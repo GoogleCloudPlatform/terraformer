@@ -27,8 +27,8 @@ func NewAwsRegionResource(region string) map[string]interface{} {
 }
 
 func GenerateTfState(resources []TerraformResource) error {
-	tfstate := NewTfState(resources)
-	firstState, _ := json.MarshalIndent(tfstate, "", "  ")
+	tfState := NewTfState(resources)
+	firstState, _ := json.MarshalIndent(tfState, "", "  ")
 	ioutil.WriteFile("terraform.tfstate", firstState, os.ModePerm)
 	oldRegion := os.Getenv("AWS_DEFAULT_REGION")
 	defer os.Setenv("AWS_DEFAULT_REGION", oldRegion)
@@ -72,27 +72,27 @@ func GenerateTf(resources []TerraformResource, resourceName, region string) erro
 	return ioutil.WriteFile(resourceName+".tf", data, os.ModePerm)
 }
 
-func NewTfState(resources []TerraformResource) map[string]interface{} {
-	tfstate := map[string]interface{}{
-		"version":           1,
-		"terraform_version": terraform.VersionString(),
-		"serial":            1,
-		"modules": []map[string]interface{}{
-			{
-				"path":      []string{"root"},
-				"resources": map[string]interface{}{},
-			},
+func NewTfState(resources []TerraformResource) terraform.State {
+	tfstate := terraform.State{
+		Version:   terraform.StateVersion,
+		TFVersion: terraform.VersionString(),
+		Serial:    1,
+	}
+	tfstate.Modules = []*terraform.ModuleState{
+		{
+			Path:      []string{"root"},
+			Resources: map[string]*terraform.ResourceState{},
 		},
 	}
 	for _, resource := range resources {
-		resourceState := map[string]interface{}{
-			"type": resource.ResourceType,
-			"primary": map[string]interface{}{
-				"id": resource.ID,
+		resourceState := &terraform.ResourceState{
+			Type: resource.ResourceType,
+			Primary: &terraform.InstanceState{
+				ID: resource.ID,
 			},
-			"provider": "provider." + resource.Provider,
+			Provider: "provider." + resource.Provider,
 		}
-		tfstate["modules"].([]map[string]interface{})[0]["resources"].(map[string]interface{})[resource.ResourceType+"."+resource.ResourceName] = resourceState
+		tfstate.Modules[0].Resources[resource.ResourceType+"."+resource.ResourceName] = resourceState
 	}
 	return tfstate
 }

@@ -19,6 +19,10 @@ var ignoreKey = map[string]bool{
 	"default_network_acl_id":    true,
 }
 
+var allowEmptyValues = map[string]bool{
+	"tags.": true,
+}
+
 func createResources(vpcs *ec2.DescribeVpcsOutput) []terraform_utils.TerraformResource {
 	resoures := []terraform_utils.TerraformResource{}
 	for _, vpc := range vpcs.Vpcs {
@@ -54,7 +58,12 @@ func Generate(region string) error {
 	if err != nil {
 		return err
 	}
-	resources, err = terraform_utils.TfstateToTfConverter("terraform.tfstate", "aws", ignoreKey)
+	converter := terraform_utils.TfstateConverter{
+		Provider:        "aws",
+		IgnoreKeys:      ignoreKey,
+		AllowEmptyValue: allowEmptyValues,
+	}
+	resources, err = converter.Convert("terraform.tfstate")
 	if err != nil {
 		return err
 	}

@@ -17,6 +17,10 @@ var ignoreKey = map[string]bool{
 	"id":       true,
 }
 
+var allowEmptyValues = map[string]bool{
+	"tags.": true,
+}
+
 func createResources(securityGroups []*ec2.SecurityGroup) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	for _, sg := range securityGroups {
@@ -58,7 +62,15 @@ func Generate(region string) error {
 	}
 	resources := createResources(securityGroups)
 	err = terraform_utils.GenerateTfState(resources)
-	resources, err = terraform_utils.TfstateToTfConverter("terraform.tfstate", "aws", ignoreKey)
+	if err != nil {
+		return err
+	}
+	converter := terraform_utils.TfstateConverter{
+		Provider:        "aws",
+		IgnoreKeys:      ignoreKey,
+		AllowEmptyValue: allowEmptyValues,
+	}
+	resources, err = converter.Convert("terraform.tfstate")
 	if err != nil {
 		return err
 	}

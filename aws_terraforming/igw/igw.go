@@ -12,6 +12,10 @@ var ignoreKey = map[string]bool{
 	"id": true,
 }
 
+var allowEmptyValues = map[string]bool{
+	"tags.": true,
+}
+
 func createResources(igws *ec2.DescribeInternetGatewaysOutput) []terraform_utils.TerraformResource {
 	resoures := []terraform_utils.TerraformResource{}
 	for _, internetGateway := range igws.InternetGateways {
@@ -47,7 +51,12 @@ func Generate(region string) error {
 	if err != nil {
 		return err
 	}
-	resources, err = terraform_utils.TfstateToTfConverter("terraform.tfstate", "aws", ignoreKey)
+	converter := terraform_utils.TfstateConverter{
+		Provider:        "aws",
+		IgnoreKeys:      ignoreKey,
+		AllowEmptyValue: allowEmptyValues,
+	}
+	resources, err = converter.Convert("terraform.tfstate")
 	if err != nil {
 		return err
 	}

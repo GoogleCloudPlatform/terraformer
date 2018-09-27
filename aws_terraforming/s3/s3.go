@@ -16,6 +16,14 @@ var ignoreKey = map[string]bool{
 	"acceleration_status":         true,
 }
 
+var allowEmptyValues = map[string]bool{
+	"tags.": true,
+}
+
+var additionalFields = map[string]string{
+	"force_destroy": "false",
+}
+
 func createResources(buckets *s3.ListBucketsOutput, region string) []terraform_utils.TerraformResource {
 	resoures := []terraform_utils.TerraformResource{}
 	for _, bucket := range buckets.Buckets {
@@ -42,11 +50,17 @@ func Generate(region string) error {
 	}
 
 	resources := createResources(buckets, region)
-	//err = terraform_utils.GenerateTfState(resources)
-	//if err != nil {
-	//	return err
-	//}
-	resources, err = terraform_utils.TfstateToTfConverter("terraform.tfstate", "aws", ignoreKey)
+	err = terraform_utils.GenerateTfState(resources)
+	if err != nil {
+		return err
+	}
+	converter := terraform_utils.TfstateConverter{
+		Provider:         "aws",
+		IgnoreKeys:       ignoreKey,
+		AllowEmptyValue:  allowEmptyValues,
+		AdditionalFields: additionalFields,
+	}
+	resources, err = converter.Convert("terraform.tfstate")
 	if err != nil {
 		return err
 	}

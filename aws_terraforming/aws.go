@@ -59,7 +59,7 @@ func Generate(service, region string) {
 			return
 
 		}
-	case "vpn_connetions":
+	case "vpn_connections":
 		err := vpn_connection.Generate(region)
 		if err != nil {
 			log.Println(err)
