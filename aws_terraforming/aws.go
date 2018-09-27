@@ -21,59 +21,28 @@ func Generate(service, region string) {
 	os.MkdirAll(currentPath, os.ModePerm)
 	os.Chdir(currentPath)
 	defer os.Chdir(rootPath)
+	var err error
 	switch service {
 	case "vpc":
-		err := vpc.Generate(region)
-		if err != nil {
-			log.Println(err)
-			return
-		}
+		err = vpc.Generate(region)
 	case "sg":
-		err := sg.Generate(region)
-		if err != nil {
-			log.Println(err)
-			return
-		}
+		err = sg.Generate(region)
 	case "subnet":
-		err := subnet.Generate(region)
-		if err != nil {
-			log.Println(err)
-			return
-		}
+		err = subnet.Generate(region)
 	case "igw":
-		err := igw.Generate(region)
-		if err != nil {
-			log.Println(err)
-			return
-		}
+		err = igw.Generate(region)
 	case "vpn_gateway":
-		err := vpn_gateway.Generate(region)
-		if err != nil {
-			log.Println(err)
-			return
-		}
+		err = vpn_gateway.Generate(region)
 	case "nacl":
-		err := nacl.Generate(region)
-		if err != nil {
-			log.Println(err)
-			return
-
-		}
+		err = nacl.Generate(region)
 	case "vpn_connections":
-		err := vpn_connection.Generate(region)
-		if err != nil {
-			log.Println(err)
-			return
-
-		}
+		err = vpn_connection.Generate(region)
 	case "s3":
-		err := s3.Generate(region)
-		if err != nil {
-			log.Println(err)
-			return
-
-		}
-
+		err = s3.Generate(region)
+	}
+	if err != nil {
+		log.Println(err)
+		return
 	}
 
 }
