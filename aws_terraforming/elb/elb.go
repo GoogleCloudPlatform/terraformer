@@ -28,13 +28,7 @@ func Generate(region string) error {
 	err := svc.DescribeLoadBalancersPages(&elb.DescribeLoadBalancersInput{}, func(loadBalancers *elb.DescribeLoadBalancersOutput, lastPage bool) bool {
 		for _, loadBalancer := range loadBalancers.LoadBalancerDescriptions {
 			resourceName := aws.StringValue(loadBalancer.LoadBalancerName)
-			resources = append(resources, terraform_utils.TerraformResource{
-				ResourceType: "aws_elb",
-				ResourceName: resourceName,
-				Item:         nil,
-				ID:           aws.StringValue(loadBalancer.LoadBalancerName),
-				Provider:     "aws",
-			})
+			resources = append(resources, terraform_utils.NewTerraformResource(aws.StringValue(loadBalancer.LoadBalancerName), resourceName, "aws_elb", "aws", nil))
 		}
 		return !lastPage
 	})

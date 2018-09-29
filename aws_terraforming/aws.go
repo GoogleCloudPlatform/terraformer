@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"waze/terraform/aws_terraforming/elb"
+	"waze/terraform/aws_terraforming/iam"
 	"waze/terraform/aws_terraforming/igw"
 	"waze/terraform/aws_terraforming/nacl"
 	"waze/terraform/aws_terraforming/s3"
@@ -42,7 +43,10 @@ func Generate(service, region string) {
 		err = s3.Generate(region)
 	case "elb":
 		err = elb.Generate(region)
+	case "iam":
+		err = iam.Generate(region)
 	}
+
 	if err != nil {
 		log.Println(err)
 		return
