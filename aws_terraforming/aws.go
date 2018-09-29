@@ -3,6 +3,7 @@ package awsTerraforming
 import (
 	"log"
 	"os"
+	"waze/terraform/aws_terraforming/elb"
 	"waze/terraform/aws_terraforming/igw"
 	"waze/terraform/aws_terraforming/nacl"
 	"waze/terraform/aws_terraforming/s3"
@@ -39,6 +40,8 @@ func Generate(service, region string) {
 		err = vpn_connection.Generate(region)
 	case "s3":
 		err = s3.Generate(region)
+	case "elb":
+		err = elb.Generate(region)
 	}
 	if err != nil {
 		log.Println(err)

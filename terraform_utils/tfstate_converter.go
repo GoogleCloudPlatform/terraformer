@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/hashicorp/terraform/terraform"
@@ -70,28 +71,32 @@ func (c TfstateConverter) Convert(pathToTfstate string) ([]TerraformResource, er
 				} else {
 					keys := strings.Split(key, ".")
 					blockName := keys[0]
+					if _, exist := c.IgnoreKeys[blockName]; exist {
+						continue
+					}
 					if keys[len(keys)-1] == "#" || keys[len(keys)-1] == "%" {
 						continue
 					}
 					if _, exist := arrayElements[blockName]; exist { // array Element
-						if _, exist := arrayElements[blockName][keys[1]]; !exist {
-							arrayElements[blockName][keys[1]] = map[string]interface{}{}
-						}
-						if len(keys) == 3 {
-							arrayElements[blockName][keys[1]][keys[2]] = value
-						} else if len(keys) == 4 {
-							if _, exist := arrayElements[blockName][keys[1]][keys[2]]; !exist {
-								arrayElements[blockName][keys[1]][keys[2]] = []string{}
+						if len(strings.Split(key, ".")) == 2 {
+							item[blockName] = collectArray(allAttributes, blockName, resource.Primary.Attributes, 1)
+						} else {
+							if _, exist := arrayElements[blockName][keys[1]]; !exist {
+								arrayElements[blockName][keys[1]] = map[string]interface{}{}
 							}
-							arrayElements[blockName][keys[1]][keys[2]] = append(arrayElements[blockName][keys[1]][keys[2]].([]string), value)
-						} else if len(keys) == 5 {
-							if _, exist := arrayElements[blockName][keys[1]][keys[2]]; !exist {
-								arrayElements[blockName][keys[1]][keys[2]] = map[string]interface{}{}
+							if len(keys) == 3 {
+								arrayElements[blockName][keys[1]][keys[2]] = value
+							} else if len(keys) == 4 {
+								if _, exist := arrayElements[blockName][keys[1]][keys[2]]; !exist {
+									arrayElements[blockName][keys[1]][keys[2]] = []string{}
+								}
+								arrayElements[blockName][keys[1]][keys[2]] = append(arrayElements[blockName][keys[1]][keys[2]].([]string), value)
+							} else if len(keys) == 5 {
+								if _, exist := arrayElements[blockName][keys[1]][keys[2]]; !exist {
+									arrayElements[blockName][keys[1]][keys[2]] = map[string]interface{}{}
+								}
+								arrayElements[blockName][keys[1]][keys[2]].(map[string]interface{})[keys[4]] = value
 							}
-							if _, exist := arrayElements[blockName][keys[1]][keys[2]].(map[string]interface{})[keys[4]]; !exist {
-								//arrayElements[blockName][keys[1]][keys[2]].(map[string]interface{})[keys[4]] = string{}
-							}
-							arrayElements[blockName][keys[1]][keys[2]].(map[string]interface{})[keys[4]] = value
 						}
 					}
 					if _, exist := hashElements[blockName]; exist { // hash Element
@@ -99,6 +104,7 @@ func (c TfstateConverter) Convert(pathToTfstate string) ([]TerraformResource, er
 					}
 				}
 			}
+
 			for key, elem := range arrayElements {
 				if len(elem) == 0 {
 					continue
@@ -117,9 +123,6 @@ func (c TfstateConverter) Convert(pathToTfstate string) ([]TerraformResource, er
 						} else if _, ok := value.(map[string]interface{}); ok {
 							element[k] = map[string]interface{}{}
 							for kk, vv := range value.(map[string]interface{}) {
-								if _, exist := element[k].(map[string]interface{})[kk]; !exist {
-									//element[k].(map[string]interface{})[kk] = []string{}
-								}
 								element[k].(map[string]interface{})[kk] = vv.(string)
 							}
 						}
@@ -140,4 +143,22 @@ func (c TfstateConverter) Convert(pathToTfstate string) ([]TerraformResource, er
 		}
 	}
 	return resources, nil
+}
+
+func collectArray(keys []string, keyPrefix string, attributes map[string]string, part int) []string {
+	values := []string{}
+	for _, key := range keys {
+		if strings.HasSuffix(key, "#") {
+			continue
+		}
+		if strings.HasPrefix(key, keyPrefix) {
+			_, err := strconv.Atoi(strings.Split(key, ".")[part])
+			if err != nil {
+				collectArray(keys, keyPrefix, attributes, part+1)
+			} else if len(strings.Split(key, ".")) == part+1 {
+				values = append(values, attributes[key])
+			}
+		}
+	}
+	return values
 }

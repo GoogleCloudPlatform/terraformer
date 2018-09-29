@@ -74,9 +74,42 @@ func Generate(region string) error {
 	if err != nil {
 		return err
 	}
+	//resources = replaceIDToName(resources)
 	err = terraform_utils.GenerateTf(resources, "security_group", region)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func replaceIDToName(resources []terraform_utils.TerraformResource) []terraform_utils.TerraformResource {
+	for _, resource := range resources {
+		item := resource.Item.(map[string]interface{})
+		if _, exist := item["ingress"]; !exist {
+			continue
+		}
+		ingresses := item["ingress"].([]map[string]interface{})
+		for _, ingress := range ingresses {
+			if _, exist := ingress["security_groups"]; !exist {
+				continue
+			}
+			security_groups := ingress["security_groups"].([]string)
+			renamedSecurity_groups := []string{}
+			for _, security_group := range security_groups {
+				found := false
+				for _, i := range resources {
+					if i.ID == security_group {
+						renamedSecurity_groups = append(renamedSecurity_groups, "${"+i.ResourceType+"."+i.ResourceName+".id}")
+						found = true
+						break
+					}
+				}
+				if !found {
+					renamedSecurity_groups = append(renamedSecurity_groups, security_group)
+				}
+			}
+			ingress["security_groups"] = renamedSecurity_groups
+		}
+	}
+	return resources
 }
