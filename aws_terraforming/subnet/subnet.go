@@ -1,6 +1,7 @@
 package subnet
 
 import (
+	"waze/terraform/aws_terraforming/awsGenerator"
 	"waze/terraform/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -17,7 +18,11 @@ var allowEmptyValues = map[string]bool{
 	"tags.": true,
 }
 
-func createResources(subnets *ec2.DescribeSubnetsOutput) []terraform_utils.TerraformResource {
+type SubnetGenerator struct {
+	awsGenerator.BasicGenerator
+}
+
+func (SubnetGenerator) createResources(subnets *ec2.DescribeSubnetsOutput) []terraform_utils.TerraformResource {
 	resoures := []terraform_utils.TerraformResource{}
 	for _, subnet := range subnets.Subnets {
 		resourceName := ""
@@ -40,24 +45,21 @@ func createResources(subnets *ec2.DescribeSubnetsOutput) []terraform_utils.Terra
 	return resoures
 }
 
-func Generate(region string) error {
+func (g SubnetGenerator) Generate(region string) error {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := ec2.New(sess)
 	subnets, err := svc.DescribeSubnets(&ec2.DescribeSubnetsInput{})
 	if err != nil {
 		return err
 	}
-	resources := createResources(subnets)
+	resources := g.createResources(subnets)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err
 	}
-	converter := terraform_utils.TfstateConverter{
-		Provider:        "aws",
-		IgnoreKeys:      ignoreKey,
-		AllowEmptyValue: allowEmptyValues,
-	}
-	resources, err = converter.Convert("terraform.tfstate")
+	converter := terraform_utils.TfstateConverter{}
+	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, map[string]string{})
+	resources, err = converter.Convert("terraform.tfstate", metadata)
 	if err != nil {
 		return err
 	}

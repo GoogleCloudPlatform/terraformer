@@ -3,6 +3,7 @@ package awsTerraforming
 import (
 	"log"
 	"os"
+	"waze/terraform/aws_terraforming/awsGenerator"
 	"waze/terraform/aws_terraforming/elb"
 	"waze/terraform/aws_terraforming/iam"
 	"waze/terraform/aws_terraforming/igw"
@@ -23,30 +24,30 @@ func Generate(service, region string) {
 	os.MkdirAll(currentPath, os.ModePerm)
 	os.Chdir(currentPath)
 	defer os.Chdir(rootPath)
-	var err error
+	var generator awsGenerator.Generator
 	switch service {
 	case "vpc":
-		err = vpc.Generate(region)
+		generator = vpc.VpcGenerator{}
 	case "sg":
-		err = sg.Generate(region)
+		generator = sg.SecurityGenerator{}
 	case "subnet":
-		err = subnet.Generate(region)
+		generator = subnet.SubnetGenerator{}
 	case "igw":
-		err = igw.Generate(region)
+		generator = igw.IgwGenerator{}
 	case "vpn_gateway":
-		err = vpn_gateway.Generate(region)
+		generator = vpn_gateway.VpnGatewayGenerator{}
 	case "nacl":
-		err = nacl.Generate(region)
+		generator = nacl.NaclGenerator{}
 	case "vpn_connections":
-		err = vpn_connection.Generate(region)
+		generator = vpn_connection.VpnConnectionGenerator{}
 	case "s3":
-		err = s3.Generate(region)
+		generator = s3.S3Generator{}
 	case "elb":
-		err = elb.Generate(region)
+		generator = elb.ElbGenerator{}
 	case "iam":
-		err = iam.Generate(region)
+		generator = iam.IamGenerator{}
 	}
-
+	err := generator.Generate(region)
 	if err != nil {
 		log.Println(err)
 		return

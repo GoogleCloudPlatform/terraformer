@@ -1,6 +1,7 @@
 package vpn_connection
 
 import (
+	"waze/terraform/aws_terraforming/awsGenerator"
 	"waze/terraform/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -26,7 +27,11 @@ var allowEmptyValues = map[string]bool{
 	"tags.": true,
 }
 
-func createResources(vpncs *ec2.DescribeVpnConnectionsOutput) []terraform_utils.TerraformResource {
+type VpnConnectionGenerator struct {
+	awsGenerator.BasicGenerator
+}
+
+func (VpnConnectionGenerator) createResources(vpncs *ec2.DescribeVpnConnectionsOutput) []terraform_utils.TerraformResource {
 	resoures := []terraform_utils.TerraformResource{}
 	for _, vpnc := range vpncs.VpnConnections {
 		resourceName := ""
@@ -49,24 +54,21 @@ func createResources(vpncs *ec2.DescribeVpnConnectionsOutput) []terraform_utils.
 	return resoures
 }
 
-func Generate(region string) error {
+func (g VpnConnectionGenerator) Generate(region string) error {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := ec2.New(sess)
 	vpncs, err := svc.DescribeVpnConnections(&ec2.DescribeVpnConnectionsInput{})
 	if err != nil {
 		return err
 	}
-	resources := createResources(vpncs)
+	resources := g.createResources(vpncs)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err
 	}
-	converter := terraform_utils.TfstateConverter{
-		Provider:        "aws",
-		IgnoreKeys:      ignoreKey,
-		AllowEmptyValue: allowEmptyValues,
-	}
-	resources, err = converter.Convert("terraform.tfstate")
+	converter := terraform_utils.TfstateConverter{}
+	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, map[string]string{})
+	resources, err = converter.Convert("terraform.tfstate", metadata)
 	if err != nil {
 		return err
 	}

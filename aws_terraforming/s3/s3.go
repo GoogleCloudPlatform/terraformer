@@ -2,6 +2,7 @@ package s3
 
 import (
 	"log"
+	"waze/terraform/aws_terraforming/awsGenerator"
 	"waze/terraform/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -24,7 +25,11 @@ var additionalFields = map[string]string{
 	"force_destroy": "false",
 }
 
-func createResources(buckets *s3.ListBucketsOutput, region string) []terraform_utils.TerraformResource {
+type S3Generator struct {
+	awsGenerator.BasicGenerator
+}
+
+func (S3Generator) createResources(buckets *s3.ListBucketsOutput, region string) []terraform_utils.TerraformResource {
 	resoures := []terraform_utils.TerraformResource{}
 	for _, bucket := range buckets.Buckets {
 		resourceName := aws.StringValue(bucket.Name)
@@ -41,7 +46,7 @@ func createResources(buckets *s3.ListBucketsOutput, region string) []terraform_u
 	return resoures
 }
 
-func Generate(region string) error {
+func (g S3Generator) Generate(region string) error {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := s3.New(sess)
 	buckets, err := svc.ListBuckets(&s3.ListBucketsInput{})
@@ -49,18 +54,14 @@ func Generate(region string) error {
 		return err
 	}
 
-	resources := createResources(buckets, region)
+	resources := g.createResources(buckets, region)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err
 	}
-	converter := terraform_utils.TfstateConverter{
-		Provider:         "aws",
-		IgnoreKeys:       ignoreKey,
-		AllowEmptyValue:  allowEmptyValues,
-		AdditionalFields: additionalFields,
-	}
-	resources, err = converter.Convert("terraform.tfstate")
+	converter := terraform_utils.TfstateConverter{}
+	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, additionalFields)
+	resources, err = converter.Convert("terraform.tfstate", metadata)
 	if err != nil {
 		return err
 	}

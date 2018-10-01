@@ -1,6 +1,7 @@
 package vpc
 
 import (
+	"waze/terraform/aws_terraforming/awsGenerator"
 	"waze/terraform/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -23,7 +24,11 @@ var allowEmptyValues = map[string]bool{
 	"tags.": true,
 }
 
-func createResources(vpcs *ec2.DescribeVpcsOutput) []terraform_utils.TerraformResource {
+type VpcGenerator struct {
+	awsGenerator.BasicGenerator
+}
+
+func (VpcGenerator) createResources(vpcs *ec2.DescribeVpcsOutput) []terraform_utils.TerraformResource {
 	resoures := []terraform_utils.TerraformResource{}
 	for _, vpc := range vpcs.Vpcs {
 		resourceName := ""
@@ -46,24 +51,21 @@ func createResources(vpcs *ec2.DescribeVpcsOutput) []terraform_utils.TerraformRe
 	return resoures
 }
 
-func Generate(region string) error {
+func (g VpcGenerator) Generate(region string) error {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := ec2.New(sess)
 	vpcs, err := svc.DescribeVpcs(&ec2.DescribeVpcsInput{})
 	if err != nil {
 		return err
 	}
-	resources := createResources(vpcs)
+	resources := g.createResources(vpcs)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err
 	}
-	converter := terraform_utils.TfstateConverter{
-		Provider:        "aws",
-		IgnoreKeys:      ignoreKey,
-		AllowEmptyValue: allowEmptyValues,
-	}
-	resources, err = converter.Convert("terraform.tfstate")
+	converter := terraform_utils.TfstateConverter{}
+	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, map[string]string{})
+	resources, err = converter.Convert("terraform.tfstate", metadata)
 	if err != nil {
 		return err
 	}

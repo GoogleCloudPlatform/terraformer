@@ -10,14 +10,11 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-type TfstateConverter struct {
-	Provider         string
-	IgnoreKeys       map[string]bool
-	AllowEmptyValue  map[string]bool
-	AdditionalFields map[string]string
-}
+type TfstateConverter struct{}
 
-func (c TfstateConverter) Convert(pathToTfstate string) ([]TerraformResource, error) {
+
+
+func (c TfstateConverter) Convert(pathToTfstate string, metadata map[string]ResourceMetaData) ([]TerraformResource, error) {
 	resources := []TerraformResource{}
 	data, err := ioutil.ReadFile(pathToTfstate)
 	if err != nil {
@@ -51,12 +48,12 @@ func (c TfstateConverter) Convert(pathToTfstate string) ([]TerraformResource, er
 			}
 			for _, key := range allAttributes {
 				value := resource.Primary.Attributes[key]
-				if _, exist := c.IgnoreKeys[key]; exist {
+				if _, exist := metadata[resource.Primary.ID].IgnoreKeys[key]; exist {
 					continue
 				}
 				if value == "" {
 					allowEmptyValue := false
-					for pattern := range c.AllowEmptyValue {
+					for pattern := range metadata[resource.Primary.ID].AllowEmptyValue {
 						if strings.Contains(key, pattern) {
 							allowEmptyValue = true
 						}
@@ -71,7 +68,7 @@ func (c TfstateConverter) Convert(pathToTfstate string) ([]TerraformResource, er
 				} else {
 					keys := strings.Split(key, ".")
 					blockName := keys[0]
-					if _, exist := c.IgnoreKeys[blockName]; exist {
+					if _, exist := metadata[resource.Primary.ID].IgnoreKeys[blockName]; exist {
 						continue
 					}
 					if keys[len(keys)-1] == "#" || keys[len(keys)-1] == "%" {
@@ -130,7 +127,7 @@ func (c TfstateConverter) Convert(pathToTfstate string) ([]TerraformResource, er
 					item[key] = append(item[key].([]map[string]interface{}), element)
 				}
 			}
-			for key, value := range c.AdditionalFields {
+			for key, value := range metadata[resource.Primary.ID].AdditionalFields {
 				item[key] = value
 			}
 			resources = append(resources, TerraformResource{
@@ -138,7 +135,7 @@ func (c TfstateConverter) Convert(pathToTfstate string) ([]TerraformResource, er
 				ResourceName: strings.Split(key, ".")[1],
 				Item:         item,
 				ID:           resource.Primary.ID,
-				Provider:     c.Provider,
+				Provider:     metadata[resource.Primary.ID].Provider,
 			})
 		}
 	}

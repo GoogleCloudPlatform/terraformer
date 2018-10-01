@@ -1,6 +1,7 @@
 package elb
 
 import (
+	"waze/terraform/aws_terraforming/awsGenerator"
 	"waze/terraform/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -21,7 +22,11 @@ var allowEmptyValues = map[string]bool{
 	"tags.": true,
 }
 
-func Generate(region string) error {
+type ElbGenerator struct {
+	awsGenerator.BasicGenerator
+}
+
+func (ElbGenerator) Generate(region string) error {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := elb.New(sess)
 	resources := []terraform_utils.TerraformResource{}
@@ -39,12 +44,9 @@ func Generate(region string) error {
 	if err != nil {
 		return err
 	}
-	converter := terraform_utils.TfstateConverter{
-		Provider:        "aws",
-		IgnoreKeys:      ignoreKey,
-		AllowEmptyValue: allowEmptyValues,
-	}
-	resources, err = converter.Convert("terraform.tfstate")
+	converter := terraform_utils.TfstateConverter{}
+	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, map[string]string{})
+	resources, err = converter.Convert("terraform.tfstate", metadata)
 	if err != nil {
 		return err
 	}

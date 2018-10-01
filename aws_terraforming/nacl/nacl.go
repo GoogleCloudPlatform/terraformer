@@ -1,6 +1,7 @@
 package nacl
 
 import (
+	"waze/terraform/aws_terraforming/awsGenerator"
 	"waze/terraform/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -16,7 +17,11 @@ var allowEmptyValues = map[string]bool{
 	"tags.": true,
 }
 
-func createResources(nacls *ec2.DescribeNetworkAclsOutput) []terraform_utils.TerraformResource {
+type NaclGenerator struct {
+	awsGenerator.BasicGenerator
+}
+
+func (NaclGenerator) createResources(nacls *ec2.DescribeNetworkAclsOutput) []terraform_utils.TerraformResource {
 	resoures := []terraform_utils.TerraformResource{}
 	for _, nacl := range nacls.NetworkAcls {
 		resourceName := ""
@@ -39,24 +44,21 @@ func createResources(nacls *ec2.DescribeNetworkAclsOutput) []terraform_utils.Ter
 	return resoures
 }
 
-func Generate(region string) error {
+func (g NaclGenerator) Generate(region string) error {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := ec2.New(sess)
 	nacls, err := svc.DescribeNetworkAcls(&ec2.DescribeNetworkAclsInput{})
 	if err != nil {
 		return err
 	}
-	resources := createResources(nacls)
+	resources := g.createResources(nacls)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err
 	}
-	converter := terraform_utils.TfstateConverter{
-		Provider:        "aws",
-		IgnoreKeys:      ignoreKey,
-		AllowEmptyValue: allowEmptyValues,
-	}
-	resources, err = converter.Convert("terraform.tfstate")
+	converter := terraform_utils.TfstateConverter{}
+	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, map[string]string{})
+	resources, err = converter.Convert("terraform.tfstate", metadata)
 	if err != nil {
 		return err
 	}

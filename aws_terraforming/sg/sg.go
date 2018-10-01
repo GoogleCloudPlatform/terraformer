@@ -2,6 +2,7 @@ package sg
 
 import (
 	"strings"
+	"waze/terraform/aws_terraforming/awsGenerator"
 	"waze/terraform/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -21,7 +22,11 @@ var allowEmptyValues = map[string]bool{
 	"tags.": true,
 }
 
-func createResources(securityGroups []*ec2.SecurityGroup) []terraform_utils.TerraformResource {
+type SecurityGenerator struct {
+	awsGenerator.BasicGenerator
+}
+
+func (SecurityGenerator) createResources(securityGroups []*ec2.SecurityGroup) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	for _, sg := range securityGroups {
 		if sg.VpcId == nil {
@@ -38,7 +43,7 @@ func createResources(securityGroups []*ec2.SecurityGroup) []terraform_utils.Terr
 	return resources
 }
 
-func Generate(region string) error {
+func (g SecurityGenerator) Generate(region string) error {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := ec2.New(sess)
 	var securityGroups []*ec2.SecurityGroup
@@ -60,21 +65,18 @@ func Generate(region string) error {
 			break
 		}
 	}
-	resources := createResources(securityGroups)
+	resources := g.createResources(securityGroups)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err
 	}
-	converter := terraform_utils.TfstateConverter{
-		Provider:        "aws",
-		IgnoreKeys:      ignoreKey,
-		AllowEmptyValue: allowEmptyValues,
-	}
-	resources, err = converter.Convert("terraform.tfstate")
+	converter := terraform_utils.TfstateConverter{}
+	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, map[string]string{})
+	resources, err = converter.Convert("terraform.tfstate", metadata)
 	if err != nil {
 		return err
 	}
-	//resources = replaceIDToName(resources)
+	//resources = g.replaceIDToName(resources)
 	err = terraform_utils.GenerateTf(resources, "security_group", region)
 	if err != nil {
 		return err
@@ -82,7 +84,7 @@ func Generate(region string) error {
 	return nil
 }
 
-func replaceIDToName(resources []terraform_utils.TerraformResource) []terraform_utils.TerraformResource {
+func (SecurityGenerator) replaceIDToName(resources []terraform_utils.TerraformResource) []terraform_utils.TerraformResource {
 	for _, resource := range resources {
 		item := resource.Item.(map[string]interface{})
 		if _, exist := item["ingress"]; !exist {
