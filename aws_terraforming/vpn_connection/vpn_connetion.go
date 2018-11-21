@@ -1,7 +1,7 @@
 package vpn_connection
 
 import (
-	"waze/terraform/aws_terraforming/awsGenerator"
+	"waze/terraform/aws_terraforming/aws_generator"
 	"waze/terraform/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -28,7 +28,7 @@ var allowEmptyValues = map[string]bool{
 }
 
 type VpnConnectionGenerator struct {
-	awsGenerator.BasicGenerator
+	aws_generator.BasicGenerator
 }
 
 func (VpnConnectionGenerator) createResources(vpncs *ec2.DescribeVpnConnectionsOutput) []terraform_utils.TerraformResource {
@@ -72,7 +72,7 @@ func (g VpnConnectionGenerator) Generate(region string) error {
 	if err != nil {
 		return err
 	}
-	err = terraform_utils.GenerateTf(resources, "vpn_connection", region)
+	err = terraform_utils.GenerateTf(resources, "vpn_connection", region, "aws")
 	if err != nil {
 		return err
 	}

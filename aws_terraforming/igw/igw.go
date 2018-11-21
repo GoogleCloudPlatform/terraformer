@@ -1,7 +1,7 @@
 package igw
 
 import (
-	"waze/terraform/aws_terraforming/awsGenerator"
+	"waze/terraform/aws_terraforming/aws_generator"
 	"waze/terraform/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -18,7 +18,7 @@ var allowEmptyValues = map[string]bool{
 }
 
 type IgwGenerator struct {
-	awsGenerator.BasicGenerator
+	aws_generator.BasicGenerator
 }
 
 func (IgwGenerator) createResources(igws *ec2.DescribeInternetGatewaysOutput) []terraform_utils.TerraformResource {
@@ -62,7 +62,7 @@ func (g IgwGenerator) Generate(region string) error {
 	if err != nil {
 		return err
 	}
-	err = terraform_utils.GenerateTf(resources, "internet_gateway", region)
+	err = terraform_utils.GenerateTf(resources, "internet_gateway", region, "aws")
 	if err != nil {
 		return err
 	}

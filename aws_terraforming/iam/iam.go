@@ -2,7 +2,7 @@ package iam
 
 import (
 	"strings"
-	"waze/terraform/aws_terraforming/awsGenerator"
+	"waze/terraform/aws_terraforming/aws_generator"
 	"waze/terraform/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/service/iam"
@@ -26,7 +26,7 @@ var allowEmptyValues = map[string]bool{
 }
 
 type IamGenerator struct {
-	awsGenerator.BasicGenerator
+	aws_generator.BasicGenerator
 	metadata  map[string]terraform_utils.ResourceMetaData
 	resources []terraform_utils.TerraformResource
 }
@@ -53,7 +53,7 @@ func (g IamGenerator) Generate(region string) error {
 	if err != nil {
 		return err
 	}
-	err = terraform_utils.GenerateTf(g.resources, "iam", region)
+	err = terraform_utils.GenerateTf(g.resources, "iam", region, "aws")
 	if err != nil {
 		return err
 	}
@@ -69,7 +69,8 @@ func (g *IamGenerator) getUsers(svc *iam.IAM) error {
 				aws.StringValue(user.UserId),
 				"aws_iam_user",
 				"aws",
-				nil))
+				nil,
+				map[string]string{}))
 			g.metadata[resourceName] = terraform_utils.ResourceMetaData{
 				Provider:         "aws",
 				IgnoreKeys:       ignoreKey,
@@ -97,6 +98,7 @@ func (g *IamGenerator) getUserGroup(svc *iam.IAM, userName *string) {
 				"aws_iam_user_group_membership",
 				"aws",
 				map[string]interface{}{"user": userName},
+				map[string]string{},
 			))
 			g.metadata[groupIDAttachment] = terraform_utils.ResourceMetaData{
 				Provider:         "aws",
@@ -119,7 +121,8 @@ func (g *IamGenerator) getUserPolices(svc *iam.IAM, userName *string) {
 				resourceName,
 				"aws_iam_user_policy",
 				"aws",
-				nil))
+				nil,
+				map[string]string{}))
 			g.metadata[policyID] = terraform_utils.ResourceMetaData{
 				Provider:         "aws",
 				IgnoreKeys:       ignoreKey,

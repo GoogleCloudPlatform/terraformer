@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/hcl/hcl/ast"
 	hcl_printer "github.com/hashicorp/hcl/hcl/printer"
 	hcl_parcer "github.com/hashicorp/hcl/json/parser"
-	"k8s.io/kops/pkg/featureflag"
 )
 
 const safeChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
@@ -25,15 +24,17 @@ type TerraformResource struct {
 	Item         interface{}
 	ID           string
 	Provider     string
+	Attributes   map[string]string
 }
 
-func NewTerraformResource(ID, resourceName, resourceType, provider string, item interface{}) TerraformResource {
+func NewTerraformResource(ID, resourceName, resourceType, provider string, item interface{}, attributes map[string]string) TerraformResource {
 	return TerraformResource{
 		ResourceType: resourceType,
 		ResourceName: TfSanitize(resourceName),
 		Item:         item,
 		ID:           ID,
 		Provider:     provider,
+		Attributes:   attributes,
 	}
 }
 
@@ -118,11 +119,6 @@ func hclPrint(node ast.Node) ([]byte, error) {
 	s = strings.Replace(s, "\\u003c", "<", -1)
 	s = strings.Replace(s, "\\u003e", ">", -1)
 
-	if featureflag.SkipTerraformFormat.Enabled() {
-		log.Println("feature-flag SkipTerraformFormat was set; skipping terraform format")
-		return []byte(s), nil
-	}
-
 	// Apply Terraform style (alignment etc.)
 	formatted, err := hcl_printer.Format([]byte(s))
 	if err != nil {
@@ -163,7 +159,13 @@ func HclPrint(resources []TerraformResource, region, provider string) ([]byte, e
 
 	data := make(map[string]interface{})
 	data["resource"] = resourcesByType
-	data["provider"] = NewAwsRegionResource(region)
+	switch provider {
+	case "google":
+		data["provider"] = NewGcpRegionResource(region)
+	case "aws":
+		data["provider"] = NewAwsRegionResource(region)
+	}
+
 	var err error
 	dataJsonBytes, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {

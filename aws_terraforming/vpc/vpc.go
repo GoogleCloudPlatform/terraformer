@@ -1,7 +1,7 @@
 package vpc
 
 import (
-	"waze/terraform/aws_terraforming/awsGenerator"
+	"waze/terraform/aws_terraforming/aws_generator"
 	"waze/terraform/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -25,7 +25,7 @@ var allowEmptyValues = map[string]bool{
 }
 
 type VpcGenerator struct {
-	awsGenerator.BasicGenerator
+	aws_generator.BasicGenerator
 }
 
 func (VpcGenerator) createResources(vpcs *ec2.DescribeVpcsOutput) []terraform_utils.TerraformResource {
@@ -69,7 +69,7 @@ func (g VpcGenerator) Generate(region string) error {
 	if err != nil {
 		return err
 	}
-	err = terraform_utils.GenerateTf(resources, "vpc", region)
+	err = terraform_utils.GenerateTf(resources, "vpc", region, "aws")
 	if err != nil {
 		return err
 	}

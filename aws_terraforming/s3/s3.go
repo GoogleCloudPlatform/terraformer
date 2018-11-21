@@ -2,7 +2,7 @@ package s3
 
 import (
 	"log"
-	"waze/terraform/aws_terraforming/awsGenerator"
+	"waze/terraform/aws_terraforming/aws_generator"
 	"waze/terraform/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -26,7 +26,7 @@ var additionalFields = map[string]string{
 }
 
 type S3Generator struct {
-	awsGenerator.BasicGenerator
+	aws_generator.BasicGenerator
 }
 
 func (S3Generator) createResources(buckets *s3.ListBucketsOutput, region string) []terraform_utils.TerraformResource {
@@ -40,7 +40,13 @@ func (S3Generator) createResources(buckets *s3.ListBucketsOutput, region string)
 			log.Println(err)
 		}
 		if aws.StringValue(location.LocationConstraint) == region {
-			resoures = append(resoures, terraform_utils.NewTerraformResource(resourceName, resourceName, "aws_s3_bucket", "aws", nil))
+			resoures = append(resoures, terraform_utils.NewTerraformResource(
+				resourceName,
+				resourceName,
+				"aws_s3_bucket",
+				"aws",
+				nil,
+				map[string]string{}))
 		}
 	}
 	return resoures
@@ -65,7 +71,7 @@ func (g S3Generator) Generate(region string) error {
 	if err != nil {
 		return err
 	}
-	err = terraform_utils.GenerateTf(resources, "buckets", region)
+	err = terraform_utils.GenerateTf(resources, "buckets", region, "aws")
 	if err != nil {
 		return err
 	}

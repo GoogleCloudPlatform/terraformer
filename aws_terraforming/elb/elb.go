@@ -1,7 +1,7 @@
 package elb
 
 import (
-	"waze/terraform/aws_terraforming/awsGenerator"
+	"waze/terraform/aws_terraforming/aws_generator"
 	"waze/terraform/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -23,7 +23,7 @@ var allowEmptyValues = map[string]bool{
 }
 
 type ElbGenerator struct {
-	awsGenerator.BasicGenerator
+	aws_generator.BasicGenerator
 }
 
 func (ElbGenerator) Generate(region string) error {
@@ -33,7 +33,13 @@ func (ElbGenerator) Generate(region string) error {
 	err := svc.DescribeLoadBalancersPages(&elb.DescribeLoadBalancersInput{}, func(loadBalancers *elb.DescribeLoadBalancersOutput, lastPage bool) bool {
 		for _, loadBalancer := range loadBalancers.LoadBalancerDescriptions {
 			resourceName := aws.StringValue(loadBalancer.LoadBalancerName)
-			resources = append(resources, terraform_utils.NewTerraformResource(aws.StringValue(loadBalancer.LoadBalancerName), resourceName, "aws_elb", "aws", nil))
+			resources = append(resources, terraform_utils.NewTerraformResource(
+				aws.StringValue(loadBalancer.LoadBalancerName),
+				resourceName,
+				"aws_elb",
+				"aws",
+				nil,
+				map[string]string{}))
 		}
 		return !lastPage
 	})
@@ -50,7 +56,7 @@ func (ElbGenerator) Generate(region string) error {
 	if err != nil {
 		return err
 	}
-	err = terraform_utils.GenerateTf(resources, "elb", region)
+	err = terraform_utils.GenerateTf(resources, "elb", region, "aws")
 	if err != nil {
 		return err
 	}

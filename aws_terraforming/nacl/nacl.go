@@ -1,7 +1,7 @@
 package nacl
 
 import (
-	"waze/terraform/aws_terraforming/awsGenerator"
+	"waze/terraform/aws_terraforming/aws_generator"
 	"waze/terraform/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -18,7 +18,7 @@ var allowEmptyValues = map[string]bool{
 }
 
 type NaclGenerator struct {
-	awsGenerator.BasicGenerator
+	aws_generator.BasicGenerator
 }
 
 func (NaclGenerator) createResources(nacls *ec2.DescribeNetworkAclsOutput) []terraform_utils.TerraformResource {
@@ -62,7 +62,7 @@ func (g NaclGenerator) Generate(region string) error {
 	if err != nil {
 		return err
 	}
-	err = terraform_utils.GenerateTf(resources, "nacl", region)
+	err = terraform_utils.GenerateTf(resources, "nacl", region, "aws")
 	if err != nil {
 		return err
 	}

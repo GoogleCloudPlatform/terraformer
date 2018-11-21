@@ -3,7 +3,7 @@ package awsTerraforming
 import (
 	"log"
 	"os"
-	"waze/terraform/aws_terraforming/awsGenerator"
+	"waze/terraform/aws_terraforming/aws_generator"
 	"waze/terraform/aws_terraforming/elb"
 	"waze/terraform/aws_terraforming/iam"
 	"waze/terraform/aws_terraforming/igw"
@@ -24,7 +24,7 @@ func Generate(service, region string) {
 	os.MkdirAll(currentPath, os.ModePerm)
 	os.Chdir(currentPath)
 	defer os.Chdir(rootPath)
-	var generator awsGenerator.Generator
+	var generator aws_generator.Generator
 	switch service {
 	case "vpc":
 		generator = vpc.VpcGenerator{}

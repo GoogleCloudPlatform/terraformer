@@ -1,4 +1,4 @@
-package awsGenerator
+package aws_generator
 
 type BasicGenerator struct{}
 

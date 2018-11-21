@@ -3,6 +3,7 @@ package terraform_utils
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"sort"
 	"strconv"
 	"strings"
@@ -11,8 +12,6 @@ import (
 )
 
 type TfstateConverter struct{}
-
-
 
 func (c TfstateConverter) Convert(pathToTfstate string, metadata map[string]ResourceMetaData) ([]TerraformResource, error) {
 	resources := []TerraformResource{}
@@ -93,6 +92,8 @@ func (c TfstateConverter) Convert(pathToTfstate string, metadata map[string]Reso
 									arrayElements[blockName][keys[1]][keys[2]] = map[string]interface{}{}
 								}
 								arrayElements[blockName][keys[1]][keys[2]].(map[string]interface{})[keys[4]] = value
+							} else {
+								log.Println(blockName)
 							}
 						}
 					}
@@ -101,7 +102,6 @@ func (c TfstateConverter) Convert(pathToTfstate string, metadata map[string]Reso
 					}
 				}
 			}
-
 			for key, elem := range arrayElements {
 				if len(elem) == 0 {
 					continue
@@ -122,6 +122,8 @@ func (c TfstateConverter) Convert(pathToTfstate string, metadata map[string]Reso
 							for kk, vv := range value.(map[string]interface{}) {
 								element[k].(map[string]interface{})[kk] = vv.(string)
 							}
+						} else {
+							log.Println(value)
 						}
 					}
 					item[key] = append(item[key].([]map[string]interface{}), element)
