@@ -26,9 +26,12 @@ var ignoreKey = map[string]bool{
 	"label_fingerprint": 	true,
 	"creation_timestamp": 	true,
 	
+	"region":			true,
 }
 
-var allowEmptyValues = map[string]bool{}
+var allowEmptyValues = map[string]bool{
+
+}
 
 var additionalFields = map[string]string{
 	"project": "waze-development",
@@ -38,7 +41,7 @@ type GlobalForwardingRulesGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
-func (GlobalForwardingRulesGenerator) createResources(GlobalForwardingRulesList *compute.GlobalForwardingRulesListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func (GlobalForwardingRulesGenerator) createResources(GlobalForwardingRulesList *compute.GlobalForwardingRulesListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := GlobalForwardingRulesList.Pages(ctx, func(page *compute.ForwardingRuleList) error {
 		for _, obj := range page.Items {
@@ -48,7 +51,12 @@ func (GlobalForwardingRulesGenerator) createResources(GlobalForwardingRulesList 
 				"google_compute_global_forwarding_rule",
 				"google",
 				nil,
-				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					
+				},
 			))
 		}
 		return nil
@@ -75,7 +83,7 @@ func (g GlobalForwardingRulesGenerator) Generate(zone string) error {
 
 	GlobalForwardingRulesList := computeService.GlobalForwardingRules.List(project)
 
-	resources := g.createResources(GlobalForwardingRulesList, ctx, region)
+	resources := g.createResources(GlobalForwardingRulesList, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err

@@ -28,7 +28,9 @@ var ignoreKey = map[string]bool{
 	
 }
 
-var allowEmptyValues = map[string]bool{}
+var allowEmptyValues = map[string]bool{
+
+}
 
 var additionalFields = map[string]string{
 	"project": "waze-development",
@@ -38,7 +40,7 @@ type RegionAutoscalersGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
-func (RegionAutoscalersGenerator) createResources(RegionAutoscalersList *compute.RegionAutoscalersListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func (RegionAutoscalersGenerator) createResources(RegionAutoscalersList *compute.RegionAutoscalersListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := RegionAutoscalersList.Pages(ctx, func(page *compute.RegionAutoscalerList) error {
 		for _, obj := range page.Items {
@@ -48,7 +50,12 @@ func (RegionAutoscalersGenerator) createResources(RegionAutoscalersList *compute
 				"google_compute_region_autoscaler",
 				"google",
 				nil,
-				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					
+				},
 			))
 		}
 		return nil
@@ -75,7 +82,7 @@ func (g RegionAutoscalersGenerator) Generate(zone string) error {
 
 	RegionAutoscalersList := computeService.RegionAutoscalers.List(project, region)
 
-	resources := g.createResources(RegionAutoscalersList, ctx, region)
+	resources := g.createResources(RegionAutoscalersList, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err

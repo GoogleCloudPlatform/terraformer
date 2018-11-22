@@ -45,7 +45,11 @@ var ignoreKey = map[string]bool{
 	"{{$value}}":			true,{{end}}
 }
 
-var allowEmptyValues = map[string]bool{}
+var allowEmptyValues = map[string]bool{
+{{ range $value := .allowEmptyValues }}
+	"{{$value}}":		true,
+{{end}}
+}
 
 var additionalFields = map[string]string{
 	"project": "waze-development",
@@ -55,17 +59,22 @@ type {{.resource}}Generator struct {
 	gcp_generator.BasicGenerator
 }
 
-func ({{.resource}}Generator) createResources({{.resource}}List *compute.{{.resource}}ListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func ({{.resource}}Generator) createResources({{.resource}}List *compute.{{.resource}}ListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := {{.resource}}List.Pages(ctx, func(page *compute.{{.responseName}}) error {
 		for _, obj := range page.Items {
 			resources = append(resources, terraform_utils.NewTerraformResource(
-				obj.Name,
+				{{ if .byZone  }}zone+"/"+obj.Name,{{else}}obj.Name,{{end}}
 				obj.Name,
 				"{{.terraformName}}",
 				"google",
 				nil,
-				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					{{ if .byZone  }}"zone":    zone,{{end}}
+				},
 			))
 		}
 		return nil
@@ -92,7 +101,7 @@ func (g {{.resource}}Generator) Generate(zone string) error {
 
 	{{.resource}}List := computeService.{{.resource}}.List({{.parameterOrder}})
 
-	resources := g.createResources({{.resource}}List, ctx, region)
+	resources := g.createResources({{.resource}}List, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err
@@ -132,28 +141,30 @@ var ComputeService = map[string]gcp_generator.Generator{
 type TerraformResource struct {
 	TerraformName       string
 	AttributesReference []string
+	AllowEmptyValues    []string
 }
 
 /*
-autoscalers
-backendServices
-disks
-globalForwardingRules
-images
-instanceGroupManagers
-instanceGroups
-instances
-instanceTemplates
-networks
-regionInstanceGroupManagers
-routes
-securityPolicies
-snapshots
-sslCertificates
+backendServices - region
+globalForwardingRules - region
+
+images - raw_disk
+
+instanceGroupManagers - zone
+instances - zone
+
+instanceTemplates - error formatting HCL: At 8569:167: illegal char
+
+
+regionInstanceGroupManagers - distribution_policy_zones(array parser)
+
+securityPolicies - parser issue
+
+
+
+targetHttpProxies - uin64 issue
+
 sslPolicies-empty
-targetHttpProxies
-
-
 regionDisks -empty
 routers- empty
 targetTcpProxies-empty
@@ -175,7 +186,8 @@ var terraformResources = map[string]TerraformResource{
 		TerraformName: "google_compute_backend_bucket",
 	},
 	"backendServices": {
-		TerraformName: "google_compute_backend_service",
+		TerraformName:       "google_compute_backend_service",
+		AttributesReference: []string{"region"},
 	},
 	"disks": {
 		TerraformName: "google_compute_disk",
@@ -199,7 +211,8 @@ var terraformResources = map[string]TerraformResource{
 		AttributesReference: []string{"address"},
 	},
 	"globalForwardingRules": {
-		TerraformName: "google_compute_global_forwarding_rule",
+		TerraformName:       "google_compute_global_forwarding_rule",
+		AttributesReference: []string{"region"},
 	},
 	"healthChecks": {
 		TerraformName:       "google_compute_health_check",
@@ -223,7 +236,8 @@ var terraformResources = map[string]TerraformResource{
 		AttributesReference: []string{"size"},
 	},
 	"instanceTemplates": {
-		TerraformName: "google_compute_instance_template",
+		TerraformName:       "google_compute_instance_template",
+		AttributesReference: []string{"tags_fingerprint"},
 	},
 	"instances": {
 		TerraformName: "google_compute_instance",
@@ -236,7 +250,7 @@ var terraformResources = map[string]TerraformResource{
 	},
 	"networks": {
 		TerraformName:       "google_compute_network",
-		AttributesReference: []string{"gateway_ipv4", "name"},
+		AttributesReference: []string{"gateway_ipv4"},
 	},
 	"regionAutoscalers": {
 		TerraformName: "google_compute_region_autoscaler",
@@ -256,29 +270,30 @@ var terraformResources = map[string]TerraformResource{
 	"regionInstanceGroupManagers": {
 		TerraformName:       "google_compute_region_instance_group_manager",
 		AttributesReference: []string{"instance_group"},
+		AllowEmptyValues:    []string{"name", "health_check"},
 	},
 	"routers": {
 		TerraformName: "google_compute_router",
 	},
 	"routes": {
 		TerraformName:       "google_compute_route",
-		AttributesReference: []string{"google_compute_route"},
+		AttributesReference: []string{"google_compute_route", "next_hop_network"},
 	},
 	"securityPolicies": {
 		TerraformName: "google_compute_security_policy",
 	},
-	"snapshots": {
+	/*"snapshots": {
 		TerraformName: "google_compute_snapshot",
 		AttributesReference: []string{
 			"snapshot_encryption_key_sha256",
 			"source_disk_encryption_key_sha256",
 			"source_disk_link",
 		},
-	},
-	"sslCertificates": {
+	},*/
+	/*"sslCertificates": {
 		TerraformName:       "google_compute_ssl_certificate",
 		AttributesReference: []string{"certificate_id"},
-	},
+	},*/
 	"sslPolicies": {
 		TerraformName: "google_compute_ssl_policy",
 		AttributesReference: []string{
@@ -345,8 +360,10 @@ func main() {
 				"responseName":        value.(map[string]interface{})["response"].(map[string]interface{})["$ref"].(string),
 				"terraformName":       terraformResources[resource].TerraformName,
 				"attributesReference": terraformResources[resource].AttributesReference,
+				"allowEmptyValues":    terraformResources[resource].AllowEmptyValues,
 				"resourcePackageName": resource,
 				"parameterOrder":      parameterOrder,
+				"byZone":              strings.Contains(parameterOrder, "zone"),
 			})
 			rootPath, _ := os.Getwd()
 			currentPath := rootPath + pathForGenerateFiles + resource

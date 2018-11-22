@@ -29,7 +29,9 @@ var ignoreKey = map[string]bool{
 	"map_id":			true,
 }
 
-var allowEmptyValues = map[string]bool{}
+var allowEmptyValues = map[string]bool{
+
+}
 
 var additionalFields = map[string]string{
 	"project": "waze-development",
@@ -39,7 +41,7 @@ type UrlMapsGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
-func (UrlMapsGenerator) createResources(UrlMapsList *compute.UrlMapsListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func (UrlMapsGenerator) createResources(UrlMapsList *compute.UrlMapsListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := UrlMapsList.Pages(ctx, func(page *compute.UrlMapList) error {
 		for _, obj := range page.Items {
@@ -49,7 +51,12 @@ func (UrlMapsGenerator) createResources(UrlMapsList *compute.UrlMapsListCall, ct
 				"google_compute_url_map",
 				"google",
 				nil,
-				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					
+				},
 			))
 		}
 		return nil
@@ -76,7 +83,7 @@ func (g UrlMapsGenerator) Generate(zone string) error {
 
 	UrlMapsList := computeService.UrlMaps.List(project)
 
-	resources := g.createResources(UrlMapsList, ctx, region)
+	resources := g.createResources(UrlMapsList, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err

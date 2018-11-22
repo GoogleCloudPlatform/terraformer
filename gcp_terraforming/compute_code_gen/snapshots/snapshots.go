@@ -31,7 +31,9 @@ var ignoreKey = map[string]bool{
 	"source_disk_link":			true,
 }
 
-var allowEmptyValues = map[string]bool{}
+var allowEmptyValues = map[string]bool{
+
+}
 
 var additionalFields = map[string]string{
 	"project": "waze-development",
@@ -41,7 +43,7 @@ type SnapshotsGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
-func (SnapshotsGenerator) createResources(SnapshotsList *compute.SnapshotsListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func (SnapshotsGenerator) createResources(SnapshotsList *compute.SnapshotsListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := SnapshotsList.Pages(ctx, func(page *compute.SnapshotList) error {
 		for _, obj := range page.Items {
@@ -51,7 +53,12 @@ func (SnapshotsGenerator) createResources(SnapshotsList *compute.SnapshotsListCa
 				"google_compute_snapshot",
 				"google",
 				nil,
-				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					
+				},
 			))
 		}
 		return nil
@@ -78,7 +85,7 @@ func (g SnapshotsGenerator) Generate(zone string) error {
 
 	SnapshotsList := computeService.Snapshots.List(project)
 
-	resources := g.createResources(SnapshotsList, ctx, region)
+	resources := g.createResources(SnapshotsList, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err

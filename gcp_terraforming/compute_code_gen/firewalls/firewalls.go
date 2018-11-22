@@ -28,7 +28,9 @@ var ignoreKey = map[string]bool{
 	
 }
 
-var allowEmptyValues = map[string]bool{}
+var allowEmptyValues = map[string]bool{
+
+}
 
 var additionalFields = map[string]string{
 	"project": "waze-development",
@@ -38,7 +40,7 @@ type FirewallsGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
-func (FirewallsGenerator) createResources(FirewallsList *compute.FirewallsListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func (FirewallsGenerator) createResources(FirewallsList *compute.FirewallsListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := FirewallsList.Pages(ctx, func(page *compute.FirewallList) error {
 		for _, obj := range page.Items {
@@ -48,7 +50,12 @@ func (FirewallsGenerator) createResources(FirewallsList *compute.FirewallsListCa
 				"google_compute_firewall",
 				"google",
 				nil,
-				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					
+				},
 			))
 		}
 		return nil
@@ -75,7 +82,7 @@ func (g FirewallsGenerator) Generate(zone string) error {
 
 	FirewallsList := computeService.Firewalls.List(project)
 
-	resources := g.createResources(FirewallsList, ctx, region)
+	resources := g.createResources(FirewallsList, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err

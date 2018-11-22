@@ -27,10 +27,11 @@ var ignoreKey = map[string]bool{
 	"creation_timestamp": 	true,
 	
 	"gateway_ipv4":			true,
-	"name":			true,
 }
 
-var allowEmptyValues = map[string]bool{}
+var allowEmptyValues = map[string]bool{
+
+}
 
 var additionalFields = map[string]string{
 	"project": "waze-development",
@@ -40,7 +41,7 @@ type NetworksGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
-func (NetworksGenerator) createResources(NetworksList *compute.NetworksListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func (NetworksGenerator) createResources(NetworksList *compute.NetworksListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := NetworksList.Pages(ctx, func(page *compute.NetworkList) error {
 		for _, obj := range page.Items {
@@ -50,7 +51,12 @@ func (NetworksGenerator) createResources(NetworksList *compute.NetworksListCall,
 				"google_compute_network",
 				"google",
 				nil,
-				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					
+				},
 			))
 		}
 		return nil
@@ -77,7 +83,7 @@ func (g NetworksGenerator) Generate(zone string) error {
 
 	NetworksList := computeService.Networks.List(project)
 
-	resources := g.createResources(NetworksList, ctx, region)
+	resources := g.createResources(NetworksList, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err

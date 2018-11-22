@@ -28,7 +28,9 @@ var ignoreKey = map[string]bool{
 	
 }
 
-var allowEmptyValues = map[string]bool{}
+var allowEmptyValues = map[string]bool{
+
+}
 
 var additionalFields = map[string]string{
 	"project": "waze-development",
@@ -38,7 +40,7 @@ type ImagesGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
-func (ImagesGenerator) createResources(ImagesList *compute.ImagesListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func (ImagesGenerator) createResources(ImagesList *compute.ImagesListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := ImagesList.Pages(ctx, func(page *compute.ImageList) error {
 		for _, obj := range page.Items {
@@ -48,7 +50,12 @@ func (ImagesGenerator) createResources(ImagesList *compute.ImagesListCall, ctx c
 				"google_compute_image",
 				"google",
 				nil,
-				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					
+				},
 			))
 		}
 		return nil
@@ -75,7 +82,7 @@ func (g ImagesGenerator) Generate(zone string) error {
 
 	ImagesList := computeService.Images.List(project)
 
-	resources := g.createResources(ImagesList, ctx, region)
+	resources := g.createResources(ImagesList, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err

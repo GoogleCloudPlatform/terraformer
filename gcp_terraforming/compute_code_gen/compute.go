@@ -28,8 +28,6 @@ import (
 	"waze/terraform/gcp_terraforming/compute_code_gen/routers"
 	"waze/terraform/gcp_terraforming/compute_code_gen/routes"
 	"waze/terraform/gcp_terraforming/compute_code_gen/securityPolicies"
-	"waze/terraform/gcp_terraforming/compute_code_gen/snapshots"
-	"waze/terraform/gcp_terraforming/compute_code_gen/sslCertificates"
 	"waze/terraform/gcp_terraforming/compute_code_gen/sslPolicies"
 	"waze/terraform/gcp_terraforming/compute_code_gen/subnetworks"
 	"waze/terraform/gcp_terraforming/compute_code_gen/targetHttpProxies"
@@ -68,8 +66,6 @@ var ComputeService = map[string]gcp_generator.Generator{
 	"routers":                   routers.RoutersGenerator{},
 	"routes":                   routes.RoutesGenerator{},
 	"securityPolicies":                   securityPolicies.SecurityPoliciesGenerator{},
-	"snapshots":                   snapshots.SnapshotsGenerator{},
-	"sslCertificates":                   sslCertificates.SslCertificatesGenerator{},
 	"sslPolicies":                   sslPolicies.SslPoliciesGenerator{},
 	"subnetworks":                   subnetworks.SubnetworksGenerator{},
 	"targetHttpProxies":                   targetHttpProxies.TargetHttpProxiesGenerator{},

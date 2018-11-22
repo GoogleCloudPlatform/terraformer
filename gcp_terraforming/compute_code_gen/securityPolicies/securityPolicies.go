@@ -28,7 +28,9 @@ var ignoreKey = map[string]bool{
 	
 }
 
-var allowEmptyValues = map[string]bool{}
+var allowEmptyValues = map[string]bool{
+
+}
 
 var additionalFields = map[string]string{
 	"project": "waze-development",
@@ -38,7 +40,7 @@ type SecurityPoliciesGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
-func (SecurityPoliciesGenerator) createResources(SecurityPoliciesList *compute.SecurityPoliciesListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func (SecurityPoliciesGenerator) createResources(SecurityPoliciesList *compute.SecurityPoliciesListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := SecurityPoliciesList.Pages(ctx, func(page *compute.SecurityPolicyList) error {
 		for _, obj := range page.Items {
@@ -48,7 +50,12 @@ func (SecurityPoliciesGenerator) createResources(SecurityPoliciesList *compute.S
 				"google_compute_security_policy",
 				"google",
 				nil,
-				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					
+				},
 			))
 		}
 		return nil
@@ -75,7 +82,7 @@ func (g SecurityPoliciesGenerator) Generate(zone string) error {
 
 	SecurityPoliciesList := computeService.SecurityPolicies.List(project)
 
-	resources := g.createResources(SecurityPoliciesList, ctx, region)
+	resources := g.createResources(SecurityPoliciesList, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err

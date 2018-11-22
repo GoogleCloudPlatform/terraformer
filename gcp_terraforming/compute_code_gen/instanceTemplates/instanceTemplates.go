@@ -26,9 +26,12 @@ var ignoreKey = map[string]bool{
 	"label_fingerprint": 	true,
 	"creation_timestamp": 	true,
 	
+	"tags_fingerprint":			true,
 }
 
-var allowEmptyValues = map[string]bool{}
+var allowEmptyValues = map[string]bool{
+
+}
 
 var additionalFields = map[string]string{
 	"project": "waze-development",
@@ -38,7 +41,7 @@ type InstanceTemplatesGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
-func (InstanceTemplatesGenerator) createResources(InstanceTemplatesList *compute.InstanceTemplatesListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func (InstanceTemplatesGenerator) createResources(InstanceTemplatesList *compute.InstanceTemplatesListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := InstanceTemplatesList.Pages(ctx, func(page *compute.InstanceTemplateList) error {
 		for _, obj := range page.Items {
@@ -48,7 +51,12 @@ func (InstanceTemplatesGenerator) createResources(InstanceTemplatesList *compute
 				"google_compute_instance_template",
 				"google",
 				nil,
-				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					
+				},
 			))
 		}
 		return nil
@@ -75,7 +83,7 @@ func (g InstanceTemplatesGenerator) Generate(zone string) error {
 
 	InstanceTemplatesList := computeService.InstanceTemplates.List(project)
 
-	resources := g.createResources(InstanceTemplatesList, ctx, region)
+	resources := g.createResources(InstanceTemplatesList, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err

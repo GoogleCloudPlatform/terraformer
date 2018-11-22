@@ -28,7 +28,9 @@ var ignoreKey = map[string]bool{
 	
 }
 
-var allowEmptyValues = map[string]bool{}
+var allowEmptyValues = map[string]bool{
+
+}
 
 var additionalFields = map[string]string{
 	"project": "waze-development",
@@ -38,7 +40,7 @@ type RoutersGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
-func (RoutersGenerator) createResources(RoutersList *compute.RoutersListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func (RoutersGenerator) createResources(RoutersList *compute.RoutersListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := RoutersList.Pages(ctx, func(page *compute.RouterList) error {
 		for _, obj := range page.Items {
@@ -48,7 +50,12 @@ func (RoutersGenerator) createResources(RoutersList *compute.RoutersListCall, ct
 				"google_compute_router",
 				"google",
 				nil,
-				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					
+				},
 			))
 		}
 		return nil
@@ -75,7 +82,7 @@ func (g RoutersGenerator) Generate(zone string) error {
 
 	RoutersList := computeService.Routers.List(project, region)
 
-	resources := g.createResources(RoutersList, ctx, region)
+	resources := g.createResources(RoutersList, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err

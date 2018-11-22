@@ -29,7 +29,13 @@ var ignoreKey = map[string]bool{
 	"instance_group":			true,
 }
 
-var allowEmptyValues = map[string]bool{}
+var allowEmptyValues = map[string]bool{
+
+	"name":		true,
+
+	"health_check":		true,
+
+}
 
 var additionalFields = map[string]string{
 	"project": "waze-development",
@@ -39,7 +45,7 @@ type RegionInstanceGroupManagersGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
-func (RegionInstanceGroupManagersGenerator) createResources(RegionInstanceGroupManagersList *compute.RegionInstanceGroupManagersListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func (RegionInstanceGroupManagersGenerator) createResources(RegionInstanceGroupManagersList *compute.RegionInstanceGroupManagersListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := RegionInstanceGroupManagersList.Pages(ctx, func(page *compute.RegionInstanceGroupManagerList) error {
 		for _, obj := range page.Items {
@@ -49,7 +55,12 @@ func (RegionInstanceGroupManagersGenerator) createResources(RegionInstanceGroupM
 				"google_compute_region_instance_group_manager",
 				"google",
 				nil,
-				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					
+				},
 			))
 		}
 		return nil
@@ -76,7 +87,7 @@ func (g RegionInstanceGroupManagersGenerator) Generate(zone string) error {
 
 	RegionInstanceGroupManagersList := computeService.RegionInstanceGroupManagers.List(project, region)
 
-	resources := g.createResources(RegionInstanceGroupManagersList, ctx, region)
+	resources := g.createResources(RegionInstanceGroupManagersList, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err

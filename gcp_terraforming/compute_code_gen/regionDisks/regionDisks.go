@@ -32,7 +32,9 @@ var ignoreKey = map[string]bool{
 	"source_snapshot_id":			true,
 }
 
-var allowEmptyValues = map[string]bool{}
+var allowEmptyValues = map[string]bool{
+
+}
 
 var additionalFields = map[string]string{
 	"project": "waze-development",
@@ -42,7 +44,7 @@ type RegionDisksGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
-func (RegionDisksGenerator) createResources(RegionDisksList *compute.RegionDisksListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func (RegionDisksGenerator) createResources(RegionDisksList *compute.RegionDisksListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := RegionDisksList.Pages(ctx, func(page *compute.DiskList) error {
 		for _, obj := range page.Items {
@@ -52,7 +54,12 @@ func (RegionDisksGenerator) createResources(RegionDisksList *compute.RegionDisks
 				"google_compute_region_disk",
 				"google",
 				nil,
-				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					
+				},
 			))
 		}
 		return nil
@@ -79,7 +86,7 @@ func (g RegionDisksGenerator) Generate(zone string) error {
 
 	RegionDisksList := computeService.RegionDisks.List(project, region)
 
-	resources := g.createResources(RegionDisksList, ctx, region)
+	resources := g.createResources(RegionDisksList, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err

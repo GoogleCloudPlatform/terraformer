@@ -31,7 +31,9 @@ var ignoreKey = map[string]bool{
 	"address":			true,
 }
 
-var allowEmptyValues = map[string]bool{}
+var allowEmptyValues = map[string]bool{
+
+}
 
 var additionalFields = map[string]string{
 	"project": "waze-development",
@@ -41,7 +43,7 @@ type AddressesGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
-func (AddressesGenerator) createResources(AddressesList *compute.AddressesListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func (AddressesGenerator) createResources(AddressesList *compute.AddressesListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := AddressesList.Pages(ctx, func(page *compute.AddressList) error {
 		for _, obj := range page.Items {
@@ -51,7 +53,12 @@ func (AddressesGenerator) createResources(AddressesList *compute.AddressesListCa
 				"google_compute_address",
 				"google",
 				nil,
-				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					
+				},
 			))
 		}
 		return nil
@@ -78,7 +85,7 @@ func (g AddressesGenerator) Generate(zone string) error {
 
 	AddressesList := computeService.Addresses.List(project, region)
 
-	resources := g.createResources(AddressesList, ctx, region)
+	resources := g.createResources(AddressesList, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err

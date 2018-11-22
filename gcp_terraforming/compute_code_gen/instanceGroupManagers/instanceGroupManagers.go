@@ -29,7 +29,9 @@ var ignoreKey = map[string]bool{
 	"instance_group":			true,
 }
 
-var allowEmptyValues = map[string]bool{}
+var allowEmptyValues = map[string]bool{
+
+}
 
 var additionalFields = map[string]string{
 	"project": "waze-development",
@@ -39,17 +41,22 @@ type InstanceGroupManagersGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
-func (InstanceGroupManagersGenerator) createResources(InstanceGroupManagersList *compute.InstanceGroupManagersListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func (InstanceGroupManagersGenerator) createResources(InstanceGroupManagersList *compute.InstanceGroupManagersListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := InstanceGroupManagersList.Pages(ctx, func(page *compute.InstanceGroupManagerList) error {
 		for _, obj := range page.Items {
 			resources = append(resources, terraform_utils.NewTerraformResource(
-				obj.Name,
+				zone+"/"+obj.Name,
 				obj.Name,
 				"google_compute_instance_group_manager",
 				"google",
 				nil,
-				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					"zone":    zone,
+				},
 			))
 		}
 		return nil
@@ -76,7 +83,7 @@ func (g InstanceGroupManagersGenerator) Generate(zone string) error {
 
 	InstanceGroupManagersList := computeService.InstanceGroupManagers.List(project, zone)
 
-	resources := g.createResources(InstanceGroupManagersList, ctx, region)
+	resources := g.createResources(InstanceGroupManagersList, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err

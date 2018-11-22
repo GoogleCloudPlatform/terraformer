@@ -28,7 +28,9 @@ var ignoreKey = map[string]bool{
 	
 }
 
-var allowEmptyValues = map[string]bool{}
+var allowEmptyValues = map[string]bool{
+
+}
 
 var additionalFields = map[string]string{
 	"project": "waze-development",
@@ -38,7 +40,7 @@ type RegionBackendServicesGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
-func (RegionBackendServicesGenerator) createResources(RegionBackendServicesList *compute.RegionBackendServicesListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func (RegionBackendServicesGenerator) createResources(RegionBackendServicesList *compute.RegionBackendServicesListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := RegionBackendServicesList.Pages(ctx, func(page *compute.BackendServiceList) error {
 		for _, obj := range page.Items {
@@ -48,7 +50,12 @@ func (RegionBackendServicesGenerator) createResources(RegionBackendServicesList 
 				"google_compute_region_backend_service",
 				"google",
 				nil,
-				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					
+				},
 			))
 		}
 		return nil
@@ -75,7 +82,7 @@ func (g RegionBackendServicesGenerator) Generate(zone string) error {
 
 	RegionBackendServicesList := computeService.RegionBackendServices.List(project, region)
 
-	resources := g.createResources(RegionBackendServicesList, ctx, region)
+	resources := g.createResources(RegionBackendServicesList, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err

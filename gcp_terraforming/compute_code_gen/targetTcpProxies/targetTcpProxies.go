@@ -29,7 +29,9 @@ var ignoreKey = map[string]bool{
 	"proxy_id":			true,
 }
 
-var allowEmptyValues = map[string]bool{}
+var allowEmptyValues = map[string]bool{
+
+}
 
 var additionalFields = map[string]string{
 	"project": "waze-development",
@@ -39,7 +41,7 @@ type TargetTcpProxiesGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
-func (TargetTcpProxiesGenerator) createResources(TargetTcpProxiesList *compute.TargetTcpProxiesListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func (TargetTcpProxiesGenerator) createResources(TargetTcpProxiesList *compute.TargetTcpProxiesListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := TargetTcpProxiesList.Pages(ctx, func(page *compute.TargetTcpProxyList) error {
 		for _, obj := range page.Items {
@@ -49,7 +51,12 @@ func (TargetTcpProxiesGenerator) createResources(TargetTcpProxiesList *compute.T
 				"google_compute_target_tcp_proxy",
 				"google",
 				nil,
-				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					
+				},
 			))
 		}
 		return nil
@@ -76,7 +83,7 @@ func (g TargetTcpProxiesGenerator) Generate(zone string) error {
 
 	TargetTcpProxiesList := computeService.TargetTcpProxies.List(project)
 
-	resources := g.createResources(TargetTcpProxiesList, ctx, region)
+	resources := g.createResources(TargetTcpProxiesList, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err

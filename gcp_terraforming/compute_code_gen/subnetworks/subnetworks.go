@@ -29,7 +29,9 @@ var ignoreKey = map[string]bool{
 	"gateway_address":			true,
 }
 
-var allowEmptyValues = map[string]bool{}
+var allowEmptyValues = map[string]bool{
+
+}
 
 var additionalFields = map[string]string{
 	"project": "waze-development",
@@ -39,7 +41,7 @@ type SubnetworksGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
-func (SubnetworksGenerator) createResources(SubnetworksList *compute.SubnetworksListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func (SubnetworksGenerator) createResources(SubnetworksList *compute.SubnetworksListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := SubnetworksList.Pages(ctx, func(page *compute.SubnetworkList) error {
 		for _, obj := range page.Items {
@@ -49,7 +51,12 @@ func (SubnetworksGenerator) createResources(SubnetworksList *compute.Subnetworks
 				"google_compute_subnetwork",
 				"google",
 				nil,
-				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					
+				},
 			))
 		}
 		return nil
@@ -76,7 +83,7 @@ func (g SubnetworksGenerator) Generate(zone string) error {
 
 	SubnetworksList := computeService.Subnetworks.List(project, region)
 
-	resources := g.createResources(SubnetworksList, ctx, region)
+	resources := g.createResources(SubnetworksList, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err

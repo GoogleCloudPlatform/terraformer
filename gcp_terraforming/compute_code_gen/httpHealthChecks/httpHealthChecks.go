@@ -28,7 +28,9 @@ var ignoreKey = map[string]bool{
 	
 }
 
-var allowEmptyValues = map[string]bool{}
+var allowEmptyValues = map[string]bool{
+
+}
 
 var additionalFields = map[string]string{
 	"project": "waze-development",
@@ -38,7 +40,7 @@ type HttpHealthChecksGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
-func (HttpHealthChecksGenerator) createResources(HttpHealthChecksList *compute.HttpHealthChecksListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func (HttpHealthChecksGenerator) createResources(HttpHealthChecksList *compute.HttpHealthChecksListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := HttpHealthChecksList.Pages(ctx, func(page *compute.HttpHealthCheckList) error {
 		for _, obj := range page.Items {
@@ -48,7 +50,12 @@ func (HttpHealthChecksGenerator) createResources(HttpHealthChecksList *compute.H
 				"google_compute_http_health_check",
 				"google",
 				nil,
-				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					
+				},
 			))
 		}
 		return nil
@@ -75,7 +82,7 @@ func (g HttpHealthChecksGenerator) Generate(zone string) error {
 
 	HttpHealthChecksList := computeService.HttpHealthChecks.List(project)
 
-	resources := g.createResources(HttpHealthChecksList, ctx, region)
+	resources := g.createResources(HttpHealthChecksList, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err

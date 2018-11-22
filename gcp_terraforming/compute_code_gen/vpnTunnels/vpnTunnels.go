@@ -30,7 +30,9 @@ var ignoreKey = map[string]bool{
 	"detailed_status":			true,
 }
 
-var allowEmptyValues = map[string]bool{}
+var allowEmptyValues = map[string]bool{
+
+}
 
 var additionalFields = map[string]string{
 	"project": "waze-development",
@@ -40,7 +42,7 @@ type VpnTunnelsGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
-func (VpnTunnelsGenerator) createResources(VpnTunnelsList *compute.VpnTunnelsListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func (VpnTunnelsGenerator) createResources(VpnTunnelsList *compute.VpnTunnelsListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := VpnTunnelsList.Pages(ctx, func(page *compute.VpnTunnelList) error {
 		for _, obj := range page.Items {
@@ -50,7 +52,12 @@ func (VpnTunnelsGenerator) createResources(VpnTunnelsList *compute.VpnTunnelsLis
 				"google_compute_vpn_tunnel",
 				"google",
 				nil,
-				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					
+				},
 			))
 		}
 		return nil
@@ -77,7 +84,7 @@ func (g VpnTunnelsGenerator) Generate(zone string) error {
 
 	VpnTunnelsList := computeService.VpnTunnels.List(project, region)
 
-	resources := g.createResources(VpnTunnelsList, ctx, region)
+	resources := g.createResources(VpnTunnelsList, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err

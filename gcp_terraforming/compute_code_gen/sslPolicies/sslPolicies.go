@@ -29,7 +29,9 @@ var ignoreKey = map[string]bool{
 	"enabled_features":			true,
 }
 
-var allowEmptyValues = map[string]bool{}
+var allowEmptyValues = map[string]bool{
+
+}
 
 var additionalFields = map[string]string{
 	"project": "waze-development",
@@ -39,7 +41,7 @@ type SslPoliciesGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
-func (SslPoliciesGenerator) createResources(SslPoliciesList *compute.SslPoliciesListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func (SslPoliciesGenerator) createResources(SslPoliciesList *compute.SslPoliciesListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := SslPoliciesList.Pages(ctx, func(page *compute.SslPoliciesList) error {
 		for _, obj := range page.Items {
@@ -49,7 +51,12 @@ func (SslPoliciesGenerator) createResources(SslPoliciesList *compute.SslPolicies
 				"google_compute_ssl_policy",
 				"google",
 				nil,
-				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					
+				},
 			))
 		}
 		return nil
@@ -76,7 +83,7 @@ func (g SslPoliciesGenerator) Generate(zone string) error {
 
 	SslPoliciesList := computeService.SslPolicies.List(project)
 
-	resources := g.createResources(SslPoliciesList, ctx, region)
+	resources := g.createResources(SslPoliciesList, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err
