@@ -3,6 +3,7 @@ package awsTerraforming
 import (
 	"log"
 	"os"
+	"strings"
 	"waze/terraform/aws_terraforming/aws_generator"
 	"waze/terraform/aws_terraforming/elb"
 	"waze/terraform/aws_terraforming/iam"
@@ -18,7 +19,8 @@ import (
 
 const pathForGenerateFiles = "/generated/aws/"
 
-func Generate(service, region string) {
+func Generate(service, zone string) {
+	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
 	rootPath, _ := os.Getwd()
 	currentPath := rootPath + pathForGenerateFiles + region + "/" + service
 	os.MkdirAll(currentPath, os.ModePerm)

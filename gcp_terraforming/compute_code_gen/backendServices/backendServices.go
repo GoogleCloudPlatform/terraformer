@@ -1,7 +1,14 @@
-package firewall_rules
+
+/*
+AUTO GENERATE CODE - NOT FOR EDIT
+
+*/
+
+package backendServices
 
 import (
 	"context"
+	"strings"
 	"log"
 	"waze/terraform/gcp_terraforming/gcp_generator"
 	"waze/terraform/terraform_utils"
@@ -13,9 +20,12 @@ import (
 
 var ignoreKey = map[string]bool{
 	//"url":                true,
-	"id":                 true,
-	"self_link":          true,
-	"creation_timestamp": true,
+	"id":                 	true,
+	"self_link":          	true,
+	"fingerprint": 			true,
+	"label_fingerprint": 	true,
+	"creation_timestamp": 	true,
+	
 }
 
 var allowEmptyValues = map[string]bool{}
@@ -24,21 +34,21 @@ var additionalFields = map[string]string{
 	"project": "waze-development",
 }
 
-type FirewallRulesGenerator struct {
+type BackendServicesGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
-func (FirewallRulesGenerator) createResources(firewallsList *compute.FirewallsListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
+func (BackendServicesGenerator) createResources(BackendServicesList *compute.BackendServicesListCall, ctx context.Context, region string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
-	if err := firewallsList.Pages(ctx, func(page *compute.FirewallList) error {
-		for _, rule := range page.Items {
+	if err := BackendServicesList.Pages(ctx, func(page *compute.BackendServiceList) error {
+		for _, obj := range page.Items {
 			resources = append(resources, terraform_utils.NewTerraformResource(
-				rule.Name,
-				rule.Name,
-				"google_compute_firewall",
+				obj.Name,
+				obj.Name,
+				"google_compute_backend_service",
 				"google",
 				nil,
-				map[string]string{"name": rule.Name, "project": "waze-development", "region": region},
+				map[string]string{"name": obj.Name, "project": "waze-development", "region": region},
 			))
 		}
 		return nil
@@ -48,8 +58,9 @@ func (FirewallRulesGenerator) createResources(firewallsList *compute.FirewallsLi
 	return resources
 }
 
-func (g FirewallRulesGenerator) Generate(region string) error {
-	projectID := "waze-development" //os.Getenv("GOOGLE_CLOUD_PROJECT")
+func (g BackendServicesGenerator) Generate(zone string) error {
+	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
+	project := "waze-development" //os.Getenv("GOOGLE_CLOUD_PROJECT")
 	ctx := context.Background()
 
 	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
@@ -62,9 +73,9 @@ func (g FirewallRulesGenerator) Generate(region string) error {
 		log.Fatal(err)
 	}
 
-	firewallsList := computeService.Firewalls.List(projectID)
+	BackendServicesList := computeService.BackendServices.List(project)
 
-	resources := g.createResources(firewallsList, ctx)
+	resources := g.createResources(BackendServicesList, ctx, region)
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err
@@ -75,10 +86,11 @@ func (g FirewallRulesGenerator) Generate(region string) error {
 	if err != nil {
 		return err
 	}
-	err = terraform_utils.GenerateTf(resources, "firewall_rules", region, "google")
+	err = terraform_utils.GenerateTf(resources, "BackendServices", region, "google")
 	if err != nil {
 		return err
 	}
 	return nil
 
 }
+
