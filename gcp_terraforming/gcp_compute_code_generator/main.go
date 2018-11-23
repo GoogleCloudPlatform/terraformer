@@ -3,24 +3,18 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"go/format"
 	"html/template"
 	"io/ioutil"
 	"log"
 	"os"
-	"regexp"
 	"strings"
 )
 
-var camel = regexp.MustCompile("(^[^A-Z]*|[A-Z]*)([A-Z][^A-Z]+|$)")
-
 const pathForGenerateFiles = "/gcp_terraforming/compute_code_gen/"
 const serviceTemplate = `
-/*
-AUTO GENERATE CODE - NOT FOR EDIT
-
-*/
-
-package {{.resourcePackageName}}
+// AUTO-GENERATED CODE. DO NOT EDIT.
+package computeTerrforming
 
 import (
 	"context"
@@ -34,8 +28,7 @@ import (
 	"google.golang.org/api/compute/v1"
 )
 
-var ignoreKey = map[string]bool{
-	//"url":                true,
+var {{.resource}}IgnoreKey = map[string]bool{
 	"id":                 	true,
 	"self_link":          	true,
 	"fingerprint": 			true,
@@ -45,21 +38,21 @@ var ignoreKey = map[string]bool{
 	"{{$value}}":			true,{{end}}
 }
 
-var allowEmptyValues = map[string]bool{
+var {{.resource}}AllowEmptyValues = map[string]bool{
 {{ range $value := .allowEmptyValues }}
 	"{{$value}}":		true,
 {{end}}
 }
 
-var additionalFields = map[string]string{
+var {{.resource}}AdditionalFields = map[string]string{
 	"project": "waze-development",
 }
 
-type {{.resource}}Generator struct {
+type {{.titleResourceName}}Generator struct {
 	gcp_generator.BasicGenerator
 }
 
-func ({{.resource}}Generator) createResources({{.resource}}List *compute.{{.resource}}ListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
+func ({{.titleResourceName}}Generator) createResources({{.resource}}List *compute.{{.titleResourceName}}ListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := {{.resource}}List.Pages(ctx, func(page *compute.{{.responseName}}) error {
 		for _, obj := range page.Items {
@@ -84,7 +77,7 @@ func ({{.resource}}Generator) createResources({{.resource}}List *compute.{{.reso
 	return resources
 }
 
-func (g {{.resource}}Generator) Generate(zone string) error {
+func (g {{.titleResourceName}}Generator) Generate(zone string) error {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
 	project := "waze-development" //os.Getenv("GOOGLE_CLOUD_PROJECT")
 	ctx := context.Background()
@@ -99,7 +92,7 @@ func (g {{.resource}}Generator) Generate(zone string) error {
 		log.Fatal(err)
 	}
 
-	{{.resource}}List := computeService.{{.resource}}.List({{.parameterOrder}})
+	{{.resource}}List := computeService.{{.titleResourceName}}.List({{.parameterOrder}})
 
 	resources := g.createResources({{.resource}}List, ctx, region, zone)
 	err = terraform_utils.GenerateTfState(resources)
@@ -107,7 +100,7 @@ func (g {{.resource}}Generator) Generate(zone string) error {
 		return err
 	}
 	converter := terraform_utils.TfstateConverter{}
-	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, additionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, {{.resource}}IgnoreKey, {{.resource}}AllowEmptyValues, {{.resource}}AdditionalFields)
 	resources, err = converter.Convert("terraform.tfstate", metadata)
 	if err != nil {
 		return err
@@ -122,17 +115,16 @@ func (g {{.resource}}Generator) Generate(zone string) error {
 
 `
 const computeTemplate = `
-package compute_code_gen
+// AUTO-GENERATED CODE. DO NOT EDIT.
+package computeTerrforming
 
 import (
-	{{ range $key, $value := .services }}
-	"waze/terraform/gcp_terraforming/compute_code_gen/{{$key}}"{{ end }}
 	"waze/terraform/gcp_terraforming/gcp_generator"
 )
 
 var ComputeService = map[string]gcp_generator.Generator{
 {{ range $key, $value := .services }}
-	"{{$key}}":                   {{$key}}.{{title $key}}Generator{},{{ end }}
+	"{{$key}}":                   {{title $key}}Generator{},{{ end }}
 
 }
 
@@ -157,18 +149,15 @@ instanceTemplates - error formatting HCL: At 8569:167: illegal char
 
 
 regionInstanceGroupManagers - distribution_policy_zones(array parser)
-
 securityPolicies - parser issue
-
-
 
 targetHttpProxies - uin64 issue
 
-sslPolicies-empty
-regionDisks -empty
-routers- empty
-targetTcpProxies-empty
-vpnTunnels-empty
+sslPolicies - empty
+regionDisks - empty
+routers - empty
+targetTcpProxies - empty
+vpnTunnels - empty
 */
 var terraformResources = map[string]TerraformResource{
 	"addresses": {
@@ -336,13 +325,17 @@ var terraformResources = map[string]TerraformResource{
 }
 
 func main() {
-	computeAPIdata, err := ioutil.ReadFile(os.Getenv("GOPATH") + "/src/google.golang.org/api/compute/v1/compute-api.json")
+	computeAPIData, err := ioutil.ReadFile(os.Getenv("GOPATH") + "/src/google.golang.org/api/compute/v1/compute-api.json")
 	if err != nil {
 		log.Fatal(err)
 
 	}
 	computeAPI := map[string]interface{}{}
-	json.Unmarshal(computeAPIdata, &computeAPI)
+	json.Unmarshal(computeAPIData, &computeAPI)
+	funcMap := template.FuncMap{
+		"title":   strings.Title,
+		"toLower": strings.ToLower,
+	}
 	for resource, v := range computeAPI["resources"].(map[string]interface{}) {
 		if _, exist := terraformResources[resource]; !exist {
 			continue
@@ -354,9 +347,10 @@ func main() {
 			}
 			parameterOrder := strings.Join(parameters, ", ")
 			var tpl bytes.Buffer
-			t := template.Must(template.New("go_file").Parse(serviceTemplate))
+			t := template.Must(template.New("resource.go").Funcs(funcMap).Parse(serviceTemplate))
 			t.Execute(&tpl, map[string]interface{}{
-				"resource":            strings.Title(resource),
+				"titleResourceName":   strings.Title(resource),
+				"resource":            resource,
 				"responseName":        value.(map[string]interface{})["response"].(map[string]interface{})["$ref"].(string),
 				"terraformName":       terraformResources[resource].TerraformName,
 				"attributesReference": terraformResources[resource].AttributesReference,
@@ -366,22 +360,28 @@ func main() {
 				"byZone":              strings.Contains(parameterOrder, "zone"),
 			})
 			rootPath, _ := os.Getwd()
-			currentPath := rootPath + pathForGenerateFiles + resource
+			currentPath := rootPath + pathForGenerateFiles
 			os.MkdirAll(currentPath, os.ModePerm)
-			ioutil.WriteFile(currentPath+"/"+resource+".go", tpl.Bytes(), os.ModePerm)
+
+			ioutil.WriteFile(currentPath+"/"+resource+".go", codeFormat(tpl.Bytes()), os.ModePerm)
 		} else {
 			log.Println(resource)
 		}
 	}
 	var tpl bytes.Buffer
-	funcMap := template.FuncMap{
-		"title": strings.Title,
-	}
 	t := template.Must(template.New("compute.go").Funcs(funcMap).Parse(computeTemplate))
 	t.Execute(&tpl, map[string]interface{}{
 		"services": terraformResources,
 	})
 	rootPath, _ := os.Getwd()
-	ioutil.WriteFile(rootPath+pathForGenerateFiles+"compute.go", tpl.Bytes(), os.ModePerm)
+	ioutil.WriteFile(rootPath+pathForGenerateFiles+"compute.go", codeFormat(tpl.Bytes()), os.ModePerm)
 
+}
+
+func codeFormat(src []byte) []byte {
+	code, err := format.Source(src)
+	if err != nil {
+		log.Println(err)
+	}
+	return code
 }

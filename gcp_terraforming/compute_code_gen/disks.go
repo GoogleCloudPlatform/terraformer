@@ -1,0 +1,99 @@
+// AUTO-GENERATED CODE. DO NOT EDIT.
+package computeTerrforming
+
+import (
+	"context"
+	"log"
+	"strings"
+	"waze/terraform/gcp_terraforming/gcp_generator"
+	"waze/terraform/terraform_utils"
+
+	"golang.org/x/oauth2/google"
+
+	"google.golang.org/api/compute/v1"
+)
+
+var disksIgnoreKey = map[string]bool{
+	"id":                 true,
+	"self_link":          true,
+	"fingerprint":        true,
+	"label_fingerprint":  true,
+	"creation_timestamp": true,
+
+	"last_attach_timestamp": true,
+	"last_detach_timestamp": true,
+	"users":                 true,
+	"source_image_id":       true,
+	"source_snapshot_id":    true,
+}
+
+var disksAllowEmptyValues = map[string]bool{}
+
+var disksAdditionalFields = map[string]string{
+	"project": "waze-development",
+}
+
+type DisksGenerator struct {
+	gcp_generator.BasicGenerator
+}
+
+func (DisksGenerator) createResources(disksList *compute.DisksListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
+	resources := []terraform_utils.TerraformResource{}
+	if err := disksList.Pages(ctx, func(page *compute.DiskList) error {
+		for _, obj := range page.Items {
+			resources = append(resources, terraform_utils.NewTerraformResource(
+				zone+"/"+obj.Name,
+				obj.Name,
+				"google_compute_disk",
+				"google",
+				nil,
+				map[string]string{
+					"name":    obj.Name,
+					"project": "waze-development",
+					"region":  region,
+					"zone":    zone,
+				},
+			))
+		}
+		return nil
+	}); err != nil {
+		log.Fatal(err)
+	}
+	return resources
+}
+
+func (g DisksGenerator) Generate(zone string) error {
+	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
+	project := "waze-development" //os.Getenv("GOOGLE_CLOUD_PROJECT")
+	ctx := context.Background()
+
+	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	computeService, err := compute.New(c)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	disksList := computeService.Disks.List(project, zone)
+
+	resources := g.createResources(disksList, ctx, region, zone)
+	err = terraform_utils.GenerateTfState(resources)
+	if err != nil {
+		return err
+	}
+	converter := terraform_utils.TfstateConverter{}
+	metadata := terraform_utils.NewResourcesMetaData(resources, disksIgnoreKey, disksAllowEmptyValues, disksAdditionalFields)
+	resources, err = converter.Convert("terraform.tfstate", metadata)
+	if err != nil {
+		return err
+	}
+	err = terraform_utils.GenerateTf(resources, "disks", region, "google")
+	if err != nil {
+		return err
+	}
+	return nil
+
+}

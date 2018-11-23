@@ -23,7 +23,7 @@ func Generate(service, zone string) {
 	case "gcs":
 		generator = gcs.GcsGenerator{}
 	default:
-		if service, exist := compute_code_gen.ComputeService[service]; exist {
+		if service, exist := computeTerrforming.ComputeService[service]; exist {
 			generator = service
 		}
 	}
