@@ -19,7 +19,9 @@ var ignoreKey = map[string]bool{
 }
 
 var allowEmptyValues = map[string]bool{
-	"tags.": true,
+	"tags.":          true,
+	"storage_class":  true,
+	"created_before": true,
 }
 
 var additionalFields = map[string]string{

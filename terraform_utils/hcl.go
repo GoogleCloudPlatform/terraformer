@@ -61,7 +61,7 @@ func (v *astSanitizer) visit(n interface{}) {
 	case *ast.ObjectType:
 		v.visit(t.List)
 	default:
-		log.Println(" unknown type: %T\n", n)
+		fmt.Printf(" unknown type: %T\n", n)
 	}
 
 }
@@ -124,7 +124,7 @@ func hclPrint(node ast.Node) ([]byte, error) {
 	if err != nil {
 		log.Println("Invalid HCL follows:")
 		for i, line := range strings.Split(s, "\n") {
-			log.Println("%d\t%s", (i + 1), line)
+			fmt.Printf("%d\t%s", (i + 1), line)
 		}
 		return nil, fmt.Errorf("error formatting HCL: %v", err)
 	}

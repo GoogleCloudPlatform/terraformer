@@ -1,0 +1,54 @@
+{
+  "version": 3,
+  "terraform_version": "0.11.10",
+  "serial": 3,
+  "lineage": "11c0e8e7-bc2d-8f4c-b40b-25f62ece8666",
+  "modules": [
+    {
+      "path": [
+        "root"
+      ],
+      "outputs": {},
+      "resources": {
+        "google_compute_firewall.resource-idA": {
+          "type": "google_compute_firewall",
+          "depends_on": [],
+          "primary": {
+            "id": "resource-idA",
+            "attributes": {
+              "direction": "INGRESS",
+              "enable_logging": "false",
+              "id": "resource-idA",
+              "name": "resource-nameA"
+            },
+            "meta": {
+              "schema_version": "1"
+            },
+            "tainted": false
+          },
+          "deposed": [],
+          "provider": "provider.google"
+        },
+        "google_compute_firewall.resource-idB": {
+          "type": "google_compute_firewall",
+          "depends_on": [],
+          "primary": {
+            "id": "resource-idB",
+            "attributes": {
+              "direction": "INGRESS",
+              "enable_logging": "false",
+              "id": "resource-idB",
+              "name": "resource-nameB"
+            },
+            "meta": {
+              "schema_version": "1"
+            },
+            "tainted": false
+          },
+          "deposed": [],
+          "provider": "provider.google"
+        }
+      }
+    }
+  ]
+}

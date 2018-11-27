@@ -1,0 +1,45 @@
+{
+  "version": 3,
+  "terraform_version": "0.11.10",
+  "serial": 3,
+  "lineage": "11c0e8e7-bc2d-8f4c-b40b-25f62ece8666",
+  "modules": [
+    {
+      "path": [
+        "root"
+      ],
+      "outputs": {},
+      "resources": {
+        "google_compute_firewall.resource-id": {
+          "type": "google_compute_firewall",
+          "depends_on": [],
+          "primary": {
+            "id": "resource-id",
+            "attributes": {
+              "lifecycle_rule.#": "1",
+              "lifecycle_rule.0.action.#": "1",
+              "lifecycle_rule.0.action.4029382586.storage_class": "",
+              "lifecycle_rule.0.action.4029382586.type": "Delete",
+              "lifecycle_rule.0.condition.#": "1",
+              "lifecycle_rule.0.condition.395037683.age": "1",
+              "lifecycle_rule.0.condition.395037683.created_before": "",
+              "lifecycle_rule.0.condition.395037683.is_live": "false",
+              "lifecycle_rule.0.condition.395037683.matches_storage_class.#": "0",
+              "lifecycle_rule.0.condition.395037683.num_newer_versions": "0",
+              "direction": "INGRESS",
+              "enable_logging": "false",
+              "id": "resource-id",
+              "name": "resource-name"
+            },
+            "meta": {
+              "schema_version": "1"
+            },
+            "tainted": false
+          },
+          "deposed": [],
+          "provider": "provider.google"
+        }
+      }
+    }
+  ]
+}

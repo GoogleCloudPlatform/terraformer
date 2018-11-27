@@ -61,7 +61,6 @@ func (c TfstateConverter) Convert(pathToTfstate string, metadata map[string]Reso
 						continue
 					}
 				}
-
 				if !strings.Contains(key, ".") {
 					item[key] = resource.Primary.Attributes[key]
 				} else {
@@ -150,7 +149,7 @@ func collectArray(keys []string, keyPrefix string, attributes map[string]string,
 		if strings.HasSuffix(key, "#") {
 			continue
 		}
-		if strings.HasPrefix(key, keyPrefix)  {
+		if strings.HasPrefix(key, keyPrefix) {
 			_, err := strconv.Atoi(strings.Split(key, ".")[part])
 			if err != nil {
 				collectArray(keys, keyPrefix, attributes, part+1)
