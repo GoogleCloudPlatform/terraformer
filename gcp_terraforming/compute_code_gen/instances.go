@@ -48,7 +48,7 @@ func (InstancesGenerator) createResources(instancesList *compute.InstancesListCa
 				nil,
 				map[string]string{
 					"name":    obj.Name,
-					"project": "waze-development",
+					"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
 					"region":  region,
 					"zone":    zone,
 				},

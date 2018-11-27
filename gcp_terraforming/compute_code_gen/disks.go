@@ -49,7 +49,7 @@ func (DisksGenerator) createResources(disksList *compute.DisksListCall, ctx cont
 				nil,
 				map[string]string{
 					"name":    obj.Name,
-					"project": "waze-development",
+					"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
 					"region":  region,
 					"zone":    zone,
 				},

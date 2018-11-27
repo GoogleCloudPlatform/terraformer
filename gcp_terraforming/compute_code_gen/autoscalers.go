@@ -43,7 +43,7 @@ func (AutoscalersGenerator) createResources(autoscalersList *compute.Autoscalers
 				nil,
 				map[string]string{
 					"name":    obj.Name,
-					"project": "waze-development",
+					"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
 					"region":  region,
 					"zone":    zone,
 				},

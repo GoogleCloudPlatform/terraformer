@@ -43,7 +43,7 @@ func (HttpHealthChecksGenerator) createResources(httpHealthChecksList *compute.H
 				nil,
 				map[string]string{
 					"name":    obj.Name,
-					"project": "waze-development",
+					"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
 					"region":  region,
 				},
 			))

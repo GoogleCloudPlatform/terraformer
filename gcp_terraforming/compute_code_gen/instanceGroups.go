@@ -45,7 +45,7 @@ func (InstanceGroupsGenerator) createResources(instanceGroupsList *compute.Insta
 				nil,
 				map[string]string{
 					"name":    obj.Name,
-					"project": "waze-development",
+					"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
 					"region":  region,
 					"zone":    zone,
 				},

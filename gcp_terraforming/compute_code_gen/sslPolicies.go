@@ -45,7 +45,7 @@ func (SslPoliciesGenerator) createResources(sslPoliciesList *compute.SslPolicies
 				nil,
 				map[string]string{
 					"name":    obj.Name,
-					"project": "waze-development",
+					"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
 					"region":  region,
 				},
 			))

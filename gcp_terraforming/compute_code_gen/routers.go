@@ -43,7 +43,7 @@ func (RoutersGenerator) createResources(routersList *compute.RoutersListCall, ct
 				nil,
 				map[string]string{
 					"name":    obj.Name,
-					"project": "waze-development",
+					"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
 					"region":  region,
 				},
 			))

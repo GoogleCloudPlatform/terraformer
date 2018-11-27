@@ -45,7 +45,7 @@ func (TargetTcpProxiesGenerator) createResources(targetTcpProxiesList *compute.T
 				nil,
 				map[string]string{
 					"name":    obj.Name,
-					"project": "waze-development",
+					"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
 					"region":  region,
 				},
 			))

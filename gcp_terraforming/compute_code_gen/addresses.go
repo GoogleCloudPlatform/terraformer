@@ -47,7 +47,7 @@ func (AddressesGenerator) createResources(addressesList *compute.AddressesListCa
 				nil,
 				map[string]string{
 					"name":    obj.Name,
-					"project": "waze-development",
+					"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
 					"region":  region,
 				},
 			))

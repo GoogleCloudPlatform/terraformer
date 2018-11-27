@@ -64,7 +64,7 @@ func ({{.titleResourceName}}Generator) createResources({{.resource}}List *comput
 				nil,
 				map[string]string{
 					"name":    obj.Name,
-					"project": "waze-development",
+					"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
 					"region":  region,
 					{{ if .byZone  }}"zone":    zone,{{end}}
 				},
