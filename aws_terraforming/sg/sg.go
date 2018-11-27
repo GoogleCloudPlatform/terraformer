@@ -2,6 +2,7 @@ package sg
 
 import (
 	"strings"
+
 	"waze/terraform/aws_terraforming/aws_generator"
 	"waze/terraform/terraform_utils"
 
@@ -76,7 +77,7 @@ func (g SecurityGenerator) Generate(region string) error {
 	if err != nil {
 		return err
 	}
-	//resources = g.replaceIDToName(resources)
+	resources = g.replaceIDToName(resources)
 	err = terraform_utils.GenerateTf(resources, "security_group", region, "aws")
 	if err != nil {
 		return err

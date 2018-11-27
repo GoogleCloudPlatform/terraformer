@@ -20,11 +20,11 @@ import (
 	"context"
 	"strings"
 	"log"
+	"os"
+
 	"waze/terraform/gcp_terraforming/gcp_generator"
 	"waze/terraform/terraform_utils"
-
 	"golang.org/x/oauth2/google"
-
 	"google.golang.org/api/compute/v1"
 )
 
@@ -45,7 +45,7 @@ var {{.resource}}AllowEmptyValues = map[string]bool{
 }
 
 var {{.resource}}AdditionalFields = map[string]string{
-	"project": "waze-development",
+	"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
 }
 
 type {{.titleResourceName}}Generator struct {
@@ -77,9 +77,9 @@ func ({{.titleResourceName}}Generator) createResources({{.resource}}List *comput
 	return resources
 }
 
-func (g {{.titleResourceName}}Generator) Generate(zone string) error {
+func (g {{.titleResourceName}}Generator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
-	project := "waze-development" //os.Getenv("GOOGLE_CLOUD_PROJECT")
+	project := os.Getenv("GOOGLE_CLOUD_PROJECT")
 	ctx := context.Background()
 
 	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
@@ -95,21 +95,8 @@ func (g {{.titleResourceName}}Generator) Generate(zone string) error {
 	{{.resource}}List := computeService.{{.titleResourceName}}.List({{.parameterOrder}})
 
 	resources := g.createResources({{.resource}}List, ctx, region, zone)
-	err = terraform_utils.GenerateTfState(resources)
-	if err != nil {
-		return err
-	}
-	converter := terraform_utils.TfstateConverter{}
 	metadata := terraform_utils.NewResourcesMetaData(resources, {{.resource}}IgnoreKey, {{.resource}}AllowEmptyValues, {{.resource}}AdditionalFields)
-	resources, err = converter.Convert("terraform.tfstate", metadata)
-	if err != nil {
-		return err
-	}
-	err = terraform_utils.GenerateTf(resources, "{{.resource}}", region, "google")
-	if err != nil {
-		return err
-	}
-	return nil
+	return resources, metadata, nil
 
 }
 
@@ -348,7 +335,7 @@ func main() {
 			parameterOrder := strings.Join(parameters, ", ")
 			var tpl bytes.Buffer
 			t := template.Must(template.New("resource.go").Funcs(funcMap).Parse(serviceTemplate))
-			t.Execute(&tpl, map[string]interface{}{
+			err := t.Execute(&tpl, map[string]interface{}{
 				"titleResourceName":   strings.Title(resource),
 				"resource":            resource,
 				"responseName":        value.(map[string]interface{})["response"].(map[string]interface{})["$ref"].(string),
@@ -359,20 +346,34 @@ func main() {
 				"parameterOrder":      parameterOrder,
 				"byZone":              strings.Contains(parameterOrder, "zone"),
 			})
+			if err != nil {
+				log.Print(resource, err)
+				continue
+			}
 			rootPath, _ := os.Getwd()
 			currentPath := rootPath + pathForGenerateFiles
-			os.MkdirAll(currentPath, os.ModePerm)
-
-			ioutil.WriteFile(currentPath+"/"+resource+".go", codeFormat(tpl.Bytes()), os.ModePerm)
+			err = os.MkdirAll(currentPath, os.ModePerm)
+			if err != nil {
+				log.Print(resource, err)
+				continue
+			}
+			err = ioutil.WriteFile(currentPath+"/"+resource+".go", codeFormat(tpl.Bytes()), os.ModePerm)
+			if err != nil {
+				log.Print(resource, err)
+				continue
+			}
 		} else {
 			log.Println(resource)
 		}
 	}
 	var tpl bytes.Buffer
 	t := template.Must(template.New("compute.go").Funcs(funcMap).Parse(computeTemplate))
-	t.Execute(&tpl, map[string]interface{}{
+	err = t.Execute(&tpl, map[string]interface{}{
 		"services": terraformResources,
 	})
+	if err != nil {
+		log.Print(err)
+	}
 	rootPath, _ := os.Getwd()
 	ioutil.WriteFile(rootPath+pathForGenerateFiles+"compute.go", codeFormat(tpl.Bytes()), os.ModePerm)
 

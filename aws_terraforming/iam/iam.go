@@ -2,6 +2,7 @@ package iam
 
 import (
 	"strings"
+
 	"waze/terraform/aws_terraforming/aws_generator"
 	"waze/terraform/terraform_utils"
 

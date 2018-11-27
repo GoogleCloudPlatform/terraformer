@@ -4,13 +4,13 @@ package computeTerrforming
 import (
 	"context"
 	"log"
+	"os"
 	"strings"
-	"waze/terraform/gcp_terraforming/gcp_generator"
-	"waze/terraform/terraform_utils"
 
 	"golang.org/x/oauth2/google"
-
 	"google.golang.org/api/compute/v1"
+	"waze/terraform/gcp_terraforming/gcp_generator"
+	"waze/terraform/terraform_utils"
 )
 
 var instanceTemplatesIgnoreKey = map[string]bool{
@@ -26,7 +26,7 @@ var instanceTemplatesIgnoreKey = map[string]bool{
 var instanceTemplatesAllowEmptyValues = map[string]bool{}
 
 var instanceTemplatesAdditionalFields = map[string]string{
-	"project": "waze-development",
+	"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
 }
 
 type InstanceTemplatesGenerator struct {
@@ -57,9 +57,9 @@ func (InstanceTemplatesGenerator) createResources(instanceTemplatesList *compute
 	return resources
 }
 
-func (g InstanceTemplatesGenerator) Generate(zone string) error {
+func (g InstanceTemplatesGenerator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
-	project := "waze-development" //os.Getenv("GOOGLE_CLOUD_PROJECT")
+	project := os.Getenv("GOOGLE_CLOUD_PROJECT")
 	ctx := context.Background()
 
 	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
@@ -75,20 +75,7 @@ func (g InstanceTemplatesGenerator) Generate(zone string) error {
 	instanceTemplatesList := computeService.InstanceTemplates.List(project)
 
 	resources := g.createResources(instanceTemplatesList, ctx, region, zone)
-	err = terraform_utils.GenerateTfState(resources)
-	if err != nil {
-		return err
-	}
-	converter := terraform_utils.TfstateConverter{}
 	metadata := terraform_utils.NewResourcesMetaData(resources, instanceTemplatesIgnoreKey, instanceTemplatesAllowEmptyValues, instanceTemplatesAdditionalFields)
-	resources, err = converter.Convert("terraform.tfstate", metadata)
-	if err != nil {
-		return err
-	}
-	err = terraform_utils.GenerateTf(resources, "instanceTemplates", region, "google")
-	if err != nil {
-		return err
-	}
-	return nil
+	return resources, metadata, nil
 
 }

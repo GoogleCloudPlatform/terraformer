@@ -3,7 +3,7 @@ package awsTerraforming
 import (
 	"log"
 	"os"
-	"strings"
+
 	"waze/terraform/aws_terraforming/aws_generator"
 	"waze/terraform/aws_terraforming/elb"
 	"waze/terraform/aws_terraforming/iam"
@@ -19,12 +19,21 @@ import (
 
 const pathForGenerateFiles = "/generated/aws/"
 
-func Generate(service, zone string) {
-	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
+func Generate(service string, args []string) {
+	region := args[0]
 	rootPath, _ := os.Getwd()
 	currentPath := rootPath + pathForGenerateFiles + region + "/" + service
-	os.MkdirAll(currentPath, os.ModePerm)
-	os.Chdir(currentPath)
+	if err := os.MkdirAll(currentPath, os.ModePerm); err != nil {
+		log.Print(err)
+		return
+	}
+	if err := os.Chdir(currentPath); err != nil {
+		log.Print(err)
+		return
+	}
+	oldRegion := os.Getenv("AWS_DEFAULT_REGION")
+	defer os.Setenv("AWS_DEFAULT_REGION", oldRegion)
+	os.Setenv("AWS_DEFAULT_REGION", region)
 	defer os.Chdir(rootPath)
 	var generator aws_generator.Generator
 	switch service {
@@ -50,6 +59,7 @@ func Generate(service, zone string) {
 		generator = iam.IamGenerator{}
 	}
 	err := generator.Generate(region)
+
 	if err != nil {
 		log.Println(err)
 		return

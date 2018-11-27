@@ -2,3 +2,4 @@
 generated
 vendor
 terraform
+.DS_Store

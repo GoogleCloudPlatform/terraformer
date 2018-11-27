@@ -4,13 +4,13 @@ package computeTerrforming
 import (
 	"context"
 	"log"
+	"os"
 	"strings"
-	"waze/terraform/gcp_terraforming/gcp_generator"
-	"waze/terraform/terraform_utils"
 
 	"golang.org/x/oauth2/google"
-
 	"google.golang.org/api/compute/v1"
+	"waze/terraform/gcp_terraforming/gcp_generator"
+	"waze/terraform/terraform_utils"
 )
 
 var targetSslProxiesIgnoreKey = map[string]bool{
@@ -26,7 +26,7 @@ var targetSslProxiesIgnoreKey = map[string]bool{
 var targetSslProxiesAllowEmptyValues = map[string]bool{}
 
 var targetSslProxiesAdditionalFields = map[string]string{
-	"project": "waze-development",
+	"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
 }
 
 type TargetSslProxiesGenerator struct {
@@ -57,9 +57,9 @@ func (TargetSslProxiesGenerator) createResources(targetSslProxiesList *compute.T
 	return resources
 }
 
-func (g TargetSslProxiesGenerator) Generate(zone string) error {
+func (g TargetSslProxiesGenerator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
-	project := "waze-development" //os.Getenv("GOOGLE_CLOUD_PROJECT")
+	project := os.Getenv("GOOGLE_CLOUD_PROJECT")
 	ctx := context.Background()
 
 	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
@@ -75,20 +75,7 @@ func (g TargetSslProxiesGenerator) Generate(zone string) error {
 	targetSslProxiesList := computeService.TargetSslProxies.List(project)
 
 	resources := g.createResources(targetSslProxiesList, ctx, region, zone)
-	err = terraform_utils.GenerateTfState(resources)
-	if err != nil {
-		return err
-	}
-	converter := terraform_utils.TfstateConverter{}
 	metadata := terraform_utils.NewResourcesMetaData(resources, targetSslProxiesIgnoreKey, targetSslProxiesAllowEmptyValues, targetSslProxiesAdditionalFields)
-	resources, err = converter.Convert("terraform.tfstate", metadata)
-	if err != nil {
-		return err
-	}
-	err = terraform_utils.GenerateTf(resources, "targetSslProxies", region, "google")
-	if err != nil {
-		return err
-	}
-	return nil
+	return resources, metadata, nil
 
 }

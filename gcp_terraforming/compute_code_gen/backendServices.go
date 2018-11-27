@@ -4,13 +4,13 @@ package computeTerrforming
 import (
 	"context"
 	"log"
+	"os"
 	"strings"
-	"waze/terraform/gcp_terraforming/gcp_generator"
-	"waze/terraform/terraform_utils"
 
 	"golang.org/x/oauth2/google"
-
 	"google.golang.org/api/compute/v1"
+	"waze/terraform/gcp_terraforming/gcp_generator"
+	"waze/terraform/terraform_utils"
 )
 
 var backendServicesIgnoreKey = map[string]bool{
@@ -26,7 +26,7 @@ var backendServicesIgnoreKey = map[string]bool{
 var backendServicesAllowEmptyValues = map[string]bool{}
 
 var backendServicesAdditionalFields = map[string]string{
-	"project": "waze-development",
+	"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
 }
 
 type BackendServicesGenerator struct {
@@ -57,9 +57,9 @@ func (BackendServicesGenerator) createResources(backendServicesList *compute.Bac
 	return resources
 }
 
-func (g BackendServicesGenerator) Generate(zone string) error {
+func (g BackendServicesGenerator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
-	project := "waze-development" //os.Getenv("GOOGLE_CLOUD_PROJECT")
+	project := os.Getenv("GOOGLE_CLOUD_PROJECT")
 	ctx := context.Background()
 
 	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
@@ -75,20 +75,7 @@ func (g BackendServicesGenerator) Generate(zone string) error {
 	backendServicesList := computeService.BackendServices.List(project)
 
 	resources := g.createResources(backendServicesList, ctx, region, zone)
-	err = terraform_utils.GenerateTfState(resources)
-	if err != nil {
-		return err
-	}
-	converter := terraform_utils.TfstateConverter{}
 	metadata := terraform_utils.NewResourcesMetaData(resources, backendServicesIgnoreKey, backendServicesAllowEmptyValues, backendServicesAdditionalFields)
-	resources, err = converter.Convert("terraform.tfstate", metadata)
-	if err != nil {
-		return err
-	}
-	err = terraform_utils.GenerateTf(resources, "backendServices", region, "google")
-	if err != nil {
-		return err
-	}
-	return nil
+	return resources, metadata, nil
 
 }

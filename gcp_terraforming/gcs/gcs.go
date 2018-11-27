@@ -3,6 +3,8 @@ package gcs
 import (
 	"context"
 	"log"
+	"os"
+
 	"waze/terraform/gcp_terraforming/gcp_generator"
 	"waze/terraform/terraform_utils"
 
@@ -22,7 +24,7 @@ var allowEmptyValues = map[string]bool{
 
 var additionalFields = map[string]string{
 	"force_destroy": "false",
-	"project":       "waze-development",
+	"project":       os.Getenv("GOOGLE_CLOUD_PROJECT"),
 }
 
 type GcsGenerator struct {
@@ -54,28 +56,19 @@ func (GcsGenerator) createResources(bucketIterator *storage.BucketIterator) []te
 	return resources
 }
 
-func (g GcsGenerator) Generate(region string) error {
+func (g GcsGenerator) Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	ctx := context.Background()
 
-	projectID := "waze-development" //os.Getenv("GOOGLE_CLOUD_PROJECT")
+	projectID := os.Getenv("GOOGLE_CLOUD_PROJECT")
 	client, err := storage.NewClient(ctx)
+	if err != nil {
+		log.Print(err)
+		return []terraform_utils.TerraformResource{}, map[string]terraform_utils.ResourceMetaData{}, err
+	}
 	bucketIterator := client.Buckets(ctx, projectID)
 
 	resources := g.createResources(bucketIterator)
-	err = terraform_utils.GenerateTfState(resources)
-	if err != nil {
-		return err
-	}
-	converter := terraform_utils.TfstateConverter{}
 	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, additionalFields)
-	resources, err = converter.Convert("terraform.tfstate", metadata)
-	if err != nil {
-		return err
-	}
-	err = terraform_utils.GenerateTf(resources, "buckets", region, "google")
-	if err != nil {
-		return err
-	}
-	return nil
+	return resources, metadata, nil
 
 }

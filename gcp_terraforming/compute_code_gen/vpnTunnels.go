@@ -4,13 +4,13 @@ package computeTerrforming
 import (
 	"context"
 	"log"
+	"os"
 	"strings"
-	"waze/terraform/gcp_terraforming/gcp_generator"
-	"waze/terraform/terraform_utils"
 
 	"golang.org/x/oauth2/google"
-
 	"google.golang.org/api/compute/v1"
+	"waze/terraform/gcp_terraforming/gcp_generator"
+	"waze/terraform/terraform_utils"
 )
 
 var vpnTunnelsIgnoreKey = map[string]bool{
@@ -27,7 +27,7 @@ var vpnTunnelsIgnoreKey = map[string]bool{
 var vpnTunnelsAllowEmptyValues = map[string]bool{}
 
 var vpnTunnelsAdditionalFields = map[string]string{
-	"project": "waze-development",
+	"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
 }
 
 type VpnTunnelsGenerator struct {
@@ -58,9 +58,9 @@ func (VpnTunnelsGenerator) createResources(vpnTunnelsList *compute.VpnTunnelsLis
 	return resources
 }
 
-func (g VpnTunnelsGenerator) Generate(zone string) error {
+func (g VpnTunnelsGenerator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
-	project := "waze-development" //os.Getenv("GOOGLE_CLOUD_PROJECT")
+	project := os.Getenv("GOOGLE_CLOUD_PROJECT")
 	ctx := context.Background()
 
 	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
@@ -76,20 +76,7 @@ func (g VpnTunnelsGenerator) Generate(zone string) error {
 	vpnTunnelsList := computeService.VpnTunnels.List(project, region)
 
 	resources := g.createResources(vpnTunnelsList, ctx, region, zone)
-	err = terraform_utils.GenerateTfState(resources)
-	if err != nil {
-		return err
-	}
-	converter := terraform_utils.TfstateConverter{}
 	metadata := terraform_utils.NewResourcesMetaData(resources, vpnTunnelsIgnoreKey, vpnTunnelsAllowEmptyValues, vpnTunnelsAdditionalFields)
-	resources, err = converter.Convert("terraform.tfstate", metadata)
-	if err != nil {
-		return err
-	}
-	err = terraform_utils.GenerateTf(resources, "vpnTunnels", region, "google")
-	if err != nil {
-		return err
-	}
-	return nil
+	return resources, metadata, nil
 
 }

@@ -4,13 +4,13 @@ package computeTerrforming
 import (
 	"context"
 	"log"
+	"os"
 	"strings"
-	"waze/terraform/gcp_terraforming/gcp_generator"
-	"waze/terraform/terraform_utils"
 
 	"golang.org/x/oauth2/google"
-
 	"google.golang.org/api/compute/v1"
+	"waze/terraform/gcp_terraforming/gcp_generator"
+	"waze/terraform/terraform_utils"
 )
 
 var disksIgnoreKey = map[string]bool{
@@ -30,7 +30,7 @@ var disksIgnoreKey = map[string]bool{
 var disksAllowEmptyValues = map[string]bool{}
 
 var disksAdditionalFields = map[string]string{
-	"project": "waze-development",
+	"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
 }
 
 type DisksGenerator struct {
@@ -62,9 +62,9 @@ func (DisksGenerator) createResources(disksList *compute.DisksListCall, ctx cont
 	return resources
 }
 
-func (g DisksGenerator) Generate(zone string) error {
+func (g DisksGenerator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
-	project := "waze-development" //os.Getenv("GOOGLE_CLOUD_PROJECT")
+	project := os.Getenv("GOOGLE_CLOUD_PROJECT")
 	ctx := context.Background()
 
 	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
@@ -80,20 +80,7 @@ func (g DisksGenerator) Generate(zone string) error {
 	disksList := computeService.Disks.List(project, zone)
 
 	resources := g.createResources(disksList, ctx, region, zone)
-	err = terraform_utils.GenerateTfState(resources)
-	if err != nil {
-		return err
-	}
-	converter := terraform_utils.TfstateConverter{}
 	metadata := terraform_utils.NewResourcesMetaData(resources, disksIgnoreKey, disksAllowEmptyValues, disksAdditionalFields)
-	resources, err = converter.Convert("terraform.tfstate", metadata)
-	if err != nil {
-		return err
-	}
-	err = terraform_utils.GenerateTf(resources, "disks", region, "google")
-	if err != nil {
-		return err
-	}
-	return nil
+	return resources, metadata, nil
 
 }

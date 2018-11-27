@@ -38,10 +38,9 @@ func NewAwsRegionResource(region string) map[string]interface{} {
 func GenerateTfState(resources []TerraformResource) error {
 	tfState := NewTfState(resources)
 	firstState, _ := json.MarshalIndent(tfState, "", "  ")
-	ioutil.WriteFile("terraform.tfstate", firstState, os.ModePerm)
-	oldRegion := os.Getenv("AWS_DEFAULT_REGION")
-	defer os.Setenv("AWS_DEFAULT_REGION", oldRegion)
-	os.Setenv("AWS_DEFAULT_REGION", "eu-west-1")
+	if err := ioutil.WriteFile("terraform.tfstate", firstState, os.ModePerm); err != nil {
+		return err
+	}
 	meta := command.Meta{
 		OverrideDataDir: os.Getenv("HOME") + "/.terraform.d",
 		Ui:              cli.Ui(&cli.ConcurrentUi{Ui: &cli.BasicUi{Writer: os.Stdout}}),

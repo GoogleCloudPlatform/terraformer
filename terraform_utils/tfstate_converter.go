@@ -150,7 +150,7 @@ func collectArray(keys []string, keyPrefix string, attributes map[string]string,
 		if strings.HasSuffix(key, "#") {
 			continue
 		}
-		if strings.HasPrefix(key, keyPrefix) && strings.Contains(keyPrefix, ".") {
+		if strings.HasPrefix(key, keyPrefix)  {
 			_, err := strconv.Atoi(strings.Split(key, ".")[part])
 			if err != nil {
 				collectArray(keys, keyPrefix, attributes, part+1)
