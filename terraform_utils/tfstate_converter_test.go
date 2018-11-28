@@ -1,7 +1,6 @@
 package terraform_utils
 
 import (
-	"log"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,8 +13,8 @@ type convertTest struct {
 	metaData     map[string]ResourceMetaData
 }
 
-var testCases = []convertTest{
-	{
+func TestBasicConvert(t *testing.T) {
+	runConvert(convertTest{
 		dataFilePath: "test1.json",
 		name:         "basic tfstate",
 		expect: []TerraformResource{
@@ -37,8 +36,11 @@ var testCases = []convertTest{
 				Provider: "google",
 			},
 		},
-	},
-	{
+	}, t)
+}
+
+func TestBasicTfstate2(t *testing.T) {
+	runConvert(convertTest{
 		dataFilePath: "test2.json",
 		name:         "basic tfstate 2",
 		expect: []TerraformResource{
@@ -75,8 +77,11 @@ var testCases = []convertTest{
 				Provider: "google",
 			},
 		},
-	},
-	{
+	}, t)
+}
+
+func TestBasicArray(t *testing.T) {
+	runConvert(convertTest{
 		dataFilePath: "test3.json",
 		name:         "basic array",
 		expect: []TerraformResource{
@@ -108,8 +113,11 @@ var testCases = []convertTest{
 				Provider: "google",
 			},
 		},
-	},
-	{
+	}, t)
+}
+
+func TestBasicArray2(t *testing.T) {
+	runConvert(convertTest{
 		dataFilePath: "test4.json",
 		name:         "basic array 2",
 		expect: []TerraformResource{
@@ -140,8 +148,11 @@ var testCases = []convertTest{
 				Provider: "google",
 			},
 		},
-	},
-	{
+	}, t)
+}
+
+func TestBasicArray3(t *testing.T) {
+	runConvert(convertTest{
 		dataFilePath: "test5.json",
 		name:         "basic array 3",
 		expect: []TerraformResource{
@@ -174,8 +185,11 @@ var testCases = []convertTest{
 				Provider: "google",
 			},
 		},
-	},
-	{
+	}, t)
+}
+
+func TestBasicArray4(t *testing.T) {
+	runConvert(convertTest{
 		dataFilePath: "test6.json",
 		name:         "basic array 4",
 		expect: []TerraformResource{
@@ -219,19 +233,16 @@ var testCases = []convertTest{
 				},
 			},
 		},
-	},
+	}, t)
 }
 
-func TestConverter(t *testing.T) {
-	for _, testCase := range testCases {
-		log.Println("test:", testCase.name)
-		c := TfstateConverter{}
-		actual, err := c.Convert("test_data/"+testCase.dataFilePath, testCase.metaData)
-		if err != nil {
-			t.Error(err)
-		}
-		if !assert.ObjectsAreEqual(testCase.expect, actual) {
-			assert.Equal(t, testCase.expect, actual, "Convert error "+testCase.name)
-		}
+func runConvert(testCase convertTest, t *testing.T) {
+	c := TfstateConverter{}
+	actual, err := c.Convert("test_data/"+testCase.dataFilePath, testCase.metaData)
+	if err != nil {
+		t.Error(err)
+	}
+	if !assert.ObjectsAreEqual(testCase.expect, actual) {
+		assert.Equal(t, testCase.expect, actual, "Convert error "+testCase.name)
 	}
 }
