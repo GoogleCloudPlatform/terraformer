@@ -1,8 +1,13 @@
 package terraform_utils
 
 import (
+	"io/ioutil"
+	"log"
 	"testing"
 
+	"github.com/hashicorp/hil"
+	"github.com/hashicorp/terraform/flatmap"
+	"github.com/hashicorp/terraform/terraform"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,6 +16,19 @@ type convertTest struct {
 	dataFilePath string
 	expect       []TerraformResource
 	metaData     map[string]ResourceMetaData
+}
+
+func unknownValue() string {
+	return hil.UnknownValue
+}
+
+func TestFeildReader(t *testing.T) {
+	data, _ := ioutil.ReadFile("test_data/test6.json")
+	tfState, _ := terraform.ReadStateV3(data)
+	m := flatmap.Expand(tfState.Modules[0].Resources["google_compute_firewall.resource-id"].Primary.Attributes, "lifecycle_rule")
+
+	log.Println(m)
+
 }
 
 func TestBasicConvert(t *testing.T) {
@@ -24,7 +42,7 @@ func TestBasicConvert(t *testing.T) {
 				ID:           "resource-id",
 				Item: map[string]interface{}{
 					"direction":      "INGRESS",
-					"enable_logging": "false",
+					"enable_logging": false,
 					"id":             "resource-id",
 					"name":           "resource-name",
 				},
@@ -50,7 +68,7 @@ func TestBasicTfstate2(t *testing.T) {
 				ID:           "resource-idA",
 				Item: map[string]interface{}{
 					"direction":      "INGRESS",
-					"enable_logging": "false",
+					"enable_logging": false,
 					"id":             "resource-idA",
 					"name":           "resource-nameA",
 				},
@@ -62,7 +80,7 @@ func TestBasicTfstate2(t *testing.T) {
 				ID:           "resource-idB",
 				Item: map[string]interface{}{
 					"direction":      "INGRESS",
-					"enable_logging": "false",
+					"enable_logging": false,
 					"id":             "resource-idB",
 					"name":           "resource-nameB",
 				},
@@ -91,15 +109,15 @@ func TestBasicArray(t *testing.T) {
 				ID:           "resource-id",
 				Item: map[string]interface{}{
 					"direction":      "INGRESS",
-					"enable_logging": "false",
+					"enable_logging": false,
 					"id":             "resource-id",
 					"name":           "resource-name",
-					"myarray": []map[string]interface{}{
-						{
+					"myarray": []interface{}{
+						map[string]interface{}{
 							"value1": "value1",
 							"value2": "value2",
 						},
-						{
+						map[string]interface{}{
 							"value3": "value3",
 							"value4": "value4",
 						},
@@ -127,14 +145,14 @@ func TestBasicArray2(t *testing.T) {
 				ID:           "resource-id",
 				Item: map[string]interface{}{
 					"direction":      "INGRESS",
-					"enable_logging": "false",
+					"enable_logging": false,
 					"id":             "resource-id",
 					"name":           "resource-name",
-					"myarray": []map[string]interface{}{
-						{
+					"myarray": []interface{}{
+						map[string]interface{}{
 							"subarray1": []string{"value1", "value2"},
 						},
-						{
+						map[string]interface{}{
 							"subarray3": []string{"value3"},
 							"subarray4": "value4",
 						},
@@ -162,17 +180,17 @@ func TestBasicArray3(t *testing.T) {
 				ID:           "resource-id",
 				Item: map[string]interface{}{
 					"direction":      "INGRESS",
-					"enable_logging": "false",
+					"enable_logging": false,
 					"id":             "resource-id",
 					"name":           "resource-name",
-					"myarray":        []string{"value1", "value2", "value3"},
-					"myarray2": []map[string]interface{}{
-						{
+					"myarray":        []interface{}{"value1", "value2", "value3"},
+					"myarray2": []interface{}{
+						map[string]interface{}{
 							"subarray3": map[string]interface{}{
 								"subsubarray": "value3",
 							},
 						},
-						{
+						map[string]interface{}{
 							"subarray4": "value4",
 						},
 					},
@@ -199,22 +217,24 @@ func TestBasicArray4(t *testing.T) {
 				ID:           "resource-id",
 				Item: map[string]interface{}{
 					"direction":      "INGRESS",
-					"enable_logging": "false",
+					"enable_logging": false,
 					"id":             "resource-id",
 					"name":           "resource-name",
-					"lifecycle_rule": []map[string]interface{}{
-						{
-							"action": []map[string]interface{}{
-								{
+					"lifecycle_rule": []interface{}{
+						map[string]interface{}{
+							"action": []interface{}{
+								map[string]interface{}{
 									"storage_class": "",
 									"type":          "Delete",
 								},
 							},
-							"condition": []map[string]interface{}{
-								{
+						},
+						map[string]interface{}{
+							"condition": []interface{}{
+								map[string]interface{}{
 									"age":                "1",
 									"created_before":     "",
-									"is_live":            "false",
+									"is_live":            false,
 									"num_newer_versions": "0",
 								},
 							},
