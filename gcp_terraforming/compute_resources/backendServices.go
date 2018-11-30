@@ -46,7 +46,6 @@ func (BackendServicesGenerator) createResources(backendServicesList *compute.Bac
 				map[string]string{
 					"name":    obj.Name,
 					"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
-					"region":  region,
 				},
 			))
 		}

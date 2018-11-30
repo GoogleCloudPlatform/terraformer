@@ -38,7 +38,7 @@ func (InstanceGroupManagersGenerator) createResources(instanceGroupManagersList 
 	if err := instanceGroupManagersList.Pages(ctx, func(page *compute.InstanceGroupManagerList) error {
 		for _, obj := range page.Items {
 			resources = append(resources, terraform_utils.NewTerraformResource(
-				zone+"/"+obj.Name,
+				obj.Name,
 				obj.Name,
 				"google_compute_instance_group_manager",
 				"google",
@@ -46,8 +46,8 @@ func (InstanceGroupManagersGenerator) createResources(instanceGroupManagersList 
 				map[string]string{
 					"name":    obj.Name,
 					"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
-					"region":  region,
-					"zone":    zone,
+
+					"zone": zone,
 				},
 			))
 		}

@@ -41,7 +41,7 @@ func (InstancesGenerator) createResources(instancesList *compute.InstancesListCa
 	if err := instancesList.Pages(ctx, func(page *compute.InstanceList) error {
 		for _, obj := range page.Items {
 			resources = append(resources, terraform_utils.NewTerraformResource(
-				zone+"/"+obj.Name,
+				obj.Name,
 				obj.Name,
 				"google_compute_instance",
 				"google",
@@ -49,8 +49,8 @@ func (InstancesGenerator) createResources(instancesList *compute.InstancesListCa
 				map[string]string{
 					"name":    obj.Name,
 					"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
-					"region":  region,
-					"zone":    zone,
+
+					"zone": zone,
 				},
 			))
 		}

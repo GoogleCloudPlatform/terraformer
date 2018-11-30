@@ -30,17 +30,17 @@ List of support GCP services:
 addresses
 autoscalers
 backendBuckets 
-backendServices - //region:  "europe-west1" => "" (forces new resource) => need delete region from tfstate
+backendServices
 disks
 firewalls
 forwardingRules
 globalAddresses
-globalForwardingRules - //region:  "europe-west1" => "" (forces new resource)  => need delete region from tfstate
+globalForwardingRules
 healthChecks
 httpHealthChecks
 httpsHealthChecks
 images
-instanceGroupManagers - Must be a match of regex '(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)', invalid (zone?)
+instanceGroupManagers
 instanceGroups
 instanceTemplates - formatting HCL bug
 instances - Values must match the following regular expression: '[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?|[1-9][0-9]{0,19}', invalidParameter(zone?)
@@ -54,7 +54,7 @@ routes
 securityPolicies 
 sslPolicies
 subnetworks
-targetHttpProxies - uint64 issue
+targetHttpProxies - bug with proxy_id uint64 issue
 targetHttpsProxies
 targetSslProxies
 targetTcpProxies
@@ -62,6 +62,8 @@ urlMaps
 vpnTunnels
 gcs
 ````
+
+
 
 Your tf and tfstate file generate to `generated/gcp/zone/service`
 
@@ -108,3 +110,10 @@ Process for generate tf + tfstate files
 
 All mapping of resource make by providers and terraform. Any upgrade need only for providers.
  
+#####GCP compute resources
+For GCP compute resources use generate code from `gcp_terraforming/compute_resources/gcp_compute_code_generator`
+
+Regenerate code 
+````
+go run gcp_terraforming/compute_resources/gcp_compute_code_generator/*.go
+````

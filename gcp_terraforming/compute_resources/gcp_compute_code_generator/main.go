@@ -34,7 +34,7 @@ var {{.resource}}IgnoreKey = map[string]bool{
 	"fingerprint": 			true,
 	"label_fingerprint": 	true,
 	"creation_timestamp": 	true,
-	{{ range $value := .IgnoreKeys}}
+	{{ range $value := .ignoreKeys}}
 	"{{$value}}":			true,{{end}}
 }
 
@@ -46,7 +46,7 @@ var {{.resource}}AllowEmptyValues = map[string]bool{
 
 var {{.resource}}AdditionalFields = map[string]string{
 	"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
-	{{ range $key,$value := .AdditionalFields}}
+	{{ range $key,$value := .additionalFields}}
 	"{{$key}}":			"{{$value}}",{{end}}
 }
 
@@ -59,7 +59,7 @@ func ({{.titleResourceName}}Generator) createResources({{.resource}}List *comput
 	if err := {{.resource}}List.Pages(ctx, func(page *compute.{{.responseName}}) error {
 		for _, obj := range page.Items {
 			resources = append(resources, terraform_utils.NewTerraformResource(
-				{{ if .byZone  }}zone+"/"+obj.Name,{{else}}obj.Name,{{end}}
+				{{ if .idWithZone  }}zone+"/"+obj.Name,{{else}}obj.Name,{{end}}
 				obj.Name,
 				"{{.terraformName}}",
 				"google",
@@ -67,7 +67,7 @@ func ({{.titleResourceName}}Generator) createResources({{.resource}}List *comput
 				map[string]string{
 					"name":    obj.Name,
 					"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
-					"region":  region,
+					{{ if .needRegion}}"region":  region,{{end}}
 					{{ if .byZone  }}"zone":    zone,{{end}}
 				},
 			))
@@ -119,178 +119,6 @@ var ComputeService = map[string]gcp_generator.Generator{
 
 `
 
-type TerraformResource struct {
-	TerraformName    string
-	IgnoreKeys       []string
-	AllowEmptyValues []string
-	AdditionalFields map[string]string
-}
-
-var terraformResources = map[string]TerraformResource{
-	"addresses": {
-		TerraformName: "google_compute_address",
-		IgnoreKeys: []string{
-			"type",
-			"users",
-			"address",
-		},
-	},
-	"autoscalers": {
-		TerraformName: "google_compute_autoscaler",
-	},
-	"backendBuckets": {
-		TerraformName: "google_compute_backend_bucket",
-	},
-	"backendServices": {
-		TerraformName: "google_compute_backend_service",
-		IgnoreKeys:    []string{"region"},
-	},
-	"disks": {
-		TerraformName: "google_compute_disk",
-		IgnoreKeys: []string{
-			"last_attach_timestamp",
-			"last_detach_timestamp",
-			"users",
-			"source_image_id",
-			"source_snapshot_id",
-		},
-	},
-	"firewalls": {
-		TerraformName: "google_compute_firewall",
-	},
-	"forwardingRules": {
-		TerraformName: "google_compute_forwarding_rule",
-		IgnoreKeys:    []string{"service_name"},
-	},
-	"globalAddresses": {
-		TerraformName: "google_compute_global_address",
-		IgnoreKeys:    []string{"address"},
-	},
-	"globalForwardingRules": {
-		TerraformName: "google_compute_global_forwarding_rule",
-		IgnoreKeys:    []string{"region"},
-	},
-	"healthChecks": {
-		TerraformName: "google_compute_health_check",
-		IgnoreKeys:    []string{"type"},
-	},
-	"httpHealthChecks": {
-		TerraformName: "google_compute_http_health_check",
-	},
-	"httpsHealthChecks": {
-		TerraformName: "google_compute_https_health_check",
-	},
-	"images": {
-		TerraformName: "google_compute_image",
-	},
-	"instanceGroupManagers": {
-		TerraformName: "google_compute_instance_group_manager",
-		IgnoreKeys:    []string{"instance_group"},
-	},
-	"instanceGroups": {
-		TerraformName: "google_compute_instance_group",
-		IgnoreKeys:    []string{"size"},
-	},
-	"instanceTemplates": {
-		TerraformName: "google_compute_instance_template",
-		IgnoreKeys:    []string{"tags_fingerprint"},
-	},
-	"instances": {
-		TerraformName: "google_compute_instance",
-		IgnoreKeys: []string{
-			"instance_id",
-			"metadata_fingerprint",
-			"tags_fingerprint",
-			"cpu_platform",
-		},
-	},
-	"networks": {
-		TerraformName: "google_compute_network",
-		IgnoreKeys:    []string{"gateway_ipv4"},
-	},
-	"regionAutoscalers": {
-		TerraformName: "google_compute_region_autoscaler",
-	},
-	"regionBackendServices": {
-		TerraformName: "google_compute_region_backend_service",
-	},
-	"regionDisks": {
-		TerraformName: "google_compute_region_disk",
-		IgnoreKeys: []string{
-			"last_attach_timestamp",
-			"last_detach_timestamp",
-			"users",
-			"source_snapshot_id",
-		},
-	},
-	"regionInstanceGroupManagers": {
-		TerraformName:    "google_compute_region_instance_group_manager",
-		IgnoreKeys:       []string{"instance_group"},
-		AllowEmptyValues: []string{"name", "health_check"},
-	},
-	"routers": {
-		TerraformName: "google_compute_router",
-	},
-	"routes": {
-		TerraformName: "google_compute_route",
-		IgnoreKeys:    []string{"google_compute_route", "next_hop_network"},
-	},
-	"securityPolicies": {
-		TerraformName: "google_compute_security_policy",
-	},
-	/*"snapshots": {
-		TerraformName: "google_compute_snapshot",
-		IgnoreKeys: []string{
-			"snapshot_encryption_key_sha256",
-			"source_disk_encryption_key_sha256",
-			"source_disk_link",
-		},
-	},*/
-	/*"sslCertificates": {
-		TerraformName:       "google_compute_ssl_certificate",
-		IgnoreKeys: []string{"certificate_id"},
-	},*/
-	"sslPolicies": {
-		TerraformName: "google_compute_ssl_policy",
-		IgnoreKeys: []string{
-			"enabled_features",
-		},
-	},
-	"subnetworks": {
-		TerraformName: "google_compute_subnetwork",
-		IgnoreKeys: []string{
-			"gateway_address",
-		},
-	},
-	"targetHttpProxies": {
-		TerraformName: "google_compute_target_http_proxy",
-		IgnoreKeys:    []string{"proxy_id"},
-	},
-	"targetHttpsProxies": {
-		TerraformName: "google_compute_target_https_proxy",
-		IgnoreKeys:    []string{"proxy_id"},
-	},
-	"targetSslProxies": {
-		TerraformName: "google_compute_target_ssl_proxy",
-		IgnoreKeys:    []string{"proxy_id"},
-	},
-	"targetTcpProxies": {
-		TerraformName: "google_compute_target_tcp_proxy",
-		IgnoreKeys:    []string{"proxy_id"},
-	},
-	"urlMaps": {
-		TerraformName: "google_compute_url_map",
-		IgnoreKeys:    []string{"map_id"},
-	},
-	"vpnTunnels": {
-		TerraformName: "google_compute_vpn_tunnel",
-		IgnoreKeys: []string{
-			"shared_secret_hash",
-			"detailed_status",
-		},
-	},
-}
-
 func main() {
 	computeAPIData, err := ioutil.ReadFile(os.Getenv("GOPATH") + "/src/google.golang.org/api/compute/v1/compute-api.json")
 	if err != nil {
@@ -319,13 +147,15 @@ func main() {
 				"titleResourceName":   strings.Title(resource),
 				"resource":            resource,
 				"responseName":        value.(map[string]interface{})["response"].(map[string]interface{})["$ref"].(string),
-				"terraformName":       terraformResources[resource].TerraformName,
-				"IgnoreKeys":          terraformResources[resource].IgnoreKeys,
-				"AdditionalFields":    terraformResources[resource].AdditionalFields,
-				"allowEmptyValues":    terraformResources[resource].AllowEmptyValues,
+				"terraformName":       terraformResources[resource].getTerraformName(),
+				"ignoreKeys":          terraformResources[resource].getIgnoreKeys(),
+				"additionalFields":    terraformResources[resource].getAdditionalFields(),
+				"allowEmptyValues":    terraformResources[resource].getAllowEmptyValues(),
+				"needRegion":          terraformResources[resource].ifNeedRegion(),
 				"resourcePackageName": resource,
 				"parameterOrder":      parameterOrder,
-				"byZone":              strings.Contains(parameterOrder, "zone"),
+				"byZone":              terraformResources[resource].ifNeedZone(strings.Contains(parameterOrder, "zone")),
+				"idWithZone":          terraformResources[resource].ifIDWithZone(strings.Contains(parameterOrder, "zone")),
 			})
 			if err != nil {
 				log.Print(resource, err)
