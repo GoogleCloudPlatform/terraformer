@@ -51,28 +51,14 @@ func (VpcGenerator) createResources(vpcs *ec2.DescribeVpcsOutput) []terraform_ut
 	return resoures
 }
 
-func (g VpcGenerator) Generate(region string) error {
+func (g VpcGenerator) Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := ec2.New(sess)
 	vpcs, err := svc.DescribeVpcs(&ec2.DescribeVpcsInput{})
 	if err != nil {
-		return err
+		return []terraform_utils.TerraformResource{}, map[string]terraform_utils.ResourceMetaData{}, err
 	}
 	resources := g.createResources(vpcs)
-	err = terraform_utils.GenerateTfState(resources)
-	if err != nil {
-		return err
-	}
-	converter := terraform_utils.TfstateConverter{}
 	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, map[string]string{})
-	resources, err = converter.Convert("terraform.tfstate", metadata)
-	if err != nil {
-		return err
-	}
-	err = terraform_utils.GenerateTf(resources, "vpc", region, "aws")
-	if err != nil {
-		return err
-	}
-	return nil
-
+	return resources, metadata, nil
 }

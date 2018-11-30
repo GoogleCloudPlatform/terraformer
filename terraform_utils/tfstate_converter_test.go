@@ -1,13 +1,8 @@
 package terraform_utils
 
 import (
-	"io/ioutil"
-	"log"
 	"testing"
 
-	"github.com/hashicorp/hil"
-	"github.com/hashicorp/terraform/flatmap"
-	"github.com/hashicorp/terraform/terraform"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,19 +11,6 @@ type convertTest struct {
 	dataFilePath string
 	expect       []TerraformResource
 	metaData     map[string]ResourceMetaData
-}
-
-func unknownValue() string {
-	return hil.UnknownValue
-}
-
-func TestFeildReader(t *testing.T) {
-	data, _ := ioutil.ReadFile("test_data/test6.json")
-	tfState, _ := terraform.ReadStateV3(data)
-	m := flatmap.Expand(tfState.Modules[0].Resources["google_compute_firewall.resource-id"].Primary.Attributes, "lifecycle_rule")
-
-	log.Println(m)
-
 }
 
 func TestBasicConvert(t *testing.T) {
@@ -52,6 +34,93 @@ func TestBasicConvert(t *testing.T) {
 		metaData: map[string]ResourceMetaData{
 			"resource-id": {
 				Provider: "google",
+			},
+		},
+	}, t)
+}
+
+func TestBasicIgnoreKeyConvert(t *testing.T) {
+	runConvert(convertTest{
+		dataFilePath: "test7.json",
+		name:         "basic tfstate",
+		expect: []TerraformResource{
+			{
+				ResourceName: "resource-id",
+				ResourceType: "google_compute_firewall",
+				ID:           "resource-id",
+				Item: map[string]interface{}{
+					"direction":      "INGRESS",
+					"enable_logging": false,
+					"id":             "resource-id",
+					"name":           "resource-name",
+				},
+				Provider: "google",
+			},
+		},
+		metaData: map[string]ResourceMetaData{
+			"resource-id": {
+				Provider:   "google",
+				IgnoreKeys: map[string]bool{"ignored": true},
+			},
+		},
+	}, t)
+}
+
+func TestBasicAllowEmptyConvert(t *testing.T) {
+	runConvert(convertTest{
+		dataFilePath: "test8.json",
+		name:         "basic tfstate",
+		expect: []TerraformResource{
+			{
+				ResourceName: "resource-id",
+				ResourceType: "google_compute_firewall",
+				ID:           "resource-id",
+				Item: map[string]interface{}{
+					"direction":      "INGRESS",
+					"enable_logging": false,
+					"id":             "resource-id",
+					"name":           "resource-name",
+					"allow_empty":    "",
+					"boolval":        false,
+					"intval":         "124",
+				},
+				Provider: "google",
+			},
+		},
+		metaData: map[string]ResourceMetaData{
+			"resource-id": {
+				Provider:        "google",
+				AllowEmptyValue: map[string]bool{"allow_empty": true},
+			},
+		},
+	}, t)
+}
+
+func TestBasicAdditionalFieldsConvert(t *testing.T) {
+	runConvert(convertTest{
+		dataFilePath: "test9.json",
+		name:         "basic tfstate",
+		expect: []TerraformResource{
+			{
+				ResourceName: "resource-id",
+				ResourceType: "google_compute_firewall",
+				ID:           "resource-id",
+				Item: map[string]interface{}{
+					"direction":      "INGRESS",
+					"enable_logging": false,
+					"id":             "resource-id",
+					"name":           "resource-name",
+					"boolval":        false,
+					"intval":         "124",
+					"add_me":         "value",
+				},
+				Provider: "google",
+			},
+		},
+		metaData: map[string]ResourceMetaData{
+			"resource-id": {
+				Provider:         "google",
+				AdditionalFields: map[string]string{"add_me": "value"},
 			},
 		},
 	}, t)
@@ -150,10 +219,13 @@ func TestBasicArray2(t *testing.T) {
 					"name":           "resource-name",
 					"myarray": []interface{}{
 						map[string]interface{}{
-							"subarray1": []string{"value1", "value2"},
+							"subarray1": map[string]interface{}{
+								"1245":  "value1",
+								"12454": "value2",
+							},
 						},
 						map[string]interface{}{
-							"subarray3": []string{"value3"},
+							"subarray3": map[string]interface{}{"123456": "value3"},
 							"subarray4": "value4",
 						},
 					},
@@ -187,7 +259,9 @@ func TestBasicArray3(t *testing.T) {
 					"myarray2": []interface{}{
 						map[string]interface{}{
 							"subarray3": map[string]interface{}{
-								"subsubarray": "value3",
+								"123456": map[string]interface{}{
+									"subsubarray": "value3",
+								},
 							},
 						},
 						map[string]interface{}{
@@ -228,8 +302,6 @@ func TestBasicArray4(t *testing.T) {
 									"type":          "Delete",
 								},
 							},
-						},
-						map[string]interface{}{
 							"condition": []interface{}{
 								map[string]interface{}{
 									"age":                "1",

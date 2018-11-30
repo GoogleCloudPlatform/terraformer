@@ -30,28 +30,28 @@ List of support GCP services:
 addresses
 autoscalers
 backendBuckets 
-backendServices - bug
+backendServices - //region:  "europe-west1" => "" (forces new resource) => need delete region from tfstate
 disks
 firewalls
 forwardingRules
 globalAddresses
-globalForwardingRules - bug
+globalForwardingRules - //region:  "europe-west1" => "" (forces new resource)  => need delete region from tfstate
 healthChecks
 httpHealthChecks
 httpsHealthChecks
 images
-instanceGroupManagers
-instanceGroups - bug
+instanceGroupManagers - Must be a match of regex '(?:[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?)', invalid (zone?)
+instanceGroups
 instanceTemplates - formatting HCL bug
-instances - bug
+instances - Values must match the following regular expression: '[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?|[1-9][0-9]{0,19}', invalidParameter(zone?)
 networks
 regionAutoscalers
 regionBackendServices
 regionDisks
-regionInstanceGroupManagers - bug in parser
+regionInstanceGroupManagers
 routers
 routes
-securityPolicies - bug in parser 
+securityPolicies 
 sslPolicies
 subnetworks
 targetHttpProxies - uint64 issue

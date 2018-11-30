@@ -1,6 +1,7 @@
 package sg
 
 import (
+	"log"
 	"strings"
 
 	"waze/terraform/aws_terraforming/aws_generator"
@@ -44,7 +45,7 @@ func (SecurityGenerator) createResources(securityGroups []*ec2.SecurityGroup) []
 	return resources
 }
 
-func (g SecurityGenerator) Generate(region string) error {
+func (g SecurityGenerator) Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := ec2.New(sess)
 	var securityGroups []*ec2.SecurityGroup
@@ -60,29 +61,15 @@ func (g SecurityGenerator) Generate(region string) error {
 			})
 			securityGroups = append(securityGroups, securityGroupsOutput.SecurityGroups...)
 			if err != nil {
-				return err
+				log.Println(err)
 			}
 		} else {
 			break
 		}
 	}
-	resources := g.createResources(securityGroups)
-	err = terraform_utils.GenerateTfState(resources)
-	if err != nil {
-		return err
-	}
-	converter := terraform_utils.TfstateConverter{}
+	resources := g.replaceIDToName(g.createResources(securityGroups))
 	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, map[string]string{})
-	resources, err = converter.Convert("terraform.tfstate", metadata)
-	if err != nil {
-		return err
-	}
-	resources = g.replaceIDToName(resources)
-	err = terraform_utils.GenerateTf(resources, "security_group", region, "aws")
-	if err != nil {
-		return err
-	}
-	return nil
+	return resources, metadata, nil
 }
 
 func (SecurityGenerator) replaceIDToName(resources []terraform_utils.TerraformResource) []terraform_utils.TerraformResource {

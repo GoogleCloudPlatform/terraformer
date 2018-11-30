@@ -26,7 +26,7 @@ type ElbGenerator struct {
 	aws_generator.BasicGenerator
 }
 
-func (ElbGenerator) Generate(region string) error {
+func (ElbGenerator) Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := elb.New(sess)
 	resources := []terraform_utils.TerraformResource{}
@@ -44,22 +44,9 @@ func (ElbGenerator) Generate(region string) error {
 		return !lastPage
 	})
 	if err != nil {
-		return err
+		return []terraform_utils.TerraformResource{}, map[string]terraform_utils.ResourceMetaData{}, err
 	}
-	err = terraform_utils.GenerateTfState(resources)
-	if err != nil {
-		return err
-	}
-	converter := terraform_utils.TfstateConverter{}
 	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, map[string]string{})
-	resources, err = converter.Convert("terraform.tfstate", metadata)
-	if err != nil {
-		return err
-	}
-	err = terraform_utils.GenerateTf(resources, "elb", region, "aws")
-	if err != nil {
-		return err
-	}
-	return nil
+	return resources, metadata, nil
 
 }

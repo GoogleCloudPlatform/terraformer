@@ -138,7 +138,7 @@ func TfSanitize(name string) string {
 	return name
 }
 
-func HclPrint(resources []TerraformResource, region, provider string) ([]byte, error) {
+func HclPrint(resources []TerraformResource, provider map[string]interface{}) ([]byte, error) {
 	resourcesByType := make(map[string]map[string]interface{})
 
 	for _, res := range resources {
@@ -159,12 +159,7 @@ func HclPrint(resources []TerraformResource, region, provider string) ([]byte, e
 
 	data := make(map[string]interface{})
 	data["resource"] = resourcesByType
-	switch provider {
-	case "google":
-		data["provider"] = NewGcpRegionResource(region)
-	case "aws":
-		data["provider"] = NewAwsRegionResource(region)
-	}
+	data["provider"] = provider
 
 	var err error
 	dataJsonBytes, err := json.MarshalIndent(data, "", "  ")

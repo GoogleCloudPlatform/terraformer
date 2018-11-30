@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"waze/terraform/aws_terraforming"
@@ -14,13 +15,15 @@ func main() {
 	if len(os.Args) > 2 {
 		args = os.Args[3:]
 	}
+	var err error
 	switch provider {
 	case "aws":
-		awsTerraforming.Generate(service, args)
-		//for _, service := range []string{"vpc", "sg", "subnet", "igw", "vpn_gateway", "vpn_connections", "s3"} {
-		//awsTerraforming.Generate(service, region)
-		//}
+		err = awsTerraforming.Generate(service, args)
 	case "google":
-		gcp_terraforming.Generate(service, args)
+		err = gcp_terraforming.Generate(service, args)
+	}
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
 	}
 }

@@ -53,29 +53,15 @@ func (S3Generator) createResources(buckets *s3.ListBucketsOutput, region string)
 	return resoures
 }
 
-func (g S3Generator) Generate(region string) error {
+func (g S3Generator) Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := s3.New(sess)
 	buckets, err := svc.ListBuckets(&s3.ListBucketsInput{})
 	if err != nil {
-		return err
+		return []terraform_utils.TerraformResource{}, map[string]terraform_utils.ResourceMetaData{}, err
 	}
-
 	resources := g.createResources(buckets, region)
-	err = terraform_utils.GenerateTfState(resources)
-	if err != nil {
-		return err
-	}
-	converter := terraform_utils.TfstateConverter{}
 	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, additionalFields)
-	resources, err = converter.Convert("terraform.tfstate", metadata)
-	if err != nil {
-		return err
-	}
-	err = terraform_utils.GenerateTf(resources, "buckets", region, "aws")
-	if err != nil {
-		return err
-	}
-	return nil
+	return resources, metadata, nil
 
 }

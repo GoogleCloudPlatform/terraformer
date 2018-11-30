@@ -1,0 +1,39 @@
+{
+  "version": 3,
+  "terraform_version": "0.11.10",
+  "serial": 3,
+  "lineage": "11c0e8e7-bc2d-8f4c-b40b-25f62ece8666",
+  "modules": [
+    {
+      "path": [
+        "root"
+      ],
+      "outputs": {},
+      "resources": {
+        "google_compute_firewall.resource-id": {
+          "type": "google_compute_firewall",
+          "depends_on": [],
+          "primary": {
+            "id": "resource-id",
+            "attributes": {
+              "direction": "INGRESS",
+              "enable_logging": "false",
+              "id": "resource-id",
+              "name": "resource-name",
+              "allow_empty": "",
+              "not_allow_empty": "",
+              "boolval": "false",
+              "intval": "124"
+            },
+            "meta": {
+              "schema_version": "1"
+            },
+            "tainted": false
+          },
+          "deposed": [],
+          "provider": "provider.google"
+        }
+      }
+    }
+  ]
+}

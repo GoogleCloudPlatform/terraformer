@@ -3,7 +3,6 @@ package terraform_utils
 import (
 	"encoding/json"
 	"io/ioutil"
-	"sort"
 	"strings"
 
 	"github.com/hashicorp/terraform/flatmap"
@@ -30,15 +29,12 @@ func (c TfstateConverter) Convert(pathToTfstate string, metadata map[string]Reso
 			for key := range resource.Primary.Attributes {
 				allAttributes = append(allAttributes, key)
 			}
-			sort.Strings(allAttributes)
 			for _, key := range allAttributes {
 				if strings.HasSuffix(key, ".#") && resource.Primary.Attributes[key] == "0" {
 					delete(resource.Primary.Attributes, key)
-					continue
 				}
 			}
-
-			for _, key := range allAttributes {
+			for key := range resource.Primary.Attributes {
 				blockName := strings.Split(key, ".")[0]
 
 				if _, exist := rawItem[blockName]; exist {
@@ -49,17 +45,17 @@ func (c TfstateConverter) Convert(pathToTfstate string, metadata map[string]Reso
 			}
 			item := map[string]interface{}{}
 			for key, v := range rawItem {
+				if _, exist := metadata[resource.Primary.ID].IgnoreKeys[key]; exist {
+					continue
+				}
 				switch v.(type) {
 				case []interface{}:
 					item[key] = v
 				default:
-					if _, exist := metadata[resource.Primary.ID].IgnoreKeys[key]; exist {
-						continue
-					}
-					if v == nil {
+					if v == "" {
 						allowEmptyValue := false
 						for pattern := range metadata[resource.Primary.ID].AllowEmptyValue {
-							if strings.Contains(key, pattern) {
+							if strings.HasPrefix(key, pattern) {
 								allowEmptyValue = true
 							}
 						}

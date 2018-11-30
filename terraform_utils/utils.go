@@ -18,22 +18,8 @@ type BaseResource struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-func NewGcpRegionResource(region string) map[string]interface{} {
-	return map[string]interface{}{
-		"google": map[string]interface{}{
-			"region":  region,
-			"project": "waze-development",
-		},
-	}
-}
 
-func NewAwsRegionResource(region string) map[string]interface{} {
-	return map[string]interface{}{
-		"aws": map[string]interface{}{
-			"region": region,
-		},
-	}
-}
+
 
 func GenerateTfState(resources []TerraformResource) error {
 	tfState := NewTfState(resources)
@@ -74,8 +60,8 @@ func GenerateTfState(resources []TerraformResource) error {
 	return nil
 }
 
-func GenerateTf(resources []TerraformResource, resourceName, region, provider string) error {
-	data, err := HclPrint(resources, region, provider)
+func GenerateTf(resources []TerraformResource, resourceName string, provider map[string]interface{}) error {
+	data, err := HclPrint(resources, provider)
 	if err != nil {
 		return err
 	}

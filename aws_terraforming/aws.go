@@ -15,21 +15,22 @@ import (
 	"waze/terraform/aws_terraforming/vpc"
 	"waze/terraform/aws_terraforming/vpn_connection"
 	"waze/terraform/aws_terraforming/vpn_gateway"
+	"waze/terraform/terraform_utils"
 )
 
 const pathForGenerateFiles = "/generated/aws/"
 
-func Generate(service string, args []string) {
+func Generate(service string, args []string) error {
 	region := args[0]
 	rootPath, _ := os.Getwd()
 	currentPath := rootPath + pathForGenerateFiles + region + "/" + service
 	if err := os.MkdirAll(currentPath, os.ModePerm); err != nil {
 		log.Print(err)
-		return
+		return err
 	}
 	if err := os.Chdir(currentPath); err != nil {
 		log.Print(err)
-		return
+		return err
 	}
 	oldRegion := os.Getenv("AWS_DEFAULT_REGION")
 	defer os.Setenv("AWS_DEFAULT_REGION", oldRegion)
@@ -58,11 +59,31 @@ func Generate(service string, args []string) {
 	case "iam":
 		generator = iam.IamGenerator{}
 	}
-	err := generator.Generate(region)
-
+	resources, metadata, err := generator.Generate(region)
 	if err != nil {
-		log.Println(err)
-		return
+		return err
 	}
+	err = terraform_utils.GenerateTfState(resources)
+	if err != nil {
+		return err
+	}
+	converter := terraform_utils.TfstateConverter{}
+	resources, err = converter.Convert("terraform.tfstate", metadata)
+	if err != nil {
+		return err
+	}
+	err = terraform_utils.GenerateTf(resources, service, NewAwsRegionResource(region))
+	if err != nil {
+		return err
+	}
+	return nil
 
+}
+
+func NewAwsRegionResource(region string) map[string]interface{} {
+	return map[string]interface{}{
+		"aws": map[string]interface{}{
+			"region": region,
+		},
+	}
 }

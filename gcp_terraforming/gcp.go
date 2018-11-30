@@ -1,7 +1,6 @@
 package gcp_terraforming
 
 import (
-	"log"
 	"os"
 	"strings"
 
@@ -14,17 +13,24 @@ import (
 
 const pathForGenerateFiles = "/generated/gcp/"
 
-func Generate(service string, args []string) {
+func NewGcpRegionResource(region string) map[string]interface{} {
+	return map[string]interface{}{
+		"google": map[string]interface{}{
+			"region":  region,
+			"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
+		},
+	}
+}
+
+func Generate(service string, args []string) error {
 	zone := args[0]
 	rootPath, _ := os.Getwd()
 	currentPath := rootPath + pathForGenerateFiles + zone + "/" + service
 	if err := os.MkdirAll(currentPath, os.ModePerm); err != nil {
-		log.Print(err)
-		return
+		return err
 	}
 	if err := os.Chdir(currentPath); err != nil {
-		log.Print(err)
-		return
+		return err
 	}
 	defer os.Chdir(rootPath)
 	var generator gcp_generator.Generator
@@ -40,26 +46,22 @@ func Generate(service string, args []string) {
 	}
 	resources, metadata, err := generator.Generate(zone)
 	if err != nil {
-		log.Println(err)
-		return
+		return err
 	}
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
-		log.Println(err)
-		return
+		return err
 	}
 	converter := terraform_utils.TfstateConverter{}
 	resources, err = converter.Convert("terraform.tfstate", metadata)
 	if err != nil {
-		log.Println(err)
-		return
+		return err
 	}
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
-	err = terraform_utils.GenerateTf(resources, service, region, "google")
+	err = terraform_utils.GenerateTf(resources, service, NewGcpRegionResource(region))
 	if err != nil {
-		log.Println(err)
-		return
+		return err
 	}
-	return
+	return nil
 
 }

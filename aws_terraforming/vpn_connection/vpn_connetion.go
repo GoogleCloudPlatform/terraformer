@@ -54,28 +54,15 @@ func (VpnConnectionGenerator) createResources(vpncs *ec2.DescribeVpnConnectionsO
 	return resoures
 }
 
-func (g VpnConnectionGenerator) Generate(region string) error {
+func (g VpnConnectionGenerator) Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := ec2.New(sess)
 	vpncs, err := svc.DescribeVpnConnections(&ec2.DescribeVpnConnectionsInput{})
 	if err != nil {
-		return err
+		return []terraform_utils.TerraformResource{}, map[string]terraform_utils.ResourceMetaData{}, err
 	}
 	resources := g.createResources(vpncs)
-	err = terraform_utils.GenerateTfState(resources)
-	if err != nil {
-		return err
-	}
-	converter := terraform_utils.TfstateConverter{}
 	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, map[string]string{})
-	resources, err = converter.Convert("terraform.tfstate", metadata)
-	if err != nil {
-		return err
-	}
-	err = terraform_utils.GenerateTf(resources, "vpn_connection", region, "aws")
-	if err != nil {
-		return err
-	}
-	return nil
+	return resources, metadata, nil
 
 }

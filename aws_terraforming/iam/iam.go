@@ -32,33 +32,23 @@ type IamGenerator struct {
 	resources []terraform_utils.TerraformResource
 }
 
-func (g IamGenerator) Generate(region string) error {
+func (g IamGenerator) Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := iam.New(sess)
 	g.resources = []terraform_utils.TerraformResource{}
 	g.metadata = map[string]terraform_utils.ResourceMetaData{}
 	err := g.getUsers(svc)
+	if err != nil {
+		return []terraform_utils.TerraformResource{}, map[string]terraform_utils.ResourceMetaData{}, err
+	}
+	//TODO ALL
 	/*svc.ListGroupsPages()
 	svc.ListPoliciesPages()
 	svc.ListRolesPages()
 	svc.ListAccessKeysPages()
 	svc.ListGroupPoliciesPages()
 	svc.ListGroupsPages()*/
-
-	err = terraform_utils.GenerateTfState(g.resources)
-	if err != nil {
-		return err
-	}
-	converter := terraform_utils.TfstateConverter{}
-	g.resources, err = converter.Convert("terraform.tfstate", g.metadata)
-	if err != nil {
-		return err
-	}
-	err = terraform_utils.GenerateTf(g.resources, "iam", region, "aws")
-	if err != nil {
-		return err
-	}
-	return nil
+	return g.resources, g.metadata, nil
 }
 
 func (g *IamGenerator) getUsers(svc *iam.IAM) error {

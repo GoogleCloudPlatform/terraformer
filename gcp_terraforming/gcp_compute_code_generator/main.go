@@ -34,7 +34,7 @@ var {{.resource}}IgnoreKey = map[string]bool{
 	"fingerprint": 			true,
 	"label_fingerprint": 	true,
 	"creation_timestamp": 	true,
-	{{ range $value := .attributesReference}}
+	{{ range $value := .IgnoreKeys}}
 	"{{$value}}":			true,{{end}}
 }
 
@@ -46,6 +46,8 @@ var {{.resource}}AllowEmptyValues = map[string]bool{
 
 var {{.resource}}AdditionalFields = map[string]string{
 	"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
+	{{ range $key,$value := .AdditionalFields}}
+	"{{$key}}":			"{{$value}}",{{end}}
 }
 
 type {{.titleResourceName}}Generator struct {
@@ -118,38 +120,16 @@ var ComputeService = map[string]gcp_generator.Generator{
 `
 
 type TerraformResource struct {
-	TerraformName       string
-	AttributesReference []string
-	AllowEmptyValues    []string
+	TerraformName    string
+	IgnoreKeys       []string
+	AllowEmptyValues []string
+	AdditionalFields map[string]string
 }
 
-/*
-backendServices - region
-globalForwardingRules - region
-
-images - raw_disk
-
-instanceGroupManagers - zone
-instances - zone
-
-instanceTemplates - error formatting HCL: At 8569:167: illegal char
-
-
-regionInstanceGroupManagers - distribution_policy_zones(array parser)
-securityPolicies - parser issue
-
-targetHttpProxies - uin64 issue
-
-sslPolicies - empty
-regionDisks - empty
-routers - empty
-targetTcpProxies - empty
-vpnTunnels - empty
-*/
 var terraformResources = map[string]TerraformResource{
 	"addresses": {
 		TerraformName: "google_compute_address",
-		AttributesReference: []string{
+		IgnoreKeys: []string{
 			"type",
 			"users",
 			"address",
@@ -162,12 +142,12 @@ var terraformResources = map[string]TerraformResource{
 		TerraformName: "google_compute_backend_bucket",
 	},
 	"backendServices": {
-		TerraformName:       "google_compute_backend_service",
-		AttributesReference: []string{"region"},
+		TerraformName: "google_compute_backend_service",
+		IgnoreKeys:    []string{"region"},
 	},
 	"disks": {
 		TerraformName: "google_compute_disk",
-		AttributesReference: []string{
+		IgnoreKeys: []string{
 			"last_attach_timestamp",
 			"last_detach_timestamp",
 			"users",
@@ -179,20 +159,20 @@ var terraformResources = map[string]TerraformResource{
 		TerraformName: "google_compute_firewall",
 	},
 	"forwardingRules": {
-		TerraformName:       "google_compute_forwarding_rule",
-		AttributesReference: []string{"service_name"},
+		TerraformName: "google_compute_forwarding_rule",
+		IgnoreKeys:    []string{"service_name"},
 	},
 	"globalAddresses": {
-		TerraformName:       "google_compute_global_address",
-		AttributesReference: []string{"address"},
+		TerraformName: "google_compute_global_address",
+		IgnoreKeys:    []string{"address"},
 	},
 	"globalForwardingRules": {
-		TerraformName:       "google_compute_global_forwarding_rule",
-		AttributesReference: []string{"region"},
+		TerraformName: "google_compute_global_forwarding_rule",
+		IgnoreKeys:    []string{"region"},
 	},
 	"healthChecks": {
-		TerraformName:       "google_compute_health_check",
-		AttributesReference: []string{"type"},
+		TerraformName: "google_compute_health_check",
+		IgnoreKeys:    []string{"type"},
 	},
 	"httpHealthChecks": {
 		TerraformName: "google_compute_http_health_check",
@@ -204,20 +184,20 @@ var terraformResources = map[string]TerraformResource{
 		TerraformName: "google_compute_image",
 	},
 	"instanceGroupManagers": {
-		TerraformName:       "google_compute_instance_group_manager",
-		AttributesReference: []string{"instance_group"},
+		TerraformName: "google_compute_instance_group_manager",
+		IgnoreKeys:    []string{"instance_group"},
 	},
 	"instanceGroups": {
-		TerraformName:       "google_compute_instance_group",
-		AttributesReference: []string{"size"},
+		TerraformName: "google_compute_instance_group",
+		IgnoreKeys:    []string{"size"},
 	},
 	"instanceTemplates": {
-		TerraformName:       "google_compute_instance_template",
-		AttributesReference: []string{"tags_fingerprint"},
+		TerraformName: "google_compute_instance_template",
+		IgnoreKeys:    []string{"tags_fingerprint"},
 	},
 	"instances": {
 		TerraformName: "google_compute_instance",
-		AttributesReference: []string{
+		IgnoreKeys: []string{
 			"instance_id",
 			"metadata_fingerprint",
 			"tags_fingerprint",
@@ -225,8 +205,8 @@ var terraformResources = map[string]TerraformResource{
 		},
 	},
 	"networks": {
-		TerraformName:       "google_compute_network",
-		AttributesReference: []string{"gateway_ipv4"},
+		TerraformName: "google_compute_network",
+		IgnoreKeys:    []string{"gateway_ipv4"},
 	},
 	"regionAutoscalers": {
 		TerraformName: "google_compute_region_autoscaler",
@@ -236,7 +216,7 @@ var terraformResources = map[string]TerraformResource{
 	},
 	"regionDisks": {
 		TerraformName: "google_compute_region_disk",
-		AttributesReference: []string{
+		IgnoreKeys: []string{
 			"last_attach_timestamp",
 			"last_detach_timestamp",
 			"users",
@@ -244,23 +224,23 @@ var terraformResources = map[string]TerraformResource{
 		},
 	},
 	"regionInstanceGroupManagers": {
-		TerraformName:       "google_compute_region_instance_group_manager",
-		AttributesReference: []string{"instance_group"},
-		AllowEmptyValues:    []string{"name", "health_check"},
+		TerraformName:    "google_compute_region_instance_group_manager",
+		IgnoreKeys:       []string{"instance_group"},
+		AllowEmptyValues: []string{"name", "health_check"},
 	},
 	"routers": {
 		TerraformName: "google_compute_router",
 	},
 	"routes": {
-		TerraformName:       "google_compute_route",
-		AttributesReference: []string{"google_compute_route", "next_hop_network"},
+		TerraformName: "google_compute_route",
+		IgnoreKeys:    []string{"google_compute_route", "next_hop_network"},
 	},
 	"securityPolicies": {
 		TerraformName: "google_compute_security_policy",
 	},
 	/*"snapshots": {
 		TerraformName: "google_compute_snapshot",
-		AttributesReference: []string{
+		IgnoreKeys: []string{
 			"snapshot_encryption_key_sha256",
 			"source_disk_encryption_key_sha256",
 			"source_disk_link",
@@ -268,43 +248,43 @@ var terraformResources = map[string]TerraformResource{
 	},*/
 	/*"sslCertificates": {
 		TerraformName:       "google_compute_ssl_certificate",
-		AttributesReference: []string{"certificate_id"},
+		IgnoreKeys: []string{"certificate_id"},
 	},*/
 	"sslPolicies": {
 		TerraformName: "google_compute_ssl_policy",
-		AttributesReference: []string{
+		IgnoreKeys: []string{
 			"enabled_features",
 		},
 	},
 	"subnetworks": {
 		TerraformName: "google_compute_subnetwork",
-		AttributesReference: []string{
+		IgnoreKeys: []string{
 			"gateway_address",
 		},
 	},
 	"targetHttpProxies": {
-		TerraformName:       "google_compute_target_http_proxy",
-		AttributesReference: []string{"proxy_id"},
+		TerraformName: "google_compute_target_http_proxy",
+		IgnoreKeys:    []string{"proxy_id"},
 	},
 	"targetHttpsProxies": {
-		TerraformName:       "google_compute_target_https_proxy",
-		AttributesReference: []string{"proxy_id"},
+		TerraformName: "google_compute_target_https_proxy",
+		IgnoreKeys:    []string{"proxy_id"},
 	},
 	"targetSslProxies": {
-		TerraformName:       "google_compute_target_ssl_proxy",
-		AttributesReference: []string{"proxy_id"},
+		TerraformName: "google_compute_target_ssl_proxy",
+		IgnoreKeys:    []string{"proxy_id"},
 	},
 	"targetTcpProxies": {
-		TerraformName:       "google_compute_target_tcp_proxy",
-		AttributesReference: []string{"proxy_id"},
+		TerraformName: "google_compute_target_tcp_proxy",
+		IgnoreKeys:    []string{"proxy_id"},
 	},
 	"urlMaps": {
-		TerraformName:       "google_compute_url_map",
-		AttributesReference: []string{"map_id"},
+		TerraformName: "google_compute_url_map",
+		IgnoreKeys:    []string{"map_id"},
 	},
 	"vpnTunnels": {
 		TerraformName: "google_compute_vpn_tunnel",
-		AttributesReference: []string{
+		IgnoreKeys: []string{
 			"shared_secret_hash",
 			"detailed_status",
 		},
@@ -340,7 +320,8 @@ func main() {
 				"resource":            resource,
 				"responseName":        value.(map[string]interface{})["response"].(map[string]interface{})["$ref"].(string),
 				"terraformName":       terraformResources[resource].TerraformName,
-				"attributesReference": terraformResources[resource].AttributesReference,
+				"IgnoreKeys":          terraformResources[resource].IgnoreKeys,
+				"AdditionalFields":    terraformResources[resource].AdditionalFields,
 				"allowEmptyValues":    terraformResources[resource].AllowEmptyValues,
 				"resourcePackageName": resource,
 				"parameterOrder":      parameterOrder,

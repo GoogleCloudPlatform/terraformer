@@ -44,28 +44,15 @@ func (IgwGenerator) createResources(igws *ec2.DescribeInternetGatewaysOutput) []
 	return resoures
 }
 
-func (g IgwGenerator) Generate(region string) error {
+func (g IgwGenerator) Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := ec2.New(sess)
 	igws, err := svc.DescribeInternetGateways(&ec2.DescribeInternetGatewaysInput{})
 	if err != nil {
-		return err
+		return []terraform_utils.TerraformResource{}, map[string]terraform_utils.ResourceMetaData{}, err
 	}
 	resources := g.createResources(igws)
-	err = terraform_utils.GenerateTfState(resources)
-	if err != nil {
-		return err
-	}
-	converter := terraform_utils.TfstateConverter{}
 	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, map[string]string{})
-	resources, err = converter.Convert("terraform.tfstate", metadata)
-	if err != nil {
-		return err
-	}
-	err = terraform_utils.GenerateTf(resources, "internet_gateway", region, "aws")
-	if err != nil {
-		return err
-	}
-	return nil
+	return resources, metadata, nil
 
 }
