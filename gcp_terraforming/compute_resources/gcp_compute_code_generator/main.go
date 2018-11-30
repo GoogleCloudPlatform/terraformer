@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-const pathForGenerateFiles = "/gcp_terraforming/compute_code_gen/"
+const pathForGenerateFiles = "/gcp_terraforming/compute_resources/"
 const serviceTemplate = `
 // AUTO-GENERATED CODE. DO NOT EDIT.
 package computeTerrforming
