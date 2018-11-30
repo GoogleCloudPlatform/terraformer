@@ -4,7 +4,7 @@ import (
 	"os"
 	"strings"
 
-	"waze/terraform/gcp_terraforming/compute_code_gen"
+	"waze/terraform/gcp_terraforming/compute_resources"
 	"waze/terraform/gcp_terraforming/gcp_generator"
 	"waze/terraform/gcp_terraforming/gcs"
 	"waze/terraform/gcp_terraforming/iam"
