@@ -44,7 +44,6 @@ require (
 	github.com/gophercloud/gophercloud v0.0.0-20170823032606-7f0936597349 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20181103185306-d547d1d9531e // indirect
 	github.com/gorilla/websocket v1.4.0 // indirect
-	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 // indirect
 	github.com/hashicorp/atlas-go v0.0.0-20170808163836-8261ea080105 // indirect
 	github.com/hashicorp/consul v1.4.0 // indirect
@@ -60,7 +59,7 @@ require (
 	github.com/hashicorp/go-tfe v0.2.7-0.20181108071842-90762f2cfc23 // indirect
 	github.com/hashicorp/hcl v1.0.0
 	github.com/hashicorp/hcl2 v0.0.0-20181111172936-0467c0c38ca2 // indirect
-	github.com/hashicorp/hil v0.0.0-20170627220502-fa9f258a9250
+	github.com/hashicorp/hil v0.0.0-20170627220502-fa9f258a9250 // indirect
 	github.com/hashicorp/logutils v1.0.0 // indirect
 	github.com/hashicorp/memberlist v0.1.0 // indirect
 	github.com/hashicorp/serf v0.8.1 // indirect
@@ -112,9 +111,6 @@ require (
 	github.com/xlab/treeprint v0.0.0-20181112141820-a009c3971eca // indirect
 	github.com/zclconf/go-cty v0.0.0-20181017232614-01c5aba823a6 // indirect
 	go.opencensus.io v0.18.0 // indirect
-	go.uber.org/atomic v1.3.2 // indirect
-	go.uber.org/multierr v1.1.0 // indirect
-	go.uber.org/zap v1.9.1 // indirect
 	golang.org/x/crypto v0.0.0-20181126163421-e657309f52e7 // indirect
 	golang.org/x/oauth2 v0.0.0-20181120190819-8f65e3013eba
 	golang.org/x/time v0.0.0-20181108054448-85acf8d2951c // indirect

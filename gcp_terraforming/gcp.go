@@ -8,6 +8,7 @@ import (
 	"waze/terraform/gcp_terraforming/gcp_generator"
 	"waze/terraform/gcp_terraforming/gcs"
 	"waze/terraform/gcp_terraforming/iam"
+	"waze/terraform/gcp_terraforming/monitoring"
 	"waze/terraform/terraform_utils"
 )
 
@@ -39,6 +40,8 @@ func Generate(service string, args []string) error {
 		generator = gcs.GcsGenerator{}
 	case "iam":
 		generator = iam.IamGenerator{}
+	case "alerts":
+		generator = monitoring.AlertsGenerator{}
 	default:
 		if service, exist := computeTerrforming.ComputeService[service]; exist {
 			generator = service

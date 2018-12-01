@@ -3,6 +3,7 @@ package terraform_utils
 import (
 	"encoding/json"
 	"io/ioutil"
+	"regexp"
 	"strings"
 
 	"github.com/hashicorp/terraform/flatmap"
@@ -34,6 +35,14 @@ func (c TfstateConverter) Convert(pathToTfstate string, metadata map[string]Reso
 					delete(resource.Primary.Attributes, key)
 				}
 			}
+			for keyAttribute := range resource.Primary.Attributes {
+				for patter := range metadata[resource.Primary.ID].IgnoreKeys {
+					match, err := regexp.MatchString(patter, keyAttribute)
+					if match && err == nil {
+						delete(resource.Primary.Attributes, keyAttribute)
+					}
+				}
+			}
 			for key := range resource.Primary.Attributes {
 				blockName := strings.Split(key, ".")[0]
 
@@ -45,9 +54,6 @@ func (c TfstateConverter) Convert(pathToTfstate string, metadata map[string]Reso
 			}
 			item := map[string]interface{}{}
 			for key, v := range rawItem {
-				if _, exist := metadata[resource.Primary.ID].IgnoreKeys[key]; exist {
-					continue
-				}
 				switch v.(type) {
 				case []interface{}:
 					item[key] = v
