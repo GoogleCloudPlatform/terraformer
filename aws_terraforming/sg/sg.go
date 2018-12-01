@@ -67,39 +67,47 @@ func (g SecurityGenerator) Generate(region string) ([]terraform_utils.TerraformR
 			break
 		}
 	}
-	resources := g.replaceIDToName(g.createResources(securityGroups))
+	resources := g.createResources(securityGroups)
 	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, map[string]string{})
 	return resources, metadata, nil
 }
 
 func (SecurityGenerator) replaceIDToName(resources []terraform_utils.TerraformResource) []terraform_utils.TerraformResource {
 	for _, resource := range resources {
-		item := resource.Item.(map[string]interface{})
-		if _, exist := item["ingress"]; !exist {
-			continue
-		}
-		ingresses := item["ingress"].([]map[string]interface{})
-		for _, ingress := range ingresses {
-			if _, exist := ingress["security_groups"]; !exist {
+		for _, typeOfRule := range []string{"ingress", "egress"} {
+			item := resource.Item.(map[string]interface{})
+			if _, exist := item[typeOfRule]; !exist {
 				continue
 			}
-			security_groups := ingress["security_groups"].([]string)
-			renamedSecurity_groups := []string{}
-			for _, security_group := range security_groups {
-				found := false
-				for _, i := range resources {
-					if i.ID == security_group {
-						renamedSecurity_groups = append(renamedSecurity_groups, "${"+i.ResourceType+"."+i.ResourceName+".id}")
-						found = true
-						break
+			for i, k := range item[typeOfRule].([]interface{}) {
+				ingresses := k.(map[string]interface{})
+				for key, ingress := range ingresses {
+					if key != "security_groups" {
+						continue
 					}
-				}
-				if !found {
-					renamedSecurity_groups = append(renamedSecurity_groups, security_group)
+					securityGroups := ingress.([]interface{})
+					renamedSecurityGroups := []string{}
+					for _, securityGroup := range securityGroups {
+						found := false
+						for _, i := range resources {
+							if i.ID == securityGroup {
+								renamedSecurityGroups = append(renamedSecurityGroups, "${"+i.ResourceType+"."+i.ResourceName+".id}")
+								found = true
+								break
+							}
+						}
+						if !found {
+							renamedSecurityGroups = append(renamedSecurityGroups, securityGroup.(string))
+						}
+					}
+					item[typeOfRule].([]interface{})[i].(map[string]interface{})["security_groups"] = renamedSecurityGroups
 				}
 			}
-			ingress["security_groups"] = renamedSecurity_groups
 		}
 	}
 	return resources
+}
+
+func (g SecurityGenerator) PostGenerateHook(resources []terraform_utils.TerraformResource) ([]terraform_utils.TerraformResource, error) {
+	return g.replaceIDToName(resources), nil
 }

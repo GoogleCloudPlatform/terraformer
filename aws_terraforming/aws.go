@@ -72,6 +72,7 @@ func Generate(service string, args []string) error {
 	if err != nil {
 		return err
 	}
+	resources, err = generator.PostGenerateHook(resources)
 	err = terraform_utils.GenerateTf(resources, service, NewAwsRegionResource(region))
 	if err != nil {
 		return err

@@ -18,9 +18,6 @@ type BaseResource struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-
-
-
 func GenerateTfState(resources []TerraformResource) error {
 	tfState := NewTfState(resources)
 	firstState, _ := json.MarshalIndent(tfState, "", "  ")
