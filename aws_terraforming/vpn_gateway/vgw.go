@@ -10,7 +10,7 @@ import (
 )
 
 var ignoreKey = map[string]bool{
-	"id": true,
+	"^id$": true,
 }
 var allowEmptyValues = map[string]bool{
 	"tags.": true,

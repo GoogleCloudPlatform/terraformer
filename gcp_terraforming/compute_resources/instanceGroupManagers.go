@@ -14,16 +14,21 @@ import (
 )
 
 var instanceGroupManagersIgnoreKey = map[string]bool{
-	"id":                 true,
-	"self_link":          true,
-	"fingerprint":        true,
-	"label_fingerprint":  true,
-	"creation_timestamp": true,
+	"^id$":                 true,
+	"^self_link$":          true,
+	"^fingerprint$":        true,
+	"^label_fingerprint$":  true,
+	"^creation_timestamp$": true,
 
-	"instance_group": true,
+	"^instance_group$": true,
 }
 
-var instanceGroupManagersAllowEmptyValues = map[string]bool{}
+var instanceGroupManagersAllowEmptyValues = map[string]bool{
+
+	"^version.[0-9].name": true,
+
+	"^auto_healing_policies.[0-9].health_check": true,
+}
 
 var instanceGroupManagersAdditionalFields = map[string]string{
 	"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),

@@ -13,9 +13,9 @@ import (
 )
 
 var ignoreKey = map[string]bool{
-	"url":       true,
-	"id":        true,
-	"self_link": true,
+	"^url$":       true,
+	"^id$":        true,
+	"^self_link$": true,
 }
 
 var allowEmptyValues = map[string]bool{

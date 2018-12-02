@@ -4,15 +4,15 @@ import (
 	"os"
 	"strings"
 
+	"waze/terraform/gcp_terraforming/alerts"
 	"waze/terraform/gcp_terraforming/compute_resources"
 	"waze/terraform/gcp_terraforming/gcp_generator"
 	"waze/terraform/gcp_terraforming/gcs"
 	"waze/terraform/gcp_terraforming/iam"
-	"waze/terraform/gcp_terraforming/monitoring"
 	"waze/terraform/terraform_utils"
 )
 
-const pathForGenerateFiles = "/generated/gcp/"
+const PathForGenerateFiles = "/generated/gcp/"
 
 func NewGcpRegionResource(region string) map[string]interface{} {
 	return map[string]interface{}{
@@ -26,7 +26,7 @@ func NewGcpRegionResource(region string) map[string]interface{} {
 func Generate(service string, args []string) error {
 	zone := args[0]
 	rootPath, _ := os.Getwd()
-	currentPath := rootPath + pathForGenerateFiles + zone + "/" + service
+	currentPath := rootPath + PathForGenerateFiles + zone + "/" + service
 	if err := os.MkdirAll(currentPath, os.ModePerm); err != nil {
 		return err
 	}
@@ -41,7 +41,7 @@ func Generate(service string, args []string) error {
 	case "iam":
 		generator = iam.IamGenerator{}
 	case "alerts":
-		generator = monitoring.AlertsGenerator{}
+		generator = alerts.AlertsGenerator{}
 	default:
 		if service, exist := computeTerrforming.ComputeService[service]; exist {
 			generator = service

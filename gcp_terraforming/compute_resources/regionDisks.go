@@ -14,11 +14,11 @@ import (
 )
 
 var regionDisksIgnoreKey = map[string]bool{
-	"id":                 true,
-	"self_link":          true,
-	"fingerprint":        true,
-	"label_fingerprint":  true,
-	"creation_timestamp": true,
+	"^id$":                 true,
+	"^self_link$":          true,
+	"^fingerprint$":        true,
+	"^label_fingerprint$":  true,
+	"^creation_timestamp$": true,
 
 	"last_attach_timestamp": true,
 	"last_detach_timestamp": true,

@@ -25,7 +25,7 @@ func (c TfstateConverter) Convert(pathToTfstate string, metadata map[string]Reso
 	}
 	for _, module := range tfState.Modules {
 		for key, resource := range module.Resources {
-			rawItem := map[string]interface{}{}
+			item := map[string]interface{}{}
 			allAttributes := []string{}
 			for key := range resource.Primary.Attributes {
 				allAttributes = append(allAttributes, key)
@@ -43,36 +43,31 @@ func (c TfstateConverter) Convert(pathToTfstate string, metadata map[string]Reso
 					}
 				}
 			}
+			for keyAttribute, value := range resource.Primary.Attributes {
+				if value != "" {
+					continue
+				}
+				allowEmptyValue := false
+				for patter := range metadata[resource.Primary.ID].AllowEmptyValue {
+					match, err := regexp.MatchString(patter, keyAttribute)
+					if match && err == nil {
+						allowEmptyValue = true
+					}
+				}
+				if !allowEmptyValue {
+					delete(resource.Primary.Attributes, keyAttribute)
+				}
+			}
+
 			for key := range resource.Primary.Attributes {
 				blockName := strings.Split(key, ".")[0]
 
-				if _, exist := rawItem[blockName]; exist {
+				if _, exist := item[blockName]; exist {
 					continue
 				}
 
-				rawItem[blockName] = flatmap.Expand(resource.Primary.Attributes, blockName)
+				item[blockName] = flatmap.Expand(resource.Primary.Attributes, blockName)
 			}
-			item := map[string]interface{}{}
-			for key, v := range rawItem {
-				switch v.(type) {
-				case []interface{}:
-					item[key] = v
-				default:
-					if v == "" {
-						allowEmptyValue := false
-						for pattern := range metadata[resource.Primary.ID].AllowEmptyValue {
-							if strings.HasPrefix(key, pattern) {
-								allowEmptyValue = true
-							}
-						}
-						if !allowEmptyValue {
-							continue
-						}
-					}
-					item[key] = v
-				}
-			}
-
 			for key, value := range metadata[resource.Primary.ID].AdditionalFields {
 				item[key] = value
 			}

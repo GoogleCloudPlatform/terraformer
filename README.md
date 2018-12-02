@@ -39,7 +39,7 @@ globalForwardingRules
 healthChecks
 httpHealthChecks
 httpsHealthChecks
-images
+images -  Either raw_disk or source_disk configuration is required.
 instanceGroupManagers
 instanceGroups
 instanceTemplates - formatting HCL bug

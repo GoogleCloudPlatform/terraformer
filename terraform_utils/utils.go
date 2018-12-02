@@ -3,7 +3,6 @@ package terraform_utils
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"os"
 
 	"github.com/hashicorp/terraform/backend"
@@ -41,7 +40,7 @@ func GenerateTfState(resources []TerraformResource) error {
 		Config: conf,
 	})
 	if err != nil {
-		log.Println(err)
+		return err
 	}
 
 	opReq := c.Operation()
@@ -49,10 +48,10 @@ func GenerateTfState(resources []TerraformResource) error {
 	opReq.Module = mod
 	op, err := c.RunOperation(b, opReq)
 	if err != nil {
-		log.Println(err)
+		return err
 	}
 	if op.Err != nil {
-		log.Println(op.Err)
+		return err
 	}
 	return nil
 }

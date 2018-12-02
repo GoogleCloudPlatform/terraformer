@@ -15,9 +15,9 @@ import (
 const maxResults = 1000
 
 var ignoreKey = map[string]bool{
-	"arn":      true,
-	"owner_id": true,
-	"id":       true,
+	"^arn":      true,
+	"^owner_id": true,
+	"^id$":       true,
 }
 
 var allowEmptyValues = map[string]bool{

@@ -11,13 +11,13 @@ import (
 )
 
 var ignoreKey = map[string]bool{
-	"arn":                       true,
-	"main_route_table_id":       true,
-	"id":                        true,
-	"dhcp_options_id":           true,
-	"default_security_group_id": true,
-	"default_route_table_id":    true,
-	"default_network_acl_id":    true,
+	"^arn$":                       true,
+	"^main_route_table_id$":       true,
+	"^id$":                        true,
+	"^dhcp_options_id$":           true,
+	"^default_security_group_id$": true,
+	"^default_route_table_id$":    true,
+	"^default_network_acl_id$":    true,
 }
 
 var allowEmptyValues = map[string]bool{

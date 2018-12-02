@@ -10,17 +10,17 @@ import (
 )
 
 var ignoreKey = map[string]bool{
-	"tunnel2_vgw_inside_address": true,
-	"id":                         true,
-	"tunnel2_cgw_inside_address": true,
-	"tunnel2_bgp_holdtime":       true,
-	"tunnel2_bgp_asn":            true,
-	"tunnel2_address":            true,
-	"tunnel1_vgw_inside_address": true,
-	"tunnel1_cgw_inside_address": true,
-	"tunnel1_bgp_holdtime":       true,
-	"tunnel1_bgp_asn":            true,
-	"tunnel1_address":            true,
+	"^tunnel2_vgw_inside_address": true,
+	"^id$":                         true,
+	"^tunnel2_cgw_inside_address": true,
+	"^tunnel2_bgp_holdtime":       true,
+	"^tunnel2_bgp_asn":            true,
+	"^tunnel2_address":            true,
+	"^tunnel1_vgw_inside_address": true,
+	"^tunnel1_cgw_inside_address": true,
+	"^tunnel1_bgp_holdtime":       true,
+	"^tunnel1_bgp_asn":            true,
+	"^tunnel1_address":            true,
 }
 
 var allowEmptyValues = map[string]bool{

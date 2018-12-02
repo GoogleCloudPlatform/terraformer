@@ -12,10 +12,10 @@ import (
 )
 
 var ignoreKey = map[string]bool{
-	"bucket_domain_name":          true,
-	"bucket_regional_domain_name": true,
-	"id":                          true,
-	"acceleration_status":         true,
+	"^bucket_domain_name$":          true,
+	"^bucket_regional_domain_name$": true,
+	"^id$":                          true,
+	"^acceleration_status$":         true,
 }
 
 var allowEmptyValues = map[string]bool{

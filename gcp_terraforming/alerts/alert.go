@@ -1,4 +1,4 @@
-package monitoring
+package alerts
 
 import (
 	"context"
@@ -15,10 +15,10 @@ import (
 )
 
 var alertsIgnoreKey = map[string]bool{
-	"creation_record":   true,
-	"^name":              true,
-	"id":                true,
-	"conditions.[0-9].name": true,
+	"^creation_record":       true,
+	"^name$":                  true,
+	"^id$":                    true,
+	"^conditions.[0-9].name$": true,
 }
 
 var alertsAllowEmptyValues = map[string]bool{}

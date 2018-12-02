@@ -13,9 +13,9 @@ import (
 )
 
 var ignoreKey = map[string]bool{
-	"id":        true,
-	"arn":       true,
-	"unique_id": true,
+	"^id$":        true,
+	"^arn":       true,
+	"^unique_id": true,
 }
 
 var additionalFields = map[string]string{

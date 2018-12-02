@@ -18,12 +18,12 @@ import (
 	"waze/terraform/terraform_utils"
 )
 
-const pathForGenerateFiles = "/generated/aws/"
+const PathForGenerateFiles = "/generated/aws/"
 
 func Generate(service string, args []string) error {
 	region := args[0]
 	rootPath, _ := os.Getwd()
-	currentPath := rootPath + pathForGenerateFiles + region + "/" + service
+	currentPath := rootPath + PathForGenerateFiles + region + "/" + service
 	if err := os.MkdirAll(currentPath, os.ModePerm); err != nil {
 		log.Print(err)
 		return err
@@ -50,7 +50,7 @@ func Generate(service string, args []string) error {
 		generator = vpn_gateway.VpnGatewayGenerator{}
 	case "nacl":
 		generator = nacl.NaclGenerator{}
-	case "vpn_connections":
+	case "vpn_connection":
 		generator = vpn_connection.VpnConnectionGenerator{}
 	case "s3":
 		generator = s3.S3Generator{}

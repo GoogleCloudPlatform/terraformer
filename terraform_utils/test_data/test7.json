@@ -19,6 +19,7 @@
               "direction": "INGRESS",
               "enable_logging": "false",
               "ignored": "no value",
+              "more.3.regex": "no value",
               "id": "resource-id",
               "name": "resource-name"
             },

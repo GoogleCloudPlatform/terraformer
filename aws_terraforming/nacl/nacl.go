@@ -10,7 +10,7 @@ import (
 )
 
 var ignoreKey = map[string]bool{
-	"id": true,
+	"^id$": true,
 }
 
 var allowEmptyValues = map[string]bool{
@@ -22,7 +22,7 @@ type NaclGenerator struct {
 }
 
 func (NaclGenerator) createResources(nacls *ec2.DescribeNetworkAclsOutput) []terraform_utils.TerraformResource {
-	resoures := []terraform_utils.TerraformResource{}
+	resources := []terraform_utils.TerraformResource{}
 	for _, nacl := range nacls.NetworkAcls {
 		resourceName := ""
 		if len(nacl.Tags) > 0 {
@@ -33,15 +33,18 @@ func (NaclGenerator) createResources(nacls *ec2.DescribeNetworkAclsOutput) []ter
 				}
 			}
 		}
-		resoures = append(resoures, terraform_utils.TerraformResource{
-			ResourceType: "aws_network_acl",
-			ResourceName: resourceName,
-			Item:         nil,
-			ID:           aws.StringValue(nacl.NetworkAclId),
-			Provider:     "aws",
-		})
+		if resourceName == "" {
+			resourceName = aws.StringValue(nacl.NetworkAclId)
+		}
+		resources = append(resources, terraform_utils.NewTerraformResource(
+			aws.StringValue(nacl.NetworkAclId),
+			resourceName,
+			"aws_network_acl",
+			"aws",
+			nil,
+			map[string]string{}))
 	}
-	return resoures
+	return resources
 }
 
 func (g NaclGenerator) Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {

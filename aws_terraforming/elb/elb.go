@@ -10,12 +10,12 @@ import (
 )
 
 var ignoreKey = map[string]bool{
-	"id":                       true,
-	"arn":                      true,
-	"dns_name":                 true,
-	"source_security_group_id": true,
-	"zone_id":                  true,
-	"instances":                true, //dynamic value
+	"^id$":                       true,
+	"^arn":                      true,
+	"^dns_name":                 true,
+	"^source_security_group_id": true,
+	"^zone_id":                  true,
+	"^instances":                true, //dynamic value
 }
 
 var allowEmptyValues = map[string]bool{

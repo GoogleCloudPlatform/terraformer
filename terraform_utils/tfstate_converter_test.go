@@ -59,8 +59,11 @@ func TestBasicIgnoreKeyConvert(t *testing.T) {
 		},
 		metaData: map[string]ResourceMetaData{
 			"resource-id": {
-				Provider:   "google",
-				IgnoreKeys: map[string]bool{"ignored": true},
+				Provider: "google",
+				IgnoreKeys: map[string]bool{
+					"ignored":          true,
+					"more.[0-9].regex": true,
+				},
 			},
 		},
 	}, t)
@@ -90,7 +93,7 @@ func TestBasicAllowEmptyConvert(t *testing.T) {
 		metaData: map[string]ResourceMetaData{
 			"resource-id": {
 				Provider:        "google",
-				AllowEmptyValue: map[string]bool{"allow_empty": true},
+				AllowEmptyValue: map[string]bool{"^allow_empty$": true},
 			},
 		},
 	}, t)

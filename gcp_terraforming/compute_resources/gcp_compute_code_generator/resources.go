@@ -62,8 +62,9 @@ var terraformResources = map[string]gcpResourceRenderble{
 	},
 	"instanceGroupManagers": instanceGroupManagers{
 		basicGCPResource{
-			terraformName: "google_compute_instance_group_manager",
-			ignoreKeys:    []string{"instance_group"},
+			terraformName:    "google_compute_instance_group_manager",
+			ignoreKeys:       []string{"^instance_group$"},
+			allowEmptyValues: []string{"^version.[0-9].name", "^auto_healing_policies.[0-9].health_check"},
 		},
 	},
 	"instanceGroups": basicGCPResource{

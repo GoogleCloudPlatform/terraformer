@@ -14,11 +14,11 @@ import (
 )
 
 var vpnTunnelsIgnoreKey = map[string]bool{
-	"id":                 true,
-	"self_link":          true,
-	"fingerprint":        true,
-	"label_fingerprint":  true,
-	"creation_timestamp": true,
+	"^id$":                 true,
+	"^self_link$":          true,
+	"^fingerprint$":        true,
+	"^label_fingerprint$":  true,
+	"^creation_timestamp$": true,
 
 	"shared_secret_hash": true,
 	"detailed_status":    true,
