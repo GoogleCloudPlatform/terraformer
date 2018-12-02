@@ -17,7 +17,7 @@ const maxResults = 1000
 var ignoreKey = map[string]bool{
 	"^arn":      true,
 	"^owner_id": true,
-	"^id$":       true,
+	"^id$":      true,
 }
 
 var allowEmptyValues = map[string]bool{
@@ -34,13 +34,13 @@ func (SecurityGenerator) createResources(securityGroups []*ec2.SecurityGroup) []
 		if sg.VpcId == nil {
 			continue
 		}
-		resources = append(resources, terraform_utils.TerraformResource{
-			ResourceType: "aws_security_group",
-			ResourceName: strings.Trim(aws.StringValue(sg.GroupName), " "),
-			Item:         nil,
-			ID:           aws.StringValue(sg.GroupId),
-			Provider:     "aws",
-		})
+		resources = append(resources, terraform_utils.NewTerraformResource(
+			aws.StringValue(sg.GroupId),
+			strings.Trim(aws.StringValue(sg.GroupName), " "),
+			"aws_security_group",
+			"aws",
+			nil,
+			map[string]string{}))
 	}
 	return resources
 }
