@@ -19,7 +19,10 @@ type BaseResource struct {
 
 func GenerateTfState(resources []TerraformResource) error {
 	tfState := NewTfState(resources)
-	firstState, _ := json.MarshalIndent(tfState, "", "  ")
+	firstState, err := json.MarshalIndent(tfState, "", "  ")
+	if err != nil {
+		return err
+	}
 	if err := ioutil.WriteFile("terraform.tfstate", firstState, os.ModePerm); err != nil {
 		return err
 	}

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 
 	"github.com/hashicorp/hcl/hcl/ast"
@@ -49,7 +50,6 @@ func (v *astSanitizer) visit(n interface{}) {
 			if index == len(t.Items) {
 				break
 			}
-
 			v.visit(t.Items[index])
 			index++
 		}
@@ -83,8 +83,39 @@ func (v *astSanitizer) visitObjectItem(o *ast.ObjectItem) {
 					k.Token.Text = v
 				}
 			}
-
 		}
+	}
+	switch t := o.Val.(type) {
+	case *ast.LiteralType: // heredoc support
+		if strings.HasPrefix(t.Token.Text, `"<<`) {
+			t.Token.Text = t.Token.Text[1:]
+			t.Token.Text = t.Token.Text[:len(t.Token.Text)-1]
+			t.Token.Text = strings.Replace(t.Token.Text, `\n`, "\n", -1)
+			t.Token.Type = 10
+			// check if text json for Unquote and Indent
+			tmp := map[string]interface{}{}
+			jsonTest := t.Token.Text
+			lines := strings.Split(jsonTest, "\n")
+			jsonTest = strings.Join(lines[1:len(lines)-1], "\n")
+			jsonTest, err := strconv.Unquote("\"" + jsonTest + "\"")
+			if err == nil {
+				// it's json we convert to heredoc back
+				err := json.Unmarshal([]byte(jsonTest), &tmp)
+				if err == nil {
+					dataJsonBytes, err := json.MarshalIndent(tmp, "", "  ")
+					if err == nil {
+						jsonData := strings.Split(string(dataJsonBytes), "\n")
+						// first line for heredoc
+						jsonData = append([]string{lines[0]}, jsonData...)
+						// last line for heredoc
+						jsonData = append(jsonData, lines[len(lines)-1])
+						hereDoc := strings.Join(jsonData, "\n")
+						t.Token.Text = hereDoc
+					}
+				}
+			}
+		}
+	default:
 	}
 
 	// A hack so that Assign.IsValid is true, so that the printer will output =
@@ -110,7 +141,7 @@ func hclPrint(node ast.Node) ([]byte, error) {
 	// ...but leave whitespace between resources
 	s = strings.Replace(s, "}\nresource", "}\n\nresource", -1)
 
-	// Workaround HCL insanity #6359: quotes are _not_ escaped in quotes (huh?)
+	// Workaround HCL insanity #6359: quotes are _not_ escaped in quotes
 	// This hits the file function
 	s = strings.Replace(s, "(\\\"", "(\"", -1)
 	s = strings.Replace(s, "\\\")", "\")", -1)
@@ -124,7 +155,7 @@ func hclPrint(node ast.Node) ([]byte, error) {
 	if err != nil {
 		log.Println("Invalid HCL follows:")
 		for i, line := range strings.Split(s, "\n") {
-			fmt.Printf("%d\t%s", (i + 1), line)
+			fmt.Printf("%d\t%s", i+1, line)
 		}
 		return nil, fmt.Errorf("error formatting HCL: %v", err)
 	}
@@ -139,7 +170,7 @@ func TfSanitize(name string) string {
 }
 
 func HclPrint(resources []TerraformResource, provider map[string]interface{}) ([]byte, error) {
-	resourcesByType := make(map[string]map[string]interface{})
+	resourcesByType := map[string]map[string]interface{}{}
 
 	for _, res := range resources {
 		resources := resourcesByType[res.ResourceType]
@@ -157,16 +188,18 @@ func HclPrint(resources []TerraformResource, provider map[string]interface{}) ([
 		resources[tfName] = res.Item
 	}
 
-	data := make(map[string]interface{})
+	data := map[string]interface{}{}
 	data["resource"] = resourcesByType
 	data["provider"] = provider
 
 	var err error
 	dataJsonBytes, err := json.MarshalIndent(data, "", "  ")
+	dataJson := string(dataJsonBytes)
+	dataJson = strings.Replace(dataJson, "\\u003c", "<", -1)
 	if err != nil {
 		return []byte{}, fmt.Errorf("error marshalling terraform data to json: %v", err)
 	}
-	nodes, err := hcl_parcer.Parse(dataJsonBytes)
+	nodes, err := hcl_parcer.Parse([]byte(dataJson))
 	if err != nil {
 		return []byte{}, fmt.Errorf("error parsing terraform json: %v", err)
 	}
