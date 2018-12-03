@@ -15,6 +15,7 @@ import (
 
 const PathForGenerateFiles = "/generated/gcp/"
 
+// GetGCPSupportService return map of support service for GCP
 func GetGCPSupportService() map[string]gcp_generator.Generator {
 	services := computeTerrforming.ComputeService
 	services["gcs"] = gcs.GcsGenerator{}
