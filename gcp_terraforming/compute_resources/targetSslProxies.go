@@ -33,6 +33,7 @@ type TargetSslProxiesGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
+// Run on targetSslProxiesList and create for each TerraformResource
 func (TargetSslProxiesGenerator) createResources(targetSslProxiesList *compute.TargetSslProxiesListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := targetSslProxiesList.Pages(ctx, func(page *compute.TargetSslProxyList) error {
@@ -57,6 +58,9 @@ func (TargetSslProxiesGenerator) createResources(targetSslProxiesList *compute.T
 	return resources
 }
 
+// Generate TerraformResources from GCP API,
+// from each targetSslProxies create 1 TerraformResource
+// Need targetSslProxies name as ID for terraform resource
 func (g TargetSslProxiesGenerator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
 	project := os.Getenv("GOOGLE_CLOUD_PROJECT")

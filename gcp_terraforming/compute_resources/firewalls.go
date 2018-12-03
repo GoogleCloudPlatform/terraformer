@@ -31,6 +31,7 @@ type FirewallsGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
+// Run on firewallsList and create for each TerraformResource
 func (FirewallsGenerator) createResources(firewallsList *compute.FirewallsListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := firewallsList.Pages(ctx, func(page *compute.FirewallList) error {
@@ -55,6 +56,9 @@ func (FirewallsGenerator) createResources(firewallsList *compute.FirewallsListCa
 	return resources
 }
 
+// Generate TerraformResources from GCP API,
+// from each firewalls create 1 TerraformResource
+// Need firewalls name as ID for terraform resource
 func (g FirewallsGenerator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
 	project := os.Getenv("GOOGLE_CLOUD_PROJECT")

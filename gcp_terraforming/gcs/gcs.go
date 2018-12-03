@@ -58,6 +58,9 @@ func (GcsGenerator) createResources(bucketIterator *storage.BucketIterator) []te
 	return resources
 }
 
+// Generate TerraformResources from GCP API,
+// from each bucket  create 1 TerraformResource
+// Need bucket name as ID for terraform resource
 func (g GcsGenerator) Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	ctx := context.Background()
 

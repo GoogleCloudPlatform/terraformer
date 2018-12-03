@@ -16,28 +16,7 @@ import (
 const safeChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
 
 // sanitizer fixes up an invalid HCL AST, as produced by the HCL parser for JSON
-type astSanitizer struct {
-}
-
-type TerraformResource struct {
-	ResourceType string
-	ResourceName string
-	Item         interface{}
-	ID           string
-	Provider     string
-	Attributes   map[string]string
-}
-
-func NewTerraformResource(ID, resourceName, resourceType, provider string, item interface{}, attributes map[string]string) TerraformResource {
-	return TerraformResource{
-		ResourceType: resourceType,
-		ResourceName: TfSanitize(resourceName),
-		Item:         item,
-		ID:           ID,
-		Provider:     provider,
-		Attributes:   attributes,
-	}
-}
+type astSanitizer struct{}
 
 // output prints creates b printable HCL output and returns it.
 func (v *astSanitizer) visit(n interface{}) {
@@ -163,12 +142,14 @@ func hclPrint(node ast.Node) ([]byte, error) {
 	return formatted, nil
 }
 
+// Sanitize name for terraform style
 func TfSanitize(name string) string {
 	name = strings.Replace(name, ".", "-", -1)
 	name = strings.Replace(name, "/", "--", -1)
 	return name
 }
 
+// Print hcl file from TerraformResource + provider
 func HclPrint(resources []TerraformResource, provider map[string]interface{}) ([]byte, error) {
 	resourcesByType := map[string]map[string]interface{}{}
 

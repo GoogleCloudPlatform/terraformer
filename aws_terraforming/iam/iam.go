@@ -13,7 +13,7 @@ import (
 )
 
 var ignoreKey = map[string]bool{
-	"^id$":        true,
+	"^id$":       true,
 	"^arn":       true,
 	"^unique_id": true,
 }
@@ -32,6 +32,7 @@ type IamGenerator struct {
 	resources []terraform_utils.TerraformResource
 }
 
+// TODO All here
 func (g IamGenerator) Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := iam.New(sess)

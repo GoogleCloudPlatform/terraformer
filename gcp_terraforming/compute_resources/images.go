@@ -31,6 +31,7 @@ type ImagesGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
+// Run on imagesList and create for each TerraformResource
 func (ImagesGenerator) createResources(imagesList *compute.ImagesListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := imagesList.Pages(ctx, func(page *compute.ImageList) error {
@@ -55,6 +56,9 @@ func (ImagesGenerator) createResources(imagesList *compute.ImagesListCall, ctx c
 	return resources
 }
 
+// Generate TerraformResources from GCP API,
+// from each images create 1 TerraformResource
+// Need images name as ID for terraform resource
 func (g ImagesGenerator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
 	project := os.Getenv("GOOGLE_CLOUD_PROJECT")

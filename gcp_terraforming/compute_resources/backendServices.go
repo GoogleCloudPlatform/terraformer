@@ -33,6 +33,7 @@ type BackendServicesGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
+// Run on backendServicesList and create for each TerraformResource
 func (BackendServicesGenerator) createResources(backendServicesList *compute.BackendServicesListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := backendServicesList.Pages(ctx, func(page *compute.BackendServiceList) error {
@@ -56,6 +57,9 @@ func (BackendServicesGenerator) createResources(backendServicesList *compute.Bac
 	return resources
 }
 
+// Generate TerraformResources from GCP API,
+// from each backendServices create 1 TerraformResource
+// Need backendServices name as ID for terraform resource
 func (g BackendServicesGenerator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
 	project := os.Getenv("GOOGLE_CLOUD_PROJECT")

@@ -47,6 +47,9 @@ func (NaclGenerator) createResources(nacls *ec2.DescribeNetworkAclsOutput) []ter
 	return resources
 }
 
+// Generate TerraformResources from AWS API,
+// from each network ACL create 1 TerraformResource.
+// Need NetworkAclId as ID for terraform resource
 func (g NaclGenerator) Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := ec2.New(sess)

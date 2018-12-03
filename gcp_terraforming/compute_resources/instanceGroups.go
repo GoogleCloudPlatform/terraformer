@@ -33,6 +33,7 @@ type InstanceGroupsGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
+// Run on instanceGroupsList and create for each TerraformResource
 func (InstanceGroupsGenerator) createResources(instanceGroupsList *compute.InstanceGroupsListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := instanceGroupsList.Pages(ctx, func(page *compute.InstanceGroupList) error {
@@ -58,6 +59,9 @@ func (InstanceGroupsGenerator) createResources(instanceGroupsList *compute.Insta
 	return resources
 }
 
+// Generate TerraformResources from GCP API,
+// from each instanceGroups create 1 TerraformResource
+// Need instanceGroups name as ID for terraform resource
 func (g InstanceGroupsGenerator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
 	project := os.Getenv("GOOGLE_CLOUD_PROJECT")

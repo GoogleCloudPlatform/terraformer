@@ -1,6 +1,7 @@
 package gcp_terraforming
 
 import (
+	"errors"
 	"os"
 	"strings"
 
@@ -14,15 +15,15 @@ import (
 
 const PathForGenerateFiles = "/generated/gcp/"
 
-func NewGcpRegionResource(region string) map[string]interface{} {
-	return map[string]interface{}{
-		"google": map[string]interface{}{
-			"region":  region,
-			"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
-		},
-	}
+func GetGCPSupportService() map[string]gcp_generator.Generator {
+	services := computeTerrforming.ComputeService
+	services["gcs"] = gcs.GcsGenerator{}
+	services["alerts"] = alerts.AlertsGenerator{}
+	services["iam"] = iam.IamGenerator{}
+	return services
 }
 
+// Main function for generate tf and tfstate file by GCP service and region
 func Generate(service string, args []string) error {
 	zone := args[0]
 	rootPath, _ := os.Getwd()
@@ -30,41 +31,51 @@ func Generate(service string, args []string) error {
 	if err := os.MkdirAll(currentPath, os.ModePerm); err != nil {
 		return err
 	}
+	// change current dir for terraform refresh
 	if err := os.Chdir(currentPath); err != nil {
 		return err
 	}
+	// return current dir after terraform refresh run
 	defer os.Chdir(rootPath)
 	var generator gcp_generator.Generator
-	switch service {
-	case "gcs":
-		generator = gcs.GcsGenerator{}
-	case "iam":
-		generator = iam.IamGenerator{}
-	case "alerts":
-		generator = alerts.AlertsGenerator{}
-	default:
-		if service, exist := computeTerrforming.ComputeService[service]; exist {
-			generator = service
-		}
+	var isSupported bool
+	if generator, isSupported = GetGCPSupportService()[service]; !isSupported {
+		return errors.New("gcp: not supported service")
 	}
+	// generate TerraformResources with type and ids + metadata
 	resources, metadata, err := generator.Generate(zone)
 	if err != nil {
 		return err
 	}
+	// generate empty(resource and ids) tfstate,
+	// and run terraform refresh with empty tfstate for populate data
 	err = terraform_utils.GenerateTfState(resources)
 	if err != nil {
 		return err
 	}
+	// convert tfstate to go struct for hcl print
 	converter := terraform_utils.TfstateConverter{}
 	resources, err = converter.Convert("terraform.tfstate", metadata)
 	if err != nil {
 		return err
 	}
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
+	// change structs with additional data for each resource
+	resources, err = generator.PostGenerateHook(resources)
+	// print HCL file
 	err = terraform_utils.GenerateTf(resources, service, NewGcpRegionResource(region))
 	if err != nil {
 		return err
 	}
 	return nil
 
+}
+
+func NewGcpRegionResource(region string) map[string]interface{} {
+	return map[string]interface{}{
+		"google": map[string]interface{}{
+			"region":  region,
+			"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
+		},
+	}
 }

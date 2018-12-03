@@ -1,5 +1,6 @@
 package main
 
+// metadata for generate code for GCP compute service
 var terraformResources = map[string]gcpResourceRenderble{
 	"addresses": basicGCPResource{
 		terraformName: "google_compute_address",

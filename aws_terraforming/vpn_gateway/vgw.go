@@ -43,6 +43,9 @@ func (VpnGatewayGenerator) createResources(vpnGws *ec2.DescribeVpnGatewaysOutput
 	return resoures
 }
 
+// Generate TerraformResources from AWS API,
+// from each vpn gateway create 1 TerraformResource.
+// Need VpnGatewayId as ID for terraform resource
 func (g VpnGatewayGenerator) Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := ec2.New(sess)

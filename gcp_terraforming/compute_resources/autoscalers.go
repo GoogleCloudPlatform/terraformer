@@ -31,6 +31,7 @@ type AutoscalersGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
+// Run on autoscalersList and create for each TerraformResource
 func (AutoscalersGenerator) createResources(autoscalersList *compute.AutoscalersListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := autoscalersList.Pages(ctx, func(page *compute.AutoscalerList) error {
@@ -56,6 +57,9 @@ func (AutoscalersGenerator) createResources(autoscalersList *compute.Autoscalers
 	return resources
 }
 
+// Generate TerraformResources from GCP API,
+// from each autoscalers create 1 TerraformResource
+// Need autoscalers name as ID for terraform resource
 func (g AutoscalersGenerator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
 	project := os.Getenv("GOOGLE_CLOUD_PROJECT")

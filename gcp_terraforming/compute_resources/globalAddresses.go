@@ -33,6 +33,7 @@ type GlobalAddressesGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
+// Run on globalAddressesList and create for each TerraformResource
 func (GlobalAddressesGenerator) createResources(globalAddressesList *compute.GlobalAddressesListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := globalAddressesList.Pages(ctx, func(page *compute.AddressList) error {
@@ -57,6 +58,9 @@ func (GlobalAddressesGenerator) createResources(globalAddressesList *compute.Glo
 	return resources
 }
 
+// Generate TerraformResources from GCP API,
+// from each globalAddresses create 1 TerraformResource
+// Need globalAddresses name as ID for terraform resource
 func (g GlobalAddressesGenerator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
 	project := os.Getenv("GOOGLE_CLOUD_PROJECT")

@@ -10,7 +10,7 @@ import (
 )
 
 var ignoreKey = map[string]bool{
-	"^id$":  true,
+	"^id$": true,
 	"^arn": true,
 }
 
@@ -45,6 +45,9 @@ func (SubnetGenerator) createResources(subnets *ec2.DescribeSubnetsOutput) []ter
 	return resoures
 }
 
+// Generate TerraformResources from AWS API,
+// from each subnet create 1 TerraformResource.
+// Need SubnetId as ID for terraform resource
 func (g SubnetGenerator) Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := ec2.New(sess)

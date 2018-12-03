@@ -11,7 +11,7 @@ import (
 
 var ignoreKey = map[string]bool{
 	"^tunnel2_vgw_inside_address": true,
-	"^id$":                         true,
+	"^id$":                        true,
 	"^tunnel2_cgw_inside_address": true,
 	"^tunnel2_bgp_holdtime":       true,
 	"^tunnel2_bgp_asn":            true,
@@ -54,6 +54,9 @@ func (VpnConnectionGenerator) createResources(vpncs *ec2.DescribeVpnConnectionsO
 	return resoures
 }
 
+// Generate TerraformResources from AWS API,
+// from each vpn connection create 1 TerraformResource.
+// Need VpnConnectionId as ID for terraform resource
 func (g VpnConnectionGenerator) Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := ec2.New(sess)

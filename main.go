@@ -18,7 +18,7 @@ func main() {
 	var err error
 	switch provider {
 	case "aws":
-		err = awsTerraforming.Generate(service, args)
+		err = aws_terraforming.Generate(service, args)
 	case "google":
 		err = gcp_terraforming.Generate(service, args)
 	}

@@ -31,6 +31,7 @@ type BackendBucketsGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
+// Run on backendBucketsList and create for each TerraformResource
 func (BackendBucketsGenerator) createResources(backendBucketsList *compute.BackendBucketsListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := backendBucketsList.Pages(ctx, func(page *compute.BackendBucketList) error {
@@ -55,6 +56,9 @@ func (BackendBucketsGenerator) createResources(backendBucketsList *compute.Backe
 	return resources
 }
 
+// Generate TerraformResources from GCP API,
+// from each backendBuckets create 1 TerraformResource
+// Need backendBuckets name as ID for terraform resource
 func (g BackendBucketsGenerator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
 	project := os.Getenv("GOOGLE_CLOUD_PROJECT")

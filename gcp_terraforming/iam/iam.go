@@ -58,6 +58,7 @@ func (IamGenerator) createResources(serviceAccountsIterator *admin.ServiceAccoun
 	return resources
 }
 
+// TODO ALL
 func (g IamGenerator) Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	ctx := context.Background()
 

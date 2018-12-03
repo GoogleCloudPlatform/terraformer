@@ -31,6 +31,7 @@ type HttpsHealthChecksGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
+// Run on httpsHealthChecksList and create for each TerraformResource
 func (HttpsHealthChecksGenerator) createResources(httpsHealthChecksList *compute.HttpsHealthChecksListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := httpsHealthChecksList.Pages(ctx, func(page *compute.HttpsHealthCheckList) error {
@@ -55,6 +56,9 @@ func (HttpsHealthChecksGenerator) createResources(httpsHealthChecksList *compute
 	return resources
 }
 
+// Generate TerraformResources from GCP API,
+// from each httpsHealthChecks create 1 TerraformResource
+// Need httpsHealthChecks name as ID for terraform resource
 func (g HttpsHealthChecksGenerator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
 	project := os.Getenv("GOOGLE_CLOUD_PROJECT")

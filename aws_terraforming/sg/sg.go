@@ -45,6 +45,10 @@ func (SecurityGenerator) createResources(securityGroups []*ec2.SecurityGroup) []
 	return resources
 }
 
+// Generate TerraformResources from AWS API,
+// from each security group create 1 TerraformResource.
+// Need GroupId as ID for terraform resource
+// AWS support pagination with NextToken patter
 func (g SecurityGenerator) Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := ec2.New(sess)
@@ -72,6 +76,7 @@ func (g SecurityGenerator) Generate(region string) ([]terraform_utils.TerraformR
 	return resources, metadata, nil
 }
 
+// replaceIDToName - replace sg-xxxxx string to terraform ID in all security group
 func (SecurityGenerator) replaceIDToName(resources []terraform_utils.TerraformResource) []terraform_utils.TerraformResource {
 	for _, resource := range resources {
 		for _, typeOfRule := range []string{"ingress", "egress"} {
@@ -108,6 +113,7 @@ func (SecurityGenerator) replaceIDToName(resources []terraform_utils.TerraformRe
 	return resources
 }
 
+// PostGenerateHook - replace sg-xxxxx string to terraform ID in all security group
 func (g SecurityGenerator) PostGenerateHook(resources []terraform_utils.TerraformResource) ([]terraform_utils.TerraformResource, error) {
 	return g.replaceIDToName(resources), nil
 }

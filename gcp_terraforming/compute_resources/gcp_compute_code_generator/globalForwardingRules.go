@@ -1,6 +1,5 @@
 package main
 
-
 type globalForwardingRules struct {
 	basicGCPResource
 }
@@ -8,4 +7,3 @@ type globalForwardingRules struct {
 func (b globalForwardingRules) ifNeedRegion() bool {
 	return false
 }
-

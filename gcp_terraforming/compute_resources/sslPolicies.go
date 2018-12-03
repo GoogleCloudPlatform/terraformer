@@ -33,6 +33,7 @@ type SslPoliciesGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
+// Run on sslPoliciesList and create for each TerraformResource
 func (SslPoliciesGenerator) createResources(sslPoliciesList *compute.SslPoliciesListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := sslPoliciesList.Pages(ctx, func(page *compute.SslPoliciesList) error {
@@ -57,6 +58,9 @@ func (SslPoliciesGenerator) createResources(sslPoliciesList *compute.SslPolicies
 	return resources
 }
 
+// Generate TerraformResources from GCP API,
+// from each sslPolicies create 1 TerraformResource
+// Need sslPolicies name as ID for terraform resource
 func (g SslPoliciesGenerator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
 	project := os.Getenv("GOOGLE_CLOUD_PROJECT")

@@ -33,6 +33,7 @@ type SubnetworksGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
+// Run on subnetworksList and create for each TerraformResource
 func (SubnetworksGenerator) createResources(subnetworksList *compute.SubnetworksListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := subnetworksList.Pages(ctx, func(page *compute.SubnetworkList) error {
@@ -57,6 +58,9 @@ func (SubnetworksGenerator) createResources(subnetworksList *compute.Subnetworks
 	return resources
 }
 
+// Generate TerraformResources from GCP API,
+// from each subnetworks create 1 TerraformResource
+// Need subnetworks name as ID for terraform resource
 func (g SubnetworksGenerator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
 	project := os.Getenv("GOOGLE_CLOUD_PROJECT")

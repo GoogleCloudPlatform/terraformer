@@ -54,6 +54,7 @@ type {{.titleResourceName}}Generator struct {
 	gcp_generator.BasicGenerator
 }
 
+// Run on {{.resource}}List and create for each TerraformResource
 func ({{.titleResourceName}}Generator) createResources({{.resource}}List *compute.{{.titleResourceName}}ListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := {{.resource}}List.Pages(ctx, func(page *compute.{{.responseName}}) error {
@@ -79,6 +80,9 @@ func ({{.titleResourceName}}Generator) createResources({{.resource}}List *comput
 	return resources
 }
 
+// Generate TerraformResources from GCP API,
+// from each {{.resource}} create 1 TerraformResource
+// Need {{.resource}} name as ID for terraform resource
 func (g {{.titleResourceName}}Generator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
 	project := os.Getenv("GOOGLE_CLOUD_PROJECT")
@@ -111,6 +115,7 @@ import (
 	"waze/terraform/gcp_terraforming/gcp_generator"
 )
 
+// Map of supported GCP compute service with code generate
 var ComputeService = map[string]gcp_generator.Generator{
 {{ range $key, $value := .services }}
 	"{{$key}}":                   {{title $key}}Generator{},{{ end }}

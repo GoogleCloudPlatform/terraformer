@@ -14,11 +14,13 @@ type TfstateConverter struct{}
 
 func (c TfstateConverter) Convert(pathToTfstate string, metadata map[string]ResourceMetaData) ([]TerraformResource, error) {
 	resources := []TerraformResource{}
+	// read full tfstate file
 	data, err := ioutil.ReadFile(pathToTfstate)
 	if err != nil {
 		return resources, err
 	}
 	tfState := terraform.State{}
+	// parse json to tfstate struct from terraform code
 	err = json.Unmarshal(data, &tfState)
 	if err != nil {
 		return resources, err
@@ -30,11 +32,13 @@ func (c TfstateConverter) Convert(pathToTfstate string, metadata map[string]Reso
 			for key := range resource.Primary.Attributes {
 				allAttributes = append(allAttributes, key)
 			}
+			// delete empty array
 			for _, key := range allAttributes {
 				if strings.HasSuffix(key, ".#") && resource.Primary.Attributes[key] == "0" {
 					delete(resource.Primary.Attributes, key)
 				}
 			}
+			// delete ignored keys by regex patter
 			for keyAttribute := range resource.Primary.Attributes {
 				for patter := range metadata[resource.Primary.ID].IgnoreKeys {
 					match, err := regexp.MatchString(patter, keyAttribute)
@@ -43,6 +47,7 @@ func (c TfstateConverter) Convert(pathToTfstate string, metadata map[string]Reso
 					}
 				}
 			}
+			// delete empty keys with empty value, but not from AllowEmptyValue list
 			for keyAttribute, value := range resource.Primary.Attributes {
 				if value != "" {
 					continue
@@ -58,7 +63,7 @@ func (c TfstateConverter) Convert(pathToTfstate string, metadata map[string]Reso
 					delete(resource.Primary.Attributes, keyAttribute)
 				}
 			}
-
+			// parse Attributes to go string with flatmap package
 			for key := range resource.Primary.Attributes {
 				blockName := strings.Split(key, ".")[0]
 
@@ -68,6 +73,7 @@ func (c TfstateConverter) Convert(pathToTfstate string, metadata map[string]Reso
 
 				item[blockName] = flatmap.Expand(resource.Primary.Attributes, blockName)
 			}
+			// add Additional Fields to resource
 			for key, value := range metadata[resource.Primary.ID].AdditionalFields {
 				item[key] = value
 			}

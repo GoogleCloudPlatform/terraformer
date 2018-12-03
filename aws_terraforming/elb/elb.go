@@ -10,7 +10,7 @@ import (
 )
 
 var ignoreKey = map[string]bool{
-	"^id$":                       true,
+	"^id$":                      true,
 	"^arn":                      true,
 	"^dns_name":                 true,
 	"^source_security_group_id": true,
@@ -26,6 +26,10 @@ type ElbGenerator struct {
 	aws_generator.BasicGenerator
 }
 
+// Generate TerraformResources from AWS API,
+// from each ELB create 1 TerraformResource.
+// Need only ELB name as ID for terraform resource
+// AWS api support paging
 func (ElbGenerator) Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := elb.New(sess)

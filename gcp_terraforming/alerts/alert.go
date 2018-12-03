@@ -15,7 +15,7 @@ import (
 )
 
 var alertsIgnoreKey = map[string]bool{
-	"^creation_record":       true,
+	"^creation_record":        true,
 	"^name$":                  true,
 	"^id$":                    true,
 	"^conditions.[0-9].name$": true,
@@ -54,6 +54,9 @@ func (AlertsGenerator) createResources(alertIterator *monitoring.AlertPolicyIter
 	return resources
 }
 
+// Generate TerraformResources from GCP API,
+// from each alert  create 1 TerraformResource
+// Need alert name as ID for terraform resource
 func (g AlertsGenerator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	project := os.Getenv("GOOGLE_CLOUD_PROJECT")
 	ctx := context.Background()

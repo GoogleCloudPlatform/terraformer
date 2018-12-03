@@ -37,6 +37,7 @@ type DisksGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
+// Run on disksList and create for each TerraformResource
 func (DisksGenerator) createResources(disksList *compute.DisksListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := disksList.Pages(ctx, func(page *compute.DiskList) error {
@@ -62,6 +63,9 @@ func (DisksGenerator) createResources(disksList *compute.DisksListCall, ctx cont
 	return resources
 }
 
+// Generate TerraformResources from GCP API,
+// from each disks create 1 TerraformResource
+// Need disks name as ID for terraform resource
 func (g DisksGenerator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
 	project := os.Getenv("GOOGLE_CLOUD_PROJECT")

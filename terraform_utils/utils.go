@@ -17,8 +17,9 @@ type BaseResource struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
+// Generate tfstate empty and populate with terraform refresh all data
 func GenerateTfState(resources []TerraformResource) error {
-	tfState := NewTfState(resources)
+	tfState := newTfState(resources)
 	firstState, err := json.MarshalIndent(tfState, "", "  ")
 	if err != nil {
 		return err
@@ -26,6 +27,7 @@ func GenerateTfState(resources []TerraformResource) error {
 	if err := ioutil.WriteFile("terraform.tfstate", firstState, os.ModePerm); err != nil {
 		return err
 	}
+	// use plugins from os.Getenv("HOME") + "/.terraform.d"
 	meta := command.Meta{
 		OverrideDataDir: os.Getenv("HOME") + "/.terraform.d",
 		Ui:              cli.Ui(&cli.ConcurrentUi{Ui: &cli.BasicUi{Writer: os.Stdout}}),
@@ -59,6 +61,7 @@ func GenerateTfState(resources []TerraformResource) error {
 	return nil
 }
 
+// print and write HCL to file
 func GenerateTf(resources []TerraformResource, resourceName string, provider map[string]interface{}) error {
 	data, err := HclPrint(resources, provider)
 	if err != nil {
@@ -67,7 +70,7 @@ func GenerateTf(resources []TerraformResource, resourceName string, provider map
 	return ioutil.WriteFile(resourceName+".tf", data, os.ModePerm)
 }
 
-func NewTfState(resources []TerraformResource) terraform.State {
+func newTfState(resources []TerraformResource) terraform.State {
 	tfstate := terraform.State{
 		Version:   terraform.StateVersion,
 		TFVersion: terraform.VersionString(),

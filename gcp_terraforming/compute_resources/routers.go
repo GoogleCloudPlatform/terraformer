@@ -31,6 +31,7 @@ type RoutersGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
+// Run on routersList and create for each TerraformResource
 func (RoutersGenerator) createResources(routersList *compute.RoutersListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := routersList.Pages(ctx, func(page *compute.RouterList) error {
@@ -55,6 +56,9 @@ func (RoutersGenerator) createResources(routersList *compute.RoutersListCall, ct
 	return resources
 }
 
+// Generate TerraformResources from GCP API,
+// from each routers create 1 TerraformResource
+// Need routers name as ID for terraform resource
 func (g RoutersGenerator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
 	project := os.Getenv("GOOGLE_CLOUD_PROJECT")

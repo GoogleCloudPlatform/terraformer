@@ -5,6 +5,7 @@ import (
 	"waze/terraform/gcp_terraforming/gcp_generator"
 )
 
+// Map of supported GCP compute service with code generate
 var ComputeService = map[string]gcp_generator.Generator{
 
 	"addresses":                   AddressesGenerator{},

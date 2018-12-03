@@ -33,6 +33,7 @@ type GlobalForwardingRulesGenerator struct {
 	gcp_generator.BasicGenerator
 }
 
+// Run on globalForwardingRulesList and create for each TerraformResource
 func (GlobalForwardingRulesGenerator) createResources(globalForwardingRulesList *compute.GlobalForwardingRulesListCall, ctx context.Context, region, zone string) []terraform_utils.TerraformResource {
 	resources := []terraform_utils.TerraformResource{}
 	if err := globalForwardingRulesList.Pages(ctx, func(page *compute.ForwardingRuleList) error {
@@ -56,6 +57,9 @@ func (GlobalForwardingRulesGenerator) createResources(globalForwardingRulesList 
 	return resources
 }
 
+// Generate TerraformResources from GCP API,
+// from each globalForwardingRules create 1 TerraformResource
+// Need globalForwardingRules name as ID for terraform resource
 func (g GlobalForwardingRulesGenerator) Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
 	project := os.Getenv("GOOGLE_CLOUD_PROJECT")
