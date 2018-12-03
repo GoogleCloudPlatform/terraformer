@@ -2,6 +2,7 @@ package gcs
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 
@@ -16,6 +17,7 @@ var ignoreKey = map[string]bool{
 	"^url$":       true,
 	"^id$":        true,
 	"^self_link$": true,
+	"^etag$":      true,
 }
 
 var allowEmptyValues = map[string]bool{
@@ -24,10 +26,7 @@ var allowEmptyValues = map[string]bool{
 	"created_before": true,
 }
 
-var additionalFields = map[string]string{
-	"force_destroy": "false",
-	"project":       os.Getenv("GOOGLE_CLOUD_PROJECT"),
-}
+var additionalFields = map[string]string{}
 
 type GcsGenerator struct {
 	gcp_generator.BasicGenerator
@@ -54,6 +53,46 @@ func (GcsGenerator) createResources(bucketIterator *storage.BucketIterator) []te
 				"name": battrs.Name,
 			},
 		))
+		resources = append(resources, terraform_utils.NewTerraformResource(
+			battrs.Name,
+			battrs.Name,
+			"google_storage_bucket_acl",
+			"google",
+			nil,
+			map[string]string{
+				"bucket": battrs.Name,
+			},
+		))
+		resources = append(resources, terraform_utils.NewTerraformResource(
+			battrs.Name,
+			battrs.Name,
+			"google_storage_bucket_iam_binding",
+			"google",
+			nil,
+			map[string]string{
+				"bucket": battrs.Name,
+			},
+		))
+		resources = append(resources, terraform_utils.NewTerraformResource(
+			battrs.Name,
+			battrs.Name,
+			"google_storage_bucket_iam_member",
+			"google",
+			nil,
+			map[string]string{
+				"bucket": battrs.Name,
+			},
+		))
+		resources = append(resources, terraform_utils.NewTerraformResource(
+			battrs.Name,
+			battrs.Name,
+			"google_storage_bucket_iam_policy",
+			"google",
+			nil,
+			map[string]string{
+				"bucket": battrs.Name,
+			},
+		))
 	}
 	return resources
 }
@@ -75,5 +114,19 @@ func (g GcsGenerator) Generate(region string) ([]terraform_utils.TerraformResour
 	resources := g.createResources(bucketIterator)
 	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, additionalFields)
 	return resources, metadata, nil
+}
 
+// PostGenerateHook for add bucket policy json as heredoc
+// support only bucket with policy
+func (GcsGenerator) PostGenerateHook(resources []terraform_utils.TerraformResource) ([]terraform_utils.TerraformResource, error) {
+	for _, resource := range resources {
+		if resource.ResourceType != "google_storage_bucket_iam_policy" {
+			continue
+		}
+		policy := resource.Item.(interface{}).(map[string]interface{})["policy_data"].(string)
+		resource.Item.(interface{}).(map[string]interface{})["policy_data"] = fmt.Sprintf(`<<POLICY
+%s
+POLICY`, policy)
+	}
+	return resources, nil
 }
