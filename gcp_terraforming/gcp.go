@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"waze/terraform/gcp_terraforming/alerts"
+	"waze/terraform/gcp_terraforming/clouddns"
 	"waze/terraform/gcp_terraforming/compute_resources"
 	"waze/terraform/gcp_terraforming/gcp_generator"
 	"waze/terraform/gcp_terraforming/gcs"
@@ -21,6 +22,15 @@ func GetGCPSupportService() map[string]gcp_generator.Generator {
 	services["gcs"] = gcs.GcsGenerator{}
 	services["alerts"] = alerts.AlertsGenerator{}
 	services["iam"] = iam.IamGenerator{}
+	services["dns"] = clouddns.CloudDNSGenerator{}
+	return services
+}
+
+func GetGCPSupportServiceName() []string {
+	services := []string{}
+	for service := range GetGCPSupportService() {
+		services = append(services, service)
+	}
 	return services
 }
 

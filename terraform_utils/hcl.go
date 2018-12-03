@@ -144,6 +144,7 @@ func hclPrint(node ast.Node) ([]byte, error) {
 
 // Sanitize name for terraform style
 func TfSanitize(name string) string {
+	name = strings.Replace(name, "*.", "", -1)
 	name = strings.Replace(name, ".", "-", -1)
 	name = strings.Replace(name, "/", "--", -1)
 	return name

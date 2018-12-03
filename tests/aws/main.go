@@ -13,6 +13,9 @@ const command = "terraform init && terraform plan"
 func main() {
 	region := "eu-west-1"
 	for service := range aws_terraforming.GetAWSSupportService() {
+		if service == "iam" {
+			continue
+		}
 		err := aws_terraforming.Generate(service, []string{region})
 		if err != nil {
 			log.Println(err)
