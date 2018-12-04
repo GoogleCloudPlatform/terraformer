@@ -16,14 +16,14 @@ import (
 	"google.golang.org/api/dns/v1"
 )
 
-var alertsIgnoreKey = map[string]bool{
+var cloudDNSIgnoreKey = map[string]bool{
 	"^id$":          true,
 	"^name_servers": true,
 }
 
-var alertsAllowEmptyValues = map[string]bool{}
+var cloudDNSAllowEmptyValues = map[string]bool{}
 
-var alertsAdditionalFields = map[string]string{}
+var cloudDNSAdditionalFields = map[string]string{}
 
 type CloudDNSGenerator struct {
 	gcp_generator.BasicGenerator
@@ -97,7 +97,7 @@ func (g CloudDNSGenerator) Generate(zone string) ([]terraform_utils.TerraformRes
 	}
 
 	resources := g.createZonesResources(ctx, svc, project)
-	metadata := terraform_utils.NewResourcesMetaData(resources, alertsIgnoreKey, alertsAllowEmptyValues, alertsAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, cloudDNSIgnoreKey, cloudDNSAllowEmptyValues, cloudDNSAdditionalFields)
 	return resources, metadata, nil
 
 }

@@ -191,8 +191,10 @@ func main() {
 		log.Print(err)
 	}
 	rootPath, _ := os.Getwd()
-	ioutil.WriteFile(rootPath+pathForGenerateFiles+"compute.go", codeFormat(tpl.Bytes()), os.ModePerm)
-
+	err = ioutil.WriteFile(rootPath+pathForGenerateFiles+"compute.go", codeFormat(tpl.Bytes()), os.ModePerm)
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 func codeFormat(src []byte) []byte {

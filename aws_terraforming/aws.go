@@ -9,6 +9,7 @@ import (
 	"waze/terraform/aws_terraforming/iam"
 	"waze/terraform/aws_terraforming/igw"
 	"waze/terraform/aws_terraforming/nacl"
+	"waze/terraform/aws_terraforming/route53"
 	"waze/terraform/aws_terraforming/s3"
 	"waze/terraform/aws_terraforming/sg"
 	"waze/terraform/aws_terraforming/subnet"
@@ -35,6 +36,7 @@ func GetAWSSupportService() map[string]aws_generator.Generator {
 		"s3":             s3.S3Generator{},
 		"elb":            elb.ElbGenerator{},
 		"iam":            iam.IamGenerator{},
+		"route53":        route53.Route53Generator{},
 	}
 }
 

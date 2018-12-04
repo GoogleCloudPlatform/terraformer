@@ -26,14 +26,6 @@ func GetGCPSupportService() map[string]gcp_generator.Generator {
 	return services
 }
 
-func GetGCPSupportServiceName() []string {
-	services := []string{}
-	for service := range GetGCPSupportService() {
-		services = append(services, service)
-	}
-	return services
-}
-
 // Main function for generate tf and tfstate file by GCP service and region
 func Generate(service string, args []string) error {
 	zone := args[0]
