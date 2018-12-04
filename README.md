@@ -62,6 +62,7 @@ urlMaps
 vpnTunnels
 gcs
 alerts
+dns
 ````
 
 
@@ -93,6 +94,7 @@ subnet
 vpc
 vpn_connection
 vpn_gateway
+route53
 ````
 
 ###Developing:
