@@ -38,8 +38,9 @@ func (g Route53Generator) createZonesResources(svc *route53.Route53) []terraform
 		return resources
 	}
 	for _, zone := range zones.HostedZones {
+		zoneID := cleanZoneID(aws.StringValue(zone.Id))
 		resources = append(resources, terraform_utils.NewTerraformResource(
-			aws.StringValue(zone.Id),
+			zoneID,
 			strings.TrimSuffix(aws.StringValue(zone.Name), "."),
 			"aws_route53_zone",
 			"aws",
@@ -48,7 +49,7 @@ func (g Route53Generator) createZonesResources(svc *route53.Route53) []terraform
 				"name": aws.StringValue(zone.Name),
 			},
 		))
-		records := g.createRecordsResources(svc, aws.StringValue(zone.Id))
+		records := g.createRecordsResources(svc, zoneID)
 		resources = append(resources, records...)
 	}
 	if err != nil {
@@ -109,4 +110,37 @@ func (g Route53Generator) Generate(region string) ([]terraform_utils.TerraformRe
 		metadata[resource.ID] = resourceMeta
 	}
 	return resources, metadata, nil
+}
+
+func (Route53Generator) PostGenerateHook(resources []terraform_utils.TerraformResource) ([]terraform_utils.TerraformResource, error) {
+	for i, resourceRecord := range resources {
+		if resourceRecord.ResourceType == "aws_route53_zone" {
+			continue
+		}
+		item := resourceRecord.Item.(map[string]interface{})
+		zoneID := item["zone_id"].(string)
+		for _, resourceZone := range resources {
+			if resourceZone.ResourceType != "aws_route53_zone" {
+				continue
+			}
+			if zoneID == resourceZone.ID {
+				resources[i].Item.(map[string]interface{})["zone_id"] = "${aws_route53_zone." + resourceZone.ResourceName + ".zone_id}"
+			}
+		}
+
+	}
+	return resources, nil
+}
+
+// cleanZoneID is used to remove the leading /hostedzone/
+func cleanZoneID(ID string) string {
+	return cleanPrefix(ID, "/hostedzone/")
+}
+
+// cleanPrefix removes a string prefix from an ID
+func cleanPrefix(ID, prefix string) string {
+	if strings.HasPrefix(ID, prefix) {
+		ID = strings.TrimPrefix(ID, prefix)
+	}
+	return ID
 }

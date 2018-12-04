@@ -99,5 +99,27 @@ func (g CloudDNSGenerator) Generate(zone string) ([]terraform_utils.TerraformRes
 	resources := g.createZonesResources(ctx, svc, project)
 	metadata := terraform_utils.NewResourcesMetaData(resources, cloudDNSIgnoreKey, cloudDNSAllowEmptyValues, cloudDNSAdditionalFields)
 	return resources, metadata, nil
+}
 
+func (CloudDNSGenerator) PostGenerateHook(resources []terraform_utils.TerraformResource) ([]terraform_utils.TerraformResource, error) {
+	for i, resourceRecord := range resources {
+		if resourceRecord.ResourceType == "google_dns_managed_zone" {
+			continue
+		}
+		item := resourceRecord.Item.(map[string]interface{})
+		zoneID := item["managed_zone"].(string)
+		for _, resourceZone := range resources {
+			if resourceZone.ResourceType != "google_dns_managed_zone" {
+				continue
+			}
+			if zoneID == resourceZone.ID {
+				resources[i].Item.(map[string]interface{})["managed_zone"] = "${google_dns_managed_zone." + resourceZone.ResourceName + ".name}"
+				name := resources[i].Item.(map[string]interface{})["name"].(string)
+				name = strings.Replace(name, resourceZone.Item.(map[string]interface{})["dns_name"].(string), "", -1)
+				resources[i].Item.(map[string]interface{})["name"] = name + "${google_dns_managed_zone." + resourceZone.ResourceName + ".dns_name}"
+			}
+		}
+
+	}
+	return resources, nil
 }

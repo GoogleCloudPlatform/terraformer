@@ -76,8 +76,8 @@ func (g SecurityGenerator) Generate(region string) ([]terraform_utils.TerraformR
 	return resources, metadata, nil
 }
 
-// replaceIDToName - replace sg-xxxxx string to terraform ID in all security group
-func (SecurityGenerator) replaceIDToName(resources []terraform_utils.TerraformResource) []terraform_utils.TerraformResource {
+// PostGenerateHook - replace sg-xxxxx string to terraform ID in all security group
+func (g SecurityGenerator) PostGenerateHook(resources []terraform_utils.TerraformResource) ([]terraform_utils.TerraformResource, error) {
 	for _, resource := range resources {
 		for _, typeOfRule := range []string{"ingress", "egress"} {
 			item := resource.Item.(map[string]interface{})
@@ -110,10 +110,5 @@ func (SecurityGenerator) replaceIDToName(resources []terraform_utils.TerraformRe
 			}
 		}
 	}
-	return resources
-}
-
-// PostGenerateHook - replace sg-xxxxx string to terraform ID in all security group
-func (g SecurityGenerator) PostGenerateHook(resources []terraform_utils.TerraformResource) ([]terraform_utils.TerraformResource, error) {
-	return g.replaceIDToName(resources), nil
+	return resources, nil
 }
