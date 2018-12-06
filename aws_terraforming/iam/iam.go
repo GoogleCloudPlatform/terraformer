@@ -2,6 +2,7 @@ package iam
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"waze/terraform/aws_terraforming/aws_generator"
@@ -14,14 +15,12 @@ import (
 )
 
 var ignoreKey = map[string]bool{
-	"^id$":       true,
-	"^arn$":      true,
-	"^unique_id": true,
+	"^id$":        true,
+	"^arn$":       true,
+	"^unique_id$": true,
 }
 
-var additionalFields = map[string]string{
-	"force_destroy": "false",
-}
+var additionalFields = map[string]string{}
 
 var allowEmptyValues = map[string]bool{
 	"tags.": true,
@@ -41,16 +40,66 @@ func (g IamGenerator) Generate(region string) ([]terraform_utils.TerraformResour
 	g.metadata = map[string]terraform_utils.ResourceMetaData{}
 	err := g.getUsers(svc)
 	if err != nil {
-		return []terraform_utils.TerraformResource{}, map[string]terraform_utils.ResourceMetaData{}, err
+		log.Println(err)
 	}
-	//TODO ALL
 	err = g.getGroups(svc)
+	if err != nil {
+		log.Println(err)
+	}
 	err = g.getPolicies(svc)
-	/*
-		svc.ListRolesPages()
-		svc.ListAccessKeysPages()
-		svc.ListGroupPoliciesPages()*/
+	if err != nil {
+		log.Println(err)
+	}
+	err = g.getRoles(svc)
+	if err != nil {
+		log.Println(err)
+	}
 	return g.resources, g.metadata, nil
+}
+
+func (g *IamGenerator) getRoles(svc *iam.IAM) error {
+	err := svc.ListRolesPages(&iam.ListRolesInput{}, func(roles *iam.ListRolesOutput, lastPages bool) bool {
+		for _, role := range roles.Roles {
+			roleID := aws.StringValue(role.RoleId)
+			roleName := aws.StringValue(role.RoleName)
+			g.resources = append(g.resources, terraform_utils.NewTerraformResource(
+				roleID,
+				roleName,
+				"aws_iam_role",
+				"aws",
+				nil,
+				map[string]string{}))
+			g.metadata[roleID] = terraform_utils.ResourceMetaData{
+				Provider:         "aws",
+				IgnoreKeys:       ignoreKey,
+				AllowEmptyValue:  allowEmptyValues,
+				AdditionalFields: additionalFields,
+			}
+			listRolePolicies, err := svc.ListRolePolicies(&iam.ListRolePoliciesInput{RoleName: role.RoleName})
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+			for _, policyName := range listRolePolicies.PolicyNames {
+				g.resources = append(g.resources, terraform_utils.NewTerraformResource(
+					roleName+":"+aws.StringValue(policyName),
+					roleName,
+					"aws_iam_role_policy",
+					"aws",
+					nil,
+					map[string]string{}))
+				g.metadata[roleName+":"+aws.StringValue(policyName)] = terraform_utils.ResourceMetaData{
+					Provider:         "aws",
+					IgnoreKeys:       ignoreKey,
+					AllowEmptyValue:  allowEmptyValues,
+					AdditionalFields: additionalFields,
+				}
+			}
+
+		}
+		return !lastPages
+	})
+	return err
 }
 
 func (g *IamGenerator) getUsers(svc *iam.IAM) error {
@@ -73,7 +122,6 @@ func (g *IamGenerator) getUsers(svc *iam.IAM) error {
 
 			g.getUserPolices(svc, user.UserName)
 			//g.getUserGroup(svc, user.UserName) //not work maybe terraform-aws bug
-			break
 		}
 
 		return !lastPage
@@ -136,23 +184,7 @@ func (g *IamGenerator) getPolicies(svc *iam.IAM) error {
 		for _, policy := range policies.Policies {
 			resourceName := aws.StringValue(policy.PolicyName)
 			policyARN := aws.StringValue(policy.Arn)
-			// not use AWS main policy
-			//if strings.HasPrefix(policyARN, "arn:aws:iam::aws:policy") {
-			//	continue
-			//}
-			g.resources = append(g.resources, terraform_utils.NewTerraformResource(
-				policyARN,
-				resourceName,
-				"aws_iam_policy",
-				"aws",
-				nil,
-				map[string]string{}))
-			g.metadata[resourceName] = terraform_utils.ResourceMetaData{
-				Provider:         "aws",
-				IgnoreKeys:       ignoreKey,
-				AllowEmptyValue:  allowEmptyValues,
-				AdditionalFields: map[string]string{},
-			}
+
 			g.resources = append(g.resources, terraform_utils.NewTerraformResource(
 				policyARN,
 				resourceName,
@@ -163,7 +195,23 @@ func (g *IamGenerator) getPolicies(svc *iam.IAM) error {
 					"policy_arn": policyARN,
 					"name":       resourceName,
 				}))
-			break
+			g.metadata[policyARN] = terraform_utils.ResourceMetaData{
+				Provider:         "aws",
+				IgnoreKeys:       ignoreKey,
+				AllowEmptyValue:  allowEmptyValues,
+				AdditionalFields: map[string]string{},
+			}
+			// not use AWS main policy
+			if strings.HasPrefix(policyARN, "arn:aws:iam::aws:policy") {
+				continue
+			}
+			g.resources = append(g.resources, terraform_utils.NewTerraformResource(
+				policyARN,
+				resourceName,
+				"aws_iam_policy",
+				"aws",
+				nil,
+				map[string]string{}))
 
 		}
 		return !lastPage
@@ -198,6 +246,26 @@ func (g *IamGenerator) getGroups(svc *iam.IAM) error {
 					"group": resourceName,
 					"name":  resourceName,
 				}))
+			_ = svc.ListGroupPoliciesPages(&iam.ListGroupPoliciesInput{GroupName: group.GroupName}, func(policyGroup *iam.ListGroupPoliciesOutput, lastPage bool) bool {
+				for _, policy := range policyGroup.PolicyNames {
+					id := resourceName + ":" + aws.StringValue(policy)
+					g.resources = append(g.resources, terraform_utils.NewTerraformResource(
+						id,
+						resourceName,
+						"aws_iam_group_policy",
+						"aws",
+						nil,
+						map[string]string{}))
+					g.metadata[id] = terraform_utils.ResourceMetaData{
+						Provider:         "aws",
+						IgnoreKeys:       ignoreKey,
+						AllowEmptyValue:  allowEmptyValues,
+						AdditionalFields: map[string]string{},
+					}
+				}
+				return !lastPage
+			})
+
 		}
 		return !lastPage
 	})
@@ -207,9 +275,17 @@ func (g *IamGenerator) getGroups(svc *iam.IAM) error {
 // PostGenerateHook for add policy json as heredoc
 func (IamGenerator) PostGenerateHook(resources []terraform_utils.TerraformResource) ([]terraform_utils.TerraformResource, error) {
 	for _, resource := range resources {
-		if resource.ResourceType == "aws_iam_policy" || resource.ResourceType == "aws_iam_user_policy" {
+		if resource.ResourceType == "aws_iam_policy" ||
+			resource.ResourceType == "aws_iam_user_policy" ||
+			resource.ResourceType == "aws_iam_group_policy" ||
+			resource.ResourceType == "aws_iam_role_policy" {
 			policy := resource.Item.(interface{}).(map[string]interface{})["policy"].(string)
 			resource.Item.(interface{}).(map[string]interface{})["policy"] = fmt.Sprintf(`<<POLICY
+%s
+POLICY`, policy)
+		} else if resource.ResourceType == "aws_iam_role" {
+			policy := resource.Item.(interface{}).(map[string]interface{})["assume_role_policy"].(string)
+			resource.Item.(interface{}).(map[string]interface{})["assume_role_policy"] = fmt.Sprintf(`<<POLICY
 %s
 POLICY`, policy)
 		}

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"strconv"
 	"strings"
 
 	"github.com/hashicorp/hcl/hcl/ast"
@@ -70,27 +69,26 @@ func (v *astSanitizer) visitObjectItem(o *ast.ObjectItem) {
 			t.Token.Text = t.Token.Text[1:]
 			t.Token.Text = t.Token.Text[:len(t.Token.Text)-1]
 			t.Token.Text = strings.Replace(t.Token.Text, `\n`, "\n", -1)
+			t.Token.Text = strings.Replace(t.Token.Text, `\t`, "", -1)
 			t.Token.Type = 10
 			// check if text json for Unquote and Indent
 			tmp := map[string]interface{}{}
 			jsonTest := t.Token.Text
 			lines := strings.Split(jsonTest, "\n")
 			jsonTest = strings.Join(lines[1:len(lines)-1], "\n")
-			jsonTest, err := strconv.Unquote("\"" + jsonTest + "\"")
+			jsonTest = strings.Replace(jsonTest, "\\\"", "\"", -1)
+			// it's json we convert to heredoc back
+			err := json.Unmarshal([]byte(jsonTest), &tmp)
 			if err == nil {
-				// it's json we convert to heredoc back
-				err := json.Unmarshal([]byte(jsonTest), &tmp)
+				dataJsonBytes, err := json.MarshalIndent(tmp, "", "  ")
 				if err == nil {
-					dataJsonBytes, err := json.MarshalIndent(tmp, "", "  ")
-					if err == nil {
-						jsonData := strings.Split(string(dataJsonBytes), "\n")
-						// first line for heredoc
-						jsonData = append([]string{lines[0]}, jsonData...)
-						// last line for heredoc
-						jsonData = append(jsonData, lines[len(lines)-1])
-						hereDoc := strings.Join(jsonData, "\n")
-						t.Token.Text = hereDoc
-					}
+					jsonData := strings.Split(string(dataJsonBytes), "\n")
+					// first line for heredoc
+					jsonData = append([]string{lines[0]}, jsonData...)
+					// last line for heredoc
+					jsonData = append(jsonData, lines[len(lines)-1])
+					hereDoc := strings.Join(jsonData, "\n")
+					t.Token.Text = hereDoc
 				}
 			}
 		}
