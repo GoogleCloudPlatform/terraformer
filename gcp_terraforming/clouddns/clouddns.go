@@ -8,8 +8,8 @@ import (
 	"os"
 	"strings"
 
-	"waze/terraform/gcp_terraforming/gcp_generator"
-	"waze/terraform/terraform_utils"
+	"waze/terraformer/gcp_terraforming/gcp_generator"
+	"waze/terraformer/terraform_utils"
 
 	"golang.org/x/oauth2/google"
 

@@ -5,8 +5,8 @@ import (
 	"log"
 	"os"
 
-	"waze/terraform/gcp_terraforming/gcp_generator"
-	"waze/terraform/terraform_utils"
+	"waze/terraformer/gcp_terraforming/gcp_generator"
+	"waze/terraformer/terraform_utils"
 
 	adminpb "google.golang.org/genproto/googleapis/iam/admin/v1"
 

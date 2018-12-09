@@ -4,8 +4,8 @@ import (
 	"log"
 	"os"
 
-	"waze/terraform/aws_terraforming"
-	"waze/terraform/gcp_terraforming"
+	"waze/terraformer/aws_terraforming"
+	"waze/terraformer/gcp_terraforming"
 )
 
 func main() {

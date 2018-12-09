@@ -9,8 +9,8 @@ import (
 
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/compute/v1"
-	"waze/terraform/gcp_terraforming/gcp_generator"
-	"waze/terraform/terraform_utils"
+	"waze/terraformer/gcp_terraforming/gcp_generator"
+	"waze/terraformer/terraform_utils"
 )
 
 var targetHttpsProxiesIgnoreKey = map[string]bool{

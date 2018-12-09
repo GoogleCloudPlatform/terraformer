@@ -22,8 +22,8 @@ import (
 	"log"
 	"os"
 
-	"waze/terraform/gcp_terraforming/gcp_generator"
-	"waze/terraform/terraform_utils"
+	"waze/terraformer/gcp_terraforming/gcp_generator"
+	"waze/terraformer/terraform_utils"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/compute/v1"
 )
@@ -112,7 +112,7 @@ const computeTemplate = `
 package computeTerrforming
 
 import (
-	"waze/terraform/gcp_terraforming/gcp_generator"
+	"waze/terraformer/gcp_terraforming/gcp_generator"
 )
 
 // Map of supported GCP compute service with code generate

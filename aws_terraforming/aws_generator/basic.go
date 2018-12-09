@@ -1,6 +1,6 @@
 package aws_generator
 
-import "waze/terraform/terraform_utils"
+import "waze/terraformer/terraform_utils"
 
 type Generator interface {
 	Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error)

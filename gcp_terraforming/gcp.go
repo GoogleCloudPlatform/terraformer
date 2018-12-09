@@ -5,13 +5,13 @@ import (
 	"os"
 	"strings"
 
-	"waze/terraform/gcp_terraforming/alerts"
-	"waze/terraform/gcp_terraforming/clouddns"
-	"waze/terraform/gcp_terraforming/compute_resources"
-	"waze/terraform/gcp_terraforming/gcp_generator"
-	"waze/terraform/gcp_terraforming/gcs"
-	"waze/terraform/gcp_terraforming/iam"
-	"waze/terraform/terraform_utils"
+	"waze/terraformer/gcp_terraforming/alerts"
+	"waze/terraformer/gcp_terraforming/clouddns"
+	"waze/terraformer/gcp_terraforming/compute_resources"
+	"waze/terraformer/gcp_terraforming/gcp_generator"
+	"waze/terraformer/gcp_terraforming/gcs"
+	"waze/terraformer/gcp_terraforming/iam"
+	"waze/terraformer/terraform_utils"
 )
 
 const PathForGenerateFiles = "/generated/gcp/"

@@ -1,4 +1,4 @@
-#Terraforming(need other name)
+#Terraformer
 
 CLI tool for generate tf + tfstate files from current configuration(reverse terraform)
 
@@ -11,18 +11,18 @@ CLI tool for generate tf + tfstate files from current configuration(reverse terr
 
 #####Usage:
 #####For GCP:
-GOOGLE_CLOUD_PROJECT=YOUR_PROJECT ./terraforming google YOUR_SERVICE YOUR_ZONE
+GOOGLE_CLOUD_PROJECT=YOUR_PROJECT ./terraformer google YOUR_SERVICE YOUR_ZONE
 Examples: 
 
 ````
-./terraform google firewalls europe-west1-c
+./terraformer google firewalls europe-west1-c
 ````
 ````
-./terraform google gcs europe-west1-c
+./terraformer google gcs europe-west1-c
 ````
 
 ````
-./terraform google addresses europe-west1-c
+./terraformer google addresses europe-west1-c
 ````
 
 List of support GCP services:
@@ -70,22 +70,22 @@ dns
 Your tf and tfstate file generate to `generated/gcp/zone/service`
 
 #####For AWS:
-./terraforming aws YOUR_SERVICE YOUR_REGION
+./terraformer aws YOUR_SERVICE YOUR_REGION
 
 
 ````
-./terraform aws sg eu-west1
+./terraformer aws sg eu-west1
 ````
 ````
-./terraform aws s3 eu-west1
+./terraformer aws s3 eu-west1
 ````
 ````
-./terraform aws subnet eu-west1
+./terraformer aws subnet eu-west1
 ````
 List of support AWS services:
 ````
 elb
-iam - bug and not finish
+iam
 igw
 nacl
 s3

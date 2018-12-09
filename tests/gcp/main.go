@@ -5,8 +5,8 @@ import (
 	"os"
 	"os/exec"
 
-	"waze/terraform/gcp_terraforming"
-	"waze/terraform/gcp_terraforming/compute_resources"
+	"waze/terraformer/gcp_terraforming"
+	"waze/terraformer/gcp_terraforming/compute_resources"
 )
 
 const command = "terraform init && terraform plan"

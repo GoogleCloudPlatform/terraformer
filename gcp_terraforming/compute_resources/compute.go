@@ -2,7 +2,7 @@
 package computeTerrforming
 
 import (
-	"waze/terraform/gcp_terraforming/gcp_generator"
+	"waze/terraformer/gcp_terraforming/gcp_generator"
 )
 
 // Map of supported GCP compute service with code generate

@@ -1,8 +1,8 @@
 package vpc
 
 import (
-	"waze/terraform/aws_terraforming/aws_generator"
-	"waze/terraform/terraform_utils"
+	"waze/terraformer/aws_terraforming/aws_generator"
+	"waze/terraformer/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
 

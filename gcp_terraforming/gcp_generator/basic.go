@@ -1,6 +1,6 @@
 package gcp_generator
 
-import "waze/terraform/terraform_utils"
+import "waze/terraformer/terraform_utils"
 
 type Generator interface {
 	Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error)
