@@ -14,7 +14,11 @@
 
 package terraform_utils
 
-import "github.com/hashicorp/terraform/terraform"
+import (
+	"fmt"
+
+	"github.com/hashicorp/terraform/terraform"
+)
 
 type TerraformResource struct {
 	InstanceInfo  *terraform.InstanceInfo
@@ -41,6 +45,7 @@ func NewTerraformResource(ID, resourceName, resourceType, provider string, item 
 		},
 		InstanceInfo: &terraform.InstanceInfo{
 			Type: resourceType,
+			Id:   fmt.Sprintf("%s.%s", resourceType, TfSanitize(resourceName)),
 		},
 	}
 }
