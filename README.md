@@ -2,6 +2,9 @@
 
 CLI tool for generate tf + tfstate files from current configuration(reverse terraform)
 
+This is not an official Google product
+
+
 ###Install
 1. git clone project OR binary
 2. Run `GO111MODULE=on go mod vendor`
