@@ -30,7 +30,11 @@ func GetGCPSupportService() map[string]gcp_generator.Generator {
 func Generate(service string, args []string) error {
 	zone := args[0]
 	rootPath, _ := os.Getwd()
-	currentPath := rootPath + PathForGenerateFiles + zone + "/" + service
+	projectName := os.Getenv("GOOGLE_CLOUD_PROJECT")
+	if projectName == "" {
+		return errors.New("google cloud project name must be set")
+	}
+	currentPath := rootPath + PathForGenerateFiles + projectName + "/" + zone + "/" + service
 	if err := os.MkdirAll(currentPath, os.ModePerm); err != nil {
 		return err
 	}
