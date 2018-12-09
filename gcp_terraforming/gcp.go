@@ -16,15 +16,15 @@ package gcp_terraforming
 
 import (
 	"errors"
+	"log"
 	"os"
 	"strings"
 
-	"waze/terraformer/gcp_terraforming/alerts"
-	"waze/terraformer/gcp_terraforming/clouddns"
-	"waze/terraformer/gcp_terraforming/compute_resources"
+	"github.com/hashicorp/terraform/terraform"
+	"github.com/terraform-providers/terraform-provider-google/google"
+
 	"waze/terraformer/gcp_terraforming/gcp_generator"
 	"waze/terraformer/gcp_terraforming/gcs"
-	"waze/terraformer/gcp_terraforming/iam"
 	"waze/terraformer/terraform_utils"
 )
 
@@ -32,11 +32,12 @@ const PathForGenerateFiles = "/generated/gcp/"
 
 // GetGCPSupportService return map of support service for GCP
 func GetGCPSupportService() map[string]gcp_generator.Generator {
-	services := computeTerrforming.ComputeService
+	services := map[string]gcp_generator.Generator{}
+	//services := computeTerrforming.ComputeService
 	services["gcs"] = gcs.GcsGenerator{}
-	services["alerts"] = alerts.AlertsGenerator{}
-	services["iam"] = iam.IamGenerator{}
-	services["dns"] = clouddns.CloudDNSGenerator{}
+	//services["alerts"] = alerts.AlertsGenerator{}
+	//services["iam"] = iam.IamGenerator{}
+	//services["dns"] = clouddns.CloudDNSGenerator{}
 	return services
 }
 
@@ -68,15 +69,32 @@ func Generate(service string, args []string) error {
 	if err != nil {
 		return err
 	}
-	// generate empty(resource and ids) tfstate,
-	// and run terraform refresh with empty tfstate for populate data
-	err = terraform_utils.GenerateTfState(resources)
+
+	provider := google.Provider()
+	err = provider.Configure(&terraform.ResourceConfig{})
 	if err != nil {
 		return err
 	}
+	for i, r := range resources {
+		state, err := provider.Refresh(r.InstanceInfo, r.InstanceState)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		resources[i].InstanceState = state
+		break
+	}
+	resources = resources[:1]
+	/*
+		// generate empty(resource and ids) tfstate,
+		// and run terraform refresh with empty tfstate for populate data
+		err = terraform_utils.GenerateTfState(resources)
+		if err != nil {
+			return err
+		}*/
 	// convert tfstate to go struct for hcl print
 	converter := terraform_utils.TfstateConverter{}
-	resources, err = converter.Convert("terraform.tfstate", metadata)
+	resources, err = converter.Convert(resources, metadata)
 	if err != nil {
 		return err
 	}

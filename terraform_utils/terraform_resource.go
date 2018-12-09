@@ -14,13 +14,17 @@
 
 package terraform_utils
 
+import "github.com/hashicorp/terraform/terraform"
+
 type TerraformResource struct {
-	ResourceType string
-	ResourceName string
-	Item         interface{}
-	ID           string
-	Provider     string
-	Attributes   map[string]string
+	InstanceInfo  *terraform.InstanceInfo
+	InstanceState *terraform.InstanceState
+	ResourceType  string
+	ResourceName  string
+	Item          interface{}
+	ID            string
+	Provider      string
+	Attributes    map[string]string
 }
 
 func NewTerraformResource(ID, resourceName, resourceType, provider string, item interface{}, attributes map[string]string) TerraformResource {
@@ -31,5 +35,12 @@ func NewTerraformResource(ID, resourceName, resourceType, provider string, item 
 		ID:           ID,
 		Provider:     provider,
 		Attributes:   attributes,
+		InstanceState: &terraform.InstanceState{
+			ID:         ID,
+			Attributes: attributes,
+		},
+		InstanceInfo: &terraform.InstanceInfo{
+			Type: resourceType,
+		},
 	}
 }
