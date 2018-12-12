@@ -41,6 +41,11 @@ func GenerateTfState(resources []TerraformResource) error {
 	if err := ioutil.WriteFile("terraform.tfstate", firstState, os.ModePerm); err != nil {
 		return err
 	}
+	// set to terraform don't check lock.json
+	err = os.Setenv("TF_SKIP_PROVIDER_VERIFY", "skip")
+	if err != nil {
+		return err
+	}
 	// use plugins from os.Getenv("HOME") + "/.terraform.d"
 	c := command.RefreshCommand{Meta: command.Meta{
 		OverrideDataDir: os.Getenv("HOME") + "/.terraform.d",

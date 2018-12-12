@@ -92,12 +92,18 @@ var terraformResources = map[string]gcpResourceRenderble{
 	},
 	"instances": instances{
 		basicGCPResource{
-			terraformName: "google_compute_instance",
+			terraformName:    "google_compute_instance",
+			allowEmptyValues: []string{"labels."},
 			ignoreKeys: []string{
-				"instance_id",
-				"metadata_fingerprint",
-				"tags_fingerprint",
-				"cpu_platform",
+				"^instance_id",
+				"^metadata_fingerprint",
+				"^tags_fingerprint",
+				"^cpu_platform",
+				"^network_interface.0.access_config.0.assigned_nat_ip",
+				"^network_interface.0.name",
+			},
+			additionalFieldsForRefresh: map[string]string{
+				"disk.#": "0",
 			},
 		},
 	},

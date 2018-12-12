@@ -42,11 +42,11 @@ globalForwardingRules
 healthChecks
 httpHealthChecks
 httpsHealthChecks
-images -  Either raw_disk or source_disk configuration is required.
+images -  bug => Either raw_disk or source_disk configuration is required.
 instanceGroupManagers
 instanceGroups
-instanceTemplates - formatting HCL bug
-instances - Values must match the following regular expression: '[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?|[1-9][0-9]{0,19}', invalidParameter(zone?)
+instanceTemplates - bug => formatting HCL bug
+instances
 networks
 regionAutoscalers
 regionBackendServices
