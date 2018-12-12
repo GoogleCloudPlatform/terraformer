@@ -46,7 +46,7 @@ images -  bug => Either raw_disk or source_disk configuration is required.
 instanceGroupManagers
 instanceGroups
 instanceTemplates - bug => formatting HCL bug
-instances - bug => Values must match the following regular expression: '[a-z](?:[-a-z0-9]{0,61}[a-z0-9])?|[1-9][0-9]{0,19}', invalidParameter(zone?)
+instances
 networks
 regionAutoscalers
 regionBackendServices

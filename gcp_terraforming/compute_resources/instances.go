@@ -34,13 +34,18 @@ var instancesIgnoreKey = map[string]bool{
 	"^label_fingerprint$":  true,
 	"^creation_timestamp$": true,
 
-	"instance_id":          true,
-	"metadata_fingerprint": true,
-	"tags_fingerprint":     true,
-	"cpu_platform":         true,
+	"^instance_id":          true,
+	"^metadata_fingerprint": true,
+	"^tags_fingerprint":     true,
+	"^cpu_platform":         true,
+	"^network_interface.0.access_config.0.assigned_nat_ip": true,
+	"^network_interface.0.name":                            true,
 }
 
-var instancesAllowEmptyValues = map[string]bool{}
+var instancesAllowEmptyValues = map[string]bool{
+
+	"labels.": true,
+}
 
 var instancesAdditionalFields = map[string]string{
 	"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
@@ -66,6 +71,8 @@ func (InstancesGenerator) createResources(instancesList *compute.InstancesListCa
 					"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
 
 					"zone": zone,
+
+					"disk.#": "0",
 				},
 			))
 		}

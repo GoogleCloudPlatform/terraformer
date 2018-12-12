@@ -27,6 +27,20 @@ import (
 
 const pathForGenerateFiles = "/gcp_terraforming/compute_resources/"
 const serviceTemplate = `
+// Copyright 2018 The Terraformer Authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 // AUTO-GENERATED CODE. DO NOT EDIT.
 package computeTerrforming
 
@@ -84,6 +98,8 @@ func ({{.titleResourceName}}Generator) createResources({{.resource}}List *comput
 					"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
 					{{ if .needRegion}}"region":  region,{{end}}
 					{{ if .byZone  }}"zone":    zone,{{end}}
+					{{ range $key, $value := .additionalFieldsForRefresh}}
+					"{{$key}}":			"{{$value}}",{{end}}
 				},
 			))
 		}
@@ -122,6 +138,20 @@ func (g {{.titleResourceName}}Generator) Generate(zone string) ([]terraform_util
 
 `
 const computeTemplate = `
+// Copyright 2018 The Terraformer Authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 // AUTO-GENERATED CODE. DO NOT EDIT.
 package computeTerrforming
 
@@ -163,18 +193,19 @@ func main() {
 			var tpl bytes.Buffer
 			t := template.Must(template.New("resource.go").Funcs(funcMap).Parse(serviceTemplate))
 			err := t.Execute(&tpl, map[string]interface{}{
-				"titleResourceName":   strings.Title(resource),
-				"resource":            resource,
-				"responseName":        value.(map[string]interface{})["response"].(map[string]interface{})["$ref"].(string),
-				"terraformName":       terraformResources[resource].getTerraformName(),
-				"ignoreKeys":          terraformResources[resource].getIgnoreKeys(),
-				"additionalFields":    terraformResources[resource].getAdditionalFields(),
-				"allowEmptyValues":    terraformResources[resource].getAllowEmptyValues(),
-				"needRegion":          terraformResources[resource].ifNeedRegion(),
-				"resourcePackageName": resource,
-				"parameterOrder":      parameterOrder,
-				"byZone":              terraformResources[resource].ifNeedZone(strings.Contains(parameterOrder, "zone")),
-				"idWithZone":          terraformResources[resource].ifIDWithZone(strings.Contains(parameterOrder, "zone")),
+				"titleResourceName":          strings.Title(resource),
+				"resource":                   resource,
+				"responseName":               value.(map[string]interface{})["response"].(map[string]interface{})["$ref"].(string),
+				"terraformName":              terraformResources[resource].getTerraformName(),
+				"ignoreKeys":                 terraformResources[resource].getIgnoreKeys(),
+				"additionalFields":           terraformResources[resource].getAdditionalFields(),
+				"additionalFieldsForRefresh": terraformResources[resource].getAdditionalFieldsForRefresh(),
+				"allowEmptyValues":           terraformResources[resource].getAllowEmptyValues(),
+				"needRegion":                 terraformResources[resource].ifNeedRegion(),
+				"resourcePackageName":        resource,
+				"parameterOrder":             parameterOrder,
+				"byZone":                     terraformResources[resource].ifNeedZone(strings.Contains(parameterOrder, "zone")),
+				"idWithZone":                 terraformResources[resource].ifIDWithZone(strings.Contains(parameterOrder, "zone")),
 			})
 			if err != nil {
 				log.Print(resource, err)
