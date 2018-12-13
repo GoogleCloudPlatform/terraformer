@@ -16,15 +16,17 @@ package gcp_terraforming
 
 import (
 	"errors"
+
+	"io/ioutil"
 	"log"
 	"os"
 	"strings"
-
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/terraform-providers/terraform-provider-google/google"
-
+	"waze/terraformer/gcp_terraforming/alerts"
+	"waze/terraformer/gcp_terraforming/clouddns"
+	"waze/terraformer/gcp_terraforming/compute_resources"
 	"waze/terraformer/gcp_terraforming/gcp_generator"
 	"waze/terraformer/gcp_terraforming/gcs"
+	"waze/terraformer/gcp_terraforming/iam"
 	"waze/terraformer/terraform_utils"
 )
 
@@ -32,81 +34,74 @@ const PathForGenerateFiles = "/generated/gcp/"
 
 // GetGCPSupportService return map of support service for GCP
 func GetGCPSupportService() map[string]gcp_generator.Generator {
-	services := map[string]gcp_generator.Generator{}
-	//services := computeTerrforming.ComputeService
+	services := computeTerrforming.ComputeService
 	services["gcs"] = gcs.GcsGenerator{}
-	//services["alerts"] = alerts.AlertsGenerator{}
-	//services["iam"] = iam.IamGenerator{}
-	//services["dns"] = clouddns.CloudDNSGenerator{}
+	services["alerts"] = alerts.AlertsGenerator{}
+	services["iam"] = iam.IamGenerator{}
+	services["dns"] = clouddns.CloudDNSGenerator{}
 	return services
 }
 
 // Main function for generate tf and tfstate file by GCP service and region
 func Generate(service string, args []string) error {
-	zone := args[0]
-	rootPath, _ := os.Getwd()
-	projectName := os.Getenv("GOOGLE_CLOUD_PROJECT")
-	if projectName == "" {
-		return errors.New("google cloud project name must be set")
-	}
-	currentPath := rootPath + PathForGenerateFiles + projectName + "/" + zone + "/" + service
-	if err := os.MkdirAll(currentPath, os.ModePerm); err != nil {
-		return err
-	}
-	// change current dir for terraform refresh
-	if err := os.Chdir(currentPath); err != nil {
-		return err
-	}
-	// return current dir after terraform refresh run
-	defer os.Chdir(rootPath)
 	var generator gcp_generator.Generator
 	var isSupported bool
 	if generator, isSupported = GetGCPSupportService()[service]; !isSupported {
 		return errors.New("gcp: not supported service")
 	}
-	// generate TerraformResources with type and ids + metadata
-	resources, metadata, err := generator.Generate(zone)
+	// check projectName in env params
+	projectName := os.Getenv("GOOGLE_CLOUD_PROJECT")
+	if projectName == "" {
+		return errors.New("google cloud project name must be set")
+	}
+	// try connect to provider in $HOME/.terraform.d/....
+	provider, err := terraform_utils.GetProvider("google")
 	if err != nil {
 		return err
 	}
 
-	provider := google.Provider()
-	err = provider.Configure(&terraform.ResourceConfig{})
+	zone := args[0]
+	rootPath, _ := os.Getwd()
+	currentPath := rootPath + PathForGenerateFiles + projectName + "/" + zone + "/" + service
+	if err := os.MkdirAll(currentPath, os.ModePerm); err != nil {
+		log.Print(err)
+		return err
+	}
+	// generate TerraformResources with type and ids + metadata
+	cloudResources, metadata, err := generator.Generate(zone)
 	if err != nil {
 		return err
 	}
-	for i, r := range resources {
-		state, err := provider.Refresh(r.InstanceInfo, r.InstanceState)
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-		resources[i].InstanceState = state
-		break
-	}
-	resources = resources[:1]
-	/*
-		// generate empty(resource and ids) tfstate,
-		// and run terraform refresh with empty tfstate for populate data
-		err = terraform_utils.GenerateTfState(resources)
-		if err != nil {
-			return err
-		}*/
-	// convert tfstate to go struct for hcl print
-	converter := terraform_utils.TfstateConverter{}
-	resources, err = converter.Convert(resources, metadata)
-	if err != nil {
-		return err
-	}
+
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
-	// change structs with additional data for each resource
-	resources, err = generator.PostGenerateHook(resources)
-	// print HCL file
-	err = terraform_utils.GenerateTf(resources, service, NewGcpRegionResource(region))
+	providerObject := NewGcpRegionResource(region)
+
+	refreshedResources := terraform_utils.RefreshResources(provider, cloudResources)
+
+	// create tfstate
+	tfstateFile, err := terraform_utils.PrintTfState(refreshedResources)
 	if err != nil {
 		return err
 	}
-	return nil
+	// convert InstanceState to go struct for hcl print
+	converter := terraform_utils.InstanceStateConverter{}
+	refreshedResources, err = converter.Convert(refreshedResources, metadata)
+	if err != nil {
+		return err
+	}
+	// change structs with additional data for each resource
+	refreshedResources, err = generator.PostGenerateHook(refreshedResources)
+	// create HCL
+	tfFile := []byte{}
+	tfFile, err = terraform_utils.HclPrint(refreshedResources, providerObject)
+	if err != nil {
+		return err
+	}
+	err = ioutil.WriteFile(currentPath+"/"+service+".tf", tfFile, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(currentPath+"/terraform.tfstate", tfstateFile, os.ModePerm)
 
 }
 

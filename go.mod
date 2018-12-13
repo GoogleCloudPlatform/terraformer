@@ -32,7 +32,6 @@ require (
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/dnaeon/go-vcr v0.0.0-20180920040454-5637cf3d8a31 // indirect
-	github.com/dustinkirkland/golang-petname v0.0.0-20170921220637-d3c2ba80e75e // indirect
 	github.com/dylanmei/iso8601 v0.1.0 // indirect
 	github.com/dylanmei/winrmtest v0.0.0-20170819153634-c2fbb09e6c08 // indirect
 	github.com/gogo/protobuf v1.1.1 // indirect
@@ -98,13 +97,10 @@ require (
 	github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d // indirect
 	github.com/smartystreets/goconvey v0.0.0-20181108003508-044398e4856c // indirect
 	github.com/soheilhy/cmux v0.1.4 // indirect
-	github.com/stoewer/go-strcase v1.0.2 // indirect
 	github.com/stretchr/testify v1.2.2
 	github.com/svanharmelen/jsonapi v0.0.0-20180618144545-0c0828c3f16d // indirect
 	github.com/terraform-providers/terraform-provider-aws v1.48.0 // indirect
-	github.com/terraform-providers/terraform-provider-google v1.19.1
 	github.com/terraform-providers/terraform-provider-openstack v0.1.0 // indirect
-	github.com/terraform-providers/terraform-provider-random v2.0.0+incompatible // indirect
 	github.com/terraform-providers/terraform-provider-template v1.0.0 // indirect
 	github.com/terraform-providers/terraform-provider-tls v1.2.0 // indirect
 	github.com/tmc/grpc-websocket-proxy v0.0.0-20171017195756-830351dc03c6 // indirect
@@ -118,7 +114,7 @@ require (
 	golang.org/x/crypto v0.0.0-20181126163421-e657309f52e7 // indirect
 	golang.org/x/oauth2 v0.0.0-20181120190819-8f65e3013eba
 	golang.org/x/time v0.0.0-20181108054448-85acf8d2951c // indirect
-	google.golang.org/api v0.0.0-20181126212806-8970221fa08d
+	google.golang.org/api v0.0.0-20181212003324-40e757e92c52
 	google.golang.org/genproto v0.0.0-20181109154231-b5d43981345b
 	gopkg.in/vmihailenco/msgpack.v2 v2.9.1 // indirect
 )

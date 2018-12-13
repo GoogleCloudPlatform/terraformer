@@ -110,9 +110,10 @@ Process for generate tf + tfstate files
 
 #####Infrastructure
 1. Create empty(only IDs) tfstate file.
-2. Run terraform refresh with this tfstate file.
-3. Convert tfstate files to Go struct.
+2. Call to provider for refresh method and get all data
+3. Convert refresh data to go struct
 4. Generate HCL file - tf files.
+5. Generate tfstate files
 
 All mapping of resource make by providers and terraform. Any upgrade need only for providers.
  

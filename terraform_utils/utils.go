@@ -15,16 +15,21 @@
 package terraform_utils
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"os"
+	"strings"
+	"sync"
 
 	"github.com/hashicorp/terraform/backend"
 	"github.com/hashicorp/terraform/command"
 	"github.com/hashicorp/terraform/config"
-	"github.com/mitchellh/cli"
-
+	tfplugin "github.com/hashicorp/terraform/plugin"
+	"github.com/hashicorp/terraform/plugin/discovery"
 	"github.com/hashicorp/terraform/terraform"
+	"github.com/mitchellh/cli"
 )
 
 type BaseResource struct {
@@ -33,7 +38,7 @@ type BaseResource struct {
 
 // Generate tfstate empty and populate with terraform refresh all data
 func GenerateTfState(resources []TerraformResource) error {
-	tfState := newTfState(resources)
+	tfState := NewTfState(resources)
 	firstState, err := json.MarshalIndent(tfState, "", "  ")
 	if err != nil {
 		return err
@@ -79,17 +84,8 @@ func GenerateTfState(resources []TerraformResource) error {
 	return nil
 }
 
-// print and write HCL to file
-func GenerateTf(resources []TerraformResource, resourceName string, provider map[string]interface{}) error {
-	data, err := HclPrint(resources, provider)
-	if err != nil {
-		return err
-	}
-	return ioutil.WriteFile(resourceName+".tf", data, os.ModePerm)
-}
-
-func newTfState(resources []TerraformResource) terraform.State {
-	tfstate := terraform.State{
+func NewTfState(resources []TerraformResource) *terraform.State {
+	tfstate := &terraform.State{
 		Version:   terraform.StateVersion,
 		TFVersion: terraform.VersionString(),
 		Serial:    1,
@@ -102,14 +98,96 @@ func newTfState(resources []TerraformResource) terraform.State {
 	}
 	for _, resource := range resources {
 		resourceState := &terraform.ResourceState{
-			Type: resource.ResourceType,
-			Primary: &terraform.InstanceState{
-				ID:         resource.ID,
-				Attributes: resource.Attributes,
-			},
+			Type:     resource.ResourceType,
+			Primary:  resource.InstanceState,
 			Provider: "provider." + resource.Provider,
 		}
 		tfstate.Modules[0].Resources[resource.ResourceType+"."+resource.ResourceName] = resourceState
 	}
 	return tfstate
+}
+
+func PrintTfState(resources []TerraformResource) ([]byte, error) {
+	state := NewTfState(resources)
+	var buf bytes.Buffer
+	err := terraform.WriteState(state, &buf)
+	return buf.Bytes(), err
+}
+
+func GetProvider(providerName string) (terraform.ResourceProvider, error) {
+	pluginPath := os.Getenv("HOME") + "/." + command.DefaultPluginVendorDir
+	files, err := ioutil.ReadDir(pluginPath)
+	if err != nil {
+		return nil, err
+	}
+	providerFileName := ""
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
+		if strings.HasPrefix(file.Name(), "terraform-provider-"+providerName) {
+			providerFileName = pluginPath + "/" + file.Name()
+		}
+	}
+	client := tfplugin.Client(discovery.PluginMeta{Path: providerFileName})
+	rpcClient, err := client.Client()
+	if err != nil {
+		return nil, err
+	}
+
+	raw, err := rpcClient.Dispense(tfplugin.ProviderPluginName)
+	if err != nil {
+		return nil, err
+	}
+
+	provider := raw.(terraform.ResourceProvider)
+	err = provider.Configure(&terraform.ResourceConfig{})
+	return provider, err
+}
+
+func RefreshResources(provider terraform.ResourceProvider, cloudResources []TerraformResource) []TerraformResource {
+	refreshedResources := []TerraformResource{}
+	input := make(chan TerraformResource, 100)
+	output := make(chan *terraform.InstanceState, 100)
+	var wg sync.WaitGroup
+	done := make(chan bool)
+	go func() {
+		for _, r := range cloudResources {
+			input <- r
+		}
+		close(input)
+	}()
+	go func() {
+		tmp := append([]TerraformResource{}, cloudResources...)
+		for state := range output {
+			if state == nil || state.ID == "" {
+				continue
+			}
+			for _, r := range tmp {
+				if r.ID == state.ID {
+					log.Println(state.ID, r)
+					r.InstanceState = state
+					refreshedResources = append(refreshedResources, r)
+					break
+				}
+			}
+		}
+		done <- true
+	}()
+	for i := 0; i < 10; i++ {
+		wg.Add(1)
+		go RefreshResource(provider, input, output, &wg)
+	}
+	wg.Wait()
+	close(output)
+	<-done
+	return refreshedResources
+}
+
+func RefreshResource(provider terraform.ResourceProvider, input chan TerraformResource, output chan *terraform.InstanceState, wg *sync.WaitGroup) {
+	for r := range input {
+		state, _ := provider.Refresh(r.InstanceInfo, r.InstanceState)
+		output <- state
+	}
+	wg.Done()
 }

@@ -15,16 +15,15 @@
 package terraform_utils
 
 import (
-	"log"
 	"regexp"
 	"strings"
 
 	"github.com/hashicorp/terraform/flatmap"
 )
 
-type TfstateConverter struct{}
+type InstanceStateConverter struct{}
 
-func (c TfstateConverter) Convert(resources []TerraformResource, metadata map[string]ResourceMetaData) ([]TerraformResource, error) {
+func (c InstanceStateConverter) Convert(resources []TerraformResource, metadata map[string]ResourceMetaData) ([]TerraformResource, error) {
 	newResources := []TerraformResource{}
 	// read full tfstate file
 	//data, err := ioutil.ReadFile(pathToTfstate)
@@ -96,6 +95,5 @@ func (c TfstateConverter) Convert(resources []TerraformResource, metadata map[st
 			Provider:     metadata[resource.InstanceState.ID].Provider,
 		})
 	}
-	log.Println(newResources)
 	return newResources, nil
 }
