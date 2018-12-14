@@ -104,16 +104,15 @@ route53
 Process for generate tf + tfstate files
 1. Call GCP/AWS/other api and get list of resources
 2. Iterate on resources and take only ID(not need mapping fields!!!)
-3. Remove Attributes Reference.
+3. Call to provider for readonly fields
 4. Call to infrastructure and take tf + tfstate.
 
 
 #####Infrastructure
-1. Create empty(only IDs) tfstate file.
-2. Call to provider for refresh method and get all data
-3. Convert refresh data to go struct
-4. Generate HCL file - tf files.
-5. Generate tfstate files
+1. Call to provider for refresh method and get all data
+2. Convert refresh data to go struct
+3. Generate HCL file - tf files.
+4. Generate tfstate files
 
 All mapping of resource make by providers and terraform. Any upgrade need only for providers.
  
