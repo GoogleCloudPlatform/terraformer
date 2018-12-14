@@ -27,16 +27,6 @@ import (
 	"waze/terraformer/terraform_utils"
 )
 
-var backendServicesIgnoreKey = map[string]bool{
-	"^id$":                 true,
-	"^self_link$":          true,
-	"^fingerprint$":        true,
-	"^label_fingerprint$":  true,
-	"^creation_timestamp$": true,
-
-	"region": true,
-}
-
 var backendServicesAllowEmptyValues = map[string]bool{}
 
 var backendServicesAdditionalFields = map[string]string{
@@ -92,7 +82,7 @@ func (g BackendServicesGenerator) Generate(zone string) ([]terraform_utils.Terra
 	backendServicesList := computeService.BackendServices.List(project)
 
 	resources := g.createResources(backendServicesList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, backendServicesIgnoreKey, backendServicesAllowEmptyValues, backendServicesAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), backendServicesAllowEmptyValues, backendServicesAdditionalFields)
 	return resources, metadata, nil
 
 }

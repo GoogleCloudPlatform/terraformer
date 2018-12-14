@@ -27,17 +27,6 @@ import (
 	"waze/terraformer/terraform_utils"
 )
 
-var vpnTunnelsIgnoreKey = map[string]bool{
-	"^id$":                 true,
-	"^self_link$":          true,
-	"^fingerprint$":        true,
-	"^label_fingerprint$":  true,
-	"^creation_timestamp$": true,
-
-	"shared_secret_hash": true,
-	"detailed_status":    true,
-}
-
 var vpnTunnelsAllowEmptyValues = map[string]bool{}
 
 var vpnTunnelsAdditionalFields = map[string]string{
@@ -94,7 +83,7 @@ func (g VpnTunnelsGenerator) Generate(zone string) ([]terraform_utils.TerraformR
 	vpnTunnelsList := computeService.VpnTunnels.List(project, region)
 
 	resources := g.createResources(vpnTunnelsList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, vpnTunnelsIgnoreKey, vpnTunnelsAllowEmptyValues, vpnTunnelsAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), vpnTunnelsAllowEmptyValues, vpnTunnelsAdditionalFields)
 	return resources, metadata, nil
 
 }

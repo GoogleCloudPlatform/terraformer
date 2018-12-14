@@ -15,6 +15,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -35,9 +36,6 @@ func main() {
 		if service == "instanceTemplates" {
 			continue
 		}
-		if service == "instances" {
-			continue
-		}
 		if service == "targetHttpProxies" {
 			continue
 		}
@@ -52,7 +50,7 @@ func main() {
 			os.Exit(1)
 		}
 		rootPath, _ := os.Getwd()
-		currentPath := rootPath + gcp_terraforming.PathForGenerateFiles + zone + "/" + service
+		currentPath := fmt.Sprintf(gcp_terraforming.GenerateFilesFolderPath, rootPath, gcp_terraforming.PathForGenerateFiles, os.Getenv("GOOGLE_CLOUD_PROJECT"), zone, service)
 		if err := os.Chdir(currentPath); err != nil {
 			log.Println(err)
 			os.Exit(1)

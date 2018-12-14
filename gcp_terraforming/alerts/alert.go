@@ -28,13 +28,6 @@ import (
 	monitoringpb "google.golang.org/genproto/googleapis/monitoring/v3"
 )
 
-var alertsIgnoreKey = map[string]bool{
-	"^creation_record":        true,
-	"^name$":                  true,
-	"^id$":                    true,
-	"^conditions.[0-9].name$": true,
-}
-
 var alertsAllowEmptyValues = map[string]bool{}
 
 var alertsAdditionalFields = map[string]string{}
@@ -89,7 +82,7 @@ func (g AlertsGenerator) Generate(zone string) ([]terraform_utils.TerraformResou
 	}
 
 	resources := g.createResources(alertIterator)
-	metadata := terraform_utils.NewResourcesMetaData(resources, alertsIgnoreKey, alertsAllowEmptyValues, alertsAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), alertsAllowEmptyValues, alertsAdditionalFields)
 	return resources, metadata, nil
 
 }

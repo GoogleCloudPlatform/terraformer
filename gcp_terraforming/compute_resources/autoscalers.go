@@ -27,14 +27,6 @@ import (
 	"waze/terraformer/terraform_utils"
 )
 
-var autoscalersIgnoreKey = map[string]bool{
-	"^id$":                 true,
-	"^self_link$":          true,
-	"^fingerprint$":        true,
-	"^label_fingerprint$":  true,
-	"^creation_timestamp$": true,
-}
-
 var autoscalersAllowEmptyValues = map[string]bool{}
 
 var autoscalersAdditionalFields = map[string]string{
@@ -92,7 +84,7 @@ func (g AutoscalersGenerator) Generate(zone string) ([]terraform_utils.Terraform
 	autoscalersList := computeService.Autoscalers.List(project, zone)
 
 	resources := g.createResources(autoscalersList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, autoscalersIgnoreKey, autoscalersAllowEmptyValues, autoscalersAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), autoscalersAllowEmptyValues, autoscalersAdditionalFields)
 	return resources, metadata, nil
 
 }

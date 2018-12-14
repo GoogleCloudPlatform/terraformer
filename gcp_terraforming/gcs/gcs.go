@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-
 	"waze/terraformer/gcp_terraforming/gcp_generator"
 	"waze/terraformer/terraform_utils"
 
@@ -27,16 +26,8 @@ import (
 	"google.golang.org/api/iterator"
 )
 
-var ignoreKey = map[string]bool{
-	"^url$":       true,
-	"^id$":        true,
-	"^self_link$": true,
-	"^etag$":      true,
-}
-
 var allowEmptyValues = map[string]bool{
 	"tags.":          true,
-	"storage_class":  true,
 	"created_before": true,
 }
 
@@ -126,7 +117,7 @@ func (g GcsGenerator) Generate(region string) ([]terraform_utils.TerraformResour
 	bucketIterator := client.Buckets(ctx, projectID)
 
 	resources := g.createResources(bucketIterator)
-	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, additionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), allowEmptyValues, additionalFields)
 	return resources, metadata, nil
 }
 
@@ -144,3 +135,5 @@ POLICY`, policy)
 	}
 	return resources, nil
 }
+
+

@@ -27,14 +27,6 @@ import (
 	"waze/terraformer/terraform_utils"
 )
 
-var imagesIgnoreKey = map[string]bool{
-	"^id$":                 true,
-	"^self_link$":          true,
-	"^fingerprint$":        true,
-	"^label_fingerprint$":  true,
-	"^creation_timestamp$": true,
-}
-
 var imagesAllowEmptyValues = map[string]bool{}
 
 var imagesAdditionalFields = map[string]string{
@@ -91,7 +83,7 @@ func (g ImagesGenerator) Generate(zone string) ([]terraform_utils.TerraformResou
 	imagesList := computeService.Images.List(project)
 
 	resources := g.createResources(imagesList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, imagesIgnoreKey, imagesAllowEmptyValues, imagesAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), imagesAllowEmptyValues, imagesAdditionalFields)
 	return resources, metadata, nil
 
 }

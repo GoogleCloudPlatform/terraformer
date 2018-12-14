@@ -176,9 +176,8 @@ func HclPrint(resources []TerraformResource, provider map[string]interface{}) ([
 		}
 
 		tfName := TfSanitize(res.ResourceName)
-
 		if r[tfName] != nil {
-			return []byte{}, fmt.Errorf("duplicate resource found: %s.%s", res.ResourceType, tfName)
+			return []byte{}, fmt.Errorf("[ERR]: duplicate resource found: %s.%s", res.ResourceType, tfName)
 		}
 
 		r[tfName] = res.Item

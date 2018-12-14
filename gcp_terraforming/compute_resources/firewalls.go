@@ -27,14 +27,6 @@ import (
 	"waze/terraformer/terraform_utils"
 )
 
-var firewallsIgnoreKey = map[string]bool{
-	"^id$":                 true,
-	"^self_link$":          true,
-	"^fingerprint$":        true,
-	"^label_fingerprint$":  true,
-	"^creation_timestamp$": true,
-}
-
 var firewallsAllowEmptyValues = map[string]bool{}
 
 var firewallsAdditionalFields = map[string]string{
@@ -91,7 +83,7 @@ func (g FirewallsGenerator) Generate(zone string) ([]terraform_utils.TerraformRe
 	firewallsList := computeService.Firewalls.List(project)
 
 	resources := g.createResources(firewallsList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, firewallsIgnoreKey, firewallsAllowEmptyValues, firewallsAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), firewallsAllowEmptyValues, firewallsAdditionalFields)
 	return resources, metadata, nil
 
 }

@@ -18,16 +18,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"os"
-	"strings"
 	"sync"
+	"waze/terraformer/terraform_utils/provider_wrapper"
 
 	"github.com/hashicorp/terraform/backend"
 	"github.com/hashicorp/terraform/command"
 	"github.com/hashicorp/terraform/config"
-	tfplugin "github.com/hashicorp/terraform/plugin"
-	"github.com/hashicorp/terraform/plugin/discovery"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/mitchellh/cli"
 )
@@ -114,80 +111,35 @@ func PrintTfState(resources []TerraformResource) ([]byte, error) {
 	return buf.Bytes(), err
 }
 
-func GetProvider(providerName string) (terraform.ResourceProvider, error) {
-	pluginPath := os.Getenv("HOME") + "/." + command.DefaultPluginVendorDir
-	files, err := ioutil.ReadDir(pluginPath)
-	if err != nil {
-		return nil, err
-	}
-	providerFileName := ""
-	for _, file := range files {
-		if file.IsDir() {
-			continue
-		}
-		if strings.HasPrefix(file.Name(), "terraform-provider-"+providerName) {
-			providerFileName = pluginPath + "/" + file.Name()
-		}
-	}
-	client := tfplugin.Client(discovery.PluginMeta{Path: providerFileName})
-	rpcClient, err := client.Client()
-	if err != nil {
-		return nil, err
-	}
-
-	raw, err := rpcClient.Dispense(tfplugin.ProviderPluginName)
-	if err != nil {
-		return nil, err
-	}
-
-	provider := raw.(terraform.ResourceProvider)
-	err = provider.Configure(&terraform.ResourceConfig{})
-	return provider, err
-}
-
-func RefreshResources(provider terraform.ResourceProvider, cloudResources []TerraformResource) []TerraformResource {
+func RefreshResources(cloudResources []TerraformResource, providerName string) ([]TerraformResource, error) {
 	refreshedResources := []TerraformResource{}
-	input := make(chan TerraformResource, 100)
-	output := make(chan *terraform.InstanceState, 100)
+	input := make(chan *TerraformResource, 100)
+	provider, err := provider_wrapper.NewProviderWrapper(providerName)
+	if err != nil {
+		return refreshedResources, err
+	}
+	defer provider.Kill()
 	var wg sync.WaitGroup
-	done := make(chan bool)
-	go func() {
-		for _, r := range cloudResources {
-			input <- r
-		}
-		close(input)
-	}()
-	go func() {
-		tmp := append([]TerraformResource{}, cloudResources...)
-		for state := range output {
-			if state == nil || state.ID == "" {
-				continue
-			}
-			for _, r := range tmp {
-				if r.ID == state.ID {
-					log.Println(state.ID, r)
-					r.InstanceState = state
-					refreshedResources = append(refreshedResources, r)
-					break
-				}
-			}
-		}
-		done <- true
-	}()
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 20; i++ {
+		go RefreshResourceWorker(input, &wg, provider)
+	}
+	for i := range cloudResources {
 		wg.Add(1)
-		go RefreshResource(provider, input, output, &wg)
+		input <- &cloudResources[i]
 	}
 	wg.Wait()
-	close(output)
-	<-done
-	return refreshedResources
+	close(input)
+	for _, r := range cloudResources {
+		if r.InstanceState != nil && r.InstanceState.ID != "" {
+			refreshedResources = append(refreshedResources, r)
+		}
+	}
+	return refreshedResources, nil
 }
 
-func RefreshResource(provider terraform.ResourceProvider, input chan TerraformResource, output chan *terraform.InstanceState, wg *sync.WaitGroup) {
+func RefreshResourceWorker(input chan *TerraformResource, wg *sync.WaitGroup, provider *provider_wrapper.ProviderWrapper) {
 	for r := range input {
-		state, _ := provider.Refresh(r.InstanceInfo, r.InstanceState)
-		output <- state
+		r.Refresh(provider)
+		wg.Done()
 	}
-	wg.Done()
 }

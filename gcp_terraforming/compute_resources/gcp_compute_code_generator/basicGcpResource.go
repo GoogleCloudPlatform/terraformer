@@ -16,7 +16,6 @@ package main
 
 type gcpResourceRenderble interface {
 	getTerraformName() string
-	getIgnoreKeys() []string
 	getAdditionalFields() map[string]string
 	getAllowEmptyValues() []string
 	ifNeedRegion() bool
@@ -27,7 +26,6 @@ type gcpResourceRenderble interface {
 
 type basicGCPResource struct {
 	terraformName              string
-	ignoreKeys                 []string
 	allowEmptyValues           []string
 	additionalFields           map[string]string
 	additionalFieldsForRefresh map[string]string
@@ -35,10 +33,6 @@ type basicGCPResource struct {
 
 func (b basicGCPResource) getTerraformName() string {
 	return b.terraformName
-}
-
-func (b basicGCPResource) getIgnoreKeys() []string {
-	return b.ignoreKeys
 }
 
 func (b basicGCPResource) getAdditionalFields() map[string]string {

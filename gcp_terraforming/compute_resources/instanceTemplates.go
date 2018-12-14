@@ -27,16 +27,6 @@ import (
 	"waze/terraformer/terraform_utils"
 )
 
-var instanceTemplatesIgnoreKey = map[string]bool{
-	"^id$":                 true,
-	"^self_link$":          true,
-	"^fingerprint$":        true,
-	"^label_fingerprint$":  true,
-	"^creation_timestamp$": true,
-
-	"tags_fingerprint": true,
-}
-
 var instanceTemplatesAllowEmptyValues = map[string]bool{}
 
 var instanceTemplatesAdditionalFields = map[string]string{
@@ -93,7 +83,7 @@ func (g InstanceTemplatesGenerator) Generate(zone string) ([]terraform_utils.Ter
 	instanceTemplatesList := computeService.InstanceTemplates.List(project)
 
 	resources := g.createResources(instanceTemplatesList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, instanceTemplatesIgnoreKey, instanceTemplatesAllowEmptyValues, instanceTemplatesAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), instanceTemplatesAllowEmptyValues, instanceTemplatesAdditionalFields)
 	return resources, metadata, nil
 
 }

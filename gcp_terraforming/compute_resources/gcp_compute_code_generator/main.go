@@ -56,16 +56,6 @@ import (
 	"google.golang.org/api/compute/v1"
 )
 
-var {{.resource}}IgnoreKey = map[string]bool{
-	"^id$":                 	true,
-	"^self_link$":          	true,
-	"^fingerprint$": 		true,
-	"^label_fingerprint$": 	true,
-	"^creation_timestamp$": 	true,
-	{{ range $value := .ignoreKeys}}
-	"{{$value}}":			true,{{end}}
-}
-
 var {{.resource}}AllowEmptyValues = map[string]bool{
 {{ range $value := .allowEmptyValues }}
 	"{{$value}}":		true,
@@ -131,7 +121,7 @@ func (g {{.titleResourceName}}Generator) Generate(zone string) ([]terraform_util
 	{{.resource}}List := computeService.{{.titleResourceName}}.List({{.parameterOrder}})
 
 	resources := g.createResources({{.resource}}List, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, {{.resource}}IgnoreKey, {{.resource}}AllowEmptyValues, {{.resource}}AdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), {{.resource}}AllowEmptyValues, {{.resource}}AdditionalFields)
 	return resources, metadata, nil
 
 }
@@ -197,7 +187,6 @@ func main() {
 				"resource":                   resource,
 				"responseName":               value.(map[string]interface{})["response"].(map[string]interface{})["$ref"].(string),
 				"terraformName":              terraformResources[resource].getTerraformName(),
-				"ignoreKeys":                 terraformResources[resource].getIgnoreKeys(),
 				"additionalFields":           terraformResources[resource].getAdditionalFields(),
 				"additionalFieldsForRefresh": terraformResources[resource].getAdditionalFieldsForRefresh(),
 				"allowEmptyValues":           terraformResources[resource].getAllowEmptyValues(),

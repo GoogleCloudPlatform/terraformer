@@ -27,21 +27,6 @@ import (
 	"waze/terraformer/terraform_utils"
 )
 
-var instancesIgnoreKey = map[string]bool{
-	"^id$":                 true,
-	"^self_link$":          true,
-	"^fingerprint$":        true,
-	"^label_fingerprint$":  true,
-	"^creation_timestamp$": true,
-
-	"^instance_id":          true,
-	"^metadata_fingerprint": true,
-	"^tags_fingerprint":     true,
-	"^cpu_platform":         true,
-	"^network_interface.0.access_config.0.assigned_nat_ip": true,
-	"^network_interface.0.name":                            true,
-}
-
 var instancesAllowEmptyValues = map[string]bool{
 
 	"labels.": true,
@@ -104,7 +89,7 @@ func (g InstancesGenerator) Generate(zone string) ([]terraform_utils.TerraformRe
 	instancesList := computeService.Instances.List(project, zone)
 
 	resources := g.createResources(instancesList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, instancesIgnoreKey, instancesAllowEmptyValues, instancesAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), instancesAllowEmptyValues, instancesAdditionalFields)
 	return resources, metadata, nil
 
 }

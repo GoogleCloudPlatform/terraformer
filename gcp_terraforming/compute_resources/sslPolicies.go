@@ -27,16 +27,6 @@ import (
 	"waze/terraformer/terraform_utils"
 )
 
-var sslPoliciesIgnoreKey = map[string]bool{
-	"^id$":                 true,
-	"^self_link$":          true,
-	"^fingerprint$":        true,
-	"^label_fingerprint$":  true,
-	"^creation_timestamp$": true,
-
-	"enabled_features": true,
-}
-
 var sslPoliciesAllowEmptyValues = map[string]bool{}
 
 var sslPoliciesAdditionalFields = map[string]string{
@@ -93,7 +83,7 @@ func (g SslPoliciesGenerator) Generate(zone string) ([]terraform_utils.Terraform
 	sslPoliciesList := computeService.SslPolicies.List(project)
 
 	resources := g.createResources(sslPoliciesList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, sslPoliciesIgnoreKey, sslPoliciesAllowEmptyValues, sslPoliciesAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), sslPoliciesAllowEmptyValues, sslPoliciesAdditionalFields)
 	return resources, metadata, nil
 
 }

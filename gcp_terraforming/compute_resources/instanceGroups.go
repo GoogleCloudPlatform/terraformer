@@ -27,16 +27,6 @@ import (
 	"waze/terraformer/terraform_utils"
 )
 
-var instanceGroupsIgnoreKey = map[string]bool{
-	"^id$":                 true,
-	"^self_link$":          true,
-	"^fingerprint$":        true,
-	"^label_fingerprint$":  true,
-	"^creation_timestamp$": true,
-
-	"size": true,
-}
-
 var instanceGroupsAllowEmptyValues = map[string]bool{}
 
 var instanceGroupsAdditionalFields = map[string]string{
@@ -94,7 +84,7 @@ func (g InstanceGroupsGenerator) Generate(zone string) ([]terraform_utils.Terraf
 	instanceGroupsList := computeService.InstanceGroups.List(project, zone)
 
 	resources := g.createResources(instanceGroupsList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, instanceGroupsIgnoreKey, instanceGroupsAllowEmptyValues, instanceGroupsAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), instanceGroupsAllowEmptyValues, instanceGroupsAdditionalFields)
 	return resources, metadata, nil
 
 }

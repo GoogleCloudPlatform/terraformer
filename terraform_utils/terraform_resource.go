@@ -16,6 +16,7 @@ package terraform_utils
 
 import (
 	"fmt"
+	"waze/terraformer/terraform_utils/provider_wrapper"
 
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -48,4 +49,8 @@ func NewTerraformResource(ID, resourceName, resourceType, provider string, item 
 			Id:   fmt.Sprintf("%s.%s", resourceType, TfSanitize(resourceName)),
 		},
 	}
+}
+
+func (r *TerraformResource) Refresh(provider *provider_wrapper.ProviderWrapper) {
+	r.InstanceState, _ = provider.Refresh(r.InstanceInfo, r.InstanceState)
 }

@@ -27,20 +27,6 @@ import (
 	"waze/terraformer/terraform_utils"
 )
 
-var disksIgnoreKey = map[string]bool{
-	"^id$":                 true,
-	"^self_link$":          true,
-	"^fingerprint$":        true,
-	"^label_fingerprint$":  true,
-	"^creation_timestamp$": true,
-
-	"last_attach_timestamp": true,
-	"last_detach_timestamp": true,
-	"users":                 true,
-	"source_image_id":       true,
-	"source_snapshot_id":    true,
-}
-
 var disksAllowEmptyValues = map[string]bool{}
 
 var disksAdditionalFields = map[string]string{
@@ -98,7 +84,7 @@ func (g DisksGenerator) Generate(zone string) ([]terraform_utils.TerraformResour
 	disksList := computeService.Disks.List(project, zone)
 
 	resources := g.createResources(disksList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, disksIgnoreKey, disksAllowEmptyValues, disksAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), disksAllowEmptyValues, disksAdditionalFields)
 	return resources, metadata, nil
 
 }

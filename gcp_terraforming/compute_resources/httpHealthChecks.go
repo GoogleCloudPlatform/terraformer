@@ -27,14 +27,6 @@ import (
 	"waze/terraformer/terraform_utils"
 )
 
-var httpHealthChecksIgnoreKey = map[string]bool{
-	"^id$":                 true,
-	"^self_link$":          true,
-	"^fingerprint$":        true,
-	"^label_fingerprint$":  true,
-	"^creation_timestamp$": true,
-}
-
 var httpHealthChecksAllowEmptyValues = map[string]bool{}
 
 var httpHealthChecksAdditionalFields = map[string]string{
@@ -91,7 +83,7 @@ func (g HttpHealthChecksGenerator) Generate(zone string) ([]terraform_utils.Terr
 	httpHealthChecksList := computeService.HttpHealthChecks.List(project)
 
 	resources := g.createResources(httpHealthChecksList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, httpHealthChecksIgnoreKey, httpHealthChecksAllowEmptyValues, httpHealthChecksAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), httpHealthChecksAllowEmptyValues, httpHealthChecksAdditionalFields)
 	return resources, metadata, nil
 
 }

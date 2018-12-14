@@ -27,18 +27,6 @@ import (
 	"waze/terraformer/terraform_utils"
 )
 
-var addressesIgnoreKey = map[string]bool{
-	"^id$":                 true,
-	"^self_link$":          true,
-	"^fingerprint$":        true,
-	"^label_fingerprint$":  true,
-	"^creation_timestamp$": true,
-
-	"type":    true,
-	"users":   true,
-	"address": true,
-}
-
 var addressesAllowEmptyValues = map[string]bool{}
 
 var addressesAdditionalFields = map[string]string{
@@ -95,7 +83,7 @@ func (g AddressesGenerator) Generate(zone string) ([]terraform_utils.TerraformRe
 	addressesList := computeService.Addresses.List(project, region)
 
 	resources := g.createResources(addressesList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, addressesIgnoreKey, addressesAllowEmptyValues, addressesAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), addressesAllowEmptyValues, addressesAdditionalFields)
 	return resources, metadata, nil
 
 }

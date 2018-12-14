@@ -27,16 +27,6 @@ import (
 	"waze/terraformer/terraform_utils"
 )
 
-var forwardingRulesIgnoreKey = map[string]bool{
-	"^id$":                 true,
-	"^self_link$":          true,
-	"^fingerprint$":        true,
-	"^label_fingerprint$":  true,
-	"^creation_timestamp$": true,
-
-	"service_name": true,
-}
-
 var forwardingRulesAllowEmptyValues = map[string]bool{}
 
 var forwardingRulesAdditionalFields = map[string]string{
@@ -93,7 +83,7 @@ func (g ForwardingRulesGenerator) Generate(zone string) ([]terraform_utils.Terra
 	forwardingRulesList := computeService.ForwardingRules.List(project, region)
 
 	resources := g.createResources(forwardingRulesList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, forwardingRulesIgnoreKey, forwardingRulesAllowEmptyValues, forwardingRulesAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), forwardingRulesAllowEmptyValues, forwardingRulesAdditionalFields)
 	return resources, metadata, nil
 
 }

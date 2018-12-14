@@ -14,7 +14,11 @@
 
 package gcp_generator
 
-import "waze/terraformer/terraform_utils"
+import (
+	"log"
+	"waze/terraformer/terraform_utils"
+	"waze/terraformer/terraform_utils/provider_wrapper"
+)
 
 type Generator interface {
 	Generate(zone string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error)
@@ -29,4 +33,23 @@ func (BasicGenerator) Generate(region string) ([]terraform_utils.TerraformResour
 
 func (BasicGenerator) PostGenerateHook(resources []terraform_utils.TerraformResource) ([]terraform_utils.TerraformResource, error) {
 	return resources, nil
+}
+
+func (BasicGenerator) IgnoreKeys(resources []terraform_utils.TerraformResource) map[string][]string {
+	p, err := provider_wrapper.NewProviderWrapper("google")
+	if err != nil {
+		log.Println(err)
+		return map[string][]string{}
+	}
+	defer p.Kill()
+	resourcesTypes := []string{}
+	for _, k := range resources {
+		resourcesTypes = append(resourcesTypes, k.ResourceType)
+	}
+	readOnlyAttributes, err := p.GetReadOnlyAttributes(resourcesTypes)
+	if err != nil {
+		log.Println(err)
+		return map[string][]string{}
+	}
+	return readOnlyAttributes
 }

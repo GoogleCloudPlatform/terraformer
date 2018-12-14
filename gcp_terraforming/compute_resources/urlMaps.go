@@ -27,16 +27,6 @@ import (
 	"waze/terraformer/terraform_utils"
 )
 
-var urlMapsIgnoreKey = map[string]bool{
-	"^id$":                 true,
-	"^self_link$":          true,
-	"^fingerprint$":        true,
-	"^label_fingerprint$":  true,
-	"^creation_timestamp$": true,
-
-	"map_id": true,
-}
-
 var urlMapsAllowEmptyValues = map[string]bool{}
 
 var urlMapsAdditionalFields = map[string]string{
@@ -93,7 +83,7 @@ func (g UrlMapsGenerator) Generate(zone string) ([]terraform_utils.TerraformReso
 	urlMapsList := computeService.UrlMaps.List(project)
 
 	resources := g.createResources(urlMapsList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, urlMapsIgnoreKey, urlMapsAllowEmptyValues, urlMapsAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), urlMapsAllowEmptyValues, urlMapsAdditionalFields)
 	return resources, metadata, nil
 
 }

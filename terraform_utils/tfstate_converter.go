@@ -48,9 +48,9 @@ func (c InstanceStateConverter) Convert(resources []TerraformResource, metadata 
 				delete(resource.InstanceState.Attributes, key)
 			}
 		}
-		// delete ignored keys by regex patter
+		// delete ignored keys
 		for keyAttribute := range resource.InstanceState.Attributes {
-			for patter := range metadata[resource.InstanceState.ID].IgnoreKeys {
+			for _, patter := range metadata[resource.InstanceState.ID].IgnoreKeys[resource.ResourceType] {
 				match, err := regexp.MatchString(patter, keyAttribute)
 				if match && err == nil {
 					delete(resource.InstanceState.Attributes, keyAttribute)

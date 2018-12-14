@@ -27,16 +27,6 @@ import (
 	"waze/terraformer/terraform_utils"
 )
 
-var targetTcpProxiesIgnoreKey = map[string]bool{
-	"^id$":                 true,
-	"^self_link$":          true,
-	"^fingerprint$":        true,
-	"^label_fingerprint$":  true,
-	"^creation_timestamp$": true,
-
-	"proxy_id": true,
-}
-
 var targetTcpProxiesAllowEmptyValues = map[string]bool{}
 
 var targetTcpProxiesAdditionalFields = map[string]string{
@@ -93,7 +83,7 @@ func (g TargetTcpProxiesGenerator) Generate(zone string) ([]terraform_utils.Terr
 	targetTcpProxiesList := computeService.TargetTcpProxies.List(project)
 
 	resources := g.createResources(targetTcpProxiesList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, targetTcpProxiesIgnoreKey, targetTcpProxiesAllowEmptyValues, targetTcpProxiesAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), targetTcpProxiesAllowEmptyValues, targetTcpProxiesAdditionalFields)
 	return resources, metadata, nil
 
 }

@@ -27,16 +27,6 @@ import (
 	"waze/terraformer/terraform_utils"
 )
 
-var subnetworksIgnoreKey = map[string]bool{
-	"^id$":                 true,
-	"^self_link$":          true,
-	"^fingerprint$":        true,
-	"^label_fingerprint$":  true,
-	"^creation_timestamp$": true,
-
-	"gateway_address": true,
-}
-
 var subnetworksAllowEmptyValues = map[string]bool{}
 
 var subnetworksAdditionalFields = map[string]string{
@@ -93,7 +83,7 @@ func (g SubnetworksGenerator) Generate(zone string) ([]terraform_utils.Terraform
 	subnetworksList := computeService.Subnetworks.List(project, region)
 
 	resources := g.createResources(subnetworksList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, subnetworksIgnoreKey, subnetworksAllowEmptyValues, subnetworksAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), subnetworksAllowEmptyValues, subnetworksAdditionalFields)
 	return resources, metadata, nil
 
 }

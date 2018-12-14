@@ -27,16 +27,6 @@ import (
 	"waze/terraformer/terraform_utils"
 )
 
-var instanceGroupManagersIgnoreKey = map[string]bool{
-	"^id$":                 true,
-	"^self_link$":          true,
-	"^fingerprint$":        true,
-	"^label_fingerprint$":  true,
-	"^creation_timestamp$": true,
-
-	"^instance_group$": true,
-}
-
 var instanceGroupManagersAllowEmptyValues = map[string]bool{
 
 	"^version.[0-9].name": true,
@@ -99,7 +89,7 @@ func (g InstanceGroupManagersGenerator) Generate(zone string) ([]terraform_utils
 	instanceGroupManagersList := computeService.InstanceGroupManagers.List(project, zone)
 
 	resources := g.createResources(instanceGroupManagersList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, instanceGroupManagersIgnoreKey, instanceGroupManagersAllowEmptyValues, instanceGroupManagersAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), instanceGroupManagersAllowEmptyValues, instanceGroupManagersAdditionalFields)
 	return resources, metadata, nil
 
 }

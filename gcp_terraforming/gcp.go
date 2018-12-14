@@ -16,7 +16,7 @@ package gcp_terraforming
 
 import (
 	"errors"
-
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -31,10 +31,12 @@ import (
 )
 
 const PathForGenerateFiles = "/generated/gcp/"
+const GenerateFilesFolderPath = "%s%s%s/%s/%s"
 
 // GetGCPSupportService return map of support service for GCP
 func GetGCPSupportService() map[string]gcp_generator.Generator {
-	services := computeTerrforming.ComputeService
+	services := map[string]gcp_generator.Generator{}
+	services = computeTerrforming.ComputeService
 	services["gcs"] = gcs.GcsGenerator{}
 	services["alerts"] = alerts.AlertsGenerator{}
 	services["iam"] = iam.IamGenerator{}
@@ -47,22 +49,17 @@ func Generate(service string, args []string) error {
 	var generator gcp_generator.Generator
 	var isSupported bool
 	if generator, isSupported = GetGCPSupportService()[service]; !isSupported {
-		return errors.New("gcp: not supported service")
+		return errors.New("gcp: " + service + " not supported service")
 	}
 	// check projectName in env params
 	projectName := os.Getenv("GOOGLE_CLOUD_PROJECT")
 	if projectName == "" {
 		return errors.New("google cloud project name must be set")
 	}
-	// try connect to provider in $HOME/.terraform.d/....
-	provider, err := terraform_utils.GetProvider("google")
-	if err != nil {
-		return err
-	}
 
 	zone := args[0]
 	rootPath, _ := os.Getwd()
-	currentPath := rootPath + PathForGenerateFiles + projectName + "/" + zone + "/" + service
+	currentPath := fmt.Sprintf(GenerateFilesFolderPath, rootPath, PathForGenerateFiles, projectName, zone, service)
 	if err := os.MkdirAll(currentPath, os.ModePerm); err != nil {
 		log.Print(err)
 		return err
@@ -72,12 +69,13 @@ func Generate(service string, args []string) error {
 	if err != nil {
 		return err
 	}
-
 	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
 	providerObject := NewGcpRegionResource(region)
 
-	refreshedResources := terraform_utils.RefreshResources(provider, cloudResources)
-
+	refreshedResources, err := terraform_utils.RefreshResources(cloudResources, "google")
+	if err != nil {
+		return err
+	}
 	// create tfstate
 	tfstateFile, err := terraform_utils.PrintTfState(refreshedResources)
 	if err != nil {

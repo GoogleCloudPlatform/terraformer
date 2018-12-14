@@ -30,11 +30,6 @@ import (
 	"google.golang.org/api/dns/v1"
 )
 
-var cloudDNSIgnoreKey = map[string]bool{
-	"^id$":          true,
-	"^name_servers": true,
-}
-
 var cloudDNSAllowEmptyValues = map[string]bool{}
 
 var cloudDNSAdditionalFields = map[string]string{}
@@ -77,7 +72,7 @@ func (CloudDNSGenerator) createRecordsResources(ctx context.Context, svc *dns.Se
 		for _, record := range listDNS.Rrsets {
 			resources = append(resources, terraform_utils.NewTerraformResource(
 				fmt.Sprintf("%s/%s/%s", zoneName, record.Name, record.Type),
-				strings.TrimSuffix(record.Name, "."),
+				strings.TrimSuffix(record.Name+"-"+record.Type, "."),
 				"google_dns_record_set",
 				"google",
 				nil,
@@ -111,7 +106,7 @@ func (g CloudDNSGenerator) Generate(zone string) ([]terraform_utils.TerraformRes
 	}
 
 	resources := g.createZonesResources(ctx, svc, project)
-	metadata := terraform_utils.NewResourcesMetaData(resources, cloudDNSIgnoreKey, cloudDNSAllowEmptyValues, cloudDNSAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), cloudDNSAllowEmptyValues, cloudDNSAdditionalFields)
 	return resources, metadata, nil
 }
 

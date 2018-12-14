@@ -28,15 +28,6 @@ import (
 	"google.golang.org/api/iterator"
 )
 
-var ignoreKey = map[string]bool{
-	"url":       true,
-	"id":        true,
-	"self_link": true,
-	"unique_id": true,
-	"email":     true,
-	"name":      true,
-}
-
 var allowEmptyValues = map[string]bool{
 	"tags.": true,
 }
@@ -84,7 +75,7 @@ func (g IamGenerator) Generate(region string) ([]terraform_utils.TerraformResour
 	serviceAccountsIterator := client.ListServiceAccounts(ctx, &adminpb.ListServiceAccountsRequest{Name: "projects/" + projectID})
 
 	resources := g.createResources(serviceAccountsIterator)
-	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, additionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), allowEmptyValues, additionalFields)
 	return resources, metadata, nil
 
 }
