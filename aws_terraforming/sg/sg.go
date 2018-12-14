@@ -80,7 +80,7 @@ func (g SecurityGenerator) Generate(region string) ([]terraform_utils.TerraformR
 		}
 	}
 	resources := g.createResources(securityGroups)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), allowEmptyValues, map[string]string{})
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "aws"), allowEmptyValues, map[string]string{})
 	return resources, metadata, nil
 }
 
@@ -103,8 +103,8 @@ func (g SecurityGenerator) PostGenerateHook(resources []terraform_utils.Terrafor
 					for _, securityGroup := range securityGroups {
 						found := false
 						for _, i := range resources {
-							if i.ID == securityGroup {
-								renamedSecurityGroups = append(renamedSecurityGroups, "${"+i.ResourceType+"."+i.ResourceName+".id}")
+							if i.InstanceState.ID == securityGroup {
+								renamedSecurityGroups = append(renamedSecurityGroups, "${"+i.InstanceInfo.Type+"."+i.ResourceName+".id}")
 								found = true
 								break
 							}

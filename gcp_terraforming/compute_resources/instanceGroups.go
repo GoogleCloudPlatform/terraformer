@@ -84,7 +84,7 @@ func (g InstanceGroupsGenerator) Generate(zone string) ([]terraform_utils.Terraf
 	instanceGroupsList := computeService.InstanceGroups.List(project, zone)
 
 	resources := g.createResources(instanceGroupsList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), instanceGroupsAllowEmptyValues, instanceGroupsAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), instanceGroupsAllowEmptyValues, instanceGroupsAdditionalFields)
 	return resources, metadata, nil
 
 }

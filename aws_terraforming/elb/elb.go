@@ -55,7 +55,7 @@ func (g ElbGenerator) Generate(region string) ([]terraform_utils.TerraformResour
 	if err != nil {
 		return []terraform_utils.TerraformResource{}, map[string]terraform_utils.ResourceMetaData{}, err
 	}
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), allowEmptyValues, map[string]string{})
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "aws"), allowEmptyValues, map[string]string{})
 	return resources, metadata, nil
 
 }

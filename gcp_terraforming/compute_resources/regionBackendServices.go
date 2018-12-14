@@ -83,7 +83,7 @@ func (g RegionBackendServicesGenerator) Generate(zone string) ([]terraform_utils
 	regionBackendServicesList := computeService.RegionBackendServices.List(project, region)
 
 	resources := g.createResources(regionBackendServicesList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), regionBackendServicesAllowEmptyValues, regionBackendServicesAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), regionBackendServicesAllowEmptyValues, regionBackendServicesAdditionalFields)
 	return resources, metadata, nil
 
 }

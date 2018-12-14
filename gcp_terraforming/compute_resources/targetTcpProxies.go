@@ -83,7 +83,7 @@ func (g TargetTcpProxiesGenerator) Generate(zone string) ([]terraform_utils.Terr
 	targetTcpProxiesList := computeService.TargetTcpProxies.List(project)
 
 	resources := g.createResources(targetTcpProxiesList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), targetTcpProxiesAllowEmptyValues, targetTcpProxiesAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), targetTcpProxiesAllowEmptyValues, targetTcpProxiesAdditionalFields)
 	return resources, metadata, nil
 
 }

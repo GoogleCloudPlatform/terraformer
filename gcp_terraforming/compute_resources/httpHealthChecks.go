@@ -83,7 +83,7 @@ func (g HttpHealthChecksGenerator) Generate(zone string) ([]terraform_utils.Terr
 	httpHealthChecksList := computeService.HttpHealthChecks.List(project)
 
 	resources := g.createResources(httpHealthChecksList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), httpHealthChecksAllowEmptyValues, httpHealthChecksAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), httpHealthChecksAllowEmptyValues, httpHealthChecksAdditionalFields)
 	return resources, metadata, nil
 
 }

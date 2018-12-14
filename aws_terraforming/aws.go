@@ -18,7 +18,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"waze/terraformer/aws_terraforming/aws_generator"
 	"waze/terraformer/aws_terraforming/elb"
 	"waze/terraformer/aws_terraforming/iam"
 	"waze/terraformer/aws_terraforming/igw"
@@ -30,6 +29,7 @@ import (
 	"waze/terraformer/aws_terraforming/vpc"
 	"waze/terraformer/aws_terraforming/vpn_connection"
 	"waze/terraformer/aws_terraforming/vpn_gateway"
+	"waze/terraformer/base_terraforming"
 	"waze/terraformer/terraform_utils"
 
 	"github.com/pkg/errors"
@@ -38,8 +38,8 @@ import (
 const PathForGenerateFiles = "/generated/aws/"
 
 // GetAWSSupportService return map of support service for AWS
-func GetAWSSupportService() map[string]aws_generator.Generator {
-	return map[string]aws_generator.Generator{
+func GetAWSSupportService() map[string]base_terraforming.Generator {
+	return map[string]base_terraforming.Generator{
 		"vpc":            vpc.VpcGenerator{},
 		"sg":             sg.SecurityGenerator{},
 		"subnet":         subnet.SubnetGenerator{},
@@ -56,7 +56,7 @@ func GetAWSSupportService() map[string]aws_generator.Generator {
 
 // Main function for generate tf and tfstate file by AWS service and region
 func Generate(service string, args []string) error {
-	var generator aws_generator.Generator
+	var generator base_terraforming.Generator
 	var isSupported bool
 	if generator, isSupported = GetAWSSupportService()[service]; !isSupported {
 		return errors.New("aws: " + service + "not supported service")
@@ -82,6 +82,7 @@ func Generate(service string, args []string) error {
 	if err != nil {
 		return err
 	}
+
 	// create tfstate
 	tfstateFile, err := terraform_utils.PrintTfState(refreshedResources)
 	if err != nil {

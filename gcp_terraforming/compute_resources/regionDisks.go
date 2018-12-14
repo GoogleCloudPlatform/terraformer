@@ -83,7 +83,7 @@ func (g RegionDisksGenerator) Generate(zone string) ([]terraform_utils.Terraform
 	regionDisksList := computeService.RegionDisks.List(project, region)
 
 	resources := g.createResources(regionDisksList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), regionDisksAllowEmptyValues, regionDisksAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), regionDisksAllowEmptyValues, regionDisksAdditionalFields)
 	return resources, metadata, nil
 
 }

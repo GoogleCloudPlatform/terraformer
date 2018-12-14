@@ -83,7 +83,7 @@ func (g VpnTunnelsGenerator) Generate(zone string) ([]terraform_utils.TerraformR
 	vpnTunnelsList := computeService.VpnTunnels.List(project, region)
 
 	resources := g.createResources(vpnTunnelsList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), vpnTunnelsAllowEmptyValues, vpnTunnelsAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), vpnTunnelsAllowEmptyValues, vpnTunnelsAdditionalFields)
 	return resources, metadata, nil
 
 }

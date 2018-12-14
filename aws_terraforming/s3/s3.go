@@ -98,7 +98,7 @@ func (g S3Generator) Generate(region string) ([]terraform_utils.TerraformResourc
 		return []terraform_utils.TerraformResource{}, map[string]terraform_utils.ResourceMetaData{}, err
 	}
 	resources := g.createResources(buckets, region)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), allowEmptyValues, additionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "aws"), allowEmptyValues, additionalFields)
 	return resources, metadata, nil
 }
 
@@ -106,7 +106,7 @@ func (g S3Generator) Generate(region string) ([]terraform_utils.TerraformResourc
 // support only bucket with policy
 func (S3Generator) PostGenerateHook(resources []terraform_utils.TerraformResource) ([]terraform_utils.TerraformResource, error) {
 	for _, resource := range resources {
-		if resource.ResourceType != "aws_s3_bucket_policy" {
+		if resource.InstanceInfo.Type != "aws_s3_bucket_policy" {
 			continue
 		}
 		policy := resource.Item.(interface{}).(map[string]interface{})["policy"].(string)

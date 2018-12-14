@@ -83,7 +83,7 @@ func (g InstanceTemplatesGenerator) Generate(zone string) ([]terraform_utils.Ter
 	instanceTemplatesList := computeService.InstanceTemplates.List(project)
 
 	resources := g.createResources(instanceTemplatesList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), instanceTemplatesAllowEmptyValues, instanceTemplatesAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), instanceTemplatesAllowEmptyValues, instanceTemplatesAdditionalFields)
 	return resources, metadata, nil
 
 }

@@ -24,19 +24,7 @@ import (
 type InstanceStateConverter struct{}
 
 func (c InstanceStateConverter) Convert(resources []TerraformResource, metadata map[string]ResourceMetaData) ([]TerraformResource, error) {
-	newResources := []TerraformResource{}
-	// read full tfstate file
-	//data, err := ioutil.ReadFile(pathToTfstate)
-	//if err != nil {
-	//		return resources, err
-	//	}
-	//	tfState := terraform.State{}
-	//	parse json to tfstate struct from terraform code
-	//	err = json.Unmarshal(data, &tfState)
-	//if err != nil {
-	//return resources, err
-	//}
-	for _, resource := range resources {
+	for i, resource := range resources {
 		item := map[string]interface{}{}
 		allAttributes := []string{}
 		for key := range resource.InstanceState.Attributes {
@@ -50,7 +38,7 @@ func (c InstanceStateConverter) Convert(resources []TerraformResource, metadata 
 		}
 		// delete ignored keys
 		for keyAttribute := range resource.InstanceState.Attributes {
-			for _, patter := range metadata[resource.InstanceState.ID].IgnoreKeys[resource.ResourceType] {
+			for _, patter := range metadata[resource.InstanceState.ID].IgnoreKeys[resource.InstanceInfo.Type] {
 				match, err := regexp.MatchString(patter, keyAttribute)
 				if match && err == nil {
 					delete(resource.InstanceState.Attributes, keyAttribute)
@@ -87,13 +75,7 @@ func (c InstanceStateConverter) Convert(resources []TerraformResource, metadata 
 		for key, value := range metadata[resource.InstanceState.ID].AdditionalFields {
 			item[key] = value
 		}
-		newResources = append(newResources, TerraformResource{
-			ResourceType: resource.ResourceType,
-			ResourceName: resource.ResourceName,
-			Item:         item,
-			ID:           resource.InstanceState.ID,
-			Provider:     metadata[resource.InstanceState.ID].Provider,
-		})
+		resources[i].Item = item
 	}
-	return newResources, nil
+	return resources, nil
 }

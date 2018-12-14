@@ -83,7 +83,7 @@ func (g SslPoliciesGenerator) Generate(zone string) ([]terraform_utils.Terraform
 	sslPoliciesList := computeService.SslPolicies.List(project)
 
 	resources := g.createResources(sslPoliciesList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), sslPoliciesAllowEmptyValues, sslPoliciesAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), sslPoliciesAllowEmptyValues, sslPoliciesAdditionalFields)
 	return resources, metadata, nil
 
 }

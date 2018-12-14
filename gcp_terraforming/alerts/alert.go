@@ -82,7 +82,7 @@ func (g AlertsGenerator) Generate(zone string) ([]terraform_utils.TerraformResou
 	}
 
 	resources := g.createResources(alertIterator)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), alertsAllowEmptyValues, alertsAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), alertsAllowEmptyValues, alertsAdditionalFields)
 	return resources, metadata, nil
 
 }

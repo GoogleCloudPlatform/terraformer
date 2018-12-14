@@ -75,7 +75,7 @@ func (g IamGenerator) Generate(region string) ([]terraform_utils.TerraformResour
 	serviceAccountsIterator := client.ListServiceAccounts(ctx, &adminpb.ListServiceAccountsRequest{Name: "projects/" + projectID})
 
 	resources := g.createResources(serviceAccountsIterator)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), allowEmptyValues, additionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), allowEmptyValues, additionalFields)
 	return resources, metadata, nil
 
 }

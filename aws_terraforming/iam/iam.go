@@ -62,7 +62,7 @@ func (g IamGenerator) Generate(region string) ([]terraform_utils.TerraformResour
 	if err != nil {
 		log.Println(err)
 	}
-	metadata := terraform_utils.NewResourcesMetaData(g.resources, g.IgnoreKeys(g.resources), allowEmptyValues, map[string]string{})
+	metadata := terraform_utils.NewResourcesMetaData(g.resources, g.IgnoreKeys(g.resources, "aws"), allowEmptyValues, map[string]string{})
 	return g.resources, metadata, nil
 }
 
@@ -233,15 +233,15 @@ func (g *IamGenerator) getGroups(svc *iam.IAM) error {
 // PostGenerateHook for add policy json as heredoc
 func (IamGenerator) PostGenerateHook(resources []terraform_utils.TerraformResource) ([]terraform_utils.TerraformResource, error) {
 	for _, resource := range resources {
-		if resource.ResourceType == "aws_iam_policy" ||
-			resource.ResourceType == "aws_iam_user_policy" ||
-			resource.ResourceType == "aws_iam_group_policy" ||
-			resource.ResourceType == "aws_iam_role_policy" {
+		if resource.InstanceInfo.Type == "aws_iam_policy" ||
+			resource.InstanceInfo.Type == "aws_iam_user_policy" ||
+			resource.InstanceInfo.Type == "aws_iam_group_policy" ||
+			resource.InstanceInfo.Type == "aws_iam_role_policy" {
 			policy := resource.Item.(interface{}).(map[string]interface{})["policy"].(string)
 			resource.Item.(interface{}).(map[string]interface{})["policy"] = fmt.Sprintf(`<<POLICY
 %s
 POLICY`, policy)
-		} else if resource.ResourceType == "aws_iam_role" {
+		} else if resource.InstanceInfo.Type == "aws_iam_role" {
 			policy := resource.Item.(interface{}).(map[string]interface{})["assume_role_policy"].(string)
 			resource.Item.(interface{}).(map[string]interface{})["assume_role_policy"] = fmt.Sprintf(`<<POLICY
 %s

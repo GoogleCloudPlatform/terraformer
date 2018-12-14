@@ -121,7 +121,7 @@ func (g {{.titleResourceName}}Generator) Generate(zone string) ([]terraform_util
 	{{.resource}}List := computeService.{{.titleResourceName}}.List({{.parameterOrder}})
 
 	resources := g.createResources({{.resource}}List, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), {{.resource}}AllowEmptyValues, {{.resource}}AdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), {{.resource}}AllowEmptyValues, {{.resource}}AdditionalFields)
 	return resources, metadata, nil
 
 }

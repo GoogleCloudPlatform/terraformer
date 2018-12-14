@@ -83,7 +83,7 @@ func (g FirewallsGenerator) Generate(zone string) ([]terraform_utils.TerraformRe
 	firewallsList := computeService.Firewalls.List(project)
 
 	resources := g.createResources(firewallsList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), firewallsAllowEmptyValues, firewallsAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), firewallsAllowEmptyValues, firewallsAdditionalFields)
 	return resources, metadata, nil
 
 }

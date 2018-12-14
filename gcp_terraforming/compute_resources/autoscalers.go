@@ -84,7 +84,7 @@ func (g AutoscalersGenerator) Generate(zone string) ([]terraform_utils.Terraform
 	autoscalersList := computeService.Autoscalers.List(project, zone)
 
 	resources := g.createResources(autoscalersList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), autoscalersAllowEmptyValues, autoscalersAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), autoscalersAllowEmptyValues, autoscalersAdditionalFields)
 	return resources, metadata, nil
 
 }

@@ -83,7 +83,7 @@ func (g RoutesGenerator) Generate(zone string) ([]terraform_utils.TerraformResou
 	routesList := computeService.Routes.List(project)
 
 	resources := g.createResources(routesList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), routesAllowEmptyValues, routesAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), routesAllowEmptyValues, routesAdditionalFields)
 	return resources, metadata, nil
 
 }

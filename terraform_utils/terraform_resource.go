@@ -24,22 +24,16 @@ import (
 type TerraformResource struct {
 	InstanceInfo  *terraform.InstanceInfo
 	InstanceState *terraform.InstanceState
-	ResourceType  string
 	ResourceName  string
 	Item          interface{}
-	ID            string
 	Provider      string
-	Attributes    map[string]string
 }
 
 func NewTerraformResource(ID, resourceName, resourceType, provider string, item interface{}, attributes map[string]string) TerraformResource {
 	return TerraformResource{
-		ResourceType: resourceType,
 		ResourceName: TfSanitize(resourceName),
 		Item:         item,
-		ID:           ID,
 		Provider:     provider,
-		Attributes:   attributes,
 		InstanceState: &terraform.InstanceState{
 			ID:         ID,
 			Attributes: attributes,

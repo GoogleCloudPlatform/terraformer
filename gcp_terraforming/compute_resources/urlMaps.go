@@ -83,7 +83,7 @@ func (g UrlMapsGenerator) Generate(zone string) ([]terraform_utils.TerraformReso
 	urlMapsList := computeService.UrlMaps.List(project)
 
 	resources := g.createResources(urlMapsList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), urlMapsAllowEmptyValues, urlMapsAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), urlMapsAllowEmptyValues, urlMapsAdditionalFields)
 	return resources, metadata, nil
 
 }

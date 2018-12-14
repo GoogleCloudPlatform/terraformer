@@ -21,10 +21,10 @@ import (
 	"log"
 	"os"
 	"strings"
+	"waze/terraformer/base_terraforming"
 	"waze/terraformer/gcp_terraforming/alerts"
 	"waze/terraformer/gcp_terraforming/clouddns"
 	"waze/terraformer/gcp_terraforming/compute_resources"
-	"waze/terraformer/gcp_terraforming/gcp_generator"
 	"waze/terraformer/gcp_terraforming/gcs"
 	"waze/terraformer/gcp_terraforming/iam"
 	"waze/terraformer/terraform_utils"
@@ -34,8 +34,8 @@ const PathForGenerateFiles = "/generated/gcp/"
 const GenerateFilesFolderPath = "%s%s%s/%s/%s"
 
 // GetGCPSupportService return map of support service for GCP
-func GetGCPSupportService() map[string]gcp_generator.Generator {
-	services := map[string]gcp_generator.Generator{}
+func GetGCPSupportService() map[string]base_terraforming.Generator {
+	services := map[string]base_terraforming.Generator{}
 	services = computeTerrforming.ComputeService
 	services["gcs"] = gcs.GcsGenerator{}
 	services["alerts"] = alerts.AlertsGenerator{}
@@ -46,7 +46,7 @@ func GetGCPSupportService() map[string]gcp_generator.Generator {
 
 // Main function for generate tf and tfstate file by GCP service and region
 func Generate(service string, args []string) error {
-	var generator gcp_generator.Generator
+	var generator base_terraforming.Generator
 	var isSupported bool
 	if generator, isSupported = GetGCPSupportService()[service]; !isSupported {
 		return errors.New("gcp: " + service + " not supported service")

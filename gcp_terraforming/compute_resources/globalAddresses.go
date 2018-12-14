@@ -83,7 +83,7 @@ func (g GlobalAddressesGenerator) Generate(zone string) ([]terraform_utils.Terra
 	globalAddressesList := computeService.GlobalAddresses.List(project)
 
 	resources := g.createResources(globalAddressesList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), globalAddressesAllowEmptyValues, globalAddressesAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), globalAddressesAllowEmptyValues, globalAddressesAdditionalFields)
 	return resources, metadata, nil
 
 }

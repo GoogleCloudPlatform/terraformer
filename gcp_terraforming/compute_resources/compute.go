@@ -16,11 +16,11 @@
 package computeTerrforming
 
 import (
-	"waze/terraformer/gcp_terraforming/gcp_generator"
+	"waze/terraformer/base_terraforming"
 )
 
 // Map of supported GCP compute service with code generate
-var ComputeService = map[string]gcp_generator.Generator{
+var ComputeService = map[string]base_terraforming.Generator{
 
 	"addresses":                   AddressesGenerator{},
 	"autoscalers":                 AutoscalersGenerator{},

@@ -117,7 +117,7 @@ func (g GcsGenerator) Generate(region string) ([]terraform_utils.TerraformResour
 	bucketIterator := client.Buckets(ctx, projectID)
 
 	resources := g.createResources(bucketIterator)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), allowEmptyValues, additionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), allowEmptyValues, additionalFields)
 	return resources, metadata, nil
 }
 
@@ -125,7 +125,7 @@ func (g GcsGenerator) Generate(region string) ([]terraform_utils.TerraformResour
 // support only bucket with policy
 func (GcsGenerator) PostGenerateHook(resources []terraform_utils.TerraformResource) ([]terraform_utils.TerraformResource, error) {
 	for _, resource := range resources {
-		if resource.ResourceType != "google_storage_bucket_iam_policy" {
+		if resource.InstanceInfo.Type != "google_storage_bucket_iam_policy" {
 			continue
 		}
 		policy := resource.Item.(interface{}).(map[string]interface{})["policy_data"].(string)

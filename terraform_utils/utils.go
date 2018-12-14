@@ -95,11 +95,11 @@ func NewTfState(resources []TerraformResource) *terraform.State {
 	}
 	for _, resource := range resources {
 		resourceState := &terraform.ResourceState{
-			Type:     resource.ResourceType,
+			Type:     resource.InstanceInfo.Type,
 			Primary:  resource.InstanceState,
 			Provider: "provider." + resource.Provider,
 		}
-		tfstate.Modules[0].Resources[resource.ResourceType+"."+resource.ResourceName] = resourceState
+		tfstate.Modules[0].Resources[resource.InstanceInfo.Type+"."+resource.ResourceName] = resourceState
 	}
 	return tfstate
 }

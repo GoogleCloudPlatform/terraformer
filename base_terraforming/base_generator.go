@@ -12,16 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package aws_generator
+package base_terraforming
 
 import (
-	"waze/terraformer/base_terraforming"
+	"log"
 	"waze/terraformer/terraform_utils"
+	"waze/terraformer/terraform_utils/provider_wrapper"
 )
 
-type BasicGenerator struct {
-	base_terraforming.BasicGenerator
+type Generator interface {
+	Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error)
+	PostGenerateHook(resources []terraform_utils.TerraformResource) ([]terraform_utils.TerraformResource, error)
 }
+
+type BasicGenerator struct{}
 
 func (BasicGenerator) Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	panic("implement me")
@@ -29,4 +33,23 @@ func (BasicGenerator) Generate(region string) ([]terraform_utils.TerraformResour
 
 func (BasicGenerator) PostGenerateHook(resources []terraform_utils.TerraformResource) ([]terraform_utils.TerraformResource, error) {
 	return resources, nil
+}
+
+func (BasicGenerator) IgnoreKeys(resources []terraform_utils.TerraformResource, providerName string) map[string][]string {
+	p, err := provider_wrapper.NewProviderWrapper(providerName)
+	if err != nil {
+		log.Println(err)
+		return map[string][]string{}
+	}
+	defer p.Kill()
+	resourcesTypes := []string{}
+	for _, k := range resources {
+		resourcesTypes = append(resourcesTypes, k.InstanceInfo.Type)
+	}
+	readOnlyAttributes, err := p.GetReadOnlyAttributes(resourcesTypes)
+	if err != nil {
+		log.Println(err)
+		return map[string][]string{}
+	}
+	return readOnlyAttributes
 }

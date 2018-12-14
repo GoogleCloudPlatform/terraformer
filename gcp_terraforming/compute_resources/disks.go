@@ -84,7 +84,7 @@ func (g DisksGenerator) Generate(zone string) ([]terraform_utils.TerraformResour
 	disksList := computeService.Disks.List(project, zone)
 
 	resources := g.createResources(disksList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), disksAllowEmptyValues, disksAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), disksAllowEmptyValues, disksAdditionalFields)
 	return resources, metadata, nil
 
 }

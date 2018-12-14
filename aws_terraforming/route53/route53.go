@@ -98,22 +98,22 @@ func (g Route53Generator) Generate(region string) ([]terraform_utils.TerraformRe
 	svc := route53.New(sess)
 
 	resources := g.createZonesResources(svc)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), route53AllowEmptyValues, route53AdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "aws"), route53AllowEmptyValues, route53AdditionalFields)
 	return resources, metadata, nil
 }
 
 func (Route53Generator) PostGenerateHook(resources []terraform_utils.TerraformResource) ([]terraform_utils.TerraformResource, error) {
 	for i, resourceRecord := range resources {
-		if resourceRecord.ResourceType == "aws_route53_zone" {
+		if resourceRecord.InstanceInfo.Type == "aws_route53_zone" {
 			continue
 		}
 		item := resourceRecord.Item.(map[string]interface{})
 		zoneID := item["zone_id"].(string)
 		for _, resourceZone := range resources {
-			if resourceZone.ResourceType != "aws_route53_zone" {
+			if resourceZone.InstanceInfo.Type != "aws_route53_zone" {
 				continue
 			}
-			if zoneID == resourceZone.ID {
+			if zoneID == resourceZone.InstanceState.ID {
 				resources[i].Item.(map[string]interface{})["zone_id"] = "${aws_route53_zone." + resourceZone.ResourceName + ".zone_id}"
 			}
 		}

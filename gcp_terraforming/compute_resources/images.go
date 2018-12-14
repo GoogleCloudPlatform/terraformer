@@ -83,7 +83,7 @@ func (g ImagesGenerator) Generate(zone string) ([]terraform_utils.TerraformResou
 	imagesList := computeService.Images.List(project)
 
 	resources := g.createResources(imagesList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), imagesAllowEmptyValues, imagesAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), imagesAllowEmptyValues, imagesAdditionalFields)
 	return resources, metadata, nil
 
 }

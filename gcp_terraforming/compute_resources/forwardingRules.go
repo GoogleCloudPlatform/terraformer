@@ -83,7 +83,7 @@ func (g ForwardingRulesGenerator) Generate(zone string) ([]terraform_utils.Terra
 	forwardingRulesList := computeService.ForwardingRules.List(project, region)
 
 	resources := g.createResources(forwardingRulesList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), forwardingRulesAllowEmptyValues, forwardingRulesAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), forwardingRulesAllowEmptyValues, forwardingRulesAdditionalFields)
 	return resources, metadata, nil
 
 }

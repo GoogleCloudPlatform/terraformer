@@ -83,7 +83,7 @@ func (g SecurityPoliciesGenerator) Generate(zone string) ([]terraform_utils.Terr
 	securityPoliciesList := computeService.SecurityPolicies.List(project)
 
 	resources := g.createResources(securityPoliciesList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), securityPoliciesAllowEmptyValues, securityPoliciesAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), securityPoliciesAllowEmptyValues, securityPoliciesAdditionalFields)
 	return resources, metadata, nil
 
 }

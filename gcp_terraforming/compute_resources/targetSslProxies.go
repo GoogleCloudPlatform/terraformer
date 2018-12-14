@@ -83,7 +83,7 @@ func (g TargetSslProxiesGenerator) Generate(zone string) ([]terraform_utils.Terr
 	targetSslProxiesList := computeService.TargetSslProxies.List(project)
 
 	resources := g.createResources(targetSslProxiesList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), targetSslProxiesAllowEmptyValues, targetSslProxiesAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), targetSslProxiesAllowEmptyValues, targetSslProxiesAdditionalFields)
 	return resources, metadata, nil
 
 }

@@ -82,7 +82,7 @@ func (g GlobalForwardingRulesGenerator) Generate(zone string) ([]terraform_utils
 	globalForwardingRulesList := computeService.GlobalForwardingRules.List(project)
 
 	resources := g.createResources(globalForwardingRulesList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), globalForwardingRulesAllowEmptyValues, globalForwardingRulesAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), globalForwardingRulesAllowEmptyValues, globalForwardingRulesAdditionalFields)
 	return resources, metadata, nil
 
 }

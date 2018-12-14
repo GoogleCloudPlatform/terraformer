@@ -169,15 +169,17 @@ func HclPrint(resources []TerraformResource, provider map[string]interface{}) ([
 	resourcesByType := map[string]map[string]interface{}{}
 
 	for _, res := range resources {
-		r := resourcesByType[res.ResourceType]
+
+		r := resourcesByType[res.InstanceInfo.Type]
 		if r == nil {
 			r = make(map[string]interface{})
-			resourcesByType[res.ResourceType] = r
+			resourcesByType[res.InstanceInfo.Type] = r
 		}
 
 		tfName := TfSanitize(res.ResourceName)
+		log.Println(res.ResourceName, tfName, res.InstanceInfo.Id)
 		if r[tfName] != nil {
-			return []byte{}, fmt.Errorf("[ERR]: duplicate resource found: %s.%s", res.ResourceType, tfName)
+			return []byte{}, fmt.Errorf("[ERR]: duplicate resource found: %s.%s", res.InstanceInfo.Type, tfName)
 		}
 
 		r[tfName] = res.Item

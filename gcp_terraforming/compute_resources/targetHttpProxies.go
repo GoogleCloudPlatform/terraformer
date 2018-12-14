@@ -83,7 +83,7 @@ func (g TargetHttpProxiesGenerator) Generate(zone string) ([]terraform_utils.Ter
 	targetHttpProxiesList := computeService.TargetHttpProxies.List(project)
 
 	resources := g.createResources(targetHttpProxiesList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), targetHttpProxiesAllowEmptyValues, targetHttpProxiesAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), targetHttpProxiesAllowEmptyValues, targetHttpProxiesAdditionalFields)
 	return resources, metadata, nil
 
 }

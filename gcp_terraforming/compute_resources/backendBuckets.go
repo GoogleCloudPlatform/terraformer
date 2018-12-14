@@ -83,7 +83,7 @@ func (g BackendBucketsGenerator) Generate(zone string) ([]terraform_utils.Terraf
 	backendBucketsList := computeService.BackendBuckets.List(project)
 
 	resources := g.createResources(backendBucketsList, ctx, region, zone)
-	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), backendBucketsAllowEmptyValues, backendBucketsAdditionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources, "google"), backendBucketsAllowEmptyValues, backendBucketsAdditionalFields)
 	return resources, metadata, nil
 
 }
