@@ -28,12 +28,6 @@ import (
 
 const maxResults = 1000
 
-var ignoreKey = map[string]bool{
-	"^arn":      true,
-	"^owner_id": true,
-	"^id$":      true,
-}
-
 var allowEmptyValues = map[string]bool{
 	"tags.": true,
 }
@@ -86,7 +80,7 @@ func (g SecurityGenerator) Generate(region string) ([]terraform_utils.TerraformR
 		}
 	}
 	resources := g.createResources(securityGroups)
-	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, map[string]string{})
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), allowEmptyValues, map[string]string{})
 	return resources, metadata, nil
 }
 

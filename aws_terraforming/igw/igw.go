@@ -23,10 +23,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
-var ignoreKey = map[string]bool{
-	"^id$": true,
-}
-
 var allowEmptyValues = map[string]bool{
 	"tags.": true,
 }
@@ -50,13 +46,14 @@ func (IgwGenerator) createResources(igws *ec2.DescribeInternetGatewaysOutput) []
 				}
 			}
 		}
-		resoures = append(resoures, terraform_utils.TerraformResource{
-			ResourceType: "aws_internet_gateway",
-			ResourceName: resourceName,
-			Item:         nil,
-			ID:           aws.StringValue(internetGateway.InternetGatewayId),
-			Provider:     "aws",
-		})
+		resoures = append(resoures, terraform_utils.NewTerraformResource(
+			aws.StringValue(internetGateway.InternetGatewayId),
+			resourceName,
+			"aws_internet_gateway",
+			"aws",
+			nil,
+			map[string]string{},
+		))
 	}
 	return resoures
 }
@@ -69,7 +66,7 @@ func (g IgwGenerator) Generate(region string) ([]terraform_utils.TerraformResour
 		return []terraform_utils.TerraformResource{}, map[string]terraform_utils.ResourceMetaData{}, err
 	}
 	resources := g.createResources(igws)
-	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, map[string]string{})
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), allowEmptyValues, map[string]string{})
 	return resources, metadata, nil
 
 }

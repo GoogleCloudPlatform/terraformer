@@ -28,12 +28,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 )
 
-var ignoreKey = map[string]bool{
-	"^id$":        true,
-	"^arn$":       true,
-	"^unique_id$": true,
-}
-
 var additionalFields = map[string]string{}
 
 var allowEmptyValues = map[string]bool{
@@ -68,7 +62,8 @@ func (g IamGenerator) Generate(region string) ([]terraform_utils.TerraformResour
 	if err != nil {
 		log.Println(err)
 	}
-	return g.resources, g.metadata, nil
+	metadata := terraform_utils.NewResourcesMetaData(g.resources, g.IgnoreKeys(g.resources), allowEmptyValues, map[string]string{})
+	return g.resources, metadata, nil
 }
 
 func (g *IamGenerator) getRoles(svc *iam.IAM) error {
@@ -83,12 +78,6 @@ func (g *IamGenerator) getRoles(svc *iam.IAM) error {
 				"aws",
 				nil,
 				map[string]string{}))
-			g.metadata[roleID] = terraform_utils.ResourceMetaData{
-				Provider:         "aws",
-				IgnoreKeys:       ignoreKey,
-				AllowEmptyValue:  allowEmptyValues,
-				AdditionalFields: additionalFields,
-			}
 			listRolePolicies, err := svc.ListRolePolicies(&iam.ListRolePoliciesInput{RoleName: role.RoleName})
 			if err != nil {
 				log.Println(err)
@@ -102,14 +91,7 @@ func (g *IamGenerator) getRoles(svc *iam.IAM) error {
 					"aws",
 					nil,
 					map[string]string{}))
-				g.metadata[roleName+":"+aws.StringValue(policyName)] = terraform_utils.ResourceMetaData{
-					Provider:         "aws",
-					IgnoreKeys:       ignoreKey,
-					AllowEmptyValue:  allowEmptyValues,
-					AdditionalFields: additionalFields,
-				}
 			}
-
 		}
 		return !lastPages
 	})
@@ -127,13 +109,6 @@ func (g *IamGenerator) getUsers(svc *iam.IAM) error {
 				"aws",
 				nil,
 				map[string]string{}))
-			g.metadata[resourceName] = terraform_utils.ResourceMetaData{
-				Provider:         "aws",
-				IgnoreKeys:       ignoreKey,
-				AllowEmptyValue:  allowEmptyValues,
-				AdditionalFields: additionalFields,
-			}
-
 			g.getUserPolices(svc, user.UserName)
 			//g.getUserGroup(svc, user.UserName) //not work maybe terraform-aws bug
 		}
@@ -156,12 +131,6 @@ func (g *IamGenerator) getUserGroup(svc *iam.IAM, userName *string) error {
 				map[string]string{},
 				map[string]string{"user": aws.StringValue(userName)},
 			))
-			g.metadata[groupIDAttachment] = terraform_utils.ResourceMetaData{
-				Provider:         "aws",
-				IgnoreKeys:       ignoreKey,
-				AllowEmptyValue:  allowEmptyValues,
-				AdditionalFields: map[string]string{},
-			}
 		}
 		return !lastPage
 	})
@@ -180,13 +149,6 @@ func (g *IamGenerator) getUserPolices(svc *iam.IAM, userName *string) error {
 				"aws",
 				nil,
 				map[string]string{}))
-			g.metadata[policyID] = terraform_utils.ResourceMetaData{
-				Provider:         "aws",
-				IgnoreKeys:       ignoreKey,
-				AllowEmptyValue:  allowEmptyValues,
-				AdditionalFields: map[string]string{},
-			}
-
 		}
 		return !lastPage
 	})
@@ -209,12 +171,6 @@ func (g *IamGenerator) getPolicies(svc *iam.IAM) error {
 					"policy_arn": policyARN,
 					"name":       resourceName,
 				}))
-			g.metadata[policyARN] = terraform_utils.ResourceMetaData{
-				Provider:         "aws",
-				IgnoreKeys:       ignoreKey,
-				AllowEmptyValue:  allowEmptyValues,
-				AdditionalFields: map[string]string{},
-			}
 			// not use AWS main policy
 			if strings.HasPrefix(policyARN, "arn:aws:iam::aws:policy") {
 				continue
@@ -244,12 +200,6 @@ func (g *IamGenerator) getGroups(svc *iam.IAM) error {
 				"aws",
 				nil,
 				map[string]string{}))
-			g.metadata[resourceName] = terraform_utils.ResourceMetaData{
-				Provider:         "aws",
-				IgnoreKeys:       ignoreKey,
-				AllowEmptyValue:  allowEmptyValues,
-				AdditionalFields: map[string]string{},
-			}
 			g.resources = append(g.resources, terraform_utils.NewTerraformResource(
 				resourceName,
 				resourceName,
@@ -270,12 +220,6 @@ func (g *IamGenerator) getGroups(svc *iam.IAM) error {
 						"aws",
 						nil,
 						map[string]string{}))
-					g.metadata[id] = terraform_utils.ResourceMetaData{
-						Provider:         "aws",
-						IgnoreKeys:       ignoreKey,
-						AllowEmptyValue:  allowEmptyValues,
-						AdditionalFields: map[string]string{},
-					}
 				}
 				return !lastPage
 			})

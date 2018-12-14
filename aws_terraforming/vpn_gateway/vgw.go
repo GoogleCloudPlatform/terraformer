@@ -23,9 +23,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
-var ignoreKey = map[string]bool{
-	"^id$": true,
-}
 var allowEmptyValues = map[string]bool{
 	"tags.": true,
 }
@@ -46,13 +43,14 @@ func (VpnGatewayGenerator) createResources(vpnGws *ec2.DescribeVpnGatewaysOutput
 				}
 			}
 		}
-		resoures = append(resoures, terraform_utils.TerraformResource{
-			ResourceType: "aws_subnet",
-			ResourceName: resourceName,
-			Item:         nil,
-			ID:           aws.StringValue(vpnGw.VpnGatewayId),
-			Provider:     "aws",
-		})
+		resoures = append(resoures, terraform_utils.NewTerraformResource(
+			aws.StringValue(vpnGw.VpnGatewayId),
+			resourceName,
+			"aws_subnet",
+			"aws",
+			nil,
+			map[string]string{},
+		))
 	}
 	return resoures
 }
@@ -68,7 +66,7 @@ func (g VpnGatewayGenerator) Generate(region string) ([]terraform_utils.Terrafor
 		return []terraform_utils.TerraformResource{}, map[string]terraform_utils.ResourceMetaData{}, err
 	}
 	resources := g.createResources(vpnGws)
-	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, map[string]string{})
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), allowEmptyValues, map[string]string{})
 	return resources, metadata, nil
 
 }

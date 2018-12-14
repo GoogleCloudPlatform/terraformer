@@ -27,14 +27,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/route53"
 )
 
-var route53IgnoreKey = map[string]bool{
-	"^id$":          true,
-	"^name_servers": true,
-	"^zone_id$":     true,
-	"^vpc_id":       true,
-	"^vpc_region$":  true,
-}
-
 var route53AllowEmptyValues = map[string]bool{}
 
 var route53AdditionalFields = map[string]string{}
@@ -106,23 +98,7 @@ func (g Route53Generator) Generate(region string) ([]terraform_utils.TerraformRe
 	svc := route53.New(sess)
 
 	resources := g.createZonesResources(svc)
-	metadata := map[string]terraform_utils.ResourceMetaData{}
-	for _, resource := range resources {
-		resourceMeta := terraform_utils.ResourceMetaData{}
-		resourceMeta.AllowEmptyValue = route53AllowEmptyValues
-		resourceMeta.AdditionalFields = route53AdditionalFields
-		switch resource.ResourceType {
-		case "aws_route53_record":
-			resourceMeta.IgnoreKeys = map[string]bool{
-				"^id$":          true,
-				"^name_servers": true,
-				"^fqdn$":        true,
-			}
-		case "aws_route53_zone":
-			resourceMeta.IgnoreKeys = route53IgnoreKey
-		}
-		metadata[resource.ID] = resourceMeta
-	}
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), route53AllowEmptyValues, route53AdditionalFields)
 	return resources, metadata, nil
 }
 

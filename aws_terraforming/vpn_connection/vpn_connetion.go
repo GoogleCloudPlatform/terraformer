@@ -23,20 +23,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
-var ignoreKey = map[string]bool{
-	"^tunnel2_vgw_inside_address": true,
-	"^id$":                        true,
-	"^tunnel2_cgw_inside_address": true,
-	"^tunnel2_bgp_holdtime":       true,
-	"^tunnel2_bgp_asn":            true,
-	"^tunnel2_address":            true,
-	"^tunnel1_vgw_inside_address": true,
-	"^tunnel1_cgw_inside_address": true,
-	"^tunnel1_bgp_holdtime":       true,
-	"^tunnel1_bgp_asn":            true,
-	"^tunnel1_address":            true,
-}
-
 var allowEmptyValues = map[string]bool{
 	"tags.": true,
 }
@@ -57,13 +43,14 @@ func (VpnConnectionGenerator) createResources(vpncs *ec2.DescribeVpnConnectionsO
 				}
 			}
 		}
-		resoures = append(resoures, terraform_utils.TerraformResource{
-			ResourceType: "aws_vpn_connection",
-			ResourceName: resourceName,
-			Item:         nil,
-			ID:           aws.StringValue(vpnc.VpnConnectionId),
-			Provider:     "aws",
-		})
+		resoures = append(resoures, terraform_utils.NewTerraformResource(
+			aws.StringValue(vpnc.VpnConnectionId),
+			resourceName,
+			"aws_vpn_connection",
+			"aws",
+			nil,
+			map[string]string{},
+		))
 	}
 	return resoures
 }
@@ -79,7 +66,7 @@ func (g VpnConnectionGenerator) Generate(region string) ([]terraform_utils.Terra
 		return []terraform_utils.TerraformResource{}, map[string]terraform_utils.ResourceMetaData{}, err
 	}
 	resources := g.createResources(vpncs)
-	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, map[string]string{})
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), allowEmptyValues, map[string]string{})
 	return resources, metadata, nil
 
 }

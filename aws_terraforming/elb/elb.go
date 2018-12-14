@@ -23,15 +23,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/elb"
 )
 
-var ignoreKey = map[string]bool{
-	"^id$":                      true,
-	"^arn":                      true,
-	"^dns_name":                 true,
-	"^source_security_group_id": true,
-	"^zone_id":                  true,
-	"^instances":                true, //dynamic value
-}
-
 var allowEmptyValues = map[string]bool{
 	"tags.": true,
 }
@@ -44,7 +35,7 @@ type ElbGenerator struct {
 // from each ELB create 1 TerraformResource.
 // Need only ELB name as ID for terraform resource
 // AWS api support paging
-func (ElbGenerator) Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
+func (g ElbGenerator) Generate(region string) ([]terraform_utils.TerraformResource, map[string]terraform_utils.ResourceMetaData, error) {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := elb.New(sess)
 	resources := []terraform_utils.TerraformResource{}
@@ -64,7 +55,7 @@ func (ElbGenerator) Generate(region string) ([]terraform_utils.TerraformResource
 	if err != nil {
 		return []terraform_utils.TerraformResource{}, map[string]terraform_utils.ResourceMetaData{}, err
 	}
-	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, map[string]string{})
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), allowEmptyValues, map[string]string{})
 	return resources, metadata, nil
 
 }

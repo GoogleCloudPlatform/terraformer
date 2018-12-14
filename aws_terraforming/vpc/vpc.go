@@ -24,16 +24,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
-var ignoreKey = map[string]bool{
-	"^arn$":                       true,
-	"^main_route_table_id$":       true,
-	"^id$":                        true,
-	"^dhcp_options_id$":           true,
-	"^default_security_group_id$": true,
-	"^default_route_table_id$":    true,
-	"^default_network_acl_id$":    true,
-}
-
 var allowEmptyValues = map[string]bool{
 	"tags.": true,
 }
@@ -54,13 +44,7 @@ func (VpcGenerator) createResources(vpcs *ec2.DescribeVpcsOutput) []terraform_ut
 				}
 			}
 		}
-		resoures = append(resoures, terraform_utils.TerraformResource{
-			ResourceType: "aws_vpc",
-			ResourceName: resourceName,
-			Item:         nil,
-			ID:           aws.StringValue(vpc.VpcId),
-			Provider:     "aws",
-		})
+		resoures = append(resoures, terraform_utils.NewTerraformResource(aws.StringValue(vpc.VpcId), resourceName, "aws_vpc", "aws", nil, map[string]string{}))
 	}
 	return resoures
 }
@@ -76,6 +60,6 @@ func (g VpcGenerator) Generate(region string) ([]terraform_utils.TerraformResour
 		return []terraform_utils.TerraformResource{}, map[string]terraform_utils.ResourceMetaData{}, err
 	}
 	resources := g.createResources(vpcs)
-	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, map[string]string{})
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), allowEmptyValues, map[string]string{})
 	return resources, metadata, nil
 }

@@ -18,6 +18,7 @@ import (
 	"log"
 	"os"
 
+	"waze/terraformer/aws_terraforming"
 	"waze/terraformer/gcp_terraforming"
 )
 
@@ -31,7 +32,7 @@ func main() {
 	var err error
 	switch provider {
 	case "aws":
-	//	err = aws_terraforming.Generate(service, args)
+		err = aws_terraforming.Generate(service, args)
 	case "google":
 		err = gcp_terraforming.Generate(service, args)
 	}

@@ -69,8 +69,6 @@ func Generate(service string, args []string) error {
 	if err != nil {
 		return err
 	}
-	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
-	providerObject := NewGcpRegionResource(region)
 
 	refreshedResources, err := terraform_utils.RefreshResources(cloudResources, "google")
 	if err != nil {
@@ -91,7 +89,8 @@ func Generate(service string, args []string) error {
 	refreshedResources, err = generator.PostGenerateHook(refreshedResources)
 	// create HCL
 	tfFile := []byte{}
-	tfFile, err = terraform_utils.HclPrint(refreshedResources, providerObject)
+	region := strings.Join(strings.Split(zone, "-")[:len(strings.Split(zone, "-"))-1], "-")
+	tfFile, err = terraform_utils.HclPrint(refreshedResources, NewGcpRegionResource(region))
 	if err != nil {
 		return err
 	}

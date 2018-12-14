@@ -23,11 +23,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
-var ignoreKey = map[string]bool{
-	"^id$": true,
-	"^arn": true,
-}
-
 var allowEmptyValues = map[string]bool{
 	"tags.": true,
 }
@@ -48,13 +43,14 @@ func (SubnetGenerator) createResources(subnets *ec2.DescribeSubnetsOutput) []ter
 				}
 			}
 		}
-		resoures = append(resoures, terraform_utils.TerraformResource{
-			ResourceType: "aws_subnet",
-			ResourceName: resourceName,
-			Item:         nil,
-			ID:           aws.StringValue(subnet.SubnetId),
-			Provider:     "aws",
-		})
+		resoures = append(resoures, terraform_utils.NewTerraformResource(
+			aws.StringValue(subnet.SubnetId),
+			resourceName,
+			"aws_subnet",
+			"aws",
+			nil,
+			map[string]string{},
+		))
 	}
 	return resoures
 }
@@ -70,7 +66,7 @@ func (g SubnetGenerator) Generate(region string) ([]terraform_utils.TerraformRes
 		return []terraform_utils.TerraformResource{}, map[string]terraform_utils.ResourceMetaData{}, err
 	}
 	resources := g.createResources(subnets)
-	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, map[string]string{})
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), allowEmptyValues, map[string]string{})
 	return resources, metadata, nil
 
 }

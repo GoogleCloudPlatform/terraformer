@@ -15,9 +15,9 @@
 package aws_terraforming
 
 import (
+	"io/ioutil"
 	"log"
 	"os"
-
 	"waze/terraformer/aws_terraforming/aws_generator"
 	"waze/terraformer/aws_terraforming/elb"
 	"waze/terraformer/aws_terraforming/iam"
@@ -56,6 +56,11 @@ func GetAWSSupportService() map[string]aws_generator.Generator {
 
 // Main function for generate tf and tfstate file by AWS service and region
 func Generate(service string, args []string) error {
+	var generator aws_generator.Generator
+	var isSupported bool
+	if generator, isSupported = GetAWSSupportService()[service]; !isSupported {
+		return errors.New("aws: " + service + "not supported service")
+	}
 	region := args[0]
 	rootPath, _ := os.Getwd()
 	currentPath := rootPath + PathForGenerateFiles + region + "/" + service
@@ -63,50 +68,44 @@ func Generate(service string, args []string) error {
 		log.Print(err)
 		return err
 	}
-	// change current dir for terraform refresh
-	if err := os.Chdir(currentPath); err != nil {
-		log.Print(err)
-		return err
-	}
 	// terraform work with env param AWS_DEFAULT_REGION
-	// save old AWS_DEFAULT_REGION
-	oldRegion := os.Getenv("AWS_DEFAULT_REGION")
-	// return AWS_DEFAULT_REGION
-	defer os.Setenv("AWS_DEFAULT_REGION", oldRegion)
-	// set env param AWS_DEFAULT_REGION for terraform
-	os.Setenv("AWS_DEFAULT_REGION", region)
-	// return current dir after terraform refresh run
-	defer os.Chdir(rootPath)
-	var generator aws_generator.Generator
-	var isSupported bool
-	if generator, isSupported = GetAWSSupportService()[service]; !isSupported {
-		return errors.New("aws: not supported service")
+	err := os.Setenv("AWS_DEFAULT_REGION", region)
+	if err != nil {
+		return err
 	}
 	// generate TerraformResources with type and ids + metadata
-	resources, metadata, err := generator.Generate(region)
+	cloudResources, metadata, err := generator.Generate(region)
 	if err != nil {
 		return err
 	}
-	// generate empty(resource and ids) tfstate,
-	// and run terraform refresh with empty tfstate for populate data
-	err = terraform_utils.GenerateTfState(resources)
+	refreshedResources, err := terraform_utils.RefreshResources(cloudResources, "aws")
 	if err != nil {
 		return err
 	}
-	// convert tfstate to go struct for hcl print
-	converter := terraform_utils.TfstateConverter{}
-	resources, err = converter.Convert("terraform.tfstate", metadata)
+	// create tfstate
+	tfstateFile, err := terraform_utils.PrintTfState(refreshedResources)
+	if err != nil {
+		return err
+	}
+	// convert InstanceState to go struct for hcl print
+	converter := terraform_utils.InstanceStateConverter{}
+	refreshedResources, err = converter.Convert(refreshedResources, metadata)
 	if err != nil {
 		return err
 	}
 	// change structs with additional data for each resource
-	resources, err = generator.PostGenerateHook(resources)
-	// print HCL file
-	err = terraform_utils.GenerateTf(resources, service, NewAwsRegionResource(region))
+	refreshedResources, err = generator.PostGenerateHook(refreshedResources)
+	// create HCL
+	tfFile := []byte{}
+	tfFile, err = terraform_utils.HclPrint(refreshedResources, NewAwsRegionResource(region))
 	if err != nil {
 		return err
 	}
-	return nil
+	err = ioutil.WriteFile(currentPath+"/"+service+".tf", tfFile, os.ModePerm)
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(currentPath+"/terraform.tfstate", tfstateFile, os.ModePerm)
 
 }
 

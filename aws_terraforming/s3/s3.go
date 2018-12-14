@@ -28,13 +28,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
-var ignoreKey = map[string]bool{
-	"^bucket_domain_name$":          true,
-	"^bucket_regional_domain_name$": true,
-	"^id$":                          true,
-	"^acceleration_status$":         true,
-}
-
 var allowEmptyValues = map[string]bool{
 	"tags.": true,
 }
@@ -90,7 +83,6 @@ func (S3Generator) createResources(buckets *s3.ListBucketsOutput, region string)
 				nil,
 				map[string]string{}))
 		}
-
 	}
 	return resources
 }
@@ -106,7 +98,7 @@ func (g S3Generator) Generate(region string) ([]terraform_utils.TerraformResourc
 		return []terraform_utils.TerraformResource{}, map[string]terraform_utils.ResourceMetaData{}, err
 	}
 	resources := g.createResources(buckets, region)
-	metadata := terraform_utils.NewResourcesMetaData(resources, ignoreKey, allowEmptyValues, additionalFields)
+	metadata := terraform_utils.NewResourcesMetaData(resources, g.IgnoreKeys(resources), allowEmptyValues, additionalFields)
 	return resources, metadata, nil
 }
 

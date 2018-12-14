@@ -75,7 +75,7 @@ func (p *ProviderWrapper) readObjBlocks(block map[string]*configschema.NestedBlo
 					}
 				case configschema.NestingSet:
 				case configschema.NestingMap:
-					readOnlyAttributes = append(readOnlyAttributes, parent+"."+key+"")
+					readOnlyAttributes = append(readOnlyAttributes, parent+"."+key)
 				default:
 					readOnlyAttributes = append(readOnlyAttributes, parent+"."+key+"$")
 				}
@@ -116,7 +116,7 @@ func (p *ProviderWrapper) initProvider() error {
 			AllowedProtocols: []plugin.Protocol{plugin.ProtocolGRPC, plugin.ProtocolNetRPC},
 			Logger: hclog.New(&hclog.LoggerOptions{
 				Name:   "plugin",
-				Level:  hclog.Error,
+				Level:  hclog.Trace,
 				Output: os.Stderr,
 			}),
 		})
