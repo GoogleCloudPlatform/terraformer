@@ -16,72 +16,18 @@ package terraform_utils
 
 import (
 	"bytes"
-	"encoding/json"
-	"io/ioutil"
-	"os"
+	"log"
 	"sync"
 	"waze/terraformer/terraform_utils/provider_wrapper"
 
-	"github.com/hashicorp/terraform/backend"
-	"github.com/hashicorp/terraform/command"
-	"github.com/hashicorp/terraform/config"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/mitchellh/cli"
 )
 
 type BaseResource struct {
 	Tags map[string]string `json:"tags,omitempty"`
 }
 
-// Generate tfstate empty and populate with terraform refresh all data
-func GenerateTfState(resources []TerraformResource) error {
-	tfState := NewTfState(resources)
-	firstState, err := json.MarshalIndent(tfState, "", "  ")
-	if err != nil {
-		return err
-	}
-	if err := ioutil.WriteFile("terraform.tfstate", firstState, os.ModePerm); err != nil {
-		return err
-	}
-	// set to terraform don't check lock.json
-	err = os.Setenv("TF_SKIP_PROVIDER_VERIFY", "skip")
-	if err != nil {
-		return err
-	}
-	// use plugins from os.Getenv("HOME") + "/.terraform.d"
-	c := command.RefreshCommand{Meta: command.Meta{
-		OverrideDataDir: os.Getenv("HOME") + "/.terraform.d",
-		Ui:              cli.Ui(&cli.ConcurrentUi{Ui: &cli.BasicUi{Writer: os.Stdout}}),
-	}}
-	path, _ := os.Getwd()
-	mod, _ := c.Module(path)
-
-	var conf *config.Config
-	if mod != nil {
-		conf = mod.Config()
-	}
-
-	b, err := c.Backend(&command.BackendOpts{
-		Config: conf,
-	})
-	if err != nil {
-		return err
-	}
-
-	opReq := c.Operation()
-	opReq.Module = mod
-	opReq.Type = backend.OperationTypeRefresh
-	op, err := c.RunOperation(b, opReq)
-	if err != nil {
-		return err
-	}
-	if op.Err != nil {
-		return err
-	}
-	return nil
-}
-
-func NewTfState(resources []TerraformResource) *terraform.State {
+func NewTfState(resources []Resource) *terraform.State {
 	tfstate := &terraform.State{
 		Version:   terraform.StateVersion,
 		TFVersion: terraform.VersionString(),
@@ -104,16 +50,16 @@ func NewTfState(resources []TerraformResource) *terraform.State {
 	return tfstate
 }
 
-func PrintTfState(resources []TerraformResource) ([]byte, error) {
+func PrintTfState(resources []Resource) ([]byte, error) {
 	state := NewTfState(resources)
 	var buf bytes.Buffer
 	err := terraform.WriteState(state, &buf)
 	return buf.Bytes(), err
 }
 
-func RefreshResources(cloudResources []TerraformResource, providerName string) ([]TerraformResource, error) {
-	refreshedResources := []TerraformResource{}
-	input := make(chan *TerraformResource, 100)
+func RefreshResources(resources []Resource, providerName string) ([]Resource, error) {
+	refreshedResources := []Resource{}
+	input := make(chan *Resource, 100)
 	provider, err := provider_wrapper.NewProviderWrapper(providerName)
 	if err != nil {
 		return refreshedResources, err
@@ -123,13 +69,13 @@ func RefreshResources(cloudResources []TerraformResource, providerName string) (
 	for i := 0; i < 20; i++ {
 		go RefreshResourceWorker(input, &wg, provider)
 	}
-	for i := range cloudResources {
+	for i := range resources {
 		wg.Add(1)
-		input <- &cloudResources[i]
+		input <- &resources[i]
 	}
 	wg.Wait()
 	close(input)
-	for _, r := range cloudResources {
+	for _, r := range resources {
 		if r.InstanceState != nil && r.InstanceState.ID != "" {
 			refreshedResources = append(refreshedResources, r)
 		}
@@ -137,9 +83,24 @@ func RefreshResources(cloudResources []TerraformResource, providerName string) (
 	return refreshedResources, nil
 }
 
-func RefreshResourceWorker(input chan *TerraformResource, wg *sync.WaitGroup, provider *provider_wrapper.ProviderWrapper) {
+func RefreshResourceWorker(input chan *Resource, wg *sync.WaitGroup, provider *provider_wrapper.ProviderWrapper) {
 	for r := range input {
 		r.Refresh(provider)
 		wg.Done()
 	}
+}
+
+func IgnoreKeys(resourcesTypes []string, providerName string) map[string][]string {
+	p, err := provider_wrapper.NewProviderWrapper(providerName)
+	if err != nil {
+		log.Println("plugin error:", err)
+		return map[string][]string{}
+	}
+	defer p.Kill()
+	readOnlyAttributes, err := p.GetReadOnlyAttributes(resourcesTypes)
+	if err != nil {
+		log.Println("plugin error:", err)
+		return map[string][]string{}
+	}
+	return readOnlyAttributes
 }

@@ -15,13 +15,13 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"os/exec"
+	"waze/terraformer/cmd"
+	"waze/terraformer/terraform_utils"
 
 	"waze/terraformer/gcp_terraforming"
-	"waze/terraformer/gcp_terraforming/compute_resources"
 )
 
 const command = "terraform init && terraform plan"
@@ -29,8 +29,12 @@ const command = "terraform init && terraform plan"
 func main() {
 	zone := "europe-west1-c"
 	services := []string{}
-	for service := range computeTerrforming.ComputeService {
+	provider := &gcp_terraforming.GCPProvider{}
+	for service := range provider.GetGCPSupportService() {
 		if service == "images" {
+			continue
+		}
+		if service == "iam" {
 			continue
 		}
 		if service == "instanceTemplates" {
@@ -42,15 +46,21 @@ func main() {
 		services = append(services, service)
 
 	}
-	services = append(services, "gcs", "alerts")
 	for _, service := range services {
-		err := gcp_terraforming.Generate(service, []string{zone})
+		err := cmd.Exec("google", service, []string{zone})
 		if err != nil {
 			log.Println(err)
 			os.Exit(1)
 		}
+		provider = &gcp_terraforming.GCPProvider{
+			Provider: terraform_utils.Provider{
+				Name: "google",
+			},
+		}
+		provider.Init([]string{zone})
+		provider.InitService(service)
 		rootPath, _ := os.Getwd()
-		currentPath := fmt.Sprintf(gcp_terraforming.GenerateFilesFolderPath, rootPath, gcp_terraforming.PathForGenerateFiles, os.Getenv("GOOGLE_CLOUD_PROJECT"), zone, service)
+		currentPath := provider.CurrentPath()
 		if err := os.Chdir(currentPath); err != nil {
 			log.Println(err)
 			os.Exit(1)

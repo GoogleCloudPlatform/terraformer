@@ -166,7 +166,7 @@ func TfSanitize(name string) string {
 }
 
 // Print hcl file from TerraformResource + provider
-func HclPrint(resources []TerraformResource, provider map[string]interface{}) ([]byte, error) {
+func HclPrint(resources []Resource, providerData map[string]interface{}) ([]byte, error) {
 	resourcesByType := map[string]map[string]interface{}{}
 
 	for _, res := range resources {
@@ -186,7 +186,7 @@ func HclPrint(resources []TerraformResource, provider map[string]interface{}) ([
 
 	data := map[string]interface{}{}
 	data["resource"] = resourcesByType
-	data["provider"] = provider
+	data["provider"] = providerData
 
 	var err error
 	dataJsonBytes, err := json.MarshalIndent(data, "", "  ")
