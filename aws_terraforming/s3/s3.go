@@ -17,7 +17,6 @@ package s3
 import (
 	"fmt"
 	"log"
-
 	"waze/terraformer/aws_terraforming/aws_generator"
 	"waze/terraformer/terraform_utils"
 

@@ -82,7 +82,6 @@ func Generate(service string, args []string) error {
 	if err != nil {
 		return err
 	}
-
 	// create tfstate
 	tfstateFile, err := terraform_utils.PrintTfState(refreshedResources)
 	if err != nil {

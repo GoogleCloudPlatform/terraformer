@@ -46,7 +46,7 @@ func (VpnGatewayGenerator) createResources(vpnGws *ec2.DescribeVpnGatewaysOutput
 		resoures = append(resoures, terraform_utils.NewTerraformResource(
 			aws.StringValue(vpnGw.VpnGatewayId),
 			resourceName,
-			"aws_subnet",
+			"aws_vpn_gateway",
 			"aws",
 			nil,
 			map[string]string{},
