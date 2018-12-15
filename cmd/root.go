@@ -63,7 +63,7 @@ func Exec(providerName, service string, args []string) error {
 	provider.GetService().SetResources(refreshedResources)
 
 	// create tfstate
-	tfStateFile, err := terraform_utils.PrintTfState(refreshedResources)
+	tfStateFile, err := terraform_utils.PrintTfState(provider.GetService().GetResources())
 	if err != nil {
 		return err
 	}
@@ -73,6 +73,9 @@ func Exec(providerName, service string, args []string) error {
 	}
 	// change structs with additional data for each resource
 	err = provider.GetService().PostConvertHook()
+	if err != nil {
+		return err
+	}
 	// create HCL
 	tfFile := []byte{}
 	tfFile, err = terraform_utils.HclPrint(provider.GetService().GetResources(), provider.RegionResource())
