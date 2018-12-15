@@ -45,7 +45,7 @@ httpsHealthChecks
 images -  bug => Either raw_disk or source_disk configuration is required.
 instanceGroupManagers
 instanceGroups
-instanceTemplates - bug => formatting HCL bug
+instanceTemplates
 instances
 networks
 regionAutoscalers
