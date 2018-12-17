@@ -88,6 +88,7 @@ Your tf and tfstate file generate to `generated/gcp/zone/service`
 List of support AWS services:
 ````
 elb
+autoscaling
 iam
 igw
 nacl

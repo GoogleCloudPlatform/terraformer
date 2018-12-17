@@ -40,7 +40,7 @@ func (g *ElbGenerator) InitResources() error {
 		for _, loadBalancer := range loadBalancers.LoadBalancerDescriptions {
 			resourceName := aws.StringValue(loadBalancer.LoadBalancerName)
 			g.Resources = append(g.Resources, terraform_utils.NewResource(
-				aws.StringValue(loadBalancer.LoadBalancerName),
+				resourceName,
 				resourceName,
 				"aws_elb",
 				"aws",
