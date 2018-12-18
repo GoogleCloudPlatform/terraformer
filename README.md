@@ -89,6 +89,7 @@ List of support AWS services:
 ````
 elb
 autoscaling
+rds
 iam
 igw
 nacl

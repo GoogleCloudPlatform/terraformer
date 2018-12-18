@@ -95,5 +95,6 @@ func (p *AWSProvider) GetAWSSupportService() map[string]terraform_utils.ServiceG
 		"iam":            &IamGenerator{},
 		"route53":        &Route53Generator{},
 		"auto_scaling":   &AutoScalingGenerator{},
+		"rds":            &RDSGenerator{},
 	}
 }
