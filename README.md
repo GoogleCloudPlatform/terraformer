@@ -66,6 +66,7 @@ vpnTunnels
 gcs
 monitoring
 dns
+cloudsql - bug(https://github.com/terraform-providers/terraform-provider-google/issues/2716), bug(https://github.com/GoogleCloudPlatform/magic-modules/pull/1097)
 ````
 
 
