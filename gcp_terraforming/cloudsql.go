@@ -16,16 +16,12 @@ package gcp_terraforming
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"waze/terraformer/terraform_utils"
 
 	"golang.org/x/oauth2/google"
 
-	"cloud.google.com/go/monitoring/apiv3"
-	"google.golang.org/api/iterator"
 	"google.golang.org/api/sqladmin/v1beta4"
-	monitoringpb "google.golang.org/genproto/googleapis/monitoring/v3"
 )
 
 var cloudSQLAllowEmptyValues = []string{}
@@ -79,79 +75,9 @@ func (g *CloudSQLGenerator) loadDBs(svc *sqladmin.Service, instanceName, project
 	return nil
 }
 
-func (g *CloudSQLGenerator) loadSSLCert(ctx context.Context, project string) error {
-	client, err := monitoring.NewNotificationChannelClient(ctx)
-	if err != nil {
-		return err
-	}
-
-	req := &monitoringpb.ListNotificationChannelsRequest{
-		Name: "projects/" + project,
-	}
-
-	notificationChannelIterator := client.ListNotificationChannels(ctx, req)
-	for {
-		notificationChannel, err := notificationChannelIterator.Next()
-		if err == iterator.Done {
-			break
-		}
-		if err != nil {
-			log.Println("error with notification Channel:", err)
-			continue
-		}
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
-			notificationChannel.Name,
-			notificationChannel.Name,
-			"google_monitoring_notification_channel",
-			"google",
-			map[string]string{
-				"name": notificationChannel.Name,
-			},
-			monitoringAllowEmptyValues,
-			monitoringAdditionalFields,
-		))
-	}
-	return nil
-}
-
-func (g *CloudSQLGenerator) loadSQLUser(ctx context.Context, project string) error {
-	client, err := monitoring.NewUptimeCheckClient(ctx)
-	if err != nil {
-		return err
-	}
-
-	req := &monitoringpb.ListUptimeCheckConfigsRequest{
-		Parent: "projects/" + project,
-	}
-
-	uptimeCheckConfigsIterator := client.ListUptimeCheckConfigs(ctx, req)
-	for {
-		uptimeCheckConfigs, err := uptimeCheckConfigsIterator.Next()
-		if err == iterator.Done {
-			break
-		}
-		if err != nil {
-			log.Println("error with uptimeCheckConfigs:", err)
-			continue
-		}
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
-			uptimeCheckConfigs.Name,
-			uptimeCheckConfigs.Name,
-			"google_monitoring_uptime_check_config",
-			"google",
-			map[string]string{
-				"name": uptimeCheckConfigs.Name,
-			},
-			monitoringAllowEmptyValues,
-			monitoringAdditionalFields,
-		))
-	}
-	return nil
-}
-
 // Generate TerraformResources from GCP API,
-// from each alert  create 1 TerraformResource
-// Need alert name as ID for terraform resource
+// from each databases create many TerraformResource(dbinstance + databases)
+// Need dbinstance name as ID for terraform resource
 func (g *CloudSQLGenerator) InitResources() error {
 	project := g.GetArgs()["project"]
 	ctx := context.Background()
