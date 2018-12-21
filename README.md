@@ -64,7 +64,7 @@ targetTcpProxies
 urlMaps
 vpnTunnels
 gcs
-alerts
+monitoring
 dns
 ````
 

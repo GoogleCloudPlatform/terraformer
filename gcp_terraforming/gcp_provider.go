@@ -91,7 +91,7 @@ func (p *GCPProvider) GetGCPSupportService() map[string]terraform_utils.ServiceG
 	services := map[string]terraform_utils.ServiceGenerator{}
 	services = ComputeServices
 	services["gcs"] = &GcsGenerator{}
-	services["alerts"] = &AlertsGenerator{}
+	services["monitoring"] = &MonitoringGenerator{}
 	services["iam"] = &IamGenerator{}
 	services["dns"] = &CloudDNSGenerator{}
 	return services
