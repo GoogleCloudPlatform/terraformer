@@ -79,7 +79,7 @@ func (g *ElastiCacheGenerator) loadParameterGroups(svc *elasticache.ElastiCache)
 	return svc.DescribeCacheParameterGroupsPages(&elasticache.DescribeCacheParameterGroupsInput{}, func(parameterGroups *elasticache.DescribeCacheParameterGroupsOutput, lastPage bool) bool {
 		for _, parameterGroup := range parameterGroups.CacheParameterGroups {
 			resourceName := aws.StringValue(parameterGroup.CacheParameterGroupName)
-			if strings.Index(resourceName, ".") != -1 {
+			if strings.Contains(resourceName, ".") {
 				continue // skip default Default ParameterGroups like default.redis5.0
 			}
 			g.Resources = append(g.Resources, terraform_utils.NewResource(

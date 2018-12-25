@@ -53,7 +53,7 @@ func (g *RDSGenerator) loadDBParameterGroups(svc *rds.RDS) error {
 	return svc.DescribeDBParameterGroupsPages(&rds.DescribeDBParameterGroupsInput{}, func(parameterGroups *rds.DescribeDBParameterGroupsOutput, lastPage bool) bool {
 		for _, parameterGroup := range parameterGroups.DBParameterGroups {
 			resourceName := aws.StringValue(parameterGroup.DBParameterGroupName)
-			if strings.Index(resourceName, ".") != -1 {
+			if strings.Contains(resourceName, ".") {
 				continue // skip default Default ParameterGroups like default.mysql5.6
 			}
 			g.Resources = append(g.Resources, terraform_utils.NewResource(
@@ -92,7 +92,7 @@ func (g *RDSGenerator) loadOptionGroups(svc *rds.RDS) error {
 	return svc.DescribeOptionGroupsPages(&rds.DescribeOptionGroupsInput{}, func(optionGroups *rds.DescribeOptionGroupsOutput, lastPage bool) bool {
 		for _, optionGroup := range optionGroups.OptionGroupsList {
 			resourceName := aws.StringValue(optionGroup.OptionGroupName)
-			if strings.Index(resourceName, ".") != -1 || strings.Index(resourceName, ":") != -1 {
+			if strings.Contains(resourceName, ".") || strings.Contains(resourceName, ":") {
 				continue // skip default Default OptionGroups like default.mysql5.6
 			}
 			g.Resources = append(g.Resources, terraform_utils.NewResource(
