@@ -58,7 +58,7 @@ func (p *ProviderWrapper) GetReadOnlyAttributes(resourceTypes []string) (map[str
 		readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], "^id$")
 		for k, v := range obj.Attributes {
 			if !v.Optional && !v.Required {
-				if v.Type.IsListType() {
+				if v.Type.IsListType() || v.Type.IsSetType() {
 					readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], "^"+k+".(.*)")
 				} else {
 					readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], "^"+k+"$")

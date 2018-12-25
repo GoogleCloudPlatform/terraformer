@@ -101,6 +101,7 @@ vpc
 vpn_connection
 vpn_gateway
 route53
+elasticache
 ````
 
 ###Developing:

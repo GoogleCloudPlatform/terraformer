@@ -16,6 +16,7 @@ package terraform_utils
 
 import (
 	"fmt"
+	"log"
 	"regexp"
 	"strings"
 	"waze/terraformer/terraform_utils/provider_wrapper"
@@ -57,7 +58,11 @@ func NewResource(ID, resourceName, resourceType, provider string,
 }
 
 func (r *Resource) Refresh(provider *provider_wrapper.ProviderWrapper) {
-	r.InstanceState, _ = provider.Refresh(r.InstanceInfo, r.InstanceState)
+	var err error
+	r.InstanceState, err = provider.Refresh(r.InstanceInfo, r.InstanceState)
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 func (r *Resource) ConvertTFstate() {

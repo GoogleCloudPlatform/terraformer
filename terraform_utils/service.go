@@ -75,7 +75,7 @@ func (s *Service) PopulateIgnoreKeys() {
 	for k, v := range keys {
 		for i := range s.Resources {
 			if s.Resources[i].InstanceInfo.Type == k {
-				s.Resources[i].IgnoreKeys = v
+				s.Resources[i].IgnoreKeys = append(s.Resources[i].IgnoreKeys, v...)
 			}
 		}
 	}
