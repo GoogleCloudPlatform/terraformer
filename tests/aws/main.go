@@ -18,22 +18,48 @@ import (
 	"log"
 	"os"
 	"os/exec"
-
+	"sort"
 	"waze/terraformer/aws_terraforming"
+	"waze/terraformer/cmd"
+	"waze/terraformer/terraform_utils"
 )
 
 const command = "terraform init && terraform plan"
 
 func main() {
 	region := "eu-west-1"
-	for service := range aws_terraforming.GetAWSSupportService() {
-		err := aws_terraforming.Generate(service, []string{region})
+	services := []string{}
+	provider := &aws_terraforming.AWSProvider{}
+	for service := range provider.GetAWSSupportService() {
+		if service == "route53" {
+			continue
+		}
+		if service == "iam" {
+			continue
+		}
+		if service == "sg" {
+			continue
+		}
+		services = append(services, service)
+
+	}
+	sort.Strings(services)
+	for _, service := range services {
+		if _, err := os.Stat("/Users/sergeylanz/go/src/waze/terraformer/generated/aws/eu-west-1/" + service); !os.IsNotExist(err) {
+			continue
+		}
+		err := cmd.Exec("aws", service, []string{region})
 		if err != nil {
 			log.Println(err)
 			os.Exit(1)
 		}
+		provider = &aws_terraforming.AWSProvider{
+			Provider: terraform_utils.Provider{},
+		}
+		provider.Init([]string{region})
+		provider.InitService(service)
 		rootPath, _ := os.Getwd()
-		currentPath := rootPath + aws_terraforming.PathForGenerateFiles + region + "/" + service
+		currentPath := provider.CurrentPath()
 		if err := os.Chdir(currentPath); err != nil {
 			log.Println(err)
 			os.Exit(1)
@@ -48,4 +74,5 @@ func main() {
 		}
 		os.Chdir(rootPath)
 	}
+
 }

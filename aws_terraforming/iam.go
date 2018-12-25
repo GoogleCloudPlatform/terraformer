@@ -35,8 +35,7 @@ type IamGenerator struct {
 	AWSService
 }
 
-// TODO All here
-func (g IamGenerator) InitResources() error {
+func (g *IamGenerator) InitResources() error {
 	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"])})
 	svc := iam.New(sess)
 	g.Resources = []terraform_utils.Resource{}
@@ -44,18 +43,22 @@ func (g IamGenerator) InitResources() error {
 	if err != nil {
 		log.Println(err)
 	}
+
 	err = g.getGroups(svc)
 	if err != nil {
 		log.Println(err)
 	}
+
 	err = g.getPolicies(svc)
 	if err != nil {
 		log.Println(err)
 	}
+
 	err = g.getRoles(svc)
 	if err != nil {
 		log.Println(err)
 	}
+
 	g.PopulateIgnoreKeys()
 	return nil
 }
@@ -81,7 +84,7 @@ func (g *IamGenerator) getRoles(svc *iam.IAM) error {
 			for _, policyName := range listRolePolicies.PolicyNames {
 				g.Resources = append(g.Resources, terraform_utils.NewResource(
 					roleName+":"+aws.StringValue(policyName),
-					roleName,
+					roleName+"_"+aws.StringValue(policyName),
 					"aws_iam_role_policy",
 					"aws",
 					map[string]string{},
@@ -138,7 +141,8 @@ func (g *IamGenerator) getUserGroup(svc *iam.IAM, userName *string) error {
 func (g *IamGenerator) getUserPolices(svc *iam.IAM, userName *string) error {
 	err := svc.ListUserPoliciesPages(&iam.ListUserPoliciesInput{UserName: userName}, func(userPolices *iam.ListUserPoliciesOutput, lastPage bool) bool {
 		for _, policy := range userPolices.PolicyNames {
-			resourceName := strings.Replace(aws.StringValue(policy), "@", "", -1)
+			resourceName := aws.StringValue(userName) + "_" + aws.StringValue(policy)
+			resourceName = strings.Replace(resourceName, "@", "", -1)
 			policyID := aws.StringValue(userName) + ":" + aws.StringValue(policy)
 			g.Resources = append(g.Resources, terraform_utils.NewResource(
 				policyID,
@@ -216,9 +220,10 @@ func (g *IamGenerator) getGroups(svc *iam.IAM) error {
 			_ = svc.ListGroupPoliciesPages(&iam.ListGroupPoliciesInput{GroupName: group.GroupName}, func(policyGroup *iam.ListGroupPoliciesOutput, lastPage bool) bool {
 				for _, policy := range policyGroup.PolicyNames {
 					id := resourceName + ":" + aws.StringValue(policy)
+					groupPolicyName := resourceName + "_" + aws.StringValue(policy)
 					g.Resources = append(g.Resources, terraform_utils.NewResource(
 						id,
-						resourceName,
+						groupPolicyName,
 						"aws_iam_group_policy",
 						"aws",
 						map[string]string{},

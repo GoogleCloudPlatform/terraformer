@@ -18,6 +18,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"sort"
 	"waze/terraformer/cmd"
 	"waze/terraformer/terraform_utils"
 
@@ -43,9 +44,16 @@ func main() {
 		if service == "targetHttpProxies" {
 			continue
 		}
+		if service == "monitoring" {
+			continue
+		}
+		if service == "cloudsql" {
+			continue
+		}
 		services = append(services, service)
 
 	}
+	sort.Strings(services)
 	for _, service := range services {
 		err := cmd.Exec("google", service, []string{zone})
 		if err != nil {
@@ -53,9 +61,7 @@ func main() {
 			os.Exit(1)
 		}
 		provider = &gcp_terraforming.GCPProvider{
-			Provider: terraform_utils.Provider{
-				Name: "google",
-			},
+			Provider: terraform_utils.Provider{},
 		}
 		provider.Init([]string{zone})
 		provider.InitService(service)
