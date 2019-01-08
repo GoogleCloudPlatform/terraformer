@@ -19,7 +19,7 @@ import (
 //var GCPProjects = []string{"waze-development", "waze-prod"}
 var GCPProjects = []string{"waze-development"}
 
-var regionServices = mapset.NewSetWith(
+var regionServicesGcp = mapset.NewSetWith(
 	"disks",
 	"autoscalers",
 	"instanceGroupManagers",
@@ -36,7 +36,7 @@ var regionServices = mapset.NewSetWith(
 	"forwardingRules",
 )
 
-var ignoreServices = mapset.NewSetWith(
+var ignoreServicesGcp = mapset.NewSetWith(
 	"disks",
 	"iam",
 	"autoscalers",
@@ -51,7 +51,7 @@ var ignoreServices = mapset.NewSetWith(
 	"addresses",
 )
 
-var notInfraService = mapset.NewSetWith(
+var notInfraServiceGcp = mapset.NewSetWith(
 	"backendServices",
 	"urlMaps",
 	"targetHttpProxies",
@@ -65,76 +65,22 @@ var notInfraService = mapset.NewSetWith(
 	"httpsHealthChecks",
 )
 
-type importedResource struct {
-	tfResources []terraform_utils.Resource
-	tfState     []byte
-	project     string
-	region      string
-	serviceName string
-}
-
 func importGCP() {
 	resources := []importedResource{}
 	for _, project := range GCPProjects {
 		for _, service := range getGCPService() {
 			zones := []*compute.Zone{{Name: "europe-west1-b", Region: "europe-west1"}} //dummy region
-			if regionServices.Contains(service) {
+			if regionServicesGcp.Contains(service) {
 				zones = getGCPZone()
 			}
 			for _, zone := range zones {
 				provider := &gcp_terraforming.GCPProvider{}
-				err := provider.Init([]string{zone.Name, project})
-				if err != nil {
-					log.Fatal(err)
-					return
-				}
-
-				err = provider.InitService(service)
-				if err != nil {
-					log.Fatal(err)
-					return
-				}
-
-				err = provider.GetService().InitResources()
-				if err != nil {
-					log.Fatal(err)
-					return
-				}
-				refreshedResources, err := terraform_utils.RefreshResources(provider.GetService().GetResources(), provider.GetName())
-				if err != nil {
-					log.Fatal(err)
-					return
-				}
-				provider.GetService().SetResources(refreshedResources)
-
-				// create tfstate
-				tfStateFile, err := terraform_utils.PrintTfState(provider.GetService().GetResources())
-				if err != nil {
-					log.Fatal(err)
-					return
-				}
-				// convert InstanceState to go struct for hcl print
-				for i := range provider.GetService().GetResources() {
-					provider.GetService().GetResources()[i].ConvertTFstate()
-				}
-				// change structs with additional data for each resource
-				err = provider.GetService().PostConvertHook()
-				if err != nil {
-					log.Fatal(err)
-					return
-				}
 				regionName := "global"
-				if regionServices.Contains(service) {
-					regionPath := strings.Split(zone.Region, "/")
+				if regionServicesGcp.Contains(service) {
+					regionPath := strings.Split(zone.Name, "/")
 					regionName = regionPath[len(regionPath)-1]
 				}
-				resources = append(resources, importedResource{
-					tfResources: provider.GetService().GetResources(),
-					tfState:     tfStateFile,
-					project:     project,
-					region:      regionName,
-					serviceName: service,
-				})
+				resources = append(resources, importResource(provider, regionName, service, zone.Name, project))
 			}
 		}
 	}
@@ -143,7 +89,7 @@ func importGCP() {
 	for _, r := range resources {
 		rootPath, _ := os.Getwd()
 		path := ""
-		if notInfraService.Contains(r.serviceName) {
+		if notInfraServiceGcp.Contains(r.serviceName) {
 			continue
 			//path = fmt.Sprintf("%s/imported/microservices/%s/", rootPath, r.serviceName)
 		} else {
@@ -199,7 +145,7 @@ func getGCPService() []string {
 	services := []string{}
 	provider := &gcp_terraforming.GCPProvider{}
 	for service := range provider.GetGCPSupportService() {
-		if !ignoreServices.Contains(service) {
+		if !ignoreServicesGcp.Contains(service) {
 			services = append(services, service)
 		}
 	}
