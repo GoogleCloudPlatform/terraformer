@@ -137,14 +137,15 @@ func importGCP() {
 				})
 			}
 		}
-
 	}
 	provider := &gcp_terraforming.GCPProvider{}
+	//services := map[string]importedResource{}
 	for _, r := range resources {
 		rootPath, _ := os.Getwd()
 		path := ""
 		if notInfraService.Contains(r.serviceName) {
-			path = fmt.Sprintf("%s/imported/microservices/%s/", rootPath, r.serviceName)
+			continue
+			//path = fmt.Sprintf("%s/imported/microservices/%s/", rootPath, r.serviceName)
 		} else {
 			path = fmt.Sprintf("%s/imported/infra/gcp/%s/%s/%s", rootPath, r.project, r.serviceName, r.region)
 		}
