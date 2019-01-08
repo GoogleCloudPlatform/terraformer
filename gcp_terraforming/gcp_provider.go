@@ -38,6 +38,9 @@ func (p *GCPProvider) Init(args []string) error {
 	if projectName == "" {
 		return errors.New("google cloud project name must be set")
 	}
+	if len(args) > 1 {
+		p.projectName = args[1]
+	}
 	p.projectName = projectName
 	p.zone = args[0]
 	p.region = strings.Join(strings.Split(p.zone, "-")[:len(strings.Split(p.zone, "-"))-1], "-")

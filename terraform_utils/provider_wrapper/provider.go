@@ -130,7 +130,7 @@ func (p *ProviderWrapper) initProvider() error {
 			AllowedProtocols: []plugin.Protocol{plugin.ProtocolGRPC, plugin.ProtocolNetRPC},
 			Logger: hclog.New(&hclog.LoggerOptions{
 				Name:   "plugin",
-				Level:  hclog.Info,
+				Level:  hclog.Trace,
 				Output: os.Stderr,
 			}),
 		})
