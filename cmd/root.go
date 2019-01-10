@@ -78,7 +78,7 @@ func Exec(providerName, service string, args []string) error {
 	}
 	// create HCL
 	tfFile := []byte{}
-	tfFile, err = terraform_utils.HclPrint(provider.GetService().GetResources(), provider.RegionResource())
+	tfFile, err = terraform_utils.HclPrintResource(provider.GetService().GetResources(), provider.RegionResource())
 	if err != nil {
 		return err
 	}

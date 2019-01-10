@@ -117,12 +117,22 @@ func (v *astSanitizer) visitObjectItem(o *ast.ObjectItem) {
 	v.visit(o.Val)
 }
 
-func hclPrint(node ast.Node) ([]byte, error) {
+func HclPrint(data interface{}) ([]byte, error) {
+	dataJsonBytes, err := json.MarshalIndent(data, "", "  ")
+	dataJson := string(dataJsonBytes)
+	dataJson = strings.Replace(dataJson, "\\u003c", "<", -1)
+	if err != nil {
+		return []byte{}, fmt.Errorf("error marshalling terraform data to json: %v", err)
+	}
+	nodes, err := hcl_parcer.Parse([]byte(dataJson))
+	if err != nil {
+		return []byte{}, fmt.Errorf("error parsing terraform json: %v", err)
+	}
 	var sanitizer astSanitizer
-	sanitizer.visit(node)
+	sanitizer.visit(nodes)
 
 	var b bytes.Buffer
-	err := hcl_printer.Fprint(&b, node)
+	err = hcl_printer.Fprint(&b, nodes)
 	if err != nil {
 		return nil, fmt.Errorf("error writing HCL: %v", err)
 	}
@@ -161,7 +171,7 @@ func TfSanitize(name string) string {
 }
 
 // Print hcl file from TerraformResource + provider
-func HclPrint(resources []Resource, providerData map[string]interface{}) ([]byte, error) {
+func HclPrintResource(resources []Resource, providerData map[string]interface{}) ([]byte, error) {
 	resourcesByType := map[string]map[string]interface{}{}
 
 	for _, res := range resources {
@@ -180,21 +190,15 @@ func HclPrint(resources []Resource, providerData map[string]interface{}) ([]byte
 	}
 
 	data := map[string]interface{}{}
-	data["resource"] = resourcesByType
-	data["provider"] = providerData
-
+	if len(resourcesByType) > 0 {
+		data["resource"] = resourcesByType
+	}
+	if len(providerData) > 0 {
+		data["provider"] = providerData
+	}
 	var err error
-	dataJsonBytes, err := json.MarshalIndent(data, "", "  ")
-	dataJson := string(dataJsonBytes)
-	dataJson = strings.Replace(dataJson, "\\u003c", "<", -1)
-	if err != nil {
-		return []byte{}, fmt.Errorf("error marshalling terraform data to json: %v", err)
-	}
-	nodes, err := hcl_parcer.Parse([]byte(dataJson))
-	if err != nil {
-		return []byte{}, fmt.Errorf("error parsing terraform json: %v", err)
-	}
-	hclBytes, err := hclPrint(nodes)
+
+	hclBytes, err := HclPrint(data)
 	if err != nil {
 		return []byte{}, err
 	}

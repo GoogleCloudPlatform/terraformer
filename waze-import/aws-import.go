@@ -75,7 +75,7 @@ func importAWS() {
 			log.Fatal(err)
 			return
 		}
-		tfFile, err := terraform_utils.HclPrint(r.tfResources, provider.RegionResource())
+		tfFile, err := terraform_utils.HclPrintResource(r.tfResources, provider.RegionResource())
 		err = ioutil.WriteFile(path+"/"+r.serviceName+".tf", tfFile, os.ModePerm)
 		if err != nil {
 			log.Fatal(err)

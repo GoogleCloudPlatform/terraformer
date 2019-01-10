@@ -35,11 +35,11 @@ type GCPProvider struct {
 // check projectName in env params
 func (p *GCPProvider) Init(args []string) error {
 	projectName := os.Getenv("GOOGLE_CLOUD_PROJECT")
+	if len(args) > 1 {
+		projectName = args[1]
+	}
 	if projectName == "" {
 		return errors.New("google cloud project name must be set")
-	}
-	if len(args) > 1 {
-		p.projectName = args[1]
 	}
 	p.projectName = projectName
 	p.zone = args[0]
