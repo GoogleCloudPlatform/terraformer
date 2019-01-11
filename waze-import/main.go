@@ -53,8 +53,6 @@ type importedResource struct {
 	serviceName string
 }
 
-
-
 // services list from spinnaker applications
 var microserviceNameList = []string{
 	"abtests",

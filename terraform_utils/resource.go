@@ -65,16 +65,24 @@ func (r *Resource) Refresh(provider *provider_wrapper.ProviderWrapper) {
 	}
 }
 
+func (r Resource) GetIDKey() string {
+	if _, exist := r.InstanceState.Attributes["self_link"]; exist {
+		return "self_link"
+	}
+	return "id"
+}
+
 func (r *Resource) ConvertTFstate() {
 	r.Item = map[string]interface{}{}
-	allAttributes := []string{}
-	for key := range r.InstanceState.Attributes {
-		allAttributes = append(allAttributes, key)
+	attributes := map[string]string{}
+	for k, v := range r.InstanceState.Attributes {
+		attributes[k] = v
 	}
+
 	// delete empty array
-	for _, key := range allAttributes {
+	for key := range r.InstanceState.Attributes {
 		if strings.HasSuffix(key, ".#") && r.InstanceState.Attributes[key] == "0" {
-			delete(r.InstanceState.Attributes, key)
+			delete(attributes, key)
 		}
 	}
 	// delete ignored keys
@@ -82,7 +90,7 @@ func (r *Resource) ConvertTFstate() {
 		for _, patter := range r.IgnoreKeys {
 			match, err := regexp.MatchString(patter, keyAttribute)
 			if match && err == nil {
-				delete(r.InstanceState.Attributes, keyAttribute)
+				delete(attributes, keyAttribute)
 			}
 		}
 	}
@@ -99,18 +107,18 @@ func (r *Resource) ConvertTFstate() {
 			}
 		}
 		if !allowEmptyValue {
-			delete(r.InstanceState.Attributes, keyAttribute)
+			delete(attributes, keyAttribute)
 		}
 	}
 	// parse Attributes to go string with flatmap package
-	for key := range r.InstanceState.Attributes {
+	for key := range attributes {
 		blockName := strings.Split(key, ".")[0]
 
 		if _, exist := r.Item[blockName]; exist {
 			continue
 		}
 
-		r.Item[blockName] = flatmap.Expand(r.InstanceState.Attributes, blockName)
+		r.Item[blockName] = flatmap.Expand(attributes, blockName)
 	}
 	// add Additional Fields to resource
 	for key, value := range r.AdditionalFields {

@@ -13,13 +13,13 @@ type bucket struct{}
 
 const bucketStateName = "waze-terraform-state"
 
-func (b bucket) getTfData(path string) interface{} {
+func bucketGetTfData(path string) interface{} {
 	bucketStateData := map[string]interface{}{
 		"terraform": map[string]interface{}{
 			"backend": map[string]interface{}{
 				"gcs": map[string]interface{}{
 					"bucket": bucketStateName,
-					"prefix": b.prefix(path),
+					"prefix": bucketPrefix(path),
 				},
 			},
 		},
@@ -27,18 +27,18 @@ func (b bucket) getTfData(path string) interface{} {
 	return bucketStateData
 }
 
-func (bucket) prefix(path string) string {
+func bucketPrefix(path string) string {
 	rootPath, _ := os.Getwd()
 	return strings.Replace(path, rootPath+"/imported/infra/", "", -1)
 }
 
-func (b bucket) upload(project, path string, file []byte) error {
+func bucketUpload(path string, file []byte) error {
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)
 	}
-	wc := client.Bucket(bucketStateName).Object(b.prefix(path) + "/default.tfstate").NewWriter(ctx)
+	wc := client.Bucket(bucketStateName).Object(bucketPrefix(path) + "/default.tfstate").NewWriter(ctx)
 	if _, err = wc.Write(file); err != nil {
 		return err
 	}

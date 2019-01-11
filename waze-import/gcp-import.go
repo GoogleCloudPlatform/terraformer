@@ -58,6 +58,10 @@ var notInfraServiceGcp = mapset.NewSetWith(
 	//"httpsHealthChecks",
 )
 
+var resourceConnections = map[string]map[string]string{
+	"firewalls": {"networks": "network"},
+}
+
 func importGCP() {
 	importResources := map[string]importedService{}
 
@@ -71,6 +75,7 @@ func importGCP() {
 			for _, zone := range zones {
 				provider := &gcp_terraforming.GCPProvider{}
 				for _, r := range importResource(provider, service, zone.Name, project) {
+					delete(r.Item, "project")
 					resources = append(resources, importedResource{
 						region:      zone.Name,
 						tfResource:  r,
@@ -79,6 +84,7 @@ func importGCP() {
 				}
 			}
 		}
+
 		for _, service := range getGCPService() {
 			ir := importedService{}
 			serviceRegion := ""
@@ -94,6 +100,24 @@ func importGCP() {
 				ir.region = regionPath[len(regionPath)-1]
 			}
 			importResources[service] = ir
+		}
+
+		for resource, connection := range resourceConnections {
+			if _, exist := importResources[resource]; exist {
+				for k, v := range connection {
+					if cc, ok := importResources[k]; ok {
+						for _, ccc := range cc.tfResources {
+							for i := range importResources[resource].tfResources {
+								idKey := ccc.tfResource.GetIDKey()
+								if ccc.tfResource.InstanceState.Attributes[idKey] == importResources[resource].tfResources[i].tfResource.InstanceState.Attributes[v] {
+									importResources[resource].tfResources[i].tfResource.InstanceState.Attributes[v] = "${data.terraform_remote_state." + k + "." + ccc.tfResource.InstanceInfo.Type + "_" + ccc.tfResource.ResourceName + "." + idKey + "}"
+									importResources[resource].tfResources[i].tfResource.Item[v] = "${data.terraform_remote_state." + k + "." + ccc.tfResource.InstanceInfo.Type + "_" + ccc.tfResource.ResourceName + "." + idKey + "}"
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 
 		/*for _, microserviceName := range microserviceNameList {
@@ -128,14 +152,13 @@ func importGCP() {
 			for _, resource := range r.tfResources {
 				resources = append(resources, resource.tfResource)
 			}
-			printHclFiles(resources, path, project)
+			printHclFiles(resources, path, project, serviceName)
 			tfStateFile, err := terraform_utils.PrintTfState(resources)
 			if err != nil {
 				log.Fatal(err)
 				return
 			}
-			bucket := bucket{}
-			err = bucket.upload(project, path, tfStateFile)
+			err = bucketUpload(path, tfStateFile)
 			if err != nil {
 				log.Fatal(err)
 				return
@@ -144,7 +167,7 @@ func importGCP() {
 	}
 }
 
-func printHclFiles(resources []terraform_utils.Resource, path, projectName string) {
+func printHclFiles(resources []terraform_utils.Resource, path, projectName, serviceName string) {
 	// create provider file
 	providerData := map[string]interface{}{
 		"provider": map[string]interface{}{
@@ -161,10 +184,46 @@ func printHclFiles(resources []terraform_utils.Resource, path, projectName strin
 	printFile(path+"/provider.tf", providerDataFile)
 
 	// create bucket file
-	bucket := bucket{}
-	bucketStateDataFile, err := terraform_utils.HclPrint(bucket.getTfData(path))
+	bucketStateDataFile, err := terraform_utils.HclPrint(bucketGetTfData(path))
 	printFile(path+"/bucket.tf", bucketStateDataFile)
-
+	// create outputs files
+	outputs := map[string]interface{}{}
+	outputsByResource := map[string]map[string]interface{}{}
+	for _, r := range resources {
+		outputsByResource[r.InstanceInfo.Type+"_"+r.ResourceName] = map[string]interface{}{
+			"value": "${" + r.InstanceInfo.Type + "." + r.ResourceName + "." + r.GetIDKey() + "}",
+		}
+	}
+	outputs["output"] = outputsByResource
+	outputsFile, err := terraform_utils.HclPrint(outputs)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	printFile(path+"/outputs.tf", outputsFile)
+	// create variables file
+	if len(resourceConnections[serviceName]) > 0 {
+		variables := map[string]interface{}{}
+		variablesByResource := map[string]map[string]interface{}{}
+		for k := range resourceConnections[serviceName] {
+			variablesByResource["terraform_remote_state"] = map[string]interface{}{
+				k: map[string]interface{}{
+					"backend": "gcs",
+					"config": map[string]interface{}{
+						"bucket": bucketStateName,
+						"prefix": bucketPrefix(strings.Replace(path, serviceName, k, -1)),
+					},
+				},
+			}
+		}
+		variables["data"] = variablesByResource
+		variablesFile, err := terraform_utils.HclPrint(variables)
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+		printFile(path+"/variables.tf", variablesFile)
+	}
 	// group by resource by type
 	typeOfServices := map[string][]terraform_utils.Resource{}
 	for _, r := range resources {
