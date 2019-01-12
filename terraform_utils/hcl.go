@@ -151,6 +151,8 @@ func HclPrint(data interface{}) ([]byte, error) {
 
 	// Apply Terraform style (alignment etc.)
 	formatted, err := hcl_printer.Format([]byte(s))
+	// hack for support terraform 0.12
+	formatted = []byte(strings.Replace(string(formatted), " = {", " {", -1))
 	if err != nil {
 		log.Println("Invalid HCL follows:")
 		for i, line := range strings.Split(s, "\n") {
