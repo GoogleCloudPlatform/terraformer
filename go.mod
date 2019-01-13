@@ -30,6 +30,7 @@ require (
 	github.com/coreos/go-semver v0.2.0 // indirect
 	github.com/coreos/go-systemd v0.0.0-20181031085051-9002847aa142 // indirect
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f // indirect
+	github.com/deckarep/golang-set v1.7.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/dnaeon/go-vcr v0.0.0-20180920040454-5637cf3d8a31 // indirect
 	github.com/dylanmei/iso8601 v0.1.0 // indirect
@@ -48,10 +49,10 @@ require (
 	github.com/hashicorp/atlas-go v0.0.0-20170808163836-8261ea080105 // indirect
 	github.com/hashicorp/consul v1.4.0 // indirect
 	github.com/hashicorp/go-getter v0.0.0-20181119194526-bd1edc22f8ea // indirect
-	github.com/hashicorp/go-hclog v0.0.0-20181001195459-61d530d6c27f // indirect
+	github.com/hashicorp/go-hclog v0.0.0-20181001195459-61d530d6c27f
 	github.com/hashicorp/go-immutable-radix v1.0.0 // indirect
 	github.com/hashicorp/go-msgpack v0.0.0-20150518234257-fa3f63826f7c // indirect
-	github.com/hashicorp/go-plugin v0.0.0-20181030172320-54b6ff97d818 // indirect
+	github.com/hashicorp/go-plugin v0.0.0-20181030172320-54b6ff97d818
 	github.com/hashicorp/go-retryablehttp v0.0.0-20180531211321-3b087ef2d313 // indirect
 	github.com/hashicorp/go-rootcerts v0.0.0-20160503143440-6bb64b370b90 // indirect
 	github.com/hashicorp/go-slug v0.1.0 // indirect
@@ -75,7 +76,7 @@ require (
 	github.com/masterzen/simplexml v0.0.0-20160608183007-4572e39b1ab9 // indirect
 	github.com/masterzen/winrm v0.0.0-20181112102303-a196a4ff2a86 // indirect
 	github.com/miekg/dns v1.0.15 // indirect
-	github.com/mitchellh/cli v1.0.0
+	github.com/mitchellh/cli v1.0.0 // indirect
 	github.com/mitchellh/colorstring v0.0.0-20150917214807-8631ce90f286 // indirect
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/mitchellh/go-linereader v0.0.0-20141013185533-07bab5fdd958 // indirect
@@ -97,7 +98,6 @@ require (
 	github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d // indirect
 	github.com/smartystreets/goconvey v0.0.0-20181108003508-044398e4856c // indirect
 	github.com/soheilhy/cmux v0.1.4 // indirect
-	github.com/stretchr/testify v1.2.2
 	github.com/svanharmelen/jsonapi v0.0.0-20180618144545-0c0828c3f16d // indirect
 	github.com/terraform-providers/terraform-provider-aws v1.48.0 // indirect
 	github.com/terraform-providers/terraform-provider-openstack v0.1.0 // indirect
