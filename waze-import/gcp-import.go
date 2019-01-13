@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"regexp"
 	"sort"
 	"strings"
 	"waze/terraformer/gcp_terraforming"
@@ -46,6 +47,7 @@ var ignoreServicesGcp = mapset.NewSetWith(
 
 var notInfraServiceGcp = mapset.NewSetWith(
 	"backendServices",
+	"regionBackendServices",
 	"urlMaps",
 	"targetHttpProxies",
 	"targetHttpsProxies",
@@ -59,7 +61,9 @@ var notInfraServiceGcp = mapset.NewSetWith(
 )
 
 var resourceConnections = map[string]map[string]string{
-	"firewalls": {"networks": "network"},
+	"firewalls":             {"networks": "network"},
+	"routes":                {"networks": "network"},
+	"regionBackendServices": {"healthChecks": "health_checks"},
 }
 
 func importGCP() {
@@ -109,9 +113,30 @@ func importGCP() {
 						for _, ccc := range cc.tfResources {
 							for i := range importResources[resource].tfResources {
 								idKey := ccc.tfResource.GetIDKey()
-								if ccc.tfResource.InstanceState.Attributes[idKey] == importResources[resource].tfResources[i].tfResource.InstanceState.Attributes[v] {
-									importResources[resource].tfResources[i].tfResource.InstanceState.Attributes[v] = "${data.terraform_remote_state." + k + "." + ccc.tfResource.InstanceInfo.Type + "_" + ccc.tfResource.ResourceName + "." + idKey + "}"
-									importResources[resource].tfResources[i].tfResource.Item[v] = "${data.terraform_remote_state." + k + "." + ccc.tfResource.InstanceInfo.Type + "_" + ccc.tfResource.ResourceName + "." + idKey + "}"
+								linkValue := "${data.terraform_remote_state." + k + "." + ccc.tfResource.InstanceInfo.Type + "_" + ccc.tfResource.ResourceName + "." + idKey + "}"
+								tfResource := importResources[resource].tfResources[i].tfResource
+								if ccc.tfResource.InstanceState.Attributes[idKey] == tfResource.InstanceState.Attributes[v] {
+									importResources[resource].tfResources[i].tfResource.InstanceState.Attributes[v] = linkValue
+									importResources[resource].tfResources[i].tfResource.Item[v] = linkValue
+								} else {
+									for keyAttributes, j := range tfResource.InstanceState.Attributes {
+										match, err := regexp.MatchString(v+".\\d+$", keyAttributes)
+										if match && err == nil {
+											if j == ccc.tfResource.InstanceState.Attributes[idKey] {
+												importResources[resource].tfResources[i].tfResource.InstanceState.Attributes[keyAttributes] = linkValue
+												switch ar := tfResource.Item[v].(type) {
+												case []interface{}:
+													for j, l := range ar {
+														if l == ccc.tfResource.InstanceState.Attributes[idKey] {
+															importResources[resource].tfResources[i].tfResource.Item[v].([]interface{})[j] = linkValue
+														}
+													}
+												default:
+													log.Println("type not supported", ar)
+												}
+											}
+										}
+									}
 								}
 							}
 						}
