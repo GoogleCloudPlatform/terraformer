@@ -33,10 +33,17 @@ func NewTfState(resources []Resource) *terraform.State {
 		TFVersion: terraform.VersionString(),
 		Serial:    1,
 	}
+	outputs := map[string]*terraform.OutputState{}
+	for _, r := range resources {
+		for k, v := range r.Outputs {
+			outputs[k] = v
+		}
+	}
 	tfstate.Modules = []*terraform.ModuleState{
 		{
 			Path:      []string{"root"},
 			Resources: map[string]*terraform.ResourceState{},
+			Outputs:   outputs,
 		},
 	}
 	for _, resource := range resources {

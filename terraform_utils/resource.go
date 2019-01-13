@@ -28,6 +28,7 @@ import (
 type Resource struct {
 	InstanceInfo     *terraform.InstanceInfo
 	InstanceState    *terraform.InstanceState
+	Outputs          map[string]*terraform.OutputState
 	ResourceName     string
 	Provider         string
 	Item             map[string]interface{}

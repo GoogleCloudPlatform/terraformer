@@ -12,6 +12,8 @@ import (
 	"waze/terraformer/gcp_terraforming"
 	"waze/terraformer/terraform_utils"
 
+	"github.com/hashicorp/terraform/terraform"
+
 	"golang.org/x/oauth2/google"
 
 	"github.com/deckarep/golang-set"
@@ -47,7 +49,7 @@ var ignoreServicesGcp = mapset.NewSetWith(
 
 var notInfraServiceGcp = mapset.NewSetWith(
 	"backendServices",
-	"regionBackendServices",
+	//"regionBackendServices",
 	"urlMaps",
 	"targetHttpProxies",
 	"targetHttpsProxies",
@@ -60,10 +62,11 @@ var notInfraServiceGcp = mapset.NewSetWith(
 	//"httpsHealthChecks",
 )
 
-var resourceConnections = map[string]map[string]string{
-	"firewalls":             {"networks": "network"},
-	"routes":                {"networks": "network"},
-	"regionBackendServices": {"healthChecks": "health_checks"},
+var resourceConnections = map[string]map[string][]string{
+	"firewalls":             {"networks": []string{"network", "self_link"}},
+	"routes":                {"networks": []string{"network", "self_link"}},
+	"regionBackendServices": {"healthChecks": []string{"health_checks", "self_link"}},
+	"backendBuckets":        {"gcs": []string{"bucket_name", "name"}},
 }
 
 func importGCP() {
@@ -112,23 +115,28 @@ func importGCP() {
 					if cc, ok := importResources[k]; ok {
 						for _, ccc := range cc.tfResources {
 							for i := range importResources[resource].tfResources {
-								idKey := ccc.tfResource.GetIDKey()
-								linkValue := "${data.terraform_remote_state." + k + "." + ccc.tfResource.InstanceInfo.Type + "_" + ccc.tfResource.ResourceName + "." + idKey + "}"
+								key := v[1]
+								if v[1] == "self_link" || v[1] == "id" {
+									key = ccc.tfResource.GetIDKey()
+								}
+								keyValue := ccc.tfResource.InstanceInfo.Type + "_" + ccc.tfResource.ResourceName + "_" + key
+								linkValue := "${data.terraform_remote_state." + k + "." + keyValue + "}"
+
 								tfResource := importResources[resource].tfResources[i].tfResource
-								if ccc.tfResource.InstanceState.Attributes[idKey] == tfResource.InstanceState.Attributes[v] {
-									importResources[resource].tfResources[i].tfResource.InstanceState.Attributes[v] = linkValue
-									importResources[resource].tfResources[i].tfResource.Item[v] = linkValue
+								if ccc.tfResource.InstanceState.Attributes[key] == tfResource.InstanceState.Attributes[v[0]] {
+									importResources[resource].tfResources[i].tfResource.InstanceState.Attributes[v[0]] = linkValue
+									importResources[resource].tfResources[i].tfResource.Item[v[0]] = linkValue
 								} else {
 									for keyAttributes, j := range tfResource.InstanceState.Attributes {
-										match, err := regexp.MatchString(v+".\\d+$", keyAttributes)
+										match, err := regexp.MatchString(v[0]+".\\d+$", keyAttributes)
 										if match && err == nil {
-											if j == ccc.tfResource.InstanceState.Attributes[idKey] {
+											if j == ccc.tfResource.InstanceState.Attributes[key] {
 												importResources[resource].tfResources[i].tfResource.InstanceState.Attributes[keyAttributes] = linkValue
-												switch ar := tfResource.Item[v].(type) {
+												switch ar := tfResource.Item[v[0]].(type) {
 												case []interface{}:
 													for j, l := range ar {
-														if l == ccc.tfResource.InstanceState.Attributes[idKey] {
-															importResources[resource].tfResources[i].tfResource.Item[v].([]interface{})[j] = linkValue
+														if l == ccc.tfResource.InstanceState.Attributes[key] {
+															importResources[resource].tfResources[i].tfResource.Item[v[0]].([]interface{})[j] = linkValue
 														}
 													}
 												default:
@@ -214,18 +222,48 @@ func printHclFiles(resources []terraform_utils.Resource, path, projectName, serv
 	// create outputs files
 	outputs := map[string]interface{}{}
 	outputsByResource := map[string]map[string]interface{}{}
-	for _, r := range resources {
-		outputsByResource[r.InstanceInfo.Type+"_"+r.ResourceName] = map[string]interface{}{
+
+	for i, r := range resources {
+		outputState := map[string]*terraform.OutputState{}
+		outputsByResource[r.InstanceInfo.Type+"_"+r.ResourceName+"_"+r.GetIDKey()] = map[string]interface{}{
 			"value": "${" + r.InstanceInfo.Type + "." + r.ResourceName + "." + r.GetIDKey() + "}",
 		}
+		outputState[r.InstanceInfo.Type+"_"+r.ResourceName+"_"+r.GetIDKey()] = &terraform.OutputState{
+			Type:  "string",
+			Value: r.InstanceState.Attributes[r.GetIDKey()],
+		}
+		for _, v := range resourceConnections {
+			for k, ids := range v {
+				if k == serviceName {
+					if _, exist := r.InstanceState.Attributes[ids[1]]; exist {
+						key := ids[1]
+						if ids[1] == "self_link" || ids[1] == "id" {
+							key = r.GetIDKey()
+						}
+						linkKey := r.InstanceInfo.Type + "_" + r.ResourceName + "_" + key
+						outputsByResource[linkKey] = map[string]interface{}{
+							"value": "${" + r.InstanceInfo.Type + "." + r.ResourceName + "." + key + "}",
+						}
+						outputState[linkKey] = &terraform.OutputState{
+							Type:  "string",
+							Value: r.InstanceState.Attributes[ids[1]],
+						}
+					}
+				}
+			}
+		}
+		resources[i].Outputs = outputState
 	}
-	outputs["output"] = outputsByResource
-	outputsFile, err := terraform_utils.HclPrint(outputs)
-	if err != nil {
-		log.Fatal(err)
-		return
+	if len(outputsByResource) > 0 {
+		outputs["output"] = outputsByResource
+		outputsFile, err := terraform_utils.HclPrint(outputs)
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+		printFile(path+"/outputs.tf", outputsFile)
 	}
-	printFile(path+"/outputs.tf", outputsFile)
+
 	// create variables file
 	if len(resourceConnections[serviceName]) > 0 {
 		variables := map[string]interface{}{}
