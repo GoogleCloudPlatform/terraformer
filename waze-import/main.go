@@ -439,20 +439,18 @@ func printHclFiles(resources []terraform_utils.Resource, resourceConnections map
 
 	// create variables file
 	if len(resourceConnections[serviceName]) > 0 {
-		variables := map[string]interface{}{}
-		variablesByResource := map[string]map[string]interface{}{}
+		variables := map[string]map[string]map[string]interface{}{}
+		variables["data"] = map[string]map[string]interface{}{}
+		variables["data"]["terraform_remote_state"] = map[string]interface{}{}
 		for k := range resourceConnections[serviceName] {
-			variablesByResource["terraform_remote_state"] = map[string]interface{}{
-				k: map[string]interface{}{
-					"backend": "gcs",
-					"config": map[string]interface{}{
-						"bucket": bucketStateName,
-						"prefix": bucketPrefix(strings.Replace(path, serviceName, k, -1)),
-					},
+			variables["data"]["terraform_remote_state"][k] = map[string]interface{}{
+				"backend": "gcs",
+				"config": map[string]interface{}{
+					"bucket": bucketStateName,
+					"prefix": bucketPrefix(strings.Replace(path, serviceName, k, -1)),
 				},
 			}
 		}
-		variables["data"] = variablesByResource
 		variablesFile, err := terraform_utils.HclPrint(variables)
 		if err != nil {
 			log.Fatal(err)

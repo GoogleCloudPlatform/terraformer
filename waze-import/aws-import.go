@@ -66,7 +66,19 @@ func (g awsImporter) getProviderData(arg ...string) map[string]interface{} {
 
 func (awsImporter) getResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{
-		"subnet":             {"vpc": []string{"vpc_id", "id"}},
+		"subnet":         {"vpc": []string{"vpc_id", "id"}},
+		"vpn_gateway":    {"vpc": []string{"vpc_id", "id"}},
+		"vpn_connection": {"vpn_gateway": []string{"vpn_gateway_id", "id"}},
+		"rds":            {"subnet": []string{"subnet_ids", "id"}},
+		"nacl": {
+			"subnet": []string{"subnet_ids", "id"},
+			"vpc":    []string{"vpc_id", "id"},
+		},
+		"igw": {"vpc": []string{"vpc_id", "id"}},
+		"elasticache": {
+			"vpc":    []string{"vpc_id", "id"},
+			"subnet": []string{"subnet_ids", "id"},
+		},
 	}
 }
 
@@ -132,7 +144,7 @@ func (g awsImporter) getService() []string {
 	services := []string{}
 	provider := &aws_terraforming.AWSProvider{}
 	for service := range provider.GetAWSSupportService() {
-		if !g.getIgnoreService().Contains(service) && (service == "vpc" || service == "subnet") {
+		if !g.getIgnoreService().Contains(service) && (service == "vpc" || service == "subnet" || service == "nacl") {
 			services = append(services, service)
 		}
 	}
