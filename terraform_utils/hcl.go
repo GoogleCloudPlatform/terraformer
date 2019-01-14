@@ -166,8 +166,8 @@ func HclPrint(data interface{}) ([]byte, error) {
 // Sanitize name for terraform style
 func TfSanitize(name string) string {
 	name = strings.Replace(name, "*.", "", -1)
-	name = strings.Replace(name, "-", "_", -1)
-	name = strings.Replace(name, ".", "-", -1)
+	//name = strings.Replace(name, "-", "_", -1)
+	name = strings.Replace(name, ".", "--", -1)
 	name = strings.Replace(name, "/", "--", -1)
 	return name
 }
@@ -185,6 +185,7 @@ func HclPrintResource(resources []Resource, providerData map[string]interface{})
 		}
 
 		if r[res.ResourceName] != nil {
+			log.Println(resources)
 			return []byte{}, fmt.Errorf("[ERR]: duplicate resource found: %s.%s", res.InstanceInfo.Type, res.ResourceName)
 		}
 

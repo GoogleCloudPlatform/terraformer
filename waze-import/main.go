@@ -265,8 +265,8 @@ var microserviceNameList = []string{
 }
 
 func main() {
-	importAWS()
-	//importGCP()
+	//importAWS()
+	importGCP()
 }
 
 func importResource(provider terraform_utils.ProviderGenerator, service, region, project string) []terraform_utils.Resource {
@@ -307,6 +307,9 @@ func connectServices(importResources map[string]importedService, resourceConnect
 				if cc, ok := importResources[k]; ok {
 					for _, ccc := range cc.tfResources {
 						for i := range importResources[resource].tfResources {
+							if ccc.region != importResources[resource].tfResources[i].region {
+								continue
+							}
 							key := v[1]
 							if v[1] == "self_link" || v[1] == "id" {
 								key = ccc.tfResource.GetIDKey()
@@ -351,32 +354,38 @@ func generateFilesAndUploadState(importResources map[string]importedService, imp
 	for serviceName, r := range importResources {
 		rootPath, _ := os.Getwd()
 		path := ""
-		if importer.getNotInfraService().Contains(serviceName) {
-			continue
-			//path = fmt.Sprintf("%s/imported/microservices/%s/", rootPath, serviceName)
-		} else {
-			path = fmt.Sprintf("%s/imported/infra/%s/%s/%s/%s", rootPath, importer.getName(), importer.getAccount(), serviceName, r.region)
-		}
-		if err := os.MkdirAll(path, os.ModePerm); err != nil {
-			log.Fatal(err)
-			return
-		}
-		resources := []terraform_utils.Resource{}
+		regionsMapping := map[string][]terraform_utils.Resource{}
 		for _, resource := range r.tfResources {
-			resources = append(resources, resource.tfResource)
+			if _, exist := regionsMapping[resource.region]; !exist {
+				regionsMapping[resource.region] = []terraform_utils.Resource{}
+			}
+			regionsMapping[resource.region] = append(regionsMapping[resource.region], resource.tfResource)
+		}
+		for region, resources := range regionsMapping {
+			if importer.getNotInfraService().Contains(serviceName) {
+				continue
+				//path = fmt.Sprintf("%s/imported/microservices/%s/", rootPath, serviceName)
+			} else {
+				path = fmt.Sprintf("%s/imported/infra/%s/%s/%s/%s", rootPath, importer.getName(), importer.getAccount(), serviceName, region)
+			}
+			if err := os.MkdirAll(path, os.ModePerm); err != nil {
+				log.Fatal(err)
+				return
+			}
+
+			printHclFiles(resources, importer.getResourceConnections(), path, serviceName, importer.getProviderData(r.project, region))
+			tfStateFile, err := terraform_utils.PrintTfState(resources)
+			if err != nil {
+				log.Fatal(err)
+				return
+			}
+			err = bucketUpload(path, tfStateFile)
+			if err != nil {
+				log.Fatal(err)
+				return
+			}
 		}
 
-		printHclFiles(resources, importer.getResourceConnections(), path, serviceName, importer.getProviderData(r.project, r.region))
-		tfStateFile, err := terraform_utils.PrintTfState(resources)
-		if err != nil {
-			log.Fatal(err)
-			return
-		}
-		err = bucketUpload(path, tfStateFile)
-		if err != nil {
-			log.Fatal(err)
-			return
-		}
 	}
 }
 
