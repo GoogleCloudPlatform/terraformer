@@ -16,6 +16,8 @@ import (
 //var GCPProjects = []string{"waze-development", "waze-prod"}
 var GCPProjects = []string{"waze-development"}
 
+const providerVersion = "~>2.0.0"
+
 type gcpImporter struct {
 	project string
 	name    string
@@ -52,6 +54,7 @@ func (g gcpImporter) getProviderData(arg ...string) map[string]interface{} {
 		"provider": map[string]interface{}{
 			g.name: map[string]interface{}{
 				"project": g.project,
+				"version": providerVersion,
 			},
 		},
 	}
