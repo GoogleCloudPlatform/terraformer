@@ -144,7 +144,7 @@ func (g awsImporter) getService() []string {
 	services := []string{}
 	provider := &aws_terraforming.AWSProvider{}
 	for service := range provider.GetAWSSupportService() {
-		if !g.getIgnoreService().Contains(service) && (service == "vpc" || service == "subnet" || service == "nacl") {
+		if !g.getIgnoreService().Contains(service) {
 			services = append(services, service)
 		}
 	}
