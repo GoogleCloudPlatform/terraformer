@@ -40,15 +40,20 @@ type awsImporter struct {
 func (g awsImporter) getIgnoreService() mapset.Set {
 	return mapset.NewSetWith(
 		"auto_scaling",
-		//"iam",     //for debug
-		"route53", //for debug
-		"elb",     //for debug
 	)
 }
 
 func (g awsImporter) getGlobalService() mapset.Set {
 	return mapset.NewSetWith(
 		"iam",
+		"route53",
+	)
+}
+
+func (awsImporter) getNotInfraService() mapset.Set {
+	return mapset.NewSetWith(
+		"elb",
+		//"elasticache",
 	)
 }
 
@@ -88,13 +93,6 @@ func (awsImporter) getResourceConnections() map[string]map[string][]string {
 	}
 }
 
-func (awsImporter) getNotInfraService() mapset.Set {
-	return mapset.NewSetWith(
-		"elb",
-		//"elasticache",
-	)
-}
-
 func (g awsImporter) getAccount() string {
 	return g.account
 }
@@ -116,6 +114,9 @@ func importAWS() {
 				continue
 			}
 			for _, service := range importer.getService() {
+				if importer.getGlobalService().Contains(service) {
+					continue
+				}
 				provider := &aws_terraforming.AWSProvider{}
 				for _, r := range importResource(provider, service, region, account) {
 					if strings.Contains(r.ResourceName, filters) {
@@ -127,6 +128,22 @@ func importAWS() {
 						serviceName: service,
 					})
 				}
+			}
+		}
+		for _, service := range importer.getService() {
+			if !importer.getGlobalService().Contains(service) {
+				continue
+			}
+			provider := &aws_terraforming.AWSProvider{}
+			for _, r := range importResource(provider, service, "eu-west-1", account) {
+				if strings.Contains(r.ResourceName, filters) {
+					continue
+				}
+				resources = append(resources, importedResource{
+					region:      "eu-west-1",
+					tfResource:  r,
+					serviceName: service,
+				})
 			}
 		}
 

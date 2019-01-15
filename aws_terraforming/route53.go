@@ -43,6 +43,9 @@ func (g Route53Generator) createZonesResources(svc *route53.Route53) []terraform
 		return resources
 	}
 	for _, zone := range zones.HostedZones {
+		if aws.StringValue(zone.Name) == "cassandra." || aws.StringValue(zone.Name) == "reverse." {
+			continue
+		}
 		zoneID := cleanZoneID(aws.StringValue(zone.Id))
 		resources = append(resources, terraform_utils.NewResource(
 			zoneID,
@@ -72,9 +75,10 @@ func (Route53Generator) createRecordsResources(svc *route53.Route53, zoneID stri
 	}
 	recordSet, err := svc.ListResourceRecordSets(listParams)
 	for _, record := range recordSet.ResourceRecordSets {
+
 		resources = append(resources, terraform_utils.NewResource(
 			fmt.Sprintf("%s_%s_%s", zoneID, aws.StringValue(record.Name), aws.StringValue(record.Type)),
-			strings.TrimSuffix(aws.StringValue(record.Name), "."),
+			fmt.Sprintf("%s_%s_%s", zoneID, aws.StringValue(record.Name), aws.StringValue(record.Type)),
 			"aws_route53_record",
 			"aws",
 			map[string]string{

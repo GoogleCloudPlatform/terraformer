@@ -14,7 +14,7 @@ import (
 )
 
 //var GCPProjects = []string{"waze-development", "waze-prod"}
-var GCPProjects = []string{"waze-development", "waze-prod", "waze-ci"}
+var GCPProjects = []string{ "waze-development"}
 
 const gcpProviderVersion = "~>2.0.0"
 
@@ -34,10 +34,13 @@ func (gcpImporter) getIgnoreService() mapset.Set {
 		"regionAutoscalers",
 		"regionDisks",
 		"regionInstanceGroupManagers",
+		"regionAutoscalers",
 		"instanceTemplates",
 		"images",
-		//"addresses",
-		"cloudsql",
+		"addresses",
+		"regionBackendServices",
+		"backendServices",
+		"healthChecks", //google_compute_http_health_check is a legacy health check https://www.terraform.io/docs/providers/google/r/compute_http_health_check.html
 	)
 }
 func (gcpImporter) getRegionServices() mapset.Set {
@@ -49,6 +52,21 @@ func (gcpImporter) getRegionServices() mapset.Set {
 		"instanceGroups",
 	)
 }
+
+func (gcpImporter) getNotInfraService() mapset.Set {
+	return mapset.NewSetWith(
+		"urlMaps",
+		"targetHttpProxies",
+		"targetHttpsProxies",
+		"targetSslProxies",
+		"targetTcpProxies",
+		"globalForwardingRules",
+		"forwardingRules",
+		"httpHealthChecks",
+		"httpsHealthChecks",
+	)
+}
+
 func (g gcpImporter) getProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
@@ -67,23 +85,6 @@ func (gcpImporter) getResourceConnections() map[string]map[string][]string {
 		"regionBackendServices": {"healthChecks": []string{"health_checks", "self_link"}},
 		"backendBuckets":        {"gcs": []string{"bucket_name", "name"}},
 	}
-}
-
-func (gcpImporter) getNotInfraService() mapset.Set {
-	return mapset.NewSetWith(
-		"backendServices",
-		//"regionBackendServices",
-		"urlMaps",
-		"targetHttpProxies",
-		"targetHttpsProxies",
-		"targetSslProxies",
-		"targetTcpProxies",
-		"globalForwardingRules",
-		"forwardingRules",
-		//"healthChecks",
-		//"httpHealthChecks",
-		//"httpsHealthChecks",
-	)
 }
 
 func (g gcpImporter) getAccount() string {

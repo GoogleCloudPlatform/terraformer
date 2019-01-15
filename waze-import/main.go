@@ -269,7 +269,10 @@ var runOnRegion = ""
 var filters = "cassandra"
 
 func main() {
-	cloud := os.Args[1]
+	cloud := ""
+	if len(os.Args) > 1 {
+		cloud = os.Args[1]
+	}
 	if len(os.Args) > 2 {
 		runOnService = os.Args[2]
 	}
@@ -280,6 +283,9 @@ func main() {
 	case "aws":
 		importAWS()
 	case "google":
+		importGCP()
+	default:
+		importAWS()
 		importGCP()
 	}
 

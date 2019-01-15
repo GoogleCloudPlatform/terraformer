@@ -40,6 +40,9 @@ func (g CloudDNSGenerator) createZonesResources(ctx context.Context, svc *dns.Se
 	managedZonesListCall := svc.ManagedZones.List(project)
 	err := managedZonesListCall.Pages(ctx, func(listDNS *dns.ManagedZonesListResponse) error {
 		for _, zone := range listDNS.ManagedZones {
+			if zone.Name == "cassandra" {
+				continue
+			}
 			resources = append(resources, terraform_utils.NewResource(
 				zone.Name,
 				zone.Name,
