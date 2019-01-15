@@ -183,14 +183,6 @@ func (g *ElastiCacheGenerator) PostConvertHook() error {
 			}
 		}
 
-		for _, subnet := range g.Resources {
-			if subnet.InstanceInfo.Type != "aws_elasticache_subnet_group" {
-				continue
-			}
-			if subnet.InstanceState.Attributes["name"] == r.InstanceState.Attributes["subnet_group_name"] {
-				g.Resources[i].Item["subnet_group_name"] = "${aws_elasticache_subnet_group." + subnet.ResourceName + ".name}"
-			}
-		}
 
 		for _, replicationGroup := range g.Resources {
 			if replicationGroup.InstanceInfo.Type != "aws_elasticache_replication_group" {

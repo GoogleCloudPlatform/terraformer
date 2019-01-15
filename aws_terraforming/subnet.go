@@ -31,18 +31,10 @@ type SubnetGenerator struct {
 func (SubnetGenerator) createResources(subnets *ec2.DescribeSubnetsOutput) []terraform_utils.Resource {
 	resoures := []terraform_utils.Resource{}
 	for _, subnet := range subnets.Subnets {
-		resourceName := ""
-		if len(subnet.Tags) > 0 {
-			for _, tag := range subnet.Tags {
-				if aws.StringValue(tag.Key) == "Name" {
-					resourceName = aws.StringValue(tag.Value)
-					break
-				}
-			}
-		}
+
 		resoures = append(resoures, terraform_utils.NewResource(
 			aws.StringValue(subnet.SubnetId),
-			resourceName,
+			aws.StringValue(subnet.SubnetId),
 			"aws_subnet",
 			"aws",
 			map[string]string{},

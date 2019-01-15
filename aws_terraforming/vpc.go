@@ -31,18 +31,9 @@ type VpcGenerator struct {
 func (VpcGenerator) createResources(vpcs *ec2.DescribeVpcsOutput) []terraform_utils.Resource {
 	resoures := []terraform_utils.Resource{}
 	for _, vpc := range vpcs.Vpcs {
-		resourceName := ""
-		if len(vpc.Tags) > 0 {
-			for _, tag := range vpc.Tags {
-				if aws.StringValue(tag.Key) == "Name" {
-					resourceName = aws.StringValue(tag.Value)
-					break
-				}
-			}
-		}
 		resoures = append(resoures, terraform_utils.NewResource(
 			aws.StringValue(vpc.VpcId),
-			resourceName,
+			aws.StringValue(vpc.VpcId),
 			"aws_vpc",
 			"aws",
 			map[string]string{},

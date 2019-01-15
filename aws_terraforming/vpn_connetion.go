@@ -31,18 +31,9 @@ type VpnConnectionGenerator struct {
 func (VpnConnectionGenerator) createResources(vpncs *ec2.DescribeVpnConnectionsOutput) []terraform_utils.Resource {
 	resoures := []terraform_utils.Resource{}
 	for _, vpnc := range vpncs.VpnConnections {
-		resourceName := ""
-		if len(vpnc.Tags) > 0 {
-			for _, tag := range vpnc.Tags {
-				if aws.StringValue(tag.Key) == "Name" {
-					resourceName = aws.StringValue(tag.Value)
-					break
-				}
-			}
-		}
 		resoures = append(resoures, terraform_utils.NewResource(
 			aws.StringValue(vpnc.VpnConnectionId),
-			resourceName,
+			aws.StringValue(vpnc.VpnConnectionId),
 			"aws_vpn_connection",
 			"aws",
 			map[string]string{},
