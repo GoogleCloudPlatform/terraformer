@@ -14,7 +14,7 @@ import (
 )
 
 //var GCPProjects = []string{"waze-development", "waze-prod"}
-var GCPProjects = []string{"waze-prod"}
+var GCPProjects = []string{"waze-development", "waze-prod", "waze-ci"}
 
 const gcpProviderVersion = "~>2.0.0"
 

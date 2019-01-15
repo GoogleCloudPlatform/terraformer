@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"log"
-	"os"
 	"strings"
 
 	"cloud.google.com/go/storage"
@@ -28,8 +27,8 @@ func bucketGetTfData(path string) interface{} {
 }
 
 func bucketPrefix(path string) string {
-	rootPath, _ := os.Getwd()
-	return strings.Replace(path, rootPath+"/imported/infra/", "", -1)
+	rootPath := rootPath()
+	return strings.Replace(path, rootPath+"/infra/", "", -1)
 }
 
 func bucketUpload(path string, file []byte) error {

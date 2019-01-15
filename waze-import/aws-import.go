@@ -27,6 +27,7 @@ var awsRegions = []string{
 }
 
 const awsProviderVersion = "~>1.55.0"
+const terraformTagName = "Terraform"
 
 var awsAccount = []string{"waze"}
 
@@ -39,12 +40,9 @@ type awsImporter struct {
 func (g awsImporter) getIgnoreService() mapset.Set {
 	return mapset.NewSetWith(
 		"auto_scaling",
-		"iam",     //for debug
+		//"iam",     //for debug
 		"route53", //for debug
-		//"s3",          //for debug
-		//"sg",  //for debug
-		"elb", //for debug
-		//"elasticache", //for debug
+		"elb",     //for debug
 	)
 }
 
@@ -57,8 +55,9 @@ func (g awsImporter) getGlobalService() mapset.Set {
 func (g awsImporter) getProviderData(arg ...string) map[string]interface{} {
 	d := map[string]interface{}{
 		"provider": map[string]interface{}{
-			"aws":     map[string]interface{}{},
-			"version": awsProviderVersion,
+			"aws": map[string]interface{}{
+				"version": awsProviderVersion,
+			},
 		},
 	}
 	if arg[1] != "global" {
@@ -113,6 +112,9 @@ func importAWS() {
 			account: account,
 		}
 		for _, region := range awsRegions {
+			if runOnRegion != "" && region != runOnRegion {
+				continue
+			}
 			for _, service := range importer.getService() {
 				provider := &aws_terraforming.AWSProvider{}
 				for _, r := range importResource(provider, service, region, account) {
@@ -138,6 +140,9 @@ func importAWS() {
 					}
 					ir.tfResources = append(ir.tfResources, r)
 				}
+				if _, exist := r.tfResource.Item["tags"]; exist {
+					r.tfResource.Item["tags"].(map[string]interface{})[terraformTagName] = "true"
+				}
 			}
 			importResources[service] = ir
 		}
@@ -153,7 +158,10 @@ func (g awsImporter) getService() []string {
 	provider := &aws_terraforming.AWSProvider{}
 	for service := range provider.GetAWSSupportService() {
 		if !g.getIgnoreService().Contains(service) {
-			services = append(services, service)
+			if runOnService == "" || service == runOnService {
+				services = append(services, service)
+			}
+
 		}
 	}
 	sort.Strings(services)

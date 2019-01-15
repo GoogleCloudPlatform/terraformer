@@ -263,10 +263,30 @@ var microserviceNameList = []string{
 	"youyinglcodelab",
 	"tiles",
 }
+var runOnService = ""
+var runOnRegion = ""
 
 func main() {
-	//importAWS()
-	importGCP()
+	cloud := os.Args[1]
+	if len(os.Args) > 2 {
+		runOnService = os.Args[2]
+	}
+	if len(os.Args) > 3 {
+		runOnRegion = os.Args[3]
+	}
+	switch cloud {
+	case "aws":
+		importAWS()
+	case "google":
+		importGCP()
+	}
+
+}
+
+func rootPath() string {
+	//rootPath, _ := os.Getwd()
+	rootPath := "/Users/sergeylanz/code/terraform" // for debug
+	return rootPath
 }
 
 func importResource(provider terraform_utils.ProviderGenerator, service, region, project string) []terraform_utils.Resource {
@@ -352,7 +372,7 @@ func connectServices(importResources map[string]importedService, resourceConnect
 
 func generateFilesAndUploadState(importResources map[string]importedService, importer providerImporter) {
 	for serviceName, r := range importResources {
-		rootPath, _ := os.Getwd()
+		rootPath := rootPath()
 		path := ""
 		regionsMapping := map[string][]terraform_utils.Resource{}
 		for _, resource := range r.tfResources {
@@ -366,7 +386,7 @@ func generateFilesAndUploadState(importResources map[string]importedService, imp
 				continue
 				//path = fmt.Sprintf("%s/imported/microservices/%s/", rootPath, serviceName)
 			} else {
-				path = fmt.Sprintf("%s/imported/infra/%s/%s/%s/%s", rootPath, importer.getName(), importer.getAccount(), serviceName, region)
+				path = fmt.Sprintf("%s/infra/%s/%s/%s/%s", rootPath, importer.getName(), importer.getAccount(), serviceName, region)
 			}
 			if err := os.MkdirAll(path, os.ModePerm); err != nil {
 				log.Fatal(err)
