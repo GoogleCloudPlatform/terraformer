@@ -41,7 +41,7 @@ func (SecurityGenerator) createResources(securityGroups []*ec2.SecurityGroup) []
 		}
 		resources = append(resources, terraform_utils.NewResource(
 			aws.StringValue(sg.GroupId),
-			strings.Trim(aws.StringValue(sg.GroupName), " "),
+			strings.Trim(aws.StringValue(sg.GroupName)+"_"+aws.StringValue(sg.GroupId), " "),
 			"aws_security_group",
 			"aws",
 			map[string]string{},
