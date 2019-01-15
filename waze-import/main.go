@@ -265,8 +265,8 @@ var microserviceNameList = []string{
 }
 
 func main() {
-	importAWS()
-	//importGCP()
+	//importAWS()
+	importGCP()
 }
 
 func importResource(provider terraform_utils.ProviderGenerator, service, region, project string) []terraform_utils.Resource {

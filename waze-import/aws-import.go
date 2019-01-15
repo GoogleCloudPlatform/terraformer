@@ -26,6 +26,8 @@ var awsRegions = []string{
 	"sa-east-1",
 }
 
+const awsProviderVersion = "~>1.55.0"
+
 var awsAccount = []string{"waze"}
 
 type awsImporter struct {
@@ -55,7 +57,8 @@ func (g awsImporter) getGlobalService() mapset.Set {
 func (g awsImporter) getProviderData(arg ...string) map[string]interface{} {
 	d := map[string]interface{}{
 		"provider": map[string]interface{}{
-			"aws": map[string]interface{}{},
+			"aws":     map[string]interface{}{},
+			"version": awsProviderVersion,
 		},
 	}
 	if arg[1] != "global" {
