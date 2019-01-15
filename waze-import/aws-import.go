@@ -118,6 +118,9 @@ func importAWS() {
 			for _, service := range importer.getService() {
 				provider := &aws_terraforming.AWSProvider{}
 				for _, r := range importResource(provider, service, region, account) {
+					if strings.Contains(r.ResourceName, filters) {
+						continue
+					}
 					resources = append(resources, importedResource{
 						region:      region,
 						tfResource:  r,

@@ -115,6 +115,9 @@ func importGCP() {
 			for _, zone := range zones {
 				provider := &gcp_terraforming.GCPProvider{}
 				for _, r := range importResource(provider, service, zone.Name, project) {
+					if strings.Contains(r.ResourceName, filters) {
+						continue
+					}
 					delete(r.Item, "project")
 					resources = append(resources, importedResource{
 						region:      zone.Name,

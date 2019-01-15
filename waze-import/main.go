@@ -266,6 +266,8 @@ var microserviceNameList = []string{
 var runOnService = ""
 var runOnRegion = ""
 
+var filters = "cassandra"
+
 func main() {
 	cloud := os.Args[1]
 	if len(os.Args) > 2 {
