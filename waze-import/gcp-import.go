@@ -127,17 +127,17 @@ func importGCP() {
 
 		for _, service := range importer.getService() {
 			ir := importedService{}
-			serviceRegion := ""
 			for _, r := range resources {
 				if r.serviceName == service {
-					serviceRegion = r.region
+					if importer.getRegionServices().Contains(service) {
+						regionPath := strings.Split(r.region, "/")
+						ir.region = regionPath[len(regionPath)-1]
+					} else {
+						ir.region = "global"
+						r.region = "global"
+					}
 					ir.tfResources = append(ir.tfResources, r)
 				}
-			}
-			ir.region = "global"
-			if importer.getRegionServices().Contains(service) {
-				regionPath := strings.Split(serviceRegion, "/")
-				ir.region = regionPath[len(regionPath)-1]
 			}
 			importResources[service] = ir
 		}

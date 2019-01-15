@@ -40,8 +40,8 @@ func (g awsImporter) getIgnoreService() mapset.Set {
 		"iam",     //for debug
 		"route53", //for debug
 		//"s3",          //for debug
-		"sg", //for debug
-		//"elb",         //for debug
+		//"sg",  //for debug
+		"elb", //for debug
 		//"elasticache", //for debug
 	)
 }
@@ -69,7 +69,10 @@ func (awsImporter) getResourceConnections() map[string]map[string][]string {
 		"subnet":         {"vpc": []string{"vpc_id", "id"}},
 		"vpn_gateway":    {"vpc": []string{"vpc_id", "id"}},
 		"vpn_connection": {"vpn_gateway": []string{"vpn_gateway_id", "id"}},
-		"rds":            {"subnet": []string{"subnet_ids", "id"}},
+		"rds": {
+			"subnet": []string{"subnet_ids", "id"},
+			"sg":     []string{"vpc_security_group_ids", "id"},
+		},
 		"nacl": {
 			"subnet": []string{"subnet_ids", "id"},
 			"vpc":    []string{"vpc_id", "id"},
@@ -78,6 +81,7 @@ func (awsImporter) getResourceConnections() map[string]map[string][]string {
 		"elasticache": {
 			"vpc":    []string{"vpc_id", "id"},
 			"subnet": []string{"subnet_ids", "id"},
+			"sg":     []string{"security_group_ids", "id"},
 		},
 	}
 }
@@ -117,19 +121,20 @@ func importAWS() {
 				}
 			}
 		}
+
 		for _, service := range importer.getService() {
 			ir := importedService{}
-			serviceRegion := ""
 			for _, r := range resources {
 				if r.serviceName == service {
-					serviceRegion = r.region
+					if !importer.getGlobalService().Contains(service) {
+						regionPath := strings.Split(r.region, "/")
+						ir.region = regionPath[len(regionPath)-1]
+					} else {
+						ir.region = "global"
+						r.region = "global"
+					}
 					ir.tfResources = append(ir.tfResources, r)
 				}
-			}
-			ir.region = "global"
-			if !importer.getGlobalService().Contains(service) {
-				regionPath := strings.Split(serviceRegion, "/")
-				ir.region = regionPath[len(regionPath)-1]
 			}
 			importResources[service] = ir
 		}
