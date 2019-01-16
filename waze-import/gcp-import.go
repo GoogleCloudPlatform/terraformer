@@ -14,7 +14,7 @@ import (
 )
 
 //var GCPProjects = []string{"waze-development", "waze-prod"}
-var GCPProjects = []string{ "waze-development"}
+var GCPProjects = []string{"waze-development", "waze-prod", "waze-ci"}
 
 const gcpProviderVersion = "~>2.0.0"
 
@@ -200,7 +200,9 @@ func (g gcpImporter) getService() []string {
 	provider := &gcp_terraforming.GCPProvider{}
 	for service := range provider.GetGCPSupportService() {
 		if !g.getIgnoreService().Contains(service) {
-			services = append(services, service)
+			if runOnService == "" || service == runOnService {
+				services = append(services, service)
+			}
 		}
 	}
 	sort.Strings(services)
