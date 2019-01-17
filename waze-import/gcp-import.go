@@ -14,7 +14,7 @@ import (
 )
 
 //var GCPProjects = []string{"waze-development", "waze-prod"}
-var GCPProjects = []string{"waze-development", "waze-prod", "waze-ci"}
+var GCPProjects = []string{"waze-ci"}
 
 const gcpProviderVersion = "~>2.0.0"
 
@@ -112,6 +112,9 @@ func importGCP() {
 		}
 		resources := []importedResource{}
 		for _, service := range importer.getService() {
+			if project == "waze-ci" && service == "monitoring" {
+				continue
+			}
 			zones := importer.getGcpZonesForService(service)
 			for _, zone := range zones {
 				provider := &gcp_terraforming.GCPProvider{}
@@ -130,6 +133,9 @@ func importGCP() {
 		}
 
 		for _, service := range importer.getService() {
+			if project == "waze-ci" && service == "monitoring" {
+				continue
+			}
 			ir := importedService{}
 			for _, r := range resources {
 				if r.serviceName == service {
@@ -144,6 +150,9 @@ func importGCP() {
 				}
 				if _, exist := r.tfResource.Item["labels"]; exist {
 					r.tfResource.Item["labels"].(map[string]interface{})[terraformTagName] = "true"
+				}
+				r.tfResource.Item["lifecycle"] = map[string]interface{}{
+					"prevent_destroy": true,
 				}
 			}
 			importResources[service] = ir

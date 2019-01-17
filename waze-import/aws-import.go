@@ -26,7 +26,7 @@ var awsRegions = []string{
 	"sa-east-1",
 }
 
-const awsProviderVersion = "~>1.55.0"
+const awsProviderVersion = "~>1.56.0"
 const terraformTagName = "terraform"
 
 var awsAccount = []string{"waze"}
@@ -162,6 +162,9 @@ func importAWS() {
 				}
 				if _, exist := r.tfResource.Item["tags"]; exist {
 					r.tfResource.Item["tags"].(map[string]interface{})[terraformTagName] = "true"
+				}
+				r.tfResource.Item["lifecycle"] = map[string]interface{}{
+					"prevent_destroy": true,
 				}
 			}
 			importResources[service] = ir
