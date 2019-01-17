@@ -27,7 +27,7 @@ var awsRegions = []string{
 }
 
 const awsProviderVersion = "~>1.55.0"
-const terraformTagName = "Terraform"
+const terraformTagName = "terraform"
 
 var awsAccount = []string{"waze"}
 

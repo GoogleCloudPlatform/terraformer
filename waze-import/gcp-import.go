@@ -142,6 +142,9 @@ func importGCP() {
 					}
 					ir.tfResources = append(ir.tfResources, r)
 				}
+				if _, exist := r.tfResource.Item["labels"]; exist {
+					r.tfResource.Item["labels"].(map[string]interface{})[terraformTagName] = "true"
+				}
 			}
 			importResources[service] = ir
 		}
