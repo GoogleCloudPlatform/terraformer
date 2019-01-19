@@ -109,13 +109,11 @@ func importGCP() {
 	for _, project := range GCPProjects {
 		wg.Add(1)
 		go func(pj string) {
-			log.Println(pj, runOnService)
 			if runOnProject == "" || pj == runOnService {
 				importer := gcpImporter{
 					name:    "google",
 					project: pj,
 				}
-				log.Println("Rrr")
 				importedResources := importProject(pj, importer)
 				importedResources = connectServices(importedResources, importer.getResourceConnections())
 				generateFilesAndUploadState(importedResources, importer)
