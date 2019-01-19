@@ -5,6 +5,7 @@ import (
 	"log"
 	"sort"
 	"strings"
+	"sync"
 	"waze/terraformer/gcp_terraforming"
 
 	"golang.org/x/oauth2/google"
@@ -14,7 +15,7 @@ import (
 )
 
 //var GCPProjects = []string{"waze-development", "waze-prod"}
-var GCPProjects = []string{"waze-ci"}
+var GCPProjects = []string{"waze-ci", "waze-development", "waze-prod"}
 
 const gcpProviderVersion = "~>2.0.0"
 
@@ -104,82 +105,93 @@ func (g gcpImporter) getGcpZonesForService(service string) []*compute.Zone {
 }
 
 func importGCP() {
-	importResources := map[string]importedService{}
+	wg := sync.WaitGroup{}
 	for _, project := range GCPProjects {
-		importer := gcpImporter{
-			name:    "google",
-			project: project,
-		}
-		resources := []importedResource{}
-		for _, service := range importer.getService() {
-			if project == "waze-ci" && service == "monitoring" {
-				continue
+		wg.Add(1)
+		go func(pj string) {
+			log.Println(pj, runOnService)
+			if runOnProject == "" || pj == runOnService {
+				importer := gcpImporter{
+					name:    "google",
+					project: pj,
+				}
+				log.Println("Rrr")
+				importedResources := importProject(pj, importer)
+				importedResources = connectServices(importedResources, importer.getResourceConnections())
+				generateFilesAndUploadState(importedResources, importer)
 			}
-			zones := importer.getGcpZonesForService(service)
-			for _, zone := range zones {
-				provider := &gcp_terraforming.GCPProvider{}
-				for _, r := range importResource(provider, service, zone.Name, project) {
-					if strings.Contains(r.ResourceName, filters) {
-						continue
-					}
-					delete(r.Item, "project")
-					resources = append(resources, importedResource{
-						region:      zone.Name,
-						tfResource:  r,
-						serviceName: service,
-					})
-				}
-			}
-		}
-
-		for _, service := range importer.getService() {
-			if project == "waze-ci" && service == "monitoring" {
-				continue
-			}
-			ir := importedService{}
-			for _, r := range resources {
-				if r.serviceName == service {
-					if importer.getRegionServices().Contains(service) {
-						regionPath := strings.Split(r.region, "/")
-						ir.region = regionPath[len(regionPath)-1]
-					} else {
-						ir.region = "global"
-						r.region = "global"
-					}
-					ir.tfResources = append(ir.tfResources, r)
-				}
-				if _, exist := r.tfResource.Item["labels"]; exist {
-					r.tfResource.Item["labels"].(map[string]interface{})[terraformTagName] = "true"
-				}
-				r.tfResource.Item["lifecycle"] = map[string]interface{}{
-					"prevent_destroy": true,
-				}
-			}
-			importResources[service] = ir
-		}
-
-		importResources = connectServices(importResources, importer.getResourceConnections())
-
-		/*for _, microserviceName := range microserviceNameList {
-			for cloudServiceName, value := range importResources {
-				if notInfraServiceGcp.Contains(cloudServiceName) {
-					continue
-				}
-				for _, obj := range value.tfResources {
-					resourceName := strings.Replace(obj.tfResource.ResourceName, "_", "-", -1)
-					ObjNamePrefix := strings.Split(resourceName, "-")[0]
-					if ObjNamePrefix == microserviceName {
-						log.Println(microserviceName, cloudServiceName)
-					}
-				}
-			}
-		}*/
-
-		generateFilesAndUploadState(importResources, importer)
-
+			wg.Done()
+		}(project)
 	}
+	wg.Wait()
 }
 
+func importProject(project string, importer gcpImporter) map[string]importedService {
+	importResources := map[string]importedService{}
+	resources := []importedResource{}
+	for _, service := range importer.getService() {
+		if project == "waze-ci" && service == "monitoring" {
+			continue
+		}
+		zones := importer.getGcpZonesForService(service)
+		for _, zone := range zones {
+			provider := &gcp_terraforming.GCPProvider{}
+			for _, r := range importResource(provider, service, zone.Name, project) {
+				if strings.Contains(r.ResourceName, filters) {
+					continue
+				}
+				delete(r.Item, "project")
+				resources = append(resources, importedResource{
+					region:      zone.Name,
+					tfResource:  r,
+					serviceName: service,
+				})
+			}
+		}
+	}
+
+	for _, service := range importer.getService() {
+		if project == "waze-ci" && service == "monitoring" {
+			continue
+		}
+		ir := importedService{}
+		for _, r := range resources {
+			if r.serviceName == service {
+				if importer.getRegionServices().Contains(service) {
+					regionPath := strings.Split(r.region, "/")
+					ir.region = regionPath[len(regionPath)-1]
+				} else {
+					ir.region = "global"
+					r.region = "global"
+				}
+				ir.tfResources = append(ir.tfResources, r)
+			}
+			if _, exist := r.tfResource.Item["labels"]; exist {
+				r.tfResource.Item["labels"].(map[string]interface{})[terraformTagName] = "true"
+			}
+			r.tfResource.Item["lifecycle"] = map[string]interface{}{
+				"prevent_destroy": true,
+			}
+		}
+		importResources[service] = ir
+	}
+	return importResources
+	/*for _, microserviceName := range microserviceNameList {
+		for cloudServiceName, value := range importResources {
+			if notInfraServiceGcp.Contains(cloudServiceName) {
+				continue
+			}
+			for _, obj := range value.tfResources {
+				resourceName := strings.Replace(obj.tfResource.ResourceName, "_", "-", -1)
+				ObjNamePrefix := strings.Split(resourceName, "-")[0]
+				if ObjNamePrefix == microserviceName {
+					log.Println(microserviceName, cloudServiceName)
+				}
+			}
+		}
+	}*/
+
+}
 func (g gcpImporter) getZone() []*compute.Zone {
 	ctx := context.Background()
 	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)

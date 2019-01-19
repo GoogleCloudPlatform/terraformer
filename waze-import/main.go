@@ -265,6 +265,7 @@ var microserviceNameList = []string{
 }
 var runOnService = ""
 var runOnRegion = ""
+var runOnProject = ""
 
 var filters = "cassandra"
 
@@ -278,6 +279,9 @@ func main() {
 	}
 	if len(os.Args) > 3 {
 		runOnRegion = os.Args[3]
+	}
+	if len(os.Args) > 4 {
+		runOnProject = os.Args[4]
 	}
 	switch cloud {
 	case "aws":
