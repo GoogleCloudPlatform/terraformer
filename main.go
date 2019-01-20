@@ -21,10 +21,7 @@ import (
 )
 
 func main() {
-	providerName := os.Args[1]
-	service := os.Args[2]
-	args := []string{}
-	if err := cmd.Exec(providerName, service, args); err != nil {
+	if err := cmd.Execute(); err != nil {
 		log.Println(err)
 		os.Exit(1)
 	}

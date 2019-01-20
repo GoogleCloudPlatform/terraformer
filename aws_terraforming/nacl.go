@@ -31,21 +31,9 @@ type NaclGenerator struct {
 func (NaclGenerator) createResources(nacls *ec2.DescribeNetworkAclsOutput) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	for _, nacl := range nacls.NetworkAcls {
-		resourceName := ""
-		if len(nacl.Tags) > 0 {
-			for _, tag := range nacl.Tags {
-				if aws.StringValue(tag.Key) == "Name" {
-					resourceName = aws.StringValue(tag.Value)
-					break
-				}
-			}
-		}
-		if resourceName == "" {
-			resourceName = aws.StringValue(nacl.NetworkAclId)
-		}
 		resources = append(resources, terraform_utils.NewResource(
 			aws.StringValue(nacl.NetworkAclId),
-			resourceName,
+			aws.StringValue(nacl.NetworkAclId),
 			"aws_network_acl",
 			"aws",
 			nil,

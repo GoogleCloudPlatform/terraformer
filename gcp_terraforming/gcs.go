@@ -24,7 +24,7 @@ import (
 	"google.golang.org/api/iterator"
 )
 
-var GcsAllowEmptyValues = []string{"tags.", "created_before"}
+var GcsAllowEmptyValues = []string{"labels.", "created_before"}
 
 var GcsAdditionalFields = map[string]string{}
 

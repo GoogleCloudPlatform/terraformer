@@ -4,6 +4,33 @@ CLI tool for generate tf + tfstate files from current configuration(reverse terr
 
 This is not an official Google product
 
+##Options
+1. Generate tf + tfstate files from current configuration for all objects by resource
+2. Remote state upload tfstate to bucket(only gcs support)
+3. Connect between resource with terraform_remote_state(local and bucket)
+4. Compatible with terraform 0.12 syntax
+5. Save tf files with folder tree patter
+
+```
+Import current State to terraform configuration from google cloud
+
+Usage:
+   import google [flags]
+
+Flags:
+  -b, --bucket string        gs://terraform-state
+  -c, --connect               (default true)
+  -h, --help                 help for google
+  -o, --path-output string    (default "generated")
+  -p, --path-patter string   {output}/{provider}/custom/{service}/ (default "{output}/{provider}/{service}/")
+  -r, --resources strings    firewalls,networks
+  -s, --state string         local or bucket (default "local")
+  -z, --zone string
+```
+
+###Providers support
+1. Google cloud
+2. AWS
 
 ###Install
 1. git clone project OR binary
@@ -14,18 +41,11 @@ This is not an official Google product
 
 #####Usage:
 #####For GCP:
-GOOGLE_CLOUD_PROJECT=YOUR_PROJECT ./terraformer google YOUR_SERVICE YOUR_ZONE
+GOOGLE_CLOUD_PROJECT=YOUR_PROJECT ./terraformer import google --resources=networks,firewalls --connect=true --zone=europe-west1-a
 Examples: 
 
 ````
-./terraformer google firewalls europe-west1-c
-````
-````
-./terraformer google gcs europe-west1-c
-````
-
-````
-./terraformer google addresses europe-west1-c
+./terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --connect=true --zone=europe-west1-a
 ````
 
 List of support GCP services:
@@ -74,17 +94,29 @@ cloudsql - bug(https://github.com/terraform-providers/terraform-provider-google/
 Your tf and tfstate file generate to `generated/gcp/zone/service`
 
 #####For AWS:
-./terraformer aws YOUR_SERVICE YOUR_REGION
+ ./terraformer import aws --resources=vpc,subnet --connect=true --region=eu-west-1
 
+````
+ ./terraformer import aws --resources=vpc,subnet --connect=false --region=eu-west-1
+````
+````
+ ./terraformer import aws --resources=vpc,subnet --connect=true --region=eu-west-1
+````
+````
+Import current State to terraform configuration from aws
 
-````
-./terraformer aws sg eu-west1
-````
-````
-./terraformer aws s3 eu-west1
-````
-````
-./terraformer aws subnet eu-west1
+Usage:
+   import aws [flags]
+
+Flags:
+  -b, --bucket string        gs://terraform-state
+  -c, --connect               (default true)
+  -h, --help                 help for aws
+  -o, --path-output string    (default "generated")
+  -p, --path-patter string   {output}/{provider}/custom/{service}/ (default "{output}/{provider}/{service}/")
+      --region string
+  -r, --resources strings    vpc,subnet,nacl
+  -s, --state string         local or bucket (default "local")
 ````
 List of support AWS services:
 ````
@@ -103,6 +135,7 @@ vpn_gateway
 route53
 elasticache
 ````
+ 
 
 ###Developing:
 Process for generate tf + tfstate files

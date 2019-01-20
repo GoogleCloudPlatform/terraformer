@@ -43,9 +43,6 @@ func (g Route53Generator) createZonesResources(svc *route53.Route53) []terraform
 		return resources
 	}
 	for _, zone := range zones.HostedZones {
-		if aws.StringValue(zone.Name) == "cassandra." || aws.StringValue(zone.Name) == "reverse." {
-			continue
-		}
 		zoneID := cleanZoneID(aws.StringValue(zone.Id))
 		resources = append(resources, terraform_utils.NewResource(
 			zoneID,

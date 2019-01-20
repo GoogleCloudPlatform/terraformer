@@ -16,14 +16,12 @@ package gcp_terraforming
 
 import (
 	"errors"
-	"fmt"
-	"log"
 	"os"
 	"strings"
 	"waze/terraformer/terraform_utils"
 )
 
-const GenerateFilesFolderPath = "%s/generated/gcp/%s/%s/%s/"
+const gcpProviderVersion = "~>2.0.0"
 
 type GCPProvider struct {
 	terraform_utils.Provider
@@ -51,19 +49,6 @@ func (p *GCPProvider) GetName() string {
 	return "google"
 }
 
-func (p *GCPProvider) GenerateOutputPath() error {
-	if err := os.MkdirAll(p.CurrentPath(), os.ModePerm); err != nil {
-		log.Print(err)
-		return err
-	}
-	return nil
-}
-
-func (p *GCPProvider) CurrentPath() string {
-	rootPath, _ := os.Getwd()
-	return fmt.Sprintf(GenerateFilesFolderPath, rootPath, p.projectName, p.zone, p.Service.GetName())
-}
-
 func (p *GCPProvider) InitService(serviceName string) error {
 	var isSupported bool
 	if _, isSupported = p.GetGCPSupportService()[serviceName]; !isSupported {
@@ -80,15 +65,6 @@ func (p *GCPProvider) InitService(serviceName string) error {
 	return nil
 }
 
-func (p *GCPProvider) RegionResource() map[string]interface{} {
-	return map[string]interface{}{
-		"google": map[string]interface{}{
-			"region":  p.region,
-			"project": p.projectName,
-		},
-	}
-}
-
 // GetGCPSupportService return map of support service for GCP
 func (p *GCPProvider) GetGCPSupportService() map[string]terraform_utils.ServiceGenerator {
 	services := map[string]terraform_utils.ServiceGenerator{}
@@ -99,4 +75,24 @@ func (p *GCPProvider) GetGCPSupportService() map[string]terraform_utils.ServiceG
 	services["dns"] = &CloudDNSGenerator{}
 	services["cloudsql"] = &CloudSQLGenerator{}
 	return services
+}
+
+func (GCPProvider) GetResourceConnections() map[string]map[string][]string {
+	return map[string]map[string][]string{
+		"firewalls":             {"networks": []string{"network", "self_link"}},
+		"routes":                {"networks": []string{"network", "self_link"}},
+		"regionBackendServices": {"healthChecks": []string{"health_checks", "self_link"}},
+		"backendBuckets":        {"gcs": []string{"bucket_name", "name"}},
+	}
+}
+
+func (g GCPProvider) GetProviderData(arg ...string) map[string]interface{} {
+	return map[string]interface{}{
+		"provider": map[string]interface{}{
+			g.GetName(): map[string]interface{}{
+				"project": g.projectName,
+				"version": gcpProviderVersion,
+			},
+		},
+	}
 }

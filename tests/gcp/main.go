@@ -54,19 +54,24 @@ func main() {
 
 	}
 	sort.Strings(services)
-	for _, service := range services {
-		err := cmd.Exec("google", service, []string{zone})
-		if err != nil {
-			log.Println(err)
-			os.Exit(1)
-		}
-		provider = &gcp_terraforming.GCPProvider{
-			Provider: terraform_utils.Provider{},
-		}
-		provider.Init([]string{zone})
-		provider.InitService(service)
-		rootPath, _ := os.Getwd()
-		currentPath := provider.CurrentPath()
+	provider = &gcp_terraforming.GCPProvider{
+		Provider: terraform_utils.Provider{},
+	}
+	err := cmd.Import(provider, cmd.ImportOptions{
+		Resources:  services,
+		PathPatter: cmd.DefaultPathPatter,
+		PathOutput: cmd.DefaultPathOutput,
+		State:      "local",
+		Zone:       "europe-west1-a",
+		Connect:    true,
+	}, []string{zone})
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
+	rootPath, _ := os.Getwd()
+	for _, serviceName := range services {
+		currentPath := cmd.Path(cmd.DefaultPathPatter, provider.GetName(), serviceName, cmd.DefaultPathOutput)
 		if err := os.Chdir(currentPath); err != nil {
 			log.Println(err)
 			os.Exit(1)
@@ -81,4 +86,5 @@ func main() {
 		}
 		os.Chdir(rootPath)
 	}
+
 }

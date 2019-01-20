@@ -15,8 +15,6 @@
 package aws_terraforming
 
 import (
-	"fmt"
-	"log"
 	"os"
 	"waze/terraformer/terraform_utils"
 
@@ -30,12 +28,39 @@ type AWSProvider struct {
 	region string
 }
 
-func (p AWSProvider) RegionResource() map[string]interface{} {
-	return map[string]interface{}{
-		"aws": map[string]interface{}{
-			"region": p.region,
+const awsProviderVersion = "~>1.56.0"
+
+func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
+	return map[string]map[string][]string{
+		"subnet":         {"vpc": []string{"vpc_id", "id"}},
+		"vpn_gateway":    {"vpc": []string{"vpc_id", "id"}},
+		"vpn_connection": {"vpn_gateway": []string{"vpn_gateway_id", "id"}},
+		"rds": {
+			"subnet": []string{"subnet_ids", "id"},
+			"sg":     []string{"vpc_security_group_ids", "id"},
+		},
+		"nacl": {
+			"subnet": []string{"subnet_ids", "id"},
+			"vpc":    []string{"vpc_id", "id"},
+		},
+		"igw": {"vpc": []string{"vpc_id", "id"}},
+		"elasticache": {
+			"vpc":    []string{"vpc_id", "id"},
+			"subnet": []string{"subnet_ids", "id"},
+			"sg":     []string{"security_group_ids", "id"},
 		},
 	}
+}
+func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
+	d := map[string]interface{}{
+		"provider": map[string]interface{}{
+			"aws": map[string]interface{}{
+				"version": awsProviderVersion,
+				"region":  p.region,
+			},
+		},
+	}
+	return d
 }
 
 // check projectName in env params
@@ -51,19 +76,6 @@ func (p *AWSProvider) Init(args []string) error {
 
 func (p *AWSProvider) GetName() string {
 	return "aws"
-}
-
-func (p *AWSProvider) GenerateOutputPath() error {
-	if err := os.MkdirAll(p.CurrentPath(), os.ModePerm); err != nil {
-		log.Print(err)
-		return err
-	}
-	return nil
-}
-
-func (p *AWSProvider) CurrentPath() string {
-	rootPath, _ := os.Getwd()
-	return fmt.Sprintf(GenerateFilesFolderPath, rootPath, p.region, p.Service.GetName())
 }
 
 func (p *AWSProvider) InitService(serviceName string) error {

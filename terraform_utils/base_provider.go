@@ -16,13 +16,13 @@ package terraform_utils
 
 type ProviderGenerator interface {
 	Init(args []string) error
-	GenerateFiles()
-	GetService() ServiceGenerator
-	GetName() string
 	InitService(serviceName string) error
+	GetName() string
+	GetService() ServiceGenerator
+	GenerateFiles()
+	GetProviderData(arg ...string) map[string]interface{}
 	GenerateOutputPath() error
-	RegionResource() map[string]interface{}
-	CurrentPath() string
+	GetResourceConnections() map[string]map[string][]string
 }
 
 type Provider struct {

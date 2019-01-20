@@ -43,23 +43,26 @@ func main() {
 		services = append(services, service)
 
 	}
+	services = []string{"vpc", "subnet", "nacl"}
 	sort.Strings(services)
-	for _, service := range services {
-		if _, err := os.Stat("/Users/sergeylanz/go/src/waze/terraformer/generated/aws/eu-west-1/" + service); !os.IsNotExist(err) {
-			continue
-		}
-		err := cmd.Exec("aws", service, []string{region})
-		if err != nil {
-			log.Println(err)
-			os.Exit(1)
-		}
-		provider = &aws_terraforming.AWSProvider{
-			Provider: terraform_utils.Provider{},
-		}
-		provider.Init([]string{region})
-		provider.InitService(service)
-		rootPath, _ := os.Getwd()
-		currentPath := provider.CurrentPath()
+	provider = &aws_terraforming.AWSProvider{
+		Provider: terraform_utils.Provider{},
+	}
+	err := cmd.Import(provider, cmd.ImportOptions{
+		Resources:  services,
+		PathPatter: cmd.DefaultPathPatter,
+		PathOutput: cmd.DefaultPathOutput,
+		State:      "local",
+		Region:     region,
+		Connect:    true,
+	}, []string{region})
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
+	rootPath, _ := os.Getwd()
+	for _, serviceName := range services {
+		currentPath := cmd.Path(cmd.DefaultPathPatter, provider.GetName(), serviceName, cmd.DefaultPathOutput)
 		if err := os.Chdir(currentPath); err != nil {
 			log.Println(err)
 			os.Exit(1)
@@ -74,5 +77,4 @@ func main() {
 		}
 		os.Chdir(rootPath)
 	}
-
 }
