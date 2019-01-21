@@ -25,6 +25,7 @@ Flags:
   -p, --path-patter string   {output}/{provider}/custom/{service}/ (default "{output}/{provider}/{service}/")
   -r, --resources strings    firewalls,networks
   -s, --state string         local or bucket (default "local")
+      --projects strings
   -z, --zone string
 ```
 
@@ -45,7 +46,7 @@ GOOGLE_CLOUD_PROJECT=YOUR_PROJECT ./terraformer import google --resources=networ
 Examples: 
 
 ````
-./terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --connect=true --zone=europe-west1-a
+./terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --connect=true --zone=europe-west1-a --projects=aaa,fff
 ````
 
 List of support GCP services:
