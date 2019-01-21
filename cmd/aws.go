@@ -31,7 +31,7 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 				provider := &aws_terraforming.AWSProvider{}
 				options.PathPatter = originalPathPatter
 				options.PathPatter += region + "/"
-				log.Println(provider.GetName() + "importing region " + region)
+				log.Println(provider.GetName() + " importing region " + region)
 				err := Import(provider, options, []string{region})
 				if err != nil {
 					return err
