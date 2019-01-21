@@ -14,6 +14,7 @@
 package cmd
 
 import (
+	"log"
 	"waze/terraformer/aws_terraforming"
 
 	"github.com/spf13/cobra"
@@ -25,9 +26,18 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 		Short: "Import current State to terraform configuration from aws",
 		Long:  "Import current State to terraform configuration from aws",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			provider := &aws_terraforming.AWSProvider{}
-			options.PathPatter += options.Region + "/"
-			return Import(provider, options, []string{options.Region})
+			originalPathPatter := options.PathPatter
+			for _, region := range options.Regions {
+				provider := &aws_terraforming.AWSProvider{}
+				options.PathPatter = originalPathPatter
+				options.PathPatter += region + "/"
+				log.Println(provider.GetName() + "importing region " + region)
+				err := Import(provider, options, []string{region})
+				if err != nil {
+					return err
+				}
+			}
+			return nil
 		},
 	}
 	cmd.PersistentFlags().BoolVarP(&options.Connect, "connect", "c", true, "")
@@ -36,6 +46,6 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&options.PathOutput, "path-output", "o", DefaultPathOutput, "")
 	cmd.PersistentFlags().StringVarP(&options.State, "state", "s", DefaultState, "local or bucket")
 	cmd.PersistentFlags().StringVarP(&options.Bucket, "bucket", "b", "", "gs://terraform-state")
-	cmd.PersistentFlags().StringVar(&options.Region, "region", "", "")
+	cmd.PersistentFlags().StringSliceVarP(&options.Regions, "regions", "", []string{}, "eu-west-1,eu-west-2,us-east-1")
 	return cmd
 }

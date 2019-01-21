@@ -31,7 +31,7 @@ type ImportOptions struct {
 	State      string
 	Bucket     string
 	Zone       string
-	Region     string
+	Regions    []string
 	Connect    bool
 }
 

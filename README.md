@@ -94,13 +94,14 @@ cloudsql - bug(https://github.com/terraform-providers/terraform-provider-google/
 Your tf and tfstate file generate to `generated/gcp/zone/service`
 
 #####For AWS:
- ./terraformer import aws --resources=vpc,subnet --connect=true --region=eu-west-1
-
 ````
- ./terraformer import aws --resources=vpc,subnet --connect=false --region=eu-west-1
+ ./terraformer import aws --resources=vpc,subnet --connect=true --regions=eu-west-1
 ````
 ````
- ./terraformer import aws --resources=vpc,subnet --connect=true --region=eu-west-1
+ ./terraformer import aws --resources=vpc,subnet --connect=false --regions=eu-west-1,eu-west-2
+````
+````
+ ./terraformer import aws --resources=vpc,subnet --connect=true --regions=eu-west-1
 ````
 ````
 Import current State to terraform configuration from aws
@@ -114,7 +115,7 @@ Flags:
   -h, --help                 help for aws
   -o, --path-output string    (default "generated")
   -p, --path-patter string   {output}/{provider}/custom/{service}/ (default "{output}/{provider}/{service}/")
-      --region string
+      --regions strings      eu-west-1,eu-west-2,us-east-1
   -r, --resources strings    vpc,subnet,nacl
   -s, --state string         local or bucket (default "local")
 ````
