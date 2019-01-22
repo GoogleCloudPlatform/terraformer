@@ -18,7 +18,6 @@ package gcp_terraforming
 import (
 	"context"
 	"log"
-	"os"
 	"waze/terraformer/terraform_utils"
 
 	"golang.org/x/oauth2/google"
@@ -27,9 +26,7 @@ import (
 
 var instanceGroupManagersAllowEmptyValues = []string{"^version.[0-9].name", "^auto_healing_policies.[0-9].health_check"}
 
-var instanceGroupManagersAdditionalFields = map[string]string{
-	"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
-}
+var instanceGroupManagersAdditionalFields = map[string]string{}
 
 type InstanceGroupManagersGenerator struct {
 	GCPService

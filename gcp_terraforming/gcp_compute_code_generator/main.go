@@ -47,7 +47,6 @@ package gcp_terraforming
 import (
 	"context"
 	"log"
-	"os"
 	"waze/terraformer/terraform_utils"
 
 	"golang.org/x/oauth2/google"
@@ -57,7 +56,6 @@ import (
 var {{.resource}}AllowEmptyValues = []string{"{{join .allowEmptyValues "\",\"" }}"}
 
 var {{.resource}}AdditionalFields = map[string]string{
-	"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
 	{{ range $key,$value := .additionalFields}}
 	"{{$key}}":			"{{$value}}",{{end}}
 }

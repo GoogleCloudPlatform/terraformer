@@ -18,7 +18,6 @@ package gcp_terraforming
 import (
 	"context"
 	"log"
-	"os"
 	"waze/terraformer/terraform_utils"
 
 	"golang.org/x/oauth2/google"
@@ -27,9 +26,7 @@ import (
 
 var targetHttpProxiesAllowEmptyValues = []string{""}
 
-var targetHttpProxiesAdditionalFields = map[string]string{
-	"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
-}
+var targetHttpProxiesAdditionalFields = map[string]string{}
 
 type TargetHttpProxiesGenerator struct {
 	GCPService

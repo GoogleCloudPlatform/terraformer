@@ -18,7 +18,6 @@ package gcp_terraforming
 import (
 	"context"
 	"log"
-	"os"
 	"waze/terraformer/terraform_utils"
 
 	"golang.org/x/oauth2/google"
@@ -27,9 +26,7 @@ import (
 
 var autoscalersAllowEmptyValues = []string{""}
 
-var autoscalersAdditionalFields = map[string]string{
-	"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
-}
+var autoscalersAdditionalFields = map[string]string{}
 
 type AutoscalersGenerator struct {
 	GCPService

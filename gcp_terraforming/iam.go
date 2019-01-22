@@ -17,8 +17,6 @@ package gcp_terraforming
 import (
 	"context"
 	"log"
-	"os"
-
 	"waze/terraformer/terraform_utils"
 
 	adminpb "google.golang.org/genproto/googleapis/iam/admin/v1"
@@ -29,9 +27,7 @@ import (
 
 var IamAllowEmptyValues = []string{"tags."}
 
-var IamAdditionalFields = map[string]string{
-	"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
-}
+var IamAdditionalFields = map[string]string{}
 
 type IamGenerator struct {
 	GCPService

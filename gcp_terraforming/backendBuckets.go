@@ -18,7 +18,6 @@ package gcp_terraforming
 import (
 	"context"
 	"log"
-	"os"
 	"waze/terraformer/terraform_utils"
 
 	"golang.org/x/oauth2/google"
@@ -27,9 +26,7 @@ import (
 
 var backendBucketsAllowEmptyValues = []string{""}
 
-var backendBucketsAdditionalFields = map[string]string{
-	"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
-}
+var backendBucketsAdditionalFields = map[string]string{}
 
 type BackendBucketsGenerator struct {
 	GCPService

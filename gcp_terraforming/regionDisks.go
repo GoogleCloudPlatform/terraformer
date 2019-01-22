@@ -18,7 +18,6 @@ package gcp_terraforming
 import (
 	"context"
 	"log"
-	"os"
 	"waze/terraformer/terraform_utils"
 
 	"golang.org/x/oauth2/google"
@@ -27,9 +26,7 @@ import (
 
 var regionDisksAllowEmptyValues = []string{""}
 
-var regionDisksAdditionalFields = map[string]string{
-	"project": os.Getenv("GOOGLE_CLOUD_PROJECT"),
-}
+var regionDisksAdditionalFields = map[string]string{}
 
 type RegionDisksGenerator struct {
 	GCPService
