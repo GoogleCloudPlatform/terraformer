@@ -73,7 +73,7 @@ func RefreshResources(resources []Resource, providerName string) ([]Resource, er
 	}
 	defer provider.Kill()
 	var wg sync.WaitGroup
-	for i := 0; i < 20; i++ {
+	for i := 0; i < 15; i++ {
 		go RefreshResourceWorker(input, &wg, provider)
 	}
 	for i := range resources {

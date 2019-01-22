@@ -15,7 +15,7 @@ require (
 	github.com/apparentlymart/go-cidr v1.0.0 // indirect
 	github.com/armon/circbuf v0.0.0-20150827004946-bbbad097214e // indirect
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da // indirect
-	github.com/aws/aws-sdk-go v1.15.82
+	github.com/aws/aws-sdk-go v1.16.23
 	github.com/beevik/etree v1.0.1 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/boltdb/bolt v1.3.1 // indirect

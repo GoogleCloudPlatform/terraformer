@@ -123,6 +123,7 @@ Flags:
 List of support AWS services:
 ````
 elb
+alb
 autoscaling
 rds
 iam

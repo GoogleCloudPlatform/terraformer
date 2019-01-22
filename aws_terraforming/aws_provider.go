@@ -49,6 +49,11 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 			"subnet": []string{"subnet_ids", "id"},
 			"sg":     []string{"security_group_ids", "id"},
 		},
+		"alb": {
+			"sg":     []string{"security_groups", "id"},
+			"subnet": []string{"subnets", "id"},
+			"vpc":    []string{"vpc_id", "id"},
+		},
 	}
 }
 func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
@@ -109,5 +114,6 @@ func (p *AWSProvider) GetAWSSupportService() map[string]terraform_utils.ServiceG
 		"auto_scaling":   &AutoScalingGenerator{},
 		"rds":            &RDSGenerator{},
 		"elasticache":    &ElastiCacheGenerator{},
+		"alb":            &AlbGenerator{},
 	}
 }
