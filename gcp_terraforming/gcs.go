@@ -49,7 +49,8 @@ func (g *GcsGenerator) createResources(bucketIterator *storage.BucketIterator) [
 			"google_storage_bucket",
 			"google",
 			map[string]string{
-				"name": battrs.Name,
+				"name":          battrs.Name,
+				"force_destroy": "false",
 			},
 			GcsAllowEmptyValues,
 			GcsAdditionalFields,

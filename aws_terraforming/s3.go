@@ -55,7 +55,10 @@ func (S3Generator) createResources(buckets *s3.ListBucketsOutput, region string)
 				resourceName,
 				"aws_s3_bucket",
 				"aws",
-				map[string]string{},
+				map[string]string{
+					"force_destroy": "false",
+					"acl":           "private",
+				},
 				S3AllowEmptyValues,
 				S3AdditionalFields))
 			// try get policy
