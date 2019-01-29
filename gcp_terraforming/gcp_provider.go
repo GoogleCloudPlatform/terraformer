@@ -74,6 +74,7 @@ func (p *GCPProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 	services["iam"] = &IamGenerator{}
 	services["dns"] = &CloudDNSGenerator{}
 	services["cloudsql"] = &CloudSQLGenerator{}
+	services["gke"] = &GkeGenerator{}
 	return services
 }
 
@@ -87,7 +88,11 @@ func (GCPProvider) GetResourceConnections() map[string]map[string][]string {
 			"networks":    []string{"network", "self_link"},
 			"subnetworks": []string{"subnetworks", "self_link"},
 		},
-		"subnetworks":                 {"networks": []string{"network", "self_link"}},
+		"subnetworks": {"networks": []string{"network", "self_link"}},
+		"gke": {
+			"networks":    []string{"network", "self_link"},
+			"subnetworks": []string{"subnetwork", "self_link"},
+		},
 		"regionInstanceGroupManagers": {"instanceTemplates": []string{"instance_template", "self_link"}},
 	}
 }
