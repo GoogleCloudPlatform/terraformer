@@ -31,7 +31,7 @@ func newCmdGoogleImporter(options ImportOptions) *cobra.Command {
 			for _, project := range options.Projects {
 				provider := &gcp_terraforming.GCPProvider{}
 				options.PathPatter = originalPathPatter
-				options.PathPatter = strings.Replace(options.PathPatter, "{provider}", "{provider}/"+project+"/", -1)
+				options.PathPatter = strings.Replace(options.PathPatter, "{provider}", "{provider}/"+project, -1)
 				log.Println(provider.GetName() + " importing project " + project)
 				err := Import(provider, options, []string{options.Zone, project})
 				if err != nil {
