@@ -41,6 +41,7 @@ func newCmdGoogleImporter(options ImportOptions) *cobra.Command {
 			return nil
 		},
 	}
+	cmd.AddCommand(listCmd(&gcp_terraforming.GCPProvider{}))
 	cmd.PersistentFlags().BoolVarP(&options.Connect, "connect", "c", true, "")
 	cmd.PersistentFlags().StringSliceVarP(&options.Resources, "resources", "r", []string{}, "firewalls,networks")
 	cmd.PersistentFlags().StringVarP(&options.PathPatter, "path-patter", "p", DefaultPathPatter, "{output}/{provider}/custom/{service}/")

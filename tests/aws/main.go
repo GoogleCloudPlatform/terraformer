@@ -30,7 +30,7 @@ func main() {
 	region := "eu-west-1"
 	services := []string{}
 	provider := &aws_terraforming.AWSProvider{}
-	for service := range provider.GetAWSSupportService() {
+	for service := range provider.GetSupportedService() {
 		if service == "route53" {
 			continue
 		}
@@ -53,7 +53,6 @@ func main() {
 		PathPatter: cmd.DefaultPathPatter,
 		PathOutput: cmd.DefaultPathOutput,
 		State:      "local",
-		Region:     region,
 		Connect:    true,
 	}, []string{region})
 	if err != nil {

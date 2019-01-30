@@ -31,7 +31,7 @@ func main() {
 	zone := "europe-west1-c"
 	services := []string{}
 	provider := &gcp_terraforming.GCPProvider{}
-	for service := range provider.GetGCPSupportService() {
+	for service := range provider.GetSupportedService() {
 		if service == "images" {
 			continue
 		}

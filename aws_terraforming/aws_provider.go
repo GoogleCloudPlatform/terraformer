@@ -85,10 +85,10 @@ func (p *AWSProvider) GetName() string {
 
 func (p *AWSProvider) InitService(serviceName string) error {
 	var isSupported bool
-	if _, isSupported = p.GetAWSSupportService()[serviceName]; !isSupported {
+	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
 		return errors.New("aws: " + serviceName + " not supported service")
 	}
-	p.Service = p.GetAWSSupportService()[serviceName]
+	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]string{
@@ -98,7 +98,7 @@ func (p *AWSProvider) InitService(serviceName string) error {
 }
 
 // GetAWSSupportService return map of support service for AWS
-func (p *AWSProvider) GetAWSSupportService() map[string]terraform_utils.ServiceGenerator {
+func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
 		"vpc":            &VpcGenerator{},
 		"sg":             &SecurityGenerator{},

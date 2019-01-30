@@ -14,9 +14,11 @@
 package cmd
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
+	"sort"
 	"strings"
 	"waze/terraformer/terraform_utils"
 	"waze/terraformer/terraform_utils/terraform_output"
@@ -173,4 +175,21 @@ func Path(pathPatter, providerName, serviceName, output string) string {
 		"{service}", serviceName,
 		"{output}", output,
 	).Replace(pathPatter)
+}
+
+func listCmd(provider terraform_utils.ProviderGenerator) *cobra.Command {
+	return &cobra.Command{
+		Use: "list",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			services := []string{}
+			for k := range provider.GetSupportedService() {
+				services = append(services, k)
+			}
+			sort.Strings(services)
+			for _, k := range services {
+				fmt.Println(k)
+			}
+			return nil
+		},
+	}
 }

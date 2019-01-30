@@ -51,10 +51,10 @@ func (p *GCPProvider) GetName() string {
 
 func (p *GCPProvider) InitService(serviceName string) error {
 	var isSupported bool
-	if _, isSupported = p.GetGCPSupportService()[serviceName]; !isSupported {
+	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
 		return errors.New("gcp: " + serviceName + " not supported service")
 	}
-	p.Service = p.GetGCPSupportService()[serviceName]
+	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]string{
@@ -66,7 +66,7 @@ func (p *GCPProvider) InitService(serviceName string) error {
 }
 
 // GetGCPSupportService return map of support service for GCP
-func (p *GCPProvider) GetGCPSupportService() map[string]terraform_utils.ServiceGenerator {
+func (p *GCPProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	services := map[string]terraform_utils.ServiceGenerator{}
 	services = ComputeServices
 	services["gcs"] = &GcsGenerator{}

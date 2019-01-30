@@ -40,6 +40,7 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 			return nil
 		},
 	}
+	cmd.AddCommand(listCmd(&aws_terraforming.AWSProvider{}))
 	cmd.PersistentFlags().BoolVarP(&options.Connect, "connect", "c", true, "")
 	cmd.PersistentFlags().StringSliceVarP(&options.Resources, "resources", "r", []string{}, "vpc,subnet,nacl")
 	cmd.PersistentFlags().StringVarP(&options.PathPatter, "path-patter", "p", DefaultPathPatter, "{output}/{provider}/custom/{service}/")

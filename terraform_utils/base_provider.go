@@ -19,6 +19,7 @@ type ProviderGenerator interface {
 	InitService(serviceName string) error
 	GetName() string
 	GetService() ServiceGenerator
+	GetSupportedService() map[string]ServiceGenerator
 	GenerateFiles()
 	GetProviderData(arg ...string) map[string]interface{}
 	GenerateOutputPath() error
@@ -51,6 +52,10 @@ func (p *Provider) GenerateFiles() {
 
 func (p *Provider) GetService() ServiceGenerator {
 	return p.Service
+}
+
+func (p *Provider) GetSupportedService() map[string]ServiceGenerator {
+	panic("implement me")
 }
 
 func GetName() string {
