@@ -83,6 +83,12 @@ func (GCPProvider) GetResourceConnections() map[string]map[string][]string {
 		"routes":                {"networks": []string{"network", "self_link"}},
 		"regionBackendServices": {"healthChecks": []string{"health_checks", "self_link"}},
 		"backendBuckets":        {"gcs": []string{"bucket_name", "name"}},
+		"instanceTemplates": {
+			"networks":    []string{"network", "self_link"},
+			"subnetworks": []string{"subnetworks", "self_link"},
+		},
+		"subnetworks":                 {"networks": []string{"network", "self_link"}},
+		"regionInstanceGroupManagers": {"instanceTemplates": []string{"instance_template", "self_link"}},
 	}
 }
 
