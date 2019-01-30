@@ -39,7 +39,11 @@ func (g *AutoScalingGenerator) loadAutoScalingGroups(svc *autoscaling.AutoScalin
 				resourceName,
 				"aws_autoscaling_group",
 				"aws",
-				map[string]string{},
+				map[string]string{
+					"force_delete":              "false",
+					"metrics_granularity":       "1Minute",
+					"wait_for_capacity_timeout": "10m",
+				},
 				AsgAllowEmptyValues,
 				map[string]string{},
 			))

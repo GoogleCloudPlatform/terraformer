@@ -54,10 +54,18 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 			"subnet": []string{"subnets", "id"},
 			"vpc":    []string{"vpc_id", "id"},
 		},
+		"elb": {
+			"sg":     []string{"security_groups", "id"},
+			"subnet": []string{"subnets", "id"},
+		},
+		"auto_scaling": {
+			"sg":     []string{"security_groups", "id"},
+			"subnet": []string{"vpc_zone_identifier", "id"},
+		},
 	}
 }
 func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
-	d := map[string]interface{}{
+	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"aws": map[string]interface{}{
 				"version": awsProviderVersion,
@@ -65,7 +73,6 @@ func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
 			},
 		},
 	}
-	return d
 }
 
 // check projectName in env params

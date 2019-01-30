@@ -166,6 +166,7 @@ func HclPrint(data interface{}) ([]byte, error) {
 // Sanitize name for terraform style
 func TfSanitize(name string) string {
 	name = strings.Replace(name, "*.", "", -1)
+	name = strings.Replace(name, " ", "", -1)
 	//name = strings.Replace(name, "-", "_", -1)
 	name = strings.Replace(name, ".", "--", -1)
 	name = strings.Replace(name, ":", "--", -1)
