@@ -39,7 +39,7 @@ func (g *ElbGenerator) InitResources() error {
 	err := svc.DescribeLoadBalancersPages(&elb.DescribeLoadBalancersInput{}, func(loadBalancers *elb.DescribeLoadBalancersOutput, lastPage bool) bool {
 		for _, loadBalancer := range loadBalancers.LoadBalancerDescriptions {
 			resourceName := aws.StringValue(loadBalancer.LoadBalancerName)
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			resource := terraform_utils.NewResource(
 				resourceName,
 				resourceName,
 				"aws_elb",
@@ -47,7 +47,9 @@ func (g *ElbGenerator) InitResources() error {
 				map[string]string{},
 				ElbAllowEmptyValues,
 				map[string]string{},
-			))
+			)
+			resource.IgnoreKeys = append(resource.IgnoreKeys, "^instances\\.(.*)") // don't import current connect instances to ELB
+			g.Resources = append(g.Resources, resource)
 		}
 		return !lastPage
 	})
