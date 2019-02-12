@@ -83,7 +83,7 @@ func (p *ProviderWrapper) readObjBlocks(block map[string]*configschema.NestedBlo
 				switch v.Nesting {
 				case configschema.NestingList:
 					if parent == "-1" {
-						readOnlyAttributes = append(readOnlyAttributes, "^"+k+".[0-9]."+key+"$")
+						readOnlyAttributes = append(readOnlyAttributes, "^"+k+".[0-9]."+key+"($|\\.[0-9]|\\.#)")
 					} else {
 						readOnlyAttributes = append(readOnlyAttributes, "^"+parent+".(.*)."+key+"$")
 					}
