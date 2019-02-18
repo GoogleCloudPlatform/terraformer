@@ -1,8 +1,8 @@
 #Terraformer
+Disclaimer: This is not an official Google product.
 
 CLI tool for generate tf + tfstate files from current configuration(reverse terraform)
 
-This is not an official Google product
 
 ##Options
 1. Generate tf + tfstate files from current configuration for all objects by resource
@@ -124,7 +124,7 @@ List of support AWS services:
 ````
 elb
 alb
-autoscaling
+auto_scaling
 rds
 iam
 igw
