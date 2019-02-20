@@ -4,7 +4,7 @@ Disclaimer: This is not an official Google product.
 CLI tool for generate tf + tfstate files from current infrastructure(reverse terraform)
 
 ####Created by
-# ![Waze SRE](docs/waze-sre-logo.png)
+![Waze SRE](docs/waze-sre-logo.png)
 
 
 #Options
