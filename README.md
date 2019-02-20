@@ -1,18 +1,21 @@
 #Terraformer
 Disclaimer: This is not an official Google product.
 
-CLI tool for generate tf + tfstate files from current configuration(reverse terraform)
+CLI tool for generate tf + tfstate files from current infrastructure(reverse terraform)
+
+####Created by
+# ![Waze SRE](docs/waze-sre-logo.png)
 
 
-##Options
-1. Generate tf + tfstate files from current configuration for all objects by resource
-2. Remote state upload tfstate to bucket(only gcs support)
+#Options
+1. Generate tf + tfstate files from current infrastructure for all objects by resource
+2. Remote state can be uploaded to bucket(only gcs support)
 3. Connect between resource with terraform_remote_state(local and bucket)
 4. Compatible with terraform 0.12 syntax
-5. Save tf files with folder tree patter
+5. Save tf files with custom folder tree patter
 
 ```
-Import current State to terraform configuration from google cloud
+Import current state to terraform configuration from google cloud
 
 Usage:
    import google [flags]
@@ -29,7 +32,7 @@ Flags:
   -z, --zone string
 ```
 
-###Providers support
+##Providers support
 1. Google cloud
 2. AWS
 
@@ -43,6 +46,7 @@ Flags:
 #####Usage:
 #####For GCP:
 GOOGLE_CLOUD_PROJECT=YOUR_PROJECT ./terraformer import google --resources=networks,firewalls --connect=true --zone=europe-west1-a
+
 Examples: 
 
 ````
@@ -92,7 +96,7 @@ cloudsql - bug(https://github.com/terraform-providers/terraform-provider-google/
 
 
 
-Your tf and tfstate file generate to `generated/gcp/zone/service`
+Your tf and tfstate files generate by default to `generated/gcp/zone/service`
 
 #####For AWS:
 ````
@@ -139,6 +143,8 @@ route53
 elasticache
 ````
  
+#Contributing
+If you have improvements or fixes, we would love to have your contributions. Please read CONTRIBUTING.md for more information on the process we would like contributors to follow.
 
 ###Developing:
 Process for generate tf + tfstate files
@@ -163,3 +169,7 @@ Regenerate code
 ````
 go run gcp_terraforming/compute_resources/gcp_compute_code_generator/*.go
 ````
+
+
+###Similar projects
+1. https://github.com/dtan4/terraforming
