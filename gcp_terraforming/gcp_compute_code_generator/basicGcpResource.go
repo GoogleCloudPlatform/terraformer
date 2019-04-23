@@ -14,7 +14,7 @@
 
 package main
 
-type gcpResourceRenderble interface {
+type gcpResourceRenderable interface {
 	getTerraformName() string
 	getAdditionalFields() map[string]string
 	getAllowEmptyValues() []string

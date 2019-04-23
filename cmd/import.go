@@ -179,7 +179,9 @@ func Path(pathPatter, providerName, serviceName, output string) string {
 
 func listCmd(provider terraform_utils.ProviderGenerator) *cobra.Command {
 	return &cobra.Command{
-		Use: "list",
+		Use:   "list",
+		Short: "Import current State to terraform configuration",
+		Long:  "Import current State to terraform configuration",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			services := []string{}
 			for k := range provider.GetSupportedService() {

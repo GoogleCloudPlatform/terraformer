@@ -29,9 +29,9 @@ type VpcGenerator struct {
 }
 
 func (VpcGenerator) createResources(vpcs *ec2.DescribeVpcsOutput) []terraform_utils.Resource {
-	resoures := []terraform_utils.Resource{}
+	resources := []terraform_utils.Resource{}
 	for _, vpc := range vpcs.Vpcs {
-		resoures = append(resoures, terraform_utils.NewResource(
+		resources = append(resources, terraform_utils.NewResource(
 			aws.StringValue(vpc.VpcId),
 			aws.StringValue(vpc.VpcId),
 			"aws_vpc",
@@ -41,7 +41,7 @@ func (VpcGenerator) createResources(vpcs *ec2.DescribeVpcsOutput) []terraform_ut
 			map[string]string{},
 		))
 	}
-	return resoures
+	return resources
 }
 
 // Generate TerraformResources from AWS API,

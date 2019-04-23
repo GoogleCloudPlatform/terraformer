@@ -21,8 +21,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-const GenerateFilesFolderPath = "%s/generated/aws/%s/%s/"
-
 type AWSProvider struct {
 	terraform_utils.Provider
 	region string

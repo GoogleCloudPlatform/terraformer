@@ -97,11 +97,11 @@ func (GCPProvider) GetResourceConnections() map[string]map[string][]string {
 	}
 }
 
-func (g GCPProvider) GetProviderData(arg ...string) map[string]interface{} {
+func (p GCPProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
-			g.GetName(): map[string]interface{}{
-				"project": g.projectName,
+			p.GetName(): map[string]interface{}{
+				"project": p.projectName,
 				"version": gcpProviderVersion,
 			},
 		},

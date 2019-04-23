@@ -183,7 +183,6 @@ func (g *ElastiCacheGenerator) PostConvertHook() error {
 			}
 		}
 
-
 		for _, replicationGroup := range g.Resources {
 			if replicationGroup.InstanceInfo.Type != "aws_elasticache_replication_group" {
 				continue

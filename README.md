@@ -6,7 +6,8 @@ CLI tool for generate tf + tfstate files from current infrastructure(reverse ter
 ####Created by
 ![Waze SRE](docs/waze-sre-logo.png)
 
-
+Status: beta - need improve documentations, bugs etc..
+ 
 #Options
 1. Generate tf + tfstate files from current infrastructure for all objects by resource
 2. Remote state can be uploaded to bucket(only gcs support)
@@ -37,20 +38,18 @@ Flags:
 2. AWS
 
 ###Install
-1. git clone project OR binary
+1. `git clone project`
 2. Run `GO111MODULE=on go mod vendor`
 3. go build -v
-4. Copy your terraform provider plugin to ~/.terraform.d/plugins/{darwin,linux}_amd64 => https://www.terraform.io/docs/configuration/providers.html
+4. Copy your terraform providers plugin to ~/.terraform.d/plugins/{darwin,linux}_amd64 => https://www.terraform.io/docs/configuration/providers.html
 
 
 #####Usage:
 #####For GCP:
-GOOGLE_CLOUD_PROJECT=YOUR_PROJECT ./terraformer import google --resources=networks,firewalls --connect=true --zone=europe-west1-a
-
 Examples: 
 
 ````
-./terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --connect=true --zone=europe-west1-a --projects=aaa,fff
+terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --connect=true --zone=europe-west1-a --projects=aaa,fff
 ````
 
 List of support GCP services:
@@ -100,13 +99,7 @@ Your tf and tfstate files generate by default to `generated/gcp/zone/service`
 
 #####For AWS:
 ````
- ./terraformer import aws --resources=vpc,subnet --connect=true --regions=eu-west-1
-````
-````
- ./terraformer import aws --resources=vpc,subnet --connect=false --regions=eu-west-1,eu-west-2
-````
-````
- ./terraformer import aws --resources=vpc,subnet --connect=true --regions=eu-west-1
+ terraformer import aws --resources=vpc,subnet --connect=true --regions=eu-west-1
 ````
 ````
 Import current State to terraform configuration from aws

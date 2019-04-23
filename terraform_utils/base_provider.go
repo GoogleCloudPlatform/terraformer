@@ -57,7 +57,3 @@ func (p *Provider) GetService() ServiceGenerator {
 func (p *Provider) GetSupportedService() map[string]ServiceGenerator {
 	panic("implement me")
 }
-
-func GetName() string {
-	panic("implement me")
-}

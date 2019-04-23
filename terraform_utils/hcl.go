@@ -22,8 +22,8 @@ import (
 	"strings"
 
 	"github.com/hashicorp/hcl/hcl/ast"
-	hcl_printer "github.com/hashicorp/hcl/hcl/printer"
-	hcl_parcer "github.com/hashicorp/hcl/json/parser"
+	hclPrinter "github.com/hashicorp/hcl/hcl/printer"
+	hclParcer "github.com/hashicorp/hcl/json/parser"
 )
 
 // Copy code from https://github.com/kubernetes/kops project with few changes for support many provider and heredoc
@@ -124,7 +124,7 @@ func HclPrint(data interface{}) ([]byte, error) {
 	if err != nil {
 		return []byte{}, fmt.Errorf("error marshalling terraform data to json: %v", err)
 	}
-	nodes, err := hcl_parcer.Parse([]byte(dataJson))
+	nodes, err := hclParcer.Parse([]byte(dataJson))
 	if err != nil {
 		return []byte{}, fmt.Errorf("error parsing terraform json: %v", err)
 	}
@@ -132,7 +132,7 @@ func HclPrint(data interface{}) ([]byte, error) {
 	sanitizer.visit(nodes)
 
 	var b bytes.Buffer
-	err = hcl_printer.Fprint(&b, nodes)
+	err = hclPrinter.Fprint(&b, nodes)
 	if err != nil {
 		return nil, fmt.Errorf("error writing HCL: %v", err)
 	}
@@ -149,7 +149,7 @@ func HclPrint(data interface{}) ([]byte, error) {
 	s = strings.Replace(s, "\\u003e", ">", -1)
 
 	// Apply Terraform style (alignment etc.)
-	formatted, err := hcl_printer.Format([]byte(s))
+	formatted, err := hclPrinter.Format([]byte(s))
 	// hack for support terraform 0.12
 	formatted = []byte(strings.Replace(string(formatted), " = {", " {", -1))
 	if err != nil {
