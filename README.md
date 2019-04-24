@@ -1,19 +1,22 @@
-#Terraformer
-Disclaimer: This is not an official Google product.
+# Terraformer
 
-CLI tool for generate tf + tfstate files from current infrastructure(reverse terraform)
+CLI tool to generate `tf` and `tfstate` files from existing infrastructure
+(reverse Terraform).
 
-####Created by
-![Waze SRE](docs/waze-sre-logo.png)
+*   Disclaimer: This is not an official Google product.
+*   Status: beta - need improve documentations, bugs etc..
+*   Created by: Created by Waze SRE.
 
-Status: beta - need improve documentations, bugs etc..
- 
-#Options
-1. Generate tf + tfstate files from current infrastructure for all objects by resource
-2. Remote state can be uploaded to bucket(only gcs support)
-3. Connect between resource with terraform_remote_state(local and bucket)
-4. Compatible with terraform 0.12 syntax
-5. Save tf files with custom folder tree patter
+![Waze SRE logo](docs/waze-sre-logo.png)
+
+## Capabilities
+
+1.  Generate `tf` + `tfstate` files from existing infrastructure for all
+    supported objects by resource.
+2.  Remote state can be uploaded to a GCS bucket.
+3.  Connect between resources with `terraform_remote_state` (local and bucket).
+4.  Compatible with terraform 0.12 syntax.
+5.  Save `tf` files with custom folder tree pattern.
 
 ```
 Import current state to terraform configuration from google cloud
@@ -33,75 +36,84 @@ Flags:
   -z, --zone string
 ```
 
-##Providers support
-1. Google cloud
-2. AWS
+## Supported providers
 
-###Install
-1. `git clone project`
-2. Run `GO111MODULE=on go mod vendor`
-3. go build -v
-4. Copy your terraform providers plugin to ~/.terraform.d/plugins/{darwin,linux}_amd64 => https://www.terraform.io/docs/configuration/providers.html
+1.  Google cloud
+2.  AWS
 
+## How to use Terraformer
 
-#####Usage:
-#####For GCP:
-Examples: 
+### Installation
 
-````
+1.  Run `git clone <terraformer repo>`
+2.  Run `GO111MODULE=on go mod vendor`
+3.  Run `go build -v`
+4.  Copy your Terraform provider's plugin(s) to
+    `~/.terraform.d/plugins/{darwin,linux}_amd64`, as appropriate.
+
+Information on provider plugins:
+https://www.terraform.io/docs/configuration/providers.html
+
+### Use with GCP
+
+Example:
+
+```
 terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --connect=true --zone=europe-west1-a --projects=aaa,fff
-````
+```
 
-List of support GCP services:
-````
-addresses
-autoscalers
-backendBuckets 
-backendServices
-disks
-firewalls
-forwardingRules
-globalAddresses
-globalForwardingRules
-healthChecks
-httpHealthChecks
-httpsHealthChecks
-images -  bug => Either raw_disk or source_disk configuration is required.
-instanceGroupManagers
-instanceGroups
-instanceTemplates
-instances
-networks
-regionAutoscalers
-regionBackendServices
-regionDisks
-regionInstanceGroupManagers
-routers
-routes
-securityPolicies 
-sslPolicies
-subnetworks
-targetHttpProxies - bug with proxy_id uint64 issue
-targetHttpsProxies
-targetSslProxies
-targetTcpProxies
-urlMaps
-vpnTunnels
-gcs
-monitoring
-dns
-cloudsql - bug(https://github.com/terraform-providers/terraform-provider-google/issues/2716), bug(https://github.com/GoogleCloudPlatform/magic-modules/pull/1097)
-````
+List of supported GCP services:
 
+*   `addresses`
+*   `autoscalers`
+*   `backendBuckets`
+*   `backendServices`
+*   `disks`
+*   `firewalls`
+*   `forwardingRules`
+*   `globalAddresses`
+*   `globalForwardingRules`
+*   `healthChecks`
+*   `httpHealthChecks`
+*   `httpsHealthChecks`
+*   `images` (bug: Either raw_disk or source_disk configuration is required.)
+*   `instanceGroupManagers`
+*   `instanceGroups`
+*   `instanceTemplates`
+*   `instances`
+*   `networks`
+*   `regionAutoscalers`
+*   `regionBackendServices`
+*   `regionDisks`
+*   `regionInstanceGroupManagers`
+*   `routers`
+*   `routes`
+*   `securityPolicies`
+*   `sslPolicies`
+*   `subnetworks`
+*   `targetHttpProxies` (bug with proxy_id uint64 issue)
+*   `targetHttpsProxies`
+*   `targetSslProxies`
+*   `targetTcpProxies`
+*   `urlMaps`
+*   `vpnTunnels`
+*   `gcs`
+*   `monitoring`
+*   `dns`
+*   `cloudsql` ([bug](https://github.com/terraform-providers/terraform-provider-google/issues/2716), [bug](https://github.com/GoogleCloudPlatform/magic-modules/pull/1097))
 
+Your `tf` and `tfstate` files are written by default to
+`generated/gcp/zone/service`.
 
-Your tf and tfstate files generate by default to `generated/gcp/zone/service`
+### Use with AWS
 
-#####For AWS:
-````
+Example:
+
+```
  terraformer import aws --resources=vpc,subnet --connect=true --regions=eu-west-1
-````
-````
+```
+
+```
 Import current State to terraform configuration from aws
 
 Usage:
@@ -116,53 +128,62 @@ Flags:
       --regions strings      eu-west-1,eu-west-2,us-east-1
   -r, --resources strings    vpc,subnet,nacl
   -s, --state string         local or bucket (default "local")
-````
+```
+
 List of support AWS services:
-````
-elb
-alb
-auto_scaling
-rds
-iam
-igw
-nacl
-s3
-sg
-subnet
-vpc
-vpn_connection
-vpn_gateway
-route53
-elasticache
-````
- 
-#Contributing
-If you have improvements or fixes, we would love to have your contributions. Please read CONTRIBUTING.md for more information on the process we would like contributors to follow.
 
-###Developing:
-Process for generate tf + tfstate files
-1. Call GCP/AWS/other api and get list of resources
-2. Iterate on resources and take only ID(not need mapping fields!!!)
-3. Call to provider for readonly fields
-4. Call to infrastructure and take tf + tfstate.
+*   `elb`
+*   `alb`
+*   `auto_scaling`
+*   `rds`
+*   `iam`
+*   `igw`
+*   `nacl`
+*   `s3`
+*   `sg`
+*   `subnet`
+*   `vpc`
+*   `vpn_connection`
+*   `vpn_gateway`
+*   `route53`
+*   `elasticache`
 
+## Contributing
 
-#####Infrastructure
-1. Call to provider for refresh method and get all data
-2. Convert refresh data to go struct
-3. Generate HCL file - tf files.
-4. Generate tfstate files
+If you have improvements or fixes, we would love to have your contributions.
+Please read CONTRIBUTING.md for more information on the process we would like
+contributors to follow.
 
-All mapping of resource make by providers and terraform. Any upgrade need only for providers.
- 
-#####GCP compute resources
-For GCP compute resources use generate code from `gcp_terraforming/compute_resources/gcp_compute_code_generator`
+## Developing
 
-Regenerate code 
-````
+Process for generating `tf` + `tfstate` files:
+
+1.  Call GCP/AWS/other api and get list of resources.
+2.  Iterate over resources and take only ID (we don't need mapping fields!!!)
+3.  Call to provider for readonly fields.
+4.  Call to infrastructure and take tf + tfstate.
+
+## Infrastructure
+
+1.  Call to provider for refresh method and get all data.
+2.  Convert refresh data to go struct.
+3.  Generate HCL file - `tf` files.
+4.  Generate `tfstate` files.
+
+All mapping of resource is made by providers and Terraform. Upgrades are needed only
+for providers.
+
+##### GCP compute resources
+
+For GCP compute resources, use generated code from
+`gcp_terraforming/compute_resources/gcp_compute_code_generator`.
+
+To regenerate code:
+
+```
 go run gcp_terraforming/compute_resources/gcp_compute_code_generator/*.go
-````
+```
 
+### Similar projects
 
-###Similar projects
-1. https://github.com/dtan4/terraforming
+1.  https://github.com/dtan4/terraforming
