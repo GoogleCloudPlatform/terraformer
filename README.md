@@ -180,7 +180,7 @@ for providers.
 ##### GCP compute resources
 
 For GCP compute resources, use generated code from
-`gcp_terraforming/compute_resources/gcp_compute_code_generator`.
+`gcp_terraforming/gcp_compute_code_generator`.
 
 To regenerate code:
 
