@@ -15,7 +15,8 @@ package cmd
 
 import (
 	"log"
-	"waze/terraformer/aws_terraforming"
+
+	"github.com/GoogleCloudPlatform/terraformer/aws_terraforming"
 
 	"github.com/spf13/cobra"
 )

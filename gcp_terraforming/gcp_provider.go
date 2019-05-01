@@ -16,9 +16,9 @@ package gcp_terraforming
 
 import (
 	"errors"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"os"
 	"strings"
-	"waze/terraformer/terraform_utils"
 )
 
 const gcpProviderVersion = "~>2.0.0"

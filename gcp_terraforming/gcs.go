@@ -18,7 +18,8 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"waze/terraformer/terraform_utils"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 	"cloud.google.com/go/storage"
 	"google.golang.org/api/iterator"

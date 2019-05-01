@@ -16,10 +16,10 @@ package terraform_utils
 
 import (
 	"fmt"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 	"log"
 	"regexp"
 	"strings"
-	"waze/terraformer/terraform_utils/provider_wrapper"
 
 	"github.com/hashicorp/terraform/flatmap"
 	"github.com/hashicorp/terraform/terraform"

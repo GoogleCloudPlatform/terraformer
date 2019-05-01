@@ -41,6 +41,10 @@ Flags:
 1.  Google cloud
 2.  AWS
 
+#### Permissions
+
+Readonly permissions
+
 ## How to use Terraformer
 
 ### Installation
@@ -181,7 +185,7 @@ For GCP compute resources, use generated code from
 To regenerate code:
 
 ```
-go run gcp_terraforming/compute_resources/gcp_compute_code_generator/*.go
+go run gcp_terraforming/gcp_compute_code_generator/*.go
 ```
 
 ### Similar projects

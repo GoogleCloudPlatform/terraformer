@@ -19,9 +19,10 @@ import (
 	"os"
 	"os/exec"
 	"sort"
-	"waze/terraformer/aws_terraforming"
-	"waze/terraformer/cmd"
-	"waze/terraformer/terraform_utils"
+
+	"github.com/GoogleCloudPlatform/terraformer/aws_terraforming"
+	"github.com/GoogleCloudPlatform/terraformer/cmd"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
 
 const command = "terraform init && terraform plan"

@@ -16,7 +16,8 @@ package aws_terraforming
 
 import (
 	"strings"
-	"waze/terraformer/terraform_utils"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/service/rds"
 

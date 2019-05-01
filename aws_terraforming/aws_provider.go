@@ -16,7 +16,8 @@ package aws_terraforming
 
 import (
 	"os"
-	"waze/terraformer/terraform_utils"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 	"github.com/pkg/errors"
 )

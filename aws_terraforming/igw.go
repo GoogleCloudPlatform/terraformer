@@ -15,7 +15,7 @@
 package aws_terraforming
 
 import (
-	"waze/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"

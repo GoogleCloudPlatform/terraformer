@@ -17,7 +17,8 @@ package gcp_terraforming
 import (
 	"context"
 	"net/http"
-	"waze/terraformer/terraform_utils"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 	"golang.org/x/oauth2/google"
 

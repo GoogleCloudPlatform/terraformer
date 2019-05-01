@@ -18,7 +18,8 @@ import (
 	"log"
 	"os"
 	"strings"
-	"waze/terraformer/terraform_utils"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 	"github.com/hashicorp/terraform/terraform"
 )

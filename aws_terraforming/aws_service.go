@@ -14,7 +14,7 @@
 
 package aws_terraforming
 
-import "waze/terraformer/terraform_utils"
+import "github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 type AWSService struct {
 	terraform_utils.Service

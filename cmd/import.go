@@ -20,8 +20,9 @@ import (
 	"os"
 	"sort"
 	"strings"
-	"waze/terraformer/terraform_utils"
-	"waze/terraformer/terraform_utils/terraform_output"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/terraform_output"
 
 	"github.com/spf13/cobra"
 )

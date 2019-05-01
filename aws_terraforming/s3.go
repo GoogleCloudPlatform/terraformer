@@ -17,7 +17,8 @@ package aws_terraforming
 import (
 	"fmt"
 	"log"
-	"waze/terraformer/terraform_utils"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws/awserr"
 

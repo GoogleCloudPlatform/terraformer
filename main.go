@@ -17,7 +17,8 @@ package main
 import (
 	"log"
 	"os"
-	"waze/terraformer/cmd"
+
+	"github.com/GoogleCloudPlatform/terraformer/cmd"
 )
 
 func main() {

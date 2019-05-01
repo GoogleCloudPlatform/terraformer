@@ -17,7 +17,8 @@ package gcp_terraforming
 import (
 	"context"
 	"log"
-	"waze/terraformer/terraform_utils"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 	adminpb "google.golang.org/genproto/googleapis/iam/admin/v1"
 

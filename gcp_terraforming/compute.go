@@ -16,7 +16,7 @@
 package gcp_terraforming
 
 import (
-	"waze/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
 
 // Map of supported GCP compute service with code generate

@@ -47,7 +47,8 @@ package gcp_terraforming
 import (
 	"context"
 	"log"
-	"waze/terraformer/terraform_utils"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/compute/v1"
@@ -136,7 +137,7 @@ const computeTemplate = `
 package gcp_terraforming
 
 import (
-	"waze/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
 
 // Map of supported GCP compute service with code generate
@@ -149,7 +150,7 @@ var ComputeServices = map[string]terraform_utils.ServiceGenerator{
 `
 
 func main() {
-	computeAPIData, err := ioutil.ReadFile(os.Getenv("GOPATH") + "/src/google.golang.org/api/compute/v1/compute-api.json")
+	computeAPIData, err := ioutil.ReadFile("vendor/google.golang.org/api/compute/v1/compute-api.json") //TODO delete this hack
 	if err != nil {
 		log.Fatal(err)
 

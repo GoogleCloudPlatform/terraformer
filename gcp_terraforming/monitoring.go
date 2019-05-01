@@ -17,7 +17,8 @@ package gcp_terraforming
 import (
 	"context"
 	"log"
-	"waze/terraformer/terraform_utils"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 	"google.golang.org/api/iterator"
 

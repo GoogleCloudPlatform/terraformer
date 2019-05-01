@@ -1,4 +1,4 @@
-module waze/terraformer
+module github.com/GoogleCloudPlatform/terraformer
 
 require (
 	cloud.google.com/go v0.33.1

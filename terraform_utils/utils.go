@@ -18,7 +18,8 @@ import (
 	"bytes"
 	"log"
 	"sync"
-	"waze/terraformer/terraform_utils/provider_wrapper"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 
 	"github.com/hashicorp/terraform/terraform"
 )

@@ -21,7 +21,7 @@ import (
 	"net/http"
 	"strings"
 
-	"waze/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/dns/v1"
