@@ -66,7 +66,7 @@ Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
 
 ### Use with GCP
-[![asciicast](https://asciinema.org/a/243953.svg)](https://asciinema.org/a/243953)
+[![asciicast](https://asciinema.org/a/243961.svg)](https://asciinema.org/a/243961)
 Example:
 
 ```
