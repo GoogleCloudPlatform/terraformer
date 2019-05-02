@@ -18,6 +18,9 @@ CLI tool to generate `tf` and `tfstate` files from existing infrastructure
 4.  Compatible with terraform 0.12 syntax.
 5.  Save `tf` files with custom folder tree pattern.
 
+Terraformer use terraform providers and built for easy to add new supported resources. 
+For upgrade resources with new fields you need upgrade only terraform providers. 
+
 ```
 Import current state to terraform configuration from google cloud
 
@@ -54,12 +57,16 @@ Readonly permissions
 3.  Run `go build -v`
 4.  Copy your Terraform provider's plugin(s) to
     `~/.terraform.d/plugins/{darwin,linux}_amd64`, as appropriate.
+    
+Links for download terraform providers:
+* google cloud provider - [here](https://releases.hashicorp.com/terraform-provider-google/)
+* aws provider - [here](https://releases.hashicorp.com/terraform-provider-aws/)
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
 
 ### Use with GCP
-
+[![asciicast](https://asciinema.org/a/243953.svg)](https://asciinema.org/a/243953)
 Example:
 
 ```
@@ -159,6 +166,7 @@ Please read CONTRIBUTING.md for more information on the process we would like
 contributors to follow.
 
 ## Developing
+Terraformer built for easy to add new providers and not only cloud providers.
 
 Process for generating `tf` + `tfstate` files:
 
