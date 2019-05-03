@@ -1,24 +1,25 @@
-# Terraformer
-
-CLI tool to generate `tf` and `tfstate` files from existing infrastructure
-(reverse Terraform).
-
-*   Disclaimer: This is not an official Google product.
-*   Status: beta - need improve documentations, bugs etc..
-*   Created by: Created by Waze SRE.
-
 ![Waze SRE logo](docs/waze-sre-logo.png)
+Created by Waze SRE
 
-## Capabilities
+# What is Terraformer?
 
-1.  Generate `tf` + `tfstate` files from existing infrastructure for all
+Terraformer is a tool for generating [Terraform](https://www.terraform.io/) `tf` and `tfstate` configuration files from existing infrastructure.
+
+<aside class="notice">
+ **Disclaimer**: This is not an official Google product
+ The project is in beta phase
+</aside>
+
+## Features
+
+1.  Generate `tf` + `tfstate` configuration files from existing infrastructure for a
     supported objects by resource.
-2.  Remote state can be uploaded to a GCS bucket.
-3.  Connect between resources with `terraform_remote_state` (local and bucket).
+2.  Save a the state data to a remote data store such as GCS.
+3.  Link between resources with `terraform_remote_state` (local and bucket).
 4.  Compatible with terraform 0.12 syntax.
 5.  Save `tf` files with custom folder tree pattern.
 
-Terraformer use terraform providers and built for easy to add new supported resources. 
+Terraformer was built to easily create new providers and resources.
 For upgrade resources with new fields you need upgrade only terraform providers. 
 
 ```
@@ -39,18 +40,39 @@ Flags:
   -z, --zone string
 ```
 
-## Supported providers
+## Supported Providers
 
-1.  Google cloud
-2.  AWS
+1.  Google Cloud Platform
+2.  Amazon Web Services
+
+We would need you to add more providers
 
 #### Permissions
 
-Readonly permissions
+`Terraformer` requires read-only API permissions.
 
-## How to use Terraformer
+## Getting Started
 
 ### Installation
+
+### Prerequisite
+
+You can download Terraform provider plugins from here:
+* Google Cloud Platform Provider - [here](https://releases.hashicorp.com/terraform-provider-google/)
+* Amazon Web Services Provider - [here](https://releases.hashicorp.com/terraform-provider-aws/)
+
+1. Copy Terraform provider's plugin(s) to:
+   `~/.terraform.d/plugins/{darwin,linux}_amd64`
+
+Information on provider plugins:
+https://www.terraform.io/docs/configuration/providers.html
+
+
+#### Binary
+
+1. Download the binary and run `./terraformer`
+
+#### From source
 
 1.  Run `git clone <terraformer repo>`
 2.  Run `GO111MODULE=on go mod vendor`
@@ -58,20 +80,13 @@ Readonly permissions
 4.  Copy your Terraform provider's plugin(s) to
     `~/.terraform.d/plugins/{darwin,linux}_amd64`, as appropriate.
     
-Links for download terraform providers:
-* google cloud provider - [here](https://releases.hashicorp.com/terraform-provider-google/)
-* aws provider - [here](https://releases.hashicorp.com/terraform-provider-aws/)
-
-Information on provider plugins:
-https://www.terraform.io/docs/configuration/providers.html
-
-### Use with GCP
-[![asciicast](https://asciinema.org/a/243961.svg)](https://asciinema.org/a/243961)
+### See it in action with GCP provider
 Example:
-
 ```
 terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --connect=true --zone=europe-west1-a --projects=aaa,fff
 ```
+[![asciicast](https://asciinema.org/a/243961.svg)](https://asciinema.org/a/243961)
+
 
 List of supported GCP services:
 
@@ -113,7 +128,7 @@ List of supported GCP services:
 *   `dns`
 *   `cloudsql` ([bug](https://github.com/terraform-providers/terraform-provider-google/issues/2716), [bug](https://github.com/GoogleCloudPlatform/magic-modules/pull/1097))
 
-Your `tf` and `tfstate` files are written by default to
+Your `tf` and `tfstate` configuration files are written by default to
 `generated/gcp/zone/service`.
 
 ### Use with AWS
