@@ -27,7 +27,7 @@ type AWSProvider struct {
 	region string
 }
 
-const awsProviderVersion = "~>1.56.0"
+const awsProviderVersion = ">1.56.0"
 
 func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{
