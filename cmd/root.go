@@ -22,9 +22,10 @@ func NewCmdRoot() *cobra.Command {
 	cmd := &cobra.Command{
 		SilenceUsage:  true,
 		SilenceErrors: true,
-		//Version:       version.String(),
+		Version:       version,
 	}
 	cmd.AddCommand(newImportCmd())
+	cmd.AddCommand(versionCmd)
 	return cmd
 }
 
