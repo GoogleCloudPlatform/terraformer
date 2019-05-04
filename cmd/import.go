@@ -55,6 +55,7 @@ func newImportCmd() *cobra.Command {
 	}
 	cmd.AddCommand(newCmdGoogleImporter(options))
 	cmd.AddCommand(newCmdAwsImporter(options))
+	cmd.AddCommand(newCmdOpenStackImporter(options))
 	return cmd
 }
 
