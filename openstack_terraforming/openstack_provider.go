@@ -76,6 +76,7 @@ func (p *OpenStackProvider) InitService(serviceName string) error {
 // GetOpenStackSupportService return map of support service for OpenStack
 func (p *OpenStackProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
-		"compute": &ComputeGenerator{},
+		"compute":    &ComputeGenerator{},
+		"networking": &NetworkingGenerator{},
 	}
 }
