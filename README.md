@@ -43,6 +43,7 @@ Flags:
 
 1.  Google cloud
 2.  AWS
+3.  OpenStack
 
 #### Permissions
 
@@ -57,10 +58,11 @@ Readonly permissions
 3.  Run `go build -v`
 4.  Copy your Terraform provider's plugin(s) to
     `~/.terraform.d/plugins/{darwin,linux}_amd64`, as appropriate.
-    
+
 Links for download terraform providers:
 * google cloud provider - [here](https://releases.hashicorp.com/terraform-provider-google/)
 * aws provider - [here](https://releases.hashicorp.com/terraform-provider-aws/)
+* openstack provider - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
@@ -158,6 +160,19 @@ List of support AWS services:
 *   `vpn_gateway`
 *   `route53`
 *   `elasticache`
+
+### Use with OpenStack
+
+Example:
+
+```
+ terraformer import openstack --resources=compute,networking --regions=RegionOne
+```
+
+List of support OpenStack services:
+
+*   `compute`
+*   `networking`
 
 ## Contributing
 
