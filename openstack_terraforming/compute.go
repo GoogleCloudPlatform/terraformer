@@ -91,15 +91,15 @@ func (g *ComputeGenerator) PostConvertHook() error {
 			continue
 		}
 
-		// Rename "all_metadata" to "metadata"
-		// because "all_metadata" field cannot be set as resource argument
+		// Copy "all_metadata.%" to "metadata.%"
 		for k, v := range g.Resources[i].InstanceState.Attributes {
 			if strings.HasPrefix(k, "all_metadata") {
 				newKey := strings.Replace(k, "all_metadata", "metadata", 1)
 				g.Resources[i].InstanceState.Attributes[newKey] = v
-				delete(g.Resources[i].InstanceState.Attributes, k)
 			}
 		}
+		// Replace "all_metadata" to "metadata"
+		// because "all_metadata" field cannot be set as resource argument
 		for k, v := range g.Resources[i].Item {
 			if strings.HasPrefix(k, "all_metadata") {
 				newKey := strings.Replace(k, "all_metadata", "metadata", 1)
