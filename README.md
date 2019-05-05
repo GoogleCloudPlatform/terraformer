@@ -56,8 +56,8 @@ Readonly permissions
 1.  Run `git clone <terraformer repo>`
 2.  Run `GO111MODULE=on go mod vendor`
 3.  Run `go build -v`
-4.  Copy your Terraform provider's plugin(s) to
-    `~/.terraform.d/plugins/{darwin,linux}_amd64`, as appropriate.
+4.  Copy your Terraform provider's plugin(s) to folder
+    `~/.terraform.d/plugins/{darwin,linux}_amd64/`, as appropriate.
 
 Links for download terraform providers:
 * google cloud provider >2.0.0 - [here](https://releases.hashicorp.com/terraform-provider-google/)
