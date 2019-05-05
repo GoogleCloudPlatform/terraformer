@@ -43,9 +43,7 @@ func (g *NetworkingGenerator) createSecgroupResources(list *pagination.Pager) []
 				grp.Name,
 				"openstack_networking_secgroup_v2",
 				"openstack",
-				map[string]string{
-					"name": grp.Name,
-				},
+				map[string]string{},
 				[]string{},
 				map[string]string{},
 			)
@@ -68,9 +66,7 @@ func (g *NetworkingGenerator) createSecgroupRuleResources(rules []rules.SecGroup
 			r.ID,
 			"openstack_networking_secgroup_rule_v2",
 			"openstack",
-			map[string]string{
-				"id": r.ID,
-			},
+			map[string]string{},
 			[]string{},
 			map[string]string{},
 		)

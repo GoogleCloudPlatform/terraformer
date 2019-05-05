@@ -44,9 +44,7 @@ func (g *ComputeGenerator) createResources(list *pagination.Pager) []terraform_u
 				s.Name,
 				"openstack_compute_instance_v2",
 				"openstack",
-				map[string]string{
-					"name": s.Name,
-				},
+				map[string]string{},
 				[]string{},
 				map[string]string{},
 			)
