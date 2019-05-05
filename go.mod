@@ -41,7 +41,7 @@ require (
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/google/martian v2.1.0+incompatible // indirect
 	github.com/googleapis/gax-go v2.0.2+incompatible // indirect
-	github.com/gophercloud/gophercloud v0.0.0-20170823032606-7f0936597349 // indirect
+	github.com/gophercloud/gophercloud v0.0.0-20190504011306-6f9faf57fddc // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20181103185306-d547d1d9531e // indirect
 	github.com/gorilla/websocket v1.4.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 // indirect
@@ -112,7 +112,6 @@ require (
 	github.com/xlab/treeprint v0.0.0-20181112141820-a009c3971eca // indirect
 	github.com/zclconf/go-cty v0.0.0-20181017232614-01c5aba823a6 // indirect
 	go.opencensus.io v0.18.0 // indirect
-	golang.org/x/crypto v0.0.0-20181126163421-e657309f52e7 // indirect
 	golang.org/x/oauth2 v0.0.0-20181120190819-8f65e3013eba
 	golang.org/x/time v0.0.0-20181108054448-85acf8d2951c // indirect
 	google.golang.org/api v0.0.0-20181212003324-40e757e92c52
