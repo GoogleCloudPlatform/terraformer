@@ -60,9 +60,9 @@ Readonly permissions
     `~/.terraform.d/plugins/{darwin,linux}_amd64`, as appropriate.
 
 Links for download terraform providers:
-* google cloud provider - [here](https://releases.hashicorp.com/terraform-provider-google/)
-* aws provider - [here](https://releases.hashicorp.com/terraform-provider-aws/)
-* openstack provider - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
+* google cloud provider >2.0.0 - [here](https://releases.hashicorp.com/terraform-provider-google/)
+* aws provider >1.56.0 - [here](https://releases.hashicorp.com/terraform-provider-aws/)
+* openstack provider >1.17.0 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html

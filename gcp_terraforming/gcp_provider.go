@@ -21,7 +21,7 @@ import (
 	"strings"
 )
 
-const gcpProviderVersion = "~>2.0.0"
+const gcpProviderVersion = ">2.0.0"
 
 type GCPProvider struct {
 	terraform_utils.Provider
