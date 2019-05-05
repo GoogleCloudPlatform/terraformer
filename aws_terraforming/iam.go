@@ -106,7 +106,9 @@ func (g *IamGenerator) getUsers(svc *iam.IAM) error {
 				aws.StringValue(user.UserId),
 				"aws_iam_user",
 				"aws",
-				map[string]string{},
+				map[string]string{
+					"force_destroy": "false",
+				},
 				IamAllowEmptyValues,
 				IamAdditionalFields))
 			g.getUserPolices(svc, user.UserName)
