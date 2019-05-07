@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
@@ -62,7 +63,8 @@ func (g *GcsGenerator) createResources(bucketIterator *storage.BucketIterator) [
 			"google_storage_bucket_acl",
 			"google",
 			map[string]string{
-				"bucket": battrs.Name,
+				"bucket":        battrs.Name,
+				"role_entity.#": strconv.Itoa(len(battrs.ACL)),
 			},
 			GcsAllowEmptyValues,
 			GcsAdditionalFields,
