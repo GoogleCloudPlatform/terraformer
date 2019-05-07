@@ -77,6 +77,7 @@ func (p *GCPProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 	services["cloudsql"] = &CloudSQLGenerator{}
 	services["gke"] = &GkeGenerator{}
 	services["memoryStore"] = &MemoryStoreGenerator{}
+	services["schedulerJobs"] = &SchedulerJobsGenerator{}
 	return services
 }
 
