@@ -16,9 +16,10 @@ package gcp_terraforming
 
 import (
 	"errors"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"os"
 	"strings"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
 
 const gcpProviderVersion = ">2.0.0"
@@ -75,6 +76,7 @@ func (p *GCPProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 	services["dns"] = &CloudDNSGenerator{}
 	services["cloudsql"] = &CloudSQLGenerator{}
 	services["gke"] = &GkeGenerator{}
+	services["memoryStore"] = &MemoryStoreGenerator{}
 	return services
 }
 

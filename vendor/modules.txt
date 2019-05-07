@@ -617,6 +617,7 @@ google.golang.org/api/compute/v1
 google.golang.org/api/container/v1beta1
 google.golang.org/api/dns/v1
 google.golang.org/api/iterator
+google.golang.org/api/redis/v1
 google.golang.org/api/sqladmin/v1beta4
 google.golang.org/api/option
 google.golang.org/api/transport
