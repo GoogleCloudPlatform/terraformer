@@ -52,12 +52,27 @@ Readonly permissions
 ## How to use Terraformer
 
 ### Installation
-
+From source:
 1.  Run `git clone <terraformer repo>`
 2.  Run `GO111MODULE=on go mod vendor`
 3.  Run `go build -v`
 4.  Copy your Terraform provider's plugin(s) to folder
     `~/.terraform.d/plugins/{darwin,linux}_amd64/`, as appropriate.
+    
+From Releases:
+
+* Linux
+```
+curl -LO https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | grep tag_name | cut -d '"' -f 4)/terraformer-linux-amd64
+chmod +x terraformer-linux-amd64
+sudo mv terraformer-linux-amd64 /usr/local/bin/terraformer
+```
+* MacOS
+```
+curl -LO https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | grep tag_name | cut -d '"' -f 4)/terraformer-darwin-amd64
+chmod +x terraformer-darwin-amd64
+sudo mv terraformer-darwin-amd64 /usr/local/bin/terraformer
+```
 
 Links for download terraform providers:
 * google cloud provider >2.0.0 - [here](https://releases.hashicorp.com/terraform-provider-google/)
