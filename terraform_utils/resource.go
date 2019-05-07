@@ -80,6 +80,13 @@ func (r *Resource) ConvertTFstate() {
 		attributes[k] = v
 	}
 
+	// delete empty map
+	for key := range r.InstanceState.Attributes {
+		if strings.HasSuffix(key, ".%") && r.InstanceState.Attributes[key] == "0" {
+			delete(attributes, key)
+		}
+	}
+
 	// delete empty array
 	for key := range r.InstanceState.Attributes {
 		if strings.HasSuffix(key, ".#") && r.InstanceState.Attributes[key] == "0" {
@@ -97,7 +104,7 @@ func (r *Resource) ConvertTFstate() {
 	}
 	// delete empty keys with empty value, but not from AllowEmptyValue list
 	for keyAttribute, value := range r.InstanceState.Attributes {
-		if value != "" {
+		if value != "" && value != "0" {
 			continue
 		}
 		allowEmptyValue := false
