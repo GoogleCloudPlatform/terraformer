@@ -96,6 +96,7 @@ List of supported GCP services:
 *   `autoscalers`
 *   `backendBuckets`
 *   `backendServices`
+*   `schedulerJobs`
 *   `disks`
 *   `firewalls`
 *   `forwardingRules`
