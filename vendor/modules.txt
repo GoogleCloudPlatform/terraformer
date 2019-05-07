@@ -613,6 +613,7 @@ golang.org/x/text/internal/tag
 golang.org/x/text/internal/utf8internal
 golang.org/x/text/runes
 # google.golang.org/api v0.0.0-20181212003324-40e757e92c52
+google.golang.org/api/cloudscheduler/v1beta1
 google.golang.org/api/compute/v1
 google.golang.org/api/container/v1beta1
 google.golang.org/api/dns/v1
