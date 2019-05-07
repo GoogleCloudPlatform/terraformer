@@ -78,6 +78,7 @@ func (p *GCPProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 	services["gke"] = &GkeGenerator{}
 	services["memoryStore"] = &MemoryStoreGenerator{}
 	services["schedulerJobs"] = &SchedulerJobsGenerator{}
+	services["bigQuery"] = &BigQueryGenerator{}
 	return services
 }
 
