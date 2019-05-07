@@ -69,12 +69,12 @@ func (g *SchedulerJobsGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	cloudschedulerService, err := cloudscheduler.New(c)
+	cloudSchedulerService, err := cloudscheduler.New(c)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	jobsList := cloudschedulerService.Projects.Locations.Jobs.List("projects/" + g.GetArgs()["project"] + "/locations/" + g.GetArgs()["region"])
+	jobsList := cloudSchedulerService.Projects.Locations.Jobs.List("projects/" + g.GetArgs()["project"] + "/locations/" + g.GetArgs()["region"])
 
 	g.Resources = g.createResources(jobsList, ctx)
 	g.PopulateIgnoreKeys()
