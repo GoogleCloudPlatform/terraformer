@@ -109,6 +109,7 @@ List of supported GCP services:
 *   `instanceGroups`
 *   `instanceTemplates`
 *   `instances`
+*   `memoryStore`
 *   `networks`
 *   `regionAutoscalers`
 *   `regionBackendServices`
