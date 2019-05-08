@@ -64,7 +64,7 @@ func (g TargetSslProxiesGenerator) createResources(targetSslProxiesList *compute
 // Need targetSslProxies name as ID for terraform resource
 func (g *TargetSslProxiesGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
+	c, err := google.DefaultClient(ctx, compute.ComputeReadonlyScope)
 	if err != nil {
 		log.Fatal(err)
 	}

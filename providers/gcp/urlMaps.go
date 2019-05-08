@@ -64,7 +64,7 @@ func (g UrlMapsGenerator) createResources(urlMapsList *compute.UrlMapsListCall, 
 // Need urlMaps name as ID for terraform resource
 func (g *UrlMapsGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
+	c, err := google.DefaultClient(ctx, compute.ComputeReadonlyScope)
 	if err != nil {
 		log.Fatal(err)
 	}

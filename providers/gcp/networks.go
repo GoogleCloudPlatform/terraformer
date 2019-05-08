@@ -64,7 +64,7 @@ func (g NetworksGenerator) createResources(networksList *compute.NetworksListCal
 // Need networks name as ID for terraform resource
 func (g *NetworksGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
+	c, err := google.DefaultClient(ctx, compute.ComputeReadonlyScope)
 	if err != nil {
 		log.Fatal(err)
 	}

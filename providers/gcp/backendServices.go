@@ -63,7 +63,7 @@ func (g BackendServicesGenerator) createResources(backendServicesList *compute.B
 // Need backendServices name as ID for terraform resource
 func (g *BackendServicesGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
+	c, err := google.DefaultClient(ctx, compute.ComputeReadonlyScope)
 	if err != nil {
 		log.Fatal(err)
 	}

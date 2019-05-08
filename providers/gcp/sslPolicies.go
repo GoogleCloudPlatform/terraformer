@@ -64,7 +64,7 @@ func (g SslPoliciesGenerator) createResources(sslPoliciesList *compute.SslPolici
 // Need sslPolicies name as ID for terraform resource
 func (g *SslPoliciesGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
+	c, err := google.DefaultClient(ctx, compute.ComputeReadonlyScope)
 	if err != nil {
 		log.Fatal(err)
 	}

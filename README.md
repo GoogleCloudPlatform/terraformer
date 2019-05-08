@@ -256,12 +256,12 @@ for providers.
 ##### GCP compute resources
 
 For GCP compute resources, use generated code from
-`gcp_terraforming/gcp_compute_code_generator`.
+`providers/gcp/gcp_compute_code_generator`.
 
 To regenerate code:
 
 ```
-go run gcp_terraforming/gcp_compute_code_generator/*.go
+go run providers/gcp/gcp_compute_code_generator/*.go
 ```
 
 ### Similar projects

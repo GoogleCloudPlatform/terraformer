@@ -64,7 +64,7 @@ func (g ImagesGenerator) createResources(imagesList *compute.ImagesListCall, ctx
 // Need images name as ID for terraform resource
 func (g *ImagesGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
+	c, err := google.DefaultClient(ctx, compute.ComputeReadonlyScope)
 	if err != nil {
 		log.Fatal(err)
 	}

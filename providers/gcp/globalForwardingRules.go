@@ -63,7 +63,7 @@ func (g GlobalForwardingRulesGenerator) createResources(globalForwardingRulesLis
 // Need globalForwardingRules name as ID for terraform resource
 func (g *GlobalForwardingRulesGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
+	c, err := google.DefaultClient(ctx, compute.ComputeReadonlyScope)
 	if err != nil {
 		log.Fatal(err)
 	}

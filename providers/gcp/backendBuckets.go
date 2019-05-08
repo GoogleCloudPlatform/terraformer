@@ -64,7 +64,7 @@ func (g BackendBucketsGenerator) createResources(backendBucketsList *compute.Bac
 // Need backendBuckets name as ID for terraform resource
 func (g *BackendBucketsGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
+	c, err := google.DefaultClient(ctx, compute.ComputeReadonlyScope)
 	if err != nil {
 		log.Fatal(err)
 	}
