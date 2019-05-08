@@ -43,7 +43,6 @@ func (g *TeamsGenerator) createTeamsResources(ctx context.Context, teams []*gith
 		))
 		resources = append(resources, g.createTeamMembersResources(ctx, team, client)...)
 		resources = append(resources, g.createTeamRepositoriesResources(ctx, team, client)...)
-		break
 	}
 	return resources
 }
@@ -100,7 +99,8 @@ func (g *TeamsGenerator) InitResources() error {
 
 	teams, _, err := client.Teams.ListTeams(ctx, g.Args["organization"], nil)
 	if err != nil {
-		return err
+		log.Println(err)
+		return nil
 	}
 	g.Resources = g.createTeamsResources(ctx, teams, client)
 	g.PopulateIgnoreKeys()

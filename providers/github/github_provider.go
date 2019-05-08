@@ -61,7 +61,7 @@ func (p *GithubProvider) Init(args []string) error {
 		} else {
 			p.token = os.Getenv("GITHUB_TOKEN")
 		}
-	}else{
+	} else {
 		p.token = args[1]
 	}
 	return nil
@@ -89,9 +89,9 @@ func (p *GithubProvider) InitService(serviceName string) error {
 // GetSupportedService return map of support service for Github
 func (p *GithubProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
-		//"membership" : &aaaa{},
-		//"organization_webhook" : &aaaa{},
-		"repositories": &RepositoriesGenerator{},
-		"teams":        &TeamsGenerator{},
+		"members":               &MembersGenerator{},
+		"organization_webhooks": &OrganizationWebhooksGenerator{},
+		"repositories":          &RepositoriesGenerator{},
+		"teams":                 &TeamsGenerator{},
 	}
 }
