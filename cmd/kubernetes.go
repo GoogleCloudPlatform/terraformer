@@ -14,7 +14,7 @@
 package cmd
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/kubernetes_terraforming"
+	kubernetes_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/kubernetes"
 
 	"github.com/spf13/cobra"
 )

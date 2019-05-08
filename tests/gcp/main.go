@@ -23,7 +23,7 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/cmd"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
-	"github.com/GoogleCloudPlatform/terraformer/gcp_terraforming"
+	gcp_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/gcp"
 )
 
 const command = "terraform init && terraform plan"
