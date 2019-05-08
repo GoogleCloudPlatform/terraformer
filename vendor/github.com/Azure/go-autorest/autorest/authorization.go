@@ -21,7 +21,6 @@ import (
 	"strings"
 
 	"github.com/Azure/go-autorest/autorest/adal"
-	"github.com/Azure/go-autorest/tracing"
 )
 
 const (
@@ -69,7 +68,7 @@ func NewAPIKeyAuthorizer(headers map[string]interface{}, queryParameters map[str
 	return &APIKeyAuthorizer{headers: headers, queryParameters: queryParameters}
 }
 
-// WithAuthorization returns a PrepareDecorator that adds an HTTP headers and Query Parameters.
+// WithAuthorization returns a PrepareDecorator that adds an HTTP headers and Query Paramaters
 func (aka *APIKeyAuthorizer) WithAuthorization() PrepareDecorator {
 	return func(p Preparer) Preparer {
 		return DecoratePreparer(p, WithHeaders(aka.headers), WithQueryParameters(aka.queryParameters))
@@ -105,6 +104,10 @@ func NewBearerAuthorizer(tp adal.OAuthTokenProvider) *BearerAuthorizer {
 	return &BearerAuthorizer{tokenProvider: tp}
 }
 
+func (ba *BearerAuthorizer) withBearerAuthorization() PrepareDecorator {
+	return WithHeader(headerAuthorization, fmt.Sprintf("Bearer %s", ba.tokenProvider.OAuthToken()))
+}
+
 // WithAuthorization returns a PrepareDecorator that adds an HTTP Authorization header whose
 // value is "Bearer " followed by the token.
 //
@@ -112,14 +115,9 @@ func NewBearerAuthorizer(tp adal.OAuthTokenProvider) *BearerAuthorizer {
 func (ba *BearerAuthorizer) WithAuthorization() PrepareDecorator {
 	return func(p Preparer) Preparer {
 		return PreparerFunc(func(r *http.Request) (*http.Request, error) {
-			r, err := p.Prepare(r)
-			if err == nil {
-				// the ordering is important here, prefer RefresherWithContext if available
-				if refresher, ok := ba.tokenProvider.(adal.RefresherWithContext); ok {
-					err = refresher.EnsureFreshWithContext(r.Context())
-				} else if refresher, ok := ba.tokenProvider.(adal.Refresher); ok {
-					err = refresher.EnsureFresh()
-				}
+			refresher, ok := ba.tokenProvider.(adal.Refresher)
+			if ok {
+				err := refresher.EnsureFresh()
 				if err != nil {
 					var resp *http.Response
 					if tokError, ok := err.(adal.TokenRefreshError); ok {
@@ -128,9 +126,8 @@ func (ba *BearerAuthorizer) WithAuthorization() PrepareDecorator {
 					return r, NewErrorWithError(err, "azure.BearerAuthorizer", "WithAuthorization", resp,
 						"Failed to refresh the Token for request to %s", r.URL)
 				}
-				return Prepare(r, WithHeader(headerAuthorization, fmt.Sprintf("Bearer %s", ba.tokenProvider.OAuthToken())))
 			}
-			return r, err
+			return (ba.withBearerAuthorization()(p)).Prepare(r)
 		})
 	}
 }
@@ -148,7 +145,7 @@ type BearerAuthorizerCallback struct {
 // is invoked when the HTTP request is submitted.
 func NewBearerAuthorizerCallback(sender Sender, callback BearerAuthorizerCallbackFunc) *BearerAuthorizerCallback {
 	if sender == nil {
-		sender = &http.Client{Transport: tracing.Transport}
+		sender = &http.Client{}
 	}
 	return &BearerAuthorizerCallback{sender: sender, callback: callback}
 }
@@ -160,28 +157,25 @@ func NewBearerAuthorizerCallback(sender Sender, callback BearerAuthorizerCallbac
 func (bacb *BearerAuthorizerCallback) WithAuthorization() PrepareDecorator {
 	return func(p Preparer) Preparer {
 		return PreparerFunc(func(r *http.Request) (*http.Request, error) {
-			r, err := p.Prepare(r)
-			if err == nil {
-				// make a copy of the request and remove the body as it's not
-				// required and avoids us having to create a copy of it.
-				rCopy := *r
-				removeRequestBody(&rCopy)
+			// make a copy of the request and remove the body as it's not
+			// required and avoids us having to create a copy of it.
+			rCopy := *r
+			removeRequestBody(&rCopy)
 
-				resp, err := bacb.sender.Do(&rCopy)
-				if err == nil && resp.StatusCode == 401 {
-					defer resp.Body.Close()
-					if hasBearerChallenge(resp) {
-						bc, err := newBearerChallenge(resp)
+			resp, err := bacb.sender.Do(&rCopy)
+			if err == nil && resp.StatusCode == 401 {
+				defer resp.Body.Close()
+				if hasBearerChallenge(resp) {
+					bc, err := newBearerChallenge(resp)
+					if err != nil {
+						return r, err
+					}
+					if bacb.callback != nil {
+						ba, err := bacb.callback(bc.values[tenantID], bc.values["resource"])
 						if err != nil {
 							return r, err
 						}
-						if bacb.callback != nil {
-							ba, err := bacb.callback(bc.values[tenantID], bc.values["resource"])
-							if err != nil {
-								return r, err
-							}
-							return Prepare(r, ba.WithAuthorization())
-						}
+						return ba.WithAuthorization()(p).Prepare(r)
 					}
 				}
 			}
