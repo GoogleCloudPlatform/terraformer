@@ -25,7 +25,7 @@ import (
 	"text/template"
 )
 
-const pathForGenerateFiles = "/gcp_terraforming/"
+const pathForGenerateFiles = "/providers/gcp/"
 const serviceTemplate = `
 // Copyright 2018 The Terraformer Authors.
 //
@@ -42,7 +42,7 @@ const serviceTemplate = `
 // limitations under the License.
 
 // AUTO-GENERATED CODE. DO NOT EDIT.
-package gcp_terraforming
+package gcp
 
 import (
 	"context"
@@ -99,7 +99,7 @@ func (g {{.titleResourceName}}Generator) createResources({{.resource}}List *comp
 // Need {{.resource}} name as ID for terraform resource
 func (g *{{.titleResourceName}}Generator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
+	c, err := google.DefaultClient(ctx, compute.ComputeReadonlyScope)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -134,7 +134,7 @@ const computeTemplate = `
 // limitations under the License.
 
 // AUTO-GENERATED CODE. DO NOT EDIT.
-package gcp_terraforming
+package gcp
 
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"

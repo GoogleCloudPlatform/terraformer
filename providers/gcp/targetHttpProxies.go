@@ -64,7 +64,7 @@ func (g TargetHttpProxiesGenerator) createResources(targetHttpProxiesList *compu
 // Need targetHttpProxies name as ID for terraform resource
 func (g *TargetHttpProxiesGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
+	c, err := google.DefaultClient(ctx, compute.ComputeReadonlyScope)
 	if err != nil {
 		log.Fatal(err)
 	}

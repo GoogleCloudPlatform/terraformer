@@ -64,7 +64,7 @@ func (g VpnTunnelsGenerator) createResources(vpnTunnelsList *compute.VpnTunnelsL
 // Need vpnTunnels name as ID for terraform resource
 func (g *VpnTunnelsGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
+	c, err := google.DefaultClient(ctx, compute.ComputeReadonlyScope)
 	if err != nil {
 		log.Fatal(err)
 	}

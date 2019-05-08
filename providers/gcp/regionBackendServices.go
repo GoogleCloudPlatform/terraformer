@@ -64,7 +64,7 @@ func (g RegionBackendServicesGenerator) createResources(regionBackendServicesLis
 // Need regionBackendServices name as ID for terraform resource
 func (g *RegionBackendServicesGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
+	c, err := google.DefaultClient(ctx, compute.ComputeReadonlyScope)
 	if err != nil {
 		log.Fatal(err)
 	}

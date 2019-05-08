@@ -97,7 +97,7 @@ func (g *CloudDNSGenerator) InitResources() error {
 	ctx := context.Background()
 	var client *http.Client
 	var err error
-	client, err = google.DefaultClient(ctx, dns.NdevClouddnsReadwriteScope)
+	client, err = google.DefaultClient(ctx, dns.CloudPlatformReadOnlyScope)
 	svc, err := dns.New(client)
 	if err != nil {
 		log.Fatal(err)

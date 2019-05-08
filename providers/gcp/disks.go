@@ -65,7 +65,7 @@ func (g DisksGenerator) createResources(disksList *compute.DisksListCall, ctx co
 // Need disks name as ID for terraform resource
 func (g *DisksGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
+	c, err := google.DefaultClient(ctx, compute.ComputeReadonlyScope)
 	if err != nil {
 		log.Fatal(err)
 	}

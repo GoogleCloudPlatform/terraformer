@@ -67,7 +67,7 @@ func (g InstancesGenerator) createResources(instancesList *compute.InstancesList
 // Need instances name as ID for terraform resource
 func (g *InstancesGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
+	c, err := google.DefaultClient(ctx, compute.ComputeReadonlyScope)
 	if err != nil {
 		log.Fatal(err)
 	}
