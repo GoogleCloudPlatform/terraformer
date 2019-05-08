@@ -44,6 +44,7 @@ Flags:
 1.  Google cloud
 2.  AWS
 3.  OpenStack
+4.  Kubernetes
 
 #### Permissions
 
@@ -63,6 +64,7 @@ Links for download terraform providers:
 * google cloud provider >2.0.0 - [here](https://releases.hashicorp.com/terraform-provider-google/)
 * aws provider >1.56.0 - [here](https://releases.hashicorp.com/terraform-provider-aws/)
 * openstack provider >1.17.0 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
+* kubernetes provider >=1.4.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
@@ -173,6 +175,39 @@ List of support OpenStack services:
 
 *   `compute`
 *   `networking`
+
+### Use with Kubernetes
+
+Example:
+
+```
+ terraformer import kubernetes --resources=deployments,services,storageclasses
+```
+
+All of the kubernetes resources that are currently being supported by kubernetes provider are supported by this module as well. Here is the list of resources which are currently supported by kubernetes provider v.1.4:
+
+* clusterrolebinding
+* configmaps
+* deployments
+* horizontalpodautoscalers
+* limitranges
+* namespaces
+* persistentvolumes
+* persistentvolumeclaims
+* pods
+* replicationcontrollers
+* resourcequotas
+* secrets
+* services
+* serviceaccounts
+* statefulsets
+* storageclasses
+
+#### Known issues
+
+* Terraform kubernetes provider is rejecting resources with ":" character in their names (As it's not meeting DNS-1123), while it's allowed for certain types in kubernetes, e.g. ClusterRoleBinding.
+* As terraform flatmap is using "." to detect the keys for unflattening the maps, some keys with "." in their names are being considered as the maps.
+* As the libary is just assuming empty string as empty value (not "0"), there are some issues with optinal integrer keys taht are restricted to be positive.
 
 ## Contributing
 
