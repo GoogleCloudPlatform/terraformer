@@ -45,7 +45,8 @@ func (g *RepositoriesGenerator) InitResources() error {
 	for {
 		repos, resp, err := client.Repositories.ListByOrg(ctx, g.Args["organization"], opt)
 		if err != nil {
-			return err
+			log.Println(err)
+			return nil
 		}
 		for _, repo := range repos {
 			resource := terraform_utils.NewResource(
@@ -62,9 +63,7 @@ func (g *RepositoriesGenerator) InitResources() error {
 			g.Resources = append(g.Resources, g.createRepositoryBranchProtectionResources(ctx, client, repo)...)
 			g.Resources = append(g.Resources, g.createRepositoryCollaboratorResources(ctx, client, repo)...)
 			g.Resources = append(g.Resources, g.createRepositoryDeployKeyResources(ctx, client, repo)...)
-			break
 		}
-
 
 		if resp.NextPage == 0 {
 			break
@@ -172,34 +171,33 @@ func (g *RepositoriesGenerator) PostConvertHook() error {
 				continue
 			}
 			if member.InstanceState.Attributes["repository"] == repo.InstanceState.Attributes["name"] {
-				g.Resources[i].Item["repository"] = "${github_team." + repo.ResourceName + ".name}"
+				g.Resources[i].Item["repository"] = "${github_repository." + repo.ResourceName + ".name}"
 			}
 		}
-		for i, repo := range g.Resources {
-			if repo.InstanceInfo.Type != "github_branch_protection" {
+		for i, branch := range g.Resources {
+			if branch.InstanceInfo.Type != "github_branch_protection" {
 				continue
 			}
-			if repo.InstanceState.Attributes["repository"] == repo.InstanceState.Attributes["name"] {
-				g.Resources[i].Item["repository"] = "${github_team." + repo.ResourceName + ".name}"
+			if branch.InstanceState.Attributes["repository"] == repo.InstanceState.Attributes["name"] {
+				g.Resources[i].Item["repository"] = "${github_repository." + repo.ResourceName + ".name}"
 			}
 		}
-		for i, repo := range g.Resources {
-			if repo.InstanceInfo.Type != "github_repository_collaborator" {
+		for i, collaborator := range g.Resources {
+			if collaborator.InstanceInfo.Type != "github_repository_collaborator" {
 				continue
 			}
-			if repo.InstanceState.Attributes["repository"] == repo.InstanceState.Attributes["name"] {
-				g.Resources[i].Item["repository"] = "${github_team." + repo.ResourceName + ".name}"
+			if collaborator.InstanceState.Attributes["repository"] == repo.InstanceState.Attributes["name"] {
+				g.Resources[i].Item["repository"] = "${github_repository." + repo.ResourceName + ".name}"
 			}
 		}
-		for i, repo := range g.Resources {
-			if repo.InstanceInfo.Type != "github_repository_deploy_key" {
+		for i, key := range g.Resources {
+			if key.InstanceInfo.Type != "github_repository_deploy_key" {
 				continue
 			}
-			if repo.InstanceState.Attributes["repository"] == repo.InstanceState.Attributes["name"] {
-				g.Resources[i].Item["repository"] = "${github_team." + repo.ResourceName + ".name}"
+			if key.InstanceState.Attributes["repository"] == repo.InstanceState.Attributes["name"] {
+				g.Resources[i].Item["repository"] = "${github_repository." + repo.ResourceName + ".name}"
 			}
 		}
 	}
 	return nil
 }
-

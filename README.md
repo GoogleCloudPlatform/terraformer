@@ -249,7 +249,10 @@ Support only organizations resources. List of supported resources:
     * `github_team`
     * `github_team_membership`
     * `github_team_repository`
-
+* `members`
+    * `github_membership`
+* `organization_webhooks`
+    * `github_organization_webhook`
 ## Contributing
 
 If you have improvements or fixes, we would love to have your contributions.
