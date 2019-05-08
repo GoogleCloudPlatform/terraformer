@@ -1,0 +1,16 @@
+language: go
+
+go:
+  - 1.12.x
+
+env:
+  - GO111MODULE=on
+
+go_import_path: github.com/GoogleCloudPlatform/terraformer
+
+before_script: go mod vendor
+
+script:
+  - go build -v
+  - go vet
+  - find . -not \( \( -wholename './.git' -o -wholename '*/vendor/*' \) -prune \) -name '*.go' | xargs gofmt -s -d
