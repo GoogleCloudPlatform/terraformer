@@ -33,11 +33,13 @@ type ProviderWrapper struct {
 	client       *plugin.Client
 	rpcClient    plugin.ClientProtocol
 	providerName string
+	config       map[string]interface{}
 }
 
-func NewProviderWrapper(providerName string) (*ProviderWrapper, error) {
+func NewProviderWrapper(providerName string, providerConfig map[string]interface{}) (*ProviderWrapper, error) {
 	p := &ProviderWrapper{}
 	p.providerName = providerName
+	p.config = providerConfig
 	err := p.initProvider()
 	return p, err
 }
@@ -144,6 +146,8 @@ func (p *ProviderWrapper) initProvider() error {
 	}
 
 	p.Provider = raw.(terraform.ResourceProvider)
-	err = p.Provider.Configure(&terraform.ResourceConfig{})
+	err = p.Provider.Configure(&terraform.ResourceConfig{
+		Config: p.config,
+	})
 	return err
 }

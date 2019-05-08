@@ -117,12 +117,12 @@ func (g *BigQueryGenerator) PostConvertHook() error {
 				delete(g.Resources[i].Item, "default_table_expiration_ms")
 			}
 		}
-		for i, table := range g.Resources {
+		for j, table := range g.Resources {
 			if table.InstanceInfo.Type != "google_bigquery_table" {
 				continue
 			}
 			if table.InstanceState.Attributes["dataset_id"] == dataset.InstanceState.Attributes["dataset_id"] {
-				g.Resources[i].Item["dataset_id"] = "${google_bigquery_dataset." + dataset.ResourceName + ".dataset_id}"
+				g.Resources[j].Item["dataset_id"] = "${google_bigquery_dataset." + dataset.ResourceName + ".dataset_id}"
 			}
 		}
 	}
