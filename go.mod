@@ -2,9 +2,8 @@ module github.com/GoogleCloudPlatform/terraformer
 
 require (
 	cloud.google.com/go v0.33.1
-	contrib.go.opencensus.io/exporter/ocagent v0.3.0 // indirect
 	github.com/Azure/azure-sdk-for-go v10.3.0-beta+incompatible // indirect
-	github.com/Azure/go-autorest v11.2.8+incompatible // indirect
+	github.com/Azure/go-autorest v9.9.0+incompatible // indirect
 	github.com/Azure/go-ntlmssp v0.0.0-20180810175552-4a21cbd618b4 // indirect
 	github.com/ChrisTrenkamp/goxpath v0.0.0-20170922090931-c385f95c6022 // indirect
 	github.com/DataDog/datadog-go v0.0.0-20180822151419-281ae9f2d895 // indirect
@@ -32,6 +31,7 @@ require (
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/dnaeon/go-vcr v0.0.0-20180920040454-5637cf3d8a31 // indirect
+	github.com/dustinkirkland/golang-petname v0.0.0-20170921220637-d3c2ba80e75e // indirect
 	github.com/dylanmei/iso8601 v0.1.0 // indirect
 	github.com/dylanmei/winrmtest v0.0.0-20170819153634-c2fbb09e6c08 // indirect
 	github.com/gogo/protobuf v1.1.1 // indirect
@@ -39,11 +39,14 @@ require (
 	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db // indirect
 	github.com/google/btree v0.0.0-20180813153112-4030bb1f1f0c // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
+	github.com/google/gofuzz v1.0.0 // indirect
 	github.com/google/martian v2.1.0+incompatible // indirect
 	github.com/googleapis/gax-go v2.0.2+incompatible // indirect
+	github.com/googleapis/gnostic v0.2.0 // indirect
 	github.com/gophercloud/gophercloud v0.0.0-20170823032606-7f0936597349
 	github.com/gopherjs/gopherjs v0.0.0-20181103185306-d547d1d9531e // indirect
 	github.com/gorilla/websocket v1.4.0 // indirect
+	github.com/gregjones/httpcache v0.0.0-20190212212710-3befbb6ad0cc // indirect
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 // indirect
 	github.com/hashicorp/atlas-go v0.0.0-20170808163836-8261ea080105 // indirect
 	github.com/hashicorp/consul v1.4.0 // indirect
@@ -65,10 +68,14 @@ require (
 	github.com/hashicorp/serf v0.8.1 // indirect
 	github.com/hashicorp/terraform v0.11.10
 	github.com/hashicorp/vault v0.11.5 // indirect
+	github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c // indirect
+	github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365
+	github.com/imdario/mergo v0.3.7 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jen20/awspolicyequivalence v1.0.0 // indirect
 	github.com/jonboulle/clockwork v0.1.0 // indirect
 	github.com/joyent/triton-go v0.0.0-20180628001255-830d2b111e62 // indirect
+	github.com/json-iterator/go v1.1.6 // indirect
 	github.com/jtolds/gls v4.2.1+incompatible // indirect
 	github.com/kardianos/osext v0.0.0-20170510131534-ae77be60afb1 // indirect
 	github.com/keybase/go-crypto v0.0.0-20181031135447-f919bfda4fc1 // indirect
@@ -84,9 +91,12 @@ require (
 	github.com/mitchellh/hashstructure v1.0.0 // indirect
 	github.com/mitchellh/mapstructure v1.1.2 // indirect
 	github.com/mitchellh/panicwrap v0.0.0-20170106182340-fce601fe5557 // indirect
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d // indirect
 	github.com/packer-community/winrmcp v0.0.0-20180921211025-c76d91c1e7db // indirect
 	github.com/pascaldekloe/goe v0.0.0-20180627143212-57f6aae5913c // indirect
+	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
 	github.com/pierrec/lz4 v2.0.5+incompatible // indirect
 	github.com/pkg/errors v0.8.0
 	github.com/pquerna/otp v1.0.0 // indirect
@@ -99,9 +109,13 @@ require (
 	github.com/smartystreets/goconvey v0.0.0-20181108003508-044398e4856c // indirect
 	github.com/soheilhy/cmux v0.1.4 // indirect
 	github.com/spf13/cobra v0.0.3
+	github.com/stoewer/go-strcase v1.0.2 // indirect
 	github.com/svanharmelen/jsonapi v0.0.0-20180618144545-0c0828c3f16d // indirect
 	github.com/terraform-providers/terraform-provider-aws v1.48.0 // indirect
+	github.com/terraform-providers/terraform-provider-google v1.20.0 // indirect
+	github.com/terraform-providers/terraform-provider-kubernetes v1.4.0
 	github.com/terraform-providers/terraform-provider-openstack v0.1.0 // indirect
+	github.com/terraform-providers/terraform-provider-random v2.0.0+incompatible // indirect
 	github.com/terraform-providers/terraform-provider-template v1.0.0 // indirect
 	github.com/terraform-providers/terraform-provider-tls v1.2.0 // indirect
 	github.com/tmc/grpc-websocket-proxy v0.0.0-20171017195756-830351dc03c6 // indirect
@@ -116,5 +130,10 @@ require (
 	golang.org/x/time v0.0.0-20181108054448-85acf8d2951c // indirect
 	google.golang.org/api v0.0.0-20181212003324-40e757e92c52
 	google.golang.org/genproto v0.0.0-20181109154231-b5d43981345b
+	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/vmihailenco/msgpack.v2 v2.9.1 // indirect
+	k8s.io/api v0.0.0-20190116205037-c89978d5f86d // indirect
+	k8s.io/apimachinery v0.0.0-20190116203031-d49e237a2683
+	k8s.io/client-go v7.0.0+incompatible
+	k8s.io/kubectl v0.0.0-20190502165022-ce8d9f55c93c
 )
