@@ -20,8 +20,8 @@ import (
 	"os/exec"
 	"sort"
 
-	"github.com/GoogleCloudPlatform/terraformer/aws_terraforming"
 	"github.com/GoogleCloudPlatform/terraformer/cmd"
+	aws_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/aws"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
 

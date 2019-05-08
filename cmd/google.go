@@ -17,7 +17,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/gcp_terraforming"
+	gcp_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/gcp"
 
 	"github.com/spf13/cobra"
 )

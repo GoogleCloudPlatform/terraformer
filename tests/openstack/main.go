@@ -21,7 +21,7 @@ import (
 	"sort"
 
 	"github.com/GoogleCloudPlatform/terraformer/cmd"
-	"github.com/GoogleCloudPlatform/terraformer/openstack_terraforming"
+	openstack_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/openstack"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
 
