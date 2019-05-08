@@ -1,0 +1,205 @@
+// Copyright 2018 The Terraformer Authors.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package github
+
+import (
+	"context"
+	"log"
+	"strconv"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	githubAPI "github.com/google/go-github/v25/github"
+	"golang.org/x/oauth2"
+)
+
+type RepositoriesGenerator struct {
+	GithubService
+}
+
+// Generate TerraformResources from github API,
+func (g *RepositoriesGenerator) InitResources() error {
+	ctx := context.Background()
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: g.Args["token"]},
+	)
+	tc := oauth2.NewClient(ctx, ts)
+
+	client := githubAPI.NewClient(tc)
+
+	opt := &githubAPI.RepositoryListByOrgOptions{
+		ListOptions: githubAPI.ListOptions{PerPage: 30},
+	}
+	//list all repositories for the authenticated user
+	for {
+		repos, resp, err := client.Repositories.ListByOrg(ctx, g.Args["organization"], opt)
+		if err != nil {
+			return err
+		}
+		for _, repo := range repos {
+			resource := terraform_utils.NewResource(
+				repo.GetName(),
+				repo.GetName(),
+				"github_repository",
+				"github",
+				map[string]string{},
+				[]string{},
+				map[string]string{},
+			)
+			g.Resources = append(g.Resources, resource)
+			g.Resources = append(g.Resources, g.createRepositoryWebhookResources(ctx, client, repo)...)
+			g.Resources = append(g.Resources, g.createRepositoryBranchProtectionResources(ctx, client, repo)...)
+			g.Resources = append(g.Resources, g.createRepositoryCollaboratorResources(ctx, client, repo)...)
+			g.Resources = append(g.Resources, g.createRepositoryDeployKeyResources(ctx, client, repo)...)
+			break
+		}
+
+
+		if resp.NextPage == 0 {
+			break
+		}
+		opt.Page = resp.NextPage
+	}
+	g.PopulateIgnoreKeys()
+
+	return nil
+}
+
+func (g *RepositoriesGenerator) createRepositoryWebhookResources(ctx context.Context, client *githubAPI.Client, repo *githubAPI.Repository) []terraform_utils.Resource {
+	resources := []terraform_utils.Resource{}
+	hooks, _, err := client.Repositories.ListHooks(ctx, g.Args["organization"], repo.GetName(), nil)
+	if err != nil {
+		log.Println(err)
+	}
+	for _, hook := range hooks {
+		resources = append(resources, terraform_utils.NewResource(
+			strconv.FormatInt(hook.GetID(), 10),
+			repo.GetName()+"_"+strconv.FormatInt(hook.GetID(), 10),
+			"github_repository_webhook",
+			"github",
+			map[string]string{
+				"repository": repo.GetName(),
+			},
+			[]string{},
+			map[string]string{},
+		))
+	}
+	return resources
+}
+
+func (g *RepositoriesGenerator) createRepositoryBranchProtectionResources(ctx context.Context, client *githubAPI.Client, repo *githubAPI.Repository) []terraform_utils.Resource {
+	resources := []terraform_utils.Resource{}
+	branches, _, err := client.Repositories.ListBranches(ctx, g.Args["organization"], repo.GetName(), nil)
+	if err != nil {
+		log.Println(err)
+	}
+	for _, branch := range branches {
+		if branch.GetProtected() {
+			resources = append(resources, terraform_utils.NewResource(
+				repo.GetName()+":"+branch.GetName(),
+				repo.GetName()+"_"+branch.GetName(),
+				"github_branch_protection",
+				"github",
+				map[string]string{},
+				[]string{},
+				map[string]string{},
+			))
+		}
+	}
+	return resources
+}
+
+func (g *RepositoriesGenerator) createRepositoryCollaboratorResources(ctx context.Context, client *githubAPI.Client, repo *githubAPI.Repository) []terraform_utils.Resource {
+	resources := []terraform_utils.Resource{}
+	collaborators, _, err := client.Repositories.ListCollaborators(ctx, g.Args["organization"], repo.GetName(), nil)
+	if err != nil {
+		log.Println(err)
+	}
+	for _, collaborator := range collaborators {
+		resources = append(resources, terraform_utils.NewResource(
+			repo.GetName()+":"+collaborator.GetName(),
+			repo.GetName()+":"+collaborator.GetName(),
+			"github_repository_collaborator",
+			"github",
+			map[string]string{},
+			[]string{},
+			map[string]string{},
+		))
+	}
+	return resources
+
+}
+
+func (g *RepositoriesGenerator) createRepositoryDeployKeyResources(ctx context.Context, client *githubAPI.Client, repo *githubAPI.Repository) []terraform_utils.Resource {
+	resources := []terraform_utils.Resource{}
+	deployKeys, _, err := client.Repositories.ListKeys(ctx, g.Args["organization"], repo.GetName(), nil)
+	if err != nil {
+		log.Println(err)
+	}
+	for _, key := range deployKeys {
+		resources = append(resources, terraform_utils.NewResource(
+			repo.GetName()+":"+strconv.FormatInt(key.GetID(), 10),
+			repo.GetName()+":"+key.GetTitle(),
+			"github_repository_deploy_key",
+			"github",
+			map[string]string{},
+			[]string{},
+			map[string]string{},
+		))
+	}
+	return resources
+}
+
+// PostGenerateHook for connect between resources
+func (g *RepositoriesGenerator) PostConvertHook() error {
+	for _, repo := range g.Resources {
+		if repo.InstanceInfo.Type != "github_repository" {
+			continue
+		}
+		for i, member := range g.Resources {
+			if member.InstanceInfo.Type != "github_repository_webhook" {
+				continue
+			}
+			if member.InstanceState.Attributes["repository"] == repo.InstanceState.Attributes["name"] {
+				g.Resources[i].Item["repository"] = "${github_team." + repo.ResourceName + ".name}"
+			}
+		}
+		for i, repo := range g.Resources {
+			if repo.InstanceInfo.Type != "github_branch_protection" {
+				continue
+			}
+			if repo.InstanceState.Attributes["repository"] == repo.InstanceState.Attributes["name"] {
+				g.Resources[i].Item["repository"] = "${github_team." + repo.ResourceName + ".name}"
+			}
+		}
+		for i, repo := range g.Resources {
+			if repo.InstanceInfo.Type != "github_repository_collaborator" {
+				continue
+			}
+			if repo.InstanceState.Attributes["repository"] == repo.InstanceState.Attributes["name"] {
+				g.Resources[i].Item["repository"] = "${github_team." + repo.ResourceName + ".name}"
+			}
+		}
+		for i, repo := range g.Resources {
+			if repo.InstanceInfo.Type != "github_repository_deploy_key" {
+				continue
+			}
+			if repo.InstanceState.Attributes["repository"] == repo.InstanceState.Attributes["name"] {
+				g.Resources[i].Item["repository"] = "${github_team." + repo.ResourceName + ".name}"
+			}
+		}
+	}
+	return nil
+}
+
