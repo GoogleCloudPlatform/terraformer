@@ -80,6 +80,8 @@ func (r *Resource) ConvertTFstate() {
 		attributes[k] = v
 	}
 
+	// TODO: Delete optinal numeric zero values
+
 	// delete empty array
 	for key := range r.InstanceState.Attributes {
 		if strings.HasSuffix(key, ".#") && r.InstanceState.Attributes[key] == "0" {
