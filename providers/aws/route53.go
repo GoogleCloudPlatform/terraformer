@@ -132,8 +132,5 @@ func cleanZoneID(ID string) string {
 
 // cleanPrefix removes a string prefix from an ID
 func cleanPrefix(ID, prefix string) string {
-	if strings.HasPrefix(ID, prefix) {
-		ID = strings.TrimPrefix(ID, prefix)
-	}
-	return ID
+	return strings.TrimPrefix(ID, prefix)
 }
