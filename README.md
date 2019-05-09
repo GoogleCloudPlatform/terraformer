@@ -92,7 +92,7 @@ Example:
 
 ```
 terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --connect=true --zone=europe-west1-a --projects=aaa,fff
-terraformer import google --resources=gcs,forwardingRules,httpHealthChecksm--filter=google_compute_firewall=rule1:rule2:rule3 --zone=europe-west1-a --projects=aaa,fff
+terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --filter=google_compute_firewall=rule1:rule2:rule3 --zone=europe-west1-a --projects=aaa,fff
 ```
 
 List of supported GCP services:
