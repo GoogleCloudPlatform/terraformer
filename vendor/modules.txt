@@ -230,6 +230,8 @@ github.com/google/go-cmp/cmp
 github.com/google/go-cmp/cmp/internal/diff
 github.com/google/go-cmp/cmp/internal/function
 github.com/google/go-cmp/cmp/internal/value
+# github.com/google/go-github/v25 v25.0.2
+github.com/google/go-github/v25/github
 # github.com/google/go-querystring v1.0.0
 github.com/google/go-querystring/query
 # github.com/google/gofuzz v1.0.0
@@ -569,7 +571,7 @@ go.opencensus.io/trace/propagation
 go.opencensus.io
 go.opencensus.io/stats/internal
 go.opencensus.io/internal/tagencoding
-# golang.org/x/crypto v0.0.0-20180904163835-0709b304e793
+# golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/openpgp
 golang.org/x/crypto/blowfish
@@ -590,7 +592,7 @@ golang.org/x/crypto/poly1305
 golang.org/x/crypto/ed25519/internal/edwards25519
 golang.org/x/crypto/internal/subtle
 golang.org/x/crypto/md4
-# golang.org/x/net v0.0.0-20181114220301-adae6a3d119a
+# golang.org/x/net v0.0.0-20190311183353-d8887717615a
 golang.org/x/net/context
 golang.org/x/net/trace
 golang.org/x/net/context/ctxhttp
@@ -608,9 +610,10 @@ golang.org/x/oauth2
 golang.org/x/oauth2/internal
 golang.org/x/oauth2/jws
 golang.org/x/oauth2/jwt
-# golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e
+# golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a
 golang.org/x/sys/unix
 golang.org/x/sys/windows
+golang.org/x/sys/cpu
 # golang.org/x/text v0.3.0
 golang.org/x/text/unicode/norm
 golang.org/x/text/transform

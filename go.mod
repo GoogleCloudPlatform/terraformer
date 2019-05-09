@@ -38,7 +38,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20181024230925-c65c006176ff // indirect
 	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db // indirect
 	github.com/google/btree v0.0.0-20180813153112-4030bb1f1f0c // indirect
-	github.com/google/go-querystring v1.0.0 // indirect
+	github.com/google/go-github/v25 v25.0.2
 	github.com/google/gofuzz v1.0.0 // indirect
 	github.com/google/martian v2.1.0+incompatible // indirect
 	github.com/googleapis/gax-go v2.0.2+incompatible // indirect

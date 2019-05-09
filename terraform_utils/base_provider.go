@@ -19,6 +19,7 @@ type ProviderGenerator interface {
 	InitService(serviceName string) error
 	GetName() string
 	GetService() ServiceGenerator
+	GetConfig() map[string]interface{}
 	GetSupportedService() map[string]ServiceGenerator
 	GenerateFiles()
 	GetProviderData(arg ...string) map[string]interface{}
@@ -28,10 +29,15 @@ type ProviderGenerator interface {
 
 type Provider struct {
 	Service ServiceGenerator
+	Config  map[string]interface{}
 }
 
 func (p *Provider) Init(args []string) error {
 	panic("implement me")
+}
+
+func (p *Provider) GetConfig() map[string]interface{} {
+	return p.Config
 }
 
 func (p *Provider) GetName() string {
