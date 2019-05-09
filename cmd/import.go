@@ -37,6 +37,7 @@ type ImportOptions struct {
 	Regions    []string
 	Projects   []string
 	Connect    bool
+	Filter     []string
 }
 
 const DefaultPathPatter = "{output}/{provider}/{service}/"
@@ -77,6 +78,12 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 		if err != nil {
 			return err
 		}
+
+		if len(options.Filter) != 0 {
+			provider.GetService().ParseFilter(options.Filter)
+			provider.GetService().CleanupWithFilter()
+		}
+
 		refreshedResources, err := terraform_utils.RefreshResources(provider.GetService().GetResources(), provider.GetName(), provider.GetConfig())
 		if err != nil {
 			return err
