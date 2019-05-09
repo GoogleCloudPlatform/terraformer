@@ -65,10 +65,10 @@ func PrintTfState(resources []Resource) ([]byte, error) {
 	return buf.Bytes(), err
 }
 
-func RefreshResources(resources []Resource, providerName string) ([]Resource, error) {
+func RefreshResources(resources []Resource, providerName string, providerConfig map[string]interface{}) ([]Resource, error) {
 	refreshedResources := []Resource{}
 	input := make(chan *Resource, 100)
-	provider, err := provider_wrapper.NewProviderWrapper(providerName)
+	provider, err := provider_wrapper.NewProviderWrapper(providerName, providerConfig)
 	if err != nil {
 		return refreshedResources, err
 	}
@@ -99,7 +99,7 @@ func RefreshResourceWorker(input chan *Resource, wg *sync.WaitGroup, provider *p
 }
 
 func IgnoreKeys(resourcesTypes []string, providerName string) map[string][]string {
-	p, err := provider_wrapper.NewProviderWrapper(providerName)
+	p, err := provider_wrapper.NewProviderWrapper(providerName, map[string]interface{}{})
 	if err != nil {
 		log.Println("plugin error:", err)
 		return map[string][]string{}

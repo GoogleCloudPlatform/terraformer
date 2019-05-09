@@ -45,6 +45,7 @@ Flags:
 2.  AWS
 3.  OpenStack
 4.  Kubernetes
+5.  Github
 
 #### Permissions
 
@@ -80,6 +81,7 @@ Links for download terraform providers:
 * aws provider >1.56.0 - [here](https://releases.hashicorp.com/terraform-provider-aws/)
 * openstack provider >1.17.0 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
 * kubernetes provider >=1.4.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
+* github provider >=2.0.0- [here](https://releases.hashicorp.com/terraform-provider-github/)
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
@@ -227,6 +229,30 @@ All of the kubernetes resources that are currently being supported by kubernetes
 * As terraform flatmap is using "." to detect the keys for unflattening the maps, some keys with "." in their names are being considered as the maps.
 * As the libary is just assuming empty string as empty value (not "0"), there are some issues with optinal integrer keys taht are restricted to be positive.
 
+### Use with Github
+
+Example:
+
+```
+ ./terraformer import github --organizations=YOUR_ORGANIZATION --resources=repositories --token=YOUR_TOKEN // or GITHUB_TOKEN in env
+```
+
+Support only organizations resources. List of supported resources:
+
+* `repositories`
+    * `github_repository`
+    * `github_repository_webhook`
+    * `github_branch_protection`
+    * `github_repository_collaborator`
+    * `github_repository_deploy_key`
+* `teams`
+    * `github_team`
+    * `github_team_membership`
+    * `github_team_repository`
+* `members`
+    * `github_membership`
+* `organization_webhooks`
+    * `github_organization_webhook`
 ## Contributing
 
 If you have improvements or fixes, we would love to have your contributions.

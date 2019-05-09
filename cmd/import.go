@@ -57,6 +57,7 @@ func newImportCmd() *cobra.Command {
 	cmd.AddCommand(newCmdAwsImporter(options))
 	cmd.AddCommand(newCmdOpenStackImporter(options))
 	cmd.AddCommand(newCmdKubernetesImporter(options))
+	cmd.AddCommand(newCmdGithubImporter(options))
 	return cmd
 }
 
@@ -76,7 +77,7 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 		if err != nil {
 			return err
 		}
-		refreshedResources, err := terraform_utils.RefreshResources(provider.GetService().GetResources(), provider.GetName())
+		refreshedResources, err := terraform_utils.RefreshResources(provider.GetService().GetResources(), provider.GetName(), provider.GetConfig())
 		if err != nil {
 			return err
 		}
