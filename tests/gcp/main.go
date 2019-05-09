@@ -51,6 +51,9 @@ func main() {
 		if service == "cloudsql" {
 			continue
 		}
+		if service == "bigQuery" {
+			continue
+		}
 		services = append(services, service)
 
 	}

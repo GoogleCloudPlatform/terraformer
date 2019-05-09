@@ -133,6 +133,7 @@ List of supported GCP services:
 *   `targetTcpProxies`
 *   `urlMaps`
 *   `vpnTunnels`
+*   `gke`
 *   `gcs`
 *   `monitoring`
 *   `dns`
