@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
@@ -54,6 +55,9 @@ func (g *GkeGenerator) initClusters(clusters *container.ListClustersResponse, se
 			GkeAdditionalFields,
 		)
 		resource.IgnoreKeys = append(resource.IgnoreKeys,
+			"^region$",
+			"^additional_zones\\.(.*)",
+			"^zone$",
 			"^node_pool\\.(.*)",   // delete node_pool config from google_container_cluster
 			"^node_config\\.(.*)", // delete node_config config from google_container_cluster
 			"^ip_allocation_policy\\.[0-9]\\.cluster_secondary_range_name$",  // conflict with cluster_ipv4_cidr_block
@@ -116,6 +120,17 @@ func (g *GkeGenerator) PostConvertHook() error {
 	for i, r := range g.Resources {
 		if r.InstanceInfo.Type != "google_container_node_pool" {
 			continue
+		}
+		if _, existNodeConfig := g.Resources[i].Item["node_config"]; existNodeConfig {
+			if _, existMetadata := g.Resources[i].Item["node_config"].([]interface{})[0].(map[string]interface{})["metadata"]; existMetadata {
+				for k, v := range g.Resources[i].Item["node_config"].([]interface{})[0].(map[string]interface{})["metadata"].(map[string]interface{}) {
+					switch x := v.(type) {
+					case bool:
+						g.Resources[i].Item["node_config"].([]interface{})[0].(map[string]interface{})["metadata"].(map[string]interface{})[k] = strconv.FormatBool(x)
+					default:
+					}
+				}
+			}
 		}
 		for _, cluster := range g.Resources {
 			if cluster.InstanceState.Attributes["name"] == r.InstanceState.Attributes["cluster"] {
