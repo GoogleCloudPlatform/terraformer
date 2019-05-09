@@ -92,6 +92,7 @@ Example:
 
 ```
 terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --connect=true --zone=europe-west1-a --projects=aaa,fff
+terraformer import google --resources=gcs,forwardingRules,httpHealthChecksm--filter=google_compute_firewall=rule1:rule2:rule3 --zone=europe-west1-a --projects=aaa,fff
 ```
 
 List of supported GCP services:
@@ -146,6 +147,7 @@ Example:
 
 ```
  terraformer import aws --resources=vpc,subnet --connect=true --regions=eu-west-1
+ terraformer import aws --resources=vpc,subnet --filter=aws_vpc=vpc_id1:vpc_id2:vpc_id3 --regions=eu-west-1
 ```
 
 ```
@@ -202,6 +204,7 @@ Example:
 
 ```
  terraformer import kubernetes --resources=deployments,services,storageclasses
+ terraformer import kubernetes --resources=deployments,services,storageclasses --filter=kubernetes_deployment=name1:name2:name3
 ```
 
 All of the kubernetes resources that are currently being supported by kubernetes provider are supported by this module as well. Here is the list of resources which are currently supported by kubernetes provider v.1.4:
@@ -235,6 +238,7 @@ Example:
 
 ```
  ./terraformer import github --organizations=YOUR_ORGANIZATION --resources=repositories --token=YOUR_TOKEN // or GITHUB_TOKEN in env
+ ./terraformer import github --organizations=YOUR_ORGANIZATION --resources=repositories --filter=github_repository=id1:id2:id4 --token=YOUR_TOKEN // or GITHUB_TOKEN in env
 ```
 
 Support only organizations resources. List of supported resources:
