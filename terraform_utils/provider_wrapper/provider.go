@@ -93,7 +93,7 @@ func (p *ProviderWrapper) readObjBlocks(block map[string]*configschema.NestedBlo
 					if parent == "-1" {
 						readOnlyAttributes = append(readOnlyAttributes, "^"+k+".[0-9]."+key+"$")
 					} else {
-						readOnlyAttributes = append(readOnlyAttributes, "^"+parent+".(.*)."+key+"$")
+						readOnlyAttributes = append(readOnlyAttributes, "^"+parent+".(.*)."+key+"($|\\.(.*))")
 					}
 				case configschema.NestingMap:
 					readOnlyAttributes = append(readOnlyAttributes, parent+"."+key)
