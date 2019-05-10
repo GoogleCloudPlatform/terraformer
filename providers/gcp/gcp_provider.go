@@ -81,6 +81,7 @@ func (p *GCPProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 	services["bigQuery"] = &BigQueryGenerator{}
 	services["dataProc"] = &DataprocGenerator{}
 	services["cloudFunctions"] = &CloudFunctionsGenerator{}
+	services["pubsub"] = &PubsubGenerator{}
 	return services
 }
 
