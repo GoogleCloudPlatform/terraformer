@@ -66,7 +66,7 @@ type {{.titleResourceName}}Generator struct {
 }
 
 // Run on {{.resource}}List and create for each TerraformResource
-func (g {{.titleResourceName}}Generator) createResources({{.resource}}List *compute.{{.titleResourceName}}ListCall, ctx context.Context) []terraform_utils.Resource {
+func (g {{.titleResourceName}}Generator) createResources(ctx context.Context, {{.resource}}List *compute.{{.titleResourceName}}ListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := {{.resource}}List.Pages(ctx, func(page *compute.{{.responseName}}) error {
 		for _, obj := range page.Items {
@@ -111,7 +111,7 @@ func (g *{{.titleResourceName}}Generator) InitResources() error {
 
 	{{.resource}}List := computeService.{{.titleResourceName}}.List({{.parameterOrder}})
 
-	g.Resources = g.createResources({{.resource}}List, ctx)
+	g.Resources = g.createResources(ctx, {{.resource}}List)
 	g.PopulateIgnoreKeys()
 	return nil
 

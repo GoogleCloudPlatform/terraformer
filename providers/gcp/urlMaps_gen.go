@@ -34,7 +34,7 @@ type UrlMapsGenerator struct {
 }
 
 // Run on urlMapsList and create for each TerraformResource
-func (g UrlMapsGenerator) createResources(urlMapsList *compute.UrlMapsListCall, ctx context.Context) []terraform_utils.Resource {
+func (g UrlMapsGenerator) createResources(ctx context.Context, urlMapsList *compute.UrlMapsListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := urlMapsList.Pages(ctx, func(page *compute.UrlMapList) error {
 		for _, obj := range page.Items {
@@ -76,7 +76,7 @@ func (g *UrlMapsGenerator) InitResources() error {
 
 	urlMapsList := computeService.UrlMaps.List(g.GetArgs()["project"])
 
-	g.Resources = g.createResources(urlMapsList, ctx)
+	g.Resources = g.createResources(ctx, urlMapsList)
 	g.PopulateIgnoreKeys()
 	return nil
 

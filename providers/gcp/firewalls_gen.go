@@ -34,7 +34,7 @@ type FirewallsGenerator struct {
 }
 
 // Run on firewallsList and create for each TerraformResource
-func (g FirewallsGenerator) createResources(firewallsList *compute.FirewallsListCall, ctx context.Context) []terraform_utils.Resource {
+func (g FirewallsGenerator) createResources(ctx context.Context, firewallsList *compute.FirewallsListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := firewallsList.Pages(ctx, func(page *compute.FirewallList) error {
 		for _, obj := range page.Items {
@@ -76,7 +76,7 @@ func (g *FirewallsGenerator) InitResources() error {
 
 	firewallsList := computeService.Firewalls.List(g.GetArgs()["project"])
 
-	g.Resources = g.createResources(firewallsList, ctx)
+	g.Resources = g.createResources(ctx, firewallsList)
 	g.PopulateIgnoreKeys()
 	return nil
 

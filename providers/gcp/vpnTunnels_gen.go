@@ -34,7 +34,7 @@ type VpnTunnelsGenerator struct {
 }
 
 // Run on vpnTunnelsList and create for each TerraformResource
-func (g VpnTunnelsGenerator) createResources(vpnTunnelsList *compute.VpnTunnelsListCall, ctx context.Context) []terraform_utils.Resource {
+func (g VpnTunnelsGenerator) createResources(ctx context.Context, vpnTunnelsList *compute.VpnTunnelsListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := vpnTunnelsList.Pages(ctx, func(page *compute.VpnTunnelList) error {
 		for _, obj := range page.Items {
@@ -76,7 +76,7 @@ func (g *VpnTunnelsGenerator) InitResources() error {
 
 	vpnTunnelsList := computeService.VpnTunnels.List(g.GetArgs()["project"], g.GetArgs()["region"])
 
-	g.Resources = g.createResources(vpnTunnelsList, ctx)
+	g.Resources = g.createResources(ctx, vpnTunnelsList)
 	g.PopulateIgnoreKeys()
 	return nil
 

@@ -34,7 +34,7 @@ type RegionInstanceGroupManagersGenerator struct {
 }
 
 // Run on regionInstanceGroupManagersList and create for each TerraformResource
-func (g RegionInstanceGroupManagersGenerator) createResources(regionInstanceGroupManagersList *compute.RegionInstanceGroupManagersListCall, ctx context.Context) []terraform_utils.Resource {
+func (g RegionInstanceGroupManagersGenerator) createResources(ctx context.Context, regionInstanceGroupManagersList *compute.RegionInstanceGroupManagersListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := regionInstanceGroupManagersList.Pages(ctx, func(page *compute.RegionInstanceGroupManagerList) error {
 		for _, obj := range page.Items {
@@ -76,7 +76,7 @@ func (g *RegionInstanceGroupManagersGenerator) InitResources() error {
 
 	regionInstanceGroupManagersList := computeService.RegionInstanceGroupManagers.List(g.GetArgs()["project"], g.GetArgs()["region"])
 
-	g.Resources = g.createResources(regionInstanceGroupManagersList, ctx)
+	g.Resources = g.createResources(ctx, regionInstanceGroupManagersList)
 	g.PopulateIgnoreKeys()
 	return nil
 

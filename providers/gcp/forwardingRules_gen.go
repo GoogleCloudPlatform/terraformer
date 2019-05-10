@@ -34,7 +34,7 @@ type ForwardingRulesGenerator struct {
 }
 
 // Run on forwardingRulesList and create for each TerraformResource
-func (g ForwardingRulesGenerator) createResources(forwardingRulesList *compute.ForwardingRulesListCall, ctx context.Context) []terraform_utils.Resource {
+func (g ForwardingRulesGenerator) createResources(ctx context.Context, forwardingRulesList *compute.ForwardingRulesListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := forwardingRulesList.Pages(ctx, func(page *compute.ForwardingRuleList) error {
 		for _, obj := range page.Items {
@@ -76,7 +76,7 @@ func (g *ForwardingRulesGenerator) InitResources() error {
 
 	forwardingRulesList := computeService.ForwardingRules.List(g.GetArgs()["project"], g.GetArgs()["region"])
 
-	g.Resources = g.createResources(forwardingRulesList, ctx)
+	g.Resources = g.createResources(ctx, forwardingRulesList)
 	g.PopulateIgnoreKeys()
 	return nil
 

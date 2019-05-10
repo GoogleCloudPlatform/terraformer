@@ -34,7 +34,7 @@ type RegionBackendServicesGenerator struct {
 }
 
 // Run on regionBackendServicesList and create for each TerraformResource
-func (g RegionBackendServicesGenerator) createResources(regionBackendServicesList *compute.RegionBackendServicesListCall, ctx context.Context) []terraform_utils.Resource {
+func (g RegionBackendServicesGenerator) createResources(ctx context.Context, regionBackendServicesList *compute.RegionBackendServicesListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := regionBackendServicesList.Pages(ctx, func(page *compute.BackendServiceList) error {
 		for _, obj := range page.Items {
@@ -76,7 +76,7 @@ func (g *RegionBackendServicesGenerator) InitResources() error {
 
 	regionBackendServicesList := computeService.RegionBackendServices.List(g.GetArgs()["project"], g.GetArgs()["region"])
 
-	g.Resources = g.createResources(regionBackendServicesList, ctx)
+	g.Resources = g.createResources(ctx, regionBackendServicesList)
 	g.PopulateIgnoreKeys()
 	return nil
 

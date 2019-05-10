@@ -34,7 +34,7 @@ type TargetTcpProxiesGenerator struct {
 }
 
 // Run on targetTcpProxiesList and create for each TerraformResource
-func (g TargetTcpProxiesGenerator) createResources(targetTcpProxiesList *compute.TargetTcpProxiesListCall, ctx context.Context) []terraform_utils.Resource {
+func (g TargetTcpProxiesGenerator) createResources(ctx context.Context, targetTcpProxiesList *compute.TargetTcpProxiesListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := targetTcpProxiesList.Pages(ctx, func(page *compute.TargetTcpProxyList) error {
 		for _, obj := range page.Items {
@@ -76,7 +76,7 @@ func (g *TargetTcpProxiesGenerator) InitResources() error {
 
 	targetTcpProxiesList := computeService.TargetTcpProxies.List(g.GetArgs()["project"])
 
-	g.Resources = g.createResources(targetTcpProxiesList, ctx)
+	g.Resources = g.createResources(ctx, targetTcpProxiesList)
 	g.PopulateIgnoreKeys()
 	return nil
 

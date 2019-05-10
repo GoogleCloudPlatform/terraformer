@@ -34,7 +34,7 @@ type RegionAutoscalersGenerator struct {
 }
 
 // Run on regionAutoscalersList and create for each TerraformResource
-func (g RegionAutoscalersGenerator) createResources(regionAutoscalersList *compute.RegionAutoscalersListCall, ctx context.Context) []terraform_utils.Resource {
+func (g RegionAutoscalersGenerator) createResources(ctx context.Context, regionAutoscalersList *compute.RegionAutoscalersListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := regionAutoscalersList.Pages(ctx, func(page *compute.RegionAutoscalerList) error {
 		for _, obj := range page.Items {
@@ -76,7 +76,7 @@ func (g *RegionAutoscalersGenerator) InitResources() error {
 
 	regionAutoscalersList := computeService.RegionAutoscalers.List(g.GetArgs()["project"], g.GetArgs()["region"])
 
-	g.Resources = g.createResources(regionAutoscalersList, ctx)
+	g.Resources = g.createResources(ctx, regionAutoscalersList)
 	g.PopulateIgnoreKeys()
 	return nil
 

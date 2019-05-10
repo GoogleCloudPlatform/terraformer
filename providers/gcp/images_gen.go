@@ -34,7 +34,7 @@ type ImagesGenerator struct {
 }
 
 // Run on imagesList and create for each TerraformResource
-func (g ImagesGenerator) createResources(imagesList *compute.ImagesListCall, ctx context.Context) []terraform_utils.Resource {
+func (g ImagesGenerator) createResources(ctx context.Context, imagesList *compute.ImagesListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := imagesList.Pages(ctx, func(page *compute.ImageList) error {
 		for _, obj := range page.Items {
@@ -76,7 +76,7 @@ func (g *ImagesGenerator) InitResources() error {
 
 	imagesList := computeService.Images.List(g.GetArgs()["project"])
 
-	g.Resources = g.createResources(imagesList, ctx)
+	g.Resources = g.createResources(ctx, imagesList)
 	g.PopulateIgnoreKeys()
 	return nil
 

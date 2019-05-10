@@ -34,7 +34,7 @@ type NetworksGenerator struct {
 }
 
 // Run on networksList and create for each TerraformResource
-func (g NetworksGenerator) createResources(networksList *compute.NetworksListCall, ctx context.Context) []terraform_utils.Resource {
+func (g NetworksGenerator) createResources(ctx context.Context, networksList *compute.NetworksListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := networksList.Pages(ctx, func(page *compute.NetworkList) error {
 		for _, obj := range page.Items {
@@ -76,7 +76,7 @@ func (g *NetworksGenerator) InitResources() error {
 
 	networksList := computeService.Networks.List(g.GetArgs()["project"])
 
-	g.Resources = g.createResources(networksList, ctx)
+	g.Resources = g.createResources(ctx, networksList)
 	g.PopulateIgnoreKeys()
 	return nil
 

@@ -34,7 +34,7 @@ type DisksGenerator struct {
 }
 
 // Run on disksList and create for each TerraformResource
-func (g DisksGenerator) createResources(disksList *compute.DisksListCall, ctx context.Context) []terraform_utils.Resource {
+func (g DisksGenerator) createResources(ctx context.Context, disksList *compute.DisksListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := disksList.Pages(ctx, func(page *compute.DiskList) error {
 		for _, obj := range page.Items {
@@ -77,7 +77,7 @@ func (g *DisksGenerator) InitResources() error {
 
 	disksList := computeService.Disks.List(g.GetArgs()["project"], g.GetArgs()["zone"])
 
-	g.Resources = g.createResources(disksList, ctx)
+	g.Resources = g.createResources(ctx, disksList)
 	g.PopulateIgnoreKeys()
 	return nil
 

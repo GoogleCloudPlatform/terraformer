@@ -34,7 +34,7 @@ type BackendServicesGenerator struct {
 }
 
 // Run on backendServicesList and create for each TerraformResource
-func (g BackendServicesGenerator) createResources(backendServicesList *compute.BackendServicesListCall, ctx context.Context) []terraform_utils.Resource {
+func (g BackendServicesGenerator) createResources(ctx context.Context, backendServicesList *compute.BackendServicesListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := backendServicesList.Pages(ctx, func(page *compute.BackendServiceList) error {
 		for _, obj := range page.Items {
@@ -75,7 +75,7 @@ func (g *BackendServicesGenerator) InitResources() error {
 
 	backendServicesList := computeService.BackendServices.List(g.GetArgs()["project"])
 
-	g.Resources = g.createResources(backendServicesList, ctx)
+	g.Resources = g.createResources(ctx, backendServicesList)
 	g.PopulateIgnoreKeys()
 	return nil
 

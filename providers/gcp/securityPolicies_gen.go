@@ -34,7 +34,7 @@ type SecurityPoliciesGenerator struct {
 }
 
 // Run on securityPoliciesList and create for each TerraformResource
-func (g SecurityPoliciesGenerator) createResources(securityPoliciesList *compute.SecurityPoliciesListCall, ctx context.Context) []terraform_utils.Resource {
+func (g SecurityPoliciesGenerator) createResources(ctx context.Context, securityPoliciesList *compute.SecurityPoliciesListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := securityPoliciesList.Pages(ctx, func(page *compute.SecurityPolicyList) error {
 		for _, obj := range page.Items {
@@ -76,7 +76,7 @@ func (g *SecurityPoliciesGenerator) InitResources() error {
 
 	securityPoliciesList := computeService.SecurityPolicies.List(g.GetArgs()["project"])
 
-	g.Resources = g.createResources(securityPoliciesList, ctx)
+	g.Resources = g.createResources(ctx, securityPoliciesList)
 	g.PopulateIgnoreKeys()
 	return nil
 

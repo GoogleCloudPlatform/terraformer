@@ -34,7 +34,7 @@ type RoutesGenerator struct {
 }
 
 // Run on routesList and create for each TerraformResource
-func (g RoutesGenerator) createResources(routesList *compute.RoutesListCall, ctx context.Context) []terraform_utils.Resource {
+func (g RoutesGenerator) createResources(ctx context.Context, routesList *compute.RoutesListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := routesList.Pages(ctx, func(page *compute.RouteList) error {
 		for _, obj := range page.Items {
@@ -76,7 +76,7 @@ func (g *RoutesGenerator) InitResources() error {
 
 	routesList := computeService.Routes.List(g.GetArgs()["project"])
 
-	g.Resources = g.createResources(routesList, ctx)
+	g.Resources = g.createResources(ctx, routesList)
 	g.PopulateIgnoreKeys()
 	return nil
 

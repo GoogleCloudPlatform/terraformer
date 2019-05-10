@@ -34,7 +34,7 @@ type HttpHealthChecksGenerator struct {
 }
 
 // Run on httpHealthChecksList and create for each TerraformResource
-func (g HttpHealthChecksGenerator) createResources(httpHealthChecksList *compute.HttpHealthChecksListCall, ctx context.Context) []terraform_utils.Resource {
+func (g HttpHealthChecksGenerator) createResources(ctx context.Context, httpHealthChecksList *compute.HttpHealthChecksListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := httpHealthChecksList.Pages(ctx, func(page *compute.HttpHealthCheckList) error {
 		for _, obj := range page.Items {
@@ -76,7 +76,7 @@ func (g *HttpHealthChecksGenerator) InitResources() error {
 
 	httpHealthChecksList := computeService.HttpHealthChecks.List(g.GetArgs()["project"])
 
-	g.Resources = g.createResources(httpHealthChecksList, ctx)
+	g.Resources = g.createResources(ctx, httpHealthChecksList)
 	g.PopulateIgnoreKeys()
 	return nil
 

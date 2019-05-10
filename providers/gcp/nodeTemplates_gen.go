@@ -34,7 +34,7 @@ type NodeTemplatesGenerator struct {
 }
 
 // Run on nodeTemplatesList and create for each TerraformResource
-func (g NodeTemplatesGenerator) createResources(nodeTemplatesList *compute.NodeTemplatesListCall, ctx context.Context) []terraform_utils.Resource {
+func (g NodeTemplatesGenerator) createResources(ctx context.Context, nodeTemplatesList *compute.NodeTemplatesListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := nodeTemplatesList.Pages(ctx, func(page *compute.NodeTemplateList) error {
 		for _, obj := range page.Items {
@@ -76,7 +76,7 @@ func (g *NodeTemplatesGenerator) InitResources() error {
 
 	nodeTemplatesList := computeService.NodeTemplates.List(g.GetArgs()["project"], g.GetArgs()["region"])
 
-	g.Resources = g.createResources(nodeTemplatesList, ctx)
+	g.Resources = g.createResources(ctx, nodeTemplatesList)
 	g.PopulateIgnoreKeys()
 	return nil
 

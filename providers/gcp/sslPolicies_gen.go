@@ -34,7 +34,7 @@ type SslPoliciesGenerator struct {
 }
 
 // Run on sslPoliciesList and create for each TerraformResource
-func (g SslPoliciesGenerator) createResources(sslPoliciesList *compute.SslPoliciesListCall, ctx context.Context) []terraform_utils.Resource {
+func (g SslPoliciesGenerator) createResources(ctx context.Context, sslPoliciesList *compute.SslPoliciesListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := sslPoliciesList.Pages(ctx, func(page *compute.SslPoliciesList) error {
 		for _, obj := range page.Items {
@@ -76,7 +76,7 @@ func (g *SslPoliciesGenerator) InitResources() error {
 
 	sslPoliciesList := computeService.SslPolicies.List(g.GetArgs()["project"])
 
-	g.Resources = g.createResources(sslPoliciesList, ctx)
+	g.Resources = g.createResources(ctx, sslPoliciesList)
 	g.PopulateIgnoreKeys()
 	return nil
 
