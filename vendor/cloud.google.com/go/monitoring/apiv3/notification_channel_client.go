@@ -245,7 +245,7 @@ func (c *NotificationChannelClient) GetNotificationChannel(ctx context.Context, 
 }
 
 // CreateNotificationChannel creates a new notification channel, representing a single notification
-// endpoint such as an email address, SMS number, or pagerduty service.
+// endpoint such as an email address, SMS number, or PagerDuty service.
 func (c *NotificationChannelClient) CreateNotificationChannel(ctx context.Context, req *monitoringpb.CreateNotificationChannelRequest, opts ...gax.CallOption) (*monitoringpb.NotificationChannel, error) {
 	ctx = insertMetadata(ctx, c.xGoogMetadata)
 	opts = append(c.CallOptions.CreateNotificationChannel[0:len(c.CallOptions.CreateNotificationChannel):len(c.CallOptions.CreateNotificationChannel)], opts...)

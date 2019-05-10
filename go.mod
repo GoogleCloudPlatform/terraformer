@@ -1,7 +1,7 @@
 module github.com/GoogleCloudPlatform/terraformer
 
 require (
-	cloud.google.com/go v0.33.1
+	cloud.google.com/go v0.34.0
 	github.com/Azure/azure-sdk-for-go v10.3.0-beta+incompatible // indirect
 	github.com/Azure/go-autorest v9.9.0+incompatible // indirect
 	github.com/Azure/go-ntlmssp v0.0.0-20180810175552-4a21cbd618b4 // indirect
@@ -16,6 +16,7 @@ require (
 	github.com/armon/go-metrics v0.0.0-20180917152333-f0300d1749da // indirect
 	github.com/aws/aws-sdk-go v1.16.23
 	github.com/beevik/etree v1.0.1 // indirect
+	github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/boltdb/bolt v1.3.1 // indirect
 	github.com/boombuler/barcode v1.0.0 // indirect
@@ -34,6 +35,7 @@ require (
 	github.com/dustinkirkland/golang-petname v0.0.0-20170921220637-d3c2ba80e75e // indirect
 	github.com/dylanmei/iso8601 v0.1.0 // indirect
 	github.com/dylanmei/winrmtest v0.0.0-20170819153634-c2fbb09e6c08 // indirect
+	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/gogo/protobuf v1.1.1 // indirect
 	github.com/golang/groupcache v0.0.0-20181024230925-c65c006176ff // indirect
 	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db // indirect
@@ -47,6 +49,7 @@ require (
 	github.com/gopherjs/gopherjs v0.0.0-20181103185306-d547d1d9531e // indirect
 	github.com/gorilla/websocket v1.4.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 // indirect
+	github.com/grpc-ecosystem/grpc-gateway v1.5.0 // indirect
 	github.com/hashicorp/atlas-go v0.0.0-20170808163836-8261ea080105 // indirect
 	github.com/hashicorp/consul v1.4.0 // indirect
 	github.com/hashicorp/go-getter v0.0.0-20181119194526-bd1edc22f8ea // indirect
@@ -81,6 +84,7 @@ require (
 	github.com/lusis/go-artifactory v0.0.0-20180304164534-a47f63f234b2 // indirect
 	github.com/masterzen/simplexml v0.0.0-20160608183007-4572e39b1ab9 // indirect
 	github.com/masterzen/winrm v0.0.0-20181112102303-a196a4ff2a86 // indirect
+	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/miekg/dns v1.0.15 // indirect
 	github.com/mitchellh/cli v1.0.0 // indirect
 	github.com/mitchellh/colorstring v0.0.0-20150917214807-8631ce90f286 // indirect
@@ -100,6 +104,10 @@ require (
 	github.com/pierrec/lz4 v2.0.5+incompatible // indirect
 	github.com/pkg/errors v0.8.0
 	github.com/pquerna/otp v1.0.0 // indirect
+	github.com/prometheus/client_golang v0.8.0 // indirect
+	github.com/prometheus/client_model v0.0.0-20180712105110-5c3871d89910 // indirect
+	github.com/prometheus/common v0.0.0-20180801064454-c7de2306084e // indirect
+	github.com/prometheus/procfs v0.0.0-20180725123919-05ee40e3a273 // indirect
 	github.com/ryanuber/columnize v2.1.0+incompatible // indirect
 	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/satori/uuid v1.2.0 // indirect
@@ -125,11 +133,10 @@ require (
 	github.com/xiang90/probing v0.0.0-20160813154853-07dd2e8dfe18 // indirect
 	github.com/xlab/treeprint v0.0.0-20181112141820-a009c3971eca // indirect
 	github.com/zclconf/go-cty v0.0.0-20181017232614-01c5aba823a6 // indirect
-	go.opencensus.io v0.18.0 // indirect
-	golang.org/x/oauth2 v0.0.0-20181120190819-8f65e3013eba
+	golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421
 	golang.org/x/time v0.0.0-20181108054448-85acf8d2951c // indirect
-	google.golang.org/api v0.0.0-20181212003324-40e757e92c52
-	google.golang.org/genproto v0.0.0-20181109154231-b5d43981345b
+	google.golang.org/api v0.5.1-0.20190510010909-bbbc0e98e3cc
+	google.golang.org/genproto v0.0.0-20190307195333-5fe7a883aa19
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/vmihailenco/msgpack.v2 v2.9.1 // indirect
 	k8s.io/api v0.0.0-20190116205037-c89978d5f86d // indirect
