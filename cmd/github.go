@@ -30,11 +30,11 @@ func newCmdGithubImporter(options ImportOptions) *cobra.Command {
 		Short: "Import current State to terraform configuration from github",
 		Long:  "Import current State to terraform configuration from github",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			originalPathPatter := options.PathPatter
+			originalPathPattern := options.PathPattern
 			for _, organization := range organizations {
 				provider := &github_terraforming.GithubProvider{}
-				options.PathPatter = originalPathPatter
-				options.PathPatter = strings.Replace(options.PathPatter, "{provider}", "{provider}/"+organization, -1)
+				options.PathPattern = originalPathPattern
+				options.PathPattern = strings.Replace(options.PathPattern, "{provider}", "{provider}/"+organization, -1)
 				log.Println(provider.GetName() + " importing organization " + organization)
 				err := Import(provider, options, []string{organization, token})
 				if err != nil {
@@ -47,7 +47,7 @@ func newCmdGithubImporter(options ImportOptions) *cobra.Command {
 	cmd.AddCommand(listCmd(&github_terraforming.GithubProvider{}))
 	cmd.PersistentFlags().BoolVarP(&options.Connect, "connect", "c", true, "")
 	cmd.PersistentFlags().StringSliceVarP(&options.Resources, "resources", "r", []string{}, "repository")
-	cmd.PersistentFlags().StringVarP(&options.PathPatter, "path-patter", "p", DefaultPathPatter, "{output}/{provider}/custom/{service}/")
+	cmd.PersistentFlags().StringVarP(&options.PathPattern, "path-pattern", "p", DefaultPathPattern, "{output}/{provider}/custom/{service}/")
 	cmd.PersistentFlags().StringVarP(&options.PathOutput, "path-output", "o", DefaultPathOutput, "")
 	cmd.PersistentFlags().StringVarP(&options.State, "state", "s", DefaultState, "local or bucket")
 	cmd.PersistentFlags().StringVarP(&options.Bucket, "bucket", "b", "", "gs://terraform-state")

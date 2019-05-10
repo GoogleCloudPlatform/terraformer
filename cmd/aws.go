@@ -27,11 +27,11 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 		Short: "Import current State to terraform configuration from aws",
 		Long:  "Import current State to terraform configuration from aws",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			originalPathPatter := options.PathPatter
+			originalPathPattern := options.PathPattern
 			for _, region := range options.Regions {
 				provider := &aws_terraforming.AWSProvider{}
-				options.PathPatter = originalPathPatter
-				options.PathPatter += region + "/"
+				options.PathPattern = originalPathPattern
+				options.PathPattern += region + "/"
 				log.Println(provider.GetName() + " importing region " + region)
 				err := Import(provider, options, []string{region})
 				if err != nil {
@@ -44,7 +44,7 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 	cmd.AddCommand(listCmd(&aws_terraforming.AWSProvider{}))
 	cmd.PersistentFlags().BoolVarP(&options.Connect, "connect", "c", true, "")
 	cmd.PersistentFlags().StringSliceVarP(&options.Resources, "resources", "r", []string{}, "vpc,subnet,nacl")
-	cmd.PersistentFlags().StringVarP(&options.PathPatter, "path-patter", "p", DefaultPathPatter, "{output}/{provider}/custom/{service}/")
+	cmd.PersistentFlags().StringVarP(&options.PathPattern, "path-pattern", "p", DefaultPathPattern, "{output}/{provider}/custom/{service}/")
 	cmd.PersistentFlags().StringVarP(&options.PathOutput, "path-output", "o", DefaultPathOutput, "")
 	cmd.PersistentFlags().StringVarP(&options.State, "state", "s", DefaultState, "local or bucket")
 	cmd.PersistentFlags().StringVarP(&options.Bucket, "bucket", "b", "", "gs://terraform-state")
