@@ -116,6 +116,7 @@ List of supported GCP services:
 *   `instanceGroups`
 *   `instanceTemplates`
 *   `instances`
+*   `interconnectAttachments`
 *   `memoryStore`
 *   `networks`
 *   `nodeGroups`
