@@ -118,6 +118,8 @@ List of supported GCP services:
 *   `instances`
 *   `memoryStore`
 *   `networks`
+*   `nodeGroups`
+*   `nodeTemplates`
 *   `regionAutoscalers`
 *   `regionBackendServices`
 *   `regionDisks`
@@ -129,6 +131,7 @@ List of supported GCP services:
 *   `subnetworks`
 *   `targetHttpProxies` (bug with proxy_id uint64 issue)
 *   `targetHttpsProxies`
+*   `targetPools`
 *   `targetSslProxies`
 *   `targetTcpProxies`
 *   `urlMaps`
