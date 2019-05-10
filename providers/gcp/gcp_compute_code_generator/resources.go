@@ -113,10 +113,6 @@ var terraformResources = map[string]gcpResourceRenderable{
 			"source_disk_link",
 		},
 	},*/
-	/*"sslCertificates": {
-		terraformName:       "google_compute_ssl_certificate",
-		ignoreKeys: []string{"certificate_id"},
-	},*/
 	"sslPolicies": basicGCPResource{
 		terraformName: "google_compute_ssl_policy",
 	},
@@ -140,5 +136,14 @@ var terraformResources = map[string]gcpResourceRenderable{
 	},
 	"vpnTunnels": basicGCPResource{
 		terraformName: "google_compute_vpn_tunnel",
+	},
+	"nodeGroups": basicGCPResource{
+		terraformName: "google_compute_node_group",
+	},
+	"nodeTemplates": basicGCPResource{
+		terraformName: "google_compute_node_template",
+	},
+	"targetPools": basicGCPResource{
+		terraformName: "google_compute_target_pool",
 	},
 }
