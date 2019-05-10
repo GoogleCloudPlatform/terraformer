@@ -90,8 +90,8 @@ func (r *Resource) ConvertTFstate() {
 	}
 	// delete ignored keys
 	for keyAttribute := range r.InstanceState.Attributes {
-		for _, patter := range r.IgnoreKeys {
-			match, err := regexp.MatchString(patter, keyAttribute)
+		for _, pattern := range r.IgnoreKeys {
+			match, err := regexp.MatchString(pattern, keyAttribute)
 			if match && err == nil {
 				delete(attributes, keyAttribute)
 			}
@@ -103,9 +103,9 @@ func (r *Resource) ConvertTFstate() {
 			continue
 		}
 		allowEmptyValue := false
-		for _, patter := range r.AllowEmptyValues {
-			match, err := regexp.MatchString(patter, keyAttribute)
-			if match && err == nil && patter != "" {
+		for _, pattern := range r.AllowEmptyValues {
+			match, err := regexp.MatchString(pattern, keyAttribute)
+			if match && err == nil && pattern != "" {
 				allowEmptyValue = true
 			}
 		}

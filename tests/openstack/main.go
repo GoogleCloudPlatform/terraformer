@@ -39,11 +39,11 @@ func main() {
 		Provider: terraform_utils.Provider{},
 	}
 	err := cmd.Import(provider, cmd.ImportOptions{
-		Resources:  services,
-		PathPatter: cmd.DefaultPathPatter,
-		PathOutput: cmd.DefaultPathOutput,
-		State:      "local",
-		Connect:    true,
+		Resources:   services,
+		PathPattern: cmd.DefaultPathPattern,
+		PathOutput:  cmd.DefaultPathOutput,
+		State:       "local",
+		Connect:     true,
 	}, []string{region})
 	if err != nil {
 		log.Println(err)
@@ -51,7 +51,7 @@ func main() {
 	}
 	rootPath, _ := os.Getwd()
 	for _, serviceName := range services {
-		currentPath := cmd.Path(cmd.DefaultPathPatter, provider.GetName(), serviceName, cmd.DefaultPathOutput)
+		currentPath := cmd.Path(cmd.DefaultPathPattern, provider.GetName(), serviceName, cmd.DefaultPathOutput)
 		if err := os.Chdir(currentPath); err != nil {
 			log.Println(err)
 			os.Exit(1)

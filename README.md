@@ -5,7 +5,7 @@ CLI tool to generate `tf` and `tfstate` files from existing infrastructure
 
 *   Disclaimer: This is not an official Google product.
 *   Status: beta - need improve documentations, bugs etc..
-*   Created by: Created by Waze SRE.
+*   Created by: Waze SRE.
 
 ![Waze SRE logo](docs/waze-sre-logo.png)
 
@@ -32,7 +32,7 @@ Flags:
   -c, --connect               (default true)
   -h, --help                 help for google
   -o, --path-output string    (default "generated")
-  -p, --path-patter string   {output}/{provider}/custom/{service}/ (default "{output}/{provider}/{service}/")
+  -p, --path-pattern string   {output}/{provider}/custom/{service}/ (default "{output}/{provider}/{service}/")
   -r, --resources strings    firewalls,networks
   -s, --state string         local or bucket (default "local")
       --projects strings
@@ -164,7 +164,7 @@ Flags:
   -c, --connect               (default true)
   -h, --help                 help for aws
   -o, --path-output string    (default "generated")
-  -p, --path-patter string   {output}/{provider}/custom/{service}/ (default "{output}/{provider}/{service}/")
+  -p, --path-pattern string   {output}/{provider}/custom/{service}/ (default "{output}/{provider}/{service}/")
       --regions strings      eu-west-1,eu-west-2,us-east-1
   -r, --resources strings    vpc,subnet,nacl
   -s, --state string         local or bucket (default "local")

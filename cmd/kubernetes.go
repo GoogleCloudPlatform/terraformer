@@ -37,7 +37,7 @@ func newCmdKubernetesImporter(options ImportOptions) *cobra.Command {
 	cmd.AddCommand(listCmd(&kubernetes_terraforming.KubernetesProvider{}))
 	cmd.PersistentFlags().BoolVarP(&options.Connect, "connect", "c", true, "")
 	cmd.PersistentFlags().StringSliceVarP(&options.Resources, "resources", "r", []string{}, "configmaps,deployments,services")
-	cmd.PersistentFlags().StringVarP(&options.PathPatter, "path-patter", "p", DefaultPathPatter, "{output}/{provider}/custom/{service}/")
+	cmd.PersistentFlags().StringVarP(&options.PathPattern, "path-pattern", "p", DefaultPathPattern, "{output}/{provider}/custom/{service}/")
 	cmd.PersistentFlags().StringVarP(&options.PathOutput, "path-output", "o", DefaultPathOutput, "")
 	cmd.PersistentFlags().StringVarP(&options.State, "state", "s", DefaultState, "local or bucket")
 	cmd.PersistentFlags().StringVarP(&options.Bucket, "bucket", "b", "", "gs://terraform-state")

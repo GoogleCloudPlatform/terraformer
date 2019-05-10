@@ -28,19 +28,19 @@ import (
 )
 
 type ImportOptions struct {
-	Resources  []string
-	PathPatter string
-	PathOutput string
-	State      string
-	Bucket     string
-	Zone       string
-	Regions    []string
-	Projects   []string
-	Connect    bool
-	Filter     []string
+	Resources   []string
+	PathPattern string
+	PathOutput  string
+	State       string
+	Bucket      string
+	Zone        string
+	Regions     []string
+	Projects    []string
+	Connect     bool
+	Filter      []string
 }
 
-const DefaultPathPatter = "{output}/{provider}/{service}/"
+const DefaultPathPattern = "{output}/{provider}/{service}/"
 const DefaultPathOutput = "generated"
 const DefaultState = "local"
 
@@ -110,7 +110,7 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 	for serviceName, resources := range importedResource {
 		log.Println(provider.GetName() + " save " + serviceName)
 		// Print HCL files for Resources
-		path := Path(options.PathPatter, provider.GetName(), serviceName, options.PathOutput)
+		path := Path(options.PathPattern, provider.GetName(), serviceName, options.PathOutput)
 		err := terraform_output.OutputHclFiles(resources, provider, path, serviceName)
 		if err != nil {
 			return err
@@ -180,19 +180,19 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 	return nil
 }
 
-func Path(pathPatter, providerName, serviceName, output string) string {
+func Path(pathPattern, providerName, serviceName, output string) string {
 	return strings.NewReplacer(
 		"{provider}", providerName,
 		"{service}", serviceName,
 		"{output}", output,
-	).Replace(pathPatter)
+	).Replace(pathPattern)
 }
 
 func listCmd(provider terraform_utils.ProviderGenerator) *cobra.Command {
 	return &cobra.Command{
 		Use:   "list",
-		Short: "Import current State to terraform configuration",
-		Long:  "Import current State to terraform configuration",
+		Short: "List supported resources for " + provider.GetName()+" provider",
+		Long:  "List supported resources for " + provider.GetName()+" provider",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			services := []string{}
 			for k := range provider.GetSupportedService() {
