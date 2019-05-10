@@ -34,7 +34,7 @@ type TargetPoolsGenerator struct {
 }
 
 // Run on targetPoolsList and create for each TerraformResource
-func (g TargetPoolsGenerator) createResources(targetPoolsList *compute.TargetPoolsListCall, ctx context.Context) []terraform_utils.Resource {
+func (g TargetPoolsGenerator) createResources(ctx context.Context, targetPoolsList *compute.TargetPoolsListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := targetPoolsList.Pages(ctx, func(page *compute.TargetPoolList) error {
 		for _, obj := range page.Items {
@@ -76,7 +76,7 @@ func (g *TargetPoolsGenerator) InitResources() error {
 
 	targetPoolsList := computeService.TargetPools.List(g.GetArgs()["project"], g.GetArgs()["region"])
 
-	g.Resources = g.createResources(targetPoolsList, ctx)
+	g.Resources = g.createResources(ctx, targetPoolsList)
 	g.PopulateIgnoreKeys()
 	return nil
 

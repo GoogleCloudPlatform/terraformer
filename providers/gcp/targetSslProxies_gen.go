@@ -34,7 +34,7 @@ type TargetSslProxiesGenerator struct {
 }
 
 // Run on targetSslProxiesList and create for each TerraformResource
-func (g TargetSslProxiesGenerator) createResources(targetSslProxiesList *compute.TargetSslProxiesListCall, ctx context.Context) []terraform_utils.Resource {
+func (g TargetSslProxiesGenerator) createResources(ctx context.Context, targetSslProxiesList *compute.TargetSslProxiesListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := targetSslProxiesList.Pages(ctx, func(page *compute.TargetSslProxyList) error {
 		for _, obj := range page.Items {
@@ -76,7 +76,7 @@ func (g *TargetSslProxiesGenerator) InitResources() error {
 
 	targetSslProxiesList := computeService.TargetSslProxies.List(g.GetArgs()["project"])
 
-	g.Resources = g.createResources(targetSslProxiesList, ctx)
+	g.Resources = g.createResources(ctx, targetSslProxiesList)
 	g.PopulateIgnoreKeys()
 	return nil
 

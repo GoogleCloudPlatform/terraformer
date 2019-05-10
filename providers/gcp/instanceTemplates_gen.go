@@ -34,7 +34,7 @@ type InstanceTemplatesGenerator struct {
 }
 
 // Run on instanceTemplatesList and create for each TerraformResource
-func (g InstanceTemplatesGenerator) createResources(instanceTemplatesList *compute.InstanceTemplatesListCall, ctx context.Context) []terraform_utils.Resource {
+func (g InstanceTemplatesGenerator) createResources(ctx context.Context, instanceTemplatesList *compute.InstanceTemplatesListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := instanceTemplatesList.Pages(ctx, func(page *compute.InstanceTemplateList) error {
 		for _, obj := range page.Items {
@@ -76,7 +76,7 @@ func (g *InstanceTemplatesGenerator) InitResources() error {
 
 	instanceTemplatesList := computeService.InstanceTemplates.List(g.GetArgs()["project"])
 
-	g.Resources = g.createResources(instanceTemplatesList, ctx)
+	g.Resources = g.createResources(ctx, instanceTemplatesList)
 	g.PopulateIgnoreKeys()
 	return nil
 

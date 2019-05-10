@@ -34,7 +34,7 @@ type GlobalAddressesGenerator struct {
 }
 
 // Run on globalAddressesList and create for each TerraformResource
-func (g GlobalAddressesGenerator) createResources(globalAddressesList *compute.GlobalAddressesListCall, ctx context.Context) []terraform_utils.Resource {
+func (g GlobalAddressesGenerator) createResources(ctx context.Context, globalAddressesList *compute.GlobalAddressesListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := globalAddressesList.Pages(ctx, func(page *compute.AddressList) error {
 		for _, obj := range page.Items {
@@ -76,7 +76,7 @@ func (g *GlobalAddressesGenerator) InitResources() error {
 
 	globalAddressesList := computeService.GlobalAddresses.List(g.GetArgs()["project"])
 
-	g.Resources = g.createResources(globalAddressesList, ctx)
+	g.Resources = g.createResources(ctx, globalAddressesList)
 	g.PopulateIgnoreKeys()
 	return nil
 

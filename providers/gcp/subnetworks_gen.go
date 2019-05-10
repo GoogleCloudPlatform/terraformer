@@ -34,7 +34,7 @@ type SubnetworksGenerator struct {
 }
 
 // Run on subnetworksList and create for each TerraformResource
-func (g SubnetworksGenerator) createResources(subnetworksList *compute.SubnetworksListCall, ctx context.Context) []terraform_utils.Resource {
+func (g SubnetworksGenerator) createResources(ctx context.Context, subnetworksList *compute.SubnetworksListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := subnetworksList.Pages(ctx, func(page *compute.SubnetworkList) error {
 		for _, obj := range page.Items {
@@ -76,7 +76,7 @@ func (g *SubnetworksGenerator) InitResources() error {
 
 	subnetworksList := computeService.Subnetworks.List(g.GetArgs()["project"], g.GetArgs()["region"])
 
-	g.Resources = g.createResources(subnetworksList, ctx)
+	g.Resources = g.createResources(ctx, subnetworksList)
 	g.PopulateIgnoreKeys()
 	return nil
 

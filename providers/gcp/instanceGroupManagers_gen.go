@@ -34,7 +34,7 @@ type InstanceGroupManagersGenerator struct {
 }
 
 // Run on instanceGroupManagersList and create for each TerraformResource
-func (g InstanceGroupManagersGenerator) createResources(instanceGroupManagersList *compute.InstanceGroupManagersListCall, ctx context.Context) []terraform_utils.Resource {
+func (g InstanceGroupManagersGenerator) createResources(ctx context.Context, instanceGroupManagersList *compute.InstanceGroupManagersListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := instanceGroupManagersList.Pages(ctx, func(page *compute.InstanceGroupManagerList) error {
 		for _, obj := range page.Items {
@@ -77,7 +77,7 @@ func (g *InstanceGroupManagersGenerator) InitResources() error {
 
 	instanceGroupManagersList := computeService.InstanceGroupManagers.List(g.GetArgs()["project"], g.GetArgs()["zone"])
 
-	g.Resources = g.createResources(instanceGroupManagersList, ctx)
+	g.Resources = g.createResources(ctx, instanceGroupManagersList)
 	g.PopulateIgnoreKeys()
 	return nil
 

@@ -34,7 +34,7 @@ type HealthChecksGenerator struct {
 }
 
 // Run on healthChecksList and create for each TerraformResource
-func (g HealthChecksGenerator) createResources(healthChecksList *compute.HealthChecksListCall, ctx context.Context) []terraform_utils.Resource {
+func (g HealthChecksGenerator) createResources(ctx context.Context, healthChecksList *compute.HealthChecksListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := healthChecksList.Pages(ctx, func(page *compute.HealthCheckList) error {
 		for _, obj := range page.Items {
@@ -76,7 +76,7 @@ func (g *HealthChecksGenerator) InitResources() error {
 
 	healthChecksList := computeService.HealthChecks.List(g.GetArgs()["project"])
 
-	g.Resources = g.createResources(healthChecksList, ctx)
+	g.Resources = g.createResources(ctx, healthChecksList)
 	g.PopulateIgnoreKeys()
 	return nil
 

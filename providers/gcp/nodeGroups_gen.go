@@ -34,7 +34,7 @@ type NodeGroupsGenerator struct {
 }
 
 // Run on nodeGroupsList and create for each TerraformResource
-func (g NodeGroupsGenerator) createResources(nodeGroupsList *compute.NodeGroupsListCall, ctx context.Context) []terraform_utils.Resource {
+func (g NodeGroupsGenerator) createResources(ctx context.Context, nodeGroupsList *compute.NodeGroupsListCall) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := nodeGroupsList.Pages(ctx, func(page *compute.NodeGroupList) error {
 		for _, obj := range page.Items {
@@ -77,7 +77,7 @@ func (g *NodeGroupsGenerator) InitResources() error {
 
 	nodeGroupsList := computeService.NodeGroups.List(g.GetArgs()["project"], g.GetArgs()["zone"])
 
-	g.Resources = g.createResources(nodeGroupsList, ctx)
+	g.Resources = g.createResources(ctx, nodeGroupsList)
 	g.PopulateIgnoreKeys()
 	return nil
 
