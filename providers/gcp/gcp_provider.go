@@ -80,6 +80,7 @@ func (p *GCPProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 	services["schedulerJobs"] = &SchedulerJobsGenerator{}
 	services["bigQuery"] = &BigQueryGenerator{}
 	services["dataProc"] = &DataprocGenerator{}
+	services["cloudFunctions"] = &CloudFunctionsGenerator{}
 	return services
 }
 

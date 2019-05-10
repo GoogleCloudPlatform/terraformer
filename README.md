@@ -135,6 +135,7 @@ List of supported GCP services:
 *   `vpnTunnels`
 *   `gke`
 *   `dataProc`
+*   `cloudFunctions`
 *   `gcs`
 *   `monitoring`
 *   `dns`
