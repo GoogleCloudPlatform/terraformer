@@ -302,7 +302,7 @@
                   ],
                   "parameters": {
                     "name": {
-                      "description": "The job name. For example:\n`projects/PROJECT_ID/locations/LOCATION_ID/jobs/JOB_ID`.\n\n* `PROJECT_ID` can contain letters ([A-Za-z]), numbers ([0-9]),\n   hyphens (-), colons (:), or periods (.).\n   For more information, see\n   [Identifying projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects#identifying_projects)\n* `LOCATION_ID` is the canonical ID for the job's location.\n   The list of available locations can be obtained by calling\n   ListLocations.\n   For more information, see https://cloud.google.com/about/locations/.\n* `JOB_ID` can contain only letters ([A-Za-z]), numbers ([0-9]),\n   hyphens (-), or underscores (_). The maximum length is 500 characters.",
+                      "description": "Optionally caller-specified in CreateJob, after\nwhich it becomes output only.\n\nThe job name. For example:\n`projects/PROJECT_ID/locations/LOCATION_ID/jobs/JOB_ID`.\n\n* `PROJECT_ID` can contain letters ([A-Za-z]), numbers ([0-9]),\n   hyphens (-), colons (:), or periods (.).\n   For more information, see\n   [Identifying\n   projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects#identifying_projects)\n* `LOCATION_ID` is the canonical ID for the job's location.\n   The list of available locations can be obtained by calling\n   ListLocations.\n   For more information, see https://cloud.google.com/about/locations/.\n* `JOB_ID` can contain only letters ([A-Za-z]), numbers ([0-9]),\n   hyphens (-), or underscores (_). The maximum length is 500 characters.",
                       "location": "path",
                       "pattern": "^projects/[^/]+/locations/[^/]+/jobs/[^/]+$",
                       "required": true,
@@ -417,7 +417,7 @@
       }
     }
   },
-  "revision": "20181120",
+  "revision": "20190429",
   "rootUrl": "https://cloudscheduler.googleapis.com/",
   "schemas": {
     "AppEngineHttpTarget": {
@@ -437,7 +437,7 @@
           "additionalProperties": {
             "type": "string"
           },
-          "description": "HTTP request headers.\n\nThis map contains the header field names and values. Headers can be set\nwhen the job is created.\n\nCloud Scheduler sets some headers to default values:\n\n* `User-Agent`: By default, this header is\n  `\"AppEngine-Google; (+http://code.google.com/appengine)\"`.\n  This header can be modified, but Cloud Scheduler will append\n  `\"AppEngine-Google; (+http://code.google.com/appengine)\"` to the\n  modified `User-Agent`.\n\nIf the job has an body, Cloud Scheduler sets the\nfollowing headers:\n\n* `Content-Type`: By default, the `Content-Type` header is set to\n  `\"application/octet-stream\"`. The default can be overridden by explictly\n  setting `Content-Type` to a particular media type when the job is\n  created.\n  For example, `Content-Type` can be set to `\"application/json\"`.\n* `Content-Length`: This is computed by Cloud Scheduler. This value is\n  output only. It cannot be changed.\n\nThe headers below are output only. They cannot be set or overridden:\n\n* `X-Google-*`: For Google internal use only.\n* `X-AppEngine-*`: For Google internal use only. See\n  [Reading request headers](https://cloud.google.com/appengine/docs/python/taskqueue/push/creating-handlers#reading_request_headers).\n\nIn addition, some App Engine headers, which contain\njob-specific information, are also be sent to the job handler; see\n[request headers](https://cloud.google.comappengine/docs/standard/python/config/cron#securing_urls_for_cron).",
+          "description": "HTTP request headers.\n\nThis map contains the header field names and values. Headers can be set\nwhen the job is created.\n\nCloud Scheduler sets some headers to default values:\n\n* `User-Agent`: By default, this header is\n  `\"AppEngine-Google; (+http://code.google.com/appengine)\"`.\n  This header can be modified, but Cloud Scheduler will append\n  `\"AppEngine-Google; (+http://code.google.com/appengine)\"` to the\n  modified `User-Agent`.\n* `X-CloudScheduler`: This header will be set to true.\n\nIf the job has an body, Cloud Scheduler sets\nthe following headers:\n\n* `Content-Type`: By default, the `Content-Type` header is set to\n  `\"application/octet-stream\"`. The default can be overridden by explictly\n  setting `Content-Type` to a particular media type when the job is\n  created.\n  For example, `Content-Type` can be set to `\"application/json\"`.\n* `Content-Length`: This is computed by Cloud Scheduler. This value is\n  output only. It cannot be changed.\n\nThe headers below are output only. They cannot be set or overridden:\n\n* `X-Google-*`: For Google internal use only.\n* `X-AppEngine-*`: For Google internal use only.\n\nIn addition, some App Engine headers, which contain\njob-specific information, are also be sent to the job handler.",
           "type": "object"
         },
         "httpMethod": {
@@ -472,7 +472,7 @@
       "type": "object"
     },
     "AppEngineRouting": {
-      "description": "App Engine Routing.\n\nFor more information about services, versions, and instances see\n[An Overview of App Engine](https://cloud.google.com/appengine/docs/python/an-overview-of-app-engine),\n[Microservices Architecture on Google App Engine](https://cloud.google.com/appengine/docs/python/microservices-on-app-engine),\n[App Engine Standard request routing](https://cloud.google.com/appengine/docs/standard/python/how-requests-are-routed), and\n[App Engine Flex request routing](https://cloud.google.com/appengine/docs/flexible/python/how-requests-are-routed).",
+      "description": "App Engine Routing.\n\nFor more information about services, versions, and instances see\n[An Overview of App\nEngine](https://cloud.google.com/appengine/docs/python/an-overview-of-app-engine),\n[Microservices Architecture on Google App\nEngine](https://cloud.google.com/appengine/docs/python/microservices-on-app-engine),\n[App Engine Standard request\nrouting](https://cloud.google.com/appengine/docs/standard/python/how-requests-are-routed),\nand [App Engine Flex request\nrouting](https://cloud.google.com/appengine/docs/flexible/python/how-requests-are-routed).",
       "id": "AppEngineRouting",
       "properties": {
         "host": {
@@ -480,7 +480,7 @@
           "type": "string"
         },
         "instance": {
-          "description": "App instance.\n\nBy default, the job is sent to an instance which is available when\nthe job is attempted.\n\nRequests can only be sent to a specific instance if\n[manual scaling is used in App Engine Standard](https://cloud.google.com/appengine/docs/python/an-overview-of-app-engine?hl=en_US#scaling_types_and_instance_classes).\nApp Engine Flex does not support instances. For more information, see\n[App Engine Standard request routing](https://cloud.google.com/appengine/docs/standard/python/how-requests-are-routed) and\n[App Engine Flex request routing](https://cloud.google.com/appengine/docs/flexible/python/how-requests-are-routed).",
+          "description": "App instance.\n\nBy default, the job is sent to an instance which is available when\nthe job is attempted.\n\nRequests can only be sent to a specific instance if\n[manual scaling is used in App Engine\nStandard](https://cloud.google.com/appengine/docs/python/an-overview-of-app-engine?hl=en_US#scaling_types_and_instance_classes).\nApp Engine Flex does not support instances. For more information, see\n[App Engine Standard request\nrouting](https://cloud.google.com/appengine/docs/standard/python/how-requests-are-routed)\nand [App Engine Flex request\nrouting](https://cloud.google.com/appengine/docs/flexible/python/how-requests-are-routed).",
           "type": "string"
         },
         "service": {
@@ -540,6 +540,14 @@
           ],
           "type": "string"
         },
+        "oauthToken": {
+          "$ref": "OAuthToken",
+          "description": "If specified, an\n[OAuth token](https://developers.google.com/identity/protocols/OAuth2)\nwill be generated and attached as an `Authorization` header in the HTTP\nrequest.\n\nThis type of authorization should be used when sending requests to a GCP\nendpoint."
+        },
+        "oidcToken": {
+          "$ref": "OidcToken",
+          "description": "If specified, an\n[OIDC](https://developers.google.com/identity/protocols/OpenIDConnect)\ntoken will be generated and attached as an `Authorization` header in the\nHTTP request.\n\nThis type of authorization should be used when sending requests to third\nparty endpoints or Cloud Run."
+        },
         "uri": {
           "description": "Required.\n\nThe full URI path that the request will be sent to. This string\nmust begin with either \"http://\" or \"https://\". Some examples of\nvalid values for uri are:\n`http://acme.com` and `https://acme.com/sales:8080`. Cloud Scheduler will\nencode some characters for safety and compatibility. The maximum allowed\nURL length is 2083 characters after encoding.",
           "type": "string"
@@ -555,8 +563,13 @@
           "$ref": "AppEngineHttpTarget",
           "description": "App Engine HTTP target."
         },
+        "attemptDeadline": {
+          "description": "The deadline for job attempts. If the request handler does not respond by\nthis deadline then the request is cancelled and the attempt is marked as a\n`DEADLINE_EXCEEDED` failure. The failed attempt can be viewed in\nexecution logs. Cloud Scheduler will retry the job according\nto the RetryConfig.\n\nThe allowed duration for this deadline is:\n\n* For HTTP targets, between 15 seconds and 30 minutes.\n* For App Engine HTTP targets, between 15\n  seconds and 24 hours.\n* For PubSub targets, this field is ignored.",
+          "format": "google-duration",
+          "type": "string"
+        },
         "description": {
-          "description": "A human-readable description for the job. This string must not contain\nmore than 500 characters.",
+          "description": "Optionally caller-specified in CreateJob or\nUpdateJob.\n\nA human-readable description for the job. This string must not contain\nmore than 500 characters.",
           "type": "string"
         },
         "httpTarget": {
@@ -569,7 +582,7 @@
           "type": "string"
         },
         "name": {
-          "description": "The job name. For example:\n`projects/PROJECT_ID/locations/LOCATION_ID/jobs/JOB_ID`.\n\n* `PROJECT_ID` can contain letters ([A-Za-z]), numbers ([0-9]),\n   hyphens (-), colons (:), or periods (.).\n   For more information, see\n   [Identifying projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects#identifying_projects)\n* `LOCATION_ID` is the canonical ID for the job's location.\n   The list of available locations can be obtained by calling\n   ListLocations.\n   For more information, see https://cloud.google.com/about/locations/.\n* `JOB_ID` can contain only letters ([A-Za-z]), numbers ([0-9]),\n   hyphens (-), or underscores (_). The maximum length is 500 characters.",
+          "description": "Optionally caller-specified in CreateJob, after\nwhich it becomes output only.\n\nThe job name. For example:\n`projects/PROJECT_ID/locations/LOCATION_ID/jobs/JOB_ID`.\n\n* `PROJECT_ID` can contain letters ([A-Za-z]), numbers ([0-9]),\n   hyphens (-), colons (:), or periods (.).\n   For more information, see\n   [Identifying\n   projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects#identifying_projects)\n* `LOCATION_ID` is the canonical ID for the job's location.\n   The list of available locations can be obtained by calling\n   ListLocations.\n   For more information, see https://cloud.google.com/about/locations/.\n* `JOB_ID` can contain only letters ([A-Za-z]), numbers ([0-9]),\n   hyphens (-), or underscores (_). The maximum length is 500 characters.",
           "type": "string"
         },
         "pubsubTarget": {
@@ -581,7 +594,7 @@
           "description": "Settings that determine the retry behavior."
         },
         "schedule": {
-          "description": "Required.\n\nDescribes the schedule on which the job will be executed.\n\nAs a general rule, execution `n + 1` of a job will not begin\nuntil execution `n` has finished. Cloud Scheduler will never\nallow two simultaneously outstanding executions. For example,\nthis implies that if the `n+1`th execution is scheduled to run at\n16:00 but the `n`th execution takes until 16:15, the `n+1`th\nexecution will not start until `16:15`.\nA scheduled start time will be delayed if the previous\nexecution has not ended when its scheduled time occurs.\n\nIf retry_count \u003e 0 and a job attempt fails,\nthe job will be tried a total of retry_count\ntimes, with exponential backoff, until the next scheduled start\ntime.\n\nThe schedule can be either of the following types:\n\n* [Crontab](http://en.wikipedia.org/wiki/Cron#Overview)\n* English-like [schedule](https://cloud.google.com/scheduler/docs/configuring/cron-job-schedules)",
+          "description": "Required, except when used with UpdateJob.\n\nDescribes the schedule on which the job will be executed.\n\nThe schedule can be either of the following types:\n\n* [Crontab](http://en.wikipedia.org/wiki/Cron#Overview)\n* English-like\n[schedule](https://cloud.google.com/scheduler/docs/configuring/cron-job-schedules)\n\nAs a general rule, execution `n + 1` of a job will not begin\nuntil execution `n` has finished. Cloud Scheduler will never\nallow two simultaneously outstanding executions. For example,\nthis implies that if the `n+1`th execution is scheduled to run at\n16:00 but the `n`th execution takes until 16:15, the `n+1`th\nexecution will not start until `16:15`.\nA scheduled start time will be delayed if the previous\nexecution has not ended when its scheduled time occurs.\n\nIf retry_count \u003e 0 and a job attempt fails,\nthe job will be tried a total of retry_count\ntimes, with exponential backoff, until the next scheduled start\ntime.",
           "type": "string"
         },
         "scheduleTime": {
@@ -693,6 +706,36 @@
       },
       "type": "object"
     },
+    "OAuthToken": {
+      "description": "Contains information needed for generating an\n[OAuth token](https://developers.google.com/identity/protocols/OAuth2).\nThis type of authorization should be used when sending requests to a GCP\nendpoint.",
+      "id": "OAuthToken",
+      "properties": {
+        "scope": {
+          "description": "OAuth scope to be used for generating OAuth access token.\nIf not specified, \"https://www.googleapis.com/auth/cloud-platform\"\nwill be used.",
+          "type": "string"
+        },
+        "serviceAccountEmail": {
+          "description": "[Service account email](https://cloud.google.com/iam/docs/service-accounts)\nto be used for generating OAuth token.\nThe service account must be within the same project as the job. The caller\nmust have iam.serviceAccounts.actAs permission for the service account.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "OidcToken": {
+      "description": "Contains information needed for generating an\n[OpenID Connect\ntoken](https://developers.google.com/identity/protocols/OpenIDConnect). This\ntype of authorization should be used when sending requests to third party\nendpoints or Cloud Run.",
+      "id": "OidcToken",
+      "properties": {
+        "audience": {
+          "description": "Audience to be used when generating OIDC token. If not specified, the URI\nspecified in target will be used.",
+          "type": "string"
+        },
+        "serviceAccountEmail": {
+          "description": "[Service account email](https://cloud.google.com/iam/docs/service-accounts)\nto be used for generating OIDC token.\nThe service account must be within the same project as the job. The caller\nmust have iam.serviceAccounts.actAs permission for the service account.",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
     "PauseJobRequest": {
       "description": "Request message for PauseJob.",
       "id": "PauseJobRequest",
@@ -771,7 +814,7 @@
           "type": "integer"
         },
         "maxRetryDuration": {
-          "description": "The time limit for retrying a failed job, measured from time when an\nexecution was first attempted. If specified with\nretry_count, the job will be retried until both limits are\nreached.\n\nThe default value for max_retry_duration is zero, which means retry\nduration is unlimited.",
+          "description": "The time limit for retrying a failed job, measured from time when an\nexecution was first attempted. If specified with\nretry_count, the job will be retried until both\nlimits are reached.\n\nThe default value for max_retry_duration is zero, which means retry\nduration is unlimited.",
           "format": "google-duration",
           "type": "string"
         },
@@ -795,7 +838,7 @@
       "type": "object"
     },
     "Status": {
-      "description": "The `Status` type defines a logical error model that is suitable for different\nprogramming environments, including REST APIs and RPC APIs. It is used by\n[gRPC](https://github.com/grpc). The error model is designed to be:\n\n- Simple to use and understand for most users\n- Flexible enough to meet unexpected needs\n\n# Overview\n\nThe `Status` message contains three pieces of data: error code, error message,\nand error details. The error code should be an enum value of\ngoogle.rpc.Code, but it may accept additional error codes if needed.  The\nerror message should be a developer-facing English message that helps\ndevelopers *understand* and *resolve* the error. If a localized user-facing\nerror message is needed, put the localized message in the error details or\nlocalize it in the client. The optional error details may contain arbitrary\ninformation about the error. There is a predefined set of error detail types\nin the package `google.rpc` that can be used for common error conditions.\n\n# Language mapping\n\nThe `Status` message is the logical representation of the error model, but it\nis not necessarily the actual wire format. When the `Status` message is\nexposed in different client libraries and different wire protocols, it can be\nmapped differently. For example, it will likely be mapped to some exceptions\nin Java, but more likely mapped to some error codes in C.\n\n# Other uses\n\nThe error model and the `Status` message can be used in a variety of\nenvironments, either with or without APIs, to provide a\nconsistent developer experience across different environments.\n\nExample uses of this error model include:\n\n- Partial errors. If a service needs to return partial errors to the client,\n    it may embed the `Status` in the normal response to indicate the partial\n    errors.\n\n- Workflow errors. A typical workflow has multiple steps. Each step may\n    have a `Status` message for error reporting.\n\n- Batch operations. If a client uses batch request and batch response, the\n    `Status` message should be used directly inside batch response, one for\n    each error sub-response.\n\n- Asynchronous operations. If an API call embeds asynchronous operation\n    results in its response, the status of those operations should be\n    represented directly using the `Status` message.\n\n- Logging. If some API errors are stored in logs, the message `Status` could\n    be used directly after any stripping needed for security/privacy reasons.",
+      "description": "The `Status` type defines a logical error model that is suitable for\ndifferent programming environments, including REST APIs and RPC APIs. It is\nused by [gRPC](https://github.com/grpc). The error model is designed to be:\n\n- Simple to use and understand for most users\n- Flexible enough to meet unexpected needs\n\n# Overview\n\nThe `Status` message contains three pieces of data: error code, error\nmessage, and error details. The error code should be an enum value of\ngoogle.rpc.Code, but it may accept additional error codes if needed.  The\nerror message should be a developer-facing English message that helps\ndevelopers *understand* and *resolve* the error. If a localized user-facing\nerror message is needed, put the localized message in the error details or\nlocalize it in the client. The optional error details may contain arbitrary\ninformation about the error. There is a predefined set of error detail types\nin the package `google.rpc` that can be used for common error conditions.\n\n# Language mapping\n\nThe `Status` message is the logical representation of the error model, but it\nis not necessarily the actual wire format. When the `Status` message is\nexposed in different client libraries and different wire protocols, it can be\nmapped differently. For example, it will likely be mapped to some exceptions\nin Java, but more likely mapped to some error codes in C.\n\n# Other uses\n\nThe error model and the `Status` message can be used in a variety of\nenvironments, either with or without APIs, to provide a\nconsistent developer experience across different environments.\n\nExample uses of this error model include:\n\n- Partial errors. If a service needs to return partial errors to the client,\n    it may embed the `Status` in the normal response to indicate the partial\n    errors.\n\n- Workflow errors. A typical workflow has multiple steps. Each step may\n    have a `Status` message for error reporting.\n\n- Batch operations. If a client uses batch request and batch response, the\n    `Status` message should be used directly inside batch response, one for\n    each error sub-response.\n\n- Asynchronous operations. If an API call embeds asynchronous operation\n    results in its response, the status of those operations should be\n    represented directly using the `Status` message.\n\n- Logging. If some API errors are stored in logs, the message `Status` could\n    be used directly after any stripping needed for security/privacy reasons.",
       "id": "Status",
       "properties": {
         "code": {

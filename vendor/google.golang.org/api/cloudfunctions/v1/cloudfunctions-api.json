@@ -139,12 +139,12 @@
           "parameterOrder": [],
           "parameters": {
             "filter": {
-              "description": "The standard list filter.",
+              "description": "Required. A filter for matching the requested operations.\u003cbr\u003e\u003cbr\u003e The supported formats of \u003cb\u003efilter\u003c/b\u003e are:\u003cbr\u003e To query for specific function: \u003ccode\u003eproject:*,location:*,function:*\u003c/code\u003e\u003cbr\u003e To query for all of the latest operations for a project: \u003ccode\u003eproject:*,latest:true\u003c/code\u003e",
               "location": "query",
               "type": "string"
             },
             "name": {
-              "description": "The name of the operation's parent resource.",
+              "description": "Must not be set.",
               "location": "query",
               "type": "string"
             },
@@ -220,7 +220,7 @@
             "functions": {
               "methods": {
                 "call": {
-                  "description": "Invokes synchronously deployed function. To be used for testing, very\nlimited traffic allowed.",
+                  "description": "Synchronously invokes a deployed Cloud Function. To be used for testing\npurposes as very limited traffic is allowed. For more information on\nthe actual limits, refer to\n[Rate Limits](https://cloud.google.com/functions/quotas#rate_limits).",
                   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/functions/{functionsId}:call",
                   "httpMethod": "POST",
                   "id": "cloudfunctions.projects.locations.functions.call",
@@ -329,7 +329,7 @@
                   ]
                 },
                 "generateUploadUrl": {
-                  "description": "Returns a signed URL for uploading a function source code.\nFor more information about the signed URL usage see:\nhttps://cloud.google.com/storage/docs/access-control/signed-urls.\nOnce the function source code upload is complete, the used signed\nURL should be provided in CreateFunction or UpdateFunction request\nas a reference to the function source code.\n\nWhen uploading source code to the generated signed URL, please follow\nthese restrictions:\n\n* Source file type should be a zip file.\n* Source file size should not exceed 100MB limit.\n\nWhen making a HTTP PUT request, these two headers need to be specified:\n\n* `content-type: application/zip`\n* `x-goog-content-length-range: 0,104857600`",
+                  "description": "Returns a signed URL for uploading a function source code.\nFor more information about the signed URL usage see:\nhttps://cloud.google.com/storage/docs/access-control/signed-urls.\nOnce the function source code upload is complete, the used signed\nURL should be provided in CreateFunction or UpdateFunction request\nas a reference to the function source code.\n\nWhen uploading source code to the generated signed URL, please follow\nthese restrictions:\n\n* Source file type should be a zip file.\n* Source file size should not exceed 100MB limit.\n* No credentials should be attached - the signed URLs provide access to the\n  target bucket using internal service identity; if credentials were\n  attached, the identity from the credentials would be used, but that\n  identity does not have permissions to upload files to the URL.\n\nWhen making a HTTP PUT request, these two headers need to be specified:\n\n* `content-type: application/zip`\n* `x-goog-content-length-range: 0,104857600`\n\nAnd this header SHOULD NOT be specified:\n\n* `Authorization: Bearer YOUR_TOKEN`",
                   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/functions:generateUploadUrl",
                   "httpMethod": "POST",
                   "id": "cloudfunctions.projects.locations.functions.generateUploadUrl",
@@ -382,7 +382,7 @@
                   ]
                 },
                 "getIamPolicy": {
-                  "description": "Gets the access control policy for a resource.\nReturns an empty policy if the resource exists and does not have a policy\nset.",
+                  "description": "Gets the IAM access control policy for a function.\nReturns an empty policy if the function exists and does not have a policy\nset.",
                   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/functions/{functionsId}:getIamPolicy",
                   "httpMethod": "GET",
                   "id": "cloudfunctions.projects.locations.functions.getIamPolicy",
@@ -477,7 +477,7 @@
                   ]
                 },
                 "setIamPolicy": {
-                  "description": "Sets the access control policy on the specified resource. Replaces any\nexisting policy.",
+                  "description": "Sets the IAM access control policy on the specified function.\nReplaces any existing policy.",
                   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/functions/{functionsId}:setIamPolicy",
                   "httpMethod": "POST",
                   "id": "cloudfunctions.projects.locations.functions.setIamPolicy",
@@ -505,7 +505,7 @@
                   ]
                 },
                 "testIamPermissions": {
-                  "description": "Returns permissions that a caller has on the specified resource.\nIf the resource does not exist, this will return an empty set of\npermissions, not a NOT_FOUND error.\n\nNote: This operation is designed to be used for building permission-aware\nUIs and command-line tools, not for authorization checking. This operation\nmay \"fail open\" without warning.",
+                  "description": "Tests the specified permissions against the IAM access control policy\nfor a function.\nIf the function does not exist, this will return an empty set of\npermissions, not a NOT_FOUND error.",
                   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/functions/{functionsId}:testIamPermissions",
                   "httpMethod": "POST",
                   "id": "cloudfunctions.projects.locations.functions.testIamPermissions",
@@ -539,7 +539,7 @@
       }
     }
   },
-  "revision": "20181121",
+  "revision": "20190406",
   "rootUrl": "https://cloudfunctions.googleapis.com/",
   "schemas": {
     "AuditConfig": {
@@ -596,10 +596,10 @@
       "properties": {
         "condition": {
           "$ref": "Expr",
-          "description": "Unimplemented. The condition that is associated with this binding.\nNOTE: an unsatisfied condition will not allow user access via current\nbinding. Different bindings, including their conditions, are examined\nindependently."
+          "description": "The condition that is associated with this binding.\nNOTE: An unsatisfied condition will not allow user access via current\nbinding. Different bindings, including their conditions, are examined\nindependently."
         },
         "members": {
-          "description": "Specifies the identities requesting access for a Cloud Platform resource.\n`members` can have the following values:\n\n* `allUsers`: A special identifier that represents anyone who is\n   on the internet; with or without a Google account.\n\n* `allAuthenticatedUsers`: A special identifier that represents anyone\n   who is authenticated with a Google account or a service account.\n\n* `user:{emailid}`: An email address that represents a specific Google\n   account. For example, `alice@gmail.com` .\n\n\n* `serviceAccount:{emailid}`: An email address that represents a service\n   account. For example, `my-other-app@appspot.gserviceaccount.com`.\n\n* `group:{emailid}`: An email address that represents a Google group.\n   For example, `admins@example.com`.\n\n\n* `domain:{domain}`: A Google Apps domain name that represents all the\n   users of that domain. For example, `google.com` or `example.com`.\n\n",
+          "description": "Specifies the identities requesting access for a Cloud Platform resource.\n`members` can have the following values:\n\n* `allUsers`: A special identifier that represents anyone who is\n   on the internet; with or without a Google account.\n\n* `allAuthenticatedUsers`: A special identifier that represents anyone\n   who is authenticated with a Google account or a service account.\n\n* `user:{emailid}`: An email address that represents a specific Google\n   account. For example, `alice@gmail.com` .\n\n\n* `serviceAccount:{emailid}`: An email address that represents a service\n   account. For example, `my-other-app@appspot.gserviceaccount.com`.\n\n* `group:{emailid}`: An email address that represents a Google group.\n   For example, `admins@example.com`.\n\n\n* `domain:{domain}`: The G Suite domain (primary) that represents all the\n   users of that domain. For example, `google.com` or `example.com`.\n\n",
           "items": {
             "type": "string"
           },
@@ -682,7 +682,7 @@
           "type": "object"
         },
         "maxInstances": {
-          "description": "The limit on the maximum number of function instances that may coexist at a\ngiven time. This feature is currently in alpha, available only for\nwhitelisted users.",
+          "description": "The limit on the maximum number of function instances that may coexist at a\ngiven time.",
           "format": "int32",
           "type": "integer"
         },
@@ -695,11 +695,11 @@
           "type": "string"
         },
         "runtime": {
-          "description": "The runtime in which the function is going to run. If empty, defaults to\nNode.js 6.",
+          "description": "Required. The runtime in which the function is going to run. Choices:\n\n* `nodejs6`: Node.js 6\n* `nodejs8`: Node.js 8\n* `nodejs10`: Node.js 10\n* `python37`: Python 3.7\n* `go111`: Go 1.11",
           "type": "string"
         },
         "serviceAccountEmail": {
-          "description": "Output only. The email of the function's service account.",
+          "description": "The email of the function's service account. If empty, defaults to\n{project_id}@appspot.gserviceaccount.com.",
           "type": "string"
         },
         "sourceArchiveUrl": {
@@ -1146,7 +1146,7 @@
       "type": "object"
     },
     "Status": {
-      "description": "The `Status` type defines a logical error model that is suitable for different\nprogramming environments, including REST APIs and RPC APIs. It is used by\n[gRPC](https://github.com/grpc). The error model is designed to be:\n\n- Simple to use and understand for most users\n- Flexible enough to meet unexpected needs\n\n# Overview\n\nThe `Status` message contains three pieces of data: error code, error message,\nand error details. The error code should be an enum value of\ngoogle.rpc.Code, but it may accept additional error codes if needed.  The\nerror message should be a developer-facing English message that helps\ndevelopers *understand* and *resolve* the error. If a localized user-facing\nerror message is needed, put the localized message in the error details or\nlocalize it in the client. The optional error details may contain arbitrary\ninformation about the error. There is a predefined set of error detail types\nin the package `google.rpc` that can be used for common error conditions.\n\n# Language mapping\n\nThe `Status` message is the logical representation of the error model, but it\nis not necessarily the actual wire format. When the `Status` message is\nexposed in different client libraries and different wire protocols, it can be\nmapped differently. For example, it will likely be mapped to some exceptions\nin Java, but more likely mapped to some error codes in C.\n\n# Other uses\n\nThe error model and the `Status` message can be used in a variety of\nenvironments, either with or without APIs, to provide a\nconsistent developer experience across different environments.\n\nExample uses of this error model include:\n\n- Partial errors. If a service needs to return partial errors to the client,\n    it may embed the `Status` in the normal response to indicate the partial\n    errors.\n\n- Workflow errors. A typical workflow has multiple steps. Each step may\n    have a `Status` message for error reporting.\n\n- Batch operations. If a client uses batch request and batch response, the\n    `Status` message should be used directly inside batch response, one for\n    each error sub-response.\n\n- Asynchronous operations. If an API call embeds asynchronous operation\n    results in its response, the status of those operations should be\n    represented directly using the `Status` message.\n\n- Logging. If some API errors are stored in logs, the message `Status` could\n    be used directly after any stripping needed for security/privacy reasons.",
+      "description": "The `Status` type defines a logical error model that is suitable for\ndifferent programming environments, including REST APIs and RPC APIs. It is\nused by [gRPC](https://github.com/grpc). The error model is designed to be:\n\n- Simple to use and understand for most users\n- Flexible enough to meet unexpected needs\n\n# Overview\n\nThe `Status` message contains three pieces of data: error code, error\nmessage, and error details. The error code should be an enum value of\ngoogle.rpc.Code, but it may accept additional error codes if needed.  The\nerror message should be a developer-facing English message that helps\ndevelopers *understand* and *resolve* the error. If a localized user-facing\nerror message is needed, put the localized message in the error details or\nlocalize it in the client. The optional error details may contain arbitrary\ninformation about the error. There is a predefined set of error detail types\nin the package `google.rpc` that can be used for common error conditions.\n\n# Language mapping\n\nThe `Status` message is the logical representation of the error model, but it\nis not necessarily the actual wire format. When the `Status` message is\nexposed in different client libraries and different wire protocols, it can be\nmapped differently. For example, it will likely be mapped to some exceptions\nin Java, but more likely mapped to some error codes in C.\n\n# Other uses\n\nThe error model and the `Status` message can be used in a variety of\nenvironments, either with or without APIs, to provide a\nconsistent developer experience across different environments.\n\nExample uses of this error model include:\n\n- Partial errors. If a service needs to return partial errors to the client,\n    it may embed the `Status` in the normal response to indicate the partial\n    errors.\n\n- Workflow errors. A typical workflow has multiple steps. Each step may\n    have a `Status` message for error reporting.\n\n- Batch operations. If a client uses batch request and batch response, the\n    `Status` message should be used directly inside batch response, one for\n    each error sub-response.\n\n- Asynchronous operations. If an API call embeds asynchronous operation\n    results in its response, the status of those operations should be\n    represented directly using the `Status` message.\n\n- Logging. If some API errors are stored in logs, the message `Status` could\n    be used directly after any stripping needed for security/privacy reasons.",
       "id": "Status",
       "properties": {
         "code": {

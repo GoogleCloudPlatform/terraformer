@@ -1,4 +1,4 @@
-// Copyright 2018 Google Inc. All rights reserved.
+// Copyright 2019 Google LLC.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
@@ -8,13 +8,39 @@
 //
 // This package is DEPRECATED. Use package cloud.google.com/go/bigquery instead.
 //
-// See https://cloud.google.com/bigquery/
+// For product documentation, see: https://cloud.google.com/bigquery/
+//
+// Creating a client
 //
 // Usage example:
 //
 //   import "google.golang.org/api/bigquery/v2"
 //   ...
-//   bigqueryService, err := bigquery.New(oauthHttpClient)
+//   ctx := context.Background()
+//   bigqueryService, err := bigquery.NewService(ctx)
+//
+// In this example, Google Application Default Credentials are used for authentication.
+//
+// For information on how to create and obtain Application Default Credentials, see https://developers.google.com/identity/protocols/application-default-credentials.
+//
+// Other authentication options
+//
+// By default, all available scopes (see "Constants") are used to authenticate. To restrict scopes, use option.WithScopes:
+//
+//   bigqueryService, err := bigquery.NewService(ctx, option.WithScopes(bigquery.DevstorageReadWriteScope))
+//
+// To use an API key for authentication (note: some APIs do not support API keys), use option.WithAPIKey:
+//
+//   bigqueryService, err := bigquery.NewService(ctx, option.WithAPIKey("AIza..."))
+//
+// To use an OAuth token (e.g., a user token obtained via a three-legged OAuth flow), use option.WithTokenSource:
+//
+//   config := &oauth2.Config{...}
+//   // ...
+//   token, err := config.Exchange(ctx, ...)
+//   bigqueryService, err := bigquery.NewService(ctx, option.WithTokenSource(config.TokenSource(ctx, token)))
+//
+// See https://godoc.org/google.golang.org/api/option/ for details on options.
 package bigquery // import "google.golang.org/api/bigquery/v2"
 
 import (
@@ -31,6 +57,8 @@ import (
 
 	gensupport "google.golang.org/api/gensupport"
 	googleapi "google.golang.org/api/googleapi"
+	option "google.golang.org/api/option"
+	htransport "google.golang.org/api/transport/http"
 )
 
 // Always reference these packages, just in case the auto-generated code
@@ -76,6 +104,38 @@ const (
 	DevstorageReadWriteScope = "https://www.googleapis.com/auth/devstorage.read_write"
 )
 
+// NewService creates a new Service.
+func NewService(ctx context.Context, opts ...option.ClientOption) (*Service, error) {
+	scopesOption := option.WithScopes(
+		"https://www.googleapis.com/auth/bigquery",
+		"https://www.googleapis.com/auth/bigquery.insertdata",
+		"https://www.googleapis.com/auth/cloud-platform",
+		"https://www.googleapis.com/auth/cloud-platform.read-only",
+		"https://www.googleapis.com/auth/devstorage.full_control",
+		"https://www.googleapis.com/auth/devstorage.read_only",
+		"https://www.googleapis.com/auth/devstorage.read_write",
+	)
+	// NOTE: prepend, so we don't override user-specified scopes.
+	opts = append([]option.ClientOption{scopesOption}, opts...)
+	client, endpoint, err := htransport.NewClient(ctx, opts...)
+	if err != nil {
+		return nil, err
+	}
+	s, err := New(client)
+	if err != nil {
+		return nil, err
+	}
+	if endpoint != "" {
+		s.BasePath = endpoint
+	}
+	return s, nil
+}
+
+// New creates a new Service. It uses the provided http.Client for requests.
+//
+// Deprecated: please use NewService instead.
+// To provide a custom HTTP client, use option.WithHTTPClient.
+// If you are using google.golang.org/api/googleapis/transport.APIKey, use option.WithAPIKey with NewService instead.
 func New(client *http.Client) (*Service, error) {
 	if client == nil {
 		return nil, errors.New("client is nil")
@@ -83,6 +143,7 @@ func New(client *http.Client) (*Service, error) {
 	s := &Service{client: client, BasePath: basePath}
 	s.Datasets = NewDatasetsService(s)
 	s.Jobs = NewJobsService(s)
+	s.Models = NewModelsService(s)
 	s.Projects = NewProjectsService(s)
 	s.Tabledata = NewTabledataService(s)
 	s.Tables = NewTablesService(s)
@@ -97,6 +158,8 @@ type Service struct {
 	Datasets *DatasetsService
 
 	Jobs *JobsService
+
+	Models *ModelsService
 
 	Projects *ProjectsService
 
@@ -130,6 +193,15 @@ type JobsService struct {
 	s *Service
 }
 
+func NewModelsService(s *Service) *ModelsService {
+	rs := &ModelsService{s: s}
+	return rs
+}
+
+type ModelsService struct {
+	s *Service
+}
+
 func NewProjectsService(s *Service) *ProjectsService {
 	rs := &ProjectsService{s: s}
 	return rs
@@ -155,6 +227,104 @@ func NewTablesService(s *Service) *TablesService {
 
 type TablesService struct {
 	s *Service
+}
+
+// AggregateClassificationMetrics: Aggregate metrics for classification
+// models. For multi-class models,
+// the metrics are either macro-averaged: metrics are calculated for
+// each
+// label and then an unweighted average is taken of those values
+// or
+// micro-averaged: the metric is calculated globally by counting the
+// total
+// number of correctly predicted rows.
+type AggregateClassificationMetrics struct {
+	// Accuracy: Accuracy is the fraction of predictions given the correct
+	// label. For
+	// multiclass this is a micro-averaged metric.
+	Accuracy float64 `json:"accuracy,omitempty"`
+
+	// F1Score: The F1 score is an average of recall and precision. For
+	// multiclass
+	// this is a macro-averaged metric.
+	F1Score float64 `json:"f1Score,omitempty"`
+
+	// LogLoss: Logarithmic Loss. For multiclass this is a macro-averaged
+	// metric.
+	LogLoss float64 `json:"logLoss,omitempty"`
+
+	// Precision: Precision is the fraction of actual positive predictions
+	// that had
+	// positive actual labels. For multiclass this is a
+	// macro-averaged
+	// metric treating each class as a binary classifier.
+	Precision float64 `json:"precision,omitempty"`
+
+	// Recall: Recall is the fraction of actual positive labels that were
+	// given a
+	// positive prediction. For multiclass this is a macro-averaged metric.
+	Recall float64 `json:"recall,omitempty"`
+
+	// RocAuc: Area Under a ROC Curve. For multiclass this is a
+	// macro-averaged
+	// metric.
+	RocAuc float64 `json:"rocAuc,omitempty"`
+
+	// Threshold: Threshold at which the metrics are computed. For
+	// binary
+	// classification models this is the positive class threshold.
+	// For multi-class classfication models this is the
+	// confidence
+	// threshold.
+	Threshold float64 `json:"threshold,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "Accuracy") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "Accuracy") to include in
+	// API requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *AggregateClassificationMetrics) MarshalJSON() ([]byte, error) {
+	type NoMethod AggregateClassificationMetrics
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+func (s *AggregateClassificationMetrics) UnmarshalJSON(data []byte) error {
+	type NoMethod AggregateClassificationMetrics
+	var s1 struct {
+		Accuracy  gensupport.JSONFloat64 `json:"accuracy"`
+		F1Score   gensupport.JSONFloat64 `json:"f1Score"`
+		LogLoss   gensupport.JSONFloat64 `json:"logLoss"`
+		Precision gensupport.JSONFloat64 `json:"precision"`
+		Recall    gensupport.JSONFloat64 `json:"recall"`
+		RocAuc    gensupport.JSONFloat64 `json:"rocAuc"`
+		Threshold gensupport.JSONFloat64 `json:"threshold"`
+		*NoMethod
+	}
+	s1.NoMethod = (*NoMethod)(s)
+	if err := json.Unmarshal(data, &s1); err != nil {
+		return err
+	}
+	s.Accuracy = float64(s1.Accuracy)
+	s.F1Score = float64(s1.F1Score)
+	s.LogLoss = float64(s1.LogLoss)
+	s.Precision = float64(s1.Precision)
+	s.Recall = float64(s1.Recall)
+	s.RocAuc = float64(s1.RocAuc)
+	s.Threshold = float64(s1.Threshold)
+	return nil
 }
 
 type BigQueryModelTraining struct {
@@ -362,6 +532,342 @@ func (s *BigtableOptions) MarshalJSON() ([]byte, error) {
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
 
+// BinaryClassificationMetrics: Evaluation metrics for binary
+// classification models.
+type BinaryClassificationMetrics struct {
+	// AggregateClassificationMetrics: Aggregate classification metrics.
+	AggregateClassificationMetrics *AggregateClassificationMetrics `json:"aggregateClassificationMetrics,omitempty"`
+
+	// BinaryConfusionMatrixList: Binary confusion matrix at multiple
+	// thresholds.
+	BinaryConfusionMatrixList []*BinaryConfusionMatrix `json:"binaryConfusionMatrixList,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g.
+	// "AggregateClassificationMetrics") to unconditionally include in API
+	// requests. By default, fields with empty values are omitted from API
+	// requests. However, any non-pointer, non-interface field appearing in
+	// ForceSendFields will be sent to the server regardless of whether the
+	// field is empty or not. This may be used to include empty fields in
+	// Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g.
+	// "AggregateClassificationMetrics") to include in API requests with the
+	// JSON null value. By default, fields with empty values are omitted
+	// from API requests. However, any field with an empty value appearing
+	// in NullFields will be sent to the server as null. It is an error if a
+	// field in this list has a non-empty value. This may be used to include
+	// null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *BinaryClassificationMetrics) MarshalJSON() ([]byte, error) {
+	type NoMethod BinaryClassificationMetrics
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// BinaryConfusionMatrix: Confusion matrix for binary classification
+// models.
+type BinaryConfusionMatrix struct {
+	// FalseNegatives: Number of false samples predicted as false.
+	FalseNegatives int64 `json:"falseNegatives,omitempty,string"`
+
+	// FalsePositives: Number of false samples predicted as true.
+	FalsePositives int64 `json:"falsePositives,omitempty,string"`
+
+	// PositiveClassThreshold: Threshold value used when computing each of
+	// the following metric.
+	PositiveClassThreshold float64 `json:"positiveClassThreshold,omitempty"`
+
+	// Precision: Aggregate precision.
+	Precision float64 `json:"precision,omitempty"`
+
+	// Recall: Aggregate recall.
+	Recall float64 `json:"recall,omitempty"`
+
+	// TrueNegatives: Number of true samples predicted as false.
+	TrueNegatives int64 `json:"trueNegatives,omitempty,string"`
+
+	// TruePositives: Number of true samples predicted as true.
+	TruePositives int64 `json:"truePositives,omitempty,string"`
+
+	// ForceSendFields is a list of field names (e.g. "FalseNegatives") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "FalseNegatives") to
+	// include in API requests with the JSON null value. By default, fields
+	// with empty values are omitted from API requests. However, any field
+	// with an empty value appearing in NullFields will be sent to the
+	// server as null. It is an error if a field in this list has a
+	// non-empty value. This may be used to include null fields in Patch
+	// requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *BinaryConfusionMatrix) MarshalJSON() ([]byte, error) {
+	type NoMethod BinaryConfusionMatrix
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+func (s *BinaryConfusionMatrix) UnmarshalJSON(data []byte) error {
+	type NoMethod BinaryConfusionMatrix
+	var s1 struct {
+		PositiveClassThreshold gensupport.JSONFloat64 `json:"positiveClassThreshold"`
+		Precision              gensupport.JSONFloat64 `json:"precision"`
+		Recall                 gensupport.JSONFloat64 `json:"recall"`
+		*NoMethod
+	}
+	s1.NoMethod = (*NoMethod)(s)
+	if err := json.Unmarshal(data, &s1); err != nil {
+		return err
+	}
+	s.PositiveClassThreshold = float64(s1.PositiveClassThreshold)
+	s.Precision = float64(s1.Precision)
+	s.Recall = float64(s1.Recall)
+	return nil
+}
+
+type BqmlIterationResult struct {
+	// DurationMs: [Output-only, Beta] Time taken to run the training
+	// iteration in milliseconds.
+	DurationMs int64 `json:"durationMs,omitempty,string"`
+
+	// EvalLoss: [Output-only, Beta] Eval loss computed on the eval data at
+	// the end of the iteration. The eval loss is used for early stopping to
+	// avoid overfitting. No eval loss if eval_split_method option is
+	// specified as no_split or auto_split with input data size less than
+	// 500 rows.
+	EvalLoss float64 `json:"evalLoss,omitempty"`
+
+	// Index: [Output-only, Beta] Index of the ML training iteration,
+	// starting from zero for each training run.
+	Index int64 `json:"index,omitempty"`
+
+	// LearnRate: [Output-only, Beta] Learning rate used for this iteration,
+	// it varies for different training iterations if learn_rate_strategy
+	// option is not constant.
+	LearnRate float64 `json:"learnRate,omitempty"`
+
+	// TrainingLoss: [Output-only, Beta] Training loss computed on the
+	// training data at the end of the iteration. The training loss function
+	// is defined by model type.
+	TrainingLoss float64 `json:"trainingLoss,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "DurationMs") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "DurationMs") to include in
+	// API requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *BqmlIterationResult) MarshalJSON() ([]byte, error) {
+	type NoMethod BqmlIterationResult
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+func (s *BqmlIterationResult) UnmarshalJSON(data []byte) error {
+	type NoMethod BqmlIterationResult
+	var s1 struct {
+		EvalLoss     gensupport.JSONFloat64 `json:"evalLoss"`
+		LearnRate    gensupport.JSONFloat64 `json:"learnRate"`
+		TrainingLoss gensupport.JSONFloat64 `json:"trainingLoss"`
+		*NoMethod
+	}
+	s1.NoMethod = (*NoMethod)(s)
+	if err := json.Unmarshal(data, &s1); err != nil {
+		return err
+	}
+	s.EvalLoss = float64(s1.EvalLoss)
+	s.LearnRate = float64(s1.LearnRate)
+	s.TrainingLoss = float64(s1.TrainingLoss)
+	return nil
+}
+
+type BqmlTrainingRun struct {
+	// IterationResults: [Output-only, Beta] List of each iteration results.
+	IterationResults []*BqmlIterationResult `json:"iterationResults,omitempty"`
+
+	// StartTime: [Output-only, Beta] Training run start time in
+	// milliseconds since the epoch.
+	StartTime string `json:"startTime,omitempty"`
+
+	// State: [Output-only, Beta] Different state applicable for a training
+	// run. IN PROGRESS: Training run is in progress. FAILED: Training run
+	// ended due to a non-retryable failure. SUCCEEDED: Training run
+	// successfully completed. CANCELLED: Training run cancelled by the
+	// user.
+	State string `json:"state,omitempty"`
+
+	// TrainingOptions: [Output-only, Beta] Training options used by this
+	// training run. These options are mutable for subsequent training runs.
+	// Default values are explicitly stored for options not specified in the
+	// input query of the first training run. For subsequent training runs,
+	// any option not explicitly specified in the input query will be copied
+	// from the previous training run.
+	TrainingOptions *BqmlTrainingRunTrainingOptions `json:"trainingOptions,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "IterationResults") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "IterationResults") to
+	// include in API requests with the JSON null value. By default, fields
+	// with empty values are omitted from API requests. However, any field
+	// with an empty value appearing in NullFields will be sent to the
+	// server as null. It is an error if a field in this list has a
+	// non-empty value. This may be used to include null fields in Patch
+	// requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *BqmlTrainingRun) MarshalJSON() ([]byte, error) {
+	type NoMethod BqmlTrainingRun
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// BqmlTrainingRunTrainingOptions: [Output-only, Beta] Training options
+// used by this training run. These options are mutable for subsequent
+// training runs. Default values are explicitly stored for options not
+// specified in the input query of the first training run. For
+// subsequent training runs, any option not explicitly specified in the
+// input query will be copied from the previous training run.
+type BqmlTrainingRunTrainingOptions struct {
+	EarlyStop bool `json:"earlyStop,omitempty"`
+
+	L1Reg float64 `json:"l1Reg,omitempty"`
+
+	L2Reg float64 `json:"l2Reg,omitempty"`
+
+	LearnRate float64 `json:"learnRate,omitempty"`
+
+	LearnRateStrategy string `json:"learnRateStrategy,omitempty"`
+
+	LineSearchInitLearnRate float64 `json:"lineSearchInitLearnRate,omitempty"`
+
+	MaxIteration int64 `json:"maxIteration,omitempty,string"`
+
+	MinRelProgress float64 `json:"minRelProgress,omitempty"`
+
+	WarmStart bool `json:"warmStart,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "EarlyStop") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "EarlyStop") to include in
+	// API requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *BqmlTrainingRunTrainingOptions) MarshalJSON() ([]byte, error) {
+	type NoMethod BqmlTrainingRunTrainingOptions
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+func (s *BqmlTrainingRunTrainingOptions) UnmarshalJSON(data []byte) error {
+	type NoMethod BqmlTrainingRunTrainingOptions
+	var s1 struct {
+		L1Reg                   gensupport.JSONFloat64 `json:"l1Reg"`
+		L2Reg                   gensupport.JSONFloat64 `json:"l2Reg"`
+		LearnRate               gensupport.JSONFloat64 `json:"learnRate"`
+		LineSearchInitLearnRate gensupport.JSONFloat64 `json:"lineSearchInitLearnRate"`
+		MinRelProgress          gensupport.JSONFloat64 `json:"minRelProgress"`
+		*NoMethod
+	}
+	s1.NoMethod = (*NoMethod)(s)
+	if err := json.Unmarshal(data, &s1); err != nil {
+		return err
+	}
+	s.L1Reg = float64(s1.L1Reg)
+	s.L2Reg = float64(s1.L2Reg)
+	s.LearnRate = float64(s1.LearnRate)
+	s.LineSearchInitLearnRate = float64(s1.LineSearchInitLearnRate)
+	s.MinRelProgress = float64(s1.MinRelProgress)
+	return nil
+}
+
+// ClusterInfo: Information about a single cluster for clustering model.
+type ClusterInfo struct {
+	// CentroidId: Centroid id.
+	CentroidId int64 `json:"centroidId,omitempty,string"`
+
+	// ClusterRadius: Cluster radius, the average distance from centroid
+	// to each point assigned to the cluster.
+	ClusterRadius float64 `json:"clusterRadius,omitempty"`
+
+	// ClusterSize: Cluster size, the total number of points assigned to the
+	// cluster.
+	ClusterSize int64 `json:"clusterSize,omitempty,string"`
+
+	// ForceSendFields is a list of field names (e.g. "CentroidId") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "CentroidId") to include in
+	// API requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *ClusterInfo) MarshalJSON() ([]byte, error) {
+	type NoMethod ClusterInfo
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+func (s *ClusterInfo) UnmarshalJSON(data []byte) error {
+	type NoMethod ClusterInfo
+	var s1 struct {
+		ClusterRadius gensupport.JSONFloat64 `json:"clusterRadius"`
+		*NoMethod
+	}
+	s1.NoMethod = (*NoMethod)(s)
+	if err := json.Unmarshal(data, &s1); err != nil {
+		return err
+	}
+	s.ClusterRadius = float64(s1.ClusterRadius)
+	return nil
+}
+
 type Clustering struct {
 	// Fields: [Repeated] One or more fields on which data should be
 	// clustered. Only top-level, non-repeated, simple-type fields are
@@ -391,6 +897,104 @@ func (s *Clustering) MarshalJSON() ([]byte, error) {
 	type NoMethod Clustering
 	raw := NoMethod(*s)
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// ClusteringMetrics: Evaluation metrics for clustering models.
+type ClusteringMetrics struct {
+	// DaviesBouldinIndex: Davies-Bouldin index.
+	DaviesBouldinIndex float64 `json:"daviesBouldinIndex,omitempty"`
+
+	// MeanSquaredDistance: Mean of squared distances between each sample to
+	// its cluster centroid.
+	MeanSquaredDistance float64 `json:"meanSquaredDistance,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "DaviesBouldinIndex")
+	// to unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "DaviesBouldinIndex") to
+	// include in API requests with the JSON null value. By default, fields
+	// with empty values are omitted from API requests. However, any field
+	// with an empty value appearing in NullFields will be sent to the
+	// server as null. It is an error if a field in this list has a
+	// non-empty value. This may be used to include null fields in Patch
+	// requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *ClusteringMetrics) MarshalJSON() ([]byte, error) {
+	type NoMethod ClusteringMetrics
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+func (s *ClusteringMetrics) UnmarshalJSON(data []byte) error {
+	type NoMethod ClusteringMetrics
+	var s1 struct {
+		DaviesBouldinIndex  gensupport.JSONFloat64 `json:"daviesBouldinIndex"`
+		MeanSquaredDistance gensupport.JSONFloat64 `json:"meanSquaredDistance"`
+		*NoMethod
+	}
+	s1.NoMethod = (*NoMethod)(s)
+	if err := json.Unmarshal(data, &s1); err != nil {
+		return err
+	}
+	s.DaviesBouldinIndex = float64(s1.DaviesBouldinIndex)
+	s.MeanSquaredDistance = float64(s1.MeanSquaredDistance)
+	return nil
+}
+
+// ConfusionMatrix: Confusion matrix for multi-class classification
+// models.
+type ConfusionMatrix struct {
+	// ConfidenceThreshold: Confidence threshold used when computing the
+	// entries of the
+	// confusion matrix.
+	ConfidenceThreshold float64 `json:"confidenceThreshold,omitempty"`
+
+	// Rows: One row per actual label.
+	Rows []*Row `json:"rows,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "ConfidenceThreshold")
+	// to unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "ConfidenceThreshold") to
+	// include in API requests with the JSON null value. By default, fields
+	// with empty values are omitted from API requests. However, any field
+	// with an empty value appearing in NullFields will be sent to the
+	// server as null. It is an error if a field in this list has a
+	// non-empty value. This may be used to include null fields in Patch
+	// requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *ConfusionMatrix) MarshalJSON() ([]byte, error) {
+	type NoMethod ConfusionMatrix
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+func (s *ConfusionMatrix) UnmarshalJSON(data []byte) error {
+	type NoMethod ConfusionMatrix
+	var s1 struct {
+		ConfidenceThreshold gensupport.JSONFloat64 `json:"confidenceThreshold"`
+		*NoMethod
+	}
+	s1.NoMethod = (*NoMethod)(s)
+	if err := json.Unmarshal(data, &s1); err != nil {
+		return err
+	}
+	s.ConfidenceThreshold = float64(s1.ConfidenceThreshold)
+	return nil
 }
 
 type CsvOptions struct {
@@ -577,27 +1181,36 @@ func (s *Dataset) MarshalJSON() ([]byte, error) {
 type DatasetAccess struct {
 	// Domain: [Pick one] A domain to grant access to. Any users signed in
 	// with the domain specified will be granted the specified access.
-	// Example: "example.com".
+	// Example: "example.com". Maps to IAM policy member "domain:DOMAIN".
 	Domain string `json:"domain,omitempty"`
 
 	// GroupByEmail: [Pick one] An email address of a Google Group to grant
-	// access to.
+	// access to. Maps to IAM policy member "group:GROUP".
 	GroupByEmail string `json:"groupByEmail,omitempty"`
 
-	// Role: [Required] Describes the rights granted to the user specified
-	// by the other member of the access object. The following string values
-	// are supported: READER, WRITER, OWNER.
+	// IamMember: [Pick one] Some other type of member that appears in the
+	// IAM Policy but isn't a user, group, domain, or special group.
+	IamMember string `json:"iamMember,omitempty"`
+
+	// Role: [Required] An IAM role ID that should be granted to the user,
+	// group, or domain specified in this access entry. The following legacy
+	// mappings will be applied: OWNER  roles/bigquery.dataOwner WRITER
+	// roles/bigquery.dataEditor READER  roles/bigquery.dataViewer This
+	// field will accept any of the above formats, but will return only the
+	// legacy format. For example, if you set this field to
+	// "roles/bigquery.dataOwner", it will be returned back as "OWNER".
 	Role string `json:"role,omitempty"`
 
 	// SpecialGroup: [Pick one] A special group to grant access to. Possible
 	// values include: projectOwners: Owners of the enclosing project.
 	// projectReaders: Readers of the enclosing project. projectWriters:
 	// Writers of the enclosing project. allAuthenticatedUsers: All
-	// authenticated BigQuery users.
+	// authenticated BigQuery users. Maps to similarly-named IAM members.
 	SpecialGroup string `json:"specialGroup,omitempty"`
 
 	// UserByEmail: [Pick one] An email address of a user to grant access
-	// to. For example: fred@example.com.
+	// to. For example: fred@example.com. Maps to IAM policy member
+	// "user:EMAIL" or "serviceAccount:EMAIL".
 	UserByEmail string `json:"userByEmail,omitempty"`
 
 	// View: [Pick one] A view from a different dataset to grant access to.
@@ -767,6 +1380,13 @@ type DestinationTableProperties struct {
 	// friendly name is provided, the job will fail.
 	FriendlyName string `json:"friendlyName,omitempty"`
 
+	// Labels: [Optional] The labels associated with this table. You can use
+	// these to organize and group your tables. This will only be used if
+	// the destination table is newly created. If the table already exists
+	// and labels are different than the current labels are provided, the
+	// job will fail.
+	Labels map[string]string `json:"labels,omitempty"`
+
 	// ForceSendFields is a list of field names (e.g. "Description") to
 	// unconditionally include in API requests. By default, fields with
 	// empty values are omitted from API requests. However, any non-pointer,
@@ -820,6 +1440,40 @@ func (s *EncryptionConfiguration) MarshalJSON() ([]byte, error) {
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
 
+// Entry: A single entry in the confusion matrix.
+type Entry struct {
+	// ItemCount: Number of items being predicted as this label.
+	ItemCount int64 `json:"itemCount,omitempty,string"`
+
+	// PredictedLabel: The predicted label. For confidence_threshold > 0, we
+	// will
+	// also add an entry indicating the number of items under the
+	// confidence threshold.
+	PredictedLabel string `json:"predictedLabel,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "ItemCount") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "ItemCount") to include in
+	// API requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *Entry) MarshalJSON() ([]byte, error) {
+	type NoMethod Entry
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
 type ErrorProto struct {
 	// DebugInfo: Debugging information. This property is internal to Google
 	// and should not be used.
@@ -853,6 +1507,51 @@ type ErrorProto struct {
 
 func (s *ErrorProto) MarshalJSON() ([]byte, error) {
 	type NoMethod ErrorProto
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// EvaluationMetrics: Evaluation metrics of a model. These are either
+// computed on all
+// training data or just the eval data based on whether eval data was
+// used
+// during training.
+type EvaluationMetrics struct {
+	// BinaryClassificationMetrics: Populated for binary classification
+	// models.
+	BinaryClassificationMetrics *BinaryClassificationMetrics `json:"binaryClassificationMetrics,omitempty"`
+
+	// ClusteringMetrics: [Beta] Populated for clustering models.
+	ClusteringMetrics *ClusteringMetrics `json:"clusteringMetrics,omitempty"`
+
+	// MultiClassClassificationMetrics: Populated for multi-class
+	// classification models.
+	MultiClassClassificationMetrics *MultiClassClassificationMetrics `json:"multiClassClassificationMetrics,omitempty"`
+
+	// RegressionMetrics: Populated for regression models.
+	RegressionMetrics *RegressionMetrics `json:"regressionMetrics,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g.
+	// "BinaryClassificationMetrics") to unconditionally include in API
+	// requests. By default, fields with empty values are omitted from API
+	// requests. However, any non-pointer, non-interface field appearing in
+	// ForceSendFields will be sent to the server regardless of whether the
+	// field is empty or not. This may be used to include empty fields in
+	// Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g.
+	// "BinaryClassificationMetrics") to include in API requests with the
+	// JSON null value. By default, fields with empty values are omitted
+	// from API requests. However, any field with an empty value appearing
+	// in NullFields will be sent to the server as null. It is an error if a
+	// field in this list has a non-empty value. This may be used to include
+	// null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *EvaluationMetrics) MarshalJSON() ([]byte, error) {
+	type NoMethod EvaluationMetrics
 	raw := NoMethod(*s)
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
@@ -1064,6 +1763,14 @@ type ExternalDataConfiguration struct {
 	// GoogleSheetsOptions: [Optional] Additional options if sourceFormat is
 	// set to GOOGLE_SHEETS.
 	GoogleSheetsOptions *GoogleSheetsOptions `json:"googleSheetsOptions,omitempty"`
+
+	// HivePartitioningMode: [Optional, Experimental] If hive partitioning
+	// is enabled, which mode to use. Two modes are supported: - AUTO:
+	// automatically infer partition key name(s) and type(s). - STRINGS:
+	// automatic infer partition key name(s). All types are strings. Not all
+	// storage formats support hive partitioning -- requesting hive
+	// partitioning on an unsupported format will lead to an error.
+	HivePartitioningMode string `json:"hivePartitioningMode,omitempty"`
 
 	// IgnoreUnknownValues: [Optional] Indicates if BigQuery should allow
 	// extra values that are not represented in the table schema. If true,
@@ -1295,33 +2002,30 @@ func (s *GoogleSheetsOptions) MarshalJSON() ([]byte, error) {
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
 
+// IterationResult: Information about a single iteration of the training
+// run.
 type IterationResult struct {
-	// DurationMs: [Output-only, Beta] Time taken to run the training
-	// iteration in milliseconds.
+	// ClusterInfos: [Beta] Information about top clusters for clustering
+	// models.
+	ClusterInfos []*ClusterInfo `json:"clusterInfos,omitempty"`
+
+	// DurationMs: Time taken to run the iteration in milliseconds.
 	DurationMs int64 `json:"durationMs,omitempty,string"`
 
-	// EvalLoss: [Output-only, Beta] Eval loss computed on the eval data at
-	// the end of the iteration. The eval loss is used for early stopping to
-	// avoid overfitting. No eval loss if eval_split_method option is
-	// specified as no_split or auto_split with input data size less than
-	// 500 rows.
+	// EvalLoss: Loss computed on the eval data at the end of iteration.
 	EvalLoss float64 `json:"evalLoss,omitempty"`
 
-	// Index: [Output-only, Beta] Index of the ML training iteration,
-	// starting from zero for each training run.
+	// Index: Index of the iteration, 0 based.
 	Index int64 `json:"index,omitempty"`
 
-	// LearnRate: [Output-only, Beta] Learning rate used for this iteration,
-	// it varies for different training iterations if learn_rate_strategy
-	// option is not constant.
+	// LearnRate: Learn rate used for this iteration.
 	LearnRate float64 `json:"learnRate,omitempty"`
 
-	// TrainingLoss: [Output-only, Beta] Training loss computed on the
-	// training data at the end of the iteration. The training loss function
-	// is defined by model type.
+	// TrainingLoss: Loss computed on the training data at the end of
+	// iteration.
 	TrainingLoss float64 `json:"trainingLoss,omitempty"`
 
-	// ForceSendFields is a list of field names (e.g. "DurationMs") to
+	// ForceSendFields is a list of field names (e.g. "ClusterInfos") to
 	// unconditionally include in API requests. By default, fields with
 	// empty values are omitted from API requests. However, any non-pointer,
 	// non-interface field appearing in ForceSendFields will be sent to the
@@ -1329,10 +2033,10 @@ type IterationResult struct {
 	// used to include empty fields in Patch requests.
 	ForceSendFields []string `json:"-"`
 
-	// NullFields is a list of field names (e.g. "DurationMs") to include in
-	// API requests with the JSON null value. By default, fields with empty
-	// values are omitted from API requests. However, any field with an
-	// empty value appearing in NullFields will be sent to the server as
+	// NullFields is a list of field names (e.g. "ClusterInfos") to include
+	// in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. However, any field with
+	// an empty value appearing in NullFields will be sent to the server as
 	// null. It is an error if a field in this list has a non-empty value.
 	// This may be used to include null fields in Patch requests.
 	NullFields []string `json:"-"`
@@ -1629,6 +2333,14 @@ type JobConfigurationLoad struct {
 	// raw, binary state. BigQuery also supports the escape sequence "\t" to
 	// specify a tab separator. The default value is a comma (',').
 	FieldDelimiter string `json:"fieldDelimiter,omitempty"`
+
+	// HivePartitioningMode: [Optional, Experimental] If hive partitioning
+	// is enabled, which mode to use. Two modes are supported: - AUTO:
+	// automatically infer partition key name(s) and type(s). - STRINGS:
+	// automatic infer partition key name(s). All types are strings. Not all
+	// storage formats support hive partitioning -- requesting hive
+	// partitioning on an unsupported format will lead to an error.
+	HivePartitioningMode string `json:"hivePartitioningMode,omitempty"`
 
 	// IgnoreUnknownValues: [Optional] Indicates if BigQuery should allow
 	// extra values that are not represented in the table schema. If true,
@@ -2155,12 +2867,23 @@ type JobStatistics struct {
 	// Load: [Output-only] Statistics for a load job.
 	Load *JobStatistics3 `json:"load,omitempty"`
 
+	// NumChildJobs: [Output-only] Number of child jobs executed.
+	NumChildJobs int64 `json:"numChildJobs,omitempty,string"`
+
+	// ParentJobId: [Output-only] If this is a child job, the id of the
+	// parent.
+	ParentJobId string `json:"parentJobId,omitempty"`
+
 	// Query: [Output-only] Statistics for a query job.
 	Query *JobStatistics2 `json:"query,omitempty"`
 
 	// QuotaDeferments: [Output-only] Quotas which delayed this job's start
 	// time.
 	QuotaDeferments []string `json:"quotaDeferments,omitempty"`
+
+	// ReservationUsage: [Output-only] Job resource usage breakdown by
+	// reservation.
+	ReservationUsage []*JobStatisticsReservationUsage `json:"reservationUsage,omitempty"`
 
 	// StartTime: [Output-only] Start time of this job, in milliseconds
 	// since the epoch. This field will be present when the job transitions
@@ -2170,6 +2893,9 @@ type JobStatistics struct {
 	// TotalBytesProcessed: [Output-only] [Deprecated] Use the bytes
 	// processed in the query statistics instead.
 	TotalBytesProcessed int64 `json:"totalBytesProcessed,omitempty,string"`
+
+	// TotalSlotMs: [Output-only] Slot-milliseconds for the job.
+	TotalSlotMs int64 `json:"totalSlotMs,omitempty,string"`
 
 	// ForceSendFields is a list of field names (e.g. "CompletionRatio") to
 	// unconditionally include in API requests. By default, fields with
@@ -2209,6 +2935,38 @@ func (s *JobStatistics) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type JobStatisticsReservationUsage struct {
+	// Name: [Output-only] Reservation name or "unreserved" for on-demand
+	// resources usage.
+	Name string `json:"name,omitempty"`
+
+	// SlotMs: [Output-only] Slot-milliseconds the job spent in the given
+	// reservation.
+	SlotMs int64 `json:"slotMs,omitempty,string"`
+
+	// ForceSendFields is a list of field names (e.g. "Name") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "Name") to include in API
+	// requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *JobStatisticsReservationUsage) MarshalJSON() ([]byte, error) {
+	type NoMethod JobStatisticsReservationUsage
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
 type JobStatistics2 struct {
 	// BillingTier: [Output-only] Billing tier for the job.
 	BillingTier int64 `json:"billingTier,omitempty"`
@@ -2227,6 +2985,10 @@ type JobStatistics2 struct {
 	// is CREATE OR REPLACE TABLE, and the table already exists. "DROP": The
 	// query deleted the DDL target.
 	DdlOperationPerformed string `json:"ddlOperationPerformed,omitempty"`
+
+	// DdlTargetRoutine: The DDL target routine. Present only for
+	// CREATE/DROP FUNCTION/PROCEDURE queries.
+	DdlTargetRoutine *RoutineReference `json:"ddlTargetRoutine,omitempty"`
 
 	// DdlTargetTable: The DDL target table. Present only for CREATE/DROP
 	// TABLE/VIEW queries.
@@ -2272,7 +3034,7 @@ type JobStatistics2 struct {
 	// StatementType: The type of query statement, if valid. Possible values
 	// (new values might be added in the future): "SELECT": SELECT query.
 	// "INSERT": INSERT query; see
-	// https://cloud.google.com/bigquery/docs/reference/standard-sql/data-manipulation-language "UPDATE": UPDATE query; see https://cloud.google.com/bigquery/docs/reference/standard-sql/data-manipulation-language "DELETE": DELETE query; see https://cloud.google.com/bigquery/docs/reference/standard-sql/data-manipulation-language "MERGE": MERGE query; see https://cloud.google.com/bigquery/docs/reference/standard-sql/data-manipulation-language "CREATE_TABLE": CREATE [OR REPLACE] TABLE without AS SELECT. "CREATE_TABLE_AS_SELECT": CREATE [OR REPLACE] TABLE ... AS SELECT ... "DROP_TABLE": DROP TABLE query. "CREATE_VIEW": CREATE [OR REPLACE] VIEW ... AS SELECT ... "DROP_VIEW": DROP VIEW
+	// https://cloud.google.com/bigquery/docs/reference/standard-sql/data-manipulation-language. "UPDATE": UPDATE query; see https://cloud.google.com/bigquery/docs/reference/standard-sql/data-manipulation-language. "DELETE": DELETE query; see https://cloud.google.com/bigquery/docs/reference/standard-sql/data-manipulation-language. "MERGE": MERGE query; see https://cloud.google.com/bigquery/docs/reference/standard-sql/data-manipulation-language. "ALTER_TABLE": ALTER TABLE query. "ALTER_VIEW": ALTER VIEW query. "CREATE_FUNCTION": CREATE FUNCTION query. "CREATE_MODEL": CREATE [OR REPLACE] MODEL ... AS SELECT ... . "CREATE_PROCEDURE": CREATE PROCEDURE query. "CREATE_TABLE": CREATE [OR REPLACE] TABLE without AS SELECT. "CREATE_TABLE_AS_SELECT": CREATE [OR REPLACE] TABLE ... AS SELECT ... . "CREATE_VIEW": CREATE [OR REPLACE] VIEW ... AS SELECT ... . "DROP_FUNCTION" : DROP FUNCTION query. "DROP_PROCEDURE": DROP PROCEDURE query. "DROP_TABLE": DROP TABLE query. "DROP_VIEW": DROP VIEW
 	// query.
 	StatementType string `json:"statementType,omitempty"`
 
@@ -2290,7 +3052,7 @@ type JobStatistics2 struct {
 	// accuracy of the estimate. Possible values can be: UNKNOWN: accuracy
 	// of the estimate is unknown. PRECISE: estimate is precise.
 	// LOWER_BOUND: estimate is lower bound of what the query would cost.
-	// UPPER_BOUND: estiamte is upper bound of what the query would cost.
+	// UPPER_BOUND: estimate is upper bound of what the query would cost.
 	TotalBytesProcessedAccuracy string `json:"totalBytesProcessedAccuracy,omitempty"`
 
 	// TotalPartitionsProcessed: [Output-only] Total number of partitions
@@ -2413,6 +3175,11 @@ type JobStatistics4 struct {
 	// specified in the 'destinationUris' field.
 	DestinationUriFileCounts googleapi.Int64s `json:"destinationUriFileCounts,omitempty"`
 
+	// InputBytes: [Output-only] Number of user bytes extracted into the
+	// result. This is the byte count as computed by BigQuery for billing
+	// purposes.
+	InputBytes int64 `json:"inputBytes,omitempty,string"`
+
 	// ForceSendFields is a list of field names (e.g.
 	// "DestinationUriFileCounts") to unconditionally include in API
 	// requests. By default, fields with empty values are omitted from API
@@ -2477,6 +3244,80 @@ func (s *JobStatus) MarshalJSON() ([]byte, error) {
 
 type JsonValue interface{}
 
+type ListModelsResponse struct {
+	// Models: Models in the requested dataset. Only the following fields
+	// are populated:
+	// model_reference, model_type, creation_time, last_modified_time
+	// and
+	// labels.
+	Models []*Model `json:"models,omitempty"`
+
+	// NextPageToken: A token to request the next page of results.
+	NextPageToken string `json:"nextPageToken,omitempty"`
+
+	// ServerResponse contains the HTTP response code and headers from the
+	// server.
+	googleapi.ServerResponse `json:"-"`
+
+	// ForceSendFields is a list of field names (e.g. "Models") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "Models") to include in API
+	// requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *ListModelsResponse) MarshalJSON() ([]byte, error) {
+	type NoMethod ListModelsResponse
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// LocationMetadata: BigQuery-specific metadata about a location. This
+// will be set on
+// google.cloud.location.Location.metadata in Cloud Location
+// API
+// responses.
+type LocationMetadata struct {
+	// LegacyLocationId: The legacy BigQuery location ID, e.g. “EU” for
+	// the “europe” location.
+	// This is for any API consumers that need the legacy “US” and
+	// “EU” locations.
+	LegacyLocationId string `json:"legacyLocationId,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "LegacyLocationId") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "LegacyLocationId") to
+	// include in API requests with the JSON null value. By default, fields
+	// with empty values are omitted from API requests. However, any field
+	// with an empty value appearing in NullFields will be sent to the
+	// server as null. It is an error if a field in this list has a
+	// non-empty value. This may be used to include null fields in Patch
+	// requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *LocationMetadata) MarshalJSON() ([]byte, error) {
+	type NoMethod LocationMetadata
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
 type MaterializedViewDefinition struct {
 	// LastRefreshTime: [Output-only] [TrustedTester] The time when this
 	// materialized view was last modified, in milliseconds since the epoch.
@@ -2509,6 +3350,114 @@ func (s *MaterializedViewDefinition) MarshalJSON() ([]byte, error) {
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
 
+type Model struct {
+	// CreationTime: Output only. The time when this model was created, in
+	// millisecs since the
+	// epoch.
+	CreationTime int64 `json:"creationTime,omitempty,string"`
+
+	// Description: [Optional] A user-friendly description of this
+	// model.
+	// @mutable bigquery.models.patch
+	Description string `json:"description,omitempty"`
+
+	// Etag: Output only. A hash of this resource.
+	Etag string `json:"etag,omitempty"`
+
+	// ExpirationTime: [Optional] The time when this model expires, in
+	// milliseconds since the
+	// epoch. If not present, the model will persist indefinitely. Expired
+	// models
+	// will be deleted and their storage reclaimed.  The
+	// defaultTableExpirationMs
+	// property of the encapsulating dataset can be used to set a
+	// default
+	// expirationTime on newly created models.
+	// @mutable bigquery.models.patch
+	ExpirationTime int64 `json:"expirationTime,omitempty,string"`
+
+	// FeatureColumns: Output only. Input feature columns that were used to
+	// train this model.
+	FeatureColumns []*StandardSqlField `json:"featureColumns,omitempty"`
+
+	// FriendlyName: [Optional] A descriptive name for this model.
+	// @mutable bigquery.models.patch
+	FriendlyName string `json:"friendlyName,omitempty"`
+
+	// LabelColumns: Output only. Label columns that were used to train this
+	// model.
+	// The output of the model will have a “predicted_” prefix to these
+	// columns.
+	LabelColumns []*StandardSqlField `json:"labelColumns,omitempty"`
+
+	// Labels: [Optional] The labels associated with this model. You can use
+	// these to
+	// organize and group your models. Label keys and values can be no
+	// longer
+	// than 63 characters, can only contain lowercase letters,
+	// numeric
+	// characters, underscores and dashes. International characters are
+	// allowed.
+	// Label values are optional. Label keys must start with a letter and
+	// each
+	// label in the list must have a different key.
+	// @mutable bigquery.models.patch
+	Labels map[string]string `json:"labels,omitempty"`
+
+	// LastModifiedTime: Output only. The time when this model was last
+	// modified, in millisecs
+	// since the epoch.
+	LastModifiedTime int64 `json:"lastModifiedTime,omitempty,string"`
+
+	// Location: Output only. The geographic location where the model
+	// resides. This value
+	// is inherited from the dataset.
+	Location string `json:"location,omitempty"`
+
+	// ModelReference: Required. Unique identifier for this model.
+	ModelReference *ModelReference `json:"modelReference,omitempty"`
+
+	// ModelType: Output only. Type of the model resource.
+	//
+	// Possible values:
+	//   "MODEL_TYPE_UNSPECIFIED"
+	//   "LINEAR_REGRESSION" - Linear regression model.
+	//   "LOGISTIC_REGRESSION" - Logistic regression model.
+	//   "KMEANS" - [Beta] K-means clustering model.
+	ModelType string `json:"modelType,omitempty"`
+
+	// TrainingRuns: Output only. Information for all training runs in
+	// increasing order of
+	// start_time.
+	TrainingRuns []*TrainingRun `json:"trainingRuns,omitempty"`
+
+	// ServerResponse contains the HTTP response code and headers from the
+	// server.
+	googleapi.ServerResponse `json:"-"`
+
+	// ForceSendFields is a list of field names (e.g. "CreationTime") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "CreationTime") to include
+	// in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. However, any field with
+	// an empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *Model) MarshalJSON() ([]byte, error) {
+	type NoMethod Model
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
 type ModelDefinition struct {
 	// ModelOptions: [Output-only, Beta] Model options used for the first
 	// training run. These options are immutable for subsequent training
@@ -2520,7 +3469,7 @@ type ModelDefinition struct {
 	// each training run comprises of multiple iterations and there may be
 	// multiple training runs for the model if warm start is used or if a
 	// user decides to continue a previously cancelled query.
-	TrainingRuns []*TrainingRun `json:"trainingRuns,omitempty"`
+	TrainingRuns []*BqmlTrainingRun `json:"trainingRuns,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "ModelOptions") to
 	// unconditionally include in API requests. By default, fields with
@@ -2575,6 +3524,78 @@ type ModelDefinitionModelOptions struct {
 
 func (s *ModelDefinitionModelOptions) MarshalJSON() ([]byte, error) {
 	type NoMethod ModelDefinitionModelOptions
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// ModelReference: Id path of a model.
+type ModelReference struct {
+	// DatasetId: [Required] The ID of the dataset containing this model.
+	DatasetId string `json:"datasetId,omitempty"`
+
+	// ModelId: [Required] The ID of the model. The ID must contain
+	// only
+	// letters (a-z, A-Z), numbers (0-9), or underscores (_). The
+	// maximum
+	// length is 1,024 characters.
+	ModelId string `json:"modelId,omitempty"`
+
+	// ProjectId: [Required] The ID of the project containing this model.
+	ProjectId string `json:"projectId,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "DatasetId") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "DatasetId") to include in
+	// API requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *ModelReference) MarshalJSON() ([]byte, error) {
+	type NoMethod ModelReference
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// MultiClassClassificationMetrics: Evaluation metrics for multi-class
+// classification models.
+type MultiClassClassificationMetrics struct {
+	// AggregateClassificationMetrics: Aggregate classification metrics.
+	AggregateClassificationMetrics *AggregateClassificationMetrics `json:"aggregateClassificationMetrics,omitempty"`
+
+	// ConfusionMatrixList: Confusion matrix at different thresholds.
+	ConfusionMatrixList []*ConfusionMatrix `json:"confusionMatrixList,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g.
+	// "AggregateClassificationMetrics") to unconditionally include in API
+	// requests. By default, fields with empty values are omitted from API
+	// requests. However, any non-pointer, non-interface field appearing in
+	// ForceSendFields will be sent to the server regardless of whether the
+	// field is empty or not. This may be used to include empty fields in
+	// Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g.
+	// "AggregateClassificationMetrics") to include in API requests with the
+	// JSON null value. By default, fields with empty values are omitted
+	// from API requests. However, any field with an empty value appearing
+	// in NullFields will be sent to the server as null. It is an error if a
+	// field in this list has a non-empty value. This may be used to include
+	// null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *MultiClassClassificationMetrics) MarshalJSON() ([]byte, error) {
+	type NoMethod MultiClassClassificationMetrics
 	raw := NoMethod(*s)
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
@@ -3112,6 +4133,269 @@ func (s *RangePartitioningRange) MarshalJSON() ([]byte, error) {
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
 
+// RegressionMetrics: Evaluation metrics for regression models.
+type RegressionMetrics struct {
+	// MeanAbsoluteError: Mean absolute error.
+	MeanAbsoluteError float64 `json:"meanAbsoluteError,omitempty"`
+
+	// MeanSquaredError: Mean squared error.
+	MeanSquaredError float64 `json:"meanSquaredError,omitempty"`
+
+	// MeanSquaredLogError: Mean squared log error.
+	MeanSquaredLogError float64 `json:"meanSquaredLogError,omitempty"`
+
+	// MedianAbsoluteError: Median absolute error.
+	MedianAbsoluteError float64 `json:"medianAbsoluteError,omitempty"`
+
+	// RSquared: R^2 score.
+	RSquared float64 `json:"rSquared,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "MeanAbsoluteError")
+	// to unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "MeanAbsoluteError") to
+	// include in API requests with the JSON null value. By default, fields
+	// with empty values are omitted from API requests. However, any field
+	// with an empty value appearing in NullFields will be sent to the
+	// server as null. It is an error if a field in this list has a
+	// non-empty value. This may be used to include null fields in Patch
+	// requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *RegressionMetrics) MarshalJSON() ([]byte, error) {
+	type NoMethod RegressionMetrics
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+func (s *RegressionMetrics) UnmarshalJSON(data []byte) error {
+	type NoMethod RegressionMetrics
+	var s1 struct {
+		MeanAbsoluteError   gensupport.JSONFloat64 `json:"meanAbsoluteError"`
+		MeanSquaredError    gensupport.JSONFloat64 `json:"meanSquaredError"`
+		MeanSquaredLogError gensupport.JSONFloat64 `json:"meanSquaredLogError"`
+		MedianAbsoluteError gensupport.JSONFloat64 `json:"medianAbsoluteError"`
+		RSquared            gensupport.JSONFloat64 `json:"rSquared"`
+		*NoMethod
+	}
+	s1.NoMethod = (*NoMethod)(s)
+	if err := json.Unmarshal(data, &s1); err != nil {
+		return err
+	}
+	s.MeanAbsoluteError = float64(s1.MeanAbsoluteError)
+	s.MeanSquaredError = float64(s1.MeanSquaredError)
+	s.MeanSquaredLogError = float64(s1.MeanSquaredLogError)
+	s.MedianAbsoluteError = float64(s1.MedianAbsoluteError)
+	s.RSquared = float64(s1.RSquared)
+	return nil
+}
+
+type RoutineReference struct {
+	// DatasetId: [Required] The ID of the dataset containing this routine.
+	DatasetId string `json:"datasetId,omitempty"`
+
+	// ProjectId: [Required] The ID of the project containing this routine.
+	ProjectId string `json:"projectId,omitempty"`
+
+	// RoutineId: [Required] The ID of the routine. The ID must contain only
+	// letters (a-z, A-Z), numbers (0-9), or underscores (_). The maximum
+	// length is 256 characters.
+	RoutineId string `json:"routineId,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "DatasetId") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "DatasetId") to include in
+	// API requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *RoutineReference) MarshalJSON() ([]byte, error) {
+	type NoMethod RoutineReference
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// Row: A single row in the confusion matrix.
+type Row struct {
+	// ActualLabel: The original label of this row.
+	ActualLabel string `json:"actualLabel,omitempty"`
+
+	// Entries: Info describing predicted label distribution.
+	Entries []*Entry `json:"entries,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "ActualLabel") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "ActualLabel") to include
+	// in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. However, any field with
+	// an empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *Row) MarshalJSON() ([]byte, error) {
+	type NoMethod Row
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// StandardSqlDataType: The type of a variable, e.g., a function
+// argument.
+// Examples:
+// INT64: {type_kind="INT64"}
+// ARRAY<STRING>: {type_kind="ARRAY",
+// array_element_type="STRING"}
+// STRUCT<x STRING, y ARRAY<DATE>>:
+//   {type_kind="STRUCT",
+//    struct_type={fields=[
+//      {name="x", type={type_kind="STRING"}},
+//      {name="y", type={type_kind="ARRAY", array_element_type="DATE"}}
+//    ]}}
+type StandardSqlDataType struct {
+	// ArrayElementType: The type of the array's elements, if type_kind =
+	// "ARRAY".
+	ArrayElementType *StandardSqlDataType `json:"arrayElementType,omitempty"`
+
+	// StructType: The fields of this struct, in order, if type_kind =
+	// "STRUCT".
+	StructType *StandardSqlStructType `json:"structType,omitempty"`
+
+	// TypeKind: Required. The top level type of this field.
+	// Can be any standard SQL data type (e.g., "INT64", "DATE", "ARRAY").
+	//
+	// Possible values:
+	//   "TYPE_KIND_UNSPECIFIED" - Invalid type.
+	//   "INT64" - Encoded as a string in decimal format.
+	//   "BOOL" - Encoded as a boolean "false" or "true".
+	//   "FLOAT64" - Encoded as a number, or string "NaN", "Infinity" or
+	// "-Infinity".
+	//   "STRING" - Encoded as a string value.
+	//   "BYTES" - Encoded as a base64 string per RFC 4648, section 4.
+	//   "TIMESTAMP" - Encoded as an RFC 3339 timestamp with mandatory "Z"
+	// time zone string:
+	// 1985-04-12T23:20:50.52Z
+	//   "DATE" - Encoded as RFC 3339 full-date format string: 1985-04-12
+	//   "TIME" - Encoded as RFC 3339 partial-time format string:
+	// 23:20:50.52
+	//   "DATETIME" - Encoded as RFC 3339 full-date "T" partial-time:
+	// 1985-04-12T23:20:50.52
+	//   "GEOGRAPHY" - Encoded as WKT
+	//   "NUMERIC" - Encoded as a decimal string.
+	//   "ARRAY" - Encoded as a list with types matching Type.array_type.
+	//   "STRUCT" - Encoded as a list with fields of type
+	// Type.struct_type[i]. List is used
+	// because a JSON object cannot have duplicate field names.
+	TypeKind string `json:"typeKind,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "ArrayElementType") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "ArrayElementType") to
+	// include in API requests with the JSON null value. By default, fields
+	// with empty values are omitted from API requests. However, any field
+	// with an empty value appearing in NullFields will be sent to the
+	// server as null. It is an error if a field in this list has a
+	// non-empty value. This may be used to include null fields in Patch
+	// requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *StandardSqlDataType) MarshalJSON() ([]byte, error) {
+	type NoMethod StandardSqlDataType
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// StandardSqlField: A field or a column.
+type StandardSqlField struct {
+	// Name: Optional. The name of this field. Can be absent for struct
+	// fields.
+	Name string `json:"name,omitempty"`
+
+	// Type: Optional. The type of this parameter. Absent if not
+	// explicitly
+	// specified (e.g., CREATE FUNCTION statement can omit the return
+	// type;
+	// in this case the output parameter does not have this "type" field).
+	Type *StandardSqlDataType `json:"type,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "Name") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "Name") to include in API
+	// requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *StandardSqlField) MarshalJSON() ([]byte, error) {
+	type NoMethod StandardSqlField
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+type StandardSqlStructType struct {
+	Fields []*StandardSqlField `json:"fields,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "Fields") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "Fields") to include in API
+	// requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *StandardSqlStructType) MarshalJSON() ([]byte, error) {
+	type NoMethod StandardSqlStructType
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
 type Streamingbuffer struct {
 	// EstimatedBytes: [Output-only] A lower-bound estimate of the number of
 	// bytes currently in the streaming buffer.
@@ -3527,6 +4811,10 @@ func (s *TableDataList) MarshalJSON() ([]byte, error) {
 }
 
 type TableFieldSchema struct {
+	// Categories: [Optional] The categories attached to this field, used
+	// for field-level access control.
+	Categories *TableFieldSchemaCategories `json:"categories,omitempty"`
+
 	// Description: [Optional] The field description. The maximum length is
 	// 1,024 characters.
 	Description string `json:"description,omitempty"`
@@ -3551,7 +4839,7 @@ type TableFieldSchema struct {
 	// nested schema) or STRUCT (same as RECORD).
 	Type string `json:"type,omitempty"`
 
-	// ForceSendFields is a list of field names (e.g. "Description") to
+	// ForceSendFields is a list of field names (e.g. "Categories") to
 	// unconditionally include in API requests. By default, fields with
 	// empty values are omitted from API requests. However, any non-pointer,
 	// non-interface field appearing in ForceSendFields will be sent to the
@@ -3559,10 +4847,10 @@ type TableFieldSchema struct {
 	// used to include empty fields in Patch requests.
 	ForceSendFields []string `json:"-"`
 
-	// NullFields is a list of field names (e.g. "Description") to include
-	// in API requests with the JSON null value. By default, fields with
-	// empty values are omitted from API requests. However, any field with
-	// an empty value appearing in NullFields will be sent to the server as
+	// NullFields is a list of field names (e.g. "Categories") to include in
+	// API requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
 	// null. It is an error if a field in this list has a non-empty value.
 	// This may be used to include null fields in Patch requests.
 	NullFields []string `json:"-"`
@@ -3570,6 +4858,37 @@ type TableFieldSchema struct {
 
 func (s *TableFieldSchema) MarshalJSON() ([]byte, error) {
 	type NoMethod TableFieldSchema
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+// TableFieldSchemaCategories: [Optional] The categories attached to
+// this field, used for field-level access control.
+type TableFieldSchemaCategories struct {
+	// Names: A list of category resource names. For example,
+	// "projects/1/taxonomies/2/categories/3". At most 5 categories are
+	// allowed.
+	Names []string `json:"names,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "Names") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "Names") to include in API
+	// requests with the JSON null value. By default, fields with empty
+	// values are omitted from API requests. However, any field with an
+	// empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *TableFieldSchemaCategories) MarshalJSON() ([]byte, error) {
+	type NoMethod TableFieldSchemaCategories
 	raw := NoMethod(*s)
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
@@ -3814,9 +5133,6 @@ type TimePartitioning struct {
 	// REQUIRED.
 	Field string `json:"field,omitempty"`
 
-	// RequirePartitionFilter: [Beta] [Optional] If set to true, queries
-	// over this table require a partition filter that can be used for
-	// partition elimination to be specified.
 	RequirePartitionFilter bool `json:"requirePartitionFilter,omitempty"`
 
 	// Type: [Required] The only type supported is DAY, which will generate
@@ -3846,30 +5162,115 @@ func (s *TimePartitioning) MarshalJSON() ([]byte, error) {
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
 
-type TrainingRun struct {
-	// IterationResults: [Output-only, Beta] List of each iteration results.
-	IterationResults []*IterationResult `json:"iterationResults,omitempty"`
+type TrainingOptions struct {
+	// DataSplitColumn: The column to split data with. This column won't be
+	// used as a
+	// feature.
+	// 1. When data_split_method is CUSTOM, the corresponding column
+	// should
+	// be boolean. The rows with true value tag are eval data, and the
+	// false
+	// are training data.
+	// 2. When data_split_method is SEQ, the first
+	// DATA_SPLIT_EVAL_FRACTION
+	// rows (from smallest to largest) in the corresponding column are
+	// used
+	// as training data, and the rest are eval data. It respects the
+	// order
+	// in Orderable data
+	// types:
+	// https://cloud.google.com/bigquery/docs/reference/standard-sql/d
+	// ata-types#data-type-properties
+	DataSplitColumn string `json:"dataSplitColumn,omitempty"`
 
-	// StartTime: [Output-only, Beta] Training run start time in
-	// milliseconds since the epoch.
-	StartTime string `json:"startTime,omitempty"`
+	// DataSplitEvalFraction: The fraction of evaluation data over the whole
+	// input data. The rest
+	// of data will be used as training data. The format should be
+	// double.
+	// Accurate to two decimal places.
+	// Default value is 0.2.
+	DataSplitEvalFraction float64 `json:"dataSplitEvalFraction,omitempty"`
 
-	// State: [Output-only, Beta] Different state applicable for a training
-	// run. IN PROGRESS: Training run is in progress. FAILED: Training run
-	// ended due to a non-retryable failure. SUCCEEDED: Training run
-	// successfully completed. CANCELLED: Training run cancelled by the
-	// user.
-	State string `json:"state,omitempty"`
+	// DataSplitMethod: The data split type for training and evaluation,
+	// e.g. RANDOM.
+	//
+	// Possible values:
+	//   "DATA_SPLIT_METHOD_UNSPECIFIED"
+	//   "RANDOM" - Splits data randomly.
+	//   "CUSTOM" - Splits data with the user provided tags.
+	//   "SEQUENTIAL" - Splits data sequentially.
+	//   "NO_SPLIT" - Data split will be skipped.
+	//   "AUTO_SPLIT" - Splits data automatically: Uses NO_SPLIT if the data
+	// size is small.
+	// Otherwise uses RANDOM.
+	DataSplitMethod string `json:"dataSplitMethod,omitempty"`
 
-	// TrainingOptions: [Output-only, Beta] Training options used by this
-	// training run. These options are mutable for subsequent training runs.
-	// Default values are explicitly stored for options not specified in the
-	// input query of the first training run. For subsequent training runs,
-	// any option not explicitly specified in the input query will be copied
-	// from the previous training run.
-	TrainingOptions *TrainingRunTrainingOptions `json:"trainingOptions,omitempty"`
+	// DistanceType: [Beta] Distance type for clustering models.
+	//
+	// Possible values:
+	//   "DISTANCE_TYPE_UNSPECIFIED"
+	//   "EUCLIDEAN" - Eculidean distance.
+	//   "COSINE" - Cosine distance.
+	DistanceType string `json:"distanceType,omitempty"`
 
-	// ForceSendFields is a list of field names (e.g. "IterationResults") to
+	// EarlyStop: Whether to stop early when the loss doesn't improve
+	// significantly
+	// any more (compared to min_relative_progress).
+	EarlyStop bool `json:"earlyStop,omitempty"`
+
+	// InitialLearnRate: Specifies the initial learning rate for line search
+	// to start at.
+	InitialLearnRate float64 `json:"initialLearnRate,omitempty"`
+
+	// InputLabelColumns: Name of input label columns in training data.
+	InputLabelColumns []string `json:"inputLabelColumns,omitempty"`
+
+	// L1Regularization: L1 regularization coefficient.
+	L1Regularization float64 `json:"l1Regularization,omitempty"`
+
+	// L2Regularization: L2 regularization coefficient.
+	L2Regularization float64 `json:"l2Regularization,omitempty"`
+
+	// LabelClassWeights: Weights associated with each label class, for
+	// rebalancing the
+	// training data.
+	LabelClassWeights map[string]float64 `json:"labelClassWeights,omitempty"`
+
+	// LearnRate: Learning rate in training.
+	LearnRate float64 `json:"learnRate,omitempty"`
+
+	// LearnRateStrategy: The strategy to determine learning rate.
+	//
+	// Possible values:
+	//   "LEARN_RATE_STRATEGY_UNSPECIFIED"
+	//   "LINE_SEARCH" - Use line search to determine learning rate.
+	//   "CONSTANT" - Use a constant learning rate.
+	LearnRateStrategy string `json:"learnRateStrategy,omitempty"`
+
+	// LossType: Type of loss function used during training run.
+	//
+	// Possible values:
+	//   "LOSS_TYPE_UNSPECIFIED"
+	//   "MEAN_SQUARED_LOSS" - Mean squared loss, used for linear
+	// regression.
+	//   "MEAN_LOG_LOSS" - Mean log loss, used for logistic regression.
+	LossType string `json:"lossType,omitempty"`
+
+	// MaxIterations: The maximum number of iterations in training.
+	MaxIterations int64 `json:"maxIterations,omitempty,string"`
+
+	// MinRelativeProgress: When early_stop is true, stops training when
+	// accuracy improvement is
+	// less than 'min_relative_progress'.
+	MinRelativeProgress float64 `json:"minRelativeProgress,omitempty"`
+
+	// NumClusters: [Beta] Number of clusters for clustering models.
+	NumClusters int64 `json:"numClusters,omitempty,string"`
+
+	// WarmStart: Whether to train a model from the last checkpoint.
+	WarmStart bool `json:"warmStart,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "DataSplitColumn") to
 	// unconditionally include in API requests. By default, fields with
 	// empty values are omitted from API requests. However, any non-pointer,
 	// non-interface field appearing in ForceSendFields will be sent to the
@@ -3877,7 +5278,75 @@ type TrainingRun struct {
 	// used to include empty fields in Patch requests.
 	ForceSendFields []string `json:"-"`
 
-	// NullFields is a list of field names (e.g. "IterationResults") to
+	// NullFields is a list of field names (e.g. "DataSplitColumn") to
+	// include in API requests with the JSON null value. By default, fields
+	// with empty values are omitted from API requests. However, any field
+	// with an empty value appearing in NullFields will be sent to the
+	// server as null. It is an error if a field in this list has a
+	// non-empty value. This may be used to include null fields in Patch
+	// requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *TrainingOptions) MarshalJSON() ([]byte, error) {
+	type NoMethod TrainingOptions
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
+func (s *TrainingOptions) UnmarshalJSON(data []byte) error {
+	type NoMethod TrainingOptions
+	var s1 struct {
+		DataSplitEvalFraction gensupport.JSONFloat64 `json:"dataSplitEvalFraction"`
+		InitialLearnRate      gensupport.JSONFloat64 `json:"initialLearnRate"`
+		L1Regularization      gensupport.JSONFloat64 `json:"l1Regularization"`
+		L2Regularization      gensupport.JSONFloat64 `json:"l2Regularization"`
+		LearnRate             gensupport.JSONFloat64 `json:"learnRate"`
+		MinRelativeProgress   gensupport.JSONFloat64 `json:"minRelativeProgress"`
+		*NoMethod
+	}
+	s1.NoMethod = (*NoMethod)(s)
+	if err := json.Unmarshal(data, &s1); err != nil {
+		return err
+	}
+	s.DataSplitEvalFraction = float64(s1.DataSplitEvalFraction)
+	s.InitialLearnRate = float64(s1.InitialLearnRate)
+	s.L1Regularization = float64(s1.L1Regularization)
+	s.L2Regularization = float64(s1.L2Regularization)
+	s.LearnRate = float64(s1.LearnRate)
+	s.MinRelativeProgress = float64(s1.MinRelativeProgress)
+	return nil
+}
+
+// TrainingRun: Information about a single training query run for the
+// model.
+type TrainingRun struct {
+	// EvaluationMetrics: The evaluation metrics over training/eval data
+	// that were computed at the
+	// end of training.
+	EvaluationMetrics *EvaluationMetrics `json:"evaluationMetrics,omitempty"`
+
+	// Results: Output of each iteration run, results.size() <=
+	// max_iterations.
+	Results []*IterationResult `json:"results,omitempty"`
+
+	// StartTime: The start time of this training run.
+	StartTime string `json:"startTime,omitempty"`
+
+	// TrainingOptions: Options that were used for this training run,
+	// includes
+	// user specified and default options that were used.
+	TrainingOptions *TrainingOptions `json:"trainingOptions,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "EvaluationMetrics")
+	// to unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "EvaluationMetrics") to
 	// include in API requests with the JSON null value. By default, fields
 	// with empty values are omitted from API requests. However, any field
 	// with an empty value appearing in NullFields will be sent to the
@@ -3891,76 +5360,6 @@ func (s *TrainingRun) MarshalJSON() ([]byte, error) {
 	type NoMethod TrainingRun
 	raw := NoMethod(*s)
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
-}
-
-// TrainingRunTrainingOptions: [Output-only, Beta] Training options used
-// by this training run. These options are mutable for subsequent
-// training runs. Default values are explicitly stored for options not
-// specified in the input query of the first training run. For
-// subsequent training runs, any option not explicitly specified in the
-// input query will be copied from the previous training run.
-type TrainingRunTrainingOptions struct {
-	EarlyStop bool `json:"earlyStop,omitempty"`
-
-	L1Reg float64 `json:"l1Reg,omitempty"`
-
-	L2Reg float64 `json:"l2Reg,omitempty"`
-
-	LearnRate float64 `json:"learnRate,omitempty"`
-
-	LearnRateStrategy string `json:"learnRateStrategy,omitempty"`
-
-	LineSearchInitLearnRate float64 `json:"lineSearchInitLearnRate,omitempty"`
-
-	MaxIteration int64 `json:"maxIteration,omitempty,string"`
-
-	MinRelProgress float64 `json:"minRelProgress,omitempty"`
-
-	WarmStart bool `json:"warmStart,omitempty"`
-
-	// ForceSendFields is a list of field names (e.g. "EarlyStop") to
-	// unconditionally include in API requests. By default, fields with
-	// empty values are omitted from API requests. However, any non-pointer,
-	// non-interface field appearing in ForceSendFields will be sent to the
-	// server regardless of whether the field is empty or not. This may be
-	// used to include empty fields in Patch requests.
-	ForceSendFields []string `json:"-"`
-
-	// NullFields is a list of field names (e.g. "EarlyStop") to include in
-	// API requests with the JSON null value. By default, fields with empty
-	// values are omitted from API requests. However, any field with an
-	// empty value appearing in NullFields will be sent to the server as
-	// null. It is an error if a field in this list has a non-empty value.
-	// This may be used to include null fields in Patch requests.
-	NullFields []string `json:"-"`
-}
-
-func (s *TrainingRunTrainingOptions) MarshalJSON() ([]byte, error) {
-	type NoMethod TrainingRunTrainingOptions
-	raw := NoMethod(*s)
-	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
-}
-
-func (s *TrainingRunTrainingOptions) UnmarshalJSON(data []byte) error {
-	type NoMethod TrainingRunTrainingOptions
-	var s1 struct {
-		L1Reg                   gensupport.JSONFloat64 `json:"l1Reg"`
-		L2Reg                   gensupport.JSONFloat64 `json:"l2Reg"`
-		LearnRate               gensupport.JSONFloat64 `json:"learnRate"`
-		LineSearchInitLearnRate gensupport.JSONFloat64 `json:"lineSearchInitLearnRate"`
-		MinRelProgress          gensupport.JSONFloat64 `json:"minRelProgress"`
-		*NoMethod
-	}
-	s1.NoMethod = (*NoMethod)(s)
-	if err := json.Unmarshal(data, &s1); err != nil {
-		return err
-	}
-	s.L1Reg = float64(s1.L1Reg)
-	s.L2Reg = float64(s1.L2Reg)
-	s.LearnRate = float64(s1.LearnRate)
-	s.LineSearchInitLearnRate = float64(s1.LineSearchInitLearnRate)
-	s.MinRelProgress = float64(s1.MinRelProgress)
-	return nil
 }
 
 type UserDefinedFunctionResource struct {
@@ -5649,7 +7048,7 @@ func (c *JobsInsertCall) doRequest(alt string) (*http.Response, error) {
 		return nil, err
 	}
 	req.Header = reqHeaders
-	gensupport.SetGetBody(req, getBody)
+	req.GetBody = getBody
 	googleapi.Expand(req.URL, map[string]string{
 		"projectId": c.projectId,
 	})
@@ -6179,6 +7578,664 @@ func (c *JobsQueryCall) Do(opts ...googleapi.CallOption) (*QueryResponse, error)
 	//     "https://www.googleapis.com/auth/bigquery",
 	//     "https://www.googleapis.com/auth/cloud-platform",
 	//     "https://www.googleapis.com/auth/cloud-platform.read-only"
+	//   ]
+	// }
+
+}
+
+// method id "bigquery.models.delete":
+
+type ModelsDeleteCall struct {
+	s          *Service
+	projectId  string
+	datasetId  string
+	modelId    string
+	urlParams_ gensupport.URLParams
+	ctx_       context.Context
+	header_    http.Header
+}
+
+// Delete: Deletes the model specified by modelId from the dataset.
+func (r *ModelsService) Delete(projectId string, datasetId string, modelId string) *ModelsDeleteCall {
+	c := &ModelsDeleteCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.projectId = projectId
+	c.datasetId = datasetId
+	c.modelId = modelId
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse
+// for more information.
+func (c *ModelsDeleteCall) Fields(s ...googleapi.Field) *ModelsDeleteCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// Context sets the context to be used in this call's Do method. Any
+// pending HTTP request will be aborted if the provided context is
+// canceled.
+func (c *ModelsDeleteCall) Context(ctx context.Context) *ModelsDeleteCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns an http.Header that can be modified by the caller to
+// add HTTP headers to the request.
+func (c *ModelsDeleteCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ModelsDeleteCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := make(http.Header)
+	for k, v := range c.header_ {
+		reqHeaders[k] = v
+	}
+	reqHeaders.Set("User-Agent", c.s.userAgent())
+	var body io.Reader = nil
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "projects/{+projectId}/datasets/{+datasetId}/models/{+modelId}")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("DELETE", urls, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"projectId": c.projectId,
+		"datasetId": c.datasetId,
+		"modelId":   c.modelId,
+	})
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "bigquery.models.delete" call.
+func (c *ModelsDeleteCall) Do(opts ...googleapi.CallOption) error {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if err != nil {
+		return err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return err
+	}
+	return nil
+	// {
+	//   "description": "Deletes the model specified by modelId from the dataset.",
+	//   "flatPath": "projects/{projectsId}/datasets/{datasetsId}/models/{modelsId}",
+	//   "httpMethod": "DELETE",
+	//   "id": "bigquery.models.delete",
+	//   "parameterOrder": [
+	//     "projectId",
+	//     "datasetId",
+	//     "modelId"
+	//   ],
+	//   "parameters": {
+	//     "datasetId": {
+	//       "description": "Dataset ID of the model to delete.",
+	//       "location": "path",
+	//       "pattern": "^[^/]+$",
+	//       "required": true,
+	//       "type": "string"
+	//     },
+	//     "modelId": {
+	//       "description": "Model ID of the model to delete.",
+	//       "location": "path",
+	//       "pattern": "^[^/]+$",
+	//       "required": true,
+	//       "type": "string"
+	//     },
+	//     "projectId": {
+	//       "description": "Project ID of the model to delete.",
+	//       "location": "path",
+	//       "pattern": "^[^/]+$",
+	//       "required": true,
+	//       "type": "string"
+	//     }
+	//   },
+	//   "path": "projects/{+projectId}/datasets/{+datasetId}/models/{+modelId}",
+	//   "scopes": [
+	//     "https://www.googleapis.com/auth/bigquery",
+	//     "https://www.googleapis.com/auth/cloud-platform"
+	//   ]
+	// }
+
+}
+
+// method id "bigquery.models.get":
+
+type ModelsGetCall struct {
+	s            *Service
+	projectId    string
+	datasetId    string
+	modelId      string
+	urlParams_   gensupport.URLParams
+	ifNoneMatch_ string
+	ctx_         context.Context
+	header_      http.Header
+}
+
+// Get: Gets the specified model resource by model ID.
+func (r *ModelsService) Get(projectId string, datasetId string, modelId string) *ModelsGetCall {
+	c := &ModelsGetCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.projectId = projectId
+	c.datasetId = datasetId
+	c.modelId = modelId
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse
+// for more information.
+func (c *ModelsGetCall) Fields(s ...googleapi.Field) *ModelsGetCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// IfNoneMatch sets the optional parameter which makes the operation
+// fail if the object's ETag matches the given value. This is useful for
+// getting updates only after the object has changed since the last
+// request. Use googleapi.IsNotModified to check whether the response
+// error from Do is the result of In-None-Match.
+func (c *ModelsGetCall) IfNoneMatch(entityTag string) *ModelsGetCall {
+	c.ifNoneMatch_ = entityTag
+	return c
+}
+
+// Context sets the context to be used in this call's Do method. Any
+// pending HTTP request will be aborted if the provided context is
+// canceled.
+func (c *ModelsGetCall) Context(ctx context.Context) *ModelsGetCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns an http.Header that can be modified by the caller to
+// add HTTP headers to the request.
+func (c *ModelsGetCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ModelsGetCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := make(http.Header)
+	for k, v := range c.header_ {
+		reqHeaders[k] = v
+	}
+	reqHeaders.Set("User-Agent", c.s.userAgent())
+	if c.ifNoneMatch_ != "" {
+		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
+	}
+	var body io.Reader = nil
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "projects/{+projectId}/datasets/{+datasetId}/models/{+modelId}")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("GET", urls, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"projectId": c.projectId,
+		"datasetId": c.datasetId,
+		"modelId":   c.modelId,
+	})
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "bigquery.models.get" call.
+// Exactly one of *Model or error will be non-nil. Any non-2xx status
+// code is an error. Response headers are in either
+// *Model.ServerResponse.Header or (if a response was returned at all)
+// in error.(*googleapi.Error).Header. Use googleapi.IsNotModified to
+// check whether the returned error was because http.StatusNotModified
+// was returned.
+func (c *ModelsGetCall) Do(opts ...googleapi.CallOption) (*Model, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, &googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		}
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, err
+	}
+	ret := &Model{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	if err := gensupport.DecodeResponse(target, res); err != nil {
+		return nil, err
+	}
+	return ret, nil
+	// {
+	//   "description": "Gets the specified model resource by model ID.",
+	//   "flatPath": "projects/{projectsId}/datasets/{datasetsId}/models/{modelsId}",
+	//   "httpMethod": "GET",
+	//   "id": "bigquery.models.get",
+	//   "parameterOrder": [
+	//     "projectId",
+	//     "datasetId",
+	//     "modelId"
+	//   ],
+	//   "parameters": {
+	//     "datasetId": {
+	//       "description": "Dataset ID of the requested model.",
+	//       "location": "path",
+	//       "pattern": "^[^/]+$",
+	//       "required": true,
+	//       "type": "string"
+	//     },
+	//     "modelId": {
+	//       "description": "Model ID of the requested model.",
+	//       "location": "path",
+	//       "pattern": "^[^/]+$",
+	//       "required": true,
+	//       "type": "string"
+	//     },
+	//     "projectId": {
+	//       "description": "Project ID of the requested model.",
+	//       "location": "path",
+	//       "pattern": "^[^/]+$",
+	//       "required": true,
+	//       "type": "string"
+	//     }
+	//   },
+	//   "path": "projects/{+projectId}/datasets/{+datasetId}/models/{+modelId}",
+	//   "response": {
+	//     "$ref": "Model"
+	//   },
+	//   "scopes": [
+	//     "https://www.googleapis.com/auth/bigquery",
+	//     "https://www.googleapis.com/auth/cloud-platform",
+	//     "https://www.googleapis.com/auth/cloud-platform.read-only"
+	//   ]
+	// }
+
+}
+
+// method id "bigquery.models.list":
+
+type ModelsListCall struct {
+	s            *Service
+	projectId    string
+	datasetId    string
+	urlParams_   gensupport.URLParams
+	ifNoneMatch_ string
+	ctx_         context.Context
+	header_      http.Header
+}
+
+// List: Lists all models in the specified dataset. Requires the READER
+// dataset
+// role.
+func (r *ModelsService) List(projectId string, datasetId string) *ModelsListCall {
+	c := &ModelsListCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.projectId = projectId
+	c.datasetId = datasetId
+	return c
+}
+
+// MaxResults sets the optional parameter "maxResults": The maximum
+// number of results per page.
+func (c *ModelsListCall) MaxResults(maxResults int64) *ModelsListCall {
+	c.urlParams_.Set("maxResults", fmt.Sprint(maxResults))
+	return c
+}
+
+// PageToken sets the optional parameter "pageToken": Page token,
+// returned by a previous call to request the next page of
+// results
+func (c *ModelsListCall) PageToken(pageToken string) *ModelsListCall {
+	c.urlParams_.Set("pageToken", pageToken)
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse
+// for more information.
+func (c *ModelsListCall) Fields(s ...googleapi.Field) *ModelsListCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// IfNoneMatch sets the optional parameter which makes the operation
+// fail if the object's ETag matches the given value. This is useful for
+// getting updates only after the object has changed since the last
+// request. Use googleapi.IsNotModified to check whether the response
+// error from Do is the result of In-None-Match.
+func (c *ModelsListCall) IfNoneMatch(entityTag string) *ModelsListCall {
+	c.ifNoneMatch_ = entityTag
+	return c
+}
+
+// Context sets the context to be used in this call's Do method. Any
+// pending HTTP request will be aborted if the provided context is
+// canceled.
+func (c *ModelsListCall) Context(ctx context.Context) *ModelsListCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns an http.Header that can be modified by the caller to
+// add HTTP headers to the request.
+func (c *ModelsListCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ModelsListCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := make(http.Header)
+	for k, v := range c.header_ {
+		reqHeaders[k] = v
+	}
+	reqHeaders.Set("User-Agent", c.s.userAgent())
+	if c.ifNoneMatch_ != "" {
+		reqHeaders.Set("If-None-Match", c.ifNoneMatch_)
+	}
+	var body io.Reader = nil
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "projects/{+projectId}/datasets/{+datasetId}/models")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("GET", urls, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"projectId": c.projectId,
+		"datasetId": c.datasetId,
+	})
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "bigquery.models.list" call.
+// Exactly one of *ListModelsResponse or error will be non-nil. Any
+// non-2xx status code is an error. Response headers are in either
+// *ListModelsResponse.ServerResponse.Header or (if a response was
+// returned at all) in error.(*googleapi.Error).Header. Use
+// googleapi.IsNotModified to check whether the returned error was
+// because http.StatusNotModified was returned.
+func (c *ModelsListCall) Do(opts ...googleapi.CallOption) (*ListModelsResponse, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, &googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		}
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, err
+	}
+	ret := &ListModelsResponse{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	if err := gensupport.DecodeResponse(target, res); err != nil {
+		return nil, err
+	}
+	return ret, nil
+	// {
+	//   "description": "Lists all models in the specified dataset. Requires the READER dataset\nrole.",
+	//   "flatPath": "projects/{projectsId}/datasets/{datasetsId}/models",
+	//   "httpMethod": "GET",
+	//   "id": "bigquery.models.list",
+	//   "parameterOrder": [
+	//     "projectId",
+	//     "datasetId"
+	//   ],
+	//   "parameters": {
+	//     "datasetId": {
+	//       "description": "Dataset ID of the models to list.",
+	//       "location": "path",
+	//       "pattern": "^[^/]+$",
+	//       "required": true,
+	//       "type": "string"
+	//     },
+	//     "maxResults": {
+	//       "description": "The maximum number of results per page.",
+	//       "format": "uint32",
+	//       "location": "query",
+	//       "type": "integer"
+	//     },
+	//     "pageToken": {
+	//       "description": "Page token, returned by a previous call to request the next page of\nresults",
+	//       "location": "query",
+	//       "type": "string"
+	//     },
+	//     "projectId": {
+	//       "description": "Project ID of the models to list.",
+	//       "location": "path",
+	//       "pattern": "^[^/]+$",
+	//       "required": true,
+	//       "type": "string"
+	//     }
+	//   },
+	//   "path": "projects/{+projectId}/datasets/{+datasetId}/models",
+	//   "response": {
+	//     "$ref": "ListModelsResponse"
+	//   },
+	//   "scopes": [
+	//     "https://www.googleapis.com/auth/bigquery",
+	//     "https://www.googleapis.com/auth/cloud-platform",
+	//     "https://www.googleapis.com/auth/cloud-platform.read-only"
+	//   ]
+	// }
+
+}
+
+// Pages invokes f for each page of results.
+// A non-nil error returned from f will halt the iteration.
+// The provided context supersedes any context provided to the Context method.
+func (c *ModelsListCall) Pages(ctx context.Context, f func(*ListModelsResponse) error) error {
+	c.ctx_ = ctx
+	defer c.PageToken(c.urlParams_.Get("pageToken")) // reset paging to original point
+	for {
+		x, err := c.Do()
+		if err != nil {
+			return err
+		}
+		if err := f(x); err != nil {
+			return err
+		}
+		if x.NextPageToken == "" {
+			return nil
+		}
+		c.PageToken(x.NextPageToken)
+	}
+}
+
+// method id "bigquery.models.patch":
+
+type ModelsPatchCall struct {
+	s          *Service
+	projectId  string
+	datasetId  string
+	modelId    string
+	model      *Model
+	urlParams_ gensupport.URLParams
+	ctx_       context.Context
+	header_    http.Header
+}
+
+// Patch: Patch specific fields in the specified model.
+func (r *ModelsService) Patch(projectId string, datasetId string, modelId string, model *Model) *ModelsPatchCall {
+	c := &ModelsPatchCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.projectId = projectId
+	c.datasetId = datasetId
+	c.modelId = modelId
+	c.model = model
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse
+// for more information.
+func (c *ModelsPatchCall) Fields(s ...googleapi.Field) *ModelsPatchCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// Context sets the context to be used in this call's Do method. Any
+// pending HTTP request will be aborted if the provided context is
+// canceled.
+func (c *ModelsPatchCall) Context(ctx context.Context) *ModelsPatchCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns an http.Header that can be modified by the caller to
+// add HTTP headers to the request.
+func (c *ModelsPatchCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ModelsPatchCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := make(http.Header)
+	for k, v := range c.header_ {
+		reqHeaders[k] = v
+	}
+	reqHeaders.Set("User-Agent", c.s.userAgent())
+	var body io.Reader = nil
+	body, err := googleapi.WithoutDataWrapper.JSONReader(c.model)
+	if err != nil {
+		return nil, err
+	}
+	reqHeaders.Set("Content-Type", "application/json")
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "projects/{+projectId}/datasets/{+datasetId}/models/{+modelId}")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("PATCH", urls, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"projectId": c.projectId,
+		"datasetId": c.datasetId,
+		"modelId":   c.modelId,
+	})
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "bigquery.models.patch" call.
+// Exactly one of *Model or error will be non-nil. Any non-2xx status
+// code is an error. Response headers are in either
+// *Model.ServerResponse.Header or (if a response was returned at all)
+// in error.(*googleapi.Error).Header. Use googleapi.IsNotModified to
+// check whether the returned error was because http.StatusNotModified
+// was returned.
+func (c *ModelsPatchCall) Do(opts ...googleapi.CallOption) (*Model, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, &googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		}
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, err
+	}
+	ret := &Model{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	if err := gensupport.DecodeResponse(target, res); err != nil {
+		return nil, err
+	}
+	return ret, nil
+	// {
+	//   "description": "Patch specific fields in the specified model.",
+	//   "flatPath": "projects/{projectsId}/datasets/{datasetsId}/models/{modelsId}",
+	//   "httpMethod": "PATCH",
+	//   "id": "bigquery.models.patch",
+	//   "parameterOrder": [
+	//     "projectId",
+	//     "datasetId",
+	//     "modelId"
+	//   ],
+	//   "parameters": {
+	//     "datasetId": {
+	//       "description": "Dataset ID of the model to patch.",
+	//       "location": "path",
+	//       "pattern": "^[^/]+$",
+	//       "required": true,
+	//       "type": "string"
+	//     },
+	//     "modelId": {
+	//       "description": "Model ID of the model to patch.",
+	//       "location": "path",
+	//       "pattern": "^[^/]+$",
+	//       "required": true,
+	//       "type": "string"
+	//     },
+	//     "projectId": {
+	//       "description": "Project ID of the model to patch.",
+	//       "location": "path",
+	//       "pattern": "^[^/]+$",
+	//       "required": true,
+	//       "type": "string"
+	//     }
+	//   },
+	//   "path": "projects/{+projectId}/datasets/{+datasetId}/models/{+modelId}",
+	//   "request": {
+	//     "$ref": "Model"
+	//   },
+	//   "response": {
+	//     "$ref": "Model"
+	//   },
+	//   "scopes": [
+	//     "https://www.googleapis.com/auth/bigquery",
+	//     "https://www.googleapis.com/auth/cloud-platform"
 	//   ]
 	// }
 
