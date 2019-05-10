@@ -146,4 +146,10 @@ var terraformResources = map[string]gcpResourceRenderable{
 	"targetPools": basicGCPResource{
 		terraformName: "google_compute_target_pool",
 	},
+	"interconnectAttachments": basicGCPResource{
+		terraformName: "google_compute_interconnect_attachment",
+	},
+	"targetInstances": basicGCPResource{
+		terraformName: "google_compute_target_instance",
+	},
 }
