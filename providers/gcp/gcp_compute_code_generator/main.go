@@ -199,7 +199,7 @@ func main() {
 				log.Print(resource, err)
 				continue
 			}
-			err = ioutil.WriteFile(currentPath+"/"+resource+".go", codeFormat(tpl.Bytes()), os.ModePerm)
+			err = ioutil.WriteFile(currentPath+"/"+resource+"_gen.go", codeFormat(tpl.Bytes()), os.ModePerm)
 			if err != nil {
 				log.Print(resource, err)
 				continue
