@@ -137,6 +137,7 @@ List of supported GCP services:
 *   `urlMaps`
 *   `vpnTunnels`
 *   `gke`
+*   `pubsub`
 *   `dataProc`
 *   `cloudFunctions`
 *   `gcs`
