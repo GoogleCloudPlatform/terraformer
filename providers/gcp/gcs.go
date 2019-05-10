@@ -20,10 +20,11 @@ import (
 	"log"
 	"strconv"
 
+	"golang.org/x/oauth2/google"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
-	"cloud.google.com/go/storage"
-	"google.golang.org/api/iterator"
+	"google.golang.org/api/storage/v1"
 )
 
 var GcsAllowEmptyValues = []string{"labels.", "created_before"}
@@ -34,71 +35,103 @@ type GcsGenerator struct {
 	GCPService
 }
 
-func (g *GcsGenerator) createResources(bucketIterator *storage.BucketIterator) []terraform_utils.Resource {
+func (g *GcsGenerator) createBucketsResources(ctx context.Context, gcsService *storage.Service) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
-	for {
-		battrs, err := bucketIterator.Next()
-		if err == iterator.Done {
-			break
+	bucketList := gcsService.Buckets.List(g.GetArgs()["project"])
+	if err := bucketList.Pages(ctx, func(page *storage.Buckets) error {
+		for _, bucket := range page.Items {
+			resources = append(resources, terraform_utils.NewResource(
+				bucket.Name,
+				bucket.Name,
+				"google_storage_bucket",
+				"google",
+				map[string]string{
+					"name":          bucket.Name,
+					"force_destroy": "false",
+				},
+				GcsAllowEmptyValues,
+				GcsAdditionalFields,
+			))
+			resources = append(resources, terraform_utils.NewResource(
+				bucket.Name,
+				bucket.Name,
+				"google_storage_bucket_acl",
+				"google",
+				map[string]string{
+					"bucket":        bucket.Name,
+					"role_entity.#": strconv.Itoa(len(bucket.Acl)),
+				},
+				GcsAllowEmptyValues,
+				GcsAdditionalFields,
+			))
+			resources = append(resources, terraform_utils.NewResource(
+				bucket.Name,
+				bucket.Name,
+				"google_storage_default_object_acl",
+				"google",
+				map[string]string{
+					"bucket":        bucket.Name,
+					"role_entity.#": strconv.Itoa(len(bucket.Acl)),
+				},
+				GcsAllowEmptyValues,
+				GcsAdditionalFields,
+			))
+			resources = append(resources, terraform_utils.NewResource(
+				bucket.Name,
+				bucket.Name,
+				"google_storage_bucket_iam_binding",
+				"google",
+				map[string]string{
+					"bucket": bucket.Name,
+				},
+				GcsAllowEmptyValues,
+				GcsAdditionalFields,
+			))
+			resources = append(resources, terraform_utils.NewResource(
+				bucket.Name,
+				bucket.Name,
+				"google_storage_bucket_iam_member",
+				"google",
+				map[string]string{
+					"bucket": bucket.Name,
+				},
+				GcsAllowEmptyValues,
+				GcsAdditionalFields,
+			))
+			resources = append(resources, terraform_utils.NewResource(
+				bucket.Name,
+				bucket.Name,
+				"google_storage_bucket_iam_policy",
+				"google",
+				map[string]string{
+					"bucket": bucket.Name,
+				},
+				GcsAllowEmptyValues,
+				GcsAdditionalFields,
+			))
+			resources = append(resources, g.createNotificationResources(ctx, gcsService, bucket)...)
 		}
-		if err != nil {
-			log.Println("error with bucket:", err)
-			continue
-		}
+		return nil
+	}); err != nil {
+		log.Fatal(err)
+	}
+	return resources
+}
+
+func (g *GcsGenerator) createNotificationResources(ctx context.Context, gcsService *storage.Service, bucket *storage.Bucket) []terraform_utils.Resource {
+	resources := []terraform_utils.Resource{}
+	notificationList, err := gcsService.Notifications.List(bucket.Name).Do()
+	if err != nil {
+		log.Fatal(err)
+		return resources
+	}
+	for _, notification := range notificationList.Items {
 		resources = append(resources, terraform_utils.NewResource(
-			battrs.Name,
-			battrs.Name,
-			"google_storage_bucket",
+			bucket.Name+"/notificationConfigs/"+notification.Id,
+			bucket.Name+"/"+notification.Id,
+			"google_storage_notification",
 			"google",
-			map[string]string{
-				"name":          battrs.Name,
-				"force_destroy": "false",
-			},
-			GcsAllowEmptyValues,
-			GcsAdditionalFields,
-		))
-		resources = append(resources, terraform_utils.NewResource(
-			battrs.Name,
-			battrs.Name,
-			"google_storage_bucket_acl",
-			"google",
-			map[string]string{
-				"bucket":        battrs.Name,
-				"role_entity.#": strconv.Itoa(len(battrs.ACL)),
-			},
-			GcsAllowEmptyValues,
-			GcsAdditionalFields,
-		))
-		resources = append(resources, terraform_utils.NewResource(
-			battrs.Name,
-			battrs.Name,
-			"google_storage_bucket_iam_binding",
-			"google",
-			map[string]string{
-				"bucket": battrs.Name,
-			},
-			GcsAllowEmptyValues,
-			GcsAdditionalFields,
-		))
-		resources = append(resources, terraform_utils.NewResource(
-			battrs.Name,
-			battrs.Name,
-			"google_storage_bucket_iam_member",
-			"google",
-			map[string]string{
-				"bucket": battrs.Name,
-			},
-			GcsAllowEmptyValues,
-			GcsAdditionalFields,
-		))
-		resources = append(resources, terraform_utils.NewResource(
-			battrs.Name,
-			battrs.Name,
-			"google_storage_bucket_iam_policy",
-			"google",
-			map[string]string{
-				"bucket": battrs.Name,
-			},
+			map[string]string{},
 			GcsAllowEmptyValues,
 			GcsAdditionalFields,
 		))
@@ -106,21 +139,58 @@ func (g *GcsGenerator) createResources(bucketIterator *storage.BucketIterator) [
 	return resources
 }
 
+/*
+func (g *GcsGenerator) createTransferJobsResources(ctx context.Context, storageTransferService *storagetransfer.Service) []terraform_utils.Resource {
+	resources := []terraform_utils.Resource{}
+	transferJobsList := storageTransferService.TransferJobs.List()
+	err := transferJobsList.Pages(ctx, func(page *storagetransfer.ListTransferJobsResponse) error {
+		log.Println(page.TransferJobs)
+		for _, transferJob := range page.TransferJobs {
+			resources = append(resources, terraform_utils.NewResource(
+				transferJob.Name,
+				transferJob.Name,
+				"google_storage_transfer_job",
+				"google",
+				map[string]string{
+					"name": transferJob.Name,
+				},
+				GcsAllowEmptyValues,
+				GcsAdditionalFields,
+			))
+		}
+		return nil
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	return resources
+}
+*/
+
 // Generate TerraformResources from GCP API,
 // from each bucket  create 1 TerraformResource
 // Need bucket name as ID for terraform resource
 func (g *GcsGenerator) InitResources() error {
 	ctx := context.Background()
+	c, err := google.DefaultClient(ctx, storage.CloudPlatformReadOnlyScope)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	projectID := g.GetArgs()["project"]
-	client, err := storage.NewClient(ctx)
+	gcsService, err := storage.New(c)
 	if err != nil {
 		log.Print(err)
 		return err
 	}
-	bucketIterator := client.Buckets(ctx, projectID)
+	g.Resources = g.createBucketsResources(ctx, gcsService)
 
-	g.Resources = g.createResources(bucketIterator)
+	// TODO find bug with storageTransferService.TransferJobs.List().Pages
+	//storageTransferService, err := storagetransfer.New(c)
+	//if err != nil {
+	//	log.Print(err)
+	//		return err
+	//	}
+	//g.Resources = append(g.Resources, g.createTransferJobsResources(ctx, storageTransferService)...)
 	g.PopulateIgnoreKeys()
 	return nil
 }
