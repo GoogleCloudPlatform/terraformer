@@ -1,4 +1,4 @@
-// Copyright 2018 Google Inc. All rights reserved.
+// Copyright 2019 Google LLC.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
@@ -6,13 +6,35 @@
 
 // Package cloudfunctions provides access to the Cloud Functions API.
 //
-// See https://cloud.google.com/functions
+// For product documentation, see: https://cloud.google.com/functions
+//
+// Creating a client
 //
 // Usage example:
 //
 //   import "google.golang.org/api/cloudfunctions/v1"
 //   ...
-//   cloudfunctionsService, err := cloudfunctions.New(oauthHttpClient)
+//   ctx := context.Background()
+//   cloudfunctionsService, err := cloudfunctions.NewService(ctx)
+//
+// In this example, Google Application Default Credentials are used for authentication.
+//
+// For information on how to create and obtain Application Default Credentials, see https://developers.google.com/identity/protocols/application-default-credentials.
+//
+// Other authentication options
+//
+// To use an API key for authentication (note: some APIs do not support API keys), use option.WithAPIKey:
+//
+//   cloudfunctionsService, err := cloudfunctions.NewService(ctx, option.WithAPIKey("AIza..."))
+//
+// To use an OAuth token (e.g., a user token obtained via a three-legged OAuth flow), use option.WithTokenSource:
+//
+//   config := &oauth2.Config{...}
+//   // ...
+//   token, err := config.Exchange(ctx, ...)
+//   cloudfunctionsService, err := cloudfunctions.NewService(ctx, option.WithTokenSource(config.TokenSource(ctx, token)))
+//
+// See https://godoc.org/google.golang.org/api/option/ for details on options.
 package cloudfunctions // import "google.golang.org/api/cloudfunctions/v1"
 
 import (
@@ -29,6 +51,8 @@ import (
 
 	gensupport "google.golang.org/api/gensupport"
 	googleapi "google.golang.org/api/googleapi"
+	option "google.golang.org/api/option"
+	htransport "google.golang.org/api/transport/http"
 )
 
 // Always reference these packages, just in case the auto-generated code
@@ -56,6 +80,32 @@ const (
 	CloudPlatformScope = "https://www.googleapis.com/auth/cloud-platform"
 )
 
+// NewService creates a new Service.
+func NewService(ctx context.Context, opts ...option.ClientOption) (*Service, error) {
+	scopesOption := option.WithScopes(
+		"https://www.googleapis.com/auth/cloud-platform",
+	)
+	// NOTE: prepend, so we don't override user-specified scopes.
+	opts = append([]option.ClientOption{scopesOption}, opts...)
+	client, endpoint, err := htransport.NewClient(ctx, opts...)
+	if err != nil {
+		return nil, err
+	}
+	s, err := New(client)
+	if err != nil {
+		return nil, err
+	}
+	if endpoint != "" {
+		s.BasePath = endpoint
+	}
+	return s, nil
+}
+
+// New creates a new Service. It uses the provided http.Client for requests.
+//
+// Deprecated: please use NewService instead.
+// To provide a custom HTTP client, use option.WithHTTPClient.
+// If you are using google.golang.org/api/googleapis/transport.APIKey, use option.WithAPIKey with NewService instead.
 func New(client *http.Client) (*Service, error) {
 	if client == nil {
 		return nil, errors.New("client is nil")
@@ -281,9 +331,8 @@ func (s *AuditLogConfig) MarshalJSON() ([]byte, error) {
 
 // Binding: Associates `members` with a `role`.
 type Binding struct {
-	// Condition: Unimplemented. The condition that is associated with this
-	// binding.
-	// NOTE: an unsatisfied condition will not allow user access via
+	// Condition: The condition that is associated with this binding.
+	// NOTE: An unsatisfied condition will not allow user access via
 	// current
 	// binding. Different bindings, including their conditions, are
 	// examined
@@ -317,7 +366,7 @@ type Binding struct {
 	//    For example, `admins@example.com`.
 	//
 	//
-	// * `domain:{domain}`: A Google Apps domain name that represents all
+	// * `domain:{domain}`: The G Suite domain (primary) that represents all
 	// the
 	//    users of that domain. For example, `google.com` or
 	// `example.com`.
@@ -466,9 +515,7 @@ type CloudFunction struct {
 
 	// MaxInstances: The limit on the maximum number of function instances
 	// that may coexist at a
-	// given time. This feature is currently in alpha, available only
-	// for
-	// whitelisted users.
+	// given time.
 	MaxInstances int64 `json:"maxInstances,omitempty"`
 
 	// Name: A user-defined name of the function. Function names must be
@@ -504,13 +551,19 @@ type CloudFunction struct {
 	// users.
 	Network string `json:"network,omitempty"`
 
-	// Runtime: The runtime in which the function is going to run. If empty,
-	// defaults to
-	// Node.js 6.
+	// Runtime: Required. The runtime in which the function is going to run.
+	// Choices:
+	//
+	// * `nodejs6`: Node.js 6
+	// * `nodejs8`: Node.js 8
+	// * `nodejs10`: Node.js 10
+	// * `python37`: Python 3.7
+	// * `go111`: Go 1.11
 	Runtime string `json:"runtime,omitempty"`
 
-	// ServiceAccountEmail: Output only. The email of the function's service
-	// account.
+	// ServiceAccountEmail: The email of the function's service account. If
+	// empty, defaults to
+	// {project_id}@appspot.gserviceaccount.com.
 	ServiceAccountEmail string `json:"serviceAccountEmail,omitempty"`
 
 	// SourceArchiveUrl: The Google Cloud Storage URL, starting with gs://,
@@ -1473,20 +1526,20 @@ func (s *SourceRepository) MarshalJSON() ([]byte, error) {
 }
 
 // Status: The `Status` type defines a logical error model that is
-// suitable for different
-// programming environments, including REST APIs and RPC APIs. It is
-// used by
-// [gRPC](https://github.com/grpc). The error model is designed to
-// be:
+// suitable for
+// different programming environments, including REST APIs and RPC APIs.
+// It is
+// used by [gRPC](https://github.com/grpc). The error model is designed
+// to be:
 //
 // - Simple to use and understand for most users
 // - Flexible enough to meet unexpected needs
 //
 // # Overview
 //
-// The `Status` message contains three pieces of data: error code, error
-// message,
-// and error details. The error code should be an enum value
+// The `Status` message contains three pieces of data: error code,
+// error
+// message, and error details. The error code should be an enum value
 // of
 // google.rpc.Code, but it may accept additional error codes if needed.
 // The
@@ -1840,15 +1893,18 @@ func (r *OperationsService) List() *OperationsListCall {
 	return c
 }
 
-// Filter sets the optional parameter "filter": The standard list
-// filter.
+// Filter sets the optional parameter "filter": Required. A filter for
+// matching the requested operations.<br><br> The supported formats of
+// <b>filter</b> are:<br> To query for specific function:
+// <code>project:*,location:*,function:*</code><br> To query for all of
+// the latest operations for a project:
+// <code>project:*,latest:true</code>
 func (c *OperationsListCall) Filter(filter string) *OperationsListCall {
 	c.urlParams_.Set("filter", filter)
 	return c
 }
 
-// Name sets the optional parameter "name": The name of the operation's
-// parent resource.
+// Name sets the optional parameter "name": Must not be set.
 func (c *OperationsListCall) Name(name string) *OperationsListCall {
 	c.urlParams_.Set("name", name)
 	return c
@@ -1970,12 +2026,12 @@ func (c *OperationsListCall) Do(opts ...googleapi.CallOption) (*ListOperationsRe
 	//   "parameterOrder": [],
 	//   "parameters": {
 	//     "filter": {
-	//       "description": "The standard list filter.",
+	//       "description": "Required. A filter for matching the requested operations.\u003cbr\u003e\u003cbr\u003e The supported formats of \u003cb\u003efilter\u003c/b\u003e are:\u003cbr\u003e To query for specific function: \u003ccode\u003eproject:*,location:*,function:*\u003c/code\u003e\u003cbr\u003e To query for all of the latest operations for a project: \u003ccode\u003eproject:*,latest:true\u003c/code\u003e",
 	//       "location": "query",
 	//       "type": "string"
 	//     },
 	//     "name": {
-	//       "description": "The name of the operation's parent resource.",
+	//       "description": "Must not be set.",
 	//       "location": "query",
 	//       "type": "string"
 	//     },
@@ -2236,9 +2292,12 @@ type ProjectsLocationsFunctionsCallCall struct {
 	header_             http.Header
 }
 
-// Call: Invokes synchronously deployed function. To be used for
-// testing, very
-// limited traffic allowed.
+// Call: Synchronously invokes a deployed Cloud Function. To be used for
+// testing
+// purposes as very limited traffic is allowed. For more information
+// on
+// the actual limits, refer to
+// [Rate Limits](https://cloud.google.com/functions/quotas#rate_limits).
 func (r *ProjectsLocationsFunctionsService) Call(name string, callfunctionrequest *CallFunctionRequest) *ProjectsLocationsFunctionsCallCall {
 	c := &ProjectsLocationsFunctionsCallCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.name = name
@@ -2336,7 +2395,7 @@ func (c *ProjectsLocationsFunctionsCallCall) Do(opts ...googleapi.CallOption) (*
 	}
 	return ret, nil
 	// {
-	//   "description": "Invokes synchronously deployed function. To be used for testing, very\nlimited traffic allowed.",
+	//   "description": "Synchronously invokes a deployed Cloud Function. To be used for testing\npurposes as very limited traffic is allowed. For more information on\nthe actual limits, refer to\n[Rate Limits](https://cloud.google.com/functions/quotas#rate_limits).",
 	//   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/functions/{functionsId}:call",
 	//   "httpMethod": "POST",
 	//   "id": "cloudfunctions.projects.locations.functions.call",
@@ -2815,12 +2874,23 @@ type ProjectsLocationsFunctionsGenerateUploadUrlCall struct {
 //
 // * Source file type should be a zip file.
 // * Source file size should not exceed 100MB limit.
+// * No credentials should be attached - the signed URLs provide access
+// to the
+//   target bucket using internal service identity; if credentials were
+//   attached, the identity from the credentials would be used, but
+// that
+//   identity does not have permissions to upload files to the
+// URL.
 //
 // When making a HTTP PUT request, these two headers need to be
 // specified:
 //
 // * `content-type: application/zip`
 // * `x-goog-content-length-range: 0,104857600`
+//
+// And this header SHOULD NOT be specified:
+//
+// * `Authorization: Bearer YOUR_TOKEN`
 func (r *ProjectsLocationsFunctionsService) GenerateUploadUrl(parent string, generateuploadurlrequest *GenerateUploadUrlRequest) *ProjectsLocationsFunctionsGenerateUploadUrlCall {
 	c := &ProjectsLocationsFunctionsGenerateUploadUrlCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.parent = parent
@@ -2918,7 +2988,7 @@ func (c *ProjectsLocationsFunctionsGenerateUploadUrlCall) Do(opts ...googleapi.C
 	}
 	return ret, nil
 	// {
-	//   "description": "Returns a signed URL for uploading a function source code.\nFor more information about the signed URL usage see:\nhttps://cloud.google.com/storage/docs/access-control/signed-urls.\nOnce the function source code upload is complete, the used signed\nURL should be provided in CreateFunction or UpdateFunction request\nas a reference to the function source code.\n\nWhen uploading source code to the generated signed URL, please follow\nthese restrictions:\n\n* Source file type should be a zip file.\n* Source file size should not exceed 100MB limit.\n\nWhen making a HTTP PUT request, these two headers need to be specified:\n\n* `content-type: application/zip`\n* `x-goog-content-length-range: 0,104857600`",
+	//   "description": "Returns a signed URL for uploading a function source code.\nFor more information about the signed URL usage see:\nhttps://cloud.google.com/storage/docs/access-control/signed-urls.\nOnce the function source code upload is complete, the used signed\nURL should be provided in CreateFunction or UpdateFunction request\nas a reference to the function source code.\n\nWhen uploading source code to the generated signed URL, please follow\nthese restrictions:\n\n* Source file type should be a zip file.\n* Source file size should not exceed 100MB limit.\n* No credentials should be attached - the signed URLs provide access to the\n  target bucket using internal service identity; if credentials were\n  attached, the identity from the credentials would be used, but that\n  identity does not have permissions to upload files to the URL.\n\nWhen making a HTTP PUT request, these two headers need to be specified:\n\n* `content-type: application/zip`\n* `x-goog-content-length-range: 0,104857600`\n\nAnd this header SHOULD NOT be specified:\n\n* `Authorization: Bearer YOUR_TOKEN`",
 	//   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/functions:generateUploadUrl",
 	//   "httpMethod": "POST",
 	//   "id": "cloudfunctions.projects.locations.functions.generateUploadUrl",
@@ -3103,8 +3173,9 @@ type ProjectsLocationsFunctionsGetIamPolicyCall struct {
 	header_      http.Header
 }
 
-// GetIamPolicy: Gets the access control policy for a resource.
-// Returns an empty policy if the resource exists and does not have a
+// GetIamPolicy: Gets the IAM access control policy for a
+// function.
+// Returns an empty policy if the function exists and does not have a
 // policy
 // set.
 func (r *ProjectsLocationsFunctionsService) GetIamPolicy(resource string) *ProjectsLocationsFunctionsGetIamPolicyCall {
@@ -3211,7 +3282,7 @@ func (c *ProjectsLocationsFunctionsGetIamPolicyCall) Do(opts ...googleapi.CallOp
 	}
 	return ret, nil
 	// {
-	//   "description": "Gets the access control policy for a resource.\nReturns an empty policy if the resource exists and does not have a policy\nset.",
+	//   "description": "Gets the IAM access control policy for a function.\nReturns an empty policy if the function exists and does not have a policy\nset.",
 	//   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/functions/{functionsId}:getIamPolicy",
 	//   "httpMethod": "GET",
 	//   "id": "cloudfunctions.projects.locations.functions.getIamPolicy",
@@ -3595,9 +3666,9 @@ type ProjectsLocationsFunctionsSetIamPolicyCall struct {
 	header_             http.Header
 }
 
-// SetIamPolicy: Sets the access control policy on the specified
-// resource. Replaces any
-// existing policy.
+// SetIamPolicy: Sets the IAM access control policy on the specified
+// function.
+// Replaces any existing policy.
 func (r *ProjectsLocationsFunctionsService) SetIamPolicy(resource string, setiampolicyrequest *SetIamPolicyRequest) *ProjectsLocationsFunctionsSetIamPolicyCall {
 	c := &ProjectsLocationsFunctionsSetIamPolicyCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.resource = resource
@@ -3695,7 +3766,7 @@ func (c *ProjectsLocationsFunctionsSetIamPolicyCall) Do(opts ...googleapi.CallOp
 	}
 	return ret, nil
 	// {
-	//   "description": "Sets the access control policy on the specified resource. Replaces any\nexisting policy.",
+	//   "description": "Sets the IAM access control policy on the specified function.\nReplaces any existing policy.",
 	//   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/functions/{functionsId}:setIamPolicy",
 	//   "httpMethod": "POST",
 	//   "id": "cloudfunctions.projects.locations.functions.setIamPolicy",
@@ -3736,17 +3807,12 @@ type ProjectsLocationsFunctionsTestIamPermissionsCall struct {
 	header_                   http.Header
 }
 
-// TestIamPermissions: Returns permissions that a caller has on the
-// specified resource.
-// If the resource does not exist, this will return an empty set
+// TestIamPermissions: Tests the specified permissions against the IAM
+// access control policy
+// for a function.
+// If the function does not exist, this will return an empty set
 // of
 // permissions, not a NOT_FOUND error.
-//
-// Note: This operation is designed to be used for building
-// permission-aware
-// UIs and command-line tools, not for authorization checking. This
-// operation
-// may "fail open" without warning.
 func (r *ProjectsLocationsFunctionsService) TestIamPermissions(resource string, testiampermissionsrequest *TestIamPermissionsRequest) *ProjectsLocationsFunctionsTestIamPermissionsCall {
 	c := &ProjectsLocationsFunctionsTestIamPermissionsCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.resource = resource
@@ -3844,7 +3910,7 @@ func (c *ProjectsLocationsFunctionsTestIamPermissionsCall) Do(opts ...googleapi.
 	}
 	return ret, nil
 	// {
-	//   "description": "Returns permissions that a caller has on the specified resource.\nIf the resource does not exist, this will return an empty set of\npermissions, not a NOT_FOUND error.\n\nNote: This operation is designed to be used for building permission-aware\nUIs and command-line tools, not for authorization checking. This operation\nmay \"fail open\" without warning.",
+	//   "description": "Tests the specified permissions against the IAM access control policy\nfor a function.\nIf the function does not exist, this will return an empty set of\npermissions, not a NOT_FOUND error.",
 	//   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/functions/{functionsId}:testIamPermissions",
 	//   "httpMethod": "POST",
 	//   "id": "cloudfunctions.projects.locations.functions.testIamPermissions",
