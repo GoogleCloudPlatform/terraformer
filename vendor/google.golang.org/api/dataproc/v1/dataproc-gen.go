@@ -1,4 +1,4 @@
-// Copyright 2018 Google Inc. All rights reserved.
+// Copyright 2019 Google LLC.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
@@ -8,13 +8,35 @@
 //
 // This package is DEPRECATED. Use package cloud.google.com/go/dataproc/apiv1 instead.
 //
-// See https://cloud.google.com/dataproc/
+// For product documentation, see: https://cloud.google.com/dataproc/
+//
+// Creating a client
 //
 // Usage example:
 //
 //   import "google.golang.org/api/dataproc/v1"
 //   ...
-//   dataprocService, err := dataproc.New(oauthHttpClient)
+//   ctx := context.Background()
+//   dataprocService, err := dataproc.NewService(ctx)
+//
+// In this example, Google Application Default Credentials are used for authentication.
+//
+// For information on how to create and obtain Application Default Credentials, see https://developers.google.com/identity/protocols/application-default-credentials.
+//
+// Other authentication options
+//
+// To use an API key for authentication (note: some APIs do not support API keys), use option.WithAPIKey:
+//
+//   dataprocService, err := dataproc.NewService(ctx, option.WithAPIKey("AIza..."))
+//
+// To use an OAuth token (e.g., a user token obtained via a three-legged OAuth flow), use option.WithTokenSource:
+//
+//   config := &oauth2.Config{...}
+//   // ...
+//   token, err := config.Exchange(ctx, ...)
+//   dataprocService, err := dataproc.NewService(ctx, option.WithTokenSource(config.TokenSource(ctx, token)))
+//
+// See https://godoc.org/google.golang.org/api/option/ for details on options.
 package dataproc // import "google.golang.org/api/dataproc/v1"
 
 import (
@@ -31,6 +53,8 @@ import (
 
 	gensupport "google.golang.org/api/gensupport"
 	googleapi "google.golang.org/api/googleapi"
+	option "google.golang.org/api/option"
+	htransport "google.golang.org/api/transport/http"
 )
 
 // Always reference these packages, just in case the auto-generated code
@@ -58,6 +82,32 @@ const (
 	CloudPlatformScope = "https://www.googleapis.com/auth/cloud-platform"
 )
 
+// NewService creates a new Service.
+func NewService(ctx context.Context, opts ...option.ClientOption) (*Service, error) {
+	scopesOption := option.WithScopes(
+		"https://www.googleapis.com/auth/cloud-platform",
+	)
+	// NOTE: prepend, so we don't override user-specified scopes.
+	opts = append([]option.ClientOption{scopesOption}, opts...)
+	client, endpoint, err := htransport.NewClient(ctx, opts...)
+	if err != nil {
+		return nil, err
+	}
+	s, err := New(client)
+	if err != nil {
+		return nil, err
+	}
+	if endpoint != "" {
+		s.BasePath = endpoint
+	}
+	return s, nil
+}
+
+// New creates a new Service. It uses the provided http.Client for requests.
+//
+// Deprecated: please use NewService instead.
+// To provide a custom HTTP client, use option.WithHTTPClient.
+// If you are using google.golang.org/api/googleapis/transport.APIKey, use option.WithAPIKey with NewService instead.
 func New(client *http.Client) (*Service, error) {
 	if client == nil {
 		return nil, errors.New("client is nil")
@@ -99,6 +149,7 @@ type ProjectsService struct {
 
 func NewProjectsLocationsService(s *Service) *ProjectsLocationsService {
 	rs := &ProjectsLocationsService{s: s}
+	rs.AutoscalingPolicies = NewProjectsLocationsAutoscalingPoliciesService(s)
 	rs.WorkflowTemplates = NewProjectsLocationsWorkflowTemplatesService(s)
 	return rs
 }
@@ -106,7 +157,18 @@ func NewProjectsLocationsService(s *Service) *ProjectsLocationsService {
 type ProjectsLocationsService struct {
 	s *Service
 
+	AutoscalingPolicies *ProjectsLocationsAutoscalingPoliciesService
+
 	WorkflowTemplates *ProjectsLocationsWorkflowTemplatesService
+}
+
+func NewProjectsLocationsAutoscalingPoliciesService(s *Service) *ProjectsLocationsAutoscalingPoliciesService {
+	rs := &ProjectsLocationsAutoscalingPoliciesService{s: s}
+	return rs
+}
+
+type ProjectsLocationsAutoscalingPoliciesService struct {
+	s *Service
 }
 
 func NewProjectsLocationsWorkflowTemplatesService(s *Service) *ProjectsLocationsWorkflowTemplatesService {
@@ -120,6 +182,7 @@ type ProjectsLocationsWorkflowTemplatesService struct {
 
 func NewProjectsRegionsService(s *Service) *ProjectsRegionsService {
 	rs := &ProjectsRegionsService{s: s}
+	rs.AutoscalingPolicies = NewProjectsRegionsAutoscalingPoliciesService(s)
 	rs.Clusters = NewProjectsRegionsClustersService(s)
 	rs.Jobs = NewProjectsRegionsJobsService(s)
 	rs.Operations = NewProjectsRegionsOperationsService(s)
@@ -130,6 +193,8 @@ func NewProjectsRegionsService(s *Service) *ProjectsRegionsService {
 type ProjectsRegionsService struct {
 	s *Service
 
+	AutoscalingPolicies *ProjectsRegionsAutoscalingPoliciesService
+
 	Clusters *ProjectsRegionsClustersService
 
 	Jobs *ProjectsRegionsJobsService
@@ -137,6 +202,15 @@ type ProjectsRegionsService struct {
 	Operations *ProjectsRegionsOperationsService
 
 	WorkflowTemplates *ProjectsRegionsWorkflowTemplatesService
+}
+
+func NewProjectsRegionsAutoscalingPoliciesService(s *Service) *ProjectsRegionsAutoscalingPoliciesService {
+	rs := &ProjectsRegionsAutoscalingPoliciesService{s: s}
+	return rs
+}
+
+type ProjectsRegionsAutoscalingPoliciesService struct {
+	s *Service
 }
 
 func NewProjectsRegionsClustersService(s *Service) *ProjectsRegionsClustersService {
@@ -222,10 +296,10 @@ func (s *AcceleratorConfig) MarshalJSON() ([]byte, error) {
 
 // Binding: Associates members with a role.
 type Binding struct {
-	// Condition: Unimplemented. The condition that is associated with this
-	// binding. NOTE: an unsatisfied condition will not allow user access
-	// via current binding. Different bindings, including their conditions,
-	// are examined independently.
+	// Condition: The condition that is associated with this binding. NOTE:
+	// An unsatisfied condition will not allow user access via current
+	// binding. Different bindings, including their conditions, are examined
+	// independently.
 	Condition *Expr `json:"condition,omitempty"`
 
 	// Members: Specifies the identities requesting access for a Cloud
@@ -242,8 +316,8 @@ type Binding struct {
 	// my-other-app@appspot.gserviceaccount.com.
 	// group:{emailid}: An email address that represents a Google group.
 	// For example, admins@example.com.
-	// domain:{domain}: A Google Apps domain name that represents all the
-	// users of that domain. For example, google.com or example.com.
+	// domain:{domain}: The G Suite domain (primary) that represents all the
+	//  users of that domain. For example, google.com or example.com.
 	Members []string `json:"members,omitempty"`
 
 	// Role: Role that is assigned to members. For example, roles/viewer,
@@ -345,19 +419,19 @@ func (s *Cluster) MarshalJSON() ([]byte, error) {
 
 // ClusterConfig: The cluster config.
 type ClusterConfig struct {
-	// ConfigBucket: Optional. A Cloud Storage staging bucket used for
-	// sharing generated SSH keys and config. If you do not specify a
-	// staging bucket, Cloud Dataproc will determine an appropriate Cloud
-	// Storage location (US, ASIA, or EU) for your cluster's staging bucket
-	// according to the Google Compute Engine zone where your cluster is
-	// deployed, and then it will create and manage this project-level,
-	// per-location bucket for you.
+	// ConfigBucket: Optional. A Google Cloud Storage bucket used to stage
+	// job dependencies, config files, and job driver console output. If you
+	// do not specify a staging bucket, Cloud Dataproc will determine a
+	// Cloud Storage location (US, ASIA, or EU) for your cluster's staging
+	// bucket according to the Google Compute Engine zone where your cluster
+	// is deployed, and then create and manage this project-level,
+	// per-location bucket (see Cloud Dataproc staging bucket).
 	ConfigBucket string `json:"configBucket,omitempty"`
 
 	// EncryptionConfig: Optional. Encryption settings for the cluster.
 	EncryptionConfig *EncryptionConfig `json:"encryptionConfig,omitempty"`
 
-	// GceClusterConfig: Required. The shared Compute Engine config settings
+	// GceClusterConfig: Optional. The shared Compute Engine config settings
 	// for all instances in a cluster.
 	GceClusterConfig *GceClusterConfig `json:"gceClusterConfig,omitempty"`
 
@@ -366,9 +440,10 @@ type ClusterConfig struct {
 	// and all worker nodes. You can test a node's role metadata to run an
 	// executable on a master or worker node, as shown below using curl (you
 	// can also use wget):
-	// ROLE=$(curl -H Metadata-Flavor:Google
-	// http://metadata/computeMetadata/v1/instance/attributes/dataproc-role)
-	//
+	// ROLE=$(curl -H
+	// Metadata-Flavor:Google
+	// http://metadata/computeMetadata/v1/instance/att
+	// ributes/dataproc-role)
 	// if [[ "${ROLE}" == 'Master' ]]; then
 	//   ... master specific actions ...
 	// else
@@ -913,8 +988,9 @@ type GceClusterConfig struct {
 	// URL, partial URI, or short name are valid.
 	// Examples:
 	// https://www.googleapis.com/compute/v1/projects/[project_id]/
-	// regions/us-east1/sub0
-	// projects/[project_id]/regions/us-east1/sub0
+	// regions/us-east1/subnetworks/sub0
+	// projects/[project_id]/regions/us-eas
+	// t1/subnetworks/sub0
 	// sub0
 	SubnetworkUri string `json:"subnetworkUri,omitempty"`
 
@@ -1336,12 +1412,11 @@ func (s *JobPlacement) MarshalJSON() ([]byte, error) {
 
 // JobReference: Encapsulates the full scoping used to reference a job.
 type JobReference struct {
-	// JobId: Optional. The job ID, which must be unique within the project.
-	// The job ID is generated by the server upon job submission or provided
-	// by the user as a means to perform retries without creating duplicate
-	// jobs. The ID must contain only letters (a-z, A-Z), numbers (0-9),
+	// JobId: Optional. The job ID, which must be unique within the
+	// project.The ID must contain only letters (a-z, A-Z), numbers (0-9),
 	// underscores (_), or hyphens (-). The maximum length is 100
-	// characters.
+	// characters.If not specified by the caller, the job ID will be
+	// provided by the server.
 	JobId string `json:"jobId,omitempty"`
 
 	// ProjectId: Required. The ID of the Google Cloud Platform project that
@@ -2243,13 +2318,26 @@ type SoftwareConfig struct {
 	// ImageVersion: Optional. The version of software inside the cluster.
 	// It must be one of the supported Cloud Dataproc Versions, such as
 	// "1.2" (including a subminor version, such as "1.2.29"), or the
-	// "preview" version. If unspecified, it defaults to the latest version.
+	// "preview" version. If unspecified, it defaults to the latest Debian
+	// version.
 	ImageVersion string `json:"imageVersion,omitempty"`
 
+	// OptionalComponents: The set of optional components to activate on the
+	// cluster.
+	//
+	// Possible values:
+	//   "COMPONENT_UNSPECIFIED" - Unspecified component.
+	//   "ANACONDA" - The Anaconda python distribution.
+	//   "HIVE_WEBHCAT" - The Hive Web HCatalog (the REST service for
+	// accessing HCatalog).
+	//   "JUPYTER" - The Jupyter Notebook.
+	//   "ZEPPELIN" - The Zeppelin notebook.
+	OptionalComponents []string `json:"optionalComponents,omitempty"`
+
 	// Properties: Optional. The properties to set on daemon config
-	// files.Property keys are specified in prefix:property format, such as
-	// core:fs.defaultFS. The following are supported prefixes and their
-	// mappings:
+	// files.Property keys are specified in prefix:property format, for
+	// example core:hadoop.tmp.dir. The following are supported prefixes and
+	// their mappings:
 	// capacity-scheduler: capacity-scheduler.xml
 	// core: core-site.xml
 	// distcp: distcp-default.xml
@@ -3021,6 +3109,431 @@ func (s *YarnApplication) UnmarshalJSON(data []byte) error {
 	}
 	s.Progress = float64(s1.Progress)
 	return nil
+}
+
+// method id "dataproc.projects.locations.autoscalingPolicies.getIamPolicy":
+
+type ProjectsLocationsAutoscalingPoliciesGetIamPolicyCall struct {
+	s                   *Service
+	resource            string
+	getiampolicyrequest *GetIamPolicyRequest
+	urlParams_          gensupport.URLParams
+	ctx_                context.Context
+	header_             http.Header
+}
+
+// GetIamPolicy: Gets the access control policy for a resource. Returns
+// an empty policy if the resource exists and does not have a policy
+// set.
+func (r *ProjectsLocationsAutoscalingPoliciesService) GetIamPolicy(resource string, getiampolicyrequest *GetIamPolicyRequest) *ProjectsLocationsAutoscalingPoliciesGetIamPolicyCall {
+	c := &ProjectsLocationsAutoscalingPoliciesGetIamPolicyCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.resource = resource
+	c.getiampolicyrequest = getiampolicyrequest
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse
+// for more information.
+func (c *ProjectsLocationsAutoscalingPoliciesGetIamPolicyCall) Fields(s ...googleapi.Field) *ProjectsLocationsAutoscalingPoliciesGetIamPolicyCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// Context sets the context to be used in this call's Do method. Any
+// pending HTTP request will be aborted if the provided context is
+// canceled.
+func (c *ProjectsLocationsAutoscalingPoliciesGetIamPolicyCall) Context(ctx context.Context) *ProjectsLocationsAutoscalingPoliciesGetIamPolicyCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns an http.Header that can be modified by the caller to
+// add HTTP headers to the request.
+func (c *ProjectsLocationsAutoscalingPoliciesGetIamPolicyCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsLocationsAutoscalingPoliciesGetIamPolicyCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := make(http.Header)
+	for k, v := range c.header_ {
+		reqHeaders[k] = v
+	}
+	reqHeaders.Set("User-Agent", c.s.userAgent())
+	var body io.Reader = nil
+	body, err := googleapi.WithoutDataWrapper.JSONReader(c.getiampolicyrequest)
+	if err != nil {
+		return nil, err
+	}
+	reqHeaders.Set("Content-Type", "application/json")
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+resource}:getIamPolicy")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("POST", urls, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"resource": c.resource,
+	})
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "dataproc.projects.locations.autoscalingPolicies.getIamPolicy" call.
+// Exactly one of *Policy or error will be non-nil. Any non-2xx status
+// code is an error. Response headers are in either
+// *Policy.ServerResponse.Header or (if a response was returned at all)
+// in error.(*googleapi.Error).Header. Use googleapi.IsNotModified to
+// check whether the returned error was because http.StatusNotModified
+// was returned.
+func (c *ProjectsLocationsAutoscalingPoliciesGetIamPolicyCall) Do(opts ...googleapi.CallOption) (*Policy, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, &googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		}
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, err
+	}
+	ret := &Policy{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	if err := gensupport.DecodeResponse(target, res); err != nil {
+		return nil, err
+	}
+	return ret, nil
+	// {
+	//   "description": "Gets the access control policy for a resource. Returns an empty policy if the resource exists and does not have a policy set.",
+	//   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/autoscalingPolicies/{autoscalingPoliciesId}:getIamPolicy",
+	//   "httpMethod": "POST",
+	//   "id": "dataproc.projects.locations.autoscalingPolicies.getIamPolicy",
+	//   "parameterOrder": [
+	//     "resource"
+	//   ],
+	//   "parameters": {
+	//     "resource": {
+	//       "description": "REQUIRED: The resource for which the policy is being requested. See the operation documentation for the appropriate value for this field.",
+	//       "location": "path",
+	//       "pattern": "^projects/[^/]+/locations/[^/]+/autoscalingPolicies/[^/]+$",
+	//       "required": true,
+	//       "type": "string"
+	//     }
+	//   },
+	//   "path": "v1/{+resource}:getIamPolicy",
+	//   "request": {
+	//     "$ref": "GetIamPolicyRequest"
+	//   },
+	//   "response": {
+	//     "$ref": "Policy"
+	//   },
+	//   "scopes": [
+	//     "https://www.googleapis.com/auth/cloud-platform"
+	//   ]
+	// }
+
+}
+
+// method id "dataproc.projects.locations.autoscalingPolicies.setIamPolicy":
+
+type ProjectsLocationsAutoscalingPoliciesSetIamPolicyCall struct {
+	s                   *Service
+	resource            string
+	setiampolicyrequest *SetIamPolicyRequest
+	urlParams_          gensupport.URLParams
+	ctx_                context.Context
+	header_             http.Header
+}
+
+// SetIamPolicy: Sets the access control policy on the specified
+// resource. Replaces any existing policy.
+func (r *ProjectsLocationsAutoscalingPoliciesService) SetIamPolicy(resource string, setiampolicyrequest *SetIamPolicyRequest) *ProjectsLocationsAutoscalingPoliciesSetIamPolicyCall {
+	c := &ProjectsLocationsAutoscalingPoliciesSetIamPolicyCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.resource = resource
+	c.setiampolicyrequest = setiampolicyrequest
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse
+// for more information.
+func (c *ProjectsLocationsAutoscalingPoliciesSetIamPolicyCall) Fields(s ...googleapi.Field) *ProjectsLocationsAutoscalingPoliciesSetIamPolicyCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// Context sets the context to be used in this call's Do method. Any
+// pending HTTP request will be aborted if the provided context is
+// canceled.
+func (c *ProjectsLocationsAutoscalingPoliciesSetIamPolicyCall) Context(ctx context.Context) *ProjectsLocationsAutoscalingPoliciesSetIamPolicyCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns an http.Header that can be modified by the caller to
+// add HTTP headers to the request.
+func (c *ProjectsLocationsAutoscalingPoliciesSetIamPolicyCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsLocationsAutoscalingPoliciesSetIamPolicyCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := make(http.Header)
+	for k, v := range c.header_ {
+		reqHeaders[k] = v
+	}
+	reqHeaders.Set("User-Agent", c.s.userAgent())
+	var body io.Reader = nil
+	body, err := googleapi.WithoutDataWrapper.JSONReader(c.setiampolicyrequest)
+	if err != nil {
+		return nil, err
+	}
+	reqHeaders.Set("Content-Type", "application/json")
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+resource}:setIamPolicy")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("POST", urls, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"resource": c.resource,
+	})
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "dataproc.projects.locations.autoscalingPolicies.setIamPolicy" call.
+// Exactly one of *Policy or error will be non-nil. Any non-2xx status
+// code is an error. Response headers are in either
+// *Policy.ServerResponse.Header or (if a response was returned at all)
+// in error.(*googleapi.Error).Header. Use googleapi.IsNotModified to
+// check whether the returned error was because http.StatusNotModified
+// was returned.
+func (c *ProjectsLocationsAutoscalingPoliciesSetIamPolicyCall) Do(opts ...googleapi.CallOption) (*Policy, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, &googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		}
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, err
+	}
+	ret := &Policy{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	if err := gensupport.DecodeResponse(target, res); err != nil {
+		return nil, err
+	}
+	return ret, nil
+	// {
+	//   "description": "Sets the access control policy on the specified resource. Replaces any existing policy.",
+	//   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/autoscalingPolicies/{autoscalingPoliciesId}:setIamPolicy",
+	//   "httpMethod": "POST",
+	//   "id": "dataproc.projects.locations.autoscalingPolicies.setIamPolicy",
+	//   "parameterOrder": [
+	//     "resource"
+	//   ],
+	//   "parameters": {
+	//     "resource": {
+	//       "description": "REQUIRED: The resource for which the policy is being specified. See the operation documentation for the appropriate value for this field.",
+	//       "location": "path",
+	//       "pattern": "^projects/[^/]+/locations/[^/]+/autoscalingPolicies/[^/]+$",
+	//       "required": true,
+	//       "type": "string"
+	//     }
+	//   },
+	//   "path": "v1/{+resource}:setIamPolicy",
+	//   "request": {
+	//     "$ref": "SetIamPolicyRequest"
+	//   },
+	//   "response": {
+	//     "$ref": "Policy"
+	//   },
+	//   "scopes": [
+	//     "https://www.googleapis.com/auth/cloud-platform"
+	//   ]
+	// }
+
+}
+
+// method id "dataproc.projects.locations.autoscalingPolicies.testIamPermissions":
+
+type ProjectsLocationsAutoscalingPoliciesTestIamPermissionsCall struct {
+	s                         *Service
+	resource                  string
+	testiampermissionsrequest *TestIamPermissionsRequest
+	urlParams_                gensupport.URLParams
+	ctx_                      context.Context
+	header_                   http.Header
+}
+
+// TestIamPermissions: Returns permissions that a caller has on the
+// specified resource. If the resource does not exist, this will return
+// an empty set of permissions, not a NOT_FOUND error.Note: This
+// operation is designed to be used for building permission-aware UIs
+// and command-line tools, not for authorization checking. This
+// operation may "fail open" without warning.
+func (r *ProjectsLocationsAutoscalingPoliciesService) TestIamPermissions(resource string, testiampermissionsrequest *TestIamPermissionsRequest) *ProjectsLocationsAutoscalingPoliciesTestIamPermissionsCall {
+	c := &ProjectsLocationsAutoscalingPoliciesTestIamPermissionsCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.resource = resource
+	c.testiampermissionsrequest = testiampermissionsrequest
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse
+// for more information.
+func (c *ProjectsLocationsAutoscalingPoliciesTestIamPermissionsCall) Fields(s ...googleapi.Field) *ProjectsLocationsAutoscalingPoliciesTestIamPermissionsCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// Context sets the context to be used in this call's Do method. Any
+// pending HTTP request will be aborted if the provided context is
+// canceled.
+func (c *ProjectsLocationsAutoscalingPoliciesTestIamPermissionsCall) Context(ctx context.Context) *ProjectsLocationsAutoscalingPoliciesTestIamPermissionsCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns an http.Header that can be modified by the caller to
+// add HTTP headers to the request.
+func (c *ProjectsLocationsAutoscalingPoliciesTestIamPermissionsCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsLocationsAutoscalingPoliciesTestIamPermissionsCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := make(http.Header)
+	for k, v := range c.header_ {
+		reqHeaders[k] = v
+	}
+	reqHeaders.Set("User-Agent", c.s.userAgent())
+	var body io.Reader = nil
+	body, err := googleapi.WithoutDataWrapper.JSONReader(c.testiampermissionsrequest)
+	if err != nil {
+		return nil, err
+	}
+	reqHeaders.Set("Content-Type", "application/json")
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+resource}:testIamPermissions")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("POST", urls, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"resource": c.resource,
+	})
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "dataproc.projects.locations.autoscalingPolicies.testIamPermissions" call.
+// Exactly one of *TestIamPermissionsResponse or error will be non-nil.
+// Any non-2xx status code is an error. Response headers are in either
+// *TestIamPermissionsResponse.ServerResponse.Header or (if a response
+// was returned at all) in error.(*googleapi.Error).Header. Use
+// googleapi.IsNotModified to check whether the returned error was
+// because http.StatusNotModified was returned.
+func (c *ProjectsLocationsAutoscalingPoliciesTestIamPermissionsCall) Do(opts ...googleapi.CallOption) (*TestIamPermissionsResponse, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, &googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		}
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, err
+	}
+	ret := &TestIamPermissionsResponse{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	if err := gensupport.DecodeResponse(target, res); err != nil {
+		return nil, err
+	}
+	return ret, nil
+	// {
+	//   "description": "Returns permissions that a caller has on the specified resource. If the resource does not exist, this will return an empty set of permissions, not a NOT_FOUND error.Note: This operation is designed to be used for building permission-aware UIs and command-line tools, not for authorization checking. This operation may \"fail open\" without warning.",
+	//   "flatPath": "v1/projects/{projectsId}/locations/{locationsId}/autoscalingPolicies/{autoscalingPoliciesId}:testIamPermissions",
+	//   "httpMethod": "POST",
+	//   "id": "dataproc.projects.locations.autoscalingPolicies.testIamPermissions",
+	//   "parameterOrder": [
+	//     "resource"
+	//   ],
+	//   "parameters": {
+	//     "resource": {
+	//       "description": "REQUIRED: The resource for which the policy detail is being requested. See the operation documentation for the appropriate value for this field.",
+	//       "location": "path",
+	//       "pattern": "^projects/[^/]+/locations/[^/]+/autoscalingPolicies/[^/]+$",
+	//       "required": true,
+	//       "type": "string"
+	//     }
+	//   },
+	//   "path": "v1/{+resource}:testIamPermissions",
+	//   "request": {
+	//     "$ref": "TestIamPermissionsRequest"
+	//   },
+	//   "response": {
+	//     "$ref": "TestIamPermissionsResponse"
+	//   },
+	//   "scopes": [
+	//     "https://www.googleapis.com/auth/cloud-platform"
+	//   ]
+	// }
+
 }
 
 // method id "dataproc.projects.locations.workflowTemplates.create":
@@ -4521,6 +5034,431 @@ func (c *ProjectsLocationsWorkflowTemplatesUpdateCall) Do(opts ...googleapi.Call
 	//   },
 	//   "response": {
 	//     "$ref": "WorkflowTemplate"
+	//   },
+	//   "scopes": [
+	//     "https://www.googleapis.com/auth/cloud-platform"
+	//   ]
+	// }
+
+}
+
+// method id "dataproc.projects.regions.autoscalingPolicies.getIamPolicy":
+
+type ProjectsRegionsAutoscalingPoliciesGetIamPolicyCall struct {
+	s                   *Service
+	resource            string
+	getiampolicyrequest *GetIamPolicyRequest
+	urlParams_          gensupport.URLParams
+	ctx_                context.Context
+	header_             http.Header
+}
+
+// GetIamPolicy: Gets the access control policy for a resource. Returns
+// an empty policy if the resource exists and does not have a policy
+// set.
+func (r *ProjectsRegionsAutoscalingPoliciesService) GetIamPolicy(resource string, getiampolicyrequest *GetIamPolicyRequest) *ProjectsRegionsAutoscalingPoliciesGetIamPolicyCall {
+	c := &ProjectsRegionsAutoscalingPoliciesGetIamPolicyCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.resource = resource
+	c.getiampolicyrequest = getiampolicyrequest
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse
+// for more information.
+func (c *ProjectsRegionsAutoscalingPoliciesGetIamPolicyCall) Fields(s ...googleapi.Field) *ProjectsRegionsAutoscalingPoliciesGetIamPolicyCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// Context sets the context to be used in this call's Do method. Any
+// pending HTTP request will be aborted if the provided context is
+// canceled.
+func (c *ProjectsRegionsAutoscalingPoliciesGetIamPolicyCall) Context(ctx context.Context) *ProjectsRegionsAutoscalingPoliciesGetIamPolicyCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns an http.Header that can be modified by the caller to
+// add HTTP headers to the request.
+func (c *ProjectsRegionsAutoscalingPoliciesGetIamPolicyCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsRegionsAutoscalingPoliciesGetIamPolicyCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := make(http.Header)
+	for k, v := range c.header_ {
+		reqHeaders[k] = v
+	}
+	reqHeaders.Set("User-Agent", c.s.userAgent())
+	var body io.Reader = nil
+	body, err := googleapi.WithoutDataWrapper.JSONReader(c.getiampolicyrequest)
+	if err != nil {
+		return nil, err
+	}
+	reqHeaders.Set("Content-Type", "application/json")
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+resource}:getIamPolicy")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("POST", urls, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"resource": c.resource,
+	})
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "dataproc.projects.regions.autoscalingPolicies.getIamPolicy" call.
+// Exactly one of *Policy or error will be non-nil. Any non-2xx status
+// code is an error. Response headers are in either
+// *Policy.ServerResponse.Header or (if a response was returned at all)
+// in error.(*googleapi.Error).Header. Use googleapi.IsNotModified to
+// check whether the returned error was because http.StatusNotModified
+// was returned.
+func (c *ProjectsRegionsAutoscalingPoliciesGetIamPolicyCall) Do(opts ...googleapi.CallOption) (*Policy, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, &googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		}
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, err
+	}
+	ret := &Policy{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	if err := gensupport.DecodeResponse(target, res); err != nil {
+		return nil, err
+	}
+	return ret, nil
+	// {
+	//   "description": "Gets the access control policy for a resource. Returns an empty policy if the resource exists and does not have a policy set.",
+	//   "flatPath": "v1/projects/{projectsId}/regions/{regionsId}/autoscalingPolicies/{autoscalingPoliciesId}:getIamPolicy",
+	//   "httpMethod": "POST",
+	//   "id": "dataproc.projects.regions.autoscalingPolicies.getIamPolicy",
+	//   "parameterOrder": [
+	//     "resource"
+	//   ],
+	//   "parameters": {
+	//     "resource": {
+	//       "description": "REQUIRED: The resource for which the policy is being requested. See the operation documentation for the appropriate value for this field.",
+	//       "location": "path",
+	//       "pattern": "^projects/[^/]+/regions/[^/]+/autoscalingPolicies/[^/]+$",
+	//       "required": true,
+	//       "type": "string"
+	//     }
+	//   },
+	//   "path": "v1/{+resource}:getIamPolicy",
+	//   "request": {
+	//     "$ref": "GetIamPolicyRequest"
+	//   },
+	//   "response": {
+	//     "$ref": "Policy"
+	//   },
+	//   "scopes": [
+	//     "https://www.googleapis.com/auth/cloud-platform"
+	//   ]
+	// }
+
+}
+
+// method id "dataproc.projects.regions.autoscalingPolicies.setIamPolicy":
+
+type ProjectsRegionsAutoscalingPoliciesSetIamPolicyCall struct {
+	s                   *Service
+	resource            string
+	setiampolicyrequest *SetIamPolicyRequest
+	urlParams_          gensupport.URLParams
+	ctx_                context.Context
+	header_             http.Header
+}
+
+// SetIamPolicy: Sets the access control policy on the specified
+// resource. Replaces any existing policy.
+func (r *ProjectsRegionsAutoscalingPoliciesService) SetIamPolicy(resource string, setiampolicyrequest *SetIamPolicyRequest) *ProjectsRegionsAutoscalingPoliciesSetIamPolicyCall {
+	c := &ProjectsRegionsAutoscalingPoliciesSetIamPolicyCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.resource = resource
+	c.setiampolicyrequest = setiampolicyrequest
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse
+// for more information.
+func (c *ProjectsRegionsAutoscalingPoliciesSetIamPolicyCall) Fields(s ...googleapi.Field) *ProjectsRegionsAutoscalingPoliciesSetIamPolicyCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// Context sets the context to be used in this call's Do method. Any
+// pending HTTP request will be aborted if the provided context is
+// canceled.
+func (c *ProjectsRegionsAutoscalingPoliciesSetIamPolicyCall) Context(ctx context.Context) *ProjectsRegionsAutoscalingPoliciesSetIamPolicyCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns an http.Header that can be modified by the caller to
+// add HTTP headers to the request.
+func (c *ProjectsRegionsAutoscalingPoliciesSetIamPolicyCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsRegionsAutoscalingPoliciesSetIamPolicyCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := make(http.Header)
+	for k, v := range c.header_ {
+		reqHeaders[k] = v
+	}
+	reqHeaders.Set("User-Agent", c.s.userAgent())
+	var body io.Reader = nil
+	body, err := googleapi.WithoutDataWrapper.JSONReader(c.setiampolicyrequest)
+	if err != nil {
+		return nil, err
+	}
+	reqHeaders.Set("Content-Type", "application/json")
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+resource}:setIamPolicy")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("POST", urls, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"resource": c.resource,
+	})
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "dataproc.projects.regions.autoscalingPolicies.setIamPolicy" call.
+// Exactly one of *Policy or error will be non-nil. Any non-2xx status
+// code is an error. Response headers are in either
+// *Policy.ServerResponse.Header or (if a response was returned at all)
+// in error.(*googleapi.Error).Header. Use googleapi.IsNotModified to
+// check whether the returned error was because http.StatusNotModified
+// was returned.
+func (c *ProjectsRegionsAutoscalingPoliciesSetIamPolicyCall) Do(opts ...googleapi.CallOption) (*Policy, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, &googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		}
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, err
+	}
+	ret := &Policy{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	if err := gensupport.DecodeResponse(target, res); err != nil {
+		return nil, err
+	}
+	return ret, nil
+	// {
+	//   "description": "Sets the access control policy on the specified resource. Replaces any existing policy.",
+	//   "flatPath": "v1/projects/{projectsId}/regions/{regionsId}/autoscalingPolicies/{autoscalingPoliciesId}:setIamPolicy",
+	//   "httpMethod": "POST",
+	//   "id": "dataproc.projects.regions.autoscalingPolicies.setIamPolicy",
+	//   "parameterOrder": [
+	//     "resource"
+	//   ],
+	//   "parameters": {
+	//     "resource": {
+	//       "description": "REQUIRED: The resource for which the policy is being specified. See the operation documentation for the appropriate value for this field.",
+	//       "location": "path",
+	//       "pattern": "^projects/[^/]+/regions/[^/]+/autoscalingPolicies/[^/]+$",
+	//       "required": true,
+	//       "type": "string"
+	//     }
+	//   },
+	//   "path": "v1/{+resource}:setIamPolicy",
+	//   "request": {
+	//     "$ref": "SetIamPolicyRequest"
+	//   },
+	//   "response": {
+	//     "$ref": "Policy"
+	//   },
+	//   "scopes": [
+	//     "https://www.googleapis.com/auth/cloud-platform"
+	//   ]
+	// }
+
+}
+
+// method id "dataproc.projects.regions.autoscalingPolicies.testIamPermissions":
+
+type ProjectsRegionsAutoscalingPoliciesTestIamPermissionsCall struct {
+	s                         *Service
+	resource                  string
+	testiampermissionsrequest *TestIamPermissionsRequest
+	urlParams_                gensupport.URLParams
+	ctx_                      context.Context
+	header_                   http.Header
+}
+
+// TestIamPermissions: Returns permissions that a caller has on the
+// specified resource. If the resource does not exist, this will return
+// an empty set of permissions, not a NOT_FOUND error.Note: This
+// operation is designed to be used for building permission-aware UIs
+// and command-line tools, not for authorization checking. This
+// operation may "fail open" without warning.
+func (r *ProjectsRegionsAutoscalingPoliciesService) TestIamPermissions(resource string, testiampermissionsrequest *TestIamPermissionsRequest) *ProjectsRegionsAutoscalingPoliciesTestIamPermissionsCall {
+	c := &ProjectsRegionsAutoscalingPoliciesTestIamPermissionsCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	c.resource = resource
+	c.testiampermissionsrequest = testiampermissionsrequest
+	return c
+}
+
+// Fields allows partial responses to be retrieved. See
+// https://developers.google.com/gdata/docs/2.0/basics#PartialResponse
+// for more information.
+func (c *ProjectsRegionsAutoscalingPoliciesTestIamPermissionsCall) Fields(s ...googleapi.Field) *ProjectsRegionsAutoscalingPoliciesTestIamPermissionsCall {
+	c.urlParams_.Set("fields", googleapi.CombineFields(s))
+	return c
+}
+
+// Context sets the context to be used in this call's Do method. Any
+// pending HTTP request will be aborted if the provided context is
+// canceled.
+func (c *ProjectsRegionsAutoscalingPoliciesTestIamPermissionsCall) Context(ctx context.Context) *ProjectsRegionsAutoscalingPoliciesTestIamPermissionsCall {
+	c.ctx_ = ctx
+	return c
+}
+
+// Header returns an http.Header that can be modified by the caller to
+// add HTTP headers to the request.
+func (c *ProjectsRegionsAutoscalingPoliciesTestIamPermissionsCall) Header() http.Header {
+	if c.header_ == nil {
+		c.header_ = make(http.Header)
+	}
+	return c.header_
+}
+
+func (c *ProjectsRegionsAutoscalingPoliciesTestIamPermissionsCall) doRequest(alt string) (*http.Response, error) {
+	reqHeaders := make(http.Header)
+	for k, v := range c.header_ {
+		reqHeaders[k] = v
+	}
+	reqHeaders.Set("User-Agent", c.s.userAgent())
+	var body io.Reader = nil
+	body, err := googleapi.WithoutDataWrapper.JSONReader(c.testiampermissionsrequest)
+	if err != nil {
+		return nil, err
+	}
+	reqHeaders.Set("Content-Type", "application/json")
+	c.urlParams_.Set("alt", alt)
+	c.urlParams_.Set("prettyPrint", "false")
+	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+resource}:testIamPermissions")
+	urls += "?" + c.urlParams_.Encode()
+	req, err := http.NewRequest("POST", urls, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header = reqHeaders
+	googleapi.Expand(req.URL, map[string]string{
+		"resource": c.resource,
+	})
+	return gensupport.SendRequest(c.ctx_, c.s.client, req)
+}
+
+// Do executes the "dataproc.projects.regions.autoscalingPolicies.testIamPermissions" call.
+// Exactly one of *TestIamPermissionsResponse or error will be non-nil.
+// Any non-2xx status code is an error. Response headers are in either
+// *TestIamPermissionsResponse.ServerResponse.Header or (if a response
+// was returned at all) in error.(*googleapi.Error).Header. Use
+// googleapi.IsNotModified to check whether the returned error was
+// because http.StatusNotModified was returned.
+func (c *ProjectsRegionsAutoscalingPoliciesTestIamPermissionsCall) Do(opts ...googleapi.CallOption) (*TestIamPermissionsResponse, error) {
+	gensupport.SetOptions(c.urlParams_, opts...)
+	res, err := c.doRequest("json")
+	if res != nil && res.StatusCode == http.StatusNotModified {
+		if res.Body != nil {
+			res.Body.Close()
+		}
+		return nil, &googleapi.Error{
+			Code:   res.StatusCode,
+			Header: res.Header,
+		}
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer googleapi.CloseBody(res)
+	if err := googleapi.CheckResponse(res); err != nil {
+		return nil, err
+	}
+	ret := &TestIamPermissionsResponse{
+		ServerResponse: googleapi.ServerResponse{
+			Header:         res.Header,
+			HTTPStatusCode: res.StatusCode,
+		},
+	}
+	target := &ret
+	if err := gensupport.DecodeResponse(target, res); err != nil {
+		return nil, err
+	}
+	return ret, nil
+	// {
+	//   "description": "Returns permissions that a caller has on the specified resource. If the resource does not exist, this will return an empty set of permissions, not a NOT_FOUND error.Note: This operation is designed to be used for building permission-aware UIs and command-line tools, not for authorization checking. This operation may \"fail open\" without warning.",
+	//   "flatPath": "v1/projects/{projectsId}/regions/{regionsId}/autoscalingPolicies/{autoscalingPoliciesId}:testIamPermissions",
+	//   "httpMethod": "POST",
+	//   "id": "dataproc.projects.regions.autoscalingPolicies.testIamPermissions",
+	//   "parameterOrder": [
+	//     "resource"
+	//   ],
+	//   "parameters": {
+	//     "resource": {
+	//       "description": "REQUIRED: The resource for which the policy detail is being requested. See the operation documentation for the appropriate value for this field.",
+	//       "location": "path",
+	//       "pattern": "^projects/[^/]+/regions/[^/]+/autoscalingPolicies/[^/]+$",
+	//       "required": true,
+	//       "type": "string"
+	//     }
+	//   },
+	//   "path": "v1/{+resource}:testIamPermissions",
+	//   "request": {
+	//     "$ref": "TestIamPermissionsRequest"
+	//   },
+	//   "response": {
+	//     "$ref": "TestIamPermissionsResponse"
 	//   },
 	//   "scopes": [
 	//     "https://www.googleapis.com/auth/cloud-platform"
