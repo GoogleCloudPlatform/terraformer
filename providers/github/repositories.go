@@ -39,7 +39,7 @@ func (g *RepositoriesGenerator) InitResources() error {
 	client := githubAPI.NewClient(tc)
 
 	opt := &githubAPI.RepositoryListByOrgOptions{
-		ListOptions: githubAPI.ListOptions{PerPage: 30},
+		ListOptions: githubAPI.ListOptions{PerPage: 100},
 	}
 	//list all repositories for the authenticated user
 	for {
