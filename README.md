@@ -379,6 +379,11 @@ Support only organizations resources. List of supported resources:
     * `github_membership`
 * `organization_webhooks`
     * `github_organization_webhook`
+
+Notes:
+* Github API don't return webhook secrets. If you have secret in webhook, you get changes on `terraform plan`
+=> `configuration.#: "1" => "0"` in tfstate only.
+
 ## Contributing
 
 If you have improvements or fixes, we would love to have your contributions.
