@@ -46,7 +46,7 @@ func (g Route53Generator) createZonesResources(svc *route53.Route53) []terraform
 		zoneID := cleanZoneID(aws.StringValue(zone.Id))
 		resources = append(resources, terraform_utils.NewResource(
 			zoneID,
-			strings.TrimSuffix(aws.StringValue(zone.Name), "."),
+			zoneID+"_"+strings.TrimSuffix(aws.StringValue(zone.Name), "."),
 			"aws_route53_zone",
 			"aws",
 			map[string]string{
