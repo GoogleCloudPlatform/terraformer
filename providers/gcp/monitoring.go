@@ -46,9 +46,6 @@ func (g *MonitoringGenerator) loadAlerts(ctx context.Context, project string) er
 	}
 
 	alertIterator := client.ListAlertPolicies(ctx, req)
-	if err != nil {
-		return err
-	}
 
 	for {
 		alert, err := alertIterator.Next()
