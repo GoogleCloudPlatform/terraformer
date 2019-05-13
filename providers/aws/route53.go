@@ -58,10 +58,6 @@ func (g Route53Generator) createZonesResources(svc *route53.Route53) []terraform
 		records := g.createRecordsResources(svc, zoneID)
 		resources = append(resources, records...)
 	}
-	if err != nil {
-		log.Println(err)
-		return []terraform_utils.Resource{}
-	}
 	return resources
 }
 
