@@ -50,7 +50,8 @@ func (g Route53Generator) createZonesResources(svc *route53.Route53) []terraform
 			"aws_route53_zone",
 			"aws",
 			map[string]string{
-				"name": aws.StringValue(zone.Name),
+				"name":          aws.StringValue(zone.Name),
+				"force_destroy": "false",
 			},
 			route53AllowEmptyValues,
 			route53AdditionalFields,
@@ -116,7 +117,11 @@ func (g *Route53Generator) PostConvertHook() error {
 				g.Resources[i].Item["zone_id"] = "${aws_route53_zone." + resourceZone.ResourceName + ".zone_id}"
 			}
 		}
-
+		if _, aliasExist := resourceRecord.Item["alias"]; aliasExist {
+			if _, ttlExist := resourceRecord.Item["ttl"]; ttlExist {
+				delete(g.Resources[i].Item, "ttl")
+			}
+		}
 	}
 	return nil
 }
