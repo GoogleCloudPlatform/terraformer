@@ -74,6 +74,7 @@ type CreateOpts struct {
 	DetectContentType bool   `h:"X-Detect-Content-Type"`
 	IfNoneMatch       string `h:"If-None-Match"`
 	VersionsLocation  string `h:"X-Versions-Location"`
+	HistoryLocation   string `h:"X-History-Location"`
 }
 
 // ToContainerCreateMap formats a CreateOpts into a map of headers.
@@ -107,6 +108,7 @@ func Create(c *gophercloud.ServiceClient, containerName string, opts CreateOptsB
 	})
 	if resp != nil {
 		r.Header = resp.Header
+		resp.Body.Close()
 	}
 	r.Err = err
 	return
@@ -128,6 +130,7 @@ type UpdateOptsBuilder interface {
 // deleting a container's metadata.
 type UpdateOpts struct {
 	Metadata               map[string]string
+	RemoveMetadata         []string
 	ContainerRead          string `h:"X-Container-Read"`
 	ContainerSyncTo        string `h:"X-Container-Sync-To"`
 	ContainerSyncKey       string `h:"X-Container-Sync-Key"`
@@ -136,6 +139,8 @@ type UpdateOpts struct {
 	DetectContentType      bool   `h:"X-Detect-Content-Type"`
 	RemoveVersionsLocation string `h:"X-Remove-Versions-Location"`
 	VersionsLocation       string `h:"X-Versions-Location"`
+	RemoveHistoryLocation  string `h:"X-Remove-History-Location"`
+	HistoryLocation        string `h:"X-History-Location"`
 }
 
 // ToContainerUpdateMap formats a UpdateOpts into a map of headers.
@@ -144,9 +149,15 @@ func (opts UpdateOpts) ToContainerUpdateMap() (map[string]string, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	for k, v := range opts.Metadata {
 		h["X-Container-Meta-"+k] = v
 	}
+
+	for _, k := range opts.RemoveMetadata {
+		h["X-Remove-Container-Meta-"+k] = "remove"
+	}
+
 	return h, nil
 }
 
@@ -176,12 +187,41 @@ func Update(c *gophercloud.ServiceClient, containerName string, opts UpdateOptsB
 	return
 }
 
+// GetOptsBuilder allows extensions to add additional parameters to the Get
+// request.
+type GetOptsBuilder interface {
+	ToContainerGetMap() (map[string]string, error)
+}
+
+// GetOpts is a structure that holds options for listing containers.
+type GetOpts struct {
+	Newest bool `h:"X-Newest"`
+}
+
+// ToContainerGetMap formats a GetOpts into a map of headers.
+func (opts GetOpts) ToContainerGetMap() (map[string]string, error) {
+	return gophercloud.BuildHeaders(opts)
+}
+
 // Get is a function that retrieves the metadata of a container. To extract just
 // the custom metadata, pass the GetResult response to the ExtractMetadata
 // function.
-func Get(c *gophercloud.ServiceClient, containerName string) (r GetResult) {
-	resp, err := c.Request("HEAD", getURL(c, containerName), &gophercloud.RequestOpts{
-		OkCodes: []int{200, 204},
+func Get(c *gophercloud.ServiceClient, containerName string, opts GetOptsBuilder) (r GetResult) {
+	h := make(map[string]string)
+	if opts != nil {
+		headers, err := opts.ToContainerGetMap()
+		if err != nil {
+			r.Err = err
+			return
+		}
+
+		for k, v := range headers {
+			h[k] = v
+		}
+	}
+	resp, err := c.Head(getURL(c, containerName), &gophercloud.RequestOpts{
+		MoreHeaders: h,
+		OkCodes:     []int{200, 204},
 	})
 	if resp != nil {
 		r.Header = resp.Header

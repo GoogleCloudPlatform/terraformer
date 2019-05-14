@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/fwaas/policies"
 	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/fwaas/rules"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -21,60 +20,72 @@ func resourceFWRuleV1() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"region": &schema.Schema{
+			"region": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Computed: true,
 				ForceNew: true,
 			},
-			"name": &schema.Schema{
+
+			"name": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"description": &schema.Schema{
+
+			"description": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"protocol": &schema.Schema{
+
+			"protocol": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"action": &schema.Schema{
+
+			"action": {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			"ip_version": &schema.Schema{
+
+			"ip_version": {
 				Type:     schema.TypeInt,
 				Optional: true,
 				Default:  4,
 			},
-			"source_ip_address": &schema.Schema{
+
+			"source_ip_address": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"destination_ip_address": &schema.Schema{
+
+			"destination_ip_address": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"source_port": &schema.Schema{
+
+			"source_port": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"destination_port": &schema.Schema{
+
+			"destination_port": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"enabled": &schema.Schema{
+
+			"enabled": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  true,
 			},
-			"tenant_id": &schema.Schema{
+
+			"tenant_id": {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
 			},
-			"value_specs": &schema.Schema{
+
+			"value_specs": {
 				Type:     schema.TypeMap,
 				Optional: true,
 				ForceNew: true,
@@ -84,7 +95,6 @@ func resourceFWRuleV1() *schema.Resource {
 }
 
 func resourceFWRuleV1Create(d *schema.ResourceData, meta interface{}) error {
-
 	config := meta.(*Config)
 	networkingClient, err := config.networkingV2Client(GetRegion(d, config))
 	if err != nil {
@@ -92,16 +102,13 @@ func resourceFWRuleV1Create(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	enabled := d.Get("enabled").(bool)
-	ipVersion := resourceFWRuleV1DetermineIPVersion(d.Get("ip_version").(int))
-	protocol := resourceFWRuleV1DetermineProtocol(d.Get("protocol").(string))
-
 	ruleConfiguration := RuleCreateOpts{
 		rules.CreateOpts{
 			Name:                 d.Get("name").(string),
 			Description:          d.Get("description").(string),
-			Protocol:             protocol,
+			Protocol:             expandFWRuleV1Protocol(d.Get("protocol").(string)),
 			Action:               d.Get("action").(string),
-			IPVersion:            ipVersion,
+			IPVersion:            expandFWRuleV1IPVersion(d.Get("ip_version").(int)),
 			SourceIPAddress:      d.Get("source_ip_address").(string),
 			DestinationIPAddress: d.Get("destination_ip_address").(string),
 			SourcePort:           d.Get("source_port").(string),
@@ -112,15 +119,14 @@ func resourceFWRuleV1Create(d *schema.ResourceData, meta interface{}) error {
 		MapValueSpecs(d),
 	}
 
-	log.Printf("[DEBUG] Create firewall rule: %#v", ruleConfiguration)
+	log.Printf("[DEBUG] openstack_fw_rule_v1 create options: %#v", ruleConfiguration)
 
 	rule, err := rules.Create(networkingClient, ruleConfiguration).Extract()
-
 	if err != nil {
-		return err
+		return fmt.Errorf("Error creating openstack_fw_rule_v1: %s", err)
 	}
 
-	log.Printf("[DEBUG] Firewall rule with id %s : %#v", rule.ID, rule)
+	log.Printf("[DEBUG] Created openstack_fw_rule_v1 %s: %#v", rule.ID, rule)
 
 	d.SetId(rule.ID)
 
@@ -128,8 +134,6 @@ func resourceFWRuleV1Create(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceFWRuleV1Read(d *schema.ResourceData, meta interface{}) error {
-	log.Printf("[DEBUG] Retrieve information about firewall rule: %s", d.Id())
-
 	config := meta.(*Config)
 	networkingClient, err := config.networkingV2Client(GetRegion(d, config))
 	if err != nil {
@@ -138,10 +142,10 @@ func resourceFWRuleV1Read(d *schema.ResourceData, meta interface{}) error {
 
 	rule, err := rules.Get(networkingClient, d.Id()).Extract()
 	if err != nil {
-		return CheckDeleted(d, err, "FW rule")
+		return CheckDeleted(d, err, "Error retrieving openstack_fw_rule_v1")
 	}
 
-	log.Printf("[DEBUG] Read OpenStack Firewall Rule %s: %#v", d.Id(), rule)
+	log.Printf("[DEBUG] Retrieved openstack_fw_rule_v1 %s: %#v", d.Id(), rule)
 
 	d.Set("action", rule.Action)
 	d.Set("name", rule.Name)
@@ -171,72 +175,90 @@ func resourceFWRuleV1Update(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Error creating OpenStack networking client: %s", err)
 	}
 
-	opts := rules.UpdateOpts{}
-
+	var updateOpts rules.UpdateOpts
 	if d.HasChange("name") {
-		v := d.Get("name").(string)
-		opts.Name = &v
+		name := d.Get("name").(string)
+		updateOpts.Name = &name
 	}
 
 	if d.HasChange("description") {
-		v := d.Get("description").(string)
-		opts.Description = &v
+		description := d.Get("description").(string)
+		updateOpts.Description = &description
 	}
 
 	if d.HasChange("protocol") {
-		v := d.Get("protocol").(string)
-		opts.Protocol = &v
+		protocol := d.Get("protocol").(string)
+		updateOpts.Protocol = &protocol
 	}
 
 	if d.HasChange("action") {
-		v := d.Get("action").(string)
-		opts.Action = &v
+		action := d.Get("action").(string)
+		updateOpts.Action = &action
 	}
 
 	if d.HasChange("ip_version") {
-		v := d.Get("ip_version").(int)
-		ipVersion := resourceFWRuleV1DetermineIPVersion(v)
-		opts.IPVersion = &ipVersion
+		ipVersion := expandFWRuleV1IPVersion(d.Get("ip_version").(int))
+		updateOpts.IPVersion = &ipVersion
 	}
 
 	if d.HasChange("source_ip_address") {
-		v := d.Get("source_ip_address").(string)
-		opts.SourceIPAddress = &v
-	}
+		sourceIPAddress := d.Get("source_ip_address").(string)
+		updateOpts.SourceIPAddress = &sourceIPAddress
 
-	if d.HasChange("destination_ip_address") {
-		v := d.Get("destination_ip_address").(string)
-		opts.DestinationIPAddress = &v
+		// Also include the ip_version.
+		ipVersion := expandFWRuleV1IPVersion(d.Get("ip_version").(int))
+		updateOpts.IPVersion = &ipVersion
 	}
 
 	if d.HasChange("source_port") {
-		v := d.Get("source_port").(string)
-		opts.SourcePort = &v
+		sourcePort := d.Get("source_port").(string)
+		if sourcePort == "" {
+			sourcePort = "0"
+		}
+		updateOpts.SourcePort = &sourcePort
+
+		// Also include the protocol.
+		protocol := d.Get("protocol").(string)
+		updateOpts.Protocol = &protocol
+	}
+
+	if d.HasChange("destination_ip_address") {
+		destinationIPAddress := d.Get("destination_ip_address").(string)
+		updateOpts.DestinationIPAddress = &destinationIPAddress
+
+		// Also include the ip_version.
+		ipVersion := expandFWRuleV1IPVersion(d.Get("ip_version").(int))
+		updateOpts.IPVersion = &ipVersion
 	}
 
 	if d.HasChange("destination_port") {
-		v := d.Get("destination_port").(string)
-		opts.DestinationPort = &v
+		destinationPort := d.Get("destination_port").(string)
+		if destinationPort == "" {
+			destinationPort = "0"
+		}
+
+		updateOpts.DestinationPort = &destinationPort
+
+		// Also include the protocol.
+		protocol := d.Get("protocol").(string)
+		updateOpts.Protocol = &protocol
 	}
 
 	if d.HasChange("enabled") {
-		v := d.Get("enabled").(bool)
-		opts.Enabled = &v
+		enabled := d.Get("enabled").(bool)
+		updateOpts.Enabled = &enabled
 	}
 
-	log.Printf("[DEBUG] Updating firewall rules: %#v", opts)
-
-	err = rules.Update(networkingClient, d.Id(), opts).Err
+	log.Printf("[DEBUG] openstack_fw_rule_v1 %s update options: %#v", d.Id(), updateOpts)
+	err = rules.Update(networkingClient, d.Id(), updateOpts).Err
 	if err != nil {
-		return err
+		return fmt.Errorf("Error updating openstack_fw_rule_v1 %s: %s", d.Id(), err)
 	}
 
 	return resourceFWRuleV1Read(d, meta)
 }
 
 func resourceFWRuleV1Delete(d *schema.ResourceData, meta interface{}) error {
-	log.Printf("[DEBUG] Destroy firewall rule: %s", d.Id())
-
 	config := meta.(*Config)
 	networkingClient, err := config.networkingV2Client(GetRegion(d, config))
 	if err != nil {
@@ -245,44 +267,20 @@ func resourceFWRuleV1Delete(d *schema.ResourceData, meta interface{}) error {
 
 	rule, err := rules.Get(networkingClient, d.Id()).Extract()
 	if err != nil {
-		return err
+		return CheckDeleted(d, err, "Error retrieving openstack_fw_rule_v1")
 	}
 
 	if rule.PolicyID != "" {
 		_, err := policies.RemoveRule(networkingClient, rule.PolicyID, rule.ID).Extract()
 		if err != nil {
-			return err
+			return fmt.Errorf("Error removing openstack_fw_rule_v1 %s from policy %s: %s", d.Id(), rule.PolicyID, err)
 		}
 	}
 
-	return rules.Delete(networkingClient, d.Id()).Err
-}
-
-func resourceFWRuleV1DetermineIPVersion(ipv int) gophercloud.IPVersion {
-	// Determine the IP Version
-	var ipVersion gophercloud.IPVersion
-	switch ipv {
-	case 4:
-		ipVersion = gophercloud.IPv4
-	case 6:
-		ipVersion = gophercloud.IPv6
+	err = rules.Delete(networkingClient, d.Id()).ExtractErr()
+	if err != nil {
+		return fmt.Errorf("Error deleting openstack_fw_rule_v1 %s: %s", d.Id(), err)
 	}
 
-	return ipVersion
-}
-
-func resourceFWRuleV1DetermineProtocol(p string) rules.Protocol {
-	var protocol rules.Protocol
-	switch p {
-	case "any":
-		protocol = rules.ProtocolAny
-	case "icmp":
-		protocol = rules.ProtocolICMP
-	case "tcp":
-		protocol = rules.ProtocolTCP
-	case "udp":
-		protocol = rules.ProtocolUDP
-	}
-
-	return protocol
+	return nil
 }
