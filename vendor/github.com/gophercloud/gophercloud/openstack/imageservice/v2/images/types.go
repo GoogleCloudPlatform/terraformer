@@ -1,5 +1,9 @@
 package images
 
+import (
+	"time"
+)
+
 // ImageStatus image statuses
 // http://docs.openstack.org/developer/glance/statuses.html
 type ImageStatus string
@@ -77,3 +81,24 @@ const (
 	// ImageMemberStatusAll
 	ImageMemberStatusAll ImageMemberStatus = "all"
 )
+
+// ImageDateFilter represents a valid filter to use for filtering
+// images by their date during a List.
+type ImageDateFilter string
+
+const (
+	FilterGT  ImageDateFilter = "gt"
+	FilterGTE ImageDateFilter = "gte"
+	FilterLT  ImageDateFilter = "lt"
+	FilterLTE ImageDateFilter = "lte"
+	FilterNEQ ImageDateFilter = "neq"
+	FilterEQ  ImageDateFilter = "eq"
+)
+
+// ImageDateQuery represents a date field to be used for listing images.
+// If no filter is specified, the query will act as though FilterEQ was
+// set.
+type ImageDateQuery struct {
+	Date   time.Time
+	Filter ImageDateFilter
+}

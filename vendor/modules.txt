@@ -11,7 +11,7 @@ cloud.google.com/go/internal/version
 # github.com/Azure/azure-sdk-for-go v10.3.0-beta+incompatible
 github.com/Azure/azure-sdk-for-go/arm/storage
 github.com/Azure/azure-sdk-for-go/storage
-# github.com/Azure/go-autorest v9.9.0+incompatible
+# github.com/Azure/go-autorest v9.10.0+incompatible
 github.com/Azure/go-autorest/autorest
 github.com/Azure/go-autorest/autorest/adal
 github.com/Azure/go-autorest/autorest/azure
@@ -242,9 +242,10 @@ github.com/googleapis/gax-go
 github.com/googleapis/gnostic/OpenAPIv2
 github.com/googleapis/gnostic/compiler
 github.com/googleapis/gnostic/extensions
-# github.com/gophercloud/gophercloud v0.0.0-20170823032606-7f0936597349
+# github.com/gophercloud/gophercloud v0.0.0-20190427020117-60507118a582
 github.com/gophercloud/gophercloud
 github.com/gophercloud/gophercloud/openstack
+github.com/gophercloud/gophercloud/openstack/blockstorage/v3/volumes
 github.com/gophercloud/gophercloud/openstack/compute/v2/servers
 github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/security/groups
 github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/security/rules
@@ -260,7 +261,10 @@ github.com/gophercloud/gophercloud/openstack/objectstorage/v1/objects
 github.com/gophercloud/gophercloud/openstack/objectstorage/v1/accounts
 github.com/gophercloud/gophercloud/openstack/blockstorage/extensions/volumeactions
 github.com/gophercloud/gophercloud/openstack/blockstorage/v1/volumes
+github.com/gophercloud/gophercloud/openstack/blockstorage/v2/snapshots
 github.com/gophercloud/gophercloud/openstack/blockstorage/v2/volumes
+github.com/gophercloud/gophercloud/openstack/blockstorage/v3/snapshots
+github.com/gophercloud/gophercloud/openstack/compute/v2/extensions/attachinterfaces
 github.com/gophercloud/gophercloud/openstack/compute/v2/extensions/availabilityzones
 github.com/gophercloud/gophercloud/openstack/compute/v2/extensions/bootfromvolume
 github.com/gophercloud/gophercloud/openstack/compute/v2/extensions/floatingips
@@ -271,30 +275,71 @@ github.com/gophercloud/gophercloud/openstack/compute/v2/extensions/servergroups
 github.com/gophercloud/gophercloud/openstack/compute/v2/extensions/startstop
 github.com/gophercloud/gophercloud/openstack/compute/v2/extensions/tenantnetworks
 github.com/gophercloud/gophercloud/openstack/compute/v2/extensions/volumeattach
+github.com/gophercloud/gophercloud/openstack/containerinfra/v1/clusters
+github.com/gophercloud/gophercloud/openstack/containerinfra/v1/clustertemplates
+github.com/gophercloud/gophercloud/openstack/db/v1/configurations
+github.com/gophercloud/gophercloud/openstack/db/v1/databases
+github.com/gophercloud/gophercloud/openstack/db/v1/instances
+github.com/gophercloud/gophercloud/openstack/db/v1/users
 github.com/gophercloud/gophercloud/openstack/dns/v2/recordsets
 github.com/gophercloud/gophercloud/openstack/dns/v2/zones
+github.com/gophercloud/gophercloud/openstack/identity/v3/applicationcredentials
+github.com/gophercloud/gophercloud/openstack/identity/v3/endpoints
+github.com/gophercloud/gophercloud/openstack/identity/v3/groups
+github.com/gophercloud/gophercloud/openstack/identity/v3/projects
+github.com/gophercloud/gophercloud/openstack/identity/v3/roles
+github.com/gophercloud/gophercloud/openstack/identity/v3/services
+github.com/gophercloud/gophercloud/openstack/identity/v3/users
 github.com/gophercloud/gophercloud/openstack/imageservice/v2/imagedata
 github.com/gophercloud/gophercloud/openstack/imageservice/v2/images
+github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/attributestags
+github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/dns
+github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/external
+github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/extradhcpopts
 github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/fwaas/firewalls
 github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/fwaas/policies
 github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/fwaas/routerinsertion
 github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/fwaas/rules
+github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/layer3/addressscopes
 github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/layer3/floatingips
 github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/layer3/routers
 github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/lbaas/members
 github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/lbaas/monitors
 github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/lbaas/pools
 github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/lbaas/vips
+github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/lbaas_v2/l7policies
 github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/lbaas_v2/listeners
 github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/lbaas_v2/loadbalancers
 github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/lbaas_v2/monitors
 github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/lbaas_v2/pools
+github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/mtu
+github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/portsbinding
+github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/portsecurity
 github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/provider
+github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/subnetpools
+github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/trunks
+github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/vlantransparent
+github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/vpnaas/endpointgroups
+github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/vpnaas/ikepolicies
+github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/vpnaas/ipsecpolicies
+github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/vpnaas/services
+github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/vpnaas/siteconnections
 github.com/gophercloud/gophercloud/openstack/networking/v2/networks
 github.com/gophercloud/gophercloud/openstack/networking/v2/ports
 github.com/gophercloud/gophercloud/openstack/networking/v2/subnets
 github.com/gophercloud/gophercloud/openstack/objectstorage/v1/swauth
+github.com/gophercloud/gophercloud/openstack/sharedfilesystems/apiversions
+github.com/gophercloud/gophercloud/openstack/sharedfilesystems/v2/availabilityzones
+github.com/gophercloud/gophercloud/openstack/sharedfilesystems/v2/errors
+github.com/gophercloud/gophercloud/openstack/sharedfilesystems/v2/messages
+github.com/gophercloud/gophercloud/openstack/sharedfilesystems/v2/securityservices
+github.com/gophercloud/gophercloud/openstack/sharedfilesystems/v2/sharenetworks
+github.com/gophercloud/gophercloud/openstack/sharedfilesystems/v2/shares
+github.com/gophercloud/gophercloud/openstack/sharedfilesystems/v2/snapshots
+github.com/gophercloud/gophercloud/openstack/db/v1/datastores
 github.com/gophercloud/gophercloud/internal
+# github.com/gophercloud/utils v0.0.0-20190313033024-0bcc8e728cb5
+github.com/gophercloud/utils/openstack/clientconfig
 # github.com/hashicorp/atlas-go v0.0.0-20170808163836-8261ea080105
 github.com/hashicorp/atlas-go/archive
 github.com/hashicorp/atlas-go/v1
@@ -313,17 +358,17 @@ github.com/hashicorp/go-hclog
 github.com/hashicorp/go-multierror
 # github.com/hashicorp/go-plugin v0.0.0-20181030172320-54b6ff97d818
 github.com/hashicorp/go-plugin
-# github.com/hashicorp/go-retryablehttp v0.0.0-20180531211321-3b087ef2d313
+# github.com/hashicorp/go-retryablehttp v0.5.1
 github.com/hashicorp/go-retryablehttp
 # github.com/hashicorp/go-rootcerts v0.0.0-20160503143440-6bb64b370b90
 github.com/hashicorp/go-rootcerts
 # github.com/hashicorp/go-safetemp v1.0.0
 github.com/hashicorp/go-safetemp
-# github.com/hashicorp/go-slug v0.1.0
+# github.com/hashicorp/go-slug v0.2.0
 github.com/hashicorp/go-slug
-# github.com/hashicorp/go-tfe v0.2.7-0.20181108071842-90762f2cfc23
+# github.com/hashicorp/go-tfe v0.3.8
 github.com/hashicorp/go-tfe
-# github.com/hashicorp/go-uuid v1.0.0
+# github.com/hashicorp/go-uuid v1.0.1
 github.com/hashicorp/go-uuid
 # github.com/hashicorp/go-version v1.0.0
 github.com/hashicorp/go-version
@@ -356,9 +401,9 @@ github.com/hashicorp/hil/parser
 github.com/hashicorp/hil/scanner
 # github.com/hashicorp/logutils v1.0.0
 github.com/hashicorp/logutils
-# github.com/hashicorp/serf v0.8.1
+# github.com/hashicorp/serf v0.8.2-0.20171022020050-c20a0b1b1ea9
 github.com/hashicorp/serf/coordinate
-# github.com/hashicorp/terraform v0.11.10
+# github.com/hashicorp/terraform v0.11.12-beta1.0.20190212191339-ee1f8f9362f3
 github.com/hashicorp/terraform/helper/resource
 github.com/hashicorp/terraform/helper/schema
 github.com/hashicorp/terraform/flatmap
@@ -476,9 +521,9 @@ github.com/masterzen/simplexml/dom
 # github.com/masterzen/winrm v0.0.0-20181112102303-a196a4ff2a86
 github.com/masterzen/winrm
 github.com/masterzen/winrm/soap
-# github.com/mattn/go-colorable v0.0.9
+# github.com/mattn/go-colorable v0.1.0
 github.com/mattn/go-colorable
-# github.com/mattn/go-isatty v0.0.3
+# github.com/mattn/go-isatty v0.0.4
 github.com/mattn/go-isatty
 # github.com/mitchellh/cli v1.0.0
 github.com/mitchellh/cli
@@ -486,7 +531,7 @@ github.com/mitchellh/cli
 github.com/mitchellh/colorstring
 # github.com/mitchellh/copystructure v1.0.0
 github.com/mitchellh/copystructure
-# github.com/mitchellh/go-homedir v1.0.0
+# github.com/mitchellh/go-homedir v1.1.0
 github.com/mitchellh/go-homedir
 # github.com/mitchellh/go-linereader v0.0.0-20141013185533-07bab5fdd958
 github.com/mitchellh/go-linereader
@@ -536,7 +581,7 @@ github.com/svanharmelen/jsonapi
 github.com/terraform-providers/terraform-provider-aws/aws
 # github.com/terraform-providers/terraform-provider-kubernetes v1.4.0
 github.com/terraform-providers/terraform-provider-kubernetes/kubernetes
-# github.com/terraform-providers/terraform-provider-openstack v0.1.0
+# github.com/terraform-providers/terraform-provider-openstack v1.18.0
 github.com/terraform-providers/terraform-provider-openstack/openstack
 # github.com/ugorji/go v1.1.2-0.20180728093225-eeb0478a81ae
 github.com/ugorji/go/codec
@@ -725,7 +770,7 @@ google.golang.org/grpc/binarylog/grpc_binarylog_v1
 google.golang.org/grpc/internal/syscall
 # gopkg.in/inf.v0 v0.9.1
 gopkg.in/inf.v0
-# gopkg.in/yaml.v2 v2.2.1
+# gopkg.in/yaml.v2 v2.2.2
 gopkg.in/yaml.v2
 # k8s.io/api v0.0.0-20190116205037-c89978d5f86d
 k8s.io/api/apps/v1

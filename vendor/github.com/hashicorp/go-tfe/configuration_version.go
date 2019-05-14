@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"os"
 	"time"
 
 	slug "github.com/hashicorp/go-slug"
@@ -101,7 +102,7 @@ type ConfigurationVersionListOptions struct {
 // List returns all configuration versions of a workspace.
 func (s *configurationVersions) List(ctx context.Context, workspaceID string, options ConfigurationVersionListOptions) (*ConfigurationVersionList, error) {
 	if !validStringID(&workspaceID) {
-		return nil, errors.New("Invalid value for workspace ID")
+		return nil, errors.New("invalid value for workspace ID")
 	}
 
 	u := fmt.Sprintf("workspaces/%s/configuration-versions", url.QueryEscape(workspaceID))
@@ -137,7 +138,7 @@ type ConfigurationVersionCreateOptions struct {
 // configuration version will be usable once data is uploaded to it.
 func (s *configurationVersions) Create(ctx context.Context, workspaceID string, options ConfigurationVersionCreateOptions) (*ConfigurationVersion, error) {
 	if !validStringID(&workspaceID) {
-		return nil, errors.New("Invalid value for workspace ID")
+		return nil, errors.New("invalid value for workspace ID")
 	}
 
 	// Make sure we don't send a user provided ID.
@@ -161,7 +162,7 @@ func (s *configurationVersions) Create(ctx context.Context, workspaceID string, 
 // Read a configuration version by its ID.
 func (s *configurationVersions) Read(ctx context.Context, cvID string) (*ConfigurationVersion, error) {
 	if !validStringID(&cvID) {
-		return nil, errors.New("Invalid value for configuration version ID")
+		return nil, errors.New("invalid value for configuration version ID")
 	}
 
 	u := fmt.Sprintf("configuration-versions/%s", url.QueryEscape(cvID))
@@ -183,9 +184,17 @@ func (s *configurationVersions) Read(ctx context.Context, cvID string) (*Configu
 // upload URL from a configuration version and the path to the configuration
 // files on disk.
 func (s *configurationVersions) Upload(ctx context.Context, url, path string) error {
+	file, err := os.Stat(path)
+	if err != nil {
+		return err
+	}
+	if !file.Mode().IsDir() {
+		return errors.New("path needs to be an existing directory")
+	}
+
 	body := bytes.NewBuffer(nil)
 
-	_, err := slug.Pack(path, body)
+	_, err = slug.Pack(path, body, true)
 	if err != nil {
 		return err
 	}

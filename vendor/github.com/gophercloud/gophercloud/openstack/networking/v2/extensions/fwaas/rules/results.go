@@ -22,6 +22,7 @@ type Rule struct {
 	PolicyID             string `json:"firewall_policy_id"`
 	Position             int    `json:"position"`
 	TenantID             string `json:"tenant_id"`
+	ProjectID            string `json:"project_id"`
 }
 
 // RulePage is the page returned by a pager when traversing over a

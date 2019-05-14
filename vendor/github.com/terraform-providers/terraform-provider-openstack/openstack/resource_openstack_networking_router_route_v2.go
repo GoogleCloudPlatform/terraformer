@@ -6,7 +6,6 @@ import (
 
 	"github.com/hashicorp/terraform/helper/schema"
 
-	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/layer3/routers"
 )
 
@@ -15,25 +14,31 @@ func resourceNetworkingRouterRouteV2() *schema.Resource {
 		Create: resourceNetworkingRouterRouteV2Create,
 		Read:   resourceNetworkingRouterRouteV2Read,
 		Delete: resourceNetworkingRouterRouteV2Delete,
+		Importer: &schema.ResourceImporter{
+			State: schema.ImportStatePassthrough,
+		},
 
 		Schema: map[string]*schema.Schema{
-			"region": &schema.Schema{
+			"region": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Computed: true,
 				ForceNew: true,
 			},
-			"router_id": &schema.Schema{
+
+			"router_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-			"destination_cidr": &schema.Schema{
+
+			"destination_cidr": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-			"next_hop": &schema.Schema{
+
+			"next_hop": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
@@ -43,100 +48,86 @@ func resourceNetworkingRouterRouteV2() *schema.Resource {
 }
 
 func resourceNetworkingRouterRouteV2Create(d *schema.ResourceData, meta interface{}) error {
-
-	routerId := d.Get("router_id").(string)
-	osMutexKV.Lock(routerId)
-	defer osMutexKV.Unlock(routerId)
-
-	var destCidr string = d.Get("destination_cidr").(string)
-	var nextHop string = d.Get("next_hop").(string)
-
 	config := meta.(*Config)
 	networkingClient, err := config.networkingV2Client(GetRegion(d, config))
 	if err != nil {
 		return fmt.Errorf("Error creating OpenStack networking client: %s", err)
 	}
 
-	n, err := routers.Get(networkingClient, routerId).Extract()
-	if err != nil {
-		if _, ok := err.(gophercloud.ErrDefault404); ok {
-			d.SetId("")
-			return nil
-		}
+	routerID := d.Get("router_id").(string)
+	osMutexKV.Lock(routerID)
+	defer osMutexKV.Unlock(routerID)
 
-		return fmt.Errorf("Error retrieving OpenStack Neutron Router: %s", err)
+	r, err := routers.Get(networkingClient, routerID).Extract()
+	if err != nil {
+		return CheckDeleted(d, err, "Error getting openstack_networking_router_v2")
 	}
 
-	var updateOpts routers.UpdateOpts
-	var routeExists bool = false
+	log.Printf("[DEBUG] Retrieved openstack_networking_router_v2 %s: %#v", routerID, r)
 
-	var rts []routers.Route = n.Routes
-	for _, r := range rts {
+	routes := r.Routes
+	dstCIDR := d.Get("destination_cidr").(string)
+	nextHop := d.Get("next_hop").(string)
+	exists := false
 
-		if r.DestinationCIDR == destCidr && r.NextHop == nextHop {
-			routeExists = true
+	for _, route := range routes {
+		if route.DestinationCIDR == dstCIDR && route.NextHop == nextHop {
+			exists = true
 			break
 		}
 	}
 
-	if !routeExists {
-
-		if destCidr != "" && nextHop != "" {
-			r := routers.Route{DestinationCIDR: destCidr, NextHop: nextHop}
-			log.Printf(
-				"[INFO] Adding route %s", r)
-			rts = append(rts, r)
-		}
-
-		updateOpts.Routes = rts
-
-		log.Printf("[DEBUG] Updating Router %s with options: %+v", routerId, updateOpts)
-
-		_, err = routers.Update(networkingClient, routerId, updateOpts).Extract()
-		if err != nil {
-			return fmt.Errorf("Error updating OpenStack Neutron Router: %s", err)
-		}
-		d.SetId(fmt.Sprintf("%s-route-%s-%s", routerId, destCidr, nextHop))
-
-	} else {
-		log.Printf("[DEBUG] Router %s has route already", routerId)
+	if exists {
+		log.Printf("[DEBUG] openstack_networking_router_v2 %s already has route to %s via %s", routerID, dstCIDR, nextHop)
+		return resourceNetworkingRouterRouteV2Read(d, meta)
 	}
+
+	routes = append(routes, routers.Route{
+		DestinationCIDR: dstCIDR,
+		NextHop:         nextHop,
+	})
+	updateOpts := routers.UpdateOpts{
+		Routes: routes,
+	}
+	log.Printf("[DEBUG] openstack_networking_router_v2 %s update options: %#v", routerID, updateOpts)
+	_, err = routers.Update(networkingClient, routerID, updateOpts).Extract()
+	if err != nil {
+		return fmt.Errorf("Error updating openstack_networking_router_v2: %s", err)
+	}
+
+	d.SetId(resourceNetworkingRouterRouteV2BuildID(routerID, dstCIDR, nextHop))
 
 	return resourceNetworkingRouterRouteV2Read(d, meta)
 }
 
 func resourceNetworkingRouterRouteV2Read(d *schema.ResourceData, meta interface{}) error {
-
-	routerId := d.Get("router_id").(string)
-
 	config := meta.(*Config)
 	networkingClient, err := config.networkingV2Client(GetRegion(d, config))
 	if err != nil {
 		return fmt.Errorf("Error creating OpenStack networking client: %s", err)
 	}
 
-	n, err := routers.Get(networkingClient, routerId).Extract()
+	idFromResource, dstCIDR, nextHop, err := resourceNetworkingRouterRouteV2ParseID(d.Id())
 	if err != nil {
-		if _, ok := err.(gophercloud.ErrDefault404); ok {
-			d.SetId("")
-			return nil
-		}
-
-		return fmt.Errorf("Error retrieving OpenStack Neutron Router: %s", err)
+		return fmt.Errorf("Error reading openstack_networking_router_route_v2 ID %s: %s", d.Id(), err)
 	}
 
-	log.Printf("[DEBUG] Retrieved Router %s: %+v", routerId, n)
+	routerID := d.Get("router_id").(string)
+	if routerID == "" {
+		routerID = idFromResource
+	}
+	d.Set("router_id", routerID)
 
-	var destCidr string = d.Get("destination_cidr").(string)
-	var nextHop string = d.Get("next_hop").(string)
+	r, err := routers.Get(networkingClient, routerID).Extract()
+	if err != nil {
+		return CheckDeleted(d, err, "Error getting openstack_networking_router_v2")
+	}
 
-	d.Set("next_hop", "")
-	d.Set("destination_cidr", "")
+	log.Printf("[DEBUG] Retrieved openstack_networking_router_v2 %s: %#v", routerID, r)
 
-	for _, r := range n.Routes {
-
-		if r.DestinationCIDR == destCidr && r.NextHop == nextHop {
-			d.Set("destination_cidr", destCidr)
+	for _, route := range r.Routes {
+		if route.DestinationCIDR == dstCIDR && route.NextHop == nextHop {
+			d.Set("destination_cidr", dstCIDR)
 			d.Set("next_hop", nextHop)
 			break
 		}
@@ -148,56 +139,46 @@ func resourceNetworkingRouterRouteV2Read(d *schema.ResourceData, meta interface{
 }
 
 func resourceNetworkingRouterRouteV2Delete(d *schema.ResourceData, meta interface{}) error {
-
-	routerId := d.Get("router_id").(string)
-	osMutexKV.Lock(routerId)
-	defer osMutexKV.Unlock(routerId)
-
 	config := meta.(*Config)
-
 	networkingClient, err := config.networkingV2Client(GetRegion(d, config))
 	if err != nil {
 		return fmt.Errorf("Error creating OpenStack networking client: %s", err)
 	}
 
-	n, err := routers.Get(networkingClient, routerId).Extract()
+	routerID := d.Get("router_id").(string)
+	osMutexKV.Lock(routerID)
+	defer osMutexKV.Unlock(routerID)
+
+	r, err := routers.Get(networkingClient, routerID).Extract()
 	if err != nil {
-		if _, ok := err.(gophercloud.ErrDefault404); ok {
-			return nil
-		}
-
-		return fmt.Errorf("Error retrieving OpenStack Neutron Router: %s", err)
+		return CheckDeleted(d, err, "Error getting openstack_networking_router_v2")
 	}
 
-	var updateOpts routers.UpdateOpts
+	log.Printf("[DEBUG] Retrieved openstack_networking_router_v2 %s: %#v", routerID, r)
 
-	var destCidr string = d.Get("destination_cidr").(string)
-	var nextHop string = d.Get("next_hop").(string)
+	dstCIDR := d.Get("destination_cidr").(string)
+	nextHop := d.Get("next_hop").(string)
 
-	var oldRts []routers.Route = n.Routes
-	var newRts []routers.Route
+	oldRoutes := r.Routes
+	newRoute := []routers.Route{}
 
-	for _, r := range oldRts {
-
-		if r.DestinationCIDR != destCidr || r.NextHop != nextHop {
-			newRts = append(newRts, r)
+	for _, route := range oldRoutes {
+		if route.DestinationCIDR != dstCIDR || route.NextHop != nextHop {
+			newRoute = append(newRoute, route)
 		}
 	}
 
-	if len(oldRts) != len(newRts) {
-		r := routers.Route{DestinationCIDR: destCidr, NextHop: nextHop}
-		log.Printf(
-			"[INFO] Deleting route %s", r)
-		updateOpts.Routes = newRts
+	if len(oldRoutes) == len(newRoute) {
+		return fmt.Errorf("Can't find route to %s via %s on openstack_networking_router_v2 %s", dstCIDR, nextHop, routerID)
+	}
 
-		log.Printf("[DEBUG] Updating Router %s with options: %+v", routerId, updateOpts)
-
-		_, err = routers.Update(networkingClient, routerId, updateOpts).Extract()
-		if err != nil {
-			return fmt.Errorf("Error updating OpenStack Neutron Router: %s", err)
-		}
-	} else {
-		return fmt.Errorf("Route did not exist already")
+	log.Printf("[DEBUG] Deleting openstack_networking_router_v2 %s route to %s via %s", routerID, dstCIDR, nextHop)
+	updateOpts := routers.UpdateOpts{
+		Routes: newRoute,
+	}
+	_, err = routers.Update(networkingClient, routerID, updateOpts).Extract()
+	if err != nil {
+		return fmt.Errorf("Error updating openstack_networking_router_v2: %s", err)
 	}
 
 	return nil

@@ -37,7 +37,7 @@ Example to Create a Port
 		FixedIPs: []ports.IP{
 			{SubnetID: "a0304c3a-4f08-4c43-88af-d796509c97d2", IPAddress: "10.0.0.2"},
 		},
-		SecurityGroups: []string{"foo"},
+		SecurityGroups: &[]string{"foo"},
 		AllowedAddressPairs: []ports.AddressPair{
 			{IPAddress: "10.0.0.4", MACAddress: "fa:16:3e:c9:cb:f0"},
 		},
@@ -54,7 +54,7 @@ Example to Update a Port
 
 	updateOpts := ports.UpdateOpts{
 		Name:           "new_name",
-		SecurityGroups: []string{},
+		SecurityGroups: &[]string{},
 	}
 
 	port, err := ports.Update(networkClient, portID, updateOpts).Extract()

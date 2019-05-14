@@ -14,6 +14,7 @@ type Firewall struct {
 	Status       string `json:"status"`
 	PolicyID     string `json:"firewall_policy_id"`
 	TenantID     string `json:"tenant_id"`
+	ProjectID    string `json:"project_id"`
 }
 
 type commonResult struct {
