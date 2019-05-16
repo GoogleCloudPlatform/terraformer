@@ -82,6 +82,7 @@ func (p *GCPProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 	services["dataProc"] = &DataprocGenerator{}
 	services["cloudFunctions"] = &CloudFunctionsGenerator{}
 	services["pubsub"] = &PubsubGenerator{}
+	services["kms"] = &KmsGenerator{}
 	return services
 }
 
