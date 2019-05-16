@@ -90,7 +90,7 @@ type PolicyListOptions struct {
 // List all the policies for a given organization
 func (s *policies) List(ctx context.Context, organization string, options PolicyListOptions) (*PolicyList, error) {
 	if !validStringID(&organization) {
-		return nil, errors.New("Invalid value for organization")
+		return nil, errors.New("invalid value for organization")
 	}
 
 	u := fmt.Sprintf("organizations/%s/policies", url.QueryEscape(organization))
@@ -131,20 +131,20 @@ type EnforcementOptions struct {
 
 func (o PolicyCreateOptions) valid() error {
 	if !validString(o.Name) {
-		return errors.New("Name is required")
+		return errors.New("name is required")
 	}
 	if !validStringID(o.Name) {
-		return errors.New("Invalid value for name")
+		return errors.New("invalid value for name")
 	}
 	if o.Enforce == nil {
-		return errors.New("Enforce is required")
+		return errors.New("enforce is required")
 	}
 	for _, e := range o.Enforce {
 		if !validString(e.Path) {
-			return errors.New("Enforcement path is required")
+			return errors.New("enforcement path is required")
 		}
 		if e.Mode == nil {
-			return errors.New("Enforcement mode is required")
+			return errors.New("enforcement mode is required")
 		}
 	}
 	return nil
@@ -153,7 +153,7 @@ func (o PolicyCreateOptions) valid() error {
 // Create a policy and associate it with an organization.
 func (s *policies) Create(ctx context.Context, organization string, options PolicyCreateOptions) (*Policy, error) {
 	if !validStringID(&organization) {
-		return nil, errors.New("Invalid value for organization")
+		return nil, errors.New("invalid value for organization")
 	}
 	if err := options.valid(); err != nil {
 		return nil, err
@@ -180,7 +180,7 @@ func (s *policies) Create(ctx context.Context, organization string, options Poli
 // Read a policy by its ID.
 func (s *policies) Read(ctx context.Context, policyID string) (*Policy, error) {
 	if !validStringID(&policyID) {
-		return nil, errors.New("Invalid value for policy ID")
+		return nil, errors.New("invalid value for policy ID")
 	}
 
 	u := fmt.Sprintf("policies/%s", url.QueryEscape(policyID))
@@ -213,7 +213,7 @@ type PolicyUpdateOptions struct {
 // Update an existing policy.
 func (s *policies) Update(ctx context.Context, policyID string, options PolicyUpdateOptions) (*Policy, error) {
 	if !validStringID(&policyID) {
-		return nil, errors.New("Invalid value for policy ID")
+		return nil, errors.New("invalid value for policy ID")
 	}
 
 	// Make sure we don't send a user provided ID.
@@ -237,7 +237,7 @@ func (s *policies) Update(ctx context.Context, policyID string, options PolicyUp
 // Delete a policy by its ID.
 func (s *policies) Delete(ctx context.Context, policyID string) error {
 	if !validStringID(&policyID) {
-		return errors.New("Invalid value for policy ID")
+		return errors.New("invalid value for policy ID")
 	}
 
 	u := fmt.Sprintf("policies/%s", url.QueryEscape(policyID))
@@ -252,7 +252,7 @@ func (s *policies) Delete(ctx context.Context, policyID string) error {
 // Upload the policy content of the policy.
 func (s *policies) Upload(ctx context.Context, policyID string, content []byte) error {
 	if !validStringID(&policyID) {
-		return errors.New("Invalid value for policy ID")
+		return errors.New("invalid value for policy ID")
 	}
 
 	u := fmt.Sprintf("policies/%s/upload", url.QueryEscape(policyID))
@@ -267,7 +267,7 @@ func (s *policies) Upload(ctx context.Context, policyID string, content []byte) 
 // Download the policy content of the policy.
 func (s *policies) Download(ctx context.Context, policyID string) ([]byte, error) {
 	if !validStringID(&policyID) {
-		return nil, errors.New("Invalid value for policy ID")
+		return nil, errors.New("invalid value for policy ID")
 	}
 
 	u := fmt.Sprintf("policies/%s/download", url.QueryEscape(policyID))

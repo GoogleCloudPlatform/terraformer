@@ -322,6 +322,17 @@ func (m *mockOrganizations) Capacity(ctx context.Context, name string) (*tfe.Cap
 	return &tfe.Capacity{Pending: pending, Running: running}, nil
 }
 
+func (m *mockOrganizations) Entitlements(ctx context.Context, name string) (*tfe.Entitlements, error) {
+	return &tfe.Entitlements{
+		Operations:            true,
+		PrivateModuleRegistry: true,
+		Sentinel:              true,
+		StateStorage:          true,
+		Teams:                 true,
+		VCSIntegrations:       true,
+	}, nil
+}
+
 func (m *mockOrganizations) RunQueue(ctx context.Context, name string, options tfe.RunQueueOptions) (*tfe.RunQueue, error) {
 	rq := &tfe.RunQueue{}
 
@@ -609,9 +620,8 @@ func (m *mockRuns) List(ctx context.Context, workspaceID string, options tfe.Run
 		return nil, tfe.ErrResourceNotFound
 	}
 
-	rl := &tfe.RunList{}
-	for _, r := range m.workspaces[w.ID] {
-		rl.Items = append(rl.Items, r)
+	rl := &tfe.RunList{
+		Items: m.workspaces[w.ID],
 	}
 
 	rl.Pagination = &tfe.Pagination{
@@ -905,8 +915,9 @@ func (m *mockWorkspaces) List(ctx context.Context, organization string, options 
 
 func (m *mockWorkspaces) Create(ctx context.Context, organization string, options tfe.WorkspaceCreateOptions) (*tfe.Workspace, error) {
 	w := &tfe.Workspace{
-		ID:   generateID("ws-"),
-		Name: *options.Name,
+		ID:         generateID("ws-"),
+		Name:       *options.Name,
+		Operations: !strings.HasSuffix(*options.Name, "no-operations"),
 		Permissions: &tfe.WorkspacePermissions{
 			CanQueueRun: true,
 			CanUpdate:   true,
@@ -966,6 +977,9 @@ func (m *mockWorkspaces) Lock(ctx context.Context, workspaceID string, options t
 	if !ok {
 		return nil, tfe.ErrResourceNotFound
 	}
+	if w.Locked {
+		return nil, tfe.ErrWorkspaceLocked
+	}
 	w.Locked = true
 	return w, nil
 }
@@ -974,6 +988,21 @@ func (m *mockWorkspaces) Unlock(ctx context.Context, workspaceID string) (*tfe.W
 	w, ok := m.workspaceIDs[workspaceID]
 	if !ok {
 		return nil, tfe.ErrResourceNotFound
+	}
+	if !w.Locked {
+		return nil, tfe.ErrWorkspaceNotLocked
+	}
+	w.Locked = false
+	return w, nil
+}
+
+func (m *mockWorkspaces) ForceUnlock(ctx context.Context, workspaceID string) (*tfe.Workspace, error) {
+	w, ok := m.workspaceIDs[workspaceID]
+	if !ok {
+		return nil, tfe.ErrResourceNotFound
+	}
+	if !w.Locked {
+		return nil, tfe.ErrWorkspaceNotLocked
 	}
 	w.Locked = false
 	return w, nil

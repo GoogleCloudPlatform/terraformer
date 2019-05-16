@@ -320,6 +320,10 @@ List of support OpenStack services:
 *   `networking`
     * `openstack_networking_secgroup_v2`
     * `openstack_networking_secgroup_rule_v2`
+*   `blockstorage`
+    * `openstack_blockstorage_volume_v1`
+    * `openstack_blockstorage_volume_v2`
+    * `openstack_blockstorage_volume_v3`
 
 ### Use with Kubernetes
 

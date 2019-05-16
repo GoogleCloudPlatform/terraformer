@@ -10,16 +10,14 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gophercloud/gophercloud/openstack/compute/v2/extensions/keypairs"
-	"github.com/gophercloud/gophercloud/openstack/compute/v2/extensions/servergroups"
-	"github.com/gophercloud/gophercloud/openstack/dns/v2/recordsets"
-	"github.com/gophercloud/gophercloud/openstack/dns/v2/zones"
-	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/fwaas/firewalls"
-	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/fwaas/policies"
-	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/fwaas/routerinsertion"
-	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/fwaas/rules"
 	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/layer3/floatingips"
 	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/layer3/routers"
+	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/subnetpools"
+	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/vpnaas/endpointgroups"
+	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/vpnaas/ikepolicies"
+	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/vpnaas/ipsecpolicies"
+	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/vpnaas/services"
+	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/vpnaas/siteconnections"
 	"github.com/gophercloud/gophercloud/openstack/networking/v2/networks"
 	"github.com/gophercloud/gophercloud/openstack/networking/v2/ports"
 	"github.com/gophercloud/gophercloud/openstack/networking/v2/subnets"
@@ -28,8 +26,9 @@ import (
 // LogRoundTripper satisfies the http.RoundTripper interface and is used to
 // customize the default http client RoundTripper to allow for logging.
 type LogRoundTripper struct {
-	Rt      http.RoundTripper
-	OsDebug bool
+	Rt         http.RoundTripper
+	OsDebug    bool
+	MaxRetries int
 }
 
 // RoundTrip performs a round-trip HTTP request and logs relevant information about it.
@@ -47,7 +46,7 @@ func (lrt *LogRoundTripper) RoundTrip(request *http.Request) (*http.Response, er
 
 	if lrt.OsDebug {
 		log.Printf("[DEBUG] OpenStack Request URL: %s %s", request.Method, request.URL)
-		log.Printf("[DEBUG] Openstack Request Headers:\n%s", FormatHeaders(request.Header, "\n"))
+		log.Printf("[DEBUG] OpenStack Request Headers:\n%s", FormatHeaders(request.Header, "\n"))
 
 		if request.Body != nil {
 			request.Body, err = lrt.logRequest(request.Body, request.Header.Get("Content-Type"))
@@ -58,13 +57,28 @@ func (lrt *LogRoundTripper) RoundTrip(request *http.Request) (*http.Response, er
 	}
 
 	response, err := lrt.Rt.RoundTrip(request)
-	if response == nil {
-		return nil, err
+
+	// If the first request didn't return a response, retry up to `max_retries`.
+	retry := 1
+	for response == nil {
+		if retry > lrt.MaxRetries {
+			if lrt.OsDebug {
+				log.Printf("[DEBUG] OpenStack connection error, retries exhausted. Aborting")
+			}
+			err = fmt.Errorf("OpenStack connection error, retries exhausted. Aborting. Last error was: %s", err)
+			return nil, err
+		}
+
+		if lrt.OsDebug {
+			log.Printf("[DEBUG] OpenStack connection error, retry number %d: %s", retry, err)
+		}
+		response, err = lrt.Rt.RoundTrip(request)
+		retry += 1
 	}
 
 	if lrt.OsDebug {
-		log.Printf("[DEBUG] Openstack Response Code: %d", response.StatusCode)
-		log.Printf("[DEBUG] Openstack Response Headers:\n%s", FormatHeaders(response.Header, "\n"))
+		log.Printf("[DEBUG] OpenStack Response Code: %d", response.StatusCode)
+		log.Printf("[DEBUG] OpenStack Response Headers:\n%s", FormatHeaders(response.Header, "\n"))
 
 		response.Body, err = lrt.logResponse(response.Body, response.Header.Get("Content-Type"))
 	}
@@ -87,8 +101,6 @@ func (lrt *LogRoundTripper) logRequest(original io.ReadCloser, contentType strin
 	if strings.HasPrefix(contentType, "application/json") {
 		debugInfo := lrt.formatJSON(bs.Bytes())
 		log.Printf("[DEBUG] OpenStack Request Body: %s", debugInfo)
-	} else {
-		log.Printf("[DEBUG] OpenStack Request Body: %s", bs.String())
 	}
 
 	return ioutil.NopCloser(strings.NewReader(bs.String())), nil
@@ -118,12 +130,23 @@ func (lrt *LogRoundTripper) logResponse(original io.ReadCloser, contentType stri
 // formatJSON will try to pretty-format a JSON body.
 // It will also mask known fields which contain sensitive information.
 func (lrt *LogRoundTripper) formatJSON(raw []byte) string {
-	var data map[string]interface{}
+	var rawData interface{}
 
-	err := json.Unmarshal(raw, &data)
+	err := json.Unmarshal(raw, &rawData)
 	if err != nil {
 		log.Printf("[DEBUG] Unable to parse OpenStack JSON: %s", err)
 		return string(raw)
+	}
+
+	data, ok := rawData.(map[string]interface{})
+	if !ok {
+		pretty, err := json.MarshalIndent(rawData, "", "  ")
+		if err != nil {
+			log.Printf("[DEBUG] Unable to re-marshal OpenStack JSON: %s", err)
+			return string(raw)
+		}
+
+		return string(pretty)
 	}
 
 	// Mask known password fields
@@ -133,6 +156,12 @@ func (lrt *LogRoundTripper) formatJSON(raw []byte) string {
 				if v, ok := v["user"].(map[string]interface{}); ok {
 					v["password"] = "***"
 				}
+			}
+			if v, ok := v["application_credential"].(map[string]interface{}); ok {
+				v["secret"] = "***"
+			}
+			if v, ok := v["token"].(map[string]interface{}); ok {
+				v["id"] = "***"
 			}
 		}
 	}
@@ -153,38 +182,6 @@ func (lrt *LogRoundTripper) formatJSON(raw []byte) string {
 	return string(pretty)
 }
 
-// Firewall is an OpenStack firewall.
-type Firewall struct {
-	firewalls.Firewall
-	routerinsertion.FirewallExt
-}
-
-// FirewallCreateOpts represents the attributes used when creating a new firewall.
-type FirewallCreateOpts struct {
-	firewalls.CreateOptsBuilder
-	ValueSpecs map[string]string `json:"value_specs,omitempty"`
-}
-
-// ToFirewallCreateMap casts a CreateOptsExt struct to a map.
-// It overrides firewalls.ToFirewallCreateMap to add the ValueSpecs field.
-func (opts FirewallCreateOpts) ToFirewallCreateMap() (map[string]interface{}, error) {
-	body, err := opts.CreateOptsBuilder.ToFirewallCreateMap()
-	if err != nil {
-		return nil, err
-	}
-
-	return AddValueSpecs(body), nil
-}
-
-//FirewallUpdateOpts
-type FirewallUpdateOpts struct {
-	firewalls.UpdateOptsBuilder
-}
-
-func (opts FirewallUpdateOpts) ToFirewallUpdateMap() (map[string]interface{}, error) {
-	return BuildRequest(opts, "firewall")
-}
-
 // FloatingIPCreateOpts represents the attributes used when creating a new floating ip.
 type FloatingIPCreateOpts struct {
 	floatingips.CreateOpts
@@ -195,18 +192,6 @@ type FloatingIPCreateOpts struct {
 // It overrides floatingips.ToFloatingIPCreateMap to add the ValueSpecs field.
 func (opts FloatingIPCreateOpts) ToFloatingIPCreateMap() (map[string]interface{}, error) {
 	return BuildRequest(opts, "floatingip")
-}
-
-// KeyPairCreateOpts represents the attributes used when creating a new keypair.
-type KeyPairCreateOpts struct {
-	keypairs.CreateOpts
-	ValueSpecs map[string]string `json:"value_specs,omitempty"`
-}
-
-// ToKeyPairCreateMap casts a CreateOpts struct to a map.
-// It overrides keypairs.ToKeyPairCreateMap to add the ValueSpecs field.
-func (opts KeyPairCreateOpts) ToKeyPairCreateMap() (map[string]interface{}, error) {
-	return BuildRequest(opts, "keypair")
 }
 
 // NetworkCreateOpts represents the attributes used when creating a new network.
@@ -221,16 +206,16 @@ func (opts NetworkCreateOpts) ToNetworkCreateMap() (map[string]interface{}, erro
 	return BuildRequest(opts, "network")
 }
 
-// PolicyCreateOpts represents the attributes used when creating a new firewall policy.
-type PolicyCreateOpts struct {
-	policies.CreateOpts
+// IKEPolicyCreateOpts represents the attributes used when creating a new IKE policy.
+type IKEPolicyCreateOpts struct {
+	ikepolicies.CreateOpts
 	ValueSpecs map[string]string `json:"value_specs,omitempty"`
 }
 
-// ToPolicyCreateMap casts a CreateOpts struct to a map.
-// It overrides policies.ToFirewallPolicyCreateMap to add the ValueSpecs field.
-func (opts PolicyCreateOpts) ToFirewallPolicyCreateMap() (map[string]interface{}, error) {
-	return BuildRequest(opts, "firewall_policy")
+// IKEPolicyLifetimeCreateOpts represents the attributes used when creating a new lifetime for an IKE policy.
+type IKEPolicyLifetimeCreateOpts struct {
+	ikepolicies.LifetimeCreateOpts
+	ValueSpecs map[string]string `json:"value_specs,omitempty"`
 }
 
 // PortCreateOpts represents the attributes used when creating a new port.
@@ -245,27 +230,6 @@ func (opts PortCreateOpts) ToPortCreateMap() (map[string]interface{}, error) {
 	return BuildRequest(opts, "port")
 }
 
-// RecordSetCreateOpts represents the attributes used when creating a new DNS record set.
-type RecordSetCreateOpts struct {
-	recordsets.CreateOpts
-	ValueSpecs map[string]string `json:"value_specs,omitempty"`
-}
-
-// ToRecordSetCreateMap casts a CreateOpts struct to a map.
-// It overrides recordsets.ToRecordSetCreateMap to add the ValueSpecs field.
-func (opts RecordSetCreateOpts) ToRecordSetCreateMap() (map[string]interface{}, error) {
-	b, err := BuildRequest(opts, "")
-	if err != nil {
-		return nil, err
-	}
-
-	if m, ok := b[""].(map[string]interface{}); ok {
-		return m, nil
-	}
-
-	return nil, fmt.Errorf("Expected map but got %T", b[""])
-}
-
 // RouterCreateOpts represents the attributes used when creating a new router.
 type RouterCreateOpts struct {
 	routers.CreateOpts
@@ -276,39 +240,6 @@ type RouterCreateOpts struct {
 // It overrides routers.ToRouterCreateMap to add the ValueSpecs field.
 func (opts RouterCreateOpts) ToRouterCreateMap() (map[string]interface{}, error) {
 	return BuildRequest(opts, "router")
-}
-
-// RuleCreateOpts represents the attributes used when creating a new firewall rule.
-type RuleCreateOpts struct {
-	rules.CreateOpts
-	ValueSpecs map[string]string `json:"value_specs,omitempty"`
-}
-
-// ToRuleCreateMap casts a CreateOpts struct to a map.
-// It overrides rules.ToRuleCreateMap to add the ValueSpecs field.
-func (opts RuleCreateOpts) ToRuleCreateMap() (map[string]interface{}, error) {
-	b, err := BuildRequest(opts, "firewall_rule")
-	if err != nil {
-		return nil, err
-	}
-
-	if m := b["firewall_rule"].(map[string]interface{}); m["protocol"] == "any" {
-		m["protocol"] = nil
-	}
-
-	return b, nil
-}
-
-// ServerGroupCreateOpts represents the attributes used when creating a new router.
-type ServerGroupCreateOpts struct {
-	servergroups.CreateOpts
-	ValueSpecs map[string]string `json:"value_specs,omitempty"`
-}
-
-// ToServerGroupCreateMap casts a CreateOpts struct to a map.
-// It overrides routers.ToServerGroupCreateMap to add the ValueSpecs field.
-func (opts ServerGroupCreateOpts) ToServerGroupCreateMap() (map[string]interface{}, error) {
-	return BuildRequest(opts, "server_group")
 }
 
 // SubnetCreateOpts represents the attributes used when creating a new subnet.
@@ -332,27 +263,32 @@ func (opts SubnetCreateOpts) ToSubnetCreateMap() (map[string]interface{}, error)
 	return b, nil
 }
 
-// ZoneCreateOpts represents the attributes used when creating a new DNS zone.
-type ZoneCreateOpts struct {
-	zones.CreateOpts
+// SubnetPoolCreateOpts represents the attributes used when creating a new subnet pool.
+type SubnetPoolCreateOpts struct {
+	subnetpools.CreateOpts
 	ValueSpecs map[string]string `json:"value_specs,omitempty"`
 }
 
-// ToZoneCreateMap casts a CreateOpts struct to a map.
-// It overrides zones.ToZoneCreateMap to add the ValueSpecs field.
-func (opts ZoneCreateOpts) ToZoneCreateMap() (map[string]interface{}, error) {
-	b, err := BuildRequest(opts, "")
-	if err != nil {
-		return nil, err
-	}
+// IPSecPolicyCreateOpts represents the attributes used when creating a new IPSec policy.
+type IPSecPolicyCreateOpts struct {
+	ipsecpolicies.CreateOpts
+	ValueSpecs map[string]string `json:"value_specs,omitempty"`
+}
 
-	if m, ok := b[""].(map[string]interface{}); ok {
-		if opts.TTL > 0 {
-			m["ttl"] = opts.TTL
-		}
+// ServiceCreateOpts represents the attributes used when creating a new VPN service.
+type ServiceCreateOpts struct {
+	services.CreateOpts
+	ValueSpecs map[string]string `json:"value_specs,omitempty"`
+}
 
-		return m, nil
-	}
+// EndpointGroupCreateOpts represents the attributes used when creating a new endpoint group.
+type EndpointGroupCreateOpts struct {
+	endpointgroups.CreateOpts
+	ValueSpecs map[string]string `json:"value_specs,omitempty"`
+}
 
-	return nil, fmt.Errorf("Expected map but got %T", b[""])
+// SiteConnectionCreateOpts represents the attributes used when creating a new IPSec site connection.
+type SiteConnectionCreateOpts struct {
+	siteconnections.CreateOpts
+	ValueSpecs map[string]string `json:"value_specs,omitempty"`
 }

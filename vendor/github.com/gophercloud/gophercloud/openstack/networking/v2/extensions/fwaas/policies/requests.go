@@ -18,6 +18,7 @@ type ListOptsBuilder interface {
 // and is either `asc' or `desc'. Marker and Limit are used for pagination.
 type ListOpts struct {
 	TenantID    string `q:"tenant_id"`
+	ProjectID   string `q:"project_id"`
 	Name        string `q:"name"`
 	Description string `q:"description"`
 	Shared      *bool  `q:"shared"`
@@ -67,6 +68,7 @@ type CreateOpts struct {
 	// an admin role in order to set this. Otherwise, this field is left unset
 	// and the caller will be the owner.
 	TenantID    string   `json:"tenant_id,omitempty"`
+	ProjectID   string   `json:"project_id,omitempty"`
 	Name        string   `json:"name,omitempty"`
 	Description string   `json:"description,omitempty"`
 	Shared      *bool    `json:"shared,omitempty"`
@@ -105,8 +107,8 @@ type UpdateOptsBuilder interface {
 
 // UpdateOpts contains the values used when updating a firewall policy.
 type UpdateOpts struct {
-	Name        string   `json:"name,omitempty"`
-	Description string   `json:"description,omitempty"`
+	Name        *string  `json:"name,omitempty"`
+	Description *string  `json:"description,omitempty"`
 	Shared      *bool    `json:"shared,omitempty"`
 	Audited     *bool    `json:"audited,omitempty"`
 	Rules       []string `json:"firewall_rules,omitempty"`

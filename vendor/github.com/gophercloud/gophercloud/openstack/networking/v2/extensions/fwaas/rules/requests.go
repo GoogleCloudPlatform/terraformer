@@ -37,6 +37,7 @@ type ListOptsBuilder interface {
 // is either `asc' or `desc'. Marker and Limit are used for pagination.
 type ListOpts struct {
 	TenantID             string `q:"tenant_id"`
+	ProjectID            string `q:"project_id"`
 	Name                 string `q:"name"`
 	Description          string `q:"description"`
 	Protocol             string `q:"protocol"`
@@ -96,6 +97,7 @@ type CreateOpts struct {
 	Protocol             Protocol              `json:"protocol" required:"true"`
 	Action               string                `json:"action" required:"true"`
 	TenantID             string                `json:"tenant_id,omitempty"`
+	ProjectID            string                `json:"project_id,omitempty"`
 	Name                 string                `json:"name,omitempty"`
 	Description          string                `json:"description,omitempty"`
 	IPVersion            gophercloud.IPVersion `json:"ip_version,omitempty"`

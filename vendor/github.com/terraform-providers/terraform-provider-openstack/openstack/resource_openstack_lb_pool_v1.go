@@ -28,52 +28,52 @@ func resourceLBPoolV1() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
-			"region": &schema.Schema{
+			"region": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Computed: true,
 				ForceNew: true,
 			},
-			"name": &schema.Schema{
+			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: false,
 			},
-			"protocol": &schema.Schema{
+			"protocol": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
-			"subnet_id": &schema.Schema{
+			"subnet_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
 
-			"lb_method": &schema.Schema{
+			"lb_method": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: false,
 			},
-			"lb_provider": &schema.Schema{
+			"lb_provider": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Computed: true,
 				ForceNew: true,
 			},
-			"tenant_id": &schema.Schema{
+			"tenant_id": {
 				Type:     schema.TypeString,
 				Optional: true,
 				ForceNew: true,
 				Computed: true,
 			},
-			"member": &schema.Schema{
+			"member": {
 				Type:     schema.TypeSet,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 				Optional: true,
 				Removed:  "Use openstack_lb_member_v1 instead.",
 			},
-			"monitor_ids": &schema.Schema{
+			"monitor_ids": {
 				Type:     schema.TypeSet,
 				Optional: true,
 				ForceNew: false,
@@ -182,17 +182,17 @@ func resourceLBPoolV1Update(d *schema.ResourceData, meta interface{}) error {
 	// If either option changed, update both.
 	// Gophercloud complains if one is empty.
 	if d.HasChange("name") || d.HasChange("lb_method") {
-		updateOpts.Name = d.Get("name").(string)
+		name := d.Get("name").(string)
+		updateOpts.Name = &name
 
 		lbMethod := resourceLBPoolV1DetermineLBMethod(d.Get("lb_method").(string))
 		updateOpts.LBMethod = lbMethod
-	}
 
-	log.Printf("[DEBUG] Updating OpenStack LB Pool %s with options: %+v", d.Id(), updateOpts)
-
-	_, err = pools.Update(networkingClient, d.Id(), updateOpts).Extract()
-	if err != nil {
-		return fmt.Errorf("Error updating OpenStack LB Pool: %s", err)
+		log.Printf("[DEBUG] Updating OpenStack LB Pool %s with options: %+v", d.Id(), updateOpts)
+		_, err = pools.Update(networkingClient, d.Id(), updateOpts).Extract()
+		if err != nil {
+			return fmt.Errorf("Error updating OpenStack LB Pool: %s", err)
+		}
 	}
 
 	if d.HasChange("monitor_ids") {
