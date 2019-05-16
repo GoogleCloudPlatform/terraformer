@@ -687,6 +687,7 @@ golang.org/x/time/rate
 # google.golang.org/api v0.5.1-0.20190510010909-bbbc0e98e3cc
 google.golang.org/api/bigquery/v2
 google.golang.org/api/cloudfunctions/v1
+google.golang.org/api/cloudkms/v1
 google.golang.org/api/cloudscheduler/v1beta1
 google.golang.org/api/compute/v1
 google.golang.org/api/container/v1beta1

@@ -234,6 +234,9 @@ List of supported GCP services:
 *   `cloudsql`
     * `google_sql_database_instance`
     * `google_sql_database`
+*   `kms`
+    * `google_kms_key_ring`
+    * `google_kms_crypto_key`
 
 Your `tf` and `tfstate` files are written by default to
 `generated/gcp/zone/service`.
