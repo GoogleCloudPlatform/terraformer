@@ -15,8 +15,9 @@
 package openstack
 
 import (
+	"log"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/apex/log"
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack"
 	"github.com/gophercloud/gophercloud/openstack/blockstorage/v3/volumes"
@@ -74,19 +75,19 @@ func (g *BlockStorageGenerator) createResources(list *pagination.Pager, clientTy
 func newBlockStorageClent(provider *gophercloud.ProviderClient, eo gophercloud.EndpointOpts) (*gophercloud.ServiceClient, error) {
 	// Choose v3 client firstly
 	if client, err := openstack.NewBlockStorageV3(provider, eo); err == nil {
-		log.Info("Using BlockStorage API v3")
+		log.Println("Using BlockStorage API v3")
 		return client, nil
 	}
 
 	// if it can't initialize v3 client, try to initialize v2 client
 	if client, err := openstack.NewBlockStorageV2(provider, eo); err == nil {
-		log.Info("Using BlockStorage API v2")
+		log.Println("Using BlockStorage API v2")
 		return client, nil
 	}
 
 	// if it can't initialize v2 client, try to initialize v1 client
 	if client, err := openstack.NewBlockStorageV1(provider, eo); err == nil {
-		log.Info("Using BlockStorage API v1")
+		log.Println("Using BlockStorage API v1")
 		return client, nil
 	}
 
