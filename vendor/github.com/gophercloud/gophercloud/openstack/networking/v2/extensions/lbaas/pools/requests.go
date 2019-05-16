@@ -123,7 +123,7 @@ type UpdateOptsBuilder interface {
 // UpdateOpts contains the values used when updating a pool.
 type UpdateOpts struct {
 	// Name of the pool.
-	Name string `json:"name,omitempty"`
+	Name *string `json:"name,omitempty"`
 
 	// LBMethod is the algorithm used to distribute load between the members of
 	// the pool. The current specification supports LBMethodRoundRobin and

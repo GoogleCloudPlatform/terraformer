@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
@@ -17,14 +18,8 @@ import (
 	"github.com/hashicorp/terraform/backend"
 )
 
-func (b *Remote) opPlan(stopCtx, cancelCtx context.Context, op *backend.Operation) (*tfe.Run, error) {
+func (b *Remote) opPlan(stopCtx, cancelCtx context.Context, op *backend.Operation, w *tfe.Workspace) (*tfe.Run, error) {
 	log.Printf("[INFO] backend/remote: starting Plan operation")
-
-	// Retrieve the workspace used to run this operation in.
-	w, err := b.client.Workspaces.Read(stopCtx, b.organization, op.Workspace)
-	if err != nil {
-		return nil, generalError("error retrieving workspace", err)
-	}
 
 	if !w.Permissions.CanQueueRun {
 		return nil, fmt.Errorf(strings.TrimSpace(fmt.Sprintf(planErrNoQueueRunRights)))
@@ -67,6 +62,14 @@ func (b *Remote) opPlan(stopCtx, cancelCtx context.Context, op *backend.Operatio
 }
 
 func (b *Remote) plan(stopCtx, cancelCtx context.Context, op *backend.Operation, w *tfe.Workspace) (*tfe.Run, error) {
+	if b.CLI != nil {
+		header := planDefaultHeader
+		if op.Type == backend.OperationTypeApply {
+			header = applyDefaultHeader
+		}
+		b.CLI.Output(b.Colorize().Color(strings.TrimSpace(header) + "\n"))
+	}
+
 	configOptions := tfe.ConfigurationVersionCreateOptions{
 		AutoQueueRuns: tfe.Bool(false),
 		Speculative:   tfe.Bool(op.Type == backend.OperationTypePlan),
@@ -182,12 +185,8 @@ func (b *Remote) plan(stopCtx, cancelCtx context.Context, op *backend.Operation,
 	}
 
 	if b.CLI != nil {
-		header := planDefaultHeader
-		if op.Type == backend.OperationTypeApply {
-			header = applyDefaultHeader
-		}
 		b.CLI.Output(b.Colorize().Color(strings.TrimSpace(fmt.Sprintf(
-			header, b.hostname, b.organization, op.Workspace, r.ID)) + "\n"))
+			runHeader, b.hostname, b.organization, op.Workspace, r.ID)) + "\n"))
 	}
 
 	r, err = b.waitForRun(stopCtx, cancelCtx, op, "plan", r, w)
@@ -199,15 +198,27 @@ func (b *Remote) plan(stopCtx, cancelCtx context.Context, op *backend.Operation,
 	if err != nil {
 		return r, generalError("error retrieving logs", err)
 	}
-	scanner := bufio.NewScanner(logs)
+	reader := bufio.NewReaderSize(logs, 64*1024)
 
-	for scanner.Scan() {
-		if b.CLI != nil {
-			b.CLI.Output(b.Colorize().Color(scanner.Text()))
+	if b.CLI != nil {
+		for next := true; next; {
+			var l, line []byte
+
+			for isPrefix := true; isPrefix; {
+				l, isPrefix, err = reader.ReadLine()
+				if err != nil {
+					if err != io.EOF {
+						return r, generalError("error reading logs", err)
+					}
+					next = false
+				}
+				line = append(line, l...)
+			}
+
+			if next || len(line) > 0 {
+				b.CLI.Output(b.Colorize().Color(string(line)))
+			}
 		}
-	}
-	if err := scanner.Err(); err != nil {
-		return r, generalError("error reading logs", err)
 	}
 
 	// Retrieve the run to get its current status.
@@ -216,10 +227,10 @@ func (b *Remote) plan(stopCtx, cancelCtx context.Context, op *backend.Operation,
 		return r, generalError("error retrieving run", err)
 	}
 
-	// Return if there are no changes or the run errored. We return
-	// without an error, even if the run errored, as the error is
-	// already displayed by the output of the remote run.
-	if !r.HasChanges || r.Status == tfe.RunErrored {
+	// Return if the run errored. We return without an error, even
+	// if the run errored, as the error is already displayed by the
+	// output of the remote run.
+	if r.Status == tfe.RunErrored {
 		return r, nil
 	}
 
@@ -307,8 +318,13 @@ a Terraform configuration file in the path being executed and try again.
 
 const planDefaultHeader = `
 [reset][yellow]Running plan in the remote backend. Output will stream here. Pressing Ctrl-C
-will stop streaming the logs, but will not stop the plan running remotely.
-To view this run in a browser, visit:
+will stop streaming the logs, but will not stop the plan running remotely.[reset]
+
+Preparing the remote plan...
+`
+
+const runHeader = `
+[reset][yellow]To view this run in a browser, visit:
 https://%s/app/%s/%s/runs/%s[reset]
 `
 

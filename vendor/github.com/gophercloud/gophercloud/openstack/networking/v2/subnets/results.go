@@ -68,6 +68,9 @@ type Subnet struct {
 	// Human-readable name for the subnet. Might not be unique.
 	Name string `json:"name"`
 
+	// Description for the subnet.
+	Description string `json:"description"`
+
 	// IP version, either `4' or `6'.
 	IPVersion int `json:"ip_version"`
 
@@ -91,8 +94,24 @@ type Subnet struct {
 	// Specifies whether DHCP is enabled for this subnet or not.
 	EnableDHCP bool `json:"enable_dhcp"`
 
-	// Owner of network.
+	// TenantID is the project owner of the subnet.
 	TenantID string `json:"tenant_id"`
+
+	// ProjectID is the project owner of the subnet.
+	ProjectID string `json:"project_id"`
+
+	// The IPv6 address modes specifies mechanisms for assigning IPv6 IP addresses.
+	IPv6AddressMode string `json:"ipv6_address_mode"`
+
+	// The IPv6 router advertisement specifies whether the networking service
+	// should transmit ICMPv6 packets.
+	IPv6RAMode string `json:"ipv6_ra_mode"`
+
+	// SubnetPoolID is the id of the subnet pool associated with the subnet.
+	SubnetPoolID string `json:"subnetpool_id"`
+
+	// Tags optionally set via extensions/attributestags
+	Tags []string `json:"tags"`
 }
 
 // SubnetPage is the page returned by a pager when traversing over a collection
