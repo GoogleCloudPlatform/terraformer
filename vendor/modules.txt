@@ -366,7 +366,7 @@ github.com/hashicorp/go-rootcerts
 github.com/hashicorp/go-safetemp
 # github.com/hashicorp/go-slug v0.2.0
 github.com/hashicorp/go-slug
-# github.com/hashicorp/go-tfe v0.3.8
+# github.com/hashicorp/go-tfe v0.3.11
 github.com/hashicorp/go-tfe
 # github.com/hashicorp/go-uuid v1.0.1
 github.com/hashicorp/go-uuid
@@ -403,7 +403,7 @@ github.com/hashicorp/hil/scanner
 github.com/hashicorp/logutils
 # github.com/hashicorp/serf v0.8.2-0.20171022020050-c20a0b1b1ea9
 github.com/hashicorp/serf/coordinate
-# github.com/hashicorp/terraform v0.11.12-beta1.0.20190212191339-ee1f8f9362f3
+# github.com/hashicorp/terraform v0.11.12
 github.com/hashicorp/terraform/helper/resource
 github.com/hashicorp/terraform/helper/schema
 github.com/hashicorp/terraform/flatmap
