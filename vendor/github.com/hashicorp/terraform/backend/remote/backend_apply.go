@@ -16,7 +16,9 @@ import (
 func (b *Remote) opApply(stopCtx, cancelCtx context.Context, op *backend.Operation, w *tfe.Workspace) (*tfe.Run, error) {
 	log.Printf("[INFO] backend/remote: starting Apply operation")
 
-	if !w.Permissions.CanUpdate {
+	// We should remove the `CanUpdate` part of this test, but for now
+	// (to remain compatible with tfe.v2.1) we'll leave it in here.
+	if !w.Permissions.CanUpdate && !w.Permissions.CanQueueApply {
 		return nil, fmt.Errorf(strings.TrimSpace(applyErrNoUpdateRights))
 	}
 
@@ -58,7 +60,7 @@ func (b *Remote) opApply(stopCtx, cancelCtx context.Context, op *backend.Operati
 	// This check is also performed in the plan method to determine if
 	// the policies should be checked, but we need to check the values
 	// here again to determine if we are done and should return.
-	if !r.HasChanges || r.Status == tfe.RunErrored {
+	if !r.HasChanges || r.Status == tfe.RunCanceled || r.Status == tfe.RunErrored {
 		return r, nil
 	}
 
@@ -108,14 +110,16 @@ func (b *Remote) opApply(stopCtx, cancelCtx context.Context, op *backend.Operati
 					"Only 'yes' will be accepted to approve."
 			}
 
-			if err = b.confirm(stopCtx, op, opts, r, "yes"); err != nil {
+			err = b.confirm(stopCtx, op, opts, r, "yes")
+			if err != nil && err != errRunApproved {
 				return r, err
 			}
 		}
 
-		err = b.client.Runs.Apply(stopCtx, r.ID, tfe.RunApplyOptions{})
-		if err != nil {
-			return r, generalError("error approving the apply command", err)
+		if err != errRunApproved {
+			if err = b.client.Runs.Apply(stopCtx, r.ID, tfe.RunApplyOptions{}); err != nil {
+				return r, generalError("error approving the apply command", err)
+			}
 		}
 	}
 
