@@ -4,19 +4,15 @@ require (
 	cloud.google.com/go v0.34.0
 	github.com/Azure/go-ntlmssp v0.0.0-20180810175552-4a21cbd618b4 // indirect
 	github.com/ChrisTrenkamp/goxpath v0.0.0-20170922090931-c385f95c6022 // indirect
-	github.com/DataDog/datadog-go v0.0.0-20180822151419-281ae9f2d895 // indirect
 	github.com/Unknwon/com v0.0.0-20181010210213-41959bdd855f // indirect
 	github.com/antchfx/xpath v0.0.0-20181126034058-1239a4a2acfc // indirect
 	github.com/antchfx/xquery v0.0.0-20180515051857-ad5b8c7a47b0 // indirect
 	github.com/apparentlymart/go-cidr v1.0.0 // indirect
 	github.com/aws/aws-sdk-go v1.16.23
 	github.com/beevik/etree v1.0.1 // indirect
-	github.com/boltdb/bolt v1.3.1 // indirect
 	github.com/boombuler/barcode v1.0.0 // indirect
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
 	github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1 // indirect
-	github.com/circonus-labs/circonus-gometrics v2.2.5+incompatible // indirect
-	github.com/circonus-labs/circonusllhist v0.1.2 // indirect
 	github.com/coreos/etcd v3.2.0-rc.1.0.20171020155248-81ca10f99174+incompatible // indirect
 	github.com/coreos/go-systemd v0.0.0-20181031085051-9002847aa142 // indirect
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f // indirect
@@ -44,7 +40,7 @@ require (
 	github.com/hashicorp/hcl2 v0.0.0-20181111172936-0467c0c38ca2 // indirect
 	github.com/hashicorp/logutils v1.0.0 // indirect
 	github.com/hashicorp/memberlist v0.1.0 // indirect
-	github.com/hashicorp/terraform v0.11.12-beta1.0.20190212191339-ee1f8f9362f3
+	github.com/hashicorp/terraform v0.11.12
 	github.com/hashicorp/vault v0.11.5 // indirect
 	github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c // indirect
 	github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365
@@ -85,7 +81,6 @@ require (
 	github.com/terraform-providers/terraform-provider-openstack v1.18.0 // indirect
 	github.com/terraform-providers/terraform-provider-random v2.0.0+incompatible // indirect
 	github.com/tmc/grpc-websocket-proxy v0.0.0-20171017195756-830351dc03c6 // indirect
-	github.com/tv42/httpunix v0.0.0-20150427012821-b75d8614f926 // indirect
 	github.com/ugorji/go v1.1.2-0.20180728093225-eeb0478a81ae // indirect
 	github.com/xlab/treeprint v0.0.0-20181112141820-a009c3971eca // indirect
 	github.com/zclconf/go-cty v0.0.0-20181017232614-01c5aba823a6 // indirect
@@ -93,7 +88,6 @@ require (
 	google.golang.org/api v0.5.1-0.20190510010909-bbbc0e98e3cc
 	google.golang.org/genproto v0.0.0-20190307195333-5fe7a883aa19
 	gopkg.in/inf.v0 v0.9.1 // indirect
-	gopkg.in/vmihailenco/msgpack.v2 v2.9.1 // indirect
 	k8s.io/api v0.0.0-20190116205037-c89978d5f86d // indirect
 	k8s.io/apimachinery v0.0.0-20190116203031-d49e237a2683
 	k8s.io/client-go v7.0.0+incompatible
