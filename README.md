@@ -33,8 +33,8 @@ CLI tool to generate `tf` and `tfstate` files from existing infrastructure
 5.  Save `tf` files with custom folder tree pattern.
 6.  Import by resource name and type.
 
-Terraformer use terraform providers and built for easy to add new supported resources. 
-For upgrade resources with new fields you need upgrade only terraform providers. 
+Terraformer use terraform providers and built for easy to add new supported resources.
+For upgrade resources with new fields you need upgrade only terraform providers.
 ```
 Import current State to terraform configuration from google cloud
 
@@ -61,6 +61,23 @@ Flags:
 
 Readonly permissions
 
+#### Filtering
+
+Filters are a way to choose which resources `terraformer` import.
+
+Ex:
+```
+terraformer import aws --resources=vpc,subnet --filter=aws_vpc=myvpcid --regions=eu-west-1
+```
+will import only one VPC and not only subnets from this VPC but all subnets from all VPCs
+
+##### Resources ID
+
+Filtering is based on Terraform resource ID pattern. This way, it may differ from the value your provider give you.
+Check the import part of [Terraform documentation][terraform-providers] for your resource for valid ID pattern.
+
+[terraform-providers]: https://www.terraform.io/docs/providers/
+
 ### Installation
 From source:
 1.  Run `git clone <terraformer repo>`
@@ -68,7 +85,7 @@ From source:
 3.  Run `go build -v`
 4.  Copy your Terraform provider's plugin(s) to folder
     `~/.terraform.d/plugins/{darwin,linux}_amd64/`, as appropriate.
-    
+
 From Releases:
 
 * Linux
@@ -263,7 +280,7 @@ List of support AWS services:
     * `aws_iam_group_membership`
     * `aws_iam_group_policy`
 *   `igw`
-    * `aws_internet_gateway` 
+    * `aws_internet_gateway`
 *   `nacl`
     * `aws_network_acl`
 *   `s3`
@@ -274,7 +291,7 @@ List of support AWS services:
 *   `subnet`
     * `aws_subnet`
 *   `vpc`
-    * `aws_vpc`  
+    * `aws_vpc`
 *   `vpn_connection`
     * `aws_vpn_connection`
 *   `vpn_gateway`
@@ -302,7 +319,7 @@ List of support OpenStack services:
     * `openstack_compute_instance_v2`
 *   `networking`
     * `openstack_networking_secgroup_v2`
-    * `openstack_networking_secgroup_rule_v2` 
+    * `openstack_networking_secgroup_rule_v2`
 *   `blockstorage`
     * `openstack_blockstorage_volume_v1`
     * `openstack_blockstorage_volume_v2`
