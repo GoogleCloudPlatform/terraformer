@@ -21,8 +21,6 @@ import (
 	"google.golang.org/api/dataproc/v1"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-
-	"golang.org/x/oauth2/google"
 )
 
 var dataprocAllowEmptyValues = []string{""}
@@ -93,12 +91,7 @@ func (g DataprocGenerator) createJobResources(jobList *dataproc.ProjectsRegionsJ
 // Need DataprocGenerator name as ID for terraform resource
 func (g *DataprocGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, dataproc.CloudPlatformScope)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	dataprocService, err := dataproc.New(c)
+	dataprocService, err := dataproc.NewService(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}

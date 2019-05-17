@@ -22,7 +22,6 @@ import (
 	"google.golang.org/api/redis/v1"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"golang.org/x/oauth2/google"
 )
 
 var redisAllowEmptyValues = []string{""}
@@ -66,12 +65,7 @@ func (g MemoryStoreGenerator) createResources(redisInstancesList *redis.Projects
 // Need Redis name as ID for terraform resource
 func (g *MemoryStoreGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, redis.CloudPlatformScope)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	redisService, err := redis.New(c)
+	redisService, err := redis.NewService(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}

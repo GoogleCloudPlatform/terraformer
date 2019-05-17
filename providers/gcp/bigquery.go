@@ -20,7 +20,6 @@ import (
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"golang.org/x/oauth2/google"
 	"google.golang.org/api/bigquery/v2"
 )
 
@@ -89,12 +88,7 @@ func (g *BigQueryGenerator) createResourcesTables(datasetID string, ctx context.
 // Generate TerraformResources from GCP API,
 func (g *BigQueryGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, bigquery.CloudPlatformReadOnlyScope)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	bigQueryService, err := bigquery.New(c)
+	bigQueryService, err := bigquery.NewService(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
