@@ -16,11 +16,8 @@ package gcp
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-
-	"golang.org/x/oauth2/google"
 
 	"google.golang.org/api/sqladmin/v1beta4"
 )
@@ -82,10 +79,7 @@ func (g *CloudSQLGenerator) loadDBs(svc *sqladmin.Service, instanceName, project
 func (g *CloudSQLGenerator) InitResources() error {
 	project := g.GetArgs()["project"]
 	ctx := context.Background()
-	var client *http.Client
-	var err error
-	client, err = google.DefaultClient(ctx, sqladmin.SqlserviceAdminScope)
-	svc, err := sqladmin.New(client)
+	svc, err := sqladmin.NewService(ctx)
 	if err != nil {
 		return err
 	}

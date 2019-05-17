@@ -18,12 +18,10 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net/http"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
-	"golang.org/x/oauth2/google"
 	"google.golang.org/api/dns/v1"
 )
 
@@ -95,10 +93,7 @@ func (CloudDNSGenerator) createRecordsResources(ctx context.Context, svc *dns.Se
 func (g *CloudDNSGenerator) InitResources() error {
 	project := g.GetArgs()["project"]
 	ctx := context.Background()
-	var client *http.Client
-	var err error
-	client, err = google.DefaultClient(ctx, dns.CloudPlatformReadOnlyScope)
-	svc, err := dns.New(client)
+	svc, err := dns.NewService(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}

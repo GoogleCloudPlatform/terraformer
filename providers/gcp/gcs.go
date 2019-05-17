@@ -20,8 +20,6 @@ import (
 	"log"
 	"strconv"
 
-	"golang.org/x/oauth2/google"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 	"google.golang.org/api/storage/v1"
@@ -172,12 +170,7 @@ func (g *GcsGenerator) createTransferJobsResources(ctx context.Context, storageT
 // Need bucket name as ID for terraform resource
 func (g *GcsGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, storage.CloudPlatformReadOnlyScope)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	gcsService, err := storage.New(c)
+	gcsService, err := storage.NewService(ctx)
 	if err != nil {
 		log.Print(err)
 		return err
@@ -185,7 +178,7 @@ func (g *GcsGenerator) InitResources() error {
 	g.Resources = g.createBucketsResources(ctx, gcsService)
 
 	// TODO find bug with storageTransferService.TransferJobs.List().Pages
-	//storageTransferService, err := storagetransfer.New(c)
+	//storageTransferService, err := storagetransfer.NewService(ctx)
 	//if err != nil {
 	//	log.Print(err)
 	//		return err
