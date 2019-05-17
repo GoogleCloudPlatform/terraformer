@@ -3,11 +3,11 @@ cloud.google.com/go/iam/admin/apiv1
 cloud.google.com/go/monitoring/apiv3
 cloud.google.com/go/storage
 cloud.google.com/go/iam
-cloud.google.com/go/compute/metadata
 cloud.google.com/go/internal
 cloud.google.com/go/internal/optional
 cloud.google.com/go/internal/trace
 cloud.google.com/go/internal/version
+cloud.google.com/go/compute/metadata
 # github.com/Azure/azure-sdk-for-go v10.3.0-beta+incompatible
 github.com/Azure/azure-sdk-for-go/arm/storage
 github.com/Azure/azure-sdk-for-go/storage
@@ -654,9 +654,9 @@ golang.org/x/net/idna
 golang.org/x/net/html/atom
 golang.org/x/net/html/charset
 # golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421
-golang.org/x/oauth2/google
 golang.org/x/oauth2
 golang.org/x/oauth2/internal
+golang.org/x/oauth2/google
 golang.org/x/oauth2/jws
 golang.org/x/oauth2/jwt
 # golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a
@@ -709,18 +709,18 @@ google.golang.org/api/googleapi/internal/uritemplates
 google.golang.org/api/googleapi/transport
 google.golang.org/api/transport/http/internal/propagation
 # google.golang.org/appengine v1.4.0
-google.golang.org/appengine
 google.golang.org/appengine/urlfetch
+google.golang.org/appengine
+google.golang.org/appengine/socket
 google.golang.org/appengine/internal
+google.golang.org/appengine/internal/urlfetch
 google.golang.org/appengine/internal/app_identity
 google.golang.org/appengine/internal/modules
-google.golang.org/appengine/socket
-google.golang.org/appengine/internal/urlfetch
+google.golang.org/appengine/internal/socket
 google.golang.org/appengine/internal/base
 google.golang.org/appengine/internal/datastore
 google.golang.org/appengine/internal/log
 google.golang.org/appengine/internal/remote_api
-google.golang.org/appengine/internal/socket
 # google.golang.org/genproto v0.0.0-20190307195333-5fe7a883aa19
 google.golang.org/genproto/googleapis/iam/admin/v1
 google.golang.org/genproto/googleapis/monitoring/v3

@@ -22,8 +22,6 @@ import (
 	"google.golang.org/api/cloudfunctions/v1"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-
-	"golang.org/x/oauth2/google"
 )
 
 var cloudFunctionsAllowEmptyValues = []string{""}
@@ -63,12 +61,7 @@ func (g CloudFunctionsGenerator) createResources(functionsList *cloudfunctions.P
 // Need CloudFunctions name as ID for terraform resource
 func (g *CloudFunctionsGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, cloudfunctions.CloudPlatformScope)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	cloudfunctionsService, err := cloudfunctions.New(c)
+	cloudfunctionsService, err := cloudfunctions.NewService(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}

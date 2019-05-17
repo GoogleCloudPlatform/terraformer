@@ -22,8 +22,6 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
-	"golang.org/x/oauth2/google"
-
 	"google.golang.org/api/container/v1beta1"
 )
 
@@ -93,12 +91,7 @@ func (g *GkeGenerator) initNodePools(nodePools []*container.NodePool, clusterNam
 // Generate TerraformResources from GCP API,
 func (g *GkeGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, container.CloudPlatformScope)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	service, err := container.New(c)
+	service, err := container.NewService(ctx)
 	if err != nil {
 		log.Print(err)
 		return err
