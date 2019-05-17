@@ -22,8 +22,6 @@ import (
 	"google.golang.org/api/pubsub/v1"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-
-	"golang.org/x/oauth2/google"
 )
 
 var pubsubAllowEmptyValues = []string{""}
@@ -91,12 +89,7 @@ func (g PubsubGenerator) createTopicsListResources(ctx context.Context, topicsLi
 // Generate TerraformResources from GCP API,
 func (g *PubsubGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, pubsub.PubsubScope)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	pubsubService, err := pubsub.New(c)
+	pubsubService, err := pubsub.NewService(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}

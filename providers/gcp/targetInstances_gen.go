@@ -21,7 +21,6 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
-	"golang.org/x/oauth2/google"
 	"google.golang.org/api/compute/v1"
 )
 
@@ -65,12 +64,7 @@ func (g TargetInstancesGenerator) createResources(ctx context.Context, targetIns
 // Need targetInstances name as ID for terraform resource
 func (g *TargetInstancesGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, compute.ComputeReadonlyScope)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	computeService, err := compute.New(c)
+	computeService, err := compute.NewService(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}

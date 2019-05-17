@@ -22,7 +22,6 @@ import (
 	"google.golang.org/api/cloudkms/v1"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"golang.org/x/oauth2/google"
 )
 
 var kmsAllowEmptyValues = []string{""}
@@ -90,12 +89,7 @@ func (g *KmsGenerator) createKmsKeyResources(ctx context.Context, keyRingName st
 // Generate TerraformResources from GCP API,
 func (g *KmsGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, cloudkms.CloudkmsScope)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	kmsService, err := cloudkms.New(c)
+	kmsService, err := cloudkms.NewService(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}

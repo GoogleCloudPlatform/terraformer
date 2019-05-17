@@ -22,7 +22,6 @@ import (
 	"google.golang.org/api/cloudscheduler/v1beta1"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"golang.org/x/oauth2/google"
 )
 
 var schedulerJobsAllowEmptyValues = []string{""}
@@ -64,12 +63,7 @@ func (g SchedulerJobsGenerator) createResources(jobsList *cloudscheduler.Project
 // Generate TerraformResources from GCP API,
 func (g *SchedulerJobsGenerator) InitResources() error {
 	ctx := context.Background()
-	c, err := google.DefaultClient(ctx, cloudscheduler.CloudPlatformScope)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	cloudSchedulerService, err := cloudscheduler.New(c)
+	cloudSchedulerService, err := cloudscheduler.NewService(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
