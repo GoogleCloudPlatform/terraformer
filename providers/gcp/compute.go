@@ -58,6 +58,7 @@ var ComputeServices = map[string]terraform_utils.ServiceGenerator{
 	"targetPools":                 &TargetPoolsGenerator{},
 	"targetSslProxies":            &TargetSslProxiesGenerator{},
 	"targetTcpProxies":            &TargetTcpProxiesGenerator{},
+	"targetVpnGateways":           &TargetVpnGatewaysGenerator{},
 	"urlMaps":                     &UrlMapsGenerator{},
 	"vpnTunnels":                  &VpnTunnelsGenerator{},
 }
