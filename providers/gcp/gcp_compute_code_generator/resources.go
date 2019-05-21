@@ -152,4 +152,7 @@ var terraformResources = map[string]gcpResourceRenderable{
 	"targetInstances": basicGCPResource{
 		terraformName: "google_compute_target_instance",
 	},
+	"targetVpnGateways": basicGCPResource{
+		terraformName: "google_compute_vpn_gateway",
+	},
 }
