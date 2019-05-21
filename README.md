@@ -201,6 +201,8 @@ List of supported GCP services:
     * `google_compute_target_ssl_proxy`
 *   `targetTcpProxies`
     * `google_compute_target_tcp_proxy`
+*   `targetVpnGateways`
+    * `google_compute_vpn_gateway`
 *   `urlMaps`
     * `google_compute_url_map`
 *   `vpnTunnels`
