@@ -237,6 +237,8 @@ List of supported GCP services:
 *   `kms`
     * `google_kms_key_ring`
     * `google_kms_crypto_key`
+*   `project`
+    * `google_project`
 
 Your `tf` and `tfstate` files are written by default to
 `generated/gcp/zone/service`.
