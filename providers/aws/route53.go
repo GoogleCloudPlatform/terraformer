@@ -36,29 +36,35 @@ type Route53Generator struct {
 
 func (g Route53Generator) createZonesResources(svc *route53.Route53) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
-	zones, err := svc.ListHostedZones(&route53.ListHostedZonesInput{})
+	err := svc.ListHostedZonesPages(
+		&route53.ListHostedZonesInput{},
+		func(zones *route53.ListHostedZonesOutput, lastPage bool) bool {
+			for _, zone := range zones.HostedZones {
+				zoneID := cleanZoneID(aws.StringValue(zone.Id))
+				resources = append(resources, terraform_utils.NewResource(
+					zoneID,
+					zoneID+"_"+strings.TrimSuffix(aws.StringValue(zone.Name), "."),
+					"aws_route53_zone",
+					"aws",
+					map[string]string{
+						"name":          aws.StringValue(zone.Name),
+						"force_destroy": "false",
+					},
+					route53AllowEmptyValues,
+					route53AdditionalFields,
+				))
+				records := g.createRecordsResources(svc, zoneID)
+				resources = append(resources, records...)
+			}
+			return true
+		},
+	)
 
 	if err != nil {
 		log.Println(err)
 		return resources
 	}
-	for _, zone := range zones.HostedZones {
-		zoneID := cleanZoneID(aws.StringValue(zone.Id))
-		resources = append(resources, terraform_utils.NewResource(
-			zoneID,
-			zoneID+"_"+strings.TrimSuffix(aws.StringValue(zone.Name), "."),
-			"aws_route53_zone",
-			"aws",
-			map[string]string{
-				"name":          aws.StringValue(zone.Name),
-				"force_destroy": "false",
-			},
-			route53AllowEmptyValues,
-			route53AdditionalFields,
-		))
-		records := g.createRecordsResources(svc, zoneID)
-		resources = append(resources, records...)
-	}
+
 	return resources
 }
 
