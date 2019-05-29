@@ -451,4 +451,23 @@ go run providers/gcp/gcp_compute_code_generator/*.go
 
 ### Similar projects
 
-1.  https://github.com/dtan4/terraforming
+#### [terraforming](https://github.com/dtan4/terraforming)
+
+##### Terraformer Benefits
+
+* Simpler to add new providers and resources - already supports AWS, GCP, Github, Kubernetes, and Openstack. Terraforming supports only AWS.
+* Better support for HCL + tfstate, including updates for Terraform 0.12
+* If a provider adds new attributes to a resource, there is no need change Terraformer code - just update the terraform provider on your laptop.
+* Automatically supports connections between resources in HCL files
+
+##### Comparison
+
+Terraforming gets all attributes from cloud APIs and creates HCL and tfstate files with templating. Each attribute in the API needs to map to attribute in terraform. Generated files from templating can be broken with illegal syntax. When a provider adds new attributes the terraforming code needs to be updated. 
+
+Terraformer instead uses terraform provider files for mapping attributes, HCL library from hashicorp, and terraform code.
+
+Look for S3 support in Terraforming here and official s3 support
+Terraforming lacks full coverage for resources - as an example you can see that 70% of s3 options are not supported:
+
+* terraforming - https://github.com/dtan4/terraforming/blob/master/lib/terraforming/template/tf/s3.erb
+* official s3 support - https://www.terraform.io/docs/providers/aws/r/s3_bucket.html
