@@ -86,6 +86,13 @@ From source:
 1.  Run `git clone <terraformer repo>`
 2.  Run `GO111MODULE=on go mod vendor`
 3.  Run `go build -v`
+4.  Run ```terraform init``` against an ```init.tf``` installing the platform correct required plugin(s) relative to current directory. Example ```init.tf``` to install the AWS plugin:
+```
+provider "aws" {
+}
+```
+Or alternatively
+
 4.  Copy your Terraform provider's plugin(s) to folder
     `~/.terraform.d/plugins/{darwin,linux}_amd64/`, as appropriate.
 
