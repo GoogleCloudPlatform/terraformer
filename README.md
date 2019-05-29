@@ -1,5 +1,7 @@
 # Terraformer
 
+[![Build Status](https://travis-ci.com/GoogleCloudPlatform/terraformer.svg?branch=master)](https://travis-ci.com/GoogleCloudPlatform/terraformer)
+
 CLI tool to generate `tf` and `tfstate` files from existing infrastructure
 (reverse Terraform).
 
