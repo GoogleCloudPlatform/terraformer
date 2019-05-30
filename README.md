@@ -309,6 +309,8 @@ List of support AWS services:
 *   `route53`
     * `aws_route53_zone`
     * `aws_route53_record`
+*   `acm`
+    * `aws_acm_certificate`
 *   `elasticache`
     * `aws_elasticache_cluster`
     * `aws_elasticache_parameter_group`
