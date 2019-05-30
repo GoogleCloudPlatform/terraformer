@@ -76,10 +76,6 @@ func (g *ACMGenerator) InitResources() error {
 	return nil
 }
 
-func (g *ACMGenerator) PostConvertHook() error {
-	return nil
-}
-
 // extractCertificateUUID extracts UUID from ARN
 func extractCertificateUUID(arn string) string {
 	if i := strings.Index(arn, "/"); i != -1 {
