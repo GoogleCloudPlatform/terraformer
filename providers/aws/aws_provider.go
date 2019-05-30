@@ -121,5 +121,6 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"rds":            &RDSGenerator{},
 		"elasticache":    &ElastiCacheGenerator{},
 		"alb":            &AlbGenerator{},
+		"acm":            &ACMGenerator{},
 	}
 }
