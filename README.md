@@ -436,8 +436,12 @@ Example:
 
 List of support Datadog services:
 
-*   `monitor`
+* `downtime`
+    * `datadog_downtime`
+* `monitor`
     * `datadog_monitor`
+* `user`
+    * `datadog_user`
 
 
 ## Contributing
