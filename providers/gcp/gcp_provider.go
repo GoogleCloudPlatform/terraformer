@@ -68,8 +68,7 @@ func (p *GCPProvider) InitService(serviceName string) error {
 
 // GetGCPSupportService return map of support service for GCP
 func (p *GCPProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	services := map[string]terraform_utils.ServiceGenerator{}
-	services = ComputeServices
+	services := ComputeServices
 	services["gcs"] = &GcsGenerator{}
 	services["monitoring"] = &MonitoringGenerator{}
 	services["iam"] = &IamGenerator{}
