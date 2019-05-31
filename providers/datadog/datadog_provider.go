@@ -87,6 +87,7 @@ func (p *DatadogProvider) InitService(serviceName string) error {
 func (p *DatadogProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
 		"monitor": &MonitorGenerator{},
+		"user":    &UserGenerator{},
 	}
 }
 
