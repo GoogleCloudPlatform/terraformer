@@ -59,6 +59,7 @@ func newImportCmd() *cobra.Command {
 	cmd.AddCommand(newCmdOpenStackImporter(options))
 	cmd.AddCommand(newCmdKubernetesImporter(options))
 	cmd.AddCommand(newCmdGithubImporter(options))
+	cmd.AddCommand(newCmdDatadogImporter(options))
 	return cmd
 }
 
