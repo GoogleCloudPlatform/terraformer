@@ -19,6 +19,7 @@ CLI tool to generate `tf` and `tfstate` files from existing infrastructure
     * [OpenStack](#use-with-openstack)
     * [Kubernetes](#use-with-kubernetes)
     * [Github](#use-with-github)
+    * [Datadog](#use-with-datadog)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
@@ -107,6 +108,7 @@ Links for download terraform providers:
 * openstack provider >1.17.0 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
 * kubernetes provider >=1.4.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
 * github provider >=2.0.0 - [here](https://releases.hashicorp.com/terraform-provider-github/)
+* datadog provider >1.19.0 - [here](https://releases.hashicorp.com/terraform-provider-datadog/)
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
@@ -411,6 +413,21 @@ Support only organizations resources. List of supported resources:
 Notes:
 * Github API don't return webhook secrets. If you have secret in webhook, you get changes on `terraform plan`
 => `configuration.#: "1" => "0"` in tfstate only.
+
+### Use with Datadog
+
+Example:
+
+```
+ ./terraformer import datadog --resources=monitor --api-key=YOUR_DATADOG_API_KEY // or DATADOG_API_KEY in env --app-key=YOUR_DATADOG_APP_KEY // or DATADOG_APP_KEY in env
+ ./terraformer import datadog --resources=monitor --filter=datadog_monitor=id1:id2:id4 --api-key=YOUR_DATADOG_API_KEY // or DATADOG_API_KEY in env --app-key=YOUR_DATADOG_APP_KEY // or DATADOG_APP_KEY in env
+```
+
+List of support Datadog services:
+
+*   `monitor`
+    * `datadog_monitor`
+
 
 ## Contributing
 
