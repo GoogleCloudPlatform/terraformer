@@ -180,6 +180,8 @@ github.com/bgentry/go-netrc/netrc
 github.com/bgentry/speakeasy
 # github.com/blang/semver v3.5.1+incompatible
 github.com/blang/semver
+# github.com/cenkalti/backoff v2.1.1+incompatible
+github.com/cenkalti/backoff
 # github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e
 github.com/chzyer/readline
 # github.com/coreos/etcd v3.2.0-rc.1.0.20171020155248-81ca10f99174+incompatible
@@ -602,6 +604,8 @@ github.com/zclconf/go-cty/cty/function/stdlib
 github.com/zclconf/go-cty/cty/set
 github.com/zclconf/go-cty/cty/gocty
 github.com/zclconf/go-cty/cty/json
+# github.com/zorkian/go-datadog-api v2.20.0+incompatible
+github.com/zorkian/go-datadog-api
 # go.opencensus.io v0.21.0
 go.opencensus.io/plugin/ochttp
 go.opencensus.io/trace
