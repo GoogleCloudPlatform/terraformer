@@ -86,9 +86,10 @@ func (p *DatadogProvider) InitService(serviceName string) error {
 // GetSupportedService return map of support service for Datadog
 func (p *DatadogProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
-		"downtime": &DowntimeGenerator{},
-		"monitor":  &MonitorGenerator{},
-		"user":     &UserGenerator{},
+		"downtime":   &DowntimeGenerator{},
+		"monitor":    &MonitorGenerator{},
+		"synthetics": &SyntheticsGenerator{},
+		"user":       &UserGenerator{},
 	}
 }
 
