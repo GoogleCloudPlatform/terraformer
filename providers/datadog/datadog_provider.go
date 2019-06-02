@@ -90,6 +90,7 @@ func (p *DatadogProvider) GetSupportedService() map[string]terraform_utils.Servi
 		"monitor":     &MonitorGenerator{},
 		"screenboard": &ScreenboardGenerator{},
 		"synthetics":  &SyntheticsGenerator{},
+		"timeboard":   &TimeboardGenerator{},
 		"user":        &UserGenerator{},
 	}
 }
