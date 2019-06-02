@@ -444,6 +444,8 @@ List of support Datadog services:
     * `datadog_screenboard`
 * `synthetics`
     * `datadog_synthetics_test`
+* `timeboard`
+    * `datadog_timeboard`
 * `user`
     * `datadog_user`
 
