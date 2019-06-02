@@ -440,6 +440,8 @@ List of support Datadog services:
     * `datadog_downtime`
 * `monitor`
     * `datadog_monitor`
+* `screenboard`
+    * `datadog_screenboard`
 * `synthetics`
     * `datadog_synthetics_test`
 * `user`
