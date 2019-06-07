@@ -15,7 +15,7 @@ package cmd
 
 import (
 	"encoding/json"
-	"errors"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -25,6 +25,7 @@ import (
 )
 
 type ImportPlan struct {
+	Version   string
 	Provider  string
 	Options   ImportOptions
 	Args      []string
@@ -80,7 +81,7 @@ func newCmdPlanImporter(options ImportOptions) *cobra.Command {
 			case newDataDogProvider().GetName():
 				provider = newDataDogProvider()
 			default:
-				return errors.New("unsupported provider: " + plan.Provider)
+				return fmt.Errorf("unsupported provider: %s", plan.Provider)
 			}
 
 			if err = provider.Init(plan.Args); err != nil {
@@ -112,10 +113,17 @@ func LoadPlanfile(path string) (*ImportPlan, error) {
 	if err := dec.Decode(plan); err != nil {
 		return nil, err
 	}
+
+	if plan.Version != version {
+		return nil, fmt.Errorf("planfile version did not match. expected: %s, actual: %s", version, plan.Version)
+	}
+
 	return plan, nil
 }
 
 func ExportPlanfile(plan *ImportPlan, path, filename string) error {
+	plan.Version = version
+
 	planfilePath := filepath.Join(path, filename)
 	log.Println("Saving planfile to", planfilePath)
 
