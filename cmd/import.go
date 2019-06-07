@@ -38,7 +38,7 @@ type ImportOptions struct {
 	Projects    []string
 	Connect     bool
 	Filter      []string
-	Plan        bool
+	Plan        bool     `json:"-"`
 }
 
 const DefaultPathPattern = "{output}/{provider}/{service}/"
