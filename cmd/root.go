@@ -25,6 +25,7 @@ func NewCmdRoot() *cobra.Command {
 		Version:       version,
 	}
 	cmd.AddCommand(newImportCmd())
+	cmd.AddCommand(newPlanCmd())
 	cmd.AddCommand(versionCmd)
 	return cmd
 }

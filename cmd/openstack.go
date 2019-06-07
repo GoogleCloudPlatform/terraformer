@@ -17,7 +17,7 @@ import (
 	"log"
 
 	openstack_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/openstack"
-
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +29,7 @@ func newCmdOpenStackImporter(options ImportOptions) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			originalPathPattern := options.PathPattern
 			for _, region := range options.Regions {
-				provider := &openstack_terraforming.OpenStackProvider{}
+				provider := newOpenStackProvider()
 				options.PathPattern = originalPathPattern
 				options.PathPattern += region + "/"
 				log.Println(provider.GetName() + " importing region " + region)
@@ -41,7 +41,7 @@ func newCmdOpenStackImporter(options ImportOptions) *cobra.Command {
 			return nil
 		},
 	}
-	cmd.AddCommand(listCmd(&openstack_terraforming.OpenStackProvider{}))
+	cmd.AddCommand(listCmd(newOpenStackProvider()))
 	cmd.PersistentFlags().BoolVarP(&options.Connect, "connect", "c", true, "")
 	cmd.PersistentFlags().StringSliceVarP(&options.Resources, "resources", "r", []string{}, "compute,networking")
 	cmd.PersistentFlags().StringVarP(&options.PathPattern, "path-pattern", "p", DefaultPathPattern, "{output}/{provider}/custom/{service}/")
@@ -51,4 +51,8 @@ func newCmdOpenStackImporter(options ImportOptions) *cobra.Command {
 	cmd.PersistentFlags().StringSliceVarP(&options.Regions, "regions", "", []string{}, "RegionOne")
 	cmd.PersistentFlags().StringSliceVarP(&options.Filter, "filter", "f", []string{}, "openstack_compute_instance_v2=id1:id2:id4")
 	return cmd
+}
+
+func newOpenStackProvider() terraform_utils.ProviderGenerator {
+	return &openstack_terraforming.OpenStackProvider{}
 }

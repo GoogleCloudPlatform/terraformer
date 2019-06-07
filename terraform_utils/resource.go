@@ -16,10 +16,11 @@ package terraform_utils
 
 import (
 	"fmt"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 	"log"
 	"regexp"
 	"strings"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 
 	"github.com/hashicorp/terraform/flatmap"
 	"github.com/hashicorp/terraform/terraform"
@@ -28,13 +29,13 @@ import (
 type Resource struct {
 	InstanceInfo     *terraform.InstanceInfo
 	InstanceState    *terraform.InstanceState
-	Outputs          map[string]*terraform.OutputState
+	Outputs          map[string]*terraform.OutputState `json:",omitempty"`
 	ResourceName     string
 	Provider         string
-	Item             map[string]interface{}
-	IgnoreKeys       []string
-	AllowEmptyValues []string
-	AdditionalFields map[string]string
+	Item             map[string]interface{} `json:",omitempty"`
+	IgnoreKeys       []string               `json:",omitempty"`
+	AllowEmptyValues []string               `json:",omitempty"`
+	AdditionalFields map[string]string      `json:",omitempty"`
 }
 
 func NewResource(ID, resourceName, resourceType, provider string,
