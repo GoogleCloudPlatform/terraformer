@@ -82,6 +82,25 @@ Check the import part of [Terraform documentation][terraform-providers] for your
 
 [terraform-providers]: https://www.terraform.io/docs/providers/
 
+#### Planning
+
+`plan` command let you review the resources to import, rename them, or even filter only what you need.
+
+The rest of subcommands and parameters are same to `import` command.
+
+```
+$ terraformer plan aws --resources=vpc,subnet --filter=aws_vpc=myvpcid --regions=eu-west-1
+(snip)
+
+Saving planfile to generated/aws/terraformer/eu-west-1/plan.json
+```
+
+After reviewing/customizing the planfile, perform import by `import plan` command.
+
+```
+$ terraformer import plan generated/aws/terraformer/eu-west-1/plan.json
+```
+
 ### Installation
 From source:
 1.  Run `git clone <terraformer repo>`
