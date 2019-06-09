@@ -111,6 +111,12 @@ chmod +x terraformer-darwin-amd64
 sudo mv terraformer-darwin-amd64 /usr/local/bin/terraformer
 ```
 
+#### Using package manager
+
+If you want to use a package manager:
+
+- [Homebrew](https://brew.sh/) users can use `brew install terraformer`.
+
 Links for download terraform providers:
 * google cloud provider >2.0.0 - [here](https://releases.hashicorp.com/terraform-provider-google/)
 * aws provider >1.56.0 - [here](https://releases.hashicorp.com/terraform-provider-aws/)
