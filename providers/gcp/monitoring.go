@@ -62,7 +62,8 @@ func (g *MonitoringGenerator) loadAlerts(ctx context.Context, project string) er
 			"google_monitoring_alert_policy",
 			"google",
 			map[string]string{
-				"name": alert.Name,
+				"name":    alert.Name,
+				"project": project,
 			},
 			monitoringAllowEmptyValues,
 			monitoringAdditionalFields,
@@ -97,7 +98,8 @@ func (g *MonitoringGenerator) loadGroups(ctx context.Context, project string) er
 			"google_monitoring_group",
 			"google",
 			map[string]string{
-				"name": group.Name,
+				"name":    group.Name,
+				"project": project,
 			},
 			monitoringAllowEmptyValues,
 			monitoringAdditionalFields,
@@ -132,7 +134,8 @@ func (g *MonitoringGenerator) loadNotificationChannel(ctx context.Context, proje
 			"google_monitoring_notification_channel",
 			"google",
 			map[string]string{
-				"name": notificationChannel.Name,
+				"name":    notificationChannel.Name,
+				"project": project,
 			},
 			monitoringAllowEmptyValues,
 			monitoringAdditionalFields,
@@ -166,7 +169,8 @@ func (g *MonitoringGenerator) loadUptimeCheck(ctx context.Context, project strin
 			"google_monitoring_uptime_check_config",
 			"google",
 			map[string]string{
-				"name": uptimeCheckConfigs.Name,
+				"name":    uptimeCheckConfigs.Name,
+				"project": project,
 			},
 			monitoringAllowEmptyValues,
 			monitoringAdditionalFields,
