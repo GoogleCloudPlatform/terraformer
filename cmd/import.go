@@ -38,7 +38,7 @@ type ImportOptions struct {
 	Projects    []string
 	Connect     bool
 	Filter      []string
-	Plan        bool     `json:"-"`
+	Plan        bool `json:"-"`
 }
 
 const DefaultPathPattern = "{output}/{provider}/{service}/"
@@ -104,7 +104,7 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 	plan := &ImportPlan{
 		Provider:  provider.GetName(),
 		Options:   options,
-		Args: args,
+		Args:      args,
 		Resources: provider.GetService().GetResources(),
 	}
 
