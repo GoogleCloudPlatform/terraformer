@@ -15,6 +15,7 @@
 package cmd
 
 import (
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/spf13/cobra"
 )
 
@@ -33,4 +34,19 @@ func NewCmdRoot() *cobra.Command {
 func Execute() error {
 	cmd := NewCmdRoot()
 	return cmd.Execute()
+}
+
+func providerGenerators() map[string]func() terraform_utils.ProviderGenerator {
+	list := make(map[string]func() terraform_utils.ProviderGenerator)
+	for _, providerGen := range []func() terraform_utils.ProviderGenerator{
+		newGCPProvider,
+		newAWSProvider,
+		newOpenStackProvider,
+		newKubernetesProvider,
+		newGitHubProvider,
+		newDataDogProvider,
+	} {
+		list[providerGen().GetName()] = providerGen
+	}
+	return list
 }
