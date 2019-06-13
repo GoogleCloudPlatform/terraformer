@@ -36,6 +36,17 @@ func Execute() error {
 	return cmd.Execute()
 }
 
+func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command {
+	return []func(options ImportOptions) *cobra.Command {
+		newCmdGoogleImporter,
+		newCmdAwsImporter,
+		newCmdOpenStackImporter,
+		newCmdKubernetesImporter,
+		newCmdGithubImporter,
+		newCmdDatadogImporter,
+	}
+}
+
 func providerGenerators() map[string]func() terraform_utils.ProviderGenerator {
 	list := make(map[string]func() terraform_utils.ProviderGenerator)
 	for _, providerGen := range []func() terraform_utils.ProviderGenerator{
