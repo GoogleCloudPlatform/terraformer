@@ -66,21 +66,9 @@ func newCmdPlanImporter(options ImportOptions) *cobra.Command {
 			}
 
 			var provider terraform_utils.ProviderGenerator
-			switch plan.Provider {
-			// TODO: Make this something beautiful
-			case newGCPProvider().GetName():
-				provider = newGCPProvider()
-			case newAWSProvider().GetName():
-				provider = newAWSProvider()
-			case newOpenStackProvider().GetName():
-				provider = newOpenStackProvider()
-			case newKubernetesProvider().GetName():
-				provider = newKubernetesProvider()
-			case newGitHubProvider().GetName():
-				provider = newGitHubProvider()
-			case newDataDogProvider().GetName():
-				provider = newDataDogProvider()
-			default:
+			if providerGen, ok := providerGenerators()[plan.Provider]; ok {
+				provider = providerGen()
+			} else {
 				return fmt.Errorf("unsupported provider: %s", plan.Provider)
 			}
 
