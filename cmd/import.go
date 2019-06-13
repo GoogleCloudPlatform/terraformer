@@ -55,13 +55,10 @@ func newImportCmd() *cobra.Command {
 		SilenceErrors: false,
 		//Version:       version.String(),
 	}
-	cmd.AddCommand(newCmdPlanImporter(options))
-	cmd.AddCommand(newCmdGoogleImporter(options))
-	cmd.AddCommand(newCmdAwsImporter(options))
-	cmd.AddCommand(newCmdOpenStackImporter(options))
-	cmd.AddCommand(newCmdKubernetesImporter(options))
-	cmd.AddCommand(newCmdGithubImporter(options))
-	cmd.AddCommand(newCmdDatadogImporter(options))
+
+	for _, subcommand := range providerImporterSubcommands() {
+		cmd.AddCommand(subcommand(options))
+	}
 	return cmd
 }
 
