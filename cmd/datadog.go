@@ -15,7 +15,7 @@ package cmd
 
 import (
 	datadog_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/datadog"
-
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/spf13/cobra"
 )
 
@@ -26,7 +26,7 @@ func newCmdDatadogImporter(options ImportOptions) *cobra.Command {
 		Short: "Import current State to terraform configuration from datadog",
 		Long:  "Import current State to terraform configuration from datadog",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			provider := &datadog_terraforming.DatadogProvider{}
+			provider := newDataDogProvider()
 			err := Import(provider, options, []string{apiKey, appKey})
 			if err != nil {
 				return err
@@ -34,7 +34,7 @@ func newCmdDatadogImporter(options ImportOptions) *cobra.Command {
 			return nil
 		},
 	}
-	cmd.AddCommand(listCmd(&datadog_terraforming.DatadogProvider{}))
+	cmd.AddCommand(listCmd(newDataDogProvider()))
 	cmd.PersistentFlags().BoolVarP(&options.Connect, "connect", "c", true, "")
 	cmd.PersistentFlags().StringSliceVarP(&options.Resources, "resources", "r", []string{}, "monitors,users")
 	cmd.PersistentFlags().StringVarP(&options.PathPattern, "path-pattern", "p", DefaultPathPattern, "{output}/{provider}/custom/{service}/")
@@ -45,4 +45,8 @@ func newCmdDatadogImporter(options ImportOptions) *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&appKey, "app-key", "", "", "YOUR_DATADOG_APP_KEY or env param DATADOG_APP_KEY")
 	cmd.PersistentFlags().StringSliceVarP(&options.Filter, "filter", "f", []string{}, "datadog_monitor=id1:id2:id4")
 	return cmd
+}
+
+func newDataDogProvider() terraform_utils.ProviderGenerator {
+	return &datadog_terraforming.DatadogProvider{}
 }

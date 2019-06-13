@@ -18,7 +18,7 @@ import (
 	"strings"
 
 	github_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/github"
-
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/spf13/cobra"
 )
 
@@ -32,7 +32,7 @@ func newCmdGithubImporter(options ImportOptions) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			originalPathPattern := options.PathPattern
 			for _, organization := range organizations {
-				provider := &github_terraforming.GithubProvider{}
+				provider := newGitHubProvider()
 				options.PathPattern = originalPathPattern
 				options.PathPattern = strings.Replace(options.PathPattern, "{provider}", "{provider}/"+organization, -1)
 				log.Println(provider.GetName() + " importing organization " + organization)
@@ -44,7 +44,7 @@ func newCmdGithubImporter(options ImportOptions) *cobra.Command {
 			return nil
 		},
 	}
-	cmd.AddCommand(listCmd(&github_terraforming.GithubProvider{}))
+	cmd.AddCommand(listCmd(newGitHubProvider()))
 	cmd.PersistentFlags().BoolVarP(&options.Connect, "connect", "c", true, "")
 	cmd.PersistentFlags().StringSliceVarP(&options.Resources, "resources", "r", []string{}, "repository")
 	cmd.PersistentFlags().StringVarP(&options.PathPattern, "path-pattern", "p", DefaultPathPattern, "{output}/{provider}/custom/{service}/")
@@ -55,4 +55,8 @@ func newCmdGithubImporter(options ImportOptions) *cobra.Command {
 	cmd.PersistentFlags().StringSliceVarP(&options.Filter, "filter", "f", []string{}, "github_repository=id1:id2:id4")
 	cmd.PersistentFlags().StringSliceVarP(&organizations, "organizations", "", []string{}, "")
 	return cmd
+}
+
+func newGitHubProvider() terraform_utils.ProviderGenerator {
+	return &github_terraforming.GithubProvider{}
 }

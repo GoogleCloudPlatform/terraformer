@@ -15,7 +15,7 @@ package cmd
 
 import (
 	kubernetes_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/kubernetes"
-
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/spf13/cobra"
 )
 
@@ -25,7 +25,7 @@ func newCmdKubernetesImporter(options ImportOptions) *cobra.Command {
 		Short: "Import current State to terraform configuration from kubernetes",
 		Long:  "Import current State to terraform configuration from kubernetes",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			provider := &kubernetes_terraforming.KubernetesProvider{}
+			provider := newKubernetesProvider()
 			err := Import(provider, options, []string{})
 			if err != nil {
 				return err
@@ -34,7 +34,7 @@ func newCmdKubernetesImporter(options ImportOptions) *cobra.Command {
 		},
 	}
 
-	cmd.AddCommand(listCmd(&kubernetes_terraforming.KubernetesProvider{}))
+	cmd.AddCommand(listCmd(newKubernetesProvider()))
 	cmd.PersistentFlags().BoolVarP(&options.Connect, "connect", "c", true, "")
 	cmd.PersistentFlags().StringSliceVarP(&options.Resources, "resources", "r", []string{}, "configmaps,deployments,services")
 	cmd.PersistentFlags().StringVarP(&options.PathPattern, "path-pattern", "p", DefaultPathPattern, "{output}/{provider}/custom/{service}/")
@@ -43,4 +43,8 @@ func newCmdKubernetesImporter(options ImportOptions) *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&options.Bucket, "bucket", "b", "", "gs://terraform-state")
 	cmd.PersistentFlags().StringSliceVarP(&options.Filter, "filter", "f", []string{}, "kubernetes_deployment=name1:name2:name3")
 	return cmd
+}
+
+func newKubernetesProvider() terraform_utils.ProviderGenerator {
+	return &kubernetes_terraforming.KubernetesProvider{}
 }
