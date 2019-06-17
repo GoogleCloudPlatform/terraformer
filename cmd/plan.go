@@ -25,11 +25,11 @@ import (
 )
 
 type ImportPlan struct {
-	Version   string
-	Provider  string
-	Options   ImportOptions
-	Args      []string
-	Resources []terraform_utils.Resource
+	Version          string
+	Provider         string
+	Options          ImportOptions
+	Args             []string
+	ImportedResource map[string][]terraform_utils.Resource
 }
 
 func newPlanCmd() *cobra.Command {
