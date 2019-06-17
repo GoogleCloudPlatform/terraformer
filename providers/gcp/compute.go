@@ -40,6 +40,7 @@ var ComputeServices = map[string]terraform_utils.ServiceGenerator{
 	"instanceTemplates":           &InstanceTemplatesGenerator{},
 	"instances":                   &InstancesGenerator{},
 	"interconnectAttachments":     &InterconnectAttachmentsGenerator{},
+	"networkEndpointGroups":       &NetworkEndpointGroupsGenerator{},
 	"networks":                    &NetworksGenerator{},
 	"nodeGroups":                  &NodeGroupsGenerator{},
 	"nodeTemplates":               &NodeTemplatesGenerator{},
