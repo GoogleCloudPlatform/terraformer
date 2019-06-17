@@ -93,6 +93,7 @@ func RefreshResources(resources []Resource, providerName string, providerConfig 
 
 func RefreshResourceWorker(input chan *Resource, wg *sync.WaitGroup, provider *provider_wrapper.ProviderWrapper) {
 	for r := range input {
+		log.Println("Refreshing state...", r.InstanceInfo.Id)
 		r.Refresh(provider)
 		wg.Done()
 	}
