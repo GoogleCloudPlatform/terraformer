@@ -89,16 +89,16 @@ Check the import part of [Terraform documentation][terraform-providers] for your
 The rest of subcommands and parameters are same to `import` command.
 
 ```
-$ terraformer plan aws --resources=vpc,subnet --filter=aws_vpc=myvpcid --regions=eu-west-1
+$ terraformer plan google --resources=networks,firewalls --projects=my-project --zone=europe-west1-d
 (snip)
 
-Saving planfile to generated/aws/terraformer/eu-west-1/plan.json
+Saving planfile to generated/google/my-project/terraformer/plan.json
 ```
 
 After reviewing/customizing the planfile, perform import by `import plan` command.
 
 ```
-$ terraformer import plan generated/aws/terraformer/eu-west-1/plan.json
+$ terraformer import plan generated/google/my-project/terraformer/plan.json
 ```
 
 ### Installation
