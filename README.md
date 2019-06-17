@@ -349,6 +349,8 @@ List of support AWS services:
     * `aws_elasticache_parameter_group`
     * `aws_elasticache_subnet_group`
     * `aws_elasticache_replication_group`
+*   `ec2_instance`
+    * `aws_instance`
 
 ### Use with OpenStack
 

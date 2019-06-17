@@ -84,9 +84,9 @@ func (Route53Generator) createRecordsResources(svc *route53.Route53, zoneID stri
 					"aws_route53_record",
 					"aws",
 					map[string]string{
-						"name":    aws.StringValue(record.Name),
-						"zone_id": zoneID,
-						"type":    aws.StringValue(record.Type),
+						"name":           aws.StringValue(record.Name),
+						"zone_id":        zoneID,
+						"type":           aws.StringValue(record.Type),
 						"set_identifier": aws.StringValue(record.SetIdentifier),
 					},
 					route53AllowEmptyValues,
