@@ -79,14 +79,15 @@ func (Route53Generator) createRecordsResources(svc *route53.Route53, zoneID stri
 		func(recordSet *route53.ListResourceRecordSetsOutput, lastPage bool) bool {
 			for _, record := range recordSet.ResourceRecordSets {
 				resources = append(resources, terraform_utils.NewResource(
-					fmt.Sprintf("%s_%s_%s", zoneID, aws.StringValue(record.Name), aws.StringValue(record.Type)),
-					fmt.Sprintf("%s_%s_%s", zoneID, aws.StringValue(record.Name), aws.StringValue(record.Type)),
+					fmt.Sprintf("%s_%s_%s_%s", zoneID, aws.StringValue(record.Name), aws.StringValue(record.Type), aws.StringValue(record.SetIdentifier)),
+					fmt.Sprintf("%s_%s_%s_%s", zoneID, aws.StringValue(record.Name), aws.StringValue(record.Type), aws.StringValue(record.SetIdentifier)),
 					"aws_route53_record",
 					"aws",
 					map[string]string{
 						"name":    aws.StringValue(record.Name),
 						"zone_id": zoneID,
 						"type":    aws.StringValue(record.Type),
+						"set_identifier": aws.StringValue(record.SetIdentifier),
 					},
 					route53AllowEmptyValues,
 					route53AdditionalFields,
