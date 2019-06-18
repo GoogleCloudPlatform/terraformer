@@ -351,6 +351,8 @@ List of support AWS services:
     * `aws_elasticache_replication_group`
 *   `cloudfront`
     * `aws_cloudfront_distribution`
+*   `ec2_instance`
+    * `aws_instance`
 
 ### Use with OpenStack
 
