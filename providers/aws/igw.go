@@ -32,9 +32,9 @@ type IgwGenerator struct {
 // from each Internet gateway create 1 TerraformResource.
 // Need InternetGatewayId as ID for terraform resource
 func (g IgwGenerator) createResources(igws *ec2.DescribeInternetGatewaysOutput) []terraform_utils.Resource {
-	resoures := []terraform_utils.Resource{}
+	resources := []terraform_utils.Resource{}
 	for _, internetGateway := range igws.InternetGateways {
-		resoures = append(resoures, terraform_utils.NewResource(
+		resources = append(resources, terraform_utils.NewResource(
 			aws.StringValue(internetGateway.InternetGatewayId),
 			aws.StringValue(internetGateway.InternetGatewayId),
 			"aws_internet_gateway",
@@ -44,7 +44,7 @@ func (g IgwGenerator) createResources(igws *ec2.DescribeInternetGatewaysOutput) 
 			map[string]string{},
 		))
 	}
-	return resoures
+	return resources
 }
 
 func (g *IgwGenerator) InitResources() error {
