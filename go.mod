@@ -37,7 +37,7 @@ require (
 	github.com/hashicorp/go-getter v0.0.0-20181119194526-bd1edc22f8ea // indirect
 	github.com/hashicorp/go-hclog v0.0.0-20181001195459-61d530d6c27f
 	github.com/hashicorp/go-plugin v0.0.0-20181030172320-54b6ff97d818
-	github.com/hashicorp/hcl v1.0.0
+	github.com/hashicorp/hcl v1.0.1-0.20190611123218-cf7d376da96d
 	github.com/hashicorp/hcl2 v0.0.0-20181111172936-0467c0c38ca2 // indirect
 	github.com/hashicorp/logutils v1.0.0 // indirect
 	github.com/hashicorp/memberlist v0.1.0 // indirect
