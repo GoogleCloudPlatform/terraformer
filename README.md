@@ -33,9 +33,8 @@ CLI tool to generate `tf` and `tfstate` files from existing infrastructure
     supported objects by resource.
 2.  Remote state can be uploaded to a GCS bucket.
 3.  Connect between resources with `terraform_remote_state` (local and bucket).
-4.  Compatible with terraform 0.12 syntax.
-5.  Save `tf` files with custom folder tree pattern.
-6.  Import by resource name and type.
+4.  Save `tf` files with custom folder tree pattern.
+5.  Import by resource name and type.
 
 Terraformer use terraform providers and built for easy to add new supported resources.
 For upgrade resources with new fields you need upgrade only terraform providers.
