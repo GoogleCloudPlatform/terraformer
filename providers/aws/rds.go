@@ -133,7 +133,7 @@ func (g *RDSGenerator) loadEventSubscription(svc *rds.RDS) error {
 // Need only database name as ID for terraform resource
 // AWS api support paging
 func (g *RDSGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"])})
+	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
 	svc := rds.New(sess)
 
 	if err := g.loadDBInstances(svc); err != nil {

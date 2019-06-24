@@ -15,9 +15,11 @@
 package gcp
 
 import (
+	"context"
 	"errors"
 	"os"
-	"strings"
+
+	"google.golang.org/api/compute/v1"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
@@ -27,8 +29,35 @@ const gcpProviderVersion = ">2.0.0"
 type GCPProvider struct {
 	terraform_utils.Provider
 	projectName string
-	zone        string
-	region      string
+	region      compute.Region
+}
+
+func GetRegions(project string) []string {
+	computeService, err := compute.NewService(context.Background())
+	if err != nil {
+		return []string{}
+	}
+	regionsList, err := computeService.Regions.List(project).Do()
+	if err != nil {
+		return []string{}
+	}
+	regions := []string{}
+	for _, region := range regionsList.Items {
+		regions = append(regions, region.Name)
+	}
+	return regions
+}
+
+func getRegion(project, regionName string) *compute.Region {
+	computeService, err := compute.NewService(context.Background())
+	if err != nil {
+		return &compute.Region{}
+	}
+	region, err := computeService.Regions.Get(project, regionName).Do()
+	if err != nil {
+		return &compute.Region{}
+	}
+	return region
 }
 
 // check projectName in env params
@@ -41,8 +70,7 @@ func (p *GCPProvider) Init(args []string) error {
 		return errors.New("google cloud project name must be set")
 	}
 	p.projectName = projectName
-	p.zone = args[0]
-	p.region = strings.Join(strings.Split(p.zone, "-")[:len(strings.Split(p.zone, "-"))-1], "-")
+	p.region = *getRegion(projectName, args[0])
 	return nil
 }
 
@@ -58,8 +86,7 @@ func (p *GCPProvider) InitService(serviceName string) error {
 	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetArgs(map[string]string{
-		"zone":    p.zone,
+	p.Service.SetArgs(map[string]interface{}{
 		"region":  p.region,
 		"project": p.projectName,
 	})

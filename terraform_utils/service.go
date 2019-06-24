@@ -25,8 +25,8 @@ type ServiceGenerator interface {
 	SetResources(resources []Resource)
 	ParseFilter(rawFilter []string)
 	PostConvertHook() error
-	GetArgs() map[string]string
-	SetArgs(args map[string]string)
+	GetArgs() map[string]interface{}
+	SetArgs(args map[string]interface{})
 	SetName(name string)
 	SetProviderName(name string)
 	GetName() string
@@ -37,7 +37,7 @@ type Service struct {
 	Name         string
 	Resources    []Resource
 	ProviderName string
-	Args         map[string]string
+	Args         map[string]interface{}
 	Filter       map[string][]string
 }
 
@@ -84,10 +84,10 @@ func (s *Service) CleanupWithFilter() {
 	s.Resources = newListOfResources
 }
 
-func (s *Service) GetArgs() map[string]string {
+func (s *Service) GetArgs() map[string]interface{} {
 	return s.Args
 }
-func (s *Service) SetArgs(args map[string]string) {
+func (s *Service) SetArgs(args map[string]interface{}) {
 	s.Args = args
 }
 

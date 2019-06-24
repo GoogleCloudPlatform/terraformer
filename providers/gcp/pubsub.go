@@ -46,7 +46,7 @@ func (g PubsubGenerator) createSubscriptionsResources(ctx context.Context, subsc
 				"google",
 				map[string]string{
 					"name":    name,
-					"project": g.GetArgs()["project"],
+					"project": g.GetArgs()["project"].(string),
 				},
 				pubsubAllowEmptyValues,
 				pubsubAdditionalFields,
@@ -67,13 +67,13 @@ func (g PubsubGenerator) createTopicsListResources(ctx context.Context, topicsLi
 			t := strings.Split(obj.Name, "/")
 			name := t[len(t)-1]
 			resources = append(resources, terraform_utils.NewResource(
-				name,
+				g.GetArgs()["project"].(string)+"/"+name,
 				obj.Name,
 				"google_pubsub_topic",
 				"google",
 				map[string]string{
 					"name":    name,
-					"project": g.GetArgs()["project"],
+					"project": g.GetArgs()["project"].(string),
 				},
 				pubsubAllowEmptyValues,
 				pubsubAdditionalFields,
@@ -94,10 +94,10 @@ func (g *PubsubGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	subscriptionsList := pubsubService.Projects.Subscriptions.List("projects/" + g.GetArgs()["project"])
+	subscriptionsList := pubsubService.Projects.Subscriptions.List("projects/" + g.GetArgs()["project"].(string))
 	subscriptionsResources := g.createSubscriptionsResources(ctx, subscriptionsList)
 
-	topicsList := pubsubService.Projects.Topics.List("projects/" + g.GetArgs()["project"])
+	topicsList := pubsubService.Projects.Topics.List("projects/" + g.GetArgs()["project"].(string))
 	topicsResources := g.createTopicsListResources(ctx, topicsList)
 
 	g.Resources = append(g.Resources, subscriptionsResources...)
@@ -110,7 +110,7 @@ func (g *PubsubGenerator) InitResources() error {
 func (g *PubsubGenerator) PostConvertHook() error {
 	for i, r := range g.Resources {
 		for _, topic := range g.Resources {
-			if r.InstanceState.Attributes["topic"] == "projects/"+g.GetArgs()["project"]+"/topics/"+topic.InstanceState.Attributes["name"] {
+			if r.InstanceState.Attributes["topic"] == "projects/"+g.GetArgs()["project"].(string)+"/topics/"+topic.InstanceState.Attributes["name"] {
 				g.Resources[i].Item["topic"] = "${google_pubsub_topic." + topic.ResourceName + ".name}"
 			}
 		}

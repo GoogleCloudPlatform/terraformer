@@ -97,7 +97,7 @@ func (p *AWSProvider) InitService(serviceName string) error {
 	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetArgs(map[string]string{
+	p.Service.SetArgs(map[string]interface{}{
 		"region": p.region,
 	})
 	return nil

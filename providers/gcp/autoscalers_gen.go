@@ -18,6 +18,7 @@ package gcp
 import (
 	"context"
 	"log"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
@@ -33,20 +34,20 @@ type AutoscalersGenerator struct {
 }
 
 // Run on autoscalersList and create for each TerraformResource
-func (g AutoscalersGenerator) createResources(ctx context.Context, autoscalersList *compute.AutoscalersListCall) []terraform_utils.Resource {
+func (g AutoscalersGenerator) createResources(ctx context.Context, autoscalersList *compute.AutoscalersListCall, zone string) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := autoscalersList.Pages(ctx, func(page *compute.AutoscalerList) error {
 		for _, obj := range page.Items {
 			resources = append(resources, terraform_utils.NewResource(
-				g.GetArgs()["zone"]+"/"+obj.Name,
+				zone+"/"+obj.Name,
 				obj.Name,
 				"google_compute_autoscaler",
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
-					"zone":    g.GetArgs()["zone"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
+					"zone":    zone,
 				},
 				autoscalersAllowEmptyValues,
 				autoscalersAdditionalFields,
@@ -69,9 +70,13 @@ func (g *AutoscalersGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	autoscalersList := computeService.Autoscalers.List(g.GetArgs()["project"], g.GetArgs()["zone"])
+	for _, zoneLink := range g.GetArgs()["region"].(compute.Region).Zones {
+		t := strings.Split(zoneLink, "/")
+		zone := t[len(t)-1]
+		autoscalersList := computeService.Autoscalers.List(g.GetArgs()["project"].(string), zone)
+		g.Resources = g.createResources(ctx, autoscalersList, zone)
+	}
 
-	g.Resources = g.createResources(ctx, autoscalersList)
 	g.PopulateIgnoreKeys()
 	return nil
 

@@ -36,7 +36,7 @@ type IamGenerator struct {
 }
 
 func (g *IamGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"])})
+	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
 	svc := iam.New(sess)
 	g.Resources = []terraform_utils.Resource{}
 	err := g.getUsers(svc)

@@ -44,8 +44,8 @@ func (g UrlMapsGenerator) createResources(ctx context.Context, urlMapsList *comp
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				urlMapsAllowEmptyValues,
 				urlMapsAdditionalFields,
@@ -68,9 +68,9 @@ func (g *UrlMapsGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	urlMapsList := computeService.UrlMaps.List(g.GetArgs()["project"])
-
+	urlMapsList := computeService.UrlMaps.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, urlMapsList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

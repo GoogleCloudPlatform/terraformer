@@ -18,6 +18,7 @@ package gcp
 import (
 	"context"
 	"log"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
@@ -33,20 +34,20 @@ type InstanceGroupsGenerator struct {
 }
 
 // Run on instanceGroupsList and create for each TerraformResource
-func (g InstanceGroupsGenerator) createResources(ctx context.Context, instanceGroupsList *compute.InstanceGroupsListCall) []terraform_utils.Resource {
+func (g InstanceGroupsGenerator) createResources(ctx context.Context, instanceGroupsList *compute.InstanceGroupsListCall, zone string) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := instanceGroupsList.Pages(ctx, func(page *compute.InstanceGroupList) error {
 		for _, obj := range page.Items {
 			resources = append(resources, terraform_utils.NewResource(
-				g.GetArgs()["zone"]+"/"+obj.Name,
+				zone+"/"+obj.Name,
 				obj.Name,
 				"google_compute_instance_group",
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
-					"zone":    g.GetArgs()["zone"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
+					"zone":    zone,
 				},
 				instanceGroupsAllowEmptyValues,
 				instanceGroupsAdditionalFields,
@@ -69,9 +70,13 @@ func (g *InstanceGroupsGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	instanceGroupsList := computeService.InstanceGroups.List(g.GetArgs()["project"], g.GetArgs()["zone"])
+	for _, zoneLink := range g.GetArgs()["region"].(compute.Region).Zones {
+		t := strings.Split(zoneLink, "/")
+		zone := t[len(t)-1]
+		instanceGroupsList := computeService.InstanceGroups.List(g.GetArgs()["project"].(string), zone)
+		g.Resources = g.createResources(ctx, instanceGroupsList, zone)
+	}
 
-	g.Resources = g.createResources(ctx, instanceGroupsList)
 	g.PopulateIgnoreKeys()
 	return nil
 

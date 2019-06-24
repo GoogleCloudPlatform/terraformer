@@ -48,7 +48,7 @@ func (VpnConnectionGenerator) createResources(vpncs *ec2.DescribeVpnConnectionsO
 // from each vpn connection create 1 TerraformResource.
 // Need VpnConnectionId as ID for terraform resource
 func (g *VpnConnectionGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"])})
+	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
 	svc := ec2.New(sess)
 	vpncs, err := svc.DescribeVpnConnections(&ec2.DescribeVpnConnectionsInput{})
 	if err != nil {

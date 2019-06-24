@@ -175,7 +175,7 @@ func (g *AlbGenerator) loadTargetGroupTargets(svc *elbv2.ELBV2, targetGroupArn *
 
 // Generate TerraformResources from AWS API,
 func (g *AlbGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"])})
+	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
 	svc := elbv2.New(sess)
 	if err := g.loadLB(svc); err != nil {
 		return err

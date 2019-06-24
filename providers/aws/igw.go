@@ -48,7 +48,7 @@ func (g IgwGenerator) createResources(igws *ec2.DescribeInternetGatewaysOutput) 
 }
 
 func (g *IgwGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"])})
+	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
 	svc := ec2.New(sess)
 	igws, err := svc.DescribeInternetGateways(&ec2.DescribeInternetGatewaysInput{})
 	if err != nil {

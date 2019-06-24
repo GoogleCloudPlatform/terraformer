@@ -44,8 +44,8 @@ func (g BackendBucketsGenerator) createResources(ctx context.Context, backendBuc
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				backendBucketsAllowEmptyValues,
 				backendBucketsAdditionalFields,
@@ -68,9 +68,9 @@ func (g *BackendBucketsGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	backendBucketsList := computeService.BackendBuckets.List(g.GetArgs()["project"])
-
+	backendBucketsList := computeService.BackendBuckets.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, backendBucketsList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

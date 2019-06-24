@@ -51,7 +51,7 @@ func (SubnetGenerator) createResources(subnets *ec2.DescribeSubnetsOutput) []ter
 // from each subnet create 1 TerraformResource.
 // Need SubnetId as ID for terraform resource
 func (g *SubnetGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"])})
+	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
 	svc := ec2.New(sess)
 	subnets, err := svc.DescribeSubnets(&ec2.DescribeSubnetsInput{})
 	if err != nil {

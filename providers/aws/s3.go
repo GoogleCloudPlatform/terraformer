@@ -93,13 +93,13 @@ func (S3Generator) createResources(buckets *s3.ListBucketsOutput, region string)
 // from each s3 bucket create 2 TerraformResource(bucket and bucket policy)
 // Need bucket name as ID for terraform resource
 func (g *S3Generator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"])})
+	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
 	svc := s3.New(sess)
 	buckets, err := svc.ListBuckets(&s3.ListBucketsInput{})
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(buckets, g.GetArgs()["region"])
+	g.Resources = g.createResources(buckets, g.GetArgs()["region"].(string))
 	g.PopulateIgnoreKeys()
 	return nil
 }

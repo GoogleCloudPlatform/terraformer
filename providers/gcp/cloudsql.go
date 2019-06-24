@@ -77,7 +77,7 @@ func (g *CloudSQLGenerator) loadDBs(svc *sqladmin.Service, instanceName, project
 // from each databases create many TerraformResource(dbinstance + databases)
 // Need dbinstance name as ID for terraform resource
 func (g *CloudSQLGenerator) InitResources() error {
-	project := g.GetArgs()["project"]
+	project := g.GetArgs()["project"].(string)
 	ctx := context.Background()
 	svc, err := sqladmin.NewService(ctx)
 	if err != nil {

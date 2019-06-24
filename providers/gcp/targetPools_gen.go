@@ -44,8 +44,8 @@ func (g TargetPoolsGenerator) createResources(ctx context.Context, targetPoolsLi
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				targetPoolsAllowEmptyValues,
 				targetPoolsAdditionalFields,
@@ -68,9 +68,9 @@ func (g *TargetPoolsGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	targetPoolsList := computeService.TargetPools.List(g.GetArgs()["project"], g.GetArgs()["region"])
-
+	targetPoolsList := computeService.TargetPools.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createResources(ctx, targetPoolsList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

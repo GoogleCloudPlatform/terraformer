@@ -107,7 +107,7 @@ func (Route53Generator) createRecordsResources(svc *route53.Route53, zoneID stri
 // Generate TerraformResources from AWS API,
 // create terraform resource for each zone + each record
 func (g *Route53Generator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"])})
+	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
 	svc := route53.New(sess)
 
 	g.Resources = g.createZonesResources(svc)

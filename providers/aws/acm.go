@@ -68,7 +68,7 @@ func (g ACMGenerator) createCertificatesResources(svc *acm.ACM) []terraform_util
 // Generate TerraformResources from AWS API,
 // create terraform resource for each certificates
 func (g *ACMGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"])})
+	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
 	svc := acm.New(sess)
 
 	g.Resources = g.createCertificatesResources(svc)

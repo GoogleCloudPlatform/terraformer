@@ -29,7 +29,7 @@ type CloudFrontGenerator struct {
 }
 
 func (g *CloudFrontGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"])})
+	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
 	svc := cloudfront.New(sess)
 	err := svc.ListDistributionsPages(&cloudfront.ListDistributionsInput{}, func(distributions *cloudfront.ListDistributionsOutput, lastPage bool) bool {
 		for _, distribution := range distributions.DistributionList.Items {

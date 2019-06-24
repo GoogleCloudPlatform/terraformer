@@ -48,7 +48,7 @@ func (VpcGenerator) createResources(vpcs *ec2.DescribeVpcsOutput) []terraform_ut
 // from each vpc create 1 TerraformResource.
 // Need VpcId as ID for terraform resource
 func (g *VpcGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"])})
+	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
 	svc := ec2.New(sess)
 	vpcs, err := svc.DescribeVpcs(&ec2.DescribeVpcsInput{})
 	if err != nil {

@@ -138,7 +138,7 @@ func (g *ElastiCacheGenerator) loadReplicationGroups(svc *elasticache.ElastiCach
 // Need only database name as ID for terraform resource
 // AWS api support paging
 func (g *ElastiCacheGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"])})
+	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
 	svc := elasticache.New(sess)
 
 	if err := g.loadCacheClusters(svc); err != nil {

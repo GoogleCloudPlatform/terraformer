@@ -44,8 +44,8 @@ func (g RegionDisksGenerator) createResources(ctx context.Context, regionDisksLi
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				regionDisksAllowEmptyValues,
 				regionDisksAdditionalFields,
@@ -68,9 +68,9 @@ func (g *RegionDisksGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	regionDisksList := computeService.RegionDisks.List(g.GetArgs()["project"], g.GetArgs()["region"])
-
+	regionDisksList := computeService.RegionDisks.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createResources(ctx, regionDisksList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

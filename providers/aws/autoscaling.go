@@ -112,7 +112,7 @@ func (g *AutoScalingGenerator) loadLaunchTemplates(sess *session.Session) error 
 // Need only ASG name as ID for terraform resource
 // AWS api support paging
 func (g *AutoScalingGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"])})
+	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
 	svc := autoscaling.New(sess)
 	if err := g.loadAutoScalingGroups(svc); err != nil {
 		return err

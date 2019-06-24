@@ -56,7 +56,7 @@ func (SecurityGenerator) createResources(securityGroups []*ec2.SecurityGroup) []
 // Need GroupId as ID for terraform resource
 // AWS support pagination with NextToken pattern
 func (g *SecurityGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"])})
+	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
 	svc := ec2.New(sess)
 	var securityGroups []*ec2.SecurityGroup
 	var err error
