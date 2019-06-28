@@ -135,7 +135,9 @@ If you want to use a package manager:
 
 - [Homebrew](https://brew.sh/) users can use `brew install terraformer`.
 
-Links for download terraform providers:
+<details>
+<summary>Links for download terraform providers:</summary>
+
 * google cloud provider >2.0.0 - [here](https://releases.hashicorp.com/terraform-provider-google/)
 * aws provider >1.56.0 - [here](https://releases.hashicorp.com/terraform-provider-aws/)
 * openstack provider >1.17.0 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
@@ -145,17 +147,21 @@ Links for download terraform providers:
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
+</details>
 
 ### Use with GCP
 [![asciicast](https://asciinema.org/a/243961.svg)](https://asciinema.org/a/243961)
-Example:
+<details>
+<summary>Example:</summary>
 
 ```
 terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --connect=true --zone=europe-west1-a --projects=aaa,fff
 terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --filter=google_compute_firewall=rule1:rule2:rule3 --zone=europe-west1-a --projects=aaa,fff
 ```
+</details>
 
-List of supported GCP services:
+<details>
+<summary>List of supported GCP services:</summary>
 
 *   `addresses`
     * `google_compute_address`
@@ -279,17 +285,21 @@ List of supported GCP services:
 
 Your `tf` and `tfstate` files are written by default to
 `generated/gcp/zone/service`.
+</details>
 
 ### Use with AWS
 
-Example:
+<details>
+<summary>Example:</summary>
 
 ```
  terraformer import aws --resources=vpc,subnet --connect=true --regions=eu-west-1
  terraformer import aws --resources=vpc,subnet --filter=aws_vpc=vpc_id1:vpc_id2:vpc_id3 --regions=eu-west-1
 ```
+</details>
 
-List of support AWS services:
+<details>
+<summary>List of support AWS services:</summary>
 
 *   `elb`
     * `aws_elb`
@@ -352,16 +362,20 @@ List of support AWS services:
     * `aws_cloudfront_distribution`
 *   `ec2_instance`
     * `aws_instance`
+</details>
 
 ### Use with OpenStack
 
-Example:
+<details>
+<summary>Example:</summary>
 
 ```
  terraformer import openstack --resources=compute,networking --regions=RegionOne
 ```
+</details>
 
-List of support OpenStack services:
+<details>
+<summary>List of support OpenStack services:</summary>
 
 *   `compute`
     * `openstack_compute_instance_v2`
@@ -372,17 +386,21 @@ List of support OpenStack services:
     * `openstack_blockstorage_volume_v1`
     * `openstack_blockstorage_volume_v2`
     * `openstack_blockstorage_volume_v3`
+</details>
 
 ### Use with Kubernetes
 
-Example:
+<details>
+<summary>Example:</summary>
 
 ```
  terraformer import kubernetes --resources=deployments,services,storageclasses
  terraformer import kubernetes --resources=deployments,services,storageclasses --filter=kubernetes_deployment=name1:name2:name3
 ```
+</details>
 
-All of the kubernetes resources that are currently being supported by kubernetes provider are supported by this module as well. Here is the list of resources which are currently supported by kubernetes provider v.1.4:
+<details>
+<summary>All of the kubernetes resources that are currently being supported by kubernetes provider are supported by this module as well. Here is the list of resources which are currently supported by kubernetes provider v.1.4:</summary>
 
 * `clusterrolebinding`
   * `kubernetes_cluster_role_binding`
@@ -416,23 +434,29 @@ All of the kubernetes resources that are currently being supported by kubernetes
   * `kubernetes_stateful_set`
 * `storageclasses`
   * `kubernetes_storage_class`
+</details>
 
-#### Known issues
+<details>
+<summary>Known issues</summary>
 
 * Terraform kubernetes provider is rejecting resources with ":" character in their names (As it's not meeting DNS-1123), while it's allowed for certain types in kubernetes, e.g. ClusterRoleBinding.
 * As terraform flatmap is using "." to detect the keys for unflattening the maps, some keys with "." in their names are being considered as the maps.
 * As the library is just assuming empty string as empty value (not "0"), there are some issues with optional integer keys that are restricted to be positive.
+</details>
 
 ### Use with Github
 
-Example:
+<details>
+<summary>Example:</summary>
 
 ```
  ./terraformer import github --organizations=YOUR_ORGANIZATION --resources=repositories --token=YOUR_TOKEN // or GITHUB_TOKEN in env
  ./terraformer import github --organizations=YOUR_ORGANIZATION --resources=repositories --filter=github_repository=id1:id2:id4 --token=YOUR_TOKEN // or GITHUB_TOKEN in env
 ```
+</details>
 
-Support only organizations resources. List of supported resources:
+<details>
+<summary>Support only organizations resources. List of supported resources:</summary>
 
 * `repositories`
     * `github_repository`
@@ -452,17 +476,21 @@ Support only organizations resources. List of supported resources:
 Notes:
 * Github API don't return webhook secrets. If you have secret in webhook, you get changes on `terraform plan`
 => `configuration.#: "1" => "0"` in tfstate only.
+</details>
 
 ### Use with Datadog
 
-Example:
+<details>
+<summary>Example:</summary>
 
 ```
  ./terraformer import datadog --resources=monitor --api-key=YOUR_DATADOG_API_KEY // or DATADOG_API_KEY in env --app-key=YOUR_DATADOG_APP_KEY // or DATADOG_APP_KEY in env
  ./terraformer import datadog --resources=monitor --filter=datadog_monitor=id1:id2:id4 --api-key=YOUR_DATADOG_API_KEY // or DATADOG_API_KEY in env --app-key=YOUR_DATADOG_APP_KEY // or DATADOG_APP_KEY in env
 ```
+</details>
 
-List of support Datadog services:
+<details>
+<summary>List of support Datadog services:</summary>
 
 * `downtime`
     * `datadog_downtime`
@@ -476,7 +504,7 @@ List of support Datadog services:
     * `datadog_timeboard`
 * `user`
     * `datadog_user`
-
+</details>
 
 ## Contributing
 
