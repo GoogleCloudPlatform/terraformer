@@ -3,12 +3,12 @@
 [![Build Status](https://travis-ci.com/GoogleCloudPlatform/terraformer.svg?branch=master)](https://travis-ci.com/GoogleCloudPlatform/terraformer)
 [![Go Report Card](https://goreportcard.com/badge/github.com/GoogleCloudPlatform/terraformer)](https://goreportcard.com/report/github.com/GoogleCloudPlatform/terraformer)
 
-CLI tool to generate `tf` and `tfstate` files from existing infrastructure
+A CLI tool that generates `tf` and `tfstate` files based on existing infrastructure
 (reverse Terraform).
 
-*   Disclaimer: This is not an official Google product.
-*   Status: beta - need improve documentations, bugs etc..
-*   Created by: Waze SRE.
+*   Disclaimer: This is not an official Google product
+*   Status: beta - need to improve documentation, squash some bugs, etc...
+*   Created by: Waze SRE
 
 ![Waze SRE logo](docs/waze-sre-logo.png)
 
@@ -36,10 +36,10 @@ CLI tool to generate `tf` and `tfstate` files from existing infrastructure
 4.  Save `tf` files with custom folder tree pattern.
 5.  Import by resource name and type.
 
-Terraformer use terraform providers and built for easy to add new supported resources.
-For upgrade resources with new fields you need upgrade only terraform providers.
+Terraformer uses terraform providers and is designed to easily support newly added resources.
+To upgrade resources with new fields, all you need to do is upgrade the relevant terraform providers.
 ```
-Import current State to terraform configuration from google cloud
+Import current state to terraform configuration from google cloud
 
 Usage:
    import google [flags]
@@ -62,22 +62,22 @@ Flags:
 ```
 #### Permissions
 
-Readonly permissions
+Read-only permissions
 
 #### Filtering
 
-Filters are a way to choose which resources `terraformer` import.
+Filters are a way to choose which resources `terraformer` imports.
 
-Ex:
+e.g:
 ```
 terraformer import aws --resources=vpc,subnet --filter=aws_vpc=myvpcid --regions=eu-west-1
 ```
-will import only one VPC and not only subnets from this VPC but all subnets from all VPCs
+will import only one VPC and all subnets from all VPCs (not just the ones from the filtered VPC)
 
 ##### Resources ID
 
-Filtering is based on Terraform resource ID pattern. This way, it may differ from the value your provider give you.
-Check the import part of [Terraform documentation][terraform-providers] for your resource for valid ID pattern.
+Filtering is based on the Terraform resource ID patterns. This way, it may differ from the value your provider gives you.
+Check the import part of [Terraform documentation][terraform-providers] for your resource for valid ID patterns.
 
 [terraform-providers]: https://www.terraform.io/docs/providers/
 
