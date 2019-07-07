@@ -711,7 +711,7 @@ func (c *ElasticTranscoder) ListJobsByPipelineWithContext(ctx aws.Context, input
 //    // Example iterating over at most 3 pages of a ListJobsByPipeline operation.
 //    pageNum := 0
 //    err := client.ListJobsByPipelinePages(params,
-//        func(page *ListJobsByPipelineOutput, lastPage bool) bool {
+//        func(page *elastictranscoder.ListJobsByPipelineOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -859,7 +859,7 @@ func (c *ElasticTranscoder) ListJobsByStatusWithContext(ctx aws.Context, input *
 //    // Example iterating over at most 3 pages of a ListJobsByStatus operation.
 //    pageNum := 0
 //    err := client.ListJobsByStatusPages(params,
-//        func(page *ListJobsByStatusOutput, lastPage bool) bool {
+//        func(page *elastictranscoder.ListJobsByStatusOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -1001,7 +1001,7 @@ func (c *ElasticTranscoder) ListPipelinesWithContext(ctx aws.Context, input *Lis
 //    // Example iterating over at most 3 pages of a ListPipelines operation.
 //    pageNum := 0
 //    err := client.ListPipelinesPages(params,
-//        func(page *ListPipelinesOutput, lastPage bool) bool {
+//        func(page *elastictranscoder.ListPipelinesOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -1143,7 +1143,7 @@ func (c *ElasticTranscoder) ListPresetsWithContext(ctx aws.Context, input *ListP
 //    // Example iterating over at most 3 pages of a ListPresets operation.
 //    pageNum := 0
 //    err := client.ListPresetsPages(params,
-//        func(page *ListPresetsOutput, lastPage bool) bool {
+//        func(page *elastictranscoder.ListPresetsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -2373,29 +2373,14 @@ type CaptionFormat struct {
 	// The format you specify determines whether Elastic Transcoder generates an
 	// embedded or sidecar caption for this output.
 	//
-	//    * Valid Embedded Caption Formats:
-	//
-	// for FLAC: None
-	//
-	// For MP3: None
-	//
-	// For MP4: mov-text
-	//
-	// For MPEG-TS: None
-	//
-	// For ogg: None
-	//
-	// For webm: None
+	//    * Valid Embedded Caption Formats: for FLAC: None For MP3: None For MP4:
+	//    mov-text For MPEG-TS: None For ogg: None For webm: None
 	//
 	//    * Valid Sidecar Caption Formats: Elastic Transcoder supports dfxp (first
 	//    div element only), scc, srt, and webvtt. If you want ttml or smpte-tt
-	//    compatible captions, specify dfxp as your output format.
-	//
-	// For FMP4: dfxp
-	//
-	// Non-FMP4 outputs: All sidecar types
-	//
-	// fmp4 captions have an extension of .ismt
+	//    compatible captions, specify dfxp as your output format. For FMP4: dfxp
+	//    Non-FMP4 outputs: All sidecar types fmp4 captions have an extension of
+	//    .ismt
 	Format *string `type:"string"`
 
 	// The prefix for caption filenames, in the form description-{language}, where:
@@ -2835,25 +2820,19 @@ type CreateJobOutput struct {
 	//
 	//    * Embedded: Embedded captions are included in the same file as the audio
 	//    and video. Elastic Transcoder supports only one embedded caption per language,
-	//    to a maximum of 300 embedded captions per file.
-	//
-	// Valid input values include: CEA-608 (EIA-608, first non-empty channel only),
-	//    CEA-708 (EIA-708, first non-empty channel only), and mov-text
-	//
-	// Valid outputs include: mov-text
-	//
-	// Elastic Transcoder supports a maximum of one embedded format per output.
+	//    to a maximum of 300 embedded captions per file. Valid input values include:
+	//    CEA-608 (EIA-608, first non-empty channel only), CEA-708 (EIA-708, first
+	//    non-empty channel only), and mov-text Valid outputs include: mov-text
+	//    Elastic Transcoder supports a maximum of one embedded format per output.
 	//
 	//    * Sidecar: Sidecar captions are kept in a separate metadata file from
 	//    the audio and video data. Sidecar captions require a player that is capable
 	//    of understanding the relationship between the video file and the sidecar
 	//    file. Elastic Transcoder supports only one sidecar caption per language,
-	//    to a maximum of 20 sidecar captions per file.
-	//
-	// Valid input values include: dfxp (first div element only), ebu-tt, scc, smpt,
-	//    srt, ttml (first div element only), and webvtt
-	//
-	// Valid outputs include: dfxp (first div element only), scc, srt, and webvtt.
+	//    to a maximum of 20 sidecar captions per file. Valid input values include:
+	//    dfxp (first div element only), ebu-tt, scc, smpt, srt, ttml (first div
+	//    element only), and webvtt Valid outputs include: dfxp (first div element
+	//    only), scc, srt, and webvtt.
 	//
 	// If you want ttml or smpte-tt compatible captions, specify dfxp as your output
 	// format.
@@ -2904,6 +2883,7 @@ type CreateJobOutput struct {
 	// transcoding contains rotation metadata.
 	Rotate *string `type:"string"`
 
+	//
 	// (Outputs in Fragmented MP4 or MPEG-TS format only.
 	//
 	// If you specify a preset in PresetId for which the value of Container is fmp4
@@ -2940,11 +2920,9 @@ type CreateJobOutput struct {
 	//    {count} in the ThumbnailPattern object. Wherever you specify {count},
 	//    Elastic Transcoder adds a five-digit sequence number (beginning with 00001)
 	//    to thumbnail file names. The number indicates where a given thumbnail
-	//    appears in the sequence of thumbnails for a transcoded file.
-	//
-	// If you specify a literal value and/or {resolution} but you omit {count},
-	//    Elastic Transcoder returns a validation error and does not create the
-	//    job.
+	//    appears in the sequence of thumbnails for a transcoded file. If you specify
+	//    a literal value and/or {resolution} but you omit {count}, Elastic Transcoder
+	//    returns a validation error and does not create the job.
 	//
 	//    * Literal values (Optional): You can specify literal values anywhere in
 	//    the ThumbnailPattern object. For example, you can include them as a file
@@ -3105,28 +3083,19 @@ type CreateJobPlaylist struct {
 	//
 	//    * If your output is not HLS or does not have a segment duration set, the
 	//    name of the output file is a concatenation of OutputKeyPrefix and Outputs:Key:
-	//
-	// OutputKeyPrefixOutputs:Key
+	//    OutputKeyPrefixOutputs:Key
 	//
 	//    * If your output is HLSv3 and has a segment duration set, or is not included
 	//    in a playlist, Elastic Transcoder creates an output playlist file with
 	//    a file extension of .m3u8, and a series of .ts files that include a five-digit
-	//    sequential counter beginning with 00000:
-	//
-	// OutputKeyPrefixOutputs:Key.m3u8
-	//
-	// OutputKeyPrefixOutputs:Key00000.ts
+	//    sequential counter beginning with 00000: OutputKeyPrefixOutputs:Key.m3u8
+	//    OutputKeyPrefixOutputs:Key00000.ts
 	//
 	//    * If your output is HLSv4, has a segment duration set, and is included
 	//    in an HLSv4 playlist, Elastic Transcoder creates an output playlist file
 	//    with a file extension of _v4.m3u8. If the output is video, Elastic Transcoder
-	//    also creates an output file with an extension of _iframe.m3u8:
-	//
-	// OutputKeyPrefixOutputs:Key_v4.m3u8
-	//
-	// OutputKeyPrefixOutputs:Key_iframe.m3u8
-	//
-	// OutputKeyPrefixOutputs:Key.ts
+	//    also creates an output file with an extension of _iframe.m3u8: OutputKeyPrefixOutputs:Key_v4.m3u8
+	//    OutputKeyPrefixOutputs:Key_iframe.m3u8 OutputKeyPrefixOutputs:Key.ts
 	//
 	// Elastic Transcoder automatically appends the relevant file extension to the
 	// file name. If you include a file extension in Output Key, the file name will
@@ -3261,23 +3230,18 @@ type CreatePipelineInput struct {
 	//    and/or predefined Amazon S3 groups.
 	//
 	//    * Grantee Type: Specify the type of value that appears in the Grantee
-	//    object:
-	//
-	// Canonical: The value in the Grantee object is either the canonical user ID
-	//    for an AWS account or an origin access identity for an Amazon CloudFront
-	//    distribution. For more information about canonical user IDs, see Access
-	//    Control List (ACL) Overview in the Amazon Simple Storage Service Developer
-	//    Guide. For more information about using CloudFront origin access identities
-	//    to require that users use CloudFront URLs instead of Amazon S3 URLs, see
-	//    Using an Origin Access Identity to Restrict Access to Your Amazon S3 Content.
-	//
-	// A canonical user ID is not the same as an AWS account number.
-	//
-	// Email: The value in the Grantee object is the registered email address of
-	//    an AWS account.
-	//
-	// Group: The value in the Grantee object is one of the following predefined
-	//    Amazon S3 groups: AllUsers, AuthenticatedUsers, or LogDelivery.
+	//    object: Canonical: The value in the Grantee object is either the canonical
+	//    user ID for an AWS account or an origin access identity for an Amazon
+	//    CloudFront distribution. For more information about canonical user IDs,
+	//    see Access Control List (ACL) Overview in the Amazon Simple Storage Service
+	//    Developer Guide. For more information about using CloudFront origin access
+	//    identities to require that users use CloudFront URLs instead of Amazon
+	//    S3 URLs, see Using an Origin Access Identity to Restrict Access to Your
+	//    Amazon S3 Content. A canonical user ID is not the same as an AWS account
+	//    number. Email: The value in the Grantee object is the registered email
+	//    address of an AWS account. Group: The value in the Grantee object is one
+	//    of the following predefined Amazon S3 groups: AllUsers, AuthenticatedUsers,
+	//    or LogDelivery.
 	//
 	//    * Grantee: The AWS user or group that you want to have access to transcoded
 	//    files and playlists. To identify the user or group, you can specify the
@@ -3288,19 +3252,13 @@ type CreatePipelineInput struct {
 	//    * Access: The permission that you want to give to the AWS user that you
 	//    specified in Grantee. Permissions are granted on the files that Elastic
 	//    Transcoder adds to the bucket, including playlists and video files. Valid
-	//    values include:
-	//
-	// READ: The grantee can read the objects and metadata for objects that Elastic
-	//    Transcoder adds to the Amazon S3 bucket.
-	//
-	// READ_ACP: The grantee can read the object ACL for objects that Elastic Transcoder
-	//    adds to the Amazon S3 bucket.
-	//
-	// WRITE_ACP: The grantee can write the ACL for the objects that Elastic Transcoder
-	//    adds to the Amazon S3 bucket.
-	//
-	// FULL_CONTROL: The grantee has READ, READ_ACP, and WRITE_ACP permissions for
-	//    the objects that Elastic Transcoder adds to the Amazon S3 bucket.
+	//    values include: READ: The grantee can read the objects and metadata for
+	//    objects that Elastic Transcoder adds to the Amazon S3 bucket. READ_ACP:
+	//    The grantee can read the object ACL for objects that Elastic Transcoder
+	//    adds to the Amazon S3 bucket. WRITE_ACP: The grantee can write the ACL
+	//    for the objects that Elastic Transcoder adds to the Amazon S3 bucket.
+	//    FULL_CONTROL: The grantee has READ, READ_ACP, and WRITE_ACP permissions
+	//    for the objects that Elastic Transcoder adds to the Amazon S3 bucket.
 	//
 	//    * StorageClass: The Amazon S3 storage class, Standard or ReducedRedundancy,
 	//    that you want Elastic Transcoder to assign to the video files and playlists
@@ -3360,11 +3318,9 @@ type CreatePipelineInput struct {
 	//    transcoded files, thumbnails, and playlists.
 	//
 	//    * You do not want to specify the permissions that Elastic Transcoder grants
-	//    to the files.
-	//
-	// When Elastic Transcoder saves files in OutputBucket, it grants full control
-	//    over the files only to the AWS account that owns the role that is specified
-	//    by Role.
+	//    to the files. When Elastic Transcoder saves files in OutputBucket, it
+	//    grants full control over the files only to the AWS account that owns the
+	//    role that is specified by Role.
 	//
 	//    * You want to associate the transcoded files and thumbnails with the Amazon
 	//    S3 Standard storage class.
@@ -3401,19 +3357,13 @@ type CreatePipelineInput struct {
 	//    to a maximum of 30 users and/or predefined Amazon S3 groups.
 	//
 	//    * GranteeType: Specify the type of value that appears in the Grantee object:
-	//
-	//
-	// Canonical: The value in the Grantee object is either the canonical user ID
-	//    for an AWS account or an origin access identity for an Amazon CloudFront
-	//    distribution.
-	//
-	// A canonical user ID is not the same as an AWS account number.
-	//
-	// Email: The value in the Grantee object is the registered email address of
-	//    an AWS account.
-	//
-	// Group: The value in the Grantee object is one of the following predefined
-	//    Amazon S3 groups: AllUsers, AuthenticatedUsers, or LogDelivery.
+	//    Canonical: The value in the Grantee object is either the canonical user
+	//    ID for an AWS account or an origin access identity for an Amazon CloudFront
+	//    distribution. A canonical user ID is not the same as an AWS account number.
+	//    Email: The value in the Grantee object is the registered email address
+	//    of an AWS account. Group: The value in the Grantee object is one of the
+	//    following predefined Amazon S3 groups: AllUsers, AuthenticatedUsers, or
+	//    LogDelivery.
 	//
 	//    * Grantee: The AWS user or group that you want to have access to thumbnail
 	//    files. To identify the user or group, you can specify the canonical user
@@ -3423,19 +3373,14 @@ type CreatePipelineInput struct {
 	//
 	//    * Access: The permission that you want to give to the AWS user that you
 	//    specified in Grantee. Permissions are granted on the thumbnail files that
-	//    Elastic Transcoder adds to the bucket. Valid values include:
-	//
-	// READ: The grantee can read the thumbnails and metadata for objects that Elastic
-	//    Transcoder adds to the Amazon S3 bucket.
-	//
-	// READ_ACP: The grantee can read the object ACL for thumbnails that Elastic
-	//    Transcoder adds to the Amazon S3 bucket.
-	//
-	// WRITE_ACP: The grantee can write the ACL for the thumbnails that Elastic
-	//    Transcoder adds to the Amazon S3 bucket.
-	//
-	// FULL_CONTROL: The grantee has READ, READ_ACP, and WRITE_ACP permissions for
-	//    the thumbnails that Elastic Transcoder adds to the Amazon S3 bucket.
+	//    Elastic Transcoder adds to the bucket. Valid values include: READ: The
+	//    grantee can read the thumbnails and metadata for objects that Elastic
+	//    Transcoder adds to the Amazon S3 bucket. READ_ACP: The grantee can read
+	//    the object ACL for thumbnails that Elastic Transcoder adds to the Amazon
+	//    S3 bucket. WRITE_ACP: The grantee can write the ACL for the thumbnails
+	//    that Elastic Transcoder adds to the Amazon S3 bucket. FULL_CONTROL: The
+	//    grantee has READ, READ_ACP, and WRITE_ACP permissions for the thumbnails
+	//    that Elastic Transcoder adds to the Amazon S3 bucket.
 	//
 	//    * StorageClass: The Amazon S3 storage class, Standard or ReducedRedundancy,
 	//    that you want Elastic Transcoder to assign to the thumbnails that it stores
@@ -4210,6 +4155,7 @@ type Job struct {
 	// into which Elastic Transcoder puts the transcoded files.
 	PipelineId *string `type:"string"`
 
+	//
 	// Outputs in Fragmented MP4 or MPEG-TS format only.
 	//
 	// If you specify a preset in PresetId for which the value of Container is fmp4
@@ -4437,25 +4383,19 @@ type JobInput struct {
 	//
 	//    * Embedded: Embedded captions are included in the same file as the audio
 	//    and video. Elastic Transcoder supports only one embedded caption per language,
-	//    to a maximum of 300 embedded captions per file.
-	//
-	// Valid input values include: CEA-608 (EIA-608, first non-empty channel only),
-	//    CEA-708 (EIA-708, first non-empty channel only), and mov-text
-	//
-	// Valid outputs include: mov-text
-	//
-	// Elastic Transcoder supports a maximum of one embedded format per output.
+	//    to a maximum of 300 embedded captions per file. Valid input values include:
+	//    CEA-608 (EIA-608, first non-empty channel only), CEA-708 (EIA-708, first
+	//    non-empty channel only), and mov-text Valid outputs include: mov-text
+	//    Elastic Transcoder supports a maximum of one embedded format per output.
 	//
 	//    * Sidecar: Sidecar captions are kept in a separate metadata file from
 	//    the audio and video data. Sidecar captions require a player that is capable
 	//    of understanding the relationship between the video file and the sidecar
 	//    file. Elastic Transcoder supports only one sidecar caption per language,
-	//    to a maximum of 20 sidecar captions per file.
-	//
-	// Valid input values include: dfxp (first div element only), ebu-tt, scc, smpt,
-	//    srt, ttml (first div element only), and webvtt
-	//
-	// Valid outputs include: dfxp (first div element only), scc, srt, and webvtt.
+	//    to a maximum of 20 sidecar captions per file. Valid input values include:
+	//    dfxp (first div element only), ebu-tt, scc, smpt, srt, ttml (first div
+	//    element only), and webvtt Valid outputs include: dfxp (first div element
+	//    only), scc, srt, and webvtt.
 	//
 	// If you want ttml or smpte-tt compatible captions, specify dfxp as your output
 	// format.
@@ -4592,6 +4532,7 @@ func (s *JobInput) SetTimeSpan(v *TimeSpan) *JobInput {
 	return s
 }
 
+//
 // Outputs recommended instead.
 //
 // If you specified one output for a job, information about that output. If
@@ -4616,25 +4557,19 @@ type JobOutput struct {
 	//
 	//    * Embedded: Embedded captions are included in the same file as the audio
 	//    and video. Elastic Transcoder supports only one embedded caption per language,
-	//    to a maximum of 300 embedded captions per file.
-	//
-	// Valid input values include: CEA-608 (EIA-608, first non-empty channel only),
-	//    CEA-708 (EIA-708, first non-empty channel only), and mov-text
-	//
-	// Valid outputs include: mov-text
-	//
-	// Elastic Transcoder supports a maximum of one embedded format per output.
+	//    to a maximum of 300 embedded captions per file. Valid input values include:
+	//    CEA-608 (EIA-608, first non-empty channel only), CEA-708 (EIA-708, first
+	//    non-empty channel only), and mov-text Valid outputs include: mov-text
+	//    Elastic Transcoder supports a maximum of one embedded format per output.
 	//
 	//    * Sidecar: Sidecar captions are kept in a separate metadata file from
 	//    the audio and video data. Sidecar captions require a player that is capable
 	//    of understanding the relationship between the video file and the sidecar
 	//    file. Elastic Transcoder supports only one sidecar caption per language,
-	//    to a maximum of 20 sidecar captions per file.
-	//
-	// Valid input values include: dfxp (first div element only), ebu-tt, scc, smpt,
-	//    srt, ttml (first div element only), and webvtt
-	//
-	// Valid outputs include: dfxp (first div element only), scc, srt, and webvtt.
+	//    to a maximum of 20 sidecar captions per file. Valid input values include:
+	//    dfxp (first div element only), ebu-tt, scc, smpt, srt, ttml (first div
+	//    element only), and webvtt Valid outputs include: dfxp (first div element
+	//    only), scc, srt, and webvtt.
 	//
 	// If you want ttml or smpte-tt compatible captions, specify dfxp as your output
 	// format.
@@ -4711,6 +4646,7 @@ type JobOutput struct {
 	// rotation metadata.
 	Rotate *string `type:"string"`
 
+	//
 	// (Outputs in Fragmented MP4 or MPEG-TS format only.
 	//
 	// If you specify a preset in PresetId for which the value of Container is fmp4
@@ -4774,11 +4710,9 @@ type JobOutput struct {
 	//    {count} in the ThumbnailPattern object. Wherever you specify {count},
 	//    Elastic Transcoder adds a five-digit sequence number (beginning with 00001)
 	//    to thumbnail file names. The number indicates where a given thumbnail
-	//    appears in the sequence of thumbnails for a transcoded file.
-	//
-	// If you specify a literal value and/or {resolution} but you omit {count},
-	//    Elastic Transcoder returns a validation error and does not create the
-	//    job.
+	//    appears in the sequence of thumbnails for a transcoded file. If you specify
+	//    a literal value and/or {resolution} but you omit {count}, Elastic Transcoder
+	//    returns a validation error and does not create the job.
 	//
 	//    * Literal values (Optional): You can specify literal values anywhere in
 	//    the ThumbnailPattern object. For example, you can include them as a file
@@ -4800,12 +4734,12 @@ type JobOutput struct {
 	// you specify in Preset for the current output.
 	//
 	// Watermarks are added to the output video in the sequence in which you list
-	// them in the job output—the first watermark in the list is added to the output
-	// video first, the second watermark in the list is added next, and so on. As
-	// a result, if the settings in a preset cause Elastic Transcoder to place all
-	// watermarks in the same location, the second watermark that you add covers
-	// the first one, the third one covers the second, and the fourth one covers
-	// the third.
+	// them in the job output—the first watermark in the list is added to the
+	// output video first, the second watermark in the list is added next, and so
+	// on. As a result, if the settings in a preset cause Elastic Transcoder to
+	// place all watermarks in the same location, the second watermark that you
+	// add covers the first one, the third one covers the second, and the fourth
+	// one covers the third.
 	Watermarks []*JobWatermark `type:"list"`
 
 	// Specifies the width of the output file in pixels.
@@ -5445,9 +5379,8 @@ type Permission struct {
 	// The type of value that appears in the Grantee object:
 	//
 	//    * Canonical: Either the canonical user ID for an AWS account or an origin
-	//    access identity for an Amazon CloudFront distribution.
-	//
-	// A canonical user ID is not the same as an AWS account number.
+	//    access identity for an Amazon CloudFront distribution. A canonical user
+	//    ID is not the same as an AWS account number.
 	//
 	//    * Email: The registered email address of an AWS account.
 	//
@@ -5523,35 +5456,21 @@ type Pipeline struct {
 	//
 	//    * Permissions: A list of the users and/or predefined Amazon S3 groups
 	//    you want to have access to transcoded files and playlists, and the type
-	//    of access that you want them to have.
-	//
-	// GranteeType: The type of value that appears in the Grantee object:
-	//
-	// Canonical: Either the canonical user ID for an AWS account or an origin access
-	//    identity for an Amazon CloudFront distribution.
-	//
-	// Email: The registered email address of an AWS account.
-	//
-	// Group: One of the following predefined Amazon S3 groups: AllUsers, AuthenticatedUsers,
-	//    or LogDelivery.
-	//
-	// Grantee: The AWS user or group that you want to have access to transcoded
-	//    files and playlists.
-	//
-	// Access: The permission that you want to give to the AWS user that is listed
-	//    in Grantee. Valid values include:
-	//
-	// READ: The grantee can read the objects and metadata for objects that Elastic
+	//    of access that you want them to have. GranteeType: The type of value that
+	//    appears in the Grantee object: Canonical: Either the canonical user ID
+	//    for an AWS account or an origin access identity for an Amazon CloudFront
+	//    distribution. Email: The registered email address of an AWS account. Group:
+	//    One of the following predefined Amazon S3 groups: AllUsers, AuthenticatedUsers,
+	//    or LogDelivery. Grantee: The AWS user or group that you want to have access
+	//    to transcoded files and playlists. Access: The permission that you want
+	//    to give to the AWS user that is listed in Grantee. Valid values include:
+	//    READ: The grantee can read the objects and metadata for objects that Elastic
+	//    Transcoder adds to the Amazon S3 bucket. READ_ACP: The grantee can read
+	//    the object ACL for objects that Elastic Transcoder adds to the Amazon
+	//    S3 bucket. WRITE_ACP: The grantee can write the ACL for the objects that
+	//    Elastic Transcoder adds to the Amazon S3 bucket. FULL_CONTROL: The grantee
+	//    has READ, READ_ACP, and WRITE_ACP permissions for the objects that Elastic
 	//    Transcoder adds to the Amazon S3 bucket.
-	//
-	// READ_ACP: The grantee can read the object ACL for objects that Elastic Transcoder
-	//    adds to the Amazon S3 bucket.
-	//
-	// WRITE_ACP: The grantee can write the ACL for the objects that Elastic Transcoder
-	//    adds to the Amazon S3 bucket.
-	//
-	// FULL_CONTROL: The grantee has READ, READ_ACP, and WRITE_ACP permissions for
-	//    the objects that Elastic Transcoder adds to the Amazon S3 bucket.
 	//
 	//    * StorageClass: The Amazon S3 storage class, Standard or ReducedRedundancy,
 	//    that you want Elastic Transcoder to assign to the video files and playlists
@@ -5618,37 +5537,22 @@ type Pipeline struct {
 	//
 	//    * Permissions: A list of the users and/or predefined Amazon S3 groups
 	//    you want to have access to thumbnail files, and the type of access that
-	//    you want them to have.
-	//
-	// GranteeType: The type of value that appears in the Grantee object:
-	//
-	// Canonical: Either the canonical user ID for an AWS account or an origin access
-	//    identity for an Amazon CloudFront distribution.
-	//
-	// A canonical user ID is not the same as an AWS account number.
-	//
-	// Email: The registered email address of an AWS account.
-	//
-	// Group: One of the following predefined Amazon S3 groups: AllUsers, AuthenticatedUsers,
-	//    or LogDelivery.
-	//
-	// Grantee: The AWS user or group that you want to have access to thumbnail
-	//    files.
-	//
-	// Access: The permission that you want to give to the AWS user that is listed
-	//    in Grantee. Valid values include:
-	//
-	// READ: The grantee can read the thumbnails and metadata for thumbnails that
-	//    Elastic Transcoder adds to the Amazon S3 bucket.
-	//
-	// READ_ACP: The grantee can read the object ACL for thumbnails that Elastic
-	//    Transcoder adds to the Amazon S3 bucket.
-	//
-	// WRITE_ACP: The grantee can write the ACL for the thumbnails that Elastic
-	//    Transcoder adds to the Amazon S3 bucket.
-	//
-	// FULL_CONTROL: The grantee has READ, READ_ACP, and WRITE_ACP permissions for
-	//    the thumbnails that Elastic Transcoder adds to the Amazon S3 bucket.
+	//    you want them to have. GranteeType: The type of value that appears in
+	//    the Grantee object: Canonical: Either the canonical user ID for an AWS
+	//    account or an origin access identity for an Amazon CloudFront distribution.
+	//    A canonical user ID is not the same as an AWS account number. Email: The
+	//    registered email address of an AWS account. Group: One of the following
+	//    predefined Amazon S3 groups: AllUsers, AuthenticatedUsers, or LogDelivery.
+	//    Grantee: The AWS user or group that you want to have access to thumbnail
+	//    files. Access: The permission that you want to give to the AWS user that
+	//    is listed in Grantee. Valid values include: READ: The grantee can read
+	//    the thumbnails and metadata for thumbnails that Elastic Transcoder adds
+	//    to the Amazon S3 bucket. READ_ACP: The grantee can read the object ACL
+	//    for thumbnails that Elastic Transcoder adds to the Amazon S3 bucket. WRITE_ACP:
+	//    The grantee can write the ACL for the thumbnails that Elastic Transcoder
+	//    adds to the Amazon S3 bucket. FULL_CONTROL: The grantee has READ, READ_ACP,
+	//    and WRITE_ACP permissions for the thumbnails that Elastic Transcoder adds
+	//    to the Amazon S3 bucket.
 	//
 	//    * StorageClass: The Amazon S3 storage class, Standard or ReducedRedundancy,
 	//    that you want Elastic Transcoder to assign to the thumbnails that it stores
@@ -5970,28 +5874,19 @@ type Playlist struct {
 	//
 	//    * If your output is not HLS or does not have a segment duration set, the
 	//    name of the output file is a concatenation of OutputKeyPrefix and Outputs:Key:
-	//
-	// OutputKeyPrefixOutputs:Key
+	//    OutputKeyPrefixOutputs:Key
 	//
 	//    * If your output is HLSv3 and has a segment duration set, or is not included
 	//    in a playlist, Elastic Transcoder creates an output playlist file with
 	//    a file extension of .m3u8, and a series of .ts files that include a five-digit
-	//    sequential counter beginning with 00000:
-	//
-	// OutputKeyPrefixOutputs:Key.m3u8
-	//
-	// OutputKeyPrefixOutputs:Key00000.ts
+	//    sequential counter beginning with 00000: OutputKeyPrefixOutputs:Key.m3u8
+	//    OutputKeyPrefixOutputs:Key00000.ts
 	//
 	//    * If your output is HLSv4, has a segment duration set, and is included
 	//    in an HLSv4 playlist, Elastic Transcoder creates an output playlist file
 	//    with a file extension of _v4.m3u8. If the output is video, Elastic Transcoder
-	//    also creates an output file with an extension of _iframe.m3u8:
-	//
-	// OutputKeyPrefixOutputs:Key_v4.m3u8
-	//
-	// OutputKeyPrefixOutputs:Key_iframe.m3u8
-	//
-	// OutputKeyPrefixOutputs:Key.ts
+	//    also creates an output file with an extension of _iframe.m3u8: OutputKeyPrefixOutputs:Key_v4.m3u8
+	//    OutputKeyPrefixOutputs:Key_iframe.m3u8 OutputKeyPrefixOutputs:Key.ts
 	//
 	// Elastic Transcoder automatically appends the relevant file extension to the
 	// file name. If you include a file extension in Output Key, the file name will
@@ -6250,8 +6145,7 @@ type PresetWatermark struct {
 	//    * integer percentage (%): The range of valid values is 0 to 100. Use the
 	//    value of Target to specify whether you want Elastic Transcoder to include
 	//    the black bars that are added by Elastic Transcoder, if any, in the calculation.
-	//
-	// If you specify the value in pixels, it must be less than or equal to the
+	//    If you specify the value in pixels, it must be less than or equal to the
 	//    value of MaxWidth.
 	MaxWidth *string `type:"string"`
 
@@ -6761,6 +6655,7 @@ func (s *TestRoleOutput) SetSuccess(v string) *TestRoleOutput {
 type Thumbnails struct {
 	_ struct{} `type:"structure"`
 
+	//
 	// To better control resolution and aspect ratio of thumbnails, we recommend
 	// that you use the values MaxWidth, MaxHeight, SizingPolicy, and PaddingPolicy
 	// instead of Resolution and AspectRatio. The two groups of settings are mutually
@@ -6800,6 +6695,7 @@ type Thumbnails struct {
 	// MaxWidth and MaxHeight settings.
 	PaddingPolicy *string `type:"string"`
 
+	//
 	// To better control resolution and aspect ratio of thumbnails, we recommend
 	// that you use the values MaxWidth, MaxHeight, SizingPolicy, and PaddingPolicy
 	// instead of Resolution and AspectRatio. The two groups of settings are mutually
@@ -7019,23 +6915,18 @@ type UpdatePipelineInput struct {
 	//    and/or predefined Amazon S3 groups.
 	//
 	//    * Grantee Type: Specify the type of value that appears in the Grantee
-	//    object:
-	//
-	// Canonical: The value in the Grantee object is either the canonical user ID
-	//    for an AWS account or an origin access identity for an Amazon CloudFront
-	//    distribution. For more information about canonical user IDs, see Access
-	//    Control List (ACL) Overview in the Amazon Simple Storage Service Developer
-	//    Guide. For more information about using CloudFront origin access identities
-	//    to require that users use CloudFront URLs instead of Amazon S3 URLs, see
-	//    Using an Origin Access Identity to Restrict Access to Your Amazon S3 Content.
-	//
-	// A canonical user ID is not the same as an AWS account number.
-	//
-	// Email: The value in the Grantee object is the registered email address of
-	//    an AWS account.
-	//
-	// Group: The value in the Grantee object is one of the following predefined
-	//    Amazon S3 groups: AllUsers, AuthenticatedUsers, or LogDelivery.
+	//    object: Canonical: The value in the Grantee object is either the canonical
+	//    user ID for an AWS account or an origin access identity for an Amazon
+	//    CloudFront distribution. For more information about canonical user IDs,
+	//    see Access Control List (ACL) Overview in the Amazon Simple Storage Service
+	//    Developer Guide. For more information about using CloudFront origin access
+	//    identities to require that users use CloudFront URLs instead of Amazon
+	//    S3 URLs, see Using an Origin Access Identity to Restrict Access to Your
+	//    Amazon S3 Content. A canonical user ID is not the same as an AWS account
+	//    number. Email: The value in the Grantee object is the registered email
+	//    address of an AWS account. Group: The value in the Grantee object is one
+	//    of the following predefined Amazon S3 groups: AllUsers, AuthenticatedUsers,
+	//    or LogDelivery.
 	//
 	//    * Grantee: The AWS user or group that you want to have access to transcoded
 	//    files and playlists. To identify the user or group, you can specify the
@@ -7046,19 +6937,13 @@ type UpdatePipelineInput struct {
 	//    * Access: The permission that you want to give to the AWS user that you
 	//    specified in Grantee. Permissions are granted on the files that Elastic
 	//    Transcoder adds to the bucket, including playlists and video files. Valid
-	//    values include:
-	//
-	// READ: The grantee can read the objects and metadata for objects that Elastic
-	//    Transcoder adds to the Amazon S3 bucket.
-	//
-	// READ_ACP: The grantee can read the object ACL for objects that Elastic Transcoder
-	//    adds to the Amazon S3 bucket.
-	//
-	// WRITE_ACP: The grantee can write the ACL for the objects that Elastic Transcoder
-	//    adds to the Amazon S3 bucket.
-	//
-	// FULL_CONTROL: The grantee has READ, READ_ACP, and WRITE_ACP permissions for
-	//    the objects that Elastic Transcoder adds to the Amazon S3 bucket.
+	//    values include: READ: The grantee can read the objects and metadata for
+	//    objects that Elastic Transcoder adds to the Amazon S3 bucket. READ_ACP:
+	//    The grantee can read the object ACL for objects that Elastic Transcoder
+	//    adds to the Amazon S3 bucket. WRITE_ACP: The grantee can write the ACL
+	//    for the objects that Elastic Transcoder adds to the Amazon S3 bucket.
+	//    FULL_CONTROL: The grantee has READ, READ_ACP, and WRITE_ACP permissions
+	//    for the objects that Elastic Transcoder adds to the Amazon S3 bucket.
 	//
 	//    * StorageClass: The Amazon S3 storage class, Standard or ReducedRedundancy,
 	//    that you want Elastic Transcoder to assign to the video files and playlists
@@ -7128,18 +7013,13 @@ type UpdatePipelineInput struct {
 	//    to a maximum of 30 users and/or predefined Amazon S3 groups.
 	//
 	//    * GranteeType: Specify the type of value that appears in the Grantee object:
-	//
-	// Canonical: The value in the Grantee object is either the canonical user ID
-	//    for an AWS account or an origin access identity for an Amazon CloudFront
-	//    distribution.
-	//
-	// A canonical user ID is not the same as an AWS account number.
-	//
-	// Email: The value in the Grantee object is the registered email address of
-	//    an AWS account.
-	//
-	// Group: The value in the Grantee object is one of the following predefined
-	//    Amazon S3 groups: AllUsers, AuthenticatedUsers, or LogDelivery.
+	//    Canonical: The value in the Grantee object is either the canonical user
+	//    ID for an AWS account or an origin access identity for an Amazon CloudFront
+	//    distribution. A canonical user ID is not the same as an AWS account number.
+	//    Email: The value in the Grantee object is the registered email address
+	//    of an AWS account. Group: The value in the Grantee object is one of the
+	//    following predefined Amazon S3 groups: AllUsers, AuthenticatedUsers, or
+	//    LogDelivery.
 	//
 	//    * Grantee: The AWS user or group that you want to have access to thumbnail
 	//    files. To identify the user or group, you can specify the canonical user
@@ -7149,19 +7029,14 @@ type UpdatePipelineInput struct {
 	//
 	//    * Access: The permission that you want to give to the AWS user that you
 	//    specified in Grantee. Permissions are granted on the thumbnail files that
-	//    Elastic Transcoder adds to the bucket. Valid values include:
-	//
-	// READ: The grantee can read the thumbnails and metadata for objects that Elastic
-	//    Transcoder adds to the Amazon S3 bucket.
-	//
-	// READ_ACP: The grantee can read the object ACL for thumbnails that Elastic
-	//    Transcoder adds to the Amazon S3 bucket.
-	//
-	// WRITE_ACP: The grantee can write the ACL for the thumbnails that Elastic
-	//    Transcoder adds to the Amazon S3 bucket.
-	//
-	// FULL_CONTROL: The grantee has READ, READ_ACP, and WRITE_ACP permissions for
-	//    the thumbnails that Elastic Transcoder adds to the Amazon S3 bucket.
+	//    Elastic Transcoder adds to the bucket. Valid values include: READ: The
+	//    grantee can read the thumbnails and metadata for objects that Elastic
+	//    Transcoder adds to the Amazon S3 bucket. READ_ACP: The grantee can read
+	//    the object ACL for thumbnails that Elastic Transcoder adds to the Amazon
+	//    S3 bucket. WRITE_ACP: The grantee can write the ACL for the thumbnails
+	//    that Elastic Transcoder adds to the Amazon S3 bucket. FULL_CONTROL: The
+	//    grantee has READ, READ_ACP, and WRITE_ACP permissions for the thumbnails
+	//    that Elastic Transcoder adds to the Amazon S3 bucket.
 	//
 	//    * StorageClass: The Amazon S3 storage class, Standard or ReducedRedundancy,
 	//    that you want Elastic Transcoder to assign to the thumbnails that it stores
@@ -7487,6 +7362,7 @@ func (s *UpdatePipelineStatusOutput) SetPipeline(v *Pipeline) *UpdatePipelineSta
 type VideoParameters struct {
 	_ struct{} `type:"structure"`
 
+	//
 	// To better control resolution and aspect ratio of output videos, we recommend
 	// that you use the values MaxWidth, MaxHeight, SizingPolicy, PaddingPolicy,
 	// and DisplayAspectRatio instead of Resolution and AspectRatio. The two groups
@@ -7658,8 +7534,8 @@ type VideoParameters struct {
 	//
 	//    * HD to Standard, 1920x1080 to 720x576 - Elastic Transcoder applies Bt709ToBt601
 	//
-	// Elastic Transcoder may change the behavior of the ColorspaceConversionModeAuto
-	// mode in the future. All outputs in a playlist must use the same ColorSpaceConversionMode.
+	// Elastic Transcoder may change the behavior of the ColorspaceConversionMode
+	// Auto mode in the future. All outputs in a playlist must use the same ColorSpaceConversionMode.
 	//
 	// If you do not specify a ColorSpaceConversionMode, Elastic Transcoder does
 	// not change the color space of a file. If you are unsure what ColorSpaceConversionMode
@@ -7796,6 +7672,7 @@ type VideoParameters struct {
 	// for MaxWidth and MaxHeight.
 	PaddingPolicy *string `type:"string"`
 
+	//
 	// To better control resolution and aspect ratio of output videos, we recommend
 	// that you use the values MaxWidth, MaxHeight, SizingPolicy, PaddingPolicy,
 	// and DisplayAspectRatio instead of Resolution and AspectRatio. The two groups
@@ -7807,7 +7684,7 @@ type VideoParameters struct {
 	//    * auto: Elastic Transcoder attempts to preserve the width and height of
 	//    the input file, subject to the following rules.
 	//
-	//    * width x height: The width and height of the output video in pixels.
+	//    * width x height : The width and height of the output video in pixels.
 	//
 	// Note the following about specifying the width and height:
 	//
@@ -7823,33 +7700,9 @@ type VideoParameters struct {
 	//
 	//    * We recommend that you specify a resolution for which the product of
 	//    width and height is less than or equal to the applicable value in the
-	//    following list (List - Max width x height value):
-	//
-	// 1 - 25344
-	//
-	// 1b - 25344
-	//
-	// 1.1 - 101376
-	//
-	// 1.2 - 101376
-	//
-	// 1.3 - 101376
-	//
-	// 2 - 101376
-	//
-	// 2.1 - 202752
-	//
-	// 2.2 - 404720
-	//
-	// 3 - 404720
-	//
-	// 3.1 - 921600
-	//
-	// 3.2 - 1310720
-	//
-	// 4 - 2097152
-	//
-	// 4.1 - 2097152
+	//    following list (List - Max width x height value): 1 - 25344 1b - 25344
+	//    1.1 - 101376 1.2 - 101376 1.3 - 101376 2 - 101376 2.1 - 202752 2.2 - 404720
+	//    3 - 404720 3.1 - 921600 3.2 - 1310720 4 - 2097152 4.1 - 2097152
 	Resolution *string `type:"string"`
 
 	// Specify one of the following values to control scaling of the output video:

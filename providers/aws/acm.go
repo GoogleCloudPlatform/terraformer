@@ -21,7 +21,6 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/acm"
 )
 
@@ -68,7 +67,7 @@ func (g ACMGenerator) createCertificatesResources(svc *acm.ACM) []terraform_util
 // Generate TerraformResources from AWS API,
 // create terraform resource for each certificates
 func (g *ACMGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"])})
+	sess := g.generateSession()
 	svc := acm.New(sess)
 
 	g.Resources = g.createCertificatesResources(svc)

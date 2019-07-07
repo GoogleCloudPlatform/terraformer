@@ -7,7 +7,7 @@ const (
 	// ErrCodeCodeStorageExceededException for service response error code
 	// "CodeStorageExceededException".
 	//
-	// You have exceeded your maximum total code size per account. Limits (http://docs.aws.amazon.com/lambda/latest/dg/limits.html)
+	// You have exceeded your maximum total code size per account. Learn more (https://docs.aws.amazon.com/lambda/latest/dg/limits.html)
 	ErrCodeCodeStorageExceededException = "CodeStorageExceededException"
 
 	// ErrCodeEC2AccessDeniedException for service response error code
@@ -108,7 +108,7 @@ const (
 	// ErrCodePolicyLengthExceededException for service response error code
 	// "PolicyLengthExceededException".
 	//
-	// Lambda function access policy is limited to 20 KB.
+	// The permissions policy for the resource is too large. Learn more (https://docs.aws.amazon.com/lambda/latest/dg/limits.html)
 	ErrCodePolicyLengthExceededException = "PolicyLengthExceededException"
 
 	// ErrCodePreconditionFailedException for service response error code
@@ -123,7 +123,7 @@ const (
 	// "RequestTooLargeException".
 	//
 	// The request payload exceeded the Invoke request body JSON input limit. For
-	// more information, see Limits (http://docs.aws.amazon.com/lambda/latest/dg/limits.html).
+	// more information, see Limits (https://docs.aws.amazon.com/lambda/latest/dg/limits.html).
 	ErrCodeRequestTooLargeException = "RequestTooLargeException"
 
 	// ErrCodeResourceConflictException for service response error code

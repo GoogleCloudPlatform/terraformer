@@ -80,6 +80,9 @@ func (c *DataSync) CancelTaskExecutionRequest(input *CancelTaskExecutionInput) (
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
 //
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
+//
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/CancelTaskExecution
 func (c *DataSync) CancelTaskExecution(input *CancelTaskExecutionInput) (*CancelTaskExecutionOutput, error) {
 	req, out := c.CancelTaskExecutionRequest(input)
@@ -156,9 +159,10 @@ func (c *DataSync) CreateAgentRequest(input *CreateAgentInput) (req *request.Req
 // You can use an agent for more than one location. If a task uses multiple
 // agents, all of them need to have status AVAILABLE for the task to run. If
 // you use multiple agents for a source location, the status of all the agents
-// must be AVAILABLE for the task to run. For more information, see Activating
-// a Sync Agent (https://docs.aws.amazon.com/sync-service/latest/userguide/working-with-sync-agents.html#activating-sync-agent)
-// in the AWS DataSync User Guide.
+// must be AVAILABLE for the task to run.
+//
+// For more information, see "https://docs.aws.amazon.com/datasync/latest/userguide/working-with-agents.html#activating-agent"
+// (Activating an Agent) in the AWS DataSync User Guide.
 //
 // Agents are automatically updated by AWS on a regular basis, using a mechanism
 // that ensures minimal interruption to your tasks.
@@ -173,6 +177,9 @@ func (c *DataSync) CreateAgentRequest(input *CreateAgentInput) (req *request.Req
 // Returned Error Codes:
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
+//
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/CreateAgent
 func (c *DataSync) CreateAgent(input *CreateAgentInput) (*CreateAgentOutput, error) {
@@ -253,6 +260,9 @@ func (c *DataSync) CreateLocationEfsRequest(input *CreateLocationEfsInput) (req 
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
 //
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
+//
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/CreateLocationEfs
 func (c *DataSync) CreateLocationEfs(input *CreateLocationEfsInput) (*CreateLocationEfsOutput, error) {
 	req, out := c.CreateLocationEfsRequest(input)
@@ -332,6 +342,9 @@ func (c *DataSync) CreateLocationNfsRequest(input *CreateLocationNfsInput) (req 
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
 //
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
+//
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/CreateLocationNfs
 func (c *DataSync) CreateLocationNfs(input *CreateLocationNfsInput) (*CreateLocationNfsOutput, error) {
 	req, out := c.CreateLocationNfsRequest(input)
@@ -404,9 +417,10 @@ func (c *DataSync) CreateLocationS3Request(input *CreateLocationS3Input) (req *r
 // and Access Management (IAM) role that has the required permissions. You can
 // set up the required permissions by creating an IAM policy that grants the
 // required permissions and attaching the policy to the role. An example of
-// such a policy is shown in the examples section. For more information, see
-// Configuring Amazon S3 Location Settings (https://docs.aws.amazon.com/sync-service/latest/userguide/configuring-s3-locations.html)
-// in the AWS DataSync User Guide.
+// such a policy is shown in the examples section.
+//
+// For more information, see "https://docs.aws.amazon.com/datasync/latest/userguide/working-with-locations.html#create-s3-location"
+// (Configuring Amazon S3 Location Settings) in the AWS DataSync User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -418,6 +432,9 @@ func (c *DataSync) CreateLocationS3Request(input *CreateLocationS3Input) (req *r
 // Returned Error Codes:
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
+//
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/CreateLocationS3
 func (c *DataSync) CreateLocationS3(input *CreateLocationS3Input) (*CreateLocationS3Output, error) {
@@ -486,16 +503,15 @@ func (c *DataSync) CreateTaskRequest(input *CreateTaskInput) (req *request.Reque
 // CreateTask API operation for AWS DataSync.
 //
 // Creates a task. A task is a set of two locations (source and destination)
-// and a set of default OverrideOptions that you use to control the behavior
-// of a task. If you don't specify default values for Options when you create
-// a task, AWS DataSync populates them with safe service defaults.
+// and a set of Options that you use to control the behavior of a task. If you
+// don't specify Options when you create a task, AWS DataSync populates them
+// with service defaults.
 //
-// When you initially create a task, it enters the INITIALIZING status and then
-// the CREATING status. In CREATING status, AWS DataSync attempts to mount the
-// source Network File System (NFS) location. The task transitions to the AVAILABLE
-// status without waiting for the destination location to mount. Instead, AWS
-// DataSync mounts a destination before every task execution and then unmounts
-// it after every task execution.
+// When you create a task, it first enters the CREATING state. During CREATING
+// AWS DataSync attempts to mount the on-premises Network File System (NFS)
+// location. The task transitions to the AVAILABLE state without waiting for
+// the AWS location to become mounted. If required, AWS DataSync mounts the
+// AWS location before each task execution.
 //
 // If an agent that is associated with a source (NFS) location goes offline,
 // the task transitions to the UNAVAILABLE status. If the status of the task
@@ -514,6 +530,9 @@ func (c *DataSync) CreateTaskRequest(input *CreateTaskInput) (req *request.Reque
 // Returned Error Codes:
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
+//
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/CreateTask
 func (c *DataSync) CreateTask(input *CreateTaskInput) (*CreateTaskOutput, error) {
@@ -587,9 +606,6 @@ func (c *DataSync) DeleteAgentRequest(input *DeleteAgentInput) (req *request.Req
 // agent from your AWS account. However, it doesn't delete the agent virtual
 // machine (VM) from your on-premises environment.
 //
-// After you delete an agent, you can't reactivate it and you longer pay software
-// charges for it.
-//
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
 // the error.
@@ -600,6 +616,9 @@ func (c *DataSync) DeleteAgentRequest(input *DeleteAgentInput) (req *request.Req
 // Returned Error Codes:
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
+//
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/DeleteAgent
 func (c *DataSync) DeleteAgent(input *DeleteAgentInput) (*DeleteAgentOutput, error) {
@@ -681,6 +700,9 @@ func (c *DataSync) DeleteLocationRequest(input *DeleteLocationInput) (req *reque
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
 //
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
+//
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/DeleteLocation
 func (c *DataSync) DeleteLocation(input *DeleteLocationInput) (*DeleteLocationOutput, error) {
 	req, out := c.DeleteLocationRequest(input)
@@ -760,6 +782,9 @@ func (c *DataSync) DeleteTaskRequest(input *DeleteTaskInput) (req *request.Reque
 // Returned Error Codes:
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
+//
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/DeleteTask
 func (c *DataSync) DeleteTask(input *DeleteTaskInput) (*DeleteTaskOutput, error) {
@@ -843,6 +868,9 @@ func (c *DataSync) DescribeAgentRequest(input *DescribeAgentInput) (req *request
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
 //
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
+//
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/DescribeAgent
 func (c *DataSync) DescribeAgent(input *DescribeAgentInput) (*DescribeAgentOutput, error) {
 	req, out := c.DescribeAgentRequest(input)
@@ -921,6 +949,9 @@ func (c *DataSync) DescribeLocationEfsRequest(input *DescribeLocationEfsInput) (
 // Returned Error Codes:
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
+//
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/DescribeLocationEfs
 func (c *DataSync) DescribeLocationEfs(input *DescribeLocationEfsInput) (*DescribeLocationEfsOutput, error) {
@@ -1001,6 +1032,9 @@ func (c *DataSync) DescribeLocationNfsRequest(input *DescribeLocationNfsInput) (
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
 //
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
+//
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/DescribeLocationNfs
 func (c *DataSync) DescribeLocationNfs(input *DescribeLocationNfsInput) (*DescribeLocationNfsOutput, error) {
 	req, out := c.DescribeLocationNfsRequest(input)
@@ -1079,6 +1113,9 @@ func (c *DataSync) DescribeLocationS3Request(input *DescribeLocationS3Input) (re
 // Returned Error Codes:
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
+//
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/DescribeLocationS3
 func (c *DataSync) DescribeLocationS3(input *DescribeLocationS3Input) (*DescribeLocationS3Output, error) {
@@ -1159,6 +1196,9 @@ func (c *DataSync) DescribeTaskRequest(input *DescribeTaskInput) (req *request.R
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
 //
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
+//
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/DescribeTask
 func (c *DataSync) DescribeTask(input *DescribeTaskInput) (*DescribeTaskOutput, error) {
 	req, out := c.DescribeTaskRequest(input)
@@ -1237,6 +1277,9 @@ func (c *DataSync) DescribeTaskExecutionRequest(input *DescribeTaskExecutionInpu
 // Returned Error Codes:
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
+//
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/DescribeTaskExecution
 func (c *DataSync) DescribeTaskExecution(input *DescribeTaskExecutionInput) (*DescribeTaskExecutionOutput, error) {
@@ -1333,6 +1376,9 @@ func (c *DataSync) ListAgentsRequest(input *ListAgentsInput) (req *request.Reque
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
 //
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
+//
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/ListAgents
 func (c *DataSync) ListAgents(input *ListAgentsInput) (*ListAgentsOutput, error) {
 	req, out := c.ListAgentsRequest(input)
@@ -1366,7 +1412,7 @@ func (c *DataSync) ListAgentsWithContext(ctx aws.Context, input *ListAgentsInput
 //    // Example iterating over at most 3 pages of a ListAgents operation.
 //    pageNum := 0
 //    err := client.ListAgentsPages(params,
-//        func(page *ListAgentsOutput, lastPage bool) bool {
+//        func(page *datasync.ListAgentsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -1473,6 +1519,9 @@ func (c *DataSync) ListLocationsRequest(input *ListLocationsInput) (req *request
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
 //
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
+//
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/ListLocations
 func (c *DataSync) ListLocations(input *ListLocationsInput) (*ListLocationsOutput, error) {
 	req, out := c.ListLocationsRequest(input)
@@ -1506,7 +1555,7 @@ func (c *DataSync) ListLocationsWithContext(ctx aws.Context, input *ListLocation
 //    // Example iterating over at most 3 pages of a ListLocations operation.
 //    pageNum := 0
 //    err := client.ListLocationsPages(params,
-//        func(page *ListLocationsOutput, lastPage bool) bool {
+//        func(page *datasync.ListLocationsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -1608,6 +1657,9 @@ func (c *DataSync) ListTagsForResourceRequest(input *ListTagsForResourceInput) (
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
 //
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
+//
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/ListTagsForResource
 func (c *DataSync) ListTagsForResource(input *ListTagsForResourceInput) (*ListTagsForResourceOutput, error) {
 	req, out := c.ListTagsForResourceRequest(input)
@@ -1641,7 +1693,7 @@ func (c *DataSync) ListTagsForResourceWithContext(ctx aws.Context, input *ListTa
 //    // Example iterating over at most 3 pages of a ListTagsForResource operation.
 //    pageNum := 0
 //    err := client.ListTagsForResourcePages(params,
-//        func(page *ListTagsForResourceOutput, lastPage bool) bool {
+//        func(page *datasync.ListTagsForResourceOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -1743,6 +1795,9 @@ func (c *DataSync) ListTaskExecutionsRequest(input *ListTaskExecutionsInput) (re
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
 //
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
+//
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/ListTaskExecutions
 func (c *DataSync) ListTaskExecutions(input *ListTaskExecutionsInput) (*ListTaskExecutionsOutput, error) {
 	req, out := c.ListTaskExecutionsRequest(input)
@@ -1776,7 +1831,7 @@ func (c *DataSync) ListTaskExecutionsWithContext(ctx aws.Context, input *ListTas
 //    // Example iterating over at most 3 pages of a ListTaskExecutions operation.
 //    pageNum := 0
 //    err := client.ListTaskExecutionsPages(params,
-//        func(page *ListTaskExecutionsOutput, lastPage bool) bool {
+//        func(page *datasync.ListTaskExecutionsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -1878,6 +1933,9 @@ func (c *DataSync) ListTasksRequest(input *ListTasksInput) (req *request.Request
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
 //
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
+//
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/ListTasks
 func (c *DataSync) ListTasks(input *ListTasksInput) (*ListTasksOutput, error) {
 	req, out := c.ListTasksRequest(input)
@@ -1911,7 +1969,7 @@ func (c *DataSync) ListTasksWithContext(ctx aws.Context, input *ListTasksInput, 
 //    // Example iterating over at most 3 pages of a ListTasks operation.
 //    pageNum := 0
 //    err := client.ListTasksPages(params,
-//        func(page *ListTasksOutput, lastPage bool) bool {
+//        func(page *datasync.ListTasksOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -2001,9 +2059,8 @@ func (c *DataSync) StartTaskExecutionRequest(input *StartTaskExecutionInput) (re
 // TaskExecution has the following transition phases: INITIALIZING | PREPARING
 // | TRANSFERRING | VERIFYING | SUCCESS/FAILURE.
 //
-// For detailed information, see Task Execution in Components and Terminology
-// (https://docs.aws.amazon.com/sync-service/latest/userguide/how-awssync-works.html#terminology)
-// in the AWS DataSync User Guide.
+// For detailed information, see Task Execution in "https://docs.aws.amazon.com/datasync/latest/userguide/how-datasync-works.html#terminology"
+// (Components and Terminology) in the AWS DataSync User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -2015,6 +2072,9 @@ func (c *DataSync) StartTaskExecutionRequest(input *StartTaskExecutionInput) (re
 // Returned Error Codes:
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
+//
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/StartTaskExecution
 func (c *DataSync) StartTaskExecution(input *StartTaskExecutionInput) (*StartTaskExecutionOutput, error) {
@@ -2096,6 +2156,9 @@ func (c *DataSync) TagResourceRequest(input *TagResourceInput) (req *request.Req
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
 //
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
+//
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/TagResource
 func (c *DataSync) TagResource(input *TagResourceInput) (*TagResourceOutput, error) {
 	req, out := c.TagResourceRequest(input)
@@ -2175,6 +2238,9 @@ func (c *DataSync) UntagResourceRequest(input *UntagResourceInput) (req *request
 // Returned Error Codes:
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
+//
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/UntagResource
 func (c *DataSync) UntagResource(input *UntagResourceInput) (*UntagResourceOutput, error) {
@@ -2256,6 +2322,9 @@ func (c *DataSync) UpdateAgentRequest(input *UpdateAgentInput) (req *request.Req
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
 //
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
+//
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/UpdateAgent
 func (c *DataSync) UpdateAgent(input *UpdateAgentInput) (*UpdateAgentOutput, error) {
 	req, out := c.UpdateAgentRequest(input)
@@ -2335,6 +2404,9 @@ func (c *DataSync) UpdateTaskRequest(input *UpdateTaskInput) (req *request.Reque
 // Returned Error Codes:
 //   * ErrCodeInvalidRequestException "InvalidRequestException"
 //   This exception is thrown when the client submits a malformed request.
+//
+//   * ErrCodeInternalException "InternalException"
+//   This exception is thrown when an error occurs in the AWS DataSync service.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/datasync-2018-11-09/UpdateTask
 func (c *DataSync) UpdateTask(input *UpdateTaskInput) (*UpdateTaskOutput, error) {
@@ -2466,8 +2538,10 @@ type CreateAgentInput struct {
 	// for your agent in the query string parameter activationKey. It might also
 	// include other activation-related parameters; however, these are merely defaults.
 	// The arguments you pass to this API call determine the actual configuration
-	// of your agent. For more information, see Activating a Sync Agent (https://docs.aws.amazon.com/sync-service/latest/userguide/working-with-sync-agents.html#activating-sync-agent)
-	// in the AWS DataSync User Guide.
+	// of your agent.
+	//
+	// For more information, see "https://docs.aws.amazon.com/datasync/latest/userguide/working-with-agents.html#activating-agent"
+	// (Activating a Agent) in the AWS DataSync User Guide.
 	//
 	// ActivationKey is a required field
 	ActivationKey *string `type:"string" required:"true"`
@@ -2476,9 +2550,9 @@ type CreateAgentInput struct {
 	// is used to identify the agent in the console.
 	AgentName *string `min:"1" type:"string"`
 
-	// The key-value pair that represents the tag you want to associate with the
-	// agent. The value can be an empty string. This value helps you manage, filter,
-	// and search for your agents.
+	// The key-value pair that represents the tag that you want to associate with
+	// the agent. The value can be an empty string. This value helps you manage,
+	// filter, and search for your agents.
 	//
 	// Valid characters for key and value are letters, spaces, and numbers representable
 	// in UTF-8 format, and the following special characters: + - = . _ : / @.
@@ -2568,7 +2642,26 @@ func (s *CreateAgentOutput) SetAgentArn(v string) *CreateAgentOutput {
 type CreateLocationEfsInput struct {
 	_ struct{} `type:"structure"`
 
-	// The subnet and security group that the Amazon EFS file system uses.
+	// The subnet and security group that the Amazon EFS file system uses. The security
+	// group that you provide needs to be able to communicate with the security
+	// group on the mount target in the subnet specified.
+	//
+	// The exact relationship between security group M (of the mount target) and
+	// security group S (which you provide for DataSync to use at this stage) is
+	// as follows:
+	//
+	//    * Security group M (which you associate with the mount target) must allow
+	//    inbound access for the Transmission Control Protocol (TCP) on the NFS
+	//    port (2049) from security group S. You can enable inbound connections
+	//    either by IP address (CIDR range) or security group.
+	//
+	//    * Security group S (provided to DataSync to access EFS) should have a
+	//    rule that enables outbound connections to the NFS port on one of the file
+	//    system’s mount targets. You can enable outbound connections either by
+	//    IP address (CIDR range) or security group. For information about security
+	//    groups and mount targets, see "https://docs.aws.amazon.com/efs/latest/ug/security-considerations.html#network-access"
+	//    (Security Groups for Amazon EC2 Instances and Mount Targets) in the Amazon
+	//    EFS User Guide.
 	//
 	// Ec2Config is a required field
 	Ec2Config *Ec2Config `type:"structure" required:"true"`
@@ -2581,9 +2674,7 @@ type CreateLocationEfsInput struct {
 	// A subdirectory in the location’s path. This subdirectory in the EFS file
 	// system is used to read data from the EFS source location or write data to
 	// the EFS destination. By default, AWS DataSync uses the root directory.
-	//
-	// Subdirectory is a required field
-	Subdirectory *string `type:"string" required:"true"`
+	Subdirectory *string `type:"string"`
 
 	// The key-value pair that represents a tag that you want to add to the resource.
 	// The value can be an empty string. This value helps you manage, filter, and
@@ -2610,9 +2701,6 @@ func (s *CreateLocationEfsInput) Validate() error {
 	}
 	if s.EfsFilesystemArn == nil {
 		invalidParams.Add(request.NewErrParamRequired("EfsFilesystemArn"))
-	}
-	if s.Subdirectory == nil {
-		invalidParams.Add(request.NewErrParamRequired("Subdirectory"))
 	}
 	if s.Ec2Config != nil {
 		if err := s.Ec2Config.Validate(); err != nil {
@@ -2689,6 +2777,9 @@ func (s *CreateLocationEfsOutput) SetLocationArn(v string) *CreateLocationEfsOut
 type CreateLocationNfsInput struct {
 	_ struct{} `type:"structure"`
 
+	// The NFS mount options that DataSync can use to mount your NFS share.
+	MountOptions *NfsMountOptions `type:"structure"`
+
 	// Contains a list of Amazon Resource Names (ARNs) of agents that are used to
 	// connect to an NFS server.
 	//
@@ -2719,11 +2810,12 @@ type CreateLocationNfsInput struct {
 	// To transfer all the data in the folder you specified, DataSync needs to have
 	// permissions to read all the data. To ensure this, either configure the NFS
 	// export with no_root_squash, or ensure that the permissions for all of the
-	// files that you want sync allow read access for all users. Doing either enables
-	// the agent to read the files. For the agent to access directories, you must
-	// additionally enable all execute access. For information about NFS export
-	// configuration, see 18.7. The /etc/exports Configuration File (https://www.centos.org/docs/5/html/Deployment_Guide-en-US/s1-nfs-server-config-exports.html)
-	// in the Centos documentation.
+	// files that you want DataSync allow read access for all users. Doing either
+	// enables the agent to read the files. For the agent to access directories,
+	// you must additionally enable all execute access.
+	//
+	// For information about NFS export configuration, see "http://web.mit.edu/rhel-doc/5/RHEL-5-manual/Deployment_Guide-en-US/s1-nfs-server-config-exports.html"
+	// (18.7. The /etc/exports Configuration File).
 	//
 	// Subdirectory is a required field
 	Subdirectory *string `type:"string" required:"true"`
@@ -2775,6 +2867,12 @@ func (s *CreateLocationNfsInput) Validate() error {
 		return invalidParams
 	}
 	return nil
+}
+
+// SetMountOptions sets the MountOptions field's value.
+func (s *CreateLocationNfsInput) SetMountOptions(v *NfsMountOptions) *CreateLocationNfsInput {
+	s.MountOptions = v
+	return s
 }
 
 // SetOnPremConfig sets the OnPremConfig field's value.
@@ -2836,18 +2934,17 @@ type CreateLocationS3Input struct {
 	S3BucketArn *string `type:"string" required:"true"`
 
 	// The Amazon Resource Name (ARN) of the AWS Identity and Access Management
-	// (IAM) role that is used to access an Amazon S3 bucket. For detailed information
-	// about using such a role, see Components and Terminology (https://alpha-aws-docs.aws.amazon.com/sync-service/latest/userguide/create-locations-cli.html#create-location-s3-cli)
-	// in the AWS DataSync User Guide.
+	// (IAM) role that is used to access an Amazon S3 bucket.
+	//
+	// For detailed information about using such a role, see "https://docs.aws.amazon.com/datasync/latest/userguide/working-with-locations.html#create-s3-location"
+	// (Creating a Location for Amazon S3) in the AWS DataSync User Guide.
 	//
 	// S3Config is a required field
 	S3Config *S3Config `type:"structure" required:"true"`
 
 	// A subdirectory in the Amazon S3 bucket. This subdirectory in Amazon S3 is
 	// used to read data from the S3 source location or write data to the S3 destination.
-	//
-	// Subdirectory is a required field
-	Subdirectory *string `type:"string" required:"true"`
+	Subdirectory *string `type:"string"`
 
 	// The key-value pair that represents the tag that you want to add to the location.
 	// The value can be an empty string. We recommend using tags to name your resources.
@@ -2872,9 +2969,6 @@ func (s *CreateLocationS3Input) Validate() error {
 	}
 	if s.S3Config == nil {
 		invalidParams.Add(request.NewErrParamRequired("S3Config"))
-	}
-	if s.Subdirectory == nil {
-		invalidParams.Add(request.NewErrParamRequired("Subdirectory"))
 	}
 	if s.S3Config != nil {
 		if err := s.S3Config.Validate(); err != nil {
@@ -2952,18 +3046,24 @@ type CreateTaskInput struct {
 	_ struct{} `type:"structure"`
 
 	// The Amazon Resource Name (ARN) of the Amazon CloudWatch log group that is
-	// used to monitor and log events in the task. For more information on these
-	// groups, see Working with Log Groups and Log Streams (https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/Working-with-log-groups-and-streams.html)
-	// in the Amazon CloudWatch User Guide.
+	// used to monitor and log events in the task.
 	//
-	// For more information about how to useCloudWatchLogs with DataSync, see Monitoring
-	// Your Task (https://docs.aws.amazon.com/datasync/latest/userguide/monitor-datasync.html).
+	// For more information on these groups, see "https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/Working-with-log-groups-and-streams.html"
+	// (Working with Log Groups and Log Streams) in the Amazon CloudWatch User Guide.
+	//
+	// For more information about how to useCloudWatchLogs with DataSync, see "https://docs.aws.amazon.com/datasync/latest/userguide/monitor-datasync.html"
+	// (Monitoring Your Task)
 	CloudWatchLogGroupArn *string `type:"string"`
 
 	// The Amazon Resource Name (ARN) of an AWS storage resource's location.
 	//
 	// DestinationLocationArn is a required field
 	DestinationLocationArn *string `type:"string" required:"true"`
+
+	// A filter that determines which files to exclude from a task based on the
+	// specified pattern. Transfers all files in the task’s subdirectory, except
+	// files that match the filter that is set.
+	Excludes []*FilterRule `type:"list"`
 
 	// The name of a task. This value is a text reference that is used to identify
 	// the task in the console.
@@ -3042,6 +3142,12 @@ func (s *CreateTaskInput) SetCloudWatchLogGroupArn(v string) *CreateTaskInput {
 // SetDestinationLocationArn sets the DestinationLocationArn field's value.
 func (s *CreateTaskInput) SetDestinationLocationArn(v string) *CreateTaskInput {
 	s.DestinationLocationArn = &v
+	return s
+}
+
+// SetExcludes sets the Excludes field's value.
+func (s *CreateTaskInput) SetExcludes(v []*FilterRule) *CreateTaskInput {
+	s.Excludes = v
 	return s
 }
 
@@ -3302,11 +3408,15 @@ type DescribeAgentOutput struct {
 	// The time that the agent was activated (that is, created in your account).
 	CreationTime *time.Time `type:"timestamp"`
 
-	// The time that the agent was last connected.
+	EndpointOptions *EndpointOptions `type:"structure"`
+
+	// The time that the agent last connected to DataSyc.
 	LastConnectionTime *time.Time `type:"timestamp"`
 
 	// The name of the agent.
 	Name *string `min:"1" type:"string"`
+
+	PrivateLinkConfig *PrivateLinkConfig `type:"structure"`
 
 	// The status of the agent. If the status is ONLINE, then the agent is configured
 	// properly and is available to use. The Running status is the normal running
@@ -3338,6 +3448,12 @@ func (s *DescribeAgentOutput) SetCreationTime(v time.Time) *DescribeAgentOutput 
 	return s
 }
 
+// SetEndpointOptions sets the EndpointOptions field's value.
+func (s *DescribeAgentOutput) SetEndpointOptions(v *EndpointOptions) *DescribeAgentOutput {
+	s.EndpointOptions = v
+	return s
+}
+
 // SetLastConnectionTime sets the LastConnectionTime field's value.
 func (s *DescribeAgentOutput) SetLastConnectionTime(v time.Time) *DescribeAgentOutput {
 	s.LastConnectionTime = &v
@@ -3347,6 +3463,12 @@ func (s *DescribeAgentOutput) SetLastConnectionTime(v time.Time) *DescribeAgentO
 // SetName sets the Name field's value.
 func (s *DescribeAgentOutput) SetName(v string) *DescribeAgentOutput {
 	s.Name = &v
+	return s
+}
+
+// SetPrivateLinkConfig sets the PrivateLinkConfig field's value.
+func (s *DescribeAgentOutput) SetPrivateLinkConfig(v *PrivateLinkConfig) *DescribeAgentOutput {
+	s.PrivateLinkConfig = v
 	return s
 }
 
@@ -3402,27 +3524,10 @@ type DescribeLocationEfsOutput struct {
 	// The time that the EFS location was created.
 	CreationTime *time.Time `type:"timestamp"`
 
-	// The subnet and the security group that the target Amazon EFS file system
-	// uses. The subnet must have at least one mount target for that file system.
-	// The security group that you provide needs to be able to communicate with
-	// the security group on the mount target in the subnet specified.
-	//
-	// The exact relationship between security group M (of the mount target) and
-	// security group S (which you provide for DataSync to use at this stage) is
-	// as follows:
-	//
-	//    *  Security group M (which you associate with the mount target) must allow
-	//    inbound access for the Transmission Control Protocol (TCP) on the NFS
-	//    port (2049) from security group S. You can enable inbound connections
-	//    either by IP address (CIDR range) or security group.
-	//
-	//    * Security group S (provided to DataSync to access EFS) should have a
-	//    rule that enables outbound connections to the NFS port on one of the file
-	//    system’s mount targets. You can enable outbound connections either by
-	//    IP address (CIDR range) or security group. For information about security
-	//    groups and mount targets, see Security Groups for Amazon EC2 Instances
-	//    and Mount Targets (https://docs.aws.amazon.com/efs/latest/ug/security-considerations.html#network-access)
-	//    in the Amazon EFS User Guide.
+	// The subnet and the security group that DataSync uses to access target EFS
+	// file system. The subnet must have at least one mount target for that file
+	// system. The security group that you provide needs to be able to communicate
+	// with the security group on the mount target in the subnet specified.
 	Ec2Config *Ec2Config `type:"structure"`
 
 	// The Amazon resource Name (ARN) of the EFS location that was described.
@@ -3518,6 +3623,9 @@ type DescribeLocationNfsOutput struct {
 	// The URL of the source NFS location that was described.
 	LocationUri *string `type:"string"`
 
+	// The NFS mount options that DataSync used to mount your NFS share.
+	MountOptions *NfsMountOptions `type:"structure"`
+
 	// A list of Amazon Resource Names (ARNs) of agents to use for a Network File
 	// System (NFS) location.
 	OnPremConfig *OnPremConfig `type:"structure"`
@@ -3548,6 +3656,12 @@ func (s *DescribeLocationNfsOutput) SetLocationArn(v string) *DescribeLocationNf
 // SetLocationUri sets the LocationUri field's value.
 func (s *DescribeLocationNfsOutput) SetLocationUri(v string) *DescribeLocationNfsOutput {
 	s.LocationUri = &v
+	return s
+}
+
+// SetMountOptions sets the MountOptions field's value.
+func (s *DescribeLocationNfsOutput) SetMountOptions(v *NfsMountOptions) *DescribeLocationNfsOutput {
+	s.MountOptions = v
 	return s
 }
 
@@ -3610,9 +3724,10 @@ type DescribeLocationS3Output struct {
 	LocationUri *string `type:"string"`
 
 	// The Amazon Resource Name (ARN) of the AWS Identity and Access Management
-	// (IAM) role that is used to access an Amazon S3 bucket. For detailed information
-	// about using such a role, see Components and Terminology (https://alpha-aws-docs.aws.amazon.com/sync-service/latest/userguide/create-locations-cli.html#create-location-s3-cli)
-	// in the AWS DataSync User Guide.
+	// (IAM) role that is used to access an Amazon S3 bucket.
+	//
+	// For detailed information about using such a role, see "https://docs.aws.amazon.com/datasync/latest/userguide/working-with-locations.html#create-s3-location"
+	// (Creating a Location for Amazon S3) in the AWS DataSync User Guide.
 	S3Config *S3Config `type:"structure"`
 }
 
@@ -3710,6 +3825,11 @@ type DescribeTaskExecutionOutput struct {
 	// and finding the delta that needs to be transferred.
 	EstimatedFilesToTransfer *int64 `type:"long"`
 
+	// Specifies that the task execution excludes files from the transfer based
+	// on the specified pattern in the filter. Transfers all files in the task’s
+	// subdirectory, except files that match the filter that is set.
+	Excludes []*FilterRule `type:"list"`
+
 	// The actual number of files that was transferred over the network. This value
 	// is calculated and updated on an ongoing basis during the TRANSFERRING phase.
 	// It's updated periodically when each file is read from the source and sent
@@ -3721,6 +3841,11 @@ type DescribeTaskExecutionOutput struct {
 	// use it as an indicator for a correct file number or to monitor your task
 	// execution.
 	FilesTransferred *int64 `type:"long"`
+
+	// Specifies that the task execution excludes files in the transfer based on
+	// the specified pattern in the filter. When multiple include filters are set,
+	// they are interpreted as an OR.
+	Includes []*FilterRule `type:"list"`
 
 	// Represents the options that are available to control the behavior of a StartTaskExecution
 	// operation. Behavior includes preserving metadata such as user ID (UID), group
@@ -3739,16 +3864,18 @@ type DescribeTaskExecutionOutput struct {
 	// The time that the task execution was started.
 	StartTime *time.Time `type:"timestamp"`
 
-	// The status of the task. For detailed information about sync statuses, see
-	// Understanding Sync Task Statuses (https://docs.aws.amazon.com/sync-service/latest/userguide/understand-sync-task-statuses.html).
+	// The status of the task execution.
+	//
+	// For detailed information about task execution statuses, see "https://docs.aws.amazon.com/datasync/latest/userguide/working-with-tasks.html#understand-task-creation-statuses"
+	// (Understanding Task Statuses).
 	Status *string `type:"string" enum:"TaskExecutionStatus"`
 
 	// The Amazon Resource Name (ARN) of the task execution that was described.
 	// TaskExecutionArn is hierarchical and includes TaskArn for the task that was
 	// executed.
 	//
-	// For example, a TaskExecution value with the ARN arn:aws:sync:us-east-1:209870788375:task/task-0208075f79cedf4a2/execution/exec-08ef1e88ec491019b
-	// executed the task with the ARN arn:aws:sync:us-east-1:209870788375:task/task-0208075f79cedf4a2.
+	// For example, a TaskExecution value with the ARN arn:aws:datasync:us-east-1:111222333444:task/task-0208075f79cedf4a2/execution/exec-08ef1e88ec491019b
+	// executed the task with the ARN arn:aws:datasync:us-east-1:111222333444:task/task-0208075f79cedf4a2.
 	TaskExecutionArn *string `type:"string"`
 }
 
@@ -3786,9 +3913,21 @@ func (s *DescribeTaskExecutionOutput) SetEstimatedFilesToTransfer(v int64) *Desc
 	return s
 }
 
+// SetExcludes sets the Excludes field's value.
+func (s *DescribeTaskExecutionOutput) SetExcludes(v []*FilterRule) *DescribeTaskExecutionOutput {
+	s.Excludes = v
+	return s
+}
+
 // SetFilesTransferred sets the FilesTransferred field's value.
 func (s *DescribeTaskExecutionOutput) SetFilesTransferred(v int64) *DescribeTaskExecutionOutput {
 	s.FilesTransferred = &v
+	return s
+}
+
+// SetIncludes sets the Includes field's value.
+func (s *DescribeTaskExecutionOutput) SetIncludes(v []*FilterRule) *DescribeTaskExecutionOutput {
+	s.Includes = v
 	return s
 }
 
@@ -3866,9 +4005,10 @@ type DescribeTaskOutput struct {
 	_ struct{} `type:"structure"`
 
 	// The Amazon Resource Name (ARN) of the Amazon CloudWatch log group that was
-	// used to monitor and log events in the task. For more information on these
-	// groups, see Working with Log Groups and Log Streams (https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/Working-with-log-groups-and-streams.html)
-	// in the Amazon CloudWatch User Guide.
+	// used to monitor and log events in the task.
+	//
+	// For more information on these groups, see "https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/Working-with-log-groups-and-streams.html"
+	// (Working with Log Groups and Log Streams) in the Amazon CloudWatch UserGuide.
 	CloudWatchLogGroupArn *string `type:"string"`
 
 	// The time that the task was created.
@@ -3888,6 +4028,11 @@ type DescribeTaskOutput struct {
 	// You can use this information to help troubleshoot issues.
 	ErrorDetail *string `type:"string"`
 
+	// Specifies that the task excludes files in the transfer based on the specified
+	// pattern in the filter. Transfers all files in the task’s subdirectory,
+	// except files that match the filter that is set.
+	Excludes []*FilterRule `type:"list"`
+
 	// The name of the task that was described.
 	Name *string `min:"1" type:"string"`
 
@@ -3903,8 +4048,10 @@ type DescribeTaskOutput struct {
 	// The Amazon Resource Name (ARN) of the source file system's location.
 	SourceLocationArn *string `type:"string"`
 
-	// The status of the task that was described. For detailed information about
-	// sync statuses, see Understanding Sync Task Statuses (https://docs.aws.amazon.com/sync-service/latest/userguide/understand-sync-task-statuses.html).
+	// The status of the task that was described.
+	//
+	// For detailed information about task execution statuses, see "https://docs.aws.amazon.com/datasync/latest/userguide/working-with-tasks.html#understand-task-creation-statuses"
+	// (Understanding Task Statuses).
 	Status *string `type:"string" enum:"TaskStatus"`
 
 	// The Amazon Resource Name (ARN) of the task that was described.
@@ -3957,6 +4104,12 @@ func (s *DescribeTaskOutput) SetErrorDetail(v string) *DescribeTaskOutput {
 	return s
 }
 
+// SetExcludes sets the Excludes field's value.
+func (s *DescribeTaskOutput) SetExcludes(v []*FilterRule) *DescribeTaskOutput {
+	s.Excludes = v
+	return s
+}
+
 // SetName sets the Name field's value.
 func (s *DescribeTaskOutput) SetName(v string) *DescribeTaskOutput {
 	s.Name = &v
@@ -3987,27 +4140,10 @@ func (s *DescribeTaskOutput) SetTaskArn(v string) *DescribeTaskOutput {
 	return s
 }
 
-// The subnet and the security group that the target Amazon EFS file system
-// uses. The subnet must have at least one mount target for that file system.
-// The security group that you provide needs to be able to communicate with
-// the security group on the mount target in the subnet specified.
-//
-// The exact relationship between security group M (of the mount target) and
-// security group S (which you provide for DataSync to use at this stage) is
-// as follows:
-//
-//    *  Security group M (which you associate with the mount target) must allow
-//    inbound access for the Transmission Control Protocol (TCP) on the NFS
-//    port (2049) from security group S. You can enable inbound connections
-//    either by IP address (CIDR range) or security group.
-//
-//    * Security group S (provided to DataSync to access EFS) should have a
-//    rule that enables outbound connections to the NFS port on one of the file
-//    system’s mount targets. You can enable outbound connections either by
-//    IP address (CIDR range) or security group. For information about security
-//    groups and mount targets, see Security Groups for Amazon EC2 Instances
-//    and Mount Targets (https://docs.aws.amazon.com/efs/latest/ug/security-considerations.html#network-access)
-//    in the Amazon EFS User Guide.
+// The subnet and the security group that DataSync uses to access target EFS
+// file system. The subnet must have at least one mount target for that file
+// system. The security group that you provide needs to be able to communicate
+// with the security group on the mount target in the subnet specified.
 type Ec2Config struct {
 	_ struct{} `type:"structure"`
 
@@ -4017,7 +4153,8 @@ type Ec2Config struct {
 	// SecurityGroupArns is a required field
 	SecurityGroupArns []*string `min:"1" type:"list" required:"true"`
 
-	// The ARN of the subnet that the Amazon EC2 resource belongs in.
+	// The ARN of the subnet and the security group that DataSync uses to access
+	// the target EFS file system.
 	//
 	// SubnetArn is a required field
 	SubnetArn *string `type:"string" required:"true"`
@@ -4061,6 +4198,72 @@ func (s *Ec2Config) SetSecurityGroupArns(v []*string) *Ec2Config {
 // SetSubnetArn sets the SubnetArn field's value.
 func (s *Ec2Config) SetSubnetArn(v string) *Ec2Config {
 	s.SubnetArn = &v
+	return s
+}
+
+type EndpointOptions struct {
+	_ struct{} `type:"structure"`
+
+	Fips *bool `type:"boolean"`
+
+	PrivateLink *bool `type:"boolean"`
+}
+
+// String returns the string representation
+func (s EndpointOptions) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s EndpointOptions) GoString() string {
+	return s.String()
+}
+
+// SetFips sets the Fips field's value.
+func (s *EndpointOptions) SetFips(v bool) *EndpointOptions {
+	s.Fips = &v
+	return s
+}
+
+// SetPrivateLink sets the PrivateLink field's value.
+func (s *EndpointOptions) SetPrivateLink(v bool) *EndpointOptions {
+	s.PrivateLink = &v
+	return s
+}
+
+// A pattern that determines which files to include in the transfer or which
+// files to exclude.
+type FilterRule struct {
+	_ struct{} `type:"structure"`
+
+	// Specifies the type of filter rule pattern to apply. DataSync only supports
+	// the SIMPLE_PATTERN rule type.
+	FilterType *string `type:"string" enum:"FilterType"`
+
+	// A pattern that defines the filter. The filter might include or exclude files
+	// is a transfer.
+	Value *string `type:"string"`
+}
+
+// String returns the string representation
+func (s FilterRule) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s FilterRule) GoString() string {
+	return s.String()
+}
+
+// SetFilterType sets the FilterType field's value.
+func (s *FilterRule) SetFilterType(v string) *FilterRule {
+	s.FilterType = &v
+	return s
+}
+
+// SetValue sets the Value field's value.
+func (s *FilterRule) SetValue(v string) *FilterRule {
+	s.Value = &v
 	return s
 }
 
@@ -4489,6 +4692,34 @@ func (s *LocationListEntry) SetLocationUri(v string) *LocationListEntry {
 	return s
 }
 
+// Represents the mount options that are available for DataSync to access an
+// NFS location.
+type NfsMountOptions struct {
+	_ struct{} `type:"structure"`
+
+	// The specific NFS version that you want DataSync to use to mount your NFS
+	// share. If you don't specify a version, DataSync defaults to AUTOMATIC. That
+	// is, DataSync automatically selects a version based on negotiation with the
+	// NFS server.
+	Version *string `type:"string" enum:"NfsVersion"`
+}
+
+// String returns the string representation
+func (s NfsMountOptions) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s NfsMountOptions) GoString() string {
+	return s.String()
+}
+
+// SetVersion sets the Version field's value.
+func (s *NfsMountOptions) SetVersion(v string) *NfsMountOptions {
+	s.Version = &v
+	return s
+}
+
 // A list of Amazon Resource Names (ARNs) of agents to use for a Network File
 // System (NFS) location.
 type OnPremConfig struct {
@@ -4723,10 +4954,49 @@ func (s *Options) SetVerifyMode(v string) *Options {
 	return s
 }
 
+type PrivateLinkConfig struct {
+	_ struct{} `type:"structure"`
+
+	PrivateLinkEndpoint *string `type:"string"`
+
+	SecurityGroupArns []*string `min:"1" type:"list"`
+
+	SubnetArns []*string `min:"1" type:"list"`
+}
+
+// String returns the string representation
+func (s PrivateLinkConfig) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s PrivateLinkConfig) GoString() string {
+	return s.String()
+}
+
+// SetPrivateLinkEndpoint sets the PrivateLinkEndpoint field's value.
+func (s *PrivateLinkConfig) SetPrivateLinkEndpoint(v string) *PrivateLinkConfig {
+	s.PrivateLinkEndpoint = &v
+	return s
+}
+
+// SetSecurityGroupArns sets the SecurityGroupArns field's value.
+func (s *PrivateLinkConfig) SetSecurityGroupArns(v []*string) *PrivateLinkConfig {
+	s.SecurityGroupArns = v
+	return s
+}
+
+// SetSubnetArns sets the SubnetArns field's value.
+func (s *PrivateLinkConfig) SetSubnetArns(v []*string) *PrivateLinkConfig {
+	s.SubnetArns = v
+	return s
+}
+
 // The Amazon Resource Name (ARN) of the AWS Identity and Access Management
-// (IAM) role that is used to access an Amazon S3 bucket. For detailed information
-// about using such a role, see Components and Terminology (https://alpha-aws-docs.aws.amazon.com/sync-service/latest/userguide/create-locations-cli.html#create-location-s3-cli)
-// in the AWS DataSync User Guide.
+// (IAM) role that is used to access an Amazon S3 bucket.
+//
+// For detailed information about using such a role, see "https://docs.aws.amazon.com/datasync/latest/userguide/working-with-locations.html#create-s3-location"
+// (Creating a Location for Amazon S3) in the AWS DataSync User Guide.
 type S3Config struct {
 	_ struct{} `type:"structure"`
 
@@ -4769,6 +5039,11 @@ func (s *S3Config) SetBucketAccessRoleArn(v string) *S3Config {
 // StartTaskExecutionRequest
 type StartTaskExecutionInput struct {
 	_ struct{} `type:"structure"`
+
+	// A filter that determines which files to include in the transfer during a
+	// task execution based on the specified pattern in the filter. When multiple
+	// include filters are set, they are interpreted as an OR.
+	Includes []*FilterRule `type:"list"`
 
 	// Represents the options that are available to control the behavior of a StartTaskExecution
 	// operation. Behavior includes preserving metadata such as user ID (UID), group
@@ -4815,6 +5090,12 @@ func (s *StartTaskExecutionInput) Validate() error {
 	return nil
 }
 
+// SetIncludes sets the Includes field's value.
+func (s *StartTaskExecutionInput) SetIncludes(v []*FilterRule) *StartTaskExecutionInput {
+	s.Includes = v
+	return s
+}
+
 // SetOverrideOptions sets the OverrideOptions field's value.
 func (s *StartTaskExecutionInput) SetOverrideOptions(v *Options) *StartTaskExecutionInput {
 	s.OverrideOptions = v
@@ -4858,7 +5139,9 @@ type TagListEntry struct {
 	_ struct{} `type:"structure"`
 
 	// The key for an AWS resource tag.
-	Key *string `min:"1" type:"string"`
+	//
+	// Key is a required field
+	Key *string `min:"1" type:"string" required:"true"`
 
 	// The value for an AWS resource tag.
 	Value *string `min:"1" type:"string"`
@@ -4877,6 +5160,9 @@ func (s TagListEntry) GoString() string {
 // Validate inspects the fields of the type to determine if they are valid.
 func (s *TagListEntry) Validate() error {
 	invalidParams := request.ErrInvalidParams{Context: "TagListEntry"}
+	if s.Key == nil {
+		invalidParams.Add(request.NewErrParamRequired("Key"))
+	}
 	if s.Key != nil && len(*s.Key) < 1 {
 		invalidParams.Add(request.NewErrParamMinLen("Key", 1))
 	}
@@ -5290,6 +5576,14 @@ func (s UpdateAgentOutput) GoString() string {
 type UpdateTaskInput struct {
 	_ struct{} `type:"structure"`
 
+	// The Amazon Resource Name (ARN) of the resource name of the CloudWatch LogGroup.
+	CloudWatchLogGroupArn *string `type:"string"`
+
+	// A filter that determines which files to exclude from a task based on the
+	// specified pattern in the filter. Transfers all files in the task’s subdirectory,
+	// except files that match the filter that is set.
+	Excludes []*FilterRule `type:"list"`
+
 	// The name of the task to update.
 	Name *string `min:"1" type:"string"`
 
@@ -5341,6 +5635,18 @@ func (s *UpdateTaskInput) Validate() error {
 	return nil
 }
 
+// SetCloudWatchLogGroupArn sets the CloudWatchLogGroupArn field's value.
+func (s *UpdateTaskInput) SetCloudWatchLogGroupArn(v string) *UpdateTaskInput {
+	s.CloudWatchLogGroupArn = &v
+	return s
+}
+
+// SetExcludes sets the Excludes field's value.
+func (s *UpdateTaskInput) SetExcludes(v []*FilterRule) *UpdateTaskInput {
+	s.Excludes = v
+	return s
+}
+
 // SetName sets the Name field's value.
 func (s *UpdateTaskInput) SetName(v string) *UpdateTaskInput {
 	s.Name = &v
@@ -5390,6 +5696,11 @@ const (
 )
 
 const (
+	// FilterTypeSimplePattern is a FilterType enum value
+	FilterTypeSimplePattern = "SIMPLE_PATTERN"
+)
+
+const (
 	// GidNone is a Gid enum value
 	GidNone = "NONE"
 
@@ -5409,6 +5720,20 @@ const (
 
 	// MtimePreserve is a Mtime enum value
 	MtimePreserve = "PRESERVE"
+)
+
+const (
+	// NfsVersionAutomatic is a NfsVersion enum value
+	NfsVersionAutomatic = "AUTOMATIC"
+
+	// NfsVersionNfs3 is a NfsVersion enum value
+	NfsVersionNfs3 = "NFS3"
+
+	// NfsVersionNfs40 is a NfsVersion enum value
+	NfsVersionNfs40 = "NFS4_0"
+
+	// NfsVersionNfs41 is a NfsVersion enum value
+	NfsVersionNfs41 = "NFS4_1"
 )
 
 const (

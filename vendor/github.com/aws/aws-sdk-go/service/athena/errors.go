@@ -18,10 +18,15 @@ const (
 	// a required parameter may be missing or out of range.
 	ErrCodeInvalidRequestException = "InvalidRequestException"
 
+	// ErrCodeResourceNotFoundException for service response error code
+	// "ResourceNotFoundException".
+	//
+	// A resource, such as a workgroup, was not found.
+	ErrCodeResourceNotFoundException = "ResourceNotFoundException"
+
 	// ErrCodeTooManyRequestsException for service response error code
 	// "TooManyRequestsException".
 	//
-	// Indicates that the request was throttled and includes the reason for throttling,
-	// for example, the limit of concurrent queries has been exceeded.
+	// Indicates that the request was throttled.
 	ErrCodeTooManyRequestsException = "TooManyRequestsException"
 )

@@ -721,7 +721,9 @@ func (c *IoT) AttachThingPrincipalRequest(input *AttachThingPrincipalInput) (req
 
 // AttachThingPrincipal API operation for AWS IoT.
 //
-// Attaches the specified principal to the specified thing.
+// Attaches the specified principal to the specified thing. A principal can
+// be X.509 certificates, IAM users, groups, and roles, Amazon Cognito identities
+// or federated identities.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -2528,9 +2530,12 @@ func (c *IoT) CreateThingRequest(input *CreateThingInput) (req *request.Request,
 
 // CreateThing API operation for AWS IoT.
 //
-// Creates a thing record in the registry.
+// Creates a thing record in the registry. If this call is made multiple times
+// using the same thing name and configuration, the call will succeed. If this
+// call is made with the same thing name but different configuration a ResourceAlreadyExistsException
+// is thrown.
 //
-// This is a control plane operation. See Authorization (http://docs.aws.amazon.com/iot/latest/developerguide/authorization.html)
+// This is a control plane operation. See Authorization (https://docs.aws.amazon.com/iot/latest/developerguide/authorization.html)
 // for information about authorizing control plane actions.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -2627,7 +2632,7 @@ func (c *IoT) CreateThingGroupRequest(input *CreateThingGroupInput) (req *reques
 //
 // Create a thing group.
 //
-// This is a control plane operation. See Authorization (http://docs.aws.amazon.com/iot/latest/developerguide/authorization.html)
+// This is a control plane operation. See Authorization (https://docs.aws.amazon.com/iot/latest/developerguide/authorization.html)
 // for information about authorizing control plane actions.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -6975,7 +6980,9 @@ func (c *IoT) DetachThingPrincipalRequest(input *DetachThingPrincipalInput) (req
 
 // DetachThingPrincipal API operation for AWS IoT.
 //
-// Detaches the specified principal from the specified thing.
+// Detaches the specified principal from the specified thing. A principal can
+// be X.509 certificates, IAM users, groups, and roles, Amazon Cognito identities
+// or federated identities.
 //
 // This call is asynchronous. It might take several seconds for the detachment
 // to propagate.
@@ -7916,6 +7923,106 @@ func (c *IoT) GetRegistrationCode(input *GetRegistrationCodeInput) (*GetRegistra
 // for more information on using Contexts.
 func (c *IoT) GetRegistrationCodeWithContext(ctx aws.Context, input *GetRegistrationCodeInput, opts ...request.Option) (*GetRegistrationCodeOutput, error) {
 	req, out := c.GetRegistrationCodeRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opGetStatistics = "GetStatistics"
+
+// GetStatisticsRequest generates a "aws/request.Request" representing the
+// client's request for the GetStatistics operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See GetStatistics for more information on using the GetStatistics
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the GetStatisticsRequest method.
+//    req, resp := client.GetStatisticsRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+func (c *IoT) GetStatisticsRequest(input *GetStatisticsInput) (req *request.Request, output *GetStatisticsOutput) {
+	op := &request.Operation{
+		Name:       opGetStatistics,
+		HTTPMethod: "POST",
+		HTTPPath:   "/indices/statistics",
+	}
+
+	if input == nil {
+		input = &GetStatisticsInput{}
+	}
+
+	output = &GetStatisticsOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// GetStatistics API operation for AWS IoT.
+//
+// Gets statistics about things that match the specified query.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS IoT's
+// API operation GetStatistics for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeInvalidRequestException "InvalidRequestException"
+//   The request is not valid.
+//
+//   * ErrCodeThrottlingException "ThrottlingException"
+//   The rate exceeds the limit.
+//
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
+//   You are not authorized to perform this operation.
+//
+//   * ErrCodeServiceUnavailableException "ServiceUnavailableException"
+//   The service is temporarily unavailable.
+//
+//   * ErrCodeInternalFailureException "InternalFailureException"
+//   An unexpected error has occurred.
+//
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
+//   The specified resource does not exist.
+//
+//   * ErrCodeInvalidQueryException "InvalidQueryException"
+//   The query is invalid.
+//
+//   * ErrCodeInvalidAggregationException "InvalidAggregationException"
+//   The aggregation is invalid.
+//
+//   * ErrCodeIndexNotReadyException "IndexNotReadyException"
+//   The index is not ready.
+//
+func (c *IoT) GetStatistics(input *GetStatisticsInput) (*GetStatisticsOutput, error) {
+	req, out := c.GetStatisticsRequest(input)
+	return out, req.Send()
+}
+
+// GetStatisticsWithContext is the same as GetStatistics with the addition of
+// the ability to pass a context and additional request options.
+//
+// See GetStatistics for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *IoT) GetStatisticsWithContext(ctx aws.Context, input *GetStatisticsInput, opts ...request.Option) (*GetStatisticsOutput, error) {
+	req, out := c.GetStatisticsRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -9725,7 +9832,7 @@ func (c *IoT) ListPrincipalPoliciesRequest(input *ListPrincipalPoliciesInput) (r
 // ListPrincipalPolicies API operation for AWS IoT.
 //
 // Lists the policies attached to the specified principal. If you use an Cognito
-// identity, the ID must be in AmazonCognito Identity format (http://docs.aws.amazon.com/cognitoidentity/latest/APIReference/API_GetCredentialsForIdentity.html#API_GetCredentialsForIdentity_RequestSyntax).
+// identity, the ID must be in AmazonCognito Identity format (https://docs.aws.amazon.com/cognitoidentity/latest/APIReference/API_GetCredentialsForIdentity.html#API_GetCredentialsForIdentity_RequestSyntax).
 //
 // Note: This API is deprecated. Please use ListAttachedPolicies instead.
 //
@@ -9822,7 +9929,9 @@ func (c *IoT) ListPrincipalThingsRequest(input *ListPrincipalThingsInput) (req *
 
 // ListPrincipalThings API operation for AWS IoT.
 //
-// Lists the things associated with the specified principal.
+// Lists the things associated with the specified principal. A principal can
+// be X.509 certificates, IAM users, groups, and roles, Amazon Cognito identities
+// or federated identities.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -10769,7 +10878,9 @@ func (c *IoT) ListThingPrincipalsRequest(input *ListThingPrincipalsInput) (req *
 
 // ListThingPrincipals API operation for AWS IoT.
 //
-// Lists the principals associated with the specified thing.
+// Lists the principals associated with the specified thing. A principal can
+// be X.509 certificates, IAM users, groups, and roles, Amazon Cognito identities
+// or federated identities.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -16853,6 +16964,11 @@ func (s *Behavior) Validate() error {
 	if s.Name != nil && len(*s.Name) < 1 {
 		invalidParams.Add(request.NewErrParamMinLen("Name", 1))
 	}
+	if s.Criteria != nil {
+		if err := s.Criteria.Validate(); err != nil {
+			invalidParams.AddNested("Criteria", err.(request.ErrInvalidParams))
+		}
+	}
 
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -16882,12 +16998,30 @@ func (s *Behavior) SetName(v string) *Behavior {
 type BehaviorCriteria struct {
 	_ struct{} `type:"structure"`
 
-	// The operator that relates the thing measured (metric) to the criteria (value).
+	// The operator that relates the thing measured (metric) to the criteria (containing
+	// a value or statisticalThreshold).
 	ComparisonOperator *string `locationName:"comparisonOperator" type:"string" enum:"ComparisonOperator"`
 
-	// Use this to specify the period of time over which the behavior is evaluated,
+	// If a device is in violation of the behavior for the specified number of consecutive
+	// datapoints, an alarm occurs. If not specified, the default is 1.
+	ConsecutiveDatapointsToAlarm *int64 `locationName:"consecutiveDatapointsToAlarm" min:"1" type:"integer"`
+
+	// If an alarm has occurred and the offending device is no longer in violation
+	// of the behavior for the specified number of consecutive datapoints, the alarm
+	// is cleared. If not specified, the default is 1.
+	ConsecutiveDatapointsToClear *int64 `locationName:"consecutiveDatapointsToClear" min:"1" type:"integer"`
+
+	// Use this to specify the time duration over which the behavior is evaluated,
 	// for those criteria which have a time dimension (for example, NUM_MESSAGES_SENT).
+	// For a statisticalThreshhold metric comparison, measurements from all devices
+	// are accumulated over this time duration before being used to calculate percentiles,
+	// and later, measurements from an individual device are also accumulated over
+	// this time duration before being given a percentile rank.
 	DurationSeconds *int64 `locationName:"durationSeconds" type:"integer"`
+
+	// A statistical ranking (percentile) which indicates a threshold value by which
+	// a behavior is determined to be in compliance or in violation of the behavior.
+	StatisticalThreshold *StatisticalThreshold `locationName:"statisticalThreshold" type:"structure"`
 
 	// The value to be compared with the metric.
 	Value *MetricValue `locationName:"value" type:"structure"`
@@ -16903,15 +17037,49 @@ func (s BehaviorCriteria) GoString() string {
 	return s.String()
 }
 
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *BehaviorCriteria) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "BehaviorCriteria"}
+	if s.ConsecutiveDatapointsToAlarm != nil && *s.ConsecutiveDatapointsToAlarm < 1 {
+		invalidParams.Add(request.NewErrParamMinValue("ConsecutiveDatapointsToAlarm", 1))
+	}
+	if s.ConsecutiveDatapointsToClear != nil && *s.ConsecutiveDatapointsToClear < 1 {
+		invalidParams.Add(request.NewErrParamMinValue("ConsecutiveDatapointsToClear", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
 // SetComparisonOperator sets the ComparisonOperator field's value.
 func (s *BehaviorCriteria) SetComparisonOperator(v string) *BehaviorCriteria {
 	s.ComparisonOperator = &v
 	return s
 }
 
+// SetConsecutiveDatapointsToAlarm sets the ConsecutiveDatapointsToAlarm field's value.
+func (s *BehaviorCriteria) SetConsecutiveDatapointsToAlarm(v int64) *BehaviorCriteria {
+	s.ConsecutiveDatapointsToAlarm = &v
+	return s
+}
+
+// SetConsecutiveDatapointsToClear sets the ConsecutiveDatapointsToClear field's value.
+func (s *BehaviorCriteria) SetConsecutiveDatapointsToClear(v int64) *BehaviorCriteria {
+	s.ConsecutiveDatapointsToClear = &v
+	return s
+}
+
 // SetDurationSeconds sets the DurationSeconds field's value.
 func (s *BehaviorCriteria) SetDurationSeconds(v int64) *BehaviorCriteria {
 	s.DurationSeconds = &v
+	return s
+}
+
+// SetStatisticalThreshold sets the StatisticalThreshold field's value.
+func (s *BehaviorCriteria) SetStatisticalThreshold(v *StatisticalThreshold) *BehaviorCriteria {
+	s.StatisticalThreshold = v
 	return s
 }
 
@@ -17823,10 +17991,10 @@ type CloudwatchMetricAction struct {
 	// MetricNamespace is a required field
 	MetricNamespace *string `locationName:"metricNamespace" type:"string" required:"true"`
 
-	// An optional Unix timestamp (http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/cloudwatch_concepts.html#about_timestamp).
+	// An optional Unix timestamp (https://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/cloudwatch_concepts.html#about_timestamp).
 	MetricTimestamp *string `locationName:"metricTimestamp" type:"string"`
 
-	// The metric unit (http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/cloudwatch_concepts.html#Unit)
+	// The metric unit (https://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/cloudwatch_concepts.html#Unit)
 	// supported by CloudWatch.
 	//
 	// MetricUnit is a required field
@@ -18387,7 +18555,7 @@ type CreateDynamicThingGroupInput struct {
 
 	// The dynamic thing group search query string.
 	//
-	// See Query Syntax (http://docs.aws.amazon.com/iot/latest/developerguide/query-syntax.html)
+	// See Query Syntax (https://docs.aws.amazon.com/iot/latest/developerguide/query-syntax.html)
 	// for information about query string syntax.
 	//
 	// QueryString is a required field
@@ -18870,6 +19038,9 @@ type CreateOTAUpdateInput struct {
 	// RoleArn is a required field
 	RoleArn *string `locationName:"roleArn" min:"20" type:"string" required:"true"`
 
+	// Metadata which can be used to manage updates.
+	Tags []*Tag `locationName:"tags" type:"list"`
+
 	// Specifies whether the update will continue to run (CONTINUOUS), or will be
 	// complete after all the things specified as targets have completed the update
 	// (SNAPSHOT). If continuous, the update may also be run on a thing when a change
@@ -18976,6 +19147,12 @@ func (s *CreateOTAUpdateInput) SetOtaUpdateId(v string) *CreateOTAUpdateInput {
 // SetRoleArn sets the RoleArn field's value.
 func (s *CreateOTAUpdateInput) SetRoleArn(v string) *CreateOTAUpdateInput {
 	s.RoleArn = &v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *CreateOTAUpdateInput) SetTags(v []*Tag) *CreateOTAUpdateInput {
+	s.Tags = v
 	return s
 }
 
@@ -19406,6 +19583,9 @@ type CreateScheduledAuditInput struct {
 	// ScheduledAuditName is a required field
 	ScheduledAuditName *string `location:"uri" locationName:"scheduledAuditName" min:"1" type:"string" required:"true"`
 
+	// Metadata which can be used to manage the scheduled audit.
+	Tags []*Tag `locationName:"tags" type:"list"`
+
 	// Which checks are performed during the scheduled audit. Checks must be enabled
 	// for your account. (Use DescribeAccountAuditConfiguration to see the list
 	// of all checks including those that are enabled or UpdateAccountAuditConfiguration
@@ -19471,6 +19651,12 @@ func (s *CreateScheduledAuditInput) SetScheduledAuditName(v string) *CreateSched
 	return s
 }
 
+// SetTags sets the Tags field's value.
+func (s *CreateScheduledAuditInput) SetTags(v []*Tag) *CreateScheduledAuditInput {
+	s.Tags = v
+	return s
+}
+
 // SetTargetCheckNames sets the TargetCheckNames field's value.
 func (s *CreateScheduledAuditInput) SetTargetCheckNames(v []*string) *CreateScheduledAuditInput {
 	s.TargetCheckNames = v
@@ -19503,15 +19689,18 @@ func (s *CreateScheduledAuditOutput) SetScheduledAuditArn(v string) *CreateSched
 type CreateSecurityProfileInput struct {
 	_ struct{} `type:"structure"`
 
+	// A list of metrics whose data is retained (stored). By default, data is retained
+	// for any metric used in the profile's behaviors but it is also retained for
+	// any metric specified here.
+	AdditionalMetricsToRetain []*string `locationName:"additionalMetricsToRetain" type:"list"`
+
 	// Specifies the destinations to which alerts are sent. (Alerts are always sent
 	// to the console.) Alerts are generated when a device (thing) violates a behavior.
 	AlertTargets map[string]*AlertTarget `locationName:"alertTargets" type:"map"`
 
 	// Specifies the behaviors that, when violated by a device (thing), cause an
 	// alert.
-	//
-	// Behaviors is a required field
-	Behaviors []*Behavior `locationName:"behaviors" type:"list" required:"true"`
+	Behaviors []*Behavior `locationName:"behaviors" type:"list"`
 
 	// A description of the security profile.
 	SecurityProfileDescription *string `locationName:"securityProfileDescription" type:"string"`
@@ -19538,9 +19727,6 @@ func (s CreateSecurityProfileInput) GoString() string {
 // Validate inspects the fields of the type to determine if they are valid.
 func (s *CreateSecurityProfileInput) Validate() error {
 	invalidParams := request.ErrInvalidParams{Context: "CreateSecurityProfileInput"}
-	if s.Behaviors == nil {
-		invalidParams.Add(request.NewErrParamRequired("Behaviors"))
-	}
 	if s.SecurityProfileName == nil {
 		invalidParams.Add(request.NewErrParamRequired("SecurityProfileName"))
 	}
@@ -19572,6 +19758,12 @@ func (s *CreateSecurityProfileInput) Validate() error {
 		return invalidParams
 	}
 	return nil
+}
+
+// SetAdditionalMetricsToRetain sets the AdditionalMetricsToRetain field's value.
+func (s *CreateSecurityProfileInput) SetAdditionalMetricsToRetain(v []*string) *CreateSecurityProfileInput {
+	s.AdditionalMetricsToRetain = v
+	return s
 }
 
 // SetAlertTargets sets the AlertTargets field's value.
@@ -19657,6 +19849,9 @@ type CreateStreamInput struct {
 	//
 	// StreamId is a required field
 	StreamId *string `location:"uri" locationName:"streamId" min:"1" type:"string" required:"true"`
+
+	// Metadata which can be used to manage streams.
+	Tags []*Tag `locationName:"tags" type:"list"`
 }
 
 // String returns the string representation
@@ -19728,6 +19923,12 @@ func (s *CreateStreamInput) SetRoleArn(v string) *CreateStreamInput {
 // SetStreamId sets the StreamId field's value.
 func (s *CreateStreamInput) SetStreamId(v string) *CreateStreamInput {
 	s.StreamId = &v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *CreateStreamInput) SetTags(v []*Tag) *CreateStreamInput {
+	s.Tags = v
 	return s
 }
 
@@ -22350,16 +22551,16 @@ type DescribeIndexOutput struct {
 	// Contains a value that specifies the type of indexing performed. Valid values
 	// are:
 	//
-	//    * REGISTRY – Your thing index will contain only registry data.
+	//    * REGISTRY – Your thing index contains only registry data.
 	//
-	//    * REGISTRY_AND_SHADOW - Your thing index will contain registry data and
-	//    shadow data.
+	//    * REGISTRY_AND_SHADOW - Your thing index contains registry data and shadow
+	//    data.
 	//
-	//    * REGISTRY_AND_CONNECTIVITY_STATUS - Your thing index will contain registry
+	//    * REGISTRY_AND_CONNECTIVITY_STATUS - Your thing index contains registry
 	//    data and thing connectivity status data.
 	//
-	//    * REGISTRY_AND_SHADOW_AND_CONNECTIVITY_STATUS - Your thing index will
-	//    contain registry data, shadow data, and thing connectivity status data.
+	//    * REGISTRY_AND_SHADOW_AND_CONNECTIVITY_STATUS - Your thing index contains
+	//    registry data, shadow data, and thing connectivity status data.
 	Schema *string `locationName:"schema" type:"string"`
 }
 
@@ -22779,6 +22980,11 @@ func (s *DescribeSecurityProfileInput) SetSecurityProfileName(v string) *Describ
 type DescribeSecurityProfileOutput struct {
 	_ struct{} `type:"structure"`
 
+	// A list of metrics whose data is retained (stored). By default, data is retained
+	// for any metric used in the profile's behaviors but it is also retained for
+	// any metric specified here.
+	AdditionalMetricsToRetain []*string `locationName:"additionalMetricsToRetain" type:"list"`
+
 	// Where the alerts are sent. (Alerts are always sent to the console.)
 	AlertTargets map[string]*AlertTarget `locationName:"alertTargets" type:"map"`
 
@@ -22815,6 +23021,12 @@ func (s DescribeSecurityProfileOutput) String() string {
 // GoString returns the string representation
 func (s DescribeSecurityProfileOutput) GoString() string {
 	return s.String()
+}
+
+// SetAdditionalMetricsToRetain sets the AdditionalMetricsToRetain field's value.
+func (s *DescribeSecurityProfileOutput) SetAdditionalMetricsToRetain(v []*string) *DescribeSecurityProfileOutput {
+	s.AdditionalMetricsToRetain = v
+	return s
 }
 
 // SetAlertTargets sets the AlertTargets field's value.
@@ -25129,6 +25341,105 @@ func (s *GetRegistrationCodeOutput) SetRegistrationCode(v string) *GetRegistrati
 	return s
 }
 
+type GetStatisticsInput struct {
+	_ struct{} `type:"structure"`
+
+	// The aggregation field name. Currently not supported.
+	AggregationField *string `locationName:"aggregationField" min:"1" type:"string"`
+
+	// The name of the index to search. The default value is AWS_Things.
+	IndexName *string `locationName:"indexName" min:"1" type:"string"`
+
+	// The query used to search. You can specify "*" for the query string to get
+	// the count of all indexed things in your AWS account.
+	//
+	// QueryString is a required field
+	QueryString *string `locationName:"queryString" min:"1" type:"string" required:"true"`
+
+	// The version of the query used to search.
+	QueryVersion *string `locationName:"queryVersion" type:"string"`
+}
+
+// String returns the string representation
+func (s GetStatisticsInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetStatisticsInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *GetStatisticsInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "GetStatisticsInput"}
+	if s.AggregationField != nil && len(*s.AggregationField) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("AggregationField", 1))
+	}
+	if s.IndexName != nil && len(*s.IndexName) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("IndexName", 1))
+	}
+	if s.QueryString == nil {
+		invalidParams.Add(request.NewErrParamRequired("QueryString"))
+	}
+	if s.QueryString != nil && len(*s.QueryString) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("QueryString", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetAggregationField sets the AggregationField field's value.
+func (s *GetStatisticsInput) SetAggregationField(v string) *GetStatisticsInput {
+	s.AggregationField = &v
+	return s
+}
+
+// SetIndexName sets the IndexName field's value.
+func (s *GetStatisticsInput) SetIndexName(v string) *GetStatisticsInput {
+	s.IndexName = &v
+	return s
+}
+
+// SetQueryString sets the QueryString field's value.
+func (s *GetStatisticsInput) SetQueryString(v string) *GetStatisticsInput {
+	s.QueryString = &v
+	return s
+}
+
+// SetQueryVersion sets the QueryVersion field's value.
+func (s *GetStatisticsInput) SetQueryVersion(v string) *GetStatisticsInput {
+	s.QueryVersion = &v
+	return s
+}
+
+type GetStatisticsOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The statistics returned by the Fleet Indexing service based on the query
+	// and aggregation field.
+	Statistics *Statistics `locationName:"statistics" type:"structure"`
+}
+
+// String returns the string representation
+func (s GetStatisticsOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetStatisticsOutput) GoString() string {
+	return s.String()
+}
+
+// SetStatistics sets the Statistics field's value.
+func (s *GetStatisticsOutput) SetStatistics(v *Statistics) *GetStatisticsOutput {
+	s.Statistics = v
+	return s
+}
+
 // The input for the GetTopicRule operation.
 type GetTopicRuleInput struct {
 	_ struct{} `type:"structure"`
@@ -25439,10 +25750,10 @@ type Job struct {
 	// If the job was updated, describes the reason for the update.
 	Comment *string `locationName:"comment" type:"string"`
 
-	// The time, in milliseconds since the epoch, when the job was completed.
+	// The time, in seconds since the epoch, when the job was completed.
 	CompletedAt *time.Time `locationName:"completedAt" type:"timestamp"`
 
-	// The time, in milliseconds since the epoch, when the job was created.
+	// The time, in seconds since the epoch, when the job was created.
 	CreatedAt *time.Time `locationName:"createdAt" type:"timestamp"`
 
 	// A short text description of the job.
@@ -25464,7 +25775,7 @@ type Job struct {
 	// Details about the job process.
 	JobProcessDetails *JobProcessDetails `locationName:"jobProcessDetails" type:"structure"`
 
-	// The time, in milliseconds since the epoch, when the job was last updated.
+	// The time, in seconds since the epoch, when the job was last updated.
 	LastUpdatedAt *time.Time `locationName:"lastUpdatedAt" type:"timestamp"`
 
 	// Configuration for pre-signed S3 URLs.
@@ -25631,14 +25942,13 @@ type JobExecution struct {
 	// The unique identifier you assigned to the job when it was created.
 	JobId *string `locationName:"jobId" min:"1" type:"string"`
 
-	// The time, in milliseconds since the epoch, when the job execution was last
-	// updated.
+	// The time, in seconds since the epoch, when the job execution was last updated.
 	LastUpdatedAt *time.Time `locationName:"lastUpdatedAt" type:"timestamp"`
 
-	// The time, in milliseconds since the epoch, when the job execution was queued.
+	// The time, in seconds since the epoch, when the job execution was queued.
 	QueuedAt *time.Time `locationName:"queuedAt" type:"timestamp"`
 
-	// The time, in milliseconds since the epoch, when the job execution started.
+	// The time, in seconds since the epoch, when the job execution started.
 	StartedAt *time.Time `locationName:"startedAt" type:"timestamp"`
 
 	// The status of the job execution (IN_PROGRESS, QUEUED, FAILED, SUCCEEDED,
@@ -25765,14 +26075,13 @@ type JobExecutionSummary struct {
 	// in commands which return or update job execution information.
 	ExecutionNumber *int64 `locationName:"executionNumber" type:"long"`
 
-	// The time, in milliseconds since the epoch, when the job execution was last
-	// updated.
+	// The time, in seconds since the epoch, when the job execution was last updated.
 	LastUpdatedAt *time.Time `locationName:"lastUpdatedAt" type:"timestamp"`
 
-	// The time, in milliseconds since the epoch, when the job execution was queued.
+	// The time, in seconds since the epoch, when the job execution was queued.
 	QueuedAt *time.Time `locationName:"queuedAt" type:"timestamp"`
 
-	// The time, in milliseconds since the epoch, when the job execution started.
+	// The time, in seconds since the epoch, when the job execution started.
 	StartedAt *time.Time `locationName:"startedAt" type:"timestamp"`
 
 	// The status of the job execution.
@@ -26042,10 +26351,10 @@ func (s *JobProcessDetails) SetProcessingTargets(v []*string) *JobProcessDetails
 type JobSummary struct {
 	_ struct{} `type:"structure"`
 
-	// The time, in milliseconds since the epoch, when the job completed.
+	// The time, in seconds since the epoch, when the job completed.
 	CompletedAt *time.Time `locationName:"completedAt" type:"timestamp"`
 
-	// The time, in milliseconds since the epoch, when the job was created.
+	// The time, in seconds since the epoch, when the job was created.
 	CreatedAt *time.Time `locationName:"createdAt" type:"timestamp"`
 
 	// The job ARN.
@@ -26054,7 +26363,7 @@ type JobSummary struct {
 	// The unique identifier you assigned to this job when it was created.
 	JobId *string `locationName:"jobId" min:"1" type:"string"`
 
-	// The time, in milliseconds since the epoch, when the job was last updated.
+	// The time, in seconds since the epoch, when the job was last updated.
 	LastUpdatedAt *time.Time `locationName:"lastUpdatedAt" type:"timestamp"`
 
 	// The job summary status.
@@ -31104,7 +31413,7 @@ type RegisterCertificateInput struct {
 	// CertificatePem is a required field
 	CertificatePem *string `locationName:"certificatePem" min:"1" type:"string" required:"true"`
 
-	// A boolean value that specifies if the CA certificate is set to active.
+	// A boolean value that specifies if the certificate is set to active.
 	//
 	// Deprecated: SetAsActive has been deprecated
 	SetAsActive *bool `location:"querystring" locationName:"setAsActive" deprecated:"true" type:"boolean"`
@@ -31202,11 +31511,11 @@ func (s *RegisterCertificateOutput) SetCertificateId(v string) *RegisterCertific
 type RegisterThingInput struct {
 	_ struct{} `type:"structure"`
 
-	// The parameters for provisioning a thing. See Programmatic Provisioning (http://docs.aws.amazon.com/iot/latest/developerguide/programmatic-provisioning.html)
+	// The parameters for provisioning a thing. See Programmatic Provisioning (https://docs.aws.amazon.com/iot/latest/developerguide/programmatic-provisioning.html)
 	// for more information.
 	Parameters map[string]*string `locationName:"parameters" type:"map"`
 
-	// The provisioning template. See Programmatic Provisioning (http://docs.aws.amazon.com/iot/latest/developerguide/programmatic-provisioning.html)
+	// The provisioning template. See Programmatic Provisioning (https://docs.aws.amazon.com/iot/latest/developerguide/programmatic-provisioning.html)
 	// for more information.
 	//
 	// TemplateBody is a required field
@@ -31903,7 +32212,7 @@ type S3Action struct {
 	BucketName *string `locationName:"bucketName" type:"string" required:"true"`
 
 	// The Amazon S3 canned ACL that controls access to the object identified by
-	// the object key. For more information, see S3 canned ACLs (http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl).
+	// the object key. For more information, see S3 canned ACLs (https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl).
 	CannedAcl *string `locationName:"cannedAcl" type:"string" enum:"CannedAccessControlList"`
 
 	// The object key.
@@ -32798,7 +33107,7 @@ type SnsAction struct {
 	// are "JSON" and "RAW". The default value of the attribute is "RAW". SNS uses
 	// this setting to determine if the payload should be parsed and relevant platform-specific
 	// bits of the payload should be extracted. To read more about SNS message formats,
-	// see http://docs.aws.amazon.com/sns/latest/dg/json-formats.html (http://docs.aws.amazon.com/sns/latest/dg/json-formats.html)
+	// see https://docs.aws.amazon.com/sns/latest/dg/json-formats.html (https://docs.aws.amazon.com/sns/latest/dg/json-formats.html)
 	// refer to their official documentation.
 	MessageFormat *string `locationName:"messageFormat" type:"string" enum:"MessageFormat"`
 
@@ -33151,6 +33460,63 @@ func (s StartThingRegistrationTaskOutput) GoString() string {
 // SetTaskId sets the TaskId field's value.
 func (s *StartThingRegistrationTaskOutput) SetTaskId(v string) *StartThingRegistrationTaskOutput {
 	s.TaskId = &v
+	return s
+}
+
+// A statistical ranking (percentile) which indicates a threshold value by which
+// a behavior is determined to be in compliance or in violation of the behavior.
+type StatisticalThreshold struct {
+	_ struct{} `type:"structure"`
+
+	// The percentile which resolves to a threshold value by which compliance with
+	// a behavior is determined. Metrics are collected over the specified period
+	// (durationSeconds) from all reporting devices in your account and statistical
+	// ranks are calculated. Then, the measurements from a device are collected
+	// over the same period. If the accumulated measurements from the device fall
+	// above or below (comparisonOperator) the value associated with the percentile
+	// specified, then the device is considered to be in compliance with the behavior,
+	// otherwise a violation occurs.
+	Statistic *string `locationName:"statistic" type:"string"`
+}
+
+// String returns the string representation
+func (s StatisticalThreshold) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s StatisticalThreshold) GoString() string {
+	return s.String()
+}
+
+// SetStatistic sets the Statistic field's value.
+func (s *StatisticalThreshold) SetStatistic(v string) *StatisticalThreshold {
+	s.Statistic = &v
+	return s
+}
+
+// A map of key-value pairs for all supported statistics. Currently, only count
+// is supported.
+type Statistics struct {
+	_ struct{} `type:"structure"`
+
+	// The count of things that match the query.
+	Count *int64 `locationName:"count" type:"integer"`
+}
+
+// String returns the string representation
+func (s Statistics) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s Statistics) GoString() string {
+	return s.String()
+}
+
+// SetCount sets the Count field's value.
+func (s *Statistics) SetCount(v int64) *Statistics {
+	s.Count = &v
 	return s
 }
 
@@ -33995,13 +34361,13 @@ func (s *ThingAttribute) SetVersion(v int64) *ThingAttribute {
 type ThingConnectivity struct {
 	_ struct{} `type:"structure"`
 
-	// True if the thing is connected to the AWS IoT service, false if it is not
+	// True if the thing is connected to the AWS IoT service; false if it is not
 	// connected.
 	Connected *bool `locationName:"connected" type:"boolean"`
 
 	// The epoch time (in milliseconds) when the thing last connected or disconnected.
-	// Note that if the thing has been disconnected for more than a few weeks, the
-	// time value can be missing.
+	// If the thing has been disconnected for more than a few weeks, the time value
+	// might be missing.
 	Timestamp *int64 `locationName:"timestamp" type:"long"`
 }
 
@@ -34034,7 +34400,7 @@ type ThingDocument struct {
 	// The attributes.
 	Attributes map[string]*string `locationName:"attributes" type:"map"`
 
-	// Indicates whether or not the thing is connected to the AWS IoT service.
+	// Indicates whether the thing is connected to the AWS IoT service.
 	Connectivity *ThingConnectivity `locationName:"connectivity" type:"structure"`
 
 	// The shadow.
@@ -34286,18 +34652,17 @@ type ThingIndexingConfiguration struct {
 
 	// Thing connectivity indexing mode. Valid values are:
 	//
-	//    * STATUS – Your thing index will contain connectivity status. In order
-	//    to enable thing connectivity indexing, thingIndexMode must not be set
-	//    to OFF.
+	//    * STATUS – Your thing index contains connectivity status. To enable
+	//    thing connectivity indexing, thingIndexMode must not be set to OFF.
 	//
 	//    * OFF - Thing connectivity status indexing is disabled.
 	ThingConnectivityIndexingMode *string `locationName:"thingConnectivityIndexingMode" type:"string" enum:"ThingConnectivityIndexingMode"`
 
 	// Thing indexing mode. Valid values are:
 	//
-	//    * REGISTRY – Your thing index will contain only registry data.
+	//    * REGISTRY – Your thing index contains registry data only.
 	//
-	//    * REGISTRY_AND_SHADOW - Your thing index will contain registry and shadow
+	//    * REGISTRY_AND_SHADOW - Your thing index contains registry and shadow
 	//    data.
 	//
 	//    * OFF - Thing indexing is disabled.
@@ -34675,7 +35040,7 @@ type TopicRulePayload struct {
 	RuleDisabled *bool `locationName:"ruleDisabled" type:"boolean"`
 
 	// The SQL statement used to query the topic. For more information, see AWS
-	// IoT SQL Reference (http://docs.aws.amazon.com/iot/latest/developerguide/iot-rules.html#aws-iot-sql-reference)
+	// IoT SQL Reference (https://docs.aws.amazon.com/iot/latest/developerguide/iot-rules.html#aws-iot-sql-reference)
 	// in the AWS IoT Developer Guide.
 	//
 	// Sql is a required field
@@ -36007,12 +36372,30 @@ func (s *UpdateScheduledAuditOutput) SetScheduledAuditArn(v string) *UpdateSched
 type UpdateSecurityProfileInput struct {
 	_ struct{} `type:"structure"`
 
+	// A list of metrics whose data is retained (stored). By default, data is retained
+	// for any metric used in the profile's behaviors but it is also retained for
+	// any metric specified here.
+	AdditionalMetricsToRetain []*string `locationName:"additionalMetricsToRetain" type:"list"`
+
 	// Where the alerts are sent. (Alerts are always sent to the console.)
 	AlertTargets map[string]*AlertTarget `locationName:"alertTargets" type:"map"`
 
 	// Specifies the behaviors that, when violated by a device (thing), cause an
 	// alert.
 	Behaviors []*Behavior `locationName:"behaviors" type:"list"`
+
+	// If true, delete all additionalMetricsToRetain defined for this security profile.
+	// If any additionalMetricsToRetain are defined in the current invocation an
+	// exception occurs.
+	DeleteAdditionalMetricsToRetain *bool `locationName:"deleteAdditionalMetricsToRetain" type:"boolean"`
+
+	// If true, delete all alertTargets defined for this security profile. If any
+	// alertTargets are defined in the current invocation an exception occurs.
+	DeleteAlertTargets *bool `locationName:"deleteAlertTargets" type:"boolean"`
+
+	// If true, delete all behaviors defined for this security profile. If any behaviors
+	// are defined in the current invocation an exception occurs.
+	DeleteBehaviors *bool `locationName:"deleteBehaviors" type:"boolean"`
 
 	// The expected version of the security profile. A new version is generated
 	// whenever the security profile is updated. If you specify a value that is
@@ -36074,6 +36457,12 @@ func (s *UpdateSecurityProfileInput) Validate() error {
 	return nil
 }
 
+// SetAdditionalMetricsToRetain sets the AdditionalMetricsToRetain field's value.
+func (s *UpdateSecurityProfileInput) SetAdditionalMetricsToRetain(v []*string) *UpdateSecurityProfileInput {
+	s.AdditionalMetricsToRetain = v
+	return s
+}
+
 // SetAlertTargets sets the AlertTargets field's value.
 func (s *UpdateSecurityProfileInput) SetAlertTargets(v map[string]*AlertTarget) *UpdateSecurityProfileInput {
 	s.AlertTargets = v
@@ -36083,6 +36472,24 @@ func (s *UpdateSecurityProfileInput) SetAlertTargets(v map[string]*AlertTarget) 
 // SetBehaviors sets the Behaviors field's value.
 func (s *UpdateSecurityProfileInput) SetBehaviors(v []*Behavior) *UpdateSecurityProfileInput {
 	s.Behaviors = v
+	return s
+}
+
+// SetDeleteAdditionalMetricsToRetain sets the DeleteAdditionalMetricsToRetain field's value.
+func (s *UpdateSecurityProfileInput) SetDeleteAdditionalMetricsToRetain(v bool) *UpdateSecurityProfileInput {
+	s.DeleteAdditionalMetricsToRetain = &v
+	return s
+}
+
+// SetDeleteAlertTargets sets the DeleteAlertTargets field's value.
+func (s *UpdateSecurityProfileInput) SetDeleteAlertTargets(v bool) *UpdateSecurityProfileInput {
+	s.DeleteAlertTargets = &v
+	return s
+}
+
+// SetDeleteBehaviors sets the DeleteBehaviors field's value.
+func (s *UpdateSecurityProfileInput) SetDeleteBehaviors(v bool) *UpdateSecurityProfileInput {
+	s.DeleteBehaviors = &v
 	return s
 }
 
@@ -36106,6 +36513,11 @@ func (s *UpdateSecurityProfileInput) SetSecurityProfileName(v string) *UpdateSec
 
 type UpdateSecurityProfileOutput struct {
 	_ struct{} `type:"structure"`
+
+	// A list of metrics whose data is retained (stored). By default, data is retained
+	// for any metric used in the security profile's behaviors but it is also retained
+	// for any metric specified here.
+	AdditionalMetricsToRetain []*string `locationName:"additionalMetricsToRetain" type:"list"`
 
 	// Where the alerts are sent. (Alerts are always sent to the console.)
 	AlertTargets map[string]*AlertTarget `locationName:"alertTargets" type:"map"`
@@ -36141,6 +36553,12 @@ func (s UpdateSecurityProfileOutput) String() string {
 // GoString returns the string representation
 func (s UpdateSecurityProfileOutput) GoString() string {
 	return s.String()
+}
+
+// SetAdditionalMetricsToRetain sets the AdditionalMetricsToRetain field's value.
+func (s *UpdateSecurityProfileOutput) SetAdditionalMetricsToRetain(v []*string) *UpdateSecurityProfileOutput {
+	s.AdditionalMetricsToRetain = v
+	return s
 }
 
 // SetAlertTargets sets the AlertTargets field's value.

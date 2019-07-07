@@ -133,6 +133,14 @@ const (
 	// cluster-specific and Region-specific.
 	ErrCodeTargetNotFoundException = "TargetNotFoundException"
 
+	// ErrCodeTaskSetNotFoundException for service response error code
+	// "TaskSetNotFoundException".
+	//
+	// The specified task set could not be found. You can view your available container
+	// instances with DescribeTaskSets. Task sets are specific to each cluster,
+	// service and Region.
+	ErrCodeTaskSetNotFoundException = "TaskSetNotFoundException"
+
 	// ErrCodeUnsupportedFeatureException for service response error code
 	// "UnsupportedFeatureException".
 	//

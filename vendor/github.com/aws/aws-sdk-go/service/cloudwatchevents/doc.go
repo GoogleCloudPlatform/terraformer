@@ -21,7 +21,7 @@
 //    EBS volume.
 //
 // For more information about the features of Amazon CloudWatch Events, see
-// the Amazon CloudWatch Events User Guide (http://docs.aws.amazon.com/AmazonCloudWatch/latest/events).
+// the Amazon CloudWatch Events User Guide (https://docs.aws.amazon.com/AmazonCloudWatch/latest/events).
 //
 // See https://docs.aws.amazon.com/goto/WebAPI/events-2015-10-07 for more information on this service.
 //

@@ -506,7 +506,7 @@ func (c *MQ) DeleteTagsRequest(input *DeleteTagsInput) (req *request.Request, ou
 
 // DeleteTags API operation for AmazonMQ.
 //
-// Remove a tag from a resource.
+// Removes a tag from a resource.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -722,6 +722,176 @@ func (c *MQ) DescribeBroker(input *DescribeBrokerInput) (*DescribeBrokerResponse
 // for more information on using Contexts.
 func (c *MQ) DescribeBrokerWithContext(ctx aws.Context, input *DescribeBrokerInput, opts ...request.Option) (*DescribeBrokerResponse, error) {
 	req, out := c.DescribeBrokerRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opDescribeBrokerEngineTypes = "DescribeBrokerEngineTypes"
+
+// DescribeBrokerEngineTypesRequest generates a "aws/request.Request" representing the
+// client's request for the DescribeBrokerEngineTypes operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See DescribeBrokerEngineTypes for more information on using the DescribeBrokerEngineTypes
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the DescribeBrokerEngineTypesRequest method.
+//    req, resp := client.DescribeBrokerEngineTypesRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/mq-2017-11-27/DescribeBrokerEngineTypes
+func (c *MQ) DescribeBrokerEngineTypesRequest(input *DescribeBrokerEngineTypesInput) (req *request.Request, output *DescribeBrokerEngineTypesOutput) {
+	op := &request.Operation{
+		Name:       opDescribeBrokerEngineTypes,
+		HTTPMethod: "GET",
+		HTTPPath:   "/v1/broker-engine-types",
+	}
+
+	if input == nil {
+		input = &DescribeBrokerEngineTypesInput{}
+	}
+
+	output = &DescribeBrokerEngineTypesOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// DescribeBrokerEngineTypes API operation for AmazonMQ.
+//
+// Describe available engine types and versions.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AmazonMQ's
+// API operation DescribeBrokerEngineTypes for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeBadRequestException "BadRequestException"
+//   Returns information about an error.
+//
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
+//   Returns information about an error.
+//
+//   * ErrCodeForbiddenException "ForbiddenException"
+//   Returns information about an error.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/mq-2017-11-27/DescribeBrokerEngineTypes
+func (c *MQ) DescribeBrokerEngineTypes(input *DescribeBrokerEngineTypesInput) (*DescribeBrokerEngineTypesOutput, error) {
+	req, out := c.DescribeBrokerEngineTypesRequest(input)
+	return out, req.Send()
+}
+
+// DescribeBrokerEngineTypesWithContext is the same as DescribeBrokerEngineTypes with the addition of
+// the ability to pass a context and additional request options.
+//
+// See DescribeBrokerEngineTypes for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *MQ) DescribeBrokerEngineTypesWithContext(ctx aws.Context, input *DescribeBrokerEngineTypesInput, opts ...request.Option) (*DescribeBrokerEngineTypesOutput, error) {
+	req, out := c.DescribeBrokerEngineTypesRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opDescribeBrokerInstanceOptions = "DescribeBrokerInstanceOptions"
+
+// DescribeBrokerInstanceOptionsRequest generates a "aws/request.Request" representing the
+// client's request for the DescribeBrokerInstanceOptions operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See DescribeBrokerInstanceOptions for more information on using the DescribeBrokerInstanceOptions
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the DescribeBrokerInstanceOptionsRequest method.
+//    req, resp := client.DescribeBrokerInstanceOptionsRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/mq-2017-11-27/DescribeBrokerInstanceOptions
+func (c *MQ) DescribeBrokerInstanceOptionsRequest(input *DescribeBrokerInstanceOptionsInput) (req *request.Request, output *DescribeBrokerInstanceOptionsOutput) {
+	op := &request.Operation{
+		Name:       opDescribeBrokerInstanceOptions,
+		HTTPMethod: "GET",
+		HTTPPath:   "/v1/broker-instance-options",
+	}
+
+	if input == nil {
+		input = &DescribeBrokerInstanceOptionsInput{}
+	}
+
+	output = &DescribeBrokerInstanceOptionsOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// DescribeBrokerInstanceOptions API operation for AmazonMQ.
+//
+// Describe available broker instance options.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AmazonMQ's
+// API operation DescribeBrokerInstanceOptions for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeBadRequestException "BadRequestException"
+//   Returns information about an error.
+//
+//   * ErrCodeInternalServerErrorException "InternalServerErrorException"
+//   Returns information about an error.
+//
+//   * ErrCodeForbiddenException "ForbiddenException"
+//   Returns information about an error.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/mq-2017-11-27/DescribeBrokerInstanceOptions
+func (c *MQ) DescribeBrokerInstanceOptions(input *DescribeBrokerInstanceOptionsInput) (*DescribeBrokerInstanceOptionsOutput, error) {
+	req, out := c.DescribeBrokerInstanceOptionsRequest(input)
+	return out, req.Send()
+}
+
+// DescribeBrokerInstanceOptionsWithContext is the same as DescribeBrokerInstanceOptions with the addition of
+// the ability to pass a context and additional request options.
+//
+// See DescribeBrokerInstanceOptions for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *MQ) DescribeBrokerInstanceOptionsWithContext(ctx aws.Context, input *DescribeBrokerInstanceOptionsInput, opts ...request.Option) (*DescribeBrokerInstanceOptionsOutput, error) {
+	req, out := c.DescribeBrokerInstanceOptionsRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -1788,6 +1958,63 @@ func (c *MQ) UpdateUserWithContext(ctx aws.Context, input *UpdateUserRequest, op
 	return out, req.Send()
 }
 
+// Name of the availability zone.
+type AvailabilityZone struct {
+	_ struct{} `type:"structure"`
+
+	// Id for the availability zone.
+	Name *string `locationName:"name" type:"string"`
+}
+
+// String returns the string representation
+func (s AvailabilityZone) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s AvailabilityZone) GoString() string {
+	return s.String()
+}
+
+// SetName sets the Name field's value.
+func (s *AvailabilityZone) SetName(v string) *AvailabilityZone {
+	s.Name = &v
+	return s
+}
+
+// Types of broker engines.
+type BrokerEngineType struct {
+	_ struct{} `type:"structure"`
+
+	// The type of broker engine.
+	EngineType *string `locationName:"engineType" type:"string" enum:"EngineType"`
+
+	// The list of engine versions.
+	EngineVersions []*EngineVersion `locationName:"engineVersions" type:"list"`
+}
+
+// String returns the string representation
+func (s BrokerEngineType) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s BrokerEngineType) GoString() string {
+	return s.String()
+}
+
+// SetEngineType sets the EngineType field's value.
+func (s *BrokerEngineType) SetEngineType(v string) *BrokerEngineType {
+	s.EngineType = &v
+	return s
+}
+
+// SetEngineVersions sets the EngineVersions field's value.
+func (s *BrokerEngineType) SetEngineVersions(v []*EngineVersion) *BrokerEngineType {
+	s.EngineVersions = v
+	return s
+}
+
 // Returns information about all brokers.
 type BrokerInstance struct {
 	_ struct{} `type:"structure"`
@@ -1827,6 +2054,57 @@ func (s *BrokerInstance) SetEndpoints(v []*string) *BrokerInstance {
 // SetIpAddress sets the IpAddress field's value.
 func (s *BrokerInstance) SetIpAddress(v string) *BrokerInstance {
 	s.IpAddress = &v
+	return s
+}
+
+// Option for host instance type.
+type BrokerInstanceOption struct {
+	_ struct{} `type:"structure"`
+
+	// The list of available az.
+	AvailabilityZones []*AvailabilityZone `locationName:"availabilityZones" type:"list"`
+
+	// The type of broker engine.
+	EngineType *string `locationName:"engineType" type:"string" enum:"EngineType"`
+
+	// The type of broker instance.
+	HostInstanceType *string `locationName:"hostInstanceType" type:"string"`
+
+	// The list of supported engine versions.
+	SupportedEngineVersions []*string `locationName:"supportedEngineVersions" type:"list"`
+}
+
+// String returns the string representation
+func (s BrokerInstanceOption) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s BrokerInstanceOption) GoString() string {
+	return s.String()
+}
+
+// SetAvailabilityZones sets the AvailabilityZones field's value.
+func (s *BrokerInstanceOption) SetAvailabilityZones(v []*AvailabilityZone) *BrokerInstanceOption {
+	s.AvailabilityZones = v
+	return s
+}
+
+// SetEngineType sets the EngineType field's value.
+func (s *BrokerInstanceOption) SetEngineType(v string) *BrokerInstanceOption {
+	s.EngineType = &v
+	return s
+}
+
+// SetHostInstanceType sets the HostInstanceType field's value.
+func (s *BrokerInstanceOption) SetHostInstanceType(v string) *BrokerInstanceOption {
+	s.HostInstanceType = &v
+	return s
+}
+
+// SetSupportedEngineVersions sets the SupportedEngineVersions field's value.
+func (s *BrokerInstanceOption) SetSupportedEngineVersions(v []*string) *BrokerInstanceOption {
+	s.SupportedEngineVersions = v
 	return s
 }
 
@@ -2747,6 +3025,95 @@ func (s DeleteUserOutput) GoString() string {
 	return s.String()
 }
 
+type DescribeBrokerEngineTypesInput struct {
+	_ struct{} `type:"structure"`
+
+	EngineType *string `location:"querystring" locationName:"engineType" type:"string"`
+
+	MaxResults *int64 `location:"querystring" locationName:"maxResults" min:"1" type:"integer"`
+
+	NextToken *string `location:"querystring" locationName:"nextToken" type:"string"`
+}
+
+// String returns the string representation
+func (s DescribeBrokerEngineTypesInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s DescribeBrokerEngineTypesInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *DescribeBrokerEngineTypesInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "DescribeBrokerEngineTypesInput"}
+	if s.MaxResults != nil && *s.MaxResults < 1 {
+		invalidParams.Add(request.NewErrParamMinValue("MaxResults", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetEngineType sets the EngineType field's value.
+func (s *DescribeBrokerEngineTypesInput) SetEngineType(v string) *DescribeBrokerEngineTypesInput {
+	s.EngineType = &v
+	return s
+}
+
+// SetMaxResults sets the MaxResults field's value.
+func (s *DescribeBrokerEngineTypesInput) SetMaxResults(v int64) *DescribeBrokerEngineTypesInput {
+	s.MaxResults = &v
+	return s
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *DescribeBrokerEngineTypesInput) SetNextToken(v string) *DescribeBrokerEngineTypesInput {
+	s.NextToken = &v
+	return s
+}
+
+type DescribeBrokerEngineTypesOutput struct {
+	_ struct{} `type:"structure"`
+
+	BrokerEngineTypes []*BrokerEngineType `locationName:"brokerEngineTypes" type:"list"`
+
+	MaxResults *int64 `locationName:"maxResults" min:"5" type:"integer"`
+
+	NextToken *string `locationName:"nextToken" type:"string"`
+}
+
+// String returns the string representation
+func (s DescribeBrokerEngineTypesOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s DescribeBrokerEngineTypesOutput) GoString() string {
+	return s.String()
+}
+
+// SetBrokerEngineTypes sets the BrokerEngineTypes field's value.
+func (s *DescribeBrokerEngineTypesOutput) SetBrokerEngineTypes(v []*BrokerEngineType) *DescribeBrokerEngineTypesOutput {
+	s.BrokerEngineTypes = v
+	return s
+}
+
+// SetMaxResults sets the MaxResults field's value.
+func (s *DescribeBrokerEngineTypesOutput) SetMaxResults(v int64) *DescribeBrokerEngineTypesOutput {
+	s.MaxResults = &v
+	return s
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *DescribeBrokerEngineTypesOutput) SetNextToken(v string) *DescribeBrokerEngineTypesOutput {
+	s.NextToken = &v
+	return s
+}
+
 type DescribeBrokerInput struct {
 	_ struct{} `type:"structure"`
 
@@ -2783,6 +3150,103 @@ func (s *DescribeBrokerInput) Validate() error {
 // SetBrokerId sets the BrokerId field's value.
 func (s *DescribeBrokerInput) SetBrokerId(v string) *DescribeBrokerInput {
 	s.BrokerId = &v
+	return s
+}
+
+type DescribeBrokerInstanceOptionsInput struct {
+	_ struct{} `type:"structure"`
+
+	EngineType *string `location:"querystring" locationName:"engineType" type:"string"`
+
+	HostInstanceType *string `location:"querystring" locationName:"hostInstanceType" type:"string"`
+
+	MaxResults *int64 `location:"querystring" locationName:"maxResults" min:"1" type:"integer"`
+
+	NextToken *string `location:"querystring" locationName:"nextToken" type:"string"`
+}
+
+// String returns the string representation
+func (s DescribeBrokerInstanceOptionsInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s DescribeBrokerInstanceOptionsInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *DescribeBrokerInstanceOptionsInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "DescribeBrokerInstanceOptionsInput"}
+	if s.MaxResults != nil && *s.MaxResults < 1 {
+		invalidParams.Add(request.NewErrParamMinValue("MaxResults", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetEngineType sets the EngineType field's value.
+func (s *DescribeBrokerInstanceOptionsInput) SetEngineType(v string) *DescribeBrokerInstanceOptionsInput {
+	s.EngineType = &v
+	return s
+}
+
+// SetHostInstanceType sets the HostInstanceType field's value.
+func (s *DescribeBrokerInstanceOptionsInput) SetHostInstanceType(v string) *DescribeBrokerInstanceOptionsInput {
+	s.HostInstanceType = &v
+	return s
+}
+
+// SetMaxResults sets the MaxResults field's value.
+func (s *DescribeBrokerInstanceOptionsInput) SetMaxResults(v int64) *DescribeBrokerInstanceOptionsInput {
+	s.MaxResults = &v
+	return s
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *DescribeBrokerInstanceOptionsInput) SetNextToken(v string) *DescribeBrokerInstanceOptionsInput {
+	s.NextToken = &v
+	return s
+}
+
+type DescribeBrokerInstanceOptionsOutput struct {
+	_ struct{} `type:"structure"`
+
+	BrokerInstanceOptions []*BrokerInstanceOption `locationName:"brokerInstanceOptions" type:"list"`
+
+	MaxResults *int64 `locationName:"maxResults" min:"5" type:"integer"`
+
+	NextToken *string `locationName:"nextToken" type:"string"`
+}
+
+// String returns the string representation
+func (s DescribeBrokerInstanceOptionsOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s DescribeBrokerInstanceOptionsOutput) GoString() string {
+	return s.String()
+}
+
+// SetBrokerInstanceOptions sets the BrokerInstanceOptions field's value.
+func (s *DescribeBrokerInstanceOptionsOutput) SetBrokerInstanceOptions(v []*BrokerInstanceOption) *DescribeBrokerInstanceOptionsOutput {
+	s.BrokerInstanceOptions = v
+	return s
+}
+
+// SetMaxResults sets the MaxResults field's value.
+func (s *DescribeBrokerInstanceOptionsOutput) SetMaxResults(v int64) *DescribeBrokerInstanceOptionsOutput {
+	s.MaxResults = &v
+	return s
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *DescribeBrokerInstanceOptionsOutput) SetNextToken(v string) *DescribeBrokerInstanceOptionsOutput {
+	s.NextToken = &v
 	return s
 }
 
@@ -3302,6 +3766,30 @@ func (s *DescribeUserResponse) SetPending(v *UserPendingChanges) *DescribeUserRe
 // SetUsername sets the Username field's value.
 func (s *DescribeUserResponse) SetUsername(v string) *DescribeUserResponse {
 	s.Username = &v
+	return s
+}
+
+// Id of the engine version.
+type EngineVersion struct {
+	_ struct{} `type:"structure"`
+
+	// Id for the version.
+	Name *string `locationName:"name" type:"string"`
+}
+
+// String returns the string representation
+func (s EngineVersion) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s EngineVersion) GoString() string {
+	return s.String()
+}
+
+// SetName sets the Name field's value.
+func (s *EngineVersion) SetName(v string) *EngineVersion {
+	s.Name = &v
 	return s
 }
 

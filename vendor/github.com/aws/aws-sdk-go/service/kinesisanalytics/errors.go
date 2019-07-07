@@ -54,8 +54,8 @@ const (
 	//
 	// Discovery failed to get a record from the streaming source because of the
 	// Amazon Kinesis Streams ProvisionedThroughputExceededException. For more information,
-	// see GetRecords (http://docs.aws.amazon.com/kinesis/latest/APIReference/API_GetRecords.html)
-	// in the Amazon Kinesis Streams API Reference.
+	// see GetRecords (kinesis/latest/APIReference/API_GetRecords.html) in the Amazon
+	// Kinesis Streams API Reference.
 	ErrCodeResourceProvisionedThroughputExceededException = "ResourceProvisionedThroughputExceededException"
 
 	// ErrCodeServiceUnavailableException for service response error code
@@ -63,6 +63,14 @@ const (
 	//
 	// The service is unavailable. Back off and retry the operation.
 	ErrCodeServiceUnavailableException = "ServiceUnavailableException"
+
+	// ErrCodeTooManyTagsException for service response error code
+	// "TooManyTagsException".
+	//
+	// Application created with too many tags, or too many tags added to an application.
+	// Note that the maximum number of application tags includes system tags. The
+	// maximum number of user-defined application tags is 50.
+	ErrCodeTooManyTagsException = "TooManyTagsException"
 
 	// ErrCodeUnableToDetectSchemaException for service response error code
 	// "UnableToDetectSchemaException".
@@ -73,5 +81,8 @@ const (
 
 	// ErrCodeUnsupportedOperationException for service response error code
 	// "UnsupportedOperationException".
+	//
+	// The request was rejected because a specified parameter is not supported or
+	// a specified resource is not valid for this operation.
 	ErrCodeUnsupportedOperationException = "UnsupportedOperationException"
 )

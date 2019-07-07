@@ -24,7 +24,8 @@ import (
 
 type AWSProvider struct {
 	terraform_utils.Provider
-	region string
+	region  string
+	profile string
 }
 
 const awsProviderVersion = ">1.56.0"
@@ -77,7 +78,8 @@ func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
 // check projectName in env params
 func (p *AWSProvider) Init(args []string) error {
 	p.region = args[0]
-	// terraform work with env param AWS_DEFAULT_REGION
+	p.profile = args[1]
+	// terraform work with env params AWS_DEFAULT_REGION
 	err := os.Setenv("AWS_DEFAULT_REGION", p.region)
 	if err != nil {
 		return err
@@ -98,7 +100,8 @@ func (p *AWSProvider) InitService(serviceName string) error {
 	p.Service.SetName(serviceName)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]string{
-		"region": p.region,
+		"region":  p.region,
+		"profile": p.profile,
 	})
 	return nil
 }

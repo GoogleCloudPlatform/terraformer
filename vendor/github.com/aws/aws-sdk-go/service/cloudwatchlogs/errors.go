@@ -41,7 +41,7 @@ const (
 	// a QueryCompileError object. For more information, see .
 	//
 	// For more information about valid query syntax, see CloudWatch Logs Insights
-	// Query Syntax (http://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_QuerySyntax.html).
+	// Query Syntax (https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_QuerySyntax.html).
 	ErrCodeMalformedQueryException = "MalformedQueryException"
 
 	// ErrCodeOperationAbortedException for service response error code

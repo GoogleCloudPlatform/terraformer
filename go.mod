@@ -8,7 +8,7 @@ require (
 	github.com/antchfx/xpath v0.0.0-20181126034058-1239a4a2acfc // indirect
 	github.com/antchfx/xquery v0.0.0-20180515051857-ad5b8c7a47b0 // indirect
 	github.com/apparentlymart/go-cidr v1.0.0 // indirect
-	github.com/aws/aws-sdk-go v1.16.23
+	github.com/aws/aws-sdk-go v1.16.36
 	github.com/beevik/etree v1.0.1 // indirect
 	github.com/boombuler/barcode v1.0.0 // indirect
 	github.com/cenkalti/backoff v2.1.1+incompatible // indirect

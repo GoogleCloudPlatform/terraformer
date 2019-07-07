@@ -10,6 +10,13 @@ const (
 	// Indicates that the user has been denied access to the requested resource.
 	ErrCodeAuthorizationErrorException = "AuthorizationError"
 
+	// ErrCodeConcurrentAccessException for service response error code
+	// "ConcurrentAccess".
+	//
+	// Can't perform multiple operations on a tag simultaneously. Perform the operations
+	// sequentially.
+	ErrCodeConcurrentAccessException = "ConcurrentAccess"
+
 	// ErrCodeEndpointDisabledException for service response error code
 	// "EndpointDisabled".
 	//
@@ -68,7 +75,7 @@ const (
 	//
 	// The request was rejected because the state of the specified resource isn't
 	// valid for this request. For more information, see How Key State Affects Use
-	// of a Customer Master Key (http://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+	// of a Customer Master Key (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
 	// in the AWS Key Management Service Developer Guide.
 	ErrCodeKMSInvalidStateException = "KMSInvalidState"
 
@@ -89,7 +96,7 @@ const (
 	// "KMSThrottling".
 	//
 	// The request was denied due to request throttling. For more information about
-	// throttling, see Limits (http://docs.aws.amazon.com/kms/latest/developerguide/limits.html#requests-per-second)
+	// throttling, see Limits (https://docs.aws.amazon.com/kms/latest/developerguide/limits.html#requests-per-second)
 	// in the AWS Key Management Service Developer Guide.
 	ErrCodeKMSThrottlingException = "KMSThrottling"
 
@@ -105,11 +112,37 @@ const (
 	// Exception error indicating platform application disabled.
 	ErrCodePlatformApplicationDisabledException = "PlatformApplicationDisabled"
 
+	// ErrCodeResourceNotFoundException for service response error code
+	// "ResourceNotFound".
+	//
+	// Can't tag resource. Verify that the topic exists.
+	ErrCodeResourceNotFoundException = "ResourceNotFound"
+
+	// ErrCodeStaleTagException for service response error code
+	// "StaleTag".
+	//
+	// A tag has been added to a resource with the same ARN as a deleted resource.
+	// Wait a short while and then retry the operation.
+	ErrCodeStaleTagException = "StaleTag"
+
 	// ErrCodeSubscriptionLimitExceededException for service response error code
 	// "SubscriptionLimitExceeded".
 	//
 	// Indicates that the customer already owns the maximum allowed number of subscriptions.
 	ErrCodeSubscriptionLimitExceededException = "SubscriptionLimitExceeded"
+
+	// ErrCodeTagLimitExceededException for service response error code
+	// "TagLimitExceeded".
+	//
+	// Can't add more than 50 tags to a topic.
+	ErrCodeTagLimitExceededException = "TagLimitExceeded"
+
+	// ErrCodeTagPolicyException for service response error code
+	// "TagPolicy".
+	//
+	// The request doesn't comply with the IAM tag policy. Correct your request
+	// and then retry it.
+	ErrCodeTagPolicyException = "TagPolicy"
 
 	// ErrCodeThrottledException for service response error code
 	// "Throttled".

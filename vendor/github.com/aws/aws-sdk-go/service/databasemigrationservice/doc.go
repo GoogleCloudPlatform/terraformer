@@ -12,7 +12,7 @@
 // to PostgreSQL.
 //
 // For more information about AWS DMS, see What Is AWS Database Migration Service?
-// (http://docs.aws.amazon.com/dms/latest/userguide/Welcome.html) in the AWS
+// (https://docs.aws.amazon.com/dms/latest/userguide/Welcome.html) in the AWS
 // Database Migration User Guide.
 //
 // See https://docs.aws.amazon.com/goto/WebAPI/dms-2016-01-01 for more information on this service.

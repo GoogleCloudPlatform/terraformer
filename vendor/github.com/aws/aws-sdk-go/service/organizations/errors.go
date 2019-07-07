@@ -17,7 +17,7 @@ const (
 	// You don't have permissions to perform the requested operation. The user or
 	// role that is making the request must have at least one IAM permissions policy
 	// attached that grants the required permissions. For more information, see
-	// Access Management (http://docs.aws.amazon.com/IAM/latest/UserGuide/access.html)
+	// Access Management (https://docs.aws.amazon.com/IAM/latest/UserGuide/access.html)
 	// in the IAM User Guide.
 	ErrCodeAccessDeniedException = "AccessDeniedException"
 
@@ -25,8 +25,8 @@ const (
 	// "AccessDeniedForDependencyException".
 	//
 	// The operation that you attempted requires you to have the iam:CreateServiceLinkedRole
-	// so that AWS Organizations can create the required service-linked role. You
-	// don't have that permission.
+	// for organizations.amazonaws.com permission so that AWS Organizations can
+	// create the required service-linked role. You don't have that permission.
 	ErrCodeAccessDeniedForDependencyException = "AccessDeniedForDependencyException"
 
 	// ErrCodeAccountNotFoundException for service response error code
@@ -71,7 +71,7 @@ const (
 	// "ConstraintViolationException".
 	//
 	// Performing this operation violates a minimum or maximum value limit. For
-	// example, attempting to removing the last service control policy (SCP) from
+	// example, attempting to remove the last service control policy (SCP) from
 	// an OU or root, inviting or creating too many accounts to the organization,
 	// or attaching too many policies to an account, OU, or root. This exception
 	// includes a reason that contains additional information about the violated
@@ -79,46 +79,6 @@ const (
 	//
 	// Some of the reasons in the following list might not be applicable to this
 	// specific API or operation:
-	//
-	//    * ACCOUNT_NUMBER_LIMIT_EXCEEDED: You attempted to exceed the limit on
-	//    the number of accounts in an organization. If you need more accounts,
-	//    contactAWS Support (https://console.aws.amazon.com/support/home#/) to
-	//    request an increase in your limit.
-	//
-	// Or the number of invitations that you tried to send would cause you to exceed
-	//    the limit of accounts in your organization. Send fewer invitations or
-	//    contact AWS Support to request an increase in the number of accounts.
-	//
-	// Deleted and closed accounts still count toward your limit.
-	//
-	// If you get receive this exception when running a command immediately after
-	//    creating the organization, wait one hour and try again. If after an hour
-	//    it continues to fail with this error, contact AWS Support (https://console.aws.amazon.com/support/home#/).
-	//
-	//    * HANDSHAKE_RATE_LIMIT_EXCEEDED: You attempted to exceed the number of
-	//    handshakes that you can send in one day.
-	//
-	//    * OU_NUMBER_LIMIT_EXCEEDED: You attempted to exceed the number of OUs
-	//    that you can have in an organization.
-	//
-	//    * OU_DEPTH_LIMIT_EXCEEDED: You attempted to create an OU tree that is
-	//    too many levels deep.
-	//
-	//    * ORGANIZATION_NOT_IN_ALL_FEATURES_MODE: You attempted to perform an operation
-	//    that requires the organization to be configured to support all features.
-	//    An organization that supports only consolidated billing features can't
-	//    perform this operation.
-	//
-	//    * POLICY_NUMBER_LIMIT_EXCEEDED. You attempted to exceed the number of
-	//    policies that you can have in an organization.
-	//
-	//    * MAX_POLICY_TYPE_ATTACHMENT_LIMIT_EXCEEDED: You attempted to exceed the
-	//    number of policies of a certain type that can be attached to an entity
-	//    at one time.
-	//
-	//    * MIN_POLICY_TYPE_ATTACHMENT_LIMIT_EXCEEDED: You attempted to detach a
-	//    policy from an entity that would cause the entity to have fewer than the
-	//    minimum number of policies of a certain type required.
 	//
 	//    * ACCOUNT_CANNOT_LEAVE_WITHOUT_EULA: You attempted to remove an account
 	//    from the organization that doesn't yet have enough information to exist
@@ -134,22 +94,23 @@ const (
 	//    all required account information has not yet been provided (http://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_remove.html#leave-without-all-info)
 	//    in the AWS Organizations User Guide.
 	//
-	//    * MASTER_ACCOUNT_PAYMENT_INSTRUMENT_REQUIRED: To create an organization
-	//    with this master account, you first must associate a payment instrument,
-	//    such as a credit card, with the account. Follow the steps at To leave
-	//    an organization when all required account information has not yet been
-	//    provided (http://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_remove.html#leave-without-all-info)
-	//    in the AWS Organizations User Guide.
-	//
-	//    * MEMBER_ACCOUNT_PAYMENT_INSTRUMENT_REQUIRED: To complete this operation
-	//    with this member account, you first must associate a payment instrument,
-	//    such as a credit card, with the account. Follow the steps at To leave
-	//    an organization when all required account information has not yet been
-	//    provided (http://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_remove.html#leave-without-all-info)
-	//    in the AWS Organizations User Guide.
-	//
 	//    * ACCOUNT_CREATION_RATE_LIMIT_EXCEEDED: You attempted to exceed the number
 	//    of accounts that you can create in one day.
+	//
+	//    * ACCOUNT_NUMBER_LIMIT_EXCEEDED: You attempted to exceed the limit on
+	//    the number of accounts in an organization. If you need more accounts,
+	//    contact AWS Support (https://console.aws.amazon.com/support/home#/) to
+	//    request an increase in your limit. Or the number of invitations that you
+	//    tried to send would cause you to exceed the limit of accounts in your
+	//    organization. Send fewer invitations or contact AWS Support to request
+	//    an increase in the number of accounts. Deleted and closed accounts still
+	//    count toward your limit. If you get receive this exception when running
+	//    a command immediately after creating the organization, wait one hour and
+	//    try again. If after an hour it continues to fail with this error, contact
+	//    AWS Support (https://console.aws.amazon.com/support/home#/).
+	//
+	//    * HANDSHAKE_RATE_LIMIT_EXCEEDED: You attempted to exceed the number of
+	//    handshakes that you can send in one day.
 	//
 	//    * MASTER_ACCOUNT_ADDRESS_DOES_NOT_MATCH_MARKETPLACE: To create an account
 	//    in this organization, you first must migrate the organization's master
@@ -161,6 +122,50 @@ const (
 	//    * MASTER_ACCOUNT_MISSING_CONTACT_INFO: To complete this operation, you
 	//    must first provide contact a valid address and phone number for the master
 	//    account. Then try the operation again.
+	//
+	//    * MASTER_ACCOUNT_NOT_GOVCLOUD_ENABLED: To complete this operation, the
+	//    master account must have an associated account in the AWS GovCloud (US-West)
+	//    Region. For more information, see AWS Organizations (http://docs.aws.amazon.com/govcloud-us/latest/UserGuide/govcloud-organizations.html)
+	//    in the AWS GovCloud User Guide.
+	//
+	//    * MASTER_ACCOUNT_PAYMENT_INSTRUMENT_REQUIRED: To create an organization
+	//    with this master account, you first must associate a valid payment instrument,
+	//    such as a credit card, with the account. Follow the steps at To leave
+	//    an organization when all required account information has not yet been
+	//    provided (http://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_remove.html#leave-without-all-info)
+	//    in the AWS Organizations User Guide.
+	//
+	//    * MAX_POLICY_TYPE_ATTACHMENT_LIMIT_EXCEEDED: You attempted to exceed the
+	//    number of policies of a certain type that can be attached to an entity
+	//    at one time.
+	//
+	//    * MAX_TAG_LIMIT_EXCEEDED: You have exceeded the number of tags allowed
+	//    on this resource.
+	//
+	//    * MEMBER_ACCOUNT_PAYMENT_INSTRUMENT_REQUIRED: To complete this operation
+	//    with this member account, you first must associate a valid payment instrument,
+	//    such as a credit card, with the account. Follow the steps at To leave
+	//    an organization when all required account information has not yet been
+	//    provided (http://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_remove.html#leave-without-all-info)
+	//    in the AWS Organizations User Guide.
+	//
+	//    * MIN_POLICY_TYPE_ATTACHMENT_LIMIT_EXCEEDED: You attempted to detach a
+	//    policy from an entity that would cause the entity to have fewer than the
+	//    minimum number of policies of a certain type required.
+	//
+	//    * OU_DEPTH_LIMIT_EXCEEDED: You attempted to create an OU tree that is
+	//    too many levels deep.
+	//
+	//    * ORGANIZATION_NOT_IN_ALL_FEATURES_MODE: You attempted to perform an operation
+	//    that requires the organization to be configured to support all features.
+	//    An organization that supports only consolidated billing features can't
+	//    perform this operation.
+	//
+	//    * OU_NUMBER_LIMIT_EXCEEDED: You attempted to exceed the number of OUs
+	//    that you can have in an organization.
+	//
+	//    * POLICY_NUMBER_LIMIT_EXCEEDED. You attempted to exceed the number of
+	//    policies that you can have in an organization.
 	ErrCodeConstraintViolationException = "ConstraintViolationException"
 
 	// ErrCodeCreateAccountStatusNotFoundException for service response error code
@@ -238,29 +243,23 @@ const (
 	//
 	//    * ACCOUNT_NUMBER_LIMIT_EXCEEDED: You attempted to exceed the limit on
 	//    the number of accounts in an organization. Note that deleted and closed
-	//    accounts still count toward your limit.
-	//
-	// If you get this exception immediately after creating the organization, wait
-	//    one hour and try again. If after an hour it continues to fail with this
-	//    error, contact AWS Support (https://console.aws.amazon.com/support/home#/).
-	//
-	//    * HANDSHAKE_RATE_LIMIT_EXCEEDED: You attempted to exceed the number of
-	//    handshakes that you can send in one day.
+	//    accounts still count toward your limit. If you get this exception immediately
+	//    after creating the organization, wait one hour and try again. If after
+	//    an hour it continues to fail with this error, contact AWS Support (https://console.aws.amazon.com/support/home#/).
 	//
 	//    * ALREADY_IN_AN_ORGANIZATION: The handshake request is invalid because
 	//    the invited account is already a member of an organization.
 	//
-	//    * ORGANIZATION_ALREADY_HAS_ALL_FEATURES: The handshake request is invalid
-	//    because the organization has already enabled all features.
+	//    * HANDSHAKE_RATE_LIMIT_EXCEEDED: You attempted to exceed the number of
+	//    handshakes that you can send in one day.
 	//
 	//    * INVITE_DISABLED_DURING_ENABLE_ALL_FEATURES: You can't issue new invitations
 	//    to join an organization while it's in the process of enabling all features.
 	//    You can resume inviting accounts after you finalize the process when all
 	//    accounts have agreed to the change.
 	//
-	//    * PAYMENT_INSTRUMENT_REQUIRED: You can't complete the operation with an
-	//    account that doesn't have a payment instrument, such as a credit card,
-	//    associated with it.
+	//    * ORGANIZATION_ALREADY_HAS_ALL_FEATURES: The handshake request is invalid
+	//    because the organization has already enabled all features.
 	//
 	//    * ORGANIZATION_FROM_DIFFERENT_SELLER_OF_RECORD: The request failed because
 	//    the account is from a different marketplace than the accounts in the organization.
@@ -270,6 +269,10 @@ const (
 	//
 	//    * ORGANIZATION_MEMBERSHIP_CHANGE_RATE_LIMIT_EXCEEDED: You attempted to
 	//    change the membership of an account too quickly after its previous change.
+	//
+	//    * PAYMENT_INSTRUMENT_REQUIRED: You can't complete the operation with an
+	//    account that doesn't have a payment instrument, such as a credit card,
+	//    associated with it.
 	ErrCodeHandshakeConstraintViolationException = "HandshakeConstraintViolationException"
 
 	// ErrCodeHandshakeNotFoundException for service response error code
@@ -301,7 +304,7 @@ const (
 	//
 	//    * INPUT_REQUIRED: You must include a value for all required parameters.
 	//
-	//    * INVALID_ENUM: You specified a value that isn't valid for that parameter.
+	//    * INVALID_ENUM: You specified an invalid value.
 	//
 	//    * INVALID_FULL_NAME_TARGET: You specified a full name that contains invalid
 	//    characters.
@@ -309,11 +312,11 @@ const (
 	//    * INVALID_LIST_MEMBER: You provided a list to a parameter that contains
 	//    at least one invalid value.
 	//
-	//    * INVALID_PARTY_TYPE_TARGET: You specified the wrong type of entity (account,
-	//    organization, or email) as a party.
-	//
 	//    * INVALID_PAGINATION_TOKEN: Get the value for the NextToken parameter
 	//    from the response to a previous call of the operation.
+	//
+	//    * INVALID_PARTY_TYPE_TARGET: You specified the wrong type of entity (account,
+	//    organization, or email) as a party.
 	//
 	//    * INVALID_PATTERN: You provided a value that doesn't match the required
 	//    pattern.
@@ -328,6 +331,11 @@ const (
 	//    Name (ARN) for the organization.
 	//
 	//    * INVALID_SYNTAX_POLICY_ID: You specified an invalid policy ID.
+	//
+	//    * INVALID_SYSTEM_TAGS_PARAMETER: You specified a tag key that is a system
+	//    tag. You can’t add, edit, or delete system tag keys because they're
+	//    reserved for AWS use. System tags don’t count against your tags per
+	//    resource limit.
 	//
 	//    * MAX_FILTER_LIMIT_EXCEEDED: You can specify only one filter parameter
 	//    for the operation.
@@ -353,7 +361,7 @@ const (
 	//
 	// The provided policy document doesn't meet the requirements of the specified
 	// policy type. For example, the syntax might be incorrect. For details about
-	// service control policy syntax, see Service Control Policy Syntax (http://docs.aws.amazon.com/organizations/latest/userguide/orgs_reference_scp-syntax.html)
+	// service control policy syntax, see Service Control Policy Syntax (https://docs.aws.amazon.com/organizations/latest/userguide/orgs_reference_scp-syntax.html)
 	// in the AWS Organizations User Guide.
 	ErrCodeMalformedPolicyDocumentException = "MalformedPolicyDocumentException"
 
@@ -422,7 +430,7 @@ const (
 	// You can't use the specified policy type with the feature set currently enabled
 	// for this organization. For example, you can enable SCPs only after you enable
 	// all features in the organization. For more information, see Enabling and
-	// Disabling a Policy Type on a Root (http://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies.html#enable_policies_on_root)
+	// Disabling a Policy Type on a Root (https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies.html#enable_policies_on_root)
 	// in the AWS Organizations User Guide.
 	ErrCodePolicyTypeNotAvailableForOrganizationException = "PolicyTypeNotAvailableForOrganizationException"
 
@@ -432,7 +440,7 @@ const (
 	// The specified policy type isn't currently enabled in this root. You can't
 	// attach policies of the specified type to entities in a root until you enable
 	// that type in the root. For more information, see Enabling All Features in
-	// Your Organization (http://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_org_support-all-features.html)
+	// Your Organization (https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_org_support-all-features.html)
 	// in the AWS Organizations User Guide.
 	ErrCodePolicyTypeNotEnabledException = "PolicyTypeNotEnabledException"
 
@@ -464,7 +472,17 @@ const (
 	// ErrCodeTooManyRequestsException for service response error code
 	// "TooManyRequestsException".
 	//
-	// You've sent too many requests in too short a period of time. The limit helps
-	// protect against denial-of-service attacks. Try again later.
+	// You have sent too many requests in too short a period of time. The limit
+	// helps protect against denial-of-service attacks. Try again later.
+	//
+	// For information on limits that affect AWS Organizations, see Limits of AWS
+	// Organizations (https://docs.aws.amazon.com/organizations/latest/userguide/orgs_reference_limits.html)
+	// in the AWS Organizations User Guide.
 	ErrCodeTooManyRequestsException = "TooManyRequestsException"
+
+	// ErrCodeUnsupportedAPIEndpointException for service response error code
+	// "UnsupportedAPIEndpointException".
+	//
+	// This action isn't available in the current Region.
+	ErrCodeUnsupportedAPIEndpointException = "UnsupportedAPIEndpointException"
 )

@@ -388,13 +388,11 @@ func (c *SQS) CreateQueueRequest(input *CreateQueueInput) (req *request.Request,
 // in the request. Keep the following caveats in mind:
 //
 //    * If you don't specify the FifoQueue attribute, Amazon SQS creates a standard
-//    queue.
-//
-//  You can't change the queue type after you create it and you can't convert
-//    an existing standard queue into a FIFO queue. You must either create a
-//    new FIFO queue for your application or delete your existing standard queue
-//    and recreate it as a FIFO queue. For more information, see Moving From
-//    a Standard Queue to a FIFO Queue (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html#FIFO-queues-moving)
+//    queue. You can't change the queue type after you create it and you can't
+//    convert an existing standard queue into a FIFO queue. You must either
+//    create a new FIFO queue for your application or delete your existing standard
+//    queue and recreate it as a FIFO queue. For more information, see Moving
+//    From a Standard Queue to a FIFO Queue (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html#FIFO-queues-moving)
 //    in the Amazon Simple Queue Service Developer Guide.
 //
 //    * If you don't provide a value for an attribute, the queue is created
@@ -2501,19 +2499,15 @@ type CreateQueueInput struct {
 	//    queue functionality of the source queue. For more information about the
 	//    redrive policy and dead-letter queues, see Using Amazon SQS Dead-Letter
 	//    Queues (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html)
-	//    in the Amazon Simple Queue Service Developer Guide.
-	//
-	// deadLetterTargetArn - The Amazon Resource Name (ARN) of the dead-letter queue
-	//    to which Amazon SQS moves messages after the value of maxReceiveCount
-	//    is exceeded.
-	//
-	// maxReceiveCount - The number of times a message is delivered to the source
-	//    queue before being moved to the dead-letter queue. When the ReceiveCount
-	//    for a message exceeds the maxReceiveCount for a queue, Amazon SQS moves
-	//    the message to the dead-letter-queue.
-	//
-	// The dead-letter queue of a FIFO queue must also be a FIFO queue. Similarly,
-	//    the dead-letter queue of a standard queue must also be a standard queue.
+	//    in the Amazon Simple Queue Service Developer Guide. deadLetterTargetArn
+	//    - The Amazon Resource Name (ARN) of the dead-letter queue to which Amazon
+	//    SQS moves messages after the value of maxReceiveCount is exceeded. maxReceiveCount
+	//    - The number of times a message is delivered to the source queue before
+	//    being moved to the dead-letter queue. When the ReceiveCount for a message
+	//    exceeds the maxReceiveCount for a queue, Amazon SQS moves the message
+	//    to the dead-letter-queue. The dead-letter queue of a FIFO queue must also
+	//    be a FIFO queue. Similarly, the dead-letter queue of a standard queue
+	//    must also be a standard queue.
 	//
 	//    * VisibilityTimeout - The visibility timeout for the queue, in seconds.
 	//    Valid values: An integer from 0 to 43,200 (12 hours). Default: 30. For
@@ -2526,7 +2520,7 @@ type CreateQueueInput struct {
 	//    * KmsMasterKeyId - The ID of an AWS-managed customer master key (CMK)
 	//    for Amazon SQS or a custom CMK. For more information, see Key Terms (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-server-side-encryption.html#sqs-sse-key-terms).
 	//    While the alias of the AWS-managed CMK for Amazon SQS is always alias/aws/sqs,
-	//    the alias of a custom CMK can, for example, be alias/MyAlias. For more
+	//    the alias of a custom CMK can, for example, be alias/MyAlias . For more
 	//    examples, see KeyId (http://docs.aws.amazon.com/kms/latest/APIReference/API_DescribeKey.html#API_DescribeKey_RequestParameters)
 	//    in the AWS Key Management Service API Reference.
 	//
@@ -2539,45 +2533,33 @@ type CreateQueueInput struct {
 	//    Free Tier. For more information, see How Does the Data Key Reuse Period
 	//    Work? (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-server-side-encryption.html#sqs-how-does-the-data-key-reuse-period-work).
 	//
-	//
 	// The following attributes apply only to FIFO (first-in-first-out) queues (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html):
 	//
 	//    * FifoQueue - Designates a queue as FIFO. Valid values: true, false. You
 	//    can provide this attribute only during queue creation. You can't change
 	//    it for an existing queue. When you set this attribute, you must also provide
-	//    the MessageGroupId for your messages explicitly.
-	//
-	// For more information, see FIFO Queue Logic (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html#FIFO-queues-understanding-logic)
+	//    the MessageGroupId for your messages explicitly. For more information,
+	//    see FIFO Queue Logic (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html#FIFO-queues-understanding-logic)
 	//    in the Amazon Simple Queue Service Developer Guide.
 	//
 	//    * ContentBasedDeduplication - Enables content-based deduplication. Valid
 	//    values: true, false. For more information, see Exactly-Once Processing
 	//    (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html#FIFO-queues-exactly-once-processing)
-	//    in the Amazon Simple Queue Service Developer Guide.
-	//
-	// Every message must have a unique MessageDeduplicationId,
-	//
-	// You may provide a MessageDeduplicationId explicitly.
-	//
-	// If you aren't able to provide a MessageDeduplicationId and you enable ContentBasedDeduplication
-	//    for your queue, Amazon SQS uses a SHA-256 hash to generate the MessageDeduplicationId
-	//    using the body of the message (but not the attributes of the message).
-	//
-	//
-	// If you don't provide a MessageDeduplicationId and the queue doesn't have
-	//    ContentBasedDeduplication set, the action fails with an error.
-	//
-	// If the queue has ContentBasedDeduplication set, your MessageDeduplicationId
-	//    overrides the generated one.
-	//
-	// When ContentBasedDeduplication is in effect, messages with identical content
-	//    sent within the deduplication interval are treated as duplicates and only
-	//    one copy of the message is delivered.
-	//
-	// If you send one message with ContentBasedDeduplication enabled and then another
-	//    message with a MessageDeduplicationId that is the same as the one generated
-	//    for the first MessageDeduplicationId, the two messages are treated as
-	//    duplicates and only one copy of the message is delivered.
+	//    in the Amazon Simple Queue Service Developer Guide. Every message must
+	//    have a unique MessageDeduplicationId, You may provide a MessageDeduplicationId
+	//    explicitly. If you aren't able to provide a MessageDeduplicationId and
+	//    you enable ContentBasedDeduplication for your queue, Amazon SQS uses a
+	//    SHA-256 hash to generate the MessageDeduplicationId using the body of
+	//    the message (but not the attributes of the message). If you don't provide
+	//    a MessageDeduplicationId and the queue doesn't have ContentBasedDeduplication
+	//    set, the action fails with an error. If the queue has ContentBasedDeduplication
+	//    set, your MessageDeduplicationId overrides the generated one. When ContentBasedDeduplication
+	//    is in effect, messages with identical content sent within the deduplication
+	//    interval are treated as duplicates and only one copy of the message is
+	//    delivered. If you send one message with ContentBasedDeduplication enabled
+	//    and then another message with a MessageDeduplicationId that is the same
+	//    as the one generated for the first MessageDeduplicationId, the two messages
+	//    are treated as duplicates and only one copy of the message is delivered.
 	Attributes map[string]*string `locationName:"Attribute" locationNameKey:"Name" locationNameValue:"Value" type:"map" flattened:"true"`
 
 	// The name of the new queue. The following limits apply to this name:
@@ -3012,16 +2994,13 @@ type GetQueueAttributesInput struct {
 	//    dead-letter queue functionality of the source queue. For more information
 	//    about the redrive policy and dead-letter queues, see Using Amazon SQS
 	//    Dead-Letter Queues (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html)
-	//    in the Amazon Simple Queue Service Developer Guide.
-	//
-	// deadLetterTargetArn - The Amazon Resource Name (ARN) of the dead-letter queue
-	//    to which Amazon SQS moves messages after the value of maxReceiveCount
-	//    is exceeded.
-	//
-	// maxReceiveCount - The number of times a message is delivered to the source
-	//    queue before being moved to the dead-letter queue. When the ReceiveCount
-	//    for a message exceeds the maxReceiveCount for a queue, Amazon SQS moves
-	//    the message to the dead-letter-queue.
+	//    in the Amazon Simple Queue Service Developer Guide. deadLetterTargetArn
+	//    - The Amazon Resource Name (ARN) of the dead-letter queue to which Amazon
+	//    SQS moves messages after the value of maxReceiveCount is exceeded. maxReceiveCount
+	//    - The number of times a message is delivered to the source queue before
+	//    being moved to the dead-letter queue. When the ReceiveCount for a message
+	//    exceeds the maxReceiveCount for a queue, Amazon SQS moves the message
+	//    to the dead-letter-queue.
 	//
 	//    * VisibilityTimeout - Returns the visibility timeout for the queue. For
 	//    more information about the visibility timeout, see Visibility Timeout
@@ -3034,20 +3013,17 @@ type GetQueueAttributesInput struct {
 	//    (CMK) for Amazon SQS or a custom CMK. For more information, see Key Terms
 	//    (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-server-side-encryption.html#sqs-sse-key-terms).
 	//
-	//
 	//    * KmsDataKeyReusePeriodSeconds - Returns the length of time, in seconds,
 	//    for which Amazon SQS can reuse a data key to encrypt or decrypt messages
 	//    before calling AWS KMS again. For more information, see How Does the Data
 	//    Key Reuse Period Work? (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-server-side-encryption.html#sqs-how-does-the-data-key-reuse-period-work).
 	//
-	//
 	// The following attributes apply only to FIFO (first-in-first-out) queues (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html):
 	//
 	//    * FifoQueue - Returns whether the queue is FIFO. For more information,
 	//    see FIFO Queue Logic (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html#FIFO-queues-understanding-logic)
-	//    in the Amazon Simple Queue Service Developer Guide.
-	//
-	// To determine whether a queue is FIFO (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html),
+	//    in the Amazon Simple Queue Service Developer Guide. To determine whether
+	//    a queue is FIFO (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html),
 	//    you can check whether QueueName ends with the .fifo suffix.
 	//
 	//    * ContentBasedDeduplication - Returns whether content-based deduplication
@@ -3640,11 +3616,8 @@ type ReceiveMessageInput struct {
 	//    * ApproximateReceiveCount - Returns the number of times a message has
 	//    been received from the queue but not deleted.
 	//
-	//    * SenderId
-	//
-	// For an IAM user, returns the IAM user ID, for example ABCDEFGHI1JKLMNOPQ23R.
-	//
-	// For an IAM role, returns the IAM role ID, for example ABCDE1F2GH3I4JK5LMNOP:i-a123b456.
+	//    * SenderId For an IAM user, returns the IAM user ID, for example ABCDEFGHI1JKLMNOPQ23R.
+	//    For an IAM role, returns the IAM role ID, for example ABCDE1F2GH3I4JK5LMNOP:i-a123b456.
 	//
 	//    * SentTimestamp - Returns the time the message was sent to the queue (epoch
 	//    time (http://en.wikipedia.org/wiki/Unix_time) in milliseconds).
@@ -3718,18 +3691,15 @@ type ReceiveMessageInput struct {
 	//    return the same messages and receipt handles. If a retry occurs within
 	//    the deduplication interval, it resets the visibility timeout. For more
 	//    information, see Visibility Timeout (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-visibility-timeout.html)
-	//    in the Amazon Simple Queue Service Developer Guide.
-	//
-	// If a caller of the ReceiveMessage action still processes messages when the
-	//    visibility timeout expires and messages become visible, another worker
-	//    consuming from the same queue can receive the same messages and therefore
-	//    process duplicates. Also, if a consumer whose message processing time
-	//    is longer than the visibility timeout tries to delete the processed messages,
-	//    the action fails with an error.
-	//
-	// To mitigate this effect, ensure that your application observes a safe threshold
-	//    before the visibility timeout expires and extend the visibility timeout
-	//    as necessary.
+	//    in the Amazon Simple Queue Service Developer Guide. If a caller of the
+	//    ReceiveMessage action still processes messages when the visibility timeout
+	//    expires and messages become visible, another worker consuming from the
+	//    same queue can receive the same messages and therefore process duplicates.
+	//    Also, if a consumer whose message processing time is longer than the visibility
+	//    timeout tries to delete the processed messages, the action fails with
+	//    an error. To mitigate this effect, ensure that your application observes
+	//    a safe threshold before the visibility timeout expires and extend the
+	//    visibility timeout as necessary.
 	//
 	//    * While messages with a particular MessageGroupId are invisible, no more
 	//    messages belonging to the same MessageGroupId are returned until the visibility
@@ -4059,24 +4029,17 @@ type SendMessageBatchRequestEntry struct {
 	// The token used for deduplication of messages within a 5-minute minimum deduplication
 	// interval. If a message with a particular MessageDeduplicationId is sent successfully,
 	// subsequent messages with the same MessageDeduplicationId are accepted successfully
-	// but aren't delivered. For more information, see  Exactly-Once Processing
-	// (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html#FIFO-queues-exactly-once-processing)
+	// but aren't delivered. For more information, see Exactly-Once Processing (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html#FIFO-queues-exactly-once-processing)
 	// in the Amazon Simple Queue Service Developer Guide.
 	//
-	//    * Every message must have a unique MessageDeduplicationId,
-	//
-	// You may provide a MessageDeduplicationId explicitly.
-	//
-	// If you aren't able to provide a MessageDeduplicationId and you enable ContentBasedDeduplication
-	//    for your queue, Amazon SQS uses a SHA-256 hash to generate the MessageDeduplicationId
-	//    using the body of the message (but not the attributes of the message).
-	//
-	//
-	// If you don't provide a MessageDeduplicationId and the queue doesn't have
-	//    ContentBasedDeduplication set, the action fails with an error.
-	//
-	// If the queue has ContentBasedDeduplication set, your MessageDeduplicationId
-	//    overrides the generated one.
+	//    * Every message must have a unique MessageDeduplicationId, You may provide
+	//    a MessageDeduplicationId explicitly. If you aren't able to provide a MessageDeduplicationId
+	//    and you enable ContentBasedDeduplication for your queue, Amazon SQS uses
+	//    a SHA-256 hash to generate the MessageDeduplicationId using the body of
+	//    the message (but not the attributes of the message). If you don't provide
+	//    a MessageDeduplicationId and the queue doesn't have ContentBasedDeduplication
+	//    set, the action fails with an error. If the queue has ContentBasedDeduplication
+	//    set, your MessageDeduplicationId overrides the generated one.
 	//
 	//    * When ContentBasedDeduplication is in effect, messages with identical
 	//    content sent within the deduplication interval are treated as duplicates
@@ -4318,24 +4281,18 @@ type SendMessageInput struct {
 	// The token used for deduplication of sent messages. If a message with a particular
 	// MessageDeduplicationId is sent successfully, any messages sent with the same
 	// MessageDeduplicationId are accepted successfully but aren't delivered during
-	// the 5-minute deduplication interval. For more information, see  Exactly-Once
+	// the 5-minute deduplication interval. For more information, see Exactly-Once
 	// Processing (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html#FIFO-queues-exactly-once-processing)
 	// in the Amazon Simple Queue Service Developer Guide.
 	//
-	//    * Every message must have a unique MessageDeduplicationId,
-	//
-	// You may provide a MessageDeduplicationId explicitly.
-	//
-	// If you aren't able to provide a MessageDeduplicationId and you enable ContentBasedDeduplication
-	//    for your queue, Amazon SQS uses a SHA-256 hash to generate the MessageDeduplicationId
-	//    using the body of the message (but not the attributes of the message).
-	//
-	//
-	// If you don't provide a MessageDeduplicationId and the queue doesn't have
-	//    ContentBasedDeduplication set, the action fails with an error.
-	//
-	// If the queue has ContentBasedDeduplication set, your MessageDeduplicationId
-	//    overrides the generated one.
+	//    * Every message must have a unique MessageDeduplicationId, You may provide
+	//    a MessageDeduplicationId explicitly. If you aren't able to provide a MessageDeduplicationId
+	//    and you enable ContentBasedDeduplication for your queue, Amazon SQS uses
+	//    a SHA-256 hash to generate the MessageDeduplicationId using the body of
+	//    the message (but not the attributes of the message). If you don't provide
+	//    a MessageDeduplicationId and the queue doesn't have ContentBasedDeduplication
+	//    set, the action fails with an error. If the queue has ContentBasedDeduplication
+	//    set, your MessageDeduplicationId overrides the generated one.
 	//
 	//    * When ContentBasedDeduplication is in effect, messages with identical
 	//    content sent within the deduplication interval are treated as duplicates
@@ -4556,7 +4513,6 @@ type SetQueueAttributesInput struct {
 	//    SQS retains a message. Valid values: An integer representing seconds,
 	//    from 60 (1 minute) to 1,209,600 (14 days). Default: 345,600 (4 days).
 	//
-	//
 	//    * Policy - The queue's policy. A valid AWS policy. For more information
 	//    about policy structure, see Overview of AWS IAM Policies (http://docs.aws.amazon.com/IAM/latest/UserGuide/PoliciesOverview.html)
 	//    in the Amazon IAM User Guide.
@@ -4569,19 +4525,15 @@ type SetQueueAttributesInput struct {
 	//    queue functionality of the source queue. For more information about the
 	//    redrive policy and dead-letter queues, see Using Amazon SQS Dead-Letter
 	//    Queues (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html)
-	//    in the Amazon Simple Queue Service Developer Guide.
-	//
-	// deadLetterTargetArn - The Amazon Resource Name (ARN) of the dead-letter queue
-	//    to which Amazon SQS moves messages after the value of maxReceiveCount
-	//    is exceeded.
-	//
-	// maxReceiveCount - The number of times a message is delivered to the source
-	//    queue before being moved to the dead-letter queue. When the ReceiveCount
-	//    for a message exceeds the maxReceiveCount for a queue, Amazon SQS moves
-	//    the message to the dead-letter-queue.
-	//
-	// The dead-letter queue of a FIFO queue must also be a FIFO queue. Similarly,
-	//    the dead-letter queue of a standard queue must also be a standard queue.
+	//    in the Amazon Simple Queue Service Developer Guide. deadLetterTargetArn
+	//    - The Amazon Resource Name (ARN) of the dead-letter queue to which Amazon
+	//    SQS moves messages after the value of maxReceiveCount is exceeded. maxReceiveCount
+	//    - The number of times a message is delivered to the source queue before
+	//    being moved to the dead-letter queue. When the ReceiveCount for a message
+	//    exceeds the maxReceiveCount for a queue, Amazon SQS moves the message
+	//    to the dead-letter-queue. The dead-letter queue of a FIFO queue must also
+	//    be a FIFO queue. Similarly, the dead-letter queue of a standard queue
+	//    must also be a standard queue.
 	//
 	//    * VisibilityTimeout - The visibility timeout for the queue, in seconds.
 	//    Valid values: an integer from 0 to 43,200 (12 hours). Default: 30. For
@@ -4594,7 +4546,7 @@ type SetQueueAttributesInput struct {
 	//    * KmsMasterKeyId - The ID of an AWS-managed customer master key (CMK)
 	//    for Amazon SQS or a custom CMK. For more information, see Key Terms (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-server-side-encryption.html#sqs-sse-key-terms).
 	//    While the alias of the AWS-managed CMK for Amazon SQS is always alias/aws/sqs,
-	//    the alias of a custom CMK can, for example, be alias/MyAlias. For more
+	//    the alias of a custom CMK can, for example, be alias/MyAlias . For more
 	//    examples, see KeyId (http://docs.aws.amazon.com/kms/latest/APIReference/API_DescribeKey.html#API_DescribeKey_RequestParameters)
 	//    in the AWS Key Management Service API Reference.
 	//
@@ -4607,37 +4559,26 @@ type SetQueueAttributesInput struct {
 	//    Free Tier. For more information, see How Does the Data Key Reuse Period
 	//    Work? (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-server-side-encryption.html#sqs-how-does-the-data-key-reuse-period-work).
 	//
-	//
 	// The following attribute applies only to FIFO (first-in-first-out) queues
 	// (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html):
 	//
 	//    * ContentBasedDeduplication - Enables content-based deduplication. For
 	//    more information, see Exactly-Once Processing (http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/FIFO-queues.html#FIFO-queues-exactly-once-processing)
-	//    in the Amazon Simple Queue Service Developer Guide.
-	//
-	// Every message must have a unique MessageDeduplicationId,
-	//
-	// You may provide a MessageDeduplicationId explicitly.
-	//
-	// If you aren't able to provide a MessageDeduplicationId and you enable ContentBasedDeduplication
-	//    for your queue, Amazon SQS uses a SHA-256 hash to generate the MessageDeduplicationId
-	//    using the body of the message (but not the attributes of the message).
-	//
-	//
-	// If you don't provide a MessageDeduplicationId and the queue doesn't have
-	//    ContentBasedDeduplication set, the action fails with an error.
-	//
-	// If the queue has ContentBasedDeduplication set, your MessageDeduplicationId
-	//    overrides the generated one.
-	//
-	// When ContentBasedDeduplication is in effect, messages with identical content
-	//    sent within the deduplication interval are treated as duplicates and only
-	//    one copy of the message is delivered.
-	//
-	// If you send one message with ContentBasedDeduplication enabled and then another
-	//    message with a MessageDeduplicationId that is the same as the one generated
-	//    for the first MessageDeduplicationId, the two messages are treated as
-	//    duplicates and only one copy of the message is delivered.
+	//    in the Amazon Simple Queue Service Developer Guide. Every message must
+	//    have a unique MessageDeduplicationId, You may provide a MessageDeduplicationId
+	//    explicitly. If you aren't able to provide a MessageDeduplicationId and
+	//    you enable ContentBasedDeduplication for your queue, Amazon SQS uses a
+	//    SHA-256 hash to generate the MessageDeduplicationId using the body of
+	//    the message (but not the attributes of the message). If you don't provide
+	//    a MessageDeduplicationId and the queue doesn't have ContentBasedDeduplication
+	//    set, the action fails with an error. If the queue has ContentBasedDeduplication
+	//    set, your MessageDeduplicationId overrides the generated one. When ContentBasedDeduplication
+	//    is in effect, messages with identical content sent within the deduplication
+	//    interval are treated as duplicates and only one copy of the message is
+	//    delivered. If you send one message with ContentBasedDeduplication enabled
+	//    and then another message with a MessageDeduplicationId that is the same
+	//    as the one generated for the first MessageDeduplicationId, the two messages
+	//    are treated as duplicates and only one copy of the message is delivered.
 	//
 	// Attributes is a required field
 	Attributes map[string]*string `locationName:"Attribute" locationNameKey:"Name" locationNameValue:"Value" type:"map" flattened:"true" required:"true"`

@@ -35,7 +35,8 @@ const (
 	// managed by that service. If you see this error in response to DeleteRule
 	// or RemoveTargets, you can use the Force parameter in those calls to delete
 	// the rule or remove targets from the rule. You cannot modify these managed
-	// rules by using DisableRule, EnableRule, PutTargets, or PutRule.
+	// rules by using DisableRule, EnableRule, PutTargets, PutRule, TagResource,
+	// or UntagResource.
 	ErrCodeManagedRuleException = "ManagedRuleException"
 
 	// ErrCodePolicyLengthExceededException for service response error code

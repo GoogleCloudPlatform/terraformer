@@ -87,7 +87,8 @@ func (c *CloudWatchEvents) DeleteRuleRequest(input *DeleteRuleInput) (req *reque
 //   managed by that service. If you see this error in response to DeleteRule
 //   or RemoveTargets, you can use the Force parameter in those calls to delete
 //   the rule or remove targets from the rule. You cannot modify these managed
-//   rules by using DisableRule, EnableRule, PutTargets, or PutRule.
+//   rules by using DisableRule, EnableRule, PutTargets, PutRule, TagResource,
+//   or UntagResource.
 //
 //   * ErrCodeInternalException "InternalException"
 //   This exception occurs due to unexpected causes.
@@ -353,7 +354,8 @@ func (c *CloudWatchEvents) DisableRuleRequest(input *DisableRuleInput) (req *req
 //   managed by that service. If you see this error in response to DeleteRule
 //   or RemoveTargets, you can use the Force parameter in those calls to delete
 //   the rule or remove targets from the rule. You cannot modify these managed
-//   rules by using DisableRule, EnableRule, PutTargets, or PutRule.
+//   rules by using DisableRule, EnableRule, PutTargets, PutRule, TagResource,
+//   or UntagResource.
 //
 //   * ErrCodeInternalException "InternalException"
 //   This exception occurs due to unexpected causes.
@@ -450,7 +452,8 @@ func (c *CloudWatchEvents) EnableRuleRequest(input *EnableRuleInput) (req *reque
 //   managed by that service. If you see this error in response to DeleteRule
 //   or RemoveTargets, you can use the Force parameter in those calls to delete
 //   the rule or remove targets from the rule. You cannot modify these managed
-//   rules by using DisableRule, EnableRule, PutTargets, or PutRule.
+//   rules by using DisableRule, EnableRule, PutTargets, PutRule, TagResource,
+//   or UntagResource.
 //
 //   * ErrCodeInternalException "InternalException"
 //   This exception occurs due to unexpected causes.
@@ -635,6 +638,89 @@ func (c *CloudWatchEvents) ListRules(input *ListRulesInput) (*ListRulesOutput, e
 // for more information on using Contexts.
 func (c *CloudWatchEvents) ListRulesWithContext(ctx aws.Context, input *ListRulesInput, opts ...request.Option) (*ListRulesOutput, error) {
 	req, out := c.ListRulesRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opListTagsForResource = "ListTagsForResource"
+
+// ListTagsForResourceRequest generates a "aws/request.Request" representing the
+// client's request for the ListTagsForResource operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See ListTagsForResource for more information on using the ListTagsForResource
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the ListTagsForResourceRequest method.
+//    req, resp := client.ListTagsForResourceRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/events-2015-10-07/ListTagsForResource
+func (c *CloudWatchEvents) ListTagsForResourceRequest(input *ListTagsForResourceInput) (req *request.Request, output *ListTagsForResourceOutput) {
+	op := &request.Operation{
+		Name:       opListTagsForResource,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &ListTagsForResourceInput{}
+	}
+
+	output = &ListTagsForResourceOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// ListTagsForResource API operation for Amazon CloudWatch Events.
+//
+// Displays the tags associated with a CloudWatch Events resource. In CloudWatch
+// Events, rules can be tagged.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for Amazon CloudWatch Events's
+// API operation ListTagsForResource for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
+//   An entity that you specified does not exist.
+//
+//   * ErrCodeInternalException "InternalException"
+//   This exception occurs due to unexpected causes.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/events-2015-10-07/ListTagsForResource
+func (c *CloudWatchEvents) ListTagsForResource(input *ListTagsForResourceInput) (*ListTagsForResourceOutput, error) {
+	req, out := c.ListTagsForResourceRequest(input)
+	return out, req.Send()
+}
+
+// ListTagsForResourceWithContext is the same as ListTagsForResource with the addition of
+// the ability to pass a context and additional request options.
+//
+// See ListTagsForResource for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CloudWatchEvents) ListTagsForResourceWithContext(ctx aws.Context, input *ListTagsForResourceInput, opts ...request.Option) (*ListTagsForResourceOutput, error) {
+	req, out := c.ListTagsForResourceRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -865,7 +951,7 @@ func (c *CloudWatchEvents) PutPermissionRequest(input *PutPermissionInput) (req 
 // If you grant permissions using an organization, then accounts in that organization
 // must specify a RoleArn with proper permissions when they use PutTarget to
 // add your account's event bus as a target. For more information, see Sending
-// and Receiving Events Between AWS Accounts (http://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEvents-CrossAccountEventDelivery.html)
+// and Receiving Events Between AWS Accounts (https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEvents-CrossAccountEventDelivery.html)
 // in the Amazon CloudWatch Events User Guide.
 //
 // The permission policy on the default event bus cannot exceed 10 KB in size.
@@ -974,6 +1060,17 @@ func (c *CloudWatchEvents) PutRuleRequest(input *PutRuleInput) (req *request.Req
 // can have both an EventPattern and a ScheduleExpression, in which case the
 // rule triggers on matching events as well as on a schedule.
 //
+// When you initially create a rule, you can optionally assign one or more tags
+// to the rule. Tags can help you organize and categorize your resources. You
+// can also use them to scope user permissions, by granting a user permission
+// to access or change only rules with certain tag values. To use the PutRule
+// operation and assign tags, you must have both the events:PutRule and events:TagResource
+// permissions.
+//
+// If you are updating an existing rule, any tags you specify in the PutRule
+// operation are ignored. To update the tags of an existing rule, use TagResource
+// and UntagResource.
+//
 // Most services in AWS treat : or / as the same character in Amazon Resource
 // Names (ARNs). However, CloudWatch Events uses an exact match in event patterns
 // and rules. Be sure to use the correct ARN characters when creating event
@@ -991,7 +1088,7 @@ func (c *CloudWatchEvents) PutRuleRequest(input *PutRuleInput) (req *request.Req
 //
 // An infinite loop can quickly cause higher than expected charges. We recommend
 // that you use budgeting, which alerts you when charges exceed your specified
-// limit. For more information, see Managing Your Costs with Budgets (http://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/budgets-managing-costs.html).
+// limit. For more information, see Managing Your Costs with Budgets (https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/budgets-managing-costs.html).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1015,7 +1112,8 @@ func (c *CloudWatchEvents) PutRuleRequest(input *PutRuleInput) (req *request.Req
 //   managed by that service. If you see this error in response to DeleteRule
 //   or RemoveTargets, you can use the Force parameter in those calls to delete
 //   the rule or remove targets from the rule. You cannot modify these managed
-//   rules by using DisableRule, EnableRule, PutTargets, or PutRule.
+//   rules by using DisableRule, EnableRule, PutTargets, PutRule, TagResource,
+//   or UntagResource.
 //
 //   * ErrCodeInternalException "InternalException"
 //   This exception occurs due to unexpected causes.
@@ -1138,7 +1236,7 @@ func (c *CloudWatchEvents) PutTargetsRequest(input *PutTargetsInput) (req *reque
 // CloudWatch Events relies on resource-based policies. For EC2 instances, Kinesis
 // data streams, and AWS Step Functions state machines, CloudWatch Events relies
 // on IAM roles that you specify in the RoleARN argument in PutTargets. For
-// more information, see Authentication and Access Control (http://docs.aws.amazon.com/AmazonCloudWatch/latest/events/auth-and-access-control-cwe.html)
+// more information, see Authentication and Access Control (https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/auth-and-access-control-cwe.html)
 // in the Amazon CloudWatch Events User Guide.
 //
 // If another AWS account is in the same region and has granted you permission
@@ -1154,7 +1252,7 @@ func (c *CloudWatchEvents) PutTargetsRequest(input *PutTargetsInput) (req *reque
 // account granted permission to your account through an organization instead
 // of directly by the account ID, then you must specify a RoleArn with proper
 // permissions in the Target structure. For more information, see Sending and
-// Receiving Events Between AWS Accounts (http://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEvents-CrossAccountEventDelivery.html)
+// Receiving Events Between AWS Accounts (https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEvents-CrossAccountEventDelivery.html)
 // in the Amazon CloudWatch Events User Guide.
 //
 // For more information about enabling cross-account events, see PutPermission.
@@ -1212,7 +1310,8 @@ func (c *CloudWatchEvents) PutTargetsRequest(input *PutTargetsInput) (req *reque
 //   managed by that service. If you see this error in response to DeleteRule
 //   or RemoveTargets, you can use the Force parameter in those calls to delete
 //   the rule or remove targets from the rule. You cannot modify these managed
-//   rules by using DisableRule, EnableRule, PutTargets, or PutRule.
+//   rules by using DisableRule, EnableRule, PutTargets, PutRule, TagResource,
+//   or UntagResource.
 //
 //   * ErrCodeInternalException "InternalException"
 //   This exception occurs due to unexpected causes.
@@ -1403,7 +1502,8 @@ func (c *CloudWatchEvents) RemoveTargetsRequest(input *RemoveTargetsInput) (req 
 //   managed by that service. If you see this error in response to DeleteRule
 //   or RemoveTargets, you can use the Force parameter in those calls to delete
 //   the rule or remove targets from the rule. You cannot modify these managed
-//   rules by using DisableRule, EnableRule, PutTargets, or PutRule.
+//   rules by using DisableRule, EnableRule, PutTargets, PutRule, TagResource,
+//   or UntagResource.
 //
 //   * ErrCodeInternalException "InternalException"
 //   This exception occurs due to unexpected causes.
@@ -1425,6 +1525,115 @@ func (c *CloudWatchEvents) RemoveTargets(input *RemoveTargetsInput) (*RemoveTarg
 // for more information on using Contexts.
 func (c *CloudWatchEvents) RemoveTargetsWithContext(ctx aws.Context, input *RemoveTargetsInput, opts ...request.Option) (*RemoveTargetsOutput, error) {
 	req, out := c.RemoveTargetsRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opTagResource = "TagResource"
+
+// TagResourceRequest generates a "aws/request.Request" representing the
+// client's request for the TagResource operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See TagResource for more information on using the TagResource
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the TagResourceRequest method.
+//    req, resp := client.TagResourceRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/events-2015-10-07/TagResource
+func (c *CloudWatchEvents) TagResourceRequest(input *TagResourceInput) (req *request.Request, output *TagResourceOutput) {
+	op := &request.Operation{
+		Name:       opTagResource,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &TagResourceInput{}
+	}
+
+	output = &TagResourceOutput{}
+	req = c.newRequest(op, input, output)
+	req.Handlers.Unmarshal.Swap(jsonrpc.UnmarshalHandler.Name, protocol.UnmarshalDiscardBodyHandler)
+	return
+}
+
+// TagResource API operation for Amazon CloudWatch Events.
+//
+// Assigns one or more tags (key-value pairs) to the specified CloudWatch Events
+// resource. Tags can help you organize and categorize your resources. You can
+// also use them to scope user permissions by granting a user permission to
+// access or change only resources with certain tag values. In CloudWatch Events,
+// rules can be tagged.
+//
+// Tags don't have any semantic meaning to AWS and are interpreted strictly
+// as strings of characters.
+//
+// You can use the TagResource action with a rule that already has tags. If
+// you specify a new tag key for the rule, this tag is appended to the list
+// of tags associated with the rule. If you specify a tag key that is already
+// associated with the rule, the new tag value that you specify replaces the
+// previous value for that tag.
+//
+// You can associate as many as 50 tags with a resource.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for Amazon CloudWatch Events's
+// API operation TagResource for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
+//   An entity that you specified does not exist.
+//
+//   * ErrCodeConcurrentModificationException "ConcurrentModificationException"
+//   There is concurrent modification on a rule or target.
+//
+//   * ErrCodeInternalException "InternalException"
+//   This exception occurs due to unexpected causes.
+//
+//   * ErrCodeManagedRuleException "ManagedRuleException"
+//   This rule was created by an AWS service on behalf of your account. It is
+//   managed by that service. If you see this error in response to DeleteRule
+//   or RemoveTargets, you can use the Force parameter in those calls to delete
+//   the rule or remove targets from the rule. You cannot modify these managed
+//   rules by using DisableRule, EnableRule, PutTargets, PutRule, TagResource,
+//   or UntagResource.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/events-2015-10-07/TagResource
+func (c *CloudWatchEvents) TagResource(input *TagResourceInput) (*TagResourceOutput, error) {
+	req, out := c.TagResourceRequest(input)
+	return out, req.Send()
+}
+
+// TagResourceWithContext is the same as TagResource with the addition of
+// the ability to pass a context and additional request options.
+//
+// See TagResource for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CloudWatchEvents) TagResourceWithContext(ctx aws.Context, input *TagResourceInput, opts ...request.Option) (*TagResourceOutput, error) {
+	req, out := c.TagResourceRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -1512,6 +1721,101 @@ func (c *CloudWatchEvents) TestEventPattern(input *TestEventPatternInput) (*Test
 // for more information on using Contexts.
 func (c *CloudWatchEvents) TestEventPatternWithContext(ctx aws.Context, input *TestEventPatternInput, opts ...request.Option) (*TestEventPatternOutput, error) {
 	req, out := c.TestEventPatternRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opUntagResource = "UntagResource"
+
+// UntagResourceRequest generates a "aws/request.Request" representing the
+// client's request for the UntagResource operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See UntagResource for more information on using the UntagResource
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the UntagResourceRequest method.
+//    req, resp := client.UntagResourceRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/events-2015-10-07/UntagResource
+func (c *CloudWatchEvents) UntagResourceRequest(input *UntagResourceInput) (req *request.Request, output *UntagResourceOutput) {
+	op := &request.Operation{
+		Name:       opUntagResource,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &UntagResourceInput{}
+	}
+
+	output = &UntagResourceOutput{}
+	req = c.newRequest(op, input, output)
+	req.Handlers.Unmarshal.Swap(jsonrpc.UnmarshalHandler.Name, protocol.UnmarshalDiscardBodyHandler)
+	return
+}
+
+// UntagResource API operation for Amazon CloudWatch Events.
+//
+// Removes one or more tags from the specified CloudWatch Events resource. In
+// CloudWatch Events, rules can be tagged.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for Amazon CloudWatch Events's
+// API operation UntagResource for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
+//   An entity that you specified does not exist.
+//
+//   * ErrCodeInternalException "InternalException"
+//   This exception occurs due to unexpected causes.
+//
+//   * ErrCodeConcurrentModificationException "ConcurrentModificationException"
+//   There is concurrent modification on a rule or target.
+//
+//   * ErrCodeManagedRuleException "ManagedRuleException"
+//   This rule was created by an AWS service on behalf of your account. It is
+//   managed by that service. If you see this error in response to DeleteRule
+//   or RemoveTargets, you can use the Force parameter in those calls to delete
+//   the rule or remove targets from the rule. You cannot modify these managed
+//   rules by using DisableRule, EnableRule, PutTargets, PutRule, TagResource,
+//   or UntagResource.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/events-2015-10-07/UntagResource
+func (c *CloudWatchEvents) UntagResource(input *UntagResourceInput) (*UntagResourceOutput, error) {
+	req, out := c.UntagResourceRequest(input)
+	return out, req.Send()
+}
+
+// UntagResourceWithContext is the same as UntagResource with the addition of
+// the ability to pass a context and additional request options.
+//
+// See UntagResource for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CloudWatchEvents) UntagResourceWithContext(ctx aws.Context, input *UntagResourceInput, opts ...request.Option) (*UntagResourceOutput, error) {
+	req, out := c.UntagResourceRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -1964,7 +2268,7 @@ type DescribeRuleOutput struct {
 	// The description of the rule.
 	Description *string `type:"string"`
 
-	// The event pattern. For more information, see Events and Event Patterns (http://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEventsandEventPatterns.html)
+	// The event pattern. For more information, see Events and Event Patterns (https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEventsandEventPatterns.html)
 	// in the Amazon CloudWatch Events User Guide.
 	EventPattern *string `type:"string"`
 
@@ -2109,7 +2413,7 @@ type EcsParameters struct {
 	// that you specify here must match one of the launch type (compatibilities)
 	// of the target task. The FARGATE value is supported only in the Regions where
 	// AWS Fargate with Amazon ECS is supported. For more information, see AWS Fargate
-	// on Amazon ECS (http://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS-Fargate.html)
+	// on Amazon ECS (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS-Fargate.html)
 	// in the Amazon Elastic Container Service Developer Guide.
 	LaunchType *string `type:"string" enum:"LaunchType"`
 
@@ -2126,7 +2430,7 @@ type EcsParameters struct {
 	// of the platform version, such as 1.1.0.
 	//
 	// This structure is used only if LaunchType is FARGATE. For more information
-	// about valid platform versions, see AWS Fargate Platform Versions (http://docs.aws.amazon.com/AmazonECS/latest/developerguide/platform_versions.html)
+	// about valid platform versions, see AWS Fargate Platform Versions (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/platform_versions.html)
 	// in the Amazon Elastic Container Service Developer Guide.
 	PlatformVersion *string `type:"string"`
 
@@ -2368,7 +2672,7 @@ type KinesisParameters struct {
 	_ struct{} `type:"structure"`
 
 	// The JSON path to be extracted from the event and used as the partition key.
-	// For more information, see Amazon Kinesis Streams Key Concepts (http://docs.aws.amazon.com/streams/latest/dev/key-concepts.html#partition-key)
+	// For more information, see Amazon Kinesis Streams Key Concepts (https://docs.aws.amazon.com/streams/latest/dev/key-concepts.html#partition-key)
 	// in the Amazon Kinesis Streams Developer Guide.
 	//
 	// PartitionKeyPath is a required field
@@ -2592,6 +2896,70 @@ func (s *ListRulesOutput) SetNextToken(v string) *ListRulesOutput {
 // SetRules sets the Rules field's value.
 func (s *ListRulesOutput) SetRules(v []*Rule) *ListRulesOutput {
 	s.Rules = v
+	return s
+}
+
+type ListTagsForResourceInput struct {
+	_ struct{} `type:"structure"`
+
+	// The ARN of the CloudWatch Events rule for which you want to view tags.
+	//
+	// ResourceARN is a required field
+	ResourceARN *string `min:"1" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s ListTagsForResourceInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ListTagsForResourceInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *ListTagsForResourceInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "ListTagsForResourceInput"}
+	if s.ResourceARN == nil {
+		invalidParams.Add(request.NewErrParamRequired("ResourceARN"))
+	}
+	if s.ResourceARN != nil && len(*s.ResourceARN) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("ResourceARN", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetResourceARN sets the ResourceARN field's value.
+func (s *ListTagsForResourceInput) SetResourceARN(v string) *ListTagsForResourceInput {
+	s.ResourceARN = &v
+	return s
+}
+
+type ListTagsForResourceOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The list of tag keys and values associated with the rule you specified
+	Tags []*Tag `type:"list"`
+}
+
+// String returns the string representation
+func (s ListTagsForResourceOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ListTagsForResourceOutput) GoString() string {
+	return s.String()
+}
+
+// SetTags sets the Tags field's value.
+func (s *ListTagsForResourceOutput) SetTags(v []*Tag) *ListTagsForResourceOutput {
+	s.Tags = v
 	return s
 }
 
@@ -2928,7 +3296,7 @@ type PutPermissionInput struct {
 	// This parameter enables you to limit the permission to accounts that fulfill
 	// a certain condition, such as being a member of a certain AWS organization.
 	// For more information about AWS Organizations, see What Is AWS Organizations
-	// (http://docs.aws.amazon.com/organizations/latest/userguide/orgs_introduction.html)
+	// (https://docs.aws.amazon.com/organizations/latest/userguide/orgs_introduction.html)
 	// in the AWS Organizations User Guide.
 	//
 	// If you specify Condition with an AWS organization ID, and specify "*" as
@@ -3046,7 +3414,7 @@ type PutRuleInput struct {
 	// A description of the rule.
 	Description *string `type:"string"`
 
-	// The event pattern. For more information, see Events and Event Patterns (http://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEventsandEventPatterns.html)
+	// The event pattern. For more information, see Events and Event Patterns (https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEventsandEventPatterns.html)
 	// in the Amazon CloudWatch Events User Guide.
 	EventPattern *string `type:"string"`
 
@@ -3063,6 +3431,9 @@ type PutRuleInput struct {
 
 	// Indicates whether the rule is enabled or disabled.
 	State *string `type:"string" enum:"RuleState"`
+
+	// The list of key-value pairs to associate with the rule.
+	Tags []*Tag `type:"list"`
 }
 
 // String returns the string representation
@@ -3086,6 +3457,16 @@ func (s *PutRuleInput) Validate() error {
 	}
 	if s.RoleArn != nil && len(*s.RoleArn) < 1 {
 		invalidParams.Add(request.NewErrParamMinLen("RoleArn", 1))
+	}
+	if s.Tags != nil {
+		for i, v := range s.Tags {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "Tags", i), err.(request.ErrInvalidParams))
+			}
+		}
 	}
 
 	if invalidParams.Len() > 0 {
@@ -3127,6 +3508,12 @@ func (s *PutRuleInput) SetScheduleExpression(v string) *PutRuleInput {
 // SetState sets the State field's value.
 func (s *PutRuleInput) SetState(v string) *PutRuleInput {
 	s.State = &v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *PutRuleInput) SetTags(v []*Tag) *PutRuleInput {
+	s.Tags = v
 	return s
 }
 
@@ -3511,7 +3898,7 @@ type Rule struct {
 	Description *string `type:"string"`
 
 	// The event pattern of the rule. For more information, see Events and Event
-	// Patterns (http://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEventsandEventPatterns.html)
+	// Patterns (https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEventsandEventPatterns.html)
 	// in the Amazon CloudWatch Events User Guide.
 	EventPattern *string `type:"string"`
 
@@ -3650,12 +4037,12 @@ func (s *RunCommandParameters) SetRunCommandTargets(v []*RunCommandTarget) *RunC
 type RunCommandTarget struct {
 	_ struct{} `type:"structure"`
 
-	// Can be either tag:tag-key or InstanceIds.
+	// Can be either tag: tag-key or InstanceIds.
 	//
 	// Key is a required field
 	Key *string `min:"1" type:"string" required:"true"`
 
-	// If Key is tag:tag-key, Values is a list of tag values. If Key is InstanceIds,
+	// If Key is tag: tag-key, Values is a list of tag values. If Key is InstanceIds,
 	// Values is a list of Amazon EC2 instance IDs.
 	//
 	// Values is a required field
@@ -3731,6 +4118,143 @@ func (s *SqsParameters) SetMessageGroupId(v string) *SqsParameters {
 	return s
 }
 
+// A key-value pair associated with an AWS resource. In CloudWatch Events, rules
+// support tagging.
+type Tag struct {
+	_ struct{} `type:"structure"`
+
+	// A string you can use to assign a value. The combination of tag keys and values
+	// can help you organize and categorize your resources.
+	//
+	// Key is a required field
+	Key *string `min:"1" type:"string" required:"true"`
+
+	// The value for the specified tag key.
+	//
+	// Value is a required field
+	Value *string `type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s Tag) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s Tag) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *Tag) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "Tag"}
+	if s.Key == nil {
+		invalidParams.Add(request.NewErrParamRequired("Key"))
+	}
+	if s.Key != nil && len(*s.Key) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("Key", 1))
+	}
+	if s.Value == nil {
+		invalidParams.Add(request.NewErrParamRequired("Value"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetKey sets the Key field's value.
+func (s *Tag) SetKey(v string) *Tag {
+	s.Key = &v
+	return s
+}
+
+// SetValue sets the Value field's value.
+func (s *Tag) SetValue(v string) *Tag {
+	s.Value = &v
+	return s
+}
+
+type TagResourceInput struct {
+	_ struct{} `type:"structure"`
+
+	// The ARN of the CloudWatch Events rule that you're adding tags to.
+	//
+	// ResourceARN is a required field
+	ResourceARN *string `min:"1" type:"string" required:"true"`
+
+	// The list of key-value pairs to associate with the rule.
+	//
+	// Tags is a required field
+	Tags []*Tag `type:"list" required:"true"`
+}
+
+// String returns the string representation
+func (s TagResourceInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s TagResourceInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *TagResourceInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "TagResourceInput"}
+	if s.ResourceARN == nil {
+		invalidParams.Add(request.NewErrParamRequired("ResourceARN"))
+	}
+	if s.ResourceARN != nil && len(*s.ResourceARN) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("ResourceARN", 1))
+	}
+	if s.Tags == nil {
+		invalidParams.Add(request.NewErrParamRequired("Tags"))
+	}
+	if s.Tags != nil {
+		for i, v := range s.Tags {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "Tags", i), err.(request.ErrInvalidParams))
+			}
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetResourceARN sets the ResourceARN field's value.
+func (s *TagResourceInput) SetResourceARN(v string) *TagResourceInput {
+	s.ResourceARN = &v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *TagResourceInput) SetTags(v []*Tag) *TagResourceInput {
+	s.Tags = v
+	return s
+}
+
+type TagResourceOutput struct {
+	_ struct{} `type:"structure"`
+}
+
+// String returns the string representation
+func (s TagResourceOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s TagResourceOutput) GoString() string {
+	return s.String()
+}
+
 // Targets are the resources to be invoked when a rule is triggered. For a complete
 // list of services and resources that can be set as a target, see PutTargets.
 //
@@ -3738,7 +4262,7 @@ func (s *SqsParameters) SetMessageGroupId(v string) *SqsParameters {
 // account granted permission to your account through an organization instead
 // of directly by the account ID, then you must specify a RoleArn with proper
 // permissions in the Target structure. For more information, see Sending and
-// Receiving Events Between AWS Accounts (http://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEvents-CrossAccountEventDelivery.html)
+// Receiving Events Between AWS Accounts (https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEvents-CrossAccountEventDelivery.html)
 // in the Amazon CloudWatch Events User Guide.
 type Target struct {
 	_ struct{} `type:"structure"`
@@ -3749,13 +4273,13 @@ type Target struct {
 	Arn *string `min:"1" type:"string" required:"true"`
 
 	// If the event target is an AWS Batch job, this contains the job definition,
-	// job name, and other parameters. For more information, see Jobs (http://docs.aws.amazon.com/batch/latest/userguide/jobs.html)
+	// job name, and other parameters. For more information, see Jobs (https://docs.aws.amazon.com/batch/latest/userguide/jobs.html)
 	// in the AWS Batch User Guide.
 	BatchParameters *BatchParameters `type:"structure"`
 
 	// Contains the Amazon ECS task definition and task count to be used, if the
 	// event target is an Amazon ECS task. For more information about Amazon ECS
-	// tasks, see Task Definitions  (http://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_defintions.html)
+	// tasks, see Task Definitions (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_defintions.html)
 	// in the Amazon EC2 Container Service Developer Guide.
 	EcsParameters *EcsParameters `type:"structure"`
 
@@ -3933,7 +4457,7 @@ type TestEventPatternInput struct {
 	// Event is a required field
 	Event *string `type:"string" required:"true"`
 
-	// The event pattern. For more information, see Events and Event Patterns (http://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEventsandEventPatterns.html)
+	// The event pattern. For more information, see Events and Event Patterns (https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/CloudWatchEventsandEventPatterns.html)
 	// in the Amazon CloudWatch Events User Guide.
 	//
 	// EventPattern is a required field
@@ -3999,6 +4523,75 @@ func (s TestEventPatternOutput) GoString() string {
 func (s *TestEventPatternOutput) SetResult(v bool) *TestEventPatternOutput {
 	s.Result = &v
 	return s
+}
+
+type UntagResourceInput struct {
+	_ struct{} `type:"structure"`
+
+	// The ARN of the CloudWatch Events rule from which you are removing tags.
+	//
+	// ResourceARN is a required field
+	ResourceARN *string `min:"1" type:"string" required:"true"`
+
+	// The list of tag keys to remove from the resource.
+	//
+	// TagKeys is a required field
+	TagKeys []*string `type:"list" required:"true"`
+}
+
+// String returns the string representation
+func (s UntagResourceInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s UntagResourceInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *UntagResourceInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "UntagResourceInput"}
+	if s.ResourceARN == nil {
+		invalidParams.Add(request.NewErrParamRequired("ResourceARN"))
+	}
+	if s.ResourceARN != nil && len(*s.ResourceARN) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("ResourceARN", 1))
+	}
+	if s.TagKeys == nil {
+		invalidParams.Add(request.NewErrParamRequired("TagKeys"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetResourceARN sets the ResourceARN field's value.
+func (s *UntagResourceInput) SetResourceARN(v string) *UntagResourceInput {
+	s.ResourceARN = &v
+	return s
+}
+
+// SetTagKeys sets the TagKeys field's value.
+func (s *UntagResourceInput) SetTagKeys(v []*string) *UntagResourceInput {
+	s.TagKeys = v
+	return s
+}
+
+type UntagResourceOutput struct {
+	_ struct{} `type:"structure"`
+}
+
+// String returns the string representation
+func (s UntagResourceOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s UntagResourceOutput) GoString() string {
+	return s.String()
 }
 
 const (

@@ -2127,7 +2127,7 @@ func (c *DirectoryService) DescribeDomainControllersWithContext(ctx aws.Context,
 //    // Example iterating over at most 3 pages of a DescribeDomainControllers operation.
 //    pageNum := 0
 //    err := client.DescribeDomainControllersPages(params,
-//        func(page *DescribeDomainControllersOutput, lastPage bool) bool {
+//        func(page *directoryservice.DescribeDomainControllersOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -4907,7 +4907,10 @@ type AddIpRoutesInput struct {
 	//
 	// Outbound:
 	//
-	// Type: All traffic, Protocol: All, Range: All, Destination: 0.0.0.0/0
+	//    * Type: All traffic, Protocol: All, Range: All, Destination: 0.0.0.0/0
+	//
+	// These security rules impact an internal network interface that is not exposed
+	// publicly.
 	UpdateSecurityGroupForDirectoryControllers *bool `type:"boolean"`
 }
 
@@ -5279,6 +5282,9 @@ type ConnectDirectoryInput struct {
 	//
 	// Size is a required field
 	Size *string `type:"string" required:"true" enum:"DirectorySize"`
+
+	// The tags to be assigned to AD Connector.
+	Tags []*Tag `type:"list"`
 }
 
 // String returns the string representation
@@ -5312,6 +5318,16 @@ func (s *ConnectDirectoryInput) Validate() error {
 	if s.ConnectSettings != nil {
 		if err := s.ConnectSettings.Validate(); err != nil {
 			invalidParams.AddNested("ConnectSettings", err.(request.ErrInvalidParams))
+		}
+	}
+	if s.Tags != nil {
+		for i, v := range s.Tags {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "Tags", i), err.(request.ErrInvalidParams))
+			}
 		}
 	}
 
@@ -5354,6 +5370,12 @@ func (s *ConnectDirectoryInput) SetShortName(v string) *ConnectDirectoryInput {
 // SetSize sets the Size field's value.
 func (s *ConnectDirectoryInput) SetSize(v string) *ConnectDirectoryInput {
 	s.Size = &v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *ConnectDirectoryInput) SetTags(v []*Tag) *ConnectDirectoryInput {
+	s.Tags = v
 	return s
 }
 
@@ -5717,6 +5739,9 @@ type CreateDirectoryInput struct {
 	// Size is a required field
 	Size *string `type:"string" required:"true" enum:"DirectorySize"`
 
+	// The tags to be assigned to the Simple AD directory.
+	Tags []*Tag `type:"list"`
+
 	// A DirectoryVpcSettings object that contains additional information for the
 	// operation.
 	VpcSettings *DirectoryVpcSettings `type:"structure"`
@@ -5743,6 +5768,16 @@ func (s *CreateDirectoryInput) Validate() error {
 	}
 	if s.Size == nil {
 		invalidParams.Add(request.NewErrParamRequired("Size"))
+	}
+	if s.Tags != nil {
+		for i, v := range s.Tags {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "Tags", i), err.(request.ErrInvalidParams))
+			}
+		}
 	}
 	if s.VpcSettings != nil {
 		if err := s.VpcSettings.Validate(); err != nil {
@@ -5783,6 +5818,12 @@ func (s *CreateDirectoryInput) SetShortName(v string) *CreateDirectoryInput {
 // SetSize sets the Size field's value.
 func (s *CreateDirectoryInput) SetSize(v string) *CreateDirectoryInput {
 	s.Size = &v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *CreateDirectoryInput) SetTags(v []*Tag) *CreateDirectoryInput {
+	s.Tags = v
 	return s
 }
 
@@ -5916,6 +5957,9 @@ type CreateMicrosoftADInput struct {
 	// part of your directory DNS. For example, CORP for the directory DNS corp.example.com.
 	ShortName *string `type:"string"`
 
+	// The tags to be assigned to the AWS Managed Microsoft AD directory.
+	Tags []*Tag `type:"list"`
+
 	// Contains VPC information for the CreateDirectory or CreateMicrosoftAD operation.
 	//
 	// VpcSettings is a required field
@@ -5943,6 +5987,16 @@ func (s *CreateMicrosoftADInput) Validate() error {
 	}
 	if s.VpcSettings == nil {
 		invalidParams.Add(request.NewErrParamRequired("VpcSettings"))
+	}
+	if s.Tags != nil {
+		for i, v := range s.Tags {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "Tags", i), err.(request.ErrInvalidParams))
+			}
+		}
 	}
 	if s.VpcSettings != nil {
 		if err := s.VpcSettings.Validate(); err != nil {
@@ -5983,6 +6037,12 @@ func (s *CreateMicrosoftADInput) SetPassword(v string) *CreateMicrosoftADInput {
 // SetShortName sets the ShortName field's value.
 func (s *CreateMicrosoftADInput) SetShortName(v string) *CreateMicrosoftADInput {
 	s.ShortName = &v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *CreateMicrosoftADInput) SetTags(v []*Tag) *CreateMicrosoftADInput {
+	s.Tags = v
 	return s
 }
 

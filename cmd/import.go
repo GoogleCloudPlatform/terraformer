@@ -33,6 +33,7 @@ type ImportOptions struct {
 	PathOutput  string
 	State       string
 	Bucket      string
+	Profile     string
 	Zone        string
 	Regions     []string
 	Projects    []string
