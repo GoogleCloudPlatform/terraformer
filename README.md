@@ -7,7 +7,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
 (reverse Terraform).
 
 *   Disclaimer: This is not an official Google product
-*   Status: beta - need to improve documentation, squash some bugs, etc...
+*   Status: beta - we still need to improve documentation, squash some bugs, etc...
 *   Created by: Waze SRE
 
 ![Waze SRE logo](docs/waze-sre-logo.png)
@@ -33,7 +33,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
     supported objects by resource.
 2.  Remote state can be uploaded to a GCS bucket.
 3.  Connect between resources with `terraform_remote_state` (local and bucket).
-4.  Save `tf` files with custom folder tree pattern.
+4.  Save `tf` files using a custom folder tree pattern.
 5.  Import by resource name and type.
 
 Terraformer uses terraform providers and is designed to easily support newly added resources.
@@ -68,7 +68,7 @@ Read-only permissions
 
 Filters are a way to choose which resources `terraformer` imports.
 
-e.g:
+For example:
 ```
 terraformer import aws --resources=vpc,subnet --filter=aws_vpc=myvpcid --regions=eu-west-1
 ```
@@ -76,13 +76,13 @@ will import only one VPC and all subnets from all VPCs (not just the ones from t
 
 ##### Resources ID
 
-Filtering is based on the Terraform resource ID patterns. To find valid ID patterns for your resource, check the import part of [Terraform documentation][terraform-providers].
+Filtering is based on Terraform resource ID patterns. To find valid ID patterns for your resource, check the import part of [Terraform documentation][terraform-providers].
 
 [terraform-providers]: https://www.terraform.io/docs/providers/
 
 #### Planning
 
-The `plan` command lets you review the resources set to be imported. It also allows you to rename or filter them, before running the import command.
+The `plan` command generates a planfile that contains all the resources set to be imported. By modifying the planfile before running the `import` command, you can rename or filter the resources you'd like to import.
 
 The rest of subcommands and parameters are identical to the `import` command.
 
