@@ -38,9 +38,8 @@ type S3Generator struct {
 // createResources iterate on all buckets
 // for each bucket we check region and choose only bucket from set region
 // for each bucket try get bucket policy, if policy exist create additional NewTerraformResource for policy
-func (S3Generator) createResources(buckets *s3.ListBucketsOutput, region string) []terraform_utils.Resource {
+func (g S3Generator) createResources(sess *session.Session, buckets *s3.ListBucketsOutput, region string) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := s3.New(sess)
 	for _, bucket := range buckets.Buckets {
 		resourceName := aws.StringValue(bucket.Name)
@@ -99,7 +98,7 @@ func (g *S3Generator) InitResources() error {
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(buckets, g.GetArgs()["region"])
+	g.Resources = g.createResources(sess, buckets, g.GetArgs()["region"])
 	g.PopulateIgnoreKeys()
 	return nil
 }

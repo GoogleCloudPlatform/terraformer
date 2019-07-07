@@ -17,6 +17,7 @@ package aws
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/autoscaling"
 	"github.com/aws/aws-sdk-go/service/ec2"
 
@@ -76,8 +77,8 @@ func (g *AutoScalingGenerator) loadLaunchConfigurations(svc *autoscaling.AutoSca
 	return err
 }
 
-func (g *AutoScalingGenerator) loadLaunchTemplates() error {
-	ec2svc := ec2.New(g.Session)
+func (g *AutoScalingGenerator) loadLaunchTemplates(sess *session.Session) error {
+	ec2svc := ec2.New(sess)
 	firstRun := true
 	var err error
 	launchTemplatesOutput := &ec2.DescribeLaunchTemplatesOutput{}
@@ -119,7 +120,7 @@ func (g *AutoScalingGenerator) InitResources() error {
 	if err := g.loadLaunchConfigurations(svc); err != nil {
 		return err
 	}
-	if err := g.loadLaunchTemplates(); err != nil {
+	if err := g.loadLaunchTemplates(sess); err != nil {
 		return err
 	}
 	g.PopulateIgnoreKeys()
