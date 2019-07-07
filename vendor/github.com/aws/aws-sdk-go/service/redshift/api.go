@@ -175,7 +175,7 @@ func (c *Redshift) AuthorizeClusterSecurityGroupIngressRequest(input *AuthorizeC
 // You must also associate the security group with a cluster so that clients
 // running on these IP addresses or the EC2 instance are authorized to connect
 // to the cluster. For information about managing security groups, go to Working
-// with Security Groups (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-security-groups.html)
+// with Security Groups (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-security-groups.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -269,7 +269,7 @@ func (c *Redshift) AuthorizeSnapshotAccessRequest(input *AuthorizeSnapshotAccess
 // Authorizes the specified AWS customer account to restore the specified snapshot.
 //
 // For more information about working with snapshots, go to Amazon Redshift
-// Snapshots (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-snapshots.html)
+// Snapshots (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-snapshots.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -631,7 +631,7 @@ func (c *Redshift) CopyClusterSnapshotRequest(input *CopyClusterSnapshotInput) (
 // Manual snapshots are retained until you delete them.
 //
 // For more information about working with snapshots, go to Amazon Redshift
-// Snapshots (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-snapshots.html)
+// Snapshots (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-snapshots.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -733,7 +733,7 @@ func (c *Redshift) CreateClusterRequest(input *CreateClusterInput) (req *request
 // To create a cluster in Virtual Private Cloud (VPC), you must provide a cluster
 // subnet group name. The cluster subnet group identifies the subnets of your
 // VPC that Amazon Redshift uses when creating the cluster. For more information
-// about managing clusters, go to Amazon Redshift Clusters (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html)
+// about managing clusters, go to Amazon Redshift Clusters (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -760,13 +760,13 @@ func (c *Redshift) CreateClusterRequest(input *CreateClusterInput) (req *request
 //   * ErrCodeClusterQuotaExceededFault "ClusterQuotaExceeded"
 //   The request would exceed the allowed number of cluster instances for this
 //   account. For information about increasing your quota, go to Limits in Amazon
-//   Redshift (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+//   Redshift (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 //   in the Amazon Redshift Cluster Management Guide.
 //
 //   * ErrCodeNumberOfNodesQuotaExceededFault "NumberOfNodesQuotaExceeded"
 //   The operation would exceed the number of nodes allotted to the account. For
 //   information about increasing your quota, go to Limits in Amazon Redshift
-//   (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+//   (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 //   in the Amazon Redshift Cluster Management Guide.
 //
 //   * ErrCodeNumberOfNodesPerClusterLimitExceededFault "NumberOfNodesPerClusterLimitExceeded"
@@ -897,7 +897,7 @@ func (c *Redshift) CreateClusterParameterGroupRequest(input *CreateClusterParame
 //
 // Parameters in the parameter group define specific behavior that applies to
 // the databases you create on the cluster. For more information about parameters
-// and parameter groups, go to Amazon Redshift Parameter Groups (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-parameter-groups.html)
+// and parameter groups, go to Amazon Redshift Parameter Groups (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-parameter-groups.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -911,7 +911,7 @@ func (c *Redshift) CreateClusterParameterGroupRequest(input *CreateClusterParame
 //   * ErrCodeClusterParameterGroupQuotaExceededFault "ClusterParameterGroupQuotaExceeded"
 //   The request would result in the user exceeding the allowed number of cluster
 //   parameter groups. For information about increasing your quota, go to Limits
-//   in Amazon Redshift (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+//   in Amazon Redshift (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 //   in the Amazon Redshift Cluster Management Guide.
 //
 //   * ErrCodeClusterParameterGroupAlreadyExistsFault "ClusterParameterGroupAlreadyExists"
@@ -993,7 +993,7 @@ func (c *Redshift) CreateClusterSecurityGroupRequest(input *CreateClusterSecurit
 // control access to non-VPC clusters.
 //
 // For information about managing security groups, go to Amazon Redshift Cluster
-// Security Groups (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-security-groups.html)
+// Security Groups (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-security-groups.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -1010,7 +1010,7 @@ func (c *Redshift) CreateClusterSecurityGroupRequest(input *CreateClusterSecurit
 //   * ErrCodeClusterSecurityGroupQuotaExceededFault "QuotaExceeded.ClusterSecurityGroup"
 //   The request would result in the user exceeding the allowed number of cluster
 //   security groups. For information about increasing your quota, go to Limits
-//   in Amazon Redshift (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+//   in Amazon Redshift (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 //   in the Amazon Redshift Cluster Management Guide.
 //
 //   * ErrCodeTagLimitExceededFault "TagLimitExceededFault"
@@ -1089,7 +1089,7 @@ func (c *Redshift) CreateClusterSnapshotRequest(input *CreateClusterSnapshotInpu
 // the available state.
 //
 // For more information about working with snapshots, go to Amazon Redshift
-// Snapshots (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-snapshots.html)
+// Snapshots (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-snapshots.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -1196,7 +1196,7 @@ func (c *Redshift) CreateClusterSubnetGroupRequest(input *CreateClusterSubnetGro
 // when creating Amazon Redshift subnet group.
 //
 // For information about subnet groups, go to Amazon Redshift Cluster Subnet
-// Groups (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-cluster-subnet-groups.html)
+// Groups (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-cluster-subnet-groups.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -1213,13 +1213,13 @@ func (c *Redshift) CreateClusterSubnetGroupRequest(input *CreateClusterSubnetGro
 //   * ErrCodeClusterSubnetGroupQuotaExceededFault "ClusterSubnetGroupQuotaExceeded"
 //   The request would result in user exceeding the allowed number of cluster
 //   subnet groups. For information about increasing your quota, go to Limits
-//   in Amazon Redshift (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+//   in Amazon Redshift (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 //   in the Amazon Redshift Cluster Management Guide.
 //
 //   * ErrCodeClusterSubnetQuotaExceededFault "ClusterSubnetQuotaExceededFault"
 //   The request would result in user exceeding the allowed number of subnets
 //   in a cluster subnet groups. For information about increasing your quota,
-//   go to Limits in Amazon Redshift (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+//   go to Limits in Amazon Redshift (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 //   in the Amazon Redshift Cluster Management Guide.
 //
 //   * ErrCodeInvalidSubnet "InvalidSubnet"
@@ -1339,7 +1339,7 @@ func (c *Redshift) CreateEventSubscriptionRequest(input *CreateEventSubscription
 //   * ErrCodeEventSubscriptionQuotaExceededFault "EventSubscriptionQuotaExceeded"
 //   The request would exceed the allowed number of event subscriptions for this
 //   account. For information about increasing your quota, go to Limits in Amazon
-//   Redshift (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+//   Redshift (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 //   in the Amazon Redshift Cluster Management Guide.
 //
 //   * ErrCodeSubscriptionAlreadyExistFault "SubscriptionAlreadyExist"
@@ -1452,7 +1452,7 @@ func (c *Redshift) CreateHsmClientCertificateRequest(input *CreateHsmClientCerti
 // The command returns a public key, which you must store in the HSM. In addition
 // to creating the HSM certificate, you must create an Amazon Redshift HSM configuration
 // that provides a cluster the information needed to store and use encryption
-// keys in the HSM. For more information, go to Hardware Security Modules (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-HSM.html)
+// keys in the HSM. For more information, go to Hardware Security Modules (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-HSM.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -1469,7 +1469,7 @@ func (c *Redshift) CreateHsmClientCertificateRequest(input *CreateHsmClientCerti
 //
 //   * ErrCodeHsmClientCertificateQuotaExceededFault "HsmClientCertificateQuotaExceededFault"
 //   The quota for HSM client certificates has been reached. For information about
-//   increasing your quota, go to Limits in Amazon Redshift (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+//   increasing your quota, go to Limits in Amazon Redshift (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 //   in the Amazon Redshift Cluster Management Guide.
 //
 //   * ErrCodeTagLimitExceededFault "TagLimitExceededFault"
@@ -1552,8 +1552,8 @@ func (c *Redshift) CreateHsmConfigurationRequest(input *CreateHsmConfigurationIn
 //
 // In addition to creating an HSM configuration, you must also create an HSM
 // client certificate. For more information, go to Hardware Security Modules
-// (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-HSM.html) in
-// the Amazon Redshift Cluster Management Guide.
+// (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-HSM.html)
+// in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1569,7 +1569,7 @@ func (c *Redshift) CreateHsmConfigurationRequest(input *CreateHsmConfigurationIn
 //
 //   * ErrCodeHsmConfigurationQuotaExceededFault "HsmConfigurationQuotaExceededFault"
 //   The quota for HSM configurations has been reached. For information about
-//   increasing your quota, go to Limits in Amazon Redshift (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+//   increasing your quota, go to Limits in Amazon Redshift (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 //   in the Amazon Redshift Cluster Management Guide.
 //
 //   * ErrCodeTagLimitExceededFault "TagLimitExceededFault"
@@ -1649,7 +1649,7 @@ func (c *Redshift) CreateSnapshotCopyGrantRequest(input *CreateSnapshotCopyGrant
 // snapshots in a destination region.
 //
 // For more information about managing snapshot copy grants, go to Amazon Redshift
-// Database Encryption (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-db-encryption.html)
+// Database Encryption (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-db-encryption.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -1934,7 +1934,7 @@ func (c *Redshift) DeleteClusterRequest(input *DeleteClusterInput) (req *request
 // web service indicates that the request was received correctly. Use DescribeClusters
 // to monitor the status of the deletion. The delete operation cannot be canceled
 // or reverted once submitted. For more information about managing clusters,
-// go to Amazon Redshift Clusters (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html)
+// go to Amazon Redshift Clusters (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // If you want to shut down the cluster and retain it for future use, set SkipFinalClusterSnapshot
@@ -1945,7 +1945,7 @@ func (c *Redshift) DeleteClusterRequest(input *DeleteClusterInput) (req *request
 // deleting the cluster.
 //
 // For more information about managing clusters, go to Amazon Redshift Clusters
-// (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html)
+// (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -2135,7 +2135,7 @@ func (c *Redshift) DeleteClusterSecurityGroupRequest(input *DeleteClusterSecurit
 // You cannot delete the default security group.
 //
 // For information about managing security groups, go to Amazon Redshift Cluster
-// Security Groups (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-security-groups.html)
+// Security Groups (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-security-groups.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -3070,7 +3070,7 @@ func (c *Redshift) DescribeClusterParameterGroupsRequest(input *DescribeClusterP
 // of a specific parameter group.
 //
 // For more information about parameters and parameter groups, go to Amazon
-// Redshift Parameter Groups (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-parameter-groups.html)
+// Redshift Parameter Groups (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-parameter-groups.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // If you specify both tag keys and tag values in the same request, Amazon Redshift
@@ -3130,7 +3130,7 @@ func (c *Redshift) DescribeClusterParameterGroupsWithContext(ctx aws.Context, in
 //    // Example iterating over at most 3 pages of a DescribeClusterParameterGroups operation.
 //    pageNum := 0
 //    err := client.DescribeClusterParameterGroupsPages(params,
-//        func(page *DescribeClusterParameterGroupsOutput, lastPage bool) bool {
+//        func(page *redshift.DescribeClusterParameterGroupsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -3229,7 +3229,7 @@ func (c *Redshift) DescribeClusterParametersRequest(input *DescribeClusterParame
 // as from ModifyClusterParameterGroup, you can specify source equal to user.
 //
 // For more information about parameters and parameter groups, go to Amazon
-// Redshift Parameter Groups (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-parameter-groups.html)
+// Redshift Parameter Groups (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-parameter-groups.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -3276,7 +3276,7 @@ func (c *Redshift) DescribeClusterParametersWithContext(ctx aws.Context, input *
 //    // Example iterating over at most 3 pages of a DescribeClusterParameters operation.
 //    pageNum := 0
 //    err := client.DescribeClusterParametersPages(params,
-//        func(page *DescribeClusterParametersOutput, lastPage bool) bool {
+//        func(page *redshift.DescribeClusterParametersOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -3370,7 +3370,7 @@ func (c *Redshift) DescribeClusterSecurityGroupsRequest(input *DescribeClusterSe
 // about only that security group.
 //
 // For information about managing security groups, go to Amazon Redshift Cluster
-// Security Groups (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-security-groups.html)
+// Security Groups (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-security-groups.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // If you specify both tag keys and tag values in the same request, Amazon Redshift
@@ -3431,7 +3431,7 @@ func (c *Redshift) DescribeClusterSecurityGroupsWithContext(ctx aws.Context, inp
 //    // Example iterating over at most 3 pages of a DescribeClusterSecurityGroups operation.
 //    pageNum := 0
 //    err := client.DescribeClusterSecurityGroupsPages(params,
-//        func(page *DescribeClusterSecurityGroupsOutput, lastPage bool) bool {
+//        func(page *redshift.DescribeClusterSecurityGroupsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -3586,7 +3586,7 @@ func (c *Redshift) DescribeClusterSnapshotsWithContext(ctx aws.Context, input *D
 //    // Example iterating over at most 3 pages of a DescribeClusterSnapshots operation.
 //    pageNum := 0
 //    err := client.DescribeClusterSnapshotsPages(params,
-//        func(page *DescribeClusterSnapshotsOutput, lastPage bool) bool {
+//        func(page *redshift.DescribeClusterSnapshotsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -3737,7 +3737,7 @@ func (c *Redshift) DescribeClusterSubnetGroupsWithContext(ctx aws.Context, input
 //    // Example iterating over at most 3 pages of a DescribeClusterSubnetGroups operation.
 //    pageNum := 0
 //    err := client.DescribeClusterSubnetGroupsPages(params,
-//        func(page *DescribeClusterSubnetGroupsOutput, lastPage bool) bool {
+//        func(page *redshift.DescribeClusterSubnetGroupsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -3911,7 +3911,7 @@ func (c *Redshift) DescribeClusterVersionsRequest(input *DescribeClusterVersions
 // Returns descriptions of the available Amazon Redshift cluster versions. You
 // can call this operation even before creating any clusters to learn more about
 // the Amazon Redshift versions. For more information about managing clusters,
-// go to Amazon Redshift Clusters (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html)
+// go to Amazon Redshift Clusters (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -3953,7 +3953,7 @@ func (c *Redshift) DescribeClusterVersionsWithContext(ctx aws.Context, input *De
 //    // Example iterating over at most 3 pages of a DescribeClusterVersions operation.
 //    pageNum := 0
 //    err := client.DescribeClusterVersionsPages(params,
-//        func(page *DescribeClusterVersionsOutput, lastPage bool) bool {
+//        func(page *redshift.DescribeClusterVersionsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -4045,7 +4045,7 @@ func (c *Redshift) DescribeClustersRequest(input *DescribeClustersInput) (req *r
 // Returns properties of provisioned clusters including general cluster properties,
 // cluster database properties, maintenance and backup properties, and security
 // and access properties. This operation supports pagination. For more information
-// about managing clusters, go to Amazon Redshift Clusters (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html)
+// about managing clusters, go to Amazon Redshift Clusters (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // If you specify both tag keys and tag values in the same request, Amazon Redshift
@@ -4104,7 +4104,7 @@ func (c *Redshift) DescribeClustersWithContext(ctx aws.Context, input *DescribeC
 //    // Example iterating over at most 3 pages of a DescribeClusters operation.
 //    pageNum := 0
 //    err := client.DescribeClustersPages(params,
-//        func(page *DescribeClustersOutput, lastPage bool) bool {
+//        func(page *redshift.DescribeClustersOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -4196,7 +4196,7 @@ func (c *Redshift) DescribeDefaultClusterParametersRequest(input *DescribeDefaul
 // Returns a list of parameter settings for the specified parameter group family.
 //
 // For more information about parameters and parameter groups, go to Amazon
-// Redshift Parameter Groups (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-parameter-groups.html)
+// Redshift Parameter Groups (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-parameter-groups.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -4238,7 +4238,7 @@ func (c *Redshift) DescribeDefaultClusterParametersWithContext(ctx aws.Context, 
 //    // Example iterating over at most 3 pages of a DescribeDefaultClusterParameters operation.
 //    pageNum := 0
 //    err := client.DescribeDefaultClusterParametersPages(params,
-//        func(page *DescribeDefaultClusterParametersOutput, lastPage bool) bool {
+//        func(page *redshift.DescribeDefaultClusterParametersOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -4323,7 +4323,7 @@ func (c *Redshift) DescribeEventCategoriesRequest(input *DescribeEventCategories
 //
 // Displays a list of event categories for all event source types, or for a
 // specified source type. For a list of the event categories and source types,
-// go to Amazon Redshift Event Notifications (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-event-notifications.html).
+// go to Amazon Redshift Event Notifications (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-event-notifications.html).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -4465,7 +4465,7 @@ func (c *Redshift) DescribeEventSubscriptionsWithContext(ctx aws.Context, input 
 //    // Example iterating over at most 3 pages of a DescribeEventSubscriptions operation.
 //    pageNum := 0
 //    err := client.DescribeEventSubscriptionsPages(params,
-//        func(page *DescribeEventSubscriptionsOutput, lastPage bool) bool {
+//        func(page *redshift.DescribeEventSubscriptionsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -4598,7 +4598,7 @@ func (c *Redshift) DescribeEventsWithContext(ctx aws.Context, input *DescribeEve
 //    // Example iterating over at most 3 pages of a DescribeEvents operation.
 //    pageNum := 0
 //    err := client.DescribeEventsPages(params,
-//        func(page *DescribeEventsOutput, lastPage bool) bool {
+//        func(page *redshift.DescribeEventsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -4748,7 +4748,7 @@ func (c *Redshift) DescribeHsmClientCertificatesWithContext(ctx aws.Context, inp
 //    // Example iterating over at most 3 pages of a DescribeHsmClientCertificates operation.
 //    pageNum := 0
 //    err := client.DescribeHsmClientCertificatesPages(params,
-//        func(page *DescribeHsmClientCertificatesOutput, lastPage bool) bool {
+//        func(page *redshift.DescribeHsmClientCertificatesOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -4898,7 +4898,7 @@ func (c *Redshift) DescribeHsmConfigurationsWithContext(ctx aws.Context, input *
 //    // Example iterating over at most 3 pages of a DescribeHsmConfigurations operation.
 //    pageNum := 0
 //    err := client.DescribeHsmConfigurationsPages(params,
-//        func(page *DescribeHsmConfigurationsOutput, lastPage bool) bool {
+//        func(page *redshift.DescribeHsmConfigurationsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -5074,7 +5074,7 @@ func (c *Redshift) DescribeOrderableClusterOptionsRequest(input *DescribeOrderab
 // memory, CPU and price. With the cost involved you might want to obtain a
 // list of cluster options in the specific region and specify values when creating
 // a cluster. For more information about managing clusters, go to Amazon Redshift
-// Clusters (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html)
+// Clusters (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -5116,7 +5116,7 @@ func (c *Redshift) DescribeOrderableClusterOptionsWithContext(ctx aws.Context, i
 //    // Example iterating over at most 3 pages of a DescribeOrderableClusterOptions operation.
 //    pageNum := 0
 //    err := client.DescribeOrderableClusterOptionsPages(params,
-//        func(page *DescribeOrderableClusterOptionsOutput, lastPage bool) bool {
+//        func(page *redshift.DescribeOrderableClusterOptionsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -5213,7 +5213,7 @@ func (c *Redshift) DescribeReservedNodeOfferingsRequest(input *DescribeReservedN
 // to reserve one or more nodes for your Amazon Redshift cluster.
 //
 // For more information about reserved node offerings, go to Purchasing Reserved
-// Nodes (http://docs.aws.amazon.com/redshift/latest/mgmt/purchase-reserved-node-instance.html)
+// Nodes (https://docs.aws.amazon.com/redshift/latest/mgmt/purchase-reserved-node-instance.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -5267,7 +5267,7 @@ func (c *Redshift) DescribeReservedNodeOfferingsWithContext(ctx aws.Context, inp
 //    // Example iterating over at most 3 pages of a DescribeReservedNodeOfferings operation.
 //    pageNum := 0
 //    err := client.DescribeReservedNodeOfferingsPages(params,
-//        func(page *DescribeReservedNodeOfferingsOutput, lastPage bool) bool {
+//        func(page *redshift.DescribeReservedNodeOfferingsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -5406,7 +5406,7 @@ func (c *Redshift) DescribeReservedNodesWithContext(ctx aws.Context, input *Desc
 //    // Example iterating over at most 3 pages of a DescribeReservedNodes operation.
 //    pageNum := 0
 //    err := client.DescribeReservedNodesPages(params,
-//        func(page *DescribeReservedNodesOutput, lastPage bool) bool {
+//        func(page *redshift.DescribeReservedNodesOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -5581,7 +5581,7 @@ func (c *Redshift) DescribeSnapshotCopyGrantsRequest(input *DescribeSnapshotCopy
 // region.
 //
 // For more information about managing snapshot copy grants, go to Amazon Redshift
-// Database Encryption (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-db-encryption.html)
+// Database Encryption (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-db-encryption.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -6204,7 +6204,7 @@ func (c *Redshift) EnableLoggingRequest(input *EnableLoggingInput) (req *request
 //
 //   * ErrCodeInvalidS3BucketNameFault "InvalidS3BucketNameFault"
 //   The S3 bucket name is invalid. For more information about naming rules, go
-//   to Bucket Restrictions and Limitations (http://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html)
+//   to Bucket Restrictions and Limitations (https://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html)
 //   in the Amazon Simple Storage Service (S3) Developer Guide.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/redshift-2012-12-01/EnableLogging
@@ -6394,13 +6394,13 @@ func (c *Redshift) GetClusterCredentialsRequest(input *GetClusterCredentialsInpu
 // the user will join at log on. By default, the temporary credentials expire
 // in 900 seconds. You can optionally specify a duration between 900 seconds
 // (15 minutes) and 3600 seconds (60 minutes). For more information, see Using
-// IAM Authentication to Generate Database User Credentials (http://docs.aws.amazon.com/redshift/latest/mgmt/generating-user-credentials.html)
+// IAM Authentication to Generate Database User Credentials (https://docs.aws.amazon.com/redshift/latest/mgmt/generating-user-credentials.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // The AWS Identity and Access Management (IAM)user or role that executes GetClusterCredentials
 // must have an IAM policy attached that allows access to all necessary actions
 // and resources. For more information about permissions, see Resource Policies
-// for GetClusterCredentials (http://docs.aws.amazon.com/redshift/latest/mgmt/redshift-iam-access-control-identity-based.html#redshift-policy-resources.getclustercredentials-resources)
+// for GetClusterCredentials (https://docs.aws.amazon.com/redshift/latest/mgmt/redshift-iam-access-control-identity-based.html#redshift-policy-resources.getclustercredentials-resources)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // If the DbGroups parameter is specified, the IAM policy must allow the redshift:JoinGroup
@@ -6593,7 +6593,7 @@ func (c *Redshift) ModifyClusterRequest(input *ModifyClusterInput) (req *request
 // master user password. Resetting a cluster password or modifying the security
 // groups associated with a cluster do not need a reboot. However, modifying
 // a parameter group requires a reboot for parameters to take effect. For more
-// information about managing clusters, go to Amazon Redshift Clusters (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html)
+// information about managing clusters, go to Amazon Redshift Clusters (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // You can also change node type and the number of nodes to scale up or down
@@ -6620,7 +6620,7 @@ func (c *Redshift) ModifyClusterRequest(input *ModifyClusterInput) (req *request
 //   * ErrCodeNumberOfNodesQuotaExceededFault "NumberOfNodesQuotaExceeded"
 //   The operation would exceed the number of nodes allotted to the account. For
 //   information about increasing your quota, go to Limits in Amazon Redshift
-//   (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+//   (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 //   in the Amazon Redshift Cluster Management Guide.
 //
 //   * ErrCodeNumberOfNodesPerClusterLimitExceededFault "NumberOfNodesPerClusterLimitExceeded"
@@ -6993,7 +6993,7 @@ func (c *Redshift) ModifyClusterParameterGroupRequest(input *ModifyClusterParame
 // Modifies the parameters of a parameter group.
 //
 // For more information about parameters and parameter groups, go to Amazon
-// Redshift Parameter Groups (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-parameter-groups.html)
+// Redshift Parameter Groups (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-parameter-groups.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -7271,7 +7271,7 @@ func (c *Redshift) ModifyClusterSubnetGroupRequest(input *ModifyClusterSubnetGro
 //   * ErrCodeClusterSubnetQuotaExceededFault "ClusterSubnetQuotaExceededFault"
 //   The request would result in user exceeding the allowed number of subnets
 //   in a cluster subnet groups. For information about increasing your quota,
-//   go to Limits in Amazon Redshift (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+//   go to Limits in Amazon Redshift (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 //   in the Amazon Redshift Cluster Management Guide.
 //
 //   * ErrCodeSubnetAlreadyInUse "SubnetAlreadyInUse"
@@ -7657,7 +7657,7 @@ func (c *Redshift) PurchaseReservedNodeOfferingRequest(input *PurchaseReservedNo
 // node offering and the number of nodes you want to reserve.
 //
 // For more information about reserved node offerings, go to Purchasing Reserved
-// Nodes (http://docs.aws.amazon.com/redshift/latest/mgmt/purchase-reserved-node-instance.html)
+// Nodes (https://docs.aws.amazon.com/redshift/latest/mgmt/purchase-reserved-node-instance.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -7676,7 +7676,7 @@ func (c *Redshift) PurchaseReservedNodeOfferingRequest(input *PurchaseReservedNo
 //
 //   * ErrCodeReservedNodeQuotaExceededFault "ReservedNodeQuotaExceeded"
 //   Request would exceed the user's compute node quota. For information about
-//   increasing your quota, go to Limits in Amazon Redshift (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+//   increasing your quota, go to Limits in Amazon Redshift (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 //   in the Amazon Redshift Cluster Management Guide.
 //
 //   * ErrCodeUnsupportedOperationFault "UnsupportedOperation"
@@ -7753,7 +7753,7 @@ func (c *Redshift) RebootClusterRequest(input *RebootClusterInput) (req *request
 // to rebooting. A cluster event is created when the reboot is completed. Any
 // pending cluster modifications (see ModifyCluster) are applied at this reboot.
 // For more information about managing clusters, go to Amazon Redshift Clusters
-// (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html)
+// (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -7930,15 +7930,8 @@ func (c *Redshift) ResizeClusterRequest(input *ResizeClusterInput) (req *request
 //
 // Elastic resize operations have the following restrictions:
 //
-//    * You can only resize clusters of the following types:
-//
-// dc2.large
-//
-// dc2.8xlarge
-//
-// ds2.xlarge
-//
-// ds2.8xlarge
+//    * You can only resize clusters of the following types: dc2.large dc2.8xlarge
+//    ds2.xlarge ds2.8xlarge
 //
 //    * The type of nodes that you add must match the node type for the cluster.
 //
@@ -7959,7 +7952,7 @@ func (c *Redshift) ResizeClusterRequest(input *ResizeClusterInput) (req *request
 //   * ErrCodeNumberOfNodesQuotaExceededFault "NumberOfNodesQuotaExceeded"
 //   The operation would exceed the number of nodes allotted to the account. For
 //   information about increasing your quota, go to Limits in Amazon Redshift
-//   (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+//   (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 //   in the Amazon Redshift Cluster Management Guide.
 //
 //   * ErrCodeNumberOfNodesPerClusterLimitExceededFault "NumberOfNodesPerClusterLimitExceeded"
@@ -8059,7 +8052,7 @@ func (c *Redshift) RestoreFromClusterSnapshotRequest(input *RestoreFromClusterSn
 // where you want the cluster restored.
 //
 // For more information about working with snapshots, go to Amazon Redshift
-// Snapshots (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-snapshots.html)
+// Snapshots (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-snapshots.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -8083,7 +8076,7 @@ func (c *Redshift) RestoreFromClusterSnapshotRequest(input *RestoreFromClusterSn
 //   * ErrCodeClusterQuotaExceededFault "ClusterQuotaExceeded"
 //   The request would exceed the allowed number of cluster instances for this
 //   account. For information about increasing your quota, go to Limits in Amazon
-//   Redshift (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+//   Redshift (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 //   in the Amazon Redshift Cluster Management Guide.
 //
 //   * ErrCodeInsufficientClusterCapacityFault "InsufficientClusterCapacity"
@@ -8099,7 +8092,7 @@ func (c *Redshift) RestoreFromClusterSnapshotRequest(input *RestoreFromClusterSn
 //   * ErrCodeNumberOfNodesQuotaExceededFault "NumberOfNodesQuotaExceeded"
 //   The operation would exceed the number of nodes allotted to the account. For
 //   information about increasing your quota, go to Limits in Amazon Redshift
-//   (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+//   (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 //   in the Amazon Redshift Cluster Management Guide.
 //
 //   * ErrCodeNumberOfNodesPerClusterLimitExceededFault "NumberOfNodesPerClusterLimitExceeded"
@@ -8150,6 +8143,12 @@ func (c *Redshift) RestoreFromClusterSnapshotRequest(input *RestoreFromClusterSn
 //
 //   * ErrCodeSnapshotScheduleNotFoundFault "SnapshotScheduleNotFound"
 //   We could not find the specified snapshot schedule.
+//
+//   * ErrCodeTagLimitExceededFault "TagLimitExceededFault"
+//   You have exceeded the number of tags allowed.
+//
+//   * ErrCodeInvalidTagFault "InvalidTagFault"
+//   The tag is invalid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/redshift-2012-12-01/RestoreFromClusterSnapshot
 func (c *Redshift) RestoreFromClusterSnapshot(input *RestoreFromClusterSnapshotInput) (*RestoreFromClusterSnapshotOutput, error) {
@@ -8332,7 +8331,7 @@ func (c *Redshift) RevokeClusterSecurityGroupIngressRequest(input *RevokeCluster
 // Revokes an ingress rule in an Amazon Redshift security group for a previously
 // authorized IP range or Amazon EC2 security group. To add an ingress rule,
 // see AuthorizeClusterSecurityGroupIngress. For information about managing
-// security groups, go to Amazon Redshift Cluster Security Groups (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-security-groups.html)
+// security groups, go to Amazon Redshift Cluster Security Groups (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-security-groups.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -8425,7 +8424,7 @@ func (c *Redshift) RevokeSnapshotAccessRequest(input *RevokeSnapshotAccessInput)
 // restore will run to completion.
 //
 // For more information about working with snapshots, go to Amazon Redshift
-// Snapshots (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-snapshots.html)
+// Snapshots (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-snapshots.html)
 // in the Amazon Redshift Cluster Management Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -9162,6 +9161,9 @@ type CancelResizeOutput struct {
 	// shows the average rate of the entire resize operation.
 	AvgResizeRateInMegaBytesPerSecond *float64 `type:"double"`
 
+	// The percent of data transferred from source cluster to target cluster.
+	DataTransferProgressPercent *float64 `type:"double"`
+
 	// The amount of seconds that have elapsed since the resize operation began.
 	// After the resize operation completes, this value shows the total actual time,
 	// in seconds, for the resize operation.
@@ -9243,6 +9245,12 @@ func (s CancelResizeOutput) GoString() string {
 // SetAvgResizeRateInMegaBytesPerSecond sets the AvgResizeRateInMegaBytesPerSecond field's value.
 func (s *CancelResizeOutput) SetAvgResizeRateInMegaBytesPerSecond(v float64) *CancelResizeOutput {
 	s.AvgResizeRateInMegaBytesPerSecond = &v
+	return s
+}
+
+// SetDataTransferProgressPercent sets the DataTransferProgressPercent field's value.
+func (s *CancelResizeOutput) SetDataTransferProgressPercent(v float64) *CancelResizeOutput {
+	s.DataTransferProgressPercent = &v
 	return s
 }
 
@@ -9343,6 +9351,22 @@ type Cluster struct {
 
 	// The name of the Availability Zone in which the cluster is located.
 	AvailabilityZone *string `type:"string"`
+
+	// The availability status of the cluster for queries. Possible values are the
+	// following:
+	//
+	//    * Available - The cluster is available for queries.
+	//
+	//    * Unavailable - The cluster is not available for queries.
+	//
+	//    * Maintenance - The cluster is intermittently available for queries due
+	//    to maintenance activities.
+	//
+	//    * Modifying - The cluster is intermittently available for queries due
+	//    to changes that modify the cluster.
+	//
+	//    * Failed - The cluster failed and is not available for queries.
+	ClusterAvailabilityStatus *string `type:"string"`
 
 	// The date and time that the cluster was created.
 	ClusterCreateTime *time.Time `type:"timestamp"`
@@ -9453,7 +9477,7 @@ type Cluster struct {
 	// An option that specifies whether to create the cluster with enhanced VPC
 	// routing enabled. To create a cluster that uses enhanced VPC routing, the
 	// cluster must be in a VPC. For more information, see Enhanced VPC Routing
-	// (http://docs.aws.amazon.com/redshift/latest/mgmt/enhanced-vpc-routing.html)
+	// (https://docs.aws.amazon.com/redshift/latest/mgmt/enhanced-vpc-routing.html)
 	// in the Amazon Redshift Cluster Management Guide.
 	//
 	// If this option is true, enhanced VPC routing is enabled.
@@ -9569,6 +9593,12 @@ func (s *Cluster) SetAutomatedSnapshotRetentionPeriod(v int64) *Cluster {
 // SetAvailabilityZone sets the AvailabilityZone field's value.
 func (s *Cluster) SetAvailabilityZone(v string) *Cluster {
 	s.AvailabilityZone = &v
+	return s
+}
+
+// SetClusterAvailabilityStatus sets the ClusterAvailabilityStatus field's value.
+func (s *Cluster) SetClusterAvailabilityStatus(v string) *Cluster {
+	s.ClusterAvailabilityStatus = &v
 	return s
 }
 
@@ -10067,7 +10097,7 @@ type ClusterParameterGroupStatus struct {
 	// The list of parameter statuses.
 	//
 	// For more information about parameters and parameter groups, go to Amazon
-	// Redshift Parameter Groups (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-parameter-groups.html)
+	// Redshift Parameter Groups (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-parameter-groups.html)
 	// in the Amazon Redshift Cluster Management Guide.
 	ClusterParameterStatusList []*ClusterParameterStatus `type:"list"`
 
@@ -10622,7 +10652,7 @@ type CreateClusterInput struct {
 	//
 	// Default: The default Amazon Redshift cluster parameter group. For information
 	// about the default parameter group, go to Working with Amazon Redshift Parameter
-	// Groups (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-parameter-groups.html)
+	// Groups (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-parameter-groups.html)
 	//
 	// Constraints:
 	//
@@ -10669,7 +10699,7 @@ type CreateClusterInput struct {
 	//
 	// To create additional databases after the cluster is created, connect to the
 	// cluster with a SQL client and use SQL commands to create a database. For
-	// more information, go to Create a Database (http://docs.aws.amazon.com/redshift/latest/dg/t_creating_database.html)
+	// more information, go to Create a Database (https://docs.aws.amazon.com/redshift/latest/dg/t_creating_database.html)
 	// in the Amazon Redshift Database Developer Guide.
 	//
 	// Default: dev
@@ -10681,7 +10711,7 @@ type CreateClusterInput struct {
 	//    * Must contain only lowercase letters.
 	//
 	//    * Cannot be a word that is reserved by the service. A list of reserved
-	//    words can be found in Reserved Words (http://docs.aws.amazon.com/redshift/latest/dg/r_pg_keywords.html)
+	//    words can be found in Reserved Words (https://docs.aws.amazon.com/redshift/latest/dg/r_pg_keywords.html)
 	//    in the Amazon Redshift Database Developer Guide.
 	DBName *string `type:"string"`
 
@@ -10689,7 +10719,7 @@ type CreateClusterInput struct {
 	//
 	// Constraints: The cluster must be provisioned in EC2-VPC and publicly-accessible
 	// through an Internet gateway. For more information about provisioning clusters
-	// in EC2-VPC, go to Supported Platforms to Launch Your Cluster (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html#cluster-platforms)
+	// in EC2-VPC, go to Supported Platforms to Launch Your Cluster (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html#cluster-platforms)
 	// in the Amazon Redshift Cluster Management Guide.
 	ElasticIp *string `type:"string"`
 
@@ -10701,7 +10731,7 @@ type CreateClusterInput struct {
 	// An option that specifies whether to create the cluster with enhanced VPC
 	// routing enabled. To create a cluster that uses enhanced VPC routing, the
 	// cluster must be in a VPC. For more information, see Enhanced VPC Routing
-	// (http://docs.aws.amazon.com/redshift/latest/mgmt/enhanced-vpc-routing.html)
+	// (https://docs.aws.amazon.com/redshift/latest/mgmt/enhanced-vpc-routing.html)
 	// in the Amazon Redshift Cluster Management Guide.
 	//
 	// If this option is true, enhanced VPC routing is enabled.
@@ -10770,14 +10800,14 @@ type CreateClusterInput struct {
 	//    * First character must be a letter.
 	//
 	//    * Cannot be a reserved word. A list of reserved words can be found in
-	//    Reserved Words (http://docs.aws.amazon.com/redshift/latest/dg/r_pg_keywords.html)
+	//    Reserved Words (https://docs.aws.amazon.com/redshift/latest/dg/r_pg_keywords.html)
 	//    in the Amazon Redshift Database Developer Guide.
 	//
 	// MasterUsername is a required field
 	MasterUsername *string `type:"string" required:"true"`
 
 	// The node type to be provisioned for the cluster. For information about node
-	// types, go to  Working with Clusters (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html#how-many-nodes)
+	// types, go to Working with Clusters (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html#how-many-nodes)
 	// in the Amazon Redshift Cluster Management Guide.
 	//
 	// Valid Values: ds2.xlarge | ds2.8xlarge | ds2.xlarge | ds2.8xlarge | dc1.large
@@ -10789,8 +10819,8 @@ type CreateClusterInput struct {
 	// The number of compute nodes in the cluster. This parameter is required when
 	// the ClusterType parameter is specified as multi-node.
 	//
-	// For information about determining how many nodes you need, go to  Working
-	// with Clusters (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html#how-many-nodes)
+	// For information about determining how many nodes you need, go to Working
+	// with Clusters (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html#how-many-nodes)
 	// in the Amazon Redshift Cluster Management Guide.
 	//
 	// If you don't specify this parameter, you get a single-node cluster. When
@@ -10820,7 +10850,7 @@ type CreateClusterInput struct {
 	//
 	// Default: A 30-minute window selected at random from an 8-hour block of time
 	// per region, occurring on a random day of the week. For more information about
-	// the time blocks for each region, see Maintenance Windows (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html#rs-maintenance-windows)
+	// the time blocks for each region, see Maintenance Windows (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html#rs-maintenance-windows)
 	// in Amazon Redshift Cluster Management Guide.
 	//
 	// Valid Days: Mon | Tue | Wed | Thu | Fri | Sat | Sun
@@ -11973,7 +12003,7 @@ type CreateSnapshotCopyGrantOutput struct {
 	// in the destination region.
 	//
 	// For more information about managing snapshot copy grants, go to Amazon Redshift
-	// Database Encryption (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-db-encryption.html)
+	// Database Encryption (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-db-encryption.html)
 	// in the Amazon Redshift Cluster Management Guide.
 	SnapshotCopyGrant *SnapshotCopyGrant `type:"structure"`
 }
@@ -12012,6 +12042,7 @@ type CreateSnapshotScheduleInput struct {
 	// are allowed for the identifier.
 	ScheduleIdentifier *string `type:"string"`
 
+	// An optional set of tags you can use to search for the schedule.
 	Tags []*Tag `locationNameList:"Tag" type:"list"`
 }
 
@@ -12066,13 +12097,16 @@ func (s *CreateSnapshotScheduleInput) SetTags(v []*Tag) *CreateSnapshotScheduleI
 type CreateSnapshotScheduleOutput struct {
 	_ struct{} `type:"structure"`
 
+	// The number of clusters associated with the schedule.
 	AssociatedClusterCount *int64 `type:"integer"`
 
+	// A list of clusters associated with the schedule. A maximum of 100 clusters
+	// is returned.
 	AssociatedClusters []*ClusterAssociatedToSchedule `locationNameList:"ClusterAssociatedToSchedule" type:"list"`
 
 	NextInvocations []*time.Time `locationNameList:"SnapshotTime" type:"list"`
 
-	// A list of ScheduleDefinitions
+	// A list of ScheduleDefinitions.
 	ScheduleDefinitions []*string `locationNameList:"ScheduleDefinition" type:"list"`
 
 	// The description of the schedule.
@@ -13620,12 +13654,24 @@ type DescribeClusterSnapshotsInput struct {
 	_ struct{} `type:"structure"`
 
 	// A value that indicates whether to return snapshots only for an existing cluster.
-	// Table-level restore can be performed only using a snapshot of an existing
-	// cluster, that is, a cluster that has not been deleted. If ClusterExists is
-	// set to true, ClusterIdentifier is required.
+	// You can perform table-level restore only by using a snapshot of an existing
+	// cluster, that is, a cluster that has not been deleted. Values for this parameter
+	// work as follows:
+	//
+	//    * If ClusterExists is set to true, ClusterIdentifier is required.
+	//
+	//    * If ClusterExists is set to false and ClusterIdentifier isn't specified,
+	//    all snapshots associated with deleted clusters (orphaned snapshots) are
+	//    returned.
+	//
+	//    * If ClusterExists is set to false and ClusterIdentifier is specified
+	//    for a deleted cluster, snapshots associated with that cluster are returned.
+	//
+	//    * If ClusterExists is set to false and ClusterIdentifier is specified
+	//    for an existing cluster, no snapshots are returned.
 	ClusterExists *bool `type:"boolean"`
 
-	// The identifier of the cluster for which information about snapshots is requested.
+	// The identifier of the cluster which generated the requested snapshots.
 	ClusterIdentifier *string `type:"string"`
 
 	// A time value that requests only snapshots created at or before the specified
@@ -15298,6 +15344,9 @@ type DescribeResizeOutput struct {
 	// shows the average rate of the entire resize operation.
 	AvgResizeRateInMegaBytesPerSecond *float64 `type:"double"`
 
+	// The percent of data transferred from source cluster to target cluster.
+	DataTransferProgressPercent *float64 `type:"double"`
+
 	// The amount of seconds that have elapsed since the resize operation began.
 	// After the resize operation completes, this value shows the total actual time,
 	// in seconds, for the resize operation.
@@ -15379,6 +15428,12 @@ func (s DescribeResizeOutput) GoString() string {
 // SetAvgResizeRateInMegaBytesPerSecond sets the AvgResizeRateInMegaBytesPerSecond field's value.
 func (s *DescribeResizeOutput) SetAvgResizeRateInMegaBytesPerSecond(v float64) *DescribeResizeOutput {
 	s.AvgResizeRateInMegaBytesPerSecond = &v
+	return s
+}
+
+// SetDataTransferProgressPercent sets the DataTransferProgressPercent field's value.
+func (s *DescribeResizeOutput) SetDataTransferProgressPercent(v float64) *DescribeResizeOutput {
+	s.DataTransferProgressPercent = &v
 	return s
 }
 
@@ -15883,7 +15938,7 @@ type DescribeTagsInput struct {
 	//
 	// For more information about Amazon Redshift resource types and constructing
 	// ARNs, go to Specifying Policy Elements: Actions, Effects, Resources, and
-	// Principals (http://docs.aws.amazon.com/redshift/latest/mgmt/redshift-iam-access-control-overview.html#redshift-iam-access-control-specify-actions)
+	// Principals (https://docs.aws.amazon.com/redshift/latest/mgmt/redshift-iam-access-control-overview.html#redshift-iam-access-control-specify-actions)
 	// in the Amazon Redshift Cluster Management Guide.
 	ResourceType *string `type:"string"`
 
@@ -16205,17 +16260,7 @@ type EnableLoggingInput struct {
 	//
 	//    * Cannot contain spaces( ), double quotes ("), single quotes ('), a backslash
 	//    (\), or control characters. The hexadecimal codes for invalid characters
-	//    are:
-	//
-	// x00 to x20
-	//
-	// x22
-	//
-	// x27
-	//
-	// x5c
-	//
-	// x7f or larger
+	//    are: x00 to x20 x22 x27 x5c x7f or larger
 	S3KeyPrefix *string `type:"string"`
 }
 
@@ -16277,7 +16322,7 @@ type EnableSnapshotCopyInput struct {
 	// The destination AWS Region that you want to copy snapshots to.
 	//
 	// Constraints: Must be the name of a valid AWS Region. For more information,
-	// see Regions and Endpoints (http://docs.aws.amazon.com/general/latest/gr/rande.html#redshift_region)
+	// see Regions and Endpoints (https://docs.aws.amazon.com/general/latest/gr/rande.html#redshift_region)
 	// in the Amazon Web Services General Reference.
 	//
 	// DestinationRegion is a required field
@@ -16778,7 +16823,7 @@ type GetClusterCredentialsInput struct {
 	// is False, then the command succeeds but the connection attempt will fail
 	// because the user doesn't exist in the database.
 	//
-	// For more information, see CREATE USER (http://docs.aws.amazon.com/redshift/latest/dg/r_CREATE_USER.html)
+	// For more information, see CREATE USER (https://docs.aws.amazon.com/redshift/latest/dg/r_CREATE_USER.html)
 	// in the Amazon Redshift Database Developer Guide.
 	//
 	// Constraints:
@@ -17547,7 +17592,7 @@ type ModifyClusterInput struct {
 	// cluster is deleted and your connection is switched to the new cluster. You
 	// can use DescribeResize to track the progress of the resize request.
 	//
-	// Valid Values:  multi-node | single-node
+	// Valid Values: multi-node | single-node
 	ClusterType *string `type:"string"`
 
 	// The new version number of the Amazon Redshift engine to upgrade to.
@@ -17557,7 +17602,7 @@ type ModifyClusterInput struct {
 	// for the new version must be specified. The new cluster parameter group can
 	// be the default for that cluster parameter group family. For more information
 	// about parameters and parameter groups, go to Amazon Redshift Parameter Groups
-	// (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-parameter-groups.html)
+	// (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-parameter-groups.html)
 	// in the Amazon Redshift Cluster Management Guide.
 	//
 	// Example: 1.0
@@ -17567,7 +17612,7 @@ type ModifyClusterInput struct {
 	//
 	// Constraints: The cluster must be provisioned in EC2-VPC and publicly-accessible
 	// through an Internet gateway. For more information about provisioning clusters
-	// in EC2-VPC, go to Supported Platforms to Launch Your Cluster (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html#cluster-platforms)
+	// in EC2-VPC, go to Supported Platforms to Launch Your Cluster (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html#cluster-platforms)
 	// in the Amazon Redshift Cluster Management Guide.
 	ElasticIp *string `type:"string"`
 
@@ -17581,7 +17626,7 @@ type ModifyClusterInput struct {
 	// An option that specifies whether to create the cluster with enhanced VPC
 	// routing enabled. To create a cluster that uses enhanced VPC routing, the
 	// cluster must be in a VPC. For more information, see Enhanced VPC Routing
-	// (http://docs.aws.amazon.com/redshift/latest/mgmt/enhanced-vpc-routing.html)
+	// (https://docs.aws.amazon.com/redshift/latest/mgmt/enhanced-vpc-routing.html)
 	// in the Amazon Redshift Cluster Management Guide.
 	//
 	// If this option is true, enhanced VPC routing is enabled.
@@ -17883,7 +17928,7 @@ type ModifyClusterMaintenanceInput struct {
 
 	// An integer indicating the duration of the maintenance window in days. If
 	// you specify a duration, you can't specify an end time. The duration must
-	// be 14 days or less.
+	// be 45 days or less.
 	DeferMaintenanceDuration *int64 `type:"integer"`
 
 	// A timestamp indicating end time for the deferred maintenance window. If you
@@ -18609,13 +18654,16 @@ func (s *ModifySnapshotScheduleInput) SetScheduleIdentifier(v string) *ModifySna
 type ModifySnapshotScheduleOutput struct {
 	_ struct{} `type:"structure"`
 
+	// The number of clusters associated with the schedule.
 	AssociatedClusterCount *int64 `type:"integer"`
 
+	// A list of clusters associated with the schedule. A maximum of 100 clusters
+	// is returned.
 	AssociatedClusters []*ClusterAssociatedToSchedule `locationNameList:"ClusterAssociatedToSchedule" type:"list"`
 
 	NextInvocations []*time.Time `locationNameList:"SnapshotTime" type:"list"`
 
-	// A list of ScheduleDefinitions
+	// A list of ScheduleDefinitions.
 	ScheduleDefinitions []*string `locationNameList:"ScheduleDefinition" type:"list"`
 
 	// The description of the schedule.
@@ -18742,7 +18790,7 @@ type Parameter struct {
 	// be applied dynamically, while other properties require that any associated
 	// clusters be rebooted for the configuration changes to be applied. For more
 	// information about parameters and parameter groups, go to Amazon Redshift
-	// Parameter Groups (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-parameter-groups.html)
+	// Parameter Groups (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-parameter-groups.html)
 	// in the Amazon Redshift Cluster Management Guide.
 	ApplyType *string `type:"string" enum:"ParameterApplyType"`
 
@@ -18857,7 +18905,7 @@ type PendingModifiedValues struct {
 	// An option that specifies whether to create the cluster with enhanced VPC
 	// routing enabled. To create a cluster that uses enhanced VPC routing, the
 	// cluster must be in a VPC. For more information, see Enhanced VPC Routing
-	// (http://docs.aws.amazon.com/redshift/latest/mgmt/enhanced-vpc-routing.html)
+	// (https://docs.aws.amazon.com/redshift/latest/mgmt/enhanced-vpc-routing.html)
 	// in the Amazon Redshift Cluster Management Guide.
 	//
 	// If this option is true, enhanced VPC routing is enabled.
@@ -19624,7 +19672,7 @@ type RestoreFromClusterSnapshotInput struct {
 	//
 	// Default: The default Amazon Redshift cluster parameter group. For information
 	// about the default parameter group, go to Working with Amazon Redshift Parameter
-	// Groups (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-parameter-groups.html).
+	// Groups (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-parameter-groups.html).
 	//
 	// Constraints:
 	//
@@ -19654,7 +19702,7 @@ type RestoreFromClusterSnapshotInput struct {
 	// An option that specifies whether to create the cluster with enhanced VPC
 	// routing enabled. To create a cluster that uses enhanced VPC routing, the
 	// cluster must be in a VPC. For more information, see Enhanced VPC Routing
-	// (http://docs.aws.amazon.com/redshift/latest/mgmt/enhanced-vpc-routing.html)
+	// (https://docs.aws.amazon.com/redshift/latest/mgmt/enhanced-vpc-routing.html)
 	// in the Amazon Redshift Cluster Management Guide.
 	//
 	// If this option is true, enhanced VPC routing is enabled.
@@ -19692,6 +19740,11 @@ type RestoreFromClusterSnapshotInput struct {
 	// are on different tracks.
 	MaintenanceTrackName *string `type:"string"`
 
+	// The default number of days to retain a manual snapshot. If the value is -1,
+	// the snapshot is retained indefinitely. This setting doesn't change the retention
+	// period of existing snapshots.
+	//
+	// The value must be either -1 or an integer between 1 and 3,653.
 	ManualSnapshotRetentionPeriod *int64 `type:"integer"`
 
 	// The node type that the restored cluster will be provisioned with.
@@ -19705,7 +19758,7 @@ type RestoreFromClusterSnapshotInput struct {
 	// type into another dc1.large instance type or dc2.large instance type. You
 	// can't restore dc1.8xlarge to dc2.8xlarge. First restore to a dc1.8xlareg
 	// cluster, then resize to a dc2.8large cluster. For more information about
-	// node types, see  About Clusters and Nodes (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html#rs-about-clusters-and-nodes)
+	// node types, see About Clusters and Nodes (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html#rs-about-clusters-and-nodes)
 	// in the Amazon Redshift Cluster Management Guide.
 	NodeType *string `type:"string"`
 
@@ -19727,7 +19780,7 @@ type RestoreFromClusterSnapshotInput struct {
 	//
 	// Default: The value selected for the cluster from which the snapshot was taken.
 	// For more information about the time blocks for each region, see Maintenance
-	// Windows (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html#rs-maintenance-windows)
+	// Windows (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-clusters.html#rs-maintenance-windows)
 	// in Amazon Redshift Cluster Management Guide.
 	//
 	// Valid Days: Mon | Tue | Wed | Thu | Fri | Sat | Sun
@@ -20523,7 +20576,7 @@ type Snapshot struct {
 	// An option that specifies whether to create the cluster with enhanced VPC
 	// routing enabled. To create a cluster that uses enhanced VPC routing, the
 	// cluster must be in a VPC. For more information, see Enhanced VPC Routing
-	// (http://docs.aws.amazon.com/redshift/latest/mgmt/enhanced-vpc-routing.html)
+	// (https://docs.aws.amazon.com/redshift/latest/mgmt/enhanced-vpc-routing.html)
 	// in the Amazon Redshift Cluster Management Guide.
 	//
 	// If this option is true, enhanced VPC routing is enabled.
@@ -20592,7 +20645,6 @@ type Snapshot struct {
 	// used:
 	//
 	//    * CreateClusterSnapshot and CopyClusterSnapshot returns status as "creating".
-	//
 	//
 	//    * DescribeClusterSnapshots returns status as "creating", "available",
 	//    "final snapshot", or "failed".
@@ -20825,7 +20877,7 @@ func (s *Snapshot) SetVpcId(v string) *Snapshot {
 // in the destination region.
 //
 // For more information about managing snapshot copy grants, go to Amazon Redshift
-// Database Encryption (http://docs.aws.amazon.com/redshift/latest/mgmt/working-with-db-encryption.html)
+// Database Encryption (https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-db-encryption.html)
 // in the Amazon Redshift Cluster Management Guide.
 type SnapshotCopyGrant struct {
 	_ struct{} `type:"structure"`
@@ -20925,13 +20977,16 @@ func (s *SnapshotErrorMessage) SetSnapshotIdentifier(v string) *SnapshotErrorMes
 type SnapshotSchedule struct {
 	_ struct{} `type:"structure"`
 
+	// The number of clusters associated with the schedule.
 	AssociatedClusterCount *int64 `type:"integer"`
 
+	// A list of clusters associated with the schedule. A maximum of 100 clusters
+	// is returned.
 	AssociatedClusters []*ClusterAssociatedToSchedule `locationNameList:"ClusterAssociatedToSchedule" type:"list"`
 
 	NextInvocations []*time.Time `locationNameList:"SnapshotTime" type:"list"`
 
-	// A list of ScheduleDefinitions
+	// A list of ScheduleDefinitions.
 	ScheduleDefinitions []*string `locationNameList:"ScheduleDefinition" type:"list"`
 
 	// The description of the schedule.
@@ -21342,7 +21397,7 @@ type TaggedResource struct {
 	//    * Parameter group
 	//
 	// For more information about Amazon Redshift resource types and constructing
-	// ARNs, go to Constructing an Amazon Redshift Amazon Resource Name (ARN) (http://docs.aws.amazon.com/redshift/latest/mgmt/redshift-iam-access-control-overview.html#redshift-iam-access-control-specify-actions)
+	// ARNs, go to Constructing an Amazon Redshift Amazon Resource Name (ARN) (https://docs.aws.amazon.com/redshift/latest/mgmt/redshift-iam-access-control-overview.html#redshift-iam-access-control-specify-actions)
 	// in the Amazon Redshift Cluster Management Guide.
 	ResourceType *string `type:"string"`
 

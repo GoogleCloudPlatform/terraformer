@@ -21,7 +21,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 )
 
 var AsgAllowEmptyValues = []string{"tags."}
@@ -77,8 +76,8 @@ func (g *AutoScalingGenerator) loadLaunchConfigurations(svc *autoscaling.AutoSca
 	return err
 }
 
-func (g *AutoScalingGenerator) loadLaunchTemplates(sess *session.Session) error {
-	ec2svc := ec2.New(sess)
+func (g *AutoScalingGenerator) loadLaunchTemplates() error {
+	ec2svc := ec2.New(g.Session)
 	firstRun := true
 	var err error
 	launchTemplatesOutput := &ec2.DescribeLaunchTemplatesOutput{}
@@ -112,7 +111,7 @@ func (g *AutoScalingGenerator) loadLaunchTemplates(sess *session.Session) error 
 // Need only ASG name as ID for terraform resource
 // AWS api support paging
 func (g *AutoScalingGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"])})
+	sess := g.generateSession()
 	svc := autoscaling.New(sess)
 	if err := g.loadAutoScalingGroups(svc); err != nil {
 		return err
@@ -120,7 +119,7 @@ func (g *AutoScalingGenerator) InitResources() error {
 	if err := g.loadLaunchConfigurations(svc); err != nil {
 		return err
 	}
-	if err := g.loadLaunchTemplates(sess); err != nil {
+	if err := g.loadLaunchTemplates(); err != nil {
 		return err
 	}
 	g.PopulateIgnoreKeys()

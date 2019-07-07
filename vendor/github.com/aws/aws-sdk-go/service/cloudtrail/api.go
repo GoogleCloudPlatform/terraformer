@@ -589,8 +589,7 @@ func (c *CloudTrail) GetEventSelectorsRequest(input *GetEventSelectorsInput) (re
 //    * If your event selector includes data events, the Amazon S3 objects or
 //    AWS Lambda functions that you are logging for data events.
 //
-// For more information, see Logging Data and Management Events for Trails
-// (http://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-management-and-data-events-with-cloudtrail.html)
+// For more information, see Logging Data and Management Events for Trails (http://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-management-and-data-events-with-cloudtrail.html)
 // in the AWS CloudTrail User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -1092,7 +1091,7 @@ func (c *CloudTrail) LookupEventsWithContext(ctx aws.Context, input *LookupEvent
 //    // Example iterating over at most 3 pages of a LookupEvents operation.
 //    pageNum := 0
 //    err := client.LookupEventsPages(params,
-//        func(page *LookupEventsOutput, lastPage bool) bool {
+//        func(page *cloudtrail.LookupEventsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -1204,7 +1203,7 @@ func (c *CloudTrail) PutEventSelectorsRequest(input *PutEventSelectorsInput) (re
 // trail was created; otherwise, an InvalidHomeRegionException is thrown.
 //
 // You can configure up to five event selectors for each trail. For more information,
-// see Logging Data and Management Events for Trails  (http://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-management-and-data-events-with-cloudtrail.html)
+// see Logging Data and Management Events for Trails (http://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-management-and-data-events-with-cloudtrail.html)
 // and Limits in AWS CloudTrail (https://docs.aws.amazon.com/awscloudtrail/latest/userguide/WhatIsCloudTrail-Limits.html)
 // in the AWS CloudTrail User Guide.
 //
@@ -2292,7 +2291,8 @@ func (s *CreateTrailOutput) SetTrailARN(v string) *CreateTrailOutput {
 // A user uploads an object to an Amazon S3 bucket named arn:aws:s3:::bucket-2.
 //
 // The PutObject API operation occurred for an object in an S3 bucket that the
-// CloudTrail user didn't specify for the trail. The trail doesn’t log the event.
+// CloudTrail user didn't specify for the trail. The trail doesn’t log the
+// event.
 //
 // The following example demonstrates how logging works when you configure logging
 // of AWS Lambda data events for a Lambda function named MyLambdaFunction, but
@@ -2321,11 +2321,10 @@ type DataResource struct {
 	// the specified objects.
 	//
 	//    * To log data events for all objects in all S3 buckets in your AWS account,
-	//    specify the prefix as arn:aws:s3:::.
-	//
-	// This will also enable logging of data event activity performed by any user
-	//    or role in your AWS account, even if that activity is performed on a bucket
-	//    that belongs to another AWS account.
+	//    specify the prefix as arn:aws:s3:::. This will also enable logging of
+	//    data event activity performed by any user or role in your AWS account,
+	//    even if that activity is performed on a bucket that belongs to another
+	//    AWS account.
 	//
 	//    * To log data events for all objects in all S3 buckets that include my-bucket
 	//    in their names, specify the prefix as aws:s3:::my-bucket. The trail logs
@@ -2341,17 +2340,13 @@ type DataResource struct {
 	//    events for objects in this S3 bucket that match the prefix.
 	//
 	//    * To log data events for all functions in your AWS account, specify the
-	//    prefix as arn:aws:lambda.
-	//
-	// This will also enable logging of Invoke activity performed by any user or
-	//    role in your AWS account, even if that activity is performed on a function
-	//    that belongs to another AWS account.
+	//    prefix as arn:aws:lambda. This will also enable logging of Invoke activity
+	//    performed by any user or role in your AWS account, even if that activity
+	//    is performed on a function that belongs to another AWS account.
 	//
 	//    * To log data eents for a specific Lambda function, specify the function
-	//    ARN.
-	//
-	// Lambda function ARNs are exact. Unlike S3, you cannot use matching. For example,
-	//    if you specify a function ARN arn:aws:lambda:us-west-2:111111111111:function:helloworld,
+	//    ARN. Lambda function ARNs are exact. Unlike S3, you cannot use matching.
+	//    For example, if you specify a function ARN arn:aws:lambda:us-west-2:111111111111:function:helloworld,
 	//    data events will only be logged for arn:aws:lambda:us-west-2:111111111111:function:helloworld.
 	//    They will not be logged for arn:aws:lambda:us-west-2:111111111111:function:helloworld2.
 	Values []*string `type:"list"`

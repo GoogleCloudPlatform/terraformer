@@ -566,7 +566,8 @@ func (s *CreateLifecyclePolicyOutput) SetPolicyId(v string) *CreateLifecyclePoli
 type CreateRule struct {
 	_ struct{} `type:"structure"`
 
-	// The interval. The supported values are 12 and 24.
+	// The interval between snapshots. The supported values are 2, 3, 4, 6, 8, 12,
+	// and 24.
 	//
 	// Interval is a required field
 	Interval *int64 `min:"1" type:"integer" required:"true"`
@@ -576,7 +577,7 @@ type CreateRule struct {
 	// IntervalUnit is a required field
 	IntervalUnit *string `type:"string" required:"true" enum:"IntervalUnitValues"`
 
-	// The time, in UTC, to start the operation.
+	// The time, in UTC, to start the operation. The supported format is hh:mm.
 	//
 	// The operation occurs within a one-hour window following the specified time.
 	Times []*string `type:"list"`
@@ -858,10 +859,10 @@ type LifecyclePolicy struct {
 	_ struct{} `type:"structure"`
 
 	// The local date and time when the lifecycle policy was created.
-	DateCreated *time.Time `type:"timestamp"`
+	DateCreated *time.Time `type:"timestamp" timestampFormat:"iso8601"`
 
 	// The local date and time when the lifecycle policy was last modified.
-	DateModified *time.Time `type:"timestamp"`
+	DateModified *time.Time `type:"timestamp" timestampFormat:"iso8601"`
 
 	// The description of the lifecycle policy.
 	Description *string `type:"string"`
@@ -974,9 +975,43 @@ func (s *LifecyclePolicySummary) SetState(v string) *LifecyclePolicySummary {
 	return s
 }
 
+// Optional parameters that can be added to the policy. The set of valid parameters
+// depends on the combination of policyType and resourceType values.
+type Parameters struct {
+	_ struct{} `type:"structure"`
+
+	// When executing an EBS Snapshot Management – Instance policy, execute all
+	// CreateSnapshots calls with the excludeBootVolume set to the supplied field.
+	// Defaults to false. Only valid for EBS Snapshot Management – Instance policies.
+	ExcludeBootVolume *bool `type:"boolean"`
+}
+
+// String returns the string representation
+func (s Parameters) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s Parameters) GoString() string {
+	return s.String()
+}
+
+// SetExcludeBootVolume sets the ExcludeBootVolume field's value.
+func (s *Parameters) SetExcludeBootVolume(v bool) *Parameters {
+	s.ExcludeBootVolume = &v
+	return s
+}
+
 // Specifies the configuration of a lifecycle policy.
 type PolicyDetails struct {
 	_ struct{} `type:"structure"`
+
+	// A set of optional parameters that can be provided by the policy.
+	Parameters *Parameters `type:"structure"`
+
+	// This field determines the valid target resource types and actions a policy
+	// can manage. This field defaults to EBS_SNAPSHOT_MANAGEMENT if not present.
+	PolicyType *string `type:"string" enum:"PolicyTypeValues"`
 
 	// The resource type.
 	ResourceTypes []*string `min:"1" type:"list"`
@@ -1035,6 +1070,18 @@ func (s *PolicyDetails) Validate() error {
 		return invalidParams
 	}
 	return nil
+}
+
+// SetParameters sets the Parameters field's value.
+func (s *PolicyDetails) SetParameters(v *Parameters) *PolicyDetails {
+	s.Parameters = v
+	return s
+}
+
+// SetPolicyType sets the PolicyType field's value.
+func (s *PolicyDetails) SetPolicyType(v string) *PolicyDetails {
+	s.PolicyType = &v
+	return s
 }
 
 // SetResourceTypes sets the ResourceTypes field's value.
@@ -1101,6 +1148,8 @@ func (s *RetainRule) SetCount(v int64) *RetainRule {
 type Schedule struct {
 	_ struct{} `type:"structure"`
 
+	// Copy all user-defined tags on a source volume to snapshots of the volume
+	// created by this policy.
 	CopyTags *bool `type:"boolean"`
 
 	// The create rule.
@@ -1115,6 +1164,12 @@ type Schedule struct {
 	// The tags to apply to policy-created resources. These user-defined tags are
 	// in addition to the AWS-added lifecycle tags.
 	TagsToAdd []*Tag `type:"list"`
+
+	// A collection of key/value pairs with values determined dynamically when the
+	// policy is executed. Keys may be any valid Amazon EC2 tag key. Values must
+	// be in one of the two following formats: $(instance-id) or $(timestamp). Variable
+	// tags are only valid for EBS Snapshot Management – Instance policies.
+	VariableTags []*Tag `type:"list"`
 }
 
 // String returns the string representation
@@ -1147,6 +1202,16 @@ func (s *Schedule) Validate() error {
 			}
 			if err := v.Validate(); err != nil {
 				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "TagsToAdd", i), err.(request.ErrInvalidParams))
+			}
+		}
+	}
+	if s.VariableTags != nil {
+		for i, v := range s.VariableTags {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "VariableTags", i), err.(request.ErrInvalidParams))
 			}
 		}
 	}
@@ -1184,6 +1249,12 @@ func (s *Schedule) SetRetainRule(v *RetainRule) *Schedule {
 // SetTagsToAdd sets the TagsToAdd field's value.
 func (s *Schedule) SetTagsToAdd(v []*Tag) *Schedule {
 	s.TagsToAdd = v
+	return s
+}
+
+// SetVariableTags sets the VariableTags field's value.
+func (s *Schedule) SetVariableTags(v []*Tag) *Schedule {
+	s.VariableTags = v
 	return s
 }
 
@@ -1356,8 +1427,16 @@ const (
 )
 
 const (
+	// PolicyTypeValuesEbsSnapshotManagement is a PolicyTypeValues enum value
+	PolicyTypeValuesEbsSnapshotManagement = "EBS_SNAPSHOT_MANAGEMENT"
+)
+
+const (
 	// ResourceTypeValuesVolume is a ResourceTypeValues enum value
 	ResourceTypeValuesVolume = "VOLUME"
+
+	// ResourceTypeValuesInstance is a ResourceTypeValues enum value
+	ResourceTypeValuesInstance = "INSTANCE"
 )
 
 const (

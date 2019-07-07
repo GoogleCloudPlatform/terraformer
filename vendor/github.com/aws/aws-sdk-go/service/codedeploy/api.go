@@ -155,7 +155,8 @@ func (c *CodeDeploy) BatchGetApplicationRevisionsRequest(input *BatchGetApplicat
 
 // BatchGetApplicationRevisions API operation for AWS CodeDeploy.
 //
-// Gets information about one or more application revisions.
+// Gets information about one or more application revisions. The maximum number
+// of application revisions that can be returned is 25.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -249,7 +250,8 @@ func (c *CodeDeploy) BatchGetApplicationsRequest(input *BatchGetApplicationsInpu
 
 // BatchGetApplications API operation for AWS CodeDeploy.
 //
-// Gets information about one or more applications.
+// Gets information about one or more applications. The maximum number of applications
+// that can be returned is 25.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -439,11 +441,13 @@ func (c *CodeDeploy) BatchGetDeploymentInstancesRequest(input *BatchGetDeploymen
 
 // BatchGetDeploymentInstances API operation for AWS CodeDeploy.
 //
+//
 // This method works, but is deprecated. Use BatchGetDeploymentTargets instead.
 //
-// Returns an array of instances associated with a deployment. This method works
-// with EC2/On-premises and AWS Lambda compute platforms. The newer BatchGetDeploymentTargets
-// works with all compute platforms.
+// Returns an array of one or more instances associated with a deployment. This
+// method works with EC2/On-premises and AWS Lambda compute platforms. The newer
+// BatchGetDeploymentTargets works with all compute platforms. The maximum number
+// of instances that can be returned is 25.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -544,8 +548,10 @@ func (c *CodeDeploy) BatchGetDeploymentTargetsRequest(input *BatchGetDeploymentT
 
 // BatchGetDeploymentTargets API operation for AWS CodeDeploy.
 //
-// Returns an array of targets associated with a deployment. This method works
-// with all compute types and should be used instead of the deprecated BatchGetDeploymentInstances.
+// Returns an array of one or more targets associated with a deployment. This
+// method works with all compute types and should be used instead of the deprecated
+// BatchGetDeploymentInstances. The maximum number of targets that can be returned
+// is 25.
 //
 // The type of targets returned depends on the deployment's compute platform:
 //
@@ -571,6 +577,9 @@ func (c *CodeDeploy) BatchGetDeploymentTargetsRequest(input *BatchGetDeploymentT
 //
 //   * ErrCodeDeploymentDoesNotExistException "DeploymentDoesNotExistException"
 //   The deployment with the IAM user or AWS account does not exist.
+//
+//   * ErrCodeDeploymentNotStartedException "DeploymentNotStartedException"
+//   The specified deployment has not started.
 //
 //   * ErrCodeDeploymentTargetIdRequiredException "DeploymentTargetIdRequiredException"
 //   A deployment target ID was not provided.
@@ -653,7 +662,8 @@ func (c *CodeDeploy) BatchGetDeploymentsRequest(input *BatchGetDeploymentsInput)
 
 // BatchGetDeployments API operation for AWS CodeDeploy.
 //
-// Gets information about one or more deployments.
+// Gets information about one or more deployments. The maximum number of deployments
+// that can be returned is 25.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -738,7 +748,8 @@ func (c *CodeDeploy) BatchGetOnPremisesInstancesRequest(input *BatchGetOnPremise
 
 // BatchGetOnPremisesInstances API operation for AWS CodeDeploy.
 //
-// Gets information about one or more on-premises instances.
+// Gets information about one or more on-premises instances. The maximum number
+// of on-premises instances that can be returned is 25.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -954,6 +965,9 @@ func (c *CodeDeploy) CreateApplicationRequest(input *CreateApplicationInput) (re
 //
 //   * ErrCodeInvalidComputePlatformException "InvalidComputePlatformException"
 //   The computePlatform is invalid. The computePlatform should be Lambda or Server.
+//
+//   * ErrCodeInvalidTagsToAddException "InvalidTagsToAddException"
+//   The specified tags are not valid.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/codedeploy-2014-10-06/CreateApplication
 func (c *CodeDeploy) CreateApplication(input *CreateApplicationInput) (*CreateApplicationOutput, error) {
@@ -1409,6 +1423,9 @@ func (c *CodeDeploy) CreateDeploymentGroupRequest(input *CreateDeploymentGroupIn
 //   The Amazon ECS service is associated with more than one deployment groups.
 //   An Amazon ECS service can be associated with only one deployment group.
 //
+//   * ErrCodeInvalidTagsToAddException "InvalidTagsToAddException"
+//   The specified tags are not valid.
+//
 // See also, https://docs.aws.amazon.com/goto/WebAPI/codedeploy-2014-10-06/CreateDeploymentGroup
 func (c *CodeDeploy) CreateDeploymentGroup(input *CreateDeploymentGroupInput) (*CreateDeploymentGroupOutput, error) {
 	req, out := c.CreateDeploymentGroupRequest(input)
@@ -1491,6 +1508,11 @@ func (c *CodeDeploy) DeleteApplicationRequest(input *DeleteApplicationInput) (re
 //
 //   * ErrCodeInvalidApplicationNameException "InvalidApplicationNameException"
 //   The application name was specified in an invalid format.
+//
+//   * ErrCodeInvalidRoleException "InvalidRoleException"
+//   The service role ARN was specified in an invalid format. Or, if an Auto Scaling
+//   group was specified, the specified service role does not grant the appropriate
+//   permissions to Amazon EC2 Auto Scaling.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/codedeploy-2014-10-06/DeleteApplication
 func (c *CodeDeploy) DeleteApplication(input *DeleteApplicationInput) (*DeleteApplicationOutput, error) {
@@ -2098,6 +2120,11 @@ func (c *CodeDeploy) GetDeploymentRequest(input *GetDeploymentInput) (req *reque
 //
 // Gets information about a deployment.
 //
+// The content property of the appSpecContent object in the returned revision
+// is always null. Use GetApplicationRevision and the sha256 property of the
+// returned appSpecContent object to get the content of the deployment’s AppSpec
+// file.
+//
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
 // the error.
@@ -2491,6 +2518,9 @@ func (c *CodeDeploy) GetDeploymentTargetRequest(input *GetDeploymentTargetInput)
 //   * ErrCodeDeploymentDoesNotExistException "DeploymentDoesNotExistException"
 //   The deployment with the IAM user or AWS account does not exist.
 //
+//   * ErrCodeDeploymentNotStartedException "DeploymentNotStartedException"
+//   The specified deployment has not started.
+//
 //   * ErrCodeDeploymentTargetIdRequiredException "DeploymentTargetIdRequiredException"
 //   A deployment target ID was not provided.
 //
@@ -2734,7 +2764,7 @@ func (c *CodeDeploy) ListApplicationRevisionsWithContext(ctx aws.Context, input 
 //    // Example iterating over at most 3 pages of a ListApplicationRevisions operation.
 //    pageNum := 0
 //    err := client.ListApplicationRevisionsPages(params,
-//        func(page *ListApplicationRevisionsOutput, lastPage bool) bool {
+//        func(page *codedeploy.ListApplicationRevisionsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -2869,7 +2899,7 @@ func (c *CodeDeploy) ListApplicationsWithContext(ctx aws.Context, input *ListApp
 //    // Example iterating over at most 3 pages of a ListApplications operation.
 //    pageNum := 0
 //    err := client.ListApplicationsPages(params,
-//        func(page *ListApplicationsOutput, lastPage bool) bool {
+//        func(page *codedeploy.ListApplicationsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -3004,7 +3034,7 @@ func (c *CodeDeploy) ListDeploymentConfigsWithContext(ctx aws.Context, input *Li
 //    // Example iterating over at most 3 pages of a ListDeploymentConfigs operation.
 //    pageNum := 0
 //    err := client.ListDeploymentConfigsPages(params,
-//        func(page *ListDeploymentConfigsOutput, lastPage bool) bool {
+//        func(page *codedeploy.ListDeploymentConfigsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -3149,7 +3179,7 @@ func (c *CodeDeploy) ListDeploymentGroupsWithContext(ctx aws.Context, input *Lis
 //    // Example iterating over at most 3 pages of a ListDeploymentGroups operation.
 //    pageNum := 0
 //    err := client.ListDeploymentGroupsPages(params,
-//        func(page *ListDeploymentGroupsOutput, lastPage bool) bool {
+//        func(page *codedeploy.ListDeploymentGroupsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -3243,6 +3273,7 @@ func (c *CodeDeploy) ListDeploymentInstancesRequest(input *ListDeploymentInstanc
 
 // ListDeploymentInstances API operation for AWS CodeDeploy.
 //
+//
 // The newer BatchGetDeploymentTargets should be used instead because it works
 // with all compute types. ListDeploymentInstances throws an exception if it
 // is used with a compute platform other than EC2/On-premises or AWS Lambda.
@@ -3327,7 +3358,7 @@ func (c *CodeDeploy) ListDeploymentInstancesWithContext(ctx aws.Context, input *
 //    // Example iterating over at most 3 pages of a ListDeploymentInstances operation.
 //    pageNum := 0
 //    err := client.ListDeploymentInstancesPages(params,
-//        func(page *ListDeploymentInstancesOutput, lastPage bool) bool {
+//        func(page *codedeploy.ListDeploymentInstancesOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -3594,7 +3625,7 @@ func (c *CodeDeploy) ListDeploymentsWithContext(ctx aws.Context, input *ListDepl
 //    // Example iterating over at most 3 pages of a ListDeployments operation.
 //    pageNum := 0
 //    err := client.ListDeploymentsPages(params,
-//        func(page *ListDeploymentsOutput, lastPage bool) bool {
+//        func(page *codedeploy.ListDeploymentsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -3802,6 +3833,93 @@ func (c *CodeDeploy) ListOnPremisesInstances(input *ListOnPremisesInstancesInput
 // for more information on using Contexts.
 func (c *CodeDeploy) ListOnPremisesInstancesWithContext(ctx aws.Context, input *ListOnPremisesInstancesInput, opts ...request.Option) (*ListOnPremisesInstancesOutput, error) {
 	req, out := c.ListOnPremisesInstancesRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opListTagsForResource = "ListTagsForResource"
+
+// ListTagsForResourceRequest generates a "aws/request.Request" representing the
+// client's request for the ListTagsForResource operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See ListTagsForResource for more information on using the ListTagsForResource
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the ListTagsForResourceRequest method.
+//    req, resp := client.ListTagsForResourceRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codedeploy-2014-10-06/ListTagsForResource
+func (c *CodeDeploy) ListTagsForResourceRequest(input *ListTagsForResourceInput) (req *request.Request, output *ListTagsForResourceOutput) {
+	op := &request.Operation{
+		Name:       opListTagsForResource,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &ListTagsForResourceInput{}
+	}
+
+	output = &ListTagsForResourceOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// ListTagsForResource API operation for AWS CodeDeploy.
+//
+// Returns a list of tags for the resource identified by a specified ARN. Tags
+// are used to organize and categorize your CodeDeploy resources.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS CodeDeploy's
+// API operation ListTagsForResource for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeArnNotSupportedException "ArnNotSupportedException"
+//   The specified ARN is not supported. For example, it might be an ARN for a
+//   resource that is not expected.
+//
+//   * ErrCodeInvalidArnException "InvalidArnException"
+//   The specified ARN is not in a valid format.
+//
+//   * ErrCodeResourceArnRequiredException "ResourceArnRequiredException"
+//   The ARN of a resource is required, but was not found.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codedeploy-2014-10-06/ListTagsForResource
+func (c *CodeDeploy) ListTagsForResource(input *ListTagsForResourceInput) (*ListTagsForResourceOutput, error) {
+	req, out := c.ListTagsForResourceRequest(input)
+	return out, req.Send()
+}
+
+// ListTagsForResourceWithContext is the same as ListTagsForResource with the addition of
+// the ability to pass a context and additional request options.
+//
+// See ListTagsForResource for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CodeDeploy) ListTagsForResourceWithContext(ctx aws.Context, input *ListTagsForResourceInput, opts ...request.Option) (*ListTagsForResourceOutput, error) {
+	req, out := c.ListTagsForResourceRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -4406,6 +4524,213 @@ func (c *CodeDeploy) StopDeployment(input *StopDeploymentInput) (*StopDeployment
 // for more information on using Contexts.
 func (c *CodeDeploy) StopDeploymentWithContext(ctx aws.Context, input *StopDeploymentInput, opts ...request.Option) (*StopDeploymentOutput, error) {
 	req, out := c.StopDeploymentRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opTagResource = "TagResource"
+
+// TagResourceRequest generates a "aws/request.Request" representing the
+// client's request for the TagResource operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See TagResource for more information on using the TagResource
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the TagResourceRequest method.
+//    req, resp := client.TagResourceRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codedeploy-2014-10-06/TagResource
+func (c *CodeDeploy) TagResourceRequest(input *TagResourceInput) (req *request.Request, output *TagResourceOutput) {
+	op := &request.Operation{
+		Name:       opTagResource,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &TagResourceInput{}
+	}
+
+	output = &TagResourceOutput{}
+	req = c.newRequest(op, input, output)
+	req.Handlers.Unmarshal.Swap(jsonrpc.UnmarshalHandler.Name, protocol.UnmarshalDiscardBodyHandler)
+	return
+}
+
+// TagResource API operation for AWS CodeDeploy.
+//
+// Associates the list of tags in the input Tags parameter with the resource
+// identified by the ResourceArn input parameter.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS CodeDeploy's
+// API operation TagResource for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeResourceArnRequiredException "ResourceArnRequiredException"
+//   The ARN of a resource is required, but was not found.
+//
+//   * ErrCodeApplicationDoesNotExistException "ApplicationDoesNotExistException"
+//   The application does not exist with the IAM user or AWS account.
+//
+//   * ErrCodeDeploymentGroupDoesNotExistException "DeploymentGroupDoesNotExistException"
+//   The named deployment group with the IAM user or AWS account does not exist.
+//
+//   * ErrCodeDeploymentConfigDoesNotExistException "DeploymentConfigDoesNotExistException"
+//   The deployment configuration does not exist with the IAM user or AWS account.
+//
+//   * ErrCodeTagRequiredException "TagRequiredException"
+//   A tag was not specified.
+//
+//   * ErrCodeInvalidTagsToAddException "InvalidTagsToAddException"
+//   The specified tags are not valid.
+//
+//   * ErrCodeArnNotSupportedException "ArnNotSupportedException"
+//   The specified ARN is not supported. For example, it might be an ARN for a
+//   resource that is not expected.
+//
+//   * ErrCodeInvalidArnException "InvalidArnException"
+//   The specified ARN is not in a valid format.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codedeploy-2014-10-06/TagResource
+func (c *CodeDeploy) TagResource(input *TagResourceInput) (*TagResourceOutput, error) {
+	req, out := c.TagResourceRequest(input)
+	return out, req.Send()
+}
+
+// TagResourceWithContext is the same as TagResource with the addition of
+// the ability to pass a context and additional request options.
+//
+// See TagResource for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CodeDeploy) TagResourceWithContext(ctx aws.Context, input *TagResourceInput, opts ...request.Option) (*TagResourceOutput, error) {
+	req, out := c.TagResourceRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opUntagResource = "UntagResource"
+
+// UntagResourceRequest generates a "aws/request.Request" representing the
+// client's request for the UntagResource operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See UntagResource for more information on using the UntagResource
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the UntagResourceRequest method.
+//    req, resp := client.UntagResourceRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codedeploy-2014-10-06/UntagResource
+func (c *CodeDeploy) UntagResourceRequest(input *UntagResourceInput) (req *request.Request, output *UntagResourceOutput) {
+	op := &request.Operation{
+		Name:       opUntagResource,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &UntagResourceInput{}
+	}
+
+	output = &UntagResourceOutput{}
+	req = c.newRequest(op, input, output)
+	req.Handlers.Unmarshal.Swap(jsonrpc.UnmarshalHandler.Name, protocol.UnmarshalDiscardBodyHandler)
+	return
+}
+
+// UntagResource API operation for AWS CodeDeploy.
+//
+// Disassociates a resource from a list of tags. The resource is identified
+// by the ResourceArn input parameter. The tags are identfied by the list of
+// keys in the TagKeys input parameter.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS CodeDeploy's
+// API operation UntagResource for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeResourceArnRequiredException "ResourceArnRequiredException"
+//   The ARN of a resource is required, but was not found.
+//
+//   * ErrCodeApplicationDoesNotExistException "ApplicationDoesNotExistException"
+//   The application does not exist with the IAM user or AWS account.
+//
+//   * ErrCodeDeploymentGroupDoesNotExistException "DeploymentGroupDoesNotExistException"
+//   The named deployment group with the IAM user or AWS account does not exist.
+//
+//   * ErrCodeDeploymentConfigDoesNotExistException "DeploymentConfigDoesNotExistException"
+//   The deployment configuration does not exist with the IAM user or AWS account.
+//
+//   * ErrCodeTagRequiredException "TagRequiredException"
+//   A tag was not specified.
+//
+//   * ErrCodeInvalidTagsToAddException "InvalidTagsToAddException"
+//   The specified tags are not valid.
+//
+//   * ErrCodeArnNotSupportedException "ArnNotSupportedException"
+//   The specified ARN is not supported. For example, it might be an ARN for a
+//   resource that is not expected.
+//
+//   * ErrCodeInvalidArnException "InvalidArnException"
+//   The specified ARN is not in a valid format.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codedeploy-2014-10-06/UntagResource
+func (c *CodeDeploy) UntagResource(input *UntagResourceInput) (*UntagResourceOutput, error) {
+	req, out := c.UntagResourceRequest(input)
+	return out, req.Send()
+}
+
+// UntagResourceWithContext is the same as UntagResource with the addition of
+// the ability to pass a context and additional request options.
+//
+// See UntagResource for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CodeDeploy) UntagResourceWithContext(ctx aws.Context, input *UntagResourceInput, opts ...request.Option) (*UntagResourceOutput, error) {
+	req, out := c.UntagResourceRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -5031,7 +5356,9 @@ type BatchGetApplicationRevisionsInput struct {
 	// ApplicationName is a required field
 	ApplicationName *string `locationName:"applicationName" min:"1" type:"string" required:"true"`
 
-	// Information to get about the application revisions, including type and location.
+	// An array of RevisionLocation objects that specify information to get about
+	// the application revisions, including type and location. The maximum number
+	// of RevisionLocation objects you can specify is 25.
 	//
 	// Revisions is a required field
 	Revisions []*RevisionLocation `locationName:"revisions" type:"list" required:"true"`
@@ -5124,7 +5451,8 @@ func (s *BatchGetApplicationRevisionsOutput) SetRevisions(v []*RevisionInfo) *Ba
 type BatchGetApplicationsInput struct {
 	_ struct{} `type:"structure"`
 
-	// A list of application names separated by spaces.
+	// A list of application names separated by spaces. The maximum number of application
+	// names you can specify is 25.
 	//
 	// ApplicationNames is a required field
 	ApplicationNames []*string `locationName:"applicationNames" type:"list" required:"true"`
@@ -5282,7 +5610,8 @@ type BatchGetDeploymentInstancesInput struct {
 	// DeploymentId is a required field
 	DeploymentId *string `locationName:"deploymentId" type:"string" required:"true"`
 
-	// The unique IDs of instances used in the deployment.
+	// The unique IDs of instances used in the deployment. The maximum number of
+	// instance IDs you can specify is 25.
 	//
 	// InstanceIds is a required field
 	InstanceIds []*string `locationName:"instanceIds" type:"list" required:"true"`
@@ -5366,17 +5695,16 @@ type BatchGetDeploymentTargetsInput struct {
 	DeploymentId *string `locationName:"deploymentId" type:"string"`
 
 	// The unique IDs of the deployment targets. The compute platform of the deployment
-	// determines the type of the targets and their formats.
+	// determines the type of the targets and their formats. The maximum number
+	// of deployment target IDs you can specify is 25.
 	//
-	//    *  For deployments that use the EC2/On-premises compute platform, the
-	//    target IDs are EC2 or on-premises instances IDs, and their target type
-	//    is instanceTarget.
+	//    * For deployments that use the EC2/On-premises compute platform, the target
+	//    IDs are EC2 or on-premises instances IDs, and their target type is instanceTarget.
 	//
-	//    *  For deployments that use the AWS Lambda compute platform, the target
+	//    * For deployments that use the AWS Lambda compute platform, the target
 	//    IDs are the names of Lambda functions, and their target type is instanceTarget.
 	//
-	//
-	//    *  For deployments that use the Amazon ECS compute platform, the target
+	//    * For deployments that use the Amazon ECS compute platform, the target
 	//    IDs are pairs of Amazon ECS clusters and services specified using the
 	//    format <clustername>:<servicename>. Their target type is ecsTarget.
 	TargetIds []*string `locationName:"targetIds" type:"list"`
@@ -5413,7 +5741,6 @@ type BatchGetDeploymentTargetsOutput struct {
 	//
 	//    * EC2/On-premises: Each target object is an EC2 or on-premises instance.
 	//
-	//
 	//    * AWS Lambda: The target object is a specific version of an AWS Lambda
 	//    function.
 	//
@@ -5441,7 +5768,8 @@ func (s *BatchGetDeploymentTargetsOutput) SetDeploymentTargets(v []*DeploymentTa
 type BatchGetDeploymentsInput struct {
 	_ struct{} `type:"structure"`
 
-	// A list of deployment IDs, separated by spaces.
+	// A list of deployment IDs, separated by spaces. The maximum number of deployment
+	// IDs you can specify is 25.
 	//
 	// DeploymentIds is a required field
 	DeploymentIds []*string `locationName:"deploymentIds" type:"list" required:"true"`
@@ -5504,7 +5832,8 @@ func (s *BatchGetDeploymentsOutput) SetDeploymentsInfo(v []*DeploymentInfo) *Bat
 type BatchGetOnPremisesInstancesInput struct {
 	_ struct{} `type:"structure"`
 
-	// The names of the on-premises instances about which to get information.
+	// The names of the on-premises instances about which to get information. The
+	// maximum number of instance names you can specify is 25.
 	//
 	// InstanceNames is a required field
 	InstanceNames []*string `locationName:"instanceNames" type:"list" required:"true"`
@@ -5709,8 +6038,13 @@ type CreateApplicationInput struct {
 	// ApplicationName is a required field
 	ApplicationName *string `locationName:"applicationName" min:"1" type:"string" required:"true"`
 
-	// The destination platform type for the deployment (Lambda or Server).
+	// The destination platform type for the deployment (Lambda, Server, or ECS).
 	ComputePlatform *string `locationName:"computePlatform" type:"string" enum:"ComputePlatform"`
+
+	// The metadata that you apply to CodeDeploy applications to help you organize
+	// and categorize them. Each tag consists of a key and an optional value, both
+	// of which you define.
+	Tags []*Tag `locationName:"tags" type:"list"`
 }
 
 // String returns the string representation
@@ -5751,6 +6085,12 @@ func (s *CreateApplicationInput) SetComputePlatform(v string) *CreateApplication
 	return s
 }
 
+// SetTags sets the Tags field's value.
+func (s *CreateApplicationInput) SetTags(v []*Tag) *CreateApplicationInput {
+	s.Tags = v
+	return s
+}
+
 // Represents the output of a CreateApplication operation.
 type CreateApplicationOutput struct {
 	_ struct{} `type:"structure"`
@@ -5779,7 +6119,7 @@ func (s *CreateApplicationOutput) SetApplicationId(v string) *CreateApplicationO
 type CreateDeploymentConfigInput struct {
 	_ struct{} `type:"structure"`
 
-	// The destination platform type for the deployment (Lambda or Server>).
+	// The destination platform type for the deployment (Lambda, Server, or ECS).
 	ComputePlatform *string `locationName:"computePlatform" type:"string" enum:"ComputePlatform"`
 
 	// The name of the deployment configuration to create.
@@ -5920,7 +6260,7 @@ type CreateDeploymentGroupInput struct {
 	// group.
 	//
 	// For more information about the predefined deployment configurations in AWS
-	// CodeDeploy, see Working with Deployment Groups in AWS CodeDeploy (http://docs.aws.amazon.com/codedeploy/latest/userguide/deployment-configurations.html)
+	// CodeDeploy, see Working with Deployment Groups in AWS CodeDeploy (https://docs.aws.amazon.com/codedeploy/latest/userguide/deployment-configurations.html)
 	// in the AWS CodeDeploy User Guide.
 	DeploymentConfigName *string `locationName:"deploymentConfigName" min:"1" type:"string"`
 
@@ -5968,8 +6308,13 @@ type CreateDeploymentGroupInput struct {
 	// ServiceRoleArn is a required field
 	ServiceRoleArn *string `locationName:"serviceRoleArn" type:"string" required:"true"`
 
+	// The metadata that you apply to CodeDeploy deployment groups to help you organize
+	// and categorize them. Each tag consists of a key and an optional value, both
+	// of which you define.
+	Tags []*Tag `locationName:"tags" type:"list"`
+
 	// Information about triggers to create when the deployment group is created.
-	// For examples, see Create a Trigger for an AWS CodeDeploy Event (http://docs.aws.amazon.com/codedeploy/latest/userguide/how-to-notify-sns.html)
+	// For examples, see Create a Trigger for an AWS CodeDeploy Event (https://docs.aws.amazon.com/codedeploy/latest/userguide/how-to-notify-sns.html)
 	// in the AWS CodeDeploy User Guide.
 	TriggerConfigurations []*TriggerConfig `locationName:"triggerConfigurations" type:"list"`
 }
@@ -6102,6 +6447,12 @@ func (s *CreateDeploymentGroupInput) SetServiceRoleArn(v string) *CreateDeployme
 	return s
 }
 
+// SetTags sets the Tags field's value.
+func (s *CreateDeploymentGroupInput) SetTags(v []*Tag) *CreateDeploymentGroupInput {
+	s.Tags = v
+	return s
+}
+
 // SetTriggerConfigurations sets the TriggerConfigurations field's value.
 func (s *CreateDeploymentGroupInput) SetTriggerConfigurations(v []*TriggerConfig) *CreateDeploymentGroupInput {
 	s.TriggerConfigurations = v
@@ -6176,15 +6527,29 @@ type CreateDeploymentInput struct {
 	//    used as part of the new deployment.
 	FileExistsBehavior *string `locationName:"fileExistsBehavior" type:"string" enum:"FileExistsBehavior"`
 
-	// If set to true, then if the deployment causes the ApplicationStop deployment
-	// lifecycle event to an instance to fail, the deployment to that instance is
-	// considered to have failed at that point and continues on to the BeforeInstall
-	// deployment lifecycle event.
+	// If true, then if an ApplicationStop, BeforeBlockTraffic, or AfterBlockTraffic
+	// deployment lifecycle event to an instance fails, then the deployment continues
+	// to the next deployment lifecycle event. For example, if ApplicationStop fails,
+	// the deployment continues with DownloadBundle. If BeforeBlockTraffic fails,
+	// the deployment continues with BlockTraffic. If AfterBlockTraffic fails, the
+	// deployment continues with ApplicationStop.
 	//
-	// If set to false or not specified, then if the deployment causes the ApplicationStop
-	// deployment lifecycle event to fail to an instance, the deployment to that
-	// instance stops, and the deployment to that instance is considered to have
-	// failed.
+	// If false or not specified, then if a lifecycle event fails during a deployment
+	// to an instance, that deployment fails. If deployment to that instance is
+	// part of an overall deployment and the number of healthy hosts is not less
+	// than the minimum number of healthy hosts, then a deployment to the next instance
+	// is attempted.
+	//
+	// During a deployment, the AWS CodeDeploy agent runs the scripts specified
+	// for ApplicationStop, BeforeBlockTraffic, and AfterBlockTraffic in the AppSpec
+	// file from the previous successful deployment. (All other scripts are run
+	// from the AppSpec file in the current deployment.) If one of these scripts
+	// contains an error and does not run successfully, the deployment can fail.
+	//
+	// If the cause of the failure is a script from the last successful deployment
+	// that will never run successfully, create a new deployment and use ignoreApplicationStopFailures
+	// to specify that the ApplicationStop, BeforeBlockTraffic, and AfterBlockTraffic
+	// failures should be ignored.
 	IgnoreApplicationStopFailures *bool `locationName:"ignoreApplicationStopFailures" type:"boolean"`
 
 	// The type and location of the revision to deploy.
@@ -6570,7 +6935,7 @@ func (s *DeleteGitHubAccountTokenOutput) SetTokenName(v string) *DeleteGitHubAcc
 type DeploymentConfigInfo struct {
 	_ struct{} `type:"structure"`
 
-	// The destination platform type for the deployment (Lambda or Server).
+	// The destination platform type for the deployment (Lambda, Server, or ECS).
 	ComputePlatform *string `locationName:"computePlatform" type:"string" enum:"ComputePlatform"`
 
 	// The time at which the deployment configuration was created.
@@ -6656,7 +7021,7 @@ type DeploymentGroupInfo struct {
 	// Information about blue/green deployment options for a deployment group.
 	BlueGreenDeploymentConfiguration *BlueGreenDeploymentConfiguration `locationName:"blueGreenDeploymentConfiguration" type:"structure"`
 
-	// The destination platform type for the deployment group (Lambda or Server).
+	// The destination platform type for the deployment (Lambda, Server, or ECS).
 	ComputePlatform *string `locationName:"computePlatform" type:"string" enum:"ComputePlatform"`
 
 	// The deployment configuration name.
@@ -6707,7 +7072,10 @@ type DeploymentGroupInfo struct {
 	// tag groups. Cannot be used in the same call as onPremisesInstanceTagFilters.
 	OnPremisesTagSet *OnPremisesTagSet `locationName:"onPremisesTagSet" type:"structure"`
 
-	// A service role ARN.
+	// A service role Amazon Resource Name (ARN) that grants CodeDeploy permission
+	// to make calls to AWS services on your behalf. For more information, see Create
+	// a Service Role for AWS CodeDeploy (https://docs.aws.amazon.com/codedeploy/latest/userguide/getting-started-create-service-role.html)
+	// in the AWS CodeDeploy User Guide.
 	ServiceRoleArn *string `locationName:"serviceRoleArn" type:"string"`
 
 	// Information about the deployment group's target revision, including type
@@ -6875,7 +7243,7 @@ type DeploymentInfo struct {
 	// A timestamp that indicates when the deployment was complete.
 	CompleteTime *time.Time `locationName:"completeTime" type:"timestamp"`
 
-	// The destination platform type for the deployment (Lambda or Server).
+	// The destination platform type for the deployment (Lambda, Server, or ECS).
 	ComputePlatform *string `locationName:"computePlatform" type:"string" enum:"ComputePlatform"`
 
 	// A timestamp that indicates when the deployment was created.
@@ -6929,15 +7297,29 @@ type DeploymentInfo struct {
 	//    used as part of the new deployment.
 	FileExistsBehavior *string `locationName:"fileExistsBehavior" type:"string" enum:"FileExistsBehavior"`
 
-	// If true, then if the deployment causes the ApplicationStop deployment lifecycle
-	// event to an instance to fail, the deployment to that instance is not considered
-	// to have failed at that point and continues on to the BeforeInstall deployment
-	// lifecycle event.
+	// If true, then if an ApplicationStop, BeforeBlockTraffic, or AfterBlockTraffic
+	// deployment lifecycle event to an instance fails, then the deployment continues
+	// to the next deployment lifecycle event. For example, if ApplicationStop fails,
+	// the deployment continues with DownloadBundle. If BeforeBlockTraffic fails,
+	// the deployment continues with BlockTraffic. If AfterBlockTraffic fails, the
+	// deployment continues with ApplicationStop.
 	//
-	// If false or not specified, then if the deployment causes the ApplicationStop
-	// deployment lifecycle event to an instance to fail, the deployment to that
-	// instance stops, and the deployment to that instance is considered to have
-	// failed.
+	// If false or not specified, then if a lifecycle event fails during a deployment
+	// to an instance, that deployment fails. If deployment to that instance is
+	// part of an overall deployment and the number of healthy hosts is not less
+	// than the minimum number of healthy hosts, then a deployment to the next instance
+	// is attempted.
+	//
+	// During a deployment, the AWS CodeDeploy agent runs the scripts specified
+	// for ApplicationStop, BeforeBlockTraffic, and AfterBlockTraffic in the AppSpec
+	// file from the previous successful deployment. (All other scripts are run
+	// from the AppSpec file in the current deployment.) If one of these scripts
+	// contains an error and does not run successfully, the deployment can fail.
+	//
+	// If the cause of the failure is a script from the last successful deployment
+	// that will never run successfully, create a new deployment and use ignoreApplicationStopFailures
+	// to specify that the ApplicationStop, BeforeBlockTraffic, and AfterBlockTraffic
+	// failures should be ignored.
 	IgnoreApplicationStopFailures *bool `locationName:"ignoreApplicationStopFailures" type:"boolean"`
 
 	// Indicates whether the wait period set for the termination of instances in
@@ -7807,8 +8189,8 @@ func (s *ELBInfo) SetName(v string) *ELBInfo {
 type ErrorInformation struct {
 	_ struct{} `type:"structure"`
 
-	// For more information, see Error Codes for AWS CodeDeploy (http://docs.aws.amazon.com/codedeploy/latest/userguide/error-codes.html)
-	// in the AWS CodeDeploy User Guide (http://docs.aws.amazon.com/codedeploy/latest/userguide).
+	// For more information, see Error Codes for AWS CodeDeploy (https://docs.aws.amazon.com/codedeploy/latest/userguide/error-codes.html)
+	// in the AWS CodeDeploy User Guide (https://docs.aws.amazon.com/codedeploy/latest/userguide).
 	//
 	// The error code:
 	//
@@ -8827,12 +9209,78 @@ func (s *InstanceTarget) SetTargetId(v string) *InstanceTarget {
 	return s
 }
 
+// Information about a Lambda function specified in a deployment.
+type LambdaFunctionInfo struct {
+	_ struct{} `type:"structure"`
+
+	// The version of a Lambda function that production traffic points to.
+	CurrentVersion *string `locationName:"currentVersion" type:"string"`
+
+	// The alias of a Lambda function. For more information, see Introduction to
+	// AWS Lambda Aliases (https://docs.aws.amazon.com/lambda/latest/dg/aliases-intro.html).
+	FunctionAlias *string `locationName:"functionAlias" type:"string"`
+
+	// The name of a Lambda function.
+	FunctionName *string `locationName:"functionName" type:"string"`
+
+	// The version of a Lambda function that production traffic points to after
+	// the Lambda function is deployed.
+	TargetVersion *string `locationName:"targetVersion" type:"string"`
+
+	// The percentage of production traffic that the target version of a Lambda
+	// function receives.
+	TargetVersionWeight *float64 `locationName:"targetVersionWeight" type:"double"`
+}
+
+// String returns the string representation
+func (s LambdaFunctionInfo) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s LambdaFunctionInfo) GoString() string {
+	return s.String()
+}
+
+// SetCurrentVersion sets the CurrentVersion field's value.
+func (s *LambdaFunctionInfo) SetCurrentVersion(v string) *LambdaFunctionInfo {
+	s.CurrentVersion = &v
+	return s
+}
+
+// SetFunctionAlias sets the FunctionAlias field's value.
+func (s *LambdaFunctionInfo) SetFunctionAlias(v string) *LambdaFunctionInfo {
+	s.FunctionAlias = &v
+	return s
+}
+
+// SetFunctionName sets the FunctionName field's value.
+func (s *LambdaFunctionInfo) SetFunctionName(v string) *LambdaFunctionInfo {
+	s.FunctionName = &v
+	return s
+}
+
+// SetTargetVersion sets the TargetVersion field's value.
+func (s *LambdaFunctionInfo) SetTargetVersion(v string) *LambdaFunctionInfo {
+	s.TargetVersion = &v
+	return s
+}
+
+// SetTargetVersionWeight sets the TargetVersionWeight field's value.
+func (s *LambdaFunctionInfo) SetTargetVersionWeight(v float64) *LambdaFunctionInfo {
+	s.TargetVersionWeight = &v
+	return s
+}
+
 // Information about the target AWS Lambda function during an AWS Lambda deployment.
 type LambdaTarget struct {
 	_ struct{} `type:"structure"`
 
 	// The unique ID of a deployment.
 	DeploymentId *string `locationName:"deploymentId" type:"string"`
+
+	// A LambdaFunctionInfo object that describes a target Lambda function.
+	LambdaFunctionInfo *LambdaFunctionInfo `locationName:"lambdaFunctionInfo" type:"structure"`
 
 	// The date and time when the target Lambda function was updated by a deployment.
 	LastUpdatedAt *time.Time `locationName:"lastUpdatedAt" type:"timestamp"`
@@ -8863,6 +9311,12 @@ func (s LambdaTarget) GoString() string {
 // SetDeploymentId sets the DeploymentId field's value.
 func (s *LambdaTarget) SetDeploymentId(v string) *LambdaTarget {
 	s.DeploymentId = &v
+	return s
+}
+
+// SetLambdaFunctionInfo sets the LambdaFunctionInfo field's value.
+func (s *LambdaTarget) SetLambdaFunctionInfo(v *LambdaFunctionInfo) *LambdaTarget {
+	s.LambdaFunctionInfo = v
 	return s
 }
 
@@ -9600,12 +10054,18 @@ type ListDeploymentsInput struct {
 
 	// The name of an AWS CodeDeploy application associated with the IAM user or
 	// AWS account.
+	//
+	// If applicationName is specified, then deploymentGroupName must be specified.
+	// If it is not specified, then deploymentGroupName must not be specified.
 	ApplicationName *string `locationName:"applicationName" min:"1" type:"string"`
 
 	// A time range (start and end) for returning a subset of the list of deployments.
 	CreateTimeRange *TimeRange `locationName:"createTimeRange" type:"structure"`
 
 	// The name of a deployment group for the specified application.
+	//
+	// If deploymentGroupName is specified, then applicationName must be specified.
+	// If it is not specified, then applicationName must not be specified.
 	DeploymentGroupName *string `locationName:"deploymentGroupName" min:"1" type:"string"`
 
 	// A subset of deployments to list by status:
@@ -9864,6 +10324,93 @@ func (s *ListOnPremisesInstancesOutput) SetNextToken(v string) *ListOnPremisesIn
 	return s
 }
 
+type ListTagsForResourceInput struct {
+	_ struct{} `type:"structure"`
+
+	// An identifier returned from the previous ListTagsForResource call. It can
+	// be used to return the next set of applications in the list.
+	NextToken *string `type:"string"`
+
+	// The ARN of a CodeDeploy resource. ListTagsForResource returns all the tags
+	// associated with the resource that is identified by the ResourceArn.
+	//
+	// ResourceArn is a required field
+	ResourceArn *string `min:"1" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s ListTagsForResourceInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ListTagsForResourceInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *ListTagsForResourceInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "ListTagsForResourceInput"}
+	if s.ResourceArn == nil {
+		invalidParams.Add(request.NewErrParamRequired("ResourceArn"))
+	}
+	if s.ResourceArn != nil && len(*s.ResourceArn) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("ResourceArn", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *ListTagsForResourceInput) SetNextToken(v string) *ListTagsForResourceInput {
+	s.NextToken = &v
+	return s
+}
+
+// SetResourceArn sets the ResourceArn field's value.
+func (s *ListTagsForResourceInput) SetResourceArn(v string) *ListTagsForResourceInput {
+	s.ResourceArn = &v
+	return s
+}
+
+type ListTagsForResourceOutput struct {
+	_ struct{} `type:"structure"`
+
+	// If a large amount of information is returned, an identifier is also returned.
+	// It can be used in a subsequent list application revisions call to return
+	// the next set of application revisions in the list.
+	NextToken *string `type:"string"`
+
+	// A list of tags returned by ListTagsForResource. The tags are associated with
+	// the resource identified by the input ResourceArn parameter.
+	Tags []*Tag `type:"list"`
+}
+
+// String returns the string representation
+func (s ListTagsForResourceOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ListTagsForResourceOutput) GoString() string {
+	return s.String()
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *ListTagsForResourceOutput) SetNextToken(v string) *ListTagsForResourceOutput {
+	s.NextToken = &v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *ListTagsForResourceOutput) SetTags(v []*Tag) *ListTagsForResourceOutput {
+	s.Tags = v
+	return s
+}
+
 // Information about the Elastic Load Balancing load balancer or target group
 // used in a deployment.
 type LoadBalancerInfo struct {
@@ -9934,17 +10481,17 @@ type MinimumHealthyHosts struct {
 	// time. The deployment is successful if four or more instance are deployed
 	// to successfully. Otherwise, the deployment fails.
 	//
-	// In a call to the get deployment configuration operation, CodeDeployDefault.OneAtATime
-	// returns a minimum healthy instance type of MOST_CONCURRENCY and a value of
-	// 1. This means a deployment to only one instance at a time. (You cannot set
-	// the type to MOST_CONCURRENCY, only to HOST_COUNT or FLEET_PERCENT.) In addition,
-	// with CodeDeployDefault.OneAtATime, AWS CodeDeploy attempts to ensure that
-	// all instances but one are kept in a healthy state during the deployment.
-	// Although this allows one instance at a time to be taken offline for a new
-	// deployment, it also means that if the deployment to the last instance fails,
-	// the overall deployment is still successful.
+	// In a call to the GetDeploymentConfig, CodeDeployDefault.OneAtATime returns
+	// a minimum healthy instance type of MOST_CONCURRENCY and a value of 1. This
+	// means a deployment to only one instance at a time. (You cannot set the type
+	// to MOST_CONCURRENCY, only to HOST_COUNT or FLEET_PERCENT.) In addition, with
+	// CodeDeployDefault.OneAtATime, AWS CodeDeploy attempts to ensure that all
+	// instances but one are kept in a healthy state during the deployment. Although
+	// this allows one instance at a time to be taken offline for a new deployment,
+	// it also means that if the deployment to the last instance fails, the overall
+	// deployment is still successful.
 	//
-	// For more information, see AWS CodeDeploy Instance Health (http://docs.aws.amazon.com/codedeploy/latest/userguide/instances-health.html)
+	// For more information, see AWS CodeDeploy Instance Health (https://docs.aws.amazon.com/codedeploy/latest/userguide/instances-health.html)
 	// in the AWS CodeDeploy User Guide.
 	Type *string `locationName:"type" type:"string" enum:"MinimumHealthyHostsType"`
 
@@ -10756,6 +11303,76 @@ func (s *TagFilter) SetValue(v string) *TagFilter {
 	return s
 }
 
+type TagResourceInput struct {
+	_ struct{} `type:"structure"`
+
+	// The ARN of a resource, such as a CodeDeploy application or deployment group.
+	//
+	// ResourceArn is a required field
+	ResourceArn *string `min:"1" type:"string" required:"true"`
+
+	// A list of tags that TagResource associates with a resource. The resource
+	// is identified by the ResourceArn input parameter.
+	//
+	// Tags is a required field
+	Tags []*Tag `type:"list" required:"true"`
+}
+
+// String returns the string representation
+func (s TagResourceInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s TagResourceInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *TagResourceInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "TagResourceInput"}
+	if s.ResourceArn == nil {
+		invalidParams.Add(request.NewErrParamRequired("ResourceArn"))
+	}
+	if s.ResourceArn != nil && len(*s.ResourceArn) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("ResourceArn", 1))
+	}
+	if s.Tags == nil {
+		invalidParams.Add(request.NewErrParamRequired("Tags"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetResourceArn sets the ResourceArn field's value.
+func (s *TagResourceInput) SetResourceArn(v string) *TagResourceInput {
+	s.ResourceArn = &v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *TagResourceInput) SetTags(v []*Tag) *TagResourceInput {
+	s.Tags = v
+	return s
+}
+
+type TagResourceOutput struct {
+	_ struct{} `type:"structure"`
+}
+
+// String returns the string representation
+func (s TagResourceOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s TagResourceOutput) GoString() string {
+	return s.String()
+}
+
 // Information about a target group in Elastic Load Balancing to use in a deployment.
 // Instances are registered as targets in a target group, and traffic is routed
 // to the target group.
@@ -11114,6 +11731,77 @@ func (s *TriggerConfig) SetTriggerTargetArn(v string) *TriggerConfig {
 	return s
 }
 
+type UntagResourceInput struct {
+	_ struct{} `type:"structure"`
+
+	// The ARN that specifies from which resource to disassociate the tags with
+	// the keys in the TagKeys input paramter.
+	//
+	// ResourceArn is a required field
+	ResourceArn *string `min:"1" type:"string" required:"true"`
+
+	// A list of keys of Tag objects. The Tag objects identified by the keys are
+	// disassociated from the resource specified by the ResourceArn input parameter.
+	//
+	// TagKeys is a required field
+	TagKeys []*string `type:"list" required:"true"`
+}
+
+// String returns the string representation
+func (s UntagResourceInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s UntagResourceInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *UntagResourceInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "UntagResourceInput"}
+	if s.ResourceArn == nil {
+		invalidParams.Add(request.NewErrParamRequired("ResourceArn"))
+	}
+	if s.ResourceArn != nil && len(*s.ResourceArn) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("ResourceArn", 1))
+	}
+	if s.TagKeys == nil {
+		invalidParams.Add(request.NewErrParamRequired("TagKeys"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetResourceArn sets the ResourceArn field's value.
+func (s *UntagResourceInput) SetResourceArn(v string) *UntagResourceInput {
+	s.ResourceArn = &v
+	return s
+}
+
+// SetTagKeys sets the TagKeys field's value.
+func (s *UntagResourceInput) SetTagKeys(v []*string) *UntagResourceInput {
+	s.TagKeys = v
+	return s
+}
+
+type UntagResourceOutput struct {
+	_ struct{} `type:"structure"`
+}
+
+// String returns the string representation
+func (s UntagResourceOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s UntagResourceOutput) GoString() string {
+	return s.String()
+}
+
 // Represents the input of an UpdateApplication operation.
 type UpdateApplicationInput struct {
 	_ struct{} `type:"structure"`
@@ -11250,7 +11938,7 @@ type UpdateDeploymentGroupInput struct {
 	ServiceRoleArn *string `locationName:"serviceRoleArn" type:"string"`
 
 	// Information about triggers to change when the deployment group is updated.
-	// For examples, see Modify Triggers in an AWS CodeDeploy Deployment Group (http://docs.aws.amazon.com/codedeploy/latest/userguide/how-to-notify-edit.html)
+	// For examples, see Modify Triggers in an AWS CodeDeploy Deployment Group (https://docs.aws.amazon.com/codedeploy/latest/userguide/how-to-notify-edit.html)
 	// in the AWS CodeDeploy User Guide.
 	TriggerConfigurations []*TriggerConfig `locationName:"triggerConfigurations" type:"list"`
 }
@@ -11562,14 +12250,50 @@ const (
 )
 
 const (
-	// ErrorCodeDeploymentGroupMissing is a ErrorCode enum value
-	ErrorCodeDeploymentGroupMissing = "DEPLOYMENT_GROUP_MISSING"
+	// ErrorCodeAgentIssue is a ErrorCode enum value
+	ErrorCodeAgentIssue = "AGENT_ISSUE"
+
+	// ErrorCodeAlarmActive is a ErrorCode enum value
+	ErrorCodeAlarmActive = "ALARM_ACTIVE"
 
 	// ErrorCodeApplicationMissing is a ErrorCode enum value
 	ErrorCodeApplicationMissing = "APPLICATION_MISSING"
 
-	// ErrorCodeRevisionMissing is a ErrorCode enum value
-	ErrorCodeRevisionMissing = "REVISION_MISSING"
+	// ErrorCodeAutoscalingValidationError is a ErrorCode enum value
+	ErrorCodeAutoscalingValidationError = "AUTOSCALING_VALIDATION_ERROR"
+
+	// ErrorCodeAutoScalingConfiguration is a ErrorCode enum value
+	ErrorCodeAutoScalingConfiguration = "AUTO_SCALING_CONFIGURATION"
+
+	// ErrorCodeAutoScalingIamRolePermissions is a ErrorCode enum value
+	ErrorCodeAutoScalingIamRolePermissions = "AUTO_SCALING_IAM_ROLE_PERMISSIONS"
+
+	// ErrorCodeCodedeployResourceCannotBeFound is a ErrorCode enum value
+	ErrorCodeCodedeployResourceCannotBeFound = "CODEDEPLOY_RESOURCE_CANNOT_BE_FOUND"
+
+	// ErrorCodeCustomerApplicationUnhealthy is a ErrorCode enum value
+	ErrorCodeCustomerApplicationUnhealthy = "CUSTOMER_APPLICATION_UNHEALTHY"
+
+	// ErrorCodeDeploymentGroupMissing is a ErrorCode enum value
+	ErrorCodeDeploymentGroupMissing = "DEPLOYMENT_GROUP_MISSING"
+
+	// ErrorCodeEcsUpdateError is a ErrorCode enum value
+	ErrorCodeEcsUpdateError = "ECS_UPDATE_ERROR"
+
+	// ErrorCodeElasticLoadBalancingInvalid is a ErrorCode enum value
+	ErrorCodeElasticLoadBalancingInvalid = "ELASTIC_LOAD_BALANCING_INVALID"
+
+	// ErrorCodeElbInvalidInstance is a ErrorCode enum value
+	ErrorCodeElbInvalidInstance = "ELB_INVALID_INSTANCE"
+
+	// ErrorCodeHealthConstraints is a ErrorCode enum value
+	ErrorCodeHealthConstraints = "HEALTH_CONSTRAINTS"
+
+	// ErrorCodeHealthConstraintsInvalid is a ErrorCode enum value
+	ErrorCodeHealthConstraintsInvalid = "HEALTH_CONSTRAINTS_INVALID"
+
+	// ErrorCodeHookExecutionFailure is a ErrorCode enum value
+	ErrorCodeHookExecutionFailure = "HOOK_EXECUTION_FAILURE"
 
 	// ErrorCodeIamRoleMissing is a ErrorCode enum value
 	ErrorCodeIamRoleMissing = "IAM_ROLE_MISSING"
@@ -11577,41 +12301,20 @@ const (
 	// ErrorCodeIamRolePermissions is a ErrorCode enum value
 	ErrorCodeIamRolePermissions = "IAM_ROLE_PERMISSIONS"
 
-	// ErrorCodeNoEc2Subscription is a ErrorCode enum value
-	ErrorCodeNoEc2Subscription = "NO_EC2_SUBSCRIPTION"
-
-	// ErrorCodeOverMaxInstances is a ErrorCode enum value
-	ErrorCodeOverMaxInstances = "OVER_MAX_INSTANCES"
-
-	// ErrorCodeNoInstances is a ErrorCode enum value
-	ErrorCodeNoInstances = "NO_INSTANCES"
-
-	// ErrorCodeTimeout is a ErrorCode enum value
-	ErrorCodeTimeout = "TIMEOUT"
-
-	// ErrorCodeHealthConstraintsInvalid is a ErrorCode enum value
-	ErrorCodeHealthConstraintsInvalid = "HEALTH_CONSTRAINTS_INVALID"
-
-	// ErrorCodeHealthConstraints is a ErrorCode enum value
-	ErrorCodeHealthConstraints = "HEALTH_CONSTRAINTS"
-
 	// ErrorCodeInternalError is a ErrorCode enum value
 	ErrorCodeInternalError = "INTERNAL_ERROR"
 
-	// ErrorCodeThrottled is a ErrorCode enum value
-	ErrorCodeThrottled = "THROTTLED"
+	// ErrorCodeInvalidEcsService is a ErrorCode enum value
+	ErrorCodeInvalidEcsService = "INVALID_ECS_SERVICE"
 
-	// ErrorCodeAlarmActive is a ErrorCode enum value
-	ErrorCodeAlarmActive = "ALARM_ACTIVE"
+	// ErrorCodeInvalidLambdaConfiguration is a ErrorCode enum value
+	ErrorCodeInvalidLambdaConfiguration = "INVALID_LAMBDA_CONFIGURATION"
 
-	// ErrorCodeAgentIssue is a ErrorCode enum value
-	ErrorCodeAgentIssue = "AGENT_ISSUE"
+	// ErrorCodeInvalidLambdaFunction is a ErrorCode enum value
+	ErrorCodeInvalidLambdaFunction = "INVALID_LAMBDA_FUNCTION"
 
-	// ErrorCodeAutoScalingIamRolePermissions is a ErrorCode enum value
-	ErrorCodeAutoScalingIamRolePermissions = "AUTO_SCALING_IAM_ROLE_PERMISSIONS"
-
-	// ErrorCodeAutoScalingConfiguration is a ErrorCode enum value
-	ErrorCodeAutoScalingConfiguration = "AUTO_SCALING_CONFIGURATION"
+	// ErrorCodeInvalidRevision is a ErrorCode enum value
+	ErrorCodeInvalidRevision = "INVALID_REVISION"
 
 	// ErrorCodeManualStop is a ErrorCode enum value
 	ErrorCodeManualStop = "MANUAL_STOP"
@@ -11625,32 +12328,26 @@ const (
 	// ErrorCodeMissingGithubToken is a ErrorCode enum value
 	ErrorCodeMissingGithubToken = "MISSING_GITHUB_TOKEN"
 
-	// ErrorCodeElasticLoadBalancingInvalid is a ErrorCode enum value
-	ErrorCodeElasticLoadBalancingInvalid = "ELASTIC_LOAD_BALANCING_INVALID"
+	// ErrorCodeNoEc2Subscription is a ErrorCode enum value
+	ErrorCodeNoEc2Subscription = "NO_EC2_SUBSCRIPTION"
 
-	// ErrorCodeElbInvalidInstance is a ErrorCode enum value
-	ErrorCodeElbInvalidInstance = "ELB_INVALID_INSTANCE"
+	// ErrorCodeNoInstances is a ErrorCode enum value
+	ErrorCodeNoInstances = "NO_INSTANCES"
 
-	// ErrorCodeInvalidLambdaConfiguration is a ErrorCode enum value
-	ErrorCodeInvalidLambdaConfiguration = "INVALID_LAMBDA_CONFIGURATION"
+	// ErrorCodeOverMaxInstances is a ErrorCode enum value
+	ErrorCodeOverMaxInstances = "OVER_MAX_INSTANCES"
 
-	// ErrorCodeInvalidLambdaFunction is a ErrorCode enum value
-	ErrorCodeInvalidLambdaFunction = "INVALID_LAMBDA_FUNCTION"
+	// ErrorCodeResourceLimitExceeded is a ErrorCode enum value
+	ErrorCodeResourceLimitExceeded = "RESOURCE_LIMIT_EXCEEDED"
 
-	// ErrorCodeHookExecutionFailure is a ErrorCode enum value
-	ErrorCodeHookExecutionFailure = "HOOK_EXECUTION_FAILURE"
+	// ErrorCodeRevisionMissing is a ErrorCode enum value
+	ErrorCodeRevisionMissing = "REVISION_MISSING"
 
-	// ErrorCodeAutoscalingValidationError is a ErrorCode enum value
-	ErrorCodeAutoscalingValidationError = "AUTOSCALING_VALIDATION_ERROR"
+	// ErrorCodeThrottled is a ErrorCode enum value
+	ErrorCodeThrottled = "THROTTLED"
 
-	// ErrorCodeInvalidEcsService is a ErrorCode enum value
-	ErrorCodeInvalidEcsService = "INVALID_ECS_SERVICE"
-
-	// ErrorCodeEcsUpdateError is a ErrorCode enum value
-	ErrorCodeEcsUpdateError = "ECS_UPDATE_ERROR"
-
-	// ErrorCodeInvalidRevision is a ErrorCode enum value
-	ErrorCodeInvalidRevision = "INVALID_REVISION"
+	// ErrorCodeTimeout is a ErrorCode enum value
+	ErrorCodeTimeout = "TIMEOUT"
 )
 
 const (

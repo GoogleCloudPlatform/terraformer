@@ -18,7 +18,6 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
@@ -47,7 +46,7 @@ func (NaclGenerator) createResources(nacls *ec2.DescribeNetworkAclsOutput) []ter
 // from each network ACL create 1 TerraformResource.
 // Need NetworkAclId as ID for terraform resource
 func (g *NaclGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"])})
+	sess := g.generateSession()
 	svc := ec2.New(sess)
 	nacls, err := svc.DescribeNetworkAcls(&ec2.DescribeNetworkAclsInput{})
 	if err != nil {

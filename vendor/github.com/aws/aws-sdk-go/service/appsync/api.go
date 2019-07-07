@@ -3,6 +3,8 @@
 package appsync
 
 import (
+	"fmt"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awsutil"
 	"github.com/aws/aws-sdk-go/aws/request"
@@ -934,6 +936,9 @@ func (c *AppSync) DeleteGraphqlApiRequest(input *DeleteGraphqlApiInput) (req *re
 //   * ErrCodeInternalFailureException "InternalFailureException"
 //   An internal AWS AppSync error occurred. Try your request again.
 //
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
+//   You do not have access to perform this operation on this resource.
+//
 // See also, https://docs.aws.amazon.com/goto/WebAPI/appsync-2017-07-25/DeleteGraphqlApi
 func (c *AppSync) DeleteGraphqlApi(input *DeleteGraphqlApiInput) (*DeleteGraphqlApiOutput, error) {
 	req, out := c.DeleteGraphqlApiRequest(input)
@@ -1390,6 +1395,9 @@ func (c *AppSync) GetGraphqlApiRequest(input *GetGraphqlApiInput) (req *request.
 //
 //   * ErrCodeInternalFailureException "InternalFailureException"
 //   An internal AWS AppSync error occurred. Try your request again.
+//
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
+//   You do not have access to perform this operation on this resource.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/appsync-2017-07-25/GetGraphqlApi
 func (c *AppSync) GetGraphqlApi(input *GetGraphqlApiInput) (*GetGraphqlApiOutput, error) {
@@ -2314,6 +2322,102 @@ func (c *AppSync) ListResolversByFunctionWithContext(ctx aws.Context, input *Lis
 	return out, req.Send()
 }
 
+const opListTagsForResource = "ListTagsForResource"
+
+// ListTagsForResourceRequest generates a "aws/request.Request" representing the
+// client's request for the ListTagsForResource operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See ListTagsForResource for more information on using the ListTagsForResource
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the ListTagsForResourceRequest method.
+//    req, resp := client.ListTagsForResourceRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/appsync-2017-07-25/ListTagsForResource
+func (c *AppSync) ListTagsForResourceRequest(input *ListTagsForResourceInput) (req *request.Request, output *ListTagsForResourceOutput) {
+	op := &request.Operation{
+		Name:       opListTagsForResource,
+		HTTPMethod: "GET",
+		HTTPPath:   "/v1/tags/{resourceArn}",
+	}
+
+	if input == nil {
+		input = &ListTagsForResourceInput{}
+	}
+
+	output = &ListTagsForResourceOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// ListTagsForResource API operation for AWS AppSync.
+//
+// Lists the tags for a resource.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS AppSync's
+// API operation ListTagsForResource for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeBadRequestException "BadRequestException"
+//   The request is not well formed. For example, a value is invalid or a required
+//   field is missing. Check the field values, and then try again.
+//
+//   * ErrCodeNotFoundException "NotFoundException"
+//   The resource specified in the request was not found. Check the resource,
+//   and then try again.
+//
+//   * ErrCodeLimitExceededException "LimitExceededException"
+//   The request exceeded a limit. Try your request again.
+//
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
+//   You are not authorized to perform this operation.
+//
+//   * ErrCodeInternalFailureException "InternalFailureException"
+//   An internal AWS AppSync error occurred. Try your request again.
+//
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
+//   You do not have access to perform this operation on this resource.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/appsync-2017-07-25/ListTagsForResource
+func (c *AppSync) ListTagsForResource(input *ListTagsForResourceInput) (*ListTagsForResourceOutput, error) {
+	req, out := c.ListTagsForResourceRequest(input)
+	return out, req.Send()
+}
+
+// ListTagsForResourceWithContext is the same as ListTagsForResource with the addition of
+// the ability to pass a context and additional request options.
+//
+// See ListTagsForResource for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *AppSync) ListTagsForResourceWithContext(ctx aws.Context, input *ListTagsForResourceInput, opts ...request.Option) (*ListTagsForResourceOutput, error) {
+	req, out := c.ListTagsForResourceRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
 const opListTypes = "ListTypes"
 
 // ListTypesRequest generates a "aws/request.Request" representing the
@@ -2499,6 +2603,200 @@ func (c *AppSync) StartSchemaCreation(input *StartSchemaCreationInput) (*StartSc
 // for more information on using Contexts.
 func (c *AppSync) StartSchemaCreationWithContext(ctx aws.Context, input *StartSchemaCreationInput, opts ...request.Option) (*StartSchemaCreationOutput, error) {
 	req, out := c.StartSchemaCreationRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opTagResource = "TagResource"
+
+// TagResourceRequest generates a "aws/request.Request" representing the
+// client's request for the TagResource operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See TagResource for more information on using the TagResource
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the TagResourceRequest method.
+//    req, resp := client.TagResourceRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/appsync-2017-07-25/TagResource
+func (c *AppSync) TagResourceRequest(input *TagResourceInput) (req *request.Request, output *TagResourceOutput) {
+	op := &request.Operation{
+		Name:       opTagResource,
+		HTTPMethod: "POST",
+		HTTPPath:   "/v1/tags/{resourceArn}",
+	}
+
+	if input == nil {
+		input = &TagResourceInput{}
+	}
+
+	output = &TagResourceOutput{}
+	req = c.newRequest(op, input, output)
+	req.Handlers.Unmarshal.Swap(restjson.UnmarshalHandler.Name, protocol.UnmarshalDiscardBodyHandler)
+	return
+}
+
+// TagResource API operation for AWS AppSync.
+//
+// Tags a resource with user-supplied tags.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS AppSync's
+// API operation TagResource for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeBadRequestException "BadRequestException"
+//   The request is not well formed. For example, a value is invalid or a required
+//   field is missing. Check the field values, and then try again.
+//
+//   * ErrCodeNotFoundException "NotFoundException"
+//   The resource specified in the request was not found. Check the resource,
+//   and then try again.
+//
+//   * ErrCodeLimitExceededException "LimitExceededException"
+//   The request exceeded a limit. Try your request again.
+//
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
+//   You are not authorized to perform this operation.
+//
+//   * ErrCodeInternalFailureException "InternalFailureException"
+//   An internal AWS AppSync error occurred. Try your request again.
+//
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
+//   You do not have access to perform this operation on this resource.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/appsync-2017-07-25/TagResource
+func (c *AppSync) TagResource(input *TagResourceInput) (*TagResourceOutput, error) {
+	req, out := c.TagResourceRequest(input)
+	return out, req.Send()
+}
+
+// TagResourceWithContext is the same as TagResource with the addition of
+// the ability to pass a context and additional request options.
+//
+// See TagResource for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *AppSync) TagResourceWithContext(ctx aws.Context, input *TagResourceInput, opts ...request.Option) (*TagResourceOutput, error) {
+	req, out := c.TagResourceRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opUntagResource = "UntagResource"
+
+// UntagResourceRequest generates a "aws/request.Request" representing the
+// client's request for the UntagResource operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See UntagResource for more information on using the UntagResource
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the UntagResourceRequest method.
+//    req, resp := client.UntagResourceRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/appsync-2017-07-25/UntagResource
+func (c *AppSync) UntagResourceRequest(input *UntagResourceInput) (req *request.Request, output *UntagResourceOutput) {
+	op := &request.Operation{
+		Name:       opUntagResource,
+		HTTPMethod: "DELETE",
+		HTTPPath:   "/v1/tags/{resourceArn}",
+	}
+
+	if input == nil {
+		input = &UntagResourceInput{}
+	}
+
+	output = &UntagResourceOutput{}
+	req = c.newRequest(op, input, output)
+	req.Handlers.Unmarshal.Swap(restjson.UnmarshalHandler.Name, protocol.UnmarshalDiscardBodyHandler)
+	return
+}
+
+// UntagResource API operation for AWS AppSync.
+//
+// Untags a resource.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS AppSync's
+// API operation UntagResource for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeBadRequestException "BadRequestException"
+//   The request is not well formed. For example, a value is invalid or a required
+//   field is missing. Check the field values, and then try again.
+//
+//   * ErrCodeNotFoundException "NotFoundException"
+//   The resource specified in the request was not found. Check the resource,
+//   and then try again.
+//
+//   * ErrCodeLimitExceededException "LimitExceededException"
+//   The request exceeded a limit. Try your request again.
+//
+//   * ErrCodeUnauthorizedException "UnauthorizedException"
+//   You are not authorized to perform this operation.
+//
+//   * ErrCodeInternalFailureException "InternalFailureException"
+//   An internal AWS AppSync error occurred. Try your request again.
+//
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
+//   You do not have access to perform this operation on this resource.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/appsync-2017-07-25/UntagResource
+func (c *AppSync) UntagResource(input *UntagResourceInput) (*UntagResourceOutput, error) {
+	req, out := c.UntagResourceRequest(input)
+	return out, req.Send()
+}
+
+// UntagResourceWithContext is the same as UntagResource with the addition of
+// the ability to pass a context and additional request options.
+//
+// See UntagResource for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *AppSync) UntagResourceWithContext(ctx aws.Context, input *UntagResourceInput, opts ...request.Option) (*UntagResourceOutput, error) {
+	req, out := c.UntagResourceRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -2857,6 +3155,9 @@ func (c *AppSync) UpdateGraphqlApiRequest(input *UpdateGraphqlApiInput) (req *re
 //   * ErrCodeInternalFailureException "InternalFailureException"
 //   An internal AWS AppSync error occurred. Try your request again.
 //
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
+//   You do not have access to perform this operation on this resource.
+//
 // See also, https://docs.aws.amazon.com/goto/WebAPI/appsync-2017-07-25/UpdateGraphqlApi
 func (c *AppSync) UpdateGraphqlApi(input *UpdateGraphqlApiInput) (*UpdateGraphqlApiOutput, error) {
 	req, out := c.UpdateGraphqlApiRequest(input)
@@ -3063,6 +3364,68 @@ func (c *AppSync) UpdateTypeWithContext(ctx aws.Context, input *UpdateTypeInput,
 	return out, req.Send()
 }
 
+// Describes an additional authentication provider.
+type AdditionalAuthenticationProvider struct {
+	_ struct{} `type:"structure"`
+
+	// The authentication type: API key, AWS IAM, OIDC, or Amazon Cognito user pools.
+	AuthenticationType *string `locationName:"authenticationType" type:"string" enum:"AuthenticationType"`
+
+	// The OpenID Connect configuration.
+	OpenIDConnectConfig *OpenIDConnectConfig `locationName:"openIDConnectConfig" type:"structure"`
+
+	// The Amazon Cognito user pool configuration.
+	UserPoolConfig *CognitoUserPoolConfig `locationName:"userPoolConfig" type:"structure"`
+}
+
+// String returns the string representation
+func (s AdditionalAuthenticationProvider) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s AdditionalAuthenticationProvider) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *AdditionalAuthenticationProvider) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "AdditionalAuthenticationProvider"}
+	if s.OpenIDConnectConfig != nil {
+		if err := s.OpenIDConnectConfig.Validate(); err != nil {
+			invalidParams.AddNested("OpenIDConnectConfig", err.(request.ErrInvalidParams))
+		}
+	}
+	if s.UserPoolConfig != nil {
+		if err := s.UserPoolConfig.Validate(); err != nil {
+			invalidParams.AddNested("UserPoolConfig", err.(request.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetAuthenticationType sets the AuthenticationType field's value.
+func (s *AdditionalAuthenticationProvider) SetAuthenticationType(v string) *AdditionalAuthenticationProvider {
+	s.AuthenticationType = &v
+	return s
+}
+
+// SetOpenIDConnectConfig sets the OpenIDConnectConfig field's value.
+func (s *AdditionalAuthenticationProvider) SetOpenIDConnectConfig(v *OpenIDConnectConfig) *AdditionalAuthenticationProvider {
+	s.OpenIDConnectConfig = v
+	return s
+}
+
+// SetUserPoolConfig sets the UserPoolConfig field's value.
+func (s *AdditionalAuthenticationProvider) SetUserPoolConfig(v *CognitoUserPoolConfig) *AdditionalAuthenticationProvider {
+	s.UserPoolConfig = v
+	return s
+}
+
 // Describes an API key.
 //
 // Customers invoke AWS AppSync GraphQL API operations with API keys as an identity
@@ -3223,6 +3586,69 @@ func (s *AwsIamConfig) SetSigningRegion(v string) *AwsIamConfig {
 // SetSigningServiceName sets the SigningServiceName field's value.
 func (s *AwsIamConfig) SetSigningServiceName(v string) *AwsIamConfig {
 	s.SigningServiceName = &v
+	return s
+}
+
+// Describes an Amazon Cognito user pool configuration.
+type CognitoUserPoolConfig struct {
+	_ struct{} `type:"structure"`
+
+	// A regular expression for validating the incoming Amazon Cognito user pool
+	// app client ID.
+	AppIdClientRegex *string `locationName:"appIdClientRegex" type:"string"`
+
+	// The AWS Region in which the user pool was created.
+	//
+	// AwsRegion is a required field
+	AwsRegion *string `locationName:"awsRegion" type:"string" required:"true"`
+
+	// The user pool ID.
+	//
+	// UserPoolId is a required field
+	UserPoolId *string `locationName:"userPoolId" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s CognitoUserPoolConfig) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s CognitoUserPoolConfig) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *CognitoUserPoolConfig) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "CognitoUserPoolConfig"}
+	if s.AwsRegion == nil {
+		invalidParams.Add(request.NewErrParamRequired("AwsRegion"))
+	}
+	if s.UserPoolId == nil {
+		invalidParams.Add(request.NewErrParamRequired("UserPoolId"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetAppIdClientRegex sets the AppIdClientRegex field's value.
+func (s *CognitoUserPoolConfig) SetAppIdClientRegex(v string) *CognitoUserPoolConfig {
+	s.AppIdClientRegex = &v
+	return s
+}
+
+// SetAwsRegion sets the AwsRegion field's value.
+func (s *CognitoUserPoolConfig) SetAwsRegion(v string) *CognitoUserPoolConfig {
+	s.AwsRegion = &v
+	return s
+}
+
+// SetUserPoolId sets the UserPoolId field's value.
+func (s *CognitoUserPoolConfig) SetUserPoolId(v string) *CognitoUserPoolConfig {
+	s.UserPoolId = &v
 	return s
 }
 
@@ -3495,7 +3921,7 @@ type CreateFunctionInput struct {
 	// ApiId is a required field
 	ApiId *string `location:"uri" locationName:"apiId" type:"string" required:"true"`
 
-	// The FunctionDataSource name.
+	// The Function DataSource name.
 	//
 	// DataSourceName is a required field
 	DataSourceName *string `locationName:"dataSourceName" type:"string" required:"true"`
@@ -3636,7 +4062,10 @@ func (s *CreateFunctionOutput) SetFunctionConfiguration(v *FunctionConfiguration
 type CreateGraphqlApiInput struct {
 	_ struct{} `type:"structure"`
 
-	// The authentication type: API key, AWS IAM, or Amazon Cognito user pools.
+	// A list of additional authentication providers for the GraphqlApi API.
+	AdditionalAuthenticationProviders []*AdditionalAuthenticationProvider `locationName:"additionalAuthenticationProviders" type:"list"`
+
+	// The authentication type: API key, AWS IAM, OIDC, or Amazon Cognito user pools.
 	//
 	// AuthenticationType is a required field
 	AuthenticationType *string `locationName:"authenticationType" type:"string" required:"true" enum:"AuthenticationType"`
@@ -3651,6 +4080,9 @@ type CreateGraphqlApiInput struct {
 
 	// The OpenID Connect configuration.
 	OpenIDConnectConfig *OpenIDConnectConfig `locationName:"openIDConnectConfig" type:"structure"`
+
+	// A TagMap object.
+	Tags map[string]*string `locationName:"tags" min:"1" type:"map"`
 
 	// The Amazon Cognito user pool configuration.
 	UserPoolConfig *UserPoolConfig `locationName:"userPoolConfig" type:"structure"`
@@ -3675,6 +4107,19 @@ func (s *CreateGraphqlApiInput) Validate() error {
 	if s.Name == nil {
 		invalidParams.Add(request.NewErrParamRequired("Name"))
 	}
+	if s.Tags != nil && len(s.Tags) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("Tags", 1))
+	}
+	if s.AdditionalAuthenticationProviders != nil {
+		for i, v := range s.AdditionalAuthenticationProviders {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "AdditionalAuthenticationProviders", i), err.(request.ErrInvalidParams))
+			}
+		}
+	}
 	if s.LogConfig != nil {
 		if err := s.LogConfig.Validate(); err != nil {
 			invalidParams.AddNested("LogConfig", err.(request.ErrInvalidParams))
@@ -3695,6 +4140,12 @@ func (s *CreateGraphqlApiInput) Validate() error {
 		return invalidParams
 	}
 	return nil
+}
+
+// SetAdditionalAuthenticationProviders sets the AdditionalAuthenticationProviders field's value.
+func (s *CreateGraphqlApiInput) SetAdditionalAuthenticationProviders(v []*AdditionalAuthenticationProvider) *CreateGraphqlApiInput {
+	s.AdditionalAuthenticationProviders = v
+	return s
 }
 
 // SetAuthenticationType sets the AuthenticationType field's value.
@@ -3718,6 +4169,12 @@ func (s *CreateGraphqlApiInput) SetName(v string) *CreateGraphqlApiInput {
 // SetOpenIDConnectConfig sets the OpenIDConnectConfig field's value.
 func (s *CreateGraphqlApiInput) SetOpenIDConnectConfig(v *OpenIDConnectConfig) *CreateGraphqlApiInput {
 	s.OpenIDConnectConfig = v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *CreateGraphqlApiInput) SetTags(v map[string]*string) *CreateGraphqlApiInput {
+	s.Tags = v
 	return s
 }
 
@@ -5004,6 +5461,9 @@ type GetIntrospectionSchemaInput struct {
 	//
 	// Format is a required field
 	Format *string `location:"querystring" locationName:"format" type:"string" required:"true" enum:"OutputType"`
+
+	// A flag that specifies whether the schema introspection should contain directives.
+	IncludeDirectives *bool `location:"querystring" locationName:"includeDirectives" type:"boolean"`
 }
 
 // String returns the string representation
@@ -5044,6 +5504,12 @@ func (s *GetIntrospectionSchemaInput) SetApiId(v string) *GetIntrospectionSchema
 // SetFormat sets the Format field's value.
 func (s *GetIntrospectionSchemaInput) SetFormat(v string) *GetIntrospectionSchemaInput {
 	s.Format = &v
+	return s
+}
+
+// SetIncludeDirectives sets the IncludeDirectives field's value.
+func (s *GetIntrospectionSchemaInput) SetIncludeDirectives(v bool) *GetIntrospectionSchemaInput {
+	s.IncludeDirectives = &v
 	return s
 }
 
@@ -5217,8 +5683,8 @@ type GetSchemaCreationStatusOutput struct {
 	// Detailed information about the status of the schema creation operation.
 	Details *string `locationName:"details" type:"string"`
 
-	// The current state of the schema (PROCESSING, ACTIVE, or DELETING). Once the
-	// schema is in the ACTIVE state, you can add data.
+	// The current state of the schema (PROCESSING, FAILED, SUCCESS, or NOT_APPLICABLE).
+	// When the schema is in the ACTIVE state, you can add data.
 	Status *string `locationName:"status" type:"string" enum:"SchemaStatus"`
 }
 
@@ -5343,6 +5809,9 @@ func (s *GetTypeOutput) SetType(v *Type) *GetTypeOutput {
 type GraphqlApi struct {
 	_ struct{} `type:"structure"`
 
+	// A list of additional authentication providers for the GraphqlApi API.
+	AdditionalAuthenticationProviders []*AdditionalAuthenticationProvider `locationName:"additionalAuthenticationProviders" type:"list"`
+
 	// The API ID.
 	ApiId *string `locationName:"apiId" type:"string"`
 
@@ -5361,6 +5830,9 @@ type GraphqlApi struct {
 	// The OpenID Connect configuration.
 	OpenIDConnectConfig *OpenIDConnectConfig `locationName:"openIDConnectConfig" type:"structure"`
 
+	// The tags.
+	Tags map[string]*string `locationName:"tags" min:"1" type:"map"`
+
 	// The URIs.
 	Uris map[string]*string `locationName:"uris" type:"map"`
 
@@ -5376,6 +5848,12 @@ func (s GraphqlApi) String() string {
 // GoString returns the string representation
 func (s GraphqlApi) GoString() string {
 	return s.String()
+}
+
+// SetAdditionalAuthenticationProviders sets the AdditionalAuthenticationProviders field's value.
+func (s *GraphqlApi) SetAdditionalAuthenticationProviders(v []*AdditionalAuthenticationProvider) *GraphqlApi {
+	s.AdditionalAuthenticationProviders = v
+	return s
 }
 
 // SetApiId sets the ApiId field's value.
@@ -5411,6 +5889,12 @@ func (s *GraphqlApi) SetName(v string) *GraphqlApi {
 // SetOpenIDConnectConfig sets the OpenIDConnectConfig field's value.
 func (s *GraphqlApi) SetOpenIDConnectConfig(v *OpenIDConnectConfig) *GraphqlApi {
 	s.OpenIDConnectConfig = v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *GraphqlApi) SetTags(v map[string]*string) *GraphqlApi {
+	s.Tags = v
 	return s
 }
 
@@ -6080,6 +6564,70 @@ func (s *ListResolversOutput) SetResolvers(v []*Resolver) *ListResolversOutput {
 	return s
 }
 
+type ListTagsForResourceInput struct {
+	_ struct{} `type:"structure"`
+
+	// The GraphqlApi ARN.
+	//
+	// ResourceArn is a required field
+	ResourceArn *string `location:"uri" locationName:"resourceArn" min:"70" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s ListTagsForResourceInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ListTagsForResourceInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *ListTagsForResourceInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "ListTagsForResourceInput"}
+	if s.ResourceArn == nil {
+		invalidParams.Add(request.NewErrParamRequired("ResourceArn"))
+	}
+	if s.ResourceArn != nil && len(*s.ResourceArn) < 70 {
+		invalidParams.Add(request.NewErrParamMinLen("ResourceArn", 70))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetResourceArn sets the ResourceArn field's value.
+func (s *ListTagsForResourceInput) SetResourceArn(v string) *ListTagsForResourceInput {
+	s.ResourceArn = &v
+	return s
+}
+
+type ListTagsForResourceOutput struct {
+	_ struct{} `type:"structure"`
+
+	// A TagMap object.
+	Tags map[string]*string `locationName:"tags" min:"1" type:"map"`
+}
+
+// String returns the string representation
+func (s ListTagsForResourceOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ListTagsForResourceOutput) GoString() string {
+	return s.String()
+}
+
+// SetTags sets the Tags field's value.
+func (s *ListTagsForResourceOutput) SetTags(v map[string]*string) *ListTagsForResourceOutput {
+	s.Tags = v
+	return s
+}
+
 type ListTypesInput struct {
 	_ struct{} `type:"structure"`
 
@@ -6202,19 +6750,12 @@ type LogConfig struct {
 	//    * NONE: No field-level logs are captured.
 	//
 	//    * ERROR: Logs the following information only for the fields that are in
-	//    error:
-	//
-	// The error section in the server response.
-	//
-	// Field-level errors.
-	//
-	// The generated request/response functions that got resolved for error fields.
+	//    error: The error section in the server response. Field-level errors. The
+	//    generated request/response functions that got resolved for error fields.
 	//
 	//    * ALL: The following information is logged for all fields in the query:
-	//
-	// Field-level tracing information.
-	//
-	// The generated request/response functions that got resolved for each field.
+	//    Field-level tracing information. The generated request/response functions
+	//    that got resolved for each field.
 	//
 	// FieldLogLevel is a required field
 	FieldLogLevel *string `locationName:"fieldLogLevel" type:"string" required:"true" enum:"FieldLogLevel"`
@@ -6603,8 +7144,8 @@ func (s *StartSchemaCreationInput) SetDefinition(v []byte) *StartSchemaCreationI
 type StartSchemaCreationOutput struct {
 	_ struct{} `type:"structure"`
 
-	// The current state of the schema (PROCESSING, ACTIVE, or DELETING). When the
-	// schema is in the ACTIVE state, you can add data.
+	// The current state of the schema (PROCESSING, FAILED, SUCCESS, or NOT_APPLICABLE).
+	// When the schema is in the ACTIVE state, you can add data.
 	Status *string `locationName:"status" type:"string" enum:"SchemaStatus"`
 }
 
@@ -6622,6 +7163,78 @@ func (s StartSchemaCreationOutput) GoString() string {
 func (s *StartSchemaCreationOutput) SetStatus(v string) *StartSchemaCreationOutput {
 	s.Status = &v
 	return s
+}
+
+type TagResourceInput struct {
+	_ struct{} `type:"structure"`
+
+	// The GraphqlApi ARN.
+	//
+	// ResourceArn is a required field
+	ResourceArn *string `location:"uri" locationName:"resourceArn" min:"70" type:"string" required:"true"`
+
+	// A TagMap object.
+	//
+	// Tags is a required field
+	Tags map[string]*string `locationName:"tags" min:"1" type:"map" required:"true"`
+}
+
+// String returns the string representation
+func (s TagResourceInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s TagResourceInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *TagResourceInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "TagResourceInput"}
+	if s.ResourceArn == nil {
+		invalidParams.Add(request.NewErrParamRequired("ResourceArn"))
+	}
+	if s.ResourceArn != nil && len(*s.ResourceArn) < 70 {
+		invalidParams.Add(request.NewErrParamMinLen("ResourceArn", 70))
+	}
+	if s.Tags == nil {
+		invalidParams.Add(request.NewErrParamRequired("Tags"))
+	}
+	if s.Tags != nil && len(s.Tags) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("Tags", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetResourceArn sets the ResourceArn field's value.
+func (s *TagResourceInput) SetResourceArn(v string) *TagResourceInput {
+	s.ResourceArn = &v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *TagResourceInput) SetTags(v map[string]*string) *TagResourceInput {
+	s.Tags = v
+	return s
+}
+
+type TagResourceOutput struct {
+	_ struct{} `type:"structure"`
+}
+
+// String returns the string representation
+func (s TagResourceOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s TagResourceOutput) GoString() string {
+	return s.String()
 }
 
 // Describes a type.
@@ -6682,6 +7295,78 @@ func (s *Type) SetFormat(v string) *Type {
 func (s *Type) SetName(v string) *Type {
 	s.Name = &v
 	return s
+}
+
+type UntagResourceInput struct {
+	_ struct{} `type:"structure"`
+
+	// The GraphqlApi ARN.
+	//
+	// ResourceArn is a required field
+	ResourceArn *string `location:"uri" locationName:"resourceArn" min:"70" type:"string" required:"true"`
+
+	// A list of TagKey objects.
+	//
+	// TagKeys is a required field
+	TagKeys []*string `location:"querystring" locationName:"tagKeys" min:"1" type:"list" required:"true"`
+}
+
+// String returns the string representation
+func (s UntagResourceInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s UntagResourceInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *UntagResourceInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "UntagResourceInput"}
+	if s.ResourceArn == nil {
+		invalidParams.Add(request.NewErrParamRequired("ResourceArn"))
+	}
+	if s.ResourceArn != nil && len(*s.ResourceArn) < 70 {
+		invalidParams.Add(request.NewErrParamMinLen("ResourceArn", 70))
+	}
+	if s.TagKeys == nil {
+		invalidParams.Add(request.NewErrParamRequired("TagKeys"))
+	}
+	if s.TagKeys != nil && len(s.TagKeys) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("TagKeys", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetResourceArn sets the ResourceArn field's value.
+func (s *UntagResourceInput) SetResourceArn(v string) *UntagResourceInput {
+	s.ResourceArn = &v
+	return s
+}
+
+// SetTagKeys sets the TagKeys field's value.
+func (s *UntagResourceInput) SetTagKeys(v []*string) *UntagResourceInput {
+	s.TagKeys = v
+	return s
+}
+
+type UntagResourceOutput struct {
+	_ struct{} `type:"structure"`
+}
+
+// String returns the string representation
+func (s UntagResourceOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s UntagResourceOutput) GoString() string {
+	return s.String()
 }
 
 type UpdateApiKeyInput struct {
@@ -6970,7 +7655,7 @@ type UpdateFunctionInput struct {
 	// ApiId is a required field
 	ApiId *string `location:"uri" locationName:"apiId" type:"string" required:"true"`
 
-	// The FunctionDataSource name.
+	// The Function DataSource name.
 	//
 	// DataSourceName is a required field
 	DataSourceName *string `locationName:"dataSourceName" type:"string" required:"true"`
@@ -7128,6 +7813,9 @@ func (s *UpdateFunctionOutput) SetFunctionConfiguration(v *FunctionConfiguration
 type UpdateGraphqlApiInput struct {
 	_ struct{} `type:"structure"`
 
+	// A list of additional authentication providers for the GraphqlApi API.
+	AdditionalAuthenticationProviders []*AdditionalAuthenticationProvider `locationName:"additionalAuthenticationProviders" type:"list"`
+
 	// The API ID.
 	//
 	// ApiId is a required field
@@ -7173,6 +7861,16 @@ func (s *UpdateGraphqlApiInput) Validate() error {
 	if s.Name == nil {
 		invalidParams.Add(request.NewErrParamRequired("Name"))
 	}
+	if s.AdditionalAuthenticationProviders != nil {
+		for i, v := range s.AdditionalAuthenticationProviders {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "AdditionalAuthenticationProviders", i), err.(request.ErrInvalidParams))
+			}
+		}
+	}
 	if s.LogConfig != nil {
 		if err := s.LogConfig.Validate(); err != nil {
 			invalidParams.AddNested("LogConfig", err.(request.ErrInvalidParams))
@@ -7193,6 +7891,12 @@ func (s *UpdateGraphqlApiInput) Validate() error {
 		return invalidParams
 	}
 	return nil
+}
+
+// SetAdditionalAuthenticationProviders sets the AdditionalAuthenticationProviders field's value.
+func (s *UpdateGraphqlApiInput) SetAdditionalAuthenticationProviders(v []*AdditionalAuthenticationProvider) *UpdateGraphqlApiInput {
+	s.AdditionalAuthenticationProviders = v
+	return s
 }
 
 // SetApiId sets the ApiId field's value.
@@ -7687,6 +8391,15 @@ const (
 
 	// SchemaStatusDeleting is a SchemaStatus enum value
 	SchemaStatusDeleting = "DELETING"
+
+	// SchemaStatusFailed is a SchemaStatus enum value
+	SchemaStatusFailed = "FAILED"
+
+	// SchemaStatusSuccess is a SchemaStatus enum value
+	SchemaStatusSuccess = "SUCCESS"
+
+	// SchemaStatusNotApplicable is a SchemaStatus enum value
+	SchemaStatusNotApplicable = "NOT_APPLICABLE"
 )
 
 const (

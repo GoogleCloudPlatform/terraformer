@@ -14,8 +14,36 @@
 
 package aws
 
-import "github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+import (
+	"os"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+
+	"github.com/aws/aws-sdk-go/aws/credentials/stscreds"
+	"github.com/aws/aws-sdk-go/aws/session"
+)
+
+type AWSServiceGenerator interface {
+	terraform_utils.ServiceGenerator
+	SetSession(session *session.Session)
+}
 
 type AWSService struct {
 	terraform_utils.Service
+	Session *session.Session
+}
+
+func (s *AWSService) generateSession() *session.Session {
+	sess := session.Must(session.NewSessionWithOptions(session.Options{
+		Profile:                 s.GetArgs()["profile"],
+		AssumeRoleTokenProvider: stscreds.StdinTokenProvider,
+		SharedConfigState:       session.SharedConfigEnable,
+	}))
+	creds, _ := sess.Config.Credentials.Get()
+	// terraform cannot ask for MFA token, so we need to pass STS session token
+	os.Setenv("AWS_ACCESS_KEY_ID", creds.AccessKeyID)
+	os.Setenv("AWS_SECRET_ACCESS_KEY", creds.SecretAccessKey)
+	os.Setenv("AWS_SESSION_TOKEN", creds.SessionToken)
+
+	return sess
 }

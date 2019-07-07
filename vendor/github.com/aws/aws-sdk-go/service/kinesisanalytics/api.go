@@ -58,9 +58,15 @@ func (c *KinesisAnalytics) AddApplicationCloudWatchLoggingOptionRequest(input *A
 
 // AddApplicationCloudWatchLoggingOption API operation for Amazon Kinesis Analytics.
 //
+//
+// This documentation is for version 1 of the Amazon Kinesis Data Analytics
+// API, which only supports SQL applications. Version 2 of the API supports
+// SQL and Java applications. For more information about version 2, see Amazon
+// Kinesis Data Analytics API V2 Documentation (/kinesisanalytics/latest/apiv2/Welcome.html).
+//
 // Adds a CloudWatch log stream to monitor application configuration errors.
 // For more information about using CloudWatch log streams with Amazon Kinesis
-// Analytics applications, see Working with Amazon CloudWatch Logs (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/cloudwatch-logs.html).
+// Analytics applications, see Working with Amazon CloudWatch Logs (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/cloudwatch-logs.html).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -85,6 +91,8 @@ func (c *KinesisAnalytics) AddApplicationCloudWatchLoggingOptionRequest(input *A
 //   same time.
 //
 //   * ErrCodeUnsupportedOperationException "UnsupportedOperationException"
+//   The request was rejected because a specified parameter is not supported or
+//   a specified resource is not valid for this operation.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kinesisanalytics-2015-08-14/AddApplicationCloudWatchLoggingOption
 func (c *KinesisAnalytics) AddApplicationCloudWatchLoggingOption(input *AddApplicationCloudWatchLoggingOptionInput) (*AddApplicationCloudWatchLoggingOptionOutput, error) {
@@ -153,15 +161,22 @@ func (c *KinesisAnalytics) AddApplicationInputRequest(input *AddApplicationInput
 
 // AddApplicationInput API operation for Amazon Kinesis Analytics.
 //
+//
+// This documentation is for version 1 of the Amazon Kinesis Data Analytics
+// API, which only supports SQL applications. Version 2 of the API supports
+// SQL and Java applications. For more information about version 2, see Amazon
+// Kinesis Data Analytics API V2 Documentation (/kinesisanalytics/latest/apiv2/Welcome.html).
+//
 // Adds a streaming source to your Amazon Kinesis application. For conceptual
-// information, see Configuring Application Input (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-input.html).
+// information, see Configuring Application Input (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-input.html).
 //
 // You can add a streaming source either when you create an application or you
 // can use this operation to add a streaming source after you create an application.
-// For more information, see CreateApplication.
+// For more information, see CreateApplication (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_CreateApplication.html).
 //
 // Any configuration update, including adding a streaming source using this
 // operation, results in a new version of the application. You can use the DescribeApplication
+// (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_DescribeApplication.html)
 // operation to find the current application version.
 //
 // This operation requires permissions to perform the kinesisanalytics:AddApplicationInput
@@ -194,6 +209,8 @@ func (c *KinesisAnalytics) AddApplicationInputRequest(input *AddApplicationInput
 //   error.
 //
 //   * ErrCodeUnsupportedOperationException "UnsupportedOperationException"
+//   The request was rejected because a specified parameter is not supported or
+//   a specified resource is not valid for this operation.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kinesisanalytics-2015-08-14/AddApplicationInput
 func (c *KinesisAnalytics) AddApplicationInput(input *AddApplicationInputInput) (*AddApplicationInputOutput, error) {
@@ -262,9 +279,16 @@ func (c *KinesisAnalytics) AddApplicationInputProcessingConfigurationRequest(inp
 
 // AddApplicationInputProcessingConfiguration API operation for Amazon Kinesis Analytics.
 //
-// Adds an InputProcessingConfiguration to an application. An input processor
-// preprocesses records on the input stream before the application's SQL code
-// executes. Currently, the only input processor available is AWS Lambda (https://aws.amazon.com/documentation/lambda/).
+//
+// This documentation is for version 1 of the Amazon Kinesis Data Analytics
+// API, which only supports SQL applications. Version 2 of the API supports
+// SQL and Java applications. For more information about version 2, see Amazon
+// Kinesis Data Analytics API V2 Documentation (/kinesisanalytics/latest/apiv2/Welcome.html).
+//
+// Adds an InputProcessingConfiguration (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_InputProcessingConfiguration.html)
+// to an application. An input processor preprocesses records on the input stream
+// before the application's SQL code executes. Currently, the only input processor
+// available is AWS Lambda (https://docs.aws.amazon.com/lambda/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -289,6 +313,8 @@ func (c *KinesisAnalytics) AddApplicationInputProcessingConfigurationRequest(inp
 //   same time.
 //
 //   * ErrCodeUnsupportedOperationException "UnsupportedOperationException"
+//   The request was rejected because a specified parameter is not supported or
+//   a specified resource is not valid for this operation.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kinesisanalytics-2015-08-14/AddApplicationInputProcessingConfiguration
 func (c *KinesisAnalytics) AddApplicationInputProcessingConfiguration(input *AddApplicationInputProcessingConfigurationInput) (*AddApplicationInputProcessingConfigurationOutput, error) {
@@ -357,6 +383,12 @@ func (c *KinesisAnalytics) AddApplicationOutputRequest(input *AddApplicationOutp
 
 // AddApplicationOutput API operation for Amazon Kinesis Analytics.
 //
+//
+// This documentation is for version 1 of the Amazon Kinesis Data Analytics
+// API, which only supports SQL applications. Version 2 of the API supports
+// SQL and Java applications. For more information about version 2, see Amazon
+// Kinesis Data Analytics API V2 Documentation (/kinesisanalytics/latest/apiv2/Welcome.html).
+//
 // Adds an external destination to your Amazon Kinesis Analytics application.
 //
 // If you want Amazon Kinesis Analytics to deliver data from an in-application
@@ -369,14 +401,15 @@ func (c *KinesisAnalytics) AddApplicationOutputRequest(input *AddApplicationOutp
 // You can use one of the output configurations to deliver data from your in-application
 // error stream to an external destination so that you can analyze the errors.
 // For more information, see Understanding Application Output (Destination)
-// (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-output.html).
+// (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-output.html).
 //
 // Any configuration update, including adding a streaming source using this
 // operation, results in a new version of the application. You can use the DescribeApplication
+// (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_DescribeApplication.html)
 // operation to find the current application version.
 //
 // For the limits on the number of application inputs and outputs you can configure,
-// see Limits (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/limits.html).
+// see Limits (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/limits.html).
 //
 // This operation requires permissions to perform the kinesisanalytics:AddApplicationOutput
 // action.
@@ -404,6 +437,8 @@ func (c *KinesisAnalytics) AddApplicationOutputRequest(input *AddApplicationOutp
 //   same time.
 //
 //   * ErrCodeUnsupportedOperationException "UnsupportedOperationException"
+//   The request was rejected because a specified parameter is not supported or
+//   a specified resource is not valid for this operation.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kinesisanalytics-2015-08-14/AddApplicationOutput
 func (c *KinesisAnalytics) AddApplicationOutput(input *AddApplicationOutputInput) (*AddApplicationOutputOutput, error) {
@@ -472,6 +507,12 @@ func (c *KinesisAnalytics) AddApplicationReferenceDataSourceRequest(input *AddAp
 
 // AddApplicationReferenceDataSource API operation for Amazon Kinesis Analytics.
 //
+//
+// This documentation is for version 1 of the Amazon Kinesis Data Analytics
+// API, which only supports SQL applications. Version 2 of the API supports
+// SQL and Java applications. For more information about version 2, see Amazon
+// Kinesis Data Analytics API V2 Documentation (/kinesisanalytics/latest/apiv2/Welcome.html).
+//
 // Adds a reference data source to an existing application.
 //
 // Amazon Kinesis Analytics reads reference data (that is, an Amazon S3 object)
@@ -481,9 +522,9 @@ func (c *KinesisAnalytics) AddApplicationReferenceDataSourceRequest(input *AddAp
 // describes how data in Amazon S3 object maps to columns in the resulting in-application
 // table.
 //
-// For conceptual information, see Configuring Application Input (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-input.html).
+// For conceptual information, see Configuring Application Input (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-input.html).
 // For the limits on data sources you can add to your application, see Limits
-// (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/limits.html).
+// (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/limits.html).
 //
 // This operation requires permissions to perform the kinesisanalytics:AddApplicationOutput
 // action.
@@ -511,6 +552,8 @@ func (c *KinesisAnalytics) AddApplicationReferenceDataSourceRequest(input *AddAp
 //   same time.
 //
 //   * ErrCodeUnsupportedOperationException "UnsupportedOperationException"
+//   The request was rejected because a specified parameter is not supported or
+//   a specified resource is not valid for this operation.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kinesisanalytics-2015-08-14/AddApplicationReferenceDataSource
 func (c *KinesisAnalytics) AddApplicationReferenceDataSource(input *AddApplicationReferenceDataSourceInput) (*AddApplicationReferenceDataSourceOutput, error) {
@@ -578,11 +621,17 @@ func (c *KinesisAnalytics) CreateApplicationRequest(input *CreateApplicationInpu
 
 // CreateApplication API operation for Amazon Kinesis Analytics.
 //
+//
+// This documentation is for version 1 of the Amazon Kinesis Data Analytics
+// API, which only supports SQL applications. Version 2 of the API supports
+// SQL and Java applications. For more information about version 2, see Amazon
+// Kinesis Data Analytics API V2 Documentation (/kinesisanalytics/latest/apiv2/Welcome.html).
+//
 // Creates an Amazon Kinesis Analytics application. You can configure each application
 // with one streaming source as input, application code to process the input,
 // and up to three destinations where you want Amazon Kinesis Analytics to write
 // the output data from your application. For an overview, see How it Works
-// (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works.html).
+// (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works.html).
 //
 // In the input configuration, you map the streaming source to an in-application
 // stream, which you can think of as a constantly updating table. In the mapping,
@@ -602,7 +651,7 @@ func (c *KinesisAnalytics) CreateApplicationRequest(input *CreateApplicationInpu
 // kinesisanalytics:CreateApplication action.
 //
 // For introductory exercises to create an Amazon Kinesis Analytics application,
-// see Getting Started (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/getting-started.html).
+// see Getting Started (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/getting-started.html).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -624,6 +673,16 @@ func (c *KinesisAnalytics) CreateApplicationRequest(input *CreateApplicationInpu
 //
 //   * ErrCodeInvalidArgumentException "InvalidArgumentException"
 //   Specified input parameter value is invalid.
+//
+//   * ErrCodeTooManyTagsException "TooManyTagsException"
+//   Application created with too many tags, or too many tags added to an application.
+//   Note that the maximum number of application tags includes system tags. The
+//   maximum number of user-defined application tags is 50.
+//
+//   * ErrCodeConcurrentModificationException "ConcurrentModificationException"
+//   Exception thrown as a result of concurrent modification to an application.
+//   For example, two individuals attempting to edit the same application at the
+//   same time.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kinesisanalytics-2015-08-14/CreateApplication
 func (c *KinesisAnalytics) CreateApplication(input *CreateApplicationInput) (*CreateApplicationOutput, error) {
@@ -692,6 +751,12 @@ func (c *KinesisAnalytics) DeleteApplicationRequest(input *DeleteApplicationInpu
 
 // DeleteApplication API operation for Amazon Kinesis Analytics.
 //
+//
+// This documentation is for version 1 of the Amazon Kinesis Data Analytics
+// API, which only supports SQL applications. Version 2 of the API supports
+// SQL and Java applications. For more information about version 2, see Amazon
+// Kinesis Data Analytics API V2 Documentation (/kinesisanalytics/latest/apiv2/Welcome.html).
+//
 // Deletes the specified application. Amazon Kinesis Analytics halts application
 // execution and deletes the application, including any application artifacts
 // (such as in-application streams, reference table, and application code).
@@ -719,6 +784,8 @@ func (c *KinesisAnalytics) DeleteApplicationRequest(input *DeleteApplicationInpu
 //   Application is not available for this operation.
 //
 //   * ErrCodeUnsupportedOperationException "UnsupportedOperationException"
+//   The request was rejected because a specified parameter is not supported or
+//   a specified resource is not valid for this operation.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kinesisanalytics-2015-08-14/DeleteApplication
 func (c *KinesisAnalytics) DeleteApplication(input *DeleteApplicationInput) (*DeleteApplicationOutput, error) {
@@ -787,9 +854,15 @@ func (c *KinesisAnalytics) DeleteApplicationCloudWatchLoggingOptionRequest(input
 
 // DeleteApplicationCloudWatchLoggingOption API operation for Amazon Kinesis Analytics.
 //
+//
+// This documentation is for version 1 of the Amazon Kinesis Data Analytics
+// API, which only supports SQL applications. Version 2 of the API supports
+// SQL and Java applications. For more information about version 2, see Amazon
+// Kinesis Data Analytics API V2 Documentation (/kinesisanalytics/latest/apiv2/Welcome.html).
+//
 // Deletes a CloudWatch log stream from an application. For more information
 // about using CloudWatch log streams with Amazon Kinesis Analytics applications,
-// see Working with Amazon CloudWatch Logs (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/cloudwatch-logs.html).
+// see Working with Amazon CloudWatch Logs (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/cloudwatch-logs.html).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -814,6 +887,8 @@ func (c *KinesisAnalytics) DeleteApplicationCloudWatchLoggingOptionRequest(input
 //   same time.
 //
 //   * ErrCodeUnsupportedOperationException "UnsupportedOperationException"
+//   The request was rejected because a specified parameter is not supported or
+//   a specified resource is not valid for this operation.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kinesisanalytics-2015-08-14/DeleteApplicationCloudWatchLoggingOption
 func (c *KinesisAnalytics) DeleteApplicationCloudWatchLoggingOption(input *DeleteApplicationCloudWatchLoggingOptionInput) (*DeleteApplicationCloudWatchLoggingOptionOutput, error) {
@@ -882,7 +957,14 @@ func (c *KinesisAnalytics) DeleteApplicationInputProcessingConfigurationRequest(
 
 // DeleteApplicationInputProcessingConfiguration API operation for Amazon Kinesis Analytics.
 //
-// Deletes an InputProcessingConfiguration from an input.
+//
+// This documentation is for version 1 of the Amazon Kinesis Data Analytics
+// API, which only supports SQL applications. Version 2 of the API supports
+// SQL and Java applications. For more information about version 2, see Amazon
+// Kinesis Data Analytics API V2 Documentation (/kinesisanalytics/latest/apiv2/Welcome.html).
+//
+// Deletes an InputProcessingConfiguration (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_InputProcessingConfiguration.html)
+// from an input.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -907,6 +989,8 @@ func (c *KinesisAnalytics) DeleteApplicationInputProcessingConfigurationRequest(
 //   same time.
 //
 //   * ErrCodeUnsupportedOperationException "UnsupportedOperationException"
+//   The request was rejected because a specified parameter is not supported or
+//   a specified resource is not valid for this operation.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kinesisanalytics-2015-08-14/DeleteApplicationInputProcessingConfiguration
 func (c *KinesisAnalytics) DeleteApplicationInputProcessingConfiguration(input *DeleteApplicationInputProcessingConfigurationInput) (*DeleteApplicationInputProcessingConfigurationOutput, error) {
@@ -975,6 +1059,12 @@ func (c *KinesisAnalytics) DeleteApplicationOutputRequest(input *DeleteApplicati
 
 // DeleteApplicationOutput API operation for Amazon Kinesis Analytics.
 //
+//
+// This documentation is for version 1 of the Amazon Kinesis Data Analytics
+// API, which only supports SQL applications. Version 2 of the API supports
+// SQL and Java applications. For more information about version 2, see Amazon
+// Kinesis Data Analytics API V2 Documentation (/kinesisanalytics/latest/apiv2/Welcome.html).
+//
 // Deletes output destination configuration from your application configuration.
 // Amazon Kinesis Analytics will no longer write data from the corresponding
 // in-application stream to the external output destination.
@@ -1005,6 +1095,8 @@ func (c *KinesisAnalytics) DeleteApplicationOutputRequest(input *DeleteApplicati
 //   same time.
 //
 //   * ErrCodeUnsupportedOperationException "UnsupportedOperationException"
+//   The request was rejected because a specified parameter is not supported or
+//   a specified resource is not valid for this operation.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kinesisanalytics-2015-08-14/DeleteApplicationOutput
 func (c *KinesisAnalytics) DeleteApplicationOutput(input *DeleteApplicationOutputInput) (*DeleteApplicationOutputOutput, error) {
@@ -1073,11 +1165,18 @@ func (c *KinesisAnalytics) DeleteApplicationReferenceDataSourceRequest(input *De
 
 // DeleteApplicationReferenceDataSource API operation for Amazon Kinesis Analytics.
 //
+//
+// This documentation is for version 1 of the Amazon Kinesis Data Analytics
+// API, which only supports SQL applications. Version 2 of the API supports
+// SQL and Java applications. For more information about version 2, see Amazon
+// Kinesis Data Analytics API V2 Documentation (/kinesisanalytics/latest/apiv2/Welcome.html).
+//
 // Deletes a reference data source configuration from the specified application
 // configuration.
 //
 // If the application is running, Amazon Kinesis Analytics immediately removes
 // the in-application table that you created using the AddApplicationReferenceDataSource
+// (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_AddApplicationReferenceDataSource.html)
 // operation.
 //
 // This operation requires permissions to perform the kinesisanalytics.DeleteApplicationReferenceDataSource
@@ -1106,6 +1205,8 @@ func (c *KinesisAnalytics) DeleteApplicationReferenceDataSourceRequest(input *De
 //   same time.
 //
 //   * ErrCodeUnsupportedOperationException "UnsupportedOperationException"
+//   The request was rejected because a specified parameter is not supported or
+//   a specified resource is not valid for this operation.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kinesisanalytics-2015-08-14/DeleteApplicationReferenceDataSource
 func (c *KinesisAnalytics) DeleteApplicationReferenceDataSource(input *DeleteApplicationReferenceDataSourceInput) (*DeleteApplicationReferenceDataSourceOutput, error) {
@@ -1173,10 +1274,17 @@ func (c *KinesisAnalytics) DescribeApplicationRequest(input *DescribeApplication
 
 // DescribeApplication API operation for Amazon Kinesis Analytics.
 //
+//
+// This documentation is for version 1 of the Amazon Kinesis Data Analytics
+// API, which only supports SQL applications. Version 2 of the API supports
+// SQL and Java applications. For more information about version 2, see Amazon
+// Kinesis Data Analytics API V2 Documentation (/kinesisanalytics/latest/apiv2/Welcome.html).
+//
 // Returns information about a specific Amazon Kinesis Analytics application.
 //
 // If you want to retrieve a list of all applications in your account, use the
-// ListApplications operation.
+// ListApplications (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_ListApplications.html)
+// operation.
 //
 // This operation requires permissions to perform the kinesisanalytics:DescribeApplication
 // action. You can use DescribeApplication to get the current application versionId,
@@ -1194,6 +1302,8 @@ func (c *KinesisAnalytics) DescribeApplicationRequest(input *DescribeApplication
 //   Specified application can't be found.
 //
 //   * ErrCodeUnsupportedOperationException "UnsupportedOperationException"
+//   The request was rejected because a specified parameter is not supported or
+//   a specified resource is not valid for this operation.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kinesisanalytics-2015-08-14/DescribeApplication
 func (c *KinesisAnalytics) DescribeApplication(input *DescribeApplicationInput) (*DescribeApplicationOutput, error) {
@@ -1261,6 +1371,12 @@ func (c *KinesisAnalytics) DiscoverInputSchemaRequest(input *DiscoverInputSchema
 
 // DiscoverInputSchema API operation for Amazon Kinesis Analytics.
 //
+//
+// This documentation is for version 1 of the Amazon Kinesis Data Analytics
+// API, which only supports SQL applications. Version 2 of the API supports
+// SQL and Java applications. For more information about version 2, see Amazon
+// Kinesis Data Analytics API V2 Documentation (/kinesisanalytics/latest/apiv2/Welcome.html).
+//
 // Infers a schema by evaluating sample records on the specified streaming source
 // (Amazon Kinesis stream or Amazon Kinesis Firehose delivery stream) or S3
 // object. In the response, the operation returns the inferred schema and also
@@ -1268,7 +1384,7 @@ func (c *KinesisAnalytics) DiscoverInputSchemaRequest(input *DiscoverInputSchema
 //
 // You can use the inferred schema when configuring a streaming source for your
 // application. For conceptual information, see Configuring Application Input
-// (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-input.html).
+// (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-input.html).
 // Note that when you create an application using the Amazon Kinesis Analytics
 // console, the console uses this operation to infer a schema and show it in
 // the console user interface.
@@ -1294,8 +1410,8 @@ func (c *KinesisAnalytics) DiscoverInputSchemaRequest(input *DiscoverInputSchema
 //   * ErrCodeResourceProvisionedThroughputExceededException "ResourceProvisionedThroughputExceededException"
 //   Discovery failed to get a record from the streaming source because of the
 //   Amazon Kinesis Streams ProvisionedThroughputExceededException. For more information,
-//   see GetRecords (http://docs.aws.amazon.com/kinesis/latest/APIReference/API_GetRecords.html)
-//   in the Amazon Kinesis Streams API Reference.
+//   see GetRecords (kinesis/latest/APIReference/API_GetRecords.html) in the Amazon
+//   Kinesis Streams API Reference.
 //
 //   * ErrCodeServiceUnavailableException "ServiceUnavailableException"
 //   The service is unavailable. Back off and retry the operation.
@@ -1366,6 +1482,12 @@ func (c *KinesisAnalytics) ListApplicationsRequest(input *ListApplicationsInput)
 
 // ListApplications API operation for Amazon Kinesis Analytics.
 //
+//
+// This documentation is for version 1 of the Amazon Kinesis Data Analytics
+// API, which only supports SQL applications. Version 2 of the API supports
+// SQL and Java applications. For more information about version 2, see Amazon
+// Kinesis Data Analytics API V2 Documentation (/kinesisanalytics/latest/apiv2/Welcome.html).
+//
 // Returns a list of Amazon Kinesis Analytics applications in your account.
 // For each application, the response includes the application name, Amazon
 // Resource Name (ARN), and status. If the response returns the HasMoreApplications
@@ -1373,7 +1495,8 @@ func (c *KinesisAnalytics) ListApplicationsRequest(input *ListApplicationsInput)
 // in the request body, and set the value of this to the last application name
 // from the previous response.
 //
-// If you want detailed information about a specific application, use DescribeApplication.
+// If you want detailed information about a specific application, use DescribeApplication
+// (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_DescribeApplication.html).
 //
 // This operation requires permissions to perform the kinesisanalytics:ListApplications
 // action.
@@ -1401,6 +1524,93 @@ func (c *KinesisAnalytics) ListApplications(input *ListApplicationsInput) (*List
 // for more information on using Contexts.
 func (c *KinesisAnalytics) ListApplicationsWithContext(ctx aws.Context, input *ListApplicationsInput, opts ...request.Option) (*ListApplicationsOutput, error) {
 	req, out := c.ListApplicationsRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opListTagsForResource = "ListTagsForResource"
+
+// ListTagsForResourceRequest generates a "aws/request.Request" representing the
+// client's request for the ListTagsForResource operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See ListTagsForResource for more information on using the ListTagsForResource
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the ListTagsForResourceRequest method.
+//    req, resp := client.ListTagsForResourceRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/kinesisanalytics-2015-08-14/ListTagsForResource
+func (c *KinesisAnalytics) ListTagsForResourceRequest(input *ListTagsForResourceInput) (req *request.Request, output *ListTagsForResourceOutput) {
+	op := &request.Operation{
+		Name:       opListTagsForResource,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &ListTagsForResourceInput{}
+	}
+
+	output = &ListTagsForResourceOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// ListTagsForResource API operation for Amazon Kinesis Analytics.
+//
+// Retrieves the list of key-value tags assigned to the application.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for Amazon Kinesis Analytics's
+// API operation ListTagsForResource for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
+//   Specified application can't be found.
+//
+//   * ErrCodeInvalidArgumentException "InvalidArgumentException"
+//   Specified input parameter value is invalid.
+//
+//   * ErrCodeConcurrentModificationException "ConcurrentModificationException"
+//   Exception thrown as a result of concurrent modification to an application.
+//   For example, two individuals attempting to edit the same application at the
+//   same time.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/kinesisanalytics-2015-08-14/ListTagsForResource
+func (c *KinesisAnalytics) ListTagsForResource(input *ListTagsForResourceInput) (*ListTagsForResourceOutput, error) {
+	req, out := c.ListTagsForResourceRequest(input)
+	return out, req.Send()
+}
+
+// ListTagsForResourceWithContext is the same as ListTagsForResource with the addition of
+// the ability to pass a context and additional request options.
+//
+// See ListTagsForResource for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *KinesisAnalytics) ListTagsForResourceWithContext(ctx aws.Context, input *ListTagsForResourceInput, opts ...request.Option) (*ListTagsForResourceOutput, error) {
+	req, out := c.ListTagsForResourceRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -1451,6 +1661,12 @@ func (c *KinesisAnalytics) StartApplicationRequest(input *StartApplicationInput)
 
 // StartApplication API operation for Amazon Kinesis Analytics.
 //
+//
+// This documentation is for version 1 of the Amazon Kinesis Data Analytics
+// API, which only supports SQL applications. Version 2 of the API supports
+// SQL and Java applications. For more information about version 2, see Amazon
+// Kinesis Data Analytics API V2 Documentation (/kinesisanalytics/latest/apiv2/Welcome.html).
+//
 // Starts the specified Amazon Kinesis Analytics application. After creating
 // an application, you must exclusively call this operation to start your application.
 //
@@ -1459,10 +1675,12 @@ func (c *KinesisAnalytics) StartApplicationRequest(input *StartApplicationInput)
 //
 // The application status must be READY for you to start an application. You
 // can get the application status in the console or using the DescribeApplication
+// (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_DescribeApplication.html)
 // operation.
 //
 // After you start the application, you can stop the application from processing
-// the input by calling the StopApplication operation.
+// the input by calling the StopApplication (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_StopApplication.html)
+// operation.
 //
 // This operation requires permissions to perform the kinesisanalytics:StartApplication
 // action.
@@ -1488,6 +1706,8 @@ func (c *KinesisAnalytics) StartApplicationRequest(input *StartApplicationInput)
 //   User-provided application configuration is not valid.
 //
 //   * ErrCodeUnsupportedOperationException "UnsupportedOperationException"
+//   The request was rejected because a specified parameter is not supported or
+//   a specified resource is not valid for this operation.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kinesisanalytics-2015-08-14/StartApplication
 func (c *KinesisAnalytics) StartApplication(input *StartApplicationInput) (*StartApplicationOutput, error) {
@@ -1556,11 +1776,17 @@ func (c *KinesisAnalytics) StopApplicationRequest(input *StopApplicationInput) (
 
 // StopApplication API operation for Amazon Kinesis Analytics.
 //
+//
+// This documentation is for version 1 of the Amazon Kinesis Data Analytics
+// API, which only supports SQL applications. Version 2 of the API supports
+// SQL and Java applications. For more information about version 2, see Amazon
+// Kinesis Data Analytics API V2 Documentation (/kinesisanalytics/latest/apiv2/Welcome.html).
+//
 // Stops the application from processing input data. You can stop an application
-// only if it is in the running state. You can use the DescribeApplication operation
-// to find the application state. After the application is stopped, Amazon Kinesis
-// Analytics stops reading data from the input, the application stops processing
-// data, and there is no output written to the destination.
+// only if it is in the running state. You can use the DescribeApplication (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_DescribeApplication.html)
+// operation to find the application state. After the application is stopped,
+// Amazon Kinesis Analytics stops reading data from the input, the application
+// stops processing data, and there is no output written to the destination.
 //
 // This operation requires permissions to perform the kinesisanalytics:StopApplication
 // action.
@@ -1580,6 +1806,8 @@ func (c *KinesisAnalytics) StopApplicationRequest(input *StopApplicationInput) (
 //   Application is not available for this operation.
 //
 //   * ErrCodeUnsupportedOperationException "UnsupportedOperationException"
+//   The request was rejected because a specified parameter is not supported or
+//   a specified resource is not valid for this operation.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kinesisanalytics-2015-08-14/StopApplication
 func (c *KinesisAnalytics) StopApplication(input *StopApplicationInput) (*StopApplicationOutput, error) {
@@ -1598,6 +1826,200 @@ func (c *KinesisAnalytics) StopApplication(input *StopApplicationInput) (*StopAp
 // for more information on using Contexts.
 func (c *KinesisAnalytics) StopApplicationWithContext(ctx aws.Context, input *StopApplicationInput, opts ...request.Option) (*StopApplicationOutput, error) {
 	req, out := c.StopApplicationRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opTagResource = "TagResource"
+
+// TagResourceRequest generates a "aws/request.Request" representing the
+// client's request for the TagResource operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See TagResource for more information on using the TagResource
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the TagResourceRequest method.
+//    req, resp := client.TagResourceRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/kinesisanalytics-2015-08-14/TagResource
+func (c *KinesisAnalytics) TagResourceRequest(input *TagResourceInput) (req *request.Request, output *TagResourceOutput) {
+	op := &request.Operation{
+		Name:       opTagResource,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &TagResourceInput{}
+	}
+
+	output = &TagResourceOutput{}
+	req = c.newRequest(op, input, output)
+	req.Handlers.Unmarshal.Swap(jsonrpc.UnmarshalHandler.Name, protocol.UnmarshalDiscardBodyHandler)
+	return
+}
+
+// TagResource API operation for Amazon Kinesis Analytics.
+//
+// Adds one or more key-value tags to a Kinesis Analytics application. Note
+// that the maximum number of application tags includes system tags. The maximum
+// number of user-defined application tags is 50.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for Amazon Kinesis Analytics's
+// API operation TagResource for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
+//   Specified application can't be found.
+//
+//   * ErrCodeResourceInUseException "ResourceInUseException"
+//   Application is not available for this operation.
+//
+//   * ErrCodeTooManyTagsException "TooManyTagsException"
+//   Application created with too many tags, or too many tags added to an application.
+//   Note that the maximum number of application tags includes system tags. The
+//   maximum number of user-defined application tags is 50.
+//
+//   * ErrCodeInvalidArgumentException "InvalidArgumentException"
+//   Specified input parameter value is invalid.
+//
+//   * ErrCodeConcurrentModificationException "ConcurrentModificationException"
+//   Exception thrown as a result of concurrent modification to an application.
+//   For example, two individuals attempting to edit the same application at the
+//   same time.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/kinesisanalytics-2015-08-14/TagResource
+func (c *KinesisAnalytics) TagResource(input *TagResourceInput) (*TagResourceOutput, error) {
+	req, out := c.TagResourceRequest(input)
+	return out, req.Send()
+}
+
+// TagResourceWithContext is the same as TagResource with the addition of
+// the ability to pass a context and additional request options.
+//
+// See TagResource for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *KinesisAnalytics) TagResourceWithContext(ctx aws.Context, input *TagResourceInput, opts ...request.Option) (*TagResourceOutput, error) {
+	req, out := c.TagResourceRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opUntagResource = "UntagResource"
+
+// UntagResourceRequest generates a "aws/request.Request" representing the
+// client's request for the UntagResource operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See UntagResource for more information on using the UntagResource
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the UntagResourceRequest method.
+//    req, resp := client.UntagResourceRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/kinesisanalytics-2015-08-14/UntagResource
+func (c *KinesisAnalytics) UntagResourceRequest(input *UntagResourceInput) (req *request.Request, output *UntagResourceOutput) {
+	op := &request.Operation{
+		Name:       opUntagResource,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &UntagResourceInput{}
+	}
+
+	output = &UntagResourceOutput{}
+	req = c.newRequest(op, input, output)
+	req.Handlers.Unmarshal.Swap(jsonrpc.UnmarshalHandler.Name, protocol.UnmarshalDiscardBodyHandler)
+	return
+}
+
+// UntagResource API operation for Amazon Kinesis Analytics.
+//
+// Removes one or more tags from a Kinesis Analytics application.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for Amazon Kinesis Analytics's
+// API operation UntagResource for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
+//   Specified application can't be found.
+//
+//   * ErrCodeResourceInUseException "ResourceInUseException"
+//   Application is not available for this operation.
+//
+//   * ErrCodeTooManyTagsException "TooManyTagsException"
+//   Application created with too many tags, or too many tags added to an application.
+//   Note that the maximum number of application tags includes system tags. The
+//   maximum number of user-defined application tags is 50.
+//
+//   * ErrCodeInvalidArgumentException "InvalidArgumentException"
+//   Specified input parameter value is invalid.
+//
+//   * ErrCodeConcurrentModificationException "ConcurrentModificationException"
+//   Exception thrown as a result of concurrent modification to an application.
+//   For example, two individuals attempting to edit the same application at the
+//   same time.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/kinesisanalytics-2015-08-14/UntagResource
+func (c *KinesisAnalytics) UntagResource(input *UntagResourceInput) (*UntagResourceOutput, error) {
+	req, out := c.UntagResourceRequest(input)
+	return out, req.Send()
+}
+
+// UntagResourceWithContext is the same as UntagResource with the addition of
+// the ability to pass a context and additional request options.
+//
+// See UntagResource for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *KinesisAnalytics) UntagResourceWithContext(ctx aws.Context, input *UntagResourceInput, opts ...request.Option) (*UntagResourceOutput, error) {
+	req, out := c.UntagResourceRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -1648,6 +2070,12 @@ func (c *KinesisAnalytics) UpdateApplicationRequest(input *UpdateApplicationInpu
 
 // UpdateApplication API operation for Amazon Kinesis Analytics.
 //
+//
+// This documentation is for version 1 of the Amazon Kinesis Data Analytics
+// API, which only supports SQL applications. Version 2 of the API supports
+// SQL and Java applications. For more information about version 2, see Amazon
+// Kinesis Data Analytics API V2 Documentation (/kinesisanalytics/latest/apiv2/Welcome.html).
+//
 // Updates an existing Amazon Kinesis Analytics application. Using this API,
 // you can update application code, input configuration, and output configuration.
 //
@@ -1684,6 +2112,8 @@ func (c *KinesisAnalytics) UpdateApplicationRequest(input *UpdateApplicationInpu
 //   same time.
 //
 //   * ErrCodeUnsupportedOperationException "UnsupportedOperationException"
+//   The request was rejected because a specified parameter is not supported or
+//   a specified resource is not valid for this operation.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/kinesisanalytics-2015-08-14/UpdateApplication
 func (c *KinesisAnalytics) UpdateApplication(input *UpdateApplicationInput) (*UpdateApplicationOutput, error) {
@@ -1810,12 +2240,14 @@ type AddApplicationInputInput struct {
 	ApplicationName *string `min:"1" type:"string" required:"true"`
 
 	// Current version of your Amazon Kinesis Analytics application. You can use
-	// the DescribeApplication operation to find the current application version.
+	// the DescribeApplication (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_DescribeApplication.html)
+	// operation to find the current application version.
 	//
 	// CurrentApplicationVersionId is a required field
 	CurrentApplicationVersionId *int64 `min:"1" type:"long" required:"true"`
 
-	// The Input to add.
+	// The Input (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_Input.html)
+	// to add.
 	//
 	// Input is a required field
 	Input *Input `type:"structure" required:"true"`
@@ -1902,21 +2334,23 @@ type AddApplicationInputProcessingConfigurationInput struct {
 	ApplicationName *string `min:"1" type:"string" required:"true"`
 
 	// Version of the application to which you want to add the input processing
-	// configuration. You can use the DescribeApplication operation to get the current
-	// application version. If the version specified is not the current version,
-	// the ConcurrentModificationException is returned.
+	// configuration. You can use the DescribeApplication (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_DescribeApplication.html)
+	// operation to get the current application version. If the version specified
+	// is not the current version, the ConcurrentModificationException is returned.
 	//
 	// CurrentApplicationVersionId is a required field
 	CurrentApplicationVersionId *int64 `min:"1" type:"long" required:"true"`
 
 	// The ID of the input configuration to add the input processing configuration
 	// to. You can get a list of the input IDs for an application using the DescribeApplication
+	// (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_DescribeApplication.html)
 	// operation.
 	//
 	// InputId is a required field
 	InputId *string `min:"1" type:"string" required:"true"`
 
-	// The InputProcessingConfiguration to add to the application.
+	// The InputProcessingConfiguration (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_InputProcessingConfiguration.html)
+	// to add to the application.
 	//
 	// InputProcessingConfiguration is a required field
 	InputProcessingConfiguration *InputProcessingConfiguration `type:"structure" required:"true"`
@@ -2015,9 +2449,9 @@ type AddApplicationOutputInput struct {
 	ApplicationName *string `min:"1" type:"string" required:"true"`
 
 	// Version of the application to which you want to add the output configuration.
-	// You can use the DescribeApplication operation to get the current application
-	// version. If the version specified is not the current version, the ConcurrentModificationException
-	// is returned.
+	// You can use the DescribeApplication (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_DescribeApplication.html)
+	// operation to get the current application version. If the version specified
+	// is not the current version, the ConcurrentModificationException is returned.
 	//
 	// CurrentApplicationVersionId is a required field
 	CurrentApplicationVersionId *int64 `min:"1" type:"long" required:"true"`
@@ -2113,9 +2547,9 @@ type AddApplicationReferenceDataSourceInput struct {
 	ApplicationName *string `min:"1" type:"string" required:"true"`
 
 	// Version of the application for which you are adding the reference data source.
-	// You can use the DescribeApplication operation to get the current application
-	// version. If the version specified is not the current version, the ConcurrentModificationException
-	// is returned.
+	// You can use the DescribeApplication (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_DescribeApplication.html)
+	// operation to get the current application version. If the version specified
+	// is not the current version, the ConcurrentModificationException is returned.
 	//
 	// CurrentApplicationVersionId is a required field
 	CurrentApplicationVersionId *int64 `min:"1" type:"long" required:"true"`
@@ -2203,6 +2637,12 @@ func (s AddApplicationReferenceDataSourceOutput) GoString() string {
 	return s.String()
 }
 
+//
+// This documentation is for version 1 of the Amazon Kinesis Data Analytics
+// API, which only supports SQL applications. Version 2 of the API supports
+// SQL and Java applications. For more information about version 2, see Amazon
+// Kinesis Data Analytics API V2 Documentation (/kinesisanalytics/latest/apiv2/Welcome.html).
+//
 // Provides a description of the application, including the application Amazon
 // Resource Name (ARN), status, latest version, and input and output configuration.
 type ApplicationDetail struct {
@@ -2237,25 +2677,25 @@ type ApplicationDetail struct {
 
 	// Describes the CloudWatch log streams that are configured to receive application
 	// messages. For more information about using CloudWatch log streams with Amazon
-	// Kinesis Analytics applications, see Working with Amazon CloudWatch Logs (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/cloudwatch-logs.html).
+	// Kinesis Analytics applications, see Working with Amazon CloudWatch Logs (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/cloudwatch-logs.html).
 	CloudWatchLoggingOptionDescriptions []*CloudWatchLoggingOptionDescription `type:"list"`
 
 	// Time stamp when the application version was created.
 	CreateTimestamp *time.Time `type:"timestamp"`
 
 	// Describes the application input configuration. For more information, see
-	// Configuring Application Input (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-input.html).
+	// Configuring Application Input (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-input.html).
 	InputDescriptions []*InputDescription `type:"list"`
 
 	// Time stamp when the application was last updated.
 	LastUpdateTimestamp *time.Time `type:"timestamp"`
 
 	// Describes the application output configuration. For more information, see
-	// Configuring Application Output (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-output.html).
+	// Configuring Application Output (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-output.html).
 	OutputDescriptions []*OutputDescription `type:"list"`
 
 	// Describes reference data sources configured for the application. For more
-	// information, see Configuring Application Input (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-input.html).
+	// information, see Configuring Application Input (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-input.html).
 	ReferenceDataSourceDescriptions []*ReferenceDataSourceDescription `type:"list"`
 }
 
@@ -2341,6 +2781,12 @@ func (s *ApplicationDetail) SetReferenceDataSourceDescriptions(v []*ReferenceDat
 	return s
 }
 
+//
+// This documentation is for version 1 of the Amazon Kinesis Data Analytics
+// API, which only supports SQL applications. Version 2 of the API supports
+// SQL and Java applications. For more information about version 2, see Amazon
+// Kinesis Data Analytics API V2 Documentation (/kinesisanalytics/latest/apiv2/Welcome.html).
+//
 // Provides application summary information, including the application Amazon
 // Resource Name (ARN), name, and status.
 type ApplicationSummary struct {
@@ -2754,7 +3200,7 @@ type CreateApplicationInput struct {
 	// in-application stream, generates a running average of the number of advertisement
 	// clicks by vendor, and insert resulting rows in another in-application stream
 	// using pumps. For more information about the typical pattern, see Application
-	// Code (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-app-code.html).
+	// Code (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-app-code.html).
 	//
 	// You can provide such series of SQL statements, where output of one statement
 	// can be used as the input for the next statement. You store intermediate results
@@ -2776,7 +3222,7 @@ type CreateApplicationInput struct {
 
 	// Use this parameter to configure a CloudWatch log stream to monitor application
 	// configuration errors. For more information, see Working with Amazon CloudWatch
-	// Logs (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/cloudwatch-logs.html).
+	// Logs (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/cloudwatch-logs.html).
 	CloudWatchLoggingOptions []*CloudWatchLoggingOption `type:"list"`
 
 	// Use this parameter to configure the application input.
@@ -2815,6 +3261,13 @@ type CreateApplicationInput struct {
 	// Amazon Kinesis Analytics can assume to write to the stream or Lambda function
 	// on your behalf.
 	Outputs []*Output `type:"list"`
+
+	// A list of one or more tags to assign to the application. A tag is a key-value
+	// pair that identifies an application. Note that the maximum number of application
+	// tags includes system tags. The maximum number of user-defined application
+	// tags is 50. For more information, see Using Cost Allocation Tags (https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html)
+	// in the AWS Billing and Cost Management Guide.
+	Tags []*Tag `min:"1" type:"list"`
 }
 
 // String returns the string representation
@@ -2835,6 +3288,9 @@ func (s *CreateApplicationInput) Validate() error {
 	}
 	if s.ApplicationName != nil && len(*s.ApplicationName) < 1 {
 		invalidParams.Add(request.NewErrParamMinLen("ApplicationName", 1))
+	}
+	if s.Tags != nil && len(s.Tags) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("Tags", 1))
 	}
 	if s.CloudWatchLoggingOptions != nil {
 		for i, v := range s.CloudWatchLoggingOptions {
@@ -2863,6 +3319,16 @@ func (s *CreateApplicationInput) Validate() error {
 			}
 			if err := v.Validate(); err != nil {
 				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "Outputs", i), err.(request.ErrInvalidParams))
+			}
+		}
+	}
+	if s.Tags != nil {
+		for i, v := range s.Tags {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "Tags", i), err.(request.ErrInvalidParams))
 			}
 		}
 	}
@@ -2909,6 +3375,12 @@ func (s *CreateApplicationInput) SetOutputs(v []*Output) *CreateApplicationInput
 	return s
 }
 
+// SetTags sets the Tags field's value.
+func (s *CreateApplicationInput) SetTags(v []*Tag) *CreateApplicationInput {
+	s.Tags = v
+	return s
+}
+
 // TBD
 type CreateApplicationOutput struct {
 	_ struct{} `type:"structure"`
@@ -2947,6 +3419,7 @@ type DeleteApplicationCloudWatchLoggingOptionInput struct {
 
 	// The CloudWatchLoggingOptionId of the CloudWatch logging option to delete.
 	// You can get the CloudWatchLoggingOptionId by using the DescribeApplication
+	// (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_DescribeApplication.html)
 	// operation.
 	//
 	// CloudWatchLoggingOptionId is a required field
@@ -3098,7 +3571,8 @@ type DeleteApplicationInputProcessingConfigurationInput struct {
 
 	// The ID of the input configuration from which to delete the input processing
 	// configuration. You can get a list of the input IDs for an application by
-	// using the DescribeApplication operation.
+	// using the DescribeApplication (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_DescribeApplication.html)
+	// operation.
 	//
 	// InputId is a required field
 	InputId *string `min:"1" type:"string" required:"true"`
@@ -3197,6 +3671,7 @@ type DeleteApplicationOutputInput struct {
 	ApplicationName *string `min:"1" type:"string" required:"true"`
 
 	// Amazon Kinesis Analytics application version. You can use the DescribeApplication
+	// (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_DescribeApplication.html)
 	// operation to get the current application version. If the version specified
 	// is not the current version, the ConcurrentModificationException is returned.
 	//
@@ -3205,10 +3680,11 @@ type DeleteApplicationOutputInput struct {
 
 	// The ID of the configuration to delete. Each output configuration that is
 	// added to the application, either when the application is created or later
-	// using the AddApplicationOutput operation, has a unique ID. You need to provide
-	// the ID to uniquely identify the output configuration that you want to delete
-	// from the application configuration. You can use the DescribeApplication operation
-	// to get the specific OutputId.
+	// using the AddApplicationOutput (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_AddApplicationOutput.html)
+	// operation, has a unique ID. You need to provide the ID to uniquely identify
+	// the output configuration that you want to delete from the application configuration.
+	// You can use the DescribeApplication (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_DescribeApplication.html)
+	// operation to get the specific OutputId.
 	//
 	// OutputId is a required field
 	OutputId *string `min:"1" type:"string" required:"true"`
@@ -3292,17 +3768,18 @@ type DeleteApplicationReferenceDataSourceInput struct {
 	// ApplicationName is a required field
 	ApplicationName *string `min:"1" type:"string" required:"true"`
 
-	// Version of the application. You can use the DescribeApplication operation
-	// to get the current application version. If the version specified is not the
-	// current version, the ConcurrentModificationException is returned.
+	// Version of the application. You can use the DescribeApplication (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_DescribeApplication.html)
+	// operation to get the current application version. If the version specified
+	// is not the current version, the ConcurrentModificationException is returned.
 	//
 	// CurrentApplicationVersionId is a required field
 	CurrentApplicationVersionId *int64 `min:"1" type:"long" required:"true"`
 
 	// ID of the reference data source. When you add a reference data source to
-	// your application using the AddApplicationReferenceDataSource, Amazon Kinesis
-	// Analytics assigns an ID. You can use the DescribeApplication operation to
-	// get the reference ID.
+	// your application using the AddApplicationReferenceDataSource (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_AddApplicationReferenceDataSource.html),
+	// Amazon Kinesis Analytics assigns an ID. You can use the DescribeApplication
+	// (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_DescribeApplication.html)
+	// operation to get the reference ID.
 	//
 	// ReferenceId is a required field
 	ReferenceId *string `min:"1" type:"string" required:"true"`
@@ -3447,7 +3924,7 @@ func (s *DescribeApplicationOutput) SetApplicationDetail(v *ApplicationDetail) *
 }
 
 // Describes the data format when records are written to the destination. For
-// more information, see Configuring Application Output (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-output.html).
+// more information, see Configuring Application Output (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-output.html).
 type DestinationSchema struct {
 	_ struct{} `type:"structure"`
 
@@ -3489,8 +3966,8 @@ func (s *DestinationSchema) SetRecordFormatType(v string) *DestinationSchema {
 type DiscoverInputSchemaInput struct {
 	_ struct{} `type:"structure"`
 
-	// The InputProcessingConfiguration to use to preprocess the records before
-	// discovering the schema of the records.
+	// The InputProcessingConfiguration (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_InputProcessingConfiguration.html)
+	// to use to preprocess the records before discovering the schema of the records.
 	InputProcessingConfiguration *InputProcessingConfiguration `type:"structure"`
 
 	// Point at which you want Amazon Kinesis Analytics to start reading records
@@ -3630,7 +4107,7 @@ func (s *DiscoverInputSchemaOutput) SetRawInputRecords(v []*string) *DiscoverInp
 
 // When you configure the application input, you specify the streaming source,
 // the in-application stream name that is created, and the mapping between the
-// two. For more information, see Configuring Application Input (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-input.html).
+// two. For more information, see Configuring Application Input (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-input.html).
 type Input struct {
 	_ struct{} `type:"structure"`
 
@@ -3638,13 +4115,13 @@ type Input struct {
 	//
 	// Data from your source is routed to these in-application input streams.
 	//
-	// (see Configuring Application Input (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-input.html).
+	// (see Configuring Application Input (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-input.html).
 	InputParallelism *InputParallelism `type:"structure"`
 
-	// The InputProcessingConfiguration for the input. An input processor transforms
-	// records as they are received from the stream, before the application's SQL
-	// code executes. Currently, the only input processing configuration available
-	// is InputLambdaProcessor.
+	// The InputProcessingConfiguration (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_InputProcessingConfiguration.html)
+	// for the input. An input processor transforms records as they are received
+	// from the stream, before the application's SQL code executes. Currently, the
+	// only input processing configuration available is InputLambdaProcessor (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_InputLambdaProcessor.html).
 	InputProcessingConfiguration *InputProcessingConfiguration `type:"structure"`
 
 	// Describes the format of the data in the streaming source, and how each data
@@ -3776,7 +4253,8 @@ func (s *Input) SetNamePrefix(v string) *Input {
 type InputConfiguration struct {
 	_ struct{} `type:"structure"`
 
-	// Input source ID. You can get this ID by calling the DescribeApplication operation.
+	// Input source ID. You can get this ID by calling the DescribeApplication (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_DescribeApplication.html)
+	// operation.
 	//
 	// Id is a required field
 	Id *string `min:"1" type:"string" required:"true"`
@@ -3830,7 +4308,7 @@ func (s *InputConfiguration) SetInputStartingPositionConfiguration(v *InputStart
 }
 
 // Describes the application input configuration. For more information, see
-// Configuring Application Input (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-input.html).
+// Configuring Application Input (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-input.html).
 type InputDescription struct {
 	_ struct{} `type:"structure"`
 
@@ -3936,14 +4414,18 @@ func (s *InputDescription) SetNamePrefix(v string) *InputDescription {
 }
 
 // An object that contains the Amazon Resource Name (ARN) of the AWS Lambda
-// (https://aws.amazon.com/documentation/lambda/) function that is used to preprocess
+// (https://docs.aws.amazon.com/lambda/) function that is used to preprocess
 // records in the stream, and the ARN of the IAM role that is used to access
 // the AWS Lambda function.
 type InputLambdaProcessor struct {
 	_ struct{} `type:"structure"`
 
-	// The ARN of the AWS Lambda (https://aws.amazon.com/documentation/lambda/)
-	// function that operates on records in the stream.
+	// The ARN of the AWS Lambda (https://docs.aws.amazon.com/lambda/) function
+	// that operates on records in the stream.
+	//
+	// To specify an earlier version of the Lambda function than the latest, include
+	// the Lambda function version in the Lambda function ARN. For more information
+	// about Lambda ARNs, see Example ARNs: AWS Lambda (/general/latest/gr/aws-arns-and-namespaces.html#arn-syntax-lambda)
 	//
 	// ResourceARN is a required field
 	ResourceARN *string `min:"1" type:"string" required:"true"`
@@ -3999,14 +4481,14 @@ func (s *InputLambdaProcessor) SetRoleARN(v string) *InputLambdaProcessor {
 }
 
 // An object that contains the Amazon Resource Name (ARN) of the AWS Lambda
-// (https://aws.amazon.com/documentation/lambda/) function that is used to preprocess
+// (https://docs.aws.amazon.com/lambda/) function that is used to preprocess
 // records in the stream, and the ARN of the IAM role that is used to access
 // the AWS Lambda expression.
 type InputLambdaProcessorDescription struct {
 	_ struct{} `type:"structure"`
 
-	// The ARN of the AWS Lambda (https://aws.amazon.com/documentation/lambda/)
-	// function that is used to preprocess the records in the stream.
+	// The ARN of the AWS Lambda (https://docs.aws.amazon.com/lambda/) function
+	// that is used to preprocess the records in the stream.
 	ResourceARN *string `min:"1" type:"string"`
 
 	// The ARN of the IAM role that is used to access the AWS Lambda function.
@@ -4035,13 +4517,17 @@ func (s *InputLambdaProcessorDescription) SetRoleARN(v string) *InputLambdaProce
 	return s
 }
 
-// Represents an update to the InputLambdaProcessor that is used to preprocess
-// the records in the stream.
+// Represents an update to the InputLambdaProcessor (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_InputLambdaProcessor.html)
+// that is used to preprocess the records in the stream.
 type InputLambdaProcessorUpdate struct {
 	_ struct{} `type:"structure"`
 
-	// The Amazon Resource Name (ARN) of the new AWS Lambda (https://aws.amazon.com/documentation/lambda/)
+	// The Amazon Resource Name (ARN) of the new AWS Lambda (https://docs.aws.amazon.com/ambda/)
 	// function that is used to preprocess the records in the stream.
+	//
+	// To specify an earlier version of the Lambda function than the latest, include
+	// the Lambda function version in the Lambda function ARN. For more information
+	// about Lambda ARNs, see Example ARNs: AWS Lambda (/general/latest/gr/aws-arns-and-namespaces.html#arn-syntax-lambda)
 	ResourceARNUpdate *string `min:"1" type:"string"`
 
 	// The ARN of the new IAM role that is used to access the AWS Lambda function.
@@ -4088,12 +4574,12 @@ func (s *InputLambdaProcessorUpdate) SetRoleARNUpdate(v string) *InputLambdaProc
 
 // Describes the number of in-application streams to create for a given streaming
 // source. For information about parallelism, see Configuring Application Input
-// (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-input.html).
+// (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-input.html).
 type InputParallelism struct {
 	_ struct{} `type:"structure"`
 
 	// Number of in-application streams to create. For more information, see Limits
-	// (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/limits.html).
+	// (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/limits.html).
 	Count *int64 `min:"1" type:"integer"`
 }
 
@@ -4165,12 +4651,13 @@ func (s *InputParallelismUpdate) SetCountUpdate(v int64) *InputParallelismUpdate
 
 // Provides a description of a processor that is used to preprocess the records
 // in the stream before being processed by your application code. Currently,
-// the only input processor available is AWS Lambda (https://aws.amazon.com/documentation/lambda/).
+// the only input processor available is AWS Lambda (https://docs.aws.amazon.com/lambda/).
 type InputProcessingConfiguration struct {
 	_ struct{} `type:"structure"`
 
-	// The InputLambdaProcessor that is used to preprocess the records in the stream
-	// before being processed by your application code.
+	// The InputLambdaProcessor (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_InputLambdaProcessor.html)
+	// that is used to preprocess the records in the stream before being processed
+	// by your application code.
 	//
 	// InputLambdaProcessor is a required field
 	InputLambdaProcessor *InputLambdaProcessor `type:"structure" required:"true"`
@@ -4211,11 +4698,12 @@ func (s *InputProcessingConfiguration) SetInputLambdaProcessor(v *InputLambdaPro
 }
 
 // Provides configuration information about an input processor. Currently, the
-// only input processor available is AWS Lambda (https://aws.amazon.com/documentation/lambda/).
+// only input processor available is AWS Lambda (https://docs.aws.amazon.com/lambda/).
 type InputProcessingConfigurationDescription struct {
 	_ struct{} `type:"structure"`
 
-	// Provides configuration information about the associated InputLambdaProcessorDescription.
+	// Provides configuration information about the associated InputLambdaProcessorDescription
+	// (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_InputLambdaProcessorDescription.html).
 	InputLambdaProcessorDescription *InputLambdaProcessorDescription `type:"structure"`
 }
 
@@ -4235,11 +4723,11 @@ func (s *InputProcessingConfigurationDescription) SetInputLambdaProcessorDescrip
 	return s
 }
 
-// Describes updates to an InputProcessingConfiguration.
+// Describes updates to an InputProcessingConfiguration (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_InputProcessingConfiguration.html).
 type InputProcessingConfigurationUpdate struct {
 	_ struct{} `type:"structure"`
 
-	// Provides update information for an InputLambdaProcessor.
+	// Provides update information for an InputLambdaProcessor (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_InputLambdaProcessor.html).
 	//
 	// InputLambdaProcessorUpdate is a required field
 	InputLambdaProcessorUpdate *InputLambdaProcessorUpdate `type:"structure" required:"true"`
@@ -4809,9 +5297,9 @@ func (s *KinesisFirehoseOutputDescription) SetRoleARN(v string) *KinesisFirehose
 	return s
 }
 
-// When updating an output configuration using the UpdateApplication operation,
-// provides information about an Amazon Kinesis Firehose delivery stream configured
-// as the destination.
+// When updating an output configuration using the UpdateApplication (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_UpdateApplication.html)
+// operation, provides information about an Amazon Kinesis Firehose delivery
+// stream configured as the destination.
 type KinesisFirehoseOutputUpdate struct {
 	_ struct{} `type:"structure"`
 
@@ -5112,8 +5600,9 @@ func (s *KinesisStreamsOutputDescription) SetRoleARN(v string) *KinesisStreamsOu
 	return s
 }
 
-// When updating an output configuration using the UpdateApplication operation,
-// provides information about an Amazon Kinesis stream configured as the destination.
+// When updating an output configuration using the UpdateApplication (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_UpdateApplication.html)
+// operation, provides information about an Amazon Kinesis stream configured
+// as the destination.
 type KinesisStreamsOutputUpdate struct {
 	_ struct{} `type:"structure"`
 
@@ -5173,6 +5662,10 @@ type LambdaOutput struct {
 	_ struct{} `type:"structure"`
 
 	// Amazon Resource Name (ARN) of the destination Lambda function to write to.
+	//
+	// To specify an earlier version of the Lambda function than the latest, include
+	// the Lambda function version in the Lambda function ARN. For more information
+	// about Lambda ARNs, see Example ARNs: AWS Lambda (/general/latest/gr/aws-arns-and-namespaces.html#arn-syntax-lambda)
 	//
 	// ResourceARN is a required field
 	ResourceARN *string `min:"1" type:"string" required:"true"`
@@ -5264,12 +5757,17 @@ func (s *LambdaOutputDescription) SetRoleARN(v string) *LambdaOutputDescription 
 	return s
 }
 
-// When updating an output configuration using the UpdateApplication operation,
-// provides information about an AWS Lambda function configured as the destination.
+// When updating an output configuration using the UpdateApplication (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_UpdateApplication.html)
+// operation, provides information about an AWS Lambda function configured as
+// the destination.
 type LambdaOutputUpdate struct {
 	_ struct{} `type:"structure"`
 
 	// Amazon Resource Name (ARN) of the destination Lambda function.
+	//
+	// To specify an earlier version of the Lambda function than the latest, include
+	// the Lambda function version in the Lambda function ARN. For more information
+	// about Lambda ARNs, see Example ARNs: AWS Lambda (/general/latest/gr/aws-arns-and-namespaces.html#arn-syntax-lambda)
 	ResourceARNUpdate *string `min:"1" type:"string"`
 
 	// ARN of the IAM role that Amazon Kinesis Analytics can assume to write to
@@ -5403,6 +5901,70 @@ func (s *ListApplicationsOutput) SetHasMoreApplications(v bool) *ListApplication
 	return s
 }
 
+type ListTagsForResourceInput struct {
+	_ struct{} `type:"structure"`
+
+	// The ARN of the application for which to retrieve tags.
+	//
+	// ResourceARN is a required field
+	ResourceARN *string `min:"1" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s ListTagsForResourceInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ListTagsForResourceInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *ListTagsForResourceInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "ListTagsForResourceInput"}
+	if s.ResourceARN == nil {
+		invalidParams.Add(request.NewErrParamRequired("ResourceARN"))
+	}
+	if s.ResourceARN != nil && len(*s.ResourceARN) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("ResourceARN", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetResourceARN sets the ResourceARN field's value.
+func (s *ListTagsForResourceInput) SetResourceARN(v string) *ListTagsForResourceInput {
+	s.ResourceARN = &v
+	return s
+}
+
+type ListTagsForResourceOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The key-value tags assigned to the application.
+	Tags []*Tag `min:"1" type:"list"`
+}
+
+// String returns the string representation
+func (s ListTagsForResourceOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ListTagsForResourceOutput) GoString() string {
+	return s.String()
+}
+
+// SetTags sets the Tags field's value.
+func (s *ListTagsForResourceOutput) SetTags(v []*Tag) *ListTagsForResourceOutput {
+	s.Tags = v
+	return s
+}
+
 // When configuring application input at the time of creating or updating an
 // application, provides additional mapping information specific to the record
 // format (such as JSON, CSV, or record fields delimited by some delimiter)
@@ -5467,12 +6029,12 @@ func (s *MappingParameters) SetJSONMappingParameters(v *JSONMappingParameters) *
 // Kinesis Firehose delivery stream.
 //
 // For limits on how many destinations an application can write and other limitations,
-// see Limits (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/limits.html)
+// see Limits (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/limits.html).
 type Output struct {
 	_ struct{} `type:"structure"`
 
 	// Describes the data format when records are written to the destination. For
-	// more information, see Configuring Application Output (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-output.html).
+	// more information, see Configuring Application Output (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-output.html).
 	//
 	// DestinationSchema is a required field
 	DestinationSchema *DestinationSchema `type:"structure" required:"true"`
@@ -5650,7 +6212,7 @@ type OutputUpdate struct {
 	_ struct{} `type:"structure"`
 
 	// Describes the data format when records are written to the destination. For
-	// more information, see Configuring Application Output (http://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-output.html).
+	// more information, see Configuring Application Output (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/how-it-works-output.html).
 	DestinationSchemaUpdate *DestinationSchema `type:"structure"`
 
 	// Describes an Amazon Kinesis Firehose delivery stream as the destination for
@@ -5765,8 +6327,9 @@ func (s *OutputUpdate) SetOutputId(v string) *OutputUpdate {
 type RecordColumn struct {
 	_ struct{} `type:"structure"`
 
-	// Reference to the data element in the streaming input of the reference data
-	// source.
+	// Reference to the data element in the streaming input or the reference data
+	// source. This element is required if the RecordFormatType (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_RecordFormat.html#analytics-Type-RecordFormat-RecordFormatTypel)
+	// is JSON.
 	Mapping *string `type:"string"`
 
 	// Name of the column created in the in-application input stream or reference
@@ -5974,7 +6537,8 @@ type ReferenceDataSourceDescription struct {
 
 	// ID of the reference data source. This is the ID that Amazon Kinesis Analytics
 	// assigns when you add the reference data source to your application using
-	// the AddApplicationReferenceDataSource operation.
+	// the AddApplicationReferenceDataSource (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_AddApplicationReferenceDataSource.html)
+	// operation.
 	//
 	// ReferenceId is a required field
 	ReferenceId *string `min:"1" type:"string" required:"true"`
@@ -6041,6 +6605,7 @@ type ReferenceDataSourceUpdate struct {
 	_ struct{} `type:"structure"`
 
 	// ID of the reference data source being updated. You can use the DescribeApplication
+	// (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_DescribeApplication.html)
 	// operation to get this value.
 	//
 	// ReferenceId is a required field
@@ -6206,8 +6771,8 @@ func (s *S3Configuration) SetRoleARN(v string) *S3Configuration {
 // object on your behalf.
 //
 // An Amazon Kinesis Analytics application loads reference data only once. If
-// the data changes, you call the UpdateApplication operation to trigger reloading
-// of data into your application.
+// the data changes, you call the UpdateApplication (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_UpdateApplication.html)
+// operation to trigger reloading of data into your application.
 type S3ReferenceDataSource struct {
 	_ struct{} `type:"structure"`
 
@@ -6619,6 +7184,217 @@ func (s StopApplicationOutput) GoString() string {
 	return s.String()
 }
 
+// A key-value pair (the value is optional) that you can define and assign to
+// AWS resources. If you specify a tag that already exists, the tag value is
+// replaced with the value that you specify in the request. Note that the maximum
+// number of application tags includes system tags. The maximum number of user-defined
+// application tags is 50. For more information, see Using Cost Allocation Tags
+// (https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html)
+// in the AWS Billing and Cost Management Guide.
+type Tag struct {
+	_ struct{} `type:"structure"`
+
+	// The key of the key-value tag.
+	//
+	// Key is a required field
+	Key *string `min:"1" type:"string" required:"true"`
+
+	// The value of the key-value tag. The value is optional.
+	Value *string `type:"string"`
+}
+
+// String returns the string representation
+func (s Tag) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s Tag) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *Tag) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "Tag"}
+	if s.Key == nil {
+		invalidParams.Add(request.NewErrParamRequired("Key"))
+	}
+	if s.Key != nil && len(*s.Key) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("Key", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetKey sets the Key field's value.
+func (s *Tag) SetKey(v string) *Tag {
+	s.Key = &v
+	return s
+}
+
+// SetValue sets the Value field's value.
+func (s *Tag) SetValue(v string) *Tag {
+	s.Value = &v
+	return s
+}
+
+type TagResourceInput struct {
+	_ struct{} `type:"structure"`
+
+	// The ARN of the application to assign the tags.
+	//
+	// ResourceARN is a required field
+	ResourceARN *string `min:"1" type:"string" required:"true"`
+
+	// The key-value tags to assign to the application.
+	//
+	// Tags is a required field
+	Tags []*Tag `min:"1" type:"list" required:"true"`
+}
+
+// String returns the string representation
+func (s TagResourceInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s TagResourceInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *TagResourceInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "TagResourceInput"}
+	if s.ResourceARN == nil {
+		invalidParams.Add(request.NewErrParamRequired("ResourceARN"))
+	}
+	if s.ResourceARN != nil && len(*s.ResourceARN) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("ResourceARN", 1))
+	}
+	if s.Tags == nil {
+		invalidParams.Add(request.NewErrParamRequired("Tags"))
+	}
+	if s.Tags != nil && len(s.Tags) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("Tags", 1))
+	}
+	if s.Tags != nil {
+		for i, v := range s.Tags {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "Tags", i), err.(request.ErrInvalidParams))
+			}
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetResourceARN sets the ResourceARN field's value.
+func (s *TagResourceInput) SetResourceARN(v string) *TagResourceInput {
+	s.ResourceARN = &v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *TagResourceInput) SetTags(v []*Tag) *TagResourceInput {
+	s.Tags = v
+	return s
+}
+
+type TagResourceOutput struct {
+	_ struct{} `type:"structure"`
+}
+
+// String returns the string representation
+func (s TagResourceOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s TagResourceOutput) GoString() string {
+	return s.String()
+}
+
+type UntagResourceInput struct {
+	_ struct{} `type:"structure"`
+
+	// The ARN of the Kinesis Analytics application from which to remove the tags.
+	//
+	// ResourceARN is a required field
+	ResourceARN *string `min:"1" type:"string" required:"true"`
+
+	// A list of keys of tags to remove from the specified application.
+	//
+	// TagKeys is a required field
+	TagKeys []*string `min:"1" type:"list" required:"true"`
+}
+
+// String returns the string representation
+func (s UntagResourceInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s UntagResourceInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *UntagResourceInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "UntagResourceInput"}
+	if s.ResourceARN == nil {
+		invalidParams.Add(request.NewErrParamRequired("ResourceARN"))
+	}
+	if s.ResourceARN != nil && len(*s.ResourceARN) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("ResourceARN", 1))
+	}
+	if s.TagKeys == nil {
+		invalidParams.Add(request.NewErrParamRequired("TagKeys"))
+	}
+	if s.TagKeys != nil && len(s.TagKeys) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("TagKeys", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetResourceARN sets the ResourceARN field's value.
+func (s *UntagResourceInput) SetResourceARN(v string) *UntagResourceInput {
+	s.ResourceARN = &v
+	return s
+}
+
+// SetTagKeys sets the TagKeys field's value.
+func (s *UntagResourceInput) SetTagKeys(v []*string) *UntagResourceInput {
+	s.TagKeys = v
+	return s
+}
+
+type UntagResourceOutput struct {
+	_ struct{} `type:"structure"`
+}
+
+// String returns the string representation
+func (s UntagResourceOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s UntagResourceOutput) GoString() string {
+	return s.String()
+}
+
 type UpdateApplicationInput struct {
 	_ struct{} `type:"structure"`
 
@@ -6632,8 +7408,8 @@ type UpdateApplicationInput struct {
 	// ApplicationUpdate is a required field
 	ApplicationUpdate *ApplicationUpdate `type:"structure" required:"true"`
 
-	// The current application version ID. You can use the DescribeApplication operation
-	// to get this value.
+	// The current application version ID. You can use the DescribeApplication (https://docs.aws.amazon.com/kinesisanalytics/latest/dev/API_DescribeApplication.html)
+	// operation to get this value.
 	//
 	// CurrentApplicationVersionId is a required field
 	CurrentApplicationVersionId *int64 `min:"1" type:"long" required:"true"`

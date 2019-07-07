@@ -86,16 +86,16 @@ func (c *WAFRegional) AssociateWebACLRequest(input *AssociateWebACLInput) (req *
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -198,7 +198,7 @@ func (c *WAFRegional) CreateByteMatchSetRequest(input *waf.CreateByteMatchSetInp
 // value that you want AWS WAF to watch for.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -230,16 +230,16 @@ func (c *WAFRegional) CreateByteMatchSetRequest(input *waf.CreateByteMatchSetInp
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -255,7 +255,7 @@ func (c *WAFRegional) CreateByteMatchSetRequest(input *waf.CreateByteMatchSetInp
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/waf-regional-2016-11-28/CreateByteMatchSet
@@ -344,7 +344,7 @@ func (c *WAFRegional) CreateGeoMatchSetRequest(input *waf.CreateGeoMatchSetInput
 // want AWS WAF to watch for.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -380,16 +380,16 @@ func (c *WAFRegional) CreateGeoMatchSetRequest(input *waf.CreateGeoMatchSetInput
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -401,7 +401,7 @@ func (c *WAFRegional) CreateGeoMatchSetRequest(input *waf.CreateGeoMatchSetInput
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/waf-regional-2016-11-28/CreateGeoMatchSet
@@ -491,7 +491,7 @@ func (c *WAFRegional) CreateIPSetRequest(input *waf.CreateIPSetInput) (req *requ
 // WAF to watch for.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -527,16 +527,16 @@ func (c *WAFRegional) CreateIPSetRequest(input *waf.CreateIPSetInput) (req *requ
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -548,7 +548,7 @@ func (c *WAFRegional) CreateIPSetRequest(input *waf.CreateIPSetInput) (req *requ
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/waf-regional-2016-11-28/CreateIPSet
@@ -677,7 +677,7 @@ func (c *WAFRegional) CreateRateBasedRuleRequest(input *waf.CreateRateBasedRuleI
 // see CreateWebACL.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -709,16 +709,16 @@ func (c *WAFRegional) CreateRateBasedRuleRequest(input *waf.CreateRateBasedRuleI
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -730,7 +730,7 @@ func (c *WAFRegional) CreateRateBasedRuleRequest(input *waf.CreateRateBasedRuleI
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/waf-regional-2016-11-28/CreateRateBasedRule
@@ -821,7 +821,7 @@ func (c *WAFRegional) CreateRegexMatchSetRequest(input *waf.CreateRegexMatchSetI
 // the value, using a RegexPatternSet, that you want AWS WAF to watch for.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -845,7 +845,7 @@ func (c *WAFRegional) CreateRegexMatchSetRequest(input *waf.CreateRegexMatchSetI
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/waf-regional-2016-11-28/CreateRegexMatchSet
@@ -932,7 +932,7 @@ func (c *WAFRegional) CreateRegexPatternSetRequest(input *waf.CreateRegexPattern
 // AWS WAF to watch for.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -956,7 +956,7 @@ func (c *WAFRegional) CreateRegexPatternSetRequest(input *waf.CreateRegexPattern
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/waf-regional-2016-11-28/CreateRegexPatternSet
@@ -1060,7 +1060,7 @@ func (c *WAFRegional) CreateRuleRequest(input *waf.CreateRuleInput) (req *reques
 // see CreateWebACL.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1092,16 +1092,16 @@ func (c *WAFRegional) CreateRuleRequest(input *waf.CreateRuleInput) (req *reques
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -1113,7 +1113,7 @@ func (c *WAFRegional) CreateRuleRequest(input *waf.CreateRuleInput) (req *reques
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/waf-regional-2016-11-28/CreateRule
@@ -1195,7 +1195,7 @@ func (c *WAFRegional) CreateRuleGroupRequest(input *waf.CreateRuleGroupInput) (r
 //    * Ten rules per rule group.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1219,7 +1219,7 @@ func (c *WAFRegional) CreateRuleGroupRequest(input *waf.CreateRuleGroupInput) (r
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/waf-regional-2016-11-28/CreateRuleGroup
@@ -1310,7 +1310,7 @@ func (c *WAFRegional) CreateSizeConstraintSetRequest(input *waf.CreateSizeConstr
 // the value that you want AWS WAF to watch for.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1346,16 +1346,16 @@ func (c *WAFRegional) CreateSizeConstraintSetRequest(input *waf.CreateSizeConstr
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -1367,7 +1367,7 @@ func (c *WAFRegional) CreateSizeConstraintSetRequest(input *waf.CreateSizeConstr
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/waf-regional-2016-11-28/CreateSizeConstraintSet
@@ -1454,7 +1454,7 @@ func (c *WAFRegional) CreateSqlInjectionMatchSetRequest(input *waf.CreateSqlInje
 // requests in which you want to allow, block, or count malicious SQL code.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1486,16 +1486,16 @@ func (c *WAFRegional) CreateSqlInjectionMatchSetRequest(input *waf.CreateSqlInje
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -1511,7 +1511,7 @@ func (c *WAFRegional) CreateSqlInjectionMatchSetRequest(input *waf.CreateSqlInje
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/waf-regional-2016-11-28/CreateSqlInjectionMatchSet
@@ -1610,7 +1610,7 @@ func (c *WAFRegional) CreateWebACLRequest(input *waf.CreateWebACLInput) (req *re
 // with a CloudFront distribution.
 //
 // For more information about how to use the AWS WAF API, see the AWS WAF Developer
-// Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1646,16 +1646,16 @@ func (c *WAFRegional) CreateWebACLRequest(input *waf.CreateWebACLInput) (req *re
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -1667,7 +1667,7 @@ func (c *WAFRegional) CreateWebACLRequest(input *waf.CreateWebACLInput) (req *re
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/waf-regional-2016-11-28/CreateWebACL
@@ -1755,7 +1755,7 @@ func (c *WAFRegional) CreateXssMatchSetRequest(input *waf.CreateXssMatchSetInput
 // in which you want to allow, block, or count cross-site scripting attacks.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1787,16 +1787,16 @@ func (c *WAFRegional) CreateXssMatchSetRequest(input *waf.CreateXssMatchSetInput
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -1812,7 +1812,7 @@ func (c *WAFRegional) CreateXssMatchSetRequest(input *waf.CreateXssMatchSetInput
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/waf-regional-2016-11-28/CreateXssMatchSet
@@ -3609,16 +3609,16 @@ func (c *WAFRegional) DisassociateWebACLRequest(input *DisassociateWebACLInput) 
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -3887,7 +3887,7 @@ func (c *WAFRegional) GetChangeTokenStatusRequest(input *waf.GetChangeTokenStatu
 //    * PENDING: AWS WAF is propagating the create, update, or delete request
 //    to all AWS WAF servers.
 //
-//    * IN_SYNC: Propagation is complete.
+//    * INSYNC: Propagation is complete.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -4433,16 +4433,16 @@ func (c *WAFRegional) GetRateBasedRuleManagedKeysRequest(input *waf.GetRateBased
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -5252,16 +5252,16 @@ func (c *WAFRegional) GetWebACLForResourceRequest(input *GetWebACLForResourceInp
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -5455,16 +5455,16 @@ func (c *WAFRegional) ListActivatedRulesInRuleGroupRequest(input *waf.ListActiva
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -5819,16 +5819,16 @@ func (c *WAFRegional) ListLoggingConfigurationsRequest(input *waf.ListLoggingCon
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -6187,16 +6187,16 @@ func (c *WAFRegional) ListResourcesForWebACLRequest(input *ListResourcesForWebAC
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -6861,12 +6861,18 @@ func (c *WAFRegional) PutLoggingConfigurationRequest(input *waf.PutLoggingConfig
 //
 // Create an Amazon Kinesis Data Firehose .
 //
+// Create the data firehose with a PUT source and in the region that you are
+// operating. However, if you are capturing logs for Amazon CloudFront, always
+// create the firehose in US East (N. Virginia).
+//
+// Do not create the data firehose using a Kinesis stream as your source.
+//
 // Associate that firehose to your web ACL using a PutLoggingConfiguration request.
 //
 // When you successfully enable logging using a PutLoggingConfiguration request,
 // AWS WAF will create a service linked role with the necessary permissions
 // to write logs to the Amazon Kinesis Data Firehose. For more information,
-// see Logging Web ACL Traffic Information (http://docs.aws.amazon.com/waf/latest/developerguide/logging.html)
+// see Logging Web ACL Traffic Information (https://docs.aws.amazon.com/waf/latest/developerguide/logging.html)
 // in the AWS WAF Developer Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -7138,7 +7144,7 @@ func (c *WAFRegional) UpdateByteMatchSetRequest(input *waf.UpdateByteMatchSetInp
 // value that you want AWS WAF to watch for.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -7185,16 +7191,16 @@ func (c *WAFRegional) UpdateByteMatchSetRequest(input *waf.UpdateByteMatchSetInp
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -7229,7 +7235,7 @@ func (c *WAFRegional) UpdateByteMatchSetRequest(input *waf.UpdateByteMatchSetInp
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/waf-regional-2016-11-28/UpdateByteMatchSet
@@ -7325,7 +7331,7 @@ func (c *WAFRegional) UpdateGeoMatchSetRequest(input *waf.UpdateGeoMatchSetInput
 // you delete the existing country and add the new one.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -7376,16 +7382,16 @@ func (c *WAFRegional) UpdateGeoMatchSetRequest(input *waf.UpdateGeoMatchSetInput
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -7424,7 +7430,7 @@ func (c *WAFRegional) UpdateGeoMatchSetRequest(input *waf.UpdateGeoMatchSetInput
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/waf-regional-2016-11-28/UpdateGeoMatchSet
@@ -7507,9 +7513,9 @@ func (c *WAFRegional) UpdateIPSetRequest(input *waf.UpdateIPSetInput) (req *requ
 //    (for the individual IP address 192.0.2.44).
 //
 // AWS WAF supports IPv4 address ranges: /8 and any range between /16 through
-// /32. AWS WAF supports IPv6 address ranges: /16, /24, /32, /48, /56, /64,
-// and /128. For more information about CIDR notation, see the Wikipedia entry
-// Classless Inter-Domain Routing (https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing).
+// /32. AWS WAF supports IPv6 address ranges: /24, /32, /48, /56, /64, and /128.
+// For more information about CIDR notation, see the Wikipedia entry Classless
+// Inter-Domain Routing (https://en.wikipedia.org/wiki/Classless_Inter-Domain_Routing).
 //
 // IPv6 addresses can be represented using any of the following formats:
 //
@@ -7544,7 +7550,7 @@ func (c *WAFRegional) UpdateIPSetRequest(input *waf.UpdateIPSetInput) (req *requ
 // You can insert a maximum of 1000 addresses in a single request.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -7595,16 +7601,16 @@ func (c *WAFRegional) UpdateIPSetRequest(input *waf.UpdateIPSetInput) (req *requ
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -7643,7 +7649,7 @@ func (c *WAFRegional) UpdateIPSetRequest(input *waf.UpdateIPSetInput) (req *requ
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/waf-regional-2016-11-28/UpdateIPSet
@@ -7800,16 +7806,16 @@ func (c *WAFRegional) UpdateRateBasedRuleRequest(input *waf.UpdateRateBasedRuleI
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -7848,7 +7854,7 @@ func (c *WAFRegional) UpdateRateBasedRuleRequest(input *waf.UpdateRateBasedRuleI
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/waf-regional-2016-11-28/UpdateRateBasedRule
@@ -7950,7 +7956,7 @@ func (c *WAFRegional) UpdateRegexMatchSetRequest(input *waf.UpdateRegexMatchSetI
 // patters you want AWS WAF to watch for.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -7974,7 +7980,7 @@ func (c *WAFRegional) UpdateRegexMatchSetRequest(input *waf.UpdateRegexMatchSetI
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 //   * ErrCodeWAFNonexistentItemException "WAFNonexistentItemException"
@@ -8114,7 +8120,7 @@ func (c *WAFRegional) UpdateRegexPatternSetRequest(input *waf.UpdateRegexPattern
 // pattern that you want AWS WAF to watch for.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -8135,7 +8141,7 @@ func (c *WAFRegional) UpdateRegexPatternSetRequest(input *waf.UpdateRegexPattern
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 //   * ErrCodeWAFNonexistentItemException "WAFNonexistentItemException"
@@ -8261,7 +8267,7 @@ func (c *WAFRegional) UpdateRuleRequest(input *waf.UpdateRuleInput) (req *reques
 //
 // You then add the Rule to a WebACL and specify that you want to block requests
 // that satisfy the Rule. For a request to be blocked, the User-Agent header
-// in the request must contain the value BadBotand the request must originate
+// in the request must contain the value BadBot and the request must originate
 // from the IP address 192.0.2.44.
 //
 // To create and configure a Rule, perform the following steps:
@@ -8281,7 +8287,7 @@ func (c *WAFRegional) UpdateRuleRequest(input *waf.UpdateRuleInput) (req *reques
 // the existing one and add the new one.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -8332,16 +8338,16 @@ func (c *WAFRegional) UpdateRuleRequest(input *waf.UpdateRuleInput) (req *reques
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -8380,7 +8386,7 @@ func (c *WAFRegional) UpdateRuleRequest(input *waf.UpdateRuleInput) (req *reques
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/waf-regional-2016-11-28/UpdateRule
@@ -8471,7 +8477,7 @@ func (c *WAFRegional) UpdateRuleGroupRequest(input *waf.UpdateRuleGroupInput) (r
 // and add the new one.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -8529,7 +8535,7 @@ func (c *WAFRegional) UpdateRuleGroupRequest(input *waf.UpdateRuleGroupInput) (r
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 //   * ErrCodeWAFInvalidParameterException "WAFInvalidParameterException"
@@ -8543,16 +8549,16 @@ func (c *WAFRegional) UpdateRuleGroupRequest(input *waf.UpdateRuleGroupInput) (r
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -8640,9 +8646,8 @@ func (c *WAFRegional) UpdateSizeConstraintSetRequest(input *waf.UpdateSizeConstr
 //    * Whether to perform any transformations on the request, such as converting
 //    it to lowercase, before checking its length. Note that transformations
 //    of the request body are not supported because the AWS resource forwards
-//    only the first 8192 bytes of your request to AWS WAF.
-//
-// You can only specify a single type of TextTransformation.
+//    only the first 8192 bytes of your request to AWS WAF. You can only specify
+//    a single type of TextTransformation.
 //
 //    * A ComparisonOperator used for evaluating the selected part of the request
 //    against the specified Size, such as equals, greater than, less than, and
@@ -8667,7 +8672,7 @@ func (c *WAFRegional) UpdateSizeConstraintSetRequest(input *waf.UpdateSizeConstr
 // the value that you want AWS WAF to watch for.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -8718,16 +8723,16 @@ func (c *WAFRegional) UpdateSizeConstraintSetRequest(input *waf.UpdateSizeConstr
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -8766,7 +8771,7 @@ func (c *WAFRegional) UpdateSizeConstraintSetRequest(input *waf.UpdateSizeConstr
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/waf-regional-2016-11-28/UpdateSizeConstraintSet
@@ -8848,9 +8853,7 @@ func (c *WAFRegional) UpdateSqlInjectionMatchSetRequest(input *waf.UpdateSqlInje
 //
 //    * TextTransformation: Which text transformation, if any, to perform on
 //    the web request before inspecting the request for snippets of malicious
-//    SQL code.
-//
-// You can only specify a single type of TextTransformation.
+//    SQL code. You can only specify a single type of TextTransformation.
 //
 // You use SqlInjectionMatchSet objects to specify which CloudFront requests
 // that you want to allow, block, or count. For example, if you're receiving
@@ -8869,7 +8872,7 @@ func (c *WAFRegional) UpdateSqlInjectionMatchSetRequest(input *waf.UpdateSqlInje
 // requests that you want AWS WAF to inspect for snippets of SQL code.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -8916,16 +8919,16 @@ func (c *WAFRegional) UpdateSqlInjectionMatchSetRequest(input *waf.UpdateSqlInje
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -8960,7 +8963,7 @@ func (c *WAFRegional) UpdateSqlInjectionMatchSetRequest(input *waf.UpdateSqlInje
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/waf-regional-2016-11-28/UpdateSqlInjectionMatchSet
@@ -9084,7 +9087,7 @@ func (c *WAFRegional) UpdateWebACLRequest(input *waf.UpdateWebACLInput) (req *re
 // with the specified ID, which does not exist.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -9135,16 +9138,16 @@ func (c *WAFRegional) UpdateWebACLRequest(input *waf.UpdateWebACLInput) (req *re
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -9183,7 +9186,7 @@ func (c *WAFRegional) UpdateWebACLRequest(input *waf.UpdateWebACLInput) (req *re
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 //   * ErrCodeWAFSubscriptionNotFoundException "WAFSubscriptionNotFoundException"
@@ -9268,9 +9271,7 @@ func (c *WAFRegional) UpdateXssMatchSetRequest(input *waf.UpdateXssMatchSetInput
 //
 //    * TextTransformation: Which text transformation, if any, to perform on
 //    the web request before inspecting the request for cross-site scripting
-//    attacks.
-//
-// You can only specify a single type of TextTransformation.
+//    attacks. You can only specify a single type of TextTransformation.
 //
 // You use XssMatchSet objects to specify which CloudFront requests that you
 // want to allow, block, or count. For example, if you're receiving requests
@@ -9289,7 +9290,7 @@ func (c *WAFRegional) UpdateXssMatchSetRequest(input *waf.UpdateXssMatchSetInput
 // that you want AWS WAF to inspect for cross-site scripting attacks.
 //
 // For more information about how to use the AWS WAF API to allow or block HTTP
-// requests, see the AWS WAF Developer Guide (http://docs.aws.amazon.com/waf/latest/developerguide/).
+// requests, see the AWS WAF Developer Guide (https://docs.aws.amazon.com/waf/latest/developerguide/).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -9336,16 +9337,16 @@ func (c *WAFRegional) UpdateXssMatchSetRequest(input *waf.UpdateXssMatchSetInput
 //      * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 //      using an action other than INSERT or DELETE.
 //
-//      * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+//      * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
 //      * You tried to create a RateBasedRule with a RateKey value other than
 //      IP.
 //
-//      * You tried to update a WebACL with a WafActionType other than ALLOW,
+//      * You tried to update a WebACL with a WafAction Type other than ALLOW,
 //      BLOCK, or COUNT.
 //
-//      * You tried to update a ByteMatchSet with a FieldToMatchType other than
+//      * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 //      HEADER, METHOD, QUERY_STRING, URI, or BODY.
 //
 //      * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -9380,7 +9381,7 @@ func (c *WAFRegional) UpdateXssMatchSetRequest(input *waf.UpdateXssMatchSetInput
 //   * ErrCodeWAFLimitsExceededException "WAFLimitsExceededException"
 //   The operation exceeds a resource limit, for example, the maximum number of
 //   WebACL objects that you can create for an AWS account. For more information,
-//   see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+//   see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 //   in the AWS WAF Developer Guide.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/waf-regional-2016-11-28/UpdateXssMatchSet

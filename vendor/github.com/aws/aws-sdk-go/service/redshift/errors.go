@@ -86,7 +86,7 @@ const (
 	//
 	// The request would result in the user exceeding the allowed number of cluster
 	// parameter groups. For information about increasing your quota, go to Limits
-	// in Amazon Redshift (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+	// in Amazon Redshift (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 	// in the Amazon Redshift Cluster Management Guide.
 	ErrCodeClusterParameterGroupQuotaExceededFault = "ClusterParameterGroupQuotaExceeded"
 
@@ -95,7 +95,7 @@ const (
 	//
 	// The request would exceed the allowed number of cluster instances for this
 	// account. For information about increasing your quota, go to Limits in Amazon
-	// Redshift (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+	// Redshift (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 	// in the Amazon Redshift Cluster Management Guide.
 	ErrCodeClusterQuotaExceededFault = "ClusterQuotaExceeded"
 
@@ -117,7 +117,7 @@ const (
 	//
 	// The request would result in the user exceeding the allowed number of cluster
 	// security groups. For information about increasing your quota, go to Limits
-	// in Amazon Redshift (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+	// in Amazon Redshift (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 	// in the Amazon Redshift Cluster Management Guide.
 	ErrCodeClusterSecurityGroupQuotaExceededFault = "QuotaExceeded.ClusterSecurityGroup"
 
@@ -159,7 +159,7 @@ const (
 	//
 	// The request would result in user exceeding the allowed number of cluster
 	// subnet groups. For information about increasing your quota, go to Limits
-	// in Amazon Redshift (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+	// in Amazon Redshift (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 	// in the Amazon Redshift Cluster Management Guide.
 	ErrCodeClusterSubnetGroupQuotaExceededFault = "ClusterSubnetGroupQuotaExceeded"
 
@@ -168,7 +168,7 @@ const (
 	//
 	// The request would result in user exceeding the allowed number of subnets
 	// in a cluster subnet groups. For information about increasing your quota,
-	// go to Limits in Amazon Redshift (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+	// go to Limits in Amazon Redshift (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 	// in the Amazon Redshift Cluster Management Guide.
 	ErrCodeClusterSubnetQuotaExceededFault = "ClusterSubnetQuotaExceededFault"
 
@@ -197,7 +197,7 @@ const (
 	//
 	// The request would exceed the allowed number of event subscriptions for this
 	// account. For information about increasing your quota, go to Limits in Amazon
-	// Redshift (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+	// Redshift (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 	// in the Amazon Redshift Cluster Management Guide.
 	ErrCodeEventSubscriptionQuotaExceededFault = "EventSubscriptionQuotaExceeded"
 
@@ -218,7 +218,7 @@ const (
 	// "HsmClientCertificateQuotaExceededFault".
 	//
 	// The quota for HSM client certificates has been reached. For information about
-	// increasing your quota, go to Limits in Amazon Redshift (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+	// increasing your quota, go to Limits in Amazon Redshift (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 	// in the Amazon Redshift Cluster Management Guide.
 	ErrCodeHsmClientCertificateQuotaExceededFault = "HsmClientCertificateQuotaExceededFault"
 
@@ -239,7 +239,7 @@ const (
 	// "HsmConfigurationQuotaExceededFault".
 	//
 	// The quota for HSM configurations has been reached. For information about
-	// increasing your quota, go to Limits in Amazon Redshift (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+	// increasing your quota, go to Limits in Amazon Redshift (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 	// in the Amazon Redshift Cluster Management Guide.
 	ErrCodeHsmConfigurationQuotaExceededFault = "HsmConfigurationQuotaExceededFault"
 
@@ -364,7 +364,7 @@ const (
 	// "InvalidS3BucketNameFault".
 	//
 	// The S3 bucket name is invalid. For more information about naming rules, go
-	// to Bucket Restrictions and Limitations (http://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html)
+	// to Bucket Restrictions and Limitations (https://docs.aws.amazon.com/AmazonS3/latest/dev/BucketRestrictions.html)
 	// in the Amazon Simple Storage Service (S3) Developer Guide.
 	ErrCodeInvalidS3BucketNameFault = "InvalidS3BucketNameFault"
 
@@ -438,7 +438,7 @@ const (
 	//
 	// The operation would exceed the number of nodes allotted to the account. For
 	// information about increasing your quota, go to Limits in Amazon Redshift
-	// (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+	// (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 	// in the Amazon Redshift Cluster Management Guide.
 	ErrCodeNumberOfNodesQuotaExceededFault = "NumberOfNodesQuotaExceeded"
 
@@ -470,7 +470,7 @@ const (
 	// "ReservedNodeQuotaExceeded".
 	//
 	// Request would exceed the user's compute node quota. For information about
-	// increasing your quota, go to Limits in Amazon Redshift (http://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
+	// increasing your quota, go to Limits in Amazon Redshift (https://docs.aws.amazon.com/redshift/latest/mgmt/amazon-redshift-limits.html)
 	// in the Amazon Redshift Cluster Management Guide.
 	ErrCodeReservedNodeQuotaExceededFault = "ReservedNodeQuotaExceeded"
 

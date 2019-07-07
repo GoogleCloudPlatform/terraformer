@@ -58,7 +58,7 @@ func (c *Lambda) AddLayerVersionPermissionRequest(input *AddLayerVersionPermissi
 // AddLayerVersionPermission API operation for AWS Lambda.
 //
 // Adds permissions to the resource-based policy of a version of an AWS Lambda
-// layer (http://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
+// layer (https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
 // Use this action to grant layer usage permission to other accounts. You can
 // grant permission to a single account, all AWS accounts, or all accounts in
 // an organization.
@@ -93,7 +93,7 @@ func (c *Lambda) AddLayerVersionPermissionRequest(input *AddLayerVersionPermissi
 //   API, that AWS Lambda is unable to assume you will get this exception.
 //
 //   * ErrCodePolicyLengthExceededException "PolicyLengthExceededException"
-//   Lambda function access policy is limited to 20 KB.
+//   The permissions policy for the resource is too large. Learn more (https://docs.aws.amazon.com/lambda/latest/dg/limits.html)
 //
 //   * ErrCodePreconditionFailedException "PreconditionFailedException"
 //   The RevisionId provided does not match the latest RevisionId for the Lambda
@@ -182,7 +182,7 @@ func (c *Lambda) AddPermissionRequest(input *AddPermissionInput) (req *request.R
 //
 // This action adds a statement to a resource-based permission policy for the
 // function. For more information about function policies, see Lambda Function
-// Policies (http://docs.aws.amazon.com/lambda/latest/dg/access-control-resource-based.html).
+// Policies (https://docs.aws.amazon.com/lambda/latest/dg/access-control-resource-based.html).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -208,7 +208,7 @@ func (c *Lambda) AddPermissionRequest(input *AddPermissionInput) (req *request.R
 //   API, that AWS Lambda is unable to assume you will get this exception.
 //
 //   * ErrCodePolicyLengthExceededException "PolicyLengthExceededException"
-//   Lambda function access policy is limited to 20 KB.
+//   The permissions policy for the resource is too large. Learn more (https://docs.aws.amazon.com/lambda/latest/dg/limits.html)
 //
 //   * ErrCodeTooManyRequestsException "TooManyRequestsException"
 //   Request throughput limit exceeded.
@@ -284,7 +284,7 @@ func (c *Lambda) CreateAliasRequest(input *CreateAliasInput) (req *request.Reque
 
 // CreateAlias API operation for AWS Lambda.
 //
-// Creates an alias (http://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html)
+// Creates an alias (https://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html)
 // for a Lambda function version. Use aliases to provide clients with a function
 // identifier that you can update to invoke a different version.
 //
@@ -389,11 +389,11 @@ func (c *Lambda) CreateEventSourceMappingRequest(input *CreateEventSourceMapping
 //
 // For details about each event source type, see the following topics.
 //
-//    * Using AWS Lambda with Amazon Kinesis (http://docs.aws.amazon.com/lambda/latest/dg/with-kinesis.html)
+//    * Using AWS Lambda with Amazon Kinesis (https://docs.aws.amazon.com/lambda/latest/dg/with-kinesis.html)
 //
-//    * Using AWS Lambda with Amazon SQS (http://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html)
+//    * Using AWS Lambda with Amazon SQS (https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html)
 //
-//    * Using AWS Lambda with Amazon DynamoDB (http://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html)
+//    * Using AWS Lambda with Amazon DynamoDB (https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html)
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -488,32 +488,34 @@ func (c *Lambda) CreateFunctionRequest(input *CreateFunctionInput) (req *request
 // CreateFunction API operation for AWS Lambda.
 //
 // Creates a Lambda function. To create a function, you need a deployment package
-// (http://docs.aws.amazon.com/lambda/latest/dg/deployment-package-v2.html)
-// and an execution role (http://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html#lambda-intro-execution-role).
+// (https://docs.aws.amazon.com/lambda/latest/dg/deployment-package-v2.html)
+// and an execution role (https://docs.aws.amazon.com/lambda/latest/dg/intro-permission-model.html#lambda-intro-execution-role).
 // The deployment package contains your function code. The execution role grants
-// the function permission to use AWS services such as Amazon CloudWatch Logs
+// the function permission to use AWS services, such as Amazon CloudWatch Logs
 // for log streaming and AWS X-Ray for request tracing.
 //
 // A function has an unpublished version, and can have published versions and
-// aliases. A published version is a snapshot of your function code and configuration
-// that can not be changed. An alias is a named resource that maps to a version,
-// and can be changed to map to a different version. Use the Publish parameter
-// to create version 1 of your function from its initial configuration.
+// aliases. The unpublished version changes when you update your function's
+// code and configuration. A published version is a snapshot of your function
+// code and configuration that can't be changed. An alias is a named resource
+// that maps to a version, and can be changed to map to a different version.
+// Use the Publish parameter to create version 1 of your function from its initial
+// configuration.
 //
 // The other parameters let you configure version-specific and function-level
 // settings. You can modify version-specific settings later with UpdateFunctionConfiguration.
 // Function-level settings apply to both the unpublished and published versions
-// of the function and include tags (TagResource) and per-function concurrency
+// of the function, and include tags (TagResource) and per-function concurrency
 // limits (PutFunctionConcurrency).
 //
-// If another account or a AWS service invokes your function, use AddPermission
+// If another account or an AWS service invokes your function, use AddPermission
 // to grant permission by creating a resource-based IAM policy. You can grant
 // permissions at the function level, on a version, or on an alias.
 //
 // To invoke your function directly, use Invoke. To invoke your function in
 // response to events in other AWS services, create an event source mapping
 // (CreateEventSourceMapping), or configure a function trigger in the other
-// service. For more information, see Invoking Functions (http://docs.aws.amazon.com/lambda/latest/dg/invoking-lambda-functions.html).
+// service. For more information, see Invoking Functions (https://docs.aws.amazon.com/lambda/latest/dg/invoking-lambda-functions.html).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -542,7 +544,7 @@ func (c *Lambda) CreateFunctionRequest(input *CreateFunctionInput) (req *request
 //   Request throughput limit exceeded.
 //
 //   * ErrCodeCodeStorageExceededException "CodeStorageExceededException"
-//   You have exceeded your maximum total code size per account. Limits (http://docs.aws.amazon.com/lambda/latest/dg/limits.html)
+//   You have exceeded your maximum total code size per account. Learn more (https://docs.aws.amazon.com/lambda/latest/dg/limits.html)
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/lambda-2015-03-31/CreateFunction
 func (c *Lambda) CreateFunction(input *CreateFunctionInput) (*FunctionConfiguration, error) {
@@ -611,7 +613,7 @@ func (c *Lambda) DeleteAliasRequest(input *DeleteAliasInput) (req *request.Reque
 
 // DeleteAlias API operation for AWS Lambda.
 //
-// Deletes a Lambda function alias (http://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html).
+// Deletes a Lambda function alias (https://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -698,7 +700,7 @@ func (c *Lambda) DeleteEventSourceMappingRequest(input *DeleteEventSourceMapping
 
 // DeleteEventSourceMapping API operation for AWS Lambda.
 //
-// Deletes an event source mapping (http://docs.aws.amazon.com/lambda/latest/dg/intro-invocation-modes.html).
+// Deletes an event source mapping (https://docs.aws.amazon.com/lambda/latest/dg/intro-invocation-modes.html).
 // You can get the identifier of a mapping from the output of ListEventSourceMappings.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -988,7 +990,7 @@ func (c *Lambda) DeleteLayerVersionRequest(input *DeleteLayerVersionInput) (req 
 
 // DeleteLayerVersion API operation for AWS Lambda.
 //
-// Deletes a version of an AWS Lambda layer (http://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
+// Deletes a version of an AWS Lambda layer (https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
 // Deleted versions can no longer be viewed or added to functions. To avoid
 // breaking functions, a copy of the version remains in Lambda until no functions
 // refer to it.
@@ -1073,8 +1075,8 @@ func (c *Lambda) GetAccountSettingsRequest(input *GetAccountSettingsInput) (req 
 
 // GetAccountSettings API operation for AWS Lambda.
 //
-// Retrieves details about your account's limits (http://docs.aws.amazon.com/lambda/latest/dg/limits.html)
-// and usage in a region.
+// Retrieves details about your account's limits (https://docs.aws.amazon.com/lambda/latest/dg/limits.html)
+// and usage in an AWS Region.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1156,7 +1158,7 @@ func (c *Lambda) GetAliasRequest(input *GetAliasInput) (req *request.Request, ou
 
 // GetAlias API operation for AWS Lambda.
 //
-// Returns details about a Lambda function alias (http://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html).
+// Returns details about a Lambda function alias (https://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1339,9 +1341,9 @@ func (c *Lambda) GetFunctionRequest(input *GetFunctionInput) (req *request.Reque
 
 // GetFunction API operation for AWS Lambda.
 //
-// Returns information about function or function version, with a link to download
-// the deployment package that's valid for 10 minutes. If you specify a function
-// version, only details specific to that version are returned.
+// Returns information about the function or function version, with a link to
+// download the deployment package that's valid for 10 minutes. If you specify
+// a function version, only details that are specific to that version are returned.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1432,8 +1434,8 @@ func (c *Lambda) GetFunctionConfigurationRequest(input *GetFunctionConfiguration
 
 // GetFunctionConfiguration API operation for AWS Lambda.
 //
-// Returns a the version-specific settings of a Lambda function or version.
-// The output includes only options that can vary between versions of a function.
+// Returns the version-specific settings of a Lambda function or version. The
+// output includes only options that can vary between versions of a function.
 // To modify these settings, use UpdateFunctionConfiguration.
 //
 // To get all of a function's details, including function-level settings, use
@@ -1528,7 +1530,7 @@ func (c *Lambda) GetLayerVersionRequest(input *GetLayerVersionInput) (req *reque
 
 // GetLayerVersion API operation for AWS Lambda.
 //
-// Returns information about a version of an AWS Lambda layer (http://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html),
+// Returns information about a version of an AWS Lambda layer (https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html),
 // with a link to download the layer archive that's valid for 10 minutes.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -1571,6 +1573,98 @@ func (c *Lambda) GetLayerVersion(input *GetLayerVersionInput) (*GetLayerVersionO
 // for more information on using Contexts.
 func (c *Lambda) GetLayerVersionWithContext(ctx aws.Context, input *GetLayerVersionInput, opts ...request.Option) (*GetLayerVersionOutput, error) {
 	req, out := c.GetLayerVersionRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opGetLayerVersionByArn = "GetLayerVersionByArn"
+
+// GetLayerVersionByArnRequest generates a "aws/request.Request" representing the
+// client's request for the GetLayerVersionByArn operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See GetLayerVersionByArn for more information on using the GetLayerVersionByArn
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the GetLayerVersionByArnRequest method.
+//    req, resp := client.GetLayerVersionByArnRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/lambda-2015-03-31/GetLayerVersionByArn
+func (c *Lambda) GetLayerVersionByArnRequest(input *GetLayerVersionByArnInput) (req *request.Request, output *GetLayerVersionByArnOutput) {
+	op := &request.Operation{
+		Name:       opGetLayerVersionByArn,
+		HTTPMethod: "GET",
+		HTTPPath:   "/2018-10-31/layers?find=LayerVersion",
+	}
+
+	if input == nil {
+		input = &GetLayerVersionByArnInput{}
+	}
+
+	output = &GetLayerVersionByArnOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// GetLayerVersionByArn API operation for AWS Lambda.
+//
+// Returns information about a version of an AWS Lambda layer (https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html),
+// with a link to download the layer archive that's valid for 10 minutes.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS Lambda's
+// API operation GetLayerVersionByArn for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeServiceException "ServiceException"
+//   The AWS Lambda service encountered an internal error.
+//
+//   * ErrCodeInvalidParameterValueException "InvalidParameterValueException"
+//   One of the parameters in the request is invalid. For example, if you provided
+//   an IAM role for AWS Lambda to assume in the CreateFunction or the UpdateFunctionConfiguration
+//   API, that AWS Lambda is unable to assume you will get this exception.
+//
+//   * ErrCodeTooManyRequestsException "TooManyRequestsException"
+//   Request throughput limit exceeded.
+//
+//   * ErrCodeResourceNotFoundException "ResourceNotFoundException"
+//   The resource (for example, a Lambda function or access policy statement)
+//   specified in the request does not exist.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/lambda-2015-03-31/GetLayerVersionByArn
+func (c *Lambda) GetLayerVersionByArn(input *GetLayerVersionByArnInput) (*GetLayerVersionByArnOutput, error) {
+	req, out := c.GetLayerVersionByArnRequest(input)
+	return out, req.Send()
+}
+
+// GetLayerVersionByArnWithContext is the same as GetLayerVersionByArn with the addition of
+// the ability to pass a context and additional request options.
+//
+// See GetLayerVersionByArn for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *Lambda) GetLayerVersionByArnWithContext(ctx aws.Context, input *GetLayerVersionByArnInput, opts ...request.Option) (*GetLayerVersionByArnOutput, error) {
+	req, out := c.GetLayerVersionByArnRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -1620,7 +1714,7 @@ func (c *Lambda) GetLayerVersionPolicyRequest(input *GetLayerVersionPolicyInput)
 
 // GetLayerVersionPolicy API operation for AWS Lambda.
 //
-// Returns the permission policy for a version of an AWS Lambda layer (http://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
+// Returns the permission policy for a version of an AWS Lambda layer (https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
 // For more information, see AddLayerVersionPermission.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -1712,7 +1806,7 @@ func (c *Lambda) GetPolicyRequest(input *GetPolicyInput) (req *request.Request, 
 
 // GetPolicy API operation for AWS Lambda.
 //
-// Returns the resource-based IAM policy (http://docs.aws.amazon.com/lambda/latest/dg/access-control-resource-based.html)
+// Returns the resource-based IAM policy (https://docs.aws.amazon.com/lambda/latest/dg/access-control-resource-based.html)
 // for a function, version, or alias.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -1804,26 +1898,32 @@ func (c *Lambda) InvokeRequest(input *InvokeInput) (req *request.Request, output
 
 // Invoke API operation for AWS Lambda.
 //
-// Invokes a Lambda function. You can invoke a function synchronously and wait
-// for the response, or asynchronously. To invoke a function asynchronously,
+// Invokes a Lambda function. You can invoke a function synchronously (and wait
+// for the response), or asynchronously. To invoke a function asynchronously,
 // set InvocationType to Event.
 //
 // For synchronous invocation, details about the function response, including
 // errors, are included in the response body and headers. For either invocation
-// type, you can find more information in the execution log (http://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions.html)
-// and trace (http://docs.aws.amazon.com/lambda/latest/dg/dlq.html). To record
+// type, you can find more information in the execution log (https://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions.html)
+// and trace (https://docs.aws.amazon.com/lambda/latest/dg/dlq.html). To record
 // function errors for asynchronous invocations, configure your function with
-// a dead letter queue (http://docs.aws.amazon.com/lambda/latest/dg/dlq.html).
+// a dead letter queue (https://docs.aws.amazon.com/lambda/latest/dg/dlq.html).
 //
-// The status code in the API response does not reflect function errors. Error
+// When an error occurs, your function may be invoked multiple times. Retry
+// behavior varies by error type, client, event source, and invocation type.
+// For example, if you invoke a function asynchronously and it returns an error,
+// Lambda executes the function up to two more times. For more information,
+// see Retry Behavior (https://docs.aws.amazon.com/lambda/latest/dg/retries-on-errors.html).
+//
+// The status code in the API response doesn't reflect function errors. Error
 // codes are reserved for errors that prevent your function from executing,
-// such as permissions errors, limit errors (http://docs.aws.amazon.com/lambda/latest/dg/limits.html),
+// such as permissions errors, limit errors (https://docs.aws.amazon.com/lambda/latest/dg/limits.html),
 // or issues with your function's code and configuration. For example, Lambda
 // returns TooManyRequestsException if executing the function would cause you
 // to exceed a concurrency limit at either the account level (ConcurrentInvocationLimitExceeded)
 // or function level (ReservedFunctionConcurrentInvocationLimitExceeded).
 //
-// For functions with a long timeout, your client may be disconnected during
+// For functions with a long timeout, your client might be disconnected during
 // synchronous invocation while it waits for a response. Configure your HTTP
 // client, SDK, firewall, proxy, or operating system to allow for long connections
 // with timeout or keep-alive settings.
@@ -1850,7 +1950,7 @@ func (c *Lambda) InvokeRequest(input *InvokeInput) (req *request.Request, output
 //
 //   * ErrCodeRequestTooLargeException "RequestTooLargeException"
 //   The request payload exceeded the Invoke request body JSON input limit. For
-//   more information, see Limits (http://docs.aws.amazon.com/lambda/latest/dg/limits.html).
+//   more information, see Limits (https://docs.aws.amazon.com/lambda/latest/dg/limits.html).
 //
 //   * ErrCodeUnsupportedMediaTypeException "UnsupportedMediaTypeException"
 //   The content type of the Invoke request body is not JSON.
@@ -1983,6 +2083,7 @@ func (c *Lambda) InvokeAsyncRequest(input *InvokeAsyncInput) (req *request.Reque
 
 // InvokeAsync API operation for AWS Lambda.
 //
+//
 // For asynchronous function invocation, use Invoke.
 //
 // Invokes a function asynchronously.
@@ -2078,7 +2179,7 @@ func (c *Lambda) ListAliasesRequest(input *ListAliasesInput) (req *request.Reque
 
 // ListAliases API operation for AWS Lambda.
 //
-// Returns a list of aliases (http://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html)
+// Returns a list of aliases (https://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html)
 // for a Lambda function.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -2235,7 +2336,7 @@ func (c *Lambda) ListEventSourceMappingsWithContext(ctx aws.Context, input *List
 //    // Example iterating over at most 3 pages of a ListEventSourceMappings operation.
 //    pageNum := 0
 //    err := client.ListEventSourceMappingsPages(params,
-//        func(page *ListEventSourceMappingsOutput, lastPage bool) bool {
+//        func(page *lambda.ListEventSourceMappingsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -2383,7 +2484,7 @@ func (c *Lambda) ListFunctionsWithContext(ctx aws.Context, input *ListFunctionsI
 //    // Example iterating over at most 3 pages of a ListFunctions operation.
 //    pageNum := 0
 //    err := client.ListFunctionsPages(params,
-//        func(page *ListFunctionsOutput, lastPage bool) bool {
+//        func(page *lambda.ListFunctionsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -2466,9 +2567,9 @@ func (c *Lambda) ListLayerVersionsRequest(input *ListLayerVersionsInput) (req *r
 
 // ListLayerVersions API operation for AWS Lambda.
 //
-// Lists the versions of an AWS Lambda layer (http://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
+// Lists the versions of an AWS Lambda layer (https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
 // Versions that have been deleted aren't listed. Specify a runtime identifier
-// (http://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html) to list
+// (https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html) to list
 // only versions that indicate that they're compatible with that runtime.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -2560,9 +2661,9 @@ func (c *Lambda) ListLayersRequest(input *ListLayersInput) (req *request.Request
 
 // ListLayers API operation for AWS Lambda.
 //
-// Lists AWS Lambda layers (http://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html)
+// Lists AWS Lambda layers (https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html)
 // and shows information about the latest version of each. Specify a runtime
-// identifier (http://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html)
+// identifier (https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html)
 // to list only layers that indicate that they're compatible with that runtime.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -2650,7 +2751,7 @@ func (c *Lambda) ListTagsRequest(input *ListTagsInput) (req *request.Request, ou
 
 // ListTags API operation for AWS Lambda.
 //
-// Returns a function's tags (http://docs.aws.amazon.com/lambda/latest/dg/tagging.html).
+// Returns a function's tags (https://docs.aws.amazon.com/lambda/latest/dg/tagging.html).
 // You can also view tags with GetFunction.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -2742,7 +2843,7 @@ func (c *Lambda) ListVersionsByFunctionRequest(input *ListVersionsByFunctionInpu
 
 // ListVersionsByFunction API operation for AWS Lambda.
 //
-// Returns a list of versions (http://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html),
+// Returns a list of versions (https://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html),
 // with the version-specific configuration of each.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -2834,7 +2935,7 @@ func (c *Lambda) PublishLayerVersionRequest(input *PublishLayerVersionInput) (re
 
 // PublishLayerVersion API operation for AWS Lambda.
 //
-// Creates an AWS Lambda layer (http://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html)
+// Creates an AWS Lambda layer (https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html)
 // from a ZIP archive. Each time you call PublishLayerVersion with the same
 // version name, a new version is created.
 //
@@ -2864,7 +2965,7 @@ func (c *Lambda) PublishLayerVersionRequest(input *PublishLayerVersionInput) (re
 //   API, that AWS Lambda is unable to assume you will get this exception.
 //
 //   * ErrCodeCodeStorageExceededException "CodeStorageExceededException"
-//   You have exceeded your maximum total code size per account. Limits (http://docs.aws.amazon.com/lambda/latest/dg/limits.html)
+//   You have exceeded your maximum total code size per account. Learn more (https://docs.aws.amazon.com/lambda/latest/dg/limits.html)
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/lambda-2015-03-31/PublishLayerVersion
 func (c *Lambda) PublishLayerVersion(input *PublishLayerVersionInput) (*PublishLayerVersionOutput, error) {
@@ -2932,13 +3033,13 @@ func (c *Lambda) PublishVersionRequest(input *PublishVersionInput) (req *request
 
 // PublishVersion API operation for AWS Lambda.
 //
-// Creates a version (http://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html)
+// Creates a version (https://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html)
 // from the current code and configuration of a function. Use versions to create
 // a snapshot of your function code and configuration that doesn't change.
 //
-// AWS Lambda does not publish a version if the function's configuration and
-// code hasn't changed since the last version. Use UpdateFunctionCode or UpdateFunctionConfiguration
-// to update the function prior to publishing a version.
+// AWS Lambda doesn't publish a version if the function's configuration and
+// code haven't changed since the last version. Use UpdateFunctionCode or UpdateFunctionConfiguration
+// to update the function before publishing a version.
 //
 // Clients can invoke versions directly or with an alias. To create an alias,
 // use CreateAlias.
@@ -2967,7 +3068,7 @@ func (c *Lambda) PublishVersionRequest(input *PublishVersionInput) (req *request
 //   Request throughput limit exceeded.
 //
 //   * ErrCodeCodeStorageExceededException "CodeStorageExceededException"
-//   You have exceeded your maximum total code size per account. Limits (http://docs.aws.amazon.com/lambda/latest/dg/limits.html)
+//   You have exceeded your maximum total code size per account. Learn more (https://docs.aws.amazon.com/lambda/latest/dg/limits.html)
 //
 //   * ErrCodePreconditionFailedException "PreconditionFailedException"
 //   The RevisionId provided does not match the latest RevisionId for the Lambda
@@ -3044,7 +3145,7 @@ func (c *Lambda) PutFunctionConcurrencyRequest(input *PutFunctionConcurrencyInpu
 // capacity for that concurrency level.
 //
 // Concurrency settings apply to the function as a whole, including all published
-// versions and the unpublished version. Reserving concurrency both guarantees
+// versions and the unpublished version. Reserving concurrency both ensures
 // that your function has capacity to process the specified number of events
 // simultaneously, and prevents it from scaling beyond that level. Use GetFunction
 // to see the current setting for a function.
@@ -3053,7 +3154,7 @@ func (c *Lambda) PutFunctionConcurrencyRequest(input *PutFunctionConcurrencyInpu
 // concurrency for as many functions as you like, as long as you leave at least
 // 100 simultaneous executions unreserved for functions that aren't configured
 // with a per-function limit. For more information, see Managing Concurrency
-// (http://docs.aws.amazon.com/lambda/latest/dg/concurrent-executions.html).
+// (https://docs.aws.amazon.com/lambda/latest/dg/concurrent-executions.html).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -3146,7 +3247,7 @@ func (c *Lambda) RemoveLayerVersionPermissionRequest(input *RemoveLayerVersionPe
 // RemoveLayerVersionPermission API operation for AWS Lambda.
 //
 // Removes a statement from the permissions policy for a version of an AWS Lambda
-// layer (http://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
+// layer (https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
 // For more information, see AddLayerVersionPermission.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -3244,7 +3345,7 @@ func (c *Lambda) RemovePermissionRequest(input *RemovePermissionInput) (req *req
 
 // RemovePermission API operation for AWS Lambda.
 //
-// Revokes function use permission from an AWS service or another account. You
+// Revokes function-use permission from an AWS service or another account. You
 // can get the ID of the statement from the output of GetPolicy.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -3342,8 +3443,8 @@ func (c *Lambda) TagResourceRequest(input *TagResourceInput) (req *request.Reque
 
 // TagResource API operation for AWS Lambda.
 //
-// Adds tags (http://docs.aws.amazon.com/lambda/latest/dg/tagging.html) to a
-// function.
+// Adds tags (https://docs.aws.amazon.com/lambda/latest/dg/tagging.html) to
+// a function.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -3435,8 +3536,8 @@ func (c *Lambda) UntagResourceRequest(input *UntagResourceInput) (req *request.R
 
 // UntagResource API operation for AWS Lambda.
 //
-// Removes tags (http://docs.aws.amazon.com/lambda/latest/dg/tagging.html) from
-// a function.
+// Removes tags (https://docs.aws.amazon.com/lambda/latest/dg/tagging.html)
+// from a function.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -3527,7 +3628,7 @@ func (c *Lambda) UpdateAliasRequest(input *UpdateAliasInput) (req *request.Reque
 
 // UpdateAlias API operation for AWS Lambda.
 //
-// Updates the configuration of a Lambda function alias (http://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html).
+// Updates the configuration of a Lambda function alias (https://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html).
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -3725,7 +3826,7 @@ func (c *Lambda) UpdateFunctionCodeRequest(input *UpdateFunctionCodeInput) (req 
 //
 // Updates a Lambda function's code.
 //
-// The function's code is locked when you publish a version. You cannot modify
+// The function's code is locked when you publish a version. You can't modify
 // the code of a published version, only the unpublished version.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -3752,7 +3853,7 @@ func (c *Lambda) UpdateFunctionCodeRequest(input *UpdateFunctionCodeInput) (req 
 //   Request throughput limit exceeded.
 //
 //   * ErrCodeCodeStorageExceededException "CodeStorageExceededException"
-//   You have exceeded your maximum total code size per account. Limits (http://docs.aws.amazon.com/lambda/latest/dg/limits.html)
+//   You have exceeded your maximum total code size per account. Learn more (https://docs.aws.amazon.com/lambda/latest/dg/limits.html)
 //
 //   * ErrCodePreconditionFailedException "PreconditionFailedException"
 //   The RevisionId provided does not match the latest RevisionId for the Lambda
@@ -3825,10 +3926,10 @@ func (c *Lambda) UpdateFunctionConfigurationRequest(input *UpdateFunctionConfigu
 
 // UpdateFunctionConfiguration API operation for AWS Lambda.
 //
-// Modify the version-specifc settings of a Lambda function.
+// Modify the version-specific settings of a Lambda function.
 //
 // These settings can vary between versions of a function and are locked when
-// you publish a version. You cannot modify the configuration of a published
+// you publish a version. You can't modify the configuration of a published
 // version, only the unpublished version.
 //
 // To configure function concurrency, use PutFunctionConcurrency. To grant invoke
@@ -3887,16 +3988,16 @@ func (c *Lambda) UpdateFunctionConfigurationWithContext(ctx aws.Context, input *
 	return out, req.Send()
 }
 
-// Limits related to concurrency and code storage. All file and storage sizes
-// are in bytes.
+// Limits that are related to concurrency and code storage. All file and storage
+// sizes are in bytes.
 type AccountLimit struct {
 	_ struct{} `type:"structure"`
 
-	// The maximum size of your function's code and layers when extracted.
+	// The maximum size of your function's code and layers when they're extracted.
 	CodeSizeUnzipped *int64 `type:"long"`
 
-	// The maximum size of a deployment package when uploaded direcly to AWS Lambda.
-	// Use Amazon S3 for larger files.
+	// The maximum size of a deployment package when it's uploaded directly to AWS
+	// Lambda. Use Amazon S3 for larger files.
 	CodeSizeZipped *int64 `type:"long"`
 
 	// The maximum number of simultaneous function executions.
@@ -3906,8 +4007,8 @@ type AccountLimit struct {
 	// and layer archives.
 	TotalCodeSize *int64 `type:"long"`
 
-	// The maximum number of simultaneous function executions, less the concurrency
-	// reserved for individual functions with PutFunctionConcurrency.
+	// The maximum number of simultaneous function executions, minus the capacity
+	// that's reserved for individual functions with PutFunctionConcurrency.
 	UnreservedConcurrentExecutions *int64 `type:"integer"`
 }
 
@@ -3958,8 +4059,8 @@ type AccountUsage struct {
 	// The number of Lambda functions.
 	FunctionCount *int64 `type:"long"`
 
-	// The amount of storage space, in bytes, in use by deployment packages and
-	// layer archives.
+	// The amount of storage space, in bytes, that's being used by deployment packages
+	// and layer archives.
 	TotalCodeSize *int64 `type:"long"`
 }
 
@@ -4178,16 +4279,17 @@ type AddPermissionInput struct {
 	// function.
 	Qualifier *string `location:"querystring" locationName:"Qualifier" min:"1" type:"string"`
 
-	// Only update the policy if the revision ID matches the ID specified. Use this
-	// option to avoid modifying a policy that has changed since you last read it.
+	// Only update the policy if the revision ID matches the ID that's specified.
+	// Use this option to avoid modifying a policy that has changed since you last
+	// read it.
 	RevisionId *string `type:"string"`
 
-	// For AWS services, the ID of the account that owns the resource. Use instead
-	// of SourceArn to grant permission to resources owned by another account (e.g.
-	// all of an account's Amazon S3 buckets). Or use together with SourceArn to
-	// ensure that the resource is owned by the specified account. For example,
-	// an Amazon S3 bucket could be deleted by its owner and recreated by another
-	// account.
+	// For AWS services, the ID of the account that owns the resource. Use this
+	// instead of SourceArn to grant permission to resources that are owned by another
+	// account (for example, all of an account's Amazon S3 buckets). Or use it together
+	// with SourceArn to ensure that the resource is owned by the specified account.
+	// For example, an Amazon S3 bucket could be deleted by its owner and recreated
+	// by another account.
 	SourceAccount *string `type:"string"`
 
 	// For AWS services, the ARN of the AWS resource that invokes the function.
@@ -4299,7 +4401,7 @@ func (s *AddPermissionInput) SetStatementId(v string) *AddPermissionInput {
 type AddPermissionOutput struct {
 	_ struct{} `type:"structure"`
 
-	// The permission statement added to the function policy.
+	// The permission statement that's added to the function policy.
 	Statement *string `type:"string"`
 }
 
@@ -4319,7 +4421,7 @@ func (s *AddPermissionOutput) SetStatement(v string) *AddPermissionOutput {
 	return s
 }
 
-// Provides configuration information about a Lambda function alias (http://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html).
+// Provides configuration information about a Lambda function alias (https://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html).
 type AliasConfiguration struct {
 	_ struct{} `type:"structure"`
 
@@ -4338,7 +4440,7 @@ type AliasConfiguration struct {
 	// A unique identifier that changes when you update the alias.
 	RevisionId *string `type:"string"`
 
-	// The routing configuration (http://docs.aws.amazon.com/lambda/latest/dg/lambda-traffic-shifting-using-aliases.html)
+	// The routing configuration (https://docs.aws.amazon.com/lambda/latest/dg/lambda-traffic-shifting-using-aliases.html)
 	// of the alias.
 	RoutingConfig *AliasRoutingConfiguration `type:"structure"`
 }
@@ -4389,12 +4491,12 @@ func (s *AliasConfiguration) SetRoutingConfig(v *AliasRoutingConfiguration) *Ali
 	return s
 }
 
-// A Lambda function alias's traffic shifting (http://docs.aws.amazon.com/lambda/latest/dg/lambda-traffic-shifting-using-aliases.html)
-// configuration.
+// The traffic-shifting (https://docs.aws.amazon.com/lambda/latest/dg/lambda-traffic-shifting-using-aliases.html)
+// configuration of a Lambda function alias.
 type AliasRoutingConfiguration struct {
 	_ struct{} `type:"structure"`
 
-	// The name of the second alias, and the percentage of traffic that is routed
+	// The name of the second alias, and the percentage of traffic that's routed
 	// to it.
 	AdditionalVersionWeights map[string]*float64 `type:"map"`
 }
@@ -4421,7 +4523,7 @@ type CreateAliasInput struct {
 	// A description of the alias.
 	Description *string `type:"string"`
 
-	// The name of the lambda function.
+	// The name of the Lambda function.
 	//
 	// Name formats
 	//
@@ -4447,7 +4549,7 @@ type CreateAliasInput struct {
 	// Name is a required field
 	Name *string `min:"1" type:"string" required:"true"`
 
-	// The routing configuration (http://docs.aws.amazon.com/lambda/latest/dg/lambda-traffic-shifting-using-aliases.html)
+	// The routing configuration (https://docs.aws.amazon.com/lambda/latest/dg/lambda-traffic-shifting-using-aliases.html)
 	// of the alias.
 	RoutingConfig *AliasRoutingConfiguration `type:"structure"`
 }
@@ -4651,7 +4753,7 @@ type CreateFunctionInput struct {
 
 	// A dead letter queue configuration that specifies the queue or topic where
 	// Lambda sends asynchronous events when they fail processing. For more information,
-	// see Dead Letter Queues (http://docs.aws.amazon.com/lambda/latest/dg/dlq.html).
+	// see Dead Letter Queues (https://docs.aws.amazon.com/lambda/latest/dg/dlq.html).
 	DeadLetterConfig *DeadLetterConfig `type:"structure"`
 
 	// A description of the function.
@@ -4677,25 +4779,25 @@ type CreateFunctionInput struct {
 	FunctionName *string `min:"1" type:"string" required:"true"`
 
 	// The name of the method within your code that Lambda calls to execute your
-	// function. The format includes the filename and can also include namespaces
+	// function. The format includes the file name. It can also include namespaces
 	// and other qualifiers, depending on the runtime. For more information, see
-	// Programming Model (http://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html).
+	// Programming Model (https://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html).
 	//
 	// Handler is a required field
 	Handler *string `type:"string" required:"true"`
 
-	// The ARN of the AWS Key Management Service key used to encrypt your function's
-	// environment variables. If not provided, AWS Lambda uses a default service
-	// key.
+	// The ARN of the AWS Key Management Service (AWS KMS) key that's used to encrypt
+	// your function's environment variables. If it's not provided, AWS Lambda uses
+	// a default service key.
 	KMSKeyArn *string `type:"string"`
 
-	// A list of function layers (http://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html)
-	// to add to the function's execution environment. Specify each layer by ARN,
-	// including the version.
+	// A list of function layers (https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html)
+	// to add to the function's execution environment. Specify each layer by its
+	// ARN, including the version.
 	Layers []*string `type:"list"`
 
 	// The amount of memory that your function has access to. Increasing the function's
-	// memory also increases it's CPU allocation. The default value is 128 MB. The
+	// memory also increases its CPU allocation. The default value is 128 MB. The
 	// value must be a multiple of 64 MB.
 	MemorySize *int64 `min:"128" type:"integer"`
 
@@ -4707,17 +4809,17 @@ type CreateFunctionInput struct {
 	// Role is a required field
 	Role *string `type:"string" required:"true"`
 
-	// The identifier of the function's runtime (http://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html).
+	// The identifier of the function's runtime (https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html).
 	//
 	// Runtime is a required field
 	Runtime *string `type:"string" required:"true" enum:"Runtime"`
 
-	// A list of tags (http://docs.aws.amazon.com/lambda/latest/dg/tagging.html)
+	// A list of tags (https://docs.aws.amazon.com/lambda/latest/dg/tagging.html)
 	// to apply to the function.
 	Tags map[string]*string `type:"map"`
 
-	// The amount of time that Lambda allows a function to run before terminating
-	// it. The default is 3 seconds. The maximum allowed value is 900 seconds.
+	// The amount of time that Lambda allows a function to run before stopping it.
+	// The default is 3 seconds. The maximum allowed value is 900 seconds.
 	Timeout *int64 `min:"1" type:"integer"`
 
 	// Set Mode to Active to sample and trace a subset of incoming requests with
@@ -4727,7 +4829,7 @@ type CreateFunctionInput struct {
 	// For network connectivity to AWS resources in a VPC, specify a list of security
 	// groups and subnets in the VPC. When you connect a function to a VPC, it can
 	// only access resources and the internet through that VPC. For more information,
-	// see VPC Settings (http://docs.aws.amazon.com/lambda/latest/dg/vpc.html).
+	// see VPC Settings (https://docs.aws.amazon.com/lambda/latest/dg/vpc.html).
 	VpcConfig *VpcConfig `type:"structure"`
 }
 
@@ -4876,7 +4978,7 @@ func (s *CreateFunctionInput) SetVpcConfig(v *VpcConfig) *CreateFunctionInput {
 	return s
 }
 
-// The dead letter queue (http://docs.aws.amazon.com/lambda/latest/dg/dlq.html)
+// The dead letter queue (https://docs.aws.amazon.com/lambda/latest/dg/dlq.html)
 // for failed asynchronous invocations.
 type DeadLetterConfig struct {
 	_ struct{} `type:"structure"`
@@ -4904,7 +5006,7 @@ func (s *DeadLetterConfig) SetTargetArn(v string) *DeadLetterConfig {
 type DeleteAliasInput struct {
 	_ struct{} `type:"structure"`
 
-	// The name of the lambda function.
+	// The name of the Lambda function.
 	//
 	// Name formats
 	//
@@ -5111,7 +5213,7 @@ type DeleteFunctionInput struct {
 	// FunctionName is a required field
 	FunctionName *string `location:"uri" locationName:"FunctionName" min:"1" type:"string" required:"true"`
 
-	// Specify a version to delete. You cannot delete a version that is referenced
+	// Specify a version to delete. You can't delete a version that's referenced
 	// by an alias.
 	Qualifier *string `location:"querystring" locationName:"Qualifier" min:"1" type:"string"`
 }
@@ -5264,7 +5366,7 @@ func (s *Environment) SetVariables(v map[string]*string) *Environment {
 	return s
 }
 
-// Error messages for environment variables that could not be applied.
+// Error messages for environment variables that couldn't be applied.
 type EnvironmentError struct {
 	_ struct{} `type:"structure"`
 
@@ -5301,7 +5403,7 @@ func (s *EnvironmentError) SetMessage(v string) *EnvironmentError {
 type EnvironmentResponse struct {
 	_ struct{} `type:"structure"`
 
-	// Error messages for environment variables that could not be applied.
+	// Error messages for environment variables that couldn't be applied.
 	Error *EnvironmentError `type:"structure"`
 
 	// Environment variable key-value pairs.
@@ -5424,8 +5526,8 @@ func (s *EventSourceMappingConfiguration) SetUUID(v string) *EventSourceMappingC
 type FunctionCode struct {
 	_ struct{} `type:"structure"`
 
-	// An Amazon S3 bucket in the same region as your function. The bucket can be
-	// in a different AWS account.
+	// An Amazon S3 bucket in the same AWS Region as your function. The bucket can
+	// be in a different AWS account.
 	S3Bucket *string `min:"3" type:"string"`
 
 	// The Amazon S3 key of the deployment package.
@@ -5498,10 +5600,10 @@ func (s *FunctionCode) SetZipFile(v []byte) *FunctionCode {
 type FunctionCodeLocation struct {
 	_ struct{} `type:"structure"`
 
-	// A pre-signed URL that you can use to download the deployment package.
+	// A presigned URL that you can use to download the deployment package.
 	Location *string `type:"string"`
 
-	// The service hosting the file.
+	// The service that's hosting the file.
 	RepositoryType *string `type:"string"`
 }
 
@@ -5534,7 +5636,7 @@ type FunctionConfiguration struct {
 	// The SHA256 hash of the function's deployment package.
 	CodeSha256 *string `type:"string"`
 
-	// The size of the function's deployment package in bytes.
+	// The size of the function's deployment package, in bytes.
 	CodeSize *int64 `type:"long"`
 
 	// The function's dead letter queue.
@@ -5552,27 +5654,27 @@ type FunctionConfiguration struct {
 	// The name of the function.
 	FunctionName *string `min:"1" type:"string"`
 
-	// The function Lambda calls to begin executing your function.
+	// The function that Lambda calls to begin executing your function.
 	Handler *string `type:"string"`
 
-	// The KMS key used to encrypt the function's environment variables. Only returned
-	// if you've configured a customer managed CMK.
+	// The KMS key that's used to encrypt the function's environment variables.
+	// This key is only returned if you've configured a customer-managed CMK.
 	KMSKeyArn *string `type:"string"`
 
 	// The date and time that the function was last updated, in ISO-8601 format
 	// (https://www.w3.org/TR/NOTE-datetime) (YYYY-MM-DDThh:mm:ss.sTZD).
 	LastModified *string `type:"string"`
 
-	// The function's  layers (http://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html)
+	// The function's layers (https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
 	Layers []*Layer `type:"list"`
 
 	// For Lambda@Edge functions, the ARN of the master function.
 	MasterArn *string `type:"string"`
 
-	// The memory allocated to the function
+	// The memory that's allocated to the function.
 	MemorySize *int64 `min:"128" type:"integer"`
 
-	// Represents the latest updated revision of the function or alias.
+	// The latest updated revision of the function or alias.
 	RevisionId *string `type:"string"`
 
 	// The function's execution role.
@@ -5581,8 +5683,7 @@ type FunctionConfiguration struct {
 	// The runtime environment for the Lambda function.
 	Runtime *string `type:"string" enum:"Runtime"`
 
-	// The amount of time that Lambda allows a function to run before terminating
-	// it.
+	// The amount of time that Lambda allows a function to run before stopping it.
 	Timeout *int64 `min:"1" type:"integer"`
 
 	// The function's AWS X-Ray tracing configuration.
@@ -5742,7 +5843,7 @@ func (s GetAccountSettingsInput) GoString() string {
 type GetAccountSettingsOutput struct {
 	_ struct{} `type:"structure"`
 
-	// Limits related to concurrency and code storage.
+	// Limits that are related to concurrency and code storage.
 	AccountLimit *AccountLimit `type:"structure"`
 
 	// The number of functions and amount of storage in use.
@@ -5774,7 +5875,7 @@ func (s *GetAccountSettingsOutput) SetAccountUsage(v *AccountUsage) *GetAccountS
 type GetAliasInput struct {
 	_ struct{} `type:"structure"`
 
-	// The name of the lambda function.
+	// The name of the Lambda function.
 	//
 	// Name formats
 	//
@@ -6019,13 +6120,13 @@ type GetFunctionOutput struct {
 	// The deployment package of the function or version.
 	Code *FunctionCodeLocation `type:"structure"`
 
-	// The function's reserved concurrency (http://docs.aws.amazon.com/lambda/latest/dg/concurrent-executions.html).
+	// The function's reserved concurrency (https://docs.aws.amazon.com/lambda/latest/dg/concurrent-executions.html).
 	Concurrency *PutFunctionConcurrencyOutput `type:"structure"`
 
 	// The configuration of the function or version.
 	Configuration *FunctionConfiguration `type:"structure"`
 
-	// The function's tags (http://docs.aws.amazon.com/lambda/latest/dg/tagging.html).
+	// The function's tags (https://docs.aws.amazon.com/lambda/latest/dg/tagging.html).
 	Tags map[string]*string `type:"map"`
 }
 
@@ -6060,6 +6161,134 @@ func (s *GetFunctionOutput) SetConfiguration(v *FunctionConfiguration) *GetFunct
 // SetTags sets the Tags field's value.
 func (s *GetFunctionOutput) SetTags(v map[string]*string) *GetFunctionOutput {
 	s.Tags = v
+	return s
+}
+
+type GetLayerVersionByArnInput struct {
+	_ struct{} `type:"structure"`
+
+	// The ARN of the layer version.
+	//
+	// Arn is a required field
+	Arn *string `location:"querystring" locationName:"Arn" min:"1" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s GetLayerVersionByArnInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetLayerVersionByArnInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *GetLayerVersionByArnInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "GetLayerVersionByArnInput"}
+	if s.Arn == nil {
+		invalidParams.Add(request.NewErrParamRequired("Arn"))
+	}
+	if s.Arn != nil && len(*s.Arn) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("Arn", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetArn sets the Arn field's value.
+func (s *GetLayerVersionByArnInput) SetArn(v string) *GetLayerVersionByArnInput {
+	s.Arn = &v
+	return s
+}
+
+type GetLayerVersionByArnOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The layer's compatible runtimes.
+	CompatibleRuntimes []*string `type:"list"`
+
+	// Details about the layer version.
+	Content *LayerVersionContentOutput `type:"structure"`
+
+	// The date that the layer version was created, in ISO-8601 format (https://www.w3.org/TR/NOTE-datetime)
+	// (YYYY-MM-DDThh:mm:ss.sTZD).
+	CreatedDate *string `type:"string"`
+
+	// The description of the version.
+	Description *string `type:"string"`
+
+	// The ARN of the layer.
+	LayerArn *string `min:"1" type:"string"`
+
+	// The ARN of the layer version.
+	LayerVersionArn *string `min:"1" type:"string"`
+
+	// The layer's software license.
+	LicenseInfo *string `type:"string"`
+
+	// The version number.
+	Version *int64 `type:"long"`
+}
+
+// String returns the string representation
+func (s GetLayerVersionByArnOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetLayerVersionByArnOutput) GoString() string {
+	return s.String()
+}
+
+// SetCompatibleRuntimes sets the CompatibleRuntimes field's value.
+func (s *GetLayerVersionByArnOutput) SetCompatibleRuntimes(v []*string) *GetLayerVersionByArnOutput {
+	s.CompatibleRuntimes = v
+	return s
+}
+
+// SetContent sets the Content field's value.
+func (s *GetLayerVersionByArnOutput) SetContent(v *LayerVersionContentOutput) *GetLayerVersionByArnOutput {
+	s.Content = v
+	return s
+}
+
+// SetCreatedDate sets the CreatedDate field's value.
+func (s *GetLayerVersionByArnOutput) SetCreatedDate(v string) *GetLayerVersionByArnOutput {
+	s.CreatedDate = &v
+	return s
+}
+
+// SetDescription sets the Description field's value.
+func (s *GetLayerVersionByArnOutput) SetDescription(v string) *GetLayerVersionByArnOutput {
+	s.Description = &v
+	return s
+}
+
+// SetLayerArn sets the LayerArn field's value.
+func (s *GetLayerVersionByArnOutput) SetLayerArn(v string) *GetLayerVersionByArnOutput {
+	s.LayerArn = &v
+	return s
+}
+
+// SetLayerVersionArn sets the LayerVersionArn field's value.
+func (s *GetLayerVersionByArnOutput) SetLayerVersionArn(v string) *GetLayerVersionByArnOutput {
+	s.LayerVersionArn = &v
+	return s
+}
+
+// SetLicenseInfo sets the LicenseInfo field's value.
+func (s *GetLayerVersionByArnOutput) SetLicenseInfo(v string) *GetLayerVersionByArnOutput {
+	s.LicenseInfo = &v
+	return s
+}
+
+// SetVersion sets the Version field's value.
+func (s *GetLayerVersionByArnOutput) SetVersion(v int64) *GetLayerVersionByArnOutput {
+	s.Version = &v
 	return s
 }
 
@@ -6409,7 +6638,7 @@ type InvokeAsyncInput struct {
 	// FunctionName is a required field
 	FunctionName *string `location:"uri" locationName:"FunctionName" min:"1" type:"string" required:"true"`
 
-	// JSON that you want to provide to your Lambda function as input.
+	// The JSON that you want to provide to your Lambda function as input.
 	//
 	// InvokeArgs is a required field
 	InvokeArgs io.ReadSeeker `type:"blob" required:"true"`
@@ -6456,13 +6685,14 @@ func (s *InvokeAsyncInput) SetInvokeArgs(v io.ReadSeeker) *InvokeAsyncInput {
 	return s
 }
 
-// Upon success, it returns empty response. Otherwise, throws an exception.
+// A success response (202 Accepted) indicates that the request is queued for
+// invocation.
 //
 // Deprecated: InvokeAsyncOutput has been deprecated
 type InvokeAsyncOutput struct {
 	_ struct{} `deprecated:"true" type:"structure"`
 
-	// It will be 202 upon success.
+	// The status code.
 	Status *int64 `location:"statusCode" type:"integer"`
 }
 
@@ -6513,8 +6743,8 @@ type InvokeInput struct {
 	//    The API response includes the function response and additional data.
 	//
 	//    * Event - Invoke the function asynchronously. Send events that fail multiple
-	//    times to the function's dead-letter queue (if configured). The API response
-	//    only includes a status code.
+	//    times to the function's dead-letter queue (if it's configured). The API
+	//    response only includes a status code.
 	//
 	//    * DryRun - Validate parameter values and verify that the user or role
 	//    has permission to invoke the function.
@@ -6523,7 +6753,7 @@ type InvokeInput struct {
 	// Set to Tail to include the execution log in the response.
 	LogType *string `location:"header" locationName:"X-Amz-Log-Type" type:"string" enum:"LogType"`
 
-	// JSON that you want to provide to your Lambda function as input.
+	// The JSON that you want to provide to your Lambda function as input.
 	Payload []byte `type:"blob" sensitive:"true"`
 
 	// Specify a version or alias to invoke a published version of the function.
@@ -6599,29 +6829,29 @@ type InvokeOutput struct {
 	_ struct{} `type:"structure" payload:"Payload"`
 
 	// The version of the function that executed. When you invoke a function with
-	// an alias, indicates which version the alias resolved to.
+	// an alias, this indicates which version the alias resolved to.
 	ExecutedVersion *string `location:"header" locationName:"X-Amz-Executed-Version" min:"1" type:"string"`
 
-	// If present, indicates that an error occured during function execution. Details
+	// If present, indicates that an error occurred during function execution. Details
 	// about the error are included in the response payload.
 	//
 	//    * Handled - The runtime caught an error thrown by the function and formatted
 	//    it into a JSON document.
 	//
-	//    * Unhandled - The runtime did not handle the error. For example, the function
+	//    * Unhandled - The runtime didn't handle the error. For example, the function
 	//    ran out of memory or timed out.
 	FunctionError *string `location:"header" locationName:"X-Amz-Function-Error" type:"string"`
 
-	// The last 4 KB of the execution log, base64 encoded.
+	// The last 4 KB of the execution log, which is base64 encoded.
 	LogResult *string `location:"header" locationName:"X-Amz-Log-Result" type:"string"`
 
 	// The response from the function, or an error object.
 	Payload []byte `type:"blob" sensitive:"true"`
 
-	// The HTTP status code will be in the 200 range for successful request. For
-	// the RequestResponse invocation type this status code will be 200. For the
-	// Event invocation type this status code will be 202. For the DryRun invocation
-	// type the status code will be 204.
+	// The HTTP status code is in the 200 range for a successful request. For the
+	// RequestResponse invocation type, this status code is 200. For the Event invocation
+	// type, this status code is 202. For the DryRun invocation type, the status
+	// code is 204.
 	StatusCode *int64 `location:"statusCode" type:"integer"`
 }
 
@@ -6665,7 +6895,7 @@ func (s *InvokeOutput) SetStatusCode(v int64) *InvokeOutput {
 	return s
 }
 
-// An AWS Lambda layer (http://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
+// An AWS Lambda layer (https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
 type Layer struct {
 	_ struct{} `type:"structure"`
 
@@ -6698,7 +6928,7 @@ func (s *Layer) SetCodeSize(v int64) *Layer {
 	return s
 }
 
-// A ZIP archive that contains the contents of an AWS Lambda layer (http://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
+// A ZIP archive that contains the contents of an AWS Lambda layer (https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
 // You can specify either an Amazon S3 location, or upload a layer archive directly.
 type LayerVersionContentInput struct {
 	_ struct{} `type:"structure"`
@@ -6772,7 +7002,7 @@ func (s *LayerVersionContentInput) SetZipFile(v []byte) *LayerVersionContentInpu
 	return s
 }
 
-// Details about a version of an AWS Lambda layer (http://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
+// Details about a version of an AWS Lambda layer (https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
 type LayerVersionContentOutput struct {
 	_ struct{} `type:"structure"`
 
@@ -6814,7 +7044,7 @@ func (s *LayerVersionContentOutput) SetLocation(v string) *LayerVersionContentOu
 	return s
 }
 
-// Details about a version of an AWS Lambda layer (http://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
+// Details about a version of an AWS Lambda layer (https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
 type LayerVersionsListItem struct {
 	_ struct{} `type:"structure"`
 
@@ -6883,7 +7113,7 @@ func (s *LayerVersionsListItem) SetVersion(v int64) *LayerVersionsListItem {
 	return s
 }
 
-// Details about an AWS Lambda layer (http://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
+// Details about an AWS Lambda layer (https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
 type LayersListItem struct {
 	_ struct{} `type:"structure"`
 
@@ -6928,7 +7158,7 @@ func (s *LayersListItem) SetLayerName(v string) *LayersListItem {
 type ListAliasesInput struct {
 	_ struct{} `type:"structure"`
 
-	// The name of the lambda function.
+	// The name of the Lambda function.
 	//
 	// Name formats
 	//
@@ -6947,8 +7177,8 @@ type ListAliasesInput struct {
 	// Specify a function version to only list aliases that invoke that version.
 	FunctionVersion *string `location:"querystring" locationName:"FunctionVersion" min:"1" type:"string"`
 
-	// Specify the pagination token returned by a previous request to retrieve the
-	// next page of results.
+	// Specify the pagination token that's returned by a previous request to retrieve
+	// the next page of results.
 	Marker *string `location:"querystring" locationName:"Marker" type:"string"`
 
 	// Limit the number of aliases returned.
@@ -7017,7 +7247,7 @@ type ListAliasesOutput struct {
 	// A list of aliases.
 	Aliases []*AliasConfiguration `type:"list"`
 
-	// Pagination token included if more results are available.
+	// The pagination token that's included if more results are available.
 	NextMarker *string `type:"string"`
 }
 
@@ -7167,11 +7397,11 @@ type ListFunctionsInput struct {
 	// Set to ALL to include entries for all published versions of each function.
 	FunctionVersion *string `location:"querystring" locationName:"FunctionVersion" type:"string" enum:"FunctionVersion"`
 
-	// Specify the pagination token returned by a previous request to retrieve the
-	// next page of results.
+	// Specify the pagination token that's returned by a previous request to retrieve
+	// the next page of results.
 	Marker *string `location:"querystring" locationName:"Marker" type:"string"`
 
-	// For Lambda@Edge functions, the region of the master function. For example,
+	// For Lambda@Edge functions, the AWS Region of the master function. For example,
 	// us-east-2 or ALL. If specified, you must set FunctionVersion to ALL.
 	MasterRegion *string `location:"querystring" locationName:"MasterRegion" type:"string"`
 
@@ -7234,7 +7464,7 @@ type ListFunctionsOutput struct {
 	// A list of Lambda functions.
 	Functions []*FunctionConfiguration `type:"list"`
 
-	// Pagination token included if more results are available.
+	// The pagination token that's included if more results are available.
 	NextMarker *string `type:"string"`
 }
 
@@ -7516,7 +7746,7 @@ func (s *ListTagsOutput) SetTags(v map[string]*string) *ListTagsOutput {
 type ListVersionsByFunctionInput struct {
 	_ struct{} `type:"structure"`
 
-	// The name of the lambda function.
+	// The name of the Lambda function.
 	//
 	// Name formats
 	//
@@ -7532,11 +7762,11 @@ type ListVersionsByFunctionInput struct {
 	// FunctionName is a required field
 	FunctionName *string `location:"uri" locationName:"FunctionName" min:"1" type:"string" required:"true"`
 
-	// Specify the pagination token returned by a previous request to retrieve the
-	// next page of results.
+	// Specify the pagination token that's returned by a previous request to retrieve
+	// the next page of results.
 	Marker *string `location:"querystring" locationName:"Marker" type:"string"`
 
-	// Limit the number of versions returned.
+	// Limit the number of versions that are returned.
 	MaxItems *int64 `location:"querystring" locationName:"MaxItems" min:"1" type:"integer"`
 }
 
@@ -7590,7 +7820,7 @@ func (s *ListVersionsByFunctionInput) SetMaxItems(v int64) *ListVersionsByFuncti
 type ListVersionsByFunctionOutput struct {
 	_ struct{} `type:"structure"`
 
-	// Pagination token included if more results are available.
+	// The pagination token that's included if more results are available.
 	NextMarker *string `type:"string"`
 
 	// A list of Lambda function versions.
@@ -7622,7 +7852,7 @@ func (s *ListVersionsByFunctionOutput) SetVersions(v []*FunctionConfiguration) *
 type PublishLayerVersionInput struct {
 	_ struct{} `type:"structure"`
 
-	// A list of compatible function runtimes (http://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html).
+	// A list of compatible function runtimes (https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html).
 	// Used for filtering with ListLayers and ListLayerVersions.
 	CompatibleRuntimes []*string `type:"list"`
 
@@ -7804,17 +8034,17 @@ func (s *PublishLayerVersionOutput) SetVersion(v int64) *PublishLayerVersionOutp
 type PublishVersionInput struct {
 	_ struct{} `type:"structure"`
 
-	// Only publish a version if the hash matches the value specified. Use this
-	// option to avoid publishing a version if the function code has changed since
-	// you last updated it. You can get the hash for the version you uploaded from
-	// the output of UpdateFunctionCode.
+	// Only publish a version if the hash value matches the value that's specified.
+	// Use this option to avoid publishing a version if the function code has changed
+	// since you last updated it. You can get the hash for the version that you
+	// uploaded from the output of UpdateFunctionCode.
 	CodeSha256 *string `type:"string"`
 
-	// Specify a description for the version to override the description in the
-	// function configuration.
+	// A description for the version to override the description in the function
+	// configuration.
 	Description *string `type:"string"`
 
-	// The name of the lambda function.
+	// The name of the Lambda function.
 	//
 	// Name formats
 	//
@@ -7830,9 +8060,9 @@ type PublishVersionInput struct {
 	// FunctionName is a required field
 	FunctionName *string `location:"uri" locationName:"FunctionName" min:"1" type:"string" required:"true"`
 
-	// Only update the function if the revision ID matches the ID specified. Use
-	// this option to avoid publishing a version if the function configuration has
-	// changed since you last updated it.
+	// Only update the function if the revision ID matches the ID that's specified.
+	// Use this option to avoid publishing a version if the function configuration
+	// has changed since you last updated it.
 	RevisionId *string `type:"string"`
 }
 
@@ -7955,8 +8185,8 @@ func (s *PutFunctionConcurrencyInput) SetReservedConcurrentExecutions(v int64) *
 type PutFunctionConcurrencyOutput struct {
 	_ struct{} `type:"structure"`
 
-	// The number of concurrent executions reserved for this function. For more
-	// information, see Managing Concurrency (http://docs.aws.amazon.com/lambda/latest/dg/concurrent-executions.html).
+	// The number of concurrent executions that are reserved for this function.
+	// For more information, see Managing Concurrency (https://docs.aws.amazon.com/lambda/latest/dg/concurrent-executions.html).
 	ReservedConcurrentExecutions *int64 `type:"integer"`
 }
 
@@ -8096,8 +8326,9 @@ type RemovePermissionInput struct {
 	// of the function.
 	Qualifier *string `location:"querystring" locationName:"Qualifier" min:"1" type:"string"`
 
-	// Only update the policy if the revision ID matches the ID specified. Use this
-	// option to avoid modifying a policy that has changed since you last read it.
+	// Only update the policy if the revision ID matches the ID that's specified.
+	// Use this option to avoid modifying a policy that has changed since you last
+	// read it.
 	RevisionId *string `location:"querystring" locationName:"RevisionId" type:"string"`
 
 	// Statement ID of the permission to remove.
@@ -8371,7 +8602,7 @@ type UpdateAliasInput struct {
 	// A description of the alias.
 	Description *string `type:"string"`
 
-	// The name of the lambda function.
+	// The name of the Lambda function.
 	//
 	// Name formats
 	//
@@ -8395,11 +8626,12 @@ type UpdateAliasInput struct {
 	// Name is a required field
 	Name *string `location:"uri" locationName:"Name" min:"1" type:"string" required:"true"`
 
-	// Only update the alias if the revision ID matches the ID specified. Use this
-	// option to avoid modifying an alias that has changed since you last read it.
+	// Only update the alias if the revision ID matches the ID that's specified.
+	// Use this option to avoid modifying an alias that has changed since you last
+	// read it.
 	RevisionId *string `type:"string"`
 
-	// The routing configuration (http://docs.aws.amazon.com/lambda/latest/dg/lambda-traffic-shifting-using-aliases.html)
+	// The routing configuration (https://docs.aws.amazon.com/lambda/latest/dg/lambda-traffic-shifting-using-aliases.html)
 	// of the alias.
 	RoutingConfig *AliasRoutingConfiguration `type:"structure"`
 }
@@ -8595,13 +8827,13 @@ type UpdateFunctionCodeInput struct {
 	// This has the same effect as calling PublishVersion separately.
 	Publish *bool `type:"boolean"`
 
-	// Only update the function if the revision ID matches the ID specified. Use
-	// this option to avoid modifying a function that has changed since you last
-	// read it.
+	// Only update the function if the revision ID matches the ID that's specified.
+	// Use this option to avoid modifying a function that has changed since you
+	// last read it.
 	RevisionId *string `type:"string"`
 
-	// An Amazon S3 bucket in the same region as your function. The bucket can be
-	// in a different AWS account.
+	// An Amazon S3 bucket in the same AWS Region as your function. The bucket can
+	// be in a different AWS account.
 	S3Bucket *string `min:"3" type:"string"`
 
 	// The Amazon S3 key of the deployment package.
@@ -8705,14 +8937,13 @@ type UpdateFunctionConfigurationInput struct {
 
 	// A dead letter queue configuration that specifies the queue or topic where
 	// Lambda sends asynchronous events when they fail processing. For more information,
-	// see Dead Letter Queues (http://docs.aws.amazon.com/lambda/latest/dg/dlq.html).
+	// see Dead Letter Queues (https://docs.aws.amazon.com/lambda/latest/dg/dlq.html).
 	DeadLetterConfig *DeadLetterConfig `type:"structure"`
 
-	// A short user-defined function description. AWS Lambda does not use this value.
-	// Assign a meaningful description as you see fit.
+	// A description of the function.
 	Description *string `type:"string"`
 
-	// The parent object that contains your environment's configuration settings.
+	// Environment variables that are accessible from function code during execution.
 	Environment *Environment `type:"structure"`
 
 	// The name of the Lambda function.
@@ -8731,49 +8962,50 @@ type UpdateFunctionConfigurationInput struct {
 	// FunctionName is a required field
 	FunctionName *string `location:"uri" locationName:"FunctionName" min:"1" type:"string" required:"true"`
 
-	// The function that Lambda calls to begin executing your function. For Node.js,
-	// it is the module-name.export value in your function.
+	// The name of the method within your code that Lambda calls to execute your
+	// function. The format includes the file name. It can also include namespaces
+	// and other qualifiers, depending on the runtime. For more information, see
+	// Programming Model (https://docs.aws.amazon.com/lambda/latest/dg/programming-model-v2.html).
 	Handler *string `type:"string"`
 
-	// The Amazon Resource Name (ARN) of the KMS key used to encrypt your function's
-	// environment variables. If you elect to use the AWS Lambda default service
-	// key, pass in an empty string ("") for this parameter.
+	// The ARN of the AWS Key Management Service (AWS KMS) key that's used to encrypt
+	// your function's environment variables. If it's not provided, AWS Lambda uses
+	// a default service key.
 	KMSKeyArn *string `type:"string"`
 
-	// A list of function layers (http://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html)
-	// to add to the function's execution environment.
+	// A list of function layers (https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html)
+	// to add to the function's execution environment. Specify each layer by its
+	// ARN, including the version.
 	Layers []*string `type:"list"`
 
-	// The amount of memory, in MB, your Lambda function is given. AWS Lambda uses
-	// this memory size to infer the amount of CPU allocated to your function. Your
-	// function use-case determines your CPU and memory requirements. For example,
-	// a database operation might need less memory compared to an image processing
-	// function. The default value is 128 MB. The value must be a multiple of 64
-	// MB.
+	// The amount of memory that your function has access to. Increasing the function's
+	// memory also increases its CPU allocation. The default value is 128 MB. The
+	// value must be a multiple of 64 MB.
 	MemorySize *int64 `min:"128" type:"integer"`
 
-	// Only update the function if the revision ID matches the ID specified. Use
-	// this option to avoid modifying a function that has changed since you last
-	// read it.
+	// Only update the function if the revision ID matches the ID that's specified.
+	// Use this option to avoid modifying a function that has changed since you
+	// last read it.
 	RevisionId *string `type:"string"`
 
-	// The Amazon Resource Name (ARN) of the IAM role that Lambda will assume when
-	// it executes your function.
+	// The Amazon Resource Name (ARN) of the function's execution role.
 	Role *string `type:"string"`
 
-	// The runtime version for the function.
+	// The identifier of the function's runtime (https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html).
 	Runtime *string `type:"string" enum:"Runtime"`
 
-	// The amount of time that Lambda allows a function to run before terminating
-	// it. The default is 3 seconds. The maximum allowed value is 900 seconds.
+	// The amount of time that Lambda allows a function to run before stopping it.
+	// The default is 3 seconds. The maximum allowed value is 900 seconds.
 	Timeout *int64 `min:"1" type:"integer"`
 
 	// Set Mode to Active to sample and trace a subset of incoming requests with
 	// AWS X-Ray.
 	TracingConfig *TracingConfig `type:"structure"`
 
-	// Specify security groups and subnets in a VPC to which your Lambda function
-	// needs access.
+	// For network connectivity to AWS resources in a VPC, specify a list of security
+	// groups and subnets in the VPC. When you connect a function to a VPC, it can
+	// only access resources and the internet through that VPC. For more information,
+	// see VPC Settings (https://docs.aws.amazon.com/lambda/latest/dg/vpc.html).
 	VpcConfig *VpcConfig `type:"structure"`
 }
 
@@ -8893,7 +9125,7 @@ func (s *UpdateFunctionConfigurationInput) SetVpcConfig(v *VpcConfig) *UpdateFun
 	return s
 }
 
-// The VPC security groups and subnets attached to a Lambda function.
+// The VPC security groups and subnets that are attached to a Lambda function.
 type VpcConfig struct {
 	_ struct{} `type:"structure"`
 
@@ -8926,7 +9158,7 @@ func (s *VpcConfig) SetSubnetIds(v []*string) *VpcConfig {
 	return s
 }
 
-// The VPC security groups and subnets attached to a Lambda function.
+// The VPC security groups and subnets that are attached to a Lambda function.
 type VpcConfigResponse struct {
 	_ struct{} `type:"structure"`
 
@@ -9015,6 +9247,9 @@ const (
 
 	// RuntimeNodejs810 is a Runtime enum value
 	RuntimeNodejs810 = "nodejs8.10"
+
+	// RuntimeNodejs10X is a Runtime enum value
+	RuntimeNodejs10X = "nodejs10.x"
 
 	// RuntimeJava8 is a Runtime enum value
 	RuntimeJava8 = "java8"

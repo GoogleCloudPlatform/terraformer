@@ -58,16 +58,16 @@ const (
 	//    * You tried to update an object (ByteMatchSet, IPSet, Rule, or WebACL)
 	//    using an action other than INSERT or DELETE.
 	//
-	//    * You tried to create a WebACL with a DefaultActionType other than ALLOW,
+	//    * You tried to create a WebACL with a DefaultAction Type other than ALLOW,
 	//    BLOCK, or COUNT.
 	//
 	//    * You tried to create a RateBasedRule with a RateKey value other than
 	//    IP.
 	//
-	//    * You tried to update a WebACL with a WafActionType other than ALLOW,
+	//    * You tried to update a WebACL with a WafAction Type other than ALLOW,
 	//    BLOCK, or COUNT.
 	//
-	//    * You tried to update a ByteMatchSet with a FieldToMatchType other than
+	//    * You tried to update a ByteMatchSet with a FieldToMatch Type other than
 	//    HEADER, METHOD, QUERY_STRING, URI, or BODY.
 	//
 	//    * You tried to update a ByteMatchSet with a Field of HEADER but no value
@@ -115,7 +115,7 @@ const (
 	//
 	// The operation exceeds a resource limit, for example, the maximum number of
 	// WebACL objects that you can create for an AWS account. For more information,
-	// see Limits (http://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
+	// see Limits (https://docs.aws.amazon.com/waf/latest/developerguide/limits.html)
 	// in the AWS WAF Developer Guide.
 	ErrCodeLimitsExceededException = "WAFLimitsExceededException"
 

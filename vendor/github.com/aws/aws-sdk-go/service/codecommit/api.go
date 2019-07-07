@@ -13,6 +13,155 @@ import (
 	"github.com/aws/aws-sdk-go/private/protocol/jsonrpc"
 )
 
+const opBatchDescribeMergeConflicts = "BatchDescribeMergeConflicts"
+
+// BatchDescribeMergeConflictsRequest generates a "aws/request.Request" representing the
+// client's request for the BatchDescribeMergeConflicts operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See BatchDescribeMergeConflicts for more information on using the BatchDescribeMergeConflicts
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the BatchDescribeMergeConflictsRequest method.
+//    req, resp := client.BatchDescribeMergeConflictsRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/BatchDescribeMergeConflicts
+func (c *CodeCommit) BatchDescribeMergeConflictsRequest(input *BatchDescribeMergeConflictsInput) (req *request.Request, output *BatchDescribeMergeConflictsOutput) {
+	op := &request.Operation{
+		Name:       opBatchDescribeMergeConflicts,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &BatchDescribeMergeConflictsInput{}
+	}
+
+	output = &BatchDescribeMergeConflictsOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// BatchDescribeMergeConflicts API operation for AWS CodeCommit.
+//
+// Returns information about one or more merge conflicts in the attempted merge
+// of two commit specifiers using the squash or three-way merge strategy.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS CodeCommit's
+// API operation BatchDescribeMergeConflicts for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeRepositoryNameRequiredException "RepositoryNameRequiredException"
+//   A repository name is required but was not specified.
+//
+//   * ErrCodeInvalidRepositoryNameException "InvalidRepositoryNameException"
+//   At least one specified repository name is not valid.
+//
+//   This exception only occurs when a specified repository name is not valid.
+//   Other exceptions occur when a required repository parameter is missing, or
+//   when a specified repository does not exist.
+//
+//   * ErrCodeRepositoryDoesNotExistException "RepositoryDoesNotExistException"
+//   The specified repository does not exist.
+//
+//   * ErrCodeMergeOptionRequiredException "MergeOptionRequiredException"
+//   A merge option or stategy is required, and none was provided.
+//
+//   * ErrCodeInvalidMergeOptionException "InvalidMergeOptionException"
+//   The specified merge option is not valid for this operation. Not all merge
+//   strategies are supported for all operations.
+//
+//   * ErrCodeInvalidContinuationTokenException "InvalidContinuationTokenException"
+//   The specified continuation token is not valid.
+//
+//   * ErrCodeCommitRequiredException "CommitRequiredException"
+//   A commit was not specified.
+//
+//   * ErrCodeCommitDoesNotExistException "CommitDoesNotExistException"
+//   The specified commit does not exist or no commit was specified, and the specified
+//   repository has no default branch.
+//
+//   * ErrCodeInvalidCommitException "InvalidCommitException"
+//   The specified commit is not valid.
+//
+//   * ErrCodeTipsDivergenceExceededException "TipsDivergenceExceededException"
+//   The divergence between the tips of the provided commit specifiers is too
+//   great to determine whether there might be any merge conflicts. Locally compare
+//   the specifiers using git diff or a diff tool.
+//
+//   * ErrCodeInvalidMaxConflictFilesException "InvalidMaxConflictFilesException"
+//   The specified value for the number of conflict files to return is not valid.
+//
+//   * ErrCodeInvalidMaxMergeHunksException "InvalidMaxMergeHunksException"
+//   The specified value for the number of merge hunks to return is not valid.
+//
+//   * ErrCodeInvalidConflictDetailLevelException "InvalidConflictDetailLevelException"
+//   The specified conflict detail level is not valid.
+//
+//   * ErrCodeInvalidConflictResolutionStrategyException "InvalidConflictResolutionStrategyException"
+//   The specified conflict resolution strategy is not valid.
+//
+//   * ErrCodeMaximumFileContentToLoadExceededException "MaximumFileContentToLoadExceededException"
+//   The number of files to load exceeds the allowed limit.
+//
+//   * ErrCodeMaximumItemsToCompareExceededException "MaximumItemsToCompareExceededException"
+//   The maximum number of items to compare between the source or destination
+//   branches and the merge base has exceeded the maximum allowed.
+//
+//   * ErrCodeEncryptionIntegrityChecksFailedException "EncryptionIntegrityChecksFailedException"
+//   An encryption integrity check failed.
+//
+//   * ErrCodeEncryptionKeyAccessDeniedException "EncryptionKeyAccessDeniedException"
+//   An encryption key could not be accessed.
+//
+//   * ErrCodeEncryptionKeyDisabledException "EncryptionKeyDisabledException"
+//   The encryption key is disabled.
+//
+//   * ErrCodeEncryptionKeyNotFoundException "EncryptionKeyNotFoundException"
+//   No encryption key was found.
+//
+//   * ErrCodeEncryptionKeyUnavailableException "EncryptionKeyUnavailableException"
+//   The encryption key is not available.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/BatchDescribeMergeConflicts
+func (c *CodeCommit) BatchDescribeMergeConflicts(input *BatchDescribeMergeConflictsInput) (*BatchDescribeMergeConflictsOutput, error) {
+	req, out := c.BatchDescribeMergeConflictsRequest(input)
+	return out, req.Send()
+}
+
+// BatchDescribeMergeConflictsWithContext is the same as BatchDescribeMergeConflicts with the addition of
+// the ability to pass a context and additional request options.
+//
+// See BatchDescribeMergeConflicts for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CodeCommit) BatchDescribeMergeConflictsWithContext(ctx aws.Context, input *BatchDescribeMergeConflictsInput, opts ...request.Option) (*BatchDescribeMergeConflictsOutput, error) {
+	req, out := c.BatchDescribeMergeConflictsRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
 const opBatchGetRepositories = "BatchGetRepositories"
 
 // BatchGetRepositoriesRequest generates a "aws/request.Request" representing the
@@ -246,6 +395,240 @@ func (c *CodeCommit) CreateBranch(input *CreateBranchInput) (*CreateBranchOutput
 // for more information on using Contexts.
 func (c *CodeCommit) CreateBranchWithContext(ctx aws.Context, input *CreateBranchInput, opts ...request.Option) (*CreateBranchOutput, error) {
 	req, out := c.CreateBranchRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opCreateCommit = "CreateCommit"
+
+// CreateCommitRequest generates a "aws/request.Request" representing the
+// client's request for the CreateCommit operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See CreateCommit for more information on using the CreateCommit
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the CreateCommitRequest method.
+//    req, resp := client.CreateCommitRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/CreateCommit
+func (c *CodeCommit) CreateCommitRequest(input *CreateCommitInput) (req *request.Request, output *CreateCommitOutput) {
+	op := &request.Operation{
+		Name:       opCreateCommit,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &CreateCommitInput{}
+	}
+
+	output = &CreateCommitOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// CreateCommit API operation for AWS CodeCommit.
+//
+// Creates a commit for a repository on the tip of a specified branch.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS CodeCommit's
+// API operation CreateCommit for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeRepositoryNameRequiredException "RepositoryNameRequiredException"
+//   A repository name is required but was not specified.
+//
+//   * ErrCodeInvalidRepositoryNameException "InvalidRepositoryNameException"
+//   At least one specified repository name is not valid.
+//
+//   This exception only occurs when a specified repository name is not valid.
+//   Other exceptions occur when a required repository parameter is missing, or
+//   when a specified repository does not exist.
+//
+//   * ErrCodeRepositoryDoesNotExistException "RepositoryDoesNotExistException"
+//   The specified repository does not exist.
+//
+//   * ErrCodeParentCommitIdRequiredException "ParentCommitIdRequiredException"
+//   A parent commit ID is required. To view the full commit ID of a branch in
+//   a repository, use GetBranch or a Git command (for example, git pull or git
+//   log).
+//
+//   * ErrCodeInvalidParentCommitIdException "InvalidParentCommitIdException"
+//   The parent commit ID is not valid. The commit ID cannot be empty, and must
+//   match the head commit ID for the branch of the repository where you want
+//   to add or update a file.
+//
+//   * ErrCodeParentCommitDoesNotExistException "ParentCommitDoesNotExistException"
+//   The parent commit ID is not valid because it does not exist. The specified
+//   parent commit ID does not exist in the specified branch of the repository.
+//
+//   * ErrCodeParentCommitIdOutdatedException "ParentCommitIdOutdatedException"
+//   The file could not be added because the provided parent commit ID is not
+//   the current tip of the specified branch. To view the full commit ID of the
+//   current head of the branch, use GetBranch.
+//
+//   * ErrCodeBranchNameRequiredException "BranchNameRequiredException"
+//   A branch name is required but was not specified.
+//
+//   * ErrCodeInvalidBranchNameException "InvalidBranchNameException"
+//   The specified reference name is not valid.
+//
+//   * ErrCodeBranchDoesNotExistException "BranchDoesNotExistException"
+//   The specified branch does not exist.
+//
+//   * ErrCodeBranchNameIsTagNameException "BranchNameIsTagNameException"
+//   The specified branch name is not valid because it is a tag name. Type the
+//   name of a current branch in the repository. For a list of valid branch names,
+//   use ListBranches.
+//
+//   * ErrCodeFileEntryRequiredException "FileEntryRequiredException"
+//   The commit cannot be created because no files have been specified as added,
+//   updated, or changed (PutFile or DeleteFile) for the commit.
+//
+//   * ErrCodeMaximumFileEntriesExceededException "MaximumFileEntriesExceededException"
+//   The number of specified files to change as part of this commit exceeds the
+//   maximum number of files that can be changed in a single commit. Consider
+//   using a Git client for these changes.
+//
+//   * ErrCodePutFileEntryConflictException "PutFileEntryConflictException"
+//   The commit cannot be created because one or more files specified in the commit
+//   reference both a file and a folder.
+//
+//   * ErrCodeSourceFileOrContentRequiredException "SourceFileOrContentRequiredException"
+//   The commit cannot be created because no source files or file content have
+//   been specified for the commit.
+//
+//   * ErrCodeFileContentAndSourceFileSpecifiedException "FileContentAndSourceFileSpecifiedException"
+//   The commit cannot be created because both a source file and file content
+//   have been specified for the same file. You cannot provide both. Either specify
+//   a source file, or provide the file content directly.
+//
+//   * ErrCodePathRequiredException "PathRequiredException"
+//   The folderPath for a location cannot be null.
+//
+//   * ErrCodeInvalidPathException "InvalidPathException"
+//   The specified path is not valid.
+//
+//   * ErrCodeSamePathRequestException "SamePathRequestException"
+//   The commit cannot be created because one or more changes in this commit duplicate
+//   actions in the same file path. For example, you cannot make the same delete
+//   request to the same file in the same file path twice, or make a delete request
+//   and a move request to the same file as part of the same commit.
+//
+//   * ErrCodeFileDoesNotExistException "FileDoesNotExistException"
+//   The specified file does not exist. Verify that you have provided the correct
+//   name of the file, including its full path and extension.
+//
+//   * ErrCodeFileContentSizeLimitExceededException "FileContentSizeLimitExceededException"
+//   The file cannot be added because it is too large. The maximum file size that
+//   can be added is 6 MB, and the combined file content change size is 7 MB.
+//   Consider making these changes using a Git client.
+//
+//   * ErrCodeFolderContentSizeLimitExceededException "FolderContentSizeLimitExceededException"
+//   The commit cannot be created because at least one of the overall changes
+//   in the commit results in a folder whose contents exceed the limit of 6 MB.
+//   Either reduce the number and size of your changes, or split the changes across
+//   multiple folders.
+//
+//   * ErrCodeInvalidDeletionParameterException "InvalidDeletionParameterException"
+//   The specified deletion parameter is not valid.
+//
+//   * ErrCodeRestrictedSourceFileException "RestrictedSourceFileException"
+//   The commit cannot be created because one of the changes specifies copying
+//   or moving a .gitkeep file.
+//
+//   * ErrCodeFileModeRequiredException "FileModeRequiredException"
+//   The commit cannot be created because a file mode is required to update mode
+//   permissions for an existing file, but no file mode has been specified.
+//
+//   * ErrCodeInvalidFileModeException "InvalidFileModeException"
+//   The specified file mode permission is not valid. For a list of valid file
+//   mode permissions, see PutFile.
+//
+//   * ErrCodeNameLengthExceededException "NameLengthExceededException"
+//   The user name is not valid because it has exceeded the character limit for
+//   author names.
+//
+//   * ErrCodeInvalidEmailException "InvalidEmailException"
+//   The specified email address either contains one or more characters that are
+//   not allowed, or it exceeds the maximum number of characters allowed for an
+//   email address.
+//
+//   * ErrCodeCommitMessageLengthExceededException "CommitMessageLengthExceededException"
+//   The commit message is too long. Provide a shorter string.
+//
+//   * ErrCodeEncryptionIntegrityChecksFailedException "EncryptionIntegrityChecksFailedException"
+//   An encryption integrity check failed.
+//
+//   * ErrCodeEncryptionKeyAccessDeniedException "EncryptionKeyAccessDeniedException"
+//   An encryption key could not be accessed.
+//
+//   * ErrCodeEncryptionKeyDisabledException "EncryptionKeyDisabledException"
+//   The encryption key is disabled.
+//
+//   * ErrCodeEncryptionKeyNotFoundException "EncryptionKeyNotFoundException"
+//   No encryption key was found.
+//
+//   * ErrCodeEncryptionKeyUnavailableException "EncryptionKeyUnavailableException"
+//   The encryption key is not available.
+//
+//   * ErrCodeNoChangeException "NoChangeException"
+//   The commit cannot be created because no changes will be made to the repository
+//   as a result of this commit. A commit must contain at least one change.
+//
+//   * ErrCodeFileNameConflictsWithDirectoryNameException "FileNameConflictsWithDirectoryNameException"
+//   A file cannot be added to the repository because the specified file name
+//   has the same name as a directory in this repository. Either provide another
+//   name for the file, or add the file in a directory that does not match the
+//   file name.
+//
+//   * ErrCodeDirectoryNameConflictsWithFileNameException "DirectoryNameConflictsWithFileNameException"
+//   A file cannot be added to the repository because the specified path name
+//   has the same name as a file that already exists in this repository. Either
+//   provide a different name for the file, or specify a different path for the
+//   file.
+//
+//   * ErrCodeFilePathConflictsWithSubmodulePathException "FilePathConflictsWithSubmodulePathException"
+//   The commit cannot be created because a specified file path points to a submodule.
+//   Verify that the destination files have valid file paths that do not point
+//   to a submodule.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/CreateCommit
+func (c *CodeCommit) CreateCommit(input *CreateCommitInput) (*CreateCommitOutput, error) {
+	req, out := c.CreateCommitRequest(input)
+	return out, req.Send()
+}
+
+// CreateCommitWithContext is the same as CreateCommit with the addition of
+// the ability to pass a context and additional request options.
+//
+// See CreateCommit for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CodeCommit) CreateCommitWithContext(ctx aws.Context, input *CreateCommitInput, opts ...request.Option) (*CreateCommitOutput, error) {
+	req, out := c.CreateCommitRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -516,6 +899,18 @@ func (c *CodeCommit) CreateRepositoryRequest(input *CreateRepositoryInput) (req 
 //   * ErrCodeEncryptionKeyUnavailableException "EncryptionKeyUnavailableException"
 //   The encryption key is not available.
 //
+//   * ErrCodeInvalidTagsMapException "InvalidTagsMapException"
+//   The map of tags is not valid.
+//
+//   * ErrCodeTooManyTagsException "TooManyTagsException"
+//   The maximum number of tags for an AWS CodeCommit resource has been exceeded.
+//
+//   * ErrCodeInvalidSystemTagUsageException "InvalidSystemTagUsageException"
+//   The specified tag is not valid. Key names cannot be prefixed with aws:.
+//
+//   * ErrCodeTagPolicyException "TagPolicyException"
+//   The tag policy is not valid.
+//
 // See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/CreateRepository
 func (c *CodeCommit) CreateRepository(input *CreateRepositoryInput) (*CreateRepositoryOutput, error) {
 	req, out := c.CreateRepositoryRequest(input)
@@ -533,6 +928,217 @@ func (c *CodeCommit) CreateRepository(input *CreateRepositoryInput) (*CreateRepo
 // for more information on using Contexts.
 func (c *CodeCommit) CreateRepositoryWithContext(ctx aws.Context, input *CreateRepositoryInput, opts ...request.Option) (*CreateRepositoryOutput, error) {
 	req, out := c.CreateRepositoryRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opCreateUnreferencedMergeCommit = "CreateUnreferencedMergeCommit"
+
+// CreateUnreferencedMergeCommitRequest generates a "aws/request.Request" representing the
+// client's request for the CreateUnreferencedMergeCommit operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See CreateUnreferencedMergeCommit for more information on using the CreateUnreferencedMergeCommit
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the CreateUnreferencedMergeCommitRequest method.
+//    req, resp := client.CreateUnreferencedMergeCommitRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/CreateUnreferencedMergeCommit
+func (c *CodeCommit) CreateUnreferencedMergeCommitRequest(input *CreateUnreferencedMergeCommitInput) (req *request.Request, output *CreateUnreferencedMergeCommitOutput) {
+	op := &request.Operation{
+		Name:       opCreateUnreferencedMergeCommit,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &CreateUnreferencedMergeCommitInput{}
+	}
+
+	output = &CreateUnreferencedMergeCommitOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// CreateUnreferencedMergeCommit API operation for AWS CodeCommit.
+//
+// Creates an unreferenced commit that represents the result of merging two
+// branches using a specified merge strategy. This can help you determine the
+// outcome of a potential merge. This API cannot be used with the fast-forward
+// merge strategy, as that strategy does not create a merge commit.
+//
+// This unreferenced merge commit can only be accessed using the GetCommit API
+// or through git commands such as git fetch. To retrieve this commit, you must
+// specify its commit ID or otherwise reference it.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS CodeCommit's
+// API operation CreateUnreferencedMergeCommit for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeRepositoryNameRequiredException "RepositoryNameRequiredException"
+//   A repository name is required but was not specified.
+//
+//   * ErrCodeInvalidRepositoryNameException "InvalidRepositoryNameException"
+//   At least one specified repository name is not valid.
+//
+//   This exception only occurs when a specified repository name is not valid.
+//   Other exceptions occur when a required repository parameter is missing, or
+//   when a specified repository does not exist.
+//
+//   * ErrCodeRepositoryDoesNotExistException "RepositoryDoesNotExistException"
+//   The specified repository does not exist.
+//
+//   * ErrCodeTipsDivergenceExceededException "TipsDivergenceExceededException"
+//   The divergence between the tips of the provided commit specifiers is too
+//   great to determine whether there might be any merge conflicts. Locally compare
+//   the specifiers using git diff or a diff tool.
+//
+//   * ErrCodeCommitRequiredException "CommitRequiredException"
+//   A commit was not specified.
+//
+//   * ErrCodeInvalidCommitException "InvalidCommitException"
+//   The specified commit is not valid.
+//
+//   * ErrCodeCommitDoesNotExistException "CommitDoesNotExistException"
+//   The specified commit does not exist or no commit was specified, and the specified
+//   repository has no default branch.
+//
+//   * ErrCodeMergeOptionRequiredException "MergeOptionRequiredException"
+//   A merge option or stategy is required, and none was provided.
+//
+//   * ErrCodeInvalidMergeOptionException "InvalidMergeOptionException"
+//   The specified merge option is not valid for this operation. Not all merge
+//   strategies are supported for all operations.
+//
+//   * ErrCodeInvalidConflictDetailLevelException "InvalidConflictDetailLevelException"
+//   The specified conflict detail level is not valid.
+//
+//   * ErrCodeInvalidConflictResolutionStrategyException "InvalidConflictResolutionStrategyException"
+//   The specified conflict resolution strategy is not valid.
+//
+//   * ErrCodeInvalidConflictResolutionException "InvalidConflictResolutionException"
+//   The specified conflict resolution list is not valid.
+//
+//   * ErrCodeManualMergeRequiredException "ManualMergeRequiredException"
+//   The pull request cannot be merged automatically into the destination branch.
+//   You must manually merge the branches and resolve any conflicts.
+//
+//   * ErrCodeMaximumConflictResolutionEntriesExceededException "MaximumConflictResolutionEntriesExceededException"
+//   The number of allowed conflict resolution entries was exceeded.
+//
+//   * ErrCodeMultipleConflictResolutionEntriesException "MultipleConflictResolutionEntriesException"
+//   More than one conflict resolution entries exists for the conflict. A conflict
+//   can have only one conflict resolution entry.
+//
+//   * ErrCodeReplacementTypeRequiredException "ReplacementTypeRequiredException"
+//   A replacement type is required.
+//
+//   * ErrCodeInvalidReplacementTypeException "InvalidReplacementTypeException"
+//   Automerge was specified for resolving the conflict, but the specified replacement
+//   type is not valid.
+//
+//   * ErrCodeReplacementContentRequiredException "ReplacementContentRequiredException"
+//   USE_NEW_CONTENT was specified but no replacement content has been provided.
+//
+//   * ErrCodeInvalidReplacementContentException "InvalidReplacementContentException"
+//   Automerge was specified for resolving the conflict, but the replacement type
+//   is not valid or content is missing.
+//
+//   * ErrCodePathRequiredException "PathRequiredException"
+//   The folderPath for a location cannot be null.
+//
+//   * ErrCodeInvalidPathException "InvalidPathException"
+//   The specified path is not valid.
+//
+//   * ErrCodeFileContentSizeLimitExceededException "FileContentSizeLimitExceededException"
+//   The file cannot be added because it is too large. The maximum file size that
+//   can be added is 6 MB, and the combined file content change size is 7 MB.
+//   Consider making these changes using a Git client.
+//
+//   * ErrCodeFolderContentSizeLimitExceededException "FolderContentSizeLimitExceededException"
+//   The commit cannot be created because at least one of the overall changes
+//   in the commit results in a folder whose contents exceed the limit of 6 MB.
+//   Either reduce the number and size of your changes, or split the changes across
+//   multiple folders.
+//
+//   * ErrCodeMaximumFileContentToLoadExceededException "MaximumFileContentToLoadExceededException"
+//   The number of files to load exceeds the allowed limit.
+//
+//   * ErrCodeMaximumItemsToCompareExceededException "MaximumItemsToCompareExceededException"
+//   The maximum number of items to compare between the source or destination
+//   branches and the merge base has exceeded the maximum allowed.
+//
+//   * ErrCodeFileModeRequiredException "FileModeRequiredException"
+//   The commit cannot be created because a file mode is required to update mode
+//   permissions for an existing file, but no file mode has been specified.
+//
+//   * ErrCodeInvalidFileModeException "InvalidFileModeException"
+//   The specified file mode permission is not valid. For a list of valid file
+//   mode permissions, see PutFile.
+//
+//   * ErrCodeNameLengthExceededException "NameLengthExceededException"
+//   The user name is not valid because it has exceeded the character limit for
+//   author names.
+//
+//   * ErrCodeInvalidEmailException "InvalidEmailException"
+//   The specified email address either contains one or more characters that are
+//   not allowed, or it exceeds the maximum number of characters allowed for an
+//   email address.
+//
+//   * ErrCodeCommitMessageLengthExceededException "CommitMessageLengthExceededException"
+//   The commit message is too long. Provide a shorter string.
+//
+//   * ErrCodeEncryptionIntegrityChecksFailedException "EncryptionIntegrityChecksFailedException"
+//   An encryption integrity check failed.
+//
+//   * ErrCodeEncryptionKeyAccessDeniedException "EncryptionKeyAccessDeniedException"
+//   An encryption key could not be accessed.
+//
+//   * ErrCodeEncryptionKeyDisabledException "EncryptionKeyDisabledException"
+//   The encryption key is disabled.
+//
+//   * ErrCodeEncryptionKeyNotFoundException "EncryptionKeyNotFoundException"
+//   No encryption key was found.
+//
+//   * ErrCodeEncryptionKeyUnavailableException "EncryptionKeyUnavailableException"
+//   The encryption key is not available.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/CreateUnreferencedMergeCommit
+func (c *CodeCommit) CreateUnreferencedMergeCommit(input *CreateUnreferencedMergeCommitInput) (*CreateUnreferencedMergeCommitOutput, error) {
+	req, out := c.CreateUnreferencedMergeCommitRequest(input)
+	return out, req.Send()
+}
+
+// CreateUnreferencedMergeCommitWithContext is the same as CreateUnreferencedMergeCommit with the addition of
+// the ability to pass a context and additional request options.
+//
+// See CreateUnreferencedMergeCommit for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CodeCommit) CreateUnreferencedMergeCommitWithContext(ctx aws.Context, input *CreateUnreferencedMergeCommitInput, opts ...request.Option) (*CreateUnreferencedMergeCommitOutput, error) {
+	req, out := c.CreateUnreferencedMergeCommitRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -859,8 +1465,7 @@ func (c *CodeCommit) DeleteFileRequest(input *DeleteFileInput) (req *request.Req
 //
 //   * ErrCodeNameLengthExceededException "NameLengthExceededException"
 //   The user name is not valid because it has exceeded the character limit for
-//   file names. File names, including the path to the file, cannot exceed the
-//   character limit.
+//   author names.
 //
 //   * ErrCodeInvalidEmailException "InvalidEmailException"
 //   The specified email address either contains one or more characters that are
@@ -1013,6 +1618,220 @@ func (c *CodeCommit) DeleteRepositoryWithContext(ctx aws.Context, input *DeleteR
 	return out, req.Send()
 }
 
+const opDescribeMergeConflicts = "DescribeMergeConflicts"
+
+// DescribeMergeConflictsRequest generates a "aws/request.Request" representing the
+// client's request for the DescribeMergeConflicts operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See DescribeMergeConflicts for more information on using the DescribeMergeConflicts
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the DescribeMergeConflictsRequest method.
+//    req, resp := client.DescribeMergeConflictsRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/DescribeMergeConflicts
+func (c *CodeCommit) DescribeMergeConflictsRequest(input *DescribeMergeConflictsInput) (req *request.Request, output *DescribeMergeConflictsOutput) {
+	op := &request.Operation{
+		Name:       opDescribeMergeConflicts,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"nextToken"},
+			OutputTokens:    []string{"nextToken"},
+			LimitToken:      "maxMergeHunks",
+			TruncationToken: "",
+		},
+	}
+
+	if input == nil {
+		input = &DescribeMergeConflictsInput{}
+	}
+
+	output = &DescribeMergeConflictsOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// DescribeMergeConflicts API operation for AWS CodeCommit.
+//
+// Returns information about one or more merge conflicts in the attempted merge
+// of two commit specifiers using the squash or three-way merge strategy. If
+// the merge option for the attempted merge is specified as FAST_FORWARD_MERGE,
+// an exception will be thrown.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS CodeCommit's
+// API operation DescribeMergeConflicts for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeRepositoryNameRequiredException "RepositoryNameRequiredException"
+//   A repository name is required but was not specified.
+//
+//   * ErrCodeInvalidRepositoryNameException "InvalidRepositoryNameException"
+//   At least one specified repository name is not valid.
+//
+//   This exception only occurs when a specified repository name is not valid.
+//   Other exceptions occur when a required repository parameter is missing, or
+//   when a specified repository does not exist.
+//
+//   * ErrCodeRepositoryDoesNotExistException "RepositoryDoesNotExistException"
+//   The specified repository does not exist.
+//
+//   * ErrCodeMergeOptionRequiredException "MergeOptionRequiredException"
+//   A merge option or stategy is required, and none was provided.
+//
+//   * ErrCodeInvalidMergeOptionException "InvalidMergeOptionException"
+//   The specified merge option is not valid for this operation. Not all merge
+//   strategies are supported for all operations.
+//
+//   * ErrCodeInvalidContinuationTokenException "InvalidContinuationTokenException"
+//   The specified continuation token is not valid.
+//
+//   * ErrCodeCommitRequiredException "CommitRequiredException"
+//   A commit was not specified.
+//
+//   * ErrCodeCommitDoesNotExistException "CommitDoesNotExistException"
+//   The specified commit does not exist or no commit was specified, and the specified
+//   repository has no default branch.
+//
+//   * ErrCodeInvalidCommitException "InvalidCommitException"
+//   The specified commit is not valid.
+//
+//   * ErrCodeTipsDivergenceExceededException "TipsDivergenceExceededException"
+//   The divergence between the tips of the provided commit specifiers is too
+//   great to determine whether there might be any merge conflicts. Locally compare
+//   the specifiers using git diff or a diff tool.
+//
+//   * ErrCodePathRequiredException "PathRequiredException"
+//   The folderPath for a location cannot be null.
+//
+//   * ErrCodeInvalidPathException "InvalidPathException"
+//   The specified path is not valid.
+//
+//   * ErrCodeFileDoesNotExistException "FileDoesNotExistException"
+//   The specified file does not exist. Verify that you have provided the correct
+//   name of the file, including its full path and extension.
+//
+//   * ErrCodeInvalidMaxMergeHunksException "InvalidMaxMergeHunksException"
+//   The specified value for the number of merge hunks to return is not valid.
+//
+//   * ErrCodeInvalidConflictDetailLevelException "InvalidConflictDetailLevelException"
+//   The specified conflict detail level is not valid.
+//
+//   * ErrCodeInvalidConflictResolutionStrategyException "InvalidConflictResolutionStrategyException"
+//   The specified conflict resolution strategy is not valid.
+//
+//   * ErrCodeMaximumFileContentToLoadExceededException "MaximumFileContentToLoadExceededException"
+//   The number of files to load exceeds the allowed limit.
+//
+//   * ErrCodeMaximumItemsToCompareExceededException "MaximumItemsToCompareExceededException"
+//   The maximum number of items to compare between the source or destination
+//   branches and the merge base has exceeded the maximum allowed.
+//
+//   * ErrCodeEncryptionIntegrityChecksFailedException "EncryptionIntegrityChecksFailedException"
+//   An encryption integrity check failed.
+//
+//   * ErrCodeEncryptionKeyAccessDeniedException "EncryptionKeyAccessDeniedException"
+//   An encryption key could not be accessed.
+//
+//   * ErrCodeEncryptionKeyDisabledException "EncryptionKeyDisabledException"
+//   The encryption key is disabled.
+//
+//   * ErrCodeEncryptionKeyNotFoundException "EncryptionKeyNotFoundException"
+//   No encryption key was found.
+//
+//   * ErrCodeEncryptionKeyUnavailableException "EncryptionKeyUnavailableException"
+//   The encryption key is not available.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/DescribeMergeConflicts
+func (c *CodeCommit) DescribeMergeConflicts(input *DescribeMergeConflictsInput) (*DescribeMergeConflictsOutput, error) {
+	req, out := c.DescribeMergeConflictsRequest(input)
+	return out, req.Send()
+}
+
+// DescribeMergeConflictsWithContext is the same as DescribeMergeConflicts with the addition of
+// the ability to pass a context and additional request options.
+//
+// See DescribeMergeConflicts for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CodeCommit) DescribeMergeConflictsWithContext(ctx aws.Context, input *DescribeMergeConflictsInput, opts ...request.Option) (*DescribeMergeConflictsOutput, error) {
+	req, out := c.DescribeMergeConflictsRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+// DescribeMergeConflictsPages iterates over the pages of a DescribeMergeConflicts operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See DescribeMergeConflicts method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a DescribeMergeConflicts operation.
+//    pageNum := 0
+//    err := client.DescribeMergeConflictsPages(params,
+//        func(page *codecommit.DescribeMergeConflictsOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *CodeCommit) DescribeMergeConflictsPages(input *DescribeMergeConflictsInput, fn func(*DescribeMergeConflictsOutput, bool) bool) error {
+	return c.DescribeMergeConflictsPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// DescribeMergeConflictsPagesWithContext same as DescribeMergeConflictsPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CodeCommit) DescribeMergeConflictsPagesWithContext(ctx aws.Context, input *DescribeMergeConflictsInput, fn func(*DescribeMergeConflictsOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *DescribeMergeConflictsInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.DescribeMergeConflictsRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	cont := true
+	for p.Next() && cont {
+		cont = fn(p.Page().(*DescribeMergeConflictsOutput), !p.HasNextPage())
+	}
+	return p.Err()
+}
+
 const opDescribePullRequestEvents = "DescribePullRequestEvents"
 
 // DescribePullRequestEventsRequest generates a "aws/request.Request" representing the
@@ -1150,7 +1969,7 @@ func (c *CodeCommit) DescribePullRequestEventsWithContext(ctx aws.Context, input
 //    // Example iterating over at most 3 pages of a DescribePullRequestEvents operation.
 //    pageNum := 0
 //    err := client.DescribePullRequestEventsPages(params,
-//        func(page *DescribePullRequestEventsOutput, lastPage bool) bool {
+//        func(page *codecommit.DescribePullRequestEventsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -1283,7 +2102,7 @@ func (c *CodeCommit) GetBlobRequest(input *GetBlobInput) (req *request.Request, 
 //   * ErrCodeFileTooLargeException "FileTooLargeException"
 //   The specified file exceeds the file size limit for AWS CodeCommit. For more
 //   information about limits in AWS CodeCommit, see AWS CodeCommit User Guide
-//   (http://docs.aws.amazon.com/codecommit/latest/userguide/limits.html).
+//   (https://docs.aws.amazon.com/codecommit/latest/userguide/limits.html).
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/GetBlob
 func (c *CodeCommit) GetBlob(input *GetBlobInput) (*GetBlobOutput, error) {
@@ -1649,7 +2468,7 @@ func (c *CodeCommit) GetCommentsForComparedCommitWithContext(ctx aws.Context, in
 //    // Example iterating over at most 3 pages of a GetCommentsForComparedCommit operation.
 //    pageNum := 0
 //    err := client.GetCommentsForComparedCommitPages(params,
-//        func(page *GetCommentsForComparedCommitOutput, lastPage bool) bool {
+//        func(page *codecommit.GetCommentsForComparedCommitOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -1791,8 +2610,8 @@ func (c *CodeCommit) GetCommentsForPullRequestRequest(input *GetCommentsForPullR
 //
 //   * ErrCodeRepositoryNotAssociatedWithPullRequestException "RepositoryNotAssociatedWithPullRequestException"
 //   The repository does not contain any pull requests with that pull request
-//   ID. Check to make sure you have provided the correct repository name for
-//   the pull request.
+//   ID. Use GetPullRequest to verify the correct repository name for the pull
+//   request ID.
 //
 //   * ErrCodeEncryptionIntegrityChecksFailedException "EncryptionIntegrityChecksFailedException"
 //   An encryption integrity check failed.
@@ -1842,7 +2661,7 @@ func (c *CodeCommit) GetCommentsForPullRequestWithContext(ctx aws.Context, input
 //    // Example iterating over at most 3 pages of a GetCommentsForPullRequest operation.
 //    pageNum := 0
 //    err := client.GetCommentsForPullRequestPages(params,
-//        func(page *GetCommentsForPullRequestOutput, lastPage bool) bool {
+//        func(page *codecommit.GetCommentsForPullRequestOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -2143,7 +2962,7 @@ func (c *CodeCommit) GetDifferencesWithContext(ctx aws.Context, input *GetDiffer
 //    // Example iterating over at most 3 pages of a GetDifferences operation.
 //    pageNum := 0
 //    err := client.GetDifferencesPages(params,
-//        func(page *GetDifferencesOutput, lastPage bool) bool {
+//        func(page *codecommit.GetDifferencesOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -2284,7 +3103,7 @@ func (c *CodeCommit) GetFileRequest(input *GetFileInput) (req *request.Request, 
 //   * ErrCodeFileTooLargeException "FileTooLargeException"
 //   The specified file exceeds the file size limit for AWS CodeCommit. For more
 //   information about limits in AWS CodeCommit, see AWS CodeCommit User Guide
-//   (http://docs.aws.amazon.com/codecommit/latest/userguide/limits.html).
+//   (https://docs.aws.amazon.com/codecommit/latest/userguide/limits.html).
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/GetFile
 func (c *CodeCommit) GetFile(input *GetFileInput) (*GetFileOutput, error) {
@@ -2429,6 +3248,126 @@ func (c *CodeCommit) GetFolderWithContext(ctx aws.Context, input *GetFolderInput
 	return out, req.Send()
 }
 
+const opGetMergeCommit = "GetMergeCommit"
+
+// GetMergeCommitRequest generates a "aws/request.Request" representing the
+// client's request for the GetMergeCommit operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See GetMergeCommit for more information on using the GetMergeCommit
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the GetMergeCommitRequest method.
+//    req, resp := client.GetMergeCommitRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/GetMergeCommit
+func (c *CodeCommit) GetMergeCommitRequest(input *GetMergeCommitInput) (req *request.Request, output *GetMergeCommitOutput) {
+	op := &request.Operation{
+		Name:       opGetMergeCommit,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &GetMergeCommitInput{}
+	}
+
+	output = &GetMergeCommitOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// GetMergeCommit API operation for AWS CodeCommit.
+//
+// Returns information about a specified merge commit.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS CodeCommit's
+// API operation GetMergeCommit for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeRepositoryNameRequiredException "RepositoryNameRequiredException"
+//   A repository name is required but was not specified.
+//
+//   * ErrCodeInvalidRepositoryNameException "InvalidRepositoryNameException"
+//   At least one specified repository name is not valid.
+//
+//   This exception only occurs when a specified repository name is not valid.
+//   Other exceptions occur when a required repository parameter is missing, or
+//   when a specified repository does not exist.
+//
+//   * ErrCodeRepositoryDoesNotExistException "RepositoryDoesNotExistException"
+//   The specified repository does not exist.
+//
+//   * ErrCodeCommitRequiredException "CommitRequiredException"
+//   A commit was not specified.
+//
+//   * ErrCodeInvalidCommitException "InvalidCommitException"
+//   The specified commit is not valid.
+//
+//   * ErrCodeCommitDoesNotExistException "CommitDoesNotExistException"
+//   The specified commit does not exist or no commit was specified, and the specified
+//   repository has no default branch.
+//
+//   * ErrCodeInvalidConflictDetailLevelException "InvalidConflictDetailLevelException"
+//   The specified conflict detail level is not valid.
+//
+//   * ErrCodeInvalidConflictResolutionStrategyException "InvalidConflictResolutionStrategyException"
+//   The specified conflict resolution strategy is not valid.
+//
+//   * ErrCodeEncryptionIntegrityChecksFailedException "EncryptionIntegrityChecksFailedException"
+//   An encryption integrity check failed.
+//
+//   * ErrCodeEncryptionKeyAccessDeniedException "EncryptionKeyAccessDeniedException"
+//   An encryption key could not be accessed.
+//
+//   * ErrCodeEncryptionKeyDisabledException "EncryptionKeyDisabledException"
+//   The encryption key is disabled.
+//
+//   * ErrCodeEncryptionKeyNotFoundException "EncryptionKeyNotFoundException"
+//   No encryption key was found.
+//
+//   * ErrCodeEncryptionKeyUnavailableException "EncryptionKeyUnavailableException"
+//   The encryption key is not available.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/GetMergeCommit
+func (c *CodeCommit) GetMergeCommit(input *GetMergeCommitInput) (*GetMergeCommitOutput, error) {
+	req, out := c.GetMergeCommitRequest(input)
+	return out, req.Send()
+}
+
+// GetMergeCommitWithContext is the same as GetMergeCommit with the addition of
+// the ability to pass a context and additional request options.
+//
+// See GetMergeCommit for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CodeCommit) GetMergeCommitWithContext(ctx aws.Context, input *GetMergeCommitInput, opts ...request.Option) (*GetMergeCommitOutput, error) {
+	req, out := c.GetMergeCommitRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
 const opGetMergeConflicts = "GetMergeConflicts"
 
 // GetMergeConflictsRequest generates a "aws/request.Request" representing the
@@ -2460,6 +3399,12 @@ func (c *CodeCommit) GetMergeConflictsRequest(input *GetMergeConflictsInput) (re
 		Name:       opGetMergeConflicts,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"nextToken"},
+			OutputTokens:    []string{"nextToken"},
+			LimitToken:      "maxConflictFiles",
+			TruncationToken: "",
+		},
 	}
 
 	if input == nil {
@@ -2501,15 +3446,11 @@ func (c *CodeCommit) GetMergeConflictsRequest(input *GetMergeConflictsInput) (re
 //   A merge option or stategy is required, and none was provided.
 //
 //   * ErrCodeInvalidMergeOptionException "InvalidMergeOptionException"
-//   The specified merge option is not valid. The only valid value is FAST_FORWARD_MERGE.
+//   The specified merge option is not valid for this operation. Not all merge
+//   strategies are supported for all operations.
 //
-//   * ErrCodeInvalidDestinationCommitSpecifierException "InvalidDestinationCommitSpecifierException"
-//   The destination commit specifier is not valid. You must provide a valid branch
-//   name, tag, or full commit ID.
-//
-//   * ErrCodeInvalidSourceCommitSpecifierException "InvalidSourceCommitSpecifierException"
-//   The source commit specifier is not valid. You must provide a valid branch
-//   name, tag, or full commit ID.
+//   * ErrCodeInvalidContinuationTokenException "InvalidContinuationTokenException"
+//   The specified continuation token is not valid.
 //
 //   * ErrCodeCommitRequiredException "CommitRequiredException"
 //   A commit was not specified.
@@ -2525,6 +3466,30 @@ func (c *CodeCommit) GetMergeConflictsRequest(input *GetMergeConflictsInput) (re
 //   The divergence between the tips of the provided commit specifiers is too
 //   great to determine whether there might be any merge conflicts. Locally compare
 //   the specifiers using git diff or a diff tool.
+//
+//   * ErrCodeInvalidMaxConflictFilesException "InvalidMaxConflictFilesException"
+//   The specified value for the number of conflict files to return is not valid.
+//
+//   * ErrCodeInvalidConflictDetailLevelException "InvalidConflictDetailLevelException"
+//   The specified conflict detail level is not valid.
+//
+//   * ErrCodeInvalidDestinationCommitSpecifierException "InvalidDestinationCommitSpecifierException"
+//   The destination commit specifier is not valid. You must provide a valid branch
+//   name, tag, or full commit ID.
+//
+//   * ErrCodeInvalidSourceCommitSpecifierException "InvalidSourceCommitSpecifierException"
+//   The source commit specifier is not valid. You must provide a valid branch
+//   name, tag, or full commit ID.
+//
+//   * ErrCodeInvalidConflictResolutionStrategyException "InvalidConflictResolutionStrategyException"
+//   The specified conflict resolution strategy is not valid.
+//
+//   * ErrCodeMaximumFileContentToLoadExceededException "MaximumFileContentToLoadExceededException"
+//   The number of files to load exceeds the allowed limit.
+//
+//   * ErrCodeMaximumItemsToCompareExceededException "MaximumItemsToCompareExceededException"
+//   The maximum number of items to compare between the source or destination
+//   branches and the merge base has exceeded the maximum allowed.
 //
 //   * ErrCodeEncryptionIntegrityChecksFailedException "EncryptionIntegrityChecksFailedException"
 //   An encryption integrity check failed.
@@ -2558,6 +3523,190 @@ func (c *CodeCommit) GetMergeConflicts(input *GetMergeConflictsInput) (*GetMerge
 // for more information on using Contexts.
 func (c *CodeCommit) GetMergeConflictsWithContext(ctx aws.Context, input *GetMergeConflictsInput, opts ...request.Option) (*GetMergeConflictsOutput, error) {
 	req, out := c.GetMergeConflictsRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+// GetMergeConflictsPages iterates over the pages of a GetMergeConflicts operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See GetMergeConflicts method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a GetMergeConflicts operation.
+//    pageNum := 0
+//    err := client.GetMergeConflictsPages(params,
+//        func(page *codecommit.GetMergeConflictsOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *CodeCommit) GetMergeConflictsPages(input *GetMergeConflictsInput, fn func(*GetMergeConflictsOutput, bool) bool) error {
+	return c.GetMergeConflictsPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// GetMergeConflictsPagesWithContext same as GetMergeConflictsPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CodeCommit) GetMergeConflictsPagesWithContext(ctx aws.Context, input *GetMergeConflictsInput, fn func(*GetMergeConflictsOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *GetMergeConflictsInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.GetMergeConflictsRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	cont := true
+	for p.Next() && cont {
+		cont = fn(p.Page().(*GetMergeConflictsOutput), !p.HasNextPage())
+	}
+	return p.Err()
+}
+
+const opGetMergeOptions = "GetMergeOptions"
+
+// GetMergeOptionsRequest generates a "aws/request.Request" representing the
+// client's request for the GetMergeOptions operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See GetMergeOptions for more information on using the GetMergeOptions
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the GetMergeOptionsRequest method.
+//    req, resp := client.GetMergeOptionsRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/GetMergeOptions
+func (c *CodeCommit) GetMergeOptionsRequest(input *GetMergeOptionsInput) (req *request.Request, output *GetMergeOptionsOutput) {
+	op := &request.Operation{
+		Name:       opGetMergeOptions,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &GetMergeOptionsInput{}
+	}
+
+	output = &GetMergeOptionsOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// GetMergeOptions API operation for AWS CodeCommit.
+//
+// Returns information about the merge options available for merging two specified
+// branches. For details about why a particular merge option is not available,
+// use GetMergeConflicts or DescribeMergeConflicts.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS CodeCommit's
+// API operation GetMergeOptions for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeRepositoryNameRequiredException "RepositoryNameRequiredException"
+//   A repository name is required but was not specified.
+//
+//   * ErrCodeInvalidRepositoryNameException "InvalidRepositoryNameException"
+//   At least one specified repository name is not valid.
+//
+//   This exception only occurs when a specified repository name is not valid.
+//   Other exceptions occur when a required repository parameter is missing, or
+//   when a specified repository does not exist.
+//
+//   * ErrCodeRepositoryDoesNotExistException "RepositoryDoesNotExistException"
+//   The specified repository does not exist.
+//
+//   * ErrCodeCommitRequiredException "CommitRequiredException"
+//   A commit was not specified.
+//
+//   * ErrCodeCommitDoesNotExistException "CommitDoesNotExistException"
+//   The specified commit does not exist or no commit was specified, and the specified
+//   repository has no default branch.
+//
+//   * ErrCodeInvalidCommitException "InvalidCommitException"
+//   The specified commit is not valid.
+//
+//   * ErrCodeTipsDivergenceExceededException "TipsDivergenceExceededException"
+//   The divergence between the tips of the provided commit specifiers is too
+//   great to determine whether there might be any merge conflicts. Locally compare
+//   the specifiers using git diff or a diff tool.
+//
+//   * ErrCodeInvalidConflictDetailLevelException "InvalidConflictDetailLevelException"
+//   The specified conflict detail level is not valid.
+//
+//   * ErrCodeInvalidConflictResolutionStrategyException "InvalidConflictResolutionStrategyException"
+//   The specified conflict resolution strategy is not valid.
+//
+//   * ErrCodeMaximumFileContentToLoadExceededException "MaximumFileContentToLoadExceededException"
+//   The number of files to load exceeds the allowed limit.
+//
+//   * ErrCodeMaximumItemsToCompareExceededException "MaximumItemsToCompareExceededException"
+//   The maximum number of items to compare between the source or destination
+//   branches and the merge base has exceeded the maximum allowed.
+//
+//   * ErrCodeEncryptionIntegrityChecksFailedException "EncryptionIntegrityChecksFailedException"
+//   An encryption integrity check failed.
+//
+//   * ErrCodeEncryptionKeyAccessDeniedException "EncryptionKeyAccessDeniedException"
+//   An encryption key could not be accessed.
+//
+//   * ErrCodeEncryptionKeyDisabledException "EncryptionKeyDisabledException"
+//   The encryption key is disabled.
+//
+//   * ErrCodeEncryptionKeyNotFoundException "EncryptionKeyNotFoundException"
+//   No encryption key was found.
+//
+//   * ErrCodeEncryptionKeyUnavailableException "EncryptionKeyUnavailableException"
+//   The encryption key is not available.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/GetMergeOptions
+func (c *CodeCommit) GetMergeOptions(input *GetMergeOptionsInput) (*GetMergeOptionsOutput, error) {
+	req, out := c.GetMergeOptionsRequest(input)
+	return out, req.Send()
+}
+
+// GetMergeOptionsWithContext is the same as GetMergeOptions with the addition of
+// the ability to pass a context and additional request options.
+//
+// See GetMergeOptions for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CodeCommit) GetMergeOptionsWithContext(ctx aws.Context, input *GetMergeOptionsInput, opts ...request.Option) (*GetMergeOptionsOutput, error) {
+	req, out := c.GetMergeOptionsRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -3004,7 +4153,7 @@ func (c *CodeCommit) ListBranchesWithContext(ctx aws.Context, input *ListBranche
 //    // Example iterating over at most 3 pages of a ListBranches operation.
 //    pageNum := 0
 //    err := client.ListBranchesPages(params,
-//        func(page *ListBranchesOutput, lastPage bool) bool {
+//        func(page *codecommit.ListBranchesOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -3182,7 +4331,7 @@ func (c *CodeCommit) ListPullRequestsWithContext(ctx aws.Context, input *ListPul
 //    // Example iterating over at most 3 pages of a ListPullRequests operation.
 //    pageNum := 0
 //    err := client.ListPullRequestsPages(params,
-//        func(page *ListPullRequestsOutput, lastPage bool) bool {
+//        func(page *codecommit.ListPullRequestsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -3323,7 +4472,7 @@ func (c *CodeCommit) ListRepositoriesWithContext(ctx aws.Context, input *ListRep
 //    // Example iterating over at most 3 pages of a ListRepositories operation.
 //    pageNum := 0
 //    err := client.ListRepositoriesPages(params,
-//        func(page *ListRepositoriesOutput, lastPage bool) bool {
+//        func(page *codecommit.ListRepositoriesOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -3360,6 +4509,674 @@ func (c *CodeCommit) ListRepositoriesPagesWithContext(ctx aws.Context, input *Li
 		cont = fn(p.Page().(*ListRepositoriesOutput), !p.HasNextPage())
 	}
 	return p.Err()
+}
+
+const opListTagsForResource = "ListTagsForResource"
+
+// ListTagsForResourceRequest generates a "aws/request.Request" representing the
+// client's request for the ListTagsForResource operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See ListTagsForResource for more information on using the ListTagsForResource
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the ListTagsForResourceRequest method.
+//    req, resp := client.ListTagsForResourceRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/ListTagsForResource
+func (c *CodeCommit) ListTagsForResourceRequest(input *ListTagsForResourceInput) (req *request.Request, output *ListTagsForResourceOutput) {
+	op := &request.Operation{
+		Name:       opListTagsForResource,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &ListTagsForResourceInput{}
+	}
+
+	output = &ListTagsForResourceOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// ListTagsForResource API operation for AWS CodeCommit.
+//
+// Gets information about AWS tags for a specified Amazon Resource Name (ARN)
+// in AWS CodeCommit. For a list of valid resources in AWS CodeCommit, see CodeCommit
+// Resources and Operations (https://docs.aws.amazon.com/codecommit/latest/userguide/auth-and-access-control-iam-access-control-identity-based.html#arn-formats)
+// in the AWS CodeCommit User Guide.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS CodeCommit's
+// API operation ListTagsForResource for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeRepositoryDoesNotExistException "RepositoryDoesNotExistException"
+//   The specified repository does not exist.
+//
+//   * ErrCodeInvalidRepositoryNameException "InvalidRepositoryNameException"
+//   At least one specified repository name is not valid.
+//
+//   This exception only occurs when a specified repository name is not valid.
+//   Other exceptions occur when a required repository parameter is missing, or
+//   when a specified repository does not exist.
+//
+//   * ErrCodeResourceArnRequiredException "ResourceArnRequiredException"
+//   A valid Amazon Resource Name (ARN) for an AWS CodeCommit resource is required.
+//   For a list of valid resources in AWS CodeCommit, see CodeCommit Resources
+//   and Operations (https://docs.aws.amazon.com/codecommit/latest/userguide/auth-and-access-control-iam-access-control-identity-based.html#arn-formats)
+//   in the AWS CodeCommit User Guide.
+//
+//   * ErrCodeInvalidResourceArnException "InvalidResourceArnException"
+//   The value for the resource ARN is not valid. For more information about resources
+//   in AWS CodeCommit, see CodeCommit Resources and Operations (https://docs.aws.amazon.com/codecommit/latest/userguide/auth-and-access-control-iam-access-control-identity-based.html#arn-formats)
+//   in the AWS CodeCommit User Guide.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/ListTagsForResource
+func (c *CodeCommit) ListTagsForResource(input *ListTagsForResourceInput) (*ListTagsForResourceOutput, error) {
+	req, out := c.ListTagsForResourceRequest(input)
+	return out, req.Send()
+}
+
+// ListTagsForResourceWithContext is the same as ListTagsForResource with the addition of
+// the ability to pass a context and additional request options.
+//
+// See ListTagsForResource for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CodeCommit) ListTagsForResourceWithContext(ctx aws.Context, input *ListTagsForResourceInput, opts ...request.Option) (*ListTagsForResourceOutput, error) {
+	req, out := c.ListTagsForResourceRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opMergeBranchesByFastForward = "MergeBranchesByFastForward"
+
+// MergeBranchesByFastForwardRequest generates a "aws/request.Request" representing the
+// client's request for the MergeBranchesByFastForward operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See MergeBranchesByFastForward for more information on using the MergeBranchesByFastForward
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the MergeBranchesByFastForwardRequest method.
+//    req, resp := client.MergeBranchesByFastForwardRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/MergeBranchesByFastForward
+func (c *CodeCommit) MergeBranchesByFastForwardRequest(input *MergeBranchesByFastForwardInput) (req *request.Request, output *MergeBranchesByFastForwardOutput) {
+	op := &request.Operation{
+		Name:       opMergeBranchesByFastForward,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &MergeBranchesByFastForwardInput{}
+	}
+
+	output = &MergeBranchesByFastForwardOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// MergeBranchesByFastForward API operation for AWS CodeCommit.
+//
+// Merges two branches using the fast-forward merge strategy.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS CodeCommit's
+// API operation MergeBranchesByFastForward for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeRepositoryNameRequiredException "RepositoryNameRequiredException"
+//   A repository name is required but was not specified.
+//
+//   * ErrCodeInvalidRepositoryNameException "InvalidRepositoryNameException"
+//   At least one specified repository name is not valid.
+//
+//   This exception only occurs when a specified repository name is not valid.
+//   Other exceptions occur when a required repository parameter is missing, or
+//   when a specified repository does not exist.
+//
+//   * ErrCodeRepositoryDoesNotExistException "RepositoryDoesNotExistException"
+//   The specified repository does not exist.
+//
+//   * ErrCodeTipsDivergenceExceededException "TipsDivergenceExceededException"
+//   The divergence between the tips of the provided commit specifiers is too
+//   great to determine whether there might be any merge conflicts. Locally compare
+//   the specifiers using git diff or a diff tool.
+//
+//   * ErrCodeCommitRequiredException "CommitRequiredException"
+//   A commit was not specified.
+//
+//   * ErrCodeInvalidCommitException "InvalidCommitException"
+//   The specified commit is not valid.
+//
+//   * ErrCodeCommitDoesNotExistException "CommitDoesNotExistException"
+//   The specified commit does not exist or no commit was specified, and the specified
+//   repository has no default branch.
+//
+//   * ErrCodeInvalidTargetBranchException "InvalidTargetBranchException"
+//   The specified target branch is not valid.
+//
+//   * ErrCodeInvalidBranchNameException "InvalidBranchNameException"
+//   The specified reference name is not valid.
+//
+//   * ErrCodeBranchNameRequiredException "BranchNameRequiredException"
+//   A branch name is required but was not specified.
+//
+//   * ErrCodeBranchNameIsTagNameException "BranchNameIsTagNameException"
+//   The specified branch name is not valid because it is a tag name. Type the
+//   name of a current branch in the repository. For a list of valid branch names,
+//   use ListBranches.
+//
+//   * ErrCodeBranchDoesNotExistException "BranchDoesNotExistException"
+//   The specified branch does not exist.
+//
+//   * ErrCodeManualMergeRequiredException "ManualMergeRequiredException"
+//   The pull request cannot be merged automatically into the destination branch.
+//   You must manually merge the branches and resolve any conflicts.
+//
+//   * ErrCodeEncryptionIntegrityChecksFailedException "EncryptionIntegrityChecksFailedException"
+//   An encryption integrity check failed.
+//
+//   * ErrCodeEncryptionKeyAccessDeniedException "EncryptionKeyAccessDeniedException"
+//   An encryption key could not be accessed.
+//
+//   * ErrCodeEncryptionKeyDisabledException "EncryptionKeyDisabledException"
+//   The encryption key is disabled.
+//
+//   * ErrCodeEncryptionKeyNotFoundException "EncryptionKeyNotFoundException"
+//   No encryption key was found.
+//
+//   * ErrCodeEncryptionKeyUnavailableException "EncryptionKeyUnavailableException"
+//   The encryption key is not available.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/MergeBranchesByFastForward
+func (c *CodeCommit) MergeBranchesByFastForward(input *MergeBranchesByFastForwardInput) (*MergeBranchesByFastForwardOutput, error) {
+	req, out := c.MergeBranchesByFastForwardRequest(input)
+	return out, req.Send()
+}
+
+// MergeBranchesByFastForwardWithContext is the same as MergeBranchesByFastForward with the addition of
+// the ability to pass a context and additional request options.
+//
+// See MergeBranchesByFastForward for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CodeCommit) MergeBranchesByFastForwardWithContext(ctx aws.Context, input *MergeBranchesByFastForwardInput, opts ...request.Option) (*MergeBranchesByFastForwardOutput, error) {
+	req, out := c.MergeBranchesByFastForwardRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opMergeBranchesBySquash = "MergeBranchesBySquash"
+
+// MergeBranchesBySquashRequest generates a "aws/request.Request" representing the
+// client's request for the MergeBranchesBySquash operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See MergeBranchesBySquash for more information on using the MergeBranchesBySquash
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the MergeBranchesBySquashRequest method.
+//    req, resp := client.MergeBranchesBySquashRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/MergeBranchesBySquash
+func (c *CodeCommit) MergeBranchesBySquashRequest(input *MergeBranchesBySquashInput) (req *request.Request, output *MergeBranchesBySquashOutput) {
+	op := &request.Operation{
+		Name:       opMergeBranchesBySquash,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &MergeBranchesBySquashInput{}
+	}
+
+	output = &MergeBranchesBySquashOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// MergeBranchesBySquash API operation for AWS CodeCommit.
+//
+// Merges two branches using the squash merge strategy.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS CodeCommit's
+// API operation MergeBranchesBySquash for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeRepositoryNameRequiredException "RepositoryNameRequiredException"
+//   A repository name is required but was not specified.
+//
+//   * ErrCodeInvalidRepositoryNameException "InvalidRepositoryNameException"
+//   At least one specified repository name is not valid.
+//
+//   This exception only occurs when a specified repository name is not valid.
+//   Other exceptions occur when a required repository parameter is missing, or
+//   when a specified repository does not exist.
+//
+//   * ErrCodeRepositoryDoesNotExistException "RepositoryDoesNotExistException"
+//   The specified repository does not exist.
+//
+//   * ErrCodeTipsDivergenceExceededException "TipsDivergenceExceededException"
+//   The divergence between the tips of the provided commit specifiers is too
+//   great to determine whether there might be any merge conflicts. Locally compare
+//   the specifiers using git diff or a diff tool.
+//
+//   * ErrCodeCommitRequiredException "CommitRequiredException"
+//   A commit was not specified.
+//
+//   * ErrCodeInvalidCommitException "InvalidCommitException"
+//   The specified commit is not valid.
+//
+//   * ErrCodeCommitDoesNotExistException "CommitDoesNotExistException"
+//   The specified commit does not exist or no commit was specified, and the specified
+//   repository has no default branch.
+//
+//   * ErrCodeInvalidTargetBranchException "InvalidTargetBranchException"
+//   The specified target branch is not valid.
+//
+//   * ErrCodeInvalidBranchNameException "InvalidBranchNameException"
+//   The specified reference name is not valid.
+//
+//   * ErrCodeBranchNameRequiredException "BranchNameRequiredException"
+//   A branch name is required but was not specified.
+//
+//   * ErrCodeBranchNameIsTagNameException "BranchNameIsTagNameException"
+//   The specified branch name is not valid because it is a tag name. Type the
+//   name of a current branch in the repository. For a list of valid branch names,
+//   use ListBranches.
+//
+//   * ErrCodeBranchDoesNotExistException "BranchDoesNotExistException"
+//   The specified branch does not exist.
+//
+//   * ErrCodeManualMergeRequiredException "ManualMergeRequiredException"
+//   The pull request cannot be merged automatically into the destination branch.
+//   You must manually merge the branches and resolve any conflicts.
+//
+//   * ErrCodeInvalidConflictDetailLevelException "InvalidConflictDetailLevelException"
+//   The specified conflict detail level is not valid.
+//
+//   * ErrCodeInvalidConflictResolutionStrategyException "InvalidConflictResolutionStrategyException"
+//   The specified conflict resolution strategy is not valid.
+//
+//   * ErrCodeInvalidConflictResolutionException "InvalidConflictResolutionException"
+//   The specified conflict resolution list is not valid.
+//
+//   * ErrCodeMaximumConflictResolutionEntriesExceededException "MaximumConflictResolutionEntriesExceededException"
+//   The number of allowed conflict resolution entries was exceeded.
+//
+//   * ErrCodeMultipleConflictResolutionEntriesException "MultipleConflictResolutionEntriesException"
+//   More than one conflict resolution entries exists for the conflict. A conflict
+//   can have only one conflict resolution entry.
+//
+//   * ErrCodeReplacementTypeRequiredException "ReplacementTypeRequiredException"
+//   A replacement type is required.
+//
+//   * ErrCodeInvalidReplacementTypeException "InvalidReplacementTypeException"
+//   Automerge was specified for resolving the conflict, but the specified replacement
+//   type is not valid.
+//
+//   * ErrCodeReplacementContentRequiredException "ReplacementContentRequiredException"
+//   USE_NEW_CONTENT was specified but no replacement content has been provided.
+//
+//   * ErrCodeInvalidReplacementContentException "InvalidReplacementContentException"
+//   Automerge was specified for resolving the conflict, but the replacement type
+//   is not valid or content is missing.
+//
+//   * ErrCodePathRequiredException "PathRequiredException"
+//   The folderPath for a location cannot be null.
+//
+//   * ErrCodeInvalidPathException "InvalidPathException"
+//   The specified path is not valid.
+//
+//   * ErrCodeFileContentSizeLimitExceededException "FileContentSizeLimitExceededException"
+//   The file cannot be added because it is too large. The maximum file size that
+//   can be added is 6 MB, and the combined file content change size is 7 MB.
+//   Consider making these changes using a Git client.
+//
+//   * ErrCodeFolderContentSizeLimitExceededException "FolderContentSizeLimitExceededException"
+//   The commit cannot be created because at least one of the overall changes
+//   in the commit results in a folder whose contents exceed the limit of 6 MB.
+//   Either reduce the number and size of your changes, or split the changes across
+//   multiple folders.
+//
+//   * ErrCodeMaximumFileContentToLoadExceededException "MaximumFileContentToLoadExceededException"
+//   The number of files to load exceeds the allowed limit.
+//
+//   * ErrCodeMaximumItemsToCompareExceededException "MaximumItemsToCompareExceededException"
+//   The maximum number of items to compare between the source or destination
+//   branches and the merge base has exceeded the maximum allowed.
+//
+//   * ErrCodeFileModeRequiredException "FileModeRequiredException"
+//   The commit cannot be created because a file mode is required to update mode
+//   permissions for an existing file, but no file mode has been specified.
+//
+//   * ErrCodeInvalidFileModeException "InvalidFileModeException"
+//   The specified file mode permission is not valid. For a list of valid file
+//   mode permissions, see PutFile.
+//
+//   * ErrCodeNameLengthExceededException "NameLengthExceededException"
+//   The user name is not valid because it has exceeded the character limit for
+//   author names.
+//
+//   * ErrCodeInvalidEmailException "InvalidEmailException"
+//   The specified email address either contains one or more characters that are
+//   not allowed, or it exceeds the maximum number of characters allowed for an
+//   email address.
+//
+//   * ErrCodeCommitMessageLengthExceededException "CommitMessageLengthExceededException"
+//   The commit message is too long. Provide a shorter string.
+//
+//   * ErrCodeEncryptionIntegrityChecksFailedException "EncryptionIntegrityChecksFailedException"
+//   An encryption integrity check failed.
+//
+//   * ErrCodeEncryptionKeyAccessDeniedException "EncryptionKeyAccessDeniedException"
+//   An encryption key could not be accessed.
+//
+//   * ErrCodeEncryptionKeyDisabledException "EncryptionKeyDisabledException"
+//   The encryption key is disabled.
+//
+//   * ErrCodeEncryptionKeyNotFoundException "EncryptionKeyNotFoundException"
+//   No encryption key was found.
+//
+//   * ErrCodeEncryptionKeyUnavailableException "EncryptionKeyUnavailableException"
+//   The encryption key is not available.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/MergeBranchesBySquash
+func (c *CodeCommit) MergeBranchesBySquash(input *MergeBranchesBySquashInput) (*MergeBranchesBySquashOutput, error) {
+	req, out := c.MergeBranchesBySquashRequest(input)
+	return out, req.Send()
+}
+
+// MergeBranchesBySquashWithContext is the same as MergeBranchesBySquash with the addition of
+// the ability to pass a context and additional request options.
+//
+// See MergeBranchesBySquash for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CodeCommit) MergeBranchesBySquashWithContext(ctx aws.Context, input *MergeBranchesBySquashInput, opts ...request.Option) (*MergeBranchesBySquashOutput, error) {
+	req, out := c.MergeBranchesBySquashRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opMergeBranchesByThreeWay = "MergeBranchesByThreeWay"
+
+// MergeBranchesByThreeWayRequest generates a "aws/request.Request" representing the
+// client's request for the MergeBranchesByThreeWay operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See MergeBranchesByThreeWay for more information on using the MergeBranchesByThreeWay
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the MergeBranchesByThreeWayRequest method.
+//    req, resp := client.MergeBranchesByThreeWayRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/MergeBranchesByThreeWay
+func (c *CodeCommit) MergeBranchesByThreeWayRequest(input *MergeBranchesByThreeWayInput) (req *request.Request, output *MergeBranchesByThreeWayOutput) {
+	op := &request.Operation{
+		Name:       opMergeBranchesByThreeWay,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &MergeBranchesByThreeWayInput{}
+	}
+
+	output = &MergeBranchesByThreeWayOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// MergeBranchesByThreeWay API operation for AWS CodeCommit.
+//
+// Merges two specified branches using the three-way merge strategy.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS CodeCommit's
+// API operation MergeBranchesByThreeWay for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeRepositoryNameRequiredException "RepositoryNameRequiredException"
+//   A repository name is required but was not specified.
+//
+//   * ErrCodeInvalidRepositoryNameException "InvalidRepositoryNameException"
+//   At least one specified repository name is not valid.
+//
+//   This exception only occurs when a specified repository name is not valid.
+//   Other exceptions occur when a required repository parameter is missing, or
+//   when a specified repository does not exist.
+//
+//   * ErrCodeRepositoryDoesNotExistException "RepositoryDoesNotExistException"
+//   The specified repository does not exist.
+//
+//   * ErrCodeTipsDivergenceExceededException "TipsDivergenceExceededException"
+//   The divergence between the tips of the provided commit specifiers is too
+//   great to determine whether there might be any merge conflicts. Locally compare
+//   the specifiers using git diff or a diff tool.
+//
+//   * ErrCodeCommitRequiredException "CommitRequiredException"
+//   A commit was not specified.
+//
+//   * ErrCodeInvalidCommitException "InvalidCommitException"
+//   The specified commit is not valid.
+//
+//   * ErrCodeCommitDoesNotExistException "CommitDoesNotExistException"
+//   The specified commit does not exist or no commit was specified, and the specified
+//   repository has no default branch.
+//
+//   * ErrCodeInvalidTargetBranchException "InvalidTargetBranchException"
+//   The specified target branch is not valid.
+//
+//   * ErrCodeInvalidBranchNameException "InvalidBranchNameException"
+//   The specified reference name is not valid.
+//
+//   * ErrCodeBranchNameRequiredException "BranchNameRequiredException"
+//   A branch name is required but was not specified.
+//
+//   * ErrCodeBranchNameIsTagNameException "BranchNameIsTagNameException"
+//   The specified branch name is not valid because it is a tag name. Type the
+//   name of a current branch in the repository. For a list of valid branch names,
+//   use ListBranches.
+//
+//   * ErrCodeBranchDoesNotExistException "BranchDoesNotExistException"
+//   The specified branch does not exist.
+//
+//   * ErrCodeManualMergeRequiredException "ManualMergeRequiredException"
+//   The pull request cannot be merged automatically into the destination branch.
+//   You must manually merge the branches and resolve any conflicts.
+//
+//   * ErrCodeInvalidConflictDetailLevelException "InvalidConflictDetailLevelException"
+//   The specified conflict detail level is not valid.
+//
+//   * ErrCodeInvalidConflictResolutionStrategyException "InvalidConflictResolutionStrategyException"
+//   The specified conflict resolution strategy is not valid.
+//
+//   * ErrCodeInvalidConflictResolutionException "InvalidConflictResolutionException"
+//   The specified conflict resolution list is not valid.
+//
+//   * ErrCodeMaximumConflictResolutionEntriesExceededException "MaximumConflictResolutionEntriesExceededException"
+//   The number of allowed conflict resolution entries was exceeded.
+//
+//   * ErrCodeMultipleConflictResolutionEntriesException "MultipleConflictResolutionEntriesException"
+//   More than one conflict resolution entries exists for the conflict. A conflict
+//   can have only one conflict resolution entry.
+//
+//   * ErrCodeReplacementTypeRequiredException "ReplacementTypeRequiredException"
+//   A replacement type is required.
+//
+//   * ErrCodeInvalidReplacementTypeException "InvalidReplacementTypeException"
+//   Automerge was specified for resolving the conflict, but the specified replacement
+//   type is not valid.
+//
+//   * ErrCodeReplacementContentRequiredException "ReplacementContentRequiredException"
+//   USE_NEW_CONTENT was specified but no replacement content has been provided.
+//
+//   * ErrCodeInvalidReplacementContentException "InvalidReplacementContentException"
+//   Automerge was specified for resolving the conflict, but the replacement type
+//   is not valid or content is missing.
+//
+//   * ErrCodePathRequiredException "PathRequiredException"
+//   The folderPath for a location cannot be null.
+//
+//   * ErrCodeInvalidPathException "InvalidPathException"
+//   The specified path is not valid.
+//
+//   * ErrCodeFileContentSizeLimitExceededException "FileContentSizeLimitExceededException"
+//   The file cannot be added because it is too large. The maximum file size that
+//   can be added is 6 MB, and the combined file content change size is 7 MB.
+//   Consider making these changes using a Git client.
+//
+//   * ErrCodeFolderContentSizeLimitExceededException "FolderContentSizeLimitExceededException"
+//   The commit cannot be created because at least one of the overall changes
+//   in the commit results in a folder whose contents exceed the limit of 6 MB.
+//   Either reduce the number and size of your changes, or split the changes across
+//   multiple folders.
+//
+//   * ErrCodeMaximumFileContentToLoadExceededException "MaximumFileContentToLoadExceededException"
+//   The number of files to load exceeds the allowed limit.
+//
+//   * ErrCodeMaximumItemsToCompareExceededException "MaximumItemsToCompareExceededException"
+//   The maximum number of items to compare between the source or destination
+//   branches and the merge base has exceeded the maximum allowed.
+//
+//   * ErrCodeFileModeRequiredException "FileModeRequiredException"
+//   The commit cannot be created because a file mode is required to update mode
+//   permissions for an existing file, but no file mode has been specified.
+//
+//   * ErrCodeInvalidFileModeException "InvalidFileModeException"
+//   The specified file mode permission is not valid. For a list of valid file
+//   mode permissions, see PutFile.
+//
+//   * ErrCodeNameLengthExceededException "NameLengthExceededException"
+//   The user name is not valid because it has exceeded the character limit for
+//   author names.
+//
+//   * ErrCodeInvalidEmailException "InvalidEmailException"
+//   The specified email address either contains one or more characters that are
+//   not allowed, or it exceeds the maximum number of characters allowed for an
+//   email address.
+//
+//   * ErrCodeCommitMessageLengthExceededException "CommitMessageLengthExceededException"
+//   The commit message is too long. Provide a shorter string.
+//
+//   * ErrCodeEncryptionIntegrityChecksFailedException "EncryptionIntegrityChecksFailedException"
+//   An encryption integrity check failed.
+//
+//   * ErrCodeEncryptionKeyAccessDeniedException "EncryptionKeyAccessDeniedException"
+//   An encryption key could not be accessed.
+//
+//   * ErrCodeEncryptionKeyDisabledException "EncryptionKeyDisabledException"
+//   The encryption key is disabled.
+//
+//   * ErrCodeEncryptionKeyNotFoundException "EncryptionKeyNotFoundException"
+//   No encryption key was found.
+//
+//   * ErrCodeEncryptionKeyUnavailableException "EncryptionKeyUnavailableException"
+//   The encryption key is not available.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/MergeBranchesByThreeWay
+func (c *CodeCommit) MergeBranchesByThreeWay(input *MergeBranchesByThreeWayInput) (*MergeBranchesByThreeWayOutput, error) {
+	req, out := c.MergeBranchesByThreeWayRequest(input)
+	return out, req.Send()
+}
+
+// MergeBranchesByThreeWayWithContext is the same as MergeBranchesByThreeWay with the addition of
+// the ability to pass a context and additional request options.
+//
+// See MergeBranchesByThreeWay for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CodeCommit) MergeBranchesByThreeWayWithContext(ctx aws.Context, input *MergeBranchesByThreeWayInput, opts ...request.Option) (*MergeBranchesByThreeWayOutput, error) {
+	req, out := c.MergeBranchesByThreeWayRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
 }
 
 const opMergePullRequestByFastForward = "MergePullRequestByFastForward"
@@ -3406,9 +5223,10 @@ func (c *CodeCommit) MergePullRequestByFastForwardRequest(input *MergePullReques
 
 // MergePullRequestByFastForward API operation for AWS CodeCommit.
 //
-// Closes a pull request and attempts to merge the source commit of a pull request
-// into the specified destination branch for that pull request at the specified
-// commit using the fast-forward merge option.
+// Attempts to merge the source commit of a pull request into the specified
+// destination branch for that pull request at the specified commit using the
+// fast-forward merge strategy. If the merge is successful, it closes the pull
+// request.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -3447,6 +5265,11 @@ func (c *CodeCommit) MergePullRequestByFastForwardRequest(input *MergePullReques
 //
 //   * ErrCodeInvalidCommitIdException "InvalidCommitIdException"
 //   The specified commit ID is not valid.
+//
+//   * ErrCodeRepositoryNotAssociatedWithPullRequestException "RepositoryNotAssociatedWithPullRequestException"
+//   The repository does not contain any pull requests with that pull request
+//   ID. Use GetPullRequest to verify the correct repository name for the pull
+//   request ID.
 //
 //   * ErrCodeRepositoryNameRequiredException "RepositoryNameRequiredException"
 //   A repository name is required but was not specified.
@@ -3493,6 +5316,433 @@ func (c *CodeCommit) MergePullRequestByFastForward(input *MergePullRequestByFast
 // for more information on using Contexts.
 func (c *CodeCommit) MergePullRequestByFastForwardWithContext(ctx aws.Context, input *MergePullRequestByFastForwardInput, opts ...request.Option) (*MergePullRequestByFastForwardOutput, error) {
 	req, out := c.MergePullRequestByFastForwardRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opMergePullRequestBySquash = "MergePullRequestBySquash"
+
+// MergePullRequestBySquashRequest generates a "aws/request.Request" representing the
+// client's request for the MergePullRequestBySquash operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See MergePullRequestBySquash for more information on using the MergePullRequestBySquash
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the MergePullRequestBySquashRequest method.
+//    req, resp := client.MergePullRequestBySquashRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/MergePullRequestBySquash
+func (c *CodeCommit) MergePullRequestBySquashRequest(input *MergePullRequestBySquashInput) (req *request.Request, output *MergePullRequestBySquashOutput) {
+	op := &request.Operation{
+		Name:       opMergePullRequestBySquash,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &MergePullRequestBySquashInput{}
+	}
+
+	output = &MergePullRequestBySquashOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// MergePullRequestBySquash API operation for AWS CodeCommit.
+//
+// Attempts to merge the source commit of a pull request into the specified
+// destination branch for that pull request at the specified commit using the
+// squash merge strategy. If the merge is successful, it closes the pull request.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS CodeCommit's
+// API operation MergePullRequestBySquash for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodePullRequestAlreadyClosedException "PullRequestAlreadyClosedException"
+//   The pull request status cannot be updated because it is already closed.
+//
+//   * ErrCodePullRequestDoesNotExistException "PullRequestDoesNotExistException"
+//   The pull request ID could not be found. Make sure that you have specified
+//   the correct repository name and pull request ID, and then try again.
+//
+//   * ErrCodePullRequestIdRequiredException "PullRequestIdRequiredException"
+//   A pull request ID is required, but none was provided.
+//
+//   * ErrCodeInvalidPullRequestIdException "InvalidPullRequestIdException"
+//   The pull request ID is not valid. Make sure that you have provided the full
+//   ID and that the pull request is in the specified repository, and then try
+//   again.
+//
+//   * ErrCodeInvalidCommitIdException "InvalidCommitIdException"
+//   The specified commit ID is not valid.
+//
+//   * ErrCodeManualMergeRequiredException "ManualMergeRequiredException"
+//   The pull request cannot be merged automatically into the destination branch.
+//   You must manually merge the branches and resolve any conflicts.
+//
+//   * ErrCodeTipOfSourceReferenceIsDifferentException "TipOfSourceReferenceIsDifferentException"
+//   The tip of the source branch in the destination repository does not match
+//   the tip of the source branch specified in your request. The pull request
+//   might have been updated. Make sure that you have the latest changes.
+//
+//   * ErrCodeTipsDivergenceExceededException "TipsDivergenceExceededException"
+//   The divergence between the tips of the provided commit specifiers is too
+//   great to determine whether there might be any merge conflicts. Locally compare
+//   the specifiers using git diff or a diff tool.
+//
+//   * ErrCodeNameLengthExceededException "NameLengthExceededException"
+//   The user name is not valid because it has exceeded the character limit for
+//   author names.
+//
+//   * ErrCodeInvalidEmailException "InvalidEmailException"
+//   The specified email address either contains one or more characters that are
+//   not allowed, or it exceeds the maximum number of characters allowed for an
+//   email address.
+//
+//   * ErrCodeCommitMessageLengthExceededException "CommitMessageLengthExceededException"
+//   The commit message is too long. Provide a shorter string.
+//
+//   * ErrCodeInvalidConflictDetailLevelException "InvalidConflictDetailLevelException"
+//   The specified conflict detail level is not valid.
+//
+//   * ErrCodeInvalidConflictResolutionStrategyException "InvalidConflictResolutionStrategyException"
+//   The specified conflict resolution strategy is not valid.
+//
+//   * ErrCodeInvalidConflictResolutionException "InvalidConflictResolutionException"
+//   The specified conflict resolution list is not valid.
+//
+//   * ErrCodeReplacementTypeRequiredException "ReplacementTypeRequiredException"
+//   A replacement type is required.
+//
+//   * ErrCodeInvalidReplacementTypeException "InvalidReplacementTypeException"
+//   Automerge was specified for resolving the conflict, but the specified replacement
+//   type is not valid.
+//
+//   * ErrCodeMultipleConflictResolutionEntriesException "MultipleConflictResolutionEntriesException"
+//   More than one conflict resolution entries exists for the conflict. A conflict
+//   can have only one conflict resolution entry.
+//
+//   * ErrCodeReplacementContentRequiredException "ReplacementContentRequiredException"
+//   USE_NEW_CONTENT was specified but no replacement content has been provided.
+//
+//   * ErrCodeMaximumConflictResolutionEntriesExceededException "MaximumConflictResolutionEntriesExceededException"
+//   The number of allowed conflict resolution entries was exceeded.
+//
+//   * ErrCodePathRequiredException "PathRequiredException"
+//   The folderPath for a location cannot be null.
+//
+//   * ErrCodeInvalidPathException "InvalidPathException"
+//   The specified path is not valid.
+//
+//   * ErrCodeInvalidFileModeException "InvalidFileModeException"
+//   The specified file mode permission is not valid. For a list of valid file
+//   mode permissions, see PutFile.
+//
+//   * ErrCodeInvalidReplacementContentException "InvalidReplacementContentException"
+//   Automerge was specified for resolving the conflict, but the replacement type
+//   is not valid or content is missing.
+//
+//   * ErrCodeFileContentSizeLimitExceededException "FileContentSizeLimitExceededException"
+//   The file cannot be added because it is too large. The maximum file size that
+//   can be added is 6 MB, and the combined file content change size is 7 MB.
+//   Consider making these changes using a Git client.
+//
+//   * ErrCodeFolderContentSizeLimitExceededException "FolderContentSizeLimitExceededException"
+//   The commit cannot be created because at least one of the overall changes
+//   in the commit results in a folder whose contents exceed the limit of 6 MB.
+//   Either reduce the number and size of your changes, or split the changes across
+//   multiple folders.
+//
+//   * ErrCodeMaximumFileContentToLoadExceededException "MaximumFileContentToLoadExceededException"
+//   The number of files to load exceeds the allowed limit.
+//
+//   * ErrCodeMaximumItemsToCompareExceededException "MaximumItemsToCompareExceededException"
+//   The maximum number of items to compare between the source or destination
+//   branches and the merge base has exceeded the maximum allowed.
+//
+//   * ErrCodeRepositoryNameRequiredException "RepositoryNameRequiredException"
+//   A repository name is required but was not specified.
+//
+//   * ErrCodeInvalidRepositoryNameException "InvalidRepositoryNameException"
+//   At least one specified repository name is not valid.
+//
+//   This exception only occurs when a specified repository name is not valid.
+//   Other exceptions occur when a required repository parameter is missing, or
+//   when a specified repository does not exist.
+//
+//   * ErrCodeRepositoryDoesNotExistException "RepositoryDoesNotExistException"
+//   The specified repository does not exist.
+//
+//   * ErrCodeRepositoryNotAssociatedWithPullRequestException "RepositoryNotAssociatedWithPullRequestException"
+//   The repository does not contain any pull requests with that pull request
+//   ID. Use GetPullRequest to verify the correct repository name for the pull
+//   request ID.
+//
+//   * ErrCodeEncryptionIntegrityChecksFailedException "EncryptionIntegrityChecksFailedException"
+//   An encryption integrity check failed.
+//
+//   * ErrCodeEncryptionKeyAccessDeniedException "EncryptionKeyAccessDeniedException"
+//   An encryption key could not be accessed.
+//
+//   * ErrCodeEncryptionKeyDisabledException "EncryptionKeyDisabledException"
+//   The encryption key is disabled.
+//
+//   * ErrCodeEncryptionKeyNotFoundException "EncryptionKeyNotFoundException"
+//   No encryption key was found.
+//
+//   * ErrCodeEncryptionKeyUnavailableException "EncryptionKeyUnavailableException"
+//   The encryption key is not available.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/MergePullRequestBySquash
+func (c *CodeCommit) MergePullRequestBySquash(input *MergePullRequestBySquashInput) (*MergePullRequestBySquashOutput, error) {
+	req, out := c.MergePullRequestBySquashRequest(input)
+	return out, req.Send()
+}
+
+// MergePullRequestBySquashWithContext is the same as MergePullRequestBySquash with the addition of
+// the ability to pass a context and additional request options.
+//
+// See MergePullRequestBySquash for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CodeCommit) MergePullRequestBySquashWithContext(ctx aws.Context, input *MergePullRequestBySquashInput, opts ...request.Option) (*MergePullRequestBySquashOutput, error) {
+	req, out := c.MergePullRequestBySquashRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opMergePullRequestByThreeWay = "MergePullRequestByThreeWay"
+
+// MergePullRequestByThreeWayRequest generates a "aws/request.Request" representing the
+// client's request for the MergePullRequestByThreeWay operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See MergePullRequestByThreeWay for more information on using the MergePullRequestByThreeWay
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the MergePullRequestByThreeWayRequest method.
+//    req, resp := client.MergePullRequestByThreeWayRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/MergePullRequestByThreeWay
+func (c *CodeCommit) MergePullRequestByThreeWayRequest(input *MergePullRequestByThreeWayInput) (req *request.Request, output *MergePullRequestByThreeWayOutput) {
+	op := &request.Operation{
+		Name:       opMergePullRequestByThreeWay,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &MergePullRequestByThreeWayInput{}
+	}
+
+	output = &MergePullRequestByThreeWayOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// MergePullRequestByThreeWay API operation for AWS CodeCommit.
+//
+// Attempts to merge the source commit of a pull request into the specified
+// destination branch for that pull request at the specified commit using the
+// three-way merge strategy. If the merge is successful, it closes the pull
+// request.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS CodeCommit's
+// API operation MergePullRequestByThreeWay for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodePullRequestAlreadyClosedException "PullRequestAlreadyClosedException"
+//   The pull request status cannot be updated because it is already closed.
+//
+//   * ErrCodePullRequestDoesNotExistException "PullRequestDoesNotExistException"
+//   The pull request ID could not be found. Make sure that you have specified
+//   the correct repository name and pull request ID, and then try again.
+//
+//   * ErrCodePullRequestIdRequiredException "PullRequestIdRequiredException"
+//   A pull request ID is required, but none was provided.
+//
+//   * ErrCodeInvalidPullRequestIdException "InvalidPullRequestIdException"
+//   The pull request ID is not valid. Make sure that you have provided the full
+//   ID and that the pull request is in the specified repository, and then try
+//   again.
+//
+//   * ErrCodeInvalidCommitIdException "InvalidCommitIdException"
+//   The specified commit ID is not valid.
+//
+//   * ErrCodeManualMergeRequiredException "ManualMergeRequiredException"
+//   The pull request cannot be merged automatically into the destination branch.
+//   You must manually merge the branches and resolve any conflicts.
+//
+//   * ErrCodeTipOfSourceReferenceIsDifferentException "TipOfSourceReferenceIsDifferentException"
+//   The tip of the source branch in the destination repository does not match
+//   the tip of the source branch specified in your request. The pull request
+//   might have been updated. Make sure that you have the latest changes.
+//
+//   * ErrCodeTipsDivergenceExceededException "TipsDivergenceExceededException"
+//   The divergence between the tips of the provided commit specifiers is too
+//   great to determine whether there might be any merge conflicts. Locally compare
+//   the specifiers using git diff or a diff tool.
+//
+//   * ErrCodeNameLengthExceededException "NameLengthExceededException"
+//   The user name is not valid because it has exceeded the character limit for
+//   author names.
+//
+//   * ErrCodeInvalidEmailException "InvalidEmailException"
+//   The specified email address either contains one or more characters that are
+//   not allowed, or it exceeds the maximum number of characters allowed for an
+//   email address.
+//
+//   * ErrCodeCommitMessageLengthExceededException "CommitMessageLengthExceededException"
+//   The commit message is too long. Provide a shorter string.
+//
+//   * ErrCodeInvalidConflictDetailLevelException "InvalidConflictDetailLevelException"
+//   The specified conflict detail level is not valid.
+//
+//   * ErrCodeInvalidConflictResolutionStrategyException "InvalidConflictResolutionStrategyException"
+//   The specified conflict resolution strategy is not valid.
+//
+//   * ErrCodeInvalidConflictResolutionException "InvalidConflictResolutionException"
+//   The specified conflict resolution list is not valid.
+//
+//   * ErrCodeReplacementTypeRequiredException "ReplacementTypeRequiredException"
+//   A replacement type is required.
+//
+//   * ErrCodeInvalidReplacementTypeException "InvalidReplacementTypeException"
+//   Automerge was specified for resolving the conflict, but the specified replacement
+//   type is not valid.
+//
+//   * ErrCodeMultipleConflictResolutionEntriesException "MultipleConflictResolutionEntriesException"
+//   More than one conflict resolution entries exists for the conflict. A conflict
+//   can have only one conflict resolution entry.
+//
+//   * ErrCodeReplacementContentRequiredException "ReplacementContentRequiredException"
+//   USE_NEW_CONTENT was specified but no replacement content has been provided.
+//
+//   * ErrCodeMaximumConflictResolutionEntriesExceededException "MaximumConflictResolutionEntriesExceededException"
+//   The number of allowed conflict resolution entries was exceeded.
+//
+//   * ErrCodePathRequiredException "PathRequiredException"
+//   The folderPath for a location cannot be null.
+//
+//   * ErrCodeInvalidPathException "InvalidPathException"
+//   The specified path is not valid.
+//
+//   * ErrCodeInvalidFileModeException "InvalidFileModeException"
+//   The specified file mode permission is not valid. For a list of valid file
+//   mode permissions, see PutFile.
+//
+//   * ErrCodeInvalidReplacementContentException "InvalidReplacementContentException"
+//   Automerge was specified for resolving the conflict, but the replacement type
+//   is not valid or content is missing.
+//
+//   * ErrCodeFileContentSizeLimitExceededException "FileContentSizeLimitExceededException"
+//   The file cannot be added because it is too large. The maximum file size that
+//   can be added is 6 MB, and the combined file content change size is 7 MB.
+//   Consider making these changes using a Git client.
+//
+//   * ErrCodeFolderContentSizeLimitExceededException "FolderContentSizeLimitExceededException"
+//   The commit cannot be created because at least one of the overall changes
+//   in the commit results in a folder whose contents exceed the limit of 6 MB.
+//   Either reduce the number and size of your changes, or split the changes across
+//   multiple folders.
+//
+//   * ErrCodeMaximumFileContentToLoadExceededException "MaximumFileContentToLoadExceededException"
+//   The number of files to load exceeds the allowed limit.
+//
+//   * ErrCodeMaximumItemsToCompareExceededException "MaximumItemsToCompareExceededException"
+//   The maximum number of items to compare between the source or destination
+//   branches and the merge base has exceeded the maximum allowed.
+//
+//   * ErrCodeRepositoryNameRequiredException "RepositoryNameRequiredException"
+//   A repository name is required but was not specified.
+//
+//   * ErrCodeInvalidRepositoryNameException "InvalidRepositoryNameException"
+//   At least one specified repository name is not valid.
+//
+//   This exception only occurs when a specified repository name is not valid.
+//   Other exceptions occur when a required repository parameter is missing, or
+//   when a specified repository does not exist.
+//
+//   * ErrCodeRepositoryDoesNotExistException "RepositoryDoesNotExistException"
+//   The specified repository does not exist.
+//
+//   * ErrCodeRepositoryNotAssociatedWithPullRequestException "RepositoryNotAssociatedWithPullRequestException"
+//   The repository does not contain any pull requests with that pull request
+//   ID. Use GetPullRequest to verify the correct repository name for the pull
+//   request ID.
+//
+//   * ErrCodeEncryptionIntegrityChecksFailedException "EncryptionIntegrityChecksFailedException"
+//   An encryption integrity check failed.
+//
+//   * ErrCodeEncryptionKeyAccessDeniedException "EncryptionKeyAccessDeniedException"
+//   An encryption key could not be accessed.
+//
+//   * ErrCodeEncryptionKeyDisabledException "EncryptionKeyDisabledException"
+//   The encryption key is disabled.
+//
+//   * ErrCodeEncryptionKeyNotFoundException "EncryptionKeyNotFoundException"
+//   No encryption key was found.
+//
+//   * ErrCodeEncryptionKeyUnavailableException "EncryptionKeyUnavailableException"
+//   The encryption key is not available.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/MergePullRequestByThreeWay
+func (c *CodeCommit) MergePullRequestByThreeWay(input *MergePullRequestByThreeWayInput) (*MergePullRequestByThreeWayOutput, error) {
+	req, out := c.MergePullRequestByThreeWayRequest(input)
+	return out, req.Send()
+}
+
+// MergePullRequestByThreeWayWithContext is the same as MergePullRequestByThreeWay with the addition of
+// the ability to pass a context and additional request options.
+//
+// See MergePullRequestByThreeWay for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CodeCommit) MergePullRequestByThreeWayWithContext(ctx aws.Context, input *MergePullRequestByThreeWayInput, opts ...request.Option) (*MergePullRequestByThreeWayOutput, error) {
+	req, out := c.MergePullRequestByThreeWayRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -3726,8 +5976,8 @@ func (c *CodeCommit) PostCommentForPullRequestRequest(input *PostCommentForPullR
 //
 //   * ErrCodeRepositoryNotAssociatedWithPullRequestException "RepositoryNotAssociatedWithPullRequestException"
 //   The repository does not contain any pull requests with that pull request
-//   ID. Check to make sure you have provided the correct repository name for
-//   the pull request.
+//   ID. Use GetPullRequest to verify the correct repository name for the pull
+//   request ID.
 //
 //   * ErrCodeRepositoryNameRequiredException "RepositoryNameRequiredException"
 //   A repository name is required but was not specified.
@@ -4040,8 +6290,14 @@ func (c *CodeCommit) PutFileRequest(input *PutFileInput) (req *request.Request, 
 //
 //   * ErrCodeFileContentSizeLimitExceededException "FileContentSizeLimitExceededException"
 //   The file cannot be added because it is too large. The maximum file size that
-//   can be added using PutFile is 6 MB. For files larger than 6 MB but smaller
-//   than 2 GB, add them using a Git client.
+//   can be added is 6 MB, and the combined file content change size is 7 MB.
+//   Consider making these changes using a Git client.
+//
+//   * ErrCodeFolderContentSizeLimitExceededException "FolderContentSizeLimitExceededException"
+//   The commit cannot be created because at least one of the overall changes
+//   in the commit results in a folder whose contents exceed the limit of 6 MB.
+//   Either reduce the number and size of your changes, or split the changes across
+//   multiple folders.
 //
 //   * ErrCodePathRequiredException "PathRequiredException"
 //   The folderPath for a location cannot be null.
@@ -4069,8 +6325,7 @@ func (c *CodeCommit) PutFileRequest(input *PutFileInput) (req *request.Request, 
 //
 //   * ErrCodeNameLengthExceededException "NameLengthExceededException"
 //   The user name is not valid because it has exceeded the character limit for
-//   file names. File names, including the path to the file, cannot exceed the
-//   character limit.
+//   author names.
 //
 //   * ErrCodeInvalidEmailException "InvalidEmailException"
 //   The specified email address either contains one or more characters that are
@@ -4114,6 +6369,11 @@ func (c *CodeCommit) PutFileRequest(input *PutFileInput) (req *request.Request, 
 //   has the same name as a file that already exists in this repository. Either
 //   provide a different name for the file, or specify a different path for the
 //   file.
+//
+//   * ErrCodeFilePathConflictsWithSubmodulePathException "FilePathConflictsWithSubmodulePathException"
+//   The commit cannot be created because a specified file path points to a submodule.
+//   Verify that the destination files have valid file paths that do not point
+//   to a submodule.
 //
 // See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/PutFile
 func (c *CodeCommit) PutFile(input *PutFileInput) (*PutFileOutput, error) {
@@ -4287,6 +6547,121 @@ func (c *CodeCommit) PutRepositoryTriggersWithContext(ctx aws.Context, input *Pu
 	return out, req.Send()
 }
 
+const opTagResource = "TagResource"
+
+// TagResourceRequest generates a "aws/request.Request" representing the
+// client's request for the TagResource operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See TagResource for more information on using the TagResource
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the TagResourceRequest method.
+//    req, resp := client.TagResourceRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/TagResource
+func (c *CodeCommit) TagResourceRequest(input *TagResourceInput) (req *request.Request, output *TagResourceOutput) {
+	op := &request.Operation{
+		Name:       opTagResource,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &TagResourceInput{}
+	}
+
+	output = &TagResourceOutput{}
+	req = c.newRequest(op, input, output)
+	req.Handlers.Unmarshal.Swap(jsonrpc.UnmarshalHandler.Name, protocol.UnmarshalDiscardBodyHandler)
+	return
+}
+
+// TagResource API operation for AWS CodeCommit.
+//
+// Adds or updates tags for a resource in AWS CodeCommit. For a list of valid
+// resources in AWS CodeCommit, see CodeCommit Resources and Operations (https://docs.aws.amazon.com/codecommit/latest/userguide/auth-and-access-control-iam-access-control-identity-based.html#arn-formats)
+// in the AWS CodeCommit User Guide.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS CodeCommit's
+// API operation TagResource for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeRepositoryDoesNotExistException "RepositoryDoesNotExistException"
+//   The specified repository does not exist.
+//
+//   * ErrCodeInvalidRepositoryNameException "InvalidRepositoryNameException"
+//   At least one specified repository name is not valid.
+//
+//   This exception only occurs when a specified repository name is not valid.
+//   Other exceptions occur when a required repository parameter is missing, or
+//   when a specified repository does not exist.
+//
+//   * ErrCodeResourceArnRequiredException "ResourceArnRequiredException"
+//   A valid Amazon Resource Name (ARN) for an AWS CodeCommit resource is required.
+//   For a list of valid resources in AWS CodeCommit, see CodeCommit Resources
+//   and Operations (https://docs.aws.amazon.com/codecommit/latest/userguide/auth-and-access-control-iam-access-control-identity-based.html#arn-formats)
+//   in the AWS CodeCommit User Guide.
+//
+//   * ErrCodeInvalidResourceArnException "InvalidResourceArnException"
+//   The value for the resource ARN is not valid. For more information about resources
+//   in AWS CodeCommit, see CodeCommit Resources and Operations (https://docs.aws.amazon.com/codecommit/latest/userguide/auth-and-access-control-iam-access-control-identity-based.html#arn-formats)
+//   in the AWS CodeCommit User Guide.
+//
+//   * ErrCodeTagsMapRequiredException "TagsMapRequiredException"
+//   A map of tags is required.
+//
+//   * ErrCodeInvalidTagsMapException "InvalidTagsMapException"
+//   The map of tags is not valid.
+//
+//   * ErrCodeTooManyTagsException "TooManyTagsException"
+//   The maximum number of tags for an AWS CodeCommit resource has been exceeded.
+//
+//   * ErrCodeInvalidSystemTagUsageException "InvalidSystemTagUsageException"
+//   The specified tag is not valid. Key names cannot be prefixed with aws:.
+//
+//   * ErrCodeTagPolicyException "TagPolicyException"
+//   The tag policy is not valid.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/TagResource
+func (c *CodeCommit) TagResource(input *TagResourceInput) (*TagResourceOutput, error) {
+	req, out := c.TagResourceRequest(input)
+	return out, req.Send()
+}
+
+// TagResourceWithContext is the same as TagResource with the addition of
+// the ability to pass a context and additional request options.
+//
+// See TagResource for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CodeCommit) TagResourceWithContext(ctx aws.Context, input *TagResourceInput, opts ...request.Option) (*TagResourceOutput, error) {
+	req, out := c.TagResourceRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
 const opTestRepositoryTriggers = "TestRepositoryTriggers"
 
 // TestRepositoryTriggersRequest generates a "aws/request.Request" representing the
@@ -4434,6 +6809,121 @@ func (c *CodeCommit) TestRepositoryTriggers(input *TestRepositoryTriggersInput) 
 // for more information on using Contexts.
 func (c *CodeCommit) TestRepositoryTriggersWithContext(ctx aws.Context, input *TestRepositoryTriggersInput, opts ...request.Option) (*TestRepositoryTriggersOutput, error) {
 	req, out := c.TestRepositoryTriggersRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opUntagResource = "UntagResource"
+
+// UntagResourceRequest generates a "aws/request.Request" representing the
+// client's request for the UntagResource operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See UntagResource for more information on using the UntagResource
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the UntagResourceRequest method.
+//    req, resp := client.UntagResourceRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/UntagResource
+func (c *CodeCommit) UntagResourceRequest(input *UntagResourceInput) (req *request.Request, output *UntagResourceOutput) {
+	op := &request.Operation{
+		Name:       opUntagResource,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &UntagResourceInput{}
+	}
+
+	output = &UntagResourceOutput{}
+	req = c.newRequest(op, input, output)
+	req.Handlers.Unmarshal.Swap(jsonrpc.UnmarshalHandler.Name, protocol.UnmarshalDiscardBodyHandler)
+	return
+}
+
+// UntagResource API operation for AWS CodeCommit.
+//
+// Removes tags for a resource in AWS CodeCommit. For a list of valid resources
+// in AWS CodeCommit, see CodeCommit Resources and Operations (https://docs.aws.amazon.com/codecommit/latest/userguide/auth-and-access-control-iam-access-control-identity-based.html#arn-formats)
+// in the AWS CodeCommit User Guide.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS CodeCommit's
+// API operation UntagResource for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeRepositoryDoesNotExistException "RepositoryDoesNotExistException"
+//   The specified repository does not exist.
+//
+//   * ErrCodeInvalidRepositoryNameException "InvalidRepositoryNameException"
+//   At least one specified repository name is not valid.
+//
+//   This exception only occurs when a specified repository name is not valid.
+//   Other exceptions occur when a required repository parameter is missing, or
+//   when a specified repository does not exist.
+//
+//   * ErrCodeResourceArnRequiredException "ResourceArnRequiredException"
+//   A valid Amazon Resource Name (ARN) for an AWS CodeCommit resource is required.
+//   For a list of valid resources in AWS CodeCommit, see CodeCommit Resources
+//   and Operations (https://docs.aws.amazon.com/codecommit/latest/userguide/auth-and-access-control-iam-access-control-identity-based.html#arn-formats)
+//   in the AWS CodeCommit User Guide.
+//
+//   * ErrCodeInvalidResourceArnException "InvalidResourceArnException"
+//   The value for the resource ARN is not valid. For more information about resources
+//   in AWS CodeCommit, see CodeCommit Resources and Operations (https://docs.aws.amazon.com/codecommit/latest/userguide/auth-and-access-control-iam-access-control-identity-based.html#arn-formats)
+//   in the AWS CodeCommit User Guide.
+//
+//   * ErrCodeTagKeysListRequiredException "TagKeysListRequiredException"
+//   A list of tag keys is required. The list cannot be empty or null.
+//
+//   * ErrCodeInvalidTagKeysListException "InvalidTagKeysListException"
+//   The list of tags is not valid.
+//
+//   * ErrCodeTooManyTagsException "TooManyTagsException"
+//   The maximum number of tags for an AWS CodeCommit resource has been exceeded.
+//
+//   * ErrCodeInvalidSystemTagUsageException "InvalidSystemTagUsageException"
+//   The specified tag is not valid. Key names cannot be prefixed with aws:.
+//
+//   * ErrCodeTagPolicyException "TagPolicyException"
+//   The tag policy is not valid.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/codecommit-2015-04-13/UntagResource
+func (c *CodeCommit) UntagResource(input *UntagResourceInput) (*UntagResourceOutput, error) {
+	req, out := c.UntagResourceRequest(input)
+	return out, req.Send()
+}
+
+// UntagResourceWithContext is the same as UntagResource with the addition of
+// the ability to pass a context and additional request options.
+//
+// See UntagResource for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *CodeCommit) UntagResourceWithContext(ctx aws.Context, input *UntagResourceInput, opts ...request.Option) (*UntagResourceOutput, error) {
+	req, out := c.UntagResourceRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -5129,7 +7619,7 @@ func (c *CodeCommit) UpdateRepositoryNameRequest(input *UpdateRepositoryNameInpu
 // AWS account. In addition, repository names are limited to 100 alphanumeric,
 // dash, and underscore characters, and cannot include certain characters. The
 // suffix ".git" is prohibited. For a full description of the limits on repository
-// names, see Limits (http://docs.aws.amazon.com/codecommit/latest/userguide/limits.html)
+// names, see Limits (https://docs.aws.amazon.com/codecommit/latest/userguide/limits.html)
 // in the AWS CodeCommit User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -5176,6 +7666,281 @@ func (c *CodeCommit) UpdateRepositoryNameWithContext(ctx aws.Context, input *Upd
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
+}
+
+// Information about errors in a BatchDescribeMergeConflicts operation.
+type BatchDescribeMergeConflictsError struct {
+	_ struct{} `type:"structure"`
+
+	// The name of the exception.
+	//
+	// ExceptionName is a required field
+	ExceptionName *string `locationName:"exceptionName" type:"string" required:"true"`
+
+	// The path to the file.
+	//
+	// FilePath is a required field
+	FilePath *string `locationName:"filePath" type:"string" required:"true"`
+
+	// The message provided by the exception.
+	//
+	// Message is a required field
+	Message *string `locationName:"message" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s BatchDescribeMergeConflictsError) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s BatchDescribeMergeConflictsError) GoString() string {
+	return s.String()
+}
+
+// SetExceptionName sets the ExceptionName field's value.
+func (s *BatchDescribeMergeConflictsError) SetExceptionName(v string) *BatchDescribeMergeConflictsError {
+	s.ExceptionName = &v
+	return s
+}
+
+// SetFilePath sets the FilePath field's value.
+func (s *BatchDescribeMergeConflictsError) SetFilePath(v string) *BatchDescribeMergeConflictsError {
+	s.FilePath = &v
+	return s
+}
+
+// SetMessage sets the Message field's value.
+func (s *BatchDescribeMergeConflictsError) SetMessage(v string) *BatchDescribeMergeConflictsError {
+	s.Message = &v
+	return s
+}
+
+type BatchDescribeMergeConflictsInput struct {
+	_ struct{} `type:"structure"`
+
+	// The level of conflict detail to use. If unspecified, the default FILE_LEVEL
+	// is used, which will return a not mergeable result if the same file has differences
+	// in both branches. If LINE_LEVEL is specified, a conflict will be considered
+	// not mergeable if the same file in both branches has differences on the same
+	// line.
+	ConflictDetailLevel *string `locationName:"conflictDetailLevel" type:"string" enum:"ConflictDetailLevelTypeEnum"`
+
+	// Specifies which branch to use when resolving conflicts, or whether to attempt
+	// automatically merging two versions of a file. The default is NONE, which
+	// requires any conflicts to be resolved manually before the merge operation
+	// will be successful.
+	ConflictResolutionStrategy *string `locationName:"conflictResolutionStrategy" type:"string" enum:"ConflictResolutionStrategyTypeEnum"`
+
+	// The branch, tag, HEAD, or other fully qualified reference used to identify
+	// a commit. For example, a branch name or a full commit ID.
+	//
+	// DestinationCommitSpecifier is a required field
+	DestinationCommitSpecifier *string `locationName:"destinationCommitSpecifier" type:"string" required:"true"`
+
+	// The path of the target files used to describe the conflicts. If not specified,
+	// the default is all conflict files.
+	FilePaths []*string `locationName:"filePaths" type:"list"`
+
+	// The maximum number of files to include in the output.
+	MaxConflictFiles *int64 `locationName:"maxConflictFiles" type:"integer"`
+
+	// The maximum number of merge hunks to include in the output.
+	MaxMergeHunks *int64 `locationName:"maxMergeHunks" type:"integer"`
+
+	// The merge option or strategy you want to use to merge the code.
+	//
+	// MergeOption is a required field
+	MergeOption *string `locationName:"mergeOption" type:"string" required:"true" enum:"MergeOptionTypeEnum"`
+
+	// An enumeration token that when provided in a request, returns the next batch
+	// of the results.
+	NextToken *string `locationName:"nextToken" type:"string"`
+
+	// The name of the repository that contains the merge conflicts you want to
+	// review.
+	//
+	// RepositoryName is a required field
+	RepositoryName *string `locationName:"repositoryName" min:"1" type:"string" required:"true"`
+
+	// The branch, tag, HEAD, or other fully qualified reference used to identify
+	// a commit. For example, a branch name or a full commit ID.
+	//
+	// SourceCommitSpecifier is a required field
+	SourceCommitSpecifier *string `locationName:"sourceCommitSpecifier" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s BatchDescribeMergeConflictsInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s BatchDescribeMergeConflictsInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *BatchDescribeMergeConflictsInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "BatchDescribeMergeConflictsInput"}
+	if s.DestinationCommitSpecifier == nil {
+		invalidParams.Add(request.NewErrParamRequired("DestinationCommitSpecifier"))
+	}
+	if s.MergeOption == nil {
+		invalidParams.Add(request.NewErrParamRequired("MergeOption"))
+	}
+	if s.RepositoryName == nil {
+		invalidParams.Add(request.NewErrParamRequired("RepositoryName"))
+	}
+	if s.RepositoryName != nil && len(*s.RepositoryName) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("RepositoryName", 1))
+	}
+	if s.SourceCommitSpecifier == nil {
+		invalidParams.Add(request.NewErrParamRequired("SourceCommitSpecifier"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetConflictDetailLevel sets the ConflictDetailLevel field's value.
+func (s *BatchDescribeMergeConflictsInput) SetConflictDetailLevel(v string) *BatchDescribeMergeConflictsInput {
+	s.ConflictDetailLevel = &v
+	return s
+}
+
+// SetConflictResolutionStrategy sets the ConflictResolutionStrategy field's value.
+func (s *BatchDescribeMergeConflictsInput) SetConflictResolutionStrategy(v string) *BatchDescribeMergeConflictsInput {
+	s.ConflictResolutionStrategy = &v
+	return s
+}
+
+// SetDestinationCommitSpecifier sets the DestinationCommitSpecifier field's value.
+func (s *BatchDescribeMergeConflictsInput) SetDestinationCommitSpecifier(v string) *BatchDescribeMergeConflictsInput {
+	s.DestinationCommitSpecifier = &v
+	return s
+}
+
+// SetFilePaths sets the FilePaths field's value.
+func (s *BatchDescribeMergeConflictsInput) SetFilePaths(v []*string) *BatchDescribeMergeConflictsInput {
+	s.FilePaths = v
+	return s
+}
+
+// SetMaxConflictFiles sets the MaxConflictFiles field's value.
+func (s *BatchDescribeMergeConflictsInput) SetMaxConflictFiles(v int64) *BatchDescribeMergeConflictsInput {
+	s.MaxConflictFiles = &v
+	return s
+}
+
+// SetMaxMergeHunks sets the MaxMergeHunks field's value.
+func (s *BatchDescribeMergeConflictsInput) SetMaxMergeHunks(v int64) *BatchDescribeMergeConflictsInput {
+	s.MaxMergeHunks = &v
+	return s
+}
+
+// SetMergeOption sets the MergeOption field's value.
+func (s *BatchDescribeMergeConflictsInput) SetMergeOption(v string) *BatchDescribeMergeConflictsInput {
+	s.MergeOption = &v
+	return s
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *BatchDescribeMergeConflictsInput) SetNextToken(v string) *BatchDescribeMergeConflictsInput {
+	s.NextToken = &v
+	return s
+}
+
+// SetRepositoryName sets the RepositoryName field's value.
+func (s *BatchDescribeMergeConflictsInput) SetRepositoryName(v string) *BatchDescribeMergeConflictsInput {
+	s.RepositoryName = &v
+	return s
+}
+
+// SetSourceCommitSpecifier sets the SourceCommitSpecifier field's value.
+func (s *BatchDescribeMergeConflictsInput) SetSourceCommitSpecifier(v string) *BatchDescribeMergeConflictsInput {
+	s.SourceCommitSpecifier = &v
+	return s
+}
+
+type BatchDescribeMergeConflictsOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The commit ID of the merge base.
+	BaseCommitId *string `locationName:"baseCommitId" type:"string"`
+
+	// A list of conflicts for each file, including the conflict metadata and the
+	// hunks of the differences between the files.
+	//
+	// Conflicts is a required field
+	Conflicts []*Conflict `locationName:"conflicts" type:"list" required:"true"`
+
+	// The commit ID of the destination commit specifier that was used in the merge
+	// evaluation.
+	//
+	// DestinationCommitId is a required field
+	DestinationCommitId *string `locationName:"destinationCommitId" type:"string" required:"true"`
+
+	// A list of any errors returned while describing the merge conflicts for each
+	// file.
+	Errors []*BatchDescribeMergeConflictsError `locationName:"errors" type:"list"`
+
+	// An enumeration token that can be used in a request to return the next batch
+	// of the results.
+	NextToken *string `locationName:"nextToken" type:"string"`
+
+	// The commit ID of the source commit specifier that was used in the merge evaluation.
+	//
+	// SourceCommitId is a required field
+	SourceCommitId *string `locationName:"sourceCommitId" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s BatchDescribeMergeConflictsOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s BatchDescribeMergeConflictsOutput) GoString() string {
+	return s.String()
+}
+
+// SetBaseCommitId sets the BaseCommitId field's value.
+func (s *BatchDescribeMergeConflictsOutput) SetBaseCommitId(v string) *BatchDescribeMergeConflictsOutput {
+	s.BaseCommitId = &v
+	return s
+}
+
+// SetConflicts sets the Conflicts field's value.
+func (s *BatchDescribeMergeConflictsOutput) SetConflicts(v []*Conflict) *BatchDescribeMergeConflictsOutput {
+	s.Conflicts = v
+	return s
+}
+
+// SetDestinationCommitId sets the DestinationCommitId field's value.
+func (s *BatchDescribeMergeConflictsOutput) SetDestinationCommitId(v string) *BatchDescribeMergeConflictsOutput {
+	s.DestinationCommitId = &v
+	return s
+}
+
+// SetErrors sets the Errors field's value.
+func (s *BatchDescribeMergeConflictsOutput) SetErrors(v []*BatchDescribeMergeConflictsError) *BatchDescribeMergeConflictsOutput {
+	s.Errors = v
+	return s
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *BatchDescribeMergeConflictsOutput) SetNextToken(v string) *BatchDescribeMergeConflictsOutput {
+	s.NextToken = &v
+	return s
+}
+
+// SetSourceCommitId sets the SourceCommitId field's value.
+func (s *BatchDescribeMergeConflictsOutput) SetSourceCommitId(v string) *BatchDescribeMergeConflictsOutput {
+	s.SourceCommitId = &v
+	return s
 }
 
 // Represents the input of a batch get repositories operation.
@@ -5687,6 +8452,233 @@ func (s *Commit) SetTreeId(v string) *Commit {
 	return s
 }
 
+// Information about conflicts in a merge operation.
+type Conflict struct {
+	_ struct{} `type:"structure"`
+
+	// Metadata about a conflict in a merge operation.
+	ConflictMetadata *ConflictMetadata `locationName:"conflictMetadata" type:"structure"`
+
+	// A list of hunks that contain the differences between files or lines causing
+	// the conflict.
+	MergeHunks []*MergeHunk `locationName:"mergeHunks" type:"list"`
+}
+
+// String returns the string representation
+func (s Conflict) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s Conflict) GoString() string {
+	return s.String()
+}
+
+// SetConflictMetadata sets the ConflictMetadata field's value.
+func (s *Conflict) SetConflictMetadata(v *ConflictMetadata) *Conflict {
+	s.ConflictMetadata = v
+	return s
+}
+
+// SetMergeHunks sets the MergeHunks field's value.
+func (s *Conflict) SetMergeHunks(v []*MergeHunk) *Conflict {
+	s.MergeHunks = v
+	return s
+}
+
+// Information about the metadata for a conflict in a merge operation.
+type ConflictMetadata struct {
+	_ struct{} `type:"structure"`
+
+	// A boolean value indicating whether there are conflicts in the content of
+	// a file.
+	ContentConflict *bool `locationName:"contentConflict" type:"boolean"`
+
+	// A boolean value indicating whether there are conflicts in the file mode of
+	// a file.
+	FileModeConflict *bool `locationName:"fileModeConflict" type:"boolean"`
+
+	// The file modes of the file in the source, destination, and base of the merge.
+	FileModes *FileModes `locationName:"fileModes" type:"structure"`
+
+	// The path of the file that contains conflicts.
+	FilePath *string `locationName:"filePath" type:"string"`
+
+	// The file sizes of the file in the source, destination, and base of the merge.
+	FileSizes *FileSizes `locationName:"fileSizes" type:"structure"`
+
+	// A boolean value (true or false) indicating whether the file is binary or
+	// textual in the source, destination, and base of the merge.
+	IsBinaryFile *IsBinaryFile `locationName:"isBinaryFile" type:"structure"`
+
+	// Whether an add, modify, or delete operation caused the conflict between the
+	// source and destination of the merge.
+	MergeOperations *MergeOperations `locationName:"mergeOperations" type:"structure"`
+
+	// The number of conflicts, including both hunk conflicts and metadata conflicts.
+	NumberOfConflicts *int64 `locationName:"numberOfConflicts" type:"integer"`
+
+	// A boolean value (true or false) indicating whether there are conflicts between
+	// the branches in the object type of a file, folder, or submodule.
+	ObjectTypeConflict *bool `locationName:"objectTypeConflict" type:"boolean"`
+
+	// Information about any object type conflicts in a merge operation.
+	ObjectTypes *ObjectTypes `locationName:"objectTypes" type:"structure"`
+}
+
+// String returns the string representation
+func (s ConflictMetadata) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ConflictMetadata) GoString() string {
+	return s.String()
+}
+
+// SetContentConflict sets the ContentConflict field's value.
+func (s *ConflictMetadata) SetContentConflict(v bool) *ConflictMetadata {
+	s.ContentConflict = &v
+	return s
+}
+
+// SetFileModeConflict sets the FileModeConflict field's value.
+func (s *ConflictMetadata) SetFileModeConflict(v bool) *ConflictMetadata {
+	s.FileModeConflict = &v
+	return s
+}
+
+// SetFileModes sets the FileModes field's value.
+func (s *ConflictMetadata) SetFileModes(v *FileModes) *ConflictMetadata {
+	s.FileModes = v
+	return s
+}
+
+// SetFilePath sets the FilePath field's value.
+func (s *ConflictMetadata) SetFilePath(v string) *ConflictMetadata {
+	s.FilePath = &v
+	return s
+}
+
+// SetFileSizes sets the FileSizes field's value.
+func (s *ConflictMetadata) SetFileSizes(v *FileSizes) *ConflictMetadata {
+	s.FileSizes = v
+	return s
+}
+
+// SetIsBinaryFile sets the IsBinaryFile field's value.
+func (s *ConflictMetadata) SetIsBinaryFile(v *IsBinaryFile) *ConflictMetadata {
+	s.IsBinaryFile = v
+	return s
+}
+
+// SetMergeOperations sets the MergeOperations field's value.
+func (s *ConflictMetadata) SetMergeOperations(v *MergeOperations) *ConflictMetadata {
+	s.MergeOperations = v
+	return s
+}
+
+// SetNumberOfConflicts sets the NumberOfConflicts field's value.
+func (s *ConflictMetadata) SetNumberOfConflicts(v int64) *ConflictMetadata {
+	s.NumberOfConflicts = &v
+	return s
+}
+
+// SetObjectTypeConflict sets the ObjectTypeConflict field's value.
+func (s *ConflictMetadata) SetObjectTypeConflict(v bool) *ConflictMetadata {
+	s.ObjectTypeConflict = &v
+	return s
+}
+
+// SetObjectTypes sets the ObjectTypes field's value.
+func (s *ConflictMetadata) SetObjectTypes(v *ObjectTypes) *ConflictMetadata {
+	s.ObjectTypes = v
+	return s
+}
+
+// A list of inputs to use when resolving conflicts during a merge if AUTOMERGE
+// is chosen as the conflict resolution strategy.
+type ConflictResolution struct {
+	_ struct{} `type:"structure"`
+
+	// Files that will be deleted as part of the merge conflict resolution.
+	DeleteFiles []*DeleteFileEntry `locationName:"deleteFiles" type:"list"`
+
+	// Files that will have content replaced as part of the merge conflict resolution.
+	ReplaceContents []*ReplaceContentEntry `locationName:"replaceContents" type:"list"`
+
+	// File modes that will be set as part of the merge conflict resolution.
+	SetFileModes []*SetFileModeEntry `locationName:"setFileModes" type:"list"`
+}
+
+// String returns the string representation
+func (s ConflictResolution) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ConflictResolution) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *ConflictResolution) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "ConflictResolution"}
+	if s.DeleteFiles != nil {
+		for i, v := range s.DeleteFiles {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "DeleteFiles", i), err.(request.ErrInvalidParams))
+			}
+		}
+	}
+	if s.ReplaceContents != nil {
+		for i, v := range s.ReplaceContents {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "ReplaceContents", i), err.(request.ErrInvalidParams))
+			}
+		}
+	}
+	if s.SetFileModes != nil {
+		for i, v := range s.SetFileModes {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "SetFileModes", i), err.(request.ErrInvalidParams))
+			}
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetDeleteFiles sets the DeleteFiles field's value.
+func (s *ConflictResolution) SetDeleteFiles(v []*DeleteFileEntry) *ConflictResolution {
+	s.DeleteFiles = v
+	return s
+}
+
+// SetReplaceContents sets the ReplaceContents field's value.
+func (s *ConflictResolution) SetReplaceContents(v []*ReplaceContentEntry) *ConflictResolution {
+	s.ReplaceContents = v
+	return s
+}
+
+// SetSetFileModes sets the SetFileModes field's value.
+func (s *ConflictResolution) SetSetFileModes(v []*SetFileModeEntry) *ConflictResolution {
+	s.SetFileModes = v
+	return s
+}
+
 // Represents the input of a create branch operation.
 type CreateBranchInput struct {
 	_ struct{} `type:"structure"`
@@ -5772,6 +8764,233 @@ func (s CreateBranchOutput) String() string {
 // GoString returns the string representation
 func (s CreateBranchOutput) GoString() string {
 	return s.String()
+}
+
+type CreateCommitInput struct {
+	_ struct{} `type:"structure"`
+
+	// The name of the author who created the commit. This information will be used
+	// as both the author and committer for the commit.
+	AuthorName *string `locationName:"authorName" type:"string"`
+
+	// The name of the branch where you will create the commit.
+	//
+	// BranchName is a required field
+	BranchName *string `locationName:"branchName" min:"1" type:"string" required:"true"`
+
+	// The commit message you want to include as part of creating the commit. Commit
+	// messages are limited to 256 KB. If no message is specified, a default message
+	// will be used.
+	CommitMessage *string `locationName:"commitMessage" type:"string"`
+
+	// The files to delete in this commit. These files will still exist in prior
+	// commits.
+	DeleteFiles []*DeleteFileEntry `locationName:"deleteFiles" type:"list"`
+
+	// The email address of the person who created the commit.
+	Email *string `locationName:"email" type:"string"`
+
+	// If the commit contains deletions, whether to keep a folder or folder structure
+	// if the changes leave the folders empty. If this is specified as true, a .gitkeep
+	// file will be created for empty folders. The default is false.
+	KeepEmptyFolders *bool `locationName:"keepEmptyFolders" type:"boolean"`
+
+	// The ID of the commit that is the parent of the commit you will create. If
+	// this is an empty repository, this is not required.
+	ParentCommitId *string `locationName:"parentCommitId" type:"string"`
+
+	// The files to add or update in this commit.
+	PutFiles []*PutFileEntry `locationName:"putFiles" type:"list"`
+
+	// The name of the repository where you will create the commit.
+	//
+	// RepositoryName is a required field
+	RepositoryName *string `locationName:"repositoryName" min:"1" type:"string" required:"true"`
+
+	// The file modes to update for files in this commit.
+	SetFileModes []*SetFileModeEntry `locationName:"setFileModes" type:"list"`
+}
+
+// String returns the string representation
+func (s CreateCommitInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s CreateCommitInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *CreateCommitInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "CreateCommitInput"}
+	if s.BranchName == nil {
+		invalidParams.Add(request.NewErrParamRequired("BranchName"))
+	}
+	if s.BranchName != nil && len(*s.BranchName) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("BranchName", 1))
+	}
+	if s.RepositoryName == nil {
+		invalidParams.Add(request.NewErrParamRequired("RepositoryName"))
+	}
+	if s.RepositoryName != nil && len(*s.RepositoryName) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("RepositoryName", 1))
+	}
+	if s.DeleteFiles != nil {
+		for i, v := range s.DeleteFiles {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "DeleteFiles", i), err.(request.ErrInvalidParams))
+			}
+		}
+	}
+	if s.PutFiles != nil {
+		for i, v := range s.PutFiles {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "PutFiles", i), err.(request.ErrInvalidParams))
+			}
+		}
+	}
+	if s.SetFileModes != nil {
+		for i, v := range s.SetFileModes {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "SetFileModes", i), err.(request.ErrInvalidParams))
+			}
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetAuthorName sets the AuthorName field's value.
+func (s *CreateCommitInput) SetAuthorName(v string) *CreateCommitInput {
+	s.AuthorName = &v
+	return s
+}
+
+// SetBranchName sets the BranchName field's value.
+func (s *CreateCommitInput) SetBranchName(v string) *CreateCommitInput {
+	s.BranchName = &v
+	return s
+}
+
+// SetCommitMessage sets the CommitMessage field's value.
+func (s *CreateCommitInput) SetCommitMessage(v string) *CreateCommitInput {
+	s.CommitMessage = &v
+	return s
+}
+
+// SetDeleteFiles sets the DeleteFiles field's value.
+func (s *CreateCommitInput) SetDeleteFiles(v []*DeleteFileEntry) *CreateCommitInput {
+	s.DeleteFiles = v
+	return s
+}
+
+// SetEmail sets the Email field's value.
+func (s *CreateCommitInput) SetEmail(v string) *CreateCommitInput {
+	s.Email = &v
+	return s
+}
+
+// SetKeepEmptyFolders sets the KeepEmptyFolders field's value.
+func (s *CreateCommitInput) SetKeepEmptyFolders(v bool) *CreateCommitInput {
+	s.KeepEmptyFolders = &v
+	return s
+}
+
+// SetParentCommitId sets the ParentCommitId field's value.
+func (s *CreateCommitInput) SetParentCommitId(v string) *CreateCommitInput {
+	s.ParentCommitId = &v
+	return s
+}
+
+// SetPutFiles sets the PutFiles field's value.
+func (s *CreateCommitInput) SetPutFiles(v []*PutFileEntry) *CreateCommitInput {
+	s.PutFiles = v
+	return s
+}
+
+// SetRepositoryName sets the RepositoryName field's value.
+func (s *CreateCommitInput) SetRepositoryName(v string) *CreateCommitInput {
+	s.RepositoryName = &v
+	return s
+}
+
+// SetSetFileModes sets the SetFileModes field's value.
+func (s *CreateCommitInput) SetSetFileModes(v []*SetFileModeEntry) *CreateCommitInput {
+	s.SetFileModes = v
+	return s
+}
+
+type CreateCommitOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The full commit ID of the commit that contains your committed file changes.
+	CommitId *string `locationName:"commitId" type:"string"`
+
+	// The files added as part of the committed file changes.
+	FilesAdded []*FileMetadata `locationName:"filesAdded" type:"list"`
+
+	// The files deleted as part of the committed file changes.
+	FilesDeleted []*FileMetadata `locationName:"filesDeleted" type:"list"`
+
+	// The files updated as part of the commited file changes.
+	FilesUpdated []*FileMetadata `locationName:"filesUpdated" type:"list"`
+
+	// The full SHA-1 pointer of the tree information for the commit that contains
+	// the commited file changes.
+	TreeId *string `locationName:"treeId" type:"string"`
+}
+
+// String returns the string representation
+func (s CreateCommitOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s CreateCommitOutput) GoString() string {
+	return s.String()
+}
+
+// SetCommitId sets the CommitId field's value.
+func (s *CreateCommitOutput) SetCommitId(v string) *CreateCommitOutput {
+	s.CommitId = &v
+	return s
+}
+
+// SetFilesAdded sets the FilesAdded field's value.
+func (s *CreateCommitOutput) SetFilesAdded(v []*FileMetadata) *CreateCommitOutput {
+	s.FilesAdded = v
+	return s
+}
+
+// SetFilesDeleted sets the FilesDeleted field's value.
+func (s *CreateCommitOutput) SetFilesDeleted(v []*FileMetadata) *CreateCommitOutput {
+	s.FilesDeleted = v
+	return s
+}
+
+// SetFilesUpdated sets the FilesUpdated field's value.
+func (s *CreateCommitOutput) SetFilesUpdated(v []*FileMetadata) *CreateCommitOutput {
+	s.FilesUpdated = v
+	return s
+}
+
+// SetTreeId sets the TreeId field's value.
+func (s *CreateCommitOutput) SetTreeId(v string) *CreateCommitOutput {
+	s.TreeId = &v
+	return s
 }
 
 type CreatePullRequestInput struct {
@@ -5907,11 +9126,14 @@ type CreateRepositoryInput struct {
 	// The repository name must be unique across the calling AWS account. In addition,
 	// repository names are limited to 100 alphanumeric, dash, and underscore characters,
 	// and cannot include certain characters. For a full description of the limits
-	// on repository names, see Limits (http://docs.aws.amazon.com/codecommit/latest/userguide/limits.html)
+	// on repository names, see Limits (https://docs.aws.amazon.com/codecommit/latest/userguide/limits.html)
 	// in the AWS CodeCommit User Guide. The suffix ".git" is prohibited.
 	//
 	// RepositoryName is a required field
 	RepositoryName *string `locationName:"repositoryName" min:"1" type:"string" required:"true"`
+
+	// One or more tag key-value pairs to use when tagging this repository.
+	Tags map[string]*string `locationName:"tags" type:"map"`
 }
 
 // String returns the string representation
@@ -5952,6 +9174,12 @@ func (s *CreateRepositoryInput) SetRepositoryName(v string) *CreateRepositoryInp
 	return s
 }
 
+// SetTags sets the Tags field's value.
+func (s *CreateRepositoryInput) SetTags(v map[string]*string) *CreateRepositoryInput {
+	s.Tags = v
+	return s
+}
+
 // Represents the output of a create repository operation.
 type CreateRepositoryOutput struct {
 	_ struct{} `type:"structure"`
@@ -5973,6 +9201,204 @@ func (s CreateRepositoryOutput) GoString() string {
 // SetRepositoryMetadata sets the RepositoryMetadata field's value.
 func (s *CreateRepositoryOutput) SetRepositoryMetadata(v *RepositoryMetadata) *CreateRepositoryOutput {
 	s.RepositoryMetadata = v
+	return s
+}
+
+type CreateUnreferencedMergeCommitInput struct {
+	_ struct{} `type:"structure"`
+
+	// The name of the author who created the unreferenced commit. This information
+	// will be used as both the author and committer for the commit.
+	AuthorName *string `locationName:"authorName" type:"string"`
+
+	// The commit message for the unreferenced commit.
+	CommitMessage *string `locationName:"commitMessage" type:"string"`
+
+	// The level of conflict detail to use. If unspecified, the default FILE_LEVEL
+	// is used, which will return a not mergeable result if the same file has differences
+	// in both branches. If LINE_LEVEL is specified, a conflict will be considered
+	// not mergeable if the same file in both branches has differences on the same
+	// line.
+	ConflictDetailLevel *string `locationName:"conflictDetailLevel" type:"string" enum:"ConflictDetailLevelTypeEnum"`
+
+	// A list of inputs to use when resolving conflicts during a merge if AUTOMERGE
+	// is chosen as the conflict resolution strategy.
+	ConflictResolution *ConflictResolution `locationName:"conflictResolution" type:"structure"`
+
+	// Specifies which branch to use when resolving conflicts, or whether to attempt
+	// automatically merging two versions of a file. The default is NONE, which
+	// requires any conflicts to be resolved manually before the merge operation
+	// will be successful.
+	ConflictResolutionStrategy *string `locationName:"conflictResolutionStrategy" type:"string" enum:"ConflictResolutionStrategyTypeEnum"`
+
+	// The branch, tag, HEAD, or other fully qualified reference used to identify
+	// a commit. For example, a branch name or a full commit ID.
+	//
+	// DestinationCommitSpecifier is a required field
+	DestinationCommitSpecifier *string `locationName:"destinationCommitSpecifier" type:"string" required:"true"`
+
+	// The email address for the person who created the unreferenced commit.
+	Email *string `locationName:"email" type:"string"`
+
+	// If the commit contains deletions, whether to keep a folder or folder structure
+	// if the changes leave the folders empty. If this is specified as true, a .gitkeep
+	// file will be created for empty folders. The default is false.
+	KeepEmptyFolders *bool `locationName:"keepEmptyFolders" type:"boolean"`
+
+	// The merge option or strategy you want to use to merge the code.
+	//
+	// MergeOption is a required field
+	MergeOption *string `locationName:"mergeOption" type:"string" required:"true" enum:"MergeOptionTypeEnum"`
+
+	// The name of the repository where you want to create the unreferenced merge
+	// commit.
+	//
+	// RepositoryName is a required field
+	RepositoryName *string `locationName:"repositoryName" min:"1" type:"string" required:"true"`
+
+	// The branch, tag, HEAD, or other fully qualified reference used to identify
+	// a commit. For example, a branch name or a full commit ID.
+	//
+	// SourceCommitSpecifier is a required field
+	SourceCommitSpecifier *string `locationName:"sourceCommitSpecifier" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s CreateUnreferencedMergeCommitInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s CreateUnreferencedMergeCommitInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *CreateUnreferencedMergeCommitInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "CreateUnreferencedMergeCommitInput"}
+	if s.DestinationCommitSpecifier == nil {
+		invalidParams.Add(request.NewErrParamRequired("DestinationCommitSpecifier"))
+	}
+	if s.MergeOption == nil {
+		invalidParams.Add(request.NewErrParamRequired("MergeOption"))
+	}
+	if s.RepositoryName == nil {
+		invalidParams.Add(request.NewErrParamRequired("RepositoryName"))
+	}
+	if s.RepositoryName != nil && len(*s.RepositoryName) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("RepositoryName", 1))
+	}
+	if s.SourceCommitSpecifier == nil {
+		invalidParams.Add(request.NewErrParamRequired("SourceCommitSpecifier"))
+	}
+	if s.ConflictResolution != nil {
+		if err := s.ConflictResolution.Validate(); err != nil {
+			invalidParams.AddNested("ConflictResolution", err.(request.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetAuthorName sets the AuthorName field's value.
+func (s *CreateUnreferencedMergeCommitInput) SetAuthorName(v string) *CreateUnreferencedMergeCommitInput {
+	s.AuthorName = &v
+	return s
+}
+
+// SetCommitMessage sets the CommitMessage field's value.
+func (s *CreateUnreferencedMergeCommitInput) SetCommitMessage(v string) *CreateUnreferencedMergeCommitInput {
+	s.CommitMessage = &v
+	return s
+}
+
+// SetConflictDetailLevel sets the ConflictDetailLevel field's value.
+func (s *CreateUnreferencedMergeCommitInput) SetConflictDetailLevel(v string) *CreateUnreferencedMergeCommitInput {
+	s.ConflictDetailLevel = &v
+	return s
+}
+
+// SetConflictResolution sets the ConflictResolution field's value.
+func (s *CreateUnreferencedMergeCommitInput) SetConflictResolution(v *ConflictResolution) *CreateUnreferencedMergeCommitInput {
+	s.ConflictResolution = v
+	return s
+}
+
+// SetConflictResolutionStrategy sets the ConflictResolutionStrategy field's value.
+func (s *CreateUnreferencedMergeCommitInput) SetConflictResolutionStrategy(v string) *CreateUnreferencedMergeCommitInput {
+	s.ConflictResolutionStrategy = &v
+	return s
+}
+
+// SetDestinationCommitSpecifier sets the DestinationCommitSpecifier field's value.
+func (s *CreateUnreferencedMergeCommitInput) SetDestinationCommitSpecifier(v string) *CreateUnreferencedMergeCommitInput {
+	s.DestinationCommitSpecifier = &v
+	return s
+}
+
+// SetEmail sets the Email field's value.
+func (s *CreateUnreferencedMergeCommitInput) SetEmail(v string) *CreateUnreferencedMergeCommitInput {
+	s.Email = &v
+	return s
+}
+
+// SetKeepEmptyFolders sets the KeepEmptyFolders field's value.
+func (s *CreateUnreferencedMergeCommitInput) SetKeepEmptyFolders(v bool) *CreateUnreferencedMergeCommitInput {
+	s.KeepEmptyFolders = &v
+	return s
+}
+
+// SetMergeOption sets the MergeOption field's value.
+func (s *CreateUnreferencedMergeCommitInput) SetMergeOption(v string) *CreateUnreferencedMergeCommitInput {
+	s.MergeOption = &v
+	return s
+}
+
+// SetRepositoryName sets the RepositoryName field's value.
+func (s *CreateUnreferencedMergeCommitInput) SetRepositoryName(v string) *CreateUnreferencedMergeCommitInput {
+	s.RepositoryName = &v
+	return s
+}
+
+// SetSourceCommitSpecifier sets the SourceCommitSpecifier field's value.
+func (s *CreateUnreferencedMergeCommitInput) SetSourceCommitSpecifier(v string) *CreateUnreferencedMergeCommitInput {
+	s.SourceCommitSpecifier = &v
+	return s
+}
+
+type CreateUnreferencedMergeCommitOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The full commit ID of the commit that contains your merge results.
+	CommitId *string `locationName:"commitId" type:"string"`
+
+	// The full SHA-1 pointer of the tree information for the commit that contains
+	// the merge results.
+	TreeId *string `locationName:"treeId" type:"string"`
+}
+
+// String returns the string representation
+func (s CreateUnreferencedMergeCommitOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s CreateUnreferencedMergeCommitOutput) GoString() string {
+	return s.String()
+}
+
+// SetCommitId sets the CommitId field's value.
+func (s *CreateUnreferencedMergeCommitOutput) SetCommitId(v string) *CreateUnreferencedMergeCommitOutput {
+	s.CommitId = &v
+	return s
+}
+
+// SetTreeId sets the TreeId field's value.
+func (s *CreateUnreferencedMergeCommitOutput) SetTreeId(v string) *CreateUnreferencedMergeCommitOutput {
+	s.TreeId = &v
 	return s
 }
 
@@ -6119,6 +9545,46 @@ func (s DeleteCommentContentOutput) GoString() string {
 // SetComment sets the Comment field's value.
 func (s *DeleteCommentContentOutput) SetComment(v *Comment) *DeleteCommentContentOutput {
 	s.Comment = v
+	return s
+}
+
+// A file that will be deleted as part of a commit.
+type DeleteFileEntry struct {
+	_ struct{} `type:"structure"`
+
+	// The full path of the file that will be deleted, including the name of the
+	// file.
+	//
+	// FilePath is a required field
+	FilePath *string `locationName:"filePath" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s DeleteFileEntry) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s DeleteFileEntry) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *DeleteFileEntry) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "DeleteFileEntry"}
+	if s.FilePath == nil {
+		invalidParams.Add(request.NewErrParamRequired("FilePath"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetFilePath sets the FilePath field's value.
+func (s *DeleteFileEntry) SetFilePath(v string) *DeleteFileEntry {
+	s.FilePath = &v
 	return s
 }
 
@@ -6385,6 +9851,228 @@ func (s *DeleteRepositoryOutput) SetRepositoryId(v string) *DeleteRepositoryOutp
 	return s
 }
 
+type DescribeMergeConflictsInput struct {
+	_ struct{} `type:"structure"`
+
+	// The level of conflict detail to use. If unspecified, the default FILE_LEVEL
+	// is used, which will return a not mergeable result if the same file has differences
+	// in both branches. If LINE_LEVEL is specified, a conflict will be considered
+	// not mergeable if the same file in both branches has differences on the same
+	// line.
+	ConflictDetailLevel *string `locationName:"conflictDetailLevel" type:"string" enum:"ConflictDetailLevelTypeEnum"`
+
+	// Specifies which branch to use when resolving conflicts, or whether to attempt
+	// automatically merging two versions of a file. The default is NONE, which
+	// requires any conflicts to be resolved manually before the merge operation
+	// will be successful.
+	ConflictResolutionStrategy *string `locationName:"conflictResolutionStrategy" type:"string" enum:"ConflictResolutionStrategyTypeEnum"`
+
+	// The branch, tag, HEAD, or other fully qualified reference used to identify
+	// a commit. For example, a branch name or a full commit ID.
+	//
+	// DestinationCommitSpecifier is a required field
+	DestinationCommitSpecifier *string `locationName:"destinationCommitSpecifier" type:"string" required:"true"`
+
+	// The path of the target files used to describe the conflicts.
+	//
+	// FilePath is a required field
+	FilePath *string `locationName:"filePath" type:"string" required:"true"`
+
+	// The maximum number of merge hunks to include in the output.
+	MaxMergeHunks *int64 `locationName:"maxMergeHunks" type:"integer"`
+
+	// The merge option or strategy you want to use to merge the code.
+	//
+	// MergeOption is a required field
+	MergeOption *string `locationName:"mergeOption" type:"string" required:"true" enum:"MergeOptionTypeEnum"`
+
+	// An enumeration token that when provided in a request, returns the next batch
+	// of the results.
+	NextToken *string `locationName:"nextToken" type:"string"`
+
+	// The name of the repository where you want to get information about a merge
+	// conflict.
+	//
+	// RepositoryName is a required field
+	RepositoryName *string `locationName:"repositoryName" min:"1" type:"string" required:"true"`
+
+	// The branch, tag, HEAD, or other fully qualified reference used to identify
+	// a commit. For example, a branch name or a full commit ID.
+	//
+	// SourceCommitSpecifier is a required field
+	SourceCommitSpecifier *string `locationName:"sourceCommitSpecifier" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s DescribeMergeConflictsInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s DescribeMergeConflictsInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *DescribeMergeConflictsInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "DescribeMergeConflictsInput"}
+	if s.DestinationCommitSpecifier == nil {
+		invalidParams.Add(request.NewErrParamRequired("DestinationCommitSpecifier"))
+	}
+	if s.FilePath == nil {
+		invalidParams.Add(request.NewErrParamRequired("FilePath"))
+	}
+	if s.MergeOption == nil {
+		invalidParams.Add(request.NewErrParamRequired("MergeOption"))
+	}
+	if s.RepositoryName == nil {
+		invalidParams.Add(request.NewErrParamRequired("RepositoryName"))
+	}
+	if s.RepositoryName != nil && len(*s.RepositoryName) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("RepositoryName", 1))
+	}
+	if s.SourceCommitSpecifier == nil {
+		invalidParams.Add(request.NewErrParamRequired("SourceCommitSpecifier"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetConflictDetailLevel sets the ConflictDetailLevel field's value.
+func (s *DescribeMergeConflictsInput) SetConflictDetailLevel(v string) *DescribeMergeConflictsInput {
+	s.ConflictDetailLevel = &v
+	return s
+}
+
+// SetConflictResolutionStrategy sets the ConflictResolutionStrategy field's value.
+func (s *DescribeMergeConflictsInput) SetConflictResolutionStrategy(v string) *DescribeMergeConflictsInput {
+	s.ConflictResolutionStrategy = &v
+	return s
+}
+
+// SetDestinationCommitSpecifier sets the DestinationCommitSpecifier field's value.
+func (s *DescribeMergeConflictsInput) SetDestinationCommitSpecifier(v string) *DescribeMergeConflictsInput {
+	s.DestinationCommitSpecifier = &v
+	return s
+}
+
+// SetFilePath sets the FilePath field's value.
+func (s *DescribeMergeConflictsInput) SetFilePath(v string) *DescribeMergeConflictsInput {
+	s.FilePath = &v
+	return s
+}
+
+// SetMaxMergeHunks sets the MaxMergeHunks field's value.
+func (s *DescribeMergeConflictsInput) SetMaxMergeHunks(v int64) *DescribeMergeConflictsInput {
+	s.MaxMergeHunks = &v
+	return s
+}
+
+// SetMergeOption sets the MergeOption field's value.
+func (s *DescribeMergeConflictsInput) SetMergeOption(v string) *DescribeMergeConflictsInput {
+	s.MergeOption = &v
+	return s
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *DescribeMergeConflictsInput) SetNextToken(v string) *DescribeMergeConflictsInput {
+	s.NextToken = &v
+	return s
+}
+
+// SetRepositoryName sets the RepositoryName field's value.
+func (s *DescribeMergeConflictsInput) SetRepositoryName(v string) *DescribeMergeConflictsInput {
+	s.RepositoryName = &v
+	return s
+}
+
+// SetSourceCommitSpecifier sets the SourceCommitSpecifier field's value.
+func (s *DescribeMergeConflictsInput) SetSourceCommitSpecifier(v string) *DescribeMergeConflictsInput {
+	s.SourceCommitSpecifier = &v
+	return s
+}
+
+type DescribeMergeConflictsOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The commit ID of the merge base.
+	BaseCommitId *string `locationName:"baseCommitId" type:"string"`
+
+	// Contains metadata about the conflicts found in the merge.
+	//
+	// ConflictMetadata is a required field
+	ConflictMetadata *ConflictMetadata `locationName:"conflictMetadata" type:"structure" required:"true"`
+
+	// The commit ID of the destination commit specifier that was used in the merge
+	// evaluation.
+	//
+	// DestinationCommitId is a required field
+	DestinationCommitId *string `locationName:"destinationCommitId" type:"string" required:"true"`
+
+	// A list of merge hunks of the differences between the files or lines.
+	//
+	// MergeHunks is a required field
+	MergeHunks []*MergeHunk `locationName:"mergeHunks" type:"list" required:"true"`
+
+	// An enumeration token that can be used in a request to return the next batch
+	// of the results.
+	NextToken *string `locationName:"nextToken" type:"string"`
+
+	// The commit ID of the source commit specifier that was used in the merge evaluation.
+	//
+	// SourceCommitId is a required field
+	SourceCommitId *string `locationName:"sourceCommitId" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s DescribeMergeConflictsOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s DescribeMergeConflictsOutput) GoString() string {
+	return s.String()
+}
+
+// SetBaseCommitId sets the BaseCommitId field's value.
+func (s *DescribeMergeConflictsOutput) SetBaseCommitId(v string) *DescribeMergeConflictsOutput {
+	s.BaseCommitId = &v
+	return s
+}
+
+// SetConflictMetadata sets the ConflictMetadata field's value.
+func (s *DescribeMergeConflictsOutput) SetConflictMetadata(v *ConflictMetadata) *DescribeMergeConflictsOutput {
+	s.ConflictMetadata = v
+	return s
+}
+
+// SetDestinationCommitId sets the DestinationCommitId field's value.
+func (s *DescribeMergeConflictsOutput) SetDestinationCommitId(v string) *DescribeMergeConflictsOutput {
+	s.DestinationCommitId = &v
+	return s
+}
+
+// SetMergeHunks sets the MergeHunks field's value.
+func (s *DescribeMergeConflictsOutput) SetMergeHunks(v []*MergeHunk) *DescribeMergeConflictsOutput {
+	s.MergeHunks = v
+	return s
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *DescribeMergeConflictsOutput) SetNextToken(v string) *DescribeMergeConflictsOutput {
+	s.NextToken = &v
+	return s
+}
+
+// SetSourceCommitId sets the SourceCommitId field's value.
+func (s *DescribeMergeConflictsOutput) SetSourceCommitId(v string) *DescribeMergeConflictsOutput {
+	s.SourceCommitId = &v
+	return s
+}
+
 type DescribePullRequestEventsInput struct {
 	_ struct{} `type:"structure"`
 
@@ -6593,6 +10281,134 @@ func (s *File) SetFileMode(v string) *File {
 // SetRelativePath sets the RelativePath field's value.
 func (s *File) SetRelativePath(v string) *File {
 	s.RelativePath = &v
+	return s
+}
+
+// A file that will be added, updated, or deleted as part of a commit.
+type FileMetadata struct {
+	_ struct{} `type:"structure"`
+
+	// The full path to the file that will be added or updated, including the name
+	// of the file.
+	AbsolutePath *string `locationName:"absolutePath" type:"string"`
+
+	// The blob ID that contains the file information.
+	BlobId *string `locationName:"blobId" type:"string"`
+
+	// The extrapolated file mode permissions for the file. Valid values include
+	// EXECUTABLE and NORMAL.
+	FileMode *string `locationName:"fileMode" type:"string" enum:"FileModeTypeEnum"`
+}
+
+// String returns the string representation
+func (s FileMetadata) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s FileMetadata) GoString() string {
+	return s.String()
+}
+
+// SetAbsolutePath sets the AbsolutePath field's value.
+func (s *FileMetadata) SetAbsolutePath(v string) *FileMetadata {
+	s.AbsolutePath = &v
+	return s
+}
+
+// SetBlobId sets the BlobId field's value.
+func (s *FileMetadata) SetBlobId(v string) *FileMetadata {
+	s.BlobId = &v
+	return s
+}
+
+// SetFileMode sets the FileMode field's value.
+func (s *FileMetadata) SetFileMode(v string) *FileMetadata {
+	s.FileMode = &v
+	return s
+}
+
+// Information about file modes in a merge or pull request.
+type FileModes struct {
+	_ struct{} `type:"structure"`
+
+	// The file mode of a file in the base of a merge or pull request.
+	Base *string `locationName:"base" type:"string" enum:"FileModeTypeEnum"`
+
+	// The file mode of a file in the destination of a merge or pull request.
+	Destination *string `locationName:"destination" type:"string" enum:"FileModeTypeEnum"`
+
+	// The file mode of a file in the source of a merge or pull request.
+	Source *string `locationName:"source" type:"string" enum:"FileModeTypeEnum"`
+}
+
+// String returns the string representation
+func (s FileModes) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s FileModes) GoString() string {
+	return s.String()
+}
+
+// SetBase sets the Base field's value.
+func (s *FileModes) SetBase(v string) *FileModes {
+	s.Base = &v
+	return s
+}
+
+// SetDestination sets the Destination field's value.
+func (s *FileModes) SetDestination(v string) *FileModes {
+	s.Destination = &v
+	return s
+}
+
+// SetSource sets the Source field's value.
+func (s *FileModes) SetSource(v string) *FileModes {
+	s.Source = &v
+	return s
+}
+
+// Information about the size of files in a merge or pull request.
+type FileSizes struct {
+	_ struct{} `type:"structure"`
+
+	// The size of a file in the base of a merge or pull request.
+	Base *int64 `locationName:"base" type:"long"`
+
+	// The size of a file in the destination of a merge or pull request.
+	Destination *int64 `locationName:"destination" type:"long"`
+
+	// The size of a file in the source of a merge or pull request.
+	Source *int64 `locationName:"source" type:"long"`
+}
+
+// String returns the string representation
+func (s FileSizes) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s FileSizes) GoString() string {
+	return s.String()
+}
+
+// SetBase sets the Base field's value.
+func (s *FileSizes) SetBase(v int64) *FileSizes {
+	s.Base = &v
+	return s
+}
+
+// SetDestination sets the Destination field's value.
+func (s *FileSizes) SetDestination(v int64) *FileSizes {
+	s.Destination = &v
+	return s
+}
+
+// SetSource sets the Source field's value.
+func (s *FileSizes) SetSource(v int64) *FileSizes {
+	s.Source = &v
 	return s
 }
 
@@ -7641,8 +11457,21 @@ func (s *GetFolderOutput) SetTreeId(v string) *GetFolderOutput {
 	return s
 }
 
-type GetMergeConflictsInput struct {
+type GetMergeCommitInput struct {
 	_ struct{} `type:"structure"`
+
+	// The level of conflict detail to use. If unspecified, the default FILE_LEVEL
+	// is used, which will return a not mergeable result if the same file has differences
+	// in both branches. If LINE_LEVEL is specified, a conflict will be considered
+	// not mergeable if the same file in both branches has differences on the same
+	// line.
+	ConflictDetailLevel *string `locationName:"conflictDetailLevel" type:"string" enum:"ConflictDetailLevelTypeEnum"`
+
+	// Specifies which branch to use when resolving conflicts, or whether to attempt
+	// automatically merging two versions of a file. The default is NONE, which
+	// requires any conflicts to be resolved manually before the merge operation
+	// will be successful.
+	ConflictResolutionStrategy *string `locationName:"conflictResolutionStrategy" type:"string" enum:"ConflictResolutionStrategyTypeEnum"`
 
 	// The branch, tag, HEAD, or other fully qualified reference used to identify
 	// a commit. For example, a branch name or a full commit ID.
@@ -7650,11 +11479,167 @@ type GetMergeConflictsInput struct {
 	// DestinationCommitSpecifier is a required field
 	DestinationCommitSpecifier *string `locationName:"destinationCommitSpecifier" type:"string" required:"true"`
 
-	// The merge option or strategy you want to use to merge the code. The only
-	// valid value is FAST_FORWARD_MERGE.
+	// The name of the repository that contains the merge commit about which you
+	// want to get information.
+	//
+	// RepositoryName is a required field
+	RepositoryName *string `locationName:"repositoryName" min:"1" type:"string" required:"true"`
+
+	// The branch, tag, HEAD, or other fully qualified reference used to identify
+	// a commit. For example, a branch name or a full commit ID.
+	//
+	// SourceCommitSpecifier is a required field
+	SourceCommitSpecifier *string `locationName:"sourceCommitSpecifier" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s GetMergeCommitInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetMergeCommitInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *GetMergeCommitInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "GetMergeCommitInput"}
+	if s.DestinationCommitSpecifier == nil {
+		invalidParams.Add(request.NewErrParamRequired("DestinationCommitSpecifier"))
+	}
+	if s.RepositoryName == nil {
+		invalidParams.Add(request.NewErrParamRequired("RepositoryName"))
+	}
+	if s.RepositoryName != nil && len(*s.RepositoryName) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("RepositoryName", 1))
+	}
+	if s.SourceCommitSpecifier == nil {
+		invalidParams.Add(request.NewErrParamRequired("SourceCommitSpecifier"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetConflictDetailLevel sets the ConflictDetailLevel field's value.
+func (s *GetMergeCommitInput) SetConflictDetailLevel(v string) *GetMergeCommitInput {
+	s.ConflictDetailLevel = &v
+	return s
+}
+
+// SetConflictResolutionStrategy sets the ConflictResolutionStrategy field's value.
+func (s *GetMergeCommitInput) SetConflictResolutionStrategy(v string) *GetMergeCommitInput {
+	s.ConflictResolutionStrategy = &v
+	return s
+}
+
+// SetDestinationCommitSpecifier sets the DestinationCommitSpecifier field's value.
+func (s *GetMergeCommitInput) SetDestinationCommitSpecifier(v string) *GetMergeCommitInput {
+	s.DestinationCommitSpecifier = &v
+	return s
+}
+
+// SetRepositoryName sets the RepositoryName field's value.
+func (s *GetMergeCommitInput) SetRepositoryName(v string) *GetMergeCommitInput {
+	s.RepositoryName = &v
+	return s
+}
+
+// SetSourceCommitSpecifier sets the SourceCommitSpecifier field's value.
+func (s *GetMergeCommitInput) SetSourceCommitSpecifier(v string) *GetMergeCommitInput {
+	s.SourceCommitSpecifier = &v
+	return s
+}
+
+type GetMergeCommitOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The commit ID of the merge base.
+	BaseCommitId *string `locationName:"baseCommitId" type:"string"`
+
+	// The commit ID of the destination commit specifier that was used in the merge
+	// evaluation.
+	DestinationCommitId *string `locationName:"destinationCommitId" type:"string"`
+
+	// The commit ID for the merge commit created when the source branch was merged
+	// into the destination branch. If the fast-forward merge strategy was used,
+	// no merge commit exists.
+	MergedCommitId *string `locationName:"mergedCommitId" type:"string"`
+
+	// The commit ID of the source commit specifier that was used in the merge evaluation.
+	SourceCommitId *string `locationName:"sourceCommitId" type:"string"`
+}
+
+// String returns the string representation
+func (s GetMergeCommitOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetMergeCommitOutput) GoString() string {
+	return s.String()
+}
+
+// SetBaseCommitId sets the BaseCommitId field's value.
+func (s *GetMergeCommitOutput) SetBaseCommitId(v string) *GetMergeCommitOutput {
+	s.BaseCommitId = &v
+	return s
+}
+
+// SetDestinationCommitId sets the DestinationCommitId field's value.
+func (s *GetMergeCommitOutput) SetDestinationCommitId(v string) *GetMergeCommitOutput {
+	s.DestinationCommitId = &v
+	return s
+}
+
+// SetMergedCommitId sets the MergedCommitId field's value.
+func (s *GetMergeCommitOutput) SetMergedCommitId(v string) *GetMergeCommitOutput {
+	s.MergedCommitId = &v
+	return s
+}
+
+// SetSourceCommitId sets the SourceCommitId field's value.
+func (s *GetMergeCommitOutput) SetSourceCommitId(v string) *GetMergeCommitOutput {
+	s.SourceCommitId = &v
+	return s
+}
+
+type GetMergeConflictsInput struct {
+	_ struct{} `type:"structure"`
+
+	// The level of conflict detail to use. If unspecified, the default FILE_LEVEL
+	// is used, which will return a not mergeable result if the same file has differences
+	// in both branches. If LINE_LEVEL is specified, a conflict will be considered
+	// not mergeable if the same file in both branches has differences on the same
+	// line.
+	ConflictDetailLevel *string `locationName:"conflictDetailLevel" type:"string" enum:"ConflictDetailLevelTypeEnum"`
+
+	// Specifies which branch to use when resolving conflicts, or whether to attempt
+	// automatically merging two versions of a file. The default is NONE, which
+	// requires any conflicts to be resolved manually before the merge operation
+	// will be successful.
+	ConflictResolutionStrategy *string `locationName:"conflictResolutionStrategy" type:"string" enum:"ConflictResolutionStrategyTypeEnum"`
+
+	// The branch, tag, HEAD, or other fully qualified reference used to identify
+	// a commit. For example, a branch name or a full commit ID.
+	//
+	// DestinationCommitSpecifier is a required field
+	DestinationCommitSpecifier *string `locationName:"destinationCommitSpecifier" type:"string" required:"true"`
+
+	// The maximum number of files to include in the output.
+	MaxConflictFiles *int64 `locationName:"maxConflictFiles" type:"integer"`
+
+	// The merge option or strategy you want to use to merge the code.
 	//
 	// MergeOption is a required field
 	MergeOption *string `locationName:"mergeOption" type:"string" required:"true" enum:"MergeOptionTypeEnum"`
+
+	// An enumeration token that when provided in a request, returns the next batch
+	// of the results.
+	NextToken *string `locationName:"nextToken" type:"string"`
 
 	// The name of the repository where the pull request was created.
 	//
@@ -7703,15 +11688,39 @@ func (s *GetMergeConflictsInput) Validate() error {
 	return nil
 }
 
+// SetConflictDetailLevel sets the ConflictDetailLevel field's value.
+func (s *GetMergeConflictsInput) SetConflictDetailLevel(v string) *GetMergeConflictsInput {
+	s.ConflictDetailLevel = &v
+	return s
+}
+
+// SetConflictResolutionStrategy sets the ConflictResolutionStrategy field's value.
+func (s *GetMergeConflictsInput) SetConflictResolutionStrategy(v string) *GetMergeConflictsInput {
+	s.ConflictResolutionStrategy = &v
+	return s
+}
+
 // SetDestinationCommitSpecifier sets the DestinationCommitSpecifier field's value.
 func (s *GetMergeConflictsInput) SetDestinationCommitSpecifier(v string) *GetMergeConflictsInput {
 	s.DestinationCommitSpecifier = &v
 	return s
 }
 
+// SetMaxConflictFiles sets the MaxConflictFiles field's value.
+func (s *GetMergeConflictsInput) SetMaxConflictFiles(v int64) *GetMergeConflictsInput {
+	s.MaxConflictFiles = &v
+	return s
+}
+
 // SetMergeOption sets the MergeOption field's value.
 func (s *GetMergeConflictsInput) SetMergeOption(v string) *GetMergeConflictsInput {
 	s.MergeOption = &v
+	return s
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *GetMergeConflictsInput) SetNextToken(v string) *GetMergeConflictsInput {
+	s.NextToken = &v
 	return s
 }
 
@@ -7730,17 +11739,30 @@ func (s *GetMergeConflictsInput) SetSourceCommitSpecifier(v string) *GetMergeCon
 type GetMergeConflictsOutput struct {
 	_ struct{} `type:"structure"`
 
+	// The commit ID of the merge base.
+	BaseCommitId *string `locationName:"baseCommitId" type:"string"`
+
+	// A list of metadata for any conflicting files. If the specified merge strategy
+	// is FAST_FORWARD_MERGE, this list will always be empty.
+	//
+	// ConflictMetadataList is a required field
+	ConflictMetadataList []*ConflictMetadata `locationName:"conflictMetadataList" type:"list" required:"true"`
+
 	// The commit ID of the destination commit specifier that was used in the merge
 	// evaluation.
 	//
 	// DestinationCommitId is a required field
 	DestinationCommitId *string `locationName:"destinationCommitId" type:"string" required:"true"`
 
-	// A Boolean value that indicates whether the code is mergable by the specified
+	// A Boolean value that indicates whether the code is mergeable by the specified
 	// merge option.
 	//
 	// Mergeable is a required field
 	Mergeable *bool `locationName:"mergeable" type:"boolean" required:"true"`
+
+	// An enumeration token that can be used in a request to return the next batch
+	// of the results.
+	NextToken *string `locationName:"nextToken" type:"string"`
 
 	// The commit ID of the source commit specifier that was used in the merge evaluation.
 	//
@@ -7758,6 +11780,18 @@ func (s GetMergeConflictsOutput) GoString() string {
 	return s.String()
 }
 
+// SetBaseCommitId sets the BaseCommitId field's value.
+func (s *GetMergeConflictsOutput) SetBaseCommitId(v string) *GetMergeConflictsOutput {
+	s.BaseCommitId = &v
+	return s
+}
+
+// SetConflictMetadataList sets the ConflictMetadataList field's value.
+func (s *GetMergeConflictsOutput) SetConflictMetadataList(v []*ConflictMetadata) *GetMergeConflictsOutput {
+	s.ConflictMetadataList = v
+	return s
+}
+
 // SetDestinationCommitId sets the DestinationCommitId field's value.
 func (s *GetMergeConflictsOutput) SetDestinationCommitId(v string) *GetMergeConflictsOutput {
 	s.DestinationCommitId = &v
@@ -7770,8 +11804,170 @@ func (s *GetMergeConflictsOutput) SetMergeable(v bool) *GetMergeConflictsOutput 
 	return s
 }
 
+// SetNextToken sets the NextToken field's value.
+func (s *GetMergeConflictsOutput) SetNextToken(v string) *GetMergeConflictsOutput {
+	s.NextToken = &v
+	return s
+}
+
 // SetSourceCommitId sets the SourceCommitId field's value.
 func (s *GetMergeConflictsOutput) SetSourceCommitId(v string) *GetMergeConflictsOutput {
+	s.SourceCommitId = &v
+	return s
+}
+
+type GetMergeOptionsInput struct {
+	_ struct{} `type:"structure"`
+
+	// The level of conflict detail to use. If unspecified, the default FILE_LEVEL
+	// is used, which will return a not mergeable result if the same file has differences
+	// in both branches. If LINE_LEVEL is specified, a conflict will be considered
+	// not mergeable if the same file in both branches has differences on the same
+	// line.
+	ConflictDetailLevel *string `locationName:"conflictDetailLevel" type:"string" enum:"ConflictDetailLevelTypeEnum"`
+
+	// Specifies which branch to use when resolving conflicts, or whether to attempt
+	// automatically merging two versions of a file. The default is NONE, which
+	// requires any conflicts to be resolved manually before the merge operation
+	// will be successful.
+	ConflictResolutionStrategy *string `locationName:"conflictResolutionStrategy" type:"string" enum:"ConflictResolutionStrategyTypeEnum"`
+
+	// The branch, tag, HEAD, or other fully qualified reference used to identify
+	// a commit. For example, a branch name or a full commit ID.
+	//
+	// DestinationCommitSpecifier is a required field
+	DestinationCommitSpecifier *string `locationName:"destinationCommitSpecifier" type:"string" required:"true"`
+
+	// The name of the repository that contains the commits about which you want
+	// to get merge options.
+	//
+	// RepositoryName is a required field
+	RepositoryName *string `locationName:"repositoryName" min:"1" type:"string" required:"true"`
+
+	// The branch, tag, HEAD, or other fully qualified reference used to identify
+	// a commit. For example, a branch name or a full commit ID.
+	//
+	// SourceCommitSpecifier is a required field
+	SourceCommitSpecifier *string `locationName:"sourceCommitSpecifier" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s GetMergeOptionsInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetMergeOptionsInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *GetMergeOptionsInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "GetMergeOptionsInput"}
+	if s.DestinationCommitSpecifier == nil {
+		invalidParams.Add(request.NewErrParamRequired("DestinationCommitSpecifier"))
+	}
+	if s.RepositoryName == nil {
+		invalidParams.Add(request.NewErrParamRequired("RepositoryName"))
+	}
+	if s.RepositoryName != nil && len(*s.RepositoryName) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("RepositoryName", 1))
+	}
+	if s.SourceCommitSpecifier == nil {
+		invalidParams.Add(request.NewErrParamRequired("SourceCommitSpecifier"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetConflictDetailLevel sets the ConflictDetailLevel field's value.
+func (s *GetMergeOptionsInput) SetConflictDetailLevel(v string) *GetMergeOptionsInput {
+	s.ConflictDetailLevel = &v
+	return s
+}
+
+// SetConflictResolutionStrategy sets the ConflictResolutionStrategy field's value.
+func (s *GetMergeOptionsInput) SetConflictResolutionStrategy(v string) *GetMergeOptionsInput {
+	s.ConflictResolutionStrategy = &v
+	return s
+}
+
+// SetDestinationCommitSpecifier sets the DestinationCommitSpecifier field's value.
+func (s *GetMergeOptionsInput) SetDestinationCommitSpecifier(v string) *GetMergeOptionsInput {
+	s.DestinationCommitSpecifier = &v
+	return s
+}
+
+// SetRepositoryName sets the RepositoryName field's value.
+func (s *GetMergeOptionsInput) SetRepositoryName(v string) *GetMergeOptionsInput {
+	s.RepositoryName = &v
+	return s
+}
+
+// SetSourceCommitSpecifier sets the SourceCommitSpecifier field's value.
+func (s *GetMergeOptionsInput) SetSourceCommitSpecifier(v string) *GetMergeOptionsInput {
+	s.SourceCommitSpecifier = &v
+	return s
+}
+
+type GetMergeOptionsOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The commit ID of the merge base.
+	//
+	// BaseCommitId is a required field
+	BaseCommitId *string `locationName:"baseCommitId" type:"string" required:"true"`
+
+	// The commit ID of the destination commit specifier that was used in the merge
+	// evaluation.
+	//
+	// DestinationCommitId is a required field
+	DestinationCommitId *string `locationName:"destinationCommitId" type:"string" required:"true"`
+
+	// The merge option or strategy used to merge the code.
+	//
+	// MergeOptions is a required field
+	MergeOptions []*string `locationName:"mergeOptions" type:"list" required:"true"`
+
+	// The commit ID of the source commit specifier that was used in the merge evaluation.
+	//
+	// SourceCommitId is a required field
+	SourceCommitId *string `locationName:"sourceCommitId" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s GetMergeOptionsOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetMergeOptionsOutput) GoString() string {
+	return s.String()
+}
+
+// SetBaseCommitId sets the BaseCommitId field's value.
+func (s *GetMergeOptionsOutput) SetBaseCommitId(v string) *GetMergeOptionsOutput {
+	s.BaseCommitId = &v
+	return s
+}
+
+// SetDestinationCommitId sets the DestinationCommitId field's value.
+func (s *GetMergeOptionsOutput) SetDestinationCommitId(v string) *GetMergeOptionsOutput {
+	s.DestinationCommitId = &v
+	return s
+}
+
+// SetMergeOptions sets the MergeOptions field's value.
+func (s *GetMergeOptionsOutput) SetMergeOptions(v []*string) *GetMergeOptionsOutput {
+	s.MergeOptions = v
+	return s
+}
+
+// SetSourceCommitId sets the SourceCommitId field's value.
+func (s *GetMergeOptionsOutput) SetSourceCommitId(v string) *GetMergeOptionsOutput {
 	s.SourceCommitId = &v
 	return s
 }
@@ -7977,6 +12173,52 @@ func (s *GetRepositoryTriggersOutput) SetConfigurationId(v string) *GetRepositor
 // SetTriggers sets the Triggers field's value.
 func (s *GetRepositoryTriggersOutput) SetTriggers(v []*RepositoryTrigger) *GetRepositoryTriggersOutput {
 	s.Triggers = v
+	return s
+}
+
+// Information about whether a file is binary or textual in a merge or pull
+// request operation.
+type IsBinaryFile struct {
+	_ struct{} `type:"structure"`
+
+	// The binary or non-binary status of a file in the base of a merge or pull
+	// request.
+	Base *bool `locationName:"base" type:"boolean"`
+
+	// The binary or non-binary status of a file in the destination of a merge or
+	// pull request.
+	Destination *bool `locationName:"destination" type:"boolean"`
+
+	// The binary or non-binary status of file in the source of a merge or pull
+	// request.
+	Source *bool `locationName:"source" type:"boolean"`
+}
+
+// String returns the string representation
+func (s IsBinaryFile) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s IsBinaryFile) GoString() string {
+	return s.String()
+}
+
+// SetBase sets the Base field's value.
+func (s *IsBinaryFile) SetBase(v bool) *IsBinaryFile {
+	s.Base = &v
+	return s
+}
+
+// SetDestination sets the Destination field's value.
+func (s *IsBinaryFile) SetDestination(v bool) *IsBinaryFile {
+	s.Destination = &v
+	return s
+}
+
+// SetSource sets the Source field's value.
+func (s *IsBinaryFile) SetSource(v bool) *IsBinaryFile {
+	s.Source = &v
 	return s
 }
 
@@ -8261,6 +12503,88 @@ func (s *ListRepositoriesOutput) SetRepositories(v []*RepositoryNameIdPair) *Lis
 	return s
 }
 
+type ListTagsForResourceInput struct {
+	_ struct{} `type:"structure"`
+
+	// An enumeration token that when provided in a request, returns the next batch
+	// of the results.
+	NextToken *string `locationName:"nextToken" type:"string"`
+
+	// The Amazon Resource Name (ARN) of the resource for which you want to get
+	// information about tags, if any.
+	//
+	// ResourceArn is a required field
+	ResourceArn *string `locationName:"resourceArn" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s ListTagsForResourceInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ListTagsForResourceInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *ListTagsForResourceInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "ListTagsForResourceInput"}
+	if s.ResourceArn == nil {
+		invalidParams.Add(request.NewErrParamRequired("ResourceArn"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *ListTagsForResourceInput) SetNextToken(v string) *ListTagsForResourceInput {
+	s.NextToken = &v
+	return s
+}
+
+// SetResourceArn sets the ResourceArn field's value.
+func (s *ListTagsForResourceInput) SetResourceArn(v string) *ListTagsForResourceInput {
+	s.ResourceArn = &v
+	return s
+}
+
+type ListTagsForResourceOutput struct {
+	_ struct{} `type:"structure"`
+
+	// An enumeration token that allows the operation to batch the next results
+	// of the operation.
+	NextToken *string `locationName:"nextToken" type:"string"`
+
+	// A list of tag key and value pairs associated with the specified resource.
+	Tags map[string]*string `locationName:"tags" type:"map"`
+}
+
+// String returns the string representation
+func (s ListTagsForResourceOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ListTagsForResourceOutput) GoString() string {
+	return s.String()
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *ListTagsForResourceOutput) SetNextToken(v string) *ListTagsForResourceOutput {
+	s.NextToken = &v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *ListTagsForResourceOutput) SetTags(v map[string]*string) *ListTagsForResourceOutput {
+	s.Tags = v
+	return s
+}
+
 // Returns information about the location of a change or comment in the comparison
 // between two commits or a pull request.
 type Location struct {
@@ -8306,6 +12630,611 @@ func (s *Location) SetRelativeFileVersion(v string) *Location {
 	return s
 }
 
+type MergeBranchesByFastForwardInput struct {
+	_ struct{} `type:"structure"`
+
+	// The branch, tag, HEAD, or other fully qualified reference used to identify
+	// a commit. For example, a branch name or a full commit ID.
+	//
+	// DestinationCommitSpecifier is a required field
+	DestinationCommitSpecifier *string `locationName:"destinationCommitSpecifier" type:"string" required:"true"`
+
+	// The name of the repository where you want to merge two branches.
+	//
+	// RepositoryName is a required field
+	RepositoryName *string `locationName:"repositoryName" min:"1" type:"string" required:"true"`
+
+	// The branch, tag, HEAD, or other fully qualified reference used to identify
+	// a commit. For example, a branch name or a full commit ID.
+	//
+	// SourceCommitSpecifier is a required field
+	SourceCommitSpecifier *string `locationName:"sourceCommitSpecifier" type:"string" required:"true"`
+
+	// The branch where the merge will be applied.
+	TargetBranch *string `locationName:"targetBranch" min:"1" type:"string"`
+}
+
+// String returns the string representation
+func (s MergeBranchesByFastForwardInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s MergeBranchesByFastForwardInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *MergeBranchesByFastForwardInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "MergeBranchesByFastForwardInput"}
+	if s.DestinationCommitSpecifier == nil {
+		invalidParams.Add(request.NewErrParamRequired("DestinationCommitSpecifier"))
+	}
+	if s.RepositoryName == nil {
+		invalidParams.Add(request.NewErrParamRequired("RepositoryName"))
+	}
+	if s.RepositoryName != nil && len(*s.RepositoryName) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("RepositoryName", 1))
+	}
+	if s.SourceCommitSpecifier == nil {
+		invalidParams.Add(request.NewErrParamRequired("SourceCommitSpecifier"))
+	}
+	if s.TargetBranch != nil && len(*s.TargetBranch) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("TargetBranch", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetDestinationCommitSpecifier sets the DestinationCommitSpecifier field's value.
+func (s *MergeBranchesByFastForwardInput) SetDestinationCommitSpecifier(v string) *MergeBranchesByFastForwardInput {
+	s.DestinationCommitSpecifier = &v
+	return s
+}
+
+// SetRepositoryName sets the RepositoryName field's value.
+func (s *MergeBranchesByFastForwardInput) SetRepositoryName(v string) *MergeBranchesByFastForwardInput {
+	s.RepositoryName = &v
+	return s
+}
+
+// SetSourceCommitSpecifier sets the SourceCommitSpecifier field's value.
+func (s *MergeBranchesByFastForwardInput) SetSourceCommitSpecifier(v string) *MergeBranchesByFastForwardInput {
+	s.SourceCommitSpecifier = &v
+	return s
+}
+
+// SetTargetBranch sets the TargetBranch field's value.
+func (s *MergeBranchesByFastForwardInput) SetTargetBranch(v string) *MergeBranchesByFastForwardInput {
+	s.TargetBranch = &v
+	return s
+}
+
+type MergeBranchesByFastForwardOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The commit ID of the merge in the destination or target branch.
+	CommitId *string `locationName:"commitId" type:"string"`
+
+	// The tree ID of the merge in the destination or target branch.
+	TreeId *string `locationName:"treeId" type:"string"`
+}
+
+// String returns the string representation
+func (s MergeBranchesByFastForwardOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s MergeBranchesByFastForwardOutput) GoString() string {
+	return s.String()
+}
+
+// SetCommitId sets the CommitId field's value.
+func (s *MergeBranchesByFastForwardOutput) SetCommitId(v string) *MergeBranchesByFastForwardOutput {
+	s.CommitId = &v
+	return s
+}
+
+// SetTreeId sets the TreeId field's value.
+func (s *MergeBranchesByFastForwardOutput) SetTreeId(v string) *MergeBranchesByFastForwardOutput {
+	s.TreeId = &v
+	return s
+}
+
+type MergeBranchesBySquashInput struct {
+	_ struct{} `type:"structure"`
+
+	// The name of the author who created the commit. This information will be used
+	// as both the author and committer for the commit.
+	AuthorName *string `locationName:"authorName" type:"string"`
+
+	// The commit message for the merge.
+	CommitMessage *string `locationName:"commitMessage" type:"string"`
+
+	// The level of conflict detail to use. If unspecified, the default FILE_LEVEL
+	// is used, which will return a not mergeable result if the same file has differences
+	// in both branches. If LINE_LEVEL is specified, a conflict will be considered
+	// not mergeable if the same file in both branches has differences on the same
+	// line.
+	ConflictDetailLevel *string `locationName:"conflictDetailLevel" type:"string" enum:"ConflictDetailLevelTypeEnum"`
+
+	// A list of inputs to use when resolving conflicts during a merge if AUTOMERGE
+	// is chosen as the conflict resolution strategy.
+	ConflictResolution *ConflictResolution `locationName:"conflictResolution" type:"structure"`
+
+	// Specifies which branch to use when resolving conflicts, or whether to attempt
+	// automatically merging two versions of a file. The default is NONE, which
+	// requires any conflicts to be resolved manually before the merge operation
+	// will be successful.
+	ConflictResolutionStrategy *string `locationName:"conflictResolutionStrategy" type:"string" enum:"ConflictResolutionStrategyTypeEnum"`
+
+	// The branch, tag, HEAD, or other fully qualified reference used to identify
+	// a commit. For example, a branch name or a full commit ID.
+	//
+	// DestinationCommitSpecifier is a required field
+	DestinationCommitSpecifier *string `locationName:"destinationCommitSpecifier" type:"string" required:"true"`
+
+	// The email address of the person merging the branches. This information will
+	// be used in the commit information for the merge.
+	Email *string `locationName:"email" type:"string"`
+
+	// If the commit contains deletions, whether to keep a folder or folder structure
+	// if the changes leave the folders empty. If this is specified as true, a .gitkeep
+	// file will be created for empty folders. The default is false.
+	KeepEmptyFolders *bool `locationName:"keepEmptyFolders" type:"boolean"`
+
+	// The name of the repository where you want to merge two branches.
+	//
+	// RepositoryName is a required field
+	RepositoryName *string `locationName:"repositoryName" min:"1" type:"string" required:"true"`
+
+	// The branch, tag, HEAD, or other fully qualified reference used to identify
+	// a commit. For example, a branch name or a full commit ID.
+	//
+	// SourceCommitSpecifier is a required field
+	SourceCommitSpecifier *string `locationName:"sourceCommitSpecifier" type:"string" required:"true"`
+
+	// The branch where the merge will be applied.
+	TargetBranch *string `locationName:"targetBranch" min:"1" type:"string"`
+}
+
+// String returns the string representation
+func (s MergeBranchesBySquashInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s MergeBranchesBySquashInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *MergeBranchesBySquashInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "MergeBranchesBySquashInput"}
+	if s.DestinationCommitSpecifier == nil {
+		invalidParams.Add(request.NewErrParamRequired("DestinationCommitSpecifier"))
+	}
+	if s.RepositoryName == nil {
+		invalidParams.Add(request.NewErrParamRequired("RepositoryName"))
+	}
+	if s.RepositoryName != nil && len(*s.RepositoryName) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("RepositoryName", 1))
+	}
+	if s.SourceCommitSpecifier == nil {
+		invalidParams.Add(request.NewErrParamRequired("SourceCommitSpecifier"))
+	}
+	if s.TargetBranch != nil && len(*s.TargetBranch) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("TargetBranch", 1))
+	}
+	if s.ConflictResolution != nil {
+		if err := s.ConflictResolution.Validate(); err != nil {
+			invalidParams.AddNested("ConflictResolution", err.(request.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetAuthorName sets the AuthorName field's value.
+func (s *MergeBranchesBySquashInput) SetAuthorName(v string) *MergeBranchesBySquashInput {
+	s.AuthorName = &v
+	return s
+}
+
+// SetCommitMessage sets the CommitMessage field's value.
+func (s *MergeBranchesBySquashInput) SetCommitMessage(v string) *MergeBranchesBySquashInput {
+	s.CommitMessage = &v
+	return s
+}
+
+// SetConflictDetailLevel sets the ConflictDetailLevel field's value.
+func (s *MergeBranchesBySquashInput) SetConflictDetailLevel(v string) *MergeBranchesBySquashInput {
+	s.ConflictDetailLevel = &v
+	return s
+}
+
+// SetConflictResolution sets the ConflictResolution field's value.
+func (s *MergeBranchesBySquashInput) SetConflictResolution(v *ConflictResolution) *MergeBranchesBySquashInput {
+	s.ConflictResolution = v
+	return s
+}
+
+// SetConflictResolutionStrategy sets the ConflictResolutionStrategy field's value.
+func (s *MergeBranchesBySquashInput) SetConflictResolutionStrategy(v string) *MergeBranchesBySquashInput {
+	s.ConflictResolutionStrategy = &v
+	return s
+}
+
+// SetDestinationCommitSpecifier sets the DestinationCommitSpecifier field's value.
+func (s *MergeBranchesBySquashInput) SetDestinationCommitSpecifier(v string) *MergeBranchesBySquashInput {
+	s.DestinationCommitSpecifier = &v
+	return s
+}
+
+// SetEmail sets the Email field's value.
+func (s *MergeBranchesBySquashInput) SetEmail(v string) *MergeBranchesBySquashInput {
+	s.Email = &v
+	return s
+}
+
+// SetKeepEmptyFolders sets the KeepEmptyFolders field's value.
+func (s *MergeBranchesBySquashInput) SetKeepEmptyFolders(v bool) *MergeBranchesBySquashInput {
+	s.KeepEmptyFolders = &v
+	return s
+}
+
+// SetRepositoryName sets the RepositoryName field's value.
+func (s *MergeBranchesBySquashInput) SetRepositoryName(v string) *MergeBranchesBySquashInput {
+	s.RepositoryName = &v
+	return s
+}
+
+// SetSourceCommitSpecifier sets the SourceCommitSpecifier field's value.
+func (s *MergeBranchesBySquashInput) SetSourceCommitSpecifier(v string) *MergeBranchesBySquashInput {
+	s.SourceCommitSpecifier = &v
+	return s
+}
+
+// SetTargetBranch sets the TargetBranch field's value.
+func (s *MergeBranchesBySquashInput) SetTargetBranch(v string) *MergeBranchesBySquashInput {
+	s.TargetBranch = &v
+	return s
+}
+
+type MergeBranchesBySquashOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The commit ID of the merge in the destination or target branch.
+	CommitId *string `locationName:"commitId" type:"string"`
+
+	// The tree ID of the merge in the destination or target branch.
+	TreeId *string `locationName:"treeId" type:"string"`
+}
+
+// String returns the string representation
+func (s MergeBranchesBySquashOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s MergeBranchesBySquashOutput) GoString() string {
+	return s.String()
+}
+
+// SetCommitId sets the CommitId field's value.
+func (s *MergeBranchesBySquashOutput) SetCommitId(v string) *MergeBranchesBySquashOutput {
+	s.CommitId = &v
+	return s
+}
+
+// SetTreeId sets the TreeId field's value.
+func (s *MergeBranchesBySquashOutput) SetTreeId(v string) *MergeBranchesBySquashOutput {
+	s.TreeId = &v
+	return s
+}
+
+type MergeBranchesByThreeWayInput struct {
+	_ struct{} `type:"structure"`
+
+	// The name of the author who created the commit. This information will be used
+	// as both the author and committer for the commit.
+	AuthorName *string `locationName:"authorName" type:"string"`
+
+	// The commit message to include in the commit information for the merge.
+	CommitMessage *string `locationName:"commitMessage" type:"string"`
+
+	// The level of conflict detail to use. If unspecified, the default FILE_LEVEL
+	// is used, which will return a not mergeable result if the same file has differences
+	// in both branches. If LINE_LEVEL is specified, a conflict will be considered
+	// not mergeable if the same file in both branches has differences on the same
+	// line.
+	ConflictDetailLevel *string `locationName:"conflictDetailLevel" type:"string" enum:"ConflictDetailLevelTypeEnum"`
+
+	// A list of inputs to use when resolving conflicts during a merge if AUTOMERGE
+	// is chosen as the conflict resolution strategy.
+	ConflictResolution *ConflictResolution `locationName:"conflictResolution" type:"structure"`
+
+	// Specifies which branch to use when resolving conflicts, or whether to attempt
+	// automatically merging two versions of a file. The default is NONE, which
+	// requires any conflicts to be resolved manually before the merge operation
+	// will be successful.
+	ConflictResolutionStrategy *string `locationName:"conflictResolutionStrategy" type:"string" enum:"ConflictResolutionStrategyTypeEnum"`
+
+	// The branch, tag, HEAD, or other fully qualified reference used to identify
+	// a commit. For example, a branch name or a full commit ID.
+	//
+	// DestinationCommitSpecifier is a required field
+	DestinationCommitSpecifier *string `locationName:"destinationCommitSpecifier" type:"string" required:"true"`
+
+	// The email address of the person merging the branches. This information will
+	// be used in the commit information for the merge.
+	Email *string `locationName:"email" type:"string"`
+
+	// If the commit contains deletions, whether to keep a folder or folder structure
+	// if the changes leave the folders empty. If this is specified as true, a .gitkeep
+	// file will be created for empty folders. The default is false.
+	KeepEmptyFolders *bool `locationName:"keepEmptyFolders" type:"boolean"`
+
+	// The name of the repository where you want to merge two branches.
+	//
+	// RepositoryName is a required field
+	RepositoryName *string `locationName:"repositoryName" min:"1" type:"string" required:"true"`
+
+	// The branch, tag, HEAD, or other fully qualified reference used to identify
+	// a commit. For example, a branch name or a full commit ID.
+	//
+	// SourceCommitSpecifier is a required field
+	SourceCommitSpecifier *string `locationName:"sourceCommitSpecifier" type:"string" required:"true"`
+
+	// The branch where the merge will be applied.
+	TargetBranch *string `locationName:"targetBranch" min:"1" type:"string"`
+}
+
+// String returns the string representation
+func (s MergeBranchesByThreeWayInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s MergeBranchesByThreeWayInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *MergeBranchesByThreeWayInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "MergeBranchesByThreeWayInput"}
+	if s.DestinationCommitSpecifier == nil {
+		invalidParams.Add(request.NewErrParamRequired("DestinationCommitSpecifier"))
+	}
+	if s.RepositoryName == nil {
+		invalidParams.Add(request.NewErrParamRequired("RepositoryName"))
+	}
+	if s.RepositoryName != nil && len(*s.RepositoryName) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("RepositoryName", 1))
+	}
+	if s.SourceCommitSpecifier == nil {
+		invalidParams.Add(request.NewErrParamRequired("SourceCommitSpecifier"))
+	}
+	if s.TargetBranch != nil && len(*s.TargetBranch) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("TargetBranch", 1))
+	}
+	if s.ConflictResolution != nil {
+		if err := s.ConflictResolution.Validate(); err != nil {
+			invalidParams.AddNested("ConflictResolution", err.(request.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetAuthorName sets the AuthorName field's value.
+func (s *MergeBranchesByThreeWayInput) SetAuthorName(v string) *MergeBranchesByThreeWayInput {
+	s.AuthorName = &v
+	return s
+}
+
+// SetCommitMessage sets the CommitMessage field's value.
+func (s *MergeBranchesByThreeWayInput) SetCommitMessage(v string) *MergeBranchesByThreeWayInput {
+	s.CommitMessage = &v
+	return s
+}
+
+// SetConflictDetailLevel sets the ConflictDetailLevel field's value.
+func (s *MergeBranchesByThreeWayInput) SetConflictDetailLevel(v string) *MergeBranchesByThreeWayInput {
+	s.ConflictDetailLevel = &v
+	return s
+}
+
+// SetConflictResolution sets the ConflictResolution field's value.
+func (s *MergeBranchesByThreeWayInput) SetConflictResolution(v *ConflictResolution) *MergeBranchesByThreeWayInput {
+	s.ConflictResolution = v
+	return s
+}
+
+// SetConflictResolutionStrategy sets the ConflictResolutionStrategy field's value.
+func (s *MergeBranchesByThreeWayInput) SetConflictResolutionStrategy(v string) *MergeBranchesByThreeWayInput {
+	s.ConflictResolutionStrategy = &v
+	return s
+}
+
+// SetDestinationCommitSpecifier sets the DestinationCommitSpecifier field's value.
+func (s *MergeBranchesByThreeWayInput) SetDestinationCommitSpecifier(v string) *MergeBranchesByThreeWayInput {
+	s.DestinationCommitSpecifier = &v
+	return s
+}
+
+// SetEmail sets the Email field's value.
+func (s *MergeBranchesByThreeWayInput) SetEmail(v string) *MergeBranchesByThreeWayInput {
+	s.Email = &v
+	return s
+}
+
+// SetKeepEmptyFolders sets the KeepEmptyFolders field's value.
+func (s *MergeBranchesByThreeWayInput) SetKeepEmptyFolders(v bool) *MergeBranchesByThreeWayInput {
+	s.KeepEmptyFolders = &v
+	return s
+}
+
+// SetRepositoryName sets the RepositoryName field's value.
+func (s *MergeBranchesByThreeWayInput) SetRepositoryName(v string) *MergeBranchesByThreeWayInput {
+	s.RepositoryName = &v
+	return s
+}
+
+// SetSourceCommitSpecifier sets the SourceCommitSpecifier field's value.
+func (s *MergeBranchesByThreeWayInput) SetSourceCommitSpecifier(v string) *MergeBranchesByThreeWayInput {
+	s.SourceCommitSpecifier = &v
+	return s
+}
+
+// SetTargetBranch sets the TargetBranch field's value.
+func (s *MergeBranchesByThreeWayInput) SetTargetBranch(v string) *MergeBranchesByThreeWayInput {
+	s.TargetBranch = &v
+	return s
+}
+
+type MergeBranchesByThreeWayOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The commit ID of the merge in the destination or target branch.
+	CommitId *string `locationName:"commitId" type:"string"`
+
+	// The tree ID of the merge in the destination or target branch.
+	TreeId *string `locationName:"treeId" type:"string"`
+}
+
+// String returns the string representation
+func (s MergeBranchesByThreeWayOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s MergeBranchesByThreeWayOutput) GoString() string {
+	return s.String()
+}
+
+// SetCommitId sets the CommitId field's value.
+func (s *MergeBranchesByThreeWayOutput) SetCommitId(v string) *MergeBranchesByThreeWayOutput {
+	s.CommitId = &v
+	return s
+}
+
+// SetTreeId sets the TreeId field's value.
+func (s *MergeBranchesByThreeWayOutput) SetTreeId(v string) *MergeBranchesByThreeWayOutput {
+	s.TreeId = &v
+	return s
+}
+
+// Information about merge hunks in a merge or pull request operation.
+type MergeHunk struct {
+	_ struct{} `type:"structure"`
+
+	// Information about the merge hunk in the base of a merge or pull request.
+	Base *MergeHunkDetail `locationName:"base" type:"structure"`
+
+	// Information about the merge hunk in the destination of a merge or pull request.
+	Destination *MergeHunkDetail `locationName:"destination" type:"structure"`
+
+	// A Boolean value indicating whether a combination of hunks contains a conflict.
+	// Conflicts occur when the same file or the same lines in a file were modified
+	// in both the source and destination of a merge or pull request. Valid values
+	// include true, false, and null. This will be true when the hunk represents
+	// a conflict and one or more files contains a line conflict. File mode conflicts
+	// in a merge will not set this to be true.
+	IsConflict *bool `locationName:"isConflict" type:"boolean"`
+
+	// Information about the merge hunk in the source of a merge or pull request.
+	Source *MergeHunkDetail `locationName:"source" type:"structure"`
+}
+
+// String returns the string representation
+func (s MergeHunk) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s MergeHunk) GoString() string {
+	return s.String()
+}
+
+// SetBase sets the Base field's value.
+func (s *MergeHunk) SetBase(v *MergeHunkDetail) *MergeHunk {
+	s.Base = v
+	return s
+}
+
+// SetDestination sets the Destination field's value.
+func (s *MergeHunk) SetDestination(v *MergeHunkDetail) *MergeHunk {
+	s.Destination = v
+	return s
+}
+
+// SetIsConflict sets the IsConflict field's value.
+func (s *MergeHunk) SetIsConflict(v bool) *MergeHunk {
+	s.IsConflict = &v
+	return s
+}
+
+// SetSource sets the Source field's value.
+func (s *MergeHunk) SetSource(v *MergeHunkDetail) *MergeHunk {
+	s.Source = v
+	return s
+}
+
+// Information about the details of a merge hunk that contains a conflict in
+// a merge or pull request operation.
+type MergeHunkDetail struct {
+	_ struct{} `type:"structure"`
+
+	// The end position of the hunk in the merge result.
+	EndLine *int64 `locationName:"endLine" type:"integer"`
+
+	// The base-64 encoded content of the hunk merged region that might or might
+	// not contain a conflict.
+	HunkContent *string `locationName:"hunkContent" type:"string"`
+
+	// The start position of the hunk in the merge result.
+	StartLine *int64 `locationName:"startLine" type:"integer"`
+}
+
+// String returns the string representation
+func (s MergeHunkDetail) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s MergeHunkDetail) GoString() string {
+	return s.String()
+}
+
+// SetEndLine sets the EndLine field's value.
+func (s *MergeHunkDetail) SetEndLine(v int64) *MergeHunkDetail {
+	s.EndLine = &v
+	return s
+}
+
+// SetHunkContent sets the HunkContent field's value.
+func (s *MergeHunkDetail) SetHunkContent(v string) *MergeHunkDetail {
+	s.HunkContent = &v
+	return s
+}
+
+// SetStartLine sets the StartLine field's value.
+func (s *MergeHunkDetail) SetStartLine(v int64) *MergeHunkDetail {
+	s.StartLine = &v
+	return s
+}
+
 // Returns information about a merge or potential merge between a source reference
 // and a destination reference in a pull request.
 type MergeMetadata struct {
@@ -8313,6 +13242,12 @@ type MergeMetadata struct {
 
 	// A Boolean value indicating whether the merge has been made.
 	IsMerged *bool `locationName:"isMerged" type:"boolean"`
+
+	// The commit ID for the merge commit, if any.
+	MergeCommitId *string `locationName:"mergeCommitId" type:"string"`
+
+	// The merge strategy used in the merge.
+	MergeOption *string `locationName:"mergeOption" type:"string" enum:"MergeOptionTypeEnum"`
 
 	// The Amazon Resource Name (ARN) of the user who merged the branches.
 	MergedBy *string `locationName:"mergedBy" type:"string"`
@@ -8334,9 +13269,55 @@ func (s *MergeMetadata) SetIsMerged(v bool) *MergeMetadata {
 	return s
 }
 
+// SetMergeCommitId sets the MergeCommitId field's value.
+func (s *MergeMetadata) SetMergeCommitId(v string) *MergeMetadata {
+	s.MergeCommitId = &v
+	return s
+}
+
+// SetMergeOption sets the MergeOption field's value.
+func (s *MergeMetadata) SetMergeOption(v string) *MergeMetadata {
+	s.MergeOption = &v
+	return s
+}
+
 // SetMergedBy sets the MergedBy field's value.
 func (s *MergeMetadata) SetMergedBy(v string) *MergeMetadata {
 	s.MergedBy = &v
+	return s
+}
+
+// Information about the file operation conflicts in a merge operation.
+type MergeOperations struct {
+	_ struct{} `type:"structure"`
+
+	// The operation on a file in the destination of a merge or pull request.
+	Destination *string `locationName:"destination" type:"string" enum:"ChangeTypeEnum"`
+
+	// The operation on a file (add, modify, or delete) of a file in the source
+	// of a merge or pull request.
+	Source *string `locationName:"source" type:"string" enum:"ChangeTypeEnum"`
+}
+
+// String returns the string representation
+func (s MergeOperations) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s MergeOperations) GoString() string {
+	return s.String()
+}
+
+// SetDestination sets the Destination field's value.
+func (s *MergeOperations) SetDestination(v string) *MergeOperations {
+	s.Destination = &v
+	return s
+}
+
+// SetSource sets the Source field's value.
+func (s *MergeOperations) SetSource(v string) *MergeOperations {
+	s.Source = &v
 	return s
 }
 
@@ -8430,6 +13411,386 @@ func (s *MergePullRequestByFastForwardOutput) SetPullRequest(v *PullRequest) *Me
 	return s
 }
 
+type MergePullRequestBySquashInput struct {
+	_ struct{} `type:"structure"`
+
+	// The name of the author who created the commit. This information will be used
+	// as both the author and committer for the commit.
+	AuthorName *string `locationName:"authorName" type:"string"`
+
+	// The commit message to include in the commit information for the merge.
+	CommitMessage *string `locationName:"commitMessage" type:"string"`
+
+	// The level of conflict detail to use. If unspecified, the default FILE_LEVEL
+	// is used, which will return a not mergeable result if the same file has differences
+	// in both branches. If LINE_LEVEL is specified, a conflict will be considered
+	// not mergeable if the same file in both branches has differences on the same
+	// line.
+	ConflictDetailLevel *string `locationName:"conflictDetailLevel" type:"string" enum:"ConflictDetailLevelTypeEnum"`
+
+	// A list of inputs to use when resolving conflicts during a merge if AUTOMERGE
+	// is chosen as the conflict resolution strategy.
+	ConflictResolution *ConflictResolution `locationName:"conflictResolution" type:"structure"`
+
+	// Specifies which branch to use when resolving conflicts, or whether to attempt
+	// automatically merging two versions of a file. The default is NONE, which
+	// requires any conflicts to be resolved manually before the merge operation
+	// will be successful.
+	ConflictResolutionStrategy *string `locationName:"conflictResolutionStrategy" type:"string" enum:"ConflictResolutionStrategyTypeEnum"`
+
+	// The email address of the person merging the branches. This information will
+	// be used in the commit information for the merge.
+	Email *string `locationName:"email" type:"string"`
+
+	// If the commit contains deletions, whether to keep a folder or folder structure
+	// if the changes leave the folders empty. If this is specified as true, a .gitkeep
+	// file will be created for empty folders. The default is false.
+	KeepEmptyFolders *bool `locationName:"keepEmptyFolders" type:"boolean"`
+
+	// The system-generated ID of the pull request. To get this ID, use ListPullRequests.
+	//
+	// PullRequestId is a required field
+	PullRequestId *string `locationName:"pullRequestId" type:"string" required:"true"`
+
+	// The name of the repository where the pull request was created.
+	//
+	// RepositoryName is a required field
+	RepositoryName *string `locationName:"repositoryName" min:"1" type:"string" required:"true"`
+
+	// The full commit ID of the original or updated commit in the pull request
+	// source branch. Pass this value if you want an exception thrown if the current
+	// commit ID of the tip of the source branch does not match this commit ID.
+	SourceCommitId *string `locationName:"sourceCommitId" type:"string"`
+}
+
+// String returns the string representation
+func (s MergePullRequestBySquashInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s MergePullRequestBySquashInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *MergePullRequestBySquashInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "MergePullRequestBySquashInput"}
+	if s.PullRequestId == nil {
+		invalidParams.Add(request.NewErrParamRequired("PullRequestId"))
+	}
+	if s.RepositoryName == nil {
+		invalidParams.Add(request.NewErrParamRequired("RepositoryName"))
+	}
+	if s.RepositoryName != nil && len(*s.RepositoryName) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("RepositoryName", 1))
+	}
+	if s.ConflictResolution != nil {
+		if err := s.ConflictResolution.Validate(); err != nil {
+			invalidParams.AddNested("ConflictResolution", err.(request.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetAuthorName sets the AuthorName field's value.
+func (s *MergePullRequestBySquashInput) SetAuthorName(v string) *MergePullRequestBySquashInput {
+	s.AuthorName = &v
+	return s
+}
+
+// SetCommitMessage sets the CommitMessage field's value.
+func (s *MergePullRequestBySquashInput) SetCommitMessage(v string) *MergePullRequestBySquashInput {
+	s.CommitMessage = &v
+	return s
+}
+
+// SetConflictDetailLevel sets the ConflictDetailLevel field's value.
+func (s *MergePullRequestBySquashInput) SetConflictDetailLevel(v string) *MergePullRequestBySquashInput {
+	s.ConflictDetailLevel = &v
+	return s
+}
+
+// SetConflictResolution sets the ConflictResolution field's value.
+func (s *MergePullRequestBySquashInput) SetConflictResolution(v *ConflictResolution) *MergePullRequestBySquashInput {
+	s.ConflictResolution = v
+	return s
+}
+
+// SetConflictResolutionStrategy sets the ConflictResolutionStrategy field's value.
+func (s *MergePullRequestBySquashInput) SetConflictResolutionStrategy(v string) *MergePullRequestBySquashInput {
+	s.ConflictResolutionStrategy = &v
+	return s
+}
+
+// SetEmail sets the Email field's value.
+func (s *MergePullRequestBySquashInput) SetEmail(v string) *MergePullRequestBySquashInput {
+	s.Email = &v
+	return s
+}
+
+// SetKeepEmptyFolders sets the KeepEmptyFolders field's value.
+func (s *MergePullRequestBySquashInput) SetKeepEmptyFolders(v bool) *MergePullRequestBySquashInput {
+	s.KeepEmptyFolders = &v
+	return s
+}
+
+// SetPullRequestId sets the PullRequestId field's value.
+func (s *MergePullRequestBySquashInput) SetPullRequestId(v string) *MergePullRequestBySquashInput {
+	s.PullRequestId = &v
+	return s
+}
+
+// SetRepositoryName sets the RepositoryName field's value.
+func (s *MergePullRequestBySquashInput) SetRepositoryName(v string) *MergePullRequestBySquashInput {
+	s.RepositoryName = &v
+	return s
+}
+
+// SetSourceCommitId sets the SourceCommitId field's value.
+func (s *MergePullRequestBySquashInput) SetSourceCommitId(v string) *MergePullRequestBySquashInput {
+	s.SourceCommitId = &v
+	return s
+}
+
+type MergePullRequestBySquashOutput struct {
+	_ struct{} `type:"structure"`
+
+	// Returns information about a pull request.
+	PullRequest *PullRequest `locationName:"pullRequest" type:"structure"`
+}
+
+// String returns the string representation
+func (s MergePullRequestBySquashOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s MergePullRequestBySquashOutput) GoString() string {
+	return s.String()
+}
+
+// SetPullRequest sets the PullRequest field's value.
+func (s *MergePullRequestBySquashOutput) SetPullRequest(v *PullRequest) *MergePullRequestBySquashOutput {
+	s.PullRequest = v
+	return s
+}
+
+type MergePullRequestByThreeWayInput struct {
+	_ struct{} `type:"structure"`
+
+	// The name of the author who created the commit. This information will be used
+	// as both the author and committer for the commit.
+	AuthorName *string `locationName:"authorName" type:"string"`
+
+	// The commit message to include in the commit information for the merge.
+	CommitMessage *string `locationName:"commitMessage" type:"string"`
+
+	// The level of conflict detail to use. If unspecified, the default FILE_LEVEL
+	// is used, which will return a not mergeable result if the same file has differences
+	// in both branches. If LINE_LEVEL is specified, a conflict will be considered
+	// not mergeable if the same file in both branches has differences on the same
+	// line.
+	ConflictDetailLevel *string `locationName:"conflictDetailLevel" type:"string" enum:"ConflictDetailLevelTypeEnum"`
+
+	// A list of inputs to use when resolving conflicts during a merge if AUTOMERGE
+	// is chosen as the conflict resolution strategy.
+	ConflictResolution *ConflictResolution `locationName:"conflictResolution" type:"structure"`
+
+	// Specifies which branch to use when resolving conflicts, or whether to attempt
+	// automatically merging two versions of a file. The default is NONE, which
+	// requires any conflicts to be resolved manually before the merge operation
+	// will be successful.
+	ConflictResolutionStrategy *string `locationName:"conflictResolutionStrategy" type:"string" enum:"ConflictResolutionStrategyTypeEnum"`
+
+	// The email address of the person merging the branches. This information will
+	// be used in the commit information for the merge.
+	Email *string `locationName:"email" type:"string"`
+
+	// If the commit contains deletions, whether to keep a folder or folder structure
+	// if the changes leave the folders empty. If this is specified as true, a .gitkeep
+	// file will be created for empty folders. The default is false.
+	KeepEmptyFolders *bool `locationName:"keepEmptyFolders" type:"boolean"`
+
+	// The system-generated ID of the pull request. To get this ID, use ListPullRequests.
+	//
+	// PullRequestId is a required field
+	PullRequestId *string `locationName:"pullRequestId" type:"string" required:"true"`
+
+	// The name of the repository where the pull request was created.
+	//
+	// RepositoryName is a required field
+	RepositoryName *string `locationName:"repositoryName" min:"1" type:"string" required:"true"`
+
+	// The full commit ID of the original or updated commit in the pull request
+	// source branch. Pass this value if you want an exception thrown if the current
+	// commit ID of the tip of the source branch does not match this commit ID.
+	SourceCommitId *string `locationName:"sourceCommitId" type:"string"`
+}
+
+// String returns the string representation
+func (s MergePullRequestByThreeWayInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s MergePullRequestByThreeWayInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *MergePullRequestByThreeWayInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "MergePullRequestByThreeWayInput"}
+	if s.PullRequestId == nil {
+		invalidParams.Add(request.NewErrParamRequired("PullRequestId"))
+	}
+	if s.RepositoryName == nil {
+		invalidParams.Add(request.NewErrParamRequired("RepositoryName"))
+	}
+	if s.RepositoryName != nil && len(*s.RepositoryName) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("RepositoryName", 1))
+	}
+	if s.ConflictResolution != nil {
+		if err := s.ConflictResolution.Validate(); err != nil {
+			invalidParams.AddNested("ConflictResolution", err.(request.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetAuthorName sets the AuthorName field's value.
+func (s *MergePullRequestByThreeWayInput) SetAuthorName(v string) *MergePullRequestByThreeWayInput {
+	s.AuthorName = &v
+	return s
+}
+
+// SetCommitMessage sets the CommitMessage field's value.
+func (s *MergePullRequestByThreeWayInput) SetCommitMessage(v string) *MergePullRequestByThreeWayInput {
+	s.CommitMessage = &v
+	return s
+}
+
+// SetConflictDetailLevel sets the ConflictDetailLevel field's value.
+func (s *MergePullRequestByThreeWayInput) SetConflictDetailLevel(v string) *MergePullRequestByThreeWayInput {
+	s.ConflictDetailLevel = &v
+	return s
+}
+
+// SetConflictResolution sets the ConflictResolution field's value.
+func (s *MergePullRequestByThreeWayInput) SetConflictResolution(v *ConflictResolution) *MergePullRequestByThreeWayInput {
+	s.ConflictResolution = v
+	return s
+}
+
+// SetConflictResolutionStrategy sets the ConflictResolutionStrategy field's value.
+func (s *MergePullRequestByThreeWayInput) SetConflictResolutionStrategy(v string) *MergePullRequestByThreeWayInput {
+	s.ConflictResolutionStrategy = &v
+	return s
+}
+
+// SetEmail sets the Email field's value.
+func (s *MergePullRequestByThreeWayInput) SetEmail(v string) *MergePullRequestByThreeWayInput {
+	s.Email = &v
+	return s
+}
+
+// SetKeepEmptyFolders sets the KeepEmptyFolders field's value.
+func (s *MergePullRequestByThreeWayInput) SetKeepEmptyFolders(v bool) *MergePullRequestByThreeWayInput {
+	s.KeepEmptyFolders = &v
+	return s
+}
+
+// SetPullRequestId sets the PullRequestId field's value.
+func (s *MergePullRequestByThreeWayInput) SetPullRequestId(v string) *MergePullRequestByThreeWayInput {
+	s.PullRequestId = &v
+	return s
+}
+
+// SetRepositoryName sets the RepositoryName field's value.
+func (s *MergePullRequestByThreeWayInput) SetRepositoryName(v string) *MergePullRequestByThreeWayInput {
+	s.RepositoryName = &v
+	return s
+}
+
+// SetSourceCommitId sets the SourceCommitId field's value.
+func (s *MergePullRequestByThreeWayInput) SetSourceCommitId(v string) *MergePullRequestByThreeWayInput {
+	s.SourceCommitId = &v
+	return s
+}
+
+type MergePullRequestByThreeWayOutput struct {
+	_ struct{} `type:"structure"`
+
+	// Returns information about a pull request.
+	PullRequest *PullRequest `locationName:"pullRequest" type:"structure"`
+}
+
+// String returns the string representation
+func (s MergePullRequestByThreeWayOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s MergePullRequestByThreeWayOutput) GoString() string {
+	return s.String()
+}
+
+// SetPullRequest sets the PullRequest field's value.
+func (s *MergePullRequestByThreeWayOutput) SetPullRequest(v *PullRequest) *MergePullRequestByThreeWayOutput {
+	s.PullRequest = v
+	return s
+}
+
+// Information about the type of an object in a merge operation.
+type ObjectTypes struct {
+	_ struct{} `type:"structure"`
+
+	// The type of the object in the base commit of the merge.
+	Base *string `locationName:"base" type:"string" enum:"ObjectTypeEnum"`
+
+	// The type of the object in the destination branch.
+	Destination *string `locationName:"destination" type:"string" enum:"ObjectTypeEnum"`
+
+	// The type of the object in the source branch.
+	Source *string `locationName:"source" type:"string" enum:"ObjectTypeEnum"`
+}
+
+// String returns the string representation
+func (s ObjectTypes) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ObjectTypes) GoString() string {
+	return s.String()
+}
+
+// SetBase sets the Base field's value.
+func (s *ObjectTypes) SetBase(v string) *ObjectTypes {
+	s.Base = &v
+	return s
+}
+
+// SetDestination sets the Destination field's value.
+func (s *ObjectTypes) SetDestination(v string) *ObjectTypes {
+	s.Destination = &v
+	return s
+}
+
+// SetSource sets the Source field's value.
+func (s *ObjectTypes) SetSource(v string) *ObjectTypes {
+	s.Source = &v
+	return s
+}
+
 type PostCommentForComparedCommitInput struct {
 	_ struct{} `type:"structure"`
 
@@ -8441,6 +13802,9 @@ type PostCommentForComparedCommitInput struct {
 
 	// To establish the directionality of the comparison, the full commit ID of
 	// the 'before' commit.
+	//
+	// This is required for commenting on any commit unless that commit is the initial
+	// commit.
 	BeforeCommitId *string `locationName:"beforeCommitId" type:"string"`
 
 	// A unique, client-generated idempotency token that when provided in a request,
@@ -9366,6 +14730,81 @@ func (s *PullRequestTarget) SetSourceReference(v string) *PullRequestTarget {
 	return s
 }
 
+// Information about a file that will be added or updated as part of a commit.
+type PutFileEntry struct {
+	_ struct{} `type:"structure"`
+
+	// The content of the file, if a source file is not specified.
+	//
+	// FileContent is automatically base64 encoded/decoded by the SDK.
+	FileContent []byte `locationName:"fileContent" type:"blob"`
+
+	// The extrapolated file mode permissions for the file. Valid values include
+	// EXECUTABLE and NORMAL.
+	FileMode *string `locationName:"fileMode" type:"string" enum:"FileModeTypeEnum"`
+
+	// The full path to the file in the repository, including the name of the file.
+	//
+	// FilePath is a required field
+	FilePath *string `locationName:"filePath" type:"string" required:"true"`
+
+	// The name and full path of the file that contains the changes you want to
+	// make as part of the commit, if you are not providing the file content directly.
+	SourceFile *SourceFileSpecifier `locationName:"sourceFile" type:"structure"`
+}
+
+// String returns the string representation
+func (s PutFileEntry) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s PutFileEntry) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *PutFileEntry) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "PutFileEntry"}
+	if s.FilePath == nil {
+		invalidParams.Add(request.NewErrParamRequired("FilePath"))
+	}
+	if s.SourceFile != nil {
+		if err := s.SourceFile.Validate(); err != nil {
+			invalidParams.AddNested("SourceFile", err.(request.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetFileContent sets the FileContent field's value.
+func (s *PutFileEntry) SetFileContent(v []byte) *PutFileEntry {
+	s.FileContent = v
+	return s
+}
+
+// SetFileMode sets the FileMode field's value.
+func (s *PutFileEntry) SetFileMode(v string) *PutFileEntry {
+	s.FileMode = &v
+	return s
+}
+
+// SetFilePath sets the FilePath field's value.
+func (s *PutFileEntry) SetFilePath(v string) *PutFileEntry {
+	s.FilePath = &v
+	return s
+}
+
+// SetSourceFile sets the SourceFile field's value.
+func (s *PutFileEntry) SetSourceFile(v *SourceFileSpecifier) *PutFileEntry {
+	s.SourceFile = v
+	return s
+}
+
 type PutFileInput struct {
 	_ struct{} `type:"structure"`
 
@@ -9652,6 +15091,80 @@ func (s *PutRepositoryTriggersOutput) SetConfigurationId(v string) *PutRepositor
 	return s
 }
 
+// Information about a replacement content entry in the conflict of a merge
+// or pull request operation.
+type ReplaceContentEntry struct {
+	_ struct{} `type:"structure"`
+
+	// The base-64 encoded content to use when the replacement type is USE_NEW_CONTENT.
+	//
+	// Content is automatically base64 encoded/decoded by the SDK.
+	Content []byte `locationName:"content" type:"blob"`
+
+	// The file mode to apply during conflict resoltion.
+	FileMode *string `locationName:"fileMode" type:"string" enum:"FileModeTypeEnum"`
+
+	// The path of the conflicting file.
+	//
+	// FilePath is a required field
+	FilePath *string `locationName:"filePath" type:"string" required:"true"`
+
+	// The replacement type to use when determining how to resolve the conflict.
+	//
+	// ReplacementType is a required field
+	ReplacementType *string `locationName:"replacementType" type:"string" required:"true" enum:"ReplacementTypeEnum"`
+}
+
+// String returns the string representation
+func (s ReplaceContentEntry) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ReplaceContentEntry) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *ReplaceContentEntry) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "ReplaceContentEntry"}
+	if s.FilePath == nil {
+		invalidParams.Add(request.NewErrParamRequired("FilePath"))
+	}
+	if s.ReplacementType == nil {
+		invalidParams.Add(request.NewErrParamRequired("ReplacementType"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetContent sets the Content field's value.
+func (s *ReplaceContentEntry) SetContent(v []byte) *ReplaceContentEntry {
+	s.Content = v
+	return s
+}
+
+// SetFileMode sets the FileMode field's value.
+func (s *ReplaceContentEntry) SetFileMode(v string) *ReplaceContentEntry {
+	s.FileMode = &v
+	return s
+}
+
+// SetFilePath sets the FilePath field's value.
+func (s *ReplaceContentEntry) SetFilePath(v string) *ReplaceContentEntry {
+	s.FilePath = &v
+	return s
+}
+
+// SetReplacementType sets the ReplacementType field's value.
+func (s *ReplaceContentEntry) SetReplacementType(v string) *ReplaceContentEntry {
+	s.ReplacementType = &v
+	return s
+}
+
 // Information about a repository.
 type RepositoryMetadata struct {
 	_ struct{} `type:"structure"`
@@ -9917,6 +15430,107 @@ func (s *RepositoryTriggerExecutionFailure) SetTrigger(v string) *RepositoryTrig
 	return s
 }
 
+// Information about the file mode changes.
+type SetFileModeEntry struct {
+	_ struct{} `type:"structure"`
+
+	// The file mode for the file.
+	//
+	// FileMode is a required field
+	FileMode *string `locationName:"fileMode" type:"string" required:"true" enum:"FileModeTypeEnum"`
+
+	// The full path to the file, including the name of the file.
+	//
+	// FilePath is a required field
+	FilePath *string `locationName:"filePath" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s SetFileModeEntry) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s SetFileModeEntry) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *SetFileModeEntry) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "SetFileModeEntry"}
+	if s.FileMode == nil {
+		invalidParams.Add(request.NewErrParamRequired("FileMode"))
+	}
+	if s.FilePath == nil {
+		invalidParams.Add(request.NewErrParamRequired("FilePath"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetFileMode sets the FileMode field's value.
+func (s *SetFileModeEntry) SetFileMode(v string) *SetFileModeEntry {
+	s.FileMode = &v
+	return s
+}
+
+// SetFilePath sets the FilePath field's value.
+func (s *SetFileModeEntry) SetFilePath(v string) *SetFileModeEntry {
+	s.FilePath = &v
+	return s
+}
+
+// Information about a source file that is part of changes made in a commit.
+type SourceFileSpecifier struct {
+	_ struct{} `type:"structure"`
+
+	// The full path to the file, including the name of the file.
+	//
+	// FilePath is a required field
+	FilePath *string `locationName:"filePath" type:"string" required:"true"`
+
+	// Whether to remove the source file from the parent commit.
+	IsMove *bool `locationName:"isMove" type:"boolean"`
+}
+
+// String returns the string representation
+func (s SourceFileSpecifier) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s SourceFileSpecifier) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *SourceFileSpecifier) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "SourceFileSpecifier"}
+	if s.FilePath == nil {
+		invalidParams.Add(request.NewErrParamRequired("FilePath"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetFilePath sets the FilePath field's value.
+func (s *SourceFileSpecifier) SetFilePath(v string) *SourceFileSpecifier {
+	s.FilePath = &v
+	return s
+}
+
+// SetIsMove sets the IsMove field's value.
+func (s *SourceFileSpecifier) SetIsMove(v bool) *SourceFileSpecifier {
+	s.IsMove = &v
+	return s
+}
+
 // Returns information about a submodule reference in a repository folder.
 type SubModule struct {
 	_ struct{} `type:"structure"`
@@ -10010,6 +15624,73 @@ func (s *SymbolicLink) SetFileMode(v string) *SymbolicLink {
 func (s *SymbolicLink) SetRelativePath(v string) *SymbolicLink {
 	s.RelativePath = &v
 	return s
+}
+
+type TagResourceInput struct {
+	_ struct{} `type:"structure"`
+
+	// The Amazon Resource Name (ARN) of the resource to which you want to add or
+	// update tags.
+	//
+	// ResourceArn is a required field
+	ResourceArn *string `locationName:"resourceArn" type:"string" required:"true"`
+
+	// The key-value pair to use when tagging this repository.
+	//
+	// Tags is a required field
+	Tags map[string]*string `locationName:"tags" type:"map" required:"true"`
+}
+
+// String returns the string representation
+func (s TagResourceInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s TagResourceInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *TagResourceInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "TagResourceInput"}
+	if s.ResourceArn == nil {
+		invalidParams.Add(request.NewErrParamRequired("ResourceArn"))
+	}
+	if s.Tags == nil {
+		invalidParams.Add(request.NewErrParamRequired("Tags"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetResourceArn sets the ResourceArn field's value.
+func (s *TagResourceInput) SetResourceArn(v string) *TagResourceInput {
+	s.ResourceArn = &v
+	return s
+}
+
+// SetTags sets the Tags field's value.
+func (s *TagResourceInput) SetTags(v map[string]*string) *TagResourceInput {
+	s.Tags = v
+	return s
+}
+
+type TagResourceOutput struct {
+	_ struct{} `type:"structure"`
+}
+
+// String returns the string representation
+func (s TagResourceOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s TagResourceOutput) GoString() string {
+	return s.String()
 }
 
 // Returns information about a target for a pull request.
@@ -10178,6 +15859,73 @@ func (s *TestRepositoryTriggersOutput) SetFailedExecutions(v []*RepositoryTrigge
 func (s *TestRepositoryTriggersOutput) SetSuccessfulExecutions(v []*string) *TestRepositoryTriggersOutput {
 	s.SuccessfulExecutions = v
 	return s
+}
+
+type UntagResourceInput struct {
+	_ struct{} `type:"structure"`
+
+	// The Amazon Resource Name (ARN) of the resource to which you want to remove
+	// tags.
+	//
+	// ResourceArn is a required field
+	ResourceArn *string `locationName:"resourceArn" type:"string" required:"true"`
+
+	// The tag key for each tag that you want to remove from the resource.
+	//
+	// TagKeys is a required field
+	TagKeys []*string `locationName:"tagKeys" type:"list" required:"true"`
+}
+
+// String returns the string representation
+func (s UntagResourceInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s UntagResourceInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *UntagResourceInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "UntagResourceInput"}
+	if s.ResourceArn == nil {
+		invalidParams.Add(request.NewErrParamRequired("ResourceArn"))
+	}
+	if s.TagKeys == nil {
+		invalidParams.Add(request.NewErrParamRequired("TagKeys"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetResourceArn sets the ResourceArn field's value.
+func (s *UntagResourceInput) SetResourceArn(v string) *UntagResourceInput {
+	s.ResourceArn = &v
+	return s
+}
+
+// SetTagKeys sets the TagKeys field's value.
+func (s *UntagResourceInput) SetTagKeys(v []*string) *UntagResourceInput {
+	s.TagKeys = v
+	return s
+}
+
+type UntagResourceOutput struct {
+	_ struct{} `type:"structure"`
+}
+
+// String returns the string representation
+func (s UntagResourceOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s UntagResourceOutput) GoString() string {
+	return s.String()
 }
 
 type UpdateCommentInput struct {
@@ -10757,6 +16505,28 @@ const (
 )
 
 const (
+	// ConflictDetailLevelTypeEnumFileLevel is a ConflictDetailLevelTypeEnum enum value
+	ConflictDetailLevelTypeEnumFileLevel = "FILE_LEVEL"
+
+	// ConflictDetailLevelTypeEnumLineLevel is a ConflictDetailLevelTypeEnum enum value
+	ConflictDetailLevelTypeEnumLineLevel = "LINE_LEVEL"
+)
+
+const (
+	// ConflictResolutionStrategyTypeEnumNone is a ConflictResolutionStrategyTypeEnum enum value
+	ConflictResolutionStrategyTypeEnumNone = "NONE"
+
+	// ConflictResolutionStrategyTypeEnumAcceptSource is a ConflictResolutionStrategyTypeEnum enum value
+	ConflictResolutionStrategyTypeEnumAcceptSource = "ACCEPT_SOURCE"
+
+	// ConflictResolutionStrategyTypeEnumAcceptDestination is a ConflictResolutionStrategyTypeEnum enum value
+	ConflictResolutionStrategyTypeEnumAcceptDestination = "ACCEPT_DESTINATION"
+
+	// ConflictResolutionStrategyTypeEnumAutomerge is a ConflictResolutionStrategyTypeEnum enum value
+	ConflictResolutionStrategyTypeEnumAutomerge = "AUTOMERGE"
+)
+
+const (
 	// FileModeTypeEnumExecutable is a FileModeTypeEnum enum value
 	FileModeTypeEnumExecutable = "EXECUTABLE"
 
@@ -10770,6 +16540,26 @@ const (
 const (
 	// MergeOptionTypeEnumFastForwardMerge is a MergeOptionTypeEnum enum value
 	MergeOptionTypeEnumFastForwardMerge = "FAST_FORWARD_MERGE"
+
+	// MergeOptionTypeEnumSquashMerge is a MergeOptionTypeEnum enum value
+	MergeOptionTypeEnumSquashMerge = "SQUASH_MERGE"
+
+	// MergeOptionTypeEnumThreeWayMerge is a MergeOptionTypeEnum enum value
+	MergeOptionTypeEnumThreeWayMerge = "THREE_WAY_MERGE"
+)
+
+const (
+	// ObjectTypeEnumFile is a ObjectTypeEnum enum value
+	ObjectTypeEnumFile = "FILE"
+
+	// ObjectTypeEnumDirectory is a ObjectTypeEnum enum value
+	ObjectTypeEnumDirectory = "DIRECTORY"
+
+	// ObjectTypeEnumGitLink is a ObjectTypeEnum enum value
+	ObjectTypeEnumGitLink = "GIT_LINK"
+
+	// ObjectTypeEnumSymbolicLink is a ObjectTypeEnum enum value
+	ObjectTypeEnumSymbolicLink = "SYMBOLIC_LINK"
 )
 
 const (
@@ -10808,6 +16598,20 @@ const (
 
 	// RelativeFileVersionEnumAfter is a RelativeFileVersionEnum enum value
 	RelativeFileVersionEnumAfter = "AFTER"
+)
+
+const (
+	// ReplacementTypeEnumKeepBase is a ReplacementTypeEnum enum value
+	ReplacementTypeEnumKeepBase = "KEEP_BASE"
+
+	// ReplacementTypeEnumKeepSource is a ReplacementTypeEnum enum value
+	ReplacementTypeEnumKeepSource = "KEEP_SOURCE"
+
+	// ReplacementTypeEnumKeepDestination is a ReplacementTypeEnum enum value
+	ReplacementTypeEnumKeepDestination = "KEEP_DESTINATION"
+
+	// ReplacementTypeEnumUseNewContent is a ReplacementTypeEnum enum value
+	ReplacementTypeEnumUseNewContent = "USE_NEW_CONTENT"
 )
 
 const (

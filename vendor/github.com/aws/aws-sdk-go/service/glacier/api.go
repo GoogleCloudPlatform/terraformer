@@ -610,7 +610,7 @@ func (c *Glacier) CreateVaultRequest(input *CreateVaultInput) (req *request.Requ
 //
 // For conceptual information and underlying REST API, see Creating a Vault
 // in Amazon Glacier (http://docs.aws.amazon.com/amazonglacier/latest/dev/creating-vaults.html)
-// and Create Vault  (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-vault-put.html)
+// and Create Vault (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-vault-put.html)
 // in the Amazon Glacier Developer Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -829,7 +829,7 @@ func (c *Glacier) DeleteVaultRequest(input *DeleteVaultInput) (req *request.Requ
 //
 // For conceptual information and underlying REST API, see Deleting a Vault
 // in Amazon Glacier (http://docs.aws.amazon.com/amazonglacier/latest/dev/deleting-vaults.html)
-// and Delete Vault  (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-vault-delete.html)
+// and Delete Vault (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-vault-delete.html)
 // in the Amazon Glacier Developer Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -1026,7 +1026,7 @@ func (c *Glacier) DeleteVaultNotificationsRequest(input *DeleteVaultNotification
 //
 // For conceptual information and underlying REST API, see Configuring Vault
 // Notifications in Amazon Glacier (http://docs.aws.amazon.com/amazonglacier/latest/dev/configuring-notifications.html)
-// and Delete Vault Notification Configuration  (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-vault-notifications-delete.html)
+// and Delete Vault Notification Configuration (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-vault-notifications-delete.html)
 // in the Amazon Glacier Developer Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -1238,7 +1238,7 @@ func (c *Glacier) DescribeVaultRequest(input *DescribeVaultInput) (req *request.
 //
 // For conceptual information and underlying REST API, see Retrieving Vault
 // Metadata in Amazon Glacier (http://docs.aws.amazon.com/amazonglacier/latest/dev/retrieving-vault-info.html)
-// and Describe Vault  (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-vault-get.html)
+// and Describe Vault (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-vault-get.html)
 // in the Amazon Glacier Developer Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -1452,7 +1452,7 @@ func (c *Glacier) GetJobOutputRequest(input *GetJobOutputInput) (req *request.Re
 // For conceptual information and the underlying REST API, see Downloading a
 // Vault Inventory (http://docs.aws.amazon.com/amazonglacier/latest/dev/vault-inventory.html),
 // Downloading an Archive (http://docs.aws.amazon.com/amazonglacier/latest/dev/downloading-an-archive.html),
-// and Get Job Output  (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-job-output-get.html)
+// and Get Job Output (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-job-output-get.html)
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1751,7 +1751,7 @@ func (c *Glacier) GetVaultNotificationsRequest(input *GetVaultNotificationsInput
 //
 // For conceptual information and underlying REST API, see Configuring Vault
 // Notifications in Amazon Glacier (http://docs.aws.amazon.com/amazonglacier/latest/dev/configuring-notifications.html)
-// and Get Vault Notification Configuration  (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-vault-notifications-get.html)
+// and Get Vault Notification Configuration (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-vault-notifications-get.html)
 // in the Amazon Glacier Developer Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -2266,7 +2266,7 @@ func (c *Glacier) ListJobsWithContext(ctx aws.Context, input *ListJobsInput, opt
 //    // Example iterating over at most 3 pages of a ListJobs operation.
 //    pageNum := 0
 //    err := client.ListJobsPages(params,
-//        func(page *ListJobsOutput, lastPage bool) bool {
+//        func(page *glacier.ListJobsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -2381,7 +2381,7 @@ func (c *Glacier) ListMultipartUploadsRequest(input *ListMultipartUploadsInput) 
 //
 // For conceptual information and the underlying REST API, see Working with
 // Archives in Amazon Glacier (http://docs.aws.amazon.com/amazonglacier/latest/dev/working-with-archives.html)
-// and List Multipart Uploads  (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-multipart-list-uploads.html)
+// and List Multipart Uploads (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-multipart-list-uploads.html)
 // in the Amazon Glacier Developer Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -2437,7 +2437,7 @@ func (c *Glacier) ListMultipartUploadsWithContext(ctx aws.Context, input *ListMu
 //    // Example iterating over at most 3 pages of a ListMultipartUploads operation.
 //    pageNum := 0
 //    err := client.ListMultipartUploadsPages(params,
-//        func(page *ListMultipartUploadsOutput, lastPage bool) bool {
+//        func(page *glacier.ListMultipartUploadsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -2602,7 +2602,7 @@ func (c *Glacier) ListPartsWithContext(ctx aws.Context, input *ListPartsInput, o
 //    // Example iterating over at most 3 pages of a ListParts operation.
 //    pageNum := 0
 //    err := client.ListPartsPages(params,
-//        func(page *ListPartsOutput, lastPage bool) bool {
+//        func(page *glacier.ListPartsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -2879,7 +2879,7 @@ func (c *Glacier) ListVaultsRequest(input *ListVaultsInput) (req *request.Reques
 //
 // For conceptual information and underlying REST API, see Retrieving Vault
 // Metadata in Amazon Glacier (http://docs.aws.amazon.com/amazonglacier/latest/dev/retrieving-vault-info.html)
-// and List Vaults  (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-vaults-get.html)
+// and List Vaults (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-vaults-get.html)
 // in the Amazon Glacier Developer Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -2935,7 +2935,7 @@ func (c *Glacier) ListVaultsWithContext(ctx aws.Context, input *ListVaultsInput,
 //    // Example iterating over at most 3 pages of a ListVaults operation.
 //    pageNum := 0
 //    err := client.ListVaultsPages(params,
-//        func(page *ListVaultsOutput, lastPage bool) bool {
+//        func(page *glacier.ListVaultsOutput, lastPage bool) bool {
 //            pageNum++
 //            fmt.Println(page)
 //            return pageNum <= 3
@@ -3405,7 +3405,7 @@ func (c *Glacier) SetVaultNotificationsRequest(input *SetVaultNotificationsInput
 //
 // For conceptual information and underlying REST API, see Configuring Vault
 // Notifications in Amazon Glacier (http://docs.aws.amazon.com/amazonglacier/latest/dev/configuring-notifications.html)
-// and Set Vault Notification Configuration  (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-vault-notifications-put.html)
+// and Set Vault Notification Configuration (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-vault-notifications-put.html)
 // in the Amazon Glacier Developer Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -3634,12 +3634,10 @@ func (c *Glacier) UploadMultipartPartRequest(input *UploadMultipartPartInput) (r
 //    * Part size does not matchThe size of each part except the last must match
 //    the size specified in the corresponding InitiateMultipartUpload request.
 //    The size of the last part must be the same size as, or smaller than, the
-//    specified size.
-//
-// If you upload a part whose size is smaller than the part size you specified
-//    in your initiate multipart upload request and that part is not the last
-//    part, then the upload part request will succeed. However, the subsequent
-//    Complete Multipart Upload request will fail.
+//    specified size. If you upload a part whose size is smaller than the part
+//    size you specified in your initiate multipart upload request and that
+//    part is not the last part, then the upload part request will succeed.
+//    However, the subsequent Complete Multipart Upload request will fail.
 //
 //    * Range does not alignThe byte range value in the request does not align
 //    with the part size specified in the corresponding initiate request. For
@@ -3647,7 +3645,6 @@ func (c *Glacier) UploadMultipartPartRequest(input *UploadMultipartPartInput) (r
 //    4194303 bytes (4 MB - 1) and 4194304 (4 MB) to 8388607 (8 MB - 1) are
 //    valid part ranges. However, if you set a range value of 2 MB to 6 MB,
 //    the range does not align with the part size and the upload will fail.
-//
 //
 // This operation is idempotent. If you upload the same part multiple times,
 // the data included in the most recent request overwrites the previously uploaded
@@ -3661,7 +3658,7 @@ func (c *Glacier) UploadMultipartPartRequest(input *UploadMultipartPartInput) (r
 //
 // For conceptual information and underlying REST API, see Uploading Large Archives
 // in Parts (Multipart Upload) (http://docs.aws.amazon.com/amazonglacier/latest/dev/uploading-archive-mpu.html)
-// and Upload Part  (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-upload-part.html)
+// and Upload Part (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-upload-part.html)
 // in the Amazon Glacier Developer Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -6185,8 +6182,7 @@ type InventoryRetrievalJobDescription struct {
 	// An opaque string that represents where to continue pagination of the vault
 	// inventory retrieval results. You use the marker in a new InitiateJob request
 	// to obtain additional inventory items. If there are no more inventory items,
-	// this value is null. For more information, see  Range Inventory Retrieval
-	// (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-initiate-job-post.html#api-initiate-job-post-vault-inventory-list-filtering).
+	// this value is null. For more information, see Range Inventory Retrieval (http://docs.aws.amazon.com/amazonglacier/latest/dev/api-initiate-job-post.html#api-initiate-job-post-vault-inventory-list-filtering).
 	Marker *string `type:"string"`
 
 	// The start of the date range in Universal Coordinated Time (UTC) for vault
