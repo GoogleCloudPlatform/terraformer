@@ -24,7 +24,7 @@ import (
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/hashicorp/terraform/command"
-	"github.com/hashicorp/terraform/config/configschema"
+	"github.com/hashicorp/terraform/configs/configschema"
 	tfplugin "github.com/hashicorp/terraform/plugin"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -133,18 +133,21 @@ func (p *ProviderWrapper) initProvider() error {
 			providerFileName = pluginPath + string(os.PathSeparator) + file.Name()
 		}
 	}
+	logger := hclog.New(&hclog.LoggerOptions{
+		Name:   "plugin",
+		Level:  hclog.Trace,
+		Output: os.Stderr,
+	})
+
 	p.client = plugin.NewClient(
 		&plugin.ClientConfig{
 			Cmd:              exec.Command(providerFileName),
 			HandshakeConfig:  tfplugin.Handshake,
+			VersionedPlugins: tfplugin.VersionedPlugins,
 			Managed:          true,
-			Plugins:          tfplugin.PluginMap,
-			AllowedProtocols: []plugin.Protocol{plugin.ProtocolGRPC, plugin.ProtocolNetRPC},
-			Logger: hclog.New(&hclog.LoggerOptions{
-				Name:   "plugin",
-				Level:  hclog.Info,
-				Output: os.Stderr,
-			}),
+			Logger:           logger,
+			AllowedProtocols: []plugin.Protocol{plugin.ProtocolGRPC},
+			AutoMTLS:         true,
 		})
 	p.rpcClient, err = p.client.Client()
 	if err != nil {
