@@ -7,36 +7,36 @@ const (
 	// ErrCodeBadRequestException for service response error code
 	// "BadRequestException".
 	//
-	// Provides information about an API request or response.
+	// Simple message object.
 	ErrCodeBadRequestException = "BadRequestException"
 
 	// ErrCodeForbiddenException for service response error code
 	// "ForbiddenException".
 	//
-	// Provides information about an API request or response.
+	// Simple message object.
 	ErrCodeForbiddenException = "ForbiddenException"
 
 	// ErrCodeInternalServerErrorException for service response error code
 	// "InternalServerErrorException".
 	//
-	// Provides information about an API request or response.
+	// Simple message object.
 	ErrCodeInternalServerErrorException = "InternalServerErrorException"
 
 	// ErrCodeMethodNotAllowedException for service response error code
 	// "MethodNotAllowedException".
 	//
-	// Provides information about an API request or response.
+	// Simple message object.
 	ErrCodeMethodNotAllowedException = "MethodNotAllowedException"
 
 	// ErrCodeNotFoundException for service response error code
 	// "NotFoundException".
 	//
-	// Provides information about an API request or response.
+	// Simple message object.
 	ErrCodeNotFoundException = "NotFoundException"
 
 	// ErrCodeTooManyRequestsException for service response error code
 	// "TooManyRequestsException".
 	//
-	// Provides information about an API request or response.
+	// Simple message object.
 	ErrCodeTooManyRequestsException = "TooManyRequestsException"
 )

@@ -174,8 +174,6 @@ const (
 
 	// ErrCodeEventSubscriptionQuotaExceededFault for service response error code
 	// "EventSubscriptionQuotaExceeded".
-	//
-	// You have exceeded the number of events you can subscribe to.
 	ErrCodeEventSubscriptionQuotaExceededFault = "EventSubscriptionQuotaExceeded"
 
 	// ErrCodeInstanceQuotaExceededFault for service response error code
@@ -257,8 +255,6 @@ const (
 
 	// ErrCodeInvalidEventSubscriptionStateFault for service response error code
 	// "InvalidEventSubscriptionState".
-	//
-	// The event subscription is in an invalid state.
 	ErrCodeInvalidEventSubscriptionStateFault = "InvalidEventSubscriptionState"
 
 	// ErrCodeInvalidRestoreFault for service response error code
@@ -289,8 +285,6 @@ const (
 
 	// ErrCodeOptionGroupNotFoundFault for service response error code
 	// "OptionGroupNotFoundFault".
-	//
-	// The designated option group could not be found.
 	ErrCodeOptionGroupNotFoundFault = "OptionGroupNotFoundFault"
 
 	// ErrCodeProvisionedIopsNotAvailableInAZFault for service response error code
@@ -307,20 +301,14 @@ const (
 
 	// ErrCodeSNSInvalidTopicFault for service response error code
 	// "SNSInvalidTopic".
-	//
-	// The SNS topic is invalid.
 	ErrCodeSNSInvalidTopicFault = "SNSInvalidTopic"
 
 	// ErrCodeSNSNoAuthorizationFault for service response error code
 	// "SNSNoAuthorization".
-	//
-	// There is no SNS authorization.
 	ErrCodeSNSNoAuthorizationFault = "SNSNoAuthorization"
 
 	// ErrCodeSNSTopicArnNotFoundFault for service response error code
 	// "SNSTopicArnNotFound".
-	//
-	// The ARN of the SNS topic could not be found.
 	ErrCodeSNSTopicArnNotFoundFault = "SNSTopicArnNotFound"
 
 	// ErrCodeSharedSnapshotQuotaExceededFault for service response error code
@@ -338,8 +326,6 @@ const (
 
 	// ErrCodeSourceNotFoundFault for service response error code
 	// "SourceNotFound".
-	//
-	// The source could not be found.
 	ErrCodeSourceNotFoundFault = "SourceNotFound"
 
 	// ErrCodeStorageQuotaExceededFault for service response error code
@@ -363,19 +349,13 @@ const (
 
 	// ErrCodeSubscriptionAlreadyExistFault for service response error code
 	// "SubscriptionAlreadyExist".
-	//
-	// This subscription already exists.
 	ErrCodeSubscriptionAlreadyExistFault = "SubscriptionAlreadyExist"
 
 	// ErrCodeSubscriptionCategoryNotFoundFault for service response error code
 	// "SubscriptionCategoryNotFound".
-	//
-	// The designated subscription category could not be found.
 	ErrCodeSubscriptionCategoryNotFoundFault = "SubscriptionCategoryNotFound"
 
 	// ErrCodeSubscriptionNotFoundFault for service response error code
 	// "SubscriptionNotFound".
-	//
-	// The designated subscription could not be found.
 	ErrCodeSubscriptionNotFoundFault = "SubscriptionNotFound"
 )

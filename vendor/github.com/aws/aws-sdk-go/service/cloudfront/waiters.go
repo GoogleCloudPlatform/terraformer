@@ -28,7 +28,7 @@ func (c *CloudFront) WaitUntilDistributionDeployed(input *GetDistributionInput) 
 func (c *CloudFront) WaitUntilDistributionDeployedWithContext(ctx aws.Context, input *GetDistributionInput, opts ...request.WaiterOption) error {
 	w := request.Waiter{
 		Name:        "WaitUntilDistributionDeployed",
-		MaxAttempts: 35,
+		MaxAttempts: 25,
 		Delay:       request.ConstantWaiterDelay(60 * time.Second),
 		Acceptors: []request.WaiterAcceptor{
 			{

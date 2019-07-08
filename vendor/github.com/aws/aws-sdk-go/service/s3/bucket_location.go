@@ -80,8 +80,7 @@ func buildGetBucketLocation(r *request.Request) {
 		out := r.Data.(*GetBucketLocationOutput)
 		b, err := ioutil.ReadAll(r.HTTPResponse.Body)
 		if err != nil {
-			r.Error = awserr.New(request.ErrCodeSerialization,
-				"failed reading response body", err)
+			r.Error = awserr.New("SerializationError", "failed reading response body", err)
 			return
 		}
 

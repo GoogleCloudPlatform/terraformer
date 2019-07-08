@@ -1,106 +1,77 @@
 package route53
 
 import (
+	"bytes"
 	"encoding/xml"
-	"fmt"
+	"io/ioutil"
 
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/request"
-	"github.com/aws/aws-sdk-go/private/protocol/xml/xmlutil"
+	"github.com/aws/aws-sdk-go/private/protocol/restxml"
 )
 
-const errorRespTag = "ErrorResponse"
-const invalidChangeTag = "InvalidChangeBatch"
+type baseXMLErrorResponse struct {
+	XMLName xml.Name
+}
 
 type standardXMLErrorResponse struct {
-	Code      string `xml:"Error>Code"`
-	Message   string `xml:"Error>Message"`
-	RequestID string `xml:"RequestId"`
-}
-
-func (e standardXMLErrorResponse) FillCommon(c *xmlErrorResponse) {
-	c.Code = e.Code
-	c.Message = e.Message
-	c.RequestID = e.RequestID
-}
-
-type invalidChangeBatchXMLErrorResponse struct {
-	Messages  []string `xml:"Messages>Message"`
+	XMLName   xml.Name `xml:"ErrorResponse"`
+	Code      string   `xml:"Error>Code"`
+	Message   string   `xml:"Error>Message"`
 	RequestID string   `xml:"RequestId"`
 }
 
-func (e invalidChangeBatchXMLErrorResponse) FillCommon(c *xmlErrorResponse) {
-	c.Code = invalidChangeTag
-	c.Message = "ChangeBatch errors occurred"
-	c.Messages = e.Messages
-	c.RequestID = e.RequestID
-}
-
-type xmlErrorResponse struct {
-	Code      string
-	Message   string
-	Messages  []string
-	RequestID string
-}
-
-func (e *xmlErrorResponse) UnmarshalXML(d *xml.Decoder, start xml.StartElement) error {
-	type commonFiller interface {
-		FillCommon(*xmlErrorResponse)
-	}
-
-	var errResp commonFiller
-	switch start.Name.Local {
-	case errorRespTag:
-		errResp = &standardXMLErrorResponse{}
-
-	case invalidChangeTag:
-		errResp = &invalidChangeBatchXMLErrorResponse{}
-
-	default:
-		return fmt.Errorf("unknown error message, %v", start.Name.Local)
-	}
-
-	if err := d.DecodeElement(errResp, &start); err != nil {
-		return err
-	}
-
-	errResp.FillCommon(e)
-	return nil
+type invalidChangeBatchXMLErrorResponse struct {
+	XMLName  xml.Name `xml:"InvalidChangeBatch"`
+	Messages []string `xml:"Messages>Message"`
 }
 
 func unmarshalChangeResourceRecordSetsError(r *request.Request) {
 	defer r.HTTPResponse.Body.Close()
 
-	var errResp xmlErrorResponse
-	err := xmlutil.UnmarshalXMLError(&errResp, r.HTTPResponse.Body)
+	responseBody, err := ioutil.ReadAll(r.HTTPResponse.Body)
+
 	if err != nil {
-		r.Error = awserr.NewRequestFailure(
-			awserr.New(request.ErrCodeSerialization,
-				"failed to unmarshal error message", err),
-			r.HTTPResponse.StatusCode,
-			r.RequestID,
-		)
+		r.Error = awserr.New("SerializationError", "failed to read Route53 XML error response", err)
 		return
 	}
 
-	var baseErr awserr.Error
-	if len(errResp.Messages) != 0 {
-		var errs []error
-		for _, msg := range errResp.Messages {
-			errs = append(errs, awserr.New(invalidChangeTag, msg, nil))
-		}
-		baseErr = awserr.NewBatchError(errResp.Code, errResp.Message, errs)
-	} else {
-		baseErr = awserr.New(errResp.Code, errResp.Message, nil)
+	baseError := &baseXMLErrorResponse{}
+
+	if err := xml.Unmarshal(responseBody, baseError); err != nil {
+		r.Error = awserr.New("SerializationError", "failed to decode Route53 XML error response", err)
+		return
 	}
 
-	reqID := errResp.RequestID
-	if len(reqID) == 0 {
-		reqID = r.RequestID
+	switch baseError.XMLName.Local {
+	case "InvalidChangeBatch":
+		unmarshalInvalidChangeBatchError(r, responseBody)
+	default:
+		r.HTTPResponse.Body = ioutil.NopCloser(bytes.NewReader(responseBody))
+		restxml.UnmarshalError(r)
 	}
+}
+
+func unmarshalInvalidChangeBatchError(r *request.Request, requestBody []byte) {
+	resp := &invalidChangeBatchXMLErrorResponse{}
+	err := xml.Unmarshal(requestBody, resp)
+
+	if err != nil {
+		r.Error = awserr.New("SerializationError", "failed to decode query XML error response", err)
+		return
+	}
+
+	const errorCode = "InvalidChangeBatch"
+	errors := []error{}
+
+	for _, msg := range resp.Messages {
+		errors = append(errors, awserr.New(errorCode, msg, nil))
+	}
+
 	r.Error = awserr.NewRequestFailure(
-		baseErr,
+		awserr.NewBatchError(errorCode, "ChangeBatch errors occurred", errors),
 		r.HTTPResponse.StatusCode,
-		reqID,
+		r.RequestID,
 	)
+
 }

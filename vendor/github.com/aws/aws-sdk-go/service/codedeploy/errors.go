@@ -35,13 +35,6 @@ const (
 	// The minimum number of required application names was not specified.
 	ErrCodeApplicationNameRequiredException = "ApplicationNameRequiredException"
 
-	// ErrCodeArnNotSupportedException for service response error code
-	// "ArnNotSupportedException".
-	//
-	// The specified ARN is not supported. For example, it might be an ARN for a
-	// resource that is not expected.
-	ErrCodeArnNotSupportedException = "ArnNotSupportedException"
-
 	// ErrCodeBatchLimitExceededException for service response error code
 	// "BatchLimitExceededException".
 	//
@@ -276,12 +269,6 @@ const (
 	//
 	// The application name was specified in an invalid format.
 	ErrCodeInvalidApplicationNameException = "InvalidApplicationNameException"
-
-	// ErrCodeInvalidArnException for service response error code
-	// "InvalidArnException".
-	//
-	// The specified ARN is not in a valid format.
-	ErrCodeInvalidArnException = "InvalidArnException"
 
 	// ErrCodeInvalidAutoRollbackConfigException for service response error code
 	// "InvalidAutoRollbackConfigException".
@@ -555,12 +542,6 @@ const (
 	// The tag filter was specified in an invalid format.
 	ErrCodeInvalidTagFilterException = "InvalidTagFilterException"
 
-	// ErrCodeInvalidTagsToAddException for service response error code
-	// "InvalidTagsToAddException".
-	//
-	// The specified tags are not valid.
-	ErrCodeInvalidTagsToAddException = "InvalidTagsToAddException"
-
 	// ErrCodeInvalidTargetFilterNameException for service response error code
 	// "InvalidTargetFilterNameException".
 	//
@@ -638,12 +619,6 @@ const (
 	//
 	// The API used does not support the deployment.
 	ErrCodeOperationNotSupportedException = "OperationNotSupportedException"
-
-	// ErrCodeResourceArnRequiredException for service response error code
-	// "ResourceArnRequiredException".
-	//
-	// The ARN of a resource is required, but was not found.
-	ErrCodeResourceArnRequiredException = "ResourceArnRequiredException"
 
 	// ErrCodeResourceValidationException for service response error code
 	// "ResourceValidationException".

@@ -55,12 +55,6 @@ const (
 	// An unexpected error has occurred.
 	ErrCodeInternalFailureException = "InternalFailureException"
 
-	// ErrCodeInvalidAggregationException for service response error code
-	// "InvalidAggregationException".
-	//
-	// The aggregation is invalid.
-	ErrCodeInvalidAggregationException = "InvalidAggregationException"
-
 	// ErrCodeInvalidQueryException for service response error code
 	// "InvalidQueryException".
 	//

@@ -4,12 +4,6 @@ package appsync
 
 const (
 
-	// ErrCodeAccessDeniedException for service response error code
-	// "AccessDeniedException".
-	//
-	// You do not have access to perform this operation on this resource.
-	ErrCodeAccessDeniedException = "AccessDeniedException"
-
 	// ErrCodeApiKeyLimitExceededException for service response error code
 	// "ApiKeyLimitExceededException".
 	//

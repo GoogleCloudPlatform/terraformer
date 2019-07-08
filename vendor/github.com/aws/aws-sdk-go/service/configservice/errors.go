@@ -34,12 +34,6 @@ const (
 	// The specified delivery channel name is not valid.
 	ErrCodeInvalidDeliveryChannelNameException = "InvalidDeliveryChannelNameException"
 
-	// ErrCodeInvalidExpressionException for service response error code
-	// "InvalidExpressionException".
-	//
-	// The syntax of the query is incorrect.
-	ErrCodeInvalidExpressionException = "InvalidExpressionException"
-
 	// ErrCodeInvalidLimitException for service response error code
 	// "InvalidLimitException".
 	//
@@ -120,7 +114,7 @@ const (
 	// "MaxNumberOfConfigRulesExceededException".
 	//
 	// Failed to add the AWS Config rule because the account already contains the
-	// maximum number of 150 rules. Consider deleting any deactivated rules before
+	// maximum number of 50 rules. Consider deleting any deactivated rules before
 	// you add new rules.
 	ErrCodeMaxNumberOfConfigRulesExceededException = "MaxNumberOfConfigRulesExceededException"
 
@@ -199,12 +193,6 @@ const (
 	// You have specified a delivery channel that does not exist.
 	ErrCodeNoSuchDeliveryChannelException = "NoSuchDeliveryChannelException"
 
-	// ErrCodeNoSuchRemediationConfigurationException for service response error code
-	// "NoSuchRemediationConfigurationException".
-	//
-	// You specified an AWS Config rule without a remediation configuration.
-	ErrCodeNoSuchRemediationConfigurationException = "NoSuchRemediationConfigurationException"
-
 	// ErrCodeNoSuchRetentionConfigurationException for service response error code
 	// "NoSuchRetentionConfigurationException".
 	//
@@ -242,19 +230,6 @@ const (
 	//
 	// You have specified a resource that is either unknown or has not been discovered.
 	ErrCodeResourceNotDiscoveredException = "ResourceNotDiscoveredException"
-
-	// ErrCodeResourceNotFoundException for service response error code
-	// "ResourceNotFoundException".
-	//
-	// You have specified a resource that does not exist.
-	ErrCodeResourceNotFoundException = "ResourceNotFoundException"
-
-	// ErrCodeTooManyTagsException for service response error code
-	// "TooManyTagsException".
-	//
-	// You have reached the limit of the number of tags you can use. You have more
-	// than 50 tags.
-	ErrCodeTooManyTagsException = "TooManyTagsException"
 
 	// ErrCodeValidationException for service response error code
 	// "ValidationException".

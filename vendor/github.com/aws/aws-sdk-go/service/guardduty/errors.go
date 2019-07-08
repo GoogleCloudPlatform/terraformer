@@ -7,12 +7,12 @@ const (
 	// ErrCodeBadRequestException for service response error code
 	// "BadRequestException".
 	//
-	// Bad request exception object.
+	// Error response object.
 	ErrCodeBadRequestException = "BadRequestException"
 
 	// ErrCodeInternalServerErrorException for service response error code
 	// "InternalServerErrorException".
 	//
-	// Internal server error exception object.
+	// Error response object.
 	ErrCodeInternalServerErrorException = "InternalServerErrorException"
 )
