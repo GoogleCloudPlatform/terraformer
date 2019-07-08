@@ -23,14 +23,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 )
 
-type AWSServiceGenerator interface {
-	terraform_utils.ServiceGenerator
-	SetSession(session *session.Session)
-}
-
 type AWSService struct {
 	terraform_utils.Service
-	Session *session.Session
 }
 
 func (s *AWSService) generateSession() *session.Session {
