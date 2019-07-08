@@ -29,7 +29,7 @@ const command = "terraform init && terraform plan"
 
 func main() {
 	region := "ap-southeast-1"
-	profile := "dev_sin_admin"
+	profile := "personal"
 	services := []string{}
 	provider := &aws_terraforming.AWSProvider{}
 	for service := range provider.GetSupportedService() {

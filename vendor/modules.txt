@@ -411,7 +411,7 @@ github.com/hashicorp/terraform/helper/schema
 github.com/hashicorp/terraform/flatmap
 github.com/hashicorp/terraform/terraform
 github.com/hashicorp/terraform/command
-github.com/hashicorp/terraform/config/configschema
+github.com/hashicorp/terraform/configs/configschema
 github.com/hashicorp/terraform/plugin
 github.com/hashicorp/terraform/config/module
 github.com/hashicorp/terraform/helper/config
@@ -783,7 +783,6 @@ k8s.io/api/autoscaling/v1
 k8s.io/api/core/v1
 k8s.io/api/rbac/v1
 k8s.io/api/storage/v1
-k8s.io/api/admissionregistration/v1alpha1
 k8s.io/api/admissionregistration/v1beta1
 k8s.io/api/apps/v1beta1
 k8s.io/api/apps/v1beta2
