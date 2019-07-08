@@ -121,8 +121,7 @@ const (
 	// "InsufficientCacheClusterCapacity".
 	//
 	// The requested cache node type is not available in the specified Availability
-	// Zone. For more information, see InsufficientCacheClusterCapacity (http://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/ErrorMessages.html#ErrorMessages.INSUFFICIENT_CACHE_CLUSTER_CAPACITY)
-	// in the ElastiCache User Guide.
+	// Zone.
 	ErrCodeInsufficientCacheClusterCapacityFault = "InsufficientCacheClusterCapacity"
 
 	// ErrCodeInvalidARNFault for service response error code
@@ -265,12 +264,6 @@ const (
 	//
 	// The specified service linked role (SLR) was not found.
 	ErrCodeServiceLinkedRoleNotFoundFault = "ServiceLinkedRoleNotFoundFault"
-
-	// ErrCodeServiceUpdateNotFoundFault for service response error code
-	// "ServiceUpdateNotFoundFault".
-	//
-	// The service update doesn't exist
-	ErrCodeServiceUpdateNotFoundFault = "ServiceUpdateNotFoundFault"
 
 	// ErrCodeSnapshotAlreadyExistsFault for service response error code
 	// "SnapshotAlreadyExistsFault".
