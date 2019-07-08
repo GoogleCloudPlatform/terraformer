@@ -20,7 +20,6 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
@@ -31,7 +30,7 @@ type Ec2Generator struct {
 }
 
 func (g *Ec2Generator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"])})
+	sess := g.generateSession()
 	svc := ec2.New(sess)
 	err := svc.DescribeInstancesPages(&ec2.DescribeInstancesInput{}, func(instances *ec2.DescribeInstancesOutput, lastPage bool) bool {
 		for _, reservation := range instances.Reservations {

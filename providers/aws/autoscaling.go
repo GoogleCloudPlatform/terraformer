@@ -17,11 +17,11 @@ package aws
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/autoscaling"
 	"github.com/aws/aws-sdk-go/service/ec2"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 )
 
 var AsgAllowEmptyValues = []string{"tags."}
@@ -112,7 +112,7 @@ func (g *AutoScalingGenerator) loadLaunchTemplates(sess *session.Session) error 
 // Need only ASG name as ID for terraform resource
 // AWS api support paging
 func (g *AutoScalingGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"])})
+	sess := g.generateSession()
 	svc := autoscaling.New(sess)
 	if err := g.loadAutoScalingGroups(svc); err != nil {
 		return err
