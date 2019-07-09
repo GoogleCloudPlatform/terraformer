@@ -106,7 +106,7 @@ func (r *Resource) ConvertTFstate() {
 			continue
 		}
 
-		if !r.isAllowedEmptyValue(keyAttribute)  {
+		if !r.isAllowedEmptyValue(keyAttribute) {
 			delete(attributes, keyAttribute)
 		}
 	}
