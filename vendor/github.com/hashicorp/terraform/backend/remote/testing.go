@@ -6,15 +6,22 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"path"
 	"testing"
 
 	tfe "github.com/hashicorp/go-tfe"
 	"github.com/hashicorp/terraform/backend"
+	"github.com/hashicorp/terraform/configs"
+	"github.com/hashicorp/terraform/configs/configschema"
+	"github.com/hashicorp/terraform/providers"
 	"github.com/hashicorp/terraform/state/remote"
 	"github.com/hashicorp/terraform/svchost"
 	"github.com/hashicorp/terraform/svchost/auth"
 	"github.com/hashicorp/terraform/svchost/disco"
+	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform/tfdiags"
 	"github.com/mitchellh/cli"
+	"github.com/zclconf/go-cty/cty"
 
 	backendLocal "github.com/hashicorp/terraform/backend/local"
 )
@@ -35,46 +42,49 @@ func testInput(t *testing.T, answers map[string]string) *mockInput {
 }
 
 func testBackendDefault(t *testing.T) (*Remote, func()) {
-	c := map[string]interface{}{
-		"organization": "hashicorp",
-		"workspaces": []interface{}{
-			map[string]interface{}{
-				"name": "prod",
-			},
-		},
-	}
-	return testBackend(t, c)
+	obj := cty.ObjectVal(map[string]cty.Value{
+		"hostname":     cty.NullVal(cty.String),
+		"organization": cty.StringVal("hashicorp"),
+		"token":        cty.NullVal(cty.String),
+		"workspaces": cty.ObjectVal(map[string]cty.Value{
+			"name":   cty.StringVal("prod"),
+			"prefix": cty.NullVal(cty.String),
+		}),
+	})
+	return testBackend(t, obj)
 }
 
 func testBackendNoDefault(t *testing.T) (*Remote, func()) {
-	c := map[string]interface{}{
-		"organization": "hashicorp",
-		"workspaces": []interface{}{
-			map[string]interface{}{
-				"prefix": "my-app-",
-			},
-		},
-	}
-	return testBackend(t, c)
+	obj := cty.ObjectVal(map[string]cty.Value{
+		"hostname":     cty.NullVal(cty.String),
+		"organization": cty.StringVal("hashicorp"),
+		"token":        cty.NullVal(cty.String),
+		"workspaces": cty.ObjectVal(map[string]cty.Value{
+			"name":   cty.NullVal(cty.String),
+			"prefix": cty.StringVal("my-app-"),
+		}),
+	})
+	return testBackend(t, obj)
 }
 
 func testBackendNoOperations(t *testing.T) (*Remote, func()) {
-	c := map[string]interface{}{
-		"organization": "no-operations",
-		"workspaces": []interface{}{
-			map[string]interface{}{
-				"name": "prod",
-			},
-		},
-	}
-	return testBackend(t, c)
+	obj := cty.ObjectVal(map[string]cty.Value{
+		"hostname":     cty.NullVal(cty.String),
+		"organization": cty.StringVal("no-operations"),
+		"token":        cty.NullVal(cty.String),
+		"workspaces": cty.ObjectVal(map[string]cty.Value{
+			"name":   cty.StringVal("prod"),
+			"prefix": cty.NullVal(cty.String),
+		}),
+	})
+	return testBackend(t, obj)
 }
 
 func testRemoteClient(t *testing.T) remote.Client {
 	b, bCleanup := testBackendDefault(t)
 	defer bCleanup()
 
-	raw, err := b.State(backend.DefaultStateName)
+	raw, err := b.StateMgr(backend.DefaultStateName)
 	if err != nil {
 		t.Fatalf("error: %v", err)
 	}
@@ -82,12 +92,21 @@ func testRemoteClient(t *testing.T) remote.Client {
 	return raw.(*remote.State).Client
 }
 
-func testBackend(t *testing.T, c map[string]interface{}) (*Remote, func()) {
+func testBackend(t *testing.T, obj cty.Value) (*Remote, func()) {
 	s := testServer(t)
 	b := New(testDisco(s))
 
 	// Configure the backend so the client is created.
-	backend.TestBackendConfig(t, b, c)
+	newObj, valDiags := b.PrepareConfig(obj)
+	if len(valDiags) != 0 {
+		t.Fatal(valDiags.ErrWithWarnings())
+	}
+	obj = newObj
+
+	confDiags := b.Configure(obj)
+	if len(confDiags) != 0 {
+		t.Fatal(confDiags.ErrWithWarnings())
+	}
 
 	// Get a new mock client.
 	mc := newMockClient()
@@ -102,6 +121,13 @@ func testBackend(t *testing.T, c map[string]interface{}) (*Remote, func()) {
 	b.client.Runs = mc.Runs
 	b.client.StateVersions = mc.StateVersions
 	b.client.Workspaces = mc.Workspaces
+
+	b.ShowDiagnostics = func(vals ...interface{}) {
+		var diags tfdiags.Diagnostics
+		for _, diag := range diags.Append(vals...) {
+			b.CLI.Error(diag.Description().Summary)
+		}
+	}
 
 	// Set local to a local test backend.
 	b.local = testLocalBackend(t, b)
@@ -131,10 +157,23 @@ func testBackend(t *testing.T, c map[string]interface{}) (*Remote, func()) {
 
 func testLocalBackend(t *testing.T, remote *Remote) backend.Enhanced {
 	b := backendLocal.NewWithBackend(remote)
+
 	b.CLI = remote.CLI
+	b.ShowDiagnostics = remote.ShowDiagnostics
 
 	// Add a test provider to the local backend.
-	backendLocal.TestLocalProvider(t, b, "null")
+	p := backendLocal.TestLocalProvider(t, b, "null", &terraform.ProviderSchema{
+		ResourceTypes: map[string]*configschema.Block{
+			"null_resource": {
+				Attributes: map[string]*configschema.Attribute{
+					"id": {Type: cty.String, Computed: true},
+				},
+			},
+		},
+	})
+	p.ApplyResourceChangeResponse = providers.ApplyResourceChangeResponse{NewState: cty.ObjectVal(map[string]cty.Value{
+		"id": cty.StringVal("yes"),
+	})}
 
 	return b
 }
@@ -147,6 +186,7 @@ func testServer(t *testing.T) *httptest.Server {
 	mux.HandleFunc("/well-known/terraform.json", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		io.WriteString(w, `{
+  "state.v2": "/api/v2/",
   "tfe.v2.1": "/api/v2/",
   "versions.v1": "/v1/versions/"
 }`)
@@ -155,12 +195,12 @@ func testServer(t *testing.T) *httptest.Server {
 	// Respond to service version constraints calls.
 	mux.HandleFunc("/v1/versions/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		io.WriteString(w, `{
-  "service": "tfe.v2.1",
+		io.WriteString(w, fmt.Sprintf(`{
+  "service": "%s",
   "product": "terraform",
   "minimum": "0.1.0",
   "maximum": "10.0.0"
-}`)
+}`, path.Base(r.URL.Path)))
 	})
 
 	// Respond to the initial query to read the hashicorp org entitlements.
@@ -222,6 +262,7 @@ func testServer(t *testing.T) *httptest.Server {
 // localhost to a local test server.
 func testDisco(s *httptest.Server) *disco.Disco {
 	services := map[string]interface{}{
+		"state.v2":    fmt.Sprintf("%s/api/v2/", s.URL),
 		"tfe.v2.1":    fmt.Sprintf("%s/api/v2/", s.URL),
 		"versions.v1": fmt.Sprintf("%s/v1/versions/", s.URL),
 	}
@@ -230,4 +271,28 @@ func testDisco(s *httptest.Server) *disco.Disco {
 	d.ForceHostServices(svchost.Hostname(defaultHostname), services)
 	d.ForceHostServices(svchost.Hostname("localhost"), services)
 	return d
+}
+
+type unparsedVariableValue struct {
+	value  string
+	source terraform.ValueSourceType
+}
+
+func (v *unparsedVariableValue) ParseVariableValue(mode configs.VariableParsingMode) (*terraform.InputValue, tfdiags.Diagnostics) {
+	return &terraform.InputValue{
+		Value:      cty.StringVal(v.value),
+		SourceType: v.source,
+	}, tfdiags.Diagnostics{}
+}
+
+// testVariable returns a backend.UnparsedVariableValue used for testing.
+func testVariables(s terraform.ValueSourceType, vs ...string) map[string]backend.UnparsedVariableValue {
+	vars := make(map[string]backend.UnparsedVariableValue, len(vs))
+	for _, v := range vs {
+		vars[v] = &unparsedVariableValue{
+			value:  v,
+			source: s,
+		}
+	}
+	return vars
 }

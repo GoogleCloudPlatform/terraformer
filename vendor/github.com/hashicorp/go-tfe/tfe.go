@@ -104,26 +104,28 @@ type Client struct {
 	retryLogHook      RetryLogHook
 	retryServerErrors bool
 
-	Applies               Applies
-	ConfigurationVersions ConfigurationVersions
-	OAuthClients          OAuthClients
-	OAuthTokens           OAuthTokens
-	Organizations         Organizations
-	OrganizationTokens    OrganizationTokens
-	Plans                 Plans
-	Policies              Policies
-	PolicyChecks          PolicyChecks
-	PolicySets            PolicySets
-	Runs                  Runs
-	SSHKeys               SSHKeys
-	StateVersions         StateVersions
-	Teams                 Teams
-	TeamAccess            TeamAccesses
-	TeamMembers           TeamMembers
-	TeamTokens            TeamTokens
-	Users                 Users
-	Variables             Variables
-	Workspaces            Workspaces
+	Applies                    Applies
+	ConfigurationVersions      ConfigurationVersions
+	CostEstimations            CostEstimations
+	NotificationConfigurations NotificationConfigurations
+	OAuthClients               OAuthClients
+	OAuthTokens                OAuthTokens
+	Organizations              Organizations
+	OrganizationTokens         OrganizationTokens
+	Plans                      Plans
+	Policies                   Policies
+	PolicyChecks               PolicyChecks
+	PolicySets                 PolicySets
+	Runs                       Runs
+	SSHKeys                    SSHKeys
+	StateVersions              StateVersions
+	Teams                      Teams
+	TeamAccess                 TeamAccesses
+	TeamMembers                TeamMembers
+	TeamTokens                 TeamTokens
+	Users                      Users
+	Variables                  Variables
+	Workspaces                 Workspaces
 }
 
 // NewClient creates a new Terraform Enterprise API client.
@@ -194,6 +196,8 @@ func NewClient(cfg *Config) (*Client, error) {
 	// Create the services.
 	client.Applies = &applies{client: client}
 	client.ConfigurationVersions = &configurationVersions{client: client}
+	client.CostEstimations = &costEstimations{client: client}
+	client.NotificationConfigurations = &notificationConfigurations{client: client}
 	client.OAuthClients = &oAuthClients{client: client}
 	client.OAuthTokens = &oAuthTokens{client: client}
 	client.Organizations = &organizations{client: client}
@@ -245,7 +249,7 @@ func (c *Client) retryHTTPBackoff(min, max time.Duration, attemptNum int, resp *
 	}
 
 	// Use the rate limit backoff function when we are rate limited.
-	if resp.StatusCode == 429 {
+	if resp != nil && resp.StatusCode == 429 {
 		return rateLimitBackoff(min, max, attemptNum, resp)
 	}
 
@@ -297,6 +301,7 @@ func (c *Client) configureLimiter() error {
 		req.Header[k] = v
 	}
 	req.Header.Set("Accept", "application/vnd.api+json")
+	req.Header.Set("Authorization", "Bearer "+c.token)
 
 	// Make a single request to retrieve the rate limit headers.
 	resp, err := c.http.HTTPClient.Do(req)
