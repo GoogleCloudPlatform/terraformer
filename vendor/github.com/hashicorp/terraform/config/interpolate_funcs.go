@@ -47,6 +47,20 @@ func stringSliceToVariableValue(values []string) []ast.Variable {
 	return output
 }
 
+// listVariableSliceToVariableValue converts a list of lists into the value
+// required to be returned from interpolation functions which return TypeList.
+func listVariableSliceToVariableValue(values [][]ast.Variable) []ast.Variable {
+	output := make([]ast.Variable, len(values))
+
+	for index, value := range values {
+		output[index] = ast.Variable{
+			Type:  ast.TypeList,
+			Value: value,
+		}
+	}
+	return output
+}
+
 func listVariableValueToStringSlice(values []ast.Variable) ([]string, error) {
 	output := make([]string, len(values))
 	for index, value := range values {
@@ -61,74 +75,69 @@ func listVariableValueToStringSlice(values []ast.Variable) ([]string, error) {
 // Funcs is the mapping of built-in functions for configuration.
 func Funcs() map[string]ast.Function {
 	return map[string]ast.Function{
-		"abs":              interpolationFuncAbs(),
-		"basename":         interpolationFuncBasename(),
-		"base64decode":     interpolationFuncBase64Decode(),
-		"base64encode":     interpolationFuncBase64Encode(),
-		"base64gzip":       interpolationFuncBase64Gzip(),
-		"base64sha256":     interpolationFuncBase64Sha256(),
-		"base64sha512":     interpolationFuncBase64Sha512(),
-		"bcrypt":           interpolationFuncBcrypt(),
-		"ceil":             interpolationFuncCeil(),
-		"chomp":            interpolationFuncChomp(),
-		"cidrhost":         interpolationFuncCidrHost(),
-		"cidrnetmask":      interpolationFuncCidrNetmask(),
-		"cidrsubnet":       interpolationFuncCidrSubnet(),
-		"coalesce":         interpolationFuncCoalesce(),
-		"coalescelist":     interpolationFuncCoalesceList(),
-		"compact":          interpolationFuncCompact(),
-		"concat":           interpolationFuncConcat(),
-		"contains":         interpolationFuncContains(),
-		"dirname":          interpolationFuncDirname(),
-		"distinct":         interpolationFuncDistinct(),
-		"element":          interpolationFuncElement(),
-		"chunklist":        interpolationFuncChunklist(),
-		"file":             interpolationFuncFile(),
-		"filebase64sha256": interpolationFuncMakeFileHash(interpolationFuncBase64Sha256()),
-		"filebase64sha512": interpolationFuncMakeFileHash(interpolationFuncBase64Sha512()),
-		"filemd5":          interpolationFuncMakeFileHash(interpolationFuncMd5()),
-		"filesha1":         interpolationFuncMakeFileHash(interpolationFuncSha1()),
-		"filesha256":       interpolationFuncMakeFileHash(interpolationFuncSha256()),
-		"filesha512":       interpolationFuncMakeFileHash(interpolationFuncSha512()),
-		"matchkeys":        interpolationFuncMatchKeys(),
-		"flatten":          interpolationFuncFlatten(),
-		"floor":            interpolationFuncFloor(),
-		"format":           interpolationFuncFormat(),
-		"formatlist":       interpolationFuncFormatList(),
-		"indent":           interpolationFuncIndent(),
-		"index":            interpolationFuncIndex(),
-		"join":             interpolationFuncJoin(),
-		"jsonencode":       interpolationFuncJSONEncode(),
-		"length":           interpolationFuncLength(),
-		"list":             interpolationFuncList(),
-		"log":              interpolationFuncLog(),
-		"lower":            interpolationFuncLower(),
-		"map":              interpolationFuncMap(),
-		"max":              interpolationFuncMax(),
-		"md5":              interpolationFuncMd5(),
-		"merge":            interpolationFuncMerge(),
-		"min":              interpolationFuncMin(),
-		"pathexpand":       interpolationFuncPathExpand(),
-		"pow":              interpolationFuncPow(),
-		"uuid":             interpolationFuncUUID(),
-		"replace":          interpolationFuncReplace(),
-		"rsadecrypt":       interpolationFuncRsaDecrypt(),
-		"sha1":             interpolationFuncSha1(),
-		"sha256":           interpolationFuncSha256(),
-		"sha512":           interpolationFuncSha512(),
-		"signum":           interpolationFuncSignum(),
-		"slice":            interpolationFuncSlice(),
-		"sort":             interpolationFuncSort(),
-		"split":            interpolationFuncSplit(),
-		"substr":           interpolationFuncSubstr(),
-		"timestamp":        interpolationFuncTimestamp(),
-		"timeadd":          interpolationFuncTimeAdd(),
-		"title":            interpolationFuncTitle(),
-		"transpose":        interpolationFuncTranspose(),
-		"trimspace":        interpolationFuncTrimSpace(),
-		"upper":            interpolationFuncUpper(),
-		"urlencode":        interpolationFuncURLEncode(),
-		"zipmap":           interpolationFuncZipMap(),
+		"abs":          interpolationFuncAbs(),
+		"basename":     interpolationFuncBasename(),
+		"base64decode": interpolationFuncBase64Decode(),
+		"base64encode": interpolationFuncBase64Encode(),
+		"base64gzip":   interpolationFuncBase64Gzip(),
+		"base64sha256": interpolationFuncBase64Sha256(),
+		"base64sha512": interpolationFuncBase64Sha512(),
+		"bcrypt":       interpolationFuncBcrypt(),
+		"ceil":         interpolationFuncCeil(),
+		"chomp":        interpolationFuncChomp(),
+		"cidrhost":     interpolationFuncCidrHost(),
+		"cidrnetmask":  interpolationFuncCidrNetmask(),
+		"cidrsubnet":   interpolationFuncCidrSubnet(),
+		"coalesce":     interpolationFuncCoalesce(),
+		"coalescelist": interpolationFuncCoalesceList(),
+		"compact":      interpolationFuncCompact(),
+		"concat":       interpolationFuncConcat(),
+		"contains":     interpolationFuncContains(),
+		"dirname":      interpolationFuncDirname(),
+		"distinct":     interpolationFuncDistinct(),
+		"element":      interpolationFuncElement(),
+		"chunklist":    interpolationFuncChunklist(),
+		"file":         interpolationFuncFile(),
+		"matchkeys":    interpolationFuncMatchKeys(),
+		"flatten":      interpolationFuncFlatten(),
+		"floor":        interpolationFuncFloor(),
+		"format":       interpolationFuncFormat(),
+		"formatlist":   interpolationFuncFormatList(),
+		"indent":       interpolationFuncIndent(),
+		"index":        interpolationFuncIndex(),
+		"join":         interpolationFuncJoin(),
+		"jsonencode":   interpolationFuncJSONEncode(),
+		"length":       interpolationFuncLength(),
+		"list":         interpolationFuncList(),
+		"log":          interpolationFuncLog(),
+		"lower":        interpolationFuncLower(),
+		"map":          interpolationFuncMap(),
+		"max":          interpolationFuncMax(),
+		"md5":          interpolationFuncMd5(),
+		"merge":        interpolationFuncMerge(),
+		"min":          interpolationFuncMin(),
+		"pathexpand":   interpolationFuncPathExpand(),
+		"pow":          interpolationFuncPow(),
+		"uuid":         interpolationFuncUUID(),
+		"replace":      interpolationFuncReplace(),
+		"reverse":      interpolationFuncReverse(),
+		"rsadecrypt":   interpolationFuncRsaDecrypt(),
+		"sha1":         interpolationFuncSha1(),
+		"sha256":       interpolationFuncSha256(),
+		"sha512":       interpolationFuncSha512(),
+		"signum":       interpolationFuncSignum(),
+		"slice":        interpolationFuncSlice(),
+		"sort":         interpolationFuncSort(),
+		"split":        interpolationFuncSplit(),
+		"substr":       interpolationFuncSubstr(),
+		"timestamp":    interpolationFuncTimestamp(),
+		"timeadd":      interpolationFuncTimeAdd(),
+		"title":        interpolationFuncTitle(),
+		"transpose":    interpolationFuncTranspose(),
+		"trimspace":    interpolationFuncTrimSpace(),
+		"upper":        interpolationFuncUpper(),
+		"urlencode":    interpolationFuncURLEncode(),
+		"zipmap":       interpolationFuncZipMap(),
 	}
 }
 
@@ -947,6 +956,25 @@ func interpolationFuncReplace() ast.Function {
 	}
 }
 
+// interpolationFuncReverse implements the "reverse" function that does list reversal
+func interpolationFuncReverse() ast.Function {
+	return ast.Function{
+		ArgTypes:   []ast.Type{ast.TypeList},
+		ReturnType: ast.TypeList,
+		Variadic:   false,
+		Callback: func(args []interface{}) (interface{}, error) {
+			inputList := args[0].([]ast.Variable)
+
+			reversedList := make([]ast.Variable, len(inputList))
+			for idx := range inputList {
+				reversedList[len(inputList)-1-idx] = inputList[idx]
+			}
+
+			return reversedList, nil
+		},
+	}
+}
+
 func interpolationFuncLength() ast.Function {
 	return ast.Function{
 		ArgTypes:   []ast.Type{ast.TypeAny},
@@ -1728,27 +1756,6 @@ func interpolationFuncRsaDecrypt() ast.Function {
 			}
 
 			return string(out), nil
-		},
-	}
-}
-
-// interpolationFuncMakeFileHash constructs a function that hashes the contents
-// of a file by combining the implementations of the file(...) function and
-// a given other function that is assumed to take a single string argument and
-// return a hash value.
-func interpolationFuncMakeFileHash(hashFunc ast.Function) ast.Function {
-	fileFunc := interpolationFuncFile()
-
-	return ast.Function{
-		ArgTypes:   []ast.Type{ast.TypeString},
-		ReturnType: ast.TypeString,
-		Callback: func(args []interface{}) (interface{}, error) {
-			filename := args[0].(string)
-			contents, err := fileFunc.Callback([]interface{}{filename})
-			if err != nil {
-				return nil, err
-			}
-			return hashFunc.Callback([]interface{}{contents})
 		},
 	}
 }

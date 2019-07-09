@@ -21,23 +21,26 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/zclconf/go-cty/cty"
+
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/hashicorp/terraform/command"
 	"github.com/hashicorp/terraform/configs/configschema"
 	tfplugin "github.com/hashicorp/terraform/plugin"
+	"github.com/hashicorp/terraform/providers"
 	"github.com/hashicorp/terraform/terraform"
 )
 
 type ProviderWrapper struct {
-	Provider     terraform.ResourceProvider
+	Provider     *tfplugin.GRPCProvider
 	client       *plugin.Client
 	rpcClient    plugin.ClientProtocol
 	providerName string
-	config       map[string]interface{}
+	config       cty.Value
 }
 
-func NewProviderWrapper(providerName string, providerConfig map[string]interface{}) (*ProviderWrapper, error) {
+func NewProviderWrapper(providerName string, providerConfig cty.Value) (*ProviderWrapper, error) {
 	p := &ProviderWrapper{}
 	p.providerName = providerName
 	p.config = providerConfig
@@ -50,16 +53,15 @@ func (p *ProviderWrapper) Kill() {
 }
 
 func (p *ProviderWrapper) GetReadOnlyAttributes(resourceTypes []string) (map[string][]string, error) {
-	schema, err := p.Provider.GetSchema(&terraform.ProviderSchemaRequest{
-		ResourceTypes: resourceTypes,
-	})
-	if err != nil {
-		return map[string][]string{}, err
+	r := p.Provider.GetSchema()
+
+	if r.Diagnostics.HasErrors() {
+		return nil, r.Diagnostics.Err()
 	}
 	readOnlyAttributes := map[string][]string{}
-	for resourceName, obj := range schema.ResourceTypes {
+	for resourceName, obj := range r.ResourceTypes {
 		readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], "^id$")
-		for k, v := range obj.Attributes {
+		for k, v := range obj.Block.Attributes {
 			if !v.Optional && !v.Required {
 				if v.Type.IsListType() || v.Type.IsSetType() {
 					readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], "^"+k+".(.*)")
@@ -69,7 +71,7 @@ func (p *ProviderWrapper) GetReadOnlyAttributes(resourceTypes []string) (map[str
 
 			}
 		}
-		readOnlyAttributes[resourceName] = p.readObjBlocks(obj.BlockTypes, readOnlyAttributes[resourceName], "-1")
+		readOnlyAttributes[resourceName] = p.readObjBlocks(obj.Block.BlockTypes, readOnlyAttributes[resourceName], "-1")
 	}
 	return readOnlyAttributes, nil
 }
@@ -111,7 +113,13 @@ func (p *ProviderWrapper) readObjBlocks(block map[string]*configschema.NestedBlo
 }
 
 func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform.InstanceState) (*terraform.InstanceState, error) {
-	return p.Provider.Refresh(info, state)
+	stateVal, _ := state.AttrsAsObjectValue(cty.EmptyObject)
+
+	p.Provider.ReadResource(providers.ReadResourceRequest{
+		TypeName:   info.Type,
+		PriorState: stateVal,
+	})
+	return state, nil
 }
 
 func (p *ProviderWrapper) initProvider() error {
@@ -158,9 +166,15 @@ func (p *ProviderWrapper) initProvider() error {
 		return err
 	}
 
-	p.Provider = raw.(terraform.ResourceProvider)
-	err = p.Provider.Configure(&terraform.ResourceConfig{
-		Config: p.config,
-	})
-	return err
+	p.Provider = raw.(*tfplugin.GRPCProvider)
+
+	// requestConfig := cty.ObjectVal(map[string]cty.Value{})
+	// if cty.NilVal != p.config {
+	// 	requestConfig = p.config
+	// }
+	// configPrepareResp := p.Provider.PrepareProviderConfig(providers.PrepareProviderConfigRequest{
+	// 	Config: requestConfig,
+	// })
+
+	return nil
 }

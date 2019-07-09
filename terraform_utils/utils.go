@@ -22,6 +22,8 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 
 	"github.com/hashicorp/terraform/terraform"
+
+	"github.com/zclconf/go-cty/cty"
 )
 
 type BaseResource struct {
@@ -65,7 +67,7 @@ func PrintTfState(resources []Resource) ([]byte, error) {
 	return buf.Bytes(), err
 }
 
-func RefreshResources(resources []Resource, providerName string, providerConfig map[string]interface{}) ([]Resource, error) {
+func RefreshResources(resources []Resource, providerName string, providerConfig cty.Value) ([]Resource, error) {
 	refreshedResources := []Resource{}
 	input := make(chan *Resource, 100)
 	provider, err := provider_wrapper.NewProviderWrapper(providerName, providerConfig)
@@ -100,7 +102,7 @@ func RefreshResourceWorker(input chan *Resource, wg *sync.WaitGroup, provider *p
 }
 
 func IgnoreKeys(resourcesTypes []string, providerName string) map[string][]string {
-	p, err := provider_wrapper.NewProviderWrapper(providerName, map[string]interface{}{})
+	p, err := provider_wrapper.NewProviderWrapper(providerName, cty.ObjectVal(map[string]cty.Value{}))
 	if err != nil {
 		log.Println("plugin error:", err)
 		return map[string][]string{}

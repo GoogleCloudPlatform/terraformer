@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strings"
 
 	getter "github.com/hashicorp/go-getter"
 	"github.com/hashicorp/terraform/registry"
@@ -101,21 +100,6 @@ func (s Storage) loadManifest() (moduleManifest, error) {
 	if err := json.Unmarshal(data, &manifest); err != nil {
 		return manifest, err
 	}
-
-	for i, rec := range manifest.Modules {
-		// If the path was recorded before we changed to always using a
-		// slash as separator, we delete the record from the manifest so
-		// it can be discovered again and will be recorded using a slash.
-		if strings.Contains(rec.Dir, "\\") {
-			manifest.Modules[i] = manifest.Modules[len(manifest.Modules)-1]
-			manifest.Modules = manifest.Modules[:len(manifest.Modules)-1]
-			continue
-		}
-
-		// Make sure we use the correct path separator.
-		rec.Dir = filepath.FromSlash(rec.Dir)
-	}
-
 	return manifest, nil
 }
 
@@ -145,9 +129,6 @@ func (s Storage) recordModule(rec moduleRecord) error {
 			break
 		}
 	}
-
-	// Make sure we always use a slash separator.
-	rec.Dir = filepath.ToSlash(rec.Dir)
 
 	manifest.Modules = append(manifest.Modules, rec)
 
@@ -331,7 +312,7 @@ func (s Storage) findRegistryModule(mSource, constraint string) (moduleRecord, e
 	// we need to lookup available versions
 	// Only on Get if it's not found, on unconditionally on Update
 	if (s.Mode == GetModeGet && !found) || (s.Mode == GetModeUpdate) {
-		resp, err := s.registry.Versions(mod)
+		resp, err := s.registry.ModuleVersions(mod)
 		if err != nil {
 			return rec, err
 		}
@@ -351,7 +332,7 @@ func (s Storage) findRegistryModule(mSource, constraint string) (moduleRecord, e
 
 		rec.Version = match.Version
 
-		rec.url, err = s.registry.Location(mod, rec.Version)
+		rec.url, err = s.registry.ModuleLocation(mod, rec.Version)
 		if err != nil {
 			return rec, err
 		}

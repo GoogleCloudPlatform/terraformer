@@ -4,9 +4,23 @@ package terraform
 
 import "strconv"
 
-const _GraphType_name = "GraphTypeInvalidGraphTypeLegacyGraphTypeRefreshGraphTypePlanGraphTypePlanDestroyGraphTypeApplyGraphTypeInputGraphTypeValidate"
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[GraphTypeInvalid-0]
+	_ = x[GraphTypeLegacy-1]
+	_ = x[GraphTypeRefresh-2]
+	_ = x[GraphTypePlan-3]
+	_ = x[GraphTypePlanDestroy-4]
+	_ = x[GraphTypeApply-5]
+	_ = x[GraphTypeValidate-6]
+	_ = x[GraphTypeEval-7]
+}
 
-var _GraphType_index = [...]uint8{0, 16, 31, 47, 60, 80, 94, 108, 125}
+const _GraphType_name = "GraphTypeInvalidGraphTypeLegacyGraphTypeRefreshGraphTypePlanGraphTypePlanDestroyGraphTypeApplyGraphTypeValidateGraphTypeEval"
+
+var _GraphType_index = [...]uint8{0, 16, 31, 47, 60, 80, 94, 111, 124}
 
 func (i GraphType) String() string {
 	if i >= GraphType(len(_GraphType_index)-1) {
