@@ -62,6 +62,10 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 			"sg":     []string{"security_groups", "id"},
 			"subnet": []string{"vpc_zone_identifier", "id"},
 		},
+		"ec2_instance": {
+			"sg":     []string{"vpc_security_group_ids", "id"},
+			"subnet": []string{"subnet_id", "id"},
+		},
 	}
 }
 func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
