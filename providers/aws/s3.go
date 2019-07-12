@@ -17,13 +17,14 @@ package aws
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws/awserr"
+	"github.com/aws/aws-sdk-go/aws/session"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
@@ -38,9 +39,8 @@ type S3Generator struct {
 // createResources iterate on all buckets
 // for each bucket we check region and choose only bucket from set region
 // for each bucket try get bucket policy, if policy exist create additional NewTerraformResource for policy
-func (S3Generator) createResources(buckets *s3.ListBucketsOutput, region string) []terraform_utils.Resource {
+func (g S3Generator) createResources(sess *session.Session, buckets *s3.ListBucketsOutput, region string) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(region)})
 	svc := s3.New(sess)
 	for _, bucket := range buckets.Buckets {
 		resourceName := aws.StringValue(bucket.Name)
@@ -93,13 +93,13 @@ func (S3Generator) createResources(buckets *s3.ListBucketsOutput, region string)
 // from each s3 bucket create 2 TerraformResource(bucket and bucket policy)
 // Need bucket name as ID for terraform resource
 func (g *S3Generator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"])})
+	sess := g.generateSession()
 	svc := s3.New(sess)
 	buckets, err := svc.ListBuckets(&s3.ListBucketsInput{})
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(buckets, g.GetArgs()["region"])
+	g.Resources = g.createResources(sess, buckets, g.GetArgs()["region"])
 	g.PopulateIgnoreKeys()
 	return nil
 }
@@ -117,4 +117,20 @@ func (g *S3Generator) PostConvertHook() error {
 POLICY`, policy)
 	}
 	return nil
+}
+
+func (g *S3Generator) ParseFilter(rawFilter []string) {
+	g.Filter = map[string][]string{}
+	for _, resource := range rawFilter {
+		t := strings.Split(resource, "=")
+		if len(t) != 2 {
+			log.Println("Pattern for filter must be resource_type=id1:id2:id4")
+			continue
+		}
+		resourceName, resourcesID := t[0], t[1]
+		g.Filter[resourceName] = strings.Split(resourcesID, ":")
+		if resourceName == "aws_s3_bucket" {
+			g.Filter["aws_s3_bucket_policy"] = strings.Split(resourcesID, ":")
+		}
+	}
 }

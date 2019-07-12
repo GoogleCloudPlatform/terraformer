@@ -64,6 +64,8 @@ github.com/blang/semver v3.5.1+incompatible/go.mod h1:kRBLl5iJ+tD4TcOOxsy/0fnweb
 github.com/boombuler/barcode v1.0.0 h1:s1TvRnXwL2xJRaccrdcBQMZxq6X7DvsMogtmJeHDdrc=
 github.com/boombuler/barcode v1.0.0/go.mod h1:paBWMcWSl3LHKBqUq+rly7CNSldXjb2rDl3JlRe0mD8=
 github.com/bsm/go-vlq v0.0.0-20150828105119-ec6e8d4f5f4e/go.mod h1:N+BjUcTjSxc2mtRGSCPsat1kze3CUtvJN3/jTXlp29k=
+github.com/cenkalti/backoff v2.1.1+incompatible h1:tKJnvO2kl0zmb/jA5UKAt4VoEVw1qxKWjE/Bpp46npY=
+github.com/cenkalti/backoff v2.1.1+incompatible/go.mod h1:90ReRw6GdpyfrHakVjL/QHaoyV4aDUVVkXQJJJ3NXXM=
 github.com/chzyer/logex v1.1.11-0.20160617073814-96a4d311aa9b h1:i4AJWjdpwyE7iKKxsp8NbWy3gQVQ9nZEBG/Pm+cBaww=
 github.com/chzyer/logex v1.1.11-0.20160617073814-96a4d311aa9b/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
 github.com/chzyer/readline v0.0.0-20161106042343-c914be64f07d/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
@@ -220,6 +222,8 @@ github.com/hashicorp/golang-lru v0.5.0/go.mod h1:/m3WP610KZHVQ1SGc6re/UDhFvYD7pJ
 github.com/hashicorp/hcl v0.0.0-20170504190234-a4b07c25de5f/go.mod h1:oZtUIOe8dh44I2q6ScRibXws4Ajl+d+nod3AaR9vL5w=
 github.com/hashicorp/hcl v1.0.0 h1:0Anlzjpi4vEasTeNFn2mLJgTSwt0+6sfsiTG8qcWGx4=
 github.com/hashicorp/hcl v1.0.0/go.mod h1:E5yfLk+7swimpb2L/Alb/PJmXilQ/rhwaUYs4T20WEQ=
+github.com/hashicorp/hcl v1.0.1-0.20190611123218-cf7d376da96d h1:r4iSf+UX1tNxFJZ64FsUoOfysT7TePSbRNz4/mYGUIE=
+github.com/hashicorp/hcl v1.0.1-0.20190611123218-cf7d376da96d/go.mod h1:E5yfLk+7swimpb2L/Alb/PJmXilQ/rhwaUYs4T20WEQ=
 github.com/hashicorp/hcl2 v0.0.0-20180308163058-5f8ed954abd8/go.mod h1:xp1eMAxqhQKBxz+yQUTsig9bBMRRWRWw+rK3FJmHf/A=
 github.com/hashicorp/hcl2 v0.0.0-20181111172936-0467c0c38ca2 h1:uNBHbPmzVQJHlOPwdj/2Ssi9WMXBYaPfaq5pylaJJuQ=
 github.com/hashicorp/hcl2 v0.0.0-20181111172936-0467c0c38ca2/go.mod h1:4nBvwJRETsbpa0LQ7FbXXVFmo0Crvhya1Dmpbm7cVow=
@@ -461,6 +465,8 @@ github.com/zclconf/go-cty v0.0.0-20180328152515-d006e4534bc4/go.mod h1:LnDKxj8gN
 github.com/zclconf/go-cty v0.0.0-20180815031001-58bb2bc0302a/go.mod h1:xnAOWiHeOqg2nWS62VtQ7pbOu17FtxJNW8RLEih+O3s=
 github.com/zclconf/go-cty v0.0.0-20181017232614-01c5aba823a6 h1:Y9SzKuDy2J5QLFPmFk7/ZIzbu4/FrQK9Zwv4vjivNiM=
 github.com/zclconf/go-cty v0.0.0-20181017232614-01c5aba823a6/go.mod h1:xnAOWiHeOqg2nWS62VtQ7pbOu17FtxJNW8RLEih+O3s=
+github.com/zorkian/go-datadog-api v2.20.0+incompatible h1:zfITezz+b9lZuYghMXTdAXBdJe7HRAyU72kKnx876k8=
+github.com/zorkian/go-datadog-api v2.20.0+incompatible/go.mod h1:PkXwHX9CUQa/FpB9ZwAD45N1uhCW4MT/Wj7m36PbKss=
 go.opencensus.io v0.21.0 h1:mU6zScU4U1YAFPHEHYk+3JC4SY7JxgkqS10ZOSyksNg=
 go.opencensus.io v0.21.0/go.mod h1:mSImk1erAIZhrmZN+AvHh14ztQfjbGwt4TtuofqLduU=
 golang.org/x/crypto v0.0.0-20180211211603-9de5f2eaf759/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=

@@ -11,6 +11,7 @@ require (
 	github.com/aws/aws-sdk-go v1.16.23
 	github.com/beevik/etree v1.0.1 // indirect
 	github.com/boombuler/barcode v1.0.0 // indirect
+	github.com/cenkalti/backoff v2.1.1+incompatible // indirect
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
 	github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1 // indirect
 	github.com/coreos/etcd v3.2.0-rc.1.0.20171020155248-81ca10f99174+incompatible // indirect
@@ -36,7 +37,7 @@ require (
 	github.com/hashicorp/go-getter v0.0.0-20181119194526-bd1edc22f8ea // indirect
 	github.com/hashicorp/go-hclog v0.0.0-20181001195459-61d530d6c27f
 	github.com/hashicorp/go-plugin v0.0.0-20181030172320-54b6ff97d818
-	github.com/hashicorp/hcl v1.0.0
+	github.com/hashicorp/hcl v1.0.1-0.20190611123218-cf7d376da96d
 	github.com/hashicorp/hcl2 v0.0.0-20181111172936-0467c0c38ca2 // indirect
 	github.com/hashicorp/logutils v1.0.0 // indirect
 	github.com/hashicorp/memberlist v0.1.0 // indirect
@@ -84,6 +85,7 @@ require (
 	github.com/ugorji/go v1.1.2-0.20180728093225-eeb0478a81ae // indirect
 	github.com/xlab/treeprint v0.0.0-20181112141820-a009c3971eca // indirect
 	github.com/zclconf/go-cty v0.0.0-20181017232614-01c5aba823a6 // indirect
+	github.com/zorkian/go-datadog-api v2.20.0+incompatible
 	golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421
 	google.golang.org/api v0.5.1-0.20190510010909-bbbc0e98e3cc
 	google.golang.org/genproto v0.0.0-20190307195333-5fe7a883aa19

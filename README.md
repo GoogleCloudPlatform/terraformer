@@ -1,11 +1,14 @@
 # Terraformer
 
-CLI tool to generate `tf` and `tfstate` files from existing infrastructure
+[![Build Status](https://travis-ci.com/GoogleCloudPlatform/terraformer.svg?branch=master)](https://travis-ci.com/GoogleCloudPlatform/terraformer)
+[![Go Report Card](https://goreportcard.com/badge/github.com/GoogleCloudPlatform/terraformer)](https://goreportcard.com/report/github.com/GoogleCloudPlatform/terraformer)
+
+A CLI tool that generates `tf` and `tfstate` files based on existing infrastructure
 (reverse Terraform).
 
-*   Disclaimer: This is not an official Google product.
-*   Status: beta - need improve documentations, bugs etc..
-*   Created by: Waze SRE.
+*   Disclaimer: This is not an official Google product
+*   Status: beta - we still need to improve documentation, squash some bugs, etc...
+*   Created by: Waze SRE
 
 ![Waze SRE logo](docs/waze-sre-logo.png)
 
@@ -19,6 +22,7 @@ CLI tool to generate `tf` and `tfstate` files from existing infrastructure
     * [OpenStack](#use-with-openstack)
     * [Kubernetes](#use-with-kubernetes)
     * [Github](#use-with-github)
+    * [Datadog](#use-with-datadog)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
@@ -29,14 +33,13 @@ CLI tool to generate `tf` and `tfstate` files from existing infrastructure
     supported objects by resource.
 2.  Remote state can be uploaded to a GCS bucket.
 3.  Connect between resources with `terraform_remote_state` (local and bucket).
-4.  Compatible with terraform 0.12 syntax.
-5.  Save `tf` files with custom folder tree pattern.
-6.  Import by resource name and type.
+4.  Save `tf` files using a custom folder tree pattern.
+5.  Import by resource name and type.
 
-Terraformer use terraform providers and built for easy to add new supported resources.
-For upgrade resources with new fields you need upgrade only terraform providers.
+Terraformer uses terraform providers and is designed to easily support newly added resources.
+To upgrade resources with new fields, all you need to do is upgrade the relevant terraform providers.
 ```
-Import current State to terraform configuration from google cloud
+Import current state to terraform configuration from google cloud
 
 Usage:
    import google [flags]
@@ -59,30 +62,54 @@ Flags:
 ```
 #### Permissions
 
-Readonly permissions
+Read-only permissions
 
 #### Filtering
 
-Filters are a way to choose which resources `terraformer` import.
+Filters are a way to choose which resources `terraformer` imports.
 
-Ex:
+For example:
 ```
 terraformer import aws --resources=vpc,subnet --filter=aws_vpc=myvpcid --regions=eu-west-1
 ```
-will import only one VPC and not only subnets from this VPC but all subnets from all VPCs
+will import only one VPC and all subnets from all VPCs (not just the ones from the filtered VPC)
 
 ##### Resources ID
 
-Filtering is based on Terraform resource ID pattern. This way, it may differ from the value your provider give you.
-Check the import part of [Terraform documentation][terraform-providers] for your resource for valid ID pattern.
+Filtering is based on Terraform resource ID patterns. To find valid ID patterns for your resource, check the import part of [Terraform documentation][terraform-providers].
 
 [terraform-providers]: https://www.terraform.io/docs/providers/
+
+#### Planning
+
+The `plan` command generates a planfile that contains all the resources set to be imported. By modifying the planfile before running the `import` command, you can rename or filter the resources you'd like to import.
+
+The rest of subcommands and parameters are identical to the `import` command.
+
+```
+$ terraformer plan google --resources=networks,firewalls --projects=my-project --zone=europe-west1-d
+(snip)
+
+Saving planfile to generated/google/my-project/terraformer/plan.json
+```
+
+After reviewing/customizing the planfile, begin the import by running `import plan`.
+
+```
+$ terraformer import plan generated/google/my-project/terraformer/plan.json
+```
 
 ### Installation
 From source:
 1.  Run `git clone <terraformer repo>`
 2.  Run `GO111MODULE=on go mod vendor`
 3.  Run `go build -v`
+4.  Run ```terraform init``` against an ```init.tf``` file to install the plugins required for your platform. For example, if you need plugins for the google provider, ```init.tf``` should contain:
+```
+provider "google" {}
+```
+Or alternatively
+
 4.  Copy your Terraform provider's plugin(s) to folder
     `~/.terraform.d/plugins/{darwin,linux}_amd64/`, as appropriate.
 
@@ -101,12 +128,19 @@ chmod +x terraformer-darwin-amd64
 sudo mv terraformer-darwin-amd64 /usr/local/bin/terraformer
 ```
 
-Links for download terraform providers:
+#### Using a package manager
+
+If you want to use a package manager:
+
+- [Homebrew](https://brew.sh/) users can use `brew install terraformer`.
+
+Links to download terraform providers:
 * google cloud provider >2.0.0 - [here](https://releases.hashicorp.com/terraform-provider-google/)
 * aws provider >1.56.0 - [here](https://releases.hashicorp.com/terraform-provider-aws/)
 * openstack provider >1.17.0 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
 * kubernetes provider >=1.4.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
 * github provider >=2.0.0 - [here](https://releases.hashicorp.com/terraform-provider-github/)
+* datadog provider >1.19.0 - [here](https://releases.hashicorp.com/terraform-provider-datadog/)
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
@@ -250,11 +284,11 @@ Your `tf` and `tfstate` files are written by default to
 Example:
 
 ```
- terraformer import aws --resources=vpc,subnet --connect=true --regions=eu-west-1
+ terraformer import aws --resources=vpc,subnet --connect=true --regions=eu-west-1 --profile=prod
  terraformer import aws --resources=vpc,subnet --filter=aws_vpc=vpc_id1:vpc_id2:vpc_id3 --regions=eu-west-1
 ```
 
-List of support AWS services:
+List of supported AWS services:
 
 *   `elb`
     * `aws_elb`
@@ -306,11 +340,17 @@ List of support AWS services:
 *   `route53`
     * `aws_route53_zone`
     * `aws_route53_record`
+*   `acm`
+    * `aws_acm_certificate`
 *   `elasticache`
     * `aws_elasticache_cluster`
     * `aws_elasticache_parameter_group`
     * `aws_elasticache_subnet_group`
     * `aws_elasticache_replication_group`
+*   `cloudfront`
+    * `aws_cloudfront_distribution`
+*   `ec2_instance`
+    * `aws_instance`
 
 ### Use with OpenStack
 
@@ -320,7 +360,7 @@ Example:
  terraformer import openstack --resources=compute,networking --regions=RegionOne
 ```
 
-List of support OpenStack services:
+List of supported OpenStack services:
 
 *   `compute`
     * `openstack_compute_instance_v2`
@@ -341,7 +381,7 @@ Example:
  terraformer import kubernetes --resources=deployments,services,storageclasses --filter=kubernetes_deployment=name1:name2:name3
 ```
 
-All of the kubernetes resources that are currently being supported by kubernetes provider are supported by this module as well. Here is the list of resources which are currently supported by kubernetes provider v.1.4:
+All kubernetes resources that are currently supported by the kubernetes provider, are also supported by this module. Here is the list of resources which are currently supported by kubernetes provider v.1.4:
 
 * `clusterrolebinding`
   * `kubernetes_cluster_role_binding`
@@ -378,9 +418,9 @@ All of the kubernetes resources that are currently being supported by kubernetes
 
 #### Known issues
 
-* Terraform kubernetes provider is rejecting resources with ":" character in their names (As it's not meeting DNS-1123), while it's allowed for certain types in kubernetes, e.g. ClusterRoleBinding.
-* As terraform flatmap is using "." to detect the keys for unflattening the maps, some keys with "." in their names are being considered as the maps.
-* As the library is just assuming empty string as empty value (not "0"), there are some issues with optional integer keys that are restricted to be positive.
+* Terraform kubernetes provider is rejecting resources with ":" characters in their names (as they don't meet DNS-1123), while it's allowed for certain types in kubernetes, e.g. ClusterRoleBinding.
+* Because terraform flatmap uses "." to detect the keys for unflattening the maps, some keys with "." in their names are being considered as the maps.
+* Since the library assumes empty strings to be empty values (not "0"), there are some issues with optional integer keys that are restricted to be positive.
 
 ### Use with Github
 
@@ -391,7 +431,7 @@ Example:
  ./terraformer import github --organizations=YOUR_ORGANIZATION --resources=repositories --filter=github_repository=id1:id2:id4 --token=YOUR_TOKEN // or GITHUB_TOKEN in env
 ```
 
-Support only organizations resources. List of supported resources:
+Supports only organizational resources. List of supported resources:
 
 * `repositories`
     * `github_repository`
@@ -409,8 +449,33 @@ Support only organizations resources. List of supported resources:
     * `github_organization_webhook`
 
 Notes:
-* Github API don't return webhook secrets. If you have secret in webhook, you get changes on `terraform plan`
+* Terraformer can't get webhook secrets from the github API. If you use a secret token in any of your webhooks, running `terraform plan` will result in a change being detected:
 => `configuration.#: "1" => "0"` in tfstate only.
+
+### Use with Datadog
+
+Example:
+
+```
+ ./terraformer import datadog --resources=monitor --api-key=YOUR_DATADOG_API_KEY // or DATADOG_API_KEY in env --app-key=YOUR_DATADOG_APP_KEY // or DATADOG_APP_KEY in env
+ ./terraformer import datadog --resources=monitor --filter=datadog_monitor=id1:id2:id4 --api-key=YOUR_DATADOG_API_KEY // or DATADOG_API_KEY in env --app-key=YOUR_DATADOG_APP_KEY // or DATADOG_APP_KEY in env
+```
+
+List of supported Datadog services:
+
+* `downtime`
+    * `datadog_downtime`
+* `monitor`
+    * `datadog_monitor`
+* `screenboard`
+    * `datadog_screenboard`
+* `synthetics`
+    * `datadog_synthetics_test`
+* `timeboard`
+    * `datadog_timeboard`
+* `user`
+    * `datadog_user`
+
 
 ## Contributing
 
@@ -419,18 +484,18 @@ Please read CONTRIBUTING.md for more information on the process we would like
 contributors to follow.
 
 ## Developing
-Terraformer built for easy to add new providers and not only cloud providers.
+Terraformer was built so you can easily add new providers of any kind.
 
 Process for generating `tf` + `tfstate` files:
 
 1.  Call GCP/AWS/other api and get list of resources.
-2.  Iterate over resources and take only ID (we don't need mapping fields!!!)
+2.  Iterate over resources and take only the ID (we don't need mapping fields!)
 3.  Call to provider for readonly fields.
 4.  Call to infrastructure and take tf + tfstate.
 
 ## Infrastructure
 
-1.  Call to provider for refresh method and get all data.
+1.  Call to provider using the refresh method and get all data.
 2.  Convert refresh data to go struct.
 3.  Generate HCL file - `tf` files.
 4.  Generate `tfstate` files.
@@ -450,6 +515,7 @@ go run providers/gcp/gcp_compute_code_generator/*.go
 ```
 
 ### Similar projects
+
 
 #### [terraforming](https://github.com/dtan4/terraforming)
 

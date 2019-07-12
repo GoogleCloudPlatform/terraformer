@@ -17,7 +17,7 @@ import (
 	"log"
 
 	aws_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/aws"
-
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/spf13/cobra"
 )
 
@@ -29,11 +29,12 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			originalPathPattern := options.PathPattern
 			for _, region := range options.Regions {
-				provider := &aws_terraforming.AWSProvider{}
+				provider := newAWSProvider()
 				options.PathPattern = originalPathPattern
 				options.PathPattern += region + "/"
 				log.Println(provider.GetName() + " importing region " + region)
-				err := Import(provider, options, []string{region})
+				profile := options.Profile
+				err := Import(provider, options, []string{region, profile})
 				if err != nil {
 					return err
 				}
@@ -41,14 +42,19 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 			return nil
 		},
 	}
-	cmd.AddCommand(listCmd(&aws_terraforming.AWSProvider{}))
+	cmd.AddCommand(listCmd(newAWSProvider()))
 	cmd.PersistentFlags().BoolVarP(&options.Connect, "connect", "c", true, "")
 	cmd.PersistentFlags().StringSliceVarP(&options.Resources, "resources", "r", []string{}, "vpc,subnet,nacl")
 	cmd.PersistentFlags().StringVarP(&options.PathPattern, "path-pattern", "p", DefaultPathPattern, "{output}/{provider}/custom/{service}/")
 	cmd.PersistentFlags().StringVarP(&options.PathOutput, "path-output", "o", DefaultPathOutput, "")
 	cmd.PersistentFlags().StringVarP(&options.State, "state", "s", DefaultState, "local or bucket")
 	cmd.PersistentFlags().StringVarP(&options.Bucket, "bucket", "b", "", "gs://terraform-state")
+	cmd.PersistentFlags().StringVar(&options.Profile, "profile", "default", "prod")
 	cmd.PersistentFlags().StringSliceVarP(&options.Regions, "regions", "", []string{}, "eu-west-1,eu-west-2,us-east-1")
 	cmd.PersistentFlags().StringSliceVarP(&options.Filter, "filter", "f", []string{}, "aws_elb=id1:id2:id4")
 	return cmd
+}
+
+func newAWSProvider() terraform_utils.ProviderGenerator {
+	return &aws_terraforming.AWSProvider{}
 }

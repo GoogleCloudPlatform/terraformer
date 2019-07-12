@@ -44,7 +44,8 @@ func (g CloudDNSGenerator) createZonesResources(ctx context.Context, svc *dns.Se
 				"google_dns_managed_zone",
 				"google",
 				map[string]string{
-					"name": zone.Name,
+					"name":    zone.Name,
+					"project": project,
 				},
 				cloudDNSAllowEmptyValues,
 				cloudDNSAdditionalFields,
@@ -74,6 +75,7 @@ func (CloudDNSGenerator) createRecordsResources(ctx context.Context, svc *dns.Se
 					"name":         record.Name,
 					"managed_zone": zoneName,
 					"type":         record.Type,
+					"project":      project,
 				},
 				cloudDNSAllowEmptyValues,
 				cloudDNSAdditionalFields,
