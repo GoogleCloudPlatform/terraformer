@@ -86,14 +86,7 @@ func (r *Resource) ConvertTFstate() {
 	// delete empty array
 	for key := range r.InstanceState.Attributes {
 		if strings.HasSuffix(key, ".#") && r.InstanceState.Attributes[key] == "0" {
-			allowEmptyValue := false
-			for _, allowedEmptyValue := range r.AllowEmptyValues {
-				if allowedEmptyValue == key {
-					allowEmptyValue = true
-					break
-				}
-			}
-			if !allowEmptyValue {
+			if !r.isAllowedEmptyValue(key) {
 				delete(attributes, key)
 			}
 		}
@@ -112,14 +105,8 @@ func (r *Resource) ConvertTFstate() {
 		if value != "" {
 			continue
 		}
-		allowEmptyValue := false
-		for _, pattern := range r.AllowEmptyValues {
-			match, err := regexp.MatchString(pattern, keyAttribute)
-			if match && err == nil && pattern != "" {
-				allowEmptyValue = true
-			}
-		}
-		if !allowEmptyValue {
+
+		if !r.isAllowedEmptyValue(keyAttribute)  {
 			delete(attributes, keyAttribute)
 		}
 	}
@@ -137,4 +124,15 @@ func (r *Resource) ConvertTFstate() {
 	for key, value := range r.AdditionalFields {
 		r.Item[key] = value
 	}
+}
+
+// isAllowedEmptyValue checks if a key is an allowed empty value with regular expression
+func (r *Resource) isAllowedEmptyValue(key string) bool {
+	for _, pattern := range r.AllowEmptyValues {
+		match, err := regexp.MatchString(pattern, key)
+		if match && err == nil && pattern != "" {
+			return true
+		}
+	}
+	return false
 }
