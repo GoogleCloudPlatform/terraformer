@@ -77,13 +77,14 @@ func (Route53Generator) createRecordsResources(svc *route53.Route53, zoneID stri
 		listParams,
 		func(recordSet *route53.ListResourceRecordSetsOutput, lastPage bool) bool {
 			for _, record := range recordSet.ResourceRecordSets {
+				recordName := wildcardUnescape(aws.StringValue(record.Name))
 				resources = append(resources, terraform_utils.NewResource(
-					fmt.Sprintf("%s_%s_%s_%s", zoneID, aws.StringValue(record.Name), aws.StringValue(record.Type), aws.StringValue(record.SetIdentifier)),
-					fmt.Sprintf("%s_%s_%s_%s", zoneID, aws.StringValue(record.Name), aws.StringValue(record.Type), aws.StringValue(record.SetIdentifier)),
+					fmt.Sprintf("%s_%s_%s_%s", zoneID, recordName, aws.StringValue(record.Type), aws.StringValue(record.SetIdentifier)),
+					fmt.Sprintf("%s_%s_%s_%s", zoneID, recordName, aws.StringValue(record.Type), aws.StringValue(record.SetIdentifier)),
 					"aws_route53_record",
 					"aws",
 					map[string]string{
-						"name":           aws.StringValue(record.Name),
+						"name":           recordName,
 						"zone_id":        zoneID,
 						"type":           aws.StringValue(record.Type),
 						"set_identifier": aws.StringValue(record.SetIdentifier),
@@ -136,6 +137,13 @@ func (g *Route53Generator) PostConvertHook() error {
 		}
 	}
 	return nil
+}
+
+func wildcardUnescape(s string) string {
+	if strings.Contains(s, "\\052") {
+		s = strings.Replace(s, "\\052", "*", 1)
+	}
+	return s
 }
 
 // cleanZoneID is used to remove the leading /hostedzone/

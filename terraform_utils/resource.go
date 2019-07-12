@@ -81,7 +81,7 @@ func (r *Resource) ConvertTFstate() {
 		attributes[k] = v
 	}
 
-	// TODO: Delete optinal numeric zero values
+	// TODO: Delete optional numeric zero values
 
 	// delete empty array
 	for key := range r.InstanceState.Attributes {
