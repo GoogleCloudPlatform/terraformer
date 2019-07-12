@@ -313,6 +313,9 @@ type BackupConfiguration struct {
 	// Kind: This is always sql#backupConfiguration.
 	Kind string `json:"kind,omitempty"`
 
+	// Location: The location of the backup.
+	Location string `json:"location,omitempty"`
+
 	// ReplicationLogArchivingEnabled: Reserved for future use.
 	ReplicationLogArchivingEnabled bool `json:"replicationLogArchivingEnabled,omitempty"`
 
@@ -371,6 +374,9 @@ type BackupRun struct {
 
 	// Kind: This is always sql#backupRun.
 	Kind string `json:"kind,omitempty"`
+
+	// Location: The location of the backup.
+	Location string `json:"location,omitempty"`
 
 	// SelfLink: The URI of this resource.
 	SelfLink string `json:"selfLink,omitempty"`
@@ -1801,10 +1807,11 @@ type IpMapping struct {
 	// available when the IP is scheduled to be retired.
 	TimeToRetire string `json:"timeToRetire,omitempty"`
 
-	// Type: The type of this IP address. A PRIMARY address is an address
-	// that can accept incoming connections. An OUTGOING address is the
-	// source address of connections originating from the instance, if
-	// supported.
+	// Type: The type of this IP address. A PRIMARY address is a public
+	// address that can accept incoming connections. A PRIVATE address is a
+	// private address that can accept incoming connections. An OUTGOING
+	// address is the source address of connections originating from the
+	// instance, if supported.
 	Type string `json:"type,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "IpAddress") to
@@ -2265,6 +2272,9 @@ type RestoreBackupContext struct {
 
 	// Kind: This is always sql#restoreBackupContext.
 	Kind string `json:"kind,omitempty"`
+
+	// Project: The full project ID of the source instance.
+	Project string `json:"project,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "BackupRunId") to
 	// unconditionally include in API requests. By default, fields with

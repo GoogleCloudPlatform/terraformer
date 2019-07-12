@@ -1,7 +1,7 @@
 module github.com/GoogleCloudPlatform/terraformer
 
 require (
-	cloud.google.com/go v0.34.0
+	cloud.google.com/go v0.38.0
 	github.com/Azure/go-ntlmssp v0.0.0-20180810175552-4a21cbd618b4 // indirect
 	github.com/ChrisTrenkamp/goxpath v0.0.0-20170922090931-c385f95c6022 // indirect
 	github.com/Unknwon/com v0.0.0-20181010210213-41959bdd855f // indirect
@@ -25,8 +25,6 @@ require (
 	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db // indirect
 	github.com/google/go-github/v25 v25.0.2
 	github.com/google/gofuzz v1.0.0 // indirect
-	github.com/google/martian v2.1.0+incompatible // indirect
-	github.com/googleapis/gax-go v2.0.2+incompatible // indirect
 	github.com/googleapis/gnostic v0.2.0 // indirect
 	github.com/gophercloud/gophercloud v0.0.0-20190427020117-60507118a582
 	github.com/gorilla/websocket v1.4.0 // indirect
@@ -86,9 +84,9 @@ require (
 	github.com/xlab/treeprint v0.0.0-20181112141820-a009c3971eca // indirect
 	github.com/zclconf/go-cty v0.0.0-20181017232614-01c5aba823a6 // indirect
 	github.com/zorkian/go-datadog-api v2.20.0+incompatible
-	golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421
-	google.golang.org/api v0.5.1-0.20190510010909-bbbc0e98e3cc
-	google.golang.org/genproto v0.0.0-20190307195333-5fe7a883aa19
+	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
+	google.golang.org/api v0.7.1-0.20190712000834-aa15faf3c8a1
+	google.golang.org/genproto v0.0.0-20190502173448-54afdca5d873
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	k8s.io/api v0.0.0-20190116205037-c89978d5f86d // indirect
 	k8s.io/apimachinery v0.0.0-20190116203031-d49e237a2683
