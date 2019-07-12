@@ -107,7 +107,7 @@ func LoadPlanfile(path string) (*ImportPlan, error) {
 	return plan, nil
 }
 
-func ExportPlanfile(plan *ImportPlan, path, filename string) error {
+func ExportPlanFile(plan *ImportPlan, path, filename string) error {
 	plan.Version = version
 
 	planfilePath := filepath.Join(path, filename)
