@@ -86,7 +86,16 @@ func (r *Resource) ConvertTFstate() {
 	// delete empty array
 	for key := range r.InstanceState.Attributes {
 		if strings.HasSuffix(key, ".#") && r.InstanceState.Attributes[key] == "0" {
-			delete(attributes, key)
+			allowEmptyValue := false
+			for _, allowedEmptyValue := range r.AllowEmptyValues {
+				if allowedEmptyValue == key {
+					allowEmptyValue = true
+					break
+				}
+			}
+			if !allowEmptyValue {
+				delete(attributes, key)
+			}
 		}
 	}
 	// delete ignored keys
