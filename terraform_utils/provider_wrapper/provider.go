@@ -18,6 +18,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"runtime"
 	"strings"
 
 	"github.com/hashicorp/go-hclog"
@@ -114,10 +115,14 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 }
 
 func (p *ProviderWrapper) initProvider() error {
-	pluginPath := os.Getenv("HOME") + "/." + command.DefaultPluginVendorDir
+	pluginPath := command.DefaultDataDir + string(os.PathSeparator) + "plugins" + string(os.PathSeparator) + runtime.GOOS + "_" + runtime.GOARCH
 	files, err := ioutil.ReadDir(pluginPath)
 	if err != nil {
-		return err
+		pluginPath = os.Getenv("HOME") + string(os.PathSeparator) + "." + command.DefaultPluginVendorDir
+		files, err = ioutil.ReadDir(pluginPath)
+		if err != nil {
+			return err
+		}
 	}
 	providerFileName := ""
 	for _, file := range files {
@@ -125,7 +130,7 @@ func (p *ProviderWrapper) initProvider() error {
 			continue
 		}
 		if strings.HasPrefix(file.Name(), "terraform-provider-"+p.providerName) {
-			providerFileName = pluginPath + "/" + file.Name()
+			providerFileName = pluginPath + string(os.PathSeparator) + file.Name()
 		}
 	}
 	p.client = plugin.NewClient(

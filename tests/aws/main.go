@@ -28,7 +28,8 @@ import (
 const command = "terraform init && terraform plan"
 
 func main() {
-	region := "eu-west-1"
+	region := "ap-southeast-1"
+	profile := "dev_sin_admin"
 	services := []string{}
 	provider := &aws_terraforming.AWSProvider{}
 	for service := range provider.GetSupportedService() {
@@ -55,7 +56,7 @@ func main() {
 		PathOutput:  cmd.DefaultPathOutput,
 		State:       "local",
 		Connect:     true,
-	}, []string{region})
+	}, []string{region, profile})
 	if err != nil {
 		log.Println(err)
 		os.Exit(1)
