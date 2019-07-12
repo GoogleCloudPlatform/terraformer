@@ -18,7 +18,6 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
@@ -48,7 +47,7 @@ func (VpcGenerator) createResources(vpcs *ec2.DescribeVpcsOutput) []terraform_ut
 // from each vpc create 1 TerraformResource.
 // Need VpcId as ID for terraform resource
 func (g *VpcGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
+	sess := g.generateSession()
 	svc := ec2.New(sess)
 	vpcs, err := svc.DescribeVpcs(&ec2.DescribeVpcsInput{})
 	if err != nil {

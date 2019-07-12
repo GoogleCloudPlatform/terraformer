@@ -25,7 +25,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/elbv2"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 )
 
 var AlbAllowEmptyValues = []string{"tags.", "^condition."}
@@ -175,7 +174,7 @@ func (g *AlbGenerator) loadTargetGroupTargets(svc *elbv2.ELBV2, targetGroupArn *
 
 // Generate TerraformResources from AWS API,
 func (g *AlbGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
+	sess := g.generateSession()
 	svc := elbv2.New(sess)
 	if err := g.loadLB(svc); err != nil {
 		return err

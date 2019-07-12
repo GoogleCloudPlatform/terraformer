@@ -18,7 +18,6 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
@@ -48,7 +47,7 @@ func (VpnGatewayGenerator) createResources(vpnGws *ec2.DescribeVpnGatewaysOutput
 // from each vpn gateway create 1 TerraformResource.
 // Need VpnGatewayId as ID for terraform resource
 func (g *VpnGatewayGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
+	sess := g.generateSession()
 	svc := ec2.New(sess)
 	vpnGws, err := svc.DescribeVpnGateways(&ec2.DescribeVpnGatewaysInput{})
 	if err != nil {

@@ -21,7 +21,6 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
@@ -56,7 +55,7 @@ func (SecurityGenerator) createResources(securityGroups []*ec2.SecurityGroup) []
 // Need GroupId as ID for terraform resource
 // AWS support pagination with NextToken pattern
 func (g *SecurityGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
+	sess := g.generateSession()
 	svc := ec2.New(sess)
 	var securityGroups []*ec2.SecurityGroup
 	var err error

@@ -19,7 +19,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/cloudfront"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 )
 
 var cloudFrontAllowEmptyValues = []string{"tags."}
@@ -29,7 +28,7 @@ type CloudFrontGenerator struct {
 }
 
 func (g *CloudFrontGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
+	sess := g.generateSession()
 	svc := cloudfront.New(sess)
 	err := svc.ListDistributionsPages(&cloudfront.ListDistributionsInput{}, func(distributions *cloudfront.ListDistributionsOutput, lastPage bool) bool {
 		for _, distribution := range distributions.DistributionList.Items {

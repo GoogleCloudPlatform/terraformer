@@ -33,6 +33,7 @@ type ImportOptions struct {
 	PathOutput  string
 	State       string
 	Bucket      string
+	Profile     string
 	Zone        string
 	Regions     []string
 	Projects    []string
@@ -112,7 +113,7 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 	log.Println(plan.ImportedResource)
 	if options.Plan {
 		path := Path(options.PathPattern, provider.GetName(), "terraformer", options.PathOutput)
-		return ExportPlanfile(plan, path, "plan.json")
+		return ExportPlanFile(plan, path, "plan.json")
 	} else {
 		return ImportFromPlan(provider, plan)
 	}

@@ -22,7 +22,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/elasticache"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 )
 
 var elastiCacheAllowEmptyValues = []string{"tags."}
@@ -138,7 +137,7 @@ func (g *ElastiCacheGenerator) loadReplicationGroups(svc *elasticache.ElastiCach
 // Need only database name as ID for terraform resource
 // AWS api support paging
 func (g *ElastiCacheGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
+	sess := g.generateSession()
 	svc := elasticache.New(sess)
 
 	if err := g.loadCacheClusters(svc); err != nil {

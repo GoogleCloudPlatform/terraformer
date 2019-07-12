@@ -22,7 +22,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/rds"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 )
 
 var RDSAllowEmptyValues = []string{"tags."}
@@ -133,7 +132,7 @@ func (g *RDSGenerator) loadEventSubscription(svc *rds.RDS) error {
 // Need only database name as ID for terraform resource
 // AWS api support paging
 func (g *RDSGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
+	sess := g.generateSession()
 	svc := rds.New(sess)
 
 	if err := g.loadDBInstances(svc); err != nil {

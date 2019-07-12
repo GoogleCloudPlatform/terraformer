@@ -24,7 +24,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/iam"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 )
 
 var IamAllowEmptyValues = []string{"tags."}
@@ -36,7 +35,7 @@ type IamGenerator struct {
 }
 
 func (g *IamGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
+	sess := g.generateSession()
 	svc := iam.New(sess)
 	g.Resources = []terraform_utils.Resource{}
 	err := g.getUsers(svc)

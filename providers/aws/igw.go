@@ -18,7 +18,6 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
@@ -48,7 +47,7 @@ func (g IgwGenerator) createResources(igws *ec2.DescribeInternetGatewaysOutput) 
 }
 
 func (g *IgwGenerator) InitResources() error {
-	sess, _ := session.NewSession(&aws.Config{Region: aws.String(g.GetArgs()["region"].(string))})
+	sess := g.generateSession()
 	svc := ec2.New(sess)
 	igws, err := svc.DescribeInternetGateways(&ec2.DescribeInternetGatewaysInput{})
 	if err != nil {
