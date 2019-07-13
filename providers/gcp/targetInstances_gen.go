@@ -18,6 +18,7 @@ package gcp
 import (
 	"context"
 	"log"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
@@ -33,20 +34,20 @@ type TargetInstancesGenerator struct {
 }
 
 // Run on targetInstancesList and create for each TerraformResource
-func (g TargetInstancesGenerator) createResources(ctx context.Context, targetInstancesList *compute.TargetInstancesListCall) []terraform_utils.Resource {
+func (g TargetInstancesGenerator) createResources(ctx context.Context, targetInstancesList *compute.TargetInstancesListCall, zone string) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := targetInstancesList.Pages(ctx, func(page *compute.TargetInstanceList) error {
 		for _, obj := range page.Items {
 			resources = append(resources, terraform_utils.NewResource(
-				g.GetArgs()["zone"]+"/"+obj.Name,
+				zone+"/"+obj.Name,
 				obj.Name,
 				"google_compute_target_instance",
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
-					"zone":    g.GetArgs()["zone"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
+					"zone":    zone,
 				},
 				targetInstancesAllowEmptyValues,
 				targetInstancesAdditionalFields,
@@ -69,9 +70,13 @@ func (g *TargetInstancesGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	targetInstancesList := computeService.TargetInstances.List(g.GetArgs()["project"], g.GetArgs()["zone"])
+	for _, zoneLink := range g.GetArgs()["region"].(compute.Region).Zones {
+		t := strings.Split(zoneLink, "/")
+		zone := t[len(t)-1]
+		targetInstancesList := computeService.TargetInstances.List(g.GetArgs()["project"].(string), zone)
+		g.Resources = g.createResources(ctx, targetInstancesList, zone)
+	}
 
-	g.Resources = g.createResources(ctx, targetInstancesList)
 	g.PopulateIgnoreKeys()
 	return nil
 

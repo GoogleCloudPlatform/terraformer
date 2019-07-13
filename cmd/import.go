@@ -109,7 +109,6 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 		}
 		plan.ImportedResource[service] = append(plan.ImportedResource[service], provider.GetService().GetResources()...)
 	}
-
 	if options.Plan {
 		path := Path(options.PathPattern, provider.GetName(), "terraformer", options.PathOutput)
 		return ExportPlanFile(plan, path, "plan.json")

@@ -44,7 +44,7 @@ func (g BackendServicesGenerator) createResources(ctx context.Context, backendSe
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
+					"project": g.GetArgs()["project"].(string),
 				},
 				backendServicesAllowEmptyValues,
 				backendServicesAdditionalFields,
@@ -67,9 +67,9 @@ func (g *BackendServicesGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	backendServicesList := computeService.BackendServices.List(g.GetArgs()["project"])
-
+	backendServicesList := computeService.BackendServices.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, backendServicesList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

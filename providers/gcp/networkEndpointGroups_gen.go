@@ -18,6 +18,7 @@ package gcp
 import (
 	"context"
 	"log"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
@@ -33,20 +34,20 @@ type NetworkEndpointGroupsGenerator struct {
 }
 
 // Run on networkEndpointGroupsList and create for each TerraformResource
-func (g NetworkEndpointGroupsGenerator) createResources(ctx context.Context, networkEndpointGroupsList *compute.NetworkEndpointGroupsListCall) []terraform_utils.Resource {
+func (g NetworkEndpointGroupsGenerator) createResources(ctx context.Context, networkEndpointGroupsList *compute.NetworkEndpointGroupsListCall, zone string) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := networkEndpointGroupsList.Pages(ctx, func(page *compute.NetworkEndpointGroupList) error {
 		for _, obj := range page.Items {
 			resources = append(resources, terraform_utils.NewResource(
-				g.GetArgs()["zone"]+"/"+obj.Name,
+				zone+"/"+obj.Name,
 				obj.Name,
 				"google_compute_network_endpoint_group",
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
-					"zone":    g.GetArgs()["zone"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
+					"zone":    zone,
 				},
 				networkEndpointGroupsAllowEmptyValues,
 				networkEndpointGroupsAdditionalFields,
@@ -69,9 +70,13 @@ func (g *NetworkEndpointGroupsGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	networkEndpointGroupsList := computeService.NetworkEndpointGroups.List(g.GetArgs()["project"], g.GetArgs()["zone"])
+	for _, zoneLink := range g.GetArgs()["region"].(compute.Region).Zones {
+		t := strings.Split(zoneLink, "/")
+		zone := t[len(t)-1]
+		networkEndpointGroupsList := computeService.NetworkEndpointGroups.List(g.GetArgs()["project"].(string), zone)
+		g.Resources = g.createResources(ctx, networkEndpointGroupsList, zone)
+	}
 
-	g.Resources = g.createResources(ctx, networkEndpointGroupsList)
 	g.PopulateIgnoreKeys()
 	return nil
 

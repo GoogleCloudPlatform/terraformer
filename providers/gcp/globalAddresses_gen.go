@@ -44,8 +44,8 @@ func (g GlobalAddressesGenerator) createResources(ctx context.Context, globalAdd
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				globalAddressesAllowEmptyValues,
 				globalAddressesAdditionalFields,
@@ -68,9 +68,9 @@ func (g *GlobalAddressesGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	globalAddressesList := computeService.GlobalAddresses.List(g.GetArgs()["project"])
-
+	globalAddressesList := computeService.GlobalAddresses.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, globalAddressesList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

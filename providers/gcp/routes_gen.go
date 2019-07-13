@@ -44,8 +44,8 @@ func (g RoutesGenerator) createResources(ctx context.Context, routesList *comput
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				routesAllowEmptyValues,
 				routesAdditionalFields,
@@ -68,9 +68,9 @@ func (g *RoutesGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	routesList := computeService.Routes.List(g.GetArgs()["project"])
-
+	routesList := computeService.Routes.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, routesList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

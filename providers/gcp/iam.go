@@ -62,7 +62,7 @@ func (IamGenerator) createResources(serviceAccountsIterator *admin.ServiceAccoun
 func (g *IamGenerator) InitResources() error {
 	ctx := context.Background()
 
-	projectID := g.GetArgs()["project"]
+	projectID := g.GetArgs()["project"].(string)
 	client, err := admin.NewIamClient(ctx)
 	if err != nil {
 		log.Fatal(err)

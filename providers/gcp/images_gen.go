@@ -44,8 +44,8 @@ func (g ImagesGenerator) createResources(ctx context.Context, imagesList *comput
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				imagesAllowEmptyValues,
 				imagesAdditionalFields,
@@ -68,9 +68,9 @@ func (g *ImagesGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	imagesList := computeService.Images.List(g.GetArgs()["project"])
-
+	imagesList := computeService.Images.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, imagesList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

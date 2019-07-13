@@ -32,20 +32,20 @@ type MembersGenerator struct {
 func (g *MembersGenerator) InitResources() error {
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: g.Args["token"]},
+		&oauth2.Token{AccessToken: g.Args["token"].(string)},
 	)
 	tc := oauth2.NewClient(ctx, ts)
 
 	client := githubAPI.NewClient(tc)
 
-	members, _, err := client.Organizations.ListMembers(ctx, g.Args["organization"], nil)
+	members, _, err := client.Organizations.ListMembers(ctx, g.Args["organization"].(string), nil)
 	if err != nil {
 		log.Println(err)
 		return nil
 	}
 	for _, member := range members {
 		g.Resources = append(g.Resources, terraform_utils.NewResource(
-			g.Args["organization"]+":"+member.GetLogin(),
+			g.Args["organization"].(string)+":"+member.GetLogin(),
 			member.GetLogin(),
 			"github_membership",
 			"github",
