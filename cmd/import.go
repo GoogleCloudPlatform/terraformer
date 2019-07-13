@@ -96,7 +96,6 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 		if err != nil {
 			return err
 		}
-		log.Println(refreshedResources)
 		provider.GetService().SetResources(refreshedResources)
 
 		// convert InstanceState to go struct for hcl print
@@ -110,7 +109,6 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 		}
 		plan.ImportedResource[service] = append(plan.ImportedResource[service], provider.GetService().GetResources()...)
 	}
-	log.Println(plan.ImportedResource)
 	if options.Plan {
 		path := Path(options.PathPattern, provider.GetName(), "terraformer", options.PathOutput)
 		return ExportPlanFile(plan, path, "plan.json")
