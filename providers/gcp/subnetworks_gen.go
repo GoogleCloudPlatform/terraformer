@@ -44,8 +44,8 @@ func (g SubnetworksGenerator) createResources(ctx context.Context, subnetworksLi
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				subnetworksAllowEmptyValues,
 				subnetworksAdditionalFields,
@@ -68,9 +68,9 @@ func (g *SubnetworksGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	subnetworksList := computeService.Subnetworks.List(g.GetArgs()["project"], g.GetArgs()["region"])
-
+	subnetworksList := computeService.Subnetworks.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createResources(ctx, subnetworksList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

@@ -39,7 +39,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
 Terraformer uses terraform providers and is designed to easily support newly added resources.
 To upgrade resources with new fields, all you need to do is upgrade the relevant terraform providers.
 ```
-Import current state to terraform configuration from google cloud
+Import current State to terraform configuration from google cloud
 
 Usage:
    import google [flags]
@@ -56,9 +56,11 @@ Flags:
   -o, --path-output string     (default "generated")
   -p, --path-pattern string   {output}/{provider}/custom/{service}/ (default "{output}/{provider}/{service}/")
       --projects strings
+  -z, --regions strings       europe-west1, (default [global])
   -r, --resources strings     firewalls,networks
   -s, --state string          local or bucket (default "local")
-  -z, --zone string
+
+Use " import google [command] --help" for more information about a command.
 ```
 #### Permissions
 
@@ -150,8 +152,8 @@ https://www.terraform.io/docs/configuration/providers.html
 Example:
 
 ```
-terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --connect=true --zone=europe-west1-a --projects=aaa,fff
-terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --filter=google_compute_firewall=rule1:rule2:rule3 --zone=europe-west1-a --projects=aaa,fff
+terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --connect=true --regions=europe-west1,europe-west4 --projects=aaa,fff
+terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --filter=google_compute_firewall=rule1:rule2:rule3 --regions=europe-west1 --projects=aaa,fff
 ```
 
 List of supported GCP services:

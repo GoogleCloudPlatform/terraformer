@@ -46,7 +46,7 @@ func (g *GkeGenerator) initClusters(clusters *container.ListClustersResponse, se
 			"google",
 			map[string]string{
 				"name":    cluster.Name, // provider need cluster name as Required
-				"project": g.GetArgs()["project"],
+				"project": g.GetArgs()["project"].(string),
 				"zone":    cluster.Zone, // provider need zone as Required
 			},
 			GkeAllowEmptyValues,
@@ -77,7 +77,7 @@ func (g *GkeGenerator) initNodePools(nodePools []*container.NodePool, clusterNam
 			"google",
 			map[string]string{
 				"zone":    location,
-				"project": g.GetArgs()["project"],
+				"project": g.GetArgs()["project"].(string),
 				"cluster": clusterName, // provider need cluster name as Required
 				"name":    nodePool.Name,
 			},
@@ -97,7 +97,7 @@ func (g *GkeGenerator) InitResources() error {
 		return err
 	}
 	// GKE support zone and regional cluster, api use location, it's can be region or zone, for all "-"
-	location := fmt.Sprintf("projects/%s/locations/%s", g.GetArgs()["project"], "-")
+	location := fmt.Sprintf("projects/%s/locations/%s", g.GetArgs()["project"].(string), "-")
 	clusters, err := service.Projects.Locations.Clusters.List(location).Do()
 	if err != nil {
 		log.Print(err)

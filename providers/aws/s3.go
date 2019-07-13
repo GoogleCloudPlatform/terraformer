@@ -99,7 +99,7 @@ func (g *S3Generator) InitResources() error {
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(sess, buckets, g.GetArgs()["region"])
+	g.Resources = g.createResources(sess, buckets, g.GetArgs()["region"].(string))
 	g.PopulateIgnoreKeys()
 	return nil
 }

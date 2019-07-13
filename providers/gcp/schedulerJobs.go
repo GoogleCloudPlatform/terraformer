@@ -20,6 +20,7 @@ import (
 	"strings"
 
 	"google.golang.org/api/cloudscheduler/v1beta1"
+	"google.golang.org/api/compute/v1"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
@@ -46,8 +47,8 @@ func (g SchedulerJobsGenerator) createResources(jobsList *cloudscheduler.Project
 				"google",
 				map[string]string{
 					"name":    name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				schedulerJobsAllowEmptyValues,
 				schedulerJobsAdditionalFields,
@@ -68,7 +69,7 @@ func (g *SchedulerJobsGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	jobsList := cloudSchedulerService.Projects.Locations.Jobs.List("projects/" + g.GetArgs()["project"] + "/locations/" + g.GetArgs()["region"])
+	jobsList := cloudSchedulerService.Projects.Locations.Jobs.List("projects/" + g.GetArgs()["project"].(string) + "/locations/" + g.GetArgs()["region"].(compute.Region).Name)
 
 	g.Resources = g.createResources(jobsList, ctx)
 	g.PopulateIgnoreKeys()

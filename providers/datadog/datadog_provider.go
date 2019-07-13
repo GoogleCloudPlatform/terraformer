@@ -76,7 +76,7 @@ func (p *DatadogProvider) InitService(serviceName string) error {
 	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetArgs(map[string]string{
+	p.Service.SetArgs(map[string]interface{}{
 		"api-key": p.apiKey,
 		"app-key": p.appKey,
 	})

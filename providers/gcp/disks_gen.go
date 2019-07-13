@@ -18,6 +18,7 @@ package gcp
 import (
 	"context"
 	"log"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
@@ -33,20 +34,20 @@ type DisksGenerator struct {
 }
 
 // Run on disksList and create for each TerraformResource
-func (g DisksGenerator) createResources(ctx context.Context, disksList *compute.DisksListCall) []terraform_utils.Resource {
+func (g DisksGenerator) createResources(ctx context.Context, disksList *compute.DisksListCall, zone string) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := disksList.Pages(ctx, func(page *compute.DiskList) error {
 		for _, obj := range page.Items {
 			resources = append(resources, terraform_utils.NewResource(
-				g.GetArgs()["zone"]+"/"+obj.Name,
+				zone+"/"+obj.Name,
 				obj.Name,
 				"google_compute_disk",
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
-					"zone":    g.GetArgs()["zone"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
+					"zone":    zone,
 				},
 				disksAllowEmptyValues,
 				disksAdditionalFields,
@@ -69,9 +70,13 @@ func (g *DisksGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	disksList := computeService.Disks.List(g.GetArgs()["project"], g.GetArgs()["zone"])
+	for _, zoneLink := range g.GetArgs()["region"].(compute.Region).Zones {
+		t := strings.Split(zoneLink, "/")
+		zone := t[len(t)-1]
+		disksList := computeService.Disks.List(g.GetArgs()["project"].(string), zone)
+		g.Resources = g.createResources(ctx, disksList, zone)
+	}
 
-	g.Resources = g.createResources(ctx, disksList)
 	g.PopulateIgnoreKeys()
 	return nil
 

@@ -30,13 +30,15 @@ func newCmdGoogleImporter(options ImportOptions) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			originalPathPattern := options.PathPattern
 			for _, project := range options.Projects {
-				provider := newGCPProvider()
-				options.PathPattern = originalPathPattern
-				options.PathPattern = strings.Replace(options.PathPattern, "{provider}", "{provider}/"+project, -1)
-				log.Println(provider.GetName() + " importing project " + project)
-				err := Import(provider, options, []string{options.Zone, project})
-				if err != nil {
-					return err
+				for _, region := range options.Regions {
+					provider := newGCPProvider()
+					options.PathPattern = originalPathPattern
+					options.PathPattern = strings.Replace(options.PathPattern, "{provider}/{service}", "{provider}/"+project+"/{service}/"+region, -1)
+					log.Println(provider.GetName() + " importing project " + project + " region " + region)
+					err := Import(provider, options, []string{region, project})
+					if err != nil {
+						return err
+					}
 				}
 			}
 			return nil
@@ -49,7 +51,7 @@ func newCmdGoogleImporter(options ImportOptions) *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&options.PathOutput, "path-output", "o", DefaultPathOutput, "")
 	cmd.PersistentFlags().StringVarP(&options.State, "state", "s", DefaultState, "local or bucket")
 	cmd.PersistentFlags().StringVarP(&options.Bucket, "bucket", "b", "", "gs://terraform-state")
-	cmd.PersistentFlags().StringVarP(&options.Zone, "zone", "z", "", "")
+	cmd.PersistentFlags().StringSliceVarP(&options.Regions, "regions", "z", []string{"global"}, "europe-west1,")
 	cmd.PersistentFlags().StringSliceVarP(&options.Filter, "filter", "f", []string{}, "google_compute_firewall=id1:id2:id4")
 	cmd.PersistentFlags().StringSliceVarP(&options.Projects, "projects", "", []string{}, "")
 	return cmd

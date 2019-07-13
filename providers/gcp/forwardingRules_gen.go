@@ -44,8 +44,8 @@ func (g ForwardingRulesGenerator) createResources(ctx context.Context, forwardin
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				forwardingRulesAllowEmptyValues,
 				forwardingRulesAdditionalFields,
@@ -68,9 +68,9 @@ func (g *ForwardingRulesGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	forwardingRulesList := computeService.ForwardingRules.List(g.GetArgs()["project"], g.GetArgs()["region"])
-
+	forwardingRulesList := computeService.ForwardingRules.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createResources(ctx, forwardingRulesList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

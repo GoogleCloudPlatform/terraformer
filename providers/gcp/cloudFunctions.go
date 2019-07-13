@@ -20,6 +20,7 @@ import (
 	"strings"
 
 	"google.golang.org/api/cloudfunctions/v1"
+	"google.golang.org/api/compute/v1"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
@@ -40,8 +41,8 @@ func (g CloudFunctionsGenerator) createResources(functionsList *cloudfunctions.P
 			t := strings.Split(functions.Name, "/")
 			name := t[len(t)-1]
 			resources = append(resources, terraform_utils.NewResource(
-				g.GetArgs()["project"]+"/"+g.GetArgs()["region"]+"/"+name,
-				g.GetArgs()["region"]+"_"+name,
+				g.GetArgs()["project"].(string)+"/"+g.GetArgs()["region"].(compute.Region).Name+"/"+name,
+				g.GetArgs()["region"].(compute.Region).Name+"_"+name,
 				"google_cloudfunctions_function",
 				"google",
 				map[string]string{},
@@ -66,7 +67,7 @@ func (g *CloudFunctionsGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	functionsList := cloudfunctionsService.Projects.Locations.Functions.List("projects/" + g.GetArgs()["project"] + "/locations/" + g.GetArgs()["region"])
+	functionsList := cloudfunctionsService.Projects.Locations.Functions.List("projects/" + g.GetArgs()["project"].(string) + "/locations/" + g.GetArgs()["region"].(compute.Region).Name)
 
 	g.Resources = g.createResources(functionsList, ctx)
 	g.PopulateIgnoreKeys()

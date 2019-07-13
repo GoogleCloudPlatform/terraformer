@@ -18,6 +18,7 @@ package gcp
 import (
 	"context"
 	"log"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
@@ -33,7 +34,7 @@ type InstanceGroupManagersGenerator struct {
 }
 
 // Run on instanceGroupManagersList and create for each TerraformResource
-func (g InstanceGroupManagersGenerator) createResources(ctx context.Context, instanceGroupManagersList *compute.InstanceGroupManagersListCall) []terraform_utils.Resource {
+func (g InstanceGroupManagersGenerator) createResources(ctx context.Context, instanceGroupManagersList *compute.InstanceGroupManagersListCall, zone string) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := instanceGroupManagersList.Pages(ctx, func(page *compute.InstanceGroupManagerList) error {
 		for _, obj := range page.Items {
@@ -44,9 +45,9 @@ func (g InstanceGroupManagersGenerator) createResources(ctx context.Context, ins
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
+					"project": g.GetArgs()["project"].(string),
 
-					"zone": g.GetArgs()["zone"],
+					"zone": zone,
 				},
 				instanceGroupManagersAllowEmptyValues,
 				instanceGroupManagersAdditionalFields,
@@ -69,9 +70,13 @@ func (g *InstanceGroupManagersGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	instanceGroupManagersList := computeService.InstanceGroupManagers.List(g.GetArgs()["project"], g.GetArgs()["zone"])
+	for _, zoneLink := range g.GetArgs()["region"].(compute.Region).Zones {
+		t := strings.Split(zoneLink, "/")
+		zone := t[len(t)-1]
+		instanceGroupManagersList := computeService.InstanceGroupManagers.List(g.GetArgs()["project"].(string), zone)
+		g.Resources = g.createResources(ctx, instanceGroupManagersList, zone)
+	}
 
-	g.Resources = g.createResources(ctx, instanceGroupManagersList)
 	g.PopulateIgnoreKeys()
 	return nil
 

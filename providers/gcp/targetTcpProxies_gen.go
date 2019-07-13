@@ -44,8 +44,8 @@ func (g TargetTcpProxiesGenerator) createResources(ctx context.Context, targetTc
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				targetTcpProxiesAllowEmptyValues,
 				targetTcpProxiesAdditionalFields,
@@ -68,9 +68,9 @@ func (g *TargetTcpProxiesGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	targetTcpProxiesList := computeService.TargetTcpProxies.List(g.GetArgs()["project"])
-
+	targetTcpProxiesList := computeService.TargetTcpProxies.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, targetTcpProxiesList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 
