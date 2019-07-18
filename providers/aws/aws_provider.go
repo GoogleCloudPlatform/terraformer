@@ -131,5 +131,6 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"acm":            &ACMGenerator{},
 		"cloudfront":     &CloudFrontGenerator{},
 		"ec2_instance":   &Ec2Generator{},
+		"firehose":       &FirehoseGenerator{},
 	}
 }
