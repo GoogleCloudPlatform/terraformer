@@ -1,13 +1,3 @@
-package aws
-
-
-import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/firehose"
-)
-
 // Copyright 2018 The Terraformer Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,13 +12,20 @@ import (
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+package aws
+
+import (
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/firehose"
+)
 
 type FirehoseGenerator struct {
 	AWSService
 }
 
-func (g FirehoseGenerator) createResources(sess *session.Session, streamNames []*string, region string) []terraform_utils.Resource {
-
+func (g FirehoseGenerator) createResources(sess *session.Session, streamNames []*string) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
 	for _, streamName := range streamNames {
 		resourceName := aws.StringValue(streamName)
@@ -62,7 +59,7 @@ func (g *FirehoseGenerator) InitResources() error {
 		}
 	}
 
-	g.Resources = g.createResources(sess, streamNames, g.GetArgs()["region"].(string))
+	g.Resources = g.createResources(sess, streamNames)
 
 	g.PopulateIgnoreKeys()
 	return nil
