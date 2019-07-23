@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
@@ -81,7 +82,17 @@ func (r *Resource) ConvertTFstate() {
 		attributes[k] = v
 	}
 
-	// TODO: Delete optional numeric zero values
+	// delete optional numeric keys with zero values
+	for keyAttribute, value := range r.InstanceState.Attributes {
+		val, err := strconv.ParseInt(value, 10, 64)
+		if err != nil || val != 0 {
+			continue
+		}
+
+		if !r.isAllowedEmptyValue(keyAttribute) {
+			delete(attributes, keyAttribute)
+		}
+	}
 
 	// delete empty array
 	for key := range r.InstanceState.Attributes {
@@ -106,7 +117,7 @@ func (r *Resource) ConvertTFstate() {
 			continue
 		}
 
-		if !r.isAllowedEmptyValue(keyAttribute)  {
+		if !r.isAllowedEmptyValue(keyAttribute) {
 			delete(attributes, keyAttribute)
 		}
 	}
