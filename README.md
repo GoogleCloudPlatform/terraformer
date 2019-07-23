@@ -23,6 +23,8 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
     * [Kubernetes](#use-with-kubernetes)
     * [Github](#use-with-github)
     * [Datadog](#use-with-datadog)
+    * [Cloudflare](#use-with-cloudflare)
+
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
@@ -481,6 +483,26 @@ List of supported Datadog services:
     * `datadog_user`
 
 
+### Use with Cloudflare
+
+Example:
+```
+CLOUDFLARE_TOKEN=[CLOUDFLARE_API_TOKEN]
+CLOUDFLARE_EMAIL=[CLOUDFLARE_EMAIL]
+ ./terraformer import cloudflare --resources=firewall,dns
+```
+
+List of supported Cloudflare services:
+
+* `firewall`
+  * `cloudflare_access_rule`
+  * `cloudflare_filter`
+  * `cloudflare_firewall_rule`
+  * `cloudflare_zone_lockdown`
+* `dns`
+  * `cloudflare_zone`
+  * `cloudflare_record`
+
 ## Contributing
 
 If you have improvements or fixes, we would love to have your contributions.
@@ -532,7 +554,7 @@ go run providers/gcp/gcp_compute_code_generator/*.go
 
 ##### Comparison
 
-Terraforming gets all attributes from cloud APIs and creates HCL and tfstate files with templating. Each attribute in the API needs to map to attribute in terraform. Generated files from templating can be broken with illegal syntax. When a provider adds new attributes the terraforming code needs to be updated. 
+Terraforming gets all attributes from cloud APIs and creates HCL and tfstate files with templating. Each attribute in the API needs to map to attribute in terraform. Generated files from templating can be broken with illegal syntax. When a provider adds new attributes the terraforming code needs to be updated.
 
 Terraformer instead uses terraform provider files for mapping attributes, HCL library from hashicorp, and terraform code.
 
