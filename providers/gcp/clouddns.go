@@ -68,7 +68,7 @@ func (CloudDNSGenerator) createRecordsResources(ctx context.Context, svc *dns.Se
 		for _, record := range listDNS.Rrsets {
 			resources = append(resources, terraform_utils.NewResource(
 				fmt.Sprintf("%s/%s/%s", zoneName, record.Name, record.Type),
-				strings.TrimSuffix(record.Name+"-"+record.Type, "."),
+				zoneName+"_"+strings.TrimSuffix(record.Name+"-"+record.Type, "."),
 				"google_dns_record_set",
 				"google",
 				map[string]string{
