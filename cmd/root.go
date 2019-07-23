@@ -44,6 +44,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdKubernetesImporter,
 		newCmdGithubImporter,
 		newCmdDatadogImporter,
+		newCmdCloudflareImporter,
 	}
 }
 
