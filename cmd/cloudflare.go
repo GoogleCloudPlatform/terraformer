@@ -42,46 +42,9 @@ func newCmdCloudflareImporter(options ImportOptions) *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&options.PathOutput, "path-output", "o", DefaultPathOutput, "")
 	cmd.PersistentFlags().StringVarP(&options.State, "state", "s", DefaultState, "local or bucket")
 	cmd.PersistentFlags().StringVarP(&options.Bucket, "bucket", "b", "", "gs://terraform-state")
-	//cmd.PersistentFlags().StringVar(&options.Profile, "profile", "default", "prod")
-	//cmd.PersistentFlags().StringSliceVarP(&options.Filter, "filter", "f", []string{}, "aws_elb=id1:id2:id4")
 	return cmd
 }
 
 func newClouflareProvider() terraform_utils.ProviderGenerator {
 	return &cloudflare_terraforming.CloudflareProvider{}
 }
-
-// func newCmdAwsImporter(options ImportOptions) *cobra.Command {
-// 	cmd := &cobra.Command{
-// 		Use:   "aws",
-// 		Short: "Import current State to terraform configuration from aws",
-// 		Long:  "Import current State to terraform configuration from aws",
-// 		RunE: func(cmd *cobra.Command, args []string) error {
-// 			originalPathPattern := options.PathPattern
-// 			for _, region := range options.Regions {
-// 				provider := newAWSProvider()
-// 				options.PathPattern = originalPathPattern
-// 				options.PathPattern += region + "/"
-// 				log.Println(provider.GetName() + " importing region " + region)
-// 				profile := options.Profile
-// 				err := Import(provider, options, []string{region, profile})
-// 				if err != nil {
-// 					return err
-// 				}
-// 			}
-// 			return nil
-// 		},
-// 	}
-
-//
-// 	cmd.PersistentFlags().BoolVarP(&options.Connect, "connect", "c", true, "")
-// 	cmd.PersistentFlags().StringSliceVarP(&options.Resources, "resources", "r", []string{}, "vpc,subnet,nacl")
-// 	cmd.PersistentFlags().StringVarP(&options.PathPattern, "path-pattern", "p", DefaultPathPattern, "{output}/{provider}/custom/{service}/")
-// 	cmd.PersistentFlags().StringVarP(&options.PathOutput, "path-output", "o", DefaultPathOutput, "")
-// 	cmd.PersistentFlags().StringVarP(&options.State, "state", "s", DefaultState, "local or bucket")
-// 	cmd.PersistentFlags().StringVarP(&options.Bucket, "bucket", "b", "", "gs://terraform-state")
-// 	cmd.PersistentFlags().StringVar(&options.Profile, "profile", "default", "prod")
-// 	cmd.PersistentFlags().StringSliceVarP(&options.Regions, "regions", "", []string{}, "eu-west-1,eu-west-2,us-east-1")
-// 	cmd.PersistentFlags().StringSliceVarP(&options.Filter, "filter", "f", []string{}, "aws_elb=id1:id2:id4")
-// 	return cmd
-// }
