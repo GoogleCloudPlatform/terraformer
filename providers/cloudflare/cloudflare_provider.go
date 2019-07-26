@@ -52,7 +52,7 @@ func (p *CloudflareProvider) GetSupportedService() map[string]terraform_utils.Se
 	return map[string]terraform_utils.ServiceGenerator{
 		"dns":      &DNSGenerator{},
 		"firewall": &FirewallGenerator{},
-		//"access":   &AccessGenerator{},
+		"access":   &AccessGenerator{},
 	}
 }
 
