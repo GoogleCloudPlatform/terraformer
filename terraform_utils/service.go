@@ -77,8 +77,6 @@ func (s *Service) CleanupWithFilter() {
 					newListOfResources = append(newListOfResources, v)
 				}
 			}
-		} else {
-			newListOfResources = append(newListOfResources, v)
 		}
 	}
 	s.Resources = newListOfResources
