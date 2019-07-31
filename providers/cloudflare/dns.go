@@ -44,6 +44,7 @@ func (*DNSGenerator) createZonesResource(api *cf.API, zoneID string) ([]terrafor
 		[]string{},
 		map[string]string{},
 	)
+	resource.IgnoreKeys = append(resource.IgnoreKeys, "^meta$")
 
 	return []terraform_utils.Resource{resource}, nil
 }
@@ -57,7 +58,7 @@ func (*DNSGenerator) createRecordsResources(api *cf.API, zoneID string) ([]terra
 	}
 
 	for _, record := range records {
-		resources = append(resources, terraform_utils.NewResource(
+		r := terraform_utils.NewResource(
 			record.ID,
 			fmt.Sprintf("%s_%s_%s", record.Type, record.ZoneName, record.ID),
 			"cloudflare_record",
@@ -65,10 +66,14 @@ func (*DNSGenerator) createRecordsResources(api *cf.API, zoneID string) ([]terra
 			map[string]string{
 				"zone_id": zoneID,
 				"domain":  record.ZoneName,
+				"name":    record.Name,
 			},
 			[]string{},
 			map[string]string{},
-		))
+		)
+
+		r.IgnoreKeys = append(r.IgnoreKeys, "^metadata")
+		resources = append(resources, r)
 	}
 
 	return resources, nil
@@ -102,30 +107,23 @@ func (g *DNSGenerator) InitResources() error {
 			g.Resources = append(g.Resources, tmpRes...)
 		}
 	}
-
 	g.PopulateIgnoreKeys()
 	return nil
 
 }
 
 func (g *DNSGenerator) PostConvertHook() error {
-	for i, resourceRecord := range g.Resources {
-		if resourceRecord.InstanceInfo.Type == "cloudflare_zone" {
-			continue
-		}
-
-		item := resourceRecord.Item
-		zoneID := item["zone_id"].(string)
-		for _, resourceZone := range g.Resources {
-			if resourceZone.InstanceInfo.Type != "cloudflare_zone" {
-				continue
-			}
-			if zoneID == resourceZone.InstanceState.ID {
-				if resourceRecord.InstanceInfo.Type == "cloudflare_record" {
-					g.Resources[i].Item["domain"] = "${cloudflare_zone." + resourceZone.ResourceName + ".zone}"
-				}
+	// 'record' resource have 'data' and 'value' is mutual-exclude
+	// delete which one have empty value
+	for i, resource := range g.Resources {
+		if resource.InstanceInfo.Type == "cloudflare_record" {
+			if val, ok := resource.Item["data"]; ok && len(val.(map[string]interface{})) == 0 {
+				delete(g.Resources[i].Item, "data")
+			} else if val, ok := resource.Item["value"]; ok && len(val.(string)) == 0 {
+				delete(g.Resources[i].Item, "value")
 			}
 		}
 	}
+
 	return nil
 }
