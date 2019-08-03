@@ -29,7 +29,6 @@ func (g FirehoseGenerator) createResources(sess *session.Session, streamNames []
 	var resources []terraform_utils.Resource
 	for _, streamName := range streamNames {
 		resourceName := aws.StringValue(streamName)
-
 		resources = append(resources, terraform_utils.NewResource(
 			resourceName,
 			resourceName,
@@ -62,5 +61,16 @@ func (g *FirehoseGenerator) InitResources() error {
 	g.Resources = g.createResources(sess, streamNames)
 
 	g.PopulateIgnoreKeys()
+	return nil
+}
+
+func (g *FirehoseGenerator) PostConvertHook() error {
+	for _, resource := range g.Resources {
+		_, hasExtendedS3Configuration := resource.Item["extended_s3_configuration"]
+		_, hasS3Configuration := resource.Item["s3_configuration"]
+		if hasExtendedS3Configuration && hasS3Configuration {
+			delete(resource.Item,"s3_configuration")
+		}
+	}
 	return nil
 }
