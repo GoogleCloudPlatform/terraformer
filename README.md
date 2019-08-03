@@ -502,7 +502,8 @@ List of supported Cloudflare services:
 * `dns`
   * `cloudflare_zone`
   * `cloudflare_record`
-
+* `access`
+  * `cloudflare_access_application`
 ## Contributing
 
 If you have improvements or fixes, we would love to have your contributions.
