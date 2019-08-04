@@ -78,7 +78,6 @@ require (
 	github.com/sirupsen/logrus v1.2.0 // indirect
 	github.com/spf13/cobra v0.0.3
 	github.com/stoewer/go-strcase v1.0.2 // indirect
-	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/terraform-providers/terraform-provider-aws v1.48.0 // indirect
 	github.com/terraform-providers/terraform-provider-google v1.20.0 // indirect
 	github.com/terraform-providers/terraform-provider-kubernetes v1.4.0
@@ -88,7 +87,7 @@ require (
 	github.com/ugorji/go v1.1.2-0.20180728093225-eeb0478a81ae // indirect
 	github.com/xlab/treeprint v0.0.0-20181112141820-a009c3971eca // indirect
 	github.com/zclconf/go-cty v0.0.0-20181017232614-01c5aba823a6 // indirect
-	github.com/zorkian/go-datadog-api v2.20.0+incompatible
+	github.com/zorkian/go-datadog-api v2.21.1-0.20190802113207-d0ce49abc107+incompatible
 	golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421
 	google.golang.org/api v0.5.1-0.20190510010909-bbbc0e98e3cc
 	google.golang.org/genproto v0.0.0-20190307195333-5fe7a883aa19
