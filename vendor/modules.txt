@@ -494,6 +494,11 @@ github.com/inconshreveable/mousetrap
 github.com/jen20/awspolicyequivalence
 # github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 github.com/jmespath/go-jmespath
+# github.com/jonboydell/logzio_client v0.0.0-20190726085421-c93d6b149c1e
+github.com/jonboydell/logzio_client/alerts
+github.com/jonboydell/logzio_client/endpoints
+github.com/jonboydell/logzio_client
+github.com/jonboydell/logzio_client/client
 # github.com/joyent/triton-go v0.0.0-20180628001255-830d2b111e62
 github.com/joyent/triton-go
 github.com/joyent/triton-go/authentication

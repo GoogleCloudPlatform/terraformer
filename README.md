@@ -24,7 +24,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
     * [Github](#use-with-github)
     * [Datadog](#use-with-datadog)
     * [Cloudflare](#use-with-cloudflare)
-
+    * [Logzio](#use-with-logzio)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
@@ -145,6 +145,7 @@ Links to download terraform providers:
 * kubernetes provider >=1.4.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
 * github provider >=2.0.0 - [here](https://releases.hashicorp.com/terraform-provider-github/)
 * datadog provider >1.19.0 - [here](https://releases.hashicorp.com/terraform-provider-datadog/)
+* logzio provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
@@ -504,6 +505,24 @@ List of supported Cloudflare services:
   * `cloudflare_record`
 * `access`
   * `cloudflare_access_application`
+
+
+### Use with Logz.io
+
+Example:
+
+```
+ LOGZIO_API_TOKEN=foobar LOGZIO_BASE_URL=https://api-eu.logz.io ./terraformer import logzio -r=alerts,alert_notification_endpoints // Import Logz.io alerts and alert notification endpoints
+```
+
+List of supported Logz.io resources:
+
+* `alerts`
+    * `logzio_alert`
+* `alert notification endpoints`
+    * `logzio_endpoint`
+
+
 ## Contributing
 
 If you have improvements or fixes, we would love to have your contributions.
