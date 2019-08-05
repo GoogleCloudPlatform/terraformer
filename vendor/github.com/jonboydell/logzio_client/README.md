@@ -83,7 +83,7 @@ user := client.User{
 
 ##### Endpoints
 
-There's no 1-1 mapping between this library and the logz.io API functions, logz.io provide one API endpoint per *type* of notification endpoint being created.  I have abstracted this so that depending on how you create your `Endpoints` variable that you pass to `CreateEndpoint` the `CreateEndpoint` function will work out which API call to make.
+There's no 1-1 mapping between this library and the logz.io API functions, logz.io provide one API endpoint per *type* of notification endpoint being created.  I have abstracted this so that depending on how you create your `Endpoints` variable that you pass to `CreateEndpoint` the `CreateEndpoint` function will work out which API call to make. 
 
 For more info, see: https://docs.logz.io/api/#tag/Manage-notification-endpoints
 
@@ -94,3 +94,6 @@ For more info, see: https://docs.logz.io/api/#tag/Manage-notification-endpoints
 
 ##### Run tests
 `go test -v -race ./...`
+
+
+
