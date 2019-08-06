@@ -76,7 +76,7 @@ For example:
 ```
 terraformer import aws --resources=vpc,subnet --filter=aws_vpc=myvpcid --regions=eu-west-1
 ```
-will import only one VPC and all subnets from all VPCs (not just the ones from the filtered VPC)
+will only import the vpc with id `myvpcid`.
 
 ##### Resources ID
 
