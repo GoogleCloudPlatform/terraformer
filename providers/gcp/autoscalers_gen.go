@@ -74,7 +74,7 @@ func (g *AutoscalersGenerator) InitResources() error {
 		t := strings.Split(zoneLink, "/")
 		zone := t[len(t)-1]
 		autoscalersList := computeService.Autoscalers.List(g.GetArgs()["project"].(string), zone)
-		g.Resources = g.createResources(ctx, autoscalersList, zone)
+		g.Resources = append(g.Resources, g.createResources(ctx, autoscalersList, zone)...)
 	}
 
 	g.PopulateIgnoreKeys()

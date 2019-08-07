@@ -74,7 +74,7 @@ func (g *NetworkEndpointGroupsGenerator) InitResources() error {
 		t := strings.Split(zoneLink, "/")
 		zone := t[len(t)-1]
 		networkEndpointGroupsList := computeService.NetworkEndpointGroups.List(g.GetArgs()["project"].(string), zone)
-		g.Resources = g.createResources(ctx, networkEndpointGroupsList, zone)
+		g.Resources = append(g.Resources, g.createResources(ctx, networkEndpointGroupsList, zone)...)
 	}
 
 	g.PopulateIgnoreKeys()
