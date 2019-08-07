@@ -74,7 +74,7 @@ func (g *TargetInstancesGenerator) InitResources() error {
 		t := strings.Split(zoneLink, "/")
 		zone := t[len(t)-1]
 		targetInstancesList := computeService.TargetInstances.List(g.GetArgs()["project"].(string), zone)
-		g.Resources = g.createResources(ctx, targetInstancesList, zone)
+		g.Resources = append(g.Resources, g.createResources(ctx, targetInstancesList, zone)...)
 	}
 
 	g.PopulateIgnoreKeys()
