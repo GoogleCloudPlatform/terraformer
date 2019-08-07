@@ -74,7 +74,7 @@ func (g *InstanceGroupManagersGenerator) InitResources() error {
 		t := strings.Split(zoneLink, "/")
 		zone := t[len(t)-1]
 		instanceGroupManagersList := computeService.InstanceGroupManagers.List(g.GetArgs()["project"].(string), zone)
-		g.Resources = g.createResources(ctx, instanceGroupManagersList, zone)
+		g.Resources = append(g.Resources, g.createResources(ctx, instanceGroupManagersList, zone)...)
 	}
 
 	g.PopulateIgnoreKeys()

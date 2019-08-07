@@ -74,7 +74,7 @@ func (g *DisksGenerator) InitResources() error {
 		t := strings.Split(zoneLink, "/")
 		zone := t[len(t)-1]
 		disksList := computeService.Disks.List(g.GetArgs()["project"].(string), zone)
-		g.Resources = g.createResources(ctx, disksList, zone)
+		g.Resources = append(g.Resources, g.createResources(ctx, disksList, zone)...)
 	}
 
 	g.PopulateIgnoreKeys()

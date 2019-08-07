@@ -74,7 +74,7 @@ func (g *NodeGroupsGenerator) InitResources() error {
 		t := strings.Split(zoneLink, "/")
 		zone := t[len(t)-1]
 		nodeGroupsList := computeService.NodeGroups.List(g.GetArgs()["project"].(string), zone)
-		g.Resources = g.createResources(ctx, nodeGroupsList, zone)
+		g.Resources = append(g.Resources, g.createResources(ctx, nodeGroupsList, zone)...)
 	}
 
 	g.PopulateIgnoreKeys()
