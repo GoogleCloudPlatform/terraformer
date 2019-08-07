@@ -108,7 +108,7 @@ func (g *{{.titleResourceName}}Generator) InitResources() error {
 		t := strings.Split(zoneLink, "/")
 		zone := t[len(t)-1]
 		{{.resource}}List := computeService.{{.titleResourceName}}.List(g.GetArgs()["project"].(string), zone)
-		g.Resources = g.createResources(ctx, {{.resource}}List, zone)
+		g.Resources = append(g.Resources, g.createResources(ctx, {{.resource}}List, zone)...)
 	}
 	{{else}}
 		{{.resource}}List := computeService.{{.titleResourceName}}.List({{.parameterOrder}})
