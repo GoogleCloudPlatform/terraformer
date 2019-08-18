@@ -181,9 +181,9 @@ func ImportFromPlan(provider terraform_utils.ProviderGenerator, plan *ImportPlan
 				for k := range provider.GetResourceConnections()[serviceName] {
 					variables["data"]["terraform_remote_state"][k] = map[string]interface{}{
 						"backend": "local",
-						"config": map[string]interface{}{
+						"config": [1]interface{}{map[string]interface{}{
 							"path": strings.Repeat("../", strings.Count(path, "/")) + strings.Replace(path, serviceName, k, -1) + "terraform.tfstate",
-						},
+						}},
 					}
 				}
 			}
