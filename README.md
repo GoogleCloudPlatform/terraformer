@@ -358,6 +358,8 @@ List of supported AWS services:
     * `aws_instance`
 *   `firehose`
     * `aws_kinesis_firehose_delivery_stream`
+*   `glue`
+    * `glue_crawler`
 
 ### Use with OpenStack
 
