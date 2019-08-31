@@ -66,6 +66,9 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 			"sg":     []string{"vpc_security_group_ids", "id"},
 			"subnet": []string{"subnet_id", "id"},
 		},
+		"route_table": {
+			"vpc":    []string{"vpc_id", "id"},
+		},
 	}
 }
 func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
@@ -133,5 +136,6 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"ec2_instance":   &Ec2Generator{},
 		"firehose":       &FirehoseGenerator{},
 		"glue":           &GlueGenerator{},
+		"route_table":    &RouteTableGenerator{},
 	}
 }
