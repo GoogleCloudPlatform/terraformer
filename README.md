@@ -360,6 +360,8 @@ List of supported AWS services:
     * `aws_kinesis_firehose_delivery_stream`
 *   `glue`
     * `glue_crawler`
+*   `route_table`
+    * `aws_route_table`
 
 ### Use with OpenStack
 
