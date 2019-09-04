@@ -1,12 +1,16 @@
 # cloud.google.com/go v0.34.0
 cloud.google.com/go/iam/admin/apiv1
+cloud.google.com/go/logging/logadmin
 cloud.google.com/go/monitoring/apiv3
 cloud.google.com/go/storage
 cloud.google.com/go/iam
+cloud.google.com/go/internal/version
+cloud.google.com/go/logging
+cloud.google.com/go/logging/apiv2
+cloud.google.com/go/logging/internal
 cloud.google.com/go/internal
 cloud.google.com/go/internal/optional
 cloud.google.com/go/internal/trace
-cloud.google.com/go/internal/version
 cloud.google.com/go/compute/metadata
 # github.com/Azure/azure-sdk-for-go v10.3.0-beta+incompatible
 github.com/Azure/azure-sdk-for-go/arm/storage
@@ -59,6 +63,7 @@ github.com/aws/aws-sdk-go/service/elasticache
 github.com/aws/aws-sdk-go/service/elb
 github.com/aws/aws-sdk-go/service/elbv2
 github.com/aws/aws-sdk-go/service/firehose
+github.com/aws/aws-sdk-go/service/glue
 github.com/aws/aws-sdk-go/service/iam
 github.com/aws/aws-sdk-go/service/rds
 github.com/aws/aws-sdk-go/service/route53
@@ -137,7 +142,6 @@ github.com/aws/aws-sdk-go/service/emr
 github.com/aws/aws-sdk-go/service/fms
 github.com/aws/aws-sdk-go/service/gamelift
 github.com/aws/aws-sdk-go/service/glacier
-github.com/aws/aws-sdk-go/service/glue
 github.com/aws/aws-sdk-go/service/guardduty
 github.com/aws/aws-sdk-go/service/inspector
 github.com/aws/aws-sdk-go/service/iot
@@ -219,14 +223,14 @@ github.com/gogo/protobuf/sortkeys
 github.com/golang/glog
 # github.com/golang/protobuf v1.2.0
 github.com/golang/protobuf/proto
+github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/empty
 github.com/golang/protobuf/ptypes/timestamp
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/struct
 github.com/golang/protobuf/ptypes/wrappers
-github.com/golang/protobuf/protoc-gen-go/descriptor
 github.com/golang/protobuf/ptypes/any
-github.com/golang/protobuf/ptypes
+github.com/golang/protobuf/protoc-gen-go/descriptor
 # github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db
 github.com/golang/snappy
 # github.com/google/go-cmp v0.2.0
@@ -670,6 +674,8 @@ golang.org/x/oauth2/internal
 golang.org/x/oauth2/google
 golang.org/x/oauth2/jws
 golang.org/x/oauth2/jwt
+# golang.org/x/sync v0.0.0-20190227155943-e225da77a7e6
+golang.org/x/sync/semaphore
 # golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a
 golang.org/x/sys/unix
 golang.org/x/sys/windows
@@ -716,6 +722,7 @@ google.golang.org/api/googleapi
 google.golang.org/api/transport/http
 google.golang.org/api/internal
 google.golang.org/api/transport/grpc
+google.golang.org/api/support/bundler
 google.golang.org/api/googleapi/internal/uritemplates
 google.golang.org/api/googleapi/transport
 google.golang.org/api/transport/http/internal/propagation
@@ -736,10 +743,14 @@ google.golang.org/appengine/internal/remote_api
 google.golang.org/genproto/googleapis/iam/admin/v1
 google.golang.org/genproto/googleapis/monitoring/v3
 google.golang.org/genproto/googleapis/iam/v1
-google.golang.org/genproto/googleapis/api/metric
 google.golang.org/genproto/googleapis/api/monitoredres
-google.golang.org/genproto/googleapis/api/annotations
+google.golang.org/genproto/googleapis/appengine/logging/v1
+google.golang.org/genproto/googleapis/cloud/audit
+google.golang.org/genproto/googleapis/logging/type
+google.golang.org/genproto/googleapis/logging/v2
 google.golang.org/genproto/protobuf/field_mask
+google.golang.org/genproto/googleapis/api/metric
+google.golang.org/genproto/googleapis/api/annotations
 google.golang.org/genproto/googleapis/api/distribution
 google.golang.org/genproto/googleapis/api/label
 google.golang.org/genproto/googleapis/rpc/status

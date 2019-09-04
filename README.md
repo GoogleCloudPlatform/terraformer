@@ -280,6 +280,8 @@ List of supported GCP services:
     * `google_kms_crypto_key`
 *   `project`
     * `google_project`
+*   `logging`
+    * `google_logging_metric`
 
 Your `tf` and `tfstate` files are written by default to
 `generated/gcp/zone/service`.
