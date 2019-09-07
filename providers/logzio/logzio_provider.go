@@ -15,6 +15,7 @@
 package logzio
 
 import (
+	"github.com/zclconf/go-cty/cty"
 	"regexp"
 	"strings"
 
@@ -51,11 +52,11 @@ func (p LogzioProvider) GetProviderData(arg ...string) map[string]interface{} {
 	}
 }
 
-func (p *LogzioProvider) GetConfig() map[string]interface{} {
-	return map[string]interface{}{
-		"token":   p.token,
-		"baseURL": p.baseURL,
-	}
+func (p *LogzioProvider) GetConfig() cty.Value {
+	return cty.ObjectVal(map[string]cty.Value{
+		"token":   cty.StringVal(p.token),
+		"baseURL": cty.StringVal(p.baseURL),
+	})
 }
 
 // Init LogzioProvider with API token
