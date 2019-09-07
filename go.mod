@@ -10,8 +10,8 @@ require (
 	github.com/cenkalti/backoff v2.1.1+incompatible // indirect
 	github.com/chzyer/logex v1.1.11-0.20160617073814-96a4d311aa9b // indirect
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
+	github.com/cloudflare/cloudflare-go v0.9.4
 	github.com/coreos/bbolt v1.3.1-coreos.1 // indirect
-    github.com/cloudflare/cloudflare-go v0.9.4
 	github.com/coreos/go-systemd v0.0.0-20181031085051-9002847aa142 // indirect
 	github.com/dustinkirkland/golang-petname v0.0.0-20170921220637-d3c2ba80e75e // indirect
 	github.com/golang/groupcache v0.0.0-20181024230925-c65c006176ff // indirect
@@ -69,7 +69,7 @@ require (
 	github.com/ugorji/go v1.1.2-0.20180728093225-eeb0478a81ae // indirect
 	github.com/xlab/treeprint v0.0.0-20181112141820-a009c3971eca // indirect
 	github.com/zclconf/go-cty v1.0.0
-    github.com/zorkian/go-datadog-api v2.21.1-0.20190802113207-d0ce49abc107+incompatible
+	github.com/zorkian/go-datadog-api v2.21.1-0.20190802113207-d0ce49abc107+incompatible
 	golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421
 	google.golang.org/api v0.5.1-0.20190510010909-bbbc0e98e3cc
 	google.golang.org/genproto v0.0.0-20190307195333-5fe7a883aa19
