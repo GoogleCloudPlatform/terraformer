@@ -44,7 +44,7 @@ func (g GlobalForwardingRulesGenerator) createResources(ctx context.Context, glo
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
+					"project": g.GetArgs()["project"].(string),
 				},
 				globalForwardingRulesAllowEmptyValues,
 				globalForwardingRulesAdditionalFields,
@@ -67,9 +67,9 @@ func (g *GlobalForwardingRulesGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	globalForwardingRulesList := computeService.GlobalForwardingRules.List(g.GetArgs()["project"])
-
+	globalForwardingRulesList := computeService.GlobalForwardingRules.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, globalForwardingRulesList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

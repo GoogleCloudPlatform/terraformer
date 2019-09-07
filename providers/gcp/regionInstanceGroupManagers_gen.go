@@ -44,8 +44,8 @@ func (g RegionInstanceGroupManagersGenerator) createResources(ctx context.Contex
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				regionInstanceGroupManagersAllowEmptyValues,
 				regionInstanceGroupManagersAdditionalFields,
@@ -68,9 +68,9 @@ func (g *RegionInstanceGroupManagersGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	regionInstanceGroupManagersList := computeService.RegionInstanceGroupManagers.List(g.GetArgs()["project"], g.GetArgs()["region"])
-
+	regionInstanceGroupManagersList := computeService.RegionInstanceGroupManagers.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createResources(ctx, regionInstanceGroupManagersList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

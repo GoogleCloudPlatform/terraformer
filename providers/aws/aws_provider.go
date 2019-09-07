@@ -62,6 +62,13 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 			"sg":     []string{"security_groups", "id"},
 			"subnet": []string{"vpc_zone_identifier", "id"},
 		},
+		"ec2_instance": {
+			"sg":     []string{"vpc_security_group_ids", "id"},
+			"subnet": []string{"subnet_id", "id"},
+		},
+		"route_table": {
+			"vpc":    []string{"vpc_id", "id"},
+		},
 	}
 }
 func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
@@ -99,7 +106,7 @@ func (p *AWSProvider) InitService(serviceName string) error {
 	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetArgs(map[string]string{
+	p.Service.SetArgs(map[string]interface{}{
 		"region":  p.region,
 		"profile": p.profile,
 	})
@@ -127,5 +134,8 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"acm":            &ACMGenerator{},
 		"cloudfront":     &CloudFrontGenerator{},
 		"ec2_instance":   &Ec2Generator{},
+		"firehose":       &FirehoseGenerator{},
+		"glue":           &GlueGenerator{},
+		"route_table":    &RouteTableGenerator{},
 	}
 }

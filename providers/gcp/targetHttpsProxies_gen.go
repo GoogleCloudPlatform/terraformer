@@ -44,8 +44,8 @@ func (g TargetHttpsProxiesGenerator) createResources(ctx context.Context, target
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				targetHttpsProxiesAllowEmptyValues,
 				targetHttpsProxiesAdditionalFields,
@@ -68,9 +68,9 @@ func (g *TargetHttpsProxiesGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	targetHttpsProxiesList := computeService.TargetHttpsProxies.List(g.GetArgs()["project"])
-
+	targetHttpsProxiesList := computeService.TargetHttpsProxies.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, targetHttpsProxiesList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

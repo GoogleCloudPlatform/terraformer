@@ -147,7 +147,11 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 }
 
 func (p *ProviderWrapper) initProvider() error {
-	pluginPath := command.DefaultDataDir + string(os.PathSeparator) + "plugins" + string(os.PathSeparator) + runtime.GOOS + "_" + runtime.GOARCH
+	defaultDataDir := os.Getenv("TF_DATA_DIR")
+	if defaultDataDir == "" {
+		defaultDataDir = command.DefaultDataDir
+	}
+	pluginPath := defaultDataDir + string(os.PathSeparator) + "plugins" + string(os.PathSeparator) + runtime.GOOS + "_" + runtime.GOARCH
 	files, err := ioutil.ReadDir(pluginPath)
 	if err != nil {
 		pluginPath = os.Getenv("HOME") + string(os.PathSeparator) + "." + command.DefaultPluginVendorDir

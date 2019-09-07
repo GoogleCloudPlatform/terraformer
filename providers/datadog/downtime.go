@@ -59,7 +59,7 @@ func (DowntimeGenerator) createResources(downtimes []datadog.Downtime) []terrafo
 // from each downtime create 1 TerraformResource.
 // Need Downtime ID as ID for terraform resource
 func (g *DowntimeGenerator) InitResources() error {
-	client := datadog.NewClient(g.Args["api-key"], g.Args["app-key"])
+	client := datadog.NewClient(g.Args["api-key"].(string), g.Args["app-key"].(string))
 	_, err := client.Validate()
 	if err != nil {
 		return err

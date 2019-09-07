@@ -18,6 +18,7 @@ import (
 	"context"
 	"log"
 
+	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/dataproc/v1"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
@@ -43,8 +44,8 @@ func (g DataprocGenerator) createClusterResources(clusterList *dataproc.Projects
 				"google",
 				map[string]string{
 					"name":    cluster.ClusterName,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				dataprocAllowEmptyValues,
 				dataprocAdditionalFields,
@@ -71,8 +72,8 @@ func (g DataprocGenerator) createJobResources(jobList *dataproc.ProjectsRegionsJ
 				"google_dataproc_job",
 				"google",
 				map[string]string{
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				dataprocAllowEmptyValues,
 				dataprocAdditionalFields,
@@ -96,10 +97,10 @@ func (g *DataprocGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	clusterList := dataprocService.Projects.Regions.Clusters.List(g.GetArgs()["project"], g.GetArgs()["region"])
+	clusterList := dataprocService.Projects.Regions.Clusters.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createClusterResources(clusterList, ctx)
 
-	//jobList := dataprocService.Projects.Regions.Jobs.List(g.GetArgs()["project"], g.GetArgs()["region"])
+	//jobList := dataprocService.Projects.Regions.Jobs.List(g.GetArgs()["project"].(string), g.GetArgs()["region"])
 	//g.Resources = append(g.Resources, g.createJobResources(jobList, ctx)...)
 
 	g.PopulateIgnoreKeys()

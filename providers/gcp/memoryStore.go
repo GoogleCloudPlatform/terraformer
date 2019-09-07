@@ -19,6 +19,7 @@ import (
 	"log"
 	"strings"
 
+	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/redis/v1"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
@@ -46,8 +47,8 @@ func (g MemoryStoreGenerator) createResources(redisInstancesList *redis.Projects
 				"google",
 				map[string]string{
 					"name":    name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				redisAllowEmptyValues,
 				redisAdditionalFields,
@@ -70,7 +71,7 @@ func (g *MemoryStoreGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	redisInstancesList := redisService.Projects.Locations.Instances.List("projects/" + g.GetArgs()["project"] + "/locations/" + g.GetArgs()["region"])
+	redisInstancesList := redisService.Projects.Locations.Instances.List("projects/" + g.GetArgs()["project"].(string) + "/locations/" + g.GetArgs()["region"].(compute.Region).Name)
 
 	g.Resources = g.createResources(redisInstancesList, ctx)
 	g.PopulateIgnoreKeys()

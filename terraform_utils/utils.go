@@ -104,13 +104,13 @@ func RefreshResourceWorker(input chan *Resource, wg *sync.WaitGroup, provider *p
 func IgnoreKeys(resourcesTypes []string, providerName string) map[string][]string {
 	p, err := provider_wrapper.NewProviderWrapper(providerName, cty.ObjectVal(map[string]cty.Value{}))
 	if err != nil {
-		log.Println("plugin error:", err)
+		log.Println("plugin error 1:", err)
 		return map[string][]string{}
 	}
 	defer p.Kill()
 	readOnlyAttributes, err := p.GetReadOnlyAttributes(resourcesTypes)
 	if err != nil {
-		log.Println("plugin error:", err)
+		log.Println("plugin error 2:", err)
 		return map[string][]string{}
 	}
 	return readOnlyAttributes

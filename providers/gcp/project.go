@@ -29,8 +29,8 @@ type ProjectGenerator struct {
 // Generate TerraformResources from GCP API,
 func (g *ProjectGenerator) InitResources() error {
 	g.Resources = append(g.Resources, terraform_utils.NewResource(
-		g.GetArgs()["project"],
-		g.GetArgs()["project"],
+		g.GetArgs()["project"].(string),
+		g.GetArgs()["project"].(string),
 		"google_project",
 		"google",
 		map[string]string{

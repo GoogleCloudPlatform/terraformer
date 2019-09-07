@@ -61,7 +61,7 @@ func (g BigQueryGenerator) createResources(dataSetsList *bigquery.DatasetsListCa
 
 func (g *BigQueryGenerator) createResourcesTables(datasetID string, ctx context.Context, bigQueryService *bigquery.Service) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
-	tableList := bigQueryService.Tables.List(g.Args["project"], datasetID)
+	tableList := bigQueryService.Tables.List(g.Args["project"].(string), datasetID)
 	if err := tableList.Pages(ctx, func(page *bigquery.TableList) error {
 		for _, table := range page.Tables {
 			name := table.FriendlyName
@@ -93,7 +93,7 @@ func (g *BigQueryGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	datasetsList := bigQueryService.Datasets.List(g.GetArgs()["project"])
+	datasetsList := bigQueryService.Datasets.List(g.GetArgs()["project"].(string))
 
 	g.Resources = g.createResources(datasetsList, ctx, bigQueryService)
 	g.PopulateIgnoreKeys()

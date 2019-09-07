@@ -23,6 +23,8 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
     * [Kubernetes](#use-with-kubernetes)
     * [Github](#use-with-github)
     * [Datadog](#use-with-datadog)
+    * [Cloudflare](#use-with-cloudflare)
+    * [Logzio](#use-with-logzio)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
@@ -39,7 +41,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
 Terraformer uses terraform providers and is designed to easily support newly added resources.
 To upgrade resources with new fields, all you need to do is upgrade the relevant terraform providers.
 ```
-Import current state to terraform configuration from google cloud
+Import current State to terraform configuration from google cloud
 
 Usage:
    import google [flags]
@@ -56,9 +58,11 @@ Flags:
   -o, --path-output string     (default "generated")
   -p, --path-pattern string   {output}/{provider}/custom/{service}/ (default "{output}/{provider}/{service}/")
       --projects strings
+  -z, --regions strings       europe-west1, (default [global])
   -r, --resources strings     firewalls,networks
   -s, --state string          local or bucket (default "local")
-  -z, --zone string
+
+Use " import google [command] --help" for more information about a command.
 ```
 #### Permissions
 
@@ -72,7 +76,7 @@ For example:
 ```
 terraformer import aws --resources=vpc,subnet --filter=aws_vpc=myvpcid --regions=eu-west-1
 ```
-will import only one VPC and all subnets from all VPCs (not just the ones from the filtered VPC)
+will only import the vpc with id `myvpcid`.
 
 ##### Resources ID
 
@@ -141,6 +145,7 @@ Links to download terraform providers:
 * kubernetes provider >=1.4.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
 * github provider >=2.0.0 - [here](https://releases.hashicorp.com/terraform-provider-github/)
 * datadog provider >1.19.0 - [here](https://releases.hashicorp.com/terraform-provider-datadog/)
+* logzio provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
@@ -150,8 +155,8 @@ https://www.terraform.io/docs/configuration/providers.html
 Example:
 
 ```
-terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --connect=true --zone=europe-west1-a --projects=aaa,fff
-terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --filter=google_compute_firewall=rule1:rule2:rule3 --zone=europe-west1-a --projects=aaa,fff
+terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --connect=true --regions=europe-west1,europe-west4 --projects=aaa,fff
+terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --filter=google_compute_firewall=rule1:rule2:rule3 --regions=europe-west1 --projects=aaa,fff
 ```
 
 List of supported GCP services:
@@ -275,6 +280,8 @@ List of supported GCP services:
     * `google_kms_crypto_key`
 *   `project`
     * `google_project`
+*   `logging`
+    * `google_logging_metric`
 
 Your `tf` and `tfstate` files are written by default to
 `generated/gcp/zone/service`.
@@ -351,6 +358,12 @@ List of supported AWS services:
     * `aws_cloudfront_distribution`
 *   `ec2_instance`
     * `aws_instance`
+*   `firehose`
+    * `aws_kinesis_firehose_delivery_stream`
+*   `glue`
+    * `glue_crawler`
+*   `route_table`
+    * `aws_route_table`
 
 ### Use with OpenStack
 
@@ -477,6 +490,45 @@ List of supported Datadog services:
     * `datadog_user`
 
 
+### Use with Cloudflare
+
+Example:
+```
+CLOUDFLARE_TOKEN=[CLOUDFLARE_API_TOKEN]
+CLOUDFLARE_EMAIL=[CLOUDFLARE_EMAIL]
+ ./terraformer import cloudflare --resources=firewall,dns
+```
+
+List of supported Cloudflare services:
+
+* `firewall`
+  * `cloudflare_access_rule`
+  * `cloudflare_filter`
+  * `cloudflare_firewall_rule`
+  * `cloudflare_zone_lockdown`
+* `dns`
+  * `cloudflare_zone`
+  * `cloudflare_record`
+* `access`
+  * `cloudflare_access_application`
+
+
+### Use with Logz.io
+
+Example:
+
+```
+ LOGZIO_API_TOKEN=foobar LOGZIO_BASE_URL=https://api-eu.logz.io ./terraformer import logzio -r=alerts,alert_notification_endpoints // Import Logz.io alerts and alert notification endpoints
+```
+
+List of supported Logz.io resources:
+
+* `alerts`
+    * `logzio_alert`
+* `alert notification endpoints`
+    * `logzio_endpoint`
+
+
 ## Contributing
 
 If you have improvements or fixes, we would love to have your contributions.
@@ -516,4 +568,24 @@ go run providers/gcp/gcp_compute_code_generator/*.go
 
 ### Similar projects
 
-1.  https://github.com/dtan4/terraforming
+
+#### [terraforming](https://github.com/dtan4/terraforming)
+
+##### Terraformer Benefits
+
+* Simpler to add new providers and resources - already supports AWS, GCP, Github, Kubernetes, and Openstack. Terraforming supports only AWS.
+* Better support for HCL + tfstate, including updates for Terraform 0.12
+* If a provider adds new attributes to a resource, there is no need change Terraformer code - just update the terraform provider on your laptop.
+* Automatically supports connections between resources in HCL files
+
+##### Comparison
+
+Terraforming gets all attributes from cloud APIs and creates HCL and tfstate files with templating. Each attribute in the API needs to map to attribute in terraform. Generated files from templating can be broken with illegal syntax. When a provider adds new attributes the terraforming code needs to be updated.
+
+Terraformer instead uses terraform provider files for mapping attributes, HCL library from hashicorp, and terraform code.
+
+Look for S3 support in Terraforming here and official s3 support
+Terraforming lacks full coverage for resources - as an example you can see that 70% of s3 options are not supported:
+
+* terraforming - https://github.com/dtan4/terraforming/blob/master/lib/terraforming/template/tf/s3.erb
+* official s3 support - https://www.terraform.io/docs/providers/aws/r/s3_bucket.html

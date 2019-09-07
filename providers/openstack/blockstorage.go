@@ -107,7 +107,7 @@ func (g *BlockStorageGenerator) InitResources() error {
 	}
 
 	eo := gophercloud.EndpointOpts{
-		Region: g.GetArgs()["region"],
+		Region: g.GetArgs()["region"].(string),
 	}
 
 	client, err := newBlockStorageClent(provider, eo)

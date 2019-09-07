@@ -44,8 +44,8 @@ func (g InstanceTemplatesGenerator) createResources(ctx context.Context, instanc
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				instanceTemplatesAllowEmptyValues,
 				instanceTemplatesAdditionalFields,
@@ -68,9 +68,9 @@ func (g *InstanceTemplatesGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	instanceTemplatesList := computeService.InstanceTemplates.List(g.GetArgs()["project"])
-
+	instanceTemplatesList := computeService.InstanceTemplates.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, instanceTemplatesList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

@@ -44,8 +44,8 @@ func (g NetworksGenerator) createResources(ctx context.Context, networksList *co
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				networksAllowEmptyValues,
 				networksAdditionalFields,
@@ -68,9 +68,9 @@ func (g *NetworksGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	networksList := computeService.Networks.List(g.GetArgs()["project"])
-
+	networksList := computeService.Networks.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, networksList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

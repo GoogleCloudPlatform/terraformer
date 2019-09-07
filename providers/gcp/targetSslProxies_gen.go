@@ -44,8 +44,8 @@ func (g TargetSslProxiesGenerator) createResources(ctx context.Context, targetSs
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				targetSslProxiesAllowEmptyValues,
 				targetSslProxiesAdditionalFields,
@@ -68,9 +68,9 @@ func (g *TargetSslProxiesGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	targetSslProxiesList := computeService.TargetSslProxies.List(g.GetArgs()["project"])
-
+	targetSslProxiesList := computeService.TargetSslProxies.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, targetSslProxiesList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

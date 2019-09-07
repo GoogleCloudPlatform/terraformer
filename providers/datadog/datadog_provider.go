@@ -78,7 +78,7 @@ func (p *DatadogProvider) InitService(serviceName string) error {
 	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetArgs(map[string]string{
+	p.Service.SetArgs(map[string]interface{}{
 		"api-key": p.apiKey,
 		"app-key": p.appKey,
 	})
@@ -94,6 +94,7 @@ func (p *DatadogProvider) GetSupportedService() map[string]terraform_utils.Servi
 		"synthetics":  &SyntheticsGenerator{},
 		"timeboard":   &TimeboardGenerator{},
 		"user":        &UserGenerator{},
+		"dashboard":   &DashboardGenerator{},
 	}
 }
 

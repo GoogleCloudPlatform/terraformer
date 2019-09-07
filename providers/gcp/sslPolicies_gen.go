@@ -44,8 +44,8 @@ func (g SslPoliciesGenerator) createResources(ctx context.Context, sslPoliciesLi
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				sslPoliciesAllowEmptyValues,
 				sslPoliciesAdditionalFields,
@@ -68,9 +68,9 @@ func (g *SslPoliciesGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	sslPoliciesList := computeService.SslPolicies.List(g.GetArgs()["project"])
-
+	sslPoliciesList := computeService.SslPolicies.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, sslPoliciesList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

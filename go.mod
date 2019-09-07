@@ -11,6 +11,7 @@ require (
 	github.com/chzyer/logex v1.1.11-0.20160617073814-96a4d311aa9b // indirect
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
 	github.com/coreos/bbolt v1.3.1-coreos.1 // indirect
+    github.com/cloudflare/cloudflare-go v0.9.4
 	github.com/coreos/go-systemd v0.0.0-20181031085051-9002847aa142 // indirect
 	github.com/dustinkirkland/golang-petname v0.0.0-20170921220637-d3c2ba80e75e // indirect
 	github.com/golang/groupcache v0.0.0-20181024230925-c65c006176ff // indirect
@@ -36,6 +37,7 @@ require (
 	github.com/imdario/mergo v0.3.7 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jen20/awspolicyequivalence v1.0.0 // indirect
+	github.com/jonboydell/logzio_client v0.0.0-20190726085421-c93d6b149c1e
 	github.com/joyent/triton-go v0.0.0-20180628001255-830d2b111e62 // indirect
 	github.com/json-iterator/go v1.1.6 // indirect
 	github.com/keybase/go-crypto v0.0.0-20181031135447-f919bfda4fc1 // indirect
@@ -46,7 +48,7 @@ require (
 	github.com/onsi/gomega v1.5.0 // indirect
 	github.com/packer-community/winrmcp v0.0.0-20180921211025-c76d91c1e7db // indirect
 	github.com/pierrec/lz4 v2.0.5+incompatible // indirect
-	github.com/pkg/errors v0.8.0
+	github.com/pkg/errors v0.8.1
 	github.com/pquerna/otp v1.0.0 // indirect
 	github.com/prometheus/common v0.0.0-20181126121408-4724e9255275 // indirect
 	github.com/prometheus/procfs v0.0.0-20181204211112-1dc9a6cbc91a // indirect
@@ -67,7 +69,7 @@ require (
 	github.com/ugorji/go v1.1.2-0.20180728093225-eeb0478a81ae // indirect
 	github.com/xlab/treeprint v0.0.0-20181112141820-a009c3971eca // indirect
 	github.com/zclconf/go-cty v1.0.0
-	github.com/zorkian/go-datadog-api v2.20.0+incompatible
+    github.com/zorkian/go-datadog-api v2.21.1-0.20190802113207-d0ce49abc107+incompatible
 	golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421
 	google.golang.org/api v0.5.1-0.20190510010909-bbbc0e98e3cc
 	google.golang.org/genproto v0.0.0-20190307195333-5fe7a883aa19

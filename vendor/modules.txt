@@ -1,12 +1,16 @@
 # cloud.google.com/go v0.36.0
 cloud.google.com/go/iam/admin/apiv1
+cloud.google.com/go/logging/logadmin
 cloud.google.com/go/monitoring/apiv3
 cloud.google.com/go/storage
 cloud.google.com/go/iam
+cloud.google.com/go/internal/version
+cloud.google.com/go/logging
+cloud.google.com/go/logging/apiv2
+cloud.google.com/go/logging/internal
 cloud.google.com/go/internal
 cloud.google.com/go/internal/optional
 cloud.google.com/go/internal/trace
-cloud.google.com/go/internal/version
 cloud.google.com/go/compute/metadata
 # github.com/Azure/azure-sdk-for-go v21.3.0+incompatible
 github.com/Azure/azure-sdk-for-go/profiles/2017-03-09/resources/mgmt/resources
@@ -84,6 +88,8 @@ github.com/aws/aws-sdk-go/service/ec2
 github.com/aws/aws-sdk-go/service/elasticache
 github.com/aws/aws-sdk-go/service/elb
 github.com/aws/aws-sdk-go/service/elbv2
+github.com/aws/aws-sdk-go/service/firehose
+github.com/aws/aws-sdk-go/service/glue
 github.com/aws/aws-sdk-go/service/iam
 github.com/aws/aws-sdk-go/service/rds
 github.com/aws/aws-sdk-go/service/route53
@@ -92,6 +98,7 @@ github.com/aws/aws-sdk-go/aws/credentials
 github.com/aws/aws-sdk-go/aws/endpoints
 github.com/aws/aws-sdk-go/internal/sdkio
 github.com/aws/aws-sdk-go/aws/client
+github.com/aws/aws-sdk-go/service/sts
 github.com/aws/aws-sdk-go/internal/sdkrand
 github.com/aws/aws-sdk-go/service/sts
 github.com/aws/aws-sdk-go/aws/corehandlers
@@ -108,6 +115,9 @@ github.com/aws/aws-sdk-go/private/protocol
 github.com/aws/aws-sdk-go/private/protocol/jsonrpc
 github.com/aws/aws-sdk-go/private/protocol/query
 github.com/aws/aws-sdk-go/private/protocol/restxml
+github.com/aws/aws-sdk-go/internal/sdkrand
+github.com/aws/aws-sdk-go/private/protocol/ec2query
+github.com/aws/aws-sdk-go/private/protocol/restxml
 github.com/aws/aws-sdk-go/private/protocol/ec2query
 github.com/aws/aws-sdk-go/private/protocol/xml/xmlutil
 github.com/aws/aws-sdk-go/internal/s3err
@@ -123,6 +133,81 @@ github.com/aws/aws-sdk-go/internal/sdkuri
 github.com/aws/aws-sdk-go/service/dynamodb
 github.com/aws/aws-sdk-go/aws/crr
 github.com/aws/aws-sdk-go/aws/arn
+github.com/aws/aws-sdk-go/service/acmpca
+github.com/aws/aws-sdk-go/service/apigateway
+github.com/aws/aws-sdk-go/service/applicationautoscaling
+github.com/aws/aws-sdk-go/service/appsync
+github.com/aws/aws-sdk-go/service/athena
+github.com/aws/aws-sdk-go/service/batch
+github.com/aws/aws-sdk-go/service/budgets
+github.com/aws/aws-sdk-go/service/cloud9
+github.com/aws/aws-sdk-go/service/cloudformation
+github.com/aws/aws-sdk-go/service/cloudhsmv2
+github.com/aws/aws-sdk-go/service/cloudtrail
+github.com/aws/aws-sdk-go/service/cloudwatch
+github.com/aws/aws-sdk-go/service/cloudwatchevents
+github.com/aws/aws-sdk-go/service/cloudwatchlogs
+github.com/aws/aws-sdk-go/service/codebuild
+github.com/aws/aws-sdk-go/service/codecommit
+github.com/aws/aws-sdk-go/service/codedeploy
+github.com/aws/aws-sdk-go/service/codepipeline
+github.com/aws/aws-sdk-go/service/cognitoidentity
+github.com/aws/aws-sdk-go/service/cognitoidentityprovider
+github.com/aws/aws-sdk-go/service/configservice
+github.com/aws/aws-sdk-go/service/databasemigrationservice
+github.com/aws/aws-sdk-go/service/datasync
+github.com/aws/aws-sdk-go/service/dax
+github.com/aws/aws-sdk-go/service/devicefarm
+github.com/aws/aws-sdk-go/service/directconnect
+github.com/aws/aws-sdk-go/service/directoryservice
+github.com/aws/aws-sdk-go/service/dlm
+github.com/aws/aws-sdk-go/service/ecr
+github.com/aws/aws-sdk-go/service/ecs
+github.com/aws/aws-sdk-go/service/efs
+github.com/aws/aws-sdk-go/service/eks
+github.com/aws/aws-sdk-go/service/elasticbeanstalk
+github.com/aws/aws-sdk-go/service/elasticsearchservice
+github.com/aws/aws-sdk-go/service/elastictranscoder
+github.com/aws/aws-sdk-go/service/emr
+github.com/aws/aws-sdk-go/service/fms
+github.com/aws/aws-sdk-go/service/gamelift
+github.com/aws/aws-sdk-go/service/glacier
+github.com/aws/aws-sdk-go/service/guardduty
+github.com/aws/aws-sdk-go/service/inspector
+github.com/aws/aws-sdk-go/service/iot
+github.com/aws/aws-sdk-go/service/kinesis
+github.com/aws/aws-sdk-go/service/kinesisanalytics
+github.com/aws/aws-sdk-go/service/kms
+github.com/aws/aws-sdk-go/service/lambda
+github.com/aws/aws-sdk-go/service/lexmodelbuildingservice
+github.com/aws/aws-sdk-go/service/lightsail
+github.com/aws/aws-sdk-go/service/macie
+github.com/aws/aws-sdk-go/service/mediastore
+github.com/aws/aws-sdk-go/service/mq
+github.com/aws/aws-sdk-go/service/neptune
+github.com/aws/aws-sdk-go/service/opsworks
+github.com/aws/aws-sdk-go/service/organizations
+github.com/aws/aws-sdk-go/service/pinpoint
+github.com/aws/aws-sdk-go/service/pricing
+github.com/aws/aws-sdk-go/service/redshift
+github.com/aws/aws-sdk-go/service/secretsmanager
+github.com/aws/aws-sdk-go/service/servicecatalog
+github.com/aws/aws-sdk-go/service/servicediscovery
+github.com/aws/aws-sdk-go/service/ses
+github.com/aws/aws-sdk-go/service/sfn
+github.com/aws/aws-sdk-go/service/simpledb
+github.com/aws/aws-sdk-go/service/sns
+github.com/aws/aws-sdk-go/service/sqs
+github.com/aws/aws-sdk-go/service/ssm
+github.com/aws/aws-sdk-go/service/storagegateway
+github.com/aws/aws-sdk-go/service/swf
+github.com/aws/aws-sdk-go/service/waf
+github.com/aws/aws-sdk-go/service/wafregional
+github.com/aws/aws-sdk-go/service/workspaces
+github.com/aws/aws-sdk-go/private/protocol/restjson
+github.com/aws/aws-sdk-go/private/signer/v2
+# github.com/beevik/etree v1.0.1
+github.com/beevik/etree
 # github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d
 github.com/bgentry/go-netrc/netrc
 # github.com/bgentry/speakeasy v0.1.0
@@ -135,6 +220,9 @@ github.com/cenkalti/backoff
 github.com/chzyer/readline
 # github.com/coreos/etcd v3.3.10+incompatible
 github.com/coreos/etcd/client
+# github.com/cloudflare/cloudflare-go v0.9.4
+github.com/cloudflare/cloudflare-go
+# github.com/coreos/etcd v3.2.0-rc.1.0.20171020155248-81ca10f99174+incompatible
 github.com/coreos/etcd/clientv3
 github.com/coreos/etcd/clientv3/concurrency
 github.com/coreos/etcd/pkg/transport
@@ -165,12 +253,17 @@ github.com/gogo/protobuf/proto
 github.com/gogo/protobuf/protoc-gen-gogo/descriptor
 # github.com/golang/protobuf v1.3.0
 github.com/golang/protobuf/proto
+github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/empty
 github.com/golang/protobuf/ptypes/timestamp
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/struct
 github.com/golang/protobuf/ptypes/wrappers
+github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/protoc-gen-go/descriptor
+# github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db
+github.com/golang/snappy
+# github.com/google/go-cmp v0.2.0
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes
 # github.com/google/go-cmp v0.3.0
@@ -458,6 +551,11 @@ github.com/hashicorp/yamux
 github.com/inconshreveable/mousetrap
 # github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 github.com/jmespath/go-jmespath
+# github.com/jonboydell/logzio_client v0.0.0-20190726085421-c93d6b149c1e
+github.com/jonboydell/logzio_client/alerts
+github.com/jonboydell/logzio_client/endpoints
+github.com/jonboydell/logzio_client
+github.com/jonboydell/logzio_client/client
 # github.com/joyent/triton-go v0.0.0-20180628001255-830d2b111e62
 github.com/joyent/triton-go
 github.com/joyent/triton-go/authentication
@@ -516,6 +614,10 @@ github.com/nu7hatch/gouuid
 github.com/oklog/run
 # github.com/packer-community/winrmcp v0.0.0-20180921211025-c76d91c1e7db
 github.com/packer-community/winrmcp/winrmcp
+# github.com/pierrec/lz4 v2.0.5+incompatible
+github.com/pierrec/lz4
+github.com/pierrec/lz4/internal/xxh32
+# github.com/pkg/errors v0.8.1
 # github.com/pkg/errors v0.8.0
 github.com/pkg/errors
 # github.com/posener/complete v1.2.1
@@ -559,6 +661,9 @@ github.com/zclconf/go-cty/cty/msgpack
 github.com/zclconf/go-cty/cty/function
 github.com/zclconf/go-cty/cty/function/stdlib
 github.com/zclconf/go-cty/cty/set
+github.com/zclconf/go-cty/cty/gocty
+github.com/zclconf/go-cty/cty/json
+# github.com/zorkian/go-datadog-api v2.21.1-0.20190802113207-d0ce49abc107+incompatible
 # github.com/zclconf/go-cty-yaml v0.1.0
 github.com/zclconf/go-cty-yaml
 # github.com/zorkian/go-datadog-api v2.20.0+incompatible
@@ -621,6 +726,9 @@ golang.org/x/oauth2/internal
 golang.org/x/oauth2/google
 golang.org/x/oauth2/jws
 golang.org/x/oauth2/jwt
+# golang.org/x/sync v0.0.0-20190227155943-e225da77a7e6
+golang.org/x/sync/semaphore
+# golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a
 # golang.org/x/sys v0.0.0-20190502175342-a43fa875dd82
 golang.org/x/sys/unix
 golang.org/x/sys/cpu
@@ -644,6 +752,7 @@ golang.org/x/text/internal/language
 golang.org/x/text/internal/language/compact
 golang.org/x/text/internal/utf8internal
 golang.org/x/text/runes
+# golang.org/x/time v0.0.0-20190513212739-9d24e82272b4
 golang.org/x/text/internal/tag
 # golang.org/x/time v0.0.0-20190308202827-9d24e82272b4
 golang.org/x/time/rate
@@ -668,6 +777,7 @@ google.golang.org/api/googleapi
 google.golang.org/api/transport/http
 google.golang.org/api/internal
 google.golang.org/api/transport/grpc
+google.golang.org/api/support/bundler
 google.golang.org/api/googleapi/internal/uritemplates
 google.golang.org/api/googleapi/transport
 google.golang.org/api/transport/http/internal/propagation
@@ -689,10 +799,14 @@ google.golang.org/appengine/internal/remote_api
 google.golang.org/genproto/googleapis/iam/admin/v1
 google.golang.org/genproto/googleapis/monitoring/v3
 google.golang.org/genproto/googleapis/iam/v1
-google.golang.org/genproto/googleapis/api/metric
 google.golang.org/genproto/googleapis/api/monitoredres
-google.golang.org/genproto/googleapis/api/annotations
+google.golang.org/genproto/googleapis/appengine/logging/v1
+google.golang.org/genproto/googleapis/cloud/audit
+google.golang.org/genproto/googleapis/logging/type
+google.golang.org/genproto/googleapis/logging/v2
 google.golang.org/genproto/protobuf/field_mask
+google.golang.org/genproto/googleapis/api/metric
+google.golang.org/genproto/googleapis/api/annotations
 google.golang.org/genproto/googleapis/api/distribution
 google.golang.org/genproto/googleapis/api/label
 google.golang.org/genproto/googleapis/rpc/status

@@ -44,8 +44,8 @@ func (g RegionAutoscalersGenerator) createResources(ctx context.Context, regionA
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				regionAutoscalersAllowEmptyValues,
 				regionAutoscalersAdditionalFields,
@@ -68,9 +68,9 @@ func (g *RegionAutoscalersGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	regionAutoscalersList := computeService.RegionAutoscalers.List(g.GetArgs()["project"], g.GetArgs()["region"])
-
+	regionAutoscalersList := computeService.RegionAutoscalers.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createResources(ctx, regionAutoscalersList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

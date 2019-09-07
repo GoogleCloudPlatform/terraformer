@@ -47,6 +47,7 @@ package gcp
 import (
 	"context"
 	"log"
+	{{ if .byZone  }}"strings"{{end}}
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
@@ -65,20 +66,20 @@ type {{.titleResourceName}}Generator struct {
 }
 
 // Run on {{.resource}}List and create for each TerraformResource
-func (g {{.titleResourceName}}Generator) createResources(ctx context.Context, {{.resource}}List *compute.{{.titleResourceName}}ListCall) []terraform_utils.Resource {
+func (g {{.titleResourceName}}Generator) createResources(ctx context.Context, {{.resource}}List *compute.{{.titleResourceName}}ListCall{{ if .byZone  }}, zone string{{end}}) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	if err := {{.resource}}List.Pages(ctx, func(page *compute.{{.responseName}}) error {
 		for _, obj := range page.Items {
 			resources = append(resources, terraform_utils.NewResource(
-				{{ if .idWithZone  }}g.GetArgs()["zone"]+"/"+obj.Name,{{else}}obj.Name,{{end}}
+				{{ if .idWithZone  }}zone+"/"+obj.Name,{{else}}obj.Name,{{end}}
 				obj.Name,
 				"{{.terraformName}}",
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					{{ if .needRegion}}"region":  g.GetArgs()["region"],{{end}}
-					{{ if .byZone  }}"zone":    g.GetArgs()["zone"],{{end}}
+					"project": g.GetArgs()["project"].(string),
+					{{ if .needRegion}}"region":  g.GetArgs()["region"].(compute.Region).Name,{{end}}
+					{{ if .byZone  }}"zone":    zone,{{end}}
 					{{ range $key, $value := .additionalFieldsForRefresh}}
 					"{{$key}}":			"{{$value}}",{{end}}
 				},
@@ -102,10 +103,18 @@ func (g *{{.titleResourceName}}Generator) InitResources() error {
 	if err != nil {
 		log.Fatal(err)
 	}
+	{{ if .byZone  }}
+	for _, zoneLink := range g.GetArgs()["region"].(compute.Region).Zones {
+		t := strings.Split(zoneLink, "/")
+		zone := t[len(t)-1]
+		{{.resource}}List := computeService.{{.titleResourceName}}.List(g.GetArgs()["project"].(string), zone)
+		g.Resources = append(g.Resources, g.createResources(ctx, {{.resource}}List, zone)...)
+	}
+	{{else}}
+		{{.resource}}List := computeService.{{.titleResourceName}}.List({{.parameterOrder}})
+		g.Resources = g.createResources(ctx, {{.resource}}List)
+	{{end}}
 
-	{{.resource}}List := computeService.{{.titleResourceName}}.List({{.parameterOrder}})
-
-	g.Resources = g.createResources(ctx, {{.resource}}List)
 	g.PopulateIgnoreKeys()
 	return nil
 
@@ -163,7 +172,15 @@ func main() {
 		if value, exist := v.(map[string]interface{})["methods"].(map[string]interface{})["list"]; exist {
 			parameters := []string{}
 			for _, param := range value.(map[string]interface{})["parameterOrder"].([]interface{}) {
-				parameters = append(parameters, `g.GetArgs()["`+param.(string)+`"]`)
+				switch param.(string) {
+				case "region":
+					parameters = append(parameters, `g.GetArgs()["region"].(compute.Region).Name`)
+				case "project":
+					parameters = append(parameters, `g.GetArgs()["project"].(string)`)
+				case "zone":
+					parameters = append(parameters, `g.GetArgs()["zone"].(string)`)
+				}
+
 			}
 			parameterOrder := strings.Join(parameters, ", ")
 			var tpl bytes.Buffer

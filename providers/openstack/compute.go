@@ -71,7 +71,7 @@ func (g *ComputeGenerator) InitResources() error {
 	}
 
 	client, err := openstack.NewComputeV2(provider, gophercloud.EndpointOpts{
-		Region: g.GetArgs()["region"],
+		Region: g.GetArgs()["region"].(string),
 	})
 	if err != nil {
 		return err

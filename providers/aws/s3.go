@@ -17,6 +17,7 @@ package aws
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
@@ -98,7 +99,7 @@ func (g *S3Generator) InitResources() error {
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(sess, buckets, g.GetArgs()["region"])
+	g.Resources = g.createResources(sess, buckets, g.GetArgs()["region"].(string))
 	g.PopulateIgnoreKeys()
 	return nil
 }
@@ -116,4 +117,20 @@ func (g *S3Generator) PostConvertHook() error {
 POLICY`, policy)
 	}
 	return nil
+}
+
+func (g *S3Generator) ParseFilter(rawFilter []string) {
+	g.Filter = map[string][]string{}
+	for _, resource := range rawFilter {
+		t := strings.Split(resource, "=")
+		if len(t) != 2 {
+			log.Println("Pattern for filter must be resource_type=id1:id2:id4")
+			continue
+		}
+		resourceName, resourcesID := t[0], t[1]
+		g.Filter[resourceName] = strings.Split(resourcesID, ":")
+		if resourceName == "aws_s3_bucket" {
+			g.Filter["aws_s3_bucket_policy"] = strings.Split(resourcesID, ":")
+		}
+	}
 }

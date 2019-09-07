@@ -44,8 +44,8 @@ func (g HttpHealthChecksGenerator) createResources(ctx context.Context, httpHeal
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				httpHealthChecksAllowEmptyValues,
 				httpHealthChecksAdditionalFields,
@@ -68,9 +68,9 @@ func (g *HttpHealthChecksGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	httpHealthChecksList := computeService.HttpHealthChecks.List(g.GetArgs()["project"])
-
+	httpHealthChecksList := computeService.HttpHealthChecks.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, httpHealthChecksList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 
