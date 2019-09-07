@@ -27,7 +27,7 @@ type OpenStackProvider struct {
 	region string
 }
 
-const openStackProviderVersion = "~>1.17.0"
+const openStackProviderVersion = "~>1.21.1"
 
 func (p OpenStackProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{}

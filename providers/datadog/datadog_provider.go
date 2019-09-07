@@ -23,7 +23,7 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
 
-const datadogProviderVersion = ">1.9.0"
+const datadogProviderVersion = ">2.1.0"
 
 type DatadogProvider struct {
 	terraform_utils.Provider
