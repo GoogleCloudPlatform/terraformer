@@ -30,7 +30,7 @@ type GithubProvider struct {
 	token        string
 }
 
-const githubProviderVersion = "~>2.0.0"
+const githubProviderVersion = "~>2.2.1"
 
 func (p GithubProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{}
@@ -50,7 +50,7 @@ func (p GithubProvider) GetProviderData(arg ...string) map[string]interface{} {
 func (p *GithubProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
 		"organization": cty.StringVal(p.organization),
-		"token": cty.StringVal(p.token),
+		"token":        cty.StringVal(p.token),
 	})
 }
 
