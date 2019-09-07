@@ -10,6 +10,17 @@ package datadog
 
 import (
 	"fmt"
+	"strings"
+)
+
+// DowntimeType are a classification of a given downtime scope
+type DowntimeType int
+
+// The three downtime type classifications.
+const (
+	StarDowntimeType  DowntimeType = 0
+	HostDowntimeType  DowntimeType = 1
+	OtherDowntimeType DowntimeType = 2
 )
 
 type Recurrence struct {
@@ -30,10 +41,37 @@ type Downtime struct {
 	MonitorId   *int        `json:"monitor_id,omitempty"`
 	MonitorTags []string    `json:"monitor_tags,omitempty"`
 	ParentId    *int        `json:"parent_id,omitempty"`
-	Timezone    *string     `jsonm:"timezone,omitempty"`
+	Timezone    *string     `json:"timezone,omitempty"`
 	Recurrence  *Recurrence `json:"recurrence,omitempty"`
 	Scope       []string    `json:"scope,omitempty"`
 	Start       *int        `json:"start,omitempty"`
+	CreatorID   *int        `json:"creator_id,omitempty"`
+	UpdaterID   *int        `json:"updater_id,omitempty"`
+	Type        *int        `json:"downtime_type,omitempty"`
+}
+
+// DowntimeType returns the canonical downtime type classification.
+// This is calculated based on the provided server response, but the logic is copied down here to calculate locally.
+func (d *Downtime) DowntimeType() DowntimeType {
+	if d.Type != nil {
+		switch *d.Type {
+		case 0:
+			return StarDowntimeType
+		case 1:
+			return HostDowntimeType
+		default:
+			return OtherDowntimeType
+		}
+	}
+	if len(d.Scope) == 1 {
+		if d.Scope[0] == "*" {
+			return StarDowntimeType
+		}
+		if strings.HasPrefix(d.Scope[0], "host:") {
+			return HostDowntimeType
+		}
+	}
+	return OtherDowntimeType
 }
 
 // reqDowntimes retrieves a slice of all Downtimes.
@@ -56,7 +94,7 @@ func (client *Client) CreateDowntime(downtime *Downtime) (*Downtime, error) {
 // and sends it back to the server.
 func (client *Client) UpdateDowntime(downtime *Downtime) error {
 	return client.doJsonRequest("PUT", fmt.Sprintf("/v1/downtime/%d", *downtime.Id),
-		downtime, nil)
+		downtime, downtime)
 }
 
 // Getdowntime retrieves an downtime by identifier.

@@ -33,13 +33,13 @@ type OrganizationWebhooksGenerator struct {
 func (g *OrganizationWebhooksGenerator) InitResources() error {
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: g.Args["token"]},
+		&oauth2.Token{AccessToken: g.Args["token"].(string)},
 	)
 	tc := oauth2.NewClient(ctx, ts)
 
 	client := githubAPI.NewClient(tc)
 
-	hooks, _, err := client.Organizations.ListHooks(ctx, g.Args["organization"], nil)
+	hooks, _, err := client.Organizations.ListHooks(ctx, g.Args["organization"].(string), nil)
 	if err != nil {
 		log.Println(err)
 		return nil

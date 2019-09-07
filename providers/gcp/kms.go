@@ -44,7 +44,7 @@ func (g KmsGenerator) createKmsRingResources(ctx context.Context, keyRingList *c
 				"google_kms_key_ring",
 				"google",
 				map[string]string{
-					"project":  g.GetArgs()["project"],
+					"project":  g.GetArgs()["project"].(string),
 					"location": tm[3],
 					"name":     tm[5],
 				},
@@ -72,7 +72,7 @@ func (g *KmsGenerator) createKmsKeyResources(ctx context.Context, keyRingName st
 				"google_kms_crypto_key",
 				"google",
 				map[string]string{
-					"project": g.GetArgs()["project"],
+					"project": g.GetArgs()["project"].(string),
 					"name":    key.Name,
 				},
 				kmsAllowEmptyValues,
@@ -94,7 +94,7 @@ func (g *KmsGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	keyRingList := kmsService.Projects.Locations.KeyRings.List("projects/" + g.GetArgs()["project"] + "/locations/global")
+	keyRingList := kmsService.Projects.Locations.KeyRings.List("projects/" + g.GetArgs()["project"].(string) + "/locations/global")
 
 	g.Resources = g.createKmsRingResources(ctx, keyRingList, kmsService)
 	g.PopulateIgnoreKeys()

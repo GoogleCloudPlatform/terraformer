@@ -59,7 +59,7 @@ func (TimeboardGenerator) createResources(timeboards []datadog.DashboardLite) []
 // from each timeboard create 1 TerraformResource.
 // Need Timeboard ID as ID for terraform resource
 func (g *TimeboardGenerator) InitResources() error {
-	client := datadog.NewClient(g.Args["api-key"], g.Args["app-key"])
+	client := datadog.NewClient(g.Args["api-key"].(string), g.Args["app-key"].(string))
 	_, err := client.Validate()
 	if err != nil {
 		return err

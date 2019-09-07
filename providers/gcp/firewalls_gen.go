@@ -44,8 +44,8 @@ func (g FirewallsGenerator) createResources(ctx context.Context, firewallsList *
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				firewallsAllowEmptyValues,
 				firewallsAdditionalFields,
@@ -68,9 +68,9 @@ func (g *FirewallsGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	firewallsList := computeService.Firewalls.List(g.GetArgs()["project"])
-
+	firewallsList := computeService.Firewalls.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, firewallsList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

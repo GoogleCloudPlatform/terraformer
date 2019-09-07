@@ -44,8 +44,8 @@ func (g SecurityPoliciesGenerator) createResources(ctx context.Context, security
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				securityPoliciesAllowEmptyValues,
 				securityPoliciesAdditionalFields,
@@ -68,9 +68,9 @@ func (g *SecurityPoliciesGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	securityPoliciesList := computeService.SecurityPolicies.List(g.GetArgs()["project"])
-
+	securityPoliciesList := computeService.SecurityPolicies.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, securityPoliciesList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

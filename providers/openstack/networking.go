@@ -88,7 +88,7 @@ func (g *NetworkingGenerator) InitResources() error {
 	}
 
 	client, err := openstack.NewNetworkV2(provider, gophercloud.EndpointOpts{
-		Region: g.GetArgs()["region"],
+		Region: g.GetArgs()["region"].(string),
 	})
 	if err != nil {
 		return err

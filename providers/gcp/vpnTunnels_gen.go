@@ -44,8 +44,8 @@ func (g VpnTunnelsGenerator) createResources(ctx context.Context, vpnTunnelsList
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				vpnTunnelsAllowEmptyValues,
 				vpnTunnelsAdditionalFields,
@@ -68,9 +68,9 @@ func (g *VpnTunnelsGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	vpnTunnelsList := computeService.VpnTunnels.List(g.GetArgs()["project"], g.GetArgs()["region"])
-
+	vpnTunnelsList := computeService.VpnTunnels.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createResources(ctx, vpnTunnelsList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

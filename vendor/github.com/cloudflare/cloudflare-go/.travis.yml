@@ -1,0 +1,51 @@
+language: go
+sudo: false
+
+cache:
+  directories:
+    - $GOPATH/pkg/mod
+
+env:
+  global:
+    - MOD_VENDOR="-mod=vendor"
+    - GO111MODULE=on
+
+matrix:
+  fast_finish: true
+  include:
+    - go: 1.11.x
+    - go: 1.12.x
+    - go: 1.x
+      env: LATEST=true
+    - go: tip
+  allow_failures:
+    - go: tip
+
+before_install:
+  - cd $(mktemp -d); go mod init tmp; go get -u github.com/mitchellh/gox; cd -
+  - cd $(mktemp -d); go mod init tmp; go get -u golang.org/x/lint/golint; cd -
+
+install:
+  - # skip
+
+script:
+  - if [ "$GO111MODULE" != "on" ]; then go get -t -v ./... ; else true; fi
+  - golint -set_exit_status . cmd/flarectl
+  - go vet $MOD_VENDOR $(go list $MOD_VENDOR ./... | grep -v /vendor/)
+  - go test -v -race $MOD_VENDOR ./...
+  # Only build binaries from the latest Go release.
+  - if [ "${LATEST}" = "true" ]; then gox -os="linux darwin windows" -arch="amd64" -output="flarectl.{{.OS}}.{{.Arch}}" -ldflags "-X main.Rev=`git rev-parse --short HEAD`" -verbose ./...; fi
+
+# deploy:
+#   provider: releases
+#   skip_cleanup: true
+#   api_key:
+#     secure: TODO
+#   file:
+#   - flarectl.windows.amd64.exe
+#   - flarectl.darwin.amd64
+#   - flarectl.linux.amd64
+#   on:
+#     repo: cloudflare/cloudflare-go
+#     tags: true
+#     condition: $LATEST = true

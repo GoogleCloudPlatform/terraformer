@@ -35,7 +35,7 @@ type GcsGenerator struct {
 
 func (g *GcsGenerator) createBucketsResources(ctx context.Context, gcsService *storage.Service) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
-	bucketList := gcsService.Buckets.List(g.GetArgs()["project"])
+	bucketList := gcsService.Buckets.List(g.GetArgs()["project"].(string))
 	if err := bucketList.Pages(ctx, func(page *storage.Buckets) error {
 		for _, bucket := range page.Items {
 			resources = append(resources, terraform_utils.NewResource(

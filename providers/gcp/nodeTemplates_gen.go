@@ -44,8 +44,8 @@ func (g NodeTemplatesGenerator) createResources(ctx context.Context, nodeTemplat
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				nodeTemplatesAllowEmptyValues,
 				nodeTemplatesAdditionalFields,
@@ -68,9 +68,9 @@ func (g *NodeTemplatesGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	nodeTemplatesList := computeService.NodeTemplates.List(g.GetArgs()["project"], g.GetArgs()["region"])
-
+	nodeTemplatesList := computeService.NodeTemplates.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createResources(ctx, nodeTemplatesList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

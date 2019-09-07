@@ -44,8 +44,8 @@ func (g RoutersGenerator) createResources(ctx context.Context, routersList *comp
 				"google",
 				map[string]string{
 					"name":    obj.Name,
-					"project": g.GetArgs()["project"],
-					"region":  g.GetArgs()["region"],
+					"project": g.GetArgs()["project"].(string),
+					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
 				routersAllowEmptyValues,
 				routersAdditionalFields,
@@ -68,9 +68,9 @@ func (g *RoutersGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 
-	routersList := computeService.Routers.List(g.GetArgs()["project"], g.GetArgs()["region"])
-
+	routersList := computeService.Routers.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createResources(ctx, routersList)
+
 	g.PopulateIgnoreKeys()
 	return nil
 

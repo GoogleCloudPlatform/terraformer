@@ -30,7 +30,7 @@ type AWSService struct {
 
 func (s *AWSService) generateSession() *session.Session {
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		Profile:                 s.GetArgs()["profile"],
+		Profile:                 s.GetArgs()["profile"].(string),
 		AssumeRoleTokenProvider: stscreds.StdinTokenProvider,
 		SharedConfigState:       session.SharedConfigEnable,
 	}))
