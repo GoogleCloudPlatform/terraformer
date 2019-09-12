@@ -25,6 +25,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
     * [Datadog](#use-with-datadog)
     * [Cloudflare](#use-with-cloudflare)
     * [Logzio](#use-with-logzio)
+    * [NewRelic](#use-with-newrelic)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
@@ -528,6 +529,27 @@ List of supported Logz.io resources:
 * `alert notification endpoints`
     * `logzio_endpoint`
 
+### Use with NewRelic
+Example:
+
+```
+NEWRELIC_API_KEY=[API-KEY]
+./terraformer import newrelic -r alert,dashboard,infra,synthetics
+```
+
+List of supported NewRelic resources:
+
+* `alert`
+    * `newrelic_alert_channel`
+    * `newrelic_alert_condition`
+    * `newrelic_alert_policy`
+* `dashboard`
+    * `newrelic_dashboard`
+* `infra`
+    * `newrelic_infra_alert_condition`
+* `synthetics`
+    * `newrelic_synthetics_monitor`
+    * `newrelic_synthetics_alert_condition`
 
 ## Contributing
 
