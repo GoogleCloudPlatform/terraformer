@@ -7,9 +7,14 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/hashicorp/terraform/config"
 	"github.com/mitchellh/copystructure"
 	"github.com/mitchellh/reflectwalk"
+	"github.com/zclconf/go-cty/cty"
+
+	"github.com/hashicorp/terraform/addrs"
+	"github.com/hashicorp/terraform/config"
+	"github.com/hashicorp/terraform/config/hcl2shim"
+	"github.com/hashicorp/terraform/configs/configschema"
 )
 
 // ResourceProvisionerConfig is used to pair a provisioner
@@ -25,9 +30,10 @@ type ResourceProvisionerConfig struct {
 	ConnInfo    *config.RawConfig
 }
 
-// Resource encapsulates a resource, its configuration, its provider,
-// its current state, and potentially a desired diff from the state it
-// wants to reach.
+// Resource is a legacy way to identify a particular resource instance.
+//
+// New code should use addrs.ResourceInstance instead. This is still here
+// only for codepaths that haven't been updated yet.
 type Resource struct {
 	// These are all used by the new EvalNode stuff.
 	Name       string
@@ -45,6 +51,31 @@ type Resource struct {
 	State        *InstanceState
 	Provisioners []*ResourceProvisionerConfig
 	Flags        ResourceFlag
+}
+
+// NewResource constructs a legacy Resource object from an
+// addrs.ResourceInstance value.
+//
+// This is provided to shim to old codepaths that haven't been updated away
+// from this type yet. Since this old type is not able to represent instances
+// that have string keys, this function will panic if given a resource address
+// that has a string key.
+func NewResource(addr addrs.ResourceInstance) *Resource {
+	ret := &Resource{
+		Name: addr.Resource.Name,
+		Type: addr.Resource.Type,
+	}
+
+	if addr.Key != addrs.NoKey {
+		switch tk := addr.Key.(type) {
+		case addrs.IntKey:
+			ret.CountIndex = int(tk)
+		default:
+			panic(fmt.Errorf("resource instance with key %#v is not supported", addr.Key))
+		}
+	}
+
+	return ret
 }
 
 // ResourceKind specifies what kind of instance we're working with, whether
@@ -72,20 +103,53 @@ type InstanceInfo struct {
 	uniqueExtra string
 }
 
-// HumanId is a unique Id that is human-friendly and useful for UI elements.
-func (i *InstanceInfo) HumanId() string {
-	if i == nil {
-		return "<nil>"
+// NewInstanceInfo constructs an InstanceInfo from an addrs.AbsResourceInstance.
+//
+// InstanceInfo is a legacy type, and uses of it should be gradually replaced
+// by direct use of addrs.AbsResource or addrs.AbsResourceInstance as
+// appropriate.
+//
+// The legacy InstanceInfo type cannot represent module instances with instance
+// keys, so this function will panic if given such a path. Uses of this type
+// should all be removed or replaced before implementing "count" and "for_each"
+// arguments on modules in order to avoid such panics.
+//
+// This legacy type also cannot represent resource instances with string
+// instance keys. It will panic if the given key is not either NoKey or an
+// IntKey.
+func NewInstanceInfo(addr addrs.AbsResourceInstance) *InstanceInfo {
+	// We need an old-style []string module path for InstanceInfo.
+	path := make([]string, len(addr.Module))
+	for i, step := range addr.Module {
+		if step.InstanceKey != addrs.NoKey {
+			panic("NewInstanceInfo cannot convert module instance with key")
+		}
+		path[i] = step.Name
 	}
 
-	if len(i.ModulePath) <= 1 {
-		return i.Id
+	// This is a funny old meaning of "id" that is no longer current. It should
+	// not be used for anything users might see. Note that it does not include
+	// a representation of the resource mode, and so it's impossible to
+	// determine from an InstanceInfo alone whether it is a managed or data
+	// resource that is being referred to.
+	id := fmt.Sprintf("%s.%s", addr.Resource.Resource.Type, addr.Resource.Resource.Name)
+	if addr.Resource.Resource.Mode == addrs.DataResourceMode {
+		id = "data." + id
+	}
+	if addr.Resource.Key != addrs.NoKey {
+		switch k := addr.Resource.Key.(type) {
+		case addrs.IntKey:
+			id = id + fmt.Sprintf(".%d", int(k))
+		default:
+			panic(fmt.Sprintf("NewInstanceInfo cannot convert resource instance with %T instance key", addr.Resource.Key))
+		}
 	}
 
-	return fmt.Sprintf(
-		"module.%s.%s",
-		strings.Join(i.ModulePath[1:], "."),
-		i.Id)
+	return &InstanceInfo{
+		Id:         id,
+		ModulePath: path,
+		Type:       addr.Resource.Resource.Type,
+	}
 }
 
 // ResourceAddress returns the address of the resource that the receiver is describing.
@@ -128,18 +192,9 @@ func (i *InstanceInfo) ResourceAddress() *ResourceAddress {
 	return addr
 }
 
-func (i *InstanceInfo) uniqueId() string {
-	prefix := i.HumanId()
-	if v := i.uniqueExtra; v != "" {
-		prefix += " " + v
-	}
-
-	return prefix
-}
-
-// ResourceConfig holds the configuration given for a resource. This is
-// done instead of a raw `map[string]interface{}` type so that rich
-// methods can be added to it to make dealing with it easier.
+// ResourceConfig is a legacy type that was formerly used to represent
+// interpolatable configuration blocks. It is now only used to shim to old
+// APIs that still use this type, via NewResourceConfigShimmed.
 type ResourceConfig struct {
 	ComputedKeys []string
 	Raw          map[string]interface{}
@@ -153,6 +208,85 @@ func NewResourceConfig(c *config.RawConfig) *ResourceConfig {
 	result := &ResourceConfig{raw: c}
 	result.interpolateForce()
 	return result
+}
+
+// NewResourceConfigShimmed wraps a cty.Value of object type in a legacy
+// ResourceConfig object, so that it can be passed to older APIs that expect
+// this wrapping.
+//
+// The returned ResourceConfig is already interpolated and cannot be
+// re-interpolated. It is, therefore, useful only to functions that expect
+// an already-populated ResourceConfig which they then treat as read-only.
+//
+// If the given value is not of an object type that conforms to the given
+// schema then this function will panic.
+func NewResourceConfigShimmed(val cty.Value, schema *configschema.Block) *ResourceConfig {
+	if !val.Type().IsObjectType() {
+		panic(fmt.Errorf("NewResourceConfigShimmed given %#v; an object type is required", val.Type()))
+	}
+	ret := &ResourceConfig{}
+
+	legacyVal := hcl2shim.ConfigValueFromHCL2Block(val, schema)
+	if legacyVal != nil {
+		ret.Config = legacyVal
+
+		// Now we need to walk through our structure and find any unknown values,
+		// producing the separate list ComputedKeys to represent these. We use the
+		// schema here so that we can preserve the expected invariant
+		// that an attribute is always either wholly known or wholly unknown, while
+		// a child block can be partially unknown.
+		ret.ComputedKeys = newResourceConfigShimmedComputedKeys(val, "")
+	} else {
+		ret.Config = make(map[string]interface{})
+	}
+	ret.Raw = ret.Config
+
+	return ret
+}
+
+// Record the any config values in ComputedKeys. This field had been unused in
+// helper/schema, but in the new protocol we're using this so that the SDK can
+// now handle having an unknown collection. The legacy diff code doesn't
+// properly handle the unknown, because it can't be expressed in the same way
+// between the config and diff.
+func newResourceConfigShimmedComputedKeys(val cty.Value, path string) []string {
+	var ret []string
+	ty := val.Type()
+
+	if val.IsNull() {
+		return ret
+	}
+
+	if !val.IsKnown() {
+		// we shouldn't have an entirely unknown resource, but prevent empty
+		// strings just in case
+		if len(path) > 0 {
+			ret = append(ret, path)
+		}
+		return ret
+	}
+
+	if path != "" {
+		path += "."
+	}
+	switch {
+	case ty.IsListType(), ty.IsTupleType(), ty.IsSetType():
+		i := 0
+		for it := val.ElementIterator(); it.Next(); i++ {
+			_, subVal := it.Element()
+			keys := newResourceConfigShimmedComputedKeys(subVal, fmt.Sprintf("%s%d", path, i))
+			ret = append(ret, keys...)
+		}
+
+	case ty.IsMapType(), ty.IsObjectType():
+		for it := val.ElementIterator(); it.Next(); {
+			subK, subVal := it.Element()
+			keys := newResourceConfigShimmedComputedKeys(subVal, fmt.Sprintf("%s%s", path, subK.AsString()))
+			ret = append(ret, keys...)
+		}
+	}
+
+	return ret
 }
 
 // DeepCopy performs a deep copy of the configuration. This makes it safe
@@ -374,6 +508,14 @@ func (c *ResourceConfig) get(
 // refactor is complete.
 func (c *ResourceConfig) interpolateForce() {
 	if c.raw == nil {
+		// If we don't have a lowercase "raw" but we _do_ have the uppercase
+		// Raw populated then this indicates that we're recieving a shim
+		// ResourceConfig created by NewResourceConfigShimmed, which is already
+		// fully evaluated and thus this function doesn't need to do anything.
+		if c.Raw != nil {
+			return
+		}
+
 		var err error
 		c.raw, err = config.NewRawConfig(make(map[string]interface{}))
 		if err != nil {

@@ -15,29 +15,34 @@
 package provider_wrapper
 
 import (
+	"errors"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"runtime"
 	"strings"
 
+	"github.com/zclconf/go-cty/cty"
+
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/hashicorp/terraform/command"
-	"github.com/hashicorp/terraform/config/configschema"
+	"github.com/hashicorp/terraform/configs/configschema"
 	tfplugin "github.com/hashicorp/terraform/plugin"
+	"github.com/hashicorp/terraform/providers"
 	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform/version"
 )
 
 type ProviderWrapper struct {
-	Provider     terraform.ResourceProvider
+	Provider     *tfplugin.GRPCProvider
 	client       *plugin.Client
 	rpcClient    plugin.ClientProtocol
 	providerName string
-	config       map[string]interface{}
+	config       cty.Value
 }
 
-func NewProviderWrapper(providerName string, providerConfig map[string]interface{}) (*ProviderWrapper, error) {
+func NewProviderWrapper(providerName string, providerConfig cty.Value) (*ProviderWrapper, error) {
 	p := &ProviderWrapper{}
 	p.providerName = providerName
 	p.config = providerConfig
@@ -50,28 +55,38 @@ func (p *ProviderWrapper) Kill() {
 }
 
 func (p *ProviderWrapper) GetReadOnlyAttributes(resourceTypes []string) (map[string][]string, error) {
-	schema, err := p.Provider.GetSchema(&terraform.ProviderSchemaRequest{
-		ResourceTypes: resourceTypes,
-	})
-	if err != nil {
-		return map[string][]string{}, err
+	r := p.Provider.GetSchema()
+
+	if r.Diagnostics.HasErrors() {
+		return nil, r.Diagnostics.Err()
 	}
 	readOnlyAttributes := map[string][]string{}
-	for resourceName, obj := range schema.ResourceTypes {
-		readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], "^id$")
-		for k, v := range obj.Attributes {
-			if !v.Optional && !v.Required {
-				if v.Type.IsListType() || v.Type.IsSetType() {
-					readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], "^"+k+".(.*)")
-				} else {
-					readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], "^"+k+"$")
-				}
+	for resourceName, obj := range r.ResourceTypes {
+		if contains(resourceTypes, resourceName) {
+			readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], "^id$")
+			for k, v := range obj.Block.Attributes {
+				if !v.Optional && !v.Required {
+					if v.Type.IsListType() || v.Type.IsSetType() {
+						readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], "^"+k+".(.*)")
+					} else {
+						readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], "^"+k+"$")
+					}
 
+				}
 			}
+			readOnlyAttributes[resourceName] = p.readObjBlocks(obj.Block.BlockTypes, readOnlyAttributes[resourceName], "-1")
 		}
-		readOnlyAttributes[resourceName] = p.readObjBlocks(obj.BlockTypes, readOnlyAttributes[resourceName], "-1")
 	}
 	return readOnlyAttributes, nil
+}
+
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
 }
 
 func (p *ProviderWrapper) readObjBlocks(block map[string]*configschema.NestedBlock, readOnlyAttributes []string, parent string) []string {
@@ -111,7 +126,24 @@ func (p *ProviderWrapper) readObjBlocks(block map[string]*configschema.NestedBlo
 }
 
 func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform.InstanceState) (*terraform.InstanceState, error) {
-	return p.Provider.Refresh(info, state)
+	resppp := p.Provider.ImportResourceState(providers.ImportResourceStateRequest{
+		TypeName: info.Type,
+		ID:       strings.Split(info.Id, ".")[1],
+	})
+	if len(resppp.ImportedResources) == 0 {
+		return nil, errors.New("Couldn't import resource")
+	}
+	resp := p.Provider.ReadResource(providers.ReadResourceRequest{
+		TypeName:   resppp.ImportedResources[0].TypeName,
+		PriorState: resppp.ImportedResources[0].State,
+		Private:    resppp.ImportedResources[0].Private,
+	})
+
+	if resp.Diagnostics.HasErrors() {
+		return nil, resp.Diagnostics.Err()
+	}
+
+	return terraform.NewInstanceStateShimmedFromValue(resp.NewState, int(p.Provider.GetSchema().Provider.Version)), nil
 }
 
 func (p *ProviderWrapper) initProvider() error {
@@ -137,18 +169,21 @@ func (p *ProviderWrapper) initProvider() error {
 			providerFileName = pluginPath + string(os.PathSeparator) + file.Name()
 		}
 	}
+	logger := hclog.New(&hclog.LoggerOptions{
+		Name:   "plugin",
+		Level:  hclog.Trace,
+		Output: os.Stderr,
+	})
+
 	p.client = plugin.NewClient(
 		&plugin.ClientConfig{
 			Cmd:              exec.Command(providerFileName),
 			HandshakeConfig:  tfplugin.Handshake,
+			VersionedPlugins: tfplugin.VersionedPlugins,
 			Managed:          true,
-			Plugins:          tfplugin.PluginMap,
-			AllowedProtocols: []plugin.Protocol{plugin.ProtocolGRPC, plugin.ProtocolNetRPC},
-			Logger: hclog.New(&hclog.LoggerOptions{
-				Name:   "plugin",
-				Level:  hclog.Info,
-				Output: os.Stderr,
-			}),
+			Logger:           logger,
+			AllowedProtocols: []plugin.Protocol{plugin.ProtocolGRPC},
+			AutoMTLS:         true,
 		})
 	p.rpcClient, err = p.client.Client()
 	if err != nil {
@@ -159,9 +194,16 @@ func (p *ProviderWrapper) initProvider() error {
 		return err
 	}
 
-	p.Provider = raw.(terraform.ResourceProvider)
-	err = p.Provider.Configure(&terraform.ResourceConfig{
-		Config: p.config,
+	p.Provider = raw.(*tfplugin.GRPCProvider)
+
+	config, err := p.Provider.GetSchema().Provider.Block.CoerceValue(p.config)
+	if err != nil {
+		return err
+	}
+	p.Provider.Configure(providers.ConfigureRequest{
+		TerraformVersion: version.Version,
+		Config:           config,
 	})
-	return err
+
+	return nil
 }

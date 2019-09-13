@@ -28,7 +28,7 @@ type AWSProvider struct {
 	profile string
 }
 
-const awsProviderVersion = ">1.56.0"
+const awsProviderVersion = ">2.25.0"
 
 func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{

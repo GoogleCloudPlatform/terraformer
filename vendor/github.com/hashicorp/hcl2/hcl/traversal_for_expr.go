@@ -36,7 +36,7 @@ func AbsTraversalForExpr(expr Expression) (Traversal, Diagnostics) {
 		&Diagnostic{
 			Severity: DiagError,
 			Summary:  "Invalid expression",
-			Detail:   "A static variable reference is required.",
+			Detail:   "A single static variable reference is required: only attribute access and indexing with constant keys. No calculations, function calls, template expressions, etc are allowed here.",
 			Subject:  expr.Range().Ptr(),
 		},
 	}
@@ -52,11 +52,14 @@ func AbsTraversalForExpr(expr Expression) (Traversal, Diagnostics) {
 func RelTraversalForExpr(expr Expression) (Traversal, Diagnostics) {
 	traversal, diags := AbsTraversalForExpr(expr)
 	if len(traversal) > 0 {
+		ret := make(Traversal, len(traversal))
+		copy(ret, traversal)
 		root := traversal[0].(TraverseRoot)
-		traversal[0] = TraverseAttr{
+		ret[0] = TraverseAttr{
 			Name:     root.Name,
 			SrcRange: root.SrcRange,
 		}
+		return ret, diags
 	}
 	return traversal, diags
 }

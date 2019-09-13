@@ -146,6 +146,27 @@ const (
 	// DBInstanceIdentifier doesn't refer to an existing DB instance.
 	ErrCodeDBInstanceNotFoundFault = "DBInstanceNotFound"
 
+	// ErrCodeDBInstanceRoleAlreadyExistsFault for service response error code
+	// "DBInstanceRoleAlreadyExists".
+	//
+	// The specified RoleArn or FeatureName value is already associated with the
+	// DB instance.
+	ErrCodeDBInstanceRoleAlreadyExistsFault = "DBInstanceRoleAlreadyExists"
+
+	// ErrCodeDBInstanceRoleNotFoundFault for service response error code
+	// "DBInstanceRoleNotFound".
+	//
+	// The specified RoleArn value doesn't match the specifed feature for the DB
+	// instance.
+	ErrCodeDBInstanceRoleNotFoundFault = "DBInstanceRoleNotFound"
+
+	// ErrCodeDBInstanceRoleQuotaExceededFault for service response error code
+	// "DBInstanceRoleQuotaExceeded".
+	//
+	// You can't associate any more AWS Identity and Access Management (IAM) roles
+	// with the DB instance because the quota has been reached.
+	ErrCodeDBInstanceRoleQuotaExceededFault = "DBInstanceRoleQuotaExceeded"
+
 	// ErrCodeDBLogFileNotFoundFault for service response error code
 	// "DBLogFileNotFoundFault".
 	//

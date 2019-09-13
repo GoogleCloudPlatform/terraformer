@@ -20,6 +20,8 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
 	"github.com/pkg/errors"
+
+	"github.com/zclconf/go-cty/cty"
 )
 
 type GithubProvider struct {
@@ -28,7 +30,7 @@ type GithubProvider struct {
 	token        string
 }
 
-const githubProviderVersion = "~>2.0.0"
+const githubProviderVersion = "~>2.2.1"
 
 func (p GithubProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{}
@@ -45,11 +47,11 @@ func (p GithubProvider) GetProviderData(arg ...string) map[string]interface{} {
 	}
 }
 
-func (p *GithubProvider) GetConfig() map[string]interface{} {
-	return map[string]interface{}{
-		"organization": p.organization,
-		"token":        p.token,
-	}
+func (p *GithubProvider) GetConfig() cty.Value {
+	return cty.ObjectVal(map[string]cty.Value{
+		"organization": cty.StringVal(p.organization),
+		"token":        cty.StringVal(p.token),
+	})
 }
 
 // Init GithubProvider with organization

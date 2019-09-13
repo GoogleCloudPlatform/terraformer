@@ -18,10 +18,12 @@ import (
 	"errors"
 	"os"
 
+	"github.com/zclconf/go-cty/cty"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
 
-const datadogProviderVersion = ">1.9.0"
+const datadogProviderVersion = ">2.1.0"
 
 type DatadogProvider struct {
 	terraform_utils.Provider
@@ -60,11 +62,11 @@ func (p *DatadogProvider) GetName() string {
 }
 
 // GetConfig return map of provider config for Datadog
-func (p *DatadogProvider) GetConfig() map[string]interface{} {
-	return map[string]interface{}{
-		"api-key": p.apiKey,
-		"app-key": p.appKey,
-	}
+func (p *DatadogProvider) GetConfig() cty.Value {
+	return cty.ObjectVal(map[string]cty.Value{
+		"api-key": cty.StringVal(p.apiKey),
+		"app-key": cty.StringVal(p.appKey),
+	})
 }
 
 // InitService ...
