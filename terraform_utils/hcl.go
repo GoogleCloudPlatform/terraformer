@@ -151,7 +151,7 @@ func HclPrint(data interface{}) ([]byte, error) {
 	// Apply Terraform style (alignment etc.)
 	formatted, err := hclPrinter.Format([]byte(s))
 	// hack for support terraform 0.12
-	formatted = []byte(strings.Replace(string(formatted), " = {", " {", -1))
+	formatted = terraform12Adjustments(formatted)
 	if err != nil {
 		log.Println("Invalid HCL follows:")
 		for i, line := range strings.Split(s, "\n") {
@@ -161,6 +161,32 @@ func HclPrint(data interface{}) ([]byte, error) {
 	}
 
 	return formatted, nil
+}
+
+func terraform12Adjustments(formatted []byte) []byte {
+	s := string(formatted)
+	old := " = {"
+	new := " {"
+	n := strings.Count(s, old)
+
+	t := make([]byte, len(s)+n*(len(old)))
+	w := 0
+	start := 0
+	for i := 0; i < n; i++ {
+		j := start + strings.Index(s[start:], old)
+
+		w += copy(t[w:], s[start:j])
+		// hack for AWS provider for terraform 0.12
+		if strings.Contains(string(s[start:j]), "tags") || strings.Contains(string(s[start:j]), "config") {
+			w += copy(t[w:], old)
+		} else {
+			w += copy(t[w:], new)
+		}
+		start = j + len(old)
+	}
+	w += copy(t[w:], s[start:])
+
+	return []byte(t[0:w])
 }
 
 // Sanitize name for terraform style

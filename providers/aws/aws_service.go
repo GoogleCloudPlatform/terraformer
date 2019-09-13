@@ -16,6 +16,7 @@ package aws
 
 import (
 	"os"
+	"encoding/json"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
@@ -40,4 +41,25 @@ func (s *AWSService) generateSession() *session.Session {
 	os.Setenv("AWS_SESSION_TOKEN", creds.SessionToken)
 
 	return sess
+}
+
+func (s *AWSService) PostConvertHook() error {
+
+	for _, r := range s.Resources {
+		tagsMap, resourceHasTags := r.Item["tags"]
+		if resourceHasTags && len(tagsMap.(map[string]interface{})) > 0 {
+			var newTags []map[string]interface{}
+			for tagName, tagValue := range r.Item["tags"].(map[string]interface{}) {
+				newTag := make(map[string]interface{})
+				newTag[tagName] = tagValue
+				newTags = append(newTags, newTag)
+			}
+			r.Item["tags"] = newTags
+		}
+	}
+
+	dataJsonBytes, _ := json.MarshalIndent(s.Resources[0], "", "  ")
+	println(string(dataJsonBytes))
+
+	return nil
 }

@@ -14,12 +14,16 @@
 
 package terraform_utils
 
+import (
+	"github.com/zclconf/go-cty/cty"
+)
+
 type ProviderGenerator interface {
 	Init(args []string) error
 	InitService(serviceName string) error
 	GetName() string
 	GetService() ServiceGenerator
-	GetConfig() map[string]interface{}
+	GetConfig() cty.Value
 	GetSupportedService() map[string]ServiceGenerator
 	GenerateFiles()
 	GetProviderData(arg ...string) map[string]interface{}
@@ -29,14 +33,14 @@ type ProviderGenerator interface {
 
 type Provider struct {
 	Service ServiceGenerator
-	Config  map[string]interface{}
+	Config  cty.Value
 }
 
 func (p *Provider) Init(args []string) error {
 	panic("implement me")
 }
 
-func (p *Provider) GetConfig() map[string]interface{} {
+func (p *Provider) GetConfig() cty.Value {
 	return p.Config
 }
 

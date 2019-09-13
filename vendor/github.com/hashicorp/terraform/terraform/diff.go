@@ -4,11 +4,19 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"log"
 	"reflect"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/hashicorp/terraform/addrs"
+	"github.com/hashicorp/terraform/config"
+	"github.com/hashicorp/terraform/config/hcl2shim"
+	"github.com/hashicorp/terraform/configs/configschema"
+	"github.com/zclconf/go-cty/cty"
 
 	"github.com/mitchellh/copystructure"
 )
@@ -69,8 +77,24 @@ func (d *Diff) Prune() {
 //
 // This should be the preferred method to add module diffs since it
 // allows us to optimize lookups later as well as control sorting.
-func (d *Diff) AddModule(path []string) *ModuleDiff {
-	m := &ModuleDiff{Path: path}
+func (d *Diff) AddModule(path addrs.ModuleInstance) *ModuleDiff {
+	// Lower the new-style address into a legacy-style address.
+	// This requires that none of the steps have instance keys, which is
+	// true for all addresses at the time of implementing this because
+	// "count" and "for_each" are not yet implemented for modules.
+	legacyPath := make([]string, len(path))
+	for i, step := range path {
+		if step.InstanceKey != addrs.NoKey {
+			// FIXME: Once the rest of Terraform is ready to use count and
+			// for_each, remove all of this and just write the addrs.ModuleInstance
+			// value itself into the ModuleState.
+			panic("diff cannot represent modules with count or for_each keys")
+		}
+
+		legacyPath[i] = step.Name
+	}
+
+	m := &ModuleDiff{Path: legacyPath}
 	m.init()
 	d.Modules = append(d.Modules, m)
 	return m
@@ -79,7 +103,7 @@ func (d *Diff) AddModule(path []string) *ModuleDiff {
 // ModuleByPath is used to lookup the module diff for the given path.
 // This should be the preferred lookup mechanism as it allows for future
 // lookup optimizations.
-func (d *Diff) ModuleByPath(path []string) *ModuleDiff {
+func (d *Diff) ModuleByPath(path addrs.ModuleInstance) *ModuleDiff {
 	if d == nil {
 		return nil
 	}
@@ -87,7 +111,8 @@ func (d *Diff) ModuleByPath(path []string) *ModuleDiff {
 		if mod.Path == nil {
 			panic("missing module path")
 		}
-		if reflect.DeepEqual(mod.Path, path) {
+		modPath := normalizeModulePath(mod.Path)
+		if modPath.String() == path.String() {
 			return mod
 		}
 	}
@@ -96,7 +121,7 @@ func (d *Diff) ModuleByPath(path []string) *ModuleDiff {
 
 // RootModule returns the ModuleState for the root module
 func (d *Diff) RootModule() *ModuleDiff {
-	root := d.ModuleByPath(rootModulePath)
+	root := d.ModuleByPath(addrs.RootModuleInstance)
 	if root == nil {
 		panic("missing root module")
 	}
@@ -166,7 +191,8 @@ func (d *Diff) String() string {
 	keys := make([]string, 0, len(d.Modules))
 	lookup := make(map[string]*ModuleDiff)
 	for _, m := range d.Modules {
-		key := fmt.Sprintf("module.%s", strings.Join(m.Path[1:], "."))
+		addr := normalizeModulePath(m.Path)
+		key := addr.String()
 		keys = append(keys, key)
 		lookup[key] = m
 	}
@@ -383,6 +409,541 @@ type InstanceDiff struct {
 
 func (d *InstanceDiff) Lock()   { d.mu.Lock() }
 func (d *InstanceDiff) Unlock() { d.mu.Unlock() }
+
+// ApplyToValue merges the receiver into the given base value, returning a
+// new value that incorporates the planned changes. The given value must
+// conform to the given schema, or this method will panic.
+//
+// This method is intended for shimming old subsystems that still use this
+// legacy diff type to work with the new-style types.
+func (d *InstanceDiff) ApplyToValue(base cty.Value, schema *configschema.Block) (cty.Value, error) {
+	// Create an InstanceState attributes from our existing state.
+	// We can use this to more easily apply the diff changes.
+	attrs := hcl2shim.FlatmapValueFromHCL2(base)
+	applied, err := d.Apply(attrs, schema)
+	if err != nil {
+		return base, err
+	}
+
+	val, err := hcl2shim.HCL2ValueFromFlatmap(applied, schema.ImpliedType())
+	if err != nil {
+		return base, err
+	}
+
+	return schema.CoerceValue(val)
+}
+
+// Apply applies the diff to the provided flatmapped attributes,
+// returning the new instance attributes.
+//
+// This method is intended for shimming old subsystems that still use this
+// legacy diff type to work with the new-style types.
+func (d *InstanceDiff) Apply(attrs map[string]string, schema *configschema.Block) (map[string]string, error) {
+	// We always build a new value here, even if the given diff is "empty",
+	// because we might be planning to create a new instance that happens
+	// to have no attributes set, and so we want to produce an empty object
+	// rather than just echoing back the null old value.
+	if attrs == nil {
+		attrs = map[string]string{}
+	}
+
+	// Rather applying the diff to mutate the attrs, we'll copy new values into
+	// here to avoid the possibility of leaving stale values.
+	result := map[string]string{}
+
+	if d.Destroy || d.DestroyDeposed || d.DestroyTainted {
+		return result, nil
+	}
+
+	return d.applyBlockDiff(nil, attrs, schema)
+}
+
+func (d *InstanceDiff) applyBlockDiff(path []string, attrs map[string]string, schema *configschema.Block) (map[string]string, error) {
+	result := map[string]string{}
+	name := ""
+	if len(path) > 0 {
+		name = path[len(path)-1]
+	}
+
+	// localPrefix is used to build the local result map
+	localPrefix := ""
+	if name != "" {
+		localPrefix = name + "."
+	}
+
+	// iterate over the schema rather than the attributes, so we can handle
+	// different block types separately from plain attributes
+	for n, attrSchema := range schema.Attributes {
+		var err error
+		newAttrs, err := d.applyAttrDiff(append(path, n), attrs, attrSchema)
+
+		if err != nil {
+			return result, err
+		}
+
+		for k, v := range newAttrs {
+			result[localPrefix+k] = v
+		}
+	}
+
+	blockPrefix := strings.Join(path, ".")
+	if blockPrefix != "" {
+		blockPrefix += "."
+	}
+	for n, block := range schema.BlockTypes {
+		// we need to find the set of all keys that traverse this block
+		candidateKeys := map[string]bool{}
+		blockKey := blockPrefix + n + "."
+		localBlockPrefix := localPrefix + n + "."
+
+		// we can only trust the diff for sets, since the path changes, so don't
+		// count existing values as candidate keys. If it turns out we're
+		// keeping the attributes, we will catch it down below with "keepBlock"
+		// after we check the set count.
+		if block.Nesting != configschema.NestingSet {
+			for k := range attrs {
+				if strings.HasPrefix(k, blockKey) {
+					nextDot := strings.Index(k[len(blockKey):], ".")
+					if nextDot < 0 {
+						continue
+					}
+					nextDot += len(blockKey)
+					candidateKeys[k[len(blockKey):nextDot]] = true
+				}
+			}
+		}
+
+		for k, diff := range d.Attributes {
+			if strings.HasPrefix(k, blockKey) {
+				nextDot := strings.Index(k[len(blockKey):], ".")
+				if nextDot < 0 {
+					continue
+				}
+
+				if diff.NewRemoved {
+					continue
+				}
+
+				nextDot += len(blockKey)
+				candidateKeys[k[len(blockKey):nextDot]] = true
+			}
+		}
+
+		// check each set candidate to see if it was removed.
+		// we need to do this, because when entire sets are removed, they may
+		// have the wrong key, and ony show diffs going to ""
+		if block.Nesting == configschema.NestingSet {
+			for k := range candidateKeys {
+				indexPrefix := strings.Join(append(path, n, k), ".") + "."
+				keep := false
+				// now check each set element to see if it's a new diff, or one
+				// that we're dropping. Since we're only applying the "New"
+				// portion of the set, we can ignore diffs that only contain "Old"
+				for attr, diff := range d.Attributes {
+					if !strings.HasPrefix(attr, indexPrefix) {
+						continue
+					}
+
+					// check for empty "count" keys
+					if (strings.HasSuffix(attr, ".#") || strings.HasSuffix(attr, ".%")) && diff.New == "0" {
+						continue
+					}
+
+					// removed items don't count either
+					if diff.NewRemoved {
+						continue
+					}
+
+					// this must be a diff to keep
+					keep = true
+					break
+				}
+				if !keep {
+					delete(candidateKeys, k)
+				}
+			}
+		}
+
+		for k := range candidateKeys {
+			newAttrs, err := d.applyBlockDiff(append(path, n, k), attrs, &block.Block)
+			if err != nil {
+				return result, err
+			}
+
+			for attr, v := range newAttrs {
+				result[localBlockPrefix+attr] = v
+			}
+		}
+
+		keepBlock := true
+		// check this block's count diff directly first, since we may not
+		// have candidates because it was removed and only set to "0"
+		if diff, ok := d.Attributes[blockKey+"#"]; ok {
+			if diff.New == "0" || diff.NewRemoved {
+				keepBlock = false
+			}
+		}
+
+		// if there was no diff at all, then we need to keep the block attributes
+		if len(candidateKeys) == 0 && keepBlock {
+			for k, v := range attrs {
+				if strings.HasPrefix(k, blockKey) {
+					// we need the key relative to this block, so remove the
+					// entire prefix, then re-insert the block name.
+					localKey := localBlockPrefix + k[len(blockKey):]
+					result[localKey] = v
+				}
+			}
+		}
+
+		countAddr := strings.Join(append(path, n, "#"), ".")
+		if countDiff, ok := d.Attributes[countAddr]; ok {
+			if countDiff.NewComputed {
+				result[localBlockPrefix+"#"] = hcl2shim.UnknownVariableValue
+			} else {
+				result[localBlockPrefix+"#"] = countDiff.New
+
+				// While sets are complete, list are not, and we may not have all the
+				// information to track removals. If the list was truncated, we need to
+				// remove the extra items from the result.
+				if block.Nesting == configschema.NestingList &&
+					countDiff.New != "" && countDiff.New != hcl2shim.UnknownVariableValue {
+					length, _ := strconv.Atoi(countDiff.New)
+					for k := range result {
+						if !strings.HasPrefix(k, localBlockPrefix) {
+							continue
+						}
+
+						index := k[len(localBlockPrefix):]
+						nextDot := strings.Index(index, ".")
+						if nextDot < 1 {
+							continue
+						}
+						index = index[:nextDot]
+						i, err := strconv.Atoi(index)
+						if err != nil {
+							// this shouldn't happen since we added these
+							// ourself, but make note of it just in case.
+							log.Printf("[ERROR] bad list index in %q: %s", k, err)
+							continue
+						}
+						if i >= length {
+							delete(result, k)
+						}
+					}
+				}
+			}
+		} else if origCount, ok := attrs[countAddr]; ok && keepBlock {
+			result[localBlockPrefix+"#"] = origCount
+		} else {
+			result[localBlockPrefix+"#"] = countFlatmapContainerValues(localBlockPrefix+"#", result)
+		}
+	}
+
+	return result, nil
+}
+
+func (d *InstanceDiff) applyAttrDiff(path []string, attrs map[string]string, attrSchema *configschema.Attribute) (map[string]string, error) {
+	ty := attrSchema.Type
+	switch {
+	case ty.IsListType(), ty.IsTupleType(), ty.IsMapType():
+		return d.applyCollectionDiff(path, attrs, attrSchema)
+	case ty.IsSetType():
+		return d.applySetDiff(path, attrs, attrSchema)
+	default:
+		return d.applySingleAttrDiff(path, attrs, attrSchema)
+	}
+}
+
+func (d *InstanceDiff) applySingleAttrDiff(path []string, attrs map[string]string, attrSchema *configschema.Attribute) (map[string]string, error) {
+	currentKey := strings.Join(path, ".")
+
+	attr := path[len(path)-1]
+
+	result := map[string]string{}
+	diff := d.Attributes[currentKey]
+	old, exists := attrs[currentKey]
+
+	if diff != nil && diff.NewComputed {
+		result[attr] = config.UnknownVariableValue
+		return result, nil
+	}
+
+	// "id" must exist and not be an empty string, or it must be unknown.
+	// This only applied to top-level "id" fields.
+	if attr == "id" && len(path) == 1 {
+		if old == "" {
+			result[attr] = config.UnknownVariableValue
+		} else {
+			result[attr] = old
+		}
+		return result, nil
+	}
+
+	// attribute diffs are sometimes missed, so assume no diff means keep the
+	// old value
+	if diff == nil {
+		if exists {
+			result[attr] = old
+		} else {
+			// We need required values, so set those with an empty value. It
+			// must be set in the config, since if it were missing it would have
+			// failed validation.
+			if attrSchema.Required {
+				// we only set a missing string here, since bool or number types
+				// would have distinct zero value which shouldn't have been
+				// lost.
+				if attrSchema.Type == cty.String {
+					result[attr] = ""
+				}
+			}
+		}
+		return result, nil
+	}
+
+	// check for missmatched diff values
+	if exists &&
+		old != diff.Old &&
+		old != config.UnknownVariableValue &&
+		diff.Old != config.UnknownVariableValue {
+		return result, fmt.Errorf("diff apply conflict for %s: diff expects %q, but prior value has %q", attr, diff.Old, old)
+	}
+
+	if diff.NewRemoved {
+		// don't set anything in the new value
+		return map[string]string{}, nil
+	}
+
+	if diff.Old == diff.New && diff.New == "" {
+		// this can only be a valid empty string
+		if attrSchema.Type == cty.String {
+			result[attr] = ""
+		}
+		return result, nil
+	}
+
+	if attrSchema.Computed && diff.NewComputed {
+		result[attr] = config.UnknownVariableValue
+		return result, nil
+	}
+
+	result[attr] = diff.New
+
+	return result, nil
+}
+
+func (d *InstanceDiff) applyCollectionDiff(path []string, attrs map[string]string, attrSchema *configschema.Attribute) (map[string]string, error) {
+	result := map[string]string{}
+
+	prefix := ""
+	if len(path) > 1 {
+		prefix = strings.Join(path[:len(path)-1], ".") + "."
+	}
+
+	name := ""
+	if len(path) > 0 {
+		name = path[len(path)-1]
+	}
+
+	currentKey := prefix + name
+
+	// check the index first for special handling
+	for k, diff := range d.Attributes {
+		// check the index value, which can be set, and 0
+		if k == currentKey+".#" || k == currentKey+".%" || k == currentKey {
+			if diff.NewRemoved {
+				return result, nil
+			}
+
+			if diff.NewComputed {
+				result[k[len(prefix):]] = config.UnknownVariableValue
+				return result, nil
+			}
+
+			// do what the diff tells us to here, so that it's consistent with applies
+			if diff.New == "0" {
+				result[k[len(prefix):]] = "0"
+				return result, nil
+			}
+		}
+	}
+
+	// collect all the keys from the diff and the old state
+	noDiff := true
+	keys := map[string]bool{}
+	for k := range d.Attributes {
+		if !strings.HasPrefix(k, currentKey+".") {
+			continue
+		}
+		noDiff = false
+		keys[k] = true
+	}
+
+	noAttrs := true
+	for k := range attrs {
+		if !strings.HasPrefix(k, currentKey+".") {
+			continue
+		}
+		noAttrs = false
+		keys[k] = true
+	}
+
+	// If there's no diff and no attrs, then there's no value at all.
+	// This prevents an unexpected zero-count attribute in the attributes.
+	if noDiff && noAttrs {
+		return result, nil
+	}
+
+	idx := "#"
+	if attrSchema.Type.IsMapType() {
+		idx = "%"
+	}
+
+	for k := range keys {
+		// generate an schema placeholder for the values
+		elSchema := &configschema.Attribute{
+			Type: attrSchema.Type.ElementType(),
+		}
+
+		res, err := d.applySingleAttrDiff(append(path, k[len(currentKey)+1:]), attrs, elSchema)
+		if err != nil {
+			return result, err
+		}
+
+		for k, v := range res {
+			result[name+"."+k] = v
+		}
+	}
+
+	// Just like in nested list blocks, for simple lists we may need to fill in
+	// missing empty strings.
+	countKey := name + "." + idx
+	count := result[countKey]
+	length, _ := strconv.Atoi(count)
+
+	if count != "" && count != hcl2shim.UnknownVariableValue &&
+		attrSchema.Type.Equals(cty.List(cty.String)) {
+		// insert empty strings into missing indexes
+		for i := 0; i < length; i++ {
+			key := fmt.Sprintf("%s.%d", name, i)
+			if _, ok := result[key]; !ok {
+				result[key] = ""
+			}
+		}
+	}
+
+	// now check for truncation in any type of list
+	if attrSchema.Type.IsListType() {
+		for key := range result {
+			if key == countKey {
+				continue
+			}
+
+			if len(key) <= len(name)+1 {
+				// not sure what this is, but don't panic
+				continue
+			}
+
+			index := key[len(name)+1:]
+
+			// It is possible to have nested sets or maps, so look for another dot
+			dot := strings.Index(index, ".")
+			if dot > 0 {
+				index = index[:dot]
+			}
+
+			// This shouldn't have any more dots, since the element type is only string.
+			num, err := strconv.Atoi(index)
+			if err != nil {
+				log.Printf("[ERROR] bad list index in %q: %s", currentKey, err)
+				continue
+			}
+
+			if num >= length {
+				delete(result, key)
+			}
+		}
+	}
+
+	// Fill in the count value if it wasn't present in the diff for some reason,
+	// or if there is no count at all.
+	_, countDiff := d.Attributes[countKey]
+	if result[countKey] == "" || (!countDiff && len(keys) != len(result)) {
+		result[countKey] = countFlatmapContainerValues(countKey, result)
+	}
+
+	return result, nil
+}
+
+func (d *InstanceDiff) applySetDiff(path []string, attrs map[string]string, attrSchema *configschema.Attribute) (map[string]string, error) {
+	// We only need this special behavior for sets of object.
+	if !attrSchema.Type.ElementType().IsObjectType() {
+		// The normal collection apply behavior will work okay for this one, then.
+		return d.applyCollectionDiff(path, attrs, attrSchema)
+	}
+
+	// When we're dealing with a set of an object type we actually want to
+	// use our normal _block type_ apply behaviors, so we'll construct ourselves
+	// a synthetic schema that treats the object type as a block type and
+	// then delegate to our block apply method.
+	synthSchema := &configschema.Block{
+		Attributes: make(map[string]*configschema.Attribute),
+	}
+
+	for name, ty := range attrSchema.Type.ElementType().AttributeTypes() {
+		// We can safely make everything into an attribute here because in the
+		// event that there are nested set attributes we'll end up back in
+		// here again recursively and can then deal with the next level of
+		// expansion.
+		synthSchema.Attributes[name] = &configschema.Attribute{
+			Type:     ty,
+			Optional: true,
+		}
+	}
+
+	parentPath := path[:len(path)-1]
+	childName := path[len(path)-1]
+	containerSchema := &configschema.Block{
+		BlockTypes: map[string]*configschema.NestedBlock{
+			childName: {
+				Nesting: configschema.NestingSet,
+				Block:   *synthSchema,
+			},
+		},
+	}
+
+	return d.applyBlockDiff(parentPath, attrs, containerSchema)
+}
+
+// countFlatmapContainerValues returns the number of values in the flatmapped container
+// (set, map, list) indexed by key. The key argument is expected to include the
+// trailing ".#", or ".%".
+func countFlatmapContainerValues(key string, attrs map[string]string) string {
+	if len(key) < 3 || !(strings.HasSuffix(key, ".#") || strings.HasSuffix(key, ".%")) {
+		panic(fmt.Sprintf("invalid index value %q", key))
+	}
+
+	prefix := key[:len(key)-1]
+	items := map[string]int{}
+
+	for k := range attrs {
+		if k == key {
+			continue
+		}
+		if !strings.HasPrefix(k, prefix) {
+			continue
+		}
+
+		suffix := k[len(prefix):]
+		dot := strings.Index(suffix, ".")
+		if dot > 0 {
+			suffix = suffix[:dot]
+		}
+
+		items[suffix]++
+	}
+	return strconv.Itoa(len(items))
+}
 
 // ResourceAttrDiff is the diff of a single attribute of a resource.
 type ResourceAttrDiff struct {
