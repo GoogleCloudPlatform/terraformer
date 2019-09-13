@@ -241,8 +241,14 @@ github.com/coreos/go-semver/semver
 github.com/davecgh/go-spew/spew
 # github.com/dgrijalva/jwt-go v3.2.0+incompatible
 github.com/dgrijalva/jwt-go
+
 # github.com/dimchansky/utfbom v1.0.0
 github.com/dimchansky/utfbom
+
+# github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
+github.com/dollarshaveclub/new-relic-synthetics-go
+github.com/dollarshaveclub/new-relic-synthetics-go/util
+
 # github.com/dylanmei/iso8601 v0.1.0
 github.com/dylanmei/iso8601
 # github.com/fatih/color v1.7.0
@@ -614,6 +620,8 @@ github.com/nu7hatch/gouuid
 github.com/oklog/run
 # github.com/packer-community/winrmcp v0.0.0-20180921211025-c76d91c1e7db
 github.com/packer-community/winrmcp/winrmcp
+# github.com/paultyng/go-newrelic v3.1.0+incompatible
+github.com/paultyng/go-newrelic/api
 # github.com/pierrec/lz4 v2.0.5+incompatible
 github.com/pierrec/lz4
 github.com/pierrec/lz4/internal/xxh32
@@ -638,6 +646,8 @@ github.com/spf13/pflag
 github.com/svanharmelen/jsonapi
 # github.com/terraform-providers/terraform-provider-openstack v1.18.0
 github.com/terraform-providers/terraform-provider-openstack/openstack
+# github.com/tomnomnom/linkheader v0.0.0-20180905144013-02ca5825eb80
+github.com/tomnomnom/linkheader
 # github.com/ugorji/go v1.1.2-0.20180728093225-eeb0478a81ae
 github.com/ugorji/go/codec
 # github.com/ulikunitz/xz v0.5.5
@@ -712,6 +722,11 @@ golang.org/x/crypto/md4
 golang.org/x/net/context
 golang.org/x/net/trace
 golang.org/x/net/context/ctxhttp
+
+golang.org/x/net/http2
+golang.org/x/net/publicsuffix
+golang.org/x/net/html
+
 golang.org/x/net/internal/timeseries
 golang.org/x/net/http2
 golang.org/x/net/http2/hpack
@@ -847,8 +862,15 @@ google.golang.org/grpc/credentials/internal
 google.golang.org/grpc/balancer/base
 google.golang.org/grpc/binarylog/grpc_binarylog_v1
 google.golang.org/grpc/internal/syscall
+
 google.golang.org/grpc/credentials/oauth
 # gopkg.in/ini.v1 v1.42.0
 gopkg.in/ini.v1
+
+# gopkg.in/inf.v0 v0.9.1
+gopkg.in/inf.v0
+# gopkg.in/resty.v0 v0.4.1
+gopkg.in/resty.v0
+
 # gopkg.in/yaml.v2 v2.2.2
 gopkg.in/yaml.v2

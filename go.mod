@@ -13,6 +13,10 @@ require (
 	github.com/cloudflare/cloudflare-go v0.9.4
 	github.com/coreos/bbolt v1.3.1-coreos.1 // indirect
 	github.com/coreos/go-systemd v0.0.0-20181031085051-9002847aa142 // indirect
+	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
+	github.com/dnaeon/go-vcr v0.0.0-20180920040454-5637cf3d8a31 // indirect
+	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
 	github.com/dustinkirkland/golang-petname v0.0.0-20170921220637-d3c2ba80e75e // indirect
 	github.com/golang/groupcache v0.0.0-20181024230925-c65c006176ff // indirect
 	github.com/google/go-github/v25 v25.0.2
@@ -47,6 +51,7 @@ require (
 	github.com/onsi/ginkgo v1.8.0 // indirect
 	github.com/onsi/gomega v1.5.0 // indirect
 	github.com/packer-community/winrmcp v0.0.0-20180921211025-c76d91c1e7db // indirect
+	github.com/paultyng/go-newrelic v3.1.0+incompatible
 	github.com/pierrec/lz4 v2.0.5+incompatible // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/pquerna/otp v1.0.0 // indirect
@@ -66,6 +71,8 @@ require (
 	github.com/terraform-providers/terraform-provider-random v2.0.0+incompatible // indirect
 	github.com/terraform-providers/terraform-provider-template v1.0.0 // indirect
 	github.com/terraform-providers/terraform-provider-tls v1.2.0 // indirect
+	github.com/tmc/grpc-websocket-proxy v0.0.0-20171017195756-830351dc03c6 // indirect
+	github.com/tomnomnom/linkheader v0.0.0-20180905144013-02ca5825eb80 // indirect
 	github.com/ugorji/go v1.1.2-0.20180728093225-eeb0478a81ae // indirect
 	github.com/xlab/treeprint v0.0.0-20181112141820-a009c3971eca // indirect
 	github.com/zclconf/go-cty v1.0.0
@@ -73,6 +80,8 @@ require (
 	golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421
 	google.golang.org/api v0.5.1-0.20190510010909-bbbc0e98e3cc
 	google.golang.org/genproto v0.0.0-20190307195333-5fe7a883aa19
+	gopkg.in/inf.v0 v0.9.1 // indirect
+	gopkg.in/resty.v0 v0.4.1 // indirect
 	k8s.io/api v0.0.0-20190116205037-c89978d5f86d // indirect
 	k8s.io/apimachinery v0.0.0-20190116203031-d49e237a2683 // indirect
 	k8s.io/client-go v7.0.0+incompatible // indirect
