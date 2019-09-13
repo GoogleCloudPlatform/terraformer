@@ -16,7 +16,6 @@ package aws
 
 import (
 	"os"
-	"encoding/json"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
@@ -44,7 +43,6 @@ func (s *AWSService) generateSession() *session.Session {
 }
 
 func (s *AWSService) PostConvertHook() error {
-
 	for _, r := range s.Resources {
 		tagsMap, resourceHasTags := r.Item["tags"]
 		if resourceHasTags && len(tagsMap.(map[string]interface{})) > 0 {
@@ -57,9 +55,6 @@ func (s *AWSService) PostConvertHook() error {
 			r.Item["tags"] = newTags
 		}
 	}
-
-	dataJsonBytes, _ := json.MarshalIndent(s.Resources[0], "", "  ")
-	println(string(dataJsonBytes))
 
 	return nil
 }
