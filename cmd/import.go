@@ -148,7 +148,7 @@ func ImportFromPlan(provider terraform_utils.ProviderGenerator, plan *ImportPlan
 				return err
 			}
 			// create Bucket file
-			if bucketStateDataFile, err := terraform_utils.HclPrint(bucket.BucketGetTfData(path)); err == nil {
+			if bucketStateDataFile, err := terraform_utils.HclPrint(bucket.BucketGetTfData(path), map[string]struct{}{}); err == nil {
 				terraform_output.PrintFile(path+"/bucket.tf", bucketStateDataFile)
 			}
 		} else {
@@ -188,7 +188,7 @@ func ImportFromPlan(provider terraform_utils.ProviderGenerator, plan *ImportPlan
 			}
 			// create variables file
 			if len(provider.GetResourceConnections()[serviceName]) > 0 && options.Connect {
-				variablesFile, err := terraform_utils.HclPrint(variables)
+				variablesFile, err := terraform_utils.HclPrint(variables, map[string]struct{}{"config": {}})
 				if err != nil {
 					return err
 				}
