@@ -1,5 +1,7 @@
 module github.com/GoogleCloudPlatform/terraformer
 
+go 1.13
+
 require (
 	cloud.google.com/go v0.34.0
 	github.com/Azure/go-ntlmssp v0.0.0-20180810175552-4a21cbd618b4 // indirect
@@ -101,3 +103,8 @@ require (
 	k8s.io/client-go v7.0.0+incompatible
 	k8s.io/kubectl v0.0.0-20190502165022-ce8d9f55c93c
 )
+
+// related to invalid pseudo-version: does not match version-control timestamp (2019-04-09T20:28:23Z)
+replace golang.org/x/lint => golang.org/x/lint v0.0.0-20190409202823-959b441ac422
+
+replace golang.org/x/time => golang.org/x/time v0.0.0-20190308202827-9d24e82272b4
