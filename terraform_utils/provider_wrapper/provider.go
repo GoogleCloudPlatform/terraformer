@@ -15,7 +15,6 @@
 package provider_wrapper
 
 import (
-	"errors"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -126,24 +125,21 @@ func (p *ProviderWrapper) readObjBlocks(block map[string]*configschema.NestedBlo
 }
 
 func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform.InstanceState) (*terraform.InstanceState, error) {
-	resppp := p.Provider.ImportResourceState(providers.ImportResourceStateRequest{
-		TypeName: info.Type,
-		ID:       strings.Split(info.Id, ".")[1],
-	})
-	if len(resppp.ImportedResources) == 0 {
-		return nil, errors.New("Couldn't import resource")
+	schema := p.Provider.GetSchema()
+	priorState, err := state.AttrsAsObjectValue(schema.ResourceTypes[info.Type].Block.ImpliedType())
+	if err != nil {
+		return nil, err
 	}
 	resp := p.Provider.ReadResource(providers.ReadResourceRequest{
-		TypeName:   resppp.ImportedResources[0].TypeName,
-		PriorState: resppp.ImportedResources[0].State,
-		Private:    resppp.ImportedResources[0].Private,
+		TypeName:   info.Type,
+		PriorState: priorState,
+		Private:    []byte{},
 	})
-
 	if resp.Diagnostics.HasErrors() {
 		return nil, resp.Diagnostics.Err()
 	}
 
-	return terraform.NewInstanceStateShimmedFromValue(resp.NewState, int(p.Provider.GetSchema().Provider.Version)), nil
+	return terraform.NewInstanceStateShimmedFromValue(resp.NewState, int(schema.Provider.Version)), nil
 }
 
 func (p *ProviderWrapper) initProvider() error {
