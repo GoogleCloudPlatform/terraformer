@@ -38,6 +38,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
 3.  Connect between resources with `terraform_remote_state` (local and bucket).
 4.  Save `tf` files using a custom folder tree pattern.
 5.  Import by resource name and type.
+6.  Support terraform 0.12 only from version 0.8 
 
 Terraformer uses terraform providers and is designed to easily support newly added resources.
 To upgrade resources with new fields, all you need to do is upgrade the relevant terraform providers.
@@ -140,12 +141,13 @@ If you want to use a package manager:
 - [Homebrew](https://brew.sh/) users can use `brew install terraformer`.
 
 Links to download terraform providers:
-* google cloud provider >2.0.0 - [here](https://releases.hashicorp.com/terraform-provider-google/)
-* aws provider >1.56.0 - [here](https://releases.hashicorp.com/terraform-provider-aws/)
-* openstack provider >1.17.0 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
-* kubernetes provider >=1.4.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
-* github provider >=2.0.0 - [here](https://releases.hashicorp.com/terraform-provider-github/)
-* datadog provider >1.19.0 - [here](https://releases.hashicorp.com/terraform-provider-datadog/)
+* google cloud provider >2.11.0 - [here](https://releases.hashicorp.com/terraform-provider-google/)
+* aws provider >2.25.0 - [here](https://releases.hashicorp.com/terraform-provider-aws/)
+* openstack provider >1.21.1 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
+* kubernetes provider >=1.9.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
+* github provider >=2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-github/)
+* datadog provider >2.1.0 - [here](https://releases.hashicorp.com/terraform-provider-datadog/)
+* cloudflare provider >1.16 - [here](https://releases.hashicorp.com/terraform-provider-cloudflare/)
 * logzio provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
 
 Information on provider plugins:
