@@ -206,7 +206,7 @@ const (
 	//
 	// The request cannot be processed because it would exceed the maximum allowed
 	// number of node groups (shards) in a single replication group. The default
-	// maximum is 15
+	// maximum is 90
 	ErrCodeNodeGroupsPerReplicationGroupQuotaExceededFault = "NodeGroupsPerReplicationGroupQuotaExceeded"
 
 	// ErrCodeNodeQuotaForClusterExceededFault for service response error code

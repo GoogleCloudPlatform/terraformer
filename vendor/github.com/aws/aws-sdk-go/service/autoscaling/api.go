@@ -1274,8 +1274,12 @@ func (c *AutoScaling) DeletePolicyRequest(input *DeletePolicyInput) (req *reques
 //
 // Deletes the specified scaling policy.
 //
-// Deleting a policy deletes the underlying alarm action, but does not delete
-// the alarm, even if it no longer has an associated action.
+// Deleting either a step scaling policy or a simple scaling policy deletes
+// the underlying alarm action, but does not delete the alarm, even if it no
+// longer has an associated action.
+//
+// For more information, see Deleting a Scaling Policy (https://docs.aws.amazon.com/autoscaling/ec2/userguide/deleting-scaling-policy.html)
+// in the Amazon EC2 Auto Scaling User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -3106,7 +3110,8 @@ func (c *AutoScaling) DescribeScheduledActionsRequest(input *DescribeScheduledAc
 // DescribeScheduledActions API operation for Auto Scaling.
 //
 // Describes the actions scheduled for your Auto Scaling group that haven't
-// run. To describe the actions that have already run, use DescribeScalingActivities.
+// run or that have not reached their end time. To describe the actions that
+// have already run, use DescribeScalingActivities.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -5197,27 +5202,43 @@ func (c *AutoScaling) UpdateAutoScalingGroupRequest(input *UpdateAutoScalingGrou
 //
 // Updates the configuration for the specified Auto Scaling group.
 //
-// The new settings take effect on any scaling activities after this call returns.
-// Scaling activities that are currently in progress aren't affected.
+// To update an Auto Scaling group, specify the name of the group and the parameter
+// that you want to change. Any parameters that you don't specify are not changed
+// by this update request. The new settings take effect on any scaling activities
+// after this call returns. Scaling activities that are currently in progress
+// aren't affected.
 //
-// To update an Auto Scaling group with a launch configuration with InstanceMonitoring
-// set to false, you must first disable the collection of group metrics. Otherwise,
-// you get an error. If you have previously enabled the collection of group
-// metrics, you can disable it using DisableMetricsCollection.
+// If you associate a new launch configuration or template with an Auto Scaling
+// group, all new instances will get the updated configuration, but existing
+// instances continue to run with the configuration that they were originally
+// launched with. When you update a group to specify a mixed instances policy
+// instead of a launch configuration or template, existing instances may be
+// replaced to match the new purchasing options that you specified in the policy.
+// For example, if the group currently has 100% On-Demand capacity and the policy
+// specifies 50% Spot capacity, this means that half of your instances will
+// be gradually terminated and relaunched as Spot Instances. When replacing
+// instances, Amazon EC2 Auto Scaling launches new instances before terminating
+// the old ones, so that updating your group does not compromise the performance
+// or availability of your application.
 //
-// Note the following:
+// Note the following about changing DesiredCapacity, MaxSize, or MinSize:
+//
+//    * If a scale-in event occurs as a result of a new DesiredCapacity value
+//    that is lower than the current size of the group, the Auto Scaling group
+//    uses its termination policy to determine which instances to terminate.
 //
 //    * If you specify a new value for MinSize without specifying a value for
 //    DesiredCapacity, and the new MinSize is larger than the current size of
-//    the group, we implicitly call SetDesiredCapacity to set the size of the
-//    group to the new value of MinSize.
+//    the group, this sets the group's DesiredCapacity to the new MinSize value.
 //
 //    * If you specify a new value for MaxSize without specifying a value for
 //    DesiredCapacity, and the new MaxSize is smaller than the current size
-//    of the group, we implicitly call SetDesiredCapacity to set the size of
-//    the group to the new value of MaxSize.
+//    of the group, this sets the group's DesiredCapacity to the new MaxSize
+//    value.
 //
-//    * All other optional parameters are left unchanged if not specified.
+// To see which parameters have been set, use DescribeAutoScalingGroups. You
+// can also view the scaling policies for an Auto Scaling group using DescribePolicies.
+// If the group has scaling policies, you can update them using PutScalingPolicy.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -6006,8 +6027,8 @@ func (s CompleteLifecycleActionOutput) GoString() string {
 type CreateAutoScalingGroupInput struct {
 	_ struct{} `type:"structure"`
 
-	// The name of the Auto Scaling group. This name must be unique within the scope
-	// of your AWS account.
+	// The name of the Auto Scaling group. This name must be unique per Region per
+	// account.
 	//
 	// AutoScalingGroupName is a required field
 	AutoScalingGroupName *string `min:"1" type:"string" required:"true"`
@@ -6026,10 +6047,11 @@ type CreateAutoScalingGroupInput struct {
 	// in the Amazon EC2 Auto Scaling User Guide.
 	DefaultCooldown *int64 `type:"integer"`
 
-	// The number of EC2 instances that should be running in the group. This number
-	// must be greater than or equal to the minimum size of the group and less than
-	// or equal to the maximum size of the group. If you do not specify a desired
-	// capacity, the default is the minimum size of the group.
+	// The number of Amazon EC2 instances that the Auto Scaling group attempts to
+	// maintain. This number must be greater than or equal to the minimum size of
+	// the group and less than or equal to the maximum size of the group. If you
+	// do not specify a desired capacity, the default is the minimum size of the
+	// group.
 	DesiredCapacity *int64 `type:"integer"`
 
 	// The amount of time, in seconds, that Amazon EC2 Auto Scaling waits before
@@ -6053,8 +6075,6 @@ type CreateAutoScalingGroupInput struct {
 	HealthCheckType *string `min:"1" type:"string"`
 
 	// The ID of the instance used to create a launch configuration for the group.
-	// This parameter, a launch configuration, a launch template, or a mixed instances
-	// policy must be specified.
 	//
 	// When you specify an ID of an instance, Amazon EC2 Auto Scaling creates a
 	// new launch configuration and associates it with the group. This launch configuration
@@ -6064,31 +6084,39 @@ type CreateAutoScalingGroupInput struct {
 	// For more information, see Create an Auto Scaling Group Using an EC2 Instance
 	// (https://docs.aws.amazon.com/autoscaling/ec2/userguide/create-asg-from-instance.html)
 	// in the Amazon EC2 Auto Scaling User Guide.
+	//
+	// You must specify one of the following parameters in your request: LaunchConfigurationName,
+	// LaunchTemplate, InstanceId, or MixedInstancesPolicy.
 	InstanceId *string `min:"1" type:"string"`
 
-	// The name of the launch configuration. This parameter, a launch template,
-	// a mixed instances policy, or an EC2 instance must be specified.
+	// The name of the launch configuration.
 	//
 	// For more information, see Creating an Auto Scaling Group Using a Launch Configuration
 	// (https://docs.aws.amazon.com/autoscaling/ec2/userguide/create-asg.html) in
 	// the Amazon EC2 Auto Scaling User Guide.
+	//
+	// If you do not specify LaunchConfigurationName, you must specify one of the
+	// following parameters: InstanceId, LaunchTemplate, or MixedInstancesPolicy.
 	LaunchConfigurationName *string `min:"1" type:"string"`
 
-	// The launch template to use to launch instances. This parameter, a launch
-	// configuration, a mixed instances policy, or an EC2 instance must be specified.
+	// The launch template to use to launch instances.
 	//
 	// For more information, see Creating an Auto Scaling Group Using a Launch Template
 	// (https://docs.aws.amazon.com/autoscaling/ec2/userguide/create-asg-launch-template.html)
 	// in the Amazon EC2 Auto Scaling User Guide.
+	//
+	// If you do not specify LaunchTemplate, you must specify one of the following
+	// parameters: InstanceId, LaunchConfigurationName, or MixedInstancesPolicy.
 	LaunchTemplate *LaunchTemplateSpecification `type:"structure"`
 
 	// One or more lifecycle hooks.
 	LifecycleHookSpecificationList []*LifecycleHookSpecification `type:"list"`
 
-	// One or more Classic Load Balancers. To specify an Application Load Balancer
-	// or a Network Load Balancer, use TargetGroupARNs instead.
+	// A list of Classic Load Balancers associated with this Auto Scaling group.
+	// For Application Load Balancers and Network Load Balancers, specify a list
+	// of target groups using the TargetGroupARNs property instead.
 	//
-	// For more information, see Using a Load Balancer With an Auto Scaling Group
+	// For more information, see Using a Load Balancer with an Auto Scaling Group
 	// (https://docs.aws.amazon.com/autoscaling/ec2/userguide/autoscaling-load-balancer.html)
 	// in the Amazon EC2 Auto Scaling User Guide.
 	LoadBalancerNames []*string `type:"list"`
@@ -6103,12 +6131,22 @@ type CreateAutoScalingGroupInput struct {
 	// MinSize is a required field
 	MinSize *int64 `type:"integer" required:"true"`
 
-	// The mixed instances policy to use to launch instances. This parameter, a
-	// launch template, a launch configuration, or an EC2 instance must be specified.
+	// An embedded object that specifies a mixed instances policy. The required
+	// parameters must be specified. If optional parameters are unspecified, their
+	// default values are used.
+	//
+	// The policy includes parameters that not only define the distribution of On-Demand
+	// Instances and Spot Instances, the maximum price to pay for Spot instances,
+	// and how the Auto Scaling group allocates instance types to fulfill On-Demand
+	// and Spot capacity, but also the parameters that specify the instance configuration
+	// information—the launch template and instance types.
 	//
 	// For more information, see Auto Scaling Groups with Multiple Instance Types
 	// and Purchase Options (https://docs.aws.amazon.com/autoscaling/ec2/userguide/asg-purchase-options.html)
 	// in the Amazon EC2 Auto Scaling User Guide.
+	//
+	// You must specify one of the following parameters in your request: LaunchConfigurationName,
+	// LaunchTemplate, InstanceId, or MixedInstancesPolicy.
 	MixedInstancesPolicy *MixedInstancesPolicy `type:"structure"`
 
 	// Indicates whether newly launched instances are protected from termination
@@ -6140,7 +6178,13 @@ type CreateAutoScalingGroupInput struct {
 	// in the Amazon EC2 Auto Scaling User Guide.
 	Tags []*Tag `type:"list"`
 
-	// The Amazon Resource Names (ARN) of the target groups.
+	// The Amazon Resource Names (ARN) of the target groups to associate with the
+	// Auto Scaling group. Instances are registered as targets in a target group,
+	// and traffic is routed to the target group.
+	//
+	// For more information, see Using a Load Balancer with an Auto Scaling Group
+	// (https://docs.aws.amazon.com/autoscaling/ec2/userguide/autoscaling-load-balancer.html)
+	// in the Amazon EC2 Auto Scaling User Guide.
 	TargetGroupARNs []*string `type:"list"`
 
 	// One or more termination policies used to select the instance to terminate.
@@ -6438,8 +6482,8 @@ type CreateLaunchConfigurationInput struct {
 	// EC2 instances launched with an IAM role automatically have AWS security credentials
 	// available. You can use IAM roles with Amazon EC2 Auto Scaling to automatically
 	// enable applications running on your EC2 instances to securely access other
-	// AWS resources. For more information, see Use an IAM Role for Applications
-	// That Run on Amazon EC2 Instances (https://docs.aws.amazon.com/autoscaling/ec2/userguide/us-iam-role.html)
+	// AWS resources. For more information, see IAM Role for Applications That Run
+	// on Amazon EC2 Instances (https://docs.aws.amazon.com/autoscaling/ec2/userguide/us-iam-role.html)
 	// in the Amazon EC2 Auto Scaling User Guide.
 	IamInstanceProfile *string `min:"1" type:"string"`
 
@@ -6455,14 +6499,14 @@ type CreateLaunchConfigurationInput struct {
 	// launch configuration derives attributes from the instance, except for the
 	// block device mapping.
 	//
-	// If you do not specify InstanceId, you must specify both ImageId and InstanceType.
-	//
 	// To create a launch configuration with a block device mapping or override
 	// any other instance attributes, specify them as part of the same request.
 	//
 	// For more information, see Create a Launch Configuration Using an EC2 Instance
 	// (https://docs.aws.amazon.com/autoscaling/ec2/userguide/create-lc-with-instanceID.html)
 	// in the Amazon EC2 Auto Scaling User Guide.
+	//
+	// If you do not specify InstanceId, you must specify both ImageId and InstanceType.
 	InstanceId *string `min:"1" type:"string"`
 
 	// Enables detailed monitoring (true) or basic monitoring (false) for the Auto
@@ -6471,11 +6515,11 @@ type CreateLaunchConfigurationInput struct {
 
 	// The instance type of the EC2 instance.
 	//
-	// If you do not specify InstanceId, you must specify InstanceType.
-	//
 	// For information about available instance types, see Available Instance Types
 	// (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html#AvailableInstanceTypes)
 	// in the Amazon EC2 User Guide for Linux Instances.
+	//
+	// If you do not specify InstanceId, you must specify InstanceType.
 	InstanceType *string `min:"1" type:"string"`
 
 	// The ID of the kernel associated with the AMI.
@@ -6486,8 +6530,8 @@ type CreateLaunchConfigurationInput struct {
 	// in the Amazon EC2 User Guide for Linux Instances.
 	KeyName *string `min:"1" type:"string"`
 
-	// The name of the launch configuration. This name must be unique within the
-	// scope of your AWS account.
+	// The name of the launch configuration. This name must be unique per Region
+	// per account.
 	//
 	// LaunchConfigurationName is a required field
 	LaunchConfigurationName *string `min:"1" type:"string" required:"true"`
@@ -6499,10 +6543,10 @@ type CreateLaunchConfigurationInput struct {
 	// placement tenancy attribute set to default), you must set the value of this
 	// parameter to dedicated.
 	//
-	// If you specify this parameter, be sure to specify at least one subnet when
+	// If you specify PlacementTenancy, be sure to specify at least one subnet when
 	// you create your group.
 	//
-	// For more information, see Launching Auto Scaling Instances in a VPC (https://docs.aws.amazon.com/autoscaling/ec2/userguide/asg-in-vpc.html)
+	// For more information, see Instance Placement Tenancy (https://docs.aws.amazon.com/autoscaling/ec2/userguide/asg-in-vpc.html#as-vpc-tenancy)
 	// in the Amazon EC2 Auto Scaling User Guide.
 	//
 	// Valid values: default | dedicated
@@ -8990,37 +9034,56 @@ func (s DisableMetricsCollectionOutput) GoString() string {
 type Ebs struct {
 	_ struct{} `type:"structure"`
 
-	// Indicates whether the volume is deleted on instance termination. The default
-	// value is true.
+	// Indicates whether the volume is deleted on instance termination. For Amazon
+	// EC2 Auto Scaling, the default value is true.
 	DeleteOnTermination *bool `type:"boolean"`
 
-	// Specifies whether the volume should be encrypted. Encrypted EBS volumes must
-	// be attached to instances that support Amazon EBS encryption. Volumes that
-	// are created from encrypted snapshots are automatically encrypted. There is
-	// no way to create an encrypted volume from an unencrypted snapshot or an unencrypted
-	// volume from an encrypted snapshot. If your AMI uses encrypted volumes, you
-	// can only launch it on supported instance types. For more information, see
-	// Amazon EBS Encryption (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html)
-	// in the Amazon EC2 User Guide for Linux Instances.
+	// Specifies whether the volume should be encrypted. Encrypted EBS volumes can
+	// only be attached to instances that support Amazon EBS encryption. For more
+	// information, see Supported Instance Types (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html#EBSEncryption_supported_instances).
+	// If your AMI uses encrypted volumes, you can also only launch it on supported
+	// instance types.
+	//
+	// If you are creating a volume from a snapshot, you cannot specify an encryption
+	// value. Volumes that are created from encrypted snapshots are automatically
+	// encrypted, and volumes that are created from unencrypted snapshots are automatically
+	// unencrypted. By default, encrypted snapshots use the AWS managed CMK that
+	// is used for EBS encryption, but you can specify a custom CMK when you create
+	// the snapshot. The ability to encrypt a snapshot during copying also allows
+	// you to apply a new CMK to an already-encrypted snapshot. Volumes restored
+	// from the resulting copy are only accessible using the new CMK.
+	//
+	// Enabling encryption by default (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html#encryption-by-default)
+	// results in all EBS volumes being encrypted with the AWS managed CMK or a
+	// customer managed CMK, whether or not the snapshot was encrypted.
+	//
+	// For more information, see Using Encryption with EBS-Backed AMIs (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIEncryption.html)
+	// in the Amazon EC2 User Guide for Linux Instances and Required CMK Key Policy
+	// for Use with Encrypted Volumes (https://docs.aws.amazon.com/autoscaling/ec2/userguide/key-policy-requirements-EBS-encryption.html)
+	// in the Amazon EC2 Auto Scaling User Guide.
 	Encrypted *bool `type:"boolean"`
 
 	// The number of I/O operations per second (IOPS) to provision for the volume.
-	// For more information, see Amazon EBS Volume Types (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSVolumeTypes.html)
+	// The maximum ratio of IOPS to volume size (in GiB) is 50:1. For more information,
+	// see Amazon EBS Volume Types (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSVolumeTypes.html)
 	// in the Amazon EC2 User Guide for Linux Instances.
 	//
 	// Conditional: This parameter is required when the volume type is io1. (Not
 	// used with standard, gp2, st1, or sc1 volumes.)
 	Iops *int64 `min:"100" type:"integer"`
 
-	// The ID of the snapshot. This parameter is optional if you specify a volume
-	// size.
+	// The snapshot ID of the volume to use.
+	//
+	// Conditional: This parameter is optional if you specify a volume size. If
+	// you specify both SnapshotId and VolumeSize, VolumeSize must be equal or greater
+	// than the size of the snapshot.
 	SnapshotId *string `min:"1" type:"string"`
 
-	// The volume size, in GiB.
+	// The volume size, in Gibibytes (GiB).
 	//
-	// Constraints: 1-1,024 for standard, 4-16,384 for io1, 1-16,384 for gp2, and
-	// 500-16,384 for st1 and sc1. If you specify a snapshot, the volume size must
-	// be equal to or larger than the snapshot size.
+	// This can be a number from 1-1,024 for standard, 4-16,384 for io1, 1-16,384
+	// for gp2, and 500-16,384 for st1 and sc1. If you specify a snapshot, the volume
+	// size must be equal to or larger than the snapshot size.
 	//
 	// Default: If you create a volume from a snapshot and you don't specify a volume
 	// size, the default is the snapshot size.
@@ -9356,7 +9419,7 @@ type ExecutePolicyInput struct {
 	// Indicates whether Amazon EC2 Auto Scaling waits for the cooldown period to
 	// complete before executing the policy.
 	//
-	// This parameter is not supported if the policy type is StepScaling.
+	// This parameter is not supported if the policy type is StepScaling or TargetTrackingScaling.
 	//
 	// For more information, see Scaling Cooldowns (https://docs.aws.amazon.com/autoscaling/ec2/userguide/Cooldown.html)
 	// in the Amazon EC2 Auto Scaling User Guide.
@@ -10093,7 +10156,8 @@ func (s *InstanceMonitoring) SetEnabled(v bool) *InstanceMonitoring {
 //
 // The instances distribution specifies the distribution of On-Demand Instances
 // and Spot Instances, the maximum price to pay for Spot Instances, and how
-// the Auto Scaling group allocates instance types.
+// the Auto Scaling group allocates instance types to fulfill On-Demand and
+// Spot capacity.
 type InstancesDistribution struct {
 	_ struct{} `type:"structure"`
 
@@ -10118,11 +10182,10 @@ type InstancesDistribution struct {
 	OnDemandBaseCapacity *int64 `type:"integer"`
 
 	// Controls the percentages of On-Demand Instances and Spot Instances for your
-	// additional capacity beyond OnDemandBaseCapacity.
+	// additional capacity beyond OnDemandBaseCapacity. The range is 0–100.
 	//
-	// The range is 0–100. The default value is 100. If you leave this parameter
-	// set to 100, the percentages are 100% for On-Demand Instances and 0% for Spot
-	// Instances.
+	// The default value is 100. If you leave this parameter set to 100, the percentages
+	// are 100% for On-Demand Instances and 0% for Spot Instances.
 	OnDemandPercentageAboveBaseCapacity *int64 `type:"integer"`
 
 	// Indicates how to allocate Spot capacity across Spot pools.
@@ -10134,9 +10197,9 @@ type InstancesDistribution struct {
 
 	// The number of Spot pools to use to allocate your Spot capacity. The Spot
 	// pools are determined from the different instance types in the Overrides array
-	// of LaunchTemplate.
+	// of LaunchTemplate. The range is 1–20.
 	//
-	// The range is 1–20 and the default is 2.
+	// The default value is 2.
 	SpotInstancePools *int64 `type:"integer"`
 
 	// The maximum price per unit hour that you are willing to pay for a Spot Instance.
@@ -10417,9 +10480,8 @@ type LaunchTemplate struct {
 	LaunchTemplateSpecification *LaunchTemplateSpecification `type:"structure"`
 
 	// Any parameters that you specify override the same parameters in the launch
-	// template. Currently, the only supported override is instance type.
-	//
-	// You must specify between 2 and 20 overrides.
+	// template. Currently, the only supported override is instance type. You must
+	// specify between 2 and 20 overrides.
 	Overrides []*LaunchTemplateOverrides `type:"list"`
 }
 
@@ -11085,27 +11147,27 @@ func (s *MetricGranularityType) SetGranularity(v string) *MetricGranularityType 
 
 // Describes a mixed instances policy for an Auto Scaling group. With mixed
 // instances, your Auto Scaling group can provision a combination of On-Demand
-// Instances and Spot Instances across multiple instance types. Used in combination
-// with CreateAutoScalingGroup. For more information, see Auto Scaling Groups
-// with Multiple Instance Types and Purchase Options (https://docs.aws.amazon.com/autoscaling/ec2/userguide/asg-purchase-options.html)
+// Instances and Spot Instances across multiple instance types. For more information,
+// see Auto Scaling Groups with Multiple Instance Types and Purchase Options
+// (https://docs.aws.amazon.com/autoscaling/ec2/userguide/asg-purchase-options.html)
 // in the Amazon EC2 Auto Scaling User Guide.
 //
-// When you create your Auto Scaling group, you can specify a launch configuration
-// or template as a parameter for the top-level object, or you can specify a
-// mixed instances policy, but not both at the same time.
+// You can create a mixed instances policy for a new Auto Scaling group (CreateAutoScalingGroup),
+// or you can create it for an existing group by updating the group (UpdateAutoScalingGroup)
+// to specify MixedInstancesPolicy as the top-level parameter instead of a launch
+// configuration or template.
 type MixedInstancesPolicy struct {
 	_ struct{} `type:"structure"`
 
 	// The instances distribution to use.
 	//
-	// If you leave this parameter unspecified when creating the group, the default
-	// values are used.
+	// If you leave this parameter unspecified when creating a mixed instances policy,
+	// the default values are used.
 	InstancesDistribution *InstancesDistribution `type:"structure"`
 
-	// The launch template and overrides.
+	// The launch template and instance types (overrides).
 	//
-	// This parameter is required when creating an Auto Scaling group with a mixed
-	// instances policy, but is not required when updating the group.
+	// This parameter must be specified when creating a mixed instances policy.
 	LaunchTemplate *LaunchTemplate `type:"structure"`
 }
 
@@ -11222,7 +11284,7 @@ type PredefinedMetricSpecification struct {
 	//    interfaces by the Auto Scaling group.
 	//
 	//    * ALBRequestCountPerTarget - Number of requests completed per target in
-	//    an Application Load Balancer or a Network Load Balancer target group.
+	//    an Application Load Balancer target group.
 	//
 	// For predefined metric types ASGAverageCPUUtilization, ASGAverageNetworkIn,
 	// and ASGAverageNetworkOut, the parameter must not be specified as the resource
@@ -11826,17 +11888,17 @@ type PutScheduledUpdateGroupActionInput struct {
 	// AutoScalingGroupName is a required field
 	AutoScalingGroupName *string `min:"1" type:"string" required:"true"`
 
-	// The number of EC2 instances that should be running in the group.
+	// The number of EC2 instances that should be running in the Auto Scaling group.
 	DesiredCapacity *int64 `type:"integer"`
 
-	// The time for the recurring schedule to end. Amazon EC2 Auto Scaling does
-	// not perform the action after this time.
+	// The date and time for the recurring schedule to end. Amazon EC2 Auto Scaling
+	// does not perform the action after this time.
 	EndTime *time.Time `type:"timestamp"`
 
-	// The maximum size for the Auto Scaling group.
+	// The maximum number of instances in the Auto Scaling group.
 	MaxSize *int64 `type:"integer"`
 
-	// The minimum size for the Auto Scaling group.
+	// The minimum number of instances in the Auto Scaling group.
 	MinSize *int64 `type:"integer"`
 
 	// The recurring schedule for this action, in Unix cron syntax format. This
@@ -11844,6 +11906,9 @@ type PutScheduledUpdateGroupActionInput struct {
 	// [Day_of_Month] [Month_of_Year] [Day_of_Week]. The value must be in quotes
 	// (for example, "30 0 1 1,6,12 *"). For more information about this format,
 	// see Crontab (http://crontab.org).
+	//
+	// When StartTime and EndTime are specified with Recurrence, they form the boundaries
+	// of when the recurring action starts and stops.
 	Recurrence *string `min:"1" type:"string"`
 
 	// The name of this scaling action.
@@ -11851,8 +11916,8 @@ type PutScheduledUpdateGroupActionInput struct {
 	// ScheduledActionName is a required field
 	ScheduledActionName *string `min:"1" type:"string" required:"true"`
 
-	// The time for this action to start, in YYYY-MM-DDThh:mm:ssZ format in UTC/GMT
-	// only and in quotes (for example, "2019-06-01T00:00:00Z").
+	// The date and time for this action to start, in YYYY-MM-DDThh:mm:ssZ format
+	// in UTC/GMT only and in quotes (for example, "2019-06-01T00:00:00Z").
 	//
 	// If you specify Recurrence and StartTime, Amazon EC2 Auto Scaling performs
 	// the action at this time, and then performs the action based on the specified
@@ -12122,7 +12187,7 @@ type ScalingPolicy struct {
 	// The name of the scaling policy.
 	PolicyName *string `min:"1" type:"string"`
 
-	// The policy type. The valid values are SimpleScaling and StepScaling.
+	// The policy type. The valid values are SimpleScaling, StepScaling, and TargetTrackingScaling.
 	PolicyType *string `min:"1" type:"string"`
 
 	// The amount by which to scale, based on the specified adjustment type. A positive
@@ -12309,16 +12374,20 @@ type ScheduledUpdateGroupAction struct {
 	// The number of instances you prefer to maintain in the group.
 	DesiredCapacity *int64 `type:"integer"`
 
-	// The date and time that the action is scheduled to end.
+	// The date and time in UTC for the recurring schedule to end. For example,
+	// "2019-06-01T00:00:00Z".
 	EndTime *time.Time `type:"timestamp"`
 
-	// The maximum size of the group.
+	// The maximum number of instances in the Auto Scaling group.
 	MaxSize *int64 `type:"integer"`
 
-	// The minimum size of the group.
+	// The minimum number of instances in the Auto Scaling group.
 	MinSize *int64 `type:"integer"`
 
-	// The recurring schedule for the action.
+	// The recurring schedule for the action, in Unix cron syntax format.
+	//
+	// When StartTime and EndTime are specified with Recurrence, they form the boundaries
+	// of when the recurring action starts and stops.
 	Recurrence *string `min:"1" type:"string"`
 
 	// The Amazon Resource Name (ARN) of the scheduled action.
@@ -12327,10 +12396,7 @@ type ScheduledUpdateGroupAction struct {
 	// The name of the scheduled action.
 	ScheduledActionName *string `min:"1" type:"string"`
 
-	// The date and time that the action is scheduled to begin.
-	//
-	// When StartTime and EndTime are specified with Recurrence, they form the boundaries
-	// of when the recurring action starts and stops.
+	// The date and time in UTC for this action to start. For example, "2019-06-01T00:00:00Z".
 	StartTime *time.Time `type:"timestamp"`
 
 	// This parameter is deprecated.
@@ -12418,20 +12484,23 @@ type ScheduledUpdateGroupActionRequest struct {
 	// The number of EC2 instances that should be running in the group.
 	DesiredCapacity *int64 `type:"integer"`
 
-	// The time for the recurring schedule to end. Amazon EC2 Auto Scaling does
-	// not perform the action after this time.
+	// The date and time for the recurring schedule to end. Amazon EC2 Auto Scaling
+	// does not perform the action after this time.
 	EndTime *time.Time `type:"timestamp"`
 
-	// The maximum size of the group.
+	// The maximum number of instances in the Auto Scaling group.
 	MaxSize *int64 `type:"integer"`
 
-	// The minimum size of the group.
+	// The minimum number of instances in the Auto Scaling group.
 	MinSize *int64 `type:"integer"`
 
 	// The recurring schedule for the action, in Unix cron syntax format. This format
 	// consists of five fields separated by white spaces: [Minute] [Hour] [Day_of_Month]
 	// [Month_of_Year] [Day_of_Week]. The value must be in quotes (for example,
 	// "30 0 1 1,6,12 *"). For more information about this format, see Crontab (http://crontab.org).
+	//
+	// When StartTime and EndTime are specified with Recurrence, they form the boundaries
+	// of when the recurring action starts and stops.
 	Recurrence *string `min:"1" type:"string"`
 
 	// The name of the scaling action.
@@ -12439,8 +12508,8 @@ type ScheduledUpdateGroupActionRequest struct {
 	// ScheduledActionName is a required field
 	ScheduledActionName *string `min:"1" type:"string" required:"true"`
 
-	// The time for the action to start, in YYYY-MM-DDThh:mm:ssZ format in UTC/GMT
-	// only and in quotes (for example, "2019-06-01T00:00:00Z").
+	// The date and time for the action to start, in YYYY-MM-DDThh:mm:ssZ format
+	// in UTC/GMT only and in quotes (for example, "2019-06-01T00:00:00Z").
 	//
 	// If you specify Recurrence and StartTime, Amazon EC2 Auto Scaling performs
 	// the action at this time, and then performs the action based on the specified
@@ -13065,17 +13134,17 @@ func (s *TagDescription) SetValue(v string) *TagDescription {
 type TargetTrackingConfiguration struct {
 	_ struct{} `type:"structure"`
 
-	// A customized metric. You can specify either a predefined metric or a customized
+	// A customized metric. You must specify either a predefined metric or a customized
 	// metric.
 	CustomizedMetricSpecification *CustomizedMetricSpecification `type:"structure"`
 
 	// Indicates whether scaling in by the target tracking scaling policy is disabled.
 	// If scaling in is disabled, the target tracking scaling policy doesn't remove
 	// instances from the Auto Scaling group. Otherwise, the target tracking scaling
-	// policy can remove instances from the Auto Scaling group. The default is disabled.
+	// policy can remove instances from the Auto Scaling group. The default is false.
 	DisableScaleIn *bool `type:"boolean"`
 
-	// A predefined metric. You can specify either a predefined metric or a customized
+	// A predefined metric. You must specify either a predefined metric or a customized
 	// metric.
 	PredefinedMetricSpecification *PredefinedMetricSpecification `type:"structure"`
 
@@ -13233,9 +13302,12 @@ type UpdateAutoScalingGroupInput struct {
 	AvailabilityZones []*string `min:"1" type:"list"`
 
 	// The amount of time, in seconds, after a scaling activity completes before
-	// another scaling activity can start. The default value is 300.
+	// another scaling activity can start. The default value is 300. This cooldown
+	// period is not used when a scaling-specific cooldown is specified.
 	//
-	// For more information, see Scaling Cooldowns (https://docs.aws.amazon.com/autoscaling/ec2/userguide/Cooldown.html)
+	// Cooldown periods are not supported for target tracking scaling policies,
+	// step scaling policies, or scheduled scaling. For more information, see Scaling
+	// Cooldowns (https://docs.aws.amazon.com/autoscaling/ec2/userguide/Cooldown.html)
 	// in the Amazon EC2 Auto Scaling User Guide.
 	DefaultCooldown *int64 `type:"integer"`
 
@@ -13260,13 +13332,18 @@ type UpdateAutoScalingGroupInput struct {
 	// balancer health checks.
 	HealthCheckType *string `min:"1" type:"string"`
 
-	// The name of the launch configuration. If you specify this parameter, you
-	// can't specify a launch template or a mixed instances policy.
+	// The name of the launch configuration. If you specify LaunchConfigurationName
+	// in your update request, you can't specify LaunchTemplate or MixedInstancesPolicy.
+	//
+	// To update an Auto Scaling group with a launch configuration with InstanceMonitoring
+	// set to false, you must first disable the collection of group metrics. Otherwise,
+	// you get an error. If you have previously enabled the collection of group
+	// metrics, you can disable it using DisableMetricsCollection.
 	LaunchConfigurationName *string `min:"1" type:"string"`
 
 	// The launch template and version to use to specify the updates. If you specify
-	// this parameter, you can't specify a launch configuration or a mixed instances
-	// policy.
+	// LaunchTemplate in your update request, you can't specify LaunchConfigurationName
+	// or MixedInstancesPolicy.
 	LaunchTemplate *LaunchTemplateSpecification `type:"structure"`
 
 	// The maximum size of the Auto Scaling group.
@@ -13275,8 +13352,10 @@ type UpdateAutoScalingGroupInput struct {
 	// The minimum size of the Auto Scaling group.
 	MinSize *int64 `type:"integer"`
 
-	// The mixed instances policy to use to specify the updates. If you specify
-	// this parameter, you can't specify a launch configuration or a launch template.
+	// An embedded object that specifies a mixed instances policy.
+	//
+	// In your call to UpdateAutoScalingGroup, you can make changes to the policy
+	// that is specified. All optional parameters are left unchanged if not specified.
 	//
 	// For more information, see Auto Scaling Groups with Multiple Instance Types
 	// and Purchase Options (https://docs.aws.amazon.com/autoscaling/ec2/userguide/asg-purchase-options.html)
@@ -13313,7 +13392,7 @@ type UpdateAutoScalingGroupInput struct {
 	// in the Amazon EC2 Auto Scaling User Guide.
 	TerminationPolicies []*string `type:"list"`
 
-	// A comma-separated list of subnet IDs, if you are launching into a VPC.
+	// A comma-separated list of subnet IDs for virtual private cloud (VPC).
 	//
 	// If you specify VPCZoneIdentifier with AvailabilityZones, the subnets that
 	// you specify for this parameter must reside in those Availability Zones.
