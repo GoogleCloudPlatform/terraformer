@@ -5,15 +5,14 @@ import (
 	"fmt"
 	"log"
 	"strconv"
-	"strings"
 
 	"github.com/zclconf/go-cty/cty"
 	ctyconvert "github.com/zclconf/go-cty/cty/convert"
 	"github.com/zclconf/go-cty/cty/msgpack"
 	context "golang.org/x/net/context"
 
-	"github.com/hashicorp/terraform/config/hcl2shim"
 	"github.com/hashicorp/terraform/configs/configschema"
+	"github.com/hashicorp/terraform/configs/hcl2shim"
 	"github.com/hashicorp/terraform/helper/schema"
 	proto "github.com/hashicorp/terraform/internal/tfplugin5"
 	"github.com/hashicorp/terraform/plans/objchange"
@@ -868,7 +867,6 @@ func (s *GRPCProviderServer) ApplyResourceChange(_ context.Context, req *proto.A
 		diff.Meta = private
 	}
 
-	var newRemoved []string
 	for k, d := range diff.Attributes {
 		// We need to turn off any RequiresNew. There could be attributes
 		// without changes in here inserted by helper/schema, but if they have
@@ -876,10 +874,8 @@ func (s *GRPCProviderServer) ApplyResourceChange(_ context.Context, req *proto.A
 		d.RequiresNew = false
 
 		// Check that any "removed" attributes that don't actually exist in the
-		// prior state, or helper/schema will confuse itself, and record them
-		// to make sure they are actually removed from the state.
+		// prior state, or helper/schema will confuse itself
 		if d.NewRemoved {
-			newRemoved = append(newRemoved, k)
 			if _, ok := priorState.Attributes[k]; !ok {
 				delete(diff.Attributes, k)
 			}
@@ -906,19 +902,6 @@ func (s *GRPCProviderServer) ApplyResourceChange(_ context.Context, req *proto.A
 			Msgpack: newStateMP,
 		}
 		return resp, nil
-	}
-
-	// Now remove any primitive zero values that were left from NewRemoved
-	// attributes. Any attempt to reconcile more complex structures to the best
-	// of our abilities happens in normalizeNullValues.
-	for _, r := range newRemoved {
-		if strings.HasSuffix(r, ".#") || strings.HasSuffix(r, ".%") {
-			continue
-		}
-		switch newInstanceState.Attributes[r] {
-		case "", "0", "false":
-			delete(newInstanceState.Attributes, r)
-		}
 	}
 
 	// We keep the null val if we destroyed the resource, otherwise build the
@@ -1223,6 +1206,8 @@ func normalizeNullValues(dst, src cty.Value, apply bool) cty.Value {
 		}
 	}
 
+	// check the invariants that we need below, to ensure we are working with
+	// non-null and known values.
 	if src.IsNull() || !src.IsKnown() || !dst.IsKnown() {
 		return dst
 	}
@@ -1341,8 +1326,12 @@ func normalizeNullValues(dst, src cty.Value, apply bool) cty.Value {
 			return cty.ListVal(dsts)
 		}
 
-	case ty.IsPrimitiveType():
-		if dst.IsNull() && src.IsWhollyKnown() && apply {
+	case ty == cty.String:
+		// The legacy SDK should not be able to remove a value during plan or
+		// apply, however we are only going to overwrite this if the source was
+		// an empty string, since that is what is often equated with unset and
+		// lost in the diff process.
+		if dst.IsNull() && src.AsString() == "" {
 			return src
 		}
 	}
@@ -1368,11 +1357,19 @@ func validateConfigNulls(v cty.Value, path cty.Path) []*proto.Diagnostic {
 		for it.Next() {
 			kv, ev := it.Element()
 			if ev.IsNull() {
+				// if this is a set, the kv is also going to be null which
+				// isn't a valid path element, so we can't append it to the
+				// diagnostic.
+				p := path
+				if !kv.IsNull() {
+					p = append(p, cty.IndexStep{Key: kv})
+				}
+
 				diags = append(diags, &proto.Diagnostic{
 					Severity:  proto.Diagnostic_ERROR,
 					Summary:   "Null value found in list",
 					Detail:    "Null values are not allowed for this attribute value.",
-					Attribute: convert.PathToAttributePath(append(path, cty.IndexStep{Key: kv})),
+					Attribute: convert.PathToAttributePath(p),
 				})
 				continue
 			}

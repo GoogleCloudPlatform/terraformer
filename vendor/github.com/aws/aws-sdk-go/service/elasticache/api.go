@@ -463,19 +463,19 @@ func (c *ElastiCache) CopySnapshotRequest(input *CopySnapshotInput) (req *reques
 //    * Error Message: ElastiCache has not been granted READ permissions %s
 //    on the S3 Bucket. Solution: Add List and Read permissions on the bucket.
 //    For more information, see Step 2: Grant ElastiCache Access to Your Amazon
-//    S3 Bucket (https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/backups-exporting.html#backups-exporting-grant-access.html)
+//    S3 Bucket (https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/backups-exporting.html#backups-exporting-grant-access)
 //    in the ElastiCache User Guide.
 //
 //    * Error Message: ElastiCache has not been granted WRITE permissions %s
 //    on the S3 Bucket. Solution: Add Upload/Delete permissions on the bucket.
 //    For more information, see Step 2: Grant ElastiCache Access to Your Amazon
-//    S3 Bucket (https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/backups-exporting.html#backups-exporting-grant-access.html)
+//    S3 Bucket (https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/backups-exporting.html#backups-exporting-grant-access)
 //    in the ElastiCache User Guide.
 //
 //    * Error Message: ElastiCache has not been granted READ_ACP permissions
 //    %s on the S3 Bucket. Solution: Add View Permissions on the bucket. For
 //    more information, see Step 2: Grant ElastiCache Access to Your Amazon
-//    S3 Bucket (https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/backups-exporting.html#backups-exporting-grant-access.html)
+//    S3 Bucket (https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/backups-exporting.html#backups-exporting-grant-access)
 //    in the ElastiCache User Guide.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -1006,7 +1006,7 @@ func (c *ElastiCache) CreateReplicationGroupRequest(input *CreateReplicationGrou
 // replicas. Writes to the primary are asynchronously propagated to the replicas.
 //
 // A Redis (cluster mode enabled) replication group is a collection of 1 to
-// 15 node groups (shards). Each node group (shard) has one read/write primary
+// 90 node groups (shards). Each node group (shard) has one read/write primary
 // node and up to 5 read-only replica nodes. Writes to the primary are asynchronously
 // propagated to the replicas. Redis (cluster mode enabled) replication groups
 // partition the data across node groups (shards).
@@ -1079,7 +1079,7 @@ func (c *ElastiCache) CreateReplicationGroupRequest(input *CreateReplicationGrou
 //   * ErrCodeNodeGroupsPerReplicationGroupQuotaExceededFault "NodeGroupsPerReplicationGroupQuotaExceeded"
 //   The request cannot be processed because it would exceed the maximum allowed
 //   number of node groups (shards) in a single replication group. The default
-//   maximum is 15
+//   maximum is 90
 //
 //   * ErrCodeInvalidParameterValueException "InvalidParameterValue"
 //   The value for a parameter is invalid.
@@ -1305,7 +1305,7 @@ func (c *ElastiCache) DecreaseReplicaCountRequest(input *DecreaseReplicaCountInp
 //   * ErrCodeNodeGroupsPerReplicationGroupQuotaExceededFault "NodeGroupsPerReplicationGroupQuotaExceeded"
 //   The request cannot be processed because it would exceed the maximum allowed
 //   number of node groups (shards) in a single replication group. The default
-//   maximum is 15
+//   maximum is 90
 //
 //   * ErrCodeNodeQuotaForCustomerExceededFault "NodeQuotaForCustomerExceeded"
 //   The request cannot be processed because it would exceed the allowed number
@@ -4025,7 +4025,7 @@ func (c *ElastiCache) IncreaseReplicaCountRequest(input *IncreaseReplicaCountInp
 //   * ErrCodeNodeGroupsPerReplicationGroupQuotaExceededFault "NodeGroupsPerReplicationGroupQuotaExceeded"
 //   The request cannot be processed because it would exceed the maximum allowed
 //   number of node groups (shards) in a single replication group. The default
-//   maximum is 15
+//   maximum is 90
 //
 //   * ErrCodeNodeQuotaForCustomerExceededFault "NodeQuotaForCustomerExceeded"
 //   The request cannot be processed because it would exceed the allowed number
@@ -4756,7 +4756,7 @@ func (c *ElastiCache) ModifyReplicationGroupShardConfigurationRequest(input *Mod
 //   * ErrCodeNodeGroupsPerReplicationGroupQuotaExceededFault "NodeGroupsPerReplicationGroupQuotaExceeded"
 //   The request cannot be processed because it would exceed the maximum allowed
 //   number of node groups (shards) in a single replication group. The default
-//   maximum is 15
+//   maximum is 90
 //
 //   * ErrCodeNodeQuotaForCustomerExceededFault "NodeQuotaForCustomerExceeded"
 //   The request cannot be processed because it would exceed the allowed number
@@ -5750,7 +5750,7 @@ type CacheCluster struct {
 	// to true when you create a cluster.
 	//
 	// Required: Only available when creating a replication group in an Amazon VPC
-	// using redis version 3.2.6 or 4.x.
+	// using redis version 3.2.6, 4.x or later.
 	//
 	// Default: false
 	AtRestEncryptionEnabled *bool `type:"boolean"`
@@ -5912,7 +5912,7 @@ type CacheCluster struct {
 	// to true when you create a cluster.
 	//
 	// Required: Only available when creating a replication group in an Amazon VPC
-	// using redis version 3.2.6 or 4.x.
+	// using redis version 3.2.6, 4.x or later.
 	//
 	// Default: false
 	TransitEncryptionEnabled *bool `type:"boolean"`
@@ -7571,7 +7571,7 @@ type CreateReplicationGroupInput struct {
 	// group.
 	//
 	// Required: Only available when creating a replication group in an Amazon VPC
-	// using redis version 3.2.6 or 4.x.
+	// using redis version 3.2.6, 4.x or later.
 	//
 	// Default: false
 	AtRestEncryptionEnabled *bool `type:"boolean"`
@@ -7872,7 +7872,7 @@ type CreateReplicationGroupInput struct {
 	// If you enable in-transit encryption, you must also specify a value for CacheSubnetGroup.
 	//
 	// Required: Only available when creating a replication group in an Amazon VPC
-	// using redis version 3.2.6 or 4.x.
+	// using redis version 3.2.6, 4.x or later.
 	//
 	// Default: false
 	//
@@ -10725,7 +10725,7 @@ type ModifyCacheClusterInput struct {
 	// Only newly created nodes are located in different Availability Zones. For
 	// instructions on how to move existing Memcached nodes to different Availability
 	// Zones, see the Availability Zone Considerations section of Cache Node Considerations
-	// for Memcached (https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/CacheNode.Memcached.html).
+	// for Memcached (https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/CacheNodes.SupportedTypes.html).
 	AZMode *string `type:"string" enum:"AZMode"`
 
 	// If true, this parameter causes the modifications in this request and any
@@ -10821,7 +10821,7 @@ type ModifyCacheClusterInput struct {
 	// Availability Zone. Only newly created nodes can be located in different Availability
 	// Zones. For guidance on how to move existing Memcached nodes to different
 	// Availability Zones, see the Availability Zone Considerations section of Cache
-	// Node Considerations for Memcached (https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/CacheNode.Memcached.html).
+	// Node Considerations for Memcached (https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/CacheNodes.SupportedTypes.html).
 	//
 	// Impact of new add/remove requests upon pending requests
 	//
@@ -11679,8 +11679,8 @@ type NodeGroup struct {
 
 	// The identifier for the node group (shard). A Redis (cluster mode disabled)
 	// replication group contains only 1 node group; therefore, the node group ID
-	// is 0001. A Redis (cluster mode enabled) replication group contains 1 to 15
-	// node groups numbered 0001 to 0015. Optionally, the user can provide the id
+	// is 0001. A Redis (cluster mode enabled) replication group contains 1 to 90
+	// node groups numbered 0001 to 0090. Optionally, the user can provide the id
 	// for a node group.
 	NodeGroupId *string `type:"string"`
 
@@ -12640,7 +12640,7 @@ type ReplicationGroup struct {
 	// to true when you create a cluster.
 	//
 	// Required: Only available when creating a replication group in an Amazon VPC
-	// using redis version 3.2.6 or 4.x.
+	// using redis version 3.2.6, 4.x or later.
 	//
 	// Default: false
 	AtRestEncryptionEnabled *bool `type:"boolean"`
@@ -12731,7 +12731,7 @@ type ReplicationGroup struct {
 	// to true when you create a cluster.
 	//
 	// Required: Only available when creating a replication group in an Amazon VPC
-	// using redis version 3.2.6 or 4.x.
+	// using redis version 3.2.6, 4.x or later.
 	//
 	// Default: false
 	TransitEncryptionEnabled *bool `type:"boolean"`
