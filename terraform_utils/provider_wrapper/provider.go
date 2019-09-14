@@ -167,7 +167,7 @@ func (p *ProviderWrapper) initProvider() error {
 	}
 	logger := hclog.New(&hclog.LoggerOptions{
 		Name:   "plugin",
-		Level:  hclog.Trace,
+		Level:  hclog.Error,
 		Output: os.Stderr,
 	})
 
