@@ -28,14 +28,14 @@ require (
 	github.com/hashicorp/terraform v0.12.3
 	github.com/hashicorp/vault v0.11.5 // indirect
 	github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c // indirect
-	github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365 // indirect
+	github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365
 	github.com/imdario/mergo v0.3.7 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jen20/awspolicyequivalence v1.0.0 // indirect
 	github.com/jonboydell/logzio_client v0.0.0-20190726085421-c93d6b149c1e
 	github.com/joyent/triton-go v0.0.0-20180628001255-830d2b111e62 // indirect
 	github.com/json-iterator/go v1.1.6 // indirect
-	github.com/k0kubun/pp v3.0.1+incompatible // indirect
+	github.com/k0kubun/pp v3.0.1+incompatible
 	github.com/keybase/go-crypto v0.0.0-20181031135447-f919bfda4fc1 // indirect
 	github.com/lusis/go-artifactory v0.0.0-20180304164534-a47f63f234b2 // indirect
 	github.com/miekg/dns v1.0.15 // indirect
@@ -66,9 +66,9 @@ require (
 	google.golang.org/genproto v0.0.0-20190307195333-5fe7a883aa19
 	gopkg.in/resty.v0 v0.4.1 // indirect
 	k8s.io/api v0.0.0-20190116205037-c89978d5f86d // indirect
-	k8s.io/apimachinery v0.0.0-20190116203031-d49e237a2683 // indirect
-	k8s.io/client-go v7.0.0+incompatible // indirect
-	k8s.io/kubectl v0.0.0-20190502165022-ce8d9f55c93c // indirect
+	k8s.io/apimachinery v0.0.0-20190116203031-d49e237a2683
+	k8s.io/client-go v7.0.0+incompatible
+	k8s.io/kubectl v0.0.0-20190502165022-ce8d9f55c93c
 )
 
 go 1.13
