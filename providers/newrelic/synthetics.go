@@ -62,9 +62,7 @@ func (g *SyntheticsGenerator) createSyntheticsMonitorResources(client *synthetic
 	}
 
 	for allMonitors.Count > 0 {
-		//fmt.Printf("%d - Loop\n", offset)
 		for _, monitor := range allMonitors.Monitors {
-			//fmt.Println(monitor.Name)
 			g.Resources = append(g.Resources, terraform_utils.NewResource(
 				fmt.Sprintf("%s", monitor.ID),
 				fmt.Sprintf("%s-%s", normalizeResourceName(monitor.Name), monitor.ID),

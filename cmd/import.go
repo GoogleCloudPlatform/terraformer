@@ -148,7 +148,7 @@ func ImportFromPlan(provider terraform_utils.ProviderGenerator, plan *ImportPlan
 				return err
 			}
 			// create Bucket file
-			if bucketStateDataFile, err := terraform_utils.HclPrint(bucket.BucketGetTfData(path)); err == nil {
+			if bucketStateDataFile, err := terraform_utils.HclPrint(bucket.BucketGetTfData(path), map[string]struct{}{}); err == nil {
 				terraform_output.PrintFile(path+"/bucket.tf", bucketStateDataFile)
 			}
 		} else {
@@ -168,6 +168,9 @@ func ImportFromPlan(provider terraform_utils.ProviderGenerator, plan *ImportPlan
 					Name: options.Bucket,
 				}
 				for k := range provider.GetResourceConnections()[serviceName] {
+					if _, exist := importedResource[k]; !exist {
+						continue
+					}
 					variables["data"]["terraform_remote_state"][k] = map[string]interface{}{
 						"backend": "gcs",
 						"config": map[string]interface{}{
@@ -178,17 +181,20 @@ func ImportFromPlan(provider terraform_utils.ProviderGenerator, plan *ImportPlan
 				}
 			} else {
 				for k := range provider.GetResourceConnections()[serviceName] {
+					if _, exist := importedResource[k]; !exist {
+						continue
+					}
 					variables["data"]["terraform_remote_state"][k] = map[string]interface{}{
 						"backend": "local",
-						"config": map[string]interface{}{
+						"config": [1]interface{}{map[string]interface{}{
 							"path": strings.Repeat("../", strings.Count(path, "/")) + strings.Replace(path, serviceName, k, -1) + "terraform.tfstate",
-						},
+						}},
 					}
 				}
 			}
 			// create variables file
-			if len(provider.GetResourceConnections()[serviceName]) > 0 && options.Connect {
-				variablesFile, err := terraform_utils.HclPrint(variables)
+			if len(provider.GetResourceConnections()[serviceName]) > 0 && options.Connect && len(variables["data"]["terraform_remote_state"]) > 0 {
+				variablesFile, err := terraform_utils.HclPrint(variables, map[string]struct{}{"config": {}})
 				if err != nil {
 					return err
 				}

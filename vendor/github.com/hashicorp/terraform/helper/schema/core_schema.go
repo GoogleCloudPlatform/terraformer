@@ -3,7 +3,7 @@ package schema
 import (
 	"fmt"
 
-	"github.com/hashicorp/terraform/config/configschema"
+	"github.com/hashicorp/terraform/configs/configschema"
 	"github.com/zclconf/go-cty/cty"
 )
 
@@ -39,14 +39,42 @@ func (m schemaMap) CoreConfigSchema() *configschema.Block {
 			ret.Attributes[name] = schema.coreConfigSchemaAttribute()
 			continue
 		}
-		switch schema.Elem.(type) {
-		case *Schema:
+		if schema.Type == TypeMap {
+			// For TypeMap in particular, it isn't valid for Elem to be a
+			// *Resource (since that would be ambiguous in flatmap) and
+			// so Elem is treated as a TypeString schema if so. This matches
+			// how the field readers treat this situation, for compatibility
+			// with configurations targeting Terraform 0.11 and earlier.
+			if _, isResource := schema.Elem.(*Resource); isResource {
+				sch := *schema // shallow copy
+				sch.Elem = &Schema{
+					Type: TypeString,
+				}
+				ret.Attributes[name] = sch.coreConfigSchemaAttribute()
+				continue
+			}
+		}
+		switch schema.ConfigMode {
+		case SchemaConfigModeAttr:
 			ret.Attributes[name] = schema.coreConfigSchemaAttribute()
-		case *Resource:
+		case SchemaConfigModeBlock:
 			ret.BlockTypes[name] = schema.coreConfigSchemaBlock()
-		default:
-			// Should never happen for a valid schema
-			panic(fmt.Errorf("invalid Schema.Elem %#v; need *Schema or *Resource", schema.Elem))
+		default: // SchemaConfigModeAuto, or any other invalid value
+			if schema.Computed && !schema.Optional {
+				// Computed-only schemas are always handled as attributes,
+				// because they never appear in configuration.
+				ret.Attributes[name] = schema.coreConfigSchemaAttribute()
+				continue
+			}
+			switch schema.Elem.(type) {
+			case *Schema, ValueType:
+				ret.Attributes[name] = schema.coreConfigSchemaAttribute()
+			case *Resource:
+				ret.BlockTypes[name] = schema.coreConfigSchemaBlock()
+			default:
+				// Should never happen for a valid schema
+				panic(fmt.Errorf("invalid Schema.Elem %#v; need *Schema or *Resource", schema.Elem))
+			}
 		}
 	}
 
@@ -58,12 +86,42 @@ func (m schemaMap) CoreConfigSchema() *configschema.Block {
 // Elem is an instance of Schema. Use coreConfigSchemaBlock for collections
 // whose elem is a whole resource.
 func (s *Schema) coreConfigSchemaAttribute() *configschema.Attribute {
+	// The Schema.DefaultFunc capability adds some extra weirdness here since
+	// it can be combined with "Required: true" to create a sitution where
+	// required-ness is conditional. Terraform Core doesn't share this concept,
+	// so we must sniff for this possibility here and conditionally turn
+	// off the "Required" flag if it looks like the DefaultFunc is going
+	// to provide a value.
+	// This is not 100% true to the original interface of DefaultFunc but
+	// works well enough for the EnvDefaultFunc and MultiEnvDefaultFunc
+	// situations, which are the main cases we care about.
+	//
+	// Note that this also has a consequence for commands that return schema
+	// information for documentation purposes: running those for certain
+	// providers will produce different results depending on which environment
+	// variables are set. We accept that weirdness in order to keep this
+	// interface to core otherwise simple.
+	reqd := s.Required
+	opt := s.Optional
+	if reqd && s.DefaultFunc != nil {
+		v, err := s.DefaultFunc()
+		// We can't report errors from here, so we'll instead just force
+		// "Required" to false and let the provider try calling its
+		// DefaultFunc again during the validate step, where it can then
+		// return the error.
+		if err != nil || (err == nil && v != nil) {
+			reqd = false
+			opt = true
+		}
+	}
+
 	return &configschema.Attribute{
-		Type:      s.coreConfigSchemaType(),
-		Optional:  s.Optional,
-		Required:  s.Required,
-		Computed:  s.Computed,
-		Sensitive: s.Sensitive,
+		Type:        s.coreConfigSchemaType(),
+		Optional:    opt,
+		Required:    reqd,
+		Computed:    s.Computed,
+		Sensitive:   s.Sensitive,
+		Description: s.Description,
 	}
 }
 
@@ -72,7 +130,7 @@ func (s *Schema) coreConfigSchemaAttribute() *configschema.Attribute {
 // of Resource, and will panic otherwise.
 func (s *Schema) coreConfigSchemaBlock() *configschema.NestedBlock {
 	ret := &configschema.NestedBlock{}
-	if nested := s.Elem.(*Resource).CoreConfigSchema(); nested != nil {
+	if nested := s.Elem.(*Resource).coreConfigSchema(); nested != nil {
 		ret.Block = *nested
 	}
 	switch s.Type {
@@ -94,6 +152,20 @@ func (s *Schema) coreConfigSchemaBlock() *configschema.NestedBlock {
 		// configschema doesn't have a "required" representation for nested
 		// blocks, but we can fake it by requiring at least one item.
 		ret.MinItems = 1
+	}
+	if s.Optional && s.MinItems > 0 {
+		// Historically helper/schema would ignore MinItems if Optional were
+		// set, so we must mimic this behavior here to ensure that providers
+		// relying on that undocumented behavior can continue to operate as
+		// they did before.
+		ret.MinItems = 0
+	}
+	if s.Computed && !s.Optional {
+		// MinItems/MaxItems are meaningless for computed nested blocks, since
+		// they are never set by the user anyway. This ensures that we'll never
+		// generate weird errors about them.
+		ret.MinItems = 0
+		ret.MaxItems = 0
 	}
 
 	return ret
@@ -117,11 +189,16 @@ func (s *Schema) coreConfigSchemaType() cty.Type {
 		switch set := s.Elem.(type) {
 		case *Schema:
 			elemType = set.coreConfigSchemaType()
+		case ValueType:
+			// This represents a mistake in the provider code, but it's a
+			// common one so we'll just shim it.
+			elemType = (&Schema{Type: set}).coreConfigSchemaType()
 		case *Resource:
-			// In practice we don't actually use this for normal schema
-			// construction because we construct a NestedBlock in that
-			// case instead. See schemaMap.CoreConfigSchema.
-			elemType = set.CoreConfigSchema().ImpliedType()
+			// By default we construct a NestedBlock in this case, but this
+			// behavior is selected either for computed-only schemas or
+			// when ConfigMode is explicitly SchemaConfigModeBlock.
+			// See schemaMap.CoreConfigSchema for the exact rules.
+			elemType = set.coreConfigSchema().ImpliedType()
 		default:
 			if set != nil {
 				// Should never happen for a valid schema
@@ -148,8 +225,85 @@ func (s *Schema) coreConfigSchemaType() cty.Type {
 	}
 }
 
-// CoreConfigSchema is a convenient shortcut for calling CoreConfigSchema
-// on the resource's schema.
+// CoreConfigSchema is a convenient shortcut for calling CoreConfigSchema on
+// the resource's schema. CoreConfigSchema adds the implicitly required "id"
+// attribute for top level resources if it doesn't exist.
 func (r *Resource) CoreConfigSchema() *configschema.Block {
+	block := r.coreConfigSchema()
+
+	if block.Attributes == nil {
+		block.Attributes = map[string]*configschema.Attribute{}
+	}
+
+	// Add the implicitly required "id" field if it doesn't exist
+	if block.Attributes["id"] == nil {
+		block.Attributes["id"] = &configschema.Attribute{
+			Type:     cty.String,
+			Optional: true,
+			Computed: true,
+		}
+	}
+
+	_, timeoutsAttr := block.Attributes[TimeoutsConfigKey]
+	_, timeoutsBlock := block.BlockTypes[TimeoutsConfigKey]
+
+	// Insert configured timeout values into the schema, as long as the schema
+	// didn't define anything else by that name.
+	if r.Timeouts != nil && !timeoutsAttr && !timeoutsBlock {
+		timeouts := configschema.Block{
+			Attributes: map[string]*configschema.Attribute{},
+		}
+
+		if r.Timeouts.Create != nil {
+			timeouts.Attributes[TimeoutCreate] = &configschema.Attribute{
+				Type:     cty.String,
+				Optional: true,
+			}
+		}
+
+		if r.Timeouts.Read != nil {
+			timeouts.Attributes[TimeoutRead] = &configschema.Attribute{
+				Type:     cty.String,
+				Optional: true,
+			}
+		}
+
+		if r.Timeouts.Update != nil {
+			timeouts.Attributes[TimeoutUpdate] = &configschema.Attribute{
+				Type:     cty.String,
+				Optional: true,
+			}
+		}
+
+		if r.Timeouts.Delete != nil {
+			timeouts.Attributes[TimeoutDelete] = &configschema.Attribute{
+				Type:     cty.String,
+				Optional: true,
+			}
+		}
+
+		if r.Timeouts.Default != nil {
+			timeouts.Attributes[TimeoutDefault] = &configschema.Attribute{
+				Type:     cty.String,
+				Optional: true,
+			}
+		}
+
+		block.BlockTypes[TimeoutsConfigKey] = &configschema.NestedBlock{
+			Nesting: configschema.NestingSingle,
+			Block:   timeouts,
+		}
+	}
+
+	return block
+}
+
+func (r *Resource) coreConfigSchema() *configschema.Block {
+	return schemaMap(r.Schema).CoreConfigSchema()
+}
+
+// CoreConfigSchema is a convenient shortcut for calling CoreConfigSchema
+// on the backends's schema.
+func (r *Backend) CoreConfigSchema() *configschema.Block {
 	return schemaMap(r.Schema).CoreConfigSchema()
 }

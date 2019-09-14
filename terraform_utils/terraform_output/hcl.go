@@ -29,7 +29,7 @@ func OutputHclFiles(resources []terraform_utils.Resource, provider terraform_uti
 		return err
 	}
 	// create provider file
-	providerDataFile, err := terraform_utils.HclPrint(provider.GetProviderData())
+	providerDataFile, err := terraform_utils.HclPrint(provider.GetProviderData(), map[string]struct{}{})
 	if err != nil {
 		return err
 	}
@@ -72,7 +72,7 @@ func OutputHclFiles(resources []terraform_utils.Resource, provider terraform_uti
 	}
 	if len(outputsByResource) > 0 {
 		outputs["output"] = outputsByResource
-		outputsFile, err := terraform_utils.HclPrint(outputs)
+		outputsFile, err := terraform_utils.HclPrint(outputs, map[string]struct{}{})
 		if err != nil {
 			return err
 		}

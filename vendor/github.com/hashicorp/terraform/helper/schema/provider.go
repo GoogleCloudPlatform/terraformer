@@ -8,10 +8,14 @@ import (
 	"sync"
 
 	"github.com/hashicorp/go-multierror"
-	"github.com/hashicorp/terraform/config"
-	"github.com/hashicorp/terraform/config/configschema"
+	"github.com/hashicorp/terraform/configs/configschema"
 	"github.com/hashicorp/terraform/terraform"
 )
+
+var ReservedProviderFields = []string{
+	"alias",
+	"version",
+}
 
 // Provider represents a resource provider in Terraform, and properly
 // implements all of the ResourceProvider API.
@@ -64,6 +68,8 @@ type Provider struct {
 	stopCtx       context.Context
 	stopCtxCancel context.CancelFunc
 	stopOnce      sync.Once
+
+	TerraformVersion string
 }
 
 // ConfigureFunc is the function used to configure a Provider.
@@ -114,7 +120,7 @@ func (p *Provider) InternalValidate() error {
 }
 
 func isReservedProviderFieldName(name string) bool {
-	for _, reservedName := range config.ReservedProviderFields {
+	for _, reservedName := range ReservedProviderFields {
 		if name == reservedName {
 			return true
 		}
@@ -251,7 +257,7 @@ func (p *Provider) Configure(c *terraform.ResourceConfig) error {
 
 	// Get a ResourceData for this configuration. To do this, we actually
 	// generate an intermediary "diff" although that is never exposed.
-	diff, err := sm.Diff(nil, c, nil, p.meta)
+	diff, err := sm.Diff(nil, c, nil, p.meta, true)
 	if err != nil {
 		return err
 	}
@@ -296,6 +302,20 @@ func (p *Provider) Diff(
 	return r.Diff(s, c, p.meta)
 }
 
+// SimpleDiff is used by the new protocol wrappers to get a diff that doesn't
+// attempt to calculate ignore_changes.
+func (p *Provider) SimpleDiff(
+	info *terraform.InstanceInfo,
+	s *terraform.InstanceState,
+	c *terraform.ResourceConfig) (*terraform.InstanceDiff, error) {
+	r, ok := p.ResourcesMap[info.Type]
+	if !ok {
+		return nil, fmt.Errorf("unknown resource type: %s", info.Type)
+	}
+
+	return r.simpleDiff(s, c, p.meta)
+}
+
 // Refresh implementation of terraform.ResourceProvider interface.
 func (p *Provider) Refresh(
 	info *terraform.InstanceInfo,
@@ -311,7 +331,7 @@ func (p *Provider) Refresh(
 // Resources implementation of terraform.ResourceProvider interface.
 func (p *Provider) Resources() []terraform.ResourceType {
 	keys := make([]string, 0, len(p.ResourcesMap))
-	for k, _ := range p.ResourcesMap {
+	for k := range p.ResourcesMap {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)

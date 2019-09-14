@@ -15,14 +15,17 @@
 package kubernetes
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"log"
 
-	tfschema "github.com/hashicorp/terraform/helper/schema"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/zclconf/go-cty/cty"
+
 	"github.com/pkg/errors"
-	tfk8s "github.com/terraform-providers/terraform-provider-kubernetes/kubernetes"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/sets"
 	"k8s.io/client-go/discovery"
+	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp" // GKE support
 	"k8s.io/kubectl/pkg/pluginutils"
 )
 
@@ -31,7 +34,7 @@ type KubernetesProvider struct {
 	region string
 }
 
-const k8sProviderVersion = ">=1.4.0"
+const k8sProviderVersion = ">=1.9.0"
 
 func (p KubernetesProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{}
@@ -77,14 +80,21 @@ func (p *KubernetesProvider) GetSupportedService() map[string]terraform_utils.Se
 
 	dc, err := discovery.NewDiscoveryClientForConfig(config)
 	if err != nil {
+		log.Println(err)
 		return resources
 	}
 
 	lists, err := dc.ServerPreferredResources()
 	if err != nil {
+		log.Println(err)
 		return resources
 	}
-
+	provider, err := provider_wrapper.NewProviderWrapper("kubernetes", cty.Value{})
+	if err != nil {
+		log.Println(err)
+		return resources
+	}
+	resp := provider.Provider.GetSchema()
 	for _, list := range lists {
 		if len(list.APIResources) == 0 {
 			continue
@@ -106,7 +116,7 @@ func (p *KubernetesProvider) GetSupportedService() map[string]terraform_utils.Se
 			}
 
 			// filter to resource that are supported by terraform kubernetes provider
-			if _, ok := tfk8s.Provider().(*tfschema.Provider).ResourcesMap[extractTfResourceName(resource.Kind)]; !ok {
+			if _, ok := resp.ResourceTypes[extractTfResourceName(resource.Kind)]; !ok {
 				continue
 			}
 

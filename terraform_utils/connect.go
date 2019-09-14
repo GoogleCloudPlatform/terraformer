@@ -31,7 +31,7 @@ func ConnectServices(importResources map[string][]Resource, resourceConnections 
 								key = ccc.GetIDKey()
 							}
 							keyValue := ccc.InstanceInfo.Type + "_" + ccc.ResourceName + "_" + key
-							linkValue := "${data.terraform_remote_state." + k + "." + keyValue + "}"
+							linkValue := "${data.terraform_remote_state." + k + ".outputs." + keyValue + "}"
 
 							tfResource := importResources[resource][i]
 							if ccc.InstanceState.Attributes[key] == tfResource.InstanceState.Attributes[v[0]] {

@@ -32,9 +32,6 @@ type Backend struct {
 	defaultStateFile string
 
 	encryptionKey []byte
-
-	projectID string
-	region    string
 }
 
 func New() backend.Backend {
@@ -80,6 +77,7 @@ func New() backend.Backend {
 				Optional:    true,
 				Description: "Google Cloud Project ID",
 				Default:     "",
+				Removed:     "Please remove this attribute. It is not used since the backend no longer creates the bucket if it does not yet exist.",
 			},
 
 			"region": {
@@ -87,6 +85,7 @@ func New() backend.Backend {
 				Optional:    true,
 				Description: "Region / location in which to create the bucket",
 				Default:     "",
+				Removed:     "Please remove this attribute. It is not used since the backend no longer creates the bucket if it does not yet exist.",
 			},
 		},
 	}
@@ -115,15 +114,6 @@ func (b *Backend) configure(ctx context.Context) error {
 
 	b.defaultStateFile = strings.TrimLeft(data.Get("path").(string), "/")
 
-	b.projectID = data.Get("project").(string)
-	if id := os.Getenv("GOOGLE_PROJECT"); b.projectID == "" && id != "" {
-		b.projectID = id
-	}
-	b.region = data.Get("region").(string)
-	if r := os.Getenv("GOOGLE_REGION"); b.projectID == "" && r != "" {
-		b.region = r
-	}
-
 	var opts []option.ClientOption
 
 	creds := data.Get("credentials").(string)
@@ -148,7 +138,7 @@ func (b *Backend) configure(ctx context.Context) error {
 			Email:      account.ClientEmail,
 			PrivateKey: []byte(account.PrivateKey),
 			Scopes:     []string{storage.ScopeReadWrite},
-			TokenURL:   "https://accounts.google.com/o/oauth2/token",
+			TokenURL:   "https://oauth2.googleapis.com/token",
 		}
 
 		opts = append(opts, option.WithHTTPClient(conf.Client(ctx)))

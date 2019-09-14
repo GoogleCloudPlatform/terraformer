@@ -16,9 +16,8 @@ package aws
 
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/aws/aws-sdk-go/service/cloudfront"
-
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/cloudfront"
 )
 
 var cloudFrontAllowEmptyValues = []string{"tags."}
