@@ -41,20 +41,3 @@ func (s *AWSService) generateSession() *session.Session {
 
 	return sess
 }
-
-func (s *AWSService) PostConvertHook() error {
-	for _, r := range s.Resources {
-		tagsMap, resourceHasTags := r.Item["tags"]
-		if resourceHasTags && len(tagsMap.(map[string]interface{})) > 0 {
-			var newTags []map[string]interface{}
-			for tagName, tagValue := range r.Item["tags"].(map[string]interface{}) {
-				newTag := make(map[string]interface{})
-				newTag[tagName] = tagValue
-				newTags = append(newTags, newTag)
-			}
-			r.Item["tags"] = newTags
-		}
-	}
-
-	return nil
-}

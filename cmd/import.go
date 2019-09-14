@@ -168,6 +168,9 @@ func ImportFromPlan(provider terraform_utils.ProviderGenerator, plan *ImportPlan
 					Name: options.Bucket,
 				}
 				for k := range provider.GetResourceConnections()[serviceName] {
+					if _, exist := importedResource[k]; !exist {
+						continue
+					}
 					variables["data"]["terraform_remote_state"][k] = map[string]interface{}{
 						"backend": "gcs",
 						"config": map[string]interface{}{
@@ -178,6 +181,9 @@ func ImportFromPlan(provider terraform_utils.ProviderGenerator, plan *ImportPlan
 				}
 			} else {
 				for k := range provider.GetResourceConnections()[serviceName] {
+					if _, exist := importedResource[k]; !exist {
+						continue
+					}
 					variables["data"]["terraform_remote_state"][k] = map[string]interface{}{
 						"backend": "local",
 						"config": [1]interface{}{map[string]interface{}{
@@ -187,7 +193,7 @@ func ImportFromPlan(provider terraform_utils.ProviderGenerator, plan *ImportPlan
 				}
 			}
 			// create variables file
-			if len(provider.GetResourceConnections()[serviceName]) > 0 && options.Connect {
+			if len(provider.GetResourceConnections()[serviceName]) > 0 && options.Connect && len(variables["data"]["terraform_remote_state"]) > 0 {
 				variablesFile, err := terraform_utils.HclPrint(variables, map[string]struct{}{"config": {}})
 				if err != nil {
 					return err
