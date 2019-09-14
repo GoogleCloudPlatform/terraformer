@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/hashicorp/terraform/addrs"
 	"github.com/hashicorp/terraform/backend"
-	"github.com/hashicorp/terraform/config"
 	"github.com/hashicorp/terraform/helper/wrappedstreams"
 	"github.com/hashicorp/terraform/repl"
 	"github.com/hashicorp/terraform/tfdiags"
@@ -26,10 +26,11 @@ func (c *ConsoleCommand) Run(args []string) int {
 		return 1
 	}
 
-	cmdFlags := c.Meta.flagSet("console")
+	cmdFlags := c.Meta.defaultFlagSet("console")
 	cmdFlags.StringVar(&c.Meta.statePath, "state", DefaultStateFilename, "path")
 	cmdFlags.Usage = func() { c.Ui.Error(c.Help()) }
 	if err := cmdFlags.Parse(args); err != nil {
+		c.Ui.Error(fmt.Sprintf("Error parsing command line flags: %s\n", err.Error()))
 		return 1
 	}
 
@@ -39,45 +40,64 @@ func (c *ConsoleCommand) Run(args []string) int {
 		return 1
 	}
 
+	// Check for user-supplied plugin path
+	if c.pluginPath, err = c.loadPluginPath(); err != nil {
+		c.Ui.Error(fmt.Sprintf("Error loading plugin path: %s", err))
+		return 1
+	}
+
 	var diags tfdiags.Diagnostics
 
-	// Load the module
-	mod, diags := c.Module(configPath)
+	backendConfig, backendDiags := c.loadBackendConfig(configPath)
+	diags = diags.Append(backendDiags)
 	if diags.HasErrors() {
 		c.showDiagnostics(diags)
 		return 1
 	}
 
-	var conf *config.Config
-	if mod != nil {
-		conf = mod.Config()
-	}
-
 	// Load the backend
-	b, err := c.Backend(&BackendOpts{
-		Config: conf,
+	b, backendDiags := c.Backend(&BackendOpts{
+		Config: backendConfig,
 	})
-
-	if err != nil {
-		c.Ui.Error(fmt.Sprintf("Failed to load backend: %s", err))
+	diags = diags.Append(backendDiags)
+	if backendDiags.HasErrors() {
+		c.showDiagnostics(diags)
 		return 1
 	}
 
 	// We require a local backend
 	local, ok := b.(backend.Local)
 	if !ok {
+		c.showDiagnostics(diags) // in case of any warnings in here
 		c.Ui.Error(ErrUnsupportedLocalOp)
 		return 1
 	}
 
 	// Build the operation
-	opReq := c.Operation()
-	opReq.Module = mod
+	opReq := c.Operation(b)
+	opReq.ConfigDir = configPath
+	opReq.ConfigLoader, err = c.initConfigLoader()
+	if err != nil {
+		diags = diags.Append(err)
+		c.showDiagnostics(diags)
+		return 1
+	}
+
+	{
+		var moreDiags tfdiags.Diagnostics
+		opReq.Variables, moreDiags = c.collectVariableValues()
+		diags = diags.Append(moreDiags)
+		if moreDiags.HasErrors() {
+			c.showDiagnostics(diags)
+			return 1
+		}
+	}
 
 	// Get the context
-	ctx, _, err := local.Context(opReq)
-	if err != nil {
-		c.Ui.Error(err.Error())
+	ctx, _, ctxDiags := local.Context(opReq)
+	diags = diags.Append(ctxDiags)
+	if ctxDiags.HasErrors() {
+		c.showDiagnostics(diags)
 		return 1
 	}
 
@@ -94,9 +114,29 @@ func (c *ConsoleCommand) Run(args []string) int {
 		ErrorWriter: wrappedstreams.Stderr(),
 	}
 
+	// Before we can evaluate expressions, we must compute and populate any
+	// derived values (input variables, local values, output values)
+	// that are not stored in the persistent state.
+	scope, scopeDiags := ctx.Eval(addrs.RootModuleInstance)
+	diags = diags.Append(scopeDiags)
+	if scope == nil {
+		// scope is nil if there are errors so bad that we can't even build a scope.
+		// Otherwise, we'll try to eval anyway.
+		c.showDiagnostics(diags)
+		return 1
+	}
+	if diags.HasErrors() {
+		diags = diags.Append(tfdiags.SimpleWarning("Due to the problems above, some expressions may produce unexpected results."))
+	}
+
+	// Before we become interactive we'll show any diagnostics we encountered
+	// during initialization, and then afterwards the driver will manage any
+	// further diagnostics itself.
+	c.showDiagnostics(diags)
+
 	// IO Loop
 	session := &repl.Session{
-		Interpolater: ctx.Interpolater(),
+		Scope: scope,
 	}
 
 	// Determine if stdin is a pipe. If so, we evaluate directly.
@@ -111,11 +151,14 @@ func (c *ConsoleCommand) modePiped(session *repl.Session, ui cli.Ui) int {
 	var lastResult string
 	scanner := bufio.NewScanner(wrappedstreams.Stdin())
 	for scanner.Scan() {
-		// Handle it. If there is an error exit immediately
-		result, err := session.Handle(strings.TrimSpace(scanner.Text()))
-		if err != nil {
-			ui.Error(err.Error())
+		result, exit, diags := session.Handle(strings.TrimSpace(scanner.Text()))
+		if diags.HasErrors() {
+			// In piped mode we'll exit immediately on error.
+			c.showDiagnostics(diags)
 			return 1
+		}
+		if exit {
+			return 0
 		}
 
 		// Store the last result

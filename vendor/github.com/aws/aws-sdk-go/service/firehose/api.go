@@ -2242,8 +2242,8 @@ type ElasticsearchDestinationConfiguration struct {
 	// The Amazon CloudWatch logging options for your delivery stream.
 	CloudWatchLoggingOptions *CloudWatchLoggingOptions `type:"structure"`
 
-	// The ARN of the Amazon ES domain. The IAM role must have permissions for DescribeElasticsearchDomain,
-	// DescribeElasticsearchDomains, and DescribeElasticsearchDomainConfig after
+	// The ARN of the Amazon ES domain. The IAM role must have permissions for DescribeElasticsearchDomain,
+	// DescribeElasticsearchDomains, and DescribeElasticsearchDomainConfig after
 	// assuming the role specified in RoleARN. For more information, see Amazon
 	// Resource Names (ARNs) and AWS Service Namespaces (https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html).
 	//
@@ -2258,7 +2258,7 @@ type ElasticsearchDestinationConfiguration struct {
 	// The Elasticsearch index rotation period. Index rotation appends a timestamp
 	// to the IndexName to facilitate the expiration of old data. For more information,
 	// see Index Rotation for the Amazon ES Destination (http://docs.aws.amazon.com/firehose/latest/dev/basic-deliver.html#es-index-rotation).
-	// The default value is OneDay.
+	// The default value is OneDay.
 	IndexRotationPeriod *string `type:"string" enum:"ElasticsearchIndexRotationPeriod"`
 
 	// The data processing configuration.
@@ -2556,8 +2556,8 @@ type ElasticsearchDestinationUpdate struct {
 	// The CloudWatch logging options for your delivery stream.
 	CloudWatchLoggingOptions *CloudWatchLoggingOptions `type:"structure"`
 
-	// The ARN of the Amazon ES domain. The IAM role must have permissions for DescribeElasticsearchDomain,
-	// DescribeElasticsearchDomains, and DescribeElasticsearchDomainConfig after
+	// The ARN of the Amazon ES domain. The IAM role must have permissions for DescribeElasticsearchDomain,
+	// DescribeElasticsearchDomains, and DescribeElasticsearchDomainConfig after
 	// assuming the IAM role specified in RoleARN. For more information, see Amazon
 	// Resource Names (ARNs) and AWS Service Namespaces (https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html).
 	DomainARN *string `min:"1" type:"string"`
@@ -2568,7 +2568,7 @@ type ElasticsearchDestinationUpdate struct {
 	// The Elasticsearch index rotation period. Index rotation appends a timestamp
 	// to IndexName to facilitate the expiration of old data. For more information,
 	// see Index Rotation for the Amazon ES Destination (http://docs.aws.amazon.com/firehose/latest/dev/basic-deliver.html#es-index-rotation).
-	// Default value is OneDay.
+	// Default value is OneDay.
 	IndexRotationPeriod *string `type:"string" enum:"ElasticsearchIndexRotationPeriod"`
 
 	// The data processing configuration.

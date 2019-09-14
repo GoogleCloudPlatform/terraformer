@@ -12,6 +12,7 @@ import (
 	tfe "github.com/hashicorp/go-tfe"
 	"github.com/hashicorp/terraform/backend"
 	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform/tfdiags"
 )
 
 var (
@@ -48,7 +49,7 @@ func (b *Remote) waitForRun(stopCtx, cancelCtx context.Context, op *backend.Oper
 		// Retrieve the run to get its current status.
 		r, err := b.client.Runs.Read(stopCtx, r.ID)
 		if err != nil {
-			return r, generalError("error retrieving run", err)
+			return r, generalError("Failed to retrieve run", err)
 		}
 
 		// Return if the run is no longer pending.
@@ -79,7 +80,7 @@ func (b *Remote) waitForRun(stopCtx, cancelCtx context.Context, op *backend.Oper
 			// Retrieve the workspace used to run this operation in.
 			w, err = b.client.Workspaces.Read(stopCtx, b.organization, w.Name)
 			if err != nil {
-				return nil, generalError("error retrieving workspace", err)
+				return nil, generalError("Failed to retrieve workspace", err)
 			}
 
 			// If the workspace is locked the run will not be queued and we can
@@ -87,7 +88,7 @@ func (b *Remote) waitForRun(stopCtx, cancelCtx context.Context, op *backend.Oper
 			if w.Locked && w.CurrentRun != nil {
 				cr, err := b.client.Runs.Read(stopCtx, w.CurrentRun.ID)
 				if err != nil {
-					return r, generalError("error retrieving current run", err)
+					return r, generalError("Failed to retrieve current run", err)
 				}
 				if cr.Status == tfe.RunPending {
 					b.CLI.Output(b.Colorize().Color(
@@ -104,7 +105,7 @@ func (b *Remote) waitForRun(stopCtx, cancelCtx context.Context, op *backend.Oper
 				for {
 					rl, err := b.client.Runs.List(stopCtx, w.ID, options)
 					if err != nil {
-						return r, generalError("error retrieving run list", err)
+						return r, generalError("Failed to retrieve run list", err)
 					}
 
 					// Loop through all runs to calculate the workspace queue position.
@@ -159,7 +160,7 @@ func (b *Remote) waitForRun(stopCtx, cancelCtx context.Context, op *backend.Oper
 			for {
 				rq, err := b.client.Organizations.RunQueue(stopCtx, b.organization, options)
 				if err != nil {
-					return r, generalError("error retrieving queue", err)
+					return r, generalError("Failed to retrieve queue", err)
 				}
 
 				// Search through all queued items to find our run.
@@ -182,7 +183,7 @@ func (b *Remote) waitForRun(stopCtx, cancelCtx context.Context, op *backend.Oper
 			if position > 0 {
 				c, err := b.client.Organizations.Capacity(stopCtx, b.organization)
 				if err != nil {
-					return r, generalError("error retrieving capacity", err)
+					return r, generalError("Failed to retrieve capacity", err)
 				}
 				b.CLI.Output(b.Colorize().Color(fmt.Sprintf(
 					"Waiting for %d queued run(s) to finish before starting...%s",
@@ -198,6 +199,34 @@ func (b *Remote) waitForRun(stopCtx, cancelCtx context.Context, op *backend.Oper
 	}
 }
 
+func (b *Remote) parseVariableValues(op *backend.Operation) (terraform.InputValues, tfdiags.Diagnostics) {
+	var diags tfdiags.Diagnostics
+	result := make(terraform.InputValues)
+
+	// Load the configuration using the caller-provided configuration loader.
+	config, _, configDiags := op.ConfigLoader.LoadConfigWithSnapshot(op.ConfigDir)
+	diags = diags.Append(configDiags)
+	if diags.HasErrors() {
+		return nil, diags
+	}
+
+	variables, varDiags := backend.ParseVariableValues(op.Variables, config.Module.Variables)
+	diags = diags.Append(varDiags)
+	if diags.HasErrors() {
+		return nil, diags
+	}
+
+	// Save only the explicitly defined variables.
+	for k, v := range variables {
+		switch v.SourceType {
+		case terraform.ValueFromCLIArg, terraform.ValueFromNamedFile:
+			result[k] = v
+		}
+	}
+
+	return result, diags
+}
+
 func (b *Remote) checkPolicy(stopCtx, cancelCtx context.Context, op *backend.Operation, r *tfe.Run) error {
 	if b.CLI != nil {
 		b.CLI.Output("\n------------------------------------------------------------------------\n")
@@ -205,14 +234,14 @@ func (b *Remote) checkPolicy(stopCtx, cancelCtx context.Context, op *backend.Ope
 	for i, pc := range r.PolicyChecks {
 		logs, err := b.client.PolicyChecks.Logs(stopCtx, pc.ID)
 		if err != nil {
-			return generalError("error retrieving policy check logs", err)
+			return generalError("Failed to retrieve policy check logs", err)
 		}
 		reader := bufio.NewReaderSize(logs, 64*1024)
 
 		// Retrieve the policy check to get its current status.
 		pc, err := b.client.PolicyChecks.Read(stopCtx, pc.ID)
 		if err != nil {
-			return generalError("error retrieving policy check", err)
+			return generalError("Failed to retrieve policy check", err)
 		}
 
 		var msgPrefix string
@@ -237,7 +266,7 @@ func (b *Remote) checkPolicy(stopCtx, cancelCtx context.Context, op *backend.Ope
 					l, isPrefix, err = reader.ReadLine()
 					if err != nil {
 						if err != io.EOF {
-							return generalError("error reading logs", err)
+							return generalError("Failed to read logs", err)
 						}
 						next = false
 					}
@@ -252,7 +281,7 @@ func (b *Remote) checkPolicy(stopCtx, cancelCtx context.Context, op *backend.Ope
 
 		switch pc.Status {
 		case tfe.PolicyPasses:
-			if (op.Type == backend.OperationTypeApply || i < len(r.PolicyChecks)-1) && b.CLI != nil {
+			if (r.HasChanges && op.Type == backend.OperationTypeApply || i < len(r.PolicyChecks)-1) && b.CLI != nil {
 				b.CLI.Output("\n------------------------------------------------------------------------")
 			}
 			continue
@@ -282,7 +311,7 @@ func (b *Remote) checkPolicy(stopCtx, cancelCtx context.Context, op *backend.Ope
 
 		if err != errRunOverridden {
 			if _, err = b.client.PolicyChecks.Override(stopCtx, pc.ID); err != nil {
-				return generalError("error overriding policy check", err)
+				return generalError("Failed to override policy check", err)
 			}
 		}
 
@@ -313,7 +342,7 @@ func (b *Remote) confirm(stopCtx context.Context, op *backend.Operation, opts *t
 				// Retrieve the run again to get its current status.
 				r, err := b.client.Runs.Read(stopCtx, r.ID)
 				if err != nil {
-					result <- generalError("error retrieving run", err)
+					result <- generalError("Failed to retrieve run", err)
 					return
 				}
 
@@ -380,7 +409,7 @@ func (b *Remote) confirm(stopCtx context.Context, op *backend.Operation, opts *t
 			// Retrieve the run again to get its current status.
 			r, err = b.client.Runs.Read(stopCtx, r.ID)
 			if err != nil {
-				return generalError("error retrieving run", err)
+				return generalError("Failed to retrieve run", err)
 			}
 
 			// Make sure we discard the run if possible.
@@ -388,9 +417,9 @@ func (b *Remote) confirm(stopCtx context.Context, op *backend.Operation, opts *t
 				err = b.client.Runs.Discard(stopCtx, r.ID, tfe.RunDiscardOptions{})
 				if err != nil {
 					if op.Destroy {
-						return generalError("error disarding destroy", err)
+						return generalError("Failed to discard destroy", err)
 					}
-					return generalError("error disarding apply", err)
+					return generalError("Failed to discard apply", err)
 				}
 			}
 

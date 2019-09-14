@@ -21,6 +21,8 @@ import (
 	"log"
 	"strings"
 
+	"github.com/hashicorp/hcl2/hclwrite"
+
 	"github.com/hashicorp/hcl/hcl/ast"
 	hclPrinter "github.com/hashicorp/hcl/hcl/printer"
 	hclParcer "github.com/hashicorp/hcl/json/parser"
@@ -117,7 +119,7 @@ func (v *astSanitizer) visitObjectItem(o *ast.ObjectItem) {
 	v.visit(o.Val)
 }
 
-func HclPrint(data interface{}) ([]byte, error) {
+func HclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error) {
 	dataJsonBytes, err := json.MarshalIndent(data, "", "  ")
 	dataJson := string(dataJsonBytes)
 	dataJson = strings.Replace(dataJson, "\\u003c", "<", -1)
@@ -149,9 +151,10 @@ func HclPrint(data interface{}) ([]byte, error) {
 	s = strings.Replace(s, "\\u003e", ">", -1)
 
 	// Apply Terraform style (alignment etc.)
-	formatted, err := hclPrinter.Format([]byte(s))
+	formatted := hclwrite.Format([]byte(s))
+	formatted, err = hclPrinter.Format([]byte(s))
 	// hack for support terraform 0.12
-	formatted = []byte(strings.Replace(string(formatted), " = {", " {", -1))
+	formatted = terraform12Adjustments(formatted, mapsObjects)
 	if err != nil {
 		log.Println("Invalid HCL follows:")
 		for i, line := range strings.Split(s, "\n") {
@@ -161,6 +164,25 @@ func HclPrint(data interface{}) ([]byte, error) {
 	}
 
 	return formatted, nil
+}
+
+func terraform12Adjustments(formatted []byte, mapsObjects map[string]struct{}) []byte {
+	s := string(formatted)
+	old := " = {"
+	new := " {"
+	lines := strings.Split(s, "\n")
+	for i, line := range lines {
+		if !strings.Contains(line, old) {
+			continue
+		}
+		key := strings.Trim(strings.Split(line, old)[0], " ")
+		if _, exist := mapsObjects[key]; exist {
+			continue
+		}
+		lines[i] = strings.Replace(line, old, new, -1)
+	}
+	s = strings.Join(lines, "\n")
+	return []byte(s)
 }
 
 // Sanitize name for terraform style
@@ -177,7 +199,7 @@ func TfSanitize(name string) string {
 // Print hcl file from TerraformResource + provider
 func HclPrintResource(resources []Resource, providerData map[string]interface{}) ([]byte, error) {
 	resourcesByType := map[string]map[string]interface{}{}
-
+	mapsObjects := map[string]struct{}{}
 	for _, res := range resources {
 
 		r := resourcesByType[res.InstanceInfo.Type]
@@ -192,6 +214,14 @@ func HclPrintResource(resources []Resource, providerData map[string]interface{})
 		}
 
 		r[res.ResourceName] = res.Item
+
+		for k := range res.InstanceState.Attributes {
+			if strings.HasSuffix(k, ".%") {
+				t := strings.Split(k, ".")
+				key := t[len(t)-2]
+				mapsObjects[key] = struct{}{}
+			}
+		}
 	}
 
 	data := map[string]interface{}{}
@@ -203,7 +233,7 @@ func HclPrintResource(resources []Resource, providerData map[string]interface{})
 	}
 	var err error
 
-	hclBytes, err := HclPrint(data)
+	hclBytes, err := HclPrint(data, mapsObjects)
 	if err != nil {
 		return []byte{}, err
 	}

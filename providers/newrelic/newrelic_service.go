@@ -16,7 +16,6 @@ package newrelic
 
 import (
 	"errors"
-	"fmt"
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
@@ -33,7 +32,6 @@ func (s *NewRelicService) Client() (*newrelic.Client, error) {
 
 	if apiKey == "" {
 		err := errors.New("No NEWRELIC_API_KEY environment set")
-		fmt.Fprintln(os.Stderr, err)
 		return nil, err
 	}
 
@@ -46,7 +44,6 @@ func (s *NewRelicService) InfraClient() (*newrelic.InfraClient, error) {
 
 	if apiKey == "" {
 		err := errors.New("No NEWRELIC_API_KEY environment set")
-		fmt.Fprintln(os.Stderr, err)
 		return nil, err
 	}
 
@@ -60,7 +57,6 @@ func (s *NewRelicService) SyntheticsClient() (*synthetics.Client, error) {
 
 	if apiKey == "" {
 		err := errors.New("No NEWRELIC_API_KEY environment set")
-		fmt.Fprintln(os.Stderr, err)
 		return nil, err
 	}
 

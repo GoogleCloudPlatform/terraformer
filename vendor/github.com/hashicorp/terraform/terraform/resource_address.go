@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/hashicorp/terraform/config"
-	"github.com/hashicorp/terraform/config/module"
+	"github.com/hashicorp/terraform/addrs"
+	"github.com/hashicorp/terraform/configs"
 )
 
 // ResourceAddress is a way of identifying an individual resource (or,
@@ -25,7 +25,7 @@ type ResourceAddress struct {
 	InstanceTypeSet bool
 	Name            string
 	Type            string
-	Mode            config.ResourceMode // significant only if InstanceTypeSet
+	Mode            ResourceMode // significant only if InstanceTypeSet
 }
 
 // Copy returns a copy of this ResourceAddress
@@ -56,9 +56,9 @@ func (r *ResourceAddress) String() string {
 	}
 
 	switch r.Mode {
-	case config.ManagedResourceMode:
+	case ManagedResourceMode:
 		// nothing to do
-	case config.DataResourceMode:
+	case DataResourceMode:
 		result = append(result, "data")
 	default:
 		panic(fmt.Errorf("unsupported resource mode %s", r.Mode))
@@ -109,30 +109,47 @@ func (r *ResourceAddress) WholeModuleAddress() *ResourceAddress {
 	}
 }
 
-// MatchesConfig returns true if the receiver matches the given
-// configuration resource within the given configuration module.
+// MatchesResourceConfig returns true if the receiver matches the given
+// configuration resource within the given _static_ module path. Note that
+// the module path in a resource address is a _dynamic_ module path, and
+// multiple dynamic resource paths may map to a single static path if
+// count and for_each are in use on module calls.
 //
 // Since resource configuration blocks represent all of the instances of
 // a multi-instance resource, the index of the address (if any) is not
 // considered.
-func (r *ResourceAddress) MatchesConfig(mod *module.Tree, rc *config.Resource) bool {
+func (r *ResourceAddress) MatchesResourceConfig(path addrs.Module, rc *configs.Resource) bool {
 	if r.HasResourceSpec() {
-		if r.Mode != rc.Mode || r.Type != rc.Type || r.Name != rc.Name {
+		// FIXME: Some ugliness while we are between worlds. Functionality
+		// in "addrs" should eventually replace this ResourceAddress idea
+		// completely, but for now we'll need to translate to the old
+		// way of representing resource modes.
+		switch r.Mode {
+		case ManagedResourceMode:
+			if rc.Mode != addrs.ManagedResourceMode {
+				return false
+			}
+		case DataResourceMode:
+			if rc.Mode != addrs.DataResourceMode {
+				return false
+			}
+		}
+		if r.Type != rc.Type || r.Name != rc.Name {
 			return false
 		}
 	}
 
 	addrPath := r.Path
-	cfgPath := mod.Path()
 
 	// normalize
 	if len(addrPath) == 0 {
 		addrPath = nil
 	}
-	if len(cfgPath) == 0 {
-		cfgPath = nil
+	if len(path) == 0 {
+		path = nil
 	}
-	return reflect.DeepEqual(addrPath, cfgPath)
+	rawPath := []string(path)
+	return reflect.DeepEqual(addrPath, rawPath)
 }
 
 // stateId returns the ID that this resource should be entered with
@@ -141,9 +158,9 @@ func (r *ResourceAddress) MatchesConfig(mod *module.Tree, rc *config.Resource) b
 func (r *ResourceAddress) stateId() string {
 	result := fmt.Sprintf("%s.%s", r.Type, r.Name)
 	switch r.Mode {
-	case config.ManagedResourceMode:
+	case ManagedResourceMode:
 		// Done
-	case config.DataResourceMode:
+	case DataResourceMode:
 		result = fmt.Sprintf("data.%s", result)
 	default:
 		panic(fmt.Errorf("unknown resource mode: %s", r.Mode))
@@ -153,17 +170,6 @@ func (r *ResourceAddress) stateId() string {
 	}
 
 	return result
-}
-
-// parseResourceAddressConfig creates a resource address from a config.Resource
-func parseResourceAddressConfig(r *config.Resource) (*ResourceAddress, error) {
-	return &ResourceAddress{
-		Type:         r.Type,
-		Name:         r.Name,
-		Index:        -1,
-		InstanceType: TypePrimary,
-		Mode:         r.Mode,
-	}, nil
 }
 
 // parseResourceAddressInternal parses the somewhat bespoke resource
@@ -177,14 +183,14 @@ func parseResourceAddressInternal(s string) (*ResourceAddress, error) {
 	}
 
 	// Data resource if we have at least 3 parts and the first one is data
-	mode := config.ManagedResourceMode
+	mode := ManagedResourceMode
 	if len(parts) > 2 && parts[0] == "data" {
-		mode = config.DataResourceMode
+		mode = DataResourceMode
 		parts = parts[1:]
 	}
 
 	// If we're not a data resource and we have more than 3, then it is an error
-	if len(parts) > 3 && mode != config.DataResourceMode {
+	if len(parts) > 3 && mode != DataResourceMode {
 		return nil, fmt.Errorf("Invalid internal resource address format: %s", s)
 	}
 
@@ -215,9 +221,9 @@ func ParseResourceAddress(s string) (*ResourceAddress, error) {
 	if err != nil {
 		return nil, err
 	}
-	mode := config.ManagedResourceMode
+	mode := ManagedResourceMode
 	if matches["data_prefix"] != "" {
-		mode = config.DataResourceMode
+		mode = DataResourceMode
 	}
 	resourceIndex, err := ParseResourceIndex(matches["index"])
 	if err != nil {
@@ -230,7 +236,7 @@ func ParseResourceAddress(s string) (*ResourceAddress, error) {
 	path := ParseResourcePath(matches["path"])
 
 	// not allowed to say "data." without a type following
-	if mode == config.DataResourceMode && matches["type"] == "" {
+	if mode == DataResourceMode && matches["type"] == "" {
 		return nil, fmt.Errorf(
 			"invalid resource address %q: must target specific data instance",
 			s,
@@ -268,6 +274,146 @@ func ParseResourceAddressForInstanceDiff(path []string, key string) (*ResourceAd
 	}
 	addr.Path = path
 	return addr, nil
+}
+
+// NewLegacyResourceAddress creates a ResourceAddress from a new-style
+// addrs.AbsResource value.
+//
+// This is provided for shimming purposes so that we can still easily call into
+// older functions that expect the ResourceAddress type.
+func NewLegacyResourceAddress(addr addrs.AbsResource) *ResourceAddress {
+	ret := &ResourceAddress{
+		Type: addr.Resource.Type,
+		Name: addr.Resource.Name,
+	}
+
+	switch addr.Resource.Mode {
+	case addrs.ManagedResourceMode:
+		ret.Mode = ManagedResourceMode
+	case addrs.DataResourceMode:
+		ret.Mode = DataResourceMode
+	default:
+		panic(fmt.Errorf("cannot shim %s to legacy ResourceMode value", addr.Resource.Mode))
+	}
+
+	path := make([]string, len(addr.Module))
+	for i, step := range addr.Module {
+		if step.InstanceKey != addrs.NoKey {
+			// At the time of writing this can't happen because we don't
+			// ket generate keyed module instances. This legacy codepath must
+			// be removed before we can support "count" and "for_each" for
+			// modules.
+			panic(fmt.Errorf("cannot shim module instance step with key %#v to legacy ResourceAddress.Path", step.InstanceKey))
+		}
+
+		path[i] = step.Name
+	}
+	ret.Path = path
+	ret.Index = -1
+
+	return ret
+}
+
+// NewLegacyResourceInstanceAddress creates a ResourceAddress from a new-style
+// addrs.AbsResource value.
+//
+// This is provided for shimming purposes so that we can still easily call into
+// older functions that expect the ResourceAddress type.
+func NewLegacyResourceInstanceAddress(addr addrs.AbsResourceInstance) *ResourceAddress {
+	ret := &ResourceAddress{
+		Type: addr.Resource.Resource.Type,
+		Name: addr.Resource.Resource.Name,
+	}
+
+	switch addr.Resource.Resource.Mode {
+	case addrs.ManagedResourceMode:
+		ret.Mode = ManagedResourceMode
+	case addrs.DataResourceMode:
+		ret.Mode = DataResourceMode
+	default:
+		panic(fmt.Errorf("cannot shim %s to legacy ResourceMode value", addr.Resource.Resource.Mode))
+	}
+
+	path := make([]string, len(addr.Module))
+	for i, step := range addr.Module {
+		if step.InstanceKey != addrs.NoKey {
+			// At the time of writing this can't happen because we don't
+			// ket generate keyed module instances. This legacy codepath must
+			// be removed before we can support "count" and "for_each" for
+			// modules.
+			panic(fmt.Errorf("cannot shim module instance step with key %#v to legacy ResourceAddress.Path", step.InstanceKey))
+		}
+
+		path[i] = step.Name
+	}
+	ret.Path = path
+
+	if addr.Resource.Key == addrs.NoKey {
+		ret.Index = -1
+	} else if ik, ok := addr.Resource.Key.(addrs.IntKey); ok {
+		ret.Index = int(ik)
+	} else if _, ok := addr.Resource.Key.(addrs.StringKey); ok {
+		ret.Index = -1
+	} else {
+		panic(fmt.Errorf("cannot shim resource instance with key %#v to legacy ResourceAddress.Index", addr.Resource.Key))
+	}
+
+	return ret
+}
+
+// AbsResourceInstanceAddr converts the receiver, a legacy resource address, to
+// the new resource address type addrs.AbsResourceInstance.
+//
+// This method can be used only on an address that has a resource specification.
+// It will panic if called on a module-path-only ResourceAddress. Use
+// method HasResourceSpec to check before calling, in contexts where it is
+// unclear.
+//
+// addrs.AbsResourceInstance does not represent the "tainted" and "deposed"
+// states, and so if these are present on the receiver then they are discarded.
+//
+// This is provided for shimming purposes so that we can easily adapt functions
+// that are returning the legacy ResourceAddress type, for situations where
+// the new type is required.
+func (addr *ResourceAddress) AbsResourceInstanceAddr() addrs.AbsResourceInstance {
+	if !addr.HasResourceSpec() {
+		panic("AbsResourceInstanceAddr called on ResourceAddress with no resource spec")
+	}
+
+	ret := addrs.AbsResourceInstance{
+		Module: addr.ModuleInstanceAddr(),
+		Resource: addrs.ResourceInstance{
+			Resource: addrs.Resource{
+				Type: addr.Type,
+				Name: addr.Name,
+			},
+		},
+	}
+
+	switch addr.Mode {
+	case ManagedResourceMode:
+		ret.Resource.Resource.Mode = addrs.ManagedResourceMode
+	case DataResourceMode:
+		ret.Resource.Resource.Mode = addrs.DataResourceMode
+	default:
+		panic(fmt.Errorf("cannot shim %s to addrs.ResourceMode value", addr.Mode))
+	}
+
+	if addr.Index != -1 {
+		ret.Resource.Key = addrs.IntKey(addr.Index)
+	}
+
+	return ret
+}
+
+// ModuleInstanceAddr returns the module path portion of the receiver as a
+// addrs.ModuleInstance value.
+func (addr *ResourceAddress) ModuleInstanceAddr() addrs.ModuleInstance {
+	path := make(addrs.ModuleInstance, len(addr.Path))
+	for i, name := range addr.Path {
+		path[i] = addrs.ModuleInstanceStep{Name: name}
+	}
+	return path
 }
 
 // Contains returns true if and only if the given node is contained within
@@ -375,7 +521,7 @@ func (addr *ResourceAddress) Less(other *ResourceAddress) bool {
 		return addrStr < otherStr
 
 	case addr.Mode != other.Mode:
-		return addr.Mode == config.DataResourceMode
+		return addr.Mode == DataResourceMode
 
 	case addr.Type != other.Type:
 		return addr.Type < other.Type

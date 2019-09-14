@@ -240,8 +240,6 @@ func (c *stateClient) http() (*retryablehttp.Client, error) {
 					return false, nil
 				}
 			}
-			// continue retrying
-			return true, nil
 		}
 		return retryablehttp.DefaultRetryPolicy(ctx, resp, err)
 	}

@@ -17,6 +17,10 @@ func getConversion(in cty.Type, out cty.Type, unsafe bool) conversion {
 	// Wrap the conversion in some standard checks that we don't want to
 	// have to repeat in every conversion function.
 	return func(in cty.Value, path cty.Path) (cty.Value, error) {
+		if out == cty.DynamicPseudoType {
+			// Conversion to DynamicPseudoType always just passes through verbatim.
+			return in, nil
+		}
 		if !in.IsKnown() {
 			return cty.UnknownVal(out), nil
 		}
@@ -59,6 +63,9 @@ func getConversionKnown(in cty.Type, out cty.Type, unsafe bool) conversion {
 
 	case out.IsObjectType() && in.IsObjectType():
 		return conversionObjectToObject(in, out, unsafe)
+
+	case out.IsTupleType() && in.IsTupleType():
+		return conversionTupleToTuple(in, out, unsafe)
 
 	case out.IsListType() && (in.IsListType() || in.IsSetType()):
 		inEty := in.ElementType()

@@ -16,46 +16,102 @@ import (
 
 	tfe "github.com/hashicorp/go-tfe"
 	"github.com/hashicorp/terraform/backend"
+	"github.com/hashicorp/terraform/tfdiags"
 )
 
 func (b *Remote) opPlan(stopCtx, cancelCtx context.Context, op *backend.Operation, w *tfe.Workspace) (*tfe.Run, error) {
 	log.Printf("[INFO] backend/remote: starting Plan operation")
 
-	if !w.Permissions.CanQueueRun {
-		return nil, fmt.Errorf(strings.TrimSpace(fmt.Sprintf(planErrNoQueueRunRights)))
-	}
+	var diags tfdiags.Diagnostics
 
-	if op.ModuleDepth != defaultModuleDepth {
-		return nil, fmt.Errorf(strings.TrimSpace(planErrModuleDepthNotSupported))
+	if !w.Permissions.CanQueueRun {
+		diags = diags.Append(tfdiags.Sourceless(
+			tfdiags.Error,
+			"Insufficient rights to generate a plan",
+			"The provided credentials have insufficient rights to generate a plan. In order "+
+				"to generate plans, at least plan permissions on the workspace are required.",
+		))
+		return nil, diags.Err()
 	}
 
 	if op.Parallelism != defaultParallelism {
-		return nil, fmt.Errorf(strings.TrimSpace(planErrParallelismNotSupported))
+		diags = diags.Append(tfdiags.Sourceless(
+			tfdiags.Error,
+			"Custom parallelism values are currently not supported",
+			`The "remote" backend does not support setting a custom parallelism `+
+				`value at this time.`,
+		))
 	}
 
-	if op.Plan != nil {
-		return nil, fmt.Errorf(strings.TrimSpace(planErrPlanNotSupported))
+	if op.PlanFile != nil {
+		diags = diags.Append(tfdiags.Sourceless(
+			tfdiags.Error,
+			"Displaying a saved plan is currently not supported",
+			`The "remote" backend currently requires configuration to be present and `+
+				`does not accept an existing saved plan as an argument at this time.`,
+		))
 	}
 
 	if op.PlanOutPath != "" {
-		return nil, fmt.Errorf(strings.TrimSpace(planErrOutPathNotSupported))
+		diags = diags.Append(tfdiags.Sourceless(
+			tfdiags.Error,
+			"Saving a generated plan is currently not supported",
+			`The "remote" backend does not support saving the generated execution `+
+				`plan locally at this time.`,
+		))
 	}
 
 	if !op.PlanRefresh {
-		return nil, fmt.Errorf(strings.TrimSpace(planErrNoRefreshNotSupported))
+		diags = diags.Append(tfdiags.Sourceless(
+			tfdiags.Error,
+			"Planning without refresh is currently not supported",
+			`Currently the "remote" backend will always do an in-memory refresh of `+
+				`the Terraform state prior to generating the plan.`,
+		))
 	}
 
 	if op.Targets != nil {
-		return nil, fmt.Errorf(strings.TrimSpace(planErrTargetsNotSupported))
+		diags = diags.Append(tfdiags.Sourceless(
+			tfdiags.Error,
+			"Resource targeting is currently not supported",
+			`The "remote" backend does not support resource targeting at this time.`,
+		))
 	}
 
-	if op.Variables != nil {
-		return nil, fmt.Errorf(strings.TrimSpace(
-			fmt.Sprintf(planErrVariablesNotSupported, b.hostname, b.organization, op.Workspace)))
+	variables, parseDiags := b.parseVariableValues(op)
+	diags = diags.Append(parseDiags)
+
+	if len(variables) > 0 {
+		diags = diags.Append(tfdiags.Sourceless(
+			tfdiags.Error,
+			"Run variables are currently not supported",
+			fmt.Sprintf(
+				"The \"remote\" backend does not support setting run variables at this time. "+
+					"Currently the only to way to pass variables to the remote backend is by "+
+					"creating a '*.auto.tfvars' variables file. This file will automatically "+
+					"be loaded by the \"remote\" backend when the workspace is configured to use "+
+					"Terraform v0.10.0 or later.\n\nAdditionally you can also set variables on "+
+					"the workspace in the web UI:\nhttps://%s/app/%s/%s/variables",
+				b.hostname, b.organization, op.Workspace,
+			),
+		))
 	}
 
-	if (op.Module == nil || op.Module.Config().Dir == "") && !op.Destroy {
-		return nil, fmt.Errorf(strings.TrimSpace(planErrNoConfig))
+	if !op.HasConfig() && !op.Destroy {
+		diags = diags.Append(tfdiags.Sourceless(
+			tfdiags.Error,
+			"No configuration files found",
+			`Plan requires configuration to be present. Planning without a configuration `+
+				`would mark everything for destruction, which is normally not what is desired. `+
+				`If you would like to destroy everything, please run plan with the "-destroy" `+
+				`flag or create a single empty configuration file. Otherwise, please create `+
+				`a Terraform configuration file in the path being executed and try again.`,
+		))
+	}
+
+	// Return if there are any errors.
+	if diags.HasErrors() {
+		return nil, diags.Err()
 	}
 
 	return b.plan(stopCtx, cancelCtx, op, w)
@@ -77,25 +133,51 @@ func (b *Remote) plan(stopCtx, cancelCtx context.Context, op *backend.Operation,
 
 	cv, err := b.client.ConfigurationVersions.Create(stopCtx, w.ID, configOptions)
 	if err != nil {
-		return nil, generalError("error creating configuration version", err)
+		return nil, generalError("Failed to create configuration version", err)
 	}
 
 	var configDir string
-	if op.Module != nil && op.Module.Config().Dir != "" {
+	if op.ConfigDir != "" {
+		// De-normalize the configuration directory path.
+		configDir, err = filepath.Abs(op.ConfigDir)
+		if err != nil {
+			return nil, generalError(
+				"Failed to get absolute path of the configuration directory: %v", err)
+		}
+
 		// Make sure to take the working directory into account by removing
 		// the working directory from the current path. This will result in
 		// a path that points to the expected root of the workspace.
 		configDir = filepath.Clean(strings.TrimSuffix(
-			filepath.Clean(op.Module.Config().Dir),
+			filepath.Clean(configDir),
 			filepath.Clean(w.WorkingDirectory),
 		))
+
+		// If the workspace has a subdirectory as its working directory then
+		// our configDir will be some parent directory of the current working
+		// directory. Users are likely to find that surprising, so we'll
+		// produce an explicit message about it to be transparent about what
+		// we are doing and why.
+		if w.WorkingDirectory != "" && filepath.Base(configDir) != w.WorkingDirectory {
+			if b.CLI != nil {
+				b.CLI.Output(fmt.Sprintf(strings.TrimSpace(`
+The remote workspace is configured to work with configuration at
+%s relative to the target repository.
+
+Therefore Terraform will upload the full contents of the following directory
+to capture the filesystem context the remote workspace expects:
+    %s
+`), w.WorkingDirectory, configDir) + "\n")
+			}
+		}
+
 	} else {
 		// We did a check earlier to make sure we either have a config dir,
 		// or the plan is run with -destroy. So this else clause will only
 		// be executed when we are destroying and doesn't need the config.
 		configDir, err = ioutil.TempDir("", "tf")
 		if err != nil {
-			return nil, generalError("error creating temporary directory", err)
+			return nil, generalError("Failed to create temporary directory", err)
 		}
 		defer os.RemoveAll(configDir)
 
@@ -103,13 +185,13 @@ func (b *Remote) plan(stopCtx, cancelCtx context.Context, op *backend.Operation,
 		err = os.MkdirAll(filepath.Join(configDir, w.WorkingDirectory), 0700)
 		if err != nil {
 			return nil, generalError(
-				"error creating temporary working directory", err)
+				"Failed to create temporary working directory", err)
 		}
 	}
 
 	err = b.client.ConfigurationVersions.Upload(stopCtx, cv.UploadURL, configDir)
 	if err != nil {
-		return nil, generalError("error uploading configuration files", err)
+		return nil, generalError("Failed to upload configuration files", err)
 	}
 
 	uploaded := false
@@ -122,7 +204,7 @@ func (b *Remote) plan(stopCtx, cancelCtx context.Context, op *backend.Operation,
 		case <-time.After(500 * time.Millisecond):
 			cv, err = b.client.ConfigurationVersions.Read(stopCtx, cv.ID)
 			if err != nil {
-				return nil, generalError("error retrieving configuration version", err)
+				return nil, generalError("Failed to retrieve configuration version", err)
 			}
 
 			if cv.Status == tfe.ConfigurationUploaded {
@@ -133,7 +215,7 @@ func (b *Remote) plan(stopCtx, cancelCtx context.Context, op *backend.Operation,
 
 	if !uploaded {
 		return nil, generalError(
-			"error uploading configuration files", errors.New("operation timed out"))
+			"Failed to upload configuration files", errors.New("operation timed out"))
 	}
 
 	runOptions := tfe.RunCreateOptions{
@@ -145,7 +227,7 @@ func (b *Remote) plan(stopCtx, cancelCtx context.Context, op *backend.Operation,
 
 	r, err := b.client.Runs.Create(stopCtx, runOptions)
 	if err != nil {
-		return r, generalError("error creating run", err)
+		return r, generalError("Failed to create run", err)
 	}
 
 	// When the lock timeout is set,
@@ -196,7 +278,7 @@ func (b *Remote) plan(stopCtx, cancelCtx context.Context, op *backend.Operation,
 
 	logs, err := b.client.Plans.Logs(stopCtx, r.Plan.ID)
 	if err != nil {
-		return r, generalError("error retrieving logs", err)
+		return r, generalError("Failed to retrieve logs", err)
 	}
 	reader := bufio.NewReaderSize(logs, 64*1024)
 
@@ -208,7 +290,7 @@ func (b *Remote) plan(stopCtx, cancelCtx context.Context, op *backend.Operation,
 				l, isPrefix, err = reader.ReadLine()
 				if err != nil {
 					if err != io.EOF {
-						return r, generalError("error reading logs", err)
+						return r, generalError("Failed to read logs", err)
 					}
 					next = false
 				}
@@ -224,7 +306,7 @@ func (b *Remote) plan(stopCtx, cancelCtx context.Context, op *backend.Operation,
 	// Retrieve the run to get its current status.
 	r, err = b.client.Runs.Read(stopCtx, r.ID)
 	if err != nil {
-		return r, generalError("error retrieving run", err)
+		return r, generalError("Failed to retrieve run", err)
 	}
 
 	// Return if the run is canceled or errored. We return without
@@ -244,77 +326,6 @@ func (b *Remote) plan(stopCtx, cancelCtx context.Context, op *backend.Operation,
 
 	return r, nil
 }
-
-const planErrNoQueueRunRights = `
-Insufficient rights to generate a plan!
-
-[reset][yellow]The provided credentials have insufficient rights to generate a plan. In order
-to generate plans, at least plan permissions on the workspace are required.[reset]
-`
-
-const planErrModuleDepthNotSupported = `
-Custom module depths are currently not supported!
-
-The "remote" backend does not support setting a custom module
-depth at this time.
-`
-
-const planErrParallelismNotSupported = `
-Custom parallelism values are currently not supported!
-
-The "remote" backend does not support setting a custom parallelism
-value at this time.
-`
-
-const planErrPlanNotSupported = `
-Displaying a saved plan is currently not supported!
-
-The "remote" backend currently requires configuration to be present and
-does not accept an existing saved plan as an argument at this time.
-`
-
-const planErrOutPathNotSupported = `
-Saving a generated plan is currently not supported!
-
-The "remote" backend does not support saving the generated execution
-plan locally at this time.
-`
-
-const planErrNoRefreshNotSupported = `
-Planning without refresh is currently not supported!
-
-Currently the "remote" backend will always do an in-memory refresh of
-the Terraform state prior to generating the plan.
-`
-
-const planErrTargetsNotSupported = `
-Resource targeting is currently not supported!
-
-The "remote" backend does not support resource targeting at this time.
-`
-
-const planErrVariablesNotSupported = `
-Run variables are currently not supported!
-
-The "remote" backend does not support setting run variables at this time.
-Currently the only to way to pass variables to the remote backend is by
-creating a '*.auto.tfvars' variables file. This file will automatically
-be loaded by the "remote" backend when the workspace is configured to use
-Terraform v0.10.0 or later.
-
-Additionally you can also set variables on the workspace in the web UI:
-https://%s/app/%s/%s/variables
-`
-
-const planErrNoConfig = `
-No configuration files found!
-
-Plan requires configuration to be present. Planning without a configuration
-would mark everything for destruction, which is normally not what is desired.
-If you would like to destroy everything, please run plan with the "-destroy"
-flag or create a single empty configuration file. Otherwise, please create
-a Terraform configuration file in the path being executed and try again.
-`
 
 const planDefaultHeader = `
 [reset][yellow]Running plan in the remote backend. Output will stream here. Pressing Ctrl-C

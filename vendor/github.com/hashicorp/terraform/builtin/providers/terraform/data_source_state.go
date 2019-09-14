@@ -3,458 +3,159 @@ package terraform
 import (
 	"fmt"
 	"log"
-	"time"
 
-	multierror "github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/terraform/backend"
+	"github.com/hashicorp/terraform/configs/configschema"
+	"github.com/hashicorp/terraform/providers"
+	"github.com/hashicorp/terraform/tfdiags"
+	"github.com/zclconf/go-cty/cty"
+
 	backendInit "github.com/hashicorp/terraform/backend/init"
-	"github.com/hashicorp/terraform/config"
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/terraform"
 )
 
-func dataSourceRemoteState() *schema.Resource {
-	return &schema.Resource{
-		Read: dataSourceRemoteStateRead,
-
-		Schema: map[string]*schema.Schema{
-			"backend": {
-				Type:     schema.TypeString,
-				Required: true,
-				ValidateFunc: func(v interface{}, k string) (ws []string, errors []error) {
-					if vStr, ok := v.(string); ok && vStr == "_local" {
-						ws = append(ws, "Use of the %q backend is now officially "+
-							"supported as %q. Please update your configuration to ensure "+
-							"compatibility with future versions of Terraform.",
-							"_local", "local")
-					}
-
-					return
+func dataSourceRemoteStateGetSchema() providers.Schema {
+	return providers.Schema{
+		Block: &configschema.Block{
+			Attributes: map[string]*configschema.Attribute{
+				"backend": {
+					Type:     cty.String,
+					Required: true,
 				},
-			},
-
-			// This field now contains all possible attributes that are supported
-			// by any of the existing backends. When merging this into 0.12 this
-			// should be reverted and instead the new 'cty.DynamicPseudoType' type
-			// should be used to make this work with any future backends as well.
-			"config": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				MaxItems: 1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"path": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"hostname": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"organization": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"token": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"workspaces": &schema.Schema{
-							Type:     schema.TypeList,
-							Optional: true,
-							MaxItems: 1,
-							Elem:     &schema.Schema{Type: schema.TypeMap},
-						},
-						"username": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"password": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"url": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"repo": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"subpath": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"storage_account_name": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"container_name": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"key": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"access_key": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"environment": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"resource_group_name": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"arm_subscription_id": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"arm_client_id": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"arm_client_secret": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"arm_tenant_id": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"access_token": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"address": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"scheme": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"datacenter": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"http_auth": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"gzip": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"lock": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"ca_file": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"cert_file": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"key_file": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"endpoints": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"prefix": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"cacert_path": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"cert_path": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"key_path": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"bucket": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"credentials": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"project": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"region": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"encryption_key": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"update_method": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"lock_address": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"lock_method": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"unlock_address": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"unlock_method": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"skip_cert_verification": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"account": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"user": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"key_material": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"key_id": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"insecure_skip_tls_verify": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"object_name": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"endpoint": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"encrypt": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"acl": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"secret_key": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"kms_key_id": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"lock_table": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"dynamodb_table": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"profile": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"shared_credentials_file": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"role_arn": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"assume_role_policy": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"external_id": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"session_name": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"workspace_key_prefix": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"skip_credentials_validation": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"skip_get_ec2_platforms": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"skip_region_validation": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"skip_requesting_account_id": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"skip_metadata_api_check": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"force_path_style": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"auth_url": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"container": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"user_name": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"user_id": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"region_name": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"tenant_id": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"tenant_name": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"domain_id": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"domain_name": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"insecure": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"cacert_file": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"cert": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"archive_container": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"archive_path": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"expire_after": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-						"name": &schema.Schema{
-							Type:     schema.TypeString,
-							Optional: true,
-						},
-					},
+				"config": {
+					Type:     cty.DynamicPseudoType,
+					Optional: true,
 				},
-			},
-
-			"defaults": {
-				Type:     schema.TypeMap,
-				Optional: true,
-			},
-
-			"environment": {
-				Type:       schema.TypeString,
-				Optional:   true,
-				Default:    backend.DefaultStateName,
-				Deprecated: "Terraform environments are now called workspaces. Please use the workspace key instead.",
-			},
-
-			"workspace": {
-				Type:     schema.TypeString,
-				Optional: true,
-				Default:  backend.DefaultStateName,
-			},
-
-			"__has_dynamic_attributes": {
-				Type:     schema.TypeString,
-				Optional: true,
+				"defaults": {
+					Type:     cty.DynamicPseudoType,
+					Optional: true,
+				},
+				"outputs": {
+					Type:     cty.DynamicPseudoType,
+					Computed: true,
+				},
+				"workspace": {
+					Type:     cty.String,
+					Optional: true,
+				},
 			},
 		},
 	}
 }
 
-func dataSourceRemoteStateRead(d *schema.ResourceData, meta interface{}) error {
-	backendType := d.Get("backend").(string)
+func dataSourceRemoteStateValidate(cfg cty.Value) tfdiags.Diagnostics {
+	var diags tfdiags.Diagnostics
 
-	// Get the configuration in a type we want. This is a bit of a hack but makes
-	// things work for the 'remote' backend as well. This can simply be deleted or
-	// reverted when merging this 0.12.
-	raw := make(map[string]interface{})
-	if cfg, ok := d.GetOk("config"); ok {
-		if raw, ok = cfg.(*schema.Set).List()[0].(map[string]interface{}); ok {
-			for k, v := range raw {
-				switch v := v.(type) {
-				case string:
-					if v == "" {
-						delete(raw, k)
-					}
-				case []interface{}:
-					if len(v) == 0 {
-						delete(raw, k)
-					}
-				}
-			}
+	// Getting the backend implicitly validates the configuration for it,
+	// but we can only do that if it's all known already.
+	if cfg.GetAttr("config").IsWhollyKnown() && cfg.GetAttr("backend").IsKnown() {
+		_, moreDiags := getBackend(cfg)
+		diags = diags.Append(moreDiags)
+	} else {
+		// Otherwise we'll just type-check the config object itself.
+		configTy := cfg.GetAttr("config").Type()
+		if configTy != cty.DynamicPseudoType && !(configTy.IsObjectType() || configTy.IsMapType()) {
+			diags = diags.Append(tfdiags.AttributeValue(
+				tfdiags.Error,
+				"Invalid backend configuration",
+				"The configuration must be an object value.",
+				cty.GetAttrPath("config"),
+			))
 		}
 	}
 
-	rawConfig, err := config.NewRawConfig(raw)
-	if err != nil {
-		return fmt.Errorf("error initializing backend: %s", err)
+	{
+		defaultsTy := cfg.GetAttr("defaults").Type()
+		if defaultsTy != cty.DynamicPseudoType && !(defaultsTy.IsObjectType() || defaultsTy.IsMapType()) {
+			diags = diags.Append(tfdiags.AttributeValue(
+				tfdiags.Error,
+				"Invalid default values",
+				"Defaults must be given in an object value.",
+				cty.GetAttrPath("defaults"),
+			))
+		}
 	}
+
+	return diags
+}
+
+func dataSourceRemoteStateRead(d cty.Value) (cty.Value, tfdiags.Diagnostics) {
+	var diags tfdiags.Diagnostics
+
+	b, moreDiags := getBackend(d)
+	diags = diags.Append(moreDiags)
+	if diags.HasErrors() {
+		return cty.NilVal, diags
+	}
+
+	newState := make(map[string]cty.Value)
+	newState["backend"] = d.GetAttr("backend")
+	newState["config"] = d.GetAttr("config")
+
+	workspaceName := backend.DefaultStateName
+
+	if workspaceVal := d.GetAttr("workspace"); !workspaceVal.IsNull() {
+		newState["workspace"] = workspaceVal
+		workspaceName = workspaceVal.AsString()
+	}
+
+	newState["workspace"] = cty.StringVal(workspaceName)
+
+	state, err := b.StateMgr(workspaceName)
+	if err != nil {
+		diags = diags.Append(tfdiags.AttributeValue(
+			tfdiags.Error,
+			"Error loading state error",
+			fmt.Sprintf("error loading the remote state: %s", err),
+			cty.Path(nil).GetAttr("backend"),
+		))
+		return cty.NilVal, diags
+	}
+
+	if err := state.RefreshState(); err != nil {
+		diags = diags.Append(err)
+		return cty.NilVal, diags
+	}
+
+	outputs := make(map[string]cty.Value)
+
+	if defaultsVal := d.GetAttr("defaults"); !defaultsVal.IsNull() {
+		newState["defaults"] = defaultsVal
+		it := defaultsVal.ElementIterator()
+		for it.Next() {
+			k, v := it.Element()
+			outputs[k.AsString()] = v
+		}
+	} else {
+		newState["defaults"] = cty.NullVal(cty.DynamicPseudoType)
+	}
+
+	remoteState := state.State()
+	if remoteState == nil {
+		diags = diags.Append(tfdiags.AttributeValue(
+			tfdiags.Error,
+			"Unable to find remote state",
+			"No stored state was found for the given workspace in the given backend.",
+			cty.Path(nil).GetAttr("workspace"),
+		))
+		newState["outputs"] = cty.EmptyObjectVal
+		return cty.ObjectVal(newState), diags
+	}
+	mod := remoteState.RootModule()
+	if mod != nil { // should always have a root module in any valid state
+		for k, os := range mod.OutputValues {
+			outputs[k] = os.Value
+		}
+	}
+
+	newState["outputs"] = cty.ObjectVal(outputs)
+
+	return cty.ObjectVal(newState), diags
+}
+
+func getBackend(cfg cty.Value) (backend.Backend, tfdiags.Diagnostics) {
+	var diags tfdiags.Diagnostics
+
+	backendType := cfg.GetAttr("backend").AsString()
 
 	// Don't break people using the old _local syntax - but note warning above
 	if backendType == "_local" {
@@ -466,62 +167,53 @@ func dataSourceRemoteStateRead(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[DEBUG] Initializing remote state backend: %s", backendType)
 	f := backendInit.Backend(backendType)
 	if f == nil {
-		return fmt.Errorf("Unknown backend type: %s", backendType)
+		diags = diags.Append(tfdiags.AttributeValue(
+			tfdiags.Error,
+			"Invalid backend configuration",
+			fmt.Sprintf("There is no backend type named %q.", backendType),
+			cty.Path(nil).GetAttr("backend"),
+		))
+		return nil, diags
 	}
 	b := f()
 
-	warns, errs := b.Validate(terraform.NewResourceConfig(rawConfig))
-	for _, warning := range warns {
-		log.Printf("[DEBUG] Warning validating backend config: %s", warning)
-	}
-	if len(errs) > 0 {
-		return fmt.Errorf("error validating backend config: %s", multierror.Append(nil, errs...))
-	}
-
-	// Configure the backend
-	if err := b.Configure(terraform.NewResourceConfig(rawConfig)); err != nil {
-		return fmt.Errorf("error initializing backend: %s", err)
+	config := cfg.GetAttr("config")
+	if config.IsNull() {
+		// We'll treat this as an empty configuration and see if the backend's
+		// schema and validation code will accept it.
+		config = cty.EmptyObjectVal
 	}
 
-	// environment is deprecated in favour of workspace.
-	// If both keys are set workspace should win.
-	name := d.Get("environment").(string)
-	if ws, ok := d.GetOk("workspace"); ok && ws != backend.DefaultStateName {
-		name = ws.(string)
+	if config.Type().IsMapType() { // The code below expects an object type, so we'll convert
+		config = cty.ObjectVal(config.AsValueMap())
 	}
 
-	state, err := b.State(name)
+	schema := b.ConfigSchema()
+	// Try to coerce the provided value into the desired configuration type.
+	configVal, err := schema.CoerceValue(config)
 	if err != nil {
-		return fmt.Errorf("error loading the remote state: %s", err)
-	}
-	if err := state.RefreshState(); err != nil {
-		return err
-	}
-	d.SetId(time.Now().UTC().String())
-
-	outputMap := make(map[string]interface{})
-
-	defaults := d.Get("defaults").(map[string]interface{})
-	for key, val := range defaults {
-		outputMap[key] = val
+		diags = diags.Append(tfdiags.AttributeValue(
+			tfdiags.Error,
+			"Invalid backend configuration",
+			fmt.Sprintf("The given configuration is not valid for backend %q: %s.", backendType,
+				tfdiags.FormatError(err)),
+			cty.Path(nil).GetAttr("config"),
+		))
+		return nil, diags
 	}
 
-	remoteState := state.State()
-	if remoteState.Empty() {
-		log.Println("[DEBUG] empty remote state")
-	} else {
-		for key, val := range remoteState.RootModule().Outputs {
-			if val.Value != nil {
-				outputMap[key] = val.Value
-			}
-		}
+	newVal, validateDiags := b.PrepareConfig(configVal)
+	diags = diags.Append(validateDiags)
+	if validateDiags.HasErrors() {
+		return nil, diags
+	}
+	configVal = newVal
+
+	configureDiags := b.Configure(configVal)
+	if configureDiags.HasErrors() {
+		diags = diags.Append(configureDiags.Err())
+		return nil, diags
 	}
 
-	mappedOutputs := remoteStateFlatten(outputMap)
-
-	for key, val := range mappedOutputs {
-		d.UnsafeSetFieldRaw(key, val)
-	}
-
-	return nil
+	return b, diags
 }
