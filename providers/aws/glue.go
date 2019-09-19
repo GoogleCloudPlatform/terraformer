@@ -16,11 +16,9 @@ package aws
 
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-
 	"github.com/aws/aws-sdk-go/service/glue"
+	"github.com/aws/aws-sdk-go/service/sts"
 )
-
-var glueAllowEmptyValues = []string{"tags."}
 
 type GlueGenerator struct {
 	AWSService
@@ -33,15 +31,35 @@ func (g *GlueGenerator) loadGlueCrawlers(svc *glue.Glue) error {
 		return err
 	}
 
-	var resources []terraform_utils.Resource
 	for _, crawler := range crawlers.Crawlers {
 		resource := terraform_utils.NewSimpleResource(*crawler.Name, *crawler.Name,
 			"aws_glue_crawler",
 			"aws",
 			GlueCrawlerAllowEmptyValues)
-		resources = append(resources, resource)
+		g.Resources = append(g.Resources, resource)
 	}
-	g.Resources = resources
+	return nil
+}
+
+func (g *GlueGenerator) loadGlueCatalogDatabase(svc *glue.Glue, accont *string) error {
+	var GlueCatalogDatabaseAllowEmptyValues = []string{"tags."}
+	catalogDatabases, err := svc.GetDatabases(&glue.GetDatabasesInput{})
+	if err != nil {
+		return err
+	}
+
+	for _, catalogDatabase := range catalogDatabases.DatabaseList {
+		// format of ID is "CATALOG-ID:DATABASE-NAME".
+		// CATALOG-ID is AWS Account ID
+		// https://docs.aws.amazon.com/cli/latest/reference/glue/create-database.html#options
+		id := *accont + ":" + *catalogDatabase.Name
+		resource := terraform_utils.NewSimpleResource(id, *catalogDatabase.Name,
+			"aws_glue_catalog_database",
+			"aws",
+			GlueCatalogDatabaseAllowEmptyValues)
+		g.Resources = append(g.Resources, resource)
+	}
+
 	return nil
 }
 
@@ -53,9 +71,18 @@ func (g *GlueGenerator) InitResources() error {
 	sess := g.generateSession()
 	svc := glue.New(sess)
 
+	stsSvc := sts.New(sess)
+	identity, err := stsSvc.GetCallerIdentity(&sts.GetCallerIdentityInput{})
+	if err != nil {
+		return err
+	}
+	account := identity.Account
+
 	if err := g.loadGlueCrawlers(svc); err != nil {
 		return err
 	}
+	if err := g.loadGlueCatalogDatabase(svc, account); err != nil {
+		return err
+	}
 	return nil
-
 }
