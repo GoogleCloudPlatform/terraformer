@@ -26,10 +26,6 @@ import (
 var (
 	// DowntimeAllowEmptyValues ...
 	DowntimeAllowEmptyValues = []string{}
-	// DowntimeAttributes ...
-	DowntimeAttributes = map[string]string{}
-	// DowntimeAdditionalFields ...
-	DowntimeAdditionalFields = map[string]string{}
 )
 
 // DowntimeGenerator ...
@@ -41,14 +37,12 @@ func (DowntimeGenerator) createResources(downtimes []datadog.Downtime) []terrafo
 	resources := []terraform_utils.Resource{}
 	for _, downtime := range downtimes {
 		resourceName := strconv.Itoa(downtime.GetId())
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraform_utils.NewSimpleResource(
 			resourceName,
 			fmt.Sprintf("downtime_%s", resourceName),
 			"datadog_downtime",
 			"datadog",
-			DowntimeAttributes,
 			DowntimeAllowEmptyValues,
-			DowntimeAdditionalFields,
 		))
 	}
 

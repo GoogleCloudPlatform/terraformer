@@ -26,7 +26,7 @@ import (
 
 var regionDisksAllowEmptyValues = []string{""}
 
-var regionDisksAdditionalFields = map[string]string{}
+var regionDisksAdditionalFields = map[string]interface{}{}
 
 type RegionDisksGenerator struct {
 	GCPService

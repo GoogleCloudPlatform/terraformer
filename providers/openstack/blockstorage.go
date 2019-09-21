@@ -52,14 +52,12 @@ func (g *BlockStorageGenerator) createResources(list *pagination.Pager, clientTy
 				name = v.ID
 			}
 
-			resource := terraform_utils.NewResource(
+			resource := terraform_utils.NewSimpleResource(
 				v.ID,
 				name,
 				resourceType[clientType],
 				"openstack",
-				map[string]string{},
 				[]string{},
-				map[string]string{},
 			)
 
 			resources = append(resources, resource)

@@ -38,14 +38,12 @@ func (SecurityGenerator) createResources(securityGroups []*ec2.SecurityGroup) []
 		if sg.VpcId == nil {
 			continue
 		}
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraform_utils.NewSimpleResource(
 			aws.StringValue(sg.GroupId),
 			strings.Trim(aws.StringValue(sg.GroupName)+"_"+aws.StringValue(sg.GroupId), " "),
 			"aws_security_group",
 			"aws",
-			map[string]string{},
-			SgAllowEmptyValues,
-			map[string]string{}))
+			SgAllowEmptyValues))
 	}
 	return resources
 }

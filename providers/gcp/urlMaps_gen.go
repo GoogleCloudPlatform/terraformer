@@ -26,7 +26,7 @@ import (
 
 var urlMapsAllowEmptyValues = []string{""}
 
-var urlMapsAdditionalFields = map[string]string{}
+var urlMapsAdditionalFields = map[string]interface{}{}
 
 type UrlMapsGenerator struct {
 	GCPService

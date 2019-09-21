@@ -45,7 +45,7 @@ func (g *AutoScalingGenerator) loadAutoScalingGroups(svc *autoscaling.AutoScalin
 					"wait_for_capacity_timeout": "10m",
 				},
 				AsgAllowEmptyValues,
-				map[string]string{},
+				map[string]interface{}{},
 			))
 		}
 		return !lastPage
@@ -69,7 +69,7 @@ func (g *AutoScalingGenerator) loadLaunchConfigurations(svc *autoscaling.AutoSca
 				"aws",
 				attributes,
 				AsgAllowEmptyValues,
-				map[string]string{},
+				map[string]interface{}{},
 			))
 		}
 		return !lastPage
@@ -90,14 +90,12 @@ func (g *AutoScalingGenerator) loadLaunchTemplates(sess *session.Session) error 
 				NextToken:  launchTemplatesOutput.NextToken,
 			})
 			for _, lt := range launchTemplatesOutput.LaunchTemplates {
-				g.Resources = append(g.Resources, terraform_utils.NewResource(
+				g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 					aws.StringValue(lt.LaunchTemplateId),
 					aws.StringValue(lt.LaunchTemplateName),
 					"aws_launch_template",
 					"aws",
-					map[string]string{},
 					AsgAllowEmptyValues,
-					map[string]string{},
 				))
 			}
 		} else {

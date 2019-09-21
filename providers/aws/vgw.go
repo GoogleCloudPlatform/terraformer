@@ -30,14 +30,12 @@ type VpnGatewayGenerator struct {
 func (VpnGatewayGenerator) createResources(vpnGws *ec2.DescribeVpnGatewaysOutput) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	for _, vpnGw := range vpnGws.VpnGateways {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraform_utils.NewSimpleResource(
 			aws.StringValue(vpnGw.VpnGatewayId),
 			aws.StringValue(vpnGw.VpnGatewayId),
 			"aws_vpn_gateway",
 			"aws",
-			map[string]string{},
 			VpnAllowEmptyValues,
-			map[string]string{},
 		))
 	}
 	return resources

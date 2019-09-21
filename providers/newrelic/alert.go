@@ -31,14 +31,12 @@ func (g *AlertGenerator) createAlertChannelResources(client *newrelic.Client) er
 	}
 
 	for _, channel := range alertChannels {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 			fmt.Sprintf("%d", channel.ID),
 			fmt.Sprintf("%s-%d", normalizeResourceName(channel.Name), channel.ID),
 			"newrelic_alert_channel",
 			g.ProviderName,
-			map[string]string{},
 			[]string{},
-			map[string]string{},
 		))
 	}
 
@@ -58,14 +56,12 @@ func (g *AlertGenerator) createAlertConditionResources(client *newrelic.Client) 
 		}
 
 		for _, alertCondition := range alertConditions {
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				fmt.Sprintf("%d:%d", alertPolicy.ID, alertCondition.ID),
 				fmt.Sprintf("%s-%d", normalizeResourceName(alertCondition.Name), alertCondition.ID),
 				"newrelic_alert_condition",
 				g.ProviderName,
-				map[string]string{},
-				[]string{},
-				map[string]string{}))
+				[]string{}))
 		}
 	}
 	return nil
@@ -78,14 +74,12 @@ func (g *AlertGenerator) createAlertPolicyResources(client *newrelic.Client) err
 	}
 
 	for _, alertPolicy := range alertPolicies {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 			fmt.Sprintf("%d", alertPolicy.ID),
 			fmt.Sprintf("%s-%d", normalizeResourceName(alertPolicy.Name), alertPolicy.ID),
 			"newrelic_alert_policy",
 			g.ProviderName,
-			map[string]string{},
-			[]string{},
-			map[string]string{}))
+			[]string{}))
 	}
 
 	return nil

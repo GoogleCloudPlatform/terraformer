@@ -26,7 +26,7 @@ import (
 
 var acmAllowEmptyValues = []string{}
 
-var acmAdditionalFields = map[string]string{}
+var acmAdditionalFields = map[string]interface{}{}
 
 type ACMGenerator struct {
 	AWSService

@@ -26,7 +26,7 @@ import (
 
 var globalForwardingRulesAllowEmptyValues = []string{""}
 
-var globalForwardingRulesAdditionalFields = map[string]string{}
+var globalForwardingRulesAdditionalFields = map[string]interface{}{}
 
 type GlobalForwardingRulesGenerator struct {
 	GCPService

@@ -30,7 +30,7 @@ import (
 
 var S3AllowEmptyValues = []string{"tags."}
 
-var S3AdditionalFields = map[string]string{}
+var S3AdditionalFields = map[string]interface{}{}
 
 type S3Generator struct {
 	AWSService
@@ -76,14 +76,12 @@ func (g S3Generator) createResources(sess *session.Session, buckets *s3.ListBuck
 				continue
 			}
 			// if bucket policy exist create TerraformResource with bucket name as ID
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraform_utils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_s3_bucket_policy",
 				"aws",
-				map[string]string{},
-				S3AllowEmptyValues,
-				S3AdditionalFields))
+				S3AllowEmptyValues))
 		}
 	}
 	return resources

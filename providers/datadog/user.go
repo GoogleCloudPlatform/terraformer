@@ -25,10 +25,6 @@ import (
 var (
 	// UserAllowEmptyValues ...
 	UserAllowEmptyValues = []string{}
-	// UserAttributes ...
-	UserAttributes = map[string]string{}
-	// UserAdditionalFields ...
-	UserAdditionalFields = map[string]string{}
 )
 
 // UserGenerator ...
@@ -40,14 +36,12 @@ func (UserGenerator) createResources(users []datadog.User) []terraform_utils.Res
 	resources := []terraform_utils.Resource{}
 	for _, user := range users {
 		resourceName := user.GetHandle()
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraform_utils.NewSimpleResource(
 			resourceName,
 			fmt.Sprintf("user_%s", resourceName),
 			"datadog_user",
 			"datadog",
-			UserAttributes,
 			UserAllowEmptyValues,
-			UserAdditionalFields,
 		))
 	}
 

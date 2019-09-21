@@ -26,7 +26,7 @@ import (
 
 var targetSslProxiesAllowEmptyValues = []string{""}
 
-var targetSslProxiesAdditionalFields = map[string]string{}
+var targetSslProxiesAdditionalFields = map[string]interface{}{}
 
 type TargetSslProxiesGenerator struct {
 	GCPService

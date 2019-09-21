@@ -25,7 +25,7 @@ import (
 
 var bigQueryAllowEmptyValues = []string{""}
 
-var bigQueryAdditionalFields = map[string]string{}
+var bigQueryAdditionalFields = map[string]interface{}{}
 
 type BigQueryGenerator struct {
 	GCPService

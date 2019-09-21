@@ -28,7 +28,7 @@ import (
 
 var IamAllowEmptyValues = []string{"tags."}
 
-var IamAdditionalFields = map[string]string{}
+var IamAdditionalFields = map[string]interface{}{}
 
 type IamGenerator struct {
 	AWSService
@@ -67,28 +67,24 @@ func (g *IamGenerator) getRoles(svc *iam.IAM) error {
 		for _, role := range roles.Roles {
 			roleID := aws.StringValue(role.RoleId)
 			roleName := aws.StringValue(role.RoleName)
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				roleID,
 				roleName,
 				"aws_iam_role",
 				"aws",
-				map[string]string{},
-				IamAllowEmptyValues,
-				IamAdditionalFields))
+				IamAllowEmptyValues))
 			listRolePolicies, err := svc.ListRolePolicies(&iam.ListRolePoliciesInput{RoleName: role.RoleName})
 			if err != nil {
 				log.Println(err)
 				continue
 			}
 			for _, policyName := range listRolePolicies.PolicyNames {
-				g.Resources = append(g.Resources, terraform_utils.NewResource(
+				g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 					roleName+":"+aws.StringValue(policyName),
 					roleName+"_"+aws.StringValue(policyName),
 					"aws_iam_role_policy",
 					"aws",
-					map[string]string{},
-					IamAllowEmptyValues,
-					IamAdditionalFields))
+					IamAllowEmptyValues))
 			}
 		}
 		return !lastPages
@@ -109,7 +105,7 @@ func (g *IamGenerator) getUsers(svc *iam.IAM) error {
 					"force_destroy": "false",
 				},
 				IamAllowEmptyValues,
-				IamAdditionalFields))
+				map[string]interface{}{}))
 			g.getUserPolices(svc, user.UserName)
 			//g.getUserGroup(svc, user.UserName) //not work maybe terraform-aws bug
 		}
@@ -145,14 +141,12 @@ func (g *IamGenerator) getUserPolices(svc *iam.IAM, userName *string) error {
 			resourceName := aws.StringValue(userName) + "_" + aws.StringValue(policy)
 			resourceName = strings.Replace(resourceName, "@", "", -1)
 			policyID := aws.StringValue(userName) + ":" + aws.StringValue(policy)
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				policyID,
 				resourceName,
 				"aws_iam_user_policy",
 				"aws",
-				map[string]string{},
-				IamAllowEmptyValues,
-				IamAdditionalFields))
+				IamAllowEmptyValues))
 		}
 		return !lastPage
 	})
@@ -180,14 +174,12 @@ func (g *IamGenerator) getPolicies(svc *iam.IAM) error {
 			if strings.HasPrefix(policyARN, "arn:aws:iam::aws:policy") {
 				continue
 			}
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				policyARN,
 				resourceName,
 				"aws_iam_policy",
 				"aws",
-				map[string]string{},
-				IamAllowEmptyValues,
-				IamAdditionalFields))
+				IamAllowEmptyValues))
 
 		}
 		return !lastPage
@@ -199,14 +191,12 @@ func (g *IamGenerator) getGroups(svc *iam.IAM) error {
 	err := svc.ListGroupsPages(&iam.ListGroupsInput{}, func(groups *iam.ListGroupsOutput, lastPage bool) bool {
 		for _, group := range groups.Groups {
 			resourceName := aws.StringValue(group.GroupName)
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_iam_group",
 				"aws",
-				map[string]string{},
-				IamAllowEmptyValues,
-				IamAdditionalFields))
+				IamAllowEmptyValues))
 			g.Resources = append(g.Resources, terraform_utils.NewResource(
 				resourceName,
 				resourceName,

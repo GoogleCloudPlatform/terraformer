@@ -26,7 +26,7 @@ import (
 
 var regionBackendServicesAllowEmptyValues = []string{""}
 
-var regionBackendServicesAdditionalFields = map[string]string{}
+var regionBackendServicesAdditionalFields = map[string]interface{}{}
 
 type RegionBackendServicesGenerator struct {
 	GCPService

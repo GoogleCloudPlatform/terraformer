@@ -25,10 +25,6 @@ import (
 var (
 	// SyntheticsAllowEmptyValues ...
 	SyntheticsAllowEmptyValues = []string{"tags."}
-	// SyntheticsAttributes ...
-	SyntheticsAttributes = map[string]string{}
-	// SyntheticsAdditionalFields ...
-	SyntheticsAdditionalFields = map[string]string{}
 )
 
 // SyntheticsGenerator ...
@@ -40,14 +36,12 @@ func (SyntheticsGenerator) createResources(syntheticsList []datadog.SyntheticsTe
 	resources := []terraform_utils.Resource{}
 	for _, synthetics := range syntheticsList {
 		resourceName := synthetics.GetPublicId()
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraform_utils.NewSimpleResource(
 			resourceName,
 			fmt.Sprintf("synthetics_%s", resourceName),
 			"datadog_synthetics_test",
 			"datadog",
-			SyntheticsAttributes,
 			SyntheticsAllowEmptyValues,
-			SyntheticsAdditionalFields,
 		))
 	}
 

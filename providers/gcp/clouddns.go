@@ -27,7 +27,7 @@ import (
 
 var cloudDNSAllowEmptyValues = []string{}
 
-var cloudDNSAdditionalFields = map[string]string{}
+var cloudDNSAdditionalFields = map[string]interface{}{}
 
 type CloudDNSGenerator struct {
 	GCPService

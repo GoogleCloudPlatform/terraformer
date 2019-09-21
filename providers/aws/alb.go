@@ -37,14 +37,12 @@ func (g *AlbGenerator) loadLB(svc *elbv2.ELBV2) error {
 	err := svc.DescribeLoadBalancersPages(&elbv2.DescribeLoadBalancersInput{}, func(lbs *elbv2.DescribeLoadBalancersOutput, lastPage bool) bool {
 		for _, lb := range lbs.LoadBalancers {
 			resourceName := aws.StringValue(lb.LoadBalancerName)
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				aws.StringValue(lb.LoadBalancerArn),
 				resourceName,
 				"aws_lb",
 				"aws",
-				map[string]string{},
 				AlbAllowEmptyValues,
-				map[string]string{},
 			))
 			if aws.StringValue(lb.Type) != "network" {
 				err := g.loadLBListener(svc, lb.LoadBalancerArn)
@@ -70,7 +68,7 @@ func (g *AlbGenerator) loadLBListener(svc *elbv2.ELBV2, loadBalancerArn *string)
 				"aws",
 				map[string]string{},
 				AlbAllowEmptyValues,
-				map[string]string{},
+				map[string]interface{}{},
 			))
 			err := g.loadLBListenerRule(svc, ls.ListenerArn)
 			if err != nil {
@@ -100,7 +98,7 @@ func (g *AlbGenerator) loadLBListenerRule(svc *elbv2.ELBV2, listenerArn *string)
 			"aws",
 			map[string]string{},
 			AlbAllowEmptyValues,
-			map[string]string{},
+			map[string]interface{}{},
 		))
 	}
 	return err
@@ -120,7 +118,7 @@ func (g *AlbGenerator) loadLBListenerCertificate(svc *elbv2.ELBV2, listenerArn *
 			"aws",
 			map[string]string{},
 			AlbAllowEmptyValues,
-			map[string]string{},
+			map[string]interface{}{},
 		))
 	}
 	return err
@@ -137,7 +135,7 @@ func (g *AlbGenerator) loadLBTargetGroup(svc *elbv2.ELBV2) error {
 				"aws",
 				map[string]string{},
 				AlbAllowEmptyValues,
-				map[string]string{},
+				map[string]interface{}{},
 			))
 			err := g.loadTargetGroupTargets(svc, tg.TargetGroupArn)
 			if err != nil {
@@ -166,7 +164,7 @@ func (g *AlbGenerator) loadTargetGroupTargets(svc *elbv2.ELBV2, targetGroupArn *
 				"target_group_arn": aws.StringValue(targetGroupArn),
 			},
 			AlbAllowEmptyValues,
-			map[string]string{},
+			map[string]interface{}{},
 		))
 	}
 	return nil

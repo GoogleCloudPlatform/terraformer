@@ -39,14 +39,12 @@ func (g *ComputeGenerator) createResources(list *pagination.Pager) []terraform_u
 		}
 
 		for _, s := range servers {
-			resource := terraform_utils.NewResource(
+			resource := terraform_utils.NewSimpleResource(
 				s.ID,
 				s.Name,
 				"openstack_compute_instance_v2",
 				"openstack",
-				map[string]string{},
 				[]string{},
-				map[string]string{},
 			)
 
 			resources = append(resources, resource)

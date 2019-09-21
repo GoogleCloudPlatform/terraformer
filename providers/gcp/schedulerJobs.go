@@ -27,7 +27,7 @@ import (
 
 var schedulerJobsAllowEmptyValues = []string{""}
 
-var schedulerJobsAdditionalFields = map[string]string{}
+var schedulerJobsAdditionalFields = map[string]interface{}{}
 
 type SchedulerJobsGenerator struct {
 	GCPService

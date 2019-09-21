@@ -24,7 +24,7 @@ import (
 
 var cloudSQLAllowEmptyValues = []string{}
 
-var cloudSQLAdditionalFields = map[string]string{}
+var cloudSQLAdditionalFields = map[string]interface{}{}
 
 type CloudSQLGenerator struct {
 	GCPService

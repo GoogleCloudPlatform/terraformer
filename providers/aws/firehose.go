@@ -36,7 +36,7 @@ func (g FirehoseGenerator) createResources(sess *session.Session, streamNames []
 			"aws",
 			map[string]string{"name": resourceName},
 			[]string{".tags"},
-			map[string]string{}))
+			map[string]interface{}{}))
 	}
 	return resources
 }

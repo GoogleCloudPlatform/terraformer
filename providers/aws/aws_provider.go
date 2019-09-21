@@ -147,5 +147,8 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"ebs":            &EbsGenerator{},
 		"sqs":            &SqsGenerator{},
 		"sns":            &SnsGenerator{},
+		"ecs":            &EcsGenerator{},
+		"es":             &EsGenerator{},
+		"organization":   &OrganizationGenerator{},
 	}
 }

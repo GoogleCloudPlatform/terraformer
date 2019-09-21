@@ -26,7 +26,7 @@ import (
 
 var dataprocAllowEmptyValues = []string{""}
 
-var dataprocAdditionalFields = map[string]string{}
+var dataprocAdditionalFields = map[string]interface{}{}
 
 type DataprocGenerator struct {
 	GCPService

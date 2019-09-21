@@ -24,7 +24,7 @@ import (
 
 var loggingAllowEmptyValues = []string{}
 
-var loggingAdditionalFields = map[string]string{}
+var loggingAdditionalFields = map[string]interface{}{}
 
 type LoggingGenerator struct {
 	GCPService

@@ -25,10 +25,6 @@ import (
 var (
 	// DashboardAllowEmptyValues ...
 	DashboardAllowEmptyValues = []string{"tags."}
-	// DashboardAttributes ...
-	DashboardAttributes = map[string]string{}
-	// DashboardAdditionalFields ...
-	DashboardAdditionalFields = map[string]string{}
 )
 
 // DashboardGenerator ...
@@ -40,14 +36,12 @@ func (DashboardGenerator) createResources(dashboards []datadog.BoardLite) []terr
 	resources := []terraform_utils.Resource{}
 	for _, dashboard := range dashboards {
 		resourceName := dashboard.GetId()
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraform_utils.NewSimpleResource(
 			resourceName,
 			fmt.Sprintf("dashboard_%s", resourceName),
 			"datadog_dashboard",
 			"datadog",
-			DashboardAttributes,
 			DashboardAllowEmptyValues,
-			DashboardAdditionalFields,
 		))
 	}
 

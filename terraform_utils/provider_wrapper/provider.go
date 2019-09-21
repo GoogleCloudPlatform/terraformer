@@ -15,6 +15,7 @@
 package provider_wrapper
 
 import (
+	"github.com/zclconf/go-cty/cty/gocty"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -126,7 +127,8 @@ func (p *ProviderWrapper) readObjBlocks(block map[string]*configschema.NestedBlo
 
 func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform.InstanceState) (*terraform.InstanceState, error) {
 	schema := p.Provider.GetSchema()
-	priorState, err := state.AttrsAsObjectValue(schema.ResourceTypes[info.Type].Block.ImpliedType())
+	impliedType := schema.ResourceTypes[info.Type].Block.ImpliedType()
+	priorState, err := state.AttrsAsObjectValue(impliedType)
 	if err != nil {
 		return nil, err
 	}
@@ -135,8 +137,18 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 		PriorState: priorState,
 		Private:    []byte{},
 	})
+
 	if resp.Diagnostics.HasErrors() {
-		return nil, resp.Diagnostics.Err()
+		// retry with different serialization mechanism
+		priorState, err  = gocty.ToCtyValue(state, impliedType)
+		resp = p.Provider.ReadResource(providers.ReadResourceRequest{
+			TypeName:   info.Type,
+			PriorState: priorState,
+			Private:    []byte{},
+		})
+		if resp.Diagnostics.HasErrors() {
+			return nil, resp.Diagnostics.Err()
+		}
 	}
 
 	return terraform.NewInstanceStateShimmedFromValue(resp.NewState, int(schema.Provider.Version)), nil

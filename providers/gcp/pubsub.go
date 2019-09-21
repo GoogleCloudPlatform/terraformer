@@ -26,7 +26,7 @@ import (
 
 var pubsubAllowEmptyValues = []string{""}
 
-var pubsubAdditionalFields = map[string]string{}
+var pubsubAdditionalFields = map[string]interface{}{}
 
 type PubsubGenerator struct {
 	GCPService

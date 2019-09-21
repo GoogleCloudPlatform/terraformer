@@ -26,10 +26,6 @@ import (
 var (
 	// ScreenboardAllowEmptyValues ...
 	ScreenboardAllowEmptyValues = []string{"tags."}
-	// ScreenboardAttributes ...
-	ScreenboardAttributes = map[string]string{}
-	// ScreenboardAdditionalFields ...
-	ScreenboardAdditionalFields = map[string]string{}
 )
 
 // ScreenboardGenerator ...
@@ -41,14 +37,12 @@ func (ScreenboardGenerator) createResources(screenboards []*datadog.ScreenboardL
 	resources := []terraform_utils.Resource{}
 	for _, screenboard := range screenboards {
 		resourceName := strconv.Itoa(screenboard.GetId())
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraform_utils.NewSimpleResource(
 			resourceName,
 			fmt.Sprintf("screenboard_%s", resourceName),
 			"datadog_screenboard",
 			"datadog",
-			ScreenboardAttributes,
 			ScreenboardAllowEmptyValues,
-			ScreenboardAdditionalFields,
 		))
 	}
 

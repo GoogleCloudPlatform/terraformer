@@ -17,37 +17,36 @@ package aws
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aws/aws-sdk-go/aws"
-	"strings"
 
-	"github.com/aws/aws-sdk-go/service/sqs"
+	es "github.com/aws/aws-sdk-go/service/elasticsearchservice"
 )
 
-var sqsAllowEmptyValues = []string{"tags."}
+var esAllowEmptyValues = []string{"tags."}
 
-type SqsGenerator struct {
+type EsGenerator struct {
 	AWSService
 }
 
-func (g *SqsGenerator) InitResources() error {
+func (g *EsGenerator) InitResources() error {
 	sess := g.generateSession()
-	svc := sqs.New(sess)
+	svc := es.New(sess)
 
-	queuesList, err := svc.ListQueues(&sqs.ListQueuesInput{})
-
+	domainNames, err := svc.ListDomainNames(&es.ListDomainNamesInput{})
 	if err != nil {
 		return err
 	}
 
-	for _, queueUrl := range queuesList.QueueUrls {
-		urlParts := strings.Split(aws.StringValue(queueUrl), "/")
-		queueName := urlParts[len(urlParts)-1]
-
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-			aws.StringValue(queueUrl),
-			queueName,
-			"aws_sqs_queue",
+	for _, domainName := range domainNames.DomainNames {
+		g.Resources = append(g.Resources, terraform_utils.NewResource(
+			aws.StringValue(domainName.DomainName),
+			aws.StringValue(domainName.DomainName),
+			"aws_elasticsearch_domain",
 			"aws",
-			sqsAllowEmptyValues,
+			map[string]string{
+				"domain_name": aws.StringValue(domainName.DomainName),
+			},
+			esAllowEmptyValues,
+			map[string]interface{}{},
 		))
 	}
 
