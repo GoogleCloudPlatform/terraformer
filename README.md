@@ -370,6 +370,11 @@ List of supported AWS services:
 *   `ebs`
     * `aws_ebs_volume`
     * `aws_volume_attachment`
+*   `sqs`
+    * `aws_sqs_queue`
+*   `sns`
+    * `aws_sns_topic`
+    * `aws_sns_topic_subscription`
 
 ### Use with OpenStack
 

@@ -72,6 +72,10 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 		"ebs": {
 			// TF EBS attachment logic doesn't work well with references (doesn't interpolate)
 		},
+		"sns": {
+			"sns": []string{"topic_arn", "id"},
+			"sqs": []string{"endpoint", "arn"},
+		},
 	}
 }
 func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
@@ -141,5 +145,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"glue":           &GlueGenerator{},
 		"route_table":    &RouteTableGenerator{},
 		"ebs":            &EbsGenerator{},
+		"sqs":            &SqsGenerator{},
+		"sns":            &SnsGenerator{},
 	}
 }
