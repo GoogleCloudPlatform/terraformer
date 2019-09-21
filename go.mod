@@ -56,3 +56,5 @@ require (
 replace golang.org/x/lint => golang.org/x/lint v0.0.0-20190409202823-959b441ac422
 
 replace golang.org/x/time => golang.org/x/time v0.0.0-20190308202827-9d24e82272b4
+
+replace git.apache.org/thrift.git v0.0.0-20180902110319-2566ecd5d999 => github.com/apache/thrift v0.0.0-20180902110319-2566ecd5d999

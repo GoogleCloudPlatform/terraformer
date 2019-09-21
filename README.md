@@ -367,6 +367,9 @@ List of supported AWS services:
     * `glue_crawler`
 *   `route_table`
     * `aws_route_table`
+*   `ebs`
+    * `aws_ebs_volume`
+    * `aws_volume_attachment`
 
 ### Use with OpenStack
 
