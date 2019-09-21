@@ -49,14 +49,12 @@ func (g *RepositoriesGenerator) InitResources() error {
 			return nil
 		}
 		for _, repo := range repos {
-			resource := terraform_utils.NewResource(
+			resource := terraform_utils.NewSimpleResource(
 				repo.GetName(),
 				repo.GetName(),
 				"github_repository",
 				"github",
-				map[string]string{},
 				[]string{},
-				map[string]string{},
 			)
 			g.Resources = append(g.Resources, resource)
 			g.Resources = append(g.Resources, g.createRepositoryWebhookResources(ctx, client, repo)...)
@@ -91,7 +89,7 @@ func (g *RepositoriesGenerator) createRepositoryWebhookResources(ctx context.Con
 				"repository": repo.GetName(),
 			},
 			[]string{},
-			map[string]string{},
+			map[string]interface{}{},
 		))
 	}
 	return resources
@@ -105,14 +103,12 @@ func (g *RepositoriesGenerator) createRepositoryBranchProtectionResources(ctx co
 	}
 	for _, branch := range branches {
 		if branch.GetProtected() {
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraform_utils.NewSimpleResource(
 				repo.GetName()+":"+branch.GetName(),
 				repo.GetName()+"_"+branch.GetName(),
 				"github_branch_protection",
 				"github",
-				map[string]string{},
 				[]string{},
-				map[string]string{},
 			))
 		}
 	}
@@ -126,14 +122,12 @@ func (g *RepositoriesGenerator) createRepositoryCollaboratorResources(ctx contex
 		log.Println(err)
 	}
 	for _, collaborator := range collaborators {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraform_utils.NewSimpleResource(
 			repo.GetName()+":"+collaborator.GetName(),
 			repo.GetName()+":"+collaborator.GetName(),
 			"github_repository_collaborator",
 			"github",
-			map[string]string{},
 			[]string{},
-			map[string]string{},
 		))
 	}
 	return resources
@@ -147,14 +141,12 @@ func (g *RepositoriesGenerator) createRepositoryDeployKeyResources(ctx context.C
 		log.Println(err)
 	}
 	for _, key := range deployKeys {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraform_utils.NewSimpleResource(
 			repo.GetName()+":"+strconv.FormatInt(key.GetID(), 10),
 			repo.GetName()+":"+key.GetTitle(),
 			"github_repository_deploy_key",
 			"github",
-			map[string]string{},
 			[]string{},
-			map[string]string{},
 		))
 	}
 	return resources

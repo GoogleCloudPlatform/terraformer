@@ -26,7 +26,7 @@ import (
 
 var regionAutoscalersAllowEmptyValues = []string{""}
 
-var regionAutoscalersAdditionalFields = map[string]string{}
+var regionAutoscalersAdditionalFields = map[string]interface{}{}
 
 type RegionAutoscalersGenerator struct {
 	GCPService

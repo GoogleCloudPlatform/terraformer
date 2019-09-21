@@ -26,7 +26,7 @@ import (
 
 var networksAllowEmptyValues = []string{""}
 
-var networksAdditionalFields = map[string]string{}
+var networksAdditionalFields = map[string]interface{}{}
 
 type NetworksGenerator struct {
 	GCPService

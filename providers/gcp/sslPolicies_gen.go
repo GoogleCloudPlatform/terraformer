@@ -26,7 +26,7 @@ import (
 
 var sslPoliciesAllowEmptyValues = []string{""}
 
-var sslPoliciesAdditionalFields = map[string]string{}
+var sslPoliciesAdditionalFields = map[string]interface{}{}
 
 type SslPoliciesGenerator struct {
 	GCPService

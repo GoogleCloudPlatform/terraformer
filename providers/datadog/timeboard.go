@@ -26,10 +26,6 @@ import (
 var (
 	// TimeboardAllowEmptyValues ...
 	TimeboardAllowEmptyValues = []string{"tags."}
-	// TimeboardAttributes ...
-	TimeboardAttributes = map[string]string{}
-	// TimeboardAdditionalFields ...
-	TimeboardAdditionalFields = map[string]string{}
 )
 
 // TimeboardGenerator ...
@@ -41,14 +37,12 @@ func (TimeboardGenerator) createResources(timeboards []datadog.DashboardLite) []
 	resources := []terraform_utils.Resource{}
 	for _, timeboard := range timeboards {
 		resourceName := strconv.Itoa(timeboard.GetId())
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraform_utils.NewSimpleResource(
 			resourceName,
 			fmt.Sprintf("timeboard_%s", resourceName),
 			"datadog_timeboard",
 			"datadog",
-			TimeboardAttributes,
 			TimeboardAllowEmptyValues,
-			TimeboardAdditionalFields,
 		))
 	}
 

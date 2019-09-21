@@ -40,7 +40,7 @@ func (g *CloudFrontGenerator) InitResources() error {
 					"retain_on_delete": "false",
 				},
 				cloudFrontAllowEmptyValues,
-				map[string]string{},
+				map[string]interface{}{},
 			)
 			r.IgnoreKeys = append(r.IgnoreKeys, "^active_trusted_signers.(.*)")
 			g.Resources = append(g.Resources, r)

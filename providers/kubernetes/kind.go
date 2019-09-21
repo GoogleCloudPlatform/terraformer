@@ -79,14 +79,12 @@ func (k *Kind) InitResources() error {
 			name = item.FieldByName("Name").String()
 		}
 
-		k.Resources = append(k.Resources, terraform_utils.NewResource(
+		k.Resources = append(k.Resources, terraform_utils.NewSimpleResource(
 			name,
 			name,
 			extractTfResourceName(k.Name),
 			"kubernetes",
-			map[string]string{},
 			[]string{},
-			map[string]string{},
 		))
 	}
 	k.PopulateIgnoreKeys()

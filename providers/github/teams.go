@@ -32,14 +32,12 @@ type TeamsGenerator struct {
 func (g *TeamsGenerator) createTeamsResources(ctx context.Context, teams []*githubAPI.Team, client *githubAPI.Client) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	for _, team := range teams {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraform_utils.NewSimpleResource(
 			strconv.FormatInt(team.GetID(), 10),
 			team.GetName(),
 			"github_team",
 			"github",
-			map[string]string{},
 			[]string{},
-			map[string]string{},
 		))
 		resources = append(resources, g.createTeamMembersResources(ctx, team, client)...)
 		resources = append(resources, g.createTeamRepositoriesResources(ctx, team, client)...)
@@ -54,14 +52,12 @@ func (g *TeamsGenerator) createTeamMembersResources(ctx context.Context, team *g
 		log.Println(err)
 	}
 	for _, member := range members {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraform_utils.NewSimpleResource(
 			strconv.FormatInt(team.GetID(), 10)+":"+member.GetLogin(),
 			team.GetName()+"_"+member.GetLogin(),
 			"github_team_membership",
 			"github",
-			map[string]string{},
 			[]string{},
-			map[string]string{},
 		))
 	}
 	return resources
@@ -74,14 +70,12 @@ func (g *TeamsGenerator) createTeamRepositoriesResources(ctx context.Context, te
 		log.Println(err)
 	}
 	for _, repo := range repos {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraform_utils.NewSimpleResource(
 			strconv.FormatInt(team.GetID(), 10)+":"+repo.GetName(),
 			team.GetName()+"_"+repo.GetName(),
 			"github_team_repository",
 			"github",
-			map[string]string{},
 			[]string{},
-			map[string]string{},
 		))
 	}
 	return resources

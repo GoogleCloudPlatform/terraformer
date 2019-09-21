@@ -26,10 +26,6 @@ import (
 var (
 	// MonitorAllowEmptyValues ...
 	MonitorAllowEmptyValues = []string{"tags."}
-	// MonitorAttributes ...
-	MonitorAttributes = map[string]string{}
-	// MonitorAdditionalFields ...
-	MonitorAdditionalFields = map[string]string{}
 )
 
 // MonitorGenerator ...
@@ -41,14 +37,12 @@ func (MonitorGenerator) createResources(monitors []datadog.Monitor) []terraform_
 	resources := []terraform_utils.Resource{}
 	for _, monitor := range monitors {
 		resourceName := strconv.Itoa(monitor.GetId())
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraform_utils.NewSimpleResource(
 			resourceName,
 			fmt.Sprintf("monitor_%s", resourceName),
 			"datadog_monitor",
 			"datadog",
-			MonitorAttributes,
 			MonitorAllowEmptyValues,
-			MonitorAdditionalFields,
 		))
 	}
 

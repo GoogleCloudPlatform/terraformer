@@ -27,7 +27,7 @@ import (
 
 var redisAllowEmptyValues = []string{""}
 
-var redisAdditionalFields = map[string]string{}
+var redisAdditionalFields = map[string]interface{}{}
 
 type MemoryStoreGenerator struct {
 	GCPService

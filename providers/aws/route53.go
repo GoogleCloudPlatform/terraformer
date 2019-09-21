@@ -27,7 +27,7 @@ import (
 
 var route53AllowEmptyValues = []string{}
 
-var route53AdditionalFields = map[string]string{}
+var route53AdditionalFields = map[string]interface{}{}
 
 type Route53Generator struct {
 	AWSService

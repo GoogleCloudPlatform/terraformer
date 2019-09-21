@@ -26,7 +26,7 @@ import (
 
 var securityPoliciesAllowEmptyValues = []string{""}
 
-var securityPoliciesAdditionalFields = map[string]string{}
+var securityPoliciesAdditionalFields = map[string]interface{}{}
 
 type SecurityPoliciesGenerator struct {
 	GCPService

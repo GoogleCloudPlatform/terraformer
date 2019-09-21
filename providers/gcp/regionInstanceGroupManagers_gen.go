@@ -26,7 +26,7 @@ import (
 
 var regionInstanceGroupManagersAllowEmptyValues = []string{"name", "health_check"}
 
-var regionInstanceGroupManagersAdditionalFields = map[string]string{}
+var regionInstanceGroupManagersAdditionalFields = map[string]interface{}{}
 
 type RegionInstanceGroupManagersGenerator struct {
 	GCPService

@@ -375,6 +375,18 @@ List of supported AWS services:
 *   `sns`
     * `aws_sns_topic`
     * `aws_sns_topic_subscription`
+*   `ecs`
+    * `aws_ecs_cluster`
+    * `aws_ecs_service`
+    * `aws_ecs_task_definition`
+*   `es`
+    * `aws_elasticsearch_domain`
+*   `organizations`
+    * `aws_organizations_account`
+    * `aws_organizations_organization`
+    * `aws_organizations_organizational_unit`
+    * `aws_organizations_policy`
+    * `aws_organizations_policy_attachment`
 
 ### Use with OpenStack
 

@@ -42,7 +42,7 @@ func (*DNSGenerator) createZonesResource(api *cf.API, zoneID string) ([]terrafor
 			"id": zoneDetails.ID,
 		},
 		[]string{},
-		map[string]string{},
+		map[string]interface{}{},
 	)
 	resource.IgnoreKeys = append(resource.IgnoreKeys, "^meta$")
 
@@ -69,7 +69,7 @@ func (*DNSGenerator) createRecordsResources(api *cf.API, zoneID string) ([]terra
 				"name":    record.Name,
 			},
 			[]string{},
-			map[string]string{},
+			map[string]interface{}{},
 		)
 
 		r.IgnoreKeys = append(r.IgnoreKeys, "^metadata")

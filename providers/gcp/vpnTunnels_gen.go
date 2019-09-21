@@ -26,7 +26,7 @@ import (
 
 var vpnTunnelsAllowEmptyValues = []string{""}
 
-var vpnTunnelsAdditionalFields = map[string]string{}
+var vpnTunnelsAdditionalFields = map[string]interface{}{}
 
 type VpnTunnelsGenerator struct {
 	GCPService

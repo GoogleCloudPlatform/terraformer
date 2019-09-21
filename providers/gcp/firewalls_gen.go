@@ -26,7 +26,7 @@ import (
 
 var firewallsAllowEmptyValues = []string{""}
 
-var firewallsAdditionalFields = map[string]string{}
+var firewallsAdditionalFields = map[string]interface{}{}
 
 type FirewallsGenerator struct {
 	GCPService

@@ -42,14 +42,12 @@ func (g *SnsGenerator) InitResources() error {
 			arnParts := strings.Split(aws.StringValue(topic.TopicArn), ":")
 			topicName := arnParts[len(arnParts)-1]
 
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				aws.StringValue(topic.TopicArn),
 				topicName,
 				"aws_sns_topic",
 				"aws",
-				map[string]string{},
 				snsAllowEmptyValues,
-				map[string]string{},
 			))
 
 			_ = svc.ListSubscriptionsByTopicPages(&sns.ListSubscriptionsByTopicInput{
@@ -60,14 +58,12 @@ func (g *SnsGenerator) InitResources() error {
 					subscriptionId := subscriptionArnParts[len(subscriptionArnParts)-1]
 
 					if g.isSupportedSubscription(aws.StringValue(subscription.Protocol), subscriptionId) {
-						g.Resources = append(g.Resources, terraform_utils.NewResource(
+						g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 							aws.StringValue(subscription.SubscriptionArn),
 							"subscription-"+subscriptionId,
 							"aws_sns_topic_subscription",
 							"aws",
-							map[string]string{},
 							snsAllowEmptyValues,
-							map[string]string{},
 						))
 					}
 				}

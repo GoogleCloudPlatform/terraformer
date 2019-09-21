@@ -28,7 +28,7 @@ import (
 
 var monitoringAllowEmptyValues = []string{}
 
-var monitoringAdditionalFields = map[string]string{}
+var monitoringAdditionalFields = map[string]interface{}{}
 
 type MonitoringGenerator struct {
 	GCPService

@@ -27,7 +27,7 @@ import (
 
 var instanceGroupManagersAllowEmptyValues = []string{"^version.[0-9].name", "^auto_healing_policies.[0-9].health_check"}
 
-var instanceGroupManagersAdditionalFields = map[string]string{}
+var instanceGroupManagersAdditionalFields = map[string]interface{}{}
 
 type InstanceGroupManagersGenerator struct {
 	GCPService

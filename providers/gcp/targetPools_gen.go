@@ -26,7 +26,7 @@ import (
 
 var targetPoolsAllowEmptyValues = []string{""}
 
-var targetPoolsAdditionalFields = map[string]string{}
+var targetPoolsAdditionalFields = map[string]interface{}{}
 
 type TargetPoolsGenerator struct {
 	GCPService

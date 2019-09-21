@@ -20,7 +20,7 @@ import (
 
 var projectAllowEmptyValues = []string{""}
 
-var projectAdditionalFields = map[string]string{}
+var projectAdditionalFields = map[string]interface{}{}
 
 type ProjectGenerator struct {
 	GCPService

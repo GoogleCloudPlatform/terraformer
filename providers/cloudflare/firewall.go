@@ -50,7 +50,7 @@ func (*FirewallGenerator) createZoneLockdownsResources(api *cf.API, zoneID, zone
 					"zone":    zoneName,
 				},
 				[]string{},
-				map[string]string{},
+				map[string]interface{}{},
 			))
 		}
 
@@ -83,7 +83,7 @@ func (*FirewallGenerator) createAccessRuleResources(api *cf.API, zoneID, zoneNam
 				"zone":    zoneName,
 			},
 			[]string{},
-			map[string]string{},
+			map[string]interface{}{},
 		))
 	}
 
@@ -108,7 +108,7 @@ func (*FirewallGenerator) createFilterResources(api *cf.API, zoneID, zoneName st
 				"zone_id": zoneID,
 			},
 			[]string{},
-			map[string]string{},
+			map[string]interface{}{},
 		))
 	}
 
@@ -133,7 +133,7 @@ func (*FirewallGenerator) createFirewallRuleResources(api *cf.API, zoneID, zoneN
 				"zone_id": zoneID,
 			},
 			[]string{},
-			map[string]string{},
+			map[string]interface{}{},
 		))
 	}
 

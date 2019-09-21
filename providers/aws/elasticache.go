@@ -34,14 +34,12 @@ func (g *ElastiCacheGenerator) loadCacheClusters(svc *elasticache.ElastiCache) e
 	return svc.DescribeCacheClustersPages(&elasticache.DescribeCacheClustersInput{}, func(clusters *elasticache.DescribeCacheClustersOutput, lastPage bool) bool {
 		for _, cluster := range clusters.CacheClusters {
 			resourceName := aws.StringValue(cluster.CacheClusterId)
-			resource := terraform_utils.NewResource(
+			resource := terraform_utils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_elasticache_cluster",
 				"aws",
-				map[string]string{},
 				elastiCacheAllowEmptyValues,
-				map[string]string{},
 			)
 			// redis only - if cluster has Replication Group not need next attributes.
 			// terraform-aws provider has ConflictsWith on ReplicationGroupId with all next attributes,
@@ -82,14 +80,12 @@ func (g *ElastiCacheGenerator) loadParameterGroups(svc *elasticache.ElastiCache)
 			if strings.Contains(resourceName, ".") {
 				continue // skip default Default ParameterGroups like default.redis5.0
 			}
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_elasticache_parameter_group",
 				"aws",
-				map[string]string{},
 				elastiCacheAllowEmptyValues,
-				map[string]string{},
 			))
 		}
 		return !lastPage
@@ -100,14 +96,12 @@ func (g *ElastiCacheGenerator) loadSubnetGroups(svc *elasticache.ElastiCache) er
 	return svc.DescribeCacheSubnetGroupsPages(&elasticache.DescribeCacheSubnetGroupsInput{}, func(subnets *elasticache.DescribeCacheSubnetGroupsOutput, lastPage bool) bool {
 		for _, subnet := range subnets.CacheSubnetGroups {
 			resourceName := aws.StringValue(subnet.CacheSubnetGroupName)
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_elasticache_subnet_group",
 				"aws",
-				map[string]string{},
 				elastiCacheAllowEmptyValues,
-				map[string]string{},
 			))
 		}
 		return !lastPage
@@ -118,14 +112,12 @@ func (g *ElastiCacheGenerator) loadReplicationGroups(svc *elasticache.ElastiCach
 	return svc.DescribeReplicationGroupsPages(&elasticache.DescribeReplicationGroupsInput{}, func(optionGroups *elasticache.DescribeReplicationGroupsOutput, lastPage bool) bool {
 		for _, replicationGroup := range optionGroups.ReplicationGroups {
 			resourceName := aws.StringValue(replicationGroup.ReplicationGroupId)
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_elasticache_replication_group",
 				"aws",
-				map[string]string{},
 				elastiCacheAllowEmptyValues,
-				map[string]string{},
 			))
 		}
 		return !lastPage

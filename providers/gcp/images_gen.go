@@ -26,7 +26,7 @@ import (
 
 var imagesAllowEmptyValues = []string{""}
 
-var imagesAdditionalFields = map[string]string{}
+var imagesAdditionalFields = map[string]interface{}{}
 
 type ImagesGenerator struct {
 	GCPService

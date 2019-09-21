@@ -26,7 +26,7 @@ import (
 
 var httpHealthChecksAllowEmptyValues = []string{""}
 
-var httpHealthChecksAdditionalFields = map[string]string{}
+var httpHealthChecksAdditionalFields = map[string]interface{}{}
 
 type HttpHealthChecksGenerator struct {
 	GCPService
