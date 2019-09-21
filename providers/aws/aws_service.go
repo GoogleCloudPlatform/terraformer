@@ -31,7 +31,7 @@ func (s *AWSService) generateSession() *session.Session {
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		Profile:                 s.GetArgs()["profile"].(string),
 		AssumeRoleTokenProvider: stscreds.StdinTokenProvider,
-		SharedConfigState:       session.SharedConfigEnable,
+		SharedConfigState:       session.SharedConfigStateFromEnv,
 	}))
 	creds, _ := sess.Config.Credentials.Get()
 	// terraform cannot ask for MFA token, so we need to pass STS session token

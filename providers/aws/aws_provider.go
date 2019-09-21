@@ -67,7 +67,10 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 			"subnet": []string{"subnet_id", "id"},
 		},
 		"route_table": {
-			"vpc":    []string{"vpc_id", "id"},
+			"vpc": []string{"vpc_id", "id"},
+		},
+		"ebs": {
+			// TF EBS attachment logic doesn't work well with references (doesn't interpolate)
 		},
 	}
 }
@@ -87,7 +90,7 @@ func (p *AWSProvider) Init(args []string) error {
 	p.region = args[0]
 	p.profile = args[1]
 	// terraform work with env params AWS_DEFAULT_REGION
-	err := os.Setenv("AWS_DEFAULT_REGION", p.region)
+	err := os.Setenv("AWS_REGION", p.region)
 	if err != nil {
 		return err
 	}
@@ -137,5 +140,6 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"firehose":       &FirehoseGenerator{},
 		"glue":           &GlueGenerator{},
 		"route_table":    &RouteTableGenerator{},
+		"ebs":            &EbsGenerator{},
 	}
 }
