@@ -76,6 +76,16 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 			"sns": []string{"topic_arn", "id"},
 			"sqs": []string{"endpoint", "arn"},
 		},
+		"ecs": {
+			"ecs": []string{"task_definition", "arn"},
+		},
+		"organization": {
+			"organization": []string{
+				"policy_id", "id",
+				"parent_id", "id",
+				"target_id", "id",
+			},
+		},
 	}
 }
 func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {

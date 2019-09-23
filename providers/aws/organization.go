@@ -129,7 +129,7 @@ func (g *OrganizationGenerator) InitResources() error {
 				for _, target := range targetsForPolicy.Targets {
 					g.Resources = append(g.Resources, terraform_utils.NewResource(
 						aws.StringValue(target.TargetId)+":"+policyId,
-						aws.StringValue(target.TargetId)+":"+policyName,
+						"pa-"+aws.StringValue(target.TargetId)+":"+policyName,
 						"aws_organizations_policy_attachment",
 						"aws",
 						map[string]string{
