@@ -381,7 +381,7 @@ List of supported AWS services:
     * `aws_ecs_task_definition`
 *   `es`
     * `aws_elasticsearch_domain`
-*   `organizations`
+*   `organization`
     * `aws_organizations_account`
     * `aws_organizations_organization`
     * `aws_organizations_organizational_unit`
