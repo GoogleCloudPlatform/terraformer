@@ -41,7 +41,7 @@ require (
 	github.com/unknwon/com v0.0.0-20181010210213-41959bdd855f // indirect
 	github.com/xlab/treeprint v0.0.0-20181112141820-a009c3971eca // indirect
 	github.com/zclconf/go-cty v1.0.1-0.20190708163926-19588f92a98f
-	github.com/zorkian/go-datadog-api v2.21.1-0.20190802113207-d0ce49abc107+incompatible
+	github.com/zorkian/go-datadog-api v2.24.0+incompatible
 	golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421
 	google.golang.org/api v0.5.1-0.20190510010909-bbbc0e98e3cc
 	google.golang.org/genproto v0.0.0-20190307195333-5fe7a883aa19
