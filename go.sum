@@ -657,6 +657,8 @@ github.com/zclconf/go-cty-yaml v1.0.1 h1:up11wlgAaDvlAGENcFDnZgkn0qUJurso7k6EpUR
 github.com/zclconf/go-cty-yaml v1.0.1/go.mod h1:IP3Ylp0wQpYm50IHK8OZWKMu6sPJIUgKa8XhiVHura0=
 github.com/zorkian/go-datadog-api v2.21.1-0.20190802113207-d0ce49abc107+incompatible h1:CUiImFW4MzEoGHPAeeUSanQfGv0hQxk2ZucM2AglK7A=
 github.com/zorkian/go-datadog-api v2.21.1-0.20190802113207-d0ce49abc107+incompatible/go.mod h1:PkXwHX9CUQa/FpB9ZwAD45N1uhCW4MT/Wj7m36PbKss=
+github.com/zorkian/go-datadog-api v2.24.0+incompatible h1:conz6t5Vu0nIVigLpinYudl6uYc+xhajR6WuX+tD21I=
+github.com/zorkian/go-datadog-api v2.24.0+incompatible/go.mod h1:PkXwHX9CUQa/FpB9ZwAD45N1uhCW4MT/Wj7m36PbKss=
 go.opencensus.io v0.18.0/go.mod h1:vKdFvxhtzZ9onBp9VKHK8z/sRpBMnKAsufL7wlDrCOA=
 go.opencensus.io v0.20.1/go.mod h1:6WKK9ahsWS3RSO+PY9ZHZUfv2irvY6gN279GOPZjmmk=
 go.opencensus.io v0.20.2/go.mod h1:6WKK9ahsWS3RSO+PY9ZHZUfv2irvY6gN279GOPZjmmk=
