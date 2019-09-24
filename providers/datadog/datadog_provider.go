@@ -23,7 +23,7 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
 
-const datadogProviderVersion = ">2.1.0"
+const datadogProviderVersion = ">2.4.0"
 
 type DatadogProvider struct {
 	terraform_utils.Provider
@@ -64,8 +64,8 @@ func (p *DatadogProvider) GetName() string {
 // GetConfig return map of provider config for Datadog
 func (p *DatadogProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
-		"api-key": cty.StringVal(p.apiKey),
-		"app-key": cty.StringVal(p.appKey),
+		"api_key": cty.StringVal(p.apiKey),
+		"app_key": cty.StringVal(p.appKey),
 	})
 }
 
