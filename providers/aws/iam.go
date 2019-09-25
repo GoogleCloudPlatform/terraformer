@@ -216,7 +216,7 @@ func (g *IamGenerator) getGroups(svc *iam.IAM) error {
 					"group": resourceName,
 					"name":  resourceName,
 				},
-				IamAllowEmptyValues,
+				[]string{"tags.", "users."},
 				IamAdditionalFields))
 			_ = svc.ListGroupPoliciesPages(&iam.ListGroupPoliciesInput{GroupName: group.GroupName}, func(policyGroup *iam.ListGroupPoliciesOutput, lastPage bool) bool {
 				for _, policy := range policyGroup.PolicyNames {
