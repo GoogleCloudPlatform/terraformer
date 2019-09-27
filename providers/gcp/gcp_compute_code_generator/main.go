@@ -56,7 +56,7 @@ import (
 
 var {{.resource}}AllowEmptyValues = []string{"{{join .allowEmptyValues "\",\"" }}"}
 
-var {{.resource}}AdditionalFields = map[string]string{
+var {{.resource}}AdditionalFields = map[string]interface{}{
 	{{ range $key,$value := .additionalFields}}
 	"{{$key}}":			"{{$value}}",{{end}}
 }
