@@ -187,9 +187,9 @@ func terraform12Adjustments(formatted []byte, mapsObjects map[string]struct{}) [
 
 // Sanitize name for terraform style
 func TfSanitize(name string) string {
-	name = strings.Replace(name, "*.", "", -1)
 	name = strings.Replace(name, " ", "", -1)
 	//name = strings.Replace(name, "-", "_", -1)
+	name = strings.Replace(name, "*", "--", -1)
 	name = strings.Replace(name, ".", "--", -1)
 	name = strings.Replace(name, ":", "--", -1)
 	name = strings.Replace(name, "/", "--", -1)
