@@ -299,6 +299,12 @@ Example:
  terraformer import aws --resources=vpc,subnet --filter=aws_vpc=vpc_id1:vpc_id2:vpc_id3 --regions=eu-west-1
 ```
 
+To load profiles from the shared AWS configuration file (typically `~/.aws/config`), set the `AWS_SDK_LOAD_CONFIG` to `true`:
+
+```
+AWS_SDK_LOAD_CONFIG=true terraformer import aws --resources=vpc,subnet --regions=eu-west-1 --profile=prod
+```
+
 List of supported AWS services:
 
 *   `elb`
