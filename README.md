@@ -39,7 +39,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
 3.  Connect between resources with `terraform_remote_state` (local and bucket).
 4.  Save `tf` files using a custom folder tree pattern.
 5.  Import by resource name and type.
-6.  Support terraform 0.12 only from version 0.8 
+6.  Support terraform 0.12 (for terraform 0.11 use v0.7.9)
 
 Terraformer uses terraform providers and is designed to easily support newly added resources.
 To upgrade resources with new fields, all you need to do is upgrade the relevant terraform providers.
