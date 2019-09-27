@@ -26,7 +26,7 @@ import (
 
 var subnetworksAllowEmptyValues = []string{""}
 
-var subnetworksAdditionalFields = map[string]string{}
+var subnetworksAdditionalFields = map[string]interface{}{}
 
 type SubnetworksGenerator struct {
 	GCPService

@@ -45,14 +45,12 @@ func (g *OrganizationWebhooksGenerator) InitResources() error {
 		return nil
 	}
 	for _, hook := range hooks {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 			strconv.FormatInt(hook.GetID(), 10),
 			strconv.FormatInt(hook.GetID(), 10),
 			"github_organization_webhook",
 			"github",
-			map[string]string{},
 			[]string{},
-			map[string]string{},
 		))
 	}
 	g.PopulateIgnoreKeys()

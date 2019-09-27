@@ -28,7 +28,6 @@ type GlueGenerator struct {
 
 func (g *GlueGenerator) loadGlueCrawlers(svc *glue.Glue) error {
 	var GlueCrawlerAllowEmptyValues = []string{"tags."}
-	var GlueCrawlerAdditionalFields = map[string]string{}
 	crawlers, err := svc.GetCrawlers(&glue.GetCrawlersInput{})
 	if err != nil {
 		return err
@@ -36,11 +35,10 @@ func (g *GlueGenerator) loadGlueCrawlers(svc *glue.Glue) error {
 
 	var resources []terraform_utils.Resource
 	for _, crawler := range crawlers.Crawlers {
-		resource := terraform_utils.NewResource(*crawler.Name, *crawler.Name,
+		resource := terraform_utils.NewSimpleResource(*crawler.Name, *crawler.Name,
 			"aws_glue_crawler",
 			"aws",
-			map[string]string{},
-			GlueCrawlerAllowEmptyValues, GlueCrawlerAdditionalFields)
+			GlueCrawlerAllowEmptyValues)
 		resources = append(resources, resource)
 	}
 	g.Resources = resources

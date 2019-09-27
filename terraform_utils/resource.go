@@ -35,13 +35,13 @@ type Resource struct {
 	Item             map[string]interface{} `json:",omitempty"`
 	IgnoreKeys       []string               `json:",omitempty"`
 	AllowEmptyValues []string               `json:",omitempty"`
-	AdditionalFields map[string]string      `json:",omitempty"`
+	AdditionalFields map[string]interface{} `json:",omitempty"`
 }
 
 func NewResource(ID, resourceName, resourceType, provider string,
 	attributes map[string]string,
 	allowEmptyValues []string,
-	additionalFields map[string]string) Resource {
+	additionalFields map[string]interface{}) Resource {
 	return Resource{
 		ResourceName: TfSanitize(resourceName),
 		Item:         nil,
@@ -57,6 +57,18 @@ func NewResource(ID, resourceName, resourceType, provider string,
 		AdditionalFields: additionalFields,
 		AllowEmptyValues: allowEmptyValues,
 	}
+}
+
+func NewSimpleResource(ID, resourceName, resourceType, provider string, allowEmptyValues []string) Resource {
+	return NewResource(
+		ID,
+		resourceName,
+		resourceType,
+		provider,
+		map[string]string{},
+		allowEmptyValues,
+		map[string]interface{}{},
+	)
 }
 
 func (r *Resource) Refresh(provider *provider_wrapper.ProviderWrapper) {

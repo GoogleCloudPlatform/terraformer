@@ -56,14 +56,12 @@ func (g *EbsGenerator) InitResources() error {
 			}
 
 			if !isRootDevice {
-				g.Resources = append(g.Resources, terraform_utils.NewResource(
+				g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 					aws.StringValue(volume.VolumeId),
 					aws.StringValue(volume.VolumeId),
 					"aws_ebs_volume",
 					"aws",
-					map[string]string{},
 					ebsAllowEmptyValues,
-					map[string]string{},
 				))
 
 				for _, attachment := range volume.Attachments {
@@ -84,7 +82,7 @@ func (g *EbsGenerator) InitResources() error {
 								"instance_id": aws.StringValue(attachment.InstanceId),
 							},
 							[]string{},
-							map[string]string{},
+							map[string]interface{}{},
 						))
 					}
 				}

@@ -27,7 +27,7 @@ import (
 
 var GcsAllowEmptyValues = []string{"labels.", "created_before"}
 
-var GcsAdditionalFields = map[string]string{}
+var GcsAdditionalFields = map[string]interface{}{}
 
 type GcsGenerator struct {
 	GCPService

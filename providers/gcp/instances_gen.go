@@ -27,7 +27,7 @@ import (
 
 var instancesAllowEmptyValues = []string{"labels."}
 
-var instancesAdditionalFields = map[string]string{}
+var instancesAdditionalFields = map[string]interface{}{}
 
 type InstancesGenerator struct {
 	GCPService

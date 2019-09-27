@@ -31,14 +31,12 @@ func (g *DashboardGenerator) createDashboardResources(client *newrelic.Client) e
 	}
 
 	for _, dashboard := range dashboards {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 			fmt.Sprintf("%d", dashboard.ID),
 			fmt.Sprintf("%s-%d", normalizeResourceName(dashboard.Title), dashboard.ID),
 			"newrelic_dashboard",
 			g.ProviderName,
-			map[string]string{},
-			[]string{},
-			map[string]string{}))
+			[]string{}))
 	}
 
 	return nil

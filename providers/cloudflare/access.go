@@ -43,7 +43,7 @@ func (g *AccessGenerator) createAccessApplications(api *cf.API, zoneID string) (
 				"name":    app.Name,
 			},
 			[]string{},
-			map[string]string{},
+			map[string]interface{}{},
 		))
 	}
 
