@@ -26,7 +26,7 @@ import (
 
 var targetHttpsProxiesAllowEmptyValues = []string{""}
 
-var targetHttpsProxiesAdditionalFields = map[string]string{}
+var targetHttpsProxiesAdditionalFields = map[string]interface{}{}
 
 type TargetHttpsProxiesGenerator struct {
 	GCPService

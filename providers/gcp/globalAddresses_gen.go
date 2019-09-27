@@ -26,7 +26,7 @@ import (
 
 var globalAddressesAllowEmptyValues = []string{""}
 
-var globalAddressesAdditionalFields = map[string]string{}
+var globalAddressesAdditionalFields = map[string]interface{}{}
 
 type GlobalAddressesGenerator struct {
 	GCPService

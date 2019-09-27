@@ -27,7 +27,7 @@ import (
 
 var networkEndpointGroupsAllowEmptyValues = []string{""}
 
-var networkEndpointGroupsAdditionalFields = map[string]string{}
+var networkEndpointGroupsAdditionalFields = map[string]interface{}{}
 
 type NetworkEndpointGroupsGenerator struct {
 	GCPService

@@ -40,14 +40,12 @@ func (g CloudFunctionsGenerator) createResources(functionsList *cloudfunctions.P
 		for _, functions := range page.Functions {
 			t := strings.Split(functions.Name, "/")
 			name := t[len(t)-1]
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraform_utils.NewSimpleResource(
 				g.GetArgs()["project"].(string)+"/"+g.GetArgs()["region"].(compute.Region).Name+"/"+name,
 				g.GetArgs()["region"].(compute.Region).Name+"_"+name,
 				"google_cloudfunctions_function",
 				"google",
-				map[string]string{},
 				cloudFunctionsAllowEmptyValues,
-				cloudFunctionsAdditionalFields,
 			))
 		}
 		return nil

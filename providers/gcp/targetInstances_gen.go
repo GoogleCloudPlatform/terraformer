@@ -27,7 +27,7 @@ import (
 
 var targetInstancesAllowEmptyValues = []string{""}
 
-var targetInstancesAdditionalFields = map[string]string{}
+var targetInstancesAdditionalFields = map[string]interface{}{}
 
 type TargetInstancesGenerator struct {
 	GCPService

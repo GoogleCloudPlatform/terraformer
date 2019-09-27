@@ -26,7 +26,7 @@ import (
 
 var routesAllowEmptyValues = []string{""}
 
-var routesAdditionalFields = map[string]string{}
+var routesAdditionalFields = map[string]interface{}{}
 
 type RoutesGenerator struct {
 	GCPService

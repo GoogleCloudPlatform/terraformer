@@ -27,7 +27,7 @@ import (
 
 var nodeGroupsAllowEmptyValues = []string{""}
 
-var nodeGroupsAdditionalFields = map[string]string{}
+var nodeGroupsAdditionalFields = map[string]interface{}{}
 
 type NodeGroupsGenerator struct {
 	GCPService

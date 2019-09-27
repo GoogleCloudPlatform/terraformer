@@ -28,8 +28,6 @@ import (
 
 var IamAllowEmptyValues = []string{"tags."}
 
-var IamAdditionalFields = map[string]string{}
-
 type IamGenerator struct {
 	GCPService
 }
@@ -45,14 +43,12 @@ func (IamGenerator) createResources(serviceAccountsIterator *admin.ServiceAccoun
 			log.Println("error with service account:", err)
 			continue
 		}
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraform_utils.NewSimpleResource(
 			serviceAccount.Name,
 			serviceAccount.UniqueId,
 			"google_service_account",
 			"google",
-			map[string]string{},
 			IamAllowEmptyValues,
-			IamAdditionalFields,
 		))
 	}
 	return resources

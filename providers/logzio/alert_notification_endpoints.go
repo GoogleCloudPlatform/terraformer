@@ -36,14 +36,12 @@ func (g *AlertNotificationEndpointsGenerator) InitResources() error {
 		return err
 	}
 	for _, endpoint := range endpoints {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 			strconv.FormatInt(endpoint.Id, 10),
 			createSlug(endpoint.Title+"-"+string(endpoint.EndpointType)+"-"+strconv.FormatInt(endpoint.Id, 10)),
 			"logzio_endpoint",
 			"logzio",
-			map[string]string{},
 			[]string{},
-			map[string]string{},
 		))
 	}
 	g.PopulateIgnoreKeys()

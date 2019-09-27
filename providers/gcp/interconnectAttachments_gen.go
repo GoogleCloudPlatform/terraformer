@@ -26,7 +26,7 @@ import (
 
 var interconnectAttachmentsAllowEmptyValues = []string{""}
 
-var interconnectAttachmentsAdditionalFields = map[string]string{}
+var interconnectAttachmentsAdditionalFields = map[string]interface{}{}
 
 type InterconnectAttachmentsGenerator struct {
 	GCPService

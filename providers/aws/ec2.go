@@ -59,7 +59,7 @@ func (g *Ec2Generator) InitResources() error {
 						"source_dest_check": "true",
 					},
 					ec2AllowEmptyValues,
-					map[string]string{},
+					map[string]interface{}{},
 				)
 				r.IgnoreKeys = append(r.IgnoreKeys, "^ebs_block_device.(.*)")
 				g.Resources = append(g.Resources, r)

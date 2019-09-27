@@ -26,7 +26,7 @@ import (
 
 var instanceTemplatesAllowEmptyValues = []string{""}
 
-var instanceTemplatesAdditionalFields = map[string]string{}
+var instanceTemplatesAdditionalFields = map[string]interface{}{}
 
 type InstanceTemplatesGenerator struct {
 	GCPService

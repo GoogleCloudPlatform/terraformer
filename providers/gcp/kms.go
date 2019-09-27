@@ -26,7 +26,7 @@ import (
 
 var kmsAllowEmptyValues = []string{""}
 
-var kmsAdditionalFields = map[string]string{}
+var kmsAdditionalFields = map[string]interface{}{}
 
 type KmsGenerator struct {
 	GCPService

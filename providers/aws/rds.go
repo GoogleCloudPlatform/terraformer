@@ -34,14 +34,12 @@ func (g *RDSGenerator) loadDBInstances(svc *rds.RDS) error {
 	return svc.DescribeDBInstancesPages(&rds.DescribeDBInstancesInput{}, func(dbInstances *rds.DescribeDBInstancesOutput, lastPage bool) bool {
 		for _, db := range dbInstances.DBInstances {
 			resourceName := aws.StringValue(db.DBInstanceIdentifier)
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_db_instance",
 				"aws",
-				map[string]string{},
 				RDSAllowEmptyValues,
-				map[string]string{},
 			))
 		}
 		return !lastPage
@@ -56,14 +54,12 @@ func (g *RDSGenerator) loadDBParameterGroups(svc *rds.RDS) error {
 			if strings.Contains(resourceName, ".") {
 				continue // skip default Default ParameterGroups like default.mysql5.6
 			}
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_db_parameter_group",
 				"aws",
-				map[string]string{},
 				RDSAllowEmptyValues,
-				map[string]string{},
 			))
 		}
 		return !lastPage
@@ -74,14 +70,12 @@ func (g *RDSGenerator) loadDBSubnetGroups(svc *rds.RDS) error {
 	return svc.DescribeDBSubnetGroupsPages(&rds.DescribeDBSubnetGroupsInput{}, func(subnets *rds.DescribeDBSubnetGroupsOutput, lastPage bool) bool {
 		for _, subnet := range subnets.DBSubnetGroups {
 			resourceName := aws.StringValue(subnet.DBSubnetGroupName)
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_db_subnet_group",
 				"aws",
-				map[string]string{},
 				RDSAllowEmptyValues,
-				map[string]string{},
 			))
 		}
 		return !lastPage
@@ -95,14 +89,12 @@ func (g *RDSGenerator) loadOptionGroups(svc *rds.RDS) error {
 			if strings.Contains(resourceName, ".") || strings.Contains(resourceName, ":") {
 				continue // skip default Default OptionGroups like default.mysql5.6
 			}
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_db_option_group",
 				"aws",
-				map[string]string{},
 				RDSAllowEmptyValues,
-				map[string]string{},
 			))
 		}
 		return !lastPage
@@ -113,14 +105,12 @@ func (g *RDSGenerator) loadEventSubscription(svc *rds.RDS) error {
 	return svc.DescribeEventSubscriptionsPages(&rds.DescribeEventSubscriptionsInput{}, func(eventSubscriptions *rds.DescribeEventSubscriptionsOutput, lastPage bool) bool {
 		for _, eventSubscription := range eventSubscriptions.EventSubscriptionsList {
 			resourceName := aws.StringValue(eventSubscription.CustomerAwsId)
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_db_event_subscription",
 				"aws",
-				map[string]string{},
 				RDSAllowEmptyValues,
-				map[string]string{},
 			))
 		}
 		return !lastPage

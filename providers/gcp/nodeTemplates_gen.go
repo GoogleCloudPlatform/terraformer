@@ -26,7 +26,7 @@ import (
 
 var nodeTemplatesAllowEmptyValues = []string{""}
 
-var nodeTemplatesAdditionalFields = map[string]string{}
+var nodeTemplatesAdditionalFields = map[string]interface{}{}
 
 type NodeTemplatesGenerator struct {
 	GCPService

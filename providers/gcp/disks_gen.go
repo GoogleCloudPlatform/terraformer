@@ -27,7 +27,7 @@ import (
 
 var disksAllowEmptyValues = []string{""}
 
-var disksAdditionalFields = map[string]string{}
+var disksAdditionalFields = map[string]interface{}{}
 
 type DisksGenerator struct {
 	GCPService

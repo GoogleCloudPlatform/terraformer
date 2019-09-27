@@ -27,7 +27,7 @@ import (
 
 var GkeAllowEmptyValues = []string{"labels."}
 
-var GkeAdditionalFields = map[string]string{}
+var GkeAdditionalFields = map[string]interface{}{}
 
 type GkeGenerator struct {
 	GCPService

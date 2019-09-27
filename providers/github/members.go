@@ -44,14 +44,12 @@ func (g *MembersGenerator) InitResources() error {
 		return nil
 	}
 	for _, member := range members {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 			g.Args["organization"].(string)+":"+member.GetLogin(),
 			member.GetLogin(),
 			"github_membership",
 			"github",
-			map[string]string{},
 			[]string{},
-			map[string]string{},
 		))
 	}
 	g.PopulateIgnoreKeys()
