@@ -5,7 +5,9 @@ package oss
 import (
 	"bytes"
 	"encoding/xml"
+	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -111,6 +113,14 @@ func (client Client) CreateBucket(bucketName string, options ...Option) error {
 
 	params := map[string]interface{}{}
 	resp, err := client.do("PUT", bucketName, params, headers, buffer)
+
+	// get response header
+	respHeader, _ := findOption(options, responseHeader, nil)
+	if respHeader != nil {
+		pRespHeader := respHeader.(*http.Header)
+		*pRespHeader = resp.Headers
+	}
+
 	if err != nil {
 		return err
 	}
@@ -138,6 +148,14 @@ func (client Client) ListBuckets(options ...Option) (ListBucketsResult, error) {
 	}
 
 	resp, err := client.do("GET", "", params, nil, nil)
+
+	// get response header
+	respHeader, _ := findOption(options, responseHeader, nil)
+	if respHeader != nil {
+		pRespHeader := respHeader.(*http.Header)
+		*pRespHeader = resp.Headers
+	}
+
 	if err != nil {
 		return out, err
 	}
@@ -217,6 +235,7 @@ func (client Client) GetBucketLocation(bucketName string) (string, error) {
 func (client Client) SetBucketACL(bucketName string, bucketACL ACLType) error {
 	headers := map[string]string{HTTPHeaderOssACL: string(bucketACL)}
 	params := map[string]interface{}{}
+	params["acl"] = nil
 	resp, err := client.do("PUT", bucketName, params, headers, nil)
 	if err != nil {
 		return err
@@ -258,8 +277,12 @@ func (client Client) GetBucketACL(bucketName string) (GetBucketACLResult, error)
 // error    it's nil if no error, otherwise it's an error object.
 //
 func (client Client) SetBucketLifecycle(bucketName string, rules []LifecycleRule) error {
-	lxml := lifecycleXML{Rules: convLifecycleRule(rules)}
-	bs, err := xml.Marshal(lxml)
+	err := verifyLifecycleRules(rules)
+	if err != nil {
+		return err
+	}
+	lifecycleCfg := LifecycleConfiguration{Rules: rules}
+	bs, err := xml.Marshal(lifecycleCfg)
 	if err != nil {
 		return err
 	}
@@ -645,7 +668,279 @@ func (client Client) GetBucketInfo(bucketName string) (GetBucketInfoResult, erro
 	defer resp.Body.Close()
 
 	err = xmlUnmarshal(resp.Body, &out)
+
+	// convert None to ""
+	if err == nil {
+		if out.BucketInfo.SseRule.KMSMasterKeyID == "None" {
+			out.BucketInfo.SseRule.KMSMasterKeyID = ""
+		}
+
+		if out.BucketInfo.SseRule.SSEAlgorithm == "None" {
+			out.BucketInfo.SseRule.SSEAlgorithm = ""
+		}
+	}
 	return out, err
+}
+
+// SetBucketVersioning set bucket versioning:Enabled、Suspended
+// bucketName    the bucket name.
+// error    it's nil if no error, otherwise it's an error object.
+func (client Client) SetBucketVersioning(bucketName string, versioningConfig VersioningConfig, options ...Option) error {
+	var err error
+	var bs []byte
+	bs, err = xml.Marshal(versioningConfig)
+
+	if err != nil {
+		return err
+	}
+
+	buffer := new(bytes.Buffer)
+	buffer.Write(bs)
+
+	contentType := http.DetectContentType(buffer.Bytes())
+	headers := map[string]string{}
+	headers[HTTPHeaderContentType] = contentType
+
+	params := map[string]interface{}{}
+	params["versioning"] = nil
+	resp, err := client.do("PUT", bucketName, params, headers, buffer)
+
+	// get response header
+	respHeader, _ := findOption(options, responseHeader, nil)
+	if respHeader != nil {
+		pRespHeader := respHeader.(*http.Header)
+		*pRespHeader = resp.Headers
+	}
+
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	return checkRespCode(resp.StatusCode, []int{http.StatusOK})
+}
+
+// GetBucketVersioning get bucket versioning status:Enabled、Suspended
+// bucketName    the bucket name.
+// error    it's nil if no error, otherwise it's an error object.
+func (client Client) GetBucketVersioning(bucketName string, options ...Option) (GetBucketVersioningResult, error) {
+	var out GetBucketVersioningResult
+	params := map[string]interface{}{}
+	params["versioning"] = nil
+	resp, err := client.do("GET", bucketName, params, nil, nil)
+
+	// get response header
+	respHeader, _ := findOption(options, responseHeader, nil)
+	if respHeader != nil {
+		pRespHeader := respHeader.(*http.Header)
+		*pRespHeader = resp.Headers
+	}
+
+	if err != nil {
+		return out, err
+	}
+	defer resp.Body.Close()
+
+	err = xmlUnmarshal(resp.Body, &out)
+	return out, err
+}
+
+// SetBucketEncryption set bucket encryption config
+// bucketName    the bucket name.
+// error    it's nil if no error, otherwise it's an error object.
+func (client Client) SetBucketEncryption(bucketName string, encryptionRule ServerEncryptionRule, options ...Option) error {
+	var err error
+	var bs []byte
+	bs, err = xml.Marshal(encryptionRule)
+
+	if err != nil {
+		return err
+	}
+
+	buffer := new(bytes.Buffer)
+	buffer.Write(bs)
+
+	contentType := http.DetectContentType(buffer.Bytes())
+	headers := map[string]string{}
+	headers[HTTPHeaderContentType] = contentType
+
+	params := map[string]interface{}{}
+	params["encryption"] = nil
+	resp, err := client.do("PUT", bucketName, params, headers, buffer)
+
+	// get response header
+	respHeader, _ := findOption(options, responseHeader, nil)
+	if respHeader != nil {
+		pRespHeader := respHeader.(*http.Header)
+		*pRespHeader = resp.Headers
+	}
+
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	return checkRespCode(resp.StatusCode, []int{http.StatusOK})
+}
+
+// GetBucketEncryption get bucket encryption
+// bucketName    the bucket name.
+// error    it's nil if no error, otherwise it's an error object.
+func (client Client) GetBucketEncryption(bucketName string, options ...Option) (GetBucketEncryptionResult, error) {
+	var out GetBucketEncryptionResult
+	params := map[string]interface{}{}
+	params["encryption"] = nil
+	resp, err := client.do("GET", bucketName, params, nil, nil)
+
+	// get response header
+	respHeader, _ := findOption(options, responseHeader, nil)
+	if respHeader != nil {
+		pRespHeader := respHeader.(*http.Header)
+		*pRespHeader = resp.Headers
+	}
+
+	if err != nil {
+		return out, err
+	}
+	defer resp.Body.Close()
+
+	err = xmlUnmarshal(resp.Body, &out)
+	return out, err
+}
+
+// DeleteBucketEncryption delete bucket encryption config
+// bucketName    the bucket name.
+// error    it's nil if no error, otherwise it's an error bucket
+func (client Client) DeleteBucketEncryption(bucketName string, options ...Option) error {
+	params := map[string]interface{}{}
+	params["encryption"] = nil
+	resp, err := client.do("DELETE", bucketName, params, nil, nil)
+
+	// get response header
+	respHeader, _ := findOption(options, responseHeader, nil)
+	if respHeader != nil {
+		pRespHeader := respHeader.(*http.Header)
+		*pRespHeader = resp.Headers
+	}
+
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	return checkRespCode(resp.StatusCode, []int{http.StatusNoContent})
+}
+
+//
+// SetBucketTagging add tagging to bucket
+// bucketName  name of bucket
+// tagging    tagging to be added
+// error        nil if success, otherwise error
+func (client Client) SetBucketTagging(bucketName string, tagging Tagging, options ...Option) error {
+	var err error
+	var bs []byte
+	bs, err = xml.Marshal(tagging)
+
+	if err != nil {
+		return err
+	}
+
+	buffer := new(bytes.Buffer)
+	buffer.Write(bs)
+
+	contentType := http.DetectContentType(buffer.Bytes())
+	headers := map[string]string{}
+	headers[HTTPHeaderContentType] = contentType
+
+	params := map[string]interface{}{}
+	params["tagging"] = nil
+	resp, err := client.do("PUT", bucketName, params, headers, buffer)
+
+	// get response header
+	respHeader, _ := findOption(options, responseHeader, nil)
+	if respHeader != nil {
+		pRespHeader := respHeader.(*http.Header)
+		*pRespHeader = resp.Headers
+	}
+
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	return checkRespCode(resp.StatusCode, []int{http.StatusOK})
+}
+
+// GetBucketTagging get tagging of the bucket
+// bucketName  name of bucket
+// error      nil if success, otherwise error
+func (client Client) GetBucketTagging(bucketName string, options ...Option) (GetBucketTaggingResult, error) {
+	var out GetBucketTaggingResult
+	params := map[string]interface{}{}
+	params["tagging"] = nil
+	resp, err := client.do("GET", bucketName, params, nil, nil)
+
+	// get response header
+	respHeader, _ := findOption(options, responseHeader, nil)
+	if respHeader != nil {
+		pRespHeader := respHeader.(*http.Header)
+		*pRespHeader = resp.Headers
+	}
+
+	if err != nil {
+		return out, err
+	}
+	defer resp.Body.Close()
+
+	err = xmlUnmarshal(resp.Body, &out)
+	return out, err
+}
+
+//
+// DeleteBucketTagging delete bucket tagging
+// bucketName  name of bucket
+// error      nil if success, otherwise error
+//
+func (client Client) DeleteBucketTagging(bucketName string, options ...Option) error {
+	params := map[string]interface{}{}
+	params["tagging"] = nil
+	resp, err := client.do("DELETE", bucketName, params, nil, nil)
+
+	// get response header
+	respHeader, _ := findOption(options, responseHeader, nil)
+	if respHeader != nil {
+		pRespHeader := respHeader.(*http.Header)
+		*pRespHeader = resp.Headers
+	}
+
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	return checkRespCode(resp.StatusCode, []int{http.StatusNoContent})
+}
+
+// GetBucketStat get bucket stat
+// bucketName    the bucket name.
+// error    it's nil if no error, otherwise it's an error object.
+func (client Client) GetBucketStat(bucketName string) (GetBucketStatResult, error) {
+	var out GetBucketStatResult
+	params := map[string]interface{}{}
+	params["stat"] = nil
+	resp, err := client.do("GET", bucketName, params, nil, nil)
+	if err != nil {
+		return out, err
+	}
+	defer resp.Body.Close()
+
+	err = xmlUnmarshal(resp.Body, &out)
+	return out, err
+}
+
+// LimitUploadSpeed set upload bandwidth limit speed,default is 0,unlimited
+// upSpeed KB/s, 0 is unlimited,default is 0
+// error it's nil if success, otherwise failure
+func (client Client) LimitUploadSpeed(upSpeed int) error {
+	if client.Config == nil {
+		return fmt.Errorf("client config is nil")
+	}
+	return client.Config.LimitUploadSpeed(upSpeed)
 }
 
 // UseCname sets the flag of using CName. By default it's false.
@@ -764,6 +1059,24 @@ func AuthProxy(proxyHost, proxyUser, proxyPassword string) ClientOption {
 func HTTPClient(HTTPClient *http.Client) ClientOption {
 	return func(client *Client) {
 		client.HTTPClient = HTTPClient
+	}
+}
+
+//
+// SetLogLevel sets the oss sdk log level
+//
+func SetLogLevel(LogLevel int) ClientOption {
+	return func(client *Client) {
+		client.Config.LogLevel = LogLevel
+	}
+}
+
+//
+// SetLogger sets the oss sdk logger
+//
+func SetLogger(Logger *log.Logger) ClientOption {
+	return func(client *Client) {
+		client.Config.Logger = Logger
 	}
 }
 

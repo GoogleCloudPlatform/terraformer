@@ -777,6 +777,10 @@ type ObjectAttrs struct {
 	// ObjectIterator.Next. When set, no other fields in ObjectAttrs will be
 	// populated.
 	Prefix string
+
+	// Etag is the HTTP/1.1 Entity tag for the object.
+	// This field is read-only.
+	Etag string
 }
 
 // convertTime converts a time in RFC3339 format to time.Time.
@@ -829,6 +833,7 @@ func newObject(o *raw.Object) *ObjectAttrs {
 		Created:                 convertTime(o.TimeCreated),
 		Deleted:                 convertTime(o.TimeDeleted),
 		Updated:                 convertTime(o.Updated),
+		Etag:                    o.Etag,
 	}
 }
 

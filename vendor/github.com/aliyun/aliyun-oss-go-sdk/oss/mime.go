@@ -232,6 +232,7 @@ var extToMimeType = map[string]string{
 	".xsl":     "application/xml",
 	".xslt":    "application/xslt+xml",
 	".xul":     "application/vnd.mozilla.xul+xml",
+	".webp":    "image/webp",
 }
 
 // TypeByExtension returns the MIME type associated with the file extension ext.

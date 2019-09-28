@@ -151,10 +151,22 @@ func (bucket Bucket) UploadPartCopy(imur InitiateMultipartUploadResult, srcBucke
 	startPosition, partSize int64, partNumber int, options ...Option) (UploadPart, error) {
 	var out UploadPartCopyResult
 	var part UploadPart
+	var opts []Option
 
-	opts := []Option{CopySource(srcBucketName, url.QueryEscape(srcObjectKey)),
-		CopySourceRange(startPosition, partSize)}
+	//first find version id
+	versionIdKey := "versionId"
+	versionId, _ := findOption(options, versionIdKey, nil)
+	if versionId == nil {
+		opts = []Option{CopySource(srcBucketName, url.QueryEscape(srcObjectKey)),
+			CopySourceRange(startPosition, partSize)}
+	} else {
+		opts = []Option{CopySourceVersion(srcBucketName, url.QueryEscape(srcObjectKey), versionId.(string)),
+			CopySourceRange(startPosition, partSize)}
+		options = deleteOption(options, versionIdKey)
+	}
+
 	opts = append(opts, options...)
+
 	params := map[string]interface{}{}
 	params["partNumber"] = strconv.Itoa(partNumber)
 	params["uploadId"] = imur.UploadID

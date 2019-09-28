@@ -225,12 +225,6 @@ func (bucket Bucket) downloadFile(objectKey, filePath string, partSize int64, op
 	tempFilePath := filePath + TempFileSuffix
 	listener := getProgressListener(options)
 
-	payerOptions := []Option{}
-	payer := getPayer(options)
-	if payer != "" {
-		payerOptions = append(payerOptions, RequestPayer(PayerType(payer)))
-	}
-
 	// If the file does not exist, create one. If exists, the download will overwrite it.
 	fd, err := os.OpenFile(tempFilePath, os.O_WRONLY|os.O_CREATE, FilePermMode)
 	if err != nil {
@@ -238,7 +232,10 @@ func (bucket Bucket) downloadFile(objectKey, filePath string, partSize int64, op
 	}
 	fd.Close()
 
-	meta, err := bucket.GetObjectDetailedMeta(objectKey, payerOptions...)
+	// Get the object detailed meta for object whole size
+	// must delete header:range to get whole object size
+	skipOptions := deleteOption(options, HTTPHeaderRange)
+	meta, err := bucket.GetObjectDetailedMeta(objectKey, skipOptions...)
 	if err != nil {
 		return err
 	}
@@ -474,12 +471,6 @@ func (bucket Bucket) downloadFileWithCp(objectKey, filePath string, partSize int
 	tempFilePath := filePath + TempFileSuffix
 	listener := getProgressListener(options)
 
-	payerOptions := []Option{}
-	payer := getPayer(options)
-	if payer != "" {
-		payerOptions = append(payerOptions, RequestPayer(PayerType(payer)))
-	}
-
 	// Load checkpoint data.
 	dcp := downloadCheckpoint{}
 	err := dcp.load(cpFilePath)
@@ -487,8 +478,10 @@ func (bucket Bucket) downloadFileWithCp(objectKey, filePath string, partSize int
 		os.Remove(cpFilePath)
 	}
 
-	// Get the object detailed meta.
-	meta, err := bucket.GetObjectDetailedMeta(objectKey, payerOptions...)
+	// Get the object detailed meta for object whole size
+	// must delete header:range to get whole object size
+	skipOptions := deleteOption(options, HTTPHeaderRange)
+	meta, err := bucket.GetObjectDetailedMeta(objectKey, skipOptions...)
 	if err != nil {
 		return err
 	}

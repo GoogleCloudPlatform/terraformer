@@ -15,6 +15,7 @@
 package requests
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"reflect"
@@ -69,6 +70,7 @@ type AcsRequest interface {
 	GetStyle() string
 	GetProduct() string
 	GetVersion() string
+	SetVersion(version string)
 	GetActionName() string
 	GetAcceptFormat() string
 	GetLocationServiceCode() string
@@ -163,6 +165,10 @@ func (request *baseRequest) SetHTTPSInsecure(isInsecure bool) {
 
 func (request *baseRequest) GetContent() []byte {
 	return request.Content
+}
+
+func (request *baseRequest) SetVersion(version string) {
+	request.version = version
 }
 
 func (request *baseRequest) GetVersion() string {
@@ -313,29 +319,97 @@ func flatRepeatedList(dataValue reflect.Value, request AcsRequest, position, pre
 				// simple param
 				key := prefix + name
 				value := dataValue.Field(i).String()
+				if dataValue.Field(i).Kind().String() == "map" {
+					byt, _ := json.Marshal(dataValue.Field(i).Interface())
+					value = string(byt)
+					if value == "null" {
+						value = ""
+					}
+				}
 				err = addParam(request, fieldPosition, key, value)
 				if err != nil {
 					return
 				}
 			} else if typeTag == "Repeated" {
 				// repeated param
-				repeatedFieldValue := dataValue.Field(i)
-				if repeatedFieldValue.Kind() != reflect.Slice {
-					// possible value: {"[]string", "*[]struct"}, we must call Elem() in the last condition
-					repeatedFieldValue = repeatedFieldValue.Elem()
+				err = handleRepeatedParams(request, dataValue, prefix, name, fieldPosition, i)
+				if err != nil {
+					return
 				}
-				if repeatedFieldValue.IsValid() && !repeatedFieldValue.IsNil() {
-					for m := 0; m < repeatedFieldValue.Len(); m++ {
-						elementValue := repeatedFieldValue.Index(m)
-						key := prefix + name + "." + strconv.Itoa(m+1)
-						if elementValue.Type().Kind().String() == "string" {
-							value := elementValue.String()
-							err = addParam(request, fieldPosition, key, value)
-							if err != nil {
-								return
-							}
-						} else {
-							err = flatRepeatedList(elementValue, request, fieldPosition, key+".")
+			} else if typeTag == "Struct" {
+				err = handleStruct(request, dataValue, prefix, name, fieldPosition, i)
+				if err != nil {
+					return
+				}
+			}
+		}
+	}
+	return
+}
+
+func handleRepeatedParams(request AcsRequest, dataValue reflect.Value, prefix, name, fieldPosition string, index int) (err error) {
+	repeatedFieldValue := dataValue.Field(index)
+	if repeatedFieldValue.Kind() != reflect.Slice {
+		// possible value: {"[]string", "*[]struct"}, we must call Elem() in the last condition
+		repeatedFieldValue = repeatedFieldValue.Elem()
+	}
+	if repeatedFieldValue.IsValid() && !repeatedFieldValue.IsNil() {
+		for m := 0; m < repeatedFieldValue.Len(); m++ {
+			elementValue := repeatedFieldValue.Index(m)
+			key := prefix + name + "." + strconv.Itoa(m+1)
+			if elementValue.Type().Kind().String() == "string" {
+				value := elementValue.String()
+				err = addParam(request, fieldPosition, key, value)
+				if err != nil {
+					return
+				}
+			} else {
+				err = flatRepeatedList(elementValue, request, fieldPosition, key+".")
+				if err != nil {
+					return
+				}
+			}
+		}
+	}
+	return nil
+}
+
+func handleStruct(request AcsRequest, dataValue reflect.Value, prefix, name, fieldPosition string, index int) (err error) {
+	valueField := dataValue.Field(index)
+	if valueField.IsValid() && valueField.String() != "" {
+		valueFieldType := valueField.Type()
+		for m := 0; m < valueFieldType.NumField(); m++ {
+			fieldName := valueFieldType.Field(m).Name
+			elementValue := valueField.FieldByName(fieldName)
+			key := prefix + name + "." + fieldName
+			if elementValue.Type().String() == "[]string" {
+				if elementValue.IsNil() {
+					continue
+				}
+				for j := 0; j < elementValue.Len(); j++ {
+					err = addParam(request, fieldPosition, key+"."+strconv.Itoa(j+1), elementValue.Index(j).String())
+					if err != nil {
+						return
+					}
+				}
+			} else {
+				if elementValue.Type().Kind().String() == "string" {
+					value := elementValue.String()
+					err = addParam(request, fieldPosition, key, value)
+					if err != nil {
+						return
+					}
+				} else if elementValue.Type().Kind().String() == "struct" {
+					err = flatRepeatedList(elementValue, request, fieldPosition, key+".")
+					if err != nil {
+						return
+					}
+				} else if !elementValue.IsNil() {
+					repeatedFieldValue := elementValue.Elem()
+					if repeatedFieldValue.IsValid() && !repeatedFieldValue.IsNil() {
+						for m := 0; m < repeatedFieldValue.Len(); m++ {
+							elementValue := repeatedFieldValue.Index(m)
+							err = flatRepeatedList(elementValue, request, fieldPosition, key+"."+strconv.Itoa(m+1)+".")
 							if err != nil {
 								return
 							}
@@ -345,7 +419,7 @@ func flatRepeatedList(dataValue reflect.Value, request AcsRequest, position, pre
 			}
 		}
 	}
-	return
+	return nil
 }
 
 func addParam(request AcsRequest, position, name, value string) (err error) {

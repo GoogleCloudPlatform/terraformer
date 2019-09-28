@@ -1,0 +1,52 @@
+syntax = "proto2";
+package sls;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+option (gogoproto.sizer_all) = true;
+option (gogoproto.marshaler_all) = true;
+option (gogoproto.unmarshaler_all) = true;
+
+message LogContent
+{
+    required string Key = 1;
+    required string Value = 2;
+}  
+
+message Log
+{
+    required uint32 Time = 1;// UNIX Time Format
+    
+    repeated LogContent Contents= 2;
+
+}
+message LogTag
+{
+    required string Key = 1;
+    required string Value = 2;
+}
+message LogGroup
+{
+    repeated Log Logs= 1;
+    optional string Category = 2;
+    optional string Topic = 3;
+    optional string Source = 4;
+    optional string MachineUUID = 5;
+    repeated LogTag LogTags = 6;
+}
+
+message SlsLogPackage
+{
+    required bytes data = 1;  // the serialized data of LogGroup , may be compressed
+    optional int32 uncompress_size = 2;  
+}
+
+message SlsLogPackageList
+{
+    repeated SlsLogPackage packages = 1;
+}
+
+message LogGroupList
+{
+    repeated LogGroup LogGroups = 1;
+}

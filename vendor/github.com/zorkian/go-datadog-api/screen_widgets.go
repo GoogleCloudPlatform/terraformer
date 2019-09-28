@@ -96,7 +96,7 @@ type TileDefApmOrLogQuery struct {
 type TileDefApmOrLogQueryCompute struct {
 	Aggregation *string `json:"aggregation"`
 	Facet       *string `json:"facet,omitempty"`
-	Interval    *int    `json:"interval,omitempty"`
+	Interval    *string `json:"interval,omitempty"`
 }
 type TileDefApmOrLogQuerySearch struct {
 	Query *string `json:"query"`
@@ -124,7 +124,7 @@ type TileDefMetadata struct {
 }
 
 type ConditionalFormat struct {
-	Color         *string `json:"color,omitempty"`
+	Color         *string `json:"custom_fg_color,omitempty"`
 	Palette       *string `json:"palette,omitempty"`
 	Comparator    *string `json:"comparator,omitempty"`
 	Invert        *bool   `json:"invert,omitempty"`

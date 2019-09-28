@@ -1,0 +1,11 @@
+package: aliyun/serverless/lambda-go-sdk
+import:
+- package: github.com/go-resty/resty
+  version: v0.11
+- package: github.com/stretchr/testify
+  version: f6abca593680b2315d2075e0f5e2a9751e3f431a
+  subpackages:
+  - assert
+  - mock
+  - require
+  - suite

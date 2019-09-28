@@ -1,0 +1,21 @@
+language: go
+
+go:
+ - 1.8.x
+ - 1.9.x
+ - 1.10.x
+ - 1.11.x
+
+install:
+ - go get github.com/mattn/goveralls
+ - go get github.com/stretchr/testify/suite
+ - go get github.com/cenkalti/backoff
+ - go get github.com/pkg/errors
+ - go get golang.org/x/net/context
+ - go get gopkg.in/resty.v1
+
+script:
+ - go test -v
+
+env:
+ - GO111MODULE=on

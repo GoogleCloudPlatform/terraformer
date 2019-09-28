@@ -28,18 +28,45 @@ type Response struct {
 	Error  string `json:"error"`
 }
 
-// uriForAPI is to be called with something like "/v1/events" and it will give
-// the proper request URI to be posted to.
+// uriForAPI is to be called with either an API resource like "/v1/events"
+// or a full URL like the IP Ranges one
+// and it will give the proper request URI to be posted to.
 func (client *Client) uriForAPI(api string) (string, error) {
-	apiBase, err := url.Parse(client.baseUrl + "/api" + api)
+	var err error
+	// If api is a URI such as /v1/hosts/, /v2/dashboards... add credentials and return a properly formatted URL
+	if !(strings.HasPrefix(api, "https://") || strings.HasPrefix(api, "http://")) {
+		apiBase, err := url.Parse(client.baseUrl + "/api" + api)
+		if err != nil {
+			return "", err
+		}
+		q := apiBase.Query()
+		q.Add("api_key", client.apiKey)
+		q.Add("application_key", client.appKey)
+		apiBase.RawQuery = q.Encode()
+		return apiBase.String(), nil
+	}
+	// if api is a generic URL we simply return it
+	apiBase, err := url.Parse(api)
 	if err != nil {
 		return "", err
 	}
-	q := apiBase.Query()
-	q.Add("api_key", client.apiKey)
-	q.Add("application_key", client.appKey)
-	apiBase.RawQuery = q.Encode()
 	return apiBase.String(), nil
+}
+
+// URLIPRanges returns the IP Ranges URL used to whitelist IP addresses in use to send data to Datadog
+// agents, api, apm, logs, process, synthetics, webhooks
+func (client *Client) URLIPRanges() (string, error) {
+	baseURL := client.GetBaseUrl()
+	// Get the domain from the URL: eu, com...
+	domain := strings.Split(baseURL, ".")[2]
+	var urlIPRanges string
+	switch domain {
+	case "eu":
+		urlIPRanges = "https://ip-ranges.datadoghq.eu"
+	case "com":
+		urlIPRanges = "https://ip-ranges.datadoghq.com"
+	}
+	return urlIPRanges, nil
 }
 
 // redactError removes api and application keys from error strings
