@@ -29,15 +29,20 @@ type AWSService struct {
 
 func (s *AWSService) generateSession() *session.Session {
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		Profile:                 s.GetArgs()["profile"].(string),
 		AssumeRoleTokenProvider: stscreds.StdinTokenProvider,
-		SharedConfigState:       session.SharedConfigStateFromEnv,
 	}))
-	creds, _ := sess.Config.Credentials.Get()
-	// terraform cannot ask for MFA token, so we need to pass STS session token
-	os.Setenv("AWS_ACCESS_KEY_ID", creds.AccessKeyID)
-	os.Setenv("AWS_SECRET_ACCESS_KEY", creds.SecretAccessKey)
-	os.Setenv("AWS_SESSION_TOKEN", creds.SessionToken)
+
+	// terraform cannot ask for MFA token, so we need to pass STS session token, which might contain credentials with MFA requirement
+	accessKey := os.Getenv("AWS_SECRET_ACCESS_KEY")
+	if accessKey == "" {
+		creds, _ := sess.Config.Credentials.Get()
+		os.Setenv("AWS_ACCESS_KEY_ID", creds.AccessKeyID)
+		os.Setenv("AWS_SECRET_ACCESS_KEY", creds.SecretAccessKey)
+
+		if creds.SessionToken != "" {
+			os.Setenv("AWS_SESSION_TOKEN", creds.SessionToken)
+		}
+	}
 
 	return sess
 }
