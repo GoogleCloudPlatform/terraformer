@@ -16,6 +16,7 @@ package aws
 
 import (
 	"os"
+	"strconv"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
@@ -103,10 +104,28 @@ func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
 func (p *AWSProvider) Init(args []string) error {
 	p.region = args[0]
 	p.profile = args[1]
-	// terraform work with env params AWS_DEFAULT_REGION
-	err := os.Setenv("AWS_REGION", p.region)
+
+	// Terraformer accepts region and profile configuration, so we must detect what env variables to adjust to make Go SDK rely on them. AWS_SDK_LOAD_CONFIG here must be checked to determine correct variable to set.
+	enableSharedConfig, _ := strconv.ParseBool(os.Getenv("AWS_SDK_LOAD_CONFIG"))
+	var err error
+	if enableSharedConfig {
+		err = os.Setenv("AWS_DEFAULT_REGION", p.region)
+	} else {
+		err = os.Setenv("AWS_REGION", p.region)
+	}
 	if err != nil {
 		return err
+	}
+
+	if p.profile != "default" && p.profile != "" {
+		if enableSharedConfig {
+			err = os.Setenv("AWS_DEFAULT_PROFILE", p.profile)
+		} else {
+			err = os.Setenv("AWS_PROFILE", p.profile)
+		}
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -125,7 +144,6 @@ func (p *AWSProvider) InitService(serviceName string) error {
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
 		"region":  p.region,
-		"profile": p.profile,
 	})
 	return nil
 }
