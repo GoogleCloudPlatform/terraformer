@@ -52,7 +52,6 @@ func (g *IgwGenerator) InitResources() error {
 		return err
 	}
 	g.Resources = g.createResources(igws)
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

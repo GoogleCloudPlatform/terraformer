@@ -45,6 +45,5 @@ func (g *AlertsGenerator) InitResources() error {
 			allowedEmptyValues,
 		))
 	}
-	g.PopulateIgnoreKeys()
 	return nil
 }

@@ -77,7 +77,6 @@ func (g *DisksGenerator) InitResources() error {
 		g.Resources = append(g.Resources, g.createResources(ctx, disksList, zone)...)
 	}
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

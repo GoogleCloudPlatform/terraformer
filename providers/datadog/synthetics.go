@@ -62,6 +62,5 @@ func (g *SyntheticsGenerator) InitResources() error {
 		return err
 	}
 	g.Resources = g.createResources(syntheticsList)
-	g.PopulateIgnoreKeys()
 	return nil
 }

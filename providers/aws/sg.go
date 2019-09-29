@@ -75,7 +75,6 @@ func (g *SecurityGenerator) InitResources() error {
 		}
 	}
 	g.Resources = g.createResources(securityGroups)
-	g.PopulateIgnoreKeys()
 	return nil
 }
 

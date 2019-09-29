@@ -97,7 +97,6 @@ func (g *TeamsGenerator) InitResources() error {
 		return nil
 	}
 	g.Resources = g.createTeamsResources(ctx, teams, client)
-	g.PopulateIgnoreKeys()
 	return nil
 }
 

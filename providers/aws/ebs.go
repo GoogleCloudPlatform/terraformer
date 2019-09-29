@@ -94,6 +94,5 @@ func (g *EbsGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
-	g.PopulateIgnoreKeys()
 	return nil
 }

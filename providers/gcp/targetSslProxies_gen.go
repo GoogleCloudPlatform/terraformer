@@ -71,7 +71,6 @@ func (g *TargetSslProxiesGenerator) InitResources() error {
 	targetSslProxiesList := computeService.TargetSslProxies.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, targetSslProxiesList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

@@ -40,6 +40,5 @@ func (g *ProjectGenerator) InitResources() error {
 		projectAdditionalFields,
 	))
 
-	g.PopulateIgnoreKeys()
 	return nil
 }

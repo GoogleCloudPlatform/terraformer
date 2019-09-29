@@ -71,7 +71,6 @@ func (g *NetworksGenerator) InitResources() error {
 	networksList := computeService.Networks.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, networksList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

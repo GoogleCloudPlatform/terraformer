@@ -52,7 +52,6 @@ func (g *VpnConnectionGenerator) InitResources() error {
 		return err
 	}
 	g.Resources = g.createResources(vpncs)
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

@@ -62,6 +62,5 @@ func (g *RouteTableGenerator) InitResources() error {
 	svc := ec2.New(sess)
 
 	g.Resources = g.createRouteTablesResources(svc)
-	g.PopulateIgnoreKeys()
 	return nil
 }

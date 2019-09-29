@@ -63,6 +63,5 @@ func (g *TimeboardGenerator) InitResources() error {
 		return err
 	}
 	g.Resources = g.createResources(timeboards)
-	g.PopulateIgnoreKeys()
 	return nil
 }

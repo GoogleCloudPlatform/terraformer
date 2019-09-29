@@ -103,7 +103,6 @@ func (g *PubsubGenerator) InitResources() error {
 	g.Resources = append(g.Resources, subscriptionsResources...)
 	g.Resources = append(g.Resources, topicsResources...)
 
-	g.PopulateIgnoreKeys()
 	return nil
 }
 

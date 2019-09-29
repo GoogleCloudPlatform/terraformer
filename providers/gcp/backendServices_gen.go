@@ -70,7 +70,6 @@ func (g *BackendServicesGenerator) InitResources() error {
 	backendServicesList := computeService.BackendServices.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, backendServicesList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

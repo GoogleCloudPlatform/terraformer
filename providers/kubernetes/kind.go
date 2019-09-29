@@ -87,6 +87,5 @@ func (k *Kind) InitResources() error {
 			[]string{},
 		))
 	}
-	k.PopulateIgnoreKeys()
 	return nil
 }

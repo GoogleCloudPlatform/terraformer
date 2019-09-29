@@ -101,7 +101,6 @@ func (g *CloudDNSGenerator) InitResources() error {
 	}
 
 	g.Resources = g.createZonesResources(ctx, svc, project)
-	g.PopulateIgnoreKeys()
 	return nil
 }
 

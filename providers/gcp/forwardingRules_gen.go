@@ -71,7 +71,6 @@ func (g *ForwardingRulesGenerator) InitResources() error {
 	forwardingRulesList := computeService.ForwardingRules.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createResources(ctx, forwardingRulesList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

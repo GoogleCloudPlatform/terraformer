@@ -62,6 +62,5 @@ func (g *UserGenerator) InitResources() error {
 		return err
 	}
 	g.Resources = g.createResources(users)
-	g.PopulateIgnoreKeys()
 	return nil
 }

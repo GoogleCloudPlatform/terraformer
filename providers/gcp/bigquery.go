@@ -96,7 +96,6 @@ func (g *BigQueryGenerator) InitResources() error {
 	datasetsList := bigQueryService.Datasets.List(g.GetArgs()["project"].(string))
 
 	g.Resources = g.createResources(datasetsList, ctx, bigQueryService)
-	g.PopulateIgnoreKeys()
 	return nil
 }
 

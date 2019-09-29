@@ -71,7 +71,6 @@ func (g *RegionDisksGenerator) InitResources() error {
 	regionDisksList := computeService.RegionDisks.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createResources(ctx, regionDisksList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }
