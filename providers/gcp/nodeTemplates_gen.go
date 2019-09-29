@@ -71,7 +71,6 @@ func (g *NodeTemplatesGenerator) InitResources() error {
 	nodeTemplatesList := computeService.NodeTemplates.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createResources(ctx, nodeTemplatesList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

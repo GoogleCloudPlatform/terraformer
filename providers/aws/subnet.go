@@ -55,7 +55,6 @@ func (g *SubnetGenerator) InitResources() error {
 		return err
 	}
 	g.Resources = g.createResources(subnets)
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

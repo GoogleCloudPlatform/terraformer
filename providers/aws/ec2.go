@@ -71,7 +71,6 @@ func (g *Ec2Generator) InitResources() error {
 	if err != nil {
 		return err
 	}
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

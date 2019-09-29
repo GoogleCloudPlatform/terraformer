@@ -121,7 +121,6 @@ func (g *AutoScalingGenerator) InitResources() error {
 	if err := g.loadLaunchTemplates(sess); err != nil {
 		return err
 	}
-	g.PopulateIgnoreKeys()
 	return nil
 }
 

@@ -116,7 +116,6 @@ func (g *BlockStorageGenerator) InitResources() error {
 	list := volumes.List(client, nil)
 
 	g.Resources = g.createResources(&list, client.Type)
-	g.PopulateIgnoreKeys()
 
 	return nil
 }

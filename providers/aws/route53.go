@@ -111,7 +111,6 @@ func (g *Route53Generator) InitResources() error {
 	svc := route53.New(sess)
 
 	g.Resources = g.createZonesResources(svc)
-	g.PopulateIgnoreKeys()
 	return nil
 }
 

@@ -51,6 +51,5 @@ func (g *SqsGenerator) InitResources() error {
 		))
 	}
 
-	g.PopulateIgnoreKeys()
 	return nil
 }

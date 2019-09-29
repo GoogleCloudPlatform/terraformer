@@ -68,7 +68,6 @@ func (g *RepositoriesGenerator) InitResources() error {
 		}
 		opt.Page = resp.NextPage
 	}
-	g.PopulateIgnoreKeys()
 
 	return nil
 }

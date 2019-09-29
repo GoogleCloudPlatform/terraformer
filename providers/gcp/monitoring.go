@@ -202,6 +202,5 @@ func (g *MonitoringGenerator) InitResources() error {
 		return err
 	}
 
-	g.PopulateIgnoreKeys()
 	return nil
 }

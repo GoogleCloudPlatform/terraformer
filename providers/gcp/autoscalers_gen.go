@@ -77,7 +77,6 @@ func (g *AutoscalersGenerator) InitResources() error {
 		g.Resources = append(g.Resources, g.createResources(ctx, autoscalersList, zone)...)
 	}
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

@@ -173,7 +173,6 @@ func (g *FirewallGenerator) InitResources() error {
 		}
 	}
 
-	g.PopulateIgnoreKeys()
 	return nil
 }
 

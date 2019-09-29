@@ -71,7 +71,6 @@ func (g *InstanceTemplatesGenerator) InitResources() error {
 	instanceTemplatesList := computeService.InstanceTemplates.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, instanceTemplatesList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

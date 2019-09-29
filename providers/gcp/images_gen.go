@@ -71,7 +71,6 @@ func (g *ImagesGenerator) InitResources() error {
 	imagesList := computeService.Images.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, imagesList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

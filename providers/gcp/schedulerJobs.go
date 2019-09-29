@@ -72,6 +72,5 @@ func (g *SchedulerJobsGenerator) InitResources() error {
 	jobsList := cloudSchedulerService.Projects.Locations.Jobs.List("projects/" + g.GetArgs()["project"].(string) + "/locations/" + g.GetArgs()["region"].(compute.Region).Name)
 
 	g.Resources = g.createResources(jobsList, ctx)
-	g.PopulateIgnoreKeys()
 	return nil
 }

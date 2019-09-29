@@ -71,7 +71,6 @@ func (g *RegionInstanceGroupManagersGenerator) InitResources() error {
 	regionInstanceGroupManagersList := computeService.RegionInstanceGroupManagers.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createResources(ctx, regionInstanceGroupManagersList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

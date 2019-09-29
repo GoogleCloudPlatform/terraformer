@@ -58,7 +58,6 @@ func (g *IamGenerator) InitResources() error {
 		log.Println(err)
 	}
 
-	g.PopulateIgnoreKeys()
 	return nil
 }
 

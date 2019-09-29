@@ -105,7 +105,6 @@ func (g *GkeGenerator) InitResources() error {
 	}
 
 	g.Resources = g.initClusters(clusters, service)
-	g.PopulateIgnoreKeys()
 	return nil
 }
 

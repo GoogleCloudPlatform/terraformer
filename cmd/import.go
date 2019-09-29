@@ -83,6 +83,7 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 			return err
 		}
 		err = provider.GetService().InitResources()
+		provider.GetService().PopulateIgnoreKeys(provider.GetBasicConfig())
 		if err != nil {
 			return err
 		}

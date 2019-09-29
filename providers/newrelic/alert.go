@@ -104,7 +104,6 @@ func (g *AlertGenerator) InitResources() error {
 		}
 	}
 
-	g.PopulateIgnoreKeys()
 	return nil
 }
 

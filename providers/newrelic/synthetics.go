@@ -99,6 +99,5 @@ func (g *SyntheticsGenerator) InitResources() error {
 		return err
 	}
 
-	g.PopulateIgnoreKeys()
 	return nil
 }
