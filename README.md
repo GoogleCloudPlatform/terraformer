@@ -309,7 +309,7 @@ List of supported AWS services:
 
 *   `elb`
     * `aws_elb`
-*   `alb`
+*   `alb` (supports ALB and NLB)
     * `aws_lb`
     * `aws_lb_listener`
     * `aws_lb_listener_rule`

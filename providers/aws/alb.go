@@ -44,11 +44,9 @@ func (g *AlbGenerator) loadLB(svc *elbv2.ELBV2) error {
 				"aws",
 				AlbAllowEmptyValues,
 			))
-			if aws.StringValue(lb.Type) != "network" {
-				err := g.loadLBListener(svc, lb.LoadBalancerArn)
-				if err != nil {
-					log.Println(err)
-				}
+			err := g.loadLBListener(svc, lb.LoadBalancerArn)
+			if err != nil {
+				log.Println(err)
 			}
 
 		}
