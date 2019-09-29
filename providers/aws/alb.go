@@ -90,16 +90,18 @@ func (g *AlbGenerator) loadLBListenerRule(svc *elbv2.ELBV2, listenerArn *string)
 		return err
 	}
 	for _, lsr := range lsrs.Rules {
-		resourceName := aws.StringValue(lsr.RuleArn)
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
-			resourceName,
-			resourceName,
-			"aws_lb_listener_rule",
-			"aws",
-			map[string]string{},
-			AlbAllowEmptyValues,
-			map[string]interface{}{},
-		))
+		if !aws.BoolValue(lsr.IsDefault) {
+			resourceName := aws.StringValue(lsr.RuleArn)
+			g.Resources = append(g.Resources, terraform_utils.NewResource(
+				resourceName,
+				resourceName,
+				"aws_lb_listener_rule",
+				"aws",
+				map[string]string{},
+				AlbAllowEmptyValues,
+				map[string]interface{}{},
+			))
+		}
 	}
 	return err
 }
@@ -185,17 +187,12 @@ func (g *AlbGenerator) InitResources() error {
 }
 
 func (g *AlbGenerator) PostConvertHook() error {
-	for i, r := range g.Resources {
+	for _, r := range g.Resources {
 		if r.InstanceInfo.Type != "aws_lb_listener" {
 			continue
 		}
-		for _, lb := range g.Resources {
-			if lb.InstanceInfo.Type != "aws_lb" {
-				continue
-			}
-			if r.InstanceState.Attributes["load_balancer_arn"] == lb.InstanceState.Attributes["arn"] {
-				g.Resources[i].Item["load_balancer_arn"] = "${aws_lb." + lb.ResourceName + ".arn}"
-			}
+		if r.InstanceState.Attributes["default_action.0.order"] == "0" {
+			delete(r.Item["default_action"].([]interface{})[0].(map[string]interface{}), "order")
 		}
 	}
 
@@ -203,13 +200,8 @@ func (g *AlbGenerator) PostConvertHook() error {
 		if r.InstanceInfo.Type != "aws_lb_listener_rule" {
 			continue
 		}
-		for _, lb := range g.Resources {
-			if lb.InstanceInfo.Type != "aws_lb_listener" {
-				continue
-			}
-			if r.InstanceState.Attributes["listener_arn"] == lb.InstanceState.Attributes["arn"] {
-				g.Resources[i].Item["listener_arn"] = "${aws_lb_listener." + lb.ResourceName + ".arn}"
-			}
+		if r.InstanceState.Attributes["action.0.order"] == "0" {
+			delete(r.Item["action"].([]interface{})[0].(map[string]interface{}), "order")
 		}
 		for _, lb := range g.Resources {
 			if lb.InstanceInfo.Type != "aws_lb_listener_certificate" {
@@ -221,17 +213,12 @@ func (g *AlbGenerator) PostConvertHook() error {
 		}
 	}
 
-	for i, r := range g.Resources {
-		if r.InstanceInfo.Type != "aws_lb_target_group_attachment" {
+	for _, r := range g.Resources {
+		if r.InstanceInfo.Type != "aws_lb" {
 			continue
 		}
-		for _, lb := range g.Resources {
-			if lb.InstanceInfo.Type != "aws_lb_target_group" {
-				continue
-			}
-			if r.InstanceState.Attributes["target_group_arn"] == lb.InstanceState.Attributes["arn"] {
-				g.Resources[i].Item["target_group_arn"] = "${aws_lb_target_group." + lb.ResourceName + ".arn}"
-			}
+		if val, ok := r.InstanceState.Attributes["access_logs.0.enabled"]; ok && val == "false" {
+			delete(r.Item, "access_logs")
 		}
 	}
 	return nil

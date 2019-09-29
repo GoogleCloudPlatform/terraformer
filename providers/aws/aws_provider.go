@@ -54,6 +54,11 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 			"sg":     []string{"security_groups", "id"},
 			"subnet": []string{"subnets", "id"},
 			"vpc":    []string{"vpc_id", "id"},
+			"alb": []string{
+				"load_balancer_arn", "id",
+				"listener_arn", "id",
+				// TF ALB TG attachment logic doesn't work well with references (doesn't interpolate)
+			},
 		},
 		"elb": {
 			"sg":     []string{"security_groups", "id"},
