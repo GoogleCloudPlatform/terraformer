@@ -394,6 +394,8 @@ List of supported AWS services:
     * `aws_organizations_organizational_unit`
     * `aws_organizations_policy`
     * `aws_organizations_policy_attachment`
+* `dynamodb`
+    * `aws_dynamodb_table`
 
 ### Use with OpenStack
 
