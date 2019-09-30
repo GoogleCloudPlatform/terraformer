@@ -59,7 +59,9 @@ func newImportCmd() *cobra.Command {
 
 	cmd.AddCommand(newCmdPlanImporter(options))
 	for _, subcommand := range providerImporterSubcommands() {
-		cmd.AddCommand(subcommand(options))
+		providerCommand := subcommand(options)
+		_ = providerCommand.MarkPersistentFlagRequired("resources")
+		cmd.AddCommand(providerCommand)
 	}
 	return cmd
 }

@@ -118,13 +118,9 @@ func (p *AWSProvider) GetConfig() cty.Value {
 	})
 }
 
-
 func (p *AWSProvider) GetBasicConfig() cty.Value {
-	return cty.ObjectVal(map[string]cty.Value{
-		"region": cty.StringVal(p.region),
-		"skip_region_validation": cty.True,
-	})}
-
+	return p.GetConfig()
+}
 
 // check projectName in env params
 func (p *AWSProvider) Init(args []string) error {
