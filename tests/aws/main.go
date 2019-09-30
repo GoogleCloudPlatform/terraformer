@@ -17,7 +17,7 @@ package main
 import (
 	"log"
 	"os"
-	//"os/exec"
+	"os/exec"
 	"sort"
 
 	"github.com/GoogleCloudPlatform/terraformer/cmd"
@@ -28,7 +28,7 @@ import (
 const command = "terraform init && terraform plan"
 
 func main() {
-	//region := "ap-southeast-1"
+	region := "ap-southeast-1"
 	profile := "personal"
 	services := []string{}
 	provider := &aws_terraforming.AWSProvider{}
@@ -45,7 +45,7 @@ func main() {
 		services = append(services, service)
 
 	}
-	services = []string{"cloudfront"}
+	services = []string{"vpc", "subnet", "nacl"}
 	sort.Strings(services)
 	provider = &aws_terraforming.AWSProvider{
 		Provider: terraform_utils.Provider{},
@@ -56,26 +56,26 @@ func main() {
 		PathOutput:  cmd.DefaultPathOutput,
 		State:       "local",
 		Connect:     true,
-	}, []string{"", profile})
+	}, []string{region, profile})
 	if err != nil {
 		log.Println(err)
 		os.Exit(1)
 	}
-	//rootPath, _ := os.Getwd()
-	//for _, serviceName := range services {
-	//	currentPath := cmd.Path(cmd.DefaultPathPattern, provider.GetName(), serviceName, cmd.DefaultPathOutput)
-	//	if err := os.Chdir(currentPath); err != nil {
-	//		log.Println(err)
-	//		os.Exit(1)
-	//	}
-	//	cmd := exec.Command("sh", "-c", command)
-	//	cmd.Stdout = os.Stdout
-	//	cmd.Stderr = os.Stderr
-	//	err = cmd.Run()
-	//	if err != nil {
-	//		log.Println(err)
-	//		os.Exit(1)
-	//	}
-	//	os.Chdir(rootPath)
-	//}
+	rootPath, _ := os.Getwd()
+	for _, serviceName := range services {
+		currentPath := cmd.Path(cmd.DefaultPathPattern, provider.GetName(), serviceName, cmd.DefaultPathOutput)
+		if err := os.Chdir(currentPath); err != nil {
+			log.Println(err)
+			os.Exit(1)
+		}
+		cmd := exec.Command("sh", "-c", command)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		err = cmd.Run()
+		if err != nil {
+			log.Println(err)
+			os.Exit(1)
+		}
+		os.Chdir(rootPath)
+	}
 }
