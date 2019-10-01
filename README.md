@@ -518,6 +518,8 @@ List of supported Datadog services:
     * `datadog_downtime`
 * `monitor`
     * `datadog_monitor`
+* `dashboard`
+    * `datadog_dashboard`
 * `screenboard`
     * `datadog_screenboard`
 * `synthetics`
