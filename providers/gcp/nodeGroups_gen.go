@@ -77,7 +77,6 @@ func (g *NodeGroupsGenerator) InitResources() error {
 		g.Resources = append(g.Resources, g.createResources(ctx, nodeGroupsList, zone)...)
 	}
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

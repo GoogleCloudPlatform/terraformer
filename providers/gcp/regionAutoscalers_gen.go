@@ -71,7 +71,6 @@ func (g *RegionAutoscalersGenerator) InitResources() error {
 	regionAutoscalersList := computeService.RegionAutoscalers.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createResources(ctx, regionAutoscalersList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

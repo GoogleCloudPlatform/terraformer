@@ -71,7 +71,6 @@ func (g *SslPoliciesGenerator) InitResources() error {
 	sslPoliciesList := computeService.SslPolicies.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, sslPoliciesList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

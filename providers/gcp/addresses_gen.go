@@ -71,7 +71,6 @@ func (g *AddressesGenerator) InitResources() error {
 	addressesList := computeService.Addresses.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createResources(ctx, addressesList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

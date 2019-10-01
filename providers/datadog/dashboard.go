@@ -62,6 +62,5 @@ func (g *DashboardGenerator) InitResources() error {
 		return err
 	}
 	g.Resources = g.createResources(boards)
-	g.PopulateIgnoreKeys()
 	return nil
 }

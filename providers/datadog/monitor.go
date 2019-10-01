@@ -63,6 +63,5 @@ func (g *MonitorGenerator) InitResources() error {
 		return err
 	}
 	g.Resources = g.createResources(monitors)
-	g.PopulateIgnoreKeys()
 	return nil
 }

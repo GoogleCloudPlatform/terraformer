@@ -70,7 +70,6 @@ func (g *GlobalForwardingRulesGenerator) InitResources() error {
 	globalForwardingRulesList := computeService.GlobalForwardingRules.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, globalForwardingRulesList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

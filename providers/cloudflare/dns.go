@@ -107,7 +107,6 @@ func (g *DNSGenerator) InitResources() error {
 			g.Resources = append(g.Resources, tmpRes...)
 		}
 	}
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

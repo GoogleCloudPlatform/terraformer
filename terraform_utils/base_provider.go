@@ -24,6 +24,7 @@ type ProviderGenerator interface {
 	GetName() string
 	GetService() ServiceGenerator
 	GetConfig() cty.Value
+	GetBasicConfig() cty.Value
 	GetSupportedService() map[string]ServiceGenerator
 	GenerateFiles()
 	GetProviderData(arg ...string) map[string]interface{}
@@ -66,4 +67,8 @@ func (p *Provider) GetService() ServiceGenerator {
 
 func (p *Provider) GetSupportedService() map[string]ServiceGenerator {
 	panic("implement me")
+}
+
+func (p *Provider) GetBasicConfig() cty.Value {
+	return cty.ObjectVal(map[string]cty.Value{})
 }

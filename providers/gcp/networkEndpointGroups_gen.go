@@ -77,7 +77,6 @@ func (g *NetworkEndpointGroupsGenerator) InitResources() error {
 		g.Resources = append(g.Resources, g.createResources(ctx, networkEndpointGroupsList, zone)...)
 	}
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

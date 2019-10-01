@@ -71,7 +71,6 @@ func (g *GlobalAddressesGenerator) InitResources() error {
 	globalAddressesList := computeService.GlobalAddresses.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, globalAddressesList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

@@ -94,6 +94,5 @@ func (g *CloudSQLGenerator) InitResources() error {
 		return err
 	}
 
-	g.PopulateIgnoreKeys()
 	return nil
 }

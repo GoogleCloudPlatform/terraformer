@@ -71,7 +71,6 @@ func (g *ACMGenerator) InitResources() error {
 	svc := acm.New(sess)
 
 	g.Resources = g.createCertificatesResources(svc)
-	g.PopulateIgnoreKeys()
 	return nil
 }
 

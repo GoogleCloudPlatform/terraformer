@@ -74,6 +74,5 @@ func (g *MemoryStoreGenerator) InitResources() error {
 	redisInstancesList := redisService.Projects.Locations.Instances.List("projects/" + g.GetArgs()["project"].(string) + "/locations/" + g.GetArgs()["region"].(compute.Region).Name)
 
 	g.Resources = g.createResources(redisInstancesList, ctx)
-	g.PopulateIgnoreKeys()
 	return nil
 }

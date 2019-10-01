@@ -103,7 +103,6 @@ func (g *DataprocGenerator) InitResources() error {
 	//jobList := dataprocService.Projects.Regions.Jobs.List(g.GetArgs()["project"].(string), g.GetArgs()["region"])
 	//g.Resources = append(g.Resources, g.createJobResources(jobList, ctx)...)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

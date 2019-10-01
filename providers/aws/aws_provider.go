@@ -15,6 +15,7 @@
 package aws
 
 import (
+	"github.com/zclconf/go-cty/cty"
 	"os"
 	"strconv"
 
@@ -95,14 +96,30 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 	}
 }
 func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
+	awsConfig := map[string]interface{}{
+		"version": awsProviderVersion,
+	}
+
+	if p.region != "" {
+		awsConfig["region"] = p.region
+	}
+
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
-			"aws": map[string]interface{}{
-				"version": awsProviderVersion,
-				"region":  p.region,
-			},
+			"aws": awsConfig,
 		},
 	}
+}
+
+func (p *AWSProvider) GetConfig() cty.Value {
+	return cty.ObjectVal(map[string]cty.Value{
+		"region": cty.StringVal(p.region),
+		"skip_region_validation": cty.True,
+	})
+}
+
+func (p *AWSProvider) GetBasicConfig() cty.Value {
+	return p.GetConfig()
 }
 
 // check projectName in env params
@@ -113,13 +130,15 @@ func (p *AWSProvider) Init(args []string) error {
 	// Terraformer accepts region and profile configuration, so we must detect what env variables to adjust to make Go SDK rely on them. AWS_SDK_LOAD_CONFIG here must be checked to determine correct variable to set.
 	enableSharedConfig, _ := strconv.ParseBool(os.Getenv("AWS_SDK_LOAD_CONFIG"))
 	var err error
-	if enableSharedConfig {
-		err = os.Setenv("AWS_DEFAULT_REGION", p.region)
-	} else {
-		err = os.Setenv("AWS_REGION", p.region)
-	}
-	if err != nil {
-		return err
+	if p.region != "" {
+		if enableSharedConfig {
+			err = os.Setenv("AWS_DEFAULT_REGION", p.region)
+		} else {
+			err = os.Setenv("AWS_REGION", p.region)
+		}
+		if err != nil {
+			return err
+		}
 	}
 
 	if p.profile != "default" && p.profile != "" {
@@ -149,6 +168,7 @@ func (p *AWSProvider) InitService(serviceName string) error {
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
 		"region":  p.region,
+		"skip_region_validation": true,
 	})
 	return nil
 }

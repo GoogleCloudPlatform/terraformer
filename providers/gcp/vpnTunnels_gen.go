@@ -71,7 +71,6 @@ func (g *VpnTunnelsGenerator) InitResources() error {
 	vpnTunnelsList := computeService.VpnTunnels.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createResources(ctx, vpnTunnelsList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

@@ -71,7 +71,6 @@ func (g *TargetTcpProxiesGenerator) InitResources() error {
 	targetTcpProxiesList := computeService.TargetTcpProxies.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, targetTcpProxiesList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

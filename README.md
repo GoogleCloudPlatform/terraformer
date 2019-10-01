@@ -305,6 +305,12 @@ To load profiles from the shared AWS configuration file (typically `~/.aws/confi
 AWS_SDK_LOAD_CONFIG=true terraformer import aws --resources=vpc,subnet --regions=eu-west-1 --profile=prod
 ```
 
+You can also provide no regions when importing resources:
+```
+terraformer import aws --resources=cloudfront --profile=prod
+```
+In that case terraformer will not know with which region resources are associated with and will not assume any region. That scenario is useful in case of global resources (e.g. CloudFront distributions or Route 53 records) and when region is passed implicitly through environmental variables or metadata service.
+
 List of supported AWS services:
 
 *   `elb`

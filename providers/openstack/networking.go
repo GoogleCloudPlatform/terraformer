@@ -93,7 +93,6 @@ func (g *NetworkingGenerator) InitResources() error {
 	list := groups.List(client, groups.ListOpts{})
 
 	g.Resources = g.createSecgroupResources(&list)
-	g.PopulateIgnoreKeys()
 
 	return nil
 }

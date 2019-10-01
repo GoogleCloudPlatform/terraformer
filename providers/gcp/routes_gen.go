@@ -71,7 +71,6 @@ func (g *RoutesGenerator) InitResources() error {
 	routesList := computeService.Routes.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, routesList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

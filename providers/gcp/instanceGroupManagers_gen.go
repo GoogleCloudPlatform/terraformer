@@ -77,7 +77,6 @@ func (g *InstanceGroupManagersGenerator) InitResources() error {
 		g.Resources = append(g.Resources, g.createResources(ctx, instanceGroupManagersList, zone)...)
 	}
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

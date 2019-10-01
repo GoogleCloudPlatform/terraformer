@@ -71,7 +71,6 @@ func (g *UrlMapsGenerator) InitResources() error {
 	urlMapsList := computeService.UrlMaps.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, urlMapsList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

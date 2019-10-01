@@ -142,7 +142,6 @@ func (g *RDSGenerator) InitResources() error {
 		return err
 	}
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

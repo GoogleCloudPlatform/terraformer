@@ -184,7 +184,6 @@ func (g *GcsGenerator) InitResources() error {
 	//		return err
 	//	}
 	//g.Resources = append(g.Resources, g.createTransferJobsResources(ctx, storageTransferService)...)
-	g.PopulateIgnoreKeys()
 	return nil
 }
 
