@@ -50,6 +50,5 @@ func (g *EsGenerator) InitResources() error {
 		))
 	}
 
-	g.PopulateIgnoreKeys()
 	return nil
 }

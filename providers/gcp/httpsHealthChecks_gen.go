@@ -71,7 +71,6 @@ func (g *HttpsHealthChecksGenerator) InitResources() error {
 	httpsHealthChecksList := computeService.HttpsHealthChecks.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, httpsHealthChecksList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

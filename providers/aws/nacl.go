@@ -52,7 +52,6 @@ func (g *NaclGenerator) InitResources() error {
 
 	}
 	g.Resources = g.createResources(nacls)
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

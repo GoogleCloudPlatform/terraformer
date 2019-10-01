@@ -60,7 +60,6 @@ func (g *FirehoseGenerator) InitResources() error {
 
 	g.Resources = g.createResources(sess, streamNames)
 
-	g.PopulateIgnoreKeys()
 	return nil
 }
 

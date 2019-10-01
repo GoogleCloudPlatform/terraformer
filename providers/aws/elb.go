@@ -53,7 +53,6 @@ func (g *ElbGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

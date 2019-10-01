@@ -28,6 +28,15 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 		Long:  "Import current State to terraform configuration from aws",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			originalPathPattern := options.PathPattern
+			if len(options.Regions) == 0 {
+				provider := newAWSProvider()
+				log.Println(provider.GetName() + " importing default region")
+				err := Import(provider, options, []string{"", options.Profile})
+				if err != nil {
+					return err
+				}
+			}
+
 			for _, region := range options.Regions {
 				provider := newAWSProvider()
 				options.PathPattern = originalPathPattern

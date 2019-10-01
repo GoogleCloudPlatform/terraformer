@@ -71,7 +71,6 @@ func (g *TargetPoolsGenerator) InitResources() error {
 	targetPoolsList := computeService.TargetPools.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createResources(ctx, targetPoolsList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

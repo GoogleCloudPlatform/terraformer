@@ -78,7 +78,6 @@ func (g *ComputeGenerator) InitResources() error {
 	list := servers.List(client, nil)
 
 	g.Resources = g.createResources(&list)
-	g.PopulateIgnoreKeys()
 
 	return nil
 }

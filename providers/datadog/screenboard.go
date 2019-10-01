@@ -63,6 +63,5 @@ func (g *ScreenboardGenerator) InitResources() error {
 		return err
 	}
 	g.Resources = g.createResources(screenboards)
-	g.PopulateIgnoreKeys()
 	return nil
 }

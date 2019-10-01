@@ -15,6 +15,7 @@
 package terraform_utils
 
 import (
+	"github.com/zclconf/go-cty/cty"
 	"log"
 	"strings"
 )
@@ -31,6 +32,7 @@ type ServiceGenerator interface {
 	SetProviderName(name string)
 	GetName() string
 	CleanupWithFilter()
+	PopulateIgnoreKeys(cty.Value)
 }
 
 type Service struct {
@@ -104,12 +106,12 @@ func (s *Service) PostConvertHook() error {
 	return nil
 }
 
-func (s *Service) PopulateIgnoreKeys() {
+func (s *Service) PopulateIgnoreKeys(providerConfig cty.Value) {
 	resourcesTypes := []string{}
 	for _, r := range s.Resources {
 		resourcesTypes = append(resourcesTypes, r.InstanceInfo.Type)
 	}
-	keys := IgnoreKeys(resourcesTypes, s.ProviderName)
+	keys := IgnoreKeys(resourcesTypes, s.ProviderName, providerConfig)
 	for k, v := range keys {
 		for i := range s.Resources {
 			if s.Resources[i].InstanceInfo.Type == k {

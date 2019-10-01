@@ -52,6 +52,5 @@ func (g *MembersGenerator) InitResources() error {
 			[]string{},
 		))
 	}
-	g.PopulateIgnoreKeys()
 	return nil
 }

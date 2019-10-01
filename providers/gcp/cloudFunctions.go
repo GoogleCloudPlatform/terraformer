@@ -68,7 +68,6 @@ func (g *CloudFunctionsGenerator) InitResources() error {
 	functionsList := cloudfunctionsService.Projects.Locations.Functions.List("projects/" + g.GetArgs()["project"].(string) + "/locations/" + g.GetArgs()["region"].(compute.Region).Name)
 
 	g.Resources = g.createResources(functionsList, ctx)
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

@@ -53,6 +53,5 @@ func (g *OrganizationWebhooksGenerator) InitResources() error {
 			[]string{},
 		))
 	}
-	g.PopulateIgnoreKeys()
 	return nil
 }

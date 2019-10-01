@@ -71,7 +71,6 @@ func (g *SubnetworksGenerator) InitResources() error {
 	subnetworksList := computeService.Subnetworks.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createResources(ctx, subnetworksList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

@@ -53,7 +53,6 @@ func (g *DashboardGenerator) InitResources() error {
 		return err
 	}
 
-	g.PopulateIgnoreKeys()
 	return nil
 }
 

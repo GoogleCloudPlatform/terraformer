@@ -66,7 +66,6 @@ func (g *IamGenerator) InitResources() error {
 	serviceAccountsIterator := client.ListServiceAccounts(ctx, &adminpb.ListServiceAccountsRequest{Name: "projects/" + projectID})
 
 	g.Resources = g.createResources(serviceAccountsIterator)
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

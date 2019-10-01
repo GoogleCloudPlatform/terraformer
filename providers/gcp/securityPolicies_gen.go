@@ -71,7 +71,6 @@ func (g *SecurityPoliciesGenerator) InitResources() error {
 	securityPoliciesList := computeService.SecurityPolicies.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, securityPoliciesList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

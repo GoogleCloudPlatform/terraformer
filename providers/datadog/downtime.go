@@ -63,6 +63,5 @@ func (g *DowntimeGenerator) InitResources() error {
 		return err
 	}
 	g.Resources = g.createResources(downtimes)
-	g.PopulateIgnoreKeys()
 	return nil
 }

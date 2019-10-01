@@ -71,7 +71,6 @@ func (g *InterconnectAttachmentsGenerator) InitResources() error {
 	interconnectAttachmentsList := computeService.InterconnectAttachments.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createResources(ctx, interconnectAttachmentsList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

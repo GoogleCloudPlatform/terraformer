@@ -52,6 +52,5 @@ func (g *VpcGenerator) InitResources() error {
 		return err
 	}
 	g.Resources = g.createResources(vpcs)
-	g.PopulateIgnoreKeys()
 	return nil
 }

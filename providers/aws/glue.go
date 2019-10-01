@@ -56,7 +56,6 @@ func (g *GlueGenerator) InitResources() error {
 	if err := g.loadGlueCrawlers(svc); err != nil {
 		return err
 	}
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

@@ -71,7 +71,6 @@ func (g *RegionBackendServicesGenerator) InitResources() error {
 	regionBackendServicesList := computeService.RegionBackendServices.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createResources(ctx, regionBackendServicesList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

@@ -71,7 +71,6 @@ func (g *TargetHttpProxiesGenerator) InitResources() error {
 	targetHttpProxiesList := computeService.TargetHttpProxies.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, targetHttpProxiesList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

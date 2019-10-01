@@ -145,7 +145,6 @@ func (g *ElastiCacheGenerator) InitResources() error {
 		return err
 	}
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

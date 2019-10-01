@@ -44,6 +44,5 @@ func (g *AlertNotificationEndpointsGenerator) InitResources() error {
 			[]string{},
 		))
 	}
-	g.PopulateIgnoreKeys()
 	return nil
 }

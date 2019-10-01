@@ -97,7 +97,6 @@ func (g *KmsGenerator) InitResources() error {
 	keyRingList := kmsService.Projects.Locations.KeyRings.List("projects/" + g.GetArgs()["project"].(string) + "/locations/global")
 
 	g.Resources = g.createKmsRingResources(ctx, keyRingList, kmsService)
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

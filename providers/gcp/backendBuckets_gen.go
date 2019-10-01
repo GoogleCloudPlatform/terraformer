@@ -71,7 +71,6 @@ func (g *BackendBucketsGenerator) InitResources() error {
 	backendBucketsList := computeService.BackendBuckets.List(g.GetArgs()["project"].(string))
 	g.Resources = g.createResources(ctx, backendBucketsList)
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }

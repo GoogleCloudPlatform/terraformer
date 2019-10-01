@@ -67,6 +67,5 @@ func (g *InfraGenerator) InitResources() error {
 		return err
 	}
 
-	g.PopulateIgnoreKeys()
 	return nil
 }

@@ -79,7 +79,6 @@ func (g *InstancesGenerator) InitResources() error {
 		g.Resources = append(g.Resources, g.createResources(ctx, instancesList, zone)...)
 	}
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }
