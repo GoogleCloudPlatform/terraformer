@@ -115,7 +115,6 @@ func (g *{{.titleResourceName}}Generator) InitResources() error {
 		g.Resources = g.createResources(ctx, {{.resource}}List)
 	{{end}}
 
-	g.PopulateIgnoreKeys()
 	return nil
 
 }
