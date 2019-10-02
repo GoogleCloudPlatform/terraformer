@@ -402,6 +402,8 @@ List of supported AWS services:
     * `aws_organizations_policy_attachment`
 * `dynamodb`
     * `aws_dynamodb_table`
+* `cloudtrail`
+    * `aws_cloudtrail`
 
 ### Use with OpenStack
 
