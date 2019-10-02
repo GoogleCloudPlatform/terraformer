@@ -21,6 +21,8 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/spf13/pflag"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/terraform_output"
 
@@ -217,7 +219,7 @@ func Path(pathPattern, providerName, serviceName, output string) string {
 }
 
 func listCmd(provider terraform_utils.ProviderGenerator) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "List supported resources for " + provider.GetName() + " provider",
 		Long:  "List supported resources for " + provider.GetName() + " provider",
@@ -233,4 +235,6 @@ func listCmd(provider terraform_utils.ProviderGenerator) *cobra.Command {
 			return nil
 		},
 	}
+	cmd.Flags().AddFlag(&pflag.Flag{Name: "resources"})
+	return cmd
 }

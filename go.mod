@@ -35,6 +35,7 @@ require (
 	github.com/paultyng/go-newrelic v3.1.0+incompatible
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/cobra v0.0.3
+	github.com/spf13/pflag v1.0.3
 	github.com/terraform-providers/terraform-provider-openstack v1.18.0 // indirect
 	github.com/tomnomnom/linkheader v0.0.0-20180905144013-02ca5825eb80 // indirect
 	github.com/ugorji/go v1.1.2-0.20180728093225-eeb0478a81ae // indirect
