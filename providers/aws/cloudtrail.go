@@ -17,7 +17,6 @@ package aws
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/cloudtrail"
 )
 
@@ -27,7 +26,7 @@ type CloudTrailGenerator struct {
 	AWSService
 }
 
-func (g CloudTrailGenerator) createResources(sess *session.Session, trailList []*cloudtrail.Trail) []terraform_utils.Resource {
+func (g CloudTrailGenerator) createResources(trailList []*cloudtrail.Trail) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
 	for _, trail := range trailList {
 		resourceName := aws.StringValue(trail.Name)
@@ -48,6 +47,6 @@ func (g *CloudTrailGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(sess, output.TrailList)
+	g.Resources = g.createResources(output.TrailList)
 	return nil
 }
