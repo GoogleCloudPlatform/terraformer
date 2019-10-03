@@ -17,7 +17,6 @@ package aws
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/firehose"
 )
 
@@ -25,7 +24,7 @@ type FirehoseGenerator struct {
 	AWSService
 }
 
-func (g FirehoseGenerator) createResources(sess *session.Session, streamNames []*string) []terraform_utils.Resource {
+func (g FirehoseGenerator) createResources(streamNames []*string) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
 	for _, streamName := range streamNames {
 		resourceName := aws.StringValue(streamName)
@@ -58,7 +57,7 @@ func (g *FirehoseGenerator) InitResources() error {
 		}
 	}
 
-	g.Resources = g.createResources(sess, streamNames)
+	g.Resources = g.createResources(streamNames)
 
 	return nil
 }
@@ -68,7 +67,7 @@ func (g *FirehoseGenerator) PostConvertHook() error {
 		_, hasExtendedS3Configuration := resource.Item["extended_s3_configuration"]
 		_, hasS3Configuration := resource.Item["s3_configuration"]
 		if hasExtendedS3Configuration && hasS3Configuration {
-			delete(resource.Item,"s3_configuration")
+			delete(resource.Item, "s3_configuration")
 		}
 	}
 	return nil
