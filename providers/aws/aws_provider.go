@@ -15,6 +15,8 @@
 package aws
 
 import (
+	"encoding/json"
+	"fmt"
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
@@ -127,6 +129,8 @@ func (p *AWSProvider) InitService(serviceName string) error {
 		"region":  p.region,
 		"profile": p.profile,
 	})
+	s, _ := json.MarshalIndent(p.Service, "", "\t")
+	fmt.Println("InitService" + string(s))
 	return nil
 }
 

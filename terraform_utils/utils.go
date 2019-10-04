@@ -88,6 +88,8 @@ func RefreshResources(resources []Resource, providerName string, providerConfig 
 	for _, r := range resources {
 		if r.InstanceState != nil && r.InstanceState.ID != "" {
 			refreshedResources = append(refreshedResources, r)
+		} else {
+			log.Printf("ERROR: Unable to refresh resource %s", r.ResourceName)
 		}
 	}
 	return refreshedResources, nil

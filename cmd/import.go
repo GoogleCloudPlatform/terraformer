@@ -14,12 +14,14 @@
 package cmd
 
 import (
+	// "encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"sort"
 	"strings"
+	"github.com/davecgh/go-spew/spew"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/terraform_output"
@@ -92,10 +94,13 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 			provider.GetService().CleanupWithFilter()
 		}
 
+		spew.Dump(provider.GetConfig())
+		log.Printf("provider.GetService().GetResources() %d", len(provider.GetService().GetResources()))
 		refreshedResources, err := terraform_utils.RefreshResources(provider.GetService().GetResources(), provider.GetName(), provider.GetConfig())
 		if err != nil {
 			return err
 		}
+		log.Printf("refreshedResources %d", len(refreshedResources))
 		provider.GetService().SetResources(refreshedResources)
 
 		// convert InstanceState to go struct for hcl print
@@ -108,6 +113,7 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 			return err
 		}
 		plan.ImportedResource[service] = append(plan.ImportedResource[service], provider.GetService().GetResources()...)
+		log.Printf("plan.ImportedResource[service] %d", len(plan.ImportedResource[service]))
 	}
 	if options.Plan {
 		path := Path(options.PathPattern, provider.GetName(), "terraformer", options.PathOutput)
@@ -130,6 +136,8 @@ func ImportFromPlan(provider terraform_utils.ProviderGenerator, plan *ImportPlan
 		log.Println(provider.GetName() + " save " + serviceName)
 		// Print HCL files for Resources
 		path := Path(options.PathPattern, provider.GetName(), serviceName, options.PathOutput)
+		log.Println("path" + path)
+		log.Printf("resource count %d", len(resources))
 		err := terraform_output.OutputHclFiles(resources, provider, path, serviceName)
 		if err != nil {
 			return err

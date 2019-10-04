@@ -1,0 +1,5 @@
+go build -v && ./terraformer import alicloud --resources=oss --regions=ap-southeast-3
+
+go build -v && ./terraformer import alicloud --resources=ecs --regions=ap-southeast-3
+
+go build -v && ./terraformer import aws --resources=s3 --regions=ap-south-1

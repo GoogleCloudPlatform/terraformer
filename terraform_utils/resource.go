@@ -73,7 +73,10 @@ func NewSimpleResource(ID, resourceName, resourceType, provider string, allowEmp
 
 func (r *Resource) Refresh(provider *provider_wrapper.ProviderWrapper) {
 	var err error
+	log.Printf("r.InstanceInfo.Id %s", r.InstanceInfo.Id)
 	r.InstanceState, err = provider.Refresh(r.InstanceInfo, r.InstanceState)
+	log.Println("provider.Refresh")
+	log.Println(r.InstanceState)
 	if err != nil {
 		log.Println(err)
 	}

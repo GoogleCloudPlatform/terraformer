@@ -1,6 +1,7 @@
 package configschema
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/zclconf/go-cty/cty"
@@ -40,6 +41,10 @@ func (b *Block) coerceValue(in cty.Value, path cty.Path) (cty.Value, error) {
 	}
 
 	for name := range ty.AttributeTypes() {
+		s, _ := json.MarshalIndent(b.Attributes, "", "\t")
+		fmt.Println(string(s))
+		s, _ = json.MarshalIndent(b.BlockTypes, "", "\t")
+		fmt.Println(string(s))
 		if _, defined := b.Attributes[name]; defined {
 			continue
 		}

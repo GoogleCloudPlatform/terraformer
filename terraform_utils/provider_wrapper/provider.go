@@ -15,12 +15,17 @@
 package provider_wrapper
 
 import (
-	"github.com/zclconf/go-cty/cty/gocty"
+	"encoding/json"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"runtime"
 	"strings"
+
+	"github.com/zclconf/go-cty/cty/gocty"
+	// "github.com/davecgh/go-spew/spew"
 
 	"github.com/zclconf/go-cty/cty"
 
@@ -128,6 +133,8 @@ func (p *ProviderWrapper) readObjBlocks(block map[string]*configschema.NestedBlo
 func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform.InstanceState) (*terraform.InstanceState, error) {
 	schema := p.Provider.GetSchema()
 	impliedType := schema.ResourceTypes[info.Type].Block.ImpliedType()
+	s, _ := json.MarshalIndent(state, "", "\t")
+	fmt.Println(string(s))
 	priorState, err := state.AttrsAsObjectValue(impliedType)
 	if err != nil {
 		return nil, err
@@ -140,7 +147,7 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 
 	if resp.Diagnostics.HasErrors() {
 		// retry with different serialization mechanism
-		priorState, err  = gocty.ToCtyValue(state, impliedType)
+		priorState, err = gocty.ToCtyValue(state, impliedType)
 		resp = p.Provider.ReadResource(providers.ReadResourceRequest{
 			TypeName:   info.Type,
 			PriorState: priorState,
@@ -149,6 +156,13 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 		if resp.Diagnostics.HasErrors() {
 			return nil, resp.Diagnostics.Err()
 		}
+	}
+	// s, _ = json.MarshalIndent(resp.NewState.AsValueMap(), "", "\t")
+	// fmt.Println(string(s))
+	// spew.Dump(resp)
+	if resp.NewState.IsNull() {
+		msg := fmt.Sprintf("ERROR: Read resource response is null for resource %s", info.Id)
+		return nil, errors.New(msg)
 	}
 
 	return terraform.NewInstanceStateShimmedFromValue(resp.NewState, int(schema.Provider.Version)), nil
