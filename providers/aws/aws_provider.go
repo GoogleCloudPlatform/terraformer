@@ -205,5 +205,6 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"organization":   &OrganizationGenerator{},
 		"dynamodb":       &DynamoDbGenerator{},
 		"cloudtrail":     &CloudTrailGenerator{},
+		"kinesis":        &KinesisGenerator{},
 	}
 }
