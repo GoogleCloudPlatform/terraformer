@@ -25,8 +25,6 @@ import (
 
 var bigQueryAllowEmptyValues = []string{""}
 
-var bigQueryAdditionalFields = map[string]interface{}{}
-
 type BigQueryGenerator struct {
 	GCPService
 }
@@ -41,14 +39,12 @@ func (g BigQueryGenerator) createResources(dataSetsList *bigquery.DatasetsListCa
 				name = dataset.Id
 			}
 			ID := strings.Split(dataset.Id, ":")[1]
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraform_utils.NewSimpleResource(
 				dataset.Id,
 				name,
 				"google_bigquery_dataset",
 				"google",
-				map[string]string{},
 				bigQueryAllowEmptyValues,
-				bigQueryAdditionalFields,
 			))
 			resources = append(resources, g.createResourcesTables(ID, ctx, bigQueryService)...)
 		}
@@ -68,14 +64,12 @@ func (g *BigQueryGenerator) createResourcesTables(datasetID string, ctx context.
 			if name == "" {
 				name = table.Id
 			}
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraform_utils.NewSimpleResource(
 				table.Id,
 				name,
 				"google_bigquery_table",
 				"google",
-				map[string]string{},
 				bigQueryAllowEmptyValues,
-				bigQueryAdditionalFields,
 			))
 		}
 		return nil
