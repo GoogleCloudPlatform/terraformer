@@ -59,14 +59,12 @@ func (g *AlbGenerator) loadLBListener(svc *elbv2.ELBV2, loadBalancerArn *string)
 	err := svc.DescribeListenersPages(&elbv2.DescribeListenersInput{LoadBalancerArn: loadBalancerArn}, func(lcs *elbv2.DescribeListenersOutput, lastPage bool) bool {
 		for _, ls := range lcs.Listeners {
 			resourceName := aws.StringValue(ls.ListenerArn)
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_lb_listener",
 				"aws",
-				map[string]string{},
 				AlbAllowEmptyValues,
-				map[string]interface{}{},
 			))
 			err := g.loadLBListenerRule(svc, ls.ListenerArn)
 			if err != nil {
@@ -90,14 +88,12 @@ func (g *AlbGenerator) loadLBListenerRule(svc *elbv2.ELBV2, listenerArn *string)
 	for _, lsr := range lsrs.Rules {
 		if !aws.BoolValue(lsr.IsDefault) {
 			resourceName := aws.StringValue(lsr.RuleArn)
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_lb_listener_rule",
 				"aws",
-				map[string]string{},
 				AlbAllowEmptyValues,
-				map[string]interface{}{},
 			))
 		}
 	}
@@ -111,14 +107,12 @@ func (g *AlbGenerator) loadLBListenerCertificate(svc *elbv2.ELBV2, listenerArn *
 	}
 	for _, lc := range lcs.Certificates {
 		resourceName := aws.StringValue(lc.CertificateArn)
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 			resourceName,
 			resourceName,
 			"aws_lb_listener_certificate",
 			"aws",
-			map[string]string{},
 			AlbAllowEmptyValues,
-			map[string]interface{}{},
 		))
 	}
 	return err
@@ -128,14 +122,12 @@ func (g *AlbGenerator) loadLBTargetGroup(svc *elbv2.ELBV2) error {
 	err := svc.DescribeTargetGroupsPages(&elbv2.DescribeTargetGroupsInput{}, func(tgs *elbv2.DescribeTargetGroupsOutput, lastPage bool) bool {
 		for _, tg := range tgs.TargetGroups {
 			resourceName := aws.StringValue(tg.TargetGroupName)
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				aws.StringValue(tg.TargetGroupArn),
 				resourceName,
 				"aws_lb_target_group",
 				"aws",
-				map[string]string{},
 				AlbAllowEmptyValues,
-				map[string]interface{}{},
 			))
 			err := g.loadTargetGroupTargets(svc, tg.TargetGroupArn)
 			if err != nil {
