@@ -404,6 +404,8 @@ List of supported AWS services:
     * `aws_dynamodb_table`
 * `cloudtrail`
     * `aws_cloudtrail`
+* `kinesis`
+    * `aws_kinesis_stream`
 
 ### Use with OpenStack
 
