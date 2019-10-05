@@ -120,10 +120,25 @@ func (g *EcsGenerator) InitResources() error {
 		return !lastPage
 	})
 	for _, v := range taskDefinitionsMap {
+		delete(v.AdditionalFields, "revision")
 		g.Resources = append(g.Resources, v)
 	}
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (g *EcsGenerator) PostConvertHook() error {
+	for _, r := range g.Resources {
+		if r.InstanceInfo.Type != "aws_ecs_service" {
+			continue
+		}
+		if r.InstanceState.Attributes["propagate_tags"] == "NONE" {
+			delete(r.Item, "propagate_tags")
+		}
+		delete(r.Item, "iam_role")
 	}
 
 	return nil
