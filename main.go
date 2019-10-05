@@ -15,13 +15,28 @@
 package main
 
 import (
+	"io"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/cmd"
 )
 
+type TerraformerWriter struct {
+	io.Writer
+}
+
+func (t TerraformerWriter) Write(p []byte) (n int, err error) {
+	if !strings.Contains(string(p), "[TRACE]") && !strings.Contains(string(p), "[DEBUG]") { // hide TF GRPC client log messages
+		return os.Stderr.Write(p)
+	} else {
+		return len(p), nil
+	}
+}
+
 func main() {
+	log.SetOutput(TerraformerWriter{})
 	if err := cmd.Execute(); err != nil {
 		log.Println(err)
 		os.Exit(1)

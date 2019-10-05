@@ -85,6 +85,44 @@ func TestConnectServices(t *testing.T) {
 				"type2": {prepare("ID2", "type2", map[string]string{})},
 			},
 		},
+		{
+			name: "ref groups test",
+			args: args{
+				importResources: map[string][]Resource{
+					"group1": {prepare("ID1", "type1", map[string]string{
+						"type2_ref1": "ID2",
+						"type2_ref2": "ID2",
+					}),
+						prepare("ID3", "type3", map[string]string{})},
+					"group2": {
+						prepare("ID2", "type2", map[string]string{
+							"uid": "ID2",
+						}),
+						prepare("ID4", "type4", map[string]string{})},
+				},
+				resourceConnections: map[string]map[string][]string{
+					"group1": {
+						"group2": {
+							"type2_ref1", "uid",
+							"type2_ref2", "uid",
+						},
+					},
+				},
+			},
+			want: map[string][]Resource{
+				"group1": {prepare("ID1", "type1", map[string]string{
+					"type2_ref1": "${data.terraform_remote_state.group2.outputs.type2_name-type2_uid}",
+					"type2_ref2": "${data.terraform_remote_state.group2.outputs.type2_name-type2_uid}",
+				}),
+					prepare("ID3", "type3", map[string]string{}),
+				},
+				"group2": {
+					prepare("ID2", "type2", map[string]string{
+						"uid": "ID2",
+					}),
+					prepare("ID4", "type4", map[string]string{})},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
