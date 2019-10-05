@@ -51,20 +51,21 @@ func mapResource(importResources map[string][]Resource, resource string, connect
 		linkValue := "${data.terraform_remote_state." + k + ".outputs." + keyValue + "}"
 
 		tfResource := importResources[resource][i]
-		if resourceToMap.InstanceState.Attributes[key] == tfResource.InstanceState.Attributes[connectionPair[0]] {
-			importResources[resource][i].InstanceState.Attributes[connectionPair[0]] = linkValue
-			importResources[resource][i].Item[connectionPair[0]] = linkValue
+		mappingResourceAttr, found := resourceToMap.InstanceState.Attributes[key]
+		if found && mappingResourceAttr == tfResource.InstanceState.Attributes[connectionPair[0]] {
+			tfResource.InstanceState.Attributes[connectionPair[0]] = linkValue
+			tfResource.Item[connectionPair[0]] = linkValue
 		} else {
 			for keyAttributes, j := range tfResource.InstanceState.Attributes {
 				match, err := regexp.MatchString(connectionPair[0]+".\\d+$", keyAttributes)
 				if match && err == nil {
-					if j == resourceToMap.InstanceState.Attributes[key] {
-						importResources[resource][i].InstanceState.Attributes[keyAttributes] = linkValue
+					if j == mappingResourceAttr {
+						tfResource.InstanceState.Attributes[keyAttributes] = linkValue
 						switch ar := tfResource.Item[connectionPair[0]].(type) {
 						case []interface{}:
 							for j, l := range ar {
-								if l == resourceToMap.InstanceState.Attributes[key] {
-									importResources[resource][i].Item[connectionPair[0]].([]interface{})[j] = linkValue
+								if l == mappingResourceAttr {
+									tfResource.Item[connectionPair[0]].([]interface{})[j] = linkValue
 								}
 							}
 						default:
