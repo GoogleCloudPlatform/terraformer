@@ -27,6 +27,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
     * [Cloudflare](#use-with-cloudflare)
     * [Logzio](#use-with-logzio)
     * [NewRelic](#use-with-newrelic)
+    * [Heroku](#use-with-heroku)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
@@ -593,6 +594,22 @@ List of supported NewRelic resources:
 * `synthetics`
     * `newrelic_synthetics_monitor`
     * `newrelic_synthetics_alert_condition`
+
+### Use with Heroku
+Example:
+
+```
+export HEROKU_EMAIL=[HEROKU_EMAIL]
+export HEROKU_API_KEY=[HEROKU_API_KEY]
+./terraformer import heroku -r app,addon
+```
+
+List of supported Heroku resources:
+
+* `addon`
+    * `heroku_addon`
+* `app`
+    * `heroku_app`
 
 ## Contributing
 
