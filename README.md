@@ -375,6 +375,8 @@ List of supported AWS services:
     * `aws_cloudfront_distribution`
 *   `ec2_instance`
     * `aws_instance`
+*   `eip`
+    * `aws_eip`
 *   `firehose`
     * `aws_kinesis_firehose_delivery_stream`
 *   `glue`
