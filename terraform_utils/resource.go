@@ -16,14 +16,10 @@ package terraform_utils
 
 import (
 	"fmt"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/hashicorp/terraform/terraform"
 	"log"
 	"regexp"
-	"strings"
-
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
-
-	"github.com/hashicorp/terraform/flatmap"
-	"github.com/hashicorp/terraform/terraform"
 )
 
 type Resource struct {
@@ -86,56 +82,34 @@ func (r Resource) GetIDKey() string {
 	return "id"
 }
 
-func (r *Resource) ConvertTFstate() {
-	r.Item = map[string]interface{}{}
-	attributes := map[string]string{}
-	for k, v := range r.InstanceState.Attributes {
-		attributes[k] = v
+func (r *Resource) ConvertTFstate(provider *provider_wrapper.ProviderWrapper) error {
+	ignoreKeys := []*regexp.Regexp{}
+	for _, pattern := range r.IgnoreKeys {
+		ignoreKeys = append(ignoreKeys, regexp.MustCompile(pattern))
 	}
 
-	// TODO: Delete optional numeric zero values
-
-	// delete empty array
-	for key := range r.InstanceState.Attributes {
-		if strings.HasSuffix(key, ".#") && r.InstanceState.Attributes[key] == "0" {
-			if !r.isAllowedEmptyValue(key) {
-				delete(attributes, key)
-			}
-		}
+	allowEmptyValues := []*regexp.Regexp{}
+	for _, pattern := range r.AllowEmptyValues {
+		allowEmptyValues = append(allowEmptyValues, regexp.MustCompile(pattern))
 	}
-	// delete ignored keys
-	for keyAttribute := range r.InstanceState.Attributes {
-		for _, pattern := range r.IgnoreKeys {
-			match, err := regexp.MatchString(pattern, keyAttribute)
-			if match && err == nil {
-				delete(attributes, keyAttribute)
-			}
-		}
-	}
-	// delete empty keys with empty value, but not from AllowEmptyValue list
-	for keyAttribute, value := range r.InstanceState.Attributes {
-		if value != "" {
-			continue
-		}
 
-		if !r.isAllowedEmptyValue(keyAttribute) {
-			delete(attributes, keyAttribute)
-		}
-	}
-	// parse Attributes to go string with flatmap package
-	for key := range attributes {
-		blockName := strings.Split(key, ".")[0]
+	parser := NewFlatmapParser(r.InstanceState.Attributes, ignoreKeys, allowEmptyValues)
 
-		if _, exist := r.Item[blockName]; exist {
-			continue
-		}
+	schema := provider.Provider.GetSchema()
+	impliedType := schema.ResourceTypes[r.InstanceInfo.Type].Block.ImpliedType()
 
-		r.Item[blockName] = flatmap.Expand(attributes, blockName)
+	attributes, err := parser.Parse(impliedType)
+	if err != nil {
+		return err
 	}
+
 	// add Additional Fields to resource
 	for key, value := range r.AdditionalFields {
-		r.Item[key] = value
+		attributes[key] = value
 	}
+
+	r.Item = attributes
+	return nil
 }
 
 // isAllowedEmptyValue checks if a key is an allowed empty value with regular expression
