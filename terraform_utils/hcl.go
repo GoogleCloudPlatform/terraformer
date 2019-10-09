@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"regexp"
 	"strings"
 
 	"github.com/hashicorp/hcl2/hclwrite"
@@ -31,6 +32,8 @@ import (
 // Copy code from https://github.com/kubernetes/kops project with few changes for support many provider and heredoc
 
 const safeChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
+
+var unsafeChars = regexp.MustCompile(`[^-0-9A-Za-z_]`)
 
 // sanitizer fixes up an invalid HCL AST, as produced by the HCL parser for JSON
 type astSanitizer struct{}
@@ -187,12 +190,8 @@ func terraform12Adjustments(formatted []byte, mapsObjects map[string]struct{}) [
 
 // Sanitize name for terraform style
 func TfSanitize(name string) string {
-	name = strings.Replace(name, " ", "", -1)
-	//name = strings.Replace(name, "-", "_", -1)
-	name = strings.Replace(name, "*", "--", -1)
-	name = strings.Replace(name, ".", "--", -1)
-	name = strings.Replace(name, ":", "--", -1)
-	name = strings.Replace(name, "/", "--", -1)
+	name = unsafeChars.ReplaceAllString(name, "--")
+	name = "tfer--" + name
 	return name
 }
 
