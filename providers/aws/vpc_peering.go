@@ -23,7 +23,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
-var ngwAllowEmptyValues = []string{"tags."}
+var peeringAllowEmptyValues = []string{"tags."}
 
 type VpcPeeringConnectionGenerator struct {
 	AWSService
@@ -33,14 +33,14 @@ func (g VpcPeeringConnectionGenerator) createVpcPeeringConnectionsResources(svc 
 	resources := []terraform_utils.Resource{}
 	err := svc.DescribeVpcPeeringConnectionsPages(
 		&ec2.DescribeVpcPeeringConnectionsInput{},
-		func(ngws *ec2.DescribeVpcPeeringConnectionsOutput, lastPage bool) bool {
-			for _, ngw := range ngws.VpcPeeringConnections {
+		func(peerings *ec2.DescribeVpcPeeringConnectionsOutput, lastPage bool) bool {
+			for _, peering := range peerings.VpcPeeringConnections {
 				resources = append(resources, terraform_utils.NewSimpleResource(
-					aws.StringValue(ngw.VpcPeeringConnectionId),
-					aws.StringValue(ngw.VpcPeeringConnectionId),
+					aws.StringValue(peering.VpcPeeringConnectionId),
+					aws.StringValue(peering.VpcPeeringConnectionId),
 					"aws_vpc_peering_connection",
 					"aws",
-					ngwAllowEmptyValues,
+					peeringAllowEmptyValues,
 				))
 			}
 			return true
