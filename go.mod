@@ -34,6 +34,29 @@ require (
 	github.com/hashicorp/hil v0.0.0-20190212132231-97b3a9cdfa93 // indirect
 	github.com/hashicorp/terraform v0.12.10
 	github.com/hashicorp/yamux v0.0.0-20190923154419-df201c70410d // indirect
+	cloud.google.com/go v0.36.0
+	github.com/aws/aws-sdk-go v1.22.0
+	github.com/cenkalti/backoff v2.1.1+incompatible // indirect
+	github.com/chzyer/logex v1.1.11-0.20160617073814-96a4d311aa9b // indirect
+	github.com/cloudflare/cloudflare-go v0.9.4
+	github.com/coreos/bbolt v1.3.1-coreos.1 // indirect
+	github.com/coreos/go-systemd v0.0.0-20181031085051-9002847aa142 // indirect
+	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
+	github.com/golang/groupcache v0.0.0-20181024230925-c65c006176ff // indirect
+	github.com/google/go-github/v25 v25.0.2
+	github.com/google/gofuzz v1.0.0 // indirect
+	github.com/googleapis/gnostic v0.2.0 // indirect
+	github.com/gophercloud/gophercloud v0.0.0-20190427020117-60507118a582
+	github.com/gopherjs/gopherjs v0.0.0-20181103185306-d547d1d9531e // indirect
+	github.com/hashicorp/consul v1.4.0 // indirect
+	github.com/hashicorp/go-hclog v0.0.0-20181001195459-61d530d6c27f
+	github.com/hashicorp/go-immutable-radix v1.0.0 // indirect
+	github.com/hashicorp/go-plugin v1.0.1-0.20190610192547-a1bc61569a26
+	github.com/hashicorp/go-sockaddr v1.0.0 // indirect
+	github.com/hashicorp/hcl v1.0.1-0.20190611123218-cf7d376da96d
+	github.com/hashicorp/hcl2 v0.0.0-20190821123243-0c888d1241f6
+	github.com/hashicorp/serf v0.8.2-0.20171022020050-c20a0b1b1ea9 // indirect
+	github.com/hashicorp/terraform v0.12.8
 	github.com/heroku/heroku-go/v5 v5.1.0
 	github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365
 	github.com/imdario/mergo v0.3.8 // indirect
@@ -46,8 +69,11 @@ require (
 	github.com/mitchellh/reflectwalk v1.0.1 // indirect
 	github.com/paultyng/go-newrelic v3.1.0+incompatible
 	github.com/pkg/errors v0.8.1
-	github.com/spf13/cobra v0.0.5
-	github.com/spf13/pflag v1.0.5
+	github.com/smartystreets/assertions v0.0.0-20190116191733-b6c0e53d7304 // indirect
+	github.com/smartystreets/goconvey v0.0.0-20181108003508-044398e4856c // indirect
+	github.com/spf13/cobra v0.0.3
+	github.com/spf13/pflag v1.0.3
+	github.com/terraform-providers/terraform-provider-openstack v1.18.0 // indirect
 	github.com/tomnomnom/linkheader v0.0.0-20180905144013-02ca5825eb80 // indirect
 	github.com/ulikunitz/xz v0.5.6 // indirect
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
