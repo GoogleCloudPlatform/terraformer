@@ -15,6 +15,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 	"io/ioutil"
 	"log"
 	"os"
@@ -97,16 +98,26 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 			provider.GetService().CleanupWithFilter()
 		}
 
-		refreshedResources, err := terraform_utils.RefreshResources(provider.GetService().GetResources(), provider.GetName(), provider.GetConfig())
+		providerWrapper, err := provider_wrapper.NewProviderWrapper(provider.GetName(), provider.GetConfig())
+		if err != nil {
+			return err
+		}
+
+		refreshedResources, err := terraform_utils.RefreshResources(provider.GetService().GetResources(), providerWrapper)
 		if err != nil {
 			return err
 		}
 		provider.GetService().SetResources(refreshedResources)
 
-		// convert InstanceState to go struct for hcl print
 		for i := range provider.GetService().GetResources() {
-			provider.GetService().GetResources()[i].ConvertTFstate()
+			err = provider.GetService().GetResources()[i].ConvertTFstate(providerWrapper)
+			if err != nil {
+				return err
+			}
 		}
+
+		providerWrapper.Kill()
+
 		// change structs with additional data for each resource
 		err = provider.GetService().PostConvertHook()
 		if err != nil {
