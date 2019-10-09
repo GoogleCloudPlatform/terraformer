@@ -346,6 +346,8 @@ List of supported AWS services:
     * `aws_iam_group_policy`
 *   `igw`
     * `aws_internet_gateway`
+*   `nat`
+    * `aws_nat_gateway`
 *   `nacl`
     * `aws_network_acl`
 *   `s3`
