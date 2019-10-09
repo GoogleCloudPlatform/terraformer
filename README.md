@@ -357,6 +357,8 @@ List of supported AWS services:
     * `aws_subnet`
 *   `vpc`
     * `aws_vpc`
+*   `vpc_peering`
+    * `aws_vpc_peering_connection`
 *   `vpn_connection`
     * `aws_vpn_connection`
 *   `vpn_gateway`

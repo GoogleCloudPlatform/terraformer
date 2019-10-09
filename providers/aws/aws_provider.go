@@ -177,6 +177,7 @@ func (p *AWSProvider) InitService(serviceName string) error {
 func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
 		"vpc":            &VpcGenerator{},
+		"vpc_peering":    &VpcPeeringConnectionGenerator{},
 		"sg":             &SecurityGenerator{},
 		"subnet":         &SubnetGenerator{},
 		"igw":            &IgwGenerator{},
