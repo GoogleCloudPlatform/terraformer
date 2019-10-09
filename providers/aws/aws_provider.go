@@ -54,7 +54,6 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 		"alb": {
 			"sg":     []string{"security_groups", "id"},
 			"subnet": []string{"subnets", "id"},
-			"vpc":    []string{"vpc_id", "id"},
 			"alb": []string{
 				"load_balancer_arn", "id",
 				"listener_arn", "id",
