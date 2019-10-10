@@ -20,6 +20,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
 - [Supported providers](/providers)
     * [Google Cloud](#use-with-gcp)
     * [AWS](#use-with-aws)
+    * [Azure](#use-with-azure)
     * [OpenStack](#use-with-openstack)
     * [Kubernetes](#use-with-kubernetes)
     * [Github](#use-with-github)
@@ -145,6 +146,7 @@ If you want to use a package manager:
 Links to download terraform providers:
 * google cloud provider >2.11.0 - [here](https://releases.hashicorp.com/terraform-provider-google/)
 * aws provider >2.25.0 - [here](https://releases.hashicorp.com/terraform-provider-aws/)
+* azurerm provider >1.35.0 - [here](https://releases.hashicorp.com/terraform-provider-azurerm/)
 * openstack provider >1.21.1 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
 * kubernetes provider >=1.9.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
 * github provider >=2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-github/)
@@ -407,6 +409,27 @@ List of supported AWS services:
     * `aws_cloudtrail`
 * `kinesis`
     * `aws_kinesis_stream`
+
+### Use with Azure
+Example:
+
+```
+export ARM_CLIENT_ID=[CLIENT_ID]
+export ARM_CLIENT_SECRET=[CLIENT_SECRET]
+export ARM_SUBSCRIPTION_ID=[SUBSCRIPTION_ID]
+export ARM_TENANT_ID=[TENANT_ID]
+
+export AZURE_CLIENT_ID=[CLIENT_ID]
+export AZURE_CLIENT_SECRET=[CLIENT_SECRET]
+export AZURE_TENANT_ID=[TENANT_ID]
+
+./terraformer import azure -r resource_group
+```
+
+List of supported Azure resources:
+
+* `resource_group`
+    * `azurerm_resource_group`
 
 ### Use with OpenStack
 
