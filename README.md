@@ -439,6 +439,14 @@ List of supported Azure resources:
 * `resource_group`
     * `azurerm_resource_group`
 
+AWS services that are global will be imported without specified region even if several regions will be passed. It is to ensure only one representation of an AWS resource is imported.
+
+List of global AWS services:
+*   `iam`
+*   `route53`
+*   `cloudfront`
+*   `organization`
+
 ### Use with OpenStack
 
 Example:
