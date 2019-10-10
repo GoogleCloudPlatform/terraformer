@@ -5,7 +5,6 @@ go 1.13
 require (
 	cloud.google.com/go v0.36.0
 	github.com/aws/aws-sdk-go v1.22.0
-	github.com/cenkalti/backoff v2.1.1+incompatible // indirect
 	github.com/cloudflare/cloudflare-go v0.9.4
 	github.com/coreos/go-systemd v0.0.0-20181031085051-9002847aa142 // indirect
 	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
@@ -20,6 +19,7 @@ require (
 	github.com/hashicorp/hcl v1.0.1-0.20190611123218-cf7d376da96d
 	github.com/hashicorp/hcl2 v0.0.0-20190821123243-0c888d1241f6
 	github.com/hashicorp/terraform v0.12.8
+	github.com/heroku/heroku-go/v5 v5.1.0
 	github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c // indirect
 	github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365
 	github.com/imdario/mergo v0.3.7 // indirect

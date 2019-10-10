@@ -54,7 +54,6 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 		"alb": {
 			"sg":     []string{"security_groups", "id"},
 			"subnet": []string{"subnets", "id"},
-			"vpc":    []string{"vpc_id", "id"},
 			"alb": []string{
 				"load_balancer_arn", "id",
 				"listener_arn", "id",
@@ -177,9 +176,11 @@ func (p *AWSProvider) InitService(serviceName string) error {
 func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
 		"vpc":            &VpcGenerator{},
+		"vpc_peering":    &VpcPeeringConnectionGenerator{},
 		"sg":             &SecurityGenerator{},
 		"subnet":         &SubnetGenerator{},
 		"igw":            &IgwGenerator{},
+		"nat":            &NatGatewayGenerator{},
 		"vpn_gateway":    &VpnGatewayGenerator{},
 		"nacl":           &NaclGenerator{},
 		"vpn_connection": &VpnConnectionGenerator{},
@@ -194,6 +195,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"acm":            &ACMGenerator{},
 		"cloudfront":     &CloudFrontGenerator{},
 		"ec2_instance":   &Ec2Generator{},
+		"eip":            &ElasticIpGenerator{},
 		"firehose":       &FirehoseGenerator{},
 		"glue":           &GlueGenerator{},
 		"route_table":    &RouteTableGenerator{},
