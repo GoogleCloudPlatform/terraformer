@@ -414,6 +414,14 @@ List of supported AWS services:
 * `kinesis`
     * `aws_kinesis_stream`
 
+AWS services that are global will be imported without specified region even if several regions will be passed. It is to ensure only one representation of an AWS resource is imported.
+
+List of global AWS services:
+*   `iam`
+*   `route53`
+*   `cloudfront`
+*   `organization`
+
 ### Use with OpenStack
 
 Example:
