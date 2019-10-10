@@ -36,7 +36,7 @@ require (
 	github.com/hashicorp/yamux v0.0.0-20190923154419-df201c70410d // indirect
 	cloud.google.com/go v0.36.0
 	github.com/ExpansiveWorlds/instrumentedsql v0.0.0-20171218214018-45abb4b1947d
-	github.com/SermoDigital/jose v0.9.1 // indirect
+	github.com/SermoDigital/jose v0.0.0-20161205224733-f6df55f235c2 // indirect
 	github.com/aws/aws-sdk-go v1.22.0
 	github.com/cenkalti/backoff v2.1.1+incompatible // indirect
 	github.com/chzyer/logex v1.1.11-0.20160617073814-96a4d311aa9b // indirect
@@ -76,8 +76,9 @@ require (
 	github.com/onsi/gomega v1.5.0 // indirect
 	github.com/packer-community/winrmcp v0.0.0-20180921211025-c76d91c1e7db // indirect
 	github.com/paultyng/go-newrelic v3.1.0+incompatible
+	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4 // indirect
 	github.com/pkg/errors v0.8.1
-	github.com/snowflakedb/gosnowflake v1.3.2
+	github.com/snowflakedb/gosnowflake v1.3.1
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/pflag v1.0.3
 	github.com/terraform-providers/terraform-provider-openstack v1.18.0 // indirect
