@@ -25,7 +25,12 @@ import (
 	"github.com/zclconf/go-cty/cty"
 )
 
+type Flatmapper interface {
+	Parse(ty cty.Type) (map[string]interface{}, error)
+}
+
 type FlatmapParser struct {
+	Flatmapper
 	attributes       map[string]string
 	ignoreKeys       []*regexp.Regexp
 	allowEmptyValues []*regexp.Regexp

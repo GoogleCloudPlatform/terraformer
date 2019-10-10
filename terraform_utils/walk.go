@@ -31,7 +31,7 @@ func WalkAndOverride(path, oldValue, newValue string, data interface{}) {
 
 func walkAndGet(pathSegments []string, data interface{}) []interface{} {
 	val := reflect.ValueOf(data)
-	if isArray(val) {
+	if isArray(val.Interface()) {
 		var arrayValues []interface{}
 		for i := 0; i < val.Len(); i++ {
 			for _, subValue := range walkAndGet(pathSegments, val.Index(i).Interface()) {
@@ -44,7 +44,7 @@ func walkAndGet(pathSegments []string, data interface{}) []interface{} {
 			for _, e := range val.MapKeys() {
 				v := val.MapIndex(e)
 				if e.String() == pathSegments[0] {
-					if isArray(v) {
+					if isArray(v.Interface()) {
 						return v.Interface().([]interface{})
 					} else {
 						return []interface{}{v.Interface()}
@@ -70,7 +70,7 @@ func walkAndGet(pathSegments []string, data interface{}) []interface{} {
 
 func walkAndOverride(pathSegments []string, oldValue, newValue string, data interface{}) {
 	val := reflect.ValueOf(data)
-	if isArray(val) {
+	if isArray(val.Interface()) {
 		for i := 0; i < val.Len(); i++ {
 			arrayValue := val.Index(i).Interface()
 			walkAndOverride(pathSegments, oldValue, newValue, arrayValue)
@@ -80,10 +80,10 @@ func walkAndOverride(pathSegments []string, oldValue, newValue string, data inte
 			for _, e := range val.MapKeys() {
 				v := val.MapIndex(e)
 				if e.String() == pathSegments[0] {
-					if isArray(v) {
+					if isArray(v.Interface()) {
 						valss := v.Interface().([]interface{})
 						for idx, currentValue := range valss {
-							if oldValue == currentValue {
+							if oldValue == currentValue.(string) {
 								valss[idx] = newValue
 							}
 						}
@@ -95,8 +95,7 @@ func walkAndOverride(pathSegments []string, oldValue, newValue string, data inte
 				}
 			}
 		}
-	}
-	if val.Kind() == reflect.Map {
+	} else if val.Kind() == reflect.Map {
 		for _, e := range val.MapKeys() {
 			v := val.MapIndex(e)
 			if e.String() == pathSegments[0] {
@@ -106,6 +105,11 @@ func walkAndOverride(pathSegments []string, oldValue, newValue string, data inte
 	}
 }
 
-func isArray(val reflect.Value) bool {
-	return val.Kind() == reflect.Array || val.Kind() == reflect.Slice
+func isArray(val interface{}) bool { // Go reflect lib can't sometimes detect given value is array
+	switch val.(type) {
+	case []interface{}:
+		return true
+	default:
+		return false
+	}
 }
