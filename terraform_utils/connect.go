@@ -14,11 +14,6 @@
 
 package terraform_utils
 
-import (
-	"log"
-	"regexp"
-)
-
 func ConnectServices(importResources map[string][]Resource, resourceConnections map[string]map[string][]string) map[string][]Resource {
 	for resource, connection := range resourceConnections {
 		if _, exist := importResources[resource]; exist {
@@ -33,7 +28,6 @@ func ConnectServices(importResources map[string][]Resource, resourceConnections 
 							mapResource(importResources, resource, connectionPair, ccc, k)
 						}
 					}
-
 				}
 			}
 		}
@@ -47,33 +41,13 @@ func mapResource(importResources map[string][]Resource, resource string, connect
 		if connectionPair[1] == "self_link" || connectionPair[1] == "id" {
 			key = resourceToMap.GetIDKey()
 		}
+		mappingResourceAttr := WalkAndGet(key, resourceToMap.InstanceState.Attributes)
 		keyValue := resourceToMap.InstanceInfo.Type + "_" + resourceToMap.ResourceName + "_" + key
 		linkValue := "${data.terraform_remote_state." + k + ".outputs." + keyValue + "}"
 
-		tfResource := importResources[resource][i]
-		mappingResourceAttr, found := resourceToMap.InstanceState.Attributes[key]
-		if found && mappingResourceAttr == tfResource.InstanceState.Attributes[connectionPair[0]] {
-			tfResource.InstanceState.Attributes[connectionPair[0]] = linkValue
-			tfResource.Item[connectionPair[0]] = linkValue
-		} else {
-			for keyAttributes, j := range tfResource.InstanceState.Attributes {
-				match, err := regexp.MatchString(connectionPair[0]+".\\d+$", keyAttributes)
-				if match && err == nil {
-					if j == mappingResourceAttr {
-						tfResource.InstanceState.Attributes[keyAttributes] = linkValue
-						switch ar := tfResource.Item[connectionPair[0]].(type) {
-						case []interface{}:
-							for j, l := range ar {
-								if l == mappingResourceAttr {
-									tfResource.Item[connectionPair[0]].([]interface{})[j] = linkValue
-								}
-							}
-						default:
-							log.Println("type not supported", ar)
-						}
-					}
-				}
-			}
+		if len(mappingResourceAttr) == 1 {
+			resourceIdentifier := mappingResourceAttr[0].(string)
+			WalkAndOverride(connectionPair[0], resourceIdentifier, linkValue, importResources[resource][i].Item)
 		}
 	}
 }
