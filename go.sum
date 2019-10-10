@@ -29,6 +29,7 @@ github.com/DATA-DOG/go-sqlmock v1.3.3/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q
 github.com/ExpansiveWorlds/instrumentedsql v0.0.0-20171218214018-45abb4b1947d h1:r+whow+VHd9kAd4UTtQ/rtvcvmwkdryKUcGofpYOp+8=
 github.com/ExpansiveWorlds/instrumentedsql v0.0.0-20171218214018-45abb4b1947d/go.mod h1:Lm6NFlzU3HvZIo5l8GykZn6MH8/wq/A/X/d+7P/hgZU=
 github.com/Pallinder/go-randomdata v1.2.0/go.mod h1:yHmJgulpD2Nfrm0cR9tI/+oAgRqCQQixsA8HyRZfV9Y=
+github.com/SermoDigital/jose v0.0.0-20161205224733-f6df55f235c2 h1:vaAJk17N8B8JfRDUhK1vSw3L/TAz8w65M3/RMeNusRE=
 github.com/SermoDigital/jose v0.0.0-20161205224733-f6df55f235c2/go.mod h1:ARgCUhI1MHQH+ONky/PAtmVHQrP5JlGY0F3poXOp/fA=
 github.com/SermoDigital/jose v0.9.1 h1:atYaHPD3lPICcbK1owly3aPm0iaJGSGPi0WD4vLznv8=
 github.com/SermoDigital/jose v0.9.1/go.mod h1:ARgCUhI1MHQH+ONky/PAtmVHQrP5JlGY0F3poXOp/fA=
@@ -619,6 +620,8 @@ github.com/smartystreets/goconvey v0.0.0-20180222194500-ef6db91d284a/go.mod h1:X
 github.com/smartystreets/goconvey v0.0.0-20181108003508-044398e4856c h1:Ho+uVpkel/udgjbwB5Lktg9BtvJSh2DT0Hi6LPSyI2w=
 github.com/smartystreets/goconvey v0.0.0-20181108003508-044398e4856c/go.mod h1:XDJAKZRPZ1CvBcN2aX5YOUTYGHki24fSF0Iv48Ibg0s=
 github.com/snowflakedb/gosnowflake v1.2.0/go.mod h1:NsRq2QeiMUuoNUJhp5Q6xGC4uBrsS9g6LwZVEkTWgsE=
+github.com/snowflakedb/gosnowflake v1.3.1 h1:b9ewmE0rMey4wlcKKzFuXSC8dPBD/uBtTU+3b+o9L1g=
+github.com/snowflakedb/gosnowflake v1.3.1/go.mod h1:NsRq2QeiMUuoNUJhp5Q6xGC4uBrsS9g6LwZVEkTWgsE=
 github.com/snowflakedb/gosnowflake v1.3.2 h1:ZMUN2+ggjvqsCm99uosiedLCsJ8oAuHrS8YdjSBwKcQ=
 github.com/snowflakedb/gosnowflake v1.3.2/go.mod h1:NsRq2QeiMUuoNUJhp5Q6xGC4uBrsS9g6LwZVEkTWgsE=
 github.com/soheilhy/cmux v0.1.4 h1:0HKaf1o97UwFjHH9o5XsHUOF+tqmdA7KEzXLpiyaw0E=

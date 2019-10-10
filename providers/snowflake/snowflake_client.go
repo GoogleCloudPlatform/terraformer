@@ -30,7 +30,7 @@ type client struct {
 }
 
 func init() {
-	sql.Register("snowflake", &gosnowflake.SnowflakeDriver{})
+	sql.Register("snowflake-provider", &gosnowflake.SnowflakeDriver{})
 }
 
 type database struct {

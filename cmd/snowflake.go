@@ -22,7 +22,7 @@ import (
 
 func newCmdSnowflakeImporter(options ImportOptions) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "snowflake",
+		Use:   "snowflake-provider",
 		Short: "Import current State to terraform configuration from Snowflake",
 		Long:  "Import current State to terraform configuration from Snowflake",
 		RunE: func(cmd *cobra.Command, args []string) error {
