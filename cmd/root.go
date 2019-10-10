@@ -40,6 +40,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 	return []func(options ImportOptions) *cobra.Command{
 		newCmdGoogleImporter,
 		newCmdAwsImporter,
+		newCmdAzureImporter,
 		newCmdOpenStackImporter,
 		newCmdGithubImporter,
 		newCmdDatadogImporter,
@@ -56,6 +57,7 @@ func providerGenerators() map[string]func() terraform_utils.ProviderGenerator {
 	for _, providerGen := range []func() terraform_utils.ProviderGenerator{
 		newGCPProvider,
 		newAWSProvider,
+		newAzureProvider,
 		newOpenStackProvider,
 		newGitHubProvider,
 		newKubernetesProvider,
