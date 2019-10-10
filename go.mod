@@ -35,11 +35,13 @@ require (
 	github.com/hashicorp/terraform v0.12.10
 	github.com/hashicorp/yamux v0.0.0-20190923154419-df201c70410d // indirect
 	cloud.google.com/go v0.36.0
+	github.com/ExpansiveWorlds/instrumentedsql v0.0.0-20171218214018-45abb4b1947d
+	github.com/SermoDigital/jose v0.9.1 // indirect
 	github.com/aws/aws-sdk-go v1.22.0
 	github.com/cenkalti/backoff v2.1.1+incompatible // indirect
 	github.com/chzyer/logex v1.1.11-0.20160617073814-96a4d311aa9b // indirect
+	github.com/chanzuckerberg/terraform-provider-snowflake v0.4.1
 	github.com/cloudflare/cloudflare-go v0.9.4
-	github.com/coreos/bbolt v1.3.1-coreos.1 // indirect
 	github.com/coreos/go-systemd v0.0.0-20181031085051-9002847aa142 // indirect
 	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
 	github.com/golang/groupcache v0.0.0-20181024230925-c65c006176ff // indirect
@@ -47,19 +49,14 @@ require (
 	github.com/google/gofuzz v1.0.0 // indirect
 	github.com/googleapis/gnostic v0.2.0 // indirect
 	github.com/gophercloud/gophercloud v0.0.0-20190427020117-60507118a582
-	github.com/gopherjs/gopherjs v0.0.0-20181103185306-d547d1d9531e // indirect
 	github.com/hashicorp/consul v1.4.0 // indirect
 	github.com/hashicorp/go-hclog v0.0.0-20181001195459-61d530d6c27f
-	github.com/hashicorp/go-immutable-radix v1.0.0 // indirect
 	github.com/hashicorp/go-plugin v1.0.1-0.20190610192547-a1bc61569a26
-	github.com/hashicorp/go-sockaddr v1.0.0 // indirect
 	github.com/hashicorp/hcl v1.0.1-0.20190611123218-cf7d376da96d
 	github.com/hashicorp/hcl2 v0.0.0-20190821123243-0c888d1241f6
-	github.com/hashicorp/serf v0.8.2-0.20171022020050-c20a0b1b1ea9 // indirect
 	github.com/hashicorp/terraform v0.12.8
 	github.com/heroku/heroku-go/v5 v5.1.0
 	github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365
-	github.com/imdario/mergo v0.3.8 // indirect
 	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 	github.com/jonboydell/logzio_client v1.2.0
 	github.com/jstemmer/go-junit-report v0.9.1 // indirect
@@ -67,10 +64,20 @@ require (
 	github.com/mattn/go-colorable v0.1.4 // indirect
 	github.com/mattn/go-isatty v0.0.10 // indirect
 	github.com/mitchellh/reflectwalk v1.0.1 // indirect
+	github.com/imdario/mergo v0.3.7 // indirect
+	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+	github.com/jmoiron/sqlx v1.2.0
+	github.com/jonboydell/logzio_client v0.0.0-20190726085421-c93d6b149c1e
+	github.com/joyent/triton-go v0.0.0-20180628001255-830d2b111e62 // indirect
+	github.com/json-iterator/go v1.1.6 // indirect
+	github.com/lusis/go-artifactory v0.0.0-20180304164534-a47f63f234b2 // indirect
+	github.com/miekg/dns v1.0.15 // indirect
+	github.com/onsi/ginkgo v1.8.0 // indirect
+	github.com/onsi/gomega v1.5.0 // indirect
+	github.com/packer-community/winrmcp v0.0.0-20180921211025-c76d91c1e7db // indirect
 	github.com/paultyng/go-newrelic v3.1.0+incompatible
 	github.com/pkg/errors v0.8.1
-	github.com/smartystreets/assertions v0.0.0-20190116191733-b6c0e53d7304 // indirect
-	github.com/smartystreets/goconvey v0.0.0-20181108003508-044398e4856c // indirect
+	github.com/snowflakedb/gosnowflake v1.3.2
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/pflag v1.0.3
 	github.com/terraform-providers/terraform-provider-openstack v1.18.0 // indirect
