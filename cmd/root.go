@@ -47,6 +47,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdCloudflareImporter,
 		newCmdLogzioImporter,
 		newCmdNewRelicImporter,
+		newCmdHerokuImporter,
 	}
 }
 
@@ -61,6 +62,7 @@ func providerGenerators() map[string]func() terraform_utils.ProviderGenerator {
 		newDataDogProvider,
 		newLogzioProvider,
 		newNewRelicProvider,
+		newHerokuProvider,
 	} {
 		list[providerGen().GetName()] = providerGen
 	}

@@ -27,6 +27,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
     * [Cloudflare](#use-with-cloudflare)
     * [Logzio](#use-with-logzio)
     * [NewRelic](#use-with-newrelic)
+    * [Heroku](#use-with-heroku)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
@@ -345,6 +346,8 @@ List of supported AWS services:
     * `aws_iam_group_policy`
 *   `igw`
     * `aws_internet_gateway`
+*   `nat`
+    * `aws_nat_gateway`
 *   `nacl`
     * `aws_network_acl`
 *   `s3`
@@ -356,6 +359,8 @@ List of supported AWS services:
     * `aws_subnet`
 *   `vpc`
     * `aws_vpc`
+*   `vpc_peering`
+    * `aws_vpc_peering_connection`
 *   `vpn_connection`
     * `aws_vpn_connection`
 *   `vpn_gateway`
@@ -374,6 +379,8 @@ List of supported AWS services:
     * `aws_cloudfront_distribution`
 *   `ec2_instance`
     * `aws_instance`
+*   `eip`
+    * `aws_eip`
 *   `firehose`
     * `aws_kinesis_firehose_delivery_stream`
 *   `glue`
@@ -595,6 +602,22 @@ List of supported NewRelic resources:
 * `synthetics`
     * `newrelic_synthetics_monitor`
     * `newrelic_synthetics_alert_condition`
+
+### Use with Heroku
+Example:
+
+```
+export HEROKU_EMAIL=[HEROKU_EMAIL]
+export HEROKU_API_KEY=[HEROKU_API_KEY]
+./terraformer import heroku -r app,addon
+```
+
+List of supported Heroku resources:
+
+* `addon`
+    * `heroku_addon`
+* `app`
+    * `heroku_app`
 
 ## Contributing
 

@@ -67,14 +67,9 @@ func PrintTfState(resources []Resource) ([]byte, error) {
 	return buf.Bytes(), err
 }
 
-func RefreshResources(resources []Resource, providerName string, providerConfig cty.Value) ([]Resource, error) {
+func RefreshResources(resources []Resource, provider *provider_wrapper.ProviderWrapper) ([]Resource, error) {
 	refreshedResources := []Resource{}
 	input := make(chan *Resource, 100)
-	provider, err := provider_wrapper.NewProviderWrapper(providerName, providerConfig)
-	if err != nil {
-		return refreshedResources, err
-	}
-	defer provider.Kill()
 	var wg sync.WaitGroup
 	for i := 0; i < 15; i++ {
 		go RefreshResourceWorker(input, &wg, provider)
