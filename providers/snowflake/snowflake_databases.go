@@ -21,7 +21,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 )
 
-var VpcAllowEmptyValues = []string{"tags."}
+var SnowflakeAllowEmptyValues = []string{"tags."}
 
 type VpcGenerator struct {
 	AWSService
@@ -35,7 +35,7 @@ func (VpcGenerator) createResources(vpcs *ec2.DescribeVpcsOutput) []terraform_ut
 			aws.StringValue(vpc.VpcId),
 			"aws_vpc",
 			"aws",
-			VpcAllowEmptyValues,
+			SnowflakeAllowEmptyValues,
 		))
 	}
 	return resources
@@ -46,11 +46,11 @@ func (VpcGenerator) createResources(vpcs *ec2.DescribeVpcsOutput) []terraform_ut
 // Need VpcId as ID for terraform resource
 func (g *VpcGenerator) InitResources() error {
 	sess := g.generateSession()
-	svc := ec2.New(sess)
-	vpcs, err := svc.DescribeVpcs(&ec2.DescribeVpcsInput{})
-	if err != nil {
-		return err
-	}
-	g.Resources = g.createResources(vpcs)
-	return nil
+	// svc := ec2.New(sess)
+	// vpcs, err := svc.DescribeVpcs(&ec2.DescribeVpcsInput{})
+	// if err != nil {
+	// 	return err
+	// }
+	// g.Resources = g.createResources(vpcs)
+	// return nil
 }
