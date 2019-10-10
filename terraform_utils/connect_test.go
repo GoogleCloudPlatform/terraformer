@@ -15,120 +15,144 @@
 package terraform_utils
 
 import (
+	"github.com/zclconf/go-cty/cty"
 	"reflect"
 	"testing"
 )
 
-func prepare(ID, resourceType string, attributes map[string]string) Resource {
+func TestSimpleReference(t *testing.T) {
+	importResources := map[string][]Resource{
+		"type1": {prepare("ID1", "type1", map[string]string{
+			"type2_ref": "ID2",
+		}, map[string]interface{}{
+			"type2_ref": "ID2",
+		})},
+		"type2": {prepareNoAttrs("ID2", "type2")},
+	}
+
+	resourceConnections :=  map[string]map[string][]string{
+		"type1": {
+			"type2": {"type2_ref", "id"},
+		},
+	}
+	resources := ConnectServices(importResources, resourceConnections)
+
+	if !reflect.DeepEqual(resources["type1"][0].Item, map[string]interface{}{
+		"type2_ref": "${data.terraform_remote_state.type2.outputs.type2_tfer--name-type2_id}",
+	}) {
+		t.Errorf("failed to connect %v", resources["type1"][0].Item)
+	}
+}
+
+func TestManyReferences(t *testing.T) {
+	importResources := map[string][]Resource{
+		"type1": {prepare("ID1", "type1", map[string]string{
+			"type2_ref1": "ID2",
+			"type2_ref2": "ID2",
+		}, map[string]interface{}{
+			"type2_ref1": "ID2",
+			"type2_ref2": "ID2",
+		})},
+		"type2": {prepareNoAttrs("ID2", "type2")},
+	}
+
+	resourceConnections := map[string]map[string][]string{
+		"type1": {
+			"type2": {
+				"type2_ref1", "id",
+				"type2_ref2", "id",
+			},
+		},
+	}
+	resources := ConnectServices(importResources, resourceConnections)
+
+	if !reflect.DeepEqual(resources["type1"][0].Item, map[string]interface{}{
+		"type2_ref1": "${data.terraform_remote_state.type2.outputs.type2_tfer--name-type2_id}",
+		"type2_ref2": "${data.terraform_remote_state.type2.outputs.type2_tfer--name-type2_id}",
+	}) {
+		t.Errorf("failed to connect %v", resources["type1"][0].Item)
+	}
+}
+
+func TestResourceGroups(t *testing.T) {
+	importResources := map[string][]Resource{
+		"group1": {prepare("ID1", "type1", map[string]string{
+			"type2_ref1": "ID2",
+			"type2_ref2": "ID2",
+		}, map[string]interface{}{
+			"type2_ref1": "ID2",
+			"type2_ref2": "ID2",
+		}),
+			prepareNoAttrs("ID3", "type3")},
+		"group2": {
+			prepare("ID2", "type2", map[string]string{
+				"uid": "ID2",
+			}, map[string]interface{}{
+				"uid": "ID2",
+			}),
+			prepareNoAttrs("ID4", "type4")},
+	}
+
+	resourceConnections := map[string]map[string][]string{
+		"group1": {
+			"group2": {
+				"type2_ref1", "uid",
+				"type2_ref2", "uid",
+			},
+		},
+	}
+	resources := ConnectServices(importResources, resourceConnections)
+
+	if !reflect.DeepEqual(resources["group1"][0].Item, map[string]interface{}{
+		"type2_ref1": "${data.terraform_remote_state.group2.outputs.type2_tfer--name-type2_uid}",
+		"type2_ref2": "${data.terraform_remote_state.group2.outputs.type2_tfer--name-type2_uid}",
+	}) {
+		t.Errorf("failed to connect %v", resources["group1"][0].Item)
+	}
+}
+
+func TestNestedReference(t *testing.T) {
+	importResources := map[string][]Resource{
+		"type1": {prepare("ID1", "type1", map[string]string{
+			"nested.type2_ref": "ID2",
+		}, mapI("nested", mapI("type2_ref", "ID2")))},
+		"type2": {prepareNoAttrs("ID2", "type2")},
+	}
+
+	resourceConnections := map[string]map[string][]string{
+		"type1": {
+			"type2": {"nested.type2_ref", "id"},
+		},
+	}
+	resources := ConnectServices(importResources, resourceConnections)
+
+	if !reflect.DeepEqual(resources["type1"][0].Item, mapI("nested", mapI("type2_ref", "${data.terraform_remote_state.type2.outputs.type2_tfer--name-type2_id}"))) {
+		t.Errorf("failed to connect %v", resources)
+	}
+}
+
+func prepareNoAttrs(ID, resourceType string) Resource {
+	return prepare(ID, resourceType, map[string]string{}, map[string]interface{}{})
+}
+
+func prepare(ID, resourceType string, attributes map[string]string, attributesParsed map[string]interface{}) Resource {
 	r := NewResource(ID, "name-"+resourceType, resourceType, "provider", attributes, []string{}, map[string]interface{}{})
 	r.InstanceState.Attributes["id"] = r.InstanceState.ID
-	r.ConvertTFstate()
+	r.ParseTFstate(&MockedFlatmapParser{
+		attributesParsed: attributesParsed,
+	}, cty.NilType)
 	return r
 }
 
-func TestConnectServices(t *testing.T) {
-	type args struct {
-		importResources     map[string][]Resource
-		resourceConnections map[string]map[string][]string
-	}
-	tests := []struct {
-		name string
-		args args
-		want map[string][]Resource
-	}{
-		{
-			name: "simple test",
-			args: args{
-				importResources: map[string][]Resource{
-					"type1": {prepare("ID1", "type1", map[string]string{
-						"type2_ref": "ID2",
-					})},
-					"type2": {prepare("ID2", "type2", map[string]string{})},
-				},
-				resourceConnections: map[string]map[string][]string{
-					"type1": {
-						"type2": {"type2_ref", "id"},
-					},
-				},
-			},
-			want: map[string][]Resource{
-				"type1": {prepare("ID1", "type1", map[string]string{
-					"type2_ref": "${data.terraform_remote_state.type2.outputs.type2_name-type2_id}",
-				})},
-				"type2": {prepare("ID2", "type2", map[string]string{})},
-			},
-		},
-		{
-			name: "many refs test",
-			args: args{
-				importResources: map[string][]Resource{
-					"type1": {prepare("ID1", "type1", map[string]string{
-						"type2_ref1": "ID2",
-						"type2_ref2": "ID2",
-					})},
-					"type2": {prepare("ID2", "type2", map[string]string{})},
-				},
-				resourceConnections: map[string]map[string][]string{
-					"type1": {
-						"type2": {
-							"type2_ref1", "id",
-							"type2_ref2", "id",
-						},
-					},
-				},
-			},
-			want: map[string][]Resource{
-				"type1": {prepare("ID1", "type1", map[string]string{
-					"type2_ref1": "${data.terraform_remote_state.type2.outputs.type2_name-type2_id}",
-					"type2_ref2": "${data.terraform_remote_state.type2.outputs.type2_name-type2_id}",
-				})},
-				"type2": {prepare("ID2", "type2", map[string]string{})},
-			},
-		},
-		{
-			name: "ref groups test",
-			args: args{
-				importResources: map[string][]Resource{
-					"group1": {prepare("ID1", "type1", map[string]string{
-						"type2_ref1": "ID2",
-						"type2_ref2": "ID2",
-					}),
-						prepare("ID3", "type3", map[string]string{})},
-					"group2": {
-						prepare("ID2", "type2", map[string]string{
-							"uid": "ID2",
-						}),
-						prepare("ID4", "type4", map[string]string{})},
-				},
-				resourceConnections: map[string]map[string][]string{
-					"group1": {
-						"group2": {
-							"type2_ref1", "uid",
-							"type2_ref2", "uid",
-						},
-					},
-				},
-			},
-			want: map[string][]Resource{
-				"group1": {prepare("ID1", "type1", map[string]string{
-					"type2_ref1": "${data.terraform_remote_state.group2.outputs.type2_name-type2_uid}",
-					"type2_ref2": "${data.terraform_remote_state.group2.outputs.type2_name-type2_uid}",
-				}),
-					prepare("ID3", "type3", map[string]string{}),
-				},
-				"group2": {
-					prepare("ID2", "type2", map[string]string{
-						"uid": "ID2",
-					}),
-					prepare("ID4", "type4", map[string]string{})},
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := ConnectServices(tt.args.importResources, tt.args.resourceConnections); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ConnectServices() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+func mapI(key string, value interface{}) map[string]interface{} {
+	return map[string]interface{}{key: value}
+}
+
+type MockedFlatmapParser struct {
+	FlatmapParser
+	attributesParsed map[string]interface{}
+}
+
+func (p *MockedFlatmapParser) Parse(ty cty.Type) (map[string]interface{}, error) {
+	return p.attributesParsed, nil
 }

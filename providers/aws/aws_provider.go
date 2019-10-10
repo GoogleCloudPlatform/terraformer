@@ -83,7 +83,9 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 			"sqs": []string{"endpoint", "arn"},
 		},
 		"ecs": {
-			"ecs": []string{"task_definition", "arn"},
+			"ecs":    []string{"task_definition", "arn"},
+			"subnet": []string{"network_configuration.subnets", "id"},
+			"sg":     []string{"network_configuration.security_groups", "id"},
 		},
 		"organization": {
 			"organization": []string{
@@ -91,6 +93,10 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 				"parent_id", "id",
 				"target_id", "id",
 			},
+		},
+		"msk": {
+			"subnet": []string{"broker_node_group_info.client_subnets", "id"},
+			"sg":     []string{"broker_node_group_info.security_groups", "id"},
 		},
 	}
 }
@@ -208,5 +214,6 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"dynamodb":       &DynamoDbGenerator{},
 		"cloudtrail":     &CloudTrailGenerator{},
 		"kinesis":        &KinesisGenerator{},
+		"msk":            &MskGenerator{},
 	}
 }

@@ -415,6 +415,8 @@ List of supported AWS services:
     * `aws_cloudtrail`
 * `kinesis`
     * `aws_kinesis_stream`
+* `msk`
+    * `aws_msk_cluster`
 
 ### Use with Azure
 Example:

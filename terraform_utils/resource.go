@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 	"github.com/hashicorp/terraform/terraform"
+	"github.com/zclconf/go-cty/cty"
 	"log"
 	"regexp"
 )
@@ -82,22 +83,7 @@ func (r Resource) GetIDKey() string {
 	return "id"
 }
 
-func (r *Resource) ConvertTFstate(provider *provider_wrapper.ProviderWrapper) error {
-	ignoreKeys := []*regexp.Regexp{}
-	for _, pattern := range r.IgnoreKeys {
-		ignoreKeys = append(ignoreKeys, regexp.MustCompile(pattern))
-	}
-
-	allowEmptyValues := []*regexp.Regexp{}
-	for _, pattern := range r.AllowEmptyValues {
-		allowEmptyValues = append(allowEmptyValues, regexp.MustCompile(pattern))
-	}
-
-	parser := NewFlatmapParser(r.InstanceState.Attributes, ignoreKeys, allowEmptyValues)
-
-	schema := provider.Provider.GetSchema()
-	impliedType := schema.ResourceTypes[r.InstanceInfo.Type].Block.ImpliedType()
-
+func (r *Resource) ParseTFstate(parser Flatmapper, impliedType cty.Type) error {
 	attributes, err := parser.Parse(impliedType)
 	if err != nil {
 		return err
@@ -110,6 +96,23 @@ func (r *Resource) ConvertTFstate(provider *provider_wrapper.ProviderWrapper) er
 
 	r.Item = attributes
 	return nil
+}
+
+func (r *Resource) ConvertTFstate(provider *provider_wrapper.ProviderWrapper) error {
+	ignoreKeys := []*regexp.Regexp{}
+	for _, pattern := range r.IgnoreKeys {
+		ignoreKeys = append(ignoreKeys, regexp.MustCompile(pattern))
+	}
+
+	allowEmptyValues := []*regexp.Regexp{}
+	for _, pattern := range r.AllowEmptyValues {
+		allowEmptyValues = append(allowEmptyValues, regexp.MustCompile(pattern))
+	}
+
+	parser := NewFlatmapParser(r.InstanceState.Attributes, ignoreKeys, allowEmptyValues)
+	schema := provider.Provider.GetSchema()
+	impliedType := schema.ResourceTypes[r.InstanceInfo.Type].Block.ImpliedType()
+	return r.ParseTFstate(parser, impliedType)
 }
 
 // isAllowedEmptyValue checks if a key is an allowed empty value with regular expression
