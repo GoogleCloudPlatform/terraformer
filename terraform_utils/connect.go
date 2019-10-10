@@ -41,14 +41,13 @@ func mapResource(importResources map[string][]Resource, resource string, connect
 		if connectionPair[1] == "self_link" || connectionPair[1] == "id" {
 			key = resourceToMap.GetIDKey()
 		}
+		mappingResourceAttr := WalkAndGet(key, resourceToMap.InstanceState.Attributes)
 		keyValue := resourceToMap.InstanceInfo.Type + "_" + resourceToMap.ResourceName + "_" + key
 		linkValue := "${data.terraform_remote_state." + k + ".outputs." + keyValue + "}"
 
-		mappingResourceAttr := WalkAndGet(key, resourceToMap.Item)
 		if len(mappingResourceAttr) == 1 {
 			resourceIdentifier := mappingResourceAttr[0].(string)
 			WalkAndOverride(connectionPair[0], resourceIdentifier, linkValue, importResources[resource][i].Item)
-			// TODO adjust InstanceState.Item
 		}
 	}
 }

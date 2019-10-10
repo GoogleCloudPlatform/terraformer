@@ -59,12 +59,9 @@ func TestNestedWalkAndGet(t *testing.T) {
 }
 
 func TestNestedArrayWalkAndGet(t *testing.T) {
-	structure := map[string][]map[string]interface{}{
-		"attr1": {
-			{"attr2": "value1"},
-			{"attr2": "value2"},
-		},
-	}
+	structure := mapI("attr1", []interface{}{
+		mapI("attr2", "value1"),
+		mapI("attr2", "value2")})
 	value := WalkAndGet("attr1.attr2", structure)
 
 	if !reflect.DeepEqual(value, []interface{}{"value1", "value2"}) {
@@ -142,15 +139,12 @@ func TestNestedWalkAndOverride(t *testing.T) {
 }
 
 func TestNestedArrayWalkAndOverride(t *testing.T) {
-	structure := map[string][]map[string]interface{}{
-		"attr1": {
-			{"attr2": "value1"},
-			{"attr2": "value2"},
-		},
-	}
+	structure := mapI("attr1", []interface{}{
+		mapI("attr2", "value1"),
+		mapI("attr2", "value2")})
 	WalkAndOverride("attr1.attr2", "value2", "newValue", structure)
 
-	if structure["attr1"][0]["attr2"] != "value1" || structure["attr1"][1]["attr2"] != "newValue" {
+	if structure["attr1"].([]interface{})[0].(map[string]interface{})["attr2"] != "value1" || structure["attr1"].([]interface{})[1].(map[string]interface{})["attr2"] != "newValue" {
 		t.Errorf("failed to set value")
 	}
 }
