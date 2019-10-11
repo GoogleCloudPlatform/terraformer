@@ -38,10 +38,38 @@ github.com/Azure/go-autorest/autorest/to
 github.com/Azure/go-autorest/autorest/validation
 # github.com/Azure/go-autorest/logger v0.1.0
 github.com/Azure/go-autorest/logger
+<<<<<<< HEAD
 # github.com/Azure/go-autorest/tracing v0.5.0
 github.com/Azure/go-autorest/tracing
 # github.com/BurntSushi/toml v0.3.1
 github.com/BurntSushi/toml
+=======
+github.com/Azure/go-autorest/version
+# github.com/Azure/go-ntlmssp v0.0.0-20180810175552-4a21cbd618b4
+github.com/Azure/go-ntlmssp
+# github.com/ChrisTrenkamp/goxpath v0.0.0-20170922090931-c385f95c6022
+github.com/ChrisTrenkamp/goxpath
+github.com/ChrisTrenkamp/goxpath/internal/execxp
+github.com/ChrisTrenkamp/goxpath/internal/execxp/findutil
+github.com/ChrisTrenkamp/goxpath/internal/execxp/intfns
+github.com/ChrisTrenkamp/goxpath/internal/xsort
+github.com/ChrisTrenkamp/goxpath/lexer
+github.com/ChrisTrenkamp/goxpath/parser
+github.com/ChrisTrenkamp/goxpath/parser/pathexpr
+github.com/ChrisTrenkamp/goxpath/tree
+github.com/ChrisTrenkamp/goxpath/tree/xmltree
+github.com/ChrisTrenkamp/goxpath/tree/xmltree/xmlbuilder
+github.com/ChrisTrenkamp/goxpath/tree/xmltree/xmlele
+github.com/ChrisTrenkamp/goxpath/tree/xmltree/xmlnode
+github.com/ChrisTrenkamp/goxpath/xconst
+# github.com/SermoDigital/jose v0.0.0-20161205224733-f6df55f235c2
+github.com/SermoDigital/jose
+github.com/SermoDigital/jose/crypto
+github.com/SermoDigital/jose/jws
+github.com/SermoDigital/jose/jwt
+# github.com/Unknwon/com v0.0.0-20151008135407-28b053d5a292
+github.com/Unknwon/com
+>>>>>>> Some more fixes
 # github.com/agext/levenshtein v1.2.2
 github.com/agext/levenshtein
 # github.com/aliyun/alibaba-cloud-sdk-go v0.0.0-20191010082856-e76f4c50e182
@@ -120,7 +148,10 @@ github.com/aws/aws-sdk-go/service/cloudtrail
 github.com/aws/aws-sdk-go/service/dynamodb
 github.com/aws/aws-sdk-go/service/ec2
 github.com/aws/aws-sdk-go/service/ecs
+<<<<<<< HEAD
 github.com/aws/aws-sdk-go/service/eks
+=======
+>>>>>>> Some more fixes
 github.com/aws/aws-sdk-go/service/elasticache
 github.com/aws/aws-sdk-go/service/elasticsearchservice
 github.com/aws/aws-sdk-go/service/elb
@@ -128,7 +159,10 @@ github.com/aws/aws-sdk-go/service/elbv2
 github.com/aws/aws-sdk-go/service/firehose
 github.com/aws/aws-sdk-go/service/glue
 github.com/aws/aws-sdk-go/service/iam
+<<<<<<< HEAD
 github.com/aws/aws-sdk-go/service/kafka
+=======
+>>>>>>> Some more fixes
 github.com/aws/aws-sdk-go/service/kinesis
 github.com/aws/aws-sdk-go/service/organizations
 github.com/aws/aws-sdk-go/service/rds
@@ -324,6 +358,11 @@ github.com/hashicorp/terraform-config-inspect/tfconfig
 github.com/hashicorp/yamux
 # github.com/heroku/heroku-go/v5 v5.1.0
 github.com/heroku/heroku-go/v5
+<<<<<<< HEAD
+=======
+# github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c
+github.com/howeyc/gopass
+>>>>>>> Some more fixes
 # github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365
 github.com/iancoleman/strcase
 # github.com/imdario/mergo v0.3.8
@@ -332,18 +371,45 @@ github.com/imdario/mergo
 github.com/inconshreveable/mousetrap
 # github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 github.com/jmespath/go-jmespath
+<<<<<<< HEAD
 # github.com/jonboydell/logzio_client v1.2.0
+=======
+# github.com/jmoiron/sqlx v1.2.0
+github.com/jmoiron/sqlx
+github.com/jmoiron/sqlx/reflectx
+# github.com/jonboydell/logzio_client v0.0.0-20190726085421-c93d6b149c1e
+>>>>>>> Some more fixes
 github.com/jonboydell/logzio_client
 github.com/jonboydell/logzio_client/alerts
 github.com/jonboydell/logzio_client/client
 github.com/jonboydell/logzio_client/endpoints
 # github.com/json-iterator/go v1.1.7
 github.com/json-iterator/go
+<<<<<<< HEAD
 # github.com/jstemmer/go-junit-report v0.9.1
 github.com/jstemmer/go-junit-report
 github.com/jstemmer/go-junit-report/formatter
 github.com/jstemmer/go-junit-report/parser
 # github.com/mattn/go-colorable v0.1.4
+=======
+# github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
+github.com/kardianos/osext
+# github.com/kelseyhightower/envconfig v1.4.0
+github.com/kelseyhightower/envconfig
+# github.com/lib/pq v1.0.0
+github.com/lib/pq
+github.com/lib/pq/oid
+# github.com/lusis/go-artifactory v0.0.0-20180304164534-a47f63f234b2
+github.com/lusis/go-artifactory/src/artifactory.v401
+# github.com/marstr/guid v1.1.0
+github.com/marstr/guid
+# github.com/masterzen/simplexml v0.0.0-20160608183007-4572e39b1ab9
+github.com/masterzen/simplexml/dom
+# github.com/masterzen/winrm v0.0.0-20190223112901-5e5c9a7fe54b
+github.com/masterzen/winrm
+github.com/masterzen/winrm/soap
+# github.com/mattn/go-colorable v0.1.1
+>>>>>>> Some more fixes
 github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.10
 github.com/mattn/go-isatty
@@ -375,6 +441,11 @@ github.com/oklog/run
 github.com/paultyng/go-newrelic/api
 # github.com/pborman/uuid v1.2.0
 github.com/pborman/uuid
+<<<<<<< HEAD
+=======
+# github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
+github.com/pkg/browser
+>>>>>>> Some more fixes
 # github.com/pkg/errors v0.8.1
 github.com/pkg/errors
 # github.com/posener/complete v1.2.1
@@ -382,7 +453,15 @@ github.com/posener/complete
 github.com/posener/complete/cmd
 github.com/posener/complete/cmd/install
 github.com/posener/complete/match
+<<<<<<< HEAD
 # github.com/spf13/afero v1.2.2
+=======
+# github.com/satori/go.uuid v1.2.0
+github.com/satori/go.uuid
+# github.com/snowflakedb/gosnowflake v1.3.1
+github.com/snowflakedb/gosnowflake
+# github.com/spf13/afero v1.2.1
+>>>>>>> Some more fixes
 github.com/spf13/afero
 github.com/spf13/afero/mem
 # github.com/spf13/cobra v0.0.5
@@ -434,6 +513,16 @@ go.opencensus.io/trace/tracestate
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/blowfish
 golang.org/x/crypto/cast5
+<<<<<<< HEAD
+=======
+golang.org/x/crypto/curve25519
+golang.org/x/crypto/ed25519
+golang.org/x/crypto/ed25519/internal/edwards25519
+golang.org/x/crypto/internal/chacha20
+golang.org/x/crypto/internal/subtle
+golang.org/x/crypto/md4
+golang.org/x/crypto/ocsp
+>>>>>>> Some more fixes
 golang.org/x/crypto/openpgp
 golang.org/x/crypto/openpgp/armor
 golang.org/x/crypto/openpgp/elgamal

@@ -1884,6 +1884,12 @@ func (c *SQS) TagQueueRequest(input *TagQueueInput) (req *request.Request, outpu
 //    * A new tag with a key identical to that of an existing tag overwrites
 //    the existing tag.
 //
+<<<<<<< HEAD
+=======
+//    * Tagging actions are limited to 5 TPS per AWS account. If your application
+//    requires a higher throughput, file a technical support request (https://console.aws.amazon.com/support/home#/case/create?issueType=technical).
+//
+>>>>>>> Some more fixes
 // For a full list of tag restrictions, see Limits Related to Queues (https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-limits.html#limits-queues)
 // in the Amazon Simple Queue Service Developer Guide.
 //
@@ -2567,6 +2573,7 @@ type CreateQueueInput struct {
 	//
 	// QueueName is a required field
 	QueueName *string `type:"string" required:"true"`
+<<<<<<< HEAD
 
 	// Add cost allocation tags to the specified Amazon SQS queue. For an overview,
 	// see Tagging Your Amazon SQS Queues (https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-tags.html)
@@ -2594,6 +2601,8 @@ type CreateQueueInput struct {
 	// see Grant Cross-Account Permissions to a Role and a User Name (https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-customer-managed-policy-examples.html#grant-cross-account-permissions-to-role-and-user-name)
 	// in the Amazon Simple Queue Service Developer Guide.
 	Tags map[string]*string `locationName:"Tag" locationNameKey:"Key" locationNameValue:"Value" type:"map" flattened:"true"`
+=======
+>>>>>>> Some more fixes
 }
 
 // String returns the string representation
@@ -2631,12 +2640,15 @@ func (s *CreateQueueInput) SetQueueName(v string) *CreateQueueInput {
 	return s
 }
 
+<<<<<<< HEAD
 // SetTags sets the Tags field's value.
 func (s *CreateQueueInput) SetTags(v map[string]*string) *CreateQueueInput {
 	s.Tags = v
 	return s
 }
 
+=======
+>>>>>>> Some more fixes
 // Returns the QueueUrl attribute of the created queue.
 type CreateQueueOutput struct {
 	_ struct{} `type:"structure"`
@@ -3572,6 +3584,7 @@ func (s *MessageAttributeValue) SetStringValue(v string) *MessageAttributeValue 
 	return s
 }
 
+<<<<<<< HEAD
 // The user-specified message system attribute value. For string data types,
 // the Value attribute has the same restrictions on the content as the message
 // body. For more information, see SendMessage.
@@ -3660,6 +3673,8 @@ func (s *MessageSystemAttributeValue) SetStringValue(v string) *MessageSystemAtt
 	return s
 }
 
+=======
+>>>>>>> Some more fixes
 type PurgeQueueInput struct {
 	_ struct{} `type:"structure"`
 
@@ -3729,8 +3744,11 @@ type ReceiveMessageInput struct {
 	//    * ApproximateReceiveCount - Returns the number of times a message has
 	//    been received from the queue but not deleted.
 	//
+<<<<<<< HEAD
 	//    * AWSTraceHeader - Returns the AWS X-Ray trace header string.
 	//
+=======
+>>>>>>> Some more fixes
 	//    * SenderId For an IAM user, returns the IAM user ID, for example ABCDEFGHI1JKLMNOPQ23R.
 	//    For an IAM role, returns the IAM role ID, for example ABCDE1F2GH3I4JK5LMNOP:i-a123b456.
 	//
@@ -4210,6 +4228,7 @@ type SendMessageBatchRequestEntry struct {
 	// MessageGroupId is required for FIFO queues. You can't use it for Standard
 	// queues.
 	MessageGroupId *string `type:"string"`
+<<<<<<< HEAD
 
 	// The message system attribute to send Each message system attribute consists
 	// of a Name, Type, and Value.
@@ -4221,6 +4240,8 @@ type SendMessageBatchRequestEntry struct {
 	//    * The size of a message system attribute doesn't count towards the total
 	//    size of a message.
 	MessageSystemAttributes map[string]*MessageSystemAttributeValue `locationName:"MessageSystemAttribute" locationNameKey:"Name" locationNameValue:"Value" type:"map" flattened:"true"`
+=======
+>>>>>>> Some more fixes
 }
 
 // String returns the string representation
@@ -4252,6 +4273,7 @@ func (s *SendMessageBatchRequestEntry) Validate() error {
 			}
 		}
 	}
+<<<<<<< HEAD
 	if s.MessageSystemAttributes != nil {
 		for i, v := range s.MessageSystemAttributes {
 			if v == nil {
@@ -4262,6 +4284,8 @@ func (s *SendMessageBatchRequestEntry) Validate() error {
 			}
 		}
 	}
+=======
+>>>>>>> Some more fixes
 
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -4305,12 +4329,15 @@ func (s *SendMessageBatchRequestEntry) SetMessageGroupId(v string) *SendMessageB
 	return s
 }
 
+<<<<<<< HEAD
 // SetMessageSystemAttributes sets the MessageSystemAttributes field's value.
 func (s *SendMessageBatchRequestEntry) SetMessageSystemAttributes(v map[string]*MessageSystemAttributeValue) *SendMessageBatchRequestEntry {
 	s.MessageSystemAttributes = v
 	return s
 }
 
+=======
+>>>>>>> Some more fixes
 // Encloses a MessageId for a successfully-enqueued message in a SendMessageBatch.
 type SendMessageBatchResultEntry struct {
 	_ struct{} `type:"structure"`
@@ -4334,12 +4361,15 @@ type SendMessageBatchResultEntry struct {
 	// MD5OfMessageBody is a required field
 	MD5OfMessageBody *string `type:"string" required:"true"`
 
+<<<<<<< HEAD
 	// An MD5 digest of the non-URL-encoded message system attribute string. You
 	// can use this attribute to verify that Amazon SQS received the message correctly.
 	// Amazon SQS URL-decodes the message before creating the MD5 digest. For information
 	// about MD5, see RFC1321 (https://www.ietf.org/rfc/rfc1321.txt).
 	MD5OfMessageSystemAttributes *string `type:"string"`
 
+=======
+>>>>>>> Some more fixes
 	// An identifier for the message.
 	//
 	// MessageId is a required field
@@ -4382,12 +4412,15 @@ func (s *SendMessageBatchResultEntry) SetMD5OfMessageBody(v string) *SendMessage
 	return s
 }
 
+<<<<<<< HEAD
 // SetMD5OfMessageSystemAttributes sets the MD5OfMessageSystemAttributes field's value.
 func (s *SendMessageBatchResultEntry) SetMD5OfMessageSystemAttributes(v string) *SendMessageBatchResultEntry {
 	s.MD5OfMessageSystemAttributes = &v
 	return s
 }
 
+=======
+>>>>>>> Some more fixes
 // SetMessageId sets the MessageId field's value.
 func (s *SendMessageBatchResultEntry) SetMessageId(v string) *SendMessageBatchResultEntry {
 	s.MessageId = &v
@@ -4503,6 +4536,7 @@ type SendMessageInput struct {
 	// queues.
 	MessageGroupId *string `type:"string"`
 
+<<<<<<< HEAD
 	// The message system attribute to send. Each message system attribute consists
 	// of a Name, Type, and Value.
 	//
@@ -4514,6 +4548,8 @@ type SendMessageInput struct {
 	//    size of a message.
 	MessageSystemAttributes map[string]*MessageSystemAttributeValue `locationName:"MessageSystemAttribute" locationNameKey:"Name" locationNameValue:"Value" type:"map" flattened:"true"`
 
+=======
+>>>>>>> Some more fixes
 	// The URL of the Amazon SQS queue to which a message is sent.
 	//
 	// Queue URLs and names are case-sensitive.
@@ -4551,6 +4587,7 @@ func (s *SendMessageInput) Validate() error {
 			}
 		}
 	}
+<<<<<<< HEAD
 	if s.MessageSystemAttributes != nil {
 		for i, v := range s.MessageSystemAttributes {
 			if v == nil {
@@ -4561,6 +4598,8 @@ func (s *SendMessageInput) Validate() error {
 			}
 		}
 	}
+=======
+>>>>>>> Some more fixes
 
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -4598,12 +4637,15 @@ func (s *SendMessageInput) SetMessageGroupId(v string) *SendMessageInput {
 	return s
 }
 
+<<<<<<< HEAD
 // SetMessageSystemAttributes sets the MessageSystemAttributes field's value.
 func (s *SendMessageInput) SetMessageSystemAttributes(v map[string]*MessageSystemAttributeValue) *SendMessageInput {
 	s.MessageSystemAttributes = v
 	return s
 }
 
+=======
+>>>>>>> Some more fixes
 // SetQueueUrl sets the QueueUrl field's value.
 func (s *SendMessageInput) SetQueueUrl(v string) *SendMessageInput {
 	s.QueueUrl = &v
@@ -4626,11 +4668,14 @@ type SendMessageOutput struct {
 	// about MD5, see RFC1321 (https://www.ietf.org/rfc/rfc1321.txt).
 	MD5OfMessageBody *string `type:"string"`
 
+<<<<<<< HEAD
 	// An MD5 digest of the non-URL-encoded message system attribute string. You
 	// can use this attribute to verify that Amazon SQS received the message correctly.
 	// Amazon SQS URL-decodes the message before creating the MD5 digest.
 	MD5OfMessageSystemAttributes *string `type:"string"`
 
+=======
+>>>>>>> Some more fixes
 	// An attribute containing the MessageId of the message sent to the queue. For
 	// more information, see Queue and Message Identifiers (https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-message-identifiers.html)
 	// in the Amazon Simple Queue Service Developer Guide.
@@ -4667,12 +4712,15 @@ func (s *SendMessageOutput) SetMD5OfMessageBody(v string) *SendMessageOutput {
 	return s
 }
 
+<<<<<<< HEAD
 // SetMD5OfMessageSystemAttributes sets the MD5OfMessageSystemAttributes field's value.
 func (s *SendMessageOutput) SetMD5OfMessageSystemAttributes(v string) *SendMessageOutput {
 	s.MD5OfMessageSystemAttributes = &v
 	return s
 }
 
+=======
+>>>>>>> Some more fixes
 // SetMessageId sets the MessageId field's value.
 func (s *SendMessageOutput) SetMessageId(v string) *SendMessageOutput {
 	s.MessageId = &v
@@ -4988,6 +5036,7 @@ const (
 
 	// MessageSystemAttributeNameMessageGroupId is a MessageSystemAttributeName enum value
 	MessageSystemAttributeNameMessageGroupId = "MessageGroupId"
+<<<<<<< HEAD
 
 	// MessageSystemAttributeNameAwstraceHeader is a MessageSystemAttributeName enum value
 	MessageSystemAttributeNameAwstraceHeader = "AWSTraceHeader"
@@ -4996,6 +5045,8 @@ const (
 const (
 	// MessageSystemAttributeNameForSendsAwstraceHeader is a MessageSystemAttributeNameForSends enum value
 	MessageSystemAttributeNameForSendsAwstraceHeader = "AWSTraceHeader"
+=======
+>>>>>>> Some more fixes
 )
 
 const (

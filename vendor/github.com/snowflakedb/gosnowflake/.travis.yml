@@ -1,0 +1,31 @@
+sudo: false
+language: go
+matrix:
+  include:
+  - go: 1.11.x
+  - go: 1.11.x
+    env: SNOWFLAKE_AZURE=true
+  - go: 1.12.x
+  - go: 1.12.x
+    env: SNOWFLAKE_AZURE=true
+install:
+- |
+  if [[ -n "$SNOWFLAKE_AZURE" ]]; then
+  openssl aes-256-cbc -k "$super_azure_secret_password" -in parameters_azure.json.enc -out parameters.json -d
+  else
+  openssl aes-256-cbc -k "$super_secret_password" -in parameters.json.enc -out parameters.json -d
+  fi
+- openssl aes-256-cbc -k "$super_secret_password" -in rsa-2048-private-key.p8.enc
+  -out rsa-2048-private-key.p8 -d
+- curl -L -s https://github.com/golang/dep/releases/download/v0.3.2/dep-linux-amd64
+  -o $GOPATH/bin/dep
+- chmod +x $GOPATH/bin/dep
+- dep ensure
+script:
+- make fmt lint cov
+after_success:
+- bash <(curl -s https://codecov.io/bash)
+env:
+  global:
+  - secure: J33DZodaFJMwoGSr898rm5eQ+nIpNpBsIrrYfEDRVMNpdDXuHDvpUPEgn00RfGsQRhFaGCayI3rFIJ2w5DHEn6krIJO2NRkaCaZqxElEYCvmUZ538YuMBsK9c14E7kCKjBdrKOLWxglGXK/Q7gdSkNPTcBcUmlLTyZgM7P6Z9t8siSChLThtmnmd6HnpVmORElnO9IjGY8AGjnrHqclyHPHw/2j22HP5mf7mrEPc/Okvg3hh2bltgKGER+WLGNNTZ3R6Twy7wgna2okF5bcCIyEo49PnT3JOVCzrZMqxH8+jZbm7n9hZPtzycpxZ/LMwARQmk6jITYyj4P3SfcFYeTijD+a2NsgOQ3b/L/3v7tyiw8UMEyGhgY/fPXgeza/Rbq8I0vavDSKPDr4iTOijsd/Rl9g2GZkOd2Eii1NYa23rvqEgDEjZ9p0nDcXqThPhuihaLspdDfH/GGkffCYRH7G1e74/eVad7Gdo6LVwiQ468i4SlaKHv0L7AmUqB8MkamwsZSG+Q700AI7G0D3q/b4Th4dS1OVpA6bCPj/xtO36Zj8WvboAPfCLf9GLQ7rqVsBIwUaNsubYNCv1nI576mQrb2P4DKyRcp0SuhFcgeqDLWIxKujl8zlNf9dLyjqx9NzN0gpKveSAad4PtJYesTtvjwXiSlIevVdvg8opH5M=
+  - secure: THOJEojZPB/IIRsMX81WhB4lJcE0IYhKDN8okOpS2q5U9nbQMV1kGJvfqK6E2wEzcJWztkBmYjzTMUu+SOMy5Dkl7Ex3YeDQAZfs3rJ4YML7tdmljDfTLz56Z5mK6rsT5h5cfQLeMteaIMhGC3m2nsPirkZc1M1SRe3cNe9D+M2itHUHKEpR4k3Edh3KN5syYK5/qPHAhauCBXj805icEwyAuG0AaFnCzFMJUw+E63YOZhuTq4WJ+biPF79C+qj4pfMTZyTIPV8u4M9uP0ag29zHl1eyBMajmOd8HmXbJpTt6SExHgDNhpWzQ5q8+6gqDDDjPdJSLV5EzQtYl97w6muVU2MEpU+ZRmt63vI4rmeBWmL1GV/iS2S+tsugcxdNn408dz8zXoU+FkUVVipG2S0tyCj8LSxkJ53gaCuga22o4eDaF/GoKGDxfNPxJqOPpXtnbzeiPXIlwBl+gSMZ8oNBIfE9QniJ8kftzGgC7OGUdvNvxexsy6da3E6TSlg5Zzc+RFFL0qIpG8Fzn4BzDkN0iDNVzDGsDvLA/9PJI3kNO94MkHblXx94fjBzR58lsNJToW3nG617yA+w6a/Z+OLZU+s4gXZnJgRoQtU/1kg61I5eE3VmjZeRDNwbFb8S/0XXpDjApVCd0oC0XJ/0LokCx6wUHr3s3/XvNFxYf10=

@@ -1,0 +1,16 @@
+[[constraint]]
+  branch = "master"
+  name = "github.com/pkg/browser"
+
+[[constraint]]
+  branch = "master"
+  name = "golang.org/x/crypto"
+
+[[override]]
+  name = "github.com/golang/glog"
+  source = "https://github.com/snowflakedb/glog.git"
+  revision = "f5055e6f21ce71153a199e6460664045b3af8e50"
+
+[prune]
+  go-tests = true
+  unused-packages = true

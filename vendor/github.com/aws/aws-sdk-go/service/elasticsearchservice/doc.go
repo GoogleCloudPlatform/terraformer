@@ -3,6 +3,7 @@
 // Package elasticsearchservice provides the client and types for making API
 // requests to Amazon Elasticsearch Service.
 //
+<<<<<<< HEAD
 // Use the Amazon Elasticsearch Configuration API to create, configure, and
 // manage Elasticsearch domains.
 //
@@ -11,6 +12,11 @@
 // The guide also contains sample code for sending signed HTTP requests to the
 // Elasticsearch APIs (https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-request-signing.html).
 //
+=======
+// Use the Amazon Elasticsearch configuration API to create, configure, and
+// manage Elasticsearch domains.
+//
+>>>>>>> Some more fixes
 // The endpoint for configuration service requests is region-specific: es.region.amazonaws.com.
 // For example, es.us-east-1.amazonaws.com. For a current list of supported
 // regions and endpoints, see Regions and Endpoints (http://docs.aws.amazon.com/general/latest/gr/rande.html#elasticsearch-service-regions).

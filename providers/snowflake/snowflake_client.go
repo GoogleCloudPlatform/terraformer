@@ -48,9 +48,12 @@ func (sc *client) ListDatabases() ([]database, error) {
 	if err != nil {
 		return nil, err
 	}
-	db := []database{}
-	err = sqlx.StructScan(rows, &db)
+	defer rows.Close()
 
+	fmt.Println("got some rows")
+	db := []database{}
+
+	err = sqlx.StructScan(rows, &db)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			log.Printf("[WARN] databases not found, removing from state file")
