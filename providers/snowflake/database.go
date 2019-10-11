@@ -28,7 +28,7 @@ func (g DatabaseGenerator) createResources(databaseList []database) []terraform_
 			database.Name,
 			database.Name,
 			"snowflake_database",
-			"snowflake",
+			"snowflake-provider",
 			[]string{}))
 	}
 	return resources

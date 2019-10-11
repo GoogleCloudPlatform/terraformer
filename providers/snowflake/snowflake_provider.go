@@ -30,7 +30,7 @@ type SnowflakeProvider struct {
 }
 
 func (p *SnowflakeProvider) GetName() string {
-	return "snowflake"
+	return "snowflake-provider"
 }
 
 func (p *SnowflakeProvider) GetProviderData(arg ...string) map[string]interface{} {
