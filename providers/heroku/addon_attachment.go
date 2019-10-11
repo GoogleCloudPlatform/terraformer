@@ -21,26 +21,26 @@ import (
 	heroku "github.com/heroku/heroku-go/v5"
 )
 
-type AddOnGenerator struct {
+type AddOnAttachmentGenerator struct {
 	HerokuService
 }
 
-func (g AddOnGenerator) createResources(addOnList []heroku.AddOn) []terraform_utils.Resource {
+func (g AddOnAttachmentGenerator) createResources(addOnAttachmentList []heroku.AddOnAttachment) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
-	for _, addOn := range addOnList {
+	for _, addOnAttachment := range addOnAttachmentList {
 		resources = append(resources, terraform_utils.NewSimpleResource(
-			addOn.ID,
-			addOn.Name,
-			"heroku_addon",
+			addOnAttachment.ID,
+			addOnAttachment.Name,
+			"heroku_addon_attachment",
 			"heroku",
 			[]string{}))
 	}
 	return resources
 }
 
-func (g *AddOnGenerator) InitResources() error {
+func (g *AddOnAttachmentGenerator) InitResources() error {
 	svc := g.generateService()
-	output, err := svc.AddOnList(context.TODO(), &heroku.ListRange{Field: "id"})
+	output, err := svc.AddOnAttachmentList(context.TODO(), &heroku.ListRange{Field: "id"})
 	if err != nil {
 		return err
 	}

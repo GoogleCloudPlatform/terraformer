@@ -21,26 +21,26 @@ import (
 	heroku "github.com/heroku/heroku-go/v5"
 )
 
-type AddOnGenerator struct {
+type PipelineGenerator struct {
 	HerokuService
 }
 
-func (g AddOnGenerator) createResources(addOnList []heroku.AddOn) []terraform_utils.Resource {
+func (g PipelineGenerator) createResources(pipelineList []heroku.Pipeline) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
-	for _, addOn := range addOnList {
+	for _, pipeline := range pipelineList {
 		resources = append(resources, terraform_utils.NewSimpleResource(
-			addOn.ID,
-			addOn.Name,
-			"heroku_addon",
+			pipeline.ID,
+			pipeline.Name,
+			"heroku_pipeline",
 			"heroku",
 			[]string{}))
 	}
 	return resources
 }
 
-func (g *AddOnGenerator) InitResources() error {
+func (g *PipelineGenerator) InitResources() error {
 	svc := g.generateService()
-	output, err := svc.AddOnList(context.TODO(), &heroku.ListRange{Field: "id"})
+	output, err := svc.PipelineList(context.TODO(), &heroku.ListRange{Field: "id"})
 	if err != nil {
 		return err
 	}
