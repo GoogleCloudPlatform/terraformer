@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/go-multierror"
-	"github.com/hashicorp/hcl2/hcl"
+	"github.com/hashicorp/hcl/v2"
 	"github.com/zclconf/go-cty/cty"
 
 	"github.com/hashicorp/terraform/addrs"
@@ -556,6 +556,11 @@ func (n *EvalApplyProvisioners) apply(ctx EvalContext, provs []*configs.Provisio
 		// Evaluate the main provisioner configuration.
 		config, _, configDiags := ctx.EvaluateBlock(prov.Config, schema, instanceAddr, keyData)
 		diags = diags.Append(configDiags)
+
+		// we can't apply the provisioner if the config has errors
+		if diags.HasErrors() {
+			return diags.Err()
+		}
 
 		// If the provisioner block contains a connection block of its own then
 		// it can override the base connection configuration, if any.

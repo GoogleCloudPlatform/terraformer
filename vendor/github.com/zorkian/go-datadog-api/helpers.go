@@ -33,6 +33,10 @@ func GetBool(v *bool) (bool, bool) {
 // to store v and returns a pointer to it.
 func Int(v int) *int { return &v }
 
+// Int64 is a helper routine that allocates a new int64 value to
+// store v and return a pointer to it.
+func Int64(v int64) *int64 { return &v }
+
 // GetIntOk is a helper routine that returns a boolean representing
 // if a value was set, and if so, dereferences the pointer to it.
 func GetIntOk(v *int) (int, bool) {

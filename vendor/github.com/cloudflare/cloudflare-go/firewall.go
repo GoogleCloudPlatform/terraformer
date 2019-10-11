@@ -132,45 +132,45 @@ func (api *API) DeleteZoneAccessRule(zoneID, accessRuleID string) (*AccessRuleRe
 	return api.deleteAccessRule("/zones/"+zoneID, accessRuleID)
 }
 
-// ListOrganizationAccessRules returns a slice of access rules for the given
-// organization identifier.
+// ListAccountAccessRules returns a slice of access rules for the given
+// account identifier.
 //
 // This takes an AccessRule to allow filtering of the results returned.
 //
-// API reference: https://api.cloudflare.com/#organization-level-firewall-access-rule-list-access-rules
-func (api *API) ListOrganizationAccessRules(organizationID string, accessRule AccessRule, page int) (*AccessRuleListResponse, error) {
-	return api.listAccessRules("/accounts/"+organizationID, accessRule, page)
+// API reference: https://api.cloudflare.com/#account-level-firewall-access-rule-list-access-rules
+func (api *API) ListAccountAccessRules(accountID string, accessRule AccessRule, page int) (*AccessRuleListResponse, error) {
+	return api.listAccessRules("/accounts/"+accountID, accessRule, page)
 }
 
-// CreateOrganizationAccessRule creates a firewall access rule for the given
-// organization identifier.
+// CreateAccountAccessRule creates a firewall access rule for the given
+// account identifier.
 //
-// API reference: https://api.cloudflare.com/#organization-level-firewall-access-rule-create-access-rule
-func (api *API) CreateOrganizationAccessRule(organizationID string, accessRule AccessRule) (*AccessRuleResponse, error) {
-	return api.createAccessRule("/accounts/"+organizationID, accessRule)
+// API reference: https://api.cloudflare.com/#account-level-firewall-access-rule-create-access-rule
+func (api *API) CreateAccountAccessRule(accountID string, accessRule AccessRule) (*AccessRuleResponse, error) {
+	return api.createAccessRule("/accounts/"+accountID, accessRule)
 }
 
-// OrganizationAccessRule returns the details of an organization's access rule.
+// AccountAccessRule returns the details of an account's access rule.
 //
 // API reference: https://api.cloudflare.com/#account-level-firewall-access-rule-access-rule-details
-func (api *API) OrganizationAccessRule(organizationID string, accessRuleID string) (*AccessRuleResponse, error) {
-	return api.retrieveAccessRule("/accounts/"+organizationID, accessRuleID)
+func (api *API) AccountAccessRule(accountID string, accessRuleID string) (*AccessRuleResponse, error) {
+	return api.retrieveAccessRule("/accounts/"+accountID, accessRuleID)
 }
 
-// UpdateOrganizationAccessRule updates a single access rule for the given
-// organization & access rule identifiers.
+// UpdateAccountAccessRule updates a single access rule for the given
+// account & access rule identifiers.
 //
-// API reference: https://api.cloudflare.com/#organization-level-firewall-access-rule-update-access-rule
-func (api *API) UpdateOrganizationAccessRule(organizationID, accessRuleID string, accessRule AccessRule) (*AccessRuleResponse, error) {
-	return api.updateAccessRule("/accounts/"+organizationID, accessRuleID, accessRule)
+// API reference: https://api.cloudflare.com/#account-level-firewall-access-rule-update-access-rule
+func (api *API) UpdateAccountAccessRule(accountID, accessRuleID string, accessRule AccessRule) (*AccessRuleResponse, error) {
+	return api.updateAccessRule("/accounts/"+accountID, accessRuleID, accessRule)
 }
 
-// DeleteOrganizationAccessRule deletes a single access rule for the given
-// organization and access rule identifiers.
+// DeleteAccountAccessRule deletes a single access rule for the given
+// account and access rule identifiers.
 //
-// API reference: https://api.cloudflare.com/#organization-level-firewall-access-rule-delete-access-rule
-func (api *API) DeleteOrganizationAccessRule(organizationID, accessRuleID string) (*AccessRuleResponse, error) {
-	return api.deleteAccessRule("/accounts/"+organizationID, accessRuleID)
+// API reference: https://api.cloudflare.com/#account-level-firewall-access-rule-delete-access-rule
+func (api *API) DeleteAccountAccessRule(accountID, accessRuleID string) (*AccessRuleResponse, error) {
+	return api.deleteAccessRule("/accounts/"+accountID, accessRuleID)
 }
 
 func (api *API) listAccessRules(prefix string, accessRule AccessRule, page int) (*AccessRuleListResponse, error) {

@@ -4034,6 +4034,9 @@ func (c *ElastiCache) IncreaseReplicaCountRequest(input *IncreaseReplicaCountInp
 //   * ErrCodeNoOperationFault "NoOperationFault"
 //   The operation was not performed because no changes were required.
 //
+//   * ErrCodeInvalidKMSKeyFault "InvalidKMSKeyFault"
+//   The KMS key supplied is not valid.
+//
 //   * ErrCodeInvalidParameterValueException "InvalidParameterValue"
 //   The value for a parameter is invalid.
 //
@@ -4107,10 +4110,10 @@ func (c *ElastiCache) ListAllowedNodeTypeModificationsRequest(input *ListAllowed
 // ListAllowedNodeTypeModifications API operation for Amazon ElastiCache.
 //
 // Lists all available node types that you can scale your Redis cluster's or
-// replication group's current node type up to.
+// replication group's current node type.
 //
 // When you use the ModifyCacheCluster or ModifyReplicationGroup operations
-// to scale up your cluster or replication group, the value of the CacheNodeType
+// to scale your cluster or replication group, the value of the CacheNodeType
 // parameter must be one of the node types returned by this operation.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
@@ -4653,6 +4656,9 @@ func (c *ElastiCache) ModifyReplicationGroupRequest(input *ModifyReplicationGrou
 //   * ErrCodeInvalidVPCNetworkStateFault "InvalidVPCNetworkStateFault"
 //   The VPC network is in an invalid state.
 //
+//   * ErrCodeInvalidKMSKeyFault "InvalidKMSKeyFault"
+//   The KMS key supplied is not valid.
+//
 //   * ErrCodeInvalidParameterValueException "InvalidParameterValue"
 //   The value for a parameter is invalid.
 //
@@ -4761,6 +4767,9 @@ func (c *ElastiCache) ModifyReplicationGroupShardConfigurationRequest(input *Mod
 //   * ErrCodeNodeQuotaForCustomerExceededFault "NodeQuotaForCustomerExceeded"
 //   The request cannot be processed because it would exceed the allowed number
 //   of cache nodes per customer.
+//
+//   * ErrCodeInvalidKMSKeyFault "InvalidKMSKeyFault"
+//   The KMS key supplied is not valid.
 //
 //   * ErrCodeInvalidParameterValueException "InvalidParameterValue"
 //   The value for a parameter is invalid.
@@ -5360,6 +5369,9 @@ func (c *ElastiCache) TestFailoverRequest(input *TestFailoverInput) (req *reques
 //   * ErrCodeTestFailoverNotAvailableFault "TestFailoverNotAvailableFault"
 //   The TestFailover action is not available.
 //
+//   * ErrCodeInvalidKMSKeyFault "InvalidKMSKeyFault"
+//   The KMS key supplied is not valid.
+//
 //   * ErrCodeInvalidParameterValueException "InvalidParameterValue"
 //   The value for a parameter is invalid.
 //
@@ -5574,10 +5586,11 @@ func (s *AvailabilityZone) SetName(v string) *AvailabilityZone {
 type BatchApplyUpdateActionInput struct {
 	_ struct{} `type:"structure"`
 
+	// The cache cluster IDs
+	CacheClusterIds []*string `type:"list"`
+
 	// The replication group IDs
-	//
-	// ReplicationGroupIds is a required field
-	ReplicationGroupIds []*string `type:"list" required:"true"`
+	ReplicationGroupIds []*string `type:"list"`
 
 	// The unique ID of the service update
 	//
@@ -5598,9 +5611,6 @@ func (s BatchApplyUpdateActionInput) GoString() string {
 // Validate inspects the fields of the type to determine if they are valid.
 func (s *BatchApplyUpdateActionInput) Validate() error {
 	invalidParams := request.ErrInvalidParams{Context: "BatchApplyUpdateActionInput"}
-	if s.ReplicationGroupIds == nil {
-		invalidParams.Add(request.NewErrParamRequired("ReplicationGroupIds"))
-	}
 	if s.ServiceUpdateName == nil {
 		invalidParams.Add(request.NewErrParamRequired("ServiceUpdateName"))
 	}
@@ -5609,6 +5619,12 @@ func (s *BatchApplyUpdateActionInput) Validate() error {
 		return invalidParams
 	}
 	return nil
+}
+
+// SetCacheClusterIds sets the CacheClusterIds field's value.
+func (s *BatchApplyUpdateActionInput) SetCacheClusterIds(v []*string) *BatchApplyUpdateActionInput {
+	s.CacheClusterIds = v
+	return s
 }
 
 // SetReplicationGroupIds sets the ReplicationGroupIds field's value.
@@ -5658,10 +5674,11 @@ func (s *BatchApplyUpdateActionOutput) SetUnprocessedUpdateActions(v []*Unproces
 type BatchStopUpdateActionInput struct {
 	_ struct{} `type:"structure"`
 
+	// The cache cluster IDs
+	CacheClusterIds []*string `type:"list"`
+
 	// The replication group IDs
-	//
-	// ReplicationGroupIds is a required field
-	ReplicationGroupIds []*string `type:"list" required:"true"`
+	ReplicationGroupIds []*string `type:"list"`
 
 	// The unique ID of the service update
 	//
@@ -5682,9 +5699,6 @@ func (s BatchStopUpdateActionInput) GoString() string {
 // Validate inspects the fields of the type to determine if they are valid.
 func (s *BatchStopUpdateActionInput) Validate() error {
 	invalidParams := request.ErrInvalidParams{Context: "BatchStopUpdateActionInput"}
-	if s.ReplicationGroupIds == nil {
-		invalidParams.Add(request.NewErrParamRequired("ReplicationGroupIds"))
-	}
 	if s.ServiceUpdateName == nil {
 		invalidParams.Add(request.NewErrParamRequired("ServiceUpdateName"))
 	}
@@ -5693,6 +5707,12 @@ func (s *BatchStopUpdateActionInput) Validate() error {
 		return invalidParams
 	}
 	return nil
+}
+
+// SetCacheClusterIds sets the CacheClusterIds field's value.
+func (s *BatchStopUpdateActionInput) SetCacheClusterIds(v []*string) *BatchStopUpdateActionInput {
+	s.CacheClusterIds = v
+	return s
 }
 
 // SetReplicationGroupIds sets the ReplicationGroupIds field's value.
@@ -6395,6 +6415,94 @@ func (s *CacheNodeTypeSpecificValue) SetValue(v string) *CacheNodeTypeSpecificVa
 	return s
 }
 
+// The status of the service update on the cache node
+type CacheNodeUpdateStatus struct {
+	_ struct{} `type:"structure"`
+
+	// The node ID of the cache cluster
+	CacheNodeId *string `type:"string"`
+
+	// The deletion date of the node
+	NodeDeletionDate *time.Time `type:"timestamp"`
+
+	// The end date of the update for a node
+	NodeUpdateEndDate *time.Time `type:"timestamp"`
+
+	// Reflects whether the update was initiated by the customer or automatically
+	// applied
+	NodeUpdateInitiatedBy *string `type:"string" enum:"NodeUpdateInitiatedBy"`
+
+	// The date when the update is triggered
+	NodeUpdateInitiatedDate *time.Time `type:"timestamp"`
+
+	// The start date of the update for a node
+	NodeUpdateStartDate *time.Time `type:"timestamp"`
+
+	// The update status of the node
+	NodeUpdateStatus *string `type:"string" enum:"NodeUpdateStatus"`
+
+	// The date when the NodeUpdateStatus was last modified>
+	NodeUpdateStatusModifiedDate *time.Time `type:"timestamp"`
+}
+
+// String returns the string representation
+func (s CacheNodeUpdateStatus) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s CacheNodeUpdateStatus) GoString() string {
+	return s.String()
+}
+
+// SetCacheNodeId sets the CacheNodeId field's value.
+func (s *CacheNodeUpdateStatus) SetCacheNodeId(v string) *CacheNodeUpdateStatus {
+	s.CacheNodeId = &v
+	return s
+}
+
+// SetNodeDeletionDate sets the NodeDeletionDate field's value.
+func (s *CacheNodeUpdateStatus) SetNodeDeletionDate(v time.Time) *CacheNodeUpdateStatus {
+	s.NodeDeletionDate = &v
+	return s
+}
+
+// SetNodeUpdateEndDate sets the NodeUpdateEndDate field's value.
+func (s *CacheNodeUpdateStatus) SetNodeUpdateEndDate(v time.Time) *CacheNodeUpdateStatus {
+	s.NodeUpdateEndDate = &v
+	return s
+}
+
+// SetNodeUpdateInitiatedBy sets the NodeUpdateInitiatedBy field's value.
+func (s *CacheNodeUpdateStatus) SetNodeUpdateInitiatedBy(v string) *CacheNodeUpdateStatus {
+	s.NodeUpdateInitiatedBy = &v
+	return s
+}
+
+// SetNodeUpdateInitiatedDate sets the NodeUpdateInitiatedDate field's value.
+func (s *CacheNodeUpdateStatus) SetNodeUpdateInitiatedDate(v time.Time) *CacheNodeUpdateStatus {
+	s.NodeUpdateInitiatedDate = &v
+	return s
+}
+
+// SetNodeUpdateStartDate sets the NodeUpdateStartDate field's value.
+func (s *CacheNodeUpdateStatus) SetNodeUpdateStartDate(v time.Time) *CacheNodeUpdateStatus {
+	s.NodeUpdateStartDate = &v
+	return s
+}
+
+// SetNodeUpdateStatus sets the NodeUpdateStatus field's value.
+func (s *CacheNodeUpdateStatus) SetNodeUpdateStatus(v string) *CacheNodeUpdateStatus {
+	s.NodeUpdateStatus = &v
+	return s
+}
+
+// SetNodeUpdateStatusModifiedDate sets the NodeUpdateStatusModifiedDate field's value.
+func (s *CacheNodeUpdateStatus) SetNodeUpdateStatusModifiedDate(v time.Time) *CacheNodeUpdateStatus {
+	s.NodeUpdateStatusModifiedDate = &v
+	return s
+}
+
 // Represents the output of a CreateCacheParameterGroup operation.
 type CacheParameterGroup struct {
 	_ struct{} `type:"structure"`
@@ -6749,6 +6857,9 @@ func (s *ConfigureShard) SetPreferredAvailabilityZones(v []*string) *ConfigureSh
 type CopySnapshotInput struct {
 	_ struct{} `type:"structure"`
 
+	// The ID of the KMS key used to encrypt the target snapshot.
+	KmsKeyId *string `type:"string"`
+
 	// The name of an existing snapshot from which to make a copy.
 	//
 	// SourceSnapshotName is a required field
@@ -6798,6 +6909,12 @@ func (s *CopySnapshotInput) Validate() error {
 		return invalidParams
 	}
 	return nil
+}
+
+// SetKmsKeyId sets the KmsKeyId field's value.
+func (s *CopySnapshotInput) SetKmsKeyId(v string) *CopySnapshotInput {
+	s.KmsKeyId = &v
+	return s
 }
 
 // SetSourceSnapshotName sets the SourceSnapshotName field's value.
@@ -6878,7 +6995,7 @@ type CreateCacheClusterInput struct {
 	//
 	// Constraints:
 	//
-	//    * A name must contain from 1 to 20 alphanumeric characters or hyphens.
+	//    * A name must contain from 1 to 50 alphanumeric characters or hyphens.
 	//
 	//    * The first character must be a letter.
 	//
@@ -7700,6 +7817,9 @@ type CreateReplicationGroupInput struct {
 	// engine version.
 	EngineVersion *string `type:"string"`
 
+	// The ID of the KMS key used to encrypt the disk on the cluster.
+	KmsKeyId *string `type:"string"`
+
 	// A list of node group (shard) configuration options. Each node group (shard)
 	// configuration has the following members: PrimaryAvailabilityZone, ReplicaAvailabilityZones,
 	// ReplicaCount, and Slots.
@@ -7807,7 +7927,7 @@ type CreateReplicationGroupInput struct {
 	//
 	// Constraints:
 	//
-	//    * A name must contain from 1 to 20 alphanumeric characters or hyphens.
+	//    * A name must contain from 1 to 40 alphanumeric characters or hyphens.
 	//
 	//    * The first character must be a letter.
 	//
@@ -7866,8 +7986,8 @@ type CreateReplicationGroupInput struct {
 	// to true when you create a cluster.
 	//
 	// This parameter is valid only if the Engine parameter is redis, the EngineVersion
-	// parameter is 3.2.6 or 4.x, and the cluster is being created in an Amazon
-	// VPC.
+	// parameter is 3.2.6, 4.x or later, and the cluster is being created in an
+	// Amazon VPC.
 	//
 	// If you enable in-transit encryption, you must also specify a value for CacheSubnetGroup.
 	//
@@ -7974,6 +8094,12 @@ func (s *CreateReplicationGroupInput) SetEngine(v string) *CreateReplicationGrou
 // SetEngineVersion sets the EngineVersion field's value.
 func (s *CreateReplicationGroupInput) SetEngineVersion(v string) *CreateReplicationGroupInput {
 	s.EngineVersion = &v
+	return s
+}
+
+// SetKmsKeyId sets the KmsKeyId field's value.
+func (s *CreateReplicationGroupInput) SetKmsKeyId(v string) *CreateReplicationGroupInput {
+	s.KmsKeyId = &v
 	return s
 }
 
@@ -8116,6 +8242,9 @@ type CreateSnapshotInput struct {
 	// cluster.
 	CacheClusterId *string `type:"string"`
 
+	// The ID of the KMS key used to encrypt the snapshot.
+	KmsKeyId *string `type:"string"`
+
 	// The identifier of an existing replication group. The snapshot is created
 	// from this replication group.
 	ReplicationGroupId *string `type:"string"`
@@ -8152,6 +8281,12 @@ func (s *CreateSnapshotInput) Validate() error {
 // SetCacheClusterId sets the CacheClusterId field's value.
 func (s *CreateSnapshotInput) SetCacheClusterId(v string) *CreateSnapshotInput {
 	s.CacheClusterId = &v
+	return s
+}
+
+// SetKmsKeyId sets the KmsKeyId field's value.
+func (s *CreateSnapshotInput) SetKmsKeyId(v string) *CreateSnapshotInput {
+	s.KmsKeyId = &v
 	return s
 }
 
@@ -10174,6 +10309,12 @@ func (s *DescribeSnapshotsOutput) SetSnapshots(v []*Snapshot) *DescribeSnapshots
 type DescribeUpdateActionsInput struct {
 	_ struct{} `type:"structure"`
 
+	// The cache cluster IDs
+	CacheClusterIds []*string `type:"list"`
+
+	// The Elasticache engine to which the update applies. Either Redis or Memcached
+	Engine *string `type:"string"`
+
 	// An optional marker returned from a prior request. Use this marker for pagination
 	// of results from this operation. If this parameter is specified, the response
 	// includes only records beyond the marker, up to the value specified by MaxRecords.
@@ -10210,6 +10351,18 @@ func (s DescribeUpdateActionsInput) String() string {
 // GoString returns the string representation
 func (s DescribeUpdateActionsInput) GoString() string {
 	return s.String()
+}
+
+// SetCacheClusterIds sets the CacheClusterIds field's value.
+func (s *DescribeUpdateActionsInput) SetCacheClusterIds(v []*string) *DescribeUpdateActionsInput {
+	s.CacheClusterIds = v
+	return s
+}
+
+// SetEngine sets the Engine field's value.
+func (s *DescribeUpdateActionsInput) SetEngine(v string) *DescribeUpdateActionsInput {
+	s.Engine = &v
+	return s
 }
 
 // SetMarker sets the Marker field's value.
@@ -10641,6 +10794,14 @@ type ListAllowedNodeTypeModificationsOutput struct {
 	// A string list, each element of which specifies a cache node type which you
 	// can use to scale your cluster or replication group.
 	//
+	// When scaling down on a Redis cluster or replication group using ModifyCacheCluster
+	// or ModifyReplicationGroup, use a value from this list for the CacheNodeType
+	// parameter.
+	ScaleDownModifications []*string `type:"list"`
+
+	// A string list, each element of which specifies a cache node type which you
+	// can use to scale your cluster or replication group.
+	//
 	// When scaling up a Redis cluster or replication group using ModifyCacheCluster
 	// or ModifyReplicationGroup, use a value from this list for the CacheNodeType
 	// parameter.
@@ -10655,6 +10816,12 @@ func (s ListAllowedNodeTypeModificationsOutput) String() string {
 // GoString returns the string representation
 func (s ListAllowedNodeTypeModificationsOutput) GoString() string {
 	return s.String()
+}
+
+// SetScaleDownModifications sets the ScaleDownModifications field's value.
+func (s *ListAllowedNodeTypeModificationsOutput) SetScaleDownModifications(v []*string) *ListAllowedNodeTypeModificationsOutput {
+	s.ScaleDownModifications = v
+	return s
 }
 
 // SetScaleUpModifications sets the ScaleUpModifications field's value.
@@ -12332,6 +12499,9 @@ func (s *PendingModifiedValues) SetNumCacheNodes(v int64) *PendingModifiedValues
 type ProcessedUpdateAction struct {
 	_ struct{} `type:"structure"`
 
+	// The ID of the cache cluster
+	CacheClusterId *string `type:"string"`
+
 	// The ID of the replication group
 	ReplicationGroupId *string `type:"string"`
 
@@ -12350,6 +12520,12 @@ func (s ProcessedUpdateAction) String() string {
 // GoString returns the string representation
 func (s ProcessedUpdateAction) GoString() string {
 	return s.String()
+}
+
+// SetCacheClusterId sets the CacheClusterId field's value.
+func (s *ProcessedUpdateAction) SetCacheClusterId(v string) *ProcessedUpdateAction {
+	s.CacheClusterId = &v
+	return s
 }
 
 // SetReplicationGroupId sets the ReplicationGroupId field's value.
@@ -12681,6 +12857,9 @@ type ReplicationGroup struct {
 	// The user supplied description of the replication group.
 	Description *string `type:"string"`
 
+	// The ID of the KMS key used to encrypt the disk in the cluster.
+	KmsKeyId *string `type:"string"`
+
 	// The names of all the cache clusters that are part of this replication group.
 	MemberClusters []*string `locationNameList:"ClusterId" type:"list"`
 
@@ -12786,6 +12965,12 @@ func (s *ReplicationGroup) SetConfigurationEndpoint(v *Endpoint) *ReplicationGro
 // SetDescription sets the Description field's value.
 func (s *ReplicationGroup) SetDescription(v string) *ReplicationGroup {
 	s.Description = &v
+	return s
+}
+
+// SetKmsKeyId sets the KmsKeyId field's value.
+func (s *ReplicationGroup) SetKmsKeyId(v string) *ReplicationGroup {
+	s.KmsKeyId = &v
 	return s
 }
 
@@ -13464,10 +13649,11 @@ type ServiceUpdate struct {
 	// recommended apply-by date has expired.
 	AutoUpdateAfterRecommendedApplyByDate *bool `type:"boolean"`
 
-	// The Redis engine to which the service update applies
+	// The Elasticache engine to which the update applies. Either Redis or Memcached
 	Engine *string `type:"string"`
 
-	// The Redis engine version to which the service update applies
+	// The Elasticache engine version to which the update applies. Either Redis
+	// or Memcached engine version
 	EngineVersion *string `type:"string"`
 
 	// The estimated length of time the service update will take
@@ -13683,6 +13869,9 @@ type Snapshot struct {
 	// The version of the cache engine version that is used by the source cluster.
 	EngineVersion *string `type:"string"`
 
+	// The ID of the KMS key used to encrypt the snapshot.
+	KmsKeyId *string `type:"string"`
+
 	// A list of the cache nodes in the source cluster.
 	NodeSnapshots []*NodeSnapshot `locationNameList:"NodeSnapshot" type:"list"`
 
@@ -13830,6 +14019,12 @@ func (s *Snapshot) SetEngine(v string) *Snapshot {
 // SetEngineVersion sets the EngineVersion field's value.
 func (s *Snapshot) SetEngineVersion(v string) *Snapshot {
 	s.EngineVersion = &v
+	return s
+}
+
+// SetKmsKeyId sets the KmsKeyId field's value.
+func (s *Snapshot) SetKmsKeyId(v string) *Snapshot {
+	s.KmsKeyId = &v
 	return s
 }
 
@@ -14138,6 +14333,9 @@ func (s *TimeRangeFilter) SetStartTime(v time.Time) *TimeRangeFilter {
 type UnprocessedUpdateAction struct {
 	_ struct{} `type:"structure"`
 
+	// The ID of the cache cluster
+	CacheClusterId *string `type:"string"`
+
 	// The error message that describes the reason the request was not processed
 	ErrorMessage *string `type:"string"`
 
@@ -14159,6 +14357,12 @@ func (s UnprocessedUpdateAction) String() string {
 // GoString returns the string representation
 func (s UnprocessedUpdateAction) GoString() string {
 	return s.String()
+}
+
+// SetCacheClusterId sets the CacheClusterId field's value.
+func (s *UnprocessedUpdateAction) SetCacheClusterId(v string) *UnprocessedUpdateAction {
+	s.CacheClusterId = &v
+	return s
 }
 
 // SetErrorMessage sets the ErrorMessage field's value.
@@ -14188,6 +14392,15 @@ func (s *UnprocessedUpdateAction) SetServiceUpdateName(v string) *UnprocessedUpd
 // The status of the service update for a specific replication group
 type UpdateAction struct {
 	_ struct{} `type:"structure"`
+
+	// The ID of the cache cluster
+	CacheClusterId *string `type:"string"`
+
+	// The status of the service update on the cache node
+	CacheNodeUpdateStatus []*CacheNodeUpdateStatus `locationNameList:"CacheNodeUpdateStatus" type:"list"`
+
+	// The Elasticache engine to which the update applies. Either Redis or Memcached
+	Engine *string `type:"string"`
 
 	// The estimated length of time for the update to complete
 	EstimatedUpdateTime *string `type:"string"`
@@ -14245,6 +14458,24 @@ func (s UpdateAction) String() string {
 // GoString returns the string representation
 func (s UpdateAction) GoString() string {
 	return s.String()
+}
+
+// SetCacheClusterId sets the CacheClusterId field's value.
+func (s *UpdateAction) SetCacheClusterId(v string) *UpdateAction {
+	s.CacheClusterId = &v
+	return s
+}
+
+// SetCacheNodeUpdateStatus sets the CacheNodeUpdateStatus field's value.
+func (s *UpdateAction) SetCacheNodeUpdateStatus(v []*CacheNodeUpdateStatus) *UpdateAction {
+	s.CacheNodeUpdateStatus = v
+	return s
+}
+
+// SetEngine sets the Engine field's value.
+func (s *UpdateAction) SetEngine(v string) *UpdateAction {
+	s.Engine = &v
+	return s
 }
 
 // SetEstimatedUpdateTime sets the EstimatedUpdateTime field's value.

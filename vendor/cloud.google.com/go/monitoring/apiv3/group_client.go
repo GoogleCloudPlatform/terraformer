@@ -18,7 +18,9 @@ package monitoring
 
 import (
 	"context"
+	"fmt"
 	"math"
+	"net/url"
 	"time"
 
 	"github.com/golang/protobuf/proto"
@@ -47,6 +49,8 @@ func defaultGroupClientOptions() []option.ClientOption {
 	return []option.ClientOption{
 		option.WithEndpoint("monitoring.googleapis.com:443"),
 		option.WithScopes(DefaultAuthScopes()...),
+		option.WithGRPCDialOption(grpc.WithDefaultCallOptions(
+			grpc.MaxCallRecvMsgSize(math.MaxInt32))),
 	}
 }
 
@@ -143,7 +147,8 @@ func (c *GroupClient) setGoogleClientInfo(keyval ...string) {
 
 // ListGroups lists the existing groups.
 func (c *GroupClient) ListGroups(ctx context.Context, req *monitoringpb.ListGroupsRequest, opts ...gax.CallOption) *GroupIterator {
-	ctx = insertMetadata(ctx, c.xGoogMetadata)
+	md := metadata.Pairs("x-goog-request-params", fmt.Sprintf("%s=%v", "name", url.QueryEscape(req.GetName())))
+	ctx = insertMetadata(ctx, c.xGoogMetadata, md)
 	opts = append(c.CallOptions.ListGroups[0:len(c.CallOptions.ListGroups):len(c.CallOptions.ListGroups)], opts...)
 	it := &GroupIterator{}
 	req = proto.Clone(req).(*monitoringpb.ListGroupsRequest)
@@ -175,12 +180,14 @@ func (c *GroupClient) ListGroups(ctx context.Context, req *monitoringpb.ListGrou
 	}
 	it.pageInfo, it.nextFunc = iterator.NewPageInfo(fetch, it.bufLen, it.takeBuf)
 	it.pageInfo.MaxSize = int(req.PageSize)
+	it.pageInfo.Token = req.PageToken
 	return it
 }
 
 // GetGroup gets a single group.
 func (c *GroupClient) GetGroup(ctx context.Context, req *monitoringpb.GetGroupRequest, opts ...gax.CallOption) (*monitoringpb.Group, error) {
-	ctx = insertMetadata(ctx, c.xGoogMetadata)
+	md := metadata.Pairs("x-goog-request-params", fmt.Sprintf("%s=%v", "name", url.QueryEscape(req.GetName())))
+	ctx = insertMetadata(ctx, c.xGoogMetadata, md)
 	opts = append(c.CallOptions.GetGroup[0:len(c.CallOptions.GetGroup):len(c.CallOptions.GetGroup)], opts...)
 	var resp *monitoringpb.Group
 	err := gax.Invoke(ctx, func(ctx context.Context, settings gax.CallSettings) error {
@@ -196,7 +203,8 @@ func (c *GroupClient) GetGroup(ctx context.Context, req *monitoringpb.GetGroupRe
 
 // CreateGroup creates a new group.
 func (c *GroupClient) CreateGroup(ctx context.Context, req *monitoringpb.CreateGroupRequest, opts ...gax.CallOption) (*monitoringpb.Group, error) {
-	ctx = insertMetadata(ctx, c.xGoogMetadata)
+	md := metadata.Pairs("x-goog-request-params", fmt.Sprintf("%s=%v", "name", url.QueryEscape(req.GetName())))
+	ctx = insertMetadata(ctx, c.xGoogMetadata, md)
 	opts = append(c.CallOptions.CreateGroup[0:len(c.CallOptions.CreateGroup):len(c.CallOptions.CreateGroup)], opts...)
 	var resp *monitoringpb.Group
 	err := gax.Invoke(ctx, func(ctx context.Context, settings gax.CallSettings) error {
@@ -213,7 +221,8 @@ func (c *GroupClient) CreateGroup(ctx context.Context, req *monitoringpb.CreateG
 // UpdateGroup updates an existing group.
 // You can change any group attributes except name.
 func (c *GroupClient) UpdateGroup(ctx context.Context, req *monitoringpb.UpdateGroupRequest, opts ...gax.CallOption) (*monitoringpb.Group, error) {
-	ctx = insertMetadata(ctx, c.xGoogMetadata)
+	md := metadata.Pairs("x-goog-request-params", fmt.Sprintf("%s=%v", "group.name", url.QueryEscape(req.GetGroup().GetName())))
+	ctx = insertMetadata(ctx, c.xGoogMetadata, md)
 	opts = append(c.CallOptions.UpdateGroup[0:len(c.CallOptions.UpdateGroup):len(c.CallOptions.UpdateGroup)], opts...)
 	var resp *monitoringpb.Group
 	err := gax.Invoke(ctx, func(ctx context.Context, settings gax.CallSettings) error {
@@ -229,7 +238,8 @@ func (c *GroupClient) UpdateGroup(ctx context.Context, req *monitoringpb.UpdateG
 
 // DeleteGroup deletes an existing group.
 func (c *GroupClient) DeleteGroup(ctx context.Context, req *monitoringpb.DeleteGroupRequest, opts ...gax.CallOption) error {
-	ctx = insertMetadata(ctx, c.xGoogMetadata)
+	md := metadata.Pairs("x-goog-request-params", fmt.Sprintf("%s=%v", "name", url.QueryEscape(req.GetName())))
+	ctx = insertMetadata(ctx, c.xGoogMetadata, md)
 	opts = append(c.CallOptions.DeleteGroup[0:len(c.CallOptions.DeleteGroup):len(c.CallOptions.DeleteGroup)], opts...)
 	err := gax.Invoke(ctx, func(ctx context.Context, settings gax.CallSettings) error {
 		var err error
@@ -241,7 +251,8 @@ func (c *GroupClient) DeleteGroup(ctx context.Context, req *monitoringpb.DeleteG
 
 // ListGroupMembers lists the monitored resources that are members of a group.
 func (c *GroupClient) ListGroupMembers(ctx context.Context, req *monitoringpb.ListGroupMembersRequest, opts ...gax.CallOption) *MonitoredResourceIterator {
-	ctx = insertMetadata(ctx, c.xGoogMetadata)
+	md := metadata.Pairs("x-goog-request-params", fmt.Sprintf("%s=%v", "name", url.QueryEscape(req.GetName())))
+	ctx = insertMetadata(ctx, c.xGoogMetadata, md)
 	opts = append(c.CallOptions.ListGroupMembers[0:len(c.CallOptions.ListGroupMembers):len(c.CallOptions.ListGroupMembers)], opts...)
 	it := &MonitoredResourceIterator{}
 	req = proto.Clone(req).(*monitoringpb.ListGroupMembersRequest)
@@ -273,6 +284,7 @@ func (c *GroupClient) ListGroupMembers(ctx context.Context, req *monitoringpb.Li
 	}
 	it.pageInfo, it.nextFunc = iterator.NewPageInfo(fetch, it.bufLen, it.takeBuf)
 	it.pageInfo.MaxSize = int(req.PageSize)
+	it.pageInfo.Token = req.PageToken
 	return it
 }
 
