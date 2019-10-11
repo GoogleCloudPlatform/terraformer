@@ -28,18 +28,23 @@ type SnowflakeService struct {
 }
 
 func (s *SnowflakeService) generateService() (*client, error) {
-	fmt.Printf("generateService")
+	fmt.Println("generateService")
 	account := s.Args["account"].(string)
 	username := s.Args["username"].(string)
 	region := s.Args["region"].(string)
 	role := s.Args["role"].(string)
+	password := s.Args["password"].(string)
+
 	dsn, err := gosnowflake.DSN(&gosnowflake.Config{
-		Account:       account,
-		User:          username,
-		Region:        region,
-		Role:          role,
-		Authenticator: gosnowflake.AuthTypeExternalBrowser,
+		Account:  account,
+		User:     username,
+		Region:   region,
+		Role:     role,
+		Password: password,
 	})
+	if err != nil {
+		return nil, err
+	}
 	db, err := sql.Open("snowflake-provider", dsn)
 	return &client{db: db}, err
 }

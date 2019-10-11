@@ -46,6 +46,11 @@ github.com/ChrisTrenkamp/goxpath/tree/xmltree/xmlbuilder
 github.com/ChrisTrenkamp/goxpath/tree/xmltree/xmlele
 github.com/ChrisTrenkamp/goxpath/tree/xmltree/xmlnode
 github.com/ChrisTrenkamp/goxpath/xconst
+# github.com/SermoDigital/jose v0.0.0-20161205224733-f6df55f235c2
+github.com/SermoDigital/jose
+github.com/SermoDigital/jose/crypto
+github.com/SermoDigital/jose/jws
+github.com/SermoDigital/jose/jwt
 # github.com/Unknwon/com v0.0.0-20151008135407-28b053d5a292
 github.com/Unknwon/com
 # github.com/agext/levenshtein v1.2.2
@@ -113,22 +118,30 @@ github.com/aws/aws-sdk-go/private/protocol/jsonrpc
 github.com/aws/aws-sdk-go/private/protocol/query
 github.com/aws/aws-sdk-go/private/protocol/query/queryutil
 github.com/aws/aws-sdk-go/private/protocol/rest
+github.com/aws/aws-sdk-go/private/protocol/restjson
 github.com/aws/aws-sdk-go/private/protocol/restxml
 github.com/aws/aws-sdk-go/private/protocol/xml/xmlutil
 github.com/aws/aws-sdk-go/service/acm
 github.com/aws/aws-sdk-go/service/autoscaling
 github.com/aws/aws-sdk-go/service/cloudfront
+github.com/aws/aws-sdk-go/service/cloudtrail
 github.com/aws/aws-sdk-go/service/dynamodb
 github.com/aws/aws-sdk-go/service/ec2
+github.com/aws/aws-sdk-go/service/ecs
 github.com/aws/aws-sdk-go/service/elasticache
+github.com/aws/aws-sdk-go/service/elasticsearchservice
 github.com/aws/aws-sdk-go/service/elb
 github.com/aws/aws-sdk-go/service/elbv2
 github.com/aws/aws-sdk-go/service/firehose
 github.com/aws/aws-sdk-go/service/glue
 github.com/aws/aws-sdk-go/service/iam
+github.com/aws/aws-sdk-go/service/kinesis
+github.com/aws/aws-sdk-go/service/organizations
 github.com/aws/aws-sdk-go/service/rds
 github.com/aws/aws-sdk-go/service/route53
 github.com/aws/aws-sdk-go/service/s3
+github.com/aws/aws-sdk-go/service/sns
+github.com/aws/aws-sdk-go/service/sqs
 github.com/aws/aws-sdk-go/service/sts
 github.com/aws/aws-sdk-go/service/sts/stsiface
 # github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d
@@ -481,6 +494,8 @@ github.com/hashicorp/terraform/version
 github.com/hashicorp/terraform-config-inspect/tfconfig
 # github.com/hashicorp/yamux v0.0.0-20180604194846-3520598351bb
 github.com/hashicorp/yamux
+# github.com/heroku/heroku-go/v5 v5.1.0
+github.com/heroku/heroku-go/v5
 # github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c
 github.com/howeyc/gopass
 # github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365
@@ -491,6 +506,9 @@ github.com/imdario/mergo
 github.com/inconshreveable/mousetrap
 # github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 github.com/jmespath/go-jmespath
+# github.com/jmoiron/sqlx v1.2.0
+github.com/jmoiron/sqlx
+github.com/jmoiron/sqlx/reflectx
 # github.com/jonboydell/logzio_client v0.0.0-20190726085421-c93d6b149c1e
 github.com/jonboydell/logzio_client
 github.com/jonboydell/logzio_client/alerts
@@ -506,6 +524,8 @@ github.com/joyent/triton-go/storage
 github.com/json-iterator/go
 # github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0
 github.com/kardianos/osext
+# github.com/kelseyhightower/envconfig v1.4.0
+github.com/kelseyhightower/envconfig
 # github.com/lib/pq v1.0.0
 github.com/lib/pq
 github.com/lib/pq/oid
@@ -556,6 +576,10 @@ github.com/oklog/run
 github.com/packer-community/winrmcp/winrmcp
 # github.com/paultyng/go-newrelic v3.1.0+incompatible
 github.com/paultyng/go-newrelic/api
+# github.com/pborman/uuid v1.2.0
+github.com/pborman/uuid
+# github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
+github.com/pkg/browser
 # github.com/pkg/errors v0.8.1
 github.com/pkg/errors
 # github.com/posener/complete v1.2.1
@@ -565,6 +589,8 @@ github.com/posener/complete/cmd/install
 github.com/posener/complete/match
 # github.com/satori/go.uuid v1.2.0
 github.com/satori/go.uuid
+# github.com/snowflakedb/gosnowflake v1.3.1
+github.com/snowflakedb/gosnowflake
 # github.com/spf13/afero v1.2.1
 github.com/spf13/afero
 github.com/spf13/afero/mem
@@ -603,7 +629,7 @@ github.com/zclconf/go-cty/cty/msgpack
 github.com/zclconf/go-cty/cty/set
 # github.com/zclconf/go-cty-yaml v1.0.1
 github.com/zclconf/go-cty-yaml
-# github.com/zorkian/go-datadog-api v2.21.1-0.20190802113207-d0ce49abc107+incompatible
+# github.com/zorkian/go-datadog-api v2.24.0+incompatible
 github.com/zorkian/go-datadog-api
 # go.opencensus.io v0.21.0
 go.opencensus.io
@@ -633,6 +659,7 @@ golang.org/x/crypto/ed25519/internal/edwards25519
 golang.org/x/crypto/internal/chacha20
 golang.org/x/crypto/internal/subtle
 golang.org/x/crypto/md4
+golang.org/x/crypto/ocsp
 golang.org/x/crypto/openpgp
 golang.org/x/crypto/openpgp/armor
 golang.org/x/crypto/openpgp/elgamal

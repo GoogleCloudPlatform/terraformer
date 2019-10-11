@@ -40,7 +40,7 @@ func newCmdSnowflakeImporter(options ImportOptions) *cobra.Command {
 	fmt.Println("listcmd")
 	cmd.AddCommand(listCmd(newSnowflakeProvider()))
 	cmd.PersistentFlags().BoolVarP(&options.Connect, "connect", "c", true, "")
-	cmd.PersistentFlags().StringSliceVarP(&options.Resources, "resources", "r", []string{}, "snowflake_database")
+	cmd.PersistentFlags().StringSliceVarP(&options.Resources, "resources", "r", []string{}, "database")
 	cmd.PersistentFlags().StringVarP(&options.PathPattern, "path-pattern", "p", DefaultPathPattern, "{output}/{provider}/custom/{service}/")
 	cmd.PersistentFlags().StringVarP(&options.PathOutput, "path-output", "o", DefaultPathOutput, "")
 	cmd.PersistentFlags().StringVarP(&options.State, "state", "s", DefaultState, "local or bucket")

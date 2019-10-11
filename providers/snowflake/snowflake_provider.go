@@ -17,41 +17,39 @@ package snowflake
 import (
 	"errors"
 	"fmt"
-	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/kelseyhightower/envconfig"
 )
+
+type SnowflakeConfig struct {
+	Account  string `envconfig:"SNOWFLAKE_ACCOUNT" required:"true"`
+	Username string `envconfig:"SNOWFLAKE_USERNAME" required:"true"`
+	Password string `envconfig:"SNOWFLAKE_PASSWORD" required:"true"`
+	Region   string `envconfig:"SNOWFLAKE_REGION" default:""`
+	Role     string `envconfig:"SNOWFLAKE_ROLE" required:"true"`
+}
 
 type SnowflakeProvider struct {
 	terraform_utils.Provider
-	account  string
-	username string
-	region   string
-	role     string
+
+	Config *SnowflakeConfig
 }
 
 func (p *SnowflakeProvider) Init(args []string) error {
 	fmt.Println("snowflake_provider init")
-	if os.Getenv("SNOWFLAKE_ACCOUNT") == "" {
-		return errors.New("set SNOWFLAKE_ACCOUNT env var")
-	}
-	p.account = os.Getenv("SNOWFLAKE_ACCOUNT")
 
-	if os.Getenv("SNOWFLAKE_USERNAME") == "" {
-		return errors.New("set SNOWFLAKE_USERNAME env var")
+	p.Config = &SnowflakeConfig{}
+	err := envconfig.Process("", p.Config)
+	if err != nil {
+		return err
 	}
-	p.account = os.Getenv("SNOWFLAKE_USERNAME")
 
-	if os.Getenv("SNOWFLAKE_REGION") == "" {
-		return errors.New("set SNOWFLAKE_REGION env var")
+	// us-west-2 is their default region, but if you actually specify that it won't trigger their default code
+	//  https://github.com/snowflakedb/gosnowflake/blob/52137ce8c32eaf93b0bd22fc5c7297beff339812/dsn.go#L61
+	if p.Config.Region == "us-west-2" {
+		p.Config.Region = ""
 	}
-	p.region = os.Getenv("SNOWFLAKE_REGION")
-
-	if os.Getenv("SNOWFLAKE_ROLE") == "" {
-		return errors.New("set SNOWFLAKE_ROLE env var")
-	}
-	p.role = os.Getenv("SNOWFLAKE_ROLE")
-
 	return nil
 }
 
@@ -65,10 +63,11 @@ func (p *SnowflakeProvider) GetProviderData(arg ...string) map[string]interface{
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"snowflake": map[string]interface{}{
-				"account":  p.account,
-				"username": p.username,
-				"region":   p.region,
-				"role":     p.role,
+				"account":  p.Config.Account,
+				"username": p.Config.Username,
+				"region":   p.Config.Region,
+				"role":     p.Config.Role,
+				"password": p.Config.Password,
 			},
 		},
 	}
@@ -82,7 +81,7 @@ func (SnowflakeProvider) GetResourceConnections() map[string]map[string][]string
 func (p *SnowflakeProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	fmt.Println("getsupportedservice")
 	return map[string]terraform_utils.ServiceGenerator{
-		"snowflake_database": &DatabaseGenerator{},
+		"database": &DatabaseGenerator{},
 	}
 }
 
@@ -96,10 +95,11 @@ func (p *SnowflakeProvider) InitService(serviceName string) error {
 	p.Service.SetName(serviceName)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"account":  p.account,
-		"username": p.username,
-		"region":   p.region,
-		"role":     p.role,
+		"account":  p.Config.Account,
+		"username": p.Config.Username,
+		"region":   p.Config.Region,
+		"role":     p.Config.Role,
+		"password": p.Config.Password,
 	})
 	return nil
 }
