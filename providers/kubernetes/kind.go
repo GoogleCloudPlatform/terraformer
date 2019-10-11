@@ -21,7 +21,6 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/kubectl/pkg/pluginutils"
 )
 
 type Kind struct {
@@ -36,7 +35,7 @@ type Kind struct {
 // from each kubernetes object 1 TerraformResource.
 // Use UID as the resource IDs.
 func (k *Kind) InitResources() error {
-	config, _, err := pluginutils.InitClientAndConfig()
+	config, _, err := initClientAndConfig()
 	if err != nil {
 		return err
 	}

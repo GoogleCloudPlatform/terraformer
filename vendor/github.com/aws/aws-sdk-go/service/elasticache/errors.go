@@ -150,6 +150,12 @@ const (
 	// The current state of the cache security group does not allow deletion.
 	ErrCodeInvalidCacheSecurityGroupStateFault = "InvalidCacheSecurityGroupState"
 
+	// ErrCodeInvalidKMSKeyFault for service response error code
+	// "InvalidKMSKeyFault".
+	//
+	// The KMS key supplied is not valid.
+	ErrCodeInvalidKMSKeyFault = "InvalidKMSKeyFault"
+
 	// ErrCodeInvalidParameterCombinationException for service response error code
 	// "InvalidParameterCombination".
 	//

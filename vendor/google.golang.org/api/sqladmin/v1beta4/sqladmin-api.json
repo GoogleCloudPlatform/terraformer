@@ -18,7 +18,7 @@
   "description": "Creates and manages Cloud SQL instances, which provide fully managed MySQL or PostgreSQL databases.",
   "discoveryVersion": "v1",
   "documentationLink": "https://cloud.google.com/sql/docs/reference/latest",
-  "etag": "\"VPK3KBfpaEgZ16pozGOoMYfKc0U/QtjhOzVspxdYDcV-neBlaStEry0\"",
+  "etag": "\"9eZ1uxVRThTDhLJCZHhqs3eQWz4/LQk4tkY-l69ZrPa5OlN2M--rZ0o\"",
   "icons": {
     "x16": "https://www.gstatic.com/images/branding/product/1x/googleg_16dp.png",
     "x32": "https://www.gstatic.com/images/branding/product/1x/googleg_32dp.png"
@@ -1579,7 +1579,7 @@
           ],
           "parameters": {
             "host": {
-              "description": "Host of the user in the instance.",
+              "description": "Host of the user in the instance. For a MySQL instance, it's required; For a PostgreSQL instance, it's optional.",
               "location": "query",
               "type": "string"
             },
@@ -1617,7 +1617,7 @@
       }
     }
   },
-  "revision": "20190415",
+  "revision": "20190827",
   "rootUrl": "https://www.googleapis.com/",
   "schemas": {
     "AclEntry": {
@@ -1677,6 +1677,10 @@
           "description": "This is always sql#backupConfiguration.",
           "type": "string"
         },
+        "location": {
+          "description": "The location of the backup.",
+          "type": "string"
+        },
         "replicationLogArchivingEnabled": {
           "description": "Reserved for future use.",
           "type": "boolean"
@@ -1695,6 +1699,14 @@
         "description": {
           "description": "The description of this run, only applicable to on-demand backups.",
           "type": "string"
+        },
+        "diskEncryptionConfiguration": {
+          "$ref": "DiskEncryptionConfiguration",
+          "description": "Disk encryption configuration specific to a backup. Applies only to Second Generation instances."
+        },
+        "diskEncryptionStatus": {
+          "$ref": "DiskEncryptionStatus",
+          "description": "Disk encryption status specific to a backup. Applies only to Second Generation instances."
         },
         "endTime": {
           "description": "The time the backup operation completed in UTC timezone in RFC 3339 format, for example 2012-11-15T16:19:00.094Z.",
@@ -1722,6 +1734,10 @@
         "kind": {
           "default": "sql#backupRun",
           "description": "This is always sql#backupRun.",
+          "type": "string"
+        },
+        "location": {
+          "description": "The location of the backup.",
           "type": "string"
         },
         "selfLink": {
@@ -2320,6 +2336,29 @@
       "description": "Database instance import context.",
       "id": "ImportContext",
       "properties": {
+        "bakImportOptions": {
+          "description": "Import parameters specific to SQL Server .BAK files",
+          "properties": {
+            "encryptionOptions": {
+              "properties": {
+                "certPath": {
+                  "description": "Path to the Certificate (.cer) in Cloud Storage, in the form gs://bucketName/fileName. The instance must have write permissions to the bucket and read access to the file.",
+                  "type": "string"
+                },
+                "pvkPassword": {
+                  "description": "Password that encrypts the private key",
+                  "type": "string"
+                },
+                "pvkPath": {
+                  "description": "Path to the Certificate Private Key (.pvk) in Cloud Storage, in the form gs://bucketName/fileName. The instance must have write permissions to the bucket and read access to the file.",
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
         "csvImportOptions": {
           "description": "Options for importing data as CSV.",
           "properties": {
@@ -2541,7 +2580,7 @@
           "type": "string"
         },
         "type": {
-          "description": "The type of this IP address. A PRIMARY address is an address that can accept incoming connections. An OUTGOING address is the source address of connections originating from the instance, if supported.",
+          "description": "The type of this IP address. A PRIMARY address is a public address that can accept incoming connections. A PRIVATE address is a private address that can accept incoming connections. An OUTGOING address is the source address of connections originating from the instance, if supported.",
           "type": "string"
         }
       },
@@ -2836,6 +2875,10 @@
         "kind": {
           "default": "sql#restoreBackupContext",
           "description": "This is always sql#restoreBackupContext.",
+          "type": "string"
+        },
+        "project": {
+          "description": "The full project ID of the source instance.",
           "type": "string"
         }
       },

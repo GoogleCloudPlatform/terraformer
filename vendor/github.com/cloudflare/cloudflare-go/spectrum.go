@@ -20,6 +20,7 @@ type SpectrumApplication struct {
 	IPFirewall    bool                          `json:"ip_firewall,omitempty"`
 	ProxyProtocol bool                          `json:"proxy_protocol,omitempty"`
 	TLS           string                        `json:"tls,omitempty"`
+	TrafficType   string                        `json:"traffic_type,omitempty"`
 	CreatedOn     *time.Time                    `json:"created_on,omitempty"`
 	ModifiedOn    *time.Time                    `json:"modified_on,omitempty"`
 }

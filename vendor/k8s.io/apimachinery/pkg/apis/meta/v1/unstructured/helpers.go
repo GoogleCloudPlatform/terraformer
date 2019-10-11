@@ -18,7 +18,6 @@ package unstructured
 
 import (
 	gojson "encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -28,23 +27,36 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/json"
+	"k8s.io/klog"
 )
 
 // NestedFieldCopy returns a deep copy of the value of a nested field.
 // Returns false if the value is missing.
 // No error is returned for a nil field.
+//
+// Note: fields passed to this function are treated as keys within the passed
+// object; no array/slice syntax is supported.
 func NestedFieldCopy(obj map[string]interface{}, fields ...string) (interface{}, bool, error) {
-	val, found, err := nestedFieldNoCopy(obj, fields...)
+	val, found, err := NestedFieldNoCopy(obj, fields...)
 	if !found || err != nil {
 		return nil, found, err
 	}
 	return runtime.DeepCopyJSONValue(val), true, nil
 }
 
-func nestedFieldNoCopy(obj map[string]interface{}, fields ...string) (interface{}, bool, error) {
+// NestedFieldNoCopy returns a reference to a nested field.
+// Returns false if value is not found and an error if unable
+// to traverse obj.
+//
+// Note: fields passed to this function are treated as keys within the passed
+// object; no array/slice syntax is supported.
+func NestedFieldNoCopy(obj map[string]interface{}, fields ...string) (interface{}, bool, error) {
 	var val interface{} = obj
 
 	for i, field := range fields {
+		if val == nil {
+			return nil, false, nil
+		}
 		if m, ok := val.(map[string]interface{}); ok {
 			val, ok = m[field]
 			if !ok {
@@ -60,7 +72,7 @@ func nestedFieldNoCopy(obj map[string]interface{}, fields ...string) (interface{
 // NestedString returns the string value of a nested field.
 // Returns false if value is not found and an error if not a string.
 func NestedString(obj map[string]interface{}, fields ...string) (string, bool, error) {
-	val, found, err := nestedFieldNoCopy(obj, fields...)
+	val, found, err := NestedFieldNoCopy(obj, fields...)
 	if !found || err != nil {
 		return "", found, err
 	}
@@ -74,7 +86,7 @@ func NestedString(obj map[string]interface{}, fields ...string) (string, bool, e
 // NestedBool returns the bool value of a nested field.
 // Returns false if value is not found and an error if not a bool.
 func NestedBool(obj map[string]interface{}, fields ...string) (bool, bool, error) {
-	val, found, err := nestedFieldNoCopy(obj, fields...)
+	val, found, err := NestedFieldNoCopy(obj, fields...)
 	if !found || err != nil {
 		return false, found, err
 	}
@@ -88,7 +100,7 @@ func NestedBool(obj map[string]interface{}, fields ...string) (bool, bool, error
 // NestedFloat64 returns the float64 value of a nested field.
 // Returns false if value is not found and an error if not a float64.
 func NestedFloat64(obj map[string]interface{}, fields ...string) (float64, bool, error) {
-	val, found, err := nestedFieldNoCopy(obj, fields...)
+	val, found, err := NestedFieldNoCopy(obj, fields...)
 	if !found || err != nil {
 		return 0, found, err
 	}
@@ -102,7 +114,7 @@ func NestedFloat64(obj map[string]interface{}, fields ...string) (float64, bool,
 // NestedInt64 returns the int64 value of a nested field.
 // Returns false if value is not found and an error if not an int64.
 func NestedInt64(obj map[string]interface{}, fields ...string) (int64, bool, error) {
-	val, found, err := nestedFieldNoCopy(obj, fields...)
+	val, found, err := NestedFieldNoCopy(obj, fields...)
 	if !found || err != nil {
 		return 0, found, err
 	}
@@ -116,7 +128,7 @@ func NestedInt64(obj map[string]interface{}, fields ...string) (int64, bool, err
 // NestedStringSlice returns a copy of []string value of a nested field.
 // Returns false if value is not found and an error if not a []interface{} or contains non-string items in the slice.
 func NestedStringSlice(obj map[string]interface{}, fields ...string) ([]string, bool, error) {
-	val, found, err := nestedFieldNoCopy(obj, fields...)
+	val, found, err := NestedFieldNoCopy(obj, fields...)
 	if !found || err != nil {
 		return nil, found, err
 	}
@@ -138,7 +150,7 @@ func NestedStringSlice(obj map[string]interface{}, fields ...string) ([]string, 
 // NestedSlice returns a deep copy of []interface{} value of a nested field.
 // Returns false if value is not found and an error if not a []interface{}.
 func NestedSlice(obj map[string]interface{}, fields ...string) ([]interface{}, bool, error) {
-	val, found, err := nestedFieldNoCopy(obj, fields...)
+	val, found, err := NestedFieldNoCopy(obj, fields...)
 	if !found || err != nil {
 		return nil, found, err
 	}
@@ -180,7 +192,7 @@ func NestedMap(obj map[string]interface{}, fields ...string) (map[string]interfa
 // nestedMapNoCopy returns a map[string]interface{} value of a nested field.
 // Returns false if value is not found and an error if not a map[string]interface{}.
 func nestedMapNoCopy(obj map[string]interface{}, fields ...string) (map[string]interface{}, bool, error) {
-	val, found, err := nestedFieldNoCopy(obj, fields...)
+	val, found, err := NestedFieldNoCopy(obj, fields...)
 	if !found || err != nil {
 		return nil, found, err
 	}
@@ -270,6 +282,22 @@ func getNestedString(obj map[string]interface{}, fields ...string) string {
 	return val
 }
 
+func getNestedInt64(obj map[string]interface{}, fields ...string) int64 {
+	val, found, err := NestedInt64(obj, fields...)
+	if !found || err != nil {
+		return 0
+	}
+	return val
+}
+
+func getNestedInt64Pointer(obj map[string]interface{}, fields ...string) *int64 {
+	val, found, err := NestedInt64(obj, fields...)
+	if !found || err != nil {
+		return nil
+	}
+	return &val
+}
+
 func jsonPath(fields []string) string {
 	return "." + strings.Join(fields, ".")
 }
@@ -302,6 +330,8 @@ var UnstructuredJSONScheme runtime.Codec = unstructuredJSONScheme{}
 
 type unstructuredJSONScheme struct{}
 
+const unstructuredJSONSchemeIdentifier runtime.Identifier = "unstructuredJSON"
+
 func (s unstructuredJSONScheme) Decode(data []byte, _ *schema.GroupVersionKind, obj runtime.Object) (runtime.Object, *schema.GroupVersionKind, error) {
 	var err error
 	if obj != nil {
@@ -322,7 +352,14 @@ func (s unstructuredJSONScheme) Decode(data []byte, _ *schema.GroupVersionKind, 
 	return obj, &gvk, nil
 }
 
-func (unstructuredJSONScheme) Encode(obj runtime.Object, w io.Writer) error {
+func (s unstructuredJSONScheme) Encode(obj runtime.Object, w io.Writer) error {
+	if co, ok := obj.(runtime.CacheableObject); ok {
+		return co.CacheEncode(s.Identifier(), s.doEncode, w)
+	}
+	return s.doEncode(obj, w)
+}
+
+func (unstructuredJSONScheme) doEncode(obj runtime.Object, w io.Writer) error {
 	switch t := obj.(type) {
 	case *Unstructured:
 		return json.NewEncoder(w).Encode(t.Object)
@@ -344,6 +381,11 @@ func (unstructuredJSONScheme) Encode(obj runtime.Object, w io.Writer) error {
 	default:
 		return json.NewEncoder(w).Encode(t)
 	}
+}
+
+// Identifier implements runtime.Encoder interface.
+func (unstructuredJSONScheme) Identifier() runtime.Identifier {
+	return unstructuredJSONSchemeIdentifier
 }
 
 func (s unstructuredJSONScheme) decode(data []byte) (runtime.Object, error) {
@@ -373,12 +415,6 @@ func (s unstructuredJSONScheme) decodeInto(data []byte, obj runtime.Object) erro
 		return s.decodeToUnstructured(data, x)
 	case *UnstructuredList:
 		return s.decodeToList(data, x)
-	case *runtime.VersionedObjects:
-		o, err := s.decode(data)
-		if err == nil {
-			x.Objects = []runtime.Object{o}
-		}
-		return err
 	default:
 		return json.Unmarshal(data, x)
 	}
@@ -433,43 +469,40 @@ func (s unstructuredJSONScheme) decodeToList(data []byte, list *UnstructuredList
 	return nil
 }
 
-// UnstructuredObjectConverter is an ObjectConverter for use with
-// Unstructured objects. Since it has no schema or type information,
-// it will only succeed for no-op conversions. This is provided as a
-// sane implementation for APIs that require an object converter.
-type UnstructuredObjectConverter struct{}
-
-func (UnstructuredObjectConverter) Convert(in, out, context interface{}) error {
-	unstructIn, ok := in.(*Unstructured)
-	if !ok {
-		return fmt.Errorf("input type %T in not valid for unstructured conversion", in)
-	}
-
-	unstructOut, ok := out.(*Unstructured)
-	if !ok {
-		return fmt.Errorf("output type %T in not valid for unstructured conversion", out)
-	}
-
-	// maybe deep copy the map? It is documented in the
-	// ObjectConverter interface that this function is not
-	// guaranteed to not mutate the input. Or maybe set the input
-	// object to nil.
-	unstructOut.Object = unstructIn.Object
-	return nil
+type jsonFallbackEncoder struct {
+	encoder    runtime.Encoder
+	identifier runtime.Identifier
 }
 
-func (UnstructuredObjectConverter) ConvertToVersion(in runtime.Object, target runtime.GroupVersioner) (runtime.Object, error) {
-	if kind := in.GetObjectKind().GroupVersionKind(); !kind.Empty() {
-		gvk, ok := target.KindForGroupVersionKinds([]schema.GroupVersionKind{kind})
-		if !ok {
-			// TODO: should this be a typed error?
-			return nil, fmt.Errorf("%v is unstructured and is not suitable for converting to %q", kind, target)
+func NewJSONFallbackEncoder(encoder runtime.Encoder) runtime.Encoder {
+	result := map[string]string{
+		"name": "fallback",
+		"base": string(encoder.Identifier()),
+	}
+	identifier, err := gojson.Marshal(result)
+	if err != nil {
+		klog.Fatalf("Failed marshaling identifier for jsonFallbackEncoder: %v", err)
+	}
+	return &jsonFallbackEncoder{
+		encoder:    encoder,
+		identifier: runtime.Identifier(identifier),
+	}
+}
+
+func (c *jsonFallbackEncoder) Encode(obj runtime.Object, w io.Writer) error {
+	// There is no need to handle runtime.CacheableObject, as we only
+	// fallback to other encoders here.
+	err := c.encoder.Encode(obj, w)
+	if runtime.IsNotRegisteredError(err) {
+		switch obj.(type) {
+		case *Unstructured, *UnstructuredList:
+			return UnstructuredJSONScheme.Encode(obj, w)
 		}
-		in.GetObjectKind().SetGroupVersionKind(gvk)
 	}
-	return in, nil
+	return err
 }
 
-func (UnstructuredObjectConverter) ConvertFieldLabel(version, kind, label, value string) (string, string, error) {
-	return "", "", errors.New("unstructured cannot convert field labels")
+// Identifier implements runtime.Encoder interface.
+func (c *jsonFallbackEncoder) Identifier() runtime.Identifier {
+	return c.identifier
 }

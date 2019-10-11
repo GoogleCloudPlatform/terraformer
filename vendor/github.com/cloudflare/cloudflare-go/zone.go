@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"golang.org/x/net/idna"
 )
 
 // Owner describes the resource owner.
@@ -48,6 +49,7 @@ type Zone struct {
 	DeactReason string   `json:"deactivation_reason"`
 	Meta        ZoneMeta `json:"meta"`
 	Account     Account  `json:"account"`
+	VerificationKey string `json:"verification_key"`
 }
 
 // ZoneMeta describes metadata about a zone.
@@ -138,7 +140,7 @@ type ZoneRatePlanResponse struct {
 type ZoneSetting struct {
 	ID            string      `json:"id"`
 	Editable      bool        `json:"editable"`
-	ModifiedOn    string      `json:"modified_on"`
+	ModifiedOn    string      `json:"modified_on,omitempty"`
 	Value         interface{} `json:"value"`
 	TimeRemaining int         `json:"time_remaining"`
 }
@@ -147,6 +149,12 @@ type ZoneSetting struct {
 type ZoneSettingResponse struct {
 	Response
 	Result []ZoneSetting `json:"result"`
+}
+
+// ZoneSettingSingleResponse represents the response from the Zone Setting endpoint for the specified setting.
+type ZoneSettingSingleResponse struct {
+	Response
+	Result ZoneSetting `json:"result"`
 }
 
 // ZoneSSLSetting contains ssl setting for a zone.
@@ -265,7 +273,19 @@ type newZone struct {
 	Type      string `json:"type"`
 	// We use a pointer to get a nil type when the field is empty.
 	// This allows us to completely omit this with json.Marshal().
-	Organization *Organization `json:"organization,omitempty"`
+	Account *Account `json:"organization,omitempty"`
+}
+
+// FallbackOrigin describes a fallback origin
+type FallbackOrigin struct {
+	Value string `json:"value"`
+	ID    string `json:"id,omitempty"`
+}
+
+// FallbackOriginResponse represents the response from the fallback_origin endpoint
+type FallbackOriginResponse struct {
+	Response
+	Result FallbackOrigin `json:"result"`
 }
 
 // CreateZone creates a zone on an account.
@@ -273,16 +293,16 @@ type newZone struct {
 // Setting jumpstart to true will attempt to automatically scan for existing
 // DNS records. Setting this to false will create the zone with no DNS records.
 //
-// If Organization is non-empty, it must have at least the ID field populated.
-// This will add the new zone to the specified multi-user organization.
+// If account is non-empty, it must have at least the ID field populated.
+// This will add the new zone to the specified multi-user account.
 //
 // API reference: https://api.cloudflare.com/#zone-create-a-zone
-func (api *API) CreateZone(name string, jumpstart bool, org Organization, zoneType string) (Zone, error) {
+func (api *API) CreateZone(name string, jumpstart bool, account Account, zoneType string) (Zone, error) {
 	var newzone newZone
 	newzone.Name = name
 	newzone.JumpStart = jumpstart
-	if org.ID != "" {
-		newzone.Organization = &org
+	if account.ID != "" {
+		newzone.Account = &account
 	}
 
 	if zoneType == "partial" {
@@ -332,7 +352,7 @@ func (api *API) ListZones(z ...string) ([]Zone, error) {
 	var err error
 	if len(z) > 0 {
 		for _, zone := range z {
-			v.Set("name", zone)
+			v.Set("name", normalizeZoneName(zone))
 			res, err = api.makeRequest("GET", "/zones?"+v.Encode(), nil)
 			if err != nil {
 				return []Zone{}, errors.Wrap(err, errMakeRequestError)
@@ -687,4 +707,91 @@ func (api *API) ZoneSSLSettings(zoneID string) (ZoneSSLSetting, error) {
 		return ZoneSSLSetting{}, errors.Wrap(err, errUnmarshalError)
 	}
 	return r.Result, nil
+}
+
+// FallbackOrigin returns information about the fallback origin for the specified zone.
+//
+// API reference: https://developers.cloudflare.com/ssl/ssl-for-saas/api-calls/#fallback-origin-configuration
+func (api *API) FallbackOrigin(zoneID string) (FallbackOrigin, error) {
+	uri := "/zones/" + zoneID + "/fallback_origin"
+	res, err := api.makeRequest("GET", uri, nil)
+	if err != nil {
+		return FallbackOrigin{}, errors.Wrap(err, errMakeRequestError)
+	}
+
+	var r FallbackOriginResponse
+	err = json.Unmarshal(res, &r)
+	if err != nil {
+		return FallbackOrigin{}, errors.Wrap(err, errUnmarshalError)
+	}
+
+	return r.Result, nil
+}
+
+// UpdateFallbackOrigin updates the fallback origin for a given zone.
+//
+// API reference: https://developers.cloudflare.com/ssl/ssl-for-saas/api-calls/#4-example-patch-to-change-fallback-origin
+func (api *API) UpdateFallbackOrigin(zoneID string, fbo FallbackOrigin) (*FallbackOriginResponse, error) {
+	uri := "/zones/" + zoneID + "/fallback_origin"
+	res, err := api.makeRequest("PATCH", uri, fbo)
+	if err != nil {
+		return nil, errors.Wrap(err, errMakeRequestError)
+	}
+
+	response := &FallbackOriginResponse{}
+	err = json.Unmarshal(res, &response)
+	if err != nil {
+		return nil, errors.Wrap(err, errUnmarshalError)
+	}
+
+	return response, nil
+}
+
+// normalizeZoneName tries to convert IDNs (international domain names)
+// from Punycode to Unicode form. If the given zone name is not represented
+// as Punycode, or converting fails (for invalid representations), it
+// is returned unchanged.
+//
+// Note: conversion errors are silently discarded.
+func normalizeZoneName(name string) string {
+	if n, err := idna.ToUnicode(name); err == nil {
+		return n
+	}
+	return name
+}
+
+// ZoneSingleSetting returns information about specified setting to the specified zone.
+//
+// API reference: https://api.cloudflare.com/#zone-settings-get-all-zone-settings
+func (api *API) ZoneSingleSetting(zoneID, settingName string) (ZoneSetting, error) {
+	uri := "/zones/" + zoneID + "/settings/" + settingName
+	res, err := api.makeRequest("GET", uri, nil)
+	if err != nil {
+		return ZoneSetting{}, errors.Wrap(err, errMakeRequestError)
+	}
+	var r ZoneSettingSingleResponse
+	err = json.Unmarshal(res, &r)
+	if err != nil {
+		return ZoneSetting{}, errors.Wrap(err, errUnmarshalError)
+	}
+	return r.Result, nil
+}
+
+// UpdateZoneSingleSetting updates the specified setting for a given zone.
+//
+// API reference: https://api.cloudflare.com/#zone-settings-edit-zone-settings-info
+func (api *API) UpdateZoneSingleSetting(zoneID, settingName string, setting ZoneSetting) (*ZoneSettingSingleResponse, error) {
+	uri := "/zones/" + zoneID + "/settings/" + settingName
+	res, err := api.makeRequest("PATCH", uri, setting)
+	if err != nil {
+		return nil, errors.Wrap(err, errMakeRequestError)
+	}
+
+	response := &ZoneSettingSingleResponse{}
+	err = json.Unmarshal(res, &response)
+	if err != nil {
+		return nil, errors.Wrap(err, errUnmarshalError)
+	}
+
+	return response, nil
 }

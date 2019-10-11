@@ -38,7 +38,7 @@ type API struct {
 	APIUserServiceKey string
 	APIToken          string
 	BaseURL           string
-	OrganizationID    string
+	AccountID         string
 	UserAgent         string
 	headers           http.Header
 	httpClient        *http.Client
@@ -137,18 +137,19 @@ func (api *API) SetAuthType(authType int) {
 
 // ZoneIDByName retrieves a zone's ID from the name.
 func (api *API) ZoneIDByName(zoneName string) (string, error) {
+	zoneName = normalizeZoneName(zoneName)
 	res, err := api.ListZonesContext(context.TODO(), WithZoneFilter(zoneName))
 	if err != nil {
 		return "", errors.Wrap(err, "ListZonesContext command failed")
 	}
 
-	if len(res.Result) > 1 && api.OrganizationID == "" {
+	if len(res.Result) > 1 && api.AccountID == "" {
 		return "", errors.New("ambiguous zone name used without an account ID")
 	}
 
 	for _, zone := range res.Result {
-		if api.OrganizationID != "" {
-			if zone.Name == zoneName && api.OrganizationID == zone.Account.ID {
+		if api.AccountID != "" {
+			if zone.Name == zoneName && api.AccountID == zone.Account.ID {
 				return zone.ID, nil
 			}
 		} else {
@@ -326,14 +327,15 @@ func (api *API) request(ctx context.Context, method, uri string, reqBody io.Read
 	return resp, nil
 }
 
-// Returns the base URL to use for API endpoints that exist for both accounts and organizations.
-// If an Organization option was used when creating the API instance, returns the org URL.
+// Returns the base URL to use for API endpoints that exist for accounts.
+// If an account option was used when creating the API instance, returns
+// the account URL.
 //
-// accountBase is the base URL for endpoints referring to the current user. It exists as a
-// parameter because it is not consistent across APIs.
+// accountBase is the base URL for endpoints referring to the current user.
+// It exists as a parameter because it is not consistent across APIs.
 func (api *API) userBaseURL(accountBase string) string {
-	if api.OrganizationID != "" {
-		return "/accounts/" + api.OrganizationID
+	if api.AccountID != "" {
+		return "/accounts/" + api.AccountID
 	}
 	return accountBase
 }
@@ -421,7 +423,7 @@ type reqOption struct {
 // WithZoneFilter applies a filter based on zone name.
 func WithZoneFilter(zone string) ReqOption {
 	return func(opt *reqOption) {
-		opt.params.Set("name", zone)
+		opt.params.Set("name", normalizeZoneName(zone))
 	}
 }
 
