@@ -15,11 +15,14 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/spf13/cobra"
 )
 
 func NewCmdRoot() *cobra.Command {
+	fmt.Println("NewCmdRoot")
 	cmd := &cobra.Command{
 		SilenceUsage:  true,
 		SilenceErrors: true,
@@ -32,11 +35,13 @@ func NewCmdRoot() *cobra.Command {
 }
 
 func Execute() error {
+	fmt.Println("execute")
 	cmd := NewCmdRoot()
 	return cmd.Execute()
 }
 
 func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command {
+	fmt.Println("providerImporterSubcommands")
 	return []func(options ImportOptions) *cobra.Command{
 		newCmdGoogleImporter,
 		newCmdAwsImporter,
@@ -53,6 +58,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 }
 
 func providerGenerators() map[string]func() terraform_utils.ProviderGenerator {
+	fmt.Println("providerGenerator")
 	list := make(map[string]func() terraform_utils.ProviderGenerator)
 	for _, providerGen := range []func() terraform_utils.ProviderGenerator{
 		newGCPProvider,

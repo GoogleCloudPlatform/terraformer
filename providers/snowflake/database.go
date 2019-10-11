@@ -14,6 +14,8 @@
 package snowflake
 
 import (
+	"fmt"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
 
@@ -22,6 +24,7 @@ type DatabaseGenerator struct {
 }
 
 func (g DatabaseGenerator) createResources(databaseList []database) []terraform_utils.Resource {
+	fmt.Println("createresources database")
 	var resources []terraform_utils.Resource
 	for _, database := range databaseList {
 		resources = append(resources, terraform_utils.NewSimpleResource(
@@ -35,6 +38,7 @@ func (g DatabaseGenerator) createResources(databaseList []database) []terraform_
 }
 
 func (g *DatabaseGenerator) InitResources() error {
+	fmt.Println("initresources")
 	db, err := g.generateService()
 	if err != nil {
 		return err
