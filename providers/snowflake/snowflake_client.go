@@ -15,6 +15,7 @@
 package snowflake
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/jmoiron/sqlx"
@@ -30,6 +31,7 @@ type client struct {
 }
 
 func init() {
+	fmt.Println("snowflake_client init")
 	sql.Register("snowflake-provider", &gosnowflake.SnowflakeDriver{})
 }
 
@@ -39,6 +41,7 @@ type database struct {
 
 // sc = Snowflake Client
 func (sc *client) ListDatabases() ([]database, error) {
+	fmt.Println("listdatabases")
 	sdb := sqlx.NewDb(sc.db, "snowflake-provider")
 	stmt := "SHOW DATABASES"
 	rows, err := sdb.Queryx(stmt)

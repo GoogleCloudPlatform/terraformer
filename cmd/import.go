@@ -60,7 +60,7 @@ func newImportCmd() *cobra.Command {
 		SilenceErrors: false,
 		//Version:       version.String(),
 	}
-
+	fmt.Println("newCmdPlanImporter call")
 	cmd.AddCommand(newCmdPlanImporter(options))
 	for _, subcommand := range providerImporterSubcommands() {
 		providerCommand := subcommand(options)

@@ -14,6 +14,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	snowflake_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/snowflake"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
@@ -21,6 +23,7 @@ import (
 )
 
 func newCmdSnowflakeImporter(options ImportOptions) *cobra.Command {
+	fmt.Println("newCmdSnowflakeImporter")
 	cmd := &cobra.Command{
 		Use:   "snowflake-provider",
 		Short: "Import current State to terraform configuration from Snowflake",
@@ -34,7 +37,7 @@ func newCmdSnowflakeImporter(options ImportOptions) *cobra.Command {
 			return nil
 		},
 	}
-
+	fmt.Println("listcmd")
 	cmd.AddCommand(listCmd(newSnowflakeProvider()))
 	cmd.PersistentFlags().BoolVarP(&options.Connect, "connect", "c", true, "")
 	cmd.PersistentFlags().StringSliceVarP(&options.Resources, "resources", "r", []string{}, "snowflake_database")
@@ -48,5 +51,6 @@ func newCmdSnowflakeImporter(options ImportOptions) *cobra.Command {
 }
 
 func newSnowflakeProvider() terraform_utils.ProviderGenerator {
+	fmt.Println("newSnowflakeProvider")
 	return &snowflake_terraforming.SnowflakeProvider{}
 }

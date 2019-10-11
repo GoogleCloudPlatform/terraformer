@@ -15,6 +15,8 @@
 package snowflake
 
 import (
+	"fmt"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/snowflakedb/gosnowflake"
 
@@ -26,6 +28,7 @@ type SnowflakeService struct {
 }
 
 func (s *SnowflakeService) generateService() (*client, error) {
+	fmt.Printf("generateService")
 	account := s.Args["account"].(string)
 	username := s.Args["username"].(string)
 	region := s.Args["region"].(string)
