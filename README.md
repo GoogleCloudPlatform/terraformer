@@ -153,6 +153,7 @@ Links to download terraform providers:
 * datadog provider >2.1.0 - [here](https://releases.hashicorp.com/terraform-provider-datadog/)
 * cloudflare provider >1.16 - [here](https://releases.hashicorp.com/terraform-provider-cloudflare/)
 * logzio provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
+* heroku provider >2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-heroku/)
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
@@ -645,10 +646,36 @@ export HEROKU_API_KEY=[HEROKU_API_KEY]
 
 List of supported Heroku resources:
 
+* `account_feature`
+    * `heroku_account_feature`
 * `addon`
     * `heroku_addon`
+* `addon_attachment`
+    * `heroku_addon_attachment`
 * `app`
     * `heroku_app`
+* `app_config_association`
+    * `heroku_app_config_association`
+* `app_feature`
+    * `heroku_app_feature`
+* `app_webhook`
+    * `heroku_app_webhook`
+* `build`
+    * `heroku_build`
+* `domain`
+    * `heroku_domain`
+* `drain`
+    * `heroku_drain`
+* `formation`
+    * `heroku_formation`
+* `pipeline`
+    * `heroku_pipeline`
+* `pipeline_coupling`
+    * `heroku_pipeline_coupling`
+* `team_collaborator`
+    * `heroku_team_collaborator`
+* `team_member`
+    * `heroku_team_member`
 
 ## Contributing
 
