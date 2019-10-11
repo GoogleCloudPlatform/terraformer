@@ -39,7 +39,7 @@ type database struct {
 
 // sc = Snowflake Client
 func (sc *client) ListDatabases() ([]database, error) {
-	sdb := sqlx.NewDb(sc.db, "snowflake")
+	sdb := sqlx.NewDb(sc.db, "snowflake-provider")
 	stmt := "SHOW DATABASES"
 	rows, err := sdb.Queryx(stmt)
 	if err != nil {

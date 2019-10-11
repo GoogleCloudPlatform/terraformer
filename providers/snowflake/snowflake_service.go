@@ -37,6 +37,6 @@ func (s *SnowflakeService) generateService() (*client, error) {
 		Role:          role,
 		Authenticator: gosnowflake.AuthTypeExternalBrowser,
 	})
-	db, err := sql.Open("snowflake", dsn)
+	db, err := sql.Open("snowflake-provider", dsn)
 	return &client{db: db}, err
 }
