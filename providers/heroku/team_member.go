@@ -16,34 +16,42 @@ package heroku
 
 import (
 	"context"
+	"fmt"
+	"log"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	heroku "github.com/heroku/heroku-go/v5"
 )
 
-type AddOnGenerator struct {
+type TeamMemberGenerator struct {
 	HerokuService
 }
 
-func (g AddOnGenerator) createResources(addOnList []heroku.AddOn) []terraform_utils.Resource {
+func (g TeamMemberGenerator) createResources(svc *heroku.Service, teamList []heroku.Team) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
-	for _, addOn := range addOnList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
-			addOn.ID,
-			addOn.Name,
-			"heroku_addon",
-			"heroku",
-			[]string{}))
+	for _, team := range teamList {
+		output, err := svc.TeamMemberList(context.TODO(), team.ID, &heroku.ListRange{Field: "id"})
+		if err != nil {
+			log.Println(err)
+		}
+		for _, member := range output {
+			resources = append(resources, terraform_utils.NewSimpleResource(
+				fmt.Sprintf("%s:%s", team.ID, member.Email),
+				member.ID,
+				"heroku_team_member",
+				"heroku",
+				[]string{}))
+		}
 	}
 	return resources
 }
 
-func (g *AddOnGenerator) InitResources() error {
+func (g *TeamMemberGenerator) InitResources() error {
 	svc := g.generateService()
-	output, err := svc.AddOnList(context.TODO(), &heroku.ListRange{Field: "id"})
+	output, err := svc.TeamList(context.TODO(), &heroku.ListRange{Field: "id"})
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(output)
+	g.Resources = g.createResources(svc, output)
 	return nil
 }

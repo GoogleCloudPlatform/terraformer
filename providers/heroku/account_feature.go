@@ -21,26 +21,28 @@ import (
 	heroku "github.com/heroku/heroku-go/v5"
 )
 
-type AddOnGenerator struct {
+type AccountFeatureGenerator struct {
 	HerokuService
 }
 
-func (g AddOnGenerator) createResources(addOnList []heroku.AddOn) []terraform_utils.Resource {
+func (g AccountFeatureGenerator) createResources(accountFeatureList []heroku.AccountFeature) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
-	for _, addOn := range addOnList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
-			addOn.ID,
-			addOn.Name,
-			"heroku_addon",
+	for _, accountFeature := range accountFeatureList {
+		resources = append(resources, terraform_utils.NewResource(
+			accountFeature.ID,
+			accountFeature.Name,
+			"heroku_account_feature",
 			"heroku",
-			[]string{}))
+			map[string]string{"name": accountFeature.Name},
+			[]string{},
+			map[string]interface{}{}))
 	}
 	return resources
 }
 
-func (g *AddOnGenerator) InitResources() error {
+func (g *AccountFeatureGenerator) InitResources() error {
 	svc := g.generateService()
-	output, err := svc.AddOnList(context.TODO(), &heroku.ListRange{Field: "id"})
+	output, err := svc.AccountFeatureList(context.TODO(), &heroku.ListRange{Field: "id"})
 	if err != nil {
 		return err
 	}

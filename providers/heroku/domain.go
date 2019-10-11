@@ -16,34 +16,43 @@ package heroku
 
 import (
 	"context"
+	"log"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	heroku "github.com/heroku/heroku-go/v5"
 )
 
-type AddOnGenerator struct {
+type DomainGenerator struct {
 	HerokuService
 }
 
-func (g AddOnGenerator) createResources(addOnList []heroku.AddOn) []terraform_utils.Resource {
+func (g DomainGenerator) createResources(svc *heroku.Service, appList []heroku.App) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
-	for _, addOn := range addOnList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
-			addOn.ID,
-			addOn.Name,
-			"heroku_addon",
-			"heroku",
-			[]string{}))
+	for _, app := range appList {
+		output, err := svc.DomainList(context.TODO(), app.ID, &heroku.ListRange{Field: "id"})
+		if err != nil {
+			log.Println(err)
+		}
+		for _, domain := range output {
+			resources = append(resources, terraform_utils.NewResource(
+				domain.ID,
+				domain.ID,
+				"heroku_domain",
+				"heroku",
+				map[string]string{"app": app.Name},
+				[]string{},
+				map[string]interface{}{}))
+		}
 	}
 	return resources
 }
 
-func (g *AddOnGenerator) InitResources() error {
+func (g *DomainGenerator) InitResources() error {
 	svc := g.generateService()
-	output, err := svc.AddOnList(context.TODO(), &heroku.ListRange{Field: "id"})
+	output, err := svc.AppList(context.TODO(), &heroku.ListRange{Field: "id"})
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(output)
+	g.Resources = g.createResources(svc, output)
 	return nil
 }
