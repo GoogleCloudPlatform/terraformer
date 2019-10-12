@@ -26,7 +26,7 @@ import (
 	gcp_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/gcp"
 )
 
-const command = "terraform init && terraform plan"
+const command = "terraform012 init && terraform012 plan"
 
 func main() {
 	zone := "europe-west1-c"
