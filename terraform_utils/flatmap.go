@@ -16,6 +16,7 @@ package terraform_utils
 
 import (
 	"fmt"
+	"log"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -97,7 +98,49 @@ func (p *FlatmapParser) fromFlatmapPrimitive(key string) (interface{}, error) {
 func (p *FlatmapParser) fromFlatmapObject(prefix string, tys map[string]cty.Type) (map[string]interface{}, error) {
 	values := make(map[string]interface{})
 	for name, ty := range tys {
-		if p.isAttributeIgnored(name, prefix) {
+		inAttributes := false
+		attributeName := ""
+		for k := range p.attributes {
+			if k == prefix+name {
+				attributeName = k
+				inAttributes = true
+				break
+			}
+			if k == name {
+				attributeName = k
+				inAttributes = true
+				break
+			}
+			log.Println(k, prefix+name+".", strings.HasPrefix(k, prefix+name))
+			if strings.HasPrefix(k, prefix+name+".") {
+				attributeName = k
+				inAttributes = true
+				break
+			}
+			lastAttribute := (prefix + name)[len(prefix):]
+			if lastAttribute == k {
+				attributeName = k
+				inAttributes = true
+				break
+			}
+		}
+
+		if _, exist := p.attributes[prefix+name+".#"]; exist {
+			attributeName = prefix + name + ".#"
+			inAttributes = true
+		}
+
+		if _, exist := p.attributes[prefix+name+".%"]; exist {
+			attributeName = prefix + name + ".%"
+			inAttributes = true
+		}
+
+		if !inAttributes {
+			log.Println("inAttributes", prefix+name)
+			continue
+		}
+		log.Println(name, attributeName)
+		if p.isAttributeIgnored(attributeName) {
 			continue
 		}
 		value, err := p.fromFlatmapValue(prefix+name, ty)
@@ -189,7 +232,7 @@ func (p *FlatmapParser) fromFlatmapMap(prefix string, ty cty.Type) (map[string]i
 			continue
 		}
 
-		if p.isAttributeIgnored(key, prefix) {
+		if p.isAttributeIgnored(fullKey) {
 			continue
 		}
 
@@ -307,12 +350,11 @@ func (p *FlatmapParser) fromFlatmapSet(prefix string, ty cty.Type) ([]interface{
 	return values, nil
 }
 
-func (p *FlatmapParser) isAttributeIgnored(name string, prefix string) bool {
-	fullName := prefix + name
-
+func (p *FlatmapParser) isAttributeIgnored(name string) bool {
 	ignored := false
 	for _, pattern := range p.ignoreKeys {
-		if pattern.MatchString(fullName) {
+		log.Println(pattern, name, pattern.MatchString(name))
+		if pattern.MatchString(name) {
 			ignored = true
 			break
 		}
@@ -324,7 +366,25 @@ func (p *FlatmapParser) isValueAllowed(value interface{}, prefix string) bool {
 	if !reflect.ValueOf(value).IsValid() {
 		return false
 	}
+	switch reflect.ValueOf(value).Kind() {
+	case reflect.Slice:
+		log.Println(prefix, value, reflect.ValueOf(value).Kind(), reflect.ValueOf(value).Len())
+		if reflect.ValueOf(value).Len() == 0 {
+			return false
+		}
 
+		for i := 0; i < reflect.ValueOf(value).Len(); i++ {
+			log.Println(reflect.ValueOf(value).Index(i), reflect.ValueOf(value).Index(i).IsZero())
+			if !reflect.ValueOf(value).Index(i).IsZero() {
+				return true
+			}
+		}
+	case reflect.Map:
+		if reflect.ValueOf(value).Len() == 0 {
+			return false
+		}
+	}
+	log.Println("isValueAllowed", prefix, value, reflect.ValueOf(value), reflect.ValueOf(value).IsZero(), reflect.ValueOf(value).Kind())
 	if !reflect.ValueOf(value).IsZero() {
 		return true
 	}

@@ -126,7 +126,7 @@ func (g *GkeGenerator) PostConvertHook() error {
 		}
 		for _, cluster := range g.Resources {
 			if cluster.InstanceState.Attributes["name"] == r.InstanceState.Attributes["cluster"] {
-				g.Resources[i].Item["cluster"] = "${google_container_cluster." + cluster.InstanceState.Attributes["name"] + ".name}"
+				g.Resources[i].Item["cluster"] = "${google_container_cluster." + cluster.ResourceName + ".name}"
 			}
 		}
 	}
