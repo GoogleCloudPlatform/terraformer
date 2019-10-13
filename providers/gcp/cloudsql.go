@@ -19,7 +19,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
-	"google.golang.org/api/sqladmin/v1beta4"
+	sqladmin "google.golang.org/api/sqladmin/v1beta4"
 )
 
 var cloudSQLAllowEmptyValues = []string{}

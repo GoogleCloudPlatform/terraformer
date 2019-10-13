@@ -15,9 +15,10 @@
 package aws
 
 import (
-	"github.com/zclconf/go-cty/cty"
 	"os"
 	"strconv"
+
+	"github.com/zclconf/go-cty/cty"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
@@ -34,23 +35,6 @@ const awsProviderVersion = ">2.25.0"
 
 func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{
-		"subnet":         {"vpc": []string{"vpc_id", "id"}},
-		"vpn_gateway":    {"vpc": []string{"vpc_id", "id"}},
-		"vpn_connection": {"vpn_gateway": []string{"vpn_gateway_id", "id"}},
-		"rds": {
-			"subnet": []string{"subnet_ids", "id"},
-			"sg":     []string{"vpc_security_group_ids", "id"},
-		},
-		"nacl": {
-			"subnet": []string{"subnet_ids", "id"},
-			"vpc":    []string{"vpc_id", "id"},
-		},
-		"igw": {"vpc": []string{"vpc_id", "id"}},
-		"elasticache": {
-			"vpc":    []string{"vpc_id", "id"},
-			"subnet": []string{"subnet_ids", "id"},
-			"sg":     []string{"security_group_ids", "id"},
-		},
 		"alb": {
 			"sg":     []string{"security_groups", "id"},
 			"subnet": []string{"subnets", "id"},
@@ -60,10 +44,6 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 				// TF ALB TG attachment logic doesn't work well with references (doesn't interpolate)
 			},
 		},
-		"elb": {
-			"sg":     []string{"security_groups", "id"},
-			"subnet": []string{"subnets", "id"},
-		},
 		"auto_scaling": {
 			"sg":     []string{"security_groups", "id"},
 			"subnet": []string{"vpc_zone_identifier", "id"},
@@ -72,20 +52,31 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 			"sg":     []string{"vpc_security_group_ids", "id"},
 			"subnet": []string{"subnet_id", "id"},
 		},
-		"route_table": {
-			"vpc": []string{"vpc_id", "id"},
+		"elasticache": {
+			"vpc":    []string{"vpc_id", "id"},
+			"subnet": []string{"subnet_ids", "id"},
+			"sg":     []string{"security_group_ids", "id"},
 		},
 		"ebs": {
 			// TF EBS attachment logic doesn't work well with references (doesn't interpolate)
-		},
-		"sns": {
-			"sns": []string{"topic_arn", "id"},
-			"sqs": []string{"endpoint", "arn"},
 		},
 		"ecs": {
 			"ecs":    []string{"task_definition", "arn"},
 			"subnet": []string{"network_configuration.subnets", "id"},
 			"sg":     []string{"network_configuration.security_groups", "id"},
+		},
+		"elb": {
+			"sg":     []string{"security_groups", "id"},
+			"subnet": []string{"subnets", "id"},
+		},
+		"igw": {"vpc": []string{"vpc_id", "id"}},
+		"msk": {
+			"subnet": []string{"broker_node_group_info.client_subnets", "id"},
+			"sg":     []string{"broker_node_group_info.security_groups", "id"},
+		},
+		"nacl": {
+			"subnet": []string{"subnet_ids", "id"},
+			"vpc":    []string{"vpc_id", "id"},
 		},
 		"organization": {
 			"organization": []string{
@@ -94,12 +85,23 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 				"target_id", "id",
 			},
 		},
-		"msk": {
-			"subnet": []string{"broker_node_group_info.client_subnets", "id"},
-			"sg":     []string{"broker_node_group_info.security_groups", "id"},
+		"rds": {
+			"subnet": []string{"subnet_ids", "id"},
+			"sg":     []string{"vpc_security_group_ids", "id"},
 		},
+		"route_table": {
+			"vpc": []string{"vpc_id", "id"},
+		},
+		"sns": {
+			"sns": []string{"topic_arn", "id"},
+			"sqs": []string{"endpoint", "arn"},
+		},
+		"subnet":         {"vpc": []string{"vpc_id", "id"}},
+		"vpn_gateway":    {"vpc": []string{"vpc_id", "id"}},
+		"vpn_connection": {"vpn_gateway": []string{"vpn_gateway_id", "id"}},
 	}
 }
+
 func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
 	awsConfig := map[string]interface{}{
 		"version": awsProviderVersion,
@@ -118,7 +120,7 @@ func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
 
 func (p *AWSProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
-		"region": cty.StringVal(p.region),
+		"region":                 cty.StringVal(p.region),
 		"skip_region_validation": cty.True,
 	})
 }
@@ -172,7 +174,7 @@ func (p *AWSProvider) InitService(serviceName string) error {
 	p.Service.SetName(serviceName)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"region":  p.region,
+		"region":                 p.region,
 		"skip_region_validation": true,
 	})
 	return nil
@@ -181,39 +183,39 @@ func (p *AWSProvider) InitService(serviceName string) error {
 // GetAWSSupportService return map of support service for AWS
 func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
-		"vpc":            &VpcGenerator{},
-		"vpc_peering":    &VpcPeeringConnectionGenerator{},
-		"sg":             &SecurityGenerator{},
-		"subnet":         &SubnetGenerator{},
-		"igw":            &IgwGenerator{},
-		"nat":            &NatGatewayGenerator{},
-		"vpn_gateway":    &VpnGatewayGenerator{},
-		"nacl":           &NaclGenerator{},
-		"vpn_connection": &VpnConnectionGenerator{},
-		"s3":             &S3Generator{},
-		"elb":            &ElbGenerator{},
-		"iam":            &IamGenerator{},
-		"route53":        &Route53Generator{},
-		"auto_scaling":   &AutoScalingGenerator{},
-		"rds":            &RDSGenerator{},
-		"elasticache":    &ElastiCacheGenerator{},
-		"alb":            &AlbGenerator{},
 		"acm":            &ACMGenerator{},
+		"alb":            &AlbGenerator{},
+		"auto_scaling":   &AutoScalingGenerator{},
 		"cloudfront":     &CloudFrontGenerator{},
+		"cloudtrail":     &CloudTrailGenerator{},
+		"dynamodb":       &DynamoDbGenerator{},
+		"ebs":            &EbsGenerator{},
 		"ec2_instance":   &Ec2Generator{},
+		"ecs":            &EcsGenerator{},
 		"eip":            &ElasticIpGenerator{},
+		"elasticache":    &ElastiCacheGenerator{},
+		"elb":            &ElbGenerator{},
+		"es":             &EsGenerator{},
 		"firehose":       &FirehoseGenerator{},
 		"glue":           &GlueGenerator{},
-		"route_table":    &RouteTableGenerator{},
-		"ebs":            &EbsGenerator{},
-		"sqs":            &SqsGenerator{},
-		"sns":            &SnsGenerator{},
-		"ecs":            &EcsGenerator{},
-		"es":             &EsGenerator{},
-		"organization":   &OrganizationGenerator{},
-		"dynamodb":       &DynamoDbGenerator{},
-		"cloudtrail":     &CloudTrailGenerator{},
+		"iam":            &IamGenerator{},
+		"igw":            &IgwGenerator{},
 		"kinesis":        &KinesisGenerator{},
 		"msk":            &MskGenerator{},
+		"nacl":           &NaclGenerator{},
+		"nat":            &NatGatewayGenerator{},
+		"organization":   &OrganizationGenerator{},
+		"rds":            &RDSGenerator{},
+		"route53":        &Route53Generator{},
+		"route_table":    &RouteTableGenerator{},
+		"s3":             &S3Generator{},
+		"sg":             &SecurityGenerator{},
+		"sqs":            &SqsGenerator{},
+		"sns":            &SnsGenerator{},
+		"subnet":         &SubnetGenerator{},
+		"vpc":            &VpcGenerator{},
+		"vpc_peering":    &VpcPeeringConnectionGenerator{},
+		"vpn_connection": &VpnConnectionGenerator{},
+		"vpn_gateway":    &VpnGatewayGenerator{},
 	}
 }

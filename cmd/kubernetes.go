@@ -22,8 +22,8 @@ import (
 func newCmdKubernetesImporter(options ImportOptions) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "kubernetes",
-		Short: "Import current State to terraform configuration from kubernetes",
-		Long:  "Import current State to terraform configuration from kubernetes",
+		Short: "Import current state to Terraform configuration from Kubernetes",
+		Long:  "Import current state to Terraform configuration from Kubernetes",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			provider := newKubernetesProvider()
 			err := Import(provider, options, []string{})

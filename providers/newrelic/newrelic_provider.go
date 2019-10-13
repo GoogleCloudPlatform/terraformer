@@ -51,9 +51,9 @@ func (NewRelicProvider) GetResourceConnections() map[string]map[string][]string 
 func (p *NewRelicProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
 		"alert":      &AlertGenerator{},
+		"dashboard":  &DashboardGenerator{},
 		"infra":      &InfraGenerator{},
 		"synthetics": &SyntheticsGenerator{},
-		"dashboard":  &DashboardGenerator{},
 	}
 }
 

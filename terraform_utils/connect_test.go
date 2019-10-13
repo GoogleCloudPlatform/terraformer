@@ -15,9 +15,10 @@
 package terraform_utils
 
 import (
-	"github.com/zclconf/go-cty/cty"
 	"reflect"
 	"testing"
+
+	"github.com/zclconf/go-cty/cty"
 )
 
 func TestSimpleReference(t *testing.T) {
@@ -30,7 +31,7 @@ func TestSimpleReference(t *testing.T) {
 		"type2": {prepareNoAttrs("ID2", "type2")},
 	}
 
-	resourceConnections :=  map[string]map[string][]string{
+	resourceConnections := map[string]map[string][]string{
 		"type1": {
 			"type2": {"type2_ref", "id"},
 		},

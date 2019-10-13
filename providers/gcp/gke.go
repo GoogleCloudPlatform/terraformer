@@ -22,7 +22,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
-	"google.golang.org/api/container/v1beta1"
+	container "google.golang.org/api/container/v1beta1"
 )
 
 var GkeAllowEmptyValues = []string{"labels."}

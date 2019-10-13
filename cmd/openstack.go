@@ -24,8 +24,8 @@ import (
 func newCmdOpenStackImporter(options ImportOptions) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "openstack",
-		Short: "Import current State to terraform configuration from OpenStack",
-		Long:  "Import current State to terraform configuration from OpenStack",
+		Short: "Import current state to Terraform configuration from OpenStack",
+		Long:  "Import current state to Terraform configuration from OpenStack",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			originalPathPattern := options.PathPattern
 			for _, region := range options.Regions {
