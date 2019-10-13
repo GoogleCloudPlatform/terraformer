@@ -33,7 +33,6 @@ require (
 	github.com/jonboydell/logzio_client v0.0.0-20190726085421-c93d6b149c1e
 	github.com/joyent/triton-go v0.0.0-20180628001255-830d2b111e62 // indirect
 	github.com/json-iterator/go v1.1.6 // indirect
-	github.com/k0kubun/pp v3.0.1+incompatible
 	github.com/lusis/go-artifactory v0.0.0-20180304164534-a47f63f234b2 // indirect
 	github.com/miekg/dns v1.0.15 // indirect
 	github.com/onsi/ginkgo v1.8.0 // indirect
