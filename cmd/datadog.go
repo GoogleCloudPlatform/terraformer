@@ -23,8 +23,8 @@ func newCmdDatadogImporter(options ImportOptions) *cobra.Command {
 	var apiKey, appKey string
 	cmd := &cobra.Command{
 		Use:   "datadog",
-		Short: "Import current State to terraform configuration from datadog",
-		Long:  "Import current State to terraform configuration from datadog",
+		Short: "Import current state to Terraform configuration from Datadog",
+		Long:  "Import current state to Terraform configuration from Datadog",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			provider := newDataDogProvider()
 			err := Import(provider, options, []string{apiKey, appKey})

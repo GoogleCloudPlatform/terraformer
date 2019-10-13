@@ -16,11 +16,12 @@ package terraform_utils
 
 import (
 	"fmt"
+	"log"
+	"regexp"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/zclconf/go-cty/cty"
-	"log"
-	"regexp"
 )
 
 type Resource struct {

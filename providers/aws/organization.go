@@ -16,6 +16,7 @@ package aws
 
 import (
 	"fmt"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aws/aws-sdk-go/aws"
 
@@ -117,7 +118,6 @@ func (g *OrganizationGenerator) InitResources() error {
 					},
 					organizationAllowEmptyValues,
 					map[string]interface{}{},
-
 				))
 
 				targetsForPolicy, err := svc.ListTargetsForPolicy(
@@ -138,7 +138,6 @@ func (g *OrganizationGenerator) InitResources() error {
 						},
 						organizationAllowEmptyValues,
 						map[string]interface{}{},
-
 					))
 				}
 			}

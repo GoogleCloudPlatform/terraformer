@@ -27,8 +27,8 @@ func newCmdGithubImporter(options ImportOptions) *cobra.Command {
 	organizations := []string{}
 	cmd := &cobra.Command{
 		Use:   "github",
-		Short: "Import current State to terraform configuration from github",
-		Long:  "Import current State to terraform configuration from github",
+		Short: "Import current state to Terraform configuration from GitHub",
+		Long:  "Import current state to Terraform configuration from GitHub",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			originalPathPattern := options.PathPattern
 			for _, organization := range organizations {

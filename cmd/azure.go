@@ -23,8 +23,8 @@ import (
 func newCmdAzureImporter(options ImportOptions) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "azure",
-		Short: "Import current State to terraform configuration from azure",
-		Long:  "Import current State to terraform configuration from azure",
+		Short: "Import current state to Terraform configuration from Azure",
+		Long:  "Import current state to Terraform configuration from Azure",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			provider := newAzureProvider()
 			err := Import(provider, options, []string{})

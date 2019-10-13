@@ -38,33 +38,48 @@ func Execute() error {
 
 func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command {
 	return []func(options ImportOptions) *cobra.Command{
+		// Major Cloud
 		newCmdGoogleImporter,
 		newCmdAwsImporter,
 		newCmdAzureImporter,
-		newCmdOpenStackImporter,
-		newCmdGithubImporter,
-		newCmdDatadogImporter,
-		newCmdKubernetesImporter,
-		newCmdCloudflareImporter,
-		newCmdLogzioImporter,
-		newCmdNewRelicImporter,
+		// Cloud
 		newCmdHerokuImporter,
+		newCmdOpenStackImporter,
+		// Infrastructure Software
+		newCmdKubernetesImporter,
+		// Network
+		newCmdCloudflareImporter,
+		// VCS
+		newCmdGithubImporter,
+		// Monitoring & System Management
+		newCmdDatadogImporter,
+		newCmdNewRelicImporter,
+		// Community
+		newCmdLogzioImporter,
 	}
 }
 
 func providerGenerators() map[string]func() terraform_utils.ProviderGenerator {
 	list := make(map[string]func() terraform_utils.ProviderGenerator)
 	for _, providerGen := range []func() terraform_utils.ProviderGenerator{
+		// Major Cloud
 		newGCPProvider,
 		newAWSProvider,
 		newAzureProvider,
-		newOpenStackProvider,
-		newGitHubProvider,
-		newKubernetesProvider,
-		newDataDogProvider,
-		newLogzioProvider,
-		newNewRelicProvider,
+		// Cloud
 		newHerokuProvider,
+		newOpenStackProvider,
+		// Infrastructure Software
+		newKubernetesProvider,
+		// Network
+		newClouflareProvider,
+		// VCS
+		newGitHubProvider,
+		// Monitoring & System Management
+		newDataDogProvider,
+		newNewRelicProvider,
+		// Community
+		newLogzioProvider,
 	} {
 		list[providerGen().GetName()] = providerGen
 	}

@@ -15,9 +15,10 @@
 package aws
 
 import (
+	"strings"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aws/aws-sdk-go/aws"
-	"strings"
 
 	"github.com/aws/aws-sdk-go/service/sqs"
 )
