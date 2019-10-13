@@ -16,7 +16,6 @@ package terraform_utils
 
 import (
 	"fmt"
-	"log"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -111,7 +110,7 @@ func (p *FlatmapParser) fromFlatmapObject(prefix string, tys map[string]cty.Type
 				inAttributes = true
 				break
 			}
-			log.Println(k, prefix+name+".", strings.HasPrefix(k, prefix+name))
+
 			if strings.HasPrefix(k, prefix+name+".") {
 				attributeName = k
 				inAttributes = true
@@ -136,10 +135,8 @@ func (p *FlatmapParser) fromFlatmapObject(prefix string, tys map[string]cty.Type
 		}
 
 		if !inAttributes {
-			log.Println("inAttributes", prefix+name)
 			continue
 		}
-		log.Println(name, attributeName)
 		if p.isAttributeIgnored(attributeName) {
 			continue
 		}
@@ -147,7 +144,7 @@ func (p *FlatmapParser) fromFlatmapObject(prefix string, tys map[string]cty.Type
 		if err != nil {
 			return nil, err
 		}
-		if p.isValueAllowed(value, prefix) {
+		if p.isValueAllowed(value, attributeName) {
 			values[name] = value
 		}
 	}
@@ -353,7 +350,6 @@ func (p *FlatmapParser) fromFlatmapSet(prefix string, ty cty.Type) ([]interface{
 func (p *FlatmapParser) isAttributeIgnored(name string) bool {
 	ignored := false
 	for _, pattern := range p.ignoreKeys {
-		log.Println(pattern, name, pattern.MatchString(name))
 		if pattern.MatchString(name) {
 			ignored = true
 			break
@@ -368,13 +364,11 @@ func (p *FlatmapParser) isValueAllowed(value interface{}, prefix string) bool {
 	}
 	switch reflect.ValueOf(value).Kind() {
 	case reflect.Slice:
-		log.Println(prefix, value, reflect.ValueOf(value).Kind(), reflect.ValueOf(value).Len())
 		if reflect.ValueOf(value).Len() == 0 {
 			return false
 		}
 
 		for i := 0; i < reflect.ValueOf(value).Len(); i++ {
-			log.Println(reflect.ValueOf(value).Index(i), reflect.ValueOf(value).Index(i).IsZero())
 			if !reflect.ValueOf(value).Index(i).IsZero() {
 				return true
 			}
@@ -384,7 +378,6 @@ func (p *FlatmapParser) isValueAllowed(value interface{}, prefix string) bool {
 			return false
 		}
 	}
-	log.Println("isValueAllowed", prefix, value, reflect.ValueOf(value), reflect.ValueOf(value).IsZero(), reflect.ValueOf(value).Kind())
 	if !reflect.ValueOf(value).IsZero() {
 		return true
 	}
