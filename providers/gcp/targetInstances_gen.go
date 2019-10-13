@@ -40,7 +40,7 @@ func (g TargetInstancesGenerator) createResources(ctx context.Context, targetIns
 		for _, obj := range page.Items {
 			resources = append(resources, terraform_utils.NewResource(
 				zone+"/"+obj.Name,
-				obj.Name,
+				zone+"/"+obj.Name,
 				"google_compute_target_instance",
 				"google",
 				map[string]string{
