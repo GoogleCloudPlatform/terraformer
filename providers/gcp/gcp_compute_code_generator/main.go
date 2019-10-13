@@ -72,7 +72,7 @@ func (g {{.titleResourceName}}Generator) createResources(ctx context.Context, {{
 		for _, obj := range page.Items {
 			resources = append(resources, terraform_utils.NewResource(
 				{{ if .idWithZone  }}zone+"/"+obj.Name,{{else}}obj.Name,{{end}}
-				obj.Name,
+				{{ if .idWithZone  }}zone+"/"+obj.Name,{{else}}obj.Name,{{end}}
 				"{{.terraformName}}",
 				"google",
 				map[string]string{

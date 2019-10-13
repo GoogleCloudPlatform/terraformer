@@ -106,15 +106,3 @@ func (g *DataprocGenerator) InitResources() error {
 	return nil
 
 }
-
-func (g *DataprocGenerator) PostConvertHook() error {
-	for i, r := range g.Resources {
-		// hack for provider bug
-		if v, exist := r.Item["cluster_config"].([]interface{})[0].(map[string]interface{})["preemptible_worker_config"]; exist {
-			if v.([]interface{})[0].(map[string]interface{})["num_instances"].(string) == "0" && len(v.([]interface{})[0].(map[string]interface{})["disk_config"].([]interface{})) == 0 {
-				delete(g.Resources[i].Item["cluster_config"].([]interface{})[0].(map[string]interface{}), "preemptible_worker_config")
-			}
-		}
-	}
-	return nil
-}

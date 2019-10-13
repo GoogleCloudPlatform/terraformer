@@ -40,7 +40,7 @@ func (g NetworkEndpointGroupsGenerator) createResources(ctx context.Context, net
 		for _, obj := range page.Items {
 			resources = append(resources, terraform_utils.NewResource(
 				zone+"/"+obj.Name,
-				obj.Name,
+				zone+"/"+obj.Name,
 				"google_compute_network_endpoint_group",
 				"google",
 				map[string]string{
