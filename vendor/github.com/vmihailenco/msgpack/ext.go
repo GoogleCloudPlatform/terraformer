@@ -9,7 +9,12 @@ import (
 	"github.com/vmihailenco/msgpack/codes"
 )
 
-var extTypes = make(map[int8]reflect.Type)
+type extInfo struct {
+	Type    reflect.Type
+	Decoder decoderFunc
+}
+
+var extTypes = make(map[int8]extInfo)
 
 var bufferPool = &sync.Pool{
 	New: func() interface{} {
@@ -39,13 +44,14 @@ func RegisterExt(id int8, value interface{}) {
 }
 
 func registerExt(id int8, typ reflect.Type, enc encoderFunc, dec decoderFunc) {
-	if dec != nil {
-		extTypes[id] = typ
-	}
 	if enc != nil {
 		typEncMap[typ] = makeExtEncoder(id, enc)
 	}
 	if dec != nil {
+		extTypes[id] = extInfo{
+			Type:    typ,
+			Decoder: dec,
+		}
 		typDecMap[typ] = makeExtDecoder(id, dec)
 	}
 }
@@ -99,8 +105,8 @@ func makeExtDecoder(typeId int8, dec decoderFunc) decoderFunc {
 			return err
 		}
 
-		if id != typeId {
-			return fmt.Errorf("msgpack: got ext type=%d, wanted %d", int8(c), typeId)
+		if int8(id) != typeId {
+			return fmt.Errorf("msgpack: got ext type=%d, wanted %d", int8(id), typeId)
 		}
 
 		d.extLen = extLen
@@ -184,15 +190,15 @@ func (d *Decoder) extInterface(c codes.Code) (interface{}, error) {
 		return nil, err
 	}
 
-	typ, ok := extTypes[extId]
+	info, ok := extTypes[extId]
 	if !ok {
-		return nil, fmt.Errorf("msgpack: unregistered ext id=%d", extId)
+		return nil, fmt.Errorf("msgpack: unknown ext id=%d", extId)
 	}
 
-	v := reflect.New(typ)
+	v := reflect.New(info.Type)
 
 	d.extLen = extLen
-	err = d.DecodeValue(v.Elem())
+	err = info.Decoder(d, v.Elem())
 	d.extLen = 0
 	if err != nil {
 		return nil, err

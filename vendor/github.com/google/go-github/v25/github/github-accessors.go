@@ -484,6 +484,30 @@ func (b *Branch) GetProtected() bool {
 	return *b.Protected
 }
 
+// GetCommit returns the Commit field.
+func (b *BranchCommit) GetCommit() *Commit {
+	if b == nil {
+		return nil
+	}
+	return b.Commit
+}
+
+// GetName returns the Name field if it's non-nil, zero value otherwise.
+func (b *BranchCommit) GetName() string {
+	if b == nil || b.Name == nil {
+		return ""
+	}
+	return *b.Name
+}
+
+// GetProtected returns the Protected field if it's non-nil, zero value otherwise.
+func (b *BranchCommit) GetProtected() string {
+	if b == nil || b.Protected == nil {
+		return ""
+	}
+	return *b.Protected
+}
+
 // GetApp returns the App field.
 func (c *CheckRun) GetApp() *App {
 	if c == nil {
@@ -7228,6 +7252,14 @@ func (p *PublicEvent) GetSender() *User {
 	return p.Sender
 }
 
+// GetExpectedHeadSHA returns the ExpectedHeadSHA field if it's non-nil, zero value otherwise.
+func (p *PullReqestBranchUpdateOptions) GetExpectedHeadSHA() string {
+	if p == nil || p.ExpectedHeadSHA == nil {
+		return ""
+	}
+	return *p.ExpectedHeadSHA
+}
+
 // GetActiveLockReason returns the ActiveLockReason field if it's non-nil, zero value otherwise.
 func (p *PullRequest) GetActiveLockReason() string {
 	if p == nil || p.ActiveLockReason == nil {
@@ -7596,6 +7628,22 @@ func (p *PullRequestBranch) GetUser() *User {
 	return p.User
 }
 
+// GetMessage returns the Message field if it's non-nil, zero value otherwise.
+func (p *PullRequestBranchUpdateResponse) GetMessage() string {
+	if p == nil || p.Message == nil {
+		return ""
+	}
+	return *p.Message
+}
+
+// GetURL returns the URL field if it's non-nil, zero value otherwise.
+func (p *PullRequestBranchUpdateResponse) GetURL() string {
+	if p == nil || p.URL == nil {
+		return ""
+	}
+	return *p.URL
+}
+
 // GetAuthorAssociation returns the AuthorAssociation field if it's non-nil, zero value otherwise.
 func (p *PullRequestComment) GetAuthorAssociation() string {
 	if p == nil || p.AuthorAssociation == nil {
@@ -7826,6 +7874,14 @@ func (p *PullRequestEvent) GetRequestedReviewer() *User {
 		return nil
 	}
 	return p.RequestedReviewer
+}
+
+// GetRequestedTeam returns the RequestedTeam field.
+func (p *PullRequestEvent) GetRequestedTeam() *Team {
+	if p == nil {
+		return nil
+	}
+	return p.RequestedTeam
 }
 
 // GetSender returns the Sender field.

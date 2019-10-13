@@ -462,6 +462,40 @@ type ListContributorsOptions struct {
 	ListOptions
 }
 
+// EnableVulnerabilityAlerts enables vulnerability alerts and the dependency graph for a repository.
+//
+// GitHub API docs: https://developer.github.com/v3/repos/#enable-vulnerability-alerts
+func (s *RepositoriesService) EnableVulnerabilityAlerts(ctx context.Context, owner, repository string) (*Response, error) {
+	u := fmt.Sprintf("repos/%v/%v/vulnerability-alerts", owner, repository)
+
+	req, err := s.client.NewRequest("PUT", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: remove custom Accept header when this API fully launches
+	req.Header.Set("Accept", mediaTypeRequiredVulnerabilityAlertsPreview)
+
+	return s.client.Do(ctx, req, nil)
+}
+
+// DisableVulnerabilityAlerts disables vulnerability alerts and the dependency graph for a repository.
+//
+// GitHub API docs: https://developer.github.com/v3/repos/#disable-vulnerability-alerts
+func (s *RepositoriesService) DisableVulnerabilityAlerts(ctx context.Context, owner, repository string) (*Response, error) {
+	u := fmt.Sprintf("repos/%v/%v/vulnerability-alerts", owner, repository)
+
+	req, err := s.client.NewRequest("DELETE", u, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// TODO: remove custom Accept header when this API fully launches
+	req.Header.Set("Accept", mediaTypeRequiredVulnerabilityAlertsPreview)
+
+	return s.client.Do(ctx, req, nil)
+}
+
 // ListContributors lists contributors for a repository.
 //
 // GitHub API docs: https://developer.github.com/v3/repos/#list-contributors

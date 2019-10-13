@@ -28,11 +28,11 @@ func Headers(headers http.Header) Option {
 	}
 }
 
-// UsingOrganization allows you to apply account-level changes (Load Balancing,
-// Railguns) to an organization instead.
-func UsingOrganization(orgID string) Option {
+// UsingAccount allows you to apply account-level changes (Load Balancing,
+// Railguns) to an account instead.
+func UsingAccount(accountID string) Option {
 	return func(api *API) error {
-		api.OrganizationID = orgID
+		api.AccountID = accountID
 		return nil
 	}
 }

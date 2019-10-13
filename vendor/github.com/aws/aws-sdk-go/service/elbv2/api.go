@@ -58,7 +58,7 @@ func (c *ELBV2) AddListenerCertificatesRequest(input *AddListenerCertificatesInp
 // AddListenerCertificates API operation for Elastic Load Balancing.
 //
 // Adds the specified SSL server certificate to the certificate list for the
-// specified HTTPS listener.
+// specified HTTPS or TLS listener.
 //
 // If the certificate in already in the certificate list, the call is successful
 // but the certificate is not added again.
@@ -1264,7 +1264,7 @@ func (c *ELBV2) DescribeListenerCertificatesRequest(input *DescribeListenerCerti
 // DescribeListenerCertificates API operation for Elastic Load Balancing.
 //
 // Describes the default certificate and the certificate list for the specified
-// HTTPS listener.
+// HTTPS or TLS listener.
 //
 // If the default certificate is also in the certificate list, it appears twice
 // in the results (once with IsDefault set to true and once with IsDefault set
@@ -2892,7 +2892,7 @@ func (c *ELBV2) RemoveListenerCertificatesRequest(input *RemoveListenerCertifica
 // RemoveListenerCertificates API operation for Elastic Load Balancing.
 //
 // Removes the specified certificate from the certificate list for the specified
-// HTTPS listener.
+// HTTPS or TLS listener.
 //
 // You can't remove the default certificate for a listener. To replace the default
 // certificate, call ModifyListener.
@@ -3982,10 +3982,12 @@ func (s *AuthenticateOidcActionConfig) SetUserInfoEndpoint(v string) *Authentica
 type AvailabilityZone struct {
 	_ struct{} `type:"structure"`
 
-	// [Network Load Balancers] The static IP address.
+	// [Network Load Balancers] If you need static IP addresses for your load balancer,
+	// you can specify one Elastic IP address per Availability Zone when you create
+	// the load balancer.
 	LoadBalancerAddresses []*LoadBalancerAddress `type:"list"`
 
-	// The ID of the subnet.
+	// The ID of the subnet. You can specify one subnet per Availability Zone.
 	SubnetId *string `type:"string"`
 
 	// The name of the Availability Zone.
@@ -4291,7 +4293,8 @@ type CreateLoadBalancerInput struct {
 	// Zones. You cannot specify Elastic IP addresses for your subnets.
 	//
 	// [Network Load Balancers] You can specify subnets from one or more Availability
-	// Zones. You can specify one Elastic IP address per subnet.
+	// Zones. You can specify one Elastic IP address per subnet if you need static
+	// IP addresses for your load balancer.
 	SubnetMappings []*SubnetMapping `type:"list"`
 
 	// The IDs of the public subnets. You can specify only one subnet per Availability
@@ -4649,7 +4652,7 @@ type CreateTargetGroupInput struct {
 	UnhealthyThresholdCount *int64 `min:"2" type:"integer"`
 
 	// The identifier of the virtual private cloud (VPC). If the target is a Lambda
-	// function, this parameter does not apply.
+	// function, this parameter does not apply. Otherwise, this parameter is required.
 	VpcId *string `type:"string"`
 }
 
@@ -8732,9 +8735,8 @@ type TargetHealth struct {
 	//
 	//    * Target.Timeout - The health check requests timed out.
 	//
-	//    * Target.FailedHealthChecks - The health checks failed because the connection
-	//    to the target timed out, the target response was malformed, or the target
-	//    failed the health check for an unknown reason.
+	//    * Target.FailedHealthChecks - The load balancer received an error while
+	//    establishing a connection to the target or the target response was malformed.
 	//
 	//    * Elb.InternalError - The health checks failed due to an internal error.
 	//

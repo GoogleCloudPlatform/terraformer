@@ -9,6 +9,148 @@ import (
 	"github.com/aws/aws-sdk-go/aws/request"
 )
 
+// WaitUntilDBClusterSnapshotAvailable uses the Amazon RDS API operation
+// DescribeDBClusterSnapshots to wait for a condition to be met before returning.
+// If the condition is not met within the max attempt window, an error will
+// be returned.
+func (c *RDS) WaitUntilDBClusterSnapshotAvailable(input *DescribeDBClusterSnapshotsInput) error {
+	return c.WaitUntilDBClusterSnapshotAvailableWithContext(aws.BackgroundContext(), input)
+}
+
+// WaitUntilDBClusterSnapshotAvailableWithContext is an extended version of WaitUntilDBClusterSnapshotAvailable.
+// With the support for passing in a context and options to configure the
+// Waiter and the underlying request options.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *RDS) WaitUntilDBClusterSnapshotAvailableWithContext(ctx aws.Context, input *DescribeDBClusterSnapshotsInput, opts ...request.WaiterOption) error {
+	w := request.Waiter{
+		Name:        "WaitUntilDBClusterSnapshotAvailable",
+		MaxAttempts: 60,
+		Delay:       request.ConstantWaiterDelay(30 * time.Second),
+		Acceptors: []request.WaiterAcceptor{
+			{
+				State:   request.SuccessWaiterState,
+				Matcher: request.PathAllWaiterMatch, Argument: "DBClusterSnapshots[].Status",
+				Expected: "available",
+			},
+			{
+				State:   request.FailureWaiterState,
+				Matcher: request.PathAnyWaiterMatch, Argument: "DBClusterSnapshots[].Status",
+				Expected: "deleted",
+			},
+			{
+				State:   request.FailureWaiterState,
+				Matcher: request.PathAnyWaiterMatch, Argument: "DBClusterSnapshots[].Status",
+				Expected: "deleting",
+			},
+			{
+				State:   request.FailureWaiterState,
+				Matcher: request.PathAnyWaiterMatch, Argument: "DBClusterSnapshots[].Status",
+				Expected: "failed",
+			},
+			{
+				State:   request.FailureWaiterState,
+				Matcher: request.PathAnyWaiterMatch, Argument: "DBClusterSnapshots[].Status",
+				Expected: "incompatible-restore",
+			},
+			{
+				State:   request.FailureWaiterState,
+				Matcher: request.PathAnyWaiterMatch, Argument: "DBClusterSnapshots[].Status",
+				Expected: "incompatible-parameters",
+			},
+		},
+		Logger: c.Config.Logger,
+		NewRequest: func(opts []request.Option) (*request.Request, error) {
+			var inCpy *DescribeDBClusterSnapshotsInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.DescribeDBClusterSnapshotsRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+	w.ApplyOptions(opts...)
+
+	return w.WaitWithContext(ctx)
+}
+
+// WaitUntilDBClusterSnapshotDeleted uses the Amazon RDS API operation
+// DescribeDBClusterSnapshots to wait for a condition to be met before returning.
+// If the condition is not met within the max attempt window, an error will
+// be returned.
+func (c *RDS) WaitUntilDBClusterSnapshotDeleted(input *DescribeDBClusterSnapshotsInput) error {
+	return c.WaitUntilDBClusterSnapshotDeletedWithContext(aws.BackgroundContext(), input)
+}
+
+// WaitUntilDBClusterSnapshotDeletedWithContext is an extended version of WaitUntilDBClusterSnapshotDeleted.
+// With the support for passing in a context and options to configure the
+// Waiter and the underlying request options.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *RDS) WaitUntilDBClusterSnapshotDeletedWithContext(ctx aws.Context, input *DescribeDBClusterSnapshotsInput, opts ...request.WaiterOption) error {
+	w := request.Waiter{
+		Name:        "WaitUntilDBClusterSnapshotDeleted",
+		MaxAttempts: 60,
+		Delay:       request.ConstantWaiterDelay(30 * time.Second),
+		Acceptors: []request.WaiterAcceptor{
+			{
+				State:   request.SuccessWaiterState,
+				Matcher: request.PathWaiterMatch, Argument: "length(DBClusterSnapshots) == `0`",
+				Expected: true,
+			},
+			{
+				State:    request.SuccessWaiterState,
+				Matcher:  request.ErrorWaiterMatch,
+				Expected: "DBClusterSnapshotNotFoundFault",
+			},
+			{
+				State:   request.FailureWaiterState,
+				Matcher: request.PathAnyWaiterMatch, Argument: "DBClusterSnapshots[].Status",
+				Expected: "creating",
+			},
+			{
+				State:   request.FailureWaiterState,
+				Matcher: request.PathAnyWaiterMatch, Argument: "DBClusterSnapshots[].Status",
+				Expected: "modifying",
+			},
+			{
+				State:   request.FailureWaiterState,
+				Matcher: request.PathAnyWaiterMatch, Argument: "DBClusterSnapshots[].Status",
+				Expected: "rebooting",
+			},
+			{
+				State:   request.FailureWaiterState,
+				Matcher: request.PathAnyWaiterMatch, Argument: "DBClusterSnapshots[].Status",
+				Expected: "resetting-master-credentials",
+			},
+		},
+		Logger: c.Config.Logger,
+		NewRequest: func(opts []request.Option) (*request.Request, error) {
+			var inCpy *DescribeDBClusterSnapshotsInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.DescribeDBClusterSnapshotsRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+	w.ApplyOptions(opts...)
+
+	return w.WaitWithContext(ctx)
+}
+
 // WaitUntilDBInstanceAvailable uses the Amazon RDS API operation
 // DescribeDBInstances to wait for a condition to be met before returning.
 // If the condition is not met within the max attempt window, an error will
@@ -104,8 +246,8 @@ func (c *RDS) WaitUntilDBInstanceDeletedWithContext(ctx aws.Context, input *Desc
 		Acceptors: []request.WaiterAcceptor{
 			{
 				State:   request.SuccessWaiterState,
-				Matcher: request.PathAllWaiterMatch, Argument: "DBInstances[].DBInstanceStatus",
-				Expected: "deleted",
+				Matcher: request.PathWaiterMatch, Argument: "length(DBInstances) == `0`",
+				Expected: true,
 			},
 			{
 				State:    request.SuccessWaiterState,
@@ -246,8 +388,8 @@ func (c *RDS) WaitUntilDBSnapshotDeletedWithContext(ctx aws.Context, input *Desc
 		Acceptors: []request.WaiterAcceptor{
 			{
 				State:   request.SuccessWaiterState,
-				Matcher: request.PathAllWaiterMatch, Argument: "DBSnapshots[].Status",
-				Expected: "deleted",
+				Matcher: request.PathWaiterMatch, Argument: "length(DBSnapshots) == `0`",
+				Expected: true,
 			},
 			{
 				State:    request.SuccessWaiterState,

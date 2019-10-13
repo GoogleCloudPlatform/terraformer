@@ -28,21 +28,25 @@ func (e *Encoder) EncodeTime(tm time.Time) error {
 }
 
 func (e *Encoder) encodeTime(tm time.Time) []byte {
+	if e.timeBuf == nil {
+		e.timeBuf = make([]byte, 12)
+	}
+
 	secs := uint64(tm.Unix())
 	if secs>>34 == 0 {
 		data := uint64(tm.Nanosecond())<<34 | secs
 		if data&0xffffffff00000000 == 0 {
-			b := make([]byte, 4)
+			b := e.timeBuf[:4]
 			binary.BigEndian.PutUint32(b, uint32(data))
 			return b
 		} else {
-			b := make([]byte, 8)
+			b := e.timeBuf[:8]
 			binary.BigEndian.PutUint64(b, data)
 			return b
 		}
 	}
 
-	b := make([]byte, 12)
+	b := e.timeBuf[:12]
 	binary.BigEndian.PutUint32(b, uint32(tm.Nanosecond()))
 	binary.BigEndian.PutUint64(b[4:], uint64(secs))
 	return b

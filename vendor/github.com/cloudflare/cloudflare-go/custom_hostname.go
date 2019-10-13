@@ -31,10 +31,11 @@ type CustomMetadata map[string]interface{}
 
 // CustomHostname represents a custom hostname in a zone.
 type CustomHostname struct {
-	ID             string            `json:"id,omitempty"`
-	Hostname       string            `json:"hostname,omitempty"`
-	SSL            CustomHostnameSSL `json:"ssl,omitempty"`
-	CustomMetadata CustomMetadata    `json:"custom_metadata,omitempty"`
+	ID                 string            `json:"id,omitempty"`
+	Hostname           string            `json:"hostname,omitempty"`
+	CustomOriginServer string            `json:"custom_origin_server,omitempty"`
+	SSL                CustomHostnameSSL `json:"ssl,omitempty"`
+	CustomMetadata     CustomMetadata    `json:"custom_metadata,omitempty"`
 }
 
 // CustomHostnameResponse represents a response from the Custom Hostnames endpoints.

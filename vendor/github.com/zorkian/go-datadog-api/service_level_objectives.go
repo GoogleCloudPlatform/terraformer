@@ -45,8 +45,8 @@ var ServiceLevelObjectiveTypeToID = map[string]int{
 // For example it's the `<SLO: ex 99.999%> of <SLI> within <TimeFrame: ex 7d>
 type ServiceLevelObjectiveThreshold struct {
 	TimeFrame      *string  `json:"timeframe,omitempty"`
-	SLO            *float64 `json:"slo,omitempty"`
-	SLODisplay     *string  `json:"slo_display,omitempty"` // Read-Only for monitor type
+	Target         *float64 `json:"target,omitempty"`
+	TargetDisplay  *string  `json:"target_display,omitempty"` // Read-Only for monitor type
 	Warning        *float64 `json:"warning,omitempty"`
 	WarningDisplay *string  `json:"warning_display,omitempty"` // Read-Only for monitor type
 }
@@ -61,14 +61,14 @@ func (s *ServiceLevelObjectiveThreshold) Equal(o interface{}) bool {
 	}
 
 	return s.GetTimeFrame() == other.GetTimeFrame() &&
-		Float64AlmostEqual(s.GetSLO(), other.GetSLO(), thresholdTolerance) &&
+		Float64AlmostEqual(s.GetTarget(), other.GetTarget(), thresholdTolerance) &&
 		Float64AlmostEqual(s.GetWarning(), other.GetWarning(), thresholdTolerance)
 }
 
 // String implements Stringer
 func (s ServiceLevelObjectiveThreshold) String() string {
-	return fmt.Sprintf("Threshold{timeframe=%s slo=%f slo_display=%s warning=%f warning_display=%s",
-		s.GetTimeFrame(), s.GetSLO(), s.GetSLODisplay(), s.GetWarning(), s.GetWarningDisplay())
+	return fmt.Sprintf("Threshold{timeframe=%s target=%f target_display=%s warning=%f warning_display=%s",
+		s.GetTimeFrame(), s.GetTarget(), s.GetTargetDisplay(), s.GetWarning(), s.GetWarningDisplay())
 }
 
 // ServiceLevelObjectiveMetricQuery represents a metric-based SLO definition query
@@ -161,8 +161,37 @@ type ServiceLevelObjective struct {
 	// Informational
 	MonitorTags []string `json:"monitor_tags,omitempty"` // Read-Only
 	Creator     *Creator `json:"creator,omitempty"`      // Read-Only
-	CreatedAt   *int     `json:"created_at"`             // Read-Only
-	ModifiedAt  *int     `json:"modified_at"`            // Read-Only
+	CreatedAt   *int     `json:"created_at,omitempty"`   // Read-Only
+	ModifiedAt  *int     `json:"modified_at,omitempty"`  // Read-Only
+}
+
+// implements custom marshaler to ignore some fields
+func (s *ServiceLevelObjective) MarshalJSON() ([]byte, error) {
+	var output struct {
+		ID          *string                         `json:"id,omitempty"`
+		Name        *string                         `json:"name,omitempty"`
+		Description *string                         `json:"description,omitempty"`
+		Tags        []string                        `json:"tags,omitempty"`
+		Thresholds  ServiceLevelObjectiveThresholds `json:"thresholds,omitempty"`
+		Type        *string                         `json:"type,omitempty"`
+		// SLI definition
+		Query         *ServiceLevelObjectiveMetricQuery `json:"query,omitempty"`
+		MonitorIDs    []int                             `json:"monitor_ids,omitempty"`
+		MonitorSearch *string                           `json:"monitor_search,omitempty"`
+		Groups        []string                          `json:"groups,omitempty"`
+	}
+
+	output.ID = s.ID
+	output.Name = s.Name
+	output.Description = s.Description
+	output.Tags = s.Tags
+	output.Thresholds = s.Thresholds
+	output.Type = s.Type
+	output.Query = s.Query
+	output.MonitorIDs = s.MonitorIDs
+	output.MonitorSearch = s.MonitorSearch
+	output.Groups = s.Groups
+	return json.Marshal(&output)
 }
 
 var sloTimeFrameToDurationRegex = regexp.MustCompile(`(?P<quantity>\d+)(?P<unit>(d))`)
@@ -195,47 +224,6 @@ func ServiceLevelObjectiveTimeFrameToDuration(timeframe string) (time.Duration, 
 	}
 }
 
-type createSLOThreshold struct {
-	SLO     *float64 `json:"slo,omitempty"`
-	Warning *float64 `json:"warning,omitempty"`
-}
-
-// createServiceLevelObjective is the appropriate model for creation/update
-// note that thresholds is a map of timeframe:<Threshold definition>
-type createUpdateServiceLevelObjective struct {
-	Name          *string                           `json:"name,omitempty"`
-	Description   *string                           `json:"description,omitempty"`
-	Tags          []string                          `json:"tags,omitempty"`
-	Thresholds    map[string]*createSLOThreshold    `json:"thresholds,omitempty"`
-	Type          *string                           `json:"type,omitempty"`
-	Query         *ServiceLevelObjectiveMetricQuery `json:"query,omitempty"`
-	MonitorIDs    []int                             `json:"monitor_ids,omitempty"`
-	MonitorSearch *string                           `json:"monitor_search,omitempty"`
-	Groups        []string                          `json:"groups,omitempty"`
-}
-
-func (slo *ServiceLevelObjective) toCreateUpdate() *createUpdateServiceLevelObjective {
-	thresholds := make(map[string]*createSLOThreshold, 0)
-	for _, threshold := range slo.Thresholds {
-		thresholds[threshold.GetTimeFrame()] = &createSLOThreshold{
-			SLO:     threshold.SLO,
-			Warning: threshold.Warning,
-		}
-	}
-
-	return &createUpdateServiceLevelObjective{
-		Name:          slo.Name,
-		Description:   slo.Description,
-		Tags:          slo.Tags,
-		Thresholds:    thresholds,
-		Type:          slo.Type,
-		Query:         slo.Query,
-		MonitorIDs:    slo.MonitorIDs,
-		MonitorSearch: slo.MonitorSearch,
-		Groups:        slo.Groups,
-	}
-}
-
 // CreateServiceLevelObjective adds a new service level objective to the system. This returns a pointer
 // to the service level objective so you can pass that to UpdateServiceLevelObjective or DeleteServiceLevelObjective
 // later if needed.
@@ -246,7 +234,7 @@ func (client *Client) CreateServiceLevelObjective(slo *ServiceLevelObjective) (*
 		return nil, fmt.Errorf("no SLO specified")
 	}
 
-	if err := client.doJsonRequest("POST", "/v1/slo", slo.toCreateUpdate(), &out); err != nil {
+	if err := client.doJsonRequest("POST", "/v1/slo", slo, &out); err != nil {
 		return nil, err
 	}
 	if out.Error != "" {
@@ -265,7 +253,11 @@ func (client *Client) UpdateServiceLevelObjective(slo *ServiceLevelObjective) (*
 		return nil, fmt.Errorf("no SLO specified")
 	}
 
-	if err := client.doJsonRequest("PUT", fmt.Sprintf("/v1/slo/%s", slo.GetID()), slo.toCreateUpdate(), &out); err != nil {
+	if _, ok := slo.GetIDOk(); !ok {
+		return nil, fmt.Errorf("SLO must be created first")
+	}
+
+	if err := client.doJsonRequest("PUT", fmt.Sprintf("/v1/slo/%s", slo.GetID()), slo, &out); err != nil {
 		return nil, err
 	}
 
@@ -294,7 +286,7 @@ func (client *Client) SearchServiceLevelObjectives(limit int, offset int, query 
 		uriValues.Set("offset", fmt.Sprintf("%d", offset))
 	}
 	// Either use `query` or use `ids`
-	hasQuery := query != ""
+	hasQuery := strings.TrimSpace(query) != ""
 	hasIDs := len(ids) > 0
 	if hasQuery && hasIDs {
 		return nil, fmt.Errorf("invalid search: must specify either ids OR query, not both")
@@ -340,24 +332,6 @@ func (client *Client) GetServiceLevelObjective(id string) (*ServiceLevelObjectiv
 	}
 
 	if err := client.doJsonRequest("GET", fmt.Sprintf("/v1/slo/%s", id), nil, &out); err != nil {
-		return nil, err
-	}
-	if out.Error != "" {
-		return nil, fmt.Errorf(out.Error)
-	}
-
-	return out.Data, nil
-}
-
-// GetServiceLevelObjectives retrieves an service level objective by identifier.
-func (client *Client) GetServiceLevelObjectives(ids []string) ([]*ServiceLevelObjective, error) {
-	var out reqServiceLevelObjectives
-
-	if len(ids) == 0 {
-		return nil, fmt.Errorf("no SLO IDs specified")
-	}
-
-	if err := client.doJsonRequest("GET", "/v1/slo", ids, &out); err != nil {
 		return nil, err
 	}
 	if out.Error != "" {
