@@ -15,12 +15,13 @@
 package provider_wrapper
 
 import (
-	"github.com/zclconf/go-cty/cty/gocty"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"runtime"
 	"strings"
+
+	"github.com/zclconf/go-cty/cty/gocty"
 
 	"github.com/zclconf/go-cty/cty"
 
@@ -140,7 +141,7 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 
 	if resp.Diagnostics.HasErrors() {
 		// retry with different serialization mechanism
-		priorState, err  = gocty.ToCtyValue(state, impliedType)
+		priorState, err = gocty.ToCtyValue(state, impliedType)
 		resp = p.Provider.ReadResource(providers.ReadResourceRequest{
 			TypeName:   info.Type,
 			PriorState: priorState,

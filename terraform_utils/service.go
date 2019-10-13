@@ -15,9 +15,10 @@
 package terraform_utils
 
 import (
-	"github.com/zclconf/go-cty/cty"
 	"log"
 	"strings"
+
+	"github.com/zclconf/go-cty/cty"
 )
 
 type ServiceGenerator interface {

@@ -23,8 +23,8 @@ import (
 func newCmdHerokuImporter(options ImportOptions) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "heroku",
-		Short: "Import current State to terraform configuration from Heroku",
-		Long:  "Import current State to terraform configuration from Heroku",
+		Short: "Import current state to Terraform configuration from Heroku",
+		Long:  "Import current state to Terraform configuration from Heroku",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			provider := newHerokuProvider()
 			err := Import(provider, options, []string{})

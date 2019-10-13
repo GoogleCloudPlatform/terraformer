@@ -23,8 +23,8 @@ import (
 func newCmdCloudflareImporter(options ImportOptions) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "cloudflare",
-		Short: "Import current State to terraform configuration from cloudflare",
-		Long:  "Import current State to terraform configuration from cloudflare",
+		Short: "Import current state to Terraform configuration from Cloudflare",
+		Long:  "Import current state to Terraform configuration from Cloudflare",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			provider := newClouflareProvider()
 			err := Import(provider, options, []string{})

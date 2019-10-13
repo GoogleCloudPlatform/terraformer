@@ -15,9 +15,10 @@
 package logzio
 
 import (
-	"github.com/zclconf/go-cty/cty"
 	"regexp"
 	"strings"
+
+	"github.com/zclconf/go-cty/cty"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
