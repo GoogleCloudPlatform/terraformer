@@ -35,7 +35,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
         * [Datadog](#use-with-datadog)
         * [New Relic](#use-with-new-relic)
     * Community
-        * [Logz.io](#use-with-logz.io)
+        * [Logz.io](#use-with-logzio)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
