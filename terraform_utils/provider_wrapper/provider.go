@@ -15,24 +15,35 @@
 package provider_wrapper
 
 import (
-	"github.com/zclconf/go-cty/cty/gocty"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"runtime"
 	"strings"
 
+	"github.com/zclconf/go-cty/cty/gocty"
+
 	"github.com/zclconf/go-cty/cty"
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
-	"github.com/hashicorp/terraform/command"
 	"github.com/hashicorp/terraform/configs/configschema"
 	tfplugin "github.com/hashicorp/terraform/plugin"
 	"github.com/hashicorp/terraform/providers"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/hashicorp/terraform/version"
 )
+
+// DefaultDataDir is the default directory for storing local data.
+const DefaultDataDir = ".terraform"
+
+// DefaultPluginVendorDir is the location in the config directory to look for
+// user-added plugin binaries. Terraform only reads from this path if it
+// exists, it is never created by terraform.
+const DefaultPluginVendorDir = "terraform.d/plugins/" + pluginMachineName
+
+// pluginMachineName is the directory name used in new plugin paths.
+const pluginMachineName = runtime.GOOS + "_" + runtime.GOARCH
 
 type ProviderWrapper struct {
 	Provider     *tfplugin.GRPCProvider
@@ -140,7 +151,7 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 
 	if resp.Diagnostics.HasErrors() {
 		// retry with different serialization mechanism
-		priorState, err  = gocty.ToCtyValue(state, impliedType)
+		priorState, err = gocty.ToCtyValue(state, impliedType)
 		resp = p.Provider.ReadResource(providers.ReadResourceRequest{
 			TypeName:   info.Type,
 			PriorState: priorState,
@@ -157,12 +168,12 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 func (p *ProviderWrapper) initProvider() error {
 	defaultDataDir := os.Getenv("TF_DATA_DIR")
 	if defaultDataDir == "" {
-		defaultDataDir = command.DefaultDataDir
+		defaultDataDir = DefaultDataDir
 	}
 	pluginPath := defaultDataDir + string(os.PathSeparator) + "plugins" + string(os.PathSeparator) + runtime.GOOS + "_" + runtime.GOARCH
 	files, err := ioutil.ReadDir(pluginPath)
 	if err != nil {
-		pluginPath = os.Getenv("HOME") + string(os.PathSeparator) + "." + command.DefaultPluginVendorDir
+		pluginPath = os.Getenv("HOME") + string(os.PathSeparator) + "." + DefaultPluginVendorDir
 		files, err = ioutil.ReadDir(pluginPath)
 		if err != nil {
 			return err

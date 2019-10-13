@@ -82,6 +82,12 @@ const (
 	// The input provided was not valid.
 	ErrCodeInvalidInputException = "InvalidInputException"
 
+	// ErrCodeMLTransformNotReadyException for service response error code
+	// "MLTransformNotReadyException".
+	//
+	// The machine learning transform is not ready to run.
+	ErrCodeMLTransformNotReadyException = "MLTransformNotReadyException"
+
 	// ErrCodeNoScheduleException for service response error code
 	// "NoScheduleException".
 	//

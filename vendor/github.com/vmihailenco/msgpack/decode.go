@@ -69,8 +69,9 @@ func (d *Decoder) SetDecodeMapFunc(fn func(*Decoder) (interface{}, error)) {
 
 // UseDecodeInterfaceLoose causes decoder to use DecodeInterfaceLoose
 // to decode msgpack value into Go interface{}.
-func (d *Decoder) UseDecodeInterfaceLoose(flag bool) {
+func (d *Decoder) UseDecodeInterfaceLoose(flag bool) *Decoder {
 	d.useLoose = flag
+	return d
 }
 
 // UseJSONTag causes the Decoder to use json struct tag as fallback option

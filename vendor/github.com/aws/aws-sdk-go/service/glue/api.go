@@ -326,14 +326,14 @@ func (c *Glue) BatchDeleteTableRequest(input *BatchDeleteTableInput) (req *reque
 //
 // Deletes multiple tables at once.
 //
-// After completing this operation, you will no longer have access to the table
-// versions and partitions that belong to the deleted table. AWS Glue deletes
-// these "orphaned" resources asynchronously in a timely manner, at the discretion
-// of the service.
+// After completing this operation, you no longer have access to the table versions
+// and partitions that belong to the deleted table. AWS Glue deletes these "orphaned"
+// resources asynchronously in a timely manner, at the discretion of the service.
 //
-// To ensure immediate deletion of all related resources, before calling BatchDeleteTable,
-// use DeleteTableVersion or BatchDeleteTableVersion, and DeletePartition or
-// BatchDeletePartition, to delete any resources that belong to the table.
+// To ensure the immediate deletion of all related resources, before calling
+// BatchDeleteTable, use DeleteTableVersion or BatchDeleteTableVersion, and
+// DeletePartition or BatchDeletePartition, to delete any resources that belong
+// to the table.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -1081,6 +1081,97 @@ func (c *Glue) BatchStopJobRunWithContext(ctx aws.Context, input *BatchStopJobRu
 	return out, req.Send()
 }
 
+const opCancelMLTaskRun = "CancelMLTaskRun"
+
+// CancelMLTaskRunRequest generates a "aws/request.Request" representing the
+// client's request for the CancelMLTaskRun operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See CancelMLTaskRun for more information on using the CancelMLTaskRun
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the CancelMLTaskRunRequest method.
+//    req, resp := client.CancelMLTaskRunRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/CancelMLTaskRun
+func (c *Glue) CancelMLTaskRunRequest(input *CancelMLTaskRunInput) (req *request.Request, output *CancelMLTaskRunOutput) {
+	op := &request.Operation{
+		Name:       opCancelMLTaskRun,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &CancelMLTaskRunInput{}
+	}
+
+	output = &CancelMLTaskRunOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// CancelMLTaskRun API operation for AWS Glue.
+//
+// Cancels (stops) a task run. Machine learning task runs are asynchronous tasks
+// that AWS Glue runs on your behalf as part of various machine learning workflows.
+// You can cancel a machine learning task run at any time by calling CancelMLTaskRun
+// with a task run's parent transform's TransformID and the task run's TaskRunId.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS Glue's
+// API operation CancelMLTaskRun for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeEntityNotFoundException "EntityNotFoundException"
+//   A specified entity does not exist
+//
+//   * ErrCodeInvalidInputException "InvalidInputException"
+//   The input provided was not valid.
+//
+//   * ErrCodeOperationTimeoutException "OperationTimeoutException"
+//   The operation timed out.
+//
+//   * ErrCodeInternalServiceException "InternalServiceException"
+//   An internal service error occurred.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/CancelMLTaskRun
+func (c *Glue) CancelMLTaskRun(input *CancelMLTaskRunInput) (*CancelMLTaskRunOutput, error) {
+	req, out := c.CancelMLTaskRunRequest(input)
+	return out, req.Send()
+}
+
+// CancelMLTaskRunWithContext is the same as CancelMLTaskRun with the addition of
+// the ability to pass a context and additional request options.
+//
+// See CancelMLTaskRun for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *Glue) CancelMLTaskRunWithContext(ctx aws.Context, input *CancelMLTaskRunInput, opts ...request.Option) (*CancelMLTaskRunOutput, error) {
+	req, out := c.CancelMLTaskRunRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
 const opCreateClassifier = "CreateClassifier"
 
 // CreateClassifierRequest generates a "aws/request.Request" representing the
@@ -1639,6 +1730,115 @@ func (c *Glue) CreateJob(input *CreateJobInput) (*CreateJobOutput, error) {
 // for more information on using Contexts.
 func (c *Glue) CreateJobWithContext(ctx aws.Context, input *CreateJobInput, opts ...request.Option) (*CreateJobOutput, error) {
 	req, out := c.CreateJobRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opCreateMLTransform = "CreateMLTransform"
+
+// CreateMLTransformRequest generates a "aws/request.Request" representing the
+// client's request for the CreateMLTransform operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See CreateMLTransform for more information on using the CreateMLTransform
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the CreateMLTransformRequest method.
+//    req, resp := client.CreateMLTransformRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/CreateMLTransform
+func (c *Glue) CreateMLTransformRequest(input *CreateMLTransformInput) (req *request.Request, output *CreateMLTransformOutput) {
+	op := &request.Operation{
+		Name:       opCreateMLTransform,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &CreateMLTransformInput{}
+	}
+
+	output = &CreateMLTransformOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// CreateMLTransform API operation for AWS Glue.
+//
+// Creates an AWS Glue machine learning transform. This operation creates the
+// transform and all the necessary parameters to train it.
+//
+// Call this operation as the first step in the process of using a machine learning
+// transform (such as the FindMatches transform) for deduplicating data. You
+// can provide an optional Description, in addition to the parameters that you
+// want to use for your algorithm.
+//
+// You must also specify certain parameters for the tasks that AWS Glue runs
+// on your behalf as part of learning from your data and creating a high-quality
+// machine learning transform. These parameters include Role, and optionally,
+// AllocatedCapacity, Timeout, and MaxRetries. For more information, see Jobs
+// (https://docs.aws.amazon.com/glue/latest/dg/aws-glue-api-jobs-job.html).
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS Glue's
+// API operation CreateMLTransform for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeAlreadyExistsException "AlreadyExistsException"
+//   A resource to be created or added already exists.
+//
+//   * ErrCodeInvalidInputException "InvalidInputException"
+//   The input provided was not valid.
+//
+//   * ErrCodeOperationTimeoutException "OperationTimeoutException"
+//   The operation timed out.
+//
+//   * ErrCodeInternalServiceException "InternalServiceException"
+//   An internal service error occurred.
+//
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
+//   Access to a resource was denied.
+//
+//   * ErrCodeResourceNumberLimitExceededException "ResourceNumberLimitExceededException"
+//   A resource numerical limit was exceeded.
+//
+//   * ErrCodeIdempotentParameterMismatchException "IdempotentParameterMismatchException"
+//   The same unique identifier was associated with two different records.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/CreateMLTransform
+func (c *Glue) CreateMLTransform(input *CreateMLTransformInput) (*CreateMLTransformOutput, error) {
+	req, out := c.CreateMLTransformRequest(input)
+	return out, req.Send()
+}
+
+// CreateMLTransformWithContext is the same as CreateMLTransform with the addition of
+// the ability to pass a context and additional request options.
+//
+// See CreateMLTransform for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *Glue) CreateMLTransformWithContext(ctx aws.Context, input *CreateMLTransformInput, opts ...request.Option) (*CreateMLTransformOutput, error) {
+	req, out := c.CreateMLTransformRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -2613,18 +2813,18 @@ func (c *Glue) DeleteDatabaseRequest(input *DeleteDatabaseInput) (req *request.R
 
 // DeleteDatabase API operation for AWS Glue.
 //
-// Removes a specified Database from a Data Catalog.
+// Removes a specified database from a Data Catalog.
 //
-// After completing this operation, you will no longer have access to the tables
+// After completing this operation, you no longer have access to the tables
 // (and all table versions and partitions that might belong to the tables) and
 // the user-defined functions in the deleted database. AWS Glue deletes these
 // "orphaned" resources asynchronously in a timely manner, at the discretion
 // of the service.
 //
-// To ensure immediate deletion of all related resources, before calling DeleteDatabase,
-// use DeleteTableVersion or BatchDeleteTableVersion, DeletePartition or BatchDeletePartition,
-// DeleteUserDefinedFunction, and DeleteTable or BatchDeleteTable, to delete
-// any resources that belong to the database.
+// To ensure the immediate deletion of all related resources, before calling
+// DeleteDatabase, use DeleteTableVersion or BatchDeleteTableVersion, DeletePartition
+// or BatchDeletePartition, DeleteUserDefinedFunction, and DeleteTable or BatchDeleteTable,
+// to delete any resources that belong to the database.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -2838,6 +3038,100 @@ func (c *Glue) DeleteJob(input *DeleteJobInput) (*DeleteJobOutput, error) {
 // for more information on using Contexts.
 func (c *Glue) DeleteJobWithContext(ctx aws.Context, input *DeleteJobInput, opts ...request.Option) (*DeleteJobOutput, error) {
 	req, out := c.DeleteJobRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opDeleteMLTransform = "DeleteMLTransform"
+
+// DeleteMLTransformRequest generates a "aws/request.Request" representing the
+// client's request for the DeleteMLTransform operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See DeleteMLTransform for more information on using the DeleteMLTransform
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the DeleteMLTransformRequest method.
+//    req, resp := client.DeleteMLTransformRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/DeleteMLTransform
+func (c *Glue) DeleteMLTransformRequest(input *DeleteMLTransformInput) (req *request.Request, output *DeleteMLTransformOutput) {
+	op := &request.Operation{
+		Name:       opDeleteMLTransform,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &DeleteMLTransformInput{}
+	}
+
+	output = &DeleteMLTransformOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// DeleteMLTransform API operation for AWS Glue.
+//
+// Deletes an AWS Glue machine learning transform. Machine learning transforms
+// are a special type of transform that use machine learning to learn the details
+// of the transformation to be performed by learning from examples provided
+// by humans. These transformations are then saved by AWS Glue. If you no longer
+// need a transform, you can delete it by calling DeleteMLTransforms. However,
+// any AWS Glue jobs that still reference the deleted transform will no longer
+// succeed.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS Glue's
+// API operation DeleteMLTransform for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeEntityNotFoundException "EntityNotFoundException"
+//   A specified entity does not exist
+//
+//   * ErrCodeInvalidInputException "InvalidInputException"
+//   The input provided was not valid.
+//
+//   * ErrCodeOperationTimeoutException "OperationTimeoutException"
+//   The operation timed out.
+//
+//   * ErrCodeInternalServiceException "InternalServiceException"
+//   An internal service error occurred.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/DeleteMLTransform
+func (c *Glue) DeleteMLTransform(input *DeleteMLTransformInput) (*DeleteMLTransformOutput, error) {
+	req, out := c.DeleteMLTransformRequest(input)
+	return out, req.Send()
+}
+
+// DeleteMLTransformWithContext is the same as DeleteMLTransform with the addition of
+// the ability to pass a context and additional request options.
+//
+// See DeleteMLTransform for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *Glue) DeleteMLTransformWithContext(ctx aws.Context, input *DeleteMLTransformInput, opts ...request.Option) (*DeleteMLTransformOutput, error) {
+	req, out := c.DeleteMLTransformRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -3160,14 +3454,13 @@ func (c *Glue) DeleteTableRequest(input *DeleteTableInput) (req *request.Request
 //
 // Removes a table definition from the Data Catalog.
 //
-// After completing this operation, you will no longer have access to the table
-// versions and partitions that belong to the deleted table. AWS Glue deletes
-// these "orphaned" resources asynchronously in a timely manner, at the discretion
-// of the service.
+// After completing this operation, you no longer have access to the table versions
+// and partitions that belong to the deleted table. AWS Glue deletes these "orphaned"
+// resources asynchronously in a timely manner, at the discretion of the service.
 //
-// To ensure immediate deletion of all related resources, before calling DeleteTable,
-// use DeleteTableVersion or BatchDeleteTableVersion, and DeletePartition or
-// BatchDeletePartition, to delete any resources that belong to the table.
+// To ensure the immediate deletion of all related resources, before calling
+// DeleteTable, use DeleteTableVersion or BatchDeleteTableVersion, and DeletePartition
+// or BatchDeletePartition, to delete any resources that belong to the table.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -4675,7 +4968,7 @@ func (c *Glue) GetDatabasesRequest(input *GetDatabasesInput) (req *request.Reque
 
 // GetDatabases API operation for AWS Glue.
 //
-// Retrieves all Databases defined in a given Data Catalog.
+// Retrieves all databases defined in a given Data Catalog.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -5275,151 +5568,6 @@ func (c *Glue) GetJobBookmarkWithContext(ctx aws.Context, input *GetJobBookmarkI
 	return out, req.Send()
 }
 
-const opGetJobBookmarks = "GetJobBookmarks"
-
-// GetJobBookmarksRequest generates a "aws/request.Request" representing the
-// client's request for the GetJobBookmarks operation. The "output" return
-// value will be populated with the request's response once the request completes
-// successfully.
-//
-// Use "Send" method on the returned Request to send the API call to the service.
-// the "output" return value is not valid until after Send returns without error.
-//
-// See GetJobBookmarks for more information on using the GetJobBookmarks
-// API call, and error handling.
-//
-// This method is useful when you want to inject custom logic or configuration
-// into the SDK's request lifecycle. Such as custom headers, or retry logic.
-//
-//
-//    // Example sending a request using the GetJobBookmarksRequest method.
-//    req, resp := client.GetJobBookmarksRequest(params)
-//
-//    err := req.Send()
-//    if err == nil { // resp is now filled
-//        fmt.Println(resp)
-//    }
-//
-// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/GetJobBookmarks
-func (c *Glue) GetJobBookmarksRequest(input *GetJobBookmarksInput) (req *request.Request, output *GetJobBookmarksOutput) {
-	op := &request.Operation{
-		Name:       opGetJobBookmarks,
-		HTTPMethod: "POST",
-		HTTPPath:   "/",
-		Paginator: &request.Paginator{
-			InputTokens:     []string{"NextToken"},
-			OutputTokens:    []string{"NextToken"},
-			LimitToken:      "MaxResults",
-			TruncationToken: "",
-		},
-	}
-
-	if input == nil {
-		input = &GetJobBookmarksInput{}
-	}
-
-	output = &GetJobBookmarksOutput{}
-	req = c.newRequest(op, input, output)
-	return
-}
-
-// GetJobBookmarks API operation for AWS Glue.
-//
-// Returns information on the job bookmark entries. The list is ordered on decreasing
-// version numbers.
-//
-// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
-// with awserr.Error's Code and Message methods to get detailed information about
-// the error.
-//
-// See the AWS API reference guide for AWS Glue's
-// API operation GetJobBookmarks for usage and error information.
-//
-// Returned Error Codes:
-//   * ErrCodeInvalidInputException "InvalidInputException"
-//   The input provided was not valid.
-//
-//   * ErrCodeEntityNotFoundException "EntityNotFoundException"
-//   A specified entity does not exist
-//
-//   * ErrCodeInternalServiceException "InternalServiceException"
-//   An internal service error occurred.
-//
-//   * ErrCodeOperationTimeoutException "OperationTimeoutException"
-//   The operation timed out.
-//
-// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/GetJobBookmarks
-func (c *Glue) GetJobBookmarks(input *GetJobBookmarksInput) (*GetJobBookmarksOutput, error) {
-	req, out := c.GetJobBookmarksRequest(input)
-	return out, req.Send()
-}
-
-// GetJobBookmarksWithContext is the same as GetJobBookmarks with the addition of
-// the ability to pass a context and additional request options.
-//
-// See GetJobBookmarks for details on how to use this API operation.
-//
-// The context must be non-nil and will be used for request cancellation. If
-// the context is nil a panic will occur. In the future the SDK may create
-// sub-contexts for http.Requests. See https://golang.org/pkg/context/
-// for more information on using Contexts.
-func (c *Glue) GetJobBookmarksWithContext(ctx aws.Context, input *GetJobBookmarksInput, opts ...request.Option) (*GetJobBookmarksOutput, error) {
-	req, out := c.GetJobBookmarksRequest(input)
-	req.SetContext(ctx)
-	req.ApplyOptions(opts...)
-	return out, req.Send()
-}
-
-// GetJobBookmarksPages iterates over the pages of a GetJobBookmarks operation,
-// calling the "fn" function with the response data for each page. To stop
-// iterating, return false from the fn function.
-//
-// See GetJobBookmarks method for more information on how to use this operation.
-//
-// Note: This operation can generate multiple requests to a service.
-//
-//    // Example iterating over at most 3 pages of a GetJobBookmarks operation.
-//    pageNum := 0
-//    err := client.GetJobBookmarksPages(params,
-//        func(page *glue.GetJobBookmarksOutput, lastPage bool) bool {
-//            pageNum++
-//            fmt.Println(page)
-//            return pageNum <= 3
-//        })
-//
-func (c *Glue) GetJobBookmarksPages(input *GetJobBookmarksInput, fn func(*GetJobBookmarksOutput, bool) bool) error {
-	return c.GetJobBookmarksPagesWithContext(aws.BackgroundContext(), input, fn)
-}
-
-// GetJobBookmarksPagesWithContext same as GetJobBookmarksPages except
-// it takes a Context and allows setting request options on the pages.
-//
-// The context must be non-nil and will be used for request cancellation. If
-// the context is nil a panic will occur. In the future the SDK may create
-// sub-contexts for http.Requests. See https://golang.org/pkg/context/
-// for more information on using Contexts.
-func (c *Glue) GetJobBookmarksPagesWithContext(ctx aws.Context, input *GetJobBookmarksInput, fn func(*GetJobBookmarksOutput, bool) bool, opts ...request.Option) error {
-	p := request.Pagination{
-		NewRequest: func() (*request.Request, error) {
-			var inCpy *GetJobBookmarksInput
-			if input != nil {
-				tmp := *input
-				inCpy = &tmp
-			}
-			req, _ := c.GetJobBookmarksRequest(inCpy)
-			req.SetContext(ctx)
-			req.ApplyOptions(opts...)
-			return req, nil
-		},
-	}
-
-	cont := true
-	for p.Next() && cont {
-		cont = fn(p.Page().(*GetJobBookmarksOutput), !p.HasNextPage())
-	}
-	return p.Err()
-}
-
 const opGetJobRun = "GetJobRun"
 
 // GetJobRunRequest generates a "aws/request.Request" representing the
@@ -5792,6 +5940,489 @@ func (c *Glue) GetJobsPagesWithContext(ctx aws.Context, input *GetJobsInput, fn 
 	cont := true
 	for p.Next() && cont {
 		cont = fn(p.Page().(*GetJobsOutput), !p.HasNextPage())
+	}
+	return p.Err()
+}
+
+const opGetMLTaskRun = "GetMLTaskRun"
+
+// GetMLTaskRunRequest generates a "aws/request.Request" representing the
+// client's request for the GetMLTaskRun operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See GetMLTaskRun for more information on using the GetMLTaskRun
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the GetMLTaskRunRequest method.
+//    req, resp := client.GetMLTaskRunRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/GetMLTaskRun
+func (c *Glue) GetMLTaskRunRequest(input *GetMLTaskRunInput) (req *request.Request, output *GetMLTaskRunOutput) {
+	op := &request.Operation{
+		Name:       opGetMLTaskRun,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &GetMLTaskRunInput{}
+	}
+
+	output = &GetMLTaskRunOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// GetMLTaskRun API operation for AWS Glue.
+//
+// Gets details for a specific task run on a machine learning transform. Machine
+// learning task runs are asynchronous tasks that AWS Glue runs on your behalf
+// as part of various machine learning workflows. You can check the stats of
+// any task run by calling GetMLTaskRun with the TaskRunID and its parent transform's
+// TransformID.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS Glue's
+// API operation GetMLTaskRun for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeEntityNotFoundException "EntityNotFoundException"
+//   A specified entity does not exist
+//
+//   * ErrCodeInvalidInputException "InvalidInputException"
+//   The input provided was not valid.
+//
+//   * ErrCodeOperationTimeoutException "OperationTimeoutException"
+//   The operation timed out.
+//
+//   * ErrCodeInternalServiceException "InternalServiceException"
+//   An internal service error occurred.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/GetMLTaskRun
+func (c *Glue) GetMLTaskRun(input *GetMLTaskRunInput) (*GetMLTaskRunOutput, error) {
+	req, out := c.GetMLTaskRunRequest(input)
+	return out, req.Send()
+}
+
+// GetMLTaskRunWithContext is the same as GetMLTaskRun with the addition of
+// the ability to pass a context and additional request options.
+//
+// See GetMLTaskRun for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *Glue) GetMLTaskRunWithContext(ctx aws.Context, input *GetMLTaskRunInput, opts ...request.Option) (*GetMLTaskRunOutput, error) {
+	req, out := c.GetMLTaskRunRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opGetMLTaskRuns = "GetMLTaskRuns"
+
+// GetMLTaskRunsRequest generates a "aws/request.Request" representing the
+// client's request for the GetMLTaskRuns operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See GetMLTaskRuns for more information on using the GetMLTaskRuns
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the GetMLTaskRunsRequest method.
+//    req, resp := client.GetMLTaskRunsRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/GetMLTaskRuns
+func (c *Glue) GetMLTaskRunsRequest(input *GetMLTaskRunsInput) (req *request.Request, output *GetMLTaskRunsOutput) {
+	op := &request.Operation{
+		Name:       opGetMLTaskRuns,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
+	}
+
+	if input == nil {
+		input = &GetMLTaskRunsInput{}
+	}
+
+	output = &GetMLTaskRunsOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// GetMLTaskRuns API operation for AWS Glue.
+//
+// Gets a list of runs for a machine learning transform. Machine learning task
+// runs are asynchronous tasks that AWS Glue runs on your behalf as part of
+// various machine learning workflows. You can get a sortable, filterable list
+// of machine learning task runs by calling GetMLTaskRuns with their parent
+// transform's TransformID and other optional parameters as documented in this
+// section.
+//
+// This operation returns a list of historic runs and must be paginated.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS Glue's
+// API operation GetMLTaskRuns for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeEntityNotFoundException "EntityNotFoundException"
+//   A specified entity does not exist
+//
+//   * ErrCodeInvalidInputException "InvalidInputException"
+//   The input provided was not valid.
+//
+//   * ErrCodeOperationTimeoutException "OperationTimeoutException"
+//   The operation timed out.
+//
+//   * ErrCodeInternalServiceException "InternalServiceException"
+//   An internal service error occurred.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/GetMLTaskRuns
+func (c *Glue) GetMLTaskRuns(input *GetMLTaskRunsInput) (*GetMLTaskRunsOutput, error) {
+	req, out := c.GetMLTaskRunsRequest(input)
+	return out, req.Send()
+}
+
+// GetMLTaskRunsWithContext is the same as GetMLTaskRuns with the addition of
+// the ability to pass a context and additional request options.
+//
+// See GetMLTaskRuns for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *Glue) GetMLTaskRunsWithContext(ctx aws.Context, input *GetMLTaskRunsInput, opts ...request.Option) (*GetMLTaskRunsOutput, error) {
+	req, out := c.GetMLTaskRunsRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+// GetMLTaskRunsPages iterates over the pages of a GetMLTaskRuns operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See GetMLTaskRuns method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a GetMLTaskRuns operation.
+//    pageNum := 0
+//    err := client.GetMLTaskRunsPages(params,
+//        func(page *glue.GetMLTaskRunsOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *Glue) GetMLTaskRunsPages(input *GetMLTaskRunsInput, fn func(*GetMLTaskRunsOutput, bool) bool) error {
+	return c.GetMLTaskRunsPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// GetMLTaskRunsPagesWithContext same as GetMLTaskRunsPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *Glue) GetMLTaskRunsPagesWithContext(ctx aws.Context, input *GetMLTaskRunsInput, fn func(*GetMLTaskRunsOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *GetMLTaskRunsInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.GetMLTaskRunsRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	cont := true
+	for p.Next() && cont {
+		cont = fn(p.Page().(*GetMLTaskRunsOutput), !p.HasNextPage())
+	}
+	return p.Err()
+}
+
+const opGetMLTransform = "GetMLTransform"
+
+// GetMLTransformRequest generates a "aws/request.Request" representing the
+// client's request for the GetMLTransform operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See GetMLTransform for more information on using the GetMLTransform
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the GetMLTransformRequest method.
+//    req, resp := client.GetMLTransformRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/GetMLTransform
+func (c *Glue) GetMLTransformRequest(input *GetMLTransformInput) (req *request.Request, output *GetMLTransformOutput) {
+	op := &request.Operation{
+		Name:       opGetMLTransform,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &GetMLTransformInput{}
+	}
+
+	output = &GetMLTransformOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// GetMLTransform API operation for AWS Glue.
+//
+// Gets an AWS Glue machine learning transform artifact and all its corresponding
+// metadata. Machine learning transforms are a special type of transform that
+// use machine learning to learn the details of the transformation to be performed
+// by learning from examples provided by humans. These transformations are then
+// saved by AWS Glue. You can retrieve their metadata by calling GetMLTransform.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS Glue's
+// API operation GetMLTransform for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeEntityNotFoundException "EntityNotFoundException"
+//   A specified entity does not exist
+//
+//   * ErrCodeInvalidInputException "InvalidInputException"
+//   The input provided was not valid.
+//
+//   * ErrCodeOperationTimeoutException "OperationTimeoutException"
+//   The operation timed out.
+//
+//   * ErrCodeInternalServiceException "InternalServiceException"
+//   An internal service error occurred.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/GetMLTransform
+func (c *Glue) GetMLTransform(input *GetMLTransformInput) (*GetMLTransformOutput, error) {
+	req, out := c.GetMLTransformRequest(input)
+	return out, req.Send()
+}
+
+// GetMLTransformWithContext is the same as GetMLTransform with the addition of
+// the ability to pass a context and additional request options.
+//
+// See GetMLTransform for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *Glue) GetMLTransformWithContext(ctx aws.Context, input *GetMLTransformInput, opts ...request.Option) (*GetMLTransformOutput, error) {
+	req, out := c.GetMLTransformRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opGetMLTransforms = "GetMLTransforms"
+
+// GetMLTransformsRequest generates a "aws/request.Request" representing the
+// client's request for the GetMLTransforms operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See GetMLTransforms for more information on using the GetMLTransforms
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the GetMLTransformsRequest method.
+//    req, resp := client.GetMLTransformsRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/GetMLTransforms
+func (c *Glue) GetMLTransformsRequest(input *GetMLTransformsInput) (req *request.Request, output *GetMLTransformsOutput) {
+	op := &request.Operation{
+		Name:       opGetMLTransforms,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
+	}
+
+	if input == nil {
+		input = &GetMLTransformsInput{}
+	}
+
+	output = &GetMLTransformsOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// GetMLTransforms API operation for AWS Glue.
+//
+// Gets a sortable, filterable list of existing AWS Glue machine learning transforms.
+// Machine learning transforms are a special type of transform that use machine
+// learning to learn the details of the transformation to be performed by learning
+// from examples provided by humans. These transformations are then saved by
+// AWS Glue, and you can retrieve their metadata by calling GetMLTransforms.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS Glue's
+// API operation GetMLTransforms for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeEntityNotFoundException "EntityNotFoundException"
+//   A specified entity does not exist
+//
+//   * ErrCodeInvalidInputException "InvalidInputException"
+//   The input provided was not valid.
+//
+//   * ErrCodeOperationTimeoutException "OperationTimeoutException"
+//   The operation timed out.
+//
+//   * ErrCodeInternalServiceException "InternalServiceException"
+//   An internal service error occurred.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/GetMLTransforms
+func (c *Glue) GetMLTransforms(input *GetMLTransformsInput) (*GetMLTransformsOutput, error) {
+	req, out := c.GetMLTransformsRequest(input)
+	return out, req.Send()
+}
+
+// GetMLTransformsWithContext is the same as GetMLTransforms with the addition of
+// the ability to pass a context and additional request options.
+//
+// See GetMLTransforms for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *Glue) GetMLTransformsWithContext(ctx aws.Context, input *GetMLTransformsInput, opts ...request.Option) (*GetMLTransformsOutput, error) {
+	req, out := c.GetMLTransformsRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+// GetMLTransformsPages iterates over the pages of a GetMLTransforms operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See GetMLTransforms method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a GetMLTransforms operation.
+//    pageNum := 0
+//    err := client.GetMLTransformsPages(params,
+//        func(page *glue.GetMLTransformsOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *Glue) GetMLTransformsPages(input *GetMLTransformsInput, fn func(*GetMLTransformsOutput, bool) bool) error {
+	return c.GetMLTransformsPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// GetMLTransformsPagesWithContext same as GetMLTransformsPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *Glue) GetMLTransformsPagesWithContext(ctx aws.Context, input *GetMLTransformsInput, fn func(*GetMLTransformsOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *GetMLTransformsInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.GetMLTransformsRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	cont := true
+	for p.Next() && cont {
+		cont = fn(p.Page().(*GetMLTransformsOutput), !p.HasNextPage())
 	}
 	return p.Err()
 }
@@ -7465,7 +8096,7 @@ func (c *Glue) GetUserDefinedFunctionsRequest(input *GetUserDefinedFunctionsInpu
 
 // GetUserDefinedFunctions API operation for AWS Glue.
 //
-// Retrieves a multiple function definitions from the Data Catalog.
+// Retrieves multiple function definitions from the Data Catalog.
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -8015,7 +8646,7 @@ func (c *Glue) ImportCatalogToGlueRequest(input *ImportCatalogToGlueInput) (req 
 
 // ImportCatalogToGlue API operation for AWS Glue.
 //
-// Imports an existing Athena Data Catalog to AWS Glue
+// Imports an existing Amazon Athena Data Catalog to AWS Glue
 //
 // Returns awserr.Error for service API and SDK errors. Use runtime type assertions
 // with awserr.Error's Code and Message methods to get detailed information about
@@ -9152,6 +9783,156 @@ func (c *Glue) ResetJobBookmarkWithContext(ctx aws.Context, input *ResetJobBookm
 	return out, req.Send()
 }
 
+const opSearchTables = "SearchTables"
+
+// SearchTablesRequest generates a "aws/request.Request" representing the
+// client's request for the SearchTables operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See SearchTables for more information on using the SearchTables
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the SearchTablesRequest method.
+//    req, resp := client.SearchTablesRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/SearchTables
+func (c *Glue) SearchTablesRequest(input *SearchTablesInput) (req *request.Request, output *SearchTablesOutput) {
+	op := &request.Operation{
+		Name:       opSearchTables,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+		Paginator: &request.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
+	}
+
+	if input == nil {
+		input = &SearchTablesInput{}
+	}
+
+	output = &SearchTablesOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// SearchTables API operation for AWS Glue.
+//
+// Searches a set of tables based on properties in the table metadata as well
+// as on the parent database. You can search against text or filter conditions.
+//
+// You can only get tables that you have access to based on the security policies
+// defined in Lake Formation. You need at least a read-only access to the table
+// for it to be returned. If you do not have access to all the columns in the
+// table, these columns will not be searched against when returning the list
+// of tables back to you. If you have access to the columns but not the data
+// in the columns, those columns and the associated metadata for those columns
+// will be included in the search.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS Glue's
+// API operation SearchTables for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeInternalServiceException "InternalServiceException"
+//   An internal service error occurred.
+//
+//   * ErrCodeInvalidInputException "InvalidInputException"
+//   The input provided was not valid.
+//
+//   * ErrCodeOperationTimeoutException "OperationTimeoutException"
+//   The operation timed out.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/SearchTables
+func (c *Glue) SearchTables(input *SearchTablesInput) (*SearchTablesOutput, error) {
+	req, out := c.SearchTablesRequest(input)
+	return out, req.Send()
+}
+
+// SearchTablesWithContext is the same as SearchTables with the addition of
+// the ability to pass a context and additional request options.
+//
+// See SearchTables for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *Glue) SearchTablesWithContext(ctx aws.Context, input *SearchTablesInput, opts ...request.Option) (*SearchTablesOutput, error) {
+	req, out := c.SearchTablesRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+// SearchTablesPages iterates over the pages of a SearchTables operation,
+// calling the "fn" function with the response data for each page. To stop
+// iterating, return false from the fn function.
+//
+// See SearchTables method for more information on how to use this operation.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//    // Example iterating over at most 3 pages of a SearchTables operation.
+//    pageNum := 0
+//    err := client.SearchTablesPages(params,
+//        func(page *glue.SearchTablesOutput, lastPage bool) bool {
+//            pageNum++
+//            fmt.Println(page)
+//            return pageNum <= 3
+//        })
+//
+func (c *Glue) SearchTablesPages(input *SearchTablesInput, fn func(*SearchTablesOutput, bool) bool) error {
+	return c.SearchTablesPagesWithContext(aws.BackgroundContext(), input, fn)
+}
+
+// SearchTablesPagesWithContext same as SearchTablesPages except
+// it takes a Context and allows setting request options on the pages.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *Glue) SearchTablesPagesWithContext(ctx aws.Context, input *SearchTablesInput, fn func(*SearchTablesOutput, bool) bool, opts ...request.Option) error {
+	p := request.Pagination{
+		NewRequest: func() (*request.Request, error) {
+			var inCpy *SearchTablesInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req, _ := c.SearchTablesRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req, nil
+		},
+	}
+
+	cont := true
+	for p.Next() && cont {
+		cont = fn(p.Page().(*SearchTablesOutput), !p.HasNextPage())
+	}
+	return p.Err()
+}
+
 const opStartCrawler = "StartCrawler"
 
 // StartCrawlerRequest generates a "aws/request.Request" representing the
@@ -9332,6 +10113,218 @@ func (c *Glue) StartCrawlerScheduleWithContext(ctx aws.Context, input *StartCraw
 	return out, req.Send()
 }
 
+const opStartExportLabelsTaskRun = "StartExportLabelsTaskRun"
+
+// StartExportLabelsTaskRunRequest generates a "aws/request.Request" representing the
+// client's request for the StartExportLabelsTaskRun operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See StartExportLabelsTaskRun for more information on using the StartExportLabelsTaskRun
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the StartExportLabelsTaskRunRequest method.
+//    req, resp := client.StartExportLabelsTaskRunRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/StartExportLabelsTaskRun
+func (c *Glue) StartExportLabelsTaskRunRequest(input *StartExportLabelsTaskRunInput) (req *request.Request, output *StartExportLabelsTaskRunOutput) {
+	op := &request.Operation{
+		Name:       opStartExportLabelsTaskRun,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &StartExportLabelsTaskRunInput{}
+	}
+
+	output = &StartExportLabelsTaskRunOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// StartExportLabelsTaskRun API operation for AWS Glue.
+//
+// Begins an asynchronous task to export all labeled data for a particular transform.
+// This task is the only label-related API call that is not part of the typical
+// active learning workflow. You typically use StartExportLabelsTaskRun when
+// you want to work with all of your existing labels at the same time, such
+// as when you want to remove or change labels that were previously submitted
+// as truth. This API operation accepts the TransformId whose labels you want
+// to export and an Amazon Simple Storage Service (Amazon S3) path to export
+// the labels to. The operation returns a TaskRunId. You can check on the status
+// of your task run by calling the GetMLTaskRun API.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS Glue's
+// API operation StartExportLabelsTaskRun for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeEntityNotFoundException "EntityNotFoundException"
+//   A specified entity does not exist
+//
+//   * ErrCodeInvalidInputException "InvalidInputException"
+//   The input provided was not valid.
+//
+//   * ErrCodeOperationTimeoutException "OperationTimeoutException"
+//   The operation timed out.
+//
+//   * ErrCodeInternalServiceException "InternalServiceException"
+//   An internal service error occurred.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/StartExportLabelsTaskRun
+func (c *Glue) StartExportLabelsTaskRun(input *StartExportLabelsTaskRunInput) (*StartExportLabelsTaskRunOutput, error) {
+	req, out := c.StartExportLabelsTaskRunRequest(input)
+	return out, req.Send()
+}
+
+// StartExportLabelsTaskRunWithContext is the same as StartExportLabelsTaskRun with the addition of
+// the ability to pass a context and additional request options.
+//
+// See StartExportLabelsTaskRun for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *Glue) StartExportLabelsTaskRunWithContext(ctx aws.Context, input *StartExportLabelsTaskRunInput, opts ...request.Option) (*StartExportLabelsTaskRunOutput, error) {
+	req, out := c.StartExportLabelsTaskRunRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opStartImportLabelsTaskRun = "StartImportLabelsTaskRun"
+
+// StartImportLabelsTaskRunRequest generates a "aws/request.Request" representing the
+// client's request for the StartImportLabelsTaskRun operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See StartImportLabelsTaskRun for more information on using the StartImportLabelsTaskRun
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the StartImportLabelsTaskRunRequest method.
+//    req, resp := client.StartImportLabelsTaskRunRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/StartImportLabelsTaskRun
+func (c *Glue) StartImportLabelsTaskRunRequest(input *StartImportLabelsTaskRunInput) (req *request.Request, output *StartImportLabelsTaskRunOutput) {
+	op := &request.Operation{
+		Name:       opStartImportLabelsTaskRun,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &StartImportLabelsTaskRunInput{}
+	}
+
+	output = &StartImportLabelsTaskRunOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// StartImportLabelsTaskRun API operation for AWS Glue.
+//
+// Enables you to provide additional labels (examples of truth) to be used to
+// teach the machine learning transform and improve its quality. This API operation
+// is generally used as part of the active learning workflow that starts with
+// the StartMLLabelingSetGenerationTaskRun call and that ultimately results
+// in improving the quality of your machine learning transform.
+//
+// After the StartMLLabelingSetGenerationTaskRun finishes, AWS Glue machine
+// learning will have generated a series of questions for humans to answer.
+// (Answering these questions is often called 'labeling' in the machine learning
+// workflows). In the case of the FindMatches transform, these questions are
+// of the form, “What is the correct way to group these rows together into
+// groups composed entirely of matching records?” After the labeling process
+// is finished, users upload their answers/labels with a call to StartImportLabelsTaskRun.
+// After StartImportLabelsTaskRun finishes, all future runs of the machine learning
+// transform use the new and improved labels and perform a higher-quality transformation.
+//
+// By default, StartMLLabelingSetGenerationTaskRun continually learns from and
+// combines all labels that you upload unless you set Replace to true. If you
+// set Replace to true, StartImportLabelsTaskRun deletes and forgets all previously
+// uploaded labels and learns only from the exact set that you upload. Replacing
+// labels can be helpful if you realize that you previously uploaded incorrect
+// labels, and you believe that they are having a negative effect on your transform
+// quality.
+//
+// You can check on the status of your task run by calling the GetMLTaskRun
+// operation.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS Glue's
+// API operation StartImportLabelsTaskRun for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeEntityNotFoundException "EntityNotFoundException"
+//   A specified entity does not exist
+//
+//   * ErrCodeInvalidInputException "InvalidInputException"
+//   The input provided was not valid.
+//
+//   * ErrCodeOperationTimeoutException "OperationTimeoutException"
+//   The operation timed out.
+//
+//   * ErrCodeResourceNumberLimitExceededException "ResourceNumberLimitExceededException"
+//   A resource numerical limit was exceeded.
+//
+//   * ErrCodeInternalServiceException "InternalServiceException"
+//   An internal service error occurred.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/StartImportLabelsTaskRun
+func (c *Glue) StartImportLabelsTaskRun(input *StartImportLabelsTaskRunInput) (*StartImportLabelsTaskRunOutput, error) {
+	req, out := c.StartImportLabelsTaskRunRequest(input)
+	return out, req.Send()
+}
+
+// StartImportLabelsTaskRunWithContext is the same as StartImportLabelsTaskRun with the addition of
+// the ability to pass a context and additional request options.
+//
+// See StartImportLabelsTaskRun for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *Glue) StartImportLabelsTaskRunWithContext(ctx aws.Context, input *StartImportLabelsTaskRunInput, opts ...request.Option) (*StartImportLabelsTaskRunOutput, error) {
+	req, out := c.StartImportLabelsTaskRunRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
 const opStartJobRun = "StartJobRun"
 
 // StartJobRunRequest generates a "aws/request.Request" representing the
@@ -9421,6 +10414,211 @@ func (c *Glue) StartJobRun(input *StartJobRunInput) (*StartJobRunOutput, error) 
 // for more information on using Contexts.
 func (c *Glue) StartJobRunWithContext(ctx aws.Context, input *StartJobRunInput, opts ...request.Option) (*StartJobRunOutput, error) {
 	req, out := c.StartJobRunRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opStartMLEvaluationTaskRun = "StartMLEvaluationTaskRun"
+
+// StartMLEvaluationTaskRunRequest generates a "aws/request.Request" representing the
+// client's request for the StartMLEvaluationTaskRun operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See StartMLEvaluationTaskRun for more information on using the StartMLEvaluationTaskRun
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the StartMLEvaluationTaskRunRequest method.
+//    req, resp := client.StartMLEvaluationTaskRunRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/StartMLEvaluationTaskRun
+func (c *Glue) StartMLEvaluationTaskRunRequest(input *StartMLEvaluationTaskRunInput) (req *request.Request, output *StartMLEvaluationTaskRunOutput) {
+	op := &request.Operation{
+		Name:       opStartMLEvaluationTaskRun,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &StartMLEvaluationTaskRunInput{}
+	}
+
+	output = &StartMLEvaluationTaskRunOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// StartMLEvaluationTaskRun API operation for AWS Glue.
+//
+// Starts a task to estimate the quality of the transform.
+//
+// When you provide label sets as examples of truth, AWS Glue machine learning
+// uses some of those examples to learn from them. The rest of the labels are
+// used as a test to estimate quality.
+//
+// Returns a unique identifier for the run. You can call GetMLTaskRun to get
+// more information about the stats of the EvaluationTaskRun.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS Glue's
+// API operation StartMLEvaluationTaskRun for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeEntityNotFoundException "EntityNotFoundException"
+//   A specified entity does not exist
+//
+//   * ErrCodeInvalidInputException "InvalidInputException"
+//   The input provided was not valid.
+//
+//   * ErrCodeOperationTimeoutException "OperationTimeoutException"
+//   The operation timed out.
+//
+//   * ErrCodeInternalServiceException "InternalServiceException"
+//   An internal service error occurred.
+//
+//   * ErrCodeConcurrentRunsExceededException "ConcurrentRunsExceededException"
+//   Too many jobs are being run concurrently.
+//
+//   * ErrCodeMLTransformNotReadyException "MLTransformNotReadyException"
+//   The machine learning transform is not ready to run.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/StartMLEvaluationTaskRun
+func (c *Glue) StartMLEvaluationTaskRun(input *StartMLEvaluationTaskRunInput) (*StartMLEvaluationTaskRunOutput, error) {
+	req, out := c.StartMLEvaluationTaskRunRequest(input)
+	return out, req.Send()
+}
+
+// StartMLEvaluationTaskRunWithContext is the same as StartMLEvaluationTaskRun with the addition of
+// the ability to pass a context and additional request options.
+//
+// See StartMLEvaluationTaskRun for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *Glue) StartMLEvaluationTaskRunWithContext(ctx aws.Context, input *StartMLEvaluationTaskRunInput, opts ...request.Option) (*StartMLEvaluationTaskRunOutput, error) {
+	req, out := c.StartMLEvaluationTaskRunRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
+const opStartMLLabelingSetGenerationTaskRun = "StartMLLabelingSetGenerationTaskRun"
+
+// StartMLLabelingSetGenerationTaskRunRequest generates a "aws/request.Request" representing the
+// client's request for the StartMLLabelingSetGenerationTaskRun operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See StartMLLabelingSetGenerationTaskRun for more information on using the StartMLLabelingSetGenerationTaskRun
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the StartMLLabelingSetGenerationTaskRunRequest method.
+//    req, resp := client.StartMLLabelingSetGenerationTaskRunRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/StartMLLabelingSetGenerationTaskRun
+func (c *Glue) StartMLLabelingSetGenerationTaskRunRequest(input *StartMLLabelingSetGenerationTaskRunInput) (req *request.Request, output *StartMLLabelingSetGenerationTaskRunOutput) {
+	op := &request.Operation{
+		Name:       opStartMLLabelingSetGenerationTaskRun,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &StartMLLabelingSetGenerationTaskRunInput{}
+	}
+
+	output = &StartMLLabelingSetGenerationTaskRunOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// StartMLLabelingSetGenerationTaskRun API operation for AWS Glue.
+//
+// Starts the active learning workflow for your machine learning transform to
+// improve the transform's quality by generating label sets and adding labels.
+//
+// When the StartMLLabelingSetGenerationTaskRun finishes, AWS Glue will have
+// generated a "labeling set" or a set of questions for humans to answer.
+//
+// In the case of the FindMatches transform, these questions are of the form,
+// “What is the correct way to group these rows together into groups composed
+// entirely of matching records?”
+//
+// After the labeling process is finished, you can upload your labels with a
+// call to StartImportLabelsTaskRun. After StartImportLabelsTaskRun finishes,
+// all future runs of the machine learning transform will use the new and improved
+// labels and perform a higher-quality transformation.
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS Glue's
+// API operation StartMLLabelingSetGenerationTaskRun for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeEntityNotFoundException "EntityNotFoundException"
+//   A specified entity does not exist
+//
+//   * ErrCodeInvalidInputException "InvalidInputException"
+//   The input provided was not valid.
+//
+//   * ErrCodeOperationTimeoutException "OperationTimeoutException"
+//   The operation timed out.
+//
+//   * ErrCodeInternalServiceException "InternalServiceException"
+//   An internal service error occurred.
+//
+//   * ErrCodeConcurrentRunsExceededException "ConcurrentRunsExceededException"
+//   Too many jobs are being run concurrently.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/StartMLLabelingSetGenerationTaskRun
+func (c *Glue) StartMLLabelingSetGenerationTaskRun(input *StartMLLabelingSetGenerationTaskRunInput) (*StartMLLabelingSetGenerationTaskRunOutput, error) {
+	req, out := c.StartMLLabelingSetGenerationTaskRunRequest(input)
+	return out, req.Send()
+}
+
+// StartMLLabelingSetGenerationTaskRunWithContext is the same as StartMLLabelingSetGenerationTaskRun with the addition of
+// the ability to pass a context and additional request options.
+//
+// See StartMLLabelingSetGenerationTaskRun for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *Glue) StartMLLabelingSetGenerationTaskRunWithContext(ctx aws.Context, input *StartMLLabelingSetGenerationTaskRunInput, opts ...request.Option) (*StartMLLabelingSetGenerationTaskRunOutput, error) {
+	req, out := c.StartMLLabelingSetGenerationTaskRunRequest(input)
 	req.SetContext(ctx)
 	req.ApplyOptions(opts...)
 	return out, req.Send()
@@ -10707,6 +11905,102 @@ func (c *Glue) UpdateJobWithContext(ctx aws.Context, input *UpdateJobInput, opts
 	return out, req.Send()
 }
 
+const opUpdateMLTransform = "UpdateMLTransform"
+
+// UpdateMLTransformRequest generates a "aws/request.Request" representing the
+// client's request for the UpdateMLTransform operation. The "output" return
+// value will be populated with the request's response once the request completes
+// successfully.
+//
+// Use "Send" method on the returned Request to send the API call to the service.
+// the "output" return value is not valid until after Send returns without error.
+//
+// See UpdateMLTransform for more information on using the UpdateMLTransform
+// API call, and error handling.
+//
+// This method is useful when you want to inject custom logic or configuration
+// into the SDK's request lifecycle. Such as custom headers, or retry logic.
+//
+//
+//    // Example sending a request using the UpdateMLTransformRequest method.
+//    req, resp := client.UpdateMLTransformRequest(params)
+//
+//    err := req.Send()
+//    if err == nil { // resp is now filled
+//        fmt.Println(resp)
+//    }
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/UpdateMLTransform
+func (c *Glue) UpdateMLTransformRequest(input *UpdateMLTransformInput) (req *request.Request, output *UpdateMLTransformOutput) {
+	op := &request.Operation{
+		Name:       opUpdateMLTransform,
+		HTTPMethod: "POST",
+		HTTPPath:   "/",
+	}
+
+	if input == nil {
+		input = &UpdateMLTransformInput{}
+	}
+
+	output = &UpdateMLTransformOutput{}
+	req = c.newRequest(op, input, output)
+	return
+}
+
+// UpdateMLTransform API operation for AWS Glue.
+//
+// Updates an existing machine learning transform. Call this operation to tune
+// the algorithm parameters to achieve better results.
+//
+// After calling this operation, you can call the StartMLEvaluationTaskRun operation
+// to assess how well your new parameters achieved your goals (such as improving
+// the quality of your machine learning transform, or making it more cost-effective).
+//
+// Returns awserr.Error for service API and SDK errors. Use runtime type assertions
+// with awserr.Error's Code and Message methods to get detailed information about
+// the error.
+//
+// See the AWS API reference guide for AWS Glue's
+// API operation UpdateMLTransform for usage and error information.
+//
+// Returned Error Codes:
+//   * ErrCodeEntityNotFoundException "EntityNotFoundException"
+//   A specified entity does not exist
+//
+//   * ErrCodeInvalidInputException "InvalidInputException"
+//   The input provided was not valid.
+//
+//   * ErrCodeOperationTimeoutException "OperationTimeoutException"
+//   The operation timed out.
+//
+//   * ErrCodeInternalServiceException "InternalServiceException"
+//   An internal service error occurred.
+//
+//   * ErrCodeAccessDeniedException "AccessDeniedException"
+//   Access to a resource was denied.
+//
+// See also, https://docs.aws.amazon.com/goto/WebAPI/glue-2017-03-31/UpdateMLTransform
+func (c *Glue) UpdateMLTransform(input *UpdateMLTransformInput) (*UpdateMLTransformOutput, error) {
+	req, out := c.UpdateMLTransformRequest(input)
+	return out, req.Send()
+}
+
+// UpdateMLTransformWithContext is the same as UpdateMLTransform with the addition of
+// the ability to pass a context and additional request options.
+//
+// See UpdateMLTransform for details on how to use this API operation.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *Glue) UpdateMLTransformWithContext(ctx aws.Context, input *UpdateMLTransformInput, opts ...request.Option) (*UpdateMLTransformOutput, error) {
+	req, out := c.UpdateMLTransformRequest(input)
+	req.SetContext(ctx)
+	req.ApplyOptions(opts...)
+	return out, req.Send()
+}
+
 const opUpdatePartition = "UpdatePartition"
 
 // UpdatePartitionRequest generates a "aws/request.Request" representing the
@@ -11285,8 +12579,8 @@ func (s *Action) SetTimeout(v int64) *Action {
 type BatchCreatePartitionInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ID of the catalog in which the partion is to be created. Currently, this
-	// should be the AWS account ID.
+	// The ID of the catalog in which the partition is to be created. Currently,
+	// this should be the AWS account ID.
 	CatalogId *string `min:"1" type:"string"`
 
 	// The name of the metadata database in which the partition is to be created.
@@ -11380,7 +12674,7 @@ func (s *BatchCreatePartitionInput) SetTableName(v string) *BatchCreatePartition
 type BatchCreatePartitionOutput struct {
 	_ struct{} `type:"structure"`
 
-	// Errors encountered when trying to create the requested partitions.
+	// The errors encountered when trying to create the requested partitions.
 	Errors []*PartitionError `type:"list"`
 }
 
@@ -11488,7 +12782,7 @@ type BatchDeletePartitionInput struct {
 	_ struct{} `type:"structure"`
 
 	// The ID of the Data Catalog where the partition to be deleted resides. If
-	// none is supplied, the AWS account ID is used by default.
+	// none is provided, the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
 	// The name of the catalog database in which the table in question resides.
@@ -11501,7 +12795,7 @@ type BatchDeletePartitionInput struct {
 	// PartitionsToDelete is a required field
 	PartitionsToDelete []*PartitionValueList `type:"list" required:"true"`
 
-	// The name of the table where the partitions to be deleted is located.
+	// The name of the table that contains the partitions to be deleted.
 	//
 	// TableName is a required field
 	TableName *string `min:"1" type:"string" required:"true"`
@@ -11582,7 +12876,7 @@ func (s *BatchDeletePartitionInput) SetTableName(v string) *BatchDeletePartition
 type BatchDeletePartitionOutput struct {
 	_ struct{} `type:"structure"`
 
-	// Errors encountered when trying to delete the requested partitions.
+	// The errors encountered when trying to delete the requested partitions.
 	Errors []*PartitionError `type:"list"`
 }
 
@@ -11605,12 +12899,12 @@ func (s *BatchDeletePartitionOutput) SetErrors(v []*PartitionError) *BatchDelete
 type BatchDeleteTableInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ID of the Data Catalog where the table resides. If none is supplied,
+	// The ID of the Data Catalog where the table resides. If none is provided,
 	// the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
-	// The name of the catalog database where the tables to delete reside. For Hive
-	// compatibility, this name is entirely lowercase.
+	// The name of the catalog database in which the tables to delete reside. For
+	// Hive compatibility, this name is entirely lowercase.
 	//
 	// DatabaseName is a required field
 	DatabaseName *string `min:"1" type:"string" required:"true"`
@@ -11697,7 +12991,7 @@ func (s *BatchDeleteTableOutput) SetErrors(v []*TableError) *BatchDeleteTableOut
 type BatchDeleteTableVersionInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ID of the Data Catalog where the tables reside. If none is supplied,
+	// The ID of the Data Catalog where the tables reside. If none is provided,
 	// the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
@@ -12121,7 +13415,7 @@ type BatchGetPartitionOutput struct {
 	// A list of the requested partitions.
 	Partitions []*Partition `type:"list"`
 
-	// A list of the partition values in the request for which partions were not
+	// A list of the partition values in the request for which partitions were not
 	// returned.
 	UnprocessedKeys []*PartitionValueList `type:"list"`
 }
@@ -12466,6 +13760,105 @@ func (s *BatchStopJobRunSuccessfulSubmission) SetJobName(v string) *BatchStopJob
 // SetJobRunId sets the JobRunId field's value.
 func (s *BatchStopJobRunSuccessfulSubmission) SetJobRunId(v string) *BatchStopJobRunSuccessfulSubmission {
 	s.JobRunId = &v
+	return s
+}
+
+type CancelMLTaskRunInput struct {
+	_ struct{} `type:"structure"`
+
+	// A unique identifier for the task run.
+	//
+	// TaskRunId is a required field
+	TaskRunId *string `min:"1" type:"string" required:"true"`
+
+	// The unique identifier of the machine learning transform.
+	//
+	// TransformId is a required field
+	TransformId *string `min:"1" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s CancelMLTaskRunInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s CancelMLTaskRunInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *CancelMLTaskRunInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "CancelMLTaskRunInput"}
+	if s.TaskRunId == nil {
+		invalidParams.Add(request.NewErrParamRequired("TaskRunId"))
+	}
+	if s.TaskRunId != nil && len(*s.TaskRunId) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("TaskRunId", 1))
+	}
+	if s.TransformId == nil {
+		invalidParams.Add(request.NewErrParamRequired("TransformId"))
+	}
+	if s.TransformId != nil && len(*s.TransformId) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("TransformId", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetTaskRunId sets the TaskRunId field's value.
+func (s *CancelMLTaskRunInput) SetTaskRunId(v string) *CancelMLTaskRunInput {
+	s.TaskRunId = &v
+	return s
+}
+
+// SetTransformId sets the TransformId field's value.
+func (s *CancelMLTaskRunInput) SetTransformId(v string) *CancelMLTaskRunInput {
+	s.TransformId = &v
+	return s
+}
+
+type CancelMLTaskRunOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The status for this run.
+	Status *string `type:"string" enum:"TaskStatusType"`
+
+	// The unique identifier for the task run.
+	TaskRunId *string `min:"1" type:"string"`
+
+	// The unique identifier of the machine learning transform.
+	TransformId *string `min:"1" type:"string"`
+}
+
+// String returns the string representation
+func (s CancelMLTaskRunOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s CancelMLTaskRunOutput) GoString() string {
+	return s.String()
+}
+
+// SetStatus sets the Status field's value.
+func (s *CancelMLTaskRunOutput) SetStatus(v string) *CancelMLTaskRunOutput {
+	s.Status = &v
+	return s
+}
+
+// SetTaskRunId sets the TaskRunId field's value.
+func (s *CancelMLTaskRunOutput) SetTaskRunId(v string) *CancelMLTaskRunOutput {
+	s.TaskRunId = &v
+	return s
+}
+
+// SetTransformId sets the TransformId field's value.
+func (s *CancelMLTaskRunOutput) SetTransformId(v string) *CancelMLTaskRunOutput {
+	s.TransformId = &v
 	return s
 }
 
@@ -12944,7 +14337,7 @@ func (s *CodeGenNodeArg) SetValue(v string) *CodeGenNodeArg {
 type Column struct {
 	_ struct{} `type:"structure"`
 
-	// Free-form text comment.
+	// A free-form text comment.
 	Comment *string `type:"string"`
 
 	// The name of the Column.
@@ -12952,7 +14345,10 @@ type Column struct {
 	// Name is a required field
 	Name *string `min:"1" type:"string" required:"true"`
 
-	// The datatype of data in the Column.
+	// These key-value pairs define properties associated with the column.
+	Parameters map[string]*string `type:"map"`
+
+	// The data type of the Column.
 	Type *string `type:"string"`
 }
 
@@ -12991,6 +14387,12 @@ func (s *Column) SetComment(v string) *Column {
 // SetName sets the Name field's value.
 func (s *Column) SetName(v string) *Column {
 	s.Name = &v
+	return s
+}
+
+// SetParameters sets the Parameters field's value.
+func (s *Column) SetParameters(v map[string]*string) *Column {
+	s.Parameters = v
 	return s
 }
 
@@ -13078,6 +14480,65 @@ func (s *Condition) SetState(v string) *Condition {
 	return s
 }
 
+// The confusion matrix shows you what your transform is predicting accurately
+// and what types of errors it is making.
+//
+// For more information, see Confusion matrix (https://en.wikipedia.org/wiki/Confusion_matrix)
+// in Wikipedia.
+type ConfusionMatrix struct {
+	_ struct{} `type:"structure"`
+
+	// The number of matches in the data that the transform didn't find, in the
+	// confusion matrix for your transform.
+	NumFalseNegatives *int64 `type:"long"`
+
+	// The number of nonmatches in the data that the transform incorrectly classified
+	// as a match, in the confusion matrix for your transform.
+	NumFalsePositives *int64 `type:"long"`
+
+	// The number of nonmatches in the data that the transform correctly rejected,
+	// in the confusion matrix for your transform.
+	NumTrueNegatives *int64 `type:"long"`
+
+	// The number of matches in the data that the transform correctly found, in
+	// the confusion matrix for your transform.
+	NumTruePositives *int64 `type:"long"`
+}
+
+// String returns the string representation
+func (s ConfusionMatrix) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ConfusionMatrix) GoString() string {
+	return s.String()
+}
+
+// SetNumFalseNegatives sets the NumFalseNegatives field's value.
+func (s *ConfusionMatrix) SetNumFalseNegatives(v int64) *ConfusionMatrix {
+	s.NumFalseNegatives = &v
+	return s
+}
+
+// SetNumFalsePositives sets the NumFalsePositives field's value.
+func (s *ConfusionMatrix) SetNumFalsePositives(v int64) *ConfusionMatrix {
+	s.NumFalsePositives = &v
+	return s
+}
+
+// SetNumTrueNegatives sets the NumTrueNegatives field's value.
+func (s *ConfusionMatrix) SetNumTrueNegatives(v int64) *ConfusionMatrix {
+	s.NumTrueNegatives = &v
+	return s
+}
+
+// SetNumTruePositives sets the NumTruePositives field's value.
+func (s *ConfusionMatrix) SetNumTruePositives(v int64) *ConfusionMatrix {
+	s.NumTruePositives = &v
+	return s
+}
+
 // Defines a connection to a data source.
 type Connection struct {
 	_ struct{} `type:"structure"`
@@ -13099,8 +14560,8 @@ type Connection struct {
 	//    by setting ConnectionPasswordEncryption in the Data Catalog encryption
 	//    settings, this field stores the encrypted password.
 	//
-	//    * JDBC_DRIVER_JAR_URI - The Amazon S3 path of the JAR file that contains
-	//    the JDBC driver to use.
+	//    * JDBC_DRIVER_JAR_URI - The Amazon Simple Storage Service (Amazon S3)
+	//    path of the JAR file that contains the JDBC driver to use.
 	//
 	//    * JDBC_DRIVER_CLASS_NAME - The class name of the JDBC driver to use.
 	//
@@ -13108,15 +14569,34 @@ type Connection struct {
 	//
 	//    * JDBC_ENGINE_VERSION - The version of the JDBC engine to use.
 	//
-	//    * CONFIG_FILES - (Reserved for future use).
+	//    * CONFIG_FILES - (Reserved for future use.)
 	//
 	//    * INSTANCE_ID - The instance ID to use.
 	//
 	//    * JDBC_CONNECTION_URL - The URL for the JDBC connection.
 	//
 	//    * JDBC_ENFORCE_SSL - A Boolean string (true, false) specifying whether
-	//    Secure Sockets Layer (SSL) with hostname matching will be enforced for
-	//    the JDBC connection on the client. The default is false.
+	//    Secure Sockets Layer (SSL) with hostname matching is enforced for the
+	//    JDBC connection on the client. The default is false.
+	//
+	//    * CUSTOM_JDBC_CERT - An Amazon S3 location specifying the customer's root
+	//    certificate. AWS Glue uses this root certificate to validate the customer’s
+	//    certificate when connecting to the customer database. AWS Glue only handles
+	//    X.509 certificates. The certificate provided must be DER-encoded and supplied
+	//    in Base64 encoding PEM format.
+	//
+	//    * SKIP_CUSTOM_JDBC_CERT_VALIDATION - By default, this is false. AWS Glue
+	//    validates the Signature algorithm and Subject Public Key Algorithm for
+	//    the customer certificate. The only permitted algorithms for the Signature
+	//    algorithm are SHA256withRSA, SHA384withRSA or SHA512withRSA. For the Subject
+	//    Public Key Algorithm, the key length must be at least 2048. You can set
+	//    the value of this property to true to skip AWS Glue’s validation of
+	//    the customer certificate.
+	//
+	//    * CUSTOM_JDBC_CERT_STRING - A custom JDBC certificate string which is
+	//    used for domain match or distinguished name match to prevent a man-in-the-middle
+	//    attack. In Oracle database, this is used as the SSL_SERVER_CERT_DN; in
+	//    Microsoft SQL Server, this is used as the hostNameInCertificate.
 	ConnectionProperties map[string]*string `type:"map"`
 
 	// The type of the connection. Currently, only JDBC is supported; SFTP is not
@@ -13325,8 +14805,8 @@ func (s *ConnectionInput) SetPhysicalConnectionRequirements(v *PhysicalConnectio
 //
 // This encryption requires that you set AWS KMS key permissions to enable or
 // restrict access on the password key according to your security requirements.
-// For example, you might want only admin users to have decrypt permission on
-// the password key.
+// For example, you might want only administrators to have decrypt permission
+// on the password key.
 type ConnectionPasswordEncryption struct {
 	_ struct{} `type:"structure"`
 
@@ -14287,11 +15767,11 @@ func (s *CreateCsvClassifierRequest) SetQuoteSymbol(v string) *CreateCsvClassifi
 type CreateDatabaseInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ID of the Data Catalog in which to create the database. If none is supplied,
+	// The ID of the Data Catalog in which to create the database. If none is provided,
 	// the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
-	// A DatabaseInput object defining the metadata database to create in the catalog.
+	// The metadata for the database.
 	//
 	// DatabaseInput is a required field
 	DatabaseInput *DatabaseInput `type:"structure" required:"true"`
@@ -14378,6 +15858,22 @@ type CreateDevEndpointInput struct {
 	// data analysis library, are not yet supported.
 	ExtraPythonLibsS3Path *string `type:"string"`
 
+	// Glue version determines the versions of Apache Spark and Python that AWS
+	// Glue supports. The Python version indicates the version supported for running
+	// your ETL scripts on development endpoints.
+	//
+	// For more information about the available AWS Glue versions and corresponding
+	// Spark and Python versions, see Glue version (https://docs.aws.amazon.com/glue/latest/dg/add-job.html)
+	// in the developer guide.
+	//
+	// Development endpoints that are created without specifying a Glue version
+	// default to Glue 0.9.
+	//
+	// You can specify a version of Python support for development endpoints by
+	// using the Arguments parameter in the CreateDevEndpoint or UpdateDevEndpoint
+	// APIs. If no arguments are provided, the version defaults to Python 2.
+	GlueVersion *string `min:"1" type:"string"`
+
 	// The number of AWS Glue Data Processing Units (DPUs) to allocate to this DevEndpoint.
 	NumberOfNodes *int64 `type:"integer"`
 
@@ -14436,6 +15932,10 @@ type CreateDevEndpointInput struct {
 	//    * For the G.2X worker type, each worker maps to 2 DPU (8 vCPU, 32 GB of
 	//    memory, 128 GB disk), and provides 1 executor per worker. We recommend
 	//    this worker type for memory-intensive jobs.
+	//
+	// Known issue: when a development endpoint is created with the G.2X WorkerType
+	// configuration, the Spark drivers for the development endpoint will run on
+	// 4 vCPU, 16 GB of memory, and a 64 GB disk.
 	WorkerType *string `type:"string" enum:"WorkerType"`
 }
 
@@ -14454,6 +15954,9 @@ func (s *CreateDevEndpointInput) Validate() error {
 	invalidParams := request.ErrInvalidParams{Context: "CreateDevEndpointInput"}
 	if s.EndpointName == nil {
 		invalidParams.Add(request.NewErrParamRequired("EndpointName"))
+	}
+	if s.GlueVersion != nil && len(*s.GlueVersion) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("GlueVersion", 1))
 	}
 	if s.RoleArn == nil {
 		invalidParams.Add(request.NewErrParamRequired("RoleArn"))
@@ -14489,6 +15992,12 @@ func (s *CreateDevEndpointInput) SetExtraJarsS3Path(v string) *CreateDevEndpoint
 // SetExtraPythonLibsS3Path sets the ExtraPythonLibsS3Path field's value.
 func (s *CreateDevEndpointInput) SetExtraPythonLibsS3Path(v string) *CreateDevEndpointInput {
 	s.ExtraPythonLibsS3Path = &v
+	return s
+}
+
+// SetGlueVersion sets the GlueVersion field's value.
+func (s *CreateDevEndpointInput) SetGlueVersion(v string) *CreateDevEndpointInput {
+	s.GlueVersion = &v
 	return s
 }
 
@@ -14556,6 +16065,18 @@ type CreateDevEndpointOutput struct {
 	_ struct{} `type:"structure"`
 
 	// The map of arguments used to configure this DevEndpoint.
+	//
+	// Valid arguments are:
+	//
+	//    * "--enable-glue-datacatalog": ""
+	//
+	//    * "GLUE_PYTHON_VERSION": "3"
+	//
+	//    * "GLUE_PYTHON_VERSION": "2"
+	//
+	// You can specify a version of Python support for development endpoints by
+	// using the Arguments parameter in the CreateDevEndpoint or UpdateDevEndpoint
+	// APIs. If no arguments are provided, the version defaults to Python 2.
 	Arguments map[string]*string `type:"map"`
 
 	// The AWS Availability Zone where this DevEndpoint is located.
@@ -14577,6 +16098,11 @@ type CreateDevEndpointOutput struct {
 
 	// The reason for a current failure in this DevEndpoint.
 	FailureReason *string `type:"string"`
+
+	// Glue version determines the versions of Apache Spark and Python that AWS
+	// Glue supports. The Python version indicates the version supported for running
+	// your ETL scripts on development endpoints.
+	GlueVersion *string `min:"1" type:"string"`
 
 	// The number of AWS Glue Data Processing Units (DPUs) allocated to this DevEndpoint.
 	NumberOfNodes *int64 `type:"integer"`
@@ -14663,6 +16189,12 @@ func (s *CreateDevEndpointOutput) SetExtraPythonLibsS3Path(v string) *CreateDevE
 // SetFailureReason sets the FailureReason field's value.
 func (s *CreateDevEndpointOutput) SetFailureReason(v string) *CreateDevEndpointOutput {
 	s.FailureReason = &v
+	return s
+}
+
+// SetGlueVersion sets the GlueVersion field's value.
+func (s *CreateDevEndpointOutput) SetGlueVersion(v string) *CreateDevEndpointOutput {
+	s.GlueVersion = &v
 	return s
 }
 
@@ -15178,11 +16710,214 @@ func (s *CreateJsonClassifierRequest) SetName(v string) *CreateJsonClassifierReq
 	return s
 }
 
+type CreateMLTransformInput struct {
+	_ struct{} `type:"structure"`
+
+	// A description of the machine learning transform that is being defined. The
+	// default is an empty string.
+	Description *string `type:"string"`
+
+	// A list of AWS Glue table definitions used by the transform.
+	//
+	// InputRecordTables is a required field
+	InputRecordTables []*Table `type:"list" required:"true"`
+
+	// The number of AWS Glue data processing units (DPUs) that are allocated to
+	// task runs for this transform. You can allocate from 2 to 100 DPUs; the default
+	// is 10. A DPU is a relative measure of processing power that consists of 4
+	// vCPUs of compute capacity and 16 GB of memory. For more information, see
+	// the AWS Glue pricing page (https://aws.amazon.com/glue/pricing/).
+	//
+	// When the WorkerType field is set to a value other than Standard, the MaxCapacity
+	// field is set automatically and becomes read-only.
+	MaxCapacity *float64 `type:"double"`
+
+	// The maximum number of times to retry a task for this transform after a task
+	// run fails.
+	MaxRetries *int64 `type:"integer"`
+
+	// The unique name that you give the transform when you create it.
+	//
+	// Name is a required field
+	Name *string `min:"1" type:"string" required:"true"`
+
+	// The number of workers of a defined workerType that are allocated when this
+	// task runs.
+	NumberOfWorkers *int64 `type:"integer"`
+
+	// The algorithmic parameters that are specific to the transform type used.
+	// Conditionally dependent on the transform type.
+	//
+	// Parameters is a required field
+	Parameters *TransformParameters `type:"structure" required:"true"`
+
+	// The name or Amazon Resource Name (ARN) of the IAM role with the required
+	// permissions. Ensure that this role has permission to your Amazon Simple Storage
+	// Service (Amazon S3) sources, targets, temporary directory, scripts, and any
+	// libraries that are used by the task run for this transform.
+	//
+	// Role is a required field
+	Role *string `type:"string" required:"true"`
+
+	// The timeout of the task run for this transform in minutes. This is the maximum
+	// time that a task run for this transform can consume resources before it is
+	// terminated and enters TIMEOUT status. The default is 2,880 minutes (48 hours).
+	Timeout *int64 `min:"1" type:"integer"`
+
+	// The type of predefined worker that is allocated when this task runs. Accepts
+	// a value of Standard, G.1X, or G.2X.
+	//
+	//    * For the Standard worker type, each worker provides 4 vCPU, 16 GB of
+	//    memory and a 50GB disk, and 2 executors per worker.
+	//
+	//    * For the G.1X worker type, each worker provides 4 vCPU, 16 GB of memory
+	//    and a 64GB disk, and 1 executor per worker.
+	//
+	//    * For the G.2X worker type, each worker provides 8 vCPU, 32 GB of memory
+	//    and a 128GB disk, and 1 executor per worker.
+	WorkerType *string `type:"string" enum:"WorkerType"`
+}
+
+// String returns the string representation
+func (s CreateMLTransformInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s CreateMLTransformInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *CreateMLTransformInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "CreateMLTransformInput"}
+	if s.InputRecordTables == nil {
+		invalidParams.Add(request.NewErrParamRequired("InputRecordTables"))
+	}
+	if s.Name == nil {
+		invalidParams.Add(request.NewErrParamRequired("Name"))
+	}
+	if s.Name != nil && len(*s.Name) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("Name", 1))
+	}
+	if s.Parameters == nil {
+		invalidParams.Add(request.NewErrParamRequired("Parameters"))
+	}
+	if s.Role == nil {
+		invalidParams.Add(request.NewErrParamRequired("Role"))
+	}
+	if s.Timeout != nil && *s.Timeout < 1 {
+		invalidParams.Add(request.NewErrParamMinValue("Timeout", 1))
+	}
+	if s.InputRecordTables != nil {
+		for i, v := range s.InputRecordTables {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "InputRecordTables", i), err.(request.ErrInvalidParams))
+			}
+		}
+	}
+	if s.Parameters != nil {
+		if err := s.Parameters.Validate(); err != nil {
+			invalidParams.AddNested("Parameters", err.(request.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetDescription sets the Description field's value.
+func (s *CreateMLTransformInput) SetDescription(v string) *CreateMLTransformInput {
+	s.Description = &v
+	return s
+}
+
+// SetInputRecordTables sets the InputRecordTables field's value.
+func (s *CreateMLTransformInput) SetInputRecordTables(v []*Table) *CreateMLTransformInput {
+	s.InputRecordTables = v
+	return s
+}
+
+// SetMaxCapacity sets the MaxCapacity field's value.
+func (s *CreateMLTransformInput) SetMaxCapacity(v float64) *CreateMLTransformInput {
+	s.MaxCapacity = &v
+	return s
+}
+
+// SetMaxRetries sets the MaxRetries field's value.
+func (s *CreateMLTransformInput) SetMaxRetries(v int64) *CreateMLTransformInput {
+	s.MaxRetries = &v
+	return s
+}
+
+// SetName sets the Name field's value.
+func (s *CreateMLTransformInput) SetName(v string) *CreateMLTransformInput {
+	s.Name = &v
+	return s
+}
+
+// SetNumberOfWorkers sets the NumberOfWorkers field's value.
+func (s *CreateMLTransformInput) SetNumberOfWorkers(v int64) *CreateMLTransformInput {
+	s.NumberOfWorkers = &v
+	return s
+}
+
+// SetParameters sets the Parameters field's value.
+func (s *CreateMLTransformInput) SetParameters(v *TransformParameters) *CreateMLTransformInput {
+	s.Parameters = v
+	return s
+}
+
+// SetRole sets the Role field's value.
+func (s *CreateMLTransformInput) SetRole(v string) *CreateMLTransformInput {
+	s.Role = &v
+	return s
+}
+
+// SetTimeout sets the Timeout field's value.
+func (s *CreateMLTransformInput) SetTimeout(v int64) *CreateMLTransformInput {
+	s.Timeout = &v
+	return s
+}
+
+// SetWorkerType sets the WorkerType field's value.
+func (s *CreateMLTransformInput) SetWorkerType(v string) *CreateMLTransformInput {
+	s.WorkerType = &v
+	return s
+}
+
+type CreateMLTransformOutput struct {
+	_ struct{} `type:"structure"`
+
+	// A unique identifier that is generated for the transform.
+	TransformId *string `min:"1" type:"string"`
+}
+
+// String returns the string representation
+func (s CreateMLTransformOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s CreateMLTransformOutput) GoString() string {
+	return s.String()
+}
+
+// SetTransformId sets the TransformId field's value.
+func (s *CreateMLTransformOutput) SetTransformId(v string) *CreateMLTransformOutput {
+	s.TransformId = &v
+	return s
+}
+
 type CreatePartitionInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ID of the catalog in which the partion is to be created. Currently, this
-	// should be the AWS account ID.
+	// The AWS account ID of the catalog in which the partition is to be created.
 	CatalogId *string `min:"1" type:"string"`
 
 	// The name of the metadata database in which the partition is to be created.
@@ -15738,7 +17473,7 @@ func (s *CreateTriggerOutput) SetName(v string) *CreateTriggerOutput {
 type CreateUserDefinedFunctionInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ID of the Data Catalog in which to create the function. If none is supplied,
+	// The ID of the Data Catalog in which to create the function. If none is provided,
 	// the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
@@ -16148,21 +17883,61 @@ func (s *DataCatalogEncryptionSettings) SetEncryptionAtRest(v *EncryptionAtRest)
 	return s
 }
 
-// The Database object represents a logical grouping of tables that may reside
+// The AWS Lake Formation principal.
+type DataLakePrincipal struct {
+	_ struct{} `type:"structure"`
+
+	// An identifier for the AWS Lake Formation principal.
+	DataLakePrincipalIdentifier *string `min:"1" type:"string"`
+}
+
+// String returns the string representation
+func (s DataLakePrincipal) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s DataLakePrincipal) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *DataLakePrincipal) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "DataLakePrincipal"}
+	if s.DataLakePrincipalIdentifier != nil && len(*s.DataLakePrincipalIdentifier) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("DataLakePrincipalIdentifier", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetDataLakePrincipalIdentifier sets the DataLakePrincipalIdentifier field's value.
+func (s *DataLakePrincipal) SetDataLakePrincipalIdentifier(v string) *DataLakePrincipal {
+	s.DataLakePrincipalIdentifier = &v
+	return s
+}
+
+// The Database object represents a logical grouping of tables that might reside
 // in a Hive metastore or an RDBMS.
 type Database struct {
 	_ struct{} `type:"structure"`
 
+	// Creates a set of default permissions on the table for principals.
+	CreateTableDefaultPermissions []*PrincipalPermissions `type:"list"`
+
 	// The time at which the metadata database was created in the catalog.
 	CreateTime *time.Time `type:"timestamp"`
 
-	// Description of the database.
+	// A description of the database.
 	Description *string `type:"string"`
 
 	// The location of the database (for example, an HDFS path).
 	LocationUri *string `min:"1" type:"string"`
 
-	// Name of the database. For Hive compatibility, this is folded to lowercase
+	// The name of the database. For Hive compatibility, this is folded to lowercase
 	// when it is stored.
 	//
 	// Name is a required field
@@ -16180,6 +17955,12 @@ func (s Database) String() string {
 // GoString returns the string representation
 func (s Database) GoString() string {
 	return s.String()
+}
+
+// SetCreateTableDefaultPermissions sets the CreateTableDefaultPermissions field's value.
+func (s *Database) SetCreateTableDefaultPermissions(v []*PrincipalPermissions) *Database {
+	s.CreateTableDefaultPermissions = v
+	return s
 }
 
 // SetCreateTime sets the CreateTime field's value.
@@ -16216,19 +17997,24 @@ func (s *Database) SetParameters(v map[string]*string) *Database {
 type DatabaseInput struct {
 	_ struct{} `type:"structure"`
 
-	// Description of the database
+	// Creates a set of default permissions on the table for principals.
+	CreateTableDefaultPermissions []*PrincipalPermissions `type:"list"`
+
+	// A description of the database.
 	Description *string `type:"string"`
 
 	// The location of the database (for example, an HDFS path).
 	LocationUri *string `min:"1" type:"string"`
 
-	// Name of the database. For Hive compatibility, this is folded to lowercase
+	// The name of the database. For Hive compatibility, this is folded to lowercase
 	// when it is stored.
 	//
 	// Name is a required field
 	Name *string `min:"1" type:"string" required:"true"`
 
-	// Thes key-value pairs define parameters and properties of the database.
+	// These key-value pairs define parameters and properties of the database.
+	//
+	// These key-value pairs define parameters and properties of the database.
 	Parameters map[string]*string `type:"map"`
 }
 
@@ -16254,11 +18040,27 @@ func (s *DatabaseInput) Validate() error {
 	if s.Name != nil && len(*s.Name) < 1 {
 		invalidParams.Add(request.NewErrParamMinLen("Name", 1))
 	}
+	if s.CreateTableDefaultPermissions != nil {
+		for i, v := range s.CreateTableDefaultPermissions {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "CreateTableDefaultPermissions", i), err.(request.ErrInvalidParams))
+			}
+		}
+	}
 
 	if invalidParams.Len() > 0 {
 		return invalidParams
 	}
 	return nil
+}
+
+// SetCreateTableDefaultPermissions sets the CreateTableDefaultPermissions field's value.
+func (s *DatabaseInput) SetCreateTableDefaultPermissions(v []*PrincipalPermissions) *DatabaseInput {
+	s.CreateTableDefaultPermissions = v
+	return s
 }
 
 // SetDescription sets the Description field's value.
@@ -16466,11 +18268,11 @@ func (s DeleteCrawlerOutput) GoString() string {
 type DeleteDatabaseInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ID of the Data Catalog in which the database resides. If none is supplied,
+	// The ID of the Data Catalog in which the database resides. If none is provided,
 	// the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
-	// The name of the Database to delete. For Hive compatibility, this must be
+	// The name of the database to delete. For Hive compatibility, this must be
 	// all lowercase.
 	//
 	// Name is a required field
@@ -16648,11 +18450,75 @@ func (s *DeleteJobOutput) SetJobName(v string) *DeleteJobOutput {
 	return s
 }
 
+type DeleteMLTransformInput struct {
+	_ struct{} `type:"structure"`
+
+	// The unique identifier of the transform to delete.
+	//
+	// TransformId is a required field
+	TransformId *string `min:"1" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s DeleteMLTransformInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s DeleteMLTransformInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *DeleteMLTransformInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "DeleteMLTransformInput"}
+	if s.TransformId == nil {
+		invalidParams.Add(request.NewErrParamRequired("TransformId"))
+	}
+	if s.TransformId != nil && len(*s.TransformId) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("TransformId", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetTransformId sets the TransformId field's value.
+func (s *DeleteMLTransformInput) SetTransformId(v string) *DeleteMLTransformInput {
+	s.TransformId = &v
+	return s
+}
+
+type DeleteMLTransformOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The unique identifier of the transform that was deleted.
+	TransformId *string `min:"1" type:"string"`
+}
+
+// String returns the string representation
+func (s DeleteMLTransformOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s DeleteMLTransformOutput) GoString() string {
+	return s.String()
+}
+
+// SetTransformId sets the TransformId field's value.
+func (s *DeleteMLTransformOutput) SetTransformId(v string) *DeleteMLTransformOutput {
+	s.TransformId = &v
+	return s
+}
+
 type DeletePartitionInput struct {
 	_ struct{} `type:"structure"`
 
 	// The ID of the Data Catalog where the partition to be deleted resides. If
-	// none is supplied, the AWS account ID is used by default.
+	// none is provided, the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
 	// The name of the catalog database in which the table in question resides.
@@ -16665,7 +18531,7 @@ type DeletePartitionInput struct {
 	// PartitionValues is a required field
 	PartitionValues []*string `type:"list" required:"true"`
 
-	// The name of the table where the partition to be deleted is located.
+	// The name of the table that contains the partition to be deleted.
 	//
 	// TableName is a required field
 	TableName *string `min:"1" type:"string" required:"true"`
@@ -16855,7 +18721,7 @@ func (s DeleteSecurityConfigurationOutput) GoString() string {
 type DeleteTableInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ID of the Data Catalog where the table resides. If none is supplied,
+	// The ID of the Data Catalog where the table resides. If none is provided,
 	// the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
@@ -16942,7 +18808,7 @@ func (s DeleteTableOutput) GoString() string {
 type DeleteTableVersionInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ID of the Data Catalog where the tables reside. If none is supplied,
+	// The ID of the Data Catalog where the tables reside. If none is provided,
 	// the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
@@ -17263,7 +19129,17 @@ type DevEndpoint struct {
 
 	// A map of arguments used to configure the DevEndpoint.
 	//
-	// Currently, only "--enable-glue-datacatalog": "" is supported as a valid argument.
+	// Valid arguments are:
+	//
+	//    * "--enable-glue-datacatalog": ""
+	//
+	//    * "GLUE_PYTHON_VERSION": "3"
+	//
+	//    * "GLUE_PYTHON_VERSION": "2"
+	//
+	// You can specify a version of Python support for development endpoints by
+	// using the Arguments parameter in the CreateDevEndpoint or UpdateDevEndpoint
+	// APIs. If no arguments are provided, the version defaults to Python 2.
 	Arguments map[string]*string `type:"map"`
 
 	// The AWS Availability Zone where this DevEndpoint is located.
@@ -17292,6 +19168,22 @@ type DevEndpoint struct {
 
 	// The reason for a current failure in this DevEndpoint.
 	FailureReason *string `type:"string"`
+
+	// Glue version determines the versions of Apache Spark and Python that AWS
+	// Glue supports. The Python version indicates the version supported for running
+	// your ETL scripts on development endpoints.
+	//
+	// For more information about the available AWS Glue versions and corresponding
+	// Spark and Python versions, see Glue version (https://docs.aws.amazon.com/glue/latest/dg/add-job.html)
+	// in the developer guide.
+	//
+	// Development endpoints that are created without specifying a Glue version
+	// default to Glue 0.9.
+	//
+	// You can specify a version of Python support for development endpoints by
+	// using the Arguments parameter in the CreateDevEndpoint or UpdateDevEndpoint
+	// APIs. If no arguments are provided, the version defaults to Python 2.
+	GlueVersion *string `min:"1" type:"string"`
 
 	// The point in time at which this DevEndpoint was last modified.
 	LastModifiedTimestamp *time.Time `type:"timestamp"`
@@ -17364,6 +19256,10 @@ type DevEndpoint struct {
 	//    * For the G.2X worker type, each worker maps to 2 DPU (8 vCPU, 32 GB of
 	//    memory, 128 GB disk), and provides 1 executor per worker. We recommend
 	//    this worker type for memory-intensive jobs.
+	//
+	// Known issue: when a development endpoint is created with the G.2X WorkerType
+	// configuration, the Spark drivers for the development endpoint will run on
+	// 4 vCPU, 16 GB of memory, and a 64 GB disk.
 	WorkerType *string `type:"string" enum:"WorkerType"`
 
 	// The YARN endpoint address used by this DevEndpoint.
@@ -17422,6 +19318,12 @@ func (s *DevEndpoint) SetExtraPythonLibsS3Path(v string) *DevEndpoint {
 // SetFailureReason sets the FailureReason field's value.
 func (s *DevEndpoint) SetFailureReason(v string) *DevEndpoint {
 	s.FailureReason = &v
+	return s
+}
+
+// SetGlueVersion sets the GlueVersion field's value.
+func (s *DevEndpoint) SetGlueVersion(v string) *DevEndpoint {
+	s.GlueVersion = &v
 	return s
 }
 
@@ -17754,6 +19656,42 @@ func (s *ErrorDetail) SetErrorMessage(v string) *ErrorDetail {
 	return s
 }
 
+// Evaluation metrics provide an estimate of the quality of your machine learning
+// transform.
+type EvaluationMetrics struct {
+	_ struct{} `type:"structure"`
+
+	// The evaluation metrics for the find matches algorithm.
+	FindMatchesMetrics *FindMatchesMetrics `type:"structure"`
+
+	// The type of machine learning transform.
+	//
+	// TransformType is a required field
+	TransformType *string `type:"string" required:"true" enum:"TransformType"`
+}
+
+// String returns the string representation
+func (s EvaluationMetrics) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s EvaluationMetrics) GoString() string {
+	return s.String()
+}
+
+// SetFindMatchesMetrics sets the FindMatchesMetrics field's value.
+func (s *EvaluationMetrics) SetFindMatchesMetrics(v *FindMatchesMetrics) *EvaluationMetrics {
+	s.FindMatchesMetrics = v
+	return s
+}
+
+// SetTransformType sets the TransformType field's value.
+func (s *EvaluationMetrics) SetTransformType(v string) *EvaluationMetrics {
+	s.TransformType = &v
+	return s
+}
+
 // An execution property of a job.
 type ExecutionProperty struct {
 	_ struct{} `type:"structure"`
@@ -17777,6 +19715,255 @@ func (s ExecutionProperty) GoString() string {
 // SetMaxConcurrentRuns sets the MaxConcurrentRuns field's value.
 func (s *ExecutionProperty) SetMaxConcurrentRuns(v int64) *ExecutionProperty {
 	s.MaxConcurrentRuns = &v
+	return s
+}
+
+// Specifies configuration properties for an exporting labels task run.
+type ExportLabelsTaskRunProperties struct {
+	_ struct{} `type:"structure"`
+
+	// The Amazon Simple Storage Service (Amazon S3) path where you will export
+	// the labels.
+	OutputS3Path *string `type:"string"`
+}
+
+// String returns the string representation
+func (s ExportLabelsTaskRunProperties) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ExportLabelsTaskRunProperties) GoString() string {
+	return s.String()
+}
+
+// SetOutputS3Path sets the OutputS3Path field's value.
+func (s *ExportLabelsTaskRunProperties) SetOutputS3Path(v string) *ExportLabelsTaskRunProperties {
+	s.OutputS3Path = &v
+	return s
+}
+
+// The evaluation metrics for the find matches algorithm. The quality of your
+// machine learning transform is measured by getting your transform to predict
+// some matches and comparing the results to known matches from the same dataset.
+// The quality metrics are based on a subset of your data, so they are not precise.
+type FindMatchesMetrics struct {
+	_ struct{} `type:"structure"`
+
+	// The area under the precision/recall curve (AUPRC) is a single number measuring
+	// the overall quality of the transform, that is independent of the choice made
+	// for precision vs. recall. Higher values indicate that you have a more attractive
+	// precision vs. recall tradeoff.
+	//
+	// For more information, see Precision and recall (https://en.wikipedia.org/wiki/Precision_and_recall)
+	// in Wikipedia.
+	AreaUnderPRCurve *float64 `type:"double"`
+
+	// The confusion matrix shows you what your transform is predicting accurately
+	// and what types of errors it is making.
+	//
+	// For more information, see Confusion matrix (https://en.wikipedia.org/wiki/Confusion_matrix)
+	// in Wikipedia.
+	ConfusionMatrix *ConfusionMatrix `type:"structure"`
+
+	// The maximum F1 metric indicates the transform's accuracy between 0 and 1,
+	// where 1 is the best accuracy.
+	//
+	// For more information, see F1 score (https://en.wikipedia.org/wiki/F1_score)
+	// in Wikipedia.
+	F1 *float64 `type:"double"`
+
+	// The precision metric indicates when often your transform is correct when
+	// it predicts a match. Specifically, it measures how well the transform finds
+	// true positives from the total true positives possible.
+	//
+	// For more information, see Precision and recall (https://en.wikipedia.org/wiki/Precision_and_recall)
+	// in Wikipedia.
+	Precision *float64 `type:"double"`
+
+	// The recall metric indicates that for an actual match, how often your transform
+	// predicts the match. Specifically, it measures how well the transform finds
+	// true positives from the total records in the source data.
+	//
+	// For more information, see Precision and recall (https://en.wikipedia.org/wiki/Precision_and_recall)
+	// in Wikipedia.
+	Recall *float64 `type:"double"`
+}
+
+// String returns the string representation
+func (s FindMatchesMetrics) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s FindMatchesMetrics) GoString() string {
+	return s.String()
+}
+
+// SetAreaUnderPRCurve sets the AreaUnderPRCurve field's value.
+func (s *FindMatchesMetrics) SetAreaUnderPRCurve(v float64) *FindMatchesMetrics {
+	s.AreaUnderPRCurve = &v
+	return s
+}
+
+// SetConfusionMatrix sets the ConfusionMatrix field's value.
+func (s *FindMatchesMetrics) SetConfusionMatrix(v *ConfusionMatrix) *FindMatchesMetrics {
+	s.ConfusionMatrix = v
+	return s
+}
+
+// SetF1 sets the F1 field's value.
+func (s *FindMatchesMetrics) SetF1(v float64) *FindMatchesMetrics {
+	s.F1 = &v
+	return s
+}
+
+// SetPrecision sets the Precision field's value.
+func (s *FindMatchesMetrics) SetPrecision(v float64) *FindMatchesMetrics {
+	s.Precision = &v
+	return s
+}
+
+// SetRecall sets the Recall field's value.
+func (s *FindMatchesMetrics) SetRecall(v float64) *FindMatchesMetrics {
+	s.Recall = &v
+	return s
+}
+
+// The parameters to configure the find matches transform.
+type FindMatchesParameters struct {
+	_ struct{} `type:"structure"`
+
+	// The value that is selected when tuning your transform for a balance between
+	// accuracy and cost. A value of 0.5 means that the system balances accuracy
+	// and cost concerns. A value of 1.0 means a bias purely for accuracy, which
+	// typically results in a higher cost, sometimes substantially higher. A value
+	// of 0.0 means a bias purely for cost, which results in a less accurate FindMatches
+	// transform, sometimes with unacceptable accuracy.
+	//
+	// Accuracy measures how well the transform finds true positives and true negatives.
+	// Increasing accuracy requires more machine resources and cost. But it also
+	// results in increased recall.
+	//
+	// Cost measures how many compute resources, and thus money, are consumed to
+	// run the transform.
+	AccuracyCostTradeoff *float64 `type:"double"`
+
+	// The value to switch on or off to force the output to match the provided labels
+	// from users. If the value is True, the find matches transform forces the output
+	// to match the provided labels. The results override the normal conflation
+	// results. If the value is False, the find matches transform does not ensure
+	// all the labels provided are respected, and the results rely on the trained
+	// model.
+	//
+	// Note that setting this value to true may increase the conflation execution
+	// time.
+	EnforceProvidedLabels *bool `type:"boolean"`
+
+	// The value selected when tuning your transform for a balance between precision
+	// and recall. A value of 0.5 means no preference; a value of 1.0 means a bias
+	// purely for precision, and a value of 0.0 means a bias for recall. Because
+	// this is a tradeoff, choosing values close to 1.0 means very low recall, and
+	// choosing values close to 0.0 results in very low precision.
+	//
+	// The precision metric indicates how often your model is correct when it predicts
+	// a match.
+	//
+	// The recall metric indicates that for an actual match, how often your model
+	// predicts the match.
+	PrecisionRecallTradeoff *float64 `type:"double"`
+
+	// The name of a column that uniquely identifies rows in the source table. Used
+	// to help identify matching records.
+	PrimaryKeyColumnName *string `min:"1" type:"string"`
+}
+
+// String returns the string representation
+func (s FindMatchesParameters) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s FindMatchesParameters) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *FindMatchesParameters) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "FindMatchesParameters"}
+	if s.PrimaryKeyColumnName != nil && len(*s.PrimaryKeyColumnName) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("PrimaryKeyColumnName", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetAccuracyCostTradeoff sets the AccuracyCostTradeoff field's value.
+func (s *FindMatchesParameters) SetAccuracyCostTradeoff(v float64) *FindMatchesParameters {
+	s.AccuracyCostTradeoff = &v
+	return s
+}
+
+// SetEnforceProvidedLabels sets the EnforceProvidedLabels field's value.
+func (s *FindMatchesParameters) SetEnforceProvidedLabels(v bool) *FindMatchesParameters {
+	s.EnforceProvidedLabels = &v
+	return s
+}
+
+// SetPrecisionRecallTradeoff sets the PrecisionRecallTradeoff field's value.
+func (s *FindMatchesParameters) SetPrecisionRecallTradeoff(v float64) *FindMatchesParameters {
+	s.PrecisionRecallTradeoff = &v
+	return s
+}
+
+// SetPrimaryKeyColumnName sets the PrimaryKeyColumnName field's value.
+func (s *FindMatchesParameters) SetPrimaryKeyColumnName(v string) *FindMatchesParameters {
+	s.PrimaryKeyColumnName = &v
+	return s
+}
+
+// Specifies configuration properties for a Find Matches task run.
+type FindMatchesTaskRunProperties struct {
+	_ struct{} `type:"structure"`
+
+	// The job ID for the Find Matches task run.
+	JobId *string `min:"1" type:"string"`
+
+	// The name assigned to the job for the Find Matches task run.
+	JobName *string `min:"1" type:"string"`
+
+	// The job run ID for the Find Matches task run.
+	JobRunId *string `min:"1" type:"string"`
+}
+
+// String returns the string representation
+func (s FindMatchesTaskRunProperties) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s FindMatchesTaskRunProperties) GoString() string {
+	return s.String()
+}
+
+// SetJobId sets the JobId field's value.
+func (s *FindMatchesTaskRunProperties) SetJobId(v string) *FindMatchesTaskRunProperties {
+	s.JobId = &v
+	return s
+}
+
+// SetJobName sets the JobName field's value.
+func (s *FindMatchesTaskRunProperties) SetJobName(v string) *FindMatchesTaskRunProperties {
+	s.JobName = &v
+	return s
+}
+
+// SetJobRunId sets the JobRunId field's value.
+func (s *FindMatchesTaskRunProperties) SetJobRunId(v string) *FindMatchesTaskRunProperties {
+	s.JobRunId = &v
 	return s
 }
 
@@ -17991,8 +20178,8 @@ type GetConnectionInput struct {
 	// Allows you to retrieve the connection metadata without returning the password.
 	// For instance, the AWS Glue console uses this flag to retrieve the connection,
 	// and does not display the password. Set this parameter when the caller might
-	// not have permission to use the AWS KMS key to decrypt the password, but does
-	// have permission to access the rest of the connection properties.
+	// not have permission to use the AWS KMS key to decrypt the password, but it
+	// does have permission to access the rest of the connection properties.
 	HidePassword *bool `type:"boolean"`
 
 	// The name of the connection definition to retrieve.
@@ -18114,14 +20301,14 @@ type GetConnectionsInput struct {
 	// the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
-	// A filter that controls which connections will be returned.
+	// A filter that controls which connections are returned.
 	Filter *GetConnectionsFilter `type:"structure"`
 
 	// Allows you to retrieve the connection metadata without returning the password.
 	// For instance, the AWS Glue console uses this flag to retrieve the connection,
 	// and does not display the password. Set this parameter when the caller might
-	// not have permission to use the AWS KMS key to decrypt the password, but does
-	// have permission to access the rest of the connection properties.
+	// not have permission to use the AWS KMS key to decrypt the password, but it
+	// does have permission to access the rest of the connection properties.
 	HidePassword *bool `type:"boolean"`
 
 	// The maximum number of connections to return in one response.
@@ -18452,8 +20639,8 @@ func (s *GetCrawlersOutput) SetNextToken(v string) *GetCrawlersOutput {
 type GetDataCatalogEncryptionSettingsInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ID of the Data Catalog for which to retrieve the security configuration.
-	// If none is provided, the AWS account ID is used by default.
+	// The ID of the Data Catalog to retrieve the security configuration for. If
+	// none is provided, the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 }
 
@@ -18512,7 +20699,7 @@ func (s *GetDataCatalogEncryptionSettingsOutput) SetDataCatalogEncryptionSetting
 type GetDatabaseInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ID of the Data Catalog in which the database resides. If none is supplied,
+	// The ID of the Data Catalog in which the database resides. If none is provided,
 	// the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
@@ -18567,7 +20754,7 @@ func (s *GetDatabaseInput) SetName(v string) *GetDatabaseInput {
 type GetDatabaseOutput struct {
 	_ struct{} `type:"structure"`
 
-	// The definition of the specified database in the catalog.
+	// The definition of the specified database in the Data Catalog.
 	Database *Database `type:"structure"`
 }
 
@@ -18590,7 +20777,7 @@ func (s *GetDatabaseOutput) SetDatabase(v *Database) *GetDatabaseOutput {
 type GetDatabasesInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ID of the Data Catalog from which to retrieve Databases. If none is supplied,
+	// The ID of the Data Catalog from which to retrieve Databases. If none is provided,
 	// the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
@@ -18943,96 +21130,6 @@ func (s *GetJobBookmarkOutput) SetJobBookmarkEntry(v *JobBookmarkEntry) *GetJobB
 	return s
 }
 
-type GetJobBookmarksInput struct {
-	_ struct{} `type:"structure"`
-
-	// The name of the job in question.
-	//
-	// JobName is a required field
-	JobName *string `type:"string" required:"true"`
-
-	// The maximum size of the response.
-	MaxResults *int64 `type:"integer"`
-
-	// A continuation token, if this is a continuation call.
-	NextToken *int64 `type:"integer"`
-}
-
-// String returns the string representation
-func (s GetJobBookmarksInput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation
-func (s GetJobBookmarksInput) GoString() string {
-	return s.String()
-}
-
-// Validate inspects the fields of the type to determine if they are valid.
-func (s *GetJobBookmarksInput) Validate() error {
-	invalidParams := request.ErrInvalidParams{Context: "GetJobBookmarksInput"}
-	if s.JobName == nil {
-		invalidParams.Add(request.NewErrParamRequired("JobName"))
-	}
-
-	if invalidParams.Len() > 0 {
-		return invalidParams
-	}
-	return nil
-}
-
-// SetJobName sets the JobName field's value.
-func (s *GetJobBookmarksInput) SetJobName(v string) *GetJobBookmarksInput {
-	s.JobName = &v
-	return s
-}
-
-// SetMaxResults sets the MaxResults field's value.
-func (s *GetJobBookmarksInput) SetMaxResults(v int64) *GetJobBookmarksInput {
-	s.MaxResults = &v
-	return s
-}
-
-// SetNextToken sets the NextToken field's value.
-func (s *GetJobBookmarksInput) SetNextToken(v int64) *GetJobBookmarksInput {
-	s.NextToken = &v
-	return s
-}
-
-type GetJobBookmarksOutput struct {
-	_ struct{} `type:"structure"`
-
-	// A list of job bookmark entries that defines a point that a job can resume
-	// processing.
-	JobBookmarkEntries []*JobBookmarkEntry `type:"list"`
-
-	// A continuation token, which has a value of 1 if all the entries are returned,
-	// or > 1 if not all requested job runs have been returned.
-	NextToken *int64 `type:"integer"`
-}
-
-// String returns the string representation
-func (s GetJobBookmarksOutput) String() string {
-	return awsutil.Prettify(s)
-}
-
-// GoString returns the string representation
-func (s GetJobBookmarksOutput) GoString() string {
-	return s.String()
-}
-
-// SetJobBookmarkEntries sets the JobBookmarkEntries field's value.
-func (s *GetJobBookmarksOutput) SetJobBookmarkEntries(v []*JobBookmarkEntry) *GetJobBookmarksOutput {
-	s.JobBookmarkEntries = v
-	return s
-}
-
-// SetNextToken sets the NextToken field's value.
-func (s *GetJobBookmarksOutput) SetNextToken(v int64) *GetJobBookmarksOutput {
-	s.NextToken = &v
-	return s
-}
-
 type GetJobInput struct {
 	_ struct{} `type:"structure"`
 
@@ -19358,6 +21455,628 @@ func (s *GetJobsOutput) SetNextToken(v string) *GetJobsOutput {
 	return s
 }
 
+type GetMLTaskRunInput struct {
+	_ struct{} `type:"structure"`
+
+	// The unique identifier of the task run.
+	//
+	// TaskRunId is a required field
+	TaskRunId *string `min:"1" type:"string" required:"true"`
+
+	// The unique identifier of the machine learning transform.
+	//
+	// TransformId is a required field
+	TransformId *string `min:"1" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s GetMLTaskRunInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetMLTaskRunInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *GetMLTaskRunInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "GetMLTaskRunInput"}
+	if s.TaskRunId == nil {
+		invalidParams.Add(request.NewErrParamRequired("TaskRunId"))
+	}
+	if s.TaskRunId != nil && len(*s.TaskRunId) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("TaskRunId", 1))
+	}
+	if s.TransformId == nil {
+		invalidParams.Add(request.NewErrParamRequired("TransformId"))
+	}
+	if s.TransformId != nil && len(*s.TransformId) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("TransformId", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetTaskRunId sets the TaskRunId field's value.
+func (s *GetMLTaskRunInput) SetTaskRunId(v string) *GetMLTaskRunInput {
+	s.TaskRunId = &v
+	return s
+}
+
+// SetTransformId sets the TransformId field's value.
+func (s *GetMLTaskRunInput) SetTransformId(v string) *GetMLTaskRunInput {
+	s.TransformId = &v
+	return s
+}
+
+type GetMLTaskRunOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The date and time when this task run was completed.
+	CompletedOn *time.Time `type:"timestamp"`
+
+	// The error strings that are associated with the task run.
+	ErrorString *string `type:"string"`
+
+	// The amount of time (in seconds) that the task run consumed resources.
+	ExecutionTime *int64 `type:"integer"`
+
+	// The date and time when this task run was last modified.
+	LastModifiedOn *time.Time `type:"timestamp"`
+
+	// The names of the log groups that are associated with the task run.
+	LogGroupName *string `type:"string"`
+
+	// The list of properties that are associated with the task run.
+	Properties *TaskRunProperties `type:"structure"`
+
+	// The date and time when this task run started.
+	StartedOn *time.Time `type:"timestamp"`
+
+	// The status for this task run.
+	Status *string `type:"string" enum:"TaskStatusType"`
+
+	// The unique run identifier associated with this run.
+	TaskRunId *string `min:"1" type:"string"`
+
+	// The unique identifier of the task run.
+	TransformId *string `min:"1" type:"string"`
+}
+
+// String returns the string representation
+func (s GetMLTaskRunOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetMLTaskRunOutput) GoString() string {
+	return s.String()
+}
+
+// SetCompletedOn sets the CompletedOn field's value.
+func (s *GetMLTaskRunOutput) SetCompletedOn(v time.Time) *GetMLTaskRunOutput {
+	s.CompletedOn = &v
+	return s
+}
+
+// SetErrorString sets the ErrorString field's value.
+func (s *GetMLTaskRunOutput) SetErrorString(v string) *GetMLTaskRunOutput {
+	s.ErrorString = &v
+	return s
+}
+
+// SetExecutionTime sets the ExecutionTime field's value.
+func (s *GetMLTaskRunOutput) SetExecutionTime(v int64) *GetMLTaskRunOutput {
+	s.ExecutionTime = &v
+	return s
+}
+
+// SetLastModifiedOn sets the LastModifiedOn field's value.
+func (s *GetMLTaskRunOutput) SetLastModifiedOn(v time.Time) *GetMLTaskRunOutput {
+	s.LastModifiedOn = &v
+	return s
+}
+
+// SetLogGroupName sets the LogGroupName field's value.
+func (s *GetMLTaskRunOutput) SetLogGroupName(v string) *GetMLTaskRunOutput {
+	s.LogGroupName = &v
+	return s
+}
+
+// SetProperties sets the Properties field's value.
+func (s *GetMLTaskRunOutput) SetProperties(v *TaskRunProperties) *GetMLTaskRunOutput {
+	s.Properties = v
+	return s
+}
+
+// SetStartedOn sets the StartedOn field's value.
+func (s *GetMLTaskRunOutput) SetStartedOn(v time.Time) *GetMLTaskRunOutput {
+	s.StartedOn = &v
+	return s
+}
+
+// SetStatus sets the Status field's value.
+func (s *GetMLTaskRunOutput) SetStatus(v string) *GetMLTaskRunOutput {
+	s.Status = &v
+	return s
+}
+
+// SetTaskRunId sets the TaskRunId field's value.
+func (s *GetMLTaskRunOutput) SetTaskRunId(v string) *GetMLTaskRunOutput {
+	s.TaskRunId = &v
+	return s
+}
+
+// SetTransformId sets the TransformId field's value.
+func (s *GetMLTaskRunOutput) SetTransformId(v string) *GetMLTaskRunOutput {
+	s.TransformId = &v
+	return s
+}
+
+type GetMLTaskRunsInput struct {
+	_ struct{} `type:"structure"`
+
+	// The filter criteria, in the TaskRunFilterCriteria structure, for the task
+	// run.
+	Filter *TaskRunFilterCriteria `type:"structure"`
+
+	// The maximum number of results to return.
+	MaxResults *int64 `min:"1" type:"integer"`
+
+	// A token for pagination of the results. The default is empty.
+	NextToken *string `type:"string"`
+
+	// The sorting criteria, in the TaskRunSortCriteria structure, for the task
+	// run.
+	Sort *TaskRunSortCriteria `type:"structure"`
+
+	// The unique identifier of the machine learning transform.
+	//
+	// TransformId is a required field
+	TransformId *string `min:"1" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s GetMLTaskRunsInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetMLTaskRunsInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *GetMLTaskRunsInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "GetMLTaskRunsInput"}
+	if s.MaxResults != nil && *s.MaxResults < 1 {
+		invalidParams.Add(request.NewErrParamMinValue("MaxResults", 1))
+	}
+	if s.TransformId == nil {
+		invalidParams.Add(request.NewErrParamRequired("TransformId"))
+	}
+	if s.TransformId != nil && len(*s.TransformId) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("TransformId", 1))
+	}
+	if s.Sort != nil {
+		if err := s.Sort.Validate(); err != nil {
+			invalidParams.AddNested("Sort", err.(request.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetFilter sets the Filter field's value.
+func (s *GetMLTaskRunsInput) SetFilter(v *TaskRunFilterCriteria) *GetMLTaskRunsInput {
+	s.Filter = v
+	return s
+}
+
+// SetMaxResults sets the MaxResults field's value.
+func (s *GetMLTaskRunsInput) SetMaxResults(v int64) *GetMLTaskRunsInput {
+	s.MaxResults = &v
+	return s
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *GetMLTaskRunsInput) SetNextToken(v string) *GetMLTaskRunsInput {
+	s.NextToken = &v
+	return s
+}
+
+// SetSort sets the Sort field's value.
+func (s *GetMLTaskRunsInput) SetSort(v *TaskRunSortCriteria) *GetMLTaskRunsInput {
+	s.Sort = v
+	return s
+}
+
+// SetTransformId sets the TransformId field's value.
+func (s *GetMLTaskRunsInput) SetTransformId(v string) *GetMLTaskRunsInput {
+	s.TransformId = &v
+	return s
+}
+
+type GetMLTaskRunsOutput struct {
+	_ struct{} `type:"structure"`
+
+	// A pagination token, if more results are available.
+	NextToken *string `type:"string"`
+
+	// A list of task runs that are associated with the transform.
+	TaskRuns []*TaskRun `type:"list"`
+}
+
+// String returns the string representation
+func (s GetMLTaskRunsOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetMLTaskRunsOutput) GoString() string {
+	return s.String()
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *GetMLTaskRunsOutput) SetNextToken(v string) *GetMLTaskRunsOutput {
+	s.NextToken = &v
+	return s
+}
+
+// SetTaskRuns sets the TaskRuns field's value.
+func (s *GetMLTaskRunsOutput) SetTaskRuns(v []*TaskRun) *GetMLTaskRunsOutput {
+	s.TaskRuns = v
+	return s
+}
+
+type GetMLTransformInput struct {
+	_ struct{} `type:"structure"`
+
+	// The unique identifier of the transform, generated at the time that the transform
+	// was created.
+	//
+	// TransformId is a required field
+	TransformId *string `min:"1" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s GetMLTransformInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetMLTransformInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *GetMLTransformInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "GetMLTransformInput"}
+	if s.TransformId == nil {
+		invalidParams.Add(request.NewErrParamRequired("TransformId"))
+	}
+	if s.TransformId != nil && len(*s.TransformId) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("TransformId", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetTransformId sets the TransformId field's value.
+func (s *GetMLTransformInput) SetTransformId(v string) *GetMLTransformInput {
+	s.TransformId = &v
+	return s
+}
+
+type GetMLTransformOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The date and time when the transform was created.
+	CreatedOn *time.Time `type:"timestamp"`
+
+	// A description of the transform.
+	Description *string `type:"string"`
+
+	// The latest evaluation metrics.
+	EvaluationMetrics *EvaluationMetrics `type:"structure"`
+
+	// A list of AWS Glue table definitions used by the transform.
+	InputRecordTables []*Table `type:"list"`
+
+	// The number of labels available for this transform.
+	LabelCount *int64 `type:"integer"`
+
+	// The date and time when the transform was last modified.
+	LastModifiedOn *time.Time `type:"timestamp"`
+
+	// The number of AWS Glue data processing units (DPUs) that are allocated to
+	// task runs for this transform. You can allocate from 2 to 100 DPUs; the default
+	// is 10. A DPU is a relative measure of processing power that consists of 4
+	// vCPUs of compute capacity and 16 GB of memory. For more information, see
+	// the AWS Glue pricing page (https://aws.amazon.com/glue/pricing/).
+	//
+	// When the WorkerType field is set to a value other than Standard, the MaxCapacity
+	// field is set automatically and becomes read-only.
+	MaxCapacity *float64 `type:"double"`
+
+	// The maximum number of times to retry a task for this transform after a task
+	// run fails.
+	MaxRetries *int64 `type:"integer"`
+
+	// The unique name given to the transform when it was created.
+	Name *string `min:"1" type:"string"`
+
+	// The number of workers of a defined workerType that are allocated when this
+	// task runs.
+	NumberOfWorkers *int64 `type:"integer"`
+
+	// The configuration parameters that are specific to the algorithm used.
+	Parameters *TransformParameters `type:"structure"`
+
+	// The name or Amazon Resource Name (ARN) of the IAM role with the required
+	// permissions.
+	Role *string `type:"string"`
+
+	// The Map<Column, Type> object that represents the schema that this transform
+	// accepts. Has an upper bound of 100 columns.
+	Schema []*SchemaColumn `type:"list"`
+
+	// The last known status of the transform (to indicate whether it can be used
+	// or not). One of "NOT_READY", "READY", or "DELETING".
+	Status *string `type:"string" enum:"TransformStatusType"`
+
+	// The timeout for a task run for this transform in minutes. This is the maximum
+	// time that a task run for this transform can consume resources before it is
+	// terminated and enters TIMEOUT status. The default is 2,880 minutes (48 hours).
+	Timeout *int64 `min:"1" type:"integer"`
+
+	// The unique identifier of the transform, generated at the time that the transform
+	// was created.
+	TransformId *string `min:"1" type:"string"`
+
+	// The type of predefined worker that is allocated when this task runs. Accepts
+	// a value of Standard, G.1X, or G.2X.
+	//
+	//    * For the Standard worker type, each worker provides 4 vCPU, 16 GB of
+	//    memory and a 50GB disk, and 2 executors per worker.
+	//
+	//    * For the G.1X worker type, each worker provides 4 vCPU, 16 GB of memory
+	//    and a 64GB disk, and 1 executor per worker.
+	//
+	//    * For the G.2X worker type, each worker provides 8 vCPU, 32 GB of memory
+	//    and a 128GB disk, and 1 executor per worker.
+	WorkerType *string `type:"string" enum:"WorkerType"`
+}
+
+// String returns the string representation
+func (s GetMLTransformOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetMLTransformOutput) GoString() string {
+	return s.String()
+}
+
+// SetCreatedOn sets the CreatedOn field's value.
+func (s *GetMLTransformOutput) SetCreatedOn(v time.Time) *GetMLTransformOutput {
+	s.CreatedOn = &v
+	return s
+}
+
+// SetDescription sets the Description field's value.
+func (s *GetMLTransformOutput) SetDescription(v string) *GetMLTransformOutput {
+	s.Description = &v
+	return s
+}
+
+// SetEvaluationMetrics sets the EvaluationMetrics field's value.
+func (s *GetMLTransformOutput) SetEvaluationMetrics(v *EvaluationMetrics) *GetMLTransformOutput {
+	s.EvaluationMetrics = v
+	return s
+}
+
+// SetInputRecordTables sets the InputRecordTables field's value.
+func (s *GetMLTransformOutput) SetInputRecordTables(v []*Table) *GetMLTransformOutput {
+	s.InputRecordTables = v
+	return s
+}
+
+// SetLabelCount sets the LabelCount field's value.
+func (s *GetMLTransformOutput) SetLabelCount(v int64) *GetMLTransformOutput {
+	s.LabelCount = &v
+	return s
+}
+
+// SetLastModifiedOn sets the LastModifiedOn field's value.
+func (s *GetMLTransformOutput) SetLastModifiedOn(v time.Time) *GetMLTransformOutput {
+	s.LastModifiedOn = &v
+	return s
+}
+
+// SetMaxCapacity sets the MaxCapacity field's value.
+func (s *GetMLTransformOutput) SetMaxCapacity(v float64) *GetMLTransformOutput {
+	s.MaxCapacity = &v
+	return s
+}
+
+// SetMaxRetries sets the MaxRetries field's value.
+func (s *GetMLTransformOutput) SetMaxRetries(v int64) *GetMLTransformOutput {
+	s.MaxRetries = &v
+	return s
+}
+
+// SetName sets the Name field's value.
+func (s *GetMLTransformOutput) SetName(v string) *GetMLTransformOutput {
+	s.Name = &v
+	return s
+}
+
+// SetNumberOfWorkers sets the NumberOfWorkers field's value.
+func (s *GetMLTransformOutput) SetNumberOfWorkers(v int64) *GetMLTransformOutput {
+	s.NumberOfWorkers = &v
+	return s
+}
+
+// SetParameters sets the Parameters field's value.
+func (s *GetMLTransformOutput) SetParameters(v *TransformParameters) *GetMLTransformOutput {
+	s.Parameters = v
+	return s
+}
+
+// SetRole sets the Role field's value.
+func (s *GetMLTransformOutput) SetRole(v string) *GetMLTransformOutput {
+	s.Role = &v
+	return s
+}
+
+// SetSchema sets the Schema field's value.
+func (s *GetMLTransformOutput) SetSchema(v []*SchemaColumn) *GetMLTransformOutput {
+	s.Schema = v
+	return s
+}
+
+// SetStatus sets the Status field's value.
+func (s *GetMLTransformOutput) SetStatus(v string) *GetMLTransformOutput {
+	s.Status = &v
+	return s
+}
+
+// SetTimeout sets the Timeout field's value.
+func (s *GetMLTransformOutput) SetTimeout(v int64) *GetMLTransformOutput {
+	s.Timeout = &v
+	return s
+}
+
+// SetTransformId sets the TransformId field's value.
+func (s *GetMLTransformOutput) SetTransformId(v string) *GetMLTransformOutput {
+	s.TransformId = &v
+	return s
+}
+
+// SetWorkerType sets the WorkerType field's value.
+func (s *GetMLTransformOutput) SetWorkerType(v string) *GetMLTransformOutput {
+	s.WorkerType = &v
+	return s
+}
+
+type GetMLTransformsInput struct {
+	_ struct{} `type:"structure"`
+
+	// The filter transformation criteria.
+	Filter *TransformFilterCriteria `type:"structure"`
+
+	// The maximum number of results to return.
+	MaxResults *int64 `min:"1" type:"integer"`
+
+	// A paginated token to offset the results.
+	NextToken *string `type:"string"`
+
+	// The sorting criteria.
+	Sort *TransformSortCriteria `type:"structure"`
+}
+
+// String returns the string representation
+func (s GetMLTransformsInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetMLTransformsInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *GetMLTransformsInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "GetMLTransformsInput"}
+	if s.MaxResults != nil && *s.MaxResults < 1 {
+		invalidParams.Add(request.NewErrParamMinValue("MaxResults", 1))
+	}
+	if s.Filter != nil {
+		if err := s.Filter.Validate(); err != nil {
+			invalidParams.AddNested("Filter", err.(request.ErrInvalidParams))
+		}
+	}
+	if s.Sort != nil {
+		if err := s.Sort.Validate(); err != nil {
+			invalidParams.AddNested("Sort", err.(request.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetFilter sets the Filter field's value.
+func (s *GetMLTransformsInput) SetFilter(v *TransformFilterCriteria) *GetMLTransformsInput {
+	s.Filter = v
+	return s
+}
+
+// SetMaxResults sets the MaxResults field's value.
+func (s *GetMLTransformsInput) SetMaxResults(v int64) *GetMLTransformsInput {
+	s.MaxResults = &v
+	return s
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *GetMLTransformsInput) SetNextToken(v string) *GetMLTransformsInput {
+	s.NextToken = &v
+	return s
+}
+
+// SetSort sets the Sort field's value.
+func (s *GetMLTransformsInput) SetSort(v *TransformSortCriteria) *GetMLTransformsInput {
+	s.Sort = v
+	return s
+}
+
+type GetMLTransformsOutput struct {
+	_ struct{} `type:"structure"`
+
+	// A pagination token, if more results are available.
+	NextToken *string `type:"string"`
+
+	// A list of machine learning transforms.
+	//
+	// Transforms is a required field
+	Transforms []*MLTransform `type:"list" required:"true"`
+}
+
+// String returns the string representation
+func (s GetMLTransformsOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s GetMLTransformsOutput) GoString() string {
+	return s.String()
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *GetMLTransformsOutput) SetNextToken(v string) *GetMLTransformsOutput {
+	s.NextToken = &v
+	return s
+}
+
+// SetTransforms sets the Transforms field's value.
+func (s *GetMLTransformsOutput) SetTransforms(v []*MLTransform) *GetMLTransformsOutput {
+	s.Transforms = v
+	return s
+}
+
 type GetMappingInput struct {
 	_ struct{} `type:"structure"`
 
@@ -19463,7 +22182,7 @@ type GetPartitionInput struct {
 	_ struct{} `type:"structure"`
 
 	// The ID of the Data Catalog where the partition in question resides. If none
-	// is supplied, the AWS account ID is used by default.
+	// is provided, the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
 	// The name of the catalog database where the partition resides.
@@ -19571,7 +22290,7 @@ type GetPartitionsInput struct {
 	_ struct{} `type:"structure"`
 
 	// The ID of the Data Catalog where the partitions in question reside. If none
-	// is supplied, the AWS account ID is used by default.
+	// is provided, the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
 	// The name of the catalog database where the partitions reside.
@@ -19579,7 +22298,7 @@ type GetPartitionsInput struct {
 	// DatabaseName is a required field
 	DatabaseName *string `min:"1" type:"string" required:"true"`
 
-	// An expression filtering the partitions to be returned.
+	// An expression that filters the partitions to be returned.
 	//
 	// The expression uses SQL syntax similar to the SQL WHERE filter clause. The
 	// SQL statement parser JSQLParser (http://jsqlparser.sourceforge.net/home.php)
@@ -19590,7 +22309,7 @@ type GetPartitionsInput struct {
 	//
 	// =
 	//
-	// Checks if the values of the two operands are equal or not; if yes, then the
+	// Checks whether the values of the two operands are equal; if yes, then the
 	// condition becomes true.
 	//
 	// Example: Assume 'variable a' holds 10 and 'variable b' holds 20.
@@ -19599,36 +22318,36 @@ type GetPartitionsInput struct {
 	//
 	// < >
 	//
-	// Checks if the values of two operands are equal or not; if the values are
-	// not equal, then the condition becomes true.
+	// Checks whether the values of two operands are equal; if the values are not
+	// equal, then the condition becomes true.
 	//
 	// Example: (a < > b) is true.
 	//
 	// >
 	//
-	// Checks if the value of the left operand is greater than the value of the
-	// right operand; if yes, then the condition becomes true.
+	// Checks whether the value of the left operand is greater than the value of
+	// the right operand; if yes, then the condition becomes true.
 	//
 	// Example: (a > b) is not true.
 	//
 	// <
 	//
-	// Checks if the value of the left operand is less than the value of the right
-	// operand; if yes, then the condition becomes true.
+	// Checks whether the value of the left operand is less than the value of the
+	// right operand; if yes, then the condition becomes true.
 	//
 	// Example: (a < b) is true.
 	//
 	// >=
 	//
-	// Checks if the value of the left operand is greater than or equal to the value
-	// of the right operand; if yes, then the condition becomes true.
+	// Checks whether the value of the left operand is greater than or equal to
+	// the value of the right operand; if yes, then the condition becomes true.
 	//
 	// Example: (a >= b) is not true.
 	//
 	// <=
 	//
-	// Checks if the value of the left operand is less than or equal to the value
-	// of the right operand; if yes, then the condition becomes true.
+	// Checks whether the value of the left operand is less than or equal to the
+	// value of the right operand; if yes, then the condition becomes true.
 	//
 	// Example: (a <= b) is true.
 	//
@@ -19636,7 +22355,7 @@ type GetPartitionsInput struct {
 	//
 	// Logical operators.
 	//
-	// Supported Partition Key Types: The following are the the supported partition
+	// Supported Partition Key Types: The following are the supported partition
 	// keys.
 	//
 	//    * string
@@ -19769,8 +22488,8 @@ func (s *GetPartitionsInput) SetTableName(v string) *GetPartitionsInput {
 type GetPartitionsOutput struct {
 	_ struct{} `type:"structure"`
 
-	// A continuation token, if the returned list of partitions does not does not
-	// include the last one.
+	// A continuation token, if the returned list of partitions does not include
+	// the last one.
 	NextToken *string `type:"string"`
 
 	// A list of requested partitions.
@@ -20138,7 +22857,7 @@ func (s *GetSecurityConfigurationsOutput) SetSecurityConfigurations(v []*Securit
 type GetTableInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ID of the Data Catalog where the table resides. If none is supplied,
+	// The ID of the Data Catalog where the table resides. If none is provided,
 	// the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
@@ -20212,7 +22931,7 @@ type GetTableOutput struct {
 	_ struct{} `type:"structure"`
 
 	// The Table object that defines the specified table.
-	Table *Table `type:"structure"`
+	Table *TableData `type:"structure"`
 }
 
 // String returns the string representation
@@ -20226,7 +22945,7 @@ func (s GetTableOutput) GoString() string {
 }
 
 // SetTable sets the Table field's value.
-func (s *GetTableOutput) SetTable(v *Table) *GetTableOutput {
+func (s *GetTableOutput) SetTable(v *TableData) *GetTableOutput {
 	s.Table = v
 	return s
 }
@@ -20234,7 +22953,7 @@ func (s *GetTableOutput) SetTable(v *Table) *GetTableOutput {
 type GetTableVersionInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ID of the Data Catalog where the tables reside. If none is supplied,
+	// The ID of the Data Catalog where the tables reside. If none is provided,
 	// the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
@@ -20342,7 +23061,7 @@ func (s *GetTableVersionOutput) SetTableVersion(v *TableVersion) *GetTableVersio
 type GetTableVersionsInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ID of the Data Catalog where the tables reside. If none is supplied,
+	// The ID of the Data Catalog where the tables reside. If none is provided,
 	// the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
@@ -20468,7 +23187,7 @@ func (s *GetTableVersionsOutput) SetTableVersions(v []*TableVersion) *GetTableVe
 type GetTablesInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ID of the Data Catalog where the tables reside. If none is supplied,
+	// The ID of the Data Catalog where the tables reside. If none is provided,
 	// the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
@@ -20558,7 +23277,7 @@ type GetTablesOutput struct {
 	NextToken *string `type:"string"`
 
 	// A list of the requested Table objects.
-	TableList []*Table `type:"list"`
+	TableList []*TableData `type:"list"`
 }
 
 // String returns the string representation
@@ -20578,7 +23297,7 @@ func (s *GetTablesOutput) SetNextToken(v string) *GetTablesOutput {
 }
 
 // SetTableList sets the TableList field's value.
-func (s *GetTablesOutput) SetTableList(v []*Table) *GetTablesOutput {
+func (s *GetTablesOutput) SetTableList(v []*TableData) *GetTablesOutput {
 	s.TableList = v
 	return s
 }
@@ -20805,7 +23524,7 @@ type GetUserDefinedFunctionInput struct {
 	_ struct{} `type:"structure"`
 
 	// The ID of the Data Catalog where the function to be retrieved is located.
-	// If none is supplied, the AWS account ID is used by default.
+	// If none is provided, the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
 	// The name of the catalog database where the function is located.
@@ -20899,7 +23618,7 @@ type GetUserDefinedFunctionsInput struct {
 	_ struct{} `type:"structure"`
 
 	// The ID of the Data Catalog where the functions to be retrieved are located.
-	// If none is supplied, the AWS account ID is used by default.
+	// If none is provided, the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
 	// The name of the catalog database where the functions are located.
@@ -21507,6 +24226,40 @@ func (s ImportCatalogToGlueOutput) GoString() string {
 	return s.String()
 }
 
+// Specifies configuration properties for an importing labels task run.
+type ImportLabelsTaskRunProperties struct {
+	_ struct{} `type:"structure"`
+
+	// The Amazon Simple Storage Service (Amazon S3) path from where you will import
+	// the labels.
+	InputS3Path *string `type:"string"`
+
+	// Indicates whether to overwrite your existing labels.
+	Replace *bool `type:"boolean"`
+}
+
+// String returns the string representation
+func (s ImportLabelsTaskRunProperties) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s ImportLabelsTaskRunProperties) GoString() string {
+	return s.String()
+}
+
+// SetInputS3Path sets the InputS3Path field's value.
+func (s *ImportLabelsTaskRunProperties) SetInputS3Path(v string) *ImportLabelsTaskRunProperties {
+	s.InputS3Path = &v
+	return s
+}
+
+// SetReplace sets the Replace field's value.
+func (s *ImportLabelsTaskRunProperties) SetReplace(v bool) *ImportLabelsTaskRunProperties {
+	s.Replace = &v
+	return s
+}
+
 // Specifies a JDBC data store to crawl.
 type JdbcTarget struct {
 	_ struct{} `type:"structure"`
@@ -21811,13 +24564,13 @@ type JobBookmarkEntry struct {
 	// The name of the job in question.
 	JobName *string `type:"string"`
 
-	// The unique run identifier associated with the previous job run..
+	// The unique run identifier associated with the previous job run.
 	PreviousRunId *string `type:"string"`
 
 	// The run ID number.
 	Run *int64 `type:"integer"`
 
-	// The unique run identifier associated with this job run.
+	// The run ID number.
 	RunId *string `type:"string"`
 
 	// The version of the job.
@@ -22567,6 +25320,31 @@ func (s *JsonClassifier) SetVersion(v int64) *JsonClassifier {
 	return s
 }
 
+// Specifies configuration properties for a labeling set generation task run.
+type LabelingSetGenerationTaskRunProperties struct {
+	_ struct{} `type:"structure"`
+
+	// The Amazon Simple Storage Service (Amazon S3) path where you will generate
+	// the labeling set.
+	OutputS3Path *string `type:"string"`
+}
+
+// String returns the string representation
+func (s LabelingSetGenerationTaskRunProperties) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s LabelingSetGenerationTaskRunProperties) GoString() string {
+	return s.String()
+}
+
+// SetOutputS3Path sets the OutputS3Path field's value.
+func (s *LabelingSetGenerationTaskRunProperties) SetOutputS3Path(v string) *LabelingSetGenerationTaskRunProperties {
+	s.OutputS3Path = &v
+	return s
+}
+
 // Status and error information about the most recent crawl.
 type LastCrawlInfo struct {
 	_ struct{} `type:"structure"`
@@ -23160,6 +25938,207 @@ func (s *Location) SetS3(v []*CodeGenNodeArg) *Location {
 	return s
 }
 
+// A structure for a machine learning transform.
+type MLTransform struct {
+	_ struct{} `type:"structure"`
+
+	// A timestamp. The time and date that this machine learning transform was created.
+	CreatedOn *time.Time `type:"timestamp"`
+
+	// A user-defined, long-form description text for the machine learning transform.
+	// Descriptions are not guaranteed to be unique and can be changed at any time.
+	Description *string `type:"string"`
+
+	// An EvaluationMetrics object. Evaluation metrics provide an estimate of the
+	// quality of your machine learning transform.
+	EvaluationMetrics *EvaluationMetrics `type:"structure"`
+
+	// A list of AWS Glue table definitions used by the transform.
+	InputRecordTables []*Table `type:"list"`
+
+	// A count identifier for the labeling files generated by AWS Glue for this
+	// transform. As you create a better transform, you can iteratively download,
+	// label, and upload the labeling file.
+	LabelCount *int64 `type:"integer"`
+
+	// A timestamp. The last point in time when this machine learning transform
+	// was modified.
+	LastModifiedOn *time.Time `type:"timestamp"`
+
+	// The number of AWS Glue data processing units (DPUs) that are allocated to
+	// task runs for this transform. You can allocate from 2 to 100 DPUs; the default
+	// is 10. A DPU is a relative measure of processing power that consists of 4
+	// vCPUs of compute capacity and 16 GB of memory. For more information, see
+	// the AWS Glue pricing page (https://aws.amazon.com/glue/pricing/).
+	//
+	// When the WorkerType field is set to a value other than Standard, the MaxCapacity
+	// field is set automatically and becomes read-only.
+	MaxCapacity *float64 `type:"double"`
+
+	// The maximum number of times to retry after an MLTaskRun of the machine learning
+	// transform fails.
+	MaxRetries *int64 `type:"integer"`
+
+	// A user-defined name for the machine learning transform. Names are not guaranteed
+	// unique and can be changed at any time.
+	Name *string `min:"1" type:"string"`
+
+	// The number of workers of a defined workerType that are allocated when a task
+	// of the transform runs.
+	NumberOfWorkers *int64 `type:"integer"`
+
+	// A TransformParameters object. You can use parameters to tune (customize)
+	// the behavior of the machine learning transform by specifying what data it
+	// learns from and your preference on various tradeoffs (such as precious vs.
+	// recall, or accuracy vs. cost).
+	Parameters *TransformParameters `type:"structure"`
+
+	// The name or Amazon Resource Name (ARN) of the IAM role with the required
+	// permissions. This role needs permission to your Amazon Simple Storage Service
+	// (Amazon S3) sources, targets, temporary directory, scripts, and any libraries
+	// used by the task run for this transform.
+	Role *string `type:"string"`
+
+	// A map of key-value pairs representing the columns and data types that this
+	// transform can run against. Has an upper bound of 100 columns.
+	Schema []*SchemaColumn `type:"list"`
+
+	// The current status of the machine learning transform.
+	Status *string `type:"string" enum:"TransformStatusType"`
+
+	// The timeout in minutes of the machine learning transform.
+	Timeout *int64 `min:"1" type:"integer"`
+
+	// The unique transform ID that is generated for the machine learning transform.
+	// The ID is guaranteed to be unique and does not change.
+	TransformId *string `min:"1" type:"string"`
+
+	// The type of predefined worker that is allocated when a task of this transform
+	// runs. Accepts a value of Standard, G.1X, or G.2X.
+	//
+	//    * For the Standard worker type, each worker provides 4 vCPU, 16 GB of
+	//    memory and a 50GB disk, and 2 executors per worker.
+	//
+	//    * For the G.1X worker type, each worker provides 4 vCPU, 16 GB of memory
+	//    and a 64GB disk, and 1 executor per worker.
+	//
+	//    * For the G.2X worker type, each worker provides 8 vCPU, 32 GB of memory
+	//    and a 128GB disk, and 1 executor per worker.
+	WorkerType *string `type:"string" enum:"WorkerType"`
+}
+
+// String returns the string representation
+func (s MLTransform) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s MLTransform) GoString() string {
+	return s.String()
+}
+
+// SetCreatedOn sets the CreatedOn field's value.
+func (s *MLTransform) SetCreatedOn(v time.Time) *MLTransform {
+	s.CreatedOn = &v
+	return s
+}
+
+// SetDescription sets the Description field's value.
+func (s *MLTransform) SetDescription(v string) *MLTransform {
+	s.Description = &v
+	return s
+}
+
+// SetEvaluationMetrics sets the EvaluationMetrics field's value.
+func (s *MLTransform) SetEvaluationMetrics(v *EvaluationMetrics) *MLTransform {
+	s.EvaluationMetrics = v
+	return s
+}
+
+// SetInputRecordTables sets the InputRecordTables field's value.
+func (s *MLTransform) SetInputRecordTables(v []*Table) *MLTransform {
+	s.InputRecordTables = v
+	return s
+}
+
+// SetLabelCount sets the LabelCount field's value.
+func (s *MLTransform) SetLabelCount(v int64) *MLTransform {
+	s.LabelCount = &v
+	return s
+}
+
+// SetLastModifiedOn sets the LastModifiedOn field's value.
+func (s *MLTransform) SetLastModifiedOn(v time.Time) *MLTransform {
+	s.LastModifiedOn = &v
+	return s
+}
+
+// SetMaxCapacity sets the MaxCapacity field's value.
+func (s *MLTransform) SetMaxCapacity(v float64) *MLTransform {
+	s.MaxCapacity = &v
+	return s
+}
+
+// SetMaxRetries sets the MaxRetries field's value.
+func (s *MLTransform) SetMaxRetries(v int64) *MLTransform {
+	s.MaxRetries = &v
+	return s
+}
+
+// SetName sets the Name field's value.
+func (s *MLTransform) SetName(v string) *MLTransform {
+	s.Name = &v
+	return s
+}
+
+// SetNumberOfWorkers sets the NumberOfWorkers field's value.
+func (s *MLTransform) SetNumberOfWorkers(v int64) *MLTransform {
+	s.NumberOfWorkers = &v
+	return s
+}
+
+// SetParameters sets the Parameters field's value.
+func (s *MLTransform) SetParameters(v *TransformParameters) *MLTransform {
+	s.Parameters = v
+	return s
+}
+
+// SetRole sets the Role field's value.
+func (s *MLTransform) SetRole(v string) *MLTransform {
+	s.Role = &v
+	return s
+}
+
+// SetSchema sets the Schema field's value.
+func (s *MLTransform) SetSchema(v []*SchemaColumn) *MLTransform {
+	s.Schema = v
+	return s
+}
+
+// SetStatus sets the Status field's value.
+func (s *MLTransform) SetStatus(v string) *MLTransform {
+	s.Status = &v
+	return s
+}
+
+// SetTimeout sets the Timeout field's value.
+func (s *MLTransform) SetTimeout(v int64) *MLTransform {
+	s.Timeout = &v
+	return s
+}
+
+// SetTransformId sets the TransformId field's value.
+func (s *MLTransform) SetTransformId(v string) *MLTransform {
+	s.TransformId = &v
+	return s
+}
+
+// SetWorkerType sets the WorkerType field's value.
+func (s *MLTransform) SetWorkerType(v string) *MLTransform {
+	s.WorkerType = &v
+	return s
+}
+
 // Defines a mapping.
 type MappingEntry struct {
 	_ struct{} `type:"structure"`
@@ -23401,7 +26380,7 @@ type Partition struct {
 	// The time at which the partition was created.
 	CreationTime *time.Time `type:"timestamp"`
 
-	// The name of the catalog database where the table in question is located.
+	// The name of the catalog database in which to create the partition.
 	DatabaseName *string `min:"1" type:"string"`
 
 	// The last time at which the partition was accessed.
@@ -23416,7 +26395,7 @@ type Partition struct {
 	// Provides information about the physical location where the partition is stored.
 	StorageDescriptor *StorageDescriptor `type:"structure"`
 
-	// The name of the table in question.
+	// The name of the database table in which to create the partition.
 	TableName *string `min:"1" type:"string"`
 
 	// The values of the partition.
@@ -23485,7 +26464,7 @@ func (s *Partition) SetValues(v []*string) *Partition {
 type PartitionError struct {
 	_ struct{} `type:"structure"`
 
-	// Details about the partition error.
+	// The details about the partition error.
 	ErrorDetail *ErrorDetail `type:"structure"`
 
 	// The values that define the partition.
@@ -23514,7 +26493,7 @@ func (s *PartitionError) SetPartitionValues(v []*string) *PartitionError {
 	return s
 }
 
-// The structure used to create and update a partion.
+// The structure used to create and update a partition.
 type PartitionInput struct {
 	_ struct{} `type:"structure"`
 
@@ -23532,6 +26511,11 @@ type PartitionInput struct {
 
 	// The values of the partition. Although this parameter is not required by the
 	// SDK, you must specify this parameter for a valid input.
+	//
+	// The values for the keys for the new partition must be passed as an array
+	// of String objects that must be ordered in the same order as the partition
+	// keys appearing in the Amazon S3 prefix. Otherwise AWS Glue will add the values
+	// to the wrong keys.
 	Values []*string `type:"list"`
 }
 
@@ -23777,11 +26761,101 @@ func (s *Predicate) SetLogical(v string) *Predicate {
 	return s
 }
 
+// Permissions granted to a principal.
+type PrincipalPermissions struct {
+	_ struct{} `type:"structure"`
+
+	// The permissions that are granted to the principal.
+	Permissions []*string `type:"list"`
+
+	// The principal who is granted permissions.
+	Principal *DataLakePrincipal `type:"structure"`
+}
+
+// String returns the string representation
+func (s PrincipalPermissions) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s PrincipalPermissions) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *PrincipalPermissions) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "PrincipalPermissions"}
+	if s.Principal != nil {
+		if err := s.Principal.Validate(); err != nil {
+			invalidParams.AddNested("Principal", err.(request.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetPermissions sets the Permissions field's value.
+func (s *PrincipalPermissions) SetPermissions(v []*string) *PrincipalPermissions {
+	s.Permissions = v
+	return s
+}
+
+// SetPrincipal sets the Principal field's value.
+func (s *PrincipalPermissions) SetPrincipal(v *DataLakePrincipal) *PrincipalPermissions {
+	s.Principal = v
+	return s
+}
+
+// Defines a property predicate.
+type PropertyPredicate struct {
+	_ struct{} `type:"structure"`
+
+	// The comparator used to compare this property to others.
+	Comparator *string `type:"string" enum:"Comparator"`
+
+	// The key of the property.
+	Key *string `type:"string"`
+
+	// The value of the property.
+	Value *string `type:"string"`
+}
+
+// String returns the string representation
+func (s PropertyPredicate) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s PropertyPredicate) GoString() string {
+	return s.String()
+}
+
+// SetComparator sets the Comparator field's value.
+func (s *PropertyPredicate) SetComparator(v string) *PropertyPredicate {
+	s.Comparator = &v
+	return s
+}
+
+// SetKey sets the Key field's value.
+func (s *PropertyPredicate) SetKey(v string) *PropertyPredicate {
+	s.Key = &v
+	return s
+}
+
+// SetValue sets the Value field's value.
+func (s *PropertyPredicate) SetValue(v string) *PropertyPredicate {
+	s.Value = &v
+	return s
+}
+
 type PutDataCatalogEncryptionSettingsInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ID of the Data Catalog for which to set the security configuration. If
-	// none is provided, the AWS account ID is used by default.
+	// The ID of the Data Catalog to set the security configuration for. If none
+	// is provided, the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
 	// The security configuration to set.
@@ -24093,7 +27167,7 @@ func (s *ResetJobBookmarkOutput) SetJobBookmarkEntry(v *JobBookmarkEntry) *Reset
 	return s
 }
 
-// URIs for function resources.
+// The URIs for function resources.
 type ResourceUri struct {
 	_ struct{} `type:"structure"`
 
@@ -24275,6 +27349,175 @@ func (s *SchemaChangePolicy) SetUpdateBehavior(v string) *SchemaChangePolicy {
 	return s
 }
 
+// A key-value pair representing a column and data type that this transform
+// can run against. The Schema parameter of the MLTransform may contain up to
+// 100 of these structures.
+type SchemaColumn struct {
+	_ struct{} `type:"structure"`
+
+	// The type of data in the column.
+	DataType *string `type:"string"`
+
+	// The name of the column.
+	Name *string `min:"1" type:"string"`
+}
+
+// String returns the string representation
+func (s SchemaColumn) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s SchemaColumn) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *SchemaColumn) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "SchemaColumn"}
+	if s.Name != nil && len(*s.Name) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("Name", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetDataType sets the DataType field's value.
+func (s *SchemaColumn) SetDataType(v string) *SchemaColumn {
+	s.DataType = &v
+	return s
+}
+
+// SetName sets the Name field's value.
+func (s *SchemaColumn) SetName(v string) *SchemaColumn {
+	s.Name = &v
+	return s
+}
+
+type SearchTablesInput struct {
+	_ struct{} `type:"structure"`
+
+	// A unique identifier, consisting of account_id/datalake.
+	CatalogId *string `min:"1" type:"string"`
+
+	// A list of key-value pairs, and a comparator used to filter the search results.
+	// Returns all entities matching the predicate.
+	Filters []*PropertyPredicate `type:"list"`
+
+	// The maximum number of tables to return in a single response.
+	MaxResults *int64 `min:"1" type:"integer"`
+
+	// A continuation token, included if this is a continuation call.
+	NextToken *string `type:"string"`
+
+	// A string used for a text search.
+	//
+	// Specifying a value in quotes filters based on an exact match to the value.
+	SearchText *string `type:"string"`
+
+	// A list of criteria for sorting the results by a field name, in an ascending
+	// or descending order.
+	SortCriteria []*SortCriterion `type:"list"`
+}
+
+// String returns the string representation
+func (s SearchTablesInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s SearchTablesInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *SearchTablesInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "SearchTablesInput"}
+	if s.CatalogId != nil && len(*s.CatalogId) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("CatalogId", 1))
+	}
+	if s.MaxResults != nil && *s.MaxResults < 1 {
+		invalidParams.Add(request.NewErrParamMinValue("MaxResults", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetCatalogId sets the CatalogId field's value.
+func (s *SearchTablesInput) SetCatalogId(v string) *SearchTablesInput {
+	s.CatalogId = &v
+	return s
+}
+
+// SetFilters sets the Filters field's value.
+func (s *SearchTablesInput) SetFilters(v []*PropertyPredicate) *SearchTablesInput {
+	s.Filters = v
+	return s
+}
+
+// SetMaxResults sets the MaxResults field's value.
+func (s *SearchTablesInput) SetMaxResults(v int64) *SearchTablesInput {
+	s.MaxResults = &v
+	return s
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *SearchTablesInput) SetNextToken(v string) *SearchTablesInput {
+	s.NextToken = &v
+	return s
+}
+
+// SetSearchText sets the SearchText field's value.
+func (s *SearchTablesInput) SetSearchText(v string) *SearchTablesInput {
+	s.SearchText = &v
+	return s
+}
+
+// SetSortCriteria sets the SortCriteria field's value.
+func (s *SearchTablesInput) SetSortCriteria(v []*SortCriterion) *SearchTablesInput {
+	s.SortCriteria = v
+	return s
+}
+
+type SearchTablesOutput struct {
+	_ struct{} `type:"structure"`
+
+	// A continuation token, present if the current list segment is not the last.
+	NextToken *string `type:"string"`
+
+	// A list of the requested Table objects. The SearchTables response returns
+	// only the tables that you have access to.
+	TableList []*TableData `type:"list"`
+}
+
+// String returns the string representation
+func (s SearchTablesOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s SearchTablesOutput) GoString() string {
+	return s.String()
+}
+
+// SetNextToken sets the NextToken field's value.
+func (s *SearchTablesOutput) SetNextToken(v string) *SearchTablesOutput {
+	s.NextToken = &v
+	return s
+}
+
+// SetTableList sets the TableList field's value.
+func (s *SearchTablesOutput) SetTableList(v []*TableData) *SearchTablesOutput {
+	s.TableList = v
+	return s
+}
+
 // Specifies a security configuration.
 type SecurityConfiguration struct {
 	_ struct{} `type:"structure"`
@@ -24322,14 +27565,13 @@ func (s *SecurityConfiguration) SetName(v string) *SecurityConfiguration {
 type Segment struct {
 	_ struct{} `type:"structure"`
 
-	// The zero-based index number of the this segment. For example, if the total
-	// number of segments is 4, SegmentNumber values will range from zero through
-	// three.
+	// The zero-based index number of the segment. For example, if the total number
+	// of segments is 4, SegmentNumber values range from 0 through 3.
 	//
 	// SegmentNumber is a required field
 	SegmentNumber *int64 `type:"integer" required:"true"`
 
-	// The total numer of segments.
+	// The total number of segments.
 	//
 	// TotalSegments is a required field
 	TotalSegments *int64 `min:"1" type:"integer" required:"true"`
@@ -24376,7 +27618,7 @@ func (s *Segment) SetTotalSegments(v int64) *Segment {
 	return s
 }
 
-// Information about a serialization/deserialization program (SerDe) which serves
+// Information about a serialization/deserialization program (SerDe) that serves
 // as an extractor and loader.
 type SerDeInfo struct {
 	_ struct{} `type:"structure"`
@@ -24387,7 +27629,7 @@ type SerDeInfo struct {
 	// These key-value pairs define initialization parameters for the SerDe.
 	Parameters map[string]*string `type:"map"`
 
-	// Usually the class that implements the SerDe. An example is: org.apache.hadoop.hive.serde2.columnar.ColumnarSerDe.
+	// Usually the class that implements the SerDe. An example is org.apache.hadoop.hive.serde2.columnar.ColumnarSerDe.
 	SerializationLibrary *string `min:"1" type:"string"`
 }
 
@@ -24435,8 +27677,8 @@ func (s *SerDeInfo) SetSerializationLibrary(v string) *SerDeInfo {
 	return s
 }
 
-// Specifies skewed values in a table. Skewed are ones that occur with very
-// high frequency.
+// Specifies skewed values in a table. Skewed values are those that occur with
+// very high frequency.
 type SkewedInfo struct {
 	_ struct{} `type:"structure"`
 
@@ -24475,6 +27717,39 @@ func (s *SkewedInfo) SetSkewedColumnValueLocationMaps(v map[string]*string) *Ske
 // SetSkewedColumnValues sets the SkewedColumnValues field's value.
 func (s *SkewedInfo) SetSkewedColumnValues(v []*string) *SkewedInfo {
 	s.SkewedColumnValues = v
+	return s
+}
+
+// Specifies a field to sort by and a sort order.
+type SortCriterion struct {
+	_ struct{} `type:"structure"`
+
+	// The name of the field on which to sort.
+	FieldName *string `type:"string"`
+
+	// An ascending or descending sort.
+	Sort *string `type:"string" enum:"Sort"`
+}
+
+// String returns the string representation
+func (s SortCriterion) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s SortCriterion) GoString() string {
+	return s.String()
+}
+
+// SetFieldName sets the FieldName field's value.
+func (s *SortCriterion) SetFieldName(v string) *SortCriterion {
+	s.FieldName = &v
+	return s
+}
+
+// SetSort sets the Sort field's value.
+func (s *SortCriterion) SetSort(v string) *SortCriterion {
+	s.Sort = &v
 	return s
 }
 
@@ -24586,6 +27861,172 @@ func (s StartCrawlerScheduleOutput) String() string {
 // GoString returns the string representation
 func (s StartCrawlerScheduleOutput) GoString() string {
 	return s.String()
+}
+
+type StartExportLabelsTaskRunInput struct {
+	_ struct{} `type:"structure"`
+
+	// The Amazon S3 path where you export the labels.
+	//
+	// OutputS3Path is a required field
+	OutputS3Path *string `type:"string" required:"true"`
+
+	// The unique identifier of the machine learning transform.
+	//
+	// TransformId is a required field
+	TransformId *string `min:"1" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s StartExportLabelsTaskRunInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s StartExportLabelsTaskRunInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *StartExportLabelsTaskRunInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "StartExportLabelsTaskRunInput"}
+	if s.OutputS3Path == nil {
+		invalidParams.Add(request.NewErrParamRequired("OutputS3Path"))
+	}
+	if s.TransformId == nil {
+		invalidParams.Add(request.NewErrParamRequired("TransformId"))
+	}
+	if s.TransformId != nil && len(*s.TransformId) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("TransformId", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetOutputS3Path sets the OutputS3Path field's value.
+func (s *StartExportLabelsTaskRunInput) SetOutputS3Path(v string) *StartExportLabelsTaskRunInput {
+	s.OutputS3Path = &v
+	return s
+}
+
+// SetTransformId sets the TransformId field's value.
+func (s *StartExportLabelsTaskRunInput) SetTransformId(v string) *StartExportLabelsTaskRunInput {
+	s.TransformId = &v
+	return s
+}
+
+type StartExportLabelsTaskRunOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The unique identifier for the task run.
+	TaskRunId *string `min:"1" type:"string"`
+}
+
+// String returns the string representation
+func (s StartExportLabelsTaskRunOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s StartExportLabelsTaskRunOutput) GoString() string {
+	return s.String()
+}
+
+// SetTaskRunId sets the TaskRunId field's value.
+func (s *StartExportLabelsTaskRunOutput) SetTaskRunId(v string) *StartExportLabelsTaskRunOutput {
+	s.TaskRunId = &v
+	return s
+}
+
+type StartImportLabelsTaskRunInput struct {
+	_ struct{} `type:"structure"`
+
+	// The Amazon Simple Storage Service (Amazon S3) path from where you import
+	// the labels.
+	//
+	// InputS3Path is a required field
+	InputS3Path *string `type:"string" required:"true"`
+
+	// Indicates whether to overwrite your existing labels.
+	ReplaceAllLabels *bool `type:"boolean"`
+
+	// The unique identifier of the machine learning transform.
+	//
+	// TransformId is a required field
+	TransformId *string `min:"1" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s StartImportLabelsTaskRunInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s StartImportLabelsTaskRunInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *StartImportLabelsTaskRunInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "StartImportLabelsTaskRunInput"}
+	if s.InputS3Path == nil {
+		invalidParams.Add(request.NewErrParamRequired("InputS3Path"))
+	}
+	if s.TransformId == nil {
+		invalidParams.Add(request.NewErrParamRequired("TransformId"))
+	}
+	if s.TransformId != nil && len(*s.TransformId) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("TransformId", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetInputS3Path sets the InputS3Path field's value.
+func (s *StartImportLabelsTaskRunInput) SetInputS3Path(v string) *StartImportLabelsTaskRunInput {
+	s.InputS3Path = &v
+	return s
+}
+
+// SetReplaceAllLabels sets the ReplaceAllLabels field's value.
+func (s *StartImportLabelsTaskRunInput) SetReplaceAllLabels(v bool) *StartImportLabelsTaskRunInput {
+	s.ReplaceAllLabels = &v
+	return s
+}
+
+// SetTransformId sets the TransformId field's value.
+func (s *StartImportLabelsTaskRunInput) SetTransformId(v string) *StartImportLabelsTaskRunInput {
+	s.TransformId = &v
+	return s
+}
+
+type StartImportLabelsTaskRunOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The unique identifier for the task run.
+	TaskRunId *string `min:"1" type:"string"`
+}
+
+// String returns the string representation
+func (s StartImportLabelsTaskRunOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s StartImportLabelsTaskRunOutput) GoString() string {
+	return s.String()
+}
+
+// SetTaskRunId sets the TaskRunId field's value.
+func (s *StartImportLabelsTaskRunOutput) SetTaskRunId(v string) *StartImportLabelsTaskRunOutput {
+	s.TaskRunId = &v
+	return s
 }
 
 type StartJobRunInput struct {
@@ -24797,6 +28238,149 @@ func (s StartJobRunOutput) GoString() string {
 // SetJobRunId sets the JobRunId field's value.
 func (s *StartJobRunOutput) SetJobRunId(v string) *StartJobRunOutput {
 	s.JobRunId = &v
+	return s
+}
+
+type StartMLEvaluationTaskRunInput struct {
+	_ struct{} `type:"structure"`
+
+	// The unique identifier of the machine learning transform.
+	//
+	// TransformId is a required field
+	TransformId *string `min:"1" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s StartMLEvaluationTaskRunInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s StartMLEvaluationTaskRunInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *StartMLEvaluationTaskRunInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "StartMLEvaluationTaskRunInput"}
+	if s.TransformId == nil {
+		invalidParams.Add(request.NewErrParamRequired("TransformId"))
+	}
+	if s.TransformId != nil && len(*s.TransformId) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("TransformId", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetTransformId sets the TransformId field's value.
+func (s *StartMLEvaluationTaskRunInput) SetTransformId(v string) *StartMLEvaluationTaskRunInput {
+	s.TransformId = &v
+	return s
+}
+
+type StartMLEvaluationTaskRunOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The unique identifier associated with this run.
+	TaskRunId *string `min:"1" type:"string"`
+}
+
+// String returns the string representation
+func (s StartMLEvaluationTaskRunOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s StartMLEvaluationTaskRunOutput) GoString() string {
+	return s.String()
+}
+
+// SetTaskRunId sets the TaskRunId field's value.
+func (s *StartMLEvaluationTaskRunOutput) SetTaskRunId(v string) *StartMLEvaluationTaskRunOutput {
+	s.TaskRunId = &v
+	return s
+}
+
+type StartMLLabelingSetGenerationTaskRunInput struct {
+	_ struct{} `type:"structure"`
+
+	// The Amazon Simple Storage Service (Amazon S3) path where you generate the
+	// labeling set.
+	//
+	// OutputS3Path is a required field
+	OutputS3Path *string `type:"string" required:"true"`
+
+	// The unique identifier of the machine learning transform.
+	//
+	// TransformId is a required field
+	TransformId *string `min:"1" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s StartMLLabelingSetGenerationTaskRunInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s StartMLLabelingSetGenerationTaskRunInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *StartMLLabelingSetGenerationTaskRunInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "StartMLLabelingSetGenerationTaskRunInput"}
+	if s.OutputS3Path == nil {
+		invalidParams.Add(request.NewErrParamRequired("OutputS3Path"))
+	}
+	if s.TransformId == nil {
+		invalidParams.Add(request.NewErrParamRequired("TransformId"))
+	}
+	if s.TransformId != nil && len(*s.TransformId) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("TransformId", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetOutputS3Path sets the OutputS3Path field's value.
+func (s *StartMLLabelingSetGenerationTaskRunInput) SetOutputS3Path(v string) *StartMLLabelingSetGenerationTaskRunInput {
+	s.OutputS3Path = &v
+	return s
+}
+
+// SetTransformId sets the TransformId field's value.
+func (s *StartMLLabelingSetGenerationTaskRunInput) SetTransformId(v string) *StartMLLabelingSetGenerationTaskRunInput {
+	s.TransformId = &v
+	return s
+}
+
+type StartMLLabelingSetGenerationTaskRunOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The unique run identifier that is associated with this task run.
+	TaskRunId *string `min:"1" type:"string"`
+}
+
+// String returns the string representation
+func (s StartMLLabelingSetGenerationTaskRunOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s StartMLLabelingSetGenerationTaskRunOutput) GoString() string {
+	return s.String()
+}
+
+// SetTaskRunId sets the TaskRunId field's value.
+func (s *StartMLLabelingSetGenerationTaskRunOutput) SetTaskRunId(v string) *StartMLLabelingSetGenerationTaskRunOutput {
+	s.TaskRunId = &v
 	return s
 }
 
@@ -25120,7 +28704,7 @@ type StorageDescriptor struct {
 	// a custom format.
 	InputFormat *string `type:"string"`
 
-	// The physical location of the table. By default this takes the form of the
+	// The physical location of the table. By default, this takes the form of the
 	// warehouse location, followed by the database location in the warehouse, followed
 	// by the table name.
 	Location *string `type:"string"`
@@ -25132,14 +28716,13 @@ type StorageDescriptor struct {
 	// or a custom format.
 	OutputFormat *string `type:"string"`
 
-	// User-supplied properties in key-value form.
+	// The user-supplied properties in key-value form.
 	Parameters map[string]*string `type:"map"`
 
-	// Serialization/deserialization (SerDe) information.
+	// The serialization/deserialization (SerDe) information.
 	SerdeInfo *SerDeInfo `type:"structure"`
 
-	// Information about values that appear very frequently in a column (skewed
-	// values).
+	// The information about values that appear frequently in a column (skewed values).
 	SkewedInfo *SkewedInfo `type:"structure"`
 
 	// A list specifying the sort order of each bucket in the table.
@@ -25266,68 +28849,26 @@ func (s *StorageDescriptor) SetStoredAsSubDirectories(v bool) *StorageDescriptor
 	return s
 }
 
-// Represents a collection of related data organized in columns and rows.
+// The database and table in the AWS Glue Data Catalog that is used for input
+// or output data.
 type Table struct {
 	_ struct{} `type:"structure"`
 
-	// Time when the table definition was created in the Data Catalog.
-	CreateTime *time.Time `type:"timestamp"`
+	// A unique identifier for the AWS Glue Data Catalog.
+	CatalogId *string `min:"1" type:"string"`
 
-	// Person or entity who created the table.
-	CreatedBy *string `min:"1" type:"string"`
+	// The name of the connection to the AWS Glue Data Catalog.
+	ConnectionName *string `min:"1" type:"string"`
 
-	// Name of the metadata database where the table metadata resides. For Hive
-	// compatibility, this must be all lowercase.
-	DatabaseName *string `min:"1" type:"string"`
-
-	// Description of the table.
-	Description *string `type:"string"`
-
-	// Last time the table was accessed. This is usually taken from HDFS, and may
-	// not be reliable.
-	LastAccessTime *time.Time `type:"timestamp"`
-
-	// Last time column statistics were computed for this table.
-	LastAnalyzedTime *time.Time `type:"timestamp"`
-
-	// Name of the table. For Hive compatibility, this must be entirely lowercase.
+	// A database name in the AWS Glue Data Catalog.
 	//
-	// Name is a required field
-	Name *string `min:"1" type:"string" required:"true"`
+	// DatabaseName is a required field
+	DatabaseName *string `min:"1" type:"string" required:"true"`
 
-	// Owner of the table.
-	Owner *string `min:"1" type:"string"`
-
-	// These key-value pairs define properties associated with the table.
-	Parameters map[string]*string `type:"map"`
-
-	// A list of columns by which the table is partitioned. Only primitive types
-	// are supported as partition keys.
+	// A table name in the AWS Glue Data Catalog.
 	//
-	// When creating a table used by Athena, and you do not specify any partitionKeys,
-	// you must at least set the value of partitionKeys to an empty list. For example:
-	//
-	// "PartitionKeys": []
-	PartitionKeys []*Column `type:"list"`
-
-	// Retention time for this table.
-	Retention *int64 `type:"integer"`
-
-	// A storage descriptor containing information about the physical storage of
-	// this table.
-	StorageDescriptor *StorageDescriptor `type:"structure"`
-
-	// The type of this table (EXTERNAL_TABLE, VIRTUAL_VIEW, etc.).
-	TableType *string `type:"string"`
-
-	// Last time the table was updated.
-	UpdateTime *time.Time `type:"timestamp"`
-
-	// If the table is a view, the expanded text of the view; otherwise null.
-	ViewExpandedText *string `type:"string"`
-
-	// If the table is a view, the original text of the view; otherwise null.
-	ViewOriginalText *string `type:"string"`
+	// TableName is a required field
+	TableName *string `min:"1" type:"string" required:"true"`
 }
 
 // String returns the string representation
@@ -25340,15 +28881,43 @@ func (s Table) GoString() string {
 	return s.String()
 }
 
-// SetCreateTime sets the CreateTime field's value.
-func (s *Table) SetCreateTime(v time.Time) *Table {
-	s.CreateTime = &v
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *Table) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "Table"}
+	if s.CatalogId != nil && len(*s.CatalogId) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("CatalogId", 1))
+	}
+	if s.ConnectionName != nil && len(*s.ConnectionName) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("ConnectionName", 1))
+	}
+	if s.DatabaseName == nil {
+		invalidParams.Add(request.NewErrParamRequired("DatabaseName"))
+	}
+	if s.DatabaseName != nil && len(*s.DatabaseName) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("DatabaseName", 1))
+	}
+	if s.TableName == nil {
+		invalidParams.Add(request.NewErrParamRequired("TableName"))
+	}
+	if s.TableName != nil && len(*s.TableName) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("TableName", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetCatalogId sets the CatalogId field's value.
+func (s *Table) SetCatalogId(v string) *Table {
+	s.CatalogId = &v
 	return s
 }
 
-// SetCreatedBy sets the CreatedBy field's value.
-func (s *Table) SetCreatedBy(v string) *Table {
-	s.CreatedBy = &v
+// SetConnectionName sets the ConnectionName field's value.
+func (s *Table) SetConnectionName(v string) *Table {
+	s.ConnectionName = &v
 	return s
 }
 
@@ -25358,80 +28927,188 @@ func (s *Table) SetDatabaseName(v string) *Table {
 	return s
 }
 
+// SetTableName sets the TableName field's value.
+func (s *Table) SetTableName(v string) *Table {
+	s.TableName = &v
+	return s
+}
+
+// Represents a collection of related data organized in columns and rows.
+type TableData struct {
+	_ struct{} `type:"structure"`
+
+	// The time when the table definition was created in the Data Catalog.
+	CreateTime *time.Time `type:"timestamp"`
+
+	// The person or entity who created the table.
+	CreatedBy *string `min:"1" type:"string"`
+
+	// The name of the database where the table metadata resides. For Hive compatibility,
+	// this must be all lowercase.
+	DatabaseName *string `min:"1" type:"string"`
+
+	// A description of the table.
+	Description *string `type:"string"`
+
+	// Indicates whether the table has been registered with AWS Lake Formation.
+	IsRegisteredWithLakeFormation *bool `type:"boolean"`
+
+	// The last time that the table was accessed. This is usually taken from HDFS,
+	// and might not be reliable.
+	LastAccessTime *time.Time `type:"timestamp"`
+
+	// The last time that column statistics were computed for this table.
+	LastAnalyzedTime *time.Time `type:"timestamp"`
+
+	// The table name. For Hive compatibility, this must be entirely lowercase.
+	//
+	// Name is a required field
+	Name *string `min:"1" type:"string" required:"true"`
+
+	// The owner of the table.
+	Owner *string `min:"1" type:"string"`
+
+	// These key-value pairs define properties associated with the table.
+	Parameters map[string]*string `type:"map"`
+
+	// A list of columns by which the table is partitioned. Only primitive types
+	// are supported as partition keys.
+	//
+	// When you create a table used by Amazon Athena, and you do not specify any
+	// partitionKeys, you must at least set the value of partitionKeys to an empty
+	// list. For example:
+	//
+	// "PartitionKeys": []
+	PartitionKeys []*Column `type:"list"`
+
+	// The retention time for this table.
+	Retention *int64 `type:"integer"`
+
+	// A storage descriptor containing information about the physical storage of
+	// this table.
+	StorageDescriptor *StorageDescriptor `type:"structure"`
+
+	// The type of this table (EXTERNAL_TABLE, VIRTUAL_VIEW, etc.).
+	TableType *string `type:"string"`
+
+	// The last time that the table was updated.
+	UpdateTime *time.Time `type:"timestamp"`
+
+	// If the table is a view, the expanded text of the view; otherwise null.
+	ViewExpandedText *string `type:"string"`
+
+	// If the table is a view, the original text of the view; otherwise null.
+	ViewOriginalText *string `type:"string"`
+}
+
+// String returns the string representation
+func (s TableData) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s TableData) GoString() string {
+	return s.String()
+}
+
+// SetCreateTime sets the CreateTime field's value.
+func (s *TableData) SetCreateTime(v time.Time) *TableData {
+	s.CreateTime = &v
+	return s
+}
+
+// SetCreatedBy sets the CreatedBy field's value.
+func (s *TableData) SetCreatedBy(v string) *TableData {
+	s.CreatedBy = &v
+	return s
+}
+
+// SetDatabaseName sets the DatabaseName field's value.
+func (s *TableData) SetDatabaseName(v string) *TableData {
+	s.DatabaseName = &v
+	return s
+}
+
 // SetDescription sets the Description field's value.
-func (s *Table) SetDescription(v string) *Table {
+func (s *TableData) SetDescription(v string) *TableData {
 	s.Description = &v
 	return s
 }
 
+// SetIsRegisteredWithLakeFormation sets the IsRegisteredWithLakeFormation field's value.
+func (s *TableData) SetIsRegisteredWithLakeFormation(v bool) *TableData {
+	s.IsRegisteredWithLakeFormation = &v
+	return s
+}
+
 // SetLastAccessTime sets the LastAccessTime field's value.
-func (s *Table) SetLastAccessTime(v time.Time) *Table {
+func (s *TableData) SetLastAccessTime(v time.Time) *TableData {
 	s.LastAccessTime = &v
 	return s
 }
 
 // SetLastAnalyzedTime sets the LastAnalyzedTime field's value.
-func (s *Table) SetLastAnalyzedTime(v time.Time) *Table {
+func (s *TableData) SetLastAnalyzedTime(v time.Time) *TableData {
 	s.LastAnalyzedTime = &v
 	return s
 }
 
 // SetName sets the Name field's value.
-func (s *Table) SetName(v string) *Table {
+func (s *TableData) SetName(v string) *TableData {
 	s.Name = &v
 	return s
 }
 
 // SetOwner sets the Owner field's value.
-func (s *Table) SetOwner(v string) *Table {
+func (s *TableData) SetOwner(v string) *TableData {
 	s.Owner = &v
 	return s
 }
 
 // SetParameters sets the Parameters field's value.
-func (s *Table) SetParameters(v map[string]*string) *Table {
+func (s *TableData) SetParameters(v map[string]*string) *TableData {
 	s.Parameters = v
 	return s
 }
 
 // SetPartitionKeys sets the PartitionKeys field's value.
-func (s *Table) SetPartitionKeys(v []*Column) *Table {
+func (s *TableData) SetPartitionKeys(v []*Column) *TableData {
 	s.PartitionKeys = v
 	return s
 }
 
 // SetRetention sets the Retention field's value.
-func (s *Table) SetRetention(v int64) *Table {
+func (s *TableData) SetRetention(v int64) *TableData {
 	s.Retention = &v
 	return s
 }
 
 // SetStorageDescriptor sets the StorageDescriptor field's value.
-func (s *Table) SetStorageDescriptor(v *StorageDescriptor) *Table {
+func (s *TableData) SetStorageDescriptor(v *StorageDescriptor) *TableData {
 	s.StorageDescriptor = v
 	return s
 }
 
 // SetTableType sets the TableType field's value.
-func (s *Table) SetTableType(v string) *Table {
+func (s *TableData) SetTableType(v string) *TableData {
 	s.TableType = &v
 	return s
 }
 
 // SetUpdateTime sets the UpdateTime field's value.
-func (s *Table) SetUpdateTime(v time.Time) *Table {
+func (s *TableData) SetUpdateTime(v time.Time) *TableData {
 	s.UpdateTime = &v
 	return s
 }
 
 // SetViewExpandedText sets the ViewExpandedText field's value.
-func (s *Table) SetViewExpandedText(v string) *Table {
+func (s *TableData) SetViewExpandedText(v string) *TableData {
 	s.ViewExpandedText = &v
 	return s
 }
 
 // SetViewOriginalText sets the ViewOriginalText field's value.
-func (s *Table) SetViewOriginalText(v string) *Table {
+func (s *TableData) SetViewOriginalText(v string) *TableData {
 	s.ViewOriginalText = &v
 	return s
 }
@@ -25440,10 +29117,10 @@ func (s *Table) SetViewOriginalText(v string) *Table {
 type TableError struct {
 	_ struct{} `type:"structure"`
 
-	// Detail about the error.
+	// The details about the error.
 	ErrorDetail *ErrorDetail `type:"structure"`
 
-	// Name of the table. For Hive compatibility, this must be entirely lowercase.
+	// The name of the table. For Hive compatibility, this must be entirely lowercase.
 	TableName *string `min:"1" type:"string"`
 }
 
@@ -25469,26 +29146,26 @@ func (s *TableError) SetTableName(v string) *TableError {
 	return s
 }
 
-// Structure used to create or update the table.
+// A structure used to define a table.
 type TableInput struct {
 	_ struct{} `type:"structure"`
 
-	// Description of the table.
+	// A description of the table.
 	Description *string `type:"string"`
 
-	// Last time the table was accessed.
+	// The last time that the table was accessed.
 	LastAccessTime *time.Time `type:"timestamp"`
 
-	// Last time column statistics were computed for this table.
+	// The last time that column statistics were computed for this table.
 	LastAnalyzedTime *time.Time `type:"timestamp"`
 
-	// Name of the table. For Hive compatibility, this is folded to lowercase when
+	// The table name. For Hive compatibility, this is folded to lowercase when
 	// it is stored.
 	//
 	// Name is a required field
 	Name *string `min:"1" type:"string" required:"true"`
 
-	// Owner of the table.
+	// The table owner.
 	Owner *string `min:"1" type:"string"`
 
 	// These key-value pairs define properties associated with the table.
@@ -25497,13 +29174,14 @@ type TableInput struct {
 	// A list of columns by which the table is partitioned. Only primitive types
 	// are supported as partition keys.
 	//
-	// When creating a table used by Athena, and you do not specify any partitionKeys,
-	// you must at least set the value of partitionKeys to an empty list. For example:
+	// When you create a table used by Amazon Athena, and you do not specify any
+	// partitionKeys, you must at least set the value of partitionKeys to an empty
+	// list. For example:
 	//
 	// "PartitionKeys": []
 	PartitionKeys []*Column `type:"list"`
 
-	// Retention time for this table.
+	// The retention time for this table.
 	Retention *int64 `type:"integer"`
 
 	// A storage descriptor containing information about the physical storage of
@@ -25640,8 +29318,8 @@ func (s *TableInput) SetViewOriginalText(v string) *TableInput {
 type TableVersion struct {
 	_ struct{} `type:"structure"`
 
-	// The table in question
-	Table *Table `type:"structure"`
+	// The table in question.
+	Table *TableData `type:"structure"`
 
 	// The ID value that identifies this table version. A VersionId is a string
 	// representation of an integer. Each version is incremented by 1.
@@ -25659,7 +29337,7 @@ func (s TableVersion) GoString() string {
 }
 
 // SetTable sets the Table field's value.
-func (s *TableVersion) SetTable(v *Table) *TableVersion {
+func (s *TableVersion) SetTable(v *TableData) *TableVersion {
 	s.Table = v
 	return s
 }
@@ -25674,7 +29352,7 @@ func (s *TableVersion) SetVersionId(v string) *TableVersion {
 type TableVersionError struct {
 	_ struct{} `type:"structure"`
 
-	// Detail about the error.
+	// The details about the error.
 	ErrorDetail *ErrorDetail `type:"structure"`
 
 	// The name of the table in question.
@@ -25781,6 +29459,508 @@ func (s TagResourceOutput) String() string {
 // GoString returns the string representation
 func (s TagResourceOutput) GoString() string {
 	return s.String()
+}
+
+// The sampling parameters that are associated with the machine learning transform.
+type TaskRun struct {
+	_ struct{} `type:"structure"`
+
+	// The last point in time that the requested task run was completed.
+	CompletedOn *time.Time `type:"timestamp"`
+
+	// The list of error strings associated with this task run.
+	ErrorString *string `type:"string"`
+
+	// The amount of time (in seconds) that the task run consumed resources.
+	ExecutionTime *int64 `type:"integer"`
+
+	// The last point in time that the requested task run was updated.
+	LastModifiedOn *time.Time `type:"timestamp"`
+
+	// The names of the log group for secure logging, associated with this task
+	// run.
+	LogGroupName *string `type:"string"`
+
+	// Specifies configuration properties associated with this task run.
+	Properties *TaskRunProperties `type:"structure"`
+
+	// The date and time that this task run started.
+	StartedOn *time.Time `type:"timestamp"`
+
+	// The current status of the requested task run.
+	Status *string `type:"string" enum:"TaskStatusType"`
+
+	// The unique identifier for this task run.
+	TaskRunId *string `min:"1" type:"string"`
+
+	// The unique identifier for the transform.
+	TransformId *string `min:"1" type:"string"`
+}
+
+// String returns the string representation
+func (s TaskRun) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s TaskRun) GoString() string {
+	return s.String()
+}
+
+// SetCompletedOn sets the CompletedOn field's value.
+func (s *TaskRun) SetCompletedOn(v time.Time) *TaskRun {
+	s.CompletedOn = &v
+	return s
+}
+
+// SetErrorString sets the ErrorString field's value.
+func (s *TaskRun) SetErrorString(v string) *TaskRun {
+	s.ErrorString = &v
+	return s
+}
+
+// SetExecutionTime sets the ExecutionTime field's value.
+func (s *TaskRun) SetExecutionTime(v int64) *TaskRun {
+	s.ExecutionTime = &v
+	return s
+}
+
+// SetLastModifiedOn sets the LastModifiedOn field's value.
+func (s *TaskRun) SetLastModifiedOn(v time.Time) *TaskRun {
+	s.LastModifiedOn = &v
+	return s
+}
+
+// SetLogGroupName sets the LogGroupName field's value.
+func (s *TaskRun) SetLogGroupName(v string) *TaskRun {
+	s.LogGroupName = &v
+	return s
+}
+
+// SetProperties sets the Properties field's value.
+func (s *TaskRun) SetProperties(v *TaskRunProperties) *TaskRun {
+	s.Properties = v
+	return s
+}
+
+// SetStartedOn sets the StartedOn field's value.
+func (s *TaskRun) SetStartedOn(v time.Time) *TaskRun {
+	s.StartedOn = &v
+	return s
+}
+
+// SetStatus sets the Status field's value.
+func (s *TaskRun) SetStatus(v string) *TaskRun {
+	s.Status = &v
+	return s
+}
+
+// SetTaskRunId sets the TaskRunId field's value.
+func (s *TaskRun) SetTaskRunId(v string) *TaskRun {
+	s.TaskRunId = &v
+	return s
+}
+
+// SetTransformId sets the TransformId field's value.
+func (s *TaskRun) SetTransformId(v string) *TaskRun {
+	s.TransformId = &v
+	return s
+}
+
+// The criteria that are used to filter the task runs for the machine learning
+// transform.
+type TaskRunFilterCriteria struct {
+	_ struct{} `type:"structure"`
+
+	// Filter on task runs started after this date.
+	StartedAfter *time.Time `type:"timestamp"`
+
+	// Filter on task runs started before this date.
+	StartedBefore *time.Time `type:"timestamp"`
+
+	// The current status of the task run.
+	Status *string `type:"string" enum:"TaskStatusType"`
+
+	// The type of task run.
+	TaskRunType *string `type:"string" enum:"TaskType"`
+}
+
+// String returns the string representation
+func (s TaskRunFilterCriteria) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s TaskRunFilterCriteria) GoString() string {
+	return s.String()
+}
+
+// SetStartedAfter sets the StartedAfter field's value.
+func (s *TaskRunFilterCriteria) SetStartedAfter(v time.Time) *TaskRunFilterCriteria {
+	s.StartedAfter = &v
+	return s
+}
+
+// SetStartedBefore sets the StartedBefore field's value.
+func (s *TaskRunFilterCriteria) SetStartedBefore(v time.Time) *TaskRunFilterCriteria {
+	s.StartedBefore = &v
+	return s
+}
+
+// SetStatus sets the Status field's value.
+func (s *TaskRunFilterCriteria) SetStatus(v string) *TaskRunFilterCriteria {
+	s.Status = &v
+	return s
+}
+
+// SetTaskRunType sets the TaskRunType field's value.
+func (s *TaskRunFilterCriteria) SetTaskRunType(v string) *TaskRunFilterCriteria {
+	s.TaskRunType = &v
+	return s
+}
+
+// The configuration properties for the task run.
+type TaskRunProperties struct {
+	_ struct{} `type:"structure"`
+
+	// The configuration properties for an exporting labels task run.
+	ExportLabelsTaskRunProperties *ExportLabelsTaskRunProperties `type:"structure"`
+
+	// The configuration properties for a find matches task run.
+	FindMatchesTaskRunProperties *FindMatchesTaskRunProperties `type:"structure"`
+
+	// The configuration properties for an importing labels task run.
+	ImportLabelsTaskRunProperties *ImportLabelsTaskRunProperties `type:"structure"`
+
+	// The configuration properties for a labeling set generation task run.
+	LabelingSetGenerationTaskRunProperties *LabelingSetGenerationTaskRunProperties `type:"structure"`
+
+	// The type of task run.
+	TaskType *string `type:"string" enum:"TaskType"`
+}
+
+// String returns the string representation
+func (s TaskRunProperties) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s TaskRunProperties) GoString() string {
+	return s.String()
+}
+
+// SetExportLabelsTaskRunProperties sets the ExportLabelsTaskRunProperties field's value.
+func (s *TaskRunProperties) SetExportLabelsTaskRunProperties(v *ExportLabelsTaskRunProperties) *TaskRunProperties {
+	s.ExportLabelsTaskRunProperties = v
+	return s
+}
+
+// SetFindMatchesTaskRunProperties sets the FindMatchesTaskRunProperties field's value.
+func (s *TaskRunProperties) SetFindMatchesTaskRunProperties(v *FindMatchesTaskRunProperties) *TaskRunProperties {
+	s.FindMatchesTaskRunProperties = v
+	return s
+}
+
+// SetImportLabelsTaskRunProperties sets the ImportLabelsTaskRunProperties field's value.
+func (s *TaskRunProperties) SetImportLabelsTaskRunProperties(v *ImportLabelsTaskRunProperties) *TaskRunProperties {
+	s.ImportLabelsTaskRunProperties = v
+	return s
+}
+
+// SetLabelingSetGenerationTaskRunProperties sets the LabelingSetGenerationTaskRunProperties field's value.
+func (s *TaskRunProperties) SetLabelingSetGenerationTaskRunProperties(v *LabelingSetGenerationTaskRunProperties) *TaskRunProperties {
+	s.LabelingSetGenerationTaskRunProperties = v
+	return s
+}
+
+// SetTaskType sets the TaskType field's value.
+func (s *TaskRunProperties) SetTaskType(v string) *TaskRunProperties {
+	s.TaskType = &v
+	return s
+}
+
+// The sorting criteria that are used to sort the list of task runs for the
+// machine learning transform.
+type TaskRunSortCriteria struct {
+	_ struct{} `type:"structure"`
+
+	// The column to be used to sort the list of task runs for the machine learning
+	// transform.
+	//
+	// Column is a required field
+	Column *string `type:"string" required:"true" enum:"TaskRunSortColumnType"`
+
+	// The sort direction to be used to sort the list of task runs for the machine
+	// learning transform.
+	//
+	// SortDirection is a required field
+	SortDirection *string `type:"string" required:"true" enum:"SortDirectionType"`
+}
+
+// String returns the string representation
+func (s TaskRunSortCriteria) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s TaskRunSortCriteria) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *TaskRunSortCriteria) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "TaskRunSortCriteria"}
+	if s.Column == nil {
+		invalidParams.Add(request.NewErrParamRequired("Column"))
+	}
+	if s.SortDirection == nil {
+		invalidParams.Add(request.NewErrParamRequired("SortDirection"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetColumn sets the Column field's value.
+func (s *TaskRunSortCriteria) SetColumn(v string) *TaskRunSortCriteria {
+	s.Column = &v
+	return s
+}
+
+// SetSortDirection sets the SortDirection field's value.
+func (s *TaskRunSortCriteria) SetSortDirection(v string) *TaskRunSortCriteria {
+	s.SortDirection = &v
+	return s
+}
+
+// The criteria used to filter the machine learning transforms.
+type TransformFilterCriteria struct {
+	_ struct{} `type:"structure"`
+
+	// The time and date after which the transforms were created.
+	CreatedAfter *time.Time `type:"timestamp"`
+
+	// The time and date before which the transforms were created.
+	CreatedBefore *time.Time `type:"timestamp"`
+
+	// Filter on transforms last modified after this date.
+	LastModifiedAfter *time.Time `type:"timestamp"`
+
+	// Filter on transforms last modified before this date.
+	LastModifiedBefore *time.Time `type:"timestamp"`
+
+	// A unique transform name that is used to filter the machine learning transforms.
+	Name *string `min:"1" type:"string"`
+
+	// Filters on datasets with a specific schema. The Map<Column, Type> object
+	// is an array of key-value pairs representing the schema this transform accepts,
+	// where Column is the name of a column, and Type is the type of the data such
+	// as an integer or string. Has an upper bound of 100 columns.
+	Schema []*SchemaColumn `type:"list"`
+
+	// Filters the list of machine learning transforms by the last known status
+	// of the transforms (to indicate whether a transform can be used or not). One
+	// of "NOT_READY", "READY", or "DELETING".
+	Status *string `type:"string" enum:"TransformStatusType"`
+
+	// The type of machine learning transform that is used to filter the machine
+	// learning transforms.
+	TransformType *string `type:"string" enum:"TransformType"`
+}
+
+// String returns the string representation
+func (s TransformFilterCriteria) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s TransformFilterCriteria) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *TransformFilterCriteria) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "TransformFilterCriteria"}
+	if s.Name != nil && len(*s.Name) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("Name", 1))
+	}
+	if s.Schema != nil {
+		for i, v := range s.Schema {
+			if v == nil {
+				continue
+			}
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "Schema", i), err.(request.ErrInvalidParams))
+			}
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetCreatedAfter sets the CreatedAfter field's value.
+func (s *TransformFilterCriteria) SetCreatedAfter(v time.Time) *TransformFilterCriteria {
+	s.CreatedAfter = &v
+	return s
+}
+
+// SetCreatedBefore sets the CreatedBefore field's value.
+func (s *TransformFilterCriteria) SetCreatedBefore(v time.Time) *TransformFilterCriteria {
+	s.CreatedBefore = &v
+	return s
+}
+
+// SetLastModifiedAfter sets the LastModifiedAfter field's value.
+func (s *TransformFilterCriteria) SetLastModifiedAfter(v time.Time) *TransformFilterCriteria {
+	s.LastModifiedAfter = &v
+	return s
+}
+
+// SetLastModifiedBefore sets the LastModifiedBefore field's value.
+func (s *TransformFilterCriteria) SetLastModifiedBefore(v time.Time) *TransformFilterCriteria {
+	s.LastModifiedBefore = &v
+	return s
+}
+
+// SetName sets the Name field's value.
+func (s *TransformFilterCriteria) SetName(v string) *TransformFilterCriteria {
+	s.Name = &v
+	return s
+}
+
+// SetSchema sets the Schema field's value.
+func (s *TransformFilterCriteria) SetSchema(v []*SchemaColumn) *TransformFilterCriteria {
+	s.Schema = v
+	return s
+}
+
+// SetStatus sets the Status field's value.
+func (s *TransformFilterCriteria) SetStatus(v string) *TransformFilterCriteria {
+	s.Status = &v
+	return s
+}
+
+// SetTransformType sets the TransformType field's value.
+func (s *TransformFilterCriteria) SetTransformType(v string) *TransformFilterCriteria {
+	s.TransformType = &v
+	return s
+}
+
+// The algorithm-specific parameters that are associated with the machine learning
+// transform.
+type TransformParameters struct {
+	_ struct{} `type:"structure"`
+
+	// The parameters for the find matches algorithm.
+	FindMatchesParameters *FindMatchesParameters `type:"structure"`
+
+	// The type of machine learning transform.
+	//
+	// For information about the types of machine learning transforms, see Creating
+	// Machine Learning Transforms (http://docs.aws.amazon.com/glue/latest/dg/add-job-machine-learning-transform.html).
+	//
+	// TransformType is a required field
+	TransformType *string `type:"string" required:"true" enum:"TransformType"`
+}
+
+// String returns the string representation
+func (s TransformParameters) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s TransformParameters) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *TransformParameters) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "TransformParameters"}
+	if s.TransformType == nil {
+		invalidParams.Add(request.NewErrParamRequired("TransformType"))
+	}
+	if s.FindMatchesParameters != nil {
+		if err := s.FindMatchesParameters.Validate(); err != nil {
+			invalidParams.AddNested("FindMatchesParameters", err.(request.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetFindMatchesParameters sets the FindMatchesParameters field's value.
+func (s *TransformParameters) SetFindMatchesParameters(v *FindMatchesParameters) *TransformParameters {
+	s.FindMatchesParameters = v
+	return s
+}
+
+// SetTransformType sets the TransformType field's value.
+func (s *TransformParameters) SetTransformType(v string) *TransformParameters {
+	s.TransformType = &v
+	return s
+}
+
+// The sorting criteria that are associated with the machine learning transform.
+type TransformSortCriteria struct {
+	_ struct{} `type:"structure"`
+
+	// The column to be used in the sorting criteria that are associated with the
+	// machine learning transform.
+	//
+	// Column is a required field
+	Column *string `type:"string" required:"true" enum:"TransformSortColumnType"`
+
+	// The sort direction to be used in the sorting criteria that are associated
+	// with the machine learning transform.
+	//
+	// SortDirection is a required field
+	SortDirection *string `type:"string" required:"true" enum:"SortDirectionType"`
+}
+
+// String returns the string representation
+func (s TransformSortCriteria) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s TransformSortCriteria) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *TransformSortCriteria) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "TransformSortCriteria"}
+	if s.Column == nil {
+		invalidParams.Add(request.NewErrParamRequired("Column"))
+	}
+	if s.SortDirection == nil {
+		invalidParams.Add(request.NewErrParamRequired("SortDirection"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetColumn sets the Column field's value.
+func (s *TransformSortCriteria) SetColumn(v string) *TransformSortCriteria {
+	s.Column = &v
+	return s
+}
+
+// SetSortDirection sets the SortDirection field's value.
+func (s *TransformSortCriteria) SetSortDirection(v string) *TransformSortCriteria {
+	s.SortDirection = &v
+	return s
 }
 
 // Information about a specific trigger.
@@ -26581,7 +30761,7 @@ type UpdateDatabaseInput struct {
 	_ struct{} `type:"structure"`
 
 	// The ID of the Data Catalog in which the metadata database resides. If none
-	// is supplied, the AWS account ID is used by default.
+	// is provided, the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
 	// A DatabaseInput object specifying the new definition of the metadata database
@@ -26670,6 +30850,18 @@ type UpdateDevEndpointInput struct {
 	_ struct{} `type:"structure"`
 
 	// The map of arguments to add the map of arguments used to configure the DevEndpoint.
+	//
+	// Valid arguments are:
+	//
+	//    * "--enable-glue-datacatalog": ""
+	//
+	//    * "GLUE_PYTHON_VERSION": "3"
+	//
+	//    * "GLUE_PYTHON_VERSION": "2"
+	//
+	// You can specify a version of Python support for development endpoints by
+	// using the Arguments parameter in the CreateDevEndpoint or UpdateDevEndpoint
+	// APIs. If no arguments are provided, the version defaults to Python 2.
 	AddArguments map[string]*string `type:"map"`
 
 	// The list of public keys for the DevEndpoint to use.
@@ -26992,11 +31184,190 @@ func (s *UpdateJsonClassifierRequest) SetName(v string) *UpdateJsonClassifierReq
 	return s
 }
 
+type UpdateMLTransformInput struct {
+	_ struct{} `type:"structure"`
+
+	// A description of the transform. The default is an empty string.
+	Description *string `type:"string"`
+
+	// The number of AWS Glue data processing units (DPUs) that are allocated to
+	// task runs for this transform. You can allocate from 2 to 100 DPUs; the default
+	// is 10. A DPU is a relative measure of processing power that consists of 4
+	// vCPUs of compute capacity and 16 GB of memory. For more information, see
+	// the AWS Glue pricing page (https://aws.amazon.com/glue/pricing/).
+	//
+	// When the WorkerType field is set to a value other than Standard, the MaxCapacity
+	// field is set automatically and becomes read-only.
+	MaxCapacity *float64 `type:"double"`
+
+	// The maximum number of times to retry a task for this transform after a task
+	// run fails.
+	MaxRetries *int64 `type:"integer"`
+
+	// The unique name that you gave the transform when you created it.
+	Name *string `min:"1" type:"string"`
+
+	// The number of workers of a defined workerType that are allocated when this
+	// task runs.
+	NumberOfWorkers *int64 `type:"integer"`
+
+	// The configuration parameters that are specific to the transform type (algorithm)
+	// used. Conditionally dependent on the transform type.
+	Parameters *TransformParameters `type:"structure"`
+
+	// The name or Amazon Resource Name (ARN) of the IAM role with the required
+	// permissions.
+	Role *string `type:"string"`
+
+	// The timeout for a task run for this transform in minutes. This is the maximum
+	// time that a task run for this transform can consume resources before it is
+	// terminated and enters TIMEOUT status. The default is 2,880 minutes (48 hours).
+	Timeout *int64 `min:"1" type:"integer"`
+
+	// A unique identifier that was generated when the transform was created.
+	//
+	// TransformId is a required field
+	TransformId *string `min:"1" type:"string" required:"true"`
+
+	// The type of predefined worker that is allocated when this task runs. Accepts
+	// a value of Standard, G.1X, or G.2X.
+	//
+	//    * For the Standard worker type, each worker provides 4 vCPU, 16 GB of
+	//    memory and a 50GB disk, and 2 executors per worker.
+	//
+	//    * For the G.1X worker type, each worker provides 4 vCPU, 16 GB of memory
+	//    and a 64GB disk, and 1 executor per worker.
+	//
+	//    * For the G.2X worker type, each worker provides 8 vCPU, 32 GB of memory
+	//    and a 128GB disk, and 1 executor per worker.
+	WorkerType *string `type:"string" enum:"WorkerType"`
+}
+
+// String returns the string representation
+func (s UpdateMLTransformInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s UpdateMLTransformInput) GoString() string {
+	return s.String()
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *UpdateMLTransformInput) Validate() error {
+	invalidParams := request.ErrInvalidParams{Context: "UpdateMLTransformInput"}
+	if s.Name != nil && len(*s.Name) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("Name", 1))
+	}
+	if s.Timeout != nil && *s.Timeout < 1 {
+		invalidParams.Add(request.NewErrParamMinValue("Timeout", 1))
+	}
+	if s.TransformId == nil {
+		invalidParams.Add(request.NewErrParamRequired("TransformId"))
+	}
+	if s.TransformId != nil && len(*s.TransformId) < 1 {
+		invalidParams.Add(request.NewErrParamMinLen("TransformId", 1))
+	}
+	if s.Parameters != nil {
+		if err := s.Parameters.Validate(); err != nil {
+			invalidParams.AddNested("Parameters", err.(request.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// SetDescription sets the Description field's value.
+func (s *UpdateMLTransformInput) SetDescription(v string) *UpdateMLTransformInput {
+	s.Description = &v
+	return s
+}
+
+// SetMaxCapacity sets the MaxCapacity field's value.
+func (s *UpdateMLTransformInput) SetMaxCapacity(v float64) *UpdateMLTransformInput {
+	s.MaxCapacity = &v
+	return s
+}
+
+// SetMaxRetries sets the MaxRetries field's value.
+func (s *UpdateMLTransformInput) SetMaxRetries(v int64) *UpdateMLTransformInput {
+	s.MaxRetries = &v
+	return s
+}
+
+// SetName sets the Name field's value.
+func (s *UpdateMLTransformInput) SetName(v string) *UpdateMLTransformInput {
+	s.Name = &v
+	return s
+}
+
+// SetNumberOfWorkers sets the NumberOfWorkers field's value.
+func (s *UpdateMLTransformInput) SetNumberOfWorkers(v int64) *UpdateMLTransformInput {
+	s.NumberOfWorkers = &v
+	return s
+}
+
+// SetParameters sets the Parameters field's value.
+func (s *UpdateMLTransformInput) SetParameters(v *TransformParameters) *UpdateMLTransformInput {
+	s.Parameters = v
+	return s
+}
+
+// SetRole sets the Role field's value.
+func (s *UpdateMLTransformInput) SetRole(v string) *UpdateMLTransformInput {
+	s.Role = &v
+	return s
+}
+
+// SetTimeout sets the Timeout field's value.
+func (s *UpdateMLTransformInput) SetTimeout(v int64) *UpdateMLTransformInput {
+	s.Timeout = &v
+	return s
+}
+
+// SetTransformId sets the TransformId field's value.
+func (s *UpdateMLTransformInput) SetTransformId(v string) *UpdateMLTransformInput {
+	s.TransformId = &v
+	return s
+}
+
+// SetWorkerType sets the WorkerType field's value.
+func (s *UpdateMLTransformInput) SetWorkerType(v string) *UpdateMLTransformInput {
+	s.WorkerType = &v
+	return s
+}
+
+type UpdateMLTransformOutput struct {
+	_ struct{} `type:"structure"`
+
+	// The unique identifier for the transform that was updated.
+	TransformId *string `min:"1" type:"string"`
+}
+
+// String returns the string representation
+func (s UpdateMLTransformOutput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// GoString returns the string representation
+func (s UpdateMLTransformOutput) GoString() string {
+	return s.String()
+}
+
+// SetTransformId sets the TransformId field's value.
+func (s *UpdateMLTransformOutput) SetTransformId(v string) *UpdateMLTransformOutput {
+	s.TransformId = &v
+	return s
+}
+
 type UpdatePartitionInput struct {
 	_ struct{} `type:"structure"`
 
 	// The ID of the Data Catalog where the partition to be updated resides. If
-	// none is supplied, the AWS account ID is used by default.
+	// none is provided, the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
 	// The name of the catalog database in which the table in question resides.
@@ -27004,7 +31375,7 @@ type UpdatePartitionInput struct {
 	// DatabaseName is a required field
 	DatabaseName *string `min:"1" type:"string" required:"true"`
 
-	// The new partition object to which to update the partition.
+	// The new partition object to update the partition to.
 	//
 	// PartitionInput is a required field
 	PartitionInput *PartitionInput `type:"structure" required:"true"`
@@ -27014,7 +31385,7 @@ type UpdatePartitionInput struct {
 	// PartitionValueList is a required field
 	PartitionValueList []*string `type:"list" required:"true"`
 
-	// The name of the table where the partition to be updated is located.
+	// The name of the table in which the partition to be updated is located.
 	//
 	// TableName is a required field
 	TableName *string `min:"1" type:"string" required:"true"`
@@ -27113,7 +31484,7 @@ func (s UpdatePartitionOutput) GoString() string {
 type UpdateTableInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ID of the Data Catalog where the table resides. If none is supplied,
+	// The ID of the Data Catalog where the table resides. If none is provided,
 	// the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
@@ -27124,7 +31495,7 @@ type UpdateTableInput struct {
 	DatabaseName *string `min:"1" type:"string" required:"true"`
 
 	// By default, UpdateTable always creates an archived version of the table before
-	// updating it. If skipArchive is set to true, however, UpdateTable does not
+	// updating it. However, if skipArchive is set to true, UpdateTable does not
 	// create the archived version.
 	SkipArchive *bool `type:"boolean"`
 
@@ -27296,7 +31667,7 @@ type UpdateUserDefinedFunctionInput struct {
 	_ struct{} `type:"structure"`
 
 	// The ID of the Data Catalog where the function to be updated is located. If
-	// none is supplied, the AWS account ID is used by default.
+	// none is provided, the AWS account ID is used by default.
 	CatalogId *string `min:"1" type:"string"`
 
 	// The name of the catalog database where the function to be updated is located.
@@ -27304,7 +31675,7 @@ type UpdateUserDefinedFunctionInput struct {
 	// DatabaseName is a required field
 	DatabaseName *string `min:"1" type:"string" required:"true"`
 
-	// A FunctionInput object that re-defines the function in the Data Catalog.
+	// A FunctionInput object that redefines the function in the Data Catalog.
 	//
 	// FunctionInput is a required field
 	FunctionInput *UserDefinedFunctionInput `type:"structure" required:"true"`
@@ -27611,7 +31982,7 @@ func (s *UserDefinedFunction) SetResourceUris(v []*ResourceUri) *UserDefinedFunc
 	return s
 }
 
-// A structure used to create or updata a user-defined function.
+// A structure used to create or update a user-defined function.
 type UserDefinedFunctionInput struct {
 	_ struct{} `type:"structure"`
 
@@ -28068,6 +32439,23 @@ const (
 )
 
 const (
+	// ComparatorEquals is a Comparator enum value
+	ComparatorEquals = "EQUALS"
+
+	// ComparatorGreaterThan is a Comparator enum value
+	ComparatorGreaterThan = "GREATER_THAN"
+
+	// ComparatorLessThan is a Comparator enum value
+	ComparatorLessThan = "LESS_THAN"
+
+	// ComparatorGreaterThanEquals is a Comparator enum value
+	ComparatorGreaterThanEquals = "GREATER_THAN_EQUALS"
+
+	// ComparatorLessThanEquals is a Comparator enum value
+	ComparatorLessThanEquals = "LESS_THAN_EQUALS"
+)
+
+const (
 	// ConnectionPropertyKeyHost is a ConnectionPropertyKey enum value
 	ConnectionPropertyKeyHost = "HOST"
 
@@ -28106,6 +32494,15 @@ const (
 
 	// ConnectionPropertyKeyJdbcEnforceSsl is a ConnectionPropertyKey enum value
 	ConnectionPropertyKeyJdbcEnforceSsl = "JDBC_ENFORCE_SSL"
+
+	// ConnectionPropertyKeyCustomJdbcCert is a ConnectionPropertyKey enum value
+	ConnectionPropertyKeyCustomJdbcCert = "CUSTOM_JDBC_CERT"
+
+	// ConnectionPropertyKeySkipCustomJdbcCertValidation is a ConnectionPropertyKey enum value
+	ConnectionPropertyKeySkipCustomJdbcCertValidation = "SKIP_CUSTOM_JDBC_CERT_VALIDATION"
+
+	// ConnectionPropertyKeyCustomJdbcCertString is a ConnectionPropertyKey enum value
+	ConnectionPropertyKeyCustomJdbcCertString = "CUSTOM_JDBC_CERT_STRING"
 )
 
 const (
@@ -28249,6 +32646,35 @@ const (
 )
 
 const (
+	// PermissionAll is a Permission enum value
+	PermissionAll = "ALL"
+
+	// PermissionSelect is a Permission enum value
+	PermissionSelect = "SELECT"
+
+	// PermissionAlter is a Permission enum value
+	PermissionAlter = "ALTER"
+
+	// PermissionDrop is a Permission enum value
+	PermissionDrop = "DROP"
+
+	// PermissionDelete is a Permission enum value
+	PermissionDelete = "DELETE"
+
+	// PermissionInsert is a Permission enum value
+	PermissionInsert = "INSERT"
+
+	// PermissionCreateDatabase is a Permission enum value
+	PermissionCreateDatabase = "CREATE_DATABASE"
+
+	// PermissionCreateTable is a Permission enum value
+	PermissionCreateTable = "CREATE_TABLE"
+
+	// PermissionDataLocationAccess is a Permission enum value
+	PermissionDataLocationAccess = "DATA_LOCATION_ACCESS"
+)
+
+const (
 	// PrincipalTypeUser is a PrincipalType enum value
 	PrincipalTypeUser = "USER"
 
@@ -28290,6 +32716,106 @@ const (
 
 	// ScheduleStateTransitioning is a ScheduleState enum value
 	ScheduleStateTransitioning = "TRANSITIONING"
+)
+
+const (
+	// SortAsc is a Sort enum value
+	SortAsc = "ASC"
+
+	// SortDesc is a Sort enum value
+	SortDesc = "DESC"
+)
+
+const (
+	// SortDirectionTypeDescending is a SortDirectionType enum value
+	SortDirectionTypeDescending = "DESCENDING"
+
+	// SortDirectionTypeAscending is a SortDirectionType enum value
+	SortDirectionTypeAscending = "ASCENDING"
+)
+
+const (
+	// TaskRunSortColumnTypeTaskRunType is a TaskRunSortColumnType enum value
+	TaskRunSortColumnTypeTaskRunType = "TASK_RUN_TYPE"
+
+	// TaskRunSortColumnTypeStatus is a TaskRunSortColumnType enum value
+	TaskRunSortColumnTypeStatus = "STATUS"
+
+	// TaskRunSortColumnTypeStarted is a TaskRunSortColumnType enum value
+	TaskRunSortColumnTypeStarted = "STARTED"
+)
+
+const (
+	// TaskStatusTypeStarting is a TaskStatusType enum value
+	TaskStatusTypeStarting = "STARTING"
+
+	// TaskStatusTypeRunning is a TaskStatusType enum value
+	TaskStatusTypeRunning = "RUNNING"
+
+	// TaskStatusTypeStopping is a TaskStatusType enum value
+	TaskStatusTypeStopping = "STOPPING"
+
+	// TaskStatusTypeStopped is a TaskStatusType enum value
+	TaskStatusTypeStopped = "STOPPED"
+
+	// TaskStatusTypeSucceeded is a TaskStatusType enum value
+	TaskStatusTypeSucceeded = "SUCCEEDED"
+
+	// TaskStatusTypeFailed is a TaskStatusType enum value
+	TaskStatusTypeFailed = "FAILED"
+
+	// TaskStatusTypeTimeout is a TaskStatusType enum value
+	TaskStatusTypeTimeout = "TIMEOUT"
+)
+
+const (
+	// TaskTypeEvaluation is a TaskType enum value
+	TaskTypeEvaluation = "EVALUATION"
+
+	// TaskTypeLabelingSetGeneration is a TaskType enum value
+	TaskTypeLabelingSetGeneration = "LABELING_SET_GENERATION"
+
+	// TaskTypeImportLabels is a TaskType enum value
+	TaskTypeImportLabels = "IMPORT_LABELS"
+
+	// TaskTypeExportLabels is a TaskType enum value
+	TaskTypeExportLabels = "EXPORT_LABELS"
+
+	// TaskTypeFindMatches is a TaskType enum value
+	TaskTypeFindMatches = "FIND_MATCHES"
+)
+
+const (
+	// TransformSortColumnTypeName is a TransformSortColumnType enum value
+	TransformSortColumnTypeName = "NAME"
+
+	// TransformSortColumnTypeTransformType is a TransformSortColumnType enum value
+	TransformSortColumnTypeTransformType = "TRANSFORM_TYPE"
+
+	// TransformSortColumnTypeStatus is a TransformSortColumnType enum value
+	TransformSortColumnTypeStatus = "STATUS"
+
+	// TransformSortColumnTypeCreated is a TransformSortColumnType enum value
+	TransformSortColumnTypeCreated = "CREATED"
+
+	// TransformSortColumnTypeLastModified is a TransformSortColumnType enum value
+	TransformSortColumnTypeLastModified = "LAST_MODIFIED"
+)
+
+const (
+	// TransformStatusTypeNotReady is a TransformStatusType enum value
+	TransformStatusTypeNotReady = "NOT_READY"
+
+	// TransformStatusTypeReady is a TransformStatusType enum value
+	TransformStatusTypeReady = "READY"
+
+	// TransformStatusTypeDeleting is a TransformStatusType enum value
+	TransformStatusTypeDeleting = "DELETING"
+)
+
+const (
+	// TransformTypeFindMatches is a TransformType enum value
+	TransformTypeFindMatches = "FIND_MATCHES"
 )
 
 const (

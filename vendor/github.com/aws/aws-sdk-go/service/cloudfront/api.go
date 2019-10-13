@@ -5871,7 +5871,7 @@ func (s *CookiePreference) SetWhitelistedNames(v *CookieNames) *CookiePreference
 // an Origin Access Identity (https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html)
 // in the Amazon CloudFront Developer Guide.
 type CreateCloudFrontOriginAccessIdentityInput struct {
-	_ struct{} `type:"structure" payload:"CloudFrontOriginAccessIdentityConfig"`
+	_ struct{} `locationName:"CreateCloudFrontOriginAccessIdentityRequest" type:"structure" payload:"CloudFrontOriginAccessIdentityConfig"`
 
 	// The current configuration information for the identity.
 	//
@@ -5958,7 +5958,7 @@ func (s *CreateCloudFrontOriginAccessIdentityOutput) SetLocation(v string) *Crea
 
 // The request to create a new distribution.
 type CreateDistributionInput struct {
-	_ struct{} `type:"structure" payload:"DistributionConfig"`
+	_ struct{} `locationName:"CreateDistributionRequest" type:"structure" payload:"DistributionConfig"`
 
 	// The distribution's configuration information.
 	//
@@ -6045,7 +6045,7 @@ func (s *CreateDistributionOutput) SetLocation(v string) *CreateDistributionOutp
 
 // The request to create a new distribution with tags.
 type CreateDistributionWithTagsInput struct {
-	_ struct{} `type:"structure" payload:"DistributionConfigWithTags"`
+	_ struct{} `locationName:"CreateDistributionWithTagsRequest" type:"structure" payload:"DistributionConfigWithTags"`
 
 	// The distribution's configuration information.
 	//
@@ -6131,7 +6131,7 @@ func (s *CreateDistributionWithTagsOutput) SetLocation(v string) *CreateDistribu
 }
 
 type CreateFieldLevelEncryptionConfigInput struct {
-	_ struct{} `type:"structure" payload:"FieldLevelEncryptionConfig"`
+	_ struct{} `locationName:"CreateFieldLevelEncryptionConfigRequest" type:"structure" payload:"FieldLevelEncryptionConfig"`
 
 	// The request to create a new field-level encryption configuration.
 	//
@@ -6217,7 +6217,7 @@ func (s *CreateFieldLevelEncryptionConfigOutput) SetLocation(v string) *CreateFi
 }
 
 type CreateFieldLevelEncryptionProfileInput struct {
-	_ struct{} `type:"structure" payload:"FieldLevelEncryptionProfileConfig"`
+	_ struct{} `locationName:"CreateFieldLevelEncryptionProfileRequest" type:"structure" payload:"FieldLevelEncryptionProfileConfig"`
 
 	// The request to create a field-level encryption profile.
 	//
@@ -6303,7 +6303,7 @@ func (s *CreateFieldLevelEncryptionProfileOutput) SetLocation(v string) *CreateF
 
 // The request to create an invalidation.
 type CreateInvalidationInput struct {
-	_ struct{} `type:"structure" payload:"InvalidationBatch"`
+	_ struct{} `locationName:"CreateInvalidationRequest" type:"structure" payload:"InvalidationBatch"`
 
 	// The distribution's id.
 	//
@@ -6397,7 +6397,7 @@ func (s *CreateInvalidationOutput) SetLocation(v string) *CreateInvalidationOutp
 }
 
 type CreatePublicKeyInput struct {
-	_ struct{} `type:"structure" payload:"PublicKeyConfig"`
+	_ struct{} `locationName:"CreatePublicKeyRequest" type:"structure" payload:"PublicKeyConfig"`
 
 	// The request to add a public key to CloudFront.
 	//
@@ -6483,7 +6483,7 @@ func (s *CreatePublicKeyOutput) SetPublicKey(v *PublicKey) *CreatePublicKeyOutpu
 
 // The request to create a new streaming distribution.
 type CreateStreamingDistributionInput struct {
-	_ struct{} `type:"structure" payload:"StreamingDistributionConfig"`
+	_ struct{} `locationName:"CreateStreamingDistributionRequest" type:"structure" payload:"StreamingDistributionConfig"`
 
 	// The streaming distribution's configuration information.
 	//
@@ -6570,7 +6570,7 @@ func (s *CreateStreamingDistributionOutput) SetStreamingDistribution(v *Streamin
 
 // The request to create a new streaming distribution with tags.
 type CreateStreamingDistributionWithTagsInput struct {
-	_ struct{} `type:"structure" payload:"StreamingDistributionConfigWithTags"`
+	_ struct{} `locationName:"CreateStreamingDistributionWithTagsRequest" type:"structure" payload:"StreamingDistributionConfigWithTags"`
 
 	// The streaming distribution's configuration information.
 	//
@@ -7290,7 +7290,7 @@ func (s *DefaultCacheBehavior) SetViewerProtocolPolicy(v string) *DefaultCacheBe
 
 // Deletes a origin access identity.
 type DeleteCloudFrontOriginAccessIdentityInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"DeleteCloudFrontOriginAccessIdentityRequest" type:"structure"`
 
 	// The origin access identity's ID.
 	//
@@ -7390,7 +7390,7 @@ func (s DeleteCloudFrontOriginAccessIdentityOutput) GoString() string {
 // see Deleting a Distribution (https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/HowToDeleteDistribution.html)
 // in the Amazon CloudFront Developer Guide.
 type DeleteDistributionInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"DeleteDistributionRequest" type:"structure"`
 
 	// The distribution ID.
 	//
@@ -7455,7 +7455,7 @@ func (s DeleteDistributionOutput) GoString() string {
 }
 
 type DeleteFieldLevelEncryptionConfigInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"DeleteFieldLevelEncryptionConfigRequest" type:"structure"`
 
 	// The ID of the configuration you want to delete from CloudFront.
 	//
@@ -7520,7 +7520,7 @@ func (s DeleteFieldLevelEncryptionConfigOutput) GoString() string {
 }
 
 type DeleteFieldLevelEncryptionProfileInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"DeleteFieldLevelEncryptionProfileRequest" type:"structure"`
 
 	// Request the ID of the profile you want to delete from CloudFront.
 	//
@@ -7585,7 +7585,7 @@ func (s DeleteFieldLevelEncryptionProfileOutput) GoString() string {
 }
 
 type DeletePublicKeyInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"DeletePublicKeyRequest" type:"structure"`
 
 	// The ID of the public key you want to remove from CloudFront.
 	//
@@ -7651,7 +7651,7 @@ func (s DeletePublicKeyOutput) GoString() string {
 
 // The request to delete a streaming distribution.
 type DeleteStreamingDistributionInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"DeleteStreamingDistributionRequest" type:"structure"`
 
 	// The distribution ID.
 	//
@@ -9522,7 +9522,7 @@ func (s *GeoRestriction) SetRestrictionType(v string) *GeoRestriction {
 // The origin access identity's configuration information. For more information,
 // see CloudFrontOriginAccessIdentityConfig (https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CloudFrontOriginAccessIdentityConfig.html).
 type GetCloudFrontOriginAccessIdentityConfigInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"GetCloudFrontOriginAccessIdentityConfigRequest" type:"structure"`
 
 	// The identity's ID.
 	//
@@ -9597,7 +9597,7 @@ func (s *GetCloudFrontOriginAccessIdentityConfigOutput) SetETag(v string) *GetCl
 
 // The request to get an origin access identity's information.
 type GetCloudFrontOriginAccessIdentityInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"GetCloudFrontOriginAccessIdentityRequest" type:"structure"`
 
 	// The identity's ID.
 	//
@@ -9673,7 +9673,7 @@ func (s *GetCloudFrontOriginAccessIdentityOutput) SetETag(v string) *GetCloudFro
 
 // The request to get a distribution configuration.
 type GetDistributionConfigInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"GetDistributionConfigRequest" type:"structure"`
 
 	// The distribution's ID. If the ID is empty, an empty distribution configuration
 	// is returned.
@@ -9749,7 +9749,7 @@ func (s *GetDistributionConfigOutput) SetETag(v string) *GetDistributionConfigOu
 
 // The request to get a distribution's information.
 type GetDistributionInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"GetDistributionRequest" type:"structure"`
 
 	// The distribution's ID. If the ID is empty, an empty distribution configuration
 	// is returned.
@@ -9824,7 +9824,7 @@ func (s *GetDistributionOutput) SetETag(v string) *GetDistributionOutput {
 }
 
 type GetFieldLevelEncryptionConfigInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"GetFieldLevelEncryptionConfigRequest" type:"structure"`
 
 	// Request the ID for the field-level encryption configuration information.
 	//
@@ -9898,7 +9898,7 @@ func (s *GetFieldLevelEncryptionConfigOutput) SetFieldLevelEncryptionConfig(v *F
 }
 
 type GetFieldLevelEncryptionInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"GetFieldLevelEncryptionRequest" type:"structure"`
 
 	// Request the ID for the field-level encryption configuration information.
 	//
@@ -9972,7 +9972,7 @@ func (s *GetFieldLevelEncryptionOutput) SetFieldLevelEncryption(v *FieldLevelEnc
 }
 
 type GetFieldLevelEncryptionProfileConfigInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"GetFieldLevelEncryptionProfileConfigRequest" type:"structure"`
 
 	// Get the ID for the field-level encryption profile configuration information.
 	//
@@ -10046,7 +10046,7 @@ func (s *GetFieldLevelEncryptionProfileConfigOutput) SetFieldLevelEncryptionProf
 }
 
 type GetFieldLevelEncryptionProfileInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"GetFieldLevelEncryptionProfileRequest" type:"structure"`
 
 	// Get the ID for the field-level encryption profile information.
 	//
@@ -10120,7 +10120,7 @@ func (s *GetFieldLevelEncryptionProfileOutput) SetFieldLevelEncryptionProfile(v 
 
 // The request to get an invalidation's information.
 type GetInvalidationInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"GetInvalidationRequest" type:"structure"`
 
 	// The distribution's ID.
 	//
@@ -10203,7 +10203,7 @@ func (s *GetInvalidationOutput) SetInvalidation(v *Invalidation) *GetInvalidatio
 }
 
 type GetPublicKeyConfigInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"GetPublicKeyConfigRequest" type:"structure"`
 
 	// Request the ID for the public key configuration.
 	//
@@ -10276,7 +10276,7 @@ func (s *GetPublicKeyConfigOutput) SetPublicKeyConfig(v *PublicKeyConfig) *GetPu
 }
 
 type GetPublicKeyInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"GetPublicKeyRequest" type:"structure"`
 
 	// Request the ID for the public key.
 	//
@@ -10350,7 +10350,7 @@ func (s *GetPublicKeyOutput) SetPublicKey(v *PublicKey) *GetPublicKeyOutput {
 
 // To request to get a streaming distribution configuration.
 type GetStreamingDistributionConfigInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"GetStreamingDistributionConfigRequest" type:"structure"`
 
 	// The streaming distribution's ID.
 	//
@@ -10425,7 +10425,7 @@ func (s *GetStreamingDistributionConfigOutput) SetStreamingDistributionConfig(v 
 
 // The request to get a streaming distribution's information.
 type GetStreamingDistributionInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"GetStreamingDistributionRequest" type:"structure"`
 
 	// The streaming distribution's ID.
 	//
@@ -11050,7 +11050,7 @@ func (s *LambdaFunctionAssociations) SetQuantity(v int64) *LambdaFunctionAssocia
 
 // The request to list origin access identities.
 type ListCloudFrontOriginAccessIdentitiesInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"ListCloudFrontOriginAccessIdentitiesRequest" type:"structure"`
 
 	// Use this when paginating results to indicate where to begin in your list
 	// of origin access identities. The results include identities in the list that
@@ -11112,7 +11112,7 @@ func (s *ListCloudFrontOriginAccessIdentitiesOutput) SetCloudFrontOriginAccessId
 // The request to list distributions that are associated with a specified AWS
 // WAF web ACL.
 type ListDistributionsByWebACLIdInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"ListDistributionsByWebACLIdRequest" type:"structure"`
 
 	// Use Marker and MaxItems to control pagination of results. If you have more
 	// than MaxItems distributions that satisfy the request, the response includes
@@ -11204,7 +11204,7 @@ func (s *ListDistributionsByWebACLIdOutput) SetDistributionList(v *DistributionL
 
 // The request to list your distributions.
 type ListDistributionsInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"ListDistributionsRequest" type:"structure"`
 
 	// Use this when paginating results to indicate where to begin in your list
 	// of distributions. The results include distributions in the list that occur
@@ -11264,7 +11264,7 @@ func (s *ListDistributionsOutput) SetDistributionList(v *DistributionList) *List
 }
 
 type ListFieldLevelEncryptionConfigsInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"ListFieldLevelEncryptionConfigsRequest" type:"structure"`
 
 	// Use this when paginating results to indicate where to begin in your list
 	// of configurations. The results include configurations in the list that occur
@@ -11325,7 +11325,7 @@ func (s *ListFieldLevelEncryptionConfigsOutput) SetFieldLevelEncryptionList(v *F
 }
 
 type ListFieldLevelEncryptionProfilesInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"ListFieldLevelEncryptionProfilesRequest" type:"structure"`
 
 	// Use this when paginating results to indicate where to begin in your list
 	// of profiles. The results include profiles in the list that occur after the
@@ -11387,7 +11387,7 @@ func (s *ListFieldLevelEncryptionProfilesOutput) SetFieldLevelEncryptionProfileL
 
 // The request to list invalidations.
 type ListInvalidationsInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"ListInvalidationsRequest" type:"structure"`
 
 	// The distribution's ID.
 	//
@@ -11477,7 +11477,7 @@ func (s *ListInvalidationsOutput) SetInvalidationList(v *InvalidationList) *List
 }
 
 type ListPublicKeysInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"ListPublicKeysRequest" type:"structure"`
 
 	// Use this when paginating results to indicate where to begin in your list
 	// of public keys. The results include public keys in the list that occur after
@@ -11538,7 +11538,7 @@ func (s *ListPublicKeysOutput) SetPublicKeyList(v *PublicKeyList) *ListPublicKey
 
 // The request to list your streaming distributions.
 type ListStreamingDistributionsInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"ListStreamingDistributionsRequest" type:"structure"`
 
 	// The value that you provided for the Marker request parameter.
 	Marker *string `location:"querystring" locationName:"Marker" type:"string"`
@@ -11595,7 +11595,7 @@ func (s *ListStreamingDistributionsOutput) SetStreamingDistributionList(v *Strea
 
 // The request to list tags for a CloudFront resource.
 type ListTagsForResourceInput struct {
-	_ struct{} `type:"structure"`
+	_ struct{} `locationName:"ListTagsForResourceRequest" type:"structure"`
 
 	// An ARN of a CloudFront resource.
 	//
@@ -14184,7 +14184,7 @@ func (s *TagKeys) SetItems(v []*string) *TagKeys {
 
 // The request to add tags to a CloudFront resource.
 type TagResourceInput struct {
-	_ struct{} `type:"structure" payload:"Tags"`
+	_ struct{} `locationName:"TagResourceRequest" type:"structure" payload:"Tags"`
 
 	// An ARN of a CloudFront resource.
 	//
@@ -14382,7 +14382,7 @@ func (s *TrustedSigners) SetQuantity(v int64) *TrustedSigners {
 
 // The request to remove tags from a CloudFront resource.
 type UntagResourceInput struct {
-	_ struct{} `type:"structure" payload:"TagKeys"`
+	_ struct{} `locationName:"UntagResourceRequest" type:"structure" payload:"TagKeys"`
 
 	// An ARN of a CloudFront resource.
 	//
@@ -14449,7 +14449,7 @@ func (s UntagResourceOutput) GoString() string {
 
 // The request to update an origin access identity.
 type UpdateCloudFrontOriginAccessIdentityInput struct {
-	_ struct{} `type:"structure" payload:"CloudFrontOriginAccessIdentityConfig"`
+	_ struct{} `locationName:"UpdateCloudFrontOriginAccessIdentityRequest" type:"structure" payload:"CloudFrontOriginAccessIdentityConfig"`
 
 	// The identity's configuration information.
 	//
@@ -14553,7 +14553,7 @@ func (s *UpdateCloudFrontOriginAccessIdentityOutput) SetETag(v string) *UpdateCl
 
 // The request to update a distribution.
 type UpdateDistributionInput struct {
-	_ struct{} `type:"structure" payload:"DistributionConfig"`
+	_ struct{} `locationName:"UpdateDistributionRequest" type:"structure" payload:"DistributionConfig"`
 
 	// The distribution's configuration information.
 	//
@@ -14656,7 +14656,7 @@ func (s *UpdateDistributionOutput) SetETag(v string) *UpdateDistributionOutput {
 }
 
 type UpdateFieldLevelEncryptionConfigInput struct {
-	_ struct{} `type:"structure" payload:"FieldLevelEncryptionConfig"`
+	_ struct{} `locationName:"UpdateFieldLevelEncryptionConfigRequest" type:"structure" payload:"FieldLevelEncryptionConfig"`
 
 	// Request to update a field-level encryption configuration.
 	//
@@ -14759,7 +14759,7 @@ func (s *UpdateFieldLevelEncryptionConfigOutput) SetFieldLevelEncryption(v *Fiel
 }
 
 type UpdateFieldLevelEncryptionProfileInput struct {
-	_ struct{} `type:"structure" payload:"FieldLevelEncryptionProfileConfig"`
+	_ struct{} `locationName:"UpdateFieldLevelEncryptionProfileRequest" type:"structure" payload:"FieldLevelEncryptionProfileConfig"`
 
 	// Request to update a field-level encryption profile.
 	//
@@ -14861,7 +14861,7 @@ func (s *UpdateFieldLevelEncryptionProfileOutput) SetFieldLevelEncryptionProfile
 }
 
 type UpdatePublicKeyInput struct {
-	_ struct{} `type:"structure" payload:"PublicKeyConfig"`
+	_ struct{} `locationName:"UpdatePublicKeyRequest" type:"structure" payload:"PublicKeyConfig"`
 
 	// ID of the public key to be updated.
 	//
@@ -14964,7 +14964,7 @@ func (s *UpdatePublicKeyOutput) SetPublicKey(v *PublicKey) *UpdatePublicKeyOutpu
 
 // The request to update a streaming distribution.
 type UpdateStreamingDistributionInput struct {
-	_ struct{} `type:"structure" payload:"StreamingDistributionConfig"`
+	_ struct{} `locationName:"UpdateStreamingDistributionRequest" type:"structure" payload:"StreamingDistributionConfig"`
 
 	// The streaming distribution's id.
 	//

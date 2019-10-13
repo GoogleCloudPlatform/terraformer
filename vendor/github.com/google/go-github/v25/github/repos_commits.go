@@ -115,6 +115,13 @@ type CommitsListOptions struct {
 	ListOptions
 }
 
+// BranchCommit is the result of listing branches with commit SHA.
+type BranchCommit struct {
+	Name      *string `json:"name,omitempty"`
+	Commit    *Commit `json:"commit,omitempty"`
+	Protected *string `json:"protected,omitempty"`
+}
+
 // ListCommits lists the commits of a repository.
 //
 // GitHub API docs: https://developer.github.com/v3/repos/commits/#list
@@ -231,4 +238,27 @@ func (s *RepositoriesService) CompareCommits(ctx context.Context, owner, repo st
 	}
 
 	return comp, resp, nil
+}
+
+// ListBranchesHeadCommit gets all branches where the given commit SHA is the HEAD,
+// or latest commit for the branch.
+//
+// GitHub API docs: https://developer.github.com/v3/repos/commits/#list-branches-for-head-commit
+func (s *RepositoriesService) ListBranchesHeadCommit(ctx context.Context, owner, repo, sha string) ([]*BranchCommit, *Response, error) {
+	u := fmt.Sprintf("repos/%v/%v/commits/%v/branches-where-head", owner, repo, sha)
+
+	req, err := s.client.NewRequest("GET", u, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// TODO: remove custom Accept header when this API fully launches.
+	req.Header.Set("Accept", mediaTypeListPullsOrBranchesForCommitPreview)
+	var branchCommits []*BranchCommit
+	resp, err := s.client.Do(ctx, req, &branchCommits)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return branchCommits, resp, nil
 }
