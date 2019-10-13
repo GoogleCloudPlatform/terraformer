@@ -38,8 +38,8 @@ func newPlanCmd() *cobra.Command {
 	}
 	cmd := &cobra.Command{
 		Use:           "plan",
-		Short:         "Plan to import current State to terraform configuration",
-		Long:          "Plan to import current State to terraform configuration",
+		Short:         "Plan to import current state to Terraform configuration",
+		Long:          "Plan to import current state to Terraform configuration",
 		SilenceUsage:  true,
 		SilenceErrors: false,
 		//Version:       version.String(),
@@ -54,8 +54,8 @@ func newPlanCmd() *cobra.Command {
 func newCmdPlanImporter(options ImportOptions) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "plan",
-		Short: "Import planned state to terraform configuration",
-		Long:  "Import planned state to terraform configuration",
+		Short: "Import planned state to Terraform configuration",
+		Long:  "Import planned state to Terraform configuration",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			plan, err := LoadPlanfile(args[0])

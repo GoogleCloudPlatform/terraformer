@@ -50,9 +50,9 @@ func (CloudflareProvider) GetResourceConnections() map[string]map[string][]strin
 
 func (p *CloudflareProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
+		"access":   &AccessGenerator{},
 		"dns":      &DNSGenerator{},
 		"firewall": &FirewallGenerator{},
-		"access":   &AccessGenerator{},
 	}
 }
 

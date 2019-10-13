@@ -30,8 +30,8 @@ const defaultRegion = ""
 func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "aws",
-		Short: "Import current State to terraform configuration from aws",
-		Long:  "Import current State to terraform configuration from aws",
+		Short: "Import current state to Terraform configuration from AWS",
+		Long:  "Import current state to Terraform configuration from AWS",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			originalResources := options.Resources
 			originalRegions := options.Regions

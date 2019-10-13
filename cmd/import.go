@@ -15,12 +15,13 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 	"io/ioutil"
 	"log"
 	"os"
 	"sort"
 	"strings"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 
 	"github.com/spf13/pflag"
 
@@ -53,8 +54,8 @@ func newImportCmd() *cobra.Command {
 	options := ImportOptions{}
 	cmd := &cobra.Command{
 		Use:           "import",
-		Short:         "Import current State to terraform configuration",
-		Long:          "Import current State to terraform configuration",
+		Short:         "Import current state to Terraform configuration",
+		Long:          "Import current state to Terraform configuration",
 		SilenceUsage:  true,
 		SilenceErrors: false,
 		//Version:       version.String(),

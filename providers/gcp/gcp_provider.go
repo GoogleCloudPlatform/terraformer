@@ -96,40 +96,40 @@ func (p *GCPProvider) InitService(serviceName string) error {
 // GetGCPSupportService return map of support service for GCP
 func (p *GCPProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	services := ComputeServices
-	services["gcs"] = &GcsGenerator{}
-	services["monitoring"] = &MonitoringGenerator{}
-	services["iam"] = &IamGenerator{}
-	services["dns"] = &CloudDNSGenerator{}
-	services["cloudsql"] = &CloudSQLGenerator{}
-	services["gke"] = &GkeGenerator{}
-	services["memoryStore"] = &MemoryStoreGenerator{}
-	services["schedulerJobs"] = &SchedulerJobsGenerator{}
 	services["bigQuery"] = &BigQueryGenerator{}
-	services["dataProc"] = &DataprocGenerator{}
 	services["cloudFunctions"] = &CloudFunctionsGenerator{}
-	services["pubsub"] = &PubsubGenerator{}
+	services["cloudsql"] = &CloudSQLGenerator{}
+	services["dataProc"] = &DataprocGenerator{}
+	services["dns"] = &CloudDNSGenerator{}
+	services["gcs"] = &GcsGenerator{}
+	services["gke"] = &GkeGenerator{}
+	services["iam"] = &IamGenerator{}
 	services["kms"] = &KmsGenerator{}
-	services["project"] = &ProjectGenerator{}
 	services["logging"] = &LoggingGenerator{}
+	services["memoryStore"] = &MemoryStoreGenerator{}
+	services["monitoring"] = &MonitoringGenerator{}
+	services["project"] = &ProjectGenerator{}
+	services["pubsub"] = &PubsubGenerator{}
+	services["schedulerJobs"] = &SchedulerJobsGenerator{}
 	return services
 }
 
 func (GCPProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{
-		"firewalls":             {"networks": []string{"network", "self_link"}},
-		"routes":                {"networks": []string{"network", "self_link"}},
-		"regionBackendServices": {"healthChecks": []string{"health_checks", "self_link"}},
-		"backendBuckets":        {"gcs": []string{"bucket_name", "name"}},
-		"instanceTemplates": {
-			"networks":    []string{"network", "self_link"},
-			"subnetworks": []string{"subnetworks", "self_link"},
-		},
-		"subnetworks": {"networks": []string{"network", "self_link"}},
+		"backendBuckets": {"gcs": []string{"bucket_name", "name"}},
+		"firewalls":      {"networks": []string{"network", "self_link"}},
 		"gke": {
 			"networks":    []string{"network", "self_link"},
 			"subnetworks": []string{"subnetwork", "self_link"},
 		},
+		"instanceTemplates": {
+			"networks":    []string{"network", "self_link"},
+			"subnetworks": []string{"subnetworks", "self_link"},
+		},
+		"regionBackendServices":       {"healthChecks": []string{"health_checks", "self_link"}},
 		"regionInstanceGroupManagers": {"instanceTemplates": []string{"instance_template", "self_link"}},
+		"routes":                      {"networks": []string{"network", "self_link"}},
+		"subnetworks":                 {"networks": []string{"network", "self_link"}},
 	}
 }
 

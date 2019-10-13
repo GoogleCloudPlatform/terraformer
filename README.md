@@ -13,22 +13,29 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
 
 ![Waze SRE logo](docs/waze-sre-logo.png)
 
-
 # Table of Contents
+
 - [Capabilities](#capabilities)
 - [Installation](#installation)
-- [Supported providers](/providers)
-    * [Google Cloud](#use-with-gcp)
-    * [AWS](#use-with-aws)
-    * [Azure](#use-with-azure)
-    * [OpenStack](#use-with-openstack)
-    * [Kubernetes](#use-with-kubernetes)
-    * [Github](#use-with-github)
-    * [Datadog](#use-with-datadog)
-    * [Cloudflare](#use-with-cloudflare)
-    * [Logzio](#use-with-logzio)
-    * [NewRelic](#use-with-newrelic)
-    * [Heroku](#use-with-heroku)
+- [Supported Providers](/providers)
+    * Major Cloud
+        * [Google Cloud](#use-with-gcp)
+        * [AWS](#use-with-aws)
+        * [Azure](#use-with-azure)
+    * Cloud
+        * [Heroku](#use-with-heroku)
+        * [OpenStack](#use-with-openstack)
+    * Infrastructure Software
+        * [Kubernetes](#use-with-kubernetes)
+    * Network
+        * [Cloudflare](#use-with-cloudflare)
+    * VCS
+        * [Github](#use-with-github)
+    * Monitoring & System Management
+        * [Datadog](#use-with-datadog)
+        * [New Relic](#use-with-new-relic)
+    * Community
+        * [Logz.io](#use-with-logzio)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
@@ -41,12 +48,12 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
 3.  Connect between resources with `terraform_remote_state` (local and bucket).
 4.  Save `tf` files using a custom folder tree pattern.
 5.  Import by resource name and type.
-6.  Support terraform 0.12 (for terraform 0.11 use v0.7.9)
+6.  Support terraform 0.12 (for terraform 0.11 use v0.7.9).
 
-Terraformer uses terraform providers and is designed to easily support newly added resources.
-To upgrade resources with new fields, all you need to do is upgrade the relevant terraform providers.
+Terraformer uses Terraform providers and is designed to easily support newly added resources.
+To upgrade resources with new fields, all you need to do is upgrade the relevant Terraform providers.
 ```
-Import current State to terraform configuration from google cloud
+Import current state to Terraform configuration from Google Cloud
 
 Usage:
    import google [flags]
@@ -62,7 +69,7 @@ Flags:
   -h, --help                  help for google
   -o, --path-output string     (default "generated")
   -p, --path-pattern string   {output}/{provider}/custom/{service}/ (default "{output}/{provider}/{service}/")
-      --projects strings
+      --projects strings      
   -z, --regions strings       europe-west1, (default [global])
   -r, --resources strings     firewalls,networks
   -s, --state string          local or bucket (default "local")
@@ -81,11 +88,11 @@ For example:
 ```
 terraformer import aws --resources=vpc,subnet --filter=aws_vpc=myvpcid --regions=eu-west-1
 ```
-will only import the vpc with id `myvpcid`.
+will only import the VPC with id `myvpcid`.
 
-##### Resources ID
+##### Resource ID
 
-Filtering is based on Terraform resource ID patterns. To find valid ID patterns for your resource, check the import part of [Terraform documentation][terraform-providers].
+Filtering is based on Terraform resource ID patterns. To find valid ID patterns for your resource, check the import part of the [Terraform documentation][terraform-providers].
 
 [terraform-providers]: https://www.terraform.io/docs/providers/
 
@@ -109,6 +116,7 @@ $ terraformer import plan generated/google/my-project/terraformer/plan.json
 ```
 
 ### Installation
+
 From source:
 1.  Run `git clone <terraformer repo>`
 2.  Run `GO111MODULE=on go mod vendor`
@@ -143,23 +151,33 @@ If you want to use a package manager:
 
 - [Homebrew](https://brew.sh/) users can use `brew install terraformer`.
 
-Links to download terraform providers:
-* google cloud provider >2.11.0 - [here](https://releases.hashicorp.com/terraform-provider-google/)
-* aws provider >2.25.0 - [here](https://releases.hashicorp.com/terraform-provider-aws/)
-* azurerm provider >1.35.0 - [here](https://releases.hashicorp.com/terraform-provider-azurerm/)
-* openstack provider >1.21.1 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
-* kubernetes provider >=1.9.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
-* github provider >=2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-github/)
-* datadog provider >2.1.0 - [here](https://releases.hashicorp.com/terraform-provider-datadog/)
-* cloudflare provider >1.16 - [here](https://releases.hashicorp.com/terraform-provider-cloudflare/)
-* logzio provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
-* heroku provider >2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-heroku/)
+Links to download Terraform Providers:
+* Major Cloud
+    * Google Cloud provider >2.11.0 - [here](https://releases.hashicorp.com/terraform-provider-google/)
+    * AWS provider >2.25.0 - [here](https://releases.hashicorp.com/terraform-provider-aws/)
+    * Azure provider >1.35.0 - [here](https://releases.hashicorp.com/terraform-provider-azurerm/)
+* Cloud
+    * Heroku provider >2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-heroku/)
+    * OpenStack provider >1.21.1 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
+* Infrastructure Software
+    * Kubernetes provider >=1.9.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
+* Network
+    * Cloudflare provider >1.16 - [here](https://releases.hashicorp.com/terraform-provider-cloudflare/)
+* VCS
+    * GitHub provider >=2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-github/)
+* Monitoring & System Management
+    * Datadog provider >2.1.0 - [here](https://releases.hashicorp.com/terraform-provider-datadog/)
+    * New Relic provider >1.5.0 - [here](https://releases.hashicorp.com/terraform-provider-newrelic/)
+* Community
+    * Logz.io provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
 
 ### Use with GCP
+
 [![asciicast](https://asciinema.org/a/243961.svg)](https://asciinema.org/a/243961)
+
 Example:
 
 ```
@@ -180,14 +198,33 @@ List of supported GCP services:
 *   `bigQuery`
     * `google_bigquery_dataset`
     * `google_bigquery_table`
-*   `schedulerJobs`
-    * `google_cloud_scheduler_job`
+*   `cloudFunctions`
+    * `google_cloudfunctions_function`
+*   `cloudsql`
+    * `google_sql_database_instance`
+    * `google_sql_database`
+*   `dataProc`
+    * `google_dataproc_cluster`
 *   `disks`
     * `google_compute_disk`
+*   `dns`
+    * `google_dns_managed_zone`
+    * `google_dns_record_set`
 *   `firewalls`
     * `google_compute_firewall`
 *   `forwardingRules`
     * `google_compute_forwarding_rule`
+*   `gcs`
+    * `google_storage_bucket`
+    * `google_storage_bucket_acl`
+    * `google_storage_default_object_acl`
+    * `google_storage_bucket_iam_binding`
+    * `google_storage_bucket_iam_member`
+    * `google_storage_bucket_iam_policy`
+    * `google_storage_notification`
+*   `gke`
+    * `google_container_cluster`
+    * `google_container_node_pool`
 *   `globalAddresses`
     * `google_compute_global_address`
 *   `globalForwardingRules`
@@ -210,14 +247,29 @@ List of supported GCP services:
     * `google_compute_instance`
 *   `interconnectAttachments`
     * `google_compute_interconnect_attachment`
+*   `kms`
+    * `google_kms_key_ring`
+    * `google_kms_crypto_key`
+*   `logging`
+    * `google_logging_metric`
 *   `memoryStore`
     * `google_redis_instance`
+*   `monitoring`
+    * `google_monitoring_alert_policy`
+    * `google_monitoring_group`
+    * `google_monitoring_notification_channel`
+    * `google_monitoring_uptime_check_config`
 *   `networks`
     * `google_compute_network`
 *   `nodeGroups`
     * `google_compute_node_group`
 *   `nodeTemplates`
     * `google_compute_node_template`
+*   `project`
+    * `google_project`
+*   `pubsub`
+    * `google_pubsub_subscription`
+    * `google_pubsub_topic`
 *   `regionAutoscalers`
     * `google_compute_region_autoscaler`
 *   `regionBackendServices`
@@ -230,6 +282,8 @@ List of supported GCP services:
     * `google_compute_router`
 *   `routes`
     * `google_compute_route`
+*   `schedulerJobs`
+    * `google_cloud_scheduler_job`
 *   `securityPolicies`
     * `google_compute_security_policy`
 *   `sslPolicies`
@@ -254,42 +308,6 @@ List of supported GCP services:
     * `google_compute_url_map`
 *   `vpnTunnels`
     * `google_compute_vpn_tunnel`
-*   `gke`
-    * `google_container_cluster`
-    * `google_container_node_pool`
-*   `pubsub`
-    * `google_pubsub_subscription`
-    * `google_pubsub_topic`
-*   `dataProc`
-    * `google_dataproc_cluster`
-*   `cloudFunctions`
-    * `google_cloudfunctions_function`
-*   `gcs`
-    * `google_storage_bucket`
-    * `google_storage_bucket_acl`
-    * `google_storage_default_object_acl`
-    * `google_storage_bucket_iam_binding`
-    * `google_storage_bucket_iam_member`
-    * `google_storage_bucket_iam_policy`
-    * `google_storage_notification`
-*   `monitoring`
-    * `google_monitoring_alert_policy`
-    * `google_monitoring_group`
-    * `google_monitoring_notification_channel`
-    * `google_monitoring_uptime_check_config`
-*   `dns`
-    * `google_dns_managed_zone`
-    * `google_dns_record_set`
-*   `cloudsql`
-    * `google_sql_database_instance`
-    * `google_sql_database`
-*   `kms`
-    * `google_kms_key_ring`
-    * `google_kms_crypto_key`
-*   `project`
-    * `google_project`
-*   `logging`
-    * `google_logging_metric`
 
 Your `tf` and `tfstate` files are written by default to
 `generated/gcp/zone/service`.
@@ -317,8 +335,8 @@ In that case terraformer will not know with which region resources are associate
 
 List of supported AWS services:
 
-*   `elb`
-    * `aws_elb`
+*   `acm`
+    * `aws_acm_certificate`
 *   `alb` (supports ALB and NLB)
     * `aws_lb`
     * `aws_lb_listener`
@@ -330,12 +348,36 @@ List of supported AWS services:
     * `aws_autoscaling_group`
     * `aws_launch_configuration`
     * `aws_launch_template`
-*   `rds`
-    * `aws_db_instance`
-    * `aws_db_parameter_group`
-    * `aws_db_subnet_group`
-    * `aws_db_option_group`
-    * `aws_db_event_subscription`
+*   `cloudfront`
+    * `aws_cloudfront_distribution`
+*   `cloudtrail`
+    * `aws_cloudtrail`
+*   `dynamodb`
+    * `aws_dynamodb_table`
+*   `ec2_instance`
+    * `aws_instance`
+*   `eip`
+    * `aws_eip`
+*   `elasticache`
+    * `aws_elasticache_cluster`
+    * `aws_elasticache_parameter_group`
+    * `aws_elasticache_subnet_group`
+    * `aws_elasticache_replication_group`
+*   `ebs`
+    * `aws_ebs_volume`
+    * `aws_volume_attachment`
+*   `ecs`
+    * `aws_ecs_cluster`
+    * `aws_ecs_service`
+    * `aws_ecs_task_definition`
+*   `elb`
+    * `aws_elb`
+*   `es`
+    * `aws_elasticsearch_domain`
+*   `firehose`
+    * `aws_kinesis_firehose_delivery_stream`
+*   `glue`
+    * `glue_crawler`
 *   `iam`
     * `aws_iam_role`
     * `aws_iam_role_policy`
@@ -349,15 +391,41 @@ List of supported AWS services:
     * `aws_iam_group_policy`
 *   `igw`
     * `aws_internet_gateway`
+*   `kinesis`
+    * `aws_kinesis_stream`
+*   `msk`
+    * `aws_msk_cluster`
 *   `nat`
     * `aws_nat_gateway`
 *   `nacl`
     * `aws_network_acl`
+*   `organization`
+    * `aws_organizations_account`
+    * `aws_organizations_organization`
+    * `aws_organizations_organizational_unit`
+    * `aws_organizations_policy`
+    * `aws_organizations_policy_attachment`
+*   `rds`
+    * `aws_db_instance`
+    * `aws_db_parameter_group`
+    * `aws_db_subnet_group`
+    * `aws_db_option_group`
+    * `aws_db_event_subscription`
+*   `route53`
+    * `aws_route53_zone`
+    * `aws_route53_record`
+*   `route_table`
+    * `aws_route_table`
 *   `s3`
     * `aws_s3_bucket`
     * `aws_s3_bucket_policy`
 *   `sg`
     * `aws_security_group`
+*   `sns`
+    * `aws_sns_topic`
+    * `aws_sns_topic_subscription`
+*   `sqs`
+    * `aws_sqs_queue`
 *   `subnet`
     * `aws_subnet`
 *   `vpc`
@@ -368,58 +436,17 @@ List of supported AWS services:
     * `aws_vpn_connection`
 *   `vpn_gateway`
     * `aws_vpn_gateway`
-*   `route53`
-    * `aws_route53_zone`
-    * `aws_route53_record`
-*   `acm`
-    * `aws_acm_certificate`
-*   `elasticache`
-    * `aws_elasticache_cluster`
-    * `aws_elasticache_parameter_group`
-    * `aws_elasticache_subnet_group`
-    * `aws_elasticache_replication_group`
+
+AWS services that are global will be imported without specified region even if several regions will be passed. It is to ensure only one representation of an AWS resource is imported.
+
+List of global AWS services:
 *   `cloudfront`
-    * `aws_cloudfront_distribution`
-*   `ec2_instance`
-    * `aws_instance`
-*   `eip`
-    * `aws_eip`
-*   `firehose`
-    * `aws_kinesis_firehose_delivery_stream`
-*   `glue`
-    * `glue_crawler`
-*   `route_table`
-    * `aws_route_table`
-*   `ebs`
-    * `aws_ebs_volume`
-    * `aws_volume_attachment`
-*   `sqs`
-    * `aws_sqs_queue`
-*   `sns`
-    * `aws_sns_topic`
-    * `aws_sns_topic_subscription`
-*   `ecs`
-    * `aws_ecs_cluster`
-    * `aws_ecs_service`
-    * `aws_ecs_task_definition`
-*   `es`
-    * `aws_elasticsearch_domain`
+*   `iam`
 *   `organization`
-    * `aws_organizations_account`
-    * `aws_organizations_organization`
-    * `aws_organizations_organizational_unit`
-    * `aws_organizations_policy`
-    * `aws_organizations_policy_attachment`
-* `dynamodb`
-    * `aws_dynamodb_table`
-* `cloudtrail`
-    * `aws_cloudtrail`
-* `kinesis`
-    * `aws_kinesis_stream`
-* `msk`
-    * `aws_msk_cluster`
+*   `route53`
 
 ### Use with Azure
+
 Example:
 
 ```
@@ -437,16 +464,51 @@ export AZURE_TENANT_ID=[TENANT_ID]
 
 List of supported Azure resources:
 
-* `resource_group`
+*   `resource_group`
     * `azurerm_resource_group`
 
-AWS services that are global will be imported without specified region even if several regions will be passed. It is to ensure only one representation of an AWS resource is imported.
+### Use with Heroku
 
-List of global AWS services:
-*   `iam`
-*   `route53`
-*   `cloudfront`
-*   `organization`
+Example:
+
+```
+export HEROKU_EMAIL=[HEROKU_EMAIL]
+export HEROKU_API_KEY=[HEROKU_API_KEY]
+./terraformer import heroku -r app,addon
+```
+
+List of supported Heroku resources:
+
+*   `account_feature`
+    * `heroku_account_feature`
+*   `addon`
+    * `heroku_addon`
+*   `addon_attachment`
+    * `heroku_addon_attachment`
+*   `app`
+    * `heroku_app`
+*   `app_config_association`
+    * `heroku_app_config_association`
+*   `app_feature`
+    * `heroku_app_feature`
+*   `app_webhook`
+    * `heroku_app_webhook`
+*   `build`
+    * `heroku_build`
+*   `domain`
+    * `heroku_domain`
+*   `drain`
+    * `heroku_drain`
+*   `formation`
+    * `heroku_formation`
+*   `pipeline`
+    * `heroku_pipeline`
+*   `pipeline_coupling`
+    * `heroku_pipeline_coupling`
+*   `team_collaborator`
+    * `heroku_team_collaborator`
+*   `team_member`
+    * `heroku_team_member`
 
 ### Use with OpenStack
 
@@ -458,15 +520,15 @@ Example:
 
 List of supported OpenStack services:
 
+*   `blockstorage`
+    * `openstack_blockstorage_volume_v1`
+    * `openstack_blockstorage_volume_v2`
+    * `openstack_blockstorage_volume_v3`
 *   `compute`
     * `openstack_compute_instance_v2`
 *   `networking`
     * `openstack_networking_secgroup_v2`
     * `openstack_networking_secgroup_rule_v2`
-*   `blockstorage`
-    * `openstack_blockstorage_volume_v1`
-    * `openstack_blockstorage_volume_v2`
-    * `openstack_blockstorage_volume_v3`
 
 ### Use with Kubernetes
 
@@ -477,48 +539,70 @@ Example:
  terraformer import kubernetes --resources=deployments,services,storageclasses --filter=kubernetes_deployment=name1:name2:name3
 ```
 
-All kubernetes resources that are currently supported by the kubernetes provider, are also supported by this module. Here is the list of resources which are currently supported by kubernetes provider v.1.4:
+All Kubernetes resources that are currently supported by the Kubernetes provider, are also supported by this module. Here is the list of resources which are currently supported by Kubernetes provider v.1.4:
 
-* `clusterrolebinding`
-  * `kubernetes_cluster_role_binding`
-* `configmaps`
-  * `kubernetes_config_map`
-* `deployments`
-  * `kubernetes_deployment`
-* `horizontalpodautoscalers`
-  * `kubernetes_horizontal_pod_autoscaler`
-* `limitranges`
-  * `kubernetes_limit_range`
-* `namespaces`
-  * `kubernetes_namespace`
-* `persistentvolumes`
-  * `kubernetes_persistent_volume`
-* `persistentvolumeclaims`
-  * `kubernetes_persistent_volume_claim`
-* `pods`
-  * `kubernetes_pod`
-* `replicationcontrollers`
-  * `kubernetes_replication_controller`
-* `resourcequotas`
-  * `kubernetes_resource_quota`
-* `secrets`
-  * `kubernetes_secret`
-* `services`
-  * `kubernetes_service`
-* `serviceaccounts`
-  * `kubernetes_service_account`
-* `statefulsets`
-  * `kubernetes_stateful_set`
-* `storageclasses`
-  * `kubernetes_storage_class`
+*   `clusterrolebinding`
+    * `kubernetes_cluster_role_binding`
+*   `configmaps`
+    * `kubernetes_config_map`
+*   `deployments`
+    * `kubernetes_deployment`
+*   `horizontalpodautoscalers`
+    * `kubernetes_horizontal_pod_autoscaler`
+*   `limitranges`
+    * `kubernetes_limit_range`
+*   `namespaces`
+    * `kubernetes_namespace`
+*   `persistentvolumes`
+    * `kubernetes_persistent_volume`
+*   `persistentvolumeclaims`
+    * `kubernetes_persistent_volume_claim`
+*   `pods`
+    * `kubernetes_pod`
+*   `replicationcontrollers`
+    * `kubernetes_replication_controller`
+*   `resourcequotas`
+    * `kubernetes_resource_quota`
+*   `secrets`
+    * `kubernetes_secret`
+*   `services`
+    * `kubernetes_service`
+*   `serviceaccounts`
+    * `kubernetes_service_account`
+*   `statefulsets`
+    * `kubernetes_stateful_set`
+*   `storageclasses`
+    * `kubernetes_storage_class`
 
 #### Known issues
 
-* Terraform kubernetes provider is rejecting resources with ":" characters in their names (as they don't meet DNS-1123), while it's allowed for certain types in kubernetes, e.g. ClusterRoleBinding.
-* Because terraform flatmap uses "." to detect the keys for unflattening the maps, some keys with "." in their names are being considered as the maps.
+* Terraform Kubernetes provider is rejecting resources with ":" characters in their names (as they don't meet DNS-1123), while it's allowed for certain types in Kubernetes, e.g. ClusterRoleBinding.
+* Because Terraform flatmap uses "." to detect the keys for unflattening the maps, some keys with "." in their names are being considered as the maps.
 * Since the library assumes empty strings to be empty values (not "0"), there are some issues with optional integer keys that are restricted to be positive.
 
-### Use with Github
+### Use with Cloudflare
+
+Example:
+```
+CLOUDFLARE_TOKEN=[CLOUDFLARE_API_TOKEN]
+CLOUDFLARE_EMAIL=[CLOUDFLARE_EMAIL]
+ ./terraformer import cloudflare --resources=firewall,dns
+```
+
+List of supported Cloudflare services:
+
+* `access`
+  * `cloudflare_access_application`
+* `dns`
+  * `cloudflare_zone`
+  * `cloudflare_record`
+* `firewall`
+  * `cloudflare_access_rule`
+  * `cloudflare_filter`
+  * `cloudflare_firewall_rule`
+  * `cloudflare_zone_lockdown`
+
+### Use with GitHub
 
 Example:
 
@@ -529,23 +613,23 @@ Example:
 
 Supports only organizational resources. List of supported resources:
 
-* `repositories`
+*   `members`
+    * `github_membership`
+*   `organization_webhooks`
+    * `github_organization_webhook`
+*   `repositories`
     * `github_repository`
     * `github_repository_webhook`
     * `github_branch_protection`
     * `github_repository_collaborator`
     * `github_repository_deploy_key`
-* `teams`
+*   `teams`
     * `github_team`
     * `github_team_membership`
     * `github_team_repository`
-* `members`
-    * `github_membership`
-* `organization_webhooks`
-    * `github_organization_webhook`
 
 Notes:
-* Terraformer can't get webhook secrets from the github API. If you use a secret token in any of your webhooks, running `terraform plan` will result in a change being detected:
+* Terraformer can't get webhook secrets from the GitHub API. If you use a secret token in any of your webhooks, running `terraform plan` will result in a change being detected:
 => `configuration.#: "1" => "0"` in tfstate only.
 
 ### Use with Datadog
@@ -559,44 +643,43 @@ Example:
 
 List of supported Datadog services:
 
-* `downtime`
-    * `datadog_downtime`
-* `monitor`
-    * `datadog_monitor`
-* `dashboard`
+*   `dashboard`
     * `datadog_dashboard`
-* `screenboard`
+*   `downtime`
+    * `datadog_downtime`
+*   `monitor`
+    * `datadog_monitor`
+*   `screenboard`
     * `datadog_screenboard`
-* `synthetics`
+*   `synthetics`
     * `datadog_synthetics_test`
-* `timeboard`
+*   `timeboard`
     * `datadog_timeboard`
-* `user`
+*   `user`
     * `datadog_user`
 
-
-### Use with Cloudflare
+### Use with New Relic
 
 Example:
+
 ```
-CLOUDFLARE_TOKEN=[CLOUDFLARE_API_TOKEN]
-CLOUDFLARE_EMAIL=[CLOUDFLARE_EMAIL]
- ./terraformer import cloudflare --resources=firewall,dns
+NEWRELIC_API_KEY=[API-KEY]
+./terraformer import newrelic -r alert,dashboard,infra,synthetics
 ```
 
-List of supported Cloudflare services:
+List of supported New Relic resources:
 
-* `firewall`
-  * `cloudflare_access_rule`
-  * `cloudflare_filter`
-  * `cloudflare_firewall_rule`
-  * `cloudflare_zone_lockdown`
-* `dns`
-  * `cloudflare_zone`
-  * `cloudflare_record`
-* `access`
-  * `cloudflare_access_application`
-
+*   `alert`
+    * `newrelic_alert_channel`
+    * `newrelic_alert_condition`
+    * `newrelic_alert_policy`
+*   `dashboard`
+    * `newrelic_dashboard`
+*   `infra`
+    * `newrelic_infra_alert_condition`
+*   `synthetics`
+    * `newrelic_synthetics_monitor`
+    * `newrelic_synthetics_alert_condition`
 
 ### Use with Logz.io
 
@@ -608,74 +691,10 @@ Example:
 
 List of supported Logz.io resources:
 
-* `alerts`
+*   `alerts`
     * `logzio_alert`
-* `alert notification endpoints`
+*   `alert_notification_endpoints`
     * `logzio_endpoint`
-
-### Use with NewRelic
-Example:
-
-```
-NEWRELIC_API_KEY=[API-KEY]
-./terraformer import newrelic -r alert,dashboard,infra,synthetics
-```
-
-List of supported NewRelic resources:
-
-* `alert`
-    * `newrelic_alert_channel`
-    * `newrelic_alert_condition`
-    * `newrelic_alert_policy`
-* `dashboard`
-    * `newrelic_dashboard`
-* `infra`
-    * `newrelic_infra_alert_condition`
-* `synthetics`
-    * `newrelic_synthetics_monitor`
-    * `newrelic_synthetics_alert_condition`
-
-### Use with Heroku
-Example:
-
-```
-export HEROKU_EMAIL=[HEROKU_EMAIL]
-export HEROKU_API_KEY=[HEROKU_API_KEY]
-./terraformer import heroku -r app,addon
-```
-
-List of supported Heroku resources:
-
-* `account_feature`
-    * `heroku_account_feature`
-* `addon`
-    * `heroku_addon`
-* `addon_attachment`
-    * `heroku_addon_attachment`
-* `app`
-    * `heroku_app`
-* `app_config_association`
-    * `heroku_app_config_association`
-* `app_feature`
-    * `heroku_app_feature`
-* `app_webhook`
-    * `heroku_app_webhook`
-* `build`
-    * `heroku_build`
-* `domain`
-    * `heroku_domain`
-* `drain`
-    * `heroku_drain`
-* `formation`
-    * `heroku_formation`
-* `pipeline`
-    * `heroku_pipeline`
-* `pipeline_coupling`
-    * `heroku_pipeline_coupling`
-* `team_collaborator`
-    * `heroku_team_collaborator`
-* `team_member`
-    * `heroku_team_member`
 
 ## Contributing
 
@@ -684,12 +703,13 @@ Please read CONTRIBUTING.md for more information on the process we would like
 contributors to follow.
 
 ## Developing
+
 Terraformer was built so you can easily add new providers of any kind.
 
 Process for generating `tf` + `tfstate` files:
 
 1.  Call GCP/AWS/other api and get list of resources.
-2.  Iterate over resources and take only the ID (we don't need mapping fields!)
+2.  Iterate over resources and take only the ID (we don't need mapping fields!).
 3.  Call to provider for readonly fields.
 4.  Call to infrastructure and take tf + tfstate.
 
@@ -716,24 +736,23 @@ go run providers/gcp/gcp_compute_code_generator/*.go
 
 ### Similar projects
 
-
 #### [terraforming](https://github.com/dtan4/terraforming)
 
 ##### Terraformer Benefits
 
-* Simpler to add new providers and resources - already supports AWS, GCP, Github, Kubernetes, and Openstack. Terraforming supports only AWS.
-* Better support for HCL + tfstate, including updates for Terraform 0.12
-* If a provider adds new attributes to a resource, there is no need change Terraformer code - just update the terraform provider on your laptop.
-* Automatically supports connections between resources in HCL files
+* Simpler to add new providers and resources - already supports AWS, GCP, GitHub, Kubernetes, and Openstack. Terraforming supports only AWS.
+* Better support for HCL + tfstate, including updates for Terraform 0.12.
+* If a provider adds new attributes to a resource, there is no need change Terraformer code - just update the Terraform provider on your laptop.
+* Automatically supports connections between resources in HCL files.
 
 ##### Comparison
 
-Terraforming gets all attributes from cloud APIs and creates HCL and tfstate files with templating. Each attribute in the API needs to map to attribute in terraform. Generated files from templating can be broken with illegal syntax. When a provider adds new attributes the terraforming code needs to be updated.
+Terraforming gets all attributes from cloud APIs and creates HCL and tfstate files with templating. Each attribute in the API needs to map to attribute in Terraform. Generated files from templating can be broken with illegal syntax. When a provider adds new attributes the terraforming code needs to be updated.
 
-Terraformer instead uses terraform provider files for mapping attributes, HCL library from hashicorp, and terraform code.
+Terraformer instead uses Terraform provider files for mapping attributes, HCL library from Hashicorp, and Terraform code.
 
-Look for S3 support in Terraforming here and official s3 support
-Terraforming lacks full coverage for resources - as an example you can see that 70% of s3 options are not supported:
+Look for S3 support in terraforming here and official S3 support
+Terraforming lacks full coverage for resources - as an example you can see that 70% of S3 options are not supported:
 
 * terraforming - https://github.com/dtan4/terraforming/blob/master/lib/terraforming/template/tf/s3.erb
-* official s3 support - https://www.terraform.io/docs/providers/aws/r/s3_bucket.html
+* official S3 support - https://www.terraform.io/docs/providers/aws/r/s3_bucket.html
