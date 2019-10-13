@@ -40,7 +40,7 @@ func (g InstanceGroupsGenerator) createResources(ctx context.Context, instanceGr
 		for _, obj := range page.Items {
 			resources = append(resources, terraform_utils.NewResource(
 				zone+"/"+obj.Name,
-				obj.Name,
+				zone+"/"+obj.Name,
 				"google_compute_instance_group",
 				"google",
 				map[string]string{

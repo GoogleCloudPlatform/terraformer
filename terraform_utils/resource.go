@@ -16,11 +16,12 @@ package terraform_utils
 
 import (
 	"fmt"
+	"log"
+	"regexp"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/zclconf/go-cty/cty"
-	"log"
-	"regexp"
 )
 
 type Resource struct {
@@ -103,12 +104,12 @@ func (r *Resource) ConvertTFstate(provider *provider_wrapper.ProviderWrapper) er
 	for _, pattern := range r.IgnoreKeys {
 		ignoreKeys = append(ignoreKeys, regexp.MustCompile(pattern))
 	}
-
 	allowEmptyValues := []*regexp.Regexp{}
 	for _, pattern := range r.AllowEmptyValues {
-		allowEmptyValues = append(allowEmptyValues, regexp.MustCompile(pattern))
+		if pattern != "" {
+			allowEmptyValues = append(allowEmptyValues, regexp.MustCompile(pattern))
+		}
 	}
-
 	parser := NewFlatmapParser(r.InstanceState.Attributes, ignoreKeys, allowEmptyValues)
 	schema := provider.Provider.GetSchema()
 	impliedType := schema.ResourceTypes[r.InstanceInfo.Type].Block.ImpliedType()

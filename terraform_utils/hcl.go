@@ -127,10 +127,13 @@ func HclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error)
 	dataJson := string(dataJsonBytes)
 	dataJson = strings.Replace(dataJson, "\\u003c", "<", -1)
 	if err != nil {
+		log.Println(dataJson)
 		return []byte{}, fmt.Errorf("error marshalling terraform data to json: %v", err)
 	}
+
 	nodes, err := hclParcer.Parse([]byte(dataJson))
 	if err != nil {
+		log.Println(dataJson)
 		return []byte{}, fmt.Errorf("error parsing terraform json: %v", err)
 	}
 	var sanitizer astSanitizer

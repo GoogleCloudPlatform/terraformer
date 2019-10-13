@@ -40,7 +40,7 @@ func (g DisksGenerator) createResources(ctx context.Context, disksList *compute.
 		for _, obj := range page.Items {
 			resources = append(resources, terraform_utils.NewResource(
 				zone+"/"+obj.Name,
-				obj.Name,
+				zone+"/"+obj.Name,
 				"google_compute_disk",
 				"google",
 				map[string]string{
