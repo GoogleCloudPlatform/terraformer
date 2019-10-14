@@ -16,7 +16,6 @@ package snowflake
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/kelseyhightower/envconfig"
@@ -37,8 +36,6 @@ type SnowflakeProvider struct {
 }
 
 func (p *SnowflakeProvider) Init(args []string) error {
-	fmt.Println("snowflake_provider init")
-
 	p.Config = &SnowflakeConfig{}
 	err := envconfig.Process("", p.Config)
 	if err != nil {
@@ -54,12 +51,10 @@ func (p *SnowflakeProvider) Init(args []string) error {
 }
 
 func (p *SnowflakeProvider) GetName() string {
-	fmt.Println("getname")
 	return "snowflake"
 }
 
 func (p *SnowflakeProvider) GetProviderData(arg ...string) map[string]interface{} {
-	fmt.Println("getproviderdata")
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"snowflake": map[string]interface{}{
@@ -74,19 +69,16 @@ func (p *SnowflakeProvider) GetProviderData(arg ...string) map[string]interface{
 }
 
 func (SnowflakeProvider) GetResourceConnections() map[string]map[string][]string {
-	fmt.Println("getresourceconnections")
 	return map[string]map[string][]string{}
 }
 
 func (p *SnowflakeProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	fmt.Println("getsupportedservice")
 	return map[string]terraform_utils.ServiceGenerator{
 		"database": &DatabaseGenerator{},
 	}
 }
 
 func (p *SnowflakeProvider) InitService(serviceName string) error {
-	fmt.Println("initservice")
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
 		return errors.New("snowflake: " + serviceName + " not supported service")

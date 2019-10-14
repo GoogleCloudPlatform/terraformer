@@ -15,7 +15,6 @@
 package snowflake
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/jmoiron/sqlx"
@@ -43,19 +42,15 @@ type database struct {
 
 // sc = Snowflake Client
 func (sc *client) ListDatabases() ([]database, error) {
-	fmt.Println("listdatabases")
 	sdb := sqlx.NewDb(sc.db, "snowflake")
 	stmt := "SHOW DATABASES"
-	fmt.Println("queryx")
 	rows, err := sdb.Queryx(stmt)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	fmt.Println("got some rows")
 	db := []database{}
-	fmt.Println("structscan in listdatabases")
 	err = sqlx.StructScan(rows, &db)
 	if err != nil {
 		if err == sql.ErrNoRows {

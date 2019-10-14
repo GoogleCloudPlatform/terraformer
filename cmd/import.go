@@ -58,7 +58,6 @@ func newImportCmd() *cobra.Command {
 		SilenceErrors: false,
 		//Version:       version.String(),
 	}
-	fmt.Println("newCmdPlanImporter call")
 	cmd.AddCommand(newCmdPlanImporter(options))
 	for _, subcommand := range providerImporterSubcommands() {
 		providerCommand := subcommand(options)
@@ -87,9 +86,7 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 			return err
 		}
 		err = provider.GetService().InitResources()
-		fmt.Println("after importing")
 		provider.GetService().PopulateIgnoreKeys(provider.GetBasicConfig())
-		fmt.Println("after PopulateIgnoreKeys")
 		if err != nil {
 			return err
 		}

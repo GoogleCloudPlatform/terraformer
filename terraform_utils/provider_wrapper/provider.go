@@ -15,7 +15,6 @@
 package provider_wrapper
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -179,13 +178,11 @@ func (p *ProviderWrapper) initProvider() error {
 			providerFileName = pluginPath + string(os.PathSeparator) + file.Name()
 		}
 	}
-	fmt.Println("logger")
 	logger := hclog.New(&hclog.LoggerOptions{
 		Name:   "plugin",
 		Level:  hclog.Error,
 		Output: os.Stderr,
 	})
-	fmt.Println("new client")
 	p.client = plugin.NewClient(
 		&plugin.ClientConfig{
 			Cmd:              exec.Command(providerFileName),
@@ -197,11 +194,9 @@ func (p *ProviderWrapper) initProvider() error {
 			AutoMTLS:         true,
 		})
 	p.rpcClient, err = p.client.Client()
-	fmt.Println("client")
 	if err != nil {
 		return err
 	}
-	fmt.Println("dispense")
 	raw, err := p.rpcClient.Dispense(tfplugin.ProviderPluginName)
 	if err != nil {
 		return err
