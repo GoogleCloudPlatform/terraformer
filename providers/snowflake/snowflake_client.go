@@ -15,6 +15,8 @@
 package snowflake
 
 import (
+	"log"
+
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 
@@ -49,8 +51,9 @@ func (sc *client) ListDatabases() ([]database, error) {
 
 	db := []database{}
 	err = sqlx.StructScan(rows, &db)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to scan row for SHOW DATABASES")
+	if err == sql.ErrNoRows {
+		log.Printf("[DEBUG] no databases found")
+		return nil, nil
 	}
-	return db, nil
+	return db, errors.Wrap(err, "unable to scan row for SHOW DATABASES")
 }
