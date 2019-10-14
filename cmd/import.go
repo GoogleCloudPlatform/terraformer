@@ -58,7 +58,6 @@ func newImportCmd() *cobra.Command {
 		SilenceErrors: false,
 		//Version:       version.String(),
 	}
-
 	cmd.AddCommand(newCmdPlanImporter(options))
 	for _, subcommand := range providerImporterSubcommands() {
 		providerCommand := subcommand(options)

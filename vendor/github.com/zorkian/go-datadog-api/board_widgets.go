@@ -31,6 +31,7 @@ const (
 	MANAGE_STATUS_WIDGET  = "manage_status"
 	NOTE_WIDGET           = "note"
 	QUERY_VALUE_WIDGET    = "query_value"
+	QUERY_TABLE_WIDGET    = "query_table"
 	SCATTERPLOT_WIDGET    = "scatterplot"
 	TIMESERIES_WIDGET     = "timeseries"
 	TOPLIST_WIDGET        = "toplist"
@@ -89,6 +90,8 @@ func (widget *BoardWidget) GetWidgetType() (string, error) {
 		return NOTE_WIDGET, nil
 	case QueryValueDefinition:
 		return QUERY_VALUE_WIDGET, nil
+	case QueryTableDefinition:
+		return QUERY_TABLE_WIDGET, nil
 	case ScatterplotDefinition:
 		return SCATTERPLOT_WIDGET, nil
 	case TimeseriesDefinition:
@@ -238,7 +241,7 @@ type HeatmapRequest struct {
 	ProcessQuery *WidgetProcessQuery  `json:"process_query,omitempty"`
 }
 
-// HostmapDefinition represents the definition for a Heatmap widget
+// HostmapDefinition represents the definition for a Hostmap widget
 type HostmapDefinition struct {
 	Type          *string          `json:"type"`
 	Requests      *HostmapRequests `json:"requests"`
@@ -346,7 +349,29 @@ type QueryValueRequest struct {
 	ProcessQuery *WidgetProcessQuery  `json:"process_query,omitempty"`
 }
 
-// ScatterplotDefinition represents the definition for a Heatmap widget
+// QueryTableDefinition represents the definition for a Table widget
+type QueryTableDefinition struct {
+	Type       *string             `json:"type"`
+	Requests   []QueryTableRequest `json:"requests"`
+	Title      *string             `json:"title,omitempty"`
+	TitleSize  *string             `json:"title_size,omitempty"`
+	TitleAlign *string             `json:"title_align,omitempty"`
+	Time       *WidgetTime         `json:"time,omitempty"`
+}
+type QueryTableRequest struct {
+	Alias              *string                   `json:"alias,omitempty"`
+	ConditionalFormats []WidgetConditionalFormat `json:"conditional_formats,omitempty"`
+	Aggregator         *string                   `json:"aggregator,omitempty"`
+	Limit              *int                      `json:"limit,omitempty"`
+	Order              *string                   `json:"order,omitempty"`
+	// A QueryTableRequest should implement exactly one of the following query types
+	MetricQuery  *string              `json:"q,omitempty"`
+	ApmQuery     *WidgetApmOrLogQuery `json:"apm_query,omitempty"`
+	LogQuery     *WidgetApmOrLogQuery `json:"log_query,omitempty"`
+	ProcessQuery *WidgetProcessQuery  `json:"process_query,omitempty"`
+}
+
+// ScatterplotDefinition represents the definition for a Scatterplot widget
 type ScatterplotDefinition struct {
 	Type          *string              `json:"type"`
 	Requests      *ScatterplotRequests `json:"requests"`
@@ -401,7 +426,7 @@ type TimeseriesRequestStyle struct {
 	LineWidth *string `json:"line_width,omitempty"`
 }
 
-// ToplistDefinition represents the definition for a Distribution widget
+// ToplistDefinition represents the definition for a Top list widget
 type ToplistDefinition struct {
 	Type       *string          `json:"type"`
 	Requests   []ToplistRequest `json:"requests"`
@@ -599,6 +624,14 @@ func (widget *BoardWidget) UnmarshalJSON(data []byte) error {
 			return err
 		}
 		widget.Definition = queryValueWidget.Definition
+	case QUERY_TABLE_WIDGET:
+		var queryTableWidget struct {
+			Definition QueryTableDefinition `json:"definition"`
+		}
+		if err := json.Unmarshal(data, &queryTableWidget); err != nil {
+			return err
+		}
+		widget.Definition = queryTableWidget.Definition
 	case SCATTERPLOT_WIDGET:
 		var scatterplotWidget struct {
 			Definition ScatterplotDefinition `json:"definition"`
@@ -678,14 +711,16 @@ type WidgetConditionalFormat struct {
 	ImageUrl      *string  `json:"image_url,omitempty"`
 	HideValue     *bool    `json:"hide_value,omitempty"`
 	Timeframe     *string  `json:"timeframe,omitempty"`
+	Metric        *string  `json:"metric,omitempty"`
 }
 
 // WidgetApmOrLogQuery represents an APM or a Log query
 type WidgetApmOrLogQuery struct {
-	Index   *string                `json:"index"`
-	Compute *ApmOrLogQueryCompute  `json:"compute"`
-	Search  *ApmOrLogQuerySearch   `json:"search,omitempty"`
-	GroupBy []ApmOrLogQueryGroupBy `json:"group_by,omitempty"`
+	Index        *string                `json:"index"`
+	Compute      *ApmOrLogQueryCompute  `json:"compute,omitempty"`
+	MultiCompute []ApmOrLogQueryCompute `json:"multi_compute,omitempty"`
+	Search       *ApmOrLogQuerySearch   `json:"search,omitempty"`
+	GroupBy      []ApmOrLogQueryGroupBy `json:"group_by,omitempty"`
 }
 type ApmOrLogQueryCompute struct {
 	Aggregation *string `json:"aggregation"`

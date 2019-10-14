@@ -37,7 +37,7 @@ type valid struct {
 func NewClient(apiKey, appKey string) *Client {
 	baseUrl := os.Getenv("DATADOG_HOST")
 	if baseUrl == "" {
-		baseUrl = "https://app.datadoghq.com"
+		baseUrl = "https://api.datadoghq.com"
 	}
 
 	return &Client{

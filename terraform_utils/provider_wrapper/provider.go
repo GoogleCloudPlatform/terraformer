@@ -15,14 +15,11 @@
 package provider_wrapper
 
 import (
-	"github.com/zclconf/go-cty/cty/gocty"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"runtime"
 	"strings"
-
-	"github.com/zclconf/go-cty/cty"
 
 	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
@@ -32,6 +29,8 @@ import (
 	"github.com/hashicorp/terraform/providers"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/hashicorp/terraform/version"
+	"github.com/zclconf/go-cty/cty"
+	"github.com/zclconf/go-cty/cty/gocty"
 )
 
 type ProviderWrapper struct {
@@ -140,7 +139,7 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 
 	if resp.Diagnostics.HasErrors() {
 		// retry with different serialization mechanism
-		priorState, err  = gocty.ToCtyValue(state, impliedType)
+		priorState, err = gocty.ToCtyValue(state, impliedType)
 		resp = p.Provider.ReadResource(providers.ReadResourceRequest{
 			TypeName:   info.Type,
 			PriorState: priorState,
@@ -182,7 +181,6 @@ func (p *ProviderWrapper) initProvider() error {
 		Level:  hclog.Error,
 		Output: os.Stderr,
 	})
-
 	p.client = plugin.NewClient(
 		&plugin.ClientConfig{
 			Cmd:              exec.Command(providerFileName),
@@ -203,7 +201,6 @@ func (p *ProviderWrapper) initProvider() error {
 	}
 
 	p.Provider = raw.(*tfplugin.GRPCProvider)
-
 	config, err := p.Provider.GetSchema().Provider.Block.CoerceValue(p.config)
 	if err != nil {
 		return err

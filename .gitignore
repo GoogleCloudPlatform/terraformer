@@ -1,6 +1,7 @@
 .idea
 generated
 terraformer
+main
 .DS_Store
 .terraform
 .vscode

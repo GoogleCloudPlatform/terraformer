@@ -4,9 +4,12 @@ go 1.13
 
 require (
 	cloud.google.com/go v0.36.0
+	github.com/ExpansiveWorlds/instrumentedsql v0.0.0-20171218214018-45abb4b1947d // indirect
+	github.com/SermoDigital/jose v0.0.0-20161205224733-f6df55f235c2 // indirect
 	github.com/aws/aws-sdk-go v1.22.0
 	github.com/cloudflare/cloudflare-go v0.9.4
 	github.com/coreos/go-systemd v0.0.0-20181031085051-9002847aa142 // indirect
+	github.com/davecgh/go-spew v1.1.1
 	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
 	github.com/golang/groupcache v0.0.0-20181024230925-c65c006176ff // indirect
 	github.com/google/go-github/v25 v25.0.2
@@ -24,16 +27,20 @@ require (
 	github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365
 	github.com/imdario/mergo v0.3.7 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+	github.com/jmoiron/sqlx v1.2.0
 	github.com/jonboydell/logzio_client v0.0.0-20190726085421-c93d6b149c1e
 	github.com/joyent/triton-go v0.0.0-20180628001255-830d2b111e62 // indirect
 	github.com/json-iterator/go v1.1.6 // indirect
+	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lusis/go-artifactory v0.0.0-20180304164534-a47f63f234b2 // indirect
 	github.com/miekg/dns v1.0.15 // indirect
 	github.com/onsi/ginkgo v1.8.0 // indirect
 	github.com/onsi/gomega v1.5.0 // indirect
 	github.com/packer-community/winrmcp v0.0.0-20180921211025-c76d91c1e7db // indirect
 	github.com/paultyng/go-newrelic v3.1.0+incompatible
+	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4 // indirect
 	github.com/pkg/errors v0.8.1
+	github.com/snowflakedb/gosnowflake v1.3.1
 	github.com/spf13/cobra v0.0.3
 	github.com/spf13/pflag v1.0.3
 	github.com/terraform-providers/terraform-provider-openstack v1.18.0 // indirect

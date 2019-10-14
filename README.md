@@ -28,6 +28,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
     * [Logzio](#use-with-logzio)
     * [NewRelic](#use-with-newrelic)
     * [Heroku](#use-with-heroku)
+    * [Snowflake](#use-with-snowflake)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
@@ -616,6 +617,23 @@ List of supported Heroku resources:
     * `heroku_addon`
 * `app`
     * `heroku_app`
+
+### Use with Snowflake
+Example:
+
+```
+export SNOWFLAKE_USER=[SNOWFLAKE_EMAIL]
+export SNOWFLAKE_PASSWORD=[SNOWFLAKE_PASSWORD]
+export SNOWFLAKE_ROLE=[SNOWFLAKE_ROLE]
+export SNOWFLAKE_ACCOUNT=[SNOWFLAKE_ACCOUNT]
+export SNOWFLAKE_REGION=[SNOWFLAKE_REGION]
+./terraformer import snowflake -r database
+```
+
+List of supported Snowflake resources:
+
+* `database`
+    * `snowflake_database`
 
 ## Contributing
 
