@@ -26,13 +26,14 @@ type ServiceGenerator interface {
 	GetResources() []Resource
 	SetResources(resources []Resource)
 	ParseFilter(rawFilter string) []ResourceFilter
+	ParseFilters(rawFilters []string)
 	PostConvertHook() error
 	GetArgs() map[string]interface{}
 	SetArgs(args map[string]interface{})
 	SetName(name string)
 	SetProviderName(name string)
 	GetName() string
-	ParseAndInitialCleanup(rawFilters []string)
+	InitialCleanup()
 	PopulateIgnoreKeys(cty.Value)
 	PostRefreshCleanup()
 }
@@ -104,11 +105,8 @@ func (s *Service) GetName() string {
 	return s.Name
 }
 
-func (s *Service) ParseAndInitialCleanup(rawFilters []string) {
-	if len(rawFilters) != 0 {
-		s.ParseFilters(rawFilters)
-		FilterCleanup(s, true)
-	}
+func (s *Service) InitialCleanup() {
+	FilterCleanup(s, true)
 }
 
 func (s *Service) PostRefreshCleanup() {

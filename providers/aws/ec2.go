@@ -32,7 +32,19 @@ type Ec2Generator struct {
 func (g *Ec2Generator) InitResources() error {
 	sess := g.generateSession()
 	svc := ec2.New(sess)
-	err := svc.DescribeInstancesPages(&ec2.DescribeInstancesInput{}, func(instances *ec2.DescribeInstancesOutput, lastPage bool) bool {
+	var filters []*ec2.Filter
+	for _, filter := range g.Filter {
+		if strings.HasPrefix(filter.FieldPath, "tags.") && filter.ResourceName == "aws_instance" {
+			filters = append(filters, &ec2.Filter{
+				Name:   aws.String("tag:" + strings.TrimPrefix(filter.FieldPath, "tags.")),
+				Values: aws.StringSlice(filter.AcceptableValues),
+			})
+		}
+	}
+	input := ec2.DescribeInstancesInput{
+		Filters: filters,
+	}
+	err := svc.DescribeInstancesPages(&input, func(instances *ec2.DescribeInstancesOutput, lastPage bool) bool {
 		for _, reservation := range instances.Reservations {
 			for _, instance := range reservation.Instances {
 				name := ""
