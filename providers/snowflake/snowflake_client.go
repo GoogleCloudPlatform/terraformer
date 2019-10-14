@@ -20,7 +20,6 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
-	"github.com/snowflakedb/gosnowflake"
 
 	"database/sql"
 )
@@ -28,11 +27,6 @@ import (
 type client struct {
 	db   *sql.DB
 	Name string
-}
-
-func init() {
-	fmt.Println("snowflake_client init")
-	sql.Register("snowflake", &gosnowflake.SnowflakeDriver{})
 }
 
 type database struct {
