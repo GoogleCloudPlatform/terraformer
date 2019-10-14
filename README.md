@@ -22,6 +22,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
         * [AWS](#use-with-aws)
         * [Azure](#use-with-azure)
         * [AliCloud](#use-with-alicloud)
+        * [Snowflake](#use-with-snowflake)
     * Cloud
         * [DigitalOcean](#use-with-digitalocean)
         * [Heroku](#use-with-heroku)
@@ -39,6 +40,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
         * [New Relic](#use-with-new-relic)
     * Community
         * [Logz.io](#use-with-logzio)
+    * [NewRelic](#use-with-newrelic)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
@@ -892,6 +894,23 @@ List of supported Logz.io resources:
     * `logzio_alert`
 *   `alert_notification_endpoints`
     * `logzio_endpoint`
+
+### Use with Snowflake
+Example:
+
+```
+export SNOWFLAKE_USER=[SNOWFLAKE_EMAIL]
+export SNOWFLAKE_PASSWORD=[SNOWFLAKE_PASSWORD]
+export SNOWFLAKE_ROLE=[SNOWFLAKE_ROLE]
+export SNOWFLAKE_ACCOUNT=[SNOWFLAKE_ACCOUNT]
+export SNOWFLAKE_REGION=[SNOWFLAKE_REGION]
+./terraformer import snowflake -r database
+```
+
+List of supported Snowflake resources:
+
+* `database`
+    * `snowflake_database`
 
 ## Contributing
 
