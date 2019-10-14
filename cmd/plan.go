@@ -52,7 +52,6 @@ func newPlanCmd() *cobra.Command {
 }
 
 func newCmdPlanImporter(options ImportOptions) *cobra.Command {
-	fmt.Println("newCmdPlanImporter")
 	cmd := &cobra.Command{
 		Use:   "plan",
 		Short: "Import planned state to Terraform configuration",

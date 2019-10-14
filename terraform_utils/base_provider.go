@@ -15,8 +15,6 @@
 package terraform_utils
 
 import (
-	"fmt"
-
 	"github.com/zclconf/go-cty/cty"
 )
 
@@ -64,7 +62,6 @@ func (p *Provider) GenerateFiles() {
 }
 
 func (p *Provider) GetService() ServiceGenerator {
-	fmt.Println("in GetService")
 	return p.Service
 }
 
@@ -73,6 +70,5 @@ func (p *Provider) GetSupportedService() map[string]ServiceGenerator {
 }
 
 func (p *Provider) GetBasicConfig() cty.Value {
-	fmt.Println("in GetBasicConfig")
 	return cty.ObjectVal(map[string]cty.Value{})
 }
