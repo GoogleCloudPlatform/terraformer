@@ -40,7 +40,6 @@ type database struct {
 	RetentionTime sql.NullString `db:"retention_time"`
 }
 
-// sc = Snowflake Client
 func (sc *client) ListDatabases() ([]database, error) {
 	sdb := sqlx.NewDb(sc.db, "snowflake")
 	stmt := "SHOW DATABASES"
