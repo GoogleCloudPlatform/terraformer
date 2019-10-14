@@ -9,6 +9,7 @@ require (
 	github.com/aws/aws-sdk-go v1.22.0
 	github.com/cloudflare/cloudflare-go v0.9.4
 	github.com/coreos/go-systemd v0.0.0-20181031085051-9002847aa142 // indirect
+	github.com/davecgh/go-spew v1.1.1
 	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
 	github.com/golang/groupcache v0.0.0-20181024230925-c65c006176ff // indirect
 	github.com/google/go-github/v25 v25.0.2

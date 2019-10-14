@@ -15,9 +15,11 @@
 package terraform_utils
 
 import (
-	"github.com/zclconf/go-cty/cty"
+	"fmt"
 	"log"
 	"strings"
+
+	"github.com/zclconf/go-cty/cty"
 )
 
 type ServiceGenerator interface {
@@ -107,11 +109,16 @@ func (s *Service) PostConvertHook() error {
 }
 
 func (s *Service) PopulateIgnoreKeys(providerConfig cty.Value) {
+	fmt.Println("in PopulateIgnoreKeys")
 	resourcesTypes := []string{}
 	for _, r := range s.Resources {
 		resourcesTypes = append(resourcesTypes, r.InstanceInfo.Type)
 	}
+	fmt.Println("after appending resourceTypes")
 	keys := IgnoreKeys(resourcesTypes, s.ProviderName, providerConfig)
+	// spew.Dump(resourcesTypes)
+	// spew.Dump(s.ProviderName)
+	// spew.Dump(providerConfig)
 	for k, v := range keys {
 		for i := range s.Resources {
 			if s.Resources[i].InstanceInfo.Type == k {
@@ -119,4 +126,5 @@ func (s *Service) PopulateIgnoreKeys(providerConfig cty.Value) {
 			}
 		}
 	}
+	fmt.Println("after ignorekeys")
 }

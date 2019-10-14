@@ -65,7 +65,6 @@ func newCmdPlanImporter(options ImportOptions) *cobra.Command {
 			}
 
 			var provider terraform_utils.ProviderGenerator
-			fmt.Println("ProviderGenerator plan.go")
 			if providerGen, ok := providerGenerators()[plan.Provider]; ok {
 				provider = providerGen()
 			} else {

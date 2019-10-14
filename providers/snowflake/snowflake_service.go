@@ -45,6 +45,6 @@ func (s *SnowflakeService) generateService() (*client, error) {
 	if err != nil {
 		return nil, err
 	}
-	db, err := sql.Open("snowflake-provider", dsn)
+	db, err := sql.Open("snowflake", dsn)
 	return &client{db: db}, err
 }

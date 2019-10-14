@@ -15,12 +15,14 @@
 package provider_wrapper
 
 import (
-	"github.com/zclconf/go-cty/cty/gocty"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"runtime"
 	"strings"
+
+	"github.com/zclconf/go-cty/cty/gocty"
 
 	"github.com/zclconf/go-cty/cty"
 
@@ -140,7 +142,7 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 
 	if resp.Diagnostics.HasErrors() {
 		// retry with different serialization mechanism
-		priorState, err  = gocty.ToCtyValue(state, impliedType)
+		priorState, err = gocty.ToCtyValue(state, impliedType)
 		resp = p.Provider.ReadResource(providers.ReadResourceRequest{
 			TypeName:   info.Type,
 			PriorState: priorState,
@@ -177,12 +179,13 @@ func (p *ProviderWrapper) initProvider() error {
 			providerFileName = pluginPath + string(os.PathSeparator) + file.Name()
 		}
 	}
+	fmt.Println("logger")
 	logger := hclog.New(&hclog.LoggerOptions{
 		Name:   "plugin",
 		Level:  hclog.Error,
 		Output: os.Stderr,
 	})
-
+	fmt.Println("new client")
 	p.client = plugin.NewClient(
 		&plugin.ClientConfig{
 			Cmd:              exec.Command(providerFileName),
@@ -194,16 +197,17 @@ func (p *ProviderWrapper) initProvider() error {
 			AutoMTLS:         true,
 		})
 	p.rpcClient, err = p.client.Client()
+	fmt.Println("client")
 	if err != nil {
 		return err
 	}
+	fmt.Println("dispense")
 	raw, err := p.rpcClient.Dispense(tfplugin.ProviderPluginName)
 	if err != nil {
 		return err
 	}
 
 	p.Provider = raw.(*tfplugin.GRPCProvider)
-
 	config, err := p.Provider.GetSchema().Provider.Block.CoerceValue(p.config)
 	if err != nil {
 		return err
