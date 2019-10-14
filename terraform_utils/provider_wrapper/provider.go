@@ -178,6 +178,7 @@ func (p *ProviderWrapper) initProvider() error {
 	if err != nil {
 		return err
 	}
+	fmt.Println("logger")
 	logger := hclog.New(&hclog.LoggerOptions{
 		Name:   "plugin",
 		Level:  hclog.Error,
@@ -194,16 +195,17 @@ func (p *ProviderWrapper) initProvider() error {
 			AutoMTLS:         true,
 		})
 	p.rpcClient, err = p.client.Client()
+	fmt.Println("client")
 	if err != nil {
 		return err
 	}
+	fmt.Println("dispense")
 	raw, err := p.rpcClient.Dispense(tfplugin.ProviderPluginName)
 	if err != nil {
 		return err
 	}
 
 	p.Provider = raw.(*tfplugin.GRPCProvider)
-
 	config, err := p.Provider.GetSchema().Provider.Block.CoerceValue(p.config)
 	if err != nil {
 		return err

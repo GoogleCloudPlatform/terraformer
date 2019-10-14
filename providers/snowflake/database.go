@@ -28,12 +28,13 @@ func (g DatabaseGenerator) createResources(databaseList []database) []terraform_
 	var resources []terraform_utils.Resource
 	for _, database := range databaseList {
 		resources = append(resources, terraform_utils.NewSimpleResource(
-			database.Name,
-			database.Name,
+			database.DBName.String,
+			database.DBName.String,
 			"snowflake_database",
-			"snowflake-provider",
+			"snowflake",
 			[]string{}))
 	}
+	fmt.Println("done createresource")
 	return resources
 }
 

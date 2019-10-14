@@ -17,8 +17,12 @@ require (
 	github.com/chanzuckerberg/terraform-provider-snowflake v0.4.1
 	github.com/cloudflare/cloudflare-go v0.10.4
 	github.com/coreos/go-systemd v0.0.0-20181031085051-9002847aa142 // indirect
+<<<<<<< HEAD
 	github.com/denverdino/aliyungo v0.0.0-20190924033012-e8e08fe22cb2
 	github.com/digitalocean/godo v1.22.0
+=======
+	github.com/davecgh/go-spew v1.1.1
+>>>>>>> removed provider from driver name
 	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
 	github.com/go-resty/resty v0.0.0-00010101000000-000000000000 // indirect
 	github.com/gogo/protobuf v1.3.0 // indirect

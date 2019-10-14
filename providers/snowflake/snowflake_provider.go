@@ -55,7 +55,7 @@ func (p *SnowflakeProvider) Init(args []string) error {
 
 func (p *SnowflakeProvider) GetName() string {
 	fmt.Println("getname")
-	return "snowflake-provider"
+	return "snowflake"
 }
 
 func (p *SnowflakeProvider) GetProviderData(arg ...string) map[string]interface{} {

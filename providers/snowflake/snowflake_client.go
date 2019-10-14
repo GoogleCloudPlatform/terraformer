@@ -32,18 +32,27 @@ type client struct {
 
 func init() {
 	fmt.Println("snowflake_client init")
-	sql.Register("snowflake-provider", &gosnowflake.SnowflakeDriver{})
+	sql.Register("snowflake", &gosnowflake.SnowflakeDriver{})
 }
 
 type database struct {
-	Name string
+	CreatedOn     sql.NullString `db:"created_on"`
+	DBName        sql.NullString `db:"name"`
+	IsDefault     sql.NullString `db:"is_default"`
+	IsCurrent     sql.NullString `db:"is_current"`
+	Origin        sql.NullString `db:"origin"`
+	Owner         sql.NullString `db:"owner"`
+	Comment       sql.NullString `db:"comment"`
+	Options       sql.NullString `db:"options"`
+	RetentionTime sql.NullString `db:"retention_time"`
 }
 
 // sc = Snowflake Client
 func (sc *client) ListDatabases() ([]database, error) {
 	fmt.Println("listdatabases")
-	sdb := sqlx.NewDb(sc.db, "snowflake-provider")
+	sdb := sqlx.NewDb(sc.db, "snowflake")
 	stmt := "SHOW DATABASES"
+	fmt.Println("queryx")
 	rows, err := sdb.Queryx(stmt)
 	if err != nil {
 		return nil, err
@@ -52,7 +61,7 @@ func (sc *client) ListDatabases() ([]database, error) {
 
 	fmt.Println("got some rows")
 	db := []database{}
-
+	fmt.Println("structscan in listdatabases")
 	err = sqlx.StructScan(rows, &db)
 	if err != nil {
 		if err == sql.ErrNoRows {
