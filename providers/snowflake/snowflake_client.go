@@ -15,6 +15,8 @@
 package snowflake
 
 import (
+	"log"
+
 	"github.com/jmoiron/sqlx"
 	"github.com/pkg/errors"
 
@@ -56,5 +58,5 @@ func (sc *client) ListDatabases() ([]database, error) {
 		}
 		return nil, errors.Wrap(err, "unable to scan row for SHOW DATABASES")
 	}
-	return db, nil
+	return db, errors.Wrap(err, "unable to scan row for SHOW DATABASES")
 }
