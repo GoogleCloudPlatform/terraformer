@@ -82,19 +82,33 @@ Read-only permissions
 
 #### Filtering
 
-Filters are a way to choose which resources `terraformer` imports.
-
-For example:
-```
-terraformer import aws --resources=vpc,subnet --filter=aws_vpc=myvpcid --regions=eu-west-1
-```
-will only import the VPC with id `myvpcid`.
+Filters are a way to choose which resources `terraformer` imports. It's possible to filter resources by its identifiers or attributes. Multiple filtering values are separated by `:`. If an identifier contains this symbol, value should be wrapped in `'` e.g. `--filter=resource=id1:'project:dataset_id'`. Identifier based filters will be executed before Terraformer will try to refresh remote state.
 
 ##### Resource ID
 
 Filtering is based on Terraform resource ID patterns. To find valid ID patterns for your resource, check the import part of the [Terraform documentation][terraform-providers].
 
 [terraform-providers]: https://www.terraform.io/docs/providers/
+
+Example usage:
+
+```
+terraformer import aws --resources=vpc,subnet --filter=aws_vpc=myvpcid --regions=eu-west-1
+```
+Will only import the vpc with id `myvpcid`. This form of filters can help when it's necessary to select resources by its identifiers.
+
+##### Resources attributes
+
+Attribute filters allow filtering across different resource types by its attributes.
+
+```
+terraformer import aws --resources=ec2_instance,ebs --filter=Name=tags.costCenter;Value=20000:'20001:1' --regions=eu-west-1
+```
+Will only import AWS EC2 instances along with EBS volumes annotated with tag `costCenter` with values `20000` or `20001:1`. Attribute filters are by default applicable to all resource types although it's possible to specify to what resource type a given filter should be applicable to by providing `Type=<type>` parameter. For example:
+```
+terraformer import aws --resources=ec2_instance,ebs --filter=Type=ec2_instance;Name=tags.costCenter;Value=20000:'20001:1' --regions=eu-west-1
+```
+Will work as same as example above with a change the filter will be applicable only to `ec2_instance` resources.
 
 #### Planning
 

@@ -110,3 +110,61 @@ func IgnoreKeys(resourcesTypes []string, providerName string, providerConfig cty
 	}
 	return readOnlyAttributes
 }
+
+func ParseFilterValues(value string) []string {
+	var values []string
+
+	valueBuffering := true
+	wrapped := false
+	var valueBuffer []byte
+	for i := 0; i < len(value); i++ {
+		if value[i] == '\'' {
+			wrapped = !wrapped
+			continue
+		} else if value[i] == ':' {
+			if len(valueBuffer) == 0 {
+				continue
+			} else if valueBuffering && !wrapped {
+				values = append(values, string(valueBuffer))
+				valueBuffering = false
+				valueBuffer = []byte{}
+				continue
+			}
+		}
+		valueBuffering = true
+		valueBuffer = append(valueBuffer, value[i])
+	}
+	if len(valueBuffer) > 0 {
+		values = append(values, string(valueBuffer))
+	}
+
+	return values
+}
+
+func FilterCleanup(s *Service, isInitial bool) {
+	if len(s.Filter) == 0 {
+		return
+	}
+	var newListOfResources []Resource
+	for _, resource := range s.Resources {
+		allPredicatesTrue := true
+		for _, filter := range s.Filter {
+			if filter.isInitial() == isInitial {
+				allPredicatesTrue = allPredicatesTrue && filter.Filter(resource)
+			}
+		}
+		if allPredicatesTrue && !ContainsResource(newListOfResources, resource) {
+			newListOfResources = append(newListOfResources, resource)
+		}
+	}
+	s.Resources = newListOfResources
+}
+
+func ContainsResource(s []Resource, e Resource) bool {
+	for _, a := range s {
+		if a.InstanceInfo.Id == e.InstanceInfo.Id {
+			return true
+		}
+	}
+	return false
+}

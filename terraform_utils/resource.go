@@ -36,6 +36,39 @@ type Resource struct {
 	AdditionalFields map[string]interface{} `json:",omitempty"`
 }
 
+type ResourceFilter struct {
+	ResourceName     string
+	FieldPath        string
+	AcceptableValues []string
+}
+
+func (rf *ResourceFilter) Filter(resource Resource) bool {
+	if resource.InstanceInfo.Type != rf.ResourceName {
+		return true
+	}
+	var vals []interface{}
+	if rf.FieldPath == "id" {
+		vals = []interface{}{resource.InstanceState.ID}
+	} else {
+		vals = WalkAndGet(rf.FieldPath, resource.InstanceState.Attributes)
+		if len(vals) == 0 {
+			vals = WalkAndGet(rf.FieldPath, resource.Item)
+		}
+	}
+	for _, val := range vals {
+		for _, acceptableValue := range rf.AcceptableValues {
+			if val == acceptableValue {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (rf *ResourceFilter) isInitial() bool {
+	return rf.FieldPath == "id"
+}
+
 func NewResource(ID, resourceName, resourceType, provider string,
 	attributes map[string]string,
 	allowEmptyValues []string,
