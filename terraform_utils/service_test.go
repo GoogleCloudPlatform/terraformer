@@ -73,7 +73,8 @@ func TestServiceIdCleanupWithFilter(t *testing.T) {
 				ID: "myid",
 			}}},
 	}
-	service.ParseAndInitialCleanup([]string{"type1=:otherId"})
+	service.ParseFilters([]string{"type1=:otherId"})
+	service.InitialCleanup()
 
 	if !reflect.DeepEqual(len(service.Resources), 1) {
 		t.Errorf("failed to cleanup")

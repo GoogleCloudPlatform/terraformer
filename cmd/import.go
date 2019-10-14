@@ -88,13 +88,13 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 		if err != nil {
 			return err
 		}
+		provider.GetService().ParseFilters(options.Filter)
 		err = provider.GetService().InitResources()
 		provider.GetService().PopulateIgnoreKeys(provider.GetBasicConfig())
 		if err != nil {
 			return err
 		}
-
-		provider.GetService().ParseAndInitialCleanup(options.Filter)
+		provider.GetService().InitialCleanup()
 
 		providerWrapper, err := provider_wrapper.NewProviderWrapper(provider.GetName(), provider.GetConfig())
 		if err != nil {
