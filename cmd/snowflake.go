@@ -27,11 +27,7 @@ func newCmdSnowflakeImporter(options ImportOptions) *cobra.Command {
 		Long:  "Import current State to terraform configuration from Snowflake",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			provider := newSnowflakeProvider()
-			err := Import(provider, options, []string{})
-			if err != nil {
-				return err
-			}
-			return nil
+			return Import(provider, options, []string{})
 		},
 	}
 	cmd.AddCommand(listCmd(newSnowflakeProvider()))
