@@ -15,10 +15,11 @@
 package snowflake
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/pkg/errors"
 )
 
 type SnowflakeConfig struct {
@@ -39,7 +40,7 @@ func (p *SnowflakeProvider) Init(args []string) error {
 	p.Config = &SnowflakeConfig{}
 	err := envconfig.Process("", p.Config)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "")
 	}
 
 	// us-west-2 is their default region, but if you actually specify that it won't trigger their default code
@@ -79,9 +80,8 @@ func (p *SnowflakeProvider) GetSupportedService() map[string]terraform_utils.Ser
 }
 
 func (p *SnowflakeProvider) InitService(serviceName string) error {
-	var isSupported bool
-	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
-		return errors.New("snowflake: " + serviceName + " not supported service")
+	if _, isSupported := p.GetSupportedService()[serviceName]; !isSupported {
+		return errors.New(fmt.Sprintf("snowflake: %s not a supported service", serviceName))
 	}
 	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)
