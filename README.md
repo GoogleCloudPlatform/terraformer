@@ -97,19 +97,6 @@ terraformer import aws --resources=vpc,subnet --filter=aws_vpc=myvpcid --regions
 ```
 Will only import the vpc with id `myvpcid`. This form of filters can help when it's necessary to select resources by its identifiers.
 
-##### Resources attributes
-
-Attribute filters allow filtering across different resource types by its attributes.
-
-```
-terraformer import aws --resources=ec2_instance,ebs --filter=Name=tags.costCenter;Value=20000:'20001:1' --regions=eu-west-1
-```
-Will only import AWS EC2 instances along with EBS volumes annotated with tag `costCenter` with values `20000` or `20001:1`. Attribute filters are by default applicable to all resource types although it's possible to specify to what resource type a given filter should be applicable to by providing `Type=<type>` parameter. For example:
-```
-terraformer import aws --resources=ec2_instance,ebs --filter=Type=ec2_instance;Name=tags.costCenter;Value=20000:'20001:1' --regions=eu-west-1
-```
-Will work as same as example above with a change the filter will be applicable only to `ec2_instance` resources.
-
 #### Planning
 
 The `plan` command generates a planfile that contains all the resources set to be imported. By modifying the planfile before running the `import` command, you can rename or filter the resources you'd like to import.
@@ -335,6 +322,8 @@ Example:
  terraformer import aws --resources=vpc,subnet --filter=aws_vpc=vpc_id1:vpc_id2:vpc_id3 --regions=eu-west-1
 ```
 
+#### Profiles support
+
 To load profiles from the shared AWS configuration file (typically `~/.aws/config`), set the `AWS_SDK_LOAD_CONFIG` to `true`:
 
 ```
@@ -347,7 +336,7 @@ terraformer import aws --resources=cloudfront --profile=prod
 ```
 In that case terraformer will not know with which region resources are associated with and will not assume any region. That scenario is useful in case of global resources (e.g. CloudFront distributions or Route 53 records) and when region is passed implicitly through environmental variables or metadata service.
 
-List of supported AWS services:
+#### Supported services
 
 *   `acm`
     * `aws_acm_certificate`
@@ -451,6 +440,8 @@ List of supported AWS services:
 *   `vpn_gateway`
     * `aws_vpn_gateway`
 
+#### Global services
+
 AWS services that are global will be imported without specified region even if several regions will be passed. It is to ensure only one representation of an AWS resource is imported.
 
 List of global AWS services:
@@ -458,6 +449,19 @@ List of global AWS services:
 *   `iam`
 *   `organization`
 *   `route53`
+
+#### Attribute filters
+
+Attribute filters allow filtering across different resource types by its attributes.
+
+```
+terraformer import aws --resources=ec2_instance,ebs --filter=Name=tags.costCenter;Value=20000:'20001:1' --regions=eu-west-1
+```
+Will only import AWS EC2 instances along with EBS volumes annotated with tag `costCenter` with values `20000` or `20001:1`. Attribute filters are by default applicable to all resource types although it's possible to specify to what resource type a given filter should be applicable to by providing `Type=<type>` parameter. For example:
+```
+terraformer import aws --resources=ec2_instance,ebs --filter=Type=ec2_instance;Name=tags.costCenter;Value=20000:'20001:1' --regions=eu-west-1
+```
+Will work as same as example above with a change the filter will be applicable only to `ec2_instance` resources.
 
 ### Use with Azure
 
