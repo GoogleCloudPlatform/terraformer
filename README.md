@@ -348,6 +348,8 @@ List of supported AWS services:
     * `aws_autoscaling_group`
     * `aws_launch_configuration`
     * `aws_launch_template`
+*   `budgets`
+    * `aws_budgets_budget`
 *   `cloudfront`
     * `aws_cloudfront_distribution`
 *   `cloudtrail`
