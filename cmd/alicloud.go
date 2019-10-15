@@ -21,7 +21,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func newCmdAlicloudImporter(options ImportOptions) *cobra.Command {
+func newCmdAliCloudImporter(options ImportOptions) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "alicloud",
 		Short: "Import current State to terraform configuration from alicloud",
@@ -29,7 +29,7 @@ func newCmdAlicloudImporter(options ImportOptions) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			originalPathPattern := options.PathPattern
 			for _, region := range options.Regions {
-				provider := newAlicloudProvider()
+				provider := newAliCloudProvider()
 				options.PathPattern = originalPathPattern
 				options.PathPattern += region + "/"
 				log.Println(provider.GetName() + " importing region " + region)
@@ -42,7 +42,7 @@ func newCmdAlicloudImporter(options ImportOptions) *cobra.Command {
 			return nil
 		},
 	}
-	cmd.AddCommand(listCmd(newAlicloudProvider()))
+	cmd.AddCommand(listCmd(newAliCloudProvider()))
 	cmd.PersistentFlags().BoolVarP(&options.Connect, "connect", "c", true, "")
 	cmd.PersistentFlags().StringSliceVarP(&options.Resources, "resources", "r", []string{}, "vpc,subnet,nacl")
 	cmd.PersistentFlags().StringVarP(&options.PathPattern, "path-pattern", "p", DefaultPathPattern, "{output}/{provider}/custom/{service}/")
@@ -55,6 +55,6 @@ func newCmdAlicloudImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newAlicloudProvider() terraform_utils.ProviderGenerator {
-	return &alicloud_terraforming.AlicloudProvider{}
+func newAliCloudProvider() terraform_utils.ProviderGenerator {
+	return &alicloud_terraforming.AliCloudProvider{}
 }

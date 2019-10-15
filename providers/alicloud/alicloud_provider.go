@@ -22,13 +22,13 @@ import (
 	"github.com/zclconf/go-cty/cty"
 )
 
-type AlicloudProvider struct {
+type AliCloudProvider struct {
 	terraform_utils.Provider
 	region  string
 	profile string
 }
 
-func (p *AlicloudProvider) GetConfig() cty.Value {
+func (p *AliCloudProvider) GetConfig() cty.Value {
 	config, _ := LoadConfigFromProfile()
 
 	region := p.region
@@ -55,13 +55,13 @@ func (p *AlicloudProvider) GetConfig() cty.Value {
 	return val
 }
 
-func (p AlicloudProvider) GetResourceConnections() map[string]map[string][]string {
+func (p AliCloudProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{
 		// TODO: Not implemented
 	}
 }
 
-func (p AlicloudProvider) GetProviderData(arg ...string) map[string]interface{} {
+func (p AliCloudProvider) GetProviderData(arg ...string) map[string]interface{} {
 	conf, err := LoadConfigFromProfile()
 	if err != nil {
 		fmt.Println("ERROR:", err)
@@ -94,17 +94,17 @@ func (p AlicloudProvider) GetProviderData(arg ...string) map[string]interface{} 
 }
 
 // check projectName in env params
-func (p *AlicloudProvider) Init(args []string) error {
+func (p *AliCloudProvider) Init(args []string) error {
 	p.region = args[0]
 	p.profile = args[1]
 	return nil
 }
 
-func (p *AlicloudProvider) GetName() string {
+func (p *AliCloudProvider) GetName() string {
 	return "alicloud"
 }
 
-func (p *AlicloudProvider) InitService(serviceName string) error {
+func (p *AliCloudProvider) InitService(serviceName string) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
 		return errors.New("alicloud: " + serviceName + " not supported service")
@@ -119,7 +119,7 @@ func (p *AlicloudProvider) InitService(serviceName string) error {
 	return nil
 }
 
-func (p *AlicloudProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
+func (p *AliCloudProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
 		"ecs": &EcsGenerator{},
 	}
