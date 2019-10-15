@@ -16,10 +16,8 @@ package aws
 
 import (
 	"fmt"
-	"log"
-	"strings"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"log"
 
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -116,18 +114,19 @@ POLICY`, policy)
 	return nil
 }
 
-func (g *S3Generator) ParseFilter(rawFilter []string) {
-	g.Filter = map[string][]string{}
-	for _, resource := range rawFilter {
-		t := strings.Split(resource, "=")
-		if len(t) != 2 {
-			log.Println("Pattern for filter must be resource_type=id1:id2:id4")
-			continue
-		}
-		resourceName, resourcesID := t[0], t[1]
-		g.Filter[resourceName] = strings.Split(resourcesID, ":")
-		if resourceName == "aws_s3_bucket" {
-			g.Filter["aws_s3_bucket_policy"] = strings.Split(resourcesID, ":")
+func (g *S3Generator) ParseFilters(rawFilters []string) {
+	g.Filter = []terraform_utils.ResourceFilter{}
+	for _, rawFilter := range rawFilters {
+		filters := g.ParseFilter(rawFilter)
+		for _, resourceFilter := range filters {
+			g.Filter = append(g.Filter, resourceFilter)
+			if resourceFilter.ResourceName == "aws_s3_bucket" {
+				g.Filter = append(g.Filter, terraform_utils.ResourceFilter{
+					ResourceName:     "aws_s3_bucket_policy",
+					FieldPath:        resourceFilter.FieldPath,
+					AcceptableValues: resourceFilter.AcceptableValues,
+				})
+			}
 		}
 	}
 }
