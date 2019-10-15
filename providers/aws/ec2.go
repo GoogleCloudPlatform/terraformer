@@ -34,7 +34,7 @@ func (g *Ec2Generator) InitResources() error {
 	svc := ec2.New(sess)
 	var filters []*ec2.Filter
 	for _, filter := range g.Filter {
-		if strings.HasPrefix(filter.FieldPath, "tags.") && filter.ResourceName == "aws_instance" {
+		if strings.HasPrefix(filter.FieldPath, "tags.") && filter.IsApplicable("aws_instance") {
 			filters = append(filters, &ec2.Filter{
 				Name:   aws.String("tag:" + strings.TrimPrefix(filter.FieldPath, "tags.")),
 				Values: aws.StringSlice(filter.AcceptableValues),
