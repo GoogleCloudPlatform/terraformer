@@ -186,6 +186,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"acm":            &ACMGenerator{},
 		"alb":            &AlbGenerator{},
 		"auto_scaling":   &AutoScalingGenerator{},
+		"budgets":        &BudgetsGenerator{},
 		"cloudfront":     &CloudFrontGenerator{},
 		"cloudtrail":     &CloudTrailGenerator{},
 		"dynamodb":       &DynamoDbGenerator{},
