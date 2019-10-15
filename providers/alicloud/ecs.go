@@ -23,7 +23,7 @@ import (
 )
 
 type EcsGenerator struct {
-	AlicloudService
+	AliCloudService
 }
 
 func resourceFromInstance(instance ecs.Instance) terraform_utils.Resource {
@@ -90,7 +90,7 @@ func (g *EcsGenerator) InitResources() error {
 		pageNumber++
 	}
 
-	// Alicloud allows instances with same names but terraform doesnt
+	// AliCloud allows instances with same names but terraform doesnt
 	allInstances = handleDuplicates(allInstances)
 
 	for _, instance := range allInstances {
