@@ -23,10 +23,10 @@ type DatabaseGrantGenerator struct {
 
 func (g DatabaseGrantGenerator) createResources(databaseGrantList []database_grant) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
-	for _, database := range databaseGrantList {
+	for _, database_grant := range databaseGrantList {
 		resources = append(resources, terraform_utils.NewSimpleResource(
-			database.Name.String,
-			database.Name.String,
+			database_grant.Name.String,
+			database_grant.Name.String,
 			"snowflake_database_grant",
 			"snowflake",
 			[]string{}))
