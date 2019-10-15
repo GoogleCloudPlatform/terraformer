@@ -88,16 +88,13 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 		if err != nil {
 			return err
 		}
+		provider.GetService().ParseFilters(options.Filter)
 		err = provider.GetService().InitResources()
 		provider.GetService().PopulateIgnoreKeys(provider.GetBasicConfig())
 		if err != nil {
 			return err
 		}
-
-		if len(options.Filter) != 0 {
-			provider.GetService().ParseFilter(options.Filter)
-			provider.GetService().CleanupWithFilter()
-		}
+		provider.GetService().InitialCleanup()
 
 		providerWrapper, err := provider_wrapper.NewProviderWrapper(provider.GetName(), provider.GetConfig())
 		if err != nil {
@@ -118,6 +115,8 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 		}
 
 		providerWrapper.Kill()
+
+		provider.GetService().PostRefreshCleanup()
 
 		// change structs with additional data for each resource
 		err = provider.GetService().PostConvertHook()

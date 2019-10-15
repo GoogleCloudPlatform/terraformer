@@ -16,6 +16,7 @@ package aws
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aws/aws-sdk-go/aws"
@@ -37,8 +38,19 @@ func (g EbsGenerator) volumeAttachmentId(device, volumeID, instanceID string) st
 func (g *EbsGenerator) InitResources() error {
 	sess := g.generateSession()
 	svc := ec2.New(sess)
-
-	err := svc.DescribeVolumesPages(&ec2.DescribeVolumesInput{}, func(volumes *ec2.DescribeVolumesOutput, lastPage bool) bool {
+	var filters []*ec2.Filter
+	for _, filter := range g.Filter {
+		if strings.HasPrefix(filter.FieldPath, "tags.") && filter.IsApplicable("aws_ebs_volume") {
+			filters = append(filters, &ec2.Filter{
+				Name:   aws.String("tag:" + strings.TrimPrefix(filter.FieldPath, "tags.")),
+				Values: aws.StringSlice(filter.AcceptableValues),
+			})
+		}
+	}
+	input := ec2.DescribeVolumesInput{
+		Filters:filters,
+	}
+	err := svc.DescribeVolumesPages(&input, func(volumes *ec2.DescribeVolumesOutput, lastPage bool) bool {
 		for _, volume := range volumes.Volumes {
 
 			isRootDevice := false // Let's leave root device configuration to be done in ec2_instance resources

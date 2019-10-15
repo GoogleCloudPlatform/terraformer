@@ -25,15 +25,17 @@ type ServiceGenerator interface {
 	InitResources() error
 	GetResources() []Resource
 	SetResources(resources []Resource)
-	ParseFilter(rawFilter []string)
+	ParseFilter(rawFilter string) []ResourceFilter
+	ParseFilters(rawFilters []string)
 	PostConvertHook() error
 	GetArgs() map[string]interface{}
 	SetArgs(args map[string]interface{})
 	SetName(name string)
 	SetProviderName(name string)
 	GetName() string
-	CleanupWithFilter()
+	InitialCleanup()
 	PopulateIgnoreKeys(cty.Value)
+	PostRefreshCleanup()
 }
 
 type Service struct {
@@ -41,24 +43,59 @@ type Service struct {
 	Resources    []Resource
 	ProviderName string
 	Args         map[string]interface{}
-	Filter       map[string][]string
+	Filter       []ResourceFilter
 }
 
 func (s *Service) SetProviderName(providerName string) {
 	s.ProviderName = providerName
 }
 
-func (s *Service) ParseFilter(rawFilter []string) {
-	s.Filter = map[string][]string{}
-	for _, resource := range rawFilter {
-		t := strings.Split(resource, "=")
-		if len(t) != 2 {
-			log.Println("Pattern for filter must be resource_type=id1:id2:id4")
-			continue
+func (s *Service) ParseFilters(rawFilters []string) {
+	s.Filter = []ResourceFilter{}
+	for _, rawFilter := range rawFilters {
+		filters := s.ParseFilter(rawFilter)
+		for _, resourceFilter := range filters {
+			s.Filter = append(s.Filter, resourceFilter)
 		}
-		resourceName, resourcesID := t[0], t[1]
-		s.Filter[resourceName] = strings.Split(resourcesID, ":")
 	}
+}
+
+func (s *Service) ParseFilter(rawFilter string) []ResourceFilter {
+	var filters []ResourceFilter
+	if len(strings.Split(rawFilter, "=")) == 2 {
+		parts := strings.Split(rawFilter, "=")
+		resourceName, resourcesID := parts[0], parts[1]
+		filters = append(filters, ResourceFilter{
+			ResourceName:     resourceName,
+			FieldPath:        "id",
+			AcceptableValues: ParseFilterValues(resourcesID),
+		})
+	} else {
+		parts := strings.Split(rawFilter, ";")
+		if len(parts) != 2 && len(parts) != 3 {
+			log.Print("Invalid filter: " + rawFilter)
+			return filters
+		}
+		var ResourceNamePart string
+		var FieldPathPart string
+		var AcceptableValuesPart string
+		if len(parts) == 2 {
+			ResourceNamePart = ""
+			FieldPathPart = parts[0]
+			AcceptableValuesPart = parts[1]
+		} else {
+			ResourceNamePart = strings.TrimPrefix(parts[0], "Type=")
+			FieldPathPart = parts[1]
+			AcceptableValuesPart = parts[2]
+		}
+
+		filters = append(filters, ResourceFilter{
+			ResourceName:     ResourceNamePart,
+			FieldPath:        strings.TrimPrefix(FieldPathPart, "Name="),
+			AcceptableValues: ParseFilterValues(strings.TrimPrefix(AcceptableValuesPart, "Value=")),
+		})
+	}
+	return filters
 }
 
 func (s *Service) SetName(name string) {
@@ -68,21 +105,14 @@ func (s *Service) GetName() string {
 	return s.Name
 }
 
-func (s *Service) CleanupWithFilter() {
-	if len(s.Filter) == 0 {
-		return
+func (s *Service) InitialCleanup() {
+	FilterCleanup(s, true)
+}
+
+func (s *Service) PostRefreshCleanup() {
+	if len(s.Filter) != 0 {
+		FilterCleanup(s, false)
 	}
-	newListOfResources := []Resource{}
-	for _, v := range s.Resources {
-		if _, exist := s.Filter[v.InstanceInfo.Type]; exist {
-			for _, r := range s.Filter[v.InstanceInfo.Type] {
-				if v.InstanceState.ID == r {
-					newListOfResources = append(newListOfResources, v)
-				}
-			}
-		}
-	}
-	s.Resources = newListOfResources
 }
 
 func (s *Service) GetArgs() map[string]interface{} {
