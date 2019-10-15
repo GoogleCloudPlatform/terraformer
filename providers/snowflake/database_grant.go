@@ -14,6 +14,8 @@
 package snowflake
 
 import (
+	"fmt"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
 
@@ -21,15 +23,49 @@ type DatabaseGrantGenerator struct {
 	SnowflakeService
 }
 
-func (g DatabaseGrantGenerator) createResources(databaseGrantList []database_grant) []terraform_utils.Resource {
+func (g DatabaseGrantGenerator) createResources(databaseGrantList []databaseGrant) []terraform_utils.Resource {
+	type tfGrant struct {
+		DB        string
+		Privilege string
+		Roles     []string
+		Shares    []string
+	}
+	groupedResources := map[string]*tfGrant{}
+	for _, grant := range databaseGrantList {
+		id := fmt.Sprintf("%v|||%v", grant.Name.String, grant.Privilege.String)
+		_, ok := groupedResources[id]
+		if !ok {
+			groupedResources[id] = &tfGrant{
+				DB:        grant.Name.String,
+				Privilege: grant.Privilege.String,
+				Roles:     []string{},
+				Shares:    []string{},
+			}
+		}
+		tfGrant := groupedResources[id]
+		if grant.GrantedTo.String == "ROLE" {
+			tfGrant.Roles = append(tfGrant.Roles, grant.GranteeName.String)
+		}
+		if grant.GrantedTo.String == "SHARE" {
+			tfGrant.Shares = append(tfGrant.Shares, grant.GranteeName.String)
+		}
+	}
 	var resources []terraform_utils.Resource
-	for _, database_grant := range databaseGrantList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
-			database_grant.Name.String,
-			database_grant.Name.String,
+	for id, grant := range groupedResources {
+		resources = append(resources, terraform_utils.NewResource(
+			id,
+			fmt.Sprintf("%v_%v", grant.DB, grant.Privilege),
 			"snowflake_database_grant",
 			"snowflake",
-			[]string{}))
+			map[string]string{
+				"privilege": grant.Privilege,
+			},
+			[]string{},
+			map[string]interface{}{
+				"roles":  grant.Roles,
+				"shares": grant.Shares,
+			},
+		))
 	}
 	return resources
 }
@@ -39,10 +75,18 @@ func (g *DatabaseGrantGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
-	output, err := db.ListDatabaseGrants()
+	databases, err := db.ListDatabases()
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(output)
+	allGrants := []databaseGrant{}
+	for _, database := range databases {
+		grants, err := db.ListDatabaseGrants(database)
+		if err != nil {
+			return err
+		}
+		allGrants = append(allGrants, grants...)
+	}
+	g.Resources = g.createResources(allGrants)
 	return nil
 }

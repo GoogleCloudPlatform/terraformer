@@ -41,7 +41,7 @@ type database struct {
 	RetentionTime sql.NullString `db:"retention_time"`
 }
 
-type database_grant struct {
+type databaseGrant struct {
 	CreatedOn   sql.NullString `db:"created_on"`
 	Privilege   sql.NullString `db:"privilege"`
 	GrantedOn   sql.NullString `db:"granted_on"`
@@ -73,20 +73,19 @@ func (sc *client) ListDatabases() ([]database, error) {
 	return db, errors.Wrap(err, "unable to scan row for SHOW DATABASES")
 }
 
-func (sc *client) ListDatabaseGrants() ([]database_grant, error) {
+func (sc *client) ListDatabaseGrants(database database) ([]databaseGrant, error) {
 	sdb := sqlx.NewDb(sc.db, "snowflake")
-	stmt := fmt.Sprintf(`SHOW GRANTS ON DATABASE %v`, sc.db)
+	stmt := fmt.Sprintf(`SHOW GRANTS ON DATABASE "%v"`, database.DBName.String)
 	rows, err := sdb.Queryx(stmt)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-
-	db_grants := []database_grant{}
-	err = sqlx.StructScan(rows, &db_grants)
+	dbGrants := []databaseGrant{}
+	err = sqlx.StructScan(rows, &dbGrants)
 	if err == sql.ErrNoRows {
 		log.Printf("[DEBUG] no database grants found")
 		return nil, nil
 	}
-	return db_grants, errors.Wrap(err, "unable to scan row for SHOW DATABASES ON DATABASE")
+	return dbGrants, errors.Wrap(err, "unable to scan row for SHOW DATABASES ON DATABASE")
 }
