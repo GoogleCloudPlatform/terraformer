@@ -31,14 +31,26 @@ type AlicloudProvider struct {
 func (p *AlicloudProvider) GetConfig() cty.Value {
 	config, _ := LoadConfigFromProfile()
 
-	val := cty.ObjectVal(map[string]cty.Value{
-		"region": cty.StringVal(config.RegionId),
-		"assume_role": cty.SetVal([]cty.Value{
-			cty.ObjectVal(map[string]cty.Value{
-				"role_arn": cty.StringVal(config.RamRoleArn),
+	region := p.region
+	if region != "" {
+		region = config.RegionId
+	}
+
+	val := cty.Value{}
+	if config.RamRoleArn != "" {
+		val = cty.ObjectVal(map[string]cty.Value{
+			"region": cty.StringVal(region),
+			"assume_role": cty.SetVal([]cty.Value{
+				cty.ObjectVal(map[string]cty.Value{
+					"role_arn": cty.StringVal(config.RamRoleArn),
+				}),
 			}),
-		}),
-	})
+		})
+	} else {
+		val = cty.ObjectVal(map[string]cty.Value{
+			"region": cty.StringVal(region),
+		})
+	}
 
 	return val
 }
