@@ -32,6 +32,7 @@ func (g DatabaseGrantGenerator) createResources(databaseGrantList []databaseGran
 	}
 	groupedResources := map[string]*tfGrant{}
 	for _, grant := range databaseGrantList {
+                // TODO(ad): Fix this csv delimited when fixed in the provider. We should use the same functionality.
 		id := fmt.Sprintf("%v|||%v", grant.Name.String, grant.Privilege.String)
 		_, ok := groupedResources[id]
 		if !ok {
