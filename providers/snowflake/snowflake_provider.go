@@ -24,7 +24,7 @@ import (
 
 type SnowflakeConfig struct {
 	Account  string `envconfig:"SNOWFLAKE_ACCOUNT" required:"true"`
-	Username string `envconfig:"SNOWFLAKE_USER" required:"true"`
+	Username string `envconfig:"SNOWFLAKE_USERNAME" required:"true"`
 	Password string `envconfig:"SNOWFLAKE_PASSWORD" required:"true"`
 	Region   string `envconfig:"SNOWFLAKE_REGION" default:""`
 	Role     string `envconfig:"SNOWFLAKE_ROLE" required:"true"`
