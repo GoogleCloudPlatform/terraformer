@@ -3,7 +3,8 @@ module github.com/GoogleCloudPlatform/terraformer
 go 1.13
 
 require (
-	cloud.google.com/go v0.36.0
+	cloud.google.com/go v0.45.1
+	cloud.google.com/go/logging v1.0.0
 	github.com/ExpansiveWorlds/instrumentedsql v0.0.0-20171218214018-45abb4b1947d // indirect
 	github.com/SermoDigital/jose v0.0.0-20161205224733-f6df55f235c2 // indirect
 	github.com/aws/aws-sdk-go v1.22.0
@@ -21,7 +22,7 @@ require (
 	github.com/hashicorp/go-plugin v1.0.1-0.20190610192547-a1bc61569a26
 	github.com/hashicorp/hcl v1.0.1-0.20190611123218-cf7d376da96d
 	github.com/hashicorp/hcl2 v0.0.0-20190821123243-0c888d1241f6
-	github.com/hashicorp/terraform v0.12.8
+	github.com/hashicorp/terraform v0.12.9
 	github.com/heroku/heroku-go/v5 v5.1.0
 	github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c // indirect
 	github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365
@@ -38,7 +39,6 @@ require (
 	github.com/onsi/gomega v1.5.0 // indirect
 	github.com/packer-community/winrmcp v0.0.0-20180921211025-c76d91c1e7db // indirect
 	github.com/paultyng/go-newrelic v3.1.0+incompatible
-	github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/snowflakedb/gosnowflake v1.3.1
 	github.com/spf13/cobra v0.0.3
@@ -50,9 +50,10 @@ require (
 	github.com/xlab/treeprint v0.0.0-20181112141820-a009c3971eca // indirect
 	github.com/zclconf/go-cty v1.0.1-0.20190708163926-19588f92a98f
 	github.com/zorkian/go-datadog-api v2.24.0+incompatible
-	golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421
-	google.golang.org/api v0.5.1-0.20190510010909-bbbc0e98e3cc
-	google.golang.org/genproto v0.0.0-20190307195333-5fe7a883aa19
+	golang.org/x/build v0.0.0-20190111050920-041ab4dc3f9d // indirect
+	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
+	google.golang.org/api v0.9.0
+	google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55
 	gopkg.in/resty.v0 v0.4.1 // indirect
 	k8s.io/api v0.0.0-20190116205037-c89978d5f86d // indirect
 	k8s.io/apimachinery v0.0.0-20190116203031-d49e237a2683
