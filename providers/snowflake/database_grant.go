@@ -81,6 +81,10 @@ func (g *DatabaseGrantGenerator) InitResources() error {
 	}
 	allGrants := []databaseGrant{}
 	for _, database := range databases {
+		if database.Origin.String == "" {
+			// Provider does not support grants on imported databases yet
+			continue
+		}
 		grants, err := db.ListDatabaseGrants(database)
 		if err != nil {
 			return err
