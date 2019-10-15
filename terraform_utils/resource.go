@@ -36,14 +36,19 @@ type Resource struct {
 	AdditionalFields map[string]interface{} `json:",omitempty"`
 }
 
+type ApplicableFilter interface {
+	IsApplicable(resourceName string) bool
+}
+
 type ResourceFilter struct {
+	ApplicableFilter
 	ResourceName     string
 	FieldPath        string
 	AcceptableValues []string
 }
 
 func (rf *ResourceFilter) Filter(resource Resource) bool {
-	if resource.InstanceInfo.Type != rf.ResourceName {
+	if !rf.IsApplicable(resource.InstanceInfo.Type) {
 		return true
 	}
 	var vals []interface{}
@@ -63,6 +68,10 @@ func (rf *ResourceFilter) Filter(resource Resource) bool {
 		}
 	}
 	return false
+}
+
+func (rf *ResourceFilter) IsApplicable(resourceName string) bool {
+	return rf.ResourceName == "" || rf.ResourceName == resourceName
 }
 
 func (rf *ResourceFilter) isInitial() bool {

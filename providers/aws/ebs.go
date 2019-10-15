@@ -40,7 +40,7 @@ func (g *EbsGenerator) InitResources() error {
 	svc := ec2.New(sess)
 	var filters []*ec2.Filter
 	for _, filter := range g.Filter {
-		if strings.HasPrefix(filter.FieldPath, "tags.") && filter.ResourceName == "aws_ebs_volume" {
+		if strings.HasPrefix(filter.FieldPath, "tags.") && filter.IsApplicable("aws_ebs_volume") {
 			filters = append(filters, &ec2.Filter{
 				Name:   aws.String("tag:" + strings.TrimPrefix(filter.FieldPath, "tags.")),
 				Values: aws.StringSlice(filter.AcceptableValues),
