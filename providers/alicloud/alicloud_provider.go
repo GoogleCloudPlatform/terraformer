@@ -129,5 +129,6 @@ func (p *AliCloudProvider) InitService(serviceName string) error {
 func (p *AliCloudProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
 		"ecs": &EcsGenerator{},
+		"slb": &SlbGenerator{},
 	}
 }
