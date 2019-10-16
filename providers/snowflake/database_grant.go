@@ -32,7 +32,7 @@ func (g DatabaseGrantGenerator) createResources(databaseGrantList []databaseGran
 	}
 	groupedResources := map[string]*tfGrant{}
 	for _, grant := range databaseGrantList {
-                // TODO(ad): Fix this csv delimited when fixed in the provider. We should use the same functionality.
+		// TODO(ad): Fix this csv delimited when fixed in the provider. We should use the same functionality.
 		id := fmt.Sprintf("%v|||%v", grant.Name.String, grant.Privilege.String)
 		_, ok := groupedResources[id]
 		if !ok {
@@ -82,7 +82,7 @@ func (g *DatabaseGrantGenerator) InitResources() error {
 	}
 	allGrants := []databaseGrant{}
 	for _, database := range databases {
-		if database.Origin.String == "" {
+		if database.Origin.String != "" {
 			// Provider does not support grants on imported databases yet
 			continue
 		}
