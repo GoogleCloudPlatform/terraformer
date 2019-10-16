@@ -50,7 +50,7 @@ func newCmdAliCloudImporter(options ImportOptions) *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&options.State, "state", "s", DefaultState, "local or bucket")
 	cmd.PersistentFlags().StringVarP(&options.Bucket, "bucket", "b", "", "gs://terraform-state")
 	cmd.PersistentFlags().StringVar(&options.Profile, "profile", "default", "prod")
-	cmd.PersistentFlags().StringSliceVarP(&options.Regions, "regions", "", []string{}, "eu-west-1,eu-west-2,us-east-1")
+	cmd.PersistentFlags().StringSliceVarP(&options.Regions, "regions", "", []string{}, "cn-hangzhou")
 	cmd.PersistentFlags().StringSliceVarP(&options.Filter, "filter", "f", []string{}, "alicloud_slb=id1:id2:id4") // TODO: Not implemented
 	return cmd
 }

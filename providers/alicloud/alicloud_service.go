@@ -25,6 +25,7 @@ import (
 	"github.com/terraform-providers/terraform-provider-alicloud/alicloud/connectivity"
 )
 
+// AliCloudService Service struct for AliCloud
 type AliCloudService struct {
 	terraform_utils.Service
 }

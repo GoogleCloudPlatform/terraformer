@@ -22,12 +22,14 @@ import (
 	"github.com/zclconf/go-cty/cty"
 )
 
+// AliCloudProvider Provider for alicloud
 type AliCloudProvider struct {
 	terraform_utils.Provider
 	region  string
 	profile string
 }
 
+// GetConfig Converts json config to go-cty
 func (p *AliCloudProvider) GetConfig() cty.Value {
 	config, _ := LoadConfigFromProfile()
 
@@ -55,12 +57,14 @@ func (p *AliCloudProvider) GetConfig() cty.Value {
 	return val
 }
 
+// GetResourceConnections Gets resource connections for alicloud
 func (p AliCloudProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{
 		// TODO: Not implemented
 	}
 }
 
+// GetProviderData Used for generated HCL2 for the provider
 func (p AliCloudProvider) GetProviderData(arg ...string) map[string]interface{} {
 	conf, err := LoadConfigFromProfile()
 	if err != nil {
@@ -93,17 +97,19 @@ func (p AliCloudProvider) GetProviderData(arg ...string) map[string]interface{} 
 	}
 }
 
-// check projectName in env params
+// Init Loads up command line arguments in the provider
 func (p *AliCloudProvider) Init(args []string) error {
 	p.region = args[0]
 	p.profile = args[1]
 	return nil
 }
 
+// GetName Gets name of provider
 func (p *AliCloudProvider) GetName() string {
 	return "alicloud"
 }
 
+// InitService Initializes the AliCloud service
 func (p *AliCloudProvider) InitService(serviceName string) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
@@ -119,6 +125,7 @@ func (p *AliCloudProvider) InitService(serviceName string) error {
 	return nil
 }
 
+// GetSupportedService Gets a list of all supported services
 func (p *AliCloudProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
 		"ecs": &EcsGenerator{},

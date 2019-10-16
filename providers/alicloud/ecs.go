@@ -15,21 +15,20 @@
 package alicloud
 
 import (
-	"fmt"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ecs"
 )
 
+// EcsGenerator Struct for generating AliCloud Elastic Compute Service
 type EcsGenerator struct {
 	AliCloudService
 }
 
 func resourceFromInstance(instance ecs.Instance) terraform_utils.Resource {
 	return terraform_utils.NewResource(
-		instance.InstanceId,   // id
-		instance.InstanceName, // name
+		instance.InstanceId, // id
+		instance.InstanceId+"__"+instance.InstanceName, // name
 		"alicloud_instance",
 		"alicloud",
 		map[string]string{},
@@ -38,26 +37,7 @@ func resourceFromInstance(instance ecs.Instance) terraform_utils.Resource {
 	)
 }
 
-func handleDuplicates(instances []ecs.Instance) []ecs.Instance {
-	m := make(map[string]bool)
-	for index, instance := range instances {
-		if m[instance.InstanceName] {
-			i := 0
-			originalID := instance.InstanceName
-			instance.InstanceName = fmt.Sprintf("%s_%d", originalID, i)
-
-			for m[instance.InstanceName] == true {
-				i++
-				instance.InstanceName = fmt.Sprintf("%s_%d", originalID, i)
-			}
-		}
-		instances[index].InstanceName = instance.InstanceName
-		m[instance.InstanceName] = true
-	}
-
-	return instances
-}
-
+// InitResources Gets the list of all ECS instance ids and generates resources
 func (g *EcsGenerator) InitResources() error {
 	client, err := LoadClientFromProfile()
 	if err != nil {
@@ -90,22 +70,10 @@ func (g *EcsGenerator) InitResources() error {
 		pageNumber++
 	}
 
-	// AliCloud allows instances with same names but terraform doesnt
-	allInstances = handleDuplicates(allInstances)
-
 	for _, instance := range allInstances {
 		resource := resourceFromInstance(instance)
 		g.Resources = append(g.Resources, resource)
 	}
 
 	return nil
-}
-
-func (g *EcsGenerator) PostConvertHook() error {
-	fmt.Println("PostConvertHook: TODO: NOT IMPLEMENTED")
-	return nil
-}
-
-func (g *EcsGenerator) ParseFilter(rawFilter []string) {
-	fmt.Println("ParseFilter: TODO: NOT IMPLEMENTED")
 }
