@@ -83,7 +83,13 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 
 func (p *AzureProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
-		"resource_group": &ResourceGroupGenerator{},
+		"disk":                   &DiskGenerator{},
+		"network_interface":      &NetworkInterfaceGenerator{},
+		"network_security_group": &NetworkSecurityGroupGenerator{},
+		"resource_group":         &ResourceGroupGenerator{},
+		"storage_account":        &StorageAccountGenerator{},
+		"virtual_machine":        &VirtualMachineGenerator{},
+		"virtual_network":        &VirtualNetworkGenerator{},
 	}
 }
 

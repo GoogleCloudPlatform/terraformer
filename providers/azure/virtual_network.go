@@ -18,26 +18,28 @@ import (
 	"context"
 	"log"
 
-	"github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2019-05-01/resources"
+	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2019-08-01/network"
 	"github.com/Azure/go-autorest/autorest/azure/auth"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
 
-type ResourceGroupGenerator struct {
+type VirtualNetworkGenerator struct {
 	AzureService
 }
 
-func (g ResourceGroupGenerator) createResources(groupListResultIterator resources.GroupListResultIterator) []terraform_utils.Resource {
+func (g VirtualNetworkGenerator) createResources(virtualNetworkListResultPage network.VirtualNetworkListResultPage) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
-	for groupListResultIterator.NotDone() {
-		group := groupListResultIterator.Value()
-		resources = append(resources, terraform_utils.NewSimpleResource(
-			*group.ID,
-			*group.Name,
-			"azurerm_resource_group",
-			"azurerm",
-			[]string{}))
-		if err := groupListResultIterator.Next(); err != nil {
+	for virtualNetworkListResultPage.NotDone() {
+		virtualNetworks := virtualNetworkListResultPage.Values()
+		for _, virtualNetwork := range virtualNetworks {
+			resources = append(resources, terraform_utils.NewSimpleResource(
+				*virtualNetwork.ID,
+				*virtualNetwork.Name,
+				"azurerm_virtual_network",
+				"azurerm",
+				[]string{}))
+		}
+		if err := virtualNetworkListResultPage.Next(); err != nil {
 			log.Println(err)
 			break
 		}
@@ -45,15 +47,15 @@ func (g ResourceGroupGenerator) createResources(groupListResultIterator resource
 	return resources
 }
 
-func (g *ResourceGroupGenerator) InitResources() error {
+func (g *VirtualNetworkGenerator) InitResources() error {
 	ctx := context.Background()
-	groupsClient := resources.NewGroupsClient(g.Args["subscription"].(string))
+	virtualNetworkClient := network.NewVirtualNetworksClient(g.Args["subscription"].(string))
 	authorizer, err := auth.NewAuthorizerFromEnvironment()
 	if err != nil {
 		return err
 	}
-	groupsClient.Authorizer = authorizer
-	output, err := groupsClient.ListComplete(ctx, "", nil)
+	virtualNetworkClient.Authorizer = authorizer
+	output, err := virtualNetworkClient.ListAll(ctx)
 	if err != nil {
 		return err
 	}
