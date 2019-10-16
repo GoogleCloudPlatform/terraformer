@@ -93,6 +93,38 @@ type user struct {
 	HasRsaPublicKey    sql.NullString `db:"has_rsa_public_key"`
 }
 
+type warehouse struct {
+	Name            sql.NullString `db:"name"`
+	State           sql.NullString `db:"state"`
+	Type            sql.NullString `db:"type"`
+	Size            sql.NullString `db:"size"`
+	MinClusterCount sql.NullInt64  `db:"min_cluster_count"`
+	MaxClusterCount sql.NullInt64  `db:"max_cluster_count"`
+	StartedClusters sql.NullInt64  `db:"started_clusters"`
+	Running         sql.NullInt64  `db:"running"`
+	Queued          sql.NullInt64  `db:"queued"`
+	IsDefault       sql.NullString `db:"is_default"`
+	IsCurrent       sql.NullString `db:"is_current"`
+	AutoSuspend     sql.NullInt64  `db:"auto_suspend"`
+	AutoResume      sql.NullBool   `db:"auto_resume"`
+	Available       sql.NullString `db:"available"`
+	Provisioning    sql.NullString `db:"provisioning"`
+	Quiescing       sql.NullString `db:"quiescing"`
+	Other           sql.NullString `db:"other"`
+	CreatedOn       sql.NullTime   `db:"created_on"`
+	ResumedOn       sql.NullTime   `db:"resumed_on"`
+	UpdatedOn       sql.NullTime   `db:"updated_on"`
+	Owner           sql.NullString `db:"owner"`
+	Comment         sql.NullString `db:"comment"`
+	ResourceMonitor sql.NullString `db:"resource_monitor"`
+	Actives         sql.NullInt64  `db:"actives"`
+	Pendings        sql.NullInt64  `db:"pendings"`
+	Failed          sql.NullInt64  `db:"failed"`
+	Suspended       sql.NullInt64  `db:"suspended"`
+	UUID            sql.NullString `db:"uuid"`
+	ScalingPolicy   sql.NullString `db:"scaling_policy"`
+}
+
 func (sc *client) ListDatabases() ([]database, error) {
 	sdb := sqlx.NewDb(sc.db, "snowflake")
 	stmt := "SHOW DATABASES"
@@ -162,4 +194,22 @@ func (sc *client) ListUsers() ([]user, error) {
 		return nil, nil
 	}
 	return user, errors.Wrap(err, "unable to scan row for SHOW USERS")
+}
+
+func (sc *client) ListWarehouses() ([]warehouse, error) {
+	sdb := sqlx.NewDb(sc.db, "snowflake")
+	stmt := "SHOW WAREHOUSES"
+	rows, err := sdb.Queryx(stmt)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	warehouse := []warehouse{}
+	err = sqlx.StructScan(rows, &warehouse)
+	if err == sql.ErrNoRows {
+		log.Printf("[DEBUG] no users found")
+		return nil, nil
+	}
+	return warehouse, errors.Wrap(err, "unable to scan row for SHOW USERS")
 }
