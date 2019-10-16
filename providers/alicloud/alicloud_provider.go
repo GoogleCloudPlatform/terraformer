@@ -136,5 +136,6 @@ func (p *AliCloudProvider) GetSupportedService() map[string]terraform_utils.Serv
 		"vswitch": &VSwitchGenerator{},
 		"sg":      &SgGenerator{},
 		"keypair": &KeyPairGenerator{},
+		"pvtz":    &PvtzGenerator{},
 	}
 }
