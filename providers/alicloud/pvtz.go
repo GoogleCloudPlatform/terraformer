@@ -40,6 +40,18 @@ func resourceFromZoneResponse(zone pvtz.Zone) terraform_utils.Resource {
 	)
 }
 
+func resourceFromZoneAttachmentResponse(zone pvtz.Zone) terraform_utils.Resource {
+	return terraform_utils.NewResource(
+		zone.ZoneId, // id
+		zone.ZoneId+"__"+zone.ZoneName+"_attachment", // name
+		"alicloud_pvtz_zone_attachment",
+		"alicloud",
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{},
+	)
+}
+
 func resourceFromZoneRecordResponse(record pvtz.Record, ZoneID string) terraform_utils.Resource {
 	return terraform_utils.NewResource(
 		strconv.Itoa(record.RecordId)+":"+ZoneID,     // id
@@ -134,8 +146,13 @@ func (g *PvtzGenerator) InitResources() error {
 		return err
 	}
 
-	for _, Zone := range allZones {
-		resource := resourceFromZoneResponse(Zone)
+	for _, zone := range allZones {
+		resource := resourceFromZoneResponse(zone)
+		g.Resources = append(g.Resources, resource)
+	}
+
+	for _, zone := range allZones {
+		resource := resourceFromZoneAttachmentResponse(zone)
 		g.Resources = append(g.Resources, resource)
 	}
 
