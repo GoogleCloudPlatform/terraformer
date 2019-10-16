@@ -25,7 +25,7 @@ type SlbGenerator struct {
 	AliCloudService
 }
 
-func resourceFromResponse(loadBalancer slb.LoadBalancer) terraform_utils.Resource {
+func resourceFromSlbResponse(loadBalancer slb.LoadBalancer) terraform_utils.Resource {
 	return terraform_utils.NewResource(
 		loadBalancer.LoadBalancerId,                                    // id
 		loadBalancer.LoadBalancerId+"__"+loadBalancer.LoadBalancerName, // name
@@ -71,7 +71,7 @@ func (g *SlbGenerator) InitResources() error {
 	}
 
 	for _, loadBalancer := range allLoadBalancers {
-		resource := resourceFromResponse(loadBalancer)
+		resource := resourceFromSlbResponse(loadBalancer)
 		g.Resources = append(g.Resources, resource)
 	}
 
