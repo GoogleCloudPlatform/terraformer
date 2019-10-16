@@ -18,26 +18,28 @@ import (
 	"context"
 	"log"
 
-	"github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2019-05-01/resources"
+	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2019-08-01/network"
 	"github.com/Azure/go-autorest/autorest/azure/auth"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
 
-type ResourceGroupGenerator struct {
+type NetworkInterfaceGenerator struct {
 	AzureService
 }
 
-func (g ResourceGroupGenerator) createResources(groupListResultIterator resources.GroupListResultIterator) []terraform_utils.Resource {
+func (g NetworkInterfaceGenerator) createResources(interfaceListResultPage network.InterfaceListResultPage) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
-	for groupListResultIterator.NotDone() {
-		group := groupListResultIterator.Value()
-		resources = append(resources, terraform_utils.NewSimpleResource(
-			*group.ID,
-			*group.Name,
-			"azurerm_resource_group",
-			"azurerm",
-			[]string{}))
-		if err := groupListResultIterator.Next(); err != nil {
+	for interfaceListResultPage.NotDone() {
+		networkInterfaces := interfaceListResultPage.Values()
+		for _, networkInterface := range networkInterfaces {
+			resources = append(resources, terraform_utils.NewSimpleResource(
+				*networkInterface.ID,
+				*networkInterface.Name,
+				"azurerm_network_interface",
+				"azurerm",
+				[]string{}))
+		}
+		if err := interfaceListResultPage.Next(); err != nil {
 			log.Println(err)
 			break
 		}
@@ -45,15 +47,15 @@ func (g ResourceGroupGenerator) createResources(groupListResultIterator resource
 	return resources
 }
 
-func (g *ResourceGroupGenerator) InitResources() error {
+func (g *NetworkInterfaceGenerator) InitResources() error {
 	ctx := context.Background()
-	groupsClient := resources.NewGroupsClient(g.Args["subscription"].(string))
+	interfacesClient := network.NewInterfacesClient(g.Args["subscription"].(string))
 	authorizer, err := auth.NewAuthorizerFromEnvironment()
 	if err != nil {
 		return err
 	}
-	groupsClient.Authorizer = authorizer
-	output, err := groupsClient.ListComplete(ctx, "", nil)
+	interfacesClient.Authorizer = authorizer
+	output, err := interfacesClient.ListAll(ctx)
 	if err != nil {
 		return err
 	}

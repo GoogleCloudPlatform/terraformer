@@ -18,26 +18,28 @@ import (
 	"context"
 	"log"
 
-	"github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2019-05-01/resources"
+	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2019-08-01/network"
 	"github.com/Azure/go-autorest/autorest/azure/auth"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
 
-type ResourceGroupGenerator struct {
+type NetworkSecurityGroupGenerator struct {
 	AzureService
 }
 
-func (g ResourceGroupGenerator) createResources(groupListResultIterator resources.GroupListResultIterator) []terraform_utils.Resource {
+func (g NetworkSecurityGroupGenerator) createResources(securityGroupListResultPage network.SecurityGroupListResultPage) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
-	for groupListResultIterator.NotDone() {
-		group := groupListResultIterator.Value()
-		resources = append(resources, terraform_utils.NewSimpleResource(
-			*group.ID,
-			*group.Name,
-			"azurerm_resource_group",
-			"azurerm",
-			[]string{}))
-		if err := groupListResultIterator.Next(); err != nil {
+	for securityGroupListResultPage.NotDone() {
+		nsgs := securityGroupListResultPage.Values()
+		for _, nsg := range nsgs {
+			resources = append(resources, terraform_utils.NewSimpleResource(
+				*nsg.ID,
+				*nsg.Name,
+				"azurerm_network_security_group",
+				"azurerm",
+				[]string{}))
+		}
+		if err := securityGroupListResultPage.Next(); err != nil {
 			log.Println(err)
 			break
 		}
@@ -45,15 +47,15 @@ func (g ResourceGroupGenerator) createResources(groupListResultIterator resource
 	return resources
 }
 
-func (g *ResourceGroupGenerator) InitResources() error {
+func (g *NetworkSecurityGroupGenerator) InitResources() error {
 	ctx := context.Background()
-	groupsClient := resources.NewGroupsClient(g.Args["subscription"].(string))
+	securityGroupsClient := network.NewSecurityGroupsClient(g.Args["subscription"].(string))
 	authorizer, err := auth.NewAuthorizerFromEnvironment()
 	if err != nil {
 		return err
 	}
-	groupsClient.Authorizer = authorizer
-	output, err := groupsClient.ListComplete(ctx, "", nil)
+	securityGroupsClient.Authorizer = authorizer
+	output, err := securityGroupsClient.ListAll(ctx)
 	if err != nil {
 		return err
 	}
