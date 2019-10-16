@@ -125,6 +125,18 @@ type warehouse struct {
 	ScalingPolicy   sql.NullString `db:"scaling_policy"`
 }
 
+type schema struct {
+	CreatedOn     sql.NullTime   `db:"created_on"`
+	Name          sql.NullString `db:"name"`
+	IsDefault     sql.NullString `db:"is_default"`
+	IsCurrent     sql.NullString `db:"is_current"`
+	DatabaseName  sql.NullString `db:"database_name"`
+	Owner         sql.NullString `db:"owner"`
+	Comment       sql.NullString `db:"comment"`
+	Options       sql.NullString `db:"options"`
+	RetentionTime sql.NullString `db:"retention_time"`
+}
+
 func (sc *client) ListDatabases() ([]database, error) {
 	sdb := sqlx.NewDb(sc.db, "snowflake")
 	stmt := "SHOW DATABASES"
@@ -208,8 +220,26 @@ func (sc *client) ListWarehouses() ([]warehouse, error) {
 	warehouse := []warehouse{}
 	err = sqlx.StructScan(rows, &warehouse)
 	if err == sql.ErrNoRows {
-		log.Printf("[DEBUG] no users found")
+		log.Printf("[DEBUG] no WAREHOUSES found")
 		return nil, nil
 	}
-	return warehouse, errors.Wrap(err, "unable to scan row for SHOW USERS")
+	return warehouse, errors.Wrap(err, "unable to scan row for SHOW WAREHOUSES")
+}
+
+func (sc *client) ListSchemas() ([]schema, error) {
+	sdb := sqlx.NewDb(sc.db, "snowflake")
+	stmt := "SHOW SCHEMAS"
+	rows, err := sdb.Queryx(stmt)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	schema := []schema{}
+	err = sqlx.StructScan(rows, &schema)
+	if err == sql.ErrNoRows {
+		log.Printf("[DEBUG] no SCHEMAS found")
+		return nil, nil
+	}
+	return schema, errors.Wrap(err, "unable to scan row for SHOW SCHEMAS")
 }

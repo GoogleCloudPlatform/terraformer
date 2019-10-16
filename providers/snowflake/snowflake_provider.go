@@ -80,6 +80,7 @@ func (p *SnowflakeProvider) GetSupportedService() map[string]terraform_utils.Ser
 		"role":           &RoleGenerator{},
 		"user":           &UserGenerator{},
 		"warehouse":      &WarehouseGenerator{},
+		"schema":         &SchemaGenerator{},
 	}
 }
 
