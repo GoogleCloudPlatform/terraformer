@@ -131,6 +131,7 @@ func (p *AliCloudProvider) GetSupportedService() map[string]terraform_utils.Serv
 		"ecs": &EcsGenerator{},
 		"slb": &SlbGenerator{},
 		"vpc": &VpcGenerator{},
+		"nat": &NatGatewayGenerator{},
 		"rds": &RdsGenerator{},
 	}
 }
