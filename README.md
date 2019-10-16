@@ -355,6 +355,10 @@ In that case terraformer will not know with which region resources are associate
     * `aws_budgets_budget`
 *   `cloudfront`
     * `aws_cloudfront_distribution`
+*   `cloudformation`
+    * `aws_cloudformation_stack`
+    * `aws_cloudformation_stack_set`
+    * `aws_cloudformation_stack_set_instance`
 *   `cloudtrail`
     * `aws_cloudtrail`
 *   `dynamodb`
@@ -375,6 +379,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_ecs_cluster`
     * `aws_ecs_service`
     * `aws_ecs_task_definition`
+*   `eks`
+    * `aws_eks_cluster`
 *   `elb`
     * `aws_elb`
 *   `es`
@@ -447,6 +453,7 @@ In that case terraformer will not know with which region resources are associate
 AWS services that are global will be imported without specified region even if several regions will be passed. It is to ensure only one representation of an AWS resource is imported.
 
 List of global AWS services:
+*   `budgets`
 *   `cloudfront`
 *   `iam`
 *   `organization`
