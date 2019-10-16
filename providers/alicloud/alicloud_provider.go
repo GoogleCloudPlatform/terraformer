@@ -134,5 +134,6 @@ func (p *AliCloudProvider) GetSupportedService() map[string]terraform_utils.Serv
 		"nat":     &NatGatewayGenerator{},
 		"rds":     &RdsGenerator{},
 		"vswitch": &VSwitchGenerator{},
+		"sg":      &SgGenerator{},
 	}
 }
