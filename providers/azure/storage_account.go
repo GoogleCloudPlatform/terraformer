@@ -18,26 +18,26 @@ import (
 	"context"
 	"log"
 
-	"github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2019-05-01/resources"
+	"github.com/Azure/azure-sdk-for-go/services/storage/mgmt/2019-04-01/storage"
 	"github.com/Azure/go-autorest/autorest/azure/auth"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
 
-type ResourceGroupGenerator struct {
+type StorageAccountGenerator struct {
 	AzureService
 }
 
-func (g ResourceGroupGenerator) createResources(groupListResultIterator resources.GroupListResultIterator) []terraform_utils.Resource {
+func (g StorageAccountGenerator) createResources(accountListResultIterator storage.AccountListResultIterator) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
-	for groupListResultIterator.NotDone() {
-		group := groupListResultIterator.Value()
+	for accountListResultIterator.NotDone() {
+		account := accountListResultIterator.Value()
 		resources = append(resources, terraform_utils.NewSimpleResource(
-			*group.ID,
-			*group.Name,
-			"azurerm_resource_group",
+			*account.ID,
+			*account.Name,
+			"azurerm_storage_account",
 			"azurerm",
 			[]string{}))
-		if err := groupListResultIterator.Next(); err != nil {
+		if err := accountListResultIterator.Next(); err != nil {
 			log.Println(err)
 			break
 		}
@@ -45,15 +45,15 @@ func (g ResourceGroupGenerator) createResources(groupListResultIterator resource
 	return resources
 }
 
-func (g *ResourceGroupGenerator) InitResources() error {
+func (g *StorageAccountGenerator) InitResources() error {
 	ctx := context.Background()
-	groupsClient := resources.NewGroupsClient(g.Args["subscription"].(string))
+	accountsClient := storage.NewAccountsClient(g.Args["subscription"].(string))
 	authorizer, err := auth.NewAuthorizerFromEnvironment()
 	if err != nil {
 		return err
 	}
-	groupsClient.Authorizer = authorizer
-	output, err := groupsClient.ListComplete(ctx, "", nil)
+	accountsClient.Authorizer = authorizer
+	output, err := accountsClient.ListComplete(ctx)
 	if err != nil {
 		return err
 	}
