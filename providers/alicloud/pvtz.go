@@ -15,9 +15,12 @@
 package alicloud
 
 import (
+	"strconv"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/pvtz"
+	"github.com/terraform-providers/terraform-provider-alicloud/alicloud/connectivity"
 )
 
 // PvtzGenerator Struct for generating AliCloud private zone
@@ -37,12 +40,19 @@ func resourceFromZoneResponse(zone pvtz.Zone) terraform_utils.Resource {
 	)
 }
 
-// InitResources Gets the list of all pvtz Zone ids and generates resources
-func (g *PvtzGenerator) InitResources() error {
-	client, err := LoadClientFromProfile()
-	if err != nil {
-		return err
-	}
+func resourceFromZoneRecordResponse(record pvtz.Record, ZoneID string) terraform_utils.Resource {
+	return terraform_utils.NewResource(
+		strconv.Itoa(record.RecordId)+":"+ZoneID,     // id
+		strconv.Itoa(record.RecordId)+"__"+record.Rr, // name
+		"alicloud_pvtz_zone_record",
+		"alicloud",
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{},
+	)
+}
+
+func initZones(client *connectivity.AliyunClient) ([]pvtz.Zone, error) {
 	remaining := 1
 	pageNumber := 1
 	pageSize := 10
@@ -58,20 +68,79 @@ func (g *PvtzGenerator) InitResources() error {
 			return pvtzClient.DescribeZones(request)
 		})
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		response := raw.(*pvtz.DescribeZonesResponse)
 		for _, Zone := range response.Zones.Zone {
 			allZones = append(allZones, Zone)
-
 		}
 		remaining = response.TotalItems - pageNumber*pageSize
 		pageNumber++
 	}
+	return allZones, nil
+}
+
+func initZoneRecords(client *connectivity.AliyunClient, allZones []pvtz.Zone) ([]pvtz.Record, []string, error) {
+	allZoneRecords := make([]pvtz.Record, 1)
+	zoneIds := make([]string, 1)
+
+	for _, zone := range allZones {
+		remaining := 1
+		pageNumber := 1
+		pageSize := 10
+		if zone.ZoneId == "" {
+			continue
+		}
+		for remaining > 0 {
+			raw, err := client.WithPvtzClient(func(pvtzClient *pvtz.Client) (interface{}, error) {
+				request := pvtz.CreateDescribeZoneRecordsRequest()
+				request.RegionId = client.RegionId
+				request.ZoneId = zone.ZoneId
+				request.PageSize = requests.NewInteger(pageSize)
+				request.PageNumber = requests.NewInteger(pageNumber)
+				return pvtzClient.DescribeZoneRecords(request)
+			})
+			if err != nil {
+				return nil, nil, err
+			}
+
+			response := raw.(*pvtz.DescribeZoneRecordsResponse)
+			for _, zoneRecord := range response.Records.Record {
+				allZoneRecords = append(allZoneRecords, zoneRecord)
+				zoneIds = append(zoneIds, zone.ZoneId)
+			}
+			remaining = response.TotalItems - pageNumber*pageSize
+			pageNumber++
+		}
+	}
+	return allZoneRecords, zoneIds, nil
+}
+
+// InitResources Gets the list of all pvtz Zone ids and generates resources
+func (g *PvtzGenerator) InitResources() error {
+	client, err := LoadClientFromProfile()
+	if err != nil {
+		return err
+	}
+
+	allZones, err := initZones(client)
+	if err != nil {
+		return err
+	}
+
+	allRecords, zoneIds, err := initZoneRecords(client, allZones)
+	if err != nil {
+		return err
+	}
 
 	for _, Zone := range allZones {
 		resource := resourceFromZoneResponse(Zone)
+		g.Resources = append(g.Resources, resource)
+	}
+
+	for i, record := range allRecords {
+		resource := resourceFromZoneRecordResponse(record, zoneIds[i])
 		g.Resources = append(g.Resources, resource)
 	}
 
