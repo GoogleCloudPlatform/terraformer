@@ -33,6 +33,16 @@ type AWSProvider struct {
 
 const awsProviderVersion = ">2.25.0"
 
+// global resources should be bound to a default region. AWS doesn't specify in which region default services are
+// placed (see  https://docs.aws.amazon.com/general/latest/gr/rande.html), so we shouldn't assume any region as well
+var SupportedGlobalResources = []string{
+	"budgets",
+	"cloudfront",
+	"iam",
+	"organization",
+	"route53",
+}
+
 func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{
 		"alb": {
@@ -64,6 +74,10 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 			"ecs":    []string{"task_definition", "arn"},
 			"subnet": []string{"network_configuration.subnets", "id"},
 			"sg":     []string{"network_configuration.security_groups", "id"},
+		},
+		"eks": {
+			"subnet": []string{"vpc_config.subnet_ids", "id"},
+			"sg":     []string{"vpc_config.security_group_ids", "id"},
 		},
 		"elb": {
 			"sg":     []string{"security_groups", "id"},
@@ -187,12 +201,14 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"alb":            &AlbGenerator{},
 		"auto_scaling":   &AutoScalingGenerator{},
 		"budgets":        &BudgetsGenerator{},
+		"cloudformation": &CloudFormationGenerator{},
 		"cloudfront":     &CloudFrontGenerator{},
 		"cloudtrail":     &CloudTrailGenerator{},
 		"dynamodb":       &DynamoDbGenerator{},
 		"ebs":            &EbsGenerator{},
 		"ec2_instance":   &Ec2Generator{},
 		"ecs":            &EcsGenerator{},
+		"eks":            &EksGenerator{},
 		"eip":            &ElasticIpGenerator{},
 		"elasticache":    &ElastiCacheGenerator{},
 		"elb":            &ElbGenerator{},

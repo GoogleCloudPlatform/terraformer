@@ -21,10 +21,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// global resources should be bound to a default region. AWS doesn't specify in which region default services are
-// placed (see  https://docs.aws.amazon.com/general/latest/gr/rande.html), so we shouldn't assume any region as well
-var supportedGlobalResources = []string{"iam", "route53", "cloudfront", "organization"}
-
 const defaultRegion = ""
 
 func newCmdAwsImporter(options ImportOptions) *cobra.Command {
@@ -79,7 +75,7 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 func parseGlobalResources(allResources []string) []string {
 	var globalResources []string
 	for _, resourceName := range allResources {
-		if contains(supportedGlobalResources, resourceName) {
+		if contains(aws_terraforming.SupportedGlobalResources, resourceName) {
 			globalResources = append(globalResources, resourceName)
 		}
 	}
@@ -97,7 +93,7 @@ func importGlobalResources(options ImportOptions) error {
 func parseRegionalResources(allResources []string) []string {
 	var localResources []string
 	for _, resourceName := range allResources {
-		if !contains(supportedGlobalResources, resourceName) {
+		if !contains(aws_terraforming.SupportedGlobalResources, resourceName) {
 			localResources = append(localResources, resourceName)
 		}
 	}
