@@ -30,7 +30,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
     * Network
         * [Cloudflare](#use-with-cloudflare)
     * VCS
-        * [Github](#use-with-github)
+        * [GitHub](#use-with-github)
     * Monitoring & System Management
         * [Datadog](#use-with-datadog)
         * [New Relic](#use-with-new-relic)
@@ -484,8 +484,20 @@ export AZURE_TENANT_ID=[TENANT_ID]
 
 List of supported Azure resources:
 
+*   `disk`
+    * `azurerm_managed_disk`
+*   `network_interface`
+    * `azurerm_network_interface`
+*   `network_security_group`
+    * `azurerm_network_security_group`
 *   `resource_group`
     * `azurerm_resource_group`
+*   `storage_account`
+    * `azurerm_storage_account`
+*   `virtual_machine`
+    * `azurerm_virtual_machine`
+*   `virtual_network`
+    * `azurerm_virtual_network`
 
 ### Use with Heroku
 

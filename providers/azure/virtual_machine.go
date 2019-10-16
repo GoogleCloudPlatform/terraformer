@@ -18,26 +18,28 @@ import (
 	"context"
 	"log"
 
-	"github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2019-05-01/resources"
+	"github.com/Azure/azure-sdk-for-go/services/compute/mgmt/2019-07-01/compute"
 	"github.com/Azure/go-autorest/autorest/azure/auth"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
 
-type ResourceGroupGenerator struct {
+type VirtualMachineGenerator struct {
 	AzureService
 }
 
-func (g ResourceGroupGenerator) createResources(groupListResultIterator resources.GroupListResultIterator) []terraform_utils.Resource {
+func (g VirtualMachineGenerator) createResources(virtualMachineListResultPage compute.VirtualMachineListResultPage) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
-	for groupListResultIterator.NotDone() {
-		group := groupListResultIterator.Value()
-		resources = append(resources, terraform_utils.NewSimpleResource(
-			*group.ID,
-			*group.Name,
-			"azurerm_resource_group",
-			"azurerm",
-			[]string{}))
-		if err := groupListResultIterator.Next(); err != nil {
+	for virtualMachineListResultPage.NotDone() {
+		vms := virtualMachineListResultPage.Values()
+		for _, vm := range vms {
+			resources = append(resources, terraform_utils.NewSimpleResource(
+				*vm.ID,
+				*vm.Name,
+				"azurerm_virtual_machine",
+				"azurerm",
+				[]string{}))
+		}
+		if err := virtualMachineListResultPage.Next(); err != nil {
 			log.Println(err)
 			break
 		}
@@ -45,15 +47,15 @@ func (g ResourceGroupGenerator) createResources(groupListResultIterator resource
 	return resources
 }
 
-func (g *ResourceGroupGenerator) InitResources() error {
+func (g *VirtualMachineGenerator) InitResources() error {
 	ctx := context.Background()
-	groupsClient := resources.NewGroupsClient(g.Args["subscription"].(string))
+	vmClient := compute.NewVirtualMachinesClient(g.Args["subscription"].(string))
 	authorizer, err := auth.NewAuthorizerFromEnvironment()
 	if err != nil {
 		return err
 	}
-	groupsClient.Authorizer = authorizer
-	output, err := groupsClient.ListComplete(ctx, "", nil)
+	vmClient.Authorizer = authorizer
+	output, err := vmClient.ListAll(ctx)
 	if err != nil {
 		return err
 	}

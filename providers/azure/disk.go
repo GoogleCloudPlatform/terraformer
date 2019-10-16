@@ -18,26 +18,26 @@ import (
 	"context"
 	"log"
 
-	"github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2019-05-01/resources"
+	"github.com/Azure/azure-sdk-for-go/services/compute/mgmt/2019-07-01/compute"
 	"github.com/Azure/go-autorest/autorest/azure/auth"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
 
-type ResourceGroupGenerator struct {
+type DiskGenerator struct {
 	AzureService
 }
 
-func (g ResourceGroupGenerator) createResources(groupListResultIterator resources.GroupListResultIterator) []terraform_utils.Resource {
+func (g DiskGenerator) createResources(diskListIterator compute.DiskListIterator) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
-	for groupListResultIterator.NotDone() {
-		group := groupListResultIterator.Value()
+	for diskListIterator.NotDone() {
+		disk := diskListIterator.Value()
 		resources = append(resources, terraform_utils.NewSimpleResource(
-			*group.ID,
-			*group.Name,
-			"azurerm_resource_group",
+			*disk.ID,
+			*disk.Name,
+			"azurerm_managed_disk",
 			"azurerm",
 			[]string{}))
-		if err := groupListResultIterator.Next(); err != nil {
+		if err := diskListIterator.Next(); err != nil {
 			log.Println(err)
 			break
 		}
@@ -45,15 +45,15 @@ func (g ResourceGroupGenerator) createResources(groupListResultIterator resource
 	return resources
 }
 
-func (g *ResourceGroupGenerator) InitResources() error {
+func (g *DiskGenerator) InitResources() error {
 	ctx := context.Background()
-	groupsClient := resources.NewGroupsClient(g.Args["subscription"].(string))
+	disksClient := compute.NewDisksClient(g.Args["subscription"].(string))
 	authorizer, err := auth.NewAuthorizerFromEnvironment()
 	if err != nil {
 		return err
 	}
-	groupsClient.Authorizer = authorizer
-	output, err := groupsClient.ListComplete(ctx, "", nil)
+	disksClient.Authorizer = authorizer
+	output, err := disksClient.ListComplete(ctx)
 	if err != nil {
 		return err
 	}
