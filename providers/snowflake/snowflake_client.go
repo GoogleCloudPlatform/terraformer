@@ -52,6 +52,19 @@ type databaseGrant struct {
 	GrantedBy   sql.NullString `db:"granted_by"`
 }
 
+type role struct {
+	CreatedOn       sql.NullString `db:"created_on"`
+	Name            sql.NullString `db:"name"`
+	IsDefault       sql.NullString `db:"is_default"`
+	IsCurrent       sql.NullString `db:"is_current"`
+	IsInherited     sql.NullString `db:"is_inherited"`
+	AssignedToUsers sql.NullInt32  `db:"assigned_to_users"`
+	GrantedToRoles  sql.NullInt32  `db:"granted_to_roles"`
+	GrantedRoles    sql.NullInt32  `db:"granted_roles"`
+	Owner           sql.NullString `db:"owner"`
+	Comment         sql.NullString `db:"comment"`
+}
+
 type user struct {
 	Name               sql.NullString `db:"name"`
 	CreatedOn          sql.NullString `db:"created_on"`
@@ -116,6 +129,24 @@ func (sc *client) ListDatabaseGrants(database database) ([]databaseGrant, error)
 		return nil, nil
 	}
 	return dbGrants, errors.Wrap(err, "unable to scan row for SHOW DATABASES ON DATABASE")
+}
+
+func (sc *client) ListRoles() ([]role, error) {
+	sdb := sqlx.NewDb(sc.db, "snowflake")
+	stmt := "SHOW ROLES"
+	rows, err := sdb.Queryx(stmt)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	role := []role{}
+	err = sqlx.StructScan(rows, &role)
+	if err == sql.ErrNoRows {
+		log.Printf("[DEBUG] no roles found")
+		return nil, nil
+	}
+	return role, errors.Wrap(err, "unable to scan row for SHOW ROLES")
 }
 
 func (sc *client) ListUsers() ([]user, error) {
