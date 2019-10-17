@@ -18,7 +18,6 @@ import (
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-
 	synthetics "github.com/dollarshaveclub/new-relic-synthetics-go"
 	newrelic "github.com/paultyng/go-newrelic/api"
 )

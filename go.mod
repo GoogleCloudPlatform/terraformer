@@ -11,10 +11,11 @@ require (
 	github.com/Azure/go-autorest/autorest/to v0.3.0 // indirect
 	github.com/Azure/go-autorest/autorest/validation v0.2.0 // indirect
 	github.com/aliyun/alibaba-cloud-sdk-go v0.0.0-20191010082856-e76f4c50e182
-	github.com/aliyun/aliyun-oss-go-sdk v0.0.0-20190528142024-f8d6d645dc4b
+	github.com/aliyun/aliyun-tablestore-go-sdk v4.1.3+incompatible
 	github.com/aws/aws-sdk-go v1.25.10
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/cloudflare/cloudflare-go v0.10.4
+	github.com/denverdino/aliyungo v0.0.0-20190924033012-e8e08fe22cb2
 	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
 	github.com/go-resty/resty v0.0.0-00010101000000-000000000000 // indirect
 	github.com/gogo/protobuf v1.3.0 // indirect
@@ -23,6 +24,7 @@ require (
 	github.com/google/go-github/v25 v25.1.3
 	github.com/googleapis/gnostic v0.3.1 // indirect
 	github.com/gophercloud/gophercloud v0.4.1-0.20190920074709-6e93a6ba3b09
+	github.com/hashicorp/go-cleanhttp v0.5.1 // indirect
 	github.com/hashicorp/go-hclog v0.9.2
 	github.com/hashicorp/go-plugin v1.0.1
 	github.com/hashicorp/go-version v1.2.0 // indirect
@@ -34,6 +36,7 @@ require (
 	github.com/heroku/heroku-go/v5 v5.1.0
 	github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365
 	github.com/imdario/mergo v0.3.8 // indirect
+	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 	github.com/jonboydell/logzio_client v1.2.0
 	github.com/jstemmer/go-junit-report v0.9.1 // indirect
 	github.com/mattn/go-colorable v0.1.4 // indirect
@@ -43,7 +46,6 @@ require (
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.5
-	github.com/terraform-providers/terraform-provider-alicloud v1.57.1
 	github.com/tomnomnom/linkheader v0.0.0-20180905144013-02ca5825eb80 // indirect
 	github.com/ulikunitz/xz v0.5.6 // indirect
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
@@ -76,8 +78,6 @@ replace golang.org/x/lint => golang.org/x/lint v0.0.0-20190409202823-959b441ac42
 replace golang.org/x/time => golang.org/x/time v0.0.0-20190308202827-9d24e82272b4
 
 replace github.com/go-resty/resty => gopkg.in/resty.v1 v1.11.0
-
-replace github.com/jarcoal/httpmock => gopkg.in/jarcoal/httpmock.v1 v1.0.4
 
 replace git.apache.org/thrift.git v0.0.0-20180902110319-2566ecd5d999 => github.com/apache/thrift v0.0.0-20180902110319-2566ecd5d999
 
