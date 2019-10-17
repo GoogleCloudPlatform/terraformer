@@ -31,7 +31,7 @@ func newCmdGoogleImporter(options ImportOptions) *cobra.Command {
 			originalPathPattern := options.PathPattern
 			for _, project := range options.Projects {
 				for _, region := range options.Regions {
-					provider := newGCPProvider()
+					provider := newGoogleProvider()
 					options.PathPattern = originalPathPattern
 					options.PathPattern = strings.Replace(options.PathPattern, "{provider}/{service}", "{provider}/"+project+"/{service}/"+region, -1)
 					log.Println(provider.GetName() + " importing project " + project + " region " + region)
@@ -44,7 +44,7 @@ func newCmdGoogleImporter(options ImportOptions) *cobra.Command {
 			return nil
 		},
 	}
-	cmd.AddCommand(listCmd(newGCPProvider()))
+	cmd.AddCommand(listCmd(newGoogleProvider()))
 	cmd.PersistentFlags().BoolVarP(&options.Connect, "connect", "c", true, "")
 	cmd.PersistentFlags().StringSliceVarP(&options.Resources, "resources", "r", []string{}, "firewalls,networks")
 	cmd.PersistentFlags().StringVarP(&options.PathPattern, "path-pattern", "p", DefaultPathPattern, "{output}/{provider}/custom/{service}/")
@@ -58,6 +58,6 @@ func newCmdGoogleImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newGCPProvider() terraform_utils.ProviderGenerator {
+func newGoogleProvider() terraform_utils.ProviderGenerator {
 	return &gcp_terraforming.GCPProvider{}
 }
