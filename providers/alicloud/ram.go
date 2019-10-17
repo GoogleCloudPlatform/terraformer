@@ -102,7 +102,7 @@ func initRAMPolicyAttachment(client *connectivity.AliyunClient, allRoles []ram.R
 
 // InitResources Gets the list of all ram role ids and generates resources
 func (g *RAMGenerator) InitResources() error {
-	client, err := LoadClientFromProfile()
+	client, err := g.LoadClientFromProfile()
 	if err != nil {
 		return err
 	}

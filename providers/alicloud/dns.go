@@ -117,7 +117,7 @@ func initDomainRecords(client *connectivity.AliyunClient, allDomains []alidns.Do
 
 // InitResources Gets the list of all alidns domain ids and generates resources
 func (g *DnsGenerator) InitResources() error {
-	client, err := LoadClientFromProfile()
+	client, err := g.LoadClientFromProfile()
 	if err != nil {
 		return err
 	}

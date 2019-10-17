@@ -39,7 +39,7 @@ func resourceFromSecurityGroup(securitygroup ecs.SecurityGroup) terraform_utils.
 
 // InitResources Gets the list of all security group ids and generates resources
 func (g *SgGenerator) InitResources() error {
-	client, err := LoadClientFromProfile()
+	client, err := g.LoadClientFromProfile()
 	if err != nil {
 		return err
 	}

@@ -106,7 +106,7 @@ func initVServerGroups(client *connectivity.AliyunClient, allLoadBalancers []slb
 
 // InitResources Gets the list of all slb loadBalancer ids and generates resources
 func (g *SlbGenerator) InitResources() error {
-	client, err := LoadClientFromProfile()
+	client, err := g.LoadClientFromProfile()
 	if err != nil {
 		return err
 	}
