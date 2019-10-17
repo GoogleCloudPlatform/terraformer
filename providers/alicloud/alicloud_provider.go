@@ -128,14 +128,15 @@ func (p *AliCloudProvider) InitService(serviceName string) error {
 // GetSupportedService Gets a list of all supported services
 func (p *AliCloudProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
+		"dns":     &DnsGenerator{},
 		"ecs":     &EcsGenerator{},
+		"keypair": &KeyPairGenerator{},
+		"nat":     &NatGatewayGenerator{},
+		"pvtz":    &PvtzGenerator{},
+		"rds":     &RdsGenerator{},
+		"sg":      &SgGenerator{},
 		"slb":     &SlbGenerator{},
 		"vpc":     &VpcGenerator{},
-		"nat":     &NatGatewayGenerator{},
-		"rds":     &RdsGenerator{},
 		"vswitch": &VSwitchGenerator{},
-		"sg":      &SgGenerator{},
-		"keypair": &KeyPairGenerator{},
-		"pvtz":    &PvtzGenerator{},
 	}
 }
