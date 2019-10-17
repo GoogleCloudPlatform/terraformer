@@ -47,7 +47,7 @@ func (g *VSwitchGenerator) InitResources() error {
 	pageNumber := 1
 	pageSize := 10
 
-	allVSwitchs := make([]vpc.VSwitch, 1)
+	allVSwitchs := make([]vpc.VSwitch, 0)
 
 	for remaining > 0 {
 		raw, err := client.WithVpcClient(func(vpcClient *vpc.Client) (interface{}, error) {

@@ -47,7 +47,7 @@ func (g *SgGenerator) InitResources() error {
 	pageNumber := 1
 	pageSize := 10
 
-	allSecurityGroups := make([]ecs.SecurityGroup, 1)
+	allSecurityGroups := make([]ecs.SecurityGroup, 0)
 
 	for remaining > 0 {
 		raw, err := client.WithEcsClient(func(ecsClient *ecs.Client) (interface{}, error) {
