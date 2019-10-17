@@ -15,6 +15,8 @@
 package provider_wrapper
 
 import (
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -160,6 +162,11 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 		if resp.Diagnostics.HasErrors() {
 			return nil, resp.Diagnostics.Err()
 		}
+	}
+
+	if resp.NewState.IsNull() {
+		msg := fmt.Sprintf("ERROR: Read resource response is null for resource %s", info.Id)
+		return nil, errors.New(msg)
 	}
 
 	return terraform.NewInstanceStateShimmedFromValue(resp.NewState, int(schema.Provider.Version)), nil
