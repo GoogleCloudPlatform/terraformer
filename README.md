@@ -515,6 +515,9 @@ List of supported AliCloud resources:
   * `alicloud_pvtz_zone`
   * `alicloud_pvtz_zone_attachment`
   * `alicloud_pvtz_zone_record`
+* `ram`
+  * `alicloud_ram_role`
+  * `alicloud_ram_role_policy_attachment`
 * `rds`
   * `alicloud_db_instance`
 * `sg`
