@@ -26,7 +26,7 @@ func newCmdCloudflareImporter(options ImportOptions) *cobra.Command {
 		Short: "Import current state to Terraform configuration from Cloudflare",
 		Long:  "Import current state to Terraform configuration from Cloudflare",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			provider := newClouflareProvider()
+			provider := newCloudflareProvider()
 			err := Import(provider, options, []string{})
 			if err != nil {
 				return err
@@ -35,7 +35,7 @@ func newCmdCloudflareImporter(options ImportOptions) *cobra.Command {
 		},
 	}
 
-	cmd.AddCommand(listCmd(newClouflareProvider()))
+	cmd.AddCommand(listCmd(newCloudflareProvider()))
 	cmd.PersistentFlags().BoolVarP(&options.Connect, "connect", "c", true, "")
 	cmd.PersistentFlags().StringSliceVarP(&options.Resources, "resources", "r", []string{}, "zone")
 	cmd.PersistentFlags().StringVarP(&options.PathPattern, "path-pattern", "p", DefaultPathPattern, "{output}/{provider}/custom/{service}/")
@@ -45,6 +45,6 @@ func newCmdCloudflareImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newClouflareProvider() terraform_utils.ProviderGenerator {
+func newCloudflareProvider() terraform_utils.ProviderGenerator {
 	return &cloudflare_terraforming.CloudflareProvider{}
 }

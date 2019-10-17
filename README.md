@@ -122,7 +122,7 @@ $ terraformer import plan generated/google/my-project/terraformer/plan.json
 From source:
 1.  Run `git clone <terraformer repo>`
 2.  Run `GO111MODULE=on go mod vendor`
-3.  Run `go build -v`
+3.  Run `go build -v` for all providers OR build with one provider `go run build/main.go {google,aws,azure,kubernetes and etc}`
 4.  Run ```terraform init``` against an ```init.tf``` file to install the plugins required for your platform. For example, if you need plugins for the google provider, ```init.tf``` should contain:
 ```
 provider "google" {}
