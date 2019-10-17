@@ -133,6 +133,7 @@ func (p *AliCloudProvider) GetSupportedService() map[string]terraform_utils.Serv
 		"keypair": &KeyPairGenerator{},
 		"nat":     &NatGatewayGenerator{},
 		"pvtz":    &PvtzGenerator{},
+		"ram":     &RAMGenerator{},
 		"rds":     &RdsGenerator{},
 		"sg":      &SgGenerator{},
 		"slb":     &SlbGenerator{},
