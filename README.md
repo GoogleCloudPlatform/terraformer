@@ -22,6 +22,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
         * [Google Cloud](#use-with-gcp)
         * [AWS](#use-with-aws)
         * [Azure](#use-with-azure)
+        * [AliCloud](#use-with-alicloud)
     * Cloud
         * [Heroku](#use-with-heroku)
         * [OpenStack](#use-with-openstack)
@@ -157,6 +158,7 @@ Links to download Terraform Providers:
     * Google Cloud provider >2.11.0 - [here](https://releases.hashicorp.com/terraform-provider-google/)
     * AWS provider >2.25.0 - [here](https://releases.hashicorp.com/terraform-provider-aws/)
     * Azure provider >1.35.0 - [here](https://releases.hashicorp.com/terraform-provider-azurerm/)
+    * Alicloud provider >1.57.1 - [here](https://releases.hashicorp.com/terraform-provider-alicloud/)
 * Cloud
     * Heroku provider >2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-heroku/)
     * OpenStack provider >1.21.1 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
@@ -486,6 +488,41 @@ List of supported Azure resources:
 
 *   `resource_group`
     * `azurerm_resource_group`
+
+### Use with AliCloud
+
+You can either edit your alicloud config directly, (usually it is `~/.aliyun/config.json`)
+or run `aliyun configure` and enter the credentials when prompted.
+
+Terraformer will pick up the first profile in the array.
+
+```sh
+terraformer import alicloud --resources=ecs --regions=ap-southeast-3
+```
+
+List of supported AliCloud resources:
+
+* `ecs`
+  * `alicloud_instance`
+* `keypair`
+  * `alicloud_key_pair`
+* `nat`
+  * `alicloud_nat_gateway`
+* `pvtz`
+  * `alicloud_pvtz_zone`
+  * `alicloud_pvtz_zone_attachment`
+  * `alicloud_pvtz_zone_record`
+* `rds`
+  * `alicloud_db_instance`
+* `sg`
+  * `alicloud_security_group`
+* `slb`
+  * `alicloud_slb`
+  * `alicloud_slb_server_group`
+* `vpc`
+  * `alicloud_vpc`
+* `vswitch`
+  * `alicloud_vswitch`
 
 ### Use with Heroku
 
