@@ -64,7 +64,7 @@ func providerGenerators() map[string]func() terraform_utils.ProviderGenerator {
 	list := make(map[string]func() terraform_utils.ProviderGenerator)
 	for _, providerGen := range []func() terraform_utils.ProviderGenerator{
 		// Major Cloud
-		newGCPProvider,
+		newGoogleProvider,
 		newAWSProvider,
 		newAzureProvider,
 		newAliCloudProvider,
@@ -74,7 +74,7 @@ func providerGenerators() map[string]func() terraform_utils.ProviderGenerator {
 		// Infrastructure Software
 		newKubernetesProvider,
 		// Network
-		newClouflareProvider,
+		newCloudflareProvider,
 		// VCS
 		newGitHubProvider,
 		// Monitoring & System Management
