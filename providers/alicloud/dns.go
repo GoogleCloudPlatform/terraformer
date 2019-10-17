@@ -18,7 +18,7 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/alidns"
-	"github.com/terraform-providers/terraform-provider-alicloud/alicloud/connectivity"
+	"github.com/GoogleCloudPlatform/terraformer/providers/alicloud/connectivity"
 )
 
 // DnsGenerator Struct for generating AliCloud Elastic Compute Service
