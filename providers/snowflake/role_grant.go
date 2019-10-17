@@ -19,25 +19,24 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
 
-type DatabaseGrantGenerator struct {
+type RoleGrantGenerator struct {
 	SnowflakeService
 }
 
-func (g DatabaseGrantGenerator) createResources(databaseGrantList []databaseGrant) []terraform_utils.Resource {
+func (g RoleGrantGenerator) createResources(roleGrantList []roleGrant) []terraform_utils.Resource {
 	type tfGrant struct {
-		DB        string
+		Role      string
 		Privilege string
 		Roles     []string
 		Shares    []string
 	}
 	groupedResources := map[string]*tfGrant{}
-	for _, grant := range databaseGrantList {
-		// TODO(ad): Fix this csv delimited when fixed in the provider. We should use the same functionality.
-		id := fmt.Sprintf("%s|||%s", grant.Name.String, grant.Privilege.String)
+	for _, grant := range roleGrantList {
+		id := grant.Name.String
 		_, ok := groupedResources[id]
 		if !ok {
 			groupedResources[id] = &tfGrant{
-				DB:        grant.Name.String,
+				Role:      grant.Name.String,
 				Privilege: grant.Privilege.String,
 				Roles:     []string{},
 				Shares:    []string{},
@@ -55,8 +54,8 @@ func (g DatabaseGrantGenerator) createResources(databaseGrantList []databaseGran
 	for id, grant := range groupedResources {
 		resources = append(resources, terraform_utils.NewResource(
 			id,
-			fmt.Sprintf("%s_%s", grant.DB, grant.Privilege),
-			"snowflake_database_grant",
+			fmt.Sprintf("%s_%s", grant.Role, grant.Privilege),
+			"snowflake_role_grants",
 			"snowflake",
 			map[string]string{
 				"privilege": grant.Privilege,
@@ -71,22 +70,19 @@ func (g DatabaseGrantGenerator) createResources(databaseGrantList []databaseGran
 	return resources
 }
 
-func (g *DatabaseGrantGenerator) InitResources() error {
+func (g *RoleGrantGenerator) InitResources() error {
 	db, err := g.generateService()
 	if err != nil {
 		return err
 	}
-	databases, err := db.ListDatabases()
+	roles, err := db.ListRoles()
 	if err != nil {
 		return err
 	}
-	allGrants := []databaseGrant{}
-	for _, database := range databases {
-		if database.Origin.String != "" {
-			// Provider does not support grants on imported databases yet
-			continue
-		}
-		grants, err := db.ListDatabaseGrants(database)
+
+	allGrants := []roleGrant{}
+	for _, role := range roles {
+		grants, err := db.ListRoleGrants(role)
 		if err != nil {
 			return err
 		}

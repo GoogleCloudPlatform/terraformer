@@ -82,6 +82,7 @@ func (p *SnowflakeProvider) GetSupportedService() map[string]terraform_utils.Ser
 		"warehouse":      &WarehouseGenerator{},
 		"schema":         &SchemaGenerator{},
 		"schema_grant":   &SchemaGrantGenerator{},
+		"role_grant":     &RoleGrantGenerator{},
 	}
 }
 
