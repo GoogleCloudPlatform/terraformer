@@ -39,7 +39,7 @@ func resourceFromKeyPair(keyPair ecs.KeyPair) terraform_utils.Resource {
 
 // InitResources Gets the list of all key pair ids and generates resources
 func (g *KeyPairGenerator) InitResources() error {
-	client, err := LoadClientFromProfile()
+	client, err := g.LoadClientFromProfile()
 	if err != nil {
 		return err
 	}

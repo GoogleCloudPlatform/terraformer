@@ -39,7 +39,7 @@ func resourceFromInstance(instance ecs.Instance) terraform_utils.Resource {
 
 // InitResources Gets the list of all ECS instance ids and generates resources
 func (g *EcsGenerator) InitResources() error {
-	client, err := LoadClientFromProfile()
+	client, err := g.LoadClientFromProfile()
 	if err != nil {
 		return err
 	}

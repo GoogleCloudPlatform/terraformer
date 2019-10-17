@@ -31,10 +31,13 @@ type AliCloudProvider struct {
 
 // GetConfig Converts json config to go-cty
 func (p *AliCloudProvider) GetConfig() cty.Value {
-	config, _ := LoadConfigFromProfile()
+	config, err := LoadConfigFromProfile()
+	if err != nil {
+		fmt.Println("ERROR:", err)
+	}
 
 	region := p.region
-	if region != "" {
+	if region == "" {
 		region = config.RegionId
 	}
 
@@ -72,7 +75,7 @@ func (p AliCloudProvider) GetProviderData(arg ...string) map[string]interface{} 
 	}
 
 	region := p.region
-	if region != "" {
+	if region == "" {
 		region = conf.RegionId
 	}
 

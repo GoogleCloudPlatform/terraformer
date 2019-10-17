@@ -39,7 +39,7 @@ func resourceFromNatGatewayResponse(natGateway vpc.NatGateway) terraform_utils.R
 
 // InitResources Gets the list of all natgateway NatGateway ids and generates resources
 func (g *NatGatewayGenerator) InitResources() error {
-	client, err := LoadClientFromProfile()
+	client, err := g.LoadClientFromProfile()
 	if err != nil {
 		return err
 	}

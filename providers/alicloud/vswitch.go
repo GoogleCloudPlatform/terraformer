@@ -39,7 +39,7 @@ func resourceFromVSwitchResponse(VSwitch vpc.VSwitch) terraform_utils.Resource {
 
 // InitResources Gets the list of all vpc VSwitch ids and generates resources
 func (g *VSwitchGenerator) InitResources() error {
-	client, err := LoadClientFromProfile()
+	client, err := g.LoadClientFromProfile()
 	if err != nil {
 		return err
 	}

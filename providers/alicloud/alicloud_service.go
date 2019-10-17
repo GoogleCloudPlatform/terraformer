@@ -56,13 +56,19 @@ type ConfigFile struct {
 	} `json:"profiles"`
 }
 
-// LoadClientFromProfile Loads profile from ~/.aliyun/config.json
-func LoadClientFromProfile() (*connectivity.AliyunClient, error) {
-	conf, err := LoadConfigFromProfile()
+// LoadClientFromProfile Loads profile from ~/.aliyun/config.json and then applies the region from cmd line
+func (s *AliCloudService) LoadClientFromProfile() (*connectivity.AliyunClient, error) {
+	config, err := LoadConfigFromProfile()
 	if err != nil {
 		return nil, err
 	}
-	return conf.Client()
+	
+	args := s.GetArgs()
+	region := args["region"].(string)
+	config.RegionId = region
+	config.Region = connectivity.Region(config.RegionId)
+
+	return config.Client()
 }
 
 // LoadConfigFromProfile Loads profile from ~/.aliyun/config.json

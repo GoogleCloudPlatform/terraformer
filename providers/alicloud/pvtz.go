@@ -131,7 +131,7 @@ func initZoneRecords(client *connectivity.AliyunClient, allZones []pvtz.Zone) ([
 
 // InitResources Gets the list of all pvtz Zone ids and generates resources
 func (g *PvtzGenerator) InitResources() error {
-	client, err := LoadClientFromProfile()
+	client, err := g.LoadClientFromProfile()
 	if err != nil {
 		return err
 	}

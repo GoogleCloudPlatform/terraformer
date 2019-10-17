@@ -39,7 +39,7 @@ func resourceFromrdsResponse(rds rds.DBInstance) terraform_utils.Resource {
 
 // InitResources Gets the list of all rds ids and generates resources
 func (g *RdsGenerator) InitResources() error {
-	client, err := LoadClientFromProfile()
+	client, err := g.LoadClientFromProfile()
 	if err != nil {
 		return err
 	}

@@ -39,7 +39,7 @@ func resourceFromVpcResponse(Vpc vpc.Vpc) terraform_utils.Resource {
 
 // InitResources Gets the list of all vpc Vpc ids and generates resources
 func (g *VpcGenerator) InitResources() error {
-	client, err := LoadClientFromProfile()
+	client, err := g.LoadClientFromProfile()
 	if err != nil {
 		return err
 	}
