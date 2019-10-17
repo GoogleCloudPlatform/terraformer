@@ -137,6 +137,17 @@ type schema struct {
 	RetentionTime sql.NullString `db:"retention_time"`
 }
 
+type schemaGrant struct {
+	CreatedOn   sql.NullString `db:"created_on"`
+	Privilege   sql.NullString `db:"privilege"`
+	GrantedOn   sql.NullString `db:"granted_on"`
+	Name        sql.NullString `db:"name"`
+	GrantedTo   sql.NullString `db:"granted_to"`
+	GranteeName sql.NullString `db:"grantee_name"`
+	GrantOption sql.NullString `db:"grant_option"`
+	GrantedBy   sql.NullString `db:"granted_by"`
+}
+
 func (sc *client) ListDatabases() ([]database, error) {
 	sdb := sqlx.NewDb(sc.db, "snowflake")
 	stmt := "SHOW DATABASES"
@@ -226,9 +237,12 @@ func (sc *client) ListWarehouses() ([]warehouse, error) {
 	return warehouse, errors.Wrap(err, "unable to scan row for SHOW WAREHOUSES")
 }
 
-func (sc *client) ListSchemas() ([]schema, error) {
+func (sc *client) ListSchemas(database *database) ([]schema, error) {
 	sdb := sqlx.NewDb(sc.db, "snowflake")
 	stmt := "SHOW SCHEMAS"
+	if database != nil {
+		stmt = fmt.Sprintf(`%s IN DATABASE "%s"`, stmt, database.DBName.String)
+	}
 	rows, err := sdb.Queryx(stmt)
 	if err != nil {
 		return nil, err
@@ -242,4 +256,21 @@ func (sc *client) ListSchemas() ([]schema, error) {
 		return nil, nil
 	}
 	return schema, errors.Wrap(err, "unable to scan row for SHOW SCHEMAS")
+}
+
+func (sc *client) ListSchemaGrants(database database, schema schema) ([]schemaGrant, error) {
+	sdb := sqlx.NewDb(sc.db, "snowflake")
+	stmt := fmt.Sprintf(`SHOW GRANTS ON SCHEMA "%s"."%s"`, database.DBName.String, schema.Name.String)
+	rows, err := sdb.Queryx(stmt)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	schemaGrants := []schemaGrant{}
+	err = sqlx.StructScan(rows, &schemaGrants)
+	if err == sql.ErrNoRows {
+		log.Printf("[DEBUG] no schema grants found")
+		return nil, nil
+	}
+	return schemaGrants, errors.Wrap(err, "unable to scan row for SHOW GRANTS ON SCHEMA")
 }

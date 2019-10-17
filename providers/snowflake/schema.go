@@ -39,7 +39,7 @@ func (g *SchemaGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
-	output, err := db.ListSchemas()
+	output, err := db.ListSchemas(nil)
 	if err != nil {
 		return err
 	}
