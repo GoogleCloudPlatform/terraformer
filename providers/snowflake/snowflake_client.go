@@ -29,6 +29,13 @@ type client struct {
 	Name string
 }
 
+type TfGrant struct {
+	Name      string
+	Privilege string
+	Roles     []string
+	Shares    []string
+}
+
 type database struct {
 	CreatedOn     sql.NullString `db:"created_on"`
 	DBName        sql.NullString `db:"name"`
@@ -149,6 +156,17 @@ type schemaGrant struct {
 }
 
 type roleGrant struct {
+	CreatedOn   sql.NullString `db:"created_on"`
+	Privilege   sql.NullString `db:"privilege"`
+	GrantedOn   sql.NullString `db:"granted_on"`
+	Name        sql.NullString `db:"name"`
+	GrantedTo   sql.NullString `db:"granted_to"`
+	GranteeName sql.NullString `db:"grantee_name"`
+	GrantOption sql.NullString `db:"grant_option"`
+	GrantedBy   sql.NullString `db:"granted_by"`
+}
+
+type warehouseGrant struct {
 	CreatedOn   sql.NullString `db:"created_on"`
 	Privilege   sql.NullString `db:"privilege"`
 	GrantedOn   sql.NullString `db:"granted_on"`
@@ -300,8 +318,25 @@ func (sc *client) ListRoleGrants(role role) ([]roleGrant, error) {
 	roleGrants := []roleGrant{}
 	err = sqlx.StructScan(rows, &roleGrants)
 	if err == sql.ErrNoRows {
-		log.Printf("[DEBUG] no database grants found")
+		log.Printf("[DEBUG] no role grants found")
 		return nil, nil
 	}
 	return roleGrants, errors.Wrap(err, "unable to scan row for SHOW GRANTS ON ROLE")
+}
+
+func (sc *client) ListWarehouseGrants(warehouse warehouse) ([]warehouseGrant, error) {
+	sdb := sqlx.NewDb(sc.db, "snowflake")
+	stmt := fmt.Sprintf(`SHOW GRANTS ON WAREHOUSE "%s"`, warehouse.Name.String)
+	rows, err := sdb.Queryx(stmt)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	warehouseGrants := []warehouseGrant{}
+	err = sqlx.StructScan(rows, &warehouseGrants)
+	if err == sql.ErrNoRows {
+		log.Printf("[DEBUG] no warehouse grants found")
+		return nil, nil
+	}
+	return warehouseGrants, errors.Wrap(err, "unable to scan row for SHOW GRANTS ON WAREHOUSE")
 }

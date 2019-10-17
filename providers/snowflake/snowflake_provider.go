@@ -75,14 +75,15 @@ func (SnowflakeProvider) GetResourceConnections() map[string]map[string][]string
 
 func (p *SnowflakeProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
-		"database":       &DatabaseGenerator{},
-		"database_grant": &DatabaseGrantGenerator{},
-		"role":           &RoleGenerator{},
-		"user":           &UserGenerator{},
-		"warehouse":      &WarehouseGenerator{},
-		"schema":         &SchemaGenerator{},
-		"schema_grant":   &SchemaGrantGenerator{},
-		"role_grant":     &RoleGrantGenerator{},
+		"database":        &DatabaseGenerator{},
+		"database_grant":  &DatabaseGrantGenerator{},
+		"role":            &RoleGenerator{},
+		"role_grant":      &RoleGrantGenerator{},
+		"schema":          &SchemaGenerator{},
+		"schema_grant":    &SchemaGrantGenerator{},
+		"user":            &UserGenerator{},
+		"warehouse":       &WarehouseGenerator{},
+		"warehouse_grant": &WarehouseGrantGenerator{},
 	}
 }
 

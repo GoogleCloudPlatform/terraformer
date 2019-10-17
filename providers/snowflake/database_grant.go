@@ -17,45 +17,42 @@ import (
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/pkg/errors"
 )
 
 type DatabaseGrantGenerator struct {
 	SnowflakeService
 }
 
-func (g DatabaseGrantGenerator) createResources(databaseGrantList []databaseGrant) []terraform_utils.Resource {
-	type tfGrant struct {
-		DB        string
-		Privilege string
-		Roles     []string
-		Shares    []string
-	}
-	groupedResources := map[string]*tfGrant{}
+func (g DatabaseGrantGenerator) createResources(databaseGrantList []databaseGrant) ([]terraform_utils.Resource, error) {
+	groupedResources := map[string]*TfGrant{}
 	for _, grant := range databaseGrantList {
 		// TODO(ad): Fix this csv delimited when fixed in the provider. We should use the same functionality.
 		id := fmt.Sprintf("%s|||%s", grant.Name.String, grant.Privilege.String)
 		_, ok := groupedResources[id]
 		if !ok {
-			groupedResources[id] = &tfGrant{
-				DB:        grant.Name.String,
+			groupedResources[id] = &TfGrant{
+				Name:      grant.Name.String,
 				Privilege: grant.Privilege.String,
 				Roles:     []string{},
 				Shares:    []string{},
 			}
 		}
 		tfGrant := groupedResources[id]
-		if grant.GrantedTo.String == "ROLE" {
+		switch grant.GrantedTo.String {
+		case "ROLE":
 			tfGrant.Roles = append(tfGrant.Roles, grant.GranteeName.String)
-		}
-		if grant.GrantedTo.String == "SHARE" {
+		case "SHARE":
 			tfGrant.Shares = append(tfGrant.Shares, grant.GranteeName.String)
+		default:
+			return nil, errors.New(fmt.Sprintf("[ERROR] Unrecognized type of grant: %s", grant.GrantedTo.String))
 		}
 	}
 	var resources []terraform_utils.Resource
 	for id, grant := range groupedResources {
 		resources = append(resources, terraform_utils.NewResource(
 			id,
-			fmt.Sprintf("%s_%s", grant.DB, grant.Privilege),
+			fmt.Sprintf("%s_%s", grant.Name, grant.Privilege),
 			"snowflake_database_grant",
 			"snowflake",
 			map[string]string{
@@ -68,7 +65,7 @@ func (g DatabaseGrantGenerator) createResources(databaseGrantList []databaseGran
 			},
 		))
 	}
-	return resources
+	return resources, nil
 }
 
 func (g *DatabaseGrantGenerator) InitResources() error {
@@ -92,6 +89,6 @@ func (g *DatabaseGrantGenerator) InitResources() error {
 		}
 		allGrants = append(allGrants, grants...)
 	}
-	g.Resources = g.createResources(allGrants)
-	return nil
+	g.Resources, err = g.createResources(allGrants)
+	return err
 }

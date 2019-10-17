@@ -15,23 +15,20 @@ package snowflake
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/pkg/errors"
 )
 
-type SchemaGrantGenerator struct {
+type WarehouseGrantGenerator struct {
 	SnowflakeService
 }
 
-func (g SchemaGrantGenerator) createResources(schemaGrantList []schemaGrant) ([]terraform_utils.Resource, error) {
+func (g WarehouseGrantGenerator) createResources(warehouseGrantList []warehouseGrant) ([]terraform_utils.Resource, error) {
 	groupedResources := map[string]*TfGrant{}
-	for _, grant := range schemaGrantList {
+	for _, grant := range warehouseGrantList {
 		// TODO(ad): Fix this csv delimited when fixed in the provider. We should use the same functionality.
-		DB := strings.Split(grant.Name.String, ".")[0]
-		Schema := strings.Split(grant.Name.String, ".")[1]
-		id := fmt.Sprintf("%s|%s||%s", DB, Schema, grant.Privilege.String)
+		id := fmt.Sprintf("%s|||%s", grant.Name.String, grant.Privilege.String)
 		_, ok := groupedResources[id]
 		if !ok {
 			groupedResources[id] = &TfGrant{
@@ -50,13 +47,14 @@ func (g SchemaGrantGenerator) createResources(schemaGrantList []schemaGrant) ([]
 		default:
 			return nil, errors.New(fmt.Sprintf("[ERROR] Unrecognized type of grant: %s", grant.GrantedTo.String))
 		}
+
 	}
 	var resources []terraform_utils.Resource
 	for id, grant := range groupedResources {
 		resources = append(resources, terraform_utils.NewResource(
 			id,
 			fmt.Sprintf("%s_%s", grant.Name, grant.Privilege),
-			"snowflake_schema_grant",
+			"snowflake_warehouse_grant",
 			"snowflake",
 			map[string]string{
 				"privilege": grant.Privilege,
@@ -71,33 +69,22 @@ func (g SchemaGrantGenerator) createResources(schemaGrantList []schemaGrant) ([]
 	return resources, nil
 }
 
-func (g *SchemaGrantGenerator) InitResources() error {
+func (g *WarehouseGrantGenerator) InitResources() error {
 	db, err := g.generateService()
 	if err != nil {
 		return err
 	}
-	databases, err := db.ListDatabases()
+	warehouses, err := db.ListWarehouses()
 	if err != nil {
 		return err
 	}
-
-	allGrants := []schemaGrant{}
-	for _, database := range databases {
-		if database.Origin.String != "" {
-			// Provider does not support grants on imported databases yet
-			continue
-		}
-		schemas, err := db.ListSchemas(&database)
+	allGrants := []warehouseGrant{}
+	for _, warehouse := range warehouses {
+		grants, err := db.ListWarehouseGrants(warehouse)
 		if err != nil {
 			return err
 		}
-		for _, schema := range schemas {
-			grants, err := db.ListSchemaGrants(database, schema)
-			if err != nil {
-				return err
-			}
-			allGrants = append(allGrants, grants...)
-		}
+		allGrants = append(allGrants, grants...)
 	}
 	g.Resources, err = g.createResources(allGrants)
 	return err
