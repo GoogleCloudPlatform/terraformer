@@ -19,7 +19,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ram"
-	"github.com/terraform-providers/terraform-provider-alicloud/alicloud/connectivity"
+	"github.com/GoogleCloudPlatform/terraformer/providers/alicloud/connectivity"
 )
 
 // RAMGenerator Struct for generating AliCloud Elastic Compute Service
