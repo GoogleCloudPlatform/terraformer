@@ -47,7 +47,7 @@ func (g *VpcGenerator) InitResources() error {
 	pageNumber := 1
 	pageSize := 10
 
-	allVpcs := make([]vpc.Vpc, 1)
+	allVpcs := make([]vpc.Vpc, 0)
 
 	for remaining > 0 {
 		raw, err := client.WithVpcClient(func(vpcClient *vpc.Client) (interface{}, error) {

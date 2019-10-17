@@ -47,7 +47,7 @@ func (g *RdsGenerator) InitResources() error {
 	pageNumber := 1
 	pageSize := 10
 
-	allrdss := make([]rds.DBInstance, 1)
+	allrdss := make([]rds.DBInstance, 0)
 
 	for remaining > 0 {
 		raw, err := client.WithRdsClient(func(rdsClient *rds.Client) (interface{}, error) {

@@ -47,7 +47,7 @@ func (g *KeyPairGenerator) InitResources() error {
 	pageNumber := 1
 	pageSize := 10
 
-	allKeyPairs := make([]ecs.KeyPair, 1)
+	allKeyPairs := make([]ecs.KeyPair, 0)
 
 	for remaining > 0 {
 		raw, err := client.WithEcsClient(func(ecsClient *ecs.Client) (interface{}, error) {

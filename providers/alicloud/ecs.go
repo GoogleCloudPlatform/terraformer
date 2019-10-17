@@ -47,7 +47,7 @@ func (g *EcsGenerator) InitResources() error {
 	pageNumber := 1
 	pageSize := 10
 
-	allInstances := make([]ecs.Instance, 1)
+	allInstances := make([]ecs.Instance, 0)
 
 	for remaining > 0 {
 		raw, err := client.WithEcsClient(func(ecsClient *ecs.Client) (interface{}, error) {

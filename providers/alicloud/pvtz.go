@@ -69,7 +69,7 @@ func initZones(client *connectivity.AliyunClient) ([]pvtz.Zone, error) {
 	pageNumber := 1
 	pageSize := 10
 
-	allZones := make([]pvtz.Zone, 1)
+	allZones := make([]pvtz.Zone, 0)
 
 	for remaining > 0 {
 		raw, err := client.WithPvtzClient(func(pvtzClient *pvtz.Client) (interface{}, error) {
@@ -94,8 +94,8 @@ func initZones(client *connectivity.AliyunClient) ([]pvtz.Zone, error) {
 }
 
 func initZoneRecords(client *connectivity.AliyunClient, allZones []pvtz.Zone) ([]pvtz.Record, []string, error) {
-	allZoneRecords := make([]pvtz.Record, 1)
-	zoneIds := make([]string, 1)
+	allZoneRecords := make([]pvtz.Record, 0)
+	zoneIds := make([]string, 0)
 
 	for _, zone := range allZones {
 		remaining := 1

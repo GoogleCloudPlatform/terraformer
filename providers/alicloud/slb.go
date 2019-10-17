@@ -55,7 +55,7 @@ func initSlb(client *connectivity.AliyunClient) ([]slb.LoadBalancer, error) {
 	pageNumber := 1
 	pageSize := 10
 
-	allLoadBalancers := make([]slb.LoadBalancer, 1)
+	allLoadBalancers := make([]slb.LoadBalancer, 0)
 
 	for remaining > 0 {
 		raw, err := client.WithSlbClient(func(slbClient *slb.Client) (interface{}, error) {
@@ -81,7 +81,7 @@ func initSlb(client *connectivity.AliyunClient) ([]slb.LoadBalancer, error) {
 }
 
 func initVServerGroups(client *connectivity.AliyunClient, allLoadBalancers []slb.LoadBalancer) ([]slb.VServerGroup, error) {
-	allVserverGroups := make([]slb.VServerGroup, 1)
+	allVserverGroups := make([]slb.VServerGroup, 0)
 	for _, loadBalancer := range allLoadBalancers {
 		if loadBalancer.LoadBalancerId == "" {
 			continue
