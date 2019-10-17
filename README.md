@@ -502,6 +502,9 @@ terraformer import alicloud --resources=ecs --regions=ap-southeast-3
 
 List of supported AliCloud resources:
 
+* `dns`
+  * `alicloud_dns`
+  * `alicloud_dns_record`
 * `ecs`
   * `alicloud_instance`
 * `keypair`
