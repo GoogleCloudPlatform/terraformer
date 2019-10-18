@@ -18,11 +18,10 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/zclconf/go-cty/cty"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 	"github.com/pkg/errors"
+	"github.com/zclconf/go-cty/cty"
 )
 
 type AWSProvider struct {
@@ -30,8 +29,6 @@ type AWSProvider struct {
 	region  string
 	profile string
 }
-
-const awsProviderVersion = ">2.25.0"
 
 // global resources should be bound to a default region. AWS doesn't specify in which region default services are
 // placed (see  https://docs.aws.amazon.com/general/latest/gr/rande.html), so we shouldn't assume any region as well
@@ -118,7 +115,7 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 
 func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
 	awsConfig := map[string]interface{}{
-		"version": awsProviderVersion,
+		"version": provider_wrapper.GetProviderVersion(p.GetName()),
 	}
 
 	if p.region != "" {
