@@ -18,6 +18,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 	"runtime"
@@ -173,37 +174,18 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 }
 
 func (p *ProviderWrapper) initProvider() error {
-	defaultDataDir := os.Getenv("TF_DATA_DIR")
-	if defaultDataDir == "" {
-		defaultDataDir = DefaultDataDir
-	}
-	pluginPath := defaultDataDir + string(os.PathSeparator) + "plugins" + string(os.PathSeparator) + runtime.GOOS + "_" + runtime.GOARCH
-	files, err := ioutil.ReadDir(pluginPath)
+	providerFilePath, err := getProviderFileName(p.providerName)
 	if err != nil {
-		pluginPath = os.Getenv("HOME") + string(os.PathSeparator) + "." + DefaultPluginVendorDir
-		files, err = ioutil.ReadDir(pluginPath)
-		if err != nil {
-			return err
-		}
-	}
-	providerFileName := ""
-	for _, file := range files {
-		if file.IsDir() {
-			continue
-		}
-		if strings.HasPrefix(file.Name(), "terraform-provider-"+p.providerName) {
-			providerFileName = pluginPath + string(os.PathSeparator) + file.Name()
-		}
+		return err
 	}
 	logger := hclog.New(&hclog.LoggerOptions{
 		Name:   "plugin",
 		Level:  hclog.Error,
 		Output: os.Stderr,
 	})
-
 	p.client = plugin.NewClient(
 		&plugin.ClientConfig{
-			Cmd:              exec.Command(providerFileName),
+			Cmd:              exec.Command(providerFilePath),
 			HandshakeConfig:  tfplugin.Handshake,
 			VersionedPlugins: tfplugin.VersionedPlugins,
 			Managed:          true,
@@ -232,4 +214,47 @@ func (p *ProviderWrapper) initProvider() error {
 	})
 
 	return nil
+}
+
+func getProviderFileName(providerName string) (string, error) {
+	defaultDataDir := os.Getenv("TF_DATA_DIR")
+	if defaultDataDir == "" {
+		defaultDataDir = DefaultDataDir
+	}
+	pluginPath := defaultDataDir + string(os.PathSeparator) + "plugins" + string(os.PathSeparator) + runtime.GOOS + "_" + runtime.GOARCH
+	files, err := ioutil.ReadDir(pluginPath)
+	if err != nil {
+		pluginPath = os.Getenv("HOME") + string(os.PathSeparator) + "." + DefaultPluginVendorDir
+		files, err = ioutil.ReadDir(pluginPath)
+		if err != nil {
+			return "", err
+		}
+	}
+	providerFilePath := ""
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
+		if strings.HasPrefix(file.Name(), "terraform-provider-"+providerName) {
+			providerFilePath = pluginPath + string(os.PathSeparator) + file.Name()
+		}
+	}
+	return providerFilePath, nil
+}
+
+func GetProviderVersion(providerName string) string {
+	providerFilePath, err := getProviderFileName(providerName)
+	if err != nil {
+		log.Println("Can't find provider file path")
+		return ""
+	}
+	t := strings.Split(providerFilePath, "/")
+	providerFileName := t[len(t)-1]
+	providerFileNameParts := strings.Split(providerFileName, "_")
+	if len(providerFileNameParts) != 3 {
+		log.Println("Can't find provider version")
+		return ""
+	}
+	providerVersion := providerFileNameParts[1]
+	return "~>" + providerVersion
 }

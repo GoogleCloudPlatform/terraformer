@@ -18,9 +18,8 @@ import (
 	"errors"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 )
-
-const newrelicProviderVersion = "~> 1.5"
 
 type NewRelicProvider struct {
 	terraform_utils.Provider
@@ -38,7 +37,7 @@ func (p *NewRelicProvider) GetProviderData(arg ...string) map[string]interface{}
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"newrelic": map[string]interface{}{
-				"version": newrelicProviderVersion,
+				"version": provider_wrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}

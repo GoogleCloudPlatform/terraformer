@@ -19,9 +19,8 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 )
-
-const digitalOceanProviderVersion = "~> 1.9.1"
 
 type DigitalOceanProvider struct {
 	terraform_utils.Provider
@@ -45,7 +44,7 @@ func (p *DigitalOceanProvider) GetProviderData(arg ...string) map[string]interfa
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"digitalocean": map[string]interface{}{
-				"version": digitalOceanProviderVersion,
+				"version": provider_wrapper.GetProviderVersion(p.GetName()),
 				"token":   p.token,
 			},
 		},
