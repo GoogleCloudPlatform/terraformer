@@ -24,6 +24,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
         * [Azure](#use-with-azure)
         * [AliCloud](#use-with-alicloud)
     * Cloud
+        * [DigitalOcean](#use-with-digitalocean)
         * [Heroku](#use-with-heroku)
         * [OpenStack](#use-with-openstack)
     * Infrastructure Software
@@ -160,6 +161,7 @@ Links to download Terraform Providers:
     * Azure provider >1.35.0 - [here](https://releases.hashicorp.com/terraform-provider-azurerm/)
     * Alicloud provider >1.57.1 - [here](https://releases.hashicorp.com/terraform-provider-alicloud/)
 * Cloud
+    * DigitalOcean provider >1.9.1 - [here](https://releases.hashicorp.com/terraform-provider-digitalocean/)
     * Heroku provider >2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-heroku/)
     * OpenStack provider >1.21.1 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
 * Infrastructure Software
@@ -548,6 +550,36 @@ List of supported AliCloud resources:
   * `alicloud_vpc`
 * `vswitch`
   * `alicloud_vswitch`
+
+### Use with DigitalOcean
+
+Example:
+
+```
+export DIGITALOCEAN_TOKEN=[DIGITALOCEAN_TOKEN]
+./terraformer import digitalocean -r project,droplet
+```
+
+List of supported DigitalOcean resources:
+
+*   `database_cluster`
+    * `digitalocean_database_cluster`
+*   `domain`
+    * `digitalocean_domain`
+*   `droplet`
+    * `digitalocean_droplet`
+*   `firewall`
+    * `digitalocean_firewall`
+*   `floating_ip`
+    * `digitalocean_floating_ip`
+*   `kubernetes_cluster`
+    * `digitalocean_kubernetes_cluster`
+*   `loadbalancer`
+    * `digitalocean_loadbalancer`
+*   `project`
+    * `digitalocean_project`
+*   `volume`
+    * `digitalocean_volume`
 
 ### Use with Heroku
 
