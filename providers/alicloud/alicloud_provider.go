@@ -19,6 +19,7 @@ import (
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 	"github.com/zclconf/go-cty/cty"
 )
 
@@ -82,6 +83,7 @@ func (p AliCloudProvider) GetProviderData(arg ...string) map[string]interface{} 
 	if conf.RamRoleArn != "" {
 		return map[string]interface{}{
 			"provider": map[string]interface{}{
+				"version": provider_wrapper.GetProviderVersion(p.GetName()),
 				"alicloud": map[string]interface{}{
 					"region": region,
 					"assume_role": map[string]interface{}{
@@ -94,7 +96,8 @@ func (p AliCloudProvider) GetProviderData(arg ...string) map[string]interface{} 
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"alicloud": map[string]interface{}{
-				"region": region,
+				"region":  region,
+				"version": provider_wrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}

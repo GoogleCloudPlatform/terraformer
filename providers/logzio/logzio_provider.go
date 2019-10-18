@@ -18,11 +18,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/zclconf/go-cty/cty"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 	"github.com/pkg/errors"
+	"github.com/zclconf/go-cty/cty"
 )
 
 type LogzioProvider struct {
@@ -35,8 +34,6 @@ var (
 	disallowedChars = regexp.MustCompile(`[^A-Za-z0-9-]`)
 )
 
-const logzioProviderVersion = "~>v1.1.1"
-
 func (p LogzioProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{
 		"alerts": {"alert_notification_endpoints": []string{"alert_notification_endpoints", "id"}},
@@ -47,7 +44,7 @@ func (p LogzioProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"logzio": map[string]interface{}{
-				"version": logzioProviderVersion,
+				"version": provider_wrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}

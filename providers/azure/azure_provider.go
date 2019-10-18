@@ -19,9 +19,8 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 )
-
-const azureProviderVersion = "~> 1.35.0"
 
 type AzureProvider struct {
 	terraform_utils.Provider
@@ -71,7 +70,7 @@ func (p *AzureProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"azurerm": map[string]interface{}{
-				"version": azureProviderVersion,
+				"version": provider_wrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}

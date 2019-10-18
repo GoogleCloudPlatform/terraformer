@@ -18,12 +18,10 @@ import (
 	"errors"
 	"os"
 
-	"github.com/zclconf/go-cty/cty"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/zclconf/go-cty/cty"
 )
-
-const datadogProviderVersion = ">2.4.0"
 
 type DatadogProvider struct {
 	terraform_utils.Provider
@@ -108,7 +106,7 @@ func (p DatadogProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			p.GetName(): map[string]interface{}{
-				"version": datadogProviderVersion,
+				"version": provider_wrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}

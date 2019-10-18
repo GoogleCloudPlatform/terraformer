@@ -18,9 +18,8 @@ import (
 	"errors"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 )
-
-const cloudflareProviderVersion = "~> 1.16"
 
 type CloudflareProvider struct {
 	terraform_utils.Provider
@@ -38,7 +37,7 @@ func (p *CloudflareProvider) GetProviderData(arg ...string) map[string]interface
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"cloudflare": map[string]interface{}{
-				"version": cloudflareProviderVersion,
+				"version": provider_wrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}

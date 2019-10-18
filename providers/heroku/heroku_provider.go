@@ -19,9 +19,8 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 )
-
-const herokuProviderVersion = "~> 2.2.1"
 
 type HerokuProvider struct {
 	terraform_utils.Provider
@@ -51,7 +50,7 @@ func (p *HerokuProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"heroku": map[string]interface{}{
-				"version": herokuProviderVersion,
+				"version": provider_wrapper.GetProviderVersion(p.GetName()),
 				"email":   p.email,
 				"api_key": p.apiKey,
 			},
