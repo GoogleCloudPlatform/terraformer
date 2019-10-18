@@ -45,8 +45,6 @@ func (g SchemaGrantGenerator) createResources(schemaGrantList []schemaGrant) ([]
 		switch grant.GrantedTo.String {
 		case "ROLE":
 			tfGrant.Roles = append(tfGrant.Roles, grant.GranteeName.String)
-		case "SHARE":
-			tfGrant.Shares = append(tfGrant.Shares, grant.GranteeName.String)
 		default:
 			return nil, errors.New(fmt.Sprintf("[ERROR] Unrecognized type of grant: %s", grant.GrantedTo.String))
 		}
@@ -63,8 +61,7 @@ func (g SchemaGrantGenerator) createResources(schemaGrantList []schemaGrant) ([]
 			},
 			[]string{},
 			map[string]interface{}{
-				"roles":  grant.Roles,
-				"shares": grant.Shares,
+				"roles": grant.Roles,
 			},
 		))
 	}

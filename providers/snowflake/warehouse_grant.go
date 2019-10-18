@@ -35,15 +35,12 @@ func (g WarehouseGrantGenerator) createResources(warehouseGrantList []warehouseG
 				Name:      grant.Name.String,
 				Privilege: grant.Privilege.String,
 				Roles:     []string{},
-				Shares:    []string{},
 			}
 		}
 		tfGrant := groupedResources[id]
 		switch grant.GrantedTo.String {
 		case "ROLE":
 			tfGrant.Roles = append(tfGrant.Roles, grant.GranteeName.String)
-		case "SHARE":
-			tfGrant.Shares = append(tfGrant.Shares, grant.GranteeName.String)
 		default:
 			return nil, errors.New(fmt.Sprintf("[ERROR] Unrecognized type of grant: %s", grant.GrantedTo.String))
 		}
@@ -61,8 +58,7 @@ func (g WarehouseGrantGenerator) createResources(warehouseGrantList []warehouseG
 			},
 			[]string{},
 			map[string]interface{}{
-				"roles":  grant.Roles,
-				"shares": grant.Shares,
+				"roles": grant.Roles,
 			},
 		))
 	}
