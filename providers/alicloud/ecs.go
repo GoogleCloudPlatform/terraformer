@@ -77,3 +77,16 @@ func (g *EcsGenerator) InitResources() error {
 
 	return nil
 }
+
+// PostConvertHook Runs before HCL files are generated
+func (g *EcsGenerator) PostConvertHook() error {
+	for _, r := range g.Resources {
+		if r.InstanceInfo.Type == "alicloud_instance" {
+			// subnet_id is absent in the documentation
+			// https://www.terraform.io/docs/providers/alicloud/r/instance.html
+			delete(r.Item, "subnet_id")
+		}
+	}
+
+	return nil
+}
