@@ -43,8 +43,6 @@ type KubernetesProvider struct {
 	region string
 }
 
-const k8sProviderVersion = ">=1.9.0"
-
 func (p KubernetesProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{}
 }
@@ -53,7 +51,7 @@ func (p KubernetesProvider) GetProviderData(arg ...string) map[string]interface{
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"kubernetes": map[string]interface{}{
-				"version": k8sProviderVersion,
+				"version": provider_wrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}

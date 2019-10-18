@@ -19,12 +19,10 @@ import (
 	"errors"
 	"os"
 
-	"google.golang.org/api/compute/v1"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"google.golang.org/api/compute/v1"
 )
-
-const gcpProviderVersion = ">2.11.0"
 
 type GCPProvider struct {
 	terraform_utils.Provider
@@ -138,7 +136,7 @@ func (p GCPProvider) GetProviderData(arg ...string) map[string]interface{} {
 		"provider": map[string]interface{}{
 			p.GetName(): map[string]interface{}{
 				"project": p.projectName,
-				"version": gcpProviderVersion,
+				"version": provider_wrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}

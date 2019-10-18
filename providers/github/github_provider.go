@@ -18,9 +18,8 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 	"github.com/pkg/errors"
-
 	"github.com/zclconf/go-cty/cty"
 )
 
@@ -40,7 +39,7 @@ func (p GithubProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"github": map[string]interface{}{
-				"version":      githubProviderVersion,
+				"version":      provider_wrapper.GetProviderVersion(p.GetName()),
 				"organization": p.organization,
 			},
 		},
