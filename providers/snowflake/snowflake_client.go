@@ -177,6 +177,19 @@ type warehouseGrant struct {
 	GrantedBy   sql.NullString `db:"granted_by"`
 }
 
+type view struct {
+	CreatedOn      sql.NullString `db:"created_on"`
+	Name           sql.NullString `db:"name"`
+	Reserved       sql.NullString `db:"reserved"`
+	DatabaseName   sql.NullString `db:"database_name"`
+	SchemaName     sql.NullString `db:"schema_name"`
+	Owner          sql.NullString `db:"owner"`
+	Comment        sql.NullString `db:"comment"`
+	Text           sql.NullString `db:"text"`
+	IsSecure       sql.NullString `db:"is_secure"`
+	IsMaterialized sql.NullString `db:"is_materialized"`
+}
+
 func (sc *client) ListDatabases() ([]database, error) {
 	sdb := sqlx.NewDb(sc.db, "snowflake")
 	stmt := "SHOW DATABASES"
@@ -336,4 +349,22 @@ func (sc *client) ListWarehouseGrants(warehouse warehouse) ([]warehouseGrant, er
 		return nil, nil
 	}
 	return warehouseGrants, errors.Wrap(err, "unable to scan row for SHOW GRANTS ON WAREHOUSE")
+}
+
+func (sc *client) ListViews() ([]view, error) {
+	sdb := sqlx.NewDb(sc.db, "snowflake")
+	stmt := "SHOW VIEWS"
+	rows, err := sdb.Queryx(stmt)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	view := []view{}
+	err = sqlx.StructScan(rows, &view)
+	if err == sql.ErrNoRows {
+		log.Printf("[DEBUG] no VIEWS found")
+		return nil, nil
+	}
+	return view, errors.Wrap(err, "unable to scan row for SHOW VIEWS")
 }
