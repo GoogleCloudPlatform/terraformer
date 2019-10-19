@@ -57,15 +57,20 @@ func (DigitalOceanProvider) GetResourceConnections() map[string]map[string][]str
 
 func (p *DigitalOceanProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
+		"cdn":                &CDNGenerator{},
 		"database_cluster":   &DatabaseClusterGenerator{},
 		"domain":             &DomainGenerator{},
 		"droplet":            &DropletGenerator{},
+		"droplet_snapshot":   &DropletSnapshotGenerator{},
 		"firewall":           &FirewallGenerator{},
 		"floating_ip":        &FloatingIPGenerator{},
 		"kubernetes_cluster": &KubernetesClusterGenerator{},
 		"loadbalancer":       &LoadBalancerGenerator{},
 		"project":            &ProjectGenerator{},
+		"ssh_key":            &SSHKeyGenerator{},
+		"tag":                &TagGenerator{},
 		"volume":             &VolumeGenerator{},
+		"volume_snapshot":    &VolumeSnapshotGenerator{},
 	}
 }
 
