@@ -562,12 +562,16 @@ export DIGITALOCEAN_TOKEN=[DIGITALOCEAN_TOKEN]
 
 List of supported DigitalOcean resources:
 
+*   `cdn`
+    * `digitalocean_cdn`
 *   `database_cluster`
     * `digitalocean_database_cluster`
 *   `domain`
     * `digitalocean_domain`
 *   `droplet`
     * `digitalocean_droplet`
+*   `droplet_snapshot`
+    * `digitalocean_droplet_snapshot`
 *   `firewall`
     * `digitalocean_firewall`
 *   `floating_ip`
@@ -578,8 +582,14 @@ List of supported DigitalOcean resources:
     * `digitalocean_loadbalancer`
 *   `project`
     * `digitalocean_project`
+*   `ssh_key`
+    * `digitalocean_ssh_key`
+*   `tag`
+    * `digitalocean_tag`
 *   `volume`
     * `digitalocean_volume`
+*   `volume_snapshot`
+    * `digitalocean_volume_snapshot`
 
 ### Use with Heroku
 
