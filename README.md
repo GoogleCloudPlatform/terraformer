@@ -517,10 +517,19 @@ List of supported Azure resources:
 You can either edit your alicloud config directly, (usually it is `~/.aliyun/config.json`)
 or run `aliyun configure` and enter the credentials when prompted.
 
-Terraformer will pick up the first profile in the array.
+Terraformer will pick up the profile name specified in the `--profile` parameter.
+It defaults to the first config in the config array.
 
 ```sh
-terraformer import alicloud --resources=ecs --regions=ap-southeast-3
+terraformer import alicloud --resources=ecs --regions=ap-southeast-3 --profile=default
+```
+
+For all *supported* resources, you can do
+
+```sh
+# https://unix.stackexchange.com/a/114948/203870
+export ALL_SUPPORTED_ALICLOUD_RESOURCES=$(terraformer import alicloud list | sed -e 'H;1h;$!d;x;y/\n/,/')
+terraformer import alicloud --resources=$ALL_SUPPORTED_ALICLOUD_RESOURCES --regions=ap-southeast-3
 ```
 
 List of supported AliCloud resources:
@@ -545,6 +554,7 @@ List of supported AliCloud resources:
   * `alicloud_db_instance`
 * `sg`
   * `alicloud_security_group`
+  * `alicloud_security_group_rule`
 * `slb`
   * `alicloud_slb`
   * `alicloud_slb_server_group`

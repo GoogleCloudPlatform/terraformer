@@ -21,8 +21,8 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/GoogleCloudPlatform/terraformer/providers/alicloud/connectivity"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
 
 // AliCloudService Service struct for AliCloud
@@ -58,13 +58,15 @@ type ConfigFile struct {
 
 // LoadClientFromProfile Loads profile from ~/.aliyun/config.json and then applies the region from cmd line
 func (s *AliCloudService) LoadClientFromProfile() (*connectivity.AliyunClient, error) {
-	config, err := LoadConfigFromProfile()
+	args := s.GetArgs()
+	region := args["region"].(string)
+	profileName := args["profile"].(string)
+
+	config, err := LoadConfigFromProfile(profileName)
 	if err != nil {
 		return nil, err
 	}
-	
-	args := s.GetArgs()
-	region := args["region"].(string)
+
 	config.RegionId = region
 	config.Region = connectivity.Region(config.RegionId)
 
@@ -72,7 +74,7 @@ func (s *AliCloudService) LoadClientFromProfile() (*connectivity.AliyunClient, e
 }
 
 // LoadConfigFromProfile Loads profile from ~/.aliyun/config.json
-func LoadConfigFromProfile() (*connectivity.Config, error) {
+func LoadConfigFromProfile(profileName string) (*connectivity.Config, error) {
 	// Set the path depending on OS from where to pull the config.json
 	profilePath := ""
 	if runtime.GOOS == "windows" {
@@ -98,8 +100,27 @@ func LoadConfigFromProfile() (*connectivity.Config, error) {
 		return nil, err
 	}
 
-	// Loading the first profile
+	// If profile argument is missing then use the config file
+	currentProfile := profileName
+	if currentProfile == "" {
+		currentProfile = configFile.Current
+	}
+
+	// Default to loading the first profile
 	config := configFile.Profiles[0]
+
+	// Set profile as current profile
+	found := false
+	for _, profile := range configFile.Profiles {
+		if currentProfile == profile.Name {
+			config = profile
+			found = true
+		}
+	}
+
+	if !found {
+		fmt.Printf("ERROR: Profile %s not found. Using profile %s\n", profileName, config.Name)
+	}
 
 	conf := connectivity.Config{
 		AccessKey:          config.AccessKeyID,
