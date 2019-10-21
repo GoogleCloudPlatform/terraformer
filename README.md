@@ -543,6 +543,7 @@ List of supported AliCloud resources:
   * `alicloud_db_instance`
 * `sg`
   * `alicloud_security_group`
+  * `alicloud_security_group_rule`
 * `slb`
   * `alicloud_slb`
   * `alicloud_slb_server_group`
