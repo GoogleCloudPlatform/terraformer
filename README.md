@@ -8,7 +8,6 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
 (reverse Terraform).
 
 *   Disclaimer: This is not an official Google product
-*   Status: beta - we still need to improve documentation, squash some bugs, etc...
 *   Created by: Waze SRE
 
 ![Waze SRE logo](docs/waze-sre-logo.png)
