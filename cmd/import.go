@@ -42,6 +42,7 @@ type ImportOptions struct {
 	Regions     []string
 	Projects    []string
 	Connect     bool
+	Compact     bool
 	Filter      []string
 	Plan        bool `json:"-"`
 }
@@ -136,45 +137,70 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 func ImportFromPlan(provider terraform_utils.ProviderGenerator, plan *ImportPlan) error {
 	options := plan.Options
 	importedResource := plan.ImportedResource
+	isServicePath := strings.Contains(options.PathPattern, "{service}")
 
 	if options.Connect {
 		log.Println(provider.GetName() + " Connecting.... ")
-		importedResource = terraform_utils.ConnectServices(importedResource, provider.GetResourceConnections())
+		importedResource = terraform_utils.ConnectServices(importedResource, isServicePath, provider.GetResourceConnections())
 	}
 
-	for serviceName, resources := range importedResource {
-		log.Println(provider.GetName() + " save " + serviceName)
-		// Print HCL files for Resources
-		path := Path(options.PathPattern, provider.GetName(), serviceName, options.PathOutput)
-		err := terraform_output.OutputHclFiles(resources, provider, path, serviceName)
-		if err != nil {
+	if !isServicePath {
+		var compactedResources []terraform_utils.Resource
+		for _, resources := range importedResource {
+			compactedResources = append(compactedResources, resources...)
+		}
+		e := printService(provider, "", options, compactedResources, importedResource)
+		if e != nil {
+			return e
+		}
+	} else {
+		for serviceName, resources := range importedResource {
+			e := printService(provider, serviceName, options, resources, importedResource)
+			if e != nil {
+				return e
+			}
+		}
+	}
+	return nil
+}
+
+func printService(provider terraform_utils.ProviderGenerator, serviceName string, options ImportOptions, resources []terraform_utils.Resource, importedResource map[string][]terraform_utils.Resource) error {
+	log.Println(provider.GetName() + " save " + serviceName)
+	// Print HCL files for Resources
+	path := Path(options.PathPattern, provider.GetName(), serviceName, options.PathOutput)
+	err := terraform_output.OutputHclFiles(resources, provider, path, serviceName, options.Compact)
+	if err != nil {
+		return err
+	}
+	tfStateFile, err := terraform_utils.PrintTfState(resources)
+	if err != nil {
+		return err
+	}
+	// print or upload State file
+	if options.State == "bucket" {
+		log.Println(provider.GetName() + " upload tfstate to  bucket " + options.Bucket)
+		bucket := terraform_output.BucketState{
+			Name: options.Bucket,
+		}
+		if err := bucket.BucketUpload(path, tfStateFile); err != nil {
 			return err
 		}
-		tfStateFile, err := terraform_utils.PrintTfState(resources)
-		if err != nil {
-			return err
+		// create Bucket file
+		if bucketStateDataFile, err := terraform_utils.HclPrint(bucket.BucketGetTfData(path), map[string]struct{}{}); err == nil {
+			terraform_output.PrintFile(path+"/bucket.tf", bucketStateDataFile)
 		}
-		// print or upload State file
-		if options.State == "bucket" {
-			log.Println(provider.GetName() + " upload tfstate to  bucket " + options.Bucket)
-			bucket := terraform_output.BucketState{
-				Name: options.Bucket,
-			}
-			if err := bucket.BucketUpload(path, tfStateFile); err != nil {
-				return err
-			}
-			// create Bucket file
-			if bucketStateDataFile, err := terraform_utils.HclPrint(bucket.BucketGetTfData(path), map[string]struct{}{}); err == nil {
-				terraform_output.PrintFile(path+"/bucket.tf", bucketStateDataFile)
-			}
+	} else {
+		if serviceName =="" {
+			log.Println(provider.GetName() + " save tfstate")
 		} else {
 			log.Println(provider.GetName() + " save tfstate for " + serviceName)
-			if err := ioutil.WriteFile(path+"/terraform.tfstate", tfStateFile, os.ModePerm); err != nil {
-				return err
-			}
 		}
-
-		// Print hcl variables.tf
+		if err := ioutil.WriteFile(path+"/terraform.tfstate", tfStateFile, os.ModePerm); err != nil {
+			return err
+		}
+	}
+	// Print hcl variables.tf
+	if serviceName != "" {
 		if options.Connect && len(provider.GetResourceConnections()[serviceName]) > 0 {
 			variables := map[string]map[string]map[string]interface{}{}
 			variables["data"] = map[string]map[string]interface{}{}
@@ -217,6 +243,39 @@ func ImportFromPlan(provider terraform_utils.ProviderGenerator, plan *ImportPlan
 				terraform_output.PrintFile(path+"/variables.tf", variablesFile)
 			}
 		}
+	} else {
+		if options.Connect {
+			variables := map[string]map[string]map[string]interface{}{}
+			variables["data"] = map[string]map[string]interface{}{}
+			variables["data"]["terraform_remote_state"] = map[string]interface{}{}
+			if options.State == "bucket" {
+				bucket := terraform_output.BucketState{
+					Name: options.Bucket,
+				}
+				variables["data"]["terraform_remote_state"]["local"] = map[string]interface{}{
+					"backend": "gcs",
+					"config": map[string]interface{}{
+						"bucket": bucket.Name,
+						"prefix": bucket.BucketPrefix(path),
+					},
+				}
+			} else {
+				variables["data"]["terraform_remote_state"]["local"] = map[string]interface{}{
+					"backend": "local",
+					"config": [1]interface{}{map[string]interface{}{
+						"path": "terraform.tfstate",
+					}},
+				}
+			}
+			// create variables file
+			if options.Connect {
+				variablesFile, err := terraform_utils.HclPrint(variables, map[string]struct{}{"config": {}})
+				if err != nil {
+					return err
+				}
+				terraform_output.PrintFile(path+"/variables.tf", variablesFile)
+			}
+		}
 	}
 	return nil
 }
@@ -248,4 +307,15 @@ func listCmd(provider terraform_utils.ProviderGenerator) *cobra.Command {
 	}
 	cmd.Flags().AddFlag(&pflag.Flag{Name: "resources"})
 	return cmd
+}
+
+func baseProviderFlags(flag *pflag.FlagSet, options *ImportOptions, sampleRes, sampleFilters string) {
+	flag.BoolVarP(&options.Connect, "connect", "c", true, "")
+	flag.BoolVarP(&options.Compact, "compact", "ct", false, "")
+	flag.StringSliceVarP(&options.Resources, "resources", "r", []string{}, sampleRes)
+	flag.StringVarP(&options.PathPattern, "path-pattern", "p", DefaultPathPattern, "{output}/{provider}/")
+	flag.StringVarP(&options.PathOutput, "path-output", "o", DefaultPathOutput, "")
+	flag.StringVarP(&options.State, "state", "s", DefaultState, "local or bucket")
+	flag.StringVarP(&options.Bucket, "bucket", "b", "", "gs://terraform-state")
+	flag.StringSliceVarP(&options.Filter, "filter", "f", []string{}, sampleFilters)
 }
