@@ -15,10 +15,10 @@
 package alicloud
 
 import (
+	"github.com/GoogleCloudPlatform/terraformer/providers/alicloud/connectivity"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/slb"
-	"github.com/GoogleCloudPlatform/terraformer/providers/alicloud/connectivity"
 )
 
 // SlbGenerator Struct for generating AliCloud Elastic Compute Service
@@ -129,6 +129,24 @@ func (g *SlbGenerator) InitResources() error {
 		resource := resourceFromVServerGroupResponse(vServerGroup)
 
 		g.Resources = append(g.Resources, resource)
+	}
+
+	return nil
+}
+
+// PostConvertHook Runs before HCL files are generated
+func (g *SlbGenerator) PostConvertHook() error {
+	for _, r := range g.Resources {
+		if r.InstanceInfo.Type == "alicloud_slb" {
+			// internet is deprecrated
+			// https://www.terraform.io/docs/providers/alicloud/r/slb.html#internet
+			delete(r.Item, "internet")
+
+			// https://www.terraform.io/docs/providers/alicloud/r/slb.html#bandwidth
+			if r.Item["internet_charge_type"] == "PayByTraffic" {
+				delete(r.Item, "bandwidth")
+			}
+		}
 	}
 
 	return nil

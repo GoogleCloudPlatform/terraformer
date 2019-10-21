@@ -17,10 +17,10 @@ package alicloud
 import (
 	"strconv"
 
+	"github.com/GoogleCloudPlatform/terraformer/providers/alicloud/connectivity"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/pvtz"
-	"github.com/GoogleCloudPlatform/terraformer/providers/alicloud/connectivity"
 )
 
 // PvtzGenerator Struct for generating AliCloud private zone
@@ -159,6 +159,21 @@ func (g *PvtzGenerator) InitResources() error {
 	for i, record := range allRecords {
 		resource := resourceFromZoneRecordResponse(record, zoneIds[i])
 		g.Resources = append(g.Resources, resource)
+	}
+
+	return nil
+}
+
+// PostConvertHook Runs before HCL files are generated
+func (g *PvtzGenerator) PostConvertHook() error {
+	for _, r := range g.Resources {
+		if r.InstanceInfo.Type == "alicloud_pvtz_zone_record" {
+			// https://www.terraform.io/docs/providers/alicloud/r/pvtz_zone_record.html#priority
+			v, e := strconv.Atoi(r.Item["priority"].(string))
+			if v < 1 || v > 50 || e != nil {
+				delete(r.Item, "priority")
+			}
+		}
 	}
 
 	return nil
