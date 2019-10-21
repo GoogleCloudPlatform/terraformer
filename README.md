@@ -521,6 +521,14 @@ Terraformer will pick up the first profile in the array.
 terraformer import alicloud --resources=ecs --regions=ap-southeast-3
 ```
 
+For all *supported* resources, you can do
+
+```sh
+# https://unix.stackexchange.com/a/114948/203870
+export ALL_SUPPORTED_ALICLOUD_RESOURCES=$(terraformer import alicloud list | sed -e 'H;1h;$!d;x;y/\n/,/')
+terraformer import alicloud --resources=$ALL_SUPPORTED_ALICLOUD_RESOURCES --regions=ap-southeast-3
+```
+
 List of supported AliCloud resources:
 
 * `dns`
