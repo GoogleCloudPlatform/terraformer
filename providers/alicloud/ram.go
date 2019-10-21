@@ -17,9 +17,9 @@ package alicloud
 import (
 	"strings"
 
+	"github.com/GoogleCloudPlatform/terraformer/providers/alicloud/connectivity"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ram"
-	"github.com/GoogleCloudPlatform/terraformer/providers/alicloud/connectivity"
 )
 
 // RAMGenerator Struct for generating AliCloud Elastic Compute Service
@@ -125,6 +125,20 @@ func (g *RAMGenerator) InitResources() error {
 	for i, ramPolicy := range allRAMPolicyAttachment {
 		resource := resourceFromRAMPolicy(ramPolicy, roleNames[i])
 		g.Resources = append(g.Resources, resource)
+	}
+
+	return nil
+}
+
+// PostConvertHook Runs before HCL files are generated
+func (g *RAMGenerator) PostConvertHook() error {
+	for _, r := range g.Resources {
+		if r.InstanceInfo.Type == "alicloud_ram_role" {
+			// https://www.terraform.io/docs/providers/alicloud/r/ram_role.html
+			delete(r.Item, "services")  // deprecated
+			delete(r.Item, "ram_users") // deprecated
+			delete(r.Item, "version")   // deprecated
+		}
 	}
 
 	return nil
