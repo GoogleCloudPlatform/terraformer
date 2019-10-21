@@ -83,9 +83,9 @@ func (p AliCloudProvider) GetProviderData(arg ...string) map[string]interface{} 
 	if conf.RamRoleArn != "" {
 		return map[string]interface{}{
 			"provider": map[string]interface{}{
-				"version": provider_wrapper.GetProviderVersion(p.GetName()),
 				"alicloud": map[string]interface{}{
-					"region": region,
+					"version": provider_wrapper.GetProviderVersion(p.GetName()),
+					"region":  region,
 					"assume_role": map[string]interface{}{
 						"role_arn": conf.RamRoleArn,
 					},
