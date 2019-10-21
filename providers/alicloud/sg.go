@@ -15,6 +15,9 @@
 package alicloud
 
 import (
+	"strings"
+
+	"github.com/GoogleCloudPlatform/terraformer/providers/alicloud/connectivity"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ecs"
@@ -37,12 +40,61 @@ func resourceFromSecurityGroup(securitygroup ecs.SecurityGroup) terraform_utils.
 	)
 }
 
-// InitResources Gets the list of all security group ids and generates resources
-func (g *SgGenerator) InitResources() error {
-	client, err := g.LoadClientFromProfile()
-	if err != nil {
-		return err
+func resourceFromSecurityGroupAttribute(permission ecs.Permission, securityGroup ecs.SecurityGroup) terraform_utils.Resource {
+	// https://github.com/terraform-providers/terraform-provider-alicloud/blob/master/alicloud/resource_alicloud_security_group_rule.go#L153
+	// sgId + ":" + direction + ":" + ptl + ":" + port + ":" + nicType + ":" + cidr_ip + ":" + policy + ":" + strconv.Itoa(priority)
+	id := strings.Join([]string{
+		securityGroup.SecurityGroupId,
+		permission.Direction,
+		permission.IpProtocol,
+		permission.PortRange,
+		permission.NicType,
+		permission.SourceCidrIp,
+		permission.Policy,
+		permission.Priority,
+	}, ":")
+	id = strings.ToLower(id)
+
+	return terraform_utils.NewResource(
+		id, // id
+		id+"__"+securityGroup.SecurityGroupName, // name
+		"alicloud_security_group_rule",
+		"alicloud",
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{},
+	)
+}
+
+func initSecurityGroupRules(client *connectivity.AliyunClient, securityGroups []ecs.SecurityGroup) ([]ecs.Permission, []ecs.SecurityGroup, error) {
+	allPermissions := make([]ecs.Permission, 0)
+	alignedSecurityGroups := make([]ecs.SecurityGroup, 0)
+
+	for _, securityGroup := range securityGroups {
+		if securityGroup.SecurityGroupId == "" {
+			continue
+		}
+		raw, err := client.WithEcsClient(func(ecsClient *ecs.Client) (interface{}, error) {
+			request := ecs.CreateDescribeSecurityGroupAttributeRequest()
+			request.RegionId = client.RegionId
+			request.SecurityGroupId = securityGroup.SecurityGroupId
+			return ecsClient.DescribeSecurityGroupAttribute(request)
+		})
+		if err != nil {
+			return nil, nil, err
+		}
+
+		response := raw.(*ecs.DescribeSecurityGroupAttributeResponse)
+		for _, zoneRecord := range response.Permissions.Permission {
+			allPermissions = append(allPermissions, zoneRecord)
+			alignedSecurityGroups = append(alignedSecurityGroups, securityGroup)
+		}
+
 	}
+	return allPermissions, alignedSecurityGroups, nil
+}
+
+func initSecurityGroups(client *connectivity.AliyunClient) ([]ecs.SecurityGroup, error) {
 	remaining := 1
 	pageNumber := 1
 	pageSize := 10
@@ -58,7 +110,7 @@ func (g *SgGenerator) InitResources() error {
 			return ecsClient.DescribeSecurityGroups(request)
 		})
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		response := raw.(*ecs.DescribeSecurityGroupsResponse)
@@ -70,8 +122,30 @@ func (g *SgGenerator) InitResources() error {
 		pageNumber++
 	}
 
+	return allSecurityGroups, nil
+}
+
+// InitResources Gets the list of all security group ids and generates resources
+func (g *SgGenerator) InitResources() error {
+	client, err := g.LoadClientFromProfile()
+	if err != nil {
+		return err
+	}
+
+	allSecurityGroups, err := initSecurityGroups(client)
+	if err != nil {
+		return err
+	}
+
+	allSecurityGroupRules, alignedSecurityGroups, err := initSecurityGroupRules(client, allSecurityGroups)
+
 	for _, securitygroup := range allSecurityGroups {
 		resource := resourceFromSecurityGroup(securitygroup)
+		g.Resources = append(g.Resources, resource)
+	}
+
+	for i, permission := range allSecurityGroupRules {
+		resource := resourceFromSecurityGroupAttribute(permission, alignedSecurityGroups[i])
 		g.Resources = append(g.Resources, resource)
 	}
 
