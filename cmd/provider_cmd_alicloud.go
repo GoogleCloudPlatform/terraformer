@@ -43,15 +43,9 @@ func newCmdAliCloudImporter(options ImportOptions) *cobra.Command {
 		},
 	}
 	cmd.AddCommand(listCmd(newAliCloudProvider()))
-	cmd.PersistentFlags().BoolVarP(&options.Connect, "connect", "c", true, "")
-	cmd.PersistentFlags().StringSliceVarP(&options.Resources, "resources", "r", []string{}, "vpc,subnet,nacl")
-	cmd.PersistentFlags().StringVarP(&options.PathPattern, "path-pattern", "p", DefaultPathPattern, "{output}/{provider}/custom/{service}/")
-	cmd.PersistentFlags().StringVarP(&options.PathOutput, "path-output", "o", DefaultPathOutput, "")
-	cmd.PersistentFlags().StringVarP(&options.State, "state", "s", DefaultState, "local or bucket")
-	cmd.PersistentFlags().StringVarP(&options.Bucket, "bucket", "b", "", "gs://terraform-state")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "vpc,subnet,nacl", "alicloud_slb=id1:id2:id4")
 	cmd.PersistentFlags().StringVar(&options.Profile, "profile", "default", "prod")
 	cmd.PersistentFlags().StringSliceVarP(&options.Regions, "regions", "", []string{}, "cn-hangzhou")
-	cmd.PersistentFlags().StringSliceVarP(&options.Filter, "filter", "f", []string{}, "alicloud_slb=id1:id2:id4") // TODO: Not implemented
 	return cmd
 }
 

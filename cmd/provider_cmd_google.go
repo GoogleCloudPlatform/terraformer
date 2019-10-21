@@ -45,14 +45,8 @@ func newCmdGoogleImporter(options ImportOptions) *cobra.Command {
 		},
 	}
 	cmd.AddCommand(listCmd(newGoogleProvider()))
-	cmd.PersistentFlags().BoolVarP(&options.Connect, "connect", "c", true, "")
-	cmd.PersistentFlags().StringSliceVarP(&options.Resources, "resources", "r", []string{}, "firewalls,networks")
-	cmd.PersistentFlags().StringVarP(&options.PathPattern, "path-pattern", "p", DefaultPathPattern, "{output}/{provider}/custom/{service}/")
-	cmd.PersistentFlags().StringVarP(&options.PathOutput, "path-output", "o", DefaultPathOutput, "")
-	cmd.PersistentFlags().StringVarP(&options.State, "state", "s", DefaultState, "local or bucket")
-	cmd.PersistentFlags().StringVarP(&options.Bucket, "bucket", "b", "", "gs://terraform-state")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "firewalls,networks", "google_compute_firewall=id1:id2:id4")
 	cmd.PersistentFlags().StringSliceVarP(&options.Regions, "regions", "z", []string{"global"}, "europe-west1,")
-	cmd.PersistentFlags().StringSliceVarP(&options.Filter, "filter", "f", []string{}, "google_compute_firewall=id1:id2:id4")
 	cmd.PersistentFlags().StringSliceVarP(&options.Projects, "projects", "", []string{}, "")
 	_ = cmd.MarkPersistentFlagRequired("projects")
 	return cmd
