@@ -32,7 +32,9 @@ type AliCloudProvider struct {
 
 // GetConfig Converts json config to go-cty
 func (p *AliCloudProvider) GetConfig() cty.Value {
-	config, err := LoadConfigFromProfile()
+	args := p.Service.GetArgs()
+	profile := args["profile"].(string)
+	config, err := LoadConfigFromProfile(profile)
 	if err != nil {
 		fmt.Println("ERROR:", err)
 	}
@@ -70,24 +72,26 @@ func (p AliCloudProvider) GetResourceConnections() map[string]map[string][]strin
 
 // GetProviderData Used for generated HCL2 for the provider
 func (p AliCloudProvider) GetProviderData(arg ...string) map[string]interface{} {
-	conf, err := LoadConfigFromProfile()
+	args := p.Service.GetArgs()
+	profile := args["profile"].(string)
+	config, err := LoadConfigFromProfile(profile)
 	if err != nil {
 		fmt.Println("ERROR:", err)
 	}
 
 	region := p.region
 	if region == "" {
-		region = conf.RegionId
+		region = config.RegionId
 	}
 
-	if conf.RamRoleArn != "" {
+	if config.RamRoleArn != "" {
 		return map[string]interface{}{
 			"provider": map[string]interface{}{
 				"alicloud": map[string]interface{}{
 					"version": provider_wrapper.GetProviderVersion(p.GetName()),
 					"region":  region,
 					"assume_role": map[string]interface{}{
-						"role_arn": conf.RamRoleArn,
+						"role_arn": config.RamRoleArn,
 					},
 				},
 			},
