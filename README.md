@@ -26,6 +26,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
     * Cloud
         * [DigitalOcean](#use-with-digitalocean)
         * [Heroku](#use-with-heroku)
+        * [Linode](#use-with-linode)
         * [OpenStack](#use-with-openstack)
     * Infrastructure Software
         * [Kubernetes](#use-with-kubernetes)
@@ -163,6 +164,7 @@ Links to download Terraform Providers:
 * Cloud
     * DigitalOcean provider >1.9.1 - [here](https://releases.hashicorp.com/terraform-provider-digitalocean/)
     * Heroku provider >2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-heroku/)
+    * Linode provider >1.8.0 - [here](https://releases.hashicorp.com/terraform-provider-linode/)
     * OpenStack provider >1.21.1 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
 * Infrastructure Software
     * Kubernetes provider >=1.9.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
@@ -633,6 +635,32 @@ List of supported Heroku resources:
     * `heroku_team_collaborator`
 *   `team_member`
     * `heroku_team_member`
+
+### Use with Linode
+
+Example:
+
+```
+export LINODE_TOKEN=[LINODE_TOKEN]
+./terraformer import linode -r instance
+```
+
+List of supported Linode resources:
+
+*   `domain`
+    * `linode_domain`
+*   `image`
+    * `linode_image`
+*   `instance`
+    * `linode_instance`
+*   `nodebalancer`
+    * `linode_nodebalancer`
+*   `sshkey`
+    * `linode_sshkey`
+*   `token`
+    * `linode_token`
+*   `volume`
+    * `linode_volume`
 
 ### Use with OpenStack
 
