@@ -26,8 +26,8 @@ import (
 
 type LogzioProvider struct {
 	terraform_utils.Provider
-	api_token string // this must match the Config in the provider
-	base_url  string // this must match the Config in the provider
+	apiToken string
+	baseURL  string
 }
 
 var (
@@ -52,15 +52,15 @@ func (p LogzioProvider) GetProviderData(arg ...string) map[string]interface{} {
 
 func (p *LogzioProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
-		"api_token": cty.StringVal(p.api_token),
-		"base_url":  cty.StringVal(p.base_url),
+		"api_token": cty.StringVal(p.apiToken),
+		"base_url":  cty.StringVal(p.baseURL),
 	})
 }
 
-// Init LogzioProvider with API api_token
+// Init LogzioProvider with API apiToken
 func (p *LogzioProvider) Init(args []string) error {
-	p.api_token = args[0]
-	p.base_url = args[1]
+	p.apiToken = args[0]
+	p.baseURL = args[1]
 	return nil
 }
 
@@ -77,8 +77,8 @@ func (p *LogzioProvider) InitService(serviceName string) error {
 	p.Service.SetName(serviceName)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"api_token": p.api_token,
-		"base_url":  p.base_url,
+		"api_token": p.apiToken,
+		"base_url":  p.baseURL,
 	})
 	return nil
 }
