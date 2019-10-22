@@ -5,9 +5,8 @@ go 1.13
 require (
 	cloud.google.com/go v0.45.1
 	cloud.google.com/go/logging v1.0.0
-	github.com/ExpansiveWorlds/instrumentedsql v0.0.0-20171218214018-45abb4b1947d // indirect
-	github.com/SermoDigital/jose v0.0.0-20161205224733-f6df55f235c2 // indirect
 	github.com/aws/aws-sdk-go v1.22.0
+	github.com/chanzuckerberg/terraform-provider-snowflake v0.4.1
 	github.com/cloudflare/cloudflare-go v0.9.4
 	github.com/coreos/go-systemd v0.0.0-20181031085051-9002847aa142 // indirect
 	github.com/davecgh/go-spew v1.1.1
@@ -18,8 +17,8 @@ require (
 	github.com/googleapis/gnostic v0.2.0 // indirect
 	github.com/gophercloud/gophercloud v0.0.0-20190427020117-60507118a582
 	github.com/hashicorp/consul v1.4.0 // indirect
-	github.com/hashicorp/go-hclog v0.0.0-20181001195459-61d530d6c27f
-	github.com/hashicorp/go-plugin v1.0.1-0.20190610192547-a1bc61569a26
+	github.com/hashicorp/go-hclog v0.9.2
+	github.com/hashicorp/go-plugin v1.0.1
 	github.com/hashicorp/hcl v1.0.1-0.20190611123218-cf7d376da96d
 	github.com/hashicorp/hcl2 v0.0.0-20190821123243-0c888d1241f6
 	github.com/hashicorp/terraform v0.12.9
@@ -48,9 +47,8 @@ require (
 	github.com/ugorji/go v1.1.2-0.20180728093225-eeb0478a81ae // indirect
 	github.com/unknwon/com v0.0.0-20181010210213-41959bdd855f // indirect
 	github.com/xlab/treeprint v0.0.0-20181112141820-a009c3971eca // indirect
-	github.com/zclconf/go-cty v1.0.1-0.20190708163926-19588f92a98f
+	github.com/zclconf/go-cty v1.1.0
 	github.com/zorkian/go-datadog-api v2.24.0+incompatible
-	golang.org/x/build v0.0.0-20190111050920-041ab4dc3f9d // indirect
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	google.golang.org/api v0.9.0
 	google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55

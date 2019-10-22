@@ -25,10 +25,40 @@ type SchemaGrantGenerator struct {
 	SnowflakeService
 }
 
+var ValidSchemaPrivileges = []string{
+	"MODIFY",
+	"MONITOR",
+	"OWNERSHIP",
+	"USAGE",
+	"CREATE TABLE",
+	"CREATE VIEW",
+	"CREATE FILE FORMAT",
+	"CREATE STAGE",
+	"CREATE PIPE",
+	"CREATE STREAM",
+	"CREATE TASK",
+	"CREATE SEQUENCE",
+	"CREATE FUNCTION",
+	"CREATE PROCEDURE",
+}
+
+func stringArrayContains(a []string, x string) bool {
+	for _, n := range a {
+		if x == n {
+			return true
+		}
+	}
+	return false
+}
+
 func (g SchemaGrantGenerator) createResources(schemaGrantList []schemaGrant) ([]terraform_utils.Resource, error) {
 	groupedResources := map[string]*TfGrant{}
 	for _, grant := range schemaGrantList {
 		// TODO(ad): Fix this csv delimited when fixed in the provider. We should use the same functionality.
+		// Valid Schema Privilege check
+		if !stringArrayContains(ValidSchemaPrivileges, grant.Privilege.String) {
+			continue
+		}
 		DB := strings.Split(grant.Name.String, ".")[0]
 		Schema := strings.Split(grant.Name.String, ".")[1]
 		id := fmt.Sprintf("%s|%s||%s", DB, Schema, grant.Privilege.String)
@@ -38,7 +68,6 @@ func (g SchemaGrantGenerator) createResources(schemaGrantList []schemaGrant) ([]
 				Name:      grant.Name.String,
 				Privilege: grant.Privilege.String,
 				Roles:     []string{},
-				Shares:    []string{},
 			}
 		}
 		tfGrant := groupedResources[id]
