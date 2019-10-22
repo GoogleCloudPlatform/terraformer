@@ -19,6 +19,7 @@ require (
 	cloud.google.com/go v0.45.1
 	github.com/ExpansiveWorlds/instrumentedsql v0.0.0-20171218214018-45abb4b1947d // indirect
 	github.com/SermoDigital/jose v0.0.0-20161205224733-f6df55f235c2 // indirect
+	github.com/aws/aws-sdk-go v1.22.0
 	github.com/coreos/go-systemd v0.0.0-20181031085051-9002847aa142 // indirect
 	github.com/denverdino/aliyungo v0.0.0-20190924033012-e8e08fe22cb2
 	github.com/digitalocean/godo v1.22.0
@@ -75,6 +76,9 @@ require (
 	golang.org/x/exp v0.0.0-20191002040644-a1355ae1e2c3 // indirect
 	golang.org/x/lint v0.0.0-20190930215403-16217165b5de // indirect
 	golang.org/x/net v0.0.0-20191009170851-d66e71096ffb // indirect
+	github.com/ugorji/go v1.1.2-0.20180728093225-eeb0478a81ae // indirect
+	github.com/unknwon/com v0.0.0-20181010210213-41959bdd855f // indirect
+	github.com/xlab/treeprint v0.0.0-20181112141820-a009c3971eca // indirect
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e // indirect
 	golang.org/x/sys v0.0.0-20191010194322-b09406accb47 // indirect
