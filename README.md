@@ -558,6 +558,7 @@ List of supported AliCloud resources:
 * `slb`
   * `alicloud_slb`
   * `alicloud_slb_server_group`
+  * `alicloud_slb_listener`
 * `vpc`
   * `alicloud_vpc`
 * `vswitch`
