@@ -15,6 +15,8 @@
 package alicloud
 
 import (
+	"fmt"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/alicloud/connectivity"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
@@ -24,6 +26,19 @@ import (
 // SlbGenerator Struct for generating AliCloud Elastic Compute Service
 type SlbGenerator struct {
 	AliCloudService
+}
+
+func resourceFromSlbListener(loadBalancer slb.LoadBalancer, suffix string) terraform_utils.Resource {
+	id := loadBalancer.LoadBalancerId + ":" + suffix
+	return terraform_utils.NewResource(
+		id, // id
+		id+"__"+loadBalancer.LoadBalancerName, // name
+		"alicloud_slb_listener",
+		"alicloud",
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{},
+	)
 }
 
 func resourceFromSlbResponse(loadBalancer slb.LoadBalancer) terraform_utils.Resource {
@@ -129,6 +144,15 @@ func (g *SlbGenerator) InitResources() error {
 		resource := resourceFromVServerGroupResponse(vServerGroup)
 
 		g.Resources = append(g.Resources, resource)
+	}
+
+	fmt.Println("WARN: No APIs exist to list all listeners for a load balancer. Trying http:80, https:443, tcp:443")
+	suffixes := []string{"http:80", "https:443", "tcp:443"}
+	for _, loadBalancer := range allLoadBalancers {
+		for _, suffix := range suffixes {
+			resource := resourceFromSlbListener(loadBalancer, suffix)
+			g.Resources = append(g.Resources, resource)
+		}
 	}
 
 	return nil
