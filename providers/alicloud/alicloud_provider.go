@@ -90,6 +90,7 @@ func (p AliCloudProvider) GetProviderData(arg ...string) map[string]interface{} 
 				"alicloud": map[string]interface{}{
 					"version": provider_wrapper.GetProviderVersion(p.GetName()),
 					"region":  region,
+					"profile": profile,
 					"assume_role": map[string]interface{}{
 						"role_arn": config.RamRoleArn,
 					},
@@ -101,6 +102,7 @@ func (p AliCloudProvider) GetProviderData(arg ...string) map[string]interface{} 
 		"provider": map[string]interface{}{
 			"alicloud": map[string]interface{}{
 				"region":  region,
+				"profile": profile,
 				"version": provider_wrapper.GetProviderVersion(p.GetName()),
 			},
 		},
