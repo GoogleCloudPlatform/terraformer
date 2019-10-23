@@ -26,6 +26,10 @@ type ViewGenerator struct {
 func (g ViewGenerator) createResources(viewList []view) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
 	for _, view := range viewList {
+		//Snowflake internal schema that adds noice, filtering out
+		if view.SchemaName.String == "INFORMATION_SCHEMA" {
+			continue
+		}
 		resources = append(resources, terraform_utils.NewResource(
 			fmt.Sprintf("%s|%s|%s", view.DatabaseName.String, view.SchemaName.String, view.Name.String),
 			fmt.Sprintf("%s__%s__%s", view.DatabaseName.String, view.SchemaName.String, view.Name.String),
