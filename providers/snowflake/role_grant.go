@@ -48,7 +48,7 @@ func (g RoleGrantGenerator) createResources(roleGrantList []roleGrant) ([]terraf
 	for id, grant := range groupedResources {
 		resources = append(resources, terraform_utils.NewResource(
 			id,
-			fmt.Sprintf("%s_%s", grant.Name, grant.Privilege),
+			grant.Name,
 			"snowflake_role_grants",
 			"snowflake",
 			map[string]string{
