@@ -29,8 +29,6 @@ type GithubProvider struct {
 	token        string
 }
 
-const githubProviderVersion = "~>2.2.1"
-
 func (p GithubProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{}
 }
