@@ -80,9 +80,11 @@ func (g SchemaGrantGenerator) createResources(schemaGrantList []schemaGrant) ([]
 	}
 	var resources []terraform_utils.Resource
 	for id, grant := range groupedResources {
+		DB := strings.Split(grant.Name, ".")[0]
+		Schema := strings.Split(grant.Name, ".")[1]
 		resources = append(resources, terraform_utils.NewResource(
 			id,
-			fmt.Sprintf("%s_%s", grant.Name, grant.Privilege),
+			fmt.Sprintf("%s__%s__%s", DB, Schema, grant.Privilege),
 			"snowflake_schema_grant",
 			"snowflake",
 			map[string]string{
