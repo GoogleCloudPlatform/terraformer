@@ -33,7 +33,7 @@ func (g SchemaGenerator) createResources(schemaList []schema) []terraform_utils.
 		}
 		resources = append(resources, terraform_utils.NewSimpleResource(
 			// Schemas need to be namespaced by their database with two underscores
-			fmt.Sprintf("%s__%s", schema.DatabaseName.String, schema.Name.String),
+			fmt.Sprintf("%s|%s", schema.DatabaseName.String, schema.Name.String),
 			fmt.Sprintf("%s__%s", schema.DatabaseName.String, schema.Name.String),
 			"snowflake_schema",
 			"snowflake",
