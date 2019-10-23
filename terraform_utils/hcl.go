@@ -199,6 +199,13 @@ func escapeRune(s string) string {
 func TfSanitize(name string) string {
 	name = unsafeChars.ReplaceAllStringFunc(name, escapeRune)
 	name = "tfer--" + name
+	name = strings.Replace(name, " ", "", -1)
+	//name = strings.Replace(name, "-", "_", -1)
+	name = strings.Replace(name, "*", "--", -1)
+	name = strings.Replace(name, ".", "--", -1)
+	name = strings.Replace(name, ":", "--", -1)
+	name = strings.Replace(name, "/", "--", -1)
+	name = strings.Replace(name, "@", "--", -1)
 	return name
 }
 
