@@ -533,6 +533,23 @@ export ALL_SUPPORTED_ALICLOUD_RESOURCES=$(terraformer import alicloud list | sed
 terraformer import alicloud --resources=$ALL_SUPPORTED_ALICLOUD_RESOURCES --regions=ap-southeast-3
 ```
 
+The resources will now be generated as `./generated/alicloud/{group_name}/{region}/{resource_name}.tf`.
+It also generates one `terraform.tfstate` file per group.
+
+In order to merge all the `tfstate` files and have all the `.tf` files in one directory, you can use `terrafactor`.
+First make sure [nodejs](https://nodejs.org/en/) is intalled
+
+```sh
+npm i -g terrafactor
+# Usage: terrafactor ./inputDir ./outputDir
+terrafactor ./generated/alicloud ./terrafactor_output
+```
+
+This will generate two directories `./terrafactor_output` and `./terrafactor_output_processed`. The HCL code in `./terrafactor_output_processed` directory
+has some post processing rules applied. You can read more about it by visiting the [terrafactor repository](https://github.com/Ghost---Shadow/terrafactor).
+
+Terrafactor should work on other providers too.
+
 List of supported AliCloud resources:
 
 * `dns`
