@@ -24,11 +24,12 @@ import (
 	"golang.org/x/oauth2"
 )
 
+// MembersGenerator holds GithubService struct of Terraform service information
 type MembersGenerator struct {
 	GithubService
 }
 
-// Generate TerraformResources from Github API,
+// InitResources generates TerraformResources from Github API,
 func (g *MembersGenerator) InitResources() error {
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
@@ -38,19 +39,32 @@ func (g *MembersGenerator) InitResources() error {
 
 	client := githubAPI.NewClient(tc)
 
-	members, _, err := client.Organizations.ListMembers(ctx, g.Args["organization"].(string), nil)
-	if err != nil {
-		log.Println(err)
-		return nil
+	opt := &githubAPI.ListMembersOptions{
+		ListOptions: githubAPI.ListOptions{PerPage: 100},
 	}
-	for _, member := range members {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-			g.Args["organization"].(string)+":"+member.GetLogin(),
-			member.GetLogin(),
-			"github_membership",
-			"github",
-			[]string{},
-		))
+
+	// List all organization members for the authenticated user
+	for {
+		members, resp, err := client.Organizations.ListMembers(ctx, g.Args["organization"].(string), opt)
+		if err != nil {
+			log.Println(err)
+			return nil
+		}
+
+		for _, member := range members {
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+				g.Args["organization"].(string)+":"+member.GetLogin(),
+				member.GetLogin(),
+				"github_membership",
+				"github",
+				[]string{},
+			))
+		}
+
+		if resp.NextPage == 0 {
+			break
+		}
+		opt.Page = resp.NextPage
 	}
 	return nil
 }
