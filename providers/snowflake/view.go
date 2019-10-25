@@ -30,17 +30,12 @@ func (g ViewGenerator) createResources(viewList []view) []terraform_utils.Resour
 		if view.SchemaName.String == "INFORMATION_SCHEMA" {
 			continue
 		}
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraform_utils.NewSimpleResource(
 			fmt.Sprintf("%s|%s|%s", view.DatabaseName.String, view.SchemaName.String, view.Name.String),
 			fmt.Sprintf("%s__%s__%s", view.DatabaseName.String, view.SchemaName.String, view.Name.String),
 			"snowflake_view",
 			"snowflake",
-			map[string]string{},
 			[]string{},
-			map[string]interface{}{
-				"database":  view.DatabaseName.String,
-				"statement": view.Text.String,
-			},
 		))
 	}
 	return resources
