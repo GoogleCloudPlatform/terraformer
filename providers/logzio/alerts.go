@@ -29,7 +29,7 @@ type AlertsGenerator struct {
 // Generate Terraform Resources from Logzio API,
 func (g *AlertsGenerator) InitResources() error {
 	var client *alerts.AlertsClient
-	client, _ = alerts.New(g.Args["token"].(string), g.Args["baseURL"].(string))
+	client, _ = alerts.New(g.Args["api_token"].(string), g.Args["base_url"].(string))
 
 	alerts, err := client.ListAlerts()
 	if err != nil {
