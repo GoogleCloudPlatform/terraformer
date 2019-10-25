@@ -26,8 +26,8 @@ import (
 
 type LogzioProvider struct {
 	terraform_utils.Provider
-	token   string
-	baseURL string
+	apiToken string
+	baseURL  string
 }
 
 var (
@@ -52,14 +52,14 @@ func (p LogzioProvider) GetProviderData(arg ...string) map[string]interface{} {
 
 func (p *LogzioProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
-		"token":   cty.StringVal(p.token),
-		"baseURL": cty.StringVal(p.baseURL),
+		"api_token": cty.StringVal(p.apiToken),
+		"base_url":  cty.StringVal(p.baseURL),
 	})
 }
 
-// Init LogzioProvider with API token
+// Init LogzioProvider with API apiToken
 func (p *LogzioProvider) Init(args []string) error {
-	p.token = args[0]
+	p.apiToken = args[0]
 	p.baseURL = args[1]
 	return nil
 }
@@ -77,8 +77,8 @@ func (p *LogzioProvider) InitService(serviceName string) error {
 	p.Service.SetName(serviceName)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"token":   p.token,
-		"baseURL": p.baseURL,
+		"api_token": p.apiToken,
+		"base_url":  p.baseURL,
 	})
 	return nil
 }

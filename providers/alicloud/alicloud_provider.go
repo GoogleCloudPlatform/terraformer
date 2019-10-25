@@ -47,7 +47,8 @@ func (p *AliCloudProvider) GetConfig() cty.Value {
 	val := cty.Value{}
 	if config.RamRoleArn != "" {
 		val = cty.ObjectVal(map[string]cty.Value{
-			"region": cty.StringVal(region),
+			"region":  cty.StringVal(region),
+			"profile": cty.StringVal(profile),
 			"assume_role": cty.SetVal([]cty.Value{
 				cty.ObjectVal(map[string]cty.Value{
 					"role_arn": cty.StringVal(config.RamRoleArn),
@@ -56,7 +57,8 @@ func (p *AliCloudProvider) GetConfig() cty.Value {
 		})
 	} else {
 		val = cty.ObjectVal(map[string]cty.Value{
-			"region": cty.StringVal(region),
+			"region":  cty.StringVal(region),
+			"profile": cty.StringVal(profile),
 		})
 	}
 
@@ -90,6 +92,7 @@ func (p AliCloudProvider) GetProviderData(arg ...string) map[string]interface{} 
 				"alicloud": map[string]interface{}{
 					"version": provider_wrapper.GetProviderVersion(p.GetName()),
 					"region":  region,
+					"profile": profile,
 					"assume_role": map[string]interface{}{
 						"role_arn": config.RamRoleArn,
 					},
@@ -101,6 +104,7 @@ func (p AliCloudProvider) GetProviderData(arg ...string) map[string]interface{} 
 		"provider": map[string]interface{}{
 			"alicloud": map[string]interface{}{
 				"region":  region,
+				"profile": profile,
 				"version": provider_wrapper.GetProviderVersion(p.GetName()),
 			},
 		},
