@@ -50,19 +50,12 @@ func (g DatabaseGrantGenerator) createResources(databaseGrantList []databaseGran
 	}
 	var resources []terraform_utils.Resource
 	for id, grant := range groupedResources {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraform_utils.NewSimpleResource(
 			id,
 			fmt.Sprintf("%s_%s", grant.Name, grant.Privilege),
 			"snowflake_database_grant",
 			"snowflake",
-			map[string]string{
-				"privilege": grant.Privilege,
-			},
 			[]string{},
-			map[string]interface{}{
-				"roles":  grant.Roles,
-				"shares": grant.Shares,
-			},
 		))
 	}
 	return resources, nil

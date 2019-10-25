@@ -48,18 +48,12 @@ func (g WarehouseGrantGenerator) createResources(warehouseGrantList []warehouseG
 	}
 	var resources []terraform_utils.Resource
 	for id, grant := range groupedResources {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraform_utils.NewSimpleResource(
 			id,
 			fmt.Sprintf("%s_%s", grant.Name, grant.Privilege),
 			"snowflake_warehouse_grant",
 			"snowflake",
-			map[string]string{
-				"privilege": grant.Privilege,
-			},
 			[]string{},
-			map[string]interface{}{
-				"roles": grant.Roles,
-			},
 		))
 	}
 	return resources, nil
