@@ -21,7 +21,7 @@ require (
 	github.com/hashicorp/go-plugin v1.0.1
 	github.com/hashicorp/hcl v1.0.1-0.20190611123218-cf7d376da96d
 	github.com/hashicorp/hcl2 v0.0.0-20190821123243-0c888d1241f6
-	github.com/hashicorp/terraform v0.12.9
+	github.com/hashicorp/terraform v0.12.10
 	github.com/heroku/heroku-go/v5 v5.1.0
 	github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c // indirect
 	github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365
