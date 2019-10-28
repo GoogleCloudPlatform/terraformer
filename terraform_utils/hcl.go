@@ -33,7 +33,7 @@ import (
 
 const safeChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
 
-var unsafeChars = regexp.MustCompile(`[^-0-9A-Za-z_]`)
+var unsafeChars = regexp.MustCompile(`[^0-9A-Za-z_]`)
 
 // sanitizer fixes up an invalid HCL AST, as produced by the HCL parser for JSON
 type astSanitizer struct{}
@@ -188,9 +188,13 @@ func terraform12Adjustments(formatted []byte, mapsObjects map[string]struct{}) [
 	return []byte(s)
 }
 
+func escapeRune(s string) string {
+	return fmt.Sprintf("-%04X-", s)
+}
+
 // Sanitize name for terraform style
 func TfSanitize(name string) string {
-	name = unsafeChars.ReplaceAllString(name, "--")
+	name = unsafeChars.ReplaceAllStringFunc(name, escapeRune)
 	name = "tfer--" + name
 	return name
 }
