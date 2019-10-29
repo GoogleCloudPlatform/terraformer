@@ -71,7 +71,7 @@ Flags:
   -h, --help                  help for google
   -o, --path-output string     (default "generated")
   -p, --path-pattern string   {output}/{provider}/custom/{service}/ (default "{output}/{provider}/{service}/")
-      --projects strings      
+      --projects strings
   -z, --regions strings       europe-west1, (default [global])
   -r, --resources strings     firewalls,networks
   -s, --state string          local or bucket (default "local")
@@ -360,6 +360,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_launch_template`
 *   `budgets`
     * `aws_budgets_budget`
+*   `cloud9`
+    * `aws_cloud9_environment_ec2`
 *   `cloudfront`
     * `aws_cloudfront_distribution`
 *   `cloudformation`
