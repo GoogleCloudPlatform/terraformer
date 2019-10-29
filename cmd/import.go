@@ -311,7 +311,7 @@ func listCmd(provider terraform_utils.ProviderGenerator) *cobra.Command {
 
 func baseProviderFlags(flag *pflag.FlagSet, options *ImportOptions, sampleRes, sampleFilters string) {
 	flag.BoolVarP(&options.Connect, "connect", "c", true, "")
-	flag.BoolVarP(&options.Compact, "compact", "ct", false, "")
+	flag.BoolVarP(&options.Compact, "compact", "C", false, "")
 	flag.StringSliceVarP(&options.Resources, "resources", "r", []string{}, sampleRes)
 	flag.StringVarP(&options.PathPattern, "path-pattern", "p", DefaultPathPattern, "{output}/{provider}/")
 	flag.StringVarP(&options.PathOutput, "path-output", "o", DefaultPathOutput, "")
