@@ -15,6 +15,8 @@
 package alicloud
 
 import (
+  "strings"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ecs"
@@ -43,6 +45,16 @@ func (g *EcsGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
+	var filters []ecs.DescribeInstancesTag
+	for _, filter := range g.Filter {
+		if strings.HasPrefix(filter.FieldPath, "tags.") {
+			filters = append(filters, ecs.DescribeInstancesTag{
+				Key:   strings.TrimPrefix(filter.FieldPath, "tags."),
+				Value: filter.AcceptableValues[0],
+			})
+		}
+	}
+
 	remaining := 1
 	pageNumber := 1
 	pageSize := 10
@@ -52,6 +64,7 @@ func (g *EcsGenerator) InitResources() error {
 	for remaining > 0 {
 		raw, err := client.WithEcsClient(func(ecsClient *ecs.Client) (interface{}, error) {
 			request := ecs.CreateDescribeInstancesRequest()
+			request.Tag = &filters
 			request.RegionId = client.RegionId
 			request.PageSize = requests.NewInteger(pageSize)
 			request.PageNumber = requests.NewInteger(pageNumber)
