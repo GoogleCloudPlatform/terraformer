@@ -15,7 +15,7 @@
 package alicloud
 
 import (
-  "strings"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
