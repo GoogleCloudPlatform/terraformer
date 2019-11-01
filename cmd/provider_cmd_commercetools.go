@@ -72,6 +72,7 @@ func newCmdCommercetoolsImporter(options ImportOptions) *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&options.PathOutput, "path-output", "o", DefaultPathOutput, "")
 	cmd.PersistentFlags().StringVarP(&options.State, "state", "s", DefaultState, "local or bucket")
 	cmd.PersistentFlags().StringVarP(&options.Bucket, "bucket", "b", "", "gs://terraform-state")
+	cmd.PersistentFlags().StringSliceVarP(&options.Filter, "filter", "f", []string{}, "commercetools_type=id1:id2:id4")
 	return cmd
 }
 
