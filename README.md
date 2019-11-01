@@ -38,6 +38,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
         * [New Relic](#use-with-new-relic)
     * Community
         * [Logz.io](#use-with-logzio)
+        * [Commercetools](#use-with-commercetools)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
@@ -178,6 +179,7 @@ Links to download Terraform Providers:
     * New Relic provider >1.5.0 - [here](https://releases.hashicorp.com/terraform-provider-newrelic/)
 * Community
     * Logz.io provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
+    * Commercetools provider >= 0.19.0 - [here](https://github.com/labd/terraform-provider-commercetools)
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
@@ -861,6 +863,40 @@ List of supported Logz.io resources:
     * `logzio_alert`
 *   `alert_notification_endpoints`
     * `logzio_endpoint`
+
+### Use with [Commercetools](https://commercetools.com/de/)
+
+This provider use the [terraform-provider-commercetools](https://github.com/labd/terraform-provider-commercetools). The terraformer provider was build by [Dustin Deus](https://github.com/StarpTech).
+
+**Important:** Pay attention to the plugin name when you move it to `$HOME/.terraform.d/plugins/ACRH_OS/terraform-provider-commercetools_vX.Y.Z_x4` otherwise it doesn't work.
+
+Example:
+
+```
+CTP_CLIENT_ID=foo CTP_CLIENT_SCOPE=scope CTP_CLIENT_SECRET=bar CTP_PROJECT_KEY=key ./terraformer plan commercetools -r=types // Only planning
+CTP_CLIENT_ID=foo CTP_CLIENT_SCOPE=scope CTP_CLIENT_SECRET=bar CTP_PROJECT_KEY=key ./terraformer import commercetools -r=types // Import commercetools types
+```
+
+List of supported [commercetools](https://commercetools.com/de/) resources:
+
+*   `types`
+    * `commercetools_type`
+*   `product_type`
+    * `commercetools_product_type`
+*   `store`
+    * `commercetools_store`
+*   `api_extension`
+    * `commercetools_api_extension`
+*   `channel`
+    * `commercetools_channel`
+*   `subscription`
+    * `commercetools_subscription`
+*   `shipping_zone`
+    * `commercetools_shipping_zone`
+*   `state`
+    * `commercetools_state`
+*   `tax_category`
+    * `commercetools_tax_category`
 
 ## Contributing
 
