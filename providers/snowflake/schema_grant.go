@@ -14,7 +14,9 @@
 package snowflake
 
 import (
+	"database/sql"
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
@@ -26,6 +28,7 @@ type SchemaGrantGenerator struct {
 }
 
 var ValidSchemaPrivileges = []string{
+	"ALL",
 	"MODIFY",
 	"MONITOR",
 	"OWNERSHIP",
@@ -51,6 +54,63 @@ func stringArrayContains(a []string, x string) bool {
 	return false
 }
 
+func (g SchemaGrantGenerator) filterALLGrants(schemaGrantList []schemaGrant) []schemaGrant {
+	// For each database_schema_role, figure out if the grant has all of the privileges
+	type databaseSchemaRole struct {
+		Name        sql.NullString
+		GrantedTo   sql.NullString
+		GranteeName sql.NullString
+	}
+	groupedByRole := map[databaseSchemaRole]map[string]struct{}{}
+	for _, schemaGrant := range schemaGrantList {
+		id := databaseSchemaRole{
+			Name:        schemaGrant.Name,
+			GrantedTo:   schemaGrant.GrantedTo,
+			GranteeName: schemaGrant.GranteeName,
+		}
+		if _, ok := groupedByRole[id]; !ok {
+			groupedByRole[id] = map[string]struct{}{}
+		}
+		groupedByRole[id][schemaGrant.Privilege.String] = struct{}{}
+	}
+	for databaseSchemaRole, privs := range groupedByRole {
+		for _, p := range ValidSchemaPrivileges {
+			if p == "ALL" || p == "OWNERSHIP" || p == "CREATE STREAM" {
+				continue
+			}
+			if _, ok := privs[p]; !ok {
+				delete(groupedByRole, databaseSchemaRole)
+				break
+			}
+		}
+	}
+	filteredSchemaGrants := []schemaGrant{}
+
+	// Roles with the "ALL" privilege
+	for databaseSchemaRole := range groupedByRole {
+		filteredSchemaGrants = append(filteredSchemaGrants, schemaGrant{
+			Name:        databaseSchemaRole.Name,
+			Privilege:   sql.NullString{String: "ALL"},
+			GrantedTo:   databaseSchemaRole.GrantedTo,
+			GranteeName: databaseSchemaRole.GranteeName,
+		})
+	}
+
+	for _, schemaGrant := range schemaGrantList {
+		id := databaseSchemaRole{
+			Name:        schemaGrant.Name,
+			GrantedTo:   schemaGrant.GrantedTo,
+			GranteeName: schemaGrant.GranteeName,
+		}
+		// Already added it with the "ALL" privilege, so skip
+		if _, ok := groupedByRole[id]; ok {
+			continue
+		}
+		filteredSchemaGrants = append(filteredSchemaGrants, schemaGrant)
+	}
+	return filteredSchemaGrants
+}
+
 func (g SchemaGrantGenerator) createResources(schemaGrantList []schemaGrant) ([]terraform_utils.Resource, error) {
 	groupedResources := map[string]*TfGrant{}
 	for _, grant := range schemaGrantList {
@@ -71,6 +131,7 @@ func (g SchemaGrantGenerator) createResources(schemaGrantList []schemaGrant) ([]
 			}
 		}
 		tfGrant := groupedResources[id]
+
 		switch grant.GrantedTo.String {
 		case "ROLE":
 			tfGrant.Roles = append(tfGrant.Roles, grant.GranteeName.String)
@@ -79,9 +140,11 @@ func (g SchemaGrantGenerator) createResources(schemaGrantList []schemaGrant) ([]
 		}
 	}
 	var resources []terraform_utils.Resource
+
 	for id, grant := range groupedResources {
 		DB := strings.Split(grant.Name, ".")[0]
 		Schema := strings.Split(grant.Name, ".")[1]
+
 		resources = append(resources, terraform_utils.NewSimpleResource(
 			id,
 			fmt.Sprintf("%s__%s__%s", DB, Schema, grant.Privilege),
@@ -90,6 +153,9 @@ func (g SchemaGrantGenerator) createResources(schemaGrantList []schemaGrant) ([]
 			[]string{},
 		))
 	}
+	sort.Slice(resources, func(i, j int) bool {
+		return resources[i].GetIDKey() < resources[j].GetIDKey()
+	})
 	return resources, nil
 }
 
@@ -121,6 +187,7 @@ func (g *SchemaGrantGenerator) InitResources() error {
 			allGrants = append(allGrants, grants...)
 		}
 	}
-	g.Resources, err = g.createResources(allGrants)
+
+	g.Resources, err = g.createResources(g.filterALLGrants(allGrants))
 	return err
 }
