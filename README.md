@@ -868,7 +868,7 @@ List of supported Logz.io resources:
 
 This provider use the [terraform-provider-commercetools](https://github.com/labd/terraform-provider-commercetools). The terraformer provider was build by [Dustin Deus](https://github.com/StarpTech).
 
-**Important:** Pay attention to the plugin name when you move it to `$HOME/.terraform.d/plugins/ACRH_OS/terraform-provider-commercetools_vX.Y.Z_x4` otherwise it doesn't work.
+**Important:** Pay attention to the plugin name when you move it to `$HOME/.terraform.d/plugins/$OS_$ARCH/terraform-provider-commercetools_vX.Y.Z_x4` otherwise it doesn't work.
 
 Example:
 
