@@ -2,6 +2,7 @@ package connectivity
 
 import (
 	"context"
+	"strings"
 
 	"github.com/labd/commercetools-go-sdk/commercetools"
 	"golang.org/x/oauth2/clientcredentials"
@@ -11,7 +12,7 @@ func (c *Config) NewClient() *commercetools.Client {
 	oauth2Config := &clientcredentials.Config{
 		ClientID:     c.ClientId,
 		ClientSecret: c.ClientSecret,
-		Scopes:       []string{c.ClientScope},
+		Scopes:       strings.Split(c.ClientScope, " "),
 		TokenURL:     c.TokenURL,
 	}
 
