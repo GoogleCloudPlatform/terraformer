@@ -29,6 +29,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
         * [OpenStack](#use-with-openstack)
     * Infrastructure Software
         * [Kubernetes](#use-with-kubernetes)
+        * [RabbitMQ](#use-with-rabbitmq)
     * Network
         * [Cloudflare](#use-with-cloudflare)
     * VCS
@@ -745,6 +746,36 @@ All Kubernetes resources that are currently supported by the Kubernetes provider
 * Terraform Kubernetes provider is rejecting resources with ":" characters in their names (as they don't meet DNS-1123), while it's allowed for certain types in Kubernetes, e.g. ClusterRoleBinding.
 * Because Terraform flatmap uses "." to detect the keys for unflattening the maps, some keys with "." in their names are being considered as the maps.
 * Since the library assumes empty strings to be empty values (not "0"), there are some issues with optional integer keys that are restricted to be positive.
+
+### Use with RabbitMQ
+
+Example:
+
+```
+ export RABBITMQ_SERVER_URL=http://foo.bar.localdomain:15672
+ export RABBITMQ_USERNAME=[RABBITMQ_USERNAME]
+ export RABBITMQ_PASSWORD=[RABBITMQ_PASSWORD]
+
+ terraformer import rabbitmq --resources=vhosts,queues,exchanges
+ terraformer import rabbitmq --resources=vhosts,queues,exchanges --filter=rabbitmq_vhost=name1:name2:name3
+```
+
+All RabbitMQ resources that are currently supported by the RabbitMQ provider, are also supported by this module. Here is the list of resources which are currently supported by RabbitMQ provider v.1.1.0:
+
+*   `bindings`
+    * `rabbitmq_binding`
+*   `exchanges`
+    * `rabbitmq_exchange`
+*   `permissions`
+    * `rabbitmq_permissions`
+*   `policies`
+    * `rabbitmq_policy`
+*   `queues`
+    * `rabbitmq_queue`
+*   `users`
+    * `rabbitmq_user`
+*   `vhosts`
+    * `rabbitmq_vhost`
 
 ### Use with Cloudflare
 
