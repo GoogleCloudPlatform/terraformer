@@ -18,7 +18,6 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 	"github.com/pkg/errors"
-	"github.com/zclconf/go-cty/cty"
 )
 
 type CommercetoolsProvider struct {
@@ -43,17 +42,6 @@ func (p CommercetoolsProvider) GetProviderData(arg ...string) map[string]interfa
 			},
 		},
 	}
-}
-
-func (p *CommercetoolsProvider) GetConfig() cty.Value {
-	return cty.ObjectVal(map[string]cty.Value{
-		"client_id":     cty.StringVal(p.clientID),
-		"client_secret": cty.StringVal(p.clientSecret),
-		"project_key":   cty.StringVal(p.projectKey),
-		"scopes":        cty.StringVal(p.clientScope),
-		"token_url":     cty.StringVal(p.tokenURL),
-		"api_url":       cty.StringVal(p.baseURL),
-	})
 }
 
 // Init CommerectoolsProvider
