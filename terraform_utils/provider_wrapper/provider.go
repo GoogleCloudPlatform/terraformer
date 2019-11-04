@@ -31,6 +31,8 @@ import (
 	"github.com/hashicorp/terraform/version"
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/gocty"
+	"fmt"
+	"errors"
 )
 
 // DefaultDataDir is the default directory for storing local data.
