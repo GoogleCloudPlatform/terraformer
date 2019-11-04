@@ -19,7 +19,7 @@ func (c *Config) NewClient() *commercetools.Client {
 	httpClient := oauth2Config.Client(context.TODO())
 
 	return commercetools.New(&commercetools.Config{
-		ProjectKey:  "lca-dev",
+		ProjectKey:  c.ProjectKey,
 		URL:         c.BaseURL,
 		HTTPClient:  httpClient,
 		LibraryName: "terraformer",
