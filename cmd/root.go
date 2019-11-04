@@ -50,6 +50,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdOpenStackImporter,
 		// Infrastructure Software
 		newCmdKubernetesImporter,
+		newCmdRabbitMQImporter,
 		// Network
 		newCmdCloudflareImporter,
 		// VCS
@@ -78,6 +79,7 @@ func providerGenerators() map[string]func() terraform_utils.ProviderGenerator {
 		newOpenStackProvider,
 		// Infrastructure Software
 		newKubernetesProvider,
+		newRabbitMQProvider,
 		// Network
 		newCloudflareProvider,
 		// VCS
