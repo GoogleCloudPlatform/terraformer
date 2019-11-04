@@ -149,9 +149,12 @@ github.com/aws/aws-sdk-go/service/dynamodb
 github.com/aws/aws-sdk-go/service/ec2
 github.com/aws/aws-sdk-go/service/ecs
 <<<<<<< HEAD
+<<<<<<< HEAD
 github.com/aws/aws-sdk-go/service/eks
 =======
 >>>>>>> Some more fixes
+=======
+>>>>>>> 25fea6fedf7cf6c194bd2d8d3983d3609770c685
 github.com/aws/aws-sdk-go/service/elasticache
 github.com/aws/aws-sdk-go/service/elasticsearchservice
 github.com/aws/aws-sdk-go/service/elb
@@ -160,9 +163,12 @@ github.com/aws/aws-sdk-go/service/firehose
 github.com/aws/aws-sdk-go/service/glue
 github.com/aws/aws-sdk-go/service/iam
 <<<<<<< HEAD
+<<<<<<< HEAD
 github.com/aws/aws-sdk-go/service/kafka
 =======
 >>>>>>> Some more fixes
+=======
+>>>>>>> 25fea6fedf7cf6c194bd2d8d3983d3609770c685
 github.com/aws/aws-sdk-go/service/kinesis
 github.com/aws/aws-sdk-go/service/organizations
 github.com/aws/aws-sdk-go/service/rds
@@ -359,7 +365,10 @@ github.com/hashicorp/yamux
 # github.com/heroku/heroku-go/v5 v5.1.0
 github.com/heroku/heroku-go/v5
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 25fea6fedf7cf6c194bd2d8d3983d3609770c685
 # github.com/howeyc/gopass v0.0.0-20170109162249-bf9dde6d0d2c
 github.com/howeyc/gopass
 >>>>>>> Some more fixes
@@ -372,8 +381,11 @@ github.com/inconshreveable/mousetrap
 # github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 github.com/jmespath/go-jmespath
 <<<<<<< HEAD
+<<<<<<< HEAD
 # github.com/jonboydell/logzio_client v1.2.0
 =======
+=======
+>>>>>>> 25fea6fedf7cf6c194bd2d8d3983d3609770c685
 # github.com/jmoiron/sqlx v1.2.0
 github.com/jmoiron/sqlx
 github.com/jmoiron/sqlx/reflectx
@@ -442,10 +454,15 @@ github.com/paultyng/go-newrelic/api
 # github.com/pborman/uuid v1.2.0
 github.com/pborman/uuid
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 # github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
 github.com/pkg/browser
 >>>>>>> Some more fixes
+=======
+# github.com/pkg/browser v0.0.0-20180916011732-0a3d74bf9ce4
+github.com/pkg/browser
+>>>>>>> 25fea6fedf7cf6c194bd2d8d3983d3609770c685
 # github.com/pkg/errors v0.8.1
 github.com/pkg/errors
 # github.com/posener/complete v1.2.1
@@ -522,7 +539,10 @@ golang.org/x/crypto/internal/chacha20
 golang.org/x/crypto/internal/subtle
 golang.org/x/crypto/md4
 golang.org/x/crypto/ocsp
+<<<<<<< HEAD
 >>>>>>> Some more fixes
+=======
+>>>>>>> 25fea6fedf7cf6c194bd2d8d3983d3609770c685
 golang.org/x/crypto/openpgp
 golang.org/x/crypto/openpgp/armor
 golang.org/x/crypto/openpgp/elgamal

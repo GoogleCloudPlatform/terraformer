@@ -2843,6 +2843,7 @@ type CreateElasticsearchDomainInput struct {
 	CognitoOptions *CognitoOptions `type:"structure"`
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	// Options to specify configuration that will be applied to the domain endpoint.
 	DomainEndpointOptions *DomainEndpointOptions `type:"structure"`
 
@@ -2854,6 +2855,11 @@ type CreateElasticsearchDomainInput struct {
 	// are unique across the domains owned by an account within an AWS region. Domain
 	// names must start with a letter or number and can contain the following characters:
 >>>>>>> Some more fixes
+=======
+	// The name of the Elasticsearch domain that you are creating. Domain names
+	// are unique across the domains owned by an account within an AWS region. Domain
+	// names must start with a letter or number and can contain the following characters:
+>>>>>>> 25fea6fedf7cf6c194bd2d8d3983d3609770c685
 	// a-z (lowercase), 0-9, and - (hyphen).
 	//
 	// DomainName is a required field
@@ -2947,6 +2953,7 @@ func (s *CreateElasticsearchDomainInput) SetCognitoOptions(v *CognitoOptions) *C
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // SetDomainEndpointOptions sets the DomainEndpointOptions field's value.
 func (s *CreateElasticsearchDomainInput) SetDomainEndpointOptions(v *DomainEndpointOptions) *CreateElasticsearchDomainInput {
 	s.DomainEndpointOptions = v
@@ -2955,6 +2962,8 @@ func (s *CreateElasticsearchDomainInput) SetDomainEndpointOptions(v *DomainEndpo
 
 =======
 >>>>>>> Some more fixes
+=======
+>>>>>>> 25fea6fedf7cf6c194bd2d8d3983d3609770c685
 // SetDomainName sets the DomainName field's value.
 func (s *CreateElasticsearchDomainInput) SetDomainName(v string) *CreateElasticsearchDomainInput {
 	s.DomainName = &v
@@ -3599,6 +3608,7 @@ func (s *DescribeReservedElasticsearchInstancesOutput) SetReservedElasticsearchI
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Options to configure endpoint for the Elasticsearch domain.
 type DomainEndpointOptions struct {
 	_ struct{} `type:"structure"`
@@ -3678,6 +3688,8 @@ func (s *DomainEndpointOptionsStatus) SetStatus(v *OptionStatus) *DomainEndpoint
 
 =======
 >>>>>>> Some more fixes
+=======
+>>>>>>> 25fea6fedf7cf6c194bd2d8d3983d3609770c685
 type DomainInfo struct {
 	_ struct{} `type:"structure"`
 
@@ -3929,11 +3941,14 @@ type ElasticsearchDomainConfig struct {
 	CognitoOptions *CognitoOptionsStatus `type:"structure"`
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	// Specifies the DomainEndpointOptions for the Elasticsearch domain.
 	DomainEndpointOptions *DomainEndpointOptionsStatus `type:"structure"`
 
 =======
 >>>>>>> Some more fixes
+=======
+>>>>>>> 25fea6fedf7cf6c194bd2d8d3983d3609770c685
 	// Specifies the EBSOptions for the Elasticsearch domain.
 	EBSOptions *EBSOptionsStatus `type:"structure"`
 
@@ -3989,6 +4004,7 @@ func (s *ElasticsearchDomainConfig) SetCognitoOptions(v *CognitoOptionsStatus) *
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // SetDomainEndpointOptions sets the DomainEndpointOptions field's value.
 func (s *ElasticsearchDomainConfig) SetDomainEndpointOptions(v *DomainEndpointOptionsStatus) *ElasticsearchDomainConfig {
 	s.DomainEndpointOptions = v
@@ -3997,6 +4013,8 @@ func (s *ElasticsearchDomainConfig) SetDomainEndpointOptions(v *DomainEndpointOp
 
 =======
 >>>>>>> Some more fixes
+=======
+>>>>>>> 25fea6fedf7cf6c194bd2d8d3983d3609770c685
 // SetEBSOptions sets the EBSOptions field's value.
 func (s *ElasticsearchDomainConfig) SetEBSOptions(v *EBSOptionsStatus) *ElasticsearchDomainConfig {
 	s.EBSOptions = v
@@ -4077,11 +4095,14 @@ type ElasticsearchDomainStatus struct {
 	Deleted *bool `type:"boolean"`
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	// The current status of the Elasticsearch domain's endpoint options.
 	DomainEndpointOptions *DomainEndpointOptions `type:"structure"`
 
 =======
 >>>>>>> Some more fixes
+=======
+>>>>>>> 25fea6fedf7cf6c194bd2d8d3983d3609770c685
 	// The unique identifier for the specified Elasticsearch domain.
 	//
 	// DomainId is a required field
@@ -4191,6 +4212,7 @@ func (s *ElasticsearchDomainStatus) SetDeleted(v bool) *ElasticsearchDomainStatu
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // SetDomainEndpointOptions sets the DomainEndpointOptions field's value.
 func (s *ElasticsearchDomainStatus) SetDomainEndpointOptions(v *DomainEndpointOptions) *ElasticsearchDomainStatus {
 	s.DomainEndpointOptions = v
@@ -4199,6 +4221,8 @@ func (s *ElasticsearchDomainStatus) SetDomainEndpointOptions(v *DomainEndpointOp
 
 =======
 >>>>>>> Some more fixes
+=======
+>>>>>>> 25fea6fedf7cf6c194bd2d8d3983d3609770c685
 // SetDomainId sets the DomainId field's value.
 func (s *ElasticsearchDomainStatus) SetDomainId(v string) *ElasticsearchDomainStatus {
 	s.DomainId = &v
@@ -6101,11 +6125,14 @@ type UpdateElasticsearchDomainConfigInput struct {
 	CognitoOptions *CognitoOptions `type:"structure"`
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	// Options to specify configuration that will be applied to the domain endpoint.
 	DomainEndpointOptions *DomainEndpointOptions `type:"structure"`
 
 =======
 >>>>>>> Some more fixes
+=======
+>>>>>>> 25fea6fedf7cf6c194bd2d8d3983d3609770c685
 	// The name of the Elasticsearch domain that you are updating.
 	//
 	// DomainName is a required field
@@ -6181,6 +6208,7 @@ func (s *UpdateElasticsearchDomainConfigInput) SetCognitoOptions(v *CognitoOptio
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // SetDomainEndpointOptions sets the DomainEndpointOptions field's value.
 func (s *UpdateElasticsearchDomainConfigInput) SetDomainEndpointOptions(v *DomainEndpointOptions) *UpdateElasticsearchDomainConfigInput {
 	s.DomainEndpointOptions = v
@@ -6189,6 +6217,8 @@ func (s *UpdateElasticsearchDomainConfigInput) SetDomainEndpointOptions(v *Domai
 
 =======
 >>>>>>> Some more fixes
+=======
+>>>>>>> 25fea6fedf7cf6c194bd2d8d3983d3609770c685
 // SetDomainName sets the DomainName field's value.
 func (s *UpdateElasticsearchDomainConfigInput) SetDomainName(v string) *UpdateElasticsearchDomainConfigInput {
 	s.DomainName = &v
@@ -6887,6 +6917,7 @@ const (
 
 const (
 <<<<<<< HEAD
+<<<<<<< HEAD
 	// TLSSecurityPolicyPolicyMinTls10201907 is a TLSSecurityPolicy enum value
 	TLSSecurityPolicyPolicyMinTls10201907 = "Policy-Min-TLS-1-0-2019-07"
 
@@ -6897,6 +6928,8 @@ const (
 const (
 =======
 >>>>>>> Some more fixes
+=======
+>>>>>>> 25fea6fedf7cf6c194bd2d8d3983d3609770c685
 	// UpgradeStatusInProgress is a UpgradeStatus enum value
 	UpgradeStatusInProgress = "IN_PROGRESS"
 

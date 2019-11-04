@@ -4,6 +4,7 @@
 // requests to Amazon Elasticsearch Service.
 //
 <<<<<<< HEAD
+<<<<<<< HEAD
 // Use the Amazon Elasticsearch Configuration API to create, configure, and
 // manage Elasticsearch domains.
 //
@@ -17,6 +18,11 @@
 // manage Elasticsearch domains.
 //
 >>>>>>> Some more fixes
+=======
+// Use the Amazon Elasticsearch configuration API to create, configure, and
+// manage Elasticsearch domains.
+//
+>>>>>>> 25fea6fedf7cf6c194bd2d8d3983d3609770c685
 // The endpoint for configuration service requests is region-specific: es.region.amazonaws.com.
 // For example, es.us-east-1.amazonaws.com. For a current list of supported
 // regions and endpoints, see Regions and Endpoints (http://docs.aws.amazon.com/general/latest/gr/rande.html#elasticsearch-service-regions).

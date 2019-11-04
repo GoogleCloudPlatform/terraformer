@@ -4,8 +4,11 @@
 // requests to AWS Organizations.
 //
 <<<<<<< HEAD
+<<<<<<< HEAD
 // AWS Organizations
 =======
+=======
+>>>>>>> 25fea6fedf7cf6c194bd2d8d3983d3609770c685
 // AWS Organizations is a web service that enables you to consolidate your multiple
 // AWS accounts into an organization and centrally manage your accounts and
 // their resources.
@@ -111,7 +114,10 @@
 // in the AWS Organizations User Guide. To learn more about CloudTrail, including
 // how to turn it on and find your log files, see the AWS CloudTrail User Guide
 // (https://docs.aws.amazon.com/awscloudtrail/latest/userguide/what_is_cloud_trail_top_level.html).
+<<<<<<< HEAD
 >>>>>>> Some more fixes
+=======
+>>>>>>> 25fea6fedf7cf6c194bd2d8d3983d3609770c685
 //
 // See https://docs.aws.amazon.com/goto/WebAPI/organizations-2016-11-28 for more information on this service.
 //

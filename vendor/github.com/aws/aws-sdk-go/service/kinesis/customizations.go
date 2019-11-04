@@ -10,6 +10,7 @@ var readDuration = 5 * time.Second
 
 func init() {
 <<<<<<< HEAD
+<<<<<<< HEAD
 	initRequest = customizeRequest
 }
 
@@ -21,6 +22,8 @@ func customizeRequest(r *request.Request) {
 	// Service specific error codes. Github(aws/aws-sdk-go#1376)
 	r.RetryErrorCodes = append(r.RetryErrorCodes, ErrCodeLimitExceededException)
 =======
+=======
+>>>>>>> 25fea6fedf7cf6c194bd2d8d3983d3609770c685
 	ops := []string{
 		opGetRecords,
 	}
@@ -31,5 +34,8 @@ func customizeRequest(r *request.Request) {
 			}
 		}
 	}
+<<<<<<< HEAD
 >>>>>>> Some more fixes
+=======
+>>>>>>> 25fea6fedf7cf6c194bd2d8d3983d3609770c685
 }
