@@ -52,9 +52,9 @@ func (p *RBTProvider) GetProviderData(arg ...string) map[string]interface{} {
 
 func (p *RBTProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
-		"endpoint":      cty.StringVal(p.endpoint),
-		"userself_link": cty.StringVal(p.username),
-		"password":      cty.StringVal(p.password),
+		"endpoint": cty.StringVal(p.endpoint),
+		"username": cty.StringVal(p.username),
+		"password": cty.StringVal(p.password),
 	})
 }
 
