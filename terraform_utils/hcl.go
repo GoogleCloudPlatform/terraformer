@@ -164,7 +164,7 @@ func HclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error)
 	if err != nil {
 		log.Println("Invalid HCL follows:")
 		for i, line := range strings.Split(s, "\n") {
-			fmt.Printf("%d\t%s", i+1, line)
+			fmt.Printf("%4d|\t%s\n", i+1, line)
 		}
 		return nil, fmt.Errorf("error formatting HCL: %v", err)
 	}
