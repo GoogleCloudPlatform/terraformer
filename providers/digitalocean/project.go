@@ -41,7 +41,7 @@ func (g ProjectGenerator) listProjects(ctx context.Context, client *godo.Client)
 		}
 
 		// if we are at the last page, break out the for loop
-		if resp.Links == nil || resp.Links.Pages == nil || resp.Links.Pages.Next == "" {
+		if resp.Links == nil || resp.Links.IsLastPage() {
 			break
 		}
 
