@@ -14,7 +14,7 @@
 
 package terraform_utils
 
-func ConnectServices(importResources map[string][]Resource, resourceConnections map[string]map[string][]string) map[string][]Resource {
+func ConnectServices(importResources map[string][]Resource, isServicePath bool, resourceConnections map[string]map[string][]string) map[string][]Resource {
 	for resource, connection := range resourceConnections {
 		if _, exist := importResources[resource]; exist {
 			for k, connectionPairs := range connection {
@@ -25,7 +25,11 @@ func ConnectServices(importResources map[string][]Resource, resourceConnections 
 					for i := 0; i < len(connectionPairs)/2; i++ {
 						connectionPair := []string{connectionPairs[i*2], connectionPairs[i*2+1]}
 						for _, ccc := range cc {
-							mapResource(importResources, resource, connectionPair, ccc, k)
+							if !isServicePath {
+								mapResource(importResources, resource, connectionPair, ccc, "local")
+							} else {
+								mapResource(importResources, resource, connectionPair, ccc, k)
+							}
 						}
 					}
 				}

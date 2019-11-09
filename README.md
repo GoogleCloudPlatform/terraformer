@@ -69,11 +69,12 @@ Available Commands:
 Flags:
   -b, --bucket string         gs://terraform-state
   -c, --connect                (default true)
+  -С, --compact                (default false)
   -f, --filter strings        google_compute_firewall=id1:id2:id4
   -h, --help                  help for google
   -o, --path-output string     (default "generated")
-  -p, --path-pattern string   {output}/{provider}/custom/{service}/ (default "{output}/{provider}/{service}/")
-      --projects strings
+  -p, --path-pattern string   {output}/{provider}/ (default "{output}/{provider}/{service}/")
+      --projects strings      
   -z, --regions strings       europe-west1, (default [global])
   -r, --resources strings     firewalls,networks
   -s, --state string          local or bucket (default "local")
