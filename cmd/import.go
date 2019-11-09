@@ -190,7 +190,7 @@ func printService(provider terraform_utils.ProviderGenerator, serviceName string
 			terraform_output.PrintFile(path+"/bucket.tf", bucketStateDataFile)
 		}
 	} else {
-		if serviceName =="" {
+		if serviceName == "" {
 			log.Println(provider.GetName() + " save tfstate")
 		} else {
 			log.Println(provider.GetName() + " save tfstate for " + serviceName)
