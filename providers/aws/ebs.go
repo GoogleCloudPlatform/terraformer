@@ -48,7 +48,7 @@ func (g *EbsGenerator) InitResources() error {
 		}
 	}
 	input := ec2.DescribeVolumesInput{
-		Filters:filters,
+		Filters: filters,
 	}
 	err := svc.DescribeVolumesPages(&input, func(volumes *ec2.DescribeVolumesOutput, lastPage bool) bool {
 		for _, volume := range volumes.Volumes {
