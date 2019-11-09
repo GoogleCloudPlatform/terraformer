@@ -48,6 +48,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdHerokuImporter,
 		newCmdLinodeImporter,
 		newCmdOpenStackImporter,
+		newCmdVultrImporter,
 		// Infrastructure Software
 		newCmdKubernetesImporter,
 		newCmdRabbitMQImporter,
@@ -76,6 +77,7 @@ func providerGenerators() map[string]func() terraform_utils.ProviderGenerator {
 		newHerokuProvider,
 		newLinodeProvider,
 		newOpenStackProvider,
+		newVultrProvider,
 		// Infrastructure Software
 		newKubernetesProvider,
 		newRabbitMQProvider,
