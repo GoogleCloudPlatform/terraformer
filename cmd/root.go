@@ -61,6 +61,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdNewRelicImporter,
 		// Community
 		newCmdLogzioImporter,
+		newCmdCommercetoolsImporter,
 	}
 }
 
@@ -90,6 +91,7 @@ func providerGenerators() map[string]func() terraform_utils.ProviderGenerator {
 		newNewRelicProvider,
 		// Community
 		newLogzioProvider,
+		newCommercetoolsProvider,
 	} {
 		list[providerGen().GetName()] = providerGen
 	}
