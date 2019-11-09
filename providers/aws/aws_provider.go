@@ -101,7 +101,9 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 			"sg":     []string{"vpc_security_group_ids", "id"},
 		},
 		"route_table": {
-			"vpc": []string{"vpc_id", "id"},
+			"route_table": []string{"route_table_id", "id"},
+			"subnet":      []string{"subnet_id", "id"},
+			"vpc":         []string{"vpc_id", "id"},
 		},
 		"sns": {
 			"sns": []string{"topic_arn", "id"},
@@ -198,6 +200,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"alb":            &AlbGenerator{},
 		"auto_scaling":   &AutoScalingGenerator{},
 		"budgets":        &BudgetsGenerator{},
+		"cloud9":         &Cloud9Generator{},
 		"cloudformation": &CloudFormationGenerator{},
 		"cloudfront":     &CloudFrontGenerator{},
 		"cloudtrail":     &CloudTrailGenerator{},

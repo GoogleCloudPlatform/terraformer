@@ -16,7 +16,7 @@ require (
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/cloudflare/cloudflare-go v0.10.4
 	github.com/denverdino/aliyungo v0.0.0-20190924033012-e8e08fe22cb2
-	github.com/digitalocean/godo v1.22.0
+	github.com/digitalocean/godo v1.24.1
 	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
 	github.com/go-resty/resty v0.0.0-00010101000000-000000000000 // indirect
 	github.com/gogo/protobuf v1.3.0 // indirect
@@ -25,7 +25,6 @@ require (
 	github.com/google/go-github/v25 v25.1.3
 	github.com/googleapis/gnostic v0.3.1 // indirect
 	github.com/gophercloud/gophercloud v0.4.1-0.20190920074709-6e93a6ba3b09
-	github.com/hashicorp/go-cleanhttp v0.5.1 // indirect
 	github.com/hashicorp/go-hclog v0.9.2
 	github.com/hashicorp/go-plugin v1.0.1
 	github.com/hashicorp/go-version v1.2.0 // indirect
@@ -51,6 +50,7 @@ require (
 	github.com/tomnomnom/linkheader v0.0.0-20180905144013-02ca5825eb80 // indirect
 	github.com/ulikunitz/xz v0.5.6 // indirect
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
+	github.com/vultr/govultr v0.1.6
 	github.com/zclconf/go-cty v1.1.0
 	github.com/zorkian/go-datadog-api v2.24.0+incompatible
 	go.opencensus.io v0.22.1 // indirect
@@ -61,6 +61,7 @@ require (
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e // indirect
 	golang.org/x/sys v0.0.0-20191010194322-b09406accb47 // indirect
+	golang.org/x/text v0.3.2
 	golang.org/x/tools v0.0.0-20191010201905-e5ffc44a6fee // indirect
 	google.golang.org/api v0.11.0
 	google.golang.org/appengine v1.6.5 // indirect

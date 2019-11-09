@@ -245,14 +245,14 @@ func getProviderFileName(providerName string) (string, error) {
 func GetProviderVersion(providerName string) string {
 	providerFilePath, err := getProviderFileName(providerName)
 	if err != nil {
-		log.Println("Can't find provider file path")
+		log.Println("Can't find provider file path. Ensure that you are following https://www.terraform.io/docs/configuration/providers.html#third-party-plugins.")
 		return ""
 	}
-	t := strings.Split(providerFilePath, "/")
+	t := strings.Split(providerFilePath, string(os.PathSeparator))
 	providerFileName := t[len(t)-1]
 	providerFileNameParts := strings.Split(providerFileName, "_")
-	if len(providerFileNameParts) != 3 {
-		log.Println("Can't find provider version")
+	if len(providerFileNameParts) < 2 {
+		log.Println("Can't find provider version. Ensure that you are following https://www.terraform.io/docs/configuration/providers.html#plugin-names-and-versions.")
 		return ""
 	}
 	providerVersion := providerFileNameParts[1]
