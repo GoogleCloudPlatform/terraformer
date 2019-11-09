@@ -27,6 +27,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
         * [Heroku](#use-with-heroku)
         * [Linode](#use-with-linode)
         * [OpenStack](#use-with-openstack)
+        * [Vultr](#use-with-vultr)
     * Infrastructure Software
         * [Kubernetes](#use-with-kubernetes)
         * [RabbitMQ](#use-with-rabbitmq)
@@ -168,6 +169,7 @@ Links to download Terraform Providers:
     * Heroku provider >2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-heroku/)
     * Linode provider >1.8.0 - [here](https://releases.hashicorp.com/terraform-provider-linode/)
     * OpenStack provider >1.21.1 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
+    * Vultr provider >1.0.5 - [here](https://releases.hashicorp.com/terraform-provider-vultr/)
 * Infrastructure Software
     * Kubernetes provider >=1.9.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
 * Network
@@ -696,6 +698,40 @@ List of supported OpenStack services:
 *   `networking`
     * `openstack_networking_secgroup_v2`
     * `openstack_networking_secgroup_rule_v2`
+
+### Use with Vultr
+
+Example:
+
+```
+export VULTR_API_KEY=[VULTR_API_KEY]
+./terraformer import vultr -r server
+```
+
+List of supported Vultr resources:
+
+*   `bare_metal_server`
+    * `vultr_bare_metal_server`
+*   `block_storage`
+    * `vultr_block_storage`
+*   `dns_domain`
+    * `vultr_dns_domain`
+*   `firewall_group`
+    * `vultr_firewall_group`
+*   `network`
+    * `vultr_network`
+*   `reserved_ip`
+    * `vultr_reserved_ip`
+*   `server`
+    * `vultr_server`
+*   `snapshot`
+    * `vultr_snapshot`
+*   `ssh_key`
+    * `vultr_ssh_key`
+*   `startup_script`
+    * `vultr_startup_script`
+*   `user`
+    * `vultr_user`
 
 ### Use with Kubernetes
 
