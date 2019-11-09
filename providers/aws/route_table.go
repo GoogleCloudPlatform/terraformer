@@ -35,6 +35,7 @@ func (g RouteTableGenerator) createRouteTablesResources(svc *ec2.EC2) []terrafor
 		&ec2.DescribeRouteTablesInput{},
 		func(tables *ec2.DescribeRouteTablesOutput, lastPage bool) bool {
 			for _, table := range tables.RouteTables {
+				// route table
 				resources = append(resources, terraform_utils.NewSimpleResource(
 					aws.StringValue(table.RouteTableId),
 					aws.StringValue(table.RouteTableId),
@@ -42,6 +43,38 @@ func (g RouteTableGenerator) createRouteTablesResources(svc *ec2.EC2) []terrafor
 					"aws",
 					rtbAllowEmptyValues,
 				))
+
+				for _, assoc := range table.Associations {
+					if aws.BoolValue(assoc.Main) {
+						// main route table association
+						resources = append(resources, terraform_utils.NewResource(
+							aws.StringValue(assoc.RouteTableAssociationId),
+							aws.StringValue(table.VpcId),
+							"aws_main_route_table_association",
+							"aws",
+							map[string]string{
+								"vpc_id":         aws.StringValue(table.VpcId),
+								"route_table_id": aws.StringValue(table.RouteTableId),
+							},
+							rtbAllowEmptyValues,
+							map[string]interface{}{},
+						))
+					} else {
+						// subnet-specific route table association
+						resources = append(resources, terraform_utils.NewResource(
+							aws.StringValue(assoc.RouteTableAssociationId),
+							aws.StringValue(assoc.SubnetId),
+							"aws_route_table_association",
+							"aws",
+							map[string]string{
+								"subnet_id":      aws.StringValue(assoc.SubnetId),
+								"route_table_id": aws.StringValue(table.RouteTableId),
+							},
+							rtbAllowEmptyValues,
+							map[string]interface{}{},
+						))
+					}
+				}
 			}
 			return true
 		},

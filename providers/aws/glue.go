@@ -41,25 +41,47 @@ func (g *GlueGenerator) loadGlueCrawlers(svc *glue.Glue) error {
 	return nil
 }
 
-func (g *GlueGenerator) loadGlueCatalogDatabase(svc *glue.Glue, accont *string) error {
+func (g *GlueGenerator) loadGlueCatalogDatabase(svc *glue.Glue, account *string) (DatabaseNames []*string, error error) {
 	var GlueCatalogDatabaseAllowEmptyValues = []string{"tags."}
 	catalogDatabases, err := svc.GetDatabases(&glue.GetDatabasesInput{})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	for _, catalogDatabase := range catalogDatabases.DatabaseList {
 		// format of ID is "CATALOG-ID:DATABASE-NAME".
 		// CATALOG-ID is AWS Account ID
 		// https://docs.aws.amazon.com/cli/latest/reference/glue/create-database.html#options
-		id := *accont + ":" + *catalogDatabase.Name
+		id := *account + ":" + *catalogDatabase.Name
 		resource := terraform_utils.NewSimpleResource(id, *catalogDatabase.Name,
 			"aws_glue_catalog_database",
 			"aws",
 			GlueCatalogDatabaseAllowEmptyValues)
 		g.Resources = append(g.Resources, resource)
+		DatabaseNames = append(DatabaseNames, catalogDatabase.Name)
 	}
+	return DatabaseNames, nil
+}
 
+func (g *GlueGenerator) loadGlueCatalogTable(svc *glue.Glue, account *string, databaseName *string) error {
+	// format of ID is "CATALOG-ID:DATABASE-NAME:TABLE-NAME".
+	// CATALOG-ID is AWS Account ID
+	// https://docs.aws.amazon.com/cli/latest/reference/glue/create-database.html#options
+
+	catalogTables, err := svc.GetTables(&glue.GetTablesInput{DatabaseName: databaseName})
+	if err != nil {
+		return err
+	}
+	var GlueCatalogTableAllowEmptyValues = []string{"tags."}
+
+	for _, catalogTable := range catalogTables.TableList {
+		id := *account + ":" + *databaseName + ":" + *catalogTable.Name
+		resource := terraform_utils.NewSimpleResource(id, *catalogTable.Name,
+			"aws_glue_catalog_table",
+			"aws",
+			GlueCatalogTableAllowEmptyValues)
+		g.Resources = append(g.Resources, resource)
+	}
 	return nil
 }
 
@@ -81,8 +103,15 @@ func (g *GlueGenerator) InitResources() error {
 	if err := g.loadGlueCrawlers(svc); err != nil {
 		return err
 	}
-	if err := g.loadGlueCatalogDatabase(svc, account); err != nil {
+	var DatabaseNames []*string
+	if DatabaseNames, err = g.loadGlueCatalogDatabase(svc, account); err != nil {
 		return err
 	}
+	for _, DatabaseName := range DatabaseNames {
+		if err := g.loadGlueCatalogTable(svc, account, DatabaseName); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

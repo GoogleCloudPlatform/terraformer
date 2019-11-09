@@ -27,8 +27,10 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
         * [Heroku](#use-with-heroku)
         * [Linode](#use-with-linode)
         * [OpenStack](#use-with-openstack)
+        * [Vultr](#use-with-vultr)
     * Infrastructure Software
         * [Kubernetes](#use-with-kubernetes)
+        * [RabbitMQ](#use-with-rabbitmq)
     * Network
         * [Cloudflare](#use-with-cloudflare)
     * VCS
@@ -67,7 +69,7 @@ Available Commands:
 Flags:
   -b, --bucket string         gs://terraform-state
   -c, --connect                (default true)
-  -t, --compact                (default false)
+  -С, --compact                (default false)
   -f, --filter strings        google_compute_firewall=id1:id2:id4
   -h, --help                  help for google
   -o, --path-output string     (default "generated")
@@ -168,6 +170,7 @@ Links to download Terraform Providers:
     * Heroku provider >2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-heroku/)
     * Linode provider >1.8.0 - [here](https://releases.hashicorp.com/terraform-provider-linode/)
     * OpenStack provider >1.21.1 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
+    * Vultr provider >1.0.5 - [here](https://releases.hashicorp.com/terraform-provider-vultr/)
 * Infrastructure Software
     * Kubernetes provider >=1.9.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
 * Network
@@ -361,6 +364,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_launch_template`
 *   `budgets`
     * `aws_budgets_budget`
+*   `cloud9`
+    * `aws_cloud9_environment_ec2`
 *   `cloudfront`
     * `aws_cloudfront_distribution`
 *   `cloudformation`
@@ -695,6 +700,40 @@ List of supported OpenStack services:
     * `openstack_networking_secgroup_v2`
     * `openstack_networking_secgroup_rule_v2`
 
+### Use with Vultr
+
+Example:
+
+```
+export VULTR_API_KEY=[VULTR_API_KEY]
+./terraformer import vultr -r server
+```
+
+List of supported Vultr resources:
+
+*   `bare_metal_server`
+    * `vultr_bare_metal_server`
+*   `block_storage`
+    * `vultr_block_storage`
+*   `dns_domain`
+    * `vultr_dns_domain`
+*   `firewall_group`
+    * `vultr_firewall_group`
+*   `network`
+    * `vultr_network`
+*   `reserved_ip`
+    * `vultr_reserved_ip`
+*   `server`
+    * `vultr_server`
+*   `snapshot`
+    * `vultr_snapshot`
+*   `ssh_key`
+    * `vultr_ssh_key`
+*   `startup_script`
+    * `vultr_startup_script`
+*   `user`
+    * `vultr_user`
+
 ### Use with Kubernetes
 
 Example:
@@ -744,6 +783,36 @@ All Kubernetes resources that are currently supported by the Kubernetes provider
 * Terraform Kubernetes provider is rejecting resources with ":" characters in their names (as they don't meet DNS-1123), while it's allowed for certain types in Kubernetes, e.g. ClusterRoleBinding.
 * Because Terraform flatmap uses "." to detect the keys for unflattening the maps, some keys with "." in their names are being considered as the maps.
 * Since the library assumes empty strings to be empty values (not "0"), there are some issues with optional integer keys that are restricted to be positive.
+
+### Use with RabbitMQ
+
+Example:
+
+```
+ export RABBITMQ_SERVER_URL=http://foo.bar.localdomain:15672
+ export RABBITMQ_USERNAME=[RABBITMQ_USERNAME]
+ export RABBITMQ_PASSWORD=[RABBITMQ_PASSWORD]
+
+ terraformer import rabbitmq --resources=vhosts,queues,exchanges
+ terraformer import rabbitmq --resources=vhosts,queues,exchanges --filter=rabbitmq_vhost=name1:name2:name3
+```
+
+All RabbitMQ resources that are currently supported by the RabbitMQ provider, are also supported by this module. Here is the list of resources which are currently supported by RabbitMQ provider v.1.1.0:
+
+*   `bindings`
+    * `rabbitmq_binding`
+*   `exchanges`
+    * `rabbitmq_exchange`
+*   `permissions`
+    * `rabbitmq_permissions`
+*   `policies`
+    * `rabbitmq_policy`
+*   `queues`
+    * `rabbitmq_queue`
+*   `users`
+    * `rabbitmq_user`
+*   `vhosts`
+    * `rabbitmq_vhost`
 
 ### Use with Cloudflare
 
