@@ -25,7 +25,6 @@ require (
 	github.com/google/go-github/v25 v25.1.3
 	github.com/googleapis/gnostic v0.3.1 // indirect
 	github.com/gophercloud/gophercloud v0.4.1-0.20190920074709-6e93a6ba3b09
-	github.com/hashicorp/go-cleanhttp v0.5.1 // indirect
 	github.com/hashicorp/go-hclog v0.9.2
 	github.com/hashicorp/go-plugin v1.0.1
 	github.com/hashicorp/go-version v1.2.0 // indirect
@@ -51,6 +50,7 @@ require (
 	github.com/tomnomnom/linkheader v0.0.0-20180905144013-02ca5825eb80 // indirect
 	github.com/ulikunitz/xz v0.5.6 // indirect
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
+	github.com/vultr/govultr v0.1.6
 	github.com/zclconf/go-cty v1.1.0
 	github.com/zorkian/go-datadog-api v2.24.0+incompatible
 	go.opencensus.io v0.22.1 // indirect
