@@ -45,14 +45,8 @@ func newCmdGithubImporter(options ImportOptions) *cobra.Command {
 		},
 	}
 	cmd.AddCommand(listCmd(newGitHubProvider()))
-	cmd.PersistentFlags().BoolVarP(&options.Connect, "connect", "c", true, "")
-	cmd.PersistentFlags().StringSliceVarP(&options.Resources, "resources", "r", []string{}, "repository")
-	cmd.PersistentFlags().StringVarP(&options.PathPattern, "path-pattern", "p", DefaultPathPattern, "{output}/{provider}/custom/{service}/")
-	cmd.PersistentFlags().StringVarP(&options.PathOutput, "path-output", "o", DefaultPathOutput, "")
-	cmd.PersistentFlags().StringVarP(&options.State, "state", "s", DefaultState, "local or bucket")
-	cmd.PersistentFlags().StringVarP(&options.Bucket, "bucket", "b", "", "gs://terraform-state")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "repository", "github_repository=id1:id2:id4")
 	cmd.PersistentFlags().StringVarP(&token, "token", "t", "", "YOUR_GITHUB_TOKEN or env param GITHUB_TOKEN")
-	cmd.PersistentFlags().StringSliceVarP(&options.Filter, "filter", "f", []string{}, "github_repository=id1:id2:id4")
 	cmd.PersistentFlags().StringSliceVarP(&organizations, "organizations", "", []string{}, "")
 	return cmd
 }

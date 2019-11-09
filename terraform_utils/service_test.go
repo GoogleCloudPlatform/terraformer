@@ -88,10 +88,16 @@ func TestServiceAttributeCleanupWithFilter(t *testing.T) {
 				InstanceInfo: &terraform.InstanceInfo{
 					Type: "aws_vpc",
 				},
+				InstanceState: &terraform.InstanceState{
+					ID: "vpc1",
+				},
 				Item: mapI("tags", mapI("Name", "some"))},
 			{
 				InstanceInfo: &terraform.InstanceInfo{
 					Type: "aws_vpc",
+				},
+				InstanceState: &terraform.InstanceState{
+					ID: "vpc2",
 				},
 				Item: mapI("tags", mapI("Name", "default"))}},
 	}
