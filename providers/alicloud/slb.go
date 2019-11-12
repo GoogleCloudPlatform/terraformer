@@ -119,6 +119,34 @@ func initVServerGroups(client *connectivity.AliyunClient, allLoadBalancers []slb
 	return allVserverGroups, nil
 }
 
+func initSlbListeners(client *connectivity.AliyunClient, allLoadBalancers []slb.LoadBalancer) ([]slb.LoadBalancer, []string, error) {
+	alignedLoadBalancers := make([]slb.LoadBalancer, 0)
+	suffixes := make([]string, 0)
+	for _, loadBalancer := range allLoadBalancers {
+		if loadBalancer.LoadBalancerId == "" {
+			continue
+		}
+		raw, err := client.WithSlbClient(func(slbClient *slb.Client) (interface{}, error) {
+			request := slb.CreateDescribeLoadBalancerAttributeRequest()
+			request.RegionId = client.RegionId
+			request.LoadBalancerId = loadBalancer.LoadBalancerId
+			return slbClient.DescribeLoadBalancerAttribute(request)
+		})
+		if err != nil {
+			return nil, nil, err
+		}
+		response := raw.(*slb.DescribeLoadBalancerAttributeResponse)
+		for _, listenerPortAndProtocol := range response.ListenerPortsAndProtocol.ListenerPortAndProtocol {
+			suffix := fmt.Sprintf("%s:%d", listenerPortAndProtocol.ListenerProtocol, listenerPortAndProtocol.ListenerPort)
+			suffixes = append(suffixes, suffix)
+
+			alignedLoadBalancers = append(alignedLoadBalancers, loadBalancer)
+		}
+	}
+
+	return alignedLoadBalancers, suffixes, nil
+}
+
 // InitResources Gets the list of all slb loadBalancer ids and generates resources
 func (g *SlbGenerator) InitResources() error {
 	client, err := g.LoadClientFromProfile()
@@ -134,6 +162,10 @@ func (g *SlbGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
+	alignedLoadBalancers, suffixes, err := initSlbListeners(client, allLoadBalancers)
+	if err != nil {
+		return err
+	}
 
 	for _, loadBalancer := range allLoadBalancers {
 		resource := resourceFromSlbResponse(loadBalancer)
@@ -142,17 +174,12 @@ func (g *SlbGenerator) InitResources() error {
 
 	for _, vServerGroup := range allVserverGroups {
 		resource := resourceFromVServerGroupResponse(vServerGroup)
-
 		g.Resources = append(g.Resources, resource)
 	}
 
-	fmt.Println("WARN: No APIs exist to list all listeners for a load balancer. Trying http:80, https:443, tcp:443")
-	suffixes := []string{"http:80", "https:443", "tcp:443"}
-	for _, loadBalancer := range allLoadBalancers {
-		for _, suffix := range suffixes {
-			resource := resourceFromSlbListener(loadBalancer, suffix)
-			g.Resources = append(g.Resources, resource)
-		}
+	for i, alignedSlb := range alignedLoadBalancers {
+		resource := resourceFromSlbListener(alignedSlb, suffixes[i])
+		g.Resources = append(g.Resources, resource)
 	}
 
 	return nil
