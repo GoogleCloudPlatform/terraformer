@@ -79,28 +79,20 @@ func (g *AutoScalingGenerator) loadLaunchConfigurations(svc *autoscaling.AutoSca
 
 func (g *AutoScalingGenerator) loadLaunchTemplates(sess *session.Session) error {
 	ec2svc := ec2.New(sess)
-	firstRun := true
-	var err error
-	launchTemplatesOutput := &ec2.DescribeLaunchTemplatesOutput{}
-	for {
-		if firstRun || launchTemplatesOutput.NextToken != nil {
-			firstRun = false
-			launchTemplatesOutput, err = ec2svc.DescribeLaunchTemplates(&ec2.DescribeLaunchTemplatesInput{
-				MaxResults: aws.Int64(maxResults),
-				NextToken:  launchTemplatesOutput.NextToken,
-			})
-			for _, lt := range launchTemplatesOutput.LaunchTemplates {
-				g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-					aws.StringValue(lt.LaunchTemplateId),
-					aws.StringValue(lt.LaunchTemplateName),
-					"aws_launch_template",
-					"aws",
-					AsgAllowEmptyValues,
-				))
-			}
-		} else {
-			break
+	err := ec2svc.DescribeLaunchTemplatesPages(&ec2.DescribeLaunchTemplatesInput{}, func(launchTemplatesOutput *ec2.DescribeLaunchTemplatesOutput, lastPage bool) bool {
+		for _, lt := range launchTemplatesOutput.LaunchTemplates {
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+				aws.StringValue(lt.LaunchTemplateId),
+				aws.StringValue(lt.LaunchTemplateName),
+				"aws_launch_template",
+				"aws",
+				AsgAllowEmptyValues,
+			))
 		}
+		return !lastPage
+	})
+	if err != nil {
+		return err
 	}
 	return err
 }
