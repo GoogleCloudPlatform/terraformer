@@ -75,7 +75,7 @@ Flags:
   -h, --help                  help for google
   -o, --path-output string     (default "generated")
   -p, --path-pattern string   {output}/{provider}/ (default "{output}/{provider}/{service}/")
-      --projects strings      
+      --projects strings
   -z, --regions strings       europe-west1, (default [global])
   -r, --resources strings     firewalls,networks
   -s, --state string          local or bucket (default "local")
@@ -586,6 +586,8 @@ List of supported DigitalOcean resources:
 
 *   `cdn`
     * `digitalocean_cdn`
+*   `certificate`
+    * `digitalocean_certificate`
 *   `database_cluster`
     * `digitalocean_database_cluster`
 *   `domain`
