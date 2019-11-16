@@ -58,6 +58,7 @@ func (DigitalOceanProvider) GetResourceConnections() map[string]map[string][]str
 func (p *DigitalOceanProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
 		"cdn":                &CDNGenerator{},
+		"certificate":        &CertificateGenerator{},
 		"database_cluster":   &DatabaseClusterGenerator{},
 		"domain":             &DomainGenerator{},
 		"droplet":            &DropletGenerator{},
