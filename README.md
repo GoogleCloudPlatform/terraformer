@@ -174,6 +174,7 @@ Links to download Terraform Providers:
     * Vultr provider >1.0.5 - [here](https://releases.hashicorp.com/terraform-provider-vultr/)
 * Infrastructure Software
     * Kubernetes provider >=1.9.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
+    * RabbitMQ provider >=1.1.0 - [here](https://releases.hashicorp.com/terraform-provider-rabbitmq/)
 * Network
     * Cloudflare provider >1.16 - [here](https://releases.hashicorp.com/terraform-provider-cloudflare/)
 * VCS
