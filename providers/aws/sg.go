@@ -41,15 +41,16 @@ type SecurityGenerator struct {
 }
 
 type SecurityGroupRule struct {
-	sourceNode int64
-	id         string // Terraform format SECURITYGROUPID_TYPE_PROTOCOL_FROMPORT_TOPORT_SOURCE[_SOURCE]*
+	sourceSG      *ec2.SecurityGroup
+	ipPermission    *ec2.IpPermission
+	userIdGroupPair *ec2.UserIdGroupPair
 }
 
 func (SecurityGenerator) createResources(securityGroups []*ec2.SecurityGroup) []terraform_utils.Resource {
 
-	spanningTree := findSpanningTree(securityGroups)
+	rulesToInline := findRulesToInline(securityGroups)
 
-	fmt.Printf("%+v\n", spanningTree)
+	fmt.Printf("%+v\n", rulesToInline)
 
 	var resources []terraform_utils.Resource
 	for _, sg := range securityGroups {
@@ -66,13 +67,14 @@ func (SecurityGenerator) createResources(securityGroups []*ec2.SecurityGroup) []
 	return resources
 }
 
-func findSpanningTree(securityGroups []*ec2.SecurityGroup) *simple_graph.WeightedDirectedGraph {
+func findRulesToInline(securityGroups []*ec2.SecurityGroup) []*SecurityGroupRule {
 	// Edges are security groups, vertexes are rules. The task is to find correct set of rule definitions, so that we
 	// won't have cycles. Direction in graph is placement of the edge definition.
-	sourceGraph := simple_graph.NewWeightedDirectedGraph(-1, absent)
+	sourceGraph := simple_graph.NewWeightedUndirectedGraph(-1, absent)
 	idToSg := make(map[int64]*ec2.SecurityGroup)
 	idToSecurityGroupRule := make(map[int]SecurityGroupRule)
 	sgToIdx := make(map[string]int64)
+	sgToLineEdges := make(map[*ec2.SecurityGroup][]graph.WeightedEdge)
 	for idx, sg := range securityGroups {
 		idToSg[int64(idx)] = sg
 		sgToIdx[aws.StringValue(sg.GroupId)] = int64(idx)
@@ -88,8 +90,9 @@ func findSpanningTree(securityGroups []*ec2.SecurityGroup) *simple_graph.Weighte
 					if fromNode.ID() != toNode.ID() {
 						i := len(idToSecurityGroupRule)
 						idToSecurityGroupRule[i] = SecurityGroupRule{
-							sourceNode: fromNode.ID(),
-							id:         "IDDDD",
+							sourceSG:        sg,
+							ipPermission:    rule,
+							userIdGroupPair: pair,
 						}
 						sourceGraph.SetWeightedEdge(sourceGraph.NewWeightedEdge(fromNode, toNode, float64(i)))
 					}
@@ -99,12 +102,9 @@ func findSpanningTree(securityGroups []*ec2.SecurityGroup) *simple_graph.Weighte
 	}
 	// we'll try to split edges that are connected to security group with lowest number of rules
 	// ref https://stackoverflow.com/a/947519/3784897
-	// TODO add weights on resulting graph's edges
 	lineGraph := simple_graph.NewWeightedUndirectedGraph(-1, math.Inf(-1))
-	allSourceEdges := sourceGraph.Edges()
-	for allSourceEdges.Next() {
-		lineGraph.AddNode(lineGraph.NewNode()) // create a new line node for each source edge
-	}
+	targetNodeToSGRule := make(map[int64]*SecurityGroupRule)
+
 	sourceNodes := sourceGraph.Nodes()
 	for sourceNodes.Next() {
 		sourceNode := sourceNodes.Node()
@@ -112,29 +112,72 @@ func findSpanningTree(securityGroups []*ec2.SecurityGroup) *simple_graph.Weighte
 		allSourceEdges := sourceGraph.Edges()
 		for allSourceEdges.Next() {
 			sourceEdge := allSourceEdges.Edge()
-			if sourceEdge.From().ID() == sourceNode.ID() {
-				w, _ := sourceGraph.Weight(sourceEdge.From().ID(), sourceEdge.To().ID())
-				if w != absent {
-					node := lineGraph.NewNode()
-					// TODO save reference between old edge and new node
-					set[node] = member
-				}
+			if sourceEdge.From().ID() == sourceNode.ID() || sourceEdge.To().ID() == sourceNode.ID() {
+				lineNode(targetNodeToSGRule, idToSecurityGroupRule, sourceEdge.(graph.WeightedEdge), set, lineGraph)
 			}
 		}
 		group := idToSg[sourceNode.ID()]
+		var edges []graph.WeightedEdge
 		for k1 := range set { // create cliques
 			for k2 := range set {
 				if k1.ID() != k2.ID() {
-					lineGraph.SetWeightedEdge(lineGraph.NewWeightedEdge(k1, k2, float64(len(group.IpPermissions))))
-					// TODO save reference between old node and new edge (to keep track of security group references)
+					// TODO add node weight * 1000 to current edge weight to incorporate SG size and improve Kruskal algo
+					edge := lineGraph.NewWeightedEdge(k1, k2, float64(sourceNode.ID()))
+					lineGraph.SetWeightedEdge(edge)
+					edges = append(edges, edge)
+				}
+			}
+		}
+		sgToLineEdges[group] = edges
+	}
+	kruskalResult := simple_graph.NewWeightedUndirectedGraph(-1, math.Inf(1))
+	path_graph.Kruskal(kruskalResult, lineGraph) // Kruskal uses undirected graph which causes us to have unoptimal adjustments
+
+	var result []*SecurityGroupRule
+
+	kruskalResultNodes := kruskalResult.Nodes()
+	for kruskalResultNodes.Next() {
+		kruskalResultNode := kruskalResultNodes.Node()
+		securityGroupRule := targetNodeToSGRule[kruskalResultNode.ID()]
+
+		kruskalResultEdges := kruskalResult.Edges()
+		for kruskalResultEdges.Next() {
+			edge := kruskalResultEdges.Edge()
+			if edge.From().ID() == kruskalResultNode.ID() || edge.To().ID() == kruskalResultNode.ID() {
+				sourceNodeId := int64(kruskalResultEdges.Edge().(graph.WeightedEdge).Weight())
+				sg := idToSg[sourceNodeId]
+				if aws.StringValue(securityGroupRule.sourceSG.GroupId) == aws.StringValue(sg.GroupId) {
+					result = append(result, securityGroupRule)
 				}
 			}
 		}
 	}
-	result := simple_graph.NewWeightedDirectedGraph(-1, math.Inf(1))
-	path_graph.Kruskal(result, lineGraph)
 
 	return result
+}
+
+func lineNode(targetNodeToSGRule map[int64]*SecurityGroupRule, idToSecurityGroupRule map[int]SecurityGroupRule,
+	sourceEdge graph.WeightedEdge, set map[graph.Node]void, lineGraph *simple_graph.WeightedUndirectedGraph) {
+
+	idx := int(sourceEdge.Weight())
+	securityGroupRule := idToSecurityGroupRule[idx]
+
+	builtTargetNodes := lineGraph.Nodes()
+	for builtTargetNodes.Next() {
+		builtTargetNode := builtTargetNodes.Node()
+		if val, ok := targetNodeToSGRule[builtTargetNode.ID()]; ok {
+			if *val == securityGroupRule {
+				set[builtTargetNode] = member
+				return
+			}
+		}
+
+	}
+	node := lineGraph.NewNode()
+	lineGraph.AddNode(node)
+	// create a new line node for each edge
+	targetNodeToSGRule[node.ID()] = &securityGroupRule
+	set[node] = member
 }
 
 // Generate TerraformResources from AWS API,
