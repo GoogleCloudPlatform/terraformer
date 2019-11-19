@@ -15,6 +15,7 @@
 package aws
 
 import (
+	"os"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
@@ -33,7 +34,14 @@ func (g *SqsGenerator) InitResources() error {
 	sess := g.generateSession()
 	svc := sqs.New(sess)
 
-	queuesList, err := svc.ListQueues(&sqs.ListQueuesInput{})
+	listQueuesInput := sqs.ListQueuesInput{}
+
+	sqsPrefix, hasPrefix := os.LookupEnv("SQS_PREFIX")
+	if hasPrefix {
+		listQueuesInput.QueueNamePrefix = aws.String(sqsPrefix)
+	}
+
+	queuesList, err := svc.ListQueues(&listQueuesInput)
 
 	if err != nil {
 		return err
