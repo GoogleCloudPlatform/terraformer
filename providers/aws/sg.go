@@ -25,8 +25,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
 
-	path_graph "gonum.org/v1/gonum/graph/path"
-	simple_graph "gonum.org/v1/gonum/graph/simple"
+	simplegraph "gonum.org/v1/gonum/graph/simple"
+	"gonum.org/v1/gonum/graph/topo"
 )
 
 var SgAllowEmptyValues = []string{"tags."}
@@ -41,16 +41,16 @@ type SecurityGenerator struct {
 }
 
 type SecurityGroupRule struct {
-	sourceSG      *ec2.SecurityGroup
+	sourceSG        *ec2.SecurityGroup
 	ipPermission    *ec2.IpPermission
 	userIdGroupPair *ec2.UserIdGroupPair
 }
 
 func (SecurityGenerator) createResources(securityGroups []*ec2.SecurityGroup) []terraform_utils.Resource {
 
-	rulesToInline := findRulesToInline(securityGroups)
+	rulesToMoveOut := findRulesToMoveOut(securityGroups)
 
-	fmt.Printf("%+v\n", rulesToInline)
+	fmt.Printf("%+v\n", rulesToMoveOut)
 
 	var resources []terraform_utils.Resource
 	for _, sg := range securityGroups {
@@ -67,14 +67,16 @@ func (SecurityGenerator) createResources(securityGroups []*ec2.SecurityGroup) []
 	return resources
 }
 
-func findRulesToInline(securityGroups []*ec2.SecurityGroup) []*SecurityGroupRule {
+// Let's try to find all cycles in build linear graph by applying Johnson's method on the directed graph
+func findRulesToMoveOut(securityGroups []*ec2.SecurityGroup) []*SecurityGroupRule {
 	// Edges are security groups, vertexes are rules. The task is to find correct set of rule definitions, so that we
-	// won't have cycles. Direction in graph is placement of the edge definition.
-	sourceGraph := simple_graph.NewWeightedUndirectedGraph(-1, absent)
+	// won't have cycles
+	// TODO verify cross account rules (are they working fine?)
+	sourceGraph := simplegraph.NewWeightedDirectedGraph(-1, absent)
 	idToSg := make(map[int64]*ec2.SecurityGroup)
 	idToSecurityGroupRule := make(map[int]SecurityGroupRule)
 	sgToIdx := make(map[string]int64)
-	sgToLineEdges := make(map[*ec2.SecurityGroup][]graph.WeightedEdge)
+	sgToLineEdges := make(map[*ec2.SecurityGroup][]graph.Edge)
 	for idx, sg := range securityGroups {
 		idToSg[int64(idx)] = sg
 		sgToIdx[aws.StringValue(sg.GroupId)] = int64(idx)
@@ -102,7 +104,7 @@ func findRulesToInline(securityGroups []*ec2.SecurityGroup) []*SecurityGroupRule
 	}
 	// we'll try to split edges that are connected to security group with lowest number of rules
 	// ref https://stackoverflow.com/a/947519/3784897
-	lineGraph := simple_graph.NewWeightedUndirectedGraph(-1, math.Inf(-1))
+	lineGraph := simplegraph.NewDirectedGraph()
 	targetNodeToSGRule := make(map[int64]*SecurityGroupRule)
 
 	sourceNodes := sourceGraph.Nodes()
@@ -117,47 +119,31 @@ func findRulesToInline(securityGroups []*ec2.SecurityGroup) []*SecurityGroupRule
 			}
 		}
 		group := idToSg[sourceNode.ID()]
-		var edges []graph.WeightedEdge
+		var edges []graph.Edge
 		for k1 := range set { // create cliques
 			for k2 := range set {
 				if k1.ID() != k2.ID() {
-					// TODO add node weight * 1000 to current edge weight to incorporate SG size and improve Kruskal algo
-					edge := lineGraph.NewWeightedEdge(k1, k2, float64(sourceNode.ID()))
-					lineGraph.SetWeightedEdge(edge)
+					edge := lineGraph.NewEdge(k1, k2)
+					lineGraph.SetEdge(edge)
 					edges = append(edges, edge)
 				}
 			}
 		}
 		sgToLineEdges[group] = edges
 	}
-	kruskalResult := simple_graph.NewWeightedUndirectedGraph(-1, math.Inf(1))
-	path_graph.Kruskal(kruskalResult, lineGraph) // Kruskal uses undirected graph which causes us to have unoptimal adjustments
+
+	cyclesInLineGraph := topo.DirectedCyclesIn(lineGraph)
 
 	var result []*SecurityGroupRule
-
-	kruskalResultNodes := kruskalResult.Nodes()
-	for kruskalResultNodes.Next() {
-		kruskalResultNode := kruskalResultNodes.Node()
-		securityGroupRule := targetNodeToSGRule[kruskalResultNode.ID()]
-
-		kruskalResultEdges := kruskalResult.Edges()
-		for kruskalResultEdges.Next() {
-			edge := kruskalResultEdges.Edge()
-			if edge.From().ID() == kruskalResultNode.ID() || edge.To().ID() == kruskalResultNode.ID() {
-				sourceNodeId := int64(kruskalResultEdges.Edge().(graph.WeightedEdge).Weight())
-				sg := idToSg[sourceNodeId]
-				if aws.StringValue(securityGroupRule.sourceSG.GroupId) == aws.StringValue(sg.GroupId) {
-					result = append(result, securityGroupRule)
-				}
-			}
-		}
+	for _, v := range cyclesInLineGraph {
+		// Try to move out first node
+		result = append(result, targetNodeToSGRule[v[0].ID()]) // TODO select rule with SG with least number of rules
 	}
-
 	return result
 }
 
 func lineNode(targetNodeToSGRule map[int64]*SecurityGroupRule, idToSecurityGroupRule map[int]SecurityGroupRule,
-	sourceEdge graph.WeightedEdge, set map[graph.Node]void, lineGraph *simple_graph.WeightedUndirectedGraph) {
+	sourceEdge graph.WeightedEdge, set map[graph.Node]void, lineGraph *simplegraph.DirectedGraph) {
 
 	idx := int(sourceEdge.Weight())
 	securityGroupRule := idToSecurityGroupRule[idx]
