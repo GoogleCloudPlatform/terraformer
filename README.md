@@ -417,6 +417,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_kinesis_firehose_delivery_stream`
 *   `glue`
     * `glue_crawler`
+    * `aws_glue_catalog_database`
+    * `aws_glue_catalog_table`
 *   `iam`
     * `aws_iam_role`
     * `aws_iam_role_policy`
@@ -455,6 +457,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_route53_record`
 *   `route_table`
     * `aws_route_table`
+    * `aws_main_route_table_association`
+    * `aws_route_table_association`
 *   `s3`
     * `aws_s3_bucket`
     * `aws_s3_bucket_policy`
