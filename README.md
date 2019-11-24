@@ -126,7 +126,7 @@ $ terraformer import plan generated/google/my-project/terraformer/plan.json
 
 Terraformer by default separates each resource into a file, which is put into a given service directory.
 
-The default path for resource files is `{output}/{provider}/{service}/{resource}.tf` and can vary for each provider. 
+The default path for resource files is `{output}/{provider}/{service}/{resource}.tf` and can vary for each provider.
 
 It's possible to adjust the generated structure by:
 1. Using `--compact` parameter to group resource files within a single service into one `resources.tf` file
@@ -692,14 +692,21 @@ List of supported Linode resources:
 
 *   `domain`
     * `linode_domain`
+    * `linode_domain_record`
 *   `image`
     * `linode_image`
 *   `instance`
     * `linode_instance`
 *   `nodebalancer`
     * `linode_nodebalancer`
+    * `linode_nodebalancer_config`
+    * `linode_nodebalancer_node`
+*   `rdns`
+    * `linode_rdns`
 *   `sshkey`
     * `linode_sshkey`
+*   `stackscript`
+    * `linode_stackscript`
 *   `token`
     * `linode_token`
 *   `volume`
