@@ -15,10 +15,11 @@
 package aws
 
 import (
+	"context"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
 var VpnConnectionAllowEmptyValues = []string{"tags."}
@@ -27,12 +28,12 @@ type VpnConnectionGenerator struct {
 	AWSService
 }
 
-func (VpnConnectionGenerator) createResources(vpncs *ec2.DescribeVpnConnectionsOutput) []terraform_utils.Resource {
+func (VpnConnectionGenerator) createResources(vpncs *ec2.DescribeVpnConnectionsResponse) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	for _, vpnc := range vpncs.VpnConnections {
 		resources = append(resources, terraform_utils.NewSimpleResource(
-			aws.StringValue(vpnc.VpnConnectionId),
-			aws.StringValue(vpnc.VpnConnectionId),
+			aws.StringValue(vpnc.ConnectionId),
+			aws.StringValue(vpnc.ConnectionId),
 			"aws_vpn_connection",
 			"aws",
 			VpnConnectionAllowEmptyValues,
@@ -49,8 +50,8 @@ func (g *VpnConnectionGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := ec2.New(sess)
-	vpncs, err := svc.DescribeVpnConnections(&ec2.DescribeVpnConnectionsInput{})
+	svc := ec2.New(config)
+	vpncs, err := svc.DescribeVpnConnectionsRequest(&ec2.DescribeVpnConnectionsInput{}).Send(context.Background())
 	if err != nil {
 		return err
 	}

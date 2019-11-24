@@ -30,6 +30,7 @@ const command = "terraform init && terraform plan"
 func main() {
 	region := "ap-southeast-1"
 	profile := "personal"
+	debug := "true"
 	var services []string
 	provider := &aws_terraforming.AWSProvider{}
 	for service := range provider.GetSupportedService() {
@@ -57,7 +58,7 @@ func main() {
 		State:       "local",
 		Connect:     true,
 		Compact:     true,
-	}, []string{region, profile})
+	}, []string{region, profile, debug})
 	if err != nil {
 		log.Println(err)
 		os.Exit(1)

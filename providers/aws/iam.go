@@ -78,7 +78,7 @@ func (g *IamGenerator) getRoles(svc *iam.Client) error {
 				"aws",
 				IamAllowEmptyValues))
 			rolePoliciesPage := iam.NewListRolePoliciesPaginator(svc.ListRolePoliciesRequest(&iam.ListRolePoliciesInput{RoleName: role.RoleName}))
-			for p.Next(context.Background()) {
+			for rolePoliciesPage.Next(context.Background()) {
 				for _, policyName := range rolePoliciesPage.CurrentPage().PolicyNames {
 					g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 						roleName+":"+policyName,
@@ -88,7 +88,7 @@ func (g *IamGenerator) getRoles(svc *iam.Client) error {
 						IamAllowEmptyValues))
 				}
 			}
-			if err := p.Err(); err != nil {
+			if err := rolePoliciesPage.Err(); err != nil {
 				log.Println(err)
 				continue
 			}
@@ -217,7 +217,7 @@ func (g *IamGenerator) getGroups(svc *iam.Client) error {
 				[]string{"tags.", "users."},
 				IamAdditionalFields))
 			groupPoliciesPage := iam.NewListGroupPoliciesPaginator(svc.ListGroupPoliciesRequest(&iam.ListGroupPoliciesInput{GroupName: group.GroupName}))
-			for p.Next(context.Background()) {
+			for groupPoliciesPage.Next(context.Background()) {
 				for _, policy := range groupPoliciesPage.CurrentPage().PolicyNames {
 					id := resourceName + ":" + policy
 					groupPolicyName := resourceName + "_" + policy

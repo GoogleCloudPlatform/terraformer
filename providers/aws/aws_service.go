@@ -28,9 +28,13 @@ type AWSService struct {
 }
 
 func (s *AWSService) generateConfig() (aws.Config, error) {
+
 	config, e := external.LoadDefaultAWSConfig(external.WithMFATokenFunc(stscreds.StdinTokenProvider))
 	if e != nil {
 		return config, e
+	}
+	if s.GetArgs()["debug"] == "true" {
+		config.LogLevel = aws.LogDebugWithHTTPBody
 	}
 
 	creds, e := config.Credentials.Retrieve()

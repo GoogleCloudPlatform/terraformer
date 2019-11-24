@@ -15,15 +15,15 @@
 package aws
 
 import (
+	"context"
 	"fmt"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"log"
 
-	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go-v2/aws/awserr"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
 var S3AllowEmptyValues = []string{"tags."}
@@ -37,18 +37,19 @@ type S3Generator struct {
 // createResources iterate on all buckets
 // for each bucket we check region and choose only bucket from set region
 // for each bucket try get bucket policy, if policy exist create additional NewTerraformResource for policy
-func (g S3Generator) createResources(sess *session.Session, buckets *s3.ListBucketsOutput, region string) []terraform_utils.Resource {
+func (g S3Generator) createResources(config aws.Config, buckets *s3.ListBucketsResponse, region string) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
-	svc := s3.New(sess)
+	svc := s3.New(config)
 	for _, bucket := range buckets.Buckets {
 		resourceName := aws.StringValue(bucket.Name)
-		location, err := svc.GetBucketLocation(&s3.GetBucketLocationInput{Bucket: bucket.Name})
+		location, err := svc.GetBucketLocationRequest(&s3.GetBucketLocationInput{Bucket: bucket.Name}).Send(context.Background())
 		if err != nil {
 			log.Println(err)
 			continue
 		}
 		// check if bucket in region
-		if s3.NormalizeBucketLocation(aws.StringValue(location.LocationConstraint)) == region {
+		constraintString, _ := s3.NormalizeBucketLocation(location.LocationConstraint).MarshalValue()
+		if constraintString == region {
 			resources = append(resources, terraform_utils.NewResource(
 				resourceName,
 				resourceName,
@@ -61,9 +62,9 @@ func (g S3Generator) createResources(sess *session.Session, buckets *s3.ListBuck
 				S3AllowEmptyValues,
 				S3AdditionalFields))
 			// try get policy
-			_, err := svc.GetBucketPolicy(&s3.GetBucketPolicyInput{
+			_, err := svc.GetBucketPolicyRequest(&s3.GetBucketPolicyInput{
 				Bucket: bucket.Name,
-			})
+			}).Send(context.Background())
 
 			if err != nil {
 				if awsErr, ok := err.(awserr.Error); ok && awsErr.Code() == "NoSuchBucketPolicy" {
@@ -93,12 +94,13 @@ func (g *S3Generator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := s3.New(sess)
-	buckets, err := svc.ListBuckets(&s3.ListBucketsInput{})
+	svc := s3.New(config)
+
+	buckets, err := svc.ListBucketsRequest(&s3.ListBucketsInput{}).Send(context.Background())
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(sess, buckets, g.GetArgs()["region"].(string))
+	g.Resources = g.createResources(config, buckets, g.GetArgs()["region"].(string))
 	return nil
 }
 
