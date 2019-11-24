@@ -15,12 +15,11 @@
 package aws
 
 import (
-	"log"
-
+	"context"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
 var peeringAllowEmptyValues = []string{"tags."}
@@ -29,27 +28,16 @@ type VpcPeeringConnectionGenerator struct {
 	AWSService
 }
 
-func (g VpcPeeringConnectionGenerator) createVpcPeeringConnectionsResources(svc *ec2.EC2) []terraform_utils.Resource {
+func (g VpcPeeringConnectionGenerator) createResources(peerings *ec2.DescribeVpcPeeringConnectionsOutput) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
-	err := svc.DescribeVpcPeeringConnectionsPages(
-		&ec2.DescribeVpcPeeringConnectionsInput{},
-		func(peerings *ec2.DescribeVpcPeeringConnectionsOutput, lastPage bool) bool {
-			for _, peering := range peerings.VpcPeeringConnections {
-				resources = append(resources, terraform_utils.NewSimpleResource(
-					aws.StringValue(peering.VpcPeeringConnectionId),
-					aws.StringValue(peering.VpcPeeringConnectionId),
-					"aws_vpc_peering_connection",
-					"aws",
-					peeringAllowEmptyValues,
-				))
-			}
-			return true
-		},
-	)
-
-	if err != nil {
-		log.Println(err)
-		return resources
+	for _, peering := range peerings.VpcPeeringConnections {
+		resources = append(resources, terraform_utils.NewSimpleResource(
+			aws.StringValue(peering.VpcPeeringConnectionId),
+			aws.StringValue(peering.VpcPeeringConnectionId),
+			"aws_vpc_peering_connection",
+			"aws",
+			peeringAllowEmptyValues,
+		))
 	}
 
 	return resources
@@ -62,8 +50,10 @@ func (g *VpcPeeringConnectionGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := ec2.New(sess)
-
-	g.Resources = g.createVpcPeeringConnectionsResources(svc)
-	return nil
+	svc := ec2.New(config)
+	p := ec2.NewDescribeVpcPeeringConnectionsPaginator(svc.DescribeVpcPeeringConnectionsRequest(&ec2.DescribeVpcPeeringConnectionsInput{}))
+	for p.Next(context.Background()) {
+		g.Resources = append(g.Resources, g.createResources(p.CurrentPage())...)
+	}
+	return p.Err()
 }

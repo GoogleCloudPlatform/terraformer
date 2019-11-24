@@ -118,7 +118,6 @@ func (g *AlbGenerator) loadLBListenerCertificate(svc *elasticloadbalancingv2.Cli
 
 func (g *AlbGenerator) loadLBTargetGroup(svc *elasticloadbalancingv2.Client) error {
 	p := elasticloadbalancingv2.NewDescribeTargetGroupsPaginator(svc.DescribeTargetGroupsRequest(&elasticloadbalancingv2.DescribeTargetGroupsInput{}))
-
 	for p.Next(context.Background()) {
 		for _, tg := range p.CurrentPage().TargetGroups {
 			resourceName := aws.StringValue(tg.TargetGroupName)

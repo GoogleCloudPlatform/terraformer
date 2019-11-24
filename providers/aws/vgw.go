@@ -15,10 +15,11 @@
 package aws
 
 import (
+	"context"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
 var VpnAllowEmptyValues = []string{"tags."}
@@ -27,7 +28,7 @@ type VpnGatewayGenerator struct {
 	AWSService
 }
 
-func (VpnGatewayGenerator) createResources(vpnGws *ec2.DescribeVpnGatewaysOutput) []terraform_utils.Resource {
+func (VpnGatewayGenerator) createResources(vpnGws *ec2.DescribeVpnGatewaysResponse) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	for _, vpnGw := range vpnGws.VpnGateways {
 		resources = append(resources, terraform_utils.NewSimpleResource(
@@ -49,8 +50,8 @@ func (g *VpnGatewayGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := ec2.New(sess)
-	vpnGws, err := svc.DescribeVpnGateways(&ec2.DescribeVpnGatewaysInput{})
+	svc := ec2.New(config)
+	vpnGws, err := svc.DescribeVpnGatewaysRequest(&ec2.DescribeVpnGatewaysInput{}).Send(context.Background())
 	if err != nil {
 		return err
 	}

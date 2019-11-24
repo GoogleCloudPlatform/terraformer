@@ -99,7 +99,7 @@ func (g *EcsGenerator) InitResources() error {
 
 	taskDefinitionsMap := map[string]terraform_utils.Resource{}
 	taskDefinitionsPage := ecs.NewListTaskDefinitionsPaginator(svc.ListTaskDefinitionsRequest(&ecs.ListTaskDefinitionsInput{}))
-	for p.Next(context.Background()) {
+	for taskDefinitionsPage.Next(context.Background()) {
 		for _, taskDefinitionArn := range taskDefinitionsPage.CurrentPage().TaskDefinitionArns {
 			arnParts := strings.Split(taskDefinitionArn, ":")
 			definitionWithFamily := arnParts[len(arnParts)-2]

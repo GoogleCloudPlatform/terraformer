@@ -15,12 +15,14 @@
 package aws
 
 import (
+	"context"
+	"log"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go-v2/aws"
 
-	"github.com/aws/aws-sdk-go/service/sns"
+	"github.com/aws/aws-sdk-go-v2/service/sns"
 )
 
 var snsAllowEmptyValues = []string{"tags."}
@@ -39,10 +41,10 @@ func (g *SnsGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := sns.New(sess)
-
-	err := svc.ListTopicsPages(&sns.ListTopicsInput{}, func(topics *sns.ListTopicsOutput, lastPage bool) bool {
-		for _, topic := range topics.Topics {
+	svc := sns.New(config)
+	p := sns.NewListTopicsPaginator(svc.ListTopicsRequest(&sns.ListTopicsInput{}))
+	for p.Next(context.Background()) {
+		for _, topic := range p.CurrentPage().Topics {
 			arnParts := strings.Split(aws.StringValue(topic.TopicArn), ":")
 			topicName := arnParts[len(arnParts)-1]
 
@@ -54,10 +56,11 @@ func (g *SnsGenerator) InitResources() error {
 				snsAllowEmptyValues,
 			))
 
-			_ = svc.ListSubscriptionsByTopicPages(&sns.ListSubscriptionsByTopicInput{
+			topicSubsPage := sns.NewListSubscriptionsByTopicPaginator(svc.ListSubscriptionsByTopicRequest(&sns.ListSubscriptionsByTopicInput{
 				TopicArn: topic.TopicArn,
-			}, func(subscriptions *sns.ListSubscriptionsByTopicOutput, lastPage bool) bool {
-				for _, subscription := range subscriptions.Subscriptions {
+			}))
+			for topicSubsPage.Next(context.Background()) {
+				for _, subscription := range topicSubsPage.CurrentPage().Subscriptions {
 					subscriptionArnParts := strings.Split(aws.StringValue(subscription.SubscriptionArn), ":")
 					subscriptionId := subscriptionArnParts[len(subscriptionArnParts)-1]
 
@@ -71,15 +74,11 @@ func (g *SnsGenerator) InitResources() error {
 						))
 					}
 				}
-
-				return !lastPage
-			})
+			}
+			if err := topicSubsPage.Err(); err != nil {
+				log.Println(err)
+			}
 		}
-
-		return !lastPage
-	})
-	if err != nil {
-		return err
 	}
-	return nil
+	return p.Err()
 }

@@ -38,6 +38,7 @@ type ImportOptions struct {
 	State       string
 	Bucket      string
 	Profile     string
+	Debug       bool
 	Zone        string
 	Regions     []string
 	Projects    []string

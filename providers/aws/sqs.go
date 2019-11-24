@@ -15,13 +15,14 @@
 package aws
 
 import (
+	"context"
 	"os"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go-v2/aws"
 
-	"github.com/aws/aws-sdk-go/service/sqs"
+	"github.com/aws/aws-sdk-go-v2/service/sqs"
 )
 
 var sqsAllowEmptyValues = []string{"tags."}
@@ -35,7 +36,7 @@ func (g *SqsGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := sqs.New(sess)
+	svc := sqs.New(config)
 
 	listQueuesInput := sqs.ListQueuesInput{}
 
@@ -44,18 +45,18 @@ func (g *SqsGenerator) InitResources() error {
 		listQueuesInput.QueueNamePrefix = aws.String(sqsPrefix)
 	}
 
-	queuesList, err := svc.ListQueues(&listQueuesInput)
+	queuesList, err := svc.ListQueuesRequest(&listQueuesInput).Send(context.Background())
 
 	if err != nil {
 		return err
 	}
 
 	for _, queueUrl := range queuesList.QueueUrls {
-		urlParts := strings.Split(aws.StringValue(queueUrl), "/")
+		urlParts := strings.Split(queueUrl, "/")
 		queueName := urlParts[len(urlParts)-1]
 
 		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-			aws.StringValue(queueUrl),
+			queueUrl,
 			queueName,
 			"aws_sqs_queue",
 			"aws",
