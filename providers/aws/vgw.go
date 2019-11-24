@@ -45,7 +45,10 @@ func (VpnGatewayGenerator) createResources(vpnGws *ec2.DescribeVpnGatewaysOutput
 // from each vpn gateway create 1 TerraformResource.
 // Need VpnGatewayId as ID for terraform resource
 func (g *VpnGatewayGenerator) InitResources() error {
-	sess := g.generateSession()
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
 	svc := ec2.New(sess)
 	vpnGws, err := svc.DescribeVpnGateways(&ec2.DescribeVpnGatewaysInput{})
 	if err != nil {

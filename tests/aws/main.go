@@ -30,7 +30,7 @@ const command = "terraform init && terraform plan"
 func main() {
 	region := "ap-southeast-1"
 	profile := "personal"
-	services := []string{}
+	var services []string
 	provider := &aws_terraforming.AWSProvider{}
 	for service := range provider.GetSupportedService() {
 		if service == "route53" {
@@ -45,7 +45,7 @@ func main() {
 		services = append(services, service)
 
 	}
-	services = []string{"vpc", "subnet", "nacl"}
+	services = []string{"sg"}
 	sort.Strings(services)
 	provider = &aws_terraforming.AWSProvider{
 		Provider: terraform_utils.Provider{},

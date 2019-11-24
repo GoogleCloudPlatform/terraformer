@@ -12,7 +12,8 @@ require (
 	github.com/Azure/go-autorest/autorest/validation v0.2.0 // indirect
 	github.com/aliyun/alibaba-cloud-sdk-go v0.0.0-20191010082856-e76f4c50e182
 	github.com/aliyun/aliyun-tablestore-go-sdk v4.1.3+incompatible
-	github.com/aws/aws-sdk-go v1.25.10
+	github.com/aws/aws-sdk-go v1.22.0
+	github.com/aws/aws-sdk-go-v2 v0.17.0
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/cloudflare/cloudflare-go v0.10.4
 	github.com/denverdino/aliyungo v0.0.0-20190924033012-e8e08fe22cb2
@@ -21,7 +22,6 @@ require (
 	github.com/go-resty/resty v0.0.0-00010101000000-000000000000 // indirect
 	github.com/gogo/protobuf v1.3.0 // indirect
 	github.com/golang/groupcache v0.0.0-20191002201903-404acd9df4cc // indirect
-	github.com/google/go-cmp v0.3.1 // indirect
 	github.com/google/go-github/v25 v25.1.3
 	github.com/googleapis/gnostic v0.3.1 // indirect
 	github.com/gophercloud/gophercloud v0.4.1-0.20190920074709-6e93a6ba3b09

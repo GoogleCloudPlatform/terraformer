@@ -89,7 +89,10 @@ func (g S3Generator) createResources(sess *session.Session, buckets *s3.ListBuck
 // from each s3 bucket create 2 TerraformResource(bucket and bucket policy)
 // Need bucket name as ID for terraform resource
 func (g *S3Generator) InitResources() error {
-	sess := g.generateSession()
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
 	svc := s3.New(sess)
 	buckets, err := svc.ListBuckets(&s3.ListBucketsInput{})
 	if err != nil {

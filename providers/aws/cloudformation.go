@@ -15,9 +15,10 @@
 package aws
 
 import (
+	"context"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/cloudformation"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/cloudformation"
 )
 
 var cloudFormationAllowEmptyValues = []string{"tags."}
@@ -27,11 +28,14 @@ type CloudFormationGenerator struct {
 }
 
 func (g *CloudFormationGenerator) InitResources() error {
-	sess := g.generateSession()
-	svc := cloudformation.New(sess)
-
-	err := svc.ListStacksPages(&cloudformation.ListStacksInput{}, func(stacks *cloudformation.ListStacksOutput, lastPage bool) bool {
-		for _, stackSummary := range stacks.StackSummaries {
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
+	svc := cloudformation.New(config)
+	p := cloudformation.NewListStacksPaginator(svc.ListStacksRequest(&cloudformation.ListStacksInput{}))
+	for p.Next(context.Background()) {
+		for _, stackSummary := range p.CurrentPage().StackSummaries {
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				aws.StringValue(stackSummary.StackId),
 				aws.StringValue(stackSummary.StackName),
@@ -40,13 +44,11 @@ func (g *CloudFormationGenerator) InitResources() error {
 				cloudFormationAllowEmptyValues,
 			))
 		}
-		return !lastPage
-	})
-	if err != nil {
+	}
+	if err := p.Err(); err != nil {
 		return err
 	}
-
-	stackSets, err := svc.ListStackSets(&cloudformation.ListStackSetsInput{})
+	stackSets, err := svc.ListStackSetsRequest(&cloudformation.ListStackSetsInput{}).Send(context.Background())
 	if err != nil {
 		return err
 	}
@@ -59,9 +61,9 @@ func (g *CloudFormationGenerator) InitResources() error {
 			cloudFormationAllowEmptyValues,
 		))
 
-		stackSetInstances, err := svc.ListStackInstances(&cloudformation.ListStackInstancesInput{
+		stackSetInstances, err := svc.ListStackInstancesRequest(&cloudformation.ListStackInstancesInput{
 			StackSetName: stackSetSummary.StackSetName,
-		})
+		}).Send(context.Background())
 		if err != nil {
 			return err
 		}
