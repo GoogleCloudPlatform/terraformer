@@ -15,9 +15,9 @@
 package aws
 
 import (
+	"context"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/kinesis"
+	"github.com/aws/aws-sdk-go-v2/service/kinesis"
 )
 
 var kinesisAllowEmptyValues = []string{"tags."}
@@ -26,10 +26,9 @@ type KinesisGenerator struct {
 	AWSService
 }
 
-func (g KinesisGenerator) createResources(streamNames []*string) []terraform_utils.Resource {
+func (g KinesisGenerator) createResources(streamNames []string) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
-	for _, streamName := range streamNames {
-		resourceName := aws.StringValue(streamName)
+	for _, resourceName := range streamNames {
 		resources = append(resources, terraform_utils.NewResource(
 			resourceName,
 			resourceName,
@@ -43,12 +42,14 @@ func (g KinesisGenerator) createResources(streamNames []*string) []terraform_uti
 }
 
 func (g *KinesisGenerator) InitResources() error {
-	sess := g.generateSession()
-	svc := kinesis.New(sess)
-	output, err := svc.ListStreams(&kinesis.ListStreamsInput{})
-	if err != nil {
-		return err
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
 	}
-	g.Resources = g.createResources(output.StreamNames)
-	return nil
+	svc := kinesis.New(config)
+	p := kinesis.NewListStreamsPaginator(svc.ListStreamsRequest(&kinesis.ListStreamsInput{}))
+	for p.Next(context.Background()) {
+		g.Resources = append(g.Resources, g.createResources(p.CurrentPage().StreamNames)...)
+	}
+	return p.Err()
 }

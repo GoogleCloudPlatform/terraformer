@@ -35,7 +35,10 @@ func (g SnsGenerator) isSupportedSubscription(protocol, subscriptionId string) b
 }
 
 func (g *SnsGenerator) InitResources() error {
-	sess := g.generateSession()
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
 	svc := sns.New(sess)
 
 	err := svc.ListTopicsPages(&sns.ListTopicsInput{}, func(topics *sns.ListTopicsOutput, lastPage bool) bool {

@@ -31,7 +31,10 @@ type SqsGenerator struct {
 }
 
 func (g *SqsGenerator) InitResources() error {
-	sess := g.generateSession()
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
 	svc := sqs.New(sess)
 
 	listQueuesInput := sqs.ListQueuesInput{}

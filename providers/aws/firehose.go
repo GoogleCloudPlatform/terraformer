@@ -15,19 +15,18 @@
 package aws
 
 import (
+	"context"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/firehose"
+	"github.com/aws/aws-sdk-go-v2/service/firehose"
 )
 
 type FirehoseGenerator struct {
 	AWSService
 }
 
-func (g FirehoseGenerator) createResources(streamNames []*string) []terraform_utils.Resource {
+func (g FirehoseGenerator) createResources(streamNames []string) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
-	for _, streamName := range streamNames {
-		resourceName := aws.StringValue(streamName)
+	for _, resourceName := range streamNames {
 		resources = append(resources, terraform_utils.NewResource(
 			resourceName,
 			resourceName,
@@ -43,11 +42,14 @@ func (g FirehoseGenerator) createResources(streamNames []*string) []terraform_ut
 // Generate TerraformResources from AWS API,
 // Need deliver stream name for terraform resource
 func (g *FirehoseGenerator) InitResources() error {
-	sess := g.generateSession()
-	svc := firehose.New(sess)
-	var streamNames []*string
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
+	svc := firehose.New(config)
+	var streamNames []string
 	for {
-		output, err := svc.ListDeliveryStreams(&firehose.ListDeliveryStreamsInput{})
+		output, err := svc.ListDeliveryStreamsRequest(&firehose.ListDeliveryStreamsInput{}).Send(context.Background())
 		if err != nil {
 			return err
 		}

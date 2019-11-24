@@ -58,7 +58,10 @@ func (g VpcPeeringConnectionGenerator) createVpcPeeringConnectionsResources(svc 
 // Generate TerraformResources from AWS API,
 // create terraform resource for each VPC Peering Connection
 func (g *VpcPeeringConnectionGenerator) InitResources() error {
-	sess := g.generateSession()
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
 	svc := ec2.New(sess)
 
 	g.Resources = g.createVpcPeeringConnectionsResources(svc)

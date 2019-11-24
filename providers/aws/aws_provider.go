@@ -188,6 +188,7 @@ func (p *AWSProvider) InitService(serviceName string) error {
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
 		"region":                 p.region,
+		"profile":                p.profile,
 		"skip_region_validation": true,
 	})
 	return nil

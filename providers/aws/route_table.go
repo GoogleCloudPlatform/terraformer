@@ -91,7 +91,10 @@ func (g RouteTableGenerator) createRouteTablesResources(svc *ec2.EC2) []terrafor
 // Generate TerraformResources from AWS API,
 // create terraform resource for each route tables
 func (g *RouteTableGenerator) InitResources() error {
-	sess := g.generateSession()
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
 	svc := ec2.New(sess)
 
 	g.Resources = g.createRouteTablesResources(svc)
