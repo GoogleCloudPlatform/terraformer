@@ -56,3 +56,15 @@ func (g *EsGenerator) InitResources() error {
 
 	return nil
 }
+
+func (g *EsGenerator) PostConvertHook() error {
+	for _, r := range g.Resources {
+		if r.InstanceInfo.Type != "aws_elasticsearch_domain" {
+			continue
+		}
+		if r.InstanceState.Attributes["cognito_options.0.enabled"] == "false" {
+			delete(r.Item, "cognito_options")
+		}
+	}
+	return nil
+}
