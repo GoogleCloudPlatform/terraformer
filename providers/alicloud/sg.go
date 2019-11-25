@@ -138,6 +138,9 @@ func (g *SgGenerator) InitResources() error {
 	}
 
 	allSecurityGroupRules, alignedSecurityGroups, err := initSecurityGroupRules(client, allSecurityGroups)
+	if err != nil {
+		return err
+	}
 
 	for _, securitygroup := range allSecurityGroups {
 		resource := resourceFromSecurityGroup(securitygroup)
