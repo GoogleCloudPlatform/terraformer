@@ -15,12 +15,13 @@
 package aws
 
 import (
+	"context"
 	"log"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
 var rtbAllowEmptyValues = []string{"tags."}
@@ -29,70 +30,67 @@ type RouteTableGenerator struct {
 	AWSService
 }
 
-func (g RouteTableGenerator) createRouteTablesResources(svc *ec2.EC2) []terraform_utils.Resource {
+func (g RouteTableGenerator) createRouteTablesResources(svc *ec2.Client) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
-	err := svc.DescribeRouteTablesPages(
-		&ec2.DescribeRouteTablesInput{},
-		func(tables *ec2.DescribeRouteTablesOutput, lastPage bool) bool {
-			for _, table := range tables.RouteTables {
-				// route table
-				resources = append(resources, terraform_utils.NewSimpleResource(
-					aws.StringValue(table.RouteTableId),
-					aws.StringValue(table.RouteTableId),
-					"aws_route_table",
-					"aws",
-					rtbAllowEmptyValues,
-				))
+	p := ec2.NewDescribeRouteTablesPaginator(svc.DescribeRouteTablesRequest(&ec2.DescribeRouteTablesInput{}))
+	for p.Next(context.Background()) {
+		for _, table := range p.CurrentPage().RouteTables {
+			// route table
+			resources = append(resources, terraform_utils.NewSimpleResource(
+				aws.StringValue(table.RouteTableId),
+				aws.StringValue(table.RouteTableId),
+				"aws_route_table",
+				"aws",
+				rtbAllowEmptyValues,
+			))
 
-				for _, assoc := range table.Associations {
-					if aws.BoolValue(assoc.Main) {
-						// main route table association
-						resources = append(resources, terraform_utils.NewResource(
-							aws.StringValue(assoc.RouteTableAssociationId),
-							aws.StringValue(table.VpcId),
-							"aws_main_route_table_association",
-							"aws",
-							map[string]string{
-								"vpc_id":         aws.StringValue(table.VpcId),
-								"route_table_id": aws.StringValue(table.RouteTableId),
-							},
-							rtbAllowEmptyValues,
-							map[string]interface{}{},
-						))
-					} else {
-						// subnet-specific route table association
-						resources = append(resources, terraform_utils.NewResource(
-							aws.StringValue(assoc.RouteTableAssociationId),
-							aws.StringValue(assoc.SubnetId),
-							"aws_route_table_association",
-							"aws",
-							map[string]string{
-								"subnet_id":      aws.StringValue(assoc.SubnetId),
-								"route_table_id": aws.StringValue(table.RouteTableId),
-							},
-							rtbAllowEmptyValues,
-							map[string]interface{}{},
-						))
-					}
+			for _, assoc := range table.Associations {
+				if aws.BoolValue(assoc.Main) {
+					// main route table association
+					resources = append(resources, terraform_utils.NewResource(
+						aws.StringValue(assoc.RouteTableAssociationId),
+						aws.StringValue(table.VpcId),
+						"aws_main_route_table_association",
+						"aws",
+						map[string]string{
+							"vpc_id":         aws.StringValue(table.VpcId),
+							"route_table_id": aws.StringValue(table.RouteTableId),
+						},
+						rtbAllowEmptyValues,
+						map[string]interface{}{},
+					))
+				} else {
+					// subnet-specific route table association
+					resources = append(resources, terraform_utils.NewResource(
+						aws.StringValue(assoc.RouteTableAssociationId),
+						aws.StringValue(assoc.SubnetId),
+						"aws_route_table_association",
+						"aws",
+						map[string]string{
+							"subnet_id":      aws.StringValue(assoc.SubnetId),
+							"route_table_id": aws.StringValue(table.RouteTableId),
+						},
+						rtbAllowEmptyValues,
+						map[string]interface{}{},
+					))
 				}
 			}
-			return true
-		},
-	)
-
-	if err != nil {
-		log.Println(err)
-		return resources
+		}
 	}
-
+	if err := p.Err(); err != nil {
+		log.Println(err)
+	}
 	return resources
 }
 
 // Generate TerraformResources from AWS API,
 // create terraform resource for each route tables
 func (g *RouteTableGenerator) InitResources() error {
-	sess := g.generateSession()
-	svc := ec2.New(sess)
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
+	svc := ec2.New(config)
 
 	g.Resources = g.createRouteTablesResources(svc)
 	return nil

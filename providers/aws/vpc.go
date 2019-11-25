@@ -15,10 +15,11 @@
 package aws
 
 import (
+	"context"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
 var VpcAllowEmptyValues = []string{"tags."}
@@ -28,7 +29,7 @@ type VpcGenerator struct {
 }
 
 func (VpcGenerator) createResources(vpcs *ec2.DescribeVpcsOutput) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+	var resources []terraform_utils.Resource
 	for _, vpc := range vpcs.Vpcs {
 		resources = append(resources, terraform_utils.NewSimpleResource(
 			aws.StringValue(vpc.VpcId),
@@ -45,12 +46,14 @@ func (VpcGenerator) createResources(vpcs *ec2.DescribeVpcsOutput) []terraform_ut
 // from each vpc create 1 TerraformResource.
 // Need VpcId as ID for terraform resource
 func (g *VpcGenerator) InitResources() error {
-	sess := g.generateSession()
-	svc := ec2.New(sess)
-	vpcs, err := svc.DescribeVpcs(&ec2.DescribeVpcsInput{})
-	if err != nil {
-		return err
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
 	}
-	g.Resources = g.createResources(vpcs)
-	return nil
+	svc := ec2.New(config)
+	p := ec2.NewDescribeVpcsPaginator(svc.DescribeVpcsRequest(&ec2.DescribeVpcsInput{}))
+	for p.Next(context.Background()) {
+		g.Resources = append(g.Resources, g.createResources(p.CurrentPage())...)
+	}
+	return p.Err()
 }

@@ -15,10 +15,10 @@
 package aws
 
 import (
+	"context"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
 var NaclAllowEmptyValues = []string{"tags."}
@@ -44,14 +44,15 @@ func (NaclGenerator) createResources(nacls *ec2.DescribeNetworkAclsOutput) []ter
 // from each network ACL create 1 TerraformResource.
 // Need NetworkAclId as ID for terraform resource
 func (g *NaclGenerator) InitResources() error {
-	sess := g.generateSession()
-	svc := ec2.New(sess)
-	nacls, err := svc.DescribeNetworkAcls(&ec2.DescribeNetworkAclsInput{})
-	if err != nil {
-		return err
-
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
 	}
-	g.Resources = g.createResources(nacls)
-	return nil
+	svc := ec2.New(config)
+	p := ec2.NewDescribeNetworkAclsPaginator(svc.DescribeNetworkAclsRequest(&ec2.DescribeNetworkAclsInput{}))
+	for p.Next(context.Background()) {
+		g.Resources = append(g.Resources, g.createResources(p.CurrentPage())...)
+	}
+	return p.Err()
 
 }

@@ -15,12 +15,13 @@
 package aws
 
 import (
+	"context"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
 var ec2AllowEmptyValues = []string{"tags."}
@@ -30,22 +31,25 @@ type Ec2Generator struct {
 }
 
 func (g *Ec2Generator) InitResources() error {
-	sess := g.generateSession()
-	svc := ec2.New(sess)
-	var filters []*ec2.Filter
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
+	svc := ec2.New(config)
+	var filters []ec2.Filter
 	for _, filter := range g.Filter {
 		if strings.HasPrefix(filter.FieldPath, "tags.") && filter.IsApplicable("aws_instance") {
-			filters = append(filters, &ec2.Filter{
+			filters = append(filters, ec2.Filter{
 				Name:   aws.String("tag:" + strings.TrimPrefix(filter.FieldPath, "tags.")),
-				Values: aws.StringSlice(filter.AcceptableValues),
+				Values: filter.AcceptableValues,
 			})
 		}
 	}
-	input := ec2.DescribeInstancesInput{
+	p := ec2.NewDescribeInstancesPaginator(svc.DescribeInstancesRequest(&ec2.DescribeInstancesInput{
 		Filters: filters,
-	}
-	err := svc.DescribeInstancesPages(&input, func(instances *ec2.DescribeInstancesOutput, lastPage bool) bool {
-		for _, reservation := range instances.Reservations {
+	}))
+	for p.Next(context.Background()) {
+		for _, reservation := range p.CurrentPage().Reservations {
 			for _, instance := range reservation.Instances {
 				name := ""
 				for _, tag := range instance.Tags {
@@ -53,10 +57,10 @@ func (g *Ec2Generator) InitResources() error {
 						name = aws.StringValue(tag.Value)
 					}
 				}
-				attr, err := svc.DescribeInstanceAttribute(&ec2.DescribeInstanceAttributeInput{
-					Attribute:  aws.String(ec2.InstanceAttributeNameUserData),
+				attr, err := svc.DescribeInstanceAttributeRequest(&ec2.DescribeInstanceAttributeInput{
+					Attribute:  ec2.InstanceAttributeNameUserData,
 					InstanceId: instance.InstanceId,
-				})
+				}).Send(context.Background())
 				userDataBase64 := ""
 				if err == nil && attr.UserData != nil && attr.UserData.Value != nil {
 					userDataBase64 = aws.StringValue(attr.UserData.Value)
@@ -78,11 +82,6 @@ func (g *Ec2Generator) InitResources() error {
 			}
 
 		}
-		return true
-	})
-	if err != nil {
-		return err
 	}
-	return nil
-
+	return p.Err()
 }

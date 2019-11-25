@@ -15,9 +15,9 @@
 package aws
 
 import (
+	"context"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/cloud9"
+	"github.com/aws/aws-sdk-go-v2/service/cloud9"
 )
 
 var cloud9AllowEmptyValues = []string{"tags."}
@@ -26,10 +26,9 @@ type Cloud9Generator struct {
 	AWSService
 }
 
-func (g Cloud9Generator) createResources(environmentIds []*string) []terraform_utils.Resource {
+func (g Cloud9Generator) createResources(environmentIds []string) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
-	for _, environmentId := range environmentIds {
-		resourceName := aws.StringValue(environmentId)
+	for _, resourceName := range environmentIds {
 		resources = append(resources, terraform_utils.NewSimpleResource(
 			resourceName,
 			resourceName,
@@ -41,9 +40,12 @@ func (g Cloud9Generator) createResources(environmentIds []*string) []terraform_u
 }
 
 func (g *Cloud9Generator) InitResources() error {
-	sess := g.generateSession()
-	svc := cloud9.New(sess)
-	output, err := svc.ListEnvironments(&cloud9.ListEnvironmentsInput{})
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
+	svc := cloud9.New(config)
+	output, err := svc.ListEnvironmentsRequest(&cloud9.ListEnvironmentsInput{}).Send(context.Background())
 	if err != nil {
 		return err
 	}

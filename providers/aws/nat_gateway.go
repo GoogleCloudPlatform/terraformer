@@ -15,12 +15,11 @@
 package aws
 
 import (
-	"log"
-
+	"context"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
 var ngwAllowEmptyValues = []string{"tags."}
@@ -29,27 +28,16 @@ type NatGatewayGenerator struct {
 	AWSService
 }
 
-func (g NatGatewayGenerator) createNatGatewaysResources(svc *ec2.EC2) []terraform_utils.Resource {
+func (g NatGatewayGenerator) createResources(ngws *ec2.DescribeNatGatewaysOutput) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
-	err := svc.DescribeNatGatewaysPages(
-		&ec2.DescribeNatGatewaysInput{},
-		func(ngws *ec2.DescribeNatGatewaysOutput, lastPage bool) bool {
-			for _, ngw := range ngws.NatGateways {
-				resources = append(resources, terraform_utils.NewSimpleResource(
-					aws.StringValue(ngw.NatGatewayId),
-					aws.StringValue(ngw.NatGatewayId),
-					"aws_nat_gateway",
-					"aws",
-					ngwAllowEmptyValues,
-				))
-			}
-			return true
-		},
-	)
-
-	if err != nil {
-		log.Println(err)
-		return resources
+	for _, ngw := range ngws.NatGateways {
+		resources = append(resources, terraform_utils.NewSimpleResource(
+			aws.StringValue(ngw.NatGatewayId),
+			aws.StringValue(ngw.NatGatewayId),
+			"aws_nat_gateway",
+			"aws",
+			ngwAllowEmptyValues,
+		))
 	}
 
 	return resources
@@ -58,9 +46,14 @@ func (g NatGatewayGenerator) createNatGatewaysResources(svc *ec2.EC2) []terrafor
 // Generate TerraformResources from AWS API,
 // create terraform resource for each NAT Gateways
 func (g *NatGatewayGenerator) InitResources() error {
-	sess := g.generateSession()
-	svc := ec2.New(sess)
-
-	g.Resources = g.createNatGatewaysResources(svc)
-	return nil
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
+	svc := ec2.New(config)
+	p := ec2.NewDescribeNatGatewaysPaginator(svc.DescribeNatGatewaysRequest(&ec2.DescribeNatGatewaysInput{}))
+	for p.Next(context.Background()) {
+		g.Resources = append(g.Resources, g.createResources(p.CurrentPage())...)
+	}
+	return p.Err()
 }

@@ -15,10 +15,11 @@
 package aws
 
 import (
+	"context"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
 var IgwAllowEmptyValues = []string{"tags."}
@@ -45,13 +46,15 @@ func (g IgwGenerator) createResources(igws *ec2.DescribeInternetGatewaysOutput) 
 }
 
 func (g *IgwGenerator) InitResources() error {
-	sess := g.generateSession()
-	svc := ec2.New(sess)
-	igws, err := svc.DescribeInternetGateways(&ec2.DescribeInternetGatewaysInput{})
-	if err != nil {
-		return err
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
 	}
-	g.Resources = g.createResources(igws)
-	return nil
+	svc := ec2.New(config)
+	p := ec2.NewDescribeInternetGatewaysPaginator(svc.DescribeInternetGatewaysRequest(&ec2.DescribeInternetGatewaysInput{}))
+	for p.Next(context.Background()) {
+		g.Resources = append(g.Resources, g.createResources(p.CurrentPage())...)
+	}
+	return p.Err()
 
 }

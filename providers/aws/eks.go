@@ -15,9 +15,9 @@
 package aws
 
 import (
+	"context"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/eks"
+	"github.com/aws/aws-sdk-go-v2/service/eks"
 )
 
 var eksAllowEmptyValues = []string{"tags."}
@@ -27,24 +27,22 @@ type EksGenerator struct {
 }
 
 func (g *EksGenerator) InitResources() error {
-	sess := g.generateSession()
-	svc := eks.New(sess)
-
-	err := svc.ListClustersPages(&eks.ListClustersInput{}, func(clusters *eks.ListClustersOutput, lastPage bool) bool {
-		for _, clusterName := range clusters.Clusters {
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
+	svc := eks.New(config)
+	p := eks.NewListClustersPaginator(svc.ListClustersRequest(&eks.ListClustersInput{}))
+	for p.Next(context.Background()) {
+		for _, clusterName := range p.CurrentPage().Clusters {
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-				aws.StringValue(clusterName),
-				aws.StringValue(clusterName),
+				clusterName,
+				clusterName,
 				"aws_eks_cluster",
 				"aws",
 				eksAllowEmptyValues,
 			))
 		}
-		return !lastPage
-	})
-	if err != nil {
-		return err
 	}
-
-	return nil
+	return p.Err()
 }
