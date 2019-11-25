@@ -15,16 +15,14 @@
 package aws
 
 import (
+	"context"
 	"fmt"
 	"log"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 	"github.com/hashicorp/terraform/helper/resource"
-
-	"github.com/aws/aws-sdk-go/service/elbv2"
-
-	"github.com/aws/aws-sdk-go/aws"
 )
 
 var AlbAllowEmptyValues = []string{"tags.", "^condition."}
@@ -33,9 +31,10 @@ type AlbGenerator struct {
 	AWSService
 }
 
-func (g *AlbGenerator) loadLB(svc *elbv2.ELBV2) error {
-	err := svc.DescribeLoadBalancersPages(&elbv2.DescribeLoadBalancersInput{}, func(lbs *elbv2.DescribeLoadBalancersOutput, lastPage bool) bool {
-		for _, lb := range lbs.LoadBalancers {
+func (g *AlbGenerator) loadLB(svc *elasticloadbalancingv2.Client) error {
+	p := elasticloadbalancingv2.NewDescribeLoadBalancersPaginator(svc.DescribeLoadBalancersRequest(&elasticloadbalancingv2.DescribeLoadBalancersInput{}))
+	for p.Next(context.Background()) {
+		for _, lb := range p.CurrentPage().LoadBalancers {
 			resourceName := aws.StringValue(lb.LoadBalancerName)
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				aws.StringValue(lb.LoadBalancerArn),
@@ -50,14 +49,14 @@ func (g *AlbGenerator) loadLB(svc *elbv2.ELBV2) error {
 			}
 
 		}
-		return !lastPage
-	})
-	return err
+	}
+	return p.Err()
 }
 
-func (g *AlbGenerator) loadLBListener(svc *elbv2.ELBV2, loadBalancerArn *string) error {
-	err := svc.DescribeListenersPages(&elbv2.DescribeListenersInput{LoadBalancerArn: loadBalancerArn}, func(lcs *elbv2.DescribeListenersOutput, lastPage bool) bool {
-		for _, ls := range lcs.Listeners {
+func (g *AlbGenerator) loadLBListener(svc *elasticloadbalancingv2.Client, loadBalancerArn *string) error {
+	p := elasticloadbalancingv2.NewDescribeListenersPaginator(svc.DescribeListenersRequest(&elasticloadbalancingv2.DescribeListenersInput{LoadBalancerArn: loadBalancerArn}))
+	for p.Next(context.Background()) {
+		for _, ls := range p.CurrentPage().Listeners {
 			resourceName := aws.StringValue(ls.ListenerArn)
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				resourceName,
@@ -75,13 +74,12 @@ func (g *AlbGenerator) loadLBListener(svc *elbv2.ELBV2, loadBalancerArn *string)
 				log.Println(err)
 			}
 		}
-		return !lastPage
-	})
-	return err
+	}
+	return p.Err()
 }
 
-func (g *AlbGenerator) loadLBListenerRule(svc *elbv2.ELBV2, listenerArn *string) error {
-	lsrs, err := svc.DescribeRules(&elbv2.DescribeRulesInput{ListenerArn: listenerArn})
+func (g *AlbGenerator) loadLBListenerRule(svc *elasticloadbalancingv2.Client, listenerArn *string) error {
+	lsrs, err := svc.DescribeRulesRequest(&elasticloadbalancingv2.DescribeRulesInput{ListenerArn: listenerArn, PageSize: aws.Int64(400)}).Send(context.Background())
 	if err != nil {
 		return err
 	}
@@ -100,8 +98,8 @@ func (g *AlbGenerator) loadLBListenerRule(svc *elbv2.ELBV2, listenerArn *string)
 	return err
 }
 
-func (g *AlbGenerator) loadLBListenerCertificate(svc *elbv2.ELBV2, listenerArn *string) error {
-	lcs, err := svc.DescribeListenerCertificates(&elbv2.DescribeListenerCertificatesInput{ListenerArn: listenerArn})
+func (g *AlbGenerator) loadLBListenerCertificate(svc *elasticloadbalancingv2.Client, listenerArn *string) error {
+	lcs, err := svc.DescribeListenerCertificatesRequest(&elasticloadbalancingv2.DescribeListenerCertificatesInput{ListenerArn: listenerArn}).Send(context.Background())
 	if err != nil {
 		return err
 	}
@@ -118,9 +116,10 @@ func (g *AlbGenerator) loadLBListenerCertificate(svc *elbv2.ELBV2, listenerArn *
 	return err
 }
 
-func (g *AlbGenerator) loadLBTargetGroup(svc *elbv2.ELBV2) error {
-	err := svc.DescribeTargetGroupsPages(&elbv2.DescribeTargetGroupsInput{}, func(tgs *elbv2.DescribeTargetGroupsOutput, lastPage bool) bool {
-		for _, tg := range tgs.TargetGroups {
+func (g *AlbGenerator) loadLBTargetGroup(svc *elasticloadbalancingv2.Client) error {
+	p := elasticloadbalancingv2.NewDescribeTargetGroupsPaginator(svc.DescribeTargetGroupsRequest(&elasticloadbalancingv2.DescribeTargetGroupsInput{}))
+	for p.Next(context.Background()) {
+		for _, tg := range p.CurrentPage().TargetGroups {
 			resourceName := aws.StringValue(tg.TargetGroupName)
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				aws.StringValue(tg.TargetGroupArn),
@@ -134,13 +133,12 @@ func (g *AlbGenerator) loadLBTargetGroup(svc *elbv2.ELBV2) error {
 				log.Println(err)
 			}
 		}
-		return !lastPage
-	})
-	return err
+	}
+	return p.Err()
 }
 
-func (g *AlbGenerator) loadTargetGroupTargets(svc *elbv2.ELBV2, targetGroupArn *string) error {
-	targetHealths, err := svc.DescribeTargetHealth(&elbv2.DescribeTargetHealthInput{TargetGroupArn: targetGroupArn})
+func (g *AlbGenerator) loadTargetGroupTargets(svc *elasticloadbalancingv2.Client, targetGroupArn *string) error {
+	targetHealths, err := svc.DescribeTargetHealthRequest(&elasticloadbalancingv2.DescribeTargetHealthInput{TargetGroupArn: targetGroupArn}).Send(context.Background())
 	if err != nil {
 		return err
 	}
@@ -164,8 +162,11 @@ func (g *AlbGenerator) loadTargetGroupTargets(svc *elbv2.ELBV2, targetGroupArn *
 
 // Generate TerraformResources from AWS API,
 func (g *AlbGenerator) InitResources() error {
-	sess := g.generateSession()
-	svc := elbv2.New(sess)
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
+	svc := elasticloadbalancingv2.New(config)
 	if err := g.loadLB(svc); err != nil {
 		return err
 	}

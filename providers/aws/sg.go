@@ -15,16 +15,14 @@
 package aws
 
 import (
-	"log"
+	"context"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
-
-const maxResults = 100
 
 var SgAllowEmptyValues = []string{"tags."}
 
@@ -32,8 +30,8 @@ type SecurityGenerator struct {
 	AWSService
 }
 
-func (SecurityGenerator) createResources(securityGroups []*ec2.SecurityGroup) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (SecurityGenerator) createResources(securityGroups []ec2.SecurityGroup) []terraform_utils.Resource {
+	var resources []terraform_utils.Resource
 	for _, sg := range securityGroups {
 		if sg.VpcId == nil {
 			continue
@@ -53,28 +51,19 @@ func (SecurityGenerator) createResources(securityGroups []*ec2.SecurityGroup) []
 // Need GroupId as ID for terraform resource
 // AWS support pagination with NextToken pattern
 func (g *SecurityGenerator) InitResources() error {
-	sess := g.generateSession()
-	svc := ec2.New(sess)
-	var securityGroups []*ec2.SecurityGroup
-	var err error
-	firstRun := true
-	securityGroupsOutput := &ec2.DescribeSecurityGroupsOutput{}
-	for {
-		if firstRun || securityGroupsOutput.NextToken != nil {
-			firstRun = false
-			securityGroupsOutput, err = svc.DescribeSecurityGroups(&ec2.DescribeSecurityGroupsInput{
-				MaxResults: aws.Int64(maxResults),
-				NextToken:  securityGroupsOutput.NextToken,
-			})
-			securityGroups = append(securityGroups, securityGroupsOutput.SecurityGroups...)
-			if err != nil {
-				log.Println(err)
-			}
-		} else {
-			break
-		}
+	config, err := g.generateConfig()
+	if err != nil {
+		return err
 	}
-	g.Resources = g.createResources(securityGroups)
+	svc := ec2.New(config)
+	p := ec2.NewDescribeSecurityGroupsPaginator(svc.DescribeSecurityGroupsRequest(&ec2.DescribeSecurityGroupsInput{}))
+	for p.Next(context.Background()) {
+		g.Resources = append(g.Resources, g.createResources(p.CurrentPage().SecurityGroups)...)
+	}
+
+	if err := p.Err(); err != nil {
+		return err
+	}
 	return nil
 }
 

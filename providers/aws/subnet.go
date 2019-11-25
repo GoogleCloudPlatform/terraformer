@@ -15,10 +15,10 @@
 package aws
 
 import (
+	"context"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
 var SubnetAllowEmptyValues = []string{"tags."}
@@ -28,7 +28,7 @@ type SubnetGenerator struct {
 }
 
 func (SubnetGenerator) createResources(subnets *ec2.DescribeSubnetsOutput) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+	var resources []terraform_utils.Resource
 	for _, subnet := range subnets.Subnets {
 
 		resource := terraform_utils.NewSimpleResource(
@@ -48,13 +48,14 @@ func (SubnetGenerator) createResources(subnets *ec2.DescribeSubnetsOutput) []ter
 // from each subnet create 1 TerraformResource.
 // Need SubnetId as ID for terraform resource
 func (g *SubnetGenerator) InitResources() error {
-	sess := g.generateSession()
-	svc := ec2.New(sess)
-	subnets, err := svc.DescribeSubnets(&ec2.DescribeSubnetsInput{})
-	if err != nil {
-		return err
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
 	}
-	g.Resources = g.createResources(subnets)
-	return nil
-
+	svc := ec2.New(config)
+	p := ec2.NewDescribeSubnetsPaginator(svc.DescribeSubnetsRequest(&ec2.DescribeSubnetsInput{}))
+	for p.Next(context.Background()) {
+		g.Resources = append(g.Resources, g.createResources(p.CurrentPage())...)
+	}
+	return p.Err()
 }

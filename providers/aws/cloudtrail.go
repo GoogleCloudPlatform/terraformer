@@ -15,9 +15,10 @@
 package aws
 
 import (
+	"context"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/cloudtrail"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/cloudtrail"
 )
 
 var cloudtrailAllowEmptyValues = []string{"tags."}
@@ -26,7 +27,7 @@ type CloudTrailGenerator struct {
 	AWSService
 }
 
-func (g CloudTrailGenerator) createResources(trailList []*cloudtrail.Trail) []terraform_utils.Resource {
+func (g CloudTrailGenerator) createResources(trailList []cloudtrail.Trail) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
 	for _, trail := range trailList {
 		resourceName := aws.StringValue(trail.Name)
@@ -41,9 +42,12 @@ func (g CloudTrailGenerator) createResources(trailList []*cloudtrail.Trail) []te
 }
 
 func (g *CloudTrailGenerator) InitResources() error {
-	sess := g.generateSession()
-	svc := cloudtrail.New(sess)
-	output, err := svc.DescribeTrails(&cloudtrail.DescribeTrailsInput{})
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
+	svc := cloudtrail.New(config)
+	output, err := svc.DescribeTrailsRequest(&cloudtrail.DescribeTrailsInput{}).Send(context.Background())
 	if err != nil {
 		return err
 	}
