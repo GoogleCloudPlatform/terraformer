@@ -161,7 +161,7 @@ func (g *IamGenerator) getUserPolices(svc *iam.Client, userName *string) error {
 }
 
 func (g *IamGenerator) getPolicies(svc *iam.Client) error {
-	p := iam.NewListPoliciesPaginator(svc.ListPoliciesRequest(&iam.ListPoliciesInput{}))
+	p := iam.NewListPoliciesPaginator(svc.ListPoliciesRequest(&iam.ListPoliciesInput{Scope:iam.PolicyScopeTypeLocal}))
 	for p.Next(context.Background()) {
 		for _, policy := range p.CurrentPage().Policies {
 			resourceName := aws.StringValue(policy.PolicyName)
@@ -178,10 +178,6 @@ func (g *IamGenerator) getPolicies(svc *iam.Client) error {
 				},
 				IamAllowEmptyValues,
 				IamAdditionalFields))
-			// not use AWS main policy
-			if strings.HasPrefix(policyARN, "arn:aws:iam::aws:policy") {
-				continue
-			}
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				policyARN,
 				resourceName,
