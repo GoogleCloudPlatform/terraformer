@@ -12,43 +12,42 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package aws
+package linode
 
 import (
 	"context"
+	"strconv"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/aws/aws-sdk-go-v2/service/cloud9"
+	"github.com/linode/linodego"
 )
 
-var cloud9AllowEmptyValues = []string{"tags."}
-
-type Cloud9Generator struct {
-	AWSService
+type StackScriptGenerator struct {
+	LinodeService
 }
 
-func (g Cloud9Generator) createResources(environmentIds []string) []terraform_utils.Resource {
+func (g StackScriptGenerator) createResources(stackscriptList []linodego.Stackscript) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
-	for _, resourceName := range environmentIds {
-		resources = append(resources, terraform_utils.NewSimpleResource(
-			resourceName,
-			resourceName,
-			"aws_cloud9_environment_ec2",
-			"aws",
-			cloud9AllowEmptyValues))
+	for _, stackscript := range stackscriptList {
+		// Avoid importing all community stackscripts
+		if !stackscript.IsPublic {
+			resources = append(resources, terraform_utils.NewSimpleResource(
+				strconv.Itoa(stackscript.ID),
+				strconv.Itoa(stackscript.ID),
+				"linode_stackscript",
+				"linode",
+				[]string{}))
+		}
 	}
 	return resources
 }
 
-func (g *Cloud9Generator) InitResources() error {
-	config, e := g.generateConfig()
-	if e != nil {
-		return e
-	}
-	svc := cloud9.New(config)
-	output, err := svc.ListEnvironmentsRequest(&cloud9.ListEnvironmentsInput{}).Send(context.Background())
+func (g *StackScriptGenerator) InitResources() error {
+	client := g.generateClient()
+	output, err := client.ListStackscripts(context.Background(), nil)
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(output.EnvironmentIds)
+	g.Resources = g.createResources(output)
 	return nil
 }

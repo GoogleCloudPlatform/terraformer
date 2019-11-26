@@ -15,10 +15,11 @@
 package aws
 
 import (
+	"context"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go-v2/aws"
 
-	es "github.com/aws/aws-sdk-go/service/elasticsearchservice"
+	es "github.com/aws/aws-sdk-go-v2/service/elasticsearchservice"
 )
 
 var esAllowEmptyValues = []string{"tags."}
@@ -28,10 +29,13 @@ type EsGenerator struct {
 }
 
 func (g *EsGenerator) InitResources() error {
-	sess := g.generateSession()
-	svc := es.New(sess)
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
+	svc := es.New(config)
 
-	domainNames, err := svc.ListDomainNames(&es.ListDomainNamesInput{})
+	domainNames, err := svc.ListDomainNamesRequest(&es.ListDomainNamesInput{}).Send(context.Background())
 	if err != nil {
 		return err
 	}
@@ -50,5 +54,17 @@ func (g *EsGenerator) InitResources() error {
 		))
 	}
 
+	return nil
+}
+
+func (g *EsGenerator) PostConvertHook() error {
+	for _, r := range g.Resources {
+		if r.InstanceInfo.Type != "aws_elasticsearch_domain" {
+			continue
+		}
+		if r.InstanceState.Attributes["cognito_options.0.enabled"] == "false" {
+			delete(r.Item, "cognito_options")
+		}
+	}
 	return nil
 }

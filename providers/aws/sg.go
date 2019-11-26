@@ -15,6 +15,7 @@
 package aws
 
 import (
+	"context"
 	"fmt"
 	"gonum.org/v1/gonum/graph"
 	"math"
@@ -22,6 +23,9 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
+)
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
 
@@ -46,11 +50,12 @@ type SecurityGroupRule struct {
 	userIdGroupPair *ec2.UserIdGroupPair
 }
 
-func (SecurityGenerator) createResources(securityGroups []*ec2.SecurityGroup) []terraform_utils.Resource {
 
+func (SecurityGenerator) createResources(securityGroups []ec2.SecurityGroup) []terraform_utils.Resource {
 	rulesToMoveOut := findRulesToMoveOut(securityGroups)
 
 	fmt.Printf("%+v\n", rulesToMoveOut)
+
 
 	var resources []terraform_utils.Resource
 	for _, sg := range securityGroups {
@@ -170,20 +175,19 @@ func lineNode(targetNodeToSGRule map[int64]*SecurityGroupRule, idToSecurityGroup
 // from each security group create 1 TerraformResource.
 // Need GroupId as ID for terraform resource
 func (g *SecurityGenerator) InitResources() error {
-	sess := g.generateSession()
-	svc := ec2.New(sess)
-	var securityGroups []*ec2.SecurityGroup
-	var err error
-
-	err = svc.DescribeSecurityGroupsPages(&ec2.DescribeSecurityGroupsInput{}, func(securityGroupsOut *ec2.DescribeSecurityGroupsOutput, lastPage bool) bool {
-		securityGroups = append(securityGroups, securityGroupsOut.SecurityGroups...)
-		return !lastPage
-	})
+	config, err := g.generateConfig()
 	if err != nil {
 		return err
 	}
+	svc := ec2.New(config)
+	p := ec2.NewDescribeSecurityGroupsPaginator(svc.DescribeSecurityGroupsRequest(&ec2.DescribeSecurityGroupsInput{}))
+	for p.Next(context.Background()) {
+		g.Resources = append(g.Resources, g.createResources(p.CurrentPage().SecurityGroups)...)
+	}
 
-	g.Resources = g.createResources(securityGroups)
+	if err := p.Err(); err != nil {
+		return err
+	}
 	return nil
 }
 

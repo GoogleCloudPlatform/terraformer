@@ -61,7 +61,9 @@ func (p *LinodeProvider) GetSupportedService() map[string]terraform_utils.Servic
 		"image":        &ImageGenerator{},
 		"instance":     &InstanceGenerator{},
 		"nodebalancer": &NodeBalancerGenerator{},
+		"rdns":         &RDNSGenerator{},
 		"sshkey":       &SSHKeyGenerator{},
+		"stackscript":  &StackScriptGenerator{},
 		"token":        &TokenGenerator{},
 		"volume":       &VolumeGenerator{},
 	}

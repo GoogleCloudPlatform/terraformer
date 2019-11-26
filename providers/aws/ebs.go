@@ -15,14 +15,15 @@
 package aws
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/hashicorp/terraform/helper/hashcode"
 
-	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
 var ebsAllowEmptyValues = []string{"tags."}
@@ -36,29 +37,32 @@ func (g EbsGenerator) volumeAttachmentId(device, volumeID, instanceID string) st
 }
 
 func (g *EbsGenerator) InitResources() error {
-	sess := g.generateSession()
-	svc := ec2.New(sess)
-	var filters []*ec2.Filter
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
+	svc := ec2.New(config)
+	var filters []ec2.Filter
 	for _, filter := range g.Filter {
 		if strings.HasPrefix(filter.FieldPath, "tags.") && filter.IsApplicable("aws_ebs_volume") {
-			filters = append(filters, &ec2.Filter{
+			filters = append(filters, ec2.Filter{
 				Name:   aws.String("tag:" + strings.TrimPrefix(filter.FieldPath, "tags.")),
-				Values: aws.StringSlice(filter.AcceptableValues),
+				Values: filter.AcceptableValues,
 			})
 		}
 	}
-	input := ec2.DescribeVolumesInput{
+	p := ec2.NewDescribeVolumesPaginator(svc.DescribeVolumesRequest(&ec2.DescribeVolumesInput{
 		Filters: filters,
-	}
-	err := svc.DescribeVolumesPages(&input, func(volumes *ec2.DescribeVolumesOutput, lastPage bool) bool {
-		for _, volume := range volumes.Volumes {
+	}))
+	for p.Next(context.Background()) {
+		for _, volume := range p.CurrentPage().Volumes {
 
 			isRootDevice := false // Let's leave root device configuration to be done in ec2_instance resources
 
 			for _, attachment := range volume.Attachments {
-				instances, _ := svc.DescribeInstances(&ec2.DescribeInstancesInput{
-					InstanceIds: []*string{attachment.InstanceId},
-				})
+				instances, _ := svc.DescribeInstancesRequest(&ec2.DescribeInstancesInput{
+					InstanceIds: []string{aws.StringValue(attachment.InstanceId)},
+				}).Send(context.Background())
 				for _, reservation := range instances.Reservations {
 					for _, instance := range reservation.Instances {
 						if aws.StringValue(instance.RootDeviceName) == aws.StringValue(attachment.Device) {
@@ -78,7 +82,7 @@ func (g *EbsGenerator) InitResources() error {
 				))
 
 				for _, attachment := range volume.Attachments {
-					if aws.StringValue(attachment.State) == ec2.VolumeAttachmentStateAttached {
+					if attachment.State == ec2.VolumeAttachmentStateAttached {
 
 						attachmentId := g.volumeAttachmentId(
 							aws.StringValue(attachment.Device),
@@ -101,11 +105,6 @@ func (g *EbsGenerator) InitResources() error {
 				}
 			}
 		}
-
-		return !lastPage
-	})
-	if err != nil {
-		return err
 	}
-	return nil
+	return p.Err()
 }

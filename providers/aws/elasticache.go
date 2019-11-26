@@ -15,13 +15,14 @@
 package aws
 
 import (
+	"context"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
-	"github.com/aws/aws-sdk-go/service/elasticache"
+	"github.com/aws/aws-sdk-go-v2/service/elasticache"
 
-	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go-v2/aws"
 )
 
 var elastiCacheAllowEmptyValues = []string{"tags."}
@@ -30,9 +31,10 @@ type ElastiCacheGenerator struct {
 	AWSService
 }
 
-func (g *ElastiCacheGenerator) loadCacheClusters(svc *elasticache.ElastiCache) error {
-	return svc.DescribeCacheClustersPages(&elasticache.DescribeCacheClustersInput{}, func(clusters *elasticache.DescribeCacheClustersOutput, lastPage bool) bool {
-		for _, cluster := range clusters.CacheClusters {
+func (g *ElastiCacheGenerator) loadCacheClusters(svc *elasticache.Client) error {
+	p := elasticache.NewDescribeCacheClustersPaginator(svc.DescribeCacheClustersRequest(&elasticache.DescribeCacheClustersInput{}))
+	for p.Next(context.Background()) {
+		for _, cluster := range p.CurrentPage().CacheClusters {
 			resourceName := aws.StringValue(cluster.CacheClusterId)
 			resource := terraform_utils.NewSimpleResource(
 				resourceName,
@@ -68,14 +70,14 @@ func (g *ElastiCacheGenerator) loadCacheClusters(svc *elasticache.ElastiCache) e
 			}
 			g.Resources = append(g.Resources, resource)
 		}
-		return !lastPage
-	})
-
+	}
+	return p.Err()
 }
 
-func (g *ElastiCacheGenerator) loadParameterGroups(svc *elasticache.ElastiCache) error {
-	return svc.DescribeCacheParameterGroupsPages(&elasticache.DescribeCacheParameterGroupsInput{}, func(parameterGroups *elasticache.DescribeCacheParameterGroupsOutput, lastPage bool) bool {
-		for _, parameterGroup := range parameterGroups.CacheParameterGroups {
+func (g *ElastiCacheGenerator) loadParameterGroups(svc *elasticache.Client) error {
+	p := elasticache.NewDescribeCacheParameterGroupsPaginator(svc.DescribeCacheParameterGroupsRequest(&elasticache.DescribeCacheParameterGroupsInput{}))
+	for p.Next(context.Background()) {
+		for _, parameterGroup := range p.CurrentPage().CacheParameterGroups {
 			resourceName := aws.StringValue(parameterGroup.CacheParameterGroupName)
 			if strings.Contains(resourceName, ".") {
 				continue // skip default Default ParameterGroups like default.redis5.0
@@ -88,13 +90,14 @@ func (g *ElastiCacheGenerator) loadParameterGroups(svc *elasticache.ElastiCache)
 				elastiCacheAllowEmptyValues,
 			))
 		}
-		return !lastPage
-	})
+	}
+	return p.Err()
 }
 
-func (g *ElastiCacheGenerator) loadSubnetGroups(svc *elasticache.ElastiCache) error {
-	return svc.DescribeCacheSubnetGroupsPages(&elasticache.DescribeCacheSubnetGroupsInput{}, func(subnets *elasticache.DescribeCacheSubnetGroupsOutput, lastPage bool) bool {
-		for _, subnet := range subnets.CacheSubnetGroups {
+func (g *ElastiCacheGenerator) loadSubnetGroups(svc *elasticache.Client) error {
+	p := elasticache.NewDescribeCacheSubnetGroupsPaginator(svc.DescribeCacheSubnetGroupsRequest(&elasticache.DescribeCacheSubnetGroupsInput{}))
+	for p.Next(context.Background()) {
+		for _, subnet := range p.CurrentPage().CacheSubnetGroups {
 			resourceName := aws.StringValue(subnet.CacheSubnetGroupName)
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				resourceName,
@@ -104,13 +107,14 @@ func (g *ElastiCacheGenerator) loadSubnetGroups(svc *elasticache.ElastiCache) er
 				elastiCacheAllowEmptyValues,
 			))
 		}
-		return !lastPage
-	})
+	}
+	return p.Err()
 }
 
-func (g *ElastiCacheGenerator) loadReplicationGroups(svc *elasticache.ElastiCache) error {
-	return svc.DescribeReplicationGroupsPages(&elasticache.DescribeReplicationGroupsInput{}, func(optionGroups *elasticache.DescribeReplicationGroupsOutput, lastPage bool) bool {
-		for _, replicationGroup := range optionGroups.ReplicationGroups {
+func (g *ElastiCacheGenerator) loadReplicationGroups(svc *elasticache.Client) error {
+	p := elasticache.NewDescribeReplicationGroupsPaginator(svc.DescribeReplicationGroupsRequest(&elasticache.DescribeReplicationGroupsInput{}))
+	for p.Next(context.Background()) {
+		for _, replicationGroup := range p.CurrentPage().ReplicationGroups {
 			resourceName := aws.StringValue(replicationGroup.ReplicationGroupId)
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				resourceName,
@@ -120,8 +124,8 @@ func (g *ElastiCacheGenerator) loadReplicationGroups(svc *elasticache.ElastiCach
 				elastiCacheAllowEmptyValues,
 			))
 		}
-		return !lastPage
-	})
+	}
+	return p.Err()
 }
 
 // Generate TerraformResources from AWS API,
@@ -129,8 +133,11 @@ func (g *ElastiCacheGenerator) loadReplicationGroups(svc *elasticache.ElastiCach
 // Need only database name as ID for terraform resource
 // AWS api support paging
 func (g *ElastiCacheGenerator) InitResources() error {
-	sess := g.generateSession()
-	svc := elasticache.New(sess)
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
+	svc := elasticache.New(config)
 
 	if err := g.loadCacheClusters(svc); err != nil {
 		return err
