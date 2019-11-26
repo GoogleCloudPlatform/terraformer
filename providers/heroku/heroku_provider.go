@@ -72,6 +72,7 @@ func (p *HerokuProvider) GetSupportedService() map[string]terraform_utils.Servic
 		"app_feature":            &AppFeatureGenerator{},
 		"app_webhook":            &AppWebhookGenerator{},
 		"build":                  &BuildGenerator{},
+		"cert":                   &CertGenerator{},
 		"domain":                 &DomainGenerator{},
 		"drain":                  &DrainGenerator{},
 		"formation":              &FormationGenerator{},

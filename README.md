@@ -666,6 +666,8 @@ List of supported Heroku resources:
     * `heroku_app_webhook`
 *   `build`
     * `heroku_build`
+*   `cert`
+    * `heroku_cert`
 *   `domain`
     * `heroku_domain`
 *   `drain`
