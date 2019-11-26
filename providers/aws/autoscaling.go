@@ -15,13 +15,13 @@
 package aws
 
 import (
+	"context"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/autoscaling"
-	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/service/autoscaling"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
 
-	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go-v2/aws"
 )
 
 var AsgAllowEmptyValues = []string{"tags."}
@@ -30,9 +30,10 @@ type AutoScalingGenerator struct {
 	AWSService
 }
 
-func (g *AutoScalingGenerator) loadAutoScalingGroups(svc *autoscaling.AutoScaling) error {
-	err := svc.DescribeAutoScalingGroupsPages(&autoscaling.DescribeAutoScalingGroupsInput{}, func(asgs *autoscaling.DescribeAutoScalingGroupsOutput, lastPage bool) bool {
-		for _, asg := range asgs.AutoScalingGroups {
+func (g *AutoScalingGenerator) loadAutoScalingGroups(svc *autoscaling.Client) error {
+	p := autoscaling.NewDescribeAutoScalingGroupsPaginator(svc.DescribeAutoScalingGroupsRequest(&autoscaling.DescribeAutoScalingGroupsInput{}))
+	for p.Next(context.Background()) {
+		for _, asg := range p.CurrentPage().AutoScalingGroups {
 			resourceName := aws.StringValue(asg.AutoScalingGroupName)
 			g.Resources = append(g.Resources, terraform_utils.NewResource(
 				resourceName,
@@ -48,14 +49,14 @@ func (g *AutoScalingGenerator) loadAutoScalingGroups(svc *autoscaling.AutoScalin
 				map[string]interface{}{},
 			))
 		}
-		return !lastPage
-	})
-	return err
+	}
+	return p.Err()
 }
 
-func (g *AutoScalingGenerator) loadLaunchConfigurations(svc *autoscaling.AutoScaling) error {
-	err := svc.DescribeLaunchConfigurationsPages(&autoscaling.DescribeLaunchConfigurationsInput{}, func(lcs *autoscaling.DescribeLaunchConfigurationsOutput, lastPage bool) bool {
-		for _, lc := range lcs.LaunchConfigurations {
+func (g *AutoScalingGenerator) loadLaunchConfigurations(svc *autoscaling.Client) error {
+	p := autoscaling.NewDescribeLaunchConfigurationsPaginator(svc.DescribeLaunchConfigurationsRequest(&autoscaling.DescribeLaunchConfigurationsInput{}))
+	for p.Next(context.Background()) {
+		for _, lc := range p.CurrentPage().LaunchConfigurations {
 			resourceName := aws.StringValue(lc.LaunchConfigurationName)
 			attributes := map[string]string{}
 			// only for LaunchConfigurations with userdata, we want get user_data_base64
@@ -72,15 +73,16 @@ func (g *AutoScalingGenerator) loadLaunchConfigurations(svc *autoscaling.AutoSca
 				map[string]interface{}{},
 			))
 		}
-		return !lastPage
-	})
-	return err
+	}
+	return p.Err()
 }
 
-func (g *AutoScalingGenerator) loadLaunchTemplates(sess *session.Session) error {
-	ec2svc := ec2.New(sess)
-	err := ec2svc.DescribeLaunchTemplatesPages(&ec2.DescribeLaunchTemplatesInput{}, func(launchTemplatesOutput *ec2.DescribeLaunchTemplatesOutput, lastPage bool) bool {
-		for _, lt := range launchTemplatesOutput.LaunchTemplates {
+func (g *AutoScalingGenerator) loadLaunchTemplates(config aws.Config) error {
+	ec2svc := ec2.New(config)
+
+	p := ec2.NewDescribeLaunchTemplatesPaginator(ec2svc.DescribeLaunchTemplatesRequest(&ec2.DescribeLaunchTemplatesInput{}))
+	for p.Next(context.Background()) {
+		for _, lt := range p.CurrentPage().LaunchTemplates {
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				aws.StringValue(lt.LaunchTemplateId),
 				aws.StringValue(lt.LaunchTemplateName),
@@ -89,12 +91,8 @@ func (g *AutoScalingGenerator) loadLaunchTemplates(sess *session.Session) error 
 				AsgAllowEmptyValues,
 			))
 		}
-		return !lastPage
-	})
-	if err != nil {
-		return err
 	}
-	return err
+	return p.Err()
 }
 
 // Generate TerraformResources from AWS API,
@@ -102,15 +100,18 @@ func (g *AutoScalingGenerator) loadLaunchTemplates(sess *session.Session) error 
 // Need only ASG name as ID for terraform resource
 // AWS api support paging
 func (g *AutoScalingGenerator) InitResources() error {
-	sess := g.generateSession()
-	svc := autoscaling.New(sess)
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
+	svc := autoscaling.New(config)
 	if err := g.loadAutoScalingGroups(svc); err != nil {
 		return err
 	}
 	if err := g.loadLaunchConfigurations(svc); err != nil {
 		return err
 	}
-	if err := g.loadLaunchTemplates(sess); err != nil {
+	if err := g.loadLaunchTemplates(config); err != nil {
 		return err
 	}
 	return nil

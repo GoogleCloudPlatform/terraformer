@@ -12,37 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package aws
+package linode
 
 import (
 	"context"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/aws/aws-sdk-go-v2/service/eks"
+	"github.com/linode/linodego"
 )
 
-var eksAllowEmptyValues = []string{"tags."}
-
-type EksGenerator struct {
-	AWSService
+type RDNSGenerator struct {
+	LinodeService
 }
 
-func (g *EksGenerator) InitResources() error {
-	config, e := g.generateConfig()
-	if e != nil {
-		return e
+func (g RDNSGenerator) createResources(instanceIPList []linodego.InstanceIP) []terraform_utils.Resource {
+	var resources []terraform_utils.Resource
+	for _, instanceIP := range instanceIPList {
+		resources = append(resources, terraform_utils.NewSimpleResource(
+			instanceIP.Address,
+			instanceIP.Address,
+			"linode_rdns",
+			"linode",
+			[]string{}))
 	}
-	svc := eks.New(config)
-	p := eks.NewListClustersPaginator(svc.ListClustersRequest(&eks.ListClustersInput{}))
-	for p.Next(context.Background()) {
-		for _, clusterName := range p.CurrentPage().Clusters {
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-				clusterName,
-				clusterName,
-				"aws_eks_cluster",
-				"aws",
-				eksAllowEmptyValues,
-			))
-		}
+	return resources
+}
+
+func (g *RDNSGenerator) InitResources() error {
+	client := g.generateClient()
+	output, err := client.ListIPAddresses(context.Background(), nil)
+	if err != nil {
+		return err
 	}
-	return p.Err()
+	g.Resources = g.createResources(output)
+	return nil
 }

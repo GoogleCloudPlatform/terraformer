@@ -15,12 +15,13 @@
 package aws
 
 import (
+	"context"
 	"log"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
 var eipAllowEmptyValues = []string{"tags."}
@@ -29,9 +30,9 @@ type ElasticIpGenerator struct {
 	AWSService
 }
 
-func (g ElasticIpGenerator) createElasticIpsResources(svc *ec2.EC2) []terraform_utils.Resource {
+func (g ElasticIpGenerator) createElasticIpsResources(svc *ec2.Client) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
-	addresses, err := svc.DescribeAddresses(&ec2.DescribeAddressesInput{})
+	addresses, err := svc.DescribeAddressesRequest(&ec2.DescribeAddressesInput{}).Send(context.Background())
 
 	if err != nil {
 		log.Println(err)
@@ -54,8 +55,11 @@ func (g ElasticIpGenerator) createElasticIpsResources(svc *ec2.EC2) []terraform_
 // Generate TerraformResources from AWS API,
 // create terraform resource for each elastic IPs
 func (g *ElasticIpGenerator) InitResources() error {
-	sess := g.generateSession()
-	svc := ec2.New(sess)
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
+	svc := ec2.New(config)
 
 	g.Resources = g.createElasticIpsResources(svc)
 	return nil

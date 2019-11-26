@@ -75,7 +75,7 @@ Flags:
   -h, --help                  help for google
   -o, --path-output string     (default "generated")
   -p, --path-pattern string   {output}/{provider}/ (default "{output}/{provider}/{service}/")
-      --projects strings      
+      --projects strings
   -z, --regions strings       europe-west1, (default [global])
   -r, --resources strings     firewalls,networks
   -s, --state string          local or bucket (default "local")
@@ -121,6 +121,18 @@ After reviewing/customizing the planfile, begin the import by running `import pl
 ```
 $ terraformer import plan generated/google/my-project/terraformer/plan.json
 ```
+
+### Resource structure
+
+Terraformer by default separates each resource into a file, which is put into a given service directory.
+
+The default path for resource files is `{output}/{provider}/{service}/{resource}.tf` and can vary for each provider.
+
+It's possible to adjust the generated structure by:
+1. Using `--compact` parameter to group resource files within a single service into one `resources.tf` file
+2. Adjusting the `--path-pattern` parameter and passing e.g. `--path-pattern {output}/{provider}/` to generate resources for all services in one directory
+
+It's possible to combine `--compact` `--path-pattern` parameters together.
 
 ### Installation
 
@@ -174,6 +186,7 @@ Links to download Terraform Providers:
     * Vultr provider >1.0.5 - [here](https://releases.hashicorp.com/terraform-provider-vultr/)
 * Infrastructure Software
     * Kubernetes provider >=1.9.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
+    * RabbitMQ provider >=1.1.0 - [here](https://releases.hashicorp.com/terraform-provider-rabbitmq/)
 * Network
     * Cloudflare provider >1.16 - [here](https://releases.hashicorp.com/terraform-provider-cloudflare/)
 * VCS
@@ -331,9 +344,11 @@ Your `tf` and `tfstate` files are written by default to
 Example:
 
 ```
- terraformer import aws --resources=vpc,subnet --connect=true --regions=eu-west-1 --profile=prod
+ terraformer import aws --resources=vpc,subnet --connect=true --regions=eu-west-1 --profile=prod --debug
  terraformer import aws --resources=vpc,subnet --filter=aws_vpc=vpc_id1:vpc_id2:vpc_id3 --regions=eu-west-1
 ```
+
+To turn on HTTP request/response debugging, you can use `--debug` parameter.
 
 #### Profiles support
 
@@ -404,6 +419,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_kinesis_firehose_delivery_stream`
 *   `glue`
     * `glue_crawler`
+    * `aws_glue_catalog_database`
+    * `aws_glue_catalog_table`
 *   `iam`
     * `aws_iam_role`
     * `aws_iam_role_policy`
@@ -442,6 +459,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_route53_record`
 *   `route_table`
     * `aws_route_table`
+    * `aws_main_route_table_association`
+    * `aws_route_table_association`
 *   `s3`
     * `aws_s3_bucket`
     * `aws_s3_bucket_policy`
@@ -486,6 +505,10 @@ Will only import AWS EC2 instances along with EBS volumes annotated with tag `co
 terraformer import aws --resources=ec2_instance,ebs --filter=Type=ec2_instance;Name=tags.costCenter;Value=20000:'20001:1' --regions=eu-west-1
 ```
 Will work as same as example above with a change the filter will be applicable only to `ec2_instance` resources.
+
+#### SQS queues retrieval
+
+Terraformer uses AWS [ListQueues](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_ListQueues.html) API call to fetch available queues. The API is able to return only up to 1000 queues and an additional name prefix should be passed to filter the list results. It's possible to pass `QueueNamePrefix` parameter by environmental variable `SQS_PREFIX`.
 
 ### Use with Azure
 
@@ -586,6 +609,8 @@ List of supported DigitalOcean resources:
 
 *   `cdn`
     * `digitalocean_cdn`
+*   `certificate`
+    * `digitalocean_certificate`
 *   `database_cluster`
     * `digitalocean_database_cluster`
 *   `domain`
@@ -669,14 +694,21 @@ List of supported Linode resources:
 
 *   `domain`
     * `linode_domain`
+    * `linode_domain_record`
 *   `image`
     * `linode_image`
 *   `instance`
     * `linode_instance`
 *   `nodebalancer`
     * `linode_nodebalancer`
+    * `linode_nodebalancer_config`
+    * `linode_nodebalancer_node`
+*   `rdns`
+    * `linode_rdns`
 *   `sshkey`
     * `linode_sshkey`
+*   `stackscript`
+    * `linode_stackscript`
 *   `token`
     * `linode_token`
 *   `volume`

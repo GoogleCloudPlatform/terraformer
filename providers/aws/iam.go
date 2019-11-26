@@ -15,15 +15,16 @@
 package aws
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 
-	"github.com/aws/aws-sdk-go/service/iam"
+	"github.com/aws/aws-sdk-go-v2/service/iam"
 
-	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go-v2/aws"
 )
 
 var IamAllowEmptyValues = []string{"tags."}
@@ -35,8 +36,11 @@ type IamGenerator struct {
 }
 
 func (g *IamGenerator) InitResources() error {
-	sess := g.generateSession()
-	svc := iam.New(sess)
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
+	svc := iam.New(config)
 	g.Resources = []terraform_utils.Resource{}
 	err := g.getUsers(svc)
 	if err != nil {
@@ -61,9 +65,10 @@ func (g *IamGenerator) InitResources() error {
 	return nil
 }
 
-func (g *IamGenerator) getRoles(svc *iam.IAM) error {
-	err := svc.ListRolesPages(&iam.ListRolesInput{}, func(roles *iam.ListRolesOutput, lastPages bool) bool {
-		for _, role := range roles.Roles {
+func (g *IamGenerator) getRoles(svc *iam.Client) error {
+	p := iam.NewListRolesPaginator(svc.ListRolesRequest(&iam.ListRolesInput{}))
+	for p.Next(context.Background()) {
+		for _, role := range p.CurrentPage().Roles {
 			roleID := aws.StringValue(role.RoleId)
 			roleName := aws.StringValue(role.RoleName)
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
@@ -72,28 +77,30 @@ func (g *IamGenerator) getRoles(svc *iam.IAM) error {
 				"aws_iam_role",
 				"aws",
 				IamAllowEmptyValues))
-			listRolePolicies, err := svc.ListRolePolicies(&iam.ListRolePoliciesInput{RoleName: role.RoleName})
-			if err != nil {
+			rolePoliciesPage := iam.NewListRolePoliciesPaginator(svc.ListRolePoliciesRequest(&iam.ListRolePoliciesInput{RoleName: role.RoleName}))
+			for rolePoliciesPage.Next(context.Background()) {
+				for _, policyName := range rolePoliciesPage.CurrentPage().PolicyNames {
+					g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+						roleName+":"+policyName,
+						roleName+"_"+policyName,
+						"aws_iam_role_policy",
+						"aws",
+						IamAllowEmptyValues))
+				}
+			}
+			if err := rolePoliciesPage.Err(); err != nil {
 				log.Println(err)
 				continue
 			}
-			for _, policyName := range listRolePolicies.PolicyNames {
-				g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-					roleName+":"+aws.StringValue(policyName),
-					roleName+"_"+aws.StringValue(policyName),
-					"aws_iam_role_policy",
-					"aws",
-					IamAllowEmptyValues))
-			}
 		}
-		return !lastPages
-	})
-	return err
+	}
+	return p.Err()
 }
 
-func (g *IamGenerator) getUsers(svc *iam.IAM) error {
-	err := svc.ListUsersPages(&iam.ListUsersInput{}, func(users *iam.ListUsersOutput, lastPage bool) bool {
-		for _, user := range users.Users {
+func (g *IamGenerator) getUsers(svc *iam.Client) error {
+	p := iam.NewListUsersPaginator(svc.ListUsersRequest(&iam.ListUsersInput{}))
+	for p.Next(context.Background()) {
+		for _, user := range p.CurrentPage().Users {
 			resourceName := aws.StringValue(user.UserName)
 			g.Resources = append(g.Resources, terraform_utils.NewResource(
 				resourceName,
@@ -105,18 +112,20 @@ func (g *IamGenerator) getUsers(svc *iam.IAM) error {
 				},
 				IamAllowEmptyValues,
 				map[string]interface{}{}))
-			g.getUserPolices(svc, user.UserName)
+			err := g.getUserPolices(svc, user.UserName)
+			if err != nil {
+				log.Println(err)
+			}
 			//g.getUserGroup(svc, user.UserName) //not work maybe terraform-aws bug
 		}
-
-		return !lastPage
-	})
-	return err
+	}
+	return p.Err()
 }
 
-func (g *IamGenerator) getUserGroup(svc *iam.IAM, userName *string) error {
-	err := svc.ListGroupsForUserPages(&iam.ListGroupsForUserInput{UserName: userName}, func(userGroup *iam.ListGroupsForUserOutput, lastPage bool) bool {
-		for _, group := range userGroup.Groups {
+func (g *IamGenerator) getUserGroup(svc *iam.Client, userName *string) error {
+	p := iam.NewListGroupsForUserPaginator(svc.ListGroupsForUserRequest(&iam.ListGroupsForUserInput{UserName: userName}))
+	for p.Next(context.Background()) {
+		for _, group := range p.CurrentPage().Groups {
 			resourceName := aws.StringValue(group.GroupName)
 			groupIDAttachment := aws.StringValue(group.GroupName)
 			g.Resources = append(g.Resources, terraform_utils.NewResource(
@@ -129,17 +138,17 @@ func (g *IamGenerator) getUserGroup(svc *iam.IAM, userName *string) error {
 				IamAdditionalFields,
 			))
 		}
-		return !lastPage
-	})
-	return err
+	}
+	return p.Err()
 }
 
-func (g *IamGenerator) getUserPolices(svc *iam.IAM, userName *string) error {
-	err := svc.ListUserPoliciesPages(&iam.ListUserPoliciesInput{UserName: userName}, func(userPolices *iam.ListUserPoliciesOutput, lastPage bool) bool {
-		for _, policy := range userPolices.PolicyNames {
-			resourceName := aws.StringValue(userName) + "_" + aws.StringValue(policy)
+func (g *IamGenerator) getUserPolices(svc *iam.Client, userName *string) error {
+	p := iam.NewListUserPoliciesPaginator(svc.ListUserPoliciesRequest(&iam.ListUserPoliciesInput{UserName: userName}))
+	for p.Next(context.Background()) {
+		for _, policy := range p.CurrentPage().PolicyNames {
+			resourceName := aws.StringValue(userName) + "_" + policy
 			resourceName = strings.Replace(resourceName, "@", "", -1)
-			policyID := aws.StringValue(userName) + ":" + aws.StringValue(policy)
+			policyID := aws.StringValue(userName) + ":" + policy
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				policyID,
 				resourceName,
@@ -147,14 +156,14 @@ func (g *IamGenerator) getUserPolices(svc *iam.IAM, userName *string) error {
 				"aws",
 				IamAllowEmptyValues))
 		}
-		return !lastPage
-	})
-	return err
+	}
+	return p.Err()
 }
 
-func (g *IamGenerator) getPolicies(svc *iam.IAM) error {
-	err := svc.ListPoliciesPages(&iam.ListPoliciesInput{}, func(policies *iam.ListPoliciesOutput, lastPage bool) bool {
-		for _, policy := range policies.Policies {
+func (g *IamGenerator) getPolicies(svc *iam.Client) error {
+	p := iam.NewListPoliciesPaginator(svc.ListPoliciesRequest(&iam.ListPoliciesInput{Scope:iam.PolicyScopeTypeLocal}))
+	for p.Next(context.Background()) {
+		for _, policy := range p.CurrentPage().Policies {
 			resourceName := aws.StringValue(policy.PolicyName)
 			policyARN := aws.StringValue(policy.Arn)
 
@@ -169,10 +178,6 @@ func (g *IamGenerator) getPolicies(svc *iam.IAM) error {
 				},
 				IamAllowEmptyValues,
 				IamAdditionalFields))
-			// not use AWS main policy
-			if strings.HasPrefix(policyARN, "arn:aws:iam::aws:policy") {
-				continue
-			}
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				policyARN,
 				resourceName,
@@ -181,14 +186,14 @@ func (g *IamGenerator) getPolicies(svc *iam.IAM) error {
 				IamAllowEmptyValues))
 
 		}
-		return !lastPage
-	})
-	return err
+	}
+	return p.Err()
 }
 
-func (g *IamGenerator) getGroups(svc *iam.IAM) error {
-	err := svc.ListGroupsPages(&iam.ListGroupsInput{}, func(groups *iam.ListGroupsOutput, lastPage bool) bool {
-		for _, group := range groups.Groups {
+func (g *IamGenerator) getGroups(svc *iam.Client) error {
+	p := iam.NewListGroupsPaginator(svc.ListGroupsRequest(&iam.ListGroupsInput{}))
+	for p.Next(context.Background()) {
+		for _, group := range p.CurrentPage().Groups {
 			resourceName := aws.StringValue(group.GroupName)
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				resourceName,
@@ -207,10 +212,11 @@ func (g *IamGenerator) getGroups(svc *iam.IAM) error {
 				},
 				[]string{"tags.", "users."},
 				IamAdditionalFields))
-			_ = svc.ListGroupPoliciesPages(&iam.ListGroupPoliciesInput{GroupName: group.GroupName}, func(policyGroup *iam.ListGroupPoliciesOutput, lastPage bool) bool {
-				for _, policy := range policyGroup.PolicyNames {
-					id := resourceName + ":" + aws.StringValue(policy)
-					groupPolicyName := resourceName + "_" + aws.StringValue(policy)
+			groupPoliciesPage := iam.NewListGroupPoliciesPaginator(svc.ListGroupPoliciesRequest(&iam.ListGroupPoliciesInput{GroupName: group.GroupName}))
+			for groupPoliciesPage.Next(context.Background()) {
+				for _, policy := range groupPoliciesPage.CurrentPage().PolicyNames {
+					id := resourceName + ":" + policy
+					groupPolicyName := resourceName + "_" + policy
 					g.Resources = append(g.Resources, terraform_utils.NewResource(
 						id,
 						groupPolicyName,
@@ -220,13 +226,13 @@ func (g *IamGenerator) getGroups(svc *iam.IAM) error {
 						IamAllowEmptyValues,
 						IamAdditionalFields))
 				}
-				return !lastPage
-			})
-
+			}
+			if err := groupPoliciesPage.Err(); err != nil {
+				log.Println(err)
+			}
 		}
-		return !lastPage
-	})
-	return err
+	}
+	return p.Err()
 }
 
 // PostGenerateHook for add policy json as heredoc

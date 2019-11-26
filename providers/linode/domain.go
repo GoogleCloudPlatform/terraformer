@@ -26,25 +26,51 @@ type DomainGenerator struct {
 	LinodeService
 }
 
-func (g DomainGenerator) createResources(domainList []linodego.Domain) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g *DomainGenerator) loadDomains(client linodego.Client) ([]linodego.Domain, error) {
+	domainList, err := client.ListDomains(context.Background(), nil)
+	if err != nil {
+		return nil, err
+	}
 	for _, domain := range domainList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 			strconv.Itoa(domain.ID),
 			strconv.Itoa(domain.ID),
 			"linode_domain",
 			"linode",
 			[]string{}))
 	}
-	return resources
+	return domainList, nil
+}
+
+func (g *DomainGenerator) loadDomainRecords(client linodego.Client, domainID int) error {
+	domainRecordList, err := client.ListDomainRecords(context.Background(), domainID, nil)
+	if err != nil {
+		return err
+	}
+	for _, domainRecord := range domainRecordList {
+		g.Resources = append(g.Resources, terraform_utils.NewResource(
+			strconv.Itoa(domainRecord.ID),
+			strconv.Itoa(domainRecord.ID),
+			"linode_domain_record",
+			"linode",
+			map[string]string{"domain_id": strconv.Itoa(domainID)},
+			[]string{},
+			map[string]interface{}{}))
+	}
+	return nil
 }
 
 func (g *DomainGenerator) InitResources() error {
 	client := g.generateClient()
-	output, err := client.ListDomains(context.Background(), nil)
+	domainList, err := g.loadDomains(client)
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(output)
+	for _, domain := range domainList {
+		err := g.loadDomainRecords(client, domain.ID)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }

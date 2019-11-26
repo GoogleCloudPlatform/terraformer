@@ -15,9 +15,10 @@
 package aws
 
 import (
+	"context"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/cloudfront"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/cloudfront"
 )
 
 var cloudFrontAllowEmptyValues = []string{"tags."}
@@ -27,10 +28,14 @@ type CloudFrontGenerator struct {
 }
 
 func (g *CloudFrontGenerator) InitResources() error {
-	sess := g.generateSession()
-	svc := cloudfront.New(sess)
-	err := svc.ListDistributionsPages(&cloudfront.ListDistributionsInput{}, func(distributions *cloudfront.ListDistributionsOutput, lastPage bool) bool {
-		for _, distribution := range distributions.DistributionList.Items {
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
+	svc := cloudfront.New(config)
+	p := cloudfront.NewListDistributionsPaginator(svc.ListDistributionsRequest(&cloudfront.ListDistributionsInput{}))
+	for p.Next(context.Background()) {
+		for _, distribution := range p.CurrentPage().DistributionList.Items {
 			r := terraform_utils.NewResource(
 				aws.StringValue(distribution.Id),
 				aws.StringValue(distribution.Id),
@@ -45,11 +50,6 @@ func (g *CloudFrontGenerator) InitResources() error {
 			r.IgnoreKeys = append(r.IgnoreKeys, "^active_trusted_signers.(.*)")
 			g.Resources = append(g.Resources, r)
 		}
-		return true
-	})
-	if err != nil {
-		return err
 	}
-	return nil
-
+	return p.Err()
 }

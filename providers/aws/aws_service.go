@@ -15,27 +15,37 @@
 package aws
 
 import (
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/aws/external"
+	"github.com/aws/aws-sdk-go-v2/aws/stscreds"
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-
-	"github.com/aws/aws-sdk-go/aws/credentials/stscreds"
-	"github.com/aws/aws-sdk-go/aws/session"
 )
 
 type AWSService struct {
 	terraform_utils.Service
 }
 
-func (s *AWSService) generateSession() *session.Session {
-	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		AssumeRoleTokenProvider: stscreds.StdinTokenProvider,
-	}))
+func (s *AWSService) generateConfig() (aws.Config, error) {
+
+	config, e := external.LoadDefaultAWSConfig(external.WithMFATokenFunc(stscreds.StdinTokenProvider))
+	if e != nil {
+		return config, e
+	}
+	if s.GetArgs()["debug"] == "true" {
+		config.LogLevel = aws.LogDebugWithHTTPBody
+	}
+
+	creds, e := config.Credentials.Retrieve()
+
+	if e != nil {
+		return config, e
+	}
 
 	// terraform cannot ask for MFA token, so we need to pass STS session token, which might contain credentials with MFA requirement
 	accessKey := os.Getenv("AWS_SECRET_ACCESS_KEY")
 	if accessKey == "" {
-		creds, _ := sess.Config.Credentials.Get()
 		os.Setenv("AWS_ACCESS_KEY_ID", creds.AccessKeyID)
 		os.Setenv("AWS_SECRET_ACCESS_KEY", creds.SecretAccessKey)
 
@@ -44,5 +54,5 @@ func (s *AWSService) generateSession() *session.Session {
 		}
 	}
 
-	return sess
+	return config, nil
 }
