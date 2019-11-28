@@ -17,7 +17,6 @@ package aws
 import (
 	"context"
 	"fmt"
-	"gonum.org/v1/gonum/graph"
 	"math"
 	"strings"
 
@@ -25,9 +24,6 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
-)
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ec2"
 
 	simplegraph "gonum.org/v1/gonum/graph/simple"
 	"gonum.org/v1/gonum/graph/topo"
@@ -44,18 +40,10 @@ type SecurityGenerator struct {
 	AWSService
 }
 
-type SecurityGroupRule struct {
-	sourceSG        *ec2.SecurityGroup
-	ipPermission    *ec2.IpPermission
-	userIdGroupPair *ec2.UserIdGroupPair
-}
-
-
 func (SecurityGenerator) createResources(securityGroups []ec2.SecurityGroup) []terraform_utils.Resource {
-	rulesToMoveOut := findRulesToMoveOut(securityGroups)
+	sgsToMoveOut := findSgsToMoveOut(securityGroups)
 
-	fmt.Printf("%+v\n", rulesToMoveOut)
-
+	fmt.Printf("%+v\n", sgsToMoveOut)
 
 	var resources []terraform_utils.Resource
 	for _, sg := range securityGroups {
@@ -72,18 +60,16 @@ func (SecurityGenerator) createResources(securityGroups []ec2.SecurityGroup) []t
 	return resources
 }
 
-// Let's try to find all cycles in build linear graph by applying Johnson's method on the directed graph
-func findRulesToMoveOut(securityGroups []*ec2.SecurityGroup) []*SecurityGroupRule {
+// Let's try to find all cycles by applying Johnson's method on the directed graph (very naive implementation)
+func findSgsToMoveOut(securityGroups []ec2.SecurityGroup) []*ec2.SecurityGroup {
 	// Edges are security groups, vertexes are rules. The task is to find correct set of rule definitions, so that we
 	// won't have cycles
 	// TODO verify cross account rules (are they working fine?)
-	sourceGraph := simplegraph.NewWeightedDirectedGraph(-1, absent)
-	idToSg := make(map[int64]*ec2.SecurityGroup)
-	idToSecurityGroupRule := make(map[int]SecurityGroupRule)
+	sourceGraph := simplegraph.NewDirectedGraph()
+	idToSg := make(map[int]ec2.SecurityGroup)
 	sgToIdx := make(map[string]int64)
-	sgToLineEdges := make(map[*ec2.SecurityGroup][]graph.Edge)
 	for idx, sg := range securityGroups {
-		idToSg[int64(idx)] = sg
+		idToSg[idx] = sg
 		sgToIdx[aws.StringValue(sg.GroupId)] = int64(idx)
 		sourceGraph.AddNode(sourceGraph.NewNode())
 	}
@@ -95,80 +81,50 @@ func findRulesToMoveOut(securityGroups []*ec2.SecurityGroup) []*SecurityGroupRul
 					fromNode := sourceGraph.Node(int64(idx))
 					toNode := sourceGraph.Node(sgToIdx[aws.StringValue(pair.GroupId)])
 					if fromNode.ID() != toNode.ID() {
-						i := len(idToSecurityGroupRule)
-						idToSecurityGroupRule[i] = SecurityGroupRule{
-							sourceSG:        sg,
-							ipPermission:    rule,
-							userIdGroupPair: pair,
-						}
-						sourceGraph.SetWeightedEdge(sourceGraph.NewWeightedEdge(fromNode, toNode, float64(i)))
+						sourceGraph.SetEdge(sourceGraph.NewEdge(fromNode, toNode))
 					}
 				}
 			}
 		}
 	}
-	// we'll try to split edges that are connected to security group with lowest number of rules
-	// ref https://stackoverflow.com/a/947519/3784897
-	lineGraph := simplegraph.NewDirectedGraph()
-	targetNodeToSGRule := make(map[int64]*SecurityGroupRule)
 
-	sourceNodes := sourceGraph.Nodes()
-	for sourceNodes.Next() {
-		sourceNode := sourceNodes.Node()
-		set := make(map[graph.Node]void)
-		allSourceEdges := sourceGraph.Edges()
-		for allSourceEdges.Next() {
-			sourceEdge := allSourceEdges.Edge()
-			if sourceEdge.From().ID() == sourceNode.ID() || sourceEdge.To().ID() == sourceNode.ID() {
-				lineNode(targetNodeToSGRule, idToSecurityGroupRule, sourceEdge.(graph.WeightedEdge), set, lineGraph)
-			}
-		}
-		group := idToSg[sourceNode.ID()]
-		var edges []graph.Edge
-		for k1 := range set { // create cliques
-			for k2 := range set {
-				if k1.ID() != k2.ID() {
-					edge := lineGraph.NewEdge(k1, k2)
-					lineGraph.SetEdge(edge)
-					edges = append(edges, edge)
+	cyclesInLineGraph := topo.DirectedCyclesIn(sourceGraph)
+
+	resultingSet := make(map[*ec2.SecurityGroup]void)
+
+	for idx, sg := range securityGroups {
+		for _, rule := range sg.IpPermissions {
+			pairs := rule.UserIdGroupPairs
+			for _, pair := range pairs {
+				if pair.GroupId != nil {
+					fromNode := sourceGraph.Node(int64(idx))
+					toNode := sourceGraph.Node(sgToIdx[aws.StringValue(pair.GroupId)])
+					if fromNode.ID() == toNode.ID() { // references to itself
+						resultingSet[&sg] = member
+					}
 				}
 			}
 		}
-		sgToLineEdges[group] = edges
 	}
 
-	cyclesInLineGraph := topo.DirectedCyclesIn(lineGraph)
-
-	var result []*SecurityGroupRule
 	for _, v := range cyclesInLineGraph {
 		// Try to move out first node
-		result = append(result, targetNodeToSGRule[v[0].ID()]) // TODO select rule with SG with least number of rules
+		id := v[0].ID()
+		group := idToSg[int(id)]
+		// TODO select rule with SG with least number of rules
+		// TODO check if any has been selected before as 1C
+		resultingSet[&group] = member
 	}
+
+	result := make([]*ec2.SecurityGroup, len(resultingSet))
+	i := 0
+	for k := range resultingSet {
+		// Try to move out first node
+		result[i] = k
+		i++
+	}
+
 	return result
-}
-
-func lineNode(targetNodeToSGRule map[int64]*SecurityGroupRule, idToSecurityGroupRule map[int]SecurityGroupRule,
-	sourceEdge graph.WeightedEdge, set map[graph.Node]void, lineGraph *simplegraph.DirectedGraph) {
-
-	idx := int(sourceEdge.Weight())
-	securityGroupRule := idToSecurityGroupRule[idx]
-
-	builtTargetNodes := lineGraph.Nodes()
-	for builtTargetNodes.Next() {
-		builtTargetNode := builtTargetNodes.Node()
-		if val, ok := targetNodeToSGRule[builtTargetNode.ID()]; ok {
-			if *val == securityGroupRule {
-				set[builtTargetNode] = member
-				return
-			}
-		}
-
-	}
-	node := lineGraph.NewNode()
-	lineGraph.AddNode(node)
-	// create a new line node for each edge
-	targetNodeToSGRule[node.ID()] = &securityGroupRule
-	set[node] = member
 }
 
 // Generate TerraformResources from AWS API,

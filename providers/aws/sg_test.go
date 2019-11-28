@@ -15,27 +15,121 @@
 package aws
 
 import (
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"reflect"
 	"testing"
 )
 
 func TestEmptySgs(t *testing.T) {
-	var securityGroups []*ec2.SecurityGroup
+	var securityGroups []ec2.SecurityGroup
 
-	rulesToMoveOut := findRulesToMoveOut(securityGroups)
+	rulesToMoveOut := findSgsToMoveOut(securityGroups)
 
-	if rulesToMoveOut != nil {
+	if !reflect.DeepEqual(rulesToMoveOut, []*ec2.SecurityGroup{}) {
 		t.Errorf("failed to calculate rules to move out %v", rulesToMoveOut)
 	}
 }
-func TestCycleReference(t *testing.T) {
+
+func Test1CycleReference(t *testing.T) {
 	sgA := ec2.SecurityGroup{
 		GroupId: aws.String("aaaa"),
-		IpPermissions: []*ec2.IpPermission{
+		IpPermissions: []ec2.IpPermission{
 			{
-				UserIdGroupPairs: []*ec2.UserIdGroupPair{
+				UserIdGroupPairs: []ec2.UserIdGroupPair{
+					{
+						GroupId: aws.String("aaaa"),
+					},
+				},
+			},
+			{},
+		},
+	}
+	securityGroups := []ec2.SecurityGroup{
+		sgA,
+	}
+
+	rulesToMoveOut := findSgsToMoveOut(securityGroups)
+
+	if !reflect.DeepEqual(rulesToMoveOut[0], &sgA) {
+		t.Errorf("failed to calculate rules to move out %v", rulesToMoveOut)
+	}
+}
+
+func Test2CycleReference(t *testing.T) {
+	sgA := ec2.SecurityGroup{
+		GroupId: aws.String("aaaa"),
+		IpPermissions: []ec2.IpPermission{
+			{
+				UserIdGroupPairs: []ec2.UserIdGroupPair{
+					{
+						GroupId: aws.String("bbbb"),
+					},
+				},
+			},
+		},
+	}
+	securityGroups := []ec2.SecurityGroup{
+		{
+			GroupId: aws.String("bbbb"),
+			IpPermissions: []ec2.IpPermission{
+				{
+					UserIdGroupPairs: []ec2.UserIdGroupPair{
+						{
+							GroupId: aws.String("aaaa"),
+						},
+					},
+				},
+				{},
+			},
+		},
+		sgA,
+	}
+
+	rulesToMoveOut := findSgsToMoveOut(securityGroups)
+
+	if !reflect.DeepEqual(rulesToMoveOut[0], &sgA) {
+		t.Errorf("failed to calculate rules to move out %v", rulesToMoveOut[0])
+	}
+}
+
+func TestNoCycleReference(t *testing.T) {
+	sgA := ec2.SecurityGroup{
+		GroupId: aws.String("aaaa"),
+		IpPermissions: []ec2.IpPermission{
+			{
+				UserIdGroupPairs: []ec2.UserIdGroupPair{
+					{
+						GroupId: aws.String("bbbb"),
+					},
+				},
+			},
+		},
+	}
+	securityGroups := []ec2.SecurityGroup{
+		{
+			GroupId: aws.String("bbbb"),
+			IpPermissions: []ec2.IpPermission{
+				{},
+				{},
+			},
+		},
+		sgA,
+	}
+
+	rulesToMoveOut := findSgsToMoveOut(securityGroups)
+
+	if len(rulesToMoveOut) != 0 {
+		t.Errorf("failed to calculate rules to move out %v", rulesToMoveOut[0])
+	}
+}
+
+func Test3CycleReference(t *testing.T) {
+	sgA := ec2.SecurityGroup{
+		GroupId: aws.String("aaaa"),
+		IpPermissions: []ec2.IpPermission{
+			{
+				UserIdGroupPairs: []ec2.UserIdGroupPair{
 					{
 						GroupId: aws.String("bbbb"),
 					},
@@ -44,25 +138,52 @@ func TestCycleReference(t *testing.T) {
 			{},
 		},
 	}
-	securityGroups := []*ec2.SecurityGroup{
-		&sgA,
+	securityGroups := []ec2.SecurityGroup{
+		sgA,
 		{
 			GroupId: aws.String("bbbb"),
-			IpPermissions: []*ec2.IpPermission{
+			IpPermissions: []ec2.IpPermission{
 				{
-					UserIdGroupPairs: []*ec2.UserIdGroupPair{
+					UserIdGroupPairs: []ec2.UserIdGroupPair{
+						{
+							GroupId: aws.String("cccc"),
+						},
+					},
+				},
+				{},
+			},
+		},
+		{
+			GroupId: aws.String("cccc"),
+			IpPermissions: []ec2.IpPermission{
+				{
+					UserIdGroupPairs: []ec2.UserIdGroupPair{
 						{
 							GroupId: aws.String("aaaa"),
 						},
 					},
 				},
+				{},
+			},
+		},
+		{
+			GroupId: aws.String("dddd"),
+			IpPermissions: []ec2.IpPermission{
+				{
+					UserIdGroupPairs: []ec2.UserIdGroupPair{
+						{
+							GroupId: aws.String("aaaa"),
+						},
+					},
+				},
+				{},
 			},
 		},
 	}
 
-	rulesToMoveOut := findRulesToMoveOut(securityGroups)
+	rulesToMoveOut := findSgsToMoveOut(securityGroups)
 
-	if !reflect.DeepEqual(rulesToMoveOut[0].sourceSG, &sgA) {
+	if !reflect.DeepEqual(rulesToMoveOut[0], &sgA) {
 		t.Errorf("failed to calculate rules to move out %v", rulesToMoveOut)
 	}
 }
