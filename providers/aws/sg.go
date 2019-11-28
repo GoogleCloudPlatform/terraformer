@@ -17,7 +17,6 @@ package aws
 import (
 	"context"
 	"fmt"
-	"math"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
@@ -34,7 +33,6 @@ var SgAllowEmptyValues = []string{"tags."}
 type void struct{}
 
 var member void
-var absent = math.Inf(1)
 
 type SecurityGenerator struct {
 	AWSService
