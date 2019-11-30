@@ -753,6 +753,7 @@ List of supported Vultr resources:
     * `vultr_block_storage`
 *   `dns_domain`
     * `vultr_dns_domain`
+    * `vultr_dns_record`
 *   `firewall_group`
     * `vultr_firewall_group`
 *   `network`
