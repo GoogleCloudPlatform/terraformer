@@ -137,7 +137,7 @@ func baseRuleAttributes(ruleType string, rule ec2.IpPermission, sg ec2.SecurityG
 }
 
 // Let's try to find all cycles by applying Johnson's method on the directed graph
-// We cannot build a directed graph and move out only rules
+// We cannot build a line graph and move out only rules because of hashicorp/terraform#11011
 func findSgsToMoveOut(securityGroups []ec2.SecurityGroup) []string {
 	// Vertexes are security groups, edges are rules. The task is to find correct set of rule definitions, so that we
 	// won't have cycles
@@ -172,7 +172,7 @@ func findSgsToMoveOut(securityGroups []ec2.SecurityGroup) []string {
 			continue
 		}
 
-		// Try to move out node with lowest number of permissions
+		// Try to move out node with lowest number of rules
 		group := idToSg[int(v[0].ID())]
 		for _, vi := range v {
 			viGroup := idToSg[int(vi.ID())]
@@ -187,7 +187,6 @@ func findSgsToMoveOut(securityGroups []ec2.SecurityGroup) []string {
 	result := make([]string, len(resultingSet))
 	i := 0
 	for k := range resultingSet {
-		// Try to move out first node
 		result[i] = k
 		i++
 	}
@@ -207,9 +206,6 @@ func elementAlreadyFound(resultingSet map[string]void, v []graph.Node, idToSg ma
 	return false
 }
 
-// Generate TerraformResources from AWS API,
-// from each security group create 1 TerraformResource.
-// Need GroupId as ID for terraform resource
 func (g *SecurityGenerator) InitResources() error {
 	config, err := g.generateConfig()
 	if err != nil {
@@ -227,7 +223,6 @@ func (g *SecurityGenerator) InitResources() error {
 	return nil
 }
 
-// PostGenerateHook - replace sg-xxxxx string to terraform ID in all security group
 func (g *SecurityGenerator) PostConvertHook() error {
 	for _, resource := range g.Resources {
 		if resource.InstanceInfo.Type == "aws_security_group_rule" {
