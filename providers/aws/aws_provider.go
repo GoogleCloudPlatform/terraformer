@@ -110,6 +110,14 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 			"sns": []string{"topic_arn", "id"},
 			"sqs": []string{"endpoint", "arn"},
 		},
+		"sg": {
+			"sg": []string{
+				"egress.security_groups", "id",
+				"ingress.security_groups", "id",
+				"security_group_id", "id",
+				"source_security_group_id", "id",
+			},
+		},
 		"subnet":         {"vpc": []string{"vpc_id", "id"}},
 		"vpn_gateway":    {"vpc": []string{"vpc_id", "id"}},
 		"vpn_connection": {"vpn_gateway": []string{"vpn_gateway_id", "id"}},
