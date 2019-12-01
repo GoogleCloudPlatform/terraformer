@@ -352,7 +352,7 @@ To turn on HTTP request/response debugging, you can use `--debug` parameter.
 
 #### Profiles support
 
-To load profiles from the shared AWS configuration file (typically `~/.aws/config`), set the `AWS_SDK_LOAD_CONFIG` to `true`:
+AWS configuration including environmental variables, shared credentials file (~/.aws/credentials), and shared config file (~/.aws/config) will be loaded by the tool by default. To use a specific profile, you can use the following command:
 
 ```
 AWS_SDK_LOAD_CONFIG=true terraformer import aws --resources=vpc,subnet --regions=eu-west-1 --profile=prod
