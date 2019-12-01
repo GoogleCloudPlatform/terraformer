@@ -26,7 +26,7 @@ func TestEmptySgs(t *testing.T) {
 
 	rulesToMoveOut := findSgsToMoveOut(securityGroups)
 
-	if !reflect.DeepEqual(rulesToMoveOut, []*ec2.SecurityGroup{}) {
+	if !reflect.DeepEqual(rulesToMoveOut, []string{}) {
 		t.Errorf("failed to calculate rules to move out %v", rulesToMoveOut)
 	}
 }
@@ -51,7 +51,7 @@ func Test1CycleReference(t *testing.T) {
 
 	rulesToMoveOut := findSgsToMoveOut(securityGroups)
 
-	if !reflect.DeepEqual(rulesToMoveOut[0], &sgA) {
+	if !reflect.DeepEqual(rulesToMoveOut, []string{}) {
 		t.Errorf("failed to calculate rules to move out %v", rulesToMoveOut)
 	}
 }
@@ -88,8 +88,8 @@ func Test2CycleReference(t *testing.T) {
 
 	rulesToMoveOut := findSgsToMoveOut(securityGroups)
 
-	if !reflect.DeepEqual(rulesToMoveOut[0], &sgA) {
-		t.Errorf("failed to calculate rules to move out %v", rulesToMoveOut[0])
+	if !reflect.DeepEqual(rulesToMoveOut[0], *sgA.GroupId) {
+		t.Errorf("failed to calculate rules to move out %v", rulesToMoveOut)
 	}
 }
 
@@ -120,14 +120,21 @@ func TestNoCycleReference(t *testing.T) {
 	rulesToMoveOut := findSgsToMoveOut(securityGroups)
 
 	if len(rulesToMoveOut) != 0 {
-		t.Errorf("failed to calculate rules to move out %v", rulesToMoveOut[0])
+		t.Errorf("failed to calculate rules to move out %v", rulesToMoveOut)
 	}
 }
 
-func Test3CycleReference(t *testing.T) {
+func Test3Cycle1CycleReference(t *testing.T) {
 	sgA := ec2.SecurityGroup{
 		GroupId: aws.String("aaaa"),
 		IpPermissions: []ec2.IpPermission{
+			{
+				UserIdGroupPairs: []ec2.UserIdGroupPair{
+					{
+						GroupId: aws.String("aaaa"),
+					},
+				},
+			},
 			{
 				UserIdGroupPairs: []ec2.UserIdGroupPair{
 					{
@@ -135,7 +142,6 @@ func Test3CycleReference(t *testing.T) {
 					},
 				},
 			},
-			{},
 		},
 	}
 	securityGroups := []ec2.SecurityGroup{
@@ -183,7 +189,7 @@ func Test3CycleReference(t *testing.T) {
 
 	rulesToMoveOut := findSgsToMoveOut(securityGroups)
 
-	if !reflect.DeepEqual(rulesToMoveOut[0], &sgA) {
+	if !reflect.DeepEqual(rulesToMoveOut[0], *sgA.GroupId) {
 		t.Errorf("failed to calculate rules to move out %v", rulesToMoveOut)
 	}
 }

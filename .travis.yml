@@ -12,5 +12,6 @@ before_script: go mod vendor
 
 script:
   - go build -v
+  - go test ./...
   - go vet
   - find . -not \( \( -wholename './.git' -o -wholename '*/vendor/*' \) -prune \) -name '*.go' | xargs gofmt -s -d
