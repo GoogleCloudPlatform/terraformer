@@ -90,9 +90,33 @@ func (SecurityGenerator) createResources(securityGroups []ec2.SecurityGroup) []t
 
 func processRule(rule ec2.IpPermission, ruleType string, sg ec2.SecurityGroup, resources []terraform_utils.Resource) []terraform_utils.Resource {
 	if rule.UserIdGroupPairs != nil && len(rule.UserIdGroupPairs) > 0 {
+		if len(rule.IpRanges) > 0 { // we must unwind coupled CIDR IPv4 range + security group rules
+			attributes := baseRuleAttributes(ruleType, rule, sg)
+			resources = append(resources, terraform_utils.NewResource(
+				permissionId(*sg.GroupId, ruleType, "", rule),
+				permissionId(*sg.GroupId, ruleType, "", rule),
+				"aws_security_group_rule",
+				"aws",
+				flatmap.Flatten(attributes),
+				SgAllowEmptyValues,
+				map[string]interface{}{}))
+		}
+		if len(rule.Ipv6Ranges) > 0 { // we must unwind coupled CIDR IPv6 range + security group rules
+			attributes := baseRuleAttributes(ruleType, rule, sg)
+			resources = append(resources, terraform_utils.NewResource(
+				permissionId(*sg.GroupId, ruleType, "", rule),
+				permissionId(*sg.GroupId, ruleType, "", rule),
+				"aws_security_group_rule",
+				"aws",
+				flatmap.Flatten(attributes),
+				SgAllowEmptyValues,
+				map[string]interface{}{}))
+		}
 		for _, groupPair := range rule.UserIdGroupPairs {
 
 			attributes := baseRuleAttributes(ruleType, rule, sg)
+			delete(attributes, "cidr_blocks")
+			delete(attributes, "ipv6_cidr_blocks")
 			if *groupPair.GroupId == *sg.GroupId { // Solution to C1
 				attributes["self"] = true
 			} else {
