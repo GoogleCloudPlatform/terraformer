@@ -39,7 +39,7 @@ func TestSimpleReference(t *testing.T) {
 	resources := ConnectServices(importResources, true, resourceConnections)
 
 	if !reflect.DeepEqual(resources["type1"][0].Item, map[string]interface{}{
-		"type2_ref": "${data.terraform_remote_state.type2.outputs.type2_tfer--name-type2_id}",
+		"type2_ref": "${data.terraform_remote_state.type2.outputs.type2_tfer--name-002D-type2_id}",
 	}) {
 		t.Errorf("failed to connect %v", resources["type1"][0].Item)
 	}
@@ -68,8 +68,8 @@ func TestManyReferences(t *testing.T) {
 	resources := ConnectServices(importResources, true, resourceConnections)
 
 	if !reflect.DeepEqual(resources["type1"][0].Item, map[string]interface{}{
-		"type2_ref1": "${data.terraform_remote_state.type2.outputs.type2_tfer--name-type2_id}",
-		"type2_ref2": "${data.terraform_remote_state.type2.outputs.type2_tfer--name-type2_id}",
+		"type2_ref1": "${data.terraform_remote_state.type2.outputs.type2_tfer--name-002D-type2_id}",
+		"type2_ref2": "${data.terraform_remote_state.type2.outputs.type2_tfer--name-002D-type2_id}",
 	}) {
 		t.Errorf("failed to connect %v", resources["type1"][0].Item)
 	}
@@ -105,8 +105,8 @@ func TestResourceGroups(t *testing.T) {
 	resources := ConnectServices(importResources, true, resourceConnections)
 
 	if !reflect.DeepEqual(resources["group1"][0].Item, map[string]interface{}{
-		"type2_ref1": "${data.terraform_remote_state.group2.outputs.type2_tfer--name-type2_uid}",
-		"type2_ref2": "${data.terraform_remote_state.group2.outputs.type2_tfer--name-type2_uid}",
+		"type2_ref1": "${data.terraform_remote_state.group2.outputs.type2_tfer--name-002D-type2_uid}",
+		"type2_ref2": "${data.terraform_remote_state.group2.outputs.type2_tfer--name-002D-type2_uid}",
 	}) {
 		t.Errorf("failed to connect %v", resources["group1"][0].Item)
 	}
@@ -127,7 +127,7 @@ func TestNestedReference(t *testing.T) {
 	}
 	resources := ConnectServices(importResources, true, resourceConnections)
 
-	if !reflect.DeepEqual(resources["type1"][0].Item, mapI("nested", mapI("type2_ref", "${data.terraform_remote_state.type2.outputs.type2_tfer--name-type2_id}"))) {
+	if !reflect.DeepEqual(resources["type1"][0].Item, mapI("nested", mapI("type2_ref", "${data.terraform_remote_state.type2.outputs.type2_tfer--name-002D-type2_id}"))) {
 		t.Errorf("failed to connect %v", resources)
 	}
 }

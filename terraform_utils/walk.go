@@ -46,6 +46,8 @@ func walkAndGet(pathSegments []string, data interface{}) []interface{} {
 				if e.String() == pathSegments[0] {
 					if isArray(v.Interface()) {
 						return v.Interface().([]interface{})
+					} else if isStringArray(v.Interface()) {
+						return v.Interface().([]interface{})
 					} else {
 						return []interface{}{v.Interface()}
 					}
@@ -87,6 +89,13 @@ func walkAndOverride(pathSegments []string, oldValue, newValue string, data inte
 								valss[idx] = newValue
 							}
 						}
+					} else if isStringArray(v.Interface()) {
+						valss := v.Interface().([]string)
+						for idx, currentValue := range valss {
+							if oldValue == currentValue {
+								valss[idx] = newValue
+							}
+						}
 					} else {
 						if oldValue == v.Interface().(string) {
 							val.Interface().(map[string]interface{})[pathSegments[0]] = newValue
@@ -108,6 +117,15 @@ func walkAndOverride(pathSegments []string, oldValue, newValue string, data inte
 func isArray(val interface{}) bool { // Go reflect lib can't sometimes detect given value is array
 	switch val.(type) {
 	case []interface{}:
+		return true
+	default:
+		return false
+	}
+}
+
+func isStringArray(val interface{}) bool { // to support locally established arrays
+	switch val.(type) {
+	case []string:
 		return true
 	default:
 		return false
