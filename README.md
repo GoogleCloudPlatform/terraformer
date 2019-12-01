@@ -466,6 +466,7 @@ In that case terraformer will not know with which region resources are associate
     * `aws_s3_bucket_policy`
 *   `sg`
     * `aws_security_group`
+    * `aws_security_group_rule` (if a rule cannot be inlined)
 *   `sns`
     * `aws_sns_topic`
     * `aws_sns_topic_subscription`
