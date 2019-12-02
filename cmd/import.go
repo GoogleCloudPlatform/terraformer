@@ -38,7 +38,7 @@ type ImportOptions struct {
 	State       string
 	Bucket      string
 	Profile     string
-	Debug       bool
+	Verbose     bool
 	Zone        string
 	Regions     []string
 	Projects    []string
@@ -86,19 +86,19 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 
 	for _, service := range options.Resources {
 		log.Println(provider.GetName() + " importing... " + service)
-		err = provider.InitService(service)
+		err = provider.InitService(service, options.Verbose)
 		if err != nil {
 			return err
 		}
 		provider.GetService().ParseFilters(options.Filter)
 		err = provider.GetService().InitResources()
-		provider.GetService().PopulateIgnoreKeys(provider.GetBasicConfig())
+		provider.GetService().PopulateIgnoreKeys(provider.GetBasicConfig(), options.Verbose)
 		if err != nil {
 			return err
 		}
 		provider.GetService().InitialCleanup()
 
-		providerWrapper, err := provider_wrapper.NewProviderWrapper(provider.GetName(), provider.GetConfig())
+		providerWrapper, err := provider_wrapper.NewProviderWrapper(provider.GetName(), provider.GetConfig(), options.Verbose)
 		if err != nil {
 			return err
 		}
@@ -319,4 +319,5 @@ func baseProviderFlags(flag *pflag.FlagSet, options *ImportOptions, sampleRes, s
 	flag.StringVarP(&options.State, "state", "s", DefaultState, "local or bucket")
 	flag.StringVarP(&options.Bucket, "bucket", "b", "", "gs://terraform-state")
 	flag.StringSliceVarP(&options.Filter, "filter", "f", []string{}, sampleFilters)
+	flag.BoolVarP(&options.Verbose, "verbose", "v", false, "")
 }

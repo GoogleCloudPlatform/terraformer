@@ -56,13 +56,14 @@ func (p *NewRelicProvider) GetSupportedService() map[string]terraform_utils.Serv
 	}
 }
 
-func (p *NewRelicProvider) InitService(serviceName string) error {
+func (p *NewRelicProvider) InitService(serviceName string, verbose bool) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
 		return errors.New("newrelic: " + serviceName + " not supported service")
 	}
 	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)
+	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 
 	return nil

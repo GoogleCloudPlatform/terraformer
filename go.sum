@@ -512,8 +512,9 @@ github.com/vmihailenco/msgpack v3.3.3+incompatible/go.mod h1:fy3FlTQTDXWkZ7Bh6Ac
 github.com/vmihailenco/msgpack v4.0.1+incompatible/go.mod h1:fy3FlTQTDXWkZ7Bh6AcGMlsjHatGryHQYUTf1ShIgkk=
 github.com/vmihailenco/msgpack v4.0.4+incompatible h1:dSLoQfGFAo3F6OoNhwUmLwVgaUXK79GlxNBwueZn0xI=
 github.com/vmihailenco/msgpack v4.0.4+incompatible/go.mod h1:fy3FlTQTDXWkZ7Bh6AcGMlsjHatGryHQYUTf1ShIgkk=
-github.com/vultr/govultr v0.1.6 h1:FZqwbph8iir4IwUjC/bZfnulM3OejhNoI2ebYUlvNCs=
 github.com/vultr/govultr v0.1.6/go.mod h1:glSLa57Jdj5s860EEc6+DEBbb/t3aUOKnB4gVPmDVlQ=
+github.com/vultr/govultr v0.1.7 h1:+AilzQB5HAStp/mOyBRNil+l8FHWRfHgDEKfC0oQMzY=
+github.com/vultr/govultr v0.1.7/go.mod h1:glSLa57Jdj5s860EEc6+DEBbb/t3aUOKnB4gVPmDVlQ=
 github.com/xanzy/ssh-agent v0.2.1/go.mod h1:mLlQY/MoOhWBj+gOGMQkOeiEvkx+8pJSI+0Bx9h2kr4=
 github.com/xiang90/probing v0.0.0-20160813154853-07dd2e8dfe18/go.mod h1:UETIi67q53MR2AWcXfiuqkDkRtnGDLqkBTpCHuJHxtU=
 github.com/xlab/treeprint v0.0.0-20161029104018-1d6e34225557/go.mod h1:ce1O1j6UtZfjr22oyGxGLbauSBp2YVXpARAosm7dHBg=

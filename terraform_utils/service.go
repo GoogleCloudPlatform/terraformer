@@ -31,10 +31,11 @@ type ServiceGenerator interface {
 	GetArgs() map[string]interface{}
 	SetArgs(args map[string]interface{})
 	SetName(name string)
+	SetVerbose(bool)
 	SetProviderName(name string)
 	GetName() string
 	InitialCleanup()
-	PopulateIgnoreKeys(cty.Value)
+	PopulateIgnoreKeys(cty.Value, bool)
 	PostRefreshCleanup()
 }
 
@@ -44,10 +45,15 @@ type Service struct {
 	ProviderName string
 	Args         map[string]interface{}
 	Filter       []ResourceFilter
+	Verbose      bool
 }
 
 func (s *Service) SetProviderName(providerName string) {
 	s.ProviderName = providerName
+}
+
+func (s *Service) SetVerbose(verbose bool) {
+	s.Verbose = verbose
 }
 
 func (s *Service) ParseFilters(rawFilters []string) {
@@ -137,12 +143,12 @@ func (s *Service) PostConvertHook() error {
 	return nil
 }
 
-func (s *Service) PopulateIgnoreKeys(providerConfig cty.Value) {
+func (s *Service) PopulateIgnoreKeys(providerConfig cty.Value, debug bool) {
 	resourcesTypes := []string{}
 	for _, r := range s.Resources {
 		resourcesTypes = append(resourcesTypes, r.InstanceInfo.Type)
 	}
-	keys := IgnoreKeys(resourcesTypes, s.ProviderName, providerConfig)
+	keys := IgnoreKeys(resourcesTypes, s.ProviderName, providerConfig, debug)
 	for k, v := range keys {
 		for i := range s.Resources {
 			if s.Resources[i].InstanceInfo.Type == k {

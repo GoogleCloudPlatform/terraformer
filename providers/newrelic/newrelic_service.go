@@ -47,7 +47,7 @@ func (s *NewRelicService) InfraClient() (*newrelic.InfraClient, error) {
 		return nil, err
 	}
 
-	client := newrelic.NewInfraClient(newrelic.Config{APIKey: apiKey})
+	client := newrelic.NewInfraClient(newrelic.Config{APIKey: apiKey, Debug: s.Verbose})
 
 	return &client, nil
 }
