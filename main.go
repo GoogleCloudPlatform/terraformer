@@ -29,7 +29,7 @@ type TerraformerWriter struct {
 
 func (t TerraformerWriter) Write(p []byte) (n int, err error) {
 	if !strings.Contains(string(p), "[TRACE]") && !strings.Contains(string(p), "[DEBUG]") { // hide TF GRPC client log messages
-		return os.Stderr.Write(p)
+		return os.Stdout.Write(p)
 	} else {
 		return len(p), nil
 	}

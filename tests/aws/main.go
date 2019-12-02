@@ -15,14 +15,13 @@
 package main
 
 import (
+	"github.com/GoogleCloudPlatform/terraformer/cmd"
+	aws_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/aws"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"log"
 	"os"
 	"os/exec"
 	"sort"
-
-	"github.com/GoogleCloudPlatform/terraformer/cmd"
-	aws_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/aws"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
 
 const command = "terraform init && terraform plan"
@@ -30,7 +29,6 @@ const command = "terraform init && terraform plan"
 func main() {
 	region := "ap-southeast-1"
 	profile := "personal"
-	debug := "true"
 	var services []string
 	provider := &aws_terraforming.AWSProvider{}
 	for service := range provider.GetSupportedService() {
@@ -58,7 +56,8 @@ func main() {
 		State:       "local",
 		Connect:     true,
 		Compact:     true,
-	}, []string{region, profile, debug})
+		Verbose:     true,
+	}, []string{region, profile})
 	if err != nil {
 		log.Println(err)
 		os.Exit(1)

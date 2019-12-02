@@ -17,6 +17,7 @@ import (
 	kubernetes_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/kubernetes"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/spf13/cobra"
+	"strconv"
 )
 
 func newCmdKubernetesImporter(options ImportOptions) *cobra.Command {
@@ -26,7 +27,7 @@ func newCmdKubernetesImporter(options ImportOptions) *cobra.Command {
 		Long:  "Import current state to Terraform configuration from Kubernetes",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			provider := newKubernetesProvider()
-			err := Import(provider, options, []string{})
+			err := Import(provider, options, []string{strconv.FormatBool(options.Verbose)})
 			if err != nil {
 				return err
 			}

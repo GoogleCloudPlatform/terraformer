@@ -55,13 +55,14 @@ func (p *CloudflareProvider) GetSupportedService() map[string]terraform_utils.Se
 	}
 }
 
-func (p *CloudflareProvider) InitService(serviceName string) error {
+func (p *CloudflareProvider) InitService(serviceName string, verbose bool) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
 		return errors.New("cloudflare: " + serviceName + " not supported service")
 	}
 	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)
+	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 
 	return nil

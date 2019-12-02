@@ -98,8 +98,8 @@ func RefreshResourceWorker(input chan *Resource, wg *sync.WaitGroup, provider *p
 	}
 }
 
-func IgnoreKeys(resourcesTypes []string, providerName string, providerConfig cty.Value) map[string][]string {
-	p, err := provider_wrapper.NewProviderWrapper(providerName, providerConfig)
+func IgnoreKeys(resourcesTypes []string, providerName string, providerConfig cty.Value, verbose bool) map[string][]string {
+	p, err := provider_wrapper.NewProviderWrapper(providerName, providerConfig, verbose)
 	if err != nil {
 		log.Println("plugin error 1:", err)
 		return map[string][]string{}
