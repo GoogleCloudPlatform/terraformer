@@ -50,7 +50,7 @@ require (
 	github.com/tomnomnom/linkheader v0.0.0-20180905144013-02ca5825eb80 // indirect
 	github.com/ulikunitz/xz v0.5.6 // indirect
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
-	github.com/vultr/govultr v0.1.6
+	github.com/vultr/govultr v0.1.7
 	github.com/zclconf/go-cty v1.1.0
 	github.com/zorkian/go-datadog-api v2.24.0+incompatible
 	go.opencensus.io v0.22.1 // indirect

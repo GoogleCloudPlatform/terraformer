@@ -28,7 +28,6 @@ type AWSProvider struct {
 	terraform_utils.Provider
 	region  string
 	profile string
-	debug   string
 }
 
 // global resources should be bound to a default region. AWS doesn't specify in which region default services are
@@ -155,7 +154,6 @@ func (p *AWSProvider) GetBasicConfig() cty.Value {
 func (p *AWSProvider) Init(args []string) error {
 	p.region =  args[0]
 	p.profile = args[1]
-	p.debug =   args[2]
 
 	// Terraformer accepts region and profile configuration, so we must detect what env variables to adjust to make Go SDK rely on them. AWS_SDK_LOAD_CONFIG here must be checked to determine correct variable to set.
 	enableSharedConfig, _ := strconv.ParseBool(os.Getenv("AWS_SDK_LOAD_CONFIG"))
@@ -188,19 +186,19 @@ func (p *AWSProvider) GetName() string {
 	return "aws"
 }
 
-func (p *AWSProvider) InitService(serviceName string) error {
+func (p *AWSProvider) InitService(serviceName string, verbose bool) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
 		return errors.New("aws: " + serviceName + " not supported service")
 	}
 	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)
+	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
 		"region":                 p.region,
 		"profile":                p.profile,
 		"skip_region_validation": true,
-		"debug":                  p.debug,
 	})
 	return nil
 }

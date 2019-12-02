@@ -92,13 +92,14 @@ func (p *AzureProvider) GetSupportedService() map[string]terraform_utils.Service
 	}
 }
 
-func (p *AzureProvider) InitService(serviceName string) error {
+func (p *AzureProvider) InitService(serviceName string, verbose bool) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
 		return errors.New("azurerm: " + serviceName + " not supported service")
 	}
 	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)
+	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
 		"subscription": p.subscription,

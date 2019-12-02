@@ -56,11 +56,11 @@ type ProviderWrapper struct {
 	config       cty.Value
 }
 
-func NewProviderWrapper(providerName string, providerConfig cty.Value) (*ProviderWrapper, error) {
+func NewProviderWrapper(providerName string, providerConfig cty.Value, verbose bool) (*ProviderWrapper, error) {
 	p := &ProviderWrapper{}
 	p.providerName = providerName
 	p.config = providerConfig
-	err := p.initProvider()
+	err := p.initProvider(verbose)
 	return p, err
 }
 
@@ -173,16 +173,20 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 	return terraform.NewInstanceStateShimmedFromValue(resp.NewState, int(schema.Provider.Version)), nil
 }
 
-func (p *ProviderWrapper) initProvider() error {
+func (p *ProviderWrapper) initProvider(verbose bool) error {
 	providerFilePath, err := getProviderFileName(p.providerName)
 	if err != nil {
 		return err
 	}
-	logger := hclog.New(&hclog.LoggerOptions{
+	options := hclog.LoggerOptions{
 		Name:   "plugin",
 		Level:  hclog.Error,
-		Output: os.Stderr,
-	})
+		Output: os.Stdout,
+	}
+	if verbose {
+		options.Level = hclog.Trace
+	}
+	logger := hclog.New(&options)
 	p.client = plugin.NewClient(
 		&plugin.ClientConfig{
 			Cmd:              exec.Command(providerFilePath),

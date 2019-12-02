@@ -15,11 +15,10 @@
 package linode
 
 import (
-	"net/http"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/linode/linodego"
 	"golang.org/x/oauth2"
+	"net/http"
 )
 
 type LinodeService struct {
@@ -34,5 +33,6 @@ func (s *LinodeService) generateClient() linodego.Client {
 		},
 	}
 	linodeClient := linodego.NewClient(oauth2Client)
+	linodeClient.SetDebug(s.Verbose)
 	return linodeClient
 }

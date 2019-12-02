@@ -20,7 +20,7 @@ import (
 
 type ProviderGenerator interface {
 	Init(args []string) error
-	InitService(serviceName string) error
+	InitService(serviceName string, verbose bool) error
 	GetName() string
 	GetService() ServiceGenerator
 	GetConfig() cty.Value

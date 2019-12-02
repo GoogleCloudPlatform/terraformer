@@ -124,13 +124,14 @@ func (p *AliCloudProvider) GetName() string {
 }
 
 // InitService Initializes the AliCloud service
-func (p *AliCloudProvider) InitService(serviceName string) error {
+func (p *AliCloudProvider) InitService(serviceName string, verbose bool) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
 		return errors.New("alicloud: " + serviceName + " not supported service")
 	}
 	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)
+	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
 		"region":  p.region,

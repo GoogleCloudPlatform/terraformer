@@ -69,13 +69,14 @@ func (p *LinodeProvider) GetSupportedService() map[string]terraform_utils.Servic
 	}
 }
 
-func (p *LinodeProvider) InitService(serviceName string) error {
+func (p *LinodeProvider) InitService(serviceName string, verbose bool) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
 		return errors.New("linode: " + serviceName + " not supported service")
 	}
 	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)
+	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
 		"token": p.token,

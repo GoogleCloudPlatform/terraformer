@@ -68,13 +68,14 @@ func (p *LogzioProvider) GetName() string {
 	return "logzio"
 }
 
-func (p *LogzioProvider) InitService(serviceName string) error {
+func (p *LogzioProvider) InitService(serviceName string, verbose bool) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
 		return errors.New(p.GetName() + ": " + serviceName + " not supported service")
 	}
 	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)
+	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
 		"api_token": p.apiToken,

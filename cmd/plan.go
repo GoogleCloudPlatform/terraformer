@@ -75,7 +75,7 @@ func newCmdPlanImporter(options ImportOptions) *cobra.Command {
 			}
 
 			for _, service := range plan.Options.Resources {
-				if err = provider.InitService(service); err != nil {
+				if err = provider.InitService(service, options.Verbose); err != nil {
 					return err
 				}
 			}
