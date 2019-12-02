@@ -40,7 +40,8 @@ import (
 
 type KubernetesProvider struct {
 	terraform_utils.Provider
-	region string
+	region  string
+	verbose string
 }
 
 func (p KubernetesProvider) GetResourceConnections() map[string]map[string][]string {
@@ -58,6 +59,7 @@ func (p KubernetesProvider) GetProviderData(arg ...string) map[string]interface{
 }
 
 func (p *KubernetesProvider) Init(args []string) error {
+	p.verbose = args[0]
 	return nil
 }
 
@@ -65,13 +67,14 @@ func (p *KubernetesProvider) GetName() string {
 	return "kubernetes"
 }
 
-func (p *KubernetesProvider) InitService(serviceName string) error {
+func (p *KubernetesProvider) InitService(serviceName string, verbose bool) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
 		return errors.New("kubernetes: " + serviceName + " not supported resource")
 	}
 	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)
+	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	return nil
 }
@@ -96,7 +99,7 @@ func (p *KubernetesProvider) GetSupportedService() map[string]terraform_utils.Se
 		log.Println(err)
 		return resources
 	}
-	provider, err := provider_wrapper.NewProviderWrapper("kubernetes", cty.Value{})
+	provider, err := provider_wrapper.NewProviderWrapper("kubernetes", cty.Value{}, p.verbose == "true")
 	if err != nil {
 		log.Println(err)
 		return resources

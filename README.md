@@ -79,6 +79,7 @@ Flags:
   -z, --regions strings       europe-west1, (default [global])
   -r, --resources strings     firewalls,networks
   -s, --state string          local or bucket (default "local")
+  -v, --verbose               verbose mode
 
 Use " import google [command] --help" for more information about a command.
 ```
@@ -344,11 +345,9 @@ Your `tf` and `tfstate` files are written by default to
 Example:
 
 ```
- terraformer import aws --resources=vpc,subnet --connect=true --regions=eu-west-1 --profile=prod --debug
+ terraformer import aws --resources=vpc,subnet --connect=true --regions=eu-west-1 --profile=prod
  terraformer import aws --resources=vpc,subnet --filter=aws_vpc=vpc_id1:vpc_id2:vpc_id3 --regions=eu-west-1
 ```
-
-To turn on HTTP request/response debugging, you can use `--debug` parameter.
 
 #### Profiles support
 

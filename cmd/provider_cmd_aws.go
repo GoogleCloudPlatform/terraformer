@@ -14,12 +14,10 @@
 package cmd
 
 import (
-	"log"
-	"strconv"
-
 	aws_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/aws"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/spf13/cobra"
+	"log"
 )
 
 const defaultRegion = ""
@@ -64,7 +62,6 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 	baseProviderFlags(cmd.PersistentFlags(), &options, "vpc,subnet,nacl", "aws_elb=id1:id2:id4")
 
 	cmd.PersistentFlags().StringVarP(&options.Profile, "profile", "", "default", "prod")
-	cmd.PersistentFlags().BoolVarP(&options.Debug, "debug", "V", false, "true")
 	cmd.PersistentFlags().StringSliceVarP(&options.Regions, "regions", "", []string{}, "eu-west-1,eu-west-2,us-east-1")
 	return cmd
 }
@@ -106,7 +103,7 @@ func importRegionResources(options ImportOptions, originalPathPattern string, re
 	} else {
 		log.Println(provider.GetName() + " importing default region")
 	}
-	err := Import(provider, options, []string{region, options.Profile, strconv.FormatBool(options.Debug)})
+	err := Import(provider, options, []string{region, options.Profile})
 	if err != nil {
 		return err
 	}

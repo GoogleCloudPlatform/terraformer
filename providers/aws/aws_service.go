@@ -33,7 +33,7 @@ func (s *AWSService) generateConfig() (aws.Config, error) {
 	if e != nil {
 		return config, e
 	}
-	if s.GetArgs()["debug"] == "true" {
+	if s.Verbose {
 		config.LogLevel = aws.LogDebugWithHTTPBody
 	}
 
