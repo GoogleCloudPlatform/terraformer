@@ -390,6 +390,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_cloudformation_stack_set_instance`
 *   `cloudtrail`
     * `aws_cloudtrail`
+*   `customer_gateway`
+    * `aws_customer_gateway`
 *   `dynamodb`
     * `aws_dynamodb_table`
 *   `ec2_instance`
