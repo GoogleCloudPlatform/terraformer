@@ -756,6 +756,7 @@ List of supported Vultr resources:
     * `vultr_dns_record`
 *   `firewall_group`
     * `vultr_firewall_group`
+    * `vultr_firewall_rule`
 *   `network`
     * `vultr_network`
 *   `reserved_ip`
