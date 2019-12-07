@@ -404,6 +404,9 @@ In that case terraformer will not know with which region resources are associate
 *   `ebs`
     * `aws_ebs_volume`
     * `aws_volume_attachment`
+*   `elastic_beanstalk`
+    * `aws_elastic_beanstalk_application`
+    * `aws_elastic_beanstalk_environment`
 *   `ecs`
     * `aws_ecs_cluster`
     * `aws_ecs_service`
@@ -412,6 +415,9 @@ In that case terraformer will not know with which region resources are associate
     * `aws_eks_cluster`
 *   `elb`
     * `aws_elb`
+*   `emr`
+    * `aws_emr_cluster`
+    * `aws_emr_security_configuration`
 *   `es`
     * `aws_elasticsearch_domain`
 *   `firehose`
@@ -435,6 +441,9 @@ In that case terraformer will not know with which region resources are associate
     * `aws_internet_gateway`
 *   `kinesis`
     * `aws_kinesis_stream`
+*   `kms`
+    * `aws_kms_key`
+    * `aws_kms_alias`
 *   `lambda`
     * `aws_lambda_function`
     * `aws_lambda_event_source_mapping`
