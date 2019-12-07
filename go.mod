@@ -18,6 +18,7 @@ require (
 	github.com/denverdino/aliyungo v0.0.0-20190924033012-e8e08fe22cb2
 	github.com/digitalocean/godo v1.24.1
 	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
+	github.com/fastly/go-fastly v1.3.0
 	github.com/go-resty/resty v0.0.0-00010101000000-000000000000 // indirect
 	github.com/gogo/protobuf v1.3.0 // indirect
 	github.com/golang/groupcache v0.0.0-20191002201903-404acd9df4cc // indirect
