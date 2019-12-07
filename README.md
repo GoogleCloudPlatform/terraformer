@@ -435,6 +435,10 @@ In that case terraformer will not know with which region resources are associate
     * `aws_internet_gateway`
 *   `kinesis`
     * `aws_kinesis_stream`
+*   `lambda`
+    * `aws_lambda_function`
+    * `aws_lambda_event_source_mapping`
+    * `aws_lambda_layer_version`
 *   `msk`
     * `aws_msk_cluster`
 *   `nat`
