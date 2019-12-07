@@ -22,7 +22,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/hashicorp/hcl2/hclwrite"
+	"github.com/hashicorp/hcl/v2/hclwrite"
 
 	"github.com/hashicorp/hcl/hcl/ast"
 	hclPrinter "github.com/hashicorp/hcl/hcl/printer"
@@ -152,6 +152,11 @@ func HclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error)
 	// ...but leave whitespace between resources
 	s = strings.Replace(s, "}\nresource", "}\n\nresource", -1)
 
+	// Workaround HCL insanity kubernetes/kops#6359: quotes are _not_ escaped in quotes (huh?)
+	// This hits the file function
+	s = strings.Replace(s, "(\\\"", "(\"", -1)
+	s = strings.Replace(s, "\\\")", "\")", -1)
+
 	// We don't need to escape > or <
 	s = strings.Replace(s, "\\u003c", "<", -1)
 	s = strings.Replace(s, "\\u003e", ">", -1)
@@ -161,6 +166,7 @@ func HclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error)
 	formatted, err = hclPrinter.Format([]byte(s))
 	// hack for support terraform 0.12
 	formatted = terraform12Adjustments(formatted, mapsObjects)
+	formatted = awsLambdaAdjustments(formatted)
 	if err != nil {
 		log.Println("Invalid HCL follows:")
 		for i, line := range strings.Split(s, "\n") {
@@ -170,6 +176,27 @@ func HclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error)
 	}
 
 	return formatted, nil
+}
+
+// hack to write properly environmental variables in AWS Lambda functions
+func awsLambdaAdjustments(formatted []byte) []byte {
+	var b bytes.Buffer
+
+	lines := strings.Split(string(formatted), "\n")
+	isEnvWrap := false
+	for _, line := range lines {
+		if strings.Contains(line, "environment \"variables\"") {
+			isEnvWrap = true
+			b.WriteString("  environment { variables = {\n")
+		} else if isEnvWrap && line == "  }" {
+			isEnvWrap = false
+			b.WriteString("  } }\n")
+		} else {
+			b.WriteString(line + "\n")
+		}
+	}
+
+	return b.Bytes()
 }
 
 func terraform12Adjustments(formatted []byte, mapsObjects map[string]struct{}) []byte {
