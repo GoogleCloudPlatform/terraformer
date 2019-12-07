@@ -161,7 +161,7 @@ func (g *IamGenerator) getUserPolices(svc *iam.Client, userName *string) error {
 }
 
 func (g *IamGenerator) getPolicies(svc *iam.Client) error {
-	p := iam.NewListPoliciesPaginator(svc.ListPoliciesRequest(&iam.ListPoliciesInput{Scope:iam.PolicyScopeTypeLocal}))
+	p := iam.NewListPoliciesPaginator(svc.ListPoliciesRequest(&iam.ListPoliciesInput{Scope: iam.PolicyScopeTypeLocal}))
 	for p.Next(context.Background()) {
 		for _, policy := range p.CurrentPage().Policies {
 			resourceName := aws.StringValue(policy.PolicyName)

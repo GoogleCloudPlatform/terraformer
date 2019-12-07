@@ -73,7 +73,7 @@ func (g *EcsGenerator) InitResources() error {
 
 					g.Resources = append(g.Resources, terraform_utils.NewResource(
 						serviceArn,
-						clusterName + "_" + serviceName,
+						clusterName+"_"+serviceName,
 						"aws_ecs_service",
 						"aws",
 						map[string]string{
