@@ -152,7 +152,7 @@ func (p *AWSProvider) GetBasicConfig() cty.Value {
 
 // check projectName in env params
 func (p *AWSProvider) Init(args []string) error {
-	p.region =  args[0]
+	p.region = args[0]
 	p.profile = args[1]
 
 	// Terraformer accepts region and profile configuration, so we must detect what env variables to adjust to make Go SDK rely on them. AWS_SDK_LOAD_CONFIG here must be checked to determine correct variable to set.
