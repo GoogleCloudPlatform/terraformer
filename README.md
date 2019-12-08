@@ -24,6 +24,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
         * [AliCloud](#use-with-alicloud)
     * Cloud
         * [DigitalOcean](#use-with-digitalocean)
+        * [Fastly](#use-with-fastly)
         * [Heroku](#use-with-heroku)
         * [Linode](#use-with-linode)
         * [OpenStack](#use-with-openstack)
@@ -181,6 +182,7 @@ Links to download Terraform Providers:
     * Alicloud provider >1.57.1 - [here](https://releases.hashicorp.com/terraform-provider-alicloud/)
 * Cloud
     * DigitalOcean provider >1.9.1 - [here](https://releases.hashicorp.com/terraform-provider-digitalocean/)
+    * Fastly provider >0.11.0 - [here](https://releases.hashicorp.com/terraform-provider-fastly/)
     * Heroku provider >2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-heroku/)
     * Linode provider >1.8.0 - [here](https://releases.hashicorp.com/terraform-provider-linode/)
     * OpenStack provider >1.21.1 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
@@ -637,6 +639,23 @@ List of supported DigitalOcean resources:
     * `digitalocean_volume`
 *   `volume_snapshot`
     * `digitalocean_volume_snapshot`
+
+### Use with Fastly
+
+Example:
+
+```
+export FASTLY_API_KEY=[FASTLY_API_KEY]
+./terraformer import fastly -r service_v1
+```
+
+List of supported Fastly resources:
+
+*   `service_v1`
+    * `fastly_service_acl_entries_v1`
+    * `fastly_service_dictionary_items_v1`
+    * `fastly_service_dynamic_snippet_content_v1`
+    * `fastly_service_v1`
 
 ### Use with Heroku
 
