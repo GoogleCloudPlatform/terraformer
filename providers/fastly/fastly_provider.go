@@ -24,14 +24,14 @@ import (
 
 type FastlyProvider struct {
 	terraform_utils.Provider
-	api_key string
+	apiKey string
 }
 
 func (p *FastlyProvider) Init(args []string) error {
 	if os.Getenv("FASTLY_API_KEY") == "" {
 		return errors.New("set FASTLY_API_KEY env var")
 	}
-	p.api_key = os.Getenv("FASTLY_API_KEY")
+	p.apiKey = os.Getenv("FASTLY_API_KEY")
 
 	return nil
 }
@@ -45,7 +45,7 @@ func (p *FastlyProvider) GetProviderData(arg ...string) map[string]interface{} {
 		"provider": map[string]interface{}{
 			"fastly": map[string]interface{}{
 				"version": provider_wrapper.GetProviderVersion(p.GetName()),
-				"api_key": p.api_key,
+				"api_key": p.apiKey,
 			},
 		},
 	}
@@ -71,7 +71,7 @@ func (p *FastlyProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"api_key": p.api_key,
+		"api_key": p.apiKey,
 	})
 	return nil
 }
