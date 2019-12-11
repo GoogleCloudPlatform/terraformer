@@ -617,6 +617,7 @@ List of supported DigitalOcean resources:
     * `digitalocean_database_cluster`
 *   `domain`
     * `digitalocean_domain`
+    * `digitalocean_record`
 *   `droplet`
     * `digitalocean_droplet`
 *   `droplet_snapshot`
