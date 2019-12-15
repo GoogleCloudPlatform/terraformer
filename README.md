@@ -628,6 +628,7 @@ List of supported DigitalOcean resources:
     * `digitalocean_floating_ip`
 *   `kubernetes_cluster`
     * `digitalocean_kubernetes_cluster`
+    * `digitalocean_kubernetes_node_pool`
 *   `loadbalancer`
     * `digitalocean_loadbalancer`
 *   `project`
