@@ -6,10 +6,9 @@ require (
 	cloud.google.com/go v0.46.3
 	cloud.google.com/go/logging v1.0.0
 	cloud.google.com/go/storage v1.1.0
-	github.com/Azure/azure-sdk-for-go v34.1.0+incompatible
+	github.com/Azure/azure-sdk-for-go v35.0.0+incompatible
+	github.com/Azure/go-autorest/autorest v0.9.2
 	github.com/Azure/go-autorest/autorest/azure/auth v0.3.0
-	github.com/Azure/go-autorest/autorest/to v0.3.0 // indirect
-	github.com/Azure/go-autorest/autorest/validation v0.2.0 // indirect
 	github.com/aliyun/alibaba-cloud-sdk-go v0.0.0-20191010082856-e76f4c50e182
 	github.com/aliyun/aliyun-tablestore-go-sdk v4.1.3+incompatible
 	github.com/aws/aws-sdk-go-v2 v0.17.0
@@ -25,6 +24,7 @@ require (
 	github.com/google/go-github/v25 v25.1.3
 	github.com/googleapis/gnostic v0.3.1 // indirect
 	github.com/gophercloud/gophercloud v0.4.1-0.20190920074709-6e93a6ba3b09
+	github.com/hashicorp/go-azure-helpers v0.10.0
 	github.com/hashicorp/go-hclog v0.9.2
 	github.com/hashicorp/go-plugin v1.0.1
 	github.com/hashicorp/go-version v1.2.0 // indirect

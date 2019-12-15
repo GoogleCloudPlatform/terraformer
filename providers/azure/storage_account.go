@@ -19,8 +19,9 @@ import (
 	"log"
 
 	"github.com/Azure/azure-sdk-for-go/services/storage/mgmt/2019-04-01/storage"
-	"github.com/Azure/go-autorest/autorest/azure/auth"
+	"github.com/Azure/go-autorest/autorest"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/hashicorp/go-azure-helpers/authentication"
 )
 
 type StorageAccountGenerator struct {
@@ -47,12 +48,9 @@ func (g StorageAccountGenerator) createResources(accountListResultIterator stora
 
 func (g *StorageAccountGenerator) InitResources() error {
 	ctx := context.Background()
-	accountsClient := storage.NewAccountsClient(g.Args["subscription"].(string))
-	authorizer, err := auth.NewAuthorizerFromEnvironment()
-	if err != nil {
-		return err
-	}
-	accountsClient.Authorizer = authorizer
+	accountsClient := storage.NewAccountsClient(g.Args["config"].(authentication.Config).SubscriptionID)
+
+	accountsClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 	output, err := accountsClient.ListComplete(ctx)
 	if err != nil {
 		return err

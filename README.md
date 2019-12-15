@@ -513,18 +513,26 @@ Will work as same as example above with a change the filter will be applicable o
 Terraformer uses AWS [ListQueues](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_ListQueues.html) API call to fetch available queues. The API is able to return only up to 1000 queues and an additional name prefix should be passed to filter the list results. It's possible to pass `QueueNamePrefix` parameter by environmental variable `SQS_PREFIX`.
 
 ### Use with Azure
+Support [Azure CLI](https://www.terraform.io/docs/providers/azurerm/guides/azure_cli.html), [Service Principal with Client Certificate](https://www.terraform.io/docs/providers/azurerm/guides/service_principal_client_certificate.html) & [Service Principal with Client Secret](https://www.terraform.io/docs/providers/azurerm/guides/service_principal_client_secret.html)
 
 Example:
 
 ```
-export ARM_CLIENT_ID=[CLIENT_ID]
-export ARM_CLIENT_SECRET=[CLIENT_SECRET]
+# Using Azure CLI (az login)
 export ARM_SUBSCRIPTION_ID=[SUBSCRIPTION_ID]
+
+# Using Service Principal with Client Certificate
+export ARM_SUBSCRIPTION_ID=[SUBSCRIPTION_ID]
+export ARM_CLIENT_ID=[CLIENT_ID]
+export ARM_CLIENT_CERTIFICATE_PATH="/path/to/my/client/certificate.pfx"
+export ARM_CLIENT_CERTIFICATE_PASSWORD=[CLIENT_CERTIFICATE_PASSWORD]
 export ARM_TENANT_ID=[TENANT_ID]
 
-export AZURE_CLIENT_ID=[CLIENT_ID]
-export AZURE_CLIENT_SECRET=[CLIENT_SECRET]
-export AZURE_TENANT_ID=[TENANT_ID]
+# Service Principal with Client Secret
+export ARM_SUBSCRIPTION_ID=[SUBSCRIPTION_ID]
+export ARM_CLIENT_ID=[CLIENT_ID]
+export ARM_CLIENT_SECRET=[CLIENT_SECRET]
+export ARM_TENANT_ID=[TENANT_ID]
 
 ./terraformer import azure -r resource_group
 ```

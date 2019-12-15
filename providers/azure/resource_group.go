@@ -19,8 +19,9 @@ import (
 	"log"
 
 	"github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2019-05-01/resources"
-	"github.com/Azure/go-autorest/autorest/azure/auth"
+	"github.com/Azure/go-autorest/autorest"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/hashicorp/go-azure-helpers/authentication"
 )
 
 type ResourceGroupGenerator struct {
@@ -47,12 +48,9 @@ func (g ResourceGroupGenerator) createResources(groupListResultIterator resource
 
 func (g *ResourceGroupGenerator) InitResources() error {
 	ctx := context.Background()
-	groupsClient := resources.NewGroupsClient(g.Args["subscription"].(string))
-	authorizer, err := auth.NewAuthorizerFromEnvironment()
-	if err != nil {
-		return err
-	}
-	groupsClient.Authorizer = authorizer
+	groupsClient := resources.NewGroupsClient(g.Args["config"].(authentication.Config).SubscriptionID)
+
+	groupsClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 	output, err := groupsClient.ListComplete(ctx, "", nil)
 	if err != nil {
 		return err
