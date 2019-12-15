@@ -21,11 +21,14 @@ import (
 	"github.com/digitalocean/godo"
 )
 
+// the default node pool has a custom tag added by terraform
+const digitaloceanKubernetesDefaultNodePoolTag = "terraform:default-node-pool"
+
 type KubernetesClusterGenerator struct {
 	DigitalOceanService
 }
 
-func (g KubernetesClusterGenerator) listKubernetesClusters(ctx context.Context, client *godo.Client) ([]*godo.KubernetesCluster, error) {
+func (g *KubernetesClusterGenerator) loadKubernetesClusters(ctx context.Context, client *godo.Client) ([]*godo.KubernetesCluster, error) {
 	list := []*godo.KubernetesCluster{}
 
 	// create options. initially, these will be blank
@@ -37,6 +40,12 @@ func (g KubernetesClusterGenerator) listKubernetesClusters(ctx context.Context, 
 		}
 
 		for _, cluster := range clusters {
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+				cluster.ID,
+				cluster.Name,
+				"digitalocean_kubernetes_cluster",
+				"digitalocean",
+				[]string{}))
 			list = append(list, cluster)
 		}
 
@@ -57,25 +66,38 @@ func (g KubernetesClusterGenerator) listKubernetesClusters(ctx context.Context, 
 	return list, nil
 }
 
-func (g KubernetesClusterGenerator) createResources(clusterList []*godo.KubernetesCluster) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
-	for _, cluster := range clusterList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
-			cluster.ID,
-			cluster.Name,
-			"digitalocean_kubernetes_cluster",
-			"digitalocean",
-			[]string{}))
+func (g *KubernetesClusterGenerator) loadKubernetesNodePools(cluster *godo.KubernetesCluster) {
+	for _, nodePool := range cluster.NodePools {
+		isDefaultPool := false
+		for _, tag := range nodePool.Tags {
+			if tag == digitaloceanKubernetesDefaultNodePoolTag {
+				isDefaultPool = true
+				break
+			}
+		}
+
+		// skip default node pool since it is included in the digitalocean_kubernetes_cluster resource
+		if !isDefaultPool {
+			g.Resources = append(g.Resources, terraform_utils.NewResource(
+				nodePool.ID,
+				nodePool.Name,
+				"digitalocean_kubernetes_node_pool",
+				"digitalocean",
+				map[string]string{"cluster_id": cluster.ID},
+				[]string{},
+				map[string]interface{}{}))
+		}
 	}
-	return resources
 }
 
 func (g *KubernetesClusterGenerator) InitResources() error {
 	client := g.generateClient()
-	output, err := g.listKubernetesClusters(context.TODO(), client)
+	clusters, err := g.loadKubernetesClusters(context.TODO(), client)
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(output)
+	for _, cluster := range clusters {
+		g.loadKubernetesNodePools(cluster)
+	}
 	return nil
 }
