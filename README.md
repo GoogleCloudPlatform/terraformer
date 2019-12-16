@@ -615,6 +615,7 @@ List of supported DigitalOcean resources:
     * `digitalocean_certificate`
 *   `database_cluster`
     * `digitalocean_database_cluster`
+    * `digitalocean_database_connection_pool`
 *   `domain`
     * `digitalocean_domain`
     * `digitalocean_record`
