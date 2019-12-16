@@ -16,6 +16,7 @@ package digitalocean
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/digitalocean/godo"
@@ -25,7 +26,7 @@ type DatabaseClusterGenerator struct {
 	DigitalOceanService
 }
 
-func (g DatabaseClusterGenerator) listDatabaseClusters(ctx context.Context, client *godo.Client) ([]godo.Database, error) {
+func (g *DatabaseClusterGenerator) loadDatabaseClusters(ctx context.Context, client *godo.Client) ([]godo.Database, error) {
 	list := []godo.Database{}
 
 	// create options. initially, these will be blank
@@ -37,6 +38,12 @@ func (g DatabaseClusterGenerator) listDatabaseClusters(ctx context.Context, clie
 		}
 
 		for _, cluster := range clusters {
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+				cluster.ID,
+				cluster.Name,
+				"digitalocean_database_cluster",
+				"digitalocean",
+				[]string{}))
 			list = append(list, cluster)
 		}
 
@@ -57,25 +64,52 @@ func (g DatabaseClusterGenerator) listDatabaseClusters(ctx context.Context, clie
 	return list, nil
 }
 
-func (g DatabaseClusterGenerator) createResources(clusterList []godo.Database) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
-	for _, cluster := range clusterList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
-			cluster.ID,
-			cluster.Name,
-			"digitalocean_database_cluster",
-			"digitalocean",
-			[]string{}))
+func (g *DatabaseClusterGenerator) loadDatabaseConnectionPools(ctx context.Context, client *godo.Client, clusterID string) error {
+	// create options. initially, these will be blank
+	opt := &godo.ListOptions{}
+	for {
+		pools, resp, err := client.Databases.ListPools(ctx, clusterID, opt)
+		if err != nil {
+			return err
+		}
+
+		for _, pool := range pools {
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+				fmt.Sprintf("%s/%s", clusterID, pool.Name),
+				pool.Name,
+				"digitalocean_database_connection_pool",
+				"digitalocean",
+				[]string{}))
+		}
+
+		// if we are at the last page, break out the for loop
+		if resp.Links == nil || resp.Links.IsLastPage() {
+			break
+		}
+
+		page, err := resp.Links.CurrentPage()
+		if err != nil {
+			return err
+		}
+
+		// set the page we want for the next request
+		opt.Page = page + 1
 	}
-	return resources
+
+	return nil
 }
 
 func (g *DatabaseClusterGenerator) InitResources() error {
 	client := g.generateClient()
-	output, err := g.listDatabaseClusters(context.TODO(), client)
+	clusters, err := g.loadDatabaseClusters(context.TODO(), client)
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(output)
+	for _, cluster := range clusters {
+		err := g.loadDatabaseConnectionPools(context.TODO(), client, cluster.ID)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
