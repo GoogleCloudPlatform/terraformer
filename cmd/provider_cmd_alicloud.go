@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//we avoid "but if any addresses resource were not found in the project,addresses folder with providers.tf and "empty" tf state file. is created"  by adding CLI parameter like --empty-resource-folders=false
 package cmd
 
 import (
