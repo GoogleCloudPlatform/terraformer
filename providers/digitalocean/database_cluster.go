@@ -99,6 +99,49 @@ func (g *DatabaseClusterGenerator) loadDatabaseConnectionPools(ctx context.Conte
 	return nil
 }
 
+func (g *DatabaseClusterGenerator) loadDatabaseDBs(ctx context.Context, client *godo.Client, clusterID string) error {
+	// create options. initially, these will be blank
+	opt := &godo.ListOptions{}
+	for {
+		dbs, resp, err := client.Databases.ListDBs(ctx, clusterID, opt)
+		if err != nil {
+			return err
+		}
+
+		for _, db := range dbs {
+			// skip default database created by the digitalocean database cluster
+			if db.Name != "defaultdb" {
+				g.Resources = append(g.Resources, terraform_utils.NewResource(
+					db.Name,
+					db.Name,
+					"digitalocean_database_db",
+					"digitalocean",
+					map[string]string{
+						"cluster_id": clusterID,
+						"name":       db.Name,
+					},
+					[]string{},
+					map[string]interface{}{}))
+			}
+		}
+
+		// if we are at the last page, break out the for loop
+		if resp.Links == nil || resp.Links.IsLastPage() {
+			break
+		}
+
+		page, err := resp.Links.CurrentPage()
+		if err != nil {
+			return err
+		}
+
+		// set the page we want for the next request
+		opt.Page = page + 1
+	}
+
+	return nil
+}
+
 func (g *DatabaseClusterGenerator) InitResources() error {
 	client := g.generateClient()
 	clusters, err := g.loadDatabaseClusters(context.TODO(), client)
@@ -107,6 +150,10 @@ func (g *DatabaseClusterGenerator) InitResources() error {
 	}
 	for _, cluster := range clusters {
 		err := g.loadDatabaseConnectionPools(context.TODO(), client, cluster.ID)
+		if err != nil {
+			return err
+		}
+		err = g.loadDatabaseDBs(context.TODO(), client, cluster.ID)
 		if err != nil {
 			return err
 		}
