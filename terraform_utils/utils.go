@@ -71,7 +71,11 @@ func RefreshResources(resources []Resource, provider *provider_wrapper.ProviderW
 	refreshedResources := []Resource{}
 	input := make(chan *Resource, 100)
 	var wg sync.WaitGroup
-	for i := 0; i < 15; i++ {
+	poolSize := 15
+	if slowProcessingRequired(resources) {
+		poolSize = 1
+	}
+	for i := 0; i < poolSize; i++ {
 		go RefreshResourceWorker(input, &wg, provider)
 	}
 	for i := range resources {
@@ -88,6 +92,15 @@ func RefreshResources(resources []Resource, provider *provider_wrapper.ProviderW
 		}
 	}
 	return refreshedResources, nil
+}
+
+func slowProcessingRequired(resources []Resource) bool {
+	for _, r := range resources {
+		if r.SlowQueryRequired {
+			return true
+		}
+	}
+	return false
 }
 
 func RefreshResourceWorker(input chan *Resource, wg *sync.WaitGroup, provider *provider_wrapper.ProviderWrapper) {
