@@ -618,6 +618,7 @@ List of supported DigitalOcean resources:
     * `digitalocean_database_connection_pool`
     * `digitalocean_database_db`
     * `digitalocean_database_replica`
+    * `digitalocean_database_user`
 *   `domain`
     * `digitalocean_domain`
     * `digitalocean_record`
