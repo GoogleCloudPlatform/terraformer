@@ -40,6 +40,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
         * [Datadog](#use-with-datadog)
         * [New Relic](#use-with-new-relic)
     * Community
+        * [Keycloak](#use-with-keycloak)
         * [Logz.io](#use-with-logzio)
         * [Commercetools](#use-with-commercetools)
 - [Contributing](#contributing)
@@ -198,6 +199,7 @@ Links to download Terraform Providers:
     * Datadog provider >2.1.0 - [here](https://releases.hashicorp.com/terraform-provider-datadog/)
     * New Relic provider >1.5.0 - [here](https://releases.hashicorp.com/terraform-provider-newrelic/)
 * Community
+    * Keycloak provider >=1.12.0 - [here](https://github.com/mrparkers/terraform-provider-keycloak/)
     * Logz.io provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
     * Commercetools provider >= 0.19.0 - [here](https://github.com/labd/terraform-provider-commercetools)
 
@@ -985,6 +987,53 @@ List of supported New Relic resources:
 *   `synthetics`
     * `newrelic_synthetics_monitor`
     * `newrelic_synthetics_alert_condition`
+
+### Use with Keycloak
+
+Example:
+
+```
+ export KEYCLOAK_URL=https://foo.bar.localdomain
+ export KEYCLOAK_CLIENT_ID=[KEYCLOAK_CLIENT_ID]
+ export KEYCLOAK_CLIENT_SECRET=[KEYCLOAK_CLIENT_SECRET]
+
+ terraformer import keycloak --resources=realms,openid_clients
+ terraformer import keycloak --resources=realms --filter=keycloak_realm=name1:name2:name3
+```
+
+Here is the list of resources which are currently supported by Keycloak provider v.1.12.0:
+
+- `realms`
+  - `keycloak_realm`
+  - `keycloak_ldap_user_federation`
+  - `keycloak_ldap_full_name_mapper`
+  - `keycloak_ldap_group_mapper`
+  - `keycloak_ldap_msad_user_account_control_mapper`
+  - `keycloak_ldap_user_attribute_mapper`
+  - `keycloak_required_action`
+- `users`
+  - `keycloak_user`
+- `roles`
+  - `keycloak_role`
+- `scopes`
+  - `keycloak_openid_client_scope`
+  - `keycloak_openid_client_default_scopes`
+  - `keycloak_openid_client_optional_scopes`
+- `groups`
+  - `keycloak_group`
+  - `keycloak_group_memberships`
+  - `keycloak_group_roles`
+  - `keycloak_default_groups`
+- `openid_clients`
+  - `keycloak_openid_client`
+  - `keycloak_openid_client_service_account_role`
+  - `keycloak_openid_user_attribute_protocol_mapper`
+  - `keycloak_openid_user_property_protocol_mapper`
+  - `keycloak_openid_full_name_protocol_mapper`
+  - `keycloak_openid_audience_protocol_mapper`
+  - `keycloak_openid_group_membership_protocol_mapper`
+  - `keycloak_openid_hardcoded_claim_protocol_mapper`
+  - `keycloak_openid_hardcoded_role_protocol_mapper`
 
 ### Use with Logz.io
 

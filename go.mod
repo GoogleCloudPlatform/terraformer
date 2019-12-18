@@ -44,6 +44,7 @@ require (
 	github.com/mattn/go-colorable v0.1.4 // indirect
 	github.com/mattn/go-isatty v0.0.10 // indirect
 	github.com/mitchellh/reflectwalk v1.0.1 // indirect
+	github.com/mrparkers/terraform-provider-keycloak v0.0.0-20191216155057-102097851a3c // indirect
 	github.com/paultyng/go-newrelic v3.1.0+incompatible
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/cobra v0.0.5
