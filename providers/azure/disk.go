@@ -19,8 +19,9 @@ import (
 	"log"
 
 	"github.com/Azure/azure-sdk-for-go/services/compute/mgmt/2019-07-01/compute"
-	"github.com/Azure/go-autorest/autorest/azure/auth"
+	"github.com/Azure/go-autorest/autorest"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/hashicorp/go-azure-helpers/authentication"
 )
 
 type DiskGenerator struct {
@@ -47,12 +48,9 @@ func (g DiskGenerator) createResources(diskListIterator compute.DiskListIterator
 
 func (g *DiskGenerator) InitResources() error {
 	ctx := context.Background()
-	disksClient := compute.NewDisksClient(g.Args["subscription"].(string))
-	authorizer, err := auth.NewAuthorizerFromEnvironment()
-	if err != nil {
-		return err
-	}
-	disksClient.Authorizer = authorizer
+	disksClient := compute.NewDisksClient(g.Args["config"].(authentication.Config).SubscriptionID)
+
+	disksClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 	output, err := disksClient.ListComplete(ctx)
 	if err != nil {
 		return err

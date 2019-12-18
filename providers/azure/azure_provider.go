@@ -15,49 +15,96 @@
 package azure
 
 import (
+	"context"
 	"errors"
+	"fmt"
 	"os"
 
+	"github.com/Azure/go-autorest/autorest"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/hashicorp/go-azure-helpers/authentication"
+	"github.com/hashicorp/go-azure-helpers/sender"
 )
 
 type AzureProvider struct {
 	terraform_utils.Provider
-	subscription string
+	config     authentication.Config
+	authorizer autorest.Authorizer
+}
+
+func (p *AzureProvider) setEnvConfig() error {
+	subscription_id := os.Getenv("ARM_SUBSCRIPTION_ID")
+	if subscription_id == "" {
+		return errors.New("set ARM_SUBSCRIPTION_ID env var")
+	}
+	builder := &authentication.Builder{
+		ClientID:                 os.Getenv("ARM_CLIENT_ID"),
+		SubscriptionID:           subscription_id,
+		TenantID:                 os.Getenv("ARM_TENANT_ID"),
+		Environment:              os.Getenv("ARM_ENVIRONMENT"),
+		ClientSecret:             os.Getenv("ARM_CLIENT_SECRET"),
+		SupportsAzureCliToken:    true,
+		SupportsClientSecretAuth: true,
+		SupportsClientCertAuth:   true,
+		ClientCertPath:           os.Getenv("ARM_CLIENT_CERTIFICATE_PATH"),
+		ClientCertPassword:       os.Getenv("ARM_CLIENT_CERTIFICATE_PASSWORD"),
+
+		/*
+		   // Managed Service Identity Auth
+		   SupportsManagedServiceIdentity bool
+		   MsiEndpoint                    string
+		*/
+	}
+
+	if builder.Environment == "" {
+		builder.Environment = "public"
+	}
+	config, err := builder.Build()
+	if err != nil {
+		return nil
+	}
+	p.config = *config
+
+	return nil
+}
+
+func (p *AzureProvider) getAuthorizer(ctx context.Context) (autorest.Authorizer, error) {
+	env, err := authentication.DetermineEnvironment(p.config.Environment)
+	if err != nil {
+		return nil, err
+	}
+
+	oauthConfig, err := p.config.BuildOAuthConfig(env.ActiveDirectoryEndpoint)
+	if err != nil {
+		return nil, err
+	}
+
+	if oauthConfig == nil {
+		return nil, fmt.Errorf("Unable to configure OAuthConfig for tenant %s", p.config.TenantID)
+	}
+
+	sender := sender.BuildSender("AzureRM")
+
+	auth, err := p.config.GetAuthorizationToken(sender, oauthConfig, env.ResourceManagerEndpoint)
+	if err != nil {
+		return nil, err
+	}
+
+	return auth, nil
 }
 
 func (p *AzureProvider) Init(args []string) error {
-	// Assert ENV Vars for Azure Terraform are set
-	if os.Getenv("ARM_CLIENT_ID") == "" {
-		return errors.New("set ARM_CLIENT_ID env var")
+	err := p.setEnvConfig()
+	if err != nil {
+		return err
 	}
 
-	if os.Getenv("ARM_CLIENT_SECRET") == "" {
-		return errors.New("set ARM_CLIENT_SECRET env var")
+	authorizer, err := p.getAuthorizer(context.Background())
+	if err != nil {
+		return err
 	}
-
-	if os.Getenv("ARM_SUBSCRIPTION_ID") == "" {
-		return errors.New("set ARM_SUBSCRIPTION_ID env var")
-	}
-	p.subscription = os.Getenv("ARM_SUBSCRIPTION_ID")
-
-	if os.Getenv("ARM_TENANT_ID") == "" {
-		return errors.New("set ARM_TENANT_ID env var")
-	}
-
-	// Assert ENV Vars for Azure Go SDK are set
-	if os.Getenv("AZURE_CLIENT_ID") == "" {
-		return errors.New("set AZURE_CLIENT_ID env var")
-	}
-
-	if os.Getenv("AZURE_CLIENT_SECRET") == "" {
-		return errors.New("set AZURE_CLIENT_SECRET env var")
-	}
-
-	if os.Getenv("AZURE_TENANT_ID") == "" {
-		return errors.New("set AZURE_TENANT_ID env var")
-	}
+	p.authorizer = authorizer
 
 	return nil
 }
@@ -102,7 +149,8 @@ func (p *AzureProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"subscription": p.subscription,
+		"config":     p.config,
+		"authorizer": p.authorizer,
 	})
 	return nil
 }

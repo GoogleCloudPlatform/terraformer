@@ -19,8 +19,9 @@ import (
 	"log"
 
 	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2019-08-01/network"
-	"github.com/Azure/go-autorest/autorest/azure/auth"
+	"github.com/Azure/go-autorest/autorest"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/hashicorp/go-azure-helpers/authentication"
 )
 
 type VirtualNetworkGenerator struct {
@@ -49,12 +50,9 @@ func (g VirtualNetworkGenerator) createResources(virtualNetworkListResultPage ne
 
 func (g *VirtualNetworkGenerator) InitResources() error {
 	ctx := context.Background()
-	virtualNetworkClient := network.NewVirtualNetworksClient(g.Args["subscription"].(string))
-	authorizer, err := auth.NewAuthorizerFromEnvironment()
-	if err != nil {
-		return err
-	}
-	virtualNetworkClient.Authorizer = authorizer
+	virtualNetworkClient := network.NewVirtualNetworksClient(g.Args["config"].(authentication.Config).SubscriptionID)
+
+	virtualNetworkClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 	output, err := virtualNetworkClient.ListAll(ctx)
 	if err != nil {
 		return err
