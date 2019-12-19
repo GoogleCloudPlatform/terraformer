@@ -307,12 +307,7 @@ func parseBlock(nativeBlock *hclsyntax.Block, from, leadComments, lineComments, 
 		before, labelTokens, from = from.Partition(rng)
 		children.AppendUnstructuredTokens(before.Tokens())
 		tokens := labelTokens.Tokens()
-		var ln *node
-		if len(tokens) == 1 && tokens[0].Type == hclsyntax.TokenIdent {
-			ln = newNode(newIdentifier(tokens[0]))
-		} else {
-			ln = newNode(newQuoted(tokens))
-		}
+		ln := newNode(newQuoted(tokens))
 		block.labels.Add(ln)
 		children.AppendNode(ln)
 	}
