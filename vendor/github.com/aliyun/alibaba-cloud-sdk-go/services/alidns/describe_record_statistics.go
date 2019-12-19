@@ -77,11 +77,11 @@ func (client *Client) DescribeRecordStatisticsWithCallback(request *DescribeReco
 type DescribeRecordStatisticsRequest struct {
 	*requests.RpcRequest
 	Rr           string `position:"Query" name:"Rr"`
+	DomainName   string `position:"Query" name:"DomainName"`
+	StartDate    string `position:"Query" name:"StartDate"`
 	EndDate      string `position:"Query" name:"EndDate"`
 	UserClientIp string `position:"Query" name:"UserClientIp"`
-	DomainName   string `position:"Query" name:"DomainName"`
 	Lang         string `position:"Query" name:"Lang"`
-	StartDate    string `position:"Query" name:"StartDate"`
 }
 
 // DescribeRecordStatisticsResponse is the response struct for api DescribeRecordStatistics
@@ -96,7 +96,7 @@ func CreateDescribeRecordStatisticsRequest() (request *DescribeRecordStatisticsR
 	request = &DescribeRecordStatisticsRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeRecordStatistics", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeRecordStatistics", "alidns", "openAPI")
 	return
 }
 

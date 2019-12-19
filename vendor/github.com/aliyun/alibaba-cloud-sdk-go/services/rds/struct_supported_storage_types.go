@@ -17,6 +17,5 @@ package rds
 
 // SupportedStorageTypes is a nested struct in rds response
 type SupportedStorageTypes struct {
-	StorageType       string               `json:"StorageType" xml:"StorageType"`
-	AvailableResource []AvailableResources `json:"AvailableResource" xml:"AvailableResource"`
+	SupportedStorageType []SupportedStorageType `json:"SupportedStorageType" xml:"SupportedStorageType"`
 }

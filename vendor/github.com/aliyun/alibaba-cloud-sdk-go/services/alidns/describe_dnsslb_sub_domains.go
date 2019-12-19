@@ -76,11 +76,11 @@ func (client *Client) DescribeDNSSLBSubDomainsWithCallback(request *DescribeDNSS
 // DescribeDNSSLBSubDomainsRequest is the request struct for api DescribeDNSSLBSubDomains
 type DescribeDNSSLBSubDomainsRequest struct {
 	*requests.RpcRequest
-	UserClientIp string           `position:"Query" name:"UserClientIp"`
 	DomainName   string           `position:"Query" name:"DomainName"`
+	PageNumber   requests.Integer `position:"Query" name:"PageNumber"`
+	UserClientIp string           `position:"Query" name:"UserClientIp"`
 	PageSize     requests.Integer `position:"Query" name:"PageSize"`
 	Lang         string           `position:"Query" name:"Lang"`
-	PageNumber   requests.Integer `position:"Query" name:"PageNumber"`
 }
 
 // DescribeDNSSLBSubDomainsResponse is the response struct for api DescribeDNSSLBSubDomains
@@ -98,7 +98,7 @@ func CreateDescribeDNSSLBSubDomainsRequest() (request *DescribeDNSSLBSubDomainsR
 	request = &DescribeDNSSLBSubDomainsRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeDNSSLBSubDomains", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeDNSSLBSubDomains", "alidns", "openAPI")
 	return
 }
 

@@ -76,15 +76,15 @@ func (client *Client) DescribeDatabasesWithCallback(request *DescribeDatabasesRe
 // DescribeDatabasesRequest is the request struct for api DescribeDatabases
 type DescribeDatabasesRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
-	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
-	DBName               string           `position:"Query" name:"DBName"`
-	DBStatus             string           `position:"Query" name:"DBStatus"`
-	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
-	PageSize             requests.Integer `position:"Query" name:"PageSize"`
 	PageNumber           requests.Integer `position:"Query" name:"PageNumber"`
+	DBStatus             string           `position:"Query" name:"DBStatus"`
+	PageSize             requests.Integer `position:"Query" name:"PageSize"`
+	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
+	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
+	DBName               string           `position:"Query" name:"DBName"`
 }
 
 // DescribeDatabasesResponse is the response struct for api DescribeDatabases

@@ -28,7 +28,8 @@ const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 // A single data point in a time series.
 type Point struct {
 	// The time interval to which the data point applies.  For `GAUGE` metrics,
-	// only the end time of the interval is used.  For `DELTA` metrics, the start
+	// the start time is optional, but if it is supplied, it must equal the
+	// end time.  For `DELTA` metrics, the start
 	// and end time should specify a non-zero interval, with subsequent points
 	// specifying contiguous and non-overlapping intervals.  For `CUMULATIVE`
 	// metrics, the start and end time should specify a non-zero interval, with

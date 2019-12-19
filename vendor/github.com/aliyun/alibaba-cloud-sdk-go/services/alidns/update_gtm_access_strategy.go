@@ -76,10 +76,10 @@ func (client *Client) UpdateGtmAccessStrategyWithCallback(request *UpdateGtmAcce
 // UpdateGtmAccessStrategyRequest is the request struct for api UpdateGtmAccessStrategy
 type UpdateGtmAccessStrategyRequest struct {
 	*requests.RpcRequest
-	StrategyName       string `position:"Query" name:"StrategyName"`
 	DefaultAddrPoolId  string `position:"Query" name:"DefaultAddrPoolId"`
-	AccessLines        string `position:"Query" name:"AccessLines"`
 	FailoverAddrPoolId string `position:"Query" name:"FailoverAddrPoolId"`
+	StrategyName       string `position:"Query" name:"StrategyName"`
+	AccessLines        string `position:"Query" name:"AccessLines"`
 	UserClientIp       string `position:"Query" name:"UserClientIp"`
 	StrategyId         string `position:"Query" name:"StrategyId"`
 	Lang               string `position:"Query" name:"Lang"`
@@ -96,7 +96,7 @@ func CreateUpdateGtmAccessStrategyRequest() (request *UpdateGtmAccessStrategyReq
 	request = &UpdateGtmAccessStrategyRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "UpdateGtmAccessStrategy", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "UpdateGtmAccessStrategy", "alidns", "openAPI")
 	return
 }
 

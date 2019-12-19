@@ -93,6 +93,7 @@ type DescribePriceRequest struct {
 	InternetMaxBandwidthOut    requests.Integer `position:"Query" name:"InternetMaxBandwidthOut"`
 	SystemDiskCategory         string           `position:"Query" name:"SystemDisk.Category"`
 	Platform                   string           `position:"Query" name:"Platform"`
+	Capacity                   requests.Integer `position:"Query" name:"Capacity"`
 	SystemDiskPerformanceLevel string           `position:"Query" name:"SystemDisk.PerformanceLevel"`
 	DataDisk4Category          string           `position:"Query" name:"DataDisk.4.Category"`
 	DataDisk4PerformanceLevel  string           `position:"Query" name:"DataDisk.4.PerformanceLevel"`

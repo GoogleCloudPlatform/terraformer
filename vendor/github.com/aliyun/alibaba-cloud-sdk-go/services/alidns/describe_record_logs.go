@@ -76,14 +76,14 @@ func (client *Client) DescribeRecordLogsWithCallback(request *DescribeRecordLogs
 // DescribeRecordLogsRequest is the request struct for api DescribeRecordLogs
 type DescribeRecordLogsRequest struct {
 	*requests.RpcRequest
+	DomainName   string           `position:"Query" name:"DomainName"`
+	StartDate    string           `position:"Query" name:"StartDate"`
+	PageNumber   requests.Integer `position:"Query" name:"PageNumber"`
 	EndDate      string           `position:"Query" name:"endDate"`
 	UserClientIp string           `position:"Query" name:"UserClientIp"`
-	DomainName   string           `position:"Query" name:"DomainName"`
 	PageSize     requests.Integer `position:"Query" name:"PageSize"`
 	Lang         string           `position:"Query" name:"Lang"`
 	KeyWord      string           `position:"Query" name:"KeyWord"`
-	StartDate    string           `position:"Query" name:"StartDate"`
-	PageNumber   requests.Integer `position:"Query" name:"PageNumber"`
 }
 
 // DescribeRecordLogsResponse is the response struct for api DescribeRecordLogs
@@ -101,7 +101,7 @@ func CreateDescribeRecordLogsRequest() (request *DescribeRecordLogsRequest) {
 	request = &DescribeRecordLogsRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeRecordLogs", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeRecordLogs", "alidns", "openAPI")
 	return
 }
 

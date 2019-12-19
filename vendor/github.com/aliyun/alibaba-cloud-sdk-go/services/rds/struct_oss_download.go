@@ -18,10 +18,10 @@ package rds
 // OssDownload is a nested struct in rds response
 type OssDownload struct {
 	FileSize    string `json:"FileSize" xml:"FileSize"`
-	IsAvail     string `json:"IsAvail" xml:"IsAvail"`
 	BackupMode  string `json:"BackupMode" xml:"BackupMode"`
-	Desc        string `json:"Desc" xml:"Desc"`
+	IsAvail     string `json:"IsAvail" xml:"IsAvail"`
 	EndTime     string `json:"EndTime" xml:"EndTime"`
+	Desc        string `json:"Desc" xml:"Desc"`
 	IsAvailable string `json:"IsAvailable" xml:"IsAvailable"`
 	CreateTime  string `json:"CreateTime" xml:"CreateTime"`
 	BakType     string `json:"BakType" xml:"BakType"`

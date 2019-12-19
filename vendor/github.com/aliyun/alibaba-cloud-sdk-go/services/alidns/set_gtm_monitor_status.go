@@ -76,8 +76,8 @@ func (client *Client) SetGtmMonitorStatusWithCallback(request *SetGtmMonitorStat
 // SetGtmMonitorStatusRequest is the request struct for api SetGtmMonitorStatus
 type SetGtmMonitorStatusRequest struct {
 	*requests.RpcRequest
-	UserClientIp    string `position:"Query" name:"UserClientIp"`
 	MonitorConfigId string `position:"Query" name:"MonitorConfigId"`
+	UserClientIp    string `position:"Query" name:"UserClientIp"`
 	Lang            string `position:"Query" name:"Lang"`
 	Status          string `position:"Query" name:"Status"`
 }
@@ -93,7 +93,7 @@ func CreateSetGtmMonitorStatusRequest() (request *SetGtmMonitorStatusRequest) {
 	request = &SetGtmMonitorStatusRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "SetGtmMonitorStatus", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "SetGtmMonitorStatus", "alidns", "openAPI")
 	return
 }
 

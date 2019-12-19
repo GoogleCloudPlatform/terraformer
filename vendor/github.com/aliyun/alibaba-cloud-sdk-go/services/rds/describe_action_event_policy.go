@@ -76,9 +76,9 @@ func (client *Client) DescribeActionEventPolicyWithCallback(request *DescribeAct
 // DescribeActionEventPolicyRequest is the request struct for api DescribeActionEventPolicy
 type DescribeActionEventPolicyRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
 }
 
 // DescribeActionEventPolicyResponse is the response struct for api DescribeActionEventPolicy

@@ -6679,6 +6679,37 @@ func (f *FreeTextDefinition) SetType(v string) {
 	f.Type = &v
 }
 
+// GetTarget returns the Target field if non-nil, zero value otherwise.
+func (g *GeoIPParser) GetTarget() string {
+	if g == nil || g.Target == nil {
+		return ""
+	}
+	return *g.Target
+}
+
+// GetTargetOk returns a tuple with the Target field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (g *GeoIPParser) GetTargetOk() (string, bool) {
+	if g == nil || g.Target == nil {
+		return "", false
+	}
+	return *g.Target, true
+}
+
+// HasTarget returns a boolean if a field has been set.
+func (g *GeoIPParser) HasTarget() bool {
+	if g != nil && g.Target != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetTarget allocates a new g.Target and returns the pointer to it.
+func (g *GeoIPParser) SetTarget(v string) {
+	g.Target = &v
+}
+
 // GetDefinition returns the Definition field if non-nil, zero value otherwise.
 func (g *Graph) GetDefinition() GraphDefinition {
 	if g == nil || g.Definition == nil {
@@ -10087,6 +10118,161 @@ func (i *IntegrationAWSAccountDeleteRequest) HasRoleName() bool {
 // SetRoleName allocates a new i.RoleName and returns the pointer to it.
 func (i *IntegrationAWSAccountDeleteRequest) SetRoleName(v string) {
 	i.RoleName = &v
+}
+
+// GetLambdaARN returns the LambdaARN field if non-nil, zero value otherwise.
+func (i *IntegrationAWSLambdaARN) GetLambdaARN() string {
+	if i == nil || i.LambdaARN == nil {
+		return ""
+	}
+	return *i.LambdaARN
+}
+
+// GetLambdaARNOk returns a tuple with the LambdaARN field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (i *IntegrationAWSLambdaARN) GetLambdaARNOk() (string, bool) {
+	if i == nil || i.LambdaARN == nil {
+		return "", false
+	}
+	return *i.LambdaARN, true
+}
+
+// HasLambdaARN returns a boolean if a field has been set.
+func (i *IntegrationAWSLambdaARN) HasLambdaARN() bool {
+	if i != nil && i.LambdaARN != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetLambdaARN allocates a new i.LambdaARN and returns the pointer to it.
+func (i *IntegrationAWSLambdaARN) SetLambdaARN(v string) {
+	i.LambdaARN = &v
+}
+
+// GetAccountID returns the AccountID field if non-nil, zero value otherwise.
+func (i *IntegrationAWSLambdaARNRequest) GetAccountID() string {
+	if i == nil || i.AccountID == nil {
+		return ""
+	}
+	return *i.AccountID
+}
+
+// GetAccountIDOk returns a tuple with the AccountID field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (i *IntegrationAWSLambdaARNRequest) GetAccountIDOk() (string, bool) {
+	if i == nil || i.AccountID == nil {
+		return "", false
+	}
+	return *i.AccountID, true
+}
+
+// HasAccountID returns a boolean if a field has been set.
+func (i *IntegrationAWSLambdaARNRequest) HasAccountID() bool {
+	if i != nil && i.AccountID != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetAccountID allocates a new i.AccountID and returns the pointer to it.
+func (i *IntegrationAWSLambdaARNRequest) SetAccountID(v string) {
+	i.AccountID = &v
+}
+
+// GetLambdaARN returns the LambdaARN field if non-nil, zero value otherwise.
+func (i *IntegrationAWSLambdaARNRequest) GetLambdaARN() string {
+	if i == nil || i.LambdaARN == nil {
+		return ""
+	}
+	return *i.LambdaARN
+}
+
+// GetLambdaARNOk returns a tuple with the LambdaARN field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (i *IntegrationAWSLambdaARNRequest) GetLambdaARNOk() (string, bool) {
+	if i == nil || i.LambdaARN == nil {
+		return "", false
+	}
+	return *i.LambdaARN, true
+}
+
+// HasLambdaARN returns a boolean if a field has been set.
+func (i *IntegrationAWSLambdaARNRequest) HasLambdaARN() bool {
+	if i != nil && i.LambdaARN != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetLambdaARN allocates a new i.LambdaARN and returns the pointer to it.
+func (i *IntegrationAWSLambdaARNRequest) SetLambdaARN(v string) {
+	i.LambdaARN = &v
+}
+
+// GetAccountID returns the AccountID field if non-nil, zero value otherwise.
+func (i *IntegrationAWSLogCollection) GetAccountID() string {
+	if i == nil || i.AccountID == nil {
+		return ""
+	}
+	return *i.AccountID
+}
+
+// GetAccountIDOk returns a tuple with the AccountID field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (i *IntegrationAWSLogCollection) GetAccountIDOk() (string, bool) {
+	if i == nil || i.AccountID == nil {
+		return "", false
+	}
+	return *i.AccountID, true
+}
+
+// HasAccountID returns a boolean if a field has been set.
+func (i *IntegrationAWSLogCollection) HasAccountID() bool {
+	if i != nil && i.AccountID != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetAccountID allocates a new i.AccountID and returns the pointer to it.
+func (i *IntegrationAWSLogCollection) SetAccountID(v string) {
+	i.AccountID = &v
+}
+
+// GetAccountID returns the AccountID field if non-nil, zero value otherwise.
+func (i *IntegrationAWSServicesLogCollection) GetAccountID() string {
+	if i == nil || i.AccountID == nil {
+		return ""
+	}
+	return *i.AccountID
+}
+
+// GetAccountIDOk returns a tuple with the AccountID field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (i *IntegrationAWSServicesLogCollection) GetAccountIDOk() (string, bool) {
+	if i == nil || i.AccountID == nil {
+		return "", false
+	}
+	return *i.AccountID, true
+}
+
+// HasAccountID returns a boolean if a field has been set.
+func (i *IntegrationAWSServicesLogCollection) HasAccountID() bool {
+	if i != nil && i.AccountID != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetAccountID allocates a new i.AccountID and returns the pointer to it.
+func (i *IntegrationAWSServicesLogCollection) SetAccountID(v string) {
+	i.AccountID = &v
 }
 
 // GetClientEmail returns the ClientEmail field if non-nil, zero value otherwise.
@@ -16785,6 +16971,254 @@ func (s *ServiceLevelObjective) SetTypeID(v int) {
 	s.TypeID = &v
 }
 
+// GetServiceLevelObjectiveID returns the ServiceLevelObjectiveID field if non-nil, zero value otherwise.
+func (s *ServiceLevelObjectiveDefinition) GetServiceLevelObjectiveID() string {
+	if s == nil || s.ServiceLevelObjectiveID == nil {
+		return ""
+	}
+	return *s.ServiceLevelObjectiveID
+}
+
+// GetServiceLevelObjectiveIDOk returns a tuple with the ServiceLevelObjectiveID field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (s *ServiceLevelObjectiveDefinition) GetServiceLevelObjectiveIDOk() (string, bool) {
+	if s == nil || s.ServiceLevelObjectiveID == nil {
+		return "", false
+	}
+	return *s.ServiceLevelObjectiveID, true
+}
+
+// HasServiceLevelObjectiveID returns a boolean if a field has been set.
+func (s *ServiceLevelObjectiveDefinition) HasServiceLevelObjectiveID() bool {
+	if s != nil && s.ServiceLevelObjectiveID != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetServiceLevelObjectiveID allocates a new s.ServiceLevelObjectiveID and returns the pointer to it.
+func (s *ServiceLevelObjectiveDefinition) SetServiceLevelObjectiveID(v string) {
+	s.ServiceLevelObjectiveID = &v
+}
+
+// GetShowErrorBudget returns the ShowErrorBudget field if non-nil, zero value otherwise.
+func (s *ServiceLevelObjectiveDefinition) GetShowErrorBudget() bool {
+	if s == nil || s.ShowErrorBudget == nil {
+		return false
+	}
+	return *s.ShowErrorBudget
+}
+
+// GetShowErrorBudgetOk returns a tuple with the ShowErrorBudget field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (s *ServiceLevelObjectiveDefinition) GetShowErrorBudgetOk() (bool, bool) {
+	if s == nil || s.ShowErrorBudget == nil {
+		return false, false
+	}
+	return *s.ShowErrorBudget, true
+}
+
+// HasShowErrorBudget returns a boolean if a field has been set.
+func (s *ServiceLevelObjectiveDefinition) HasShowErrorBudget() bool {
+	if s != nil && s.ShowErrorBudget != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetShowErrorBudget allocates a new s.ShowErrorBudget and returns the pointer to it.
+func (s *ServiceLevelObjectiveDefinition) SetShowErrorBudget(v bool) {
+	s.ShowErrorBudget = &v
+}
+
+// GetTitle returns the Title field if non-nil, zero value otherwise.
+func (s *ServiceLevelObjectiveDefinition) GetTitle() string {
+	if s == nil || s.Title == nil {
+		return ""
+	}
+	return *s.Title
+}
+
+// GetTitleOk returns a tuple with the Title field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (s *ServiceLevelObjectiveDefinition) GetTitleOk() (string, bool) {
+	if s == nil || s.Title == nil {
+		return "", false
+	}
+	return *s.Title, true
+}
+
+// HasTitle returns a boolean if a field has been set.
+func (s *ServiceLevelObjectiveDefinition) HasTitle() bool {
+	if s != nil && s.Title != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetTitle allocates a new s.Title and returns the pointer to it.
+func (s *ServiceLevelObjectiveDefinition) SetTitle(v string) {
+	s.Title = &v
+}
+
+// GetTitleAlign returns the TitleAlign field if non-nil, zero value otherwise.
+func (s *ServiceLevelObjectiveDefinition) GetTitleAlign() string {
+	if s == nil || s.TitleAlign == nil {
+		return ""
+	}
+	return *s.TitleAlign
+}
+
+// GetTitleAlignOk returns a tuple with the TitleAlign field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (s *ServiceLevelObjectiveDefinition) GetTitleAlignOk() (string, bool) {
+	if s == nil || s.TitleAlign == nil {
+		return "", false
+	}
+	return *s.TitleAlign, true
+}
+
+// HasTitleAlign returns a boolean if a field has been set.
+func (s *ServiceLevelObjectiveDefinition) HasTitleAlign() bool {
+	if s != nil && s.TitleAlign != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetTitleAlign allocates a new s.TitleAlign and returns the pointer to it.
+func (s *ServiceLevelObjectiveDefinition) SetTitleAlign(v string) {
+	s.TitleAlign = &v
+}
+
+// GetTitleSize returns the TitleSize field if non-nil, zero value otherwise.
+func (s *ServiceLevelObjectiveDefinition) GetTitleSize() string {
+	if s == nil || s.TitleSize == nil {
+		return ""
+	}
+	return *s.TitleSize
+}
+
+// GetTitleSizeOk returns a tuple with the TitleSize field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (s *ServiceLevelObjectiveDefinition) GetTitleSizeOk() (string, bool) {
+	if s == nil || s.TitleSize == nil {
+		return "", false
+	}
+	return *s.TitleSize, true
+}
+
+// HasTitleSize returns a boolean if a field has been set.
+func (s *ServiceLevelObjectiveDefinition) HasTitleSize() bool {
+	if s != nil && s.TitleSize != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetTitleSize allocates a new s.TitleSize and returns the pointer to it.
+func (s *ServiceLevelObjectiveDefinition) SetTitleSize(v string) {
+	s.TitleSize = &v
+}
+
+// GetType returns the Type field if non-nil, zero value otherwise.
+func (s *ServiceLevelObjectiveDefinition) GetType() string {
+	if s == nil || s.Type == nil {
+		return ""
+	}
+	return *s.Type
+}
+
+// GetTypeOk returns a tuple with the Type field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (s *ServiceLevelObjectiveDefinition) GetTypeOk() (string, bool) {
+	if s == nil || s.Type == nil {
+		return "", false
+	}
+	return *s.Type, true
+}
+
+// HasType returns a boolean if a field has been set.
+func (s *ServiceLevelObjectiveDefinition) HasType() bool {
+	if s != nil && s.Type != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetType allocates a new s.Type and returns the pointer to it.
+func (s *ServiceLevelObjectiveDefinition) SetType(v string) {
+	s.Type = &v
+}
+
+// GetViewMode returns the ViewMode field if non-nil, zero value otherwise.
+func (s *ServiceLevelObjectiveDefinition) GetViewMode() string {
+	if s == nil || s.ViewMode == nil {
+		return ""
+	}
+	return *s.ViewMode
+}
+
+// GetViewModeOk returns a tuple with the ViewMode field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (s *ServiceLevelObjectiveDefinition) GetViewModeOk() (string, bool) {
+	if s == nil || s.ViewMode == nil {
+		return "", false
+	}
+	return *s.ViewMode, true
+}
+
+// HasViewMode returns a boolean if a field has been set.
+func (s *ServiceLevelObjectiveDefinition) HasViewMode() bool {
+	if s != nil && s.ViewMode != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetViewMode allocates a new s.ViewMode and returns the pointer to it.
+func (s *ServiceLevelObjectiveDefinition) SetViewMode(v string) {
+	s.ViewMode = &v
+}
+
+// GetViewType returns the ViewType field if non-nil, zero value otherwise.
+func (s *ServiceLevelObjectiveDefinition) GetViewType() string {
+	if s == nil || s.ViewType == nil {
+		return ""
+	}
+	return *s.ViewType
+}
+
+// GetViewTypeOk returns a tuple with the ViewType field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (s *ServiceLevelObjectiveDefinition) GetViewTypeOk() (string, bool) {
+	if s == nil || s.ViewType == nil {
+		return "", false
+	}
+	return *s.ViewType, true
+}
+
+// HasViewType returns a boolean if a field has been set.
+func (s *ServiceLevelObjectiveDefinition) HasViewType() bool {
+	if s != nil && s.ViewType != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetViewType allocates a new s.ViewType and returns the pointer to it.
+func (s *ServiceLevelObjectiveDefinition) SetViewType(v string) {
+	s.ViewType = &v
+}
+
 // GetID returns the ID field if non-nil, zero value otherwise.
 func (s *ServiceLevelObjectiveDeleteTimeFramesError) GetID() string {
 	if s == nil || s.ID == nil {
@@ -16876,6 +17310,192 @@ func (s *ServiceLevelObjectiveDeleteTimeFramesError) HasTimeFrame() bool {
 // SetTimeFrame allocates a new s.TimeFrame and returns the pointer to it.
 func (s *ServiceLevelObjectiveDeleteTimeFramesError) SetTimeFrame(v string) {
 	s.TimeFrame = &v
+}
+
+// GetDenominator returns the Denominator field if non-nil, zero value otherwise.
+func (s *ServiceLevelObjectiveHistoryMetricSeries) GetDenominator() ServiceLevelObjectiveHistoryMetricSeriesData {
+	if s == nil || s.Denominator == nil {
+		return ServiceLevelObjectiveHistoryMetricSeriesData{}
+	}
+	return *s.Denominator
+}
+
+// GetDenominatorOk returns a tuple with the Denominator field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (s *ServiceLevelObjectiveHistoryMetricSeries) GetDenominatorOk() (ServiceLevelObjectiveHistoryMetricSeriesData, bool) {
+	if s == nil || s.Denominator == nil {
+		return ServiceLevelObjectiveHistoryMetricSeriesData{}, false
+	}
+	return *s.Denominator, true
+}
+
+// HasDenominator returns a boolean if a field has been set.
+func (s *ServiceLevelObjectiveHistoryMetricSeries) HasDenominator() bool {
+	if s != nil && s.Denominator != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetDenominator allocates a new s.Denominator and returns the pointer to it.
+func (s *ServiceLevelObjectiveHistoryMetricSeries) SetDenominator(v ServiceLevelObjectiveHistoryMetricSeriesData) {
+	s.Denominator = &v
+}
+
+// GetNumerator returns the Numerator field if non-nil, zero value otherwise.
+func (s *ServiceLevelObjectiveHistoryMetricSeries) GetNumerator() ServiceLevelObjectiveHistoryMetricSeriesData {
+	if s == nil || s.Numerator == nil {
+		return ServiceLevelObjectiveHistoryMetricSeriesData{}
+	}
+	return *s.Numerator
+}
+
+// GetNumeratorOk returns a tuple with the Numerator field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (s *ServiceLevelObjectiveHistoryMetricSeries) GetNumeratorOk() (ServiceLevelObjectiveHistoryMetricSeriesData, bool) {
+	if s == nil || s.Numerator == nil {
+		return ServiceLevelObjectiveHistoryMetricSeriesData{}, false
+	}
+	return *s.Numerator, true
+}
+
+// HasNumerator returns a boolean if a field has been set.
+func (s *ServiceLevelObjectiveHistoryMetricSeries) HasNumerator() bool {
+	if s != nil && s.Numerator != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetNumerator allocates a new s.Numerator and returns the pointer to it.
+func (s *ServiceLevelObjectiveHistoryMetricSeries) SetNumerator(v ServiceLevelObjectiveHistoryMetricSeriesData) {
+	s.Numerator = &v
+}
+
+// GetData returns the Data field if non-nil, zero value otherwise.
+func (s *ServiceLevelObjectiveHistoryResponse) GetData() ServiceLevelObjectiveHistoryResponseData {
+	if s == nil || s.Data == nil {
+		return ServiceLevelObjectiveHistoryResponseData{}
+	}
+	return *s.Data
+}
+
+// GetDataOk returns a tuple with the Data field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (s *ServiceLevelObjectiveHistoryResponse) GetDataOk() (ServiceLevelObjectiveHistoryResponseData, bool) {
+	if s == nil || s.Data == nil {
+		return ServiceLevelObjectiveHistoryResponseData{}, false
+	}
+	return *s.Data, true
+}
+
+// HasData returns a boolean if a field has been set.
+func (s *ServiceLevelObjectiveHistoryResponse) HasData() bool {
+	if s != nil && s.Data != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetData allocates a new s.Data and returns the pointer to it.
+func (s *ServiceLevelObjectiveHistoryResponse) SetData(v ServiceLevelObjectiveHistoryResponseData) {
+	s.Data = &v
+}
+
+// GetError returns the Error field if non-nil, zero value otherwise.
+func (s *ServiceLevelObjectiveHistoryResponse) GetError() string {
+	if s == nil || s.Error == nil {
+		return ""
+	}
+	return *s.Error
+}
+
+// GetErrorOk returns a tuple with the Error field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (s *ServiceLevelObjectiveHistoryResponse) GetErrorOk() (string, bool) {
+	if s == nil || s.Error == nil {
+		return "", false
+	}
+	return *s.Error, true
+}
+
+// HasError returns a boolean if a field has been set.
+func (s *ServiceLevelObjectiveHistoryResponse) HasError() bool {
+	if s != nil && s.Error != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetError allocates a new s.Error and returns the pointer to it.
+func (s *ServiceLevelObjectiveHistoryResponse) SetError(v string) {
+	s.Error = &v
+}
+
+// GetMetrics returns the Metrics field if non-nil, zero value otherwise.
+func (s *ServiceLevelObjectiveHistoryResponseData) GetMetrics() ServiceLevelObjectiveHistoryMetricSeries {
+	if s == nil || s.Metrics == nil {
+		return ServiceLevelObjectiveHistoryMetricSeries{}
+	}
+	return *s.Metrics
+}
+
+// GetMetricsOk returns a tuple with the Metrics field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (s *ServiceLevelObjectiveHistoryResponseData) GetMetricsOk() (ServiceLevelObjectiveHistoryMetricSeries, bool) {
+	if s == nil || s.Metrics == nil {
+		return ServiceLevelObjectiveHistoryMetricSeries{}, false
+	}
+	return *s.Metrics, true
+}
+
+// HasMetrics returns a boolean if a field has been set.
+func (s *ServiceLevelObjectiveHistoryResponseData) HasMetrics() bool {
+	if s != nil && s.Metrics != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetMetrics allocates a new s.Metrics and returns the pointer to it.
+func (s *ServiceLevelObjectiveHistoryResponseData) SetMetrics(v ServiceLevelObjectiveHistoryMetricSeries) {
+	s.Metrics = &v
+}
+
+// GetOverall returns the Overall field if non-nil, zero value otherwise.
+func (s *ServiceLevelObjectiveHistoryResponseData) GetOverall() ServiceLevelObjectiveHistoryOverall {
+	if s == nil || s.Overall == nil {
+		return ServiceLevelObjectiveHistoryOverall{}
+	}
+	return *s.Overall
+}
+
+// GetOverallOk returns a tuple with the Overall field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (s *ServiceLevelObjectiveHistoryResponseData) GetOverallOk() (ServiceLevelObjectiveHistoryOverall, bool) {
+	if s == nil || s.Overall == nil {
+		return ServiceLevelObjectiveHistoryOverall{}, false
+	}
+	return *s.Overall, true
+}
+
+// HasOverall returns a boolean if a field has been set.
+func (s *ServiceLevelObjectiveHistoryResponseData) HasOverall() bool {
+	if s != nil && s.Overall != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetOverall allocates a new s.Overall and returns the pointer to it.
+func (s *ServiceLevelObjectiveHistoryResponseData) SetOverall(v ServiceLevelObjectiveHistoryOverall) {
+	s.Overall = &v
 }
 
 // GetDenominator returns the Denominator field if non-nil, zero value otherwise.
@@ -17217,6 +17837,99 @@ func (s *ServicePDRequest) HasServiceName() bool {
 // SetServiceName allocates a new s.ServiceName and returns the pointer to it.
 func (s *ServicePDRequest) SetServiceName(v string) {
 	s.ServiceName = &v
+}
+
+// GetIsReplaceMissing returns the IsReplaceMissing field if non-nil, zero value otherwise.
+func (s *StringBuilderProcessor) GetIsReplaceMissing() bool {
+	if s == nil || s.IsReplaceMissing == nil {
+		return false
+	}
+	return *s.IsReplaceMissing
+}
+
+// GetIsReplaceMissingOk returns a tuple with the IsReplaceMissing field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (s *StringBuilderProcessor) GetIsReplaceMissingOk() (bool, bool) {
+	if s == nil || s.IsReplaceMissing == nil {
+		return false, false
+	}
+	return *s.IsReplaceMissing, true
+}
+
+// HasIsReplaceMissing returns a boolean if a field has been set.
+func (s *StringBuilderProcessor) HasIsReplaceMissing() bool {
+	if s != nil && s.IsReplaceMissing != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetIsReplaceMissing allocates a new s.IsReplaceMissing and returns the pointer to it.
+func (s *StringBuilderProcessor) SetIsReplaceMissing(v bool) {
+	s.IsReplaceMissing = &v
+}
+
+// GetTarget returns the Target field if non-nil, zero value otherwise.
+func (s *StringBuilderProcessor) GetTarget() string {
+	if s == nil || s.Target == nil {
+		return ""
+	}
+	return *s.Target
+}
+
+// GetTargetOk returns a tuple with the Target field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (s *StringBuilderProcessor) GetTargetOk() (string, bool) {
+	if s == nil || s.Target == nil {
+		return "", false
+	}
+	return *s.Target, true
+}
+
+// HasTarget returns a boolean if a field has been set.
+func (s *StringBuilderProcessor) HasTarget() bool {
+	if s != nil && s.Target != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetTarget allocates a new s.Target and returns the pointer to it.
+func (s *StringBuilderProcessor) SetTarget(v string) {
+	s.Target = &v
+}
+
+// GetTemplate returns the Template field if non-nil, zero value otherwise.
+func (s *StringBuilderProcessor) GetTemplate() string {
+	if s == nil || s.Template == nil {
+		return ""
+	}
+	return *s.Template
+}
+
+// GetTemplateOk returns a tuple with the Template field if it's non-nil, zero value otherwise
+// and a boolean to check if the value has been set.
+func (s *StringBuilderProcessor) GetTemplateOk() (string, bool) {
+	if s == nil || s.Template == nil {
+		return "", false
+	}
+	return *s.Template, true
+}
+
+// HasTemplate returns a boolean if a field has been set.
+func (s *StringBuilderProcessor) HasTemplate() bool {
+	if s != nil && s.Template != nil {
+		return true
+	}
+
+	return false
+}
+
+// SetTemplate allocates a new s.Template and returns the pointer to it.
+func (s *StringBuilderProcessor) SetTemplate(v string) {
+	s.Template = &v
 }
 
 // GetFillMax returns the FillMax field if non-nil, zero value otherwise.

@@ -17,6 +17,5 @@ package rds
 
 // AvailableResources is a nested struct in rds response
 type AvailableResources struct {
-	StorageRange    string `json:"StorageRange" xml:"StorageRange"`
-	DBInstanceClass string `json:"DBInstanceClass" xml:"DBInstanceClass"`
+	AvailableResource []AvailableResource `json:"AvailableResource" xml:"AvailableResource"`
 }

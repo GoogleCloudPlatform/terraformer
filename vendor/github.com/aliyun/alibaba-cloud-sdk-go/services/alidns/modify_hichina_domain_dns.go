@@ -76,8 +76,8 @@ func (client *Client) ModifyHichinaDomainDNSWithCallback(request *ModifyHichinaD
 // ModifyHichinaDomainDNSRequest is the request struct for api ModifyHichinaDomainDNS
 type ModifyHichinaDomainDNSRequest struct {
 	*requests.RpcRequest
-	UserClientIp string `position:"Query" name:"UserClientIp"`
 	DomainName   string `position:"Query" name:"DomainName"`
+	UserClientIp string `position:"Query" name:"UserClientIp"`
 	Lang         string `position:"Query" name:"Lang"`
 }
 
@@ -94,7 +94,7 @@ func CreateModifyHichinaDomainDNSRequest() (request *ModifyHichinaDomainDNSReque
 	request = &ModifyHichinaDomainDNSRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "ModifyHichinaDomainDNS", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "ModifyHichinaDomainDNS", "alidns", "openAPI")
 	return
 }
 

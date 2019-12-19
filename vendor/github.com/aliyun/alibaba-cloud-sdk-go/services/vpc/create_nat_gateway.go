@@ -81,12 +81,15 @@ type CreateNatGatewayRequest struct {
 	Description          string                              `position:"Query" name:"Description"`
 	Spec                 string                              `position:"Query" name:"Spec"`
 	Duration             string                              `position:"Query" name:"Duration"`
+	NatType              string                              `position:"Query" name:"NatType"`
 	BandwidthPackage     *[]CreateNatGatewayBandwidthPackage `position:"Query" name:"BandwidthPackage"  type:"Repeated"`
 	InstanceChargeType   string                              `position:"Query" name:"InstanceChargeType"`
 	AutoPay              requests.Boolean                    `position:"Query" name:"AutoPay"`
 	ResourceOwnerAccount string                              `position:"Query" name:"ResourceOwnerAccount"`
 	OwnerAccount         string                              `position:"Query" name:"OwnerAccount"`
 	OwnerId              requests.Integer                    `position:"Query" name:"OwnerId"`
+	VSwitchId            string                              `position:"Query" name:"VSwitchId"`
+	InternetChargeType   string                              `position:"Query" name:"InternetChargeType"`
 	VpcId                string                              `position:"Query" name:"VpcId"`
 	Name                 string                              `position:"Query" name:"Name"`
 	PricingCycle         string                              `position:"Query" name:"PricingCycle"`

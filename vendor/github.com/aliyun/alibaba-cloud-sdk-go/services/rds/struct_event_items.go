@@ -17,5 +17,5 @@ package rds
 
 // EventItems is a nested struct in rds response
 type EventItems struct {
-	EventItemsItem []EventItemsItem `json:"EventItemsItem" xml:"EventItemsItem"`
+	EventItemsItem []EventItemsItem `json:"EventItems" xml:"EventItems"`
 }

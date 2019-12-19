@@ -23,9 +23,9 @@ type MigrateTask struct {
 	MigrateTaskId string `json:"MigrateTaskId" xml:"MigrateTaskId"`
 	CreateTime    string `json:"CreateTime" xml:"CreateTime"`
 	DBName        string `json:"DBName" xml:"DBName"`
-	MigrateIaskId string `json:"MigrateIaskId" xml:"MigrateIaskId"`
 	IsDBReplaced  string `json:"IsDBReplaced" xml:"IsDBReplaced"`
-	TaskType      string `json:"TaskType" xml:"TaskType"`
+	MigrateIaskId string `json:"MigrateIaskId" xml:"MigrateIaskId"`
 	Status        string `json:"Status" xml:"Status"`
+	TaskType      string `json:"TaskType" xml:"TaskType"`
 	Description   string `json:"Description" xml:"Description"`
 }

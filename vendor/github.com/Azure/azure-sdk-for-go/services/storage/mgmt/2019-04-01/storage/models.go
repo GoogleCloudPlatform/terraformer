@@ -148,13 +148,15 @@ type DirectoryServiceOptions string
 const (
 	// DirectoryServiceOptionsAADDS ...
 	DirectoryServiceOptionsAADDS DirectoryServiceOptions = "AADDS"
+	// DirectoryServiceOptionsAD ...
+	DirectoryServiceOptionsAD DirectoryServiceOptions = "AD"
 	// DirectoryServiceOptionsNone ...
 	DirectoryServiceOptionsNone DirectoryServiceOptions = "None"
 )
 
 // PossibleDirectoryServiceOptionsValues returns an array of possible values for the DirectoryServiceOptions const type.
 func PossibleDirectoryServiceOptionsValues() []DirectoryServiceOptions {
-	return []DirectoryServiceOptions{DirectoryServiceOptionsAADDS, DirectoryServiceOptionsNone}
+	return []DirectoryServiceOptions{DirectoryServiceOptionsAADDS, DirectoryServiceOptionsAD, DirectoryServiceOptionsNone}
 }
 
 // GeoReplicationStatus enumerates the values for geo replication status.
@@ -336,6 +338,19 @@ const (
 // PossibleLeaseStatusValues returns an array of possible values for the LeaseStatus const type.
 func PossibleLeaseStatusValues() []LeaseStatus {
 	return []LeaseStatus{LeaseStatusLocked, LeaseStatusUnlocked}
+}
+
+// ListKeyExpand enumerates the values for list key expand.
+type ListKeyExpand string
+
+const (
+	// Kerb ...
+	Kerb ListKeyExpand = "kerb"
+)
+
+// PossibleListKeyExpandValues returns an array of possible values for the ListKeyExpand const type.
+func PossibleListKeyExpandValues() []ListKeyExpand {
+	return []ListKeyExpand{Kerb}
 }
 
 // Permissions enumerates the values for permissions.
@@ -1070,7 +1085,7 @@ type AccountPropertiesUpdateParameters struct {
 
 // AccountRegenerateKeyParameters the parameters used to regenerate the storage account key.
 type AccountRegenerateKeyParameters struct {
-	// KeyName - The name of storage keys that want to be regenerated, possible values are key1, key2.
+	// KeyName - The name of storage keys that want to be regenerated, possible values are key1, key2, kerb1, kerb2.
 	KeyName *string `json:"keyName,omitempty"`
 }
 
@@ -1242,6 +1257,22 @@ func (aup *AccountUpdateParameters) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// ActiveDirectoryProperties settings properties for Active Directory (AD).
+type ActiveDirectoryProperties struct {
+	// DomainName - Specifies the primary domain that the AD DNS server is authoritative for.
+	DomainName *string `json:"domainName,omitempty"`
+	// NetBiosDomainName - Specifies the NetBIOS domain name.
+	NetBiosDomainName *string `json:"netBiosDomainName,omitempty"`
+	// ForestName - Specifies the Active Directory forest to get.
+	ForestName *string `json:"forestName,omitempty"`
+	// DomainGUID - Specifies the domain GUID.
+	DomainGUID *string `json:"domainGuid,omitempty"`
+	// DomainSid - Specifies the security identifier (SID).
+	DomainSid *string `json:"domainSid,omitempty"`
+	// AzureStorageSid - Specifies the security identifier (SID) for Azure Storage.
+	AzureStorageSid *string `json:"azureStorageSid,omitempty"`
+}
+
 // AzureEntityResource the resource model definition for a Azure Resource Manager resource with an etag.
 type AzureEntityResource struct {
 	// Etag - READ-ONLY; Resource Etag.
@@ -1256,8 +1287,10 @@ type AzureEntityResource struct {
 
 // AzureFilesIdentityBasedAuthentication settings for Azure Files identity based authentication.
 type AzureFilesIdentityBasedAuthentication struct {
-	// DirectoryServiceOptions - Indicates the directory service used. Possible values include: 'DirectoryServiceOptionsNone', 'DirectoryServiceOptionsAADDS'
+	// DirectoryServiceOptions - Indicates the directory service used. Possible values include: 'DirectoryServiceOptionsNone', 'DirectoryServiceOptionsAADDS', 'DirectoryServiceOptionsAD'
 	DirectoryServiceOptions DirectoryServiceOptions `json:"directoryServiceOptions,omitempty"`
+	// ActiveDirectoryProperties - Required if choose AD.
+	ActiveDirectoryProperties *ActiveDirectoryProperties `json:"activeDirectoryProperties,omitempty"`
 }
 
 // BlobContainer properties of the blob container, including Id, resource name, resource type, Etag.

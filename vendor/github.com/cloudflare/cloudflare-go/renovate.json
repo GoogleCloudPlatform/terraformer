@@ -1,5 +1,11 @@
 {
   "extends": [
     "config:base"
+  ],
+  "packageRules": [
+    {
+      "packageNames": ["golang.org/x/net"],
+      "extends": ["schedule:weekly"]
+    }
   ]
 }

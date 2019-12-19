@@ -96,6 +96,7 @@ type DescribeRecommendInstanceTypeRequest struct {
 	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
 	SpotStrategy         string           `position:"Query" name:"SpotStrategy"`
 	PriorityStrategy     string           `position:"Query" name:"PriorityStrategy"`
+	InstanceFamilyLevel  string           `position:"Query" name:"InstanceFamilyLevel"`
 	ZoneId               string           `position:"Query" name:"ZoneId"`
 }
 

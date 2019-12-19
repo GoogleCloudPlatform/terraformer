@@ -164,6 +164,16 @@ func (client AccountsClient) Create(ctx context.Context, resourceGroupName strin
 				{Target: "parameters.AccountPropertiesCreateParameters", Name: validation.Null, Rule: false,
 					Chain: []validation.Constraint{{Target: "parameters.AccountPropertiesCreateParameters.CustomDomain", Name: validation.Null, Rule: false,
 						Chain: []validation.Constraint{{Target: "parameters.AccountPropertiesCreateParameters.CustomDomain.Name", Name: validation.Null, Rule: true, Chain: nil}}},
+						{Target: "parameters.AccountPropertiesCreateParameters.AzureFilesIdentityBasedAuthentication", Name: validation.Null, Rule: false,
+							Chain: []validation.Constraint{{Target: "parameters.AccountPropertiesCreateParameters.AzureFilesIdentityBasedAuthentication.ActiveDirectoryProperties", Name: validation.Null, Rule: false,
+								Chain: []validation.Constraint{{Target: "parameters.AccountPropertiesCreateParameters.AzureFilesIdentityBasedAuthentication.ActiveDirectoryProperties.DomainName", Name: validation.Null, Rule: true, Chain: nil},
+									{Target: "parameters.AccountPropertiesCreateParameters.AzureFilesIdentityBasedAuthentication.ActiveDirectoryProperties.NetBiosDomainName", Name: validation.Null, Rule: true, Chain: nil},
+									{Target: "parameters.AccountPropertiesCreateParameters.AzureFilesIdentityBasedAuthentication.ActiveDirectoryProperties.ForestName", Name: validation.Null, Rule: true, Chain: nil},
+									{Target: "parameters.AccountPropertiesCreateParameters.AzureFilesIdentityBasedAuthentication.ActiveDirectoryProperties.DomainGUID", Name: validation.Null, Rule: true, Chain: nil},
+									{Target: "parameters.AccountPropertiesCreateParameters.AzureFilesIdentityBasedAuthentication.ActiveDirectoryProperties.DomainSid", Name: validation.Null, Rule: true, Chain: nil},
+									{Target: "parameters.AccountPropertiesCreateParameters.AzureFilesIdentityBasedAuthentication.ActiveDirectoryProperties.AzureStorageSid", Name: validation.Null, Rule: true, Chain: nil},
+								}},
+							}},
 					}}}},
 		{TargetValue: client.SubscriptionID,
 			Constraints: []validation.Constraint{{Target: "client.SubscriptionID", Name: validation.MinLength, Rule: 1, Chain: nil}}}}); err != nil {
@@ -817,13 +827,14 @@ func (client AccountsClient) ListByResourceGroupResponder(resp *http.Response) (
 	return
 }
 
-// ListKeys lists the access keys for the specified storage account.
+// ListKeys lists the access keys or Kerberos keys (if active directory enabled) for the specified storage account.
 // Parameters:
 // resourceGroupName - the name of the resource group within the user's subscription. The name is case
 // insensitive.
 // accountName - the name of the storage account within the specified resource group. Storage account names
 // must be between 3 and 24 characters in length and use numbers and lower-case letters only.
-func (client AccountsClient) ListKeys(ctx context.Context, resourceGroupName string, accountName string) (result AccountListKeysResult, err error) {
+// expand - specifies type of the key to be listed. Possible value is kerb.
+func (client AccountsClient) ListKeys(ctx context.Context, resourceGroupName string, accountName string, expand ListKeyExpand) (result AccountListKeysResult, err error) {
 	if tracing.IsEnabled() {
 		ctx = tracing.StartSpan(ctx, fqdn+"/AccountsClient.ListKeys")
 		defer func() {
@@ -847,7 +858,7 @@ func (client AccountsClient) ListKeys(ctx context.Context, resourceGroupName str
 		return result, validation.NewError("storage.AccountsClient", "ListKeys", err.Error())
 	}
 
-	req, err := client.ListKeysPreparer(ctx, resourceGroupName, accountName)
+	req, err := client.ListKeysPreparer(ctx, resourceGroupName, accountName, expand)
 	if err != nil {
 		err = autorest.NewErrorWithError(err, "storage.AccountsClient", "ListKeys", nil, "Failure preparing request")
 		return
@@ -869,7 +880,7 @@ func (client AccountsClient) ListKeys(ctx context.Context, resourceGroupName str
 }
 
 // ListKeysPreparer prepares the ListKeys request.
-func (client AccountsClient) ListKeysPreparer(ctx context.Context, resourceGroupName string, accountName string) (*http.Request, error) {
+func (client AccountsClient) ListKeysPreparer(ctx context.Context, resourceGroupName string, accountName string, expand ListKeyExpand) (*http.Request, error) {
 	pathParameters := map[string]interface{}{
 		"accountName":       autorest.Encode("path", accountName),
 		"resourceGroupName": autorest.Encode("path", resourceGroupName),
@@ -879,6 +890,9 @@ func (client AccountsClient) ListKeysPreparer(ctx context.Context, resourceGroup
 	const APIVersion = "2019-04-01"
 	queryParameters := map[string]interface{}{
 		"api-version": APIVersion,
+	}
+	if len(string(expand)) > 0 {
+		queryParameters["$expand"] = autorest.Encode("query", expand)
 	}
 
 	preparer := autorest.CreatePreparer(
@@ -1008,13 +1022,13 @@ func (client AccountsClient) ListServiceSASResponder(resp *http.Response) (resul
 	return
 }
 
-// RegenerateKey regenerates one of the access keys for the specified storage account.
+// RegenerateKey regenerates one of the access keys or Kerberos keys for the specified storage account.
 // Parameters:
 // resourceGroupName - the name of the resource group within the user's subscription. The name is case
 // insensitive.
 // accountName - the name of the storage account within the specified resource group. Storage account names
 // must be between 3 and 24 characters in length and use numbers and lower-case letters only.
-// regenerateKey - specifies name of the key which should be regenerated -- key1 or key2.
+// regenerateKey - specifies name of the key which should be regenerated -- key1, key2, kerb1, kerb2.
 func (client AccountsClient) RegenerateKey(ctx context.Context, resourceGroupName string, accountName string, regenerateKey AccountRegenerateKeyParameters) (result AccountListKeysResult, err error) {
 	if tracing.IsEnabled() {
 		ctx = tracing.StartSpan(ctx, fqdn+"/AccountsClient.RegenerateKey")

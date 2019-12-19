@@ -63,7 +63,7 @@ func (client FirewallPolicyRuleGroupsClient) CreateOrUpdate(ctx context.Context,
 			Constraints: []validation.Constraint{{Target: "parameters.FirewallPolicyRuleGroupProperties", Name: validation.Null, Rule: false,
 				Chain: []validation.Constraint{{Target: "parameters.FirewallPolicyRuleGroupProperties.Priority", Name: validation.Null, Rule: false,
 					Chain: []validation.Constraint{{Target: "parameters.FirewallPolicyRuleGroupProperties.Priority", Name: validation.InclusiveMaximum, Rule: int64(65000), Chain: nil},
-						{Target: "parameters.FirewallPolicyRuleGroupProperties.Priority", Name: validation.InclusiveMinimum, Rule: 100, Chain: nil},
+						{Target: "parameters.FirewallPolicyRuleGroupProperties.Priority", Name: validation.InclusiveMinimum, Rule: int64(100), Chain: nil},
 					}},
 				}}}}}); err != nil {
 		return result, validation.NewError("network.FirewallPolicyRuleGroupsClient", "CreateOrUpdate", err.Error())

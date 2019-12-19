@@ -17,5 +17,5 @@ package rds
 
 // ReadonlyInstanceDelay is a nested struct in rds response
 type ReadonlyInstanceDelay struct {
-	ReadonlyInstanceDelayItem []ReadonlyInstanceDelayItem `json:"ReadonlyInstanceDelayItem" xml:"ReadonlyInstanceDelayItem"`
+	ReadonlyInstanceDelayItem []ReadonlyInstanceDelayItem `json:"ReadonlyInstanceDelay" xml:"ReadonlyInstanceDelay"`
 }

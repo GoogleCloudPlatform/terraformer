@@ -28,6 +28,15 @@ type Response struct {
 	Error  string `json:"error"`
 }
 
+func (client *Client) apiAcceptsKeysInHeaders(api string) bool {
+	for _, prefix := range []string{"/v1/series", "/v1/check_run", "/v1/events", "/v1/screen"} {
+		if strings.HasPrefix(api, prefix) {
+			return false
+		}
+	}
+	return true
+}
+
 // uriForAPI is to be called with either an API resource like "/v1/events"
 // or a full URL like the IP Ranges one
 // and it will give the proper request URI to be posted to.
@@ -40,8 +49,10 @@ func (client *Client) uriForAPI(api string) (string, error) {
 			return "", err
 		}
 		q := apiBase.Query()
-		q.Add("api_key", client.apiKey)
-		q.Add("application_key", client.appKey)
+		if !client.apiAcceptsKeysInHeaders(api) {
+			q.Add("api_key", client.apiKey)
+			q.Add("application_key", client.appKey)
+		}
 		apiBase.RawQuery = q.Encode()
 		return apiBase.String(), nil
 	}
@@ -233,8 +244,16 @@ func (client *Client) createRequest(method, api string, reqbody interface{}) (*h
 	if err != nil {
 		return nil, err
 	}
+	if client.apiAcceptsKeysInHeaders(api) {
+		req.Header.Set("DD-API-KEY", client.apiKey)
+		req.Header.Set("DD-APPLICATION-KEY", client.appKey)
+	}
 	if bodyReader != nil {
 		req.Header.Add("Content-Type", "application/json")
 	}
+	for k, v := range client.ExtraHeader {
+		req.Header.Add(k, v)
+	}
+
 	return req, nil
 }
