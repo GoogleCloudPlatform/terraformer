@@ -15,6 +15,13 @@ type DeleteObjectsInput struct {
 
 	// The bucket name containing the objects to delete.
 	//
+	// When using this API with an access point, you must direct requests to the
+	// access point hostname. The access point hostname takes the form AccessPointName-AccountId.s3-accesspoint.Region.amazonaws.com.
+	// When using this operation using an access point through the AWS SDKs, you
+	// provide the access point ARN in place of the bucket name. For more information
+	// about access point ARNs, see Using Access Points (https://docs.aws.amazon.com/AmazonS3/latest/dev/using-access-points.html)
+	// in the Amazon Simple Storage Service Developer Guide.
+	//
 	// Bucket is a required field
 	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
 
@@ -31,13 +38,14 @@ type DeleteObjectsInput struct {
 	// The concatenation of the authentication device's serial number, a space,
 	// and the value that is displayed on your authentication device. Required to
 	// permanently delete a versioned object if versioning is configured with MFA
-	// Delete enabled.
+	// delete enabled.
 	MFA *string `location:"header" locationName:"x-amz-mfa" type:"string"`
 
 	// Confirms that the requester knows that she or he will be charged for the
 	// request. Bucket owners need not specify this parameter in their requests.
-	// Documentation on downloading objects from requester pays buckets can be found
-	// at http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html
+	// For information about downloading objects from Requester Pays buckets, see
+	// Downloading Objects in Requestor Pays Buckets (https://docs.aws.amazon.com/http:/docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html)
+	// in the Amazon S3 Developer Guide.
 	RequestPayer RequestPayer `location:"header" locationName:"x-amz-request-payer" type:"string" enum:"true"`
 }
 
@@ -182,11 +190,11 @@ const opDeleteObjects = "DeleteObjects"
 // the XML, you provide the object key names, and optionally, version IDs if
 // you want to delete a specific version of the object from a versioning-enabled
 // bucket. For each key, Amazon S3 performs a delete operation and returns the
-// result of that delete, success, or failure, in the response. Note that, if
+// result of that delete, success, or failure, in the response. Note that if
 // the object specified in the request is not found, Amazon S3 returns the result
 // as deleted.
 //
-// The operation supports two modes for the response; verbose and quiet. By
+// The operation supports two modes for the response: verbose and quiet. By
 // default, the operation uses verbose mode in which the response includes the
 // result of deletion of each key in your request. In quiet mode the response
 // includes only keys where the delete operation encountered an error. For a
@@ -195,16 +203,16 @@ const opDeleteObjects = "DeleteObjects"
 //
 // When performing this operation on an MFA Delete enabled bucket, that attempts
 // to delete any versioned objects, you must include an MFA token. If you do
-// not provide one, the entire request will fail, even if there are non versioned
-// objects you are attempting to delete. If you provide an invalid token, whether
+// not provide one, the entire request will fail, even if there are non-versioned
+// objects you are trying to delete. If you provide an invalid token, whether
 // there are versioned keys in the request or not, the entire Multi-Object Delete
 // request will fail. For information about MFA Delete, see MFA Delete (https://docs.aws.amazon.com/AmazonS3/latest/dev/Versioning.html#MultiFactorAuthenticationDelete).
 //
 // Finally, the Content-MD5 header is required for all Multi-Object Delete requests.
 // Amazon S3 uses the header value to ensure that your request body has not
-// be altered in transit.
+// been altered in transit.
 //
-// The following operations are related to DeleteObjects
+// The following operations are related to DeleteObjects:
 //
 //    * CreateMultipartUpload
 //

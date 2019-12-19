@@ -76,12 +76,14 @@ func (client *Client) DescribeCrossRegionBackupDBInstanceWithCallback(request *D
 // DescribeCrossRegionBackupDBInstanceRequest is the request struct for api DescribeCrossRegionBackupDBInstance
 type DescribeCrossRegionBackupDBInstanceRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
-	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
-	PageSize             requests.Integer `position:"Query" name:"PageSize"`
 	PageNumber           requests.Integer `position:"Query" name:"PageNumber"`
+	PageSize             requests.Integer `position:"Query" name:"PageSize"`
+	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
+	NotEnabled           requests.Integer `position:"Query" name:"NotEnabled"`
+	Product              string           `position:"Query" name:"Product"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
 }
 
 // DescribeCrossRegionBackupDBInstanceResponse is the response struct for api DescribeCrossRegionBackupDBInstance

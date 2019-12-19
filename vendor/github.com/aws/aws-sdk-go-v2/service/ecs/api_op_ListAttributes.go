@@ -109,6 +109,12 @@ func (c *Client) ListAttributesRequest(input *ListAttributesInput) ListAttribute
 		Name:       opListAttributes,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &aws.Paginator{
+			InputTokens:     []string{"nextToken"},
+			OutputTokens:    []string{"nextToken"},
+			LimitToken:      "maxResults",
+			TruncationToken: "",
+		},
 	}
 
 	if input == nil {
@@ -141,6 +147,53 @@ func (r ListAttributesRequest) Send(ctx context.Context) (*ListAttributesRespons
 	}
 
 	return resp, nil
+}
+
+// NewListAttributesRequestPaginator returns a paginator for ListAttributes.
+// Use Next method to get the next page, and CurrentPage to get the current
+// response page from the paginator. Next will return false, if there are
+// no more pages, or an error was encountered.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//   // Example iterating over pages.
+//   req := client.ListAttributesRequest(input)
+//   p := ecs.NewListAttributesRequestPaginator(req)
+//
+//   for p.Next(context.TODO()) {
+//       page := p.CurrentPage()
+//   }
+//
+//   if err := p.Err(); err != nil {
+//       return err
+//   }
+//
+func NewListAttributesPaginator(req ListAttributesRequest) ListAttributesPaginator {
+	return ListAttributesPaginator{
+		Pager: aws.Pager{
+			NewRequest: func(ctx context.Context) (*aws.Request, error) {
+				var inCpy *ListAttributesInput
+				if req.Input != nil {
+					tmp := *req.Input
+					inCpy = &tmp
+				}
+
+				newReq := req.Copy(inCpy)
+				newReq.SetContext(ctx)
+				return newReq.Request, nil
+			},
+		},
+	}
+}
+
+// ListAttributesPaginator is used to paginate the request. This can be done by
+// calling Next and CurrentPage.
+type ListAttributesPaginator struct {
+	aws.Pager
+}
+
+func (p *ListAttributesPaginator) CurrentPage() *ListAttributesOutput {
+	return p.Pager.CurrentPage().(*ListAttributesOutput)
 }
 
 // ListAttributesResponse is the response type for the

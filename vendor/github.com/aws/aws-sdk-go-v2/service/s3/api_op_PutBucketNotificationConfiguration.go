@@ -142,9 +142,9 @@ const opPutBucketNotificationConfiguration = "PutBucketNotificationConfiguration
 // If the configuration in the request body includes only one TopicConfiguration
 // specifying only the s3:ReducedRedundancyLostObject event type, the response
 // will also include the x-amz-sns-test-message-id header containing the message
-// ID of the test notification sent to topic.
+// ID of the test notification sent to the topic.
 //
-// The following operations is related to PutBucketNotificationConfiguration:
+// The following operation is related to PutBucketNotificationConfiguration:
 //
 //    * GetBucketNotificationConfiguration
 //

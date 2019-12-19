@@ -16,8 +16,16 @@ type DescribeClustersInput struct {
 	// entries. If you do not specify a cluster, the default cluster is assumed.
 	Clusters []string `locationName:"clusters" type:"list"`
 
-	// Additional information about your clusters to be separated by launch type,
-	// including:
+	// Whether to include additional information about your clusters in the response.
+	// If this field is omitted, the attachments, statistics, and tags are not included.
+	//
+	// If ATTACHMENTS is specified, the attachments for the container instances
+	// or tasks within the cluster are included.
+	//
+	// If SETTINGS is specified, the settings for the cluster are included.
+	//
+	// If STATISTICS is specified, the following additional information, separated
+	// by launch type, is included:
 	//
 	//    * runningEC2TasksCount
 	//
@@ -34,6 +42,8 @@ type DescribeClustersInput struct {
 	//    * drainingEC2ServiceCount
 	//
 	//    * drainingFargateServiceCount
+	//
+	// If TAGS is specified, the metadata tags associated with the cluster are included.
 	Include []ClusterField `locationName:"include" type:"list"`
 }
 

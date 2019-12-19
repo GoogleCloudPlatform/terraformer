@@ -106,11 +106,7 @@ const opPutBucketEncryption = "PutBucketEncryption"
 //
 // This implementation of the PUT operation sets default encryption for a buckets
 // using server-side encryption with Amazon S3-managed keys SSE-S3 or AWS KMS
-// customer master keys (CMKs) (SSE-KMS) bucket. For information about the Amazon
-// S3 default encryption feature, see As a security precaution, the root user
-// of the AWS account that owns a bucket can always use this operation, even
-// if the policy explicitly denies the root user the ability to perform this
-// action. in the Amazon Simple Storage Service Developer Guide.
+// customer master keys (CMKs) (SSE-KMS) bucket.
 //
 // This operation requires AWS Signature Version 4. For more information, see
 // Authenticating Requests (AWS Signature Version 4) (sig-v4-authenticating-requests.html).

@@ -200,7 +200,9 @@ func (client ProximityPlacementGroupsClient) DeleteResponder(resp *http.Response
 // Parameters:
 // resourceGroupName - the name of the resource group.
 // proximityPlacementGroupName - the name of the proximity placement group.
-func (client ProximityPlacementGroupsClient) Get(ctx context.Context, resourceGroupName string, proximityPlacementGroupName string) (result ProximityPlacementGroup, err error) {
+// includeColocationStatus - includeColocationStatus=true enables fetching the colocation status of all the
+// resources in the proximity placement group.
+func (client ProximityPlacementGroupsClient) Get(ctx context.Context, resourceGroupName string, proximityPlacementGroupName string, includeColocationStatus string) (result ProximityPlacementGroup, err error) {
 	if tracing.IsEnabled() {
 		ctx = tracing.StartSpan(ctx, fqdn+"/ProximityPlacementGroupsClient.Get")
 		defer func() {
@@ -211,7 +213,7 @@ func (client ProximityPlacementGroupsClient) Get(ctx context.Context, resourceGr
 			tracing.EndSpan(ctx, sc, err)
 		}()
 	}
-	req, err := client.GetPreparer(ctx, resourceGroupName, proximityPlacementGroupName)
+	req, err := client.GetPreparer(ctx, resourceGroupName, proximityPlacementGroupName, includeColocationStatus)
 	if err != nil {
 		err = autorest.NewErrorWithError(err, "compute.ProximityPlacementGroupsClient", "Get", nil, "Failure preparing request")
 		return
@@ -233,7 +235,7 @@ func (client ProximityPlacementGroupsClient) Get(ctx context.Context, resourceGr
 }
 
 // GetPreparer prepares the Get request.
-func (client ProximityPlacementGroupsClient) GetPreparer(ctx context.Context, resourceGroupName string, proximityPlacementGroupName string) (*http.Request, error) {
+func (client ProximityPlacementGroupsClient) GetPreparer(ctx context.Context, resourceGroupName string, proximityPlacementGroupName string, includeColocationStatus string) (*http.Request, error) {
 	pathParameters := map[string]interface{}{
 		"proximityPlacementGroupName": autorest.Encode("path", proximityPlacementGroupName),
 		"resourceGroupName":           autorest.Encode("path", resourceGroupName),
@@ -243,6 +245,9 @@ func (client ProximityPlacementGroupsClient) GetPreparer(ctx context.Context, re
 	const APIVersion = "2019-07-01"
 	queryParameters := map[string]interface{}{
 		"api-version": APIVersion,
+	}
+	if len(includeColocationStatus) > 0 {
+		queryParameters["includeColocationStatus"] = autorest.Encode("query", includeColocationStatus)
 	}
 
 	preparer := autorest.CreatePreparer(

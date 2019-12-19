@@ -70,7 +70,7 @@ const opGetPlatformApplicationAttributes = "GetPlatformApplicationAttributes"
 // Amazon Simple Notification Service.
 //
 // Retrieves the attributes of the platform application object for the supported
-// push notification services, such as APNS and GCM. For more information, see
+// push notification services, such as APNS and FCM. For more information, see
 // Using Amazon SNS Mobile Push Notifications (https://docs.aws.amazon.com/sns/latest/dg/SNSMobilePush.html).
 //
 //    // Example sending a request using GetPlatformApplicationAttributesRequest.

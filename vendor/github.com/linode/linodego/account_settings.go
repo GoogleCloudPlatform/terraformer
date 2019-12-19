@@ -38,17 +38,22 @@ func (c *Client) GetAccountSettings(ctx context.Context) (*AccountSettings, erro
 	if err != nil {
 		return nil, err
 	}
+
 	r, err := coupleAPIErrors(c.R(ctx).SetResult(&AccountSettings{}).Get(e))
+
 	if err != nil {
 		return nil, err
 	}
+
 	return r.Result().(*AccountSettings), nil
 }
 
 // UpdateAccountSettings updates the settings associated with the account
 func (c *Client) UpdateAccountSettings(ctx context.Context, settings AccountSettingsUpdateOptions) (*AccountSettings, error) {
 	var body string
+
 	e, err := c.AccountSettings.Endpoint()
+
 	if err != nil {
 		return nil, err
 	}
@@ -68,5 +73,6 @@ func (c *Client) UpdateAccountSettings(ctx context.Context, settings AccountSett
 	if err != nil {
 		return nil, err
 	}
+
 	return r.Result().(*AccountSettings), nil
 }

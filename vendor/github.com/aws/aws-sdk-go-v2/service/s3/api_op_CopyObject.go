@@ -58,7 +58,8 @@ type CopyObjectInput struct {
 	// Copies the object if it hasn't been modified since the specified time.
 	CopySourceIfUnmodifiedSince *time.Time `location:"header" locationName:"x-amz-copy-source-if-unmodified-since" type:"timestamp"`
 
-	// Specifies the algorithm to use when decrypting the source object (e.g., AES256).
+	// Specifies the algorithm to use when decrypting the source object (for example,
+	// AES256).
 	CopySourceSSECustomerAlgorithm *string `location:"header" locationName:"x-amz-copy-source-server-side-encryption-customer-algorithm" type:"string"`
 
 	// Specifies the customer-provided encryption key for Amazon S3 to use to decrypt
@@ -67,8 +68,8 @@ type CopyObjectInput struct {
 	CopySourceSSECustomerKey *string `location:"header" locationName:"x-amz-copy-source-server-side-encryption-customer-key" type:"string" sensitive:"true"`
 
 	// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
-	// Amazon S3 uses this header for a message integrity check to ensure the encryption
-	// key was transmitted without error.
+	// Amazon S3 uses this header for a message integrity check to ensure that the
+	// encryption key was transmitted without error.
 	CopySourceSSECustomerKeyMD5 *string `location:"header" locationName:"x-amz-copy-source-server-side-encryption-customer-key-MD5" type:"string"`
 
 	// The date and time at which the object is no longer cacheable.
@@ -109,23 +110,25 @@ type CopyObjectInput struct {
 
 	// Confirms that the requester knows that she or he will be charged for the
 	// request. Bucket owners need not specify this parameter in their requests.
-	// Documentation on downloading objects from requester pays buckets can be found
-	// at http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html
+	// For information about downloading objects from Requester Pays buckets, see
+	// Downloading Objects in Requestor Pays Buckets (https://docs.aws.amazon.com/http:/docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html)
+	// in the Amazon S3 Developer Guide.
 	RequestPayer RequestPayer `location:"header" locationName:"x-amz-request-payer" type:"string" enum:"true"`
 
-	// Specifies the algorithm to use to when encrypting the object (e.g., AES256).
+	// Specifies the algorithm to use to when encrypting the object (for example,
+	// AES256).
 	SSECustomerAlgorithm *string `location:"header" locationName:"x-amz-server-side-encryption-customer-algorithm" type:"string"`
 
 	// Specifies the customer-provided encryption key for Amazon S3 to use in encrypting
 	// data. This value is used to store the object and then it is discarded; Amazon
-	// does not store the encryption key. The key must be appropriate for use with
-	// the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm
+	// S3 does not store the encryption key. The key must be appropriate for use
+	// with the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm
 	// header.
 	SSECustomerKey *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
 
 	// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
-	// Amazon S3 uses this header for a message integrity check to ensure the encryption
-	// key was transmitted without error.
+	// Amazon S3 uses this header for a message integrity check to ensure that the
+	// encryption key was transmitted without error.
 	SSECustomerKeyMD5 *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key-MD5" type:"string"`
 
 	// Specifies the AWS KMS Encryption Context to use for object encryption. The
@@ -135,12 +138,14 @@ type CopyObjectInput struct {
 
 	// Specifies the AWS KMS key ID to use for object encryption. All GET and PUT
 	// requests for an object protected by AWS KMS will fail if not made via SSL
-	// or using SigV4. Documentation on configuring any of the officially supported
-	// AWS SDKs and CLI can be found at http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingAWSSDK.html#specify-signature-version
+	// or using SigV4. For information about configuring using any of the officially
+	// supported AWS SDKs and AWS CLI, see Specifying the Signature Version in Request
+	// Authentication (https://docs.aws.amazon.com/http:/docs.aws.amazon.com/AmazonS3/latest/dev/UsingAWSSDK.html#specify-signature-version)
+	// in the Amazon S3 Developer Guide.
 	SSEKMSKeyId *string `location:"header" locationName:"x-amz-server-side-encryption-aws-kms-key-id" type:"string" sensitive:"true"`
 
-	// The Server-side encryption algorithm used when storing this object in S3
-	// (e.g., AES256, aws:kms).
+	// The server-side encryption algorithm used when storing this object in Amazon
+	// S3 (for example, AES256, aws:kms).
 	ServerSideEncryption ServerSideEncryption `location:"header" locationName:"x-amz-server-side-encryption" type:"string" enum:"true"`
 
 	// The type of storage to use for the object. Defaults to 'STANDARD'.
@@ -148,7 +153,7 @@ type CopyObjectInput struct {
 
 	// The tag-set for the object destination object this value must be used in
 	// conjunction with the TaggingDirective. The tag-set must be encoded as URL
-	// Query parameters
+	// Query parameters.
 	Tagging *string `location:"header" locationName:"x-amz-tagging" type:"string"`
 
 	// Specifies whether the object tag-set are copied from the source object or
@@ -472,7 +477,7 @@ type CopyObjectOutput struct {
 	SSECustomerAlgorithm *string `location:"header" locationName:"x-amz-server-side-encryption-customer-algorithm" type:"string"`
 
 	// If server-side encryption with a customer-provided encryption key was requested,
-	// the response will include this header to provide round trip message integrity
+	// the response will include this header to provide round-trip message integrity
 	// verification of the customer-provided encryption key.
 	SSECustomerKeyMD5 *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key-MD5" type:"string"`
 
@@ -481,12 +486,12 @@ type CopyObjectOutput struct {
 	// the encryption context key-value pairs.
 	SSEKMSEncryptionContext *string `location:"header" locationName:"x-amz-server-side-encryption-context" type:"string" sensitive:"true"`
 
-	// If present, specifies the ID of the AWS Key Management Service (KMS) customer
-	// master key (CMK) that was used for the object.
+	// If present, specifies the ID of the AWS Key Management Service (AWS KMS)
+	// customer master key (CMK) that was used for the object.
 	SSEKMSKeyId *string `location:"header" locationName:"x-amz-server-side-encryption-aws-kms-key-id" type:"string" sensitive:"true"`
 
-	// The Server-side encryption algorithm used when storing this object in S3
-	// (e.g., AES256, aws:kms).
+	// The server-side encryption algorithm used when storing this object in Amazon
+	// S3 (for example, AES256, aws:kms).
 	ServerSideEncryption ServerSideEncryption `location:"header" locationName:"x-amz-server-side-encryption" type:"string" enum:"true"`
 
 	// Version ID of the newly created copy.
@@ -573,8 +578,8 @@ const opCopyObject = "CopyObject"
 // You can store individual objects of up to 5 TB in Amazon S3. You create a
 // copy of your object up to 5 GB in size in a single atomic operation using
 // this API. However, for copying an object greater than 5 GB, you must use
-// the multipart upload Upload Part - Copy API. For conceptual information,
-// see Copy Object Using the REST Multipart Upload API (https://docs.aws.amazon.com/AmazonS3/latest/dev/CopyingObjctsUsingRESTMPUapi.html).
+// the multipart upload Upload Part - Copy API. For more information, see Copy
+// Object Using the REST Multipart Upload API (https://docs.aws.amazon.com/AmazonS3/latest/dev/CopyingObjctsUsingRESTMPUapi.html).
 //
 // When copying an object, you can preserve all metadata (default) or specify
 // new metadata. However, the ACL is not preserved and is set to private for
@@ -582,8 +587,8 @@ const opCopyObject = "CopyObject"
 // a new ACL when generating a copy request. For more information, see Using
 // ACLs (https://docs.aws.amazon.com/AmazonS3/latest/dev/S3_ACLs_UsingACLs.html).
 //
-// Amazon S3 Transfer Acceleration does not support cross-region copies. If
-// you request a cross-region copy using a Transfer Acceleration endpoint, you
+// Amazon S3 transfer acceleration does not support cross-region copies. If
+// you request a cross-region copy using a transfer acceleration endpoint, you
 // get a 400 Bad Request error. For more information about transfer acceleration,
 // see Transfer Acceleration (https://docs.aws.amazon.com/AmazonS3/latest/dev/transfer-acceleration.html).
 //
@@ -607,9 +612,9 @@ const opCopyObject = "CopyObject"
 //
 // The source object that you are copying can be encrypted or unencrypted. If
 // the source object is encrypted, it can be encrypted by server-side encryption
-// using AWS-managed encryption keys or by using a customer-provided encryption
+// using AWS managed encryption keys or by using a customer-provided encryption
 // key. When copying an object, you can request that Amazon S3 encrypt the target
-// object by using either the AWS-managed encryption keys or by using your own
+// object by using either the AWS managed encryption keys or by using your own
 // encryption key. You can do this regardless of the form of server-side encryption
 // that was used to encrypt the source, or even if the source object was not
 // encrypted. For more information about server-side encryption, see Using Server-Side
@@ -665,9 +670,9 @@ const opCopyObject = "CopyObject"
 // If you do not enable versioning or suspend it on the target bucket, the version
 // ID that Amazon S3 generates is always null.
 //
-// If the source object's storage class is GLACIER, then you must restore a
-// copy of this object before you can use it as a source object for the copy
-// operation. For more information, see .
+// If the source object's storage class is GLACIER, you must restore a copy
+// of this object before you can use it as a source object for the copy operation.
+// For more information, see .
 //
 // Access Permissions
 //
@@ -689,18 +694,18 @@ const opCopyObject = "CopyObject"
 // Server-Side- Encryption-Specific Request Headers
 //
 // To encrypt the target object, you must provide the appropriate encryption-related
-// request headers. The one you use depends on whether you want to use AWS-managed
+// request headers. The one you use depends on whether you want to use AWS managed
 // encryption keys or provide your own encryption key.
 //
-//    * To encrypt the target object using server-side encryption with an AWS-managed
-//    encryption key, provide the following request headers, as appropriate.
+//    * To encrypt the target object using server-side encryption with an AWS
+//    managed encryption key, provide the following request headers, as appropriate.
 //    x-amz-server-side​-encryption x-amz-server-side-encryption-aws-kms-key-id
-//    x-amz-server-side-encryption-context If you specify x-amz-server-side-encryption:aws:kms,
+//    x-amz-server-side-encryption-context If you specify x-amz-server-side-encryption:aws:kms
 //    but don't provide x-amz-server-side- encryption-aws-kms-key-id, Amazon
-//    S3 uses the AWS managed customer master key (CMK) in KMS to protect the
-//    data. All GET and PUT requests for an object protected by AWS KMS fail
-//    if you don't make them with SSL or by using SigV4. For more information
-//    on Server-Side Encryption with CMKs stored in Amazon KMS (SSE-KMS), see
+//    S3 uses the AWS managed customer master key (CMK) in AWS KMS to protect
+//    the data. All GET and PUT requests for an object protected by AWS KMS
+//    fail if you don't make them with SSL or by using SigV4. For more information
+//    about server-side encryption with CMKs stored in AWS KMS (SSE-KMS), see
 //    Protecting Data Using Server-Side Encryption with CMKs stored in KMS (https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html).
 //
 //    * To encrypt the target object using server-side encryption with an encryption
@@ -711,7 +716,7 @@ const opCopyObject = "CopyObject"
 //    customer-provided encryption keys, you must use the following headers.
 //    x-amz-copy-source​-server-side​-encryption​-customer-algorithm x-amz-copy-source​-server-side​-encryption​-customer-key
 //    x-amz-copy-source-​server-side​-encryption​-customer-key-MD5 For
-//    more information on Server-Side Encryption with CMKs stored in Amazon
+//    more information about server-side encryption with CMKs stored in AWS
 //    KMS (SSE-KMS), see Protecting Data Using Server-Side Encryption with CMKs
 //    stored in Amazon KMS (https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html).
 //
@@ -721,7 +726,7 @@ const opCopyObject = "CopyObject"
 // operation. By default, all objects are private. Only the owner has full access
 // control. When adding a new object, you can grant permissions to individual
 // AWS accounts or to predefined groups defined by Amazon S3. These permissions
-// are then added to the Access Control List (ACL) on the object. For more information,
+// are then added to the access control list (ACL) on the object. For more information,
 // see Using ACLs (https://docs.aws.amazon.com/AmazonS3/latest/dev/S3_ACLs_UsingACLs.html).
 // With this operation, you can grant access permissions using one of the following
 // two methods:
@@ -735,7 +740,7 @@ const opCopyObject = "CopyObject"
 //    Each header maps to specific permissions that Amazon S3 supports in an
 //    ACL. For more information, see Access Control List (ACL) Overview (https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html).
 //    In the header, you specify a list of grantees who get the specific permission.
-//    To grant permissions explicitly use: x-amz-grant-read x-amz-grant-write
+//    To grant permissions explicitly, use: x-amz-grant-read x-amz-grant-write
 //    x-amz-grant-read-acp x-amz-grant-write-acp x-amz-grant-full-control You
 //    specify each grantee as a type=value pair, where the type is one of the
 //    following: emailAddress – if the value specified is the email address
@@ -745,7 +750,7 @@ const opCopyObject = "CopyObject"
 //    accounts identified by email addresses permissions to read object data
 //    and its metadata: x-amz-grant-read: emailAddress="xyz@amazon.com", emailAddress="abc@amazon.com"
 //
-// The following operation are related to CopyObject
+// The following operations are related to CopyObject:
 //
 //    * PutObject
 //

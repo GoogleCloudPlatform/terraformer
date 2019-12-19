@@ -41,11 +41,12 @@ type UploadPartCopyInput struct {
 	// The range of bytes to copy from the source object. The range value must use
 	// the form bytes=first-last, where the first and last are the zero-based byte
 	// offsets to copy. For example, bytes=0-9 indicates that you want to copy the
-	// first ten bytes of the source. You can copy a range only if the source object
+	// first 10 bytes of the source. You can copy a range only if the source object
 	// is greater than 5 MB.
 	CopySourceRange *string `location:"header" locationName:"x-amz-copy-source-range" type:"string"`
 
-	// Specifies the algorithm to use when decrypting the source object (e.g., AES256).
+	// Specifies the algorithm to use when decrypting the source object (for example,
+	// AES256).
 	CopySourceSSECustomerAlgorithm *string `location:"header" locationName:"x-amz-copy-source-server-side-encryption-customer-algorithm" type:"string"`
 
 	// Specifies the customer-provided encryption key for Amazon S3 to use to decrypt
@@ -54,8 +55,8 @@ type UploadPartCopyInput struct {
 	CopySourceSSECustomerKey *string `location:"header" locationName:"x-amz-copy-source-server-side-encryption-customer-key" type:"string" sensitive:"true"`
 
 	// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
-	// Amazon S3 uses this header for a message integrity check to ensure the encryption
-	// key was transmitted without error.
+	// Amazon S3 uses this header for a message integrity check to ensure that the
+	// encryption key was transmitted without error.
 	CopySourceSSECustomerKeyMD5 *string `location:"header" locationName:"x-amz-copy-source-server-side-encryption-customer-key-MD5" type:"string"`
 
 	// Object key for which the multipart upload was initiated.
@@ -71,24 +72,26 @@ type UploadPartCopyInput struct {
 
 	// Confirms that the requester knows that she or he will be charged for the
 	// request. Bucket owners need not specify this parameter in their requests.
-	// Documentation on downloading objects from requester pays buckets can be found
-	// at http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html
+	// For information about downloading objects from Requester Pays buckets, see
+	// Downloading Objects in Requestor Pays Buckets (https://docs.aws.amazon.com/http:/docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html)
+	// in the Amazon S3 Developer Guide.
 	RequestPayer RequestPayer `location:"header" locationName:"x-amz-request-payer" type:"string" enum:"true"`
 
-	// Specifies the algorithm to use to when encrypting the object (e.g., AES256).
+	// Specifies the algorithm to use to when encrypting the object (for example,
+	// AES256).
 	SSECustomerAlgorithm *string `location:"header" locationName:"x-amz-server-side-encryption-customer-algorithm" type:"string"`
 
 	// Specifies the customer-provided encryption key for Amazon S3 to use in encrypting
 	// data. This value is used to store the object and then it is discarded; Amazon
-	// does not store the encryption key. The key must be appropriate for use with
-	// the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm
+	// S3 does not store the encryption key. The key must be appropriate for use
+	// with the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm
 	// header. This must be the same encryption key specified in the initiate multipart
 	// upload request.
 	SSECustomerKey *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
 
 	// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
-	// Amazon S3 uses this header for a message integrity check to ensure the encryption
-	// key was transmitted without error.
+	// Amazon S3 uses this header for a message integrity check to ensure that the
+	// encryption key was transmitted without error.
 	SSECustomerKeyMD5 *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key-MD5" type:"string"`
 
 	// Upload ID identifying the multipart upload whose part is being copied.
@@ -286,16 +289,16 @@ type UploadPartCopyOutput struct {
 	SSECustomerAlgorithm *string `location:"header" locationName:"x-amz-server-side-encryption-customer-algorithm" type:"string"`
 
 	// If server-side encryption with a customer-provided encryption key was requested,
-	// the response will include this header to provide round trip message integrity
+	// the response will include this header to provide round-trip message integrity
 	// verification of the customer-provided encryption key.
 	SSECustomerKeyMD5 *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key-MD5" type:"string"`
 
-	// If present, specifies the ID of the AWS Key Management Service (KMS) customer
-	// master key (CMK) that was used for the object.
+	// If present, specifies the ID of the AWS Key Management Service (AWS KMS)
+	// customer master key (CMK) that was used for the object.
 	SSEKMSKeyId *string `location:"header" locationName:"x-amz-server-side-encryption-aws-kms-key-id" type:"string" sensitive:"true"`
 
-	// The Server-side encryption algorithm used when storing this object in S3
-	// (e.g., AES256, aws:kms).
+	// The server-side encryption algorithm used when storing this object in Amazon
+	// S3 (for example, AES256, aws:kms).
 	ServerSideEncryption ServerSideEncryption `location:"header" locationName:"x-amz-server-side-encryption" type:"string" enum:"true"`
 }
 
@@ -372,19 +375,18 @@ const opUploadPartCopy = "UploadPartCopy"
 // to your initiate request. Amazon S3 returns a unique identifier, the upload
 // ID, that you must include in your upload part request.
 //
-// For more information on using the UploadPartCopy operation, see the following
-// topics:
+// For more information about using the UploadPartCopy operation, see the following:
 //
-//    * For conceptual information on multipart uploads, go to Uploading Objects
+//    * For conceptual information about multipart uploads, see Uploading Objects
 //    Using Multipart Upload (https://docs.aws.amazon.com/AmazonS3/latest/dev/uploadobjusingmpu.html)
 //    in the Amazon Simple Storage Service Developer Guide.
 //
-//    * For information on permissions required to use the multipart upload
-//    API, go to Multipart Upload API and Permissions (https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuAndPermissions.html)
+//    * For information about permissions required to use the multipart upload
+//    API, see Multipart Upload API and Permissions (https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuAndPermissions.html)
 //    in the Amazon Simple Storage Service Developer Guide.
 //
 //    * For information about copying objects using a single atomic operation
-//    vs. the multipart upload, go to Operations on Objects (https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectOperations.html)
+//    vs. the multipart upload, see Operations on Objects (https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectOperations.html)
 //    in the Amazon Simple Storage Service Developer Guide.
 //
 //    * For information about using server-side encryption with customer-provided
@@ -392,18 +394,20 @@ const opUploadPartCopy = "UploadPartCopy"
 //    UploadPart.
 //
 // Note the following additional considerations about the request headers x-amz-copy-source-if-match,
-// x-amz-copy-source-if-none-match x-amz-copy-source-if-unmodified-since x-amz-copy-source-if-modified-since
+// x-amz-copy-source-if-none-match, x-amz-copy-source-if-unmodified-since, and
+// x-amz-copy-source-if-modified-since:
 //
 //    * Consideration 1 - If both of the x-amz-copy-source-if-match and x-amz-copy-source-if-unmodified-since
 //    headers are present in the request as follows: x-amz-copy-source-if-match
 //    condition evaluates to true, and; x-amz-copy-source-if-unmodified-since
-//    condition evaluates to false; then, S3 returns 200 OK and copies the data.
+//    condition evaluates to false; Amazon S3 returns 200 OK and copies the
+//    data.
 //
 //    * Consideration 2 - If both of the x-amz-copy-source-if-none-match and
 //    x-amz-copy-source-if-modified-since headers are present in the request
 //    as follows: x-amz-copy-source-if-none-match condition evaluates to false,
 //    and; x-amz-copy-source-if-modified-since condition evaluates to true;
-//    then, S3 returns 412 Precondition Failed response code.
+//    Amazon S3 returns 412 Precondition Failed response code.
 //
 // Versioning
 //

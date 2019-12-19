@@ -73,23 +73,25 @@ type CreateMultipartUploadInput struct {
 
 	// Confirms that the requester knows that she or he will be charged for the
 	// request. Bucket owners need not specify this parameter in their requests.
-	// Documentation on downloading objects from requester pays buckets can be found
-	// at http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html
+	// For information about downloading objects from Requester Pays buckets, see
+	// Downloading Objects in Requestor Pays Buckets (https://docs.aws.amazon.com/http:/docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html)
+	// in the Amazon S3 Developer Guide.
 	RequestPayer RequestPayer `location:"header" locationName:"x-amz-request-payer" type:"string" enum:"true"`
 
-	// Specifies the algorithm to use to when encrypting the object (e.g., AES256).
+	// Specifies the algorithm to use to when encrypting the object (for example,
+	// AES256).
 	SSECustomerAlgorithm *string `location:"header" locationName:"x-amz-server-side-encryption-customer-algorithm" type:"string"`
 
 	// Specifies the customer-provided encryption key for Amazon S3 to use in encrypting
 	// data. This value is used to store the object and then it is discarded; Amazon
-	// does not store the encryption key. The key must be appropriate for use with
-	// the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm
+	// S3 does not store the encryption key. The key must be appropriate for use
+	// with the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm
 	// header.
 	SSECustomerKey *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
 
 	// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
-	// Amazon S3 uses this header for a message integrity check to ensure the encryption
-	// key was transmitted without error.
+	// Amazon S3 uses this header for a message integrity check to ensure that the
+	// encryption key was transmitted without error.
 	SSECustomerKeyMD5 *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key-MD5" type:"string"`
 
 	// Specifies the AWS KMS Encryption Context to use for object encryption. The
@@ -99,18 +101,20 @@ type CreateMultipartUploadInput struct {
 
 	// Specifies the AWS KMS key ID to use for object encryption. All GET and PUT
 	// requests for an object protected by AWS KMS will fail if not made via SSL
-	// or using SigV4. Documentation on configuring any of the officially supported
-	// AWS SDKs and CLI can be found at http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingAWSSDK.html#specify-signature-version
+	// or using SigV4. For information about configuring using any of the officially
+	// supported AWS SDKs and AWS CLI, see Specifying the Signature Version in Request
+	// Authentication (https://docs.aws.amazon.com/http:/docs.aws.amazon.com/AmazonS3/latest/dev/UsingAWSSDK.html#specify-signature-version)
+	// in the Amazon S3 Developer Guide.
 	SSEKMSKeyId *string `location:"header" locationName:"x-amz-server-side-encryption-aws-kms-key-id" type:"string" sensitive:"true"`
 
-	// The Server-side encryption algorithm used when storing this object in S3
-	// (e.g., AES256, aws:kms).
+	// The server-side encryption algorithm used when storing this object in Amazon
+	// S3 (for example, AES256, aws:kms).
 	ServerSideEncryption ServerSideEncryption `location:"header" locationName:"x-amz-server-side-encryption" type:"string" enum:"true"`
 
 	// The type of storage to use for the object. Defaults to 'STANDARD'.
 	StorageClass StorageClass `location:"header" locationName:"x-amz-storage-class" type:"string" enum:"true"`
 
-	// The tag-set for the object. The tag-set must be encoded as URL Query parameters
+	// The tag-set for the object. The tag-set must be encoded as URL Query parameters.
 	Tagging *string `location:"header" locationName:"x-amz-tagging" type:"string"`
 
 	// If the bucket is configured as a website, redirects requests for this object
@@ -355,6 +359,13 @@ type CreateMultipartUploadOutput struct {
 	AbortRuleId *string `location:"header" locationName:"x-amz-abort-rule-id" type:"string"`
 
 	// Name of the bucket to which the multipart upload was initiated.
+	//
+	// When using this API with an access point, you must direct requests to the
+	// access point hostname. The access point hostname takes the form AccessPointName-AccountId.s3-accesspoint.Region.amazonaws.com.
+	// When using this operation using an access point through the AWS SDKs, you
+	// provide the access point ARN in place of the bucket name. For more information
+	// about access point ARNs, see Using Access Points (https://docs.aws.amazon.com/AmazonS3/latest/dev/using-access-points.html)
+	// in the Amazon Simple Storage Service Developer Guide.
 	Bucket *string `locationName:"Bucket" type:"string"`
 
 	// Object key for which the multipart upload was initiated.
@@ -370,7 +381,7 @@ type CreateMultipartUploadOutput struct {
 	SSECustomerAlgorithm *string `location:"header" locationName:"x-amz-server-side-encryption-customer-algorithm" type:"string"`
 
 	// If server-side encryption with a customer-provided encryption key was requested,
-	// the response will include this header to provide round trip message integrity
+	// the response will include this header to provide round-trip message integrity
 	// verification of the customer-provided encryption key.
 	SSECustomerKeyMD5 *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key-MD5" type:"string"`
 
@@ -379,12 +390,12 @@ type CreateMultipartUploadOutput struct {
 	// the encryption context key-value pairs.
 	SSEKMSEncryptionContext *string `location:"header" locationName:"x-amz-server-side-encryption-context" type:"string" sensitive:"true"`
 
-	// If present, specifies the ID of the AWS Key Management Service (KMS) customer
-	// master key (CMK) that was used for the object.
+	// If present, specifies the ID of the AWS Key Management Service (AWS KMS)
+	// customer master key (CMK) that was used for the object.
 	SSEKMSKeyId *string `location:"header" locationName:"x-amz-server-side-encryption-aws-kms-key-id" type:"string" sensitive:"true"`
 
-	// The Server-side encryption algorithm used when storing this object in S3
-	// (e.g., AES256, aws:kms).
+	// The server-side encryption algorithm used when storing this object in Amazon
+	// S3 (for example, AES256, aws:kms).
 	ServerSideEncryption ServerSideEncryption `location:"header" locationName:"x-amz-server-side-encryption" type:"string" enum:"true"`
 
 	// ID for the initiated multipart upload.
@@ -558,26 +569,27 @@ const opCreateMultipartUpload = "CreateMultipartUpload"
 // encryption. Server-side encryption is for data encryption at rest. Amazon
 // S3 encrypts your data as it writes it to disks in its data centers and decrypts
 // it when you access it. The option you use depends on whether you want to
-// use AWS-managed encryption keys or provide your own encryption key.
+// use AWS managed encryption keys or provide your own encryption key.
 //
 //    * Use encryption keys managed by Amazon S3 or customer master keys (CMKs)
-//    stored in Amazon Key Management Service (KMS) – If you want AWS to manage
-//    the keys used to encrypt data, specify the following headers in the request.
-//    x-amz-server-side​-encryption x-amz-server-side-encryption-aws-kms-key-id
+//    stored in AWS Key Management Service (AWS KMS) – If you want AWS to
+//    manage the keys used to encrypt data, specify the following headers in
+//    the request. x-amz-server-side​-encryption x-amz-server-side-encryption-aws-kms-key-id
 //    x-amz-server-side-encryption-context If you specify x-amz-server-side-encryption:aws:kms,
 //    but don't provide x-amz-server-side- encryption-aws-kms-key-id, Amazon
 //    S3 uses the AWS managed CMK in AWS KMS to protect the data. All GET and
 //    PUT requests for an object protected by AWS KMS fail if you don't make
-//    them with SSL or by using SigV4. For more information on Server-Side Encryption
-//    with CMKs Stored in Amazon KMS (SSE-KMS), see Protecting Data Using Server-Side
-//    Encryption with CMKs stored in AWS KMS (https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html).
+//    them with SSL or by using SigV4. For more information about server-side
+//    encryption with CMKs stored in AWS KMS (SSE-KMS), see Protecting Data
+//    Using Server-Side Encryption with CMKs stored in AWS KMS (https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html).
 //
 //    * Use customer-provided encryption keys – If you want to manage your
 //    own encryption keys, provide all the following headers in the request.
 //    x-amz-server-side​-encryption​-customer-algorithm x-amz-server-side​-encryption​-customer-key
 //    x-amz-server-side​-encryption​-customer-key-MD5 For more information
-//    on Server-Side Encryption with CMKs stored in AWS KMS (SSE-KMS), see Protecting
-//    Data Using Server-Side Encryption with CMKs stored in AWS KMS (https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html).
+//    about server-side encryption with CMKs stored in AWS KMS (SSE-KMS), see
+//    Protecting Data Using Server-Side Encryption with CMKs stored in AWS KMS
+//    (https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html).
 //
 // Access-Control-List (ACL)-Specific Request Headers
 //
@@ -585,7 +597,7 @@ const opCreateMultipartUpload = "CreateMultipartUpload"
 // operation. By default, all objects are private. Only the owner has full access
 // control. When adding a new object, you can grant permissions to individual
 // AWS accounts or to predefined groups defined by Amazon S3. These permissions
-// are then added to the Access Control List (ACL) on the object. For more information,
+// are then added to the access control list (ACL) on the object. For more information,
 // see Using ACLs (https://docs.aws.amazon.com/AmazonS3/latest/dev/S3_ACLs_UsingACLs.html).
 // With this operation, you can grant access permissions using one of the following
 // two methods:
@@ -599,7 +611,7 @@ const opCreateMultipartUpload = "CreateMultipartUpload"
 //    Each header maps to specific permissions that Amazon S3 supports in an
 //    ACL. For more information, see Access Control List (ACL) Overview (https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html).
 //    In the header, you specify a list of grantees who get the specific permission.
-//    To grant permissions explicitly use: x-amz-grant-read x-amz-grant-write
+//    To grant permissions explicitly, use: x-amz-grant-read x-amz-grant-write
 //    x-amz-grant-read-acp x-amz-grant-write-acp x-amz-grant-full-control You
 //    specify each grantee as a type=value pair, where the type is one of the
 //    following: emailAddress – if the value specified is the email address

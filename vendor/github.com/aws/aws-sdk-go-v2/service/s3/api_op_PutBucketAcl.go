@@ -172,17 +172,17 @@ const opPutBucketAcl = "PutBucketAcl"
 //    a set of predefined ACLs, known as canned ACLs. Each canned ACL has a
 //    predefined set of grantees and permissions. Specify the canned ACL name
 //    as the value of x-amz-acl. If you use this header, you cannot use other
-//    access control specific headers in your request. For more information,
+//    access control-specific headers in your request. For more information,
 //    see Canned ACL (https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL).
 //
 //    * Specify access permissions explicitly with the x-amz-grant-read, x-amz-grant-read-acp,
 //    x-amz-grant-write-acp, and x-amz-grant-full-control headers. When using
-//    these headers you specify explicit access permissions and grantees (AWS
-//    accounts or a Amazon S3 groups) who will receive the permission. If you
-//    use these ACL specific headers, you cannot use x-amz-acl header to set
-//    a canned ACL. These parameters map to the set of permissions that Amazon
-//    S3 supports in an ACL. For more information, see Access Control List (ACL)
-//    Overview (https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html).
+//    these headers, you specify explicit access permissions and grantees (AWS
+//    accounts or Amazon S3 groups) who will receive the permission. If you
+//    use these ACL-specific headers, you cannot use the x-amz-acl header to
+//    set a canned ACL. These parameters map to the set of permissions that
+//    Amazon S3 supports in an ACL. For more information, see Access Control
+//    List (ACL) Overview (https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html).
 //    You specify each grantee as a type=value pair, where the type is one of
 //    the following: emailAddress – if the value specified is the email address
 //    of an AWS account id – if the value specified is the canonical user

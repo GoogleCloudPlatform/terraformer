@@ -154,6 +154,43 @@ func (enum ContinuousBackupsStatus) MarshalValueBuf(b []byte) ([]byte, error) {
 	return append(b, enum...), nil
 }
 
+type ContributorInsightsAction string
+
+// Enum values for ContributorInsightsAction
+const (
+	ContributorInsightsActionEnable  ContributorInsightsAction = "ENABLE"
+	ContributorInsightsActionDisable ContributorInsightsAction = "DISABLE"
+)
+
+func (enum ContributorInsightsAction) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum ContributorInsightsAction) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type ContributorInsightsStatus string
+
+// Enum values for ContributorInsightsStatus
+const (
+	ContributorInsightsStatusEnabling  ContributorInsightsStatus = "ENABLING"
+	ContributorInsightsStatusEnabled   ContributorInsightsStatus = "ENABLED"
+	ContributorInsightsStatusDisabling ContributorInsightsStatus = "DISABLING"
+	ContributorInsightsStatusDisabled  ContributorInsightsStatus = "DISABLED"
+	ContributorInsightsStatusFailed    ContributorInsightsStatus = "FAILED"
+)
+
+func (enum ContributorInsightsStatus) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum ContributorInsightsStatus) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
 type GlobalTableStatus string
 
 // Enum values for GlobalTableStatus
@@ -248,10 +285,11 @@ type ReplicaStatus string
 
 // Enum values for ReplicaStatus
 const (
-	ReplicaStatusCreating ReplicaStatus = "CREATING"
-	ReplicaStatusUpdating ReplicaStatus = "UPDATING"
-	ReplicaStatusDeleting ReplicaStatus = "DELETING"
-	ReplicaStatusActive   ReplicaStatus = "ACTIVE"
+	ReplicaStatusCreating       ReplicaStatus = "CREATING"
+	ReplicaStatusCreationFailed ReplicaStatus = "CREATION_FAILED"
+	ReplicaStatusUpdating       ReplicaStatus = "UPDATING"
+	ReplicaStatusDeleting       ReplicaStatus = "DELETING"
+	ReplicaStatusActive         ReplicaStatus = "ACTIVE"
 )
 
 func (enum ReplicaStatus) MarshalValue() (string, error) {
@@ -445,10 +483,13 @@ type TableStatus string
 
 // Enum values for TableStatus
 const (
-	TableStatusCreating TableStatus = "CREATING"
-	TableStatusUpdating TableStatus = "UPDATING"
-	TableStatusDeleting TableStatus = "DELETING"
-	TableStatusActive   TableStatus = "ACTIVE"
+	TableStatusCreating                          TableStatus = "CREATING"
+	TableStatusUpdating                          TableStatus = "UPDATING"
+	TableStatusDeleting                          TableStatus = "DELETING"
+	TableStatusActive                            TableStatus = "ACTIVE"
+	TableStatusInaccessibleEncryptionCredentials TableStatus = "INACCESSIBLE_ENCRYPTION_CREDENTIALS"
+	TableStatusArchiving                         TableStatus = "ARCHIVING"
+	TableStatusArchived                          TableStatus = "ARCHIVED"
 )
 
 func (enum TableStatus) MarshalValue() (string, error) {

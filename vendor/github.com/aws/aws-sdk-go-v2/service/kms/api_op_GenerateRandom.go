@@ -46,7 +46,7 @@ type GenerateRandomOutput struct {
 	_ struct{} `type:"structure"`
 
 	// The random byte string. When you use the HTTP API or the AWS CLI, the value
-	// is Base64-encoded. Otherwise, it is not encoded.
+	// is Base64-encoded. Otherwise, it is not Base64-encoded.
 	//
 	// Plaintext is automatically base64 encoded/decoded by the SDK.
 	Plaintext []byte `min:"1" type:"blob" sensitive:"true"`

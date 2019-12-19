@@ -76,14 +76,14 @@ func (client *Client) DescribeGtmLogsWithCallback(request *DescribeGtmLogsReques
 // DescribeGtmLogsRequest is the request struct for api DescribeGtmLogs
 type DescribeGtmLogsRequest struct {
 	*requests.RpcRequest
+	StartTimestamp requests.Integer `position:"Query" name:"StartTimestamp"`
+	PageNumber     requests.Integer `position:"Query" name:"PageNumber"`
+	EndTimestamp   requests.Integer `position:"Query" name:"EndTimestamp"`
 	InstanceId     string           `position:"Query" name:"InstanceId"`
 	UserClientIp   string           `position:"Query" name:"UserClientIp"`
 	PageSize       requests.Integer `position:"Query" name:"PageSize"`
 	Lang           string           `position:"Query" name:"Lang"`
 	Keyword        string           `position:"Query" name:"Keyword"`
-	StartTimestamp requests.Integer `position:"Query" name:"StartTimestamp"`
-	PageNumber     requests.Integer `position:"Query" name:"PageNumber"`
-	EndTimestamp   requests.Integer `position:"Query" name:"EndTimestamp"`
 }
 
 // DescribeGtmLogsResponse is the response struct for api DescribeGtmLogs
@@ -102,7 +102,7 @@ func CreateDescribeGtmLogsRequest() (request *DescribeGtmLogsRequest) {
 	request = &DescribeGtmLogsRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmLogs", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmLogs", "alidns", "openAPI")
 	return
 }
 

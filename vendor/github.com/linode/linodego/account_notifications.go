@@ -68,6 +68,7 @@ func (NotificationsPagedResponse) endpoint(c *Client) string {
 	if err != nil {
 		panic(err)
 	}
+
 	return endpoint
 }
 
@@ -84,12 +85,15 @@ func (resp *NotificationsPagedResponse) appendData(r *NotificationsPagedResponse
 func (c *Client) ListNotifications(ctx context.Context, opts *ListOptions) ([]Notification, error) {
 	response := NotificationsPagedResponse{}
 	err := c.listHelper(ctx, &response, opts)
+
 	for i := range response.Data {
 		response.Data[i].fixDates()
 	}
+
 	if err != nil {
 		return nil, err
 	}
+
 	return response.Data, nil
 }
 
@@ -97,5 +101,6 @@ func (c *Client) ListNotifications(ctx context.Context, opts *ListOptions) ([]No
 func (v *Notification) fixDates() *Notification {
 	v.Until, _ = parseDates(v.UntilStr)
 	v.When, _ = parseDates(v.WhenStr)
+
 	return v
 }

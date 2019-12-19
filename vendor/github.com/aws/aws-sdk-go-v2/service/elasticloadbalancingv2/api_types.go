@@ -289,7 +289,8 @@ type AvailabilityZone struct {
 
 	// [Network Load Balancers] If you need static IP addresses for your load balancer,
 	// you can specify one Elastic IP address per Availability Zone when you create
-	// the load balancer.
+	// an internal-facing load balancer. For internal load balancers, you can specify
+	// a private IP address from the IPv4 range of the subnet.
 	LoadBalancerAddresses []LoadBalancerAddress `type:"list"`
 
 	// The ID of the subnet. You can specify one subnet per Availability Zone.
@@ -603,11 +604,15 @@ func (s LoadBalancer) String() string {
 type LoadBalancerAddress struct {
 	_ struct{} `type:"structure"`
 
-	// [Network Load Balancers] The allocation ID of the Elastic IP address.
+	// [Network Load Balancers] The allocation ID of the Elastic IP address for
+	// an internal-facing load balancer.
 	AllocationId *string `type:"string"`
 
 	// The static IP address.
 	IpAddress *string `type:"string"`
+
+	// [Network Load Balancers] The private IPv4 address for an internal load balancer.
+	PrivateIPv4Address *string `type:"string"`
 }
 
 // String returns the string representation
@@ -1035,8 +1040,12 @@ func (s SslPolicy) String() string {
 type SubnetMapping struct {
 	_ struct{} `type:"structure"`
 
-	// [Network Load Balancers] The allocation ID of the Elastic IP address.
+	// [Network Load Balancers] The allocation ID of the Elastic IP address for
+	// an internet-facing load balancer.
 	AllocationId *string `type:"string"`
+
+	// [Network Load Balancers] The private IPv4 address for an internal load balancer.
+	PrivateIPv4Address *string `type:"string"`
 
 	// The ID of the subnet.
 	SubnetId *string `type:"string"`
@@ -1238,6 +1247,10 @@ type TargetGroupAttribute struct {
 	//
 	// The following attributes are supported by Application Load Balancers if the
 	// target is not a Lambda function:
+	//
+	//    * load_balancing.algorithm.type - The load balancing algorithm determines
+	//    how the load balancer selects targets when routing requests. The value
+	//    is round_robin or least_outstanding_requests. The default is round_robin.
 	//
 	//    * slow_start.duration_seconds - The time period, in seconds, during which
 	//    a newly registered target receives a linearly increasing share of the

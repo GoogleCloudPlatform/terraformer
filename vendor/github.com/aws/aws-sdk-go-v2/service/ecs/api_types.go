@@ -123,6 +123,58 @@ func (s *Attribute) Validate() error {
 	return nil
 }
 
+// The details of the Auto Scaling group for the capacity provider.
+type AutoScalingGroupProvider struct {
+	_ struct{} `type:"structure"`
+
+	// The Amazon Resource Name (ARN) that identifies the Auto Scaling group.
+	//
+	// AutoScalingGroupArn is a required field
+	AutoScalingGroupArn *string `locationName:"autoScalingGroupArn" type:"string" required:"true"`
+
+	// The managed scaling settings for the Auto Scaling group capacity provider.
+	ManagedScaling *ManagedScaling `locationName:"managedScaling" type:"structure"`
+
+	// The managed termination protection setting to use for the Auto Scaling group
+	// capacity provider. This determines whether the Auto Scaling group has managed
+	// termination protection.
+	//
+	// When managed termination protection is enabled, Amazon ECS prevents the Amazon
+	// EC2 instances in an Auto Scaling group that contain tasks from being terminated
+	// during a scale-in action. The Auto Scaling group and each instance in the
+	// Auto Scaling group must have instance protection from scale-in actions enabled
+	// as well. For more information, see Instance Protection (https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-instance-termination.html#instance-protection)
+	// in the AWS Auto Scaling User Guide.
+	//
+	// When managed termination protection is disabled, your Amazon EC2 instances
+	// are not protected from termination when the Auto Scaling group scales in.
+	ManagedTerminationProtection ManagedTerminationProtection `locationName:"managedTerminationProtection" type:"string" enum:"true"`
+}
+
+// String returns the string representation
+func (s AutoScalingGroupProvider) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *AutoScalingGroupProvider) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "AutoScalingGroupProvider"}
+
+	if s.AutoScalingGroupArn == nil {
+		invalidParams.Add(aws.NewErrParamRequired("AutoScalingGroupArn"))
+	}
+	if s.ManagedScaling != nil {
+		if err := s.ManagedScaling.Validate(); err != nil {
+			invalidParams.AddNested("ManagedScaling", err.(aws.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
 // An object representing the networking details for a task or service.
 type AwsVpcConfiguration struct {
 	_ struct{} `type:"structure"`
@@ -166,6 +218,102 @@ func (s *AwsVpcConfiguration) Validate() error {
 	return nil
 }
 
+// The details of a capacity provider.
+type CapacityProvider struct {
+	_ struct{} `type:"structure"`
+
+	// The Auto Scaling group settings for the capacity provider.
+	AutoScalingGroupProvider *AutoScalingGroupProvider `locationName:"autoScalingGroupProvider" type:"structure"`
+
+	// The Amazon Resource Name (ARN) that identifies the capacity provider.
+	CapacityProviderArn *string `locationName:"capacityProviderArn" type:"string"`
+
+	// The name of the capacity provider.
+	Name *string `locationName:"name" type:"string"`
+
+	// The current status of the capacity provider. Only capacity providers in an
+	// ACTIVE state can be used in a cluster.
+	Status CapacityProviderStatus `locationName:"status" type:"string" enum:"true"`
+
+	// The metadata that you apply to the capacity provider to help you categorize
+	// and organize it. Each tag consists of a key and an optional value, both of
+	// which you define.
+	//
+	// The following basic restrictions apply to tags:
+	//
+	//    * Maximum number of tags per resource - 50
+	//
+	//    * For each resource, each tag key must be unique, and each tag key can
+	//    have only one value.
+	//
+	//    * Maximum key length - 128 Unicode characters in UTF-8
+	//
+	//    * Maximum value length - 256 Unicode characters in UTF-8
+	//
+	//    * If your tagging schema is used across multiple services and resources,
+	//    remember that other services may have restrictions on allowed characters.
+	//    Generally allowed characters are: letters, numbers, and spaces representable
+	//    in UTF-8, and the following characters: + - = . _ : / @.
+	//
+	//    * Tag keys and values are case-sensitive.
+	//
+	//    * Do not use aws:, AWS:, or any upper or lowercase combination of such
+	//    as a prefix for either keys or values as it is reserved for AWS use. You
+	//    cannot edit or delete tag keys or values with this prefix. Tags with this
+	//    prefix do not count against your tags per resource limit.
+	Tags []Tag `locationName:"tags" type:"list"`
+}
+
+// String returns the string representation
+func (s CapacityProvider) String() string {
+	return awsutil.Prettify(s)
+}
+
+// The details of a capacity provider strategy.
+type CapacityProviderStrategyItem struct {
+	_ struct{} `type:"structure"`
+
+	// The base value designates how many tasks, at a minimum, to run on the specified
+	// capacity provider. Only one capacity provider in a capacity provider strategy
+	// can have a base defined.
+	Base *int64 `locationName:"base" type:"integer"`
+
+	// The short name or full Amazon Resource Name (ARN) of the capacity provider.
+	//
+	// CapacityProvider is a required field
+	CapacityProvider *string `locationName:"capacityProvider" type:"string" required:"true"`
+
+	// The weight value designates the relative percentage of the total number of
+	// tasks launched that should use the specified capacity provider.
+	//
+	// For example, if you have a strategy that contains two capacity providers
+	// and both have a weight of 1, then when the base is satisfied, the tasks will
+	// be split evenly across the two capacity providers. Using that same logic,
+	// if you specify a weight of 1 for capacityProviderA and a weight of 4 for
+	// capacityProviderB, then for every one task that is run using capacityProviderA,
+	// four tasks would use capacityProviderB.
+	Weight *int64 `locationName:"weight" type:"integer"`
+}
+
+// String returns the string representation
+func (s CapacityProviderStrategyItem) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *CapacityProviderStrategyItem) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "CapacityProviderStrategyItem"}
+
+	if s.CapacityProvider == nil {
+		invalidParams.Add(aws.NewErrParamRequired("CapacityProvider"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
 // A regional grouping of one or more container instances on which you can run
 // task requests. Each account receives a default cluster the first time you
 // use the Amazon ECS service, but you may also create other clusters. Clusters
@@ -177,6 +325,31 @@ type Cluster struct {
 	// You can view these services with ListServices.
 	ActiveServicesCount *int64 `locationName:"activeServicesCount" type:"integer"`
 
+	// The resources attached to a cluster. When using a capacity provider with
+	// a cluster, the Auto Scaling plan that is created will be returned as a cluster
+	// attachment.
+	Attachments []Attachment `locationName:"attachments" type:"list"`
+
+	// The status of the capacity providers associated with the cluster. The following
+	// are the states that will be returned:
+	//
+	// UPDATE_IN_PROGRESS
+	//
+	// The available capacity providers for the cluster are updating. This occurs
+	// when the Auto Scaling plan is provisioning or deprovisioning.
+	//
+	// UPDATE_COMPLETE
+	//
+	// The capacity providers have successfully updated.
+	//
+	// UPDATE_FAILED
+	//
+	// The capacity provider updates failed.
+	AttachmentsStatus *string `locationName:"attachmentsStatus" type:"string"`
+
+	// The capacity providers associated with the cluster.
+	CapacityProviders []string `locationName:"capacityProviders" type:"list"`
+
 	// The Amazon Resource Name (ARN) that identifies the cluster. The ARN contains
 	// the arn:aws:ecs namespace, followed by the Region of the cluster, the AWS
 	// account ID of the cluster owner, the cluster namespace, and then the cluster
@@ -185,6 +358,11 @@ type Cluster struct {
 
 	// A user-generated string that you use to identify your cluster.
 	ClusterName *string `locationName:"clusterName" type:"string"`
+
+	// The default capacity provider strategy for the cluster. When services or
+	// tasks are run in the cluster with no launch type or capacity provider strategy
+	// specified, the default capacity provider strategy is used.
+	DefaultCapacityProviderStrategy []CapacityProviderStrategyItem `locationName:"defaultCapacityProviderStrategy" type:"list"`
 
 	// The number of tasks in the cluster that are in the PENDING state.
 	PendingTasksCount *int64 `locationName:"pendingTasksCount" type:"integer"`
@@ -1056,6 +1234,9 @@ type ContainerInstance struct {
 	// agent at instance registration or manually with the PutAttributes operation.
 	Attributes []Attribute `locationName:"attributes" type:"list"`
 
+	// The capacity provider associated with the container instance.
+	CapacityProviderName *string `locationName:"capacityProviderName" type:"string"`
+
 	// The Amazon Resource Name (ARN) of the container instance. The ARN contains
 	// the arn:aws:ecs namespace, followed by the Region of the container instance,
 	// the AWS account ID of the container instance owner, the container-instance
@@ -1263,6 +1444,9 @@ func (s ContainerStateChange) String() string {
 // service uses the ECS deployment controller type.
 type Deployment struct {
 	_ struct{} `type:"structure"`
+
+	// The capacity provider strategy that the deployment is using.
+	CapacityProviderStrategy []CapacityProviderStrategyItem `locationName:"capacityProviderStrategy" type:"list"`
 
 	// The Unix timestamp for when the service deployment was created.
 	CreatedAt *time.Time `locationName:"createdAt" type:"timestamp"`
@@ -1544,9 +1728,12 @@ type FirelensConfiguration struct {
 	_ struct{} `type:"structure"`
 
 	// The options to use when configuring the log router. This field is optional
-	// and can be used to add additional metadata, such as the task, task definition,
-	// cluster, and container instance details to the log event. If specified, the
-	// syntax to use is "options":{"enable-ecs-log-metadata":"true|false"}.
+	// and can be used to specify a custom configuration file or to add additional
+	// metadata, such as the task, task definition, cluster, and container instance
+	// details to the log event. If specified, the syntax to use is "options":{"enable-ecs-log-metadata":"true|false","config-file-type:"s3|file","config-file-value":"arn:aws:s3:::mybucket/fluent.conf|filepath"}.
+	// For more information, see Creating a Task Definition that Uses a FireLens
+	// Configuration (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_firelens.html#firelens-taskdef)
+	// in the Amazon Elastic Container Service Developer Guide.
 	Options map[string]string `locationName:"options" type:"map"`
 
 	// The log router to use. The valid values are fluentd or fluentbit.
@@ -2060,6 +2247,64 @@ func (s *LogConfiguration) Validate() error {
 				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "SecretOptions", i), err.(aws.ErrInvalidParams))
 			}
 		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// The managed scaling settings for the Auto Scaling group capacity provider.
+//
+// When managed scaling is enabled, Amazon ECS manages the scale-in and scale-out
+// actions of the Auto Scaling group. Amazon ECS manages a target tracking scaling
+// policy using an Amazon ECS-managed CloudWatch metric with the specified targetCapacity
+// value as the target value for the metric. For more information, see Using
+// Managed Scaling (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/asg-capacity-providers.html#asg-capacity-providers-managed-scaling)
+// in the Amazon Elastic Container Service Developer Guide.
+//
+// If managed scaling is disabled, the user must manage the scaling of the Auto
+// Scaling group.
+type ManagedScaling struct {
+	_ struct{} `type:"structure"`
+
+	// The maximum number of container instances that Amazon ECS will scale in or
+	// scale out at one time. If this parameter is omitted, the default value of
+	// 10000 is used.
+	MaximumScalingStepSize *int64 `locationName:"maximumScalingStepSize" min:"1" type:"integer"`
+
+	// The minimum number of container instances that Amazon ECS will scale in or
+	// scale out at one time. If this parameter is omitted, the default value of
+	// 1 is used.
+	MinimumScalingStepSize *int64 `locationName:"minimumScalingStepSize" min:"1" type:"integer"`
+
+	// Whether or not to enable managed scaling for the capacity provider.
+	Status ManagedScalingStatus `locationName:"status" type:"string" enum:"true"`
+
+	// The target capacity value for the capacity provider. The specified value
+	// must be greater than 0 and less than or equal to 100. A value of 100 will
+	// result in the Amazon EC2 instances in your Auto Scaling group being completely
+	// utilized.
+	TargetCapacity *int64 `locationName:"targetCapacity" min:"1" type:"integer"`
+}
+
+// String returns the string representation
+func (s ManagedScaling) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *ManagedScaling) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "ManagedScaling"}
+	if s.MaximumScalingStepSize != nil && *s.MaximumScalingStepSize < 1 {
+		invalidParams.Add(aws.NewErrParamMinValue("MaximumScalingStepSize", 1))
+	}
+	if s.MinimumScalingStepSize != nil && *s.MinimumScalingStepSize < 1 {
+		invalidParams.Add(aws.NewErrParamMinValue("MinimumScalingStepSize", 1))
+	}
+	if s.TargetCapacity != nil && *s.TargetCapacity < 1 {
+		invalidParams.Add(aws.NewErrParamMinValue("TargetCapacity", 1))
 	}
 
 	if invalidParams.Len() > 0 {
@@ -2600,6 +2845,9 @@ func (s *Secret) Validate() error {
 type Service struct {
 	_ struct{} `type:"structure"`
 
+	// The capacity provider strategy associated with the service.
+	CapacityProviderStrategy []CapacityProviderStrategyItem `locationName:"capacityProviderStrategy" type:"list"`
+
 	// The Amazon Resource Name (ARN) of the cluster that hosts the service.
 	ClusterArn *string `locationName:"clusterArn" type:"string"`
 
@@ -2940,6 +3188,9 @@ type Task struct {
 
 	// The availability zone of the task.
 	AvailabilityZone *string `locationName:"availabilityZone" type:"string"`
+
+	// The capacity provider associated with the task.
+	CapacityProviderName *string `locationName:"capacityProviderName" type:"string"`
 
 	// The ARN of the cluster that hosts the task.
 	ClusterArn *string `locationName:"clusterArn" type:"string"`
@@ -3450,6 +3701,9 @@ func (s *TaskOverride) Validate() error {
 // set serves production traffic.
 type TaskSet struct {
 	_ struct{} `type:"structure"`
+
+	// The capacity provider strategy associated with the task set.
+	CapacityProviderStrategy []CapacityProviderStrategyItem `locationName:"capacityProviderStrategy" type:"list"`
 
 	// The Amazon Resource Name (ARN) of the cluster that the service that hosts
 	// the task set exists in.

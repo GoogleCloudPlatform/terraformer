@@ -64,9 +64,11 @@ func (resp *SSHKeysPagedResponse) appendData(r *SSHKeysPagedResponse) {
 func (c *Client) ListSSHKeys(ctx context.Context, opts *ListOptions) ([]SSHKey, error) {
 	response := SSHKeysPagedResponse{}
 	err := c.listHelper(ctx, &response, opts)
+
 	for i := range response.Data {
 		response.Data[i].fixDates()
 	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -156,5 +158,4 @@ func (c *Client) DeleteSSHKey(ctx context.Context, id int) error {
 
 	_, err = coupleAPIErrors(c.R(ctx).Delete(e))
 	return err
-
 }

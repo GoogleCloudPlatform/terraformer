@@ -36,6 +36,9 @@ type CreateDBClusterEndpointInput struct {
 
 	// List of DB instance identifiers that are part of the custom endpoint group.
 	StaticMembers []string `type:"list"`
+
+	// The tags to be assigned to the Amazon RDS resource.
+	Tags []Tag `locationNameList:"Tag" type:"list"`
 }
 
 // String returns the string representation

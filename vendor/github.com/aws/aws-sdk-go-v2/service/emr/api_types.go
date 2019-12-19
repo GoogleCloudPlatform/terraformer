@@ -461,6 +461,9 @@ type Cluster struct {
 	// the actual billing rate.
 	NormalizedInstanceHours *int64 `type:"integer"`
 
+	// The Amazon Resource Name (ARN) of the Outpost where the cluster is launched.
+	OutpostArn *string `type:"string"`
+
 	// The Amazon EMR release label, which determines the version of open-source
 	// application packages installed on the cluster. Release labels are in the
 	// form emr-x.x.x, where x.x.x is an Amazon EMR release version such as emr-5.14.0.
@@ -505,6 +508,9 @@ type Cluster struct {
 
 	// The current status details about the cluster.
 	Status *ClusterStatus `type:"structure"`
+
+	// Specifies the number of steps that can be executed concurrently.
+	StepConcurrencyLevel *int64 `type:"integer"`
 
 	// A list of tags associated with a cluster.
 	Tags []Tag `type:"list"`
@@ -586,6 +592,9 @@ type ClusterSummary struct {
 	// incremented by four. This result is only an approximation and does not reflect
 	// the actual billing rate.
 	NormalizedInstanceHours *int64 `type:"integer"`
+
+	// The Amazon Resource Name (ARN) of the Outpost where the cluster is launched.
+	OutpostArn *string `type:"string"`
 
 	// The details about the current status of the cluster.
 	Status *ClusterStatus `type:"structure"`

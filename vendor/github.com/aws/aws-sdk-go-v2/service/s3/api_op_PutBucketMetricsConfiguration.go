@@ -137,7 +137,7 @@ const opPutBucketMetricsConfiguration = "PutBucketMetricsConfiguration"
 //
 // GetBucketLifecycle has the following special error:
 //
-//    * Error code: TooManyConfigurations Description:You are attempting to
+//    * Error code: TooManyConfigurations Description: You are attempting to
 //    create a new configuration but have already reached the 1,000-configuration
 //    limit. HTTP Status Code: HTTP 400 Bad Request
 //

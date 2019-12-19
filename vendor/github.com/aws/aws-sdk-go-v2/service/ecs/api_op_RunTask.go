@@ -13,6 +13,30 @@ import (
 type RunTaskInput struct {
 	_ struct{} `type:"structure"`
 
+	// The capacity provider strategy to use for the task.
+	//
+	// A capacity provider strategy consists of one or more capacity providers along
+	// with the base and weight to assign to them. A capacity provider must be associated
+	// with the cluster to be used in a capacity provider strategy. The PutClusterCapacityProviders
+	// API is used to associate a capacity provider with a cluster. Only capacity
+	// providers with an ACTIVE or UPDATING status can be used.
+	//
+	// If a capacityProviderStrategy is specified, the launchType parameter must
+	// be omitted. If no capacityProviderStrategy or launchType is specified, the
+	// defaultCapacityProviderStrategy for the cluster is used.
+	//
+	// If specifying a capacity provider that uses an Auto Scaling group, the capacity
+	// provider must already be created. New capacity providers can be created with
+	// the CreateCapacityProvider API operation.
+	//
+	// To use a AWS Fargate capacity provider, specify either the FARGATE or FARGATE_SPOT
+	// capacity providers. The AWS Fargate capacity providers are available to all
+	// accounts and only need to be associated with a cluster to be used.
+	//
+	// The PutClusterCapacityProviders API operation is used to update the list
+	// of available capacity providers for a cluster after the cluster is created.
+	CapacityProviderStrategy []CapacityProviderStrategyItem `locationName:"capacityProviderStrategy" type:"list"`
+
 	// The short name or full Amazon Resource Name (ARN) of the cluster on which
 	// to run your task. If you do not specify a cluster, the default cluster is
 	// assumed.
@@ -34,6 +58,9 @@ type RunTaskInput struct {
 	// The launch type on which to run your task. For more information, see Amazon
 	// ECS Launch Types (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/launch_types.html)
 	// in the Amazon Elastic Container Service Developer Guide.
+	//
+	// If a launchType is specified, the capacityProviderStrategy parameter must
+	// be omitted.
 	LaunchType LaunchType `locationName:"launchType" type:"string" enum:"true"`
 
 	// The network configuration for the task. This parameter is required for task
@@ -140,6 +167,13 @@ func (s *RunTaskInput) Validate() error {
 
 	if s.TaskDefinition == nil {
 		invalidParams.Add(aws.NewErrParamRequired("TaskDefinition"))
+	}
+	if s.CapacityProviderStrategy != nil {
+		for i, v := range s.CapacityProviderStrategy {
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "CapacityProviderStrategy", i), err.(aws.ErrInvalidParams))
+			}
+		}
 	}
 	if s.NetworkConfiguration != nil {
 		if err := s.NetworkConfiguration.Validate(); err != nil {

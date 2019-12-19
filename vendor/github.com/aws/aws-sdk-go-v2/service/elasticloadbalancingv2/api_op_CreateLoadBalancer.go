@@ -53,7 +53,9 @@ type CreateLoadBalancerInput struct {
 	//
 	// [Network Load Balancers] You can specify subnets from one or more Availability
 	// Zones. You can specify one Elastic IP address per subnet if you need static
-	// IP addresses for your load balancer.
+	// IP addresses for your internet-facing load balancer. For internal load balancers,
+	// you can specify one private IP address per subnet from the IPv4 range of
+	// the subnet.
 	SubnetMappings []SubnetMapping `type:"list"`
 
 	// The IDs of the public subnets. You can specify only one subnet per Availability

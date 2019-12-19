@@ -369,6 +369,9 @@ type ClusterInfo struct {
 	// The number of broker nodes in the cluster.
 	NumberOfBrokerNodes *int64 `locationName:"numberOfBrokerNodes" type:"integer"`
 
+	// Settings for open monitoring using Prometheus.
+	OpenMonitoring *OpenMonitoring `locationName:"openMonitoring" type:"structure"`
+
 	// The state of the cluster. The possible states are CREATING, ACTIVE, and FAILED.
 	State ClusterState `locationName:"state" type:"string" enum:"true"`
 
@@ -452,6 +455,12 @@ func (s ClusterInfo) MarshalFields(e protocol.FieldEncoder) error {
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "numberOfBrokerNodes", protocol.Int64Value(v), metadata)
+	}
+	if s.OpenMonitoring != nil {
+		v := s.OpenMonitoring
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "openMonitoring", v, metadata)
 	}
 	if len(s.State) > 0 {
 		v := s.State
@@ -988,6 +997,72 @@ func (s ErrorInfo) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
+// Indicates whether you want to enable or disable the JMX Exporter.
+type JmxExporter struct {
+	_ struct{} `type:"structure"`
+
+	// Indicates whether you want to enable or disable the JMX Exporter.
+	//
+	// EnabledInBroker is a required field
+	EnabledInBroker *bool `locationName:"enabledInBroker" type:"boolean" required:"true"`
+}
+
+// String returns the string representation
+func (s JmxExporter) String() string {
+	return awsutil.Prettify(s)
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s JmxExporter) MarshalFields(e protocol.FieldEncoder) error {
+	if s.EnabledInBroker != nil {
+		v := *s.EnabledInBroker
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "enabledInBroker", protocol.BoolValue(v), metadata)
+	}
+	return nil
+}
+
+// Indicates whether you want to enable or disable the JMX Exporter.
+type JmxExporterInfo struct {
+	_ struct{} `type:"structure"`
+
+	// Indicates whether you want to enable or disable the JMX Exporter.
+	//
+	// EnabledInBroker is a required field
+	EnabledInBroker *bool `locationName:"enabledInBroker" type:"boolean" required:"true"`
+}
+
+// String returns the string representation
+func (s JmxExporterInfo) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *JmxExporterInfo) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "JmxExporterInfo"}
+
+	if s.EnabledInBroker == nil {
+		invalidParams.Add(aws.NewErrParamRequired("EnabledInBroker"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s JmxExporterInfo) MarshalFields(e protocol.FieldEncoder) error {
+	if s.EnabledInBroker != nil {
+		v := *s.EnabledInBroker
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "enabledInBroker", protocol.BoolValue(v), metadata)
+	}
+	return nil
+}
+
 // Information about cluster attributes that can be updated via update APIs.
 type MutableClusterInfo struct {
 	_ struct{} `type:"structure"`
@@ -998,8 +1073,15 @@ type MutableClusterInfo struct {
 	// Information about the changes in the configuration of the brokers.
 	ConfigurationInfo *ConfigurationInfo `locationName:"configurationInfo" type:"structure"`
 
+	// Specifies which Apache Kafka metrics Amazon MSK gathers and sends to Amazon
+	// CloudWatch for this cluster.
+	EnhancedMonitoring EnhancedMonitoring `locationName:"enhancedMonitoring" type:"string" enum:"true"`
+
 	// The number of broker nodes in the cluster.
 	NumberOfBrokerNodes *int64 `locationName:"numberOfBrokerNodes" type:"integer"`
+
+	// Settings for open monitoring using Prometheus.
+	OpenMonitoring *OpenMonitoring `locationName:"openMonitoring" type:"structure"`
 }
 
 // String returns the string representation
@@ -1027,11 +1109,89 @@ func (s MutableClusterInfo) MarshalFields(e protocol.FieldEncoder) error {
 		metadata := protocol.Metadata{}
 		e.SetFields(protocol.BodyTarget, "configurationInfo", v, metadata)
 	}
+	if len(s.EnhancedMonitoring) > 0 {
+		v := s.EnhancedMonitoring
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "enhancedMonitoring", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
 	if s.NumberOfBrokerNodes != nil {
 		v := *s.NumberOfBrokerNodes
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "numberOfBrokerNodes", protocol.Int64Value(v), metadata)
+	}
+	if s.OpenMonitoring != nil {
+		v := s.OpenMonitoring
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "openMonitoring", v, metadata)
+	}
+	return nil
+}
+
+// Indicates whether you want to enable or disable the Node Exporter.
+type NodeExporter struct {
+	_ struct{} `type:"structure"`
+
+	// Indicates whether you want to enable or disable the Node Exporter.
+	//
+	// EnabledInBroker is a required field
+	EnabledInBroker *bool `locationName:"enabledInBroker" type:"boolean" required:"true"`
+}
+
+// String returns the string representation
+func (s NodeExporter) String() string {
+	return awsutil.Prettify(s)
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s NodeExporter) MarshalFields(e protocol.FieldEncoder) error {
+	if s.EnabledInBroker != nil {
+		v := *s.EnabledInBroker
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "enabledInBroker", protocol.BoolValue(v), metadata)
+	}
+	return nil
+}
+
+// Indicates whether you want to enable or disable the Node Exporter.
+type NodeExporterInfo struct {
+	_ struct{} `type:"structure"`
+
+	// Indicates whether you want to enable or disable the Node Exporter.
+	//
+	// EnabledInBroker is a required field
+	EnabledInBroker *bool `locationName:"enabledInBroker" type:"boolean" required:"true"`
+}
+
+// String returns the string representation
+func (s NodeExporterInfo) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *NodeExporterInfo) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "NodeExporterInfo"}
+
+	if s.EnabledInBroker == nil {
+		invalidParams.Add(aws.NewErrParamRequired("EnabledInBroker"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s NodeExporterInfo) MarshalFields(e protocol.FieldEncoder) error {
+	if s.EnabledInBroker != nil {
+		v := *s.EnabledInBroker
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "enabledInBroker", protocol.BoolValue(v), metadata)
 	}
 	return nil
 }
@@ -1101,6 +1261,163 @@ func (s NodeInfo) MarshalFields(e protocol.FieldEncoder) error {
 
 		metadata := protocol.Metadata{}
 		e.SetFields(protocol.BodyTarget, "zookeeperNodeInfo", v, metadata)
+	}
+	return nil
+}
+
+// JMX and Node monitoring for the MSK cluster.
+type OpenMonitoring struct {
+	_ struct{} `type:"structure"`
+
+	// Prometheus settings.
+	//
+	// Prometheus is a required field
+	Prometheus *Prometheus `locationName:"prometheus" type:"structure" required:"true"`
+}
+
+// String returns the string representation
+func (s OpenMonitoring) String() string {
+	return awsutil.Prettify(s)
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s OpenMonitoring) MarshalFields(e protocol.FieldEncoder) error {
+	if s.Prometheus != nil {
+		v := s.Prometheus
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "prometheus", v, metadata)
+	}
+	return nil
+}
+
+// JMX and Node monitoring for the MSK cluster.
+type OpenMonitoringInfo struct {
+	_ struct{} `type:"structure"`
+
+	// Prometheus settings.
+	//
+	// Prometheus is a required field
+	Prometheus *PrometheusInfo `locationName:"prometheus" type:"structure" required:"true"`
+}
+
+// String returns the string representation
+func (s OpenMonitoringInfo) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *OpenMonitoringInfo) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "OpenMonitoringInfo"}
+
+	if s.Prometheus == nil {
+		invalidParams.Add(aws.NewErrParamRequired("Prometheus"))
+	}
+	if s.Prometheus != nil {
+		if err := s.Prometheus.Validate(); err != nil {
+			invalidParams.AddNested("Prometheus", err.(aws.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s OpenMonitoringInfo) MarshalFields(e protocol.FieldEncoder) error {
+	if s.Prometheus != nil {
+		v := s.Prometheus
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "prometheus", v, metadata)
+	}
+	return nil
+}
+
+// Prometheus settings for open monitoring.
+type Prometheus struct {
+	_ struct{} `type:"structure"`
+
+	// Indicates whether you want to enable or disable the JMX Exporter.
+	JmxExporter *JmxExporter `locationName:"jmxExporter" type:"structure"`
+
+	// Indicates whether you want to enable or disable the Node Exporter.
+	NodeExporter *NodeExporter `locationName:"nodeExporter" type:"structure"`
+}
+
+// String returns the string representation
+func (s Prometheus) String() string {
+	return awsutil.Prettify(s)
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s Prometheus) MarshalFields(e protocol.FieldEncoder) error {
+	if s.JmxExporter != nil {
+		v := s.JmxExporter
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "jmxExporter", v, metadata)
+	}
+	if s.NodeExporter != nil {
+		v := s.NodeExporter
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "nodeExporter", v, metadata)
+	}
+	return nil
+}
+
+// Prometheus settings.
+type PrometheusInfo struct {
+	_ struct{} `type:"structure"`
+
+	// JMX Exporter settings.
+	JmxExporter *JmxExporterInfo `locationName:"jmxExporter" type:"structure"`
+
+	// Node Exporter settings.
+	NodeExporter *NodeExporterInfo `locationName:"nodeExporter" type:"structure"`
+}
+
+// String returns the string representation
+func (s PrometheusInfo) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *PrometheusInfo) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "PrometheusInfo"}
+	if s.JmxExporter != nil {
+		if err := s.JmxExporter.Validate(); err != nil {
+			invalidParams.AddNested("JmxExporter", err.(aws.ErrInvalidParams))
+		}
+	}
+	if s.NodeExporter != nil {
+		if err := s.NodeExporter.Validate(); err != nil {
+			invalidParams.AddNested("NodeExporter", err.(aws.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s PrometheusInfo) MarshalFields(e protocol.FieldEncoder) error {
+	if s.JmxExporter != nil {
+		v := s.JmxExporter
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "jmxExporter", v, metadata)
+	}
+	if s.NodeExporter != nil {
+		v := s.NodeExporter
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "nodeExporter", v, metadata)
 	}
 	return nil
 }

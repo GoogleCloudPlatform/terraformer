@@ -76,11 +76,11 @@ func (client *Client) DescribeBackupDatabaseWithCallback(request *DescribeBackup
 // DescribeBackupDatabaseRequest is the request struct for api DescribeBackupDatabase
 type DescribeBackupDatabaseRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
-	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	BackupId             string           `position:"Query" name:"BackupId"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
+	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
 }
 
 // DescribeBackupDatabaseResponse is the response struct for api DescribeBackupDatabase

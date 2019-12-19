@@ -83,9 +83,8 @@ const opDeleteBucketCors = "DeleteBucketCors"
 // action. The bucket owner has this permission by default and can grant this
 // permission to others.
 //
-// For information more about cors, go to Enabling Cross-Origin Resource Sharing
-// (https://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html) in the Amazon
-// Simple Storage Service Developer Guide.
+// For information about cors, see Enabling Cross-Origin Resource Sharing (https://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html)
+// in the Amazon Simple Storage Service Developer Guide.
 //
 // Related Resources:
 //

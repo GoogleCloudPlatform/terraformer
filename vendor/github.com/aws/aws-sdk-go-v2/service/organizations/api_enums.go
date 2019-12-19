@@ -97,6 +97,7 @@ const (
 	ConstraintViolationExceptionReasonOuNumberLimitExceeded                            ConstraintViolationExceptionReason = "OU_NUMBER_LIMIT_EXCEEDED"
 	ConstraintViolationExceptionReasonOuDepthLimitExceeded                             ConstraintViolationExceptionReason = "OU_DEPTH_LIMIT_EXCEEDED"
 	ConstraintViolationExceptionReasonPolicyNumberLimitExceeded                        ConstraintViolationExceptionReason = "POLICY_NUMBER_LIMIT_EXCEEDED"
+	ConstraintViolationExceptionReasonPolicyContentLimitExceeded                       ConstraintViolationExceptionReason = "POLICY_CONTENT_LIMIT_EXCEEDED"
 	ConstraintViolationExceptionReasonMaxPolicyTypeAttachmentLimitExceeded             ConstraintViolationExceptionReason = "MAX_POLICY_TYPE_ATTACHMENT_LIMIT_EXCEEDED"
 	ConstraintViolationExceptionReasonMinPolicyTypeAttachmentLimitExceeded             ConstraintViolationExceptionReason = "MIN_POLICY_TYPE_ATTACHMENT_LIMIT_EXCEEDED"
 	ConstraintViolationExceptionReasonAccountCannotLeaveOrganization                   ConstraintViolationExceptionReason = "ACCOUNT_CANNOT_LEAVE_ORGANIZATION"
@@ -135,6 +136,7 @@ const (
 	CreateAccountFailureReasonInvalidEmail                  CreateAccountFailureReason = "INVALID_EMAIL"
 	CreateAccountFailureReasonConcurrentAccountModification CreateAccountFailureReason = "CONCURRENT_ACCOUNT_MODIFICATION"
 	CreateAccountFailureReasonInternalFailure               CreateAccountFailureReason = "INTERNAL_FAILURE"
+	CreateAccountFailureReasonGovcloudAccountAlreadyExists  CreateAccountFailureReason = "GOVCLOUD_ACCOUNT_ALREADY_EXISTS"
 )
 
 func (enum CreateAccountFailureReason) MarshalValue() (string, error) {
@@ -160,6 +162,22 @@ func (enum CreateAccountState) MarshalValue() (string, error) {
 }
 
 func (enum CreateAccountState) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type EffectivePolicyType string
+
+// Enum values for EffectivePolicyType
+const (
+	EffectivePolicyTypeTagPolicy EffectivePolicyType = "TAG_POLICY"
+)
+
+func (enum EffectivePolicyType) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum EffectivePolicyType) MarshalValueBuf(b []byte) ([]byte, error) {
 	b = b[0:0]
 	return append(b, enum...), nil
 }
@@ -274,6 +292,7 @@ const (
 	InvalidInputExceptionReasonInvalidSyntaxOrganizationArn       InvalidInputExceptionReason = "INVALID_SYNTAX_ORGANIZATION_ARN"
 	InvalidInputExceptionReasonInvalidSyntaxPolicyId              InvalidInputExceptionReason = "INVALID_SYNTAX_POLICY_ID"
 	InvalidInputExceptionReasonInvalidEnum                        InvalidInputExceptionReason = "INVALID_ENUM"
+	InvalidInputExceptionReasonInvalidEnumPolicyType              InvalidInputExceptionReason = "INVALID_ENUM_POLICY_TYPE"
 	InvalidInputExceptionReasonInvalidListMember                  InvalidInputExceptionReason = "INVALID_LIST_MEMBER"
 	InvalidInputExceptionReasonMaxLengthExceeded                  InvalidInputExceptionReason = "MAX_LENGTH_EXCEEDED"
 	InvalidInputExceptionReasonMaxValueExceeded                   InvalidInputExceptionReason = "MAX_VALUE_EXCEEDED"
@@ -290,6 +309,7 @@ const (
 	InvalidInputExceptionReasonUnrecognizedServicePrincipal       InvalidInputExceptionReason = "UNRECOGNIZED_SERVICE_PRINCIPAL"
 	InvalidInputExceptionReasonInvalidRoleName                    InvalidInputExceptionReason = "INVALID_ROLE_NAME"
 	InvalidInputExceptionReasonInvalidSystemTagsParameter         InvalidInputExceptionReason = "INVALID_SYSTEM_TAGS_PARAMETER"
+	InvalidInputExceptionReasonTargetNotSupported                 InvalidInputExceptionReason = "TARGET_NOT_SUPPORTED"
 )
 
 func (enum InvalidInputExceptionReason) MarshalValue() (string, error) {
@@ -340,6 +360,7 @@ type PolicyType string
 // Enum values for PolicyType
 const (
 	PolicyTypeServiceControlPolicy PolicyType = "SERVICE_CONTROL_POLICY"
+	PolicyTypeTagPolicy            PolicyType = "TAG_POLICY"
 )
 
 func (enum PolicyType) MarshalValue() (string, error) {

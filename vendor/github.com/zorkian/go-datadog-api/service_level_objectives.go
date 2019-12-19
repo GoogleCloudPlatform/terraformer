@@ -165,7 +165,7 @@ type ServiceLevelObjective struct {
 	ModifiedAt  *int     `json:"modified_at,omitempty"`  // Read-Only
 }
 
-// implements custom marshaler to ignore some fields
+// MarshalJSON implements custom marshaler to ignore some fields
 func (s *ServiceLevelObjective) MarshalJSON() ([]byte, error) {
 	var output struct {
 		ID          *string                         `json:"id,omitempty"`
@@ -301,11 +301,7 @@ func (client *Client) SearchServiceLevelObjectives(limit int, offset int, query 
 		uriValues.Set("ids", strings.Join(ids, ","))
 	}
 
-	uri := "/v1/slo"
-	encodedQuery := uriValues.Encode()
-	if encodedQuery != "" {
-		uri += "?" + encodedQuery
-	}
+	uri := "/v1/slo?" + uriValues.Encode()
 
 	if err := client.doJsonRequest("GET", uri, nil, &out); err != nil {
 		return nil, err
@@ -440,4 +436,161 @@ func (client *Client) DeleteServiceLevelObjectiveTimeFrames(timeframeByID map[st
 	}
 
 	return out.Data, nil
+}
+
+// ServiceLevelObjectivesCanDeleteResponse is the response for a check can delete SLO endpoint.
+type ServiceLevelObjectivesCanDeleteResponse struct {
+	Data struct {
+		OK []string `json:"ok"`
+	} `json:"data"`
+	Errors map[string]string `json:"errors"`
+}
+
+// CheckCanDeleteServiceLevelObjectives checks if the SLO is referenced within Datadog.
+// This is useful to prevent accidental deletion.
+func (client *Client) CheckCanDeleteServiceLevelObjectives(ids []string) (*ServiceLevelObjectivesCanDeleteResponse, error) {
+	var out ServiceLevelObjectivesCanDeleteResponse
+
+	if len(ids) == 0 {
+		return nil, fmt.Errorf("nothing specified")
+	}
+
+	uriValues := make(url.Values, 0)
+	uriValues.Set("ids", strings.Join(ids, ","))
+	uri := "/v1/slo/can_delete?" + uriValues.Encode()
+
+	if err := client.doJsonRequest("GET", uri, nil, &out); err != nil {
+		return nil, err
+	}
+
+	return &out, nil
+}
+
+// ServiceLevelObjectiveHistorySeriesPoint is a convenient wrapper for (timestamp, value) history data response.
+type ServiceLevelObjectiveHistorySeriesPoint [2]json.Number
+
+// ServiceLevelObjectiveHistoryMetricSeriesData contains the `batch_query` like history data for `metric` based SLOs
+type ServiceLevelObjectiveHistoryMetricSeriesData struct {
+	Count    int64       `json:"count"`
+	Sum      json.Number `json:"sum"`
+	MetaData struct {
+		QueryIndex int     `json:"query_index"`
+		Aggregator string  `json:"aggr"`
+		Scope      string  `json:"scope"`
+		Metric     string  `json:"metric"`
+		Expression string  `json:"expression"`
+		Unit       *string `json:"unit"`
+	} `json:"metadata"`
+	Values []json.Number `json:"values"`
+	Times  []int64       `json:"times"`
+}
+
+// ValuesAsFloats will transform all the values into a slice of float64
+func (d *ServiceLevelObjectiveHistoryMetricSeriesData) ValuesAsFloats() ([]float64, error) {
+	out := make([]float64, len(d.Values))
+	for i := 0; i < len(d.Values); i++ {
+		v, err := d.Values[i].Float64()
+		if err != nil {
+			return out, fmt.Errorf("could not deserialize value at index %d: %s", i, err)
+		}
+		out[i] = v
+	}
+	return out, nil
+}
+
+// ValuesAsInt64s will transform all the values into a slice of int64
+func (d *ServiceLevelObjectiveHistoryMetricSeriesData) ValuesAsInt64s() ([]int64, error) {
+	out := make([]int64, len(d.Values))
+	for i := 0; i < len(d.Values); i++ {
+		v, err := d.Values[i].Int64()
+		if err != nil {
+			return out, fmt.Errorf("could not deserialize value at index %d: %s", i, err)
+		}
+		out[i] = v
+	}
+	return out, nil
+}
+
+// ServiceLevelObjectiveHistoryMetricSeries defines the SLO history data response for `metric` type SLOs
+type ServiceLevelObjectiveHistoryMetricSeries struct {
+	ResultType      string      `json:"res_type"`
+	Interval        int         `json:"interval"`
+	ResponseVersion json.Number `json:"resp_version"`
+	Query           string      `json:"query"`   // a CSV of <numerator>, <denominator> queries
+	Message         string      `json:"message"` // optional message if there are specific query issues/warnings
+
+	Numerator   *ServiceLevelObjectiveHistoryMetricSeriesData `json:"numerator"`
+	Denominator *ServiceLevelObjectiveHistoryMetricSeriesData `json:"denominator"`
+}
+
+// ServiceLevelObjectiveHistoryMonitorSeries defines the SLO history data response for `monitor` type SLOs
+type ServiceLevelObjectiveHistoryMonitorSeries struct {
+	Uptime        float32                                   `json:"uptime"`
+	SpanPrecision json.Number                               `json:"span_precision"`
+	Name          string                                    `json:"name"`
+	Precision     map[string]json.Number                    `json:"precision"`
+	Preview       bool                                      `json:"preview"`
+	History       []ServiceLevelObjectiveHistorySeriesPoint `json:"history"`
+}
+
+// ServiceLevelObjectiveHistoryOverall defines the overall SLO history data response
+// for `monitor` type SLOs there is an additional `History` property that rolls up the overall state correctly.
+type ServiceLevelObjectiveHistoryOverall struct {
+	Uptime        float32                `json:"uptime"`
+	SpanPrecision json.Number            `json:"span_precision"`
+	Name          string                 `json:"name"`
+	Precision     map[string]json.Number `json:"precision"`
+	Preview       bool                   `json:"preview"`
+
+	// Monitor extension
+	History []ServiceLevelObjectiveHistorySeriesPoint `json:"history"`
+}
+
+// ServiceLevelObjectiveHistoryResponseData contains the SLO history data response.
+// for `monitor` based SLOs use the `Groups` property for historical data along with the `Overall.History`
+// for `metric` based SLOs use the `Metrics` property for historical data. This contains `batch_query` like response
+//    data
+type ServiceLevelObjectiveHistoryResponseData struct {
+	Errors     []string                                  `json:"errors"`
+	ToTs       int64                                     `json:"to_ts"`
+	FromTs     int64                                     `json:"from_ts"`
+	Thresholds map[string]ServiceLevelObjectiveThreshold `json:"thresholds"`
+	Overall    *ServiceLevelObjectiveHistoryOverall      `json:"overall"`
+
+	// metric based SLO
+	Metrics *ServiceLevelObjectiveHistoryMetricSeries `json:"series"`
+
+	// monitor based SLO
+	Groups []*ServiceLevelObjectiveHistoryMonitorSeries `json:"groups"`
+}
+
+// ServiceLevelObjectiveHistoryResponse is the canonical response for SLO history data.
+type ServiceLevelObjectiveHistoryResponse struct {
+	Data  *ServiceLevelObjectiveHistoryResponseData `json:"data"`
+	Error *string                                   `json:"error"`
+}
+
+// GetServiceLevelObjectiveHistory will retrieve the history data for a given SLO and provided from/to times
+func (client *Client) GetServiceLevelObjectiveHistory(id string, fromTs time.Time, toTs time.Time) (*ServiceLevelObjectiveHistoryResponse, error) {
+	var out ServiceLevelObjectiveHistoryResponse
+
+	if id == "" {
+		return nil, fmt.Errorf("nothing specified")
+	}
+
+	if !toTs.After(fromTs) {
+		return nil, fmt.Errorf("toTs must be after fromTs")
+	}
+
+	uriValues := make(url.Values, 0)
+	uriValues.Set("from_ts", fmt.Sprintf("%d", fromTs.Unix()))
+	uriValues.Set("to_ts", fmt.Sprintf("%d", toTs.Unix()))
+
+	uri := fmt.Sprintf("/v1/slo/%s/history?%s", id, uriValues.Encode())
+
+	if err := client.doJsonRequest("GET", uri, nil, &out); err != nil {
+		return nil, err
+	}
+
+	return &out, nil
 }

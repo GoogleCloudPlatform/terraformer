@@ -29,13 +29,20 @@ type SubscribeInput struct {
 	//    to Amazon SQS or HTTP/S endpoints. This eliminates the need for the endpoints
 	//    to process JSON formatting, which is otherwise created for Amazon SNS
 	//    metadata.
+	//
+	//    * RedrivePolicy – When specified, sends undeliverable messages to the
+	//    specified Amazon SQS dead-letter queue. Messages that can't be delivered
+	//    due to client errors (for example, when the subscribed endpoint is unreachable)
+	//    or server errors (for example, when the service that powers the subscribed
+	//    endpoint becomes unavailable) are held in the dead-letter queue for further
+	//    analysis or reprocessing.
 	Attributes map[string]string `type:"map"`
 
 	// The endpoint that you want to receive notifications. Endpoints vary by protocol:
 	//
-	//    * For the http protocol, the endpoint is an URL beginning with "https://"
+	//    * For the http protocol, the endpoint is an URL beginning with http://
 	//
-	//    * For the https protocol, the endpoint is a URL beginning with "https://"
+	//    * For the https protocol, the endpoint is a URL beginning with https://
 	//
 	//    * For the email protocol, the endpoint is an email address
 	//
@@ -49,7 +56,8 @@ type SubscribeInput struct {
 	//    * For the application protocol, the endpoint is the EndpointArn of a mobile
 	//    app and device.
 	//
-	//    * For the lambda protocol, the endpoint is the ARN of an AWS Lambda function.
+	//    * For the lambda protocol, the endpoint is the ARN of an Amazon Lambda
+	//    function.
 	Endpoint *string `type:"string"`
 
 	// The protocol you want to use. Supported protocols include:
@@ -69,7 +77,7 @@ type SubscribeInput struct {
 	//    * application – delivery of JSON-encoded message to an EndpointArn for
 	//    a mobile app and device.
 	//
-	//    * lambda – delivery of JSON-encoded message to an AWS Lambda function.
+	//    * lambda – delivery of JSON-encoded message to an Amazon Lambda function.
 	//
 	// Protocol is a required field
 	Protocol *string `type:"string" required:"true"`
@@ -77,14 +85,16 @@ type SubscribeInput struct {
 	// Sets whether the response from the Subscribe request includes the subscription
 	// ARN, even if the subscription is not yet confirmed.
 	//
-	// If you set this parameter to false, the response includes the ARN for confirmed
-	// subscriptions, but it includes an ARN value of "pending subscription" for
-	// subscriptions that are not yet confirmed. A subscription becomes confirmed
-	// when the subscriber calls the ConfirmSubscription action with a confirmation
-	// token.
+	//    * If you have the subscription ARN returned, the response includes the
+	//    ARN in all cases, even if the subscription is not yet confirmed.
 	//
-	// If you set this parameter to true, the response includes the ARN in all cases,
-	// even if the subscription is not yet confirmed.
+	//    * If you don't have the subscription ARN returned, in addition to the
+	//    ARN for confirmed subscriptions, the response also includes the pending
+	//    subscription ARN value for subscriptions that aren't yet confirmed. A
+	//    subscription becomes confirmed when the subscriber calls the ConfirmSubscription
+	//    action with a confirmation token.
+	//
+	// If you set this parameter to true, .
 	//
 	// The default value is false.
 	ReturnSubscriptionArn *bool `type:"boolean"`

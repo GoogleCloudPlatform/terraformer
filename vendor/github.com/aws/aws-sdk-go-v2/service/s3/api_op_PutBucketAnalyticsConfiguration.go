@@ -116,13 +116,13 @@ const opPutBucketAnalyticsConfiguration = "PutBucketAnalyticsConfiguration"
 // configuration ID). You can have up to 1,000 analytics configurations per
 // bucket.
 //
-// You can choose to have storage class analysis export analysis reports to
-// a comma-separated values (CSV) flat file, see the DataExport request element.
-// Reports are updated daily and are based on the object filters you configure.
-// When selecting data export you specify a destination bucket and optional
+// You can choose to have storage class analysis export analysis reports sent
+// to a comma-separated values (CSV) flat file. See the DataExport request element.
+// Reports are updated daily and are based on the object filters that you configure.
+// When selecting data export, you specify a destination bucket and an optional
 // destination prefix where the file is written. You can export the data to
 // a destination bucket in a different account. However, the destination bucket
-// must be in the same region as the bucket that you are making the PUT analytics
+// must be in the same Region as the bucket that you are making the PUT analytics
 // configuration to. For more information, see Amazon S3 Analytics – Storage
 // Class Analysis (https://docs.aws.amazon.com/AmazonS3/latest/dev/analytics-storage-class.html).
 //

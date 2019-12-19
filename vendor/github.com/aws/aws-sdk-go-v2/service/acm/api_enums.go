@@ -118,6 +118,7 @@ const (
 	FailureReasonPcaInvalidArn                  FailureReason = "PCA_INVALID_ARN"
 	FailureReasonPcaInvalidState                FailureReason = "PCA_INVALID_STATE"
 	FailureReasonPcaRequestFailed               FailureReason = "PCA_REQUEST_FAILED"
+	FailureReasonPcaNameConstraintsValidation   FailureReason = "PCA_NAME_CONSTRAINTS_VALIDATION"
 	FailureReasonPcaResourceNotFound            FailureReason = "PCA_RESOURCE_NOT_FOUND"
 	FailureReasonPcaInvalidArgs                 FailureReason = "PCA_INVALID_ARGS"
 	FailureReasonPcaInvalidDuration             FailureReason = "PCA_INVALID_DURATION"

@@ -61,6 +61,51 @@ func (enum ConnectionStateType) MarshalValueBuf(b []byte) ([]byte, error) {
 	return append(b, enum...), nil
 }
 
+type CustomerMasterKeySpec string
+
+// Enum values for CustomerMasterKeySpec
+const (
+	CustomerMasterKeySpecRsa2048          CustomerMasterKeySpec = "RSA_2048"
+	CustomerMasterKeySpecRsa3072          CustomerMasterKeySpec = "RSA_3072"
+	CustomerMasterKeySpecRsa4096          CustomerMasterKeySpec = "RSA_4096"
+	CustomerMasterKeySpecEccNistP256      CustomerMasterKeySpec = "ECC_NIST_P256"
+	CustomerMasterKeySpecEccNistP384      CustomerMasterKeySpec = "ECC_NIST_P384"
+	CustomerMasterKeySpecEccNistP521      CustomerMasterKeySpec = "ECC_NIST_P521"
+	CustomerMasterKeySpecEccSecgP256k1    CustomerMasterKeySpec = "ECC_SECG_P256K1"
+	CustomerMasterKeySpecSymmetricDefault CustomerMasterKeySpec = "SYMMETRIC_DEFAULT"
+)
+
+func (enum CustomerMasterKeySpec) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum CustomerMasterKeySpec) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type DataKeyPairSpec string
+
+// Enum values for DataKeyPairSpec
+const (
+	DataKeyPairSpecRsa2048       DataKeyPairSpec = "RSA_2048"
+	DataKeyPairSpecRsa3072       DataKeyPairSpec = "RSA_3072"
+	DataKeyPairSpecRsa4096       DataKeyPairSpec = "RSA_4096"
+	DataKeyPairSpecEccNistP256   DataKeyPairSpec = "ECC_NIST_P256"
+	DataKeyPairSpecEccNistP384   DataKeyPairSpec = "ECC_NIST_P384"
+	DataKeyPairSpecEccNistP521   DataKeyPairSpec = "ECC_NIST_P521"
+	DataKeyPairSpecEccSecgP256k1 DataKeyPairSpec = "ECC_SECG_P256K1"
+)
+
+func (enum DataKeyPairSpec) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum DataKeyPairSpec) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
 type DataKeySpec string
 
 // Enum values for DataKeySpec
@@ -74,6 +119,24 @@ func (enum DataKeySpec) MarshalValue() (string, error) {
 }
 
 func (enum DataKeySpec) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type EncryptionAlgorithmSpec string
+
+// Enum values for EncryptionAlgorithmSpec
+const (
+	EncryptionAlgorithmSpecSymmetricDefault EncryptionAlgorithmSpec = "SYMMETRIC_DEFAULT"
+	EncryptionAlgorithmSpecRsaesOaepSha1    EncryptionAlgorithmSpec = "RSAES_OAEP_SHA_1"
+	EncryptionAlgorithmSpecRsaesOaepSha256  EncryptionAlgorithmSpec = "RSAES_OAEP_SHA_256"
+)
+
+func (enum EncryptionAlgorithmSpec) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum EncryptionAlgorithmSpec) MarshalValueBuf(b []byte) ([]byte, error) {
 	b = b[0:0]
 	return append(b, enum...), nil
 }
@@ -99,15 +162,20 @@ type GrantOperation string
 
 // Enum values for GrantOperation
 const (
-	GrantOperationDecrypt                         GrantOperation = "Decrypt"
-	GrantOperationEncrypt                         GrantOperation = "Encrypt"
-	GrantOperationGenerateDataKey                 GrantOperation = "GenerateDataKey"
-	GrantOperationGenerateDataKeyWithoutPlaintext GrantOperation = "GenerateDataKeyWithoutPlaintext"
-	GrantOperationReEncryptFrom                   GrantOperation = "ReEncryptFrom"
-	GrantOperationReEncryptTo                     GrantOperation = "ReEncryptTo"
-	GrantOperationCreateGrant                     GrantOperation = "CreateGrant"
-	GrantOperationRetireGrant                     GrantOperation = "RetireGrant"
-	GrantOperationDescribeKey                     GrantOperation = "DescribeKey"
+	GrantOperationDecrypt                             GrantOperation = "Decrypt"
+	GrantOperationEncrypt                             GrantOperation = "Encrypt"
+	GrantOperationGenerateDataKey                     GrantOperation = "GenerateDataKey"
+	GrantOperationGenerateDataKeyWithoutPlaintext     GrantOperation = "GenerateDataKeyWithoutPlaintext"
+	GrantOperationReEncryptFrom                       GrantOperation = "ReEncryptFrom"
+	GrantOperationReEncryptTo                         GrantOperation = "ReEncryptTo"
+	GrantOperationSign                                GrantOperation = "Sign"
+	GrantOperationVerify                              GrantOperation = "Verify"
+	GrantOperationGetPublicKey                        GrantOperation = "GetPublicKey"
+	GrantOperationCreateGrant                         GrantOperation = "CreateGrant"
+	GrantOperationRetireGrant                         GrantOperation = "RetireGrant"
+	GrantOperationDescribeKey                         GrantOperation = "DescribeKey"
+	GrantOperationGenerateDataKeyPair                 GrantOperation = "GenerateDataKeyPair"
+	GrantOperationGenerateDataKeyPairWithoutPlaintext GrantOperation = "GenerateDataKeyPairWithoutPlaintext"
 )
 
 func (enum GrantOperation) MarshalValue() (string, error) {
@@ -160,6 +228,7 @@ type KeyUsageType string
 
 // Enum values for KeyUsageType
 const (
+	KeyUsageTypeSignVerify     KeyUsageType = "SIGN_VERIFY"
 	KeyUsageTypeEncryptDecrypt KeyUsageType = "ENCRYPT_DECRYPT"
 )
 
@@ -168,6 +237,23 @@ func (enum KeyUsageType) MarshalValue() (string, error) {
 }
 
 func (enum KeyUsageType) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type MessageType string
+
+// Enum values for MessageType
+const (
+	MessageTypeRaw    MessageType = "RAW"
+	MessageTypeDigest MessageType = "DIGEST"
+)
+
+func (enum MessageType) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum MessageType) MarshalValueBuf(b []byte) ([]byte, error) {
 	b = b[0:0]
 	return append(b, enum...), nil
 }
@@ -186,6 +272,30 @@ func (enum OriginType) MarshalValue() (string, error) {
 }
 
 func (enum OriginType) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type SigningAlgorithmSpec string
+
+// Enum values for SigningAlgorithmSpec
+const (
+	SigningAlgorithmSpecRsassaPssSha256      SigningAlgorithmSpec = "RSASSA_PSS_SHA_256"
+	SigningAlgorithmSpecRsassaPssSha384      SigningAlgorithmSpec = "RSASSA_PSS_SHA_384"
+	SigningAlgorithmSpecRsassaPssSha512      SigningAlgorithmSpec = "RSASSA_PSS_SHA_512"
+	SigningAlgorithmSpecRsassaPkcs1V15Sha256 SigningAlgorithmSpec = "RSASSA_PKCS1_V1_5_SHA_256"
+	SigningAlgorithmSpecRsassaPkcs1V15Sha384 SigningAlgorithmSpec = "RSASSA_PKCS1_V1_5_SHA_384"
+	SigningAlgorithmSpecRsassaPkcs1V15Sha512 SigningAlgorithmSpec = "RSASSA_PKCS1_V1_5_SHA_512"
+	SigningAlgorithmSpecEcdsaSha256          SigningAlgorithmSpec = "ECDSA_SHA_256"
+	SigningAlgorithmSpecEcdsaSha384          SigningAlgorithmSpec = "ECDSA_SHA_384"
+	SigningAlgorithmSpecEcdsaSha512          SigningAlgorithmSpec = "ECDSA_SHA_512"
+)
+
+func (enum SigningAlgorithmSpec) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum SigningAlgorithmSpec) MarshalValueBuf(b []byte) ([]byte, error) {
 	b = b[0:0]
 	return append(b, enum...), nil
 }

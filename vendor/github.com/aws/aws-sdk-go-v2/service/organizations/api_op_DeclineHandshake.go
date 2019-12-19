@@ -16,7 +16,7 @@ type DeclineHandshakeInput struct {
 	// can get the ID from the ListHandshakesForAccount operation.
 	//
 	// The regex pattern (http://wikipedia.org/wiki/regex) for handshake ID string
-	// requires "h-" followed by from 8 to 32 lower-case letters or digits.
+	// requires "h-" followed by from 8 to 32 lowercase letters or digits.
 	//
 	// HandshakeId is a required field
 	HandshakeId *string `type:"string" required:"true"`
@@ -68,7 +68,7 @@ const opDeclineHandshake = "DeclineHandshake"
 // a new handshake request.
 //
 // After you decline a handshake, it continues to appear in the results of relevant
-// APIs for only 30 days. After that, it's deleted.
+// API operations for only 30 days. After that, it's deleted.
 //
 //    // Example sending a request using DeclineHandshakeRequest.
 //    req := client.DeclineHandshakeRequest(params)

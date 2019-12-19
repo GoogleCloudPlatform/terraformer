@@ -13,10 +13,51 @@ import (
 type CreateClusterInput struct {
 	_ struct{} `type:"structure"`
 
+	// The short name or full Amazon Resource Name (ARN) of one or more capacity
+	// providers to associate with the cluster.
+	//
+	// If specifying a capacity provider that uses an Auto Scaling group, the capacity
+	// provider must already be created and not already associated with another
+	// cluster. New capacity providers can be created with the CreateCapacityProvider
+	// API operation.
+	//
+	// To use a AWS Fargate capacity provider, specify either the FARGATE or FARGATE_SPOT
+	// capacity providers. The AWS Fargate capacity providers are available to all
+	// accounts and only need to be associated with a cluster to be used.
+	//
+	// The PutClusterCapacityProviders API operation is used to update the list
+	// of available capacity providers for a cluster after the cluster is created.
+	CapacityProviders []string `locationName:"capacityProviders" type:"list"`
+
 	// The name of your cluster. If you do not specify a name for your cluster,
 	// you create a cluster named default. Up to 255 letters (uppercase and lowercase),
 	// numbers, and hyphens are allowed.
 	ClusterName *string `locationName:"clusterName" type:"string"`
+
+	// The capacity provider strategy to use by default for the cluster.
+	//
+	// When creating a service or running a task on a cluster, if no capacity provider
+	// or launch type is specified then the default capacity provider strategy for
+	// the cluster is used.
+	//
+	// A capacity provider strategy consists of one or more capacity providers along
+	// with the base and weight to assign to them. A capacity provider must be associated
+	// with the cluster to be used in a capacity provider strategy. The PutClusterCapacityProviders
+	// API is used to associate a capacity provider with a cluster. Only capacity
+	// providers with an ACTIVE or UPDATING status can be used.
+	//
+	// If specifying a capacity provider that uses an Auto Scaling group, the capacity
+	// provider must already be created. New capacity providers can be created with
+	// the CreateCapacityProvider API operation.
+	//
+	// To use a AWS Fargate capacity provider, specify either the FARGATE or FARGATE_SPOT
+	// capacity providers. The AWS Fargate capacity providers are available to all
+	// accounts and only need to be associated with a cluster to be used.
+	//
+	// If a default capacity provider strategy is not defined for a cluster during
+	// creation, it can be defined later with the PutClusterCapacityProviders API
+	// operation.
+	DefaultCapacityProviderStrategy []CapacityProviderStrategyItem `locationName:"defaultCapacityProviderStrategy" type:"list"`
 
 	// The setting to use when creating a cluster. This parameter is used to enable
 	// CloudWatch Container Insights for a cluster. If this value is specified,
@@ -61,6 +102,13 @@ func (s CreateClusterInput) String() string {
 // Validate inspects the fields of the type to determine if they are valid.
 func (s *CreateClusterInput) Validate() error {
 	invalidParams := aws.ErrInvalidParams{Context: "CreateClusterInput"}
+	if s.DefaultCapacityProviderStrategy != nil {
+		for i, v := range s.DefaultCapacityProviderStrategy {
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "DefaultCapacityProviderStrategy", i), err.(aws.ErrInvalidParams))
+			}
+		}
+	}
 	if s.Tags != nil {
 		for i, v := range s.Tags {
 			if err := v.Validate(); err != nil {
@@ -97,11 +145,11 @@ const opCreateCluster = "CreateCluster"
 // your own cluster with a unique name with the CreateCluster action.
 //
 // When you call the CreateCluster API operation, Amazon ECS attempts to create
-// the service-linked role for your account so that required resources in other
-// AWS services can be managed on your behalf. However, if the IAM user that
-// makes the call does not have permissions to create the service-linked role,
-// it is not created. For more information, see Using Service-Linked Roles for
-// Amazon ECS (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using-service-linked-roles.html)
+// the Amazon ECS service-linked role for your account so that required resources
+// in other AWS services can be managed on your behalf. However, if the IAM
+// user that makes the call does not have permissions to create the service-linked
+// role, it is not created. For more information, see Using Service-Linked Roles
+// for Amazon ECS (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using-service-linked-roles.html)
 // in the Amazon Elastic Container Service Developer Guide.
 //
 //    // Example sending a request using CreateClusterRequest.

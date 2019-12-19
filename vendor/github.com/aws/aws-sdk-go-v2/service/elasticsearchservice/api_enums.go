@@ -26,62 +26,64 @@ type ESPartitionInstanceType string
 
 // Enum values for ESPartitionInstanceType
 const (
-	ESPartitionInstanceTypeM3MediumElasticsearch   ESPartitionInstanceType = "m3.medium.elasticsearch"
-	ESPartitionInstanceTypeM3LargeElasticsearch    ESPartitionInstanceType = "m3.large.elasticsearch"
-	ESPartitionInstanceTypeM3XlargeElasticsearch   ESPartitionInstanceType = "m3.xlarge.elasticsearch"
-	ESPartitionInstanceTypeM32xlargeElasticsearch  ESPartitionInstanceType = "m3.2xlarge.elasticsearch"
-	ESPartitionInstanceTypeM4LargeElasticsearch    ESPartitionInstanceType = "m4.large.elasticsearch"
-	ESPartitionInstanceTypeM4XlargeElasticsearch   ESPartitionInstanceType = "m4.xlarge.elasticsearch"
-	ESPartitionInstanceTypeM42xlargeElasticsearch  ESPartitionInstanceType = "m4.2xlarge.elasticsearch"
-	ESPartitionInstanceTypeM44xlargeElasticsearch  ESPartitionInstanceType = "m4.4xlarge.elasticsearch"
-	ESPartitionInstanceTypeM410xlargeElasticsearch ESPartitionInstanceType = "m4.10xlarge.elasticsearch"
-	ESPartitionInstanceTypeM5LargeElasticsearch    ESPartitionInstanceType = "m5.large.elasticsearch"
-	ESPartitionInstanceTypeM5XlargeElasticsearch   ESPartitionInstanceType = "m5.xlarge.elasticsearch"
-	ESPartitionInstanceTypeM52xlargeElasticsearch  ESPartitionInstanceType = "m5.2xlarge.elasticsearch"
-	ESPartitionInstanceTypeM54xlargeElasticsearch  ESPartitionInstanceType = "m5.4xlarge.elasticsearch"
-	ESPartitionInstanceTypeM512xlargeElasticsearch ESPartitionInstanceType = "m5.12xlarge.elasticsearch"
-	ESPartitionInstanceTypeR5LargeElasticsearch    ESPartitionInstanceType = "r5.large.elasticsearch"
-	ESPartitionInstanceTypeR5XlargeElasticsearch   ESPartitionInstanceType = "r5.xlarge.elasticsearch"
-	ESPartitionInstanceTypeR52xlargeElasticsearch  ESPartitionInstanceType = "r5.2xlarge.elasticsearch"
-	ESPartitionInstanceTypeR54xlargeElasticsearch  ESPartitionInstanceType = "r5.4xlarge.elasticsearch"
-	ESPartitionInstanceTypeR512xlargeElasticsearch ESPartitionInstanceType = "r5.12xlarge.elasticsearch"
-	ESPartitionInstanceTypeC5LargeElasticsearch    ESPartitionInstanceType = "c5.large.elasticsearch"
-	ESPartitionInstanceTypeC5XlargeElasticsearch   ESPartitionInstanceType = "c5.xlarge.elasticsearch"
-	ESPartitionInstanceTypeC52xlargeElasticsearch  ESPartitionInstanceType = "c5.2xlarge.elasticsearch"
-	ESPartitionInstanceTypeC54xlargeElasticsearch  ESPartitionInstanceType = "c5.4xlarge.elasticsearch"
-	ESPartitionInstanceTypeC59xlargeElasticsearch  ESPartitionInstanceType = "c5.9xlarge.elasticsearch"
-	ESPartitionInstanceTypeC518xlargeElasticsearch ESPartitionInstanceType = "c5.18xlarge.elasticsearch"
-	ESPartitionInstanceTypeT2MicroElasticsearch    ESPartitionInstanceType = "t2.micro.elasticsearch"
-	ESPartitionInstanceTypeT2SmallElasticsearch    ESPartitionInstanceType = "t2.small.elasticsearch"
-	ESPartitionInstanceTypeT2MediumElasticsearch   ESPartitionInstanceType = "t2.medium.elasticsearch"
-	ESPartitionInstanceTypeR3LargeElasticsearch    ESPartitionInstanceType = "r3.large.elasticsearch"
-	ESPartitionInstanceTypeR3XlargeElasticsearch   ESPartitionInstanceType = "r3.xlarge.elasticsearch"
-	ESPartitionInstanceTypeR32xlargeElasticsearch  ESPartitionInstanceType = "r3.2xlarge.elasticsearch"
-	ESPartitionInstanceTypeR34xlargeElasticsearch  ESPartitionInstanceType = "r3.4xlarge.elasticsearch"
-	ESPartitionInstanceTypeR38xlargeElasticsearch  ESPartitionInstanceType = "r3.8xlarge.elasticsearch"
-	ESPartitionInstanceTypeI2XlargeElasticsearch   ESPartitionInstanceType = "i2.xlarge.elasticsearch"
-	ESPartitionInstanceTypeI22xlargeElasticsearch  ESPartitionInstanceType = "i2.2xlarge.elasticsearch"
-	ESPartitionInstanceTypeD2XlargeElasticsearch   ESPartitionInstanceType = "d2.xlarge.elasticsearch"
-	ESPartitionInstanceTypeD22xlargeElasticsearch  ESPartitionInstanceType = "d2.2xlarge.elasticsearch"
-	ESPartitionInstanceTypeD24xlargeElasticsearch  ESPartitionInstanceType = "d2.4xlarge.elasticsearch"
-	ESPartitionInstanceTypeD28xlargeElasticsearch  ESPartitionInstanceType = "d2.8xlarge.elasticsearch"
-	ESPartitionInstanceTypeC4LargeElasticsearch    ESPartitionInstanceType = "c4.large.elasticsearch"
-	ESPartitionInstanceTypeC4XlargeElasticsearch   ESPartitionInstanceType = "c4.xlarge.elasticsearch"
-	ESPartitionInstanceTypeC42xlargeElasticsearch  ESPartitionInstanceType = "c4.2xlarge.elasticsearch"
-	ESPartitionInstanceTypeC44xlargeElasticsearch  ESPartitionInstanceType = "c4.4xlarge.elasticsearch"
-	ESPartitionInstanceTypeC48xlargeElasticsearch  ESPartitionInstanceType = "c4.8xlarge.elasticsearch"
-	ESPartitionInstanceTypeR4LargeElasticsearch    ESPartitionInstanceType = "r4.large.elasticsearch"
-	ESPartitionInstanceTypeR4XlargeElasticsearch   ESPartitionInstanceType = "r4.xlarge.elasticsearch"
-	ESPartitionInstanceTypeR42xlargeElasticsearch  ESPartitionInstanceType = "r4.2xlarge.elasticsearch"
-	ESPartitionInstanceTypeR44xlargeElasticsearch  ESPartitionInstanceType = "r4.4xlarge.elasticsearch"
-	ESPartitionInstanceTypeR48xlargeElasticsearch  ESPartitionInstanceType = "r4.8xlarge.elasticsearch"
-	ESPartitionInstanceTypeR416xlargeElasticsearch ESPartitionInstanceType = "r4.16xlarge.elasticsearch"
-	ESPartitionInstanceTypeI3LargeElasticsearch    ESPartitionInstanceType = "i3.large.elasticsearch"
-	ESPartitionInstanceTypeI3XlargeElasticsearch   ESPartitionInstanceType = "i3.xlarge.elasticsearch"
-	ESPartitionInstanceTypeI32xlargeElasticsearch  ESPartitionInstanceType = "i3.2xlarge.elasticsearch"
-	ESPartitionInstanceTypeI34xlargeElasticsearch  ESPartitionInstanceType = "i3.4xlarge.elasticsearch"
-	ESPartitionInstanceTypeI38xlargeElasticsearch  ESPartitionInstanceType = "i3.8xlarge.elasticsearch"
-	ESPartitionInstanceTypeI316xlargeElasticsearch ESPartitionInstanceType = "i3.16xlarge.elasticsearch"
+	ESPartitionInstanceTypeM3MediumElasticsearch         ESPartitionInstanceType = "m3.medium.elasticsearch"
+	ESPartitionInstanceTypeM3LargeElasticsearch          ESPartitionInstanceType = "m3.large.elasticsearch"
+	ESPartitionInstanceTypeM3XlargeElasticsearch         ESPartitionInstanceType = "m3.xlarge.elasticsearch"
+	ESPartitionInstanceTypeM32xlargeElasticsearch        ESPartitionInstanceType = "m3.2xlarge.elasticsearch"
+	ESPartitionInstanceTypeM4LargeElasticsearch          ESPartitionInstanceType = "m4.large.elasticsearch"
+	ESPartitionInstanceTypeM4XlargeElasticsearch         ESPartitionInstanceType = "m4.xlarge.elasticsearch"
+	ESPartitionInstanceTypeM42xlargeElasticsearch        ESPartitionInstanceType = "m4.2xlarge.elasticsearch"
+	ESPartitionInstanceTypeM44xlargeElasticsearch        ESPartitionInstanceType = "m4.4xlarge.elasticsearch"
+	ESPartitionInstanceTypeM410xlargeElasticsearch       ESPartitionInstanceType = "m4.10xlarge.elasticsearch"
+	ESPartitionInstanceTypeM5LargeElasticsearch          ESPartitionInstanceType = "m5.large.elasticsearch"
+	ESPartitionInstanceTypeM5XlargeElasticsearch         ESPartitionInstanceType = "m5.xlarge.elasticsearch"
+	ESPartitionInstanceTypeM52xlargeElasticsearch        ESPartitionInstanceType = "m5.2xlarge.elasticsearch"
+	ESPartitionInstanceTypeM54xlargeElasticsearch        ESPartitionInstanceType = "m5.4xlarge.elasticsearch"
+	ESPartitionInstanceTypeM512xlargeElasticsearch       ESPartitionInstanceType = "m5.12xlarge.elasticsearch"
+	ESPartitionInstanceTypeR5LargeElasticsearch          ESPartitionInstanceType = "r5.large.elasticsearch"
+	ESPartitionInstanceTypeR5XlargeElasticsearch         ESPartitionInstanceType = "r5.xlarge.elasticsearch"
+	ESPartitionInstanceTypeR52xlargeElasticsearch        ESPartitionInstanceType = "r5.2xlarge.elasticsearch"
+	ESPartitionInstanceTypeR54xlargeElasticsearch        ESPartitionInstanceType = "r5.4xlarge.elasticsearch"
+	ESPartitionInstanceTypeR512xlargeElasticsearch       ESPartitionInstanceType = "r5.12xlarge.elasticsearch"
+	ESPartitionInstanceTypeC5LargeElasticsearch          ESPartitionInstanceType = "c5.large.elasticsearch"
+	ESPartitionInstanceTypeC5XlargeElasticsearch         ESPartitionInstanceType = "c5.xlarge.elasticsearch"
+	ESPartitionInstanceTypeC52xlargeElasticsearch        ESPartitionInstanceType = "c5.2xlarge.elasticsearch"
+	ESPartitionInstanceTypeC54xlargeElasticsearch        ESPartitionInstanceType = "c5.4xlarge.elasticsearch"
+	ESPartitionInstanceTypeC59xlargeElasticsearch        ESPartitionInstanceType = "c5.9xlarge.elasticsearch"
+	ESPartitionInstanceTypeC518xlargeElasticsearch       ESPartitionInstanceType = "c5.18xlarge.elasticsearch"
+	ESPartitionInstanceTypeUltrawarm1MediumElasticsearch ESPartitionInstanceType = "ultrawarm1.medium.elasticsearch"
+	ESPartitionInstanceTypeUltrawarm1LargeElasticsearch  ESPartitionInstanceType = "ultrawarm1.large.elasticsearch"
+	ESPartitionInstanceTypeT2MicroElasticsearch          ESPartitionInstanceType = "t2.micro.elasticsearch"
+	ESPartitionInstanceTypeT2SmallElasticsearch          ESPartitionInstanceType = "t2.small.elasticsearch"
+	ESPartitionInstanceTypeT2MediumElasticsearch         ESPartitionInstanceType = "t2.medium.elasticsearch"
+	ESPartitionInstanceTypeR3LargeElasticsearch          ESPartitionInstanceType = "r3.large.elasticsearch"
+	ESPartitionInstanceTypeR3XlargeElasticsearch         ESPartitionInstanceType = "r3.xlarge.elasticsearch"
+	ESPartitionInstanceTypeR32xlargeElasticsearch        ESPartitionInstanceType = "r3.2xlarge.elasticsearch"
+	ESPartitionInstanceTypeR34xlargeElasticsearch        ESPartitionInstanceType = "r3.4xlarge.elasticsearch"
+	ESPartitionInstanceTypeR38xlargeElasticsearch        ESPartitionInstanceType = "r3.8xlarge.elasticsearch"
+	ESPartitionInstanceTypeI2XlargeElasticsearch         ESPartitionInstanceType = "i2.xlarge.elasticsearch"
+	ESPartitionInstanceTypeI22xlargeElasticsearch        ESPartitionInstanceType = "i2.2xlarge.elasticsearch"
+	ESPartitionInstanceTypeD2XlargeElasticsearch         ESPartitionInstanceType = "d2.xlarge.elasticsearch"
+	ESPartitionInstanceTypeD22xlargeElasticsearch        ESPartitionInstanceType = "d2.2xlarge.elasticsearch"
+	ESPartitionInstanceTypeD24xlargeElasticsearch        ESPartitionInstanceType = "d2.4xlarge.elasticsearch"
+	ESPartitionInstanceTypeD28xlargeElasticsearch        ESPartitionInstanceType = "d2.8xlarge.elasticsearch"
+	ESPartitionInstanceTypeC4LargeElasticsearch          ESPartitionInstanceType = "c4.large.elasticsearch"
+	ESPartitionInstanceTypeC4XlargeElasticsearch         ESPartitionInstanceType = "c4.xlarge.elasticsearch"
+	ESPartitionInstanceTypeC42xlargeElasticsearch        ESPartitionInstanceType = "c4.2xlarge.elasticsearch"
+	ESPartitionInstanceTypeC44xlargeElasticsearch        ESPartitionInstanceType = "c4.4xlarge.elasticsearch"
+	ESPartitionInstanceTypeC48xlargeElasticsearch        ESPartitionInstanceType = "c4.8xlarge.elasticsearch"
+	ESPartitionInstanceTypeR4LargeElasticsearch          ESPartitionInstanceType = "r4.large.elasticsearch"
+	ESPartitionInstanceTypeR4XlargeElasticsearch         ESPartitionInstanceType = "r4.xlarge.elasticsearch"
+	ESPartitionInstanceTypeR42xlargeElasticsearch        ESPartitionInstanceType = "r4.2xlarge.elasticsearch"
+	ESPartitionInstanceTypeR44xlargeElasticsearch        ESPartitionInstanceType = "r4.4xlarge.elasticsearch"
+	ESPartitionInstanceTypeR48xlargeElasticsearch        ESPartitionInstanceType = "r4.8xlarge.elasticsearch"
+	ESPartitionInstanceTypeR416xlargeElasticsearch       ESPartitionInstanceType = "r4.16xlarge.elasticsearch"
+	ESPartitionInstanceTypeI3LargeElasticsearch          ESPartitionInstanceType = "i3.large.elasticsearch"
+	ESPartitionInstanceTypeI3XlargeElasticsearch         ESPartitionInstanceType = "i3.xlarge.elasticsearch"
+	ESPartitionInstanceTypeI32xlargeElasticsearch        ESPartitionInstanceType = "i3.2xlarge.elasticsearch"
+	ESPartitionInstanceTypeI34xlargeElasticsearch        ESPartitionInstanceType = "i3.4xlarge.elasticsearch"
+	ESPartitionInstanceTypeI38xlargeElasticsearch        ESPartitionInstanceType = "i3.8xlarge.elasticsearch"
+	ESPartitionInstanceTypeI316xlargeElasticsearch       ESPartitionInstanceType = "i3.16xlarge.elasticsearch"
 )
 
 func (enum ESPartitionInstanceType) MarshalValue() (string, error) {
@@ -89,6 +91,23 @@ func (enum ESPartitionInstanceType) MarshalValue() (string, error) {
 }
 
 func (enum ESPartitionInstanceType) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type ESWarmPartitionInstanceType string
+
+// Enum values for ESWarmPartitionInstanceType
+const (
+	ESWarmPartitionInstanceTypeUltrawarm1MediumElasticsearch ESWarmPartitionInstanceType = "ultrawarm1.medium.elasticsearch"
+	ESWarmPartitionInstanceTypeUltrawarm1LargeElasticsearch  ESWarmPartitionInstanceType = "ultrawarm1.large.elasticsearch"
+)
+
+func (enum ESWarmPartitionInstanceType) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum ESWarmPartitionInstanceType) MarshalValueBuf(b []byte) ([]byte, error) {
 	b = b[0:0]
 	return append(b, enum...), nil
 }

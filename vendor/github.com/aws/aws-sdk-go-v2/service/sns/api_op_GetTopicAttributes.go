@@ -44,28 +44,35 @@ type GetTopicAttributesOutput struct {
 
 	// A map of the topic's attributes. Attributes in this map include the following:
 	//
-	//    * TopicArn – the topic's ARN
+	//    * DeliveryPolicy – The JSON serialization of the topic's delivery policy.
 	//
-	//    * Owner – the AWS account ID of the topic's owner
+	//    * DisplayName – The human-readable name used in the From field for notifications
+	//    to email and email-json endpoints.
 	//
-	//    * Policy – the JSON serialization of the topic's access control policy
+	//    * Owner – The AWS account ID of the topic's owner.
 	//
-	//    * DisplayName – the human-readable name used in the "From" field for
-	//    notifications to email and email-json endpoints
+	//    * Policy – The JSON serialization of the topic's access control policy.
 	//
-	//    * SubscriptionsPending – the number of subscriptions pending confirmation
-	//    on this topic
+	//    * SubscriptionsConfirmed – The number of confirmed subscriptions for
+	//    the topic.
 	//
-	//    * SubscriptionsConfirmed – the number of confirmed subscriptions on
-	//    this topic
+	//    * SubscriptionsDeleted – The number of deleted subscriptions for the
+	//    topic.
 	//
-	//    * SubscriptionsDeleted – the number of deleted subscriptions on this
-	//    topic
+	//    * SubscriptionsPending – The number of subscriptions pending confirmation
+	//    for the topic.
 	//
-	//    * DeliveryPolicy – the JSON serialization of the topic's delivery policy
+	//    * TopicArn – The topic's ARN.
 	//
-	//    * EffectiveDeliveryPolicy – the JSON serialization of the effective
-	//    delivery policy that takes into account system defaults
+	//    * EffectiveDeliveryPolicy – Yhe JSON serialization of the effective
+	//    delivery policy, taking system defaults into account.
+	//
+	// The following attribute applies only to server-side-encryption (https://docs.aws.amazon.com/sns/latest/dg/sns-server-side-encryption.html):
+	//
+	//    * KmsMasterKeyId - The ID of an AWS-managed customer master key (CMK)
+	//    for Amazon SNS or a custom CMK. For more information, see Key Terms (https://docs.aws.amazon.com/sns/latest/dg/sns-server-side-encryption.html#sse-key-terms).
+	//    For more examples, see KeyId (https://docs.aws.amazon.com/kms/latest/APIReference/API_DescribeKey.html#API_DescribeKey_RequestParameters)
+	//    in the AWS Key Management Service API Reference.
 	Attributes map[string]string `type:"map"`
 }
 

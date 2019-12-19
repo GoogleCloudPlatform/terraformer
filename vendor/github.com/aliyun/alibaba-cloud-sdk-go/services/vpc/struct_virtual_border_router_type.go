@@ -37,6 +37,7 @@ type VirtualBorderRouterType struct {
 	AccessPointId                    string                                       `json:"AccessPointId" xml:"AccessPointId"`
 	Name                             string                                       `json:"Name" xml:"Name"`
 	Description                      string                                       `json:"Description" xml:"Description"`
+	PConnVbrExpireTime               string                                       `json:"PConnVbrExpireTime" xml:"PConnVbrExpireTime"`
 	EccId                            string                                       `json:"EccId" xml:"EccId"`
 	Type                             string                                       `json:"Type" xml:"Type"`
 	MinTxInterval                    int64                                        `json:"MinTxInterval" xml:"MinTxInterval"`

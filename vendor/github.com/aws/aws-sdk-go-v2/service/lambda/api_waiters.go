@@ -9,6 +9,55 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 )
 
+// WaitUntilFunctionActive uses the AWS Lambda API operation
+// GetFunctionConfiguration to wait for a condition to be met before returning.
+// If the condition is not met within the max attempt window, an error will
+// be returned.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *Client) WaitUntilFunctionActive(ctx context.Context, input *GetFunctionConfigurationInput, opts ...aws.WaiterOption) error {
+	w := aws.Waiter{
+		Name:        "WaitUntilFunctionActive",
+		MaxAttempts: 60,
+		Delay:       aws.ConstantWaiterDelay(5 * time.Second),
+		Acceptors: []aws.WaiterAcceptor{
+			{
+				State:   aws.SuccessWaiterState,
+				Matcher: aws.PathWaiterMatch, Argument: "State",
+				Expected: "Active",
+			},
+			{
+				State:   aws.FailureWaiterState,
+				Matcher: aws.PathWaiterMatch, Argument: "State",
+				Expected: "Failed",
+			},
+			{
+				State:   aws.RetryWaiterState,
+				Matcher: aws.PathWaiterMatch, Argument: "State",
+				Expected: "Pending",
+			},
+		},
+		Logger: c.Config.Logger,
+		NewRequest: func(opts []aws.Option) (*aws.Request, error) {
+			var inCpy *GetFunctionConfigurationInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req := c.GetFunctionConfigurationRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req.Request, nil
+		},
+	}
+	w.ApplyOptions(opts...)
+
+	return w.Wait(ctx)
+}
+
 // WaitUntilFunctionExists uses the AWS Lambda API operation
 // GetFunction to wait for a condition to be met before returning.
 // If the condition is not met within the max attempt window, an error will
@@ -43,6 +92,55 @@ func (c *Client) WaitUntilFunctionExists(ctx context.Context, input *GetFunction
 				inCpy = &tmp
 			}
 			req := c.GetFunctionRequest(inCpy)
+			req.SetContext(ctx)
+			req.ApplyOptions(opts...)
+			return req.Request, nil
+		},
+	}
+	w.ApplyOptions(opts...)
+
+	return w.Wait(ctx)
+}
+
+// WaitUntilFunctionUpdated uses the AWS Lambda API operation
+// GetFunctionConfiguration to wait for a condition to be met before returning.
+// If the condition is not met within the max attempt window, an error will
+// be returned.
+//
+// The context must be non-nil and will be used for request cancellation. If
+// the context is nil a panic will occur. In the future the SDK may create
+// sub-contexts for http.Requests. See https://golang.org/pkg/context/
+// for more information on using Contexts.
+func (c *Client) WaitUntilFunctionUpdated(ctx context.Context, input *GetFunctionConfigurationInput, opts ...aws.WaiterOption) error {
+	w := aws.Waiter{
+		Name:        "WaitUntilFunctionUpdated",
+		MaxAttempts: 60,
+		Delay:       aws.ConstantWaiterDelay(5 * time.Second),
+		Acceptors: []aws.WaiterAcceptor{
+			{
+				State:   aws.SuccessWaiterState,
+				Matcher: aws.PathWaiterMatch, Argument: "LastUpdateStatus",
+				Expected: "Successful",
+			},
+			{
+				State:   aws.FailureWaiterState,
+				Matcher: aws.PathWaiterMatch, Argument: "LastUpdateStatus",
+				Expected: "Failed",
+			},
+			{
+				State:   aws.RetryWaiterState,
+				Matcher: aws.PathWaiterMatch, Argument: "LastUpdateStatus",
+				Expected: "InProgress",
+			},
+		},
+		Logger: c.Config.Logger,
+		NewRequest: func(opts []aws.Option) (*aws.Request, error) {
+			var inCpy *GetFunctionConfigurationInput
+			if input != nil {
+				tmp := *input
+				inCpy = &tmp
+			}
+			req := c.GetFunctionConfigurationRequest(inCpy)
 			req.SetContext(ctx)
 			req.ApplyOptions(opts...)
 			return req.Request, nil

@@ -15,6 +15,17 @@ type WorkersKVNamespaceRequest struct {
 	Title string `json:"title"`
 }
 
+// WorkersKVPair is used in an array in the request to the bulk KV api
+type WorkersKVPair struct{
+	Key string `json:"key"`
+	Value string `json:"value"`
+	Expiration int `json:"expiration,omitempty"`
+	ExpirationTTL int `json:"expiration_ttl,omitempty"`
+}
+
+// WorkersKVBulkWriteRequest is the request to the bulk KV api
+type WorkersKVBulkWriteRequest []*WorkersKVPair
+
 // WorkersKVNamespaceResponse is the response received when creating storage namespaces
 type WorkersKVNamespaceResponse struct {
 	Response
@@ -130,6 +141,26 @@ func (api *API) WriteWorkersKV(ctx context.Context, namespaceID, key string, val
 	uri := fmt.Sprintf("/accounts/%s/storage/kv/namespaces/%s/values/%s", api.AccountID, namespaceID, key)
 	res, err := api.makeRequestWithAuthTypeAndHeaders(
 		ctx, http.MethodPut, uri, value, api.authType, http.Header{"Content-Type": []string{"application/octet-stream"}},
+	)
+	if err != nil {
+		return Response{}, errors.Wrap(err, errMakeRequestError)
+	}
+
+	result := Response{}
+	if err := json.Unmarshal(res, &result); err != nil {
+		return result, errors.Wrap(err, errUnmarshalError)
+	}
+
+	return result, err
+}
+
+// WriteWorkersKVBulk writes multiple KVs at once.
+//
+// API reference: https://api.cloudflare.com/#workers-kv-namespace-write-multiple-key-value-pairs
+func (api *API) WriteWorkersKVBulk(ctx context.Context, namespaceID string, kvs WorkersKVBulkWriteRequest) (Response, error) {
+	uri := fmt.Sprintf("/accounts/%s/storage/kv/namespaces/%s/bulk", api.AccountID, namespaceID)
+	res, err := api.makeRequestWithAuthTypeAndHeaders(
+		ctx, http.MethodPut, uri, kvs, api.authType, http.Header{"Content-Type": []string{"application/json"}},
 	)
 	if err != nil {
 		return Response{}, errors.Wrap(err, errMakeRequestError)

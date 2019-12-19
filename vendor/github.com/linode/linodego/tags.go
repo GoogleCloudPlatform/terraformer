@@ -135,9 +135,11 @@ func (i *TaggedObject) fixData() (*TaggedObject, error) {
 func (c *Client) ListTaggedObjects(ctx context.Context, label string, opts *ListOptions) (TaggedObjectList, error) {
 	response := TaggedObjectsPagedResponse{}
 	err := c.listHelperWithID(ctx, &response, label, opts)
+
 	if err != nil {
 		return nil, err
 	}
+
 	for i := range response.Data {
 		if _, err := response.Data[i].fixData(); err != nil {
 			return nil, err
@@ -149,6 +151,7 @@ func (c *Client) ListTaggedObjects(ctx context.Context, label string, opts *List
 // SortedObjects converts a list of TaggedObjects into a Sorted Objects struct, for easier access
 func (t TaggedObjectList) SortedObjects() (SortedObjects, error) {
 	so := SortedObjects{}
+
 	for _, o := range t {
 		switch o.Type {
 		case "linode":

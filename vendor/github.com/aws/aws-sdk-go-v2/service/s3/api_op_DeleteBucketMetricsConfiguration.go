@@ -105,7 +105,7 @@ const opDeleteBucketMetricsConfiguration = "DeleteBucketMetricsConfiguration"
 // For information about CloudWatch request metrics for Amazon S3, see Monitoring
 // Metrics with Amazon CloudWatch (https://docs.aws.amazon.com/AmazonS3/latest/dev/cloudwatch-monitoring.html).
 //
-// The following operations are related to DeleteBucketMetricsConfiguration
+// The following operations are related to DeleteBucketMetricsConfiguration:
 //
 //    * GetBucketMetricsConfiguration
 //

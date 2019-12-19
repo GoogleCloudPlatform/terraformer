@@ -13,7 +13,7 @@ import (
 type GetBucketLifecycleConfigurationInput struct {
 	_ struct{} `type:"structure"`
 
-	// The name of the bucket for which to the the lifecycle information.
+	// The name of the bucket for which to get the lifecycle information.
 	//
 	// Bucket is a required field
 	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`

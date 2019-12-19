@@ -85,7 +85,6 @@ type CreateGlobalAccelerationInstanceRequest struct {
 	Bandwidth            string           `position:"Query" name:"Bandwidth"`
 	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
 	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	InternetChargeType   string           `position:"Query" name:"InternetChargeType"`
 	Name                 string           `position:"Query" name:"Name"`
 }
 

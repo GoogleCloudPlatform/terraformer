@@ -83,7 +83,7 @@ const opDeleteBucketTagging = "DeleteBucketTagging"
 // action. By default, the bucket owner has this permission and can grant this
 // permission to others.
 //
-// The following operations are related to DeleteBucketTagging
+// The following operations are related to DeleteBucketTagging:
 //
 //    * GetBucketTagging
 //

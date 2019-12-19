@@ -42,6 +42,7 @@ func (InvoicesPagedResponse) endpoint(c *Client) string {
 	if err != nil {
 		panic(err)
 	}
+
 	return endpoint
 }
 
@@ -54,12 +55,15 @@ func (resp *InvoicesPagedResponse) appendData(r *InvoicesPagedResponse) {
 func (c *Client) ListInvoices(ctx context.Context, opts *ListOptions) ([]Invoice, error) {
 	response := InvoicesPagedResponse{}
 	err := c.listHelper(ctx, &response, opts)
+
 	for i := range response.Data {
 		response.Data[i].fixDates()
 	}
+
 	if err != nil {
 		return nil, err
 	}
+
 	return response.Data, nil
 }
 
@@ -73,6 +77,7 @@ func (v *Invoice) fixDates() *Invoice {
 func (v *InvoiceItem) fixDates() *InvoiceItem {
 	v.From, _ = parseDates(v.FromStr)
 	v.To, _ = parseDates(v.ToStr)
+
 	return v
 }
 
@@ -85,9 +90,11 @@ func (c *Client) GetInvoice(ctx context.Context, id int) (*Invoice, error) {
 
 	e = fmt.Sprintf("%s/%d", e, id)
 	r, err := coupleAPIErrors(c.R(ctx).SetResult(&Invoice{}).Get(e))
+
 	if err != nil {
 		return nil, err
 	}
+
 	return r.Result().(*Invoice).fixDates(), nil
 }
 
@@ -103,6 +110,7 @@ func (InvoiceItemsPagedResponse) endpointWithID(c *Client, id int) string {
 	if err != nil {
 		panic(err)
 	}
+
 	return endpoint
 }
 
@@ -115,11 +123,14 @@ func (resp *InvoiceItemsPagedResponse) appendData(r *InvoiceItemsPagedResponse) 
 func (c *Client) ListInvoiceItems(ctx context.Context, id int, opts *ListOptions) ([]InvoiceItem, error) {
 	response := InvoiceItemsPagedResponse{}
 	err := c.listHelperWithID(ctx, &response, id, opts)
+
 	for i := range response.Data {
 		response.Data[i].fixDates()
 	}
+
 	if err != nil {
 		return nil, err
 	}
+
 	return response.Data, nil
 }

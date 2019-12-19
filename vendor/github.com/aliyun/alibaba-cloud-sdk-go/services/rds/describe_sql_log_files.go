@@ -76,14 +76,14 @@ func (client *Client) DescribeSQLLogFilesWithCallback(request *DescribeSQLLogFil
 // DescribeSQLLogFilesRequest is the request struct for api DescribeSQLLogFiles
 type DescribeSQLLogFilesRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
-	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
-	FileName             string           `position:"Query" name:"FileName"`
-	PageSize             requests.Integer `position:"Query" name:"PageSize"`
 	PageNumber           requests.Integer `position:"Query" name:"PageNumber"`
+	PageSize             requests.Integer `position:"Query" name:"PageSize"`
+	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
+	FileName             string           `position:"Query" name:"FileName"`
 }
 
 // DescribeSQLLogFilesResponse is the response struct for api DescribeSQLLogFiles

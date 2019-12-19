@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 
-	"gopkg.in/resty.v1"
+	"github.com/go-resty/resty/v2"
 )
 
 const (
@@ -35,6 +35,7 @@ func (r APIErrorReason) Error() string {
 	if len(r.Field) == 0 {
 		return r.Reason
 	}
+
 	return fmt.Sprintf("[%s] %s", r.Field, r.Reason)
 }
 
@@ -52,12 +53,14 @@ func coupleAPIErrors(r *resty.Response, err error) (*resty.Response, error) {
 		// Check that response is of the correct content-type before unmarshalling
 		expectedContentType := r.Request.Header.Get("Accept")
 		responseContentType := r.Header().Get("Content-Type")
+
 		if responseContentType != expectedContentType {
 			msg := fmt.Sprintf(
 				"Unexpected Content-Type: Expected: %v, Received: %v",
 				expectedContentType,
 				responseContentType,
 			)
+
 			return nil, NewError(msg)
 		}
 
@@ -65,6 +68,7 @@ func coupleAPIErrors(r *resty.Response, err error) (*resty.Response, error) {
 		if !ok || (ok && len(apiError.Errors) == 0) {
 			return r, nil
 		}
+
 		return nil, NewError(r)
 	}
 
@@ -76,6 +80,7 @@ func (e APIError) Error() string {
 	for _, msg := range e.Errors {
 		x = append(x, msg.Error())
 	}
+
 	return strings.Join(x, "; ")
 }
 

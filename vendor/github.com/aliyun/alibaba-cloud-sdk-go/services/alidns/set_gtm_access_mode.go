@@ -93,7 +93,7 @@ func CreateSetGtmAccessModeRequest() (request *SetGtmAccessModeRequest) {
 	request = &SetGtmAccessModeRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "SetGtmAccessMode", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "SetGtmAccessMode", "alidns", "openAPI")
 	return
 }
 

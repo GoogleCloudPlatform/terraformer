@@ -28,4 +28,8 @@ type TaskProgressInfo struct {
 	Status             string `json:"Status" xml:"Status"`
 	TaskErrorCode      string `json:"TaskErrorCode" xml:"TaskErrorCode"`
 	TaskErrorMessage   string `json:"TaskErrorMessage" xml:"TaskErrorMessage"`
+	StepsInfo          string `json:"StepsInfo" xml:"StepsInfo"`
+	Remain             int    `json:"Remain" xml:"Remain"`
+	StepProgressInfo   string `json:"StepProgressInfo" xml:"StepProgressInfo"`
+	CurrentStepName    string `json:"CurrentStepName" xml:"CurrentStepName"`
 }

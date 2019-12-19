@@ -330,6 +330,11 @@ type Filters struct {
 	ExtendedKeyUsage []ExtendedKeyUsageName `locationName:"extendedKeyUsage" type:"list"`
 
 	// Specify one or more algorithms that can be used to generate key pairs.
+	//
+	// Default filtering returns only RSA_2048 certificates. To return other certificate
+	// types, provide the desired type signatures in a comma-separated list. For
+	// example, "keyTypes": ["RSA_2048,RSA_4096"] returns both RSA_2048 and RSA_4096
+	// certificates.
 	KeyTypes []KeyAlgorithm `locationName:"keyTypes" type:"list"`
 
 	// Specify one or more KeyUsage extension values.

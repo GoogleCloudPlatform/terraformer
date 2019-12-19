@@ -60,8 +60,8 @@ func (s GetBucketLocationInput) MarshalFields(e protocol.FieldEncoder) error {
 type GetBucketLocationOutput struct {
 	_ struct{} `type:"structure"`
 
-	// Specifies the region where the bucket resides. For a list of all the Amazon
-	// S3 supported location constraints by region, see Regions and Endpoints (https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region).
+	// Specifies the Region where the bucket resides. For a list of all the Amazon
+	// S3 supported location constraints by Region, see Regions and Endpoints (https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region).
 	LocationConstraint BucketLocationConstraint `type:"string" enum:"true"`
 }
 
@@ -86,7 +86,7 @@ const opGetBucketLocation = "GetBucketLocation"
 // GetBucketLocationRequest returns a request value for making API operation for
 // Amazon Simple Storage Service.
 //
-// Returns the region the bucket resides in. You set the bucket's region using
+// Returns the Region the bucket resides in. You set the bucket's Region using
 // the LocationConstraint request parameter in a CreateBucket request. For more
 // information, see CreateBucket.
 //

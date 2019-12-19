@@ -19,7 +19,7 @@ var (
 	// was not a valid numeric type.
 	ErrBadJSONAPIID = errors.New(
 		"id should be either string, int(8,16,32,64) or uint(8,16,32,64)")
-	// ErrExpectedSlice is returned when a variable or arugment was expected to
+	// ErrExpectedSlice is returned when a variable or argument was expected to
 	// be a slice of *Structs; MarshalMany will return this error when its
 	// interface{} argument is invalid.
 	ErrExpectedSlice = errors.New("models should be a slice of struct pointers")
@@ -68,10 +68,7 @@ func MarshalPayload(w io.Writer, models interface{}) error {
 		return err
 	}
 
-	if err := json.NewEncoder(w).Encode(payload); err != nil {
-		return err
-	}
-	return nil
+	return json.NewEncoder(w).Encode(payload)
 }
 
 // Marshal does the same as MarshalPayload except it just returns the payload
@@ -128,10 +125,7 @@ func MarshalPayloadWithoutIncluded(w io.Writer, model interface{}) error {
 	}
 	payload.clearIncluded()
 
-	if err := json.NewEncoder(w).Encode(payload); err != nil {
-		return err
-	}
-	return nil
+	return json.NewEncoder(w).Encode(payload)
 }
 
 // marshalOne does the same as MarshalOnePayload except it just returns the
@@ -195,11 +189,7 @@ func MarshalOnePayloadEmbedded(w io.Writer, model interface{}) error {
 
 	payload := &OnePayload{Data: rootNode}
 
-	if err := json.NewEncoder(w).Encode(payload); err != nil {
-		return err
-	}
-
-	return nil
+	return json.NewEncoder(w).Encode(payload)
 }
 
 func visitModelNode(model interface{}, included *map[string]*Node,
@@ -207,9 +197,13 @@ func visitModelNode(model interface{}, included *map[string]*Node,
 	node := new(Node)
 
 	var er error
+	value := reflect.ValueOf(model)
+	if value.IsNil() {
+		return nil, nil
+	}
 
-	modelValue := reflect.ValueOf(model).Elem()
-	modelType := reflect.ValueOf(model).Type().Elem()
+	modelValue := value.Elem()
+	modelType := value.Type().Elem()
 
 	for i := 0; i < modelValue.NumField(); i++ {
 		structField := modelValue.Type().Field(i)
@@ -276,6 +270,9 @@ func visitModelNode(model interface{}, included *map[string]*Node,
 				// We had a JSON float (numeric), but our field was not one of the
 				// allowed numeric types
 				er = ErrBadJSONAPIID
+			}
+
+			if er != nil {
 				break
 			}
 
@@ -341,7 +338,7 @@ func visitModelNode(model interface{}, included *map[string]*Node,
 				emptyValue := reflect.Zero(fieldValue.Type())
 
 				// See if we need to omit this field
-				if omitEmpty && fieldValue.Interface() == emptyValue.Interface() {
+				if omitEmpty && reflect.DeepEqual(fieldValue.Interface(), emptyValue.Interface()) {
 					continue
 				}
 

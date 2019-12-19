@@ -13,7 +13,14 @@ import (
 type ListObjectsV2Input struct {
 	_ struct{} `type:"structure"`
 
-	// Name of the bucket to list.
+	// Bucket name to list.
+	//
+	// When using this API with an access point, you must direct requests to the
+	// access point hostname. The access point hostname takes the form AccessPointName-AccountId.s3-accesspoint.Region.amazonaws.com.
+	// When using this operation using an access point through the AWS SDKs, you
+	// provide the access point ARN in place of the bucket name. For more information
+	// about access point ARNs, see Using Access Points (https://docs.aws.amazon.com/AmazonS3/latest/dev/using-access-points.html)
+	// in the Amazon Simple Storage Service Developer Guide.
 	//
 	// Bucket is a required field
 	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
@@ -31,7 +38,7 @@ type ListObjectsV2Input struct {
 
 	// The owner field is not present in listV2 by default, if you want to return
 	// owner field with each key in the result then set the fetch owner field to
-	// true
+	// true.
 	FetchOwner *bool `location:"querystring" locationName:"fetch-owner" type:"boolean"`
 
 	// Sets the maximum number of keys returned in the response. The response might
@@ -193,10 +200,17 @@ type ListObjectsV2Output struct {
 	// contain fewer keys but will never contain more.
 	MaxKeys *int64 `type:"integer"`
 
-	// Name of the bucket.
+	// Bucket name.
+	//
+	// When using this API with an access point, you must direct requests to the
+	// access point hostname. The access point hostname takes the form AccessPointName-AccountId.s3-accesspoint.Region.amazonaws.com.
+	// When using this operation using an access point through the AWS SDKs, you
+	// provide the access point ARN in place of the bucket name. For more information
+	// about access point ARNs, see Using Access Points (https://docs.aws.amazon.com/AmazonS3/latest/dev/using-access-points.html)
+	// in the Amazon Simple Storage Service Developer Guide.
 	Name *string `type:"string"`
 
-	// NextContinuationToken is sent when isTruncated is true which means there
+	// NextContinuationToken is sent when isTruncated is true, which means there
 	// are more keys in the bucket that can be listed. The next list requests to
 	// Amazon S3 can be continued with this NextContinuationToken. NextContinuationToken
 	// is obfuscated and is not a real key
@@ -314,7 +328,7 @@ const opListObjectsV2 = "ListObjectsV2"
 // to design your application to parse the contents of the response and handle
 // it appropriately.
 //
-// To use thisoperation, you must have READ access to the bucket.
+// To use this operation, you must have READ access to the bucket.
 //
 // To use this operation in an AWS Identity and Access Management (IAM) policy,
 // you must have permissions to perform the s3:ListBucket action. The bucket

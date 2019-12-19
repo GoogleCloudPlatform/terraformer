@@ -26,7 +26,7 @@ type Account struct {
 	// The email address associated with the AWS account.
 	//
 	// The regex pattern (http://wikipedia.org/wiki/regex) for this parameter is
-	// a string of characters that represents a standard Internet email address.
+	// a string of characters that represents a standard internet email address.
 	Email *string `min:"6" type:"string" sensitive:"true"`
 
 	// The unique identifier (ID) of the account.
@@ -66,12 +66,12 @@ type Child struct {
 	// The regex pattern (http://wikipedia.org/wiki/regex) for a child ID string
 	// requires one of the following:
 	//
-	//    * Account: a string that consists of exactly 12 digits.
+	//    * Account: A string that consists of exactly 12 digits.
 	//
-	//    * Organizational unit (OU): a string that begins with "ou-" followed by
+	//    * Organizational unit (OU): A string that begins with "ou-" followed by
 	//    from 4 to 32 lower-case letters or digits (the ID of the root that contains
-	//    the OU) followed by a second "-" dash and from 8 to 32 additional lower-case
-	//    letters or digits.
+	//    the OU). This string is followed by a second "-" dash and from 8 to 32
+	//    additional lower-case letters or digits.
 	Id *string `type:"string"`
 
 	// The type of this child entity.
@@ -120,7 +120,7 @@ type CreateAccountStatus struct {
 	//    you provided is not valid.
 	//
 	//    * INTERNAL_FAILURE: The account could not be created because of an internal
-	//    failure. Try again later. If the problem persists, contact Customer Support.
+	//    failure. Try again later. If the problem persists, contact AWS Support.
 	FailureReason CreateAccountFailureReason `type:"string" enum:"true"`
 
 	// If the account was created successfully, the unique identifier (ID) of the
@@ -130,7 +130,7 @@ type CreateAccountStatus struct {
 	// The unique identifier (ID) that references this request. You get this value
 	// from the response of the initial CreateAccount request to create the account.
 	//
-	// The regex pattern (http://wikipedia.org/wiki/regex) for an create account
+	// The regex pattern (http://wikipedia.org/wiki/regex) for a create account
 	// request ID string requires "car-" followed by from 8 to 32 lower-case letters
 	// or digits.
 	Id *string `type:"string"`
@@ -144,6 +144,30 @@ type CreateAccountStatus struct {
 
 // String returns the string representation
 func (s CreateAccountStatus) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Contains rules to be applied to the affected accounts. The effective policy
+// is the aggregation of any policies the account inherits, plus any policy
+// directly attached to the account.
+type EffectivePolicy struct {
+	_ struct{} `type:"structure"`
+
+	// The time of the last update to this policy.
+	LastUpdatedTimestamp *time.Time `type:"timestamp"`
+
+	// The text content of the policy.
+	PolicyContent *string `min:"1" type:"string"`
+
+	// The policy type.
+	PolicyType EffectivePolicyType `type:"string" enum:"true"`
+
+	// The account ID of the policy target.
+	TargetId *string `type:"string"`
+}
+
+// String returns the string representation
+func (s EffectivePolicy) String() string {
 	return awsutil.Prettify(s)
 }
 
@@ -167,13 +191,13 @@ func (s EnabledServicePrincipal) String() string {
 }
 
 // Contains information that must be exchanged to securely establish a relationship
-// between two accounts (an originator and a recipient). For example, when a
-// master account (the originator) invites another account (the recipient) to
-// join its organization, the two accounts exchange information as a series
-// of handshake requests and responses.
+// between two accounts (an originator and a recipient). For example, assume
+// that a master account (the originator) invites another account (the recipient)
+// to join its organization. In that case, the two accounts exchange information
+// as a series of handshake requests and responses.
 //
 // Note: Handshakes that are CANCELED, ACCEPTED, or DECLINED show up in lists
-// for only 30 days after entering that state After that they are deleted.
+// for only 30 days after entering that state. After that, they are deleted.
 type Handshake struct {
 	_ struct{} `type:"structure"`
 
@@ -362,7 +386,7 @@ func (s HandshakeResource) String() string {
 // Contains details about an organization. An organization is a collection of
 // accounts that are centrally managed together using consolidated billing,
 // organized hierarchically with organizational units (OUs), and controlled
-// with policies .
+// with policies.
 type Organization struct {
 	_ struct{} `type:"structure"`
 
@@ -438,8 +462,8 @@ type OrganizationalUnit struct {
 	//
 	// The regex pattern (http://wikipedia.org/wiki/regex) for an organizational
 	// unit ID string requires "ou-" followed by from 4 to 32 lower-case letters
-	// or digits (the ID of the root that contains the OU) followed by a second
-	// "-" dash and from 8 to 32 additional lower-case letters or digits.
+	// or digits (the ID of the root that contains the OU). This string is followed
+	// by a second "-" dash and from 8 to 32 additional lower-case letters or digits.
 	Id *string `type:"string"`
 
 	// The friendly name of this OU.
@@ -465,13 +489,13 @@ type Parent struct {
 	// The regex pattern (http://wikipedia.org/wiki/regex) for a parent ID string
 	// requires one of the following:
 	//
-	//    * Root: a string that begins with "r-" followed by from 4 to 32 lower-case
+	//    * Root: A string that begins with "r-" followed by from 4 to 32 lower-case
 	//    letters or digits.
 	//
-	//    * Organizational unit (OU): a string that begins with "ou-" followed by
+	//    * Organizational unit (OU): A string that begins with "ou-" followed by
 	//    from 4 to 32 lower-case letters or digits (the ID of the root that the
-	//    OU is in) followed by a second "-" dash and from 8 to 32 additional lower-case
-	//    letters or digits.
+	//    OU is in). This string is followed by a second "-" dash and from 8 to
+	//    32 additional lower-case letters or digits.
 	Id *string `type:"string"`
 
 	// The type of the parent entity.
@@ -513,7 +537,7 @@ type PolicySummary struct {
 	// in the AWS Organizations User Guide.
 	Arn *string `type:"string"`
 
-	// A boolean value that indicates whether the specified policy is an AWS managed
+	// A Boolean value that indicates whether the specified policy is an AWS managed
 	// policy. If true, then you can attach the policy to roots, OUs, or accounts,
 	// but you cannot edit it.
 	AwsManaged *bool `type:"boolean"`
@@ -567,15 +591,15 @@ type PolicyTargetSummary struct {
 	// The regex pattern (http://wikipedia.org/wiki/regex) for a target ID string
 	// requires one of the following:
 	//
-	//    * Root: a string that begins with "r-" followed by from 4 to 32 lower-case
+	//    * Root: A string that begins with "r-" followed by from 4 to 32 lower-case
 	//    letters or digits.
 	//
-	//    * Account: a string that consists of exactly 12 digits.
+	//    * Account: A string that consists of exactly 12 digits.
 	//
-	//    * Organizational unit (OU): a string that begins with "ou-" followed by
+	//    * Organizational unit (OU): A string that begins with "ou-" followed by
 	//    from 4 to 32 lower-case letters or digits (the ID of the root that the
-	//    OU is in) followed by a second "-" dash and from 8 to 32 additional lower-case
-	//    letters or digits.
+	//    OU is in). This string is followed by a second "-" dash and from 8 to
+	//    32 additional lower-case letters or digits.
 	TargetId *string `type:"string"`
 
 	// The type of the policy target.
@@ -592,9 +616,10 @@ func (s PolicyTargetSummary) String() string {
 type PolicyTypeSummary struct {
 	_ struct{} `type:"structure"`
 
-	// The status of the policy type as it relates to the associated root. To attach
-	// a policy of the specified type to a root or to an OU or account in that root,
-	// it must be available in the organization and enabled for that root.
+	// The status of the policy type as it relates to the associated root. You can
+	// attach a policy of the specified type to a root or to an OU or account in
+	// that root. To do so, the policy must be available in the organization and
+	// enabled for that root.
 	Status PolicyTypeStatus `type:"string" enum:"true"`
 
 	// The name of the policy type.

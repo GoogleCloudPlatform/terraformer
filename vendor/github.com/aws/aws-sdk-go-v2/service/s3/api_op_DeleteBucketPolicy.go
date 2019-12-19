@@ -77,15 +77,15 @@ const opDeleteBucketPolicy = "DeleteBucketPolicy"
 // DeleteBucketPolicyRequest returns a request value for making API operation for
 // Amazon Simple Storage Service.
 //
-// This implementation of the DELETE operation uses the policysubresource to
+// This implementation of the DELETE operation uses the policy subresource to
 // delete the policy of a specified bucket. If you are using an identity other
 // than the root user of the AWS account that owns the bucket, the calling identity
 // must have the DeleteBucketPolicy permissions on the specified bucket and
-// belong to the bucket owner's account in order to use this operation.
+// belong to the bucket owner's account to use this operation.
 //
 // If you don't have DeleteBucketPolicy permissions, Amazon S3 returns a 403
-// Access Denied error. If you have the correct permissions, but you're notusing
-// an identity that belongs to the bucket owner's account, Amazon S3 returns
+// Access Denied error. If you have the correct permissions, but you're not
+// using an identity that belongs to the bucket owner's account, Amazon S3 returns
 // a 405 Method Not Allowed error.
 //
 // As a security precaution, the root user of the AWS account that owns a bucket

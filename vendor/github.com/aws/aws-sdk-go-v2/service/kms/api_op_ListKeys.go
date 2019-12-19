@@ -75,7 +75,7 @@ const opListKeys = "ListKeys"
 // AWS Key Management Service.
 //
 // Gets a list of all customer master keys (CMKs) in the caller's AWS account
-// and region.
+// and Region.
 //
 //    // Example sending a request using ListKeysRequest.
 //    req := client.ListKeysRequest(params)

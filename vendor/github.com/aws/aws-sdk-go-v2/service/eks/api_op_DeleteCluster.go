@@ -88,8 +88,8 @@ const opDeleteCluster = "DeleteCluster"
 // For more information, see Deleting a Cluster (https://docs.aws.amazon.com/eks/latest/userguide/delete-cluster.html)
 // in the Amazon EKS User Guide.
 //
-// If you have managed node groups attached to the cluster, you must delete
-// them first. For more information, see DeleteNodegroup.
+// If you have managed node groups or Fargate profiles attached to the cluster,
+// you must delete them first. For more information, see DeleteNodegroup andDeleteFargateProfile.
 //
 //    // Example sending a request using DeleteClusterRequest.
 //    req := client.DeleteClusterRequest(params)

@@ -593,8 +593,12 @@ func (client *Client) DoActionWithSigner(request requests.AcsRequest, response r
 				return
 			}
 		}
+		if isCertificateError(err) {
+			return
+		}
+
 		//  if status code >= 500 or timeout, will trigger retry
-		if client.config.AutoRetry && (err != nil || isServerError(httpResponse)) && !isCertificateError(err) {
+		if client.config.AutoRetry && (err != nil || isServerError(httpResponse)) {
 			client.setTimeout(request)
 			// rewrite signatureNonce and signature
 			httpRequest, err = client.buildRequestWithSigner(request, signer)

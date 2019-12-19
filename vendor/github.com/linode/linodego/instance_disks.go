@@ -90,9 +90,11 @@ func (resp *InstanceDisksPagedResponse) appendData(r *InstanceDisksPagedResponse
 func (c *Client) ListInstanceDisks(ctx context.Context, linodeID int, opts *ListOptions) ([]InstanceDisk, error) {
 	response := InstanceDisksPagedResponse{}
 	err := c.listHelperWithID(ctx, &response, linodeID, opts)
+
 	for i := range response.Data {
 		response.Data[i].fixDates()
 	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -104,6 +106,7 @@ func (v *InstanceDisk) fixDates() *InstanceDisk {
 	if created, err := parseDates(v.CreatedStr); err == nil {
 		v.Created = *created
 	}
+
 	if updated, err := parseDates(v.UpdatedStr); err == nil {
 		v.Updated = *updated
 	}
@@ -116,8 +119,10 @@ func (c *Client) GetInstanceDisk(ctx context.Context, linodeID int, configID int
 	if err != nil {
 		return nil, err
 	}
+
 	e = fmt.Sprintf("%s/%d", e, configID)
 	r, err := coupleAPIErrors(c.R(ctx).SetResult(&InstanceDisk{}).Get(e))
+
 	if err != nil {
 		return nil, err
 	}
@@ -128,6 +133,7 @@ func (c *Client) GetInstanceDisk(ctx context.Context, linodeID int, configID int
 func (c *Client) CreateInstanceDisk(ctx context.Context, linodeID int, createOpts InstanceDiskCreateOptions) (*InstanceDisk, error) {
 	var body string
 	e, err := c.InstanceDisks.endpointWithID(linodeID)
+
 	if err != nil {
 		return nil, err
 	}
@@ -155,11 +161,12 @@ func (c *Client) CreateInstanceDisk(ctx context.Context, linodeID int, createOpt
 func (c *Client) UpdateInstanceDisk(ctx context.Context, linodeID int, diskID int, updateOpts InstanceDiskUpdateOptions) (*InstanceDisk, error) {
 	var body string
 	e, err := c.InstanceDisks.endpointWithID(linodeID)
+
 	if err != nil {
 		return nil, err
 	}
-	e = fmt.Sprintf("%s/%d", e, diskID)
 
+	e = fmt.Sprintf("%s/%d", e, diskID)
 	req := c.R(ctx).SetResult(&InstanceDisk{})
 
 	if bodyData, err := json.Marshal(updateOpts); err == nil {
@@ -188,6 +195,7 @@ func (c *Client) RenameInstanceDisk(ctx context.Context, linodeID int, diskID in
 func (c *Client) ResizeInstanceDisk(ctx context.Context, linodeID int, diskID int, size int) error {
 	var body string
 	e, err := c.InstanceDisks.endpointWithID(linodeID)
+
 	if err != nil {
 		return err
 	}
@@ -215,6 +223,7 @@ func (c *Client) ResizeInstanceDisk(ctx context.Context, linodeID int, diskID in
 func (c *Client) PasswordResetInstanceDisk(ctx context.Context, linodeID int, diskID int, password string) error {
 	var body string
 	e, err := c.InstanceDisks.endpointWithID(linodeID)
+
 	if err != nil {
 		return err
 	}

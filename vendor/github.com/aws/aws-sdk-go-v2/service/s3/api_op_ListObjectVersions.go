@@ -13,7 +13,14 @@ import (
 type ListObjectVersionsInput struct {
 	_ struct{} `type:"structure"`
 
-	// The name of the bucket that contains the objects.
+	// The bucket name that contains the objects.
+	//
+	// When using this API with an access point, you must direct requests to the
+	// access point hostname. The access point hostname takes the form AccessPointName-AccountId.s3-accesspoint.Region.amazonaws.com.
+	// When using this operation using an access point through the AWS SDKs, you
+	// provide the access point ARN in place of the bucket name. For more information
+	// about access point ARNs, see Using Access Points (https://docs.aws.amazon.com/AmazonS3/latest/dev/using-access-points.html)
+	// in the Amazon Simple Storage Service Developer Guide.
 	//
 	// Bucket is a required field
 	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
@@ -138,7 +145,7 @@ type ListObjectVersionsOutput struct {
 	// Container for an object that is a delete marker.
 	DeleteMarkers []DeleteMarkerEntry `locationName:"DeleteMarker" type:"list" flattened:"true"`
 
-	// The delimeter grouping the included keys. A delimiter is a character that
+	// The delimiter grouping the included keys. A delimiter is a character that
 	// you specify to group keys. All keys that contain the same string between
 	// the prefix and the first occurrence of the delimiter are grouped under a
 	// single result element in CommonPrefixes. These groups are counted as one
@@ -155,20 +162,20 @@ type ListObjectVersionsOutput struct {
 	// KeyMarker, NextKeyMarker, Prefix, Key, and Delimiter.
 	EncodingType EncodingType `type:"string" enum:"true"`
 
-	// A flag that indicates whether or not Amazon S3 returned all of the results
-	// that satisfied the search criteria. If your results were truncated, you can
-	// make a follow-up paginated request using the NextKeyMarker and NextVersionIdMarker
+	// A flag that indicates whether Amazon S3 returned all of the results that
+	// satisfied the search criteria. If your results were truncated, you can make
+	// a follow-up paginated request using the NextKeyMarker and NextVersionIdMarker
 	// response parameters as a starting place in another request to return the
 	// rest of the results.
 	IsTruncated *bool `type:"boolean"`
 
-	// Marks the last Key returned in a truncated response.
+	// Marks the last key returned in a truncated response.
 	KeyMarker *string `type:"string"`
 
 	// Specifies the maximum number of objects to return.
 	MaxKeys *int64 `type:"integer"`
 
-	// Bucket owner's name.
+	// Bucket name.
 	Name *string `type:"string"`
 
 	// When the number of responses exceeds the value of MaxKeys, NextKeyMarker
@@ -185,7 +192,7 @@ type ListObjectVersionsOutput struct {
 	// Selects objects that start with the value supplied by this parameter.
 	Prefix *string `type:"string"`
 
-	// Marks the last version of the Key returned in a truncated response.
+	// Marks the last version of the key returned in a truncated response.
 	VersionIdMarker *string `type:"string"`
 
 	// Container for version information.

@@ -91,7 +91,7 @@ const opDeleteBucketReplication = "DeleteBucketReplication"
 // For information about replication configuration, see Replication (https://docs.aws.amazon.com/AmazonS3/latest/dev/replication.html)
 // in the Amazon S3 Developer Guide.
 //
-// The following operations are related to DeleteBucketReplication
+// The following operations are related to DeleteBucketReplication:
 //
 //    * PutBucketReplication
 //

@@ -153,17 +153,44 @@ const opCreateGrant = "CreateGrant"
 // principal to use the CMK when the conditions specified in the grant are met.
 // When setting permissions, grants are an alternative to key policies.
 //
-// To create a grant that allows a cryptographic operation only when the encryption
-// context in the operation request matches or includes a specified encryption
-// context, use the Constraints parameter. For details, see GrantConstraints.
+// To create a grant that allows a cryptographic operation only when the request
+// includes a particular encryption context (https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#encrypt_context),
+// use the Constraints parameter. For details, see GrantConstraints.
+//
+// You can create grants on symmetric and asymmetric CMKs. However, if the grant
+// allows an operation that the CMK does not support, CreateGrant fails with
+// a ValidationException.
+//
+//    * Grants for symmetric CMKs cannot allow operations that are not supported
+//    for symmetric CMKs, including Sign, Verify, and GetPublicKey. (There are
+//    limited exceptions to this rule for legacy operations, but you should
+//    not create a grant for an operation that AWS KMS does not support.)
+//
+//    * Grants for asymmetric CMKs cannot allow operations that are not supported
+//    for asymmetric CMKs, including operations that generate data keys (https://docs.aws.amazon.com/kms/latest/APIReference/API_GenerateDataKey)
+//    or data key pairs (https://docs.aws.amazon.com/kms/latest/APIReference/API_GenerateDataKeyPair),
+//    or operations related to automatic key rotation (https://docs.aws.amazon.com/kms/latest/developerguide/rotate-keys.html),
+//    imported key material (https://docs.aws.amazon.com/kms/latest/developerguide/importing-keys.html),
+//    or CMKs in custom key stores (https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html).
+//
+//    * Grants for asymmetric CMKs with a KeyUsage of ENCRYPT_DECRYPT cannot
+//    allow the Sign or Verify operations. Grants for asymmetric CMKs with a
+//    KeyUsage of SIGN_VERIFY cannot allow the Encrypt or Decrypt operations.
+//
+//    * Grants for asymmetric CMKs cannot include an encryption context grant
+//    constraint. An encryption context is not supported on asymmetric CMKs.
+//
+// For information about symmetric and asymmetric CMKs, see Using Symmetric
+// and Asymmetric CMKs (https://docs.aws.amazon.com/kms/latest/developerguide/symmetric-asymmetric.html)
+// in the AWS Key Management Service Developer Guide.
 //
 // To perform this operation on a CMK in a different AWS account, specify the
 // key ARN in the value of the KeyId parameter. For more information about grants,
 // see Grants (https://docs.aws.amazon.com/kms/latest/developerguide/grants.html)
 // in the AWS Key Management Service Developer Guide .
 //
-// The result of this operation varies with the key state of the CMK. For details,
-// see How Key State Affects Use of a Customer Master Key (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+// The CMK that you use for this operation must be in a compatible key state.
+// For details, see How Key State Affects Use of a Customer Master Key (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
 // in the AWS Key Management Service Developer Guide.
 //
 //    // Example sending a request using CreateGrantRequest.

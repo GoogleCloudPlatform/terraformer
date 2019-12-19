@@ -92,9 +92,11 @@ func (resp *NodeBalancerNodesPagedResponse) appendData(r *NodeBalancerNodesPaged
 func (c *Client) ListNodeBalancerNodes(ctx context.Context, nodebalancerID int, configID int, opts *ListOptions) ([]NodeBalancerNode, error) {
 	response := NodeBalancerNodesPagedResponse{}
 	err := c.listHelperWithTwoIDs(ctx, &response, nodebalancerID, configID, opts)
+
 	for i := range response.Data {
 		response.Data[i].fixDates()
 	}
+
 	if err != nil {
 		return nil, err
 	}

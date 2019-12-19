@@ -76,9 +76,9 @@ func (client *Client) DescribeAvailableCrossRegionWithCallback(request *Describe
 // DescribeAvailableCrossRegionRequest is the request struct for api DescribeAvailableCrossRegion
 type DescribeAvailableCrossRegionRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
 }
 
 // DescribeAvailableCrossRegionResponse is the response struct for api DescribeAvailableCrossRegion

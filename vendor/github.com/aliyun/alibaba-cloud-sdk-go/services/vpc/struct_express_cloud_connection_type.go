@@ -43,10 +43,15 @@ type ExpressCloudConnectionType struct {
 	ApplicationId                 string                    `json:"ApplicationId" xml:"ApplicationId"`
 	ApplicationStatus             string                    `json:"ApplicationStatus" xml:"ApplicationStatus"`
 	ApplicationBandwidth          string                    `json:"ApplicationBandwidth" xml:"ApplicationBandwidth"`
+	EndTime                       string                    `json:"EndTime" xml:"EndTime"`
+	ChargeType                    string                    `json:"ChargeType" xml:"ChargeType"`
 	ContactTel                    string                    `json:"ContactTel" xml:"ContactTel"`
 	ContactMail                   string                    `json:"ContactMail" xml:"ContactMail"`
 	IDCardNo                      string                    `json:"IDCardNo" xml:"IDCardNo"`
-	EndTime                       string                    `json:"EndTime" xml:"EndTime"`
-	ChargeType                    string                    `json:"ChargeType" xml:"ChargeType"`
+	EstimatedTime                 string                    `json:"EstimatedTime" xml:"EstimatedTime"`
+	BgpAs                         string                    `json:"BgpAs" xml:"BgpAs"`
+	PeIp                          string                    `json:"PeIp" xml:"PeIp"`
+	CeIp                          string                    `json:"CeIp" xml:"CeIp"`
+	ConstructionPeriod            string                    `json:"ConstructionPeriod" xml:"ConstructionPeriod"`
 	VirtualBorderRouterModels     VirtualBorderRouterModels `json:"VirtualBorderRouterModels" xml:"VirtualBorderRouterModels"`
 }

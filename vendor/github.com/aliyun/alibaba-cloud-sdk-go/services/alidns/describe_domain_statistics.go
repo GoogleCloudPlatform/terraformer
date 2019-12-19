@@ -76,11 +76,11 @@ func (client *Client) DescribeDomainStatisticsWithCallback(request *DescribeDoma
 // DescribeDomainStatisticsRequest is the request struct for api DescribeDomainStatistics
 type DescribeDomainStatisticsRequest struct {
 	*requests.RpcRequest
+	DomainName   string `position:"Query" name:"DomainName"`
+	StartDate    string `position:"Query" name:"StartDate"`
 	EndDate      string `position:"Query" name:"EndDate"`
 	UserClientIp string `position:"Query" name:"UserClientIp"`
-	DomainName   string `position:"Query" name:"DomainName"`
 	Lang         string `position:"Query" name:"Lang"`
-	StartDate    string `position:"Query" name:"StartDate"`
 }
 
 // DescribeDomainStatisticsResponse is the response struct for api DescribeDomainStatistics
@@ -95,7 +95,7 @@ func CreateDescribeDomainStatisticsRequest() (request *DescribeDomainStatisticsR
 	request = &DescribeDomainStatisticsRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeDomainStatistics", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeDomainStatistics", "alidns", "openAPI")
 	return
 }
 

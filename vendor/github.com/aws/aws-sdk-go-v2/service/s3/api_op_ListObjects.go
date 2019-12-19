@@ -152,8 +152,8 @@ type ListObjectsOutput struct {
 	// Encoding type used by Amazon S3 to encode object keys in the response.
 	EncodingType EncodingType `type:"string" enum:"true"`
 
-	// A flag that indicates whether or not Amazon S3 returned all of the results
-	// that satisfied the search criteria.
+	// A flag that indicates whether Amazon S3 returned all of the results that
+	// satisfied the search criteria.
 	IsTruncated *bool `type:"boolean"`
 
 	// Indicates where in the bucket listing begins. Marker is included in the response
@@ -163,7 +163,7 @@ type ListObjectsOutput struct {
 	// The maximum number of keys returned in the response body.
 	MaxKeys *int64 `type:"integer"`
 
-	// Name of the bucket.
+	// Bucket name.
 	Name *string `type:"string"`
 
 	// When response is truncated (the IsTruncated element value in the response
@@ -266,7 +266,7 @@ const opListObjects = "ListObjects"
 // ListObjectsRequest returns a request value for making API operation for
 // Amazon Simple Storage Service.
 //
-// Returns some or all (up to 1000) of the objects in a bucket. You can use
+// Returns some or all (up to 1,000) of the objects in a bucket. You can use
 // the request parameters as selection criteria to return a subset of the objects
 // in a bucket. A 200 OK response can contain valid or invalid XML. Be sure
 // to design your application to parse the contents of the response and handle

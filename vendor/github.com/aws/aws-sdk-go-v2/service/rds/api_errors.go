@@ -212,6 +212,48 @@ const (
 	// groups.
 	ErrCodeDBParameterGroupQuotaExceededFault = "DBParameterGroupQuotaExceeded"
 
+	// ErrCodeDBProxyAlreadyExistsFault for service response error code
+	// "DBProxyAlreadyExistsFault".
+	//
+	// The specified proxy name must be unique for all proxies owned by your AWS
+	// account in the specified AWS Region.
+	ErrCodeDBProxyAlreadyExistsFault = "DBProxyAlreadyExistsFault"
+
+	// ErrCodeDBProxyNotFoundFault for service response error code
+	// "DBProxyNotFoundFault".
+	//
+	// The specified proxy name doesn't correspond to a proxy owned by your AWS
+	// accoutn in the specified AWS Region.
+	ErrCodeDBProxyNotFoundFault = "DBProxyNotFoundFault"
+
+	// ErrCodeDBProxyQuotaExceededFault for service response error code
+	// "DBProxyQuotaExceededFault".
+	//
+	// Your AWS account already has the maximum number of proxies in the specified
+	// AWS Region.
+	ErrCodeDBProxyQuotaExceededFault = "DBProxyQuotaExceededFault"
+
+	// ErrCodeDBProxyTargetAlreadyRegisteredFault for service response error code
+	// "DBProxyTargetAlreadyRegisteredFault".
+	//
+	// The proxy is already associated with the specified RDS DB instance or Aurora
+	// DB cluster.
+	ErrCodeDBProxyTargetAlreadyRegisteredFault = "DBProxyTargetAlreadyRegisteredFault"
+
+	// ErrCodeDBProxyTargetGroupNotFoundFault for service response error code
+	// "DBProxyTargetGroupNotFoundFault".
+	//
+	// The specified target group isn't available for a proxy owned by your AWS
+	// account in the specified AWS Region.
+	ErrCodeDBProxyTargetGroupNotFoundFault = "DBProxyTargetGroupNotFoundFault"
+
+	// ErrCodeDBProxyTargetNotFoundFault for service response error code
+	// "DBProxyTargetNotFoundFault".
+	//
+	// The specified RDS DB instance or Aurora DB cluster isn't available for a
+	// proxy owned by your AWS account in the specified AWS Region.
+	ErrCodeDBProxyTargetNotFoundFault = "DBProxyTargetNotFoundFault"
+
 	// ErrCodeDBSecurityGroupAlreadyExistsFault for service response error code
 	// "DBSecurityGroupAlreadyExists".
 	//
@@ -405,6 +447,12 @@ const (
 	// to delete the parameter group, you can't delete it when the parameter group
 	// is in this state.
 	ErrCodeInvalidDBParameterGroupStateFault = "InvalidDBParameterGroupState"
+
+	// ErrCodeInvalidDBProxyStateFault for service response error code
+	// "InvalidDBProxyStateFault".
+	//
+	// The requested operation can't be performed while the proxy is in this state.
+	ErrCodeInvalidDBProxyStateFault = "InvalidDBProxyStateFault"
 
 	// ErrCodeInvalidDBSecurityGroupStateFault for service response error code
 	// "InvalidDBSecurityGroupState".

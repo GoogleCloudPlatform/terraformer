@@ -24,9 +24,9 @@ type UpdateNodegroupVersionInput struct {
 	ClusterName *string `location:"uri" locationName:"name" type:"string" required:"true"`
 
 	// Force the update if the existing node group's pods are unable to be drained
-	// due to a pod disruption budget issue. If a previous update fails because
-	// pods could not be drained, you can force the update after it fails to terminate
-	// the old node regardless of whether or not any pods are running on the node.
+	// due to a pod disruption budget issue. If an update fails because pods could
+	// not be drained, you can force the update after it fails to terminate the
+	// old node whether or not any pods are running on the node.
 	Force *bool `locationName:"force" type:"boolean"`
 
 	// The name of the managed node group to update.

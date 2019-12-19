@@ -4,6 +4,7 @@ package ecs
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
@@ -11,6 +12,14 @@ import (
 
 type UpdateServiceInput struct {
 	_ struct{} `type:"structure"`
+
+	// The capacity provider strategy to update the service to use.
+	//
+	// If the service is using the default capacity provider strategy for the cluster,
+	// the service can be updated to use one or more capacity providers. However,
+	// when a service is using a non-default capacity provider strategy, the service
+	// cannot be updated to use the cluster's default capacity provider strategy.
+	CapacityProviderStrategy []CapacityProviderStrategyItem `locationName:"capacityProviderStrategy" type:"list"`
 
 	// The short name or full Amazon Resource Name (ARN) of the cluster that your
 	// service is running on. If you do not specify a cluster, the default cluster
@@ -37,28 +46,19 @@ type UpdateServiceInput struct {
 	// has first started. This is only valid if your service is configured to use
 	// a load balancer. If your service's tasks take a while to start and respond
 	// to Elastic Load Balancing health checks, you can specify a health check grace
-	// period of up to 2,147,483,647 seconds. During that time, the ECS service
+	// period of up to 2,147,483,647 seconds. During that time, the Amazon ECS service
 	// scheduler ignores the Elastic Load Balancing health check status. This grace
 	// period can prevent the ECS service scheduler from marking tasks as unhealthy
 	// and stopping them before they have time to come up.
 	HealthCheckGracePeriodSeconds *int64 `locationName:"healthCheckGracePeriodSeconds" type:"integer"`
 
-	// The network configuration for the service. This parameter is required for
-	// task definitions that use the awsvpc network mode to receive their own elastic
-	// network interface, and it is not supported for other network modes. For more
-	// information, see Task Networking (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-networking.html)
-	// in the Amazon Elastic Container Service Developer Guide.
-	//
-	// Updating a service to add a subnet to a list of existing subnets does not
-	// trigger a service deployment. For example, if your network configuration
-	// change is to keep the existing subnets and simply add another subnet to the
-	// network configuration, this does not trigger a new service deployment.
+	// An object representing the network configuration for a task or service.
 	NetworkConfiguration *NetworkConfiguration `locationName:"networkConfiguration" type:"structure"`
 
 	// The platform version on which your tasks in the service are running. A platform
-	// version is only specified for tasks using the Fargate launch type. If one
-	// is not specified, the LATEST platform version is used by default. For more
-	// information, see AWS Fargate Platform Versions (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/platform_versions.html)
+	// version is only specified for tasks using the Fargate launch type. If a platform
+	// version is not specified, the LATEST platform version is used by default.
+	// For more information, see AWS Fargate Platform Versions (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/platform_versions.html)
 	// in the Amazon Elastic Container Service Developer Guide.
 	PlatformVersion *string `locationName:"platformVersion" type:"string"`
 
@@ -86,6 +86,13 @@ func (s *UpdateServiceInput) Validate() error {
 
 	if s.Service == nil {
 		invalidParams.Add(aws.NewErrParamRequired("Service"))
+	}
+	if s.CapacityProviderStrategy != nil {
+		for i, v := range s.CapacityProviderStrategy {
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "CapacityProviderStrategy", i), err.(aws.ErrInvalidParams))
+			}
+		}
 	}
 	if s.NetworkConfiguration != nil {
 		if err := s.NetworkConfiguration.Validate(); err != nil {

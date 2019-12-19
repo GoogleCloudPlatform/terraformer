@@ -28,8 +28,9 @@ type CompleteMultipartUploadInput struct {
 
 	// Confirms that the requester knows that she or he will be charged for the
 	// request. Bucket owners need not specify this parameter in their requests.
-	// Documentation on downloading objects from requester pays buckets can be found
-	// at http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html
+	// For information about downloading objects from Requester Pays buckets, see
+	// Downloading Objects in Requestor Pays Buckets (https://docs.aws.amazon.com/http:/docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html)
+	// in the Amazon S3 Developer Guide.
 	RequestPayer RequestPayer `location:"header" locationName:"x-amz-request-payer" type:"string" enum:"true"`
 
 	// ID for the initiated multipart upload.
@@ -139,8 +140,8 @@ type CompleteMultipartUploadOutput struct {
 	// request.
 	RequestCharged RequestCharged `location:"header" locationName:"x-amz-request-charged" type:"string" enum:"true"`
 
-	// If present, specifies the ID of the AWS Key Management Service (KMS) customer
-	// master key (CMK) that was used for the object.
+	// If present, specifies the ID of the AWS Key Management Service (AWS KMS)
+	// customer master key (CMK) that was used for the object.
 	SSEKMSKeyId *string `location:"header" locationName:"x-amz-server-side-encryption-aws-kms-key-id" type:"string" sensitive:"true"`
 
 	// If you specified server-side encryption either with an Amazon S3-managed
@@ -237,15 +238,15 @@ const opCompleteMultipartUpload = "CompleteMultipartUpload"
 // an upload, you call this operation to complete the upload. Upon receiving
 // this request, Amazon S3 concatenates all the parts in ascending order by
 // part number to create a new object. In the Complete Multipart Upload request,
-// you must provide the parts list. You must ensure the parts list is complete,
-// this operation concatenates the parts you provide in the list. For each part
-// in the list, you must provide the part number and the ETag value, returned
+// you must provide the parts list. You must ensure that the parts list is complete.
+// This operation concatenates the parts that you provide in the list. For each
+// part in the list, you must provide the part number and the ETag value, returned
 // after that part was uploaded.
 //
 // Processing of a Complete Multipart Upload request could take several minutes
 // to complete. After Amazon S3 begins processing the request, it sends an HTTP
 // response header that specifies a 200 OK response. While processing is in
-// progress, Amazon S3 periodically sends whitespace characters to keep the
+// progress, Amazon S3 periodically sends white space characters to keep the
 // connection from timing out. Because a request could fail after the initial
 // 200 OK response has been sent, it is important that you check the response
 // body to determine whether the request succeeded.
@@ -254,10 +255,10 @@ const opCompleteMultipartUpload = "CompleteMultipartUpload"
 // to retry the failed requests. For more information, see Amazon S3 Error Best
 // Practices (https://docs.aws.amazon.com/AmazonS3/latest/dev/ErrorBestPractices.html).
 //
-// For more information on multipart uploads, see Uploading Objects Using Multipart
-// Upload (https://docs.aws.amazon.com/AmazonS3/latest/dev/uploadobjusingmpu.html).
+// For more information about multipart uploads, see Uploading Objects Using
+// Multipart Upload (https://docs.aws.amazon.com/AmazonS3/latest/dev/uploadobjusingmpu.html).
 //
-// For information on permissions required to use the multipart upload API,
+// For information about permissions required to use the multipart upload API,
 // see Multipart Upload API and Permissions (https://docs.aws.amazon.com/AmazonS3/latest/dev/mpuAndPermissions.html).
 //
 // GetBucketLifecycle has the following special errors:

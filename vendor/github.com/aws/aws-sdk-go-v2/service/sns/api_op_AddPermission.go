@@ -23,7 +23,7 @@ type AddPermissionInput struct {
 
 	// The action you want to allow for the specified principal(s).
 	//
-	// Valid values: any Amazon SNS action name.
+	// Valid values: Any Amazon SNS action name, for example Publish.
 	//
 	// ActionName is a required field
 	ActionName []string `type:"list" required:"true"`

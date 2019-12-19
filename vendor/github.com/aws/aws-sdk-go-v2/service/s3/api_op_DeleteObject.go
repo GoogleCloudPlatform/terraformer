@@ -15,6 +15,13 @@ type DeleteObjectInput struct {
 
 	// The bucket name of the bucket containing the object.
 	//
+	// When using this API with an access point, you must direct requests to the
+	// access point hostname. The access point hostname takes the form AccessPointName-AccountId.s3-accesspoint.Region.amazonaws.com.
+	// When using this operation using an access point through the AWS SDKs, you
+	// provide the access point ARN in place of the bucket name. For more information
+	// about access point ARNs, see Using Access Points (https://docs.aws.amazon.com/AmazonS3/latest/dev/using-access-points.html)
+	// in the Amazon Simple Storage Service Developer Guide.
+	//
 	// Bucket is a required field
 	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
 
@@ -29,14 +36,15 @@ type DeleteObjectInput struct {
 
 	// The concatenation of the authentication device's serial number, a space,
 	// and the value that is displayed on your authentication device. Required to
-	// permanently delete a versionedobject if versioning is configured with MFA
-	// Deleteenabled.
+	// permanently delete a versioned object if versioning is configured with MFA
+	// delete enabled.
 	MFA *string `location:"header" locationName:"x-amz-mfa" type:"string"`
 
 	// Confirms that the requester knows that she or he will be charged for the
 	// request. Bucket owners need not specify this parameter in their requests.
-	// Documentation on downloading objects from requester pays buckets can be found
-	// at http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html
+	// For information about downloading objects from Requester Pays buckets, see
+	// Downloading Objects in Requestor Pays Buckets (https://docs.aws.amazon.com/http:/docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html)
+	// in the Amazon S3 Developer Guide.
 	RequestPayer RequestPayer `location:"header" locationName:"x-amz-request-payer" type:"string" enum:"true"`
 
 	// VersionId used to reference a specific version of the object.
@@ -177,7 +185,7 @@ const opDeleteObject = "DeleteObject"
 // header, x-amz-delete-marker, to true.
 //
 // If the object you want to delete is in a bucket where the bucket versioning
-// configurationis MFA Delete enabled, you must include the x-amz-mfa request
+// configuration is MFA Delete enabled, you must include the x-amz-mfa request
 // header in the DELETE versionId request. Requests that include x-amz-mfa must
 // use HTTPS.
 //
@@ -187,10 +195,10 @@ const opDeleteObject = "DeleteObject"
 // You can delete objects by explicitly calling the DELETE Object API or configure
 // its lifecycle (PutBucketLifecycle) to enable Amazon S3 to remove them for
 // you. If you want to block users or accounts from removing or deleting objects
-// from your bucket you must deny them the s3:DeleteObject, s3:DeleteObjectVersion
+// from your bucket, you must deny them the s3:DeleteObject, s3:DeleteObjectVersion,
 // and s3:PutLifeCycleConfiguration actions.
 //
-// The following operation is related to DeleteObject
+// The following operation is related to DeleteObject:
 //
 //    * PutObject
 //

@@ -76,14 +76,14 @@ func (client *Client) CheckRecoveryConditionsWithCallback(request *CheckRecovery
 // CheckRecoveryConditionsRequest is the request struct for api CheckRecoveryConditions
 type CheckRecoveryConditionsRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
 	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
-	BackupId             string           `position:"Query" name:"BackupId"`
-	BackupFile           string           `position:"Query" name:"BackupFile"`
 	RestoreTime          string           `position:"Query" name:"RestoreTime"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
+	BackupFile           string           `position:"Query" name:"BackupFile"`
+	BackupId             string           `position:"Query" name:"BackupId"`
 	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
 }
 
 // CheckRecoveryConditionsResponse is the response struct for api CheckRecoveryConditions

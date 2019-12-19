@@ -4,6 +4,7 @@ package acm
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
@@ -35,6 +36,11 @@ type ImportCertificateInput struct {
 	//
 	// PrivateKey is a required field
 	PrivateKey []byte `min:"1" type:"blob" required:"true" sensitive:"true"`
+
+	// One or more resource tags to associate with the imported certificate.
+	//
+	// Note: You cannot apply tags when reimporting a certificate.
+	Tags []Tag `min:"1" type:"list"`
 }
 
 // String returns the string representation
@@ -64,6 +70,16 @@ func (s *ImportCertificateInput) Validate() error {
 	}
 	if s.PrivateKey != nil && len(s.PrivateKey) < 1 {
 		invalidParams.Add(aws.NewErrParamMinLen("PrivateKey", 1))
+	}
+	if s.Tags != nil && len(s.Tags) < 1 {
+		invalidParams.Add(aws.NewErrParamMinLen("Tags", 1))
+	}
+	if s.Tags != nil {
+		for i, v := range s.Tags {
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "Tags", i), err.(aws.ErrInvalidParams))
+			}
+		}
 	}
 
 	if invalidParams.Len() > 0 {
@@ -126,7 +142,7 @@ const opImportCertificate = "ImportCertificate"
 //    * The OCSP authority URL, if present, must not exceed 1000 characters.
 //
 //    * To import a new certificate, omit the CertificateArn argument. Include
-//    this argument only when you want to replace a previously imported certificate.
+//    this argument only when you want to replace a previously imported certifica
 //
 //    * When you import a certificate by using the CLI, you must specify the
 //    certificate, the certificate chain, and the private key by their file
@@ -138,6 +154,10 @@ const opImportCertificate = "ImportCertificate"
 //    * When you import a certificate by using an SDK, you must specify the
 //    certificate, the certificate chain, and the private key files in the manner
 //    required by the programming language you're using.
+//
+//    * The cryptographic algorithm of an imported certificate must match the
+//    algorithm of the signing CA. For example, if the signing CA key type is
+//    RSA, then the certificate key type must also be RSA.
 //
 // This operation returns the Amazon Resource Name (ARN) (https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html)
 // of the imported certificate.

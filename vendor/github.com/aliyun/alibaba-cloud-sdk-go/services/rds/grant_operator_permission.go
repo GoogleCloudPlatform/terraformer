@@ -76,13 +76,13 @@ func (client *Client) GrantOperatorPermissionWithCallback(request *GrantOperator
 // GrantOperatorPermissionRequest is the request struct for api GrantOperatorPermission
 type GrantOperatorPermissionRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
+	Privileges           string           `position:"Query" name:"Privileges"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
 	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
-	ExpiredTime          string           `position:"Query" name:"ExpiredTime"`
-	Privileges           string           `position:"Query" name:"Privileges"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
+	ExpiredTime          string           `position:"Query" name:"ExpiredTime"`
 }
 
 // GrantOperatorPermissionResponse is the response struct for api GrantOperatorPermission

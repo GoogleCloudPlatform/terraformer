@@ -76,11 +76,11 @@ func (client *Client) DescribeGtmInstanceAddressPoolsWithCallback(request *Descr
 // DescribeGtmInstanceAddressPoolsRequest is the request struct for api DescribeGtmInstanceAddressPools
 type DescribeGtmInstanceAddressPoolsRequest struct {
 	*requests.RpcRequest
+	PageNumber   requests.Integer `position:"Query" name:"PageNumber"`
 	InstanceId   string           `position:"Query" name:"InstanceId"`
 	UserClientIp string           `position:"Query" name:"UserClientIp"`
 	PageSize     requests.Integer `position:"Query" name:"PageSize"`
 	Lang         string           `position:"Query" name:"Lang"`
-	PageNumber   requests.Integer `position:"Query" name:"PageNumber"`
 }
 
 // DescribeGtmInstanceAddressPoolsResponse is the response struct for api DescribeGtmInstanceAddressPools
@@ -99,7 +99,7 @@ func CreateDescribeGtmInstanceAddressPoolsRequest() (request *DescribeGtmInstanc
 	request = &DescribeGtmInstanceAddressPoolsRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmInstanceAddressPools", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmInstanceAddressPools", "alidns", "openAPI")
 	return
 }
 

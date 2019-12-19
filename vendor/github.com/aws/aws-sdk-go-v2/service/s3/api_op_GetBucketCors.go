@@ -98,8 +98,8 @@ const opGetBucketCors = "GetBucketCors"
 // action. By default, the bucket owner has this permission and can grant it
 // to others.
 //
-// To learn more cors, see Enabling Cross-Origin Resource Sharing (https://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html)Enabling
-// Cross-Origin Resource Sharing.
+// For more information about cors, see Enabling Cross-Origin Resource Sharing
+// (https://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html).
 //
 // The following operations are related to GetBucketCors:
 //

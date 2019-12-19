@@ -17,5 +17,5 @@ package rds
 
 // ItemsInDescribeReadDBInstanceDelay is a nested struct in rds response
 type ItemsInDescribeReadDBInstanceDelay struct {
-	ItemsItem []ItemsItem `json:"ItemsItem" xml:"ItemsItem"`
+	ItemsItem []ItemsItem `json:"Items" xml:"Items"`
 }

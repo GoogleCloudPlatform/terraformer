@@ -108,8 +108,8 @@ const opScheduleKeyDeletion = "ScheduleKeyDeletion"
 // Master Keys (https://docs.aws.amazon.com/kms/latest/developerguide/deleting-keys.html)
 // in the AWS Key Management Service Developer Guide.
 //
-// The result of this operation varies with the key state of the CMK. For details,
-// see How Key State Affects Use of a Customer Master Key (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+// The CMK that you use for this operation must be in a compatible key state.
+// For details, see How Key State Affects Use of a Customer Master Key (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
 // in the AWS Key Management Service Developer Guide.
 //
 //    // Example sending a request using ScheduleKeyDeletionRequest.

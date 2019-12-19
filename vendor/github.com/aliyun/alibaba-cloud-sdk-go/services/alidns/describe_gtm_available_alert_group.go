@@ -92,7 +92,7 @@ func CreateDescribeGtmAvailableAlertGroupRequest() (request *DescribeGtmAvailabl
 	request = &DescribeGtmAvailableAlertGroupRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmAvailableAlertGroup", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmAvailableAlertGroup", "alidns", "openAPI")
 	return
 }
 

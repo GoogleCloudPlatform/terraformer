@@ -512,8 +512,18 @@ type ElasticsearchClusterConfig struct {
 	// The number of instances in the specified domain cluster.
 	InstanceCount *int64 `type:"integer"`
 
-	// The instance type for an Elasticsearch cluster.
+	// The instance type for an Elasticsearch cluster. UltraWarm instance types
+	// are not supported for data instances.
 	InstanceType ESPartitionInstanceType `type:"string" enum:"true"`
+
+	// The number of warm nodes in the cluster.
+	WarmCount *int64 `type:"integer"`
+
+	// True to enable warm storage.
+	WarmEnabled *bool `type:"boolean"`
+
+	// The instance type for the Elasticsearch cluster's warm nodes.
+	WarmType ESWarmPartitionInstanceType `type:"string" enum:"true"`
 
 	// Specifies the zone awareness configuration for a domain when zone awareness
 	// is enabled.
@@ -561,6 +571,24 @@ func (s ElasticsearchClusterConfig) MarshalFields(e protocol.FieldEncoder) error
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "InstanceType", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
+	if s.WarmCount != nil {
+		v := *s.WarmCount
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "WarmCount", protocol.Int64Value(v), metadata)
+	}
+	if s.WarmEnabled != nil {
+		v := *s.WarmEnabled
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "WarmEnabled", protocol.BoolValue(v), metadata)
+	}
+	if len(s.WarmType) > 0 {
+		v := s.WarmType
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "WarmType", protocol.QuotedValue{ValueMarshaler: v}, metadata)
 	}
 	if s.ZoneAwarenessConfig != nil {
 		v := s.ZoneAwarenessConfig

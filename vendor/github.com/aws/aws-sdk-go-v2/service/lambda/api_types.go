@@ -13,12 +13,13 @@ import (
 var _ aws.Config
 var _ = awsutil.Prettify
 
-// Limits that are related to concurrency and code storage. All file and storage
+// Limits that are related to concurrency and storage. All file and storage
 // sizes are in bytes.
 type AccountLimit struct {
 	_ struct{} `type:"structure"`
 
-	// The maximum size of your function's code and layers when they're extracted.
+	// The maximum size of a function's deployment package and layers when they're
+	// extracted.
 	CodeSizeUnzipped *int64 `type:"long"`
 
 	// The maximum size of a deployment package when it's uploaded directly to AWS
@@ -237,7 +238,7 @@ func (s Concurrency) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
-// The dead letter queue (https://docs.aws.amazon.com/lambda/latest/dg/dlq.html)
+// The dead-letter queue (https://docs.aws.amazon.com/lambda/latest/dg/invocation-async.html#dlq)
 // for failed asynchronous invocations.
 type DeadLetterConfig struct {
 	_ struct{} `type:"structure"`
@@ -258,6 +259,40 @@ func (s DeadLetterConfig) MarshalFields(e protocol.FieldEncoder) error {
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "TargetArn", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	return nil
+}
+
+// A configuration object that specifies the destination of an event after Lambda
+// processes it.
+type DestinationConfig struct {
+	_ struct{} `type:"structure"`
+
+	// The destination configuration for failed invocations.
+	OnFailure *OnFailure `type:"structure"`
+
+	// The destination configuration for successful invocations.
+	OnSuccess *OnSuccess `type:"structure"`
+}
+
+// String returns the string representation
+func (s DestinationConfig) String() string {
+	return awsutil.Prettify(s)
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s DestinationConfig) MarshalFields(e protocol.FieldEncoder) error {
+	if s.OnFailure != nil {
+		v := s.OnFailure
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "OnFailure", v, metadata)
+	}
+	if s.OnSuccess != nil {
+		v := s.OnSuccess
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "OnSuccess", v, metadata)
 	}
 	return nil
 }
@@ -325,7 +360,9 @@ func (s EnvironmentError) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
-// The results of a configuration update that applied environment variables.
+// The results of an operation to update or read environment variables. If the
+// operation is successful, the response contains the environment variables.
+// If it failed, the response contains details about the error.
 type EnvironmentResponse struct {
 	_ struct{} `type:"structure"`
 
@@ -372,25 +409,46 @@ type EventSourceMappingConfiguration struct {
 	// The maximum number of items to retrieve in a single batch.
 	BatchSize *int64 `min:"1" type:"integer"`
 
+	// (Streams) If the function returns an error, split the batch in two and retry.
+	BisectBatchOnFunctionError *bool `type:"boolean"`
+
+	// (Streams) An Amazon SQS queue or Amazon SNS topic destination for discarded
+	// records.
+	DestinationConfig *DestinationConfig `type:"structure"`
+
 	// The Amazon Resource Name (ARN) of the event source.
 	EventSourceArn *string `type:"string"`
 
 	// The ARN of the Lambda function.
 	FunctionArn *string `type:"string"`
 
-	// The date that the event source mapping was last updated.
+	// The date that the event source mapping was last updated, or its state changed.
 	LastModified *time.Time `type:"timestamp"`
 
 	// The result of the last AWS Lambda invocation of your Lambda function.
 	LastProcessingResult *string `type:"string"`
 
+	// The maximum amount of time to gather records before invoking the function,
+	// in seconds.
 	MaximumBatchingWindowInSeconds *int64 `type:"integer"`
+
+	// (Streams) The maximum age of a record that Lambda sends to a function for
+	// processing.
+	MaximumRecordAgeInSeconds *int64 `min:"60" type:"integer"`
+
+	// (Streams) The maximum number of times to retry when the function returns
+	// an error.
+	MaximumRetryAttempts *int64 `type:"integer"`
+
+	// (Streams) The number of batches to process from each shard concurrently.
+	ParallelizationFactor *int64 `min:"1" type:"integer"`
 
 	// The state of the event source mapping. It can be one of the following: Creating,
 	// Enabling, Enabled, Disabling, Disabled, Updating, or Deleting.
 	State *string `type:"string"`
 
-	// The cause of the last state change, either User initiated or Lambda initiated.
+	// Indicates whether the last change to the event source mapping was made by
+	// a user, or by the Lambda service.
 	StateTransitionReason *string `type:"string"`
 
 	// The identifier of the event source mapping.
@@ -409,6 +467,18 @@ func (s EventSourceMappingConfiguration) MarshalFields(e protocol.FieldEncoder) 
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "BatchSize", protocol.Int64Value(v), metadata)
+	}
+	if s.BisectBatchOnFunctionError != nil {
+		v := *s.BisectBatchOnFunctionError
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "BisectBatchOnFunctionError", protocol.BoolValue(v), metadata)
+	}
+	if s.DestinationConfig != nil {
+		v := s.DestinationConfig
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "DestinationConfig", v, metadata)
 	}
 	if s.EventSourceArn != nil {
 		v := *s.EventSourceArn
@@ -440,6 +510,24 @@ func (s EventSourceMappingConfiguration) MarshalFields(e protocol.FieldEncoder) 
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "MaximumBatchingWindowInSeconds", protocol.Int64Value(v), metadata)
+	}
+	if s.MaximumRecordAgeInSeconds != nil {
+		v := *s.MaximumRecordAgeInSeconds
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "MaximumRecordAgeInSeconds", protocol.Int64Value(v), metadata)
+	}
+	if s.MaximumRetryAttempts != nil {
+		v := *s.MaximumRetryAttempts
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "MaximumRetryAttempts", protocol.Int64Value(v), metadata)
+	}
+	if s.ParallelizationFactor != nil {
+		v := *s.ParallelizationFactor
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "ParallelizationFactor", protocol.Int64Value(v), metadata)
 	}
 	if s.State != nil {
 		v := *s.State
@@ -599,12 +687,21 @@ type FunctionConfiguration struct {
 	Handler *string `type:"string"`
 
 	// The KMS key that's used to encrypt the function's environment variables.
-	// This key is only returned if you've configured a customer-managed CMK.
+	// This key is only returned if you've configured a customer managed CMK.
 	KMSKeyArn *string `type:"string"`
 
 	// The date and time that the function was last updated, in ISO-8601 format
 	// (https://www.w3.org/TR/NOTE-datetime) (YYYY-MM-DDThh:mm:ss.sTZD).
 	LastModified *string `type:"string"`
+
+	// The status of the last update that was performed on the function.
+	LastUpdateStatus LastUpdateStatus `type:"string" enum:"true"`
+
+	// The reason for the last update that was performed on the function.
+	LastUpdateStatusReason *string `type:"string"`
+
+	// The reason code for the last update that was performed on the function.
+	LastUpdateStatusReasonCode LastUpdateStatusReasonCode `type:"string" enum:"true"`
 
 	// The function's layers (https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
 	Layers []Layer `type:"list"`
@@ -623,6 +720,17 @@ type FunctionConfiguration struct {
 
 	// The runtime environment for the Lambda function.
 	Runtime Runtime `type:"string" enum:"true"`
+
+	// The current state of the function. When the state is Inactive, you can reactivate
+	// the function by invoking it.
+	State State `type:"string" enum:"true"`
+
+	// The reason for the function's current state.
+	StateReason *string `type:"string"`
+
+	// The reason code for the function's current state. When the code is Creating,
+	// you can't invoke or modify the function.
+	StateReasonCode StateReasonCode `type:"string" enum:"true"`
 
 	// The amount of time that Lambda allows a function to run before stopping it.
 	Timeout *int64 `min:"1" type:"integer"`
@@ -704,6 +812,24 @@ func (s FunctionConfiguration) MarshalFields(e protocol.FieldEncoder) error {
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "LastModified", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
 	}
+	if len(s.LastUpdateStatus) > 0 {
+		v := s.LastUpdateStatus
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "LastUpdateStatus", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
+	if s.LastUpdateStatusReason != nil {
+		v := *s.LastUpdateStatusReason
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "LastUpdateStatusReason", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if len(s.LastUpdateStatusReasonCode) > 0 {
+		v := s.LastUpdateStatusReasonCode
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "LastUpdateStatusReasonCode", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
 	if s.Layers != nil {
 		v := s.Layers
 
@@ -746,6 +872,24 @@ func (s FunctionConfiguration) MarshalFields(e protocol.FieldEncoder) error {
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "Runtime", protocol.QuotedValue{ValueMarshaler: v}, metadata)
 	}
+	if len(s.State) > 0 {
+		v := s.State
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "State", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
+	if s.StateReason != nil {
+		v := *s.StateReason
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "StateReason", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if len(s.StateReasonCode) > 0 {
+		v := s.StateReasonCode
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "StateReasonCode", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
 	if s.Timeout != nil {
 		v := *s.Timeout
 
@@ -769,6 +913,76 @@ func (s FunctionConfiguration) MarshalFields(e protocol.FieldEncoder) error {
 
 		metadata := protocol.Metadata{}
 		e.SetFields(protocol.BodyTarget, "VpcConfig", v, metadata)
+	}
+	return nil
+}
+
+type FunctionEventInvokeConfig struct {
+	_ struct{} `type:"structure"`
+
+	// A destination for events after they have been sent to a function for processing.
+	//
+	// Destinations
+	//
+	//    * Function - The Amazon Resource Name (ARN) of a Lambda function.
+	//
+	//    * Queue - The ARN of an SQS queue.
+	//
+	//    * Topic - The ARN of an SNS topic.
+	//
+	//    * Event Bus - The ARN of an Amazon EventBridge event bus.
+	DestinationConfig *DestinationConfig `type:"structure"`
+
+	// The Amazon Resource Name (ARN) of the function.
+	FunctionArn *string `type:"string"`
+
+	// The date and time that the configuration was last updated.
+	LastModified *time.Time `type:"timestamp"`
+
+	// The maximum age of a request that Lambda sends to a function for processing.
+	MaximumEventAgeInSeconds *int64 `min:"60" type:"integer"`
+
+	// The maximum number of times to retry when the function returns an error.
+	MaximumRetryAttempts *int64 `type:"integer"`
+}
+
+// String returns the string representation
+func (s FunctionEventInvokeConfig) String() string {
+	return awsutil.Prettify(s)
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s FunctionEventInvokeConfig) MarshalFields(e protocol.FieldEncoder) error {
+	if s.DestinationConfig != nil {
+		v := s.DestinationConfig
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "DestinationConfig", v, metadata)
+	}
+	if s.FunctionArn != nil {
+		v := *s.FunctionArn
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "FunctionArn", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if s.LastModified != nil {
+		v := *s.LastModified
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "LastModified",
+			protocol.TimeValue{V: v, Format: protocol.UnixTimeFormatName, QuotedFormatTime: true}, metadata)
+	}
+	if s.MaximumEventAgeInSeconds != nil {
+		v := *s.MaximumEventAgeInSeconds
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "MaximumEventAgeInSeconds", protocol.Int64Value(v), metadata)
+	}
+	if s.MaximumRetryAttempts != nil {
+		v := *s.MaximumRetryAttempts
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "MaximumRetryAttempts", protocol.Int64Value(v), metadata)
 	}
 	return nil
 }
@@ -1039,6 +1253,135 @@ func (s LayersListItem) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
+// A destination for events that failed processing.
+type OnFailure struct {
+	_ struct{} `type:"structure"`
+
+	// The Amazon Resource Name (ARN) of the destination resource.
+	Destination *string `type:"string"`
+}
+
+// String returns the string representation
+func (s OnFailure) String() string {
+	return awsutil.Prettify(s)
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s OnFailure) MarshalFields(e protocol.FieldEncoder) error {
+	if s.Destination != nil {
+		v := *s.Destination
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "Destination", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	return nil
+}
+
+// A destination for events that were processed successfully.
+type OnSuccess struct {
+	_ struct{} `type:"structure"`
+
+	// The Amazon Resource Name (ARN) of the destination resource.
+	Destination *string `type:"string"`
+}
+
+// String returns the string representation
+func (s OnSuccess) String() string {
+	return awsutil.Prettify(s)
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s OnSuccess) MarshalFields(e protocol.FieldEncoder) error {
+	if s.Destination != nil {
+		v := *s.Destination
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "Destination", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	return nil
+}
+
+// Details about the provisioned concurrency configuration for a function alias
+// or version.
+type ProvisionedConcurrencyConfigListItem struct {
+	_ struct{} `type:"structure"`
+
+	// The amount of provisioned concurrency allocated.
+	AllocatedProvisionedConcurrentExecutions *int64 `type:"integer"`
+
+	// The amount of provisioned concurrency available.
+	AvailableProvisionedConcurrentExecutions *int64 `type:"integer"`
+
+	// The Amazon Resource Name (ARN) of the alias or version.
+	FunctionArn *string `type:"string"`
+
+	// The date and time that a user last updated the configuration, in ISO 8601
+	// format (https://www.iso.org/iso-8601-date-and-time-format.html).
+	LastModified *string `type:"string"`
+
+	// The amount of provisioned concurrency requested.
+	RequestedProvisionedConcurrentExecutions *int64 `min:"1" type:"integer"`
+
+	// The status of the allocation process.
+	Status ProvisionedConcurrencyStatusEnum `type:"string" enum:"true"`
+
+	// For failed allocations, the reason that provisioned concurrency could not
+	// be allocated.
+	StatusReason *string `type:"string"`
+}
+
+// String returns the string representation
+func (s ProvisionedConcurrencyConfigListItem) String() string {
+	return awsutil.Prettify(s)
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s ProvisionedConcurrencyConfigListItem) MarshalFields(e protocol.FieldEncoder) error {
+	if s.AllocatedProvisionedConcurrentExecutions != nil {
+		v := *s.AllocatedProvisionedConcurrentExecutions
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "AllocatedProvisionedConcurrentExecutions", protocol.Int64Value(v), metadata)
+	}
+	if s.AvailableProvisionedConcurrentExecutions != nil {
+		v := *s.AvailableProvisionedConcurrentExecutions
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "AvailableProvisionedConcurrentExecutions", protocol.Int64Value(v), metadata)
+	}
+	if s.FunctionArn != nil {
+		v := *s.FunctionArn
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "FunctionArn", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if s.LastModified != nil {
+		v := *s.LastModified
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "LastModified", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if s.RequestedProvisionedConcurrentExecutions != nil {
+		v := *s.RequestedProvisionedConcurrentExecutions
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "RequestedProvisionedConcurrentExecutions", protocol.Int64Value(v), metadata)
+	}
+	if len(s.Status) > 0 {
+		v := s.Status
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "Status", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
+	if s.StatusReason != nil {
+		v := *s.StatusReason
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "StatusReason", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	return nil
+}
+
 // The function's AWS X-Ray tracing configuration.
 type TracingConfig struct {
 	_ struct{} `type:"structure"`
@@ -1088,6 +1431,7 @@ func (s TracingConfigResponse) MarshalFields(e protocol.FieldEncoder) error {
 }
 
 // The VPC security groups and subnets that are attached to a Lambda function.
+// For more information, see VPC Settings (https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html).
 type VpcConfig struct {
 	_ struct{} `type:"structure"`
 

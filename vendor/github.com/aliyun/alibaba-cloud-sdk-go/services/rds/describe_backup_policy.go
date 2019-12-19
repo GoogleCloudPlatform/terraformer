@@ -76,34 +76,38 @@ func (client *Client) DescribeBackupPolicyWithCallback(request *DescribeBackupPo
 // DescribeBackupPolicyRequest is the request struct for api DescribeBackupPolicy
 type DescribeBackupPolicyRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
 	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
 	BackupPolicyMode     string           `position:"Query" name:"BackupPolicyMode"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
 	CompressType         string           `position:"Query" name:"CompressType"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
 }
 
 // DescribeBackupPolicyResponse is the response struct for api DescribeBackupPolicy
 type DescribeBackupPolicyResponse struct {
 	*responses.BaseResponse
-	RequestId                string              `json:"RequestId" xml:"RequestId"`
-	BackupRetentionPeriod    int                 `json:"BackupRetentionPeriod" xml:"BackupRetentionPeriod"`
-	PreferredNextBackupTime  string              `json:"PreferredNextBackupTime" xml:"PreferredNextBackupTime"`
-	PreferredBackupTime      string              `json:"PreferredBackupTime" xml:"PreferredBackupTime"`
-	PreferredBackupPeriod    string              `json:"PreferredBackupPeriod" xml:"PreferredBackupPeriod"`
-	BackupLog                string              `json:"BackupLog" xml:"BackupLog"`
-	LogBackupRetentionPeriod int                 `json:"LogBackupRetentionPeriod" xml:"LogBackupRetentionPeriod"`
-	EnableBackupLog          string              `json:"EnableBackupLog" xml:"EnableBackupLog"`
-	LocalLogRetentionHours   int                 `json:"LocalLogRetentionHours" xml:"LocalLogRetentionHours"`
-	LocalLogRetentionSpace   string              `json:"LocalLogRetentionSpace" xml:"LocalLogRetentionSpace"`
-	Duplication              string              `json:"Duplication" xml:"Duplication"`
-	DuplicationContent       string              `json:"DuplicationContent" xml:"DuplicationContent"`
-	HighSpaceUsageProtection string              `json:"HighSpaceUsageProtection" xml:"HighSpaceUsageProtection"`
-	LogBackupFrequency       string              `json:"LogBackupFrequency" xml:"LogBackupFrequency"`
-	CompressType             string              `json:"CompressType" xml:"CompressType"`
-	DuplicationLocation      DuplicationLocation `json:"DuplicationLocation" xml:"DuplicationLocation"`
+	RequestId                    string              `json:"RequestId" xml:"RequestId"`
+	BackupRetentionPeriod        int                 `json:"BackupRetentionPeriod" xml:"BackupRetentionPeriod"`
+	PreferredNextBackupTime      string              `json:"PreferredNextBackupTime" xml:"PreferredNextBackupTime"`
+	PreferredBackupTime          string              `json:"PreferredBackupTime" xml:"PreferredBackupTime"`
+	PreferredBackupPeriod        string              `json:"PreferredBackupPeriod" xml:"PreferredBackupPeriod"`
+	BackupLog                    string              `json:"BackupLog" xml:"BackupLog"`
+	LogBackupRetentionPeriod     int                 `json:"LogBackupRetentionPeriod" xml:"LogBackupRetentionPeriod"`
+	EnableBackupLog              string              `json:"EnableBackupLog" xml:"EnableBackupLog"`
+	LocalLogRetentionHours       int                 `json:"LocalLogRetentionHours" xml:"LocalLogRetentionHours"`
+	LocalLogRetentionSpace       string              `json:"LocalLogRetentionSpace" xml:"LocalLogRetentionSpace"`
+	Duplication                  string              `json:"Duplication" xml:"Duplication"`
+	DuplicationContent           string              `json:"DuplicationContent" xml:"DuplicationContent"`
+	HighSpaceUsageProtection     string              `json:"HighSpaceUsageProtection" xml:"HighSpaceUsageProtection"`
+	LogBackupFrequency           string              `json:"LogBackupFrequency" xml:"LogBackupFrequency"`
+	CompressType                 string              `json:"CompressType" xml:"CompressType"`
+	ArchiveBackupRetentionPeriod string              `json:"ArchiveBackupRetentionPeriod" xml:"ArchiveBackupRetentionPeriod"`
+	ArchiveBackupKeepPolicy      string              `json:"ArchiveBackupKeepPolicy" xml:"ArchiveBackupKeepPolicy"`
+	ArchiveBackupKeepCount       string              `json:"ArchiveBackupKeepCount" xml:"ArchiveBackupKeepCount"`
+	ReleasedKeepPolicy           string              `json:"ReleasedKeepPolicy" xml:"ReleasedKeepPolicy"`
+	DuplicationLocation          DuplicationLocation `json:"DuplicationLocation" xml:"DuplicationLocation"`
 }
 
 // CreateDescribeBackupPolicyRequest creates a request to invoke DescribeBackupPolicy API

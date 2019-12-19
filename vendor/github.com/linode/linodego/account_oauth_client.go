@@ -69,6 +69,7 @@ func (i OAuthClient) GetCreateOptions() (o OAuthClientCreateOptions) {
 	o.RedirectURI = i.RedirectURI
 	o.Label = i.Label
 	o.Public = i.Public
+
 	return
 }
 
@@ -77,6 +78,7 @@ func (i OAuthClient) GetUpdateOptions() (o OAuthClientUpdateOptions) {
 	o.RedirectURI = i.RedirectURI
 	o.Label = i.Label
 	o.Public = i.Public
+
 	return
 }
 
@@ -92,6 +94,7 @@ func (OAuthClientsPagedResponse) endpoint(c *Client) string {
 	if err != nil {
 		panic(err)
 	}
+
 	return endpoint
 }
 
@@ -104,9 +107,11 @@ func (resp *OAuthClientsPagedResponse) appendData(r *OAuthClientsPagedResponse) 
 func (c *Client) ListOAuthClients(ctx context.Context, opts *ListOptions) ([]OAuthClient, error) {
 	response := OAuthClientsPagedResponse{}
 	err := c.listHelper(ctx, &response, opts)
+
 	if err != nil {
 		return nil, err
 	}
+
 	return response.Data, nil
 }
 
@@ -116,18 +121,23 @@ func (c *Client) GetOAuthClient(ctx context.Context, id string) (*OAuthClient, e
 	if err != nil {
 		return nil, err
 	}
+
 	e = fmt.Sprintf("%s/%s", e, id)
 	r, err := coupleAPIErrors(c.R(ctx).SetResult(&OAuthClient{}).Get(e))
+
 	if err != nil {
 		return nil, err
 	}
+
 	return r.Result().(*OAuthClient), nil
 }
 
 // CreateOAuthClient creates an OAuthClient
 func (c *Client) CreateOAuthClient(ctx context.Context, createOpts OAuthClientCreateOptions) (*OAuthClient, error) {
 	var body string
+
 	e, err := c.OAuthClients.Endpoint()
+
 	if err != nil {
 		return nil, err
 	}
@@ -147,16 +157,20 @@ func (c *Client) CreateOAuthClient(ctx context.Context, createOpts OAuthClientCr
 	if err != nil {
 		return nil, err
 	}
+
 	return r.Result().(*OAuthClient), nil
 }
 
 // UpdateOAuthClient updates the OAuthClient with the specified id
 func (c *Client) UpdateOAuthClient(ctx context.Context, id string, updateOpts OAuthClientUpdateOptions) (*OAuthClient, error) {
 	var body string
+
 	e, err := c.OAuthClients.Endpoint()
+
 	if err != nil {
 		return nil, err
 	}
+
 	e = fmt.Sprintf("%s/%s", e, id)
 
 	req := c.R(ctx).SetResult(&OAuthClient{})
@@ -174,6 +188,7 @@ func (c *Client) UpdateOAuthClient(ctx context.Context, id string, updateOpts OA
 	if err != nil {
 		return nil, err
 	}
+
 	return r.Result().(*OAuthClient), nil
 }
 
@@ -183,8 +198,10 @@ func (c *Client) DeleteOAuthClient(ctx context.Context, id string) error {
 	if err != nil {
 		return err
 	}
+
 	e = fmt.Sprintf("%s/%s", e, id)
 
 	_, err = coupleAPIErrors(c.R(ctx).Delete(e))
+
 	return err
 }

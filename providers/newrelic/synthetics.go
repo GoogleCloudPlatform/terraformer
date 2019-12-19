@@ -18,7 +18,7 @@ import (
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	//synthetics "github.com/dollarshaveclub/new-relic-synthetics-go"
+	synthetics "github.com/dollarshaveclub/new-relic-synthetics-go"
 	newrelic "github.com/paultyng/go-newrelic/api"
 )
 
@@ -49,7 +49,7 @@ func (g *SyntheticsGenerator) createSyntheticsAlertConditionResources(client *ne
 
 	return nil
 }
-/*
+
 func (g *SyntheticsGenerator) createSyntheticsMonitorResources(client *synthetics.Client) error {
 	var offset uint
 	offset = 0
@@ -79,7 +79,6 @@ func (g *SyntheticsGenerator) createSyntheticsMonitorResources(client *synthetic
 	return nil
 }
 
- */
 
 func (g *SyntheticsGenerator) InitResources() error {
 	synctheticClient, err := g.SyntheticsClient()

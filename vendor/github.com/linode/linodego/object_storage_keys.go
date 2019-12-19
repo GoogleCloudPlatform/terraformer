@@ -131,5 +131,4 @@ func (c *Client) DeleteObjectStorageKey(ctx context.Context, id int) error {
 
 	_, err = coupleAPIErrors(c.R(ctx).Delete(e))
 	return err
-
 }

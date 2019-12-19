@@ -78,6 +78,7 @@ type DescribeLoadBalancersRequest struct {
 	*requests.RpcRequest
 	AccessKeyId           string                      `position:"Query" name:"access_key_id"`
 	ResourceOwnerId       requests.Integer            `position:"Query" name:"ResourceOwnerId"`
+	SupportPrivateLink    requests.Boolean            `position:"Query" name:"SupportPrivateLink"`
 	NetworkType           string                      `position:"Query" name:"NetworkType"`
 	AddressIPVersion      string                      `position:"Query" name:"AddressIPVersion"`
 	MasterZoneId          string                      `position:"Query" name:"MasterZoneId"`

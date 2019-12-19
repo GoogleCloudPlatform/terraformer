@@ -110,9 +110,11 @@ func (resp *VolumesPagedResponse) appendData(r *VolumesPagedResponse) {
 func (c *Client) ListVolumes(ctx context.Context, opts *ListOptions) ([]Volume, error) {
 	response := VolumesPagedResponse{}
 	err := c.listHelper(ctx, &response, opts)
+
 	for i := range response.Data {
 		response.Data[i].fixDates()
 	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -124,6 +126,7 @@ func (v *Volume) fixDates() *Volume {
 	if parsed, err := parseDates(v.CreatedStr); err != nil {
 		v.Created = *parsed
 	}
+
 	if parsed, err := parseDates(v.UpdatedStr); err != nil {
 		v.Updated = *parsed
 	}

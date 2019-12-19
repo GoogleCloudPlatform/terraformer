@@ -64,6 +64,7 @@ func (c *Client) GetInstanceIPAddresses(ctx context.Context, linodeID int) (*Ins
 	if err != nil {
 		return nil, err
 	}
+
 	r, err := coupleAPIErrors(c.R(ctx).SetResult(&InstanceIPAddressResponse{}).Get(e))
 	if err != nil {
 		return nil, err
@@ -79,6 +80,7 @@ func (c *Client) GetInstanceIPAddress(ctx context.Context, linodeID int, ipaddre
 	}
 	e = fmt.Sprintf("%s/%s", e, ipaddress)
 	r, err := coupleAPIErrors(c.R(ctx).SetResult(&InstanceIP{}).Get(e))
+
 	if err != nil {
 		return nil, err
 	}
@@ -89,6 +91,7 @@ func (c *Client) GetInstanceIPAddress(ctx context.Context, linodeID int, ipaddre
 func (c *Client) AddInstanceIPAddress(ctx context.Context, linodeID int, public bool) (*InstanceIP, error) {
 	var body string
 	e, err := c.InstanceIPs.endpointWithID(linodeID)
+
 	if err != nil {
 		return nil, err
 	}
@@ -122,6 +125,7 @@ func (c *Client) AddInstanceIPAddress(ctx context.Context, linodeID int, public 
 func (c *Client) UpdateInstanceIPAddress(ctx context.Context, linodeID int, ipAddress string, updateOpts IPAddressUpdateOptions) (*InstanceIP, error) {
 	var body string
 	e, err := c.InstanceIPs.endpointWithID(linodeID)
+
 	if err != nil {
 		return nil, err
 	}

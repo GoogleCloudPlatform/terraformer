@@ -92,7 +92,8 @@ const opGetBucketReplication = "GetBucketReplication"
 // to all Amazon S3 systems. Therefore, a get request soon after put or delete
 // can return a wrong result.
 //
-// For information about replication configuration, see Replication (https://docs.aws.amazon.com/AmazonS3/latest/dev/replication.html).
+// For information about replication configuration, see Replication (https://docs.aws.amazon.com/AmazonS3/latest/dev/replication.html)
+// in the Amazon Simple Storage Service Developer Guide.
 //
 // This operation requires permissions for the s3:GetReplicationConfiguration
 // action. For more information about permissions, see Using Bucket Policies
@@ -102,11 +103,7 @@ const opGetBucketReplication = "GetBucketReplication"
 // also include the DeleteMarkerReplication and Priority elements. The response
 // also returns those elements.
 //
-// GetBucketReplication has the following special error:
-//
-//    * Error code: NoSuchReplicationConfiguration Description: There is no
-//    replication configuration with that name. HTTP Status Code: 404 Not Found
-//    SOAP Fault Code Prefix: Client
+// For information about GetBucketReplication errors, see ReplicationErrorCodeList
 //
 // The following operations are related to GetBucketReplication:
 //

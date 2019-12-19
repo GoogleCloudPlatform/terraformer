@@ -408,3 +408,87 @@ func (client GalleryImagesClient) ListByGalleryComplete(ctx context.Context, res
 	result.page, err = client.ListByGallery(ctx, resourceGroupName, galleryName)
 	return
 }
+
+// Update update a gallery Image Definition.
+// Parameters:
+// resourceGroupName - the name of the resource group.
+// galleryName - the name of the Shared Image Gallery in which the Image Definition is to be updated.
+// galleryImageName - the name of the gallery Image Definition to be updated. The allowed characters are
+// alphabets and numbers with dots, dashes, and periods allowed in the middle. The maximum length is 80
+// characters.
+// galleryImage - parameters supplied to the update gallery image operation.
+func (client GalleryImagesClient) Update(ctx context.Context, resourceGroupName string, galleryName string, galleryImageName string, galleryImage GalleryImageUpdate) (result GalleryImagesUpdateFuture, err error) {
+	if tracing.IsEnabled() {
+		ctx = tracing.StartSpan(ctx, fqdn+"/GalleryImagesClient.Update")
+		defer func() {
+			sc := -1
+			if result.Response() != nil {
+				sc = result.Response().StatusCode
+			}
+			tracing.EndSpan(ctx, sc, err)
+		}()
+	}
+	req, err := client.UpdatePreparer(ctx, resourceGroupName, galleryName, galleryImageName, galleryImage)
+	if err != nil {
+		err = autorest.NewErrorWithError(err, "compute.GalleryImagesClient", "Update", nil, "Failure preparing request")
+		return
+	}
+
+	result, err = client.UpdateSender(req)
+	if err != nil {
+		err = autorest.NewErrorWithError(err, "compute.GalleryImagesClient", "Update", result.Response(), "Failure sending request")
+		return
+	}
+
+	return
+}
+
+// UpdatePreparer prepares the Update request.
+func (client GalleryImagesClient) UpdatePreparer(ctx context.Context, resourceGroupName string, galleryName string, galleryImageName string, galleryImage GalleryImageUpdate) (*http.Request, error) {
+	pathParameters := map[string]interface{}{
+		"galleryImageName":  autorest.Encode("path", galleryImageName),
+		"galleryName":       autorest.Encode("path", galleryName),
+		"resourceGroupName": autorest.Encode("path", resourceGroupName),
+		"subscriptionId":    autorest.Encode("path", client.SubscriptionID),
+	}
+
+	const APIVersion = "2019-07-01"
+	queryParameters := map[string]interface{}{
+		"api-version": APIVersion,
+	}
+
+	preparer := autorest.CreatePreparer(
+		autorest.AsContentType("application/json; charset=utf-8"),
+		autorest.AsPatch(),
+		autorest.WithBaseURL(client.BaseURI),
+		autorest.WithPathParameters("/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/galleries/{galleryName}/images/{galleryImageName}", pathParameters),
+		autorest.WithJSON(galleryImage),
+		autorest.WithQueryParameters(queryParameters))
+	return preparer.Prepare((&http.Request{}).WithContext(ctx))
+}
+
+// UpdateSender sends the Update request. The method will close the
+// http.Response Body if it receives an error.
+func (client GalleryImagesClient) UpdateSender(req *http.Request) (future GalleryImagesUpdateFuture, err error) {
+	sd := autorest.GetSendDecorators(req.Context(), azure.DoRetryWithRegistration(client.Client))
+	var resp *http.Response
+	resp, err = autorest.SendWithSender(client, req, sd...)
+	if err != nil {
+		return
+	}
+	future.Future, err = azure.NewFutureFromResponse(resp)
+	return
+}
+
+// UpdateResponder handles the response to the Update request. The method always
+// closes the http.Response Body.
+func (client GalleryImagesClient) UpdateResponder(resp *http.Response) (result GalleryImage, err error) {
+	err = autorest.Respond(
+		resp,
+		client.ByInspecting(),
+		azure.WithErrorUnlessStatusCode(http.StatusOK),
+		autorest.ByUnmarshallingJSON(&result),
+		autorest.ByClosing())
+	result.Response = autorest.Response{Response: resp}
+	return
+}

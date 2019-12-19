@@ -468,6 +468,23 @@ func (enum Statistic) MarshalValueBuf(b []byte) ([]byte, error) {
 	return append(b, enum...), nil
 }
 
+type StepCancellationOption string
+
+// Enum values for StepCancellationOption
+const (
+	StepCancellationOptionSendInterrupt    StepCancellationOption = "SEND_INTERRUPT"
+	StepCancellationOptionTerminateProcess StepCancellationOption = "TERMINATE_PROCESS"
+)
+
+func (enum StepCancellationOption) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum StepCancellationOption) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
 type StepExecutionState string
 
 // Enum values for StepExecutionState

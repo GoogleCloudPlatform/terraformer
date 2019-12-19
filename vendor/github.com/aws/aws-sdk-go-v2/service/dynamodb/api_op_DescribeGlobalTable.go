@@ -59,6 +59,9 @@ const opDescribeGlobalTable = "DescribeGlobalTable"
 //
 // Returns information about the specified global table.
 //
+// This method only applies to Version 2017.11.29 (https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/globaltables.V1.html)
+// of global tables.
+//
 //    // Example sending a request using DescribeGlobalTableRequest.
 //    req := client.DescribeGlobalTableRequest(params)
 //    resp, err := req.Send(context.TODO())

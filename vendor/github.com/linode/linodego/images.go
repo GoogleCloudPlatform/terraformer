@@ -78,14 +78,15 @@ func (resp *ImagesPagedResponse) appendData(r *ImagesPagedResponse) {
 func (c *Client) ListImages(ctx context.Context, opts *ListOptions) ([]Image, error) {
 	response := ImagesPagedResponse{}
 	err := c.listHelper(ctx, &response, opts)
+
 	for i := range response.Data {
 		response.Data[i].fixDates()
 	}
+
 	if err != nil {
 		return nil, err
 	}
 	return response.Data, nil
-
 }
 
 // GetImage gets the Image with the provided ID
@@ -94,8 +95,10 @@ func (c *Client) GetImage(ctx context.Context, id string) (*Image, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	e = fmt.Sprintf("%s/%s", e, id)
 	r, err := coupleAPIErrors(c.Images.R(ctx).Get(e))
+
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +108,9 @@ func (c *Client) GetImage(ctx context.Context, id string) (*Image, error) {
 // CreateImage creates a Image
 func (c *Client) CreateImage(ctx context.Context, createOpts ImageCreateOptions) (*Image, error) {
 	var body string
+
 	e, err := c.Images.Endpoint()
+
 	if err != nil {
 		return nil, err
 	}
@@ -131,10 +136,12 @@ func (c *Client) CreateImage(ctx context.Context, createOpts ImageCreateOptions)
 // UpdateImage updates the Image with the specified id
 func (c *Client) UpdateImage(ctx context.Context, id string, updateOpts ImageUpdateOptions) (*Image, error) {
 	var body string
+
 	e, err := c.Images.Endpoint()
 	if err != nil {
 		return nil, err
 	}
+
 	e = fmt.Sprintf("%s/%s", e, id)
 
 	req := c.R(ctx).SetResult(&Image{})
@@ -161,6 +168,7 @@ func (c *Client) DeleteImage(ctx context.Context, id string) error {
 	if err != nil {
 		return err
 	}
+
 	e = fmt.Sprintf("%s/%s", e, id)
 
 	_, err = coupleAPIErrors(c.R(ctx).Delete(e))

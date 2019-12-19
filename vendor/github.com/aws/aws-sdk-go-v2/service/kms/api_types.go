@@ -246,6 +246,9 @@ type KeyMetadata struct {
 	// in a custom key store.
 	CustomKeyStoreId *string `min:"1" type:"string"`
 
+	// Describes the type of key material in the CMK.
+	CustomerMasterKeySpec CustomerMasterKeySpec `type:"string" enum:"true"`
+
 	// The date and time after which AWS KMS deletes the CMK. This value is present
 	// only when KeyState is PendingDeletion.
 	DeletionDate *time.Time `type:"timestamp"`
@@ -256,6 +259,12 @@ type KeyMetadata struct {
 	// Specifies whether the CMK is enabled. When KeyState is Enabled this value
 	// is true, otherwise it is false.
 	Enabled *bool `type:"boolean"`
+
+	// A list of encryption algorithms that the CMK supports. You cannot use the
+	// CMK with other encryption algorithms within AWS KMS.
+	//
+	// This field appears only when the KeyUsage of the CMK is ENCRYPT_DECRYPT.
+	EncryptionAlgorithms []EncryptionAlgorithmSpec `type:"list"`
 
 	// Specifies whether the CMK's key material expires. This value is present only
 	// when Origin is EXTERNAL, otherwise this value is omitted.
@@ -279,9 +288,7 @@ type KeyMetadata struct {
 	// in the AWS Key Management Service Developer Guide.
 	KeyState KeyState `type:"string" enum:"true"`
 
-	// The cryptographic operations for which you can use the CMK. The only valid
-	// value is ENCRYPT_DECRYPT, which means you can use the CMK to encrypt and
-	// decrypt data.
+	// The cryptographic operations for which you can use the CMK.
 	KeyUsage KeyUsageType `type:"string" enum:"true"`
 
 	// The source of the CMK's key material. When this value is AWS_KMS, AWS KMS
@@ -290,6 +297,12 @@ type KeyMetadata struct {
 	// key material. When this value is AWS_CLOUDHSM, the key material was created
 	// in the AWS CloudHSM cluster associated with a custom key store.
 	Origin OriginType `type:"string" enum:"true"`
+
+	// A list of signing algorithms that the CMK supports. You cannot use the CMK
+	// with other signing algorithms within AWS KMS.
+	//
+	// This field appears only when the KeyUsage of the CMK is SIGN_VERIFY.
+	SigningAlgorithms []SigningAlgorithmSpec `type:"list"`
 
 	// The time at which the imported key material expires. When the key material
 	// expires, AWS KMS deletes the key material and the CMK becomes unusable. This

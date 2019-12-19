@@ -28,7 +28,7 @@ type RequestCertificateInput struct {
 	// certificate that protects several sites in the same domain. For example,
 	// *.example.com protects www.example.com, site.example.com, and images.example.com.
 	//
-	// The first domain name you enter cannot exceed 63 octets, including periods.
+	// The first domain name you enter cannot exceed 64 octets, including periods.
 	// Each subsequent Subject Alternative Name (SAN), however, can be up to 253
 	// octets in length.
 	//
@@ -79,6 +79,9 @@ type RequestCertificateInput struct {
 	//    the total length of the DNS name (63+1+63+1+63+1+62) exceeds 253 octets.
 	SubjectAlternativeNames []string `min:"1" type:"list"`
 
+	// One or more resource tags to associate with the certificate.
+	Tags []Tag `min:"1" type:"list"`
+
 	// The method you want to use if you are requesting a public certificate to
 	// validate that you own or control domain. You can validate with DNS (https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-validate-dns.html)
 	// or validate with email (https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-validate-email.html).
@@ -113,10 +116,20 @@ func (s *RequestCertificateInput) Validate() error {
 	if s.SubjectAlternativeNames != nil && len(s.SubjectAlternativeNames) < 1 {
 		invalidParams.Add(aws.NewErrParamMinLen("SubjectAlternativeNames", 1))
 	}
+	if s.Tags != nil && len(s.Tags) < 1 {
+		invalidParams.Add(aws.NewErrParamMinLen("Tags", 1))
+	}
 	if s.DomainValidationOptions != nil {
 		for i, v := range s.DomainValidationOptions {
 			if err := v.Validate(); err != nil {
 				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "DomainValidationOptions", i), err.(aws.ErrInvalidParams))
+			}
+		}
+	}
+	if s.Tags != nil {
+		for i, v := range s.Tags {
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "Tags", i), err.(aws.ErrInvalidParams))
 			}
 		}
 	}
