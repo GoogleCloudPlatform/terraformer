@@ -79,6 +79,7 @@ func (g *SyntheticsGenerator) createSyntheticsMonitorResources(client *synthetic
 	return nil
 }
 
+
 func (g *SyntheticsGenerator) InitResources() error {
 	synctheticClient, err := g.SyntheticsClient()
 	if err != nil {

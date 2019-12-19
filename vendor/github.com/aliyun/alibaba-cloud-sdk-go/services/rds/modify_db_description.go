@@ -76,13 +76,13 @@ func (client *Client) ModifyDBDescriptionWithCallback(request *ModifyDBDescripti
 // ModifyDBDescriptionRequest is the request struct for api ModifyDBDescription
 type ModifyDBDescriptionRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
 	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
-	DBName               string           `position:"Query" name:"DBName"`
 	DBDescription        string           `position:"Query" name:"DBDescription"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
+	DBName               string           `position:"Query" name:"DBName"`
 }
 
 // ModifyDBDescriptionResponse is the response struct for api ModifyDBDescription

@@ -92,7 +92,7 @@ func CreateDeleteGtmAccessStrategyRequest() (request *DeleteGtmAccessStrategyReq
 	request = &DeleteGtmAccessStrategyRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DeleteGtmAccessStrategy", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DeleteGtmAccessStrategy", "alidns", "openAPI")
 	return
 }
 

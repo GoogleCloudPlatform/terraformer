@@ -76,11 +76,11 @@ func (client *Client) DescribeDnsProductInstancesWithCallback(request *DescribeD
 // DescribeDnsProductInstancesRequest is the request struct for api DescribeDnsProductInstances
 type DescribeDnsProductInstancesRequest struct {
 	*requests.RpcRequest
+	PageNumber   requests.Integer `position:"Query" name:"PageNumber"`
 	UserClientIp string           `position:"Query" name:"UserClientIp"`
 	PageSize     requests.Integer `position:"Query" name:"PageSize"`
 	Lang         string           `position:"Query" name:"Lang"`
 	VersionCode  string           `position:"Query" name:"VersionCode"`
-	PageNumber   requests.Integer `position:"Query" name:"PageNumber"`
 }
 
 // DescribeDnsProductInstancesResponse is the response struct for api DescribeDnsProductInstances
@@ -98,7 +98,7 @@ func CreateDescribeDnsProductInstancesRequest() (request *DescribeDnsProductInst
 	request = &DescribeDnsProductInstancesRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeDnsProductInstances", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeDnsProductInstances", "alidns", "openAPI")
 	return
 }
 

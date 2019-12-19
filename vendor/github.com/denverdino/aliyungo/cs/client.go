@@ -192,7 +192,7 @@ func (client *Client) Invoke(region common.Region, method string, path string, q
 		return ecsError
 	}
 
-	if response != nil {
+	if response != nil && len(body) > 0 {
 		err = json.Unmarshal(body, response)
 		//log.Printf("%++v", response)
 		if err != nil {

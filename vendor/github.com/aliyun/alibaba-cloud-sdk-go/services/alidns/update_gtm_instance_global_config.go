@@ -77,15 +77,15 @@ func (client *Client) UpdateGtmInstanceGlobalConfigWithCallback(request *UpdateG
 type UpdateGtmInstanceGlobalConfigRequest struct {
 	*requests.RpcRequest
 	AlertGroup            string           `position:"Query" name:"AlertGroup"`
+	CnameMode             string           `position:"Query" name:"CnameMode"`
+	LbaStrategy           string           `position:"Query" name:"LbaStrategy"`
+	Ttl                   requests.Integer `position:"Query" name:"Ttl"`
+	CnameCustomDomainName string           `position:"Query" name:"CnameCustomDomainName"`
 	InstanceId            string           `position:"Query" name:"InstanceId"`
 	InstanceName          string           `position:"Query" name:"InstanceName"`
 	UserDomainName        string           `position:"Query" name:"UserDomainName"`
-	CnameMode             string           `position:"Query" name:"CnameMode"`
 	UserClientIp          string           `position:"Query" name:"UserClientIp"`
-	LbaStrategy           string           `position:"Query" name:"LbaStrategy"`
 	Lang                  string           `position:"Query" name:"Lang"`
-	Ttl                   requests.Integer `position:"Query" name:"Ttl"`
-	CnameCustomDomainName string           `position:"Query" name:"CnameCustomDomainName"`
 }
 
 // UpdateGtmInstanceGlobalConfigResponse is the response struct for api UpdateGtmInstanceGlobalConfig
@@ -99,7 +99,7 @@ func CreateUpdateGtmInstanceGlobalConfigRequest() (request *UpdateGtmInstanceGlo
 	request = &UpdateGtmInstanceGlobalConfigRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "UpdateGtmInstanceGlobalConfig", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "UpdateGtmInstanceGlobalConfig", "alidns", "openAPI")
 	return
 }
 

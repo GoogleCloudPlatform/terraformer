@@ -76,8 +76,8 @@ func (client *Client) DescribeGtmMonitorConfigWithCallback(request *DescribeGtmM
 // DescribeGtmMonitorConfigRequest is the request struct for api DescribeGtmMonitorConfig
 type DescribeGtmMonitorConfigRequest struct {
 	*requests.RpcRequest
-	UserClientIp    string `position:"Query" name:"UserClientIp"`
 	MonitorConfigId string `position:"Query" name:"MonitorConfigId"`
+	UserClientIp    string `position:"Query" name:"UserClientIp"`
 	Lang            string `position:"Query" name:"Lang"`
 }
 
@@ -90,7 +90,6 @@ type DescribeGtmMonitorConfigResponse struct {
 	CreateTimestamp   int64                                  `json:"CreateTimestamp" xml:"CreateTimestamp"`
 	UpdateTime        string                                 `json:"UpdateTime" xml:"UpdateTime"`
 	UpdateTimestamp   int64                                  `json:"UpdateTimestamp" xml:"UpdateTimestamp"`
-	Name              string                                 `json:"Name" xml:"Name"`
 	ProtocolType      string                                 `json:"ProtocolType" xml:"ProtocolType"`
 	Interval          int                                    `json:"Interval" xml:"Interval"`
 	EvaluationCount   int                                    `json:"EvaluationCount" xml:"EvaluationCount"`
@@ -104,7 +103,7 @@ func CreateDescribeGtmMonitorConfigRequest() (request *DescribeGtmMonitorConfigR
 	request = &DescribeGtmMonitorConfigRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmMonitorConfig", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmMonitorConfig", "alidns", "openAPI")
 	return
 }
 

@@ -76,9 +76,9 @@ func (client *Client) AddDomainWithCallback(request *AddDomainRequest, callback 
 // AddDomainRequest is the request struct for api AddDomain
 type AddDomainRequest struct {
 	*requests.RpcRequest
-	ResourceGroupId string `position:"Query" name:"ResourceGroupId"`
 	GroupId         string `position:"Query" name:"GroupId"`
 	DomainName      string `position:"Query" name:"DomainName"`
+	ResourceGroupId string `position:"Query" name:"ResourceGroupId"`
 	UserClientIp    string `position:"Query" name:"UserClientIp"`
 	Lang            string `position:"Query" name:"Lang"`
 }
@@ -100,7 +100,7 @@ func CreateAddDomainRequest() (request *AddDomainRequest) {
 	request = &AddDomainRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "AddDomain", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "AddDomain", "alidns", "openAPI")
 	return
 }
 

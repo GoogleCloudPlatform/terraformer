@@ -63,7 +63,7 @@ func (client VirtualRouterPeeringsClient) CreateOrUpdate(ctx context.Context, re
 			Constraints: []validation.Constraint{{Target: "parameters.VirtualRouterPeeringProperties", Name: validation.Null, Rule: false,
 				Chain: []validation.Constraint{{Target: "parameters.VirtualRouterPeeringProperties.PeerAsn", Name: validation.Null, Rule: false,
 					Chain: []validation.Constraint{{Target: "parameters.VirtualRouterPeeringProperties.PeerAsn", Name: validation.InclusiveMaximum, Rule: int64(4294967295), Chain: nil},
-						{Target: "parameters.VirtualRouterPeeringProperties.PeerAsn", Name: validation.InclusiveMinimum, Rule: 1, Chain: nil},
+						{Target: "parameters.VirtualRouterPeeringProperties.PeerAsn", Name: validation.InclusiveMinimum, Rule: int64(1), Chain: nil},
 					}},
 				}}}}}); err != nil {
 		return result, validation.NewError("network.VirtualRouterPeeringsClient", "CreateOrUpdate", err.Error())

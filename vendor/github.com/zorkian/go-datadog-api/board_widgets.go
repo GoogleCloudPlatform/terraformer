@@ -14,28 +14,29 @@ import (
 )
 
 const (
-	ALERT_GRAPH_WIDGET    = "alert_graph"
-	ALERT_VALUE_WIDGET    = "alert_value"
-	CHANGE_WIDGET         = "change"
-	CHECK_STATUS_WIDGET   = "check_status"
-	DISTRIBUTION_WIDGET   = "distribution"
-	EVENT_STREAM_WIDGET   = "event_stream"
-	EVENT_TIMELINE_WIDGET = "event_timeline"
-	FREE_TEXT_WIDGET      = "free_text"
-	GROUP_WIDGET          = "group"
-	HEATMAP_WIDGET        = "heatmap"
-	HOSTMAP_WIDGET        = "hostmap"
-	IFRAME_WIDGET         = "iframe"
-	IMAGE_WIDGET          = "image"
-	LOG_STREAM_WIDGET     = "log_stream"
-	MANAGE_STATUS_WIDGET  = "manage_status"
-	NOTE_WIDGET           = "note"
-	QUERY_VALUE_WIDGET    = "query_value"
-	QUERY_TABLE_WIDGET    = "query_table"
-	SCATTERPLOT_WIDGET    = "scatterplot"
-	TIMESERIES_WIDGET     = "timeseries"
-	TOPLIST_WIDGET        = "toplist"
-	TRACE_SERVICE_WIDGET  = "trace_service"
+	ALERT_GRAPH_WIDGET             = "alert_graph"
+	ALERT_VALUE_WIDGET             = "alert_value"
+	CHANGE_WIDGET                  = "change"
+	CHECK_STATUS_WIDGET            = "check_status"
+	DISTRIBUTION_WIDGET            = "distribution"
+	EVENT_STREAM_WIDGET            = "event_stream"
+	EVENT_TIMELINE_WIDGET          = "event_timeline"
+	FREE_TEXT_WIDGET               = "free_text"
+	GROUP_WIDGET                   = "group"
+	HEATMAP_WIDGET                 = "heatmap"
+	HOSTMAP_WIDGET                 = "hostmap"
+	IFRAME_WIDGET                  = "iframe"
+	IMAGE_WIDGET                   = "image"
+	LOG_STREAM_WIDGET              = "log_stream"
+	MANAGE_STATUS_WIDGET           = "manage_status"
+	NOTE_WIDGET                    = "note"
+	QUERY_VALUE_WIDGET             = "query_value"
+	QUERY_TABLE_WIDGET             = "query_table"
+	SCATTERPLOT_WIDGET             = "scatterplot"
+	SERVICE_LEVEL_OBJECTIVE_WIDGET = "slo"
+	TIMESERIES_WIDGET              = "timeseries"
+	TOPLIST_WIDGET                 = "toplist"
+	TRACE_SERVICE_WIDGET           = "trace_service"
 )
 
 // BoardWidget represents the structure of any widget. However, the widget Definition structure is
@@ -94,6 +95,8 @@ func (widget *BoardWidget) GetWidgetType() (string, error) {
 		return QUERY_TABLE_WIDGET, nil
 	case ScatterplotDefinition:
 		return SCATTERPLOT_WIDGET, nil
+	case ServiceLevelObjectiveDefinition:
+		return SERVICE_LEVEL_OBJECTIVE_WIDGET, nil
 	case TimeseriesDefinition:
 		return TIMESERIES_WIDGET, nil
 	case ToplistDefinition:
@@ -396,6 +399,23 @@ type ScatterplotRequest struct {
 	ProcessQuery *WidgetProcessQuery  `json:"process_query,omitempty"`
 }
 
+// ServiceLevelObjectiveDefinition represents the definition for a Service Level Objective widget
+type ServiceLevelObjectiveDefinition struct {
+	// Common
+
+	Type       *string `json:"type"`
+	Title      *string `json:"title,omitempty"`
+	TitleSize  *string `json:"title_size,omitempty"`
+	TitleAlign *string `json:"title_align,omitempty"`
+
+	// SLO specific
+	ViewType                *string  `json:"view_type,omitempty"` // currently only "detail" is supported
+	ServiceLevelObjectiveID *string  `json:"slo_id,omitempty"`
+	ShowErrorBudget         *bool    `json:"show_error_budget,omitempty"`
+	ViewMode                *string  `json:"view_mode,omitempty"`    // overall,component,both
+	TimeWindows             []string `json:"time_windows,omitempty"` // 7d,30d,90d,week_to_date,previous_week,month_to_date,previous_month
+}
+
 // TimeseriesDefinition represents the definition for a Timeseries widget
 type TimeseriesDefinition struct {
 	Type       *string             `json:"type"`
@@ -640,6 +660,14 @@ func (widget *BoardWidget) UnmarshalJSON(data []byte) error {
 			return err
 		}
 		widget.Definition = scatterplotWidget.Definition
+	case SERVICE_LEVEL_OBJECTIVE_WIDGET:
+		var serviceLevelObjectiveWidget struct {
+			Definition ServiceLevelObjectiveDefinition `json:"definition"`
+		}
+		if err := json.Unmarshal(data, &serviceLevelObjectiveWidget); err != nil {
+			return err
+		}
+		widget.Definition = serviceLevelObjectiveWidget.Definition
 	case TIMESERIES_WIDGET:
 		var timeseriesWidget struct {
 			Definition TimeseriesDefinition `json:"definition"`

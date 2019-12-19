@@ -76,13 +76,13 @@ func (client *Client) CreateTempDBInstanceWithCallback(request *CreateTempDBInst
 // CreateTempDBInstanceRequest is the request struct for api CreateTempDBInstance
 type CreateTempDBInstanceRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
 	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
-	BackupId             requests.Integer `position:"Query" name:"BackupId"`
 	RestoreTime          string           `position:"Query" name:"RestoreTime"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
+	BackupId             requests.Integer `position:"Query" name:"BackupId"`
 	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
 }
 
 // CreateTempDBInstanceResponse is the response struct for api CreateTempDBInstance

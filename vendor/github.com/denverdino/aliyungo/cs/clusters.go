@@ -30,6 +30,8 @@ const (
 
 	ClusterTypeKubernetes        = "Kubernetes"
 	ClusterTypeManagedKubernetes = "ManagedKubernetes"
+
+	ClusterTypeServerlessKubernetes = "Ask"
 )
 
 var NodeStableClusterState = []ClusterState{Running, Updating, Failed, DeleteFailed, Deleted, InActive}
@@ -102,12 +104,16 @@ type ClusterCreationArgs struct {
 	NeedSLB          bool             `json:"need_slb"`
 }
 
-type ClusterCreationResponse struct {
+type ClusterCommonResponse struct {
 	Response
-	ClusterID string `json:"cluster_id"`
+	ClusterID  string `json:"cluster_id"`
+	Token      string `json:"token,omitempty"`
+	TaskId     string `json:"task_id,omitempty"`
+	InstanceId string `json:"instanceId"`
 }
 
-func (client *Client) CreateCluster(region common.Region, args *ClusterCreationArgs) (cluster ClusterCreationResponse, err error) {
+//Deprecated
+func (client *Client) CreateCluster(region common.Region, args *ClusterCreationArgs) (cluster ClusterCommonResponse, err error) {
 	err = client.Invoke(region, http.MethodPost, "/clusters", nil, args, &cluster)
 	return
 }
@@ -135,6 +141,7 @@ type KubernetesStackArgs struct {
 	SNatEntry                bool             `json:"SNatEntry,omitempty"`
 }
 
+// Deprecated
 type KubernetesCreationArgs struct {
 	DisableRollback bool     `json:"disable_rollback"`
 	Name            string   `json:"name"`
@@ -191,6 +198,7 @@ type KubernetesCreationArgs struct {
 	StackParams       KubernetesStackArgs `json:"stack_params,omitempty"`
 }
 
+// Deprecated
 type KubernetesMultiAZCreationArgs struct {
 	DisableRollback bool   `json:"disable_rollback"`
 	Name            string `json:"name"`
@@ -249,12 +257,14 @@ type KubernetesMultiAZCreationArgs struct {
 	Network           string `json:"network,omitempty"`
 }
 
-func (client *Client) CreateKubernetesMultiAZCluster(region common.Region, args *KubernetesMultiAZCreationArgs) (cluster ClusterCreationResponse, err error) {
+// Deprecated
+func (client *Client) CreateKubernetesMultiAZCluster(region common.Region, args *KubernetesMultiAZCreationArgs) (cluster ClusterCommonResponse, err error) {
 	err = client.Invoke(region, http.MethodPost, "/clusters", nil, args, &cluster)
 	return
 }
 
-func (client *Client) CreateKubernetesCluster(region common.Region, args *KubernetesCreationArgs) (cluster ClusterCreationResponse, err error) {
+// Deprecated
+func (client *Client) CreateKubernetesCluster(region common.Region, args *KubernetesCreationArgs) (cluster ClusterCommonResponse, err error) {
 	err = client.Invoke(region, http.MethodPost, "/clusters", nil, args, &cluster)
 	return
 }
@@ -332,6 +342,7 @@ type KubernetesClusterParameter struct {
 	VSwitchIdC          string `json:"VSwitchIdC"`
 }
 
+// Deprecated
 type KubernetesCluster struct {
 	ClusterType
 
@@ -361,6 +372,7 @@ type KubernetesCluster struct {
 	Parameters KubernetesClusterParameter `json:"parameters"`
 }
 
+// Deprecated
 func (client *Client) DescribeKubernetesCluster(id string) (cluster KubernetesCluster, err error) {
 	err = client.Invoke("", http.MethodGet, "/clusters/"+id, nil, nil, &cluster)
 	if err != nil {
@@ -378,6 +390,7 @@ func (client *Client) DescribeKubernetesCluster(id string) (cluster KubernetesCl
 	return
 }
 
+// Deprecated
 type ClusterResizeArgs struct {
 	Size             int64            `json:"size"`
 	InstanceType     string           `json:"instance_type"`
@@ -392,6 +405,7 @@ type ModifyClusterNameArgs struct {
 	Name string `json:"name"`
 }
 
+// Deprecated
 func (client *Client) ResizeCluster(clusterID string, args *ClusterResizeArgs) error {
 	return client.Invoke("", http.MethodPut, "/clusters/"+clusterID, nil, args, nil)
 }
@@ -402,6 +416,7 @@ func (client *Client) ResizeKubernetes(clusterID string, args *KubernetesCreatio
 	return client.Invoke("", http.MethodPut, "/clusters/"+clusterID, nil, args, nil)
 }
 
+// Deprecated
 type KubernetesClusterResizeArgs struct {
 	DisableRollback bool   `json:"disable_rollback"`
 	TimeoutMins     int64  `json:"timeout_mins"`
@@ -427,6 +442,7 @@ func (client *Client) ResizeKubernetesCluster(clusterID string, args *Kubernetes
 	return client.Invoke("", http.MethodPut, "/clusters/"+clusterID, nil, args, nil)
 }
 
+// Deprecated
 type KubernetesClusterScaleArgs struct {
 	LoginPassword            string           `json:"login_password,omitempty"`
 	KeyPair                  string           `json:"key_pair,omitempty"`
@@ -437,20 +453,23 @@ type KubernetesClusterScaleArgs struct {
 	Count                    int              `json:"count"`
 
 	//data disk
-	WorkerDataDiskCategory   string `json:"worker_data_disk_category"`
-	WorkerDataDiskSize       int64 `json:"worker_data_disk_size"`
-	WorkerDataDiskEncrypted  string 	`json:"worker_data_disk_encrypted"`
-	WorkerDataDiskKMSKeyId   string `json:"worker_data_disk_kms_key_id"`
+	WorkerDataDiskCategory  string `json:"worker_data_disk_category"`
+	WorkerDataDiskSize      int64  `json:"worker_data_disk_size"`
+	WorkerDataDiskEncrypted string `json:"worker_data_disk_encrypted"`
+	WorkerDataDiskKMSKeyId  string `json:"worker_data_disk_kms_key_id"`
 }
 
+// Deprecated
 func (client *Client) ScaleKubernetesCluster(clusterID string, args *KubernetesClusterScaleArgs) error {
 	return client.Invoke("", http.MethodPost, "/api/v2/clusters/"+clusterID, nil, args, nil)
 }
 
+// Deprecated
 func (client *Client) ModifyClusterName(clusterID, clusterName string) error {
 	return client.Invoke("", http.MethodPost, "/clusters/"+clusterID+"/name/"+clusterName, nil, nil, nil)
 }
 
+// Deprecated
 func (client *Client) DeleteCluster(clusterID string) error {
 	return client.Invoke("", http.MethodDelete, "/clusters/"+clusterID, nil, nil, nil)
 }
@@ -483,6 +502,8 @@ type ClusterConfig struct {
 	Config string `json:"config"`
 }
 
+// deprecated
+// Please use new api DescribeClusterUserConfig
 func (client *Client) GetClusterConfig(id string) (config ClusterConfig, err error) {
 	err = client.Invoke("", http.MethodGet, "/k8s/"+id+"/user_config", nil, nil, &config)
 	return

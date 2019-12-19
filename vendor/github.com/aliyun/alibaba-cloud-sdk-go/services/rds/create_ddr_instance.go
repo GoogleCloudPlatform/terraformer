@@ -76,41 +76,41 @@ func (client *Client) CreateDdrInstanceWithCallback(request *CreateDdrInstanceRe
 // CreateDdrInstanceRequest is the request struct for api CreateDdrInstance
 type CreateDdrInstanceRequest struct {
 	*requests.RpcRequest
-	OwnerId               requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount  string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId       requests.Integer `position:"Query" name:"ResourceOwnerId"`
-	Engine                string           `position:"Query" name:"Engine"`
-	EngineVersion         string           `position:"Query" name:"EngineVersion"`
-	DBInstanceClass       string           `position:"Query" name:"DBInstanceClass"`
 	DBInstanceStorage     requests.Integer `position:"Query" name:"DBInstanceStorage"`
 	SystemDBCharset       string           `position:"Query" name:"SystemDBCharset"`
-	DBInstanceNetType     string           `position:"Query" name:"DBInstanceNetType"`
+	EngineVersion         string           `position:"Query" name:"EngineVersion"`
+	UserBakSetURL         string           `position:"Query" name:"UserBakSetURL"`
+	ResourceGroupId       string           `position:"Query" name:"ResourceGroupId"`
 	DBInstanceDescription string           `position:"Query" name:"DBInstanceDescription"`
+	BackupSetRegion       string           `position:"Query" name:"BackupSetRegion"`
+	Period                string           `position:"Query" name:"Period"`
+	BackupSetId           string           `position:"Query" name:"BackupSetId"`
+	OwnerId               requests.Integer `position:"Query" name:"OwnerId"`
+	DBInstanceClass       string           `position:"Query" name:"DBInstanceClass"`
 	SecurityIPList        string           `position:"Query" name:"SecurityIPList"`
-	ClientToken           string           `position:"Query" name:"ClientToken"`
-	PayType               string           `position:"Query" name:"PayType"`
+	VSwitchId             string           `position:"Query" name:"VSwitchId"`
+	PrivateIpAddress      string           `position:"Query" name:"PrivateIpAddress"`
+	TunnelId              string           `position:"Query" name:"TunnelId"`
 	ZoneId                string           `position:"Query" name:"ZoneId"`
 	InstanceNetworkType   string           `position:"Query" name:"InstanceNetworkType"`
 	ConnectionMode        string           `position:"Query" name:"ConnectionMode"`
-	VPCId                 string           `position:"Query" name:"VPCId"`
-	VSwitchId             string           `position:"Query" name:"VSwitchId"`
-	PrivateIpAddress      string           `position:"Query" name:"PrivateIpAddress"`
+	SourceDBInstanceName  string           `position:"Query" name:"SourceDBInstanceName"`
+	ClientToken           string           `position:"Query" name:"ClientToken"`
+	HostType              string           `position:"Query" name:"HostType"`
+	Engine                string           `position:"Query" name:"Engine"`
+	DBInstanceStorageType string           `position:"Query" name:"DBInstanceStorageType"`
+	DBInstanceNetType     string           `position:"Query" name:"DBInstanceNetType"`
+	BackupSetType         string           `position:"Query" name:"BackupSetType"`
+	RestoreTime           string           `position:"Query" name:"RestoreTime"`
+	BakSetName            string           `position:"Query" name:"BakSetName"`
+	ResourceOwnerAccount  string           `position:"Query" name:"ResourceOwnerAccount"`
 	OwnerAccount          string           `position:"Query" name:"OwnerAccount"`
 	UsedTime              string           `position:"Query" name:"UsedTime"`
-	Period                string           `position:"Query" name:"Period"`
-	ResourceGroupId       string           `position:"Query" name:"ResourceGroupId"`
-	TunnelId              string           `position:"Query" name:"TunnelId"`
 	RestoreType           string           `position:"Query" name:"RestoreType"`
-	BackupSetId           string           `position:"Query" name:"BackupSetId"`
-	BackupSetType         string           `position:"Query" name:"BackupSetType"`
-	BackupSetRegion       string           `position:"Query" name:"BackupSetRegion"`
-	RestoreTime           string           `position:"Query" name:"RestoreTime"`
+	VPCId                 string           `position:"Query" name:"VPCId"`
+	PayType               string           `position:"Query" name:"PayType"`
 	SourceRegion          string           `position:"Query" name:"SourceRegion"`
-	SourceDBInstanceName  string           `position:"Query" name:"SourceDBInstanceName"`
-	UserBakSetURL         string           `position:"Query" name:"UserBakSetURL"`
-	BakSetName            string           `position:"Query" name:"BakSetName"`
-	HostType              string           `position:"Query" name:"HostType"`
-	DBInstanceStorageType string           `position:"Query" name:"DBInstanceStorageType"`
 }
 
 // CreateDdrInstanceResponse is the response struct for api CreateDdrInstance

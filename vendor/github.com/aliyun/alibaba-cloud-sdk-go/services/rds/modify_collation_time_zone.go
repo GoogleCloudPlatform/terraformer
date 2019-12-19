@@ -76,12 +76,12 @@ func (client *Client) ModifyCollationTimeZoneWithCallback(request *ModifyCollati
 // ModifyCollationTimeZoneRequest is the request struct for api ModifyCollationTimeZone
 type ModifyCollationTimeZoneRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
+	Timezone             string           `position:"Query" name:"Timezone"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
 	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
 	Collation            string           `position:"Query" name:"Collation"`
-	Timezone             string           `position:"Query" name:"Timezone"`
 }
 
 // ModifyCollationTimeZoneResponse is the response struct for api ModifyCollationTimeZone

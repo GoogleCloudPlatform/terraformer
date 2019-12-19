@@ -100,7 +100,7 @@ func CreateDescribeBatchResultCountRequest() (request *DescribeBatchResultCountR
 	request = &DescribeBatchResultCountRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeBatchResultCount", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeBatchResultCount", "alidns", "openAPI")
 	return
 }
 

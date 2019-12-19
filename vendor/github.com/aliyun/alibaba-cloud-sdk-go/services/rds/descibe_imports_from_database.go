@@ -76,18 +76,18 @@ func (client *Client) DescibeImportsFromDatabaseWithCallback(request *DescibeImp
 // DescibeImportsFromDatabaseRequest is the request struct for api DescibeImportsFromDatabase
 type DescibeImportsFromDatabaseRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
 	ClientToken          string           `position:"Query" name:"ClientToken"`
-	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
-	Engine               string           `position:"Query" name:"Engine"`
-	ImportId             requests.Integer `position:"Query" name:"ImportId"`
 	StartTime            string           `position:"Query" name:"StartTime"`
-	EndTime              string           `position:"Query" name:"EndTime"`
-	PageSize             requests.Integer `position:"Query" name:"PageSize"`
 	PageNumber           requests.Integer `position:"Query" name:"PageNumber"`
+	ImportId             requests.Integer `position:"Query" name:"ImportId"`
+	Engine               string           `position:"Query" name:"Engine"`
+	PageSize             requests.Integer `position:"Query" name:"PageSize"`
+	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
+	EndTime              string           `position:"Query" name:"EndTime"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
 }
 
 // DescibeImportsFromDatabaseResponse is the response struct for api DescibeImportsFromDatabase

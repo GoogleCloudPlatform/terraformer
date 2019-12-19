@@ -76,15 +76,15 @@ func (client *Client) DescribeCrossRegionLogBackupFilesWithCallback(request *Des
 // DescribeCrossRegionLogBackupFilesRequest is the request struct for api DescribeCrossRegionLogBackupFiles
 type DescribeCrossRegionLogBackupFilesRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
-	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
-	CrossBackupRegion    string           `position:"Query" name:"CrossBackupRegion"`
 	StartTime            string           `position:"Query" name:"StartTime"`
-	EndTime              string           `position:"Query" name:"EndTime"`
-	PageSize             requests.Integer `position:"Query" name:"PageSize"`
 	PageNumber           requests.Integer `position:"Query" name:"PageNumber"`
+	PageSize             requests.Integer `position:"Query" name:"PageSize"`
+	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
+	EndTime              string           `position:"Query" name:"EndTime"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
+	CrossBackupRegion    string           `position:"Query" name:"CrossBackupRegion"`
 }
 
 // DescribeCrossRegionLogBackupFilesResponse is the response struct for api DescribeCrossRegionLogBackupFiles

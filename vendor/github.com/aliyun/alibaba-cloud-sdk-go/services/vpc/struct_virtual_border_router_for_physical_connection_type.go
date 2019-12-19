@@ -17,18 +17,22 @@ package vpc
 
 // VirtualBorderRouterForPhysicalConnectionType is a nested struct in vpc response
 type VirtualBorderRouterForPhysicalConnectionType struct {
-	VbrId             string `json:"VbrId" xml:"VbrId"`
-	VbrOwnerUid       int64  `json:"VbrOwnerUid" xml:"VbrOwnerUid"`
-	EccId             string `json:"EccId" xml:"EccId"`
-	Type              string `json:"Type" xml:"Type"`
-	CreationTime      string `json:"CreationTime" xml:"CreationTime"`
-	ActivationTime    string `json:"ActivationTime" xml:"ActivationTime"`
-	TerminationTime   string `json:"TerminationTime" xml:"TerminationTime"`
-	RecoveryTime      string `json:"RecoveryTime" xml:"RecoveryTime"`
-	VlanId            int    `json:"VlanId" xml:"VlanId"`
-	Status            string `json:"Status" xml:"Status"`
-	CircuitCode       string `json:"CircuitCode" xml:"CircuitCode"`
-	LocalGatewayIp    string `json:"LocalGatewayIp" xml:"LocalGatewayIp"`
-	PeerGatewayIp     string `json:"PeerGatewayIp" xml:"PeerGatewayIp"`
-	PeeringSubnetMask string `json:"PeeringSubnetMask" xml:"PeeringSubnetMask"`
+	VbrId                   string `json:"VbrId" xml:"VbrId"`
+	VbrOwnerUid             int64  `json:"VbrOwnerUid" xml:"VbrOwnerUid"`
+	EccId                   string `json:"EccId" xml:"EccId"`
+	Type                    string `json:"Type" xml:"Type"`
+	CreationTime            string `json:"CreationTime" xml:"CreationTime"`
+	ActivationTime          string `json:"ActivationTime" xml:"ActivationTime"`
+	TerminationTime         string `json:"TerminationTime" xml:"TerminationTime"`
+	RecoveryTime            string `json:"RecoveryTime" xml:"RecoveryTime"`
+	VlanId                  int    `json:"VlanId" xml:"VlanId"`
+	Status                  string `json:"Status" xml:"Status"`
+	CircuitCode             string `json:"CircuitCode" xml:"CircuitCode"`
+	LocalGatewayIp          string `json:"LocalGatewayIp" xml:"LocalGatewayIp"`
+	PeerGatewayIp           string `json:"PeerGatewayIp" xml:"PeerGatewayIp"`
+	PeeringSubnetMask       string `json:"PeeringSubnetMask" xml:"PeeringSubnetMask"`
+	PConnVbrChargeType      string `json:"PConnVbrChargeType" xml:"PConnVbrChargeType"`
+	PConnVbrExpireTime      string `json:"PConnVbrExpireTime" xml:"PConnVbrExpireTime"`
+	PConnVbrBussinessStatus string `json:"PConnVbrBussinessStatus" xml:"PConnVbrBussinessStatus"`
+	Bandwidth               string `json:"Bandwidth" xml:"Bandwidth"`
 }

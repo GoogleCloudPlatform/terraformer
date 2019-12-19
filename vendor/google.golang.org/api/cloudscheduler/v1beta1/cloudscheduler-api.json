@@ -417,7 +417,7 @@
       }
     }
   },
-  "revision": "20190815",
+  "revision": "20191111",
   "rootUrl": "https://cloudscheduler.googleapis.com/",
   "schemas": {
     "AppEngineHttpTarget": {
@@ -750,7 +750,7 @@
           "additionalProperties": {
             "type": "string"
           },
-          "description": "Optional attributes for this message.",
+          "description": "Attributes for this message. If this field is empty, the message must\ncontain non-empty data.",
           "type": "object"
         },
         "data": {

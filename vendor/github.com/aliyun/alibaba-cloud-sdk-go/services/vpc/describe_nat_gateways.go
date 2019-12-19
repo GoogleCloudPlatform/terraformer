@@ -79,6 +79,8 @@ type DescribeNatGatewaysRequest struct {
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
 	Spec                 string           `position:"Query" name:"Spec"`
 	PageNumber           requests.Integer `position:"Query" name:"PageNumber"`
+	ResourceGroupId      string           `position:"Query" name:"ResourceGroupId"`
+	NatType              string           `position:"Query" name:"NatType"`
 	PageSize             requests.Integer `position:"Query" name:"PageSize"`
 	NatGatewayId         string           `position:"Query" name:"NatGatewayId"`
 	InstanceChargeType   string           `position:"Query" name:"InstanceChargeType"`

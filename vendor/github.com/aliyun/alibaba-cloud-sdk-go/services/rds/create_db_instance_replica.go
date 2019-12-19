@@ -76,32 +76,32 @@ func (client *Client) CreateDBInstanceReplicaWithCallback(request *CreateDBInsta
 // CreateDBInstanceReplicaRequest is the request struct for api CreateDBInstanceReplica
 type CreateDBInstanceReplicaRequest struct {
 	*requests.RpcRequest
-	OwnerId               requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount  string           `position:"Query" name:"ResourceOwnerAccount"`
+	ConnectionMode        string           `position:"Query" name:"ConnectionMode"`
+	DomainMode            string           `position:"Query" name:"DomainMode"`
+	ReplicaDescription    string           `position:"Query" name:"ReplicaDescription"`
 	ResourceOwnerId       requests.Integer `position:"Query" name:"ResourceOwnerId"`
-	SourceDBInstanceId    string           `position:"Query" name:"SourceDBInstanceId"`
-	Engine                string           `position:"Query" name:"Engine"`
-	EngineVersion         string           `position:"Query" name:"EngineVersion"`
-	DBInstanceClass       string           `position:"Query" name:"DBInstanceClass"`
 	DBInstanceStorage     requests.Integer `position:"Query" name:"DBInstanceStorage"`
 	SystemDBCharset       string           `position:"Query" name:"SystemDBCharset"`
-	DBInstanceNetType     string           `position:"Query" name:"DBInstanceNetType"`
-	DBInstanceDescription string           `position:"Query" name:"DBInstanceDescription"`
-	SecurityIPList        string           `position:"Query" name:"SecurityIPList"`
 	ClientToken           string           `position:"Query" name:"ClientToken"`
-	PayType               string           `position:"Query" name:"PayType"`
-	ZoneId                string           `position:"Query" name:"ZoneId"`
-	InstanceNetworkType   string           `position:"Query" name:"InstanceNetworkType"`
-	ConnectionMode        string           `position:"Query" name:"ConnectionMode"`
-	VPCId                 string           `position:"Query" name:"VPCId"`
+	EngineVersion         string           `position:"Query" name:"EngineVersion"`
+	Engine                string           `position:"Query" name:"Engine"`
+	DBInstanceDescription string           `position:"Query" name:"DBInstanceDescription"`
+	DBInstanceNetType     string           `position:"Query" name:"DBInstanceNetType"`
+	Period                string           `position:"Query" name:"Period"`
+	ResourceOwnerAccount  string           `position:"Query" name:"ResourceOwnerAccount"`
+	OwnerAccount          string           `position:"Query" name:"OwnerAccount"`
+	OwnerId               requests.Integer `position:"Query" name:"OwnerId"`
+	UsedTime              string           `position:"Query" name:"UsedTime"`
+	DBInstanceClass       string           `position:"Query" name:"DBInstanceClass"`
+	SecurityIPList        string           `position:"Query" name:"SecurityIPList"`
 	VSwitchId             string           `position:"Query" name:"VSwitchId"`
 	PrivateIpAddress      string           `position:"Query" name:"PrivateIpAddress"`
-	ReplicaDescription    string           `position:"Query" name:"ReplicaDescription"`
-	OwnerAccount          string           `position:"Query" name:"OwnerAccount"`
-	UsedTime              string           `position:"Query" name:"UsedTime"`
-	Period                string           `position:"Query" name:"Period"`
+	SourceDBInstanceId    string           `position:"Query" name:"SourceDBInstanceId"`
 	ReplicaMode           string           `position:"Query" name:"ReplicaMode"`
-	DomainMode            string           `position:"Query" name:"DomainMode"`
+	VPCId                 string           `position:"Query" name:"VPCId"`
+	ZoneId                string           `position:"Query" name:"ZoneId"`
+	PayType               string           `position:"Query" name:"PayType"`
+	InstanceNetworkType   string           `position:"Query" name:"InstanceNetworkType"`
 }
 
 // CreateDBInstanceReplicaResponse is the response struct for api CreateDBInstanceReplica

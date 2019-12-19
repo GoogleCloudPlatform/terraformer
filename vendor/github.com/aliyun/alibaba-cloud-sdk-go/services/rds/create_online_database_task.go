@@ -76,15 +76,15 @@ func (client *Client) CreateOnlineDatabaseTaskWithCallback(request *CreateOnline
 // CreateOnlineDatabaseTaskRequest is the request struct for api CreateOnlineDatabaseTask
 type CreateOnlineDatabaseTaskRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
 	ClientToken          string           `position:"Query" name:"ClientToken"`
 	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
-	DBName               string           `position:"Query" name:"DBName"`
 	MigrateTaskId        string           `position:"Query" name:"MigrateTaskId"`
-	CheckDBMode          string           `position:"Query" name:"CheckDBMode"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
+	DBName               string           `position:"Query" name:"DBName"`
+	CheckDBMode          string           `position:"Query" name:"CheckDBMode"`
 }
 
 // CreateOnlineDatabaseTaskResponse is the response struct for api CreateOnlineDatabaseTask

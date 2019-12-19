@@ -76,10 +76,10 @@ func (client *Client) OperateBatchDomainWithCallback(request *OperateBatchDomain
 // OperateBatchDomainRequest is the request struct for api OperateBatchDomain
 type OperateBatchDomainRequest struct {
 	*requests.RpcRequest
-	UserClientIp     string                                `position:"Query" name:"UserClientIp"`
 	DomainRecordInfo *[]OperateBatchDomainDomainRecordInfo `position:"Query" name:"DomainRecordInfo"  type:"Repeated"`
-	Lang             string                                `position:"Query" name:"Lang"`
 	Type             string                                `position:"Query" name:"Type"`
+	UserClientIp     string                                `position:"Query" name:"UserClientIp"`
+	Lang             string                                `position:"Query" name:"Lang"`
 }
 
 // OperateBatchDomainDomainRecordInfo is a repeated param struct in OperateBatchDomainRequest
@@ -108,7 +108,7 @@ func CreateOperateBatchDomainRequest() (request *OperateBatchDomainRequest) {
 	request = &OperateBatchDomainRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "OperateBatchDomain", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "OperateBatchDomain", "alidns", "openAPI")
 	return
 }
 

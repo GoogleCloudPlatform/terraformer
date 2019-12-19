@@ -76,13 +76,13 @@ func (client *Client) UpdateGtmAddressPoolWithCallback(request *UpdateGtmAddress
 // UpdateGtmAddressPoolRequest is the request struct for api UpdateGtmAddressPool
 type UpdateGtmAddressPoolRequest struct {
 	*requests.RpcRequest
+	Type                string                      `position:"Query" name:"Type"`
+	MinAvailableAddrNum requests.Integer            `position:"Query" name:"MinAvailableAddrNum"`
 	AddrPoolId          string                      `position:"Query" name:"AddrPoolId"`
 	UserClientIp        string                      `position:"Query" name:"UserClientIp"`
 	Name                string                      `position:"Query" name:"Name"`
 	Lang                string                      `position:"Query" name:"Lang"`
-	Type                string                      `position:"Query" name:"Type"`
 	Addr                *[]UpdateGtmAddressPoolAddr `position:"Query" name:"Addr"  type:"Repeated"`
-	MinAvailableAddrNum requests.Integer            `position:"Query" name:"MinAvailableAddrNum"`
 }
 
 // UpdateGtmAddressPoolAddr is a repeated param struct in UpdateGtmAddressPoolRequest
@@ -103,7 +103,7 @@ func CreateUpdateGtmAddressPoolRequest() (request *UpdateGtmAddressPoolRequest) 
 	request = &UpdateGtmAddressPoolRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "UpdateGtmAddressPool", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "UpdateGtmAddressPool", "alidns", "openAPI")
 	return
 }
 
