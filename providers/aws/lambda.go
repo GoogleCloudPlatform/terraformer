@@ -16,6 +16,7 @@ package aws
 
 import (
 	"context"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
 )
@@ -43,6 +44,21 @@ func (g *LambdaGenerator) InitResources() error {
 	}
 	err = g.addLayerVersions(svc)
 	return err
+}
+
+func (g *LambdaGenerator) PostConvertHook() error {
+	for i, r := range g.Resources {
+		if _, exist := r.Item["environment"]; !exist {
+			continue
+		}
+		variables := g.Resources[i].Item["environment"].([]interface{})[0].(map[string]interface{})["variables"]
+		g.Resources[i].Item["environment"] = []interface{}{
+			map[string]interface{}{
+				"variables": []map[string]interface{}{variables.(map[string]interface{})},
+			},
+		}
+	}
+	return nil
 }
 
 func (g *LambdaGenerator) addFunctions(svc *lambda.Client) error {

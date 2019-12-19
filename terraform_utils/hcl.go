@@ -166,7 +166,6 @@ func HclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error)
 	formatted, err = hclPrinter.Format([]byte(s))
 	// hack for support terraform 0.12
 	formatted = terraform12Adjustments(formatted, mapsObjects)
-	formatted = awsLambdaAdjustments(formatted)
 	if err != nil {
 		log.Println("Invalid HCL follows:")
 		for i, line := range strings.Split(s, "\n") {
@@ -176,27 +175,6 @@ func HclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error)
 	}
 
 	return formatted, nil
-}
-
-// hack to write properly environmental variables in AWS Lambda functions
-func awsLambdaAdjustments(formatted []byte) []byte {
-	var b bytes.Buffer
-
-	lines := strings.Split(string(formatted), "\n")
-	isEnvWrap := false
-	for _, line := range lines {
-		if strings.Contains(line, "environment \"variables\"") {
-			isEnvWrap = true
-			b.WriteString("  environment { variables = {\n")
-		} else if isEnvWrap && line == "  }" {
-			isEnvWrap = false
-			b.WriteString("  } }\n")
-		} else {
-			b.WriteString(line + "\n")
-		}
-	}
-
-	return b.Bytes()
 }
 
 func terraform12Adjustments(formatted []byte, mapsObjects map[string]struct{}) []byte {
