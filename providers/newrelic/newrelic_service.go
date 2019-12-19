@@ -19,7 +19,6 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	synthetics "github.com/dollarshaveclub/new-relic-synthetics-go"
 	newrelic "github.com/paultyng/go-newrelic/api"
 )
 
@@ -52,6 +51,7 @@ func (s *NewRelicService) InfraClient() (*newrelic.InfraClient, error) {
 	return &client, nil
 }
 
+/*
 func (s *NewRelicService) SyntheticsClient() (*synthetics.Client, error) {
 	apiKey := os.Getenv("NEWRELIC_API_KEY")
 
@@ -66,3 +66,4 @@ func (s *NewRelicService) SyntheticsClient() (*synthetics.Client, error) {
 
 	return synthetics.NewClient(conf)
 }
+*/

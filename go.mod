@@ -8,7 +8,7 @@ require (
 	cloud.google.com/go/storage v1.1.0
 	github.com/Azure/azure-sdk-for-go v35.0.0+incompatible
 	github.com/Azure/go-autorest/autorest v0.9.2
-	github.com/Azure/go-autorest/autorest/azure/auth v0.3.0
+	github.com/Azure/go-autorest/autorest/azure/cli v0.3.0 // indirect
 	github.com/aliyun/alibaba-cloud-sdk-go v0.0.0-20191010082856-e76f4c50e182
 	github.com/aliyun/aliyun-tablestore-go-sdk v4.1.3+incompatible
 	github.com/aws/aws-sdk-go-v2 v0.17.0
@@ -16,7 +16,6 @@ require (
 	github.com/cloudflare/cloudflare-go v0.10.4
 	github.com/denverdino/aliyungo v0.0.0-20190924033012-e8e08fe22cb2
 	github.com/digitalocean/godo v1.24.1
-	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
 	github.com/fastly/go-fastly v1.3.0
 	github.com/go-resty/resty v0.0.0-00010101000000-000000000000 // indirect
 	github.com/gogo/protobuf v1.3.0 // indirect
@@ -30,7 +29,6 @@ require (
 	github.com/hashicorp/go-version v1.2.0 // indirect
 	github.com/hashicorp/hcl v1.0.0
 	github.com/hashicorp/hcl/v2 v2.1.0
-	github.com/hashicorp/hil v0.0.0-20190212132231-97b3a9cdfa93 // indirect
 	github.com/hashicorp/terraform v0.12.10
 	github.com/hashicorp/yamux v0.0.0-20190923154419-df201c70410d // indirect
 	github.com/heroku/heroku-go/v5 v5.1.0
@@ -44,7 +42,7 @@ require (
 	github.com/mattn/go-colorable v0.1.4 // indirect
 	github.com/mattn/go-isatty v0.0.10 // indirect
 	github.com/mitchellh/reflectwalk v1.0.1 // indirect
-	github.com/mrparkers/terraform-provider-keycloak v0.0.0-20191216155057-102097851a3c // indirect
+	github.com/mrparkers/terraform-provider-keycloak v0.0.0-20191216155057-102097851a3c
 	github.com/paultyng/go-newrelic v3.1.0+incompatible
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/cobra v0.0.5
@@ -70,7 +68,6 @@ require (
 	google.golang.org/appengine v1.6.5 // indirect
 	google.golang.org/genproto v0.0.0-20191009194640-548a555dbc03
 	google.golang.org/grpc v1.24.0 // indirect
-	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/resty.v0 v0.4.1 // indirect
 	k8s.io/api v0.0.0-20191010143144-fbf594f18f80 // indirect
 	k8s.io/apimachinery v0.0.0-20191006235458-f9f2f3f8ab02
