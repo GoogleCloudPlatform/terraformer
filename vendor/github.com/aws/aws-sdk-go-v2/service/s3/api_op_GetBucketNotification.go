@@ -68,7 +68,7 @@ type GetBucketNotificationOutput struct {
 	// when Amazon S3 detects specified events.
 	QueueConfiguration *QueueConfigurationDeprecated `type:"structure"`
 
-	// This data type is deperecated. A container for specifying the configuration
+	// This data type is deprecated. A container for specifying the configuration
 	// for publication of messages to an Amazon Simple Notification Service (Amazon
 	// SNS) topic when Amazon S3 detects specified events.
 	TopicConfiguration *TopicConfigurationDeprecated `type:"structure"`

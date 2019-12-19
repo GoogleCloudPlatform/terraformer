@@ -123,10 +123,13 @@ type DescribeLoadBalancerAttributeResponse struct {
 	ReservedInfoBandwidth          string                                        `json:"ReservedInfoBandwidth" xml:"ReservedInfoBandwidth"`
 	ReservedInfoActiveTime         string                                        `json:"ReservedInfoActiveTime" xml:"ReservedInfoActiveTime"`
 	DeleteProtection               string                                        `json:"DeleteProtection" xml:"DeleteProtection"`
+	AssociatedCenId                string                                        `json:"AssociatedCenId" xml:"AssociatedCenId"`
+	AssociatedCenStatus            string                                        `json:"AssociatedCenStatus" xml:"AssociatedCenStatus"`
 	CloudInstanceType              string                                        `json:"CloudInstanceType" xml:"CloudInstanceType"`
 	CloudInstanceId                string                                        `json:"CloudInstanceId" xml:"CloudInstanceId"`
 	TunnelType                     string                                        `json:"TunnelType" xml:"TunnelType"`
 	CloudInstanceUid               int64                                         `json:"CloudInstanceUid" xml:"CloudInstanceUid"`
+	SupportPrivateLink             bool                                          `json:"SupportPrivateLink" xml:"SupportPrivateLink"`
 	ListenerPorts                  ListenerPorts                                 `json:"ListenerPorts" xml:"ListenerPorts"`
 	ListenerPortsAndProtocal       ListenerPortsAndProtocal                      `json:"ListenerPortsAndProtocal" xml:"ListenerPortsAndProtocal"`
 	ListenerPortsAndProtocol       ListenerPortsAndProtocol                      `json:"ListenerPortsAndProtocol" xml:"ListenerPortsAndProtocol"`

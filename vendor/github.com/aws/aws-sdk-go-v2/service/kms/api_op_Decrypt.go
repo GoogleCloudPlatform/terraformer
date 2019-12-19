@@ -19,9 +19,28 @@ type DecryptInput struct {
 	// CiphertextBlob is a required field
 	CiphertextBlob []byte `min:"1" type:"blob" required:"true"`
 
-	// The encryption context. If this was specified in the Encrypt function, it
-	// must be specified here or the decryption operation will fail. For more information,
-	// see Encryption Context (https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#encrypt_context).
+	// Specifies the encryption algorithm that will be used to decrypt the ciphertext.
+	// Specify the same algorithm that was used to encrypt the data. If you specify
+	// a different algorithm, the Decrypt operation fails.
+	//
+	// This parameter is required only when the ciphertext was encrypted under an
+	// asymmetric CMK. The default value, SYMMETRIC_DEFAULT, represents the only
+	// supported algorithm that is valid for symmetric CMKs.
+	EncryptionAlgorithm EncryptionAlgorithmSpec `type:"string" enum:"true"`
+
+	// Specifies the encryption context to use when decrypting the data. An encryption
+	// context is valid only for cryptographic operations with a symmetric CMK.
+	// The standard asymmetric encryption algorithms that AWS KMS uses do not support
+	// an encryption context.
+	//
+	// An encryption context is a collection of non-secret key-value pairs that
+	// represents additional authenticated data. When you use an encryption context
+	// to encrypt data, you must specify the same (an exact case-sensitive match)
+	// encryption context to decrypt the data. An encryption context is optional
+	// when encrypting with a symmetric CMK, but it is highly recommended.
+	//
+	// For more information, see Encryption Context (https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#encrypt_context)
+	// in the AWS Key Management Service Developer Guide.
 	EncryptionContext map[string]string `type:"map"`
 
 	// A list of grant tokens.
@@ -29,6 +48,35 @@ type DecryptInput struct {
 	// For more information, see Grant Tokens (https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#grant_token)
 	// in the AWS Key Management Service Developer Guide.
 	GrantTokens []string `type:"list"`
+
+	// Specifies the customer master key (CMK) that AWS KMS will use to decrypt
+	// the ciphertext. Enter a key ID of the CMK that was used to encrypt the ciphertext.
+	//
+	// If you specify a KeyId value, the Decrypt operation succeeds only if the
+	// specified CMK was used to encrypt the ciphertext.
+	//
+	// This parameter is required only when the ciphertext was encrypted under an
+	// asymmetric CMK. Otherwise, AWS KMS uses the metadata that it adds to the
+	// ciphertext blob to determine which CMK was used to encrypt the ciphertext.
+	// However, you can use this parameter to ensure that a particular CMK (of any
+	// kind) is used to decrypt the ciphertext.
+	//
+	// To specify a CMK, use its key ID, Amazon Resource Name (ARN), alias name,
+	// or alias ARN. When using an alias name, prefix it with "alias/".
+	//
+	// For example:
+	//
+	//    * Key ID: 1234abcd-12ab-34cd-56ef-1234567890ab
+	//
+	//    * Key ARN: arn:aws:kms:us-east-2:111122223333:key/1234abcd-12ab-34cd-56ef-1234567890ab
+	//
+	//    * Alias name: alias/ExampleAlias
+	//
+	//    * Alias ARN: arn:aws:kms:us-east-2:111122223333:alias/ExampleAlias
+	//
+	// To get the key ID and key ARN for a CMK, use ListKeys or DescribeKey. To
+	// get the alias name and alias ARN, use ListAliases.
+	KeyId *string `min:"1" type:"string"`
 }
 
 // String returns the string representation
@@ -46,6 +94,9 @@ func (s *DecryptInput) Validate() error {
 	if s.CiphertextBlob != nil && len(s.CiphertextBlob) < 1 {
 		invalidParams.Add(aws.NewErrParamMinLen("CiphertextBlob", 1))
 	}
+	if s.KeyId != nil && len(*s.KeyId) < 1 {
+		invalidParams.Add(aws.NewErrParamMinLen("KeyId", 1))
+	}
 
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -56,12 +107,14 @@ func (s *DecryptInput) Validate() error {
 type DecryptOutput struct {
 	_ struct{} `type:"structure"`
 
-	// ARN of the key used to perform the decryption. This value is returned if
-	// no errors are encountered during the operation.
+	// The encryption algorithm that was used to decrypt the ciphertext.
+	EncryptionAlgorithm EncryptionAlgorithmSpec `type:"string" enum:"true"`
+
+	// The ARN of the customer master key that was used to perform the decryption.
 	KeyId *string `min:"1" type:"string"`
 
 	// Decrypted plaintext data. When you use the HTTP API or the AWS CLI, the value
-	// is Base64-encoded. Otherwise, it is not encoded.
+	// is Base64-encoded. Otherwise, it is not Base64-encoded.
 	//
 	// Plaintext is automatically base64 encoded/decoded by the SDK.
 	Plaintext []byte `min:"1" type:"blob" sensitive:"true"`
@@ -77,25 +130,51 @@ const opDecrypt = "Decrypt"
 // DecryptRequest returns a request value for making API operation for
 // AWS Key Management Service.
 //
-// Decrypts ciphertext. Ciphertext is plaintext that has been previously encrypted
-// by using any of the following operations:
-//
-//    * GenerateDataKey
-//
-//    * GenerateDataKeyWithoutPlaintext
+// Decrypts ciphertext that was encrypted by a AWS KMS customer master key (CMK)
+// using any of the following operations:
 //
 //    * Encrypt
 //
-// Whenever possible, use key policies to give users permission to call the
-// Decrypt operation on the CMK, instead of IAM policies. Otherwise, you might
-// create an IAM user policy that gives the user Decrypt permission on all CMKs.
-// This user could decrypt ciphertext that was encrypted by CMKs in other accounts
-// if the key policy for the cross-account CMK permits it. If you must use an
-// IAM policy for Decrypt permissions, limit the user to particular CMKs or
-// particular trusted accounts.
+//    * GenerateDataKey
 //
-// The result of this operation varies with the key state of the CMK. For details,
-// see How Key State Affects Use of a Customer Master Key (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+//    * GenerateDataKeyPair
+//
+//    * GenerateDataKeyWithoutPlaintext
+//
+//    * GenerateDataKeyPairWithoutPlaintext
+//
+// You can use this operation to decrypt ciphertext that was encrypted under
+// a symmetric or asymmetric CMK. When the CMK is asymmetric, you must specify
+// the CMK and the encryption algorithm that was used to encrypt the ciphertext.
+// For information about symmetric and asymmetric CMKs, see Using Symmetric
+// and Asymmetric CMKs (https://docs.aws.amazon.com/kms/latest/developerguide/symmetric-asymmetric.html)
+// in the AWS Key Management Service Developer Guide.
+//
+// The Decrypt operation also decrypts ciphertext that was encrypted outside
+// of AWS KMS by the public key in an AWS KMS asymmetric CMK. However, it cannot
+// decrypt ciphertext produced by other libraries, such as the AWS Encryption
+// SDK (https://docs.aws.amazon.com/encryption-sdk/latest/developer-guide/)
+// or Amazon S3 client-side encryption (https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingClientSideEncryption.html).
+// These libraries return a ciphertext format that is incompatible with AWS
+// KMS.
+//
+// If the ciphertext was encrypted under a symmetric CMK, you do not need to
+// specify the CMK or the encryption algorithm. AWS KMS can get this information
+// from metadata that it adds to the symmetric ciphertext blob. However, if
+// you prefer, you can specify the KeyId to ensure that a particular CMK is
+// used to decrypt the ciphertext. If you specify a different CMK than the one
+// used to encrypt the ciphertext, the Decrypt operation fails.
+//
+// Whenever possible, use key policies to give users permission to call the
+// Decrypt operation on a particular CMK, instead of using IAM policies. Otherwise,
+// you might create an IAM user policy that gives the user Decrypt permission
+// on all CMKs. This user could decrypt ciphertext that was encrypted by CMKs
+// in other accounts if the key policy for the cross-account CMK permits it.
+// If you must use an IAM policy for Decrypt permissions, limit the user to
+// particular CMKs or particular trusted accounts.
+//
+// The CMK that you use for this operation must be in a compatible key state.
+// For details, see How Key State Affects Use of a Customer Master Key (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
 // in the AWS Key Management Service Developer Guide.
 //
 //    // Example sending a request using DecryptRequest.

@@ -133,8 +133,8 @@ func (s CreateBucketInput) MarshalFields(e protocol.FieldEncoder) error {
 type CreateBucketOutput struct {
 	_ struct{} `type:"structure"`
 
-	// Specifies the region where the bucket will be created. If you are creating
-	// a bucket on the US East (N. Virginia) region (us-east-1), you do not need
+	// Specifies the Region where the bucket will be created. If you are creating
+	// a bucket on the US East (N. Virginia) Region (us-east-1), you do not need
 	// to specify the location.
 	Location *string `location:"header" locationName:"Location" type:"string"`
 }
@@ -168,19 +168,19 @@ const opCreateBucket = "CreateBucket"
 // Not every string is an acceptable bucket name. For information on bucket
 // naming restrictions, see Working with Amazon S3 Buckets (https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html).
 //
-// By default, the bucket is created in the US East (N. Virginia) region. You
-// can optionally specify a region in the request body. You might choose a region
+// By default, the bucket is created in the US East (N. Virginia) Region. You
+// can optionally specify a Region in the request body. You might choose a Region
 // to optimize latency, minimize costs, or address regulatory requirements.
 // For example, if you reside in Europe, you will probably find it advantageous
-// to create buckets in the EU (Ireland) region. For more information, see How
+// to create buckets in the EU (Ireland) Region. For more information, see How
 // to Select a Region for Your Buckets (https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro).
 //
 // If you send your create bucket request to the s3.amazonaws.com endpoint,
-// the request go to the us-east-1 region. Accordingly, the signature calculations
-// in Signature Version 4 must use us-east-1 as region, even if the location
-// constraint in the request specifies another region where the bucket is to
-// be created. If you create a bucket in a region other than US East (N. Virginia)
-// region, your application must be able to handle 307 redirect. For more information,
+// the request goes to the us-east-1 Region. Accordingly, the signature calculations
+// in Signature Version 4 must use us-east-1 as the Region, even if the location
+// constraint in the request specifies another Region where the bucket is to
+// be created. If you create a bucket in a Region other than US East (N. Virginia),
+// your application must be able to handle 307 redirect. For more information,
 // see Virtual Hosting of Buckets (https://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html).
 //
 // When creating a bucket using this operation, you can optionally specify the
@@ -194,7 +194,7 @@ const opCreateBucket = "CreateBucket"
 //    Canned ACL (https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL).
 //
 //    * Specify access permissions explicitly using the x-amz-grant-read, x-amz-grant-write,
-//    x-amz-grant-read-acp, x-amz-grant-write-acp, x-amz-grant-full-control
+//    x-amz-grant-read-acp, x-amz-grant-write-acp, and x-amz-grant-full-control
 //    headers. These headers map to the set of permissions Amazon S3 supports
 //    in an ACL. For more information, see Access Control List (ACL) Overview
 //    (https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html). You

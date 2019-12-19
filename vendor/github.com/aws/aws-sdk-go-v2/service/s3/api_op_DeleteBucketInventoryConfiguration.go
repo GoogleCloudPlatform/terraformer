@@ -104,7 +104,7 @@ const opDeleteBucketInventoryConfiguration = "DeleteBucketInventoryConfiguration
 // For information about the Amazon S3 inventory feature, see Amazon S3 Inventory
 // (https://docs.aws.amazon.com/AmazonS3/latest/dev/storage-inventory.html).
 //
-// Operation related to DeleteBucketInventoryConfiguration include:
+// Operations related to DeleteBucketInventoryConfiguration include:
 //
 //    * GetBucketInventoryConfiguration
 //

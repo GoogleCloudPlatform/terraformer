@@ -13,7 +13,14 @@ import (
 type DeleteObjectTaggingInput struct {
 	_ struct{} `type:"structure"`
 
-	// The bucket containing the objects from which to remove the tags.
+	// The bucket name containing the objects from which to remove the tags.
+	//
+	// When using this API with an access point, you must direct requests to the
+	// access point hostname. The access point hostname takes the form AccessPointName-AccountId.s3-accesspoint.Region.amazonaws.com.
+	// When using this operation using an access point through the AWS SDKs, you
+	// provide the access point ARN in place of the bucket name. For more information
+	// about access point ARNs, see Using Access Points (https://docs.aws.amazon.com/AmazonS3/latest/dev/using-access-points.html)
+	// in the Amazon Simple Storage Service Developer Guide.
 	//
 	// Bucket is a required field
 	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
@@ -122,7 +129,7 @@ const opDeleteObjectTagging = "DeleteObjectTagging"
 // in the request. You will need permission for the s3:DeleteObjectVersionTagging
 // action.
 //
-// The following operations are related to DeleteBucketMetricsConfiguration
+// The following operations are related to DeleteBucketMetricsConfiguration:
 //
 //    * PutObjectTagging
 //

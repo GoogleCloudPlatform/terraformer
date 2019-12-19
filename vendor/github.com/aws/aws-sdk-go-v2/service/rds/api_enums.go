@@ -55,6 +55,76 @@ func (enum ApplyMethod) MarshalValueBuf(b []byte) ([]byte, error) {
 	return append(b, enum...), nil
 }
 
+type AuthScheme string
+
+// Enum values for AuthScheme
+const (
+	AuthSchemeSecrets AuthScheme = "SECRETS"
+)
+
+func (enum AuthScheme) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum AuthScheme) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type DBProxyStatus string
+
+// Enum values for DBProxyStatus
+const (
+	DBProxyStatusAvailable                  DBProxyStatus = "available"
+	DBProxyStatusModifying                  DBProxyStatus = "modifying"
+	DBProxyStatusIncompatibleNetwork        DBProxyStatus = "incompatible-network"
+	DBProxyStatusInsufficientResourceLimits DBProxyStatus = "insufficient-resource-limits"
+	DBProxyStatusCreating                   DBProxyStatus = "creating"
+	DBProxyStatusDeleting                   DBProxyStatus = "deleting"
+)
+
+func (enum DBProxyStatus) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum DBProxyStatus) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type EngineFamily string
+
+// Enum values for EngineFamily
+const (
+	EngineFamilyMysql EngineFamily = "MYSQL"
+)
+
+func (enum EngineFamily) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum EngineFamily) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type IAMAuthMode string
+
+// Enum values for IAMAuthMode
+const (
+	IAMAuthModeDisabled IAMAuthMode = "DISABLED"
+	IAMAuthModeRequired IAMAuthMode = "REQUIRED"
+)
+
+func (enum IAMAuthMode) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum IAMAuthMode) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
 type SourceType string
 
 // Enum values for SourceType
@@ -72,6 +142,24 @@ func (enum SourceType) MarshalValue() (string, error) {
 }
 
 func (enum SourceType) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type TargetType string
+
+// Enum values for TargetType
+const (
+	TargetTypeRdsInstance           TargetType = "RDS_INSTANCE"
+	TargetTypeRdsServerlessEndpoint TargetType = "RDS_SERVERLESS_ENDPOINT"
+	TargetTypeTrackedCluster        TargetType = "TRACKED_CLUSTER"
+)
+
+func (enum TargetType) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum TargetType) MarshalValueBuf(b []byte) ([]byte, error) {
 	b = b[0:0]
 	return append(b, enum...), nil
 }

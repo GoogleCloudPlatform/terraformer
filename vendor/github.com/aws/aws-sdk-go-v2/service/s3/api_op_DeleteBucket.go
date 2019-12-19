@@ -77,8 +77,8 @@ const opDeleteBucket = "DeleteBucket"
 // DeleteBucketRequest returns a request value for making API operation for
 // Amazon Simple Storage Service.
 //
-// Deletes the bucket. All objects (including all object versions and Delete
-// Markers) in the bucket must be deleted before the bucket itself can be deleted.
+// Deletes the bucket. All objects (including all object versions and delete
+// markers) in the bucket must be deleted before the bucket itself can be deleted.
 //
 // Related Resources
 //

@@ -95,6 +95,12 @@ const opModifyDBClusterParameterGroup = "ModifyDBClusterParameterGroup"
 // or the DescribeDBClusterParameters action to verify that your DB cluster
 // parameter group has been created or modified.
 //
+// If the modified DB cluster parameter group is used by an Aurora Serverless
+// cluster, Aurora applies the update immediately. The cluster restart might
+// interrupt your workload. In that case, your application must reopen any connections
+// and retry any transactions that were active when the parameter changes took
+// effect.
+//
 // This action only applies to Aurora DB clusters.
 //
 //    // Example sending a request using ModifyDBClusterParameterGroupRequest.

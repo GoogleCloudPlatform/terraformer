@@ -76,25 +76,26 @@ func (client *Client) CreateReadOnlyDBInstanceWithCallback(request *CreateReadOn
 // CreateReadOnlyDBInstanceRequest is the request struct for api CreateReadOnlyDBInstance
 type CreateReadOnlyDBInstanceRequest struct {
 	*requests.RpcRequest
-	OwnerId               requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount  string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId       requests.Integer `position:"Query" name:"ResourceOwnerId"`
-	ClientToken           string           `position:"Query" name:"ClientToken"`
-	ZoneId                string           `position:"Query" name:"ZoneId"`
-	DBInstanceId          string           `position:"Query" name:"DBInstanceId"`
-	DBInstanceClass       string           `position:"Query" name:"DBInstanceClass"`
 	DBInstanceStorage     requests.Integer `position:"Query" name:"DBInstanceStorage"`
+	ClientToken           string           `position:"Query" name:"ClientToken"`
 	EngineVersion         string           `position:"Query" name:"EngineVersion"`
-	PayType               string           `position:"Query" name:"PayType"`
+	ResourceGroupId       string           `position:"Query" name:"ResourceGroupId"`
+	DBInstanceId          string           `position:"Query" name:"DBInstanceId"`
 	DBInstanceDescription string           `position:"Query" name:"DBInstanceDescription"`
-	InstanceNetworkType   string           `position:"Query" name:"InstanceNetworkType"`
-	VPCId                 string           `position:"Query" name:"VPCId"`
+	DBInstanceStorageType string           `position:"Query" name:"DBInstanceStorageType"`
+	DedicatedHostGroupId  string           `position:"Query" name:"DedicatedHostGroupId"`
+	ResourceOwnerAccount  string           `position:"Query" name:"ResourceOwnerAccount"`
+	OwnerAccount          string           `position:"Query" name:"OwnerAccount"`
+	OwnerId               requests.Integer `position:"Query" name:"OwnerId"`
+	DBInstanceClass       string           `position:"Query" name:"DBInstanceClass"`
 	VSwitchId             string           `position:"Query" name:"VSwitchId"`
 	PrivateIpAddress      string           `position:"Query" name:"PrivateIpAddress"`
-	OwnerAccount          string           `position:"Query" name:"OwnerAccount"`
-	ResourceGroupId       string           `position:"Query" name:"ResourceGroupId"`
+	VPCId                 string           `position:"Query" name:"VPCId"`
+	ZoneId                string           `position:"Query" name:"ZoneId"`
 	Category              string           `position:"Query" name:"Category"`
-	DBInstanceStorageType string           `position:"Query" name:"DBInstanceStorageType"`
+	PayType               string           `position:"Query" name:"PayType"`
+	InstanceNetworkType   string           `position:"Query" name:"InstanceNetworkType"`
 }
 
 // CreateReadOnlyDBInstanceResponse is the response struct for api CreateReadOnlyDBInstance

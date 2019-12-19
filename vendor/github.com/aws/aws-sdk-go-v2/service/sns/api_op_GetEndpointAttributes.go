@@ -56,6 +56,7 @@ type GetEndpointAttributesOutput struct {
 	//    * Token – device token, also referred to as a registration id, for an
 	//    app and mobile device. This is returned from the notification service
 	//    when an app and mobile device are registered with the notification service.
+	//    The device token for the iOS platform is returned in lowercase.
 	Attributes map[string]string `type:"map"`
 }
 
@@ -70,7 +71,7 @@ const opGetEndpointAttributes = "GetEndpointAttributes"
 // Amazon Simple Notification Service.
 //
 // Retrieves the endpoint attributes for a device on one of the supported push
-// notification services, such as GCM and APNS. For more information, see Using
+// notification services, such as FCM and APNS. For more information, see Using
 // Amazon SNS Mobile Push Notifications (https://docs.aws.amazon.com/sns/latest/dg/SNSMobilePush.html).
 //
 //    // Example sending a request using GetEndpointAttributesRequest.

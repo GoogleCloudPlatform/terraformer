@@ -76,13 +76,13 @@ func (client *Client) ImportDatabaseBetweenInstancesWithCallback(request *Import
 // ImportDatabaseBetweenInstancesRequest is the request struct for api ImportDatabaseBetweenInstances
 type ImportDatabaseBetweenInstancesRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
-	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
-	SourceDBInstanceId   string           `position:"Query" name:"SourceDBInstanceId"`
 	DBInfo               string           `position:"Query" name:"DBInfo"`
+	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
+	SourceDBInstanceId   string           `position:"Query" name:"SourceDBInstanceId"`
 }
 
 // ImportDatabaseBetweenInstancesResponse is the response struct for api ImportDatabaseBetweenInstances

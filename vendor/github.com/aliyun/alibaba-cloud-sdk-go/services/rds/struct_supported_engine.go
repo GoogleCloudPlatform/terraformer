@@ -17,6 +17,6 @@ package rds
 
 // SupportedEngine is a nested struct in rds response
 type SupportedEngine struct {
-	Engine                  string                                             `json:"Engine" xml:"Engine"`
-	SupportedEngineVersions SupportedEngineVersionsInDescribeAvailableResource `json:"SupportedEngineVersions" xml:"SupportedEngineVersions"`
+	Engine                  string                  `json:"Engine" xml:"Engine"`
+	SupportedEngineVersions SupportedEngineVersions `json:"SupportedEngineVersions" xml:"SupportedEngineVersions"`
 }

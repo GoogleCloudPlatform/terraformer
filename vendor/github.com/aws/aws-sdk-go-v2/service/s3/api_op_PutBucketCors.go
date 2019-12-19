@@ -125,7 +125,7 @@ const opPutBucketCors = "PutBucketCors"
 //
 //    * The request's Origin header must match AllowedOrigin elements.
 //
-//    * The request method (for example, GET, PUT, HEAD and so on) or the Access-Control-Request-Method
+//    * The request method (for example, GET, PUT, HEAD, and so on) or the Access-Control-Request-Method
 //    header in case of a pre-flight OPTIONS request must be one of the AllowedMethod
 //    elements.
 //

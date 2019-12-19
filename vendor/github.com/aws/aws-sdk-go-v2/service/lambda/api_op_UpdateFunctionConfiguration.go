@@ -15,7 +15,7 @@ type UpdateFunctionConfigurationInput struct {
 
 	// A dead letter queue configuration that specifies the queue or topic where
 	// Lambda sends asynchronous events when they fail processing. For more information,
-	// see Dead Letter Queues (https://docs.aws.amazon.com/lambda/latest/dg/dlq.html).
+	// see Dead Letter Queues (https://docs.aws.amazon.com/lambda/latest/dg/invocation-async.html#dlq).
 	DeadLetterConfig *DeadLetterConfig `type:"structure"`
 
 	// A description of the function.
@@ -83,7 +83,7 @@ type UpdateFunctionConfigurationInput struct {
 	// For network connectivity to AWS resources in a VPC, specify a list of security
 	// groups and subnets in the VPC. When you connect a function to a VPC, it can
 	// only access resources and the internet through that VPC. For more information,
-	// see VPC Settings (https://docs.aws.amazon.com/lambda/latest/dg/vpc.html).
+	// see VPC Settings (https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html).
 	VpcConfig *VpcConfig `type:"structure"`
 }
 
@@ -241,12 +241,21 @@ type UpdateFunctionConfigurationOutput struct {
 	Handler *string `type:"string"`
 
 	// The KMS key that's used to encrypt the function's environment variables.
-	// This key is only returned if you've configured a customer-managed CMK.
+	// This key is only returned if you've configured a customer managed CMK.
 	KMSKeyArn *string `type:"string"`
 
 	// The date and time that the function was last updated, in ISO-8601 format
 	// (https://www.w3.org/TR/NOTE-datetime) (YYYY-MM-DDThh:mm:ss.sTZD).
 	LastModified *string `type:"string"`
+
+	// The status of the last update that was performed on the function.
+	LastUpdateStatus LastUpdateStatus `type:"string" enum:"true"`
+
+	// The reason for the last update that was performed on the function.
+	LastUpdateStatusReason *string `type:"string"`
+
+	// The reason code for the last update that was performed on the function.
+	LastUpdateStatusReasonCode LastUpdateStatusReasonCode `type:"string" enum:"true"`
 
 	// The function's layers (https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html).
 	Layers []Layer `type:"list"`
@@ -265,6 +274,17 @@ type UpdateFunctionConfigurationOutput struct {
 
 	// The runtime environment for the Lambda function.
 	Runtime Runtime `type:"string" enum:"true"`
+
+	// The current state of the function. When the state is Inactive, you can reactivate
+	// the function by invoking it.
+	State State `type:"string" enum:"true"`
+
+	// The reason for the function's current state.
+	StateReason *string `type:"string"`
+
+	// The reason code for the function's current state. When the code is Creating,
+	// you can't invoke or modify the function.
+	StateReasonCode StateReasonCode `type:"string" enum:"true"`
 
 	// The amount of time that Lambda allows a function to run before stopping it.
 	Timeout *int64 `min:"1" type:"integer"`
@@ -346,6 +366,24 @@ func (s UpdateFunctionConfigurationOutput) MarshalFields(e protocol.FieldEncoder
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "LastModified", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
 	}
+	if len(s.LastUpdateStatus) > 0 {
+		v := s.LastUpdateStatus
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "LastUpdateStatus", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
+	if s.LastUpdateStatusReason != nil {
+		v := *s.LastUpdateStatusReason
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "LastUpdateStatusReason", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if len(s.LastUpdateStatusReasonCode) > 0 {
+		v := s.LastUpdateStatusReasonCode
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "LastUpdateStatusReasonCode", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
 	if s.Layers != nil {
 		v := s.Layers
 
@@ -388,6 +426,24 @@ func (s UpdateFunctionConfigurationOutput) MarshalFields(e protocol.FieldEncoder
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "Runtime", protocol.QuotedValue{ValueMarshaler: v}, metadata)
 	}
+	if len(s.State) > 0 {
+		v := s.State
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "State", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
+	if s.StateReason != nil {
+		v := *s.StateReason
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "StateReason", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if len(s.StateReasonCode) > 0 {
+		v := s.StateReasonCode
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "StateReasonCode", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
 	if s.Timeout != nil {
 		v := *s.Timeout
 
@@ -421,6 +477,14 @@ const opUpdateFunctionConfiguration = "UpdateFunctionConfiguration"
 // AWS Lambda.
 //
 // Modify the version-specific settings of a Lambda function.
+//
+// When you update a function, Lambda provisions an instance of the function
+// and its supporting resources. If your function connects to a VPC, this process
+// can take a minute. During this time, you can't modify the function, but you
+// can still invoke it. The LastUpdateStatus, LastUpdateStatusReason, and LastUpdateStatusReasonCode
+// fields in the response from GetFunctionConfiguration indicate when the update
+// is complete and the function is processing events with the new configuration.
+// For more information, see Function States (https://docs.aws.amazon.com/lambda/latest/dg/functions-states.html).
 //
 // These settings can vary between versions of a function and are locked when
 // you publish a version. You can't modify the configuration of a published

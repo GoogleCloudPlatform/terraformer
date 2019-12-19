@@ -88,11 +88,9 @@ const opTagResource = "TagResource"
 //    * A new tag with a key identical to that of an existing tag overwrites
 //    the existing tag.
 //
-//    * Tagging actions are limited to 10 TPS per AWS account. If your application
-//    requires a higher throughput, file a technical support request (https://console.aws.amazon.com/support/home#/case/create?issueType=technical).
-//
-// For a full list of tag restrictions, see Limits Related to Topics (https://docs.aws.amazon.com/sns/latest/dg/sns-limits.html#limits-topics)
-// in the Amazon SNS Developer Guide.
+//    * Tagging actions are limited to 10 TPS per AWS account, per AWS region.
+//    If your application requires a higher throughput, file a technical support
+//    request (https://console.aws.amazon.com/support/home#/case/create?issueType=technical).
 //
 //    // Example sending a request using TagResourceRequest.
 //    req := client.TagResourceRequest(params)

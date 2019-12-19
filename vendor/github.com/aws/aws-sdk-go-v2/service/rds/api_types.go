@@ -212,6 +212,116 @@ func (s CloudwatchLogsExportConfiguration) String() string {
 	return awsutil.Prettify(s)
 }
 
+//
+// This is prerelease documentation for the RDS Database Proxy feature in preview
+// release. It is subject to change.
+//
+// Specifies the settings that control the size and behavior of the connection
+// pool associated with a DBProxyTargetGroup.
+type ConnectionPoolConfiguration struct {
+	_ struct{} `type:"structure"`
+
+	// The number of seconds for a proxy to wait for a connection to become available
+	// in the connection pool. Only applies when the proxy has opened its maximum
+	// number of connections and all connections are busy with client sessions.
+	//
+	// Default: 120
+	//
+	// Constraints: between 1 and 3600, or 0 representing unlimited
+	ConnectionBorrowTimeout *int64 `type:"integer"`
+
+	// One or more SQL statements for the proxy to run when opening each new database
+	// connection. Typically used with SET statements to make sure that each connection
+	// has identical settings such as time zone and character set. For multiple
+	// statements, use semicolons as the separator. You can also include multiple
+	// variables in a single SET statement, such as SET x=1, y=2.
+	//
+	// Default: no initialization query
+	InitQuery *string `type:"string"`
+
+	// The maximum size of the connection pool for each target in a target group.
+	// For Aurora MySQL, it is expressed as a percentage of the max_connections
+	// setting for the RDS DB instance or Aurora DB cluster used by the target group.
+	//
+	// Default: 100
+	//
+	// Constraints: between 1 and 100
+	MaxConnectionsPercent *int64 `type:"integer"`
+
+	// Controls how actively the proxy closes idle database connections in the connection
+	// pool. A high value enables the proxy to leave a high percentage of idle connections
+	// open. A low value causes the proxy to close idle client connections and return
+	// the underlying database connections to the connection pool. For Aurora MySQL,
+	// it is expressed as a percentage of the max_connections setting for the RDS
+	// DB instance or Aurora DB cluster used by the target group.
+	//
+	// Default: 50
+	//
+	// Constraints: between 0 and MaxConnectionsPercent
+	MaxIdleConnectionsPercent *int64 `type:"integer"`
+
+	// Each item in the list represents a class of SQL operations that normally
+	// cause all later statements in a session using a proxy to be pinned to the
+	// same underlying database connection. Including an item in the list exempts
+	// that class of SQL operations from the pinning behavior.
+	//
+	// Default: no session pinning filters
+	SessionPinningFilters []string `type:"list"`
+}
+
+// String returns the string representation
+func (s ConnectionPoolConfiguration) String() string {
+	return awsutil.Prettify(s)
+}
+
+//
+// This is prerelease documentation for the RDS Database Proxy feature in preview
+// release. It is subject to change.
+//
+// Displays the settings that control the size and behavior of the connection
+// pool associated with a DBProxyTarget.
+type ConnectionPoolConfigurationInfo struct {
+	_ struct{} `type:"structure"`
+
+	// The number of seconds for a proxy to wait for a connection to become available
+	// in the connection pool. Only applies when the proxy has opened its maximum
+	// number of connections and all connections are busy with client sessions.
+	ConnectionBorrowTimeout *int64 `type:"integer"`
+
+	// One or more SQL statements for the proxy to run when opening each new database
+	// connection. Typically used with SET statements to make sure that each connection
+	// has identical settings such as time zone and character set. This setting
+	// is empty by default. For multiple statements, use semicolons as the separator.
+	// You can also include multiple variables in a single SET statement, such as
+	// SET x=1, y=2.
+	InitQuery *string `type:"string"`
+
+	// The maximum size of the connection pool for each target in a target group.
+	// For Aurora MySQL, it is expressed as a percentage of the max_connections
+	// setting for the RDS DB instance or Aurora DB cluster used by the target group.
+	MaxConnectionsPercent *int64 `type:"integer"`
+
+	// Controls how actively the proxy closes idle database connections in the connection
+	// pool. A high value enables the proxy to leave a high percentage of idle connections
+	// open. A low value causes the proxy to close idle client connections and return
+	// the underlying database connections to the connection pool. For Aurora MySQL,
+	// it is expressed as a percentage of the max_connections setting for the RDS
+	// DB instance or Aurora DB cluster used by the target group.
+	MaxIdleConnectionsPercent *int64 `type:"integer"`
+
+	// Each item in the list represents a class of SQL operations that normally
+	// cause all later statements in a session using a proxy to be pinned to the
+	// same underlying database connection. Including an item in the list exempts
+	// that class of SQL operations from the pinning behavior. Currently, the only
+	// allowed value is EXCLUDE_VARIABLE_SETS.
+	SessionPinningFilters []string `type:"list"`
+}
+
+// String returns the string representation
+func (s ConnectionPoolConfigurationInfo) String() string {
+	return awsutil.Prettify(s)
+}
+
 // A custom Availability Zone (AZ) is an on-premises AZ that is integrated with
 // a VMware vSphere cluster.
 //
@@ -1353,6 +1463,176 @@ type DBParameterGroupStatus struct {
 
 // String returns the string representation
 func (s DBParameterGroupStatus) String() string {
+	return awsutil.Prettify(s)
+}
+
+//
+// This is prerelease documentation for the RDS Database Proxy feature in preview
+// release. It is subject to change.
+//
+// The data structure representing a proxy managed by the RDS Proxy.
+//
+// This data type is used as a response element in the DescribeDBProxies action.
+type DBProxy struct {
+	_ struct{} `type:"structure"`
+
+	// One or more data structures specifying the authorization mechanism to connect
+	// to the associated RDS DB instance or Aurora DB cluster.
+	Auth []UserAuthConfigInfo `type:"list"`
+
+	// The date and time when the proxy was first created.
+	CreatedDate *time.Time `type:"timestamp"`
+
+	// The Amazon Resource Name (ARN) for the proxy.
+	DBProxyArn *string `type:"string"`
+
+	// The identifier for the proxy. This name must be unique for all proxies owned
+	// by your AWS account in the specified AWS Region.
+	DBProxyName *string `type:"string"`
+
+	// Whether the proxy includes detailed information about SQL statements in its
+	// logs. This information helps you to debug issues involving SQL behavior or
+	// the performance and scalability of the proxy connections. The debug information
+	// includes the text of SQL statements that you submit through the proxy. Thus,
+	// only enable this setting when needed for debugging, and only when you have
+	// security measures in place to safeguard any sensitive information that appears
+	// in the logs.
+	DebugLogging *bool `type:"boolean"`
+
+	// The endpoint that you can use to connect to the proxy. You include the endpoint
+	// value in the connection string for a database client application.
+	Endpoint *string `type:"string"`
+
+	// Currently, this value is always MYSQL. The engine family applies to both
+	// RDS MySQL and Aurora MySQL.
+	EngineFamily *string `type:"string"`
+
+	// The number of seconds a connection to the proxy can have no activity before
+	// the proxy drops the client connection. The proxy keeps the underlying database
+	// connection open and puts it back into the connection pool for reuse by later
+	// connection requests.
+	//
+	// Default: 1800 (30 minutes)
+	//
+	// Constraints: 1 to 28,800
+	IdleClientTimeout *int64 `type:"integer"`
+
+	// Indicates whether Transport Layer Security (TLS) encryption is required for
+	// connections to the proxy.
+	RequireTLS *bool `type:"boolean"`
+
+	// The Amazon Resource Name (ARN) for the IAM role that the proxy uses to access
+	// Amazon Secrets Manager.
+	RoleArn *string `type:"string"`
+
+	// The current status of this proxy. A status of available means the proxy is
+	// ready to handle requests. Other values indicate that you must wait for the
+	// proxy to be ready, or take some action to resolve an issue.
+	Status DBProxyStatus `type:"string" enum:"true"`
+
+	// The date and time when the proxy was last updated.
+	UpdatedDate *time.Time `type:"timestamp"`
+
+	// Provides a list of VPC security groups that the proxy belongs to.
+	VpcSecurityGroupIds []string `type:"list"`
+
+	// The EC2 subnet IDs for the proxy.
+	VpcSubnetIds []string `type:"list"`
+}
+
+// String returns the string representation
+func (s DBProxy) String() string {
+	return awsutil.Prettify(s)
+}
+
+//
+// This is prerelease documentation for the RDS Database Proxy feature in preview
+// release. It is subject to change.
+//
+// Contains the details for an RDS Proxy target. It represents an RDS DB instance
+// or Aurora DB cluster that the proxy can connect to. One or more targets are
+// associated with an RDS Proxy target group.
+//
+// This data type is used as a response element in the DescribeDBProxyTargets
+// action.
+type DBProxyTarget struct {
+	_ struct{} `type:"structure"`
+
+	// The writer endpoint for the RDS DB instance or Aurora DB cluster.
+	Endpoint *string `type:"string"`
+
+	// The port that the RDS Proxy uses to connect to the target RDS DB instance
+	// or Aurora DB cluster.
+	Port *int64 `type:"integer"`
+
+	// The identifier representing the target. It can be the instance identifier
+	// for an RDS DB instance, or the cluster identifier for an Aurora DB cluster.
+	RdsResourceId *string `type:"string"`
+
+	// The Amazon Resource Name (ARN) for the RDS DB instance or Aurora DB cluster.
+	TargetArn *string `type:"string"`
+
+	// The DB cluster identifier when the target represents an Aurora DB cluster.
+	// This field is blank when the target represents an
+	TrackedClusterId *string `type:"string"`
+
+	// Specifies the kind of database, such as an RDS DB instance or an Aurora DB
+	// cluster, that the target represents.
+	Type TargetType `type:"string" enum:"true"`
+}
+
+// String returns the string representation
+func (s DBProxyTarget) String() string {
+	return awsutil.Prettify(s)
+}
+
+//
+// This is prerelease documentation for the RDS Database Proxy feature in preview
+// release. It is subject to change.
+//
+// Represents a set of RDS DB instances, Aurora DB clusters, or both that a
+// proxy can connect to. Currently, each target group is associated with exactly
+// one RDS DB instance or Aurora DB cluster.
+//
+// This data type is used as a response element in the DescribeDBProxyTargetGroups
+// action.
+type DBProxyTargetGroup struct {
+	_ struct{} `type:"structure"`
+
+	// The settings that determine the size and behavior of the connection pool
+	// for the target group.
+	ConnectionPoolConfig *ConnectionPoolConfigurationInfo `type:"structure"`
+
+	// The date and time when the target group was first created.
+	CreatedDate *time.Time `type:"timestamp"`
+
+	// The identifier for the RDS proxy associated with this target group.
+	DBProxyName *string `type:"string"`
+
+	// Whether this target group is the first one used for connection requests by
+	// the associated proxy. Because each proxy is currently associated with a single
+	// target group, currently this setting is always true.
+	IsDefault *bool `type:"boolean"`
+
+	// The current status of this target group. A status of available means the
+	// target group is correctly associated with a database. Other values indicate
+	// that you must wait for the target group to be ready, or take some action
+	// to resolve an issue.
+	Status *string `type:"string"`
+
+	// The Amazon Resource Name (ARN) representing the target group.
+	TargetGroupArn *string `type:"string"`
+
+	// The identifier for the target group. This name must be unique for all target
+	// groups owned by your AWS account in the specified AWS Region.
+	TargetGroupName *string `type:"string"`
+
+	// The date and time when the target group was last updated.
+	UpdatedDate *time.Time `type:"timestamp"`
+}
+
+// String returns the string representation
+func (s DBProxyTargetGroup) String() string {
 	return awsutil.Prettify(s)
 }
 
@@ -2513,7 +2793,7 @@ type PendingMaintenanceAction struct {
 	_ struct{} `type:"structure"`
 
 	// The type of pending maintenance action that is available for the resource.
-	// Valid actions are system-update, db-upgrade, and hardware-maintenance.
+	// Valid actions are system-update, db-upgrade, hardware-maintenance, and ca-certificate-rotation.
 	Action *string `type:"string"`
 
 	// The date of the maintenance window when the action is applied. The maintenance
@@ -3036,6 +3316,76 @@ type UpgradeTarget struct {
 
 // String returns the string representation
 func (s UpgradeTarget) String() string {
+	return awsutil.Prettify(s)
+}
+
+//
+// This is prerelease documentation for the RDS Database Proxy feature in preview
+// release. It is subject to change.
+//
+// Specifies the details of authentication used by a proxy to log in as a specific
+// database user.
+type UserAuthConfig struct {
+	_ struct{} `type:"structure"`
+
+	// The type of authentication that the proxy uses for connections from the proxy
+	// to the underlying database.
+	AuthScheme AuthScheme `type:"string" enum:"true"`
+
+	// A user-specified description about the authentication used by a proxy to
+	// log in as a specific database user.
+	Description *string `type:"string"`
+
+	// Whether to require or disallow AWS Identity and Access Management (IAM) authentication
+	// for connections to the proxy.
+	IAMAuth IAMAuthMode `type:"string" enum:"true"`
+
+	// The Amazon Resource Name (ARN) representing the secret that the proxy uses
+	// to authenticate to the RDS DB instance or Aurora DB cluster. These secrets
+	// are stored within Amazon Secrets Manager.
+	SecretArn *string `type:"string"`
+
+	// The name of the database user to which the proxy connects.
+	UserName *string `type:"string"`
+}
+
+// String returns the string representation
+func (s UserAuthConfig) String() string {
+	return awsutil.Prettify(s)
+}
+
+//
+// This is prerelease documentation for the RDS Database Proxy feature in preview
+// release. It is subject to change.
+//
+// Returns the details of authentication used by a proxy to log in as a specific
+// database user.
+type UserAuthConfigInfo struct {
+	_ struct{} `type:"structure"`
+
+	// The type of authentication that the proxy uses for connections from the proxy
+	// to the underlying database.
+	AuthScheme AuthScheme `type:"string" enum:"true"`
+
+	// A user-specified description about the authentication used by a proxy to
+	// log in as a specific database user.
+	Description *string `type:"string"`
+
+	// Whether to require or disallow AWS Identity and Access Management (IAM) authentication
+	// for connections to the proxy.
+	IAMAuth IAMAuthMode `type:"string" enum:"true"`
+
+	// The Amazon Resource Name (ARN) representing the secret that the proxy uses
+	// to authenticate to the RDS DB instance or Aurora DB cluster. These secrets
+	// are stored within Amazon Secrets Manager.
+	SecretArn *string `type:"string"`
+
+	// The name of the database user to which the proxy connects.
+	UserName *string `type:"string"`
+}
+
+// String returns the string representation
+func (s UserAuthConfigInfo) String() string {
 	return awsutil.Prettify(s)
 }
 

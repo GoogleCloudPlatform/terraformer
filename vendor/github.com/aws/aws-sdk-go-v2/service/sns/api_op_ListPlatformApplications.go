@@ -46,7 +46,7 @@ const opListPlatformApplications = "ListPlatformApplications"
 // Amazon Simple Notification Service.
 //
 // Lists the platform application objects for the supported push notification
-// services, such as APNS and GCM. The results for ListPlatformApplications
+// services, such as APNS and FCM. The results for ListPlatformApplications
 // are paginated and return a limited list of applications, up to 100. If additional
 // records are available after the first page results, then a NextToken string
 // will be returned. To receive the next page, you call ListPlatformApplications

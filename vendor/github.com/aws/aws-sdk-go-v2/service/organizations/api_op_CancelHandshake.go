@@ -16,7 +16,7 @@ type CancelHandshakeInput struct {
 	// can get the ID from the ListHandshakesForOrganization operation.
 	//
 	// The regex pattern (http://wikipedia.org/wiki/regex) for handshake ID string
-	// requires "h-" followed by from 8 to 32 lower-case letters or digits.
+	// requires "h-" followed by from 8 to 32 lowercase letters or digits.
 	//
 	// HandshakeId is a required field
 	HandshakeId *string `type:"string" required:"true"`

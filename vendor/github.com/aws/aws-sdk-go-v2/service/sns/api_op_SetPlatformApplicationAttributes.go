@@ -20,11 +20,11 @@ type SetPlatformApplicationAttributesInput struct {
 	//
 	//    * PlatformCredential – The credential received from the notification
 	//    service. For APNS/APNS_SANDBOX, PlatformCredential is private key. For
-	//    GCM, PlatformCredential is "API key". For ADM, PlatformCredential is "client
+	//    FCM, PlatformCredential is "API key". For ADM, PlatformCredential is "client
 	//    secret".
 	//
 	//    * PlatformPrincipal – The principal received from the notification service.
-	//    For APNS/APNS_SANDBOX, PlatformPrincipal is SSL certificate. For GCM,
+	//    For APNS/APNS_SANDBOX, PlatformPrincipal is SSL certificate. For FCM,
 	//    PlatformPrincipal is not applicable. For ADM, PlatformPrincipal is "client
 	//    id".
 	//
@@ -97,7 +97,7 @@ const opSetPlatformApplicationAttributes = "SetPlatformApplicationAttributes"
 // Amazon Simple Notification Service.
 //
 // Sets the attributes of the platform application object for the supported
-// push notification services, such as APNS and GCM. For more information, see
+// push notification services, such as APNS and FCM. For more information, see
 // Using Amazon SNS Mobile Push Notifications (https://docs.aws.amazon.com/sns/latest/dg/SNSMobilePush.html).
 // For information on configuring attributes for message delivery status, see
 // Using Amazon SNS Application Attributes for Message Delivery Status (https://docs.aws.amazon.com/sns/latest/dg/sns-msg-status.html).

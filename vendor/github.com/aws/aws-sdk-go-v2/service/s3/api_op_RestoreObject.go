@@ -13,7 +13,14 @@ import (
 type RestoreObjectInput struct {
 	_ struct{} `type:"structure" payload:"RestoreRequest"`
 
-	// The bucket name.
+	// The bucket name or containing the object to restore.
+	//
+	// When using this API with an access point, you must direct requests to the
+	// access point hostname. The access point hostname takes the form AccessPointName-AccountId.s3-accesspoint.Region.amazonaws.com.
+	// When using this operation using an access point through the AWS SDKs, you
+	// provide the access point ARN in place of the bucket name. For more information
+	// about access point ARNs, see Using Access Points (https://docs.aws.amazon.com/AmazonS3/latest/dev/using-access-points.html)
+	// in the Amazon Simple Storage Service Developer Guide.
 	//
 	// Bucket is a required field
 	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
@@ -25,8 +32,9 @@ type RestoreObjectInput struct {
 
 	// Confirms that the requester knows that she or he will be charged for the
 	// request. Bucket owners need not specify this parameter in their requests.
-	// Documentation on downloading objects from requester pays buckets can be found
-	// at http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html
+	// For information about downloading objects from Requester Pays buckets, see
+	// Downloading Objects in Requestor Pays Buckets (https://docs.aws.amazon.com/http:/docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html)
+	// in the Amazon S3 Developer Guide.
 	RequestPayer RequestPayer `location:"header" locationName:"x-amz-request-payer" type:"string" enum:"true"`
 
 	// Container for restore job parameters.
@@ -263,7 +271,7 @@ const opRestoreObject = "RestoreObject"
 //    GLACIER storage class and typically complete within 12 hours from the
 //    DEEP_ARCHIVE storage class.
 //
-//    * Bulk - Bulk retrievals are Amazon Glacier’s lowest-cost retrieval
+//    * Bulk - Bulk retrievals are Amazon S3 Glacier’s lowest-cost retrieval
 //    option, enabling you to retrieve large amounts, even petabytes, of data
 //    inexpensively in a day. Bulk retrievals typically complete within 5-12
 //    hours from the GLACIER storage class and typically complete within 48

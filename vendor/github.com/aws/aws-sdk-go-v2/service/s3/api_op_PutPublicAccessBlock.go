@@ -98,7 +98,7 @@ const opPutPublicAccessBlock = "PutPublicAccessBlock"
 // Amazon Simple Storage Service.
 //
 // Creates or modifies the PublicAccessBlock configuration for an Amazon S3
-// bucket. In order to use this operation, you must have the s3:PutBucketPublicAccessBlock
+// bucket. To use this operation, you must have the s3:PutBucketPublicAccessBlock
 // permission. For more information about Amazon S3 permissions, see Specifying
 // Permissions in a Policy (https://docs.aws.amazon.com/AmazonS3/latest/dev/using-with-s3-actions.html).
 //

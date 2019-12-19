@@ -31,7 +31,7 @@ type UpdateNodegroupConfigInput struct {
 	// NodegroupName is a required field
 	NodegroupName *string `location:"uri" locationName:"nodegroupName" type:"string" required:"true"`
 
-	// The scaling configuration details for the AutoScaling group after the update.
+	// The scaling configuration details for the Auto Scaling group after the update.
 	ScalingConfig *NodegroupScalingConfig `locationName:"scalingConfig" type:"structure"`
 }
 

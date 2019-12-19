@@ -21,7 +21,7 @@ type EnablePolicyTypeInput struct {
 	// type. You can get the ID from the ListRoots operation.
 	//
 	// The regex pattern (http://wikipedia.org/wiki/regex) for a root ID string
-	// requires "r-" followed by from 4 to 32 lower-case letters or digits.
+	// requires "r-" followed by from 4 to 32 lowercase letters or digits.
 	//
 	// RootId is a required field
 	RootId *string `type:"string" required:"true"`

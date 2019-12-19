@@ -29,7 +29,7 @@ type CreatePlatformEndpointInput struct {
 	// Unique identifier created by the notification service for an app on a device.
 	// The specific name for Token will vary, depending on which notification service
 	// is being used. For example, when using APNS as the notification service,
-	// you need the device token. Alternatively, when using GCM or ADM, the device
+	// you need the device token. Alternatively, when using FCM or ADM, the device
 	// token equivalent is called the registration ID.
 	//
 	// Token is a required field
@@ -78,7 +78,7 @@ const opCreatePlatformEndpoint = "CreatePlatformEndpoint"
 // Amazon Simple Notification Service.
 //
 // Creates an endpoint for a device and mobile app on one of the supported push
-// notification services, such as GCM and APNS. CreatePlatformEndpoint requires
+// notification services, such as FCM and APNS. CreatePlatformEndpoint requires
 // the PlatformApplicationArn that is returned from CreatePlatformApplication.
 // The EndpointArn that is returned when using CreatePlatformEndpoint can then
 // be used by the Publish action to send a message to a mobile app or by the

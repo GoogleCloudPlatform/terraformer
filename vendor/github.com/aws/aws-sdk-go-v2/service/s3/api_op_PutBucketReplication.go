@@ -149,16 +149,7 @@ const opPutBucketReplication = "PutBucketReplication"
 // replication configuration, see Replicating Objects Created with SSE Using
 // CMKs stored in AWS KMS (https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-config-for-kms-objects.html).
 //
-// PutBucketReplication has the following special errors:
-//
-//    * Error code: InvalidRequest Description: If the <Owner> in <AccessControlTranslation>
-//    has a value, the <Account> element must be specified. HTTP 400
-//
-//    * Error code: InvalidArgument Description: The <Account> element is empty.
-//    It must contain a valid account ID. HTTP 400
-//
-//    * Error code: InvalidArgument Description: The AWS account specified in
-//    the <Account> element must match the destination bucket owner. HTTP 400
+// For information on PutBucketReplication errors, see ReplicationErrorCodeList
 //
 // The following operations are related to PutBucketReplication:
 //

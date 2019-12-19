@@ -129,7 +129,7 @@ const opGetBucketWebsite = "GetBucketWebsite"
 // bucket owners can allow other users to read the website configuration by
 // writing a bucket policy granting them the S3:GetBucketWebsite permission.
 //
-// The following operations are related to DeleteBucketWebsite
+// The following operations are related to DeleteBucketWebsite:
 //
 //    * DeleteBucketWebsite
 //

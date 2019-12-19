@@ -76,8 +76,8 @@ func (client *Client) DescribeDomainNsWithCallback(request *DescribeDomainNsRequ
 // DescribeDomainNsRequest is the request struct for api DescribeDomainNs
 type DescribeDomainNsRequest struct {
 	*requests.RpcRequest
-	UserClientIp string `position:"Query" name:"UserClientIp"`
 	DomainName   string `position:"Query" name:"DomainName"`
+	UserClientIp string `position:"Query" name:"UserClientIp"`
 	Lang         string `position:"Query" name:"Lang"`
 }
 
@@ -96,7 +96,7 @@ func CreateDescribeDomainNsRequest() (request *DescribeDomainNsRequest) {
 	request = &DescribeDomainNsRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeDomainNs", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeDomainNs", "alidns", "openAPI")
 	return
 }
 

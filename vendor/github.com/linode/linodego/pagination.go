@@ -10,7 +10,7 @@ import (
 	"log"
 	"strconv"
 
-	"gopkg.in/resty.v1"
+	"github.com/go-resty/resty/v2"
 )
 
 // PageOptions are the pagination parameters for List endpoints
@@ -30,7 +30,6 @@ type ListOptions struct {
 // the two writable properties, Page and Filter
 func NewListOptions(page int, filter string) *ListOptions {
 	return &ListOptions{PageOptions: &PageOptions{Page: page}, Filter: filter}
-
 }
 
 // listHelper abstracts fetching and pagination for GET endpoints that
@@ -403,6 +402,7 @@ func (c *Client) listHelperWithID(ctx context.Context, i interface{}, idRaw inte
 // opts.results and opts.pages will be updated from the API response
 func (c *Client) listHelperWithTwoIDs(ctx context.Context, i interface{}, firstID, secondID int, opts *ListOptions) error {
 	req := c.R(ctx)
+
 	if opts != nil && opts.Page > 0 {
 		req.SetQueryParam("page", strconv.Itoa(opts.Page))
 	}
@@ -425,7 +425,6 @@ func (c *Client) listHelperWithTwoIDs(ctx context.Context, i interface{}, firstI
 			results = r.Result().(*NodeBalancerNodesPagedResponse).Results
 			v.appendData(r.Result().(*NodeBalancerNodesPagedResponse))
 		}
-
 	default:
 		log.Fatalf("Unknown listHelperWithTwoIDs interface{} %T used", i)
 	}

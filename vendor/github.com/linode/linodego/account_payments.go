@@ -47,6 +47,7 @@ func (PaymentsPagedResponse) endpoint(c *Client) string {
 	if err != nil {
 		panic(err)
 	}
+
 	return endpoint
 }
 
@@ -59,12 +60,15 @@ func (resp *PaymentsPagedResponse) appendData(r *PaymentsPagedResponse) {
 func (c *Client) ListPayments(ctx context.Context, opts *ListOptions) ([]Payment, error) {
 	response := PaymentsPagedResponse{}
 	err := c.listHelper(ctx, &response, opts)
+
 	for i := range response.Data {
 		response.Data[i].fixDates()
 	}
+
 	if err != nil {
 		return nil, err
 	}
+
 	return response.Data, nil
 }
 
@@ -80,18 +84,23 @@ func (c *Client) GetPayment(ctx context.Context, id int) (*Payment, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	e = fmt.Sprintf("%s/%d", e, id)
 	r, err := coupleAPIErrors(c.R(ctx).SetResult(&Payment{}).Get(e))
+
 	if err != nil {
 		return nil, err
 	}
+
 	return r.Result().(*Payment).fixDates(), nil
 }
 
 // CreatePayment creates a Payment
 func (c *Client) CreatePayment(ctx context.Context, createOpts PaymentCreateOptions) (*Payment, error) {
 	var body string
+
 	e, err := c.Payments.Endpoint()
+
 	if err != nil {
 		return nil, err
 	}
@@ -111,5 +120,6 @@ func (c *Client) CreatePayment(ctx context.Context, createOpts PaymentCreateOpti
 	if err != nil {
 		return nil, err
 	}
+
 	return r.Result().(*Payment).fixDates(), nil
 }

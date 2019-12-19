@@ -87,9 +87,11 @@ func (resp *TokensPagedResponse) appendData(r *TokensPagedResponse) {
 func (c *Client) ListTokens(ctx context.Context, opts *ListOptions) ([]Token, error) {
 	response := TokensPagedResponse{}
 	err := c.listHelper(ctx, &response, opts)
+
 	for i := range response.Data {
 		response.Data[i].fixDates()
 	}
+
 	if err != nil {
 		return nil, err
 	}

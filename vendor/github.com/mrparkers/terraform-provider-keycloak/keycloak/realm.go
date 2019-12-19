@@ -27,14 +27,15 @@ type Realm struct {
 	DisplayName string `json:"displayName"`
 
 	// Login Config
-	RegistrationAllowed         bool `json:"registrationAllowed"`
-	RegistrationEmailAsUsername bool `json:"registrationEmailAsUsername"`
-	EditUsernameAllowed         bool `json:"editUsernameAllowed"`
-	ResetPasswordAllowed        bool `json:"resetPasswordAllowed"`
-	RememberMe                  bool `json:"rememberMe"`
-	VerifyEmail                 bool `json:"verifyEmail"`
-	LoginWithEmailAllowed       bool `json:"loginWithEmailAllowed"`
-	DuplicateEmailsAllowed      bool `json:"duplicateEmailsAllowed"`
+	RegistrationAllowed         bool   `json:"registrationAllowed"`
+	RegistrationEmailAsUsername bool   `json:"registrationEmailAsUsername"`
+	EditUsernameAllowed         bool   `json:"editUsernameAllowed"`
+	ResetPasswordAllowed        bool   `json:"resetPasswordAllowed"`
+	RememberMe                  bool   `json:"rememberMe"`
+	VerifyEmail                 bool   `json:"verifyEmail"`
+	LoginWithEmailAllowed       bool   `json:"loginWithEmailAllowed"`
+	DuplicateEmailsAllowed      bool   `json:"duplicateEmailsAllowed"`
+	SslRequired                 string `json:"sslRequired,omitempty"`
 
 	//SMTP Server
 	SmtpServer SmtpServer `json:"smtpServer"`
@@ -46,8 +47,8 @@ type Realm struct {
 	EmailTheme   string `json:"emailTheme,omitempty"`
 
 	// Tokens
-	RevokeRefreshToken                  bool `json:"revokeRefreshToken,omitempty"`
-	RefreshTokenMaxReuse                int  `json:"refreshTokenMaxReuse,omitempty"`
+	RevokeRefreshToken                  bool `json:"revokeRefreshToken"`
+	RefreshTokenMaxReuse                int  `json:"refreshTokenMaxReuse"`
 	SsoSessionIdleTimeout               int  `json:"ssoSessionIdleTimeout,omitempty"`
 	SsoSessionMaxLifespan               int  `json:"ssoSessionMaxLifespan,omitempty"`
 	OfflineSessionIdleTimeout           int  `json:"offlineSessionIdleTimeout,omitempty"`
@@ -65,8 +66,19 @@ type Realm struct {
 	SupportLocales              []string `json:"supportedLocales"`
 	DefaultLocale               string   `json:"defaultLocale"`
 
-	//extra attributes of a realm, contains security defenses browser headers and brute force detection parameters(those still nee to be added)
-	Attributes Attributes `json:"attributes,omitempty"`
+	//extra attributes of a realm
+	Attributes map[string]interface{} `json:"attributes"`
+
+	BrowserSecurityHeaders BrowserSecurityHeaders `json:"browserSecurityHeaders"`
+
+	BruteForceProtected          bool `json:"bruteForceProtected"`
+	PermanentLockout             bool `json:"permanentLockout"`
+	FailureFactor                int  `json:"failureFactor"` //Max Login Failures
+	WaitIncrementSeconds         int  `json:"waitIncrementSeconds"`
+	QuickLoginCheckMilliSeconds  int  `json:"quickLoginCheckMilliSeconds"`
+	MinimumQuickLoginWaitSeconds int  `json:"minimumQuickLoginWaitSeconds"`
+	MaxFailureWaitSeconds        int  `json:"maxFailureWaitSeconds"` //Max Wait
+	MaxDeltaTimeSeconds          int  `json:"maxDeltaTimeSeconds"`   //Failure Reset Time
 
 	PasswordPolicy string `json:"passwordPolicy"`
 
@@ -79,14 +91,14 @@ type Realm struct {
 	DockerAuthenticationFlow string `json:"dockerAuthenticationFlow,omitempty"`
 }
 
-type Attributes struct {
-	BrowserHeaderContentSecurityPolicy           string `json:"_browser_header.contentSecurityPolicy,omitempty"`
-	BrowserHeaderContentSecurityPolicyReportOnly string `json:"_browser_header.contentSecurityPolicyReportOnly,omitempty"`
-	BrowserHeaderStrictTransportSecurity         string `json:"_browser_header.strictTransportSecurity,omitempty"`
-	BrowserHeaderXContentTypeOptions             string `json:"_browser_header.xContentTypeOptions,omitempty"`
-	BrowserHeaderXFrameOptions                   string `json:"_browser_header.xFrameOptions,omitempty"`
-	BrowserHeaderXRobotsTag                      string `json:"_browser_header.xRobotsTag,omitempty"`
-	BrowserHeaderXXSSProtection                  string `json:"_browser_header.xXSSProtection,omitempty"`
+type BrowserSecurityHeaders struct {
+	ContentSecurityPolicy           string `json:"contentSecurityPolicy"`
+	ContentSecurityPolicyReportOnly string `json:"contentSecurityPolicyReportOnly"`
+	StrictTransportSecurity         string `json:"strictTransportSecurity"`
+	XContentTypeOptions             string `json:"xContentTypeOptions"`
+	XFrameOptions                   string `json:"xFrameOptions"`
+	XRobotsTag                      string `json:"xRobotsTag"`
+	XXSSProtection                  string `json:"xXSSProtection"`
 }
 
 type SmtpServer struct {
@@ -167,6 +179,10 @@ func (keycloakClient *KeycloakClient) ValidateRealm(realm *Realm) error {
 
 	if realm.DuplicateEmailsAllowed == true && realm.LoginWithEmailAllowed == true {
 		return fmt.Errorf("validation error: DuplicateEmailsAllowed cannot be true if LoginWithEmailAllowed is true")
+	}
+
+	if realm.SslRequired != "none" && realm.SslRequired != "external" && realm.SslRequired != "all" {
+		return fmt.Errorf("validation error: SslRequired should be 'none', 'external' or 'all'")
 	}
 
 	// validate if the given theme exists on the server. the keycloak API allows you to use any random string for a theme

@@ -795,7 +795,7 @@ func (s CORSRule) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
-// Describes how a uncompressed comma-separated values (CSV)-formatted input
+// Describes how an uncompressed comma-separated values (CSV)-formatted input
 // object is formatted.
 type CSVInput struct {
 	_ struct{} `type:"structure"`
@@ -987,7 +987,7 @@ type CloudFunctionConfiguration struct {
 	// If you don't provide one, Amazon S3 will assign an ID.
 	Id *string `type:"string"`
 
-	// The role supporting the invocation of the lambda function
+	// The role supporting the invocation of the Lambda function
 	InvocationRole *string `type:"string"`
 }
 
@@ -1175,7 +1175,7 @@ func (s Condition) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
-// >Container for all response elements.
+// Container for all response elements.
 type CopyObjectResult struct {
 	_ struct{} `type:"structure"`
 
@@ -1249,8 +1249,8 @@ func (s CopyPartResult) MarshalFields(e protocol.FieldEncoder) error {
 type CreateBucketConfiguration struct {
 	_ struct{} `type:"structure"`
 
-	// Specifies the region where the bucket will be created. If you don't specify
-	// a region, the bucket is created in US East (N. Virginia) Region (us-east-1).
+	// Specifies the Region where the bucket will be created. If you don't specify
+	// a Region, the bucket is created in the US East (N. Virginia) Region (us-east-1).
 	LocationConstraint BucketLocationConstraint `type:"string" enum:"true"`
 }
 
@@ -1446,7 +1446,7 @@ func (s DeleteMarkerEntry) MarshalFields(e protocol.FieldEncoder) error {
 // only <Status>Disabled</Status>. For an example configuration, see Basic Rule
 // Configuration (https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-add-config.html#replication-config-min-rule-config).
 //
-// If you don't specify the Filter element, Amazon S3 assumes the replication
+// If you don't specify the Filter element, Amazon S3 assumes that the replication
 // configuration is the earlier version, V1. In the earlier version, Amazon
 // S3 handled replication of delete markers differently. For more information,
 // see Backward Compatibility (https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-add-config.html#replication-backward-compat-considerations).
@@ -1532,7 +1532,7 @@ func (s DeletedObject) MarshalFields(e protocol.FieldEncoder) error {
 }
 
 // Specifies information about where to publish analysis or configuration results
-// for an Amazon S3 bucket.
+// for an Amazon S3 bucket and S3 Replication Time Control (S3 RTC).
 type Destination struct {
 	_ struct{} `type:"structure"`
 
@@ -1547,7 +1547,7 @@ type Destination struct {
 	// direct Amazon S3 to change replica ownership to the AWS account that owns
 	// the destination bucket by specifying the AccessControlTranslation property,
 	// this is the account ID of the destination bucket owner. For more information,
-	// see Replication Additional Configuration: Change Replica Owner (https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-change-owner.html)
+	// see Replication Additional Configuration: Changing the Replica Owner (https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-change-owner.html)
 	// in the Amazon Simple Storage Service Developer Guide.
 	Account *string `type:"string"`
 
@@ -1561,14 +1561,14 @@ type Destination struct {
 	// is specified, you must specify this element.
 	EncryptionConfiguration *EncryptionConfiguration `type:"structure"`
 
-	// A container specifying replication metrics-related information, including
-	// whether emitting metrics and Amazon S3 events for replication are enabled.
-	// In addition, contains configurations related to specific metrics or events.
-	// Must be specified together with a ReplicationTime block.
+	// A container specifying replication metrics-related settings enabling metrics
+	// and Amazon S3 events for S3 Replication Time Control (S3 RTC). Must be specified
+	// together with a ReplicationTime block.
 	Metrics *Metrics `type:"structure"`
 
-	// A container specifying the time when all objects and operations on objects
-	// are replicated. Must be specified together with a Metrics block.
+	// A container specifying S3 Replication Time Control (S3 RTC), including whether
+	// S3 RTC is enabled and the time when all objects and operations on objects
+	// must be replicated. Must be specified together with a Metrics block.
 	ReplicationTime *ReplicationTime `type:"structure"`
 
 	// The storage class to use when replicating objects, such as standard or reduced
@@ -1674,7 +1674,7 @@ type Encryption struct {
 	_ struct{} `type:"structure"`
 
 	// The server-side encryption algorithm used when storing job results in Amazon
-	// S3 (e.g., AES256, aws:kms).
+	// S3 (for example, AES256, aws:kms).
 	//
 	// EncryptionType is a required field
 	EncryptionType ServerSideEncryption `type:"string" required:"true" enum:"true"`
@@ -1796,11 +1796,11 @@ type Error struct {
 	//
 	//    * Code: BucketAlreadyOwnedByYou Description: The bucket you tried to create
 	//    already exists, and you own it. Amazon S3 returns this error in all AWS
-	//    Regions except in the North Virginia region. For legacy compatibility,
+	//    Regions except in the North Virginia Region. For legacy compatibility,
 	//    if you re-create an existing bucket that you already own in the North
-	//    Virginia region, Amazon S3 returns 200 OK and resets the bucket access
-	//    control lists (ACLs). Code: 409 Conflict (in all regions except the North
-	//    Virginia region) SOAP Fault Code Prefix: Client
+	//    Virginia Region, Amazon S3 returns 200 OK and resets the bucket access
+	//    control lists (ACLs). Code: 409 Conflict (in all Regions except the North
+	//    Virginia Region) SOAP Fault Code Prefix: Client
 	//
 	//    * Code: BucketNotEmpty Description: The bucket you tried to delete is
 	//    not empty. HTTP Status Code: 409 Conflict SOAP Fault Code Prefix: Client
@@ -2204,13 +2204,12 @@ func (s ErrorDocument) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
-// A container that specifies information about existing object replication.
-// You can choose whether to enable or disable the replication of existing objects.
+// Optional configuration to replicate existing source bucket objects. For more
+// information, see Replicating Existing Objects (https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-what-is-isnot-replicated.html#existing-object-replication)
+// in the Amazon S3 Developer Guide.
 type ExistingObjectReplication struct {
 	_ struct{} `type:"structure"`
 
-	// Specifies whether existing object replication is enabled.
-	//
 	// Status is a required field
 	Status ExistingObjectReplicationStatus `type:"string" required:"true" enum:"true"`
 }
@@ -2450,9 +2449,10 @@ type IndexDocument struct {
 	_ struct{} `type:"structure"`
 
 	// A suffix that is appended to a request that is for a directory on the website
-	// endpoint (e.g. if the suffix is index.html and you make a request to samplebucket/images/
-	// the data that is returned will be for the object with the key name images/index.html)
-	// The suffix must not be empty and must not include a slash character.
+	// endpoint (for example,if the suffix is index.html and you make a request
+	// to samplebucket/images/ the data that is returned will be for the object
+	// with the key name images/index.html) The suffix must not be empty and must
+	// not include a slash character.
 	//
 	// Suffix is a required field
 	Suffix *string `type:"string" required:"true"`
@@ -2488,7 +2488,7 @@ func (s IndexDocument) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
-// Container element that identifies who initiated the ultipart upload.
+// Container element that identifies who initiated the multipart upload.
 type Initiator struct {
 	_ struct{} `type:"structure"`
 
@@ -2770,10 +2770,10 @@ func (s InventoryDestination) MarshalFields(e protocol.FieldEncoder) error {
 type InventoryEncryption struct {
 	_ struct{} `type:"structure"`
 
-	// Specifies the use of SSE-KMS to encrypt delivered Inventory reports.
+	// Specifies the use of SSE-KMS to encrypt delivered inventory reports.
 	SSEKMS *SSEKMS `locationName:"SSE-KMS" type:"structure"`
 
-	// Specifies the use of SSE-S3 to encrypt delivered Inventory reports.
+	// Specifies the use of SSE-S3 to encrypt delivered inventory reports.
 	SSES3 *SSES3 `locationName:"SSE-S3" type:"structure"`
 }
 
@@ -2863,7 +2863,7 @@ type InventoryS3BucketDestination struct {
 	// The ID of the account that owns the destination bucket.
 	AccountId *string `type:"string"`
 
-	// The Amazon resource name (ARN) of the bucket where inventory results will
+	// The Amazon Resource Name (ARN) of the bucket where inventory results will
 	// be published.
 	//
 	// Bucket is a required field
@@ -3254,10 +3254,10 @@ type LifecycleRule struct {
 	NoncurrentVersionExpiration *NoncurrentVersionExpiration `type:"structure"`
 
 	// Specifies the transition rule for the lifecycle rule that describes when
-	// noncurrent objects transition to the a specific storage class. If your bucket
+	// noncurrent objects transition to a specific storage class. If your bucket
 	// is versioning-enabled (or versioning is suspended), you can set this action
-	// to request that Amazon S3 transition noncurrent object versions to the a
-	// specifc storage class at a set period in the object's lifetime.
+	// to request that Amazon S3 transition noncurrent object versions to a specific
+	// storage class at a set period in the object's lifetime.
 	NoncurrentVersionTransitions []NoncurrentVersionTransition `locationName:"NoncurrentVersionTransition" type:"list" flattened:"true"`
 
 	// Prefix identifying one or more objects to which the rule applies. This is
@@ -3502,7 +3502,7 @@ type LoggingEnabled struct {
 	// Specifies the bucket where you want Amazon S3 to store server access logs.
 	// You can have your logs delivered to any bucket that you own, including the
 	// same bucket that is being logged. You can also configure multiple buckets
-	// to deliver their logs to the same target bucket. In this case you should
+	// to deliver their logs to the same target bucket. In this case, you should
 	// choose a different TargetPrefix for each source bucket so that the delivered
 	// log files can be distinguished by key.
 	//
@@ -3612,10 +3612,9 @@ func (s MetadataEntry) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
-// A container specifying replication metrics-related information, including
-// whether emitting metrics and Amazon S3 events for replication are enabled.
-// In addition, contains configurations related to specific metrics or events.
-// Must be specified together with a ReplicationTime block.
+// A container specifying replication metrics-related settings enabling metrics
+// and Amazon S3 events for S3 Replication Time Control (S3 RTC). Must be specified
+// together with a ReplicationTime block.
 type Metrics struct {
 	_ struct{} `type:"structure"`
 
@@ -3970,8 +3969,8 @@ type NoncurrentVersionTransition struct {
 
 	// Specifies the number of days an object is noncurrent before Amazon S3 can
 	// perform the associated action. For information about the noncurrent days
-	// calculations, see How Amazon S3 Calculates When an Object Became Noncurrent
-	// (https://docs.aws.amazon.com/AmazonS3/latest/dev/s3-access-control.html)
+	// calculations, see How Amazon S3 Calculates How Long an Object Has Been Noncurrent
+	// (https://docs.aws.amazon.com/AmazonS3/latest/dev/intro-lifecycle-rules.html#non-current-days-calculations)
 	// in the Amazon Simple Storage Service Developer Guide.
 	NoncurrentDays *int64 `type:"integer"`
 
@@ -4107,7 +4106,7 @@ type NotificationConfigurationDeprecated struct {
 	// when Amazon S3 detects specified events.
 	QueueConfiguration *QueueConfigurationDeprecated `type:"structure"`
 
-	// This data type is deperecated. A container for specifying the configuration
+	// This data type is deprecated. A container for specifying the configuration
 	// for publication of messages to an Amazon Simple Notification Service (Amazon
 	// SNS) topic when Amazon S3 detects specified events.
 	TopicConfiguration *TopicConfigurationDeprecated `type:"structure"`
@@ -4411,7 +4410,7 @@ func (s ObjectLockRule) MarshalFields(e protocol.FieldEncoder) error {
 type ObjectVersion struct {
 	_ struct{} `type:"structure"`
 
-	// The entity tag is an MD5 hash of that version of the object
+	// The entity tag is an MD5 hash of that version of the object.
 	ETag *string `type:"string"`
 
 	// Specifies whether the object is (true) or is not (false) the latest version
@@ -4424,7 +4423,7 @@ type ObjectVersion struct {
 	// Date and time the object was last modified.
 	LastModified *time.Time `type:"timestamp"`
 
-	// Specifies the Owner of the object.
+	// Specifies the owner of the object.
 	Owner *Owner `type:"structure"`
 
 	// Size in bytes of the object.
@@ -4568,14 +4567,14 @@ func (s OutputSerialization) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
-// Container for the owner's display name and ID
+// Container for the owner's display name and ID.
 type Owner struct {
 	_ struct{} `type:"structure"`
 
-	// Container for the display name of the owner
+	// Container for the display name of the owner.
 	DisplayName *string `type:"string"`
 
-	// Container for the ID of the owner
+	// Container for the ID of the owner.
 	ID *string `type:"string"`
 }
 
@@ -4697,7 +4696,7 @@ func (s PolicyStatus) MarshalFields(e protocol.FieldEncoder) error {
 // The PublicAccessBlock configuration that you want to apply to this Amazon
 // S3 bucket. You can enable the configuration options in any combination. For
 // more information about when Amazon S3 considers a bucket or object public,
-// see The Meaning of "Public" (https://docs.aws.amazon.com/AmazonS3/latest/dev//access-control-block-public-access.html#access-control-block-public-access-policy-status)
+// see The Meaning of "Public" (https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html#access-control-block-public-access-policy-status)
 // in the Amazon Simple Storage Service Developer Guide.
 type PublicAccessBlockConfiguration struct {
 	_ struct{} `type:"structure"`
@@ -4781,7 +4780,7 @@ func (s PublicAccessBlockConfiguration) MarshalFields(e protocol.FieldEncoder) e
 type QueueConfiguration struct {
 	_ struct{} `type:"structure"`
 
-	// A collection of bucket events for which to send notiications
+	// A collection of bucket events for which to send notifications
 	//
 	// Events is a required field
 	Events []Event `locationName:"Event" type:"list" flattened:"true" required:"true"`
@@ -4860,17 +4859,17 @@ func (s QueueConfiguration) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
-// This data type is deprecated. Please use QueueConfiguration for the same
-// purposes. This dat type specifies the configuration for publishing messages
-// to an Amazon Simple Queue Service (Amazon SQS) queue when Amazon S3 detects
-// specified events.
+// This data type is deprecated. Use QueueConfiguration for the same purposes.
+// This data type specifies the configuration for publishing messages to an
+// Amazon Simple Queue Service (Amazon SQS) queue when Amazon S3 detects specified
+// events.
 type QueueConfigurationDeprecated struct {
 	_ struct{} `type:"structure"`
 
 	// The bucket event for which to send notifications.
 	Event Event `deprecated:"true" type:"string" enum:"true"`
 
-	// A collection of bucket events for which to send notiications
+	// A collection of bucket events for which to send notifications
 	Events []Event `locationName:"Event" type:"list" flattened:"true"`
 
 	// An optional unique identifier for configurations in a notification configuration.
@@ -5127,19 +5126,21 @@ type ReplicationRule struct {
 	// only <Status>Disabled</Status>. For an example configuration, see Basic Rule
 	// Configuration (https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-add-config.html#replication-config-min-rule-config).
 	//
-	// If you don't specify the Filter element, Amazon S3 assumes the replication
+	// If you don't specify the Filter element, Amazon S3 assumes that the replication
 	// configuration is the earlier version, V1. In the earlier version, Amazon
 	// S3 handled replication of delete markers differently. For more information,
 	// see Backward Compatibility (https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-add-config.html#replication-backward-compat-considerations).
 	DeleteMarkerReplication *DeleteMarkerReplication `type:"structure"`
 
-	// A container for information about the replication destination.
+	// A container for information about the replication destination and its configurations
+	// including enabling the S3 Replication Time Control (S3 RTC).
 	//
 	// Destination is a required field
 	Destination *Destination `type:"structure" required:"true"`
 
-	// A container that specifies information about existing object replication.
-	// You can choose whether to enable or disable the replication of existing objects.
+	// Optional configuration to replicate existing source bucket objects. For more
+	// information, see Replicating Existing Objects (https://docs.aws.amazon.com/AmazonS3/latest/dev/replication-what-is-isnot-replicated.html#existing-object-replication)
+	// in the Amazon S3 Developer Guide.
 	ExistingObjectReplication *ExistingObjectReplication `type:"structure"`
 
 	// A filter that identifies the subset of objects to which the replication rule
@@ -5149,9 +5150,9 @@ type ReplicationRule struct {
 	// A unique identifier for the rule. The maximum value is 255 characters.
 	ID *string `type:"string"`
 
-	// An object keyname prefix that identifies the object or objects to which the
-	// rule applies. The maximum prefix length is 1,024 characters. To include all
-	// objects in a bucket, specify an empty string.
+	// An object key name prefix that identifies the object or objects to which
+	// the rule applies. The maximum prefix length is 1,024 characters. To include
+	// all objects in a bucket, specify an empty string.
 	Prefix *string `deprecated:"true" type:"string"`
 
 	// The priority associated with the rule. If you specify multiple rules in a
@@ -5159,14 +5160,14 @@ type ReplicationRule struct {
 	// when filtering. If two or more rules identify the same object based on a
 	// specified filter, the rule with higher priority takes precedence. For example:
 	//
-	//    * Same object quality prefix based filter criteria If prefixes you specified
+	//    * Same object quality prefix-based filter criteria if prefixes you specified
 	//    in multiple rules overlap
 	//
-	//    * Same object qualify tag based filter criteria specified in multiple
+	//    * Same object qualify tag-based filter criteria specified in multiple
 	//    rules
 	//
 	// For more information, see Replication (https://docs.aws.amazon.com/AmazonS3/latest/dev/replication.html)
-	// in the Amazon S3 Developer Guide.
+	// in the Amazon Simple Storage Service Developer Guide.
 	Priority *int64 `type:"integer"`
 
 	// A container that describes additional filters for identifying the source
@@ -5297,8 +5298,8 @@ func (s ReplicationRule) MarshalFields(e protocol.FieldEncoder) error {
 type ReplicationRuleAndOperator struct {
 	_ struct{} `type:"structure"`
 
-	// An object keyname prefix that identifies the subset of objects to which the
-	// rule applies.
+	// An object key name prefix that identifies the subset of objects to which
+	// the rule applies.
 	Prefix *string `type:"string"`
 
 	// An array of tags containing key and value pairs.
@@ -5366,8 +5367,8 @@ type ReplicationRuleFilter struct {
 	//    in an And tag.
 	And *ReplicationRuleAndOperator `type:"structure"`
 
-	// An object keyname prefix that identifies the subset of objects to which the
-	// rule applies.
+	// An object key name prefix that identifies the subset of objects to which
+	// the rule applies.
 	Prefix *string `type:"string"`
 
 	// A container for specifying a tag key and value.
@@ -5424,8 +5425,10 @@ func (s ReplicationRuleFilter) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
-// A container specifying the time when all objects and operations on objects
-// are replicated. Must be specified together with a Metrics block.
+// A container specifying S3 Replication Time Control (S3 RTC) related information,
+// including whether S3 RTC is enabled and the time when all objects and operations
+// on objects must be replicated. Must be specified together with a Metrics
+// block.
 type ReplicationTime struct {
 	_ struct{} `type:"structure"`
 
@@ -5434,7 +5437,7 @@ type ReplicationTime struct {
 	// Status is a required field
 	Status ReplicationTimeStatus `type:"string" required:"true" enum:"true"`
 
-	// A container specifying the time by which replication should complete for
+	// A container specifying the time by which replication should be complete for
 	// all objects and operations on objects.
 	//
 	// Time is a required field
@@ -5480,11 +5483,14 @@ func (s ReplicationTime) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
-// A container specifying the time value.
+// A container specifying the time value for S3 Replication Time Control (S3
+// RTC) and replication metrics EventThreshold.
 type ReplicationTimeValue struct {
 	_ struct{} `type:"structure"`
 
 	// Contains an integer specifying time in minutes.
+	//
+	// Valid values: 15 minutes.
 	Minutes *int64 `type:"integer"`
 }
 
@@ -5832,7 +5838,7 @@ func (s Rule) MarshalFields(e protocol.FieldEncoder) error {
 type S3KeyFilter struct {
 	_ struct{} `type:"structure"`
 
-	// A list of containers for the key value pair that defines the criteria for
+	// A list of containers for the key-value pair that defines the criteria for
 	// the filter rule.
 	FilterRules []FilterRule `locationName:"FilterRule" type:"list" flattened:"true"`
 }
@@ -5859,7 +5865,8 @@ func (s S3KeyFilter) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
-// Describes an S3 location that will receive the results of the restore request.
+// Describes an Amazon S3 location that will receive the results of the restore
+// request.
 type S3Location struct {
 	_ struct{} `type:"structure"`
 
@@ -5997,12 +6004,12 @@ func (s S3Location) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
-// Specifies the use of SSE-KMS to encrypt delivered Inventory reports.
+// Specifies the use of SSE-KMS to encrypt delivered inventory reports.
 type SSEKMS struct {
 	_ struct{} `locationName:"SSE-KMS" type:"structure"`
 
-	// Specifies the ID of the AWS Key Management Service (KMS) customer master
-	// key (CMK) to use for encrypting Inventory reports.
+	// Specifies the ID of the AWS Key Management Service (AWS KMS) customer master
+	// key (CMK) to use for encrypting inventory reports.
 	//
 	// KeyId is a required field
 	KeyId *string `type:"string" required:"true" sensitive:"true"`
@@ -6041,7 +6048,7 @@ func (s SSEKMS) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
-// Specifies the use of SSE-S3 to encrypt delivered Inventory reports.
+// Specifies the use of SSE-S3 to encrypt delivered inventory reports.
 type SSES3 struct {
 	_ struct{} `locationName:"SSE-S3" type:"structure"`
 }
@@ -6065,7 +6072,7 @@ type SelectParameters struct {
 	// Expression is a required field
 	Expression *string `type:"string" required:"true"`
 
-	// The type of the provided expression (e.g., SQL).
+	// The type of the provided expression (for example, SQL).
 	//
 	// ExpressionType is a required field
 	ExpressionType ExpressionType `type:"string" required:"true" enum:"true"`
@@ -6538,7 +6545,7 @@ func (s Tag) MarshalFields(e protocol.FieldEncoder) error {
 type Tagging struct {
 	_ struct{} `type:"structure"`
 
-	// A collection for a a set of tags
+	// A collection for a set of tags
 	//
 	// TagSet is a required field
 	TagSet []Tag `locationNameList:"Tag" type:"list" required:"true"`
@@ -6730,7 +6737,7 @@ func (s TopicConfiguration) MarshalFields(e protocol.FieldEncoder) error {
 
 // A container for specifying the configuration for publication of messages
 // to an Amazon Simple Notification Service (Amazon SNS) topic when Amazon S3
-// detects specified events. This data type is deperecated. Please use TopicConfiguration
+// detects specified events. This data type is deprecated. Use TopicConfiguration
 // instead.
 type TopicConfigurationDeprecated struct {
 	_ struct{} `type:"structure"`

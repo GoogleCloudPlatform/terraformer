@@ -15,16 +15,42 @@ type CancelStepsInput struct {
 
 	// The ClusterID for which specified steps will be canceled. Use RunJobFlow
 	// and ListClusters to get ClusterIDs.
-	ClusterId *string `type:"string"`
+	//
+	// ClusterId is a required field
+	ClusterId *string `type:"string" required:"true"`
+
+	// The option to choose for cancelling RUNNING steps. By default, the value
+	// is SEND_INTERRUPT.
+	StepCancellationOption StepCancellationOption `type:"string" enum:"true"`
 
 	// The list of StepIDs to cancel. Use ListSteps to get steps and their states
 	// for the specified cluster.
-	StepIds []string `type:"list"`
+	//
+	// StepIds is a required field
+	StepIds []string `type:"list" required:"true"`
 }
 
 // String returns the string representation
 func (s CancelStepsInput) String() string {
 	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *CancelStepsInput) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "CancelStepsInput"}
+
+	if s.ClusterId == nil {
+		invalidParams.Add(aws.NewErrParamRequired("ClusterId"))
+	}
+
+	if s.StepIds == nil {
+		invalidParams.Add(aws.NewErrParamRequired("StepIds"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
 }
 
 // The output for the CancelSteps operation.

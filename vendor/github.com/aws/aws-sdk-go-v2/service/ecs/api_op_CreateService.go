@@ -13,6 +13,30 @@ import (
 type CreateServiceInput struct {
 	_ struct{} `type:"structure"`
 
+	// The capacity provider strategy to use for the service.
+	//
+	// A capacity provider strategy consists of one or more capacity providers along
+	// with the base and weight to assign to them. A capacity provider must be associated
+	// with the cluster to be used in a capacity provider strategy. The PutClusterCapacityProviders
+	// API is used to associate a capacity provider with a cluster. Only capacity
+	// providers with an ACTIVE or UPDATING status can be used.
+	//
+	// If a capacityProviderStrategy is specified, the launchType parameter must
+	// be omitted. If no capacityProviderStrategy or launchType is specified, the
+	// defaultCapacityProviderStrategy for the cluster is used.
+	//
+	// If specifying a capacity provider that uses an Auto Scaling group, the capacity
+	// provider must already be created. New capacity providers can be created with
+	// the CreateCapacityProvider API operation.
+	//
+	// To use a AWS Fargate capacity provider, specify either the FARGATE or FARGATE_SPOT
+	// capacity providers. The AWS Fargate capacity providers are available to all
+	// accounts and only need to be associated with a cluster to be used.
+	//
+	// The PutClusterCapacityProviders API operation is used to update the list
+	// of available capacity providers for a cluster after the cluster is created.
+	CapacityProviderStrategy []CapacityProviderStrategyItem `locationName:"capacityProviderStrategy" type:"list"`
+
 	// Unique, case-sensitive identifier that you provide to ensure the idempotency
 	// of the request. Up to 32 ASCII characters are allowed.
 	ClientToken *string `locationName:"clientToken" type:"string"`
@@ -56,6 +80,9 @@ type CreateServiceInput struct {
 	// The launch type on which to run your service. For more information, see Amazon
 	// ECS Launch Types (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/launch_types.html)
 	// in the Amazon Elastic Container Service Developer Guide.
+	//
+	// If a launchType is specified, the capacityProviderStrategy parameter must
+	// be omitted.
 	LaunchType LaunchType `locationName:"launchType" type:"string" enum:"true"`
 
 	// A load balancer object representing the load balancers to use with your service.
@@ -147,9 +174,9 @@ type CreateServiceInput struct {
 	// role is used by default for your service unless you specify a role here.
 	// The service-linked role is required if your task definition uses the awsvpc
 	// network mode or if the service is configured to use service discovery, an
-	// external deployment controller, or multiple target groups in which case you
-	// should not specify a role here. For more information, see Using Service-Linked
-	// Roles for Amazon ECS (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using-service-linked-roles.html)
+	// external deployment controller, multiple target groups, or Elastic Inference
+	// accelerators in which case you should not specify a role here. For more information,
+	// see Using Service-Linked Roles for Amazon ECS (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using-service-linked-roles.html)
 	// in the Amazon Elastic Container Service Developer Guide.
 	//
 	// If your specified role has a path other than /, then you must either specify
@@ -245,6 +272,13 @@ func (s *CreateServiceInput) Validate() error {
 
 	if s.ServiceName == nil {
 		invalidParams.Add(aws.NewErrParamRequired("ServiceName"))
+	}
+	if s.CapacityProviderStrategy != nil {
+		for i, v := range s.CapacityProviderStrategy {
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "CapacityProviderStrategy", i), err.(aws.ErrInvalidParams))
+			}
+		}
 	}
 	if s.DeploymentController != nil {
 		if err := s.DeploymentController.Validate(); err != nil {

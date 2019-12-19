@@ -215,7 +215,7 @@ const opPublishLayerVersion = "PublishLayerVersion"
 //
 // Creates an AWS Lambda layer (https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html)
 // from a ZIP archive. Each time you call PublishLayerVersion with the same
-// version name, a new version is created.
+// layer name, a new version is created.
 //
 // Add layers to your function with CreateFunction or UpdateFunctionConfiguration.
 //

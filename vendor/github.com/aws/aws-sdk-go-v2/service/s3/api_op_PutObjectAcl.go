@@ -14,13 +14,21 @@ type PutObjectAclInput struct {
 	_ struct{} `type:"structure" payload:"AccessControlPolicy"`
 
 	// The canned ACL to apply to the object. For more information, see Canned ACL
-	// (https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL)
+	// (https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL).
 	ACL ObjectCannedACL `location:"header" locationName:"x-amz-acl" type:"string" enum:"true"`
 
 	// Contains the elements that set the ACL permissions for an object per grantee.
 	AccessControlPolicy *AccessControlPolicy `locationName:"AccessControlPolicy" type:"structure" xmlURI:"http://s3.amazonaws.com/doc/2006-03-01/"`
 
-	// The name of the bucket to which the ACL is being added.
+	// The bucket name that contains the object to which you want to attach the
+	// ACL.
+	//
+	// When using this API with an access point, you must direct requests to the
+	// access point hostname. The access point hostname takes the form AccessPointName-AccountId.s3-accesspoint.Region.amazonaws.com.
+	// When using this operation using an access point through the AWS SDKs, you
+	// provide the access point ARN in place of the bucket name. For more information
+	// about access point ARNs, see Using Access Points (https://docs.aws.amazon.com/AmazonS3/latest/dev/using-access-points.html)
+	// in the Amazon Simple Storage Service Developer Guide.
 	//
 	// Bucket is a required field
 	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
@@ -48,8 +56,9 @@ type PutObjectAclInput struct {
 
 	// Confirms that the requester knows that she or he will be charged for the
 	// request. Bucket owners need not specify this parameter in their requests.
-	// Documentation on downloading objects from requester pays buckets can be found
-	// at http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html
+	// For information about downloading objects from Requester Pays buckets, see
+	// Downloading Objects in Requestor Pays Buckets (https://docs.aws.amazon.com/http:/docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html)
+	// in the Amazon S3 Developer Guide.
 	RequestPayer RequestPayer `location:"header" locationName:"x-amz-request-payer" type:"string" enum:"true"`
 
 	// VersionId used to reference a specific version of the object.
@@ -195,14 +204,14 @@ const opPutObjectAcl = "PutObjectAcl"
 // PutObjectAclRequest returns a request value for making API operation for
 // Amazon Simple Storage Service.
 //
-// uses the acl subresource to set the access control list (ACL) permissions
+// Uses the acl subresource to set the access control list (ACL) permissions
 // for an object that already exists in a bucket. You must have WRITE_ACP permission
 // to set the ACL of an object.
 //
-// Depending on your application needs, you may choose to set the ACL on an
+// Depending on your application needs, you can choose to set the ACL on an
 // object using either the request body or the headers. For example, if you
 // have an existing application that updates a bucket ACL using the request
-// body, then you can continue to use that approach.
+// body, you can continue to use that approach.
 //
 // Access Permissions
 //
@@ -212,14 +221,14 @@ const opPutObjectAcl = "PutObjectAcl"
 //    a set of predefined ACLs, known as canned ACLs. Each canned ACL has a
 //    predefined set of grantees and permissions. Specify the canned ACL name
 //    as the value of x-amz-acl. If you use this header, you cannot use other
-//    access control specific headers in your request. For more information,
+//    access control-specific headers in your request. For more information,
 //    see Canned ACL (https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#CannedACL).
 //
 //    * Specify access permissions explicitly with the x-amz-grant-read, x-amz-grant-read-acp,
 //    x-amz-grant-write-acp, and x-amz-grant-full-control headers. When using
-//    these headers you specify explicit access permissions and grantees (AWS
-//    accounts or a Amazon S3 groups) who will receive the permission. If you
-//    use these ACL specific headers, you cannot use x-amz-acl header to set
+//    these headers, you specify explicit access permissions and grantees (AWS
+//    accounts or Amazon S3 groups) who will receive the permission. If you
+//    use these ACL-specific headers, you cannot use x-amz-acl header to set
 //    a canned ACL. These parameters map to the set of permissions that Amazon
 //    S3 supports in an ACL. For more information, see Access Control List (ACL)
 //    Overview (https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html).
@@ -246,7 +255,7 @@ const opPutObjectAcl = "PutObjectAcl"
 //
 //    * By the person's ID: <Grantee xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 //    xsi:type="CanonicalUser"><ID><>ID<></ID><DisplayName><>GranteesEmail<></DisplayName>
-//    </Grantee> DisplayName is optional and ignored in the request
+//    </Grantee> DisplayName is optional and ignored in the request.
 //
 //    * By URI: <Grantee xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 //    xsi:type="Group"><URI><>http://acs.amazonaws.com/groups/global/AuthenticatedUsers<></URI></Grantee>

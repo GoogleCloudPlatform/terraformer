@@ -156,17 +156,25 @@ const (
 	// ErrCodeExpiredImportTokenException for service response error code
 	// "ExpiredImportTokenException".
 	//
-	// The request was rejected because the provided import token is expired. Use
+	// The request was rejected because the specified import token is expired. Use
 	// GetParametersForImport to get a new import token and public key, use the
 	// new public key to encrypt the key material, and then try the request again.
 	ErrCodeExpiredImportTokenException = "ExpiredImportTokenException"
 
+	// ErrCodeIncorrectKeyException for service response error code
+	// "IncorrectKeyException".
+	//
+	// The request was rejected because the specified CMK cannot decrypt the data.
+	// The KeyId in a Decrypt request and the SourceKeyId in a ReEncrypt request
+	// must identify the same CMK that was used to encrypt the ciphertext.
+	ErrCodeIncorrectKeyException = "IncorrectKeyException"
+
 	// ErrCodeIncorrectKeyMaterialException for service response error code
 	// "IncorrectKeyMaterialException".
 	//
-	// The request was rejected because the provided key material is invalid or
-	// is not the same key material that was previously imported into this customer
-	// master key (CMK).
+	// The request was rejected because the key material in the request is, expired,
+	// invalid, or is not the same key material that was previously imported into
+	// this customer master key (CMK).
 	ErrCodeIncorrectKeyMaterialException = "IncorrectKeyMaterialException"
 
 	// ErrCodeIncorrectTrustAnchorException for service response error code
@@ -196,9 +204,13 @@ const (
 	// ErrCodeInvalidCiphertextException for service response error code
 	// "InvalidCiphertextException".
 	//
-	// The request was rejected because the specified ciphertext, or additional
-	// authenticated data incorporated into the ciphertext, such as the encryption
-	// context, is corrupted, missing, or otherwise invalid.
+	// From the Decrypt or ReEncrypt operation, the request was rejected because
+	// the specified ciphertext, or additional authenticated data incorporated into
+	// the ciphertext, such as the encryption context, is corrupted, missing, or
+	// otherwise invalid.
+	//
+	// From the ImportKeyMaterial operation, the request was rejected because AWS
+	// KMS could not decrypt the encrypted (wrapped) key material.
 	ErrCodeInvalidCiphertextException = "InvalidCiphertextException"
 
 	// ErrCodeInvalidGrantIdException for service response error code
@@ -223,7 +235,19 @@ const (
 	// ErrCodeInvalidKeyUsageException for service response error code
 	// "InvalidKeyUsageException".
 	//
-	// The request was rejected because the specified KeySpec value is not valid.
+	// The request was rejected for one of the following reasons:
+	//
+	//    * The KeyUsage value of the CMK is incompatible with the API operation.
+	//
+	//    * The encryption algorithm or signing algorithm specified for the operation
+	//    is incompatible with the type of key material in the CMK (CustomerMasterKeySpec).
+	//
+	// For encrypting, decrypting, re-encrypting, and generating data keys, the
+	// KeyUsage must be ENCRYPT_DECRYPT. For signing and verifying, the KeyUsage
+	// must be SIGN_VERIFY. To find the KeyUsage of a CMK, use the DescribeKey operation.
+	//
+	// To find the encryption or signing algorithms supported for a particular CMK,
+	// use the DescribeKey operation.
 	ErrCodeInvalidKeyUsageException = "InvalidKeyUsageException"
 
 	// ErrCodeInvalidMarkerException for service response error code
@@ -240,6 +264,14 @@ const (
 	// can be retried.
 	ErrCodeKMSInternalException = "KMSInternalException"
 
+	// ErrCodeKMSInvalidSignatureException for service response error code
+	// "KMSInvalidSignatureException".
+	//
+	// The request was rejected because the signature verification failed. Signature
+	// verification fails when it cannot confirm that signature was produced by
+	// signing the specified message with the specified CMK and signing algorithm.
+	ErrCodeKMSInvalidSignatureException = "KMSInvalidSignatureException"
+
 	// ErrCodeKMSInvalidStateException for service response error code
 	// "KMSInvalidStateException".
 	//
@@ -248,14 +280,14 @@ const (
 	//
 	// For more information about how key state affects the use of a CMK, see How
 	// Key State Affects Use of a Customer Master Key (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
-	// in the AWS Key Management Service Developer Guide.
+	// in the AWS Key Management Service Developer Guide .
 	ErrCodeKMSInvalidStateException = "KMSInvalidStateException"
 
 	// ErrCodeKeyUnavailableException for service response error code
 	// "KeyUnavailableException".
 	//
-	// The request was rejected because the specified CMK was not available. The
-	// request can be retried.
+	// The request was rejected because the specified CMK was not available. You
+	// can retry the request.
 	ErrCodeKeyUnavailableException = "KeyUnavailableException"
 
 	// ErrCodeLimitExceededException for service response error code

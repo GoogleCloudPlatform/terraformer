@@ -62,7 +62,7 @@ func (client VirtualRoutersClient) CreateOrUpdate(ctx context.Context, resourceG
 			Constraints: []validation.Constraint{{Target: "parameters.VirtualRouterPropertiesFormat", Name: validation.Null, Rule: false,
 				Chain: []validation.Constraint{{Target: "parameters.VirtualRouterPropertiesFormat.VirtualRouterAsn", Name: validation.Null, Rule: false,
 					Chain: []validation.Constraint{{Target: "parameters.VirtualRouterPropertiesFormat.VirtualRouterAsn", Name: validation.InclusiveMaximum, Rule: int64(4294967295), Chain: nil},
-						{Target: "parameters.VirtualRouterPropertiesFormat.VirtualRouterAsn", Name: validation.InclusiveMinimum, Rule: 1, Chain: nil},
+						{Target: "parameters.VirtualRouterPropertiesFormat.VirtualRouterAsn", Name: validation.InclusiveMinimum, Rule: int64(1), Chain: nil},
 					}},
 				}}}}}); err != nil {
 		return result, validation.NewError("network.VirtualRoutersClient", "CreateOrUpdate", err.Error())

@@ -14,7 +14,9 @@ import (
 type EnableKeyRotationInput struct {
 	_ struct{} `type:"structure"`
 
-	// A unique identifier for the customer master key (CMK).
+	// Identifies a symmetric customer master key (CMK). You cannot enable automatic
+	// rotation of asymmetric CMKs, CMKs with imported key material, or CMKs in
+	// a custom key store (https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html).
 	//
 	// Specify the key ID or the Amazon Resource Name (ARN) of the CMK.
 	//
@@ -67,14 +69,14 @@ const opEnableKeyRotation = "EnableKeyRotation"
 // AWS Key Management Service.
 //
 // Enables automatic rotation of the key material (https://docs.aws.amazon.com/kms/latest/developerguide/rotate-keys.html)
-// for the specified customer master key (CMK). You cannot perform this operation
-// on a CMK in a different AWS account.
+// for the specified symmetric customer master key (CMK). You cannot perform
+// this operation on a CMK in a different AWS account.
 //
-// You cannot enable automatic rotation of CMKs with imported key material or
-// CMKs in a custom key store (https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html).
+// You cannot enable automatic rotation of asymmetric CMKs, CMKs with imported
+// key material, or CMKs in a custom key store (https://docs.aws.amazon.com/kms/latest/developerguide/custom-key-store-overview.html).
 //
-// The result of this operation varies with the key state of the CMK. For details,
-// see How Key State Affects Use of a Customer Master Key (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+// The CMK that you use for this operation must be in a compatible key state.
+// For details, see How Key State Affects Use of a Customer Master Key (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
 // in the AWS Key Management Service Developer Guide.
 //
 //    // Example sending a request using EnableKeyRotationRequest.

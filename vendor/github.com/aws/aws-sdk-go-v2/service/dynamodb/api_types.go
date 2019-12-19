@@ -13,6 +13,33 @@ import (
 var _ aws.Config
 var _ = awsutil.Prettify
 
+// Contains details of a table archival operation.
+type ArchivalSummary struct {
+	_ struct{} `type:"structure"`
+
+	// The Amazon Resource Name (ARN) of the backup the table was archived to, when
+	// applicable in the archival reason. If you wish to restore this backup to
+	// the same table name, you will need to delete the original table.
+	ArchivalBackupArn *string `min:"37" type:"string"`
+
+	// The date and time when table archival was initiated by DynamoDB, in UNIX
+	// epoch time format.
+	ArchivalDateTime *time.Time `type:"timestamp"`
+
+	// The reason DynamoDB archived the table. Currently, the only possible value
+	// is:
+	//
+	//    * INACCESSIBLE_ENCRYPTION_CREDENTIALS - The table was archived due to
+	//    the table's AWS KMS key being inaccessible for more than seven days. An
+	//    On-Demand backup was created at the archival time.
+	ArchivalReason *string `type:"string"`
+}
+
+// String returns the string representation
+func (s ArchivalSummary) String() string {
+	return awsutil.Prettify(s)
+}
+
 // Represents an attribute for describing the key schema for the table and indexes.
 type AttributeDefinition struct {
 	_ struct{} `type:"structure"`
@@ -916,6 +943,26 @@ func (s ContinuousBackupsDescription) String() string {
 	return awsutil.Prettify(s)
 }
 
+// Represents a Contributor Insights summary entry..
+type ContributorInsightsSummary struct {
+	_ struct{} `type:"structure"`
+
+	// Describes the current status for contributor insights for the given table
+	// and index, if applicable.
+	ContributorInsightsStatus ContributorInsightsStatus `type:"string" enum:"true"`
+
+	// Name of the index associated with the summary, if any.
+	IndexName *string `min:"3" type:"string"`
+
+	// Name of the table associated with the summary.
+	TableName *string `min:"3" type:"string"`
+}
+
+// String returns the string representation
+func (s ContributorInsightsSummary) String() string {
+	return awsutil.Prettify(s)
+}
+
 // Represents a new global secondary index to be added to an existing table.
 type CreateGlobalSecondaryIndexAction struct {
 	_ struct{} `type:"structure"`
@@ -1017,6 +1064,63 @@ func (s *CreateReplicaAction) Validate() error {
 
 	if s.RegionName == nil {
 		invalidParams.Add(aws.NewErrParamRequired("RegionName"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// Represents a replica to be created.
+type CreateReplicationGroupMemberAction struct {
+	_ struct{} `type:"structure"`
+
+	// Replica-specific global secondary index settings.
+	GlobalSecondaryIndexes []ReplicaGlobalSecondaryIndex `min:"1" type:"list"`
+
+	// The AWS KMS customer master key (CMK) that should be used for AWS KMS encryption
+	// in the new replica. To specify a CMK, use its key ID, Amazon Resource Name
+	// (ARN), alias name, or alias ARN. Note that you should only provide this parameter
+	// if the key is different from the default DynamoDB KMS master key alias/aws/dynamodb.
+	KMSMasterKeyId *string `type:"string"`
+
+	// Replica-specific provisioned throughput. If not specified, uses the source
+	// table's provisioned throughput settings.
+	ProvisionedThroughputOverride *ProvisionedThroughputOverride `type:"structure"`
+
+	// The Region where the new replica will be created.
+	//
+	// RegionName is a required field
+	RegionName *string `type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s CreateReplicationGroupMemberAction) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *CreateReplicationGroupMemberAction) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "CreateReplicationGroupMemberAction"}
+	if s.GlobalSecondaryIndexes != nil && len(s.GlobalSecondaryIndexes) < 1 {
+		invalidParams.Add(aws.NewErrParamMinLen("GlobalSecondaryIndexes", 1))
+	}
+
+	if s.RegionName == nil {
+		invalidParams.Add(aws.NewErrParamRequired("RegionName"))
+	}
+	if s.GlobalSecondaryIndexes != nil {
+		for i, v := range s.GlobalSecondaryIndexes {
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "GlobalSecondaryIndexes", i), err.(aws.ErrInvalidParams))
+			}
+		}
+	}
+	if s.ProvisionedThroughputOverride != nil {
+		if err := s.ProvisionedThroughputOverride.Validate(); err != nil {
+			invalidParams.AddNested("ProvisionedThroughputOverride", err.(aws.ErrInvalidParams))
+		}
 	}
 
 	if invalidParams.Len() > 0 {
@@ -1131,6 +1235,35 @@ func (s DeleteReplicaAction) String() string {
 // Validate inspects the fields of the type to determine if they are valid.
 func (s *DeleteReplicaAction) Validate() error {
 	invalidParams := aws.ErrInvalidParams{Context: "DeleteReplicaAction"}
+
+	if s.RegionName == nil {
+		invalidParams.Add(aws.NewErrParamRequired("RegionName"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// Represents a replica to be deleted.
+type DeleteReplicationGroupMemberAction struct {
+	_ struct{} `type:"structure"`
+
+	// The Region where the replica exists.
+	//
+	// RegionName is a required field
+	RegionName *string `type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s DeleteReplicationGroupMemberAction) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *DeleteReplicationGroupMemberAction) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "DeleteReplicationGroupMemberAction"}
 
 	if s.RegionName == nil {
 		invalidParams.Add(aws.NewErrParamRequired("RegionName"))
@@ -1370,6 +1503,22 @@ func (s ExpectedAttributeValue) String() string {
 	return awsutil.Prettify(s)
 }
 
+// Represents a failure a contributor insights operation.
+type FailureException struct {
+	_ struct{} `type:"structure"`
+
+	// Description of the failure.
+	ExceptionDescription *string `type:"string"`
+
+	// Exception name.
+	ExceptionName *string `type:"string"`
+}
+
+// String returns the string representation
+func (s FailureException) String() string {
+	return awsutil.Prettify(s)
+}
+
 // Specifies an item and related attribute values to retrieve in a TransactGetItem
 // object.
 type Get struct {
@@ -1510,6 +1659,42 @@ func (s *GlobalSecondaryIndex) Validate() error {
 	if s.ProvisionedThroughput != nil {
 		if err := s.ProvisionedThroughput.Validate(); err != nil {
 			invalidParams.AddNested("ProvisionedThroughput", err.(aws.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// Represents the auto scaling settings of a global secondary index for a global
+// table that will be modified.
+type GlobalSecondaryIndexAutoScalingUpdate struct {
+	_ struct{} `type:"structure"`
+
+	// The name of the global secondary index.
+	IndexName *string `min:"3" type:"string"`
+
+	// Represents the auto scaling settings to be modified for a global table or
+	// global secondary index.
+	ProvisionedWriteCapacityAutoScalingUpdate *AutoScalingSettingsUpdate `type:"structure"`
+}
+
+// String returns the string representation
+func (s GlobalSecondaryIndexAutoScalingUpdate) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *GlobalSecondaryIndexAutoScalingUpdate) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "GlobalSecondaryIndexAutoScalingUpdate"}
+	if s.IndexName != nil && len(*s.IndexName) < 3 {
+		invalidParams.Add(aws.NewErrParamMinLen("IndexName", 3))
+	}
+	if s.ProvisionedWriteCapacityAutoScalingUpdate != nil {
+		if err := s.ProvisionedWriteCapacityAutoScalingUpdate.Validate(); err != nil {
+			invalidParams.AddNested("ProvisionedWriteCapacityAutoScalingUpdate", err.(aws.ErrInvalidParams))
 		}
 	}
 
@@ -2363,6 +2548,34 @@ func (s ProvisionedThroughputDescription) String() string {
 	return awsutil.Prettify(s)
 }
 
+// Replica-specific provisioned throughput settings. If not specified, uses
+// the source table's provisioned throughput settings.
+type ProvisionedThroughputOverride struct {
+	_ struct{} `type:"structure"`
+
+	// Replica-specific read capacity units. If not specified, uses the source table's
+	// read capacity settings.
+	ReadCapacityUnits *int64 `min:"1" type:"long"`
+}
+
+// String returns the string representation
+func (s ProvisionedThroughputOverride) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *ProvisionedThroughputOverride) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "ProvisionedThroughputOverride"}
+	if s.ReadCapacityUnits != nil && *s.ReadCapacityUnits < 1 {
+		invalidParams.Add(aws.NewErrParamMinValue("ReadCapacityUnits", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
 // Represents a request to perform a PutItem operation.
 type Put struct {
 	_ struct{} `type:"structure"`
@@ -2454,16 +2667,255 @@ func (s Replica) String() string {
 	return awsutil.Prettify(s)
 }
 
+// Represents the auto scaling settings of the replica.
+type ReplicaAutoScalingDescription struct {
+	_ struct{} `type:"structure"`
+
+	// Replica-specific global secondary index auto scaling settings.
+	GlobalSecondaryIndexes []ReplicaGlobalSecondaryIndexAutoScalingDescription `type:"list"`
+
+	// The Region where the replica exists.
+	RegionName *string `type:"string"`
+
+	// Represents the auto scaling settings for a global table or global secondary
+	// index.
+	ReplicaProvisionedReadCapacityAutoScalingSettings *AutoScalingSettingsDescription `type:"structure"`
+
+	// Represents the auto scaling settings for a global table or global secondary
+	// index.
+	ReplicaProvisionedWriteCapacityAutoScalingSettings *AutoScalingSettingsDescription `type:"structure"`
+
+	// The current state of the replica:
+	//
+	//    * CREATING - The replica is being created.
+	//
+	//    * UPDATING - The replica is being updated.
+	//
+	//    * DELETING - The replica is being deleted.
+	//
+	//    * ACTIVE - The replica is ready for use.
+	ReplicaStatus ReplicaStatus `type:"string" enum:"true"`
+}
+
+// String returns the string representation
+func (s ReplicaAutoScalingDescription) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Represents the auto scaling settings of a replica that will be modified.
+type ReplicaAutoScalingUpdate struct {
+	_ struct{} `type:"structure"`
+
+	// The Region where the replica exists.
+	//
+	// RegionName is a required field
+	RegionName *string `type:"string" required:"true"`
+
+	// Represents the auto scaling settings of global secondary indexes that will
+	// be modified.
+	ReplicaGlobalSecondaryIndexUpdates []ReplicaGlobalSecondaryIndexAutoScalingUpdate `type:"list"`
+
+	// Represents the auto scaling settings to be modified for a global table or
+	// global secondary index.
+	ReplicaProvisionedReadCapacityAutoScalingUpdate *AutoScalingSettingsUpdate `type:"structure"`
+}
+
+// String returns the string representation
+func (s ReplicaAutoScalingUpdate) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *ReplicaAutoScalingUpdate) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "ReplicaAutoScalingUpdate"}
+
+	if s.RegionName == nil {
+		invalidParams.Add(aws.NewErrParamRequired("RegionName"))
+	}
+	if s.ReplicaGlobalSecondaryIndexUpdates != nil {
+		for i, v := range s.ReplicaGlobalSecondaryIndexUpdates {
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "ReplicaGlobalSecondaryIndexUpdates", i), err.(aws.ErrInvalidParams))
+			}
+		}
+	}
+	if s.ReplicaProvisionedReadCapacityAutoScalingUpdate != nil {
+		if err := s.ReplicaProvisionedReadCapacityAutoScalingUpdate.Validate(); err != nil {
+			invalidParams.AddNested("ReplicaProvisionedReadCapacityAutoScalingUpdate", err.(aws.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
 // Contains the details of the replica.
 type ReplicaDescription struct {
 	_ struct{} `type:"structure"`
 
+	// Replica-specific global secondary index settings.
+	GlobalSecondaryIndexes []ReplicaGlobalSecondaryIndexDescription `type:"list"`
+
+	// The AWS KMS customer master key (CMK) of the replica that will be used for
+	// AWS KMS encryption.
+	KMSMasterKeyId *string `type:"string"`
+
+	// Replica-specific provisioned throughput. If not described, uses the source
+	// table's provisioned throughput settings.
+	ProvisionedThroughputOverride *ProvisionedThroughputOverride `type:"structure"`
+
 	// The name of the Region.
 	RegionName *string `type:"string"`
+
+	// The current state of the replica:
+	//
+	//    * CREATING - The replica is being created.
+	//
+	//    * UPDATING - The replica is being updated.
+	//
+	//    * DELETING - The replica is being deleted.
+	//
+	//    * ACTIVE - The replica is ready for use.
+	ReplicaStatus ReplicaStatus `type:"string" enum:"true"`
+
+	// Detailed information about the replica status.
+	ReplicaStatusDescription *string `type:"string"`
+
+	// Specifies the progress of a Create, Update, or Delete action on the replica
+	// as a percentage.
+	ReplicaStatusPercentProgress *string `type:"string"`
 }
 
 // String returns the string representation
 func (s ReplicaDescription) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Represents the properties of a replica global secondary index.
+type ReplicaGlobalSecondaryIndex struct {
+	_ struct{} `type:"structure"`
+
+	// The name of the global secondary index.
+	//
+	// IndexName is a required field
+	IndexName *string `min:"3" type:"string" required:"true"`
+
+	// Replica table GSI-specific provisioned throughput. If not specified, uses
+	// the source table GSI's read capacity settings.
+	ProvisionedThroughputOverride *ProvisionedThroughputOverride `type:"structure"`
+}
+
+// String returns the string representation
+func (s ReplicaGlobalSecondaryIndex) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *ReplicaGlobalSecondaryIndex) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "ReplicaGlobalSecondaryIndex"}
+
+	if s.IndexName == nil {
+		invalidParams.Add(aws.NewErrParamRequired("IndexName"))
+	}
+	if s.IndexName != nil && len(*s.IndexName) < 3 {
+		invalidParams.Add(aws.NewErrParamMinLen("IndexName", 3))
+	}
+	if s.ProvisionedThroughputOverride != nil {
+		if err := s.ProvisionedThroughputOverride.Validate(); err != nil {
+			invalidParams.AddNested("ProvisionedThroughputOverride", err.(aws.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// Represents the auto scaling configuration for a replica global secondary
+// index.
+type ReplicaGlobalSecondaryIndexAutoScalingDescription struct {
+	_ struct{} `type:"structure"`
+
+	// The name of the global secondary index.
+	IndexName *string `min:"3" type:"string"`
+
+	// The current state of the replica global secondary index:
+	//
+	//    * CREATING - The index is being created.
+	//
+	//    * UPDATING - The index is being updated.
+	//
+	//    * DELETING - The index is being deleted.
+	//
+	//    * ACTIVE - The index is ready for use.
+	IndexStatus IndexStatus `type:"string" enum:"true"`
+
+	// Represents the auto scaling settings for a global table or global secondary
+	// index.
+	ProvisionedReadCapacityAutoScalingSettings *AutoScalingSettingsDescription `type:"structure"`
+
+	// Represents the auto scaling settings for a global table or global secondary
+	// index.
+	ProvisionedWriteCapacityAutoScalingSettings *AutoScalingSettingsDescription `type:"structure"`
+}
+
+// String returns the string representation
+func (s ReplicaGlobalSecondaryIndexAutoScalingDescription) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Represents the auto scaling settings of a global secondary index for a replica
+// that will be modified.
+type ReplicaGlobalSecondaryIndexAutoScalingUpdate struct {
+	_ struct{} `type:"structure"`
+
+	// The name of the global secondary index.
+	IndexName *string `min:"3" type:"string"`
+
+	// Represents the auto scaling settings to be modified for a global table or
+	// global secondary index.
+	ProvisionedReadCapacityAutoScalingUpdate *AutoScalingSettingsUpdate `type:"structure"`
+}
+
+// String returns the string representation
+func (s ReplicaGlobalSecondaryIndexAutoScalingUpdate) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *ReplicaGlobalSecondaryIndexAutoScalingUpdate) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "ReplicaGlobalSecondaryIndexAutoScalingUpdate"}
+	if s.IndexName != nil && len(*s.IndexName) < 3 {
+		invalidParams.Add(aws.NewErrParamMinLen("IndexName", 3))
+	}
+	if s.ProvisionedReadCapacityAutoScalingUpdate != nil {
+		if err := s.ProvisionedReadCapacityAutoScalingUpdate.Validate(); err != nil {
+			invalidParams.AddNested("ProvisionedReadCapacityAutoScalingUpdate", err.(aws.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// Represents the properties of a replica global secondary index.
+type ReplicaGlobalSecondaryIndexDescription struct {
+	_ struct{} `type:"structure"`
+
+	// The name of the global secondary index.
+	IndexName *string `min:"3" type:"string"`
+
+	// If not described, uses the source table GSI's read capacity settings.
+	ProvisionedThroughputOverride *ProvisionedThroughputOverride `type:"structure"`
+}
+
+// String returns the string representation
+func (s ReplicaGlobalSecondaryIndexDescription) String() string {
 	return awsutil.Prettify(s)
 }
 
@@ -2713,6 +3165,61 @@ func (s *ReplicaUpdate) Validate() error {
 	return nil
 }
 
+// Represents one of the following:
+//
+//    * A new replica to be added to an existing regional table or global table.
+//    This request invokes the CreateTableReplica action in the destination
+//    Region.
+//
+//    * New parameters for an existing replica. This request invokes the UpdateTable
+//    action in the destination Region.
+//
+//    * An existing replica to be deleted. The request invokes the DeleteTableReplica
+//    action in the destination Region, deleting the replica and all if its
+//    items in the destination Region.
+type ReplicationGroupUpdate struct {
+	_ struct{} `type:"structure"`
+
+	// The parameters required for creating a replica for the table.
+	Create *CreateReplicationGroupMemberAction `type:"structure"`
+
+	// The parameters required for deleting a replica for the table.
+	Delete *DeleteReplicationGroupMemberAction `type:"structure"`
+
+	// The parameters required for updating a replica for the table.
+	Update *UpdateReplicationGroupMemberAction `type:"structure"`
+}
+
+// String returns the string representation
+func (s ReplicationGroupUpdate) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *ReplicationGroupUpdate) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "ReplicationGroupUpdate"}
+	if s.Create != nil {
+		if err := s.Create.Validate(); err != nil {
+			invalidParams.AddNested("Create", err.(aws.ErrInvalidParams))
+		}
+	}
+	if s.Delete != nil {
+		if err := s.Delete.Validate(); err != nil {
+			invalidParams.AddNested("Delete", err.(aws.ErrInvalidParams))
+		}
+	}
+	if s.Update != nil {
+		if err := s.Update.Validate(); err != nil {
+			invalidParams.AddNested("Update", err.(aws.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
 // Contains details for the restore.
 type RestoreSummary struct {
 	_ struct{} `type:"structure"`
@@ -2743,7 +3250,14 @@ func (s RestoreSummary) String() string {
 type SSEDescription struct {
 	_ struct{} `type:"structure"`
 
-	// The KMS customer master key (CMK) ARN used for the AWS KMS encryption.
+	// Indicates the time, in UNIX epoch date format, when DynamoDB detected that
+	// the table's AWS KMS key was inaccessible. This attribute will automatically
+	// be cleared when DynamoDB detects that the table's AWS KMS key is accessible
+	// again. DynamoDB will initiate the table archival process when table's AWS
+	// KMS key remains inaccessible for more than seven days from this date.
+	InaccessibleEncryptionDateTime *time.Time `type:"timestamp"`
+
+	// The AWS KMS customer master key (CMK) ARN used for the AWS KMS encryption.
 	KMSMasterKeyArn *string `type:"string"`
 
 	// Server-side encryption type. The only supported value is:
@@ -2777,10 +3291,10 @@ type SSESpecification struct {
 	// (false) or not specified, server-side encryption is set to AWS owned CMK.
 	Enabled *bool `type:"boolean"`
 
-	// The KMS customer master key (CMK) that should be used for the AWS KMS encryption.
-	// To specify a CMK, use its key ID, Amazon Resource Name (ARN), alias name,
-	// or alias ARN. Note that you should only provide this parameter if the key
-	// is different from the default DynamoDB customer master key alias/aws/dynamodb.
+	// The AWS KMS customer master key (CMK) that should be used for the AWS KMS
+	// encryption. To specify a CMK, use its key ID, Amazon Resource Name (ARN),
+	// alias name, or alias ARN. Note that you should only provide this parameter
+	// if the key is different from the default DynamoDB customer master key alias/aws/dynamodb.
 	KMSMasterKeyId *string `type:"string"`
 
 	// Server-side encryption type. The only supported value is:
@@ -2887,7 +3401,9 @@ type StreamSpecification struct {
 
 	// Indicates whether DynamoDB Streams is enabled (true) or disabled (false)
 	// on the table.
-	StreamEnabled *bool `type:"boolean"`
+	//
+	// StreamEnabled is a required field
+	StreamEnabled *bool `type:"boolean" required:"true"`
 
 	// When an item in the table is modified, StreamViewType determines what information
 	// is written to the stream for this table. Valid values for StreamViewType
@@ -2912,9 +3428,53 @@ func (s StreamSpecification) String() string {
 	return awsutil.Prettify(s)
 }
 
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *StreamSpecification) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "StreamSpecification"}
+
+	if s.StreamEnabled == nil {
+		invalidParams.Add(aws.NewErrParamRequired("StreamEnabled"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// Represents the auto scaling configuration for a global table.
+type TableAutoScalingDescription struct {
+	_ struct{} `type:"structure"`
+
+	// Represents replicas of the global table.
+	Replicas []ReplicaAutoScalingDescription `type:"list"`
+
+	// The name of the table.
+	TableName *string `min:"3" type:"string"`
+
+	// The current state of the table:
+	//
+	//    * CREATING - The table is being created.
+	//
+	//    * UPDATING - The table is being updated.
+	//
+	//    * DELETING - The table is being deleted.
+	//
+	//    * ACTIVE - The table is ready for use.
+	TableStatus TableStatus `type:"string" enum:"true"`
+}
+
+// String returns the string representation
+func (s TableAutoScalingDescription) String() string {
+	return awsutil.Prettify(s)
+}
+
 // Represents the properties of a table.
 type TableDescription struct {
 	_ struct{} `type:"structure"`
+
+	// Contains information about the table archive.
+	ArchivalSummary *ArchivalSummary `type:"structure"`
 
 	// An array of AttributeDefinition objects. Each of these objects describes
 	// one attribute in the table and index key schema.
@@ -2986,6 +3546,10 @@ type TableDescription struct {
 	// If the table is in the DELETING state, no information about indexes will
 	// be returned.
 	GlobalSecondaryIndexes []GlobalSecondaryIndexDescription `type:"list"`
+
+	// Represents the version of global tables (https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GlobalTables.html)
+	// in use, if the table is replicated across AWS Regions.
+	GlobalTableVersion *string `type:"string"`
 
 	// The number of items in the specified table. DynamoDB updates this value approximately
 	// every six hours. Recent changes might not be reflected in this value.
@@ -3068,6 +3632,9 @@ type TableDescription struct {
 	// write capacity units, along with data about increases and decreases.
 	ProvisionedThroughput *ProvisionedThroughputDescription `type:"structure"`
 
+	// Represents replicas of the table.
+	Replicas []ReplicaDescription `type:"list"`
+
 	// Contains details for the restore.
 	RestoreSummary *RestoreSummary `type:"structure"`
 
@@ -3100,6 +3667,17 @@ type TableDescription struct {
 	//    * DELETING - The table is being deleted.
 	//
 	//    * ACTIVE - The table is ready for use.
+	//
+	//    * INACCESSIBLE_ENCRYPTION_CREDENTIALS - The AWS KMS key used to encrypt
+	//    the table in inaccessible. Table operations may fail due to failure to
+	//    use the AWS KMS key. DynamoDB will initiate the table archival process
+	//    when a table's AWS KMS key remains inaccessible for more than seven days.
+	//
+	//    * ARCHIVING - The table is being archived. Operations are not allowed
+	//    until archival is complete.
+	//
+	//    * ARCHIVED - The table has been archived. See the ArchivalReason for more
+	//    information.
 	TableStatus TableStatus `type:"string" enum:"true"`
 }
 
@@ -3418,6 +3996,64 @@ func (s *UpdateGlobalSecondaryIndexAction) Validate() error {
 	if s.ProvisionedThroughput != nil {
 		if err := s.ProvisionedThroughput.Validate(); err != nil {
 			invalidParams.AddNested("ProvisionedThroughput", err.(aws.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// Represents a replica to be modified.
+type UpdateReplicationGroupMemberAction struct {
+	_ struct{} `type:"structure"`
+
+	// Replica-specific global secondary index settings.
+	GlobalSecondaryIndexes []ReplicaGlobalSecondaryIndex `min:"1" type:"list"`
+
+	// The AWS KMS customer master key (CMK) of the replica that should be used
+	// for AWS KMS encryption. To specify a CMK, use its key ID, Amazon Resource
+	// Name (ARN), alias name, or alias ARN. Note that you should only provide this
+	// parameter if the key is different from the default DynamoDB KMS master key
+	// alias/aws/dynamodb.
+	KMSMasterKeyId *string `type:"string"`
+
+	// Replica-specific provisioned throughput. If not specified, uses the source
+	// table's provisioned throughput settings.
+	ProvisionedThroughputOverride *ProvisionedThroughputOverride `type:"structure"`
+
+	// The Region where the replica exists.
+	//
+	// RegionName is a required field
+	RegionName *string `type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s UpdateReplicationGroupMemberAction) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *UpdateReplicationGroupMemberAction) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "UpdateReplicationGroupMemberAction"}
+	if s.GlobalSecondaryIndexes != nil && len(s.GlobalSecondaryIndexes) < 1 {
+		invalidParams.Add(aws.NewErrParamMinLen("GlobalSecondaryIndexes", 1))
+	}
+
+	if s.RegionName == nil {
+		invalidParams.Add(aws.NewErrParamRequired("RegionName"))
+	}
+	if s.GlobalSecondaryIndexes != nil {
+		for i, v := range s.GlobalSecondaryIndexes {
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "GlobalSecondaryIndexes", i), err.(aws.ErrInvalidParams))
+			}
+		}
+	}
+	if s.ProvisionedThroughputOverride != nil {
+		if err := s.ProvisionedThroughputOverride.Validate(); err != nil {
+			invalidParams.AddNested("ProvisionedThroughputOverride", err.(aws.ErrInvalidParams))
 		}
 	}
 

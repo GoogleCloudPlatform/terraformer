@@ -40,12 +40,46 @@ func (enum AssignPublicIp) MarshalValueBuf(b []byte) ([]byte, error) {
 	return append(b, enum...), nil
 }
 
+type CapacityProviderField string
+
+// Enum values for CapacityProviderField
+const (
+	CapacityProviderFieldTags CapacityProviderField = "TAGS"
+)
+
+func (enum CapacityProviderField) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum CapacityProviderField) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type CapacityProviderStatus string
+
+// Enum values for CapacityProviderStatus
+const (
+	CapacityProviderStatusActive CapacityProviderStatus = "ACTIVE"
+)
+
+func (enum CapacityProviderStatus) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum CapacityProviderStatus) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
 type ClusterField string
 
 // Enum values for ClusterField
 const (
-	ClusterFieldStatistics ClusterField = "STATISTICS"
-	ClusterFieldTags       ClusterField = "TAGS"
+	ClusterFieldAttachments ClusterField = "ATTACHMENTS"
+	ClusterFieldSettings    ClusterField = "SETTINGS"
+	ClusterFieldStatistics  ClusterField = "STATISTICS"
+	ClusterFieldTags        ClusterField = "TAGS"
 )
 
 func (enum ClusterField) MarshalValue() (string, error) {
@@ -305,6 +339,40 @@ func (enum LogDriver) MarshalValue() (string, error) {
 }
 
 func (enum LogDriver) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type ManagedScalingStatus string
+
+// Enum values for ManagedScalingStatus
+const (
+	ManagedScalingStatusEnabled  ManagedScalingStatus = "ENABLED"
+	ManagedScalingStatusDisabled ManagedScalingStatus = "DISABLED"
+)
+
+func (enum ManagedScalingStatus) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum ManagedScalingStatus) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type ManagedTerminationProtection string
+
+// Enum values for ManagedTerminationProtection
+const (
+	ManagedTerminationProtectionEnabled  ManagedTerminationProtection = "ENABLED"
+	ManagedTerminationProtectionDisabled ManagedTerminationProtection = "DISABLED"
+)
+
+func (enum ManagedTerminationProtection) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum ManagedTerminationProtection) MarshalValueBuf(b []byte) ([]byte, error) {
 	b = b[0:0]
 	return append(b, enum...), nil
 }

@@ -17,21 +17,25 @@ package vpc
 
 // NatGateway is a nested struct in vpc response
 type NatGateway struct {
-	NatGatewayId        string                                   `json:"NatGatewayId" xml:"NatGatewayId"`
-	RegionId            string                                   `json:"RegionId" xml:"RegionId"`
-	Name                string                                   `json:"Name" xml:"Name"`
-	Description         string                                   `json:"Description" xml:"Description"`
-	VpcId               string                                   `json:"VpcId" xml:"VpcId"`
-	Spec                string                                   `json:"Spec" xml:"Spec"`
-	InstanceChargeType  string                                   `json:"InstanceChargeType" xml:"InstanceChargeType"`
-	ExpiredTime         string                                   `json:"ExpiredTime" xml:"ExpiredTime"`
-	AutoPay             bool                                     `json:"AutoPay" xml:"AutoPay"`
-	BusinessStatus      string                                   `json:"BusinessStatus" xml:"BusinessStatus"`
-	CreationTime        string                                   `json:"CreationTime" xml:"CreationTime"`
-	Status              string                                   `json:"Status" xml:"Status"`
-	DeletionProtection  bool                                     `json:"DeletionProtection" xml:"DeletionProtection"`
-	ForwardTableIds     ForwardTableIdsInDescribeNatGateways     `json:"ForwardTableIds" xml:"ForwardTableIds"`
-	SnatTableIds        SnatTableIdsInDescribeNatGateways        `json:"SnatTableIds" xml:"SnatTableIds"`
-	BandwidthPackageIds BandwidthPackageIdsInDescribeNatGateways `json:"BandwidthPackageIds" xml:"BandwidthPackageIds"`
-	IpLists             IpLists                                  `json:"IpLists" xml:"IpLists"`
+	NatGatewayId          string                                   `json:"NatGatewayId" xml:"NatGatewayId"`
+	RegionId              string                                   `json:"RegionId" xml:"RegionId"`
+	Name                  string                                   `json:"Name" xml:"Name"`
+	Description           string                                   `json:"Description" xml:"Description"`
+	VpcId                 string                                   `json:"VpcId" xml:"VpcId"`
+	Spec                  string                                   `json:"Spec" xml:"Spec"`
+	InstanceChargeType    string                                   `json:"InstanceChargeType" xml:"InstanceChargeType"`
+	ExpiredTime           string                                   `json:"ExpiredTime" xml:"ExpiredTime"`
+	AutoPay               bool                                     `json:"AutoPay" xml:"AutoPay"`
+	BusinessStatus        string                                   `json:"BusinessStatus" xml:"BusinessStatus"`
+	CreationTime          string                                   `json:"CreationTime" xml:"CreationTime"`
+	Status                string                                   `json:"Status" xml:"Status"`
+	NatType               string                                   `json:"NatType" xml:"NatType"`
+	InternetChargeType    string                                   `json:"InternetChargeType" xml:"InternetChargeType"`
+	ResourceGroupId       string                                   `json:"ResourceGroupId" xml:"ResourceGroupId"`
+	DeletionProtection    bool                                     `json:"DeletionProtection" xml:"DeletionProtection"`
+	ForwardTableIds       ForwardTableIdsInDescribeNatGateways     `json:"ForwardTableIds" xml:"ForwardTableIds"`
+	SnatTableIds          SnatTableIdsInDescribeNatGateways        `json:"SnatTableIds" xml:"SnatTableIds"`
+	BandwidthPackageIds   BandwidthPackageIdsInDescribeNatGateways `json:"BandwidthPackageIds" xml:"BandwidthPackageIds"`
+	NatGatewayPrivateInfo NatGatewayPrivateInfo                    `json:"NatGatewayPrivateInfo" xml:"NatGatewayPrivateInfo"`
+	IpLists               IpLists                                  `json:"IpLists" xml:"IpLists"`
 }

@@ -88,9 +88,11 @@ type DescribeElasticsearchInstanceTypeLimitsOutput struct {
 
 	// Map of Role of the Instance and Limits that are applicable. Role performed
 	// by given Instance in Elasticsearch can be one of the following:
-	//    * Data: If the given InstanceType is used as Data node
+	//    * data: If the given InstanceType is used as data node
 	//
-	//    * Master: If the given InstanceType is used as Master node
+	//    * master: If the given InstanceType is used as master node
+	//
+	//    * ultra_warm: If the given InstanceType is used as warm node
 	LimitsByRole map[string]Limits `type:"map"`
 }
 

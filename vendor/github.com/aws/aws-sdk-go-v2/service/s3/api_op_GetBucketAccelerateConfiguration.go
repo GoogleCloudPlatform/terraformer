@@ -102,9 +102,9 @@ const opGetBucketAccelerateConfiguration = "GetBucketAccelerateConfiguration"
 //
 // A GET accelerate request does not return a state value for a bucket that
 // has no transfer acceleration state. A bucket has no Transfer Acceleration
-// state, if a state has never been set on the bucket.
+// state if a state has never been set on the bucket.
 //
-// For more information on transfer acceleration, see Transfer Acceleration
+// For more information about transfer acceleration, see Transfer Acceleration
 // (https://docs.aws.amazon.com/AmazonS3/latest/dev//transfer-acceleration.html)
 // in the Amazon Simple Storage Service Developer Guide.
 //

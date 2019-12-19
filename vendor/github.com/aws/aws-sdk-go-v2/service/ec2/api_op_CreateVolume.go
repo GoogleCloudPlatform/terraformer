@@ -65,6 +65,9 @@ type CreateVolumeInput struct {
 	// fails.
 	KmsKeyId *string `type:"string"`
 
+	// The Amazon Resource Name (ARN) of the Outpost.
+	OutpostArn *string `type:"string"`
+
 	// The size of the volume, in GiBs.
 	//
 	// Constraints: 1-16,384 for gp2, 4-16,384 for io1, 500-16,384 for st1, 500-16,384
@@ -152,6 +155,9 @@ type CreateVolumeOutput struct {
 	// customer master key (CMK) that was used to protect the volume encryption
 	// key for the volume.
 	KmsKeyId *string `locationName:"kmsKeyId" type:"string"`
+
+	// The Amazon Resource Name (ARN) of the Outpost.
+	OutpostArn *string `locationName:"outpostArn" type:"string"`
 
 	// The size of the volume, in GiBs.
 	Size *int64 `locationName:"size" type:"integer"`

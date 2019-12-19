@@ -23,6 +23,13 @@ type UpdateEventSourceMappingInput struct {
 	//    * Amazon Simple Queue Service - Default 10. Max 10.
 	BatchSize *int64 `min:"1" type:"integer"`
 
+	// (Streams) If the function returns an error, split the batch in two and retry.
+	BisectBatchOnFunctionError *bool `type:"boolean"`
+
+	// (Streams) An Amazon SQS queue or Amazon SNS topic destination for discarded
+	// records.
+	DestinationConfig *DestinationConfig `type:"structure"`
+
 	// Disables the event source mapping to pause polling and invocation.
 	Enabled *bool `type:"boolean"`
 
@@ -42,7 +49,20 @@ type UpdateEventSourceMappingInput struct {
 	// function name, it's limited to 64 characters in length.
 	FunctionName *string `min:"1" type:"string"`
 
+	// The maximum amount of time to gather records before invoking the function,
+	// in seconds.
 	MaximumBatchingWindowInSeconds *int64 `type:"integer"`
+
+	// (Streams) The maximum age of a record that Lambda sends to a function for
+	// processing.
+	MaximumRecordAgeInSeconds *int64 `min:"60" type:"integer"`
+
+	// (Streams) The maximum number of times to retry when the function returns
+	// an error.
+	MaximumRetryAttempts *int64 `type:"integer"`
+
+	// (Streams) The number of batches to process from each shard concurrently.
+	ParallelizationFactor *int64 `min:"1" type:"integer"`
 
 	// The identifier of the event source mapping.
 	//
@@ -63,6 +83,12 @@ func (s *UpdateEventSourceMappingInput) Validate() error {
 	}
 	if s.FunctionName != nil && len(*s.FunctionName) < 1 {
 		invalidParams.Add(aws.NewErrParamMinLen("FunctionName", 1))
+	}
+	if s.MaximumRecordAgeInSeconds != nil && *s.MaximumRecordAgeInSeconds < 60 {
+		invalidParams.Add(aws.NewErrParamMinValue("MaximumRecordAgeInSeconds", 60))
+	}
+	if s.ParallelizationFactor != nil && *s.ParallelizationFactor < 1 {
+		invalidParams.Add(aws.NewErrParamMinValue("ParallelizationFactor", 1))
 	}
 
 	if s.UUID == nil {
@@ -85,6 +111,18 @@ func (s UpdateEventSourceMappingInput) MarshalFields(e protocol.FieldEncoder) er
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "BatchSize", protocol.Int64Value(v), metadata)
 	}
+	if s.BisectBatchOnFunctionError != nil {
+		v := *s.BisectBatchOnFunctionError
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "BisectBatchOnFunctionError", protocol.BoolValue(v), metadata)
+	}
+	if s.DestinationConfig != nil {
+		v := s.DestinationConfig
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "DestinationConfig", v, metadata)
+	}
 	if s.Enabled != nil {
 		v := *s.Enabled
 
@@ -103,6 +141,24 @@ func (s UpdateEventSourceMappingInput) MarshalFields(e protocol.FieldEncoder) er
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "MaximumBatchingWindowInSeconds", protocol.Int64Value(v), metadata)
 	}
+	if s.MaximumRecordAgeInSeconds != nil {
+		v := *s.MaximumRecordAgeInSeconds
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "MaximumRecordAgeInSeconds", protocol.Int64Value(v), metadata)
+	}
+	if s.MaximumRetryAttempts != nil {
+		v := *s.MaximumRetryAttempts
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "MaximumRetryAttempts", protocol.Int64Value(v), metadata)
+	}
+	if s.ParallelizationFactor != nil {
+		v := *s.ParallelizationFactor
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "ParallelizationFactor", protocol.Int64Value(v), metadata)
+	}
 	if s.UUID != nil {
 		v := *s.UUID
 
@@ -120,25 +176,46 @@ type UpdateEventSourceMappingOutput struct {
 	// The maximum number of items to retrieve in a single batch.
 	BatchSize *int64 `min:"1" type:"integer"`
 
+	// (Streams) If the function returns an error, split the batch in two and retry.
+	BisectBatchOnFunctionError *bool `type:"boolean"`
+
+	// (Streams) An Amazon SQS queue or Amazon SNS topic destination for discarded
+	// records.
+	DestinationConfig *DestinationConfig `type:"structure"`
+
 	// The Amazon Resource Name (ARN) of the event source.
 	EventSourceArn *string `type:"string"`
 
 	// The ARN of the Lambda function.
 	FunctionArn *string `type:"string"`
 
-	// The date that the event source mapping was last updated.
+	// The date that the event source mapping was last updated, or its state changed.
 	LastModified *time.Time `type:"timestamp"`
 
 	// The result of the last AWS Lambda invocation of your Lambda function.
 	LastProcessingResult *string `type:"string"`
 
+	// The maximum amount of time to gather records before invoking the function,
+	// in seconds.
 	MaximumBatchingWindowInSeconds *int64 `type:"integer"`
+
+	// (Streams) The maximum age of a record that Lambda sends to a function for
+	// processing.
+	MaximumRecordAgeInSeconds *int64 `min:"60" type:"integer"`
+
+	// (Streams) The maximum number of times to retry when the function returns
+	// an error.
+	MaximumRetryAttempts *int64 `type:"integer"`
+
+	// (Streams) The number of batches to process from each shard concurrently.
+	ParallelizationFactor *int64 `min:"1" type:"integer"`
 
 	// The state of the event source mapping. It can be one of the following: Creating,
 	// Enabling, Enabled, Disabling, Disabled, Updating, or Deleting.
 	State *string `type:"string"`
 
-	// The cause of the last state change, either User initiated or Lambda initiated.
+	// Indicates whether the last change to the event source mapping was made by
+	// a user, or by the Lambda service.
 	StateTransitionReason *string `type:"string"`
 
 	// The identifier of the event source mapping.
@@ -157,6 +234,18 @@ func (s UpdateEventSourceMappingOutput) MarshalFields(e protocol.FieldEncoder) e
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "BatchSize", protocol.Int64Value(v), metadata)
+	}
+	if s.BisectBatchOnFunctionError != nil {
+		v := *s.BisectBatchOnFunctionError
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "BisectBatchOnFunctionError", protocol.BoolValue(v), metadata)
+	}
+	if s.DestinationConfig != nil {
+		v := s.DestinationConfig
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "DestinationConfig", v, metadata)
 	}
 	if s.EventSourceArn != nil {
 		v := *s.EventSourceArn
@@ -189,6 +278,24 @@ func (s UpdateEventSourceMappingOutput) MarshalFields(e protocol.FieldEncoder) e
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "MaximumBatchingWindowInSeconds", protocol.Int64Value(v), metadata)
 	}
+	if s.MaximumRecordAgeInSeconds != nil {
+		v := *s.MaximumRecordAgeInSeconds
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "MaximumRecordAgeInSeconds", protocol.Int64Value(v), metadata)
+	}
+	if s.MaximumRetryAttempts != nil {
+		v := *s.MaximumRetryAttempts
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "MaximumRetryAttempts", protocol.Int64Value(v), metadata)
+	}
+	if s.ParallelizationFactor != nil {
+		v := *s.ParallelizationFactor
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "ParallelizationFactor", protocol.Int64Value(v), metadata)
+	}
 	if s.State != nil {
 		v := *s.State
 
@@ -217,6 +324,21 @@ const opUpdateEventSourceMapping = "UpdateEventSourceMapping"
 //
 // Updates an event source mapping. You can change the function that AWS Lambda
 // invokes, or pause invocation and resume later from the same location.
+//
+// The following error handling options are only available for stream sources
+// (DynamoDB and Kinesis):
+//
+//    * BisectBatchOnFunctionError - If the function returns an error, split
+//    the batch in two and retry.
+//
+//    * DestinationConfig - Send discarded records to an Amazon SQS queue or
+//    Amazon SNS topic.
+//
+//    * MaximumRecordAgeInSeconds - Discard records older than the specified
+//    age.
+//
+//    * MaximumRetryAttempts - Discard records after the specified number of
+//    retries.
 //
 //    // Example sending a request using UpdateEventSourceMappingRequest.
 //    req := client.UpdateEventSourceMappingRequest(params)

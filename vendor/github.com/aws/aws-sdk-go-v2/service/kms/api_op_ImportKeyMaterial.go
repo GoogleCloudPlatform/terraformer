@@ -13,9 +13,10 @@ import (
 type ImportKeyMaterialInput struct {
 	_ struct{} `type:"structure"`
 
-	// The encrypted key material to import. It must be encrypted with the public
-	// key that you received in the response to a previous GetParametersForImport
-	// request, using the wrapping algorithm that you specified in that request.
+	// The encrypted key material to import. The key material must be encrypted
+	// with the public wrapping key that GetParametersForImport returned, using
+	// the wrapping algorithm that you specified in the same GetParametersForImport
+	// request.
 	//
 	// EncryptedKeyMaterial is automatically base64 encoded/decoded by the SDK.
 	//
@@ -36,8 +37,9 @@ type ImportKeyMaterialInput struct {
 	// ImportToken is a required field
 	ImportToken []byte `min:"1" type:"blob" required:"true"`
 
-	// The identifier of the CMK to import the key material into. The CMK's Origin
-	// must be EXTERNAL.
+	// The identifier of the symmetric CMK that receives the imported key material.
+	// The CMK's Origin must be EXTERNAL. This must be the same CMK specified in
+	// the KeyID parameter of the corresponding GetParametersForImport request.
 	//
 	// Specify the key ID or the Amazon Resource Name (ARN) of the CMK.
 	//
@@ -109,11 +111,14 @@ const opImportKeyMaterial = "ImportKeyMaterial"
 // ImportKeyMaterialRequest returns a request value for making API operation for
 // AWS Key Management Service.
 //
-// Imports key material into an existing AWS KMS customer master key (CMK) that
-// was created without key material. You cannot perform this operation on a
-// CMK in a different AWS account. For more information about creating CMKs
-// with no key material and then importing key material, see Importing Key Material
-// (https://docs.aws.amazon.com/kms/latest/developerguide/importing-keys.html)
+// Imports key material into an existing symmetric AWS KMS customer master key
+// (CMK) that was created without key material. After you successfully import
+// key material into a CMK, you can reimport the same key material (https://docs.aws.amazon.com/kms/latest/developerguide/importing-keys.html#reimport-key-material)
+// into that CMK, but you cannot import different key material.
+//
+// You cannot perform this operation on an asymmetric CMK or on any CMK in a
+// different AWS account. For more information about creating CMKs with no key
+// material and then importing key material, see Importing Key Material (https://docs.aws.amazon.com/kms/latest/developerguide/importing-keys.html)
 // in the AWS Key Management Service Developer Guide.
 //
 // Before using this operation, call GetParametersForImport. Its response includes
@@ -130,23 +135,27 @@ const opImportKeyMaterial = "ImportKeyMaterial"
 //    * The encrypted key material. To get the public key to encrypt the key
 //    material, call GetParametersForImport.
 //
-//    * The import token that GetParametersForImport returned. This token and
-//    the public key used to encrypt the key material must have come from the
-//    same response.
+//    * The import token that GetParametersForImport returned. You must use
+//    a public key and token from the same GetParametersForImport response.
 //
 //    * Whether the key material expires and if so, when. If you set an expiration
-//    date, you can change it only by reimporting the same key material and
-//    specifying a new expiration date. If the key material expires, AWS KMS
-//    deletes the key material and the CMK becomes unusable. To use the CMK
-//    again, you must reimport the same key material.
+//    date, AWS KMS deletes the key material from the CMK on the specified date,
+//    and the CMK becomes unusable. To use the CMK again, you must reimport
+//    the same key material. The only way to change an expiration date is by
+//    reimporting the same key material and specifying a new expiration date.
 //
 // When this operation is successful, the key state of the CMK changes from
-// PendingImport to Enabled, and you can use the CMK. After you successfully
-// import key material into a CMK, you can reimport the same key material into
-// that CMK, but you cannot import different key material.
+// PendingImport to Enabled, and you can use the CMK.
 //
-// The result of this operation varies with the key state of the CMK. For details,
-// see How Key State Affects Use of a Customer Master Key (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+// If this operation fails, use the exception to help determine the problem.
+// If the error is related to the key material, the import token, or wrapping
+// key, use GetParametersForImport to get a new public key and import token
+// for the CMK and repeat the import procedure. For help, see How To Import
+// Key Material (https://docs.aws.amazon.com/kms/latest/developerguide/importing-keys.html#importing-keys-overview)
+// in the AWS Key Management Service Developer Guide.
+//
+// The CMK that you use for this operation must be in a compatible key state.
+// For details, see How Key State Affects Use of a Customer Master Key (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
 // in the AWS Key Management Service Developer Guide.
 //
 //    // Example sending a request using ImportKeyMaterialRequest.

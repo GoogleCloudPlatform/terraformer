@@ -70,6 +70,9 @@ const opCreateGlobalTable = "CreateGlobalTable"
 // relationship between two or more DynamoDB tables with the same table name
 // in the provided Regions.
 //
+// This method only applies to Version 2017.11.29 (https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/globaltables.V1.html)
+// of global tables.
+//
 // If you want to add a new replica table to a global table, each of the following
 // conditions must be true:
 //

@@ -77,14 +77,13 @@ func (client *Client) AddGtmMonitorWithCallback(request *AddGtmMonitorRequest, c
 type AddGtmMonitorRequest struct {
 	*requests.RpcRequest
 	MonitorExtendInfo string                      `position:"Query" name:"MonitorExtendInfo"`
+	Timeout           requests.Integer            `position:"Query" name:"Timeout"`
 	AddrPoolId        string                      `position:"Query" name:"AddrPoolId"`
 	UserClientIp      string                      `position:"Query" name:"UserClientIp"`
-	Name              string                      `position:"Query" name:"Name"`
 	EvaluationCount   requests.Integer            `position:"Query" name:"EvaluationCount"`
 	ProtocolType      string                      `position:"Query" name:"ProtocolType"`
 	Interval          requests.Integer            `position:"Query" name:"Interval"`
 	Lang              string                      `position:"Query" name:"Lang"`
-	Timeout           requests.Integer            `position:"Query" name:"Timeout"`
 	IspCityNode       *[]AddGtmMonitorIspCityNode `position:"Query" name:"IspCityNode"  type:"Repeated"`
 }
 
@@ -106,7 +105,7 @@ func CreateAddGtmMonitorRequest() (request *AddGtmMonitorRequest) {
 	request = &AddGtmMonitorRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "AddGtmMonitor", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "AddGtmMonitor", "alidns", "openAPI")
 	return
 }
 

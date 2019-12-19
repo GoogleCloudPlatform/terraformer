@@ -78,6 +78,7 @@ func (c *Client) GetInstanceSnapshot(ctx context.Context, linodeID int, snapshot
 	}
 	e = fmt.Sprintf("%s/%d", e, snapshotID)
 	r, err := coupleAPIErrors(c.R(ctx).SetResult(&InstanceSnapshot{}).Get(e))
+
 	if err != nil {
 		return nil, err
 	}
@@ -92,6 +93,7 @@ func (c *Client) CreateInstanceSnapshot(ctx context.Context, linodeID int, label
 	}
 	body := string(o)
 	e, err := c.InstanceSnapshots.endpointWithID(linodeID)
+
 	if err != nil {
 		return nil, err
 	}
@@ -118,6 +120,7 @@ func (c *Client) GetInstanceBackups(ctx context.Context, linodeID int) (*Instanc
 	r, err := coupleAPIErrors(c.R(ctx).
 		SetResult(&InstanceBackupsResponse{}).
 		Get(e))
+
 	if err != nil {
 		return nil, err
 	}
@@ -164,13 +167,13 @@ func (c *Client) RestoreInstanceBackup(ctx context.Context, linodeID int, backup
 	_, err = coupleAPIErrors(c.R(ctx).SetBody(body).Post(e))
 
 	return err
-
 }
 
 func (l *InstanceBackupSnapshotResponse) fixDates() *InstanceBackupSnapshotResponse {
 	if l.Current != nil {
 		l.Current.fixDates()
 	}
+
 	if l.InProgress != nil {
 		l.InProgress.fixDates()
 	}
@@ -181,6 +184,7 @@ func (l *InstanceBackupsResponse) fixDates() *InstanceBackupsResponse {
 	for i := range l.Automatic {
 		l.Automatic[i].fixDates()
 	}
+
 	if l.Snapshot != nil {
 		l.Snapshot.fixDates()
 	}

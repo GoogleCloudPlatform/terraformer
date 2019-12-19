@@ -101,8 +101,8 @@ const opGetBucketVersioning = "GetBucketVersioning"
 // To retrieve the versioning state of a bucket, you must be the bucket owner.
 //
 // This implementation also returns the MFA Delete status of the versioning
-// state, i.e., if the MFA Delete status is enabled, the bucket owner must use
-// an authentication device to change the versioning state of the bucket.
+// state. If the MFA Delete status is enabled, the bucket owner must use an
+// authentication device to change the versioning state of the bucket.
 //
 // The following operations are related to GetBucketVersioning:
 //

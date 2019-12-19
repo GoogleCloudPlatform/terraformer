@@ -23,6 +23,13 @@ type CreateEventSourceMappingInput struct {
 	//    * Amazon Simple Queue Service - Default 10. Max 10.
 	BatchSize *int64 `min:"1" type:"integer"`
 
+	// (Streams) If the function returns an error, split the batch in two and retry.
+	BisectBatchOnFunctionError *bool `type:"boolean"`
+
+	// (Streams) An Amazon SQS queue or Amazon SNS topic destination for discarded
+	// records.
+	DestinationConfig *DestinationConfig `type:"structure"`
+
 	// Disables the event source mapping to pause polling and invocation.
 	Enabled *bool `type:"boolean"`
 
@@ -55,7 +62,20 @@ type CreateEventSourceMappingInput struct {
 	// FunctionName is a required field
 	FunctionName *string `min:"1" type:"string" required:"true"`
 
+	// The maximum amount of time to gather records before invoking the function,
+	// in seconds.
 	MaximumBatchingWindowInSeconds *int64 `type:"integer"`
+
+	// (Streams) The maximum age of a record that Lambda sends to a function for
+	// processing.
+	MaximumRecordAgeInSeconds *int64 `min:"60" type:"integer"`
+
+	// (Streams) The maximum number of times to retry when the function returns
+	// an error.
+	MaximumRetryAttempts *int64 `type:"integer"`
+
+	// (Streams) The number of batches to process from each shard concurrently.
+	ParallelizationFactor *int64 `min:"1" type:"integer"`
 
 	// The position in a stream from which to start reading. Required for Amazon
 	// Kinesis and Amazon DynamoDB Streams sources. AT_TIMESTAMP is only supported
@@ -88,6 +108,12 @@ func (s *CreateEventSourceMappingInput) Validate() error {
 	if s.FunctionName != nil && len(*s.FunctionName) < 1 {
 		invalidParams.Add(aws.NewErrParamMinLen("FunctionName", 1))
 	}
+	if s.MaximumRecordAgeInSeconds != nil && *s.MaximumRecordAgeInSeconds < 60 {
+		invalidParams.Add(aws.NewErrParamMinValue("MaximumRecordAgeInSeconds", 60))
+	}
+	if s.ParallelizationFactor != nil && *s.ParallelizationFactor < 1 {
+		invalidParams.Add(aws.NewErrParamMinValue("ParallelizationFactor", 1))
+	}
 
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -104,6 +130,18 @@ func (s CreateEventSourceMappingInput) MarshalFields(e protocol.FieldEncoder) er
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "BatchSize", protocol.Int64Value(v), metadata)
+	}
+	if s.BisectBatchOnFunctionError != nil {
+		v := *s.BisectBatchOnFunctionError
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "BisectBatchOnFunctionError", protocol.BoolValue(v), metadata)
+	}
+	if s.DestinationConfig != nil {
+		v := s.DestinationConfig
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "DestinationConfig", v, metadata)
 	}
 	if s.Enabled != nil {
 		v := *s.Enabled
@@ -129,6 +167,24 @@ func (s CreateEventSourceMappingInput) MarshalFields(e protocol.FieldEncoder) er
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "MaximumBatchingWindowInSeconds", protocol.Int64Value(v), metadata)
 	}
+	if s.MaximumRecordAgeInSeconds != nil {
+		v := *s.MaximumRecordAgeInSeconds
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "MaximumRecordAgeInSeconds", protocol.Int64Value(v), metadata)
+	}
+	if s.MaximumRetryAttempts != nil {
+		v := *s.MaximumRetryAttempts
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "MaximumRetryAttempts", protocol.Int64Value(v), metadata)
+	}
+	if s.ParallelizationFactor != nil {
+		v := *s.ParallelizationFactor
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "ParallelizationFactor", protocol.Int64Value(v), metadata)
+	}
 	if len(s.StartingPosition) > 0 {
 		v := s.StartingPosition
 
@@ -153,25 +209,46 @@ type CreateEventSourceMappingOutput struct {
 	// The maximum number of items to retrieve in a single batch.
 	BatchSize *int64 `min:"1" type:"integer"`
 
+	// (Streams) If the function returns an error, split the batch in two and retry.
+	BisectBatchOnFunctionError *bool `type:"boolean"`
+
+	// (Streams) An Amazon SQS queue or Amazon SNS topic destination for discarded
+	// records.
+	DestinationConfig *DestinationConfig `type:"structure"`
+
 	// The Amazon Resource Name (ARN) of the event source.
 	EventSourceArn *string `type:"string"`
 
 	// The ARN of the Lambda function.
 	FunctionArn *string `type:"string"`
 
-	// The date that the event source mapping was last updated.
+	// The date that the event source mapping was last updated, or its state changed.
 	LastModified *time.Time `type:"timestamp"`
 
 	// The result of the last AWS Lambda invocation of your Lambda function.
 	LastProcessingResult *string `type:"string"`
 
+	// The maximum amount of time to gather records before invoking the function,
+	// in seconds.
 	MaximumBatchingWindowInSeconds *int64 `type:"integer"`
+
+	// (Streams) The maximum age of a record that Lambda sends to a function for
+	// processing.
+	MaximumRecordAgeInSeconds *int64 `min:"60" type:"integer"`
+
+	// (Streams) The maximum number of times to retry when the function returns
+	// an error.
+	MaximumRetryAttempts *int64 `type:"integer"`
+
+	// (Streams) The number of batches to process from each shard concurrently.
+	ParallelizationFactor *int64 `min:"1" type:"integer"`
 
 	// The state of the event source mapping. It can be one of the following: Creating,
 	// Enabling, Enabled, Disabling, Disabled, Updating, or Deleting.
 	State *string `type:"string"`
 
-	// The cause of the last state change, either User initiated or Lambda initiated.
+	// Indicates whether the last change to the event source mapping was made by
+	// a user, or by the Lambda service.
 	StateTransitionReason *string `type:"string"`
 
 	// The identifier of the event source mapping.
@@ -190,6 +267,18 @@ func (s CreateEventSourceMappingOutput) MarshalFields(e protocol.FieldEncoder) e
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "BatchSize", protocol.Int64Value(v), metadata)
+	}
+	if s.BisectBatchOnFunctionError != nil {
+		v := *s.BisectBatchOnFunctionError
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "BisectBatchOnFunctionError", protocol.BoolValue(v), metadata)
+	}
+	if s.DestinationConfig != nil {
+		v := s.DestinationConfig
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "DestinationConfig", v, metadata)
 	}
 	if s.EventSourceArn != nil {
 		v := *s.EventSourceArn
@@ -222,6 +311,24 @@ func (s CreateEventSourceMappingOutput) MarshalFields(e protocol.FieldEncoder) e
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "MaximumBatchingWindowInSeconds", protocol.Int64Value(v), metadata)
 	}
+	if s.MaximumRecordAgeInSeconds != nil {
+		v := *s.MaximumRecordAgeInSeconds
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "MaximumRecordAgeInSeconds", protocol.Int64Value(v), metadata)
+	}
+	if s.MaximumRetryAttempts != nil {
+		v := *s.MaximumRetryAttempts
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "MaximumRetryAttempts", protocol.Int64Value(v), metadata)
+	}
+	if s.ParallelizationFactor != nil {
+		v := *s.ParallelizationFactor
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "ParallelizationFactor", protocol.Int64Value(v), metadata)
+	}
 	if s.State != nil {
 		v := *s.State
 
@@ -253,11 +360,26 @@ const opCreateEventSourceMapping = "CreateEventSourceMapping"
 //
 // For details about each event source type, see the following topics.
 //
+//    * Using AWS Lambda with Amazon DynamoDB (https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html)
+//
 //    * Using AWS Lambda with Amazon Kinesis (https://docs.aws.amazon.com/lambda/latest/dg/with-kinesis.html)
 //
 //    * Using AWS Lambda with Amazon SQS (https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html)
 //
-//    * Using AWS Lambda with Amazon DynamoDB (https://docs.aws.amazon.com/lambda/latest/dg/with-ddb.html)
+// The following error handling options are only available for stream sources
+// (DynamoDB and Kinesis):
+//
+//    * BisectBatchOnFunctionError - If the function returns an error, split
+//    the batch in two and retry.
+//
+//    * DestinationConfig - Send discarded records to an Amazon SQS queue or
+//    Amazon SNS topic.
+//
+//    * MaximumRecordAgeInSeconds - Discard records older than the specified
+//    age.
+//
+//    * MaximumRetryAttempts - Discard records after the specified number of
+//    retries.
 //
 //    // Example sending a request using CreateEventSourceMappingRequest.
 //    req := client.CreateEventSourceMappingRequest(params)

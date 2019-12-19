@@ -76,17 +76,17 @@ func (client *Client) DescribeDomainStatisticsSummaryWithCallback(request *Descr
 // DescribeDomainStatisticsSummaryRequest is the request struct for api DescribeDomainStatisticsSummary
 type DescribeDomainStatisticsSummaryRequest struct {
 	*requests.RpcRequest
+	Threshold    requests.Integer `position:"Query" name:"Threshold"`
+	StartDate    string           `position:"Query" name:"StartDate"`
+	PageNumber   requests.Integer `position:"Query" name:"PageNumber"`
+	PageSize     requests.Integer `position:"Query" name:"PageSize"`
+	Lang         string           `position:"Query" name:"Lang"`
+	Keyword      string           `position:"Query" name:"Keyword"`
+	Direction    string           `position:"Query" name:"Direction"`
+	OrderBy      string           `position:"Query" name:"OrderBy"`
 	EndDate      string           `position:"Query" name:"EndDate"`
 	UserClientIp string           `position:"Query" name:"UserClientIp"`
-	PageSize     requests.Integer `position:"Query" name:"PageSize"`
-	OrderBy      string           `position:"Query" name:"OrderBy"`
 	SearchMode   string           `position:"Query" name:"SearchMode"`
-	Threshold    requests.Integer `position:"Query" name:"Threshold"`
-	Lang         string           `position:"Query" name:"Lang"`
-	StartDate    string           `position:"Query" name:"StartDate"`
-	Keyword      string           `position:"Query" name:"Keyword"`
-	PageNumber   requests.Integer `position:"Query" name:"PageNumber"`
-	Direction    string           `position:"Query" name:"Direction"`
 }
 
 // DescribeDomainStatisticsSummaryResponse is the response struct for api DescribeDomainStatisticsSummary
@@ -105,7 +105,7 @@ func CreateDescribeDomainStatisticsSummaryRequest() (request *DescribeDomainStat
 	request = &DescribeDomainStatisticsSummaryRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeDomainStatisticsSummary", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeDomainStatisticsSummary", "alidns", "openAPI")
 	return
 }
 

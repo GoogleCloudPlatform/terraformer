@@ -13,7 +13,7 @@ import (
 type GetBucketLifecycleInput struct {
 	_ struct{} `type:"structure"`
 
-	// The name of the bucket for which to the the lifecycle information.
+	// The name of the bucket for which to get the lifecycle information.
 	//
 	// Bucket is a required field
 	Bucket *string `location:"uri" locationName:"Bucket" type:"string" required:"true"`
@@ -94,7 +94,8 @@ const opGetBucketLifecycle = "GetBucketLifecycle"
 //
 // For an updated version of this API, see GetBucketLifecycleConfiguration.
 // If you configured a bucket lifecycle using the filter element, you should
-// the updated version of this topic. This topic is provided for backward compatibility.
+// see the updated version of this topic. This topic is provided for backward
+// compatibility.
 //
 // Returns the lifecycle configuration information set on the bucket. For information
 // about lifecycle configuration, see Object Lifecycle Management (https://docs.aws.amazon.com/AmazonS3/latest/dev/object-lifecycle-mgmt.html).

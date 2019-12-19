@@ -16,9 +16,6 @@ type PublishInput struct {
 
 	// The message you want to send.
 	//
-	// The Message parameter is always a string. If you set MessageStructure to
-	// json, you must string-encode the Message parameter.
-	//
 	// If you are publishing to a topic and you want to send the same message to
 	// all transport protocols, include the text of the message as a String value.
 	// If you want to send different messages for each transport protocol, set the
@@ -81,11 +78,6 @@ type PublishInput struct {
 	//
 	// You can define other top-level keys that define the message you want to send
 	// to a specific transport protocol (e.g., "http").
-	//
-	// For information about sending different messages for each protocol using
-	// the AWS Management Console, go to Create Different Messages for Each Protocol
-	// (https://docs.aws.amazon.com/sns/latest/gsg/Publish.html#sns-message-formatting-by-protocol)
-	// in the Amazon Simple Notification Service Getting Started Guide.
 	//
 	// Valid value: json
 	MessageStructure *string `type:"string"`

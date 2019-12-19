@@ -199,18 +199,24 @@ const opInvoke = "Invoke"
 // for the response), or asynchronously. To invoke a function asynchronously,
 // set InvocationType to Event.
 //
-// For synchronous invocation, details about the function response, including
-// errors, are included in the response body and headers. For either invocation
-// type, you can find more information in the execution log (https://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions.html)
-// and trace (https://docs.aws.amazon.com/lambda/latest/dg/dlq.html). To record
-// function errors for asynchronous invocations, configure your function with
-// a dead letter queue (https://docs.aws.amazon.com/lambda/latest/dg/dlq.html).
+// For synchronous invocation (https://docs.aws.amazon.com/lambda/latest/dg/invocation-sync.html),
+// details about the function response, including errors, are included in the
+// response body and headers. For either invocation type, you can find more
+// information in the execution log (https://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions.html)
+// and trace (https://docs.aws.amazon.com/lambda/latest/dg/lambda-x-ray.html).
 //
 // When an error occurs, your function may be invoked multiple times. Retry
 // behavior varies by error type, client, event source, and invocation type.
 // For example, if you invoke a function asynchronously and it returns an error,
 // Lambda executes the function up to two more times. For more information,
 // see Retry Behavior (https://docs.aws.amazon.com/lambda/latest/dg/retries-on-errors.html).
+//
+// For asynchronous invocation (https://docs.aws.amazon.com/lambda/latest/dg/invocation-async.html),
+// Lambda adds events to a queue before sending them to your function. If your
+// function does not have enough capacity to keep up with the queue, events
+// may be lost. Occasionally, your function may receive the same event multiple
+// times, even if no error occurs. To retain events that were not processed,
+// configure your function with a dead-letter queue (https://docs.aws.amazon.com/lambda/latest/dg/invocation-async.html#dlq).
 //
 // The status code in the API response doesn't reflect function errors. Error
 // codes are reserved for errors that prevent your function from executing,

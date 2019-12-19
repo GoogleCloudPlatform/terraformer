@@ -217,7 +217,7 @@ const opAddPermission = "AddPermission"
 // without specifying the source, other accounts could potentially configure
 // resources in their account to invoke your Lambda function.
 //
-// This action adds a statement to a resource-based permission policy for the
+// This action adds a statement to a resource-based permissions policy for the
 // function. For more information about function policies, see Lambda Function
 // Policies (https://docs.aws.amazon.com/lambda/latest/dg/access-control-resource-based.html).
 //

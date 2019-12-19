@@ -37,9 +37,12 @@ func (c *Client) GetAccount(ctx context.Context) (*Account, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	r, err := coupleAPIErrors(c.R(ctx).SetResult(&Account{}).Get(e))
+
 	if err != nil {
 		return nil, err
 	}
+
 	return r.Result().(*Account).fixDates(), nil
 }

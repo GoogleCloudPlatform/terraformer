@@ -17,6 +17,5 @@ package rds
 
 // SupportedCategorys is a nested struct in rds response
 type SupportedCategorys struct {
-	Category             string                  `json:"Category" xml:"Category"`
-	SupportedStorageType []SupportedStorageTypes `json:"SupportedStorageType" xml:"SupportedStorageType"`
+	SupportedCategory []SupportedCategory `json:"SupportedCategory" xml:"SupportedCategory"`
 }

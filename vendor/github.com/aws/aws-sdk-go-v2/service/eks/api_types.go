@@ -13,12 +13,13 @@ import (
 var _ aws.Config
 var _ = awsutil.Prettify
 
-// An AutoScaling group that is associated with an Amazon EKS managed node group.
+// An Auto Scaling group that is associated with an Amazon EKS managed node
+// group.
 type AutoScalingGroup struct {
 	_ struct{} `type:"structure"`
 
-	// The name of the AutoScaling group associated with an Amazon EKS managed node
-	// group.
+	// The name of the Auto Scaling group associated with an Amazon EKS managed
+	// node group.
 	Name *string `locationName:"name" type:"string"`
 }
 
@@ -291,6 +292,169 @@ func (s ErrorDetail) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
+// An object representing an AWS Fargate profile.
+type FargateProfile struct {
+	_ struct{} `type:"structure"`
+
+	// The name of the Amazon EKS cluster that the Fargate profile belongs to.
+	ClusterName *string `locationName:"clusterName" type:"string"`
+
+	// The Unix epoch timestamp in seconds for when the Fargate profile was created.
+	CreatedAt *time.Time `locationName:"createdAt" type:"timestamp"`
+
+	// The full Amazon Resource Name (ARN) of the Fargate profile.
+	FargateProfileArn *string `locationName:"fargateProfileArn" type:"string"`
+
+	// The name of the Fargate profile.
+	FargateProfileName *string `locationName:"fargateProfileName" type:"string"`
+
+	// The Amazon Resource Name (ARN) of the pod execution role to use for pods
+	// that match the selectors in the Fargate profile. For more information, see
+	// Pod Execution Role (eks/latest/userguide/pod-execution-role.html) in the
+	// Amazon EKS User Guide.
+	PodExecutionRoleArn *string `locationName:"podExecutionRoleArn" type:"string"`
+
+	// The selectors to match for pods to use this Fargate profile.
+	Selectors []FargateProfileSelector `locationName:"selectors" type:"list"`
+
+	// The current status of the Fargate profile.
+	Status FargateProfileStatus `locationName:"status" type:"string" enum:"true"`
+
+	// The IDs of subnets to launch Fargate pods into.
+	Subnets []string `locationName:"subnets" type:"list"`
+
+	// The metadata applied to the Fargate profile to assist with categorization
+	// and organization. Each tag consists of a key and an optional value, both
+	// of which you define. Fargate profile tags do not propagate to any other resources
+	// associated with the Fargate profile, such as the pods that are scheduled
+	// with it.
+	Tags map[string]string `locationName:"tags" min:"1" type:"map"`
+}
+
+// String returns the string representation
+func (s FargateProfile) String() string {
+	return awsutil.Prettify(s)
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s FargateProfile) MarshalFields(e protocol.FieldEncoder) error {
+	if s.ClusterName != nil {
+		v := *s.ClusterName
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "clusterName", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if s.CreatedAt != nil {
+		v := *s.CreatedAt
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "createdAt",
+			protocol.TimeValue{V: v, Format: protocol.UnixTimeFormatName, QuotedFormatTime: true}, metadata)
+	}
+	if s.FargateProfileArn != nil {
+		v := *s.FargateProfileArn
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "fargateProfileArn", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if s.FargateProfileName != nil {
+		v := *s.FargateProfileName
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "fargateProfileName", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if s.PodExecutionRoleArn != nil {
+		v := *s.PodExecutionRoleArn
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "podExecutionRoleArn", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if s.Selectors != nil {
+		v := s.Selectors
+
+		metadata := protocol.Metadata{}
+		ls0 := e.List(protocol.BodyTarget, "selectors", metadata)
+		ls0.Start()
+		for _, v1 := range v {
+			ls0.ListAddFields(v1)
+		}
+		ls0.End()
+
+	}
+	if len(s.Status) > 0 {
+		v := s.Status
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "status", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
+	if s.Subnets != nil {
+		v := s.Subnets
+
+		metadata := protocol.Metadata{}
+		ls0 := e.List(protocol.BodyTarget, "subnets", metadata)
+		ls0.Start()
+		for _, v1 := range v {
+			ls0.ListAddValue(protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v1)})
+		}
+		ls0.End()
+
+	}
+	if s.Tags != nil {
+		v := s.Tags
+
+		metadata := protocol.Metadata{}
+		ms0 := e.Map(protocol.BodyTarget, "tags", metadata)
+		ms0.Start()
+		for k1, v1 := range v {
+			ms0.MapSetValue(k1, protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v1)})
+		}
+		ms0.End()
+
+	}
+	return nil
+}
+
+// An object representing an AWS Fargate profile selector.
+type FargateProfileSelector struct {
+	_ struct{} `type:"structure"`
+
+	// The Kubernetes labels that the selector should match. A pod must contain
+	// all of the labels that are specified in the selector for it to be considered
+	// a match.
+	Labels map[string]string `locationName:"labels" type:"map"`
+
+	// The Kubernetes namespace that the selector should match.
+	Namespace *string `locationName:"namespace" type:"string"`
+}
+
+// String returns the string representation
+func (s FargateProfileSelector) String() string {
+	return awsutil.Prettify(s)
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s FargateProfileSelector) MarshalFields(e protocol.FieldEncoder) error {
+	if s.Labels != nil {
+		v := s.Labels
+
+		metadata := protocol.Metadata{}
+		ms0 := e.Map(protocol.BodyTarget, "labels", metadata)
+		ms0.Start()
+		for k1, v1 := range v {
+			ms0.MapSetValue(k1, protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v1)})
+		}
+		ms0.End()
+
+	}
+	if s.Namespace != nil {
+		v := *s.Namespace
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "namespace", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	return nil
+}
+
 // An object representing an identity provider for authentication credentials.
 type Identity struct {
 	_ struct{} `type:"structure"`
@@ -339,8 +503,8 @@ type Issue struct {
 	//
 	//    * Ec2LaunchTemplateVersionMismatch: The Amazon EC2 launch template version
 	//    for your managed node group does not match the version that Amazon EKS
-	//    created. You may be able to revert to the Amazon EKS-created version to
-	//    recover.
+	//    created. You may be able to revert to the version that Amazon EKS created
+	//    to recover.
 	//
 	//    * IamInstanceProfileNotFound: We couldn't find the IAM instance profile
 	//    for your managed node group. You may be able to recreate an instance profile
@@ -353,6 +517,11 @@ type Issue struct {
 	//    * AsgInstanceLaunchFailures: Your Auto Scaling group is experiencing failures
 	//    while attempting to launch instances.
 	//
+	//    * NodeCreationFailure: Your launched instances are unable to register
+	//    with your Amazon EKS cluster. Common causes of this failure are insufficient
+	//    worker node IAM role (https://docs.aws.amazon.com/eks/latest/userguide/worker_node_IAM_role.html)
+	//    permissions or lack of outbound internet access for the nodes.
+	//
 	//    * InstanceLimitExceeded: Your AWS account is unable to launch any more
 	//    instances of the specified instance type. You may be able to request an
 	//    Amazon EC2 instance limit increase to recover.
@@ -361,8 +530,8 @@ type Issue struct {
 	//    your managed node group does not have enough available IP addresses for
 	//    new nodes.
 	//
-	//    * AccessDenied: Amazon EKS and or one or more of your managed nodes is
-	//    unable to communicate with your cluster API server.
+	//    * AccessDenied: Amazon EKS or one or more of your managed nodes is unable
+	//    to communicate with your cluster API server.
 	//
 	//    * InternalFailure: These errors are usually caused by an Amazon EKS server-side
 	//    issue.
@@ -488,7 +657,7 @@ type Nodegroup struct {
 
 	// The AMI type associated with your node group. GPU instance types should use
 	// the AL2_x86_64_GPU AMI type, which uses the Amazon EKS-optimized Linux AMI
-	// with GPU support; non-GPU instances should use the AL2_x86_64 AMI type, which
+	// with GPU support. Non-GPU instances should use the AL2_x86_64 AMI type, which
 	// uses the Amazon EKS-optimized Linux AMI.
 	AmiType AMITypes `locationName:"amiType" type:"string" enum:"true"`
 
@@ -542,26 +711,26 @@ type Nodegroup struct {
 	// The remote access (SSH) configuration that is associated with the node group.
 	RemoteAccess *RemoteAccessConfig `locationName:"remoteAccess" type:"structure"`
 
-	// The resources associated with the nodegroup, such as AutoScaling groups and
-	// security groups for remote access.
+	// The resources associated with the node group, such as Auto Scaling groups
+	// and security groups for remote access.
 	Resources *NodegroupResources `locationName:"resources" type:"structure"`
 
-	// The scaling configuration details for the AutoScaling group that is associated
+	// The scaling configuration details for the Auto Scaling group that is associated
 	// with your node group.
 	ScalingConfig *NodegroupScalingConfig `locationName:"scalingConfig" type:"structure"`
 
 	// The current status of the managed node group.
 	Status NodegroupStatus `locationName:"status" type:"string" enum:"true"`
 
-	// The subnets allowed for the AutoScaling group that is associated with your
+	// The subnets allowed for the Auto Scaling group that is associated with your
 	// node group. These subnets must have the following tag: kubernetes.io/cluster/CLUSTER_NAME,
 	// where CLUSTER_NAME is replaced with the name of your cluster.
 	Subnets []string `locationName:"subnets" type:"list"`
 
-	// The metadata applied the node group to assist with categorization and organization.
-	// Each tag consists of a key and an optional value, both of which you define.
-	// Node group tags do not propagate to any other resources associated with the
-	// node group, such as the Amazon EC2 instances or subnets.
+	// The metadata applied to the node group to assist with categorization and
+	// organization. Each tag consists of a key and an optional value, both of which
+	// you define. Node group tags do not propagate to any other resources associated
+	// with the node group, such as the Amazon EC2 instances or subnets.
 	Tags map[string]string `locationName:"tags" min:"1" type:"map"`
 
 	// The Kubernetes version of the managed node group.
@@ -748,12 +917,12 @@ func (s NodegroupHealth) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
-// An object representing the resources associated with the nodegroup, such
-// as AutoScaling groups and security groups for remote access.
+// An object representing the resources associated with the node group, such
+// as Auto Scaling groups and security groups for remote access.
 type NodegroupResources struct {
 	_ struct{} `type:"structure"`
 
-	// The autoscaling groups associated with the node group.
+	// The Auto Scaling groups associated with the node group.
 	AutoScalingGroups []AutoScalingGroup `locationName:"autoScalingGroups" type:"list"`
 
 	// The remote access security group associated with the node group. This security
@@ -789,7 +958,7 @@ func (s NodegroupResources) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
-// An object representing the scaling configuration details for the AutoScaling
+// An object representing the scaling configuration details for the Auto Scaling
 // group that is associated with your node group.
 type NodegroupScalingConfig struct {
 	_ struct{} `type:"structure"`
@@ -889,11 +1058,11 @@ type RemoteAccessConfig struct {
 	// in the Amazon Elastic Compute Cloud User Guide for Linux Instances.
 	Ec2SshKey *string `locationName:"ec2SshKey" type:"string"`
 
-	// The security groups to allow SSH access (port 22) from on the worker nodes.
-	// If you specify an Amazon EC2 SSH key, but you do not specify a source security
-	// group when you create a managed node group, port 22 on the worker nodes is
-	// opened to the internet (0.0.0.0/0). For more information, see Security Groups
-	// for Your VPC (https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html)
+	// The security groups that are allowed SSH access (port 22) to the worker nodes.
+	// If you specify an Amazon EC2 SSH key but do not specify a source security
+	// group when you create a managed node group, then port 22 on the worker nodes
+	// is opened to the internet (0.0.0.0/0). For more information, see Security
+	// Groups for Your VPC (https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html)
 	// in the Amazon Virtual Private Cloud User Guide.
 	SourceSecurityGroups []string `locationName:"sourceSecurityGroups" type:"list"`
 }
@@ -1171,7 +1340,7 @@ type VpcConfigResponse struct {
 	_ struct{} `type:"structure"`
 
 	// The cluster security group that was created by Amazon EKS for the cluster.
-	// Managed node groups use this security group for control plane to data plane
+	// Managed node groups use this security group for control-plane-to-data-plane
 	// communication.
 	ClusterSecurityGroupId *string `locationName:"clusterSecurityGroupId" type:"string"`
 

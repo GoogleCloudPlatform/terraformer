@@ -45,6 +45,9 @@ type CreateTopicInput struct {
 	Name *string `type:"string" required:"true"`
 
 	// The list of tags to add to a new topic.
+	//
+	// To be able to tag a topic on creation, you must have the sns:CreateTopic
+	// and sns:TagResource permissions.
 	Tags []Tag `type:"list"`
 }
 

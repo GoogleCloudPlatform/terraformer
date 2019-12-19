@@ -1,30 +1,52 @@
-# Change Log
+# Changelog
+All notable changes to this project will be documented in this file.
 
-## [v0.12.0](https://github.com/linode/linodego/compare/v0.11.0..v0.12.0) (2019-10-04)
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+<!--- begin unreleased changes --->
+<!--- end unreleased changes --->
+<!--- remember to add diff link to footer --->
+
+## [v0.12.2] (2019-12-03)
+
+### Added
+
+* Retries on `Linode Busy.` errors.
+
+## [v0.12.1] (2019-11-22)
+
+### Changed
+
+* Update dependencies.
+
+## [v0.12.0] (2019-10-04)
 
 ### Breaking Changes
 
 * ObjectStorageBucket no longer provides `objects`, `size`, or `region`.
 
-## [v0.11.0](https://github.com/linode/linodego/compare/v0.10.1..v0.11.0) (2019-10-02)
+## [v0.11.0] (2019-10-02)
 
 ### Features
 
 * Adds support for Object Storage
 
-## [v0.10.1](https://github.com/linode/linodego/compare/v0.10.0..v0.10.1) (2019-10-01)
+## [v0.10.1] (2019-10-01)
 
 ### Fixes
 
 * Fixes panic when API is down #84
 
-## [v0.10.0](https://github.com/linode/linodego/compare/v0.9.2..v0.10.0) (2019-06-25)
+## [v0.10.0] (2019-06-25)
 
 ### Breaking Changes
 
 * Change to `AllowAutoDiskResize` to `*bool` is a breaking change, so bump minor version.
 
-## [v0.9.2](https://github.com/linode/linodego/compare/v0.9.1..v0.9.2) (2019-06-25)
+## [v0.9.2] (2019-06-25)
 
 ### Breaking Changes
 
@@ -34,7 +56,7 @@
 
 * Support the `PersistAcrossBoots` flag, allowing users to set it to false and attach more disks.
 
-## [v0.9.1](https://github.com/linode/linodego/compare/v0.9.0..v0.9.1) (2019-06-18)
+## [v0.9.1] (2019-06-18)
 
 ### Fixes
 
@@ -45,7 +67,7 @@
 * Support alternative root CA certificates with `Client.SetRooteCertificate`
 * Support setting a client's API token with `Client.SetToken`
 
-## [v0.9.0](https://github.com/linode/linodego/compare/v0.8.1..v0.9.0) (2019-05-24)
+## [v0.9.0] (2019-05-24)
 
 ### Breaking Changes
 
@@ -58,13 +80,13 @@
 * Adds new `EventAction` constants: `ActionLinodeMutateCreate`, `ActionLinodeResizeCreate`, `ActionLishBoot` (API v4.0.23)
 * Adds `GetInstanceTransfer` which returns an `InstanceTransfer` (API v4.0.23)
 
-## [v0.8.1](https://github.com/linode/linodego/compare/v0.8.0..v0.8.1) (2019-05-20)
+## [v0.8.1] (2019-05-20)
 
 ### Features
 
 * add `LINODE_URL` environment variable
 
-## [v0.8.0](https://github.com/linode/linodego/compare/v0.7.1..v0.8.0) (2019-05-01)
+## [v0.8.0] (2019-05-01)
 
 ### Fixes
 
@@ -88,18 +110,14 @@
 * switched from `metalinter` to `golangci-lint`
 * switched to `go mod` from `dep`
 
-<a name="v0.7.1"></a>
-
-## [v0.7.1](https://github.com/linode/linodego/compare/v0.7.0..v0.7.1) (2019-02-05)
+## [v0.7.1] (2019-02-05)
 
 ### Features
 
 * add `ClassDedicated` constant (`dedicated`) for use in `LinodeType` `Class` values
   See the [Dedicated CPU Announcement](https://blog.linode.com/2019/02/05/introducing-linode-dedicated-cpu-instances/)
 
-<a name="v0.7.0"></a>
-
-## [v0.7.0](https://github.com/linode/linodego/compare/v0.6.2..v0.7.0) (2018-12-03)
+## [v0.7.0] (2018-12-03)
 
 ### Features
 
@@ -110,23 +128,19 @@
 
 * invalid URL for `/v4/networking/` enpoints (IPv6 Ranges and Pools) has been correcrted
 
-<a name="v0.6.2"></a>
-
-## [v0.6.2](https://github.com/linode/linodego/compare/v0.6.1..v0.6.2) (2018-10-26)
+## [v0.6.2] (2018-10-26)
 
 ### Fixes
 
 * add missing `Account` fields: `address_1`, `address_2`, `phone`
 
-<a name="v0.6.1"></a>
-## [v0.6.1](https://github.com/linode/linodego/compare/v0.6.0..v0.6.1) (2018-10-26)
+## [v0.6.1] (2018-10-26)
 
 ### Features
 
 * Adds support for fetching and updating basic Profile information
 
-<a name="v0.6.0"></a>
-## [v0.6.0](https://github.com/linode/linodego/compare/v0.5.1..v0.6.0) (2018-10-25)
+## [v0.6.0] (2018-10-25)
 
 ### Fixes
 
@@ -150,15 +164,13 @@
   * Change polling default to 3s to avoid 429 conditions
   * Use poll delay in waitfor functions
 
-<a name="v0.5.1"></a>
-## [v0.5.1](https://github.com/linode/linodego/compare/v0.5.0...v0.5.1) (2018-09-10)
+## [v0.5.1] (2018-09-10)
 
 ### Fixes
 
 * Domain.Status was not imported from API responses correctly
 
-<a name="v0.5.0"></a>
-## [v0.5.0](https://github.com/linode/linodego/compare/v0.4.0...v0.5.0) (2018-09-09)
+## [v0.5.0] (2018-09-09)
 
 ### Breaking Changes
 
@@ -174,8 +186,7 @@
 * Event.TimeRemaining wouldn't parse all possible API value
 * Tests no longer rely on known/special instance and volume ids
 
-<a name="0.4.0"></a>
-## [0.4.0](https://github.com/linode/linodego/compare/v0.3.0...0.4.0) (2018-08-27)
+## [0.4.0] (2018-08-27)
 
 ### Breaking Changes
 
@@ -218,19 +229,14 @@ Replaces bool, error results with error results, for:
 * various linting warnings and unhandled err results as reported by linting tools
 * fix GetStackscript 404 handling
 
-
-<a name="0.3.0"></a>
-
-## [0.3.0](https://github.com/linode/linodego/compare/v0.2.0...0.3.0) (2018-08-15)
+## [0.3.0] (2018-08-15)
 
 ### Breaking Changes
 
 * WaitForVolumeLinodeID return fetch volume for consistency with out WaitFors
 * Moved linodego from chiefy to github.com/linode. Thanks [@chiefy](https://github.com/chiefy)!
 
-<a name="v0.2.0"></a>
-
-## [v0.2.0](https://github.com/linode/linodego/compare/v0.1.1...v0.2.0) (2018-08-11)
+## [v0.2.0] (2018-08-11)
 
 ### Breaking Changes
 
@@ -279,9 +285,7 @@ Replaces bool, error results with error results, for:
 
 * update all dependencies to latest
 
-<a name="v0.1.1"></a>
-
-## [v0.1.1](https://github.com/linode/linodego/compare/v0.0.1...v0.1.0) (2018-07-30)
+## [v0.1.1] (2018-07-30)
 
 Adds more Domain handling
 
@@ -294,9 +298,7 @@ Adds more Domain handling
 
 * add CreateDomainRecord, UpdateDomainRecord, and DeleteDomainRecord
 
-<a name="v0.1.0"></a>
-
-## [v0.1.0](https://github.com/linode/linodego/compare/v0.0.1...v0.1.0) (2018-07-23)
+## [v0.1.0] (2018-07-23)
 
 Deals with NewClient and context for all http requests
 
@@ -313,9 +315,34 @@ Deals with NewClient and context for all http requests
 
 * added `Client.SetBaseURL(url string)`
 
-<a name="v0.0.1"></a>
 ## v0.0.1 (2018-07-20)
 
 ### Changed
 
 * Initial tagged release
+
+
+[unreleased]: https://github.com/linode/linodego/compare/v0.12.1...HEAD
+[v0.12.2]: https://github.com/linode/linodego/compare/v0.12.1...v0.12.2
+[v0.12.1]: https://github.com/linode/linodego/compare/v0.12.0...v0.12.1
+[v0.12.0]: https://github.com/linode/linodego/compare/v0.11.0..v0.12.0
+[v0.11.0]: https://github.com/linode/linodego/compare/v0.10.1..v0.11.0
+[v0.10.1]: https://github.com/linode/linodego/compare/v0.10.0..v0.10.1
+[v0.10.0]: https://github.com/linode/linodego/compare/v0.9.2..v0.10.0
+[v0.9.2]: https://github.com/linode/linodego/compare/v0.9.1..v0.9.2
+[v0.9.1]: https://github.com/linode/linodego/compare/v0.9.0..v0.9.1
+[v0.9.0]: https://github.com/linode/linodego/compare/v0.8.1..v0.9.0
+[v0.8.1]: https://github.com/linode/linodego/compare/v0.8.0..v0.8.1
+[v0.8.0]: https://github.com/linode/linodego/compare/v0.7.1..v0.8.0
+[v0.7.1]: https://github.com/linode/linodego/compare/v0.7.0..v0.7.1
+[v0.7.0]: https://github.com/linode/linodego/compare/v0.6.2..v0.7.0
+[v0.6.2]: https://github.com/linode/linodego/compare/v0.6.1..v0.6.2
+[v0.6.1]: https://github.com/linode/linodego/compare/v0.6.0..v0.6.1
+[v0.6.0]: https://github.com/linode/linodego/compare/v0.5.1..v0.6.0
+[v0.5.1]: https://github.com/linode/linodego/compare/v0.5.0...v0.5.1
+[v0.5.0]: https://github.com/linode/linodego/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/linode/linodego/compare/v0.3.0...0.4.0
+[0.3.0]: https://github.com/linode/linodego/compare/v0.2.0...0.3.0
+[v0.2.0]: https://github.com/linode/linodego/compare/v0.1.1...v0.2.0
+[v0.1.1]: https://github.com/linode/linodego/compare/v0.0.1...v0.1.0
+[v0.1.0]: https://github.com/linode/linodego/compare/v0.0.1...v0.1.0

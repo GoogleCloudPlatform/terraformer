@@ -76,9 +76,9 @@ func (client *Client) UpdateDNSSLBWeightWithCallback(request *UpdateDNSSLBWeight
 // UpdateDNSSLBWeightRequest is the request struct for api UpdateDNSSLBWeight
 type UpdateDNSSLBWeightRequest struct {
 	*requests.RpcRequest
+	Weight       requests.Integer `position:"Query" name:"Weight"`
 	RecordId     string           `position:"Query" name:"RecordId"`
 	UserClientIp string           `position:"Query" name:"UserClientIp"`
-	Weight       requests.Integer `position:"Query" name:"Weight"`
 	Lang         string           `position:"Query" name:"Lang"`
 }
 
@@ -95,7 +95,7 @@ func CreateUpdateDNSSLBWeightRequest() (request *UpdateDNSSLBWeightRequest) {
 	request = &UpdateDNSSLBWeightRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "UpdateDNSSLBWeight", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "UpdateDNSSLBWeight", "alidns", "openAPI")
 	return
 }
 

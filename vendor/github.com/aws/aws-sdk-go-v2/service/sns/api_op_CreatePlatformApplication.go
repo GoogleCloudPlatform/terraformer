@@ -26,7 +26,8 @@ type CreatePlatformApplicationInput struct {
 	Name *string `type:"string" required:"true"`
 
 	// The following platforms are supported: ADM (Amazon Device Messaging), APNS
-	// (Apple Push Notification Service), APNS_SANDBOX, and GCM (Google Cloud Messaging).
+	// (Apple Push Notification Service), APNS_SANDBOX, and FCM (Firebase Cloud
+	// Messaging).
 	//
 	// Platform is a required field
 	Platform *string `type:"string" required:"true"`
@@ -82,27 +83,18 @@ const opCreatePlatformApplication = "CreatePlatformApplication"
 // You must specify PlatformPrincipal and PlatformCredential attributes when
 // using the CreatePlatformApplication action. The PlatformPrincipal is received
 // from the notification service. For APNS/APNS_SANDBOX, PlatformPrincipal is
-// "SSL certificate". For GCM, PlatformPrincipal is not applicable. For ADM,
+// "SSL certificate". For FCM, PlatformPrincipal is not applicable. For ADM,
 // PlatformPrincipal is "client id". The PlatformCredential is also received
 // from the notification service. For WNS, PlatformPrincipal is "Package Security
 // Identifier". For MPNS, PlatformPrincipal is "TLS certificate". For Baidu,
 // PlatformPrincipal is "API key".
 //
-// For APNS/APNS_SANDBOX, PlatformCredential is "private key". For GCM, PlatformCredential
+// For APNS/APNS_SANDBOX, PlatformCredential is "private key". For FCM, PlatformCredential
 // is "API key". For ADM, PlatformCredential is "client secret". For WNS, PlatformCredential
 // is "secret key". For MPNS, PlatformCredential is "private key". For Baidu,
 // PlatformCredential is "secret key". The PlatformApplicationArn that is returned
 // when using CreatePlatformApplication is then used as an attribute for the
-// CreatePlatformEndpoint action. For more information, see Using Amazon SNS
-// Mobile Push Notifications (https://docs.aws.amazon.com/sns/latest/dg/SNSMobilePush.html).
-// For more information about obtaining the PlatformPrincipal and PlatformCredential
-// for each of the supported push notification services, see Getting Started
-// with Apple Push Notification Service (https://docs.aws.amazon.com/sns/latest/dg/mobile-push-apns.html),
-// Getting Started with Amazon Device Messaging (https://docs.aws.amazon.com/sns/latest/dg/mobile-push-adm.html),
-// Getting Started with Baidu Cloud Push (https://docs.aws.amazon.com/sns/latest/dg/mobile-push-baidu.html),
-// Getting Started with Google Cloud Messaging for Android (https://docs.aws.amazon.com/sns/latest/dg/mobile-push-gcm.html),
-// Getting Started with MPNS (https://docs.aws.amazon.com/sns/latest/dg/mobile-push-mpns.html),
-// or Getting Started with WNS (https://docs.aws.amazon.com/sns/latest/dg/mobile-push-wns.html).
+// CreatePlatformEndpoint action.
 //
 //    // Example sending a request using CreatePlatformApplicationRequest.
 //    req := client.CreatePlatformApplicationRequest(params)

@@ -65,6 +65,26 @@ func (enum ErrorCode) MarshalValueBuf(b []byte) ([]byte, error) {
 	return append(b, enum...), nil
 }
 
+type FargateProfileStatus string
+
+// Enum values for FargateProfileStatus
+const (
+	FargateProfileStatusCreating     FargateProfileStatus = "CREATING"
+	FargateProfileStatusActive       FargateProfileStatus = "ACTIVE"
+	FargateProfileStatusDeleting     FargateProfileStatus = "DELETING"
+	FargateProfileStatusCreateFailed FargateProfileStatus = "CREATE_FAILED"
+	FargateProfileStatusDeleteFailed FargateProfileStatus = "DELETE_FAILED"
+)
+
+func (enum FargateProfileStatus) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum FargateProfileStatus) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
 type LogType string
 
 // Enum values for LogType

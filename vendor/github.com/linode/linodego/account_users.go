@@ -34,6 +34,7 @@ func (i User) GetCreateOptions() (o UserCreateOptions) {
 	o.Username = i.Username
 	o.Email = i.Email
 	o.Restricted = i.Restricted
+
 	return
 }
 
@@ -42,6 +43,7 @@ func (i User) GetUpdateOptions() (o UserUpdateOptions) {
 	o.Username = i.Username
 	o.Email = i.Email
 	o.Restricted = copyBool(&i.Restricted)
+
 	return
 }
 
@@ -57,6 +59,7 @@ func (UsersPagedResponse) endpoint(c *Client) string {
 	if err != nil {
 		panic(err)
 	}
+
 	return endpoint
 }
 
@@ -69,12 +72,15 @@ func (resp *UsersPagedResponse) appendData(r *UsersPagedResponse) {
 func (c *Client) ListUsers(ctx context.Context, opts *ListOptions) ([]User, error) {
 	response := UsersPagedResponse{}
 	err := c.listHelper(ctx, &response, opts)
+
 	for i := range response.Data {
 		response.Data[i].fixDates()
 	}
+
 	if err != nil {
 		return nil, err
 	}
+
 	return response.Data, nil
 }
 
@@ -89,11 +95,14 @@ func (c *Client) GetUser(ctx context.Context, id string) (*User, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	e = fmt.Sprintf("%s/%s", e, id)
 	r, err := coupleAPIErrors(c.R(ctx).SetResult(&User{}).Get(e))
+
 	if err != nil {
 		return nil, err
 	}
+
 	return r.Result().(*User).fixDates(), nil
 }
 
@@ -101,7 +110,9 @@ func (c *Client) GetUser(ctx context.Context, id string) (*User, error) {
 // User account can be accessed.
 func (c *Client) CreateUser(ctx context.Context, createOpts UserCreateOptions) (*User, error) {
 	var body string
+
 	e, err := c.Users.Endpoint()
+
 	if err != nil {
 		return nil, err
 	}
@@ -121,16 +132,20 @@ func (c *Client) CreateUser(ctx context.Context, createOpts UserCreateOptions) (
 	if err != nil {
 		return nil, err
 	}
+
 	return r.Result().(*User).fixDates(), nil
 }
 
 // UpdateUser updates the User with the specified id
 func (c *Client) UpdateUser(ctx context.Context, id string, updateOpts UserUpdateOptions) (*User, error) {
 	var body string
+
 	e, err := c.Users.Endpoint()
+
 	if err != nil {
 		return nil, err
 	}
+
 	e = fmt.Sprintf("%s/%s", e, id)
 
 	req := c.R(ctx).SetResult(&User{})
@@ -148,6 +163,7 @@ func (c *Client) UpdateUser(ctx context.Context, id string, updateOpts UserUpdat
 	if err != nil {
 		return nil, err
 	}
+
 	return r.Result().(*User).fixDates(), nil
 }
 
@@ -157,8 +173,10 @@ func (c *Client) DeleteUser(ctx context.Context, id string) error {
 	if err != nil {
 		return err
 	}
+
 	e = fmt.Sprintf("%s/%s", e, id)
 
 	_, err = coupleAPIErrors(c.R(ctx).Delete(e))
+
 	return err
 }

@@ -69,6 +69,12 @@ const (
 	// API request.
 	ErrCodeInvalidParameterException = "InvalidParameterException"
 
+	// ErrCodeLimitExceededException for service response error code
+	// "LimitExceededException".
+	//
+	// The limit for the resource has been exceeded.
+	ErrCodeLimitExceededException = "LimitExceededException"
+
 	// ErrCodeMissingVersionException for service response error code
 	// "MissingVersionException".
 	//
@@ -98,6 +104,12 @@ const (
 	//
 	// The specified platform version does not exist.
 	ErrCodePlatformUnknownException = "PlatformUnknownException"
+
+	// ErrCodeResourceInUseException for service response error code
+	// "ResourceInUseException".
+	//
+	// The specified resource is in-use and cannot be removed.
+	ErrCodeResourceInUseException = "ResourceInUseException"
 
 	// ErrCodeResourceNotFoundException for service response error code
 	// "ResourceNotFoundException".
@@ -136,9 +148,9 @@ const (
 	// ErrCodeTaskSetNotFoundException for service response error code
 	// "TaskSetNotFoundException".
 	//
-	// The specified task set could not be found. You can view your available container
-	// instances with DescribeTaskSets. Task sets are specific to each cluster,
-	// service and Region.
+	// The specified task set could not be found. You can view your available task
+	// sets with DescribeTaskSets. Task sets are specific to each cluster, service
+	// and Region.
 	ErrCodeTaskSetNotFoundException = "TaskSetNotFoundException"
 
 	// ErrCodeUnsupportedFeatureException for service response error code

@@ -17,9 +17,10 @@ package alidns
 
 // Line is a nested struct in alidns response
 type Line struct {
-	GroupCode string `json:"GroupCode" xml:"GroupCode"`
-	LineCode  string `json:"LineCode" xml:"LineCode"`
-	LineName  string `json:"LineName" xml:"LineName"`
-	GroupName string `json:"GroupName" xml:"GroupName"`
-	Status    string `json:"Status" xml:"Status"`
+	GroupCode  string `json:"GroupCode" xml:"GroupCode"`
+	LineCode   string `json:"LineCode" xml:"LineCode"`
+	LineName   string `json:"LineName" xml:"LineName"`
+	GroupName  string `json:"GroupName" xml:"GroupName"`
+	Status     string `json:"Status" xml:"Status"`
+	FatherCode string `json:"FatherCode" xml:"FatherCode"`
 }

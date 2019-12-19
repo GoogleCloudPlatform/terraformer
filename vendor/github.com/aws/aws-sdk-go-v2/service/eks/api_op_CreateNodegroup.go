@@ -14,8 +14,8 @@ type CreateNodegroupInput struct {
 	_ struct{} `type:"structure"`
 
 	// The AMI type for your node group. GPU instance types should use the AL2_x86_64_GPU
-	// AMI type, which uses the Amazon EKS-optimized Linux AMI with GPU support;
-	// non-GPU instances should use the AL2_x86_64 AMI type, which uses the Amazon
+	// AMI type, which uses the Amazon EKS-optimized Linux AMI with GPU support.
+	// Non-GPU instances should use the AL2_x86_64 AMI type, which uses the Amazon
 	// EKS-optimized Linux AMI.
 	AmiType AMITypes `locationName:"amiType" type:"string" enum:"true"`
 
@@ -68,11 +68,11 @@ type CreateNodegroupInput struct {
 	// The remote access (SSH) configuration to use with your node group.
 	RemoteAccess *RemoteAccessConfig `locationName:"remoteAccess" type:"structure"`
 
-	// The scaling configuration details for the AutoScaling group that is created
+	// The scaling configuration details for the Auto Scaling group that is created
 	// for your node group.
 	ScalingConfig *NodegroupScalingConfig `locationName:"scalingConfig" type:"structure"`
 
-	// The subnets to use for the AutoScaling group that is created for your node
+	// The subnets to use for the Auto Scaling group that is created for your node
 	// group. These subnets must have the tag key kubernetes.io/cluster/CLUSTER_NAME
 	// with a value of shared, where CLUSTER_NAME is replaced with the name of your
 	// cluster.

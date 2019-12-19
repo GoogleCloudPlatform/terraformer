@@ -33,17 +33,15 @@ const (
 	// ErrCodeENILimitReachedException for service response error code
 	// "ENILimitReachedException".
 	//
-	// AWS Lambda was not able to create an Elastic Network Interface (ENI) in the
-	// VPC, specified as part of Lambda function configuration, because the limit
-	// for network interfaces has been reached.
+	// AWS Lambda was not able to create an elastic network interface in the VPC,
+	// specified as part of Lambda function configuration, because the limit for
+	// network interfaces has been reached.
 	ErrCodeENILimitReachedException = "ENILimitReachedException"
 
 	// ErrCodeInvalidParameterValueException for service response error code
 	// "InvalidParameterValueException".
 	//
-	// One of the parameters in the request is invalid. For example, if you provided
-	// an IAM role for AWS Lambda to assume in the CreateFunction or the UpdateFunctionConfiguration
-	// API, that AWS Lambda is unable to assume you will get this exception.
+	// One of the parameters in the request is invalid.
 	ErrCodeInvalidParameterValueException = "InvalidParameterValueException"
 
 	// ErrCodeInvalidRequestContentException for service response error code
@@ -119,6 +117,12 @@ const (
 	// latest RevisionId for your resource.
 	ErrCodePreconditionFailedException = "PreconditionFailedException"
 
+	// ErrCodeProvisionedConcurrencyConfigNotFoundException for service response error code
+	// "ProvisionedConcurrencyConfigNotFoundException".
+	//
+	// The specified configuration does not exist.
+	ErrCodeProvisionedConcurrencyConfigNotFoundException = "ProvisionedConcurrencyConfigNotFoundException"
+
 	// ErrCodeRequestTooLargeException for service response error code
 	// "RequestTooLargeException".
 	//
@@ -129,7 +133,7 @@ const (
 	// ErrCodeResourceConflictException for service response error code
 	// "ResourceConflictException".
 	//
-	// The resource already exists.
+	// The resource already exists, or another operation is in progress.
 	ErrCodeResourceConflictException = "ResourceConflictException"
 
 	// ErrCodeResourceInUseException for service response error code
@@ -143,9 +147,15 @@ const (
 	// ErrCodeResourceNotFoundException for service response error code
 	// "ResourceNotFoundException".
 	//
-	// The resource (for example, a Lambda function or access policy statement)
-	// specified in the request does not exist.
+	// The resource specified in the request does not exist.
 	ErrCodeResourceNotFoundException = "ResourceNotFoundException"
+
+	// ErrCodeResourceNotReadyException for service response error code
+	// "ResourceNotReadyException".
+	//
+	// The function is inactive and its VPC connection is no longer available. Wait
+	// for the VPC connection to reestablish and try again.
+	ErrCodeResourceNotReadyException = "ResourceNotReadyException"
 
 	// ErrCodeServiceException for service response error code
 	// "ServiceException".
@@ -163,7 +173,7 @@ const (
 	// ErrCodeTooManyRequestsException for service response error code
 	// "TooManyRequestsException".
 	//
-	// Request throughput limit exceeded.
+	// The request throughput limit was exceeded.
 	ErrCodeTooManyRequestsException = "TooManyRequestsException"
 
 	// ErrCodeUnsupportedMediaTypeException for service response error code

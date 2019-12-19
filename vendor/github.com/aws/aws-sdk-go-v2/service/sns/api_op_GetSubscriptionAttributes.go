@@ -67,6 +67,13 @@ type GetSubscriptionAttributesOutput struct {
 	//    subscription. Raw messages are free of JSON formatting and can be sent
 	//    to HTTP/S and Amazon SQS endpoints.
 	//
+	//    * RedrivePolicy – When specified, sends undeliverable messages to the
+	//    specified Amazon SQS dead-letter queue. Messages that can't be delivered
+	//    due to client errors (for example, when the subscribed endpoint is unreachable)
+	//    or server errors (for example, when the service that powers the subscribed
+	//    endpoint becomes unavailable) are held in the dead-letter queue for further
+	//    analysis or reprocessing.
+	//
 	//    * SubscriptionArn – The subscription's ARN.
 	//
 	//    * TopicArn – The topic ARN that the subscription is associated with.

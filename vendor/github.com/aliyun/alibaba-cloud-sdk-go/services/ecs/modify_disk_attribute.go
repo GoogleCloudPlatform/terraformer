@@ -80,6 +80,7 @@ type ModifyDiskAttributeRequest struct {
 	Description          string           `position:"Query" name:"Description"`
 	DiskName             string           `position:"Query" name:"DiskName"`
 	DeleteAutoSnapshot   requests.Boolean `position:"Query" name:"DeleteAutoSnapshot"`
+	DiskIds              *[]string        `position:"Query" name:"DiskIds"  type:"Repeated"`
 	DiskId               string           `position:"Query" name:"DiskId"`
 	DeleteWithInstance   requests.Boolean `position:"Query" name:"DeleteWithInstance"`
 	EnableAutoSnapshot   requests.Boolean `position:"Query" name:"EnableAutoSnapshot"`

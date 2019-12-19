@@ -21,8 +21,8 @@ type RouteTable struct {
 	CreationTime    string                           `json:"CreationTime" xml:"CreationTime"`
 	RouteTableType  string                           `json:"RouteTableType" xml:"RouteTableType"`
 	Status          string                           `json:"Status" xml:"Status"`
-	RouteTableId    string                           `json:"RouteTableId" xml:"RouteTableId"`
 	VRouterId       string                           `json:"VRouterId" xml:"VRouterId"`
+	RouteTableId    string                           `json:"RouteTableId" xml:"RouteTableId"`
 	VSwitchIds      VSwitchIdsInDescribeRouteTables  `json:"VSwitchIds" xml:"VSwitchIds"`
 	RouteEntrys     RouteEntrysInDescribeRouteTables `json:"RouteEntrys" xml:"RouteEntrys"`
 }

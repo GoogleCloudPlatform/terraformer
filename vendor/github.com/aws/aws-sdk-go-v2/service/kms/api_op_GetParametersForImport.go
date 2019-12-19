@@ -13,8 +13,8 @@ import (
 type GetParametersForImportInput struct {
 	_ struct{} `type:"structure"`
 
-	// The identifier of the CMK into which you will import key material. The CMK's
-	// Origin must be EXTERNAL.
+	// The identifier of the symmetric CMK into which you will import key material.
+	// The Origin of the CMK must be EXTERNAL.
 	//
 	// Specify the key ID or the Amazon Resource Name (ARN) of the CMK.
 	//
@@ -106,26 +106,29 @@ const opGetParametersForImport = "GetParametersForImport"
 // GetParametersForImportRequest returns a request value for making API operation for
 // AWS Key Management Service.
 //
-// Returns the items you need in order to import key material into AWS KMS from
-// your existing key management infrastructure. For more information about importing
-// key material into AWS KMS, see Importing Key Material (https://docs.aws.amazon.com/kms/latest/developerguide/importing-keys.html)
+// Returns the items you need to import key material into a symmetric, customer
+// managed customer master key (CMK). For more information about importing key
+// material into AWS KMS, see Importing Key Material (https://docs.aws.amazon.com/kms/latest/developerguide/importing-keys.html)
 // in the AWS Key Management Service Developer Guide.
 //
-// You must specify the key ID of the customer master key (CMK) into which you
-// will import key material. This CMK's Origin must be EXTERNAL. You must also
-// specify the wrapping algorithm and type of wrapping key (public key) that
-// you will use to encrypt the key material. You cannot perform this operation
-// on a CMK in a different AWS account.
-//
 // This operation returns a public key and an import token. Use the public key
-// to encrypt the key material. Store the import token to send with a subsequent
-// ImportKeyMaterial request. The public key and import token from the same
-// response must be used together. These items are valid for 24 hours. When
-// they expire, they cannot be used for a subsequent ImportKeyMaterial request.
-// To get new ones, send another GetParametersForImport request.
+// to encrypt the symmetric key material. Store the import token to send with
+// a subsequent ImportKeyMaterial request.
 //
-// The result of this operation varies with the key state of the CMK. For details,
-// see How Key State Affects Use of a Customer Master Key (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+// You must specify the key ID of the symmetric CMK into which you will import
+// key material. This CMK's Origin must be EXTERNAL. You must also specify the
+// wrapping algorithm and type of wrapping key (public key) that you will use
+// to encrypt the key material. You cannot perform this operation on an asymmetric
+// CMK or on any CMK in a different AWS account.
+//
+// To import key material, you must use the public key and import token from
+// the same response. These items are valid for 24 hours. The expiration date
+// and time appear in the GetParametersForImport response. You cannot use an
+// expired token in an ImportKeyMaterial request. If your key and token expire,
+// send another GetParametersForImport request.
+//
+// The CMK that you use for this operation must be in a compatible key state.
+// For details, see How Key State Affects Use of a Customer Master Key (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
 // in the AWS Key Management Service Developer Guide.
 //
 //    // Example sending a request using GetParametersForImportRequest.

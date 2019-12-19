@@ -13,8 +13,8 @@ type UntagResourceInput struct {
 	_ struct{} `type:"structure"`
 
 	// The Amazon Resource Name (ARN) of the resource from which to delete tags.
-	// Currently, the supported resources are Amazon ECS tasks, services, task definitions,
-	// clusters, and container instances.
+	// Currently, the supported resources are Amazon ECS capacity providers, tasks,
+	// services, task definitions, clusters, and container instances.
 	//
 	// ResourceArn is a required field
 	ResourceArn *string `locationName:"resourceArn" type:"string" required:"true"`

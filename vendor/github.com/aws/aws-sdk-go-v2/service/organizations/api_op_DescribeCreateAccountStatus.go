@@ -17,7 +17,7 @@ type DescribeCreateAccountStatusInput struct {
 	// ListCreateAccountStatus operation.
 	//
 	// The regex pattern (http://wikipedia.org/wiki/regex) for a create account
-	// request ID string requires "car-" followed by from 8 to 32 lower-case letters
+	// request ID string requires "car-" followed by from 8 to 32 lowercase letters
 	// or digits.
 	//
 	// CreateAccountRequestId is a required field

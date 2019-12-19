@@ -17,14 +17,14 @@ package vpc
 
 // NetworkAclAttribute is a nested struct in vpc response
 type NetworkAclAttribute struct {
-	NetworkAclName    string                                          `json:"NetworkAclName" xml:"NetworkAclName"`
-	RegionId          string                                          `json:"RegionId" xml:"RegionId"`
-	NetworkAclId      string                                          `json:"NetworkAclId" xml:"NetworkAclId"`
-	CreationTime      string                                          `json:"CreationTime" xml:"CreationTime"`
-	VpcId             string                                          `json:"VpcId" xml:"VpcId"`
-	Status            string                                          `json:"Status" xml:"Status"`
-	Description       string                                          `json:"Description" xml:"Description"`
-	IngressAclEntries IngressAclEntriesInDescribeNetworkAclAttributes `json:"IngressAclEntries" xml:"IngressAclEntries"`
-	Resources         ResourcesInDescribeNetworkAclAttributes         `json:"Resources" xml:"Resources"`
-	EgressAclEntries  EgressAclEntriesInDescribeNetworkAclAttributes  `json:"EgressAclEntries" xml:"EgressAclEntries"`
+	NetworkAclName    string                              `json:"NetworkAclName" xml:"NetworkAclName"`
+	RegionId          string                              `json:"RegionId" xml:"RegionId"`
+	NetworkAclId      string                              `json:"NetworkAclId" xml:"NetworkAclId"`
+	CreationTime      string                              `json:"CreationTime" xml:"CreationTime"`
+	VpcId             string                              `json:"VpcId" xml:"VpcId"`
+	Status            string                              `json:"Status" xml:"Status"`
+	Description       string                              `json:"Description" xml:"Description"`
+	IngressAclEntries IngressAclEntriesInCreateNetworkAcl `json:"IngressAclEntries" xml:"IngressAclEntries"`
+	Resources         ResourcesInCreateNetworkAcl         `json:"Resources" xml:"Resources"`
+	EgressAclEntries  EgressAclEntriesInCreateNetworkAcl  `json:"EgressAclEntries" xml:"EgressAclEntries"`
 }

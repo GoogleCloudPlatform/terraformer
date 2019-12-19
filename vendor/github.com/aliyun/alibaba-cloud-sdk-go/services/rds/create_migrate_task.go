@@ -76,17 +76,17 @@ func (client *Client) CreateMigrateTaskWithCallback(request *CreateMigrateTaskRe
 // CreateMigrateTaskRequest is the request struct for api CreateMigrateTask
 type CreateMigrateTaskRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
-	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
-	DBName               string           `position:"Query" name:"DBName"`
-	BackupMode           string           `position:"Query" name:"BackupMode"`
 	IsOnlineDB           string           `position:"Query" name:"IsOnlineDB"`
-	CheckDBMode          string           `position:"Query" name:"CheckDBMode"`
+	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
+	MigrateTaskId        string           `position:"Query" name:"MigrateTaskId"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
 	OssObjectPositions   string           `position:"Query" name:"OssObjectPositions"`
 	OSSUrls              string           `position:"Query" name:"OSSUrls"`
-	MigrateTaskId        string           `position:"Query" name:"MigrateTaskId"`
+	DBName               string           `position:"Query" name:"DBName"`
+	BackupMode           string           `position:"Query" name:"BackupMode"`
+	CheckDBMode          string           `position:"Query" name:"CheckDBMode"`
 }
 
 // CreateMigrateTaskResponse is the response struct for api CreateMigrateTask

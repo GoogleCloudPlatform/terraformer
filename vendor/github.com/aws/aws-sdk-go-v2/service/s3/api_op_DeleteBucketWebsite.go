@@ -92,7 +92,7 @@ const opDeleteBucketWebsite = "DeleteBucketWebsite"
 // For more information about hosting websites, see Hosting Websites on Amazon
 // S3 (https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteHosting.html).
 //
-// The following operations are related to DeleteBucketWebsite
+// The following operations are related to DeleteBucketWebsite:
 //
 //    * GetBucketWebsite
 //

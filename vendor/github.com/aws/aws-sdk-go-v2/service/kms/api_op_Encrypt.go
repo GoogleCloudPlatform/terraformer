@@ -12,10 +12,27 @@ import (
 type EncryptInput struct {
 	_ struct{} `type:"structure"`
 
-	// Name-value pair that specifies the encryption context to be used for authenticated
-	// encryption. If used here, the same value must be supplied to the Decrypt
-	// API or decryption will fail. For more information, see Encryption Context
-	// (https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#encrypt_context).
+	// Specifies the encryption algorithm that AWS KMS will use to encrypt the plaintext
+	// message. The algorithm must be compatible with the CMK that you specify.
+	//
+	// This parameter is required only for asymmetric CMKs. The default value, SYMMETRIC_DEFAULT,
+	// is the algorithm used for symmetric CMKs. If you are using an asymmetric
+	// CMK, we recommend RSAES_OAEP_SHA_256.
+	EncryptionAlgorithm EncryptionAlgorithmSpec `type:"string" enum:"true"`
+
+	// Specifies the encryption context that will be used to encrypt the data. An
+	// encryption context is valid only for cryptographic operations with a symmetric
+	// CMK. The standard asymmetric encryption algorithms that AWS KMS uses do not
+	// support an encryption context.
+	//
+	// An encryption context is a collection of non-secret key-value pairs that
+	// represents additional authenticated data. When you use an encryption context
+	// to encrypt data, you must specify the same (an exact case-sensitive match)
+	// encryption context to decrypt the data. An encryption context is optional
+	// when encrypting with a symmetric CMK, but it is highly recommended.
+	//
+	// For more information, see Encryption Context (https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#encrypt_context)
+	// in the AWS Key Management Service Developer Guide.
 	EncryptionContext map[string]string `type:"map"`
 
 	// A list of grant tokens.
@@ -87,10 +104,13 @@ type EncryptOutput struct {
 	_ struct{} `type:"structure"`
 
 	// The encrypted plaintext. When you use the HTTP API or the AWS CLI, the value
-	// is Base64-encoded. Otherwise, it is not encoded.
+	// is Base64-encoded. Otherwise, it is not Base64-encoded.
 	//
 	// CiphertextBlob is automatically base64 encoded/decoded by the SDK.
 	CiphertextBlob []byte `min:"1" type:"blob"`
+
+	// The encryption algorithm that was used to encrypt the plaintext.
+	EncryptionAlgorithm EncryptionAlgorithmSpec `type:"string" enum:"true"`
 
 	// The ID of the key used during encryption.
 	KeyId *string `min:"1" type:"string"`
@@ -109,8 +129,8 @@ const opEncrypt = "Encrypt"
 // Encrypts plaintext into ciphertext by using a customer master key (CMK).
 // The Encrypt operation has two primary use cases:
 //
-//    * You can encrypt up to 4 kilobytes (4096 bytes) of arbitrary data such
-//    as an RSA key, a database password, or other sensitive information.
+//    * You can encrypt small amounts of arbitrary data, such as a personal
+//    identifier or database password, or other sensitive information.
 //
 //    * You can use the Encrypt operation to move encrypted data from one AWS
 //    region to another. In the first region, generate a data key and use the
@@ -119,16 +139,50 @@ const opEncrypt = "Encrypt"
 //    data and encrypted data key to the new region, and decrypt in the new
 //    region when necessary.
 //
-// You don't need use this operation to encrypt a data key within a region.
-// The GenerateDataKey and GenerateDataKeyWithoutPlaintext operations return
-// an encrypted data key.
+// You don't need to use the Encrypt operation to encrypt a data key. The GenerateDataKey
+// and GenerateDataKeyPair operations return a plaintext data key and an encrypted
+// copy of that data key.
 //
-// Also, you don't need to use this operation to encrypt data in your application.
-// You can use the plaintext and encrypted data keys that the GenerateDataKey
-// operation returns.
+// When you encrypt data, you must specify a symmetric or asymmetric CMK to
+// use in the encryption operation. The CMK must have a KeyUsage value of ENCRYPT_DECRYPT.
+// To find the KeyUsage of a CMK, use the DescribeKey operation.
 //
-// The result of this operation varies with the key state of the CMK. For details,
-// see How Key State Affects Use of a Customer Master Key (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
+// If you use a symmetric CMK, you can use an encryption context to add additional
+// security to your encryption operation. If you specify an EncryptionContext
+// when encrypting data, you must specify the same encryption context (a case-sensitive
+// exact match) when decrypting the data. Otherwise, the request to decrypt
+// fails with an InvalidCiphertextException. For more information, see Encryption
+// Context (https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#encrypt_context)
+// in the AWS Key Management Service Developer Guide.
+//
+// If you specify an asymmetric CMK, you must also specify the encryption algorithm.
+// The algorithm must be compatible with the CMK type.
+//
+// When you use an asymmetric CMK to encrypt or reencrypt data, be sure to record
+// the CMK and encryption algorithm that you choose. You will be required to
+// provide the same CMK and encryption algorithm when you decrypt the data.
+// If the CMK and algorithm do not match the values used to encrypt the data,
+// the decrypt operation fails.
+//
+// You are not required to supply the CMK ID and encryption algorithm when you
+// decrypt with symmetric CMKs because AWS KMS stores this information in the
+// ciphertext blob. AWS KMS cannot store metadata in ciphertext generated with
+// asymmetric keys. The standard format for asymmetric key ciphertext does not
+// include configurable fields.
+//
+// The maximum size of the data that you can encrypt varies with the type of
+// CMK and the encryption algorithm that you choose.
+//
+//    * Symmetric CMKs SYMMETRIC_DEFAULT: 4096 bytes
+//
+//    * RSA_2048 RSAES_OAEP_SHA_1: 214 bytes RSAES_OAEP_SHA_256: 190 bytes
+//
+//    * RSA_3072 RSAES_OAEP_SHA_1: 342 bytes RSAES_OAEP_SHA_256: 318 bytes
+//
+//    * RSA_4096 RSAES_OAEP_SHA_1: 470 bytes RSAES_OAEP_SHA_256: 446 bytes
+//
+// The CMK that you use for this operation must be in a compatible key state.
+// For details, see How Key State Affects Use of a Customer Master Key (https://docs.aws.amazon.com/kms/latest/developerguide/key-state.html)
 // in the AWS Key Management Service Developer Guide.
 //
 // To perform this operation on a CMK in a different AWS account, specify the

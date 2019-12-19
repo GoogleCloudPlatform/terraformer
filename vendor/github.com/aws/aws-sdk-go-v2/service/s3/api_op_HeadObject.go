@@ -47,28 +47,30 @@ type HeadObjectInput struct {
 	PartNumber *int64 `location:"querystring" locationName:"partNumber" type:"integer"`
 
 	// Downloads the specified range bytes of an object. For more information about
-	// the HTTP Range header, go to http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35.
+	// the HTTP Range header, see http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35.
 	Range *string `location:"header" locationName:"Range" type:"string"`
 
 	// Confirms that the requester knows that she or he will be charged for the
 	// request. Bucket owners need not specify this parameter in their requests.
-	// Documentation on downloading objects from requester pays buckets can be found
-	// at http://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html
+	// For information about downloading objects from Requester Pays buckets, see
+	// Downloading Objects in Requestor Pays Buckets (https://docs.aws.amazon.com/http:/docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html)
+	// in the Amazon S3 Developer Guide.
 	RequestPayer RequestPayer `location:"header" locationName:"x-amz-request-payer" type:"string" enum:"true"`
 
-	// Specifies the algorithm to use to when encrypting the object (e.g., AES256).
+	// Specifies the algorithm to use to when encrypting the object (for example,
+	// AES256).
 	SSECustomerAlgorithm *string `location:"header" locationName:"x-amz-server-side-encryption-customer-algorithm" type:"string"`
 
 	// Specifies the customer-provided encryption key for Amazon S3 to use in encrypting
 	// data. This value is used to store the object and then it is discarded; Amazon
-	// does not store the encryption key. The key must be appropriate for use with
-	// the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm
+	// S3 does not store the encryption key. The key must be appropriate for use
+	// with the algorithm specified in the x-amz-server-side​-encryption​-customer-algorithm
 	// header.
 	SSECustomerKey *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key" type:"string" sensitive:"true"`
 
 	// Specifies the 128-bit MD5 digest of the encryption key according to RFC 1321.
-	// Amazon S3 uses this header for a message integrity check to ensure the encryption
-	// key was transmitted without error.
+	// Amazon S3 uses this header for a message integrity check to ensure that the
+	// encryption key was transmitted without error.
 	SSECustomerKeyMD5 *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key-MD5" type:"string"`
 
 	// VersionId used to reference a specific version of the object.
@@ -204,7 +206,7 @@ func (s HeadObjectInput) MarshalFields(e protocol.FieldEncoder) error {
 type HeadObjectOutput struct {
 	_ struct{} `type:"structure"`
 
-	// Indicates that a range of bytes was specifed.
+	// Indicates that a range of bytes was specified.
 	AcceptRanges *string `location:"header" locationName:"accept-ranges" type:"string"`
 
 	// Specifies caching behavior along the request/reply chain.
@@ -232,11 +234,11 @@ type HeadObjectOutput struct {
 	DeleteMarker *bool `location:"header" locationName:"x-amz-delete-marker" type:"boolean"`
 
 	// An ETag is an opaque identifier assigned by a web server to a specific version
-	// of a resource found at a URL
+	// of a resource found at a URL.
 	ETag *string `location:"header" locationName:"ETag" type:"string"`
 
 	// If the object expiration is configured (see PUT Bucket lifecycle), the response
-	// includes this header. It includes the expiry-date and rule-id key value pairs
+	// includes this header. It includes the expiry-date and rule-id key-value pairs
 	// providing object expiration information. The value of the rule-id is URL
 	// encoded.
 	Expiration *string `location:"header" locationName:"x-amz-expiration" type:"string"`
@@ -278,24 +280,24 @@ type HeadObjectOutput struct {
 	// Amazon S3 can return this header if your request involves a bucket that is
 	// either a source or destination in a replication rule.
 	//
-	// In replication you have a source bucket on which you configure replication
+	// In replication, you have a source bucket on which you configure replication
 	// and destination bucket where Amazon S3 stores object replicas. When you request
 	// an object (GetObject) or object metadata (HeadObject) from these buckets,
 	// Amazon S3 will return the x-amz-replication-status header in the response
 	// as follows:
 	//
-	//    * If requesting object from the source bucket — Amazon S3 will return
-	//    the x-amz-replication-status header if object in your request is eligible
-	//    for replication. For example, suppose in your replication configuration
-	//    you specify object prefix "TaxDocs" requesting Amazon S3 to replicate
-	//    objects with key prefix "TaxDocs". Then any objects you upload with this
-	//    key name prefix, for example "TaxDocs/document1.pdf", is eligible for
-	//    replication. For any object request with this key name prefix Amazon S3
-	//    will return the x-amz-replication-status header with value PENDING, COMPLETED
-	//    or FAILED indicating object replication status.
+	//    * If requesting an object from the source bucket — Amazon S3 will return
+	//    the x-amz-replication-status header if the object in your request is eligible
+	//    for replication. For example, suppose that in your replication configuration,
+	//    you specify object prefix TaxDocs requesting Amazon S3 to replicate objects
+	//    with key prefix TaxDocs. Any objects you upload with this key name prefix,
+	//    for example TaxDocs/document1.pdf, are eligible for replication. For any
+	//    object request with this key name prefix, Amazon S3 will return the x-amz-replication-status
+	//    header with value PENDING, COMPLETED or FAILED indicating object replication
+	//    status.
 	//
-	//    * If requesting object from the destination bucket — Amazon S3 will
-	//    return the x-amz-replication-status header with value REPLICA if object
+	//    * If requesting an object from the destination bucket — Amazon S3 will
+	//    return the x-amz-replication-status header with value REPLICA if the object
 	//    in your request is a replica that Amazon S3 created.
 	//
 	// For more information, see Replication (https://docs.aws.amazon.com/AmazonS3/latest/dev/NotificationHowTo.html).
@@ -327,18 +329,18 @@ type HeadObjectOutput struct {
 	SSECustomerAlgorithm *string `location:"header" locationName:"x-amz-server-side-encryption-customer-algorithm" type:"string"`
 
 	// If server-side encryption with a customer-provided encryption key was requested,
-	// the response will include this header to provide round trip message integrity
+	// the response will include this header to provide round-trip message integrity
 	// verification of the customer-provided encryption key.
 	SSECustomerKeyMD5 *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key-MD5" type:"string"`
 
-	// If present, specifies the ID of the AWS Key Management Service (KMS) customer
-	// master key (CMK) that was used for the object.
+	// If present, specifies the ID of the AWS Key Management Service (AWS KMS)
+	// customer master key (CMK) that was used for the object.
 	SSEKMSKeyId *string `location:"header" locationName:"x-amz-server-side-encryption-aws-kms-key-id" type:"string" sensitive:"true"`
 
 	// If the object is stored using server-side encryption either with an AWS KMS
 	// customer master key (CMK) or an Amazon S3-managed encryption key, the response
-	// includes this header with the value of the Server-side encryption algorithm
-	// used when storing this object in S3 (e.g., AES256, aws:kms).
+	// includes this header with the value of the server-side encryption algorithm
+	// used when storing this object in Amazon S3 (for example, AES256, aws:kms).
 	ServerSideEncryption ServerSideEncryption `location:"header" locationName:"x-amz-server-side-encryption" type:"string" enum:"true"`
 
 	// Provides storage class information of the object. Amazon S3 returns this
@@ -598,11 +600,11 @@ const opHeadObject = "HeadObject"
 // If the object you request does not exist, the error Amazon S3 returns depends
 // on whether you also have the s3:ListBucket permission.
 //
-//    * If you have the s3:ListBucket permission on the bucket, Amazon S3 will
-//    return a HTTP status code 404 ("no such key") error.
+//    * If you have the s3:ListBucket permission on the bucket, Amazon S3 returns
+//    an HTTP status code 404 ("no such key") error.
 //
-//    * If you don’t have the s3:ListBucket permission, Amazon S3 will return
-//    a HTTP status code 403 ("access denied") error.
+//    * If you don’t have the s3:ListBucket permission, Amazon S3 returns
+//    an HTTP status code 403 ("access denied") error.
 //
 // The following operation is related to HeadObject:
 //

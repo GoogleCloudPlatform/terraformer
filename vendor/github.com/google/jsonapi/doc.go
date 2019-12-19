@@ -49,7 +49,7 @@ Value, attr: "attr,<key name in attributes hash>[,<extra arguments>]"
 
 These fields' values should end up in the "attribute" hash for a record.  The first
 argument must be, "attr', and the second should be the name for the key to display in
-the the "attributes" hash for that record.
+the "attributes" hash for that record.
 
 The following extra arguments are also supported:
 

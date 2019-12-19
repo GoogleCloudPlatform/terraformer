@@ -76,12 +76,13 @@ func (client *Client) DescribeGtmInstancesWithCallback(request *DescribeGtmInsta
 // DescribeGtmInstancesRequest is the request struct for api DescribeGtmInstances
 type DescribeGtmInstancesRequest struct {
 	*requests.RpcRequest
-	ResourceGroupId string           `position:"Query" name:"ResourceGroupId"`
-	UserClientIp    string           `position:"Query" name:"UserClientIp"`
-	PageSize        requests.Integer `position:"Query" name:"PageSize"`
-	Lang            string           `position:"Query" name:"Lang"`
-	Keyword         string           `position:"Query" name:"Keyword"`
-	PageNumber      requests.Integer `position:"Query" name:"PageNumber"`
+	PageNumber           requests.Integer `position:"Query" name:"PageNumber"`
+	ResourceGroupId      string           `position:"Query" name:"ResourceGroupId"`
+	UserClientIp         string           `position:"Query" name:"UserClientIp"`
+	PageSize             requests.Integer `position:"Query" name:"PageSize"`
+	Lang                 string           `position:"Query" name:"Lang"`
+	Keyword              string           `position:"Query" name:"Keyword"`
+	NeedDetailAttributes requests.Boolean `position:"Query" name:"NeedDetailAttributes"`
 }
 
 // DescribeGtmInstancesResponse is the response struct for api DescribeGtmInstances
@@ -100,7 +101,7 @@ func CreateDescribeGtmInstancesRequest() (request *DescribeGtmInstancesRequest) 
 	request = &DescribeGtmInstancesRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmInstances", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmInstances", "alidns", "openAPI")
 	return
 }
 

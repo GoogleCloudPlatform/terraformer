@@ -32,7 +32,7 @@ const (
 	// ErrCodeAccountNotFoundException for service response error code
 	// "AccountNotFoundException".
 	//
-	// We can't find an AWS account with the AccountId that you specified, or the
+	// We can't find an AWS account with the AccountId that you specified. Or the
 	// account whose credentials you used to make this request isn't a member of
 	// an organization.
 	ErrCodeAccountNotFoundException = "AccountNotFoundException"
@@ -70,12 +70,11 @@ const (
 	// ErrCodeConstraintViolationException for service response error code
 	// "ConstraintViolationException".
 	//
-	// Performing this operation violates a minimum or maximum value limit. For
-	// example, attempting to remove the last service control policy (SCP) from
-	// an OU or root, inviting or creating too many accounts to the organization,
-	// or attaching too many policies to an account, OU, or root. This exception
-	// includes a reason that contains additional information about the violated
-	// limit.
+	// Performing this operation violates a minimum or maximum value limit. Examples
+	// include attempting to remove the last service control policy (SCP) from an
+	// OU or root, or attaching too many policies to an account, OU, or root. This
+	// exception includes a reason that contains additional information about the
+	// violated limit.
 	//
 	// Some of the reasons in the following list might not be applicable to this
 	// specific API or operation:
@@ -150,8 +149,8 @@ const (
 	//    in the AWS Organizations User Guide.
 	//
 	//    * MIN_POLICY_TYPE_ATTACHMENT_LIMIT_EXCEEDED: You attempted to detach a
-	//    policy from an entity that would cause the entity to have fewer than the
-	//    minimum number of policies of a certain type required.
+	//    policy from an entity, which would cause the entity to have fewer than
+	//    the minimum number of policies of the required type.
 	//
 	//    * OU_DEPTH_LIMIT_EXCEEDED: You attempted to create an OU tree that is
 	//    too many levels deep.
@@ -171,7 +170,7 @@ const (
 	// ErrCodeCreateAccountStatusNotFoundException for service response error code
 	// "CreateAccountStatusNotFoundException".
 	//
-	// We can't find an create account request with the CreateAccountRequestId that
+	// We can't find a create account request with the CreateAccountRequestId that
 	// you specified.
 	ErrCodeCreateAccountStatusNotFoundException = "CreateAccountStatusNotFoundException"
 
@@ -215,6 +214,15 @@ const (
 	//
 	// A policy with the same name already exists.
 	ErrCodeDuplicatePolicyException = "DuplicatePolicyException"
+
+	// ErrCodeEffectivePolicyNotFoundException for service response error code
+	// "EffectivePolicyNotFoundException".
+	//
+	// If you ran this action on the master account, this policy type is not enabled.
+	// If you ran the action on a member account, the account doesn't have an effective
+	// policy of this type. Contact the administrator of your organization about
+	// attaching a policy of this type to the account.
+	ErrCodeEffectivePolicyNotFoundException = "EffectivePolicyNotFoundException"
 
 	// ErrCodeFinalizingOrganizationException for service response error code
 	// "FinalizingOrganizationException".
@@ -305,6 +313,8 @@ const (
 	//    * INPUT_REQUIRED: You must include a value for all required parameters.
 	//
 	//    * INVALID_ENUM: You specified an invalid value.
+	//
+	//    * INVALID_ENUM_POLICY_TYPE: You specified an invalid policy type.
 	//
 	//    * INVALID_FULL_NAME_TARGET: You specified a full name that contains invalid
 	//    characters.
@@ -398,6 +408,13 @@ const (
 	//
 	// We can't find a root or OU with the ParentId that you specified.
 	ErrCodeParentNotFoundException = "ParentNotFoundException"
+
+	// ErrCodePolicyChangesInProgressException for service response error code
+	// "PolicyChangesInProgressException".
+	//
+	// Changes to the effective policy are in progress, and its contents can't be
+	// returned. Try the operation again later.
+	ErrCodePolicyChangesInProgressException = "PolicyChangesInProgressException"
 
 	// ErrCodePolicyInUseException for service response error code
 	// "PolicyInUseException".

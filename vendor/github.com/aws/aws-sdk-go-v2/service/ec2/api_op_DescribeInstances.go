@@ -96,14 +96,14 @@ type DescribeInstancesInput struct {
 	//
 	//    * launch-time - The time when the instance was launched.
 	//
-	//    * metadata-http-tokens - The metadata request authorization state (optional
-	//    | required)
+	//    * metadata-options.http-tokens - The metadata request authorization state
+	//    (optional | required)
 	//
-	//    * metadata-http-put-response-hop-limit - The http metadata request put
-	//    response hop limit (integer, possible values 1 to 64)
+	//    * metadata-options.http-put-response-hop-limit - The http metadata request
+	//    put response hop limit (integer, possible values 1 to 64)
 	//
-	//    * metadata-http-endpoint - Enable or disable metadata access on http endpoint
-	//    (enabled | disabled)
+	//    * metadata-options.http-endpoint - Enable or disable metadata access on
+	//    http endpoint (enabled | disabled)
 	//
 	//    * monitoring-state - Indicates whether detailed monitoring is enabled
 	//    (disabled | enabled).

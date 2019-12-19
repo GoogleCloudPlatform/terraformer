@@ -76,14 +76,14 @@ func (client *Client) DescribeDBInstancePerformanceWithCallback(request *Describ
 // DescribeDBInstancePerformanceRequest is the request struct for api DescribeDBInstancePerformance
 type DescribeDBInstancePerformanceRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
+	StartTime            string           `position:"Query" name:"StartTime"`
 	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
 	Key                  string           `position:"Query" name:"Key"`
-	StartTime            string           `position:"Query" name:"StartTime"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
+	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
 	EndTime              string           `position:"Query" name:"EndTime"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
 }
 
 // DescribeDBInstancePerformanceResponse is the response struct for api DescribeDBInstancePerformance

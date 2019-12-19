@@ -215,6 +215,11 @@ func (s *CreateTableInput) Validate() error {
 			invalidParams.AddNested("ProvisionedThroughput", err.(aws.ErrInvalidParams))
 		}
 	}
+	if s.StreamSpecification != nil {
+		if err := s.StreamSpecification.Validate(); err != nil {
+			invalidParams.AddNested("StreamSpecification", err.(aws.ErrInvalidParams))
+		}
+	}
 	if s.Tags != nil {
 		for i, v := range s.Tags {
 			if err := v.Validate(); err != nil {

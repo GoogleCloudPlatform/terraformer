@@ -76,14 +76,17 @@ func (client *Client) DescribeDomainsWithCallback(request *DescribeDomainsReques
 // DescribeDomainsRequest is the request struct for api DescribeDomains
 type DescribeDomainsRequest struct {
 	*requests.RpcRequest
+	PageNumber      requests.Integer `position:"Query" name:"PageNumber"`
 	ResourceGroupId string           `position:"Query" name:"ResourceGroupId"`
-	GroupId         string           `position:"Query" name:"GroupId"`
-	UserClientIp    string           `position:"Query" name:"UserClientIp"`
 	PageSize        requests.Integer `position:"Query" name:"PageSize"`
-	SearchMode      string           `position:"Query" name:"SearchMode"`
 	Lang            string           `position:"Query" name:"Lang"`
 	KeyWord         string           `position:"Query" name:"KeyWord"`
-	PageNumber      requests.Integer `position:"Query" name:"PageNumber"`
+	Direction       string           `position:"Query" name:"Direction"`
+	Starmark        requests.Boolean `position:"Query" name:"Starmark"`
+	GroupId         string           `position:"Query" name:"GroupId"`
+	OrderBy         string           `position:"Query" name:"OrderBy"`
+	UserClientIp    string           `position:"Query" name:"UserClientIp"`
+	SearchMode      string           `position:"Query" name:"SearchMode"`
 }
 
 // DescribeDomainsResponse is the response struct for api DescribeDomains
@@ -101,7 +104,7 @@ func CreateDescribeDomainsRequest() (request *DescribeDomainsRequest) {
 	request = &DescribeDomainsRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeDomains", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeDomains", "alidns", "openAPI")
 	return
 }
 

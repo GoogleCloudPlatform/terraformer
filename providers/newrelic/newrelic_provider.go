@@ -52,7 +52,7 @@ func (p *NewRelicProvider) GetSupportedService() map[string]terraform_utils.Serv
 		"alert":      &AlertGenerator{},
 		"dashboard":  &DashboardGenerator{},
 		"infra":      &InfraGenerator{},
-		//"synthetics": &SyntheticsGenerator{},
+		"synthetics": &SyntheticsGenerator{},
 	}
 }
 
