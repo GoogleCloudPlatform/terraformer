@@ -4,7 +4,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/GoogleCloudPlatform/terraformer)](https://goreportcard.com/report/github.com/GoogleCloudPlatform/terraformer)
 [![AUR package](https://img.shields.io/aur/version/terraformer)](https://aur.archlinux.org/packages/terraformer/)
 
-A CLI tool that generates `tf` and `tfstate` files based on existing infrastructure
+A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infrastructure
 (reverse Terraform).
 
 *   Disclaimer: This is not an official Google product
@@ -49,11 +49,11 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
 
 ## Capabilities
 
-1.  Generate `tf` + `tfstate` files from existing infrastructure for all
+1.  Generate `tf`/`json` + `tfstate` files from existing infrastructure for all
     supported objects by resource.
 2.  Remote state can be uploaded to a GCS bucket.
 3.  Connect between resources with `terraform_remote_state` (local and bucket).
-4.  Save `tf` files using a custom folder tree pattern.
+4.  Save `tf`/`json` files using a custom folder tree pattern.
 5.  Import by resource name and type.
 6.  Support terraform 0.12 (for terraform 0.11 use v0.7.9).
 
@@ -75,6 +75,7 @@ Flags:
   -С, --compact                (default false)
   -f, --filter strings        google_compute_firewall=id1:id2:id4
   -h, --help                  help for google
+  -O, --output string         output format hcl or json (default "hcl")
   -o, --path-output string     (default "generated")
   -p, --path-pattern string   {output}/{provider}/ (default "{output}/{provider}/{service}/")
       --projects strings
@@ -1105,7 +1106,7 @@ contributors to follow.
 
 Terraformer was built so you can easily add new providers of any kind.
 
-Process for generating `tf` + `tfstate` files:
+Process for generating `tf`/`json` + `tfstate` files:
 
 1.  Call GCP/AWS/other api and get list of resources.
 2.  Iterate over resources and take only the ID (we don't need mapping fields!).
@@ -1116,7 +1117,7 @@ Process for generating `tf` + `tfstate` files:
 
 1.  Call to provider using the refresh method and get all data.
 2.  Convert refresh data to go struct.
-3.  Generate HCL file - `tf` files.
+3.  Generate HCL file - `tf`/`json` files.
 4.  Generate `tfstate` files.
 
 All mapping of resource is made by providers and Terraform. Upgrades are needed only
