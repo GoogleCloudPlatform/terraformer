@@ -569,6 +569,31 @@ List of supported Azure resources:
     * `azurerm_virtual_machine`
 *   `virtual_network`
     * `azurerm_virtual_network`
+*   `analysis`
+    * `azurerm_analysis_services_server`
+*   `database`
+	* `azurerm_mariadb_configuration`
+	* `azurerm_mariadb_database`
+	* `azurerm_mariadb_firewall_rule`
+	* `azurerm_mariadb_server`
+	* `azurerm_mariadb_virtual_network_rule`
+	* `azurerm_mysql_configuration`
+	* `azurerm_mysql_database`
+	* `azurerm_mysql_firewall_rule`
+	* `azurerm_mysql_server`
+	* `azurerm_mysql_virtual_network_rule`
+	* `azurerm_postgresql_configuration`
+	* `azurerm_postgresql_database`
+	* `azurerm_postgresql_firewall_rule`
+	* `azurerm_postgresql_server`
+	* `azurerm_postgresql_virtual_network_rule`
+	* `azurerm_sql_database`
+	* `azurerm_sql_active_directory_administrator`
+	* `azurerm_sql_elasticpool`
+	* `azurerm_sql_failover_group`
+	* `azurerm_sql_firewall_rule`
+	* `azurerm_sql_server`
+	* `azurerm_sql_virtual_network_rule`
 
 ### Use with AliCloud
 

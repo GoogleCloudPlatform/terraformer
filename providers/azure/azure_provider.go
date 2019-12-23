@@ -136,6 +136,8 @@ func (p *AzureProvider) GetSupportedService() map[string]terraform_utils.Service
 		"storage_account":        &StorageAccountGenerator{},
 		"virtual_machine":        &VirtualMachineGenerator{},
 		"virtual_network":        &VirtualNetworkGenerator{},
+		"analysis":               &AnalysisGenerator{},
+		"database":               &DatabasesGenerator{},
 	}
 }
 
