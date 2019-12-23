@@ -24,7 +24,6 @@ import (
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/hashicorp/go-azure-helpers/authentication"
-	"log"
 	"strings"
 )
 
@@ -49,7 +48,6 @@ func (g *DatabasesGenerator) getMariaDBServers() ([]mariadb.Server, error) {
 }
 
 func (g *DatabasesGenerator) createMariaDBServerResources(Servers []mariadb.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting MariaDB Servers")
 	var resources []terraform_utils.Resource
 
 	for _, server := range Servers {
@@ -69,7 +67,6 @@ func (g *DatabasesGenerator) createMariaDBServerResources(Servers []mariadb.Serv
 }
 
 func (g *DatabasesGenerator) createMariaDBConfigurationResources(Servers []mariadb.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting MariaDB Configurations")
 	var resources []terraform_utils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -102,7 +99,6 @@ func (g *DatabasesGenerator) createMariaDBConfigurationResources(Servers []maria
 }
 
 func (g *DatabasesGenerator) createMariaDBDatabaseResources(Servers []mariadb.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting MariaDB Database")
 	var resources []terraform_utils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -135,7 +131,6 @@ func (g *DatabasesGenerator) createMariaDBDatabaseResources(Servers []mariadb.Se
 }
 
 func (g *DatabasesGenerator) createMariaDBFirewallRuleResources(Servers []mariadb.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting MariaDB Firewall Rules")
 	var resources []terraform_utils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -167,7 +162,6 @@ func (g *DatabasesGenerator) createMariaDBFirewallRuleResources(Servers []mariad
 }
 
 func (g *DatabasesGenerator) createMariaDBVirtualNetworkRuleResources(Servers []mariadb.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting MariaDB Virtual Network Rules")
 	var resources []terraform_utils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -219,7 +213,6 @@ func (g *DatabasesGenerator) getMySQLServers() ([]mysql.Server, error) {
 }
 
 func (g *DatabasesGenerator) createMySQLServerResources(Servers []mysql.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting MySQL Servers")
 	var resources []terraform_utils.Resource
 
 	Servers, err := g.getMySQLServers()
@@ -244,7 +237,6 @@ func (g *DatabasesGenerator) createMySQLServerResources(Servers []mysql.Server) 
 }
 
 func (g *DatabasesGenerator) createMySQLConfigurationResources(Servers []mysql.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting MySQL Configurations")
 	var resources []terraform_utils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -277,7 +269,6 @@ func (g *DatabasesGenerator) createMySQLConfigurationResources(Servers []mysql.S
 }
 
 func (g *DatabasesGenerator) createMySQLDatabaseResources(Servers []mysql.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting MySQL Databases")
 	var resources []terraform_utils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -309,7 +300,6 @@ func (g *DatabasesGenerator) createMySQLDatabaseResources(Servers []mysql.Server
 }
 
 func (g *DatabasesGenerator) createMySQLFirewallRuleResources(Servers []mysql.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting MySQL Firewall Rules")
 	var resources []terraform_utils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -342,7 +332,6 @@ func (g *DatabasesGenerator) createMySQLFirewallRuleResources(Servers []mysql.Se
 }
 
 func (g *DatabasesGenerator) createMySQLVirtualNetworkRuleResources(Servers []mysql.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting MySQL VirtualNetwork Rules")
 	var resources []terraform_utils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -397,7 +386,6 @@ func (g *DatabasesGenerator) getPostgreSQLServers() ([]postgresql.Server, error)
 }
 
 func (g *DatabasesGenerator) createPostgreSQLServerResources(Servers []postgresql.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting Postgresql Servers")
 	var resources []terraform_utils.Resource
 
 	for _, server := range Servers {
@@ -417,7 +405,6 @@ func (g *DatabasesGenerator) createPostgreSQLServerResources(Servers []postgresq
 }
 
 func (g *DatabasesGenerator) createPostgreSQLDatabaseResources(Servers []postgresql.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting PostgreSQL Databases")
 	var resources []terraform_utils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -449,12 +436,10 @@ func (g *DatabasesGenerator) createPostgreSQLDatabaseResources(Servers []postgre
 }
 
 func (g *DatabasesGenerator) createPostgreSQLConfigurationResources(Servers []postgresql.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting PostgreSQL Configurations")
 	var resources []terraform_utils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
 	Authorizer := g.Args["authorizer"].(autorest.Authorizer)
-	//terraform_utils.NewSim
 	Client := postgresql.NewConfigurationsClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
@@ -481,7 +466,6 @@ func (g *DatabasesGenerator) createPostgreSQLConfigurationResources(Servers []po
 }
 
 func (g *DatabasesGenerator) createPostgreSQLFirewallRuleResources(Servers []postgresql.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting PostgreSQL Firewall Rules")
 	var resources []terraform_utils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -513,7 +497,6 @@ func (g *DatabasesGenerator) createPostgreSQLFirewallRuleResources(Servers []pos
 }
 
 func (g *DatabasesGenerator) createPostgreSQLVirtualNetworkRuleResources(Servers []postgresql.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting PostgreSQL VirtualNetwork Rules")
 	var resources []terraform_utils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -569,7 +552,6 @@ func (g *DatabasesGenerator) getSQLServers() ([]sql.Server, error) {
 }
 
 func (g *DatabasesGenerator) createSQLServerResources(Servers []sql.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting SQL Servers")
 	var resources []terraform_utils.Resource
 
 	for _, server := range Servers {
@@ -589,7 +571,6 @@ func (g *DatabasesGenerator) createSQLServerResources(Servers []sql.Server) ([]t
 }
 
 func (g *DatabasesGenerator) createSQLDatabaseResources(Servers []sql.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting SQL Databases")
 	var resources []terraform_utils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -621,7 +602,6 @@ func (g *DatabasesGenerator) createSQLDatabaseResources(Servers []sql.Server) ([
 }
 
 func (g *DatabasesGenerator) createSQLFirewallRuleResources(Servers []sql.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting SQL Firewall Rules")
 	var resources []terraform_utils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -653,7 +633,6 @@ func (g *DatabasesGenerator) createSQLFirewallRuleResources(Servers []sql.Server
 }
 
 func (g *DatabasesGenerator) createSQLVirtualNetworkRuleResources(Servers []sql.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting SQL VirtualNetwork Rules")
 	var resources []terraform_utils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -689,7 +668,6 @@ func (g *DatabasesGenerator) createSQLVirtualNetworkRuleResources(Servers []sql.
 }
 
 func (g *DatabasesGenerator) createSQLElasticPoolResources(Servers []sql.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting SQL Elastic Pools")
 	var resources []terraform_utils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -721,7 +699,6 @@ func (g *DatabasesGenerator) createSQLElasticPoolResources(Servers []sql.Server)
 }
 
 func (g *DatabasesGenerator) createSQLFailoverResources(Servers []sql.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting SQL Failover Groups")
 	var resources []terraform_utils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -756,7 +733,6 @@ func (g *DatabasesGenerator) createSQLFailoverResources(Servers []sql.Server) ([
 }
 
 func (g *DatabasesGenerator) createSQLADAdministratorResources(Servers []sql.Server) ([]terraform_utils.Resource, error) {
-	log.Println("\tImporting SQL Active Directory Administrator")
 	var resources []terraform_utils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
