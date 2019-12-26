@@ -28,14 +28,18 @@ type CloudflareService struct {
 }
 
 func (s *CloudflareService) initializeAPI() (*cf.API, error) {
-	apiKey := os.Getenv("CLOUDFLARE_TOKEN")
+	apiKey := os.Getenv("CLOUDFLARE_API_KEY")
 	apiEmail := os.Getenv("CLOUDFLARE_EMAIL")
+	apiToken := os.Getenv("CLOUDFLARE_API_TOKEN")
 
-	if apiEmail == "" || apiKey == "" {
-		err := errors.New("No CLOUDFLARE_TOKEN/CLOUDFLARE_EMAIL environment set")
+	if apiToken == "" && (apiEmail == "" || apiKey == "") {
+		err := errors.New("Either CLOUDFLARE_API_TOKEN or CLOUDFLARE_API_KEY/CLOUDFLARE_EMAIL environment variables must be set")
 		fmt.Fprintln(os.Stderr, err)
 		return nil, err
 	}
 
+	if apiToken != "" {
+		return cf.NewWithAPIToken(apiToken)
+	}
 	return cf.New(apiKey, apiEmail)
 }
