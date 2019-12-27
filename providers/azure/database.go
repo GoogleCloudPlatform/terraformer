@@ -766,10 +766,21 @@ func (g *DatabasesGenerator) createSQLADAdministratorResources(Servers []sql.Ser
 
 func (g *DatabasesGenerator) InitResources() error {
 	mariadbServers, err := g.getMariaDBServers()
-	mysqlServers, err := g.getMySQLServers()
-	postgresqlServers, err := g.getPostgreSQLServers()
-	sqlServers, err := g.getSQLServers()
+	if err != nil {
+		return err
+	}
 
+	mysqlServers, err := g.getMySQLServers()
+	if err != nil {
+		return err
+	}
+
+	postgresqlServers, err := g.getPostgreSQLServers()
+	if err != nil {
+		return err
+	}
+
+	sqlServers, err := g.getSQLServers()
 	if err != nil {
 		return err
 	}
