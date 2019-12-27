@@ -81,7 +81,7 @@ func (g *TeamsGenerator) createTeamRepositoriesResources(ctx context.Context, te
 	return resources
 }
 
-// Generate TerraformResources from Github API,
+// InitResources generates TerraformResources from Github API,
 func (g *TeamsGenerator) InitResources() error {
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
@@ -91,16 +91,28 @@ func (g *TeamsGenerator) InitResources() error {
 
 	client := githubAPI.NewClient(tc)
 
-	teams, _, err := client.Teams.ListTeams(ctx, g.Args["organization"].(string), nil)
-	if err != nil {
-		log.Println(err)
-		return nil
+	opt := &githubAPI.ListOptions{PerPage: 1}
+
+	for {
+		teams, resp, err := client.Teams.ListTeams(ctx, g.Args["organization"].(string), opt)
+		if err != nil {
+			log.Println(err)
+			return nil
+		}
+
+		g.Resources = append(g.Resources, g.createTeamsResources(ctx, teams, client)...)
+
+		if resp.NextPage == 0 {
+			break
+		}
+		opt.Page = resp.NextPage
 	}
-	g.Resources = g.createTeamsResources(ctx, teams, client)
+
 	return nil
+
 }
 
-// PostGenerateHook for connect between team and members
+// PostConvertHook for connect between team and members
 func (g *TeamsGenerator) PostConvertHook() error {
 	for _, team := range g.Resources {
 		if team.InstanceInfo.Type != "github_team" {
