@@ -126,7 +126,6 @@ After reviewing/customizing the planfile, begin the import by running `import pl
 $ terraformer import plan generated/google/my-project/terraformer/plan.json
 ```
 
-<<<<<<< HEAD
 ### Resource structure
 
 Terraformer by default separates each resource into a file, which is put into a given service directory.
@@ -138,15 +137,6 @@ It's possible to adjust the generated structure by:
 2. Adjusting the `--path-pattern` parameter and passing e.g. `--path-pattern {output}/{provider}/` to generate resources for all services in one directory
 
 It's possible to combine `--compact` `--path-pattern` parameters together.
-=======
-This will generate a `terraform.tfstate` file. If using a _remote state backend_, you can then push the generated state file:
-
-```
-$ terraform state push
-```
-
-This will now allow you to run a plan, and you shouldn't see any pending changes.
->>>>>>> Clarify documentation around using a remote state backend
 
 ### Installation
 
