@@ -85,12 +85,12 @@ func (p *KeycloakProvider) InitService(serviceName string, verbose bool) error {
 
 func (p *KeycloakProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
+		"groups":         &GroupGenerator{},
 		"openid_clients": &OpenIDClientGenerator{},
 		"realms":         &RealmGenerator{},
-		"users":          &UserGenerator{},
 		"roles":          &RoleGenerator{},
 		"scopes":         &ScopeGenerator{},
-		"groups":         &GroupGenerator{},
+		"users":          &UserGenerator{},
 	}
 }
 
