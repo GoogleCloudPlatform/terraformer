@@ -555,20 +555,6 @@ export ARM_TENANT_ID=[TENANT_ID]
 
 List of supported Azure resources:
 
-*   `disk`
-    * `azurerm_managed_disk`
-*   `network_interface`
-    * `azurerm_network_interface`
-*   `network_security_group`
-    * `azurerm_network_security_group`
-*   `resource_group`
-    * `azurerm_resource_group`
-*   `storage_account`
-    * `azurerm_storage_account`
-*   `virtual_machine`
-    * `azurerm_virtual_machine`
-*   `virtual_network`
-    * `azurerm_virtual_network`
 *   `analysis`
     * `azurerm_analysis_services_server`
 *   `database`
@@ -594,6 +580,20 @@ List of supported Azure resources:
 	* `azurerm_sql_firewall_rule`
 	* `azurerm_sql_server`
 	* `azurerm_sql_virtual_network_rule`
+*   `disk`
+    * `azurerm_managed_disk`
+*   `network_interface`
+    * `azurerm_network_interface`
+*   `network_security_group`
+    * `azurerm_network_security_group`
+*   `resource_group`
+    * `azurerm_resource_group`
+*   `storage_account`
+    * `azurerm_storage_account`
+*   `virtual_machine`
+    * `azurerm_virtual_machine`
+*   `virtual_network`
+    * `azurerm_virtual_network`
 
 ### Use with AliCloud
 
@@ -1042,22 +1042,6 @@ Example:
 
 Here is the list of resources which are currently supported by Keycloak provider v.1.12.0:
 
-- `realms`
-  - `keycloak_realm`
-  - `keycloak_ldap_user_federation`
-  - `keycloak_ldap_full_name_mapper`
-  - `keycloak_ldap_group_mapper`
-  - `keycloak_ldap_msad_user_account_control_mapper`
-  - `keycloak_ldap_user_attribute_mapper`
-  - `keycloak_required_action`
-- `users`
-  - `keycloak_user`
-- `roles`
-  - `keycloak_role`
-- `scopes`
-  - `keycloak_openid_client_scope`
-  - `keycloak_openid_client_default_scopes`
-  - `keycloak_openid_client_optional_scopes`
 - `groups`
   - `keycloak_group`
   - `keycloak_group_memberships`
@@ -1073,6 +1057,22 @@ Here is the list of resources which are currently supported by Keycloak provider
   - `keycloak_openid_group_membership_protocol_mapper`
   - `keycloak_openid_hardcoded_claim_protocol_mapper`
   - `keycloak_openid_hardcoded_role_protocol_mapper`
+- `realms`
+  - `keycloak_realm`
+  - `keycloak_ldap_user_federation`
+  - `keycloak_ldap_full_name_mapper`
+  - `keycloak_ldap_group_mapper`
+  - `keycloak_ldap_msad_user_account_control_mapper`
+  - `keycloak_ldap_user_attribute_mapper`
+  - `keycloak_required_action`
+- `roles`
+  - `keycloak_role`
+- `scopes`
+  - `keycloak_openid_client_scope`
+  - `keycloak_openid_client_default_scopes`
+  - `keycloak_openid_client_optional_scopes`
+- `users`
+  - `keycloak_user`
 
 ### Use with Logz.io
 
@@ -1102,24 +1102,24 @@ CTP_CLIENT_ID=foo CTP_CLIENT_SCOPE=scope CTP_CLIENT_SECRET=bar CTP_PROJECT_KEY=k
 
 List of supported [commercetools](https://commercetools.com/de/) resources:
 
-*   `types`
-    * `commercetools_type`
-*   `product_type`
-    * `commercetools_product_type`
-*   `store`
-    * `commercetools_store`
 *   `api_extension`
     * `commercetools_api_extension`
 *   `channel`
     * `commercetools_channel`
-*   `subscription`
-    * `commercetools_subscription`
+*   `product_type`
+    * `commercetools_product_type`
 *   `shipping_zone`
     * `commercetools_shipping_zone`
 *   `state`
     * `commercetools_state`
+*   `store`
+    * `commercetools_store`
+*   `subscription`
+    * `commercetools_subscription`
 *   `tax_category`
     * `commercetools_tax_category`
+*   `types`
+    * `commercetools_type`
 
 ## Contributing
 
