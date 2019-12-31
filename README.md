@@ -928,10 +928,17 @@ All RabbitMQ resources that are currently supported by the RabbitMQ provider, ar
 
 ### Use with Cloudflare
 
-Example:
+Example using a Cloudflare API Key and corresponding email:
 ```
-CLOUDFLARE_TOKEN=[CLOUDFLARE_API_TOKEN]
-CLOUDFLARE_EMAIL=[CLOUDFLARE_EMAIL]
+export CLOUDFLARE_API_KEY=[CLOUDFLARE_API_KEY]
+export CLOUDFLARE_EMAIL=[CLOUDFLARE_EMAIL]
+ ./terraformer import cloudflare --resources=firewall,dns
+```
+
+or using a Cloudflare API Token:
+
+```
+export CLOUDFLARE_API_TOKEN=[CLOUDFLARE_API_TOKEN]
  ./terraformer import cloudflare --resources=firewall,dns
 ```
 
