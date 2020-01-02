@@ -40,7 +40,6 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
         * [New Relic](#use-with-new-relic)
     * Community
         * [Logz.io](#use-with-logzio)
-    * [NewRelic](#use-with-newrelic)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
