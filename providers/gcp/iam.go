@@ -17,6 +17,7 @@ package gcp
 import (
 	"context"
 	"log"
+	"regexp"
 
 	"cloud.google.com/go/iam/admin/apiv1"
 	"google.golang.org/api/cloudresourcemanager/v1"
@@ -36,6 +37,7 @@ type IamGenerator struct {
 
 func (IamGenerator) createServiceAccountResources(serviceAccountsIterator *admin.ServiceAccountIterator) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
+	re := regexp.MustCompile(`^[a-z]`)
 	for {
 		serviceAccount, err := serviceAccountsIterator.Next()
 		if err == iterator.Done {
@@ -43,6 +45,10 @@ func (IamGenerator) createServiceAccountResources(serviceAccountsIterator *admin
 		}
 		if err != nil {
 			log.Println("error with service account:", err)
+			continue
+		}
+		if !re.MatchString(serviceAccount.Email) {
+			log.Printf("skipping %s: service account email must start with [a-z]\n", serviceAccount.Name)
 			continue
 		}
 		resources = append(resources, terraform_utils.NewSimpleResource(
