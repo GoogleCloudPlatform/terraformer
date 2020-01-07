@@ -88,21 +88,24 @@ func (g *IamGenerator) createIamCustomRoleResources(rolesResponse *adminpb.ListR
 	return resources
 }
 
-func (g *IamGenerator) createIamBindingResources(policy *cloudresourcemanager.Policy, project string) []terraform_utils.Resource {
+func (g *IamGenerator) createIamMemberResources(policy *cloudresourcemanager.Policy, project string) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	for _, b := range policy.Bindings {
-		resources = append(resources, terraform_utils.NewResource(
-			b.Role,
-			b.Role,
-			"google_project_iam_binding",
-			"google",
-			map[string]string{
-				"role":    b.Role,
-				"project": project,
-			},
-			IamAllowEmptyValues,
-			IamAdditionalFields,
-		))
+		for _, m := range b.Members {
+			resources = append(resources, terraform_utils.NewResource(
+				b.Role+m,
+				b.Role+m,
+				"google_project_iam_member",
+				"google",
+				map[string]string{
+					"role":    b.Role,
+					"project": project,
+					"member":  m,
+				},
+				IamAllowEmptyValues,
+				IamAdditionalFields,
+			))
+		}
 	}
 
 	return resources
@@ -134,7 +137,7 @@ func (g *IamGenerator) InitResources() error {
 
 	g.Resources = g.createServiceAccountResources(serviceAccountsIterator)
 	g.Resources = append(g.Resources, g.createIamCustomRoleResources(rolesResponse, projectID)...)
-	g.Resources = append(g.Resources, g.createIamBindingResources(policyResponse, projectID)...)
+	g.Resources = append(g.Resources, g.createIamMemberResources(policyResponse, projectID)...)
 	return nil
 
 }
