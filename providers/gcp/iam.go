@@ -65,6 +65,10 @@ func (IamGenerator) createServiceAccountResources(serviceAccountsIterator *admin
 func (g *IamGenerator) createIamCustomRoleResources(rolesResponse *adminpb.ListRolesResponse, project string) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	for _, role := range rolesResponse.Roles {
+		if role.Deleted {
+			// Note: no need to log that the resource has been deleted
+			continue
+		}
 		resources = append(resources, terraform_utils.NewResource(
 			role.Name,
 			role.Name,
