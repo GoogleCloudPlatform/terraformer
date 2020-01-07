@@ -206,6 +206,7 @@ func (p *AWSProvider) InitService(serviceName string, verbose bool) error {
 // GetAWSSupportService return map of support service for AWS
 func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
+		"accessanalyzer":    &AccessAnalyzerGenerator{},
 		"acm":               &ACMGenerator{},
 		"alb":               &AlbGenerator{},
 		"auto_scaling":      &AutoScalingGenerator{},

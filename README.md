@@ -370,6 +370,8 @@ In that case terraformer will not know with which region resources are associate
 
 #### Supported services
 
+*   `accessanalyzer`
+    * `aws_accessanalyzer_analyzer`
 *   `acm`
     * `aws_acm_certificate`
 *   `alb` (supports ALB and NLB)
