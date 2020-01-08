@@ -77,12 +77,13 @@ func (client *Client) DescribeSubDomainRecordsWithCallback(request *DescribeSubD
 type DescribeSubDomainRecordsRequest struct {
 	*requests.RpcRequest
 	Line         string           `position:"Query" name:"Line"`
+	DomainName   string           `position:"Query" name:"DomainName"`
+	Type         string           `position:"Query" name:"Type"`
+	PageNumber   requests.Integer `position:"Query" name:"PageNumber"`
 	UserClientIp string           `position:"Query" name:"UserClientIp"`
 	PageSize     requests.Integer `position:"Query" name:"PageSize"`
 	SubDomain    string           `position:"Query" name:"SubDomain"`
 	Lang         string           `position:"Query" name:"Lang"`
-	Type         string           `position:"Query" name:"Type"`
-	PageNumber   requests.Integer `position:"Query" name:"PageNumber"`
 }
 
 // DescribeSubDomainRecordsResponse is the response struct for api DescribeSubDomainRecords
@@ -100,7 +101,7 @@ func CreateDescribeSubDomainRecordsRequest() (request *DescribeSubDomainRecordsR
 	request = &DescribeSubDomainRecordsRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeSubDomainRecords", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeSubDomainRecords", "alidns", "openAPI")
 	return
 }
 

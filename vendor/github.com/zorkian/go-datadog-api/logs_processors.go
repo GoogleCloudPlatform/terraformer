@@ -6,18 +6,20 @@ import (
 )
 
 const (
-	ArithmeticProcessorType = "arithmetic-processor"
-	AttributeRemapperType   = "attribute-remapper"
-	CategoryProcessorType   = "category-processor"
-	DateRemapperType        = "date-remapper"
-	GrokParserType          = "grok-parser"
-	MessageRemapperType     = "message-remapper"
-	NestedPipelineType      = "pipeline"
-	ServiceRemapperType     = "service-remapper"
-	StatusRemapperType      = "status-remapper"
-	TraceIdRemapperType     = "trace-id-remapper"
-	UrlParserType           = "url-parser"
-	UserAgentParserType     = "user-agent-parser"
+	ArithmeticProcessorType    = "arithmetic-processor"
+	AttributeRemapperType      = "attribute-remapper"
+	CategoryProcessorType      = "category-processor"
+	DateRemapperType           = "date-remapper"
+	GeoIPParserType            = "geo-ip-parser"
+	GrokParserType             = "grok-parser"
+	MessageRemapperType        = "message-remapper"
+	NestedPipelineType         = "pipeline"
+	ServiceRemapperType        = "service-remapper"
+	StatusRemapperType         = "status-remapper"
+	StringBuilderProcessorType = "string-builder-processor"
+	TraceIdRemapperType        = "trace-id-remapper"
+	UrlParserType              = "url-parser"
+	UserAgentParserType        = "user-agent-parser"
 )
 
 // LogsProcessor struct represents the processor object from Config API.
@@ -66,9 +68,22 @@ type SourceRemapper struct {
 	Sources []string `json:"sources"`
 }
 
+// GeoIPParser represents geoIpParser object from config API.
+type GeoIPParser struct {
+	Sources []string `json:"sources"`
+	Target  *string  `json:"target"`
+}
+
+type StringBuilderProcessor struct {
+	Template         *string `json:"template"`
+	Target           *string `json:"target"`
+	IsReplaceMissing *bool   `json:"is_replace_missing"`
+}
+
 // GrokParser represents the grok parser processor object from config API.
 type GrokParser struct {
 	Source   *string   `json:"source"`
+	Samples  []string  `json:"samples"`
 	GrokRule *GrokRule `json:"grok"`
 }
 
@@ -173,6 +188,12 @@ func (processor *LogsProcessor) UnmarshalJSON(data []byte) error {
 			return err
 		}
 		processor.Definition = sourceRemapper
+	case GeoIPParserType:
+		var geoIPParser GeoIPParser
+		if err := json.Unmarshal(data, &geoIPParser); err != nil {
+			return err
+		}
+		processor.Definition = geoIPParser
 	case GrokParserType:
 		var grokParser GrokParser
 		if err := json.Unmarshal(data, &grokParser); err != nil {
@@ -185,6 +206,12 @@ func (processor *LogsProcessor) UnmarshalJSON(data []byte) error {
 			return err
 		}
 		processor.Definition = nestedPipeline
+	case StringBuilderProcessorType:
+		var stringBuilder StringBuilderProcessor
+		if err := json.Unmarshal(data, &stringBuilder); err != nil {
+			return err
+		}
+		processor.Definition = stringBuilder
 	case UrlParserType:
 		var urlParser UrlParser
 		if err := json.Unmarshal(data, &urlParser); err != nil {

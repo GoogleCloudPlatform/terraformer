@@ -84,18 +84,22 @@ type DescribeGtmAccessStrategyRequest struct {
 // DescribeGtmAccessStrategyResponse is the response struct for api DescribeGtmAccessStrategy
 type DescribeGtmAccessStrategyResponse struct {
 	*responses.BaseResponse
-	RequestId            string                           `json:"RequestId" xml:"RequestId"`
-	StrategyId           string                           `json:"StrategyId" xml:"StrategyId"`
-	StrategyName         string                           `json:"StrategyName" xml:"StrategyName"`
-	DefultAddrPoolId     string                           `json:"DefultAddrPoolId" xml:"DefultAddrPoolId"`
-	DefaultAddrPoolName  string                           `json:"DefaultAddrPoolName" xml:"DefaultAddrPoolName"`
-	FailoverAddrPoolId   string                           `json:"FailoverAddrPoolId" xml:"FailoverAddrPoolId"`
-	FailoverAddrPoolName string                           `json:"FailoverAddrPoolName" xml:"FailoverAddrPoolName"`
-	StrategyMode         string                           `json:"StrategyMode" xml:"StrategyMode"`
-	AccessMode           string                           `json:"AccessMode" xml:"AccessMode"`
-	AccessStatus         string                           `json:"AccessStatus" xml:"AccessStatus"`
-	InstanceId           string                           `json:"InstanceId" xml:"InstanceId"`
-	Lines                LinesInDescribeGtmAccessStrategy `json:"Lines" xml:"Lines"`
+	RequestId                     string                           `json:"RequestId" xml:"RequestId"`
+	StrategyId                    string                           `json:"StrategyId" xml:"StrategyId"`
+	StrategyName                  string                           `json:"StrategyName" xml:"StrategyName"`
+	DefultAddrPoolId              string                           `json:"DefultAddrPoolId" xml:"DefultAddrPoolId"`
+	DefaultAddrPoolName           string                           `json:"DefaultAddrPoolName" xml:"DefaultAddrPoolName"`
+	FailoverAddrPoolId            string                           `json:"FailoverAddrPoolId" xml:"FailoverAddrPoolId"`
+	FailoverAddrPoolName          string                           `json:"FailoverAddrPoolName" xml:"FailoverAddrPoolName"`
+	StrategyMode                  string                           `json:"StrategyMode" xml:"StrategyMode"`
+	AccessMode                    string                           `json:"AccessMode" xml:"AccessMode"`
+	AccessStatus                  string                           `json:"AccessStatus" xml:"AccessStatus"`
+	InstanceId                    string                           `json:"InstanceId" xml:"InstanceId"`
+	DefaultAddrPoolStatus         string                           `json:"DefaultAddrPoolStatus" xml:"DefaultAddrPoolStatus"`
+	FailoverAddrPoolStatus        string                           `json:"FailoverAddrPoolStatus" xml:"FailoverAddrPoolStatus"`
+	DefaultAddrPoolMonitorStatus  string                           `json:"DefaultAddrPoolMonitorStatus" xml:"DefaultAddrPoolMonitorStatus"`
+	FailoverAddrPoolMonitorStatus string                           `json:"FailoverAddrPoolMonitorStatus" xml:"FailoverAddrPoolMonitorStatus"`
+	Lines                         LinesInDescribeGtmAccessStrategy `json:"Lines" xml:"Lines"`
 }
 
 // CreateDescribeGtmAccessStrategyRequest creates a request to invoke DescribeGtmAccessStrategy API
@@ -103,7 +107,7 @@ func CreateDescribeGtmAccessStrategyRequest() (request *DescribeGtmAccessStrateg
 	request = &DescribeGtmAccessStrategyRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmAccessStrategy", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmAccessStrategy", "alidns", "openAPI")
 	return
 }
 

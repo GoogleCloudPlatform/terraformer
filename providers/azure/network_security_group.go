@@ -19,8 +19,9 @@ import (
 	"log"
 
 	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2019-08-01/network"
-	"github.com/Azure/go-autorest/autorest/azure/auth"
+	"github.com/Azure/go-autorest/autorest"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/hashicorp/go-azure-helpers/authentication"
 )
 
 type NetworkSecurityGroupGenerator struct {
@@ -49,12 +50,8 @@ func (g NetworkSecurityGroupGenerator) createResources(securityGroupListResultPa
 
 func (g *NetworkSecurityGroupGenerator) InitResources() error {
 	ctx := context.Background()
-	securityGroupsClient := network.NewSecurityGroupsClient(g.Args["subscription"].(string))
-	authorizer, err := auth.NewAuthorizerFromEnvironment()
-	if err != nil {
-		return err
-	}
-	securityGroupsClient.Authorizer = authorizer
+	securityGroupsClient := network.NewSecurityGroupsClient(g.Args["config"].(authentication.Config).SubscriptionID)
+	securityGroupsClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 	output, err := securityGroupsClient.ListAll(ctx)
 	if err != nil {
 		return err

@@ -93,7 +93,7 @@ func CreateDescribeGtmInstanceSystemCnameRequest() (request *DescribeGtmInstance
 	request = &DescribeGtmInstanceSystemCnameRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmInstanceSystemCname", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmInstanceSystemCname", "alidns", "openAPI")
 	return
 }
 

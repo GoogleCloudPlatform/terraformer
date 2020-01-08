@@ -4,7 +4,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/GoogleCloudPlatform/terraformer)](https://goreportcard.com/report/github.com/GoogleCloudPlatform/terraformer)
 [![AUR package](https://img.shields.io/aur/version/terraformer)](https://aur.archlinux.org/packages/terraformer/)
 
-A CLI tool that generates `tf` and `tfstate` files based on existing infrastructure
+A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infrastructure
 (reverse Terraform).
 
 *   Disclaimer: This is not an official Google product
@@ -24,6 +24,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
         * [AliCloud](#use-with-alicloud)
     * Cloud
         * [DigitalOcean](#use-with-digitalocean)
+        * [Fastly](#use-with-fastly)
         * [Heroku](#use-with-heroku)
         * [Linode](#use-with-linode)
         * [OpenStack](#use-with-openstack)
@@ -39,6 +40,7 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
         * [Datadog](#use-with-datadog)
         * [New Relic](#use-with-new-relic)
     * Community
+        * [Keycloak](#use-with-keycloak)
         * [Logz.io](#use-with-logzio)
         * [Commercetools](#use-with-commercetools)
 - [Contributing](#contributing)
@@ -47,11 +49,11 @@ A CLI tool that generates `tf` and `tfstate` files based on existing infrastruct
 
 ## Capabilities
 
-1.  Generate `tf` + `tfstate` files from existing infrastructure for all
+1.  Generate `tf`/`json` + `tfstate` files from existing infrastructure for all
     supported objects by resource.
 2.  Remote state can be uploaded to a GCS bucket.
 3.  Connect between resources with `terraform_remote_state` (local and bucket).
-4.  Save `tf` files using a custom folder tree pattern.
+4.  Save `tf`/`json` files using a custom folder tree pattern.
 5.  Import by resource name and type.
 6.  Support terraform 0.12 (for terraform 0.11 use v0.7.9).
 
@@ -73,6 +75,7 @@ Flags:
   -С, --compact                (default false)
   -f, --filter strings        google_compute_firewall=id1:id2:id4
   -h, --help                  help for google
+  -O, --output string         output format hcl or json (default "hcl")
   -o, --path-output string     (default "generated")
   -p, --path-pattern string   {output}/{provider}/ (default "{output}/{provider}/{service}/")
       --projects strings
@@ -181,6 +184,7 @@ Links to download Terraform Providers:
     * Alicloud provider >1.57.1 - [here](https://releases.hashicorp.com/terraform-provider-alicloud/)
 * Cloud
     * DigitalOcean provider >1.9.1 - [here](https://releases.hashicorp.com/terraform-provider-digitalocean/)
+    * Fastly provider >0.11.0 - [here](https://releases.hashicorp.com/terraform-provider-fastly/)
     * Heroku provider >2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-heroku/)
     * Linode provider >1.8.0 - [here](https://releases.hashicorp.com/terraform-provider-linode/)
     * OpenStack provider >1.21.1 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
@@ -196,6 +200,7 @@ Links to download Terraform Providers:
     * Datadog provider >2.1.0 - [here](https://releases.hashicorp.com/terraform-provider-datadog/)
     * New Relic provider >1.5.0 - [here](https://releases.hashicorp.com/terraform-provider-newrelic/)
 * Community
+    * Keycloak provider >=1.12.0 - [here](https://github.com/mrparkers/terraform-provider-keycloak/)
     * Logz.io provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
     * Commercetools provider >= 0.19.0 - [here](https://github.com/labd/terraform-provider-commercetools)
 
@@ -365,6 +370,8 @@ In that case terraformer will not know with which region resources are associate
 
 #### Supported services
 
+*   `accessanalyzer`
+    * `aws_accessanalyzer_analyzer`
 *   `acm`
     * `aws_acm_certificate`
 *   `alb` (supports ALB and NLB)
@@ -390,6 +397,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_cloudformation_stack_set_instance`
 *   `cloudtrail`
     * `aws_cloudtrail`
+*   `codecommit`
+    * `aws_codecommit_repository`
 *   `customer_gateway`
     * `aws_customer_gateway`
 *   `dynamodb`
@@ -406,6 +415,9 @@ In that case terraformer will not know with which region resources are associate
 *   `ebs`
     * `aws_ebs_volume`
     * `aws_volume_attachment`
+*   `elastic_beanstalk`
+    * `aws_elastic_beanstalk_application`
+    * `aws_elastic_beanstalk_environment`
 *   `ecs`
     * `aws_ecs_cluster`
     * `aws_ecs_service`
@@ -414,6 +426,9 @@ In that case terraformer will not know with which region resources are associate
     * `aws_eks_cluster`
 *   `elb`
     * `aws_elb`
+*   `emr`
+    * `aws_emr_cluster`
+    * `aws_emr_security_configuration`
 *   `es`
     * `aws_elasticsearch_domain`
 *   `firehose`
@@ -437,6 +452,13 @@ In that case terraformer will not know with which region resources are associate
     * `aws_internet_gateway`
 *   `kinesis`
     * `aws_kinesis_stream`
+*   `kms`
+    * `aws_kms_key`
+    * `aws_kms_alias`
+*   `lambda`
+    * `aws_lambda_function`
+    * `aws_lambda_event_source_mapping`
+    * `aws_lambda_layer_version`
 *   `msk`
     * `aws_msk_cluster`
 *   `nat`
@@ -513,24 +535,57 @@ Will work as same as example above with a change the filter will be applicable o
 Terraformer uses AWS [ListQueues](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_ListQueues.html) API call to fetch available queues. The API is able to return only up to 1000 queues and an additional name prefix should be passed to filter the list results. It's possible to pass `QueueNamePrefix` parameter by environmental variable `SQS_PREFIX`.
 
 ### Use with Azure
+Support [Azure CLI](https://www.terraform.io/docs/providers/azurerm/guides/azure_cli.html), [Service Principal with Client Certificate](https://www.terraform.io/docs/providers/azurerm/guides/service_principal_client_certificate.html) & [Service Principal with Client Secret](https://www.terraform.io/docs/providers/azurerm/guides/service_principal_client_secret.html)
 
 Example:
 
 ```
-export ARM_CLIENT_ID=[CLIENT_ID]
-export ARM_CLIENT_SECRET=[CLIENT_SECRET]
+# Using Azure CLI (az login)
 export ARM_SUBSCRIPTION_ID=[SUBSCRIPTION_ID]
+
+# Using Service Principal with Client Certificate
+export ARM_SUBSCRIPTION_ID=[SUBSCRIPTION_ID]
+export ARM_CLIENT_ID=[CLIENT_ID]
+export ARM_CLIENT_CERTIFICATE_PATH="/path/to/my/client/certificate.pfx"
+export ARM_CLIENT_CERTIFICATE_PASSWORD=[CLIENT_CERTIFICATE_PASSWORD]
 export ARM_TENANT_ID=[TENANT_ID]
 
-export AZURE_CLIENT_ID=[CLIENT_ID]
-export AZURE_CLIENT_SECRET=[CLIENT_SECRET]
-export AZURE_TENANT_ID=[TENANT_ID]
+# Service Principal with Client Secret
+export ARM_SUBSCRIPTION_ID=[SUBSCRIPTION_ID]
+export ARM_CLIENT_ID=[CLIENT_ID]
+export ARM_CLIENT_SECRET=[CLIENT_SECRET]
+export ARM_TENANT_ID=[TENANT_ID]
 
 ./terraformer import azure -r resource_group
 ```
 
 List of supported Azure resources:
 
+*   `analysis`
+    * `azurerm_analysis_services_server`
+*   `database`
+	* `azurerm_mariadb_configuration`
+	* `azurerm_mariadb_database`
+	* `azurerm_mariadb_firewall_rule`
+	* `azurerm_mariadb_server`
+	* `azurerm_mariadb_virtual_network_rule`
+	* `azurerm_mysql_configuration`
+	* `azurerm_mysql_database`
+	* `azurerm_mysql_firewall_rule`
+	* `azurerm_mysql_server`
+	* `azurerm_mysql_virtual_network_rule`
+	* `azurerm_postgresql_configuration`
+	* `azurerm_postgresql_database`
+	* `azurerm_postgresql_firewall_rule`
+	* `azurerm_postgresql_server`
+	* `azurerm_postgresql_virtual_network_rule`
+	* `azurerm_sql_database`
+	* `azurerm_sql_active_directory_administrator`
+	* `azurerm_sql_elasticpool`
+	* `azurerm_sql_failover_group`
+	* `azurerm_sql_firewall_rule`
+	* `azurerm_sql_server`
+	* `azurerm_sql_virtual_network_rule`
 *   `disk`
     * `azurerm_managed_disk`
 *   `network_interface`
@@ -615,8 +670,13 @@ List of supported DigitalOcean resources:
     * `digitalocean_certificate`
 *   `database_cluster`
     * `digitalocean_database_cluster`
+    * `digitalocean_database_connection_pool`
+    * `digitalocean_database_db`
+    * `digitalocean_database_replica`
+    * `digitalocean_database_user`
 *   `domain`
     * `digitalocean_domain`
+    * `digitalocean_record`
 *   `droplet`
     * `digitalocean_droplet`
 *   `droplet_snapshot`
@@ -627,6 +687,7 @@ List of supported DigitalOcean resources:
     * `digitalocean_floating_ip`
 *   `kubernetes_cluster`
     * `digitalocean_kubernetes_cluster`
+    * `digitalocean_kubernetes_node_pool`
 *   `loadbalancer`
     * `digitalocean_loadbalancer`
 *   `project`
@@ -639,6 +700,23 @@ List of supported DigitalOcean resources:
     * `digitalocean_volume`
 *   `volume_snapshot`
     * `digitalocean_volume_snapshot`
+
+### Use with Fastly
+
+Example:
+
+```
+export FASTLY_API_KEY=[FASTLY_API_KEY]
+./terraformer import fastly -r service_v1
+```
+
+List of supported Fastly resources:
+
+*   `service_v1`
+    * `fastly_service_acl_entries_v1`
+    * `fastly_service_dictionary_items_v1`
+    * `fastly_service_dynamic_snippet_content_v1`
+    * `fastly_service_v1`
 
 ### Use with Heroku
 
@@ -758,6 +836,7 @@ List of supported Vultr resources:
     * `vultr_dns_record`
 *   `firewall_group`
     * `vultr_firewall_group`
+    * `vultr_firewall_rule`
 *   `network`
     * `vultr_network`
 *   `reserved_ip`
@@ -855,10 +934,17 @@ All RabbitMQ resources that are currently supported by the RabbitMQ provider, ar
 
 ### Use with Cloudflare
 
-Example:
+Example using a Cloudflare API Key and corresponding email:
 ```
-CLOUDFLARE_TOKEN=[CLOUDFLARE_API_TOKEN]
-CLOUDFLARE_EMAIL=[CLOUDFLARE_EMAIL]
+export CLOUDFLARE_API_KEY=[CLOUDFLARE_API_KEY]
+export CLOUDFLARE_EMAIL=[CLOUDFLARE_EMAIL]
+ ./terraformer import cloudflare --resources=firewall,dns
+```
+
+or using a Cloudflare API Token:
+
+```
+export CLOUDFLARE_API_TOKEN=[CLOUDFLARE_API_TOKEN]
  ./terraformer import cloudflare --resources=firewall,dns
 ```
 
@@ -954,6 +1040,53 @@ List of supported New Relic resources:
     * `newrelic_synthetics_monitor`
     * `newrelic_synthetics_alert_condition`
 
+### Use with Keycloak
+
+Example:
+
+```
+ export KEYCLOAK_URL=https://foo.bar.localdomain
+ export KEYCLOAK_CLIENT_ID=[KEYCLOAK_CLIENT_ID]
+ export KEYCLOAK_CLIENT_SECRET=[KEYCLOAK_CLIENT_SECRET]
+
+ terraformer import keycloak --resources=realms,openid_clients
+ terraformer import keycloak --resources=realms --filter=keycloak_realm=name1:name2:name3
+```
+
+Here is the list of resources which are currently supported by Keycloak provider v.1.12.0:
+
+- `groups`
+  - `keycloak_group`
+  - `keycloak_group_memberships`
+  - `keycloak_group_roles`
+  - `keycloak_default_groups`
+- `openid_clients`
+  - `keycloak_openid_client`
+  - `keycloak_openid_client_service_account_role`
+  - `keycloak_openid_user_attribute_protocol_mapper`
+  - `keycloak_openid_user_property_protocol_mapper`
+  - `keycloak_openid_full_name_protocol_mapper`
+  - `keycloak_openid_audience_protocol_mapper`
+  - `keycloak_openid_group_membership_protocol_mapper`
+  - `keycloak_openid_hardcoded_claim_protocol_mapper`
+  - `keycloak_openid_hardcoded_role_protocol_mapper`
+- `realms`
+  - `keycloak_realm`
+  - `keycloak_ldap_user_federation`
+  - `keycloak_ldap_full_name_mapper`
+  - `keycloak_ldap_group_mapper`
+  - `keycloak_ldap_msad_user_account_control_mapper`
+  - `keycloak_ldap_user_attribute_mapper`
+  - `keycloak_required_action`
+- `roles`
+  - `keycloak_role`
+- `scopes`
+  - `keycloak_openid_client_scope`
+  - `keycloak_openid_client_default_scopes`
+  - `keycloak_openid_client_optional_scopes`
+- `users`
+  - `keycloak_user`
+
 ### Use with Logz.io
 
 Example:
@@ -982,24 +1115,24 @@ CTP_CLIENT_ID=foo CTP_CLIENT_SCOPE=scope CTP_CLIENT_SECRET=bar CTP_PROJECT_KEY=k
 
 List of supported [commercetools](https://commercetools.com/de/) resources:
 
-*   `types`
-    * `commercetools_type`
-*   `product_type`
-    * `commercetools_product_type`
-*   `store`
-    * `commercetools_store`
 *   `api_extension`
     * `commercetools_api_extension`
 *   `channel`
     * `commercetools_channel`
-*   `subscription`
-    * `commercetools_subscription`
+*   `product_type`
+    * `commercetools_product_type`
 *   `shipping_zone`
     * `commercetools_shipping_zone`
 *   `state`
     * `commercetools_state`
+*   `store`
+    * `commercetools_store`
+*   `subscription`
+    * `commercetools_subscription`
 *   `tax_category`
     * `commercetools_tax_category`
+*   `types`
+    * `commercetools_type`
 
 ## Contributing
 
@@ -1011,7 +1144,7 @@ contributors to follow.
 
 Terraformer was built so you can easily add new providers of any kind.
 
-Process for generating `tf` + `tfstate` files:
+Process for generating `tf`/`json` + `tfstate` files:
 
 1.  Call GCP/AWS/other api and get list of resources.
 2.  Iterate over resources and take only the ID (we don't need mapping fields!).
@@ -1022,7 +1155,7 @@ Process for generating `tf` + `tfstate` files:
 
 1.  Call to provider using the refresh method and get all data.
 2.  Convert refresh data to go struct.
-3.  Generate HCL file - `tf` files.
+3.  Generate HCL file - `tf`/`json` files.
 4.  Generate `tfstate` files.
 
 All mapping of resource is made by providers and Terraform. Upgrades are needed only

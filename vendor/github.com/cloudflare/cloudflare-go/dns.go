@@ -69,8 +69,8 @@ func (api *API) CreateDNSRecord(zoneID string, rr DNSRecord) (*DNSRecordResponse
 func (api *API) DNSRecords(zoneID string, rr DNSRecord) ([]DNSRecord, error) {
 	// Construct a query string
 	v := url.Values{}
-	// Request as many records as possible per page - API max is 50
-	v.Set("per_page", "50")
+	// Request as many records as possible per page - API max is 100
+	v.Set("per_page", "100")
 	if rr.Name != "" {
 		v.Set("name", rr.Name)
 	}

@@ -106,8 +106,8 @@ type AlertPolicy struct {
 	// to true, then an incident is created. A policy can have from one to six
 	// conditions.
 	Conditions []*AlertPolicy_Condition `protobuf:"bytes,12,rep,name=conditions,proto3" json:"conditions,omitempty"`
-	// How to combine the results of multiple conditions
-	// to determine if an incident should be opened.
+	// How to combine the results of multiple conditions to determine if an
+	// incident should be opened.
 	Combiner AlertPolicy_ConditionCombinerType `protobuf:"varint,6,opt,name=combiner,proto3,enum=google.monitoring.v3.AlertPolicy_ConditionCombinerType" json:"combiner,omitempty"`
 	// Whether or not the policy is enabled. On write, the default interpretation
 	// if unset is that the policy is enabled. On read, clients should not make
@@ -518,7 +518,7 @@ type AlertPolicy_Condition_MetricThreshold struct {
 	// identifies which time series should be compared with the threshold.
 	//
 	// The filter is similar to the one that is specified in the
-	// [`MetricService.ListTimeSeries`
+	// [`ListTimeSeries`
 	// request](/monitoring/api/ref_v3/rest/v3/projects.timeSeries/list) (that
 	// call is useful to verify the time series that will be retrieved /
 	// processed) and must specify the metric type and optionally may contain
@@ -532,8 +532,7 @@ type AlertPolicy_Condition_MetricThreshold struct {
 	// members of a group of resrouces). Multiple aggregations
 	// are applied in the order specified.
 	//
-	// This field is similar to the one in the
-	// [`MetricService.ListTimeSeries`
+	// This field is similar to the one in the [`ListTimeSeries`
 	// request](/monitoring/api/ref_v3/rest/v3/projects.timeSeries/list). It
 	// is advisable to use the `ListTimeSeries` method when debugging this
 	// field.
@@ -682,7 +681,7 @@ type AlertPolicy_Condition_MetricAbsence struct {
 	// identifies which time series should be compared with the threshold.
 	//
 	// The filter is similar to the one that is specified in the
-	// [`MetricService.ListTimeSeries`
+	// [`ListTimeSeries`
 	// request](/monitoring/api/ref_v3/rest/v3/projects.timeSeries/list) (that
 	// call is useful to verify the time series that will be retrieved /
 	// processed) and must specify the metric type and optionally may contain
@@ -696,8 +695,7 @@ type AlertPolicy_Condition_MetricAbsence struct {
 	// members of a group of resrouces). Multiple aggregations
 	// are applied in the order specified.
 	//
-	// This field is similar to the
-	// one in the [`MetricService.ListTimeSeries`
+	// This field is similar to the one in the [`ListTimeSeries`
 	// request](/monitoring/api/ref_v3/rest/v3/projects.timeSeries/list). It
 	// is advisable to use the `ListTimeSeries` method when debugging this
 	// field.

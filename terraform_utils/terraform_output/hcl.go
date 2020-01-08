@@ -24,16 +24,16 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func OutputHclFiles(resources []terraform_utils.Resource, provider terraform_utils.ProviderGenerator, path string, serviceName string, isCompact bool) error {
+func OutputHclFiles(resources []terraform_utils.Resource, provider terraform_utils.ProviderGenerator, path string, serviceName string, isCompact bool, output string) error {
 	if err := os.MkdirAll(path, os.ModePerm); err != nil {
 		return err
 	}
 	// create provider file
-	providerDataFile, err := terraform_utils.HclPrint(provider.GetProviderData(), map[string]struct{}{})
+	providerDataFile, err := terraform_utils.Print(provider.GetProviderData(), map[string]struct{}{}, output)
 	if err != nil {
 		return err
 	}
-	PrintFile(path+"/provider.tf", providerDataFile)
+	PrintFile(path+"/provider."+GetFileExtension(output), providerDataFile)
 
 	// create outputs files
 	outputs := map[string]interface{}{}
@@ -72,11 +72,11 @@ func OutputHclFiles(resources []terraform_utils.Resource, provider terraform_uti
 	}
 	if len(outputsByResource) > 0 {
 		outputs["output"] = outputsByResource
-		outputsFile, err := terraform_utils.HclPrint(outputs, map[string]struct{}{})
+		outputsFile, err := terraform_utils.Print(outputs, map[string]struct{}{}, output)
 		if err != nil {
 			return err
 		}
-		PrintFile(path+"/outputs.tf", outputsFile)
+		PrintFile(path+"/outputs."+GetFileExtension(output), outputsFile)
 	}
 
 	// group by resource by type
@@ -85,14 +85,14 @@ func OutputHclFiles(resources []terraform_utils.Resource, provider terraform_uti
 		typeOfServices[r.InstanceInfo.Type] = append(typeOfServices[r.InstanceInfo.Type], r)
 	}
 	if isCompact {
-		err := printFile(resources, "resources", path)
+		err := printFile(resources, "resources", path, output)
 		if err != nil {
 			return err
 		}
 	} else {
 		for k, v := range typeOfServices {
 			fileName := strings.Replace(k, strings.Split(k, "_")[0]+"_", "", -1)
-			err := printFile(v, fileName, path)
+			err := printFile(v, fileName, path, output)
 			if err != nil {
 				return err
 			}
@@ -101,12 +101,12 @@ func OutputHclFiles(resources []terraform_utils.Resource, provider terraform_uti
 	return nil
 }
 
-func printFile(v []terraform_utils.Resource, fileName string, path string) error {
-	tfFile, err := terraform_utils.HclPrintResource(v, map[string]interface{}{})
+func printFile(v []terraform_utils.Resource, fileName, path, output string) error {
+	tfFile, err := terraform_utils.HclPrintResource(v, map[string]interface{}{}, output)
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(path+"/"+fileName+".tf", tfFile, os.ModePerm)
+	err = ioutil.WriteFile(path+"/"+fileName+"."+GetFileExtension(output), tfFile, os.ModePerm)
 	if err != nil {
 		return err
 	}
@@ -119,4 +119,11 @@ func PrintFile(path string, data []byte) {
 		log.Fatal(err)
 		return
 	}
+}
+
+func GetFileExtension(outputFormat string) string {
+	if outputFormat == "json" {
+		return "tf.json"
+	}
+	return "tf"
 }

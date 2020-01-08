@@ -22,7 +22,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/hashicorp/hcl2/hclwrite"
+	"github.com/hashicorp/hcl/v2/hclwrite"
 
 	"github.com/hashicorp/hcl/hcl/ast"
 	hclPrinter "github.com/hashicorp/hcl/hcl/printer"
@@ -122,15 +122,22 @@ func (v *astSanitizer) visitObjectItem(o *ast.ObjectItem) {
 	v.visit(o.Val)
 }
 
-func HclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error) {
-	dataJsonBytes, err := json.MarshalIndent(data, "", "  ")
-	dataJson := string(dataJsonBytes)
-	dataJson = strings.Replace(dataJson, "\\u003c", "<", -1)
-	if err != nil {
-		log.Println(dataJson)
-		return []byte{}, fmt.Errorf("error marshalling terraform data to json: %v", err)
+func Print(data interface{}, mapsObjects map[string]struct{}, format string) ([]byte, error) {
+	switch format {
+	case "hcl":
+		return hclPrint(data, mapsObjects)
+	case "json":
+		return jsonPrint(data)
 	}
+	return []byte{}, fmt.Errorf("error: unknown output format")
+}
 
+func hclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error) {
+	dataBytesJson, err := jsonPrint(data)
+	if err != nil {
+		return dataBytesJson, err
+	}
+	dataJson := string(dataBytesJson)
 	nodes, err := hclParcer.Parse([]byte(dataJson))
 	if err != nil {
 		log.Println(dataJson)
@@ -152,9 +159,10 @@ func HclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error)
 	// ...but leave whitespace between resources
 	s = strings.Replace(s, "}\nresource", "}\n\nresource", -1)
 
-	// We don't need to escape > or <
-	s = strings.Replace(s, "\\u003c", "<", -1)
-	s = strings.Replace(s, "\\u003e", ">", -1)
+	// Workaround HCL insanity kubernetes/kops#6359: quotes are _not_ escaped in quotes (huh?)
+	// This hits the file function
+	s = strings.Replace(s, "(\\\"", "(\"", -1)
+	s = strings.Replace(s, "\\\")", "\")", -1)
 
 	// Apply Terraform style (alignment etc.)
 	formatted := hclwrite.Format([]byte(s))
@@ -203,7 +211,7 @@ func TfSanitize(name string) string {
 }
 
 // Print hcl file from TerraformResource + provider
-func HclPrintResource(resources []Resource, providerData map[string]interface{}) ([]byte, error) {
+func HclPrintResource(resources []Resource, providerData map[string]interface{}, output string) ([]byte, error) {
 	resourcesByType := map[string]map[string]interface{}{}
 	mapsObjects := map[string]struct{}{}
 	for _, res := range resources {
@@ -239,7 +247,7 @@ func HclPrintResource(resources []Resource, providerData map[string]interface{})
 	}
 	var err error
 
-	hclBytes, err := HclPrint(data, mapsObjects)
+	hclBytes, err := Print(data, mapsObjects, output)
 	if err != nil {
 		return []byte{}, err
 	}

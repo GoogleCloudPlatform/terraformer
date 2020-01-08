@@ -76,21 +76,21 @@ func (client *Client) DescribeRenewalPriceWithCallback(request *DescribeRenewalP
 // DescribeRenewalPriceRequest is the request struct for api DescribeRenewalPrice
 type DescribeRenewalPriceRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
 	ClientToken          string           `position:"Query" name:"ClientToken"`
+	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
+	BusinessInfo         string           `position:"Query" name:"BusinessInfo"`
+	Quantity             requests.Integer `position:"Query" name:"Quantity"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
 	CommodityCode        string           `position:"Query" name:"CommodityCode"`
-	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
-	PayType              string           `position:"Query" name:"PayType"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
+	UsedTime             requests.Integer `position:"Query" name:"UsedTime"`
 	DBInstanceClass      string           `position:"Query" name:"DBInstanceClass"`
-	UsedTime             string           `position:"Query" name:"UsedTime"`
-	TimeType             string           `position:"Query" name:"TimeType"`
-	Quantity             requests.Integer `position:"Query" name:"Quantity"`
-	OrderType            string           `position:"Query" name:"OrderType"`
 	PromotionCode        string           `position:"Query" name:"PromotionCode"`
-	BusinessInfo         string           `position:"Query" name:"BusinessInfo"`
+	TimeType             string           `position:"Query" name:"TimeType"`
+	PayType              string           `position:"Query" name:"PayType"`
+	OrderType            string           `position:"Query" name:"OrderType"`
 }
 
 // DescribeRenewalPriceResponse is the response struct for api DescribeRenewalPrice

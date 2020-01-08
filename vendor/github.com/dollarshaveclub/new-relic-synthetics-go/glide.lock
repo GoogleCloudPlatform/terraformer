@@ -1,0 +1,8 @@
+hash: 7357dd6e8a6e513b240e0d4042f24d5c98805c2ab236870477237538457527db
+updated: 2017-06-05T15:25:37.923910338-07:00
+imports:
+- name: github.com/pkg/errors
+  version: 645ef00459ed84a119197bfb8d8205042c6df63d
+testImports:
+- name: gopkg.in/jarcoal/httpmock.v1
+  version: cf52904a3cf0f78f199ecade6a6df8e245d5b25a

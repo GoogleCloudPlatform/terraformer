@@ -901,12 +901,6 @@
               "required": true,
               "type": "string"
             },
-            "fieldMask": {
-              "description": "If set, only the Routine fields in the field mask are returned in the\nresponse. If unset, all Routine fields are returned.",
-              "format": "google-fieldmask",
-              "location": "query",
-              "type": "string"
-            },
             "projectId": {
               "description": "Required. Project ID of the requested routine",
               "location": "path",
@@ -1417,7 +1411,7 @@
       }
     }
   },
-  "revision": "20190923",
+  "revision": "20191201",
   "rootUrl": "https://bigquery.googleapis.com/",
   "schemas": {
     "AggregateClassificationMetrics": {
@@ -2061,9 +2055,24 @@
           "type": "string"
         },
         "skipLeadingRows": {
-          "description": "[Optional] The number of rows at the top of a CSV file that BigQuery will skip when reading the data. The default value is 0. This property is useful if you have header rows in the file that should be skipped.",
+          "description": "[Optional] The number of rows at the top of a CSV file that BigQuery will skip when reading the data. The default value is 0. This property is useful if you have header rows in the file that should be skipped. When autodetect is on, the behavior is the following: * skipLeadingRows unspecified - Autodetect tries to detect headers in the first row. If they are not detected, the row is read as data. Otherwise data is read starting from the second row. * skipLeadingRows is 0 - Instructs autodetect that there are no headers and data should be read starting from the first row. * skipLeadingRows = N \u003e 0 - Autodetect skips N-1 rows and tries to detect headers in row N. If headers are not detected, row N is just skipped. Otherwise row N is used to extract column names for the detected schema.",
           "format": "int64",
           "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "DataSplitResult": {
+      "description": "Data split result. This contains references to the training and evaluation\ndata tables that were used to train the model.",
+      "id": "DataSplitResult",
+      "properties": {
+        "evaluationTable": {
+          "$ref": "TableReference",
+          "description": "Table reference of the evaluation data after split."
+        },
+        "trainingTable": {
+          "$ref": "TableReference",
+          "description": "Table reference of the training data after split."
         }
       },
       "type": "object"
@@ -2541,7 +2550,7 @@
           "description": "[Optional] Additional options if sourceFormat is set to GOOGLE_SHEETS."
         },
         "hivePartitioningMode": {
-          "description": "[Optional, Trusted Tester] If hive partitioning is enabled, which mode to use. Two modes are supported: - AUTO: automatically infer partition key name(s) and type(s). - STRINGS: automatic infer partition key name(s). All types are strings. Not all storage formats support hive partitioning -- requesting hive partitioning on an unsupported format will lead to an error. Note: this setting is in the process of being deprecated in favor of hivePartitioningOptions.",
+          "description": "[Optional, Trusted Tester] Deprecated, do not use. Please set hivePartitioningOptions instead.",
           "type": "string"
         },
         "hivePartitioningOptions": {
@@ -2935,7 +2944,7 @@
           "type": "string"
         },
         "hivePartitioningMode": {
-          "description": "[Optional, Trusted Tester] If hive partitioning is enabled, which mode to use. Two modes are supported: - AUTO: automatically infer partition key name(s) and type(s). - STRINGS: automatic infer partition key name(s). All types are strings. Not all storage formats support hive partitioning -- requesting hive partitioning on an unsupported format will lead to an error.",
+          "description": "[Optional, Trusted Tester] Deprecated, do not use. Please set hivePartitioningOptions instead.",
           "type": "string"
         },
         "hivePartitioningOptions": {
@@ -3443,7 +3452,7 @@
           "description": "[Output-only] The schema of the results. Present only for successful dry run of non-legacy SQL queries."
         },
         "statementType": {
-          "description": "The type of query statement, if valid. Possible values (new values might be added in the future): \"SELECT\": SELECT query. \"INSERT\": INSERT query; see https://cloud.google.com/bigquery/docs/reference/standard-sql/data-manipulation-language. \"UPDATE\": UPDATE query; see https://cloud.google.com/bigquery/docs/reference/standard-sql/data-manipulation-language. \"DELETE\": DELETE query; see https://cloud.google.com/bigquery/docs/reference/standard-sql/data-manipulation-language. \"MERGE\": MERGE query; see https://cloud.google.com/bigquery/docs/reference/standard-sql/data-manipulation-language. \"ALTER_TABLE\": ALTER TABLE query. \"ALTER_VIEW\": ALTER VIEW query. \"CREATE_FUNCTION\": CREATE FUNCTION query. \"CREATE_MODEL\": CREATE [OR REPLACE] MODEL ... AS SELECT ... . \"CREATE_PROCEDURE\": CREATE PROCEDURE query. \"CREATE_TABLE\": CREATE [OR REPLACE] TABLE without AS SELECT. \"CREATE_TABLE_AS_SELECT\": CREATE [OR REPLACE] TABLE ... AS SELECT ... . \"CREATE_VIEW\": CREATE [OR REPLACE] VIEW ... AS SELECT ... . \"DROP_FUNCTION\" : DROP FUNCTION query. \"DROP_PROCEDURE\": DROP PROCEDURE query. \"DROP_TABLE\": DROP TABLE query. \"DROP_VIEW\": DROP VIEW query.",
+          "description": "The type of query statement, if valid. Possible values (new values might be added in the future): \"SELECT\": SELECT query. \"INSERT\": INSERT query; see https://cloud.google.com/bigquery/docs/reference/standard-sql/data-manipulation-language. \"UPDATE\": UPDATE query; see https://cloud.google.com/bigquery/docs/reference/standard-sql/data-manipulation-language. \"DELETE\": DELETE query; see https://cloud.google.com/bigquery/docs/reference/standard-sql/data-manipulation-language. \"MERGE\": MERGE query; see https://cloud.google.com/bigquery/docs/reference/standard-sql/data-manipulation-language. \"ALTER_TABLE\": ALTER TABLE query. \"ALTER_VIEW\": ALTER VIEW query. \"ASSERT\": ASSERT condition AS 'description'. \"CREATE_FUNCTION\": CREATE FUNCTION query. \"CREATE_MODEL\": CREATE [OR REPLACE] MODEL ... AS SELECT ... . \"CREATE_PROCEDURE\": CREATE PROCEDURE query. \"CREATE_TABLE\": CREATE [OR REPLACE] TABLE without AS SELECT. \"CREATE_TABLE_AS_SELECT\": CREATE [OR REPLACE] TABLE ... AS SELECT ... . \"CREATE_VIEW\": CREATE [OR REPLACE] VIEW ... AS SELECT ... . \"DROP_FUNCTION\" : DROP FUNCTION query. \"DROP_PROCEDURE\": DROP PROCEDURE query. \"DROP_TABLE\": DROP TABLE query. \"DROP_VIEW\": DROP VIEW query.",
           "type": "string"
         },
         "timeline": {
@@ -3595,7 +3604,7 @@
           "type": "string"
         },
         "routines": {
-          "description": "Routines in the requested dataset. Only the following fields are populated:\netag, project_id, dataset_id, routine_id, routine_type, creation_time,\nlast_modified_time, language.",
+          "description": "Routines in the requested dataset. Unless read_mask is set in the request,\nonly the following fields are populated:\netag, project_id, dataset_id, routine_id, routine_type, creation_time,\nlast_modified_time, and language.",
           "items": {
             "$ref": "Routine"
           },
@@ -3618,6 +3627,10 @@
     "MaterializedViewDefinition": {
       "id": "MaterializedViewDefinition",
       "properties": {
+        "enableRefresh": {
+          "description": "[Optional] [TrustedTester] Enable automatic refresh of the materialized view when the base table is updated. The default value is \"true\".",
+          "type": "boolean"
+        },
         "lastRefreshTime": {
           "description": "[Output-only] [TrustedTester] The time when this materialized view was last modified, in milliseconds since the epoch.",
           "format": "int64",
@@ -3625,6 +3638,11 @@
         },
         "query": {
           "description": "[Required] A query whose result is persisted.",
+          "type": "string"
+        },
+        "refreshIntervalMs": {
+          "description": "[Optional] [TrustedTester] The maximum frequency at which this materialized view will be refreshed. The default value is \"1800000\" (30 minutes).",
+          "format": "int64",
           "type": "string"
         }
       },
@@ -3644,7 +3662,7 @@
         },
         "encryptionConfiguration": {
           "$ref": "EncryptionConfiguration",
-          "description": "Custom encryption configuration (e.g., Cloud KMS keys). This shows the\nencryption configuration of the model data while stored in BigQuery\nstorage."
+          "description": "Custom encryption configuration (e.g., Cloud KMS keys). This shows the\nencryption configuration of the model data while stored in BigQuery\nstorage. This field can be used with PatchModel to update encryption key\nfor an already encrypted model."
         },
         "etag": {
           "description": "Output only. A hash of this resource.",
@@ -4512,7 +4530,7 @@
         },
         "requirePartitionFilter": {
           "default": "false",
-          "description": "[Beta] [Optional] If set to true, queries over this table require a partition filter that can be used for partition elimination to be specified.",
+          "description": "[Optional] If set to true, queries over this table require a partition filter that can be used for partition elimination to be specified.",
           "type": "boolean"
         },
         "schema": {
@@ -4693,6 +4711,18 @@
           "description": "[Required] The field name. The name must contain only letters (a-z, A-Z), numbers (0-9), or underscores (_), and must start with a letter or underscore. The maximum length is 128 characters.",
           "type": "string"
         },
+        "policyTags": {
+          "properties": {
+            "names": {
+              "description": "A list of category resource names. For example, \"projects/1/location/eu/taxonomies/2/policyTags/3\". At most 1 policy tag is allowed.",
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          },
+          "type": "object"
+        },
         "type": {
           "description": "[Required] The field data type. Possible values include STRING, BYTES, INTEGER, INT64 (same as INTEGER), FLOAT, FLOAT64 (same as FLOAT), BOOLEAN, BOOL (same as BOOLEAN), TIMESTAMP, DATE, TIME, DATETIME, RECORD (where RECORD indicates that the field contains a nested schema) or STRUCT (same as RECORD).",
           "type": "string"
@@ -4753,6 +4783,10 @@
                 },
                 "description": "The labels associated with this table. You can use these to organize and group your tables.",
                 "type": "object"
+              },
+              "rangePartitioning": {
+                "$ref": "RangePartitioning",
+                "description": "The range partitioning specification for this table, if configured."
               },
               "tableReference": {
                 "$ref": "TableReference",
@@ -4941,12 +4975,14 @@
           "enum": [
             "KMEANS_INITIALIZATION_METHOD_UNSPECIFIED",
             "RANDOM",
-            "CUSTOM"
+            "CUSTOM",
+            "KMEANS_PLUS_PLUS"
           ],
           "enumDescriptions": [
             "",
             "Initializes the centroids randomly.",
-            "Initializes the centroids using data specified in\nkmeans_initialization_column."
+            "Initializes the centroids using data specified in\nkmeans_initialization_column.",
+            "Initializes with kmeans++."
           ],
           "type": "string"
         },
@@ -5045,6 +5081,10 @@
       "description": "Information about a single training query run for the model.",
       "id": "TrainingRun",
       "properties": {
+        "dataSplitResult": {
+          "$ref": "DataSplitResult",
+          "description": "Data split result of the training run. Only set when the input data is\nactually split."
+        },
         "evaluationMetrics": {
           "$ref": "EvaluationMetrics",
           "description": "The evaluation metrics over training/eval data that were computed at the\nend of training."

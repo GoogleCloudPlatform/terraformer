@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	"time"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 	"github.com/hashicorp/terraform/terraform"
@@ -25,15 +26,16 @@ import (
 )
 
 type Resource struct {
-	InstanceInfo     *terraform.InstanceInfo
-	InstanceState    *terraform.InstanceState
-	Outputs          map[string]*terraform.OutputState `json:",omitempty"`
-	ResourceName     string
-	Provider         string
-	Item             map[string]interface{} `json:",omitempty"`
-	IgnoreKeys       []string               `json:",omitempty"`
-	AllowEmptyValues []string               `json:",omitempty"`
-	AdditionalFields map[string]interface{} `json:",omitempty"`
+	InstanceInfo      *terraform.InstanceInfo
+	InstanceState     *terraform.InstanceState
+	Outputs           map[string]*terraform.OutputState `json:",omitempty"`
+	ResourceName      string
+	Provider          string
+	Item              map[string]interface{} `json:",omitempty"`
+	IgnoreKeys        []string               `json:",omitempty"`
+	AllowEmptyValues  []string               `json:",omitempty"`
+	AdditionalFields  map[string]interface{} `json:",omitempty"`
+	SlowQueryRequired bool
 }
 
 type ApplicableFilter interface {
@@ -113,6 +115,9 @@ func NewSimpleResource(ID, resourceName, resourceType, provider string, allowEmp
 
 func (r *Resource) Refresh(provider *provider_wrapper.ProviderWrapper) {
 	var err error
+	if r.SlowQueryRequired {
+		time.Sleep(200 * time.Millisecond)
+	}
 	r.InstanceState, err = provider.Refresh(r.InstanceInfo, r.InstanceState)
 	if err != nil {
 		log.Println(err)

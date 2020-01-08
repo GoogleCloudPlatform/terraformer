@@ -46,6 +46,7 @@ type ImportOptions struct {
 	Compact     bool
 	Filter      []string
 	Plan        bool `json:"-"`
+	Output      string
 }
 
 const DefaultPathPattern = "{output}/{provider}/{service}/"
@@ -169,7 +170,7 @@ func printService(provider terraform_utils.ProviderGenerator, serviceName string
 	log.Println(provider.GetName() + " save " + serviceName)
 	// Print HCL files for Resources
 	path := Path(options.PathPattern, provider.GetName(), serviceName, options.PathOutput)
-	err := terraform_output.OutputHclFiles(resources, provider, path, serviceName, options.Compact)
+	err := terraform_output.OutputHclFiles(resources, provider, path, serviceName, options.Compact, options.Output)
 	if err != nil {
 		return err
 	}
@@ -187,7 +188,7 @@ func printService(provider terraform_utils.ProviderGenerator, serviceName string
 			return err
 		}
 		// create Bucket file
-		if bucketStateDataFile, err := terraform_utils.HclPrint(bucket.BucketGetTfData(path), map[string]struct{}{}); err == nil {
+		if bucketStateDataFile, err := terraform_utils.Print(bucket.BucketGetTfData(path), map[string]struct{}{}, options.Output); err == nil {
 			terraform_output.PrintFile(path+"/bucket.tf", bucketStateDataFile)
 		}
 	} else {
@@ -237,11 +238,11 @@ func printService(provider terraform_utils.ProviderGenerator, serviceName string
 			}
 			// create variables file
 			if len(provider.GetResourceConnections()[serviceName]) > 0 && options.Connect && len(variables["data"]["terraform_remote_state"]) > 0 {
-				variablesFile, err := terraform_utils.HclPrint(variables, map[string]struct{}{"config": {}})
+				variablesFile, err := terraform_utils.Print(variables, map[string]struct{}{"config": {}}, options.Output)
 				if err != nil {
 					return err
 				}
-				terraform_output.PrintFile(path+"/variables.tf", variablesFile)
+				terraform_output.PrintFile(path+"/variables."+terraform_output.GetFileExtension(options.Output), variablesFile)
 			}
 		}
 	} else {
@@ -263,18 +264,18 @@ func printService(provider terraform_utils.ProviderGenerator, serviceName string
 			} else {
 				variables["data"]["terraform_remote_state"]["local"] = map[string]interface{}{
 					"backend": "local",
-					"config": [1]interface{}{map[string]interface{}{
+					"config": map[string]interface{}{
 						"path": "terraform.tfstate",
-					}},
+					},
 				}
 			}
 			// create variables file
 			if options.Connect {
-				variablesFile, err := terraform_utils.HclPrint(variables, map[string]struct{}{"config": {}})
+				variablesFile, err := terraform_utils.Print(variables, map[string]struct{}{"config": {}}, options.Output)
 				if err != nil {
 					return err
 				}
-				terraform_output.PrintFile(path+"/variables.tf", variablesFile)
+				terraform_output.PrintFile(path+"/variables."+terraform_output.GetFileExtension(options.Output), variablesFile)
 			}
 		}
 	}
@@ -320,4 +321,5 @@ func baseProviderFlags(flag *pflag.FlagSet, options *ImportOptions, sampleRes, s
 	flag.StringVarP(&options.Bucket, "bucket", "b", "", "gs://terraform-state")
 	flag.StringSliceVarP(&options.Filter, "filter", "f", []string{}, sampleFilters)
 	flag.BoolVarP(&options.Verbose, "verbose", "v", false, "")
+	flag.StringVarP(&options.Output, "output", "O", "hcl", "output format hcl or json")
 }

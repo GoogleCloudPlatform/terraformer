@@ -16,6 +16,7 @@ package vultr
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/vultr/govultr"
@@ -25,25 +26,58 @@ type FirewallGroupGenerator struct {
 	VultrService
 }
 
-func (g FirewallGroupGenerator) createResources(firewallGroup []govultr.FirewallGroup) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
-	for _, firewallGroup := range firewallGroup {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+func (g *FirewallGroupGenerator) loadFirewallGroups(client *govultr.Client) ([]govultr.FirewallGroup, error) {
+	firewallGroups, err := client.FirewallGroup.List(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	for _, firewallGroup := range firewallGroups {
+		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 			firewallGroup.FirewallGroupID,
 			firewallGroup.FirewallGroupID,
 			"vultr_firewall_group",
 			"vultr",
 			[]string{}))
 	}
-	return resources
+	return firewallGroups, nil
+}
+
+func (g *FirewallGroupGenerator) loadFirewallRulesByIPType(client *govultr.Client, firewallGroupId string, ipType string) error {
+	firewallRules, err := client.FirewallRule.ListByIPType(context.Background(), firewallGroupId, ipType)
+	if err != nil {
+		return err
+	}
+	for _, firewallRule := range firewallRules {
+		g.Resources = append(g.Resources, terraform_utils.NewResource(
+			strconv.Itoa(firewallRule.RuleNumber),
+			strconv.Itoa(firewallRule.RuleNumber),
+			"vultr_firewall_rule",
+			"vultr",
+			map[string]string{
+				"firewall_group_id": firewallGroupId,
+				"ip_type":           ipType,
+			},
+			[]string{},
+			map[string]interface{}{}))
+	}
+	return nil
 }
 
 func (g *FirewallGroupGenerator) InitResources() error {
 	client := g.generateClient()
-	output, err := client.FirewallGroup.List(context.Background())
+	firewallGroups, err := g.loadFirewallGroups(client)
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(output)
+	for _, firewallGroup := range firewallGroups {
+		err := g.loadFirewallRulesByIPType(client, firewallGroup.FirewallGroupID, "v4")
+		if err != nil {
+			return err
+		}
+		err = g.loadFirewallRulesByIPType(client, firewallGroup.FirewallGroupID, "v6")
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }

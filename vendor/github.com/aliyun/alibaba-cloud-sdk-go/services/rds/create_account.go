@@ -76,15 +76,15 @@ func (client *Client) CreateAccountWithCallback(request *CreateAccountRequest, c
 // CreateAccountRequest is the request struct for api CreateAccount
 type CreateAccountRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
-	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
-	AccountName          string           `position:"Query" name:"AccountName"`
-	AccountPassword      string           `position:"Query" name:"AccountPassword"`
-	AccountDescription   string           `position:"Query" name:"AccountDescription"`
 	AccountType          string           `position:"Query" name:"AccountType"`
+	AccountDescription   string           `position:"Query" name:"AccountDescription"`
+	AccountName          string           `position:"Query" name:"AccountName"`
+	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
+	AccountPassword      string           `position:"Query" name:"AccountPassword"`
 }
 
 // CreateAccountResponse is the response struct for api CreateAccount

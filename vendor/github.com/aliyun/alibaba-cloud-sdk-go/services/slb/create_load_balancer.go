@@ -78,6 +78,7 @@ type CreateLoadBalancerRequest struct {
 	*requests.RpcRequest
 	AccessKeyId          string           `position:"Query" name:"access_key_id"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
+	SupportPrivateLink   requests.Boolean `position:"Query" name:"SupportPrivateLink"`
 	ClientToken          string           `position:"Query" name:"ClientToken"`
 	CloudType            string           `position:"Query" name:"CloudType"`
 	AddressIPVersion     string           `position:"Query" name:"AddressIPVersion"`
