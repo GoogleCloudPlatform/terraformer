@@ -92,6 +92,8 @@ type DescribeDomainExtensionAttributeResponse struct {
 	DomainExtensionId   string `json:"DomainExtensionId" xml:"DomainExtensionId"`
 	Domain              string `json:"Domain" xml:"Domain"`
 	ServerCertificateId string `json:"ServerCertificateId" xml:"ServerCertificateId"`
+	LoadBalancerId      string `json:"LoadBalancerId" xml:"LoadBalancerId"`
+	ListenerPort        int    `json:"ListenerPort" xml:"ListenerPort"`
 }
 
 // CreateDescribeDomainExtensionAttributeRequest creates a request to invoke DescribeDomainExtensionAttribute API

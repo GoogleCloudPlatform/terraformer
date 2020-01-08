@@ -76,19 +76,19 @@ func (client *Client) DescribeBackupsWithCallback(request *DescribeBackupsReques
 // DescribeBackupsRequest is the request struct for api DescribeBackups
 type DescribeBackupsRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
-	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
-	BackupId             string           `position:"Query" name:"BackupId"`
+	StartTime            string           `position:"Query" name:"StartTime"`
+	PageNumber           requests.Integer `position:"Query" name:"PageNumber"`
 	BackupLocation       string           `position:"Query" name:"BackupLocation"`
+	PageSize             requests.Integer `position:"Query" name:"PageSize"`
+	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
+	BackupId             string           `position:"Query" name:"BackupId"`
+	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
+	EndTime              string           `position:"Query" name:"EndTime"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
 	BackupStatus         string           `position:"Query" name:"BackupStatus"`
 	BackupMode           string           `position:"Query" name:"BackupMode"`
-	StartTime            string           `position:"Query" name:"StartTime"`
-	EndTime              string           `position:"Query" name:"EndTime"`
-	PageSize             requests.Integer `position:"Query" name:"PageSize"`
-	PageNumber           requests.Integer `position:"Query" name:"PageNumber"`
-	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
 }
 
 // DescribeBackupsResponse is the response struct for api DescribeBackups

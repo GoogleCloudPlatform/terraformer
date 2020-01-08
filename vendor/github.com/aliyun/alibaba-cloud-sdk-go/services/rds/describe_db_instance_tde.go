@@ -76,11 +76,11 @@ func (client *Client) DescribeDBInstanceTDEWithCallback(request *DescribeDBInsta
 // DescribeDBInstanceTDERequest is the request struct for api DescribeDBInstanceTDE
 type DescribeDBInstanceTDERequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
-	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
+	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
 }
 
 // DescribeDBInstanceTDEResponse is the response struct for api DescribeDBInstanceTDE

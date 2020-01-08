@@ -76,11 +76,11 @@ func (client *Client) DescribeCharacterSetNameWithCallback(request *DescribeChar
 // DescribeCharacterSetNameRequest is the request struct for api DescribeCharacterSetName
 type DescribeCharacterSetNameRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
-	Engine               string           `position:"Query" name:"Engine"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
+	Engine               string           `position:"Query" name:"Engine"`
 }
 
 // DescribeCharacterSetNameResponse is the response struct for api DescribeCharacterSetName

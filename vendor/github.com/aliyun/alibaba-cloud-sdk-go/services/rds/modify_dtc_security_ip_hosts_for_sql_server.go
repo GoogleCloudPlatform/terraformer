@@ -76,14 +76,14 @@ func (client *Client) ModifyDTCSecurityIpHostsForSQLServerWithCallback(request *
 // ModifyDTCSecurityIpHostsForSQLServerRequest is the request struct for api ModifyDTCSecurityIpHostsForSQLServer
 type ModifyDTCSecurityIpHostsForSQLServerRequest struct {
 	*requests.RpcRequest
-	SecurityToken        string           `position:"Query" name:"SecurityToken"`
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
-	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
-	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
-	SecurityIpHosts      string           `position:"Query" name:"SecurityIpHosts"`
 	WhiteListGroupName   string           `position:"Query" name:"WhiteListGroupName"`
+	SecurityIpHosts      string           `position:"Query" name:"SecurityIpHosts"`
+	SecurityToken        string           `position:"Query" name:"SecurityToken"`
+	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
+	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
 }
 
 // ModifyDTCSecurityIpHostsForSQLServerResponse is the response struct for api ModifyDTCSecurityIpHostsForSQLServer

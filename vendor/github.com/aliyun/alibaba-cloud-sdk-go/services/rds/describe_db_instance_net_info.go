@@ -76,14 +76,14 @@ func (client *Client) DescribeDBInstanceNetInfoWithCallback(request *DescribeDBI
 // DescribeDBInstanceNetInfoRequest is the request struct for api DescribeDBInstanceNetInfo
 type DescribeDBInstanceNetInfoRequest struct {
 	*requests.RpcRequest
-	OwnerId                  requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount     string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId          requests.Integer `position:"Query" name:"ResourceOwnerId"`
+	Flag                     string           `position:"Query" name:"Flag"`
 	ClientToken              string           `position:"Query" name:"ClientToken"`
 	DBInstanceId             string           `position:"Query" name:"DBInstanceId"`
-	Flag                     string           `position:"Query" name:"Flag"`
-	DBInstanceNetRWSplitType string           `position:"Query" name:"DBInstanceNetRWSplitType"`
+	ResourceOwnerAccount     string           `position:"Query" name:"ResourceOwnerAccount"`
 	OwnerAccount             string           `position:"Query" name:"OwnerAccount"`
+	OwnerId                  requests.Integer `position:"Query" name:"OwnerId"`
+	DBInstanceNetRWSplitType string           `position:"Query" name:"DBInstanceNetRWSplitType"`
 }
 
 // DescribeDBInstanceNetInfoResponse is the response struct for api DescribeDBInstanceNetInfo

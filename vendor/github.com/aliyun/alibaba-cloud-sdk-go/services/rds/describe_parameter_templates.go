@@ -76,13 +76,14 @@ func (client *Client) DescribeParameterTemplatesWithCallback(request *DescribePa
 // DescribeParameterTemplatesRequest is the request struct for api DescribeParameterTemplates
 type DescribeParameterTemplatesRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
 	ClientToken          string           `position:"Query" name:"ClientToken"`
-	Engine               string           `position:"Query" name:"Engine"`
 	EngineVersion        string           `position:"Query" name:"EngineVersion"`
+	Engine               string           `position:"Query" name:"Engine"`
+	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	OwnerAccount         string           `position:"Query" name:"OwnerAccount"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
 	Category             string           `position:"Query" name:"Category"`
 }
 

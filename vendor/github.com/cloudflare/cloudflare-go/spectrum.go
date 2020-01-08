@@ -8,6 +8,33 @@ import (
 	"github.com/pkg/errors"
 )
 
+// ProxyProtocol implements json.Unmarshaler in order to support deserializing of the deprecated boolean
+// value for `proxy_protocol`
+type ProxyProtocol string
+
+// UnmarshalJSON handles deserializing of both the deprecated boolean value and the current string value
+// for the `proxy_protocol` field.
+func (p *ProxyProtocol) UnmarshalJSON(data []byte) error {
+	var raw interface{}
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return err
+	}
+
+	switch pp := raw.(type) {
+	case string:
+		*p = ProxyProtocol(pp)
+	case bool:
+		if pp {
+			*p = "v1"
+		} else {
+			*p = "off"
+		}
+	default:
+		return fmt.Errorf("invalid type for proxy_protocol field: %T", pp)
+	}
+	return nil
+}
+
 // SpectrumApplication defines a single Spectrum Application.
 type SpectrumApplication struct {
 	ID            string                        `json:"id,omitempty"`
@@ -18,12 +45,35 @@ type SpectrumApplication struct {
 	OriginPort    int                           `json:"origin_port,omitempty"`
 	OriginDNS     *SpectrumApplicationOriginDNS `json:"origin_dns,omitempty"`
 	IPFirewall    bool                          `json:"ip_firewall,omitempty"`
-	ProxyProtocol bool                          `json:"proxy_protocol,omitempty"`
+	ProxyProtocol ProxyProtocol                 `json:"proxy_protocol,omitempty"`
 	TLS           string                        `json:"tls,omitempty"`
 	TrafficType   string                        `json:"traffic_type,omitempty"`
 	CreatedOn     *time.Time                    `json:"created_on,omitempty"`
 	ModifiedOn    *time.Time                    `json:"modified_on,omitempty"`
 }
+
+// UnmarshalJSON handles setting the `ProxyProtocol` field based on the value of the deprecated `spp` field.
+func (a *SpectrumApplication) UnmarshalJSON(data []byte) error {
+	var body map[string]interface{}
+	if err := json.Unmarshal(data, &body); err != nil {
+		return err
+	}
+
+	var app spectrumApplicationRaw
+	if err := json.Unmarshal(data, &app); err != nil {
+		return err
+	}
+
+	if spp, ok := body["spp"]; ok && spp.(bool) == true {
+		app.ProxyProtocol = "simple"
+	}
+
+	*a = SpectrumApplication(app)
+	return nil
+}
+
+// spectrumApplicationRaw is used to inspect an application body to support the deprecated boolean value for `spp`
+type spectrumApplicationRaw SpectrumApplication
 
 // SpectrumApplicationDNS holds the external DNS configuration for a Spectrum
 // Application.

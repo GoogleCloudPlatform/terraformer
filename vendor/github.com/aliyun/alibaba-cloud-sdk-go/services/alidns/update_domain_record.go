@@ -76,15 +76,15 @@ func (client *Client) UpdateDomainRecordWithCallback(request *UpdateDomainRecord
 // UpdateDomainRecordRequest is the request struct for api UpdateDomainRecord
 type UpdateDomainRecordRequest struct {
 	*requests.RpcRequest
-	RecordId     string           `position:"Query" name:"RecordId"`
 	RR           string           `position:"Query" name:"RR"`
 	Line         string           `position:"Query" name:"Line"`
-	UserClientIp string           `position:"Query" name:"UserClientIp"`
-	Lang         string           `position:"Query" name:"Lang"`
 	Type         string           `position:"Query" name:"Type"`
-	Priority     requests.Integer `position:"Query" name:"Priority"`
+	Lang         string           `position:"Query" name:"Lang"`
 	Value        string           `position:"Query" name:"Value"`
+	Priority     requests.Integer `position:"Query" name:"Priority"`
 	TTL          requests.Integer `position:"Query" name:"TTL"`
+	RecordId     string           `position:"Query" name:"RecordId"`
+	UserClientIp string           `position:"Query" name:"UserClientIp"`
 }
 
 // UpdateDomainRecordResponse is the response struct for api UpdateDomainRecord
@@ -99,7 +99,7 @@ func CreateUpdateDomainRecordRequest() (request *UpdateDomainRecordRequest) {
 	request = &UpdateDomainRecordRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "UpdateDomainRecord", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "UpdateDomainRecord", "alidns", "openAPI")
 	return
 }
 

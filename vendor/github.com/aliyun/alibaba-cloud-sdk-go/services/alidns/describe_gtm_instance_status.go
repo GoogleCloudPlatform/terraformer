@@ -84,9 +84,11 @@ type DescribeGtmInstanceStatusRequest struct {
 // DescribeGtmInstanceStatusResponse is the response struct for api DescribeGtmInstanceStatus
 type DescribeGtmInstanceStatusResponse struct {
 	*responses.BaseResponse
-	RequestId    string `json:"RequestId" xml:"RequestId"`
-	AccessStatus string `json:"AccessStatus" xml:"AccessStatus"`
-	AlertStatus  string `json:"AlertStatus" xml:"AlertStatus"`
+	RequestId                   string `json:"RequestId" xml:"RequestId"`
+	AddrNotAvailableNum         int    `json:"AddrNotAvailableNum" xml:"AddrNotAvailableNum"`
+	AddrPoolNotAvailableNum     int    `json:"AddrPoolNotAvailableNum" xml:"AddrPoolNotAvailableNum"`
+	SwitchToFailoverStrategyNum int    `json:"SwitchToFailoverStrategyNum" xml:"SwitchToFailoverStrategyNum"`
+	StrategyNotAvailableNum     int    `json:"StrategyNotAvailableNum" xml:"StrategyNotAvailableNum"`
 }
 
 // CreateDescribeGtmInstanceStatusRequest creates a request to invoke DescribeGtmInstanceStatus API
@@ -94,7 +96,7 @@ func CreateDescribeGtmInstanceStatusRequest() (request *DescribeGtmInstanceStatu
 	request = &DescribeGtmInstanceStatusRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmInstanceStatus", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmInstanceStatus", "alidns", "openAPI")
 	return
 }
 

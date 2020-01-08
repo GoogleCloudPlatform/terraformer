@@ -76,11 +76,11 @@ func (client *Client) UpgradeDBInstanceKernelVersionWithCallback(request *Upgrad
 // UpgradeDBInstanceKernelVersionRequest is the request struct for api UpgradeDBInstanceKernelVersion
 type UpgradeDBInstanceKernelVersionRequest struct {
 	*requests.RpcRequest
-	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
-	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
 	ResourceOwnerId      requests.Integer `position:"Query" name:"ResourceOwnerId"`
-	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
+	ResourceOwnerAccount string           `position:"Query" name:"ResourceOwnerAccount"`
+	OwnerId              requests.Integer `position:"Query" name:"OwnerId"`
 	UpgradeTime          string           `position:"Query" name:"UpgradeTime"`
+	DBInstanceId         string           `position:"Query" name:"DBInstanceId"`
 	SwitchTime           string           `position:"Query" name:"SwitchTime"`
 }
 

@@ -84,20 +84,20 @@ type DescribeGtmInstanceAddressPoolRequest struct {
 // DescribeGtmInstanceAddressPoolResponse is the response struct for api DescribeGtmInstanceAddressPool
 type DescribeGtmInstanceAddressPoolResponse struct {
 	*responses.BaseResponse
-	RequestId           string `json:"RequestId" xml:"RequestId"`
-	AddrPoolId          string `json:"AddrPoolId" xml:"AddrPoolId"`
-	CreateTime          string `json:"CreateTime" xml:"CreateTime"`
-	CreateTimestamp     int64  `json:"CreateTimestamp" xml:"CreateTimestamp"`
-	UpdateTime          string `json:"UpdateTime" xml:"UpdateTime"`
-	UpdateTimestamp     int64  `json:"UpdateTimestamp" xml:"UpdateTimestamp"`
-	AddrCount           int    `json:"AddrCount" xml:"AddrCount"`
-	MinAvailableAddrNum int    `json:"MinAvailableAddrNum" xml:"MinAvailableAddrNum"`
-	MonitorConfigId     string `json:"MonitorConfigId" xml:"MonitorConfigId"`
-	MonitorStatus       string `json:"MonitorStatus" xml:"MonitorStatus"`
-	Name                string `json:"Name" xml:"Name"`
-	Status              string `json:"Status" xml:"Status"`
-	Type                string `json:"Type" xml:"Type"`
-	Addrs               Addrs  `json:"Addrs" xml:"Addrs"`
+	RequestId           string                                `json:"RequestId" xml:"RequestId"`
+	AddrPoolId          string                                `json:"AddrPoolId" xml:"AddrPoolId"`
+	CreateTime          string                                `json:"CreateTime" xml:"CreateTime"`
+	CreateTimestamp     int64                                 `json:"CreateTimestamp" xml:"CreateTimestamp"`
+	UpdateTime          string                                `json:"UpdateTime" xml:"UpdateTime"`
+	UpdateTimestamp     int64                                 `json:"UpdateTimestamp" xml:"UpdateTimestamp"`
+	AddrCount           int                                   `json:"AddrCount" xml:"AddrCount"`
+	MinAvailableAddrNum int                                   `json:"MinAvailableAddrNum" xml:"MinAvailableAddrNum"`
+	MonitorConfigId     string                                `json:"MonitorConfigId" xml:"MonitorConfigId"`
+	MonitorStatus       string                                `json:"MonitorStatus" xml:"MonitorStatus"`
+	Name                string                                `json:"Name" xml:"Name"`
+	Status              string                                `json:"Status" xml:"Status"`
+	Type                string                                `json:"Type" xml:"Type"`
+	Addrs               AddrsInDescribeGtmInstanceAddressPool `json:"Addrs" xml:"Addrs"`
 }
 
 // CreateDescribeGtmInstanceAddressPoolRequest creates a request to invoke DescribeGtmInstanceAddressPool API
@@ -105,7 +105,7 @@ func CreateDescribeGtmInstanceAddressPoolRequest() (request *DescribeGtmInstance
 	request = &DescribeGtmInstanceAddressPoolRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmInstanceAddressPool", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmInstanceAddressPool", "alidns", "openAPI")
 	return
 }
 

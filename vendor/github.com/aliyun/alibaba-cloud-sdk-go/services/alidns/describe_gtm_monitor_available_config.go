@@ -92,7 +92,7 @@ func CreateDescribeGtmMonitorAvailableConfigRequest() (request *DescribeGtmMonit
 	request = &DescribeGtmMonitorAvailableConfigRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmMonitorAvailableConfig", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmMonitorAvailableConfig", "alidns", "openAPI")
 	return
 }
 

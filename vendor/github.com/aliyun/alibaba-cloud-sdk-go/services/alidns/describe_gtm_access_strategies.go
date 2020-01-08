@@ -76,11 +76,11 @@ func (client *Client) DescribeGtmAccessStrategiesWithCallback(request *DescribeG
 // DescribeGtmAccessStrategiesRequest is the request struct for api DescribeGtmAccessStrategies
 type DescribeGtmAccessStrategiesRequest struct {
 	*requests.RpcRequest
+	PageNumber   requests.Integer `position:"Query" name:"PageNumber"`
 	InstanceId   string           `position:"Query" name:"InstanceId"`
 	UserClientIp string           `position:"Query" name:"UserClientIp"`
 	PageSize     requests.Integer `position:"Query" name:"PageSize"`
 	Lang         string           `position:"Query" name:"Lang"`
-	PageNumber   requests.Integer `position:"Query" name:"PageNumber"`
 }
 
 // DescribeGtmAccessStrategiesResponse is the response struct for api DescribeGtmAccessStrategies
@@ -99,7 +99,7 @@ func CreateDescribeGtmAccessStrategiesRequest() (request *DescribeGtmAccessStrat
 	request = &DescribeGtmAccessStrategiesRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmAccessStrategies", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeGtmAccessStrategies", "alidns", "openAPI")
 	return
 }
 

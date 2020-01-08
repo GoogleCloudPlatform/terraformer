@@ -17,9 +17,11 @@ package alidns
 
 // IspCityNode is a nested struct in alidns response
 type IspCityNode struct {
+	GroupType       string `json:"GroupType" xml:"GroupType"`
 	CityCode        string `json:"CityCode" xml:"CityCode"`
 	DefaultSelected bool   `json:"DefaultSelected" xml:"DefaultSelected"`
 	IspName         string `json:"IspName" xml:"IspName"`
+	GroupName       string `json:"GroupName" xml:"GroupName"`
 	CountryName     string `json:"CountryName" xml:"CountryName"`
 	CityName        string `json:"CityName" xml:"CityName"`
 	Mainland        bool   `json:"Mainland" xml:"Mainland"`

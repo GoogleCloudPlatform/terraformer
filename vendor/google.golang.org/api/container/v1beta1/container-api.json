@@ -2483,7 +2483,7 @@
       }
     }
   },
-  "revision": "20190830",
+  "revision": "20191115",
   "rootUrl": "https://container.googleapis.com/",
   "schemas": {
     "AcceleratorConfig": {
@@ -2567,6 +2567,10 @@
       "description": "AutoprovisioningNodePoolDefaults contains defaults for a node pool created\nby NAP.",
       "id": "AutoprovisioningNodePoolDefaults",
       "properties": {
+        "management": {
+          "$ref": "NodeManagement",
+          "description": "Specifies the node management options for NAP created node-pools."
+        },
         "oauthScopes": {
           "description": "Scopes that are used by NAP when creating node pools. If oauth_scopes are\nspecified, service_account should be empty.",
           "items": {
@@ -2576,6 +2580,25 @@
         },
         "serviceAccount": {
           "description": "The Google Cloud Platform Service Account to be used by the node VMs. If\nservice_account is specified, scopes should be empty.",
+          "type": "string"
+        },
+        "upgradeSettings": {
+          "$ref": "UpgradeSettings",
+          "description": "Specifies the upgrade settings for NAP created node pools"
+        }
+      },
+      "type": "object"
+    },
+    "AvailableVersion": {
+      "description": "AvailableVersion is an additional Kubernetes versions offered\nto users who subscribed to the release channel.",
+      "id": "AvailableVersion",
+      "properties": {
+        "reason": {
+          "description": "Reason for availability.",
+          "type": "string"
+        },
+        "version": {
+          "description": "Kubernetes version.",
           "type": "string"
         }
       },
@@ -2803,7 +2826,7 @@
           "type": "string"
         },
         "name": {
-          "description": "The name of this cluster. The name must be unique within this project\nand zone, and can be up to 40 characters with the following restrictions:\n\n* Lowercase letters, numbers, and hyphens only.\n* Must start with a letter.\n* Must end with a number or a letter.",
+          "description": "The name of this cluster. The name must be unique within this project\nand location (e.g. zone or region), and can be up to 40 characters with\nthe following restrictions:\n\n* Lowercase letters, numbers, and hyphens only.\n* Must start with a letter.\n* Must end with a number or a letter.",
           "type": "string"
         },
         "network": {
@@ -2991,7 +3014,7 @@
           "type": "array"
         },
         "desiredLoggingService": {
-          "description": "The logging service the cluster should use to write metrics.\nCurrently available options:\n\n* \"logging.googleapis.com/kubernetes\" - the Google Cloud Logging\nservice with Kubernetes-native resource model in Stackdriver\n* \"logging.googleapis.com\" - the Google Cloud Logging service\n* \"none\" - no logs will be exported from the cluster",
+          "description": "The logging service the cluster should use to write metrics.\nCurrently available options:\n\n* \"logging.googleapis.com/kubernetes\" - the Google Cloud Logging\nservice with Kubernetes-native resource model\n* \"logging.googleapis.com\" - the Google Cloud Logging service\n* \"none\" - no logs will be exported from the cluster",
           "type": "string"
         },
         "desiredMasterAuthorizedNetworksConfig": {
@@ -3003,7 +3026,7 @@
           "type": "string"
         },
         "desiredMonitoringService": {
-          "description": "The monitoring service the cluster should use to write metrics.\nCurrently available options:\n\n* \"monitoring.googleapis.com/kubernetes\" - the Google Cloud Monitoring\nservice with Kubernetes-native resource model in Stackdriver\n* \"monitoring.googleapis.com\" - the Google Cloud Monitoring service\n* \"none\" - no metrics will be exported from the cluster",
+          "description": "The monitoring service the cluster should use to write metrics.\nCurrently available options:\n\n* \"monitoring.googleapis.com/kubernetes\" - the Google Cloud Monitoring\nservice with Kubernetes-native resource model\n* \"monitoring.googleapis.com\" - the Google Cloud Monitoring service\n* \"none\" - no metrics will be exported from the cluster",
           "type": "string"
         },
         "desiredNodePoolAutoscaling": {
@@ -3985,6 +4008,10 @@
           "description": "[Output only] Additional information about the current status of this\nnode pool instance, if available.",
           "type": "string"
         },
+        "upgradeSettings": {
+          "$ref": "UpgradeSettings",
+          "description": "Upgrade settings control disruption and speed of the upgrade."
+        },
         "version": {
           "description": "The version of the Kubernetes of this node.",
           "type": "string"
@@ -4321,6 +4348,13 @@
       "description": "ReleaseChannelConfig exposes configuration for a release channel.",
       "id": "ReleaseChannelConfig",
       "properties": {
+        "availableVersions": {
+          "description": "List of available versions for the release channel.",
+          "items": {
+            "$ref": "AvailableVersion"
+          },
+          "type": "array"
+        },
         "channel": {
           "description": "The release channel this configuration applies to.",
           "enum": [
@@ -5078,6 +5112,10 @@
           "description": "Deprecated. The Google Developers Console [project ID or project\nnumber](https://support.google.com/cloud/answer/6158840).\nThis field has been deprecated and replaced by the name field.",
           "type": "string"
         },
+        "upgradeSettings": {
+          "$ref": "UpgradeSettings",
+          "description": "Upgrade settings control disruption and speed of the upgrade."
+        },
         "workloadMetadataConfig": {
           "$ref": "WorkloadMetadataConfig",
           "description": "The desired image type for the node pool."
@@ -5085,6 +5123,23 @@
         "zone": {
           "description": "Deprecated. The name of the Google Compute Engine\n[zone](/compute/docs/zones#available) in which the cluster\nresides.\nThis field has been deprecated and replaced by the name field.",
           "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "UpgradeSettings": {
+      "description": "These upgrade settings control the level of parallelism and the level of\ndisruption caused by an upgrade.\n\nmaxUnavailable controls the number of nodes that can be simultaneously\nunavailable.\n\nmaxSurge controls the number of additional nodes that can be added to the\nnode pool temporarily for the time of the upgrade to increase the number of\navailable nodes.\n\n(maxUnavailable + maxSurge) determines the level of parallelism (how many\nnodes are being upgraded at the same time).\n\nNote: upgrades inevitably introduce some disruption since workloads need to\nbe moved from old nodes to new, upgraded ones. Even if maxUnavailable=0,\nthis holds true. (Disruption stays within the limits of\nPodDisruptionBudget, if it is configured.)\n\nConsider a hypothetical node pool with 5 nodes having maxSurge=2,\nmaxUnavailable=1. This means the upgrade process upgrades 3 nodes\nsimultaneously. It creates 2 additional (upgraded) nodes, then it brings\ndown 3 old (not yet upgraded) nodes at the same time. This ensures that\nthere are always at least 4 nodes available.",
+      "id": "UpgradeSettings",
+      "properties": {
+        "maxSurge": {
+          "description": "The maximum number of nodes that can be created beyond the current size\nof the node pool during the upgrade process.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "maxUnavailable": {
+          "description": "The maximum number of nodes that can be simultaneously unavailable during\nthe upgrade process. A node is considered available if its status is\nReady.",
+          "format": "int32",
+          "type": "integer"
         }
       },
       "type": "object"

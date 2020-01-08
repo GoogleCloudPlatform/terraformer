@@ -19,8 +19,9 @@ import (
 	"log"
 
 	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2019-08-01/network"
-	"github.com/Azure/go-autorest/autorest/azure/auth"
+	"github.com/Azure/go-autorest/autorest"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/hashicorp/go-azure-helpers/authentication"
 )
 
 type NetworkInterfaceGenerator struct {
@@ -49,12 +50,9 @@ func (g NetworkInterfaceGenerator) createResources(interfaceListResultPage netwo
 
 func (g *NetworkInterfaceGenerator) InitResources() error {
 	ctx := context.Background()
-	interfacesClient := network.NewInterfacesClient(g.Args["subscription"].(string))
-	authorizer, err := auth.NewAuthorizerFromEnvironment()
-	if err != nil {
-		return err
-	}
-	interfacesClient.Authorizer = authorizer
+	interfacesClient := network.NewInterfacesClient(g.Args["config"].(authentication.Config).SubscriptionID)
+
+	interfacesClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 	output, err := interfacesClient.ListAll(ctx)
 	if err != nil {
 		return err

@@ -77,8 +77,8 @@ func (client *Client) ChangeDomainGroupWithCallback(request *ChangeDomainGroupRe
 type ChangeDomainGroupRequest struct {
 	*requests.RpcRequest
 	GroupId      string `position:"Query" name:"GroupId"`
-	UserClientIp string `position:"Query" name:"UserClientIp"`
 	DomainName   string `position:"Query" name:"DomainName"`
+	UserClientIp string `position:"Query" name:"UserClientIp"`
 	Lang         string `position:"Query" name:"Lang"`
 }
 
@@ -95,7 +95,7 @@ func CreateChangeDomainGroupRequest() (request *ChangeDomainGroupRequest) {
 	request = &ChangeDomainGroupRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "ChangeDomainGroup", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "ChangeDomainGroup", "alidns", "openAPI")
 	return
 }
 

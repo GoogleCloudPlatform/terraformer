@@ -76,18 +76,18 @@ func (client *Client) DescribeRecordStatisticsSummaryWithCallback(request *Descr
 // DescribeRecordStatisticsSummaryRequest is the request struct for api DescribeRecordStatisticsSummary
 type DescribeRecordStatisticsSummaryRequest struct {
 	*requests.RpcRequest
-	EndDate      string           `position:"Query" name:"EndDate"`
-	UserClientIp string           `position:"Query" name:"UserClientIp"`
+	Threshold    requests.Integer `position:"Query" name:"Threshold"`
+	StartDate    string           `position:"Query" name:"StartDate"`
+	PageNumber   requests.Integer `position:"Query" name:"PageNumber"`
 	PageSize     requests.Integer `position:"Query" name:"PageSize"`
+	Lang         string           `position:"Query" name:"Lang"`
+	Keyword      string           `position:"Query" name:"Keyword"`
+	Direction    string           `position:"Query" name:"Direction"`
 	DomainName   string           `position:"Query" name:"DomainName"`
 	OrderBy      string           `position:"Query" name:"OrderBy"`
+	EndDate      string           `position:"Query" name:"EndDate"`
+	UserClientIp string           `position:"Query" name:"UserClientIp"`
 	SearchMode   string           `position:"Query" name:"SearchMode"`
-	Threshold    requests.Integer `position:"Query" name:"Threshold"`
-	Lang         string           `position:"Query" name:"Lang"`
-	StartDate    string           `position:"Query" name:"StartDate"`
-	Keyword      string           `position:"Query" name:"Keyword"`
-	PageNumber   requests.Integer `position:"Query" name:"PageNumber"`
-	Direction    string           `position:"Query" name:"Direction"`
 }
 
 // DescribeRecordStatisticsSummaryResponse is the response struct for api DescribeRecordStatisticsSummary
@@ -106,7 +106,7 @@ func CreateDescribeRecordStatisticsSummaryRequest() (request *DescribeRecordStat
 	request = &DescribeRecordStatisticsSummaryRequest{
 		RpcRequest: &requests.RpcRequest{},
 	}
-	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeRecordStatisticsSummary", "Alidns", "openAPI")
+	request.InitWithApiInfo("Alidns", "2015-01-09", "DescribeRecordStatisticsSummary", "alidns", "openAPI")
 	return
 }
 
