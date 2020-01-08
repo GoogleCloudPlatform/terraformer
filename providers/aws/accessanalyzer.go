@@ -27,30 +27,25 @@ type AccessAnalyzerGenerator struct {
 	AWSService
 }
 
-func (g AccessAnalyzerGenerator) createResources(analyzerList []accessanalyzer.AnalyzerSummary) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
-	for _, analyzer := range analyzerList {
-		resourceName := aws.StringValue(analyzer.Name)
-		resources = append(resources, terraform_utils.NewSimpleResource(
-			resourceName,
-			resourceName,
-			"aws_accessanalyzer_analyzer",
-			"aws",
-			accessanalyzerAllowEmptyValues))
-	}
-	return resources
-}
-
 func (g *AccessAnalyzerGenerator) InitResources() error {
 	config, e := g.generateConfig()
 	if e != nil {
 		return e
 	}
 	svc := accessanalyzer.New(config)
-	output, err := svc.ListAnalyzersRequest(&accessanalyzer.ListAnalyzersInput{}).Send(context.Background())
-	if err != nil {
-		return err
+	p := accessanalyzer.NewListAnalyzersPaginator(svc.ListAnalyzersRequest(&accessanalyzer.ListAnalyzersInput{}))
+	var resources []terraform_utils.Resource
+	for p.Next(context.Background()) {
+		for _, analyzer := range p.CurrentPage().Analyzers {
+			resourceName := aws.StringValue(analyzer.Name)
+			resources = append(resources, terraform_utils.NewSimpleResource(
+				resourceName,
+				resourceName,
+				"aws_accessanalyzer_analyzer",
+				"aws",
+				accessanalyzerAllowEmptyValues))
+		}
 	}
-	g.Resources = g.createResources(output.Analyzers)
-	return nil
+	g.Resources = resources
+	return p.Err()
 }
