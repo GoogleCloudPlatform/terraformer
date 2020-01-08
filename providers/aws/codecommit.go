@@ -27,30 +27,25 @@ type CodeCommitGenerator struct {
 	AWSService
 }
 
-func (g CodeCommitGenerator) createResources(repositoryList []codecommit.RepositoryNameIdPair) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
-	for _, repository := range repositoryList {
-		resourceName := aws.StringValue(repository.RepositoryName)
-		resources = append(resources, terraform_utils.NewSimpleResource(
-			resourceName,
-			resourceName,
-			"aws_codecommit_repository",
-			"aws",
-			codecommitAllowEmptyValues))
-	}
-	return resources
-}
-
 func (g *CodeCommitGenerator) InitResources() error {
 	config, e := g.generateConfig()
 	if e != nil {
 		return e
 	}
 	svc := codecommit.New(config)
-	output, err := svc.ListRepositoriesRequest(&codecommit.ListRepositoriesInput{}).Send(context.Background())
-	if err != nil {
-		return err
+	p := codecommit.NewListRepositoriesPaginator(svc.ListRepositoriesRequest(&codecommit.ListRepositoriesInput{}))
+	var resources []terraform_utils.Resource
+	for p.Next(context.Background()) {
+		for _, repository := range p.CurrentPage().Repositories {
+			resourceName := aws.StringValue(repository.RepositoryName)
+			resources = append(resources, terraform_utils.NewSimpleResource(
+				resourceName,
+				resourceName,
+				"aws_codecommit_repository",
+				"aws",
+				codecommitAllowEmptyValues))
+		}
 	}
-	g.Resources = g.createResources(output.Repositories)
-	return nil
+	g.Resources = resources
+	return p.Err()
 }
