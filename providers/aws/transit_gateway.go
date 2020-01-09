@@ -1,4 +1,5 @@
-// Copyright 2018 The Terraformer Authors.
+// Copyright (c) 2020 VMware, Inc.
+// SPDX-License-Identifier: Apache-2.0
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,53 +53,37 @@ func (g *TransitGatewayGenerator) getTransitGatewayRouteTables(svc *ec2.Client) 
 	p := ec2.NewDescribeTransitGatewayRouteTablesPaginator(svc.DescribeTransitGatewayRouteTablesRequest(&ec2.DescribeTransitGatewayRouteTablesInput{}))
 	for p.Next(context.Background()) {
 		for _, tgwrt := range p.CurrentPage().TransitGatewayRouteTables {
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-				aws.StringValue(tgwrt.TransitGatewayRouteTableId),
-				aws.StringValue(tgwrt.TransitGatewayRouteTableId),
-				"aws_ec2_transit_gateway_route_table",
-				"aws",
-				tgwAllowEmptyValues,
-			))
-		}
-
-	}
-	return p.Err()
-}
-
-func (g *TransitGatewayGenerator) getTransitGatewayAttachments(svc *ec2.Client) error {
-	p := ec2.NewDescribeTransitGatewayAttachmentsPaginator(svc.DescribeTransitGatewayAttachmentsRequest(&ec2.DescribeTransitGatewayAttachmentsInput{}))
-	for p.Next(context.Background()) {
-		for _, tgwa := range p.CurrentPage().TransitGatewayAttachments {
-			switch tgwa.ResourceType {
-			// terraform@v0.12.18 doesn't support this resource type
-			/* 	case "vpn":
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-				aws.StringValue(tgwa.TransitGatewayAttachmentId),
-				aws.StringValue(tgwAttachments.TransitGatewayAttachmentId),
-				"aws_ec2_transit_gateway_vpn_attachment",
-				"aws",
-				tgwAllowEmptyValues,
-			)) */
-			case "vpc":
+			// Default route table are automatically created on the tgw creation
+			if *tgwrt.DefaultAssociationRouteTable {
+				continue
+			} else {
 				g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-					aws.StringValue(tgwa.TransitGatewayAttachmentId),
-					aws.StringValue(tgwa.TransitGatewayAttachmentId),
-					"aws_ec2_transit_gateway_vpc_attachment",
-					"aws",
-					tgwAllowEmptyValues,
-				))
-			case "dx":
-				g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-					aws.StringValue(tgwa.TransitGatewayAttachmentId),
-					aws.StringValue(tgwa.TransitGatewayAttachmentId),
-					"aws_ec2_transit_gateway_dx_attachment",
+					aws.StringValue(tgwrt.TransitGatewayRouteTableId),
+					aws.StringValue(tgwrt.TransitGatewayRouteTableId),
+					"aws_ec2_transit_gateway_route_table",
 					"aws",
 					tgwAllowEmptyValues,
 				))
 			}
 		}
 	}
+	return p.Err()
+}
 
+func (g *TransitGatewayGenerator) getTransitGatewayVpcAttachments(svc *ec2.Client) error {
+	p := ec2.NewDescribeTransitGatewayVpcAttachmentsPaginator(svc.DescribeTransitGatewayVpcAttachmentsRequest(&ec2.DescribeTransitGatewayVpcAttachmentsInput{}))
+	for p.Next(context.Background()) {
+		for _, tgwa := range p.CurrentPage().TransitGatewayVpcAttachments {
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+				aws.StringValue(tgwa.TransitGatewayAttachmentId),
+				aws.StringValue(tgwa.TransitGatewayAttachmentId),
+				"aws_ec2_transit_gateway_vpc_attachment",
+				"aws",
+				tgwAllowEmptyValues,
+			))
+		}
+
+	}
 	return p.Err()
 }
 
@@ -122,7 +107,7 @@ func (g *TransitGatewayGenerator) InitResources() error {
 		log.Println(err)
 	}
 
-	err = g.getTransitGatewayAttachments(svc)
+	err = g.getTransitGatewayVpcAttachments(svc)
 	if err != nil {
 		log.Println(err)
 	}
