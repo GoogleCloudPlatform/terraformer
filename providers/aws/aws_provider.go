@@ -117,7 +117,13 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 				"source_security_group_id", "id",
 			},
 		},
-		"subnet":      {"vpc": []string{"vpc_id", "id"}},
+		"subnet": {"vpc": []string{"vpc_id", "id"}},
+		"transit_gateway": {
+			"vpc":             []string{"vpc_id", "id"},
+			"transit_gateway": []string{"transit_gateway_id", "id"},
+			"subnet":          []string{"subnet_ids", "id"},
+			"vpn_connection":  []string{"vpn_connection_id", "id"},
+		},
 		"vpn_gateway": {"vpc": []string{"vpc_id", "id"}},
 		"vpn_connection": {
 			"customer_gateway": []string{"customer_gateway_id", "id"},
