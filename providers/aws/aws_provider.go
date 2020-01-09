@@ -250,6 +250,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"sqs":               &SqsGenerator{},
 		"sns":               &SnsGenerator{},
 		"subnet":            &SubnetGenerator{},
+		"transit_gateway":   &TransitGatewayGenerator{},
 		"vpc":               &VpcGenerator{},
 		"vpc_peering":       &VpcPeeringConnectionGenerator{},
 		"vpn_connection":    &VpnConnectionGenerator{},
