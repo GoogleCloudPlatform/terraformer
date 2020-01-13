@@ -17,23 +17,27 @@ package gcp
 import (
 	"context"
 	"log"
-
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-
-	adminpb "google.golang.org/genproto/googleapis/iam/admin/v1"
+	"regexp"
 
 	"cloud.google.com/go/iam/admin/apiv1"
+	"google.golang.org/api/cloudresourcemanager/v1"
 	"google.golang.org/api/iterator"
+	adminpb "google.golang.org/genproto/googleapis/iam/admin/v1"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
 
 var IamAllowEmptyValues = []string{"tags."}
+
+var IamAdditionalFields = map[string]interface{}{}
 
 type IamGenerator struct {
 	GCPService
 }
 
-func (IamGenerator) createResources(serviceAccountsIterator *admin.ServiceAccountIterator) []terraform_utils.Resource {
+func (IamGenerator) createServiceAccountResources(serviceAccountsIterator *admin.ServiceAccountIterator) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
+	re := regexp.MustCompile(`^[a-z]`)
 	for {
 		serviceAccount, err := serviceAccountsIterator.Next()
 		if err == iterator.Done {
@@ -41,6 +45,10 @@ func (IamGenerator) createResources(serviceAccountsIterator *admin.ServiceAccoun
 		}
 		if err != nil {
 			log.Println("error with service account:", err)
+			continue
+		}
+		if !re.MatchString(serviceAccount.Email) {
+			log.Printf("skipping %s: service account email must start with [a-z]\n", serviceAccount.Name)
 			continue
 		}
 		resources = append(resources, terraform_utils.NewSimpleResource(
@@ -54,7 +62,55 @@ func (IamGenerator) createResources(serviceAccountsIterator *admin.ServiceAccoun
 	return resources
 }
 
-// TODO ALL
+func (g *IamGenerator) createIamCustomRoleResources(rolesResponse *adminpb.ListRolesResponse, project string) []terraform_utils.Resource {
+	resources := []terraform_utils.Resource{}
+	for _, role := range rolesResponse.Roles {
+		if role.Deleted {
+			// Note: no need to log that the resource has been deleted
+			continue
+		}
+		resources = append(resources, terraform_utils.NewResource(
+			role.Name,
+			role.Name,
+			"google_project_iam_custom_role",
+			"google",
+			map[string]string{
+				"role_id": role.Name,
+				"project": project,
+			},
+			IamAllowEmptyValues,
+			map[string]interface{}{
+				"stage": role.Stage.String(),
+			},
+		))
+	}
+
+	return resources
+}
+
+func (g *IamGenerator) createIamMemberResources(policy *cloudresourcemanager.Policy, project string) []terraform_utils.Resource {
+	resources := []terraform_utils.Resource{}
+	for _, b := range policy.Bindings {
+		for _, m := range b.Members {
+			resources = append(resources, terraform_utils.NewResource(
+				b.Role+m,
+				b.Role+m,
+				"google_project_iam_member",
+				"google",
+				map[string]string{
+					"role":    b.Role,
+					"project": project,
+					"member":  m,
+				},
+				IamAllowEmptyValues,
+				IamAdditionalFields,
+			))
+		}
+	}
+
+	return resources
+}
+
 func (g *IamGenerator) InitResources() error {
 	ctx := context.Background()
 
@@ -64,8 +120,24 @@ func (g *IamGenerator) InitResources() error {
 		log.Fatal(err)
 	}
 	serviceAccountsIterator := client.ListServiceAccounts(ctx, &adminpb.ListServiceAccountsRequest{Name: "projects/" + projectID})
+	rolesResponse, err := client.ListRoles(ctx, &adminpb.ListRolesRequest{Parent: "projects/" + projectID})
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	g.Resources = g.createResources(serviceAccountsIterator)
+	cm, err := cloudresourcemanager.NewService(context.Background())
+	if err != nil {
+		log.Fatal(err)
+	}
+	rb := &cloudresourcemanager.GetIamPolicyRequest{}
+	policyResponse, err := cm.Projects.GetIamPolicy(projectID, rb).Context(context.Background()).Do()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	g.Resources = g.createServiceAccountResources(serviceAccountsIterator)
+	g.Resources = append(g.Resources, g.createIamCustomRoleResources(rolesResponse, projectID)...)
+	g.Resources = append(g.Resources, g.createIamMemberResources(policyResponse, projectID)...)
 	return nil
 
 }
