@@ -356,7 +356,7 @@ Example:
 
 #### Profiles support
 
-AWS configuration including environmental variables, shared credentials file (~/.aws/credentials), and shared config file (~/.aws/config) will be loaded by the tool by default. To use a specific profile, you can use the following command:
+AWS configuration including environmental variables, shared credentials file (\~/.aws/credentials), and shared config file (\~/.aws/config) will be loaded by the tool by default. To use a specific profile, you can use the following command:
 
 ```
 terraformer import aws --resources=vpc,subnet --regions=eu-west-1 --profile=prod
