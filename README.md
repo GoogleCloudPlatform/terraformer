@@ -984,6 +984,8 @@ Supports only organizational resources. List of supported resources:
     * `github_team`
     * `github_team_membership`
     * `github_team_repository`
+*   `user`
+    * `github_user_ssh_key`
 
 Notes:
 * Terraformer can't get webhook secrets from the GitHub API. If you use a secret token in any of your webhooks, running `terraform plan` will result in a change being detected:

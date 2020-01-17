@@ -93,5 +93,6 @@ func (p *GithubProvider) GetSupportedService() map[string]terraform_utils.Servic
 		"organization_webhooks": &OrganizationWebhooksGenerator{},
 		"repositories":          &RepositoriesGenerator{},
 		"teams":                 &TeamsGenerator{},
+		"users":                 &UsersGenerator{},
 	}
 }
