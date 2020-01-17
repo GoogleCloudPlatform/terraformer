@@ -984,7 +984,7 @@ Supports only organizational resources. List of supported resources:
     * `github_team`
     * `github_team_membership`
     * `github_team_repository`
-*   `user`
+*   `user_ssh_key`
     * `github_user_ssh_key`
 
 Notes:

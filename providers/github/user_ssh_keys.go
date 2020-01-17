@@ -25,12 +25,12 @@ import (
 	"golang.org/x/oauth2"
 )
 
-type UsersGenerator struct {
+type UserSSHKeyGenerator struct {
 	GithubService
 }
 
 // Generate TerraformResources from Github API,
-func (g *UsersGenerator) InitResources() error {
+func (g *UserSSHKeyGenerator) InitResources() error {
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: g.Args["token"].(string)},
@@ -39,44 +39,30 @@ func (g *UsersGenerator) InitResources() error {
 
 	client := githubAPI.NewClient(tc)
 
-	opt := &githubAPI.UserListOptions{}
+	opt := &githubAPI.ListOptions{PerPage: 100}
 
-	// List all users for the authenticated user
-	users, _, err := client.Users.ListAll(ctx, opt)
-	if err != nil {
-		log.Println(err)
-		return nil
-	}
-
-	for _, user := range users {
-		log.Println("User:", user.GetName())
-		opt := &githubAPI.ListOptions{PerPage: 100}
-
-		// List all ssh keys for the user
-		for {
-			keys, resp, err := client.Users.ListKeys(ctx, user.GetName(), opt)
-			if err != nil {
-				log.Println(err)
-				return nil
-			}
-
-			for _, key := range keys {
-				log.Println("Key:", key.GetID())
-				g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-					strconv.FormatInt(key.GetID(), 10),
-					strconv.FormatInt(key.GetID(), 10),
-					"github_user_ssh_key",
-					"github",
-					[]string{},
-				))
-			}
-
-			if resp.NextPage == 0 {
-				break
-			}
-			opt.Page = resp.NextPage
+	// List all ssh keys for the authenticated user
+	for {
+		keys, resp, err := client.Users.ListKeys(ctx, "", opt)
+		if err != nil {
+			log.Println(err)
+			return nil
 		}
-	}
 
+		for _, key := range keys {
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+				strconv.FormatInt(key.GetID(), 10),
+				strconv.FormatInt(key.GetID(), 10),
+				"github_user_ssh_key",
+				"github",
+				[]string{},
+			))
+		}
+
+		if resp.NextPage == 0 {
+			break
+		}
+		opt.Page = resp.NextPage
+	}
 	return nil
 }
