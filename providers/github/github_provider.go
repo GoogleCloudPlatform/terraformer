@@ -90,6 +90,7 @@ func (p *GithubProvider) InitService(serviceName string, verbose bool) error {
 func (p *GithubProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
 		"members":               &MembersGenerator{},
+		"organization_block":    &OrganizationBlockGenerator{},
 		"organization_webhooks": &OrganizationWebhooksGenerator{},
 		"repositories":          &RepositoriesGenerator{},
 		"teams":                 &TeamsGenerator{},
