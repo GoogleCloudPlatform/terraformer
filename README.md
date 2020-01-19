@@ -972,6 +972,8 @@ Supports only organizational resources. List of supported resources:
 
 *   `members`
     * `github_membership`
+*   `organization_block`
+    * `github_organization_block`
 *   `organization_webhooks`
     * `github_organization_webhook`
 *   `repositories`
