@@ -91,6 +91,7 @@ func (p *GithubProvider) GetSupportedService() map[string]terraform_utils.Servic
 	return map[string]terraform_utils.ServiceGenerator{
 		"members":               &MembersGenerator{},
 		"organization_block":    &OrganizationBlockGenerator{},
+		"organization_project":  &OrganizationProjectGenerator{},
 		"organization_webhooks": &OrganizationWebhooksGenerator{},
 		"repositories":          &RepositoriesGenerator{},
 		"teams":                 &TeamsGenerator{},
