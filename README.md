@@ -972,9 +972,9 @@ Supports only organizational resources. List of supported resources:
 
 *   `members`
     * `github_membership`
-*   `organization_block`
+*   `organization_blocks`
     * `github_organization_block`
-*   `organization_project`
+*   `organization_projects`
     * `github_organization_project`
 *   `organization_webhooks`
     * `github_organization_webhook`
@@ -988,7 +988,7 @@ Supports only organizational resources. List of supported resources:
     * `github_team`
     * `github_team_membership`
     * `github_team_repository`
-*   `user_ssh_key`
+*   `user_ssh_keys`
     * `github_user_ssh_key`
 
 Notes:
