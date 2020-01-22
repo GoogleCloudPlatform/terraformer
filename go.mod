@@ -35,9 +35,9 @@ require (
 	github.com/hashicorp/go-plugin v1.0.1
 	github.com/hashicorp/go-retryablehttp v0.6.4 // indirect
 	github.com/hashicorp/hcl v1.0.0
-	github.com/hashicorp/hcl/v2 v2.2.0
+	github.com/hashicorp/hcl/v2 v2.3.0
 	github.com/hashicorp/hcl2 v0.0.0-20191002203319-fb75b3253c80 // indirect
-	github.com/hashicorp/terraform v0.12.19
+	github.com/hashicorp/terraform v0.12.20
 	github.com/hashicorp/terraform-svchost v0.0.0-20191119180714-d2e4933b9136 // indirect
 	github.com/hashicorp/yamux v0.0.0-20190923154419-df201c70410d // indirect
 	github.com/heroku/heroku-go/v5 v5.1.0
@@ -60,7 +60,7 @@ require (
 	github.com/ulikunitz/xz v0.5.6 // indirect
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
 	github.com/vultr/govultr v0.1.7
-	github.com/zclconf/go-cty v1.2.0
+	github.com/zclconf/go-cty v1.2.1
 	github.com/zorkian/go-datadog-api v2.25.0+incompatible
 	go.opencensus.io v0.22.2 // indirect
 	golang.org/x/oauth2 v0.0.0-20191202225959-858c2ad4c8b6
