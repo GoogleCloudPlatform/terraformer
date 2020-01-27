@@ -78,7 +78,6 @@ func (c *Client) CreateAlertPolicy(policy AlertPolicy) (*AlertPolicy, error) {
 	return &resp.Policy, nil
 }
 
-
 // UpdateAlertPolicy updates an alert policy with the specified changes
 func (c *Client) UpdateAlertPolicy(policy AlertPolicy) (*AlertPolicy, error) {
 	req := struct {
@@ -91,7 +90,6 @@ func (c *Client) UpdateAlertPolicy(policy AlertPolicy) (*AlertPolicy, error) {
 		Policy AlertPolicy `json:"policy,omitempty"`
 	}{}
 
-
 	u := &url.URL{Path: fmt.Sprintf("/alerts_policies/%v.json", policy.ID)}
 	_, err := c.Do("PUT", u.String(), req, &resp)
 	if err != nil {
@@ -100,8 +98,6 @@ func (c *Client) UpdateAlertPolicy(policy AlertPolicy) (*AlertPolicy, error) {
 
 	return &resp.Policy, nil
 }
-
-
 
 // DeleteAlertPolicy deletes an existing alert policy from the account.
 func (c *Client) DeleteAlertPolicy(id int) error {
