@@ -62,6 +62,11 @@ func (g *IamGenerator) InitResources() error {
 		log.Println(err)
 	}
 
+	err = g.getInstanceProfiles(svc)
+	if err != nil {
+		log.Println(err)
+	}
+
 	return nil
 }
 
@@ -69,10 +74,9 @@ func (g *IamGenerator) getRoles(svc *iam.Client) error {
 	p := iam.NewListRolesPaginator(svc.ListRolesRequest(&iam.ListRolesInput{}))
 	for p.Next(context.Background()) {
 		for _, role := range p.CurrentPage().Roles {
-			roleID := aws.StringValue(role.RoleId)
 			roleName := aws.StringValue(role.RoleName)
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-				roleID,
+				roleName,
 				roleName,
 				"aws_iam_role",
 				"aws",
@@ -201,17 +205,6 @@ func (g *IamGenerator) getGroups(svc *iam.Client) error {
 				"aws_iam_group",
 				"aws",
 				IamAllowEmptyValues))
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
-				resourceName,
-				resourceName,
-				"aws_iam_group_membership",
-				"aws",
-				map[string]string{
-					"group": resourceName,
-					"name":  resourceName,
-				},
-				[]string{"tags.", "users."},
-				IamAdditionalFields))
 			groupPoliciesPage := iam.NewListGroupPoliciesPaginator(svc.ListGroupPoliciesRequest(&iam.ListGroupPoliciesInput{GroupName: group.GroupName}))
 			for groupPoliciesPage.Next(context.Background()) {
 				for _, policy := range groupPoliciesPage.CurrentPage().PolicyNames {
@@ -235,6 +228,27 @@ func (g *IamGenerator) getGroups(svc *iam.Client) error {
 	return p.Err()
 }
 
+func (g *IamGenerator) getInstanceProfiles(svc *iam.Client) error {
+	p := iam.NewListInstanceProfilesPaginator(svc.ListInstanceProfilesRequest(&iam.ListInstanceProfilesInput{}))
+	for p.Next(context.Background()) {
+		for _, instanceProfile := range p.CurrentPage().InstanceProfiles {
+			resourceName := *instanceProfile.InstanceProfileName
+
+			g.Resources = append(g.Resources, terraform_utils.NewResource(
+				resourceName,
+				resourceName,
+				"aws_iam_instance_profile",
+				"aws",
+				map[string]string{
+					"name": resourceName,
+				},
+				IamAllowEmptyValues,
+				IamAdditionalFields))
+		}
+	}
+	return p.Err()
+}
+
 // PostGenerateHook for add policy json as heredoc
 func (g *IamGenerator) PostConvertHook() error {
 	for i, resource := range g.Resources {
@@ -251,6 +265,8 @@ POLICY`, policy)
 			g.Resources[i].Item["assume_role_policy"] = fmt.Sprintf(`<<POLICY
 %s
 POLICY`, policy)
+		} else if resource.InstanceInfo.Type == "aws_iam_instance_profile" {
+			delete(resource.Item, "roles")
 		}
 	}
 	return nil
