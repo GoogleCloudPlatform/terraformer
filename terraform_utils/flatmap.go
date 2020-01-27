@@ -228,11 +228,9 @@ func (p *FlatmapParser) fromFlatmapMap(prefix string, ty cty.Type) (map[string]i
 			// Ignore the "count" key
 			continue
 		}
-
 		if p.isAttributeIgnored(fullKey) {
 			continue
 		}
-
 		value, err := p.fromFlatmapValue(fullKey, ty)
 		if err != nil {
 			return nil, err
@@ -274,6 +272,11 @@ func (p *FlatmapParser) fromFlatmapList(prefix string, ty cty.Type) ([]interface
 	var values []interface{}
 	for i := 0; i < count; i++ {
 		key := prefix + strconv.Itoa(i)
+
+		if p.isAttributeIgnored(key) {
+			continue
+		}
+
 		value, err := p.fromFlatmapValue(key, ty)
 		if err != nil {
 			return nil, err
@@ -318,6 +321,11 @@ func (p *FlatmapParser) fromFlatmapSet(prefix string, ty cty.Type) ([]interface{
 		}
 
 		key := fullKey
+
+		if p.isAttributeIgnored(fullKey) {
+			continue
+		}
+
 		if dot := strings.IndexByte(subKey, '.'); dot != -1 {
 			key = fullKey[:dot+len(prefix)]
 		}
