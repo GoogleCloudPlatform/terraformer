@@ -170,7 +170,7 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 		return nil, errors.New(msg)
 	}
 
-	return terraform.NewInstanceStateShimmedFromValue(resp.NewState, int(schema.Provider.Version)), nil
+	return terraform.NewInstanceStateShimmedFromValue(resp.NewState, int(schema.ResourceTypes[info.Type].Version)), nil
 }
 
 func (p *ProviderWrapper) initProvider(verbose bool) error {
