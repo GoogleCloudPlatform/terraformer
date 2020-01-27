@@ -1,6 +1,10 @@
 package api
 
-import "errors"
+import (
+	"encoding/json"
+	"errors"
+	"strconv"
+)
 
 var (
 	// ErrNotFound is returned when the resource was not found in New Relic.
@@ -45,15 +49,43 @@ type AlertConditionTerm struct {
 	TimeFunction string  `json:"time_function,omitempty"`
 }
 
+// UnmarshalJSON implements custom json unmarshalling for the AlertConditionTerm type
+func (t *AlertConditionTerm) UnmarshalJSON(data []byte) error {
+	type alias AlertConditionTerm
+	aux := &struct {
+		Duration     int    `json:"duration,string,omitempty"`
+		Operator     string `json:"operator,omitempty"`
+		Priority     string `json:"priority,omitempty"`
+		Threshold    string `json:"threshold"`
+		TimeFunction string `json:"time_function,omitempty"`
+	}{}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	threshold, err := strconv.ParseFloat(aux.Threshold, 64)
+	if err != nil {
+		return err
+	}
+
+	t.Threshold = threshold
+	t.Duration = aux.Duration
+	t.Operator = aux.Operator
+	t.Priority = aux.Priority
+	t.TimeFunction = aux.TimeFunction
+
+	return nil
+}
+
 // AlertCondition represents a New Relic alert condition.
 // TODO: custom unmarshal entities to ints?
-// TODO: handle unmarshaling .75 for float (not just 0.75)
 type AlertCondition struct {
 	PolicyID            int                       `json:"-"`
 	ID                  int                       `json:"id,omitempty"`
 	Type                string                    `json:"type,omitempty"`
 	Name                string                    `json:"name,omitempty"`
-	Enabled             bool                      `json:"enabled,omitempty"`
+	Enabled             bool                      `json:"enabled"`
 	Entities            []string                  `json:"entities,omitempty"`
 	Metric              string                    `json:"metric,omitempty"`
 	RunbookURL          string                    `json:"runbook_url,omitempty"`
@@ -72,14 +104,39 @@ type AlertNrqlQuery struct {
 
 // AlertNrqlCondition represents a New Relic NRQL Alert condition.
 type AlertNrqlCondition struct {
-	PolicyID      int                  `json:"-"`
-	ID            int                  `json:"id,omitempty"`
-	Name          string               `json:"name,omitempty"`
-	Enabled       bool                 `json:"enabled,omitempty"`
-	RunbookURL    string               `json:"runbook_url,omitempty"`
-	Terms         []AlertConditionTerm `json:"terms,omitempty"`
-	ValueFunction string               `json:"value_function,omitempty"`
-	Nrql          AlertNrqlQuery       `json:"nrql,omitempty"`
+	PolicyID            int                  `json:"-"`
+	ID                  int                  `json:"id,omitempty"`
+	Type                string               `json:"type,omitempty"`
+	Name                string               `json:"name,omitempty"`
+	Enabled             bool                 `json:"enabled"`
+	RunbookURL          string               `json:"runbook_url,omitempty"`
+	Terms               []AlertConditionTerm `json:"terms,omitempty"`
+	ValueFunction       string               `json:"value_function,omitempty"`
+	ExpectedGroups      int                  `json:"expected_groups,omitempty"`
+	IgnoreOverlap       bool                 `json:"ignore_overlap,omitempty"`
+	Nrql                AlertNrqlQuery       `json:"nrql,omitempty"`
+	ViolationCloseTimer int                  `json:"violation_time_limit_seconds,omitempty"`
+}
+
+// AlertPlugin represents a plugin to use with a Plugin alert condition.
+type AlertPlugin struct {
+	ID   string `json:"id,omitempty"`
+	GUID string `json:"guid,omitempty"`
+}
+
+// AlertPluginsCondition represents a New Relic Plugin Alert condition.
+type AlertPluginsCondition struct {
+	PolicyID          int                  `json:"-"`
+	ID                int                  `json:"id,omitempty"`
+	Name              string               `json:"name,omitempty"`
+	Enabled           bool                 `json:"enabled"`
+	Entities          []string             `json:"entities,omitempty"`
+	Metric            string               `json:"metric,omitempty"`
+	MetricDescription string               `json:"metric_description,omitempty"`
+	RunbookURL        string               `json:"runbook_url,omitempty"`
+	Terms             []AlertConditionTerm `json:"terms,omitempty"`
+	ValueFunction     string               `json:"value_function,omitempty"`
+	Plugin            AlertPlugin          `json:"plugin,omitempty"`
 }
 
 // AlertSyntheticsCondition represents a New Relic NRQL Alert condition.
@@ -87,7 +144,7 @@ type AlertSyntheticsCondition struct {
 	PolicyID   int    `json:"-"`
 	ID         int    `json:"id,omitempty"`
 	Name       string `json:"name,omitempty"`
-	Enabled    bool   `json:"enabled,omitempty"`
+	Enabled    bool   `json:"enabled"`
 	RunbookURL string `json:"runbook_url,omitempty"`
 	MonitorID  string `json:"monitor_id,omitempty"`
 }
@@ -130,8 +187,8 @@ type ApplicationEndUserSummary struct {
 type ApplicationSettings struct {
 	AppApdexThreshold        float64 `json:"app_apdex_threshold,omitempty"`
 	EndUserApdexThreshold    float64 `json:"end_user_apdex_threshold,omitempty"`
-	EnableRealUserMonitoring bool    `json:"enable_real_user_monitoring,omitempty"`
-	UseServerSideConfig      bool    `json:"use_server_side_config,omitempty"`
+	EnableRealUserMonitoring bool    `json:"enable_real_user_monitoring"`
+	UseServerSideConfig      bool    `json:"use_server_side_config"`
 }
 
 // ApplicationLinks represents all the links for a New Relic application.
@@ -148,7 +205,7 @@ type Application struct {
 	Name           string                    `json:"name,omitempty"`
 	Language       string                    `json:"language,omitempty"`
 	HealthStatus   string                    `json:"health_status,omitempty"`
-	Reporting      bool                      `json:"reporting,omitempty"`
+	Reporting      bool                      `json:"reporting"`
 	LastReportedAt string                    `json:"last_reported_at,omitempty"`
 	Summary        ApplicationSummary        `json:"application_summary,omitempty"`
 	EndUserSummary ApplicationEndUserSummary `json:"end_user_summary,omitempty"`
@@ -242,7 +299,7 @@ type KeyTransaction struct {
 	Name            string                    `json:"name,omitempty"`
 	TransactionName string                    `json:"transaction_name,omitempty"`
 	HealthStatus    string                    `json:"health_status,omitempty"`
-	Reporting       bool                      `json:"reporting,omitempty"`
+	Reporting       bool                      `json:"reporting"`
 	LastReportedAt  string                    `json:"last_reported_at,omitempty"`
 	Summary         ApplicationSummary        `json:"application_summary,omitempty"`
 	EndUserSummary  ApplicationEndUserSummary `json:"end_user_summary,omitempty"`
@@ -274,6 +331,7 @@ type DashboardMetadata struct {
 // DashboardWidget represents a widget in a dashboard.
 type DashboardWidget struct {
 	Visualization string                      `json:"visualization,omitempty"`
+	ID            int                         `json:"widget_id,omitempty"`
 	AccountID     int                         `json:"account_id,omitempty"`
 	Data          []DashboardWidgetData       `json:"data,omitempty"`
 	Presentation  DashboardWidgetPresentation `json:"presentation,omitempty"`
@@ -282,13 +340,51 @@ type DashboardWidget struct {
 
 // DashboardWidgetData represents the data backing a dashboard widget.
 type DashboardWidgetData struct {
-	NRQL string `json:"nrql,omitempty"`
+	NRQL          string                           `json:"nrql,omitempty"`
+	Source        string                           `json:"source,omitempty"`
+	Duration      int                              `json:"duration,omitempty"`
+	EndTime       int                              `json:"end_time,omitempty"`
+	EntityIds     []int                            `json:"entity_ids,omitempty"`
+	CompareWith   []DashboardWidgetDataCompareWith `json:"compare_with,omitempty"`
+	Metrics       []DashboardWidgetDataMetric      `json:"metrics,omitempty"`
+	RawMetricName string                           `json:"raw_metric_name,omitempty"`
+	Facet         string                           `json:"facet,omitempty"`
+	OrderBy       string                           `json:"order_by,omitempty"`
+	Limit         int                              `json:"limit,omitempty"`
 }
 
-// DashboardWidgetPresentation representations the visual presentation of a dashboard widget
+// DashboardWidgetDataCompareWith represents the compare with configuration of the widget.
+type DashboardWidgetDataCompareWith struct {
+	OffsetDuration string                                     `json:"offset_duration,omitempty"`
+	Presentation   DashboardWidgetDataCompareWithPresentation `json:"presentation,omitempty"`
+}
+
+// DashboardWidgetDataCompareWithPresentation represents the compare with presentation configuration of the widget.
+type DashboardWidgetDataCompareWithPresentation struct {
+	Name  string `json:"name,omitempty"`
+	Color string `json:"color,omitempty"`
+}
+
+// DashboardWidgetDataMetric represents the metrics data of the widget.
+type DashboardWidgetDataMetric struct {
+	Name   string   `json:"name,omitempty"`
+	Units  string   `json:"units,omitempty"`
+	Scope  string   `json:"scope,omitempty"`
+	Values []string `json:"values,omitempty"`
+}
+
+// DashboardWidgetPresentation represents the visual presentation of a dashboard widget.
 type DashboardWidgetPresentation struct {
-	Title string `json:"title,omitempty"`
-	Notes string `json:"notes,omitempty"`
+	Title                string                    `json:"title,omitempty"`
+	Notes                string                    `json:"notes,omitempty"`
+	DrilldownDashboardID int                       `json:"drilldown_dashboard_id,omitempty"`
+	Threshold            *DashboardWidgetThreshold `json:"threshold,omitempty"`
+}
+
+// DashboardWidgetThreshold represents the threshold configuration of a dashboard widget.
+type DashboardWidgetThreshold struct {
+	Red    float64 `json:"red,omitempty"`
+	Yellow float64 `json:"yellow,omitempty"`
 }
 
 // DashboardWidgetLayout represents the layout of a widget in a dashboard.
@@ -305,6 +401,16 @@ type DashboardFilter struct {
 	Attributes []string `json:"attributes,omitempty"`
 }
 
+// Deployment represents information about a New Relic application deployment.
+type Deployment struct {
+	ID          int    `json:"id,omitempty"`
+	Revision    string `json:"revision"`
+	Changelog   string `json:"changelog,omitempty"`
+	Description string `json:"description,omitempty"`
+	User        string `json:"user,omitempty"`
+	Timestamp   string `json:"timestamp,omitempty"`
+}
+
 // AlertInfraThreshold represents an Infra alerting condition
 type AlertInfraThreshold struct {
 	Value    int    `json:"value,omitempty"`
@@ -317,16 +423,18 @@ type AlertInfraCondition struct {
 	PolicyID            int                  `json:"policy_id,omitempty"`
 	ID                  int                  `json:"id,omitempty"`
 	Name                string               `json:"name,omitempty"`
+	RunbookURL          string               `json:"runbook_url,omitempty"`
 	Type                string               `json:"type,omitempty"`
 	Comparison          string               `json:"comparison,omitempty"`
 	CreatedAt           int                  `json:"created_at_epoch_millis,omitempty"`
 	UpdatedAt           int                  `json:"updated_at_epoch_millis,omitempty"`
-	Enabled             bool                 `json:"enabled,omitempty"`
+	Enabled             bool                 `json:"enabled"`
 	Event               string               `json:"event_type,omitempty"`
 	Select              string               `json:"select_value,omitempty"`
 	Where               string               `json:"where_clause,omitempty"`
 	ProcessWhere        string               `json:"process_where_clause,omitempty"`
 	IntegrationProvider string               `json:"integration_provider,omitempty"`
+	ViolationCloseTimer *int                 `json:"violation_close_timer,omitempty"`
 	Warning             *AlertInfraThreshold `json:"warning_threshold,omitempty"`
 	Critical            *AlertInfraThreshold `json:"critical_threshold,omitempty"`
 }

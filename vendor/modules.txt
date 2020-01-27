@@ -433,8 +433,8 @@ github.com/modern-go/reflect2
 github.com/mrparkers/terraform-provider-keycloak/keycloak
 # github.com/oklog/run v1.0.0
 github.com/oklog/run
-# github.com/paultyng/go-newrelic v3.1.0+incompatible
-github.com/paultyng/go-newrelic/api
+# github.com/paultyng/go-newrelic/v4 v4.10.0
+github.com/paultyng/go-newrelic/v4/api
 # github.com/pborman/uuid v1.2.0
 github.com/pborman/uuid
 # github.com/pkg/errors v0.8.1
@@ -711,8 +711,6 @@ google.golang.org/grpc/test/bufconn
 gopkg.in/inf.v0
 # gopkg.in/ini.v1 v1.51.0
 gopkg.in/ini.v1
-# gopkg.in/resty.v0 v0.4.1
-gopkg.in/resty.v0
 # gopkg.in/yaml.v2 v2.2.7
 gopkg.in/yaml.v2
 # honnef.co/go/tools v0.0.1-2019.2.3
