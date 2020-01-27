@@ -16,10 +16,15 @@ cloud.google.com/go/logging/logadmin
 # cloud.google.com/go/storage v1.4.0
 cloud.google.com/go/storage
 # github.com/Azure/azure-sdk-for-go v37.2.0+incompatible
+github.com/Azure/azure-sdk-for-go/services/analysisservices/mgmt/2017-08-01/analysisservices
 github.com/Azure/azure-sdk-for-go/services/compute/mgmt/2019-03-01/compute
 github.com/Azure/azure-sdk-for-go/services/compute/mgmt/2019-07-01/compute
 github.com/Azure/azure-sdk-for-go/services/graphrbac/1.6/graphrbac
+github.com/Azure/azure-sdk-for-go/services/mariadb/mgmt/2018-06-01/mariadb
+github.com/Azure/azure-sdk-for-go/services/mysql/mgmt/2017-12-01/mysql
 github.com/Azure/azure-sdk-for-go/services/network/mgmt/2019-08-01/network
+github.com/Azure/azure-sdk-for-go/services/postgresql/mgmt/2017-12-01/postgresql
+github.com/Azure/azure-sdk-for-go/services/preview/sql/mgmt/2017-03-01-preview/sql
 github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2019-05-01/resources
 github.com/Azure/azure-sdk-for-go/services/storage/mgmt/2019-04-01/storage
 github.com/Azure/azure-sdk-for-go/version
@@ -140,6 +145,7 @@ github.com/aws/aws-sdk-go-v2/private/protocol/restjson
 github.com/aws/aws-sdk-go-v2/private/protocol/restxml
 github.com/aws/aws-sdk-go-v2/private/protocol/xml
 github.com/aws/aws-sdk-go-v2/private/protocol/xml/xmlutil
+github.com/aws/aws-sdk-go-v2/service/accessanalyzer
 github.com/aws/aws-sdk-go-v2/service/acm
 github.com/aws/aws-sdk-go-v2/service/autoscaling
 github.com/aws/aws-sdk-go-v2/service/budgets
@@ -147,6 +153,7 @@ github.com/aws/aws-sdk-go-v2/service/cloud9
 github.com/aws/aws-sdk-go-v2/service/cloudformation
 github.com/aws/aws-sdk-go-v2/service/cloudfront
 github.com/aws/aws-sdk-go-v2/service/cloudtrail
+github.com/aws/aws-sdk-go-v2/service/codecommit
 github.com/aws/aws-sdk-go-v2/service/dynamodb
 github.com/aws/aws-sdk-go-v2/service/ec2
 github.com/aws/aws-sdk-go-v2/service/ecs
@@ -436,6 +443,8 @@ github.com/pkg/errors
 github.com/posener/complete
 github.com/posener/complete/cmd
 github.com/posener/complete/cmd/install
+# github.com/satori/go.uuid v1.2.0
+github.com/satori/go.uuid
 # github.com/spf13/afero v1.2.2
 github.com/spf13/afero
 github.com/spf13/afero/mem
@@ -590,6 +599,7 @@ gonum.org/v1/gonum/mat
 google.golang.org/api/bigquery/v2
 google.golang.org/api/cloudfunctions/v1
 google.golang.org/api/cloudkms/v1
+google.golang.org/api/cloudresourcemanager/v1
 google.golang.org/api/cloudscheduler/v1beta1
 google.golang.org/api/compute/v1
 google.golang.org/api/container/v1beta1
