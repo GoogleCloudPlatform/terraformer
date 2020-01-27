@@ -114,7 +114,7 @@ The `plan` command generates a planfile that contains all the resources set to b
 The rest of subcommands and parameters are identical to the `import` command.
 
 ```
-$ terraformer plan google --resources=networks,firewalls --projects=my-project --zone=europe-west1-d
+$ terraformer plan google --resources=networks,firewalls --projects=my-project --regions=europe-west1-d
 (snip)
 
 Saving planfile to generated/google/my-project/terraformer/plan.json
