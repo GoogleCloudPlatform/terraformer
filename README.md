@@ -436,16 +436,16 @@ In that case terraformer will not know with which region resources are associate
     * `aws_glue_catalog_database`
     * `aws_glue_catalog_table`
 *   `iam`
+    * `aws_iam_group`
+    * `aws_iam_group_policy`
+    * `aws_iam_instance_profile`
+    * `aws_iam_policy`
+    * `aws_iam_policy_attachment`
     * `aws_iam_role`
     * `aws_iam_role_policy`
     * `aws_iam_user`
     * `aws_iam_user_group_membership`
     * `aws_iam_user_policy`
-    * `aws_iam_policy_attachment`
-    * `aws_iam_policy`
-    * `aws_iam_group`
-    * `aws_iam_group_membership`
-    * `aws_iam_group_policy`
 *   `igw`
     * `aws_internet_gateway`
 *   `kinesis`
