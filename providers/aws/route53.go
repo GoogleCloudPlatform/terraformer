@@ -63,7 +63,7 @@ func (g Route53Generator) createZonesResources(svc *route53.Client) []terraform_
 }
 
 func (Route53Generator) createRecordsResources(svc *route53.Client, zoneID string) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+	var resources []terraform_utils.Resource
 	listParams := &route53.ListResourceRecordSetsInput{
 		HostedZoneId: aws.String(zoneID),
 	}
@@ -79,7 +79,7 @@ func (Route53Generator) createRecordsResources(svc *route53.Client, zoneID strin
 				"aws_route53_record",
 				"aws",
 				map[string]string{
-					"name":           recordName,
+					"name":           strings.TrimSuffix(recordName, "."),
 					"zone_id":        zoneID,
 					"type":           typeString,
 					"set_identifier": aws.StringValue(record.SetIdentifier),
