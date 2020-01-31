@@ -27,18 +27,12 @@ type CodePipelineGenerator struct {
 	AWSService
 }
 
-func (g *CodePipelineGenerator) InitResources() error {
-	config, e := g.generateConfig()
-	if e != nil {
-		return e
-	}
-	svc := codepipeline.New(config)
+func (g *CodePipelineGenerator) loadPipelines(svc *codepipeline.Client) error {
 	p := codepipeline.NewListPipelinesPaginator(svc.ListPipelinesRequest(&codepipeline.ListPipelinesInput{}))
-	var resources []terraform_utils.Resource
 	for p.Next(context.Background()) {
 		for _, pipeline := range p.CurrentPage().Pipelines {
 			resourceName := aws.StringValue(pipeline.Name)
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_codepipeline",
@@ -46,6 +40,38 @@ func (g *CodePipelineGenerator) InitResources() error {
 				codepipelineAllowEmptyValues))
 		}
 	}
-	g.Resources = resources
 	return p.Err()
+}
+
+func (g *CodePipelineGenerator) loadWebhooks(svc *codepipeline.Client) error {
+	p := codepipeline.NewListWebhooksPaginator(svc.ListWebhooksRequest(&codepipeline.ListWebhooksInput{}))
+	for p.Next(context.Background()) {
+		for _, webhook := range p.CurrentPage().Webhooks {
+			resourceArn := aws.StringValue(webhook.Arn)
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+				resourceArn,
+				resourceArn,
+				"aws_codepipeline_webhook",
+				"aws",
+				codepipelineAllowEmptyValues))
+		}
+	}
+	return p.Err()
+}
+
+func (g *CodePipelineGenerator) InitResources() error {
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
+	svc := codepipeline.New(config)
+
+	if err := g.loadPipelines(svc); err != nil {
+		return err
+	}
+	if err := g.loadWebhooks(svc); err != nil {
+		return err
+	}
+
+	return nil
 }
