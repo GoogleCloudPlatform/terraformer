@@ -42,7 +42,6 @@ require (
 	github.com/hashicorp/yamux v0.0.0-20190923154419-df201c70410d // indirect
 	github.com/heroku/heroku-go/v5 v5.1.0
 	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
-	github.com/imdario/mergo v0.3.8 // indirect
 	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 	github.com/jonboydell/logzio_client v1.2.0
 	github.com/jstemmer/go-junit-report v0.9.1 // indirect
@@ -51,12 +50,12 @@ require (
 	github.com/mattn/go-isatty v0.0.11 // indirect
 	github.com/mitchellh/reflectwalk v1.0.1 // indirect
 	github.com/mrparkers/terraform-provider-keycloak v0.0.0-20191218161228-a467c7185cbc
-	github.com/paultyng/go-newrelic v3.1.0+incompatible
+	github.com/paultyng/go-newrelic v3.1.0+incompatible // indirect
+	github.com/paultyng/go-newrelic/v4 v4.10.0
 	github.com/pkg/errors v0.8.1
 	github.com/posener/complete v1.2.3 // indirect
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/pflag v1.0.5
-	github.com/tomnomnom/linkheader v0.0.0-20180905144013-02ca5825eb80 // indirect
 	github.com/ulikunitz/xz v0.5.6 // indirect
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
 	github.com/vultr/govultr v0.1.7

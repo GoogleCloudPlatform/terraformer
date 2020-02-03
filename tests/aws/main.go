@@ -57,6 +57,7 @@ func main() {
 		Connect:     true,
 		Compact:     true,
 		Verbose:     true,
+		Output:	     "hcl",
 	}, []string{region, profile})
 	if err != nil {
 		log.Println(err)

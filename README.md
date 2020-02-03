@@ -114,7 +114,7 @@ The `plan` command generates a planfile that contains all the resources set to b
 The rest of subcommands and parameters are identical to the `import` command.
 
 ```
-$ terraformer plan google --resources=networks,firewalls --projects=my-project --zone=europe-west1-d
+$ terraformer plan google --resources=networks,firewalls --projects=my-project --regions=europe-west1-d
 (snip)
 
 Saving planfile to generated/google/my-project/terraformer/plan.json
@@ -356,7 +356,7 @@ Example:
 
 #### Profiles support
 
-AWS configuration including environmental variables, shared credentials file (~/.aws/credentials), and shared config file (~/.aws/config) will be loaded by the tool by default. To use a specific profile, you can use the following command:
+AWS configuration including environmental variables, shared credentials file (\~/.aws/credentials), and shared config file (\~/.aws/config) will be loaded by the tool by default. To use a specific profile, you can use the following command:
 
 ```
 terraformer import aws --resources=vpc,subnet --regions=eu-west-1 --profile=prod
@@ -399,6 +399,9 @@ In that case terraformer will not know with which region resources are associate
     * `aws_cloudtrail`
 *   `codecommit`
     * `aws_codecommit_repository`
+*   `codepipeline`
+    * `aws_codepipeline`
+    * `aws_codepipeline_webhook`
 *   `customer_gateway`
     * `aws_customer_gateway`
 *   `dynamodb`
@@ -438,16 +441,16 @@ In that case terraformer will not know with which region resources are associate
     * `aws_glue_catalog_database`
     * `aws_glue_catalog_table`
 *   `iam`
+    * `aws_iam_group`
+    * `aws_iam_group_policy`
+    * `aws_iam_instance_profile`
+    * `aws_iam_policy`
+    * `aws_iam_policy_attachment`
     * `aws_iam_role`
     * `aws_iam_role_policy`
     * `aws_iam_user`
     * `aws_iam_user_group_membership`
     * `aws_iam_user_policy`
-    * `aws_iam_policy_attachment`
-    * `aws_iam_policy`
-    * `aws_iam_group`
-    * `aws_iam_group_membership`
-    * `aws_iam_group_policy`
 *   `igw`
     * `aws_internet_gateway`
 *   `kinesis`
@@ -977,6 +980,10 @@ Supports only organizational resources. List of supported resources:
 
 *   `members`
     * `github_membership`
+*   `organization_blocks`
+    * `github_organization_block`
+*   `organization_projects`
+    * `github_organization_project`
 *   `organization_webhooks`
     * `github_organization_webhook`
 *   `repositories`
@@ -989,6 +996,8 @@ Supports only organizational resources. List of supported resources:
     * `github_team`
     * `github_team_membership`
     * `github_team_repository`
+*   `user_ssh_keys`
+    * `github_user_ssh_key`
 
 Notes:
 * Terraformer can't get webhook secrets from the GitHub API. If you use a secret token in any of your webhooks, running `terraform plan` will result in a change being detected:

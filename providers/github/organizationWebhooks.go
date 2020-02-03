@@ -39,19 +39,30 @@ func (g *OrganizationWebhooksGenerator) InitResources() error {
 
 	client := githubAPI.NewClient(tc)
 
-	hooks, _, err := client.Organizations.ListHooks(ctx, g.Args["organization"].(string), nil)
-	if err != nil {
-		log.Println(err)
-		return nil
-	}
-	for _, hook := range hooks {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-			strconv.FormatInt(hook.GetID(), 10),
-			strconv.FormatInt(hook.GetID(), 10),
-			"github_organization_webhook",
-			"github",
-			[]string{},
-		))
+	opt := &githubAPI.ListOptions{PerPage: 100}
+
+	// List all organization hooks for the authenticated user
+	for {
+		hooks, resp, err := client.Organizations.ListHooks(ctx, g.Args["organization"].(string), opt)
+		if err != nil {
+			log.Println(err)
+			return nil
+		}
+
+		for _, hook := range hooks {
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+				strconv.FormatInt(hook.GetID(), 10),
+				strconv.FormatInt(hook.GetID(), 10),
+				"github_organization_webhook",
+				"github",
+				[]string{},
+			))
+		}
+
+		if resp.NextPage == 0 {
+			break
+		}
+		opt.Page = resp.NextPage
 	}
 	return nil
 }
