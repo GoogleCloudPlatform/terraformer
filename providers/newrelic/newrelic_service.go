@@ -20,7 +20,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	synthetics "github.com/dollarshaveclub/new-relic-synthetics-go"
-	newrelic "github.com/paultyng/go-newrelic/api"
+	newrelic "github.com/paultyng/go-newrelic/v4/api"
 )
 
 type NewRelicService struct {
