@@ -52,7 +52,7 @@ func (g BackendServicesGenerator) createResources(ctx context.Context, backendSe
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -64,7 +64,7 @@ func (g *BackendServicesGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	backendServicesList := computeService.BackendServices.List(g.GetArgs()["project"].(string))

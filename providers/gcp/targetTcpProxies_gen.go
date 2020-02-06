@@ -53,7 +53,7 @@ func (g TargetTcpProxiesGenerator) createResources(ctx context.Context, targetTc
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -65,7 +65,7 @@ func (g *TargetTcpProxiesGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	targetTcpProxiesList := computeService.TargetTcpProxies.List(g.GetArgs()["project"].(string))

@@ -53,7 +53,7 @@ func (g ImagesGenerator) createResources(ctx context.Context, imagesList *comput
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -65,7 +65,7 @@ func (g *ImagesGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	imagesList := computeService.Images.List(g.GetArgs()["project"].(string))
