@@ -55,7 +55,7 @@ func (g InstanceGroupManagersGenerator) createResources(ctx context.Context, ins
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -67,7 +67,7 @@ func (g *InstanceGroupManagersGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	for _, zoneLink := range g.GetArgs()["region"].(compute.Region).Zones {

@@ -53,7 +53,7 @@ func (g GlobalAddressesGenerator) createResources(ctx context.Context, globalAdd
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -65,7 +65,7 @@ func (g *GlobalAddressesGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	globalAddressesList := computeService.GlobalAddresses.List(g.GetArgs()["project"].(string))

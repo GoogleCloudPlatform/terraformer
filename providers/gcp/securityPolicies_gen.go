@@ -53,7 +53,7 @@ func (g SecurityPoliciesGenerator) createResources(ctx context.Context, security
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -65,7 +65,7 @@ func (g *SecurityPoliciesGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	securityPoliciesList := computeService.SecurityPolicies.List(g.GetArgs()["project"].(string))

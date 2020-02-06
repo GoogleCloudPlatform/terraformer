@@ -53,7 +53,7 @@ func (g UrlMapsGenerator) createResources(ctx context.Context, urlMapsList *comp
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -65,7 +65,7 @@ func (g *UrlMapsGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	urlMapsList := computeService.UrlMaps.List(g.GetArgs()["project"].(string))
