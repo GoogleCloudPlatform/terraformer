@@ -16,6 +16,7 @@ package terraform_utils
 
 import (
 	"bytes"
+	"github.com/k0kubun/pp"
 	"log"
 	"sync"
 
@@ -85,6 +86,7 @@ func RefreshResources(resources []Resource, provider *provider_wrapper.ProviderW
 	wg.Wait()
 	close(input)
 	for _, r := range resources {
+		pp.Println(r)
 		if r.InstanceState != nil && r.InstanceState.ID != "" {
 			refreshedResources = append(refreshedResources, r)
 		} else {

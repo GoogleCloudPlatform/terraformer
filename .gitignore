@@ -4,3 +4,4 @@ terraformer
 .DS_Store
 .terraform
 .vscode
+main.tf
