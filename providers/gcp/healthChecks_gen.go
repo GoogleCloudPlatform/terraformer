@@ -53,7 +53,7 @@ func (g HealthChecksGenerator) createResources(ctx context.Context, healthChecks
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -65,7 +65,7 @@ func (g *HealthChecksGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	healthChecksList := computeService.HealthChecks.List(g.GetArgs()["project"].(string))

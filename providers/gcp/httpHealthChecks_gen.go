@@ -53,7 +53,7 @@ func (g HttpHealthChecksGenerator) createResources(ctx context.Context, httpHeal
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -65,7 +65,7 @@ func (g *HttpHealthChecksGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	httpHealthChecksList := computeService.HttpHealthChecks.List(g.GetArgs()["project"].(string))

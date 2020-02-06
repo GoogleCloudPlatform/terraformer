@@ -53,7 +53,7 @@ func (g AddressesGenerator) createResources(ctx context.Context, addressesList *
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -65,7 +65,7 @@ func (g *AddressesGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	addressesList := computeService.Addresses.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)

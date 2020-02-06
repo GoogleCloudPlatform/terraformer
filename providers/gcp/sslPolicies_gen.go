@@ -53,7 +53,7 @@ func (g SslPoliciesGenerator) createResources(ctx context.Context, sslPoliciesLi
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -65,7 +65,7 @@ func (g *SslPoliciesGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	sslPoliciesList := computeService.SslPolicies.List(g.GetArgs()["project"].(string))

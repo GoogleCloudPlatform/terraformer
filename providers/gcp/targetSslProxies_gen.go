@@ -53,7 +53,7 @@ func (g TargetSslProxiesGenerator) createResources(ctx context.Context, targetSs
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -65,7 +65,7 @@ func (g *TargetSslProxiesGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	targetSslProxiesList := computeService.TargetSslProxies.List(g.GetArgs()["project"].(string))
