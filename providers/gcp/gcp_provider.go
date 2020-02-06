@@ -26,8 +26,9 @@ import (
 
 type GCPProvider struct {
 	terraform_utils.Provider
-	projectName string
-	region      compute.Region
+	projectName  string
+	region       compute.Region
+	organization string
 }
 
 func GetRegions(project string) []string {
@@ -67,6 +68,9 @@ func (p *GCPProvider) Init(args []string) error {
 	if projectName == "" {
 		return errors.New("google cloud project name must be set")
 	}
+	if len(args) > 2 {
+		p.organization = args[2]
+	}
 	p.projectName = projectName
 	p.region = *getRegion(projectName, args[0])
 	return nil
@@ -86,8 +90,9 @@ func (p *GCPProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"region":  p.region,
-		"project": p.projectName,
+		"region":       p.region,
+		"project":      p.projectName,
+		"organization": p.organization,
 	})
 	return nil
 }
@@ -110,6 +115,7 @@ func (p *GCPProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 	services["project"] = &ProjectGenerator{}
 	services["pubsub"] = &PubsubGenerator{}
 	services["schedulerJobs"] = &SchedulerJobsGenerator{}
+	services["organizationPolicy"] = &OrganizationPolicyGenerator{}
 	return services
 }
 

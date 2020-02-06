@@ -16,6 +16,8 @@ const packageCmdPath = "cmd"
 
 func main() {
 	provider := os.Args[1]
+	provider = strings.Replace(provider,"{","",-1)
+	provider = strings.Replace(provider,"}","",-1)
 	log.Println("Build terraformer with " + provider + " provider...")
 	files, err := ioutil.ReadDir(packageCmdPath)
 	if err != nil {

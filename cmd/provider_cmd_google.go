@@ -35,7 +35,7 @@ func newCmdGoogleImporter(options ImportOptions) *cobra.Command {
 					options.PathPattern = originalPathPattern
 					options.PathPattern = strings.Replace(options.PathPattern, "{provider}/{service}", "{provider}/"+project+"/{service}/"+region, -1)
 					log.Println(provider.GetName() + " importing project " + project + " region " + region)
-					err := Import(provider, options, []string{region, project})
+					err := Import(provider, options, []string{region, project, options.Organization})
 					if err != nil {
 						return err
 					}
@@ -48,6 +48,7 @@ func newCmdGoogleImporter(options ImportOptions) *cobra.Command {
 	baseProviderFlags(cmd.PersistentFlags(), &options, "firewalls,networks", "google_compute_firewall=id1:id2:id4")
 	cmd.PersistentFlags().StringSliceVarP(&options.Regions, "regions", "z", []string{"global"}, "europe-west1,")
 	cmd.PersistentFlags().StringSliceVarP(&options.Projects, "projects", "", []string{}, "")
+	cmd.PersistentFlags().StringVarP(&options.Organization, "organization", "", "", "")
 	_ = cmd.MarkPersistentFlagRequired("projects")
 	return cmd
 }
