@@ -215,6 +215,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"cloudformation":    &CloudFormationGenerator{},
 		"cloudfront":        &CloudFrontGenerator{},
 		"cloudtrail":        &CloudTrailGenerator{},
+		"codebuild":         &CodeBuildGenerator{},
 		"codecommit":        &CodeCommitGenerator{},
 		"codepipeline":      &CodePipelineGenerator{},
 		"dynamodb":          &DynamoDbGenerator{},
