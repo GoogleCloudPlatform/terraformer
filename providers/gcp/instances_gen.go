@@ -57,7 +57,7 @@ func (g InstancesGenerator) createResources(ctx context.Context, instancesList *
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -69,7 +69,7 @@ func (g *InstancesGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	for _, zoneLink := range g.GetArgs()["region"].(compute.Region).Zones {
