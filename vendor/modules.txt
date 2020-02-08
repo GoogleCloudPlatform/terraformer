@@ -153,7 +153,9 @@ github.com/aws/aws-sdk-go-v2/service/cloud9
 github.com/aws/aws-sdk-go-v2/service/cloudformation
 github.com/aws/aws-sdk-go-v2/service/cloudfront
 github.com/aws/aws-sdk-go-v2/service/cloudtrail
+github.com/aws/aws-sdk-go-v2/service/codebuild
 github.com/aws/aws-sdk-go-v2/service/codecommit
+github.com/aws/aws-sdk-go-v2/service/codepipeline
 github.com/aws/aws-sdk-go-v2/service/dynamodb
 github.com/aws/aws-sdk-go-v2/service/ec2
 github.com/aws/aws-sdk-go-v2/service/ecs
@@ -464,7 +466,7 @@ github.com/vmihailenco/msgpack
 github.com/vmihailenco/msgpack/codes
 # github.com/vultr/govultr v0.1.7
 github.com/vultr/govultr
-# github.com/zclconf/go-cty v1.2.0
+# github.com/zclconf/go-cty v1.2.1
 github.com/zclconf/go-cty/cty
 github.com/zclconf/go-cty/cty/convert
 github.com/zclconf/go-cty/cty/function
