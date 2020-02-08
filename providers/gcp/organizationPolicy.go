@@ -19,12 +19,16 @@ func (g OrganizationPolicyGenerator) createResources(ctx context.Context, polici
 	resources := []terraform_utils.Resource{}
 	if err := policiesList.Pages(ctx, func(page *cloudresourcemanager.ListOrgPoliciesResponse) error {
 		for _, obj := range page.Policies {
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraform_utils.NewResource(
 				fmt.Sprintf("%s/%s", g.GetArgs()["organization"].(string), obj.Constraint),
 				fmt.Sprintf("%s-%s", g.GetArgs()["organization"].(string), obj.Constraint),
 				"google_organization_policy",
 				"google",
+				map[string]string{
+					"org_id": g.GetArgs()["organization"].(string),
+				},
 				[]string{},
+				map[string]interface{}{},
 			))
 		}
 		return nil
