@@ -58,6 +58,14 @@ func (g *LambdaGenerator) PostConvertHook() error {
 			},
 		}
 	}
+	for _, r := range g.Resources {
+		if r.InstanceInfo.Type != "aws_lambda_function_event_invoke_config" {
+			continue
+		}
+		if r.InstanceState.Attributes["maximum_event_age_in_seconds"] == "0" {
+			delete(r.Item, "maximum_event_age_in_seconds")
+		}
+	}
 	return nil
 }
 
@@ -76,6 +84,25 @@ func (g *LambdaGenerator) addFunctions(svc *lambda.Client) error {
 				lambdaAllowEmptyValues,
 				map[string]interface{}{},
 			))
+
+			pi := lambda.NewListFunctionEventInvokeConfigsPaginator(svc.ListFunctionEventInvokeConfigsRequest(
+				&lambda.ListFunctionEventInvokeConfigsInput{
+					FunctionName: function.FunctionName,
+				}))
+			for pi.Next(context.Background()) {
+				for _, functionEventInvokeConfig := range pi.CurrentPage().FunctionEventInvokeConfigs {
+					g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+						*function.FunctionArn,
+						"feic_" + *functionEventInvokeConfig.FunctionArn,
+						"aws_lambda_function_event_invoke_config",
+						"aws",
+						lambdaAllowEmptyValues,
+					))
+				}
+			}
+			if err := pi.Err(); err != nil {
+				return err
+			}
 		}
 	}
 	return p.Err()
@@ -86,8 +113,8 @@ func (g *LambdaGenerator) addEventSourceMappings(svc *lambda.Client) error {
 	for p.Next(context.Background()) {
 		for _, mapping := range p.CurrentPage().EventSourceMappings {
 			g.Resources = append(g.Resources, terraform_utils.NewResource(
-				*mapping.EventSourceArn,
-				*mapping.EventSourceArn,
+				*mapping.UUID,
+				*mapping.UUID,
 				"aws_lambda_event_source_mapping",
 				"aws",
 				map[string]string{
