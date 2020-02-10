@@ -28,10 +28,12 @@ type BucketState struct {
 func (b BucketState) BucketGetTfData(path string) interface{} {
 	bucketStateData := map[string]interface{}{
 		"terraform": map[string]interface{}{
-			"backend": map[string]interface{}{
-				"gcs": map[string]interface{}{
-					"bucket": b.Name,
-					"prefix": b.BucketPrefix(path),
+			"backend": []map[string]interface{}{
+				{
+					"gcs": map[string]interface{}{
+						"bucket": b.Name,
+						"prefix": b.BucketPrefix(path),
+					},
 				},
 			},
 		},
