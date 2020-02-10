@@ -27,7 +27,7 @@ import (
 const command = "terraform init && terraform plan"
 
 func main() {
-	region := "ap-southeast-1"
+	region := "us-east-1"
 	profile := "personal"
 	var services []string
 	provider := &aws_terraforming.AWSProvider{}
@@ -44,7 +44,7 @@ func main() {
 		services = append(services, service)
 
 	}
-	services = []string{"sg"}
+	services = []string{"waf"}
 	sort.Strings(services)
 	provider = &aws_terraforming.AWSProvider{
 		Provider: terraform_utils.Provider{},

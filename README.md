@@ -500,6 +500,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_sqs_queue`
 *   `subnet`
     * `aws_subnet`
+*   `waf`
+    * `aws_waf_web_acl`
 *   `vpc`
     * `aws_vpc`
 *   `vpc_peering`
