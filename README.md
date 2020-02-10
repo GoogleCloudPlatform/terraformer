@@ -459,8 +459,9 @@ In that case terraformer will not know with which region resources are associate
     * `aws_kms_key`
     * `aws_kms_alias`
 *   `lambda`
-    * `aws_lambda_function`
     * `aws_lambda_event_source_mapping`
+    * `aws_lambda_function`
+    * `aws_lambda_function_event_invoke_config`
     * `aws_lambda_layer_version`
 *   `msk`
     * `aws_msk_cluster`
