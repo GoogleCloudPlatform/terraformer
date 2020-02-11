@@ -26,12 +26,13 @@ type BucketState struct {
 }
 
 func (b BucketState) BucketGetTfData(path string) interface{} {
+	name := strings.Replace(b.Name, "gs://", "", -1)
 	bucketStateData := map[string]interface{}{
 		"terraform": map[string]interface{}{
 			"backend": []map[string]interface{}{
 				{
 					"gcs": map[string]interface{}{
-						"bucket": b.Name,
+						"bucket": name,
 						"prefix": b.BucketPrefix(path),
 					},
 				},
