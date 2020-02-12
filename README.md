@@ -401,6 +401,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_codebuild_project`
 *   `codecommit`
     * `aws_codecommit_repository`
+*   `codedeploy`
+    * `aws_codedeploy_app`
 *   `codepipeline`
     * `aws_codepipeline`
     * `aws_codepipeline_webhook`
