@@ -67,8 +67,6 @@ func fillPresignedURL(r *aws.Request) {
 	}
 
 	cfgCp.EndpointResolver = aws.ResolveWithEndpoint(resolved)
-	metadata.Endpoint = resolved.URL
-	metadata.SigningRegion = resolved.SigningRegion
 
 	// Presign a CopySnapshot request with modified params
 	req := aws.New(cfgCp, metadata, r.Handlers, r.Retryer, r.Operation, newParams, r.Data)

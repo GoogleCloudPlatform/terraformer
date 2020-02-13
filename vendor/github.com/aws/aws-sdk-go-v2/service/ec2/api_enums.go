@@ -321,13 +321,14 @@ type ByoipCidrState string
 
 // Enum values for ByoipCidrState
 const (
-	ByoipCidrStateAdvertised         ByoipCidrState = "advertised"
-	ByoipCidrStateDeprovisioned      ByoipCidrState = "deprovisioned"
-	ByoipCidrStateFailedDeprovision  ByoipCidrState = "failed-deprovision"
-	ByoipCidrStateFailedProvision    ByoipCidrState = "failed-provision"
-	ByoipCidrStatePendingDeprovision ByoipCidrState = "pending-deprovision"
-	ByoipCidrStatePendingProvision   ByoipCidrState = "pending-provision"
-	ByoipCidrStateProvisioned        ByoipCidrState = "provisioned"
+	ByoipCidrStateAdvertised                         ByoipCidrState = "advertised"
+	ByoipCidrStateDeprovisioned                      ByoipCidrState = "deprovisioned"
+	ByoipCidrStateFailedDeprovision                  ByoipCidrState = "failed-deprovision"
+	ByoipCidrStateFailedProvision                    ByoipCidrState = "failed-provision"
+	ByoipCidrStatePendingDeprovision                 ByoipCidrState = "pending-deprovision"
+	ByoipCidrStatePendingProvision                   ByoipCidrState = "pending-provision"
+	ByoipCidrStateProvisioned                        ByoipCidrState = "provisioned"
+	ByoipCidrStateProvisionedNotPubliclyAdvertisable ByoipCidrState = "provisioned-not-publicly-advertisable"
 )
 
 func (enum ByoipCidrState) MarshalValue() (string, error) {
@@ -732,6 +733,24 @@ func (enum DiskType) MarshalValueBuf(b []byte) ([]byte, error) {
 	return append(b, enum...), nil
 }
 
+type DnsNameState string
+
+// Enum values for DnsNameState
+const (
+	DnsNameStatePendingVerification DnsNameState = "pendingVerification"
+	DnsNameStateVerified            DnsNameState = "verified"
+	DnsNameStateFailed              DnsNameState = "failed"
+)
+
+func (enum DnsNameState) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum DnsNameState) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
 type DnsSupportValue string
 
 // Enum values for DnsSupportValue
@@ -997,6 +1016,22 @@ func (enum FleetActivityStatus) MarshalValue() (string, error) {
 }
 
 func (enum FleetActivityStatus) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type FleetCapacityReservationUsageStrategy string
+
+// Enum values for FleetCapacityReservationUsageStrategy
+const (
+	FleetCapacityReservationUsageStrategyUseCapacityReservationsFirst FleetCapacityReservationUsageStrategy = "use-capacity-reservations-first"
+)
+
+func (enum FleetCapacityReservationUsageStrategy) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum FleetCapacityReservationUsageStrategy) MarshalValueBuf(b []byte) ([]byte, error) {
 	b = b[0:0]
 	return append(b, enum...), nil
 }
@@ -1842,6 +1877,57 @@ func (enum LaunchTemplateErrorCode) MarshalValueBuf(b []byte) ([]byte, error) {
 	return append(b, enum...), nil
 }
 
+type LaunchTemplateHttpTokensState string
+
+// Enum values for LaunchTemplateHttpTokensState
+const (
+	LaunchTemplateHttpTokensStateOptional LaunchTemplateHttpTokensState = "optional"
+	LaunchTemplateHttpTokensStateRequired LaunchTemplateHttpTokensState = "required"
+)
+
+func (enum LaunchTemplateHttpTokensState) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum LaunchTemplateHttpTokensState) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type LaunchTemplateInstanceMetadataEndpointState string
+
+// Enum values for LaunchTemplateInstanceMetadataEndpointState
+const (
+	LaunchTemplateInstanceMetadataEndpointStateDisabled LaunchTemplateInstanceMetadataEndpointState = "disabled"
+	LaunchTemplateInstanceMetadataEndpointStateEnabled  LaunchTemplateInstanceMetadataEndpointState = "enabled"
+)
+
+func (enum LaunchTemplateInstanceMetadataEndpointState) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum LaunchTemplateInstanceMetadataEndpointState) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type LaunchTemplateInstanceMetadataOptionsState string
+
+// Enum values for LaunchTemplateInstanceMetadataOptionsState
+const (
+	LaunchTemplateInstanceMetadataOptionsStatePending LaunchTemplateInstanceMetadataOptionsState = "pending"
+	LaunchTemplateInstanceMetadataOptionsStateApplied LaunchTemplateInstanceMetadataOptionsState = "applied"
+)
+
+func (enum LaunchTemplateInstanceMetadataOptionsState) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum LaunchTemplateInstanceMetadataOptionsState) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
 type ListingState string
 
 // Enum values for ListingState
@@ -2528,10 +2614,12 @@ const (
 	ResourceTypeImage                         ResourceType = "image"
 	ResourceTypeInstance                      ResourceType = "instance"
 	ResourceTypeInternetGateway               ResourceType = "internet-gateway"
+	ResourceTypeKeyPair                       ResourceType = "key-pair"
 	ResourceTypeLaunchTemplate                ResourceType = "launch-template"
 	ResourceTypeNatgateway                    ResourceType = "natgateway"
 	ResourceTypeNetworkAcl                    ResourceType = "network-acl"
 	ResourceTypeNetworkInterface              ResourceType = "network-interface"
+	ResourceTypePlacementGroup                ResourceType = "placement-group"
 	ResourceTypeReservedInstances             ResourceType = "reserved-instances"
 	ResourceTypeRouteTable                    ResourceType = "route-table"
 	ResourceTypeSecurityGroup                 ResourceType = "security-group"
@@ -2647,6 +2735,23 @@ func (enum RuleAction) MarshalValue() (string, error) {
 }
 
 func (enum RuleAction) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type Scope string
+
+// Enum values for Scope
+const (
+	ScopeAvailabilityZone Scope = "Availability Zone"
+	ScopeRegion           Scope = "Region"
+)
+
+func (enum Scope) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum Scope) MarshalValueBuf(b []byte) ([]byte, error) {
 	b = b[0:0]
 	return append(b, enum...), nil
 }
@@ -3791,23 +3896,6 @@ func (enum VpnStaticRouteSource) MarshalValue() (string, error) {
 }
 
 func (enum VpnStaticRouteSource) MarshalValueBuf(b []byte) ([]byte, error) {
-	b = b[0:0]
-	return append(b, enum...), nil
-}
-
-type Scope string
-
-// Enum values for Scope
-const (
-	ScopeAvailabilityZone Scope = "Availability Zone"
-	ScopeRegion           Scope = "Region"
-)
-
-func (enum Scope) MarshalValue() (string, error) {
-	return string(enum), nil
-}
-
-func (enum Scope) MarshalValueBuf(b []byte) ([]byte, error) {
 	b = b[0:0]
 	return append(b, enum...), nil
 }

@@ -42,9 +42,9 @@ type CreateFargateProfileInput struct {
 	// for a namespace. You may specify up to five selectors in a Fargate profile.
 	Selectors []FargateProfileSelector `locationName:"selectors" type:"list"`
 
-	// The IDs of subnets to launch Fargate pods into. At this time, Fargate pods
-	// are not assigned public IP addresses, so only private subnets (with no direct
-	// route to an Internet Gateway) are accepted for this parameter.
+	// The IDs of subnets to launch your pods into. At this time, pods running on
+	// Fargate are not assigned public IP addresses, so only private subnets (with
+	// no direct route to an Internet Gateway) are accepted for this parameter.
 	Subnets []string `locationName:"subnets" type:"list"`
 
 	// The metadata to apply to the Fargate profile to assist with categorization
@@ -187,27 +187,25 @@ const opCreateFargateProfile = "CreateFargateProfile"
 // Amazon Elastic Kubernetes Service.
 //
 // Creates an AWS Fargate profile for your Amazon EKS cluster. You must have
-// at least one Fargate profile in a cluster to be able to schedule pods on
-// Fargate infrastructure.
+// at least one Fargate profile in a cluster to be able to run pods on Fargate.
 //
 // The Fargate profile allows an administrator to declare which pods run on
-// Fargate infrastructure and specify which pods run on which Fargate profile.
-// This declaration is done through the profile’s selectors. Each profile
-// can have up to five selectors that contain a namespace and labels. A namespace
-// is required for every selector. The label field consists of multiple optional
-// key-value pairs. Pods that match the selectors are scheduled on Fargate infrastructure.
-// If a to-be-scheduled pod matches any of the selectors in the Fargate profile,
-// then that pod is scheduled on Fargate infrastructure.
+// Fargate and specify which pods run on which Fargate profile. This declaration
+// is done through the profile’s selectors. Each profile can have up to five
+// selectors that contain a namespace and labels. A namespace is required for
+// every selector. The label field consists of multiple optional key-value pairs.
+// Pods that match the selectors are scheduled on Fargate. If a to-be-scheduled
+// pod matches any of the selectors in the Fargate profile, then that pod is
+// run on Fargate.
 //
 // When you create a Fargate profile, you must specify a pod execution role
 // to use with the pods that are scheduled with the profile. This role is added
 // to the cluster's Kubernetes Role Based Access Control (https://kubernetes.io/docs/admin/authorization/rbac/)
 // (RBAC) for authorization so that the kubelet that is running on the Fargate
-// infrastructure can register with your Amazon EKS cluster. This role is what
-// allows Fargate infrastructure to appear in your cluster as nodes. The pod
-// execution role also provides IAM permissions to the Fargate infrastructure
-// to allow read access to Amazon ECR image repositories. For more information,
-// see Pod Execution Role (https://docs.aws.amazon.com/eks/latest/userguide/pod-execution-role.html)
+// infrastructure can register with your Amazon EKS cluster so that it can appear
+// in your cluster as a node. The pod execution role also provides IAM permissions
+// to the Fargate infrastructure to allow read access to Amazon ECR image repositories.
+// For more information, see Pod Execution Role (https://docs.aws.amazon.com/eks/latest/userguide/pod-execution-role.html)
 // in the Amazon EKS User Guide.
 //
 // Fargate profiles are immutable. However, you can create a new updated profile

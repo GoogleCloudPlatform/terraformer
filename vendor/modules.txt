@@ -119,8 +119,9 @@ github.com/aws/aws-sdk-go/service/s3
 github.com/aws/aws-sdk-go/service/s3/internal/arn
 github.com/aws/aws-sdk-go/service/sts
 github.com/aws/aws-sdk-go/service/sts/stsiface
-# github.com/aws/aws-sdk-go-v2 v0.18.0
+# github.com/aws/aws-sdk-go-v2 v0.19.0
 github.com/aws/aws-sdk-go-v2/aws
+github.com/aws/aws-sdk-go-v2/aws/arn
 github.com/aws/aws-sdk-go-v2/aws/awserr
 github.com/aws/aws-sdk-go-v2/aws/defaults
 github.com/aws/aws-sdk-go-v2/aws/ec2metadata
@@ -155,6 +156,7 @@ github.com/aws/aws-sdk-go-v2/service/cloudfront
 github.com/aws/aws-sdk-go-v2/service/cloudtrail
 github.com/aws/aws-sdk-go-v2/service/codebuild
 github.com/aws/aws-sdk-go-v2/service/codecommit
+github.com/aws/aws-sdk-go-v2/service/codedeploy
 github.com/aws/aws-sdk-go-v2/service/codepipeline
 github.com/aws/aws-sdk-go-v2/service/dynamodb
 github.com/aws/aws-sdk-go-v2/service/ec2
@@ -177,6 +179,8 @@ github.com/aws/aws-sdk-go-v2/service/organizations
 github.com/aws/aws-sdk-go-v2/service/rds
 github.com/aws/aws-sdk-go-v2/service/route53
 github.com/aws/aws-sdk-go-v2/service/s3
+github.com/aws/aws-sdk-go-v2/service/s3/internal/arn
+github.com/aws/aws-sdk-go-v2/service/s3/internal/external
 github.com/aws/aws-sdk-go-v2/service/sns
 github.com/aws/aws-sdk-go-v2/service/sqs
 github.com/aws/aws-sdk-go-v2/service/sts

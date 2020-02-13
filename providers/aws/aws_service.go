@@ -15,6 +15,7 @@
 package aws
 
 import (
+	"context"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/external"
 	"github.com/aws/aws-sdk-go-v2/aws/stscreds"
@@ -28,8 +29,9 @@ type AWSService struct {
 }
 
 func (s *AWSService) generateConfig() (aws.Config, error) {
-
-	config, e := external.LoadDefaultAWSConfig(external.WithMFATokenFunc(stscreds.StdinTokenProvider))
+	config, e := external.LoadDefaultAWSConfig(
+		external.WithRegion(s.GetArgs()["region"].(string)),
+		external.WithMFATokenFunc(stscreds.StdinTokenProvider))
 	if e != nil {
 		return config, e
 	}
@@ -37,7 +39,7 @@ func (s *AWSService) generateConfig() (aws.Config, error) {
 		config.LogLevel = aws.LogDebugWithHTTPBody
 	}
 
-	creds, e := config.Credentials.Retrieve()
+	creds, e := config.Credentials.Retrieve(context.Background())
 
 	if e != nil {
 		return config, e

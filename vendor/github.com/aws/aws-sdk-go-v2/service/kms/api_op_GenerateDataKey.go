@@ -136,7 +136,8 @@ const opGenerateDataKey = "GenerateDataKey"
 // data key.
 //
 // To generate a data key, specify the symmetric CMK that will be used to encrypt
-// the data key. You cannot use an asymmetric CMK to generate data keys.
+// the data key. You cannot use an asymmetric CMK to generate data keys. To
+// get the type of your CMK, use the DescribeKey operation.
 //
 // You must also specify the length of the data key. Use either the KeySpec
 // or NumberOfBytes parameters (but not both). For 128-bit and 256-bit data

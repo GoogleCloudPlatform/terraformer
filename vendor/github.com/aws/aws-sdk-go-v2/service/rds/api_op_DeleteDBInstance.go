@@ -50,9 +50,8 @@ type DeleteDBInstanceInput struct {
 	// instance is deleted. By default, skip isn't specified, and the DB snapshot
 	// is created.
 	//
-	// Note that when a DB instance is in a failure state and has a status of 'failed',
-	// 'incompatible-restore', or 'incompatible-network', it can only be deleted
-	// when skip is specified.
+	// When a DB instance is in a failure state and has a status of 'failed', 'incompatible-restore',
+	// or 'incompatible-network', it can only be deleted when skip is specified.
 	//
 	// Specify skip when deleting a Read Replica.
 	//
@@ -108,9 +107,9 @@ const opDeleteDBInstance = "DeleteDBInstance"
 // is used to monitor the status of this operation. The action can't be canceled
 // or reverted once submitted.
 //
-// Note that when a DB instance is in a failure state and has a status of failed,
-// incompatible-restore, or incompatible-network, you can only delete it when
-// you skip creation of the final snapshot with the SkipFinalSnapshot parameter.
+// When a DB instance is in a failure state and has a status of failed, incompatible-restore,
+// or incompatible-network, you can only delete it when you skip creation of
+// the final snapshot with the SkipFinalSnapshot parameter.
 //
 // If the specified DB instance is part of an Amazon Aurora DB cluster, you
 // can't delete the DB instance if both of the following conditions are true:
