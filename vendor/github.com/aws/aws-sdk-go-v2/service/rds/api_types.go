@@ -47,7 +47,9 @@ var _ = awsutil.Prettify
 //    a lower number of associated IAM roles.
 //
 //    * DBInstances - The number of DB instances per account. The used value
-//    is the count of the DB instances in the account.
+//    is the count of the DB instances in the account. Amazon RDS DB instances,
+//    Amazon Aurora DB instances, Amazon Neptune instances, and Amazon DocumentDB
+//    instances apply to this quota.
 //
 //    * DBParameterGroups - The number of DB parameter groups per account, excluding
 //    default parameter groups. The used value is the count of nondefault DB
@@ -84,8 +86,8 @@ var _ = awsutil.Prettify
 //    account. Other DB subnet groups in the account might have a lower number
 //    of subnets.
 //
-// For more information, see Limits (https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Limits.html)
-// in the Amazon RDS User Guide and Limits (https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_Limits.html)
+// For more information, see Quotas for Amazon RDS (https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Limits.html)
+// in the Amazon RDS User Guide and Quotas for Amazon Aurora (https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/CHAP_Limits.html)
 // in the Amazon Aurora User Guide.
 type AccountQuota struct {
 	_ struct{} `type:"structure"`
@@ -157,6 +159,13 @@ type Certificate struct {
 
 	// The type of the certificate.
 	CertificateType *string `type:"string"`
+
+	// Whether there is an override for the default certificate identifier.
+	CustomerOverride *bool `type:"boolean"`
+
+	// If there is an override for the default certificate identifier, when the
+	// override expires.
+	CustomerOverrideValidTill *time.Time `type:"timestamp"`
 
 	// The thumbprint of the certificate.
 	Thumbprint *string `type:"string"`
@@ -1573,7 +1582,7 @@ type DBProxyTarget struct {
 	TargetArn *string `type:"string"`
 
 	// The DB cluster identifier when the target represents an Aurora DB cluster.
-	// This field is blank when the target represents an
+	// This field is blank when the target represents an RDS DB instance.
 	TrackedClusterId *string `type:"string"`
 
 	// Specifies the kind of database, such as an RDS DB instance or an Aurora DB
@@ -2118,6 +2127,81 @@ type EventSubscription struct {
 
 // String returns the string representation
 func (s EventSubscription) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Contains the details of a snapshot export to Amazon S3.
+//
+// This data type is used as a response element in the DescribeExportTasks action.
+type ExportTask struct {
+	_ struct{} `type:"structure"`
+
+	// The data exported from the snapshot. Valid values are the following:
+	//
+	//    * database - Export all the data of the snapshot.
+	//
+	//    * database.table [table-name] - Export a table of the snapshot.
+	//
+	//    * database.schema [schema-name] - Export a database schema of the snapshot.
+	//    This value isn't valid for RDS for MySQL, RDS for MariaDB, or Aurora MySQL.
+	//
+	//    * database.schema.table [table-name] - Export a table of the database
+	//    schema. This value isn't valid for RDS for MySQL, RDS for MariaDB, or
+	//    Aurora MySQL.
+	ExportOnly []string `type:"list"`
+
+	// A unique identifier for the snapshot export task. This ID isn't an identifier
+	// for the Amazon S3 bucket where the snapshot is exported to.
+	ExportTaskIdentifier *string `type:"string"`
+
+	// The reason the export failed, if it failed.
+	FailureCause *string `type:"string"`
+
+	// The name of the IAM role that is used to write to Amazon S3 when exporting
+	// a snapshot.
+	IamRoleArn *string `type:"string"`
+
+	// The ID of the AWS KMS key that is used to encrypt the snapshot when it's
+	// exported to Amazon S3. The KMS key ID is the Amazon Resource Name (ARN),
+	// the KMS key identifier, or the KMS key alias for the KMS encryption key.
+	// The IAM role used for the snapshot export must have encryption and decryption
+	// permissions to use this KMS key.
+	KmsKeyId *string `type:"string"`
+
+	// The progress of the snapshot export task as a percentage.
+	PercentProgress *int64 `type:"integer"`
+
+	// The Amazon S3 bucket that the snapshot is exported to.
+	S3Bucket *string `type:"string"`
+
+	// The Amazon S3 bucket prefix that is the file name and path of the exported
+	// snapshot.
+	S3Prefix *string `type:"string"`
+
+	// The time that the snapshot was created.
+	SnapshotTime *time.Time `type:"timestamp"`
+
+	// The Amazon Resource Name (ARN) of the snapshot exported to Amazon S3.
+	SourceArn *string `type:"string"`
+
+	// The progress status of the export task.
+	Status *string `type:"string"`
+
+	// The time that the snapshot export task completed.
+	TaskEndTime *time.Time `type:"timestamp"`
+
+	// The time that the snapshot export task started.
+	TaskStartTime *time.Time `type:"timestamp"`
+
+	// The total amount of data exported, in gigabytes.
+	TotalExtractedDataInGB *int64 `type:"integer"`
+
+	// A warning about the snapshot export task.
+	WarningMessage *string `type:"string"`
+}
+
+// String returns the string representation
+func (s ExportTask) String() string {
 	return awsutil.Prettify(s)
 }
 

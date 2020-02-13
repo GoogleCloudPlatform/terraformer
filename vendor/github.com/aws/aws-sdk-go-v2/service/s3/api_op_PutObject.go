@@ -4,12 +4,14 @@ package s3
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
+	"github.com/aws/aws-sdk-go-v2/service/s3/internal/arn"
 )
 
 type PutObjectInput struct {
@@ -103,10 +105,10 @@ type PutObjectInput struct {
 	// The date and time when you want this object's Object Lock to expire.
 	ObjectLockRetainUntilDate *time.Time `location:"header" locationName:"x-amz-object-lock-retain-until-date" type:"timestamp" timestampFormat:"iso8601"`
 
-	// Confirms that the requester knows that she or he will be charged for the
-	// request. Bucket owners need not specify this parameter in their requests.
-	// For information about downloading objects from Requester Pays buckets, see
-	// Downloading Objects in Requestor Pays Buckets (https://docs.aws.amazon.com/http:/docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html)
+	// Confirms that the requester knows that they will be charged for the request.
+	// Bucket owners need not specify this parameter in their requests. For information
+	// about downloading objects from requester pays buckets, see Downloading Objects
+	// in Requestor Pays Buckets (https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html)
 	// in the Amazon S3 Developer Guide.
 	RequestPayer RequestPayer `location:"header" locationName:"x-amz-request-payer" type:"string" enum:"true"`
 
@@ -133,12 +135,14 @@ type PutObjectInput struct {
 
 	// If x-amz-server-side-encryption is present and has the value of aws:kms,
 	// this header specifies the ID of the AWS Key Management Service (AWS KMS)
-	// customer master key (CMK) that was used for the object.
+	// symmetrical customer managed customer master key (CMK) that was used for
+	// the object.
 	//
 	// If the value of x-amz-server-side-encryption is aws:kms, this header specifies
-	// the ID of the AWS KMS CMK that will be used for the object. If you specify
-	// x-amz-server-side-encryption:aws:kms, but do not providex-amz-server-side-encryption-aws-kms-key-id,
-	// Amazon S3 uses the AWS managed CMK in AWS to protect the data.
+	// the ID of the symmetric customer managed AWS KMS CMK that will be used for
+	// the object. If you specify x-amz-server-side-encryption:aws:kms, but do not
+	// providex-amz-server-side-encryption-aws-kms-key-id, Amazon S3 uses the AWS
+	// managed CMK in AWS to protect the data.
 	SSEKMSKeyId *string `location:"header" locationName:"x-amz-server-side-encryption-aws-kms-key-id" type:"string" sensitive:"true"`
 
 	// The server-side encryption algorithm used when storing this object in Amazon
@@ -408,6 +412,20 @@ func (s PutObjectInput) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
+func (s *PutObjectInput) getEndpointARN() (arn.Resource, error) {
+	if s.Bucket == nil {
+		return nil, fmt.Errorf("member Bucket is nil")
+	}
+	return parseEndpointARN(*s.Bucket)
+}
+
+func (s *PutObjectInput) hasEndpointARN() bool {
+	if s.Bucket == nil {
+		return false
+	}
+	return arn.IsARN(*s.Bucket)
+}
+
 type PutObjectOutput struct {
 	_ struct{} `type:"structure"`
 
@@ -441,7 +459,8 @@ type PutObjectOutput struct {
 
 	// If x-amz-server-side-encryption is present and has the value of aws:kms,
 	// this header specifies the ID of the AWS Key Management Service (AWS KMS)
-	// customer master key (CMK) that was used for the object.
+	// symmetric customer managed customer master key (CMK) that was used for the
+	// object.
 	SSEKMSKeyId *string `location:"header" locationName:"x-amz-server-side-encryption-aws-kms-key-id" type:"string" sensitive:"true"`
 
 	// If you specified server-side encryption either with an AWS KMS customer master
@@ -583,19 +602,24 @@ const opPutObject = "PutObject"
 //    manage the keys used to encrypt data, specify the following headers in
 //    the request. x-amz-server-side​-encryption x-amz-server-side-encryption-aws-kms-key-id
 //    x-amz-server-side-encryption-context If you specify x-amz-server-side-encryption:aws:kms,
-//    but don't provide x-amz-server-side- encryption-aws-kms-key-id, Amazon
-//    S3 uses the AWS managed CMK in AWS KMS to protect the data. All GET and
-//    PUT requests for an object protected by AWS KMS fail if you don't make
-//    them with SSL or by using SigV4. For more information about server-side
-//    encryption with CMKs stored in AWS KMS (SSE-KMS), see Protecting Data
-//    Using Server-Side Encryption with CMKs stored in AWS (https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html).
+//    but don't provide x-amz-server-side-encryption-aws-kms-key-id, Amazon
+//    S3 uses the AWS managed CMK in AWS KMS to protect the data. If you want
+//    to use a customer managed AWS KMS CMK, you must provide the x-amz-server-side-encryption-aws-kms-key-id
+//    of the symmetric customer managed CMK. Amazon S3 only supports symmetric
+//    CMKs and not asymmetric CMKs. For more information, see Using Symmetric
+//    and Asymmetric Keys (https://docs.aws.amazon.com/kms/latest/developerguide/symmetric-asymmetric.html)
+//    in the AWS Key Management Service Developer Guide. All GET and PUT requests
+//    for an object protected by AWS KMS fail if you don't make them with SSL
+//    or by using SigV4. For more information about server-side encryption with
+//    CMKs stored in AWS KMS (SSE-KMS), see Protecting Data Using Server-Side
+//    Encryption with CMKs stored in AWS (https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html).
 //
 //    * Use customer-provided encryption keys – If you want to manage your
 //    own encryption keys, provide all the following headers in the request.
 //    x-amz-server-side​-encryption​-customer-algorithm x-amz-server-side​-encryption​-customer-key
 //    x-amz-server-side​-encryption​-customer-key-MD5 For more information
 //    about server-side encryption with CMKs stored in KMS (SSE-KMS), see Protecting
-//    Data Using Server-Side Encryption with CMKs stored in AWS KMS (https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html).
+//    Data Using Server-Side Encryption with CMKs stored in AWS (https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html).
 //
 // Access-Control-List (ACL)-Specific Request Headers
 //
@@ -646,8 +670,13 @@ const opPutObject = "PutObject"
 //    manage the keys used to encrypt data, specify the following headers in
 //    the request. x-amz-server-side​-encryption x-amz-server-side-encryption-aws-kms-key-id
 //    x-amz-server-side-encryption-context If you specify x-amz-server-side-encryption:aws:kms,
-//    but don't provide x-amz-server-side- encryption-aws-kms-key-id, Amazon
-//    S3 uses the default AWS KMS CMK to protect the data. All GET and PUT requests
+//    but don't provide x-amz-server-side-encryption-aws-kms-key-id, Amazon
+//    S3 uses the AWS managed CMK in AWS KMS to protect the data. If you want
+//    to use a customer managed AWS KMS CMK, you must provide the x-amz-server-side-encryption-aws-kms-key-id
+//    of the symmetric customer managed CMK. Amazon S3 only supports symmetric
+//    CMKs and not asymmetric CMKs. For more information, see Using Symmetric
+//    and Asymmetric Keys (https://docs.aws.amazon.com/kms/latest/developerguide/symmetric-asymmetric.html)
+//    in the AWS Key Management Service Developer Guide. All GET and PUT requests
 //    for an object protected by AWS KMS fail if you don't make them with SSL
 //    or by using SigV4. For more information about server-side encryption with
 //    CMKs stored in AWS KMS (SSE-KMS), see Protecting Data Using Server-Side

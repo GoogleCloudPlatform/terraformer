@@ -4,11 +4,13 @@ package s3
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
+	"github.com/aws/aws-sdk-go-v2/service/s3/internal/arn"
 )
 
 type CreateMultipartUploadInput struct {
@@ -71,10 +73,10 @@ type CreateMultipartUploadInput struct {
 	// Specifies the date and time when you want the Object Lock to expire.
 	ObjectLockRetainUntilDate *time.Time `location:"header" locationName:"x-amz-object-lock-retain-until-date" type:"timestamp" timestampFormat:"iso8601"`
 
-	// Confirms that the requester knows that she or he will be charged for the
-	// request. Bucket owners need not specify this parameter in their requests.
-	// For information about downloading objects from Requester Pays buckets, see
-	// Downloading Objects in Requestor Pays Buckets (https://docs.aws.amazon.com/http:/docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html)
+	// Confirms that the requester knows that they will be charged for the request.
+	// Bucket owners need not specify this parameter in their requests. For information
+	// about downloading objects from requester pays buckets, see Downloading Objects
+	// in Requestor Pays Buckets (https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html)
 	// in the Amazon S3 Developer Guide.
 	RequestPayer RequestPayer `location:"header" locationName:"x-amz-request-payer" type:"string" enum:"true"`
 
@@ -99,11 +101,11 @@ type CreateMultipartUploadInput struct {
 	// encryption context key-value pairs.
 	SSEKMSEncryptionContext *string `location:"header" locationName:"x-amz-server-side-encryption-context" type:"string" sensitive:"true"`
 
-	// Specifies the AWS KMS key ID to use for object encryption. All GET and PUT
-	// requests for an object protected by AWS KMS will fail if not made via SSL
-	// or using SigV4. For information about configuring using any of the officially
-	// supported AWS SDKs and AWS CLI, see Specifying the Signature Version in Request
-	// Authentication (https://docs.aws.amazon.com/http:/docs.aws.amazon.com/AmazonS3/latest/dev/UsingAWSSDK.html#specify-signature-version)
+	// Specifies the ID of the symmetric customer managed AWS KMS CMK to use for
+	// object encryption. All GET and PUT requests for an object protected by AWS
+	// KMS will fail if not made via SSL or using SigV4. For information about configuring
+	// using any of the officially supported AWS SDKs and AWS CLI, see Specifying
+	// the Signature Version in Request Authentication (https://docs.aws.amazon.com/http:/docs.aws.amazon.com/AmazonS3/latest/dev/UsingAWSSDK.html#specify-signature-version)
 	// in the Amazon S3 Developer Guide.
 	SSEKMSKeyId *string `location:"header" locationName:"x-amz-server-side-encryption-aws-kms-key-id" type:"string" sensitive:"true"`
 
@@ -339,6 +341,20 @@ func (s CreateMultipartUploadInput) MarshalFields(e protocol.FieldEncoder) error
 	return nil
 }
 
+func (s *CreateMultipartUploadInput) getEndpointARN() (arn.Resource, error) {
+	if s.Bucket == nil {
+		return nil, fmt.Errorf("member Bucket is nil")
+	}
+	return parseEndpointARN(*s.Bucket)
+}
+
+func (s *CreateMultipartUploadInput) hasEndpointARN() bool {
+	if s.Bucket == nil {
+		return false
+	}
+	return arn.IsARN(*s.Bucket)
+}
+
 type CreateMultipartUploadOutput struct {
 	_ struct{} `type:"structure"`
 
@@ -391,7 +407,8 @@ type CreateMultipartUploadOutput struct {
 	SSEKMSEncryptionContext *string `location:"header" locationName:"x-amz-server-side-encryption-context" type:"string" sensitive:"true"`
 
 	// If present, specifies the ID of the AWS Key Management Service (AWS KMS)
-	// customer master key (CMK) that was used for the object.
+	// symmetric customer managed customer master key (CMK) that was used for the
+	// object.
 	SSEKMSKeyId *string `location:"header" locationName:"x-amz-server-side-encryption-aws-kms-key-id" type:"string" sensitive:"true"`
 
 	// The server-side encryption algorithm used when storing this object in Amazon
@@ -576,7 +593,7 @@ const opCreateMultipartUpload = "CreateMultipartUpload"
 //    manage the keys used to encrypt data, specify the following headers in
 //    the request. x-amz-server-side​-encryption x-amz-server-side-encryption-aws-kms-key-id
 //    x-amz-server-side-encryption-context If you specify x-amz-server-side-encryption:aws:kms,
-//    but don't provide x-amz-server-side- encryption-aws-kms-key-id, Amazon
+//    but don't provide x-amz-server-side-encryption-aws-kms-key-id, Amazon
 //    S3 uses the AWS managed CMK in AWS KMS to protect the data. All GET and
 //    PUT requests for an object protected by AWS KMS fail if you don't make
 //    them with SSL or by using SigV4. For more information about server-side

@@ -40,7 +40,12 @@ type CustomKeyStoresListEntry struct {
 	// the custom key store.
 	CloudHsmClusterId *string `min:"19" type:"string"`
 
-	// Describes the connection error. Valid values are:
+	// Describes the connection error. This field appears in the response only when
+	// the ConnectionState is FAILED. For help resolving these errors, see How to
+	// Fix a Connection Failure (https://docs.aws.amazon.com/kms/latest/developerguide/fix-keystore.html#fix-keystore-failed)
+	// in AWS Key Management Service Developer Guide.
+	//
+	// Valid values are:
 	//
 	//    * CLUSTER_NOT_FOUND - AWS KMS cannot find the AWS CloudHSM cluster with
 	//    the specified cluster ID.
@@ -54,7 +59,10 @@ type CustomKeyStoresListEntry struct {
 	//    the custom key store before trying to connect again.
 	//
 	//    * INVALID_CREDENTIALS - AWS KMS does not have the correct password for
-	//    the kmsuser crypto user in the AWS CloudHSM cluster.
+	//    the kmsuser crypto user in the AWS CloudHSM cluster. Before you can connect
+	//    your custom key store to its AWS CloudHSM cluster, you must change the
+	//    kmsuser account password and update the key store password value for the
+	//    custom key store.
 	//
 	//    * NETWORK_ERRORS - Network errors are preventing AWS KMS from connecting
 	//    to the custom key store.
@@ -62,12 +70,23 @@ type CustomKeyStoresListEntry struct {
 	//    * USER_LOCKED_OUT - The kmsuser CU account is locked out of the associated
 	//    AWS CloudHSM cluster due to too many failed password attempts. Before
 	//    you can connect your custom key store to its AWS CloudHSM cluster, you
-	//    must change the kmsuser account password and update the password value
-	//    for the custom key store.
+	//    must change the kmsuser account password and update the key store password
+	//    value for the custom key store.
 	//
-	// For help with connection failures, see Troubleshooting Custom Key Stores
-	// (https://docs.aws.amazon.com/kms/latest/developerguide/fix-keystore.html)
-	// in the AWS Key Management Service Developer Guide.
+	//    * USER_LOGGED_IN - The kmsuser CU account is logged into the the associated
+	//    AWS CloudHSM cluster. This prevents AWS KMS from rotating the kmsuser
+	//    account password and logging into the cluster. Before you can connect
+	//    your custom key store to its AWS CloudHSM cluster, you must log the kmsuser
+	//    CU out of the cluster. If you changed the kmsuser password to log into
+	//    the cluster, you must also and update the key store password value for
+	//    the custom key store. For help, see How to Log Out and Reconnect (https://docs.aws.amazon.com/kms/latest/developerguide/fix-keystore.html#login-kmsuser-2)
+	//    in the AWS Key Management Service Developer Guide.
+	//
+	//    * USER_NOT_FOUND - AWS KMS cannot find a kmsuser CU account in the associated
+	//    AWS CloudHSM cluster. Before you can connect your custom key store to
+	//    its AWS CloudHSM cluster, you must create a kmsuser CU account in the
+	//    cluster, and then update the key store password value for the custom key
+	//    store.
 	ConnectionErrorCode ConnectionErrorCodeType `type:"string" enum:"true"`
 
 	// Indicates whether the custom key store is connected to its AWS CloudHSM cluster.
@@ -82,8 +101,9 @@ type CustomKeyStoresListEntry struct {
 	// one active HSM.
 	//
 	// A value of FAILED indicates that an attempt to connect was unsuccessful.
-	// For help resolving a connection failure, see Troubleshooting a Custom Key
-	// Store (https://docs.aws.amazon.com/kms/latest/developerguide/fix-keystore.html)
+	// The ConnectionErrorCode field in the response indicates the cause of the
+	// failure. For help resolving a connection failure, see Troubleshooting a Custom
+	// Key Store (https://docs.aws.amazon.com/kms/latest/developerguide/fix-keystore.html)
 	// in the AWS Key Management Service Developer Guide.
 	ConnectionState ConnectionStateType `type:"string" enum:"true"`
 

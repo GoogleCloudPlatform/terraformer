@@ -4,10 +4,12 @@ package s3
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
+	"github.com/aws/aws-sdk-go-v2/service/s3/internal/arn"
 )
 
 type GetObjectAclInput struct {
@@ -30,10 +32,10 @@ type GetObjectAclInput struct {
 	// Key is a required field
 	Key *string `location:"uri" locationName:"Key" min:"1" type:"string" required:"true"`
 
-	// Confirms that the requester knows that she or he will be charged for the
-	// request. Bucket owners need not specify this parameter in their requests.
-	// For information about downloading objects from Requester Pays buckets, see
-	// Downloading Objects in Requestor Pays Buckets (https://docs.aws.amazon.com/http:/docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html)
+	// Confirms that the requester knows that they will be charged for the request.
+	// Bucket owners need not specify this parameter in their requests. For information
+	// about downloading objects from requester pays buckets, see Downloading Objects
+	// in Requestor Pays Buckets (https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html)
 	// in the Amazon S3 Developer Guide.
 	RequestPayer RequestPayer `location:"header" locationName:"x-amz-request-payer" type:"string" enum:"true"`
 
@@ -102,6 +104,20 @@ func (s GetObjectAclInput) MarshalFields(e protocol.FieldEncoder) error {
 		e.SetValue(protocol.QueryTarget, "versionId", protocol.StringValue(v), metadata)
 	}
 	return nil
+}
+
+func (s *GetObjectAclInput) getEndpointARN() (arn.Resource, error) {
+	if s.Bucket == nil {
+		return nil, fmt.Errorf("member Bucket is nil")
+	}
+	return parseEndpointARN(*s.Bucket)
+}
+
+func (s *GetObjectAclInput) hasEndpointARN() bool {
+	if s.Bucket == nil {
+		return false
+	}
+	return arn.IsARN(*s.Bucket)
 }
 
 type GetObjectAclOutput struct {

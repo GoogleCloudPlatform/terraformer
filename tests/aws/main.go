@@ -17,49 +17,19 @@ package main
 import (
 	"github.com/GoogleCloudPlatform/terraformer/cmd"
 	aws_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/aws"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"log"
 	"os"
 	"os/exec"
-	"sort"
 )
 
 const command = "terraform init && terraform plan"
 
 func main() {
-	region := "ap-southeast-1"
-	profile := "personal"
-	var services []string
 	provider := &aws_terraforming.AWSProvider{}
-	for service := range provider.GetSupportedService() {
-		if service == "route53" {
-			continue
-		}
-		if service == "iam" {
-			continue
-		}
-		if service == "sg" {
-			continue
-		}
-		services = append(services, service)
 
-	}
-	services = []string{"sg"}
-	sort.Strings(services)
-	provider = &aws_terraforming.AWSProvider{
-		Provider: terraform_utils.Provider{},
-	}
-	err := cmd.Import(provider, cmd.ImportOptions{
-		Resources:   services,
-		PathPattern: "{output}/{provider}/",
-		PathOutput:  cmd.DefaultPathOutput,
-		State:       "local",
-		Connect:     true,
-		Compact:     true,
-		Verbose:     true,
-		Output:	     "hcl",
-	}, []string{region, profile})
-	if err != nil {
+	tCommand := cmd.NewCmdRoot()
+	tCommand.SetArgs([]string{"import", "aws", "--resources=iam", "--profile=personal", "--compact", "--regions=aws-global", "--path-pattern={output}/{provider}/"})
+	if err := tCommand.Execute(); err != nil {
 		log.Println(err)
 		os.Exit(1)
 	}
@@ -69,10 +39,10 @@ func main() {
 		log.Println(err)
 		os.Exit(1)
 	}
-	cmd := exec.Command("sh", "-c", command)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err = cmd.Run()
+	tfCmd := exec.Command("sh", "-c", command)
+	tfCmd.Stdout = os.Stdout
+	tfCmd.Stderr = os.Stderr
+	err := tfCmd.Run()
 	if err != nil {
 		log.Println(err)
 		os.Exit(1)

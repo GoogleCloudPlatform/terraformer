@@ -74,7 +74,7 @@ const opDescribeByoipCidrs = "DescribeByoipCidrs"
 // Describes the IP address ranges that were specified in calls to ProvisionByoipCidr.
 //
 // To describe the address pools that were created when you provisioned the
-// address ranges, use DescribePublicIpv4Pools.
+// address ranges, use DescribePublicIpv4Pools or DescribeIpv6Pools.
 //
 //    // Example sending a request using DescribeByoipCidrsRequest.
 //    req := client.DescribeByoipCidrsRequest(params)

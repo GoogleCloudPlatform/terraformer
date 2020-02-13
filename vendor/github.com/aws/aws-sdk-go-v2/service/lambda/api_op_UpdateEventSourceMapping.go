@@ -340,6 +340,8 @@ const opUpdateEventSourceMapping = "UpdateEventSourceMapping"
 //    * MaximumRetryAttempts - Discard records after the specified number of
 //    retries.
 //
+//    * ParallelizationFactor - Process multiple batches from each shard concurrently.
+//
 //    // Example sending a request using UpdateEventSourceMappingRequest.
 //    req := client.UpdateEventSourceMappingRequest(params)
 //    resp, err := req.Send(context.TODO())

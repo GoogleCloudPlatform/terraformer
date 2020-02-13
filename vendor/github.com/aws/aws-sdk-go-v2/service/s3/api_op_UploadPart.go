@@ -4,11 +4,13 @@ package s3
 
 import (
 	"context"
+	"fmt"
 	"io"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
+	"github.com/aws/aws-sdk-go-v2/service/s3/internal/arn"
 )
 
 type UploadPartInput struct {
@@ -42,10 +44,10 @@ type UploadPartInput struct {
 	// PartNumber is a required field
 	PartNumber *int64 `location:"querystring" locationName:"partNumber" type:"integer" required:"true"`
 
-	// Confirms that the requester knows that she or he will be charged for the
-	// request. Bucket owners need not specify this parameter in their requests.
-	// For information about downloading objects from Requester Pays buckets, see
-	// Downloading Objects in Requestor Pays Buckets (https://docs.aws.amazon.com/http:/docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html)
+	// Confirms that the requester knows that they will be charged for the request.
+	// Bucket owners need not specify this parameter in their requests. For information
+	// about downloading objects from requester pays buckets, see Downloading Objects
+	// in Requestor Pays Buckets (https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html)
 	// in the Amazon S3 Developer Guide.
 	RequestPayer RequestPayer `location:"header" locationName:"x-amz-request-payer" type:"string" enum:"true"`
 
@@ -192,6 +194,20 @@ func (s UploadPartInput) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
+func (s *UploadPartInput) getEndpointARN() (arn.Resource, error) {
+	if s.Bucket == nil {
+		return nil, fmt.Errorf("member Bucket is nil")
+	}
+	return parseEndpointARN(*s.Bucket)
+}
+
+func (s *UploadPartInput) hasEndpointARN() bool {
+	if s.Bucket == nil {
+		return false
+	}
+	return arn.IsARN(*s.Bucket)
+}
+
 type UploadPartOutput struct {
 	_ struct{} `type:"structure"`
 
@@ -213,7 +229,7 @@ type UploadPartOutput struct {
 	SSECustomerKeyMD5 *string `location:"header" locationName:"x-amz-server-side-encryption-customer-key-MD5" type:"string"`
 
 	// If present, specifies the ID of the AWS Key Management Service (AWS KMS)
-	// customer master key (CMK) was used for the object.
+	// symmetric customer managed customer master key (CMK) was used for the object.
 	SSEKMSKeyId *string `location:"header" locationName:"x-amz-server-side-encryption-aws-kms-key-id" type:"string" sensitive:"true"`
 
 	// The server-side encryption algorithm used when storing this object in Amazon
