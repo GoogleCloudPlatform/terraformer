@@ -43,8 +43,7 @@ func (EniGenerator) createResources(enis *ec2.DescribeNetworkInterfacesOutput) [
 }
 
 // Generate TerraformResources from AWS API,
-// from each vpc create 1 TerraformResource.
-// Need VpcId as ID for terraform resource
+// from each ENI creates 1 TerraformResource.
 func (g *EniGenerator) InitResources() error {
 	config, e := g.generateConfig()
 	if e != nil {
