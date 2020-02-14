@@ -229,6 +229,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"elastic_beanstalk": &BeanstalkGenerator{},
 		"elb":               &ElbGenerator{},
 		"emr":               &EmrGenerator{},
+		"eni":               &EniGenerator{},
 		"es":                &EsGenerator{},
 		"firehose":          &FirehoseGenerator{},
 		"glue":              &GlueGenerator{},
