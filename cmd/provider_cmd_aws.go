@@ -33,7 +33,7 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 
 			if len(options.Regions) > 0 {
 				options.Resources = parseGlobalResources(originalResources)
-				options.Regions = []string{awsterraformer.DefaultRegion}
+				options.Regions = []string{awsterraformer.GlobalRegion}
 				e := importGlobalResources(options)
 				if e != nil {
 					return e
@@ -49,7 +49,7 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 				}
 				return nil
 			} else {
-				err := importRegionResources(options, options.PathPattern, awsterraformer.DefaultRegion)
+				err := importRegionResources(options, options.PathPattern, awsterraformer.NoRegion)
 				if err != nil {
 					return err
 				}
@@ -77,7 +77,7 @@ func parseGlobalResources(allResources []string) []string {
 
 func importGlobalResources(options ImportOptions) error {
 	if len(options.Resources) > 0 {
-		return importRegionResources(options, options.PathPattern, awsterraformer.DefaultRegion)
+		return importRegionResources(options, options.PathPattern, awsterraformer.GlobalRegion)
 	} else {
 		return nil
 	}
@@ -96,7 +96,7 @@ func parseRegionalResources(allResources []string) []string {
 func importRegionResources(options ImportOptions, originalPathPattern string, region string) error {
 	provider := newAWSProvider()
 	options.PathPattern = originalPathPattern
-	if region != awsterraformer.DefaultRegion {
+	if region != awsterraformer.GlobalRegion && region != awsterraformer.NoRegion {
 		options.PathPattern += region + "/"
 		log.Println(provider.GetName() + " importing region " + region)
 	} else {

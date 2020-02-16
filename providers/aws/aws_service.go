@@ -29,9 +29,8 @@ type AWSService struct {
 }
 
 func (s *AWSService) generateConfig() (aws.Config, error) {
-	config, e := external.LoadDefaultAWSConfig(
-		external.WithRegion(s.GetArgs()["region"].(string)),
-		external.WithMFATokenFunc(stscreds.StdinTokenProvider))
+	config, e := s.buildBaseConfig()
+
 	if e != nil {
 		return config, e
 	}
@@ -57,4 +56,14 @@ func (s *AWSService) generateConfig() (aws.Config, error) {
 	}
 
 	return config, nil
+}
+
+func (s *AWSService) buildBaseConfig() (aws.Config, error) {
+	if s.GetArgs()["region"].(string) != "" {
+		return external.LoadDefaultAWSConfig(
+			external.WithRegion(s.GetArgs()["region"].(string)),
+			external.WithMFATokenFunc(stscreds.StdinTokenProvider))
+	} else {
+		return external.LoadDefaultAWSConfig(external.WithMFATokenFunc(stscreds.StdinTokenProvider))
+	}
 }
