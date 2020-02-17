@@ -218,7 +218,7 @@ func printService(provider terraform_utils.ProviderGenerator, serviceName string
 					variables["data"]["terraform_remote_state"][k] = map[string]interface{}{
 						"backend": "gcs",
 						"config": map[string]interface{}{
-							"bucket": bucket.Name,
+							"bucket": strings.Replace(bucket.Name, "gs://", "", -1),
 							"prefix": bucket.BucketPrefix(strings.Replace(path, serviceName, k, -1)),
 						},
 					}
@@ -257,7 +257,7 @@ func printService(provider terraform_utils.ProviderGenerator, serviceName string
 				variables["data"]["terraform_remote_state"]["local"] = map[string]interface{}{
 					"backend": "gcs",
 					"config": map[string]interface{}{
-						"bucket": bucket.Name,
+						"bucket": strings.Replace(bucket.Name, "gs://", "", -1),
 						"prefix": bucket.BucketPrefix(path),
 					},
 				}
