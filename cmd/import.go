@@ -217,7 +217,7 @@ func printService(provider terraform_utils.ProviderGenerator, serviceName string
 					}
 					variables["data"]["terraform_remote_state"][k] = map[string]interface{}{
 						"backend": "gcs",
-						"config": bucket.BucketGetTfData(path),
+						"config": bucket.BucketGetTfData(strings.Replace(path, serviceName, k, -1)),
 					}
 				}
 			} else {
