@@ -15,6 +15,7 @@
 package keycloak
 
 import (
+	"sort"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
@@ -106,6 +107,7 @@ func (g *RoleGenerator) PostConvertHook() error {
 		for _, v := range r.Item["composite_roles"].([]interface{}) {
 			renamedCompositeRoles = append(renamedCompositeRoles, mapRoleIDs[v.(string)])
 		}
+		sort.Strings(renamedCompositeRoles)
 		r.Item["composite_roles"] = renamedCompositeRoles
 	}
 	return nil
