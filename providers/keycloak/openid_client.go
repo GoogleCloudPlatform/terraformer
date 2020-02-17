@@ -15,6 +15,7 @@
 package keycloak
 
 import (
+	"sort"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
@@ -215,6 +216,25 @@ func (g *OpenIDClientGenerator) PostConvertHook() error {
 			r.InstanceInfo.Type == "keycloak_openid_user_property_protocol_mapper" ||
 			r.InstanceInfo.Type == "keycloak_openid_user_realm_role_protocol_mapper") {
 			r.Item["client_id"] = mapClientIDs[r.Item["client_id"].(string)]
+		}
+		if r.InstanceInfo.Type == "keycloak_openid_client" {
+			if _, exist := r.Item["valid_redirect_uris"]; exist {
+				sortedValidRedirectUris := []string{}
+				for _, v := range r.Item["valid_redirect_uris"].([]interface{}) {
+					sortedValidRedirectUris = append(sortedValidRedirectUris, v.(string))
+				}
+				sort.Strings(sortedValidRedirectUris)
+				r.Item["valid_redirect_uris"] = sortedValidRedirectUris
+			}
+
+			if _, exist := r.Item["web_origins"]; exist {
+				sortedWebOrigins := []string{}
+				for _, v := range r.Item["web_origins"].([]interface{}) {
+					sortedWebOrigins = append(sortedWebOrigins, v.(string))
+				}
+				sort.Strings(sortedWebOrigins)
+				r.Item["web_origins"] = sortedWebOrigins
+			}
 		}
 		if _, exist := r.Item["included_client_audience"]; exist && r.InstanceInfo.Type == "keycloak_openid_audience_protocol_mapper" {
 			r.Item["included_client_audience"] = mapClientClientIDs[r.Item["included_client_audience"].(string)]
