@@ -217,10 +217,7 @@ func printService(provider terraform_utils.ProviderGenerator, serviceName string
 					}
 					variables["data"]["terraform_remote_state"][k] = map[string]interface{}{
 						"backend": "gcs",
-						"config": map[string]interface{}{
-							"bucket": bucket.Name,
-							"prefix": bucket.BucketPrefix(strings.Replace(path, serviceName, k, -1)),
-						},
+						"config": bucket.BucketGetTfData(strings.Replace(path, serviceName, k, -1)),
 					}
 				}
 			} else {
@@ -256,10 +253,7 @@ func printService(provider terraform_utils.ProviderGenerator, serviceName string
 				}
 				variables["data"]["terraform_remote_state"]["local"] = map[string]interface{}{
 					"backend": "gcs",
-					"config": map[string]interface{}{
-						"bucket": bucket.Name,
-						"prefix": bucket.BucketPrefix(path),
-					},
+					"config": bucket.BucketGetTfData(path),
 				}
 			} else {
 				variables["data"]["terraform_remote_state"]["local"] = map[string]interface{}{
