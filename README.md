@@ -434,6 +434,8 @@ In that case terraformer will not know with which region resources are associate
 *   `emr`
     * `aws_emr_cluster`
     * `aws_emr_security_configuration`
+*   `eni`
+    * `aws_network_interface`
 *   `es`
     * `aws_elasticsearch_domain`
 *   `firehose`

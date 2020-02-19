@@ -15,6 +15,7 @@
 package keycloak
 
 import (
+	"sort"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
@@ -127,6 +128,7 @@ func (g *ScopeGenerator) PostConvertHook() error {
 			for _, v := range r.Item["default_scopes"].([]interface{}) {
 				renamedScopes = append(renamedScopes, mapScopeNames[v.(string)])
 			}
+			sort.Strings(renamedScopes)
 			r.Item["default_scopes"] = renamedScopes
 		}
 		if _, exist := r.Item["optional_scopes"]; exist {
@@ -134,6 +136,7 @@ func (g *ScopeGenerator) PostConvertHook() error {
 			for _, v := range r.Item["optional_scopes"].([]interface{}) {
 				renamedScopes = append(renamedScopes, mapScopeNames[v.(string)])
 			}
+			sort.Strings(renamedScopes)
 			r.Item["optional_scopes"] = renamedScopes
 		}
 	}
