@@ -15,6 +15,7 @@
 package keycloak
 
 import (
+	"sort"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
@@ -190,10 +191,28 @@ func (g *GroupGenerator) PostConvertHook() error {
 				for _, v := range r.Item["group_ids"].([]interface{}) {
 					renamedGroupIDs = append(renamedGroupIDs, mapGroupIDs[v.(string)])
 				}
+				sort.Strings(renamedGroupIDs)
 				r.Item["group_ids"] = renamedGroupIDs
 			} else {
 				r.Item["group_ids"] = []string{}
 			}
+		}
+		if r.InstanceInfo.Type == "keycloak_group_memberships" {
+			sortedMembers := []string{}
+			for _, v := range r.Item["members"].([]interface{}) {
+				sortedMembers = append(sortedMembers, v.(string))
+			}
+			sort.Strings(sortedMembers)
+			r.Item["members"] = sortedMembers
+		}
+
+		if r.InstanceInfo.Type == "keycloak_group_roles" {
+			sortedRoles := []string{}
+			for _, v := range r.Item["role_ids"].([]interface{}) {
+				sortedRoles = append(sortedRoles, v.(string))
+			}
+			sort.Strings(sortedRoles)
+			r.Item["role_ids"] = sortedRoles
 		}
 	}
 	return nil
