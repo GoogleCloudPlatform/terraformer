@@ -23,6 +23,8 @@ type ModifyTransitGatewayVpcAttachmentInput struct {
 	DryRun *bool `type:"boolean"`
 
 	// The new VPC attachment options.
+	//
+	// You cannot modify the IPv6 options.
 	Options *ModifyTransitGatewayVpcAttachmentRequestOptions `type:"structure"`
 
 	// The IDs of one or more subnets to remove.

@@ -118,8 +118,6 @@ func presignURL(r *request.Request, sourceRegion *string, newParams interface{})
 	}
 
 	cfgCp.EndpointResolver = aws.ResolveWithEndpoint(resolved)
-	metadata.Endpoint = resolved.URL
-	metadata.SigningRegion = resolved.SigningRegion
 
 	// Presign a request with modified params
 	req := request.New(cfgCp, metadata, r.Handlers, r.Retryer, r.Operation, newParams, r.Data)

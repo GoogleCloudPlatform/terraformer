@@ -42,12 +42,13 @@ type VerifyInput struct {
 	// KeyId is a required field
 	KeyId *string `min:"1" type:"string" required:"true"`
 
-	// Specifies the message that was signed, or a hash digest of that message.
-	// Messages can be 0-4096 bytes. To verify a larger message, provide a hash
-	// digest of the message.
+	// Specifies the message that was signed. You can submit a raw message of up
+	// to 4096 bytes, or a hash digest of the message. If you submit a digest, use
+	// the MessageType parameter with a value of DIGEST.
 	//
-	// If the digest of the message specified here is different from the message
-	// digest that was signed, the signature verification fails.
+	// If the message specified here is different from the message that was signed,
+	// the signature verification fails. A message and its hash digest are considered
+	// to be the same message.
 	//
 	// Message is automatically base64 encoded/decoded by the SDK.
 	//
@@ -55,8 +56,12 @@ type VerifyInput struct {
 	Message []byte `min:"1" type:"blob" required:"true" sensitive:"true"`
 
 	// Tells AWS KMS whether the value of the Message parameter is a message or
-	// message digest. To indicate a message, enter RAW. To indicate a message digest,
-	// enter DIGEST.
+	// message digest. The default value, RAW, indicates a message. To indicate
+	// a message digest, enter DIGEST.
+	//
+	// Use the DIGEST value only when the value of the Message parameter is a message
+	// digest. If you use the DIGEST value with a raw message, the security of the
+	// verification operation can be compromised.
 	MessageType MessageType `type:"string" enum:"true"`
 
 	// The signature that the Sign operation generated.

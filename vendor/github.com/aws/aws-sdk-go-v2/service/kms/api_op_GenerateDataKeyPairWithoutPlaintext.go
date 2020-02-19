@@ -32,7 +32,8 @@ type GenerateDataKeyPairWithoutPlaintextInput struct {
 	GrantTokens []string `type:"list"`
 
 	// Specifies the CMK that encrypts the private key in the data key pair. You
-	// must specify a symmetric CMK. You cannot use an asymmetric CMK.
+	// must specify a symmetric CMK. You cannot use an asymmetric CMK. To get the
+	// type of your CMK, use the DescribeKey operation.
 	//
 	// To specify a CMK, use its key ID, Amazon Resource Name (ARN), alias name,
 	// or alias ARN. When using an alias name, prefix it with "alias/".
@@ -93,7 +94,8 @@ type GenerateDataKeyPairWithoutPlaintextOutput struct {
 	_ struct{} `type:"structure"`
 
 	// Specifies the CMK that encrypted the private key in the data key pair. You
-	// must specify a symmetric CMK. You cannot use an asymmetric CMK.
+	// must specify a symmetric CMK. You cannot use an asymmetric CMK. To get the
+	// type of your CMK, use the DescribeKey operation.
 	//
 	// To specify a CMK, use its key ID, Amazon Resource Name (ARN), alias name,
 	// or alias ARN. When using an alias name, prefix it with "alias/".
