@@ -401,6 +401,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_codebuild_project`
 *   `codecommit`
     * `aws_codecommit_repository`
+*   `codedeploy`
+    * `aws_codedeploy_app`
 *   `codepipeline`
     * `aws_codepipeline`
     * `aws_codepipeline_webhook`
@@ -432,6 +434,8 @@ In that case terraformer will not know with which region resources are associate
 *   `emr`
     * `aws_emr_cluster`
     * `aws_emr_security_configuration`
+*   `eni`
+    * `aws_network_interface`
 *   `es`
     * `aws_elasticsearch_domain`
 *   `firehose`
@@ -459,8 +463,9 @@ In that case terraformer will not know with which region resources are associate
     * `aws_kms_key`
     * `aws_kms_alias`
 *   `lambda`
-    * `aws_lambda_function`
     * `aws_lambda_event_source_mapping`
+    * `aws_lambda_function`
+    * `aws_lambda_function_event_invoke_config`
     * `aws_lambda_layer_version`
 *   `msk`
     * `aws_msk_cluster`
