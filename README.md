@@ -31,6 +31,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [Vultr](#use-with-vultr)
     * Infrastructure Software
         * [Kubernetes](#use-with-kubernetes)
+        * [OctopusDeploy](#use-with-octopusdeploy)
         * [RabbitMQ](#use-with-rabbitmq)
     * Network
         * [Cloudflare](#use-with-cloudflare)
@@ -909,6 +910,20 @@ All Kubernetes resources that are currently supported by the Kubernetes provider
 * Terraform Kubernetes provider is rejecting resources with ":" characters in their names (as they don't meet DNS-1123), while it's allowed for certain types in Kubernetes, e.g. ClusterRoleBinding.
 * Because Terraform flatmap uses "." to detect the keys for unflattening the maps, some keys with "." in their names are being considered as the maps.
 * Since the library assumes empty strings to be empty values (not "0"), there are some issues with optional integer keys that are restricted to be positive.
+
+### Use with OctopusDeploy
+
+Example:
+
+```
+export OCTOPUS_CLI_SERVER=http://localhost:8081/
+export OCTOPUS_CLI_API_KEY=API-CK7DQ8BMJCUUBSHAJCDIATXUO
+
+terraformer import octopusdeploy --resources=tagsets
+```
+
+* `tagsets`
+    * `octopusdeploy_tag_set`
 
 ### Use with RabbitMQ
 

@@ -10,6 +10,7 @@ require (
 	github.com/Azure/go-autorest/autorest v0.9.3
 	github.com/Azure/go-autorest/autorest/adal v0.8.1 // indirect
 	github.com/Azure/go-autorest/autorest/azure/cli v0.3.1 // indirect
+	github.com/OctopusDeploy/go-octopusdeploy v1.6.0
 	github.com/ajg/form v1.5.1 // indirect
 	github.com/aliyun/alibaba-cloud-sdk-go v1.60.295
 	github.com/aliyun/aliyun-oss-go-sdk v0.0.0-20190307165228-86c17b95fcd5 // indirect
