@@ -15,6 +15,8 @@ require (
 	github.com/aliyun/aliyun-oss-go-sdk v0.0.0-20190307165228-86c17b95fcd5 // indirect
 	github.com/aliyun/aliyun-tablestore-go-sdk v4.1.3+incompatible
 	github.com/aws/aws-sdk-go v1.26.5 // indirect
+
+	// shouldn't be upgraded without check of fix to https://github.com/aws/aws-sdk-go-v2/issues/492
 	github.com/aws/aws-sdk-go-v2 v0.19.0
 	github.com/bmatcuk/doublestar v1.2.2 // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect

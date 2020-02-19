@@ -32,6 +32,7 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 			originalPathPattern := options.PathPattern
 
 			if len(options.Regions) > 0 {
+				shouldSpecifyPathRegion := len(options.Regions) > 1
 				options.Resources = parseGlobalResources(originalResources)
 				options.Regions = []string{awsterraformer.GlobalRegion}
 				e := importGlobalResources(options)
@@ -42,14 +43,14 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 				options.Resources = parseRegionalResources(originalResources)
 				options.Regions = originalRegions
 				for _, region := range originalRegions {
-					e := importRegionResources(options, originalPathPattern, region)
+					e := importRegionResources(options, originalPathPattern, region, shouldSpecifyPathRegion)
 					if e != nil {
 						return e
 					}
 				}
 				return nil
 			} else {
-				err := importRegionResources(options, options.PathPattern, awsterraformer.NoRegion)
+				err := importRegionResources(options, options.PathPattern, awsterraformer.NoRegion, false)
 				if err != nil {
 					return err
 				}
@@ -77,7 +78,7 @@ func parseGlobalResources(allResources []string) []string {
 
 func importGlobalResources(options ImportOptions) error {
 	if len(options.Resources) > 0 {
-		return importRegionResources(options, options.PathPattern, awsterraformer.GlobalRegion)
+		return importRegionResources(options, options.PathPattern, awsterraformer.GlobalRegion, false)
 	} else {
 		return nil
 	}
@@ -93,11 +94,13 @@ func parseRegionalResources(allResources []string) []string {
 	return localResources
 }
 
-func importRegionResources(options ImportOptions, originalPathPattern string, region string) error {
+func importRegionResources(options ImportOptions, originalPathPattern string, region string, shouldSpecifyPathRegion bool) error {
 	provider := newAWSProvider()
 	options.PathPattern = originalPathPattern
 	if region != awsterraformer.GlobalRegion && region != awsterraformer.NoRegion {
-		options.PathPattern += region + "/"
+		if shouldSpecifyPathRegion {
+			options.PathPattern += region + "/"
+		}
 		log.Println(provider.GetName() + " importing region " + region)
 	} else {
 		log.Println(provider.GetName() + " importing default region")

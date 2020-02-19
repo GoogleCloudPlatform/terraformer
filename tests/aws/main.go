@@ -29,7 +29,15 @@ func main() {
 
 	tCommand := cmd.NewCmdRoot()
 	pathPattern := "{output}/{provider}/"
-	tCommand.SetArgs([]string{"import", "aws", "--resources=organization", "--profile=personal", "--compact", "--path-pattern=" + pathPattern })
+	tCommand.SetArgs([]string{
+		"import",
+		"aws",
+		"--regions=ap-southeast-1,ap-northeast-1",
+		"--resources=vpc,sg",
+		"--profile=personal",
+		"--compact",
+		"--path-pattern=" + pathPattern,
+	})
 	if err := tCommand.Execute(); err != nil {
 		log.Println(err)
 		os.Exit(1)

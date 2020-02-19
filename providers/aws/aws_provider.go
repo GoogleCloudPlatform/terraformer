@@ -30,7 +30,7 @@ type AWSProvider struct {
 	profile string
 }
 
-const GlobalRegion = "aws-global"
+const GlobalRegion = "aws-global" // hack for https://github.com/aws/aws-sdk-go-v2/issues/492
 const NoRegion = ""
 
 // global resources should be bound to a default region. AWS doesn't specify in which region default services are
