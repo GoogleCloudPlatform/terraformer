@@ -77,9 +77,9 @@ const opModifyEventSubscription = "ModifyEventSubscription"
 // ModifyEventSubscriptionRequest returns a request value for making API operation for
 // Amazon Relational Database Service.
 //
-// Modifies an existing RDS event notification subscription. Note that you can't
-// modify the source identifiers using this call; to change source identifiers
-// for a subscription, use the AddSourceIdentifierToSubscription and RemoveSourceIdentifierFromSubscription
+// Modifies an existing RDS event notification subscription. You can't modify
+// the source identifiers using this call. To change source identifiers for
+// a subscription, use the AddSourceIdentifierToSubscription and RemoveSourceIdentifierFromSubscription
 // calls.
 //
 // You can see a list of the event categories for a given SourceType in the

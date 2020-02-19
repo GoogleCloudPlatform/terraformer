@@ -29,6 +29,9 @@ type DescribeKeyPairsInput struct {
 	//
 	// Default: Describes all your key pairs.
 	KeyNames []string `locationName:"KeyName" locationNameList:"KeyName" type:"list"`
+
+	// The IDs of the key pairs.
+	KeyPairIds []string `locationName:"KeyPairId" locationNameList:"KeyPairId" type:"list"`
 }
 
 // String returns the string representation

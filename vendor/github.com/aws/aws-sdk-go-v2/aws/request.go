@@ -36,6 +36,7 @@ const (
 type Request struct {
 	Config           Config
 	Metadata         Metadata
+	Endpoint         Endpoint
 	Handlers         Handlers
 	Retryer          Retryer
 	AttemptTime      time.Time
@@ -106,31 +107,10 @@ func New(cfg Config, metadata Metadata, handlers Handlers,
 
 	httpReq, _ := http.NewRequest(method, "", nil)
 
-	// TODO need better way of handling this error... NewRequest should return error.
-	endpoint, err := cfg.EndpointResolver.ResolveEndpoint(metadata.EndpointsID, cfg.Region)
-
-	if err == nil {
-		// TODO so ugly
-		metadata.Endpoint = endpoint.URL
-		if len(endpoint.SigningName) > 0 && !endpoint.SigningNameDerived {
-			metadata.SigningName = endpoint.SigningName
-		}
-		if len(endpoint.SigningRegion) > 0 {
-			metadata.SigningRegion = endpoint.SigningRegion
-		}
-
-		httpReq.URL, err = url.Parse(endpoint.URL + operation.HTTPPath)
-		if err != nil {
-			httpReq.URL = &url.URL{}
-			err = awserr.New("InvalidEndpointURL", "invalid endpoint uri", err)
-		}
-	}
-
 	r := &Request{
-		Config:   cfg,
-		Metadata: metadata,
-		Handlers: handlers.Copy(),
-
+		Config:      cfg,
+		Metadata:    metadata,
+		Handlers:    handlers.Copy(),
 		Retryer:     retryer,
 		Time:        time.Now(),
 		ExpireTime:  0,
@@ -138,10 +118,18 @@ func New(cfg Config, metadata Metadata, handlers Handlers,
 		HTTPRequest: httpReq,
 		Body:        nil,
 		Params:      params,
-		Error:       err,
 		Data:        data,
 	}
 	r.SetBufferBody([]byte{})
+
+	// TODO need better way of handling this error... NewRequest should return error.
+	endpoint, err := cfg.EndpointResolver.ResolveEndpoint(metadata.EndpointsID, cfg.Region)
+
+	if err == nil {
+		r.SetEndpoint(endpoint)
+	} else {
+		r.Error = err
+	}
 
 	return r
 }
@@ -650,4 +638,26 @@ func (r *Request) ResetBody() {
 
 	r.HTTPRequest.Body = body
 	r.HTTPRequest.GetBody = r.getNextRequestBody
+}
+
+// SetEndpoint updates the request to use the provided endpoint
+func (r *Request) SetEndpoint(endpoint Endpoint) {
+	var err error
+
+	if len(endpoint.SigningRegion) == 0 {
+		endpoint.SigningRegion = r.Metadata.SigningRegion
+	}
+
+	if len(endpoint.SigningName) == 0 || (len(endpoint.SigningName) > 0 && endpoint.SigningNameDerived) {
+		endpoint.SigningName = r.Metadata.SigningName
+	}
+
+	r.Endpoint = endpoint
+
+	r.HTTPRequest.URL, err = url.Parse(endpoint.URL + r.Operation.HTTPPath)
+
+	if err != nil {
+		r.HTTPRequest.URL = &url.URL{}
+		r.Error = awserr.New("InvalidEndpointURL", "invalid endpoint uri", err)
+	}
 }

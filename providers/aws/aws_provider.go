@@ -30,6 +30,9 @@ type AWSProvider struct {
 	profile string
 }
 
+const GlobalRegion = "aws-global" // hack for https://github.com/aws/aws-sdk-go-v2/issues/492
+const NoRegion = ""
+
 // global resources should be bound to a default region. AWS doesn't specify in which region default services are
 // placed (see  https://docs.aws.amazon.com/general/latest/gr/rande.html), so we shouldn't assume any region as well
 var SupportedGlobalResources = []string{
@@ -128,7 +131,9 @@ func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
 		"version": provider_wrapper.GetProviderVersion(p.GetName()),
 	}
 
-	if p.region != "" {
+	if p.region == GlobalRegion {
+		awsConfig["region"] = "us-east-1" // For TF to workaround terraform-providers/terraform-provider-aws#1043
+	} else if p.region != NoRegion {
 		awsConfig["region"] = p.region
 	}
 
@@ -140,10 +145,17 @@ func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
 }
 
 func (p *AWSProvider) GetConfig() cty.Value {
-	return cty.ObjectVal(map[string]cty.Value{
-		"region":                 cty.StringVal(p.region),
-		"skip_region_validation": cty.True,
-	})
+	if p.region != GlobalRegion {
+		return cty.ObjectVal(map[string]cty.Value{
+			"region":                 cty.StringVal(p.region),
+			"skip_region_validation": cty.True,
+		})
+	} else {
+		return cty.ObjectVal(map[string]cty.Value{
+			"region":                 cty.StringVal(""),
+			"skip_region_validation": cty.True,
+		})
+	}
 }
 
 func (p *AWSProvider) GetBasicConfig() cty.Value {
@@ -158,7 +170,7 @@ func (p *AWSProvider) Init(args []string) error {
 	// Terraformer accepts region and profile configuration, so we must detect what env variables to adjust to make Go SDK rely on them. AWS_SDK_LOAD_CONFIG here must be checked to determine correct variable to set.
 	enableSharedConfig, _ := strconv.ParseBool(os.Getenv("AWS_SDK_LOAD_CONFIG"))
 	var err error
-	if p.region != "" {
+	if p.region != GlobalRegion && p.region != NoRegion {
 		if enableSharedConfig {
 			err = os.Setenv("AWS_DEFAULT_REGION", p.region)
 		} else {

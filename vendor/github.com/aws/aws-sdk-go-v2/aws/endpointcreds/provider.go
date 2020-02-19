@@ -30,6 +30,7 @@
 package endpointcreds
 
 import (
+	"context"
 	"encoding/json"
 	"time"
 
@@ -85,8 +86,8 @@ func New(cfg aws.Config) *Provider {
 
 // Retrieve will attempt to request the credentials from the endpoint the Provider
 // was configured for. And error will be returned if the retrieval fails.
-func (p *Provider) retrieveFn() (aws.Credentials, error) {
-	resp, err := p.getCredentials()
+func (p *Provider) retrieveFn(ctx context.Context) (aws.Credentials, error) {
+	resp, err := p.getCredentials(ctx)
 	if err != nil {
 		return aws.Credentials{},
 			awserr.New("CredentialsEndpointError", "failed to load credentials", err)
@@ -119,7 +120,7 @@ type errorOutput struct {
 	Message string `json:"message"`
 }
 
-func (p *Provider) getCredentials() (*getCredentialsOutput, error) {
+func (p *Provider) getCredentials(ctx context.Context) (*getCredentialsOutput, error) {
 	op := &aws.Operation{
 		Name:       "GetCredentials",
 		HTTPMethod: "GET",
@@ -128,12 +129,12 @@ func (p *Provider) getCredentials() (*getCredentialsOutput, error) {
 	out := &getCredentialsOutput{}
 	req := p.Client.NewRequest(op, nil, out)
 	req.HTTPRequest.Header.Set("Accept", "application/json")
-
+	req.SetContext(ctx)
 	return out, req.Send()
 }
 
 func validateEndpointHandler(r *aws.Request) {
-	if len(r.Metadata.Endpoint) == 0 {
+	if len(r.Endpoint.URL) == 0 {
 		r.Error = aws.ErrMissingEndpoint
 	}
 }

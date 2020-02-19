@@ -78,6 +78,10 @@ type Config struct {
 	// Disabling this feature is useful when you want to use local endpoints
 	// for testing that do not support the modeled host prefix pattern.
 	DisableEndpointHostPrefix bool
+
+	// ConfigSources are the sources that were used to construct the Config.
+	// Allows for additional configuration can be loaded by clients.
+	ConfigSources []interface{}
 }
 
 // NewConfig returns a new Config pointer that can be chained with builder

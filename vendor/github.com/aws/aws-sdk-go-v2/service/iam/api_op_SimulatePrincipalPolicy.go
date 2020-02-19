@@ -62,6 +62,30 @@ type SimulatePrincipalPolicyInput struct {
 	// service where to continue from.
 	MaxItems *int64 `min:"1" type:"integer"`
 
+	// The IAM permissions boundary policy to simulate. The permissions boundary
+	// sets the maximum permissions that the entity can have. You can input only
+	// one permissions boundary when you pass a policy to this operation. An IAM
+	// entity can only have one permissions boundary in effect at a time. For example,
+	// if a permissions boundary is attached to an entity and you pass in a different
+	// permissions boundary policy using this parameter, then the new permission
+	// boundary policy is used for the simulation. For more information about permissions
+	// boundaries, see Permissions Boundaries for IAM Entities (https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html)
+	// in the IAM User Guide. The policy input is specified as a string containing
+	// the complete, valid JSON text of a permissions boundary policy.
+	//
+	// The regex pattern (http://wikipedia.org/wiki/regex) used to validate this
+	// parameter is a string of characters consisting of the following:
+	//
+	//    * Any printable ASCII character ranging from the space character (\u0020)
+	//    through the end of the ASCII character range
+	//
+	//    * The printable characters in the Basic Latin and Latin-1 Supplement character
+	//    set (through \u00FF)
+	//
+	//    * The special characters tab (\u0009), line feed (\u000A), and carriage
+	//    return (\u000D)
+	PermissionsBoundaryPolicyInputList []string `type:"list"`
+
 	// An optional list of additional policy documents to include in the simulation.
 	// Each document is specified as a string containing the complete, valid JSON
 	// text of an IAM policy.

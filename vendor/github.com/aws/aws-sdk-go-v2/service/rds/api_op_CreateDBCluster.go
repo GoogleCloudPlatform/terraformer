@@ -79,8 +79,8 @@ type CreateDBClusterInput struct {
 	// Example: mySubnetgroup
 	DBSubnetGroupName *string `type:"string"`
 
-	// The name for your database of up to 64 alpha-numeric characters. If you do
-	// not provide a name, Amazon RDS will not create a database in the DB cluster
+	// The name for your database of up to 64 alphanumeric characters. If you do
+	// not provide a name, Amazon RDS doesn't create a database in the DB cluster
 	// you are creating.
 	DatabaseName *string `type:"string"`
 
@@ -126,6 +126,17 @@ type CreateDBClusterInput struct {
 
 	// The DB engine mode of the DB cluster, either provisioned, serverless, parallelquery,
 	// global, or multimaster.
+	//
+	// Limitations and requirements apply to some DB engine modes. For more information,
+	// see the following sections in the Amazon Aurora User Guide:
+	//
+	//    * Limitations of Aurora Serverless (https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-serverless.html#aurora-serverless.limitations)
+	//
+	//    * Limitations of Parallel Query (https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-mysql-parallel-query.html#aurora-mysql-parallel-query-limitations)
+	//
+	//    * Requirements for Aurora Global Databases (https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database.html#aurora-global-database.limitations)
+	//
+	//    * Limitations of Multi-Master Clusters (https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-multi-master.html#aurora-multi-master-limitations)
 	EngineMode *string `type:"string"`
 
 	// The version number of the database engine to use.

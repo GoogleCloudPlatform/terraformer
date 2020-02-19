@@ -30,11 +30,13 @@ type CreateCustomKeyStoreInput struct {
 	// in the specified AWS CloudHSM cluster. AWS KMS logs into the cluster as this
 	// user to manage key material on your behalf.
 	//
+	// The password must be a string of 7 to 32 characters. Its value is case sensitive.
+	//
 	// This parameter tells AWS KMS the kmsuser account password; it does not change
 	// the password in the AWS CloudHSM cluster.
 	//
 	// KeyStorePassword is a required field
-	KeyStorePassword *string `min:"1" type:"string" required:"true" sensitive:"true"`
+	KeyStorePassword *string `min:"7" type:"string" required:"true" sensitive:"true"`
 
 	// Enter the content of the trust anchor certificate for the cluster. This is
 	// the content of the customerCA.crt file that you created when you initialized
@@ -70,8 +72,8 @@ func (s *CreateCustomKeyStoreInput) Validate() error {
 	if s.KeyStorePassword == nil {
 		invalidParams.Add(aws.NewErrParamRequired("KeyStorePassword"))
 	}
-	if s.KeyStorePassword != nil && len(*s.KeyStorePassword) < 1 {
-		invalidParams.Add(aws.NewErrParamMinLen("KeyStorePassword", 1))
+	if s.KeyStorePassword != nil && len(*s.KeyStorePassword) < 7 {
+		invalidParams.Add(aws.NewErrParamMinLen("KeyStorePassword", 7))
 	}
 
 	if s.TrustAnchorCertificate == nil {

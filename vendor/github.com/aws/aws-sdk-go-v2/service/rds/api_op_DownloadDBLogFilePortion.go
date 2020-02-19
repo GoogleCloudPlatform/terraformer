@@ -90,8 +90,7 @@ type DownloadDBLogFilePortionOutput struct {
 	// Entries from the specified log file.
 	LogFileData *string `type:"string"`
 
-	// A pagination token that can be used in a subsequent DownloadDBLogFilePortion
-	// request.
+	// A pagination token that can be used in a later DownloadDBLogFilePortion request.
 	Marker *string `type:"string"`
 }
 

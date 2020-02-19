@@ -63,7 +63,9 @@ type PutKeyPolicyInput struct {
 	//    immediately visible (https://docs.aws.amazon.com/IAM/latest/UserGuide/troubleshoot_general.html#troubleshoot_general_eventual-consistency)
 	//    in the AWS Identity and Access Management User Guide.
 	//
-	// The key policy size limit is 32 kilobytes (32768 bytes).
+	// The key policy cannot exceed 32 kilobytes (32768 bytes). For more information,
+	// see Resource Quotas (https://docs.aws.amazon.com/kms/latest/developerguide/resource-limits.html)
+	// in the AWS Key Management Service Developer Guide.
 	//
 	// Policy is a required field
 	Policy *string `min:"1" type:"string" required:"true"`

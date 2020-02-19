@@ -14,13 +14,12 @@
 package cmd
 
 import (
-	aws_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/aws"
+	awsterraformer "github.com/GoogleCloudPlatform/terraformer/providers/aws"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/spf13/cobra"
 	"log"
 )
 
-const defaultRegion = ""
 
 func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 	cmd := &cobra.Command{
@@ -33,8 +32,9 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 			originalPathPattern := options.PathPattern
 
 			if len(options.Regions) > 0 {
+				shouldSpecifyPathRegion := len(options.Regions) > 1
 				options.Resources = parseGlobalResources(originalResources)
-				options.Regions = []string{defaultRegion}
+				options.Regions = []string{awsterraformer.GlobalRegion}
 				e := importGlobalResources(options)
 				if e != nil {
 					return e
@@ -43,14 +43,14 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 				options.Resources = parseRegionalResources(originalResources)
 				options.Regions = originalRegions
 				for _, region := range originalRegions {
-					e := importRegionResources(options, originalPathPattern, region)
+					e := importRegionResources(options, originalPathPattern, region, shouldSpecifyPathRegion)
 					if e != nil {
 						return e
 					}
 				}
 				return nil
 			} else {
-				err := importRegionResources(options, options.PathPattern, defaultRegion)
+				err := importRegionResources(options, options.PathPattern, awsterraformer.NoRegion, false)
 				if err != nil {
 					return err
 				}
@@ -69,7 +69,7 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 func parseGlobalResources(allResources []string) []string {
 	var globalResources []string
 	for _, resourceName := range allResources {
-		if contains(aws_terraforming.SupportedGlobalResources, resourceName) {
+		if contains(awsterraformer.SupportedGlobalResources, resourceName) {
 			globalResources = append(globalResources, resourceName)
 		}
 	}
@@ -78,7 +78,7 @@ func parseGlobalResources(allResources []string) []string {
 
 func importGlobalResources(options ImportOptions) error {
 	if len(options.Resources) > 0 {
-		return importRegionResources(options, options.PathPattern, defaultRegion)
+		return importRegionResources(options, options.PathPattern, awsterraformer.GlobalRegion, false)
 	} else {
 		return nil
 	}
@@ -87,18 +87,20 @@ func importGlobalResources(options ImportOptions) error {
 func parseRegionalResources(allResources []string) []string {
 	var localResources []string
 	for _, resourceName := range allResources {
-		if !contains(aws_terraforming.SupportedGlobalResources, resourceName) {
+		if !contains(awsterraformer.SupportedGlobalResources, resourceName) {
 			localResources = append(localResources, resourceName)
 		}
 	}
 	return localResources
 }
 
-func importRegionResources(options ImportOptions, originalPathPattern string, region string) error {
+func importRegionResources(options ImportOptions, originalPathPattern string, region string, shouldSpecifyPathRegion bool) error {
 	provider := newAWSProvider()
 	options.PathPattern = originalPathPattern
-	if region != "" {
-		options.PathPattern += region + "/"
+	if region != awsterraformer.GlobalRegion && region != awsterraformer.NoRegion {
+		if shouldSpecifyPathRegion {
+			options.PathPattern += region + "/"
+		}
 		log.Println(provider.GetName() + " importing region " + region)
 	} else {
 		log.Println(provider.GetName() + " importing default region")
@@ -111,7 +113,7 @@ func importRegionResources(options ImportOptions, originalPathPattern string, re
 }
 
 func newAWSProvider() terraform_utils.ProviderGenerator {
-	return &aws_terraforming.AWSProvider{}
+	return &awsterraformer.AWSProvider{}
 }
 
 func contains(s []string, e string) bool {
