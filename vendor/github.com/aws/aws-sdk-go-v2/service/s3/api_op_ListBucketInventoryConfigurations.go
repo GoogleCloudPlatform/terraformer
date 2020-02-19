@@ -4,10 +4,12 @@ package s3
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
+	"github.com/aws/aws-sdk-go-v2/service/s3/internal/arn"
 )
 
 type ListBucketInventoryConfigurationsInput struct {
@@ -67,6 +69,20 @@ func (s ListBucketInventoryConfigurationsInput) MarshalFields(e protocol.FieldEn
 		e.SetValue(protocol.QueryTarget, "continuation-token", protocol.StringValue(v), metadata)
 	}
 	return nil
+}
+
+func (s *ListBucketInventoryConfigurationsInput) getEndpointARN() (arn.Resource, error) {
+	if s.Bucket == nil {
+		return nil, fmt.Errorf("member Bucket is nil")
+	}
+	return parseEndpointARN(*s.Bucket)
+}
+
+func (s *ListBucketInventoryConfigurationsInput) hasEndpointARN() bool {
+	if s.Bucket == nil {
+		return false
+	}
+	return arn.IsARN(*s.Bucket)
 }
 
 type ListBucketInventoryConfigurationsOutput struct {

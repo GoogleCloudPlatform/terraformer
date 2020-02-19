@@ -25,7 +25,7 @@ func defaultInitRequestFn(c *Client, r *aws.Request) {
 	platformRequestHandlers(c, r)
 
 	// Support building custom endpoints based on config
-	r.Handlers.Build.PushFront(buildUpdateEndpointForS3Config(c))
+	r.Handlers.Build.PushFront(buildEndpointHandler(c))
 
 	switch r.Operation.Name {
 	case opPutBucketCors, opPutBucketLifecycle, opPutBucketPolicy,

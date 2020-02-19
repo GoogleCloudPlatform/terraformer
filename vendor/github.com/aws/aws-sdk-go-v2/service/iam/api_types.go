@@ -427,12 +427,24 @@ type EvaluationResult struct {
 	// EvalDecision is a required field
 	EvalDecision PolicyEvaluationDecisionType `type:"string" required:"true" enum:"true"`
 
-	// Additional details about the results of the evaluation decision. When there
-	// are both IAM policies and resource policies, this parameter explains how
-	// each set of policies contributes to the final evaluation decision. When simulating
-	// cross-account access to a resource, both the resource-based policy and the
-	// caller's IAM policy must grant access. See How IAM Roles Differ from Resource-based
-	// Policies (https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_compare-resource-policies.html)
+	// Additional details about the results of the cross-account evaluation decision.
+	// This parameter is populated for only cross-account simulations. It contains
+	// a brief summary of how each policy type contributes to the final evaluation
+	// decision.
+	//
+	// If the simulation evaluates policies within the same account and includes
+	// a resource ARN, then the parameter is present but the response is empty.
+	// If the simulation evaluates policies within the same account and specifies
+	// all resources (*), then the parameter is not returned.
+	//
+	// When you make a cross-account request, AWS evaluates the request in the trusting
+	// account and the trusted account. The request is allowed only if both evaluations
+	// return true. For more information about how policies are evaluated, see Evaluating
+	// Policies Within a Single Account (https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html#policy-eval-basics).
+	//
+	// If an AWS Organizations SCP included in the evaluation denies access, the
+	// simulation ends. In this case, policy evaluation does not proceed any further
+	// and this parameter is not returned.
 	EvalDecisionDetails map[string]PolicyEvaluationDecisionType `type:"map"`
 
 	// The ARN of the resource that the indicated API operation was tested on.
@@ -458,6 +470,10 @@ type EvaluationResult struct {
 	// affect the results of the simulation. Only applies if the simulated user's
 	// account is part of an organization.
 	OrganizationsDecisionDetail *OrganizationsDecisionDetail `type:"structure"`
+
+	// Contains information about the effect that a permissions boundary has on
+	// a policy simulation when the boundary is applied to an IAM entity.
+	PermissionsBoundaryDecisionDetail *PermissionsBoundaryDecisionDetail `type:"structure"`
 
 	// The individual results of the simulation of the API operation specified in
 	// EvalActionName on each resource.
@@ -865,6 +881,27 @@ func (s PasswordPolicy) String() string {
 	return awsutil.Prettify(s)
 }
 
+// Contains information about the effect that a permissions boundary has on
+// a policy simulation when the boundary is applied to an IAM entity.
+type PermissionsBoundaryDecisionDetail struct {
+	_ struct{} `type:"structure"`
+
+	// Specifies whether an action is allowed by a permissions boundary that is
+	// applied to an IAM entity (user or role). A value of true means that the permissions
+	// boundary does not deny the action. This means that the policy includes an
+	// Allow statement that matches the request. In this case, if an identity-based
+	// policy also allows the action, the request is allowed. A value of false means
+	// that either the requested action is not allowed (implicitly denied) or that
+	// the action is explicitly denied by the permissions boundary. In both of these
+	// cases, the action is not allowed, regardless of the identity-based policy.
+	AllowedByPermissionsBoundary *bool `type:"boolean"`
+}
+
+// String returns the string representation
+func (s PermissionsBoundaryDecisionDetail) String() string {
+	return awsutil.Prettify(s)
+}
+
 // Contains information about a managed policy.
 //
 // This data type is used as a response element in the CreatePolicy, GetPolicy,
@@ -1153,11 +1190,10 @@ func (s Position) String() string {
 type ResourceSpecificResult struct {
 	_ struct{} `type:"structure"`
 
-	// Additional details about the results of the evaluation decision. When there
-	// are both IAM policies and resource policies, this parameter explains how
-	// each set of policies contributes to the final evaluation decision. When simulating
-	// cross-account access to a resource, both the resource-based policy and the
-	// caller's IAM policy must grant access.
+	// Additional details about the results of the evaluation decision on a single
+	// resource. This parameter is returned only for cross-account simulations.
+	// This parameter explains how each policy type contributes to the resource-specific
+	// evaluation decision.
 	EvalDecisionDetails map[string]PolicyEvaluationDecisionType `type:"map"`
 
 	// The result of the simulation of the simulated API operation on the resource
@@ -1187,6 +1223,10 @@ type ResourceSpecificResult struct {
 	// the context keys used by a set of policies, you can call GetContextKeysForCustomPolicy
 	// or GetContextKeysForPrincipalPolicy.
 	MissingContextValues []string `type:"list"`
+
+	// Contains information about the effect that a permissions boundary has on
+	// a policy simulation when that boundary is applied to an IAM entity.
+	PermissionsBoundaryDecisionDetail *PermissionsBoundaryDecisionDetail `type:"structure"`
 }
 
 // String returns the string representation

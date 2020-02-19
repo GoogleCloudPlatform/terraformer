@@ -23,7 +23,7 @@ type DescribeVpcEndpointConnectionNotificationsInput struct {
 
 	// One or more filters.
 	//
-	//    * connection-notification-arn - The ARN of SNS topic for the notification.
+	//    * connection-notification-arn - The ARN of the SNS topic for the notification.
 	//
 	//    * connection-notification-id - The ID of the notification.
 	//

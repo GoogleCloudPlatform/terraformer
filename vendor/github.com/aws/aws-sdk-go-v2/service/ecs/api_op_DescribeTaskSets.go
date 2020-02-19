@@ -18,6 +18,11 @@ type DescribeTaskSetsInput struct {
 	// Cluster is a required field
 	Cluster *string `locationName:"cluster" type:"string" required:"true"`
 
+	// Specifies whether to see the resource tags for the task set. If TAGS is specified,
+	// the tags are included in the response. If this field is omitted, tags are
+	// not included in the response.
+	Include []TaskSetField `locationName:"include" type:"list"`
+
 	// The short name or full Amazon Resource Name (ARN) of the service that the
 	// task sets exist in.
 	//

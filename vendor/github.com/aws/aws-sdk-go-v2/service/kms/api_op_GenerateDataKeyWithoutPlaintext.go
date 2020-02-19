@@ -139,15 +139,11 @@ const opGenerateDataKeyWithoutPlaintext = "GenerateDataKeyWithoutPlaintext"
 //
 // To generate a data key, you must specify the symmetric customer master key
 // (CMK) that is used to encrypt the data key. You cannot use an asymmetric
-// CMK to generate a data key. To get the type of your CMK, use the KeySpec
-// field in the DescribeKey response. You must also specify the length of the
-// data key using either the KeySpec or NumberOfBytes field (but not both).
-// For common key lengths (128-bit and 256-bit symmetric keys), use the KeySpec
-// parameter.
+// CMK to generate a data key. To get the type of your CMK, use the DescribeKey
+// operation.
 //
-// If the operation succeeds, you will find the plaintext copy of the data key
-// in the Plaintext field of the response, and the encrypted copy of the data
-// key in the CiphertextBlob field.
+// If the operation succeeds, you will find the encrypted copy of the data key
+// in the CiphertextBlob field.
 //
 // You can use the optional encryption context to add additional security to
 // the encryption operation. If you specify an EncryptionContext, you must specify

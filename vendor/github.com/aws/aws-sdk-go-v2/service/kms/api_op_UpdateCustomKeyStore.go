@@ -37,7 +37,7 @@ type UpdateCustomKeyStoreInput struct {
 	// This parameter tells AWS KMS the current password of the kmsuser crypto user
 	// (CU). It does not set or change the password of any users in the AWS CloudHSM
 	// cluster.
-	KeyStorePassword *string `min:"1" type:"string" sensitive:"true"`
+	KeyStorePassword *string `min:"7" type:"string" sensitive:"true"`
 
 	// Changes the friendly name of the custom key store to the value that you specify.
 	// The custom key store name must be unique in the AWS account.
@@ -62,8 +62,8 @@ func (s *UpdateCustomKeyStoreInput) Validate() error {
 	if s.CustomKeyStoreId != nil && len(*s.CustomKeyStoreId) < 1 {
 		invalidParams.Add(aws.NewErrParamMinLen("CustomKeyStoreId", 1))
 	}
-	if s.KeyStorePassword != nil && len(*s.KeyStorePassword) < 1 {
-		invalidParams.Add(aws.NewErrParamMinLen("KeyStorePassword", 1))
+	if s.KeyStorePassword != nil && len(*s.KeyStorePassword) < 7 {
+		invalidParams.Add(aws.NewErrParamMinLen("KeyStorePassword", 7))
 	}
 	if s.NewCustomKeyStoreName != nil && len(*s.NewCustomKeyStoreName) < 1 {
 		invalidParams.Add(aws.NewErrParamMinLen("NewCustomKeyStoreName", 1))

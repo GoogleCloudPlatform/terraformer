@@ -17,62 +17,41 @@ package main
 import (
 	"github.com/GoogleCloudPlatform/terraformer/cmd"
 	aws_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/aws"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"log"
 	"os"
 	"os/exec"
-	"sort"
 )
 
 const command = "terraform init && terraform plan"
 
 func main() {
-	region := "us-east-1"
-	profile := "personal"
-	var services []string
 	provider := &aws_terraforming.AWSProvider{}
-	for service := range provider.GetSupportedService() {
-		if service == "route53" {
-			continue
-		}
-		if service == "iam" {
-			continue
-		}
-		if service == "sg" {
-			continue
-		}
-		services = append(services, service)
 
-	}
-	services = []string{"waf"}
-	sort.Strings(services)
-	provider = &aws_terraforming.AWSProvider{
-		Provider: terraform_utils.Provider{},
-	}
-	err := cmd.Import(provider, cmd.ImportOptions{
-		Resources:   services,
-		PathPattern: "{output}/{provider}/",
-		PathOutput:  cmd.DefaultPathOutput,
-		State:       "local",
-		Connect:     true,
-		Compact:     true,
-		Verbose:     true,
-		Output:	     "hcl",
-	}, []string{region, profile})
-	if err != nil {
+	tCommand := cmd.NewCmdRoot()
+	pathPattern := "{output}/{provider}/"
+	tCommand.SetArgs([]string{
+		"import",
+		"aws",
+		"--regions=ap-southeast-1,ap-northeast-1",
+		"--resources=vpc,sg",
+		"--profile=personal",
+		"--compact",
+		"--path-pattern=" + pathPattern,
+	})
+	if err := tCommand.Execute(); err != nil {
 		log.Println(err)
 		os.Exit(1)
 	}
 	rootPath, _ := os.Getwd()
-	currentPath := cmd.Path(cmd.DefaultPathPattern, provider.GetName(), "", cmd.DefaultPathOutput)
+	currentPath := cmd.Path(pathPattern, provider.GetName(), "", cmd.DefaultPathOutput)
 	if err := os.Chdir(currentPath); err != nil {
 		log.Println(err)
 		os.Exit(1)
 	}
-	cmd := exec.Command("sh", "-c", command)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	err = cmd.Run()
+	tfCmd := exec.Command("sh", "-c", command)
+	tfCmd.Stdout = os.Stdout
+	tfCmd.Stderr = os.Stderr
+	err := tfCmd.Run()
 	if err != nil {
 		log.Println(err)
 		os.Exit(1)

@@ -21,7 +21,9 @@ type ListFunctionsInput struct {
 	Marker *string `location:"querystring" locationName:"Marker" type:"string"`
 
 	// For Lambda@Edge functions, the AWS Region of the master function. For example,
-	// us-east-2 or ALL. If specified, you must set FunctionVersion to ALL.
+	// us-east-1 filters the list of functions to only include Lambda@Edge functions
+	// replicated from a master function in US East (N. Virginia). If specified,
+	// you must set FunctionVersion to ALL.
 	MasterRegion *string `location:"querystring" locationName:"MasterRegion" type:"string"`
 
 	// Specify a value between 1 and 50 to limit the number of functions in the
