@@ -4,11 +4,13 @@ package s3
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/internal/arn"
 )
 
 type PutBucketAnalyticsConfigurationInput struct {
@@ -91,6 +93,20 @@ func (s PutBucketAnalyticsConfigurationInput) MarshalFields(e protocol.FieldEnco
 		e.SetValue(protocol.QueryTarget, "id", protocol.StringValue(v), metadata)
 	}
 	return nil
+}
+
+func (s *PutBucketAnalyticsConfigurationInput) getEndpointARN() (arn.Resource, error) {
+	if s.Bucket == nil {
+		return nil, fmt.Errorf("member Bucket is nil")
+	}
+	return parseEndpointARN(*s.Bucket)
+}
+
+func (s *PutBucketAnalyticsConfigurationInput) hasEndpointARN() bool {
+	if s.Bucket == nil {
+		return false
+	}
+	return arn.IsARN(*s.Bucket)
 }
 
 type PutBucketAnalyticsConfigurationOutput struct {

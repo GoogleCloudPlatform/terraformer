@@ -1,6 +1,8 @@
 package external
 
 import (
+	"context"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/ec2metadata"
 )
@@ -316,10 +318,28 @@ func GetMFATokenFunc(configs Configs) (func() (string, error), bool, error) {
 //
 // TODO add this provider to the default config loading?
 type WithEC2MetadataRegion struct {
-	Client *ec2metadata.Client
+	ctx    context.Context
+	client *ec2metadata.Client
 }
 
-// GetRegion attempts to retreive the region from EC2 Metadata service.
+// NewWithEC2MetadataRegion function takes in a context and an ec2metadataClient,
+// returns a WithEC2MetadataRegion region provider
+//
+// Usage:
+// ec2metaClient := ec2metadata.New(defaults.Config())
+//
+// cfg, err := external.LoadDefaultAWSConfig(
+//    external.NewWithEC2MetadataRegion(ctx, ec2metaClient),
+// )
+//
+func NewWithEC2MetadataRegion(ctx context.Context, client *ec2metadata.Client) WithEC2MetadataRegion {
+	return WithEC2MetadataRegion{
+		ctx:    ctx,
+		client: client,
+	}
+}
+
+// GetRegion attempts to retrieve the region from EC2 Metadata service.
 func (p WithEC2MetadataRegion) GetRegion() (string, error) {
-	return p.Client.Region()
+	return p.client.Region(p.ctx)
 }

@@ -134,7 +134,8 @@ type PublishVersionOutput struct {
 	// (https://www.w3.org/TR/NOTE-datetime) (YYYY-MM-DDThh:mm:ss.sTZD).
 	LastModified *string `type:"string"`
 
-	// The status of the last update that was performed on the function.
+	// The status of the last update that was performed on the function. This is
+	// first set to Successful after function creation completes.
 	LastUpdateStatus LastUpdateStatus `type:"string" enum:"true"`
 
 	// The reason for the last update that was performed on the function.

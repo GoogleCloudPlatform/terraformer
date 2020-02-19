@@ -109,18 +109,20 @@ type NodegroupIssueCode string
 
 // Enum values for NodegroupIssueCode
 const (
-	NodegroupIssueCodeAutoScalingGroupNotFound         NodegroupIssueCode = "AutoScalingGroupNotFound"
-	NodegroupIssueCodeEc2securityGroupNotFound         NodegroupIssueCode = "Ec2SecurityGroupNotFound"
-	NodegroupIssueCodeEc2securityGroupDeletionFailure  NodegroupIssueCode = "Ec2SecurityGroupDeletionFailure"
-	NodegroupIssueCodeEc2launchTemplateNotFound        NodegroupIssueCode = "Ec2LaunchTemplateNotFound"
-	NodegroupIssueCodeEc2launchTemplateVersionMismatch NodegroupIssueCode = "Ec2LaunchTemplateVersionMismatch"
-	NodegroupIssueCodeIamInstanceProfileNotFound       NodegroupIssueCode = "IamInstanceProfileNotFound"
-	NodegroupIssueCodeIamNodeRoleNotFound              NodegroupIssueCode = "IamNodeRoleNotFound"
-	NodegroupIssueCodeAsgInstanceLaunchFailures        NodegroupIssueCode = "AsgInstanceLaunchFailures"
-	NodegroupIssueCodeInstanceLimitExceeded            NodegroupIssueCode = "InstanceLimitExceeded"
-	NodegroupIssueCodeInsufficientFreeAddresses        NodegroupIssueCode = "InsufficientFreeAddresses"
-	NodegroupIssueCodeAccessDenied                     NodegroupIssueCode = "AccessDenied"
-	NodegroupIssueCodeInternalFailure                  NodegroupIssueCode = "InternalFailure"
+	NodegroupIssueCodeAutoScalingGroupNotFound             NodegroupIssueCode = "AutoScalingGroupNotFound"
+	NodegroupIssueCodeAutoScalingGroupInvalidConfiguration NodegroupIssueCode = "AutoScalingGroupInvalidConfiguration"
+	NodegroupIssueCodeEc2securityGroupNotFound             NodegroupIssueCode = "Ec2SecurityGroupNotFound"
+	NodegroupIssueCodeEc2securityGroupDeletionFailure      NodegroupIssueCode = "Ec2SecurityGroupDeletionFailure"
+	NodegroupIssueCodeEc2launchTemplateNotFound            NodegroupIssueCode = "Ec2LaunchTemplateNotFound"
+	NodegroupIssueCodeEc2launchTemplateVersionMismatch     NodegroupIssueCode = "Ec2LaunchTemplateVersionMismatch"
+	NodegroupIssueCodeEc2subnetNotFound                    NodegroupIssueCode = "Ec2SubnetNotFound"
+	NodegroupIssueCodeIamInstanceProfileNotFound           NodegroupIssueCode = "IamInstanceProfileNotFound"
+	NodegroupIssueCodeIamNodeRoleNotFound                  NodegroupIssueCode = "IamNodeRoleNotFound"
+	NodegroupIssueCodeAsgInstanceLaunchFailures            NodegroupIssueCode = "AsgInstanceLaunchFailures"
+	NodegroupIssueCodeInstanceLimitExceeded                NodegroupIssueCode = "InstanceLimitExceeded"
+	NodegroupIssueCodeInsufficientFreeAddresses            NodegroupIssueCode = "InsufficientFreeAddresses"
+	NodegroupIssueCodeAccessDenied                         NodegroupIssueCode = "AccessDenied"
+	NodegroupIssueCodeInternalFailure                      NodegroupIssueCode = "InternalFailure"
 )
 
 func (enum NodegroupIssueCode) MarshalValue() (string, error) {
@@ -169,6 +171,7 @@ const (
 	UpdateParamTypeMaxSize               UpdateParamType = "MaxSize"
 	UpdateParamTypeMinSize               UpdateParamType = "MinSize"
 	UpdateParamTypeReleaseVersion        UpdateParamType = "ReleaseVersion"
+	UpdateParamTypePublicAccessCidrs     UpdateParamType = "PublicAccessCidrs"
 )
 
 func (enum UpdateParamType) MarshalValue() (string, error) {

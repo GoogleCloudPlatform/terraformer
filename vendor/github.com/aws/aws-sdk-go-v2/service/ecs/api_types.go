@@ -139,6 +139,9 @@ type AutoScalingGroupProvider struct {
 	// capacity provider. This determines whether the Auto Scaling group has managed
 	// termination protection.
 	//
+	// When using managed termination protection, managed scaling must also be used
+	// otherwise managed termination protection will not work.
+	//
 	// When managed termination protection is enabled, Amazon ECS prevents the Amazon
 	// EC2 instances in an Auto Scaling group that contain tasks from being terminated
 	// during a scale-in action. The Auto Scaling group and each instance in the
@@ -398,9 +401,35 @@ type Cluster struct {
 	//    * drainingFargateServiceCount
 	Statistics []KeyValuePair `locationName:"statistics" type:"list"`
 
-	// The status of the cluster. The valid values are ACTIVE or INACTIVE. ACTIVE
-	// indicates that you can register container instances with the cluster and
-	// the associated instances can accept tasks.
+	// The status of the cluster. The following are the possible states that will
+	// be returned.
+	//
+	// ACTIVE
+	//
+	// The cluster is ready to accept tasks and if applicable you can register container
+	// instances with the cluster.
+	//
+	// PROVISIONING
+	//
+	// The cluster has capacity providers associated with it and the resources needed
+	// for the capacity provider are being created.
+	//
+	// DEPROVISIONING
+	//
+	// The cluster has capacity providers associated with it and the resources needed
+	// for the capacity provider are being deleted.
+	//
+	// FAILED
+	//
+	// The cluster has capacity providers associated with it and the resources needed
+	// for the capacity provider have failed to create.
+	//
+	// INACTIVE
+	//
+	// The cluster has been deleted. Clusters with an INACTIVE status may remain
+	// discoverable in your account for a period of time. However, this behavior
+	// is subject to change in the future, so you should not rely on INACTIVE clusters
+	// persisting.
 	Status *string `locationName:"status" type:"string"`
 
 	// The metadata that you apply to the cluster to help you categorize and organize
@@ -552,15 +581,6 @@ type ContainerDefinition struct {
 	// EC2 Instances (http://aws.amazon.com/ec2/instance-types/) detail page by
 	// 1,024.
 	//
-	// For example, if you run a single-container task on a single-core instance
-	// type with 512 CPU units specified for that container, and that is the only
-	// task running on the container instance, that container could use the full
-	// 1,024 CPU unit share at any given time. However, if you launched another
-	// copy of the same task on that container instance, each task would be guaranteed
-	// a minimum of 512 CPU units when needed, and each container could float to
-	// higher CPU usage if the other container was not using it, but if both tasks
-	// were 100% active all of the time, they would be limited to 512 CPU units.
-	//
 	// Linux containers share unallocated CPU units with other containers on the
 	// container instance with the same ratio as their allocated amount. For example,
 	// if you run a single-container task on a single-core instance type with 512
@@ -652,6 +672,11 @@ type ContainerDefinition struct {
 	// security systems. This field is not valid for containers in tasks using the
 	// Fargate launch type.
 	//
+	// With Windows containers, this parameter can be used to reference a credential
+	// spec file when configuring a container for Active Directory authentication.
+	// For more information, see Using gMSAs for Windows Containers (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/windows-gmsa.html)
+	// in the Amazon Elastic Container Service Developer Guide.
+	//
 	// This parameter maps to SecurityOpt in the Create a container (https://docs.docker.com/engine/api/v1.35/#operation/ContainerCreate)
 	// section of the Docker Remote API (https://docs.docker.com/engine/api/v1.35/)
 	// and the --security-opt option to docker run (https://docs.docker.com/engine/reference/run/).
@@ -662,8 +687,6 @@ type ContainerDefinition struct {
 	// options. For more information, see Amazon ECS Container Agent Configuration
 	// (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-agent-config.html)
 	// in the Amazon Elastic Container Service Developer Guide.
-	//
-	// This parameter is not supported for Windows containers.
 	DockerSecurityOptions []string `locationName:"dockerSecurityOptions" type:"list"`
 
 	//
@@ -1158,8 +1181,8 @@ func (s *ContainerDefinition) Validate() error {
 // AMI (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html)
 // in the Amazon Elastic Container Service Developer Guide.
 //
-// If you are using tasks that use the Fargate launch type, container dependency
-// parameters are not supported.
+// For tasks using the Fargate launch type, this parameter requires that the
+// task or service uses platform version 1.3.0 or later.
 type ContainerDependency struct {
 	_ struct{} `type:"structure"`
 
@@ -1701,6 +1724,47 @@ func (s DockerVolumeConfiguration) String() string {
 	return awsutil.Prettify(s)
 }
 
+// This parameter is specified when you are using an Amazon Elastic File System
+// (Amazon EFS) file storage. Amazon EFS file systems are only supported when
+// you are using the EC2 launch type.
+//
+// EFSVolumeConfiguration remains in preview and is a Beta Service as defined
+// by and subject to the Beta Service Participation Service Terms located at
+// https://aws.amazon.com/service-terms (https://aws.amazon.com/service-terms)
+// ("Beta Terms"). These Beta Terms apply to your participation in this preview
+// of EFSVolumeConfiguration.
+type EFSVolumeConfiguration struct {
+	_ struct{} `type:"structure"`
+
+	// The Amazon EFS file system ID to use.
+	//
+	// FileSystemId is a required field
+	FileSystemId *string `locationName:"fileSystemId" type:"string" required:"true"`
+
+	// The directory within the Amazon EFS file system to mount as the root directory
+	// inside the host.
+	RootDirectory *string `locationName:"rootDirectory" type:"string"`
+}
+
+// String returns the string representation
+func (s EFSVolumeConfiguration) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *EFSVolumeConfiguration) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "EFSVolumeConfiguration"}
+
+	if s.FileSystemId == nil {
+		invalidParams.Add(aws.NewErrParamRequired("FileSystemId"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
 // A failed resource.
 type Failure struct {
 	_ struct{} `type:"structure"`
@@ -2184,35 +2248,70 @@ func (s LoadBalancer) String() string {
 	return awsutil.Prettify(s)
 }
 
-// Log configuration options to send to a custom log driver for the container.
+// The log configuration specification for the container.
+//
+// This parameter maps to LogConfig in the Create a container (https://docs.docker.com/engine/api/v1.35/#operation/ContainerCreate)
+// section of the Docker Remote API (https://docs.docker.com/engine/api/v1.35/)
+// and the --log-driver option to docker run (https://docs.docker.com/engine/reference/commandline/run/).
+// By default, containers use the same logging driver that the Docker daemon
+// uses; however the container may use a different logging driver than the Docker
+// daemon by specifying a log driver with this parameter in the container definition.
+// To use a different logging driver for a container, the log system must be
+// configured properly on the container instance (or on a different log server
+// for remote logging options). For more information on the options for different
+// supported log drivers, see Configure logging drivers (https://docs.docker.com/engine/admin/logging/overview/)
+// in the Docker documentation.
+//
+// The following should be noted when specifying a log configuration for your
+// containers:
+//
+//    * Amazon ECS currently supports a subset of the logging drivers available
+//    to the Docker daemon (shown in the valid values below). Additional log
+//    drivers may be available in future releases of the Amazon ECS container
+//    agent.
+//
+//    * This parameter requires version 1.18 of the Docker Remote API or greater
+//    on your container instance.
+//
+//    * For tasks using the EC2 launch type, the Amazon ECS container agent
+//    running on a container instance must register the logging drivers available
+//    on that instance with the ECS_AVAILABLE_LOGGING_DRIVERS environment variable
+//    before containers placed on that instance can use these log configuration
+//    options. For more information, see Amazon ECS Container Agent Configuration
+//    (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-agent-config.html)
+//    in the Amazon Elastic Container Service Developer Guide.
+//
+//    * For tasks using the Fargate launch type, because you do not have access
+//    to the underlying infrastructure your tasks are hosted on, any additional
+//    software needed will have to be installed outside of the task. For example,
+//    the Fluentd output aggregators or a remote host running Logstash to send
+//    Gelf logs to.
 type LogConfiguration struct {
 	_ struct{} `type:"structure"`
 
-	// The log driver to use for the container. The valid values listed for this
-	// parameter are log drivers that the Amazon ECS container agent can communicate
-	// with by default.
+	// The log driver to use for the container. The valid values listed earlier
+	// are log drivers that the Amazon ECS container agent can communicate with
+	// by default.
 	//
-	// For tasks using the Fargate launch type, the supported log drivers are awslogs
-	// and splunk.
+	// For tasks using the Fargate launch type, the supported log drivers are awslogs,
+	// splunk, and awsfirelens.
 	//
 	// For tasks using the EC2 launch type, the supported log drivers are awslogs,
-	// fluentd, gelf, json-file, journald, logentries, syslog, and splunk.
+	// fluentd, gelf, json-file, journald, logentries,syslog, splunk, and awsfirelens.
 	//
 	// For more information about using the awslogs log driver, see Using the awslogs
 	// Log Driver (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_awslogs.html)
 	// in the Amazon Elastic Container Service Developer Guide.
 	//
-	// If you have a custom driver that is not listed above that you would like
-	// to work with the Amazon ECS container agent, you can fork the Amazon ECS
+	// For more information about using the awsfirelens log driver, see Custom Log
+	// Routing (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_firelens.html)
+	// in the Amazon Elastic Container Service Developer Guide.
+	//
+	// If you have a custom driver that is not listed, you can fork the Amazon ECS
 	// container agent project that is available on GitHub (https://github.com/aws/amazon-ecs-agent)
 	// and customize it to work with that driver. We encourage you to submit pull
-	// requests for changes that you would like to have included. However, Amazon
-	// Web Services does not currently support running modified copies of this software.
-	//
-	// This parameter requires version 1.18 of the Docker Remote API or greater
-	// on your container instance. To check the Docker Remote API version on your
-	// container instance, log in to your container instance and run the following
-	// command: sudo docker version --format '{{.Server.APIVersion}}'
+	// requests for changes that you would like to have included. However, we do
+	// not currently provide support for running modified copies of this software.
 	//
 	// LogDriver is a required field
 	LogDriver LogDriver `locationName:"logDriver" type:"string" required:"true" enum:"true"`
@@ -3437,10 +3536,14 @@ type TaskDefinition struct {
 	// that are specified in this role.
 	ExecutionRoleArn *string `locationName:"executionRoleArn" type:"string"`
 
-	// The name of a family that this task definition is registered to. A family
-	// groups multiple versions of a task definition. Amazon ECS gives the first
-	// task definition that you registered to a family a revision number of 1. Amazon
-	// ECS gives sequential revision numbers to each task definition that you add.
+	// The name of a family that this task definition is registered to. Up to 255
+	// letters (uppercase and lowercase), numbers, hyphens, and underscores are
+	// allowed.
+	//
+	// A family groups multiple versions of a task definition. Amazon ECS gives
+	// the first task definition that you registered to a family a revision number
+	// of 1. Amazon ECS gives sequential revision numbers to each task definition
+	// that you add.
 	Family *string `locationName:"family" type:"string"`
 
 	// The Elastic Inference accelerator associated with the task.
@@ -3811,6 +3914,34 @@ type TaskSet struct {
 	// are being deregistered from their target group.
 	Status *string `locationName:"status" type:"string"`
 
+	// The metadata that you apply to the task set to help you categorize and organize
+	// them. Each tag consists of a key and an optional value, both of which you
+	// define.
+	//
+	// The following basic restrictions apply to tags:
+	//
+	//    * Maximum number of tags per resource - 50
+	//
+	//    * For each resource, each tag key must be unique, and each tag key can
+	//    have only one value.
+	//
+	//    * Maximum key length - 128 Unicode characters in UTF-8
+	//
+	//    * Maximum value length - 256 Unicode characters in UTF-8
+	//
+	//    * If your tagging schema is used across multiple services and resources,
+	//    remember that other services may have restrictions on allowed characters.
+	//    Generally allowed characters are: letters, numbers, and spaces representable
+	//    in UTF-8, and the following characters: + - = . _ : / @.
+	//
+	//    * Tag keys and values are case-sensitive.
+	//
+	//    * Do not use aws:, AWS:, or any upper or lowercase combination of such
+	//    as a prefix for either keys or values as it is reserved for AWS use. You
+	//    cannot edit or delete tag keys or values with this prefix. Tags with this
+	//    prefix do not count against your tags per resource limit.
+	Tags []Tag `locationName:"tags" type:"list"`
+
 	// The task definition the task set is using.
 	TaskDefinition *string `locationName:"taskDefinition" type:"string"`
 
@@ -3950,9 +4081,20 @@ type Volume struct {
 
 	// This parameter is specified when you are using Docker volumes. Docker volumes
 	// are only supported when you are using the EC2 launch type. Windows containers
-	// only support the use of the local driver. To use bind mounts, specify a host
-	// instead.
+	// only support the use of the local driver. To use bind mounts, specify the
+	// host parameter instead.
 	DockerVolumeConfiguration *DockerVolumeConfiguration `locationName:"dockerVolumeConfiguration" type:"structure"`
+
+	// This parameter is specified when you are using an Amazon Elastic File System
+	// (Amazon EFS) file storage. Amazon EFS file systems are only supported when
+	// you are using the EC2 launch type.
+	//
+	// EFSVolumeConfiguration remains in preview and is a Beta Service as defined
+	// by and subject to the Beta Service Participation Service Terms located at
+	// https://aws.amazon.com/service-terms (https://aws.amazon.com/service-terms)
+	// ("Beta Terms"). These Beta Terms apply to your participation in this preview
+	// of EFSVolumeConfiguration.
+	EfsVolumeConfiguration *EFSVolumeConfiguration `locationName:"efsVolumeConfiguration" type:"structure"`
 
 	// This parameter is specified when you are using bind mount host volumes. Bind
 	// mount host volumes are supported when you are using either the EC2 or Fargate
@@ -3977,6 +4119,21 @@ type Volume struct {
 // String returns the string representation
 func (s Volume) String() string {
 	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *Volume) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "Volume"}
+	if s.EfsVolumeConfiguration != nil {
+		if err := s.EfsVolumeConfiguration.Validate(); err != nil {
+			invalidParams.AddNested("EfsVolumeConfiguration", err.(aws.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
 }
 
 // Details on a data volume from another container in the same task definition.

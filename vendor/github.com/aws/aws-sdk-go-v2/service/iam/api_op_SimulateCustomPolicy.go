@@ -52,6 +52,27 @@ type SimulateCustomPolicyInput struct {
 	// service where to continue from.
 	MaxItems *int64 `min:"1" type:"integer"`
 
+	// The IAM permissions boundary policy to simulate. The permissions boundary
+	// sets the maximum permissions that an IAM entity can have. You can input only
+	// one permissions boundary when you pass a policy to this operation. For more
+	// information about permissions boundaries, see Permissions Boundaries for
+	// IAM Entities (https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html)
+	// in the IAM User Guide. The policy input is specified as a string that contains
+	// the complete, valid JSON text of a permissions boundary policy.
+	//
+	// The regex pattern (http://wikipedia.org/wiki/regex) used to validate this
+	// parameter is a string of characters consisting of the following:
+	//
+	//    * Any printable ASCII character ranging from the space character (\u0020)
+	//    through the end of the ASCII character range
+	//
+	//    * The printable characters in the Basic Latin and Latin-1 Supplement character
+	//    set (through \u00FF)
+	//
+	//    * The special characters tab (\u0009), line feed (\u000A), and carriage
+	//    return (\u000D)
+	PermissionsBoundaryPolicyInputList []string `type:"list"`
+
 	// A list of policy documents to include in the simulation. Each document is
 	// specified as a string containing the complete, valid JSON text of an IAM
 	// policy. Do not include any resource-based policies in this parameter. Any
@@ -245,13 +266,14 @@ const opSimulateCustomPolicy = "SimulateCustomPolicy"
 // The simulation does not perform the API operations; it only checks the authorization
 // to determine if the simulated policies allow or deny the operations.
 //
-// If you want to simulate existing policies attached to an IAM user, group,
-// or role, use SimulatePrincipalPolicy instead.
+// If you want to simulate existing policies that are attached to an IAM user,
+// group, or role, use SimulatePrincipalPolicy instead.
 //
-// Context keys are variables maintained by AWS and its services that provide
-// details about the context of an API query request. You can use the Condition
-// element of an IAM policy to evaluate context keys. To get the list of context
-// keys that the policies require for correct simulation, use GetContextKeysForCustomPolicy.
+// Context keys are variables that are maintained by AWS and its services and
+// which provide details about the context of an API query request. You can
+// use the Condition element of an IAM policy to evaluate context keys. To get
+// the list of context keys that the policies require for correct simulation,
+// use GetContextKeysForCustomPolicy.
 //
 // If the output is long, you can use MaxItems and Marker parameters to paginate
 // the results.

@@ -101,7 +101,7 @@ func (p partition) EndpointFor(service, region string, opts ResolveOptions) (res
 	}
 
 	defs := []endpoint{p.Defaults, s.Defaults}
-	return e.resolve(service, region, p.DNSSuffix, defs, opts), nil
+	return e.resolve(service, p.ID, region, p.DNSSuffix, defs, opts), nil
 }
 
 func serviceList(ss services) []string {
@@ -213,7 +213,7 @@ func getByPriority(s []string, p []string, def string) string {
 	return s[0]
 }
 
-func (e endpoint) resolve(service, region, dnsSuffix string, defs []endpoint, opts ResolveOptions) aws.Endpoint {
+func (e endpoint) resolve(service, parittionID, region, dnsSuffix string, defs []endpoint, opts ResolveOptions) aws.Endpoint {
 	var merged endpoint
 	for _, def := range defs {
 		merged.mergeIn(def)
@@ -253,6 +253,7 @@ func (e endpoint) resolve(service, region, dnsSuffix string, defs []endpoint, op
 
 	return aws.Endpoint{
 		URL:                u,
+		PartitionID:        parittionID,
 		SigningRegion:      signingRegion,
 		SigningName:        signingName,
 		SigningNameDerived: signingNameDerived,
