@@ -33,7 +33,8 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 
 			if len(options.Regions) > 0 {
 				shouldSpecifyPathRegion := len(options.Regions) > 1
-				options.Resources = parseGlobalResources(originalResources)
+				globalResources := parseGlobalResources(originalResources)
+				options.Resources = globalResources
 				options.Regions = []string{awsterraformer.GlobalRegion}
 				e := importGlobalResources(options)
 				if e != nil {
@@ -42,10 +43,15 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 
 				options.Resources = parseRegionalResources(originalResources)
 				options.Regions = originalRegions
-				for _, region := range originalRegions {
-					e := importRegionResources(options, originalPathPattern, region, shouldSpecifyPathRegion)
-					if e != nil {
-						return e
+				if len(options.Resources) > 0 { // don't import anything and potentially override global resources
+					if len(globalResources) > 0 {
+						shouldSpecifyPathRegion = true // we should keep global resources away from regional
+					}
+					for _, region := range originalRegions {
+						e := importRegionResources(options, originalPathPattern, region, shouldSpecifyPathRegion)
+						if e != nil {
+							return e
+						}
 					}
 				}
 				return nil
