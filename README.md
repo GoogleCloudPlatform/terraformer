@@ -518,6 +518,19 @@ In that case terraformer will not know with which region resources are associate
     * `aws_waf_sql_injection_match_set`
     * `aws_waf_web_acl`
     * `aws_waf_xss_match_set`
+*   `waf_regional`
+    * `aws_wafregional_byte_match_set`
+    * `aws_wafregional_geo_match_set`
+    * `aws_wafregional_ipset`
+    * `aws_wafregional_rate_based_rule`
+    * `aws_wafregional_regex_match_set`
+    * `aws_wafregional_regex_pattern_set`
+    * `aws_wafregional_rule`
+    * `aws_wafregional_rule_group`
+    * `aws_wafregional_size_constraint_set`
+    * `aws_wafregional_sql_injection_match_set`
+    * `aws_wafregional_web_acl`
+    * `aws_wafregional_xss_match_set`
 *   `vpc`
     * `aws_vpc`
 *   `vpc_peering`
