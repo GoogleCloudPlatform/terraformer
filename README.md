@@ -506,7 +506,18 @@ In that case terraformer will not know with which region resources are associate
 *   `subnet`
     * `aws_subnet`
 *   `waf`
+    * `aws_waf_byte_match_set`
+    * `aws_waf_geo_match_set`
+    * `aws_waf_ipset`
+    * `aws_waf_rate_based_rule`
+    * `aws_waf_regex_match_set`
+    * `aws_waf_regex_pattern_set`
+    * `aws_waf_rule`
+    * `aws_waf_rule_group`
+    * `aws_waf_size_constraint_set`
+    * `aws_waf_sql_injection_match_set`
     * `aws_waf_web_acl`
+    * `aws_waf_xss_match_set`
 *   `vpc`
     * `aws_vpc`
 *   `vpc_peering`
@@ -526,6 +537,7 @@ List of global AWS services:
 *   `iam`
 *   `organization`
 *   `route53`
+*   `waf`
 
 #### Attribute filters
 
