@@ -35,12 +35,15 @@ const NoRegion = ""
 
 // global resources should be bound to a default region. AWS doesn't specify in which region default services are
 // placed (see  https://docs.aws.amazon.com/general/latest/gr/rande.html), so we shouldn't assume any region as well
+//
+// AWS WAF V2 if added, should not be included in this list since it is a composition of regional and global resources.
 var SupportedGlobalResources = []string{
 	"budgets",
 	"cloudfront",
 	"iam",
 	"organization",
 	"route53",
+	"waf",
 }
 
 func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
@@ -262,6 +265,8 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"sqs":               &SqsGenerator{},
 		"sns":               &SnsGenerator{},
 		"subnet":            &SubnetGenerator{},
+		"waf":               &WafGenerator{},
+		"waf_regional":      &WafRegionalGenerator{},
 		"vpc":               &VpcGenerator{},
 		"vpc_peering":       &VpcPeeringConnectionGenerator{},
 		"vpn_connection":    &VpnConnectionGenerator{},
