@@ -447,6 +447,7 @@ In that case terraformer will not know with which region resources are associate
 *   `iam`
     * `aws_iam_group`
     * `aws_iam_group_policy`
+    * `aws_iam_group_policy_attachment`
     * `aws_iam_instance_profile`
     * `aws_iam_policy`
     * `aws_iam_policy_attachment`
