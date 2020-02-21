@@ -557,7 +557,7 @@ List of global AWS services:
 Attribute filters allow filtering across different resource types by its attributes.
 
 ```
-terraformer import aws --resources=ec2_instance,ebs --filter=Name=tags.costCenter;Value=20000:'20001:1' --regions=eu-west-1
+terraformer import aws --resources=ec2_instance,ebs --filter="Name=tags.costCenter;Value=20000:'20001:1'" --regions=eu-west-1
 ```
 Will only import AWS EC2 instances along with EBS volumes annotated with tag `costCenter` with values `20000` or `20001:1`. Attribute filters are by default applicable to all resource types although it's possible to specify to what resource type a given filter should be applicable to by providing `Type=<type>` parameter. For example:
 ```
