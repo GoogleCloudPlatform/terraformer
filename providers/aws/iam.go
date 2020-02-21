@@ -120,7 +120,10 @@ func (g *IamGenerator) getUsers(svc *iam.Client) error {
 			if err != nil {
 				log.Println(err)
 			}
-			//g.getUserGroup(svc, user.UserName) //not work maybe terraform-aws bug
+			err = g.getUserGroup(svc, user.UserName)
+			if err != nil {
+				log.Println(err)
+			}
 		}
 	}
 	return p.Err()
@@ -130,14 +133,17 @@ func (g *IamGenerator) getUserGroup(svc *iam.Client, userName *string) error {
 	p := iam.NewListGroupsForUserPaginator(svc.ListGroupsForUserRequest(&iam.ListGroupsForUserInput{UserName: userName}))
 	for p.Next(context.Background()) {
 		for _, group := range p.CurrentPage().Groups {
-			resourceName := aws.StringValue(group.GroupName)
-			groupIDAttachment := aws.StringValue(group.GroupName)
+			userGroupMembership := *userName + "/" + *group.GroupName
 			g.Resources = append(g.Resources, terraform_utils.NewResource(
-				groupIDAttachment,
-				resourceName,
+				userGroupMembership,
+				userGroupMembership,
 				"aws_iam_user_group_membership",
 				"aws",
-				map[string]string{"user": aws.StringValue(userName)},
+				map[string]string{
+					"user": *userName,
+					"groups.#": "1",
+					"groups.0": *group.GroupName,
+				},
 				IamAllowEmptyValues,
 				IamAdditionalFields,
 			))
@@ -205,27 +211,59 @@ func (g *IamGenerator) getGroups(svc *iam.Client) error {
 				"aws_iam_group",
 				"aws",
 				IamAllowEmptyValues))
-			groupPoliciesPage := iam.NewListGroupPoliciesPaginator(svc.ListGroupPoliciesRequest(&iam.ListGroupPoliciesInput{GroupName: group.GroupName}))
-			for groupPoliciesPage.Next(context.Background()) {
-				for _, policy := range groupPoliciesPage.CurrentPage().PolicyNames {
-					id := resourceName + ":" + policy
-					groupPolicyName := resourceName + "_" + policy
-					g.Resources = append(g.Resources, terraform_utils.NewResource(
-						id,
-						groupPolicyName,
-						"aws_iam_group_policy",
-						"aws",
-						map[string]string{},
-						IamAllowEmptyValues,
-						IamAdditionalFields))
-				}
-			}
-			if err := groupPoliciesPage.Err(); err != nil {
-				log.Println(err)
-			}
+			g.getGroupPolicies(svc, group)
+			g.getAttachedGroupPolicies(svc, group)
 		}
 	}
 	return p.Err()
+}
+
+func (g *IamGenerator) getGroupPolicies(svc *iam.Client, group iam.Group) {
+	groupPoliciesPage := iam.NewListGroupPoliciesPaginator(svc.ListGroupPoliciesRequest(&iam.ListGroupPoliciesInput{GroupName: group.GroupName}))
+	for groupPoliciesPage.Next(context.Background()) {
+		for _, policy := range groupPoliciesPage.CurrentPage().PolicyNames {
+			id := *group.GroupName + ":" + policy
+			groupPolicyName := *group.GroupName + "_" + policy
+			g.Resources = append(g.Resources, terraform_utils.NewResource(
+				id,
+				groupPolicyName,
+				"aws_iam_group_policy",
+				"aws",
+				map[string]string{},
+				IamAllowEmptyValues,
+				IamAdditionalFields))
+		}
+	}
+	if err := groupPoliciesPage.Err(); err != nil {
+		log.Println(err)
+	}
+}
+
+func (g *IamGenerator) getAttachedGroupPolicies(svc *iam.Client, group iam.Group) {
+	groupAttachedPoliciesPage := iam.NewListAttachedGroupPoliciesPaginator(svc.ListAttachedGroupPoliciesRequest(
+		&iam.ListAttachedGroupPoliciesInput{GroupName: group.GroupName}))
+	for groupAttachedPoliciesPage.Next(context.Background()) {
+		for _, attachedPolicy := range groupAttachedPoliciesPage.CurrentPage().AttachedPolicies {
+			if !strings.Contains(*attachedPolicy.PolicyArn, "arn:aws:iam::aws") {
+				continue // map only AWS managed policies since others should be managed by
+			}
+			id := *group.GroupName + "/" + *attachedPolicy.PolicyArn
+			g.Resources = append(g.Resources, terraform_utils.NewResource(
+				id,
+				*group.GroupName + "_" + *attachedPolicy.PolicyName,
+				"aws_iam_group_policy_attachment",
+				"aws",
+				map[string]string{
+					"group": *group.GroupName,
+					"policy_arn": *attachedPolicy.PolicyArn,
+				},
+				IamAllowEmptyValues,
+				IamAdditionalFields))
+		}
+	}
+	if err := groupAttachedPoliciesPage.Err(); err != nil {
+		log.Println(err)
+	}
 }
 
 func (g *IamGenerator) getInstanceProfiles(svc *iam.Client) error {
