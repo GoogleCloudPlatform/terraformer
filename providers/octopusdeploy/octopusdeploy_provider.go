@@ -6,6 +6,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/zclconf/go-cty/cty"
 )
 
 type OctopusDeployProvider struct {
@@ -77,4 +78,12 @@ func (p *OctopusDeployProvider) InitService(serviceName string, verbose bool) er
 	})
 
 	return nil
+}
+
+// GetConfig return map of provider config for OctopusDeployProvider
+func (p *OctopusDeployProvider) GetConfig() cty.Value {
+	return cty.ObjectVal(map[string]cty.Value{
+		"apikey":  cty.StringVal(p.apiKey),
+		"address": cty.StringVal(p.server),
+	})
 }
