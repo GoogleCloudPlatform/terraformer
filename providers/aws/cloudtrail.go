@@ -27,7 +27,7 @@ type CloudTrailGenerator struct {
 	AWSService
 }
 
-func (g CloudTrailGenerator) createResources(trailList []cloudtrail.Trail) []terraform_utils.Resource {
+func (g *CloudTrailGenerator) createResources(trailList []cloudtrail.Trail) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
 	for _, trail := range trailList {
 		resourceName := aws.StringValue(trail.Name)

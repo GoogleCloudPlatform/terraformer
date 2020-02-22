@@ -26,7 +26,7 @@ type Cloud9Generator struct {
 	AWSService
 }
 
-func (g Cloud9Generator) createResources(environmentIds []string) []terraform_utils.Resource {
+func (g *Cloud9Generator) createResources(environmentIds []string) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
 	for _, resourceName := range environmentIds {
 		resources = append(resources, terraform_utils.NewSimpleResource(

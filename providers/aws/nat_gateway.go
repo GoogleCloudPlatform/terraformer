@@ -28,7 +28,7 @@ type NatGatewayGenerator struct {
 	AWSService
 }
 
-func (g NatGatewayGenerator) createResources(ngws *ec2.DescribeNatGatewaysOutput) []terraform_utils.Resource {
+func (g *NatGatewayGenerator) createResources(ngws *ec2.DescribeNatGatewaysOutput) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	for _, ngw := range ngws.NatGateways {
 		resources = append(resources, terraform_utils.NewSimpleResource(

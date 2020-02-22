@@ -27,7 +27,7 @@ type CodeBuildGenerator struct {
 	AWSService
 }
 
-func (g CodeBuildGenerator) createResources(projectList []string) []terraform_utils.Resource {
+func (g *CodeBuildGenerator) createResources(projectList []string) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
 	for _, project := range projectList {
 		resources = append(resources, terraform_utils.NewSimpleResource(

@@ -30,7 +30,7 @@ type ElasticIpGenerator struct {
 	AWSService
 }
 
-func (g ElasticIpGenerator) createElasticIpsResources(svc *ec2.Client) []terraform_utils.Resource {
+func (g *ElasticIpGenerator) createElasticIpsResources(svc *ec2.Client) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	addresses, err := svc.DescribeAddressesRequest(&ec2.DescribeAddressesInput{}).Send(context.Background())
 
