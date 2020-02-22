@@ -49,13 +49,15 @@ func (g *OrganizationBlockGenerator) InitResources() error {
 		}
 
 		for _, block := range blocks {
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			resource := terraform_utils.NewSimpleResource(
 				block.GetLogin(),
 				block.GetLogin(),
 				"github_organization_block",
 				"github",
 				[]string{},
-			))
+			)
+			resource.SlowQueryRequired = true
+			g.Resources = append(g.Resources, resource)
 		}
 
 		if resp.NextPage == 0 {
