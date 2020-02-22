@@ -56,6 +56,7 @@ func (g *RepositoriesGenerator) InitResources() error {
 				"github",
 				[]string{},
 			)
+			resource.SlowQueryRequired = true
 			g.Resources = append(g.Resources, resource)
 			g.Resources = append(g.Resources, g.createRepositoryWebhookResources(ctx, client, repo)...)
 			g.Resources = append(g.Resources, g.createRepositoryBranchProtectionResources(ctx, client, repo)...)
