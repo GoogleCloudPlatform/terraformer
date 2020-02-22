@@ -32,13 +32,15 @@ type TeamsGenerator struct {
 func (g *TeamsGenerator) createTeamsResources(ctx context.Context, teams []*githubAPI.Team, client *githubAPI.Client) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	for _, team := range teams {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resource := terraform_utils.NewSimpleResource(
 			strconv.FormatInt(team.GetID(), 10),
 			team.GetName(),
 			"github_team",
 			"github",
 			[]string{},
-		))
+		)
+		resource.SlowQueryRequired = true
+		resources = append(resources, resource)
 		resources = append(resources, g.createTeamMembersResources(ctx, team, client)...)
 		resources = append(resources, g.createTeamRepositoriesResources(ctx, team, client)...)
 	}
