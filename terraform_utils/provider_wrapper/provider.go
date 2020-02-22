@@ -17,6 +17,7 @@ package provider_wrapper
 import (
 	"errors"
 	"fmt"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/terraformer_string"
 	"io/ioutil"
 	"log"
 	"os"
@@ -54,6 +55,7 @@ type ProviderWrapper struct {
 	rpcClient    plugin.ClientProtocol
 	providerName string
 	config       cty.Value
+	schema       *providers.GetSchemaResponse
 }
 
 func NewProviderWrapper(providerName string, providerConfig cty.Value, verbose bool) (*ProviderWrapper, error) {
@@ -68,15 +70,23 @@ func (p *ProviderWrapper) Kill() {
 	p.client.Kill()
 }
 
+func (p *ProviderWrapper) GetSchema() *providers.GetSchemaResponse {
+	if p.schema == nil {
+		r := p.Provider.GetSchema()
+		p.schema = &r
+	}
+	return p.schema
+}
+
 func (p *ProviderWrapper) GetReadOnlyAttributes(resourceTypes []string) (map[string][]string, error) {
-	r := p.Provider.GetSchema()
+	r := p.GetSchema()
 
 	if r.Diagnostics.HasErrors() {
 		return nil, r.Diagnostics.Err()
 	}
 	readOnlyAttributes := map[string][]string{}
 	for resourceName, obj := range r.ResourceTypes {
-		if contains(resourceTypes, resourceName) {
+		if terraformer_string.ContainsString(resourceTypes, resourceName) {
 			readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], "^id$")
 			for k, v := range obj.Block.Attributes {
 				if !v.Optional && !v.Required {
@@ -92,15 +102,6 @@ func (p *ProviderWrapper) GetReadOnlyAttributes(resourceTypes []string) (map[str
 		}
 	}
 	return readOnlyAttributes, nil
-}
-
-func contains(s []string, e string) bool {
-	for _, a := range s {
-		if a == e {
-			return true
-		}
-	}
-	return false
 }
 
 func (p *ProviderWrapper) readObjBlocks(block map[string]*configschema.NestedBlock, readOnlyAttributes []string, parent string) []string {
@@ -140,7 +141,7 @@ func (p *ProviderWrapper) readObjBlocks(block map[string]*configschema.NestedBlo
 }
 
 func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform.InstanceState) (*terraform.InstanceState, error) {
-	schema := p.Provider.GetSchema()
+	schema := p.GetSchema()
 	impliedType := schema.ResourceTypes[info.Type].Block.ImpliedType()
 	priorState, err := state.AttrsAsObjectValue(impliedType)
 	if err != nil {
@@ -208,7 +209,7 @@ func (p *ProviderWrapper) initProvider(verbose bool) error {
 
 	p.Provider = raw.(*tfplugin.GRPCProvider)
 
-	config, err := p.Provider.GetSchema().Provider.Block.CoerceValue(p.config)
+	config, err := p.GetSchema().Provider.Block.CoerceValue(p.config)
 	if err != nil {
 		return err
 	}

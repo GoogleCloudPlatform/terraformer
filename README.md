@@ -60,14 +60,14 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
 Terraformer uses Terraform providers and is designed to easily support newly added resources.
 To upgrade resources with new fields, all you need to do is upgrade the relevant Terraform providers.
 ```
-Import current state to Terraform configuration from Google Cloud
+Import current state to Terraform configuration from a provider
 
 Usage:
-   import google [flags]
-   import google [command]
+   import [provider] [flags]
+   import [provider] [command]
 
 Available Commands:
-  list        List supported resources for google provider
+  list        List supported resources for a provider
 
 Flags:
   -b, --bucket string         gs://terraform-state
@@ -80,11 +80,11 @@ Flags:
   -p, --path-pattern string   {output}/{provider}/ (default "{output}/{provider}/{service}/")
       --projects strings
   -z, --regions strings       europe-west1, (default [global])
-  -r, --resources strings     firewalls,networks
+  -r, --resources strings     firewalls,networks or * for all services
   -s, --state string          local or bucket (default "local")
   -v, --verbose               verbose mode
 
-Use " import google [command] --help" for more information about a command.
+Use " import [provider] [command] --help" for more information about a command.
 ```
 #### Permissions
 
