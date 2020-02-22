@@ -28,7 +28,7 @@ type VpcPeeringConnectionGenerator struct {
 	AWSService
 }
 
-func (g VpcPeeringConnectionGenerator) createResources(peerings *ec2.DescribeVpcPeeringConnectionsOutput) []terraform_utils.Resource {
+func (g *VpcPeeringConnectionGenerator) createResources(peerings *ec2.DescribeVpcPeeringConnectionsOutput) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	for _, peering := range peerings.VpcPeeringConnections {
 		resources = append(resources, terraform_utils.NewSimpleResource(
