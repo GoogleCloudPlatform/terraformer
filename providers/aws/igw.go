@@ -31,7 +31,7 @@ type IgwGenerator struct {
 // Generate TerraformResources from AWS API,
 // from each Internet gateway create 1 TerraformResource.
 // Need InternetGatewayId as ID for terraform resource
-func (g IgwGenerator) createResources(igws *ec2.DescribeInternetGatewaysOutput) []terraform_utils.Resource {
+func (g *IgwGenerator) createResources(igws *ec2.DescribeInternetGatewaysOutput) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	for _, internetGateway := range igws.InternetGateways {
 		resources = append(resources, terraform_utils.NewSimpleResource(

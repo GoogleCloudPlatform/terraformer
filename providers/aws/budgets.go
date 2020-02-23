@@ -28,7 +28,7 @@ type BudgetsGenerator struct {
 	AWSService
 }
 
-func (g BudgetsGenerator) createResources(budgets []budgets.Budget, account *string) []terraform_utils.Resource {
+func (g *BudgetsGenerator) createResources(budgets []budgets.Budget, account *string) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
 	for _, budget := range budgets {
 		resourceName := aws.StringValue(budget.BudgetName)

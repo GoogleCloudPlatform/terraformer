@@ -397,6 +397,11 @@ In that case terraformer will not know with which region resources are associate
     * `aws_cloudformation_stack_set_instance`
 *   `cloudtrail`
     * `aws_cloudtrail`
+*   `cloudwatch`
+    * `aws_cloudwatch_dashboard`
+    * `aws_cloudwatch_event_rule`
+    * `aws_cloudwatch_event_target`
+    * `aws_cloudwatch_metric_alarm`
 *   `codebuild`
     * `aws_codebuild_project`
 *   `codecommit`
