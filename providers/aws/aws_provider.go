@@ -237,6 +237,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"dynamodb":          &DynamoDbGenerator{},
 		"ebs":               &EbsGenerator{},
 		"ec2_instance":      &Ec2Generator{},
+		"ecr":               &EcrGenerator{},
 		"ecs":               &EcsGenerator{},
 		"eks":               &EksGenerator{},
 		"eip":               &ElasticIpGenerator{},
