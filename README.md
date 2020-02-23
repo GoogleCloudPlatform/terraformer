@@ -427,6 +427,10 @@ In that case terraformer will not know with which region resources are associate
     * `aws_ecs_cluster`
     * `aws_ecs_service`
     * `aws_ecs_task_definition`
+*   `ecr`
+    * `aws_ecr_lifecycle_policy`
+    * `aws_ecr_repository`
+    * `aws_ecr_repository_policy`
 *   `eks`
     * `aws_eks_cluster`
 *   `elb`
