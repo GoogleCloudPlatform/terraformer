@@ -15,6 +15,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/terraformer_string"
 	"io/ioutil"
 	"log"
 	"os"
@@ -85,6 +86,11 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 		ImportedResource: map[string][]terraform_utils.Resource{},
 	}
 
+	if terraformer_string.ContainsString(options.Resources, "*") {
+		log.Println("Attempting an import of ALL resources in " + provider.GetName())
+		options.Resources = providerServices(provider)
+	}
+
 	for _, service := range options.Resources {
 		log.Println(provider.GetName() + " importing... " + service)
 		err = provider.InitService(service, options.Verbose)
@@ -93,16 +99,17 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 		}
 		provider.GetService().ParseFilters(options.Filter)
 		err = provider.GetService().InitResources()
-		provider.GetService().PopulateIgnoreKeys(provider.GetBasicConfig(), options.Verbose)
-		if err != nil {
-			return err
-		}
-		provider.GetService().InitialCleanup()
 
 		providerWrapper, err := provider_wrapper.NewProviderWrapper(provider.GetName(), provider.GetConfig(), options.Verbose)
 		if err != nil {
 			return err
 		}
+
+		provider.GetService().PopulateIgnoreKeys(providerWrapper)
+		if err != nil {
+			return err
+		}
+		provider.GetService().InitialCleanup()
 
 		refreshedResources, err := terraform_utils.RefreshResources(provider.GetService().GetResources(), providerWrapper)
 		if err != nil {
@@ -290,11 +297,7 @@ func listCmd(provider terraform_utils.ProviderGenerator) *cobra.Command {
 		Short: "List supported resources for " + provider.GetName() + " provider",
 		Long:  "List supported resources for " + provider.GetName() + " provider",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			services := []string{}
-			for k := range provider.GetSupportedService() {
-				services = append(services, k)
-			}
-			sort.Strings(services)
+			services := providerServices(provider)
 			for _, k := range services {
 				fmt.Println(k)
 			}
@@ -303,6 +306,15 @@ func listCmd(provider terraform_utils.ProviderGenerator) *cobra.Command {
 	}
 	cmd.Flags().AddFlag(&pflag.Flag{Name: "resources"})
 	return cmd
+}
+
+func providerServices(provider terraform_utils.ProviderGenerator) []string {
+	var services []string
+	for k := range provider.GetSupportedService() {
+		services = append(services, k)
+	}
+	sort.Strings(services)
+	return services
 }
 
 func baseProviderFlags(flag *pflag.FlagSet, options *ImportOptions, sampleRes, sampleFilters string) {
