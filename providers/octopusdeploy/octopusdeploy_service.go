@@ -14,7 +14,7 @@ type OctopusDeployService struct {
 
 func (s *OctopusDeployService) Client() (*octopusdeploy.Client, error) {
 	octopusURL := s.Args["server"].(string)
-	octopusAPIKey := s.Args["apiKey"].(string)
+	octopusAPIKey := s.Args["apikey"].(string)
 
 	if octopusURL == "" || octopusAPIKey == "" {
 		err := errors.New("Please make sure to set the env variables 'OCTOPUS_CLI_SERVER' and 'OCTOPUS_CLI_API_KEY'")

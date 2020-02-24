@@ -15,6 +15,7 @@ func newCmdOctopusDeployImporter(options ImportOptions) *cobra.Command {
 		Long:  "Import current state to Terraform configuration from Octopus Deploy",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			provider := newOctopusDeployProvider()
+			options.PathPattern = "{output}/{provider}/"
 			err := Import(provider, options, []string{server, apiKey})
 			if err != nil {
 				return err
@@ -24,7 +25,7 @@ func newCmdOctopusDeployImporter(options ImportOptions) *cobra.Command {
 	}
 
 	cmd.AddCommand(listCmd(newOctopusDeployProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "tagset", "tagset")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "octopusdeploy", "tagset")
 	cmd.PersistentFlags().StringVar(&server, "server", "", "Octopus Server's API endpoint or env param OCTOPUS_CLI_SERVER")
 	cmd.PersistentFlags().StringVar(&apiKey, "apikey", "", "Octopus API key or env param OCTOPUS_CLI_API_KEY")
 	return cmd

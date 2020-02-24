@@ -59,7 +59,18 @@ func (OctopusDeployProvider) GetResourceConnections() map[string]map[string][]st
 
 func (p *OctopusDeployProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
-		"tagsets": &TagSetGenerator{},
+		"accounts": &GenericGenerator{APIService: "accounts"},
+		// "channels":      &GenericGenerator{APIService: "channels"},
+		"certificates":        &GenericGenerator{APIService: "certificates"},
+		"environments":        &GenericGenerator{APIService: "environments"},
+		"feeds":               &GenericGenerator{APIService: "feeds"},
+		"libraryvariablesets": &GenericGenerator{APIService: "libraryvariablesets"},
+		"lifecycles":          &GenericGenerator{APIService: "lifecycles"},
+		"projects":            &GenericGenerator{APIService: "projects"},
+		"projectgroups":       &GenericGenerator{APIService: "projectgroups"},
+		"projecttriggers":     &GenericGenerator{APIService: "projecttriggers"},
+		"tagsets":             &GenericGenerator{APIService: "tagsets"},
+		// "variables":           &GenericGenerator{APIService: "variables"},
 	}
 }
 
@@ -73,7 +84,7 @@ func (p *OctopusDeployProvider) InitService(serviceName string, verbose bool) er
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"apiKey": p.apiKey,
+		"apikey": p.apiKey,
 		"server": p.server,
 	})
 
