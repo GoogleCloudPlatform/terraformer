@@ -15,6 +15,8 @@ func jsonPrint(data interface{}) ([]byte, error) {
 	}
 	// We don't need to escape > or <
 	s := strings.Replace(string(dataJsonBytes), "\\u003c", "<", -1)
+	s = strings.Replace(s, "\\<", "<", -1) // fix broken double escaping
 	s = strings.Replace(s, "\\u003e", ">", -1)
+	s = strings.Replace(s, "\\>", ">", -1) // fix broken double escaping
 	return []byte(s), nil
 }

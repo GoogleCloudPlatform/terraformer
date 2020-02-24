@@ -20,29 +20,37 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"time"
 )
 
 const command = "terraform init && terraform plan"
 
 func main() {
-	provider := &aws_terraforming.AWSProvider{}
-
 	tCommand := cmd.NewCmdRoot()
 	pathPattern := "{output}/{provider}/"
 	tCommand.SetArgs([]string{
 		"import",
 		"aws",
-		"--regions=ap-southeast-1,ap-northeast-1",
+		"--regions=ap-southeast-1",
 		"--resources=vpc,sg",
 		"--profile=personal",
 		"--compact",
 		"--path-pattern=" + pathPattern,
 	})
+	start := time.Now()
 	if err := tCommand.Execute(); err != nil {
 		log.Println(err)
 		os.Exit(1)
 	}
+	elapsed := time.Since(start)
+	log.Printf("Test took %s", elapsed)
+	runTerraform(pathPattern)
+}
+
+func runTerraform(pathPattern string) {
 	rootPath, _ := os.Getwd()
+	provider := &aws_terraforming.AWSProvider{}
+
 	currentPath := cmd.Path(pathPattern, provider.GetName(), "", cmd.DefaultPathOutput)
 	if err := os.Chdir(currentPath); err != nil {
 		log.Println(err)

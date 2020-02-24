@@ -158,7 +158,7 @@ func (r *Resource) ConvertTFstate(provider *provider_wrapper.ProviderWrapper) er
 		}
 	}
 	parser := NewFlatmapParser(r.InstanceState.Attributes, ignoreKeys, allowEmptyValues)
-	schema := provider.Provider.GetSchema()
+	schema := provider.GetSchema()
 	impliedType := schema.ResourceTypes[r.InstanceInfo.Type].Block.ImpliedType()
 	return r.ParseTFstate(parser, impliedType)
 }
