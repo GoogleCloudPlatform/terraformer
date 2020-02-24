@@ -26,7 +26,7 @@ func newCmdOctopusDeployImporter(options ImportOptions) *cobra.Command {
 	cmd.AddCommand(listCmd(newOctopusDeployProvider()))
 	baseProviderFlags(cmd.PersistentFlags(), &options, "tagset", "tagset")
 	cmd.PersistentFlags().StringVar(&server, "server", "", "Octopus Server's API endpoint or env param OCTOPUS_CLI_SERVER")
-	cmd.PersistentFlags().StringVar(&apiKey, "apiKey", "", "Octopus API key or env param OCTOPUS_CLI_API_KEY")
+	cmd.PersistentFlags().StringVar(&apiKey, "apikey", "", "Octopus API key or env param OCTOPUS_CLI_API_KEY")
 	return cmd
 }
 
