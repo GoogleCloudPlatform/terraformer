@@ -23,6 +23,7 @@ require (
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/cloudflare/cloudflare-go v0.11.0
 	github.com/denverdino/aliyungo v0.0.0-20191217032211-d5785803c365
+	github.com/dghubble/sling v1.1.0
 	github.com/digitalocean/godo v1.29.0
 	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
 	github.com/fastly/go-fastly v1.3.0

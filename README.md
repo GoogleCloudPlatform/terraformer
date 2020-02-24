@@ -922,8 +922,26 @@ export OCTOPUS_CLI_API_KEY=API-CK7DQ8BMJCUUBSHAJCDIATXUO
 terraformer import octopusdeploy --resources=tagsets
 ```
 
+* `accounts`
+  * `octopusdeploy_account`
+* `certificates`
+  * `octopusdeploy_certificate`
+* `environments`
+  * `octopusdeploy_environment`
+* `feeds`
+  * `octopusdeploy_feed`
+* `libraryvariablesets`
+  * `octopusdeploy_library_variable_set`
+* `lifecycle`
+  * `octopusdeploy_lifecycle`
+* `project`
+  * `octopusdeploy_project`
+* `projectgroups`
+  * `octopusdeploy_project_group`
+* `projecttriggers`
+  * `octopusdeploy_project_deployment_target_trigger`
 * `tagsets`
-    * `octopusdeploy_tag_set`
+  * `octopusdeploy_tag_set`
 
 ### Use with RabbitMQ
 
