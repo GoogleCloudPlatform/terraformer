@@ -469,6 +469,11 @@ In that case terraformer will not know with which region resources are associate
     * `aws_iam_user_policy`
 *   `igw`
     * `aws_internet_gateway`
+*   `iot`
+    * `aws_iot_thing`
+    * `aws_iot_thing_type`
+    * `aws_iot_topic_rule`
+    * `aws_iot_role_alias`
 *   `kinesis`
     * `aws_kinesis_stream`
 *   `kms`
