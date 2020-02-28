@@ -13,7 +13,7 @@ type OctopusDeployService struct {
 }
 
 func (s *OctopusDeployService) Client() (*octopusdeploy.Client, error) {
-	octopusURL := s.Args["server"].(string)
+	octopusURL := s.Args["address"].(string)
 	octopusAPIKey := s.Args["apikey"].(string)
 
 	if octopusURL == "" || octopusAPIKey == "" {
