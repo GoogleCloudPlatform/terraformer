@@ -1,7 +1,6 @@
 package octopusdeploy
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
@@ -45,8 +44,8 @@ func (g *GenericGenerator) createResources(client *octopusdeploy.Client) error {
 
 		for _, ressource := range *resources {
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-				fmt.Sprintf("%s", ressource.ID),
-				fmt.Sprintf("%s", ressource.Name),
+				ressource.ID,
+				ressource.Name,
 				"octopusdeploy_account",
 				g.ProviderName,
 				[]string{},
@@ -60,8 +59,8 @@ func (g *GenericGenerator) createResources(client *octopusdeploy.Client) error {
 
 		for _, ressource := range *resources {
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-				fmt.Sprintf("%s", ressource.ID),
-				fmt.Sprintf("%s", ressource.Name),
+				ressource.ID,
+				ressource.Name,
 				"octopusdeploy_certificate",
 				g.ProviderName,
 				[]string{},
@@ -79,8 +78,8 @@ func (g *GenericGenerator) createResources(client *octopusdeploy.Client) error {
 
 	// 	for _, ressource := range *resources {
 	// 		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-	// 			fmt.Sprintf("%s", ressource.ID),
-	// 			fmt.Sprintf("%s", ressource.Name),
+	// 			ressource.ID,
+	// 			ressource.Name
 	// 			"octopusdeploy_channel",
 	// 			g.ProviderName,
 	// 			[]string{},
@@ -94,8 +93,8 @@ func (g *GenericGenerator) createResources(client *octopusdeploy.Client) error {
 
 		for _, ressource := range *resources {
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-				fmt.Sprintf("%s", ressource.ID),
-				fmt.Sprintf("%s", ressource.Name),
+				ressource.ID,
+				ressource.Name,
 				"octopusdeploy_environment",
 				g.ProviderName,
 				[]string{},
@@ -109,8 +108,8 @@ func (g *GenericGenerator) createResources(client *octopusdeploy.Client) error {
 
 		for _, ressource := range *resources {
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-				fmt.Sprintf("%s", ressource.ID),
-				fmt.Sprintf("%s", ressource.Name),
+				ressource.ID,
+				ressource.Name,
 				"octopusdeploy_feed",
 				g.ProviderName,
 				[]string{},
@@ -124,8 +123,8 @@ func (g *GenericGenerator) createResources(client *octopusdeploy.Client) error {
 
 		for _, ressource := range *resources {
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-				fmt.Sprintf("%s", ressource.ID),
-				fmt.Sprintf("%s", ressource.Name),
+				ressource.ID,
+				ressource.Name,
 				"octopusdeploy_library_variable_set",
 				g.ProviderName,
 				[]string{},
@@ -139,8 +138,8 @@ func (g *GenericGenerator) createResources(client *octopusdeploy.Client) error {
 
 		for _, ressource := range *resources {
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-				fmt.Sprintf("%s", ressource.ID),
-				fmt.Sprintf("%s", ressource.Name),
+				ressource.ID,
+				ressource.Name,
 				"octopusdeploy_lifecycle",
 				g.ProviderName,
 				[]string{},
@@ -154,8 +153,8 @@ func (g *GenericGenerator) createResources(client *octopusdeploy.Client) error {
 
 		for _, ressource := range *resources {
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-				fmt.Sprintf("%s", ressource.ID),
-				fmt.Sprintf("%s", ressource.Name),
+				ressource.ID,
+				ressource.Name,
 				"octopusdeploy_project",
 				g.ProviderName,
 				[]string{},
@@ -169,8 +168,8 @@ func (g *GenericGenerator) createResources(client *octopusdeploy.Client) error {
 
 		for _, ressource := range *resources {
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-				fmt.Sprintf("%s", ressource.ID),
-				fmt.Sprintf("%s", ressource.Name),
+				ressource.ID,
+				ressource.Name,
 				"octopusdeploy_project_group",
 				g.ProviderName,
 				[]string{},
@@ -184,8 +183,8 @@ func (g *GenericGenerator) createResources(client *octopusdeploy.Client) error {
 
 		for _, ressource := range *resources {
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-				fmt.Sprintf("%s", ressource.ID),
-				fmt.Sprintf("%s", ressource.Name),
+				ressource.ID,
+				ressource.Name,
 				"octopusdeploy_project_deployment_target_trigger",
 				g.ProviderName,
 				[]string{},
@@ -199,8 +198,8 @@ func (g *GenericGenerator) createResources(client *octopusdeploy.Client) error {
 
 		for _, ressource := range *resources {
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-				fmt.Sprintf("%s", ressource.ID),
-				fmt.Sprintf("%s", ressource.Name),
+				ressource.ID,
+				ressource.Name,
 				"octopusdeploy_tag_set",
 				g.ProviderName,
 				[]string{},
@@ -223,8 +222,8 @@ func (g *GenericGenerator) createResources(client *octopusdeploy.Client) error {
 
 		// 	for _, ressource := range resources.Variables {
 		// 		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-		// 			fmt.Sprintf("%s", ressource.ID),
-		// 			fmt.Sprintf("%s", ressource.Name),
+		// 			ressource.ID,
+		// 			ressource.Name
 		// 			"octopusdeploy_variable",
 		// 			g.ProviderName,
 		// 			[]string{},

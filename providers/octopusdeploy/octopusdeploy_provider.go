@@ -11,16 +11,16 @@ import (
 
 type OctopusDeployProvider struct {
 	terraform_utils.Provider
-	server string
-	apiKey string
+	address string
+	apiKey  string
 }
 
 func (p *OctopusDeployProvider) Init(args []string) error {
 	if args[0] != "" {
-		p.server = args[0]
+		p.address = args[0]
 	} else {
-		if server := os.Getenv("OCTOPUS_CLI_SERVER"); server != "" {
-			p.server = server
+		if address := os.Getenv("OCTOPUS_CLI_SERVER"); address != "" {
+			p.address = address
 		} else {
 			return errors.New("server requirement")
 		}
@@ -48,6 +48,8 @@ func (p *OctopusDeployProvider) GetProviderData(arg ...string) map[string]interf
 		"provider": map[string]interface{}{
 			"octopusdeploy": map[string]interface{}{
 				"version": provider_wrapper.GetProviderVersion(p.GetName()),
+				"address": p.address,
+				"apikey":  p.apiKey,
 			},
 		},
 	}
@@ -84,8 +86,8 @@ func (p *OctopusDeployProvider) InitService(serviceName string, verbose bool) er
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"apikey": p.apiKey,
-		"server": p.server,
+		"apikey":  p.apiKey,
+		"address": p.address,
 	})
 
 	return nil
@@ -95,6 +97,10 @@ func (p *OctopusDeployProvider) InitService(serviceName string, verbose bool) er
 func (p *OctopusDeployProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
 		"apikey":  cty.StringVal(p.apiKey),
-		"address": cty.StringVal(p.server),
+		"address": cty.StringVal(p.address),
 	})
+}
+
+func (p *OctopusDeployProvider) GetBasicConfig() cty.Value {
+	return p.GetConfig()
 }
