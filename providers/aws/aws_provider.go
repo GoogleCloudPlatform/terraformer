@@ -224,6 +224,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"accessanalyzer":    &AccessAnalyzerGenerator{},
 		"acm":               &ACMGenerator{},
 		"alb":               &AlbGenerator{},
+		"api_gateway":       &ApiGatewayGenerator{},
 		"auto_scaling":      &AutoScalingGenerator{},
 		"budgets":           &BudgetsGenerator{},
 		"cloud9":            &Cloud9Generator{},
