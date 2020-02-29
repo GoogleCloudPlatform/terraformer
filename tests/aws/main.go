@@ -23,8 +23,6 @@ import (
 	"time"
 )
 
-const command = "terraform init && terraform plan"
-
 func main() {
 	tCommand := cmd.NewCmdRoot()
 	pathPattern := "{output}/{provider}/"
@@ -42,9 +40,10 @@ func main() {
 		log.Println(err)
 		os.Exit(1)
 	}
-	elapsed := time.Since(start)
-	log.Printf("Test took %s", elapsed)
+	log.Printf("Importing took %s", time.Since(start))
+	start = time.Now()
 	runTerraform(pathPattern)
+	log.Printf("Terraform init + plan took %s", time.Since(start))
 }
 
 func runTerraform(pathPattern string) {
@@ -56,7 +55,7 @@ func runTerraform(pathPattern string) {
 		log.Println(err)
 		os.Exit(1)
 	}
-	tfCmd := exec.Command("sh", "-c", command)
+	tfCmd := exec.Command("sh", "-c", "terraform init && terraform plan")
 	tfCmd.Stdout = os.Stdout
 	tfCmd.Stderr = os.Stderr
 	err := tfCmd.Run()
