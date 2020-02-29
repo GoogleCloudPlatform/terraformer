@@ -526,6 +526,13 @@ In that case terraformer will not know with which region resources are associate
 *   `s3`
     * `aws_s3_bucket`
     * `aws_s3_bucket_policy`
+*   `ses`
+    * `aws_ses_configuration_set`
+    * `aws_ses_domain_identity`
+    * `aws_ses_email_identity`
+    * `aws_ses_receipt_rule`
+    * `aws_ses_receipt_rule_set`
+    * `aws_ses_template`
 *   `sg`
     * `aws_security_group`
     * `aws_security_group_rule` (if a rule cannot be inlined)
