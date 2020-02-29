@@ -381,6 +381,17 @@ In that case terraformer will not know with which region resources are associate
     * `aws_lb_listener_certificate`
     * `aws_lb_target_group`
     * `aws_lb_target_group_attachment`
+*   `api_gateway`
+    * `aws_api_gateway_integration`
+    * `aws_api_gateway_integration_response`
+    * `aws_api_gateway_method`
+    * `aws_api_gateway_method_response`
+    * `aws_api_gateway_model`
+    * `aws_api_gateway_resource`
+    * `aws_api_gateway_rest_api`
+    * `aws_api_gateway_stage`
+    * `aws_api_gateway_usage_plan`
+    * `aws_api_gateway_vpc_link`
 *   `auto_scaling`
     * `aws_autoscaling_group`
     * `aws_launch_configuration`
