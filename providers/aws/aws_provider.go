@@ -266,6 +266,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"route53":           &Route53Generator{},
 		"route_table":       &RouteTableGenerator{},
 		"s3":                &S3Generator{},
+		"ses":               &SesGenerator{},
 		"sg":                &SecurityGenerator{},
 		"sqs":               &SqsGenerator{},
 		"sns":               &SnsGenerator{},
