@@ -17,11 +17,13 @@ package aws
 import (
 	"context"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/terraformer_string"
 	"github.com/aws/aws-sdk-go-v2/service/apigateway"
 	"github.com/aws/aws-sdk-go/aws"
+	"strings"
 )
 
-var apiGatewayAllowEmptyValues = []string{"tags."}
+var apiGatewayAllowEmptyValues = []string{"tags.", "parent_id", "path_part"}
 
 type ApiGatewayGenerator struct {
 	AWSService
@@ -51,6 +53,9 @@ func (g *ApiGatewayGenerator) loadRestApis(svc *apigateway.Client) error {
 	p := apigateway.NewGetRestApisPaginator(svc.GetRestApisRequest(&apigateway.GetRestApisInput{}))
 	for p.Next(context.Background()) {
 		for _, restApi := range p.CurrentPage().Items {
+			if g.shouldFilterRestApi(restApi.Tags) {
+				continue
+			}
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 				*restApi.Id,
 				*restApi.Name,
@@ -66,9 +71,32 @@ func (g *ApiGatewayGenerator) loadRestApis(svc *apigateway.Client) error {
 			if err := g.loadModels(svc, restApi.Id); err != nil {
 				return err
 			}
+			if err := g.loadResponses(svc, restApi.Id); err != nil {
+				return err
+			}
+			if err := g.loadDocumentationParts(svc, restApi.Id); err != nil {
+				return err
+			}
+			if err := g.loadAuthorizers(svc, restApi.Id); err != nil {
+				return err
+			}
 		}
 	}
 	return p.Err()
+}
+
+func (g *ApiGatewayGenerator) shouldFilterRestApi(tags map[string]string) bool {
+	for _, filter := range g.Filter {
+		if strings.HasPrefix(filter.FieldPath, "tags.") && filter.IsApplicable("aws_api_gateway_rest_api") {
+			tagName := strings.Replace(filter.FieldPath, "tags.", "", 1)
+			if val, ok := tags[tagName]; ok {
+				return !terraformer_string.ContainsString(filter.AcceptableValues, val)
+			} else {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 func (g *ApiGatewayGenerator) loadStages(svc *apigateway.Client, restApiId *string) error {
@@ -242,6 +270,79 @@ func (g *ApiGatewayGenerator) loadResourceMethods(svc *apigateway.Client, restAp
 				map[string]interface{}{},
 			))
 		}
+	}
+	return nil
+}
+
+func (g *ApiGatewayGenerator) loadResponses(svc *apigateway.Client, restApiId *string) error {
+	response, err := svc.GetGatewayResponsesRequest(&apigateway.GetGatewayResponsesInput{
+		RestApiId: restApiId,
+	}).Send(context.Background())
+	if err != nil {
+		return err
+	}
+	for _, response := range response.Items {
+		if aws.BoolValue(response.DefaultResponse) {
+			continue
+		}
+		responseTypeString, _ := response.ResponseType.MarshalValue()
+		responseId := *restApiId + "/" + responseTypeString
+		g.Resources = append(g.Resources, terraform_utils.NewResource(
+			responseId,
+			responseId,
+			"aws_api_gateway_gateway_response",
+			"aws",
+			map[string]string{
+				"rest_api_id": *restApiId,
+				"response_type": responseTypeString,
+			},
+			apiGatewayAllowEmptyValues,
+			map[string]interface{}{},
+		))
+	}
+	return nil
+}
+
+func (g *ApiGatewayGenerator) loadDocumentationParts(svc *apigateway.Client, restApiId *string) error {
+	response, err := svc.GetDocumentationPartsRequest(&apigateway.GetDocumentationPartsInput{
+		RestApiId: restApiId,
+	}).Send(context.Background())
+	if err != nil {
+		return err
+	}
+	for _, documentationPart := range response.Items {
+		documentationPartId := *restApiId + "/" + *documentationPart.Id
+		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			documentationPartId,
+			documentationPartId,
+			"aws_api_gateway_documentation_part",
+			"aws",
+			apiGatewayAllowEmptyValues,
+		))
+	}
+	return nil
+}
+
+func (g *ApiGatewayGenerator) loadAuthorizers(svc *apigateway.Client, restApiId *string) error {
+	response, err := svc.GetAuthorizersRequest(&apigateway.GetAuthorizersInput{
+		RestApiId: restApiId,
+	}).Send(context.Background())
+	if err != nil {
+		return err
+	}
+	for _, authorizer := range response.Items {
+		g.Resources = append(g.Resources, terraform_utils.NewResource(
+			*authorizer.Id,
+			*authorizer.Id,
+			"aws_api_gateway_authorizer",
+			"aws",
+			map[string]string{
+				"rest_api_id": *restApiId,
+				"name": aws.StringValue(authorizer.Name),
+			},
+			apiGatewayAllowEmptyValues,
+			map[string]interface{}{},
+		))
 	}
 	return nil
 }
