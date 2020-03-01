@@ -237,6 +237,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"codedeploy":        &CodeDeployGenerator{},
 		"codepipeline":      &CodePipelineGenerator{},
 		"datapipeline":      &DataPipelineGenerator{},
+		"devicefarm":        &DeviceFarmGenerator{},
 		"dynamodb":          &DynamoDbGenerator{},
 		"ebs":               &EbsGenerator{},
 		"ec2_instance":      &Ec2Generator{},

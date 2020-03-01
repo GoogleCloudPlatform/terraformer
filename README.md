@@ -427,6 +427,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_codepipeline_webhook`
 *   `datapipeline`
     * `aws_datapipeline_pipeline`
+*   `devicefarm`
+    * `aws_devicefarm_project`
 *   `dynamodb`
     * `aws_dynamodb_table`
 *   `ec2_instance`
