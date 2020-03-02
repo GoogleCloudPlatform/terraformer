@@ -53,7 +53,7 @@ func (g InterconnectAttachmentsGenerator) createResources(ctx context.Context, i
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -65,7 +65,7 @@ func (g *InterconnectAttachmentsGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	interconnectAttachmentsList := computeService.InterconnectAttachments.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)

@@ -22,8 +22,6 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 
 	"github.com/hashicorp/terraform/terraform"
-
-	"github.com/zclconf/go-cty/cty"
 )
 
 type BaseResource struct {
@@ -111,13 +109,7 @@ func RefreshResourceWorker(input chan *Resource, wg *sync.WaitGroup, provider *p
 	}
 }
 
-func IgnoreKeys(resourcesTypes []string, providerName string, providerConfig cty.Value, verbose bool) map[string][]string {
-	p, err := provider_wrapper.NewProviderWrapper(providerName, providerConfig, verbose)
-	if err != nil {
-		log.Println("plugin error 1:", err)
-		return map[string][]string{}
-	}
-	defer p.Kill()
+func IgnoreKeys(resourcesTypes []string, p *provider_wrapper.ProviderWrapper) map[string][]string {
 	readOnlyAttributes, err := p.GetReadOnlyAttributes(resourcesTypes)
 	if err != nil {
 		log.Println("plugin error 2:", err)

@@ -60,14 +60,14 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
 Terraformer uses Terraform providers and is designed to easily support newly added resources.
 To upgrade resources with new fields, all you need to do is upgrade the relevant Terraform providers.
 ```
-Import current state to Terraform configuration from Google Cloud
+Import current state to Terraform configuration from a provider
 
 Usage:
-   import google [flags]
-   import google [command]
+   import [provider] [flags]
+   import [provider] [command]
 
 Available Commands:
-  list        List supported resources for google provider
+  list        List supported resources for a provider
 
 Flags:
   -b, --bucket string         gs://terraform-state
@@ -80,11 +80,11 @@ Flags:
   -p, --path-pattern string   {output}/{provider}/ (default "{output}/{provider}/{service}/")
       --projects strings
   -z, --regions strings       europe-west1, (default [global])
-  -r, --resources strings     firewalls,networks
+  -r, --resources strings     firewalls,networks or * for all services
   -s, --state string          local or bucket (default "local")
   -v, --verbose               verbose mode
 
-Use " import google [command] --help" for more information about a command.
+Use " import [provider] [command] --help" for more information about a command.
 ```
 #### Permissions
 
@@ -381,6 +381,20 @@ In that case terraformer will not know with which region resources are associate
     * `aws_lb_listener_certificate`
     * `aws_lb_target_group`
     * `aws_lb_target_group_attachment`
+*   `api_gateway`
+    * `aws_api_gateway_authorizer`
+    * `aws_api_gateway_documentation_part`
+    * `aws_api_gateway_gateway_response`
+    * `aws_api_gateway_integration`
+    * `aws_api_gateway_integration_response`
+    * `aws_api_gateway_method`
+    * `aws_api_gateway_method_response`
+    * `aws_api_gateway_model`
+    * `aws_api_gateway_resource`
+    * `aws_api_gateway_rest_api`
+    * `aws_api_gateway_stage`
+    * `aws_api_gateway_usage_plan`
+    * `aws_api_gateway_vpc_link`
 *   `auto_scaling`
     * `aws_autoscaling_group`
     * `aws_launch_configuration`
@@ -397,13 +411,24 @@ In that case terraformer will not know with which region resources are associate
     * `aws_cloudformation_stack_set_instance`
 *   `cloudtrail`
     * `aws_cloudtrail`
+*   `cloudwatch`
+    * `aws_cloudwatch_dashboard`
+    * `aws_cloudwatch_event_rule`
+    * `aws_cloudwatch_event_target`
+    * `aws_cloudwatch_metric_alarm`
+*   `codebuild`
+    * `aws_codebuild_project`
 *   `codecommit`
     * `aws_codecommit_repository`
+*   `codedeploy`
+    * `aws_codedeploy_app`
 *   `codepipeline`
     * `aws_codepipeline`
     * `aws_codepipeline_webhook`
 *   `customer_gateway`
     * `aws_customer_gateway`
+*   `datapipeline`
+    * `aws_datapipeline_pipeline`
 *   `dynamodb`
     * `aws_dynamodb_table`
 *   `ec2_instance`
@@ -425,6 +450,10 @@ In that case terraformer will not know with which region resources are associate
     * `aws_ecs_cluster`
     * `aws_ecs_service`
     * `aws_ecs_task_definition`
+*   `ecr`
+    * `aws_ecr_lifecycle_policy`
+    * `aws_ecr_repository`
+    * `aws_ecr_repository_policy`
 *   `eks`
     * `aws_eks_cluster`
 *   `elb`
@@ -432,6 +461,8 @@ In that case terraformer will not know with which region resources are associate
 *   `emr`
     * `aws_emr_cluster`
     * `aws_emr_security_configuration`
+*   `eni`
+    * `aws_network_interface`
 *   `es`
     * `aws_elasticsearch_domain`
 *   `firehose`
@@ -443,6 +474,7 @@ In that case terraformer will not know with which region resources are associate
 *   `iam`
     * `aws_iam_group`
     * `aws_iam_group_policy`
+    * `aws_iam_group_policy_attachment`
     * `aws_iam_instance_profile`
     * `aws_iam_policy`
     * `aws_iam_policy_attachment`
@@ -453,14 +485,20 @@ In that case terraformer will not know with which region resources are associate
     * `aws_iam_user_policy`
 *   `igw`
     * `aws_internet_gateway`
+*   `iot`
+    * `aws_iot_thing`
+    * `aws_iot_thing_type`
+    * `aws_iot_topic_rule`
+    * `aws_iot_role_alias`
 *   `kinesis`
     * `aws_kinesis_stream`
 *   `kms`
     * `aws_kms_key`
     * `aws_kms_alias`
 *   `lambda`
-    * `aws_lambda_function`
     * `aws_lambda_event_source_mapping`
+    * `aws_lambda_function`
+    * `aws_lambda_function_event_invoke_config`
     * `aws_lambda_layer_version`
 *   `msk`
     * `aws_msk_cluster`
@@ -490,6 +528,13 @@ In that case terraformer will not know with which region resources are associate
 *   `s3`
     * `aws_s3_bucket`
     * `aws_s3_bucket_policy`
+*   `ses`
+    * `aws_ses_configuration_set`
+    * `aws_ses_domain_identity`
+    * `aws_ses_email_identity`
+    * `aws_ses_receipt_rule`
+    * `aws_ses_receipt_rule_set`
+    * `aws_ses_template`
 *   `sg`
     * `aws_security_group`
     * `aws_security_group_rule` (if a rule cannot be inlined)
@@ -503,6 +548,32 @@ In that case terraformer will not know with which region resources are associate
 *   `transit_gateway`
     * `aws_ec2_transit_gateway_route_table`
     * `aws_ec2_transit_gateway_vpc_attachment`
+*   `waf`
+    * `aws_waf_byte_match_set`
+    * `aws_waf_geo_match_set`
+    * `aws_waf_ipset`
+    * `aws_waf_rate_based_rule`
+    * `aws_waf_regex_match_set`
+    * `aws_waf_regex_pattern_set`
+    * `aws_waf_rule`
+    * `aws_waf_rule_group`
+    * `aws_waf_size_constraint_set`
+    * `aws_waf_sql_injection_match_set`
+    * `aws_waf_web_acl`
+    * `aws_waf_xss_match_set`
+*   `waf_regional`
+    * `aws_wafregional_byte_match_set`
+    * `aws_wafregional_geo_match_set`
+    * `aws_wafregional_ipset`
+    * `aws_wafregional_rate_based_rule`
+    * `aws_wafregional_regex_match_set`
+    * `aws_wafregional_regex_pattern_set`
+    * `aws_wafregional_rule`
+    * `aws_wafregional_rule_group`
+    * `aws_wafregional_size_constraint_set`
+    * `aws_wafregional_sql_injection_match_set`
+    * `aws_wafregional_web_acl`
+    * `aws_wafregional_xss_match_set`
 *   `vpc`
     * `aws_vpc`
 *   `vpc_peering`
@@ -522,19 +593,22 @@ List of global AWS services:
 *   `iam`
 *   `organization`
 *   `route53`
+*   `waf`
 
 #### Attribute filters
 
 Attribute filters allow filtering across different resource types by its attributes.
 
 ```
-terraformer import aws --resources=ec2_instance,ebs --filter=Name=tags.costCenter;Value=20000:'20001:1' --regions=eu-west-1
+terraformer import aws --resources=ec2_instance,ebs --filter="Name=tags.costCenter;Value=20000:'20001:1'" --regions=eu-west-1
 ```
 Will only import AWS EC2 instances along with EBS volumes annotated with tag `costCenter` with values `20000` or `20001:1`. Attribute filters are by default applicable to all resource types although it's possible to specify to what resource type a given filter should be applicable to by providing `Type=<type>` parameter. For example:
 ```
 terraformer import aws --resources=ec2_instance,ebs --filter=Type=ec2_instance;Name=tags.costCenter;Value=20000:'20001:1' --regions=eu-west-1
 ```
 Will work as same as example above with a change the filter will be applicable only to `ec2_instance` resources.
+
+Due to fact API Gateway generates a lot of resources, it's possible to issue a filtering query to retrieve resources related to a given REST API by tags. To fetch resources related to a REST API resource with a tag `STAGE` and value `dev`, add parameter `--filter="Type=aws_api_gateway_rest_api;Name=tags.STAGE;Value=dev"`.
 
 #### SQS queues retrieval
 

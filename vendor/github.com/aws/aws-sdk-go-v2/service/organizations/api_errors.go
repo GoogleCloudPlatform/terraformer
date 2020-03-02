@@ -163,8 +163,13 @@ const (
 	//    * OU_NUMBER_LIMIT_EXCEEDED: You attempted to exceed the number of OUs
 	//    that you can have in an organization.
 	//
-	//    * POLICY_NUMBER_LIMIT_EXCEEDED. You attempted to exceed the number of
+	//    * POLICY_NUMBER_LIMIT_EXCEEDED: You attempted to exceed the number of
 	//    policies that you can have in an organization.
+	//
+	//    * TAG_POLICY_VIOLATION: Tags associated with the resource must be compliant
+	//    with the tag policy that’s in effect for the account. For more information,
+	//    see Tag Policies (http://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_tag-policies.html)
+	//    in the AWS Organizations User Guide.
 	ErrCodeConstraintViolationException = "ConstraintViolationException"
 
 	// ErrCodeCreateAccountStatusNotFoundException for service response error code

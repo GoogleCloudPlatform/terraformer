@@ -1,6 +1,7 @@
 package aws
 
 import (
+	"context"
 	"math"
 	"sync"
 	"sync/atomic"
@@ -76,15 +77,13 @@ func (v Credentials) HasKeys() bool {
 type CredentialsProvider interface {
 	// Retrieve returns nil if it successfully retrieved the value.
 	// Error is returned if the value were not obtainable, or empty.
-	Retrieve() (Credentials, error)
-
-	// TODO should Retrieve take a context?
+	Retrieve(ctx context.Context) (Credentials, error)
 }
 
 // SafeCredentialsProvider provides caching and concurrency safe credentials
 // retrieval via the RetrieveFn.
 type SafeCredentialsProvider struct {
-	RetrieveFn func() (Credentials, error)
+	RetrieveFn func(ctx context.Context) (Credentials, error)
 
 	creds atomic.Value
 	m     sync.Mutex
@@ -95,7 +94,7 @@ type SafeCredentialsProvider struct {
 // credentials have not been retrieved yet, or expired RetrieveFn will be called.
 //
 // Returns and error if RetrieveFn returns an error.
-func (p *SafeCredentialsProvider) Retrieve() (Credentials, error) {
+func (p *SafeCredentialsProvider) Retrieve(ctx context.Context) (Credentials, error) {
 	if creds := p.getCreds(); creds != nil {
 		return *creds, nil
 	}
@@ -108,7 +107,7 @@ func (p *SafeCredentialsProvider) Retrieve() (Credentials, error) {
 		return *creds, nil
 	}
 
-	creds, err := p.RetrieveFn()
+	creds, err := p.RetrieveFn(ctx)
 	if err != nil {
 		return Credentials{}, err
 	}

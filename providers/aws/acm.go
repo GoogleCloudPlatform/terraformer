@@ -33,7 +33,7 @@ type ACMGenerator struct {
 	AWSService
 }
 
-func (g ACMGenerator) createCertificatesResources(svc *acm.Client) []terraform_utils.Resource {
+func (g *ACMGenerator) createCertificatesResources(svc *acm.Client) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	p := acm.NewListCertificatesPaginator(svc.ListCertificatesRequest(&acm.ListCertificatesInput{}))
 	for p.Next(context.Background()) {

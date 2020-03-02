@@ -4,11 +4,13 @@ package s3
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
+	"github.com/aws/aws-sdk-go-v2/service/s3/internal/arn"
 )
 
 type CopyObjectInput struct {
@@ -108,10 +110,10 @@ type CopyObjectInput struct {
 	// The date and time when you want the copied object's Object Lock to expire.
 	ObjectLockRetainUntilDate *time.Time `location:"header" locationName:"x-amz-object-lock-retain-until-date" type:"timestamp" timestampFormat:"iso8601"`
 
-	// Confirms that the requester knows that she or he will be charged for the
-	// request. Bucket owners need not specify this parameter in their requests.
-	// For information about downloading objects from Requester Pays buckets, see
-	// Downloading Objects in Requestor Pays Buckets (https://docs.aws.amazon.com/http:/docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html)
+	// Confirms that the requester knows that they will be charged for the request.
+	// Bucket owners need not specify this parameter in their requests. For information
+	// about downloading objects from requester pays buckets, see Downloading Objects
+	// in Requestor Pays Buckets (https://docs.aws.amazon.com/AmazonS3/latest/dev/ObjectsinRequesterPaysBuckets.html)
 	// in the Amazon S3 Developer Guide.
 	RequestPayer RequestPayer `location:"header" locationName:"x-amz-request-payer" type:"string" enum:"true"`
 
@@ -140,7 +142,7 @@ type CopyObjectInput struct {
 	// requests for an object protected by AWS KMS will fail if not made via SSL
 	// or using SigV4. For information about configuring using any of the officially
 	// supported AWS SDKs and AWS CLI, see Specifying the Signature Version in Request
-	// Authentication (https://docs.aws.amazon.com/http:/docs.aws.amazon.com/AmazonS3/latest/dev/UsingAWSSDK.html#specify-signature-version)
+	// Authentication (https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingAWSSDK.html#specify-signature-version)
 	// in the Amazon S3 Developer Guide.
 	SSEKMSKeyId *string `location:"header" locationName:"x-amz-server-side-encryption-aws-kms-key-id" type:"string" sensitive:"true"`
 
@@ -455,6 +457,20 @@ func (s CopyObjectInput) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
+func (s *CopyObjectInput) getEndpointARN() (arn.Resource, error) {
+	if s.Bucket == nil {
+		return nil, fmt.Errorf("member Bucket is nil")
+	}
+	return parseEndpointARN(*s.Bucket)
+}
+
+func (s *CopyObjectInput) hasEndpointARN() bool {
+	if s.Bucket == nil {
+		return false
+	}
+	return arn.IsARN(*s.Bucket)
+}
+
 type CopyObjectOutput struct {
 	_ struct{} `type:"structure" payload:"CopyObjectResult"`
 
@@ -487,7 +503,8 @@ type CopyObjectOutput struct {
 	SSEKMSEncryptionContext *string `location:"header" locationName:"x-amz-server-side-encryption-context" type:"string" sensitive:"true"`
 
 	// If present, specifies the ID of the AWS Key Management Service (AWS KMS)
-	// customer master key (CMK) that was used for the object.
+	// symmetric customer managed customer master key (CMK) that was used for the
+	// object.
 	SSEKMSKeyId *string `location:"header" locationName:"x-amz-server-side-encryption-aws-kms-key-id" type:"string" sensitive:"true"`
 
 	// The server-side encryption algorithm used when storing this object in Amazon
@@ -618,7 +635,7 @@ const opCopyObject = "CopyObject"
 // encryption key. You can do this regardless of the form of server-side encryption
 // that was used to encrypt the source, or even if the source object was not
 // encrypted. For more information about server-side encryption, see Using Server-Side
-// Encryption (https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingServerSideEncryption.html).
+// Encryption (https://docs.aws.amazon.com/AmazonS3/latest/dev/serv-side-encryption.html).
 //
 // A copy request might return an error when Amazon S3 receives the copy request
 // or while Amazon S3 is copying the files. If the error occurs before the copy
@@ -700,13 +717,18 @@ const opCopyObject = "CopyObject"
 //    * To encrypt the target object using server-side encryption with an AWS
 //    managed encryption key, provide the following request headers, as appropriate.
 //    x-amz-server-side​-encryption x-amz-server-side-encryption-aws-kms-key-id
-//    x-amz-server-side-encryption-context If you specify x-amz-server-side-encryption:aws:kms
-//    but don't provide x-amz-server-side- encryption-aws-kms-key-id, Amazon
-//    S3 uses the AWS managed customer master key (CMK) in AWS KMS to protect
-//    the data. All GET and PUT requests for an object protected by AWS KMS
-//    fail if you don't make them with SSL or by using SigV4. For more information
-//    about server-side encryption with CMKs stored in AWS KMS (SSE-KMS), see
-//    Protecting Data Using Server-Side Encryption with CMKs stored in KMS (https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html).
+//    x-amz-server-side-encryption-context If you specify x-amz-server-side-encryption:aws:kms,
+//    but don't provide x-amz-server-side-encryption-aws-kms-key-id, Amazon
+//    S3 uses the AWS managed CMK in AWS KMS to protect the data. If you want
+//    to use a customer managed AWS KMS CMK, you must provide the x-amz-server-side-encryption-aws-kms-key-id
+//    of the symmetric customer managed CMK. Amazon S3 only supports symmetric
+//    CMKs and not asymmetric CMKs. For more information, see Using Symmetric
+//    and Asymmetric Keys (https://docs.aws.amazon.com/kms/latest/developerguide/symmetric-asymmetric.html)
+//    in the AWS Key Management Service Developer Guide. All GET and PUT requests
+//    for an object protected by AWS KMS fail if you don't make them with SSL
+//    or by using SigV4. For more information about server-side encryption with
+//    CMKs stored in AWS KMS (SSE-KMS), see Protecting Data Using Server-Side
+//    Encryption with CMKs stored in KMS (https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html).
 //
 //    * To encrypt the target object using server-side encryption with an encryption
 //    key that you provide, use the following headers. x-amz-server-side​-encryption​-customer-algorithm

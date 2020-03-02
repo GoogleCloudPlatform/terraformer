@@ -32,7 +32,7 @@ type SnsGenerator struct {
 }
 
 // TF currently doesn't support email subscriptions + subscriptions with pending confirmations
-func (g SnsGenerator) isSupportedSubscription(protocol, subscriptionId string) bool {
+func (g *SnsGenerator) isSupportedSubscription(protocol, subscriptionId string) bool {
 	return protocol != "email" && protocol != "email-json" && subscriptionId != "PendingConfirmation"
 }
 

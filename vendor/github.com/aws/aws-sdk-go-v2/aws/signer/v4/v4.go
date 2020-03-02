@@ -55,6 +55,7 @@
 package v4
 
 import (
+	"context"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
@@ -262,8 +263,8 @@ type signingCtx struct {
 // generated. To bypass the signer computing the hash you can set the
 // "X-Amz-Content-Sha256" header with a precomputed value. The signer will
 // only compute the hash if the request header value is empty.
-func (v4 Signer) Sign(r *http.Request, body io.ReadSeeker, service, region string, signTime time.Time) (http.Header, error) {
-	return v4.signWithBody(r, body, service, region, 0, signTime)
+func (v4 Signer) Sign(ctx context.Context, r *http.Request, body io.ReadSeeker, service, region string, signTime time.Time) (http.Header, error) {
+	return v4.signWithBody(ctx, r, body, service, region, 0, signTime)
 }
 
 // Presign signs AWS v4 requests with the provided body, service name, region
@@ -296,12 +297,12 @@ func (v4 Signer) Sign(r *http.Request, body io.ReadSeeker, service, region strin
 // PUT/GET capabilities. If you would like to include the body's SHA256 in the
 // presigned request's signature you can set the "X-Amz-Content-Sha256"
 // HTTP header and that will be included in the request's signature.
-func (v4 Signer) Presign(r *http.Request, body io.ReadSeeker, service, region string, exp time.Duration, signTime time.Time) (http.Header, error) {
-	return v4.signWithBody(r, body, service, region, exp, signTime)
+func (v4 Signer) Presign(ctx context.Context, r *http.Request, body io.ReadSeeker, service, region string, exp time.Duration, signTime time.Time) (http.Header, error) {
+	return v4.signWithBody(ctx, r, body, service, region, exp, signTime)
 }
 
-func (v4 Signer) signWithBody(r *http.Request, body io.ReadSeeker, service, region string, exp time.Duration, signTime time.Time) (http.Header, error) {
-	ctx := &signingCtx{
+func (v4 Signer) signWithBody(ctx context.Context, r *http.Request, body io.ReadSeeker, service, region string, exp time.Duration, signTime time.Time) (http.Header, error) {
+	signingCtx := &signingCtx{
 		Request:                r,
 		Body:                   body,
 		Query:                  r.URL.Query(),
@@ -314,31 +315,31 @@ func (v4 Signer) signWithBody(r *http.Request, body io.ReadSeeker, service, regi
 		unsignedPayload:        v4.UnsignedPayload,
 	}
 
-	for key := range ctx.Query {
-		sort.Strings(ctx.Query[key])
+	for key := range signingCtx.Query {
+		sort.Strings(signingCtx.Query[key])
 	}
 
-	if ctx.isRequestSigned() {
-		ctx.Time = sdk.NowTime()
-		ctx.handlePresignRemoval()
+	if signingCtx.isRequestSigned() {
+		signingCtx.Time = sdk.NowTime()
+		signingCtx.handlePresignRemoval()
 	}
 
 	var err error
-	ctx.credValues, err = v4.Credentials.Retrieve()
+	signingCtx.credValues, err = v4.Credentials.Retrieve(ctx)
 	if err != nil {
 		return http.Header{}, err
 	}
 
-	aws.SanitizeHostForHeader(ctx.Request)
-	ctx.assignAmzQueryValues()
-	if err := ctx.build(v4.DisableHeaderHoisting); err != nil {
+	aws.SanitizeHostForHeader(signingCtx.Request)
+	signingCtx.assignAmzQueryValues()
+	if err := signingCtx.build(v4.DisableHeaderHoisting); err != nil {
 		return nil, err
 	}
 
 	// If the request is not presigned the body should be attached to it. This
 	// prevents the confusion of wanting to send a signed request without
 	// the body the request was signed for attached.
-	if !(v4.DisableRequestBodyOverwrite || ctx.isPresign) {
+	if !(v4.DisableRequestBodyOverwrite || signingCtx.isPresign) {
 		var reader io.ReadCloser
 		if body != nil {
 			var ok bool
@@ -350,10 +351,10 @@ func (v4 Signer) signWithBody(r *http.Request, body io.ReadSeeker, service, regi
 	}
 
 	if v4.Debug.Matches(aws.LogDebugWithSigning) {
-		v4.logSigningInfo(ctx)
+		v4.logSigningInfo(signingCtx)
 	}
 
-	return ctx.SignedHeaderVals, nil
+	return signingCtx.SignedHeaderVals, nil
 }
 
 func (ctx *signingCtx) handlePresignRemoval() {
@@ -421,14 +422,14 @@ func SignSDKRequest(req *aws.Request, opts ...func(*Signer)) {
 		return
 	}
 
-	region := req.Metadata.SigningRegion
+	region := req.Endpoint.SigningRegion
 	if region == "" {
-		region = req.Config.Region
+		region = req.Metadata.SigningRegion
 	}
 
-	name := req.Metadata.SigningName
+	name := req.Endpoint.SigningName
 	if name == "" {
-		name = req.Metadata.ServiceName
+		name = req.Metadata.SigningName
 	}
 
 	v4 := NewSigner(req.Config.Credentials, func(v4 *Signer) {
@@ -454,7 +455,7 @@ func SignSDKRequest(req *aws.Request, opts ...func(*Signer)) {
 		signingTime = req.LastSignedAt
 	}
 
-	signedHeaders, err := v4.signWithBody(req.HTTPRequest, req.GetBody(),
+	signedHeaders, err := v4.signWithBody(req.Context(), req.HTTPRequest, req.GetBody(),
 		name, region, req.ExpireTime, signingTime,
 	)
 	if err != nil {
@@ -562,6 +563,7 @@ func buildQuery(r rule, header http.Header) (url.Values, http.Header) {
 
 	return query, unsignedHeaders
 }
+
 func (ctx *signingCtx) buildCanonicalHeaders(r rule, header http.Header) {
 	var headers []string
 	headers = append(headers, "host")

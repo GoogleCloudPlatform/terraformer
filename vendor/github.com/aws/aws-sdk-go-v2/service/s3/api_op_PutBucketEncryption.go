@@ -4,11 +4,13 @@ package s3
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 	"github.com/aws/aws-sdk-go-v2/private/protocol"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restxml"
+	"github.com/aws/aws-sdk-go-v2/service/s3/internal/arn"
 )
 
 type PutBucketEncryptionInput struct {
@@ -82,6 +84,20 @@ func (s PutBucketEncryptionInput) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
+func (s *PutBucketEncryptionInput) getEndpointARN() (arn.Resource, error) {
+	if s.Bucket == nil {
+		return nil, fmt.Errorf("member Bucket is nil")
+	}
+	return parseEndpointARN(*s.Bucket)
+}
+
+func (s *PutBucketEncryptionInput) hasEndpointARN() bool {
+	if s.Bucket == nil {
+		return false
+	}
+	return arn.IsARN(*s.Bucket)
+}
+
 type PutBucketEncryptionOutput struct {
 	_ struct{} `type:"structure"`
 }
@@ -104,9 +120,9 @@ const opPutBucketEncryption = "PutBucketEncryption"
 // This implementation of the PUT operation uses the encryption subresource
 // to set the default encryption state of an existing bucket.
 //
-// This implementation of the PUT operation sets default encryption for a buckets
+// This implementation of the PUT operation sets default encryption for a bucket
 // using server-side encryption with Amazon S3-managed keys SSE-S3 or AWS KMS
-// customer master keys (CMKs) (SSE-KMS) bucket.
+// customer master keys (CMKs) (SSE-KMS).
 //
 // This operation requires AWS Signature Version 4. For more information, see
 // Authenticating Requests (AWS Signature Version 4) (sig-v4-authenticating-requests.html).

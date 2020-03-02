@@ -34,7 +34,7 @@ type Route53Generator struct {
 	AWSService
 }
 
-func (g Route53Generator) createZonesResources(svc *route53.Client) []terraform_utils.Resource {
+func (g *Route53Generator) createZonesResources(svc *route53.Client) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	p := route53.NewListHostedZonesPaginator(svc.ListHostedZonesRequest(&route53.ListHostedZonesInput{}))
 	for p.Next(context.Background()) {

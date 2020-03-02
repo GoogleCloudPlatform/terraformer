@@ -350,6 +350,18 @@ const (
 	// You have reached the maximum number of event subscriptions.
 	ErrCodeEventSubscriptionQuotaExceededFault = "EventSubscriptionQuotaExceeded"
 
+	// ErrCodeExportTaskAlreadyExistsFault for service response error code
+	// "ExportTaskAlreadyExists".
+	//
+	// You can't start an export task that's already running.
+	ErrCodeExportTaskAlreadyExistsFault = "ExportTaskAlreadyExists"
+
+	// ErrCodeExportTaskNotFoundFault for service response error code
+	// "ExportTaskNotFound".
+	//
+	// The export task doesn't exist.
+	ErrCodeExportTaskNotFoundFault = "ExportTaskNotFound"
+
 	// ErrCodeGlobalClusterAlreadyExistsFault for service response error code
 	// "GlobalClusterAlreadyExistsFault".
 	ErrCodeGlobalClusterAlreadyExistsFault = "GlobalClusterAlreadyExistsFault"
@@ -361,6 +373,18 @@ const (
 	// ErrCodeGlobalClusterQuotaExceededFault for service response error code
 	// "GlobalClusterQuotaExceededFault".
 	ErrCodeGlobalClusterQuotaExceededFault = "GlobalClusterQuotaExceededFault"
+
+	// ErrCodeIamRoleMissingPermissionsFault for service response error code
+	// "IamRoleMissingPermissions".
+	//
+	// The IAM role requires additional permissions to export to an Amazon S3 bucket.
+	ErrCodeIamRoleMissingPermissionsFault = "IamRoleMissingPermissions"
+
+	// ErrCodeIamRoleNotFoundFault for service response error code
+	// "IamRoleNotFound".
+	//
+	// The IAM role is missing for exporting to an Amazon S3 bucket.
+	ErrCodeIamRoleNotFoundFault = "IamRoleNotFound"
 
 	// ErrCodeInstallationMediaAlreadyExistsFault for service response error code
 	// "InstallationMediaAlreadyExists".
@@ -491,6 +515,25 @@ const (
 	// This error can occur if someone else is modifying a subscription. You should
 	// retry the action.
 	ErrCodeInvalidEventSubscriptionStateFault = "InvalidEventSubscriptionState"
+
+	// ErrCodeInvalidExportOnlyFault for service response error code
+	// "InvalidExportOnly".
+	//
+	// The export is invalid for exporting to an Amazon S3 bucket.
+	ErrCodeInvalidExportOnlyFault = "InvalidExportOnly"
+
+	// ErrCodeInvalidExportSourceStateFault for service response error code
+	// "InvalidExportSourceState".
+	//
+	// The state of the export snapshot is invalid for exporting to an Amazon S3
+	// bucket.
+	ErrCodeInvalidExportSourceStateFault = "InvalidExportSourceState"
+
+	// ErrCodeInvalidExportTaskStateFault for service response error code
+	// "InvalidExportTaskStateFault".
+	//
+	// You can't cancel an export task that has completed.
+	ErrCodeInvalidExportTaskStateFault = "InvalidExportTaskStateFault"
 
 	// ErrCodeInvalidGlobalClusterStateFault for service response error code
 	// "InvalidGlobalClusterStateFault".

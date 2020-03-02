@@ -53,7 +53,7 @@ func (g FirewallsGenerator) createResources(ctx context.Context, firewallsList *
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -65,7 +65,7 @@ func (g *FirewallsGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	firewallsList := computeService.Firewalls.List(g.GetArgs()["project"].(string))

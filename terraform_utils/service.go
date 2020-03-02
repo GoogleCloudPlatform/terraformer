@@ -15,10 +15,9 @@
 package terraform_utils
 
 import (
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 	"log"
 	"strings"
-
-	"github.com/zclconf/go-cty/cty"
 )
 
 type ServiceGenerator interface {
@@ -35,7 +34,7 @@ type ServiceGenerator interface {
 	SetProviderName(name string)
 	GetName() string
 	InitialCleanup()
-	PopulateIgnoreKeys(cty.Value, bool)
+	PopulateIgnoreKeys(*provider_wrapper.ProviderWrapper)
 	PostRefreshCleanup()
 }
 
@@ -143,12 +142,12 @@ func (s *Service) PostConvertHook() error {
 	return nil
 }
 
-func (s *Service) PopulateIgnoreKeys(providerConfig cty.Value, debug bool) {
-	resourcesTypes := []string{}
+func (s *Service) PopulateIgnoreKeys(providerWrapper *provider_wrapper.ProviderWrapper) {
+	var resourcesTypes []string
 	for _, r := range s.Resources {
 		resourcesTypes = append(resourcesTypes, r.InstanceInfo.Type)
 	}
-	keys := IgnoreKeys(resourcesTypes, s.ProviderName, providerConfig, debug)
+	keys := IgnoreKeys(resourcesTypes, providerWrapper)
 	for k, v := range keys {
 		for i := range s.Resources {
 			if s.Resources[i].InstanceInfo.Type == k {

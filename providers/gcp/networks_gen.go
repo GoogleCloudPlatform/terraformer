@@ -53,7 +53,7 @@ func (g NetworksGenerator) createResources(ctx context.Context, networksList *co
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -65,7 +65,7 @@ func (g *NetworksGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	networksList := computeService.Networks.List(g.GetArgs()["project"].(string))

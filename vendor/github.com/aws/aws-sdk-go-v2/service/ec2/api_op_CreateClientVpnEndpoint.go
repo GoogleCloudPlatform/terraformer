@@ -82,6 +82,13 @@ type CreateClientVpnEndpointInput struct {
 	//
 	// Default value: udp
 	TransportProtocol TransportProtocol `type:"string" enum:"true"`
+
+	// The port number to assign to the Client VPN endpoint for TCP and UDP traffic.
+	//
+	// Valid Values: 443 | 1194
+	//
+	// Default Value: 443
+	VpnPort *int64 `type:"integer"`
 }
 
 // String returns the string representation

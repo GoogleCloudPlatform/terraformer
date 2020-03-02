@@ -109,6 +109,9 @@ const opDescribeDBInstances = "DescribeDBInstances"
 //
 // Returns information about provisioned RDS instances. This API supports pagination.
 //
+// This operation can also return information for Amazon Neptune DB instances
+// and Amazon DocumentDB instances.
+//
 //    // Example sending a request using DescribeDBInstancesRequest.
 //    req := client.DescribeDBInstancesRequest(params)
 //    resp, err := req.Send(context.TODO())

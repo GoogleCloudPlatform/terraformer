@@ -53,7 +53,7 @@ func (g RegionDisksGenerator) createResources(ctx context.Context, regionDisksLi
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -65,7 +65,7 @@ func (g *RegionDisksGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	regionDisksList := computeService.RegionDisks.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)

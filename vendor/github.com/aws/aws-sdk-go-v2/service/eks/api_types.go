@@ -310,8 +310,8 @@ type FargateProfile struct {
 
 	// The Amazon Resource Name (ARN) of the pod execution role to use for pods
 	// that match the selectors in the Fargate profile. For more information, see
-	// Pod Execution Role (eks/latest/userguide/pod-execution-role.html) in the
-	// Amazon EKS User Guide.
+	// Pod Execution Role (https://docs.aws.amazon.com/eks/latest/userguide/pod-execution-role.html)
+	// in the Amazon EKS User Guide.
 	PodExecutionRoleArn *string `locationName:"podExecutionRoleArn" type:"string"`
 
 	// The selectors to match for pods to use this Fargate profile.
@@ -320,7 +320,7 @@ type FargateProfile struct {
 	// The current status of the Fargate profile.
 	Status FargateProfileStatus `locationName:"status" type:"string" enum:"true"`
 
-	// The IDs of subnets to launch Fargate pods into.
+	// The IDs of subnets to launch pods into.
 	Subnets []string `locationName:"subnets" type:"list"`
 
 	// The metadata applied to the Fargate profile to assist with categorization
@@ -1263,19 +1263,32 @@ type VpcConfigRequest struct {
 	// API server endpoint. If you enable private access, Kubernetes API requests
 	// from within your cluster's VPC use the private VPC endpoint. The default
 	// value for this parameter is false, which disables private access for your
-	// Kubernetes API server. For more information, see Amazon EKS Cluster Endpoint
-	// Access Control (https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html)
+	// Kubernetes API server. If you disable private access and you have worker
+	// nodes or AWS Fargate pods in the cluster, then ensure that publicAccessCidrs
+	// includes the necessary CIDR blocks for communication with the worker nodes
+	// or Fargate pods. For more information, see Amazon EKS Cluster Endpoint Access
+	// Control (https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html)
 	// in the Amazon EKS User Guide .
 	EndpointPrivateAccess *bool `locationName:"endpointPrivateAccess" type:"boolean"`
 
-	// Set this value to false to disable public access for your cluster's Kubernetes
+	// Set this value to false to disable public access to your cluster's Kubernetes
 	// API server endpoint. If you disable public access, your cluster's Kubernetes
-	// API server can receive only requests from within the cluster VPC. The default
+	// API server can only receive requests from within the cluster VPC. The default
 	// value for this parameter is true, which enables public access for your Kubernetes
 	// API server. For more information, see Amazon EKS Cluster Endpoint Access
 	// Control (https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html)
 	// in the Amazon EKS User Guide .
 	EndpointPublicAccess *bool `locationName:"endpointPublicAccess" type:"boolean"`
+
+	// The CIDR blocks that are allowed access to your cluster's public Kubernetes
+	// API server endpoint. Communication to the endpoint from addresses outside
+	// of the CIDR blocks that you specify is denied. The default value is 0.0.0.0/0.
+	// If you've disabled private endpoint access and you have worker nodes or AWS
+	// Fargate pods in the cluster, then ensure that you specify the necessary CIDR
+	// blocks. For more information, see Amazon EKS Cluster Endpoint Access Control
+	// (https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html)
+	// in the Amazon EKS User Guide .
+	PublicAccessCidrs []string `locationName:"publicAccessCidrs" type:"list"`
 
 	// Specify one or more security groups for the cross-account elastic network
 	// interfaces that Amazon EKS creates to use to allow communication between
@@ -1307,6 +1320,18 @@ func (s VpcConfigRequest) MarshalFields(e protocol.FieldEncoder) error {
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "endpointPublicAccess", protocol.BoolValue(v), metadata)
+	}
+	if s.PublicAccessCidrs != nil {
+		v := s.PublicAccessCidrs
+
+		metadata := protocol.Metadata{}
+		ls0 := e.List(protocol.BodyTarget, "publicAccessCidrs", metadata)
+		ls0.Start()
+		for _, v1 := range v {
+			ls0.ListAddValue(protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v1)})
+		}
+		ls0.End()
+
 	}
 	if s.SecurityGroupIds != nil {
 		v := s.SecurityGroupIds
@@ -1347,14 +1372,28 @@ type VpcConfigResponse struct {
 	// This parameter indicates whether the Amazon EKS private API server endpoint
 	// is enabled. If the Amazon EKS private API server endpoint is enabled, Kubernetes
 	// API requests that originate from within your cluster's VPC use the private
-	// VPC endpoint instead of traversing the internet.
+	// VPC endpoint instead of traversing the internet. If this value is disabled
+	// and you have worker nodes or AWS Fargate pods in the cluster, then ensure
+	// that publicAccessCidrs includes the necessary CIDR blocks for communication
+	// with the worker nodes or Fargate pods. For more information, see Amazon EKS
+	// Cluster Endpoint Access Control (https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html)
+	// in the Amazon EKS User Guide .
 	EndpointPrivateAccess *bool `locationName:"endpointPrivateAccess" type:"boolean"`
 
 	// This parameter indicates whether the Amazon EKS public API server endpoint
 	// is enabled. If the Amazon EKS public API server endpoint is disabled, your
-	// cluster's Kubernetes API server can receive only requests that originate
+	// cluster's Kubernetes API server can only receive requests that originate
 	// from within the cluster VPC.
 	EndpointPublicAccess *bool `locationName:"endpointPublicAccess" type:"boolean"`
+
+	// The CIDR blocks that are allowed access to your cluster's public Kubernetes
+	// API server endpoint. Communication to the endpoint from addresses outside
+	// of the listed CIDR blocks is denied. The default value is 0.0.0.0/0. If you've
+	// disabled private endpoint access and you have worker nodes or AWS Fargate
+	// pods in the cluster, then ensure that the necessary CIDR blocks are listed.
+	// For more information, see Amazon EKS Cluster Endpoint Access Control (https://docs.aws.amazon.com/eks/latest/userguide/cluster-endpoint.html)
+	// in the Amazon EKS User Guide .
+	PublicAccessCidrs []string `locationName:"publicAccessCidrs" type:"list"`
 
 	// The security groups associated with the cross-account elastic network interfaces
 	// that are used to allow communication between your worker nodes and the Kubernetes
@@ -1392,6 +1431,18 @@ func (s VpcConfigResponse) MarshalFields(e protocol.FieldEncoder) error {
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "endpointPublicAccess", protocol.BoolValue(v), metadata)
+	}
+	if s.PublicAccessCidrs != nil {
+		v := s.PublicAccessCidrs
+
+		metadata := protocol.Metadata{}
+		ls0 := e.List(protocol.BodyTarget, "publicAccessCidrs", metadata)
+		ls0.Start()
+		for _, v1 := range v {
+			ls0.ListAddValue(protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v1)})
+		}
+		ls0.End()
+
 	}
 	if s.SecurityGroupIds != nil {
 		v := s.SecurityGroupIds

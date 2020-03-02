@@ -1,6 +1,7 @@
 package aws
 
 import (
+	"context"
 	"github.com/aws/aws-sdk-go-v2/aws/awserr"
 )
 
@@ -60,10 +61,10 @@ func NewChainProvider(providers []CredentialsProvider) *ChainProvider {
 //
 // If a provider is found it will be cached and any calls to IsExpired()
 // will return the expired state of the cached provider.
-func (c *ChainProvider) retrieveFn() (Credentials, error) {
+func (c *ChainProvider) retrieveFn(ctx context.Context) (Credentials, error) {
 	var errs []error
 	for _, p := range c.Providers {
-		creds, err := p.Retrieve()
+		creds, err := p.Retrieve(ctx)
 		if err == nil {
 			return creds, nil
 		}

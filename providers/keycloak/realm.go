@@ -16,6 +16,7 @@ package keycloak
 
 import (
 	"reflect"
+	"sort"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
@@ -216,6 +217,18 @@ func (g *RealmGenerator) PostConvertHook() error {
 		}
 	}
 	for i, r := range g.Resources {
+		if r.InstanceInfo.Type == "keycloak_realm" {
+			if _, exist := r.Item["internationalization"]; exist {
+				for _, v := range r.Item["internationalization"].([]interface{}) {
+					sortedSupportedLocales := []string{}
+					for _, vv := range v.(map[string]interface{})["supported_locales"].([]interface{}) {
+						sortedSupportedLocales = append(sortedSupportedLocales, vv.(string))
+					}
+					sort.Strings(sortedSupportedLocales)
+					v.(map[string]interface{})["supported_locales"] = sortedSupportedLocales
+				}
+			}
+		}
 		if r.InstanceInfo.Type != "keycloak_required_action" &&
 			r.InstanceInfo.Type != "keycloak_ldap_user_federation" &&
 			r.InstanceInfo.Type != "keycloak_ldap_full_name_mapper" &&
@@ -230,6 +243,14 @@ func (g *RealmGenerator) PostConvertHook() error {
 			r.InstanceInfo.Type == "keycloak_ldap_msad_user_account_control_mapper" ||
 			r.InstanceInfo.Type == "keycloak_ldap_user_attribute_mapper" {
 			g.Resources[i].Item["ldap_user_federation_id"] = mapUserFederationIDs[g.Resources[i].Item["ldap_user_federation_id"].(string)]
+		}
+		if r.InstanceInfo.Type == "keycloak_ldap_user_federation" {
+			sortedUserObjectClasses := []string{}
+			for _, v := range r.Item["user_object_classes"].([]interface{}) {
+				sortedUserObjectClasses = append(sortedUserObjectClasses, v.(string))
+			}
+			sort.Strings(sortedUserObjectClasses)
+			r.Item["user_object_classes"] = sortedUserObjectClasses
 		}
 	}
 	return nil
