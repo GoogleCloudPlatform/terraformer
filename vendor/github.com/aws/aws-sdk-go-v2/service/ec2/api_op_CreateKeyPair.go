@@ -57,6 +57,9 @@ type CreateKeyPairOutput struct {
 
 	// The name of the key pair.
 	KeyName *string `locationName:"keyName" type:"string"`
+
+	// The ID of the key pair.
+	KeyPairId *string `locationName:"keyPairId" type:"string"`
 }
 
 // String returns the string representation

@@ -81,7 +81,7 @@ type DescribeDBLogFilesOutput struct {
 	// The DB log files returned.
 	DescribeDBLogFiles []DescribeDBLogFilesDetails `locationNameList:"DescribeDBLogFilesDetails" type:"list"`
 
-	// A pagination token that can be used in a subsequent DescribeDBLogFiles request.
+	// A pagination token that can be used in a later DescribeDBLogFiles request.
 	Marker *string `type:"string"`
 }
 

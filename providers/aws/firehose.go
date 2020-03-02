@@ -24,7 +24,7 @@ type FirehoseGenerator struct {
 	AWSService
 }
 
-func (g FirehoseGenerator) createResources(streamNames []string) []terraform_utils.Resource {
+func (g *FirehoseGenerator) createResources(streamNames []string) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
 	for _, resourceName := range streamNames {
 		resources = append(resources, terraform_utils.NewResource(

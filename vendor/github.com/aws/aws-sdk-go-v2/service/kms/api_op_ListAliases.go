@@ -100,7 +100,7 @@ const opListAliases = "ListAliases"
 // The response might also include aliases that have no TargetKeyId field. These
 // are predefined aliases that AWS has created but has not yet associated with
 // a CMK. Aliases that AWS creates in your account, including predefined aliases,
-// do not count against your AWS KMS aliases limit (https://docs.aws.amazon.com/kms/latest/developerguide/limits.html#aliases-limit).
+// do not count against your AWS KMS aliases quota (https://docs.aws.amazon.com/kms/latest/developerguide/limits.html#aliases-limit).
 //
 //    // Example sending a request using ListAliasesRequest.
 //    req := client.ListAliasesRequest(params)

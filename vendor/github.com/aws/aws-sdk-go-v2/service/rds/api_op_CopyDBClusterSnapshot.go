@@ -19,9 +19,9 @@ type CopyDBClusterSnapshotInput struct {
 	// DestinationRegion is used for presigning the request to a given region.
 	DestinationRegion *string `type:"string"`
 
-	// The AWS AWS KMS key ID for an encrypted DB cluster snapshot. The KMS key
-	// ID is the Amazon Resource Name (ARN), KMS key identifier, or the KMS key
-	// alias for the KMS encryption key.
+	// The AWS KMS key ID for an encrypted DB cluster snapshot. The KMS key ID is
+	// the Amazon Resource Name (ARN), KMS key identifier, or the KMS key alias
+	// for the KMS encryption key.
 	//
 	// If you copy an encrypted DB cluster snapshot from your AWS account, you can
 	// specify a value for KmsKeyId to encrypt the copy with a new KMS encryption
@@ -59,7 +59,7 @@ type CopyDBClusterSnapshotInput struct {
 	//    pre-signed URL.
 	//
 	//    * DestinationRegion - The name of the AWS Region that the DB cluster snapshot
-	//    will be created in.
+	//    is to be created in.
 	//
 	//    * SourceDBClusterSnapshotIdentifier - The DB cluster snapshot identifier
 	//    for the encrypted DB cluster snapshot to be copied. This identifier must
@@ -195,7 +195,7 @@ const opCopyDBClusterSnapshot = "CopyDBClusterSnapshot"
 //    Region. This is the same identifier for both the CopyDBClusterSnapshot
 //    action that is called in the destination AWS Region, and the action contained
 //    in the pre-signed URL. DestinationRegion - The name of the AWS Region
-//    that the DB cluster snapshot will be created in. SourceDBClusterSnapshotIdentifier
+//    that the DB cluster snapshot is to be created in. SourceDBClusterSnapshotIdentifier
 //    - The DB cluster snapshot identifier for the encrypted DB cluster snapshot
 //    to be copied. This identifier must be in the Amazon Resource Name (ARN)
 //    format for the source AWS Region. For example, if you are copying an encrypted

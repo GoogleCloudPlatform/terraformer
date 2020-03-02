@@ -32,7 +32,7 @@ type EbsGenerator struct {
 	AWSService
 }
 
-func (g EbsGenerator) volumeAttachmentId(device, volumeID, instanceID string) string {
+func (g *EbsGenerator) volumeAttachmentId(device, volumeID, instanceID string) string {
 	return fmt.Sprintf("vai-%d", hashcode.String(fmt.Sprintf("%s-%s-%s-", device, instanceID, volumeID)))
 }
 

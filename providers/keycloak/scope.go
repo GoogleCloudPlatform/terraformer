@@ -15,6 +15,7 @@
 package keycloak
 
 import (
+	"sort"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
@@ -113,7 +114,7 @@ func (g *ScopeGenerator) PostConvertHook() error {
 		if r.InstanceInfo.Type != "keycloak_openid_client_scope" {
 			continue
 		}
-		mapScopeNames[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+		mapScopeNames[r.Item["realm_id"].(string) + "_" + r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
 	}
 	for i, r := range g.Resources {
 		if r.InstanceInfo.Type != "keycloak_openid_client_scope" && r.InstanceInfo.Type != "keycloak_openid_client_default_scopes" && r.InstanceInfo.Type != "keycloak_openid_client_optional_scopes" {
@@ -125,15 +126,17 @@ func (g *ScopeGenerator) PostConvertHook() error {
 		if _, exist := r.Item["default_scopes"]; exist {
 			renamedScopes := []string{}
 			for _, v := range r.Item["default_scopes"].([]interface{}) {
-				renamedScopes = append(renamedScopes, mapScopeNames[v.(string)])
+				renamedScopes = append(renamedScopes, mapScopeNames[r.Item["realm_id"].(string) + "_" + v.(string)])
 			}
+			sort.Strings(renamedScopes)
 			r.Item["default_scopes"] = renamedScopes
 		}
 		if _, exist := r.Item["optional_scopes"]; exist {
 			renamedScopes := []string{}
 			for _, v := range r.Item["optional_scopes"].([]interface{}) {
-				renamedScopes = append(renamedScopes, mapScopeNames[v.(string)])
+				renamedScopes = append(renamedScopes, mapScopeNames[r.Item["realm_id"].(string) + "_" + v.(string)])
 			}
+			sort.Strings(renamedScopes)
 			r.Item["optional_scopes"] = renamedScopes
 		}
 	}

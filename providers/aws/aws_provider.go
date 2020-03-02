@@ -30,14 +30,20 @@ type AWSProvider struct {
 	profile string
 }
 
+const GlobalRegion = "aws-global"
+const NoRegion = ""
+
 // global resources should be bound to a default region. AWS doesn't specify in which region default services are
 // placed (see  https://docs.aws.amazon.com/general/latest/gr/rande.html), so we shouldn't assume any region as well
+//
+// AWS WAF V2 if added, should not be included in this list since it is a composition of regional and global resources.
 var SupportedGlobalResources = []string{
 	"budgets",
 	"cloudfront",
 	"iam",
 	"organization",
 	"route53",
+	"waf",
 }
 
 func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
@@ -137,7 +143,9 @@ func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
 		"version": provider_wrapper.GetProviderVersion(p.GetName()),
 	}
 
-	if p.region != "" {
+	if p.region == GlobalRegion {
+		awsConfig["region"] = "us-east-1" // For TF to workaround terraform-providers/terraform-provider-aws#1043
+	} else if p.region != NoRegion {
 		awsConfig["region"] = p.region
 	}
 
@@ -149,10 +157,17 @@ func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
 }
 
 func (p *AWSProvider) GetConfig() cty.Value {
-	return cty.ObjectVal(map[string]cty.Value{
-		"region":                 cty.StringVal(p.region),
-		"skip_region_validation": cty.True,
-	})
+	if p.region != GlobalRegion {
+		return cty.ObjectVal(map[string]cty.Value{
+			"region":                 cty.StringVal(p.region),
+			"skip_region_validation": cty.True,
+		})
+	} else {
+		return cty.ObjectVal(map[string]cty.Value{
+			"region":                 cty.StringVal(""),
+			"skip_region_validation": cty.True,
+		})
+	}
 }
 
 func (p *AWSProvider) GetBasicConfig() cty.Value {
@@ -167,7 +182,7 @@ func (p *AWSProvider) Init(args []string) error {
 	// Terraformer accepts region and profile configuration, so we must detect what env variables to adjust to make Go SDK rely on them. AWS_SDK_LOAD_CONFIG here must be checked to determine correct variable to set.
 	enableSharedConfig, _ := strconv.ParseBool(os.Getenv("AWS_SDK_LOAD_CONFIG"))
 	var err error
-	if p.region != "" {
+	if p.region != GlobalRegion && p.region != NoRegion {
 		if enableSharedConfig {
 			err = os.Setenv("AWS_DEFAULT_REGION", p.region)
 		} else {
@@ -218,18 +233,24 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"accessanalyzer":    &AccessAnalyzerGenerator{},
 		"acm":               &ACMGenerator{},
 		"alb":               &AlbGenerator{},
+		"api_gateway":       &ApiGatewayGenerator{},
 		"auto_scaling":      &AutoScalingGenerator{},
 		"budgets":           &BudgetsGenerator{},
 		"cloud9":            &Cloud9Generator{},
 		"cloudformation":    &CloudFormationGenerator{},
 		"cloudfront":        &CloudFrontGenerator{},
 		"cloudtrail":        &CloudTrailGenerator{},
+		"cloudwatch":        &CloudWatchGenerator{},
+		"codebuild":         &CodeBuildGenerator{},
 		"codecommit":        &CodeCommitGenerator{},
+		"codedeploy":        &CodeDeployGenerator{},
 		"codepipeline":      &CodePipelineGenerator{},
 		"customer_gateway":  &CustomerGatewayGenerator{},
+		"datapipeline":      &DataPipelineGenerator{},
 		"dynamodb":          &DynamoDbGenerator{},
 		"ebs":               &EbsGenerator{},
 		"ec2_instance":      &Ec2Generator{},
+		"ecr":               &EcrGenerator{},
 		"ecs":               &EcsGenerator{},
 		"eks":               &EksGenerator{},
 		"eip":               &ElasticIpGenerator{},
@@ -237,11 +258,13 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"elastic_beanstalk": &BeanstalkGenerator{},
 		"elb":               &ElbGenerator{},
 		"emr":               &EmrGenerator{},
+		"eni":               &EniGenerator{},
 		"es":                &EsGenerator{},
 		"firehose":          &FirehoseGenerator{},
 		"glue":              &GlueGenerator{},
 		"iam":               &IamGenerator{},
 		"igw":               &IgwGenerator{},
+		"iot":               &IotGenerator{},
 		"kinesis":           &KinesisGenerator{},
 		"kms":               &KmsGenerator{},
 		"lambda":            &LambdaGenerator{},
@@ -253,11 +276,14 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"route53":           &Route53Generator{},
 		"route_table":       &RouteTableGenerator{},
 		"s3":                &S3Generator{},
+		"ses":               &SesGenerator{},
 		"sg":                &SecurityGenerator{},
 		"sqs":               &SqsGenerator{},
 		"sns":               &SnsGenerator{},
 		"subnet":            &SubnetGenerator{},
 		"transit_gateway":   &TransitGatewayGenerator{},
+		"waf":               &WafGenerator{},
+		"waf_regional":      &WafRegionalGenerator{},
 		"vpc":               &VpcGenerator{},
 		"vpc_peering":       &VpcPeeringConnectionGenerator{},
 		"vpn_connection":    &VpnConnectionGenerator{},

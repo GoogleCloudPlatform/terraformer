@@ -24,6 +24,13 @@ type DescribeClientVpnRoutesInput struct {
 	DryRun *bool `type:"boolean"`
 
 	// One or more filters. Filter names and values are case-sensitive.
+	//
+	//    * destination-cidr - The CIDR of the route destination.
+	//
+	//    * origin - How the route was associated with the Client VPN endpoint (associate
+	//    | add-route).
+	//
+	//    * target-subnet - The ID of the subnet through which traffic is routed.
 	Filters []Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
 
 	// The maximum number of results to return for the request in a single page.

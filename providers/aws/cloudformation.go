@@ -36,9 +36,12 @@ func (g *CloudFormationGenerator) InitResources() error {
 	p := cloudformation.NewListStacksPaginator(svc.ListStacksRequest(&cloudformation.ListStacksInput{}))
 	for p.Next(context.Background()) {
 		for _, stackSummary := range p.CurrentPage().StackSummaries {
+			if stackSummary.StackStatus == cloudformation.StackStatusDeleteComplete {
+				continue
+			}
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-				aws.StringValue(stackSummary.StackId),
-				aws.StringValue(stackSummary.StackName),
+				*stackSummary.StackName,
+				*stackSummary.StackName,
 				"aws_cloudformation_stack",
 				"aws",
 				cloudFormationAllowEmptyValues,
@@ -54,8 +57,8 @@ func (g *CloudFormationGenerator) InitResources() error {
 	}
 	for _, stackSetSummary := range stackSets.Summaries {
 		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-			aws.StringValue(stackSetSummary.StackSetId),
-			aws.StringValue(stackSetSummary.StackSetName),
+			*stackSetSummary.StackSetName,
+			*stackSetSummary.StackSetName,
 			"aws_cloudformation_stack_set",
 			"aws",
 			cloudFormationAllowEmptyValues,

@@ -733,6 +733,22 @@ func (enum TaskField) MarshalValueBuf(b []byte) ([]byte, error) {
 	return append(b, enum...), nil
 }
 
+type TaskSetField string
+
+// Enum values for TaskSetField
+const (
+	TaskSetFieldTags TaskSetField = "TAGS"
+)
+
+func (enum TaskSetField) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum TaskSetField) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
 type TaskStopCode string
 
 // Enum values for TaskStopCode

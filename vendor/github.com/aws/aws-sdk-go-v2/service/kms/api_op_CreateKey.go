@@ -48,19 +48,26 @@ type CreateKeyInput struct {
 	// of AWS KMS with the isolation and control of a single-tenant key store.
 	CustomKeyStoreId *string `min:"1" type:"string"`
 
-	// Specifies the type of CMK to create. The CustomerMasterKeySpec determines
-	// whether the CMK contains a symmetric key or an asymmetric key pair. It also
-	// determines the encryption algorithms or signing algorithms that the CMK supports.
-	// You can't change the CustomerMasterKeySpec after the CMK is created. To further
-	// restrict the algorithms that can be used with the CMK, use its key policy
-	// or IAM policy.
-	//
-	// For help with choosing a key spec for your CMK, see Selecting a Customer
-	// Master Key Spec (https://docs.aws.amazon.com/kms/latest/developerguide/symmetric-asymmetric.html#cmk-key-spec)
+	// Specifies the type of CMK to create. The default value, SYMMETRIC_DEFAULT,
+	// creates a CMK with a 256-bit symmetric key for encryption and decryption.
+	// For help choosing a key spec for your CMK, see How to Choose Your CMK Configuration
+	// (https://docs.aws.amazon.com/kms/latest/developerguide/symm-asymm-choose.html)
 	// in the AWS Key Management Service Developer Guide.
 	//
-	// The default value, SYMMETRIC_DEFAULT, creates a CMK with a 256-bit symmetric
-	// key.
+	// The CustomerMasterKeySpec determines whether the CMK contains a symmetric
+	// key or an asymmetric key pair. It also determines the encryption algorithms
+	// or signing algorithms that the CMK supports. You can't change the CustomerMasterKeySpec
+	// after the CMK is created. To further restrict the algorithms that can be
+	// used with the CMK, use a condition key in its key policy or IAM policy. For
+	// more information, see kms:EncryptionAlgorithm (https://docs.aws.amazon.com/kms/latest/developerguide/policy-conditions.html#conditions-kms-encryption-algorithm)
+	// or kms:Signing Algorithm (https://docs.aws.amazon.com/kms/latest/developerguide/policy-conditions.html#conditions-kms-signing-algorithm)
+	// in the AWS Key Management Service Developer Guide.
+	//
+	// AWS services that are integrated with AWS KMS (http://aws.amazon.com/kms/features/#AWS_Service_Integration)
+	// use symmetric CMKs to protect your data. These services do not support asymmetric
+	// CMKs. For help determining whether a CMK is symmetric or asymmetric, see
+	// Identifying Symmetric and Asymmetric CMKs (https://docs.aws.amazon.com/kms/latest/developerguide/find-symm-asymm.html)
+	// in the AWS Key Management Service Developer Guide.
 	//
 	// AWS KMS supports the following key specs for CMKs:
 	//
@@ -137,7 +144,7 @@ type CreateKeyInput struct {
 	// to the CMK. For more information, see Default Key Policy (https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html#key-policy-default)
 	// in the AWS Key Management Service Developer Guide.
 	//
-	// The key policy size limit is 32 kilobytes (32768 bytes).
+	// The key policy size quota is 32 kilobytes (32768 bytes).
 	Policy *string `min:"1" type:"string"`
 
 	// One or more tags. Each tag consists of a tag key and a tag value. Both the
@@ -208,7 +215,8 @@ const opCreateKey = "CreateKey"
 //    KMS unencrypted. To use the CMK, you must call AWS KMS. You can use a
 //    symmetric CMK to encrypt and decrypt small amounts of data, but they are
 //    typically used to generate data keys (https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#data-keys)
-//    or data key pairs. For details, see GenerateDataKey and GenerateDataKeyPair.
+//    and data keys pairs (https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#data-key-pairs).
+//    For details, see GenerateDataKey and GenerateDataKeyPair.
 //
 //    * Asymmetric CMKs can contain an RSA key pair or an Elliptic Curve (ECC)
 //    key pair. The private key in an asymmetric CMK never leaves AWS KMS unencrypted.

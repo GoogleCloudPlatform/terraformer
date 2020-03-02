@@ -30,7 +30,7 @@ type RouteTableGenerator struct {
 	AWSService
 }
 
-func (g RouteTableGenerator) createRouteTablesResources(svc *ec2.Client) []terraform_utils.Resource {
+func (g *RouteTableGenerator) createRouteTablesResources(svc *ec2.Client) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	p := ec2.NewDescribeRouteTablesPaginator(svc.DescribeRouteTablesRequest(&ec2.DescribeRouteTablesInput{}))
 	for p.Next(context.Background()) {

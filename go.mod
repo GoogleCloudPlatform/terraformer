@@ -15,7 +15,9 @@ require (
 	github.com/aliyun/aliyun-oss-go-sdk v0.0.0-20190307165228-86c17b95fcd5 // indirect
 	github.com/aliyun/aliyun-tablestore-go-sdk v4.1.3+incompatible
 	github.com/aws/aws-sdk-go v1.26.5 // indirect
-	github.com/aws/aws-sdk-go-v2 v0.18.0
+
+	// shouldn't be upgraded without check of fix to https://github.com/aws/aws-sdk-go-v2/issues/492
+	github.com/aws/aws-sdk-go-v2 v0.19.0
 	github.com/bmatcuk/doublestar v1.2.2 // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/cloudflare/cloudflare-go v0.11.0
@@ -59,7 +61,7 @@ require (
 	github.com/ulikunitz/xz v0.5.6 // indirect
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
 	github.com/vultr/govultr v0.1.7
-	github.com/zclconf/go-cty v1.2.0
+	github.com/zclconf/go-cty v1.2.1
 	github.com/zorkian/go-datadog-api v2.25.0+incompatible
 	go.opencensus.io v0.22.2 // indirect
 	golang.org/x/oauth2 v0.0.0-20191202225959-858c2ad4c8b6

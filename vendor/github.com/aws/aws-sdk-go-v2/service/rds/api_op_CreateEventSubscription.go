@@ -34,7 +34,7 @@ type CreateEventSubscriptionInput struct {
 	// The list of identifiers of the event sources for which events are returned.
 	// If not specified, then all sources are included in the response. An identifier
 	// must begin with a letter and must contain only ASCII letters, digits, and
-	// hyphens; it can't end with a hyphen or contain two consecutive hyphens.
+	// hyphens. It can't end with a hyphen or contain two consecutive hyphens.
 	//
 	// Constraints:
 	//
@@ -115,7 +115,7 @@ const opCreateEventSubscription = "CreateEventSubscription"
 // Amazon Relational Database Service.
 //
 // Creates an RDS event notification subscription. This action requires a topic
-// ARN (Amazon Resource Name) created by either the RDS console, the SNS console,
+// Amazon Resource Name (ARN) created by either the RDS console, the SNS console,
 // or the SNS API. To obtain an ARN with SNS, you must create a topic in Amazon
 // SNS and subscribe to the topic. The ARN is displayed in the SNS console.
 //
@@ -129,8 +129,8 @@ const opCreateEventSubscription = "CreateEventSubscription"
 // and SourceIdentifier = myDBInstance1, you are notified of all the db-instance
 // events for the specified source. If you specify a SourceType but do not specify
 // a SourceIdentifier, you receive notice of the events for that source type
-// for all your RDS sources. If you do not specify either the SourceType nor
-// the SourceIdentifier, you are notified of events generated from all RDS sources
+// for all your RDS sources. If you don't specify either the SourceType or the
+// SourceIdentifier, you are notified of events generated from all RDS sources
 // belonging to your customer account.
 //
 // RDS event notification is only available for unencrypted SNS topics. If you

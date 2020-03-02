@@ -97,11 +97,11 @@ const opDeleteFargateProfile = "DeleteFargateProfile"
 //
 // Deletes an AWS Fargate profile.
 //
-// When you delete a Fargate profile, any pods that were scheduled onto Fargate
-// infrastructure with the profile are deleted. If those pods match another
-// Fargate profile, then they are scheduled on Fargate infrastructure with that
-// profile. If they no longer match any Fargate profiles, then they are not
-// scheduled on Fargate infrastructure.
+// When you delete a Fargate profile, any pods running on Fargate that were
+// created with the profile are deleted. If those pods match another Fargate
+// profile, then they are scheduled on Fargate with that profile. If they no
+// longer match any Fargate profiles, then they are not scheduled on Fargate
+// and they may remain in a pending state.
 //
 // Only one Fargate profile in a cluster can be in the DELETING status at a
 // time. You must wait for a Fargate profile to finish deleting before you can

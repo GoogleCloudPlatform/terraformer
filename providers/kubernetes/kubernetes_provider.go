@@ -104,7 +104,7 @@ func (p *KubernetesProvider) GetSupportedService() map[string]terraform_utils.Se
 		log.Println(err)
 		return resources
 	}
-	resp := provider.Provider.GetSchema()
+	resp := provider.GetSchema()
 	for _, list := range lists {
 		if len(list.APIResources) == 0 {
 			continue

@@ -16,7 +16,8 @@ type DescribePolicyInput struct {
 	// can get the ID from the ListPolicies or ListPoliciesForTarget operations.
 	//
 	// The regex pattern (http://wikipedia.org/wiki/regex) for a policy ID string
-	// requires "p-" followed by from 8 to 128 lowercase letters or digits.
+	// requires "p-" followed by from 8 to 128 lowercase or uppercase letters, digits,
+	// or the underscore character (_).
 	//
 	// PolicyId is a required field
 	PolicyId *string `type:"string" required:"true"`
