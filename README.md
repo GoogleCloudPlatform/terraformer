@@ -425,6 +425,8 @@ In that case terraformer will not know with which region resources are associate
 *   `codepipeline`
     * `aws_codepipeline`
     * `aws_codepipeline_webhook`
+*   `customer_gateway`
+    * `aws_customer_gateway`
 *   `datapipeline`
     * `aws_datapipeline_pipeline`
 *   `devicefarm`
@@ -545,6 +547,9 @@ In that case terraformer will not know with which region resources are associate
     * `aws_sqs_queue`
 *   `subnet`
     * `aws_subnet`
+*   `transit_gateway`
+    * `aws_ec2_transit_gateway_route_table`
+    * `aws_ec2_transit_gateway_vpc_attachment`
 *   `waf`
     * `aws_waf_byte_match_set`
     * `aws_waf_geo_match_set`

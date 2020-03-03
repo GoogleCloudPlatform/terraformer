@@ -123,9 +123,18 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 				"source_security_group_id", "id",
 			},
 		},
-		"subnet":         {"vpc": []string{"vpc_id", "id"}},
-		"vpn_gateway":    {"vpc": []string{"vpc_id", "id"}},
-		"vpn_connection": {"vpn_gateway": []string{"vpn_gateway_id", "id"}},
+		"subnet": {"vpc": []string{"vpc_id", "id"}},
+		"transit_gateway": {
+			"vpc":             []string{"vpc_id", "id"},
+			"transit_gateway": []string{"transit_gateway_id", "id"},
+			"subnet":          []string{"subnet_ids", "id"},
+			"vpn_connection":  []string{"vpn_connection_id", "id"},
+		},
+		"vpn_gateway": {"vpc": []string{"vpc_id", "id"}},
+		"vpn_connection": {
+			"customer_gateway": []string{"customer_gateway_id", "id"},
+			"vpn_gateway":      []string{"vpn_gateway_id", "id"},
+		},
 	}
 }
 
@@ -236,6 +245,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"codecommit":        &CodeCommitGenerator{},
 		"codedeploy":        &CodeDeployGenerator{},
 		"codepipeline":      &CodePipelineGenerator{},
+		"customer_gateway":  &CustomerGatewayGenerator{},
 		"datapipeline":      &DataPipelineGenerator{},
 		"devicefarm":        &DeviceFarmGenerator{},
 		"dynamodb":          &DynamoDbGenerator{},
@@ -272,6 +282,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"sqs":               &SqsGenerator{},
 		"sns":               &SnsGenerator{},
 		"subnet":            &SubnetGenerator{},
+		"transit_gateway":   &TransitGatewayGenerator{},
 		"waf":               &WafGenerator{},
 		"waf_regional":      &WafRegionalGenerator{},
 		"vpc":               &VpcGenerator{},
