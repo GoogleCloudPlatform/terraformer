@@ -4,3 +4,5 @@ terraformer
 .DS_Store
 .terraform
 .vscode
+terraform.tfstate
+terraform.tfstate.backup
