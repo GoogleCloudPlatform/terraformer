@@ -181,19 +181,21 @@ func hclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error)
 }
 
 func terraform12Adjustments(formatted []byte, mapsObjects map[string]struct{}) []byte {
+	singletonListFix := regexp.MustCompile(`^\s*\w+ = {`)
+
 	s := string(formatted)
 	old := " = {"
-	new := " {"
+	newEquals := " {"
 	lines := strings.Split(s, "\n")
 	for i, line := range lines {
-		if !strings.Contains(line, old) {
+		if !singletonListFix.MatchString(line) {
 			continue
 		}
 		key := strings.Trim(strings.Split(line, old)[0], " ")
 		if _, exist := mapsObjects[key]; exist {
 			continue
 		}
-		lines[i] = strings.Replace(line, old, new, -1)
+		lines[i] = strings.Replace(line, old, newEquals, -1)
 	}
 	s = strings.Join(lines, "\n")
 	return []byte(s)
