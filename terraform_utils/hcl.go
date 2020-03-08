@@ -159,11 +159,6 @@ func hclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error)
 	// ...but leave whitespace between resources
 	s = strings.Replace(s, "}\nresource", "}\n\nresource", -1)
 
-	// Workaround HCL insanity kubernetes/kops#6359: quotes are _not_ escaped in quotes (huh?)
-	// This hits the file function
-	s = strings.Replace(s, "(\\\"", "(\"", -1)
-	s = strings.Replace(s, "\\\")", "\")", -1)
-
 	// Apply Terraform style (alignment etc.)
 	formatted := hclwrite.Format([]byte(s))
 	formatted, err = hclPrinter.Format([]byte(s))
@@ -181,19 +176,21 @@ func hclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error)
 }
 
 func terraform12Adjustments(formatted []byte, mapsObjects map[string]struct{}) []byte {
+	singletonListFix := regexp.MustCompile(`^\s*\w+ = {`)
+
 	s := string(formatted)
 	old := " = {"
-	new := " {"
+	newEquals := " {"
 	lines := strings.Split(s, "\n")
 	for i, line := range lines {
-		if !strings.Contains(line, old) {
+		if !singletonListFix.MatchString(line) {
 			continue
 		}
 		key := strings.Trim(strings.Split(line, old)[0], " ")
 		if _, exist := mapsObjects[key]; exist {
 			continue
 		}
-		lines[i] = strings.Replace(line, old, new, -1)
+		lines[i] = strings.Replace(line, old, newEquals, -1)
 	}
 	s = strings.Join(lines, "\n")
 	return []byte(s)
