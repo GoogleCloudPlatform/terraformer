@@ -269,6 +269,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"kinesis":           &KinesisGenerator{},
 		"kms":               &KmsGenerator{},
 		"lambda":            &LambdaGenerator{},
+		"media_package":     &MediaPackageGenerator{},
 		"msk":               &MskGenerator{},
 		"nacl":              &NaclGenerator{},
 		"nat":               &NatGatewayGenerator{},
