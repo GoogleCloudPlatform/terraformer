@@ -20,6 +20,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws/external"
 	"github.com/aws/aws-sdk-go-v2/aws/stscreds"
 	"os"
+	"regexp"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
@@ -27,6 +28,8 @@ import (
 type AWSService struct {
 	terraform_utils.Service
 }
+
+var AWS_VARIABLE = regexp.MustCompile(`(\${[0-9A-Za-z:]+})`)
 
 func (s *AWSService) generateConfig() (aws.Config, error) {
 	config, e := s.buildBaseConfig()
@@ -66,4 +69,9 @@ func (s *AWSService) buildBaseConfig() (aws.Config, error) {
 	} else {
 		return external.LoadDefaultAWSConfig(external.WithMFATokenFunc(stscreds.StdinTokenProvider))
 	}
+}
+
+// for CF interpolation and IAM Policy variables
+func (_ *AWSService) escapeAwsInterpolation(str string) string {
+	return AWS_VARIABLE.ReplaceAllString(str, "$$$1")
 }

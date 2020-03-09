@@ -111,7 +111,7 @@ func (g *S3Generator) PostConvertHook() error {
 		if resource.InstanceInfo.Type != "aws_s3_bucket_policy" {
 			continue
 		}
-		policy := resource.Item["policy"].(string)
+		policy := g.escapeAwsInterpolation(resource.Item["policy"].(string))
 		g.Resources[i].Item["policy"] = fmt.Sprintf(`<<POLICY
 %s
 POLICY`, policy)
