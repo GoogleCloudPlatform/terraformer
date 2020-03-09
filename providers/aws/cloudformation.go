@@ -19,7 +19,6 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation"
-	"regexp"
 )
 
 var cloudFormationAllowEmptyValues = []string{"tags."}
@@ -88,13 +87,11 @@ func (g *CloudFormationGenerator) InitResources() error {
 }
 
 func (g *CloudFormationGenerator) PostConvertHook() error {
-	cfInterpolation := regexp.MustCompile(`(\${[0-9A-Za-z:]+})`)
 	for _, resource := range g.Resources {
 		if resource.InstanceInfo.Type == "aws_cloudformation_stack" {
 			delete(resource.Item, "outputs")
 			if templateBody, ok := resource.InstanceState.Attributes["template_body"]; ok {
-				str := cfInterpolation.ReplaceAllString(templateBody, "$$$1")
-				resource.Item["template_body"] = str
+				resource.Item["template_body"] = g.escapeAwsInterpolation(templateBody)
 			}
 		}
 	}
