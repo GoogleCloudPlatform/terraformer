@@ -41,7 +41,7 @@ func (g *CloudFormationGenerator) InitResources() error {
 				continue
 			}
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-				*stackSummary.StackName,
+				*stackSummary.StackId,
 				*stackSummary.StackName,
 				"aws_cloudformation_stack",
 				"aws",
@@ -57,8 +57,11 @@ func (g *CloudFormationGenerator) InitResources() error {
 		return err
 	}
 	for _, stackSetSummary := range stackSets.Summaries {
+		if stackSetSummary.Status == cloudformation.StackSetStatusDeleted {
+			continue
+		}
 		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-			*stackSetSummary.StackSetName,
+			*stackSetSummary.StackSetId,
 			*stackSetSummary.StackSetName,
 			"aws_cloudformation_stack_set",
 			"aws",
