@@ -294,12 +294,12 @@ func (g *IamGenerator) PostConvertHook() error {
 			resource.InstanceInfo.Type == "aws_iam_user_policy" ||
 			resource.InstanceInfo.Type == "aws_iam_group_policy" ||
 			resource.InstanceInfo.Type == "aws_iam_role_policy" {
-			policy := resource.Item["policy"].(string)
+			policy := g.escapeAwsInterpolation(resource.Item["policy"].(string))
 			resource.Item["policy"] = fmt.Sprintf(`<<POLICY
 %s
 POLICY`, policy)
 		} else if resource.InstanceInfo.Type == "aws_iam_role" {
-			policy := resource.Item["assume_role_policy"].(string)
+			policy := g.escapeAwsInterpolation(resource.Item["assume_role_policy"].(string))
 			g.Resources[i].Item["assume_role_policy"] = fmt.Sprintf(`<<POLICY
 %s
 POLICY`, policy)
