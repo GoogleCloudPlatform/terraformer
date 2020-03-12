@@ -270,6 +270,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"kms":               &KmsGenerator{},
 		"lambda":            &LambdaGenerator{},
 		"media_package":     &MediaPackageGenerator{},
+		"media_store":       &MediaStoreGenerator{},
 		"msk":               &MskGenerator{},
 		"nacl":              &NaclGenerator{},
 		"nat":               &NatGatewayGenerator{},
