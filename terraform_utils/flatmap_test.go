@@ -9,7 +9,7 @@ import (
 func TestNestedAttributeFiltering(t *testing.T) {
 	attributes := map[string]string{
 		"attribute": "value1",
-		"nested.0.attribute": "value2",
+		"nested.attribute": "value2",
 	}
 
 	ignoreKeys := []*regexp.Regexp{
