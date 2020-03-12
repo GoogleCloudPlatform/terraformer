@@ -505,6 +505,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_lambda_layer_version`
 *   `media_package`
     * `aws_media_package_channel`
+*   `media_store`
+    * `aws_media_store_container`
 *   `msk`
     * `aws_msk_cluster`
 *   `nat`
