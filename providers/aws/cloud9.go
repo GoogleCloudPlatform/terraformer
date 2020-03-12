@@ -26,19 +26,6 @@ type Cloud9Generator struct {
 	AWSService
 }
 
-func (g *Cloud9Generator) createResources(environmentIds []string) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
-	for _, resourceName := range environmentIds {
-		resources = append(resources, terraform_utils.NewSimpleResource(
-			resourceName,
-			resourceName,
-			"aws_cloud9_environment_ec2",
-			"aws",
-			cloud9AllowEmptyValues))
-	}
-	return resources
-}
-
 func (g *Cloud9Generator) InitResources() error {
 	config, e := g.generateConfig()
 	if e != nil {
@@ -49,6 +36,20 @@ func (g *Cloud9Generator) InitResources() error {
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(output.EnvironmentIds)
+	for _, environmentId := range output.EnvironmentIds {
+		details, _ := svc.DescribeEnvironmentStatusRequest(&cloud9.DescribeEnvironmentStatusInput{
+			EnvironmentId: &environmentId,
+		}).Send(context.Background())
+		if details.Status == cloud9.EnvironmentStatusError ||
+			details.Status == cloud9.EnvironmentStatusDeleting {
+			continue
+		}
+		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			environmentId,
+			environmentId,
+			"aws_cloud9_environment_ec2",
+			"aws",
+			cloud9AllowEmptyValues))
+	}
 	return nil
 }

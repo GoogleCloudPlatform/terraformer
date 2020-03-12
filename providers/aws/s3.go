@@ -108,13 +108,16 @@ func (g *S3Generator) InitResources() error {
 // support only bucket with policy
 func (g *S3Generator) PostConvertHook() error {
 	for i, resource := range g.Resources {
-		if resource.InstanceInfo.Type != "aws_s3_bucket_policy" {
-			continue
-		}
-		policy := g.escapeAwsInterpolation(resource.Item["policy"].(string))
-		g.Resources[i].Item["policy"] = fmt.Sprintf(`<<POLICY
+		if resource.InstanceInfo.Type == "aws_s3_bucket_policy" {
+			policy := g.escapeAwsInterpolation(resource.Item["policy"].(string))
+			g.Resources[i].Item["policy"] = fmt.Sprintf(`<<POLICY
 %s
 POLICY`, policy)
+		} else if resource.InstanceInfo.Type == "aws_s3_bucket" {
+			if val, ok := g.Resources[i].Item["acl"]; ok && val == "private" {
+				delete(g.Resources[i].Item, "acl")
+			}
+		}
 	}
 	return nil
 }
