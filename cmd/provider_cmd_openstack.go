@@ -15,14 +15,13 @@ package cmd
 
 import (
 	"log"
-	"strconv"
+
 	openstack_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/openstack"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/spf13/cobra"
 )
 
 func newCmdOpenStackImporter(options ImportOptions) *cobra.Command {
-	var instanceblockimport = false
 	cmd := &cobra.Command{
 		Use:   "openstack",
 		Short: "Import current state to Terraform configuration from OpenStack",
@@ -34,7 +33,7 @@ func newCmdOpenStackImporter(options ImportOptions) *cobra.Command {
 				options.PathPattern = originalPathPattern
 				options.PathPattern += region + "/"
 				log.Println(provider.GetName() + " importing region " + region)
-				err := Import(provider, options, []string{region,strconv.FormatBool(instanceblockimport)})
+				err := Import(provider, options, []string{region})
 				if err != nil {
 					return err
 				}
@@ -45,7 +44,6 @@ func newCmdOpenStackImporter(options ImportOptions) *cobra.Command {
 	cmd.AddCommand(listCmd(newOpenStackProvider()))
 	baseProviderFlags(cmd.PersistentFlags(), &options, "compute,networking", "openstack_compute_instance_v2=id1:id2:id4")
 	cmd.PersistentFlags().StringSliceVarP(&options.Regions, "regions", "", []string{}, "RegionOne")
-	cmd.Flags().BoolVarP(&instanceblockimport, "import-blockstorage-to-compute", "i", false, "import volumes and attachments to compute configuration")
 	return cmd
 }
 

@@ -15,16 +15,15 @@
 package openstack
 
 import (
-	"sort"
-	"strconv"
 	"strings"
-
+	"strconv"
+	"log"
+	"sort"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack"
-	"github.com/gophercloud/gophercloud/openstack/blockstorage/v3/volumes"
-	"github.com/gophercloud/gophercloud/openstack/compute/v2/extensions/volumeattach"
 	"github.com/gophercloud/gophercloud/openstack/compute/v2/servers"
+	"github.com/gophercloud/gophercloud/openstack/blockstorage/v3/volumes"
 	"github.com/gophercloud/gophercloud/pagination"
 )
 
@@ -33,162 +32,93 @@ type ComputeGenerator struct {
 }
 
 // createResources iterate on all openstack_compute_instance_v2
-func (g *ComputeGenerator) createResources(list *pagination.Pager, client_block *gophercloud.ServiceClient, client *gophercloud.ServiceClient) []terraform_utils.Resource {
-	var importblockdevicestoinstance = g.GetArgs()["importblockdevicestoinstance"]
+func (g *ComputeGenerator) createResources(list *pagination.Pager,volclient *gophercloud.ServiceClient) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 
-	var done_volume_ids = []string{}
-	var volumes_list =[]map[string]interface{}{}
-
-	if importblockdevicestoinstance == "true" {
-		volumelist := volumes.List(client_block,nil)
-		volumelist.EachPage(func(page pagination.Page) (bool, error) {
-			volume_list, err := volumes.ExtractVolumes(page)
-			if err != nil {
-				return false, err
-			}
-			for vnumber,v := range volume_list {
-
-				volumes_list = append(volumes_list,map[string]interface{}{"vnumber":vnumber,"volume":v,"id":v.ID})
-			}
-			return true,nil
-		})
-	}
-
 	list.EachPage(func(page pagination.Page) (bool, error) {
-		server_list, err := servers.ExtractServers(page)
+		servers, err := servers.ExtractServers(page)
 		if err != nil {
 			return false, err
 		}
 
-		for i, s := range server_list {
-			var abds =[]map[string]interface{}{}
-			if importblockdevicestoinstance == "true" {
-				clientType := client_block.Type
-				var boot_index = 0
-				var depends_on = ""
-				attachdetaillist := volumeattach.List(client, s.ID)
-
-				attachdetaillist.EachPage(func(page pagination.Page) (bool, error) {
-					attachments, err := volumeattach.ExtractVolumeAttachments(page)
-					if err != nil {
-						return false, err
+		for _, s := range servers {
+			var bds = []map[string]interface{}{}
+			var vol []volumes.Volume
+			t:=map[string]interface{}{}
+			if volclient != nil {
+				for _,av := range s.AttachedVolumes {
+					onevol,err := volumes.Get(volclient,av.ID).Extract()
+					if (err==nil) {
+					vol=  append(vol,*onevol)
 					}
+				}
 
-					sort.SliceStable(attachments, func(i, j int) bool {
-							return attachments[i].Device  < attachments[j].Device
+			sort.SliceStable(vol, func(i, j int) bool {
+				return vol[i].Attachments[0].Device  < vol[j].Attachments[0].Device
+			})
+
+				var bindex=0;
+				var depends_on =""
+				for _,v := range vol {
+					if v.Bootable == "true" && v.VolumeImageMetadata != nil {
+
+					bds = append(bds,map[string]interface{}{
+					"source_type":"image",
+					"uuid":v.VolumeImageMetadata["image_id"],
+					"volume_size": strconv.Itoa(v.Size),
+					"boot_index": strconv.Itoa(bindex),
+					"destination_type" : "volume",
+					"delete_on_termination": "false",
 						})
-					for _,attachment := range attachments {
-						var v volumes.Volume
-						var vnumber = 0
+					bindex++;
+					} else {
+						tv := map[string]interface{}{}
+						if depends_on != "" {
+							tv["depends_on"] = []string{depends_on}
+						}
 
-						for _,vol  := range volumes_list {
-							if (vol["id"].(string) == attachment.ID) {
-								v = vol["volume"].(volumes.Volume)
-								vnumber = vol["vnumber"].(int)
-
-								name := "server" + strconv.Itoa(i+1) + strings.Replace(attachment.Device,"/dev/","",-1)
-								tv := map[string]interface{}{"volume_resource":  "${"+resourceType[clientType]+".tfer--vol" + strconv.Itoa(vnumber+1)+".id}",
-								"server_resource": "${openstack_compute_instance_v2.tfer--" + "server" + strconv.Itoa(i+1)+".id}"}
-								if depends_on != "" {
-									tv["depends_on"] = []string{depends_on}
-								}
-
-								if v.Bootable != "true" {
-									rid := s.ID + "/" + attachment.VolumeID
-									resource := terraform_utils.NewResource(
-									rid,
-									name,
-									"openstack_compute_volume_attach_v2",
-									"openstack",
-									map[string]string{},
-									[]string{},
-									tv,
-									)
-									resources = append(resources, resource)
-									depends_on = "openstack_compute_volume_attach_v2.tfer--" + name
-								} else if v.Bootable == "true" {
-									var abd = map[string]interface{}{}
-									if v.VolumeImageMetadata["image_id"] != "" {
-										abd["source_type"] = "image"
-										abd["uuid"] = v.VolumeImageMetadata["image_id"]
-									} else {
-										abd["source_type"] = "blank"
-									}
-									abd["volume_size"] = strconv.Itoa(v.Size)
-									abd["boot_index"] = strconv.Itoa(boot_index)
-									abd["destination_type"] = "volume"
-									abd["delete_on_termination"] = "false"
-									delete(abd, "id")
-									boot_index++
-									abds = append(abds, abd)
-									done_volume_ids = append(done_volume_ids,v.ID)
-								}
+							name := s.Name + strings.Replace(v.Attachments[0].Device,"/dev/","",-1)
+							rid := s.ID + "/" + v.ID
+							resource := terraform_utils.NewResource(
+							rid,
+							name,
+							"openstack_compute_volume_attach_v2",
+							"openstack",
+							map[string]string{},
+							[]string{},
+							tv,
+							)
+							depends_on = "openstack_compute_volume_attach_v2.tfer--" + name
+							tv["instance_name"] = terraform_utils.TfSanitize(s.Name)
+							if (v.Name == ""){
+								v.Name = v.ID;
 							}
+							tv["volume_name"] = terraform_utils.TfSanitize(v.Name)
+							resources = append(resources, resource)
 						}
 					}
-
-				return true, nil
-
-				})
-				for _,vol := range volumes_list {
-					v := vol["volume"].(volumes.Volume)
-					seen := false
-					for _,dv := range done_volume_ids {
-						if dv == v.ID {
-							seen = true
-						}
-					}
-					if !seen  {
-						resource := terraform_utils.NewSimpleResource(
-						v.ID,
-						"vol"+strconv.Itoa(vol["vnumber"].(int) +1),
-						resourceType[clientType],
-						"openstack",
-						[]string{},
-						)
-
-						resources = append(resources, resource)
-						done_volume_ids = append(done_volume_ids,v.ID)
-
-					}
 				}
-			}
-			if importblockdevicestoinstance == "true" && len(abds)>0 {
-				t := map[string]interface{}{"block_device": abds}
 
-				resource := terraform_utils.NewResource(
-					s.ID,
-					"server"+strconv.Itoa(i+1),
-					"openstack_compute_instance_v2",
-					"openstack",
-					map[string]string{},
-					[]string{},
-					t,
-				)
-				resources = append(resources, resource)
 
-			} else {
-				name := s.Name
-				if importblockdevicestoinstance == "true" {
-				name = "server"+strconv.Itoa(i+1)
+				if (len(bds)>0) {
+					t=map[string]interface{}{"block_device": bds}
 				}
-				resource := terraform_utils.NewSimpleResource(
-					s.ID,
-					name,
-					"openstack_compute_instance_v2",
-					"openstack",
-					[]string{},
-				)
 
-				resources = append(resources, resource)
-			}
+			resource := terraform_utils.NewResource(
+				s.ID,
+				s.Name,
+				"openstack_compute_instance_v2",
+				"openstack",
+				map[string]string{},
+				[]string{},
+				t,
+			)
 
+			resources = append(resources, resource)
 		}
+
 		return true, nil
-
 	})
-
 
 	return resources
 }
@@ -211,18 +141,15 @@ func (g *ComputeGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
-	var client_block *gophercloud.ServiceClient = nil
-	if g.GetArgs()["importblockdevicestoinstance"]=="true" {
-		client_block, err = newBlockStorageClent(provider, gophercloud.EndpointOpts{
-			Region: g.GetArgs()["region"].(string),
-		})
-	}
-	if err != nil {
-		return err
-	}
 
 	list := servers.List(client, nil)
-	g.Resources = g.createResources(&list, client_block, client)
+	volclient, err := openstack.NewBlockStorageV3(provider, gophercloud.EndpointOpts{
+		Region: g.GetArgs()["region"].(string)})
+	if err != nil {
+		log.Println("VolumeImageMetadata requires blockStorage API v3")
+		volclient = nil
+	}
+	g.Resources = g.createResources(&list,volclient)
 
 	return nil
 }
@@ -230,10 +157,10 @@ func (g *ComputeGenerator) InitResources() error {
 func (g *ComputeGenerator) PostConvertHook() error {
 	for i, r := range g.Resources {
 		if r.InstanceInfo.Type == "openstack_compute_volume_attach_v2" {
-			g.Resources[i].Item["volume_id"] = r.AdditionalFields["volume_resource"].(string)
-			g.Resources[i].Item["instance_id"] = r.AdditionalFields["server_resource"].(string)
-			delete(g.Resources[i].Item, "volume_resource")
-			delete(g.Resources[i].Item, "server_resource")
+			g.Resources[i].Item["volume_id"] = "${openstack_blockstorage_volume_v3." +r.AdditionalFields["volume_name"].(string)+".id}"
+			g.Resources[i].Item["instance_id"] = "${openstack_compute_instance_v2." + r.AdditionalFields["instance_name"].(string) +".id}"
+			delete(g.Resources[i].Item, "volume_name")
+			delete(g.Resources[i].Item, "instance_name")
 			delete(g.Resources[i].Item, "device")
 		}
 		if r.InstanceInfo.Type != "openstack_compute_instance_v2" {
@@ -256,16 +183,15 @@ func (g *ComputeGenerator) PostConvertHook() error {
 				delete(g.Resources[i].Item, k)
 			}
 		}
-		var importblockdevicestoinstance = g.GetArgs()["importblockdevicestoinstance"]
-		if importblockdevicestoinstance == "true" && r.AdditionalFields["block_device"] != nil {
+		if (r.AdditionalFields["block_device"] != nil) {
 			bds := r.AdditionalFields["block_device"].([]map[string]interface{})
-			for bi, bd := range bds {
-				for k, v := range bd {
-					g.Resources[i].InstanceState.Attributes["block_device."+strconv.Itoa(bi)+"."+k] = v.(string)
+				for bi, bd := range bds {
+					for k, v := range bd {
+						g.Resources[i].InstanceState.Attributes["block_device."+strconv.Itoa(bi)+"."+k] = v.(string)
+					}
 				}
-			}
 
-			g.Resources[i].InstanceState.Attributes["block_device.#"] = strconv.Itoa(len(bds))
+				g.Resources[i].InstanceState.Attributes["block_device.#"] = strconv.Itoa(len(bds))
 		}
 	}
 
