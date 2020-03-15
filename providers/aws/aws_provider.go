@@ -275,6 +275,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"nacl":              &NaclGenerator{},
 		"nat":               &NatGatewayGenerator{},
 		"organization":      &OrganizationGenerator{},
+		"qldb":              &QLDBGenerator{},
 		"rds":               &RDSGenerator{},
 		"route53":           &Route53Generator{},
 		"route_table":       &RouteTableGenerator{},
