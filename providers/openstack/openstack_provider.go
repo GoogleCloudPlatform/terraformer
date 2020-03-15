@@ -25,7 +25,6 @@ import (
 type OpenStackProvider struct {
 	terraform_utils.Provider
 	region string
-	importblockdevicestoinstance string
 }
 
 func (p OpenStackProvider) GetResourceConnections() map[string]map[string][]string {
@@ -46,7 +45,6 @@ func (p OpenStackProvider) GetProviderData(arg ...string) map[string]interface{}
 // check projectName in env params
 func (p *OpenStackProvider) Init(args []string) error {
 	p.region = args[0]
-	p.importblockdevicestoinstance=args[1]
 	// terraform work with env param OS_REGION_NAME
 	err := os.Setenv("OS_REGION_NAME", p.region)
 	if err != nil {
@@ -70,7 +68,6 @@ func (p *OpenStackProvider) InitService(serviceName string, verbose bool) error 
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
 		"region": p.region,
-		"importblockdevicestoinstance":p.importblockdevicestoinstance,
 	})
 	return nil
 }
