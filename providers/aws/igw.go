@@ -34,6 +34,9 @@ type IgwGenerator struct {
 func (g *IgwGenerator) createResources(igws *ec2.DescribeInternetGatewaysOutput) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 	for _, internetGateway := range igws.InternetGateways {
+		if len(internetGateway.Attachments) == 0 {
+			continue
+		}
 		resources = append(resources, terraform_utils.NewSimpleResource(
 			aws.StringValue(internetGateway.InternetGatewayId),
 			aws.StringValue(internetGateway.InternetGatewayId),
