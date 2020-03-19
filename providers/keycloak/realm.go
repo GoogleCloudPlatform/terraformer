@@ -15,8 +15,10 @@
 package keycloak
 
 import (
+	"errors"
 	"reflect"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
@@ -113,6 +115,8 @@ func (g RealmGenerator) createLdapMapperResources(realmId, providerName string, 
 	var mapperId string
 	var mapperName string
 	var mapperType string
+	var name string
+	mapperNames := make(map[string]int)
 	for _, mapper := range *mappers {
 		switch reflect.TypeOf(mapper).String() {
 		case "*keycloak.LdapFullNameMapper":
@@ -139,9 +143,19 @@ func (g RealmGenerator) createLdapMapperResources(realmId, providerName string, 
 			// the role mapper is not supported for the moment
 			continue
 		}
+		name = "ldap_" + mapperType + "_mapper_" + normalizeResourceName(realmId) + "_" + normalizeResourceName(providerName) + "_" + normalizeResourceName(mapperName)
+		for k, v := range mapperNames {
+			if k == name {
+				v++
+				name = name + strconv.Itoa(v)
+			}
+		}
+		if name == "ldap_"+mapperType+"_mapper_"+normalizeResourceName(realmId)+"_"+normalizeResourceName(providerName)+"_"+normalizeResourceName(mapperName) {
+			mapperNames[name] = 1
+		}
 		resources = append(resources, terraform_utils.NewResource(
 			mapperId,
-			"ldap_"+mapperType+"_mapper_"+normalizeResourceName(realmId)+"_"+normalizeResourceName(providerName)+"_"+normalizeResourceName(mapperName),
+			name,
 			"keycloak_ldap_"+mapperType+"_mapper",
 			"keycloak",
 			map[string]string{
@@ -158,11 +172,20 @@ func (g RealmGenerator) createLdapMapperResources(realmId, providerName string, 
 func (g *RealmGenerator) InitResources() error {
 	client, err := keycloak.NewKeycloakClient(g.Args["url"].(string), g.Args["client_id"].(string), g.Args["client_secret"].(string), g.Args["realm"].(string), "", "", true, 5)
 	if err != nil {
-		return err
+		return errors.New("keycloak: could not connect to Keycloak")
 	}
-	realms, err := client.GetRealms()
-	if err != nil {
-		return err
+	var realms []*keycloak.Realm
+	if g.Args["target"].(string) == "" {
+		realms, err = client.GetRealms()
+		if err != nil {
+			return err
+		}
+	} else {
+		realm, err := client.GetRealm(g.Args["target"].(string))
+		if err != nil {
+			return err
+		}
+		realms = append(realms, realm)
 	}
 	g.Resources = g.createResources(realms)
 	for _, realm := range realms {
