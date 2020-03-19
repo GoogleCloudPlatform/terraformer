@@ -28,6 +28,7 @@ type KeycloakProvider struct {
 	clientID     string
 	clientSecret string
 	realm        string
+	target       string
 }
 
 func (p *KeycloakProvider) Init(args []string) error {
@@ -35,6 +36,7 @@ func (p *KeycloakProvider) Init(args []string) error {
 	p.clientID = args[1]
 	p.clientSecret = args[2]
 	p.realm = args[3]
+	p.target = args[4]
 	return nil
 }
 
@@ -79,6 +81,7 @@ func (p *KeycloakProvider) InitService(serviceName string, verbose bool) error {
 		"client_id":     p.clientID,
 		"client_secret": p.clientSecret,
 		"realm":         p.realm,
+		"target":        p.target,
 	})
 	return nil
 }
