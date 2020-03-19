@@ -520,6 +520,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_organizations_organizational_unit`
     * `aws_organizations_policy`
     * `aws_organizations_policy_attachment`
+*   `qldb`
+    * `aws_qldb_ledger`
 *   `rds`
     * `aws_db_instance`
     * `aws_db_parameter_group`
