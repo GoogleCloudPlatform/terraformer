@@ -15,6 +15,8 @@
 package keycloak
 
 import (
+	"errors"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
 )
@@ -48,11 +50,20 @@ func (g *UserGenerator) InitResources() error {
 	var usersFull []*keycloak.User
 	client, err := keycloak.NewKeycloakClient(g.Args["url"].(string), g.Args["client_id"].(string), g.Args["client_secret"].(string), g.Args["realm"].(string), "", "", true, 5)
 	if err != nil {
-		return err
+		return errors.New("keycloak: could not connect to Keycloak")
 	}
-	realms, err := client.GetRealms()
-	if err != nil {
-		return err
+	var realms []*keycloak.Realm
+	if g.Args["target"].(string) == "" {
+		realms, err = client.GetRealms()
+		if err != nil {
+			return err
+		}
+	} else {
+		realm, err := client.GetRealm(g.Args["target"].(string))
+		if err != nil {
+			return err
+		}
+		realms = append(realms, realm)
 	}
 	for _, realm := range realms {
 		users, err := client.GetUsers(realm.Id)

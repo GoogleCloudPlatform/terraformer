@@ -1179,6 +1179,7 @@ Example:
 
  terraformer import keycloak --resources=realms,openid_clients
  terraformer import keycloak --resources=realms --filter=keycloak_realm=name1:name2:name3
+ terraformer import keycloak --resources=realms,groups --targets realmA,realmB
 ```
 
 Here is the list of resources which are currently supported by Keycloak provider v.1.12.0:

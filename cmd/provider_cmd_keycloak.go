@@ -15,7 +15,9 @@
 package cmd
 
 import (
+	"log"
 	"os"
+	"strings"
 
 	keycloak_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/keycloak"
 
@@ -29,6 +31,7 @@ const (
 )
 
 func newCmdKeycloakImporter(options ImportOptions) *cobra.Command {
+	targets := []string{}
 	cmd := &cobra.Command{
 		Use:   "keycloak",
 		Short: "Import current state to Terraform configuration from Keycloak",
@@ -44,10 +47,25 @@ func newCmdKeycloakImporter(options ImportOptions) *cobra.Command {
 			if len(realm) == 0 {
 				realm = defaultKeycloakRealm
 			}
-			provider := newKeycloakProvider()
-			err := Import(provider, options, []string{url, clientID, clientSecret, realm})
-			if err != nil {
-				return err
+			if len(targets) > 0 {
+				originalPathPattern := options.PathPattern
+				for _, target := range targets {
+					provider := newKeycloakProvider()
+					log.Println(provider.GetName() + " importing realm " + target)
+					options.PathPattern = originalPathPattern
+					options.PathPattern = strings.Replace(options.PathPattern, "{provider}", "{provider}/"+target, -1)
+					err := Import(provider, options, []string{url, clientID, clientSecret, realm, target})
+					if err != nil {
+						return err
+					}
+				}
+			} else {
+				provider := newKeycloakProvider()
+				log.Println(provider.GetName() + " importing all realms")
+				err := Import(provider, options, []string{url, clientID, clientSecret, realm, ""})
+				if err != nil {
+					return err
+				}
 			}
 			return nil
 		},
@@ -55,6 +73,7 @@ func newCmdKeycloakImporter(options ImportOptions) *cobra.Command {
 
 	cmd.AddCommand(listCmd(newKeycloakProvider()))
 	baseProviderFlags(cmd.PersistentFlags(), &options, "realms", "keycloak_type=id1:id2:id4")
+	cmd.PersistentFlags().StringSliceVarP(&targets, "targets", "", []string{}, "")
 	return cmd
 }
 
