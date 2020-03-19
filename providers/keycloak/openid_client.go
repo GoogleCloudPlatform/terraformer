@@ -15,6 +15,7 @@
 package keycloak
 
 import (
+	"errors"
 	"sort"
 	"strings"
 
@@ -130,11 +131,20 @@ func (g *OpenIDClientGenerator) InitResources() error {
 	mapClientIDs := map[string]string{}
 	client, err := keycloak.NewKeycloakClient(g.Args["url"].(string), g.Args["client_id"].(string), g.Args["client_secret"].(string), g.Args["realm"].(string), "", "", true, 5)
 	if err != nil {
-		return err
+		return errors.New("keycloak: could not connect to Keycloak")
 	}
-	realms, err := client.GetRealms()
-	if err != nil {
-		return err
+	var realms []*keycloak.Realm
+	if g.Args["target"].(string) == "" {
+		realms, err = client.GetRealms()
+		if err != nil {
+			return err
+		}
+	} else {
+		realm, err := client.GetRealm(g.Args["target"].(string))
+		if err != nil {
+			return err
+		}
+		realms = append(realms, realm)
 	}
 	for _, realm := range realms {
 		openIDClients, err := client.GetOpenidClients(realm.Id, true)

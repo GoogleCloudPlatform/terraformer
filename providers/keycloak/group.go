@@ -15,6 +15,7 @@
 package keycloak
 
 import (
+	"errors"
 	"sort"
 	"strings"
 
@@ -114,11 +115,20 @@ func (g *GroupGenerator) InitResources() error {
 	var groupRoles = []string{}
 	client, err := keycloak.NewKeycloakClient(g.Args["url"].(string), g.Args["client_id"].(string), g.Args["client_secret"].(string), g.Args["realm"].(string), "", "", true, 5)
 	if err != nil {
-		return err
+		return errors.New("keycloak: could not connect to Keycloak")
 	}
-	realms, err := client.GetRealms()
-	if err != nil {
-		return err
+	var realms []*keycloak.Realm
+	if g.Args["target"].(string) == "" {
+		realms, err = client.GetRealms()
+		if err != nil {
+			return err
+		}
+	} else {
+		realm, err := client.GetRealm(g.Args["target"].(string))
+		if err != nil {
+			return err
+		}
+		realms = append(realms, realm)
 	}
 	for _, realm := range realms {
 		groups, err := client.GetGroups(realm.Id)
