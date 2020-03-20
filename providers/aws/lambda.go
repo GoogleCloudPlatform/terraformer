@@ -93,7 +93,7 @@ func (g *LambdaGenerator) addFunctions(svc *lambda.Client) error {
 				for _, functionEventInvokeConfig := range pi.CurrentPage().FunctionEventInvokeConfigs {
 					g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 						*function.FunctionArn,
-						"feic_" + *functionEventInvokeConfig.FunctionArn,
+						"feic_"+*functionEventInvokeConfig.FunctionArn,
 						"aws_lambda_function_event_invoke_config",
 						"aws",
 						lambdaAllowEmptyValues,

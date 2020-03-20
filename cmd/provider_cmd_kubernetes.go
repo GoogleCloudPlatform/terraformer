@@ -14,10 +14,11 @@
 package cmd
 
 import (
+	"strconv"
+
 	kubernetes_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/kubernetes"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/spf13/cobra"
-	"strconv"
 )
 
 func newCmdKubernetesImporter(options ImportOptions) *cobra.Command {

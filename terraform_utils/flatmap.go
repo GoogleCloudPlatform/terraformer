@@ -137,7 +137,7 @@ func (p *FlatmapParser) fromFlatmapObject(prefix string, tys map[string]cty.Type
 		if !inAttributes {
 			continue
 		}
-		if p.isAttributeIgnored(prefix+name) {
+		if p.isAttributeIgnored(prefix + name) {
 			continue
 		}
 		value, err := p.fromFlatmapValue(prefix+name, ty)

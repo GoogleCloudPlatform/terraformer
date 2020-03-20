@@ -14,12 +14,12 @@
 package cmd
 
 import (
+	"log"
+
 	awsterraformer "github.com/GoogleCloudPlatform/terraformer/providers/aws"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/spf13/cobra"
-	"log"
 )
-
 
 func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 	cmd := &cobra.Command{

@@ -16,11 +16,12 @@ package aws
 
 import (
 	"context"
+	"strings"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/terraformer_string"
 	"github.com/aws/aws-sdk-go-v2/service/apigateway"
 	"github.com/aws/aws-sdk-go/aws"
-	"strings"
 )
 
 var apiGatewayAllowEmptyValues = []string{"tags.", "parent_id", "path_part"}
@@ -293,7 +294,7 @@ func (g *ApiGatewayGenerator) loadResponses(svc *apigateway.Client, restApiId *s
 			"aws_api_gateway_gateway_response",
 			"aws",
 			map[string]string{
-				"rest_api_id": *restApiId,
+				"rest_api_id":   *restApiId,
 				"response_type": responseTypeString,
 			},
 			apiGatewayAllowEmptyValues,
@@ -338,7 +339,7 @@ func (g *ApiGatewayGenerator) loadAuthorizers(svc *apigateway.Client, restApiId 
 			"aws",
 			map[string]string{
 				"rest_api_id": *restApiId,
-				"name": aws.StringValue(authorizer.Name),
+				"name":        aws.StringValue(authorizer.Name),
 			},
 			apiGatewayAllowEmptyValues,
 			map[string]interface{}{},

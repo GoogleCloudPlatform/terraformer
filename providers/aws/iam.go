@@ -140,7 +140,7 @@ func (g *IamGenerator) getUserGroup(svc *iam.Client, userName *string) error {
 				"aws_iam_user_group_membership",
 				"aws",
 				map[string]string{
-					"user": *userName,
+					"user":     *userName,
 					"groups.#": "1",
 					"groups.0": *group.GroupName,
 				},
@@ -250,11 +250,11 @@ func (g *IamGenerator) getAttachedGroupPolicies(svc *iam.Client, group iam.Group
 			id := *group.GroupName + "/" + *attachedPolicy.PolicyArn
 			g.Resources = append(g.Resources, terraform_utils.NewResource(
 				id,
-				*group.GroupName + "_" + *attachedPolicy.PolicyName,
+				*group.GroupName+"_"+*attachedPolicy.PolicyName,
 				"aws_iam_group_policy_attachment",
 				"aws",
 				map[string]string{
-					"group": *group.GroupName,
+					"group":      *group.GroupName,
 					"policy_arn": *attachedPolicy.PolicyArn,
 				},
 				IamAllowEmptyValues,

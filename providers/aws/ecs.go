@@ -17,11 +17,12 @@ package aws
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
-	"strconv"
-	"strings"
 )
 
 var ecsAllowEmptyValues = []string{"tags."}
