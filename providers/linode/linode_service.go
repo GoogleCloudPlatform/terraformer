@@ -15,10 +15,11 @@
 package linode
 
 import (
+	"net/http"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/linode/linodego"
 	"golang.org/x/oauth2"
-	"net/http"
 )
 
 type LinodeService struct {

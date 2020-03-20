@@ -17,6 +17,8 @@ package azure
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/Azure/azure-sdk-for-go/services/mariadb/mgmt/2018-06-01/mariadb"
 	"github.com/Azure/azure-sdk-for-go/services/mysql/mgmt/2017-12-01/mysql"
 	"github.com/Azure/azure-sdk-for-go/services/postgresql/mgmt/2017-12-01/postgresql"
@@ -24,7 +26,6 @@ import (
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/hashicorp/go-azure-helpers/authentication"
-	"strings"
 )
 
 type DatabasesGenerator struct {

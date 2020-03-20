@@ -17,13 +17,14 @@ package provider_wrapper
 import (
 	"errors"
 	"fmt"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/terraformer_string"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
 	"runtime"
 	"strings"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/terraformer_string"
 
 	"github.com/zclconf/go-cty/cty/gocty"
 

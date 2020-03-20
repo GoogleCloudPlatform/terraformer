@@ -16,6 +16,7 @@ package aws
 
 import (
 	"context"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchevents"
@@ -111,7 +112,7 @@ func (g *CloudWatchGenerator) createRules(cloudwatcheventsSvc *cloudwatchevents.
 				"aws_cloudwatch_event_target",
 				"aws",
 				map[string]string{
-					"rule": *rule.Name,
+					"rule":      *rule.Name,
 					"target_id": *target.Id,
 				},
 				cloudwatchAllowEmptyValues,

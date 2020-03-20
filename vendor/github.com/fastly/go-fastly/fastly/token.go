@@ -67,7 +67,7 @@ type ListCustomerTokensInput struct {
 	ID string
 }
 
-// ListCustomerTokens returns the full list of tokens belonging to a specfic
+// ListCustomerTokens returns the full list of tokens belonging to a specific
 // customer.
 func (c *Client) ListCustomerTokens(i *ListCustomerTokensInput) ([]*Token, error) {
 	if i.ID == "" {

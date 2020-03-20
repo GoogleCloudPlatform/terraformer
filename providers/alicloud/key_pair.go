@@ -27,7 +27,7 @@ type KeyPairGenerator struct {
 
 func resourceFromKeyPair(keyPair ecs.KeyPair) terraform_utils.Resource {
 	return terraform_utils.NewResource(
-		keyPair.KeyPairName, // id
+		keyPair.KeyPairName,                          // id
 		keyPair.KeyPairName+"__"+keyPair.KeyPairName, // name
 		"alicloud_key_pair",
 		"alicloud",
