@@ -1,14 +1,15 @@
 package terraform_utils
 
 import (
-	"github.com/zclconf/go-cty/cty"
 	"regexp"
 	"testing"
+
+	"github.com/zclconf/go-cty/cty"
 )
 
 func TestNestedAttributeFiltering(t *testing.T) {
 	attributes := map[string]string{
-		"attribute": "value1",
+		"attribute":        "value1",
 		"nested.attribute": "value2",
 	}
 

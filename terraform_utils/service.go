@@ -15,9 +15,10 @@
 package terraform_utils
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 	"log"
 	"strings"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 )
 
 type ServiceGenerator interface {

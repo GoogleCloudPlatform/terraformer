@@ -16,11 +16,12 @@ package aws
 
 import (
 	"context"
+	"os"
+	"regexp"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/external"
 	"github.com/aws/aws-sdk-go-v2/aws/stscreds"
-	"os"
-	"regexp"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 )
