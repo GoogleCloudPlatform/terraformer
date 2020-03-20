@@ -43,6 +43,7 @@ func (g *CloudSQLGenerator) loadDBInstances(svc *sqladmin.Service, project strin
 			"google",
 			map[string]string{
 				"project": project,
+				"name":    dbInstance.Name,
 			},
 			cloudSQLAllowEmptyValues,
 			cloudSQLAdditionalFields,
