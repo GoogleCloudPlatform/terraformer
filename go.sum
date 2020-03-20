@@ -225,6 +225,8 @@ github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7
 github.com/evanphx/json-patch v4.2.0+incompatible/go.mod h1:50XU6AFN0ol/bzJsmQLiYLvXMP4fmwYFNcr97nuDLSk=
 github.com/fastly/go-fastly v1.3.0 h1:halI6tkEmn5JIeW888P2bNGprGP7OYot+o1akPXvPyY=
 github.com/fastly/go-fastly v1.3.0/go.mod h1:cBtWXhszIFx9xpzgm9L/3PW3Ixszo153xJBEHJghGUk=
+github.com/fastly/go-fastly v1.7.0 h1:IiDMXzoSSJZjQP5VIjv+BU4WMoo3DeMGIy2xm9BDuL8=
+github.com/fastly/go-fastly v1.7.0/go.mod h1:cBtWXhszIFx9xpzgm9L/3PW3Ixszo153xJBEHJghGUk=
 github.com/fatih/color v1.7.0 h1:DkWD4oS2D8LGGgTQ6IvwJJXSL5Vp2ffcQg58nFV38Ys=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/flynn/go-shlex v0.0.0-20150515145356-3f9db97f8568/go.mod h1:xEzjJPgXI435gkrCt3MPfRiAkVrwSbHsst4LCFVfpJc=
