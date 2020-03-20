@@ -17,11 +17,12 @@ package azure
 import (
 	"context"
 	"fmt"
+	"net/url"
+	"strings"
+
 	"github.com/Azure/azure-sdk-for-go/services/compute/mgmt/2019-07-01/compute"
 	"github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2019-05-01/resources"
 	"github.com/Azure/go-autorest/autorest"
-	"net/url"
-	"strings"
 )
 
 // FROM https://github.com/terraform-providers/terraform-provider-azurerm/blob/6e006ff4e5d1fb200a6b37eb2743ff0ec8b11e0d/azurerm/helpers/azure/resourceid.go#L24

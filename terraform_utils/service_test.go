@@ -1,9 +1,10 @@
 package terraform_utils
 
 import (
-	"github.com/hashicorp/terraform/terraform"
 	"reflect"
 	"testing"
+
+	"github.com/hashicorp/terraform/terraform"
 )
 
 func TestEmptyFiltersParsing(t *testing.T) {

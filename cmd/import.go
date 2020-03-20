@@ -15,12 +15,13 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/terraformer_string"
 	"io/ioutil"
 	"log"
 	"os"
 	"sort"
 	"strings"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/terraformer_string"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
 
@@ -224,7 +225,7 @@ func printService(provider terraform_utils.ProviderGenerator, serviceName string
 					}
 					variables["data"]["terraform_remote_state"][k] = map[string]interface{}{
 						"backend": "gcs",
-						"config": bucket.BucketGetTfData(strings.Replace(path, serviceName, k, -1)),
+						"config":  bucket.BucketGetTfData(strings.Replace(path, serviceName, k, -1)),
 					}
 				}
 			} else {
@@ -260,7 +261,7 @@ func printService(provider terraform_utils.ProviderGenerator, serviceName string
 				}
 				variables["data"]["terraform_remote_state"]["local"] = map[string]interface{}{
 					"backend": "gcs",
-					"config": bucket.BucketGetTfData(path),
+					"config":  bucket.BucketGetTfData(path),
 				}
 			} else {
 				variables["data"]["terraform_remote_state"]["local"] = map[string]interface{}{

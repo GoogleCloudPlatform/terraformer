@@ -63,6 +63,11 @@ func stringToTimeHookFunc() mapstructure.DecodeHookFunc {
 		}
 
 		// Convert it by parsing
-		return time.Parse(time.RFC3339, data.(string))
+		v, err := time.Parse(time.RFC3339, data.(string))
+		if err != nil {
+			// DictionaryInfo#get uses it's own special time format for now.
+			return time.Parse("2006-01-02 15:04:05", data.(string))
+		}
+		return v, err
 	}
 }

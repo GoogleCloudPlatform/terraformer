@@ -16,6 +16,7 @@ package aws
 
 import (
 	"context"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aws/aws-sdk-go-v2/service/ses"
 	"github.com/aws/aws-sdk-go/aws"
@@ -121,7 +122,6 @@ func (g *SesGenerator) loadConfigurationSets(svc *ses.Client) error {
 	return nil
 }
 
-
 func (g *SesGenerator) loadRuleSets(svc *ses.Client) error {
 	ruleSets, err := svc.ListReceiptRuleSetsRequest(&ses.ListReceiptRuleSetsInput{}).Send(context.Background())
 	if err != nil {
@@ -150,12 +150,12 @@ func (g *SesGenerator) loadRuleSets(svc *ses.Client) error {
 				"aws_ses_receipt_rule",
 				"aws",
 				map[string]string{
-					"name": *rule.Name,
+					"name":          *rule.Name,
 					"rule_set_name": ruleSetName,
 				},
 				sesAllowEmptyValues,
 				map[string]interface{}{},
-				))
+			))
 		}
 	}
 	return nil

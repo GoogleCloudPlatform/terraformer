@@ -16,11 +16,12 @@ package azure
 
 import (
 	"context"
+	"log"
+
 	"github.com/Azure/azure-sdk-for-go/services/analysisservices/mgmt/2017-08-01/analysisservices"
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/hashicorp/go-azure-helpers/authentication"
-	"log"
 )
 
 type AnalysisGenerator struct {

@@ -18,6 +18,9 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"sort"
+	"strings"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -25,8 +28,6 @@ import (
 	"gonum.org/v1/gonum/graph"
 	simplegraph "gonum.org/v1/gonum/graph/simple"
 	"gonum.org/v1/gonum/graph/topo"
-	"sort"
-	"strings"
 )
 
 var SgAllowEmptyValues = []string{"tags."}

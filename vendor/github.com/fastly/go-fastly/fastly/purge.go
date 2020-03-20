@@ -26,16 +26,12 @@ func (c *Client) Purge(i *PurgeInput) (*Purge, error) {
 		return nil, ErrMissingURL
 	}
 
-	req, err := c.RawRequest("PURGE", i.URL, nil)
-	if err != nil {
-		return nil, err
-	}
-
+	ro := new(RequestOptions)
 	if i.Soft {
-		req.Header.Set("Fastly-Soft-Purge", "1")
+		ro.Headers["Fastly-Soft-Purge"] = "1"
 	}
 
-	resp, err := checkResp(c.HTTPClient.Do(req))
+	resp, err := c.Post("purge/"+i.URL, ro)
 	if err != nil {
 		return nil, err
 	}
