@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// AUTO-GENERATED CODE. DO NOT EDIT.
 package gcp
 
 import (
@@ -38,6 +37,9 @@ func (g InstancesGenerator) createResources(ctx context.Context, instancesList *
 	resources := []terraform_utils.Resource{}
 	if err := instancesList.Pages(ctx, func(page *compute.InstanceList) error {
 		for _, obj := range page.Items {
+			if strings.HasPrefix("gke-", obj.Name) {
+				continue
+			}
 			resources = append(resources, terraform_utils.NewResource(
 				obj.Name,
 				obj.Name,
@@ -46,10 +48,8 @@ func (g InstancesGenerator) createResources(ctx context.Context, instancesList *
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),
-
-					"zone": zone,
-
-					"disk.#": "0",
+					"zone":    zone,
+					"disk.#":  "0",
 				},
 				instancesAllowEmptyValues,
 				instancesAdditionalFields,
@@ -78,7 +78,5 @@ func (g *InstancesGenerator) InitResources() error {
 		instancesList := computeService.Instances.List(g.GetArgs()["project"].(string), zone)
 		g.Resources = append(g.Resources, g.createResources(ctx, instancesList, zone)...)
 	}
-
 	return nil
-
 }
