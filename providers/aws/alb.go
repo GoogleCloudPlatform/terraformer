@@ -69,7 +69,7 @@ func (g *AlbGenerator) loadLBListener(svc *elasticloadbalancingv2.Client, loadBa
 			if err != nil {
 				log.Println(err)
 			}
-			err = g.loadLBListenerCertificate(svc, ls.ListenerArn)
+			err = g.loadLBListenerCertificate(svc, &ls)
 			if err != nil {
 				log.Println(err)
 			}
@@ -98,19 +98,29 @@ func (g *AlbGenerator) loadLBListenerRule(svc *elasticloadbalancingv2.Client, li
 	return err
 }
 
-func (g *AlbGenerator) loadLBListenerCertificate(svc *elasticloadbalancingv2.Client, listenerArn *string) error {
-	lcs, err := svc.DescribeListenerCertificatesRequest(&elasticloadbalancingv2.DescribeListenerCertificatesInput{ListenerArn: listenerArn}).Send(context.Background())
+func (g *AlbGenerator) loadLBListenerCertificate(svc *elasticloadbalancingv2.Client, loadBalancer *elasticloadbalancingv2.Listener) error {
+	lcs, err := svc.DescribeListenerCertificatesRequest(&elasticloadbalancingv2.DescribeListenerCertificatesInput{
+		ListenerArn: loadBalancer.ListenerArn,
+	}).Send(context.Background())
 	if err != nil {
 		return err
 	}
 	for _, lc := range lcs.Certificates {
-		resourceName := aws.StringValue(lc.CertificateArn)
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-			resourceName,
-			resourceName,
+		certificateArn := aws.StringValue(lc.CertificateArn)
+		if certificateArn == *loadBalancer.Certificates[0].CertificateArn { // discard default certificate
+			continue
+		}
+		g.Resources = append(g.Resources, terraform_utils.NewResource(
+			certificateArn,
+			certificateArn,
 			"aws_lb_listener_certificate",
 			"aws",
+			map[string]string{
+				"listener_arn":    *loadBalancer.ListenerArn,
+				"certificate_arn": certificateArn,
+			},
 			AlbAllowEmptyValues,
+			map[string]interface{}{},
 		))
 	}
 	return err
