@@ -166,6 +166,7 @@ github.com/aws/aws-sdk-go-v2/private/protocol/xml/xmlutil
 github.com/aws/aws-sdk-go-v2/service/accessanalyzer
 github.com/aws/aws-sdk-go-v2/service/acm
 github.com/aws/aws-sdk-go-v2/service/apigateway
+github.com/aws/aws-sdk-go-v2/service/appsync
 github.com/aws/aws-sdk-go-v2/service/autoscaling
 github.com/aws/aws-sdk-go-v2/service/budgets
 github.com/aws/aws-sdk-go-v2/service/cloud9

@@ -397,6 +397,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_api_gateway_stage`
     * `aws_api_gateway_usage_plan`
     * `aws_api_gateway_vpc_link`
+*   `appsync`
+    * `aws_appsync_graphql_api`
 *   `auto_scaling`
     * `aws_autoscaling_group`
     * `aws_launch_configuration`
