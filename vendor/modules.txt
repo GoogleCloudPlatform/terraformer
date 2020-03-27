@@ -178,6 +178,8 @@ github.com/aws/aws-sdk-go-v2/service/codebuild
 github.com/aws/aws-sdk-go-v2/service/codecommit
 github.com/aws/aws-sdk-go-v2/service/codedeploy
 github.com/aws/aws-sdk-go-v2/service/codepipeline
+github.com/aws/aws-sdk-go-v2/service/cognitoidentity
+github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider
 github.com/aws/aws-sdk-go-v2/service/datapipeline
 github.com/aws/aws-sdk-go-v2/service/devicefarm
 github.com/aws/aws-sdk-go-v2/service/dynamodb
