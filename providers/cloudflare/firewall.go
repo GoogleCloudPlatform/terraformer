@@ -90,6 +90,38 @@ func (*FirewallGenerator) createAccessRuleResources(api *cf.API, zoneID, zoneNam
 	return resources, nil
 }
 
+func (*FirewallGenerator) createRateLimitResources(api *cf.API, zoneID, zoneName string) ([]terraform_utils.Resource, error) {
+	resources := []terraform_utils.Resource{}
+
+	for page := 1; ; page++ {
+		rateLimits, resultInfo, err := api.ListRateLimits(zoneID, cf.PaginationOptions{Page: page, PerPage: 10})
+		if err != nil {
+			log.Println(err)
+			return resources, err
+		}
+
+		for _, rateLimit := range rateLimits {
+			resources = append(resources, terraform_utils.NewResource(
+				rateLimit.ID,
+				fmt.Sprintf("%s_%s", zoneName, rateLimit.ID),
+				"cloudflare_rate_limit",
+				"cloudflare",
+				map[string]string{
+					"zone_id": zoneID,
+				},
+				[]string{},
+				map[string]interface{}{},
+			))
+		}
+
+		if resultInfo.Count < resultInfo.PerPage {
+			break
+		}
+	}
+
+	return resources, nil
+}
+
 func (*FirewallGenerator) createFilterResources(api *cf.API, zoneID, zoneName string) ([]terraform_utils.Resource, error) {
 	resources := []terraform_utils.Resource{}
 	filters, err := api.Filters(zoneID, cf.PaginationOptions{})
@@ -159,6 +191,7 @@ func (g *FirewallGenerator) InitResources() error {
 		g.createFilterResources,
 		g.createAccessRuleResources,
 		g.createZoneLockdownsResources,
+		g.createRateLimitResources,
 	}
 
 	for _, zone := range zones {
@@ -178,7 +211,7 @@ func (g *FirewallGenerator) InitResources() error {
 
 func (g *FirewallGenerator) PostConvertHook() error {
 	for i, resourceRecord := range g.Resources {
-		// If Zone Name exists, delete ZoneID
+		// If zone ID exists, delete zone name
 		if _, zoneIDExist := resourceRecord.Item["zone_id"]; zoneIDExist {
 			delete(g.Resources[i].Item, "zone")
 		}
@@ -193,13 +226,15 @@ func (g *FirewallGenerator) PostConvertHook() error {
 		if resourceRecord.InstanceInfo.Type == "cloudflare_filter" {
 			continue
 		}
-		filterID := resourceRecord.Item["filter_id"]
-		for _, filterResource := range g.Resources {
-			if filterResource.InstanceInfo.Type != "cloudflare_filter" {
-				continue
-			}
-			if filterID == filterResource.InstanceState.ID {
-				g.Resources[i].Item["filter_id"] = "${cloudflare_filter." + filterResource.ResourceName + ".id}"
+		filterID, ok := resourceRecord.Item["filter_id"]
+		if ok {
+			for _, filterResource := range g.Resources {
+				if filterResource.InstanceInfo.Type != "cloudflare_filter" {
+					continue
+				}
+				if filterID == filterResource.InstanceState.ID {
+					g.Resources[i].Item["filter_id"] = "${cloudflare_filter." + filterResource.ResourceName + ".id}"
+				}
 			}
 		}
 	}
