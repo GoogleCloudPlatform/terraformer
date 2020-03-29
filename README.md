@@ -528,6 +528,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_db_subnet_group`
     * `aws_db_option_group`
     * `aws_db_event_subscription`
+*   `resourcegroups`
+    `aws_resourcegroups_group`
 *   `route53`
     * `aws_route53_zone`
     * `aws_route53_record`
