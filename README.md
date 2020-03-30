@@ -555,6 +555,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_sqs_queue`
 *   `subnet`
     * `aws_subnet`
+*   `swf`
+    * `aws_swf_domain`
 *   `transit_gateway`
     * `aws_ec2_transit_gateway_route_table`
     * `aws_ec2_transit_gateway_vpc_attachment`

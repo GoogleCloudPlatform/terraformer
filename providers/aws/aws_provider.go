@@ -285,6 +285,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"sqs":               &SqsGenerator{},
 		"sns":               &SnsGenerator{},
 		"subnet":            &SubnetGenerator{},
+		"swf":               &SWFGenerator{},
 		"transit_gateway":   &TransitGatewayGenerator{},
 		"waf":               &WafGenerator{},
 		"waf_regional":      &WafRegionalGenerator{},
