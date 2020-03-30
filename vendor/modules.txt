@@ -209,6 +209,7 @@ github.com/aws/aws-sdk-go-v2/service/s3
 github.com/aws/aws-sdk-go-v2/service/s3/internal/arn
 github.com/aws/aws-sdk-go-v2/service/s3/internal/external
 github.com/aws/aws-sdk-go-v2/service/ses
+github.com/aws/aws-sdk-go-v2/service/sfn
 github.com/aws/aws-sdk-go-v2/service/sns
 github.com/aws/aws-sdk-go-v2/service/sqs
 github.com/aws/aws-sdk-go-v2/service/sts
