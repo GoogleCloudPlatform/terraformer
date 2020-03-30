@@ -292,5 +292,6 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"vpc_peering":       &VpcPeeringConnectionGenerator{},
 		"vpn_connection":    &VpnConnectionGenerator{},
 		"vpn_gateway":       &VpnGatewayGenerator{},
+		"xray":              &XrayGenerator{},
 	}
 }
