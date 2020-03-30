@@ -545,6 +545,9 @@ In that case terraformer will not know with which region resources are associate
     * `aws_ses_receipt_rule`
     * `aws_ses_receipt_rule_set`
     * `aws_ses_template`
+*   `sfn`
+    * `aws_sfn_activity`
+    * `aws_sfn_state_machine`
 *   `sg`
     * `aws_security_group`
     * `aws_security_group_rule` (if a rule cannot be inlined)
