@@ -15,9 +15,7 @@
 package keycloak
 
 import (
-	"errors"
 	"reflect"
-	"sort"
 	"strconv"
 	"strings"
 
@@ -25,13 +23,7 @@ import (
 	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
 )
 
-type RealmGenerator struct {
-	KeycloakService
-}
-
-var RealmAllowEmptyValues = []string{}
-
-func (g RealmGenerator) createResources(realms []*keycloak.Realm) []terraform_utils.Resource {
+func (g RealmGenerator) createRealmResources(realms []*keycloak.Realm) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
 	for _, realm := range realms {
 		resources = append(resources, terraform_utils.NewSimpleResource(
@@ -39,7 +31,7 @@ func (g RealmGenerator) createResources(realms []*keycloak.Realm) []terraform_ut
 			"realm_"+normalizeResourceName(realm.Realm),
 			"keycloak_realm",
 			"keycloak",
-			RealmAllowEmptyValues,
+			[]string{},
 		))
 	}
 	return resources
@@ -64,7 +56,7 @@ func (g RealmGenerator) createRequiredActionResources(requiredActions []*keycloa
 	return resources
 }
 
-func (g RealmGenerator) createLdapUserFederationResources(customUserFederations *[]keycloak.CustomUserFederation) []terraform_utils.Resource {
+func (g RealmGenerator) createCustomUserFederationResources(customUserFederations *[]keycloak.CustomUserFederation) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
 	for _, customUserFederation := range *customUserFederations {
 		switch customUserFederation.ProviderId {
@@ -129,6 +121,26 @@ func (g RealmGenerator) createLdapMapperResources(realmId, providerName string, 
 			mapperId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapGroupMapper).Id
 			mapperName = reflect.ValueOf(mapper).Interface().(*keycloak.LdapGroupMapper).Name
 			mapperType = "group"
+		case "*keycloak.LdapRoleMapper":
+			providerId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapRoleMapper).LdapUserFederationId
+			mapperId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapRoleMapper).Id
+			mapperName = reflect.ValueOf(mapper).Interface().(*keycloak.LdapRoleMapper).Name
+			mapperType = "role"
+		case "*keycloak.LdapHardcodedGroupMapper":
+			providerId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapHardcodedGroupMapper).LdapUserFederationId
+			mapperId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapHardcodedGroupMapper).Id
+			mapperName = reflect.ValueOf(mapper).Interface().(*keycloak.LdapHardcodedGroupMapper).Name
+			mapperType = "hardcoded_group"
+		case "*keycloak.LdapHardcodedRoleMapper":
+			providerId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapHardcodedRoleMapper).LdapUserFederationId
+			mapperId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapHardcodedRoleMapper).Id
+			mapperName = reflect.ValueOf(mapper).Interface().(*keycloak.LdapHardcodedRoleMapper).Name
+			mapperType = "hardcoded_role"
+		case "*keycloak.LdapMsadLdsUserAccountControlMapper":
+			providerId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapMsadLdsUserAccountControlMapper).LdapUserFederationId
+			mapperId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapMsadLdsUserAccountControlMapper).Id
+			mapperName = reflect.ValueOf(mapper).Interface().(*keycloak.LdapMsadLdsUserAccountControlMapper).Name
+			mapperType = "msad_lds_user_account_control"
 		case "*keycloak.LdapMsadUserAccountControlMapper":
 			providerId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapMsadUserAccountControlMapper).LdapUserFederationId
 			mapperId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapMsadUserAccountControlMapper).Id
@@ -140,7 +152,6 @@ func (g RealmGenerator) createLdapMapperResources(realmId, providerName string, 
 			mapperName = reflect.ValueOf(mapper).Interface().(*keycloak.LdapUserAttributeMapper).Name
 			mapperType = "user_attribute"
 		default:
-			// the role mapper is not supported for the moment
 			continue
 		}
 		name = "ldap_" + mapperType + "_mapper_" + normalizeResourceName(realmId) + "_" + normalizeResourceName(providerName) + "_" + normalizeResourceName(mapperName)
@@ -167,114 +178,4 @@ func (g RealmGenerator) createLdapMapperResources(realmId, providerName string, 
 		))
 	}
 	return resources
-}
-
-func (g *RealmGenerator) InitResources() error {
-	client, err := keycloak.NewKeycloakClient(g.Args["url"].(string), g.Args["client_id"].(string), g.Args["client_secret"].(string), g.Args["realm"].(string), "", "", true, 5)
-	if err != nil {
-		return errors.New("keycloak: could not connect to Keycloak")
-	}
-	var realms []*keycloak.Realm
-	if g.Args["target"].(string) == "" {
-		realms, err = client.GetRealms()
-		if err != nil {
-			return err
-		}
-	} else {
-		realm, err := client.GetRealm(g.Args["target"].(string))
-		if err != nil {
-			return err
-		}
-		realms = append(realms, realm)
-	}
-	g.Resources = g.createResources(realms)
-	for _, realm := range realms {
-		requiredActions, err := client.GetRequiredActions(realm.Id)
-		if err != nil {
-			return err
-		}
-		g.Resources = append(g.Resources, g.createRequiredActionResources(requiredActions)...)
-		customUserFederations, err := client.GetCustomUserFederations(realm.Id)
-		if err != nil {
-			return err
-		}
-		g.Resources = append(g.Resources, g.createLdapUserFederationResources(customUserFederations)...)
-		for _, customUserFederation := range *customUserFederations {
-			switch customUserFederation.ProviderId {
-			case "ldap":
-				mappers, err := client.GetLdapUserFederationMappers(realm.Id, customUserFederation.Id)
-				if err != nil {
-					return err
-				}
-				g.Resources = append(g.Resources, g.createLdapMapperResources(realm.Id, customUserFederation.Name, mappers)...)
-			}
-		}
-		/* Not supported by the provider for the moment
-		openidClientScopes, err = client.GetRealmDefaultClientScopes(realm.Id)
-		if err != nil {
-			return err
-		}
-		fmt.Printf("RealmDefaultClientScopes: %+v\n", openidClientScopes)
-		openidClientScopes, err = client.GetRealmOptionalClientScopes(realm.Id)
-		if err != nil {
-			return err
-		}
-		fmt.Printf("RealmOptionalClientScopes: %+v\n", openidClientScopes)
-		*/
-	}
-	return nil
-}
-
-func (g *RealmGenerator) PostConvertHook() error {
-	mapRealmIDs := map[string]string{}
-	mapUserFederationIDs := map[string]string{}
-	for _, r := range g.Resources {
-		if r.InstanceInfo.Type != "keycloak_realm" && r.InstanceInfo.Type != "keycloak_ldap_user_federation" {
-			continue
-		}
-		if r.InstanceInfo.Type == "keycloak_realm" {
-			mapRealmIDs[r.InstanceState.ID] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".id}"
-		}
-		if r.InstanceInfo.Type == "keycloak_ldap_user_federation" {
-			mapUserFederationIDs[r.InstanceState.ID] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".id}"
-		}
-	}
-	for i, r := range g.Resources {
-		if r.InstanceInfo.Type == "keycloak_realm" {
-			if _, exist := r.Item["internationalization"]; exist {
-				for _, v := range r.Item["internationalization"].([]interface{}) {
-					sortedSupportedLocales := []string{}
-					for _, vv := range v.(map[string]interface{})["supported_locales"].([]interface{}) {
-						sortedSupportedLocales = append(sortedSupportedLocales, vv.(string))
-					}
-					sort.Strings(sortedSupportedLocales)
-					v.(map[string]interface{})["supported_locales"] = sortedSupportedLocales
-				}
-			}
-		}
-		if r.InstanceInfo.Type != "keycloak_required_action" &&
-			r.InstanceInfo.Type != "keycloak_ldap_user_federation" &&
-			r.InstanceInfo.Type != "keycloak_ldap_full_name_mapper" &&
-			r.InstanceInfo.Type != "keycloak_ldap_group_mapper" &&
-			r.InstanceInfo.Type != "keycloak_ldap_msad_user_account_control_mapper" &&
-			r.InstanceInfo.Type != "keycloak_ldap_user_attribute_mapper" {
-			continue
-		}
-		r.Item["realm_id"] = mapRealmIDs[r.Item["realm_id"].(string)]
-		if r.InstanceInfo.Type == "keycloak_ldap_full_name_mapper" ||
-			r.InstanceInfo.Type == "keycloak_ldap_group_mapper" ||
-			r.InstanceInfo.Type == "keycloak_ldap_msad_user_account_control_mapper" ||
-			r.InstanceInfo.Type == "keycloak_ldap_user_attribute_mapper" {
-			g.Resources[i].Item["ldap_user_federation_id"] = mapUserFederationIDs[g.Resources[i].Item["ldap_user_federation_id"].(string)]
-		}
-		if r.InstanceInfo.Type == "keycloak_ldap_user_federation" {
-			sortedUserObjectClasses := []string{}
-			for _, v := range r.Item["user_object_classes"].([]interface{}) {
-				sortedUserObjectClasses = append(sortedUserObjectClasses, v.(string))
-			}
-			sort.Strings(sortedUserObjectClasses)
-			r.Item["user_object_classes"] = sortedUserObjectClasses
-		}
-	}
-	return nil
 }
