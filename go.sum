@@ -577,6 +577,8 @@ github.com/mrparkers/terraform-provider-keycloak v0.0.0-20191216155057-102097851
 github.com/mrparkers/terraform-provider-keycloak v0.0.0-20191216155057-102097851a3c/go.mod h1:pYObjfuBa5lKIMaDrE3TbTGRBySW3i7DX7/I2PxwHUA=
 github.com/mrparkers/terraform-provider-keycloak v0.0.0-20191218161228-a467c7185cbc h1:GQrdInqMDNIwpJJVGeN95lTaQL1VLoF4+H9EyE8mpl0=
 github.com/mrparkers/terraform-provider-keycloak v0.0.0-20191218161228-a467c7185cbc/go.mod h1:oQ8jZBFBNqqhgPYnop7wJp5EwNwYrHPINZs5mrTXrQE=
+github.com/mrparkers/terraform-provider-keycloak v0.0.0-20200413144118-2212afc81161 h1:s4S6wLg05Xp7ZfynnhMSsrj0ueFelTSV55gvDIgwwAY=
+github.com/mrparkers/terraform-provider-keycloak v0.0.0-20200413144118-2212afc81161/go.mod h1:q1krA85sGCNuxTOIcH9WSFf4nEO7he+IDDf5SW+xs1s=
 github.com/munnerz/goautoneg v0.0.0-20120707110453-a547fc61f48d/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
 github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f/go.mod h1:ZdcZmHo+o7JKHSa8/e818NopupXU1YMK5fe1lsApnBw=

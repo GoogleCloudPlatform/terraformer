@@ -522,7 +522,7 @@ github.com/mitchellh/reflectwalk
 github.com/modern-go/concurrent
 # github.com/modern-go/reflect2 v1.0.1
 github.com/modern-go/reflect2
-# github.com/mrparkers/terraform-provider-keycloak v0.0.0-20191218161228-a467c7185cbc
+# github.com/mrparkers/terraform-provider-keycloak v0.0.0-20200413144118-2212afc81161
 ## explicit
 github.com/mrparkers/terraform-provider-keycloak/keycloak
 # github.com/oklog/run v1.0.0
