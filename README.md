@@ -429,6 +429,9 @@ In that case terraformer will not know with which region resources are associate
 *   `codepipeline`
     * `aws_codepipeline`
     * `aws_codepipeline_webhook`
+*   `cognito`
+    * `aws_cognito_identity_pool`
+    * `aws_cognito_user_pool`
 *   `customer_gateway`
     * `aws_customer_gateway`
 *   `datapipeline`
