@@ -246,6 +246,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"codecommit":        &CodeCommitGenerator{},
 		"codedeploy":        &CodeDeployGenerator{},
 		"codepipeline":      &CodePipelineGenerator{},
+		"cognito":           &CognitoGenerator{},
 		"customer_gateway":  &CustomerGatewayGenerator{},
 		"datapipeline":      &DataPipelineGenerator{},
 		"devicefarm":        &DeviceFarmGenerator{},
