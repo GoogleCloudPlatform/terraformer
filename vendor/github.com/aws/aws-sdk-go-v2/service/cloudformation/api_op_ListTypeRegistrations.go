@@ -26,21 +26,25 @@ type ListTypeRegistrationsInput struct {
 	NextToken *string `min:"1" type:"string"`
 
 	// The current status of the type registration request.
+	//
+	// The default is IN_PROGRESS.
 	RegistrationStatusFilter RegistrationStatus `type:"string" enum:"true"`
 
 	// The kind of type.
 	//
 	// Currently the only valid value is RESOURCE.
+	//
+	// Conditional: You must specify either TypeName and Type, or Arn.
 	Type RegistryType `type:"string" enum:"true"`
 
 	// The Amazon Resource Name (ARN) of the type.
 	//
-	// Conditional: You must specify TypeName or Arn.
+	// Conditional: You must specify either TypeName and Type, or Arn.
 	TypeArn *string `type:"string"`
 
 	// The name of the type.
 	//
-	// Conditional: You must specify TypeName or Arn.
+	// Conditional: You must specify either TypeName and Type, or Arn.
 	TypeName *string `min:"10" type:"string"`
 }
 
@@ -94,7 +98,7 @@ const opListTypeRegistrations = "ListTypeRegistrations"
 // ListTypeRegistrationsRequest returns a request value for making API operation for
 // AWS CloudFormation.
 //
-// Returns a list of registration tokens for the specified type.
+// Returns a list of registration tokens for the specified type(s).
 //
 //    // Example sending a request using ListTypeRegistrationsRequest.
 //    req := client.ListTypeRegistrationsRequest(params)

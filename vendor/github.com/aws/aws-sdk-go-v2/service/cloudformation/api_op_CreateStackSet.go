@@ -23,6 +23,13 @@ type CreateStackSetInput struct {
 	// in the AWS CloudFormation User Guide.
 	AdministrationRoleARN *string `min:"20" type:"string"`
 
+	// Describes whether StackSets automatically deploys to AWS Organizations accounts
+	// that are added to the target organization or organizational unit (OU). Specify
+	// only if PermissionModel is SERVICE_MANAGED.
+	//
+	// If you specify AutoDeployment, do not specify DeploymentTargets or Regions.
+	AutoDeployment *AutoDeployment `type:"structure"`
+
 	// In some cases, you must explicitly acknowledge that your stack set template
 	// contains certain capabilities in order for AWS CloudFormation to create the
 	// stack set and related stack instances.
@@ -85,6 +92,19 @@ type CreateStackSetInput struct {
 
 	// The input parameters for the stack set template.
 	Parameters []Parameter `type:"list"`
+
+	// Describes how the IAM roles required for stack set operations are created.
+	// By default, SELF-MANAGED is specified.
+	//
+	//    * With self-managed permissions, you must create the administrator and
+	//    execution roles required to deploy to target accounts. For more information,
+	//    see Grant Self-Managed Stack Set Permissions (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-prereqs-self-managed.html).
+	//
+	//    * With service-managed permissions, StackSets automatically creates the
+	//    IAM roles required to deploy to accounts managed by AWS Organizations.
+	//    For more information, see Grant Service-Managed Stack Set Permissions
+	//    (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-prereqs-service-managed.html).
+	PermissionModel PermissionModels `type:"string" enum:"true"`
 
 	// The name to associate with the stack set. The name must be unique in the
 	// region where you create your stack set.

@@ -62,6 +62,8 @@ type ListTypesInput struct {
 	//
 	//    * PUBLIC: The type is publically visible and usable within any Amazon
 	//    account.
+	//
+	// The default is PRIVATE.
 	Visibility Visibility `type:"string" enum:"true"`
 }
 

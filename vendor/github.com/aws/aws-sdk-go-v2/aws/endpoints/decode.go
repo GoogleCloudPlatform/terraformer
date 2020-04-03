@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
 )
 
 type modelDefinition map[string]json.RawMessage
@@ -138,11 +136,18 @@ func custSetUnresolveServices(p *partition) {
 }
 
 type decodeModelError struct {
-	awsError
+	reason string
+	err    error
 }
 
-func newDecodeModelError(msg string, err error) decodeModelError {
-	return decodeModelError{
-		awsError: awserr.New("DecodeEndpointsModelError", msg, err),
-	}
+func newDecodeModelError(msg string, err error) *decodeModelError {
+	return &decodeModelError{reason: msg, err: err}
+}
+
+func (d *decodeModelError) Error() string {
+	return fmt.Sprintf("failed to decode model, %v, %v", d.reason, d.err)
+}
+
+func (d *decodeModelError) Unwrap() error {
+	return d.err
 }

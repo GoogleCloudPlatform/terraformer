@@ -20,7 +20,7 @@ type DescribeAnomalyDetectorsInput struct {
 	Dimensions []Dimension `type:"list"`
 
 	// The maximum number of results to return in one operation. The maximum value
-	// you can specify is 10.
+	// that you can specify is 100.
 	//
 	// To retrieve the remaining results, make another call with the returned NextToken
 	// value.

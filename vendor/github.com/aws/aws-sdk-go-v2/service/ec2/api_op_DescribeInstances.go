@@ -59,7 +59,8 @@ type DescribeInstancesInput struct {
 	//    * host-id - The ID of the Dedicated Host on which the instance is running,
 	//    if applicable.
 	//
-	//    * hypervisor - The hypervisor type of the instance (ovm | xen).
+	//    * hypervisor - The hypervisor type of the instance (ovm | xen). The value
+	//    xen is used for both Xen and Nitro hypervisors.
 	//
 	//    * iam-instance-profile.arn - The instance profile associated with the
 	//    instance. Specified as an ARN.

@@ -55,6 +55,25 @@ type UpdateServiceInput struct {
 	// An object representing the network configuration for a task or service.
 	NetworkConfiguration *NetworkConfiguration `locationName:"networkConfiguration" type:"structure"`
 
+	// An array of task placement constraint objects to update the service to use.
+	// If no value is specified, the existing placement constraints for the service
+	// will remain unchanged. If this value is specified, it will override any existing
+	// placement constraints defined for the service. To remove all existing placement
+	// constraints, specify an empty array.
+	//
+	// You can specify a maximum of 10 constraints per task (this limit includes
+	// constraints in the task definition and those specified at runtime).
+	PlacementConstraints []PlacementConstraint `locationName:"placementConstraints" type:"list"`
+
+	// The task placement strategy objects to update the service to use. If no value
+	// is specified, the existing placement strategy for the service will remain
+	// unchanged. If this value is specified, it will override the existing placement
+	// strategy defined for the service. To remove an existing placement strategy,
+	// specify an empty object.
+	//
+	// You can specify a maximum of five strategy rules per service.
+	PlacementStrategy []PlacementStrategy `locationName:"placementStrategy" type:"list"`
+
 	// The platform version on which your tasks in the service are running. A platform
 	// version is only specified for tasks using the Fargate launch type. If a platform
 	// version is not specified, the LATEST platform version is used by default.

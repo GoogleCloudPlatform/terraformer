@@ -16,6 +16,11 @@ type DescribeAlarmHistoryInput struct {
 	// The name of the alarm.
 	AlarmName *string `min:"1" type:"string"`
 
+	// Use this parameter to specify whether you want the operation to return metric
+	// alarms or composite alarms. If you omit this parameter, only metric alarms
+	// are returned.
+	AlarmTypes []AlarmType `type:"list"`
+
 	// The ending date to retrieve alarm history.
 	EndDate *time.Time `type:"timestamp"`
 
@@ -28,6 +33,11 @@ type DescribeAlarmHistoryInput struct {
 	// The token returned by a previous call to indicate that there is more data
 	// available.
 	NextToken *string `type:"string"`
+
+	// Specified whether to return the newest or oldest alarm history first. Specify
+	// TimestampDescending to have the newest event history returned first, and
+	// specify TimestampAscending to have the oldest history returned first.
+	ScanBy ScanBy `type:"string" enum:"true"`
 
 	// The starting date to retrieve alarm history.
 	StartDate *time.Time `type:"timestamp"`
@@ -76,7 +86,7 @@ const opDescribeAlarmHistory = "DescribeAlarmHistory"
 //
 // Retrieves the history for the specified alarm. You can filter the results
 // by date range or item type. If an alarm name is not specified, the histories
-// for all alarms are returned.
+// for either all metric alarms or all composite alarms are returned.
 //
 // CloudWatch retains the history of an alarm even if you delete the alarm.
 //

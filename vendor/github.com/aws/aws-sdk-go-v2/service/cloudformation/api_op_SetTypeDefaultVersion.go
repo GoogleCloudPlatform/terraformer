@@ -15,15 +15,17 @@ type SetTypeDefaultVersionInput struct {
 	// The Amazon Resource Name (ARN) of the type for which you want version summary
 	// information.
 	//
-	// Conditional: You must specify TypeName or Arn.
+	// Conditional: You must specify either TypeName and Type, or Arn.
 	Arn *string `type:"string"`
 
 	// The kind of type.
+	//
+	// Conditional: You must specify either TypeName and Type, or Arn.
 	Type RegistryType `type:"string" enum:"true"`
 
 	// The name of the type.
 	//
-	// Conditional: You must specify TypeName or Arn.
+	// Conditional: You must specify either TypeName and Type, or Arn.
 	TypeName *string `min:"10" type:"string"`
 
 	// The ID of a specific version of the type. The version ID is the value at

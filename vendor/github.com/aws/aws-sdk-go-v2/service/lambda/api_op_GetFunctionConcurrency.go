@@ -93,8 +93,8 @@ const opGetFunctionConcurrency = "GetFunctionConcurrency"
 // GetFunctionConcurrencyRequest returns a request value for making API operation for
 // AWS Lambda.
 //
-// Returns details about the concurrency configuration for a function. To set
-// a concurrency limit for a function, use PutFunctionConcurrency.
+// Returns details about the reserved concurrency configuration for a function.
+// To set a concurrency limit for a function, use PutFunctionConcurrency.
 //
 //    // Example sending a request using GetFunctionConcurrencyRequest.
 //    req := client.GetFunctionConcurrencyRequest(params)

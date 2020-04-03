@@ -90,6 +90,9 @@ type CreateJobInput struct {
 	// Name is a required field
 	Name *string `min:"1" type:"string" required:"true"`
 
+	// Non-overridable arguments for this job, specified as name-value pairs.
+	NonOverridableArguments map[string]string `type:"map"`
+
 	// Specifies configuration properties of a job notification.
 	NotificationProperty *NotificationProperty `type:"structure"`
 

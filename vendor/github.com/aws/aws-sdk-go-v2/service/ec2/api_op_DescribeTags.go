@@ -27,9 +27,10 @@ type DescribeTagsInput struct {
 	//    * resource-type - The resource type (customer-gateway | dedicated-host
 	//    | dhcp-options | elastic-ip | fleet | fpga-image | image | instance |
 	//    host-reservation | internet-gateway | launch-template | natgateway | network-acl
-	//    | network-interface | reserved-instances | route-table | security-group
-	//    | snapshot | spot-instances-request | subnet | volume | vpc | vpc-peering-connection
-	//    | vpn-connection | vpn-gateway).
+	//    | network-interface | placement-group | reserved-instances | route-table
+	//    | security-group | snapshot | spot-instances-request | subnet | volume
+	//    | vpc | vpc-endpoint | vpc-endpoint-service | vpc-peering-connection |
+	//    vpn-connection | vpn-gateway).
 	//
 	//    * tag:<key> - The key/value combination of the tag. For example, specify
 	//    "tag:Owner" for the filter name and "TeamA" for the filter value to find

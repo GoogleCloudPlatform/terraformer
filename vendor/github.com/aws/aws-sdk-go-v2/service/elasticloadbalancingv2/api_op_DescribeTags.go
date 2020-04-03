@@ -12,7 +12,8 @@ import (
 type DescribeTagsInput struct {
 	_ struct{} `type:"structure"`
 
-	// The Amazon Resource Names (ARN) of the resources.
+	// The Amazon Resource Names (ARN) of the resources. You can specify up to 20
+	// resources in a single call.
 	//
 	// ResourceArns is a required field
 	ResourceArns []string `type:"list" required:"true"`

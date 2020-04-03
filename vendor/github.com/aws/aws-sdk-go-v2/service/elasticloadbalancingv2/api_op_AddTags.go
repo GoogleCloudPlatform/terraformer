@@ -18,7 +18,7 @@ type AddTagsInput struct {
 	// ResourceArns is a required field
 	ResourceArns []string `type:"list" required:"true"`
 
-	// The tags. Each resource can have a maximum of 10 tags.
+	// The tags.
 	//
 	// Tags is a required field
 	Tags []Tag `min:"1" type:"list" required:"true"`

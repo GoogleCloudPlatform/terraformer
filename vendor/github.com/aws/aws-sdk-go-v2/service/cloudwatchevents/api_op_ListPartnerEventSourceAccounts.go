@@ -18,8 +18,8 @@ type ListPartnerEventSourceAccountsInput struct {
 	EventSourceName *string `min:"1" type:"string" required:"true"`
 
 	// Specifying this limits the number of results returned by this operation.
-	// The operation also returns a NextToken that you can use in a subsequent operation
-	// to retrieve the next set of results.
+	// The operation also returns a NextToken which you can use in a subsequent
+	// operation to retrieve the next set of results.
 	Limit *int64 `min:"1" type:"integer"`
 
 	// The token returned by a previous call to this operation. Specifying this
@@ -77,9 +77,8 @@ const opListPartnerEventSourceAccounts = "ListPartnerEventSourceAccounts"
 // Amazon CloudWatch Events.
 //
 // An SaaS partner can use this operation to display the AWS account ID that
-// a particular partner event source name is associated with.
-//
-// This operation is used by SaaS partners, not by AWS customers.
+// a particular partner event source name is associated with. This operation
+// is not used by AWS customers.
 //
 //    // Example sending a request using ListPartnerEventSourceAccountsRequest.
 //    req := client.ListPartnerEventSourceAccountsRequest(params)

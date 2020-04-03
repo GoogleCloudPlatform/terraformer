@@ -3,6 +3,7 @@
 package elasticache
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -73,11 +74,11 @@ type CacheCluster struct {
 	//    * General purpose: Current generation: M5 node types: cache.m5.large,
 	//    cache.m5.xlarge, cache.m5.2xlarge, cache.m5.4xlarge, cache.m5.12xlarge,
 	//    cache.m5.24xlarge M4 node types: cache.m4.large, cache.m4.xlarge, cache.m4.2xlarge,
-	//    cache.m4.4xlarge, cache.m4.10xlarge T2 node types: cache.t2.micro, cache.t2.small,
-	//    cache.t2.medium Previous generation: (not recommended) T1 node types:
-	//    cache.t1.micro M1 node types: cache.m1.small, cache.m1.medium, cache.m1.large,
-	//    cache.m1.xlarge M3 node types: cache.m3.medium, cache.m3.large, cache.m3.xlarge,
-	//    cache.m3.2xlarge
+	//    cache.m4.4xlarge, cache.m4.10xlarge T3 node types: cache.t3.micro, cache.t3.small,
+	//    cache.t3.medium T2 node types: cache.t2.micro, cache.t2.small, cache.t2.medium
+	//    Previous generation: (not recommended) T1 node types: cache.t1.micro M1
+	//    node types: cache.m1.small, cache.m1.medium, cache.m1.large, cache.m1.xlarge
+	//    M3 node types: cache.m3.medium, cache.m3.large, cache.m3.xlarge, cache.m3.2xlarge
 	//
 	//    * Compute optimized: Previous generation: (not recommended) C1 node types:
 	//    cache.c1.xlarge
@@ -251,11 +252,11 @@ func (s CacheEngineVersion) String() string {
 //    * General purpose: Current generation: M5 node types: cache.m5.large,
 //    cache.m5.xlarge, cache.m5.2xlarge, cache.m5.4xlarge, cache.m5.12xlarge,
 //    cache.m5.24xlarge M4 node types: cache.m4.large, cache.m4.xlarge, cache.m4.2xlarge,
-//    cache.m4.4xlarge, cache.m4.10xlarge T2 node types: cache.t2.micro, cache.t2.small,
-//    cache.t2.medium Previous generation: (not recommended) T1 node types:
-//    cache.t1.micro M1 node types: cache.m1.small, cache.m1.medium, cache.m1.large,
-//    cache.m1.xlarge M3 node types: cache.m3.medium, cache.m3.large, cache.m3.xlarge,
-//    cache.m3.2xlarge
+//    cache.m4.4xlarge, cache.m4.10xlarge T3 node types: cache.t3.micro, cache.t3.small,
+//    cache.t3.medium T2 node types: cache.t2.micro, cache.t2.small, cache.t2.medium
+//    Previous generation: (not recommended) T1 node types: cache.t1.micro M1
+//    node types: cache.m1.small, cache.m1.medium, cache.m1.large, cache.m1.xlarge
+//    M3 node types: cache.m3.medium, cache.m3.large, cache.m3.xlarge, cache.m3.2xlarge
 //
 //    * Compute optimized: Previous generation: (not recommended) C1 node types:
 //    cache.c1.xlarge
@@ -289,7 +290,8 @@ type CacheNode struct {
 	// cache node used in a customer's AWS account.
 	CacheNodeId *string `type:"string"`
 
-	// The current state of this cache node.
+	// The current state of this cache node, one of the following values: available,
+	// creating, rebooting, or deleting.
 	CacheNodeStatus *string `type:"string"`
 
 	// The Availability Zone where this node was created and now resides.
@@ -422,6 +424,9 @@ type CacheParameterGroup struct {
 
 	// The description for this cache parameter group.
 	Description *string `type:"string"`
+
+	// Indicates whether the parameter group is associated with a Global Datastore
+	IsGlobal *bool `type:"boolean"`
 }
 
 // String returns the string representation
@@ -688,6 +693,132 @@ type Event struct {
 
 // String returns the string representation
 func (s Event) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Indicates the slot configuration and global identifier for a slice group.
+type GlobalNodeGroup struct {
+	_ struct{} `type:"structure"`
+
+	// The name of the global node group
+	GlobalNodeGroupId *string `type:"string"`
+
+	// The keyspace for this node group
+	Slots *string `type:"string"`
+}
+
+// String returns the string representation
+func (s GlobalNodeGroup) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Consists of a primary cluster that accepts writes and an associated secondary
+// cluster that resides in a different AWS region. The secondary cluster accepts
+// only reads. The primary cluster automatically replicates updates to the secondary
+// cluster.
+//
+//    * The GlobalReplicationGroupId represents the name of the Global Datastore,
+//    which is what you use to associate a secondary cluster.
+type GlobalReplicationGroup struct {
+	_ struct{} `type:"structure"`
+
+	// A flag that enables encryption at rest when set to true.
+	//
+	// You cannot modify the value of AtRestEncryptionEnabled after the replication
+	// group is created. To enable encryption at rest on a replication group you
+	// must set AtRestEncryptionEnabled to true when you create the replication
+	// group.
+	//
+	// Required: Only available when creating a replication group in an Amazon VPC
+	// using redis version 3.2.6, 4.x or later.
+	AtRestEncryptionEnabled *bool `type:"boolean"`
+
+	// A flag that enables using an AuthToken (password) when issuing Redis commands.
+	//
+	// Default: false
+	AuthTokenEnabled *bool `type:"boolean"`
+
+	// The cache node type of the Global Datastore
+	CacheNodeType *string `type:"string"`
+
+	// A flag that indicates whether the Global Datastore is cluster enabled.
+	ClusterEnabled *bool `type:"boolean"`
+
+	// The Elasticache engine. For preview, it is Redis only.
+	Engine *string `type:"string"`
+
+	// The Elasticache Redis engine version. For preview, it is Redis version 5.0.5
+	// only.
+	EngineVersion *string `type:"string"`
+
+	// Indicates the slot configuration and global identifier for each slice group.
+	GlobalNodeGroups []GlobalNodeGroup `locationNameList:"GlobalNodeGroup" type:"list"`
+
+	// The optional description of the Global Datastore
+	GlobalReplicationGroupDescription *string `type:"string"`
+
+	// The name of the Global Datastore
+	GlobalReplicationGroupId *string `type:"string"`
+
+	// The replication groups that comprise the Global Datastore.
+	Members []GlobalReplicationGroupMember `locationNameList:"GlobalReplicationGroupMember" type:"list"`
+
+	// The status of the Global Datastore
+	Status *string `type:"string"`
+
+	// A flag that enables in-transit encryption when set to true. You cannot modify
+	// the value of TransitEncryptionEnabled after the cluster is created. To enable
+	// in-transit encryption on a cluster you must set TransitEncryptionEnabled
+	// to true when you create a cluster.
+	TransitEncryptionEnabled *bool `type:"boolean"`
+}
+
+// String returns the string representation
+func (s GlobalReplicationGroup) String() string {
+	return awsutil.Prettify(s)
+}
+
+// The name of the Global Datastore and role of this replication group in the
+// Global Datastore.
+type GlobalReplicationGroupInfo struct {
+	_ struct{} `type:"structure"`
+
+	// The name of the Global Datastore
+	GlobalReplicationGroupId *string `type:"string"`
+
+	// The role of the replication group in a Global Datastore. Can be primary or
+	// secondary.
+	GlobalReplicationGroupMemberRole *string `type:"string"`
+}
+
+// String returns the string representation
+func (s GlobalReplicationGroupInfo) String() string {
+	return awsutil.Prettify(s)
+}
+
+// A member of a Global Datastore. It contains the Replication Group Id, the
+// AWS region and the role of the replication group.
+type GlobalReplicationGroupMember struct {
+	_ struct{} `type:"structure"`
+
+	// Indicates whether automatic failover is enabled for the replication group.
+	AutomaticFailover AutomaticFailoverStatus `type:"string" enum:"true"`
+
+	// The replication group id of the Global Datastore member.
+	ReplicationGroupId *string `type:"string"`
+
+	// The AWS region of the Global Datastore member.
+	ReplicationGroupRegion *string `type:"string"`
+
+	// Indicates the role of the replication group, primary or secondary.
+	Role *string `type:"string"`
+
+	// The status of the membership of the replication group.
+	Status *string `type:"string"`
+}
+
+// String returns the string representation
+func (s GlobalReplicationGroupMember) String() string {
 	return awsutil.Prettify(s)
 }
 
@@ -1034,6 +1165,61 @@ func (s RecurringCharge) String() string {
 	return awsutil.Prettify(s)
 }
 
+// A list of the replication groups
+type RegionalConfiguration struct {
+	_ struct{} `type:"structure"`
+
+	// The name of the secondary cluster
+	//
+	// ReplicationGroupId is a required field
+	ReplicationGroupId *string `type:"string" required:"true"`
+
+	// The AWS region where the cluster is stored
+	//
+	// ReplicationGroupRegion is a required field
+	ReplicationGroupRegion *string `type:"string" required:"true"`
+
+	// A list of PreferredAvailabilityZones objects that specifies the configuration
+	// of a node group in the resharded cluster.
+	//
+	// ReshardingConfiguration is a required field
+	ReshardingConfiguration []ReshardingConfiguration `locationNameList:"ReshardingConfiguration" type:"list" required:"true"`
+}
+
+// String returns the string representation
+func (s RegionalConfiguration) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *RegionalConfiguration) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "RegionalConfiguration"}
+
+	if s.ReplicationGroupId == nil {
+		invalidParams.Add(aws.NewErrParamRequired("ReplicationGroupId"))
+	}
+
+	if s.ReplicationGroupRegion == nil {
+		invalidParams.Add(aws.NewErrParamRequired("ReplicationGroupRegion"))
+	}
+
+	if s.ReshardingConfiguration == nil {
+		invalidParams.Add(aws.NewErrParamRequired("ReshardingConfiguration"))
+	}
+	if s.ReshardingConfiguration != nil {
+		for i, v := range s.ReshardingConfiguration {
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "ReshardingConfiguration", i), err.(aws.ErrInvalidParams))
+			}
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
 // Contains all of the attributes of a specific Redis replication group.
 type ReplicationGroup struct {
 	_ struct{} `type:"structure"`
@@ -1088,6 +1274,10 @@ type ReplicationGroup struct {
 
 	// The user supplied description of the replication group.
 	Description *string `type:"string"`
+
+	// The name of the Global Datastore and role of this replication group in the
+	// Global Datastore.
+	GlobalReplicationGroupInfo *GlobalReplicationGroupInfo `type:"structure"`
 
 	// The ID of the KMS key used to encrypt the disk in the cluster.
 	KmsKeyId *string `type:"string"`
@@ -1203,11 +1393,11 @@ type ReservedCacheNode struct {
 	//    * General purpose: Current generation: M5 node types: cache.m5.large,
 	//    cache.m5.xlarge, cache.m5.2xlarge, cache.m5.4xlarge, cache.m5.12xlarge,
 	//    cache.m5.24xlarge M4 node types: cache.m4.large, cache.m4.xlarge, cache.m4.2xlarge,
-	//    cache.m4.4xlarge, cache.m4.10xlarge T2 node types: cache.t2.micro, cache.t2.small,
-	//    cache.t2.medium Previous generation: (not recommended) T1 node types:
-	//    cache.t1.micro M1 node types: cache.m1.small, cache.m1.medium, cache.m1.large,
-	//    cache.m1.xlarge M3 node types: cache.m3.medium, cache.m3.large, cache.m3.xlarge,
-	//    cache.m3.2xlarge
+	//    cache.m4.4xlarge, cache.m4.10xlarge T3 node types: cache.t3.micro, cache.t3.small,
+	//    cache.t3.medium T2 node types: cache.t2.micro, cache.t2.small, cache.t2.medium
+	//    Previous generation: (not recommended) T1 node types: cache.t1.micro M1
+	//    node types: cache.m1.small, cache.m1.medium, cache.m1.large, cache.m1.xlarge
+	//    M3 node types: cache.m3.medium, cache.m3.large, cache.m3.xlarge, cache.m3.2xlarge
 	//
 	//    * Compute optimized: Previous generation: (not recommended) C1 node types:
 	//    cache.c1.xlarge
@@ -1286,11 +1476,11 @@ type ReservedCacheNodesOffering struct {
 	//    * General purpose: Current generation: M5 node types: cache.m5.large,
 	//    cache.m5.xlarge, cache.m5.2xlarge, cache.m5.4xlarge, cache.m5.12xlarge,
 	//    cache.m5.24xlarge M4 node types: cache.m4.large, cache.m4.xlarge, cache.m4.2xlarge,
-	//    cache.m4.4xlarge, cache.m4.10xlarge T2 node types: cache.t2.micro, cache.t2.small,
-	//    cache.t2.medium Previous generation: (not recommended) T1 node types:
-	//    cache.t1.micro M1 node types: cache.m1.small, cache.m1.medium, cache.m1.large,
-	//    cache.m1.xlarge M3 node types: cache.m3.medium, cache.m3.large, cache.m3.xlarge,
-	//    cache.m3.2xlarge
+	//    cache.m4.4xlarge, cache.m4.10xlarge T3 node types: cache.t3.micro, cache.t3.small,
+	//    cache.t3.medium T2 node types: cache.t2.micro, cache.t2.small, cache.t2.medium
+	//    Previous generation: (not recommended) T1 node types: cache.t1.micro M1
+	//    node types: cache.m1.small, cache.m1.medium, cache.m1.large, cache.m1.xlarge
+	//    M3 node types: cache.m3.medium, cache.m3.large, cache.m3.xlarge, cache.m3.2xlarge
 	//
 	//    * Compute optimized: Previous generation: (not recommended) C1 node types:
 	//    cache.c1.xlarge
@@ -1503,11 +1693,11 @@ type Snapshot struct {
 	//    * General purpose: Current generation: M5 node types: cache.m5.large,
 	//    cache.m5.xlarge, cache.m5.2xlarge, cache.m5.4xlarge, cache.m5.12xlarge,
 	//    cache.m5.24xlarge M4 node types: cache.m4.large, cache.m4.xlarge, cache.m4.2xlarge,
-	//    cache.m4.4xlarge, cache.m4.10xlarge T2 node types: cache.t2.micro, cache.t2.small,
-	//    cache.t2.medium Previous generation: (not recommended) T1 node types:
-	//    cache.t1.micro M1 node types: cache.m1.small, cache.m1.medium, cache.m1.large,
-	//    cache.m1.xlarge M3 node types: cache.m3.medium, cache.m3.large, cache.m3.xlarge,
-	//    cache.m3.2xlarge
+	//    cache.m4.4xlarge, cache.m4.10xlarge T3 node types: cache.t3.micro, cache.t3.small,
+	//    cache.t3.medium T2 node types: cache.t2.micro, cache.t2.small, cache.t2.medium
+	//    Previous generation: (not recommended) T1 node types: cache.t1.micro M1
+	//    node types: cache.m1.small, cache.m1.medium, cache.m1.large, cache.m1.xlarge
+	//    M3 node types: cache.m3.medium, cache.m3.large, cache.m3.xlarge, cache.m3.2xlarge
 	//
 	//    * Compute optimized: Previous generation: (not recommended) C1 node types:
 	//    cache.c1.xlarge

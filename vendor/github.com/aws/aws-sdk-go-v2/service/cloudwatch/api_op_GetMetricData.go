@@ -33,7 +33,7 @@ type GetMetricDataInput struct {
 	MaxDatapoints *int64 `type:"integer"`
 
 	// The metric queries to be returned. A single GetMetricData call can include
-	// as many as 100 MetricDataQuery structures. Each of these structures can specify
+	// as many as 500 MetricDataQuery structures. Each of these structures can specify
 	// either a metric to retrieve, or a math expression to perform on retrieved
 	// data.
 	//
@@ -149,7 +149,7 @@ const opGetMetricData = "GetMetricData"
 // GetMetricDataRequest returns a request value for making API operation for
 // Amazon CloudWatch.
 //
-// You can use the GetMetricData API to retrieve as many as 100 different metrics
+// You can use the GetMetricData API to retrieve as many as 500 different metrics
 // in a single request, with a total of as many as 100,800 data points. You
 // can also optionally perform math expressions on the values of the returned
 // statistics, to create new time series that represent new insights into your

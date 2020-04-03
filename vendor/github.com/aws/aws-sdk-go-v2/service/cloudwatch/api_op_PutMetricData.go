@@ -80,7 +80,8 @@ const opPutMetricData = "PutMetricData"
 // Publishes metric data points to Amazon CloudWatch. CloudWatch associates
 // the data points with the specified metric. If the specified metric does not
 // exist, CloudWatch creates the metric. When CloudWatch creates a metric, it
-// can take up to fifteen minutes for the metric to appear in calls to ListMetrics.
+// can take up to fifteen minutes for the metric to appear in calls to ListMetrics
+// (https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_ListMetrics.html).
 //
 // You can publish either individual data points in the Value field, or arrays
 // of values and the number of times each value occurred during the period by
@@ -104,8 +105,12 @@ const opPutMetricData = "PutMetricData"
 // in the Amazon CloudWatch User Guide.
 //
 // Data points with time stamps from 24 hours ago or longer can take at least
-// 48 hours to become available for GetMetricData or GetMetricStatistics from
-// the time they are submitted.
+// 48 hours to become available for GetMetricData (https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_GetMetricData.html)
+// or GetMetricStatistics (https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_GetMetricStatistics.html)
+// from the time they are submitted. Data points with time stamps between 3
+// and 24 hours ago can take as much as 2 hours to become available for for
+// GetMetricData (https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_GetMetricData.html)
+// or GetMetricStatistics (https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_GetMetricStatistics.html).
 //
 // CloudWatch needs raw data points to calculate percentile statistics. If you
 // publish data using a statistic set instead, you can only retrieve percentile

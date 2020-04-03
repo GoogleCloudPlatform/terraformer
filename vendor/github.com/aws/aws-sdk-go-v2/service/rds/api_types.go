@@ -473,6 +473,9 @@ type DBCluster struct {
 	// can't be deleted when deletion protection is enabled.
 	DeletionProtection *bool `type:"boolean"`
 
+	// The Active Directory Domain membership records associated with the DB cluster.
+	DomainMemberships []DomainMembership `locationNameList:"DomainMembership" type:"list"`
+
 	// The earliest time to which a DB cluster can be backtracked.
 	EarliestBacktrackTime *time.Time `type:"timestamp"`
 
@@ -1911,7 +1914,8 @@ func (s DescribeDBLogFilesDetails) String() string {
 	return awsutil.Prettify(s)
 }
 
-// An Active Directory Domain membership record associated with the DB instance.
+// An Active Directory Domain membership record associated with the DB instance
+// or cluster.
 type DomainMembership struct {
 	_ struct{} `type:"structure"`
 
@@ -1925,8 +1929,8 @@ type DomainMembership struct {
 	// Service.
 	IAMRoleName *string `type:"string"`
 
-	// The status of the DB instance's Active Directory Domain membership, such
-	// as joined, pending-join, failed etc).
+	// The status of the Active Directory Domain membership for the DB instance
+	// or cluster. Values include joined, pending-join, failed, and so on.
 	Status *string `type:"string"`
 }
 

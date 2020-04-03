@@ -78,10 +78,8 @@ const opPutImageTagMutability = "PutImageTagMutability"
 // PutImageTagMutabilityRequest returns a request value for making API operation for
 // Amazon EC2 Container Registry.
 //
-// Updates the image tag mutability settings for a repository. When a repository
-// is configured with tag immutability, all image tags within the repository
-// will be prevented them from being overwritten. For more information, see
-// Image Tag Mutability (https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-tag-mutability.html)
+// Updates the image tag mutability settings for the specified repository. For
+// more information, see Image Tag Mutability (https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-tag-mutability.html)
 // in the Amazon Elastic Container Registry User Guide.
 //
 //    // Example sending a request using PutImageTagMutabilityRequest.

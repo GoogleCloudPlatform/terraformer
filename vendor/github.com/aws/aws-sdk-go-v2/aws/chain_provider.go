@@ -61,10 +61,10 @@ func NewChainProvider(providers []CredentialsProvider) *ChainProvider {
 //
 // If a provider is found it will be cached and any calls to IsExpired()
 // will return the expired state of the cached provider.
-func (c *ChainProvider) retrieveFn(ctx context.Context) (Credentials, error) {
+func (c *ChainProvider) retrieveFn() (Credentials, error) {
 	var errs []error
 	for _, p := range c.Providers {
-		creds, err := p.Retrieve(ctx)
+		creds, err := p.Retrieve(context.Background())
 		if err == nil {
 			return creds, nil
 		}

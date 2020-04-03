@@ -154,6 +154,138 @@ func (s AdvancedOptionsStatus) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
+// Specifies the advanced security configuration: whether advanced security
+// is enabled, whether the internal database option is enabled.
+type AdvancedSecurityOptions struct {
+	_ struct{} `type:"structure"`
+
+	// True if advanced security is enabled.
+	Enabled *bool `type:"boolean"`
+
+	// True if the internal user database is enabled.
+	InternalUserDatabaseEnabled *bool `type:"boolean"`
+}
+
+// String returns the string representation
+func (s AdvancedSecurityOptions) String() string {
+	return awsutil.Prettify(s)
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s AdvancedSecurityOptions) MarshalFields(e protocol.FieldEncoder) error {
+	if s.Enabled != nil {
+		v := *s.Enabled
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "Enabled", protocol.BoolValue(v), metadata)
+	}
+	if s.InternalUserDatabaseEnabled != nil {
+		v := *s.InternalUserDatabaseEnabled
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "InternalUserDatabaseEnabled", protocol.BoolValue(v), metadata)
+	}
+	return nil
+}
+
+// Specifies the advanced security configuration: whether advanced security
+// is enabled, whether the internal database option is enabled, master username
+// and password (if internal database is enabled), and master user ARN (if IAM
+// is enabled).
+type AdvancedSecurityOptionsInput struct {
+	_ struct{} `type:"structure"`
+
+	// True if advanced security is enabled.
+	Enabled *bool `type:"boolean"`
+
+	// True if the internal user database is enabled.
+	InternalUserDatabaseEnabled *bool `type:"boolean"`
+
+	// Credentials for the master user: username and password, ARN, or both.
+	MasterUserOptions *MasterUserOptions `type:"structure"`
+}
+
+// String returns the string representation
+func (s AdvancedSecurityOptionsInput) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *AdvancedSecurityOptionsInput) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "AdvancedSecurityOptionsInput"}
+	if s.MasterUserOptions != nil {
+		if err := s.MasterUserOptions.Validate(); err != nil {
+			invalidParams.AddNested("MasterUserOptions", err.(aws.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s AdvancedSecurityOptionsInput) MarshalFields(e protocol.FieldEncoder) error {
+	if s.Enabled != nil {
+		v := *s.Enabled
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "Enabled", protocol.BoolValue(v), metadata)
+	}
+	if s.InternalUserDatabaseEnabled != nil {
+		v := *s.InternalUserDatabaseEnabled
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "InternalUserDatabaseEnabled", protocol.BoolValue(v), metadata)
+	}
+	if s.MasterUserOptions != nil {
+		v := s.MasterUserOptions
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "MasterUserOptions", v, metadata)
+	}
+	return nil
+}
+
+// Specifies the status of advanced security options for the specified Elasticsearch
+// domain.
+type AdvancedSecurityOptionsStatus struct {
+	_ struct{} `type:"structure"`
+
+	// Specifies advanced security options for the specified Elasticsearch domain.
+	//
+	// Options is a required field
+	Options *AdvancedSecurityOptions `type:"structure" required:"true"`
+
+	// Status of the advanced security options for the specified Elasticsearch domain.
+	//
+	// Status is a required field
+	Status *OptionStatus `type:"structure" required:"true"`
+}
+
+// String returns the string representation
+func (s AdvancedSecurityOptionsStatus) String() string {
+	return awsutil.Prettify(s)
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s AdvancedSecurityOptionsStatus) MarshalFields(e protocol.FieldEncoder) error {
+	if s.Options != nil {
+		v := s.Options
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "Options", v, metadata)
+	}
+	if s.Status != nil {
+		v := s.Status
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "Status", v, metadata)
+	}
+	return nil
+}
+
 // Options to specify the Cognito user and identity pools for Kibana authentication.
 // For more information, see Amazon Cognito Authentication for Kibana (http://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-cognito-auth.html).
 type CognitoOptions struct {
@@ -655,6 +787,9 @@ type ElasticsearchDomainConfig struct {
 	// for more information.
 	AdvancedOptions *AdvancedOptionsStatus `type:"structure"`
 
+	// Specifies AdvancedSecurityOptions for the domain.
+	AdvancedSecurityOptions *AdvancedSecurityOptionsStatus `type:"structure"`
+
 	// The CognitoOptions for the specified domain. For more information, see Amazon
 	// Cognito Authentication for Kibana (http://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-cognito-auth.html).
 	CognitoOptions *CognitoOptionsStatus `type:"structure"`
@@ -706,6 +841,12 @@ func (s ElasticsearchDomainConfig) MarshalFields(e protocol.FieldEncoder) error 
 
 		metadata := protocol.Metadata{}
 		e.SetFields(protocol.BodyTarget, "AdvancedOptions", v, metadata)
+	}
+	if s.AdvancedSecurityOptions != nil {
+		v := s.AdvancedSecurityOptions
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "AdvancedSecurityOptions", v, metadata)
 	}
 	if s.CognitoOptions != nil {
 		v := s.CognitoOptions
@@ -786,6 +927,9 @@ type ElasticsearchDomainStatus struct {
 
 	// Specifies the status of the AdvancedOptions
 	AdvancedOptions map[string]string `type:"map"`
+
+	// The current status of the Elasticsearch domain's advanced security options.
+	AdvancedSecurityOptions *AdvancedSecurityOptions `type:"structure"`
 
 	// The CognitoOptions for the specified domain. For more information, see Amazon
 	// Cognito Authentication for Kibana (http://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-cognito-auth.html).
@@ -896,6 +1040,12 @@ func (s ElasticsearchDomainStatus) MarshalFields(e protocol.FieldEncoder) error 
 		}
 		ms0.End()
 
+	}
+	if s.AdvancedSecurityOptions != nil {
+		v := s.AdvancedSecurityOptions
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "AdvancedSecurityOptions", v, metadata)
 	}
 	if s.CognitoOptions != nil {
 		v := s.CognitoOptions
@@ -1344,6 +1494,66 @@ func (s LogPublishingOptionsStatus) MarshalFields(e protocol.FieldEncoder) error
 
 		metadata := protocol.Metadata{}
 		e.SetFields(protocol.BodyTarget, "Status", v, metadata)
+	}
+	return nil
+}
+
+// Credentials for the master user: username and password, ARN, or both.
+type MasterUserOptions struct {
+	_ struct{} `type:"structure"`
+
+	// ARN for the master user (if IAM is enabled).
+	MasterUserARN *string `type:"string"`
+
+	// The master user's username, which is stored in the Amazon Elasticsearch Service
+	// domain's internal database.
+	MasterUserName *string `min:"1" type:"string" sensitive:"true"`
+
+	// The master user's password, which is stored in the Amazon Elasticsearch Service
+	// domain's internal database.
+	MasterUserPassword *string `min:"8" type:"string" sensitive:"true"`
+}
+
+// String returns the string representation
+func (s MasterUserOptions) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *MasterUserOptions) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "MasterUserOptions"}
+	if s.MasterUserName != nil && len(*s.MasterUserName) < 1 {
+		invalidParams.Add(aws.NewErrParamMinLen("MasterUserName", 1))
+	}
+	if s.MasterUserPassword != nil && len(*s.MasterUserPassword) < 8 {
+		invalidParams.Add(aws.NewErrParamMinLen("MasterUserPassword", 8))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s MasterUserOptions) MarshalFields(e protocol.FieldEncoder) error {
+	if s.MasterUserARN != nil {
+		v := *s.MasterUserARN
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "MasterUserARN", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if s.MasterUserName != nil {
+		v := *s.MasterUserName
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "MasterUserName", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if s.MasterUserPassword != nil {
+		v := *s.MasterUserPassword
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "MasterUserPassword", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
 	}
 	return nil
 }

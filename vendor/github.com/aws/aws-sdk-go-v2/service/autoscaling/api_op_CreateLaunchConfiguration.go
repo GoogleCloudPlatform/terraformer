@@ -258,8 +258,8 @@ const opCreateLaunchConfiguration = "CreateLaunchConfiguration"
 //
 // If you exceed your maximum limit of launch configurations, the call fails.
 // For information about viewing this limit, see DescribeAccountLimits. For
-// information about updating this limit, see Amazon EC2 Auto Scaling Limits
-// (https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-account-limits.html)
+// information about updating this limit, see Amazon EC2 Auto Scaling Service
+// Quotas (https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-account-limits.html)
 // in the Amazon EC2 Auto Scaling User Guide.
 //
 // For more information, see Launch Configurations (https://docs.aws.amazon.com/autoscaling/ec2/userguide/LaunchConfiguration.html)

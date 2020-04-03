@@ -1926,6 +1926,8 @@ type EbsBlockDevice struct {
 	//
 	// Encrypted volumes can only be attached to instances that support Amazon EBS
 	// encryption. For more information, see Supported Instance Types (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html#EBSEncryption_supported_instances).
+	//
+	// This parameter is not returned by .
 	Encrypted *bool `locationName:"encrypted" type:"boolean"`
 
 	// The number of I/O operations per second (IOPS) that the volume supports.
@@ -2836,7 +2838,9 @@ type FleetLaunchTemplateOverridesRequest struct {
 	// override has the lowest priority.
 	Priority *float64 `type:"double"`
 
-	// The ID of the subnet in which to launch the instances.
+	// The IDs of the subnets in which to launch the instances. Separate multiple
+	// subnet IDs using commas (for example, subnet-1234abcdeexample1, subnet-0987cdef6example2).
+	// A request of type instant can have only one subnet ID.
 	SubnetId *string `type:"string"`
 
 	// The number of units provided by the specified instance type.
@@ -2961,8 +2965,21 @@ type FlowLog struct {
 	// The name of the flow log group.
 	LogGroupName *string `locationName:"logGroupName" type:"string"`
 
+	// The maximum interval of time, in seconds, during which a flow of packets
+	// is captured and aggregated into a flow log record.
+	//
+	// When a network interface is attached to a Nitro-based instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html#ec2-nitro-instances),
+	// the aggregation interval is always 60 seconds (1 minute) or less, regardless
+	// of the specified value.
+	//
+	// Valid Values: 60 | 600
+	MaxAggregationInterval *int64 `locationName:"maxAggregationInterval" type:"integer"`
+
 	// The ID of the resource on which the flow log was created.
 	ResourceId *string `locationName:"resourceId" type:"string"`
+
+	// The tags for the flow log.
+	Tags []Tag `locationName:"tagSet" locationNameList:"item" type:"list"`
 
 	// The type of traffic captured for the flow log.
 	TrafficType TrafficType `locationName:"trafficType" type:"string" enum:"true"`
@@ -3648,6 +3665,11 @@ type Image struct {
 	// This value is set to windows for Windows AMIs; otherwise, it is blank.
 	Platform PlatformValues `locationName:"platform" type:"string" enum:"true"`
 
+	// The platform details associated with the billing code of the AMI. For more
+	// information, see Obtaining Billing Information (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ami-billing-info.html)
+	// in the Amazon Elastic Compute Cloud User Guide.
+	PlatformDetails *string `locationName:"platformDetails" type:"string"`
+
 	// Any product codes associated with the AMI.
 	ProductCodes []ProductCode `locationName:"productCodes" locationNameList:"item" type:"list"`
 
@@ -3680,6 +3702,14 @@ type Image struct {
 
 	// Any tags assigned to the image.
 	Tags []Tag `locationName:"tagSet" locationNameList:"item" type:"list"`
+
+	// The operation of the Amazon EC2 instance and the billing code that is associated
+	// with the AMI. usageOperation corresponds to the lineitem/Operation (https://docs.aws.amazon.com/cur/latest/userguide/Lineitem-columns.html#Lineitem-details-O-Operation)
+	// column on your AWS Cost and Usage Report and in the AWS Price List API (https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/price-changes.html).
+	// For the list of UsageOperation codes, see Platform Details and Usage Operation
+	// Billing Codes (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ami-billing-info.html#billing-info)
+	// in the Amazon Elastic Compute Cloud User Guide.
+	UsageOperation *string `locationName:"usageOperation" type:"string"`
 
 	// The type of virtualization of the AMI.
 	VirtualizationType VirtualizationType `locationName:"virtualizationType" type:"string" enum:"true"`
@@ -4031,7 +4061,8 @@ type Instance struct {
 	// Indicates whether the instance is enabled for hibernation.
 	HibernationOptions *HibernationOptions `locationName:"hibernationOptions" type:"structure"`
 
-	// The hypervisor type of the instance.
+	// The hypervisor type of the instance. The value xen is used for both Xen and
+	// Nitro hypervisors.
 	Hypervisor HypervisorType `locationName:"hypervisor" type:"string" enum:"true"`
 
 	// The IAM instance profile associated with the instance, if applicable.
@@ -4610,6 +4641,9 @@ type InstanceNetworkInterfaceSpecification struct {
 	Ipv6Addresses []InstanceIpv6Address `locationName:"ipv6AddressesSet" queryName:"Ipv6Addresses" locationNameList:"item" type:"list"`
 
 	// The ID of the network interface.
+	//
+	// If you are creating a Spot Fleet, omit this parameter because you can’t
+	// specify a network interface ID in a launch specification.
 	NetworkInterfaceId *string `locationName:"networkInterfaceId" type:"string"`
 
 	// The private IPv4 address of the network interface. Applies only if creating
@@ -7537,12 +7571,16 @@ type Placement struct {
 
 	// The affinity setting for the instance on the Dedicated Host. This parameter
 	// is not supported for the ImportInstance command.
+	//
+	// This parameter is not supported by .
 	Affinity *string `locationName:"affinity" type:"string"`
 
 	// The Availability Zone of the instance.
 	//
 	// If not specified, an Availability Zone will be automatically chosen for you
 	// based on the load balancing criteria for the Region.
+	//
+	// This parameter is not supported by .
 	AvailabilityZone *string `locationName:"availabilityZone" type:"string"`
 
 	// The name of the placement group the instance is in.
@@ -7550,23 +7588,33 @@ type Placement struct {
 
 	// The ID of the Dedicated Host on which the instance resides. This parameter
 	// is not supported for the ImportInstance command.
+	//
+	// This parameter is not supported by .
 	HostId *string `locationName:"hostId" type:"string"`
 
 	// The ARN of the host resource group in which to launch the instances. If you
 	// specify a host resource group ARN, omit the Tenancy parameter or set it to
 	// host.
+	//
+	// This parameter is not supported by .
 	HostResourceGroupArn *string `locationName:"hostResourceGroupArn" type:"string"`
 
 	// The number of the partition the instance is in. Valid only if the placement
 	// group strategy is set to partition.
+	//
+	// This parameter is not supported by .
 	PartitionNumber *int64 `locationName:"partitionNumber" type:"integer"`
 
 	// Reserved for future use.
+	//
+	// This parameter is not supported by .
 	SpreadDomain *string `locationName:"spreadDomain" type:"string"`
 
 	// The tenancy of the instance (if the instance is running in a VPC). An instance
 	// with a tenancy of dedicated runs on single-tenant hardware. The host tenancy
 	// is not supported for the ImportInstance command.
+	//
+	// This parameter is not supported by .
 	Tenancy Tenancy `locationName:"tenancy" type:"string" enum:"true"`
 }
 
@@ -7924,6 +7972,9 @@ type PublicIpv4Pool struct {
 
 	// The ID of the address pool.
 	PoolId *string `locationName:"poolId" type:"string"`
+
+	// Any tags for the address pool.
+	Tags []Tag `locationName:"tagSet" locationNameList:"item" type:"list"`
 
 	// The total number of addresses.
 	TotalAddressCount *int64 `locationName:"totalAddressCount" type:"integer"`
@@ -10047,6 +10098,9 @@ type SpotFleetRequestConfig struct {
 
 	// The state of the Spot Fleet request.
 	SpotFleetRequestState BatchState `locationName:"spotFleetRequestState" type:"string" enum:"true"`
+
+	// The tags for a Spot Fleet resource.
+	Tags []Tag `locationName:"tagSet" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation
@@ -10173,6 +10227,16 @@ type SpotFleetRequestConfigData struct {
 	// The default is the On-Demand price.
 	SpotPrice *string `locationName:"spotPrice" type:"string"`
 
+	// The key-value pair for tagging the Spot Fleet request on creation. The value
+	// for ResourceType must be spot-fleet-request, otherwise the Spot Fleet request
+	// fails. To tag instances at launch, specify the tags in the launch template
+	// (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-launch-templates.html#create-launch-template)
+	// (valid only if you use LaunchTemplateConfigs) or in the SpotFleetTagSpecification
+	// (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_SpotFleetTagSpecification.html)
+	// (valid only if you use LaunchSpecifications). For information about tagging
+	// after launch, see Tagging Your Resources (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html#tag-resources).
+	TagSpecifications []TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
+
 	// The number of units to request for the Spot Fleet. You can choose to set
 	// the target capacity in terms of instances or a performance characteristic
 	// that is important to your application workload, such as vCPUs, memory, or
@@ -10247,7 +10311,8 @@ type SpotFleetTagSpecification struct {
 	_ struct{} `type:"structure"`
 
 	// The type of resource. Currently, the only resource type that is supported
-	// is instance.
+	// is instance. To tag the Spot Fleet request on creation, use the TagSpecifications
+	// parameter in SpotFleetRequestConfigData (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_SpotFleetRequestConfigData.html).
 	ResourceType ResourceType `locationName:"resourceType" type:"string" enum:"true"`
 
 	// The tags.
@@ -10888,10 +10953,11 @@ type TagSpecification struct {
 
 	// The type of resource to tag. Currently, the resource types that support tagging
 	// on creation are: capacity-reservation | client-vpn-endpoint | dedicated-host
-	// | fleet | fpga-image | instance | key-pair | launch-template | placement-group
-	// | snapshot | traffic-mirror-filter | traffic-mirror-session | traffic-mirror-target
-	// | transit-gateway | transit-gateway-attachment | transit-gateway-route-table
-	// | volume.
+	// | fleet | fpga-image | instance | key-pair | launch-template | | natgateway
+	// | spot-fleet-request | placement-group | snapshot | traffic-mirror-filter
+	// | traffic-mirror-session | traffic-mirror-target | transit-gateway | transit-gateway-attachment
+	// | transit-gateway-route-table | vpc-endpoint (for interface VPC endpoints)|
+	// vpc-endpoint-service (for gateway VPC endpoints) | volume | vpc-flow-log.
 	//
 	// To tag a resource after it has been created, see CreateTags (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateTags.html).
 	ResourceType ResourceType `locationName:"resourceType" type:"string" enum:"true"`
@@ -11953,7 +12019,7 @@ type TransitGatewayVpcAttachmentOptions struct {
 	// Indicates whether DNS support is enabled.
 	DnsSupport DnsSupportValue `locationName:"dnsSupport" type:"string" enum:"true"`
 
-	// Indicates whether IPv6 support is enabled.
+	// Indicates whether IPv6 support is disabled.
 	Ipv6Support Ipv6SupportValue `locationName:"ipv6Support" type:"string" enum:"true"`
 }
 
@@ -12284,6 +12350,9 @@ type Volume struct {
 	// key for the volume.
 	KmsKeyId *string `locationName:"kmsKeyId" type:"string"`
 
+	// Indicates whether Amazon EBS Multi-Attach is enabled.
+	MultiAttachEnabled *bool `locationName:"multiAttachEnabled" type:"boolean"`
+
 	// The Amazon Resource Name (ARN) of the Outpost.
 	OutpostArn *string `locationName:"outpostArn" type:"string"`
 
@@ -12441,6 +12510,22 @@ func (s VolumeStatusAction) String() string {
 	return awsutil.Prettify(s)
 }
 
+// Information about the instances to which the volume is attached.
+type VolumeStatusAttachmentStatus struct {
+	_ struct{} `type:"structure"`
+
+	// The ID of the attached instance.
+	InstanceId *string `locationName:"instanceId" type:"string"`
+
+	// The maximum IOPS supported by the attached instance.
+	IoPerformance *string `locationName:"ioPerformance" type:"string"`
+}
+
+// String returns the string representation
+func (s VolumeStatusAttachmentStatus) String() string {
+	return awsutil.Prettify(s)
+}
+
 // Describes a volume status.
 type VolumeStatusDetails struct {
 	_ struct{} `type:"structure"`
@@ -12469,6 +12554,9 @@ type VolumeStatusEvent struct {
 
 	// The type of this event.
 	EventType *string `locationName:"eventType" type:"string"`
+
+	// The ID of the instance associated with the event.
+	InstanceId *string `locationName:"instanceId" type:"string"`
 
 	// The latest end time of the event.
 	NotAfter *time.Time `locationName:"notAfter" type:"timestamp"`
@@ -12504,6 +12592,9 @@ type VolumeStatusItem struct {
 
 	// The details of the operation.
 	Actions []VolumeStatusAction `locationName:"actionsSet" locationNameList:"item" type:"list"`
+
+	// Information about the instances to which the volume is attached.
+	AttachmentStatuses []VolumeStatusAttachmentStatus `locationName:"attachmentStatuses" locationNameList:"item" type:"list"`
 
 	// The Availability Zone of the volume.
 	AvailabilityZone *string `locationName:"availabilityZone" type:"string"`
@@ -13069,6 +13160,9 @@ type VpnEndpoint struct {
 	// Information about the DNS servers to be used for DNS resolution.
 	DnsServers []string `locationName:"dnsServer" locationNameList:"item" type:"list"`
 
+	// The IDs of the security groups for the target network.
+	SecurityGroupIds []string `locationName:"securityGroupIdSet" locationNameList:"item" type:"list"`
+
 	// The ARN of the server certificate.
 	ServerCertificateArn *string `locationName:"serverCertificateArn" type:"string"`
 
@@ -13087,6 +13181,9 @@ type VpnEndpoint struct {
 
 	// The transport protocol used by the Client VPN endpoint.
 	TransportProtocol TransportProtocol `locationName:"transportProtocol" type:"string" enum:"true"`
+
+	// The ID of the VPC.
+	VpcId *string `locationName:"vpcId" type:"string"`
 
 	// The port number for the Client VPN endpoint.
 	VpnPort *int64 `locationName:"vpnPort" type:"integer"`
@@ -13230,7 +13327,7 @@ func (s VpnStaticRoute) String() string {
 	return awsutil.Prettify(s)
 }
 
-// The tunnel options for a VPN connection.
+// The tunnel options for a single VPN tunnel.
 type VpnTunnelOptionsSpecification struct {
 	_ struct{} `type:"structure"`
 

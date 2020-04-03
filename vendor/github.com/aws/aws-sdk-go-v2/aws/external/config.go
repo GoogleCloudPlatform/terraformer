@@ -18,15 +18,14 @@ var DefaultConfigLoaders = []ConfigLoader{
 // This will setup the AWS configuration's Region,
 var DefaultAWSConfigResolvers = []AWSConfigResolver{
 	ResolveDefaultAWSConfig,
+	ResolveHandlersFunc,
+	ResolveEndpointResolverFunc,
 	ResolveCustomCABundle,
+	ResolveEnableEndpointDiscovery,
 
 	ResolveRegion,
 
-	ResolveFallbackEC2Credentials, // Initial defauilt credentails provider.
-	ResolveCredentialsValue,
-	ResolveEndpointCredentials,
-	ResolveContainerEndpointPathCredentials, // TODO is this order right?
-	ResolveAssumeRoleCredentials,
+	ResolveCredentials,
 }
 
 // A Config represents a generic configuration value or set of values. This type

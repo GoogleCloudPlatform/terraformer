@@ -21,12 +21,12 @@ func (s DescribeAccountLimitsInput) String() string {
 type DescribeAccountLimitsOutput struct {
 	_ struct{} `type:"structure"`
 
-	// The maximum number of groups allowed for your AWS account. The default limit
-	// is 200 per AWS Region.
+	// The maximum number of groups allowed for your AWS account. The default is
+	// 200 groups per AWS Region.
 	MaxNumberOfAutoScalingGroups *int64 `type:"integer"`
 
 	// The maximum number of launch configurations allowed for your AWS account.
-	// The default limit is 200 per AWS Region.
+	// The default is 200 launch configurations per AWS Region.
 	MaxNumberOfLaunchConfigurations *int64 `type:"integer"`
 
 	// The current number of groups for your AWS account.
@@ -46,11 +46,11 @@ const opDescribeAccountLimits = "DescribeAccountLimits"
 // DescribeAccountLimitsRequest returns a request value for making API operation for
 // Auto Scaling.
 //
-// Describes the current Amazon EC2 Auto Scaling resource limits for your AWS
+// Describes the current Amazon EC2 Auto Scaling resource quotas for your AWS
 // account.
 //
-// For information about requesting an increase in these limits, see Amazon
-// EC2 Auto Scaling Limits (https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-account-limits.html)
+// For information about requesting an increase, see Amazon EC2 Auto Scaling
+// Service Quotas (https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-account-limits.html)
 // in the Amazon EC2 Auto Scaling User Guide.
 //
 //    // Example sending a request using DescribeAccountLimitsRequest.

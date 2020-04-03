@@ -2046,6 +2046,9 @@ type Job struct {
 	// The name you assign to this job definition.
 	Name *string `min:"1" type:"string"`
 
+	// Non-overridable arguments for this job, specified as name-value pairs.
+	NonOverridableArguments map[string]string `type:"map"`
+
 	// Specifies configuration properties of a job notification.
 	NotificationProperty *NotificationProperty `type:"structure"`
 
@@ -2384,6 +2387,9 @@ type JobUpdate struct {
 
 	// The maximum number of times to retry this job if it fails.
 	MaxRetries *int64 `type:"integer"`
+
+	// Non-overridable arguments for this job, specified as name-value pairs.
+	NonOverridableArguments map[string]string `type:"map"`
 
 	// Specifies the configuration properties of a job notification.
 	NotificationProperty *NotificationProperty `type:"structure"`

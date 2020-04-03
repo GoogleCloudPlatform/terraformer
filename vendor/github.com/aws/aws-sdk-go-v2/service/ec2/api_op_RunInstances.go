@@ -26,7 +26,10 @@ type RunInstancesInput struct {
 	CapacityReservationSpecification *CapacityReservationSpecification `type:"structure"`
 
 	// Unique, case-sensitive identifier you provide to ensure the idempotency of
-	// the request. For more information, see Ensuring Idempotency (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Run_Instance_Idempotency.html).
+	// the request. If you do not specify a client token, a randomly generated token
+	// is used for the request to ensure idempotency.
+	//
+	// For more information, see Ensuring Idempotency (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Run_Instance_Idempotency.html).
 	//
 	// Constraints: Maximum 64 ASCII characters
 	ClientToken *string `locationName:"clientToken" type:"string"`

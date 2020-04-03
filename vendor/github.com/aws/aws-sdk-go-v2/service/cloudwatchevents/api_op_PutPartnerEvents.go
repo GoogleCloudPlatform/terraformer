@@ -4,6 +4,7 @@ package cloudwatchevents
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
@@ -33,6 +34,13 @@ func (s *PutPartnerEventsInput) Validate() error {
 	if s.Entries != nil && len(s.Entries) < 1 {
 		invalidParams.Add(aws.NewErrParamMinLen("Entries", 1))
 	}
+	if s.Entries != nil {
+		for i, v := range s.Entries {
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "Entries", i), err.(aws.ErrInvalidParams))
+			}
+		}
+	}
 
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -47,7 +55,7 @@ type PutPartnerEventsOutput struct {
 	// the partner event bus.
 	Entries []PutPartnerEventsResultEntry `type:"list"`
 
-	// The number of events from this operation that couldn't be written to the
+	// The number of events from this operation that could not be written to the
 	// partner event bus.
 	FailedEntryCount *int64 `type:"integer"`
 }
@@ -63,10 +71,7 @@ const opPutPartnerEvents = "PutPartnerEvents"
 // Amazon CloudWatch Events.
 //
 // This is used by SaaS partners to write events to a customer's partner event
-// bus.
-//
-// AWS customers do not use this operation. Instead, AWS customers can use PutEvents
-// to write custom events from their own applications to an event bus.
+// bus. AWS customers do not use this operation.
 //
 //    // Example sending a request using PutPartnerEventsRequest.
 //    req := client.PutPartnerEventsRequest(params)
