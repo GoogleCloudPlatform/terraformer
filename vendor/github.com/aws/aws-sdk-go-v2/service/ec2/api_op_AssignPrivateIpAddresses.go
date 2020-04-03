@@ -93,6 +93,8 @@ const opAssignPrivateIpAddresses = "AssignPrivateIpAddresses"
 // address from one network interface to another, check network/interfaces/macs/mac/local-ipv4s
 // in the instance metadata to confirm that the remapping is complete.
 //
+// You must specify either the IP addresses or the IP address count in the request.
+//
 //    // Example sending a request using AssignPrivateIpAddressesRequest.
 //    req := client.AssignPrivateIpAddressesRequest(params)
 //    resp, err := req.Send(context.TODO())

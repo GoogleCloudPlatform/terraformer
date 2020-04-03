@@ -30,7 +30,6 @@
 package endpointcreds
 
 import (
-	"context"
 	"encoding/json"
 	"time"
 
@@ -49,8 +48,13 @@ type Provider struct {
 	// The AWS Client to make HTTP requests to the endpoint with. The endpoint
 	// the request will be made to is provided by the aws.Config's
 	// EndpointResolver.
-	Client *aws.Client
+	client *aws.Client
 
+	options ProviderOptions
+}
+
+// ProviderOptions is structure of configurable options for Provider
+type ProviderOptions struct {
 	// ExpiryWindow will allow the credentials to trigger refreshing prior to
 	// the credentials actually expiring. This is beneficial so race conditions
 	// with expiring credentials do not cause request to fail unexpectedly
@@ -61,13 +65,17 @@ type Provider struct {
 	//
 	// If ExpiryWindow is 0 or less it will be ignored.
 	ExpiryWindow time.Duration
+
+	// Optional authorization token value if set will be used as the value of
+	// the Authorization header of the endpoint credential request.
+	AuthorizationToken string
 }
 
 // New returns a credentials Provider for retrieving AWS credentials
 // from arbitrary endpoint.
-func New(cfg aws.Config) *Provider {
+func New(cfg aws.Config, options ...func(*ProviderOptions)) *Provider {
 	p := &Provider{
-		Client: aws.NewClient(
+		client: aws.NewClient(
 			cfg,
 			aws.Metadata{
 				ServiceName: ProviderName,
@@ -76,18 +84,22 @@ func New(cfg aws.Config) *Provider {
 	}
 	p.RetrieveFn = p.retrieveFn
 
-	p.Client.Handlers.Unmarshal.PushBack(unmarshalHandler)
-	p.Client.Handlers.UnmarshalError.PushBack(unmarshalError)
-	p.Client.Handlers.Validate.Clear()
-	p.Client.Handlers.Validate.PushBack(validateEndpointHandler)
+	p.client.Handlers.Unmarshal.PushBack(unmarshalHandler)
+	p.client.Handlers.UnmarshalError.PushBack(unmarshalError)
+	p.client.Handlers.Validate.Clear()
+	p.client.Handlers.Validate.PushBack(validateEndpointHandler)
+
+	for _, option := range options {
+		option(&p.options)
+	}
 
 	return p
 }
 
 // Retrieve will attempt to request the credentials from the endpoint the Provider
 // was configured for. And error will be returned if the retrieval fails.
-func (p *Provider) retrieveFn(ctx context.Context) (aws.Credentials, error) {
-	resp, err := p.getCredentials(ctx)
+func (p *Provider) retrieveFn() (aws.Credentials, error) {
+	resp, err := p.getCredentials()
 	if err != nil {
 		return aws.Credentials{},
 			awserr.New("CredentialsEndpointError", "failed to load credentials", err)
@@ -102,7 +114,7 @@ func (p *Provider) retrieveFn(ctx context.Context) (aws.Credentials, error) {
 
 	if resp.Expiration != nil {
 		creds.CanExpire = true
-		creds.Expires = resp.Expiration.Add(-p.ExpiryWindow)
+		creds.Expires = resp.Expiration.Add(-p.options.ExpiryWindow)
 	}
 
 	return creds, nil
@@ -120,16 +132,19 @@ type errorOutput struct {
 	Message string `json:"message"`
 }
 
-func (p *Provider) getCredentials(ctx context.Context) (*getCredentialsOutput, error) {
+func (p *Provider) getCredentials() (*getCredentialsOutput, error) {
 	op := &aws.Operation{
 		Name:       "GetCredentials",
 		HTTPMethod: "GET",
 	}
 
 	out := &getCredentialsOutput{}
-	req := p.Client.NewRequest(op, nil, out)
+	req := p.client.NewRequest(op, nil, out)
 	req.HTTPRequest.Header.Set("Accept", "application/json")
-	req.SetContext(ctx)
+	if authToken := p.options.AuthorizationToken; len(authToken) != 0 {
+		req.HTTPRequest.Header.Set("Authorization", authToken)
+	}
+
 	return out, req.Send()
 }
 

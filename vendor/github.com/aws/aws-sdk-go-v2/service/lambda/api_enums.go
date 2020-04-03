@@ -151,6 +151,7 @@ const (
 	RuntimeNodejs43Edge Runtime = "nodejs4.3-edge"
 	RuntimeGo1X         Runtime = "go1.x"
 	RuntimeRuby25       Runtime = "ruby2.5"
+	RuntimeRuby27       Runtime = "ruby2.7"
 	RuntimeProvided     Runtime = "provided"
 )
 

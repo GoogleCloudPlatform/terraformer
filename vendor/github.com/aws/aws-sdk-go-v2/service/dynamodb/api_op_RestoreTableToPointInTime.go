@@ -33,10 +33,15 @@ type RestoreTableToPointInTimeInput struct {
 	// Time in the past to restore the table to.
 	RestoreDateTime *time.Time `type:"timestamp"`
 
+	// The new server-side encryption settings for the restored table.
+	SSESpecificationOverride *SSESpecification `type:"structure"`
+
+	// The DynamoDB table that will be restored. This value is an Amazon Resource
+	// Name (ARN).
+	SourceTableArn *string `type:"string"`
+
 	// Name of the source table that is being restored.
-	//
-	// SourceTableName is a required field
-	SourceTableName *string `min:"3" type:"string" required:"true"`
+	SourceTableName *string `min:"3" type:"string"`
 
 	// The name of the new table to which it must be restored to.
 	//
@@ -56,10 +61,6 @@ func (s RestoreTableToPointInTimeInput) String() string {
 // Validate inspects the fields of the type to determine if they are valid.
 func (s *RestoreTableToPointInTimeInput) Validate() error {
 	invalidParams := aws.ErrInvalidParams{Context: "RestoreTableToPointInTimeInput"}
-
-	if s.SourceTableName == nil {
-		invalidParams.Add(aws.NewErrParamRequired("SourceTableName"))
-	}
 	if s.SourceTableName != nil && len(*s.SourceTableName) < 3 {
 		invalidParams.Add(aws.NewErrParamMinLen("SourceTableName", 3))
 	}
@@ -170,6 +171,28 @@ func (c *Client) RestoreTableToPointInTimeRequest(input *RestoreTableToPointInTi
 	}
 
 	req := c.newRequest(op, input, &RestoreTableToPointInTimeOutput{})
+
+	if req.Config.EnableEndpointDiscovery {
+		de := discovererDescribeEndpoints{
+			Client:        c,
+			Required:      false,
+			EndpointCache: c.endpointCache,
+			Params: map[string]*string{
+				"op": &req.Operation.Name,
+			},
+		}
+
+		for k, v := range de.Params {
+			if v == nil {
+				delete(de.Params, k)
+			}
+		}
+
+		req.Handlers.Build.PushFrontNamed(aws.NamedHandler{
+			Name: "crr.endpointdiscovery",
+			Fn:   de.Handler,
+		})
+	}
 	return RestoreTableToPointInTimeRequest{Request: req, Input: input, Copy: c.RestoreTableToPointInTimeRequest}
 }
 

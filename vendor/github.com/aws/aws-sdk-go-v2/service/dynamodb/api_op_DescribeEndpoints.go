@@ -4,8 +4,11 @@ package dynamodb
 
 import (
 	"context"
+	"net/url"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/aws/crr"
 	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
 )
 
@@ -98,4 +101,68 @@ type DescribeEndpointsResponse struct {
 // DescribeEndpoints request.
 func (r *DescribeEndpointsResponse) SDKResponseMetdata() *aws.Response {
 	return r.response
+}
+
+type discovererDescribeEndpoints struct {
+	Context       context.Context
+	Client        *Client
+	Required      bool
+	EndpointCache *crr.EndpointCache
+	Params        map[string]*string
+	Key           string
+}
+
+func (d *discovererDescribeEndpoints) Discover() (crr.Endpoint, error) {
+	input := &DescribeEndpointsInput{}
+
+	req := d.Client.DescribeEndpointsRequest(input)
+	resp, err := req.Send(d.Context)
+	if err != nil {
+		return crr.Endpoint{}, err
+	}
+
+	endpoint := crr.Endpoint{
+		Key: d.Key,
+	}
+
+	for _, e := range resp.Endpoints {
+		if e.Address == nil {
+			continue
+		}
+
+		cachedInMinutes := aws.Int64Value(e.CachePeriodInMinutes)
+		u, err := url.Parse(*e.Address)
+		if err != nil {
+			continue
+		}
+
+		addr := crr.WeightedAddress{
+			URL:     u,
+			Expired: time.Now().Add(time.Duration(cachedInMinutes) * time.Minute),
+		}
+
+		endpoint.Add(addr)
+	}
+
+	d.EndpointCache.Add(endpoint)
+
+	return endpoint, nil
+}
+
+func (d *discovererDescribeEndpoints) Handler(r *aws.Request) {
+	d.Context = r.Context()
+	endpointKey := crr.BuildEndpointKey(d.Params)
+	d.Key = endpointKey
+
+	endpoint, err := d.EndpointCache.Get(d, endpointKey, d.Required)
+	if err != nil {
+		r.Error = err
+		return
+	}
+
+	if endpoint.URL != nil && len(endpoint.URL.String()) > 0 {
+		e := r.Endpoint
+		e.URL = endpoint.URL.String()
+		r.SetEndpoint(e)
+	}
 }

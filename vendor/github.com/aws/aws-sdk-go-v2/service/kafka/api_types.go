@@ -94,6 +94,74 @@ func (s BrokerEBSVolumeInfo) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
+// The broker logs configuration for this MSK cluster.
+type BrokerLogs struct {
+	_ struct{} `type:"structure"`
+
+	// Details of the CloudWatch Logs destination for broker logs.
+	CloudWatchLogs *CloudWatchLogs `locationName:"cloudWatchLogs" type:"structure"`
+
+	// Details of the Kinesis Data Firehose delivery stream that is the destination
+	// for broker logs.
+	Firehose *Firehose `locationName:"firehose" type:"structure"`
+
+	// Details of the Amazon S3 destination for broker logs.
+	S3 *S3 `locationName:"s3" type:"structure"`
+}
+
+// String returns the string representation
+func (s BrokerLogs) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *BrokerLogs) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "BrokerLogs"}
+	if s.CloudWatchLogs != nil {
+		if err := s.CloudWatchLogs.Validate(); err != nil {
+			invalidParams.AddNested("CloudWatchLogs", err.(aws.ErrInvalidParams))
+		}
+	}
+	if s.Firehose != nil {
+		if err := s.Firehose.Validate(); err != nil {
+			invalidParams.AddNested("Firehose", err.(aws.ErrInvalidParams))
+		}
+	}
+	if s.S3 != nil {
+		if err := s.S3.Validate(); err != nil {
+			invalidParams.AddNested("S3", err.(aws.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s BrokerLogs) MarshalFields(e protocol.FieldEncoder) error {
+	if s.CloudWatchLogs != nil {
+		v := s.CloudWatchLogs
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "cloudWatchLogs", v, metadata)
+	}
+	if s.Firehose != nil {
+		v := s.Firehose
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "firehose", v, metadata)
+	}
+	if s.S3 != nil {
+		v := s.S3
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "s3", v, metadata)
+	}
+	return nil
+}
+
 // Describes the setup to be used for Kafka broker nodes in the cluster.
 type BrokerNodeGroupInfo struct {
 	_ struct{} `type:"structure"`
@@ -326,6 +394,55 @@ func (s BrokerSoftwareInfo) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
+// Details of the CloudWatch Logs destination for broker logs.
+type CloudWatchLogs struct {
+	_ struct{} `type:"structure"`
+
+	// Specifies whether broker logs get sent to the specified CloudWatch Logs destination.
+	//
+	// Enabled is a required field
+	Enabled *bool `locationName:"enabled" type:"boolean" required:"true"`
+
+	// The CloudWatch log group that is the destination for broker logs.
+	LogGroup *string `locationName:"logGroup" type:"string"`
+}
+
+// String returns the string representation
+func (s CloudWatchLogs) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *CloudWatchLogs) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "CloudWatchLogs"}
+
+	if s.Enabled == nil {
+		invalidParams.Add(aws.NewErrParamRequired("Enabled"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s CloudWatchLogs) MarshalFields(e protocol.FieldEncoder) error {
+	if s.Enabled != nil {
+		v := *s.Enabled
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "enabled", protocol.BoolValue(v), metadata)
+	}
+	if s.LogGroup != nil {
+		v := *s.LogGroup
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "logGroup", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	return nil
+}
+
 // Returns information about a cluster.
 type ClusterInfo struct {
 	_ struct{} `type:"structure"`
@@ -365,6 +482,11 @@ type ClusterInfo struct {
 	// a list of the metrics associated with each of these three levels of monitoring,
 	// see Monitoring (https://docs.aws.amazon.com/msk/latest/developerguide/monitoring.html).
 	EnhancedMonitoring EnhancedMonitoring `locationName:"enhancedMonitoring" type:"string" enum:"true"`
+
+	// You can configure your MSK cluster to send broker logs to different destination
+	// types. This is a container for the configuration details related to broker
+	// logs.
+	LoggingInfo *LoggingInfo `locationName:"loggingInfo" type:"structure"`
 
 	// The number of broker nodes in the cluster.
 	NumberOfBrokerNodes *int64 `locationName:"numberOfBrokerNodes" type:"integer"`
@@ -449,6 +571,12 @@ func (s ClusterInfo) MarshalFields(e protocol.FieldEncoder) error {
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "enhancedMonitoring", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
+	if s.LoggingInfo != nil {
+		v := s.LoggingInfo
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "loggingInfo", v, metadata)
 	}
 	if s.NumberOfBrokerNodes != nil {
 		v := *s.NumberOfBrokerNodes
@@ -997,6 +1125,57 @@ func (s ErrorInfo) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
+// Firehose details for BrokerLogs.
+type Firehose struct {
+	_ struct{} `type:"structure"`
+
+	// The Kinesis Data Firehose delivery stream that is the destination for broker
+	// logs.
+	DeliveryStream *string `locationName:"deliveryStream" type:"string"`
+
+	// Specifies whether broker logs get sent to the specified Kinesis Data Firehose
+	// delivery stream.
+	//
+	// Enabled is a required field
+	Enabled *bool `locationName:"enabled" type:"boolean" required:"true"`
+}
+
+// String returns the string representation
+func (s Firehose) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *Firehose) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "Firehose"}
+
+	if s.Enabled == nil {
+		invalidParams.Add(aws.NewErrParamRequired("Enabled"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s Firehose) MarshalFields(e protocol.FieldEncoder) error {
+	if s.DeliveryStream != nil {
+		v := *s.DeliveryStream
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "deliveryStream", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if s.Enabled != nil {
+		v := *s.Enabled
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "enabled", protocol.BoolValue(v), metadata)
+	}
+	return nil
+}
+
 // Indicates whether you want to enable or disable the JMX Exporter.
 type JmxExporter struct {
 	_ struct{} `type:"structure"`
@@ -1027,7 +1206,7 @@ func (s JmxExporter) MarshalFields(e protocol.FieldEncoder) error {
 type JmxExporterInfo struct {
 	_ struct{} `type:"structure"`
 
-	// Indicates whether you want to enable or disable the JMX Exporter.
+	// JMX Exporter being enabled in broker.
 	//
 	// EnabledInBroker is a required field
 	EnabledInBroker *bool `locationName:"enabledInBroker" type:"boolean" required:"true"`
@@ -1063,6 +1242,87 @@ func (s JmxExporterInfo) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
+// Information about a Kafka version.
+type KafkaVersion struct {
+	_ struct{} `type:"structure"`
+
+	// The status of the Apache Kafka version.
+	Status KafkaVersionStatus `locationName:"status" type:"string" enum:"true"`
+
+	// The Kafka version.
+	Version *string `locationName:"version" type:"string"`
+}
+
+// String returns the string representation
+func (s KafkaVersion) String() string {
+	return awsutil.Prettify(s)
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s KafkaVersion) MarshalFields(e protocol.FieldEncoder) error {
+	if len(s.Status) > 0 {
+		v := s.Status
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "status", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
+	if s.Version != nil {
+		v := *s.Version
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "version", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	return nil
+}
+
+// You can configure your MSK cluster to send broker logs to different destination
+// types. This is a container for the configuration details related to broker
+// logs.
+type LoggingInfo struct {
+	_ struct{} `type:"structure"`
+
+	// You can configure your MSK cluster to send broker logs to different destination
+	// types. This configuration specifies the details of these destinations.
+	//
+	// BrokerLogs is a required field
+	BrokerLogs *BrokerLogs `locationName:"brokerLogs" type:"structure" required:"true"`
+}
+
+// String returns the string representation
+func (s LoggingInfo) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *LoggingInfo) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "LoggingInfo"}
+
+	if s.BrokerLogs == nil {
+		invalidParams.Add(aws.NewErrParamRequired("BrokerLogs"))
+	}
+	if s.BrokerLogs != nil {
+		if err := s.BrokerLogs.Validate(); err != nil {
+			invalidParams.AddNested("BrokerLogs", err.(aws.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s LoggingInfo) MarshalFields(e protocol.FieldEncoder) error {
+	if s.BrokerLogs != nil {
+		v := s.BrokerLogs
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "brokerLogs", v, metadata)
+	}
+	return nil
+}
+
 // Information about cluster attributes that can be updated via update APIs.
 type MutableClusterInfo struct {
 	_ struct{} `type:"structure"`
@@ -1076,6 +1336,9 @@ type MutableClusterInfo struct {
 	// Specifies which Apache Kafka metrics Amazon MSK gathers and sends to Amazon
 	// CloudWatch for this cluster.
 	EnhancedMonitoring EnhancedMonitoring `locationName:"enhancedMonitoring" type:"string" enum:"true"`
+
+	// LoggingInfo details.
+	LoggingInfo *LoggingInfo `locationName:"loggingInfo" type:"structure"`
 
 	// The number of broker nodes in the cluster.
 	NumberOfBrokerNodes *int64 `locationName:"numberOfBrokerNodes" type:"integer"`
@@ -1114,6 +1377,12 @@ func (s MutableClusterInfo) MarshalFields(e protocol.FieldEncoder) error {
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "enhancedMonitoring", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
+	if s.LoggingInfo != nil {
+		v := s.LoggingInfo
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "loggingInfo", v, metadata)
 	}
 	if s.NumberOfBrokerNodes != nil {
 		v := *s.NumberOfBrokerNodes
@@ -1160,7 +1429,7 @@ func (s NodeExporter) MarshalFields(e protocol.FieldEncoder) error {
 type NodeExporterInfo struct {
 	_ struct{} `type:"structure"`
 
-	// Indicates whether you want to enable or disable the Node Exporter.
+	// Node Exporter being enabled in broker.
 	//
 	// EnabledInBroker is a required field
 	EnabledInBroker *bool `locationName:"enabledInBroker" type:"boolean" required:"true"`
@@ -1418,6 +1687,64 @@ func (s PrometheusInfo) MarshalFields(e protocol.FieldEncoder) error {
 
 		metadata := protocol.Metadata{}
 		e.SetFields(protocol.BodyTarget, "nodeExporter", v, metadata)
+	}
+	return nil
+}
+
+// The details of the Amazon S3 destination for broker logs.
+type S3 struct {
+	_ struct{} `type:"structure"`
+
+	// The name of the S3 bucket that is the destination for broker logs.
+	Bucket *string `locationName:"bucket" type:"string"`
+
+	// Specifies whether broker logs get sent to the specified Amazon S3 destination.
+	//
+	// Enabled is a required field
+	Enabled *bool `locationName:"enabled" type:"boolean" required:"true"`
+
+	// The S3 prefix that is the destination for broker logs.
+	Prefix *string `locationName:"prefix" type:"string"`
+}
+
+// String returns the string representation
+func (s S3) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *S3) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "S3"}
+
+	if s.Enabled == nil {
+		invalidParams.Add(aws.NewErrParamRequired("Enabled"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s S3) MarshalFields(e protocol.FieldEncoder) error {
+	if s.Bucket != nil {
+		v := *s.Bucket
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "bucket", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if s.Enabled != nil {
+		v := *s.Enabled
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "enabled", protocol.BoolValue(v), metadata)
+	}
+	if s.Prefix != nil {
+		v := *s.Prefix
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "prefix", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
 	}
 	return nil
 }

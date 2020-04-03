@@ -93,6 +93,30 @@ func (s AccountLimit) String() string {
 	return awsutil.Prettify(s)
 }
 
+// [Service-managed permissions] Describes whether StackSets automatically deploys
+// to AWS Organizations accounts that are added to a target organization or
+// organizational unit (OU).
+type AutoDeployment struct {
+	_ struct{} `type:"structure"`
+
+	// If set to true, StackSets automatically deploys additional stack instances
+	// to AWS Organizations accounts that are added to a target organization or
+	// organizational unit (OU) in the specified Regions. If an account is removed
+	// from a target organization or OU, StackSets deletes stack instances from
+	// the account in the specified Regions.
+	Enabled *bool `type:"boolean"`
+
+	// If set to true, stack resources are retained when an account is removed from
+	// a target organization or OU. If set to false, stack resources are deleted.
+	// Specify only if Enabled is set to True.
+	RetainStacksOnAccountRemoval *bool `type:"boolean"`
+}
+
+// String returns the string representation
+func (s AutoDeployment) String() string {
+	return awsutil.Prettify(s)
+}
+
 // The Change structure describes the changes AWS CloudFormation will perform
 // if you execute the change set.
 type Change struct {
@@ -153,6 +177,28 @@ type ChangeSetSummary struct {
 
 // String returns the string representation
 func (s ChangeSetSummary) String() string {
+	return awsutil.Prettify(s)
+}
+
+// [Service-managed permissions] The AWS Organizations accounts to which StackSets
+// deploys.
+//
+// For update operations, you can specify either Accounts or OrganizationalUnitIds.
+// For create and delete operations, specify OrganizationalUnitIds.
+type DeploymentTargets struct {
+	_ struct{} `type:"structure"`
+
+	// The names of one or more AWS accounts for which you want to deploy stack
+	// set updates.
+	Accounts []string `type:"list"`
+
+	// The organization root ID or organizational unit (OUs) IDs to which StackSets
+	// deploys.
+	OrganizationalUnitIds []string `type:"list"`
+}
+
+// String returns the string representation
+func (s DeploymentTargets) String() string {
 	return awsutil.Prettify(s)
 }
 
@@ -979,7 +1025,8 @@ func (s StackEvent) String() string {
 type StackInstance struct {
 	_ struct{} `type:"structure"`
 
-	// The name of the AWS account that the stack instance is associated with.
+	// [Self-managed permissions] The name of the AWS account that the stack instance
+	// is associated with.
 	Account *string `type:"string"`
 
 	// Status of the stack instance's actual configuration compared to the expected
@@ -1003,6 +1050,10 @@ type StackInstance struct {
 	// on the stack instance. This value will be NULL for any stack instance on
 	// which drift detection has not yet been performed.
 	LastDriftCheckTimestamp *time.Time `type:"timestamp"`
+
+	// [Service-managed permissions] The organization root ID or organizational
+	// unit (OU) ID that the stack instance is associated with.
+	OrganizationalUnitId *string `type:"string"`
 
 	// A list of parameters from the stack set template whose values have been overridden
 	// in this stack instance.
@@ -1049,7 +1100,8 @@ func (s StackInstance) String() string {
 type StackInstanceSummary struct {
 	_ struct{} `type:"structure"`
 
-	// The name of the AWS account that the stack instance is associated with.
+	// [Self-managed permissions] The name of the AWS account that the stack instance
+	// is associated with.
 	Account *string `type:"string"`
 
 	// Status of the stack instance's actual configuration compared to the expected
@@ -1073,6 +1125,10 @@ type StackInstanceSummary struct {
 	// on the stack instance. This value will be NULL for any stack instance on
 	// which drift detection has not yet been performed.
 	LastDriftCheckTimestamp *time.Time `type:"timestamp"`
+
+	// [Service-managed permissions] The organization root ID or organizational
+	// unit (OU) ID that the stack instance is associated with.
+	OrganizationalUnitId *string `type:"string"`
 
 	// The name of the AWS region that the stack instance is associated with.
 	Region *string `type:"string"`
@@ -1441,6 +1497,11 @@ type StackSet struct {
 	// in the AWS CloudFormation User Guide.
 	AdministrationRoleARN *string `min:"20" type:"string"`
 
+	// [Service-managed permissions] Describes whether StackSets automatically deploys
+	// to AWS Organizations accounts that are added to a target organization or
+	// organizational unit (OU).
+	AutoDeployment *AutoDeployment `type:"structure"`
+
 	// The capabilities that are allowed in the stack set. Some stack set templates
 	// might include resources that can affect permissions in your AWS account—for
 	// example, by creating new AWS Identity and Access Management (IAM) users.
@@ -1458,8 +1519,24 @@ type StackSet struct {
 	// groups can include in their stack sets.
 	ExecutionRoleName *string `min:"1" type:"string"`
 
+	// [Service-managed permissions] The organization root ID or organizational
+	// unit (OUs) IDs to which stacks in your stack set have been deployed.
+	OrganizationalUnitIds []string `type:"list"`
+
 	// A list of input parameters for a stack set.
 	Parameters []Parameter `type:"list"`
+
+	// Describes how the IAM roles required for stack set operations are created.
+	//
+	//    * With self-managed permissions, you must create the administrator and
+	//    execution roles required to deploy to target accounts. For more information,
+	//    see Grant Self-Managed Stack Set Permissions (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-prereqs-self-managed.html).
+	//
+	//    * With service-managed permissions, StackSets automatically creates the
+	//    IAM roles required to deploy to accounts managed by AWS Organizations.
+	//    For more information, see Grant Service-Managed Stack Set Permissions
+	//    (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-prereqs-service-managed.html).
+	PermissionModel PermissionModels `type:"string" enum:"true"`
 
 	// The Amazon Resource Number (ARN) of the stack set.
 	StackSetARN *string `type:"string"`
@@ -1606,6 +1683,10 @@ type StackSetOperation struct {
 	// before actually creating the first stacks.
 	CreationTimestamp *time.Time `type:"timestamp"`
 
+	// [Service-managed permissions] The AWS Organizations accounts affected by
+	// the stack operation.
+	DeploymentTargets *DeploymentTargets `type:"structure"`
+
 	// The time at which the stack set operation ended, across all accounts and
 	// regions specified. Note that this doesn't necessarily mean that the stack
 	// set operation was successful, or even attempted, in each account or region.
@@ -1652,6 +1733,11 @@ type StackSetOperation struct {
 	//    of the operation in the region is set to FAILED. This in turn sets the
 	//    status of the operation as a whole to FAILED, and AWS CloudFormation cancels
 	//    the operation in any remaining regions.
+	//
+	//    * QUEUED: [Service-managed permissions] For automatic deployments that
+	//    require a sequence of operations. The operation is queued to be performed.
+	//    For more information, see the stack set operation status codes (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-concepts.html#stackset-status-codes)
+	//    in the AWS CloudFormation User Guide.
 	//
 	//    * RUNNING: The operation is currently being performed.
 	//
@@ -1756,12 +1842,17 @@ func (s *StackSetOperationPreferences) Validate() error {
 type StackSetOperationResultSummary struct {
 	_ struct{} `type:"structure"`
 
-	// The name of the AWS account for this operation result.
+	// [Self-managed permissions] The name of the AWS account for this operation
+	// result.
 	Account *string `type:"string"`
 
 	// The results of the account gate function AWS CloudFormation invokes, if present,
 	// before proceeding with stack set operations in an account
 	AccountGateResult *AccountGateResult `type:"structure"`
+
+	// [Service-managed permissions] The organization root ID or organizational
+	// unit (OU) ID for this operation result.
+	OrganizationalUnitId *string `type:"string"`
 
 	// The name of the AWS region for this operation result.
 	Region *string `type:"string"`
@@ -1831,6 +1922,11 @@ type StackSetOperationSummary struct {
 	//    status of the operation as a whole to FAILED, and AWS CloudFormation cancels
 	//    the operation in any remaining regions.
 	//
+	//    * QUEUED: [Service-managed permissions] For automatic deployments that
+	//    require a sequence of operations. The operation is queued to be performed.
+	//    For more information, see the stack set operation status codes (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-concepts.html#stackset-status-codes)
+	//    in the AWS CloudFormation User Guide.
+	//
 	//    * RUNNING: The operation is currently being performed.
 	//
 	//    * STOPPED: The user has cancelled the operation.
@@ -1851,6 +1947,11 @@ func (s StackSetOperationSummary) String() string {
 // set.
 type StackSetSummary struct {
 	_ struct{} `type:"structure"`
+
+	// [Service-managed permissions] Describes whether StackSets automatically deploys
+	// to AWS Organizations accounts that are added to a target organizational unit
+	// (OU).
+	AutoDeployment *AutoDeployment `type:"structure"`
 
 	// A description of the stack set that you specify when the stack set is created
 	// or updated.
@@ -1878,6 +1979,18 @@ type StackSetSummary struct {
 	// on the stack set. This value will be NULL for any stack set on which drift
 	// detection has not yet been performed.
 	LastDriftCheckTimestamp *time.Time `type:"timestamp"`
+
+	// Describes how the IAM roles required for stack set operations are created.
+	//
+	//    * With self-managed permissions, you must create the administrator and
+	//    execution roles required to deploy to target accounts. For more information,
+	//    see Grant Self-Managed Stack Set Permissions (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-prereqs-self-managed.html).
+	//
+	//    * With service-managed permissions, StackSets automatically creates the
+	//    IAM roles required to deploy to accounts managed by AWS Organizations.
+	//    For more information, see Grant Service-Managed Stack Set Permissions
+	//    (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-prereqs-service-managed.html).
+	PermissionModel PermissionModels `type:"string" enum:"true"`
 
 	// The ID of the stack set.
 	StackSetId *string `type:"string"`

@@ -4,6 +4,7 @@ package apigateway
 
 import (
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/aws/retry"
 	"github.com/aws/aws-sdk-go-v2/aws/signer/v4"
 	"github.com/aws/aws-sdk-go-v2/private/protocol/restjson"
 )
@@ -48,6 +49,10 @@ func New(config aws.Config) *Client {
 				APIVersion:    "2015-07-09",
 			},
 		),
+	}
+
+	if config.Retryer == nil {
+		svc.Retryer = retry.NewStandard()
 	}
 
 	// Handlers

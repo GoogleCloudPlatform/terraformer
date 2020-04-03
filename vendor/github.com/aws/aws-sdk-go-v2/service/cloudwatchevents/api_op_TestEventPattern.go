@@ -17,7 +17,7 @@ type TestEventPatternInput struct {
 	// Event is a required field
 	Event *string `type:"string" required:"true"`
 
-	// The event pattern. For more information, see Event Patterns (https://docs.aws.amazon.com/eventbridge/latest/userguide/eventbridge-and-event-patterns.html)
+	// The event pattern. For more information, see Events and Event Patterns (https://docs.aws.amazon.com/eventbridge/latest/userguide/eventbridge-and-event-patterns.html)
 	// in the Amazon EventBridge User Guide.
 	//
 	// EventPattern is a required field
@@ -69,8 +69,7 @@ const opTestEventPattern = "TestEventPattern"
 // Most services in AWS treat : or / as the same character in Amazon Resource
 // Names (ARNs). However, EventBridge uses an exact match in event patterns
 // and rules. Be sure to use the correct ARN characters when creating event
-// patterns so that they match the ARN syntax in the event that you want to
-// match.
+// patterns so that they match the ARN syntax in the event you want to match.
 //
 //    // Example sending a request using TestEventPatternRequest.
 //    req := client.TestEventPatternRequest(params)

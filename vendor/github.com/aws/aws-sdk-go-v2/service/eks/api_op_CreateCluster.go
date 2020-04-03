@@ -17,6 +17,9 @@ type CreateClusterInput struct {
 	// of the request.
 	ClientRequestToken *string `locationName:"clientRequestToken" type:"string" idempotencyToken:"true"`
 
+	// The encryption configuration for the cluster.
+	EncryptionConfig []EncryptionConfig `locationName:"encryptionConfig" type:"list"`
+
 	// Enable or disable exporting the Kubernetes control plane logs for your cluster
 	// to CloudWatch Logs. By default, cluster control plane logs aren't exported
 	// to CloudWatch Logs. For more information, see Amazon EKS Cluster Control
@@ -109,6 +112,18 @@ func (s CreateClusterInput) MarshalFields(e protocol.FieldEncoder) error {
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "clientRequestToken", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if s.EncryptionConfig != nil {
+		v := s.EncryptionConfig
+
+		metadata := protocol.Metadata{}
+		ls0 := e.List(protocol.BodyTarget, "encryptionConfig", metadata)
+		ls0.Start()
+		for _, v1 := range v {
+			ls0.ListAddFields(v1)
+		}
+		ls0.End()
+
 	}
 	if s.Logging != nil {
 		v := s.Logging

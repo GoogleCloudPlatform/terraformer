@@ -91,6 +91,12 @@ type CreateMLTransformInput struct {
 	// Role is a required field
 	Role *string `type:"string" required:"true"`
 
+	// The tags to use with this machine learning transform. You may use tags to
+	// limit access to the machine learning transform. For more information about
+	// tags in AWS Glue, see AWS Tags in AWS Glue (https://docs.aws.amazon.com/glue/latest/dg/monitor-tags.html)
+	// in the developer guide.
+	Tags map[string]string `type:"map"`
+
 	// The timeout of the task run for this transform in minutes. This is the maximum
 	// time that a task run for this transform can consume resources before it is
 	// terminated and enters TIMEOUT status. The default is 2,880 minutes (48 hours).

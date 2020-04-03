@@ -12,12 +12,22 @@ import (
 type UpdateStackInstancesInput struct {
 	_ struct{} `type:"structure"`
 
-	// The names of one or more AWS accounts for which you want to update parameter
-	// values for stack instances. The overridden parameter values will be applied
-	// to all stack instances in the specified accounts and regions.
+	// [Self-managed permissions] The names of one or more AWS accounts for which
+	// you want to update parameter values for stack instances. The overridden parameter
+	// values will be applied to all stack instances in the specified accounts and
+	// regions.
 	//
-	// Accounts is a required field
-	Accounts []string `type:"list" required:"true"`
+	// You can specify Accounts or DeploymentTargets, but not both.
+	Accounts []string `type:"list"`
+
+	// [Service-managed permissions] The AWS Organizations accounts for which you
+	// want to update parameter values for stack instances. If your update targets
+	// OUs, the overridden parameter values only apply to the accounts that are
+	// currently in the target OUs and their child OUs. Accounts added to the target
+	// OUs and their child OUs in the future won't use the overridden values.
+	//
+	// You can specify Accounts or DeploymentTargets, but not both.
+	DeploymentTargets *DeploymentTargets `type:"structure"`
 
 	// The unique identifier for this stack set operation.
 	//
@@ -88,10 +98,6 @@ func (s UpdateStackInstancesInput) String() string {
 // Validate inspects the fields of the type to determine if they are valid.
 func (s *UpdateStackInstancesInput) Validate() error {
 	invalidParams := aws.ErrInvalidParams{Context: "UpdateStackInstancesInput"}
-
-	if s.Accounts == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Accounts"))
-	}
 	if s.OperationId != nil && len(*s.OperationId) < 1 {
 		invalidParams.Add(aws.NewErrParamMinLen("OperationId", 1))
 	}

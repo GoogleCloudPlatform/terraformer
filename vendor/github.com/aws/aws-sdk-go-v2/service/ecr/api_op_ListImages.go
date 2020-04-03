@@ -92,13 +92,14 @@ const opListImages = "ListImages"
 // ListImagesRequest returns a request value for making API operation for
 // Amazon EC2 Container Registry.
 //
-// Lists all the image IDs for a given repository.
+// Lists all the image IDs for the specified repository.
 //
-// You can filter images based on whether or not they are tagged by setting
-// the tagStatus parameter to TAGGED or UNTAGGED. For example, you can filter
-// your results to return only UNTAGGED images and then pipe that result to
-// a BatchDeleteImage operation to delete them. Or, you can filter your results
-// to return only TAGGED images to list all of the tags in your repository.
+// You can filter images based on whether or not they are tagged by using the
+// tagStatus filter and specifying either TAGGED, UNTAGGED or ANY. For example,
+// you can filter your results to return only UNTAGGED images and then pipe
+// that result to a BatchDeleteImage operation to delete them. Or, you can filter
+// your results to return only TAGGED images to list all of the tags in your
+// repository.
 //
 //    // Example sending a request using ListImagesRequest.
 //    req := client.ListImagesRequest(params)

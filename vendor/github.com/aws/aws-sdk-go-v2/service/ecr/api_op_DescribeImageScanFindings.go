@@ -114,7 +114,7 @@ const opDescribeImageScanFindings = "DescribeImageScanFindings"
 // DescribeImageScanFindingsRequest returns a request value for making API operation for
 // Amazon EC2 Container Registry.
 //
-// Describes the image scan findings for the specified image.
+// Returns the scan findings for the specified image.
 //
 //    // Example sending a request using DescribeImageScanFindingsRequest.
 //    req := client.DescribeImageScanFindingsRequest(params)

@@ -36,6 +36,12 @@ type PutScalingPolicyInput struct {
 	// in the Amazon EC2 Auto Scaling User Guide.
 	Cooldown *int64 `type:"integer"`
 
+	// Indicates whether the scaling policy is enabled or disabled. The default
+	// is enabled. For more information, see Disabling a Scaling Policy for an Auto
+	// Scaling Group (https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-enable-disable-scaling-policy.html)
+	// in the Amazon EC2 Auto Scaling User Guide.
+	Enabled *bool `type:"boolean"`
+
 	// The estimated time, in seconds, until a newly launched instance can contribute
 	// to the CloudWatch metrics. The default is to use the value specified for
 	// the default cooldown period for the group.
@@ -177,10 +183,7 @@ const opPutScalingPolicy = "PutScalingPolicy"
 // PutScalingPolicyRequest returns a request value for making API operation for
 // Auto Scaling.
 //
-// Creates or updates a scaling policy for an Auto Scaling group. To update
-// an existing scaling policy, use the existing policy name and set the parameters
-// to change. Any existing parameter not changed in an update to an existing
-// policy is not changed in this update request.
+// Creates or updates a scaling policy for an Auto Scaling group.
 //
 // For more information about using scaling policies to scale your Auto Scaling
 // group automatically, see Dynamic Scaling (https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-scale-based-on-demand.html)

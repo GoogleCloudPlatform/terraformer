@@ -106,6 +106,10 @@ type CreateAutoScalingGroupInput struct {
 
 	// The maximum amount of time, in seconds, that an instance can be in service.
 	//
+	// For more information, see Replacing Auto Scaling Instances Based on Maximum
+	// Instance Lifetime (https://docs.aws.amazon.com/autoscaling/ec2/userguide/asg-max-instance-lifetime.html)
+	// in the Amazon EC2 Auto Scaling User Guide.
+	//
 	// Valid Range: Minimum value of 604800.
 	MaxInstanceLifetime *int64 `type:"integer"`
 
@@ -287,8 +291,8 @@ const opCreateAutoScalingGroup = "CreateAutoScalingGroup"
 //
 // If you exceed your maximum limit of Auto Scaling groups, the call fails.
 // For information about viewing this limit, see DescribeAccountLimits. For
-// information about updating this limit, see Amazon EC2 Auto Scaling Limits
-// (https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-account-limits.html)
+// information about updating this limit, see Amazon EC2 Auto Scaling Service
+// Quotas (https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-account-limits.html)
 // in the Amazon EC2 Auto Scaling User Guide.
 //
 //    // Example sending a request using CreateAutoScalingGroupRequest.

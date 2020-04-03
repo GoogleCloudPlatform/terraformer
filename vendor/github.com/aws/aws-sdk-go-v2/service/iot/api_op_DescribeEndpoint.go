@@ -24,6 +24,10 @@ type DescribeEndpointInput struct {
 	//    endpoint.
 	//
 	//    * iot:Jobs - Returns an AWS IoT device management Jobs API endpoint.
+	//
+	// We strongly recommend that customers use the newer iot:Data-ATS endpoint
+	// type to avoid issues related to the widespread distrust of Symantec certificate
+	// authorities.
 	EndpointType *string `location:"querystring" locationName:"endpointType" type:"string"`
 }
 

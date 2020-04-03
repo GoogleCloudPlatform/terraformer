@@ -22,6 +22,9 @@ type CreateElasticsearchDomainInput struct {
 	// for more information.
 	AdvancedOptions map[string]string `type:"map"`
 
+	// Specifies advanced security options.
+	AdvancedSecurityOptions *AdvancedSecurityOptionsInput `type:"structure"`
+
 	// Options to specify the Cognito user and identity pools for Kibana authentication.
 	// For more information, see Amazon Cognito Authentication for Kibana (http://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-cognito-auth.html).
 	CognitoOptions *CognitoOptions `type:"structure"`
@@ -85,6 +88,11 @@ func (s *CreateElasticsearchDomainInput) Validate() error {
 	if s.DomainName != nil && len(*s.DomainName) < 3 {
 		invalidParams.Add(aws.NewErrParamMinLen("DomainName", 3))
 	}
+	if s.AdvancedSecurityOptions != nil {
+		if err := s.AdvancedSecurityOptions.Validate(); err != nil {
+			invalidParams.AddNested("AdvancedSecurityOptions", err.(aws.ErrInvalidParams))
+		}
+	}
 	if s.CognitoOptions != nil {
 		if err := s.CognitoOptions.Validate(); err != nil {
 			invalidParams.AddNested("CognitoOptions", err.(aws.ErrInvalidParams))
@@ -123,6 +131,12 @@ func (s CreateElasticsearchDomainInput) MarshalFields(e protocol.FieldEncoder) e
 		}
 		ms0.End()
 
+	}
+	if s.AdvancedSecurityOptions != nil {
+		v := s.AdvancedSecurityOptions
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "AdvancedSecurityOptions", v, metadata)
 	}
 	if s.CognitoOptions != nil {
 		v := s.CognitoOptions

@@ -84,6 +84,24 @@ func (enum EnhancedMonitoring) MarshalValueBuf(b []byte) ([]byte, error) {
 	return append(b, enum...), nil
 }
 
+// The status of a Kafka version.
+type KafkaVersionStatus string
+
+// Enum values for KafkaVersionStatus
+const (
+	KafkaVersionStatusActive     KafkaVersionStatus = "ACTIVE"
+	KafkaVersionStatusDeprecated KafkaVersionStatus = "DEPRECATED"
+)
+
+func (enum KafkaVersionStatus) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum KafkaVersionStatus) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
 // The broker or Zookeeper node.
 type NodeType string
 

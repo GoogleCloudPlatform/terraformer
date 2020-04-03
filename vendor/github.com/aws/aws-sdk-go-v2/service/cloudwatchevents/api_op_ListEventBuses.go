@@ -13,8 +13,8 @@ type ListEventBusesInput struct {
 	_ struct{} `type:"structure"`
 
 	// Specifying this limits the number of results returned by this operation.
-	// The operation also returns a NextToken that you can use in a subsequent operation
-	// to retrieve the next set of results.
+	// The operation also returns a NextToken which you can use in a subsequent
+	// operation to retrieve the next set of results.
 	Limit *int64 `min:"1" type:"integer"`
 
 	// Specifying this limits the results to only those event buses with names that
@@ -72,8 +72,6 @@ const opListEventBuses = "ListEventBuses"
 //
 // Lists all the event buses in your account, including the default event bus,
 // custom event buses, and partner event buses.
-//
-// This operation is run by AWS customers, not by SaaS partners.
 //
 //    // Example sending a request using ListEventBusesRequest.
 //    req := client.ListEventBusesRequest(params)

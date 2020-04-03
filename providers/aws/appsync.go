@@ -2,8 +2,6 @@ package aws
 
 import (
 	"context"
-	"log"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aws/aws-sdk-go-v2/service/appsync"
 )
@@ -20,26 +18,30 @@ func (g *AppSyncGenerator) InitResources() error {
 
 	svc := appsync.New(config)
 
-	// TODO:
-	// * Service does not provides a `NewXXXXXXXXXXXPaginator` like other services' "NewListClustersPaginator" right now
-	apis, err := svc.ListGraphqlApisRequest(&appsync.ListGraphqlApisInput{}).Send(context.Background())
-	if err != nil {
-		log.Println(err)
-		return err
+	var nextToken *string
+	for {
+		apis, err := svc.ListGraphqlApisRequest(&appsync.ListGraphqlApisInput{
+			NextToken: nextToken,
+		}).Send(context.Background())
+		if err != nil {
+			return err
+		}
+
+		for _, api := range apis.GraphqlApis {
+			var id = *api.ApiId
+			var name = *api.Name
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+				id,
+				name,
+				"aws_appsync_graphql_api",
+				"aws",
+				[]string{}))
+		}
+		nextToken = apis.NextToken
+		if nextToken == nil {
+			break
+		}
 	}
 
-	var resources []terraform_utils.Resource
-	for _, api := range apis.GraphqlApis {
-		var id = *api.ApiId
-		var name = *api.Name
-		resources = append(resources, terraform_utils.NewSimpleResource(
-			id,
-			name,
-			"aws_appsync_graphql_api",
-			"aws",
-			[]string{}))
-	}
-
-	g.Resources = resources
 	return nil
 }

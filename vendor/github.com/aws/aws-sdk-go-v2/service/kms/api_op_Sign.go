@@ -54,8 +54,8 @@ type SignInput struct {
 	Message []byte `min:"1" type:"blob" required:"true" sensitive:"true"`
 
 	// Tells AWS KMS whether the value of the Message parameter is a message or
-	// message digest. To indicate a message, enter RAW. To indicate a message digest,
-	// enter DIGEST.
+	// message digest. The default value, RAW, indicates a message. To indicate
+	// a message digest, enter DIGEST.
 	MessageType MessageType `type:"string" enum:"true"`
 
 	// Specifies the signing algorithm to use when signing the message.
@@ -107,6 +107,18 @@ type SignOutput struct {
 	KeyId *string `min:"1" type:"string"`
 
 	// The cryptographic signature that was generated for the message.
+	//
+	//    * When used with the supported RSA signing algorithms, the encoding of
+	//    this value is defined by PKCS #1 in RFC 8017 (https://tools.ietf.org/html/rfc8017).
+	//
+	//    * When used with the ECDSA_SHA_256, ECDSA_SHA_384, or ECDSA_SHA_512 signing
+	//    algorithms, this value is a DER-encoded object as defined by ANS X9.62–2005
+	//    and RFC 3279 Section 2.2.3 (https://tools.ietf.org/html/rfc3279#section-2.2.3).
+	//    This is the most commonly used signature format and is appropriate for
+	//    most uses.
+	//
+	// When you use the HTTP API or the AWS CLI, the value is Base64-encoded. Otherwise,
+	// it is not Base64-encoded.
 	//
 	// Signature is automatically base64 encoded/decoded by the SDK.
 	Signature []byte `min:"1" type:"blob"`

@@ -11,6 +11,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -22,6 +23,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/awserr"
 	"github.com/aws/aws-sdk-go-v2/aws/defaults"
+	"github.com/aws/aws-sdk-go-v2/aws/retry"
 )
 
 const (
@@ -96,6 +98,11 @@ func New(config aws.Config) *Client {
 		),
 	}
 
+	if config.Retryer == nil {
+		svc.Retryer = retry.NewStandard()
+	}
+	svc.Retryer = retry.AddWithMaxBackoffDelay(svc.Retryer, 1*time.Second)
+
 	// token provider instance
 	tp := newTokenProvider(svc, defaultTTL)
 	// NamedHandler for fetching token
@@ -141,10 +148,9 @@ func New(config aws.Config) *Client {
 				r.HTTPResponse = &http.Response{
 					Header: http.Header{},
 				}
-				r.Error = awserr.New(
-					aws.ErrCodeRequestCanceled,
-					"EC2 IMDS access disabled via "+disableServiceEnvVar+" env var",
-					nil)
+				r.Error = &aws.RequestCanceledError{
+					Err: fmt.Errorf("EC2 IMDS access disabled via " + disableServiceEnvVar + " env var"),
+				}
 			},
 		})
 	}

@@ -15,7 +15,7 @@ type ListTypeVersionsInput struct {
 	// The Amazon Resource Name (ARN) of the type for which you want version summary
 	// information.
 	//
-	// Conditional: You must specify TypeName or Arn.
+	// Conditional: You must specify either TypeName and Type, or Arn.
 	Arn *string `type:"string"`
 
 	// The deprecation status of the type versions that you want to get summary
@@ -28,6 +28,8 @@ type ListTypeVersionsInput struct {
 	//
 	//    * DEPRECATED: The type version has been deregistered and can no longer
 	//    be used in CloudFormation operations.
+	//
+	// The default is LIVE.
 	DeprecatedStatus DeprecatedStatus `type:"string" enum:"true"`
 
 	// The maximum number of results to be returned with a single call. If the number
@@ -46,11 +48,13 @@ type ListTypeVersionsInput struct {
 	// The kind of the type.
 	//
 	// Currently the only valid value is RESOURCE.
+	//
+	// Conditional: You must specify either TypeName and Type, or Arn.
 	Type RegistryType `type:"string" enum:"true"`
 
 	// The name of the type for which you want version summary information.
 	//
-	// Conditional: You must specify TypeName or Arn.
+	// Conditional: You must specify either TypeName and Type, or Arn.
 	TypeName *string `min:"10" type:"string"`
 }
 

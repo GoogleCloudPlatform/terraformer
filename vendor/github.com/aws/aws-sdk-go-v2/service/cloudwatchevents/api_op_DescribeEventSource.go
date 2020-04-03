@@ -53,18 +53,18 @@ type DescribeEventSourceOutput struct {
 	// The date and time that the event source was created.
 	CreationTime *time.Time `type:"timestamp"`
 
-	// The date and time that the event source will expire if you don't create a
-	// matching event bus.
+	// The date and time that the event source will expire if you do not create
+	// a matching event bus.
 	ExpirationTime *time.Time `type:"timestamp"`
 
 	// The name of the partner event source.
 	Name *string `type:"string"`
 
-	// The state of the event source. If it's ACTIVE, you have already created a
-	// matching event bus for this event source, and that event bus is active. If
-	// it's PENDING, either you haven't yet created a matching event bus, or that
-	// event bus is deactivated. If it's DELETED, you have created a matching event
-	// bus, but the event source has since been deleted.
+	// The state of the event source. If it is ACTIVE, you have already created
+	// a matching event bus for this event source, and that event bus is active.
+	// If it is PENDING, either you haven't yet created a matching event bus, or
+	// that event bus is deactivated. If it is DELETED, you have created a matching
+	// event bus, but the event source has since been deleted.
 	State EventSourceState `type:"string" enum:"true"`
 }
 
@@ -80,8 +80,6 @@ const opDescribeEventSource = "DescribeEventSource"
 //
 // This operation lists details about a partner event source that is shared
 // with your account.
-//
-// This operation is run by AWS customers, not by SaaS partners.
 //
 //    // Example sending a request using DescribeEventSourceRequest.
 //    req := client.DescribeEventSourceRequest(params)

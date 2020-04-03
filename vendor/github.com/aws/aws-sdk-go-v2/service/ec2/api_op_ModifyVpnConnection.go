@@ -106,9 +106,9 @@ const opModifyVpnConnection = "ModifyVpnConnection"
 // gateway route table.
 //
 // After you perform this operation, the AWS VPN endpoint's IP addresses on
-// the AWS side and the tunnel options remain intact. Your s2slong; connection
-// will be temporarily unavailable for approximately 10 minutes while we provision
-// the new endpoints
+// the AWS side and the tunnel options remain intact. Your AWS Site-to-Site
+// VPN connection will be temporarily unavailable for a brief period while we
+// provision the new endpoints.
 //
 //    // Example sending a request using ModifyVpnConnectionRequest.
 //    req := client.ModifyVpnConnectionRequest(params)

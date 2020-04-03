@@ -67,7 +67,7 @@ const opGetRepositoryPolicy = "GetRepositoryPolicy"
 // GetRepositoryPolicyRequest returns a request value for making API operation for
 // Amazon EC2 Container Registry.
 //
-// Retrieves the repository policy for a specified repository.
+// Retrieves the repository policy for the specified repository.
 //
 //    // Example sending a request using GetRepositoryPolicyRequest.
 //    req := client.GetRepositoryPolicyRequest(params)

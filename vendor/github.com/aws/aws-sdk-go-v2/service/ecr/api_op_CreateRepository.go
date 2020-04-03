@@ -76,9 +76,7 @@ const opCreateRepository = "CreateRepository"
 // CreateRepositoryRequest returns a request value for making API operation for
 // Amazon EC2 Container Registry.
 //
-// Creates an Amazon Elastic Container Registry (Amazon ECR) repository, where
-// users can push and pull Docker images. For more information, see Amazon ECR
-// Repositories (https://docs.aws.amazon.com/AmazonECR/latest/userguide/Repositories.html)
+// Creates a repository. For more information, see Amazon ECR Repositories (https://docs.aws.amazon.com/AmazonECR/latest/userguide/Repositories.html)
 // in the Amazon Elastic Container Registry User Guide.
 //
 //    // Example sending a request using CreateRepositoryRequest.

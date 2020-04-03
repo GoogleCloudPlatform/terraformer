@@ -75,6 +75,9 @@ const opAssignIpv6Addresses = "AssignIpv6Addresses"
 // Type (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html#AvailableIpPerENI)
 // in the Amazon Elastic Compute Cloud User Guide.
 //
+// You must specify either the IPv6 addresses or the IPv6 address count in the
+// request.
+//
 //    // Example sending a request using AssignIpv6AddressesRequest.
 //    req := client.AssignIpv6AddressesRequest(params)
 //    resp, err := req.Send(context.TODO())

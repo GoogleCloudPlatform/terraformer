@@ -18,9 +18,9 @@ type DescribeVolumesModificationsInput struct {
 	// it is UnauthorizedOperation.
 	DryRun *bool `type:"boolean"`
 
-	// The filters. Supported filters: volume-id, modification-state, target-size,
-	// target-iops, target-volume-type, original-size, original-iops, original-volume-type,
-	// start-time.
+	// The filters. Supported filters: volume-id | modification-state | target-size
+	// | target-iops | target-volume-type | original-size | original-iops | original-volume-type
+	// | start-time | originalMultiAttachEnabled | targetMultiAttachEnabled.
 	Filters []Filter `locationName:"Filter" locationNameList:"Filter" type:"list"`
 
 	// The maximum number of results (up to a limit of 500) to be returned in a

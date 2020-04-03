@@ -83,8 +83,8 @@ const opSetRepositoryPolicy = "SetRepositoryPolicy"
 // SetRepositoryPolicyRequest returns a request value for making API operation for
 // Amazon EC2 Container Registry.
 //
-// Applies a repository policy on a specified repository to control access permissions.
-// For more information, see Amazon ECR Repository Policies (https://docs.aws.amazon.com/AmazonECR/latest/userguide/RepositoryPolicies.html)
+// Applies a repository policy to the specified repository to control access
+// permissions. For more information, see Amazon ECR Repository Policies (https://docs.aws.amazon.com/AmazonECR/latest/userguide/RepositoryPolicies.html)
 // in the Amazon Elastic Container Registry User Guide.
 //
 //    // Example sending a request using SetRepositoryPolicyRequest.

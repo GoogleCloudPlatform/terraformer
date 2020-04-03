@@ -1,6 +1,7 @@
 package ec2metadata
 
 import (
+	"errors"
 	"net/http"
 	"sync/atomic"
 	"time"
@@ -48,19 +49,23 @@ func (t *tokenProvider) fetchTokenHandler(r *aws.Request) {
 	output, err := t.client.getToken(r.Context(), t.configuredTTL)
 	if err != nil {
 		// change the disabled flag on token provider to true, when error is request timeout error.
-		if requestFailureError, ok := err.(awserr.RequestFailure); ok {
-			switch requestFailureError.StatusCode() {
-			case http.StatusForbidden, http.StatusNotFound, http.StatusMethodNotAllowed:
+		if rf, ok := err.(awserr.RequestFailure); ok {
+			switch rf.StatusCode() {
+			case http.StatusForbidden,
+				http.StatusNotFound,
+				http.StatusMethodNotAllowed:
+
 				atomic.StoreUint32(&t.disabled, 1)
+
 			case http.StatusBadRequest:
-				r.Error = requestFailureError
+				r.Error = rf
 			}
 
 			// Check if request timed out while waiting for response
-			if e, ok := requestFailureError.OrigErr().(awserr.Error); ok {
-				if e.Code() == "RequestError" {
-					atomic.StoreUint32(&t.disabled, 1)
-				}
+			var re *aws.RequestSendError
+			var ce *aws.RequestCanceledError
+			if errors.As(rf, &re) || errors.As(rf, &ce) {
+				atomic.StoreUint32(&t.disabled, 1)
 			}
 		}
 		return

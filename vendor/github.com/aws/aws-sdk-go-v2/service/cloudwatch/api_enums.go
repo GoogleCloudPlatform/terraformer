@@ -2,6 +2,23 @@
 
 package cloudwatch
 
+type AlarmType string
+
+// Enum values for AlarmType
+const (
+	AlarmTypeCompositeAlarm AlarmType = "CompositeAlarm"
+	AlarmTypeMetricAlarm    AlarmType = "MetricAlarm"
+)
+
+func (enum AlarmType) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum AlarmType) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
 type AnomalyDetectorStateValue string
 
 // Enum values for AnomalyDetectorStateValue

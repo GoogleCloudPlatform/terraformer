@@ -4,6 +4,7 @@ package cloudwatchevents
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
@@ -12,22 +13,24 @@ import (
 type CreateEventBusInput struct {
 	_ struct{} `type:"structure"`
 
-	// If you're creating a partner event bus, this specifies the partner event
+	// If you are creating a partner event bus, this specifies the partner event
 	// source that the new event bus will be matched with.
 	EventSourceName *string `min:"1" type:"string"`
 
 	// The name of the new event bus.
 	//
-	// The names of custom event buses can't contain the / character. You can't
-	// use the name default for a custom event bus because this name is already
-	// used for your account's default event bus.
+	// Event bus names cannot contain the / character. You can't use the name default
+	// for a custom event bus, as this name is already used for your account's default
+	// event bus.
 	//
 	// If this is a partner event bus, the name must exactly match the name of the
-	// partner event source that this event bus is matched to. This name will include
-	// the / character.
+	// partner event source that this event bus is matched to.
 	//
 	// Name is a required field
 	Name *string `min:"1" type:"string" required:"true"`
+
+	// Tags to associate with the event bus.
+	Tags []Tag `type:"list"`
 }
 
 // String returns the string representation
@@ -47,6 +50,13 @@ func (s *CreateEventBusInput) Validate() error {
 	}
 	if s.Name != nil && len(*s.Name) < 1 {
 		invalidParams.Add(aws.NewErrParamMinLen("Name", 1))
+	}
+	if s.Tags != nil {
+		for i, v := range s.Tags {
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "Tags", i), err.(aws.ErrInvalidParams))
+			}
+		}
 	}
 
 	if invalidParams.Len() > 0 {
@@ -73,11 +83,9 @@ const opCreateEventBus = "CreateEventBus"
 // Amazon CloudWatch Events.
 //
 // Creates a new event bus within your account. This can be a custom event bus
-// which you can use to receive events from your own custom applications and
-// services, or it can be a partner event bus which can be matched to a partner
-// event source.
-//
-// This operation is used by AWS customers, not by SaaS partners.
+// which you can use to receive events from your custom applications and services,
+// or it can be a partner event bus which can be matched to a partner event
+// source.
 //
 //    // Example sending a request using CreateEventBusRequest.
 //    req := client.CreateEventBusRequest(params)

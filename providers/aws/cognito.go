@@ -2,8 +2,6 @@ package aws
 
 import (
 	"context"
-	"log"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentity"
@@ -14,35 +12,41 @@ type CognitoGenerator struct {
 	AWSService
 }
 
-func (g *CognitoGenerator) loadIdentityPools(svc *cognitoidentity.Client) error {
-	// TODO:
-	// * Cognito does not provides a `NewIdentityPoolsPaginator` like other services' "NewListClustersPaginator"
-	// ? Replace if it being avaialble, 60 being the max under constraint currently
-	const maxIdentityPool = 60
-	pools, err := svc.ListIdentityPoolsRequest(&cognitoidentity.ListIdentityPoolsInput{MaxResults: aws.Int64(maxIdentityPool)}).Send(context.Background())
-	if err != nil {
-		log.Println(err)
-		return err
-	}
+const CognitoMaxResults = 60 // Required field for Cognito API
 
-	for _, pool := range pools.IdentityPools {
-		var id = *pool.IdentityPoolId
-		var resourceName = *pool.IdentityPoolName
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-			id,
-			resourceName,
-			"aws_cognito_identity_pool",
-			"aws",
-			[]string{}))
+func (g *CognitoGenerator) loadIdentityPools(svc *cognitoidentity.Client) error {
+	var nextToken *string
+	for {
+		pools, err := svc.ListIdentityPoolsRequest(&cognitoidentity.ListIdentityPoolsInput{
+			NextToken:  nextToken,
+			MaxResults: aws.Int64(CognitoMaxResults),
+		}).Send(context.Background())
+		if err != nil {
+			return err
+		}
+
+		for _, pool := range pools.IdentityPools {
+			var id = *pool.IdentityPoolId
+			var resourceName = *pool.IdentityPoolName
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+				id,
+				resourceName,
+				"aws_cognito_identity_pool",
+				"aws",
+				[]string{}))
+		}
+
+		nextToken = pools.NextToken
+		if nextToken == nil {
+			break
+		}
 	}
 
 	return nil
 }
 
 func (g *CognitoGenerator) loadUserPools(svc *cognitoidentityprovider.Client) error {
-	// ? Replace if it being avaialble, 60 being the max under constraint currently
-	const maxUserPool = 60
-	req := svc.ListUserPoolsRequest(&cognitoidentityprovider.ListUserPoolsInput{MaxResults: aws.Int64(maxUserPool)})
+	req := svc.ListUserPoolsRequest(&cognitoidentityprovider.ListUserPoolsInput{MaxResults: aws.Int64(CognitoMaxResults)})
 	p := cognitoidentityprovider.NewListUserPoolsPaginator(req)
 
 	for p.Next(context.Background()) {
@@ -60,7 +64,6 @@ func (g *CognitoGenerator) loadUserPools(svc *cognitoidentityprovider.Client) er
 	}
 
 	if err := p.Err(); err != nil {
-		log.Println(p.Err())
 		return err
 	}
 	return nil
@@ -82,5 +85,34 @@ func (g *CognitoGenerator) InitResources() error {
 		return err
 	}
 
+	return nil
+}
+
+func (g *CognitoGenerator) PostConvertHook() error {
+	for _, r := range g.Resources {
+		if r.InstanceInfo.Type != "aws_cognito_user_pool" {
+			continue
+		}
+		if _, ok := r.InstanceState.Attributes["admin_create_user_config.0.unused_account_validity_days"]; ok {
+			if _, okpp := r.InstanceState.Attributes["admin_create_user_config.0.unused_account_validity_days"]; okpp {
+				delete(r.Item["admin_create_user_config"].([]interface{})[0].(map[string]interface{}), "unused_account_validity_days")
+			}
+		}
+		if _, ok := r.InstanceState.Attributes["sms_verification_message"]; ok {
+			if _, oktmp := r.InstanceState.Attributes["verification_message_template.0.sms_message"]; oktmp {
+				delete(r.Item, "sms_verification_message")
+			}
+		}
+		if _, ok := r.InstanceState.Attributes["email_verification_message"]; ok {
+			if _, oktmp := r.InstanceState.Attributes["verification_message_template.0.email_message"]; oktmp {
+				delete(r.Item, "email_verification_message")
+			}
+		}
+		if _, ok := r.InstanceState.Attributes["email_verification_subject"]; ok {
+			if _, oktmp := r.InstanceState.Attributes["verification_message_template.0.email_subject"]; oktmp {
+				delete(r.Item, "email_verification_subject")
+			}
+		}
+	}
 	return nil
 }

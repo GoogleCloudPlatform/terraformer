@@ -71,6 +71,11 @@ type Build struct {
 	// A list of exported environment variables for this build.
 	ExportedEnvironmentVariables []ExportedEnvironmentVariable `locationName:"exportedEnvironmentVariables" type:"list"`
 
+	// An array of ProjectFileSystemLocation objects for a CodeBuild build project.
+	// A ProjectFileSystemLocation object specifies the identifier, location, mountOptions,
+	// mountPoint, and type of a file system created using Amazon Elastic File System.
+	FileSystemLocations []ProjectFileSystemLocation `locationName:"fileSystemLocations" type:"list"`
+
 	// The unique ID for the build.
 	Id *string `locationName:"id" min:"1" type:"string"`
 
@@ -197,8 +202,8 @@ type BuildArtifacts struct {
 	// to ZIP.
 	Md5sum *string `locationName:"md5sum" type:"string"`
 
-	// If this flag is set, a name specified in the build spec file overrides the
-	// artifact name. The name specified in a build spec file is calculated at build
+	// If this flag is set, a name specified in the buildspec file overrides the
+	// artifact name. The name specified in a buildspec file is calculated at build
 	// time and uses the Shell Command Language. For example, you can append a date
 	// and time to your artifact name so that it is always unique.
 	OverrideArtifactName *bool `locationName:"overrideArtifactName" type:"boolean"`
@@ -419,10 +424,11 @@ type EnvironmentVariable struct {
 
 	// The value of the environment variable.
 	//
-	// We strongly discourage the use of environment variables to store sensitive
-	// values, especially AWS secret key IDs and secret access keys. Environment
-	// variables can be displayed in plain text using the AWS CodeBuild console
-	// and the AWS Command Line Interface (AWS CLI).
+	// We strongly discourage the use of PLAINTEXT environment variables to store
+	// sensitive values, especially AWS secret key IDs and secret access keys. PLAINTEXT
+	// environment variables can be displayed in plain text using the AWS CodeBuild
+	// console and the AWS Command Line Interface (AWS CLI). For sensitive values,
+	// we recommend you use an environment variable of type PARAMETER_STORE or SECRETS_MANAGER.
 	//
 	// Value is a required field
 	Value *string `locationName:"value" type:"string" required:"true"`
@@ -649,6 +655,11 @@ type Project struct {
 	// Information about the build environment for this build project.
 	Environment *ProjectEnvironment `locationName:"environment" type:"structure"`
 
+	// An array of ProjectFileSystemLocation objects for a CodeBuild build project.
+	// A ProjectFileSystemLocation object specifies the identifier, location, mountOptions,
+	// mountPoint, and type of a file system created using Amazon Elastic File System.
+	FileSystemLocations []ProjectFileSystemLocation `locationName:"fileSystemLocations" type:"list"`
+
 	// When the build project's settings were last modified, expressed in Unix time
 	// format.
 	LastModified *time.Time `locationName:"lastModified" type:"timestamp"`
@@ -802,8 +813,8 @@ type ProjectArtifacts struct {
 	// and name is set to MyArtifact.zip, the output artifact is stored in MyArtifacts/build-ID/MyArtifact.zip.
 	NamespaceType ArtifactNamespace `locationName:"namespaceType" type:"string" enum:"true"`
 
-	// If this flag is set, a name specified in the build spec file overrides the
-	// artifact name. The name specified in a build spec file is calculated at build
+	// If this flag is set, a name specified in the buildspec file overrides the
+	// artifact name. The name specified in a buildspec file is calculated at build
 	// time and uses the Shell Command Language. For example, you can append a date
 	// and time to your artifact name so that it is always unique.
 	OverrideArtifactName *bool `locationName:"overrideArtifactName" type:"boolean"`
@@ -1124,6 +1135,48 @@ func (s *ProjectEnvironment) Validate() error {
 	return nil
 }
 
+// Information about a file system created by Amazon Elastic File System (EFS).
+// For more information, see What Is Amazon Elastic File System? (https://docs.aws.amazon.com/efs/latest/ug/whatisefs.html)
+type ProjectFileSystemLocation struct {
+	_ struct{} `type:"structure"`
+
+	// The name used to access a file system created by Amazon EFS. CodeBuild creates
+	// an environment variable by appending the identifier in all capital letters
+	// to CODEBUILD_. For example, if you specify my-efs for identifier, a new environment
+	// variable is create named CODEBUILD_MY-EFS.
+	//
+	// The identifier is used to mount your file system.
+	Identifier *string `locationName:"identifier" type:"string"`
+
+	// A string that specifies the location of the file system created by Amazon
+	// EFS. Its format is efs-dns-name:/directory-path. You can find the DNS name
+	// of file system when you view it in the AWS EFS console. The directory path
+	// is a path to a directory in the file system that CodeBuild mounts. For example,
+	// if the DNS name of a file system is fs-abcd1234.efs.us-west-2.amazonaws.com,
+	// and its mount directory is my-efs-mount-directory, then the location is fs-abcd1234.efs.us-west-2.amazonaws.com:/my-efs-mount-directory.
+	//
+	// The directory path in the format efs-dns-name:/directory-path is optional.
+	// If you do not specify a directory path, the location is only the DNS name
+	// and CodeBuild mounts the entire file system.
+	Location *string `locationName:"location" type:"string"`
+
+	// The mount options for a file system created by AWS EFS. The default mount
+	// options used by CodeBuild are nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2.
+	// For more information, see Recommended NFS Mount Options (https://docs.aws.amazon.com/efs/latest/ug/mounting-fs-nfs-mount-settings.html).
+	MountOptions *string `locationName:"mountOptions" type:"string"`
+
+	// The location in the container where you mount the file system.
+	MountPoint *string `locationName:"mountPoint" type:"string"`
+
+	// The type of the file system. The one supported type is EFS.
+	Type FileSystemType `locationName:"type" type:"string" enum:"true"`
+}
+
+// String returns the string representation
+func (s ProjectFileSystemLocation) String() string {
+	return awsutil.Prettify(s)
+}
+
 // Information about the build input source code for the build project.
 type ProjectSource struct {
 	_ struct{} `type:"structure"`
@@ -1135,10 +1188,16 @@ type ProjectSource struct {
 	// not get or set this information directly.
 	Auth *SourceAuth `locationName:"auth" type:"structure"`
 
-	// The build spec declaration to use for the builds in this build project.
+	// The buildspec file declaration to use for the builds in this build project.
 	//
-	// If this value is not specified, a build spec must be included along with
-	// the source code to be built.
+	// If this value is set, it can be either an inline buildspec definition, the
+	// path to an alternate buildspec file relative to the value of the built-in
+	// CODEBUILD_SRC_DIR environment variable, or the path to an S3 bucket. The
+	// bucket must be in the same AWS Region as the build project. Specify the buildspec
+	// file using its ARN (for example, arn:aws:s3:::my-codebuild-sample2/buildspec.yml).
+	// If this value is not provided or is set to an empty string, the source code
+	// must contain a buildspec file in its root directory. For more information,
+	// see Buildspec File Name and Storage Location (https://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html#build-spec-ref-name-storage).
 	Buildspec *string `locationName:"buildspec" type:"string"`
 
 	// Information about the Git clone depth for the build project.
@@ -1160,8 +1219,8 @@ type ProjectSource struct {
 	//    uses the settings in a pipeline's source action instead of this value.
 	//
 	//    * For source code in an AWS CodeCommit repository, the HTTPS clone URL
-	//    to the repository that contains the source code and the build spec (for
-	//    example, https://git-codecommit.region-ID.amazonaws.com/v1/repos/repo-name
+	//    to the repository that contains the source code and the buildspec file
+	//    (for example, https://git-codecommit.region-ID.amazonaws.com/v1/repos/repo-name
 	//    ).
 	//
 	//    * For source code in an Amazon Simple Storage Service (Amazon S3) input
@@ -1170,8 +1229,8 @@ type ProjectSource struct {
 	//    to the folder that contains the source code (for example, bucket-name/path/to/source-code/folder/).
 	//
 	//    * For source code in a GitHub repository, the HTTPS clone URL to the repository
-	//    that contains the source and the build spec. You must connect your AWS
-	//    account to your GitHub account. Use the AWS CodeBuild console to start
+	//    that contains the source and the buildspec file. You must connect your
+	//    AWS account to your GitHub account. Use the AWS CodeBuild console to start
 	//    creating a build project. When you use the console to connect (or reconnect)
 	//    with GitHub, on the GitHub Authorize application page, for Organization
 	//    access, choose Request access next to each repository you want to allow
@@ -1182,7 +1241,7 @@ type ProjectSource struct {
 	//    set the auth object's type value to OAUTH.
 	//
 	//    * For source code in a Bitbucket repository, the HTTPS clone URL to the
-	//    repository that contains the source and the build spec. You must connect
+	//    repository that contains the source and the buildspec file. You must connect
 	//    your AWS account to your Bitbucket account. Use the AWS CodeBuild console
 	//    to start creating a build project. When you use the console to connect
 	//    (or reconnect) with Bitbucket, on the Bitbucket Confirm access to your
@@ -1331,7 +1390,7 @@ type RegistryCredential struct {
 	// Manager.
 	//
 	// The credential can use the name of the credentials only if they exist in
-	// your current region.
+	// your current AWS Region.
 	//
 	// Credential is a required field
 	Credential *string `locationName:"credential" min:"1" type:"string" required:"true"`

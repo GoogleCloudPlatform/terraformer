@@ -12,8 +12,8 @@ import (
 type CreatePartnerEventSourceInput struct {
 	_ struct{} `type:"structure"`
 
-	// The AWS account ID of the customer who is permitted to create a matching
-	// partner event bus for this partner event source.
+	// The AWS account ID that is permitted to create a matching partner event bus
+	// for this partner event source.
 	//
 	// Account is a required field
 	Account *string `min:"12" type:"string" required:"true"`
@@ -73,16 +73,15 @@ const opCreatePartnerEventSource = "CreatePartnerEventSource"
 // CreatePartnerEventSourceRequest returns a request value for making API operation for
 // Amazon CloudWatch Events.
 //
-// Called by an SaaS partner to create a partner event source.
-//
-// This operation is not used by AWS customers.
+// Called by an SaaS partner to create a partner event source. This operation
+// is not used by AWS customers.
 //
 // Each partner event source can be used by one AWS account to create a matching
 // partner event bus in that AWS account. A SaaS partner must create one partner
 // event source for each AWS account that wants to receive those event types.
 //
-// A partner event source creates events based on resources in the SaaS partner's
-// service or application.
+// A partner event source creates events based on resources within the SaaS
+// partner's service or application.
 //
 // An AWS account that creates a partner event bus that matches the partner
 // event source can use that event bus to receive events from the partner, and
@@ -90,18 +89,15 @@ const opCreatePartnerEventSource = "CreatePartnerEventSource"
 //
 // Partner event source names follow this format:
 //
-// aws.partner/partner_name/event_namespace/event_name
+// partner_name/event_namespace/event_name
 //
-//    * partner_name is determined during partner registration and identifies
-//    the partner to AWS customers.
-//
-//    * For event_namespace, we recommend that partners use a string that identifies
-//    the AWS customer within the partner's system. This should not be the customer's
-//    AWS account ID.
-//
-//    * event_name is determined by the partner, and should uniquely identify
-//    an event-generating resource within the partner system. This should help
-//    AWS customers decide whether to create an event bus to receive these events.
+// partner_name is determined during partner registration and identifies the
+// partner to AWS customers. event_namespace is determined by the partner and
+// is a way for the partner to categorize their events. event_name is determined
+// by the partner, and should uniquely identify an event-generating resource
+// within the partner system. The combination of event_namespace and event_name
+// should help AWS customers decide whether to create an event bus to receive
+// these events.
 //
 //    // Example sending a request using CreatePartnerEventSourceRequest.
 //    req := client.CreatePartnerEventSourceRequest(params)

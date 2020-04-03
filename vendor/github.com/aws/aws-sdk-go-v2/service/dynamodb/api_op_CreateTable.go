@@ -288,6 +288,28 @@ func (c *Client) CreateTableRequest(input *CreateTableInput) CreateTableRequest 
 	}
 
 	req := c.newRequest(op, input, &CreateTableOutput{})
+
+	if req.Config.EnableEndpointDiscovery {
+		de := discovererDescribeEndpoints{
+			Client:        c,
+			Required:      false,
+			EndpointCache: c.endpointCache,
+			Params: map[string]*string{
+				"op": &req.Operation.Name,
+			},
+		}
+
+		for k, v := range de.Params {
+			if v == nil {
+				delete(de.Params, k)
+			}
+		}
+
+		req.Handlers.Build.PushFrontNamed(aws.NamedHandler{
+			Name: "crr.endpointdiscovery",
+			Fn:   de.Handler,
+		})
+	}
 	return CreateTableRequest{Request: req, Input: input, Copy: c.CreateTableRequest}
 }
 
