@@ -204,7 +204,7 @@ const (
 	// ErrCodeInvalidQueryStringParameters for service response error code
 	// "InvalidQueryStringParameters".
 	//
-	// Query string parameters specified in the response body are not valid.
+	// The query string parameters specified are not valid.
 	ErrCodeInvalidQueryStringParameters = "InvalidQueryStringParameters"
 
 	// ErrCodeInvalidRelativePath for service response error code
@@ -225,33 +225,32 @@ const (
 	// ErrCodeInvalidResponseCode for service response error code
 	// "InvalidResponseCode".
 	//
-	// A response code specified in the response body is not valid.
+	// A response code is not valid.
 	ErrCodeInvalidResponseCode = "InvalidResponseCode"
 
 	// ErrCodeInvalidTTLOrder for service response error code
 	// "InvalidTTLOrder".
 	//
-	// TTL order specified in the response body is not valid.
+	// The TTL order specified is not valid.
 	ErrCodeInvalidTTLOrder = "InvalidTTLOrder"
 
 	// ErrCodeInvalidTagging for service response error code
 	// "InvalidTagging".
 	//
-	// Tagging specified in the response body is not valid.
+	// The tagging specified is not valid.
 	ErrCodeInvalidTagging = "InvalidTagging"
 
 	// ErrCodeInvalidViewerCertificate for service response error code
 	// "InvalidViewerCertificate".
 	//
-	// A viewer certificate specified in the response body is not valid.
+	// A viewer certificate specified is not valid.
 	ErrCodeInvalidViewerCertificate = "InvalidViewerCertificate"
 
 	// ErrCodeInvalidWebACLId for service response error code
 	// "InvalidWebACLId".
 	//
-	// A web ACL ID specified in the response body is not valid. To specify a web
-	// ACL created using the latest version of AWS WAF, use the ACL ARN, for example
-	// arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a.
+	// A web ACL ID specified is not valid. To specify a web ACL created using the
+	// latest version of AWS WAF, use the ACL ARN, for example arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a.
 	// To specify a web ACL created using AWS WAF Classic, use the ACL ID, for example
 	// 473e64fd-f30b-4765-81a0-62ad96dd167a.
 	ErrCodeInvalidWebACLId = "InvalidWebACLId"

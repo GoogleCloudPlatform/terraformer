@@ -167,6 +167,9 @@ type Action struct {
 	// Change the state of a CloudWatch alarm.
 	CloudwatchAlarm *CloudwatchAlarmAction `locationName:"cloudwatchAlarm" type:"structure"`
 
+	// Send data to CloudWatch logs.
+	CloudwatchLogs *CloudwatchLogsAction `locationName:"cloudwatchLogs" type:"structure"`
+
 	// Capture a CloudWatch metric.
 	CloudwatchMetric *CloudwatchMetricAction `locationName:"cloudwatchMetric" type:"structure"`
 
@@ -233,6 +236,11 @@ func (s *Action) Validate() error {
 	if s.CloudwatchAlarm != nil {
 		if err := s.CloudwatchAlarm.Validate(); err != nil {
 			invalidParams.AddNested("CloudwatchAlarm", err.(aws.ErrInvalidParams))
+		}
+	}
+	if s.CloudwatchLogs != nil {
+		if err := s.CloudwatchLogs.Validate(); err != nil {
+			invalidParams.AddNested("CloudwatchLogs", err.(aws.ErrInvalidParams))
 		}
 	}
 	if s.CloudwatchMetric != nil {
@@ -329,6 +337,12 @@ func (s Action) MarshalFields(e protocol.FieldEncoder) error {
 
 		metadata := protocol.Metadata{}
 		e.SetFields(protocol.BodyTarget, "cloudwatchAlarm", v, metadata)
+	}
+	if s.CloudwatchLogs != nil {
+		v := s.CloudwatchLogs
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "cloudwatchLogs", v, metadata)
 	}
 	if s.CloudwatchMetric != nil {
 		v := s.CloudwatchMetric
@@ -2483,6 +2497,61 @@ func (s CloudwatchAlarmAction) MarshalFields(e protocol.FieldEncoder) error {
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "stateValue", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	return nil
+}
+
+// Describes an action that sends data to CloudWatch logs.
+type CloudwatchLogsAction struct {
+	_ struct{} `type:"structure"`
+
+	// The CloudWatch log group to which the action sends data.
+	//
+	// LogGroupName is a required field
+	LogGroupName *string `locationName:"logGroupName" type:"string" required:"true"`
+
+	// The IAM role that allows access to the CloudWatch log.
+	//
+	// RoleArn is a required field
+	RoleArn *string `locationName:"roleArn" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s CloudwatchLogsAction) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *CloudwatchLogsAction) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "CloudwatchLogsAction"}
+
+	if s.LogGroupName == nil {
+		invalidParams.Add(aws.NewErrParamRequired("LogGroupName"))
+	}
+
+	if s.RoleArn == nil {
+		invalidParams.Add(aws.NewErrParamRequired("RoleArn"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s CloudwatchLogsAction) MarshalFields(e protocol.FieldEncoder) error {
+	if s.LogGroupName != nil {
+		v := *s.LogGroupName
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "logGroupName", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if s.RoleArn != nil {
+		v := *s.RoleArn
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "roleArn", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
 	}
 	return nil
 }

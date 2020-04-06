@@ -41,6 +41,11 @@ type UpdateProjectInput struct {
 	// Information to be changed about the build environment for the build project.
 	Environment *ProjectEnvironment `locationName:"environment" type:"structure"`
 
+	// An array of ProjectFileSystemLocation objects for a CodeBuild build project.
+	// A ProjectFileSystemLocation object specifies the identifier, location, mountOptions,
+	// mountPoint, and type of a file system created using Amazon Elastic File System.
+	FileSystemLocations []ProjectFileSystemLocation `locationName:"fileSystemLocations" type:"list"`
+
 	// Information about logs for the build project. A project can create logs in
 	// Amazon CloudWatch Logs, logs in an S3 bucket, or both.
 	LogsConfig *LogsConfig `locationName:"logsConfig" type:"structure"`

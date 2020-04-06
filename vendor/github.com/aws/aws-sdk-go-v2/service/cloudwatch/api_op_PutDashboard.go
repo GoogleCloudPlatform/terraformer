@@ -16,7 +16,8 @@ type PutDashboardInput struct {
 	// widgets to include and their location on the dashboard. This parameter is
 	// required.
 	//
-	// For more information about the syntax, see CloudWatch-Dashboard-Body-Structure.
+	// For more information about the syntax, see Dashboard Body Structure and Syntax
+	// (https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/CloudWatch-Dashboard-Body-Structure.html).
 	//
 	// DashboardBody is a required field
 	DashboardBody *string `type:"string" required:"true"`

@@ -138,7 +138,7 @@ const opCreateThingGroup = "CreateThingGroup"
 //
 // Create a thing group.
 //
-// This is a control plane operation. See Authorization (https://docs.aws.amazon.com/iot/latest/developerguide/authorization.html)
+// This is a control plane operation. See Authorization (https://docs.aws.amazon.com/iot/latest/developerguide/iot-authorization.html)
 // for information about authorizing control plane actions.
 //
 //    // Example sending a request using CreateThingGroupRequest.

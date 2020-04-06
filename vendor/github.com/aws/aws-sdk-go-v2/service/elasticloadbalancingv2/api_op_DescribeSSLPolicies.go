@@ -48,7 +48,7 @@ type DescribeSSLPoliciesOutput struct {
 	// Otherwise, this is null.
 	NextMarker *string `type:"string"`
 
-	// Information about the policies.
+	// Information about the security policies.
 	SslPolicies []SslPolicy `type:"list"`
 }
 

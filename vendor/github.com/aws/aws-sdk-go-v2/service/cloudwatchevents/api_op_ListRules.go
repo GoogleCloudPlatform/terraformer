@@ -74,10 +74,10 @@ const opListRules = "ListRules"
 // ListRulesRequest returns a request value for making API operation for
 // Amazon CloudWatch Events.
 //
-// Lists your EventBridge rules. You can either list all the rules or provide
-// a prefix to match to the rule names.
+// Lists your Amazon EventBridge rules. You can either list all the rules or
+// you can provide a prefix to match to the rule names.
 //
-// ListRules doesn't list the targets of a rule. To see the targets associated
+// ListRules does not list the targets of a rule. To see the targets associated
 // with a rule, use ListTargetsByRule.
 //
 //    // Example sending a request using ListRulesRequest.

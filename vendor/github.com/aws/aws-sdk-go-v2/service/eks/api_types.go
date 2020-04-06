@@ -82,6 +82,9 @@ type Cluster struct {
 	// The Unix epoch timestamp in seconds for when the cluster was created.
 	CreatedAt *time.Time `locationName:"createdAt" type:"timestamp"`
 
+	// The encryption configuration for the cluster.
+	EncryptionConfig []EncryptionConfig `locationName:"encryptionConfig" type:"list"`
+
 	// The endpoint for your Kubernetes API server.
 	Endpoint *string `locationName:"endpoint" type:"string"`
 
@@ -156,6 +159,18 @@ func (s Cluster) MarshalFields(e protocol.FieldEncoder) error {
 		e.SetValue(protocol.BodyTarget, "createdAt",
 			protocol.TimeValue{V: v, Format: protocol.UnixTimeFormatName, QuotedFormatTime: true}, metadata)
 	}
+	if s.EncryptionConfig != nil {
+		v := s.EncryptionConfig
+
+		metadata := protocol.Metadata{}
+		ls0 := e.List(protocol.BodyTarget, "encryptionConfig", metadata)
+		ls0.Start()
+		for _, v1 := range v {
+			ls0.ListAddFields(v1)
+		}
+		ls0.End()
+
+	}
 	if s.Endpoint != nil {
 		v := *s.Endpoint
 
@@ -221,6 +236,46 @@ func (s Cluster) MarshalFields(e protocol.FieldEncoder) error {
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "version", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	return nil
+}
+
+// The encryption configuration for the cluster.
+type EncryptionConfig struct {
+	_ struct{} `type:"structure"`
+
+	// AWS Key Management Service (AWS KMS) customer master key (CMK). Either the
+	// ARN or the alias can be used.
+	Provider *Provider `locationName:"provider" type:"structure"`
+
+	// Specifies the resources to be encrypted. The only supported value is "secrets".
+	Resources []string `locationName:"resources" type:"list"`
+}
+
+// String returns the string representation
+func (s EncryptionConfig) String() string {
+	return awsutil.Prettify(s)
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s EncryptionConfig) MarshalFields(e protocol.FieldEncoder) error {
+	if s.Provider != nil {
+		v := s.Provider
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "provider", v, metadata)
+	}
+	if s.Resources != nil {
+		v := s.Resources
+
+		metadata := protocol.Metadata{}
+		ls0 := e.List(protocol.BodyTarget, "resources", metadata)
+		ls0.Start()
+		for _, v1 := range v {
+			ls0.ListAddValue(protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v1)})
+		}
+		ls0.End()
+
 	}
 	return nil
 }
@@ -1043,6 +1098,36 @@ func (s OIDC) MarshalFields(e protocol.FieldEncoder) error {
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "issuer", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	return nil
+}
+
+// Identifies the AWS Key Management Service (AWS KMS) customer master key (CMK)
+// used to encrypt the secrets.
+type Provider struct {
+	_ struct{} `type:"structure"`
+
+	// Amazon Resource Name (ARN) or alias of the customer master key (CMK). The
+	// CMK must be symmetric, created in the same region as the cluster, and if
+	// the CMK was created in a different account, the user must have access to
+	// the CMK. For more information, see Allowing Users in Other Accounts to Use
+	// a CMK (https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-modifying-external-accounts.html)
+	// in the AWS Key Management Service Developer Guide.
+	KeyArn *string `locationName:"keyArn" type:"string"`
+}
+
+// String returns the string representation
+func (s Provider) String() string {
+	return awsutil.Prettify(s)
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s Provider) MarshalFields(e protocol.FieldEncoder) error {
+	if s.KeyArn != nil {
+		v := *s.KeyArn
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "keyArn", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
 	}
 	return nil
 }

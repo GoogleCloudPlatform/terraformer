@@ -534,8 +534,8 @@ type Listener struct {
 	// The protocol for connections from clients to the load balancer.
 	Protocol ProtocolEnum `type:"string" enum:"true"`
 
-	// [HTTPS or TLS listener] The security policy that defines which ciphers and
-	// protocols are supported. The default is the current predefined security policy.
+	// [HTTPS or TLS listener] The security policy that defines which protocols
+	// and ciphers are supported.
 	SslPolicy *string `type:"string"`
 }
 
@@ -653,7 +653,8 @@ type LoadBalancerAttribute struct {
 	//    (true) or routed to targets (false). The default is false.
 	//
 	//    * routing.http2.enabled - Indicates whether HTTP/2 is enabled. The value
-	//    is true or false. The default is true.
+	//    is true or false. The default is true. Elastic Load Balancing requires
+	//    that message header names contain only alphanumeric characters and hyphens.
 	//
 	// The following attributes are supported by only Network Load Balancers:
 	//
@@ -1236,14 +1237,21 @@ type TargetGroupAttribute struct {
 
 	// The name of the attribute.
 	//
-	// The following attribute is supported by both Application Load Balancers and
-	// Network Load Balancers:
+	// The following attributes are supported by both Application Load Balancers
+	// and Network Load Balancers:
 	//
 	//    * deregistration_delay.timeout_seconds - The amount of time, in seconds,
 	//    for Elastic Load Balancing to wait before changing the state of a deregistering
 	//    target from draining to unused. The range is 0-3600 seconds. The default
 	//    value is 300 seconds. If the target is a Lambda function, this attribute
 	//    is not supported.
+	//
+	//    * stickiness.enabled - Indicates whether sticky sessions are enabled.
+	//    The value is true or false. The default is false.
+	//
+	//    * stickiness.type - The type of sticky sessions. The possible values are
+	//    lb_cookie for Application Load Balancers or source_ip for Network Load
+	//    Balancers.
 	//
 	// The following attributes are supported by Application Load Balancers if the
 	// target is not a Lambda function:
@@ -1257,12 +1265,6 @@ type TargetGroupAttribute struct {
 	//    traffic to the target group. After this time period ends, the target receives
 	//    its full share of traffic. The range is 30-900 seconds (15 minutes). Slow
 	//    start mode is disabled by default.
-	//
-	//    * stickiness.enabled - Indicates whether sticky sessions are enabled.
-	//    The value is true or false. The default is false.
-	//
-	//    * stickiness.type - The type of sticky sessions. The possible value is
-	//    lb_cookie.
 	//
 	//    * stickiness.lb_cookie.duration_seconds - The time period, in seconds,
 	//    during which requests from a client should be routed to the same target.

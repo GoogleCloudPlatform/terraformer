@@ -12,10 +12,17 @@ import (
 type DeleteStackInstancesInput struct {
 	_ struct{} `type:"structure"`
 
-	// The names of the AWS accounts that you want to delete stack instances for.
+	// [Self-managed permissions] The names of the AWS accounts that you want to
+	// delete stack instances for.
 	//
-	// Accounts is a required field
-	Accounts []string `type:"list" required:"true"`
+	// You can specify Accounts or DeploymentTargets, but not both.
+	Accounts []string `type:"list"`
+
+	// [Service-managed permissions] The AWS Organizations accounts from which to
+	// delete stack instances.
+	//
+	// You can specify Accounts or DeploymentTargets, but not both.
+	DeploymentTargets *DeploymentTargets `type:"structure"`
 
 	// The unique identifier for this stack set operation.
 	//
@@ -62,10 +69,6 @@ func (s DeleteStackInstancesInput) String() string {
 // Validate inspects the fields of the type to determine if they are valid.
 func (s *DeleteStackInstancesInput) Validate() error {
 	invalidParams := aws.ErrInvalidParams{Context: "DeleteStackInstancesInput"}
-
-	if s.Accounts == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Accounts"))
-	}
 	if s.OperationId != nil && len(*s.OperationId) < 1 {
 		invalidParams.Add(aws.NewErrParamMinLen("OperationId", 1))
 	}

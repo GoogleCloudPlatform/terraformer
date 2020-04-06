@@ -17,7 +17,8 @@ type RegisterThingInput struct {
 	// for more information.
 	Parameters map[string]string `locationName:"parameters" type:"map"`
 
-	// The provisioning template. See Programmatic Provisioning (https://docs.aws.amazon.com/iot/latest/developerguide/programmatic-provisioning.html)
+	// The provisioning template. See Provisioning Devices That Have Device Certificates
+	// (https://docs.aws.amazon.com/iot/latest/developerguide/provision-w-cert.html)
 	// for more information.
 	//
 	// TemplateBody is a required field

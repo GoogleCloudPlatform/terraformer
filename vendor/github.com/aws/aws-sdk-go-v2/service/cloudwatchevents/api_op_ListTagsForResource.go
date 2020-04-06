@@ -12,7 +12,7 @@ import (
 type ListTagsForResourceInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ARN of the rule for which you want to view tags.
+	// The ARN of the EventBridge resource for which you want to view tags.
 	//
 	// ResourceARN is a required field
 	ResourceARN *string `min:"1" type:"string" required:"true"`
@@ -43,7 +43,7 @@ func (s *ListTagsForResourceInput) Validate() error {
 type ListTagsForResourceOutput struct {
 	_ struct{} `type:"structure"`
 
-	// The list of tag keys and values associated with the rule that you specified.
+	// The list of tag keys and values associated with the resource you specified
 	Tags []Tag `type:"list"`
 }
 
@@ -58,7 +58,7 @@ const opListTagsForResource = "ListTagsForResource"
 // Amazon CloudWatch Events.
 //
 // Displays the tags associated with an EventBridge resource. In EventBridge,
-// rules can be tagged.
+// rules and event buses can be tagged.
 //
 //    // Example sending a request using ListTagsForResourceRequest.
 //    req := client.ListTagsForResourceRequest(params)

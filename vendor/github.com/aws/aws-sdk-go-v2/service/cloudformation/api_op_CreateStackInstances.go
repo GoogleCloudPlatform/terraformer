@@ -12,11 +12,17 @@ import (
 type CreateStackInstancesInput struct {
 	_ struct{} `type:"structure"`
 
-	// The names of one or more AWS accounts that you want to create stack instances
-	// in the specified region(s) for.
+	// [Self-managed permissions] The names of one or more AWS accounts that you
+	// want to create stack instances in the specified region(s) for.
 	//
-	// Accounts is a required field
-	Accounts []string `type:"list" required:"true"`
+	// You can specify Accounts or DeploymentTargets, but not both.
+	Accounts []string `type:"list"`
+
+	// [Service-managed permissions] The AWS Organizations accounts for which to
+	// create stack instances in the specified Regions.
+	//
+	// You can specify Accounts or DeploymentTargets, but not both.
+	DeploymentTargets *DeploymentTargets `type:"structure"`
 
 	// The unique identifier for this stack set operation.
 	//
@@ -85,10 +91,6 @@ func (s CreateStackInstancesInput) String() string {
 // Validate inspects the fields of the type to determine if they are valid.
 func (s *CreateStackInstancesInput) Validate() error {
 	invalidParams := aws.ErrInvalidParams{Context: "CreateStackInstancesInput"}
-
-	if s.Accounts == nil {
-		invalidParams.Add(aws.NewErrParamRequired("Accounts"))
-	}
 	if s.OperationId != nil && len(*s.OperationId) < 1 {
 		invalidParams.Add(aws.NewErrParamMinLen("OperationId", 1))
 	}
@@ -131,8 +133,8 @@ const opCreateStackInstances = "CreateStackInstances"
 //
 // Creates stack instances for the specified accounts, within the specified
 // regions. A stack instance refers to a stack in a specific account and region.
-// Accounts and Regions are required parameters—you must specify at least
-// one account and one region.
+// You must specify at least one value for either Accounts or DeploymentTargets,
+// and you must specify at least one value for Regions.
 //
 //    // Example sending a request using CreateStackInstancesRequest.
 //    req := client.CreateStackInstancesRequest(params)

@@ -213,11 +213,11 @@ const (
 	ErrCodeDBParameterGroupQuotaExceededFault = "DBParameterGroupQuotaExceeded"
 
 	// ErrCodeDBProxyAlreadyExistsFault for service response error code
-	// "DBProxyAlreadyExistsFault".
+	// "DBProxyTargetExistsFault".
 	//
 	// The specified proxy name must be unique for all proxies owned by your AWS
 	// account in the specified AWS Region.
-	ErrCodeDBProxyAlreadyExistsFault = "DBProxyAlreadyExistsFault"
+	ErrCodeDBProxyAlreadyExistsFault = "DBProxyTargetExistsFault"
 
 	// ErrCodeDBProxyNotFoundFault for service response error code
 	// "DBProxyNotFoundFault".

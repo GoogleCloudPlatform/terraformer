@@ -300,6 +300,28 @@ func (c *Client) PutItemRequest(input *PutItemInput) PutItemRequest {
 	}
 
 	req := c.newRequest(op, input, &PutItemOutput{})
+
+	if req.Config.EnableEndpointDiscovery {
+		de := discovererDescribeEndpoints{
+			Client:        c,
+			Required:      false,
+			EndpointCache: c.endpointCache,
+			Params: map[string]*string{
+				"op": &req.Operation.Name,
+			},
+		}
+
+		for k, v := range de.Params {
+			if v == nil {
+				delete(de.Params, k)
+			}
+		}
+
+		req.Handlers.Build.PushFrontNamed(aws.NamedHandler{
+			Name: "crr.endpointdiscovery",
+			Fn:   de.Handler,
+		})
+	}
 	return PutItemRequest{Request: req, Input: input, Copy: c.PutItemRequest}
 }
 

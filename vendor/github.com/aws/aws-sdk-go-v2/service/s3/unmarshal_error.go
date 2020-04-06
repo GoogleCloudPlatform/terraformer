@@ -2,6 +2,7 @@ package s3
 
 import (
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -92,11 +93,14 @@ type requestFailure struct {
 func (r requestFailure) Error() string {
 	extra := fmt.Sprintf("status code: %d, request id: %s, host id: %s",
 		r.StatusCode(), r.RequestID(), r.hostID)
-	return awserr.SprintError(r.Code(), r.Message(), extra, r.OrigErr())
+
+	return awserr.SprintError(r.Code(), r.Message(), extra, r.Unwrap())
 }
-func (r requestFailure) String() string {
-	return r.Error()
-}
+
 func (r requestFailure) HostID() string {
 	return r.hostID
+}
+
+func (r requestFailure) Unwrap() error {
+	return errors.Unwrap(r.RequestFailure)
 }

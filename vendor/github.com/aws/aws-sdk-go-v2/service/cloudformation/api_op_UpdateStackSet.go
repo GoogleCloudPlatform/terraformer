@@ -13,9 +13,9 @@ import (
 type UpdateStackSetInput struct {
 	_ struct{} `type:"structure"`
 
-	// The accounts in which to update associated stack instances. If you specify
-	// accounts, you must also specify the regions in which to update stack set
-	// instances.
+	// [Self-managed permissions] The accounts in which to update associated stack
+	// instances. If you specify accounts, you must also specify the regions in
+	// which to update stack set instances.
 	//
 	// To update all the stack instances associated with this stack set, do not
 	// specify the Accounts or Regions properties.
@@ -43,6 +43,13 @@ type UpdateStackSetInput struct {
 	// set, you must specify a customized administrator role, even if it is the
 	// same customized administrator role used with this stack set previously.
 	AdministrationRoleARN *string `min:"20" type:"string"`
+
+	// [Service-managed permissions] Describes whether StackSets automatically deploys
+	// to AWS Organizations accounts that are added to a target organization or
+	// organizational unit (OU).
+	//
+	// If you specify AutoDeployment, do not specify DeploymentTargets or Regions.
+	AutoDeployment *AutoDeployment `type:"structure"`
 
 	// In some cases, you must explicitly acknowledge that your stack template contains
 	// certain capabilities in order for AWS CloudFormation to update the stack
@@ -83,6 +90,21 @@ type UpdateStackSetInput struct {
 	//    set operation will fail.
 	Capabilities []Capability `type:"list"`
 
+	// [Service-managed permissions] The AWS Organizations accounts in which to
+	// update associated stack instances.
+	//
+	// To update all the stack instances associated with this stack set, do not
+	// specify DeploymentTargets or Regions.
+	//
+	// If the stack set update includes changes to the template (that is, if TemplateBody
+	// or TemplateURL is specified), or the Parameters, AWS CloudFormation marks
+	// all stack instances with a status of OUTDATED prior to updating the stack
+	// instances in the specified accounts and Regions. If the stack set update
+	// does not include changes to the template or parameters, AWS CloudFormation
+	// updates the stack instances in the specified accounts and Regions, while
+	// leaving all other stack instances with their existing stack instance status.
+	DeploymentTargets *DeploymentTargets `type:"structure"`
+
 	// A brief description of updates that you are making.
 	Description *string `min:"1" type:"string"`
 
@@ -118,6 +140,20 @@ type UpdateStackSetInput struct {
 
 	// A list of input parameters for the stack set template.
 	Parameters []Parameter `type:"list"`
+
+	// Describes how the IAM roles required for stack set operations are created.
+	// You cannot modify PermissionModel if there are stack instances associated
+	// with your stack set.
+	//
+	//    * With self-managed permissions, you must create the administrator and
+	//    execution roles required to deploy to target accounts. For more information,
+	//    see Grant Self-Managed Stack Set Permissions (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-prereqs-self-managed.html).
+	//
+	//    * With service-managed permissions, StackSets automatically creates the
+	//    IAM roles required to deploy to accounts managed by AWS Organizations.
+	//    For more information, see Grant Service-Managed Stack Set Permissions
+	//    (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-prereqs-service-managed.html).
+	PermissionModel PermissionModels `type:"string" enum:"true"`
 
 	// The regions in which to update associated stack instances. If you specify
 	// regions, you must also specify accounts in which to update stack set instances.

@@ -82,11 +82,11 @@ type CreateReplicationGroupInput struct {
 	//    * General purpose: Current generation: M5 node types: cache.m5.large,
 	//    cache.m5.xlarge, cache.m5.2xlarge, cache.m5.4xlarge, cache.m5.12xlarge,
 	//    cache.m5.24xlarge M4 node types: cache.m4.large, cache.m4.xlarge, cache.m4.2xlarge,
-	//    cache.m4.4xlarge, cache.m4.10xlarge T2 node types: cache.t2.micro, cache.t2.small,
-	//    cache.t2.medium Previous generation: (not recommended) T1 node types:
-	//    cache.t1.micro M1 node types: cache.m1.small, cache.m1.medium, cache.m1.large,
-	//    cache.m1.xlarge M3 node types: cache.m3.medium, cache.m3.large, cache.m3.xlarge,
-	//    cache.m3.2xlarge
+	//    cache.m4.4xlarge, cache.m4.10xlarge T3 node types: cache.t3.micro, cache.t3.small,
+	//    cache.t3.medium T2 node types: cache.t2.micro, cache.t2.small, cache.t2.medium
+	//    Previous generation: (not recommended) T1 node types: cache.t1.micro M1
+	//    node types: cache.m1.small, cache.m1.medium, cache.m1.large, cache.m1.xlarge
+	//    M3 node types: cache.m3.medium, cache.m3.large, cache.m3.xlarge, cache.m3.2xlarge
 	//
 	//    * Compute optimized: Previous generation: (not recommended) C1 node types:
 	//    cache.c1.xlarge
@@ -153,7 +153,10 @@ type CreateReplicationGroupInput struct {
 	// engine version.
 	EngineVersion *string `type:"string"`
 
-	// The ID of the KMS key used to encrypt the disk on the cluster.
+	// The name of the Global Datastore
+	GlobalReplicationGroupId *string `type:"string"`
+
+	// The ID of the KMS key used to encrypt the disk in the cluster.
 	KmsKeyId *string `type:"string"`
 
 	// A list of node group (shard) configuration options. Each node group (shard)
@@ -386,6 +389,9 @@ const opCreateReplicationGroup = "CreateReplicationGroup"
 //
 // Creates a Redis (cluster mode disabled) or a Redis (cluster mode enabled)
 // replication group.
+//
+// This API can be used to create a standalone regional replication group or
+// a secondary replication group associated with a Global Datastore.
 //
 // A Redis (cluster mode disabled) replication group is a collection of clusters,
 // where one of the clusters is a read/write primary and the others are read-only

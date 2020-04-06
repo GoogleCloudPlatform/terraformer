@@ -71,7 +71,7 @@ const opGetLifecyclePolicy = "GetLifecyclePolicy"
 // GetLifecyclePolicyRequest returns a request value for making API operation for
 // Amazon EC2 Container Registry.
 //
-// Retrieves the specified lifecycle policy.
+// Retrieves the lifecycle policy for the specified repository.
 //
 //    // Example sending a request using GetLifecyclePolicyRequest.
 //    req := client.GetLifecyclePolicyRequest(params)

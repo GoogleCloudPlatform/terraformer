@@ -77,8 +77,13 @@ const opBatchCheckLayerAvailability = "BatchCheckLayerAvailability"
 // BatchCheckLayerAvailabilityRequest returns a request value for making API operation for
 // Amazon EC2 Container Registry.
 //
-// Check the availability of multiple image layers in a specified registry and
-// repository.
+// Checks the availability of one or more image layers in a repository.
+//
+// When an image is pushed to a repository, each image layer is checked to verify
+// if it has been uploaded before. If it is, then the image layer is skipped.
+//
+// When an image is pulled from a repository, each image layer is checked once
+// to verify it is available to be pulled.
 //
 // This operation is used by the Amazon ECR proxy, and it is not intended for
 // general use by customers for pulling and pushing images. In most cases, you

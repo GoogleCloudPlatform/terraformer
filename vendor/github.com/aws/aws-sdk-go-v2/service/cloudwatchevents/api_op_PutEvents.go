@@ -72,8 +72,8 @@ const opPutEvents = "PutEvents"
 // PutEventsRequest returns a request value for making API operation for
 // Amazon CloudWatch Events.
 //
-// Sends custom events to EventBridge so that they can be matched to rules.
-// These events can be from your custom applications and services.
+// Sends custom events to Amazon EventBridge so that they can be matched to
+// rules.
 //
 //    // Example sending a request using PutEventsRequest.
 //    req := client.PutEventsRequest(params)

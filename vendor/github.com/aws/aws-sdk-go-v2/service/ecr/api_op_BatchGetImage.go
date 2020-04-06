@@ -94,8 +94,11 @@ const opBatchGetImage = "BatchGetImage"
 // BatchGetImageRequest returns a request value for making API operation for
 // Amazon EC2 Container Registry.
 //
-// Gets detailed information for specified images within a specified repository.
-// Images are specified with either imageTag or imageDigest.
+// Gets detailed information for an image. Images are specified with either
+// an imageTag or imageDigest.
+//
+// When an image is pulled, the BatchGetImage API is called once to retrieve
+// the image manifest.
 //
 //    // Example sending a request using BatchGetImageRequest.
 //    req := client.BatchGetImageRequest(params)

@@ -13,7 +13,7 @@ type ListPartnerEventSourcesInput struct {
 	_ struct{} `type:"structure"`
 
 	// pecifying this limits the number of results returned by this operation. The
-	// operation also returns a NextToken that you can use in a subsequent operation
+	// operation also returns a NextToken which you can use in a subsequent operation
 	// to retrieve the next set of results.
 	Limit *int64 `min:"1" type:"integer"`
 
@@ -78,9 +78,7 @@ const opListPartnerEventSources = "ListPartnerEventSources"
 // Amazon CloudWatch Events.
 //
 // An SaaS partner can use this operation to list all the partner event source
-// names that they have created.
-//
-// This operation is not used by AWS customers.
+// names that they have created. This operation is not used by AWS customers.
 //
 //    // Example sending a request using ListPartnerEventSourcesRequest.
 //    req := client.ListPartnerEventSourcesRequest(params)

@@ -59,8 +59,6 @@ const opActivateEventSource = "ActivateEventSource"
 // Activates a partner event source that has been deactivated. Once activated,
 // your matching event bus will start receiving events from the event source.
 //
-// This operation is performed by AWS customers, not by SaaS partners.
-//
 //    // Example sending a request using ActivateEventSourceRequest.
 //    req := client.ActivateEventSourceRequest(params)
 //    resp, err := req.Send(context.TODO())

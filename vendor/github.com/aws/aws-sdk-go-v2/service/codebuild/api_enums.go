@@ -206,6 +206,22 @@ func (enum EnvironmentVariableType) MarshalValueBuf(b []byte) ([]byte, error) {
 	return append(b, enum...), nil
 }
 
+type FileSystemType string
+
+// Enum values for FileSystemType
+const (
+	FileSystemTypeEfs FileSystemType = "EFS"
+)
+
+func (enum FileSystemType) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum FileSystemType) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
 type ImagePullCredentialsType string
 
 // Enum values for ImagePullCredentialsType

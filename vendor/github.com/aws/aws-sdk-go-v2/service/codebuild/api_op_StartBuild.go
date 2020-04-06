@@ -17,8 +17,17 @@ type StartBuildInput struct {
 	// ones already defined in the build project.
 	ArtifactsOverride *ProjectArtifacts `locationName:"artifactsOverride" type:"structure"`
 
-	// A build spec declaration that overrides, for this build only, the latest
+	// A buildspec file declaration that overrides, for this build only, the latest
 	// one already defined in the build project.
+	//
+	// If this value is set, it can be either an inline buildspec definition, the
+	// path to an alternate buildspec file relative to the value of the built-in
+	// CODEBUILD_SRC_DIR environment variable, or the path to an S3 bucket. The
+	// bucket must be in the same AWS Region as the build project. Specify the buildspec
+	// file using its ARN (for example, arn:aws:s3:::my-codebuild-sample2/buildspec.yml).
+	// If this value is not provided or is set to an empty string, the source code
+	// must contain a buildspec file in its root directory. For more information,
+	// see Buildspec File Name and Storage Location (https://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html#build-spec-ref-name-storage).
 	BuildspecOverride *string `locationName:"buildspecOverride" type:"string"`
 
 	// A ProjectCache object specified for this build that overrides the one defined

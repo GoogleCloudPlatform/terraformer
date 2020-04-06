@@ -4,6 +4,7 @@ package cloud9
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
@@ -46,6 +47,10 @@ type CreateEnvironmentEC2Input struct {
 	// The ID of the subnet in Amazon VPC that AWS Cloud9 will use to communicate
 	// with the Amazon EC2 instance.
 	SubnetId *string `locationName:"subnetId" min:"5" type:"string"`
+
+	// An array of key-value pairs that will be associated with the new AWS Cloud9
+	// development environment.
+	Tags []Tag `locationName:"tags" type:"list"`
 }
 
 // String returns the string representation
@@ -72,6 +77,13 @@ func (s *CreateEnvironmentEC2Input) Validate() error {
 	}
 	if s.SubnetId != nil && len(*s.SubnetId) < 5 {
 		invalidParams.Add(aws.NewErrParamMinLen("SubnetId", 5))
+	}
+	if s.Tags != nil {
+		for i, v := range s.Tags {
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "Tags", i), err.(aws.ErrInvalidParams))
+			}
+		}
 	}
 
 	if invalidParams.Len() > 0 {

@@ -6,10 +6,9 @@ import (
 	"io"
 	"io/ioutil"
 	"strconv"
-	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/aws-sdk-go-v2/aws/retry"
 )
 
 func init() {
@@ -33,10 +32,7 @@ func init() {
 }
 
 func setCustomRetryer(c *Client) {
-	c.Retryer = aws.NewDefaultRetryer(func(d *aws.DefaultRetryer) {
-		d.NumMaxRetries = 10
-		d.MinRetryDelay = 50 * time.Millisecond
-	})
+	c.Retryer = retry.AddWithMaxAttempts(c.Retryer, 10)
 }
 
 func drainBody(b io.ReadCloser, length int64) (out *bytes.Buffer, err error) {
@@ -54,13 +50,19 @@ func drainBody(b io.ReadCloser, length int64) (out *bytes.Buffer, err error) {
 	return buf, nil
 }
 
-var disableCompressionHandler = aws.NamedHandler{Name: "dynamodb.DisableCompression", Fn: disableCompression}
+var disableCompressionHandler = aws.NamedHandler{
+	Name: "dynamodb.DisableCompression",
+	Fn:   disableCompression,
+}
 
 func disableCompression(r *aws.Request) {
 	r.HTTPRequest.Header.Set("Accept-Encoding", "identity")
 }
 
-var validateCRC32Handler = aws.NamedHandler{Name: "dynamodb.ValidateCRC32", Fn: validateCRC32}
+var validateCRC32Handler = aws.NamedHandler{
+	Name: "dynamodb.ValidateCRC32",
+	Fn:   validateCRC32,
+}
 
 func validateCRC32(r *aws.Request) {
 	if r.Error != nil {
@@ -70,7 +72,7 @@ func validateCRC32(r *aws.Request) {
 	// Try to get CRC from response
 	header := r.HTTPResponse.Header.Get("X-Amz-Crc32")
 	if header == "" {
-		return // No header, skip
+		return // No CRC32 header, skip
 	}
 
 	expected, err := strconv.ParseUint(header, 10, 32)
@@ -78,8 +80,11 @@ func validateCRC32(r *aws.Request) {
 		return // Could not determine CRC value, skip
 	}
 
+	// TODO this drain body should use a multi-writer to write to the buffer and
+	// hash at same time. Remove the need for iterating through the bytes a
+	// second time to compute the hash separately.
 	buf, err := drainBody(r.HTTPResponse.Body, r.HTTPResponse.ContentLength)
-	if err != nil { // failed to read the response body, skip
+	if err != nil { // failed to read the response body, skip CRC32 validation.
 		return
 	}
 
@@ -91,7 +96,19 @@ func validateCRC32(r *aws.Request) {
 
 	if crc != uint32(expected) {
 		// CRC does not match, set a retryable error
-		r.Retryable = aws.Bool(true)
-		r.Error = awserr.New("CRC32CheckFailed", "CRC32 integrity check failed", nil)
+		r.Error = &CRC32CheckFailedError{}
 	}
+}
+
+// CRC32CheckFailedError provides the error type for when a DynamoDB operation
+// response's doesn't match the precomputed CRC32 value supplied by the
+// service's API.
+type CRC32CheckFailedError struct{}
+
+// RetryableError signals that the error should be retried.
+func (*CRC32CheckFailedError) RetryableError() bool {
+	return true
+}
+func (*CRC32CheckFailedError) Error() string {
+	return "integrity check failed for CRC32 validation"
 }

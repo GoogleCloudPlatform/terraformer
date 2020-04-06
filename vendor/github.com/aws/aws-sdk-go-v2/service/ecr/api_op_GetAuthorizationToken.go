@@ -13,7 +13,7 @@ type GetAuthorizationTokenInput struct {
 	_ struct{} `type:"structure"`
 
 	// A list of AWS account IDs that are associated with the registries for which
-	// to get authorization tokens. If you do not specify a registry, the default
+	// to get AuthorizationData objects. If you do not specify a registry, the default
 	// registry is assumed.
 	RegistryIds []string `locationName:"registryIds" min:"1" type:"list"`
 }
@@ -54,14 +54,16 @@ const opGetAuthorizationToken = "GetAuthorizationToken"
 // GetAuthorizationTokenRequest returns a request value for making API operation for
 // Amazon EC2 Container Registry.
 //
-// Retrieves a token that is valid for a specified registry for 12 hours. This
-// command allows you to use the docker CLI to push and pull images with Amazon
-// ECR. If you do not specify a registry, the default registry is assumed.
+// Retrieves an authorization token. An authorization token represents your
+// IAM authentication credentials and can be used to access any Amazon ECR registry
+// that your IAM principal has access to. The authorization token is valid for
+// 12 hours.
 //
-// The authorizationToken returned for each registry specified is a base64 encoded
-// string that can be decoded and used in a docker login command to authenticate
-// to a registry. The AWS CLI offers an aws ecr get-login command that simplifies
-// the login process.
+// The authorizationToken returned is a base64 encoded string that can be decoded
+// and used in a docker login command to authenticate to a registry. The AWS
+// CLI offers an get-login-password command that simplifies the login process.
+// For more information, see Registry Authentication (https://docs.aws.amazon.com/AmazonECR/latest/userguide/Registries.html#registry_auth)
+// in the Amazon Elastic Container Registry User Guide.
 //
 //    // Example sending a request using GetAuthorizationTokenRequest.
 //    req := client.GetAuthorizationTokenRequest(params)

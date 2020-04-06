@@ -2071,6 +2071,23 @@ func (enum MembershipType) MarshalValueBuf(b []byte) ([]byte, error) {
 	return append(b, enum...), nil
 }
 
+type ModifyAvailabilityZoneOptInStatus string
+
+// Enum values for ModifyAvailabilityZoneOptInStatus
+const (
+	ModifyAvailabilityZoneOptInStatusOptedIn    ModifyAvailabilityZoneOptInStatus = "opted-in"
+	ModifyAvailabilityZoneOptInStatusNotOptedIn ModifyAvailabilityZoneOptInStatus = "not-opted-in"
+)
+
+func (enum ModifyAvailabilityZoneOptInStatus) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum ModifyAvailabilityZoneOptInStatus) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
 type MonitoringState string
 
 // Enum values for MonitoringState
@@ -2639,6 +2656,7 @@ const (
 	ResourceTypeVpcPeeringConnection          ResourceType = "vpc-peering-connection"
 	ResourceTypeVpnConnection                 ResourceType = "vpn-connection"
 	ResourceTypeVpnGateway                    ResourceType = "vpn-gateway"
+	ResourceTypeVpcFlowLog                    ResourceType = "vpc-flow-log"
 )
 
 func (enum ResourceType) MarshalValue() (string, error) {

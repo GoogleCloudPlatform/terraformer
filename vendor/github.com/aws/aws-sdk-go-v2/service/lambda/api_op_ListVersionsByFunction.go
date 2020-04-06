@@ -33,7 +33,7 @@ type ListVersionsByFunctionInput struct {
 	// the next page of results.
 	Marker *string `location:"querystring" locationName:"Marker" type:"string"`
 
-	// Limit the number of versions that are returned.
+	// The maximum number of versions to return.
 	MaxItems *int64 `location:"querystring" locationName:"MaxItems" min:"1" type:"integer"`
 }
 
@@ -131,7 +131,8 @@ const opListVersionsByFunction = "ListVersionsByFunction"
 // AWS Lambda.
 //
 // Returns a list of versions (https://docs.aws.amazon.com/lambda/latest/dg/versioning-aliases.html),
-// with the version-specific configuration of each.
+// with the version-specific configuration of each. Lambda returns up to 50
+// versions per call.
 //
 //    // Example sending a request using ListVersionsByFunctionRequest.
 //    req := client.ListVersionsByFunctionRequest(params)

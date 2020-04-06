@@ -98,6 +98,15 @@ type ModifyDBClusterInput struct {
 	// deletion protection is disabled.
 	DeletionProtection *bool `type:"boolean"`
 
+	// The Active Directory directory ID to move the DB cluster to. Specify none
+	// to remove the cluster from its current domain. The domain must be created
+	// prior to this operation.
+	Domain *string `type:"string"`
+
+	// Specify the name of the IAM role to be used when making API calls to the
+	// Directory Service.
+	DomainIAMRoleName *string `type:"string"`
+
 	// A value that indicates whether to enable the HTTP endpoint for an Aurora
 	// Serverless DB cluster. By default, the HTTP endpoint is disabled.
 	//

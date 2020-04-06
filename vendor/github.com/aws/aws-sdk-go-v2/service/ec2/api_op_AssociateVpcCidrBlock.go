@@ -91,6 +91,9 @@ const opAssociateVpcCidrBlock = "AssociateVpcCidrBlock"
 // (BYOIP (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-byoip.html)).
 // The IPv6 CIDR block size is fixed at /56.
 //
+// You must specify one of the following in the request: an IPv4 CIDR block,
+// an IPv6 pool, or an Amazon-provided IPv6 CIDR block.
+//
 // For more information about associating CIDR blocks with your VPC and applicable
 // restrictions, see VPC and Subnet Sizing (https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#VPC_Sizing)
 // in the Amazon Virtual Private Cloud User Guide.

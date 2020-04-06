@@ -276,74 +276,98 @@ func (g *ApiGatewayGenerator) loadResourceMethods(svc *apigateway.Client, restAp
 }
 
 func (g *ApiGatewayGenerator) loadResponses(svc *apigateway.Client, restApiId *string) error {
-	response, err := svc.GetGatewayResponsesRequest(&apigateway.GetGatewayResponsesInput{
-		RestApiId: restApiId,
-	}).Send(context.Background())
-	if err != nil {
-		return err
-	}
-	for _, response := range response.Items {
-		if aws.BoolValue(response.DefaultResponse) {
-			continue
+	var position *string
+	for {
+		response, err := svc.GetGatewayResponsesRequest(&apigateway.GetGatewayResponsesInput{
+			RestApiId: restApiId,
+			Position:  position,
+		}).Send(context.Background())
+		if err != nil {
+			return err
 		}
-		responseTypeString, _ := response.ResponseType.MarshalValue()
-		responseId := *restApiId + "/" + responseTypeString
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
-			responseId,
-			responseId,
-			"aws_api_gateway_gateway_response",
-			"aws",
-			map[string]string{
-				"rest_api_id":   *restApiId,
-				"response_type": responseTypeString,
-			},
-			apiGatewayAllowEmptyValues,
-			map[string]interface{}{},
-		))
+		for _, response := range response.Items {
+			if aws.BoolValue(response.DefaultResponse) {
+				continue
+			}
+			responseTypeString, _ := response.ResponseType.MarshalValue()
+			responseId := *restApiId + "/" + responseTypeString
+			g.Resources = append(g.Resources, terraform_utils.NewResource(
+				responseId,
+				responseId,
+				"aws_api_gateway_gateway_response",
+				"aws",
+				map[string]string{
+					"rest_api_id":   *restApiId,
+					"response_type": responseTypeString,
+				},
+				apiGatewayAllowEmptyValues,
+				map[string]interface{}{},
+			))
+		}
+		position = response.Position
+		if position == nil {
+			break
+		}
 	}
 	return nil
 }
 
 func (g *ApiGatewayGenerator) loadDocumentationParts(svc *apigateway.Client, restApiId *string) error {
-	response, err := svc.GetDocumentationPartsRequest(&apigateway.GetDocumentationPartsInput{
-		RestApiId: restApiId,
-	}).Send(context.Background())
-	if err != nil {
-		return err
-	}
-	for _, documentationPart := range response.Items {
-		documentationPartId := *restApiId + "/" + *documentationPart.Id
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-			documentationPartId,
-			documentationPartId,
-			"aws_api_gateway_documentation_part",
-			"aws",
-			apiGatewayAllowEmptyValues,
-		))
+	var position *string
+	for {
+		response, err := svc.GetDocumentationPartsRequest(&apigateway.GetDocumentationPartsInput{
+			RestApiId: restApiId,
+			Position:  position,
+		}).Send(context.Background())
+		if err != nil {
+			return err
+		}
+		for _, documentationPart := range response.Items {
+			documentationPartId := *restApiId + "/" + *documentationPart.Id
+			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+				documentationPartId,
+				documentationPartId,
+				"aws_api_gateway_documentation_part",
+				"aws",
+				apiGatewayAllowEmptyValues,
+			))
+		}
+		position = response.Position
+		if position == nil {
+			break
+		}
 	}
 	return nil
 }
 
 func (g *ApiGatewayGenerator) loadAuthorizers(svc *apigateway.Client, restApiId *string) error {
-	response, err := svc.GetAuthorizersRequest(&apigateway.GetAuthorizersInput{
-		RestApiId: restApiId,
-	}).Send(context.Background())
-	if err != nil {
-		return err
-	}
-	for _, authorizer := range response.Items {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
-			*authorizer.Id,
-			*authorizer.Id,
-			"aws_api_gateway_authorizer",
-			"aws",
-			map[string]string{
-				"rest_api_id": *restApiId,
-				"name":        aws.StringValue(authorizer.Name),
-			},
-			apiGatewayAllowEmptyValues,
-			map[string]interface{}{},
-		))
+	var position *string
+	for {
+		response, err := svc.GetAuthorizersRequest(&apigateway.GetAuthorizersInput{
+			RestApiId: restApiId,
+			Position:  position,
+		}).Send(context.Background())
+		if err != nil {
+			return err
+		}
+		for _, authorizer := range response.Items {
+			g.Resources = append(g.Resources, terraform_utils.NewResource(
+				*authorizer.Id,
+				*authorizer.Id,
+				"aws_api_gateway_authorizer",
+				"aws",
+				map[string]string{
+					"rest_api_id": *restApiId,
+					"name":        aws.StringValue(authorizer.Name),
+				},
+				apiGatewayAllowEmptyValues,
+				map[string]interface{}{},
+			))
+		}
+		position = response.Position
+		if position == nil {
+			break
+		}
 	}
 	return nil
 }

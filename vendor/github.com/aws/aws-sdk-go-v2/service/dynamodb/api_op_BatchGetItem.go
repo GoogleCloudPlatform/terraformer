@@ -237,6 +237,28 @@ func (c *Client) BatchGetItemRequest(input *BatchGetItemInput) BatchGetItemReque
 	}
 
 	req := c.newRequest(op, input, &BatchGetItemOutput{})
+
+	if req.Config.EnableEndpointDiscovery {
+		de := discovererDescribeEndpoints{
+			Client:        c,
+			Required:      false,
+			EndpointCache: c.endpointCache,
+			Params: map[string]*string{
+				"op": &req.Operation.Name,
+			},
+		}
+
+		for k, v := range de.Params {
+			if v == nil {
+				delete(de.Params, k)
+			}
+		}
+
+		req.Handlers.Build.PushFrontNamed(aws.NamedHandler{
+			Name: "crr.endpointdiscovery",
+			Fn:   de.Handler,
+		})
+	}
 	return BatchGetItemRequest{Request: req, Input: input, Copy: c.BatchGetItemRequest}
 }
 

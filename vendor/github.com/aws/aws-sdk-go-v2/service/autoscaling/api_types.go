@@ -932,6 +932,10 @@ type LaunchTemplateOverrides struct {
 	// you chose to set the desired capacity in terms of instances, or a performance
 	// attribute such as vCPUs, memory, or I/O.
 	//
+	// For more information, see Instance Weighting for Amazon EC2 Auto Scaling
+	// (https://docs.aws.amazon.com/autoscaling/ec2/userguide/asg-instance-weighting.html)
+	// in the Amazon EC2 Auto Scaling User Guide.
+	//
 	// Valid Range: Minimum value of 1. Maximum value of 999.
 	WeightedCapacity *string `min:"1" type:"string"`
 }
@@ -1516,6 +1520,9 @@ type ScalingPolicy struct {
 	// The amount of time, in seconds, after a scaling activity completes before
 	// any further dynamic scaling activities can start.
 	Cooldown *int64 `type:"integer"`
+
+	// Indicates whether the policy is enabled (true) or disabled (false).
+	Enabled *bool `type:"boolean"`
 
 	// The estimated time, in seconds, until a newly launched instance can contribute
 	// to the CloudWatch metrics.

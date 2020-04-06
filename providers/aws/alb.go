@@ -79,23 +79,34 @@ func (g *AlbGenerator) loadLBListener(svc *elasticloadbalancingv2.Client, loadBa
 }
 
 func (g *AlbGenerator) loadLBListenerRule(svc *elasticloadbalancingv2.Client, listenerArn *string) error {
-	lsrs, err := svc.DescribeRulesRequest(&elasticloadbalancingv2.DescribeRulesInput{ListenerArn: listenerArn, PageSize: aws.Int64(400)}).Send(context.Background())
-	if err != nil {
-		return err
-	}
-	for _, lsr := range lsrs.Rules {
-		if !aws.BoolValue(lsr.IsDefault) {
-			resourceName := aws.StringValue(lsr.RuleArn)
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-				resourceName,
-				resourceName,
-				"aws_lb_listener_rule",
-				"aws",
-				AlbAllowEmptyValues,
-			))
+	var marker *string
+	for {
+		lsrs, err := svc.DescribeRulesRequest(&elasticloadbalancingv2.DescribeRulesInput{
+			ListenerArn: listenerArn,
+			Marker:      marker,
+			PageSize:    aws.Int64(400)},
+		).Send(context.Background())
+		if err != nil {
+			return err
+		}
+		for _, lsr := range lsrs.Rules {
+			if !aws.BoolValue(lsr.IsDefault) {
+				resourceName := aws.StringValue(lsr.RuleArn)
+				g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+					resourceName,
+					resourceName,
+					"aws_lb_listener_rule",
+					"aws",
+					AlbAllowEmptyValues,
+				))
+			}
+		}
+		marker = lsrs.NextMarker
+		if marker == nil {
+			break
 		}
 	}
-	return err
+	return nil
 }
 
 func (g *AlbGenerator) loadLBListenerCertificate(svc *elasticloadbalancingv2.Client, loadBalancer *elasticloadbalancingv2.Listener) error {
@@ -148,7 +159,9 @@ func (g *AlbGenerator) loadLBTargetGroup(svc *elasticloadbalancingv2.Client) err
 }
 
 func (g *AlbGenerator) loadTargetGroupTargets(svc *elasticloadbalancingv2.Client, targetGroupArn *string) error {
-	targetHealths, err := svc.DescribeTargetHealthRequest(&elasticloadbalancingv2.DescribeTargetHealthInput{TargetGroupArn: targetGroupArn}).Send(context.Background())
+	targetHealths, err := svc.DescribeTargetHealthRequest(&elasticloadbalancingv2.DescribeTargetHealthInput{
+		TargetGroupArn: targetGroupArn,
+	}).Send(context.Background())
 	if err != nil {
 		return err
 	}

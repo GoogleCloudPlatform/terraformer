@@ -11,17 +11,17 @@
 // to:
 //
 //    * Automatically invoke an AWS Lambda function to update DNS entries when
-//    an event notifies you that Amazon EC2 instance enters the running state
+//    an event notifies you that Amazon EC2 instance enters the running state.
 //
 //    * Direct specific API records from AWS CloudTrail to an Amazon Kinesis
 //    data stream for detailed analysis of potential security or availability
-//    risks
+//    risks.
 //
 //    * Periodically invoke a built-in target to create a snapshot of an Amazon
-//    EBS volume
+//    EBS volume.
 //
 // For more information about the features of Amazon EventBridge, see the Amazon
-// EventBridge User Guide (https://docs.aws.amazon.com/eventbridge/latest/userguide/).
+// EventBridge User Guide (https://docs.aws.amazon.com/eventbridge/latest/userguide).
 //
 // See https://docs.aws.amazon.com/goto/WebAPI/events-2015-10-07 for more information on this service.
 //
