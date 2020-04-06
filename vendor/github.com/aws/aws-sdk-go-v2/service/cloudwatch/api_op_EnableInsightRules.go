@@ -13,7 +13,7 @@ type EnableInsightRulesInput struct {
 	_ struct{} `type:"structure"`
 
 	// An array of the rule names to enable. If you need to find out the names of
-	// your rules, use DescribeInsightRules.
+	// your rules, use DescribeInsightRules (https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_DescribeInsightRules.html).
 	//
 	// RuleNames is a required field
 	RuleNames []string `type:"list" required:"true"`

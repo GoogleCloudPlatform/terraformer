@@ -74,7 +74,7 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 			// TF EBS attachment logic doesn't work well with references (doesn't interpolate)
 		},
 		"ecs": {
-			"ecs":    []string{"task_definition", "arn"},
+			// ECS is not able anymore to support references (doesn't interpolate)
 			"subnet": []string{"network_configuration.subnets", "id"},
 			"sg":     []string{"network_configuration.security_groups", "id"},
 		},

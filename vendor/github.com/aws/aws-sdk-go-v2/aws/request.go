@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws/awserr"
+	"github.com/aws/aws-sdk-go-v2/internal/sdk"
 )
 
 const (
@@ -21,16 +22,78 @@ const (
 
 	// ErrCodeRead is an error that is returned during HTTP reads.
 	ErrCodeRead = "ReadError"
-
-	// ErrCodeResponseTimeout is the connection timeout error that is received
-	// during body reads.
-	ErrCodeResponseTimeout = "ResponseTimeout"
-
-	// ErrCodeRequestCanceled is the error code that will be returned by an
-	// API request that was canceled. Requests given a Context may
-	// return this error when canceled.
-	ErrCodeRequestCanceled = "RequestCanceled"
 )
+
+// RequestSendError provides a generic request transport error.
+type RequestSendError struct {
+	Response interface{}
+	Err      error
+}
+
+// ConnectionError return that the error is related to not being able to send
+// the request.
+func (e *RequestSendError) ConnectionError() bool {
+	return true
+}
+
+// Unwrap returns the underlying error, if there was one.
+func (e *RequestSendError) Unwrap() error {
+	return e.Err
+}
+
+func (e *RequestSendError) Error() string {
+	return fmt.Sprintf("request send failed, %v", e.Err)
+}
+
+// HTTPResponseError provides the error type for an HTTP error response.
+type HTTPResponseError struct {
+	Response *http.Response
+}
+
+func (e *HTTPResponseError) Error() string {
+	return fmt.Sprintf("HTTP response error, %s, %d",
+		e.Response.Status, e.Response.StatusCode)
+}
+
+// StatusCode returns the underlying status code for the request error.
+func (e *HTTPResponseError) StatusCode() int {
+	return e.Response.StatusCode
+}
+
+// MaxAttemptsError provides the error when the maximum number of attempts have
+// been exceeded.
+type MaxAttemptsError struct {
+	Attempt int
+	Err     error
+}
+
+func (e *MaxAttemptsError) Error() string {
+	return fmt.Sprintf("exceeded maximum number of attempts, %d, %v", e.Attempt, e.Err)
+}
+
+// Unwrap returns the nested error causing the max attempts error. Provides the
+// implementation for errors.Is and errors.As to unwrap nested errors.
+func (e *MaxAttemptsError) Unwrap() error {
+	return e.Err
+}
+
+// RequestCanceledError is the error that will be returned by an API request
+// that was canceled. Requests given a Context may return this error when
+// canceled.
+type RequestCanceledError struct {
+	Err error
+}
+
+// CanceledError returns true to satisfy interfaces checking for canceled errors.
+func (*RequestCanceledError) CanceledError() bool { return true }
+
+// Unwrap returns the underlying error, if there was one.
+func (e *RequestCanceledError) Unwrap() error {
+	return e.Err
+}
+func (e *RequestCanceledError) Error() string {
+	return fmt.Sprintf("request canceled, %v", e.Err)
+}
 
 // A Request is the service request to be made.
 type Request struct {
@@ -51,20 +114,35 @@ type Request struct {
 	Error            error
 	Data             interface{}
 	RequestID        string
-	RetryCount       int
-	Retryable        *bool
-	RetryDelay       time.Duration
 	NotHoist         bool
 	SignedHeaderVals http.Header
 	LastSignedAt     time.Time
 
+	// The time the response headers were received from the API call.
+	ResponseAt time.Time
+
+	// AttemptClockSkews are the estimated clock skew between the service
+	// response Date header, and when the SDK received the response per
+	// attempt. This estimate will include the latency of receiving the
+	// service's response headers.
+	AttemptClockSkews []time.Duration
+
+	// ID for this operation's request that is shared across attempts.
+	InvocationID string
+
+	// The attempt number of this request for the operation.
+	AttemptNum int
+	// The number of times the operation has be retried.
+	RetryCount int
+
+	// Set by the request ShouldRetry handler to direct the request to retry
+	// the attempt.
+	ShouldRetry bool
+	// The backoff delay before retrying the request.
+	RetryDelay time.Duration
+
 	context context.Context
-
-	built bool
-
-	// Additional API error codes that should be retried. IsErrorRetryable
-	// will consider these codes in addition to its built in cases.
-	RetryErrorCodes []string
+	built   bool
 
 	// Additional API error codes that should be retried with throttle backoff
 	// delay. IsErrorThrottle will consider these codes in addition to its
@@ -95,9 +173,9 @@ type Operation struct {
 // Data is pointer value to an object which the request's response
 // payload will be deserialized to.
 func New(cfg Config, metadata Metadata, handlers Handlers,
-	retryer Retryer, operation *Operation, params interface{}, data interface{}) *Request {
+	retryDecider Retryer, operation *Operation, params interface{}, data interface{}) *Request {
 
-	// TODO improve this experiance for config copy?
+	// TODO improve this experience for config copy?
 	cfg = cfg.Copy()
 
 	method := operation.HTTPMethod
@@ -106,24 +184,34 @@ func New(cfg Config, metadata Metadata, handlers Handlers,
 	}
 
 	httpReq, _ := http.NewRequest(method, "", nil)
-
 	r := &Request{
 		Config:      cfg,
 		Metadata:    metadata,
 		Handlers:    handlers.Copy(),
-		Retryer:     retryer,
+		Retryer:     retryDecider,
 		Time:        time.Now(),
-		ExpireTime:  0,
 		Operation:   operation,
 		HTTPRequest: httpReq,
-		Body:        nil,
 		Params:      params,
 		Data:        data,
 	}
 	r.SetBufferBody([]byte{})
 
-	// TODO need better way of handling this error... NewRequest should return error.
-	endpoint, err := cfg.EndpointResolver.ResolveEndpoint(metadata.EndpointsID, cfg.Region)
+	if r.Retryer == nil {
+		r.Retryer = &NoOpRetryer{}
+	}
+
+	// TODO need better way of handling this error... NewRequest should return
+	// error.
+	uuid, err := sdk.UUIDVersion4()
+	if err != nil {
+		r.Error = err
+		return r
+	}
+	r.InvocationID = uuid
+
+	endpoint, err := cfg.EndpointResolver.ResolveEndpoint(
+		metadata.EndpointsID, cfg.Region)
 
 	if err == nil {
 		r.SetEndpoint(endpoint)
@@ -215,14 +303,6 @@ func (r *Request) SetContext(ctx context.Context) {
 		panic("context cannot be nil")
 	}
 	setRequestContext(ctx, r)
-}
-
-// WillRetry returns if the request's can be retried.
-func (r *Request) WillRetry() bool {
-	if !IsReaderSeekable(r.Body) && r.HTTPRequest.Body != http.NoBody {
-		return false
-	}
-	return r.Error != nil && BoolValue(r.Retryable) && r.RetryCount < r.Retryer.MaxRetries()
 }
 
 // fmtAttemptCount returns a formatted string with attempt count
@@ -445,29 +525,57 @@ func (r *Request) Send() error {
 		return err
 	}
 
+	// TODO (jasdel), Issue #74 - Refactoring request error handling needs to
+	// consider the difference between API, connection, and SDK behavior
+	// errors. This consideration must include wrapping of underlying error
+	// when any SDK error occurs.
+
+	relRetryToken := r.Retryer.GetInitialToken()
 	for {
 		r.Error = nil
-		r.AttemptTime = time.Now()
+		r.RetryDelay = 0
+		r.ShouldRetry = false
+		r.AttemptTime = sdk.NowTime()
+		r.AttemptNum++
 
-		if err := r.Sign(); err != nil {
+		var err error
+		if err = r.Sign(); err != nil {
 			debugLogReqError(r, "Sign Request", notRetrying, err)
-			return err
-		}
-
-		if err := r.sendRequest(); err == nil {
-			return nil
-		}
-		r.Handlers.Retry.Run(r)
-		r.Handlers.AfterRetry.Run(r)
-
-		if r.Error != nil || !BoolValue(r.Retryable) {
-			return r.Error
-		}
-
-		if err := r.prepareRetry(); err != nil {
 			r.Error = err
 			return err
 		}
+
+		reqErr := r.sendRequest()
+		relRetryToken(reqErr)
+		if reqErr == nil {
+			return nil
+		}
+		debugLogReqError(r, "Send Request",
+			fmtAttemptCount(r.AttemptNum, r.Retryer.MaxAttempts()),
+			reqErr)
+
+		if !r.ShouldRetry {
+			return r.Error
+		}
+
+		relRetryToken, err = r.Retryer.GetRetryToken(r.Context(), reqErr)
+		if err != nil {
+			r.Error = err
+			return err
+		}
+
+		if err = sdk.SleepWithContext(r.Context(), r.RetryDelay); err != nil {
+			r.Error = &RequestCanceledError{Err: err}
+			return r.Error
+		}
+
+		r.Error = nil
+		if err = r.prepareRetry(); err != nil {
+			r.Error = err
+			return err
+		}
+
+		r.RetryCount++
 	}
 }
 
@@ -499,13 +607,14 @@ func (r *Request) prepareRetry() error {
 
 func (r *Request) sendRequest() (sendErr error) {
 	defer r.Handlers.CompleteAttempt.Run(r)
+	defer func() {
+		if r.Error != nil {
+			r.Handlers.ShouldRetry.Run(r)
+		}
+	}()
 
-	r.Retryable = nil
 	r.Handlers.Send.Run(r)
 	if r.Error != nil {
-		debugLogReqError(r, "Send Request",
-			fmtAttemptCount(r.RetryCount, r.Retryer.MaxRetries()),
-			r.Error)
 		return r.Error
 	}
 
@@ -513,17 +622,11 @@ func (r *Request) sendRequest() (sendErr error) {
 	r.Handlers.ValidateResponse.Run(r)
 	if r.Error != nil {
 		r.Handlers.UnmarshalError.Run(r)
-		debugLogReqError(r, "Validate Response",
-			fmtAttemptCount(r.RetryCount, r.Retryer.MaxRetries()),
-			r.Error)
 		return r.Error
 	}
 
 	r.Handlers.Unmarshal.Run(r)
 	if r.Error != nil {
-		debugLogReqError(r, "Unmarshal Response",
-			fmtAttemptCount(r.RetryCount, r.Retryer.MaxRetries()),
-			r.Error)
 		return r.Error
 	}
 

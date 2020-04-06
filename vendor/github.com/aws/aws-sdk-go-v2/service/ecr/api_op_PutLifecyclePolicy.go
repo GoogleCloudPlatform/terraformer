@@ -79,8 +79,8 @@ const opPutLifecyclePolicy = "PutLifecyclePolicy"
 // PutLifecyclePolicyRequest returns a request value for making API operation for
 // Amazon EC2 Container Registry.
 //
-// Creates or updates a lifecycle policy. For information about lifecycle policy
-// syntax, see Lifecycle Policy Template (https://docs.aws.amazon.com/AmazonECR/latest/userguide/LifecyclePolicies.html).
+// Creates or updates the lifecycle policy for the specified repository. For
+// more information, see Lifecycle Policy Template (https://docs.aws.amazon.com/AmazonECR/latest/userguide/LifecyclePolicies.html).
 //
 //    // Example sending a request using PutLifecyclePolicyRequest.
 //    req := client.PutLifecyclePolicyRequest(params)

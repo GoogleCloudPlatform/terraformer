@@ -53,11 +53,6 @@ func NewClient(cfg Config, metadata Metadata) *Client {
 		svc.Config.HTTPClient = wrapWithoutRedirect(c)
 	}
 
-	retryer := cfg.Retryer
-	if retryer == nil {
-		retryer = NewDefaultRetryer()
-	}
-	svc.Retryer = retryer
 	svc.AddDebugHandlers()
 	return svc
 }

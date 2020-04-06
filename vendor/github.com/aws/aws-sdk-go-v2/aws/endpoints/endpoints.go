@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
 )
 
 // ResolveOptions provide the configuration needed to direct how the
@@ -268,15 +267,10 @@ func (e Endpoint) Resolve(opts ResolveOptions) (aws.Endpoint, error) {
 	return e.p.EndpointFor(e.serviceID, e.id, opts)
 }
 
-// So that the Error interface type can be included as an anonymous field
-// in the requestError struct and not conflict with the error.Error() method.
-type awsError awserr.Error
-
 // A UnknownServiceError is returned when the service does not resolve to an
 // endpoint. Includes a list of all known services for the partition. Returned
 // when a partition does not support the service.
 type UnknownServiceError struct {
-	awsError
 	Partition string
 	Service   string
 	Known     []string
@@ -285,8 +279,6 @@ type UnknownServiceError struct {
 // NewUnknownServiceError builds and returns UnknownServiceError.
 func NewUnknownServiceError(p, s string, known []string) UnknownServiceError {
 	return UnknownServiceError{
-		awsError: awserr.New("UnknownServiceError",
-			"could not resolve endpoint for unknown service", nil),
 		Partition: p,
 		Service:   s,
 		Known:     known,
@@ -295,24 +287,17 @@ func NewUnknownServiceError(p, s string, known []string) UnknownServiceError {
 
 // String returns the string representation of the error.
 func (e UnknownServiceError) Error() string {
-	extra := fmt.Sprintf("partition: %q, service: %q",
-		e.Partition, e.Service)
+	extra := fmt.Sprintf("partition: %q, service: %q", e.Partition, e.Service)
 	if len(e.Known) > 0 {
 		extra += fmt.Sprintf(", known: %v", e.Known)
 	}
-	return awserr.SprintError(e.Code(), e.Message(), extra, e.OrigErr())
-}
-
-// String returns the string representation of the error.
-func (e UnknownServiceError) String() string {
-	return e.Error()
+	return "unknown service, could not resolve endpoint, " + extra
 }
 
 // A UnknownEndpointError is returned when in StrictMatching mode and the
 // service is valid, but the region does not resolve to an endpoint. Includes
 // a list of all known endpoints for the service.
 type UnknownEndpointError struct {
-	awsError
 	Partition string
 	Service   string
 	Region    string
@@ -322,8 +307,6 @@ type UnknownEndpointError struct {
 // NewUnknownEndpointError builds and returns UnknownEndpointError.
 func NewUnknownEndpointError(p, s, r string, known []string) UnknownEndpointError {
 	return UnknownEndpointError{
-		awsError: awserr.New("UnknownEndpointError",
-			"could not resolve endpoint", nil),
 		Partition: p,
 		Service:   s,
 		Region:    r,
@@ -338,10 +321,5 @@ func (e UnknownEndpointError) Error() string {
 	if len(e.Known) > 0 {
 		extra += fmt.Sprintf(", known: %v", e.Known)
 	}
-	return awserr.SprintError(e.Code(), e.Message(), extra, e.OrigErr())
-}
-
-// String returns the string representation of the error.
-func (e UnknownEndpointError) String() string {
-	return e.Error()
+	return "unknown endpoint, could not resolve endpoint, " + extra
 }

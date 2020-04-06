@@ -105,8 +105,7 @@ const opDescribeImages = "DescribeImages"
 // DescribeImagesRequest returns a request value for making API operation for
 // Amazon EC2 Container Registry.
 //
-// Returns metadata about the images in a repository, including image size,
-// image tags, and creation date.
+// Returns metadata about the images in a repository.
 //
 // Beginning with Docker version 1.9, the Docker client compresses image layers
 // before pushing them to a V2 Docker registry. The output of the docker images

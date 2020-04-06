@@ -26,8 +26,7 @@ type ListFunctionsInput struct {
 	// you must set FunctionVersion to ALL.
 	MasterRegion *string `location:"querystring" locationName:"MasterRegion" type:"string"`
 
-	// Specify a value between 1 and 50 to limit the number of functions in the
-	// response.
+	// The maximum number of functions to return.
 	MaxItems *int64 `location:"querystring" locationName:"MaxItems" min:"1" type:"integer"`
 }
 
@@ -125,7 +124,7 @@ const opListFunctions = "ListFunctions"
 // AWS Lambda.
 //
 // Returns a list of Lambda functions, with the version-specific configuration
-// of each.
+// of each. Lambda returns up to 50 functions per call.
 //
 // Set FunctionVersion to ALL to include all published versions of each function
 // in addition to the unpublished version. To get more information about a function

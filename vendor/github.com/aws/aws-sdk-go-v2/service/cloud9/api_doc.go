@@ -30,6 +30,12 @@
 //
 //    * ListEnvironments: Gets a list of environment identifiers.
 //
+//    * ListTagsForResource: Gets the tags for an environment.
+//
+//    * TagResource: Adds tags to an environment.
+//
+//    * UntagResource: Removes tags from an environment.
+//
 //    * UpdateEnvironment: Changes the settings of an existing environment.
 //
 //    * UpdateEnvironmentMembership: Changes the settings of an existing environment

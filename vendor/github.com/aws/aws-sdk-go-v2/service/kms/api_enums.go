@@ -32,6 +32,7 @@ const (
 	ConnectionErrorCodeTypeUserLockedOut            ConnectionErrorCodeType = "USER_LOCKED_OUT"
 	ConnectionErrorCodeTypeUserNotFound             ConnectionErrorCodeType = "USER_NOT_FOUND"
 	ConnectionErrorCodeTypeUserLoggedIn             ConnectionErrorCodeType = "USER_LOGGED_IN"
+	ConnectionErrorCodeTypeSubnetNotFound           ConnectionErrorCodeType = "SUBNET_NOT_FOUND"
 )
 
 func (enum ConnectionErrorCodeType) MarshalValue() (string, error) {

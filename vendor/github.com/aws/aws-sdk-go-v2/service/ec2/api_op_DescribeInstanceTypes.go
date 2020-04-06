@@ -33,10 +33,10 @@ type DescribeInstanceTypesInput struct {
 	//    generation instance type of an instance family. (true | false)
 	//
 	//    * ebs-info.ebs-optimized-support - Indicates whether the instance type
-	//    is EBS-optimized. (true | false)
+	//    is EBS-optimized. (supported | unsupported | default)
 	//
 	//    * ebs-info.encryption-support - Indicates whether EBS encryption is supported.
-	//    (true | false)
+	//    (supported | unsupported)
 	//
 	//    * free-tier-eligible - Indicates whether the instance type is eligible
 	//    to use in the free tier. (true | false)
@@ -161,6 +161,12 @@ func (c *Client) DescribeInstanceTypesRequest(input *DescribeInstanceTypesInput)
 		Name:       opDescribeInstanceTypes,
 		HTTPMethod: "POST",
 		HTTPPath:   "/",
+		Paginator: &aws.Paginator{
+			InputTokens:     []string{"NextToken"},
+			OutputTokens:    []string{"NextToken"},
+			LimitToken:      "MaxResults",
+			TruncationToken: "",
+		},
 	}
 
 	if input == nil {
@@ -193,6 +199,53 @@ func (r DescribeInstanceTypesRequest) Send(ctx context.Context) (*DescribeInstan
 	}
 
 	return resp, nil
+}
+
+// NewDescribeInstanceTypesRequestPaginator returns a paginator for DescribeInstanceTypes.
+// Use Next method to get the next page, and CurrentPage to get the current
+// response page from the paginator. Next will return false, if there are
+// no more pages, or an error was encountered.
+//
+// Note: This operation can generate multiple requests to a service.
+//
+//   // Example iterating over pages.
+//   req := client.DescribeInstanceTypesRequest(input)
+//   p := ec2.NewDescribeInstanceTypesRequestPaginator(req)
+//
+//   for p.Next(context.TODO()) {
+//       page := p.CurrentPage()
+//   }
+//
+//   if err := p.Err(); err != nil {
+//       return err
+//   }
+//
+func NewDescribeInstanceTypesPaginator(req DescribeInstanceTypesRequest) DescribeInstanceTypesPaginator {
+	return DescribeInstanceTypesPaginator{
+		Pager: aws.Pager{
+			NewRequest: func(ctx context.Context) (*aws.Request, error) {
+				var inCpy *DescribeInstanceTypesInput
+				if req.Input != nil {
+					tmp := *req.Input
+					inCpy = &tmp
+				}
+
+				newReq := req.Copy(inCpy)
+				newReq.SetContext(ctx)
+				return newReq.Request, nil
+			},
+		},
+	}
+}
+
+// DescribeInstanceTypesPaginator is used to paginate the request. This can be done by
+// calling Next and CurrentPage.
+type DescribeInstanceTypesPaginator struct {
+	aws.Pager
+}
+
+func (p *DescribeInstanceTypesPaginator) CurrentPage() *DescribeInstanceTypesOutput {
+	return p.Pager.CurrentPage().(*DescribeInstanceTypesOutput)
 }
 
 // DescribeInstanceTypesResponse is the response type for the

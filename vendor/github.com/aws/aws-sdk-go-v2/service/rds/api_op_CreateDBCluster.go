@@ -92,6 +92,18 @@ type CreateDBClusterInput struct {
 	// DestinationRegion is used for presigning the request to a given region.
 	DestinationRegion *string `type:"string"`
 
+	// The Active Directory directory ID to create the DB cluster in.
+	//
+	// For Amazon Aurora DB clusters, Amazon RDS can use Kerberos Authentication
+	// to authenticate users that connect to the DB cluster. For more information,
+	// see Using Kerberos Authentication for Aurora MySQL (https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurmysql-kerberos.html)
+	// in the Amazon Aurora User Guide.
+	Domain *string `type:"string"`
+
+	// Specify the name of the IAM role to be used when making API calls to the
+	// Directory Service.
+	DomainIAMRoleName *string `type:"string"`
+
 	// The list of log types that need to be enabled for exporting to CloudWatch
 	// Logs. The values in the list depend on the DB engine being used. For more
 	// information, see Publishing Database Logs to Amazon CloudWatch Logs (https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_LogAccess.html#USER_LogAccess.Procedural.UploadtoCloudWatch)

@@ -20,6 +20,9 @@ type AlarmHistoryItem struct {
 	// The descriptive name for the alarm.
 	AlarmName *string `min:"1" type:"string"`
 
+	// The type of alarm, either metric alarm or composite alarm.
+	AlarmType AlarmType `type:"string" enum:"true"`
+
 	// Data about the alarm, in JSON format.
 	HistoryData *string `min:"1" type:"string"`
 
@@ -112,6 +115,60 @@ func (s *AnomalyDetectorConfiguration) Validate() error {
 		return invalidParams
 	}
 	return nil
+}
+
+// The details about a composite alarm.
+type CompositeAlarm struct {
+	_ struct{} `type:"structure"`
+
+	// Indicates whether actions should be executed during any changes to the alarm
+	// state.
+	ActionsEnabled *bool `type:"boolean"`
+
+	// The actions to execute when this alarm transitions to the ALARM state from
+	// any other state. Each action is specified as an Amazon Resource Name (ARN).
+	AlarmActions []string `type:"list"`
+
+	// The Amazon Resource Name (ARN) of the alarm.
+	AlarmArn *string `min:"1" type:"string"`
+
+	// The time stamp of the last update to the alarm configuration.
+	AlarmConfigurationUpdatedTimestamp *time.Time `type:"timestamp"`
+
+	// The description of the alarm.
+	AlarmDescription *string `type:"string"`
+
+	// The name of the alarm.
+	AlarmName *string `min:"1" type:"string"`
+
+	// The rule that this alarm uses to evaluate its alarm state.
+	AlarmRule *string `min:"1" type:"string"`
+
+	// The actions to execute when this alarm transitions to the INSUFFICIENT_DATA
+	// state from any other state. Each action is specified as an Amazon Resource
+	// Name (ARN).
+	InsufficientDataActions []string `type:"list"`
+
+	// The actions to execute when this alarm transitions to the OK state from any
+	// other state. Each action is specified as an Amazon Resource Name (ARN).
+	OKActions []string `type:"list"`
+
+	// An explanation for the alarm state, in text format.
+	StateReason *string `type:"string"`
+
+	// An explanation for the alarm state, in JSON format.
+	StateReasonData *string `type:"string"`
+
+	// The time stamp of the last update to the alarm state.
+	StateUpdatedTimestamp *time.Time `type:"timestamp"`
+
+	// The state value for the alarm.
+	StateValue StateValue `type:"string" enum:"true"`
+}
+
+// String returns the string representation
+func (s CompositeAlarm) String() string {
+	return awsutil.Prettify(s)
 }
 
 // Represents a specific dashboard.
@@ -312,7 +369,7 @@ func (s InsightRule) String() string {
 // If the rule contains a single key, then each unique contributor is each unique
 // value for this key.
 //
-// For more information, see GetInsightRuleReport.
+// For more information, see GetInsightRuleReport (https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_GetInsightRuleReport.html).
 type InsightRuleContributor struct {
 	_ struct{} `type:"structure"`
 
@@ -341,7 +398,8 @@ func (s InsightRuleContributor) String() string {
 
 // One data point related to one contributor.
 //
-// For more information, see GetInsightRuleReport and InsightRuleContributor.
+// For more information, see GetInsightRuleReport (https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_GetInsightRuleReport.html)
+// and InsightRuleContributor (https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_InsightRuleContributor.html).
 type InsightRuleContributorDatapoint struct {
 	_ struct{} `type:"structure"`
 
@@ -364,7 +422,7 @@ func (s InsightRuleContributorDatapoint) String() string {
 // One data point from the metric time series returned in a Contributor Insights
 // rule report.
 //
-// For more information, see GetInsightRuleReport.
+// For more information, see GetInsightRuleReport (https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_GetInsightRuleReport.html).
 type InsightRuleMetricDatapoint struct {
 	_ struct{} `type:"structure"`
 
@@ -485,7 +543,7 @@ func (s *Metric) Validate() error {
 	return nil
 }
 
-// Represents an alarm.
+// The details about a metric alarm.
 type MetricAlarm struct {
 	_ struct{} `type:"structure"`
 
@@ -600,7 +658,7 @@ func (s MetricAlarm) String() string {
 // When used in GetMetricData, it indicates the metric data to return, and whether
 // this call is just retrieving a batch set of data for one metric, or is performing
 // a math expression on metric data. A single GetMetricData call can include
-// up to 100 MetricDataQuery structures.
+// up to 500 MetricDataQuery structures.
 //
 // When used in PutMetricAlarm, it enables you to create an alarm based on a
 // metric math expression. Each MetricDataQuery in the array specifies either
@@ -663,10 +721,6 @@ type MetricDataQuery struct {
 	// at intervals of less than one minute, the period can be 1, 5, 10, 30, 60,
 	// or any multiple of 60. High-resolution metrics are those metrics stored by
 	// a PutMetricData operation that includes a StorageResolution of 1 second.
-	//
-	// If you are performing a GetMetricData operation, use this field only if you
-	// are specifying an Expression. Do not use this field when you are specifying
-	// a MetricStat in a GetMetricData operation.
 	Period *int64 `min:"1" type:"integer"`
 
 	// When used in GetMetricData, this option indicates whether to return the timestamps

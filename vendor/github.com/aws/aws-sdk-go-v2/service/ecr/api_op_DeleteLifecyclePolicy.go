@@ -71,7 +71,7 @@ const opDeleteLifecyclePolicy = "DeleteLifecyclePolicy"
 // DeleteLifecyclePolicyRequest returns a request value for making API operation for
 // Amazon EC2 Container Registry.
 //
-// Deletes the specified lifecycle policy.
+// Deletes the lifecycle policy associated with the specified repository.
 //
 //    // Example sending a request using DeleteLifecyclePolicyRequest.
 //    req := client.DeleteLifecyclePolicyRequest(params)

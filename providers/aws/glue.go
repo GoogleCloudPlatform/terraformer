@@ -69,8 +69,9 @@ func (g *GlueGenerator) loadGlueCatalogTable(svc *glue.Client, account *string, 
 	p := glue.NewGetTablesPaginator(svc.GetTablesRequest(&glue.GetTablesInput{DatabaseName: databaseName}))
 	for p.Next(context.Background()) {
 		for _, catalogTable := range p.CurrentPage().TableList {
-			id := *account + ":" + *databaseName + ":" + *catalogTable.Name
-			resource := terraform_utils.NewSimpleResource(id, *catalogTable.Name,
+			databaseTable := *databaseName + ":" + *catalogTable.Name
+			id := *account + ":" + databaseTable
+			resource := terraform_utils.NewSimpleResource(id, databaseTable,
 				"aws_glue_catalog_table",
 				"aws",
 				GlueCatalogTableAllowEmptyValues)

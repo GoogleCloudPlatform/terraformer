@@ -69,6 +69,19 @@ type RestoreDBClusterToPointInTimeInput struct {
 	// deletion protection is disabled.
 	DeletionProtection *bool `type:"boolean"`
 
+	// Specify the Active Directory directory ID to restore the DB cluster in. The
+	// domain must be created prior to this operation.
+	//
+	// For Amazon Aurora DB clusters, Amazon RDS can use Kerberos Authentication
+	// to authenticate users that connect to the DB cluster. For more information,
+	// see Using Kerberos Authentication for Aurora MySQL (https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurmysql-kerberos.html)
+	// in the Amazon Aurora User Guide.
+	Domain *string `type:"string"`
+
+	// Specify the name of the IAM role to be used when making API calls to the
+	// Directory Service.
+	DomainIAMRoleName *string `type:"string"`
+
 	// The list of logs that the restored DB cluster is to export to CloudWatch
 	// Logs. The values in the list depend on the DB engine being used. For more
 	// information, see Publishing Database Logs to Amazon CloudWatch Logs (https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_LogAccess.html#USER_LogAccess.Procedural.UploadtoCloudWatch)

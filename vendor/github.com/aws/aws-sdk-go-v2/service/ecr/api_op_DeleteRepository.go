@@ -64,8 +64,9 @@ const opDeleteRepository = "DeleteRepository"
 // DeleteRepositoryRequest returns a request value for making API operation for
 // Amazon EC2 Container Registry.
 //
-// Deletes an existing image repository. If a repository contains images, you
-// must use the force option to delete it.
+// Deletes a repository. If the repository contains images, you must either
+// delete all images in the repository or use the force option to delete the
+// repository.
 //
 //    // Example sending a request using DeleteRepositoryRequest.
 //    req := client.DeleteRepositoryRequest(params)

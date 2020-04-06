@@ -15,11 +15,11 @@ type RemoveTargetsInput struct {
 	// The name of the event bus associated with the rule.
 	EventBusName *string `min:"1" type:"string"`
 
-	// If this is a managed rule created by an AWS service on your behalf, you must
-	// specify Force as True to remove targets. This parameter is ignored for rules
-	// that aren't managed rules. You can check whether a rule is a managed rule
-	// by using DescribeRule or ListRules and checking the ManagedBy field of the
-	// response.
+	// If this is a managed rule, created by an AWS service on your behalf, you
+	// must specify Force as True to remove targets. This parameter is ignored for
+	// rules that are not managed rules. You can check whether a rule is a managed
+	// rule by using DescribeRule or ListRules and checking the ManagedBy field
+	// of the response.
 	Force *bool `type:"boolean"`
 
 	// The IDs of the targets to remove from the rule.

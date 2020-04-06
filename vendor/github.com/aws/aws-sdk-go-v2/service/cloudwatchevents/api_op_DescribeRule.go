@@ -59,7 +59,7 @@ type DescribeRuleOutput struct {
 	// The event bus associated with the rule.
 	EventBusName *string `min:"1" type:"string"`
 
-	// The event pattern. For more information, see Event Patterns (https://docs.aws.amazon.com/eventbridge/latest/userguide/eventbridge-and-event-patterns.html)
+	// The event pattern. For more information, see Events and Event Patterns (https://docs.aws.amazon.com/eventbridge/latest/userguide/eventbridge-and-event-patterns.html)
 	// in the Amazon EventBridge User Guide.
 	EventPattern *string `type:"string"`
 
@@ -73,7 +73,7 @@ type DescribeRuleOutput struct {
 	// The Amazon Resource Name (ARN) of the IAM role associated with the rule.
 	RoleArn *string `min:"1" type:"string"`
 
-	// The scheduling expression: for example, "cron(0 20 * * ? *)" or "rate(5 minutes)".
+	// The scheduling expression. For example, "cron(0 20 * * ? *)", "rate(5 minutes)".
 	ScheduleExpression *string `type:"string"`
 
 	// Specifies whether the rule is enabled or disabled.
@@ -92,7 +92,7 @@ const opDescribeRule = "DescribeRule"
 //
 // Describes the specified rule.
 //
-// DescribeRule doesn't list the targets of a rule. To see the targets associated
+// DescribeRule does not list the targets of a rule. To see the targets associated
 // with a rule, use ListTargetsByRule.
 //
 //    // Example sending a request using DescribeRuleRequest.

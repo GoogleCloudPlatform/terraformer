@@ -45,7 +45,7 @@ type GetDashboardOutput struct {
 
 	// The detailed information about the dashboard, including what widgets are
 	// included and their location on the dashboard. For more information about
-	// the DashboardBody syntax, see CloudWatch-Dashboard-Body-Structure.
+	// the DashboardBody syntax, see Dashboard Body Structure and Syntax (https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/CloudWatch-Dashboard-Body-Structure.html).
 	DashboardBody *string `type:"string"`
 
 	// The name of the dashboard.

@@ -63,8 +63,8 @@ const opDisableRule = "DisableRule"
 // DisableRuleRequest returns a request value for making API operation for
 // Amazon CloudWatch Events.
 //
-// Disables the specified rule. A disabled rule won't match any events and won't
-// self-trigger if it has a schedule expression.
+// Disables the specified rule. A disabled rule won't match any events, and
+// won't self-trigger if it has a schedule expression.
 //
 // When you disable a rule, incoming events might continue to match to the disabled
 // rule. Allow a short period of time for changes to take effect.

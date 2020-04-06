@@ -117,6 +117,18 @@ const (
 	// of clusters per customer.
 	ErrCodeClusterQuotaForCustomerExceededFault = "ClusterQuotaForCustomerExceeded"
 
+	// ErrCodeGlobalReplicationGroupAlreadyExistsFault for service response error code
+	// "GlobalReplicationGroupAlreadyExistsFault".
+	//
+	// The Global Datastore name already exists.
+	ErrCodeGlobalReplicationGroupAlreadyExistsFault = "GlobalReplicationGroupAlreadyExistsFault"
+
+	// ErrCodeGlobalReplicationGroupNotFoundFault for service response error code
+	// "GlobalReplicationGroupNotFoundFault".
+	//
+	// The Global Datastore does not exist
+	ErrCodeGlobalReplicationGroupNotFoundFault = "GlobalReplicationGroupNotFoundFault"
+
 	// ErrCodeInsufficientCacheClusterCapacityFault for service response error code
 	// "InsufficientCacheClusterCapacity".
 	//
@@ -149,6 +161,12 @@ const (
 	//
 	// The current state of the cache security group does not allow deletion.
 	ErrCodeInvalidCacheSecurityGroupStateFault = "InvalidCacheSecurityGroupState"
+
+	// ErrCodeInvalidGlobalReplicationGroupStateFault for service response error code
+	// "InvalidGlobalReplicationGroupState".
+	//
+	// The Global Datastore is not available
+	ErrCodeInvalidGlobalReplicationGroupStateFault = "InvalidGlobalReplicationGroupState"
 
 	// ErrCodeInvalidKMSKeyFault for service response error code
 	// "InvalidKMSKeyFault".

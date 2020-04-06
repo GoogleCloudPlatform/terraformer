@@ -69,7 +69,7 @@ const opDeleteRepositoryPolicy = "DeleteRepositoryPolicy"
 // DeleteRepositoryPolicyRequest returns a request value for making API operation for
 // Amazon EC2 Container Registry.
 //
-// Deletes the repository policy from a specified repository.
+// Deletes the repository policy associated with the specified repository.
 //
 //    // Example sending a request using DeleteRepositoryPolicyRequest.
 //    req := client.DeleteRepositoryPolicyRequest(params)

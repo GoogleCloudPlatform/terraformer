@@ -34,6 +34,9 @@ type CreateVpcEndpointServiceConfigurationInput struct {
 
 	// The private DNS name to assign to the VPC endpoint service.
 	PrivateDnsName *string `type:"string"`
+
+	// The tags to associate with the service.
+	TagSpecifications []TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
 }
 
 // String returns the string representation

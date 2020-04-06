@@ -61,10 +61,9 @@ const opDescribePartnerEventSource = "DescribePartnerEventSource"
 // Amazon CloudWatch Events.
 //
 // An SaaS partner can use this operation to list details about a partner event
-// source that they have created.
-//
-// AWS customers do not use this operation. Instead, AWS customers can use DescribeEventSource
-// to see details about a partner event source that is shared with them.
+// source that they have created. AWS customers do not use this operation. Instead,
+// AWS customers can use DescribeEventSource to see details about a partner
+// event source that is shared with them.
 //
 //    // Example sending a request using DescribePartnerEventSourceRequest.
 //    req := client.DescribePartnerEventSourceRequest(params)

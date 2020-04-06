@@ -24,7 +24,7 @@ type PutMetricAlarmInput struct {
 	//
 	// Valid Values: arn:aws:automate:region:ec2:stop | arn:aws:automate:region:ec2:terminate
 	// | arn:aws:automate:region:ec2:recover | arn:aws:automate:region:ec2:reboot
-	// | arn:aws:sns:region:account-id:sns-topic-name | arn:aws:autoscaling:region:account-id:scalingPolicy:policy-idautoScalingGroupName/group-friendly-name:policyName/policy-friendly-name
+	// | arn:aws:sns:region:account-id:sns-topic-name | arn:aws:autoscaling:region:account-id:scalingPolicy:policy-id:autoScalingGroupName/group-friendly-name:policyName/policy-friendly-name
 	//
 	// Valid Values (for use with IAM roles): arn:aws:swf:region:account-id:action/actions/AWS_EC2.InstanceId.Stop/1.0
 	// | arn:aws:swf:region:account-id:action/actions/AWS_EC2.InstanceId.Terminate/1.0
@@ -91,7 +91,7 @@ type PutMetricAlarmInput struct {
 	//
 	// Valid Values: arn:aws:automate:region:ec2:stop | arn:aws:automate:region:ec2:terminate
 	// | arn:aws:automate:region:ec2:recover | arn:aws:automate:region:ec2:reboot
-	// | arn:aws:sns:region:account-id:sns-topic-name | arn:aws:autoscaling:region:account-id:scalingPolicy:policy-idautoScalingGroupName/group-friendly-name:policyName/policy-friendly-name
+	// | arn:aws:sns:region:account-id:sns-topic-name | arn:aws:autoscaling:region:account-id:scalingPolicy:policy-id:autoScalingGroupName/group-friendly-name:policyName/policy-friendly-name
 	//
 	// Valid Values (for use with IAM roles): >arn:aws:swf:region:account-id:action/actions/AWS_EC2.InstanceId.Stop/1.0
 	// | arn:aws:swf:region:account-id:action/actions/AWS_EC2.InstanceId.Terminate/1.0
@@ -116,7 +116,7 @@ type PutMetricAlarmInput struct {
 	//
 	// One item in the Metrics array is the expression that the alarm watches. You
 	// designate this expression by setting ReturnValue to true for this object
-	// in the array. For more information, see MetricDataQuery.
+	// in the array. For more information, see MetricDataQuery (https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_MetricDataQuery.html).
 	//
 	// If you use the Metrics parameter, you cannot include the MetricName, Dimensions,
 	// Period, Namespace, Statistic, or ExtendedStatistic parameters of PutMetricAlarm
@@ -132,7 +132,7 @@ type PutMetricAlarmInput struct {
 	//
 	// Valid Values: arn:aws:automate:region:ec2:stop | arn:aws:automate:region:ec2:terminate
 	// | arn:aws:automate:region:ec2:recover | arn:aws:automate:region:ec2:reboot
-	// | arn:aws:sns:region:account-id:sns-topic-name | arn:aws:autoscaling:region:account-id:scalingPolicy:policy-idautoScalingGroupName/group-friendly-name:policyName/policy-friendly-name
+	// | arn:aws:sns:region:account-id:sns-topic-name | arn:aws:autoscaling:region:account-id:scalingPolicy:policy-id:autoScalingGroupName/group-friendly-name:policyName/policy-friendly-name
 	//
 	// Valid Values (for use with IAM roles): arn:aws:swf:region:account-id:action/actions/AWS_EC2.InstanceId.Stop/1.0
 	// | arn:aws:swf:region:account-id:action/actions/AWS_EC2.InstanceId.Terminate/1.0

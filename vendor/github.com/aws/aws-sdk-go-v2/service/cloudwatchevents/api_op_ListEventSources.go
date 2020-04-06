@@ -13,8 +13,8 @@ type ListEventSourcesInput struct {
 	_ struct{} `type:"structure"`
 
 	// Specifying this limits the number of results returned by this operation.
-	// The operation also returns a NextToken that you can use in a subsequent operation
-	// to retrieve the next set of results.
+	// The operation also returns a NextToken which you can use in a subsequent
+	// operation to retrieve the next set of results.
 	Limit *int64 `min:"1" type:"integer"`
 
 	// Specifying this limits the results to only those partner event sources with
@@ -73,8 +73,6 @@ const opListEventSources = "ListEventSources"
 // You can use this to see all the partner event sources that have been shared
 // with your AWS account. For more information about partner event sources,
 // see CreateEventBus.
-//
-// This operation is run by AWS customers, not by SaaS partners.
 //
 //    // Example sending a request using ListEventSourcesRequest.
 //    req := client.ListEventSourcesRequest(params)

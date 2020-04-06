@@ -270,6 +270,23 @@ func (enum OperationStatus) MarshalValueBuf(b []byte) ([]byte, error) {
 	return append(b, enum...), nil
 }
 
+type PermissionModels string
+
+// Enum values for PermissionModels
+const (
+	PermissionModelsServiceManaged PermissionModels = "SERVICE_MANAGED"
+	PermissionModelsSelfManaged    PermissionModels = "SELF_MANAGED"
+)
+
+func (enum PermissionModels) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum PermissionModels) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
 type ProvisioningType string
 
 // Enum values for ProvisioningType
@@ -587,6 +604,7 @@ const (
 	StackSetOperationStatusFailed    StackSetOperationStatus = "FAILED"
 	StackSetOperationStatusStopping  StackSetOperationStatus = "STOPPING"
 	StackSetOperationStatusStopped   StackSetOperationStatus = "STOPPED"
+	StackSetOperationStatusQueued    StackSetOperationStatus = "QUEUED"
 )
 
 func (enum StackSetOperationStatus) MarshalValue() (string, error) {

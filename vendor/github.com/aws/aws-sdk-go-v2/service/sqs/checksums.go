@@ -6,9 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	request "github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
 )
 
 var (
@@ -33,7 +31,10 @@ func verifySendMessage(r *request.Request) {
 		out := r.Data.(*SendMessageOutput)
 		err := checksumsMatch(in.MessageBody, out.MD5OfMessageBody)
 		if err != nil {
-			setChecksumError(r, err.Error())
+			r.Error = &InvalidChecksumError{
+				Reason: "response checksum does not match sent",
+				Err:    err,
+			}
 		}
 	}
 }
@@ -57,7 +58,9 @@ func verifySendMessageBatch(r *request.Request) {
 			}
 		}
 		if len(ids) > 0 {
-			setChecksumError(r, "invalid messages: %s", strings.Join(ids, ", "))
+			r.Error = &InvalidChecksumError{
+				Reason: fmt.Sprintf("invalid messages: %s", strings.Join(ids, ", ")),
+			}
 		}
 	}
 }
@@ -83,7 +86,9 @@ func verifyReceiveMessage(r *request.Request) {
 			}
 		}
 		if len(ids) > 0 {
-			setChecksumError(r, "invalid messages: %s", strings.Join(ids, ", "))
+			r.Error = &InvalidChecksumError{
+				Reason: fmt.Sprintf("invalid messages: %s", strings.Join(ids, ", ")),
+			}
 		}
 	}
 }
@@ -104,7 +109,22 @@ func checksumsMatch(body, expectedMD5 *string) error {
 	return nil
 }
 
-func setChecksumError(r *request.Request, format string, args ...interface{}) {
-	r.Retryable = aws.Bool(true)
-	r.Error = awserr.New("InvalidChecksum", fmt.Sprintf(format, args...), nil)
+// InvalidChecksumError provides the error type for invalid checksum errors.
+type InvalidChecksumError struct {
+	Reason string
+	Err    error
+}
+
+// RetryableError decorates this error as retryable.
+func (e *InvalidChecksumError) RetryableError() bool { return true }
+
+// Unwrap returns the underlying error if there was one.
+func (e *InvalidChecksumError) Unwrap() error { return e.Err }
+
+func (e *InvalidChecksumError) Error() string {
+	var extra string
+	if e.Err != nil {
+		extra = ", " + e.Err.Error()
+	}
+	return fmt.Sprintf("checksum validation error, %v%s", e.Reason, extra)
 }

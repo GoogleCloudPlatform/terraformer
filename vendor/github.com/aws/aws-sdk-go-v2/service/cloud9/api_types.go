@@ -112,3 +112,48 @@ type EnvironmentMember struct {
 func (s EnvironmentMember) String() string {
 	return awsutil.Prettify(s)
 }
+
+// Metadata that is associated with AWS resources. In particular, a name-value
+// pair that can be associated with an AWS Cloud9 development environment. There
+// are two types of tags: user tags and system tags. A user tag is created by
+// the user. A system tag is automatically created by AWS services. A system
+// tag is prefixed with "aws:" and cannot be modified by the user.
+type Tag struct {
+	_ struct{} `type:"structure"`
+
+	// The name part of a tag.
+	//
+	// Key is a required field
+	Key *string `min:"1" type:"string" required:"true"`
+
+	// The value part of a tag.
+	//
+	// Value is a required field
+	Value *string `type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s Tag) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *Tag) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "Tag"}
+
+	if s.Key == nil {
+		invalidParams.Add(aws.NewErrParamRequired("Key"))
+	}
+	if s.Key != nil && len(*s.Key) < 1 {
+		invalidParams.Add(aws.NewErrParamMinLen("Key", 1))
+	}
+
+	if s.Value == nil {
+		invalidParams.Add(aws.NewErrParamRequired("Value"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}

@@ -12,15 +12,41 @@ import (
 type DescribeAlarmsInput struct {
 	_ struct{} `type:"structure"`
 
-	// The action name prefix.
+	// Use this parameter to filter the results of the operation to only those alarms
+	// that use a certain alarm action. For example, you could specify the ARN of
+	// an SNS topic to find all alarms that send notifications to that topic.
 	ActionPrefix *string `min:"1" type:"string"`
 
-	// The alarm name prefix. If this parameter is specified, you cannot specify
-	// AlarmNames.
+	// An alarm name prefix. If you specify this parameter, you receive information
+	// about all alarms that have names that start with this prefix.
+	//
+	// If this parameter is specified, you cannot specify AlarmNames.
 	AlarmNamePrefix *string `min:"1" type:"string"`
 
-	// The names of the alarms.
+	// The names of the alarms to retrieve information about.
 	AlarmNames []string `type:"list"`
+
+	// Use this parameter to specify whether you want the operation to return metric
+	// alarms or composite alarms. If you omit this parameter, only metric alarms
+	// are returned.
+	AlarmTypes []AlarmType `type:"list"`
+
+	// If you use this parameter and specify the name of a composite alarm, the
+	// operation returns information about the "children" alarms of the alarm you
+	// specify. These are the metric alarms and composite alarms referenced in the
+	// AlarmRule field of the composite alarm that you specify in ChildrenOfAlarmName.
+	// Information about the composite alarm that you name in ChildrenOfAlarmName
+	// is not returned.
+	//
+	// If you specify ChildrenOfAlarmName, you cannot specify any other parameters
+	// in the request except for MaxRecords and NextToken. If you do so, you will
+	// receive a validation error.
+	//
+	// Only the Alarm Name, ARN, StateValue (OK/ALARM/INSUFFICIENT_DATA), and StateUpdatedTimestamp
+	// information are returned by this operation when you use this parameter. To
+	// get complete information about these alarms, perform another DescribeAlarms
+	// operation and specify the parent alarm names in the AlarmNames parameter.
+	ChildrenOfAlarmName *string `min:"1" type:"string"`
 
 	// The maximum number of alarm descriptions to retrieve.
 	MaxRecords *int64 `min:"1" type:"integer"`
@@ -29,7 +55,24 @@ type DescribeAlarmsInput struct {
 	// available.
 	NextToken *string `type:"string"`
 
-	// The state value to be used in matching alarms.
+	// If you use this parameter and specify the name of a metric or composite alarm,
+	// the operation returns information about the "parent" alarms of the alarm
+	// you specify. These are the composite alarms that have AlarmRule parameters
+	// that reference the alarm named in ParentsOfAlarmName. Information about the
+	// alarm that you specify in ParentsOfAlarmName is not returned.
+	//
+	// If you specify ParentsOfAlarmName, you cannot specify any other parameters
+	// in the request except for MaxRecords and NextToken. If you do so, you will
+	// receive a validation error.
+	//
+	// Only the Alarm Name and ARN are returned by this operation when you use this
+	// parameter. To get complete information about these alarms, perform another
+	// DescribeAlarms operation and specify the parent alarm names in the AlarmNames
+	// parameter.
+	ParentsOfAlarmName *string `min:"1" type:"string"`
+
+	// Specify this parameter to receive information only about alarms that are
+	// currently in the state that you specify.
 	StateValue StateValue `type:"string" enum:"true"`
 }
 
@@ -47,8 +90,14 @@ func (s *DescribeAlarmsInput) Validate() error {
 	if s.AlarmNamePrefix != nil && len(*s.AlarmNamePrefix) < 1 {
 		invalidParams.Add(aws.NewErrParamMinLen("AlarmNamePrefix", 1))
 	}
+	if s.ChildrenOfAlarmName != nil && len(*s.ChildrenOfAlarmName) < 1 {
+		invalidParams.Add(aws.NewErrParamMinLen("ChildrenOfAlarmName", 1))
+	}
 	if s.MaxRecords != nil && *s.MaxRecords < 1 {
 		invalidParams.Add(aws.NewErrParamMinValue("MaxRecords", 1))
+	}
+	if s.ParentsOfAlarmName != nil && len(*s.ParentsOfAlarmName) < 1 {
+		invalidParams.Add(aws.NewErrParamMinLen("ParentsOfAlarmName", 1))
 	}
 
 	if invalidParams.Len() > 0 {
@@ -60,7 +109,10 @@ func (s *DescribeAlarmsInput) Validate() error {
 type DescribeAlarmsOutput struct {
 	_ struct{} `type:"structure"`
 
-	// The information for the specified alarms.
+	// The information about any composite alarms returned by the operation.
+	CompositeAlarms []CompositeAlarm `type:"list"`
+
+	// The information about any metric alarms returned by the operation.
 	MetricAlarms []MetricAlarm `type:"list"`
 
 	// The token that marks the start of the next batch of returned results.
@@ -77,9 +129,8 @@ const opDescribeAlarms = "DescribeAlarms"
 // DescribeAlarmsRequest returns a request value for making API operation for
 // Amazon CloudWatch.
 //
-// Retrieves the specified alarms. If no alarms are specified, all alarms are
-// returned. Alarms can be retrieved by using only a prefix for the alarm name,
-// the alarm state, or a prefix for any action.
+// Retrieves the specified alarms. You can filter the results by specifying
+// a a prefix for the alarm name, the alarm state, or a prefix for any action.
 //
 //    // Example sending a request using DescribeAlarmsRequest.
 //    req := client.DescribeAlarmsRequest(params)

@@ -80,7 +80,7 @@ const opPutImageScanningConfiguration = "PutImageScanningConfiguration"
 // PutImageScanningConfigurationRequest returns a request value for making API operation for
 // Amazon EC2 Container Registry.
 //
-// Updates the image scanning configuration for a repository.
+// Updates the image scanning configuration for the specified repository.
 //
 //    // Example sending a request using PutImageScanningConfigurationRequest.
 //    req := client.PutImageScanningConfigurationRequest(params)

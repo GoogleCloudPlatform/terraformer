@@ -60,6 +60,9 @@ type CreateVpcEndpointInput struct {
 	// endpoint network interface.
 	SubnetIds []string `locationName:"SubnetId" locationNameList:"item" type:"list"`
 
+	// The tags to associate with the endpoint.
+	TagSpecifications []TagSpecification `locationName:"TagSpecification" locationNameList:"item" type:"list"`
+
 	// The type of endpoint.
 	//
 	// Default: Gateway

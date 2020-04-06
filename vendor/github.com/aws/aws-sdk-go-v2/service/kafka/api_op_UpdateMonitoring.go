@@ -27,6 +27,9 @@ type UpdateMonitoringInput struct {
 	// CloudWatch for this cluster.
 	EnhancedMonitoring EnhancedMonitoring `locationName:"enhancedMonitoring" type:"string" enum:"true"`
 
+	// LoggingInfo details.
+	LoggingInfo *LoggingInfo `locationName:"loggingInfo" type:"structure"`
+
 	// The settings for open monitoring.
 	OpenMonitoring *OpenMonitoringInfo `locationName:"openMonitoring" type:"structure"`
 }
@@ -46,6 +49,11 @@ func (s *UpdateMonitoringInput) Validate() error {
 
 	if s.CurrentVersion == nil {
 		invalidParams.Add(aws.NewErrParamRequired("CurrentVersion"))
+	}
+	if s.LoggingInfo != nil {
+		if err := s.LoggingInfo.Validate(); err != nil {
+			invalidParams.AddNested("LoggingInfo", err.(aws.ErrInvalidParams))
+		}
 	}
 	if s.OpenMonitoring != nil {
 		if err := s.OpenMonitoring.Validate(); err != nil {
@@ -74,6 +82,12 @@ func (s UpdateMonitoringInput) MarshalFields(e protocol.FieldEncoder) error {
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "enhancedMonitoring", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
+	if s.LoggingInfo != nil {
+		v := s.LoggingInfo
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "loggingInfo", v, metadata)
 	}
 	if s.OpenMonitoring != nil {
 		v := s.OpenMonitoring

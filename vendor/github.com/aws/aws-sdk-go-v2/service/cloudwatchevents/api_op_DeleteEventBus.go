@@ -57,10 +57,8 @@ const opDeleteEventBus = "DeleteEventBus"
 // Amazon CloudWatch Events.
 //
 // Deletes the specified custom event bus or partner event bus. All rules associated
-// with this event bus are also deleted. You can't delete your account's default
+// with this event bus need to be deleted. You can't delete your account's default
 // event bus.
-//
-// This operation is performed by AWS customers, not by SaaS partners.
 //
 //    // Example sending a request using DeleteEventBusRequest.
 //    req := client.DeleteEventBusRequest(params)

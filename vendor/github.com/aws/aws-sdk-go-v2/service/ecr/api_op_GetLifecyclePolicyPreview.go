@@ -121,7 +121,8 @@ const opGetLifecyclePolicyPreview = "GetLifecyclePolicyPreview"
 // GetLifecyclePolicyPreviewRequest returns a request value for making API operation for
 // Amazon EC2 Container Registry.
 //
-// Retrieves the results of the specified lifecycle policy preview request.
+// Retrieves the results of the lifecycle policy preview request for the specified
+// repository.
 //
 //    // Example sending a request using GetLifecyclePolicyPreviewRequest.
 //    req := client.GetLifecyclePolicyPreviewRequest(params)
