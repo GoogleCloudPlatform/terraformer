@@ -242,7 +242,7 @@ func (g *SecurityGenerator) InitResources() error {
 	for p.Next(context.Background()) {
 		resourcesToFilter = append(resourcesToFilter, p.CurrentPage().SecurityGroups...)
 	}
-	sort.Slice(resourcesToFilter[:], func(i, j int) bool {
+	sort.Slice(resourcesToFilter, func(i, j int) bool {
 		return *resourcesToFilter[i].GroupId < *resourcesToFilter[j].GroupId
 	})
 	g.Resources = g.createResources(resourcesToFilter)
@@ -285,7 +285,7 @@ func (g *SecurityGenerator) sortRules(rules []interface{}) {
 		g.sortIfExist("ipv6_cidr_blocks", ruleMap)
 		g.sortIfExist("security_groups", ruleMap)
 	}
-	sort.Slice(rules[:], func(i, j int) bool {
+	sort.Slice(rules, func(i, j int) bool {
 		return fmt.Sprintf("%v", rules[i]) < fmt.Sprintf("%v", rules[j])
 	})
 }
