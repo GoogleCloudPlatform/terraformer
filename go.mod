@@ -50,7 +50,7 @@ require (
 	github.com/linode/linodego v0.12.2
 	github.com/mattn/go-isatty v0.0.11 // indirect
 	github.com/mitchellh/reflectwalk v1.0.1 // indirect
-	github.com/mrparkers/terraform-provider-keycloak v0.0.0-20191218161228-a467c7185cbc
+	github.com/mrparkers/terraform-provider-keycloak v0.0.0-20200413144118-2212afc81161
 	github.com/paultyng/go-newrelic v3.1.0+incompatible // indirect
 	github.com/paultyng/go-newrelic/v4 v4.10.0
 	github.com/pkg/errors v0.8.1
