@@ -238,9 +238,14 @@ func (g *SecurityGenerator) InitResources() error {
 	}
 	svc := ec2.New(config)
 	p := ec2.NewDescribeSecurityGroupsPaginator(svc.DescribeSecurityGroupsRequest(&ec2.DescribeSecurityGroupsInput{}))
+	var resourcesToFilter []ec2.SecurityGroup
 	for p.Next(context.Background()) {
-		g.Resources = append(g.Resources, g.createResources(p.CurrentPage().SecurityGroups)...)
+		resourcesToFilter = append(resourcesToFilter, p.CurrentPage().SecurityGroups...)
 	}
+	sort.Slice(resourcesToFilter, func(i, j int) bool {
+		return *resourcesToFilter[i].GroupId < *resourcesToFilter[j].GroupId
+	})
+	g.Resources = g.createResources(resourcesToFilter)
 
 	if err := p.Err(); err != nil {
 		return err
@@ -254,16 +259,43 @@ func (g *SecurityGenerator) PostConvertHook() error {
 			if resource.Item["self"] == "true" {
 				delete(resource.Item, "source_security_group_id")
 			}
-		} else {
+		} else if resource.InstanceInfo.Type == "aws_security_group" {
 			if resource.Item["clearRules"] == true {
 				delete(resource.Item, "ingress")
 				delete(resource.Item, "egress")
 				delete(resource.Item, "clearRules")
 				continue
 			}
+
+			if val, ok := resource.Item["ingress"]; ok {
+				g.sortRules(val.([]interface{}))
+			}
+			if val, ok := resource.Item["egress"]; ok {
+				g.sortRules(val.([]interface{}))
+			}
 		}
 	}
 	return nil
+}
+
+func (g *SecurityGenerator) sortRules(rules []interface{}) {
+	for _, rule := range rules {
+		ruleMap := rule.(map[string]interface{})
+		g.sortIfExist("cidr_blocks", ruleMap)
+		g.sortIfExist("ipv6_cidr_blocks", ruleMap)
+		g.sortIfExist("security_groups", ruleMap)
+	}
+	sort.Slice(rules, func(i, j int) bool {
+		return fmt.Sprintf("%v", rules[i]) < fmt.Sprintf("%v", rules[j])
+	})
+}
+
+func (g *SecurityGenerator) sortIfExist(attribute string, ruleMap map[string]interface{}) {
+	if val, ok := ruleMap[attribute]; ok {
+		sort.Slice(val.([]interface{})[:], func(i, j int) bool {
+			return val.([]interface{})[i].(string) < val.([]interface{})[j].(string)
+		})
+	}
 }
 
 func permissionId(sg_id, ruleType, groupId string, ip ec2.IpPermission) string {
