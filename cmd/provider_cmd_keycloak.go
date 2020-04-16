@@ -17,6 +17,7 @@ package cmd
 import (
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
 	keycloak_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/keycloak"
@@ -26,8 +27,10 @@ import (
 )
 
 const (
-	defaultKeycloakEndpoint = "https://localhost:8443"
-	defaultKeycloakRealm    = "master"
+	defaultKeycloakEndpoint              = "https://localhost:8443"
+	defaultKeycloakRealm                 = "master"
+	defaultKeycloakClientTimeout         = int64(30)
+	defaultKeycloakTLSInsecureSkipVerify = false
 )
 
 func newCmdKeycloakImporter(options ImportOptions) *cobra.Command {
@@ -47,6 +50,18 @@ func newCmdKeycloakImporter(options ImportOptions) *cobra.Command {
 			if len(realm) == 0 {
 				realm = defaultKeycloakRealm
 			}
+			clientTimeout, err := strconv.ParseInt(os.Getenv("KEYCLOAK_CLIENT_TIMEOUT"), 10, 64)
+			if err != nil {
+				clientTimeout = defaultKeycloakClientTimeout
+			}
+			tlsInsecureSkipVerify, err := strconv.ParseBool(os.Getenv("KEYCLOAK_TLS_INSECURE_SKIP_VERIFY"))
+			if err != nil {
+				tlsInsecureSkipVerify = defaultKeycloakTLSInsecureSkipVerify
+			}
+			caCert := os.Getenv("KEYCLOAK_CACERT")
+			if len(caCert) == 0 {
+				caCert = "-"
+			}
 			if len(targets) > 0 {
 				originalPathPattern := options.PathPattern
 				for _, target := range targets {
@@ -54,7 +69,7 @@ func newCmdKeycloakImporter(options ImportOptions) *cobra.Command {
 					log.Println(provider.GetName() + " importing realm " + target)
 					options.PathPattern = originalPathPattern
 					options.PathPattern = strings.Replace(options.PathPattern, "{provider}", "{provider}/"+target, -1)
-					err := Import(provider, options, []string{url, clientID, clientSecret, realm, target})
+					err := Import(provider, options, []string{url, clientID, clientSecret, realm, strconv.FormatInt(clientTimeout, 10), caCert, strconv.FormatBool(tlsInsecureSkipVerify), target})
 					if err != nil {
 						return err
 					}
@@ -62,7 +77,7 @@ func newCmdKeycloakImporter(options ImportOptions) *cobra.Command {
 			} else {
 				provider := newKeycloakProvider()
 				log.Println(provider.GetName() + " importing all realms")
-				err := Import(provider, options, []string{url, clientID, clientSecret, realm, ""})
+				err := Import(provider, options, []string{url, clientID, clientSecret, realm, strconv.FormatInt(clientTimeout, 10), caCert, strconv.FormatBool(tlsInsecureSkipVerify), "-"})
 				if err != nil {
 					return err
 				}

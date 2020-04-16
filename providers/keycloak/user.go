@@ -15,20 +15,11 @@
 package keycloak
 
 import (
-	"errors"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
 )
 
-type UserGenerator struct {
-	KeycloakService
-}
-
-var UserAllowEmptyValues = []string{}
-var UserAdditionalFields = map[string]interface{}{}
-
-func (g UserGenerator) createResources(users []*keycloak.User) []terraform_utils.Resource {
+func (g RealmGenerator) createUserResources(users []*keycloak.User) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
 	for _, user := range users {
 		resources = append(resources, terraform_utils.NewResource(
@@ -39,39 +30,9 @@ func (g UserGenerator) createResources(users []*keycloak.User) []terraform_utils
 			map[string]string{
 				"realm_id": user.RealmId,
 			},
-			UserAllowEmptyValues,
-			UserAdditionalFields,
+			[]string{},
+			map[string]interface{}{},
 		))
 	}
 	return resources
-}
-
-func (g *UserGenerator) InitResources() error {
-	var usersFull []*keycloak.User
-	client, err := keycloak.NewKeycloakClient(g.Args["url"].(string), g.Args["client_id"].(string), g.Args["client_secret"].(string), g.Args["realm"].(string), "", "", true, 5)
-	if err != nil {
-		return errors.New("keycloak: could not connect to Keycloak")
-	}
-	var realms []*keycloak.Realm
-	if g.Args["target"].(string) == "" {
-		realms, err = client.GetRealms()
-		if err != nil {
-			return err
-		}
-	} else {
-		realm, err := client.GetRealm(g.Args["target"].(string))
-		if err != nil {
-			return err
-		}
-		realms = append(realms, realm)
-	}
-	for _, realm := range realms {
-		users, err := client.GetUsers(realm.Id)
-		if err != nil {
-			return err
-		}
-		usersFull = append(usersFull, users...)
-	}
-	g.Resources = g.createResources(usersFull)
-	return nil
 }

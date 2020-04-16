@@ -15,22 +15,11 @@
 package keycloak
 
 import (
-	"errors"
-	"sort"
-	"strings"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
 )
 
-type RoleGenerator struct {
-	KeycloakService
-}
-
-var RoleAllowEmptyValues = []string{}
-var RoleAdditionalFields = map[string]interface{}{}
-
-func (g RoleGenerator) createResources(roles []*keycloak.Role) []terraform_utils.Resource {
+func (g RealmGenerator) createRoleResources(roles []*keycloak.Role) []terraform_utils.Resource {
 	var resources []terraform_utils.Resource
 	for _, role := range roles {
 		resources = append(resources, terraform_utils.NewResource(
@@ -41,84 +30,9 @@ func (g RoleGenerator) createResources(roles []*keycloak.Role) []terraform_utils
 			map[string]string{
 				"realm_id": role.RealmId,
 			},
-			RoleAllowEmptyValues,
-			RoleAdditionalFields,
+			[]string{},
+			map[string]interface{}{},
 		))
 	}
 	return resources
-}
-
-func (g *RoleGenerator) InitResources() error {
-	var rolesFull []*keycloak.Role
-	client, err := keycloak.NewKeycloakClient(g.Args["url"].(string), g.Args["client_id"].(string), g.Args["client_secret"].(string), g.Args["realm"].(string), "", "", true, 5)
-	if err != nil {
-		return errors.New("keycloak: could not connect to Keycloak")
-	}
-	var realms []*keycloak.Realm
-	if g.Args["target"].(string) == "" {
-		realms, err = client.GetRealms()
-		if err != nil {
-			return err
-		}
-	} else {
-		realm, err := client.GetRealm(g.Args["target"].(string))
-		if err != nil {
-			return err
-		}
-		realms = append(realms, realm)
-	}
-	for _, realm := range realms {
-		roles, err := client.GetRealmRoles(realm.Id)
-		if err != nil {
-			return err
-		}
-		openIDClients, err := client.GetOpenidClients(realm.Id, false)
-		if err != nil {
-			return err
-		}
-		mapContainerIDs := map[string]string{}
-		for _, v := range openIDClients {
-			mapContainerIDs[v.Id] = "_" + v.ClientId
-		}
-		mapContainerIDs[realm.Id] = ""
-		clientRoles, err := client.GetClientRoles(realm.Id, openIDClients)
-		if err != nil {
-			return err
-		}
-		roles = append(roles, clientRoles...)
-		for _, role := range roles {
-			role.ContainerId = mapContainerIDs[role.ContainerId]
-		}
-		rolesFull = append(rolesFull, roles...)
-	}
-	g.Resources = g.createResources(rolesFull)
-	return nil
-}
-
-func (g *RoleGenerator) PostConvertHook() error {
-	mapRoleIDs := map[string]string{}
-	for _, r := range g.Resources {
-		if r.InstanceInfo.Type != "keycloak_role" {
-			continue
-		}
-		mapRoleIDs[r.InstanceState.ID] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".id}"
-	}
-	for _, r := range g.Resources {
-		if r.InstanceInfo.Type != "keycloak_role" {
-			continue
-		}
-		if strings.Contains(r.InstanceState.Attributes["description"], "$") {
-			r.Item["description"] = strings.ReplaceAll(r.InstanceState.Attributes["description"], "$", "$$")
-		}
-		if _, exist := r.Item["composite_roles"]; !exist {
-			continue
-		}
-		renamedCompositeRoles := []string{}
-		for _, v := range r.Item["composite_roles"].([]interface{}) {
-			renamedCompositeRoles = append(renamedCompositeRoles, mapRoleIDs[v.(string)])
-		}
-		sort.Strings(renamedCompositeRoles)
-		r.Item["composite_roles"] = renamedCompositeRoles
-	}
-	return nil
 }
