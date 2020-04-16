@@ -117,7 +117,7 @@ func ExportPlanFile(plan *ImportPlan, path, filename string) error {
 		return err
 	}
 
-	f, err := os.OpenFile(planfilePath, os.O_RDWR|os.O_CREATE, os.ModePerm)
+	f, err := os.OpenFile(planfilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, os.ModePerm)
 	if err != nil {
 		return err
 	}
