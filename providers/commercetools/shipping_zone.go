@@ -41,9 +41,14 @@ func (g *ShippingZoneGenerator) InitResources() error {
 		return err
 	}
 	for _, zone := range zones.Results {
+		resourceName := zone.Key
+		if resourceName == "" {
+			resourceName = zone.Name
+		}
+
 		g.Resources = append(g.Resources, terraform_utils.NewResource(
 			zone.ID,
-			zone.Key,
+			resourceName,
 			"commercetools_shipping_zone",
 			"commercetools",
 			map[string]string{},
