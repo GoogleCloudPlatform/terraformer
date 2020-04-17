@@ -82,14 +82,15 @@ func (p *CommercetoolsProvider) InitService(serviceName string, verbose bool) er
 // GetSupportedService return map of support service for Logzio
 func (p *CommercetoolsProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
-		"api_extension": &ApiExtensionGenerator{},
-		"channel":       &ChannelGenerator{},
-		"product_type":  &ProductTypeGenerator{},
-		"shipping_zone": &ShippingZoneGenerator{},
-		"state":         &StateGenerator{},
-		"store":         &StoreGenerator{},
-		"subscription":  &SubscriptionGenerator{},
-		"tax_category":  &TaxCategoryGenerator{},
-		"types":         &TypesGenerator{},
+		"api_extension":   &ApiExtensionGenerator{},
+		"channel":         &ChannelGenerator{},
+		"product_type":    &ProductTypeGenerator{},
+		"shipping_zone":   &ShippingZoneGenerator{},
+		"shipping_method": &ShippingMethodGenerator{},
+		"state":           &StateGenerator{},
+		"store":           &StoreGenerator{},
+		"subscription":    &SubscriptionGenerator{},
+		"tax_category":    &TaxCategoryGenerator{},
+		"types":           &TypesGenerator{},
 	}
 }
