@@ -204,7 +204,7 @@ Links to download Terraform Providers:
 * Community
     * Keycloak provider >=1.12.0 - [here](https://github.com/mrparkers/terraform-provider-keycloak/)
     * Logz.io provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
-    * Commercetools provider >= 0.19.0 - [here](https://github.com/labd/terraform-provider-commercetools)
+    * Commercetools provider >= 0.21.0 - [here](https://github.com/labd/terraform-provider-commercetools)
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
@@ -1263,6 +1263,8 @@ List of supported [commercetools](https://commercetools.com/de/) resources:
     * `commercetools_channel`
 *   `product_type`
     * `commercetools_product_type`
+*   `shipping_method`
+    * `commercetools_shipping_method`
 *   `shipping_zone`
     * `commercetools_shipping_zone`
 *   `state`
