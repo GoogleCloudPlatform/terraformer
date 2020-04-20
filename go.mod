@@ -46,7 +46,7 @@ require (
 	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
 	github.com/jonboydell/logzio_client v1.2.0
 	github.com/jstemmer/go-junit-report v0.9.1 // indirect
-	github.com/labd/commercetools-go-sdk v0.0.0-20190722144546-80b2ca71bd4d
+	github.com/labd/commercetools-go-sdk v0.0.0-20200309143931-ca72e918a79d
 	github.com/linode/linodego v0.12.2
 	github.com/mattn/go-isatty v0.0.11 // indirect
 	github.com/mitchellh/reflectwalk v1.0.1 // indirect
