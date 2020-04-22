@@ -19,7 +19,6 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aws/aws-sdk-go-v2/service/glue"
-	"github.com/aws/aws-sdk-go-v2/service/sts"
 )
 
 type GlueGenerator struct {
@@ -92,12 +91,10 @@ func (g *GlueGenerator) InitResources() error {
 	}
 	svc := glue.New(config)
 
-	stsSvc := sts.New(config)
-	identity, err := stsSvc.GetCallerIdentityRequest(&sts.GetCallerIdentityInput{}).Send(context.Background())
+	account, err := g.getAccountNumber(config)
 	if err != nil {
 		return err
 	}
-	account := identity.Account
 
 	if err := g.loadGlueCrawlers(svc); err != nil {
 		return err

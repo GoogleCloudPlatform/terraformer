@@ -434,6 +434,10 @@ In that case terraformer will not know with which region resources are associate
     * `aws_cognito_user_pool`
 *   `customer_gateway`
     * `aws_customer_gateway`
+*   `config`
+    * `aws_config_config_rule`
+    * `aws_config_configuration_recorder`
+    * `aws_config_delivery_channel`
 *   `datapipeline`
     * `aws_datapipeline_pipeline`
 *   `devicefarm`
@@ -545,6 +549,10 @@ In that case terraformer will not know with which region resources are associate
 *   `s3`
     * `aws_s3_bucket`
     * `aws_s3_bucket_policy`
+*   `securityhub`
+    * `aws_securityhub_account`
+    * `aws_securityhub_member`
+    * `aws_securityhub_standards_subscription`
 *   `ses`
     * `aws_ses_configuration_set`
     * `aws_ses_domain_identity`
