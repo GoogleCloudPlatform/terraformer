@@ -142,6 +142,10 @@ func (r *Resource) ParseTFstate(parser Flatmapper, impliedType cty.Type) error {
 		attributes[key] = value
 	}
 
+	if attributes == nil {
+		attributes = map[string]interface{}{} // ensure HCL can represent empty resource correctly
+	}
+
 	r.Item = attributes
 	return nil
 }

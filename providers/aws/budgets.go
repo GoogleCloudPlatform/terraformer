@@ -21,7 +21,6 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/budgets"
-	"github.com/aws/aws-sdk-go-v2/service/sts"
 )
 
 type BudgetsGenerator struct {
@@ -47,14 +46,12 @@ func (g *BudgetsGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	stsSvc := sts.New(config)
 	budgetsSvc := budgets.New(config)
 
-	identity, err := stsSvc.GetCallerIdentityRequest(&sts.GetCallerIdentityInput{}).Send(context.Background())
+	account, err := g.getAccountNumber(config)
 	if err != nil {
 		return err
 	}
-	account := identity.Account
 
 	output, err := budgetsSvc.DescribeBudgetsRequest(&budgets.DescribeBudgetsInput{AccountId: account}).Send(context.Background())
 	if err != nil {

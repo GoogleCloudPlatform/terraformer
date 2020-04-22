@@ -16,6 +16,7 @@ package aws
 
 import (
 	"context"
+	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"os"
 	"regexp"
 
@@ -75,4 +76,13 @@ func (s *AWSService) buildBaseConfig() (aws.Config, error) {
 // for CF interpolation and IAM Policy variables
 func (_ *AWSService) escapeAwsInterpolation(str string) string {
 	return AWS_VARIABLE.ReplaceAllString(str, "$$$1")
+}
+
+func (s *AWSService) getAccountNumber(config aws.Config) (*string, error) {
+	stsSvc := sts.New(config)
+	identity, err := stsSvc.GetCallerIdentityRequest(&sts.GetCallerIdentityInput{}).Send(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return identity.Account, nil
 }
