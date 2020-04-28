@@ -54,6 +54,13 @@ func mapDiscriminatorCustomerUpdateAction(input interface{}) (CustomerUpdateActi
 			return nil, err
 		}
 		return new, nil
+	case "addStore":
+		new := CustomerAddStoreAction{}
+		err := mapstructure.Decode(input, &new)
+		if err != nil {
+			return nil, err
+		}
+		return new, nil
 	case "changeAddress":
 		new := CustomerChangeAddressAction{}
 		err := mapstructure.Decode(input, &new)
@@ -84,6 +91,13 @@ func mapDiscriminatorCustomerUpdateAction(input interface{}) (CustomerUpdateActi
 		return new, nil
 	case "removeShippingAddressId":
 		new := CustomerRemoveShippingAddressIDAction{}
+		err := mapstructure.Decode(input, &new)
+		if err != nil {
+			return nil, err
+		}
+		return new, nil
+	case "removeStore":
+		new := CustomerRemoveStoreAction{}
 		err := mapstructure.Decode(input, &new)
 		if err != nil {
 			return nil, err
@@ -194,6 +208,13 @@ func mapDiscriminatorCustomerUpdateAction(input interface{}) (CustomerUpdateActi
 			return nil, err
 		}
 		return new, nil
+	case "setStores":
+		new := CustomerSetStoresAction{}
+		err := mapstructure.Decode(input, &new)
+		if err != nil {
+			return nil, err
+		}
+		return new, nil
 	case "setTitle":
 		new := CustomerSetTitleAction{}
 		err := mapstructure.Decode(input, &new)
@@ -212,24 +233,23 @@ func mapDiscriminatorCustomerUpdateAction(input interface{}) (CustomerUpdateActi
 	return nil, nil
 }
 
-// Customer is of type LoggedResource
+// Customer is of type BaseResource
 type Customer struct {
 	Version                  int                     `json:"version"`
-	LastModifiedAt           time.Time               `json:"lastModifiedAt"`
-	ID                       string                  `json:"id"`
-	CreatedAt                time.Time               `json:"createdAt"`
-	LastModifiedBy           *LastModifiedBy         `json:"lastModifiedBy,omitempty"`
-	CreatedBy                *CreatedBy              `json:"createdBy,omitempty"`
 	VatID                    string                  `json:"vatId,omitempty"`
 	Title                    string                  `json:"title,omitempty"`
+	Stores                   []StoreKeyReference     `json:"stores,omitempty"`
 	ShippingAddressIds       []string                `json:"shippingAddressIds,omitempty"`
 	Salutation               string                  `json:"salutation,omitempty"`
 	Password                 string                  `json:"password"`
 	MiddleName               string                  `json:"middleName,omitempty"`
 	Locale                   string                  `json:"locale,omitempty"`
 	LastName                 string                  `json:"lastName,omitempty"`
+	LastModifiedBy           *LastModifiedBy         `json:"lastModifiedBy,omitempty"`
+	LastModifiedAt           time.Time               `json:"lastModifiedAt"`
 	Key                      string                  `json:"key,omitempty"`
 	IsEmailVerified          bool                    `json:"isEmailVerified"`
+	ID                       string                  `json:"id"`
 	FirstName                string                  `json:"firstName,omitempty"`
 	ExternalID               string                  `json:"externalId,omitempty"`
 	Email                    string                  `json:"email"`
@@ -239,6 +259,8 @@ type Customer struct {
 	CustomerNumber           string                  `json:"customerNumber,omitempty"`
 	CustomerGroup            *CustomerGroupReference `json:"customerGroup,omitempty"`
 	Custom                   *CustomFields           `json:"custom,omitempty"`
+	CreatedBy                *CreatedBy              `json:"createdBy,omitempty"`
+	CreatedAt                time.Time               `json:"createdAt"`
 	CompanyName              string                  `json:"companyName,omitempty"`
 	BillingAddressIds        []string                `json:"billingAddressIds,omitempty"`
 	Addresses                []Address               `json:"addresses"`
@@ -284,6 +306,20 @@ func (obj CustomerAddShippingAddressIDAction) MarshalJSON() ([]byte, error) {
 		Action string `json:"action"`
 		*Alias
 	}{Action: "addShippingAddressId", Alias: (*Alias)(&obj)})
+}
+
+// CustomerAddStoreAction implements the interface CustomerUpdateAction
+type CustomerAddStoreAction struct {
+	Store *StoreResourceIdentifier `json:"store"`
+}
+
+// MarshalJSON override to set the discriminator value
+func (obj CustomerAddStoreAction) MarshalJSON() ([]byte, error) {
+	type Alias CustomerAddStoreAction
+	return json.Marshal(struct {
+		Action string `json:"action"`
+		*Alias
+	}{Action: "addStore", Alias: (*Alias)(&obj)})
 }
 
 // CustomerChangeAddressAction implements the interface CustomerUpdateAction
@@ -340,6 +376,7 @@ type CustomerCreatePasswordResetToken struct {
 type CustomerDraft struct {
 	VatID                  string                           `json:"vatId,omitempty"`
 	Title                  string                           `json:"title,omitempty"`
+	Stores                 []StoreResourceIdentifier        `json:"stores,omitempty"`
 	ShippingAddresses      []int                            `json:"shippingAddresses,omitempty"`
 	Salutation             string                           `json:"salutation,omitempty"`
 	Password               string                           `json:"password"`
@@ -375,6 +412,7 @@ type CustomerPagedQueryResponse struct {
 	Total   int        `json:"total,omitempty"`
 	Results []Customer `json:"results"`
 	Offset  int        `json:"offset"`
+	Limit   int        `json:"limit"`
 	Count   int        `json:"count"`
 }
 
@@ -433,6 +471,20 @@ func (obj CustomerRemoveShippingAddressIDAction) MarshalJSON() ([]byte, error) {
 		Action string `json:"action"`
 		*Alias
 	}{Action: "removeShippingAddressId", Alias: (*Alias)(&obj)})
+}
+
+// CustomerRemoveStoreAction implements the interface CustomerUpdateAction
+type CustomerRemoveStoreAction struct {
+	Store *StoreResourceIdentifier `json:"store"`
+}
+
+// MarshalJSON override to set the discriminator value
+func (obj CustomerRemoveStoreAction) MarshalJSON() ([]byte, error) {
+	type Alias CustomerRemoveStoreAction
+	return json.Marshal(struct {
+		Action string `json:"action"`
+		*Alias
+	}{Action: "removeStore", Alias: (*Alias)(&obj)})
 }
 
 // CustomerResetPassword is a standalone struct
@@ -669,6 +721,20 @@ func (obj CustomerSetSalutationAction) MarshalJSON() ([]byte, error) {
 	}{Action: "setSalutation", Alias: (*Alias)(&obj)})
 }
 
+// CustomerSetStoresAction implements the interface CustomerUpdateAction
+type CustomerSetStoresAction struct {
+	Stores []StoreResourceIdentifier `json:"stores,omitempty"`
+}
+
+// MarshalJSON override to set the discriminator value
+func (obj CustomerSetStoresAction) MarshalJSON() ([]byte, error) {
+	type Alias CustomerSetStoresAction
+	return json.Marshal(struct {
+		Action string `json:"action"`
+		*Alias
+	}{Action: "setStores", Alias: (*Alias)(&obj)})
+}
+
 // CustomerSetTitleAction implements the interface CustomerUpdateAction
 type CustomerSetTitleAction struct {
 	Title string `json:"title,omitempty"`
@@ -705,6 +771,7 @@ type CustomerSignInResult struct {
 
 // CustomerSignin is a standalone struct
 type CustomerSignin struct {
+	UpdateProductData       bool                    `json:"updateProductData"`
 	Password                string                  `json:"password"`
 	Email                   string                  `json:"email"`
 	AnonymousID             string                  `json:"anonymousId,omitempty"`

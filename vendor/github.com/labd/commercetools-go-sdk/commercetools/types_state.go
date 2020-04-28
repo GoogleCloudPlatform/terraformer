@@ -112,21 +112,21 @@ func mapDiscriminatorStateUpdateAction(input interface{}) (StateUpdateAction, er
 	return nil, nil
 }
 
-// State is of type LoggedResource
+// State is of type BaseResource
 type State struct {
 	Version        int              `json:"version"`
-	LastModifiedAt time.Time        `json:"lastModifiedAt"`
-	ID             string           `json:"id"`
-	CreatedAt      time.Time        `json:"createdAt"`
-	LastModifiedBy *LastModifiedBy  `json:"lastModifiedBy,omitempty"`
-	CreatedBy      *CreatedBy       `json:"createdBy,omitempty"`
 	Type           StateTypeEnum    `json:"type"`
 	Transitions    []StateReference `json:"transitions,omitempty"`
 	Roles          []StateRoleEnum  `json:"roles,omitempty"`
 	Name           *LocalizedString `json:"name,omitempty"`
+	LastModifiedBy *LastModifiedBy  `json:"lastModifiedBy,omitempty"`
+	LastModifiedAt time.Time        `json:"lastModifiedAt"`
 	Key            string           `json:"key"`
 	Initial        bool             `json:"initial"`
+	ID             string           `json:"id"`
 	Description    *LocalizedString `json:"description,omitempty"`
+	CreatedBy      *CreatedBy       `json:"createdBy,omitempty"`
+	CreatedAt      time.Time        `json:"createdAt"`
 	BuiltIn        bool             `json:"builtIn"`
 }
 
@@ -202,6 +202,7 @@ type StatePagedQueryResponse struct {
 	Total   int     `json:"total,omitempty"`
 	Results []State `json:"results"`
 	Offset  int     `json:"offset"`
+	Limit   int     `json:"limit"`
 	Count   int     `json:"count"`
 }
 

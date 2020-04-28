@@ -65,6 +65,12 @@ func mapDiscriminatorErrorObject(input interface{}) (ErrorObject, error) {
 		if err != nil {
 			return nil, err
 		}
+		if new.ConflictingResource != nil {
+			new.ConflictingResource, err = mapDiscriminatorReference(new.ConflictingResource)
+			if err != nil {
+				return nil, err
+			}
+		}
 		return new, nil
 	case "DuplicateFieldWithConflictingResource":
 		new := DuplicateFieldWithConflictingResourceError{}
@@ -359,9 +365,10 @@ func (obj DuplicateAttributeValuesError) Error() string {
 
 // DuplicateFieldError implements the interface ErrorObject
 type DuplicateFieldError struct {
-	Message        string      `json:"message"`
-	Field          string      `json:"field,omitempty"`
-	DuplicateValue interface{} `json:"duplicateValue,omitempty"`
+	Message             string      `json:"message"`
+	Field               string      `json:"field,omitempty"`
+	DuplicateValue      interface{} `json:"duplicateValue,omitempty"`
+	ConflictingResource Reference   `json:"conflictingResource,omitempty"`
 }
 
 // MarshalJSON override to set the discriminator value
@@ -371,6 +378,24 @@ func (obj DuplicateFieldError) MarshalJSON() ([]byte, error) {
 		Code string `json:"code"`
 		*Alias
 	}{Code: "DuplicateField", Alias: (*Alias)(&obj)})
+}
+
+// UnmarshalJSON override to deserialize correct attribute types based
+// on the discriminator value
+func (obj *DuplicateFieldError) UnmarshalJSON(data []byte) error {
+	type Alias DuplicateFieldError
+	if err := json.Unmarshal(data, (*Alias)(obj)); err != nil {
+		return err
+	}
+	if obj.ConflictingResource != nil {
+		var err error
+		obj.ConflictingResource, err = mapDiscriminatorReference(obj.ConflictingResource)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (obj DuplicateFieldError) Error() string {
@@ -936,7 +961,7 @@ func (obj ShippingMethodDoesNotMatchCartError) Error() string {
 
 // VariantValues is a standalone struct
 type VariantValues struct {
-	SKU        string      `json:"sku,omitempty"`
-	Prices     []Price     `json:"prices"`
-	Attributes []Attribute `json:"attributes"`
+	SKU        string       `json:"sku,omitempty"`
+	Prices     []PriceDraft `json:"prices"`
+	Attributes []Attribute  `json:"attributes"`
 }

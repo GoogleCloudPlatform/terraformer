@@ -43,7 +43,7 @@ better tested for general purpose use.
 ## Syntax
 
 For a complete grammar, please see the parser itself. A high-level overview
-of the syntax and grammar is listed here.
+of the syntax and grammer is listed here.
 
 Code begins within `${` and `}`. Outside of this, text is treated
 literally. For example, `foo` is a valid HIL program that is just the

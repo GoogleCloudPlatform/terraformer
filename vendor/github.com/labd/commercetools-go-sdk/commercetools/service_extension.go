@@ -41,7 +41,7 @@ func (client *Client) ExtensionDeleteWithKey(key string, version int) (result *E
 	return result, nil
 }
 
-// ExtensionGetWithKey for type Extension
+// ExtensionGetWithKey Retrieves the representation of an extension by its key.
 func (client *Client) ExtensionGetWithKey(key string) (result *Extension, err error) {
 	err = client.Get(strings.Replace("extensions/key={key}", "{key}", key, 1), nil, &result)
 	if err != nil {
@@ -78,7 +78,7 @@ func (client *Client) ExtensionDeleteWithID(ID string, version int) (result *Ext
 	return result, nil
 }
 
-// ExtensionGetWithID for type Extension
+// ExtensionGetWithID Retrieves the representation of an extension by its id.
 func (client *Client) ExtensionGetWithID(ID string) (result *Extension, err error) {
 	err = client.Get(strings.Replace("extensions/{ID}", "{ID}", ID, 1), nil, &result)
 	if err != nil {
