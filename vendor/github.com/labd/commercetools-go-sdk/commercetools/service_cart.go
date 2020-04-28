@@ -41,7 +41,10 @@ func (client *Client) CartDeleteWithID(ID string, version int, dataErasure bool)
 	return result, nil
 }
 
-// CartGetWithID for type Cart
+/*
+CartGetWithID The cart may not contain up-to-date prices, discounts etc.
+If you want to ensure they’re up-to-date, send an Update request with the Recalculate update action instead.
+*/
 func (client *Client) CartGetWithID(ID string) (result *Cart, err error) {
 	err = client.Get(strings.Replace("carts/{ID}", "{ID}", ID, 1), nil, &result)
 	if err != nil {

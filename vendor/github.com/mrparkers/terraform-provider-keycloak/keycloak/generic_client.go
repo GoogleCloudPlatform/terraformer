@@ -28,6 +28,19 @@ func (keycloakClient *KeycloakClient) listGenericClients(realmId string) ([]*Gen
 	return clients, nil
 }
 
+func (keycloakClient *KeycloakClient) GetGenericClient(realmId, id string) (*GenericClient, error) {
+	var client GenericClient
+
+	err := keycloakClient.get(fmt.Sprintf("/realms/%s/clients/%s", realmId, id), &client, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	client.RealmId = realmId
+
+	return &client, nil
+}
+
 func (keycloakClient *KeycloakClient) GetGenericClientByClientId(realmId, clientId string) (*GenericClient, error) {
 	var clients []GenericClient
 

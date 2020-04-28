@@ -494,6 +494,38 @@ func mapDiscriminatorTypedMoney(input interface{}) (TypedMoney, error) {
 	return nil, nil
 }
 
+// TypedMoneyDraft uses type as discriminator attribute
+type TypedMoneyDraft interface{}
+
+func mapDiscriminatorTypedMoneyDraft(input interface{}) (TypedMoneyDraft, error) {
+	var discriminator string
+	if data, ok := input.(map[string]interface{}); ok {
+		discriminator, ok = data["type"].(string)
+		if !ok {
+			return nil, errors.New("Error processing discriminator field 'type'")
+		}
+	} else {
+		return nil, errors.New("Invalid data")
+	}
+	switch discriminator {
+	case "centPrecision":
+		new := CentPrecisionMoneyDraft{}
+		err := mapstructure.Decode(input, &new)
+		if err != nil {
+			return nil, err
+		}
+		return new, nil
+	case "highPrecision":
+		new := HighPrecisionMoneyDraft{}
+		err := mapstructure.Decode(input, &new)
+		if err != nil {
+			return nil, err
+		}
+		return new, nil
+	}
+	return nil, nil
+}
+
 // Address is a standalone struct
 type Address struct {
 	Title                 string      `json:"title,omitempty"`
@@ -568,14 +600,29 @@ type BaseResource struct {
 
 // CentPrecisionMoney implements the interface TypedMoney
 type CentPrecisionMoney struct {
+	FractionDigits float64      `json:"fractionDigits"`
 	CurrencyCode   CurrencyCode `json:"currencyCode"`
 	CentAmount     int          `json:"centAmount"`
-	FractionDigits float64      `json:"fractionDigits"`
 }
 
 // MarshalJSON override to set the discriminator value
 func (obj CentPrecisionMoney) MarshalJSON() ([]byte, error) {
 	type Alias CentPrecisionMoney
+	return json.Marshal(struct {
+		Type string `json:"type"`
+		*Alias
+	}{Type: "centPrecision", Alias: (*Alias)(&obj)})
+}
+
+// CentPrecisionMoneyDraft implements the interface TypedMoneyDraft
+type CentPrecisionMoneyDraft struct {
+	CurrencyCode CurrencyCode `json:"currencyCode"`
+	CentAmount   int          `json:"centAmount"`
+}
+
+// MarshalJSON override to set the discriminator value
+func (obj CentPrecisionMoneyDraft) MarshalJSON() ([]byte, error) {
+	type Alias CentPrecisionMoneyDraft
 	return json.Marshal(struct {
 		Type string `json:"type"`
 		*Alias
@@ -620,15 +667,31 @@ func (obj GeoJSONPoint) MarshalJSON() ([]byte, error) {
 
 // HighPrecisionMoney implements the interface TypedMoney
 type HighPrecisionMoney struct {
+	FractionDigits float64      `json:"fractionDigits"`
 	CurrencyCode   CurrencyCode `json:"currencyCode"`
 	CentAmount     int          `json:"centAmount"`
-	FractionDigits float64      `json:"fractionDigits"`
 	PreciseAmount  int          `json:"preciseAmount"`
 }
 
 // MarshalJSON override to set the discriminator value
 func (obj HighPrecisionMoney) MarshalJSON() ([]byte, error) {
 	type Alias HighPrecisionMoney
+	return json.Marshal(struct {
+		Type string `json:"type"`
+		*Alias
+	}{Type: "highPrecision", Alias: (*Alias)(&obj)})
+}
+
+// HighPrecisionMoneyDraft implements the interface TypedMoneyDraft
+type HighPrecisionMoneyDraft struct {
+	CurrencyCode  CurrencyCode `json:"currencyCode"`
+	CentAmount    int          `json:"centAmount"`
+	PreciseAmount int          `json:"preciseAmount"`
+}
+
+// MarshalJSON override to set the discriminator value
+func (obj HighPrecisionMoneyDraft) MarshalJSON() ([]byte, error) {
+	type Alias HighPrecisionMoneyDraft
 	return json.Marshal(struct {
 		Type string `json:"type"`
 		*Alias
@@ -656,16 +719,6 @@ type LastModifiedBy struct {
 	AnonymousID    string             `json:"anonymousId,omitempty"`
 }
 
-// LoggedResource is of type BaseResource
-type LoggedResource struct {
-	Version        int             `json:"version"`
-	LastModifiedAt time.Time       `json:"lastModifiedAt"`
-	ID             string          `json:"id"`
-	CreatedAt      time.Time       `json:"createdAt"`
-	LastModifiedBy *LastModifiedBy `json:"lastModifiedBy,omitempty"`
-	CreatedBy      *CreatedBy      `json:"createdBy,omitempty"`
-}
-
 // Money is a standalone struct
 type Money struct {
 	CurrencyCode CurrencyCode `json:"currencyCode"`
@@ -678,17 +731,18 @@ type PagedQueryResponse struct {
 	Results []BaseResource `json:"results"`
 	Offset  int            `json:"offset"`
 	Meta    interface{}    `json:"meta,omitempty"`
+	Limit   int            `json:"limit"`
 	Facets  *FacetResults  `json:"facets,omitempty"`
 	Count   int            `json:"count"`
 }
 
 // Price is a standalone struct
 type Price struct {
-	Value         *Money                  `json:"value"`
+	Value         TypedMoney              `json:"value"`
 	ValidUntil    *time.Time              `json:"validUntil,omitempty"`
 	ValidFrom     *time.Time              `json:"validFrom,omitempty"`
 	Tiers         []PriceTier             `json:"tiers,omitempty"`
-	ID            string                  `json:"id,omitempty"`
+	ID            string                  `json:"id"`
 	Discounted    *DiscountedPrice        `json:"discounted,omitempty"`
 	CustomerGroup *CustomerGroupReference `json:"customerGroup,omitempty"`
 	Custom        *CustomFields           `json:"custom,omitempty"`
@@ -696,12 +750,31 @@ type Price struct {
 	Channel       *ChannelReference       `json:"channel,omitempty"`
 }
 
+// UnmarshalJSON override to deserialize correct attribute types based
+// on the discriminator value
+func (obj *Price) UnmarshalJSON(data []byte) error {
+	type Alias Price
+	if err := json.Unmarshal(data, (*Alias)(obj)); err != nil {
+		return err
+	}
+	if obj.Value != nil {
+		var err error
+		obj.Value, err = mapDiscriminatorTypedMoney(obj.Value)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // PriceDraft is a standalone struct
 type PriceDraft struct {
 	Value         *Money                           `json:"value"`
 	ValidUntil    *time.Time                       `json:"validUntil,omitempty"`
 	ValidFrom     *time.Time                       `json:"validFrom,omitempty"`
-	Tiers         []PriceTier                      `json:"tiers,omitempty"`
+	Tiers         []PriceTierDraft                 `json:"tiers,omitempty"`
+	Discounted    *DiscountedPrice                 `json:"discounted,omitempty"`
 	CustomerGroup *CustomerGroupResourceIdentifier `json:"customerGroup,omitempty"`
 	Custom        *CustomFieldsDraft               `json:"custom,omitempty"`
 	Country       CountryCode                      `json:"country,omitempty"`
@@ -710,8 +783,46 @@ type PriceDraft struct {
 
 // PriceTier is a standalone struct
 type PriceTier struct {
+	Value           TypedMoney `json:"value"`
+	MinimumQuantity int        `json:"minimumQuantity"`
+}
+
+// UnmarshalJSON override to deserialize correct attribute types based
+// on the discriminator value
+func (obj *PriceTier) UnmarshalJSON(data []byte) error {
+	type Alias PriceTier
+	if err := json.Unmarshal(data, (*Alias)(obj)); err != nil {
+		return err
+	}
+	if obj.Value != nil {
+		var err error
+		obj.Value, err = mapDiscriminatorTypedMoney(obj.Value)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// PriceTierDraft is a standalone struct
+type PriceTierDraft struct {
 	Value           *Money `json:"value"`
 	MinimumQuantity int    `json:"minimumQuantity"`
+}
+
+// QueryPrice is a standalone struct
+type QueryPrice struct {
+	Value         *Money                  `json:"value"`
+	ValidUntil    *time.Time              `json:"validUntil,omitempty"`
+	ValidFrom     *time.Time              `json:"validFrom,omitempty"`
+	Tiers         []PriceTierDraft        `json:"tiers,omitempty"`
+	ID            string                  `json:"id"`
+	Discounted    *DiscountedPrice        `json:"discounted,omitempty"`
+	CustomerGroup *CustomerGroupReference `json:"customerGroup,omitempty"`
+	Custom        *CustomFields           `json:"custom,omitempty"`
+	Country       CountryCode             `json:"country,omitempty"`
+	Channel       *ChannelReference       `json:"channel,omitempty"`
 }
 
 // ScopedPrice is a standalone struct

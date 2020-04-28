@@ -499,19 +499,19 @@ func (obj *FieldDefinition) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-// Type is of type LoggedResource
+// Type is of type BaseResource
 type Type struct {
 	Version          int               `json:"version"`
-	LastModifiedAt   time.Time         `json:"lastModifiedAt"`
-	ID               string            `json:"id"`
-	CreatedAt        time.Time         `json:"createdAt"`
-	LastModifiedBy   *LastModifiedBy   `json:"lastModifiedBy,omitempty"`
-	CreatedBy        *CreatedBy        `json:"createdBy,omitempty"`
 	ResourceTypeIds  []ResourceTypeID  `json:"resourceTypeIds"`
 	Name             *LocalizedString  `json:"name"`
+	LastModifiedBy   *LastModifiedBy   `json:"lastModifiedBy,omitempty"`
+	LastModifiedAt   time.Time         `json:"lastModifiedAt"`
 	Key              string            `json:"key"`
+	ID               string            `json:"id"`
 	FieldDefinitions []FieldDefinition `json:"fieldDefinitions"`
 	Description      *LocalizedString  `json:"description,omitempty"`
+	CreatedBy        *CreatedBy        `json:"createdBy,omitempty"`
+	CreatedAt        time.Time         `json:"createdAt"`
 }
 
 // TypeAddEnumValueAction implements the interface TypeUpdateAction
@@ -719,6 +719,7 @@ type TypePagedQueryResponse struct {
 	Total   int    `json:"total,omitempty"`
 	Results []Type `json:"results"`
 	Offset  int    `json:"offset"`
+	Limit   int    `json:"limit"`
 	Count   int    `json:"count"`
 }
 

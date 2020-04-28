@@ -332,7 +332,6 @@ func (keycloakClient *KeycloakClient) GetLdapUserFederationMappers(realmId, id s
 	if err != nil {
 		return nil, err
 	}
-
 	for _, component := range components {
 		switch component.ProviderId {
 		case "full-name-ldap-mapper":
@@ -343,6 +342,18 @@ func (keycloakClient *KeycloakClient) GetLdapUserFederationMappers(realmId, id s
 			ldapUserFederationMappers = append(ldapUserFederationMappers, mapper)
 		case "group-ldap-mapper":
 			mapper, err := convertFromComponentToLdapGroupMapper(component, realmId)
+			if err != nil {
+				return nil, err
+			}
+			ldapUserFederationMappers = append(ldapUserFederationMappers, mapper)
+		case "hardcoded-ldap-group-mapper":
+			mapper := convertFromComponentToLdapHardcodedGroupMapper(component, realmId)
+			ldapUserFederationMappers = append(ldapUserFederationMappers, mapper)
+		case "hardcoded-ldap-role-mapper":
+			mapper := convertFromComponentToLdapHardcodedRoleMapper(component, realmId)
+			ldapUserFederationMappers = append(ldapUserFederationMappers, mapper)
+		case "msad-lds-user-account-control-mapper":
+			mapper, err := convertFromComponentToLdapMsadLdsUserAccountControlMapper(component, realmId)
 			if err != nil {
 				return nil, err
 			}
@@ -360,7 +371,11 @@ func (keycloakClient *KeycloakClient) GetLdapUserFederationMappers(realmId, id s
 			}
 			ldapUserFederationMappers = append(ldapUserFederationMappers, mapper)
 		case "role-ldap-mapper":
-			// Not supported
+			mapper, err := convertFromComponentToLdapRoleMapper(component, realmId)
+			if err != nil {
+				return nil, err
+			}
+			ldapUserFederationMappers = append(ldapUserFederationMappers, mapper)
 		}
 	}
 

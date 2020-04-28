@@ -189,23 +189,43 @@ func mapDiscriminatorShoppingListUpdateAction(input interface{}) (ShoppingListUp
 	return nil, nil
 }
 
-// ShoppingList is of type LoggedResource
-type ShoppingList struct {
+// MyShoppingList is of type BaseResource
+type MyShoppingList struct {
 	Version                         int                    `json:"version"`
-	LastModifiedAt                  time.Time              `json:"lastModifiedAt"`
-	ID                              string                 `json:"id"`
-	CreatedAt                       time.Time              `json:"createdAt"`
-	LastModifiedBy                  *LastModifiedBy        `json:"lastModifiedBy,omitempty"`
-	CreatedBy                       *CreatedBy             `json:"createdBy,omitempty"`
 	TextLineItems                   []TextLineItem         `json:"textLineItems,omitempty"`
 	Slug                            *LocalizedString       `json:"slug,omitempty"`
 	Name                            *LocalizedString       `json:"name"`
 	LineItems                       []ShoppingListLineItem `json:"lineItems,omitempty"`
+	LastModifiedBy                  *LastModifiedBy        `json:"lastModifiedBy,omitempty"`
+	LastModifiedAt                  time.Time              `json:"lastModifiedAt"`
 	Key                             string                 `json:"key,omitempty"`
+	ID                              string                 `json:"id"`
 	Description                     *LocalizedString       `json:"description,omitempty"`
 	DeleteDaysAfterLastModification int                    `json:"deleteDaysAfterLastModification,omitempty"`
 	Customer                        *CustomerReference     `json:"customer,omitempty"`
 	Custom                          *CustomFields          `json:"custom,omitempty"`
+	CreatedBy                       *CreatedBy             `json:"createdBy,omitempty"`
+	CreatedAt                       time.Time              `json:"createdAt"`
+	AnonymousID                     string                 `json:"anonymousId,omitempty"`
+}
+
+// ShoppingList is of type BaseResource
+type ShoppingList struct {
+	Version                         int                    `json:"version"`
+	TextLineItems                   []TextLineItem         `json:"textLineItems,omitempty"`
+	Slug                            *LocalizedString       `json:"slug,omitempty"`
+	Name                            *LocalizedString       `json:"name"`
+	LineItems                       []ShoppingListLineItem `json:"lineItems,omitempty"`
+	LastModifiedBy                  *LastModifiedBy        `json:"lastModifiedBy,omitempty"`
+	LastModifiedAt                  time.Time              `json:"lastModifiedAt"`
+	Key                             string                 `json:"key,omitempty"`
+	ID                              string                 `json:"id"`
+	Description                     *LocalizedString       `json:"description,omitempty"`
+	DeleteDaysAfterLastModification int                    `json:"deleteDaysAfterLastModification,omitempty"`
+	Customer                        *CustomerReference     `json:"customer,omitempty"`
+	Custom                          *CustomFields          `json:"custom,omitempty"`
+	CreatedBy                       *CreatedBy             `json:"createdBy,omitempty"`
+	CreatedAt                       time.Time              `json:"createdAt"`
 	AnonymousID                     string                 `json:"anonymousId,omitempty"`
 }
 
@@ -377,6 +397,7 @@ type ShoppingListPagedQueryResponse struct {
 	Total   int            `json:"total,omitempty"`
 	Results []ShoppingList `json:"results"`
 	Offset  int            `json:"offset"`
+	Limit   int            `json:"limit"`
 	Count   int            `json:"count"`
 }
 

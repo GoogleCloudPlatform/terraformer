@@ -520,20 +520,20 @@ func (obj FilteredFacetResult) MarshalJSON() ([]byte, error) {
 	}{Type: "filter", Alias: (*Alias)(&obj)})
 }
 
-// Product is of type LoggedResource
+// Product is of type BaseResource
 type Product struct {
 	Version                int                     `json:"version"`
-	LastModifiedAt         time.Time               `json:"lastModifiedAt"`
-	ID                     string                  `json:"id"`
-	CreatedAt              time.Time               `json:"createdAt"`
-	LastModifiedBy         *LastModifiedBy         `json:"lastModifiedBy,omitempty"`
-	CreatedBy              *CreatedBy              `json:"createdBy,omitempty"`
 	TaxCategory            *TaxCategoryReference   `json:"taxCategory,omitempty"`
 	State                  *StateReference         `json:"state,omitempty"`
 	ReviewRatingStatistics *ReviewRatingStatistics `json:"reviewRatingStatistics,omitempty"`
 	ProductType            *ProductTypeReference   `json:"productType"`
 	MasterData             *ProductCatalogData     `json:"masterData"`
+	LastModifiedBy         *LastModifiedBy         `json:"lastModifiedBy,omitempty"`
+	LastModifiedAt         time.Time               `json:"lastModifiedAt"`
 	Key                    string                  `json:"key,omitempty"`
+	ID                     string                  `json:"id"`
+	CreatedBy              *CreatedBy              `json:"createdBy,omitempty"`
+	CreatedAt              time.Time               `json:"createdAt"`
 }
 
 // ProductAddAssetAction implements the interface ProductUpdateAction
@@ -803,15 +803,15 @@ type ProductPagedQueryResponse struct {
 	Total   int       `json:"total,omitempty"`
 	Results []Product `json:"results"`
 	Offset  int       `json:"offset"`
+	Limit   int       `json:"limit"`
 	Count   int       `json:"count"`
 }
 
 // ProductProjection is of type BaseResource
 type ProductProjection struct {
-	Version                int                     `json:"version"`
 	LastModifiedAt         time.Time               `json:"lastModifiedAt"`
-	ID                     string                  `json:"id"`
 	CreatedAt              time.Time               `json:"createdAt"`
+	Version                int                     `json:"version"`
 	Variants               []ProductVariant        `json:"variants"`
 	TaxCategory            *TaxCategoryReference   `json:"taxCategory,omitempty"`
 	State                  *StateReference         `json:"state,omitempty"`
@@ -826,6 +826,7 @@ type ProductProjection struct {
 	MetaDescription        *LocalizedString        `json:"metaDescription,omitempty"`
 	MasterVariant          *ProductVariant         `json:"masterVariant"`
 	Key                    string                  `json:"key,omitempty"`
+	ID                     string                  `json:"id"`
 	HasStagedChanges       bool                    `json:"hasStagedChanges"`
 	Description            *LocalizedString        `json:"description,omitempty"`
 	CategoryOrderHints     *CategoryOrderHints     `json:"categoryOrderHints,omitempty"`
@@ -837,6 +838,7 @@ type ProductProjectionPagedQueryResponse struct {
 	Total   int                 `json:"total,omitempty"`
 	Results []ProductProjection `json:"results"`
 	Offset  int                 `json:"offset"`
+	Limit   int                 `json:"limit"`
 	Count   int                 `json:"count"`
 }
 

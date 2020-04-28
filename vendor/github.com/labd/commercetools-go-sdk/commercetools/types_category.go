@@ -182,14 +182,9 @@ func mapDiscriminatorCategoryUpdateAction(input interface{}) (CategoryUpdateActi
 	return nil, nil
 }
 
-// Category is of type LoggedResource
+// Category is of type BaseResource
 type Category struct {
 	Version         int                 `json:"version"`
-	LastModifiedAt  time.Time           `json:"lastModifiedAt"`
-	ID              string              `json:"id"`
-	CreatedAt       time.Time           `json:"createdAt"`
-	LastModifiedBy  *LastModifiedBy     `json:"lastModifiedBy,omitempty"`
-	CreatedBy       *CreatedBy          `json:"createdBy,omitempty"`
 	Slug            *LocalizedString    `json:"slug"`
 	Parent          *CategoryReference  `json:"parent,omitempty"`
 	OrderHint       string              `json:"orderHint"`
@@ -197,10 +192,15 @@ type Category struct {
 	MetaTitle       *LocalizedString    `json:"metaTitle,omitempty"`
 	MetaKeywords    *LocalizedString    `json:"metaKeywords,omitempty"`
 	MetaDescription *LocalizedString    `json:"metaDescription,omitempty"`
+	LastModifiedBy  *LastModifiedBy     `json:"lastModifiedBy,omitempty"`
+	LastModifiedAt  time.Time           `json:"lastModifiedAt"`
 	Key             string              `json:"key,omitempty"`
+	ID              string              `json:"id"`
 	ExternalID      string              `json:"externalId,omitempty"`
 	Description     *LocalizedString    `json:"description,omitempty"`
 	Custom          *CustomFields       `json:"custom,omitempty"`
+	CreatedBy       *CreatedBy          `json:"createdBy,omitempty"`
+	CreatedAt       time.Time           `json:"createdAt"`
 	Assets          []Asset             `json:"assets,omitempty"`
 	Ancestors       []CategoryReference `json:"ancestors"`
 }
@@ -327,6 +327,7 @@ type CategoryPagedQueryResponse struct {
 	Total   int        `json:"total,omitempty"`
 	Results []Category `json:"results"`
 	Offset  int        `json:"offset"`
+	Limit   int        `json:"limit"`
 	Count   int        `json:"count"`
 }
 

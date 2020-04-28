@@ -189,6 +189,7 @@ github.com/aws/aws-sdk-go-v2/service/codedeploy
 github.com/aws/aws-sdk-go-v2/service/codepipeline
 github.com/aws/aws-sdk-go-v2/service/cognitoidentity
 github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider
+github.com/aws/aws-sdk-go-v2/service/configservice
 github.com/aws/aws-sdk-go-v2/service/datapipeline
 github.com/aws/aws-sdk-go-v2/service/devicefarm
 github.com/aws/aws-sdk-go-v2/service/dynamodb
@@ -220,6 +221,8 @@ github.com/aws/aws-sdk-go-v2/service/route53
 github.com/aws/aws-sdk-go-v2/service/s3
 github.com/aws/aws-sdk-go-v2/service/s3/internal/arn
 github.com/aws/aws-sdk-go-v2/service/s3/internal/external
+github.com/aws/aws-sdk-go-v2/service/secretsmanager
+github.com/aws/aws-sdk-go-v2/service/securityhub
 github.com/aws/aws-sdk-go-v2/service/ses
 github.com/aws/aws-sdk-go-v2/service/sfn
 github.com/aws/aws-sdk-go-v2/service/sns
@@ -397,13 +400,7 @@ github.com/hashicorp/hcl/v2/hclwrite
 github.com/hashicorp/hcl/v2/json
 # github.com/hashicorp/hcl2 v0.0.0-20191002203319-fb75b3253c80
 ## explicit
-github.com/hashicorp/hcl2/gohcl
-github.com/hashicorp/hcl2/hcl
-github.com/hashicorp/hcl2/hcl/hclsyntax
-github.com/hashicorp/hcl2/hcl/json
-github.com/hashicorp/hcl2/hclparse
-github.com/hashicorp/hcl2/hclwrite
-# github.com/hashicorp/hil v0.0.0-20190212132231-97b3a9cdfa93
+# github.com/hashicorp/hil v0.0.0-20190212112733-ab17b08d6590
 github.com/hashicorp/hil
 github.com/hashicorp/hil/ast
 github.com/hashicorp/hil/parser
@@ -452,7 +449,7 @@ github.com/hashicorp/terraform/states/statefile
 github.com/hashicorp/terraform/terraform
 github.com/hashicorp/terraform/tfdiags
 github.com/hashicorp/terraform/version
-# github.com/hashicorp/terraform-config-inspect v0.0.0-20190821133035-82a99dc22ef4
+# github.com/hashicorp/terraform-config-inspect v0.0.0-20191115094559-17f92b0546e8
 github.com/hashicorp/terraform-config-inspect/tfconfig
 # github.com/hashicorp/terraform-svchost v0.0.0-20191119180714-d2e4933b9136
 ## explicit
@@ -488,7 +485,7 @@ github.com/json-iterator/go
 github.com/jstemmer/go-junit-report
 github.com/jstemmer/go-junit-report/formatter
 github.com/jstemmer/go-junit-report/parser
-# github.com/labd/commercetools-go-sdk v0.0.0-20190722144546-80b2ca71bd4d
+# github.com/labd/commercetools-go-sdk v0.0.0-20200309143931-ca72e918a79d
 ## explicit
 github.com/labd/commercetools-go-sdk/commercetools
 # github.com/linode/linodego v0.12.2

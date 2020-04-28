@@ -84,20 +84,20 @@ func mapDiscriminatorInventoryEntryUpdateAction(input interface{}) (InventoryEnt
 	return nil, nil
 }
 
-// InventoryEntry is of type LoggedResource
+// InventoryEntry is of type BaseResource
 type InventoryEntry struct {
 	Version           int                        `json:"version"`
-	LastModifiedAt    time.Time                  `json:"lastModifiedAt"`
-	ID                string                     `json:"id"`
-	CreatedAt         time.Time                  `json:"createdAt"`
-	LastModifiedBy    *LastModifiedBy            `json:"lastModifiedBy,omitempty"`
-	CreatedBy         *CreatedBy                 `json:"createdBy,omitempty"`
 	SupplyChannel     *ChannelResourceIdentifier `json:"supplyChannel,omitempty"`
 	SKU               string                     `json:"sku"`
 	RestockableInDays int                        `json:"restockableInDays,omitempty"`
 	QuantityOnStock   int                        `json:"quantityOnStock"`
+	LastModifiedBy    *LastModifiedBy            `json:"lastModifiedBy,omitempty"`
+	LastModifiedAt    time.Time                  `json:"lastModifiedAt"`
+	ID                string                     `json:"id"`
 	ExpectedDelivery  *time.Time                 `json:"expectedDelivery,omitempty"`
 	Custom            *CustomFields              `json:"custom,omitempty"`
+	CreatedBy         *CreatedBy                 `json:"createdBy,omitempty"`
+	CreatedAt         time.Time                  `json:"createdAt"`
 	AvailableQuantity int                        `json:"availableQuantity"`
 }
 
@@ -284,5 +284,6 @@ type InventoryPagedQueryResponse struct {
 	Total   int              `json:"total,omitempty"`
 	Results []InventoryEntry `json:"results"`
 	Offset  int              `json:"offset"`
+	Limit   int              `json:"limit"`
 	Count   int              `json:"count"`
 }

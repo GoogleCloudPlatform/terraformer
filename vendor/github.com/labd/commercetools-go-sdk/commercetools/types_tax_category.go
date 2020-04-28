@@ -76,18 +76,18 @@ type SubRate struct {
 	Amount *float64 `json:"amount"`
 }
 
-// TaxCategory is of type LoggedResource
+// TaxCategory is of type BaseResource
 type TaxCategory struct {
 	Version        int             `json:"version"`
-	LastModifiedAt time.Time       `json:"lastModifiedAt"`
-	ID             string          `json:"id"`
-	CreatedAt      time.Time       `json:"createdAt"`
-	LastModifiedBy *LastModifiedBy `json:"lastModifiedBy,omitempty"`
-	CreatedBy      *CreatedBy      `json:"createdBy,omitempty"`
 	Rates          []TaxRate       `json:"rates"`
 	Name           string          `json:"name"`
+	LastModifiedBy *LastModifiedBy `json:"lastModifiedBy,omitempty"`
+	LastModifiedAt time.Time       `json:"lastModifiedAt"`
 	Key            string          `json:"key,omitempty"`
+	ID             string          `json:"id"`
 	Description    string          `json:"description,omitempty"`
+	CreatedBy      *CreatedBy      `json:"createdBy,omitempty"`
+	CreatedAt      time.Time       `json:"createdAt"`
 }
 
 // TaxCategoryAddTaxRateAction implements the interface TaxCategoryUpdateAction
@@ -131,6 +131,7 @@ type TaxCategoryPagedQueryResponse struct {
 	Total   int           `json:"total,omitempty"`
 	Results []TaxCategory `json:"results"`
 	Offset  int           `json:"offset"`
+	Limit   int           `json:"limit"`
 	Count   int           `json:"count"`
 }
 

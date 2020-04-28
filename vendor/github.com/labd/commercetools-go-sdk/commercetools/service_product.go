@@ -41,7 +41,7 @@ func (client *Client) ProductDeleteWithKey(key string, version int) (result *Pro
 	return result, nil
 }
 
-// ProductGetWithKey for type Product
+// ProductGetWithKey Gets the full representation of a product by Key.
 func (client *Client) ProductGetWithKey(key string) (result *Product, err error) {
 	err = client.Get(strings.Replace("products/key={key}", "{key}", key, 1), nil, &result)
 	if err != nil {
@@ -78,7 +78,7 @@ func (client *Client) ProductDeleteWithID(ID string, version int) (result *Produ
 	return result, nil
 }
 
-// ProductGetWithID for type Product
+// ProductGetWithID Gets the full representation of a product by ID.
 func (client *Client) ProductGetWithID(ID string) (result *Product, err error) {
 	err = client.Get(strings.Replace("products/{ID}", "{ID}", ID, 1), nil, &result)
 	if err != nil {

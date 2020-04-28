@@ -157,7 +157,7 @@ func mapDiscriminatorCartDiscountUpdateAction(input interface{}) (CartDiscountUp
 			return nil, err
 		}
 		if new.Value != nil {
-			new.Value, err = mapDiscriminatorCartDiscountValue(new.Value)
+			new.Value, err = mapDiscriminatorCartDiscountValueDraft(new.Value)
 			if err != nil {
 				return nil, err
 			}
@@ -236,6 +236,9 @@ func mapDiscriminatorCartDiscountValue(input interface{}) (CartDiscountValue, er
 		if err != nil {
 			return nil, err
 		}
+		for i := range new.Money {
+			new.Money[i], err = mapDiscriminatorTypedMoney(new.Money[i])
+		}
 		return new, nil
 	case "giftLineItem":
 		new := CartDiscountValueGiftLineItem{}
@@ -255,14 +258,48 @@ func mapDiscriminatorCartDiscountValue(input interface{}) (CartDiscountValue, er
 	return nil, nil
 }
 
-// CartDiscount is of type LoggedResource
+// CartDiscountValueDraft uses type as discriminator attribute
+type CartDiscountValueDraft interface{}
+
+func mapDiscriminatorCartDiscountValueDraft(input interface{}) (CartDiscountValueDraft, error) {
+	var discriminator string
+	if data, ok := input.(map[string]interface{}); ok {
+		discriminator, ok = data["type"].(string)
+		if !ok {
+			return nil, errors.New("Error processing discriminator field 'type'")
+		}
+	} else {
+		return nil, errors.New("Invalid data")
+	}
+	switch discriminator {
+	case "absolute":
+		new := CartDiscountValueAbsoluteDraft{}
+		err := mapstructure.Decode(input, &new)
+		if err != nil {
+			return nil, err
+		}
+		return new, nil
+	case "giftLineItem":
+		new := CartDiscountValueGiftLineItemDraft{}
+		err := mapstructure.Decode(input, &new)
+		if err != nil {
+			return nil, err
+		}
+		return new, nil
+	case "relative":
+		new := CartDiscountValueRelativeDraft{}
+		err := mapstructure.Decode(input, &new)
+		if err != nil {
+			return nil, err
+		}
+		return new, nil
+	}
+	return nil, nil
+}
+
+// CartDiscount is of type BaseResource
 type CartDiscount struct {
 	Version              int                `json:"version"`
-	LastModifiedAt       time.Time          `json:"lastModifiedAt"`
-	ID                   string             `json:"id"`
-	CreatedAt            time.Time          `json:"createdAt"`
-	LastModifiedBy       *LastModifiedBy    `json:"lastModifiedBy,omitempty"`
-	CreatedBy            *CreatedBy         `json:"createdBy,omitempty"`
 	Value                CartDiscountValue  `json:"value"`
 	ValidUntil           *time.Time         `json:"validUntil,omitempty"`
 	ValidFrom            *time.Time         `json:"validFrom,omitempty"`
@@ -272,10 +309,15 @@ type CartDiscount struct {
 	RequiresDiscountCode bool               `json:"requiresDiscountCode"`
 	References           []Reference        `json:"references"`
 	Name                 *LocalizedString   `json:"name"`
+	LastModifiedBy       *LastModifiedBy    `json:"lastModifiedBy,omitempty"`
+	LastModifiedAt       time.Time          `json:"lastModifiedAt"`
 	Key                  string             `json:"key,omitempty"`
 	IsActive             bool               `json:"isActive"`
+	ID                   string             `json:"id"`
 	Description          *LocalizedString   `json:"description,omitempty"`
 	Custom               *CustomFields      `json:"custom,omitempty"`
+	CreatedBy            *CreatedBy         `json:"createdBy,omitempty"`
+	CreatedAt            time.Time          `json:"createdAt"`
 	CartPredicate        string             `json:"cartPredicate"`
 }
 
@@ -429,7 +471,7 @@ func (obj *CartDiscountChangeTargetAction) UnmarshalJSON(data []byte) error {
 
 // CartDiscountChangeValueAction implements the interface CartDiscountUpdateAction
 type CartDiscountChangeValueAction struct {
-	Value CartDiscountValue `json:"value"`
+	Value CartDiscountValueDraft `json:"value"`
 }
 
 // MarshalJSON override to set the discriminator value
@@ -450,7 +492,7 @@ func (obj *CartDiscountChangeValueAction) UnmarshalJSON(data []byte) error {
 	}
 	if obj.Value != nil {
 		var err error
-		obj.Value, err = mapDiscriminatorCartDiscountValue(obj.Value)
+		obj.Value, err = mapDiscriminatorCartDiscountValueDraft(obj.Value)
 		if err != nil {
 			return err
 		}
@@ -475,19 +517,19 @@ func (obj CartDiscountCustomLineItemsTarget) MarshalJSON() ([]byte, error) {
 
 // CartDiscountDraft is a standalone struct
 type CartDiscountDraft struct {
-	Value                CartDiscountValue  `json:"value"`
-	ValidUntil           *time.Time         `json:"validUntil,omitempty"`
-	ValidFrom            *time.Time         `json:"validFrom,omitempty"`
-	Target               CartDiscountTarget `json:"target,omitempty"`
-	StackingMode         StackingMode       `json:"stackingMode,omitempty"`
-	SortOrder            string             `json:"sortOrder"`
-	RequiresDiscountCode bool               `json:"requiresDiscountCode"`
-	Name                 *LocalizedString   `json:"name"`
-	Key                  string             `json:"key,omitempty"`
-	IsActive             bool               `json:"isActive"`
-	Description          *LocalizedString   `json:"description,omitempty"`
-	Custom               *CustomFields      `json:"custom,omitempty"`
-	CartPredicate        string             `json:"cartPredicate"`
+	Value                CartDiscountValueDraft `json:"value"`
+	ValidUntil           *time.Time             `json:"validUntil,omitempty"`
+	ValidFrom            *time.Time             `json:"validFrom,omitempty"`
+	Target               CartDiscountTarget     `json:"target,omitempty"`
+	StackingMode         StackingMode           `json:"stackingMode,omitempty"`
+	SortOrder            string                 `json:"sortOrder"`
+	RequiresDiscountCode bool                   `json:"requiresDiscountCode"`
+	Name                 *LocalizedString       `json:"name"`
+	Key                  string                 `json:"key,omitempty"`
+	IsActive             bool                   `json:"isActive"`
+	Description          *LocalizedString       `json:"description,omitempty"`
+	Custom               *CustomFields          `json:"custom,omitempty"`
+	CartPredicate        string                 `json:"cartPredicate"`
 }
 
 // UnmarshalJSON override to deserialize correct attribute types based
@@ -506,7 +548,7 @@ func (obj *CartDiscountDraft) UnmarshalJSON(data []byte) error {
 	}
 	if obj.Value != nil {
 		var err error
-		obj.Value, err = mapDiscriminatorCartDiscountValue(obj.Value)
+		obj.Value, err = mapDiscriminatorCartDiscountValueDraft(obj.Value)
 		if err != nil {
 			return err
 		}
@@ -534,6 +576,7 @@ type CartDiscountPagedQueryResponse struct {
 	Total   int            `json:"total,omitempty"`
 	Results []CartDiscount `json:"results"`
 	Offset  int            `json:"offset"`
+	Limit   int            `json:"limit"`
 	Count   int            `json:"count"`
 }
 
@@ -706,12 +749,44 @@ func (obj *CartDiscountUpdate) UnmarshalJSON(data []byte) error {
 
 // CartDiscountValueAbsolute implements the interface CartDiscountValue
 type CartDiscountValueAbsolute struct {
-	Money []Money `json:"money"`
+	Money []TypedMoney `json:"money"`
 }
 
 // MarshalJSON override to set the discriminator value
 func (obj CartDiscountValueAbsolute) MarshalJSON() ([]byte, error) {
 	type Alias CartDiscountValueAbsolute
+	return json.Marshal(struct {
+		Type string `json:"type"`
+		*Alias
+	}{Type: "absolute", Alias: (*Alias)(&obj)})
+}
+
+// UnmarshalJSON override to deserialize correct attribute types based
+// on the discriminator value
+func (obj *CartDiscountValueAbsolute) UnmarshalJSON(data []byte) error {
+	type Alias CartDiscountValueAbsolute
+	if err := json.Unmarshal(data, (*Alias)(obj)); err != nil {
+		return err
+	}
+	for i := range obj.Money {
+		var err error
+		obj.Money[i], err = mapDiscriminatorTypedMoney(obj.Money[i])
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// CartDiscountValueAbsoluteDraft implements the interface CartDiscountValueDraft
+type CartDiscountValueAbsoluteDraft struct {
+	Money []Money `json:"money"`
+}
+
+// MarshalJSON override to set the discriminator value
+func (obj CartDiscountValueAbsoluteDraft) MarshalJSON() ([]byte, error) {
+	type Alias CartDiscountValueAbsoluteDraft
 	return json.Marshal(struct {
 		Type string `json:"type"`
 		*Alias
@@ -735,6 +810,23 @@ func (obj CartDiscountValueGiftLineItem) MarshalJSON() ([]byte, error) {
 	}{Type: "giftLineItem", Alias: (*Alias)(&obj)})
 }
 
+// CartDiscountValueGiftLineItemDraft implements the interface CartDiscountValueDraft
+type CartDiscountValueGiftLineItemDraft struct {
+	VariantID           int               `json:"variantId"`
+	SupplyChannel       *ChannelReference `json:"supplyChannel,omitempty"`
+	Product             *ProductReference `json:"product"`
+	DistributionChannel *ChannelReference `json:"distributionChannel,omitempty"`
+}
+
+// MarshalJSON override to set the discriminator value
+func (obj CartDiscountValueGiftLineItemDraft) MarshalJSON() ([]byte, error) {
+	type Alias CartDiscountValueGiftLineItemDraft
+	return json.Marshal(struct {
+		Type string `json:"type"`
+		*Alias
+	}{Type: "giftLineItem", Alias: (*Alias)(&obj)})
+}
+
 // CartDiscountValueRelative implements the interface CartDiscountValue
 type CartDiscountValueRelative struct {
 	Permyriad int `json:"permyriad"`
@@ -743,6 +835,20 @@ type CartDiscountValueRelative struct {
 // MarshalJSON override to set the discriminator value
 func (obj CartDiscountValueRelative) MarshalJSON() ([]byte, error) {
 	type Alias CartDiscountValueRelative
+	return json.Marshal(struct {
+		Type string `json:"type"`
+		*Alias
+	}{Type: "relative", Alias: (*Alias)(&obj)})
+}
+
+// CartDiscountValueRelativeDraft implements the interface CartDiscountValueDraft
+type CartDiscountValueRelativeDraft struct {
+	Permyriad int `json:"permyriad"`
+}
+
+// MarshalJSON override to set the discriminator value
+func (obj CartDiscountValueRelativeDraft) MarshalJSON() ([]byte, error) {
+	type Alias CartDiscountValueRelativeDraft
 	return json.Marshal(struct {
 		Type string `json:"type"`
 		*Alias

@@ -2,9 +2,10 @@ package keycloak
 
 import (
 	"bytes"
+	"crypto/tls"
+	"crypto/x509"
 	"encoding/json"
 	"fmt"
-	"golang.org/x/net/publicsuffix"
 	"io"
 	"io/ioutil"
 	"log"
@@ -14,6 +15,8 @@ import (
 	"net/url"
 	"strings"
 	"time"
+
+	"golang.org/x/net/publicsuffix"
 )
 
 type KeycloakClient struct {
@@ -40,7 +43,7 @@ const (
 	tokenUrl = "%s/auth/realms/%s/protocol/openid-connect/token"
 )
 
-func NewKeycloakClient(baseUrl, clientId, clientSecret, realm, username, password string, initialLogin bool, clientTimeout int) (*KeycloakClient, error) {
+func NewKeycloakClient(baseUrl, clientId, clientSecret, realm, username, password string, initialLogin bool, clientTimeout int, caCert string, tlsInsecureSkipVerify bool) (*KeycloakClient, error) {
 	cookieJar, err := cookiejar.New(&cookiejar.Options{
 		PublicSuffixList: publicsuffix.List,
 	})
@@ -48,10 +51,25 @@ func NewKeycloakClient(baseUrl, clientId, clientSecret, realm, username, passwor
 	if err != nil {
 		return nil, err
 	}
+	transport := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: tlsInsecureSkipVerify},
+		Proxy:           http.ProxyFromEnvironment,
+	}
 
 	httpClient := &http.Client{
-		Timeout: time.Second * time.Duration(clientTimeout),
-		Jar:     cookieJar,
+		Timeout:   time.Second * time.Duration(clientTimeout),
+		Transport: transport,
+		Jar:       cookieJar,
+	}
+
+	if caCert != "" {
+		caCertPool := x509.NewCertPool()
+		caCertPool.AppendCertsFromPEM([]byte(caCert))
+		httpClient.Transport = &http.Transport{
+			TLSClientConfig: &tls.Config{
+				RootCAs: caCertPool,
+			},
+		}
 	}
 	clientCredentials := &ClientCredentials{
 		ClientId:     clientId,
@@ -278,11 +296,19 @@ func (keycloakClient *KeycloakClient) sendRequest(request *http.Request) ([]byte
 }
 
 func (keycloakClient *KeycloakClient) get(path string, resource interface{}, params map[string]string) error {
+	body, err := keycloakClient.getRaw(path, params)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(body, resource)
+}
+
+func (keycloakClient *KeycloakClient) getRaw(path string, params map[string]string) ([]byte, error) {
 	resourceUrl := keycloakClient.baseUrl + apiUrl + path
 
 	request, err := http.NewRequest(http.MethodGet, resourceUrl, nil)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if params != nil {
@@ -294,11 +320,7 @@ func (keycloakClient *KeycloakClient) get(path string, resource interface{}, par
 	}
 
 	body, _, err := keycloakClient.sendRequest(request)
-	if err != nil {
-		return err
-	}
-
-	return json.Unmarshal(body, resource)
+	return body, err
 }
 
 func (keycloakClient *KeycloakClient) post(path string, requestBody interface{}) ([]byte, string, error) {

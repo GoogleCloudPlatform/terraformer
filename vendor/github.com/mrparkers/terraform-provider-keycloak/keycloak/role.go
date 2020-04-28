@@ -3,7 +3,7 @@ package keycloak
 import (
 	"fmt"
 	"log"
-	"strings"
+	"net/url"
 )
 
 type Role struct {
@@ -36,22 +36,22 @@ func roleByNameUrl(realmId, clientId string) string {
 }
 
 func (keycloakClient *KeycloakClient) CreateRole(role *Role) error {
-	url := roleByNameUrl(role.RealmId, role.ClientId)
+	roleUrl := roleByNameUrl(role.RealmId, role.ClientId)
 
 	if role.ClientId != "" {
 		role.ContainerId = role.ClientId
 		role.ClientRole = true
 	}
 
-	_, _, err := keycloakClient.post(url, role)
+	_, _, err := keycloakClient.post(roleUrl, role)
 	if err != nil {
 		return err
 	}
 
 	var createdRole Role
-	var roleName = strings.Replace(role.Name, "/", "%2F", -2)
+	var roleName = url.PathEscape(role.Name)
 
-	err = keycloakClient.get(fmt.Sprintf("%s/%s", url, roleName), &createdRole, nil)
+	err = keycloakClient.get(fmt.Sprintf("%s/%s", roleUrl, roleName), &createdRole, nil)
 	if err != nil {
 		return err
 	}
@@ -137,7 +137,7 @@ func (keycloakClient *KeycloakClient) GetRole(realmId, id string) (*Role, error)
 
 func (keycloakClient *KeycloakClient) GetRoleByName(realmId, clientId, name string) (*Role, error) {
 	var role Role
-	var roleName = strings.Replace(name, "/", "%2F", -2)
+	var roleName = url.PathEscape(name)
 
 	err := keycloakClient.get(fmt.Sprintf("%s/%s", roleByNameUrl(realmId, clientId), roleName), &role, nil)
 	if err != nil {

@@ -41,7 +41,7 @@ func (client *Client) ShoppingListDeleteWithKey(key string, version int, dataEra
 	return result, nil
 }
 
-// ShoppingListGetWithKey for type ShoppingList
+// ShoppingListGetWithKey Gets a shopping list by Key.
 func (client *Client) ShoppingListGetWithKey(key string) (result *ShoppingList, err error) {
 	err = client.Get(strings.Replace("shopping-lists/key={key}", "{key}", key, 1), nil, &result)
 	if err != nil {
@@ -57,7 +57,7 @@ type ShoppingListUpdateWithKeyInput struct {
 	Actions []ShoppingListUpdateAction
 }
 
-// ShoppingListUpdateWithKey for type ShoppingList
+// ShoppingListUpdateWithKey Update a shopping list found by its Key.
 func (client *Client) ShoppingListUpdateWithKey(input *ShoppingListUpdateWithKeyInput) (result *ShoppingList, err error) {
 	err = client.Update(strings.Replace("shopping-lists/key={key}", "{key}", input.Key, 1), nil, input.Version, input.Actions, &result)
 	if err != nil {
@@ -78,7 +78,7 @@ func (client *Client) ShoppingListDeleteWithID(ID string, version int, dataErasu
 	return result, nil
 }
 
-// ShoppingListGetWithID for type ShoppingList
+// ShoppingListGetWithID Gets a shopping list by ID.
 func (client *Client) ShoppingListGetWithID(ID string) (result *ShoppingList, err error) {
 	err = client.Get(strings.Replace("shopping-lists/{ID}", "{ID}", ID, 1), nil, &result)
 	if err != nil {

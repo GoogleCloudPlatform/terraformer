@@ -14,6 +14,7 @@ type Group struct {
 	SubGroups   []*Group            `json:"subGroups,omitempty"`
 	RealmRoles  []string            `json:"realmRoles,omitempty"`
 	ClientRoles map[string][]string `json:"clientRoles,omitempty"`
+	Attributes  map[string][]string `json:"attributes"`
 }
 
 /*
