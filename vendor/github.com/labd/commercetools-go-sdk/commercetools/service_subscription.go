@@ -41,7 +41,7 @@ func (client *Client) SubscriptionDeleteWithKey(key string, version int) (result
 	return result, nil
 }
 
-// SubscriptionGetWithKey for type Subscription
+// SubscriptionGetWithKey Retrieves the representation of a subscription by its key.
 func (client *Client) SubscriptionGetWithKey(key string) (result *Subscription, err error) {
 	err = client.Get(strings.Replace("subscriptions/key={key}", "{key}", key, 1), nil, &result)
 	if err != nil {
@@ -78,7 +78,7 @@ func (client *Client) SubscriptionDeleteWithID(ID string, version int) (result *
 	return result, nil
 }
 
-// SubscriptionGetWithID for type Subscription
+// SubscriptionGetWithID Retrieves the representation of a subscription by its id.
 func (client *Client) SubscriptionGetWithID(ID string) (result *Subscription, err error) {
 	err = client.Get(strings.Replace("subscriptions/{ID}", "{ID}", ID, 1), nil, &result)
 	if err != nil {

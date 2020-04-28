@@ -39,6 +39,11 @@ type IdentityProviderConfig struct {
 	LoginHint                        string                 `json:"loginHint,omitempty"`
 	UILocales                        KeycloakBoolQuoted     `json:"uiLocales,omitempty"`
 	LogoutUrl                        string                 `json:"logoutUrl,omitempty"`
+	DefaultScope                     string                 `json:"defaultScope,omitempty"`
+	AcceptsPromptNoneForwFrmClt      KeycloakBoolQuoted     `json:"acceptsPromptNoneForwardFromClient,omitempty"`
+	HostedDomain                     string                 `json:"hostedDomain,omitempty"`
+	UserIp                           KeycloakBoolQuoted     `json:"userIp,omitempty"`
+	OfflineAccess                    KeycloakBoolQuoted     `json:"offlineAccess,omitempty"`
 	ExtraConfig                      map[string]interface{} `json:"-"`
 }
 

@@ -423,19 +423,19 @@ func (obj SqsDestination) MarshalJSON() ([]byte, error) {
 	}{Type: "SQS", Alias: (*Alias)(&obj)})
 }
 
-// Subscription is of type LoggedResource
+// Subscription is of type BaseResource
 type Subscription struct {
 	Version        int                      `json:"version"`
-	LastModifiedAt time.Time                `json:"lastModifiedAt"`
-	ID             string                   `json:"id"`
-	CreatedAt      time.Time                `json:"createdAt"`
-	LastModifiedBy *LastModifiedBy          `json:"lastModifiedBy,omitempty"`
-	CreatedBy      *CreatedBy               `json:"createdBy,omitempty"`
 	Status         SubscriptionHealthStatus `json:"status"`
 	Messages       []MessageSubscription    `json:"messages"`
+	LastModifiedBy *LastModifiedBy          `json:"lastModifiedBy,omitempty"`
+	LastModifiedAt time.Time                `json:"lastModifiedAt"`
 	Key            string                   `json:"key,omitempty"`
+	ID             string                   `json:"id"`
 	Format         DeliveryFormat           `json:"format"`
 	Destination    Destination              `json:"destination"`
+	CreatedBy      *CreatedBy               `json:"createdBy,omitempty"`
+	CreatedAt      time.Time                `json:"createdAt"`
 	Changes        []ChangeSubscription     `json:"changes"`
 }
 
@@ -535,6 +535,7 @@ type SubscriptionPagedQueryResponse struct {
 	Total   int            `json:"total,omitempty"`
 	Results []Subscription `json:"results"`
 	Offset  int            `json:"offset"`
+	Limit   int            `json:"limit"`
 	Count   int            `json:"count"`
 }
 

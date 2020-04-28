@@ -71,14 +71,16 @@ type Location struct {
 
 // Zone is of type BaseResource
 type Zone struct {
-	Version        int        `json:"version"`
-	LastModifiedAt time.Time  `json:"lastModifiedAt"`
-	ID             string     `json:"id"`
-	CreatedAt      time.Time  `json:"createdAt"`
-	Name           string     `json:"name"`
-	Locations      []Location `json:"locations"`
-	Key            string     `json:"key,omitempty"`
-	Description    string     `json:"description,omitempty"`
+	Version        int             `json:"version"`
+	Name           string          `json:"name"`
+	Locations      []Location      `json:"locations"`
+	LastModifiedBy *LastModifiedBy `json:"lastModifiedBy,omitempty"`
+	LastModifiedAt time.Time       `json:"lastModifiedAt"`
+	Key            string          `json:"key,omitempty"`
+	ID             string          `json:"id"`
+	Description    string          `json:"description,omitempty"`
+	CreatedBy      *CreatedBy      `json:"createdBy,omitempty"`
+	CreatedAt      time.Time       `json:"createdAt"`
 }
 
 // ZoneAddLocationAction implements the interface ZoneUpdateAction
@@ -122,6 +124,7 @@ type ZonePagedQueryResponse struct {
 	Total   int    `json:"total,omitempty"`
 	Results []Zone `json:"results"`
 	Offset  int    `json:"offset"`
+	Limit   int    `json:"limit"`
 	Count   int    `json:"count"`
 }
 

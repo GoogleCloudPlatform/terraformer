@@ -131,18 +131,18 @@ func mapDiscriminatorOrderEditUpdateAction(input interface{}) (OrderEditUpdateAc
 	return nil, nil
 }
 
-// OrderEdit is of type LoggedResource
+// OrderEdit is of type BaseResource
 type OrderEdit struct {
 	Version        int                       `json:"version"`
-	ID             string                    `json:"id"`
-	LastModifiedBy *LastModifiedBy           `json:"lastModifiedBy,omitempty"`
-	CreatedBy      *CreatedBy                `json:"createdBy,omitempty"`
 	StagedActions  []StagedOrderUpdateAction `json:"stagedActions"`
 	Result         OrderEditResult           `json:"result"`
 	Resource       *OrderReference           `json:"resource"`
+	LastModifiedBy *LastModifiedBy           `json:"lastModifiedBy,omitempty"`
 	LastModifiedAt time.Time                 `json:"lastModifiedAt"`
 	Key            string                    `json:"key,omitempty"`
+	ID             string                    `json:"id"`
 	Custom         *CustomFields             `json:"custom,omitempty"`
+	CreatedBy      *CreatedBy                `json:"createdBy,omitempty"`
 	CreatedAt      time.Time                 `json:"createdAt"`
 	Comment        string                    `json:"comment,omitempty"`
 }
@@ -271,6 +271,7 @@ type OrderEditPagedQueryResponse struct {
 	Total   int         `json:"total,omitempty"`
 	Results []OrderEdit `json:"results"`
 	Offset  int         `json:"offset"`
+	Limit   int         `json:"limit"`
 	Count   int         `json:"count"`
 }
 
@@ -487,19 +488,32 @@ func (obj *OrderEditUpdate) UnmarshalJSON(data []byte) error {
 // OrderExcerpt is a standalone struct
 type OrderExcerpt struct {
 	Version    int         `json:"version"`
-	TotalPrice *Money      `json:"totalPrice"`
+	TotalPrice TypedMoney  `json:"totalPrice"`
 	TaxedPrice *TaxedPrice `json:"taxedPrice,omitempty"`
+}
+
+// UnmarshalJSON override to deserialize correct attribute types based
+// on the discriminator value
+func (obj *OrderExcerpt) UnmarshalJSON(data []byte) error {
+	type Alias OrderExcerpt
+	if err := json.Unmarshal(data, (*Alias)(obj)); err != nil {
+		return err
+	}
+	if obj.TotalPrice != nil {
+		var err error
+		obj.TotalPrice, err = mapDiscriminatorTypedMoney(obj.TotalPrice)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // StagedOrder is of type Order
 type StagedOrder struct {
 	Version                   int                     `json:"version"`
-	LastModifiedAt            time.Time               `json:"lastModifiedAt"`
-	ID                        string                  `json:"id"`
-	CreatedAt                 time.Time               `json:"createdAt"`
-	LastModifiedBy            *LastModifiedBy         `json:"lastModifiedBy,omitempty"`
-	CreatedBy                 *CreatedBy              `json:"createdBy,omitempty"`
-	TotalPrice                *Money                  `json:"totalPrice"`
+	TotalPrice                TypedMoney              `json:"totalPrice"`
 	TaxedPrice                *TaxedPrice             `json:"taxedPrice,omitempty"`
 	TaxRoundingMode           RoundingMode            `json:"taxRoundingMode,omitempty"`
 	TaxMode                   TaxMode                 `json:"taxMode,omitempty"`
@@ -512,6 +526,7 @@ type StagedOrder struct {
 	ShippingAddress           *Address                `json:"shippingAddress,omitempty"`
 	ShipmentState             ShipmentState           `json:"shipmentState,omitempty"`
 	ReturnInfo                []ReturnInfo            `json:"returnInfo,omitempty"`
+	RefusedGifts              []CartDiscountReference `json:"refusedGifts"`
 	PaymentState              PaymentState            `json:"paymentState,omitempty"`
 	PaymentInfo               *PaymentInfo            `json:"paymentInfo,omitempty"`
 	Origin                    CartOrigin              `json:"origin"`
@@ -519,15 +534,20 @@ type StagedOrder struct {
 	OrderNumber               string                  `json:"orderNumber,omitempty"`
 	Locale                    string                  `json:"locale,omitempty"`
 	LineItems                 []LineItem              `json:"lineItems"`
+	LastModifiedBy            *LastModifiedBy         `json:"lastModifiedBy,omitempty"`
+	LastModifiedAt            time.Time               `json:"lastModifiedAt"`
 	LastMessageSequenceNumber int                     `json:"lastMessageSequenceNumber"`
 	ItemShippingAddresses     []Address               `json:"itemShippingAddresses,omitempty"`
 	InventoryMode             InventoryMode           `json:"inventoryMode,omitempty"`
+	ID                        string                  `json:"id"`
 	DiscountCodes             []DiscountCodeInfo      `json:"discountCodes,omitempty"`
 	CustomerID                string                  `json:"customerId,omitempty"`
 	CustomerGroup             *CustomerGroupReference `json:"customerGroup,omitempty"`
 	CustomerEmail             string                  `json:"customerEmail,omitempty"`
 	CustomLineItems           []CustomLineItem        `json:"customLineItems"`
 	Custom                    *CustomFields           `json:"custom,omitempty"`
+	CreatedBy                 *CreatedBy              `json:"createdBy,omitempty"`
+	CreatedAt                 time.Time               `json:"createdAt"`
 	Country                   string                  `json:"country,omitempty"`
 	CompletedAt               *time.Time              `json:"completedAt,omitempty"`
 	Cart                      *CartReference          `json:"cart,omitempty"`
@@ -1310,8 +1330,8 @@ func (obj StagedOrderSetOrderNumberAction) MarshalJSON() ([]byte, error) {
 
 // StagedOrderSetOrderTotalTaxAction implements the interface StagedOrderUpdateAction
 type StagedOrderSetOrderTotalTaxAction struct {
-	ExternalTotalGross  *Money       `json:"externalTotalGross"`
-	ExternalTaxPortions []TaxPortion `json:"externalTaxPortions,omitempty"`
+	ExternalTotalGross  *Money            `json:"externalTotalGross"`
+	ExternalTaxPortions []TaxPortionDraft `json:"externalTaxPortions,omitempty"`
 }
 
 // MarshalJSON override to set the discriminator value

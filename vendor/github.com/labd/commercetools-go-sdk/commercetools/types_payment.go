@@ -205,23 +205,23 @@ func mapDiscriminatorPaymentUpdateAction(input interface{}) (PaymentUpdateAction
 	return nil, nil
 }
 
-// Payment is of type LoggedResource
+// Payment is of type BaseResource
 type Payment struct {
 	Version               int                `json:"version"`
-	LastModifiedAt        time.Time          `json:"lastModifiedAt"`
-	ID                    string             `json:"id"`
-	CreatedAt             time.Time          `json:"createdAt"`
-	LastModifiedBy        *LastModifiedBy    `json:"lastModifiedBy,omitempty"`
-	CreatedBy             *CreatedBy         `json:"createdBy,omitempty"`
 	Transactions          []Transaction      `json:"transactions"`
 	PaymentStatus         *PaymentStatus     `json:"paymentStatus"`
 	PaymentMethodInfo     *PaymentMethodInfo `json:"paymentMethodInfo"`
+	LastModifiedBy        *LastModifiedBy    `json:"lastModifiedBy,omitempty"`
+	LastModifiedAt        time.Time          `json:"lastModifiedAt"`
 	Key                   string             `json:"key,omitempty"`
 	InterfaceInteractions []CustomFields     `json:"interfaceInteractions"`
 	InterfaceID           string             `json:"interfaceId,omitempty"`
+	ID                    string             `json:"id"`
 	ExternalID            string             `json:"externalId,omitempty"`
 	Customer              *CustomerReference `json:"customer,omitempty"`
 	Custom                *CustomFields      `json:"custom,omitempty"`
+	CreatedBy             *CreatedBy         `json:"createdBy,omitempty"`
+	CreatedAt             time.Time          `json:"createdAt"`
 	AuthorizedUntil       string             `json:"authorizedUntil,omitempty"`
 	AnonymousID           string             `json:"anonymousId,omitempty"`
 	AmountRefunded        TypedMoney         `json:"amountRefunded,omitempty"`
@@ -388,6 +388,7 @@ type PaymentPagedQueryResponse struct {
 	Total   int       `json:"total,omitempty"`
 	Results []Payment `json:"results"`
 	Offset  int       `json:"offset"`
+	Limit   int       `json:"limit"`
 	Count   int       `json:"count"`
 }
 

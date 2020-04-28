@@ -21,10 +21,11 @@ type Keys struct {
 }
 
 type Realm struct {
-	Id          string `json:"id"`
-	Realm       string `json:"realm"`
-	Enabled     bool   `json:"enabled"`
-	DisplayName string `json:"displayName"`
+	Id              string `json:"id"`
+	Realm           string `json:"realm"`
+	Enabled         bool   `json:"enabled"`
+	DisplayName     string `json:"displayName"`
+	DisplayNameHtml string `json:"displayNameHtml"`
 
 	// Login Config
 	RegistrationAllowed         bool   `json:"registrationAllowed"`

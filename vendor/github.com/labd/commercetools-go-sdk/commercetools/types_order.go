@@ -327,6 +327,13 @@ func mapDiscriminatorOrderUpdateAction(input interface{}) (OrderUpdateAction, er
 			return nil, err
 		}
 		return new, nil
+	case "setStore":
+		new := OrderSetStoreAction{}
+		err := mapstructure.Decode(input, &new)
+		if err != nil {
+			return nil, err
+		}
+		return new, nil
 	case "transitionCustomLineItemState":
 		new := OrderTransitionCustomLineItemStateAction{}
 		err := mapstructure.Decode(input, &new)
@@ -989,15 +996,10 @@ func (obj LineItemReturnItem) MarshalJSON() ([]byte, error) {
 	}{Type: "LineItemReturnItem", Alias: (*Alias)(&obj)})
 }
 
-// Order is of type LoggedResource
+// Order is of type BaseResource
 type Order struct {
 	Version                   int                     `json:"version"`
-	LastModifiedAt            time.Time               `json:"lastModifiedAt"`
-	ID                        string                  `json:"id"`
-	CreatedAt                 time.Time               `json:"createdAt"`
-	LastModifiedBy            *LastModifiedBy         `json:"lastModifiedBy,omitempty"`
-	CreatedBy                 *CreatedBy              `json:"createdBy,omitempty"`
-	TotalPrice                *Money                  `json:"totalPrice"`
+	TotalPrice                TypedMoney              `json:"totalPrice"`
 	TaxedPrice                *TaxedPrice             `json:"taxedPrice,omitempty"`
 	TaxRoundingMode           RoundingMode            `json:"taxRoundingMode,omitempty"`
 	TaxMode                   TaxMode                 `json:"taxMode,omitempty"`
@@ -1010,6 +1012,7 @@ type Order struct {
 	ShippingAddress           *Address                `json:"shippingAddress,omitempty"`
 	ShipmentState             ShipmentState           `json:"shipmentState,omitempty"`
 	ReturnInfo                []ReturnInfo            `json:"returnInfo,omitempty"`
+	RefusedGifts              []CartDiscountReference `json:"refusedGifts"`
 	PaymentState              PaymentState            `json:"paymentState,omitempty"`
 	PaymentInfo               *PaymentInfo            `json:"paymentInfo,omitempty"`
 	Origin                    CartOrigin              `json:"origin"`
@@ -1017,15 +1020,20 @@ type Order struct {
 	OrderNumber               string                  `json:"orderNumber,omitempty"`
 	Locale                    string                  `json:"locale,omitempty"`
 	LineItems                 []LineItem              `json:"lineItems"`
+	LastModifiedBy            *LastModifiedBy         `json:"lastModifiedBy,omitempty"`
+	LastModifiedAt            time.Time               `json:"lastModifiedAt"`
 	LastMessageSequenceNumber int                     `json:"lastMessageSequenceNumber"`
 	ItemShippingAddresses     []Address               `json:"itemShippingAddresses,omitempty"`
 	InventoryMode             InventoryMode           `json:"inventoryMode,omitempty"`
+	ID                        string                  `json:"id"`
 	DiscountCodes             []DiscountCodeInfo      `json:"discountCodes,omitempty"`
 	CustomerID                string                  `json:"customerId,omitempty"`
 	CustomerGroup             *CustomerGroupReference `json:"customerGroup,omitempty"`
 	CustomerEmail             string                  `json:"customerEmail,omitempty"`
 	CustomLineItems           []CustomLineItem        `json:"customLineItems"`
 	Custom                    *CustomFields           `json:"custom,omitempty"`
+	CreatedBy                 *CreatedBy              `json:"createdBy,omitempty"`
+	CreatedAt                 time.Time               `json:"createdAt"`
 	Country                   string                  `json:"country,omitempty"`
 	CompletedAt               *time.Time              `json:"completedAt,omitempty"`
 	Cart                      *CartReference          `json:"cart,omitempty"`
@@ -1043,6 +1051,13 @@ func (obj *Order) UnmarshalJSON(data []byte) error {
 	if obj.ShippingRateInput != nil {
 		var err error
 		obj.ShippingRateInput, err = mapDiscriminatorShippingRateInput(obj.ShippingRateInput)
+		if err != nil {
+			return err
+		}
+	}
+	if obj.TotalPrice != nil {
+		var err error
+		obj.TotalPrice, err = mapDiscriminatorTypedMoney(obj.TotalPrice)
 		if err != nil {
 			return err
 		}
@@ -1172,10 +1187,13 @@ func (obj OrderChangeShipmentStateAction) MarshalJSON() ([]byte, error) {
 
 // OrderFromCartDraft is a standalone struct
 type OrderFromCartDraft struct {
-	Version      int          `json:"version"`
-	PaymentState PaymentState `json:"paymentState,omitempty"`
-	OrderNumber  string       `json:"orderNumber,omitempty"`
-	ID           string       `json:"id"`
+	Version       int                      `json:"version"`
+	State         *StateResourceIdentifier `json:"state,omitempty"`
+	ShipmentState ShipmentState            `json:"shipmentState,omitempty"`
+	PaymentState  PaymentState             `json:"paymentState,omitempty"`
+	OrderState    OrderState               `json:"orderState,omitempty"`
+	OrderNumber   string                   `json:"orderNumber,omitempty"`
+	ID            string                   `json:"id"`
 }
 
 // OrderImportCustomLineItemStateAction implements the interface OrderUpdateAction
@@ -1196,12 +1214,14 @@ func (obj OrderImportCustomLineItemStateAction) MarshalJSON() ([]byte, error) {
 // OrderImportDraft is a standalone struct
 type OrderImportDraft struct {
 	TotalPrice            *Money                           `json:"totalPrice"`
-	TaxedPrice            *TaxedPrice                      `json:"taxedPrice,omitempty"`
+	TaxedPrice            *TaxedPriceDraft                 `json:"taxedPrice,omitempty"`
 	TaxRoundingMode       RoundingMode                     `json:"taxRoundingMode,omitempty"`
+	Store                 *StoreResourceIdentifier         `json:"store,omitempty"`
 	ShippingInfo          *ShippingInfoImportDraft         `json:"shippingInfo,omitempty"`
 	ShippingAddress       *Address                         `json:"shippingAddress,omitempty"`
 	ShipmentState         ShipmentState                    `json:"shipmentState,omitempty"`
 	PaymentState          PaymentState                     `json:"paymentState,omitempty"`
+	Origin                CartOrigin                       `json:"origin,omitempty"`
 	OrderState            OrderState                       `json:"orderState,omitempty"`
 	OrderNumber           string                           `json:"orderNumber,omitempty"`
 	LineItems             []LineItemImportDraft            `json:"lineItems,omitempty"`
@@ -1237,6 +1257,7 @@ type OrderPagedQueryResponse struct {
 	Total   int     `json:"total,omitempty"`
 	Results []Order `json:"results"`
 	Offset  int     `json:"offset"`
+	Limit   int     `json:"limit"`
 	Count   int     `json:"count"`
 }
 
@@ -1637,6 +1658,20 @@ func (obj OrderSetShippingAddressAction) MarshalJSON() ([]byte, error) {
 		Action string `json:"action"`
 		*Alias
 	}{Action: "setShippingAddress", Alias: (*Alias)(&obj)})
+}
+
+// OrderSetStoreAction implements the interface OrderUpdateAction
+type OrderSetStoreAction struct {
+	Store *StoreResourceIdentifier `json:"store,omitempty"`
+}
+
+// MarshalJSON override to set the discriminator value
+func (obj OrderSetStoreAction) MarshalJSON() ([]byte, error) {
+	type Alias OrderSetStoreAction
+	return json.Marshal(struct {
+		Action string `json:"action"`
+		*Alias
+	}{Action: "setStore", Alias: (*Alias)(&obj)})
 }
 
 // OrderTransitionCustomLineItemStateAction implements the interface OrderUpdateAction

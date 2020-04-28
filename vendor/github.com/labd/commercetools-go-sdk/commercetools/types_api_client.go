@@ -27,5 +27,6 @@ type APIClientPagedQueryResponse struct {
 	Total   int         `json:"total,omitempty"`
 	Results []APIClient `json:"results"`
 	Offset  int         `json:"offset"`
+	Limit   int         `json:"limit"`
 	Count   int         `json:"count"`
 }
