@@ -9,13 +9,15 @@ import (
 
 // CustomObject is of type BaseResource
 type CustomObject struct {
-	Version        int         `json:"version"`
-	LastModifiedAt time.Time   `json:"lastModifiedAt"`
-	ID             string      `json:"id"`
-	CreatedAt      time.Time   `json:"createdAt"`
-	Value          interface{} `json:"value"`
-	Key            string      `json:"key"`
-	Container      string      `json:"container"`
+	Version        int             `json:"version"`
+	Value          interface{}     `json:"value"`
+	LastModifiedBy *LastModifiedBy `json:"lastModifiedBy,omitempty"`
+	LastModifiedAt time.Time       `json:"lastModifiedAt"`
+	Key            string          `json:"key"`
+	ID             string          `json:"id"`
+	CreatedBy      *CreatedBy      `json:"createdBy,omitempty"`
+	CreatedAt      time.Time       `json:"createdAt"`
+	Container      string          `json:"container"`
 }
 
 // CustomObjectDraft is a standalone struct
@@ -31,6 +33,7 @@ type CustomObjectPagedQueryResponse struct {
 	Total   int            `json:"total,omitempty"`
 	Results []CustomObject `json:"results"`
 	Offset  int            `json:"offset"`
+	Limit   int            `json:"limit"`
 	Count   int            `json:"count"`
 }
 

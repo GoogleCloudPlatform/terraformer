@@ -29,6 +29,43 @@ func (client *Client) CustomerQuery(input *QueryInput) (result *CustomerPagedQue
 	return result, nil
 }
 
+// CustomerDeleteWithKey for type Customer
+func (client *Client) CustomerDeleteWithKey(key string, version int, dataErasure bool) (result *Customer, err error) {
+	params := url.Values{}
+	params.Set("version", strconv.Itoa(version))
+	params.Set("dataErasure", strconv.FormatBool(dataErasure))
+	err = client.Delete(strings.Replace("customers/key={key}", "{key}", key, 1), params, &result)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// CustomerGetWithKey for type Customer
+func (client *Client) CustomerGetWithKey(key string) (result *Customer, err error) {
+	err = client.Get(strings.Replace("customers/key={key}", "{key}", key, 1), nil, &result)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// CustomerUpdateWithKeyInput is input for function CustomerUpdateWithKey
+type CustomerUpdateWithKeyInput struct {
+	Key     string
+	Version int
+	Actions []CustomerUpdateAction
+}
+
+// CustomerUpdateWithKey for type Customer
+func (client *Client) CustomerUpdateWithKey(input *CustomerUpdateWithKeyInput) (result *Customer, err error) {
+	err = client.Update(strings.Replace("customers/key={key}", "{key}", input.Key, 1), nil, input.Version, input.Actions, &result)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
 // CustomerDeleteWithID for type Customer
 func (client *Client) CustomerDeleteWithID(ID string, version int, dataErasure bool) (result *Customer, err error) {
 	params := url.Values{}

@@ -152,18 +152,18 @@ func mapDiscriminatorExtensionUpdateAction(input interface{}) (ExtensionUpdateAc
 	return nil, nil
 }
 
-// Extension is of type LoggedResource
+// Extension is of type BaseResource
 type Extension struct {
 	Version        int                  `json:"version"`
-	LastModifiedAt time.Time            `json:"lastModifiedAt"`
-	ID             string               `json:"id"`
-	CreatedAt      time.Time            `json:"createdAt"`
-	LastModifiedBy *LastModifiedBy      `json:"lastModifiedBy,omitempty"`
-	CreatedBy      *CreatedBy           `json:"createdBy,omitempty"`
 	Triggers       []ExtensionTrigger   `json:"triggers"`
 	TimeoutInMs    int                  `json:"timeoutInMs,omitempty"`
+	LastModifiedBy *LastModifiedBy      `json:"lastModifiedBy,omitempty"`
+	LastModifiedAt time.Time            `json:"lastModifiedAt"`
 	Key            string               `json:"key,omitempty"`
+	ID             string               `json:"id"`
 	Destination    ExtensionDestination `json:"destination"`
+	CreatedBy      *CreatedBy           `json:"createdBy,omitempty"`
+	CreatedAt      time.Time            `json:"createdAt"`
 }
 
 // UnmarshalJSON override to deserialize correct attribute types based
@@ -362,6 +362,7 @@ type ExtensionPagedQueryResponse struct {
 	Total   int         `json:"total,omitempty"`
 	Results []Extension `json:"results"`
 	Offset  int         `json:"offset"`
+	Limit   int         `json:"limit"`
 	Count   int         `json:"count"`
 }
 

@@ -555,14 +555,9 @@ func mapDiscriminatorShippingRateInputDraft(input interface{}) (ShippingRateInpu
 	return nil, nil
 }
 
-// Cart is of type LoggedResource
+// Cart is of type BaseResource
 type Cart struct {
 	Version                         int                     `json:"version"`
-	LastModifiedAt                  time.Time               `json:"lastModifiedAt"`
-	ID                              string                  `json:"id"`
-	CreatedAt                       time.Time               `json:"createdAt"`
-	LastModifiedBy                  *LastModifiedBy         `json:"lastModifiedBy,omitempty"`
-	CreatedBy                       *CreatedBy              `json:"createdBy,omitempty"`
 	TotalPrice                      TypedMoney              `json:"totalPrice"`
 	TaxedPrice                      *TaxedPrice             `json:"taxedPrice,omitempty"`
 	TaxRoundingMode                 RoundingMode            `json:"taxRoundingMode"`
@@ -577,8 +572,11 @@ type Cart struct {
 	Origin                          CartOrigin              `json:"origin"`
 	Locale                          string                  `json:"locale,omitempty"`
 	LineItems                       []LineItem              `json:"lineItems"`
+	LastModifiedBy                  *LastModifiedBy         `json:"lastModifiedBy,omitempty"`
+	LastModifiedAt                  time.Time               `json:"lastModifiedAt"`
 	ItemShippingAddresses           []Address               `json:"itemShippingAddresses,omitempty"`
 	InventoryMode                   InventoryMode           `json:"inventoryMode,omitempty"`
+	ID                              string                  `json:"id"`
 	DiscountCodes                   []DiscountCodeInfo      `json:"discountCodes,omitempty"`
 	DeleteDaysAfterLastModification int                     `json:"deleteDaysAfterLastModification,omitempty"`
 	CustomerID                      string                  `json:"customerId,omitempty"`
@@ -586,6 +584,8 @@ type Cart struct {
 	CustomerEmail                   string                  `json:"customerEmail,omitempty"`
 	CustomLineItems                 []CustomLineItem        `json:"customLineItems"`
 	Custom                          *CustomFields           `json:"custom,omitempty"`
+	CreatedBy                       *CreatedBy              `json:"createdBy,omitempty"`
+	CreatedAt                       time.Time               `json:"createdAt"`
 	Country                         CountryCode             `json:"country,omitempty"`
 	CartState                       CartState               `json:"cartState"`
 	BillingAddress                  *Address                `json:"billingAddress,omitempty"`
@@ -888,6 +888,7 @@ type CartPagedQueryResponse struct {
 	Total   int    `json:"total,omitempty"`
 	Results []Cart `json:"results"`
 	Offset  int    `json:"offset"`
+	Limit   int    `json:"limit"`
 	Count   int    `json:"count"`
 }
 
@@ -1039,8 +1040,8 @@ func (obj CartSetBillingAddressAction) MarshalJSON() ([]byte, error) {
 
 // CartSetCartTotalTaxAction implements the interface CartUpdateAction
 type CartSetCartTotalTaxAction struct {
-	ExternalTotalGross  *Money       `json:"externalTotalGross"`
-	ExternalTaxPortions []TaxPortion `json:"externalTaxPortions,omitempty"`
+	ExternalTotalGross  *Money            `json:"externalTotalGross"`
+	ExternalTaxPortions []TaxPortionDraft `json:"externalTaxPortions,omitempty"`
 }
 
 // MarshalJSON override to set the discriminator value
@@ -1585,8 +1586,26 @@ type DiscountCodeInfo struct {
 
 // DiscountedLineItemPortion is a standalone struct
 type DiscountedLineItemPortion struct {
-	DiscountedAmount *Money                 `json:"discountedAmount"`
+	DiscountedAmount TypedMoney             `json:"discountedAmount"`
 	Discount         *CartDiscountReference `json:"discount"`
+}
+
+// UnmarshalJSON override to deserialize correct attribute types based
+// on the discriminator value
+func (obj *DiscountedLineItemPortion) UnmarshalJSON(data []byte) error {
+	type Alias DiscountedLineItemPortion
+	if err := json.Unmarshal(data, (*Alias)(obj)); err != nil {
+		return err
+	}
+	if obj.DiscountedAmount != nil {
+		var err error
+		obj.DiscountedAmount, err = mapDiscriminatorTypedMoney(obj.DiscountedAmount)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // DiscountedLineItemPrice is a standalone struct
@@ -1661,7 +1680,7 @@ type ItemShippingTarget struct {
 // LineItem is a standalone struct
 type LineItem struct {
 	Variant                    *ProductVariant                      `json:"variant"`
-	TotalPrice                 *Money                               `json:"totalPrice"`
+	TotalPrice                 TypedMoney                           `json:"totalPrice"`
 	TaxedPrice                 *TaxedItemPrice                      `json:"taxedPrice,omitempty"`
 	TaxRate                    *TaxRate                             `json:"taxRate,omitempty"`
 	SupplyChannel              *ChannelReference                    `json:"supplyChannel,omitempty"`
@@ -1679,6 +1698,24 @@ type LineItem struct {
 	DistributionChannel        *ChannelReference                    `json:"distributionChannel,omitempty"`
 	DiscountedPricePerQuantity []DiscountedLineItemPriceForQuantity `json:"discountedPricePerQuantity"`
 	Custom                     *CustomFields                        `json:"custom,omitempty"`
+}
+
+// UnmarshalJSON override to deserialize correct attribute types based
+// on the discriminator value
+func (obj *LineItem) UnmarshalJSON(data []byte) error {
+	type Alias LineItem
+	if err := json.Unmarshal(data, (*Alias)(obj)); err != nil {
+		return err
+	}
+	if obj.TotalPrice != nil {
+		var err error
+		obj.TotalPrice, err = mapDiscriminatorTypedMoney(obj.TotalPrice)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // LineItemDraft is a standalone struct
@@ -1781,6 +1818,31 @@ func (obj *ShippingInfo) UnmarshalJSON(data []byte) error {
 
 // TaxPortion is a standalone struct
 type TaxPortion struct {
+	Rate   *float64   `json:"rate"`
+	Name   string     `json:"name,omitempty"`
+	Amount TypedMoney `json:"amount"`
+}
+
+// UnmarshalJSON override to deserialize correct attribute types based
+// on the discriminator value
+func (obj *TaxPortion) UnmarshalJSON(data []byte) error {
+	type Alias TaxPortion
+	if err := json.Unmarshal(data, (*Alias)(obj)); err != nil {
+		return err
+	}
+	if obj.Amount != nil {
+		var err error
+		obj.Amount, err = mapDiscriminatorTypedMoney(obj.Amount)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// TaxPortionDraft is a standalone struct
+type TaxPortionDraft struct {
 	Rate   *float64 `json:"rate"`
 	Name   string   `json:"name,omitempty"`
 	Amount *Money   `json:"amount"`
@@ -1819,7 +1881,64 @@ func (obj *TaxedItemPrice) UnmarshalJSON(data []byte) error {
 
 // TaxedPrice is a standalone struct
 type TaxedPrice struct {
-	TotalNet    *Money       `json:"totalNet"`
-	TotalGross  *Money       `json:"totalGross"`
+	TotalNet    TypedMoney   `json:"totalNet"`
+	TotalGross  TypedMoney   `json:"totalGross"`
 	TaxPortions []TaxPortion `json:"taxPortions"`
+}
+
+// UnmarshalJSON override to deserialize correct attribute types based
+// on the discriminator value
+func (obj *TaxedPrice) UnmarshalJSON(data []byte) error {
+	type Alias TaxedPrice
+	if err := json.Unmarshal(data, (*Alias)(obj)); err != nil {
+		return err
+	}
+	if obj.TotalGross != nil {
+		var err error
+		obj.TotalGross, err = mapDiscriminatorTypedMoney(obj.TotalGross)
+		if err != nil {
+			return err
+		}
+	}
+	if obj.TotalNet != nil {
+		var err error
+		obj.TotalNet, err = mapDiscriminatorTypedMoney(obj.TotalNet)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// TaxedPriceDraft is a standalone struct
+type TaxedPriceDraft struct {
+	TotalNet    TypedMoneyDraft   `json:"totalNet"`
+	TotalGross  TypedMoneyDraft   `json:"totalGross"`
+	TaxPortions []TaxPortionDraft `json:"taxPortions"`
+}
+
+// UnmarshalJSON override to deserialize correct attribute types based
+// on the discriminator value
+func (obj *TaxedPriceDraft) UnmarshalJSON(data []byte) error {
+	type Alias TaxedPriceDraft
+	if err := json.Unmarshal(data, (*Alias)(obj)); err != nil {
+		return err
+	}
+	if obj.TotalGross != nil {
+		var err error
+		obj.TotalGross, err = mapDiscriminatorTypedMoneyDraft(obj.TotalGross)
+		if err != nil {
+			return err
+		}
+	}
+	if obj.TotalNet != nil {
+		var err error
+		obj.TotalNet, err = mapDiscriminatorTypedMoneyDraft(obj.TotalNet)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

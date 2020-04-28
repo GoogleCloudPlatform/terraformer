@@ -56,17 +56,17 @@ func mapDiscriminatorCustomerGroupUpdateAction(input interface{}) (CustomerGroup
 	return nil, nil
 }
 
-// CustomerGroup is of type LoggedResource
+// CustomerGroup is of type BaseResource
 type CustomerGroup struct {
 	Version        int             `json:"version"`
-	LastModifiedAt time.Time       `json:"lastModifiedAt"`
-	ID             string          `json:"id"`
-	CreatedAt      time.Time       `json:"createdAt"`
-	LastModifiedBy *LastModifiedBy `json:"lastModifiedBy,omitempty"`
-	CreatedBy      *CreatedBy      `json:"createdBy,omitempty"`
 	Name           string          `json:"name"`
+	LastModifiedBy *LastModifiedBy `json:"lastModifiedBy,omitempty"`
+	LastModifiedAt time.Time       `json:"lastModifiedAt"`
 	Key            string          `json:"key,omitempty"`
+	ID             string          `json:"id"`
 	Custom         *CustomFields   `json:"custom,omitempty"`
+	CreatedBy      *CreatedBy      `json:"createdBy,omitempty"`
+	CreatedAt      time.Time       `json:"createdAt"`
 }
 
 // CustomerGroupChangeNameAction implements the interface CustomerGroupUpdateAction
@@ -95,6 +95,7 @@ type CustomerGroupPagedQueryResponse struct {
 	Total   int             `json:"total,omitempty"`
 	Results []CustomerGroup `json:"results"`
 	Offset  int             `json:"offset"`
+	Limit   int             `json:"limit"`
 	Count   int             `json:"count"`
 }
 

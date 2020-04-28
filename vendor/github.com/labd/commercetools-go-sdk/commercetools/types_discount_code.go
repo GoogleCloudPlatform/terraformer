@@ -119,24 +119,24 @@ func mapDiscriminatorDiscountCodeUpdateAction(input interface{}) (DiscountCodeUp
 	return nil, nil
 }
 
-// DiscountCode is of type LoggedResource
+// DiscountCode is of type BaseResource
 type DiscountCode struct {
 	Version                    int                     `json:"version"`
-	LastModifiedAt             time.Time               `json:"lastModifiedAt"`
-	ID                         string                  `json:"id"`
-	CreatedAt                  time.Time               `json:"createdAt"`
-	LastModifiedBy             *LastModifiedBy         `json:"lastModifiedBy,omitempty"`
-	CreatedBy                  *CreatedBy              `json:"createdBy,omitempty"`
 	ValidUntil                 *time.Time              `json:"validUntil,omitempty"`
 	ValidFrom                  *time.Time              `json:"validFrom,omitempty"`
 	References                 []Reference             `json:"references"`
 	Name                       *LocalizedString        `json:"name,omitempty"`
 	MaxApplicationsPerCustomer int                     `json:"maxApplicationsPerCustomer,omitempty"`
 	MaxApplications            int                     `json:"maxApplications,omitempty"`
+	LastModifiedBy             *LastModifiedBy         `json:"lastModifiedBy,omitempty"`
+	LastModifiedAt             time.Time               `json:"lastModifiedAt"`
 	IsActive                   bool                    `json:"isActive"`
+	ID                         string                  `json:"id"`
 	Groups                     []string                `json:"groups"`
 	Description                *LocalizedString        `json:"description,omitempty"`
 	Custom                     *CustomFields           `json:"custom,omitempty"`
+	CreatedBy                  *CreatedBy              `json:"createdBy,omitempty"`
+	CreatedAt                  time.Time               `json:"createdAt"`
 	Code                       string                  `json:"code"`
 	CartPredicate              string                  `json:"cartPredicate,omitempty"`
 	CartDiscounts              []CartDiscountReference `json:"cartDiscounts"`
@@ -223,6 +223,7 @@ type DiscountCodePagedQueryResponse struct {
 	Total   int            `json:"total,omitempty"`
 	Results []DiscountCode `json:"results"`
 	Offset  int            `json:"offset"`
+	Limit   int            `json:"limit"`
 	Count   int            `json:"count"`
 }
 
