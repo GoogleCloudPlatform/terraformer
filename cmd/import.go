@@ -100,6 +100,9 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 		}
 		provider.GetService().ParseFilters(options.Filter)
 		err = provider.GetService().InitResources()
+		if err != nil {
+			return err
+		}
 
 		providerWrapper, err := provider_wrapper.NewProviderWrapper(provider.GetName(), provider.GetConfig(), options.Verbose)
 		if err != nil {
@@ -107,9 +110,6 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 		}
 
 		provider.GetService().PopulateIgnoreKeys(providerWrapper)
-		if err != nil {
-			return err
-		}
 		provider.GetService().InitialCleanup()
 
 		refreshedResources, err := terraform_utils.RefreshResources(provider.GetService().GetResources(), providerWrapper)
