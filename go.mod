@@ -20,6 +20,7 @@ require (
 	github.com/bmatcuk/doublestar v1.2.2 // indirect
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/cloudflare/cloudflare-go v0.11.0
+	github.com/ddelnano/terraform-provider-mikrotik v0.0.0-20200501162830-a217572b326c
 	github.com/denverdino/aliyungo v0.0.0-20191217032211-d5785803c365
 	github.com/digitalocean/godo v1.29.0
 	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
@@ -66,7 +67,6 @@ require (
 	golang.org/x/oauth2 v0.0.0-20191202225959-858c2ad4c8b6
 	golang.org/x/sys v0.0.0-20191218084908-4a24b4065292 // indirect
 	golang.org/x/text v0.3.2
-	golang.org/x/tools v0.0.0-20191218225520-84f0c7cf60ea // indirect
 	gonum.org/v1/gonum v0.6.1
 	google.golang.org/api v0.15.0
 	google.golang.org/appengine v1.6.5 // indirect
