@@ -44,6 +44,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [Keycloak](#use-with-keycloak)
         * [Logz.io](#use-with-logzio)
         * [Commercetools](#use-with-commercetools)
+        * [Mikrotik](#use-with-mikrotik)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
@@ -205,6 +206,7 @@ Links to download Terraform Providers:
     * Keycloak provider >=1.12.0 - [here](https://github.com/mrparkers/terraform-provider-keycloak/)
     * Logz.io provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
     * Commercetools provider >= 0.21.0 - [here](https://github.com/labd/terraform-provider-commercetools)
+    * Mikrotik provider >= 0.2.2 - [here](https://github.com/labd/terraform-provider-commercetools)
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
@@ -1291,6 +1293,25 @@ List of supported [commercetools](https://commercetools.com/de/) resources:
     * `commercetools_tax_category`
 *   `types`
     * `commercetools_type`
+
+### Use with [Mikrotik](https://wiki.mikrotik.com/wiki/Manual:TOC)
+
+This provider uses the [terraform-provider-mikrotik](https://github.com/ddelnano/terraform-provider-mikrotik). The terraformer provider was build by [Dom Del Nano](https://github.com/ddelnano).
+
+Example:
+
+```
+## Warning! You should not expose your mikrotik creds through your bash history. Export them to your shell in a safe way when doing this for real!
+
+MIKROTIK_HOST=router-hostname:8728 MIKROTIK_USER=username MIKROTIK_PASSWORD=password terraformer  import mikrotik -r=dhcp_lease
+
+# Import only static IPs
+MIKROTIK_HOST=router-hostname:8728 MIKROTIK_USER=username MIKROTIK_PASSWORD=password terraformer  import mikrotik -r=dhcp_lease --filter='Name=dynamic;Value=false'
+```
+
+List of supported mikrotik resources:
+
+* `mikrotik_dhcp_lease`
 
 ## Contributing
 
