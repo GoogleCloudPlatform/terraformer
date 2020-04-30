@@ -270,6 +270,10 @@ List of supported GCP services:
     * `google_compute_http_health_check`
 *   `httpsHealthChecks`
     * `google_compute_https_health_check`
+*   `iam`
+    * `google_project_iam_custom_role`
+    * `google_project_iam_member`
+    * `google_service_account`
 *   `images`
     * `google_compute_image`
 *   `instanceGroupManagers`
