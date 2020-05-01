@@ -62,7 +62,7 @@ func (s *AwsFacade) InitResources() error {
 		return nil
 	} else {
 		message := err.Error()
-		if strings.Contains(message, "no such host") { // skip not available AWS services
+		if strings.Contains(message, "no such host") || strings.Contains(message, "i/o timeout") { // skip not available AWS services
 			return nil
 		} else {
 			return err
