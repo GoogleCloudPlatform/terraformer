@@ -643,6 +643,70 @@ func (s Command) String() string {
 	return awsutil.Prettify(s)
 }
 
+// The EC2 unit limits for a managed scaling policy. The managed scaling activity
+// of a cluster can not be above or below these limits. The limit only applies
+// to the core and task nodes. The master node cannot be scaled after initial
+// configuration.
+type ComputeLimits struct {
+	_ struct{} `type:"structure"`
+
+	// The upper boundary of EC2 units. It is measured through VCPU cores or instances
+	// for instance groups and measured through units for instance fleets. Managed
+	// scaling activities are not allowed beyond this boundary. The limit only applies
+	// to the core and task nodes. The master node cannot be scaled after initial
+	// configuration.
+	//
+	// MaximumCapacityUnits is a required field
+	MaximumCapacityUnits *int64 `type:"integer" required:"true"`
+
+	// The upper boundary of on-demand EC2 units. It is measured through VCPU cores
+	// or instances for instance groups and measured through units for instance
+	// fleets. The on-demand units are not allowed to scale beyond this boundary.
+	// The limit only applies to the core and task nodes. The master node cannot
+	// be scaled after initial configuration.
+	MaximumOnDemandCapacityUnits *int64 `type:"integer"`
+
+	// The lower boundary of EC2 units. It is measured through VCPU cores or instances
+	// for instance groups and measured through units for instance fleets. Managed
+	// scaling activities are not allowed beyond this boundary. The limit only applies
+	// to the core and task nodes. The master node cannot be scaled after initial
+	// configuration.
+	//
+	// MinimumCapacityUnits is a required field
+	MinimumCapacityUnits *int64 `type:"integer" required:"true"`
+
+	// The unit type used for specifying a managed scaling policy.
+	//
+	// UnitType is a required field
+	UnitType ComputeLimitsUnitType `type:"string" required:"true" enum:"true"`
+}
+
+// String returns the string representation
+func (s ComputeLimits) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *ComputeLimits) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "ComputeLimits"}
+
+	if s.MaximumCapacityUnits == nil {
+		invalidParams.Add(aws.NewErrParamRequired("MaximumCapacityUnits"))
+	}
+
+	if s.MinimumCapacityUnits == nil {
+		invalidParams.Add(aws.NewErrParamRequired("MinimumCapacityUnits"))
+	}
+	if len(s.UnitType) == 0 {
+		invalidParams.Add(aws.NewErrParamRequired("UnitType"))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
 //
 // Amazon EMR releases 4.x or later.
 //
@@ -2220,6 +2284,40 @@ type KeyValue struct {
 // String returns the string representation
 func (s KeyValue) String() string {
 	return awsutil.Prettify(s)
+}
+
+// Managed scaling policy for an Amazon EMR cluster. The policy specifies the
+// limits for resources that can be added or terminated from a cluster. The
+// policy only applies to the core and task nodes. The master node cannot be
+// scaled after initial configuration.
+type ManagedScalingPolicy struct {
+	_ struct{} `type:"structure"`
+
+	// The EC2 unit limits for a managed scaling policy. The managed scaling activity
+	// of a cluster is not allowed to go above or below these limits. The limit
+	// only applies to the core and task nodes. The master node cannot be scaled
+	// after initial configuration.
+	ComputeLimits *ComputeLimits `type:"structure"`
+}
+
+// String returns the string representation
+func (s ManagedScalingPolicy) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *ManagedScalingPolicy) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "ManagedScalingPolicy"}
+	if s.ComputeLimits != nil {
+		if err := s.ComputeLimits.Validate(); err != nil {
+			invalidParams.AddNested("ComputeLimits", err.(aws.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
 }
 
 // A CloudWatch dimension, which is specified using a Key (known as a Name in

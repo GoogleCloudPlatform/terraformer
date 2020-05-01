@@ -4,6 +4,7 @@ package cloudwatch
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/internal/awsutil"
@@ -25,6 +26,21 @@ type PutInsightRuleInput struct {
 
 	// The state of the rule. Valid values are ENABLED and DISABLED.
 	RuleState *string `min:"1" type:"string"`
+
+	// A list of key-value pairs to associate with the Contributor Insights rule.
+	// You can associate as many as 50 tags with a rule.
+	//
+	// Tags can help you organize and categorize your resources. You can also use
+	// them to scope user permissions, by granting a user permission to access or
+	// change only the resources that have certain tag values.
+	//
+	// To be able to associate tags with a rule, you must have the cloudwatch:TagResource
+	// permission in addition to the cloudwatch:PutInsightRule permission.
+	//
+	// If you are using this operation to update an existing Contributor Insights
+	// rule, any tags you specify in this parameter are ignored. To change the tags
+	// of an existing rule, use TagResource (https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_TagResource.html).
+	Tags []Tag `type:"list"`
 }
 
 // String returns the string representation
@@ -51,6 +67,13 @@ func (s *PutInsightRuleInput) Validate() error {
 	}
 	if s.RuleState != nil && len(*s.RuleState) < 1 {
 		invalidParams.Add(aws.NewErrParamMinLen("RuleState", 1))
+	}
+	if s.Tags != nil {
+		for i, v := range s.Tags {
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "Tags", i), err.(aws.ErrInvalidParams))
+			}
+		}
 	}
 
 	if invalidParams.Len() > 0 {

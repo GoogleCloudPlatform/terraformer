@@ -37,7 +37,9 @@ type DescribeEventsInput struct {
 	// Pagination token. If specified, the events return the next batch of results.
 	NextToken *string `type:"string"`
 
-	// The ARN of the version of the custom platform.
+	// The ARN of a custom platform version. If specified, AWS Elastic Beanstalk
+	// restricts the returned descriptions to those associated with this custom
+	// platform version.
 	PlatformArn *string `type:"string"`
 
 	// If specified, AWS Elastic Beanstalk restricts the described events to include

@@ -71,7 +71,7 @@ type DescribeSourceRegionsOutput struct {
 	Marker *string `type:"string"`
 
 	// A list of SourceRegion instances that contains each source AWS Region that
-	// the current AWS Region can get a Read Replica or a DB snapshot from.
+	// the current AWS Region can get a read replica or a DB snapshot from.
 	SourceRegions []SourceRegion `locationNameList:"SourceRegion" type:"list"`
 }
 
@@ -86,7 +86,7 @@ const opDescribeSourceRegions = "DescribeSourceRegions"
 // Amazon Relational Database Service.
 //
 // Returns a list of the source AWS Regions where the current AWS Region can
-// create a Read Replica or copy a DB snapshot from. This API action supports
+// create a read replica or copy a DB snapshot from. This API action supports
 // pagination.
 //
 //    // Example sending a request using DescribeSourceRegionsRequest.

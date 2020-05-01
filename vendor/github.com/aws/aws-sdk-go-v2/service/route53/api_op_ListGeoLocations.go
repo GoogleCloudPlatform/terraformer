@@ -36,18 +36,15 @@ type ListGeoLocationsInput struct {
 	// a page or more of results, if IsTruncated is true, and if NextCountryCode
 	// from the previous response has a value, enter that value in startcountrycode
 	// to return the next page of results.
-	//
-	// Route 53 uses the two-letter country codes that are specified in ISO standard
-	// 3166-1 alpha-2 (https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).
 	StartCountryCode *string `location:"querystring" locationName:"startcountrycode" min:"1" type:"string"`
 
-	// The code for the subdivision (for example, state or province) with which
-	// you want to start listing locations that Amazon Route 53 supports for geolocation.
-	// If Route 53 has already returned a page or more of results, if IsTruncated
-	// is true, and if NextSubdivisionCode from the previous response has a value,
-	// enter that value in startsubdivisioncode to return the next page of results.
+	// The code for the state of the United States with which you want to start
+	// listing locations that Amazon Route 53 supports for geolocation. If Route
+	// 53 has already returned a page or more of results, if IsTruncated is true,
+	// and if NextSubdivisionCode from the previous response has a value, enter
+	// that value in startsubdivisioncode to return the next page of results.
 	//
-	// To list subdivisions of a country, you must include both startcountrycode
+	// To list subdivisions (U.S. states), you must include both startcountrycode
 	// and startsubdivisioncode.
 	StartSubdivisionCode *string `location:"querystring" locationName:"startsubdivisioncode" min:"1" type:"string"`
 }
@@ -209,6 +206,9 @@ const opListGeoLocations = "ListGeoLocations"
 // 53 supports subdivisions for a country (for example, states or provinces),
 // the subdivisions for that country are listed in alphabetical order immediately
 // after the corresponding country.
+//
+// For a list of supported geolocation codes, see the GeoLocation (https://docs.aws.amazon.com/Route53/latest/APIReference/API_GeoLocation.html)
+// data type.
 //
 //    // Example sending a request using ListGeoLocationsRequest.
 //    req := client.ListGeoLocationsRequest(params)

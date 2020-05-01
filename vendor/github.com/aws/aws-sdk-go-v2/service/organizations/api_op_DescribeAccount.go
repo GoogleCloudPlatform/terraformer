@@ -58,9 +58,10 @@ const opDescribeAccount = "DescribeAccount"
 // DescribeAccountRequest returns a request value for making API operation for
 // AWS Organizations.
 //
-// Retrieves AWS Organizations related information about the specified account.
+// Retrieves AWS Organizations-related information about the specified account.
 //
-// This operation can be called only from the organization's master account.
+// This operation can be called only from the organization's master account
+// or by a member account that is a delegated administrator for an AWS service.
 //
 //    // Example sending a request using DescribeAccountRequest.
 //    req := client.DescribeAccountRequest(params)

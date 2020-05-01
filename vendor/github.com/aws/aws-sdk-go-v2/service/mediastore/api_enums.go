@@ -2,6 +2,23 @@
 
 package mediastore
 
+type ContainerLevelMetrics string
+
+// Enum values for ContainerLevelMetrics
+const (
+	ContainerLevelMetricsEnabled  ContainerLevelMetrics = "ENABLED"
+	ContainerLevelMetricsDisabled ContainerLevelMetrics = "DISABLED"
+)
+
+func (enum ContainerLevelMetrics) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum ContainerLevelMetrics) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
 type ContainerStatus string
 
 // Enum values for ContainerStatus

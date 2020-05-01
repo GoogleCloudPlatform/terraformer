@@ -88,8 +88,8 @@ const opModifyDBSnapshot = "ModifyDBSnapshot"
 // ModifyDBSnapshotRequest returns a request value for making API operation for
 // Amazon Relational Database Service.
 //
-// Updates a manual DB snapshot, which can be encrypted or not encrypted, with
-// a new engine version.
+// Updates a manual DB snapshot with a new engine version. The snapshot can
+// be encrypted or unencrypted, but not shared or public.
 //
 // Amazon RDS supports upgrading DB snapshots for MySQL, Oracle, and PostgreSQL.
 //

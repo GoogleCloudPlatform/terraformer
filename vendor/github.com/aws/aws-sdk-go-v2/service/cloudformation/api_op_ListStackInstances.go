@@ -28,7 +28,7 @@ type ListStackInstancesInput struct {
 	// The name of the AWS account that you want to list stack instances for.
 	StackInstanceAccount *string `type:"string"`
 
-	// The name of the region where you want to list stack instances.
+	// The name of the Region where you want to list stack instances.
 	StackInstanceRegion *string `type:"string"`
 
 	// The name or unique ID of the stack set that you want to list stack instances
@@ -89,7 +89,7 @@ const opListStackInstances = "ListStackInstances"
 //
 // Returns summary information about stack instances that are associated with
 // the specified stack set. You can filter for stack instances that are associated
-// with a specific AWS account name or region.
+// with a specific AWS account name or Region.
 //
 //    // Example sending a request using ListStackInstancesRequest.
 //    req := client.ListStackInstancesRequest(params)

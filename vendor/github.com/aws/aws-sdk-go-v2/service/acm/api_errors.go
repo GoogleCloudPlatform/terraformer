@@ -44,7 +44,7 @@ const (
 	// ErrCodeLimitExceededException for service response error code
 	// "LimitExceededException".
 	//
-	// An ACM limit has been exceeded.
+	// An ACM quota has been exceeded.
 	ErrCodeLimitExceededException = "LimitExceededException"
 
 	// ErrCodeRequestInProgressException for service response error code

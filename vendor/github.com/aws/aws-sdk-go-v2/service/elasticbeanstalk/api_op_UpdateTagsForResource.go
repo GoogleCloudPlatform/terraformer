@@ -17,7 +17,7 @@ type UpdateTagsForResourceInput struct {
 
 	// The Amazon Resource Name (ARN) of the resouce to be updated.
 	//
-	// Must be the ARN of an Elastic Beanstalk environment.
+	// Must be the ARN of an Elastic Beanstalk resource.
 	//
 	// ResourceArn is a required field
 	ResourceArn *string `type:"string" required:"true"`
@@ -76,9 +76,8 @@ const opUpdateTagsForResource = "UpdateTagsForResource"
 // Update the list of tags applied to an AWS Elastic Beanstalk resource. Two
 // lists can be passed: TagsToAdd for tags to add or update, and TagsToRemove.
 //
-// Currently, Elastic Beanstalk only supports tagging of Elastic Beanstalk environments.
-// For details about environment tagging, see Tagging Resources in Your Elastic
-// Beanstalk Environment (https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.tagging.html).
+// Elastic Beanstalk supports tagging of all of its resources. For details about
+// resource tagging, see Tagging Application Resources (https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/applications-tagging-resources.html).
 //
 // If you create a custom IAM user policy to control permission to this operation,
 // specify one of the following two virtual actions (or both) instead of the

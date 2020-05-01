@@ -44,7 +44,7 @@ type DescribeExportTasksInput struct {
 	// Default: 100
 	//
 	// Constraints: Minimum 20, maximum 100.
-	MaxRecords *string `type:"string"`
+	MaxRecords *int64 `min:"20" type:"integer"`
 
 	// The Amazon Resource Name (ARN) of the snapshot exported to Amazon S3.
 	SourceArn *string `type:"string"`
@@ -58,6 +58,9 @@ func (s DescribeExportTasksInput) String() string {
 // Validate inspects the fields of the type to determine if they are valid.
 func (s *DescribeExportTasksInput) Validate() error {
 	invalidParams := aws.ErrInvalidParams{Context: "DescribeExportTasksInput"}
+	if s.MaxRecords != nil && *s.MaxRecords < 20 {
+		invalidParams.Add(aws.NewErrParamMinValue("MaxRecords", 20))
+	}
 	if s.Filters != nil {
 		for i, v := range s.Filters {
 			if err := v.Validate(); err != nil {

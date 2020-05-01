@@ -124,13 +124,22 @@ const opAssociateVPCWithHostedZone = "AssociateVPCWithHostedZone"
 // Associates an Amazon VPC with a private hosted zone.
 //
 // To perform the association, the VPC and the private hosted zone must already
-// exist. You can't convert a public hosted zone into a private hosted zone.
+// exist. Also, you can't convert a public hosted zone into a private hosted
+// zone.
 //
-// If you want to associate a VPC that was created by using one AWS account
-// with a private hosted zone that was created by using a different account,
-// the AWS account that created the private hosted zone must first submit a
-// CreateVPCAssociationAuthorization request. Then the account that created
-// the VPC must submit an AssociateVPCWithHostedZone request.
+// If you want to associate a VPC that was created by one AWS account with a
+// private hosted zone that was created by a different account, do one of the
+// following:
+//
+//    * Use the AWS account that created the private hosted zone to submit a
+//    CreateVPCAssociationAuthorization (https://docs.aws.amazon.com/Route53/latest/APIReference/API_CreateVPCAssociationAuthorization.html)
+//    request. Then use the account that created the VPC to submit an AssociateVPCWithHostedZone
+//    request.
+//
+//    * If a subnet in the VPC was shared with another account, you can use
+//    the account that the subnet was shared with to submit an AssociateVPCWithHostedZone
+//    request. For more information about sharing subnets, see Working with
+//    Shared VPCs (https://docs.aws.amazon.com/vpc/latest/userguide/vpc-sharing.html).
 //
 //    // Example sending a request using AssociateVPCWithHostedZoneRequest.
 //    req := client.AssociateVPCWithHostedZoneRequest(params)

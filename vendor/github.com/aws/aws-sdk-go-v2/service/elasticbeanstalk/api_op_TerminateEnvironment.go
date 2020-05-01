@@ -133,7 +133,7 @@ type TerminateEnvironmentOutput struct {
 	// For more information, see Health Colors and Statuses (https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/health-enhanced-status.html).
 	HealthStatus EnvironmentHealthStatus `type:"string" enum:"true"`
 
-	// The ARN of the platform.
+	// The ARN of the platform version.
 	PlatformArn *string `type:"string"`
 
 	// The description of the AWS resources used by this environment.

@@ -12,8 +12,14 @@ import (
 type ListTagsForResourceInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ARN of the CloudWatch resource that you want to view tags for. For more
-	// information on ARN format, see Example ARNs (https://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html#arn-syntax-cloudwatch)
+	// The ARN of the CloudWatch resource that you want to view tags for.
+	//
+	// The ARN format of an alarm is arn:aws:cloudwatch:Region:account-id:alarm:alarm-name
+	//
+	// The ARN format of a Contributor Insights rule is arn:aws:cloudwatch:Region:account-id:insight-rule:insight-rule-name
+	//
+	// For more information on ARN format, see Resource Types Defined by Amazon
+	// CloudWatch (https://docs.aws.amazon.com/IAM/latest/UserGuide/list_amazoncloudwatch.html#amazoncloudwatch-resources-for-iam-policies)
 	// in the Amazon Web Services General Reference.
 	//
 	// ResourceARN is a required field
@@ -59,7 +65,8 @@ const opListTagsForResource = "ListTagsForResource"
 // ListTagsForResourceRequest returns a request value for making API operation for
 // Amazon CloudWatch.
 //
-// Displays the tags associated with a CloudWatch resource. Alarms support tagging.
+// Displays the tags associated with a CloudWatch resource. Currently, alarms
+// and Contributor Insights rules support tagging.
 //
 //    // Example sending a request using ListTagsForResourceRequest.
 //    req := client.ListTagsForResourceRequest(params)

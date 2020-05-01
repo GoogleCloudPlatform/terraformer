@@ -68,7 +68,8 @@ const opDescribeEffectivePolicy = "DescribeEffectivePolicy"
 // (http://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies-inheritance.html)
 // in the AWS Organizations User Guide.
 //
-// This operation can be called from any account in the organization.
+// This operation can be called only from the organization's master account
+// or by a member account that is a delegated administrator for an AWS service.
 //
 //    // Example sending a request using DescribeEffectivePolicyRequest.
 //    req := client.DescribeEffectivePolicyRequest(params)

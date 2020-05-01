@@ -76,6 +76,8 @@ const (
 	ConnectionPropertyKeyCustomJdbcCert               ConnectionPropertyKey = "CUSTOM_JDBC_CERT"
 	ConnectionPropertyKeySkipCustomJdbcCertValidation ConnectionPropertyKey = "SKIP_CUSTOM_JDBC_CERT_VALIDATION"
 	ConnectionPropertyKeyCustomJdbcCertString         ConnectionPropertyKey = "CUSTOM_JDBC_CERT_STRING"
+	ConnectionPropertyKeyConnectionUrl                ConnectionPropertyKey = "CONNECTION_URL"
+	ConnectionPropertyKeyKafkaBootstrapServers        ConnectionPropertyKey = "KAFKA_BOOTSTRAP_SERVERS"
 )
 
 func (enum ConnectionPropertyKey) MarshalValue() (string, error) {
@@ -91,8 +93,10 @@ type ConnectionType string
 
 // Enum values for ConnectionType
 const (
-	ConnectionTypeJdbc ConnectionType = "JDBC"
-	ConnectionTypeSftp ConnectionType = "SFTP"
+	ConnectionTypeJdbc    ConnectionType = "JDBC"
+	ConnectionTypeSftp    ConnectionType = "SFTP"
+	ConnectionTypeMongodb ConnectionType = "MONGODB"
+	ConnectionTypeKafka   ConnectionType = "KAFKA"
 )
 
 func (enum ConnectionType) MarshalValue() (string, error) {

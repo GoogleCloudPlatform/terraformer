@@ -17,9 +17,7 @@ type GetUserDefinedFunctionsInput struct {
 	CatalogId *string `min:"1" type:"string"`
 
 	// The name of the catalog database where the functions are located.
-	//
-	// DatabaseName is a required field
-	DatabaseName *string `min:"1" type:"string" required:"true"`
+	DatabaseName *string `min:"1" type:"string"`
 
 	// The maximum number of functions to return in one response.
 	MaxResults *int64 `min:"1" type:"integer"`
@@ -44,10 +42,6 @@ func (s *GetUserDefinedFunctionsInput) Validate() error {
 	invalidParams := aws.ErrInvalidParams{Context: "GetUserDefinedFunctionsInput"}
 	if s.CatalogId != nil && len(*s.CatalogId) < 1 {
 		invalidParams.Add(aws.NewErrParamMinLen("CatalogId", 1))
-	}
-
-	if s.DatabaseName == nil {
-		invalidParams.Add(aws.NewErrParamRequired("DatabaseName"))
 	}
 	if s.DatabaseName != nil && len(*s.DatabaseName) < 1 {
 		invalidParams.Add(aws.NewErrParamMinLen("DatabaseName", 1))

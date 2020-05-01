@@ -55,11 +55,9 @@ type AddPermissionInput struct {
 	// read it.
 	RevisionId *string `type:"string"`
 
-	// For AWS services, the ID of the account that owns the resource. Use this
-	// instead of SourceArn to grant permission to resources that are owned by another
-	// account (for example, all of an account's Amazon S3 buckets). Or use it together
+	// For Amazon S3, the ID of the account that owns the resource. Use this together
 	// with SourceArn to ensure that the resource is owned by the specified account.
-	// For example, an Amazon S3 bucket could be deleted by its owner and recreated
+	// It is possible for an Amazon S3 bucket to be deleted by its owner and recreated
 	// by another account.
 	SourceAccount *string `type:"string"`
 
@@ -212,10 +210,10 @@ const opAddPermission = "AddPermission"
 // To grant permission to another account, specify the account ID as the Principal.
 // For AWS services, the principal is a domain-style identifier defined by the
 // service, like s3.amazonaws.com or sns.amazonaws.com. For AWS services, you
-// can also specify the ARN or owning account of the associated resource as
-// the SourceArn or SourceAccount. If you grant permission to a service principal
-// without specifying the source, other accounts could potentially configure
-// resources in their account to invoke your Lambda function.
+// can also specify the ARN of the associated resource as the SourceArn. If
+// you grant permission to a service principal without specifying the source,
+// other accounts could potentially configure resources in their account to
+// invoke your Lambda function.
 //
 // This action adds a statement to a resource-based permissions policy for the
 // function. For more information about function policies, see Lambda Function

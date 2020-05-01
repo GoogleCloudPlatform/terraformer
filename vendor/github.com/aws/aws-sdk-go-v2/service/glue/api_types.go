@@ -567,7 +567,7 @@ type Connection struct {
 	//
 	//    * INSTANCE_ID - The instance ID to use.
 	//
-	//    * JDBC_CONNECTION_URL - The URL for the JDBC connection.
+	//    * JDBC_CONNECTION_URL - The URL for connecting to a JDBC data source.
 	//
 	//    * JDBC_ENFORCE_SSL - A Boolean string (true, false) specifying whether
 	//    Secure Sockets Layer (SSL) with hostname matching is enforced for the
@@ -591,6 +591,13 @@ type Connection struct {
 	//    used for domain match or distinguished name match to prevent a man-in-the-middle
 	//    attack. In Oracle database, this is used as the SSL_SERVER_CERT_DN; in
 	//    Microsoft SQL Server, this is used as the hostNameInCertificate.
+	//
+	//    * CONNECTION_URL - The URL for connecting to a general (non-JDBC) data
+	//    source.
+	//
+	//    * KAFKA_BOOTSTRAP_SERVERS - A comma-separated list of host and port pairs
+	//    that are the addresses of the Apache Kafka brokers in a Kafka cluster
+	//    to which a Kafka client will connect to and bootstrap itself.
 	ConnectionProperties map[string]string `type:"map"`
 
 	// The type of the connection. Currently, only JDBC is supported; SFTP is not
@@ -634,8 +641,16 @@ type ConnectionInput struct {
 	// ConnectionProperties is a required field
 	ConnectionProperties map[string]string `type:"map" required:"true"`
 
-	// The type of the connection. Currently, only JDBC is supported; SFTP is not
-	// supported.
+	// The type of the connection. Currently, these types are supported:
+	//
+	//    * JDBC - Designates a connection to a database through Java Database Connectivity
+	//    (JDBC).
+	//
+	//    * KAFKA - Designates a connection to an Apache Kafka streaming platform.
+	//
+	//    * MONGODB - Designates a connection to a MongoDB document database.
+	//
+	// SFTP is not supported.
 	//
 	// ConnectionType is a required field
 	ConnectionType ConnectionType `type:"string" required:"true" enum:"true"`

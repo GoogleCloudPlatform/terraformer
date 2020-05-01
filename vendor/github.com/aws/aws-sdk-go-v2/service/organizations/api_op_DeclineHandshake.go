@@ -68,7 +68,7 @@ const opDeclineHandshake = "DeclineHandshake"
 // a new handshake request.
 //
 // After you decline a handshake, it continues to appear in the results of relevant
-// API operations for only 30 days. After that, it's deleted.
+// APIs for only 30 days. After that, it's deleted.
 //
 //    // Example sending a request using DeclineHandshakeRequest.
 //    req := client.DeclineHandshakeRequest(params)

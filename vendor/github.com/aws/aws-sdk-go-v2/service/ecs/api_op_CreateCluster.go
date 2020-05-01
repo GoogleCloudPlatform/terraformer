@@ -13,8 +13,7 @@ import (
 type CreateClusterInput struct {
 	_ struct{} `type:"structure"`
 
-	// The short name or full Amazon Resource Name (ARN) of one or more capacity
-	// providers to associate with the cluster.
+	// The short name of one or more capacity providers to associate with the cluster.
 	//
 	// If specifying a capacity provider that uses an Auto Scaling group, the capacity
 	// provider must already be created and not already associated with another

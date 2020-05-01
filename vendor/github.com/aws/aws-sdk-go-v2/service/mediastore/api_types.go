@@ -3,6 +3,7 @@
 package mediastore
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -123,6 +124,107 @@ func (s *CorsRule) Validate() error {
 	}
 	if s.AllowedOrigins != nil && len(s.AllowedOrigins) < 1 {
 		invalidParams.Add(aws.NewErrParamMinLen("AllowedOrigins", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// The metric policy that is associated with the container. A metric policy
+// allows AWS Elemental MediaStore to send metrics to Amazon CloudWatch. In
+// the policy, you must indicate whether you want MediaStore to send container-level
+// metrics. You can also include rules to define groups of objects that you
+// want MediaStore to send object-level metrics for.
+//
+// To view examples of how to construct a metric policy for your use case, see
+// Example Metric Policies (https://docs.aws.amazon.com/mediastore/latest/ug/policies-metric-examples.html).
+type MetricPolicy struct {
+	_ struct{} `type:"structure"`
+
+	// A setting to enable or disable metrics at the container level.
+	//
+	// ContainerLevelMetrics is a required field
+	ContainerLevelMetrics ContainerLevelMetrics `type:"string" required:"true" enum:"true"`
+
+	// A parameter that holds an array of rules that enable metrics at the object
+	// level. This parameter is optional, but if you choose to include it, you must
+	// also include at least one rule. By default, you can include up to five rules.
+	// You can also request a quota increase (https://console.aws.amazon.com/servicequotas/home?region=us-east-1#!/services/mediastore/quotas)
+	// to allow up to 300 rules per policy.
+	MetricPolicyRules []MetricPolicyRule `min:"1" type:"list"`
+}
+
+// String returns the string representation
+func (s MetricPolicy) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *MetricPolicy) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "MetricPolicy"}
+	if len(s.ContainerLevelMetrics) == 0 {
+		invalidParams.Add(aws.NewErrParamRequired("ContainerLevelMetrics"))
+	}
+	if s.MetricPolicyRules != nil && len(s.MetricPolicyRules) < 1 {
+		invalidParams.Add(aws.NewErrParamMinLen("MetricPolicyRules", 1))
+	}
+	if s.MetricPolicyRules != nil {
+		for i, v := range s.MetricPolicyRules {
+			if err := v.Validate(); err != nil {
+				invalidParams.AddNested(fmt.Sprintf("%s[%v]", "MetricPolicyRules", i), err.(aws.ErrInvalidParams))
+			}
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// A setting that enables metrics at the object level. Each rule contains an
+// object group and an object group name. If the policy includes the MetricPolicyRules
+// parameter, you must include at least one rule. Each metric policy can include
+// up to five rules by default. You can also request a quota increase (https://console.aws.amazon.com/servicequotas/home?region=us-east-1#!/services/mediastore/quotas)
+// to allow up to 300 rules per policy.
+type MetricPolicyRule struct {
+	_ struct{} `type:"structure"`
+
+	// A path or file name that defines which objects to include in the group. Wildcards
+	// (*) are acceptable.
+	//
+	// ObjectGroup is a required field
+	ObjectGroup *string `min:"1" type:"string" required:"true"`
+
+	// A name that allows you to refer to the object group.
+	//
+	// ObjectGroupName is a required field
+	ObjectGroupName *string `min:"1" type:"string" required:"true"`
+}
+
+// String returns the string representation
+func (s MetricPolicyRule) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *MetricPolicyRule) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "MetricPolicyRule"}
+
+	if s.ObjectGroup == nil {
+		invalidParams.Add(aws.NewErrParamRequired("ObjectGroup"))
+	}
+	if s.ObjectGroup != nil && len(*s.ObjectGroup) < 1 {
+		invalidParams.Add(aws.NewErrParamMinLen("ObjectGroup", 1))
+	}
+
+	if s.ObjectGroupName == nil {
+		invalidParams.Add(aws.NewErrParamRequired("ObjectGroupName"))
+	}
+	if s.ObjectGroupName != nil && len(*s.ObjectGroupName) < 1 {
+		invalidParams.Add(aws.NewErrParamMinLen("ObjectGroupName", 1))
 	}
 
 	if invalidParams.Len() > 0 {

@@ -27,7 +27,7 @@ type CreateContainerInput struct {
 	// as "test," "development," or "production"). You can add up to 50 tags to
 	// each container. For more information about tagging, including naming and
 	// usage conventions, see Tagging Resources in MediaStore (https://docs.aws.amazon.com/mediastore/latest/ug/tagging.html).
-	Tags []Tag `type:"list"`
+	Tags []Tag `min:"1" type:"list"`
 }
 
 // String returns the string representation
@@ -44,6 +44,9 @@ func (s *CreateContainerInput) Validate() error {
 	}
 	if s.ContainerName != nil && len(*s.ContainerName) < 1 {
 		invalidParams.Add(aws.NewErrParamMinLen("ContainerName", 1))
+	}
+	if s.Tags != nil && len(s.Tags) < 1 {
+		invalidParams.Add(aws.NewErrParamMinLen("Tags", 1))
 	}
 	if s.Tags != nil {
 		for i, v := range s.Tags {

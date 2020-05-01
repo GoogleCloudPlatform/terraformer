@@ -12,10 +12,10 @@ import (
 type ListTagsForResourceInput struct {
 	_ struct{} `type:"structure"`
 
-	// Use this parameter if you receive a NextToken response in a previous request
-	// that indicates that there is more output available. Set it to the value of
-	// the previous call's NextToken response to indicate where the output should
-	// continue from.
+	// The parameter for receiving additional results if you receive a NextToken
+	// response in a previous request. A NextToken response indicates that more
+	// output is available. Set this parameter to the value of the previous call's
+	// NextToken response to indicate where the output should continue from.
 	NextToken *string `type:"string"`
 
 	// The ID of the resource that you want to retrieve tags for.
@@ -46,11 +46,10 @@ func (s *ListTagsForResourceInput) Validate() error {
 type ListTagsForResourceOutput struct {
 	_ struct{} `type:"structure"`
 
-	// If present, this value indicates that there is more output available than
-	// is included in the current response. Use this value in the NextToken request
-	// parameter in a subsequent call to the operation to get the next part of the
-	// output. You should repeat this until the NextToken response element comes
-	// back as null.
+	// If present, indicates that more output is available than is included in the
+	// current response. Use this value in the NextToken request parameter in a
+	// subsequent call to the operation to get the next part of the output. You
+	// should repeat this until the NextToken response element comes back as null.
 	NextToken *string `type:"string"`
 
 	// The tags that are assigned to the resource.
@@ -71,7 +70,8 @@ const opListTagsForResource = "ListTagsForResource"
 //
 // Currently, you can list tags on an account in AWS Organizations.
 //
-// This operation can be called only from the organization's master account.
+// This operation can be called only from the organization's master account
+// or by a member account that is a delegated administrator for an AWS service.
 //
 //    // Example sending a request using ListTagsForResourceRequest.
 //    req := client.ListTagsForResourceRequest(params)

@@ -205,7 +205,7 @@ const opListHostedZonesByName = "ListHostedZonesByName"
 //
 // The labels are reversed and alphabetized using the escaped value. For more
 // information about valid domain name formats, including internationalized
-// domain names, see DNS Domain Name Format (http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/DomainNameFormat.html)
+// domain names, see DNS Domain Name Format (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/DomainNameFormat.html)
 // in the Amazon Route 53 Developer Guide.
 //
 // Route 53 returns up to 100 items in each response. If you have a lot of hosted

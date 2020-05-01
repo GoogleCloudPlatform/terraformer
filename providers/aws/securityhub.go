@@ -16,7 +16,6 @@ package aws
 
 import (
 	"context"
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
@@ -41,7 +40,10 @@ func (g *SecurityhubGenerator) InitResources() error {
 		return err
 	}
 
-	err = g.addAccount(client, *account)
+	accountDisabled, err := g.addAccount(client, *account)
+	if accountDisabled {
+		return nil
+	}
 	if err != nil {
 		return err
 	}
@@ -53,12 +55,15 @@ func (g *SecurityhubGenerator) InitResources() error {
 	return err
 }
 
-func (g *SecurityhubGenerator) addAccount(client *securityhub.Client, accountNumber string) error {
+func (g *SecurityhubGenerator) addAccount(client *securityhub.Client, accountNumber string) (bool, error) {
 	_, err := client.GetEnabledStandardsRequest(&securityhub.GetEnabledStandardsInput{}).Send(context.Background())
 
 	if err != nil {
-		if !strings.Contains(err.(awserr.Error).Message(), "not subscribed to AWS Security Hub") {
-			return err
+		errorMsg := err.Error()
+		if !strings.Contains(errorMsg, "not subscribed to AWS Security Hub") {
+			return false, err
+		} else {
+			return true, nil
 		}
 	} else {
 		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
@@ -69,7 +74,7 @@ func (g *SecurityhubGenerator) addAccount(client *securityhub.Client, accountNum
 			securityhubAllowEmptyValues,
 		))
 	}
-	return nil
+	return false, nil
 }
 
 func (g *SecurityhubGenerator) addMembers(svc *securityhub.Client, accountNumber string) error {

@@ -20,7 +20,10 @@ type CreateInsightInput struct {
 	// Filters is a required field
 	Filters *AwsSecurityFindingFilters `type:"structure" required:"true"`
 
-	// The attribute used as the aggregator to group related findings for the insight.
+	// The attribute used to group the findings for the insight. The grouping attribute
+	// identifies the type of item that the insight applies to. For example, if
+	// an insight is grouped by resource identifier, then the insight produces a
+	// list of resource identifiers.
 	//
 	// GroupByAttribute is a required field
 	GroupByAttribute *string `type:"string" required:"true"`

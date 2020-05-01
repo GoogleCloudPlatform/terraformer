@@ -4,8 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"regexp"
 	"strings"
 )
+
+var OpeningBracketRegexp = regexp.MustCompile(`.?\\<`)
+var ClosingBracketRegexp = regexp.MustCompile(`.?\\>`)
 
 func jsonPrint(data interface{}) ([]byte, error) {
 	dataJsonBytes, err := json.MarshalIndent(data, "", "  ")
@@ -15,8 +19,18 @@ func jsonPrint(data interface{}) ([]byte, error) {
 	}
 	// We don't need to escape > or <
 	s := strings.Replace(string(dataJsonBytes), "\\u003c", "<", -1)
-	s = strings.Replace(s, "\\<", "<", -1) // fix broken double escaping
+	s = OpeningBracketRegexp.ReplaceAllStringFunc(s, escapingBackslashReplacer("<"))
 	s = strings.Replace(s, "\\u003e", ">", -1)
-	s = strings.Replace(s, "\\>", ">", -1) // fix broken double escaping
+	s = ClosingBracketRegexp.ReplaceAllStringFunc(s, escapingBackslashReplacer(">"))
 	return []byte(s), nil
+}
+
+func escapingBackslashReplacer(backslashedCharacter string) func(string) string {
+	return func(match string) string {
+		if strings.HasPrefix(match, "\\\\") {
+			return match // Don't replace regular backslashes
+		} else {
+			return strings.Replace(match, "\\"+backslashedCharacter, backslashedCharacter, 1)
+		}
+	}
 }

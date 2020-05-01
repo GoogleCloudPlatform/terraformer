@@ -74,13 +74,13 @@ type ModifyDBInstanceInput struct {
 	//
 	//    * Must be a value from 0 to 35
 	//
-	//    * Can be specified for a MySQL Read Replica only if the source is running
+	//    * Can be specified for a MySQL read replica only if the source is running
 	//    MySQL 5.6 or later
 	//
-	//    * Can be specified for a PostgreSQL Read Replica only if the source is
+	//    * Can be specified for a PostgreSQL read replica only if the source is
 	//    running PostgreSQL 9.3.5
 	//
-	//    * Can't be set to 0 if the DB instance is a source to Read Replicas
+	//    * Can't be set to 0 if the DB instance is a source to read replicas
 	BackupRetentionPeriod *int64 `type:"integer"`
 
 	// Indicates the certificate that needs to be associated with the instance.
@@ -172,19 +172,19 @@ type ModifyDBInstanceInput struct {
 	//
 	// Default: 3306
 	//
-	// Valid Values: 1150-65535
+	// Valid values: 1150-65535
 	//
 	// MariaDB
 	//
 	// Default: 3306
 	//
-	// Valid Values: 1150-65535
+	// Valid values: 1150-65535
 	//
 	// PostgreSQL
 	//
 	// Default: 5432
 	//
-	// Valid Values: 1150-65535
+	// Valid values: 1150-65535
 	//
 	// Type: Integer
 	//
@@ -192,20 +192,20 @@ type ModifyDBInstanceInput struct {
 	//
 	// Default: 1521
 	//
-	// Valid Values: 1150-65535
+	// Valid values: 1150-65535
 	//
 	// SQL Server
 	//
 	// Default: 1433
 	//
-	// Valid Values: 1150-65535 except for 1434, 3389, 47001, 49152, and 49152 through
-	// 49156.
+	// Valid values: 1150-65535 except 1234, 1434, 3260, 3343, 3389, 47001, and
+	// 49152-49156.
 	//
 	// Amazon Aurora
 	//
 	// Default: 3306
 	//
-	// Valid Values: 1150-65535
+	// Valid values: 1150-65535
 	DBPortNumber *int64 `type:"integer"`
 
 	// A list of DB security groups to authorize on this DB instance. Changing this
@@ -305,7 +305,7 @@ type ModifyDBInstanceInput struct {
 	// While the migration takes place, nightly backups for the instance are suspended.
 	// No other Amazon RDS operations can take place for the instance, including
 	// modifying the instance, rebooting the instance, deleting the instance, creating
-	// a Read Replica for the instance, and creating a DB snapshot of the instance.
+	// a read replica for the instance, and creating a DB snapshot of the instance.
 	//
 	// Constraints: For MariaDB, MySQL, Oracle, and PostgreSQL, the value supplied
 	// must be at least 10% greater than the current value. Values that are not
@@ -517,7 +517,7 @@ type ModifyDBInstanceInput struct {
 	// While the migration takes place, nightly backups for the instance are suspended.
 	// No other Amazon RDS operations can take place for the instance, including
 	// modifying the instance, rebooting the instance, deleting the instance, creating
-	// a Read Replica for the instance, and creating a DB snapshot of the instance.
+	// a read replica for the instance, and creating a DB snapshot of the instance.
 	//
 	// Valid values: standard | gp2 | io1
 	//

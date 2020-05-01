@@ -1,6 +1,7 @@
 package external
 
 import (
+	"context"
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
@@ -9,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/awserr"
 	"github.com/aws/aws-sdk-go-v2/aws/defaults"
+	"github.com/aws/aws-sdk-go-v2/aws/ec2metadata"
 )
 
 // ResolveDefaultAWSConfig will write default configuration values into the cfg
@@ -133,6 +135,55 @@ func ResolveEndpointResolverFunc(cfg *aws.Config, configs Configs) error {
 	}
 
 	cfg.EndpointResolver = endpointResolverFunc(cfg.EndpointResolver)
+
+	return nil
+}
+
+// ResolveDefaultRegion extracts the first instance of a default region and sets `aws.Config.Region` to the default
+// region if region had not been resolved from other sources.
+func ResolveDefaultRegion(cfg *aws.Config, configs Configs) error {
+	if len(cfg.Region) > 0 {
+		return nil
+	}
+
+	region, found, err := GetDefaultRegion(configs)
+	if err != nil {
+		return err
+	}
+	if !found {
+		return nil
+	}
+
+	cfg.Region = region
+
+	return nil
+}
+
+type ec2MetadataRegionClient interface {
+	Region(context.Context) (string, error)
+}
+
+// newEC2MetadataClient is the EC2 instance metadata service client, allows for swapping during testing
+var newEC2MetadataClient = func(cfg aws.Config) ec2MetadataRegionClient {
+	return ec2metadata.New(cfg)
+}
+
+// ResolveEC2Region attempts to resolve the region using the EC2 instance metadata service. If region is already set on
+// the config no lookup occurs. If an error is returned the service is assumed unavailable.
+func ResolveEC2Region(cfg *aws.Config, _ Configs) error {
+	if len(cfg.Region) > 0 {
+		return nil
+	}
+
+	client := newEC2MetadataClient(*cfg)
+
+	// TODO: What does context look like with external config loading and how to handle the impact to service client config loading
+	region, err := client.Region(context.Background())
+	if err != nil {
+		return nil
+	}
+
+	cfg.Region = region
 
 	return nil
 }

@@ -75,8 +75,8 @@ func (s ApplicationMetrics) String() string {
 
 // The resource lifecycle configuration for an application. Defines lifecycle
 // settings for resources that belong to the application, and the service role
-// that Elastic Beanstalk assumes in order to apply lifecycle settings. The
-// version lifecycle configuration defines lifecycle settings for application
+// that AWS Elastic Beanstalk assumes in order to apply lifecycle settings.
+// The version lifecycle configuration defines lifecycle settings for application
 // versions.
 type ApplicationResourceLifecycleConfig struct {
 	_ struct{} `type:"structure"`
@@ -92,7 +92,7 @@ type ApplicationResourceLifecycleConfig struct {
 	// Role to another value.
 	ServiceRole *string `type:"string"`
 
-	// The application version lifecycle configuration.
+	// Defines lifecycle settings for application versions.
 	VersionLifecycleConfig *ApplicationVersionLifecycleConfig `type:"structure"`
 }
 
@@ -443,19 +443,20 @@ func (s ConfigurationOptionDescription) String() string {
 }
 
 // A specification identifying an individual configuration option along with
-// its current value. For a list of possible option values, go to Option Values
-// (https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options.html)
+// its current value. For a list of possible namespaces and option values, see
+// Option Values (https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options.html)
 // in the AWS Elastic Beanstalk Developer Guide.
 type ConfigurationOptionSetting struct {
 	_ struct{} `type:"structure"`
 
-	// A unique namespace identifying the option's associated AWS resource.
+	// A unique namespace that identifies the option's associated AWS resource.
 	Namespace *string `type:"string"`
 
 	// The name of the configuration option.
 	OptionName *string `type:"string"`
 
-	// A unique resource name for a time-based scaling configuration option.
+	// A unique resource name for the option setting. Use it for a time–based
+	// scaling configuration option.
 	ResourceName *string `min:"1" type:"string"`
 
 	// The current value for the configuration option.
@@ -517,7 +518,7 @@ type ConfigurationSettingsDescription struct {
 	// set.
 	OptionSettings []ConfigurationOptionSetting `type:"list"`
 
-	// The ARN of the platform.
+	// The ARN of the platform version.
 	PlatformArn *string `type:"string"`
 
 	// The name of the solution stack this configuration set uses.
@@ -646,7 +647,7 @@ type EnvironmentDescription struct {
 	// For more information, see Health Colors and Statuses (https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/health-enhanced-status.html).
 	HealthStatus EnvironmentHealthStatus `type:"string" enum:"true"`
 
-	// The ARN of the platform.
+	// The ARN of the platform version.
 	PlatformArn *string `type:"string"`
 
 	// The description of the AWS resources used by this environment.
@@ -830,7 +831,7 @@ type EventDescription struct {
 	// The event message.
 	Message *string `type:"string"`
 
-	// The ARN of the platform.
+	// The ARN of the platform version.
 	PlatformArn *string `type:"string"`
 
 	// The web service request ID for the activity of this event.
@@ -1207,62 +1208,114 @@ func (s *OptionSpecification) Validate() error {
 	return nil
 }
 
-// Detailed information about a platform.
+// Summary information about a platform branch.
+type PlatformBranchSummary struct {
+	_ struct{} `type:"structure"`
+
+	// The name of the platform branch.
+	BranchName *string `type:"string"`
+
+	// An ordinal number that designates the order in which platform branches have
+	// been added to a platform. This can be helpful, for example, if your code
+	// calls the ListPlatformBranches action and then displays a list of platform
+	// branches.
+	//
+	// A larger BranchOrder value designates a newer platform branch within the
+	// platform.
+	BranchOrder *int64 `type:"integer"`
+
+	// The support life cycle state of the platform branch.
+	//
+	// Possible values: beta | supported | deprecated | retired
+	LifecycleState *string `type:"string"`
+
+	// The name of the platform to which this platform branch belongs.
+	PlatformName *string `type:"string"`
+
+	// The environment tiers that platform versions in this branch support.
+	//
+	// Possible values: WebServer/Standard | Worker/SQS/HTTP
+	SupportedTierList []string `type:"list"`
+}
+
+// String returns the string representation
+func (s PlatformBranchSummary) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Detailed information about a platform version.
 type PlatformDescription struct {
 	_ struct{} `type:"structure"`
 
-	// The custom AMIs supported by the platform.
+	// The custom AMIs supported by the platform version.
 	CustomAmiList []CustomAmi `type:"list"`
 
-	// The date when the platform was created.
+	// The date when the platform version was created.
 	DateCreated *time.Time `type:"timestamp"`
 
-	// The date when the platform was last updated.
+	// The date when the platform version was last updated.
 	DateUpdated *time.Time `type:"timestamp"`
 
-	// The description of the platform.
+	// The description of the platform version.
 	Description *string `type:"string"`
 
-	// The frameworks supported by the platform.
+	// The frameworks supported by the platform version.
 	Frameworks []PlatformFramework `type:"list"`
 
-	// Information about the maintainer of the platform.
+	// Information about the maintainer of the platform version.
 	Maintainer *string `type:"string"`
 
-	// The operating system used by the platform.
+	// The operating system used by the platform version.
 	OperatingSystemName *string `type:"string"`
 
-	// The version of the operating system used by the platform.
+	// The version of the operating system used by the platform version.
 	OperatingSystemVersion *string `type:"string"`
 
-	// The ARN of the platform.
+	// The ARN of the platform version.
 	PlatformArn *string `type:"string"`
 
-	// The category of the platform.
+	// The state of the platform version's branch in its lifecycle.
+	//
+	// Possible values: Beta | Supported | Deprecated | Retired
+	PlatformBranchLifecycleState *string `type:"string"`
+
+	// The platform branch to which the platform version belongs.
+	PlatformBranchName *string `type:"string"`
+
+	// The category of the platform version.
 	PlatformCategory *string `type:"string"`
 
-	// The name of the platform.
+	// The state of the platform version in its lifecycle.
+	//
+	// Possible values: Recommended | null
+	//
+	// If a null value is returned, the platform version isn't the recommended one
+	// for its branch. Each platform branch has a single recommended platform version,
+	// typically the most recent one.
+	PlatformLifecycleState *string `type:"string"`
+
+	// The name of the platform version.
 	PlatformName *string `type:"string"`
 
-	// The AWS account ID of the person who created the platform.
+	// The AWS account ID of the person who created the platform version.
 	PlatformOwner *string `type:"string"`
 
-	// The status of the platform.
+	// The status of the platform version.
 	PlatformStatus PlatformStatus `type:"string" enum:"true"`
 
-	// The version of the platform.
+	// The version of the platform version.
 	PlatformVersion *string `type:"string"`
 
-	// The programming languages supported by the platform.
+	// The programming languages supported by the platform version.
 	ProgrammingLanguages []PlatformProgrammingLanguage `type:"list"`
 
-	// The name of the solution stack used by the platform.
+	// The name of the solution stack used by the platform version.
 	SolutionStackName *string `type:"string"`
 
-	// The additions supported by the platform.
+	// The additions supported by the platform version.
 	SupportedAddonList []string `type:"list"`
 
-	// The tiers supported by the platform.
+	// The tiers supported by the platform version.
 	SupportedTierList []string `type:"list"`
 }
 
@@ -1271,27 +1324,36 @@ func (s PlatformDescription) String() string {
 	return awsutil.Prettify(s)
 }
 
-// Specify criteria to restrict the results when listing custom platforms.
+// Describes criteria to restrict the results when listing platform versions.
 //
-// The filter is evaluated as the expression:
-//
-// Type Operator Values[i]
+// The filter is evaluated as follows: Type Operator Values[1]
 type PlatformFilter struct {
 	_ struct{} `type:"structure"`
 
 	// The operator to apply to the Type with each of the Values.
 	//
-	// Valid Values: = (equal to) | != (not equal to) | < (less than) | <= (less
-	// than or equal to) | > (greater than) | >= (greater than or equal to) | contains
-	// | begins_with | ends_with
+	// Valid values: = | != | < | <= | > | >= | contains | begins_with | ends_with
 	Operator *string `type:"string"`
 
-	// The custom platform attribute to which the filter values are applied.
+	// The platform version attribute to which the filter values are applied.
 	//
-	// Valid Values: PlatformName | PlatformVersion | PlatformStatus | PlatformOwner
+	// Valid values: PlatformName | PlatformVersion | PlatformStatus | PlatformBranchName
+	// | PlatformLifecycleState | PlatformOwner | SupportedTier | SupportedAddon
+	// | ProgrammingLanguageName | OperatingSystemName
 	Type *string `type:"string"`
 
-	// The list of values applied to the custom platform attribute.
+	// The list of values applied to the filtering platform version attribute. Only
+	// one value is supported for all current operators.
+	//
+	// The following list shows valid filter values for some filter attributes.
+	//
+	//    * PlatformStatus: Creating | Failed | Ready | Deleting | Deleted
+	//
+	//    * PlatformLifecycleState: recommended
+	//
+	//    * SupportedTier: WebServer/Standard | Worker/SQS/HTTP
+	//
+	//    * SupportedAddon: Log/S3 | Monitoring/Healthd | WorkerDaemon/SQSD
 	Values []string `type:"list"`
 }
 
@@ -1300,7 +1362,7 @@ func (s PlatformFilter) String() string {
 	return awsutil.Prettify(s)
 }
 
-// A framework supported by the custom platform.
+// A framework supported by the platform.
 type PlatformFramework struct {
 	_ struct{} `type:"structure"`
 
@@ -1332,33 +1394,52 @@ func (s PlatformProgrammingLanguage) String() string {
 	return awsutil.Prettify(s)
 }
 
-// Detailed information about a platform.
+// Summary information about a platform version.
 type PlatformSummary struct {
 	_ struct{} `type:"structure"`
 
-	// The operating system used by the platform.
+	// The operating system used by the platform version.
 	OperatingSystemName *string `type:"string"`
 
-	// The version of the operating system used by the platform.
+	// The version of the operating system used by the platform version.
 	OperatingSystemVersion *string `type:"string"`
 
-	// The ARN of the platform.
+	// The ARN of the platform version.
 	PlatformArn *string `type:"string"`
 
-	// The category of platform.
+	// The state of the platform version's branch in its lifecycle.
+	//
+	// Possible values: beta | supported | deprecated | retired
+	PlatformBranchLifecycleState *string `type:"string"`
+
+	// The platform branch to which the platform version belongs.
+	PlatformBranchName *string `type:"string"`
+
+	// The category of platform version.
 	PlatformCategory *string `type:"string"`
 
-	// The AWS account ID of the person who created the platform.
+	// The state of the platform version in its lifecycle.
+	//
+	// Possible values: recommended | empty
+	//
+	// If an empty value is returned, the platform version is supported but isn't
+	// the recommended one for its branch.
+	PlatformLifecycleState *string `type:"string"`
+
+	// The AWS account ID of the person who created the platform version.
 	PlatformOwner *string `type:"string"`
 
-	// The status of the platform. You can create an environment from the platform
-	// once it is ready.
+	// The status of the platform version. You can create an environment from the
+	// platform version once it is ready.
 	PlatformStatus PlatformStatus `type:"string" enum:"true"`
 
-	// The additions associated with the platform.
+	// The version string of the platform version.
+	PlatformVersion *string `type:"string"`
+
+	// The additions associated with the platform version.
 	SupportedAddonList []string `type:"list"`
 
-	// The tiers in which the platform runs.
+	// The tiers in which the platform version runs.
 	SupportedTierList []string `type:"list"`
 }
 
@@ -1437,6 +1518,40 @@ type S3Location struct {
 
 // String returns the string representation
 func (s S3Location) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Describes criteria to restrict a list of results.
+//
+// For operators that apply a single value to the attribute, the filter is evaluated
+// as follows: Attribute Operator Values[1]
+//
+// Some operators, e.g. in, can apply multiple values. In this case, the filter
+// is evaluated as a logical union (OR) of applications of the operator to the
+// attribute with each one of the values: (Attribute Operator Values[1]) OR
+// (Attribute Operator Values[2]) OR ...
+//
+// The valid values for attributes of SearchFilter depend on the API action.
+// For valid values, see the reference page for the API action you're calling
+// that takes a SearchFilter parameter.
+type SearchFilter struct {
+	_ struct{} `type:"structure"`
+
+	// The result attribute to which the filter values are applied. Valid values
+	// vary by API action.
+	Attribute *string `type:"string"`
+
+	// The operator to apply to the Attribute with each of the Values. Valid values
+	// vary by Attribute.
+	Operator *string `type:"string"`
+
+	// The list of values applied to the Attribute and Operator attributes. Number
+	// of values and valid values vary by Attribute.
+	Values []string `type:"list"`
+}
+
+// String returns the string representation
+func (s SearchFilter) String() string {
 	return awsutil.Prettify(s)
 }
 
@@ -1564,7 +1679,7 @@ func (s *SourceBuildInformation) Validate() error {
 	return nil
 }
 
-// A specification for an environment configuration
+// A specification for an environment configuration.
 type SourceConfiguration struct {
 	_ struct{} `type:"structure"`
 

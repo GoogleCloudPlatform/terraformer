@@ -22,14 +22,14 @@ type PromoteReadReplicaInput struct {
 	//
 	//    * Must be a value from 0 to 35.
 	//
-	//    * Can't be set to 0 if the DB instance is a source to Read Replicas.
+	//    * Can't be set to 0 if the DB instance is a source to read replicas.
 	BackupRetentionPeriod *int64 `type:"integer"`
 
 	// The DB instance identifier. This value is stored as a lowercase string.
 	//
 	// Constraints:
 	//
-	//    * Must match the identifier of an existing Read Replica DB instance.
+	//    * Must match the identifier of an existing read replica DB instance.
 	//
 	// Example: mydbinstance
 	//
@@ -94,15 +94,15 @@ const opPromoteReadReplica = "PromoteReadReplica"
 // PromoteReadReplicaRequest returns a request value for making API operation for
 // Amazon Relational Database Service.
 //
-// Promotes a Read Replica DB instance to a standalone DB instance.
+// Promotes a read replica DB instance to a standalone DB instance.
 //
 //    * Backup duration is a function of the amount of changes to the database
-//    since the previous backup. If you plan to promote a Read Replica to a
+//    since the previous backup. If you plan to promote a read replica to a
 //    standalone instance, we recommend that you enable backups and complete
-//    at least one backup prior to promotion. In addition, a Read Replica cannot
+//    at least one backup prior to promotion. In addition, a read replica cannot
 //    be promoted to a standalone instance when it is in the backing-up status.
-//    If you have enabled backups on your Read Replica, configure the automated
-//    backup window so that daily backups do not interfere with Read Replica
+//    If you have enabled backups on your read replica, configure the automated
+//    backup window so that daily backups do not interfere with read replica
 //    promotion.
 //
 //    * This command doesn't apply to Aurora MySQL and Aurora PostgreSQL.

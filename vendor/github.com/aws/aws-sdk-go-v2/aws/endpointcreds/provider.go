@@ -150,7 +150,7 @@ func (p *Provider) getCredentials() (*getCredentialsOutput, error) {
 
 func validateEndpointHandler(r *aws.Request) {
 	if len(r.Endpoint.URL) == 0 {
-		r.Error = aws.ErrMissingEndpoint
+		r.Error = &aws.MissingEndpointError{}
 	}
 }
 

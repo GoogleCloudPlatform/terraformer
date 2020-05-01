@@ -71,15 +71,15 @@ const opRemoveAccountFromOrganization = "RemoveAccountFromOrganization"
 // You can remove an account from your organization only if the account is configured
 // with the information required to operate as a standalone account. When you
 // create an account in an organization using the AWS Organizations console,
-// API, or CLI, the information required of standalone accounts is not automatically
-// collected. For an account that you want to make standalone, you must accept
-// the end user license agreement (EULA). You must also choose a support plan,
+// API, or CLI commands, the information required of standalone accounts is
+// not automatically collected. For an account that you want to make standalone,
+// you must accept the end user license agreement (EULA), choose a support plan,
 // provide and verify the required contact information, and provide a current
 // payment method. AWS uses the payment method to charge for any billable (not
 // free tier) AWS activity that occurs while the account isn't attached to an
 // organization. To remove an account that doesn't yet have this information,
-// you must sign in as the member account. Then follow the steps at To leave
-// an organization when all required account information has not yet been provided
+// you must sign in as the member account and follow the steps at To leave an
+// organization when all required account information has not yet been provided
 // (http://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_remove.html#leave-without-all-info)
 // in the AWS Organizations User Guide.
 //
