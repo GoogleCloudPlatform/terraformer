@@ -15,7 +15,7 @@ type UpdateStackInstancesInput struct {
 	// [Self-managed permissions] The names of one or more AWS accounts for which
 	// you want to update parameter values for stack instances. The overridden parameter
 	// values will be applied to all stack instances in the specified accounts and
-	// regions.
+	// Regions.
 	//
 	// You can specify Accounts or DeploymentTargets, but not both.
 	Accounts []string `type:"list"`
@@ -46,7 +46,7 @@ type UpdateStackInstancesInput struct {
 	// stack instances.
 	//
 	// Any overridden parameter values will be applied to all stack instances in
-	// the specified accounts and regions. When specifying parameters and their
+	// the specified accounts and Regions. When specifying parameters and their
 	// values, be aware of how AWS CloudFormation sets parameter values during stack
 	// instance update operations:
 	//
@@ -77,9 +77,9 @@ type UpdateStackInstancesInput struct {
 	// new parameter, you can then override the parameter value using UpdateStackInstances.
 	ParameterOverrides []Parameter `type:"list"`
 
-	// The names of one or more regions in which you want to update parameter values
+	// The names of one or more Regions in which you want to update parameter values
 	// for stack instances. The overridden parameter values will be applied to all
-	// stack instances in the specified accounts and regions.
+	// stack instances in the specified accounts and Regions.
 	//
 	// Regions is a required field
 	Regions []string `type:"list" required:"true"`
@@ -139,10 +139,10 @@ const opUpdateStackInstances = "UpdateStackInstances"
 // AWS CloudFormation.
 //
 // Updates the parameter values for stack instances for the specified accounts,
-// within the specified regions. A stack instance refers to a stack in a specific
-// account and region.
+// within the specified Regions. A stack instance refers to a stack in a specific
+// account and Region.
 //
-// You can only update stack instances in regions and accounts where they already
+// You can only update stack instances in Regions and accounts where they already
 // exist; to create additional stack instances, use CreateStackInstances (https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_CreateStackInstances.html).
 //
 // During stack set updates, any parameters overridden for a stack instance

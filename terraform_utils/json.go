@@ -8,6 +8,9 @@ import (
 	"strings"
 )
 
+var OPENING_BRACKET_REGEXP = regexp.MustCompile(`.?\\<`)
+var CLOSING_BRACKET_REGEXP = regexp.MustCompile(`.?\\>`)
+
 func jsonPrint(data interface{}) ([]byte, error) {
 	dataJsonBytes, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
@@ -16,9 +19,9 @@ func jsonPrint(data interface{}) ([]byte, error) {
 	}
 	// We don't need to escape > or <
 	s := strings.Replace(string(dataJsonBytes), "\\u003c", "<", -1)
-	s = regexp.MustCompile(`.?\\<`).ReplaceAllStringFunc(s, escapingBackslashReplacer("<"))
+	s = OPENING_BRACKET_REGEXP.ReplaceAllStringFunc(s, escapingBackslashReplacer("<"))
 	s = strings.Replace(s, "\\u003e", ">", -1)
-	s = regexp.MustCompile(`.?\\>`).ReplaceAllStringFunc(s, escapingBackslashReplacer(">"))
+	s = CLOSING_BRACKET_REGEXP.ReplaceAllStringFunc(s, escapingBackslashReplacer(">"))
 	return []byte(s), nil
 }
 

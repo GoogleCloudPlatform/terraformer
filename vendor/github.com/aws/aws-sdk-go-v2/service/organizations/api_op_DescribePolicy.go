@@ -61,7 +61,8 @@ const opDescribePolicy = "DescribePolicy"
 //
 // Retrieves information about a policy.
 //
-// This operation can be called only from the organization's master account.
+// This operation can be called only from the organization's master account
+// or by a member account that is a delegated administrator for an AWS service.
 //
 //    // Example sending a request using DescribePolicyRequest.
 //    req := client.DescribePolicyRequest(params)

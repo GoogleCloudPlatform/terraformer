@@ -13,6 +13,13 @@ import (
 type DescribeOrderableDBInstanceOptionsInput struct {
 	_ struct{} `type:"structure"`
 
+	// The Availability Zone group associated with a Local Zone. Specify this parameter
+	// to retrieve available offerings for the Local Zones in the group.
+	//
+	// Omit this parameter to show the available offerings in the specified AWS
+	// Region.
+	AvailabilityZoneGroup *string `type:"string"`
+
 	// The DB instance class filter value. Specify this parameter to show only the
 	// available offerings matching the specified DB instance class.
 	DBInstanceClass *string `type:"string"`

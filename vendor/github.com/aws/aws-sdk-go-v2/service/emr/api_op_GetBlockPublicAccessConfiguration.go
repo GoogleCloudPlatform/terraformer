@@ -31,6 +31,12 @@ type GetBlockPublicAccessConfigurationOutput struct {
 	// and public access is allowed on this port. You can change this by updating
 	// the block public access configuration to remove the exception.
 	//
+	// For accounts that created clusters in a Region before November 25, 2019,
+	// block public access is disabled by default in that Region. To use this feature,
+	// you must manually enable and configure it. For accounts that did not create
+	// an EMR cluster in a Region before this date, block public access is enabled
+	// by default in that Region.
+	//
 	// BlockPublicAccessConfiguration is a required field
 	BlockPublicAccessConfiguration *BlockPublicAccessConfiguration `type:"structure" required:"true"`
 

@@ -70,10 +70,10 @@ func Handlers() aws.Handlers {
 	handlers.Validate.AfterEachFn = aws.HandlerListStopOnError
 	handlers.Build.PushBackNamed(SDKVersionUserAgentHandler)
 	handlers.Build.PushBackNamed(AddHostExecEnvUserAgentHander)
+	handlers.Build.PushFrontNamed(RequestInvocationIDHeaderHandler)
 	handlers.Build.AfterEachFn = aws.HandlerListStopOnError
 	handlers.Sign.PushBackNamed(BuildContentLengthHandler)
-	handlers.Send.PushFrontNamed(RequestInvocationIDHeaderHandler)
-	handlers.Send.PushFrontNamed(RetryMetricHeaderHandler)
+	handlers.Sign.PushFrontNamed(RetryMetricHeaderHandler)
 	handlers.Send.PushBackNamed(ValidateReqSigHandler)
 	handlers.Send.PushBackNamed(SendHandler)
 	handlers.Send.PushBackNamed(AttemptClockSkewHandler)

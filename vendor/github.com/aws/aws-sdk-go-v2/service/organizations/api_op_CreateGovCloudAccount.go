@@ -23,8 +23,8 @@ type CreateGovCloudAccountInput struct {
 	// creation. You can't access the root user of the account or remove an account
 	// that was created with an invalid email address. Like all request parameters
 	// for CreateGovCloudAccount, the request for the email address for the AWS
-	// GovCloud (US) account originates from the commercial Region. It does not
-	// come from the AWS GovCloud (US) Region.
+	// GovCloud (US) account originates from the commercial Region, not from the
+	// AWS GovCloud (US) Region.
 	//
 	// Email is a required field
 	Email *string `min:"6" type:"string" required:"true" sensitive:"true"`
@@ -54,8 +54,8 @@ type CreateGovCloudAccountInput struct {
 	// For more information about how to use this role to access the member account,
 	// see Accessing and Administering the Member Accounts in Your Organization
 	// (https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_access.html#orgs_manage_accounts_create-cross-account-role)
-	// in the AWS Organizations User Guide. See also steps 2 and 3 in Tutorial:
-	// Delegate Access Across AWS Accounts Using IAM Roles (https://docs.aws.amazon.com/IAM/latest/UserGuide/tutorial_cross-account-with-roles.html)
+	// in the AWS Organizations User Guide and steps 2 and 3 in Tutorial: Delegate
+	// Access Across AWS Accounts Using IAM Roles (https://docs.aws.amazon.com/IAM/latest/UserGuide/tutorial_cross-account-with-roles.html)
 	// in the IAM User Guide.
 	//
 	// The regex pattern (http://wikipedia.org/wiki/regex) that is used to validate
@@ -171,8 +171,8 @@ const opCreateGovCloudAccount = "CreateGovCloudAccount"
 // the master account in the organization in the commercial Region to assume
 // it. An AWS GovCloud (US) account is then created and associated with the
 // commercial account that you just created. A role is created in the new AWS
-// GovCloud (US) account. This role can be assumed by the AWS GovCloud (US)
-// account that is associated with the master account of the commercial organization.
+// GovCloud (US) account that can be assumed by the AWS GovCloud (US) account
+// that is associated with the master account of the commercial organization.
 // For more information and to view a diagram that explains how account access
 // works, see AWS Organizations (http://docs.aws.amazon.com/govcloud-us/latest/UserGuide/govcloud-organizations.html)
 // in the AWS GovCloud User Guide.
@@ -181,12 +181,13 @@ const opCreateGovCloudAccount = "CreateGovCloudAccount"
 // in Your Organization (https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_create.html)
 // in the AWS Organizations User Guide.
 //
-//    * You can create an account in an organization using the AWS Organizations
-//    console, API, or CLI commands. When you do, the information required for
-//    the account to operate as a standalone account, such as a payment method,
-//    is not automatically collected. If you must remove an account from your
-//    organization later, you can do so only after you provide the missing information.
-//    Follow the steps at To leave an organization as a member account (http://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_remove.html#leave-without-all-info)
+//    * When you create an account in an organization using the AWS Organizations
+//    console, API, or CLI commands, the information required for the account
+//    to operate as a standalone account, such as a payment method and signing
+//    the end user license agreement (EULA) is not automatically collected.
+//    If you must remove an account from your organization later, you can do
+//    so only after you provide the missing information. Follow the steps at
+//    To leave an organization as a member account (http://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_remove.html#leave-without-all-info)
 //    in the AWS Organizations User Guide.
 //
 //    * If you get an exception that indicates that you exceeded your account

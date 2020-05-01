@@ -45,8 +45,10 @@ func (s *GenerateServiceLastAccessedDetailsInput) Validate() error {
 type GenerateServiceLastAccessedDetailsOutput struct {
 	_ struct{} `type:"structure"`
 
-	// The job ID that you can use in the GetServiceLastAccessedDetails or GetServiceLastAccessedDetailsWithEntities
-	// operations.
+	// The JobId that you can use in the GetServiceLastAccessedDetails or GetServiceLastAccessedDetailsWithEntities
+	// operations. The JobId returned by GenerateServiceLastAccessedDetail must
+	// be used by the same role within a session, or by the same user when used
+	// to call GetServiceLastAccessedDetail.
 	JobId *string `min:"36" type:"string"`
 }
 
@@ -84,7 +86,9 @@ const opGenerateServiceLastAccessedDetails = "GenerateServiceLastAccessedDetails
 //    * GetServiceLastAccessedDetails – Use this operation for users, groups,
 //    roles, or policies to list every AWS service that the resource could access
 //    using permissions policies. For each service, the response includes information
-//    about the most recent access attempt.
+//    about the most recent access attempt. The JobId returned by GenerateServiceLastAccessedDetail
+//    must be used by the same role within a session, or by the same user when
+//    used to call GetServiceLastAccessedDetail.
 //
 //    * GetServiceLastAccessedDetailsWithEntities – Use this operation for
 //    groups and policies to list information about the associated entities

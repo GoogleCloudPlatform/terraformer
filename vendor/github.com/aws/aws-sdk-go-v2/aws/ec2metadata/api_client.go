@@ -234,6 +234,6 @@ func unmarshalError(r *aws.Request) {
 
 func validateEndpointHandler(r *aws.Request) {
 	if len(r.Endpoint.URL) == 0 {
-		r.Error = aws.ErrMissingEndpoint
+		r.Error = &aws.MissingEndpointError{}
 	}
 }

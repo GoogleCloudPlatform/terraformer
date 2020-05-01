@@ -33,9 +33,9 @@ type CreateAccountInput struct {
 	// Console (https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/grantaccess.html#ControllingAccessWebsite-Activate)
 	// in the AWS Billing and Cost Management User Guide.
 	//
-	// If you don't specify this parameter, the value defaults to ALLOW. This value
-	// allows IAM users and roles with the required permissions to access billing
-	// information for the new account.
+	// If you don't specify this parameter, the value defaults to ALLOW, and IAM
+	// users and roles with the required permissions can access billing information
+	// for the new account.
 	IamUserAccessToBilling IAMUserAccessToBilling `type:"string" enum:"true"`
 
 	// (Optional)
@@ -49,11 +49,15 @@ type CreateAccountInput struct {
 	// If you don't specify this parameter, the role name defaults to OrganizationAccountAccessRole.
 	//
 	// For more information about how to use this role to access the member account,
-	// see Accessing and Administering the Member Accounts in Your Organization
-	// (https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_access.html#orgs_manage_accounts_create-cross-account-role)
-	// in the AWS Organizations User Guide. Also see steps 2 and 3 in Tutorial:
-	// Delegate Access Across AWS Accounts Using IAM Roles (https://docs.aws.amazon.com/IAM/latest/UserGuide/tutorial_cross-account-with-roles.html)
-	// in the IAM User Guide.
+	// see the following links:
+	//
+	//    * Accessing and Administering the Member Accounts in Your Organization
+	//    (https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_access.html#orgs_manage_accounts_create-cross-account-role)
+	//    in the AWS Organizations User Guide
+	//
+	//    * Steps 2 and 3 in Tutorial: Delegate Access Across AWS Accounts Using
+	//    IAM Roles (https://docs.aws.amazon.com/IAM/latest/UserGuide/tutorial_cross-account-with-roles.html)
+	//    in the IAM User Guide
 	//
 	// The regex pattern (http://wikipedia.org/wiki/regex) that is used to validate
 	// this parameter. The pattern can include uppercase letters, lowercase letters,
@@ -149,13 +153,13 @@ const opCreateAccount = "CreateAccount"
 // in Your Organization (https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_create.html)
 // in the AWS Organizations User Guide.
 //
-//    * When you create an account in an organization, the information required
-//    for the account to operate as a standalone account is not automatically
-//    collected. For example, information about the payment method and signing
-//    the end user license agreement (EULA) is not collected. If you must remove
-//    an account from your organization later, you can do so only after you
-//    provide the missing information. Follow the steps at To leave an organization
-//    as a member account (http://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_remove.html#leave-without-all-info)
+//    * When you create an account in an organization using the AWS Organizations
+//    console, API, or CLI commands, the information required for the account
+//    to operate as a standalone account, such as a payment method and signing
+//    the end user license agreement (EULA) is not automatically collected.
+//    If you must remove an account from your organization later, you can do
+//    so only after you provide the missing information. Follow the steps at
+//    To leave an organization as a member account (http://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_remove.html#leave-without-all-info)
 //    in the AWS Organizations User Guide.
 //
 //    * If you get an exception that indicates that you exceeded your account

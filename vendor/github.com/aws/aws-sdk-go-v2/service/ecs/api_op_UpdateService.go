@@ -16,9 +16,28 @@ type UpdateServiceInput struct {
 	// The capacity provider strategy to update the service to use.
 	//
 	// If the service is using the default capacity provider strategy for the cluster,
-	// the service can be updated to use one or more capacity providers. However,
-	// when a service is using a non-default capacity provider strategy, the service
-	// cannot be updated to use the cluster's default capacity provider strategy.
+	// the service can be updated to use one or more capacity providers as opposed
+	// to the default capacity provider strategy. However, when a service is using
+	// a capacity provider strategy that is not the default capacity provider strategy,
+	// the service cannot be updated to use the cluster's default capacity provider
+	// strategy.
+	//
+	// A capacity provider strategy consists of one or more capacity providers along
+	// with the base and weight to assign to them. A capacity provider must be associated
+	// with the cluster to be used in a capacity provider strategy. The PutClusterCapacityProviders
+	// API is used to associate a capacity provider with a cluster. Only capacity
+	// providers with an ACTIVE or UPDATING status can be used.
+	//
+	// If specifying a capacity provider that uses an Auto Scaling group, the capacity
+	// provider must already be created. New capacity providers can be created with
+	// the CreateCapacityProvider API operation.
+	//
+	// To use a AWS Fargate capacity provider, specify either the FARGATE or FARGATE_SPOT
+	// capacity providers. The AWS Fargate capacity providers are available to all
+	// accounts and only need to be associated with a cluster to be used.
+	//
+	// The PutClusterCapacityProviders API operation is used to update the list
+	// of available capacity providers for a cluster after the cluster is created.
 	CapacityProviderStrategy []CapacityProviderStrategyItem `locationName:"capacityProviderStrategy" type:"list"`
 
 	// The short name or full Amazon Resource Name (ARN) of the cluster that your
@@ -142,24 +161,32 @@ const opUpdateService = "UpdateService"
 // UpdateServiceRequest returns a request value for making API operation for
 // Amazon EC2 Container Service.
 //
+//
+// Updating the task placement strategies and constraints on an Amazon ECS service
+// remains in preview and is a Beta Service as defined by and subject to the
+// Beta Service Participation Service Terms located at https://aws.amazon.com/service-terms
+// (https://aws.amazon.com/service-terms) ("Beta Terms"). These Beta Terms apply
+// to your participation in this preview.
+//
 // Modifies the parameters of a service.
 //
 // For services using the rolling update (ECS) deployment controller, the desired
-// count, deployment configuration, network configuration, or task definition
-// used can be updated.
+// count, deployment configuration, network configuration, task placement constraints
+// and strategies, or task definition used can be updated.
 //
 // For services using the blue/green (CODE_DEPLOY) deployment controller, only
-// the desired count, deployment configuration, and health check grace period
-// can be updated using this API. If the network configuration, platform version,
-// or task definition need to be updated, a new AWS CodeDeploy deployment should
-// be created. For more information, see CreateDeployment (https://docs.aws.amazon.com/codedeploy/latest/APIReference/API_CreateDeployment.html)
+// the desired count, deployment configuration, task placement constraints and
+// strategies, and health check grace period can be updated using this API.
+// If the network configuration, platform version, or task definition need to
+// be updated, a new AWS CodeDeploy deployment should be created. For more information,
+// see CreateDeployment (https://docs.aws.amazon.com/codedeploy/latest/APIReference/API_CreateDeployment.html)
 // in the AWS CodeDeploy API Reference.
 //
 // For services using an external deployment controller, you can update only
-// the desired count and health check grace period using this API. If the launch
-// type, load balancer, network configuration, platform version, or task definition
-// need to be updated, you should create a new task set. For more information,
-// see CreateTaskSet.
+// the desired count, task placement constraints and strategies, and health
+// check grace period using this API. If the launch type, load balancer, network
+// configuration, platform version, or task definition need to be updated, you
+// should create a new task set. For more information, see CreateTaskSet.
 //
 // You can add to or subtract from the number of instantiations of a task definition
 // in a service by specifying the cluster that the service is running in and

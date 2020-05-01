@@ -74,7 +74,7 @@ type RestoreDBClusterToPointInTimeInput struct {
 	//
 	// For Amazon Aurora DB clusters, Amazon RDS can use Kerberos Authentication
 	// to authenticate users that connect to the DB cluster. For more information,
-	// see Using Kerberos Authentication for Aurora MySQL (https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurmysql-kerberos.html)
+	// see Kerberos Authentication (https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/kerberos-authentication.html)
 	// in the Amazon Aurora User Guide.
 	Domain *string `type:"string"`
 

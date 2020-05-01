@@ -79,7 +79,7 @@ type ListStackSetOperationResultsOutput struct {
 	NextToken *string `min:"1" type:"string"`
 
 	// A list of StackSetOperationResultSummary structures that contain information
-	// about the specified operation results, for accounts and regions that are
+	// about the specified operation results, for accounts and Regions that are
 	// included in the operation.
 	Summaries []StackSetOperationResultSummary `type:"list"`
 }

@@ -81,6 +81,9 @@ const (
 	DBProxyStatusInsufficientResourceLimits DBProxyStatus = "insufficient-resource-limits"
 	DBProxyStatusCreating                   DBProxyStatus = "creating"
 	DBProxyStatusDeleting                   DBProxyStatus = "deleting"
+	DBProxyStatusSuspended                  DBProxyStatus = "suspended"
+	DBProxyStatusSuspending                 DBProxyStatus = "suspending"
+	DBProxyStatusReactivating               DBProxyStatus = "reactivating"
 )
 
 func (enum DBProxyStatus) MarshalValue() (string, error) {
@@ -96,7 +99,8 @@ type EngineFamily string
 
 // Enum values for EngineFamily
 const (
-	EngineFamilyMysql EngineFamily = "MYSQL"
+	EngineFamilyMysql      EngineFamily = "MYSQL"
+	EngineFamilyPostgresql EngineFamily = "POSTGRESQL"
 )
 
 func (enum EngineFamily) MarshalValue() (string, error) {
@@ -142,6 +146,43 @@ func (enum SourceType) MarshalValue() (string, error) {
 }
 
 func (enum SourceType) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type TargetHealthReason string
+
+// Enum values for TargetHealthReason
+const (
+	TargetHealthReasonUnreachable          TargetHealthReason = "UNREACHABLE"
+	TargetHealthReasonConnectionFailed     TargetHealthReason = "CONNECTION_FAILED"
+	TargetHealthReasonAuthFailure          TargetHealthReason = "AUTH_FAILURE"
+	TargetHealthReasonPendingProxyCapacity TargetHealthReason = "PENDING_PROXY_CAPACITY"
+)
+
+func (enum TargetHealthReason) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum TargetHealthReason) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type TargetState string
+
+// Enum values for TargetState
+const (
+	TargetStateRegistering TargetState = "REGISTERING"
+	TargetStateAvailable   TargetState = "AVAILABLE"
+	TargetStateUnavailable TargetState = "UNAVAILABLE"
+)
+
+func (enum TargetState) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum TargetState) MarshalValueBuf(b []byte) ([]byte, error) {
 	b = b[0:0]
 	return append(b, enum...), nil
 }

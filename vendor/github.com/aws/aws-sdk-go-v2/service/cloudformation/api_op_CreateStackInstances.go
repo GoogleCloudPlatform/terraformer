@@ -13,7 +13,7 @@ type CreateStackInstancesInput struct {
 	_ struct{} `type:"structure"`
 
 	// [Self-managed permissions] The names of one or more AWS accounts that you
-	// want to create stack instances in the specified region(s) for.
+	// want to create stack instances in the specified Region(s) for.
 	//
 	// You can specify Accounts or DeploymentTargets, but not both.
 	Accounts []string `type:"list"`
@@ -44,7 +44,7 @@ type CreateStackInstancesInput struct {
 	// stack instances.
 	//
 	// Any overridden parameter values will be applied to all stack instances in
-	// the specified accounts and regions. When specifying parameters and their
+	// the specified accounts and Regions. When specifying parameters and their
 	// values, be aware of how AWS CloudFormation sets parameter values during stack
 	// instance operations:
 	//
@@ -70,7 +70,7 @@ type CreateStackInstancesInput struct {
 	// to update the stack set template.
 	ParameterOverrides []Parameter `type:"list"`
 
-	// The names of one or more regions where you want to create stack instances
+	// The names of one or more Regions where you want to create stack instances
 	// using the specified AWS account(s).
 	//
 	// Regions is a required field
@@ -132,7 +132,7 @@ const opCreateStackInstances = "CreateStackInstances"
 // AWS CloudFormation.
 //
 // Creates stack instances for the specified accounts, within the specified
-// regions. A stack instance refers to a stack in a specific account and region.
+// Regions. A stack instance refers to a stack in a specific account and Region.
 // You must specify at least one value for either Accounts or DeploymentTargets,
 // and you must specify at least one value for Regions.
 //

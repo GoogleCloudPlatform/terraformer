@@ -10,6 +10,7 @@ const (
 	CompressionFormatGzip         CompressionFormat = "GZIP"
 	CompressionFormatZip          CompressionFormat = "ZIP"
 	CompressionFormatSnappy       CompressionFormat = "Snappy"
+	CompressionFormatHadoopSnappy CompressionFormat = "HADOOP_SNAPPY"
 )
 
 func (enum CompressionFormat) MarshalValue() (string, error) {
@@ -46,14 +47,21 @@ type DeliveryStreamFailureType string
 
 // Enum values for DeliveryStreamFailureType
 const (
-	DeliveryStreamFailureTypeRetireKmsGrantFailed DeliveryStreamFailureType = "RETIRE_KMS_GRANT_FAILED"
-	DeliveryStreamFailureTypeCreateKmsGrantFailed DeliveryStreamFailureType = "CREATE_KMS_GRANT_FAILED"
-	DeliveryStreamFailureTypeKmsAccessDenied      DeliveryStreamFailureType = "KMS_ACCESS_DENIED"
-	DeliveryStreamFailureTypeDisabledKmsKey       DeliveryStreamFailureType = "DISABLED_KMS_KEY"
-	DeliveryStreamFailureTypeInvalidKmsKey        DeliveryStreamFailureType = "INVALID_KMS_KEY"
-	DeliveryStreamFailureTypeKmsKeyNotFound       DeliveryStreamFailureType = "KMS_KEY_NOT_FOUND"
-	DeliveryStreamFailureTypeKmsOptInRequired     DeliveryStreamFailureType = "KMS_OPT_IN_REQUIRED"
-	DeliveryStreamFailureTypeUnknownError         DeliveryStreamFailureType = "UNKNOWN_ERROR"
+	DeliveryStreamFailureTypeRetireKmsGrantFailed      DeliveryStreamFailureType = "RETIRE_KMS_GRANT_FAILED"
+	DeliveryStreamFailureTypeCreateKmsGrantFailed      DeliveryStreamFailureType = "CREATE_KMS_GRANT_FAILED"
+	DeliveryStreamFailureTypeKmsAccessDenied           DeliveryStreamFailureType = "KMS_ACCESS_DENIED"
+	DeliveryStreamFailureTypeDisabledKmsKey            DeliveryStreamFailureType = "DISABLED_KMS_KEY"
+	DeliveryStreamFailureTypeInvalidKmsKey             DeliveryStreamFailureType = "INVALID_KMS_KEY"
+	DeliveryStreamFailureTypeKmsKeyNotFound            DeliveryStreamFailureType = "KMS_KEY_NOT_FOUND"
+	DeliveryStreamFailureTypeKmsOptInRequired          DeliveryStreamFailureType = "KMS_OPT_IN_REQUIRED"
+	DeliveryStreamFailureTypeCreateEniFailed           DeliveryStreamFailureType = "CREATE_ENI_FAILED"
+	DeliveryStreamFailureTypeDeleteEniFailed           DeliveryStreamFailureType = "DELETE_ENI_FAILED"
+	DeliveryStreamFailureTypeSubnetNotFound            DeliveryStreamFailureType = "SUBNET_NOT_FOUND"
+	DeliveryStreamFailureTypeSecurityGroupNotFound     DeliveryStreamFailureType = "SECURITY_GROUP_NOT_FOUND"
+	DeliveryStreamFailureTypeEniAccessDenied           DeliveryStreamFailureType = "ENI_ACCESS_DENIED"
+	DeliveryStreamFailureTypeSubnetAccessDenied        DeliveryStreamFailureType = "SUBNET_ACCESS_DENIED"
+	DeliveryStreamFailureTypeSecurityGroupAccessDenied DeliveryStreamFailureType = "SECURITY_GROUP_ACCESS_DENIED"
+	DeliveryStreamFailureTypeUnknownError              DeliveryStreamFailureType = "UNKNOWN_ERROR"
 )
 
 func (enum DeliveryStreamFailureType) MarshalValue() (string, error) {

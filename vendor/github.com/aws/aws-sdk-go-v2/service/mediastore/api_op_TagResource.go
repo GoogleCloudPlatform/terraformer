@@ -27,7 +27,7 @@ type TagResourceInput struct {
 	// and type:Contract.
 	//
 	// Tags is a required field
-	Tags []Tag `type:"list" required:"true"`
+	Tags []Tag `min:"1" type:"list" required:"true"`
 }
 
 // String returns the string representation
@@ -48,6 +48,9 @@ func (s *TagResourceInput) Validate() error {
 
 	if s.Tags == nil {
 		invalidParams.Add(aws.NewErrParamRequired("Tags"))
+	}
+	if s.Tags != nil && len(s.Tags) < 1 {
+		invalidParams.Add(aws.NewErrParamMinLen("Tags", 1))
 	}
 	if s.Tags != nil {
 		for i, v := range s.Tags {

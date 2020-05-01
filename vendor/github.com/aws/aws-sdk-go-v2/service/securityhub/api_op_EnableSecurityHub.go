@@ -13,6 +13,12 @@ import (
 type EnableSecurityHubInput struct {
 	_ struct{} `type:"structure"`
 
+	// Whether to enable the security standards that Security Hub has designated
+	// as automatically enabled. If you do not provide a value for EnableDefaultStandards,
+	// it is set to true. To not enable the automatically enabled standards, set
+	// EnableDefaultStandards to false.
+	EnableDefaultStandards *bool `type:"boolean"`
+
 	// The tags to add to the Hub resource when you enable Security Hub.
 	Tags map[string]string `min:"1" type:"map"`
 }
@@ -39,6 +45,12 @@ func (s *EnableSecurityHubInput) Validate() error {
 func (s EnableSecurityHubInput) MarshalFields(e protocol.FieldEncoder) error {
 	e.SetValue(protocol.HeaderTarget, "Content-Type", protocol.StringValue("application/json"), protocol.Metadata{})
 
+	if s.EnableDefaultStandards != nil {
+		v := *s.EnableDefaultStandards
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "EnableDefaultStandards", protocol.BoolValue(v), metadata)
+	}
 	if s.Tags != nil {
 		v := s.Tags
 
@@ -77,14 +89,16 @@ const opEnableSecurityHub = "EnableSecurityHub"
 // you specify in the request.
 //
 // When you enable Security Hub, you grant to Security Hub the permissions necessary
-// to gather findings from AWS Config, Amazon GuardDuty, Amazon Inspector, and
-// Amazon Macie.
+// to gather findings from other services that are integrated with Security
+// Hub.
 //
 // When you use the EnableSecurityHub operation to enable Security Hub, you
 // also automatically enable the CIS AWS Foundations standard. You do not enable
-// the Payment Card Industry Data Security Standard (PCI DSS) standard. To enable
-// a standard, use the BatchEnableStandards operation. To disable a standard,
-// use the BatchDisableStandards operation.
+// the Payment Card Industry Data Security Standard (PCI DSS) standard. To not
+// enable the CIS AWS Foundations standard, set EnableDefaultStandards to false.
+//
+// After you enable Security Hub, to enable a standard, use the BatchEnableStandards
+// operation. To disable a standard, use the BatchDisableStandards operation.
 //
 // To learn more, see Setting Up AWS Security Hub (https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-settingup.html)
 // in the AWS Security Hub User Guide.

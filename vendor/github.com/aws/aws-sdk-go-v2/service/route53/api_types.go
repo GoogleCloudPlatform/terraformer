@@ -81,7 +81,7 @@ type AlarmIdentifier struct {
 	// Route 53 supports CloudWatch alarms with the following features:
 	//
 	//    * Standard-resolution metrics. High-resolution metrics aren't supported.
-	//    For more information, see High-Resolution Metrics (http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/publishingMetrics.html#high-resolution-metrics)
+	//    For more information, see High-Resolution Metrics (https://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/publishingMetrics.html#high-resolution-metrics)
 	//    in the Amazon CloudWatch User Guide.
 	//
 	//    * Statistics: Average, Minimum, Maximum, Sum, and SampleCount. Extended
@@ -94,9 +94,8 @@ type AlarmIdentifier struct {
 	// determine whether this health check is healthy, the region that the alarm
 	// was created in.
 	//
-	// For the current list of CloudWatch regions, see Amazon CloudWatch (http://docs.aws.amazon.com/general/latest/gr/rande.html#cw_region)
-	// in the AWS Regions and Endpoints chapter of the Amazon Web Services General
-	// Reference.
+	// For the current list of CloudWatch regions, see Amazon CloudWatch (https://docs.aws.amazon.com/general/latest/gr/rande.html#cw_region)
+	// in the AWS Service Endpoints chapter of the Amazon Web Services General Reference.
 	//
 	// Region is a required field
 	Region CloudWatchRegion `min:"1" type:"string" required:"true" enum:"true"`
@@ -154,7 +153,7 @@ func (s AlarmIdentifier) MarshalFields(e protocol.FieldEncoder) error {
 //    record sets in a private hosted zone is unsupported.
 //
 //    * For information about creating failover resource record sets in a private
-//    hosted zone, see Configuring Failover in a Private Hosted Zone (http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-private-hosted-zones.html).
+//    hosted zone, see Configuring Failover in a Private Hosted Zone (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-private-hosted-zones.html).
 type AliasTarget struct {
 	_ struct{} `type:"structure"`
 
@@ -189,7 +188,7 @@ type AliasTarget struct {
 	// the name of the resource record set. For example, if the name of the resource
 	// record set is acme.example.com, your CloudFront distribution must include
 	// acme.example.com as one of the alternate domain names. For more information,
-	// see Using Alternate Domain Names (CNAMEs) (http://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CNAMEs.html)
+	// see Using Alternate Domain Names (CNAMEs) (https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/CNAMEs.html)
 	// in the Amazon CloudFront Developer Guide.
 	//
 	// You can't create a resource record set in a private hosted zone to route
@@ -222,17 +221,17 @@ type AliasTarget struct {
 	//
 	//    * AWS Management Console: For information about how to get the value by
 	//    using the console, see Using Custom Domains with AWS Elastic Beanstalk
-	//    (http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/customdomains.html)
+	//    (https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/customdomains.html)
 	//    in the AWS Elastic Beanstalk Developer Guide.
 	//
 	//    * Elastic Beanstalk API: Use the DescribeEnvironments action to get the
 	//    value of the CNAME attribute. For more information, see DescribeEnvironments
-	//    (http://docs.aws.amazon.com/elasticbeanstalk/latest/api/API_DescribeEnvironments.html)
+	//    (https://docs.aws.amazon.com/elasticbeanstalk/latest/api/API_DescribeEnvironments.html)
 	//    in the AWS Elastic Beanstalk API Reference.
 	//
 	//    * AWS CLI: Use the describe-environments command to get the value of the
-	//    CNAME attribute. For more information, see describe-environments (http://docs.aws.amazon.com/cli/latest/reference/elasticbeanstalk/describe-environments.html)
-	//    in the AWS Command Line Interface Reference.
+	//    CNAME attribute. For more information, see describe-environments (https://docs.aws.amazon.com/cli/latest/reference/elasticbeanstalk/describe-environments.html)
+	//    in the AWS CLI Command Reference.
 	//
 	// ELB load balancer
 	//
@@ -248,22 +247,31 @@ type AliasTarget struct {
 	//
 	//    * Elastic Load Balancing API: Use DescribeLoadBalancers to get the value
 	//    of DNSName. For more information, see the applicable guide: Classic Load
-	//    Balancers: DescribeLoadBalancers (http://docs.aws.amazon.com/elasticloadbalancing/2012-06-01/APIReference/API_DescribeLoadBalancers.html)
-	//    Application and Network Load Balancers: DescribeLoadBalancers (http://docs.aws.amazon.com/elasticloadbalancing/latest/APIReference/API_DescribeLoadBalancers.html)
+	//    Balancers: DescribeLoadBalancers (https://docs.aws.amazon.com/elasticloadbalancing/2012-06-01/APIReference/API_DescribeLoadBalancers.html)
+	//    Application and Network Load Balancers: DescribeLoadBalancers (https://docs.aws.amazon.com/elasticloadbalancing/latest/APIReference/API_DescribeLoadBalancers.html)
 	//
 	//    * AWS CLI: Use describe-load-balancers to get the value of DNSName. For
 	//    more information, see the applicable guide: Classic Load Balancers: describe-load-balancers
 	//    (http://docs.aws.amazon.com/cli/latest/reference/elb/describe-load-balancers.html)
 	//    Application and Network Load Balancers: describe-load-balancers (http://docs.aws.amazon.com/cli/latest/reference/elbv2/describe-load-balancers.html)
 	//
+	// AWS Global Accelerator accelerator
+	//
+	// Specify the DNS name for your accelerator:
+	//
+	//    * Global Accelerator API: To get the DNS name, use DescribeAccelerator
+	//    (https://docs.aws.amazon.com/global-accelerator/latest/api/API_DescribeAccelerator.html).
+	//
+	//    * AWS CLI: To get the DNS name, use describe-accelerator (https://docs.aws.amazon.com/cli/latest/reference/globalaccelerator/describe-accelerator.html).
+	//
 	// Amazon S3 bucket that is configured as a static website
 	//
 	// Specify the domain name of the Amazon S3 website endpoint that you created
 	// the bucket in, for example, s3-website.us-east-2.amazonaws.com. For more
-	// information about valid values, see the table Amazon Simple Storage Service
-	// (S3) Website Endpoints (http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region)
+	// information about valid values, see the table Amazon S3 Website Endpoints
+	// (https://docs.aws.amazon.com/general/latest/gr/s3.html#s3_website_region_endpoints)
 	// in the Amazon Web Services General Reference. For more information about
-	// using S3 buckets for websites, see Getting Started with Amazon Route 53 (http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/getting-started.html)
+	// using S3 buckets for websites, see Getting Started with Amazon Route 53 (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/getting-started.html)
 	// in the Amazon Route 53 Developer Guide.
 	//
 	// Another Route 53 resource record set
@@ -344,11 +352,11 @@ type AliasTarget struct {
 	// records (for example, a group of weighted records) but is not another alias
 	// record, we recommend that you associate a health check with all of the records
 	// in the alias target. For more information, see What Happens When You Omit
-	// Health Checks? (http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-complex-configs.html#dns-failover-complex-configs-hc-omitting)
+	// Health Checks? (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-complex-configs.html#dns-failover-complex-configs-hc-omitting)
 	// in the Amazon Route 53 Developer Guide.
 	//
 	// For more information and examples, see Amazon Route 53 Health Checks and
-	// DNS Failover (http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover.html)
+	// DNS Failover (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover.html)
 	// in the Amazon Route 53 Developer Guide.
 	//
 	// EvaluateTargetHealth is a required field
@@ -381,8 +389,8 @@ type AliasTarget struct {
 	//
 	// Specify the hosted zone ID for the region that you created the environment
 	// in. The environment must have a regionalized subdomain. For a list of regions
-	// and the corresponding hosted zone IDs, see AWS Elastic Beanstalk (http://docs.aws.amazon.com/general/latest/gr/rande.html#elasticbeanstalk_region)
-	// in the "AWS Regions and Endpoints" chapter of the Amazon Web Services General
+	// and the corresponding hosted zone IDs, see AWS Elastic Beanstalk (https://docs.aws.amazon.com/general/latest/gr/rande.html#elasticbeanstalk_region)
+	// in the "AWS Service Endpoints" chapter of the Amazon Web Services General
 	// Reference.
 	//
 	// ELB load balancer
@@ -390,11 +398,12 @@ type AliasTarget struct {
 	// Specify the value of the hosted zone ID for the load balancer. Use the following
 	// methods to get the hosted zone ID:
 	//
-	//    * Elastic Load Balancing (https://docs.aws.amazon.com/general/latest/gr/rande.html#elb_region)
-	//    table in the "AWS Regions and Endpoints" chapter of the Amazon Web Services
-	//    General Reference: Use the value that corresponds with the region that
-	//    you created your load balancer in. Note that there are separate columns
-	//    for Application and Classic Load Balancers and for Network Load Balancers.
+	//    * Service Endpoints (https://docs.aws.amazon.com/general/latest/gr/elb.html)
+	//    table in the "Elastic Load Balancing Endpoints and Quotas" topic in the
+	//    Amazon Web Services General Reference: Use the value that corresponds
+	//    with the region that you created your load balancer in. Note that there
+	//    are separate columns for Application and Classic Load Balancers and for
+	//    Network Load Balancers.
 	//
 	//    * AWS Management Console: Go to the Amazon EC2 page, choose Load Balancers
 	//    in the navigation pane, select the load balancer, and get the value of
@@ -402,9 +411,9 @@ type AliasTarget struct {
 	//
 	//    * Elastic Load Balancing API: Use DescribeLoadBalancers to get the applicable
 	//    value. For more information, see the applicable guide: Classic Load Balancers:
-	//    Use DescribeLoadBalancers (http://docs.aws.amazon.com/elasticloadbalancing/2012-06-01/APIReference/API_DescribeLoadBalancers.html)
+	//    Use DescribeLoadBalancers (https://docs.aws.amazon.com/elasticloadbalancing/2012-06-01/APIReference/API_DescribeLoadBalancers.html)
 	//    to get the value of CanonicalHostedZoneNameId. Application and Network
-	//    Load Balancers: Use DescribeLoadBalancers (http://docs.aws.amazon.com/elasticloadbalancing/latest/APIReference/API_DescribeLoadBalancers.html)
+	//    Load Balancers: Use DescribeLoadBalancers (https://docs.aws.amazon.com/elasticloadbalancing/latest/APIReference/API_DescribeLoadBalancers.html)
 	//    to get the value of CanonicalHostedZoneId.
 	//
 	//    * AWS CLI: Use describe-load-balancers to get the applicable value. For
@@ -414,13 +423,16 @@ type AliasTarget struct {
 	//    Load Balancers: Use describe-load-balancers (http://docs.aws.amazon.com/cli/latest/reference/elbv2/describe-load-balancers.html)
 	//    to get the value of CanonicalHostedZoneId.
 	//
+	// AWS Global Accelerator accelerator
+	//
+	// Specify Z2BJ6XQ5FK7U4H.
+	//
 	// An Amazon S3 bucket configured as a static website
 	//
 	// Specify the hosted zone ID for the region that you created the bucket in.
-	// For more information about valid values, see the Amazon Simple Storage Service
-	// Website Endpoints (http://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region)
-	// table in the "AWS Regions and Endpoints" chapter of the Amazon Web Services
-	// General Reference.
+	// For more information about valid values, see the table Amazon S3 Website
+	// Endpoints (https://docs.aws.amazon.com/general/latest/gr/s3.html#s3_website_region_endpoints)
+	// in the Amazon Web Services General Reference.
 	//
 	// Another Route 53 resource record set in your hosted zone
 	//
@@ -699,7 +711,7 @@ type CloudWatchAlarmConfiguration struct {
 
 	// For the metric that the CloudWatch alarm is associated with, a complex type
 	// that contains information about the dimensions for the metric. For information,
-	// see Amazon CloudWatch Namespaces, Dimensions, and Metrics Reference (http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/CW_Support_For_AWS.html)
+	// see Amazon CloudWatch Namespaces, Dimensions, and Metrics Reference (https://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/CW_Support_For_AWS.html)
 	// in the Amazon CloudWatch User Guide.
 	Dimensions []Dimension `locationNameList:"Dimension" type:"list"`
 
@@ -715,7 +727,7 @@ type CloudWatchAlarmConfiguration struct {
 	MetricName *string `min:"1" type:"string" required:"true"`
 
 	// The namespace of the metric that the alarm is associated with. For more information,
-	// see Amazon CloudWatch Namespaces, Dimensions, and Metrics Reference (http://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/CW_Support_For_AWS.html)
+	// see Amazon CloudWatch Namespaces, Dimensions, and Metrics Reference (https://docs.aws.amazon.com/AmazonCloudWatch/latest/DeveloperGuide/CW_Support_For_AWS.html)
 	// in the Amazon CloudWatch User Guide.
 	//
 	// Namespace is a required field
@@ -903,17 +915,39 @@ type GeoLocation struct {
 
 	// The two-letter code for the continent.
 	//
-	// Valid values: AF | AN | AS | EU | OC | NA | SA
+	// Amazon Route 53 supports the following continent codes:
+	//
+	//    * AF: Africa
+	//
+	//    * AN: Antarctica
+	//
+	//    * AS: Asia
+	//
+	//    * EU: Europe
+	//
+	//    * OC: Oceania
+	//
+	//    * NA: North America
+	//
+	//    * SA: South America
 	//
 	// Constraint: Specifying ContinentCode with either CountryCode or SubdivisionCode
 	// returns an InvalidInput error.
 	ContinentCode *string `min:"2" type:"string"`
 
-	// The two-letter code for the country.
+	// For geolocation resource record sets, the two-letter code for a country.
+	//
+	// Amazon Route 53 uses the two-letter country codes that are specified in ISO
+	// standard 3166-1 alpha-2 (https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2).
 	CountryCode *string `min:"1" type:"string"`
 
-	// The code for the subdivision. Route 53 currently supports only states in
-	// the United States.
+	// For geolocation resource record sets, the two-letter code for a state of
+	// the United States. Route 53 doesn't support any other values for SubdivisionCode.
+	// For a list of state abbreviations, see Appendix B: Two–Letter State and
+	// Possession Abbreviations (https://pe.usps.com/text/pub28/28apb.htm) on the
+	// United States Postal Service website.
+	//
+	// If you specify subdivisioncode, you must also specify US for CountryCode.
 	SubdivisionCode *string `min:"1" type:"string"`
 }
 
@@ -1182,7 +1216,7 @@ type HealthCheckConfig struct {
 	// The number of consecutive health checks that an endpoint must pass or fail
 	// for Amazon Route 53 to change the current status of the endpoint from unhealthy
 	// to healthy or vice versa. For more information, see How Amazon Route 53 Determines
-	// Whether an Endpoint Is Healthy (http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-determining-health-of-endpoints.html)
+	// Whether an Endpoint Is Healthy (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-determining-health-of-endpoints.html)
 	// in the Amazon Route 53 Developer Guide.
 	//
 	// If you don't specify a value for FailureThreshold, the default value is three
@@ -1326,8 +1360,11 @@ type HealthCheckConfig struct {
 	// You can't change the value of MeasureLatency after you create a health check.
 	MeasureLatency *bool `type:"boolean"`
 
-	// The port on the endpoint on which you want Amazon Route 53 to perform health
-	// checks. Specify a value for Port only when you specify a value for IPAddress.
+	// The port on the endpoint that you want Amazon Route 53 to perform health
+	// checks on.
+	//
+	// Don't specify a value for Port when you specify a value for Type of CLOUDWATCH_METRIC
+	// or CALCULATED.
 	Port *int64 `min:"1" type:"integer"`
 
 	// A complex type that contains one Region element for each region from which
@@ -1359,7 +1396,7 @@ type HealthCheckConfig struct {
 	// parameters, for example, /welcome.html?language=jp&login=y.
 	ResourcePath *string `type:"string"`
 
-	// If the value of Type is HTTP_STR_MATCH or HTTP_STR_MATCH, the string that
+	// If the value of Type is HTTP_STR_MATCH or HTTPS_STR_MATCH, the string that
 	// you want Amazon Route 53 to search for in the response body from the specified
 	// resource. If the string appears in the response body, Route 53 considers
 	// the resource healthy.
@@ -1938,7 +1975,7 @@ type ResourceRecordSet struct {
 	//    record sets in a private hosted zone is unsupported.
 	//
 	//    * For information about creating failover resource record sets in a private
-	//    hosted zone, see Configuring Failover in a Private Hosted Zone (http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-private-hosted-zones.html)
+	//    hosted zone, see Configuring Failover in a Private Hosted Zone (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-private-hosted-zones.html)
 	//    in the Amazon Route 53 Developer Guide.
 	AliasTarget *AliasTarget `type:"structure"`
 
@@ -1978,9 +2015,9 @@ type ResourceRecordSet struct {
 	// For more information about configuring failover for Route 53, see the following
 	// topics in the Amazon Route 53 Developer Guide:
 	//
-	//    * Route 53 Health Checks and DNS Failover (http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover.html)
+	//    * Route 53 Health Checks and DNS Failover (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover.html)
 	//
-	//    * Configuring Failover in a Private Hosted Zone (http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-private-hosted-zones.html)
+	//    * Configuring Failover in a Private Hosted Zone (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-private-hosted-zones.html)
 	Failover ResourceRecordSetFailover `type:"string" enum:"true"`
 
 	// Geolocation resource record sets only: A complex type that lets you control
@@ -1989,8 +2026,8 @@ type ResourceRecordSet struct {
 	// to a web server with an IP address of 192.0.2.111, create a resource record
 	// set with a Type of A and a ContinentCode of AF.
 	//
-	// Creating geolocation and geolocation alias resource record sets in private
-	// hosted zones is not supported.
+	// Although creating geolocation and geolocation alias resource record sets
+	// in a private hosted zone is allowed, it's not supported.
 	//
 	// If you create separate resource record sets for overlapping geographic regions
 	// (for example, one resource record set for a continent and one for a country
@@ -2009,11 +2046,12 @@ type ResourceRecordSet struct {
 	// addresses aren't mapped to geographic locations, so even if you create geolocation
 	// resource record sets that cover all seven continents, Route 53 will receive
 	// some DNS queries from locations that it can't identify. We recommend that
-	// you create a resource record set for which the value of CountryCode is *,
-	// which handles both queries that come from locations for which you haven't
-	// created geolocation resource record sets and queries from IP addresses that
-	// aren't mapped to a location. If you don't create a * resource record set,
-	// Route 53 returns a "no answer" response for queries from those locations.
+	// you create a resource record set for which the value of CountryCode is *.
+	// Two groups of queries are routed to the resource that you specify in this
+	// record: queries that come from locations for which you haven't created geolocation
+	// resource record sets and queries from IP addresses that aren't mapped to
+	// a location. If you don't create a * resource record set, Route 53 returns
+	// a "no answer" response for queries from those locations.
 	//
 	// You can't create non-geolocation resource record sets that have the same
 	// values for the Name and Type elements as geolocation resource record sets.
@@ -2046,9 +2084,9 @@ type ResourceRecordSet struct {
 	//
 	//    * How Amazon Route 53 Determines Whether an Endpoint Is Healthy (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-determining-health-of-endpoints.html)
 	//
-	//    * Route 53 Health Checks and DNS Failover (http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover.html)
+	//    * Route 53 Health Checks and DNS Failover (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover.html)
 	//
-	//    * Configuring Failover in a Private Hosted Zone (http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-private-hosted-zones.html)
+	//    * Configuring Failover in a Private Hosted Zone (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-private-hosted-zones.html)
 	//
 	// When to Specify HealthCheckId
 	//
@@ -2161,7 +2199,7 @@ type ResourceRecordSet struct {
 	//
 	// For information about how to specify characters other than a-z, 0-9, and
 	// - (hyphen) and how to specify internationalized domain names, see DNS Domain
-	// Name Format (http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/DomainNameFormat.html)
+	// Name Format (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/DomainNameFormat.html)
 	// in the Amazon Route 53 Developer Guide.
 	//
 	// You can use the asterisk (*) wildcard to replace the leftmost label in a
@@ -2191,8 +2229,8 @@ type ResourceRecordSet struct {
 	// and is referred to by an IP address or a DNS domain name, depending on the
 	// record type.
 	//
-	// Creating latency and latency alias resource record sets in private hosted
-	// zones is not supported.
+	// Although creating latency and latency alias resource record sets in a private
+	// hosted zone is allowed, it's not supported.
 	//
 	// When Amazon Route 53 receives a DNS query for a domain name and type for
 	// which you have created latency resource record sets, Route 53 selects the
@@ -2266,7 +2304,7 @@ type ResourceRecordSet struct {
 	TrafficPolicyInstanceId *string `min:"1" type:"string"`
 
 	// The DNS record type. For information about different record types and how
-	// data is encoded for them, see Supported DNS Resource Record Types (http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/ResourceRecordTypes.html)
+	// data is encoded for them, see Supported DNS Resource Record Types (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/ResourceRecordTypes.html)
 	// in the Amazon Route 53 Developer Guide.
 	//
 	// Valid values for basic resource record sets: A | AAAA | CAA | CNAME | MX
@@ -2297,8 +2335,7 @@ type ResourceRecordSet struct {
 	//    create two resource record sets to route traffic to your distribution,
 	//    one with a value of A and one with a value of AAAA.
 	//
-	//    * AWS Elastic Beanstalk environment that has a regionalized subdomain:
-	//    A
+	//    * Amazon API Gateway environment that has a regionalized subdomain: A
 	//
 	//    * ELB load balancers: A | AAAA
 	//
@@ -2346,7 +2383,7 @@ type ResourceRecordSet struct {
 	//    of DNS name and type, traffic is routed to all resources with equal probability.
 	//    The effect of setting Weight to 0 is different when you associate health
 	//    checks with weighted resource record sets. For more information, see Options
-	//    for Configuring Route 53 Active-Active and Active-Passive Failover (http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-configuring-options.html)
+	//    for Configuring Route 53 Active-Active and Active-Passive Failover (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-configuring-options.html)
 	//    in the Amazon Route 53 Developer Guide.
 	Weight *int64 `type:"long"`
 }

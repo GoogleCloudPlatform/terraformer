@@ -75,9 +75,9 @@ const opDisableAWSServiceAccess = "DisableAWSServiceAccess"
 // AWS service.
 //
 // After you perform the DisableAWSServiceAccess operation, the specified service
-// can no longer perform operations in your organization's accounts. The only
-// exception is when the operations are explicitly permitted by IAM policies
-// that are attached to your roles.
+// can no longer perform operations in your organization's accounts unless the
+// operations are explicitly permitted by the IAM policies that are attached
+// to your roles.
 //
 // For more information about integrating other services with AWS Organizations,
 // including the list of services that work with Organizations, see Integrating

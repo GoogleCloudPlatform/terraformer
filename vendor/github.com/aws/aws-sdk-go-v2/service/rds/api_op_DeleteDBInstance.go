@@ -41,7 +41,7 @@ type DeleteDBInstanceInput struct {
 	//
 	//    * Can't end with a hyphen or contain two consecutive hyphens.
 	//
-	//    * Can't be specified when deleting a Read Replica.
+	//    * Can't be specified when deleting a read replica.
 	FinalDBSnapshotIdentifier *string `type:"string"`
 
 	// A value that indicates whether to skip the creation of a final DB snapshot
@@ -53,7 +53,7 @@ type DeleteDBInstanceInput struct {
 	// When a DB instance is in a failure state and has a status of 'failed', 'incompatible-restore',
 	// or 'incompatible-network', it can only be deleted when skip is specified.
 	//
-	// Specify skip when deleting a Read Replica.
+	// Specify skip when deleting a read replica.
 	//
 	// The FinalDBSnapshotIdentifier parameter must be specified if skip isn't specified.
 	SkipFinalSnapshot *bool `type:"boolean"`
@@ -114,12 +114,12 @@ const opDeleteDBInstance = "DeleteDBInstance"
 // If the specified DB instance is part of an Amazon Aurora DB cluster, you
 // can't delete the DB instance if both of the following conditions are true:
 //
-//    * The DB cluster is a Read Replica of another Amazon Aurora DB cluster.
+//    * The DB cluster is a read replica of another Amazon Aurora DB cluster.
 //
 //    * The DB instance is the only instance in the DB cluster.
 //
 // To delete a DB instance in this case, first call the PromoteReadReplicaDBCluster
-// API action to promote the DB cluster so it's no longer a Read Replica. After
+// API action to promote the DB cluster so it's no longer a read replica. After
 // the promotion completes, then call the DeleteDBInstance API action to delete
 // the final instance in the DB cluster.
 //

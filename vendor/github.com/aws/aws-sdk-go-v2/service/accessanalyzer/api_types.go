@@ -46,12 +46,18 @@ type AnalyzedResource struct {
 	// ResourceArn is a required field
 	ResourceArn *string `locationName:"resourceArn" type:"string" required:"true"`
 
+	// The AWS account ID that owns the resource.
+	//
+	// ResourceOwnerAccount is a required field
+	ResourceOwnerAccount *string `locationName:"resourceOwnerAccount" type:"string" required:"true"`
+
 	// The type of the resource that was analyzed.
 	//
 	// ResourceType is a required field
 	ResourceType ResourceType `locationName:"resourceType" type:"string" required:"true" enum:"true"`
 
-	// Indicates how the access that generated the finding is granted.
+	// Indicates how the access that generated the finding is granted. This is populated
+	// for Amazon S3 bucket findings.
 	SharedVia []string `locationName:"sharedVia" type:"list"`
 
 	// The current status of the finding generated from the analyzed resource.
@@ -114,6 +120,12 @@ func (s AnalyzedResource) MarshalFields(e protocol.FieldEncoder) error {
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "resourceArn", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
 	}
+	if s.ResourceOwnerAccount != nil {
+		v := *s.ResourceOwnerAccount
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "resourceOwnerAccount", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
 	if len(s.ResourceType) > 0 {
 		v := s.ResourceType
 
@@ -157,6 +169,11 @@ type AnalyzedResourceSummary struct {
 	// ResourceArn is a required field
 	ResourceArn *string `locationName:"resourceArn" type:"string" required:"true"`
 
+	// The AWS account ID that owns the resource.
+	//
+	// ResourceOwnerAccount is a required field
+	ResourceOwnerAccount *string `locationName:"resourceOwnerAccount" type:"string" required:"true"`
+
 	// The type of resource that was analyzed.
 	//
 	// ResourceType is a required field
@@ -175,6 +192,12 @@ func (s AnalyzedResourceSummary) MarshalFields(e protocol.FieldEncoder) error {
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "resourceArn", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if s.ResourceOwnerAccount != nil {
+		v := *s.ResourceOwnerAccount
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "resourceOwnerAccount", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
 	}
 	if len(s.ResourceType) > 0 {
 		v := s.ResourceType
@@ -209,6 +232,23 @@ type AnalyzerSummary struct {
 	//
 	// Name is a required field
 	Name *string `locationName:"name" min:"1" type:"string" required:"true"`
+
+	// The status of the analyzer. An Active analyzer successfully monitors supported
+	// resources and generates new findings. The analyzer is Disabled when a user
+	// action, such as removing trusted access for IAM Access Analyzer from AWS
+	// Organizations, causes the analyzer to stop generating new findings. The status
+	// is Creating when the analyzer creation is in progress and Failed when the
+	// analyzer creation has failed.
+	//
+	// Status is a required field
+	Status AnalyzerStatus `locationName:"status" type:"string" required:"true" enum:"true"`
+
+	// The statusReason provides more details about the current status of the analyzer.
+	// For example, if the creation for the analyzer fails, a Failed status is displayed.
+	// For an analyzer with organization as the type, this failure can be due to
+	// an issue with creating the service-linked roles required in the member accounts
+	// of the AWS organization.
+	StatusReason *StatusReason `locationName:"statusReason" type:"structure"`
 
 	// The tags added to the analyzer.
 	Tags map[string]string `locationName:"tags" type:"map"`
@@ -258,6 +298,18 @@ func (s AnalyzerSummary) MarshalFields(e protocol.FieldEncoder) error {
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "name", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if len(s.Status) > 0 {
+		v := s.Status
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "status", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
+	if s.StatusReason != nil {
+		v := s.StatusReason
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "statusReason", v, metadata)
 	}
 	if s.Tags != nil {
 		v := s.Tags
@@ -476,10 +528,19 @@ type Finding struct {
 	// The resource that an external principal has access to.
 	Resource *string `locationName:"resource" type:"string"`
 
+	// The AWS account ID that owns the resource.
+	//
+	// ResourceOwnerAccount is a required field
+	ResourceOwnerAccount *string `locationName:"resourceOwnerAccount" type:"string" required:"true"`
+
 	// The type of the resource reported in the finding.
 	//
 	// ResourceType is a required field
 	ResourceType ResourceType `locationName:"resourceType" type:"string" required:"true" enum:"true"`
+
+	// The sources of the finding. This indicates how the access that generated
+	// the finding is granted. It is populated for Amazon S3 bucket findings.
+	Sources []FindingSource `locationName:"sources" type:"list"`
 
 	// The current status of the finding.
 	//
@@ -573,11 +634,29 @@ func (s Finding) MarshalFields(e protocol.FieldEncoder) error {
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "resource", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
 	}
+	if s.ResourceOwnerAccount != nil {
+		v := *s.ResourceOwnerAccount
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "resourceOwnerAccount", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
 	if len(s.ResourceType) > 0 {
 		v := s.ResourceType
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "resourceType", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
+	if s.Sources != nil {
+		v := s.Sources
+
+		metadata := protocol.Metadata{}
+		ls0 := e.List(protocol.BodyTarget, "sources", metadata)
+		ls0.Start()
+		for _, v1 := range v {
+			ls0.ListAddFields(v1)
+		}
+		ls0.End()
+
 	}
 	if len(s.Status) > 0 {
 		v := s.Status
@@ -591,6 +670,68 @@ func (s Finding) MarshalFields(e protocol.FieldEncoder) error {
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "updatedAt",
 			protocol.TimeValue{V: v, Format: "iso8601", QuotedFormatTime: true}, metadata)
+	}
+	return nil
+}
+
+// The source of the finding. This indicates how the access that generated the
+// finding is granted. It is populated for Amazon S3 bucket findings.
+type FindingSource struct {
+	_ struct{} `type:"structure"`
+
+	// Includes details about how the access that generated the finding is granted.
+	// This is populated for Amazon S3 bucket findings.
+	Detail *FindingSourceDetail `locationName:"detail" type:"structure"`
+
+	// Indicates the type of access that generated the finding.
+	//
+	// Type is a required field
+	Type FindingSourceType `locationName:"type" type:"string" required:"true" enum:"true"`
+}
+
+// String returns the string representation
+func (s FindingSource) String() string {
+	return awsutil.Prettify(s)
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s FindingSource) MarshalFields(e protocol.FieldEncoder) error {
+	if s.Detail != nil {
+		v := s.Detail
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "detail", v, metadata)
+	}
+	if len(s.Type) > 0 {
+		v := s.Type
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "type", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
+	return nil
+}
+
+// Includes details about how the access that generated the finding is granted.
+// This is populated for Amazon S3 bucket findings.
+type FindingSourceDetail struct {
+	_ struct{} `type:"structure"`
+
+	// The ARN of the access point that generated the finding.
+	AccessPointArn *string `locationName:"accessPointArn" type:"string"`
+}
+
+// String returns the string representation
+func (s FindingSourceDetail) String() string {
+	return awsutil.Prettify(s)
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s FindingSourceDetail) MarshalFields(e protocol.FieldEncoder) error {
+	if s.AccessPointArn != nil {
+		v := *s.AccessPointArn
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "accessPointArn", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
 	}
 	return nil
 }
@@ -637,10 +778,19 @@ type FindingSummary struct {
 	// The resource that the external principal has access to.
 	Resource *string `locationName:"resource" type:"string"`
 
+	// The AWS account ID that owns the resource.
+	//
+	// ResourceOwnerAccount is a required field
+	ResourceOwnerAccount *string `locationName:"resourceOwnerAccount" type:"string" required:"true"`
+
 	// The type of the resource that the external principal has access to.
 	//
 	// ResourceType is a required field
 	ResourceType ResourceType `locationName:"resourceType" type:"string" required:"true" enum:"true"`
+
+	// The sources of the finding. This indicates how the access that generated
+	// the finding is granted. It is populated for Amazon S3 bucket findings.
+	Sources []FindingSource `locationName:"sources" type:"list"`
 
 	// The status of the finding.
 	//
@@ -734,11 +884,29 @@ func (s FindingSummary) MarshalFields(e protocol.FieldEncoder) error {
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "resource", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
 	}
+	if s.ResourceOwnerAccount != nil {
+		v := *s.ResourceOwnerAccount
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "resourceOwnerAccount", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
 	if len(s.ResourceType) > 0 {
 		v := s.ResourceType
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "resourceType", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
+	if s.Sources != nil {
+		v := s.Sources
+
+		metadata := protocol.Metadata{}
+		ls0 := e.List(protocol.BodyTarget, "sources", metadata)
+		ls0.Start()
+		for _, v1 := range v {
+			ls0.ListAddFields(v1)
+		}
+		ls0.End()
+
 	}
 	if len(s.Status) > 0 {
 		v := s.Status
@@ -857,6 +1025,36 @@ func (s SortCriteria) MarshalFields(e protocol.FieldEncoder) error {
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "orderBy", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
+	return nil
+}
+
+// Provides more details about the current status of the analyzer. For example,
+// if the creation for the analyzer fails, a Failed status is displayed. For
+// an analyzer with organization as the type, this failure can be due to an
+// issue with creating the service-linked roles required in the member accounts
+// of the AWS organization.
+type StatusReason struct {
+	_ struct{} `type:"structure"`
+
+	// The reason code for the current status of the analyzer.
+	//
+	// Code is a required field
+	Code ReasonCode `locationName:"code" type:"string" required:"true" enum:"true"`
+}
+
+// String returns the string representation
+func (s StatusReason) String() string {
+	return awsutil.Prettify(s)
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s StatusReason) MarshalFields(e protocol.FieldEncoder) error {
+	if len(s.Code) > 0 {
+		v := s.Code
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "code", protocol.QuotedValue{ValueMarshaler: v}, metadata)
 	}
 	return nil
 }

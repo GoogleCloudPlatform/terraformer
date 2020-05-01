@@ -139,7 +139,7 @@ type UpdateStackInput struct {
 
 	// Location of a file containing the temporary overriding stack policy. The
 	// URL must point to a policy (max size: 16KB) located in an S3 bucket in the
-	// same region as the stack. You can specify either the StackPolicyDuringUpdateBody
+	// same Region as the stack. You can specify either the StackPolicyDuringUpdateBody
 	// or the StackPolicyDuringUpdateURL parameter, but not both.
 	//
 	// If you want to update protected resources, specify a temporary overriding
@@ -148,7 +148,7 @@ type UpdateStackInput struct {
 	StackPolicyDuringUpdateURL *string `min:"1" type:"string"`
 
 	// Location of a file containing the updated stack policy. The URL must point
-	// to a policy (max size: 16KB) located in an S3 bucket in the same region as
+	// to a policy (max size: 16KB) located in an S3 bucket in the same Region as
 	// the stack. You can specify either the StackPolicyBody or the StackPolicyURL
 	// parameter, but not both.
 	//

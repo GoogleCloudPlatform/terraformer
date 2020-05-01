@@ -9,10 +9,14 @@ import (
 // UUIDVersion4 returns a Version 4 random UUID from the byte slice provided
 func UUIDVersion4() (string, error) {
 	b := make([]byte, 16)
-	if n, err := rand.Reader.Read(b); err != nil {
-		return "", fmt.Errorf("unable to get random bytes for UUID, %w", err)
-	} else if n != len(b) {
-		return "", fmt.Errorf("unable to get 16 bytes for UUID, got %d", n)
+
+	var offset int
+	for offset < len(b) {
+		n, err := rand.Reader.Read(b[offset:])
+		if err != nil {
+			return "", fmt.Errorf("unable to get random bytes for UUID, %w", err)
+		}
+		offset += n
 	}
 
 	return uuidVersion4(b), nil

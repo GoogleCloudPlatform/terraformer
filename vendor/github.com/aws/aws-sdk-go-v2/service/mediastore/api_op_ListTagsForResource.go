@@ -44,7 +44,7 @@ type ListTagsForResourceOutput struct {
 	_ struct{} `type:"structure"`
 
 	// An array of key:value pairs that are assigned to the container.
-	Tags []Tag `type:"list"`
+	Tags []Tag `min:"1" type:"list"`
 }
 
 // String returns the string representation

@@ -48,12 +48,12 @@ func (s *GetCertificateInput) Validate() error {
 type GetCertificateOutput struct {
 	_ struct{} `type:"structure"`
 
-	// String that contains the ACM certificate represented by the ARN specified
-	// at input.
+	// The ACM-issued certificate corresponding to the ARN specified as input.
 	Certificate *string `min:"1" type:"string"`
 
-	// The certificate chain that contains the root certificate issued by the certificate
-	// authority (CA).
+	// Certificates forming the requested certificate's chain of trust. The chain
+	// consists of the certificate of the issuing CA and the intermediate certificates
+	// of any other subordinate CAs.
 	CertificateChain *string `min:"1" type:"string"`
 }
 
@@ -67,12 +67,11 @@ const opGetCertificate = "GetCertificate"
 // GetCertificateRequest returns a request value for making API operation for
 // AWS Certificate Manager.
 //
-// Retrieves a certificate specified by an ARN and its certificate chain . The
-// chain is an ordered list of certificates that contains the end entity certificate,
-// intermediate certificates of subordinate CAs, and the root certificate in
-// that order. The certificate and certificate chain are base64 encoded. If
-// you want to decode the certificate to see the individual fields, you can
-// use OpenSSL.
+// Retrieves an Amazon-issued certificate and its certificate chain. The chain
+// consists of the certificate of the issuing CA and the intermediate certificates
+// of any other subordinate CAs. All of the certificates are base64 encoded.
+// You can use OpenSSL (https://wiki.openssl.org/index.php/Command_Line_Utilities)
+// to decode the certificates and inspect individual fields.
 //
 //    // Example sending a request using GetCertificateRequest.
 //    req := client.GetCertificateRequest(params)

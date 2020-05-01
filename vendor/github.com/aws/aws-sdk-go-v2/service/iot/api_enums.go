@@ -395,6 +395,39 @@ func (enum DeviceCertificateUpdateAction) MarshalValueBuf(b []byte) ([]byte, err
 	return append(b, enum...), nil
 }
 
+type DimensionType string
+
+// Enum values for DimensionType
+const (
+	DimensionTypeTopicFilter DimensionType = "TOPIC_FILTER"
+)
+
+func (enum DimensionType) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum DimensionType) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type DimensionValueOperator string
+
+// Enum values for DimensionValueOperator
+const (
+	DimensionValueOperatorIn    DimensionValueOperator = "IN"
+	DimensionValueOperatorNotIn DimensionValueOperator = "NOT_IN"
+)
+
+func (enum DimensionValueOperator) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum DimensionValueOperator) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
 type DomainConfigurationStatus string
 
 // Enum values for DomainConfigurationStatus

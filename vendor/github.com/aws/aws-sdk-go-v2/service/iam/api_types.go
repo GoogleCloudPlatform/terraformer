@@ -258,7 +258,7 @@ func (s AttachedPolicy) String() string {
 // evaluating the Condition elements of the input policies.
 //
 // This data type is used as an input parameter to SimulateCustomPolicy and
-// SimulatePrincipalPolicy .
+// SimulatePrincipalPolicy.
 type ContextEntry struct {
 	_ struct{} `type:"structure"`
 
