@@ -96,7 +96,7 @@ type CreateDBClusterInput struct {
 	//
 	// For Amazon Aurora DB clusters, Amazon RDS can use Kerberos Authentication
 	// to authenticate users that connect to the DB cluster. For more information,
-	// see Using Kerberos Authentication for Aurora MySQL (https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurmysql-kerberos.html)
+	// see Kerberos Authentication (https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/kerberos-authentication.html)
 	// in the Amazon Aurora User Guide.
 	Domain *string `type:"string"`
 
@@ -138,6 +138,10 @@ type CreateDBClusterInput struct {
 
 	// The DB engine mode of the DB cluster, either provisioned, serverless, parallelquery,
 	// global, or multimaster.
+	//
+	// global engine mode only applies for global database clusters created with
+	// Aurora MySQL version 5.6.10a. For higher Aurora MySQL versions, the clusters
+	// in a global database use provisioned engine mode.
 	//
 	// Limitations and requirements apply to some DB engine modes. For more information,
 	// see the following sections in the Amazon Aurora User Guide:
@@ -200,9 +204,9 @@ type CreateDBClusterInput struct {
 	// AWS KMS creates the default encryption key for your AWS account. Your AWS
 	// account has a different default encryption key for each AWS Region.
 	//
-	// If you create a Read Replica of an encrypted DB cluster in another AWS Region,
+	// If you create a read replica of an encrypted DB cluster in another AWS Region,
 	// you must set KmsKeyId to a KMS key ID that is valid in the destination AWS
-	// Region. This key is used to encrypt the Read Replica in that AWS Region.
+	// Region. This key is used to encrypt the read replica in that AWS Region.
 	KmsKeyId *string `type:"string"`
 
 	// The password for the master database user. This password can contain any
@@ -251,7 +255,7 @@ type CreateDBClusterInput struct {
 	//    called in the destination AWS Region, and the action contained in the
 	//    pre-signed URL.
 	//
-	//    * DestinationRegion - The name of the AWS Region that Aurora Read Replica
+	//    * DestinationRegion - The name of the AWS Region that Aurora read replica
 	//    will be created in.
 	//
 	//    * ReplicationSourceIdentifier - The DB cluster identifier for the encrypted
@@ -306,7 +310,7 @@ type CreateDBClusterInput struct {
 	PreferredMaintenanceWindow *string `type:"string"`
 
 	// The Amazon Resource Name (ARN) of the source DB instance or DB cluster if
-	// this DB cluster is created as a Read Replica.
+	// this DB cluster is created as a read replica.
 	ReplicationSourceIdentifier *string `type:"string"`
 
 	// For DB clusters in serverless DB engine mode, the scaling properties of the
@@ -374,7 +378,7 @@ const opCreateDBCluster = "CreateDBCluster"
 // Creates a new Amazon Aurora DB cluster.
 //
 // You can use the ReplicationSourceIdentifier parameter to create the DB cluster
-// as a Read Replica of another DB cluster or Amazon RDS MySQL DB instance.
+// as a read replica of another DB cluster or Amazon RDS MySQL DB instance.
 // For cross-region replication where the DB cluster identified by ReplicationSourceIdentifier
 // is encrypted, you must also specify the PreSignedUrl parameter.
 //

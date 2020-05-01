@@ -62,7 +62,8 @@ const opDescribeCreateAccountStatus = "DescribeCreateAccountStatus"
 //
 // Retrieves the current status of an asynchronous request to create an account.
 //
-// This operation can be called only from the organization's master account.
+// This operation can be called only from the organization's master account
+// or by a member account that is a delegated administrator for an AWS service.
 //
 //    // Example sending a request using DescribeCreateAccountStatusRequest.
 //    req := client.DescribeCreateAccountStatusRequest(params)

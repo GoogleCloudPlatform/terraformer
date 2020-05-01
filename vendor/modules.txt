@@ -135,7 +135,7 @@ github.com/aws/aws-sdk-go/service/s3
 github.com/aws/aws-sdk-go/service/s3/internal/arn
 github.com/aws/aws-sdk-go/service/sts
 github.com/aws/aws-sdk-go/service/sts/stsiface
-# github.com/aws/aws-sdk-go-v2 v0.20.0
+# github.com/aws/aws-sdk-go-v2 v0.22.0
 ## explicit
 github.com/aws/aws-sdk-go-v2/aws
 github.com/aws/aws-sdk-go-v2/aws/arn
@@ -150,6 +150,7 @@ github.com/aws/aws-sdk-go-v2/aws/external
 github.com/aws/aws-sdk-go-v2/aws/processcreds
 github.com/aws/aws-sdk-go-v2/aws/ratelimit
 github.com/aws/aws-sdk-go-v2/aws/retry
+github.com/aws/aws-sdk-go-v2/aws/signer/internal/v4
 github.com/aws/aws-sdk-go-v2/aws/signer/v4
 github.com/aws/aws-sdk-go-v2/aws/stscreds
 github.com/aws/aws-sdk-go-v2/internal/awsutil

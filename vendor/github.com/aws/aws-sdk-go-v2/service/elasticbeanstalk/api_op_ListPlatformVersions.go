@@ -12,15 +12,19 @@ import (
 type ListPlatformVersionsInput struct {
 	_ struct{} `type:"structure"`
 
-	// List only the platforms where the platform member value relates to one of
-	// the supplied values.
+	// Criteria for restricting the resulting list of platform versions. The filter
+	// is interpreted as a logical conjunction (AND) of the separate PlatformFilter
+	// terms.
 	Filters []PlatformFilter `type:"list"`
 
-	// The maximum number of platform values returned in one call.
+	// The maximum number of platform version values returned in one call.
 	MaxRecords *int64 `min:"1" type:"integer"`
 
-	// The starting index into the remaining list of platforms. Use the NextToken
-	// value from a previous ListPlatformVersion call.
+	// For a paginated request. Specify a token from a previous response page to
+	// retrieve the next response page. All other parameter values must be identical
+	// to the ones specified in the initial request.
+	//
+	// If no NextToken is specified, the first page is retrieved.
 	NextToken *string `type:"string"`
 }
 
@@ -45,11 +49,11 @@ func (s *ListPlatformVersionsInput) Validate() error {
 type ListPlatformVersionsOutput struct {
 	_ struct{} `type:"structure"`
 
-	// The starting index into the remaining list of platforms. if this value is
-	// not null, you can use it in a subsequent ListPlatformVersion call.
+	// In a paginated request, if this value isn't null, it's the token that you
+	// can pass in a subsequent request to get the next response page.
 	NextToken *string `type:"string"`
 
-	// Detailed information about the platforms.
+	// Summary information about the platform versions.
 	PlatformSummaryList []PlatformSummary `type:"list"`
 }
 
@@ -63,7 +67,12 @@ const opListPlatformVersions = "ListPlatformVersions"
 // ListPlatformVersionsRequest returns a request value for making API operation for
 // AWS Elastic Beanstalk.
 //
-// Lists the available platforms.
+// Lists the platform versions available for your account in an AWS Region.
+// Provides summary information about each platform version. Compare to DescribePlatformVersion,
+// which provides full details about a single platform version.
+//
+// For definitions of platform version and other platform-related terms, see
+// AWS Elastic Beanstalk Platforms Glossary (https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/platforms-glossary.html).
 //
 //    // Example sending a request using ListPlatformVersionsRequest.
 //    req := client.ListPlatformVersionsRequest(params)

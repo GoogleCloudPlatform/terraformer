@@ -43,21 +43,21 @@ const opLeaveOrganization = "LeaveOrganization"
 //
 //    * The master account in an organization with all features enabled can
 //    set service control policies (SCPs) that can restrict what administrators
-//    of member accounts can do. These restrictions can include preventing member
-//    accounts from successfully calling LeaveOrganization.
+//    of member accounts can do. This includes preventing them from successfully
+//    calling LeaveOrganization and leaving the organization.
 //
 //    * You can leave an organization as a member account only if the account
 //    is configured with the information required to operate as a standalone
 //    account. When you create an account in an organization using the AWS Organizations
-//    console, API, or CLI, the information required of standalone accounts
-//    is not automatically collected. For each account that you want to make
-//    standalone, you must accept the end user license agreement (EULA). You
-//    must also choose a support plan, provide and verify the required contact
-//    information, and provide a current payment method. AWS uses the payment
-//    method to charge for any billable (not free tier) AWS activity that occurs
-//    while the account isn't attached to an organization. Follow the steps
-//    at To leave an organization when all required account information has
-//    not yet been provided (http://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_remove.html#leave-without-all-info)
+//    console, API, or CLI commands, the information required of standalone
+//    accounts is not automatically collected. For each account that you want
+//    to make standalone, you must do the following steps: Accept the end user
+//    license agreement (EULA) Choose a support plan Provide and verify the
+//    required contact information Provide a current payment method AWS uses
+//    the payment method to charge for any billable (not free tier) AWS activity
+//    that occurs while the account isn't attached to an organization. Follow
+//    the steps at To leave an organization when all required account information
+//    has not yet been provided (http://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_remove.html#leave-without-all-info)
 //    in the AWS Organizations User Guide.
 //
 //    * You can leave an organization only after you enable IAM user access

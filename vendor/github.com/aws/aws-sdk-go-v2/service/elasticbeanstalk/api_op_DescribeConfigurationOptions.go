@@ -74,7 +74,7 @@ type DescribeConfigurationOptionsOutput struct {
 	// A list of ConfigurationOptionDescription.
 	Options []ConfigurationOptionDescription `type:"list"`
 
-	// The ARN of the platform.
+	// The ARN of the platform version.
 	PlatformArn *string `type:"string"`
 
 	// The name of the solution stack these configuration options belong to.

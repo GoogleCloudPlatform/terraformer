@@ -17,7 +17,7 @@ type DescribeStackInstanceInput struct {
 	// StackInstanceAccount is a required field
 	StackInstanceAccount *string `type:"string" required:"true"`
 
-	// The name of a region that's associated with this stack instance.
+	// The name of a Region that's associated with this stack instance.
 	//
 	// StackInstanceRegion is a required field
 	StackInstanceRegion *string `type:"string" required:"true"`
@@ -74,7 +74,7 @@ const opDescribeStackInstance = "DescribeStackInstance"
 // AWS CloudFormation.
 //
 // Returns the stack instance that's associated with the specified stack set,
-// AWS account, and region.
+// AWS account, and Region.
 //
 // For a list of stack instances that are associated with a specific stack set,
 // use ListStackInstances.

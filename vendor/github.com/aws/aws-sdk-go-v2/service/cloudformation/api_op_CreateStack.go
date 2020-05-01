@@ -146,7 +146,7 @@ type CreateStackInput struct {
 	RollbackConfiguration *RollbackConfiguration `type:"structure"`
 
 	// The name that is associated with the stack. The name must be unique in the
-	// region in which you are creating the stack.
+	// Region in which you are creating the stack.
 	//
 	// A stack name can contain only alphanumeric characters (case sensitive) and
 	// hyphens. It must start with an alphabetic character and cannot be longer
@@ -162,7 +162,7 @@ type CreateStackInput struct {
 	StackPolicyBody *string `min:"1" type:"string"`
 
 	// Location of a file containing the stack policy. The URL must point to a policy
-	// (maximum size: 16 KB) located in an S3 bucket in the same region as the stack.
+	// (maximum size: 16 KB) located in an S3 bucket in the same Region as the stack.
 	// You can specify either the StackPolicyBody or the StackPolicyURL parameter,
 	// but not both.
 	StackPolicyURL *string `min:"1" type:"string"`

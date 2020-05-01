@@ -147,7 +147,7 @@ const opChangeResourceRecordSets = "ChangeResourceRecordSets"
 // names (such as example.com) or subdomain names (such as www.example.com),
 // in the same hosted zone or in multiple hosted zones. You can roll back the
 // updates if the new configuration isn't performing as expected. For more information,
-// see Using Traffic Flow to Route DNS Traffic (http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/traffic-flow.html)
+// see Using Traffic Flow to Route DNS Traffic (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/traffic-flow.html)
 // in the Amazon Route 53 Developer Guide.
 //
 // Create, Delete, and Upsert

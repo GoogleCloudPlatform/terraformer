@@ -167,7 +167,7 @@ type Action struct {
 	// Change the state of a CloudWatch alarm.
 	CloudwatchAlarm *CloudwatchAlarmAction `locationName:"cloudwatchAlarm" type:"structure"`
 
-	// Send data to CloudWatch logs.
+	// Send data to CloudWatch Logs.
 	CloudwatchLogs *CloudwatchLogsAction `locationName:"cloudwatchLogs" type:"structure"`
 
 	// Capture a CloudWatch metric.
@@ -1821,6 +1821,11 @@ type Behavior struct {
 	// What is measured by the behavior.
 	Metric *string `locationName:"metric" type:"string"`
 
+	// The dimension for a metric in your behavior. For example, using a TOPIC_FILTER
+	// dimension, you can narrow down the scope of the metric only to MQTT topics
+	// whose name match the pattern specified in the dimension.
+	MetricDimension *MetricDimension `locationName:"metricDimension" type:"structure"`
+
 	// The name you have given to the behavior.
 	//
 	// Name is a required field
@@ -1847,6 +1852,11 @@ func (s *Behavior) Validate() error {
 			invalidParams.AddNested("Criteria", err.(aws.ErrInvalidParams))
 		}
 	}
+	if s.MetricDimension != nil {
+		if err := s.MetricDimension.Validate(); err != nil {
+			invalidParams.AddNested("MetricDimension", err.(aws.ErrInvalidParams))
+		}
+	}
 
 	if invalidParams.Len() > 0 {
 		return invalidParams
@@ -1867,6 +1877,12 @@ func (s Behavior) MarshalFields(e protocol.FieldEncoder) error {
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "metric", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if s.MetricDimension != nil {
+		v := s.MetricDimension
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "metricDimension", v, metadata)
 	}
 	if s.Name != nil {
 		v := *s.Name
@@ -2501,7 +2517,7 @@ func (s CloudwatchAlarmAction) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
-// Describes an action that sends data to CloudWatch logs.
+// Describes an action that sends data to CloudWatch Logs.
 type CloudwatchLogsAction struct {
 	_ struct{} `type:"structure"`
 
@@ -3755,7 +3771,7 @@ type HttpAction struct {
 	// URL must be a prefix of the endpoint URL. If you do not specify a confirmation
 	// URL AWS IoT uses the endpoint URL as the confirmation URL. If you use substitution
 	// templates in the confirmationUrl, you must create and enable topic rule destinations
-	// that match each possible value of the substituion template before traffic
+	// that match each possible value of the substitution template before traffic
 	// is allowed to your endpoint URL.
 	ConfirmationUrl *string `locationName:"confirmationUrl" type:"string"`
 
@@ -5287,6 +5303,117 @@ func (s LoggingOptionsPayload) MarshalFields(e protocol.FieldEncoder) error {
 
 		metadata := protocol.Metadata{}
 		e.SetValue(protocol.BodyTarget, "roleArn", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	return nil
+}
+
+// The dimension of a metric.
+type MetricDimension struct {
+	_ struct{} `type:"structure"`
+
+	// A unique identifier for the dimension.
+	//
+	// DimensionName is a required field
+	DimensionName *string `locationName:"dimensionName" min:"1" type:"string" required:"true"`
+
+	// Defines how the dimensionValues of a dimension are interpreted. For example,
+	// for DimensionType TOPIC_FILTER, with IN operator, a message will be counted
+	// only if its topic matches one of the topic filters. With NOT_IN Operator,
+	// a message will be counted only if it doesn't match any of the topic filters.
+	// The operator is optional: if it's not provided (is null), it will be interpreted
+	// as IN.
+	Operator DimensionValueOperator `locationName:"operator" type:"string" enum:"true"`
+}
+
+// String returns the string representation
+func (s MetricDimension) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *MetricDimension) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "MetricDimension"}
+
+	if s.DimensionName == nil {
+		invalidParams.Add(aws.NewErrParamRequired("DimensionName"))
+	}
+	if s.DimensionName != nil && len(*s.DimensionName) < 1 {
+		invalidParams.Add(aws.NewErrParamMinLen("DimensionName", 1))
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s MetricDimension) MarshalFields(e protocol.FieldEncoder) error {
+	if s.DimensionName != nil {
+		v := *s.DimensionName
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "dimensionName", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if len(s.Operator) > 0 {
+		v := s.Operator
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "operator", protocol.QuotedValue{ValueMarshaler: v}, metadata)
+	}
+	return nil
+}
+
+// The metric you want to retain. Dimensions are optional.
+type MetricToRetain struct {
+	_ struct{} `type:"structure"`
+
+	// What is measured by the behavior.
+	//
+	// Metric is a required field
+	Metric *string `locationName:"metric" type:"string" required:"true"`
+
+	// The dimension of a metric.
+	MetricDimension *MetricDimension `locationName:"metricDimension" type:"structure"`
+}
+
+// String returns the string representation
+func (s MetricToRetain) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Validate inspects the fields of the type to determine if they are valid.
+func (s *MetricToRetain) Validate() error {
+	invalidParams := aws.ErrInvalidParams{Context: "MetricToRetain"}
+
+	if s.Metric == nil {
+		invalidParams.Add(aws.NewErrParamRequired("Metric"))
+	}
+	if s.MetricDimension != nil {
+		if err := s.MetricDimension.Validate(); err != nil {
+			invalidParams.AddNested("MetricDimension", err.(aws.ErrInvalidParams))
+		}
+	}
+
+	if invalidParams.Len() > 0 {
+		return invalidParams
+	}
+	return nil
+}
+
+// MarshalFields encodes the AWS API shape using the passed in protocol encoder.
+func (s MetricToRetain) MarshalFields(e protocol.FieldEncoder) error {
+	if s.Metric != nil {
+		v := *s.Metric
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "metric", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
+	if s.MetricDimension != nil {
+		v := s.MetricDimension
+
+		metadata := protocol.Metadata{}
+		e.SetFields(protocol.BodyTarget, "metricDimension", v, metadata)
 	}
 	return nil
 }

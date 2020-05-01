@@ -61,7 +61,15 @@ type DescribeSecurityProfileOutput struct {
 	// A list of metrics whose data is retained (stored). By default, data is retained
 	// for any metric used in the profile's behaviors, but it is also retained for
 	// any metric specified here.
-	AdditionalMetricsToRetain []string `locationName:"additionalMetricsToRetain" type:"list"`
+	//
+	// Note: This API field is deprecated. Please use DescribeSecurityProfileResponse$additionalMetricsToRetainV2
+	// instead.
+	AdditionalMetricsToRetain []string `locationName:"additionalMetricsToRetain" deprecated:"true" type:"list"`
+
+	// A list of metrics whose data is retained (stored). By default, data is retained
+	// for any metric used in the profile's behaviors, but it is also retained for
+	// any metric specified here.
+	AdditionalMetricsToRetainV2 []MetricToRetain `locationName:"additionalMetricsToRetainV2" type:"list"`
 
 	// Where the alerts are sent. (Alerts are always sent to the console.)
 	AlertTargets map[string]AlertTarget `locationName:"alertTargets" type:"map"`
@@ -106,6 +114,18 @@ func (s DescribeSecurityProfileOutput) MarshalFields(e protocol.FieldEncoder) er
 		ls0.Start()
 		for _, v1 := range v {
 			ls0.ListAddValue(protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v1)})
+		}
+		ls0.End()
+
+	}
+	if s.AdditionalMetricsToRetainV2 != nil {
+		v := s.AdditionalMetricsToRetainV2
+
+		metadata := protocol.Metadata{}
+		ls0 := e.List(protocol.BodyTarget, "additionalMetricsToRetainV2", metadata)
+		ls0.Start()
+		for _, v1 := range v {
+			ls0.ListAddFields(v1)
 		}
 		ls0.End()
 

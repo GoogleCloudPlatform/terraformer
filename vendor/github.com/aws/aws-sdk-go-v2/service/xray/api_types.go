@@ -381,6 +381,9 @@ func (s EncryptionConfig) MarshalFields(e protocol.FieldEncoder) error {
 type ErrorRootCause struct {
 	_ struct{} `type:"structure"`
 
+	// A flag that denotes that the root cause impacts the trace client.
+	ClientImpacting *bool `type:"boolean"`
+
 	// A list of services corresponding to an error. A service identifies a segment
 	// and it contains a name, account ID, type, and inferred flag.
 	Services []ErrorRootCauseService `type:"list"`
@@ -393,6 +396,12 @@ func (s ErrorRootCause) String() string {
 
 // MarshalFields encodes the AWS API shape using the passed in protocol encoder.
 func (s ErrorRootCause) MarshalFields(e protocol.FieldEncoder) error {
+	if s.ClientImpacting != nil {
+		v := *s.ClientImpacting
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "ClientImpacting", protocol.BoolValue(v), metadata)
+	}
 	if s.Services != nil {
 		v := s.Services
 
@@ -585,6 +594,9 @@ func (s ErrorStatistics) MarshalFields(e protocol.FieldEncoder) error {
 type FaultRootCause struct {
 	_ struct{} `type:"structure"`
 
+	// A flag that denotes that the root cause impacts the trace client.
+	ClientImpacting *bool `type:"boolean"`
+
 	// A list of corresponding services. A service identifies a segment and it contains
 	// a name, account ID, type, and inferred flag.
 	Services []FaultRootCauseService `type:"list"`
@@ -597,6 +609,12 @@ func (s FaultRootCause) String() string {
 
 // MarshalFields encodes the AWS API shape using the passed in protocol encoder.
 func (s FaultRootCause) MarshalFields(e protocol.FieldEncoder) error {
+	if s.ClientImpacting != nil {
+		v := *s.ClientImpacting
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "ClientImpacting", protocol.BoolValue(v), metadata)
+	}
 	if s.Services != nil {
 		v := s.Services
 
@@ -1006,6 +1024,9 @@ func (s ResourceARNDetail) MarshalFields(e protocol.FieldEncoder) error {
 type ResponseTimeRootCause struct {
 	_ struct{} `type:"structure"`
 
+	// A flag that denotes that the root cause impacts the trace client.
+	ClientImpacting *bool `type:"boolean"`
+
 	// A list of corresponding services. A service identifies a segment and contains
 	// a name, account ID, type, and inferred flag.
 	Services []ResponseTimeRootCauseService `type:"list"`
@@ -1018,6 +1039,12 @@ func (s ResponseTimeRootCause) String() string {
 
 // MarshalFields encodes the AWS API shape using the passed in protocol encoder.
 func (s ResponseTimeRootCause) MarshalFields(e protocol.FieldEncoder) error {
+	if s.ClientImpacting != nil {
+		v := *s.ClientImpacting
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.BodyTarget, "ClientImpacting", protocol.BoolValue(v), metadata)
+	}
 	if s.Services != nil {
 		v := s.Services
 

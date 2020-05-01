@@ -507,3 +507,33 @@ func GetWebIdentityCredentialProviderOptions(configs Configs) (f func(*stscreds.
 	}
 	return f, found, err
 }
+
+// DefaultRegionProvider is an interface for retrieving a default region if a region was not resolved from other sources
+type DefaultRegionProvider interface {
+	GetDefaultRegion() (string, bool, error)
+}
+
+// WithDefaultRegion wraps a string and satisfies the DefaultRegionProvider interface
+type WithDefaultRegion string
+
+// GetDefaultRegion returns wrapped fallback region
+func (w WithDefaultRegion) GetDefaultRegion() (string, bool, error) {
+	return string(w), true, nil
+}
+
+// GetDefaultRegion searches the slice of configs and returns the first fallback region found
+func GetDefaultRegion(configs Configs) (value string, found bool, err error) {
+	for _, config := range configs {
+		if p, ok := config.(DefaultRegionProvider); ok {
+			value, found, err = p.GetDefaultRegion()
+			if err != nil {
+				return "", false, err
+			}
+			if found {
+				break
+			}
+		}
+	}
+
+	return value, found, err
+}

@@ -22,8 +22,7 @@ type GetTagsInput struct {
 	// set.
 	Position *string `location:"querystring" locationName:"position" type:"string"`
 
-	// [Required] The ARN of a resource that can be tagged. The resource ARN must
-	// be URL-encoded.
+	// [Required] The ARN of a resource that can be tagged.
 	//
 	// ResourceArn is a required field
 	ResourceArn *string `location:"uri" locationName:"resource_arn" type:"string" required:"true"`

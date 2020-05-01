@@ -196,6 +196,11 @@ type DomainValidation struct {
 
 	// Contains the CNAME record that you add to your DNS database for domain validation.
 	// For more information, see Use DNS to Validate Domain Ownership (https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-validate-dns.html).
+	//
+	// Note: The CNAME information that you need does not include the name of your
+	// domain. If you include your domain name in the DNS database CNAME record,
+	// validation fails. For example, if the name is "_a79865eb4cd1a6ab990a45779b4e0b96.yourdomain.com",
+	// only "_a79865eb4cd1a6ab990a45779b4e0b96" must be used.
 	ResourceRecord *ResourceRecord `type:"structure"`
 
 	// The domain name that ACM used to send domain validation emails.

@@ -10,6 +10,14 @@
 // organize resources associated with each device (Registry), configure logging,
 // and create and manage policies and credentials to authenticate devices.
 //
+// The service endpoints that expose this API are listed in AWS IoT Core Endpoints
+// and Quotas (https://docs.aws.amazon.com/general/latest/gr/iot-core.html).
+// You must use the endpoint for the region that has the resources you want
+// to access.
+//
+// The service name used by AWS Signature Version 4 (https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html)
+// to sign the request is: execute-api.
+//
 // For more information about how AWS IoT works, see the Developer Guide (https://docs.aws.amazon.com/iot/latest/developerguide/aws-iot-how-it-works.html).
 //
 // For information about how to use the credentials provider for AWS IoT, see

@@ -12,12 +12,12 @@ import (
 type CreatePolicyInput struct {
 	_ struct{} `type:"structure"`
 
-	// The policy content to add to the new policy. For example, you could create
-	// a service control policy (https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scp.html)
-	// (SCP) that specifies the permissions that administrators in attached accounts
-	// can delegate to their users, groups, and roles. The string for this SCP must
-	// be JSON text. For more information about the SCP syntax, see Service Control
-	// Policy Syntax (https://docs.aws.amazon.com/organizations/latest/userguide/orgs_reference_scp-syntax.html)
+	// The policy content to add to the new policy. For example, if you create a
+	// service control policy (https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scp.html)
+	// (SCP), this string must be JSON text that specifies the permissions that
+	// admins in attached accounts can delegate to their users, groups, and roles.
+	// For more information about the SCP syntax, see Service Control Policy Syntax
+	// (https://docs.aws.amazon.com/organizations/latest/userguide/orgs_reference_scp-syntax.html)
 	// in the AWS Organizations User Guide.
 	//
 	// Content is a required field
@@ -38,6 +38,9 @@ type CreatePolicyInput struct {
 	Name *string `min:"1" type:"string" required:"true"`
 
 	// The type of policy to create.
+	//
+	// In the current release, the only type of policy that you can create is a
+	// service control policy (SCP).
 	//
 	// Type is a required field
 	Type PolicyType `type:"string" required:"true" enum:"true"`

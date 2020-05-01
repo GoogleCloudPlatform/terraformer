@@ -82,9 +82,11 @@ const opStartDeliveryStreamEncryption = "StartDeliveryStreamEncryption"
 //
 // Even if encryption is currently enabled for a delivery stream, you can still
 // invoke this operation on it to change the ARN of the CMK or both its type
-// and ARN. In this case, Kinesis Data Firehose schedules the grant it had on
-// the old CMK for retirement and creates a grant that enables it to use the
-// new CMK to encrypt and decrypt data and to manage the grant.
+// and ARN. If you invoke this method to change the CMK, and the old CMK is
+// of type CUSTOMER_MANAGED_CMK, Kinesis Data Firehose schedules the grant it
+// had on the old CMK for retirement. If the new CMK is of type CUSTOMER_MANAGED_CMK,
+// Kinesis Data Firehose creates a grant that enables it to use the new CMK
+// to encrypt and decrypt data and to manage the grant.
 //
 // If a delivery stream already has encryption enabled and then you invoke this
 // operation to change the ARN of the CMK or both its type and ARN and you get
@@ -92,10 +94,12 @@ const opStartDeliveryStreamEncryption = "StartDeliveryStreamEncryption"
 // In this case, encryption remains enabled with the old CMK.
 //
 // If the encryption status of your delivery stream is ENABLING_FAILED, you
-// can invoke this operation again.
+// can invoke this operation again with a valid CMK. The CMK must be enabled
+// and the key policy mustn't explicitly deny the permission for Kinesis Data
+// Firehose to invoke KMS encrypt and decrypt operations.
 //
-// You can only enable SSE for a delivery stream that uses DirectPut as its
-// source.
+// You can enable SSE for a delivery stream only if it's a delivery stream that
+// uses DirectPut as its source.
 //
 // The StartDeliveryStreamEncryption and StopDeliveryStreamEncryption operations
 // have a combined limit of 25 calls per delivery stream per 24 hours. For example,

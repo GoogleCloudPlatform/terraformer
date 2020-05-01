@@ -47,7 +47,7 @@ type CopyDBClusterSnapshotInput struct {
 	// DB cluster snapshot from another AWS Region. Don't specify PreSignedUrl when
 	// you are copying an encrypted DB cluster snapshot in the same AWS Region.
 	//
-	// The pre-signed URL must be a valid request for the CopyDBSClusterSnapshot
+	// The pre-signed URL must be a valid request for the CopyDBClusterSnapshot
 	// API action that can be executed in the source AWS Region that contains the
 	// encrypted DB cluster snapshot to be copied. The pre-signed URL request must
 	// contain the following parameter values:

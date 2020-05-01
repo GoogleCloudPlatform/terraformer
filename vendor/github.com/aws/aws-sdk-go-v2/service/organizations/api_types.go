@@ -120,7 +120,7 @@ type CreateAccountStatus struct {
 	//    you provided is not valid.
 	//
 	//    * INTERNAL_FAILURE: The account could not be created because of an internal
-	//    failure. Try again later. If the problem persists, contact AWS Support.
+	//    failure. Try again later. If the problem persists, contact Customer Support.
 	FailureReason CreateAccountFailureReason `type:"string" enum:"true"`
 
 	// If the account was created successfully, the unique identifier (ID) of the
@@ -144,6 +144,60 @@ type CreateAccountStatus struct {
 
 // String returns the string representation
 func (s CreateAccountStatus) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Contains information about the delegated administrator.
+type DelegatedAdministrator struct {
+	_ struct{} `type:"structure"`
+
+	// The Amazon Resource Name (ARN) of the delegated administrator's account.
+	Arn *string `type:"string"`
+
+	// The date when the account was made a delegated administrator.
+	DelegationEnabledDate *time.Time `type:"timestamp"`
+
+	// The email address that is associated with the delegated administrator's AWS
+	// account.
+	Email *string `min:"6" type:"string" sensitive:"true"`
+
+	// The unique identifier (ID) of the delegated administrator's account.
+	Id *string `type:"string"`
+
+	// The method by which the delegated administrator's account joined the organization.
+	JoinedMethod AccountJoinedMethod `type:"string" enum:"true"`
+
+	// The date when the delegated administrator's account became a part of the
+	// organization.
+	JoinedTimestamp *time.Time `type:"timestamp"`
+
+	// The friendly name of the delegated administrator's account.
+	Name *string `min:"1" type:"string" sensitive:"true"`
+
+	// The status of the delegated administrator's account in the organization.
+	Status AccountStatus `type:"string" enum:"true"`
+}
+
+// String returns the string representation
+func (s DelegatedAdministrator) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Contains information about the AWS service for which the account is a delegated
+// administrator.
+type DelegatedService struct {
+	_ struct{} `type:"structure"`
+
+	// The date that the account became a delegated administrator for this service.
+	DelegationEnabledDate *time.Time `type:"timestamp"`
+
+	// The name of a service that can request an operation for the specified service.
+	// This is typically in the form of a URL, such as: servicename.amazonaws.com.
+	ServicePrincipal *string `min:"1" type:"string"`
+}
+
+// String returns the string representation
+func (s DelegatedService) String() string {
 	return awsutil.Prettify(s)
 }
 
@@ -171,8 +225,8 @@ func (s EffectivePolicy) String() string {
 	return awsutil.Prettify(s)
 }
 
-// A structure that contains details of a service principal that is enabled
-// to integrate with AWS Organizations.
+// A structure that contains details of a service principal that represents
+// an AWS service that is enabled to integrate with AWS Organizations.
 type EnabledServicePrincipal struct {
 	_ struct{} `type:"structure"`
 
@@ -191,13 +245,13 @@ func (s EnabledServicePrincipal) String() string {
 }
 
 // Contains information that must be exchanged to securely establish a relationship
-// between two accounts (an originator and a recipient). For example, assume
-// that a master account (the originator) invites another account (the recipient)
-// to join its organization. In that case, the two accounts exchange information
-// as a series of handshake requests and responses.
+// between two accounts (an originator and a recipient). For example, when a
+// master account (the originator) invites another account (the recipient) to
+// join its organization, the two accounts exchange information as a series
+// of handshake requests and responses.
 //
 // Note: Handshakes that are CANCELED, ACCEPTED, or DECLINED show up in lists
-// for only 30 days after entering that state. After that, they are deleted.
+// for only 30 days after entering that state After that they are deleted.
 type Handshake struct {
 	_ struct{} `type:"structure"`
 
@@ -386,7 +440,7 @@ func (s HandshakeResource) String() string {
 // Contains details about an organization. An organization is a collection of
 // accounts that are centrally managed together using consolidated billing,
 // organized hierarchically with organizational units (OUs), and controlled
-// with policies.
+// with policies .
 type Organization struct {
 	_ struct{} `type:"structure"`
 
@@ -537,7 +591,7 @@ type PolicySummary struct {
 	// in the AWS Organizations User Guide.
 	Arn *string `type:"string"`
 
-	// A Boolean value that indicates whether the specified policy is an AWS managed
+	// A boolean value that indicates whether the specified policy is an AWS managed
 	// policy. If true, then you can attach the policy to roots, OUs, or accounts,
 	// but you cannot edit it.
 	AwsManaged *bool `type:"boolean"`
@@ -616,10 +670,9 @@ func (s PolicyTargetSummary) String() string {
 type PolicyTypeSummary struct {
 	_ struct{} `type:"structure"`
 
-	// The status of the policy type as it relates to the associated root. You can
-	// attach a policy of the specified type to a root or to an OU or account in
-	// that root. To do so, the policy must be available in the organization and
-	// enabled for that root.
+	// The status of the policy type as it relates to the associated root. To attach
+	// a policy of the specified type to a root or to an OU or account in that root,
+	// it must be available in the organization and enabled for that root.
 	Status PolicyTypeStatus `type:"string" enum:"true"`
 
 	// The name of the policy type.

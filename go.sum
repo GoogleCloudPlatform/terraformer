@@ -146,6 +146,8 @@ github.com/aws/aws-sdk-go-v2 v0.19.0 h1:jVKVeRBQah2OwqXRoy8bnWWgpo2sXk/bWf2J2tog
 github.com/aws/aws-sdk-go-v2 v0.19.0/go.mod h1:JWVYvqSMppoMJC0x5wdwiImzgXTI9FuZwxzkQq9wy+g=
 github.com/aws/aws-sdk-go-v2 v0.20.0 h1:/yefUjgMrda9PNFwWctBU63nL10CJMdBwkAmaQ4w4Hs=
 github.com/aws/aws-sdk-go-v2 v0.20.0/go.mod h1:2LhT7UgHOXK3UXONKI5OMgIyoQL6zTAw/jwIeX6yqzw=
+github.com/aws/aws-sdk-go-v2 v0.22.0 h1:mlixfS5HVzn7Sf3KVhjAIM2H3bB7uoTbLCtKHvteUfE=
+github.com/aws/aws-sdk-go-v2 v0.22.0/go.mod h1:2LhT7UgHOXK3UXONKI5OMgIyoQL6zTAw/jwIeX6yqzw=
 github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f h1:ZNv7On9kyUzm7fvRZumSyy/IUiSC7AzL0I1jKKtwooA=
 github.com/baiyubin/aliyun-sts-go-sdk v0.0.0-20180326062324-cfa1a18b161f/go.mod h1:AuiFmCCPBSrqvVMvuqFuk0qogytodnVFVSN5CeJB8Gc=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=

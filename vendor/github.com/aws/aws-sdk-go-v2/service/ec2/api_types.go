@@ -1447,6 +1447,26 @@ func (s DeleteQueuedReservedInstancesError) String() string {
 	return awsutil.Prettify(s)
 }
 
+// Information about the tag keys to deregister for the current Region. You
+// can either specify individual tag keys or deregister all tag keys in the
+// current Region. You must specify either IncludeAllTagsOfInstance or InstanceTagKeys
+// in the request
+type DeregisterInstanceTagAttributeRequest struct {
+	_ struct{} `type:"structure"`
+
+	// Indicates whether to deregister all tag keys in the current Region. Specify
+	// false to deregister all tag keys.
+	IncludeAllTagsOfInstance *bool `type:"boolean"`
+
+	// Information about the tag keys to deregister.
+	InstanceTagKeys []string `locationName:"InstanceTagKey" locationNameList:"item" type:"list"`
+}
+
+// String returns the string representation
+func (s DeregisterInstanceTagAttributeRequest) String() string {
+	return awsutil.Prettify(s)
+}
+
 // Describes fast snapshot restores for a snapshot.
 type DescribeFastSnapshotRestoreSuccessItem struct {
 	_ struct{} `type:"structure"`
@@ -4894,6 +4914,24 @@ func (s InstanceStorageInfo) String() string {
 	return awsutil.Prettify(s)
 }
 
+// Describes the registered tag keys for the current Region.
+type InstanceTagNotificationAttribute struct {
+	_ struct{} `type:"structure"`
+
+	// Indicates wheter all tag keys in the current Region are registered to appear
+	// in scheduled event notifications. true indicates that all tag keys in the
+	// current Region are registered.
+	IncludeAllTagsOfInstance *bool `locationName:"includeAllTagsOfInstance" type:"boolean"`
+
+	// The registered tag keys.
+	InstanceTagKeys []string `locationName:"instanceTagKeySet" locationNameList:"item" type:"list"`
+}
+
+// String returns the string representation
+func (s InstanceTagNotificationAttribute) String() string {
+	return awsutil.Prettify(s)
+}
+
 // Describes the instance type.
 type InstanceTypeInfo struct {
 	_ struct{} `type:"structure"`
@@ -7570,9 +7608,10 @@ type Placement struct {
 	_ struct{} `type:"structure"`
 
 	// The affinity setting for the instance on the Dedicated Host. This parameter
-	// is not supported for the ImportInstance command.
+	// is not supported for the ImportInstance (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_ImportInstance.html)
+	// command.
 	//
-	// This parameter is not supported by .
+	// This parameter is not supported by CreateFleet (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateFleet).
 	Affinity *string `locationName:"affinity" type:"string"`
 
 	// The Availability Zone of the instance.
@@ -7580,41 +7619,43 @@ type Placement struct {
 	// If not specified, an Availability Zone will be automatically chosen for you
 	// based on the load balancing criteria for the Region.
 	//
-	// This parameter is not supported by .
+	// This parameter is not supported by CreateFleet (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateFleet).
 	AvailabilityZone *string `locationName:"availabilityZone" type:"string"`
 
 	// The name of the placement group the instance is in.
 	GroupName *string `locationName:"groupName" type:"string"`
 
 	// The ID of the Dedicated Host on which the instance resides. This parameter
-	// is not supported for the ImportInstance command.
+	// is not supported for the ImportInstance (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_ImportInstance.html)
+	// command.
 	//
-	// This parameter is not supported by .
+	// This parameter is not supported by CreateFleet (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateFleet).
 	HostId *string `locationName:"hostId" type:"string"`
 
 	// The ARN of the host resource group in which to launch the instances. If you
 	// specify a host resource group ARN, omit the Tenancy parameter or set it to
 	// host.
 	//
-	// This parameter is not supported by .
+	// This parameter is not supported by CreateFleet (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateFleet).
 	HostResourceGroupArn *string `locationName:"hostResourceGroupArn" type:"string"`
 
 	// The number of the partition the instance is in. Valid only if the placement
 	// group strategy is set to partition.
 	//
-	// This parameter is not supported by .
+	// This parameter is not supported by CreateFleet (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateFleet).
 	PartitionNumber *int64 `locationName:"partitionNumber" type:"integer"`
 
 	// Reserved for future use.
 	//
-	// This parameter is not supported by .
+	// This parameter is not supported by CreateFleet (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateFleet).
 	SpreadDomain *string `locationName:"spreadDomain" type:"string"`
 
 	// The tenancy of the instance (if the instance is running in a VPC). An instance
 	// with a tenancy of dedicated runs on single-tenant hardware. The host tenancy
-	// is not supported for the ImportInstance command.
+	// is not supported for the ImportInstance (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_ImportInstance.html)
+	// command.
 	//
-	// This parameter is not supported by .
+	// This parameter is not supported by CreateFleet (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateFleet).
 	Tenancy Tenancy `locationName:"tenancy" type:"string" enum:"true"`
 }
 
@@ -8117,6 +8158,26 @@ type Region struct {
 
 // String returns the string representation
 func (s Region) String() string {
+	return awsutil.Prettify(s)
+}
+
+// Information about the tag keys to register for the current Region. You can
+// either specify individual tag keys or register all tag keys in the current
+// Region. You must specify either IncludeAllTagsOfInstance or InstanceTagKeys
+// in the request
+type RegisterInstanceTagAttributeRequest struct {
+	_ struct{} `type:"structure"`
+
+	// Indicates whether to register all tag keys in the current Region. Specify
+	// true to register all tag keys.
+	IncludeAllTagsOfInstance *bool `type:"boolean"`
+
+	// The tag keys to register.
+	InstanceTagKeys []string `locationName:"InstanceTagKey" locationNameList:"item" type:"list"`
+}
+
+// String returns the string representation
+func (s RegisterInstanceTagAttributeRequest) String() string {
 	return awsutil.Prettify(s)
 }
 
@@ -10147,8 +10208,8 @@ type SpotFleetRequestConfigData struct {
 	// (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-fleet-requests.html#spot-fleet-prerequisites)
 	// in the Amazon EC2 User Guide for Linux Instances. Spot Fleet can terminate
 	// Spot Instances on your behalf when you cancel its Spot Fleet request using
-	// CancelSpotFleetRequests or when the Spot Fleet request expires, if you set
-	// TerminateInstancesWithExpiration.
+	// CancelSpotFleetRequests (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CancelSpotFleetRequests)
+	// or when the Spot Fleet request expires, if you set TerminateInstancesWithExpiration.
 	//
 	// IamFleetRole is a required field
 	IamFleetRole *string `locationName:"iamFleetRole" type:"string" required:"true"`
@@ -10457,9 +10518,9 @@ type SpotMarketOptions struct {
 	// default is the On-Demand price.
 	MaxPrice *string `type:"string"`
 
-	// The Spot Instance request type. For RunInstances, persistent Spot Instance
-	// requests are only supported when InstanceInterruptionBehavior is set to either
-	// hibernate or stop.
+	// The Spot Instance request type. For RunInstances (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_RunInstances),
+	// persistent Spot Instance requests are only supported when InstanceInterruptionBehavior
+	// is set to either hibernate or stop.
 	SpotInstanceType SpotInstanceType `type:"string" enum:"true"`
 
 	// The end date of the request. For a one-time request, the request remains
@@ -10984,7 +11045,8 @@ func (s TagSpecification) String() string {
 // reaches the maximum amount that you're willing to pay. When the maximum amount
 // you're willing to pay is reached, the fleet stops launching instances even
 // if it hasn’t met the target capacity. The MaxTotalPrice parameters are
-// located in and
+// located in OnDemandOptions (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_OnDemandOptions.html)
+// and SpotOptions (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_SpotOptions)
 type TargetCapacitySpecification struct {
 	_ struct{} `type:"structure"`
 
@@ -11021,7 +11083,8 @@ func (s TargetCapacitySpecification) String() string {
 // instances until it reaches the maximum amount that you're willing to pay.
 // When the maximum amount you're willing to pay is reached, the fleet stops
 // launching instances even if it hasn’t met the target capacity. The MaxTotalPrice
-// parameters are located in and .
+// parameters are located in OnDemandOptionsRequest (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_OnDemandOptionsRequest)
+// and SpotOptionsRequest (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_SpotOptionsRequest).
 type TargetCapacitySpecificationRequest struct {
 	_ struct{} `type:"structure"`
 

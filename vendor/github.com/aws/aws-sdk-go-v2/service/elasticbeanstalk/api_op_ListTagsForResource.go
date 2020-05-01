@@ -14,7 +14,7 @@ type ListTagsForResourceInput struct {
 
 	// The Amazon Resource Name (ARN) of the resouce for which a tag list is requested.
 	//
-	// Must be the ARN of an Elastic Beanstalk environment.
+	// Must be the ARN of an Elastic Beanstalk resource.
 	//
 	// ResourceArn is a required field
 	ResourceArn *string `type:"string" required:"true"`
@@ -42,7 +42,7 @@ func (s *ListTagsForResourceInput) Validate() error {
 type ListTagsForResourceOutput struct {
 	_ struct{} `type:"structure"`
 
-	// The Amazon Resource Name (ARN) of the resouce for which a tag list was requested.
+	// The Amazon Resource Name (ARN) of the resource for which a tag list was requested.
 	ResourceArn *string `type:"string"`
 
 	// A list of tag key-value pairs.
@@ -59,12 +59,11 @@ const opListTagsForResource = "ListTagsForResource"
 // ListTagsForResourceRequest returns a request value for making API operation for
 // AWS Elastic Beanstalk.
 //
-// Returns the tags applied to an AWS Elastic Beanstalk resource. The response
+// Return the tags applied to an AWS Elastic Beanstalk resource. The response
 // contains a list of tag key-value pairs.
 //
-// Currently, Elastic Beanstalk only supports tagging of Elastic Beanstalk environments.
-// For details about environment tagging, see Tagging Resources in Your Elastic
-// Beanstalk Environment (https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.tagging.html).
+// Elastic Beanstalk supports tagging of all of its resources. For details about
+// resource tagging, see Tagging Application Resources (https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/applications-tagging-resources.html).
 //
 //    // Example sending a request using ListTagsForResourceRequest.
 //    req := client.ListTagsForResourceRequest(params)

@@ -12,12 +12,12 @@ import (
 type PromoteReadReplicaDBClusterInput struct {
 	_ struct{} `type:"structure"`
 
-	// The identifier of the DB cluster Read Replica to promote. This parameter
+	// The identifier of the DB cluster read replica to promote. This parameter
 	// isn't case-sensitive.
 	//
 	// Constraints:
 	//
-	//    * Must match the identifier of an existing DBCluster Read Replica.
+	//    * Must match the identifier of an existing DB cluster read replica.
 	//
 	// Example: my-cluster-replica1
 	//
@@ -64,7 +64,7 @@ const opPromoteReadReplicaDBCluster = "PromoteReadReplicaDBCluster"
 // PromoteReadReplicaDBClusterRequest returns a request value for making API operation for
 // Amazon Relational Database Service.
 //
-// Promotes a Read Replica DB cluster to a standalone DB cluster.
+// Promotes a read replica DB cluster to a standalone DB cluster.
 //
 // This action only applies to Aurora DB clusters.
 //

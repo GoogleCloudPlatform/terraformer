@@ -148,6 +148,7 @@ const (
 	RuntimeDotnetcore10 Runtime = "dotnetcore1.0"
 	RuntimeDotnetcore20 Runtime = "dotnetcore2.0"
 	RuntimeDotnetcore21 Runtime = "dotnetcore2.1"
+	RuntimeDotnetcore31 Runtime = "dotnetcore3.1"
 	RuntimeNodejs43Edge Runtime = "nodejs4.3-edge"
 	RuntimeGo1X         Runtime = "go1.x"
 	RuntimeRuby25       Runtime = "ruby2.5"

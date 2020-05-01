@@ -22,6 +22,44 @@ func (enum DeploymentStatus) MarshalValueBuf(b []byte) ([]byte, error) {
 	return append(b, enum...), nil
 }
 
+type DescribePackagesFilterName string
+
+// Enum values for DescribePackagesFilterName
+const (
+	DescribePackagesFilterNamePackageId     DescribePackagesFilterName = "PackageID"
+	DescribePackagesFilterNamePackageName   DescribePackagesFilterName = "PackageName"
+	DescribePackagesFilterNamePackageStatus DescribePackagesFilterName = "PackageStatus"
+)
+
+func (enum DescribePackagesFilterName) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum DescribePackagesFilterName) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type DomainPackageStatus string
+
+// Enum values for DomainPackageStatus
+const (
+	DomainPackageStatusAssociating        DomainPackageStatus = "ASSOCIATING"
+	DomainPackageStatusAssociationFailed  DomainPackageStatus = "ASSOCIATION_FAILED"
+	DomainPackageStatusActive             DomainPackageStatus = "ACTIVE"
+	DomainPackageStatusDissociating       DomainPackageStatus = "DISSOCIATING"
+	DomainPackageStatusDissociationFailed DomainPackageStatus = "DISSOCIATION_FAILED"
+)
+
+func (enum DomainPackageStatus) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum DomainPackageStatus) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
 type ESPartitionInstanceType string
 
 // Enum values for ESPartitionInstanceType
@@ -160,6 +198,45 @@ func (enum OptionState) MarshalValue() (string, error) {
 }
 
 func (enum OptionState) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type PackageStatus string
+
+// Enum values for PackageStatus
+const (
+	PackageStatusCopying          PackageStatus = "COPYING"
+	PackageStatusCopyFailed       PackageStatus = "COPY_FAILED"
+	PackageStatusValidating       PackageStatus = "VALIDATING"
+	PackageStatusValidationFailed PackageStatus = "VALIDATION_FAILED"
+	PackageStatusAvailable        PackageStatus = "AVAILABLE"
+	PackageStatusDeleting         PackageStatus = "DELETING"
+	PackageStatusDeleted          PackageStatus = "DELETED"
+	PackageStatusDeleteFailed     PackageStatus = "DELETE_FAILED"
+)
+
+func (enum PackageStatus) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum PackageStatus) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type PackageType string
+
+// Enum values for PackageType
+const (
+	PackageTypeTxtDictionary PackageType = "TXT-DICTIONARY"
+)
+
+func (enum PackageType) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum PackageType) MarshalValueBuf(b []byte) ([]byte, error) {
 	b = b[0:0]
 	return append(b, enum...), nil
 }
