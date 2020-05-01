@@ -84,16 +84,16 @@ const opInviteAccountToOrganization = "InviteAccountToOrganization"
 // as a Handshake whose details are in the response.
 //
 //    * You can invite AWS accounts only from the same seller as the master
-//    account. For example, assume that your organization's master account was
-//    created by Amazon Internet Services Pvt. Ltd (AISPL), an AWS seller in
-//    India. You can invite only other AISPL accounts to your organization.
-//    You can't combine accounts from AISPL and AWS or from any other AWS seller.
-//    For more information, see Consolidated Billing in India (http://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/useconsolidatedbilliing-India.html).
+//    account. For example, if your organization's master account was created
+//    by Amazon Internet Services Pvt. Ltd (AISPL), an AWS seller in India,
+//    you can invite only other AISPL accounts to your organization. You can't
+//    combine accounts from AISPL and AWS or from any other AWS seller. For
+//    more information, see Consolidated Billing in India (http://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/useconsolidatedbilliing-India.html).
 //
-//    * You might receive an exception that indicates that you exceeded your
-//    account limits for the organization or that the operation failed because
-//    your organization is still initializing. If so, wait one hour and then
-//    try again. If the error persists after an hour, contact AWS Support (https://console.aws.amazon.com/support/home#/).
+//    * If you receive an exception that indicates that you exceeded your account
+//    limits for the organization or that the operation failed because your
+//    organization is still initializing, wait one hour and then try again.
+//    If the error persists after an hour, contact AWS Support (https://console.aws.amazon.com/support/home#/).
 //
 // This operation can be called only from the organization's master account.
 //

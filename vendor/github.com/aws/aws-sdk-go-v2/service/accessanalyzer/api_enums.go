@@ -2,6 +2,43 @@
 
 package accessanalyzer
 
+type AnalyzerStatus string
+
+// Enum values for AnalyzerStatus
+const (
+	AnalyzerStatusActive   AnalyzerStatus = "ACTIVE"
+	AnalyzerStatusCreating AnalyzerStatus = "CREATING"
+	AnalyzerStatusDisabled AnalyzerStatus = "DISABLED"
+	AnalyzerStatusFailed   AnalyzerStatus = "FAILED"
+)
+
+func (enum AnalyzerStatus) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum AnalyzerStatus) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type FindingSourceType string
+
+// Enum values for FindingSourceType
+const (
+	FindingSourceTypeBucketAcl     FindingSourceType = "BUCKET_ACL"
+	FindingSourceTypePolicy        FindingSourceType = "POLICY"
+	FindingSourceTypeS3AccessPoint FindingSourceType = "S3_ACCESS_POINT"
+)
+
+func (enum FindingSourceType) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum FindingSourceType) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
 type FindingStatus string
 
 // Enum values for FindingStatus
@@ -54,6 +91,25 @@ func (enum OrderBy) MarshalValueBuf(b []byte) ([]byte, error) {
 	return append(b, enum...), nil
 }
 
+type ReasonCode string
+
+// Enum values for ReasonCode
+const (
+	ReasonCodeAwsServiceAccessDisabled           ReasonCode = "AWS_SERVICE_ACCESS_DISABLED"
+	ReasonCodeDelegatedAdministratorDeregistered ReasonCode = "DELEGATED_ADMINISTRATOR_DEREGISTERED"
+	ReasonCodeOrganizationDeleted                ReasonCode = "ORGANIZATION_DELETED"
+	ReasonCodeServiceLinkedRoleCreationFailed    ReasonCode = "SERVICE_LINKED_ROLE_CREATION_FAILED"
+)
+
+func (enum ReasonCode) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum ReasonCode) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
 type ResourceType string
 
 // Enum values for ResourceType
@@ -79,7 +135,8 @@ type Type string
 
 // Enum values for Type
 const (
-	TypeAccount Type = "ACCOUNT"
+	TypeAccount      Type = "ACCOUNT"
+	TypeOrganization Type = "ORGANIZATION"
 )
 
 func (enum Type) MarshalValue() (string, error) {

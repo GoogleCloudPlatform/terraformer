@@ -204,11 +204,13 @@ type CreateServiceInput struct {
 	//
 	//    * DAEMON-The daemon scheduling strategy deploys exactly one task on each
 	//    active container instance that meets all of the task placement constraints
-	//    that you specify in your cluster. When you're using this strategy, you
-	//    don't need to specify a desired number of tasks, a task placement strategy,
-	//    or use Service Auto Scaling policies. Tasks using the Fargate launch type
-	//    or the CODE_DEPLOY or EXTERNAL deployment controller types don't support
-	//    the DAEMON scheduling strategy.
+	//    that you specify in your cluster. The service scheduler also evaluates
+	//    the task placement constraints for running tasks and will stop tasks that
+	//    do not meet the placement constraints. When you're using this strategy,
+	//    you don't need to specify a desired number of tasks, a task placement
+	//    strategy, or use Service Auto Scaling policies. Tasks using the Fargate
+	//    launch type or the CODE_DEPLOY or EXTERNAL deployment controller types
+	//    don't support the DAEMON scheduling strategy.
 	SchedulingStrategy SchedulingStrategy `locationName:"schedulingStrategy" type:"string" enum:"true"`
 
 	// The name of your service. Up to 255 letters (uppercase and lowercase), numbers,
@@ -358,7 +360,9 @@ const opCreateService = "CreateService"
 //
 //    * DAEMON - The daemon scheduling strategy deploys exactly one task on
 //    each active container instance that meets all of the task placement constraints
-//    that you specify in your cluster. When using this strategy, you don't
+//    that you specify in your cluster. The service scheduler also evaluates
+//    the task placement constraints for running tasks and will stop tasks that
+//    do not meet the placement constraints. When using this strategy, you don't
 //    need to specify a desired number of tasks, a task placement strategy,
 //    or use Service Auto Scaling policies. For more information, see Service
 //    Scheduler Concepts (https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs_services.html)

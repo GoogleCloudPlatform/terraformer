@@ -24,6 +24,8 @@ var DefaultAWSConfigResolvers = []AWSConfigResolver{
 	ResolveEnableEndpointDiscovery,
 
 	ResolveRegion,
+	ResolveEC2Region,
+	ResolveDefaultRegion,
 
 	ResolveCredentials,
 }

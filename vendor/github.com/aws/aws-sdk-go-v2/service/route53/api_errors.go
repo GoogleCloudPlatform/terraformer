@@ -240,7 +240,9 @@ const (
 	// ErrCodeNoSuchGeoLocation for service response error code
 	// "NoSuchGeoLocation".
 	//
-	// Amazon Route 53 doesn't support the specified geographic location.
+	// Amazon Route 53 doesn't support the specified geographic location. For a
+	// list of supported geolocation codes, see the GeoLocation (https://docs.aws.amazon.com/Route53/latest/APIReference/API_GeoLocation.html)
+	// data type.
 	ErrCodeNoSuchGeoLocation = "NoSuchGeoLocation"
 
 	// ErrCodeNoSuchHealthCheck for service response error code

@@ -24,6 +24,33 @@ const (
 	ErrCodeRead = "ReadError"
 )
 
+// SerializationError provides a generic request serialization error
+type SerializationError struct {
+	Err error // original error
+}
+
+// Error returns a formatted error for SerializationError
+func (e *SerializationError) Error() string {
+	return fmt.Sprintf("serialization failed: %v", e.Err)
+}
+
+// Unwrap returns the underlying Error in DeserializationError
+func (e *SerializationError) Unwrap() error { return e.Err }
+
+// DeserializationError provides a HTTP transport specific
+// request deserialization error
+type DeserializationError struct {
+	Err error //  original error
+}
+
+// Error returns a formatted error for DeserializationError
+func (e *DeserializationError) Error() string {
+	return fmt.Sprintf("deserialization failed, %v", e.Err)
+}
+
+// Unwrap returns the underlying Error in DeserializationError
+func (e *DeserializationError) Unwrap() error { return e.Err }
+
 // RequestSendError provides a generic request transport error.
 type RequestSendError struct {
 	Response interface{}

@@ -21,8 +21,8 @@ type CreateOrganizationInput struct {
 	//    in the AWS Organizations User Guide. The consolidated billing feature
 	//    subset isn't available for organizations in the AWS GovCloud (US) Region.
 	//
-	//    * ALL: In addition to all the features that consolidated billing feature
-	//    set supports, the master account can also apply any policy type to any
+	//    * ALL: In addition to all the features supported by the consolidated billing
+	//    feature set, the master account can also apply any policy type to any
 	//    member account in the organization. For more information, see All features
 	//    (https://docs.aws.amazon.com/organizations/latest/userguide/orgs_getting-started_concepts.html#feature-set-all)
 	//    in the AWS Organizations User Guide.
@@ -60,10 +60,11 @@ const opCreateOrganization = "CreateOrganization"
 // have the relevant IAM permissions.
 //
 // By default (or if you set the FeatureSet parameter to ALL), the new organization
-// is created with all features enabled. In addition, service control policies
-// are automatically enabled in the root. If you instead create the organization
-// supporting only the consolidated billing features, no policy types are enabled
-// by default, and you can't use organization policies.
+// is created with all features enabled and service control policies automatically
+// enabled in the root. If you instead choose to create the organization supporting
+// only the consolidated billing features by setting the FeatureSet parameter
+// to CONSOLIDATED_BILLING", no policy types are enabled by default, and you
+// can't use organization policies
 //
 //    // Example sending a request using CreateOrganizationRequest.
 //    req := client.CreateOrganizationRequest(params)

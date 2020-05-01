@@ -148,6 +148,10 @@ const opRegisterType = "RegisterType"
 // see Creating Resource Providers (https://docs.aws.amazon.com/cloudformation-cli/latest/userguide/resource-types.html)
 // in the CloudFormation CLI User Guide.
 //
+// You can have a maximum of 50 resource type versions registered at a time.
+// This maximum is per account and per region. Use DeregisterType (AWSCloudFormation/latest/APIReference/API_DeregisterType.html)
+// to deregister specific resource type versions if necessary.
+//
 // Once you have initiated a registration request using RegisterType , you can
 // use DescribeTypeRegistration to monitor the progress of the registration
 // request.

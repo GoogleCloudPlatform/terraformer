@@ -26,8 +26,6 @@ type CreateStackSetInput struct {
 	// Describes whether StackSets automatically deploys to AWS Organizations accounts
 	// that are added to the target organization or organizational unit (OU). Specify
 	// only if PermissionModel is SERVICE_MANAGED.
-	//
-	// If you specify AutoDeployment, do not specify DeploymentTargets or Regions.
 	AutoDeployment *AutoDeployment `type:"structure"`
 
 	// In some cases, you must explicitly acknowledge that your stack set template
@@ -107,7 +105,7 @@ type CreateStackSetInput struct {
 	PermissionModel PermissionModels `type:"string" enum:"true"`
 
 	// The name to associate with the stack set. The name must be unique in the
-	// region where you create your stack set.
+	// Region where you create your stack set.
 	//
 	// A stack name can contain only alphanumeric characters (case-sensitive) and
 	// hyphens. It must start with an alphabetic character and can't be longer than

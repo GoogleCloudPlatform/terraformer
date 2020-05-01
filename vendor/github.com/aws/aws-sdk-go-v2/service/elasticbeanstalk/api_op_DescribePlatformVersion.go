@@ -12,7 +12,7 @@ import (
 type DescribePlatformVersionInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ARN of the version of the platform.
+	// The ARN of the platform version.
 	PlatformArn *string `type:"string"`
 }
 
@@ -24,7 +24,7 @@ func (s DescribePlatformVersionInput) String() string {
 type DescribePlatformVersionOutput struct {
 	_ struct{} `type:"structure"`
 
-	// Detailed information about the version of the platform.
+	// Detailed information about the platform version.
 	PlatformDescription *PlatformDescription `type:"structure"`
 }
 
@@ -38,7 +38,11 @@ const opDescribePlatformVersion = "DescribePlatformVersion"
 // DescribePlatformVersionRequest returns a request value for making API operation for
 // AWS Elastic Beanstalk.
 //
-// Describes the version of the platform.
+// Describes a platform version. Provides full details. Compare to ListPlatformVersions,
+// which provides summary information about a list of platform versions.
+//
+// For definitions of platform version and other platform-related terms, see
+// AWS Elastic Beanstalk Platforms Glossary (https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/platforms-glossary.html).
 //
 //    // Example sending a request using DescribePlatformVersionRequest.
 //    req := client.DescribePlatformVersionRequest(params)

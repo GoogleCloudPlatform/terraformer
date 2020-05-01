@@ -225,7 +225,8 @@ const opInvoke = "Invoke"
 // client, SDK, firewall, proxy, or operating system to allow for long connections
 // with timeout or keep-alive settings.
 //
-// This operation requires permission for the lambda:InvokeFunction action.
+// This operation requires permission for the lambda:InvokeFunction (https://docs.aws.amazon.com/IAM/latest/UserGuide/list_awslambda.html)
+// action.
 //
 //    // Example sending a request using InvokeRequest.
 //    req := client.InvokeRequest(params)

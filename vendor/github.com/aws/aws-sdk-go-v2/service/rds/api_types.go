@@ -72,10 +72,10 @@ var _ = awsutil.Prettify
 //    default option groups. The used value is the count of nondefault DB option
 //    groups in the account.
 //
-//    * ReadReplicasPerMaster - The number of Read Replicas per DB instance.
-//    The used value is the highest number of Read Replicas for a DB instance
+//    * ReadReplicasPerMaster - The number of read replicas per DB instance.
+//    The used value is the highest number of read replicas for a DB instance
 //    in the account. Other DB instances in the account might have a lower number
-//    of Read Replicas.
+//    of read replicas.
 //
 //    * ReservedDBInstances - The number of reserved DB instances per account.
 //    The used value is the count of the active reserved DB instances in the
@@ -245,6 +245,8 @@ type ConnectionPoolConfiguration struct {
 	// statements, use semicolons as the separator. You can also include multiple
 	// variables in a single SET statement, such as SET x=1, y=2.
 	//
+	// InitQuery is not currently supported for PostgreSQL.
+	//
 	// Default: no initialization query
 	InitQuery *string `type:"string"`
 
@@ -303,6 +305,8 @@ type ConnectionPoolConfigurationInfo struct {
 	// is empty by default. For multiple statements, use semicolons as the separator.
 	// You can also include multiple variables in a single SET statement, such as
 	// SET x=1, y=2.
+	//
+	// InitQuery is not currently supported for PostgreSQL.
 	InitQuery *string `type:"string"`
 
 	// The maximum size of the connection pool for each target in a target group.
@@ -499,6 +503,12 @@ type DBCluster struct {
 
 	// The DB engine mode of the DB cluster, either provisioned, serverless, parallelquery,
 	// global, or multimaster.
+	//
+	// global engine mode only applies for global database clusters created with
+	// Aurora MySQL version 5.6.10a. For higher Aurora MySQL versions, the clusters
+	// in a global database use provisioned engine mode. To check if a DB cluster
+	// is part of a global database, use DescribeGlobalClusters instead of checking
+	// the EngineMode return value from DescribeDBClusters.
 	EngineMode *string `type:"string"`
 
 	// Indicates the database engine version.
@@ -550,7 +560,7 @@ type DBCluster struct {
 	// in Universal Coordinated Time (UTC).
 	PreferredMaintenanceWindow *string `type:"string"`
 
-	// Contains one or more identifiers of the Read Replicas associated with this
+	// Contains one or more identifiers of the read replicas associated with this
 	// DB cluster.
 	ReadReplicaIdentifiers []string `locationNameList:"ReadReplicaIdentifier" type:"list"`
 
@@ -568,7 +578,7 @@ type DBCluster struct {
 	ReaderEndpoint *string `type:"string"`
 
 	// Contains the identifier of the source DB cluster if this DB cluster is a
-	// Read Replica.
+	// read replica.
 	ReplicationSourceIdentifier *string `type:"string"`
 
 	// Shows the scaling configuration for an Aurora DB cluster in serverless DB
@@ -965,6 +975,10 @@ type DBEngineVersion struct {
 	SupportedCharacterSets []CharacterSet `locationNameList:"CharacterSet" type:"list"`
 
 	// A list of the supported DB engine modes.
+	//
+	// global engine mode only applies for global database clusters created with
+	// Aurora MySQL version 5.6.10a. For higher Aurora MySQL versions, the clusters
+	// in a global database use provisioned engine mode.
 	SupportedEngineModes []string `type:"list"`
 
 	// A list of features supported by the DB engine. Supported feature names include
@@ -981,7 +995,7 @@ type DBEngineVersion struct {
 	// log types specified by ExportableLogTypes to CloudWatch Logs.
 	SupportsLogExportsToCloudwatchLogs *bool `type:"boolean"`
 
-	// Indicates whether the database engine version supports Read Replicas.
+	// Indicates whether the database engine version supports read replicas.
 	SupportsReadReplica *bool `type:"boolean"`
 
 	// A list of engine versions that this database engine version can be upgraded
@@ -1048,6 +1062,9 @@ type DBInstance struct {
 	DBInstanceIdentifier *string `type:"string"`
 
 	// Specifies the current state of this database.
+	//
+	// For information about DB instance statuses, see DB Instance Status (https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Overview.DBInstance.Status.html)
+	// in the Amazon RDS User Guide.
 	DBInstanceStatus *string `type:"string"`
 
 	// The meaning of this parameter differs according to the database engine you
@@ -1212,27 +1229,27 @@ type DBInstance struct {
 	PubliclyAccessible *bool `type:"boolean"`
 
 	// Contains one or more identifiers of Aurora DB clusters to which the RDS DB
-	// instance is replicated as a Read Replica. For example, when you create an
-	// Aurora Read Replica of an RDS MySQL DB instance, the Aurora MySQL DB cluster
-	// for the Aurora Read Replica is shown. This output does not contain information
-	// about cross region Aurora Read Replicas.
+	// instance is replicated as a read replica. For example, when you create an
+	// Aurora read replica of an RDS MySQL DB instance, the Aurora MySQL DB cluster
+	// for the Aurora read replica is shown. This output does not contain information
+	// about cross region Aurora read replicas.
 	//
-	// Currently, each RDS DB instance can have only one Aurora Read Replica.
+	// Currently, each RDS DB instance can have only one Aurora read replica.
 	ReadReplicaDBClusterIdentifiers []string `locationNameList:"ReadReplicaDBClusterIdentifier" type:"list"`
 
-	// Contains one or more identifiers of the Read Replicas associated with this
+	// Contains one or more identifiers of the read replicas associated with this
 	// DB instance.
 	ReadReplicaDBInstanceIdentifiers []string `locationNameList:"ReadReplicaDBInstanceIdentifier" type:"list"`
 
 	// Contains the identifier of the source DB instance if this DB instance is
-	// a Read Replica.
+	// a read replica.
 	ReadReplicaSourceDBInstanceIdentifier *string `type:"string"`
 
 	// If present, specifies the name of the secondary Availability Zone for a DB
 	// instance with multi-AZ support.
 	SecondaryAvailabilityZone *string `type:"string"`
 
-	// The status of a Read Replica. If the instance isn't a Read Replica, this
+	// The status of a read replica. If the instance isn't a read replica, this
 	// is blank.
 	StatusInfos []DBInstanceStatusInfo `locationNameList:"DBInstanceStatusInfo" type:"list"`
 
@@ -1408,7 +1425,7 @@ type DBInstanceStatusInfo struct {
 	// if the instance is in an error state.
 	Normal *bool `type:"boolean"`
 
-	// Status of the DB instance. For a StatusType of Read Replica, the values can
+	// Status of the DB instance. For a StatusType of read replica, the values can
 	// be replicating, replication stop point set, replication stop point reached,
 	// error, stopped, or terminated.
 	Status *string `type:"string"`
@@ -1515,8 +1532,7 @@ type DBProxy struct {
 	// value in the connection string for a database client application.
 	Endpoint *string `type:"string"`
 
-	// Currently, this value is always MYSQL. The engine family applies to both
-	// RDS MySQL and Aurora MySQL.
+	// The engine family applies to MySQL and PostgreSQL for both RDS and Aurora.
 	EngineFamily *string `type:"string"`
 
 	// The number of seconds a connection to the proxy can have no activity before
@@ -1583,6 +1599,9 @@ type DBProxyTarget struct {
 
 	// The Amazon Resource Name (ARN) for the RDS DB instance or Aurora DB cluster.
 	TargetArn *string `type:"string"`
+
+	// Information about the connection health of the RDS Proxy target.
+	TargetHealth *TargetHealth `type:"structure"`
 
 	// The DB cluster identifier when the target represents an Aurora DB cluster.
 	// This field is blank when the target represents an RDS DB instance.
@@ -2142,16 +2161,16 @@ type ExportTask struct {
 
 	// The data exported from the snapshot. Valid values are the following:
 	//
-	//    * database - Export all the data of the snapshot.
+	//    * database - Export all the data from a specified database.
 	//
-	//    * database.table [table-name] - Export a table of the snapshot.
+	//    * database.table table-name - Export a table of the snapshot. This format
+	//    is valid only for RDS for MySQL, RDS for MariaDB, and Aurora MySQL.
 	//
-	//    * database.schema [schema-name] - Export a database schema of the snapshot.
-	//    This value isn't valid for RDS for MySQL, RDS for MariaDB, or Aurora MySQL.
+	//    * database.schema schema-name - Export a database schema of the snapshot.
+	//    This format is valid only for RDS for PostgreSQL and Aurora PostgreSQL.
 	//
-	//    * database.schema.table [table-name] - Export a table of the database
-	//    schema. This value isn't valid for RDS for MySQL, RDS for MariaDB, or
-	//    Aurora MySQL.
+	//    * database.schema.table table-name - Export a table of the database schema.
+	//    This format is valid only for RDS for PostgreSQL and Aurora PostgreSQL.
 	ExportOnly []string `type:"list"`
 
 	// A unique identifier for the snapshot export task. This ID isn't an identifier
@@ -2727,6 +2746,9 @@ func (s OptionVersion) String() string {
 type OrderableDBInstanceOption struct {
 	_ struct{} `type:"structure"`
 
+	// The Availability Zone group for a DB instance.
+	AvailabilityZoneGroup *string `type:"string"`
+
 	// A list of Availability Zones for a DB instance.
 	AvailabilityZones []AvailabilityZone `locationNameList:"AvailabilityZone" type:"list"`
 
@@ -2767,13 +2789,17 @@ type OrderableDBInstanceOption struct {
 	// Indicates whether a DB instance is Multi-AZ capable.
 	MultiAZCapable *bool `type:"boolean"`
 
-	// Indicates whether a DB instance can have a Read Replica.
+	// Indicates whether a DB instance can have a read replica.
 	ReadReplicaCapable *bool `type:"boolean"`
 
 	// Indicates the storage type for a DB instance.
 	StorageType *string `type:"string"`
 
 	// A list of the supported DB engine modes.
+	//
+	// global engine mode only applies for global database clusters created with
+	// Aurora MySQL version 5.6.10a. For higher Aurora MySQL versions, the clusters
+	// in a global database use provisioned engine mode.
 	SupportedEngineModes []string `type:"list"`
 
 	// Indicates whether a DB instance supports Enhanced Monitoring at intervals
@@ -2792,8 +2818,8 @@ type OrderableDBInstanceOption struct {
 	// True if a DB instance supports Performance Insights, otherwise false.
 	SupportsPerformanceInsights *bool `type:"boolean"`
 
-	// Whether or not Amazon RDS can automatically scale storage for DB instances
-	// that use the specified instance class.
+	// Whether Amazon RDS can automatically scale storage for DB instances that
+	// use the specified DB instance class.
 	SupportsStorageAutoscaling *bool `type:"boolean"`
 
 	// Indicates whether a DB instance supports encrypted storage.
@@ -3363,6 +3389,34 @@ type Tag struct {
 
 // String returns the string representation
 func (s Tag) String() string {
+	return awsutil.Prettify(s)
+}
+
+//
+// This is prerelease documentation for the RDS Database Proxy feature in preview
+// release. It is subject to change.
+//
+// Information about the connection health of an RDS Proxy target.
+type TargetHealth struct {
+	_ struct{} `type:"structure"`
+
+	// A description of the health of the RDS Proxy target. If the State is AVAILABLE,
+	// a description is not included.
+	Description *string `type:"string"`
+
+	// The reason for the current health State of the RDS Proxy target.
+	Reason TargetHealthReason `type:"string" enum:"true"`
+
+	// The current state of the connection health lifecycle for the RDS Proxy target.
+	// The following is a typical lifecycle example for the states of an RDS Proxy
+	// target:
+	//
+	// registering > unavailable > available > unavailable > available
+	State TargetState `type:"string" enum:"true"`
+}
+
+// String returns the string representation
+func (s TargetHealth) String() string {
 	return awsutil.Prettify(s)
 }
 

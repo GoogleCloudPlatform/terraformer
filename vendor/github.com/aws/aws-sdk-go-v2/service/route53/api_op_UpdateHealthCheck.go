@@ -70,7 +70,7 @@ type UpdateHealthCheckInput struct {
 	// The number of consecutive health checks that an endpoint must pass or fail
 	// for Amazon Route 53 to change the current status of the endpoint from unhealthy
 	// to healthy or vice versa. For more information, see How Amazon Route 53 Determines
-	// Whether an Endpoint Is Healthy (http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-determining-health-of-endpoints.html)
+	// Whether an Endpoint Is Healthy (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-determining-health-of-endpoints.html)
 	// in the Amazon Route 53 Developer Guide.
 	//
 	// If you don't specify a value for FailureThreshold, the default value is three
@@ -241,8 +241,11 @@ type UpdateHealthCheckInput struct {
 	// would be considered healthy.
 	Inverted *bool `type:"boolean"`
 
-	// The port on the endpoint on which you want Amazon Route 53 to perform health
-	// checks.
+	// The port on the endpoint that you want Amazon Route 53 to perform health
+	// checks on.
+	//
+	// Don't specify a value for Port when you specify a value for Type of CLOUDWATCH_METRIC
+	// or CALCULATED.
 	Port *int64 `min:"1" type:"integer"`
 
 	// A complex type that contains one Region element for each region that you
@@ -275,7 +278,7 @@ type UpdateHealthCheckInput struct {
 	// Specify this value only if you want to change it.
 	ResourcePath *string `type:"string"`
 
-	// If the value of Type is HTTP_STR_MATCH or HTTP_STR_MATCH, the string that
+	// If the value of Type is HTTP_STR_MATCH or HTTPS_STR_MATCH, the string that
 	// you want Amazon Route 53 to search for in the response body from the specified
 	// resource. If the string appears in the response body, Route 53 considers
 	// the resource healthy. (You can't change the value of Type when you update
@@ -482,7 +485,7 @@ const opUpdateHealthCheck = "UpdateHealthCheck"
 // Updates an existing health check. Note that some values can't be updated.
 //
 // For more information about updating health checks, see Creating, Updating,
-// and Deleting Health Checks (http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/health-checks-creating-deleting.html)
+// and Deleting Health Checks (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/health-checks-creating-deleting.html)
 // in the Amazon Route 53 Developer Guide.
 //
 //    // Example sending a request using UpdateHealthCheckRequest.

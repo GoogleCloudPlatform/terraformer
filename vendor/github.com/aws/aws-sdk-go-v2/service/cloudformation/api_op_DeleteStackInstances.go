@@ -40,7 +40,7 @@ type DeleteStackInstancesInput struct {
 	// Preferences for how AWS CloudFormation performs this stack set operation.
 	OperationPreferences *StackSetOperationPreferences `type:"structure"`
 
-	// The regions where you want to delete stack set instances.
+	// The Regions where you want to delete stack set instances.
 	//
 	// Regions is a required field
 	Regions []string `type:"list" required:"true"`
@@ -113,7 +113,7 @@ const opDeleteStackInstances = "DeleteStackInstances"
 // DeleteStackInstancesRequest returns a request value for making API operation for
 // AWS CloudFormation.
 //
-// Deletes stack instances for the specified accounts, in the specified regions.
+// Deletes stack instances for the specified accounts, in the specified Regions.
 //
 //    // Example sending a request using DeleteStackInstancesRequest.
 //    req := client.DeleteStackInstancesRequest(params)

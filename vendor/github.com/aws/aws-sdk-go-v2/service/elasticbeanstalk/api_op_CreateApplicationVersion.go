@@ -26,7 +26,7 @@ type CreateApplicationVersionInput struct {
 	// Settings for an AWS CodeBuild build.
 	BuildConfiguration *BuildConfiguration `type:"structure"`
 
-	// Describes this version.
+	// A description of this application version.
 	Description *string `type:"string"`
 
 	// Pre-processes and validates the environment manifest (env.yaml) and configuration
@@ -150,8 +150,8 @@ const opCreateApplicationVersion = "CreateApplicationVersion"
 // Omit both SourceBuildInformation and SourceBundle to use the default sample
 // application.
 //
-// Once you create an application version with a specified Amazon S3 bucket
-// and key location, you cannot change that Amazon S3 location. If you change
+// After you create an application version with a specified Amazon S3 bucket
+// and key location, you can't change that Amazon S3 location. If you change
 // the Amazon S3 location, you receive an exception when you attempt to launch
 // an environment from the application version.
 //

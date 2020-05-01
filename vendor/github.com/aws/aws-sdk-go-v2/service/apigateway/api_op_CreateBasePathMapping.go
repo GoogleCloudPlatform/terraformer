@@ -31,8 +31,8 @@ type CreateBasePathMappingInput struct {
 	RestApiId *string `locationName:"restApiId" type:"string" required:"true"`
 
 	// The name of the API's stage that you want to use for this mapping. Specify
-	// '(none)' if you do not want callers to explicitly specify the stage name
-	// after any base path name.
+	// '(none)' if you want callers to explicitly specify the stage name after any
+	// base path name.
 	Stage *string `locationName:"stage" type:"string"`
 }
 

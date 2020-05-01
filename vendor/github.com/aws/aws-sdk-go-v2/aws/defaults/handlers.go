@@ -190,6 +190,12 @@ var ValidateResponseHandler = aws.NamedHandler{
 var RequestInvocationIDHeaderHandler = aws.NamedHandler{
 	Name: "core.RequestInvocationIDHeaderHandler",
 	Fn: func(r *aws.Request) {
+		if r.ExpireTime != 0 {
+			// ExpireTime set implies a presigned URL which will not have the
+			// header applied.
+			return
+		}
+
 		const invocationIDHeader = "amz-sdk-invocation-id"
 		r.HTTPRequest.Header.Set(invocationIDHeader, r.InvocationID)
 	}}
@@ -199,6 +205,12 @@ var RequestInvocationIDHeaderHandler = aws.NamedHandler{
 var RetryMetricHeaderHandler = aws.NamedHandler{
 	Name: "core.RetryMetricHeaderHandler",
 	Fn: func(r *aws.Request) {
+		if r.ExpireTime != 0 {
+			// ExpireTime set implies a presigned URL which will not have the
+			// header applied.
+			return
+		}
+
 		const retryMetricHeader = "amz-sdk-request"
 		var parts []string
 
@@ -269,9 +281,9 @@ var RetryableCheckHandler = aws.NamedHandler{
 // region is not valid.
 var ValidateEndpointHandler = aws.NamedHandler{Name: "core.ValidateEndpointHandler", Fn: func(r *aws.Request) {
 	if r.Endpoint.SigningRegion == "" && r.Config.Region == "" {
-		r.Error = aws.ErrMissingRegion
+		r.Error = &aws.MissingRegionError{}
 	} else if len(r.Endpoint.URL) == 0 {
-		r.Error = aws.ErrMissingEndpoint
+		r.Error = &aws.MissingEndpointError{}
 	}
 }}
 

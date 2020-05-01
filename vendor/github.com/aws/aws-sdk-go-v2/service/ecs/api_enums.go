@@ -250,6 +250,40 @@ func (enum DeviceCgroupPermission) MarshalValueBuf(b []byte) ([]byte, error) {
 	return append(b, enum...), nil
 }
 
+type EFSAuthorizationConfigIAM string
+
+// Enum values for EFSAuthorizationConfigIAM
+const (
+	EFSAuthorizationConfigIAMEnabled  EFSAuthorizationConfigIAM = "ENABLED"
+	EFSAuthorizationConfigIAMDisabled EFSAuthorizationConfigIAM = "DISABLED"
+)
+
+func (enum EFSAuthorizationConfigIAM) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum EFSAuthorizationConfigIAM) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
+type EFSTransitEncryption string
+
+// Enum values for EFSTransitEncryption
+const (
+	EFSTransitEncryptionEnabled  EFSTransitEncryption = "ENABLED"
+	EFSTransitEncryptionDisabled EFSTransitEncryption = "DISABLED"
+)
+
+func (enum EFSTransitEncryption) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum EFSTransitEncryption) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
 type FirelensConfigurationType string
 
 // Enum values for FirelensConfigurationType

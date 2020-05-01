@@ -79,8 +79,8 @@ type DeleteEventSourceMappingOutput struct {
 	// The result of the last AWS Lambda invocation of your Lambda function.
 	LastProcessingResult *string `type:"string"`
 
-	// The maximum amount of time to gather records before invoking the function,
-	// in seconds.
+	// (Streams) The maximum amount of time to gather records before invoking the
+	// function, in seconds.
 	MaximumBatchingWindowInSeconds *int64 `type:"integer"`
 
 	// (Streams) The maximum age of a record that Lambda sends to a function for

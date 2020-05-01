@@ -125,7 +125,7 @@ type UpdateConfigurationTemplateOutput struct {
 	// set.
 	OptionSettings []ConfigurationOptionSetting `type:"list"`
 
-	// The ARN of the platform.
+	// The ARN of the platform version.
 	PlatformArn *string `type:"string"`
 
 	// The name of the solution stack this configuration set uses.

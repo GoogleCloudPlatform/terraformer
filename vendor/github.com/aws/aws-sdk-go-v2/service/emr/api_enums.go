@@ -159,6 +159,24 @@ func (enum ComparisonOperator) MarshalValueBuf(b []byte) ([]byte, error) {
 	return append(b, enum...), nil
 }
 
+type ComputeLimitsUnitType string
+
+// Enum values for ComputeLimitsUnitType
+const (
+	ComputeLimitsUnitTypeInstanceFleetUnits ComputeLimitsUnitType = "InstanceFleetUnits"
+	ComputeLimitsUnitTypeInstances          ComputeLimitsUnitType = "Instances"
+	ComputeLimitsUnitTypeVcpu               ComputeLimitsUnitType = "VCPU"
+)
+
+func (enum ComputeLimitsUnitType) MarshalValue() (string, error) {
+	return string(enum), nil
+}
+
+func (enum ComputeLimitsUnitType) MarshalValueBuf(b []byte) ([]byte, error) {
+	b = b[0:0]
+	return append(b, enum...), nil
+}
+
 type InstanceCollectionType string
 
 // Enum values for InstanceCollectionType

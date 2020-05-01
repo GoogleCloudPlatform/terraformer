@@ -14,19 +14,16 @@ import (
 type CreateApplicationInput struct {
 	_ struct{} `type:"structure"`
 
-	// The name of the application.
-	//
-	// Constraint: This name must be unique within your account. If the specified
-	// name already exists, the action returns an InvalidParameterValue error.
+	// The name of the application. Must be unique within your account.
 	//
 	// ApplicationName is a required field
 	ApplicationName *string `min:"1" type:"string" required:"true"`
 
-	// Describes the application.
+	// Your description of the application.
 	Description *string `type:"string"`
 
-	// Specify an application resource lifecycle configuration to prevent your application
-	// from accumulating too many versions.
+	// Specifies an application resource lifecycle configuration to prevent your
+	// application from accumulating too many versions.
 	ResourceLifecycleConfig *ApplicationResourceLifecycleConfig `type:"structure"`
 
 	// Specifies the tags applied to the application.

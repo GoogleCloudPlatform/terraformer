@@ -15,54 +15,62 @@ import (
 type CreateConfigurationTemplateInput struct {
 	_ struct{} `type:"structure"`
 
-	// The name of the application to associate with this configuration template.
-	// If no application is found with this name, AWS Elastic Beanstalk returns
-	// an InvalidParameterValue error.
+	// The name of the Elastic Beanstalk application to associate with this configuration
+	// template.
 	//
 	// ApplicationName is a required field
 	ApplicationName *string `min:"1" type:"string" required:"true"`
 
-	// Describes this configuration.
+	// An optional description for this configuration.
 	Description *string `type:"string"`
 
-	// The ID of the environment used with this configuration template.
+	// The ID of an environment whose settings you want to use to create the configuration
+	// template. You must specify EnvironmentId if you don't specify PlatformArn,
+	// SolutionStackName, or SourceConfiguration.
 	EnvironmentId *string `type:"string"`
 
-	// If specified, AWS Elastic Beanstalk sets the specified configuration option
-	// to the requested value. The new value overrides the value obtained from the
-	// solution stack or the source configuration template.
+	// Option values for the Elastic Beanstalk configuration, such as the instance
+	// type. If specified, these values override the values obtained from the solution
+	// stack or the source configuration template. For a complete list of Elastic
+	// Beanstalk configuration options, see Option Values (https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options.html)
+	// in the AWS Elastic Beanstalk Developer Guide.
 	OptionSettings []ConfigurationOptionSetting `type:"list"`
 
-	// The ARN of the custom platform.
+	// The Amazon Resource Name (ARN) of the custom platform. For more information,
+	// see Custom Platforms (https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/custom-platforms.html)
+	// in the AWS Elastic Beanstalk Developer Guide.
+	//
+	// If you specify PlatformArn, then don't specify SolutionStackName.
 	PlatformArn *string `type:"string"`
 
-	// The name of the solution stack used by this configuration. The solution stack
-	// specifies the operating system, architecture, and application server for
-	// a configuration template. It determines the set of configuration options
-	// as well as the possible and default values.
+	// The name of an Elastic Beanstalk solution stack (platform version) that this
+	// configuration uses. For example, 64bit Amazon Linux 2013.09 running Tomcat
+	// 7 Java 7. A solution stack specifies the operating system, runtime, and application
+	// server for a configuration template. It also determines the set of configuration
+	// options as well as the possible and default values. For more information,
+	// see Supported Platforms (https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html)
+	// in the AWS Elastic Beanstalk Developer Guide.
 	//
-	// Use ListAvailableSolutionStacks to obtain a list of available solution stacks.
+	// You must specify SolutionStackName if you don't specify PlatformArn, EnvironmentId,
+	// or SourceConfiguration.
 	//
-	// A solution stack name or a source configuration parameter must be specified,
-	// otherwise AWS Elastic Beanstalk returns an InvalidParameterValue error.
-	//
-	// If a solution stack name is not specified and the source configuration parameter
-	// is specified, AWS Elastic Beanstalk uses the same solution stack as the source
-	// configuration template.
+	// Use the ListAvailableSolutionStacks (https://docs.aws.amazon.com/elasticbeanstalk/latest/api/API_ListAvailableSolutionStacks.html)
+	// API to obtain a list of available solution stacks.
 	SolutionStackName *string `type:"string"`
 
-	// If specified, AWS Elastic Beanstalk uses the configuration values from the
-	// specified configuration template to create a new configuration.
+	// An Elastic Beanstalk configuration template to base this one on. If specified,
+	// Elastic Beanstalk uses the configuration values from the specified configuration
+	// template to create a new configuration.
 	//
-	// Values specified in the OptionSettings parameter of this call overrides any
-	// values obtained from the SourceConfiguration.
+	// Values specified in OptionSettings override any values obtained from the
+	// SourceConfiguration.
 	//
-	// If no configuration template is found, returns an InvalidParameterValue error.
+	// You must specify SourceConfiguration if you don't specify PlatformArn, EnvironmentId,
+	// or SolutionStackName.
 	//
-	// Constraint: If both the solution stack name parameter and the source configuration
-	// parameters are specified, the solution stack of the source configuration
-	// template must match the specified solution stack name or else AWS Elastic
-	// Beanstalk returns an InvalidParameterCombination error.
+	// Constraint: If both solution stack name and source configuration are specified,
+	// the solution stack of the source configuration template must match the specified
+	// solution stack name.
 	SourceConfiguration *SourceConfiguration `type:"structure"`
 
 	// Specifies the tags applied to the configuration template.
@@ -71,9 +79,6 @@ type CreateConfigurationTemplateInput struct {
 	// The name of the configuration template.
 	//
 	// Constraint: This name must be unique per application.
-	//
-	// Default: If a configuration template already exists with this name, AWS Elastic
-	// Beanstalk returns an InvalidParameterValue error.
 	//
 	// TemplateName is a required field
 	TemplateName *string `min:"1" type:"string" required:"true"`
@@ -164,7 +169,7 @@ type CreateConfigurationTemplateOutput struct {
 	// set.
 	OptionSettings []ConfigurationOptionSetting `type:"list"`
 
-	// The ARN of the platform.
+	// The ARN of the platform version.
 	PlatformArn *string `type:"string"`
 
 	// The name of the solution stack this configuration set uses.
@@ -185,9 +190,11 @@ const opCreateConfigurationTemplate = "CreateConfigurationTemplate"
 // CreateConfigurationTemplateRequest returns a request value for making API operation for
 // AWS Elastic Beanstalk.
 //
-// Creates a configuration template. Templates are associated with a specific
-// application and are used to deploy different versions of the application
-// with the same configuration settings.
+// Creates an AWS Elastic Beanstalk configuration template, associated with
+// a specific Elastic Beanstalk application. You define application configuration
+// settings in a configuration template. You can then use the configuration
+// template to deploy different versions of the application with the same configuration
+// settings.
 //
 // Templates aren't associated with any environment. The EnvironmentName response
 // element is always null.

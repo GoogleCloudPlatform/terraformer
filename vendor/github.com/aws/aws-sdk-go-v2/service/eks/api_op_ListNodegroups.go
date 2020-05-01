@@ -128,8 +128,9 @@ const opListNodegroups = "ListNodegroups"
 // ListNodegroupsRequest returns a request value for making API operation for
 // Amazon Elastic Kubernetes Service.
 //
-// Lists the Amazon EKS node groups associated with the specified cluster in
-// your AWS account in the specified Region.
+// Lists the Amazon EKS managed node groups associated with the specified cluster
+// in your AWS account in the specified Region. Self-managed node groups are
+// not listed.
 //
 //    // Example sending a request using ListNodegroupsRequest.
 //    req := client.ListNodegroupsRequest(params)

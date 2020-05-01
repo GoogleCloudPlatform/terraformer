@@ -15,15 +15,15 @@ var _ = awsutil.Prettify
 
 // Structure that contains the results of the account gate function which AWS
 // CloudFormation invokes, if present, before proceeding with a stack set operation
-// in an account and region.
+// in an account and Region.
 //
-// For each account and region, AWS CloudFormation lets you specify a Lamdba
+// For each account and Region, AWS CloudFormation lets you specify a Lamdba
 // function that encapsulates any requirements that must be met before CloudFormation
-// can proceed with a stack set operation in that account and region. CloudFormation
+// can proceed with a stack set operation in that account and Region. CloudFormation
 // invokes the function each time a stack set operation is requested for that
-// account and region; if the function returns FAILED, CloudFormation cancels
-// the operation in that account and region, and sets the stack set operation
-// result status for that account and region to FAILED.
+// account and Region; if the function returns FAILED, CloudFormation cancels
+// the operation in that account and Region, and sets the stack set operation
+// result status for that account and Region to FAILED.
 //
 // For more information, see Configuring a target account gate (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-account-gating.html).
 type AccountGateResult struct {
@@ -32,28 +32,28 @@ type AccountGateResult struct {
 	// The status of the account gate function.
 	//
 	//    * SUCCEEDED: The account gate function has determined that the account
-	//    and region passes any requirements for a stack set operation to occur.
+	//    and Region passes any requirements for a stack set operation to occur.
 	//    AWS CloudFormation proceeds with the stack operation in that account and
-	//    region.
+	//    Region.
 	//
 	//    * FAILED: The account gate function has determined that the account and
-	//    region does not meet the requirements for a stack set operation to occur.
+	//    Region does not meet the requirements for a stack set operation to occur.
 	//    AWS CloudFormation cancels the stack set operation in that account and
-	//    region, and sets the stack set operation result status for that account
-	//    and region to FAILED.
+	//    Region, and sets the stack set operation result status for that account
+	//    and Region to FAILED.
 	//
 	//    * SKIPPED: AWS CloudFormation has skipped calling the account gate function
-	//    for this account and region, for one of the following reasons: An account
-	//    gate function has not been specified for the account and region. AWS CloudFormation
-	//    proceeds with the stack set operation in this account and region. The
+	//    for this account and Region, for one of the following reasons: An account
+	//    gate function has not been specified for the account and Region. AWS CloudFormation
+	//    proceeds with the stack set operation in this account and Region. The
 	//    AWSCloudFormationStackSetExecutionRole of the stack set adminstration
 	//    account lacks permissions to invoke the function. AWS CloudFormation proceeds
-	//    with the stack set operation in this account and region. Either no action
+	//    with the stack set operation in this account and Region. Either no action
 	//    is necessary, or no action is possible, on the stack. AWS CloudFormation
-	//    skips the stack set operation in this account and region.
+	//    skips the stack set operation in this account and Region.
 	Status AccountGateStatus `type:"string" enum:"true"`
 
-	// The reason for the account gate status assigned to this account and region
+	// The reason for the account gate status assigned to this account and Region
 	// for the stack set operation.
 	StatusReason *string `type:"string"`
 }
@@ -181,7 +181,9 @@ func (s ChangeSetSummary) String() string {
 }
 
 // [Service-managed permissions] The AWS Organizations accounts to which StackSets
-// deploys.
+// deploys. StackSets does not deploy stack instances to the organization master
+// account, even if the master account is in your organization or in an OU in
+// your organization.
 //
 // For update operations, you can specify either Accounts or OrganizationalUnitIds.
 // For create and delete operations, specify OrganizationalUnitIds.
@@ -192,7 +194,7 @@ type DeploymentTargets struct {
 	// set updates.
 	Accounts []string `type:"list"`
 
-	// The organization root ID or organizational unit (OUs) IDs to which StackSets
+	// The organization root ID or organizational unit (OU) IDs to which StackSets
 	// deploys.
 	OrganizationalUnitIds []string `type:"list"`
 }
@@ -1015,9 +1017,9 @@ func (s StackEvent) String() string {
 	return awsutil.Prettify(s)
 }
 
-// An AWS CloudFormation stack, in a specific account and region, that's part
+// An AWS CloudFormation stack, in a specific account and Region, that's part
 // of a stack set operation. A stack instance is a reference to an attempted
-// or actual stack in a given account within a given region. A stack instance
+// or actual stack in a given account within a given Region. A stack instance
 // can exist without a stack—for example, if the stack couldn't be created
 // for some reason. A stack instance is associated with only one stack set.
 // Each stack instance contains the ID of its associated stack set, as well
@@ -1051,15 +1053,14 @@ type StackInstance struct {
 	// which drift detection has not yet been performed.
 	LastDriftCheckTimestamp *time.Time `type:"timestamp"`
 
-	// [Service-managed permissions] The organization root ID or organizational
-	// unit (OU) ID that the stack instance is associated with.
+	// Reserved for internal use. No data returned.
 	OrganizationalUnitId *string `type:"string"`
 
 	// A list of parameters from the stack set template whose values have been overridden
 	// in this stack instance.
 	ParameterOverrides []Parameter `type:"list"`
 
-	// The name of the AWS region that the stack instance is associated with.
+	// The name of the AWS Region that the stack instance is associated with.
 	Region *string `type:"string"`
 
 	// The ID of the stack instance.
@@ -1126,11 +1127,10 @@ type StackInstanceSummary struct {
 	// which drift detection has not yet been performed.
 	LastDriftCheckTimestamp *time.Time `type:"timestamp"`
 
-	// [Service-managed permissions] The organization root ID or organizational
-	// unit (OU) ID that the stack instance is associated with.
+	// Reserved for internal use. No data returned.
 	OrganizationalUnitId *string `type:"string"`
 
-	// The name of the AWS region that the stack instance is associated with.
+	// The name of the AWS Region that the stack instance is associated with.
 	Region *string `type:"string"`
 
 	// The ID of the stack instance.
@@ -1482,7 +1482,7 @@ func (s StackResourceSummary) String() string {
 }
 
 // A structure that contains information about a stack set. A stack set enables
-// you to provision stacks into AWS accounts and across regions by using a single
+// you to provision stacks into AWS accounts and across Regions by using a single
 // CloudFormation template. In the stack set, you specify the template to use,
 // as well as any parameters and capabilities that the template requires.
 type StackSet struct {
@@ -1519,8 +1519,7 @@ type StackSet struct {
 	// groups can include in their stack sets.
 	ExecutionRoleName *string `min:"1" type:"string"`
 
-	// [Service-managed permissions] The organization root ID or organizational
-	// unit (OUs) IDs to which stacks in your stack set have been deployed.
+	// Reserved for internal use. No data returned.
 	OrganizationalUnitIds []string `type:"list"`
 
 	// A list of input parameters for a stack set.
@@ -1679,7 +1678,7 @@ type StackSetOperation struct {
 	// The time at which the operation was initiated. Note that the creation times
 	// for the stack set operation might differ from the creation time of the individual
 	// stacks themselves. This is because AWS CloudFormation needs to perform preparatory
-	// work for the operation, such as dispatching the work to the requested regions,
+	// work for the operation, such as dispatching the work to the requested Regions,
 	// before actually creating the first stacks.
 	CreationTimestamp *time.Time `type:"timestamp"`
 
@@ -1688,8 +1687,8 @@ type StackSetOperation struct {
 	DeploymentTargets *DeploymentTargets `type:"structure"`
 
 	// The time at which the stack set operation ended, across all accounts and
-	// regions specified. Note that this doesn't necessarily mean that the stack
-	// set operation was successful, or even attempted, in each account or region.
+	// Regions specified. Note that this doesn't necessarily mean that the stack
+	// set operation was successful, or even attempted, in each account or Region.
 	EndTimestamp *time.Time `type:"timestamp"`
 
 	// The name of the IAM execution role used to create or update the stack set.
@@ -1728,14 +1727,14 @@ type StackSetOperation struct {
 	//
 	//    * FAILED: The operation exceeded the specified failure tolerance. The
 	//    failure tolerance value that you've set for an operation is applied for
-	//    each region during stack create and update operations. If the number of
-	//    failed stacks within a region exceeds the failure tolerance, the status
-	//    of the operation in the region is set to FAILED. This in turn sets the
+	//    each Region during stack create and update operations. If the number of
+	//    failed stacks within a Region exceeds the failure tolerance, the status
+	//    of the operation in the Region is set to FAILED. This in turn sets the
 	//    status of the operation as a whole to FAILED, and AWS CloudFormation cancels
-	//    the operation in any remaining regions.
+	//    the operation in any remaining Regions.
 	//
 	//    * QUEUED: [Service-managed permissions] For automatic deployments that
-	//    require a sequence of operations. The operation is queued to be performed.
+	//    require a sequence of operations, the operation is queued to be performed.
 	//    For more information, see the stack set operation status codes (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-concepts.html#stackset-status-codes)
 	//    in the AWS CloudFormation User Guide.
 	//
@@ -1763,19 +1762,19 @@ func (s StackSetOperation) String() string {
 type StackSetOperationPreferences struct {
 	_ struct{} `type:"structure"`
 
-	// The number of accounts, per region, for which this operation can fail before
-	// AWS CloudFormation stops the operation in that region. If the operation is
-	// stopped in a region, AWS CloudFormation doesn't attempt the operation in
-	// any subsequent regions.
+	// The number of accounts, per Region, for which this operation can fail before
+	// AWS CloudFormation stops the operation in that Region. If the operation is
+	// stopped in a Region, AWS CloudFormation doesn't attempt the operation in
+	// any subsequent Regions.
 	//
 	// Conditional: You must specify either FailureToleranceCount or FailureTolerancePercentage
 	// (but not both).
 	FailureToleranceCount *int64 `type:"integer"`
 
-	// The percentage of accounts, per region, for which this stack operation can
-	// fail before AWS CloudFormation stops the operation in that region. If the
-	// operation is stopped in a region, AWS CloudFormation doesn't attempt the
-	// operation in any subsequent regions.
+	// The percentage of accounts, per Region, for which this stack operation can
+	// fail before AWS CloudFormation stops the operation in that Region. If the
+	// operation is stopped in a Region, AWS CloudFormation doesn't attempt the
+	// operation in any subsequent Regions.
 	//
 	// When calculating the number of accounts based on the specified percentage,
 	// AWS CloudFormation rounds down to the next whole number.
@@ -1812,7 +1811,7 @@ type StackSetOperationPreferences struct {
 	// but not both.
 	MaxConcurrentPercentage *int64 `min:"1" type:"integer"`
 
-	// The order of the regions in where you want to perform the stack operation.
+	// The order of the Regions in where you want to perform the stack operation.
 	RegionOrder []string `type:"list"`
 }
 
@@ -1838,7 +1837,7 @@ func (s *StackSetOperationPreferences) Validate() error {
 }
 
 // The structure that contains information about a specified operation's results
-// for a given account in a given region.
+// for a given account in a given Region.
 type StackSetOperationResultSummary struct {
 	_ struct{} `type:"structure"`
 
@@ -1850,31 +1849,30 @@ type StackSetOperationResultSummary struct {
 	// before proceeding with stack set operations in an account
 	AccountGateResult *AccountGateResult `type:"structure"`
 
-	// [Service-managed permissions] The organization root ID or organizational
-	// unit (OU) ID for this operation result.
+	// Reserved for internal use. No data returned.
 	OrganizationalUnitId *string `type:"string"`
 
-	// The name of the AWS region for this operation result.
+	// The name of the AWS Region for this operation result.
 	Region *string `type:"string"`
 
 	// The result status of the stack set operation for the given account in the
-	// given region.
+	// given Region.
 	//
-	//    * CANCELLED: The operation in the specified account and region has been
+	//    * CANCELLED: The operation in the specified account and Region has been
 	//    cancelled. This is either because a user has stopped the stack set operation,
 	//    or because the failure tolerance of the stack set operation has been exceeded.
 	//
-	//    * FAILED: The operation in the specified account and region failed. If
-	//    the stack set operation fails in enough accounts within a region, the
+	//    * FAILED: The operation in the specified account and Region failed. If
+	//    the stack set operation fails in enough accounts within a Region, the
 	//    failure tolerance for the stack set operation as a whole might be exceeded.
 	//
-	//    * RUNNING: The operation in the specified account and region is currently
+	//    * RUNNING: The operation in the specified account and Region is currently
 	//    in progress.
 	//
-	//    * PENDING: The operation in the specified account and region has yet to
+	//    * PENDING: The operation in the specified account and Region has yet to
 	//    start.
 	//
-	//    * SUCCEEDED: The operation in the specified account and region completed
+	//    * SUCCEEDED: The operation in the specified account and Region completed
 	//    successfully.
 	Status StackSetOperationResultStatus `type:"string" enum:"true"`
 
@@ -1900,13 +1898,13 @@ type StackSetOperationSummary struct {
 	// The time at which the operation was initiated. Note that the creation times
 	// for the stack set operation might differ from the creation time of the individual
 	// stacks themselves. This is because AWS CloudFormation needs to perform preparatory
-	// work for the operation, such as dispatching the work to the requested regions,
+	// work for the operation, such as dispatching the work to the requested Regions,
 	// before actually creating the first stacks.
 	CreationTimestamp *time.Time `type:"timestamp"`
 
 	// The time at which the stack set operation ended, across all accounts and
-	// regions specified. Note that this doesn't necessarily mean that the stack
-	// set operation was successful, or even attempted, in each account or region.
+	// Regions specified. Note that this doesn't necessarily mean that the stack
+	// set operation was successful, or even attempted, in each account or Region.
 	EndTimestamp *time.Time `type:"timestamp"`
 
 	// The unique ID of the stack set operation.
@@ -1916,14 +1914,14 @@ type StackSetOperationSummary struct {
 	//
 	//    * FAILED: The operation exceeded the specified failure tolerance. The
 	//    failure tolerance value that you've set for an operation is applied for
-	//    each region during stack create and update operations. If the number of
-	//    failed stacks within a region exceeds the failure tolerance, the status
-	//    of the operation in the region is set to FAILED. This in turn sets the
+	//    each Region during stack create and update operations. If the number of
+	//    failed stacks within a Region exceeds the failure tolerance, the status
+	//    of the operation in the Region is set to FAILED. This in turn sets the
 	//    status of the operation as a whole to FAILED, and AWS CloudFormation cancels
-	//    the operation in any remaining regions.
+	//    the operation in any remaining Regions.
 	//
 	//    * QUEUED: [Service-managed permissions] For automatic deployments that
-	//    require a sequence of operations. The operation is queued to be performed.
+	//    require a sequence of operations, the operation is queued to be performed.
 	//    For more information, see the stack set operation status codes (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-concepts.html#stackset-status-codes)
 	//    in the AWS CloudFormation User Guide.
 	//

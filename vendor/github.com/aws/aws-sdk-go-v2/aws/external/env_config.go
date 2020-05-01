@@ -15,56 +15,56 @@ const CredentialsSourceName = "EnvConfigCredentials"
 
 // Environment variables that will be read for configuration values.
 const (
-	AWSAccessKeyIDEnvVar = "AWS_ACCESS_KEY_ID"
-	AWSAccessKeyEnvVar   = "AWS_ACCESS_KEY"
+	awsAccessKeyIDEnvVar = "AWS_ACCESS_KEY_ID"
+	awsAccessKeyEnvVar   = "AWS_ACCESS_KEY"
 
-	AWSSecreteAccessKeyEnvVar = "AWS_SECRET_ACCESS_KEY"
-	AWSSecreteKeyEnvVar       = "AWS_SECRET_KEY"
+	awsSecreteAccessKeyEnvVar = "AWS_SECRET_ACCESS_KEY"
+	awsSecreteKeyEnvVar       = "AWS_SECRET_KEY"
 
-	AWSSessionTokenEnvVar = "AWS_SESSION_TOKEN"
+	awsSessionTokenEnvVar = "AWS_SESSION_TOKEN"
 
-	AWSContainerCredentialsEndpointEnvVar     = "AWS_CONTAINER_CREDENTIALS_FULL_URI"
-	AWSContainerCredentialsRelativePathEnvVar = "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI"
-	AWSContainerPProviderAuthorizationEnvVar  = "AWS_CONTAINER_AUTHORIZATION_TOKEN"
+	awsContainerCredentialsEndpointEnvVar     = "AWS_CONTAINER_CREDENTIALS_FULL_URI"
+	awsContainerCredentialsRelativePathEnvVar = "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI"
+	awsContainerPProviderAuthorizationEnvVar  = "AWS_CONTAINER_AUTHORIZATION_TOKEN"
 
-	AWSRegionEnvVar        = "AWS_REGION"
-	AWSDefaultRegionEnvVar = "AWS_DEFAULT_REGION"
+	awsRegionEnvVar        = "AWS_REGION"
+	awsDefaultRegionEnvVar = "AWS_DEFAULT_REGION"
 
-	AWSProfileEnvVar        = "AWS_PROFILE"
-	AWSDefaultProfileEnvVar = "AWS_DEFAULT_PROFILE"
+	awsProfileEnvVar        = "AWS_PROFILE"
+	awsDefaultProfileEnvVar = "AWS_DEFAULT_PROFILE"
 
-	AWSSharedCredentialsFileEnvVar = "AWS_SHARED_CREDENTIALS_FILE"
+	awsSharedCredentialsFileEnvVar = "AWS_SHARED_CREDENTIALS_FILE"
 
-	AWSConfigFileEnvVar = "AWS_CONFIG_FILE"
+	awsConfigFileEnvVar = "AWS_CONFIG_FILE"
 
-	AWSCustomCABundleEnvVar = "AWS_CA_BUNDLE"
+	awsCustomCABundleEnvVar = "AWS_CA_BUNDLE"
 
-	AWSWebIdentityTokenFilePathEnvKey = "AWS_WEB_IDENTITY_TOKEN_FILE"
+	awsWebIdentityTokenFilePathEnvKey = "AWS_WEB_IDENTITY_TOKEN_FILE"
 
-	AWSRoleARNEnvKey         = "AWS_ROLE_ARN"
-	AWSRoleSessionNameEnvKey = "AWS_ROLE_SESSION_NAME"
+	awsRoleARNEnvKey         = "AWS_ROLE_ARN"
+	awsRoleSessionNameEnvKey = "AWS_ROLE_SESSION_NAME"
 
-	AWSEnableEndpointDiscoveryEnvKey = "AWS_ENABLE_ENDPOINT_DISCOVERY"
+	awsEnableEndpointDiscoveryEnvKey = "AWS_ENABLE_ENDPOINT_DISCOVERY"
 
-	AWSS3UseARNRegionEnvVar = "AWS_S3_USE_ARN_REGION"
+	awsS3UseARNRegionEnvVar = "AWS_S3_USE_ARN_REGION"
 )
 
 var (
 	credAccessEnvKeys = []string{
-		AWSAccessKeyIDEnvVar,
-		AWSAccessKeyEnvVar,
+		awsAccessKeyIDEnvVar,
+		awsAccessKeyEnvVar,
 	}
 	credSecretEnvKeys = []string{
-		AWSSecreteAccessKeyEnvVar,
-		AWSSecreteKeyEnvVar,
+		awsSecreteAccessKeyEnvVar,
+		awsSecreteKeyEnvVar,
 	}
 	regionEnvKeys = []string{
-		AWSRegionEnvVar,
-		AWSDefaultRegionEnvVar,
+		awsRegionEnvVar,
+		awsDefaultRegionEnvVar,
 	}
 	profileEnvKeys = []string{
-		AWSProfileEnvVar,
-		AWSDefaultProfileEnvVar,
+		awsProfileEnvVar,
+		awsDefaultProfileEnvVar,
 	}
 )
 
@@ -196,32 +196,32 @@ func NewEnvConfig() (EnvConfig, error) {
 	setStringFromEnvVal(&creds.AccessKeyID, credAccessEnvKeys)
 	setStringFromEnvVal(&creds.SecretAccessKey, credSecretEnvKeys)
 	if creds.HasKeys() {
-		creds.SessionToken = os.Getenv(AWSSessionTokenEnvVar)
+		creds.SessionToken = os.Getenv(awsSessionTokenEnvVar)
 		cfg.Credentials = creds
 	}
 
-	cfg.ContainerCredentialsEndpoint = os.Getenv(AWSContainerCredentialsEndpointEnvVar)
-	cfg.ContainerCredentialsRelativePath = os.Getenv(AWSContainerCredentialsRelativePathEnvVar)
-	cfg.ContainerAuthorizationToken = os.Getenv(AWSContainerPProviderAuthorizationEnvVar)
+	cfg.ContainerCredentialsEndpoint = os.Getenv(awsContainerCredentialsEndpointEnvVar)
+	cfg.ContainerCredentialsRelativePath = os.Getenv(awsContainerCredentialsRelativePathEnvVar)
+	cfg.ContainerAuthorizationToken = os.Getenv(awsContainerPProviderAuthorizationEnvVar)
 
 	setStringFromEnvVal(&cfg.Region, regionEnvKeys)
 	setStringFromEnvVal(&cfg.SharedConfigProfile, profileEnvKeys)
 
-	cfg.SharedCredentialsFile = os.Getenv(AWSSharedCredentialsFileEnvVar)
-	cfg.SharedConfigFile = os.Getenv(AWSConfigFileEnvVar)
+	cfg.SharedCredentialsFile = os.Getenv(awsSharedCredentialsFileEnvVar)
+	cfg.SharedConfigFile = os.Getenv(awsConfigFileEnvVar)
 
-	cfg.CustomCABundle = os.Getenv(AWSCustomCABundleEnvVar)
+	cfg.CustomCABundle = os.Getenv(awsCustomCABundleEnvVar)
 
-	cfg.WebIdentityTokenFilePath = os.Getenv(AWSWebIdentityTokenFilePathEnvKey)
+	cfg.WebIdentityTokenFilePath = os.Getenv(awsWebIdentityTokenFilePathEnvKey)
 
-	cfg.RoleARN = os.Getenv(AWSRoleARNEnvKey)
-	cfg.RoleSessionName = os.Getenv(AWSRoleSessionNameEnvKey)
+	cfg.RoleARN = os.Getenv(awsRoleARNEnvKey)
+	cfg.RoleSessionName = os.Getenv(awsRoleSessionNameEnvKey)
 
-	if err := setBoolPtrFromEnvVal(&cfg.EnableEndpointDiscovery, []string{AWSEnableEndpointDiscoveryEnvKey}); err != nil {
+	if err := setBoolPtrFromEnvVal(&cfg.EnableEndpointDiscovery, []string{awsEnableEndpointDiscoveryEnvKey}); err != nil {
 		return cfg, err
 	}
 
-	if err := setBoolPtrFromEnvVal(&cfg.S3UseARNRegion, []string{AWSS3UseARNRegionEnvVar}); err != nil {
+	if err := setBoolPtrFromEnvVal(&cfg.S3UseARNRegion, []string{awsS3UseARNRegionEnvVar}); err != nil {
 		return cfg, err
 	}
 

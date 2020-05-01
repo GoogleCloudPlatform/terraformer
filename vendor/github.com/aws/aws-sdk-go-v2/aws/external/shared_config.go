@@ -44,12 +44,15 @@ const (
 
 	// ErrCodeSharedConfig AWS SDK Error Code for Shared Configuration Errors
 	ErrCodeSharedConfig = "SharedConfigErr"
+
+	// DefaultSharedConfigProfile is the default profile to be used when
+	// loading configuration from the config files if another profile name
+	// is not provided.
+	DefaultSharedConfigProfile = `default`
 )
 
-// DefaultSharedConfigProfile is the default profile to be used when
-// loading configuration from the config files if another profile name
-// is not provided.
-var DefaultSharedConfigProfile = `default`
+// defaultSharedConfigProfile allows for swapping the default profile for testing
+var defaultSharedConfigProfile = DefaultSharedConfigProfile
 
 // DefaultSharedCredentialsFilename returns the SDK's default file path
 // for the shared credentials file.
@@ -82,8 +85,7 @@ var DefaultSharedConfigFiles = []string{
 
 // AssumeRoleConfig provides the values defining the configuration for an IAM
 // assume role.
-type AssumeRoleConfig struct {
-}
+type AssumeRoleConfig struct{}
 
 // SharedConfig represents the configuration fields of the SDK config files.
 type SharedConfig struct {
@@ -199,7 +201,7 @@ func LoadSharedConfig(configs Configs) (Config, error) {
 		return nil, err
 	}
 	if !ok {
-		profile = DefaultSharedConfigProfile
+		profile = defaultSharedConfigProfile
 	}
 
 	files, ok, err = GetSharedConfigFiles(configs)

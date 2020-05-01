@@ -53,7 +53,7 @@ func (s GetVpcLinkInput) MarshalFields(e protocol.FieldEncoder) error {
 	return nil
 }
 
-// A API Gateway VPC link for a RestApi to access resources in an Amazon Virtual
+// An API Gateway VPC link for a RestApi to access resources in an Amazon Virtual
 // Private Cloud (VPC).
 //
 // To enable access to a resource in an Amazon Virtual Private Cloud through
@@ -87,8 +87,9 @@ type GetVpcLinkOutput struct {
 	// The collection of tags. Each tag element is associated with a given resource.
 	Tags map[string]string `locationName:"tags" type:"map"`
 
-	// The ARNs of network load balancers of the VPC targeted by the VPC link. The
-	// network load balancers must be owned by the same AWS account of the API owner.
+	// The ARN of the network load balancer of the VPC targeted by the VPC link.
+	// The network load balancer must be owned by the same AWS account of the API
+	// owner.
 	TargetArns []string `locationName:"targetArns" type:"list"`
 }
 

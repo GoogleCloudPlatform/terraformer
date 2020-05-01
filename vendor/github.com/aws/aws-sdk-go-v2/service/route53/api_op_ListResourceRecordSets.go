@@ -36,7 +36,9 @@ type ListResourceRecordSetsInput struct {
 	StartRecordIdentifier *string `location:"querystring" locationName:"identifier" min:"1" type:"string"`
 
 	// The first name in the lexicographic ordering of resource record sets that
-	// you want to list.
+	// you want to list. If the specified record name doesn't exist, the results
+	// begin with the first resource record set that has a name greater than the
+	// value of name.
 	StartRecordName *string `location:"querystring" locationName:"name" type:"string"`
 
 	// The type of resource record set to begin the record listing from.
@@ -57,9 +59,9 @@ type ListResourceRecordSetsInput struct {
 	//
 	//    * Elastic Load Balancing load balancer: A | AAAA
 	//
-	//    * Amazon S3 bucket: A
+	//    * S3 bucket: A
 	//
-	//    * Amazon VPC interface VPC endpoint: A
+	//    * VPC interface VPC endpoint: A
 	//
 	//    * Another resource record set in this hosted zone: The type of the resource
 	//    record set that the alias references.

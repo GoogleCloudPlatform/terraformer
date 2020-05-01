@@ -226,10 +226,10 @@ const opCreateHostedZone = "CreateHostedZone"
 //    * You can't create a hosted zone for a top-level domain (TLD) such as
 //    .com.
 //
-//    * For public hosted zones, Amazon Route 53 automatically creates a default
-//    SOA record and four NS records for the zone. For more information about
-//    SOA and NS records, see NS and SOA Records that Route 53 Creates for a
-//    Hosted Zone (http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/SOA-NSrecords.html)
+//    * For public hosted zones, Route 53 automatically creates a default SOA
+//    record and four NS records for the zone. For more information about SOA
+//    and NS records, see NS and SOA Records that Route 53 Creates for a Hosted
+//    Zone (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/SOA-NSrecords.html)
 //    in the Amazon Route 53 Developer Guide. If you want to use the same name
 //    servers for multiple public hosted zones, you can optionally associate
 //    a reusable delegation set with the hosted zone. See the DelegationSetId
@@ -238,7 +238,7 @@ const opCreateHostedZone = "CreateHostedZone"
 //    * If your domain is registered with a registrar other than Route 53, you
 //    must update the name servers with your registrar to make Route 53 the
 //    DNS service for the domain. For more information, see Migrating DNS Service
-//    for an Existing Domain to Amazon Route 53 (http://docs.aws.amazon.com/Route53/latest/DeveloperGuide/MigratingDNS.html)
+//    for an Existing Domain to Amazon Route 53 (https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/MigratingDNS.html)
 //    in the Amazon Route 53 Developer Guide.
 //
 // When you submit a CreateHostedZone request, the initial status of the hosted

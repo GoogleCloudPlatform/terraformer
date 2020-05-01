@@ -78,6 +78,9 @@ type RunJobFlowInput struct {
 	// is not provided, logs are not created.
 	LogUri *string `type:"string"`
 
+	// The specified managed scaling policy for an Amazon EMR cluster.
+	ManagedScalingPolicy *ManagedScalingPolicy `type:"structure"`
+
 	// The name of the job flow.
 	//
 	// Name is a required field
@@ -211,6 +214,11 @@ func (s *RunJobFlowInput) Validate() error {
 	if s.KerberosAttributes != nil {
 		if err := s.KerberosAttributes.Validate(); err != nil {
 			invalidParams.AddNested("KerberosAttributes", err.(aws.ErrInvalidParams))
+		}
+	}
+	if s.ManagedScalingPolicy != nil {
+		if err := s.ManagedScalingPolicy.Validate(); err != nil {
+			invalidParams.AddNested("ManagedScalingPolicy", err.(aws.ErrInvalidParams))
 		}
 	}
 	if s.Steps != nil {

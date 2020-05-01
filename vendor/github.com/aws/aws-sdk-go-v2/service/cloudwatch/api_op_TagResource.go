@@ -13,8 +13,15 @@ import (
 type TagResourceInput struct {
 	_ struct{} `type:"structure"`
 
-	// The ARN of the CloudWatch alarm that you're adding tags to. The ARN format
-	// is arn:aws:cloudwatch:Region:account-id:alarm:alarm-name
+	// The ARN of the CloudWatch resource that you're adding tags to.
+	//
+	// The ARN format of an alarm is arn:aws:cloudwatch:Region:account-id:alarm:alarm-name
+	//
+	// The ARN format of a Contributor Insights rule is arn:aws:cloudwatch:Region:account-id:insight-rule:insight-rule-name
+	//
+	// For more information on ARN format, see Resource Types Defined by Amazon
+	// CloudWatch (https://docs.aws.amazon.com/IAM/latest/UserGuide/list_amazoncloudwatch.html#amazoncloudwatch-resources-for-iam-policies)
+	// in the Amazon Web Services General Reference.
 	//
 	// ResourceARN is a required field
 	ResourceARN *string `min:"1" type:"string" required:"true"`
@@ -73,7 +80,8 @@ const opTagResource = "TagResource"
 // Amazon CloudWatch.
 //
 // Assigns one or more tags (key-value pairs) to the specified CloudWatch resource.
-// Currently, the only CloudWatch resources that can be tagged are alarms.
+// Currently, the only CloudWatch resources that can be tagged are alarms and
+// Contributor Insights rules.
 //
 // Tags can help you organize and categorize your resources. You can also use
 // them to scope user permissions, by granting a user permission to access or
@@ -88,7 +96,7 @@ const opTagResource = "TagResource"
 // associated with the alarm, the new tag value that you specify replaces the
 // previous value for that tag.
 //
-// You can associate as many as 50 tags with a resource.
+// You can associate as many as 50 tags with a CloudWatch resource.
 //
 //    // Example sending a request using TagResourceRequest.
 //    req := client.TagResourceRequest(params)

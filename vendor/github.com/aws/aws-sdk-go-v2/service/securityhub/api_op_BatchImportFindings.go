@@ -130,6 +130,28 @@ const opBatchImportFindings = "BatchImportFindings"
 // The maximum allowed size for a finding is 240 Kb. An error is returned for
 // any finding larger than 240 Kb.
 //
+// After a finding is created, BatchImportFindings cannot be used to update
+// the following finding fields and objects, which Security Hub customers use
+// to manage their investigation workflow.
+//
+//    * Confidence
+//
+//    * Criticality
+//
+//    * Note
+//
+//    * RelatedFindings
+//
+//    * Severity
+//
+//    * Types
+//
+//    * UserDefinedFields
+//
+//    * VerificationState
+//
+//    * Workflow
+//
 //    // Example sending a request using BatchImportFindingsRequest.
 //    req := client.BatchImportFindingsRequest(params)
 //    resp, err := req.Send(context.TODO())

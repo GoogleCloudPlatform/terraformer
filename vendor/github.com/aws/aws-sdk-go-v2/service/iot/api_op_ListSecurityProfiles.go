@@ -13,6 +13,9 @@ import (
 type ListSecurityProfilesInput struct {
 	_ struct{} `type:"structure"`
 
+	// A filter to limit results to the security profiles that use the defined dimension.
+	DimensionName *string `location:"querystring" locationName:"dimensionName" min:"1" type:"string"`
+
 	// The maximum number of results to return at one time.
 	MaxResults *int64 `location:"querystring" locationName:"maxResults" min:"1" type:"integer"`
 
@@ -28,6 +31,9 @@ func (s ListSecurityProfilesInput) String() string {
 // Validate inspects the fields of the type to determine if they are valid.
 func (s *ListSecurityProfilesInput) Validate() error {
 	invalidParams := aws.ErrInvalidParams{Context: "ListSecurityProfilesInput"}
+	if s.DimensionName != nil && len(*s.DimensionName) < 1 {
+		invalidParams.Add(aws.NewErrParamMinLen("DimensionName", 1))
+	}
 	if s.MaxResults != nil && *s.MaxResults < 1 {
 		invalidParams.Add(aws.NewErrParamMinValue("MaxResults", 1))
 	}
@@ -42,6 +48,12 @@ func (s *ListSecurityProfilesInput) Validate() error {
 func (s ListSecurityProfilesInput) MarshalFields(e protocol.FieldEncoder) error {
 	e.SetValue(protocol.HeaderTarget, "Content-Type", protocol.StringValue("application/json"), protocol.Metadata{})
 
+	if s.DimensionName != nil {
+		v := *s.DimensionName
+
+		metadata := protocol.Metadata{}
+		e.SetValue(protocol.QueryTarget, "dimensionName", protocol.QuotedValue{ValueMarshaler: protocol.StringValue(v)}, metadata)
+	}
 	if s.MaxResults != nil {
 		v := *s.MaxResults
 
