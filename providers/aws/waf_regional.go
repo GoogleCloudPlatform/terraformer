@@ -81,7 +81,7 @@ func (g *WafRegionalGenerator) loadWebACL(svc *wafregional.Client) error {
 	for _, acl := range output.WebACLs {
 		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 			*acl.WebACLId,
-			*acl.Name,
+			*acl.Name+"_"+(*acl.WebACLId)[0:8],
 			"aws_wafregional_web_acl",
 			"aws",
 			wafAllowEmptyValues))
@@ -97,7 +97,7 @@ func (g *WafRegionalGenerator) loadByteMatchSet(svc *wafregional.Client) error {
 	for _, byteMatchSet := range output.ByteMatchSets {
 		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 			*byteMatchSet.ByteMatchSetId,
-			*byteMatchSet.Name,
+			*byteMatchSet.Name+"_"+(*byteMatchSet.ByteMatchSetId)[0:8],
 			"aws_wafregional_byte_match_set",
 			"aws",
 			wafAllowEmptyValues))
@@ -113,7 +113,7 @@ func (g *WafRegionalGenerator) loadGeoMatchSet(svc *wafregional.Client) error {
 	for _, matchSet := range output.GeoMatchSets {
 		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 			*matchSet.GeoMatchSetId,
-			*matchSet.Name,
+			*matchSet.Name+"_"+(*matchSet.GeoMatchSetId)[0:8],
 			"aws_wafregional_geo_match_set",
 			"aws",
 			wafAllowEmptyValues))
@@ -129,7 +129,7 @@ func (g *WafRegionalGenerator) loadIPSet(svc *wafregional.Client) error {
 	for _, IPSet := range output.IPSets {
 		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 			*IPSet.IPSetId,
-			*IPSet.Name,
+			*IPSet.Name+"_"+(*IPSet.IPSetId)[0:8],
 			"aws_wafregional_ipset",
 			"aws",
 			wafAllowEmptyValues))
@@ -145,7 +145,7 @@ func (g *WafRegionalGenerator) loadRateBasedRules(svc *wafregional.Client) error
 	for _, rule := range output.Rules {
 		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 			*rule.RuleId,
-			*rule.Name,
+			*rule.Name+"_"+(*rule.RuleId)[0:8],
 			"aws_wafregional_rate_based_rule",
 			"aws",
 			wafAllowEmptyValues))
@@ -161,7 +161,7 @@ func (g *WafRegionalGenerator) loadRegexMatchSets(svc *wafregional.Client) error
 	for _, regexMatchSet := range output.RegexMatchSets {
 		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 			*regexMatchSet.RegexMatchSetId,
-			*regexMatchSet.Name,
+			*regexMatchSet.Name+"_"+(*regexMatchSet.RegexMatchSetId)[0:8],
 			"aws_wafregional_regex_match_set",
 			"aws",
 			wafAllowEmptyValues))
@@ -177,7 +177,7 @@ func (g *WafRegionalGenerator) loadRegexPatternSets(svc *wafregional.Client) err
 	for _, regexPatternSet := range output.RegexPatternSets {
 		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 			*regexPatternSet.RegexPatternSetId,
-			*regexPatternSet.Name,
+			*regexPatternSet.Name+"_"+(*regexPatternSet.RegexPatternSetId)[0:8],
 			"aws_wafregional_regex_pattern_set",
 			"aws",
 			wafAllowEmptyValues))
@@ -193,7 +193,7 @@ func (g *WafRegionalGenerator) loadWafRules(svc *wafregional.Client) error {
 	for _, rule := range output.Rules {
 		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 			*rule.RuleId,
-			*rule.Name,
+			*rule.Name+"_"+(*rule.RuleId)[0:8],
 			"aws_wafregional_rule",
 			"aws",
 			wafAllowEmptyValues))
@@ -209,7 +209,7 @@ func (g *WafRegionalGenerator) loadWafRuleGroups(svc *wafregional.Client) error 
 	for _, ruleGroup := range output.RuleGroups {
 		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 			*ruleGroup.RuleGroupId,
-			*ruleGroup.Name,
+			*ruleGroup.Name+"_"+(*ruleGroup.RuleGroupId)[0:8],
 			"aws_wafregional_rule_group",
 			"aws",
 			wafAllowEmptyValues))
@@ -225,7 +225,7 @@ func (g *WafRegionalGenerator) loadSizeConstraintSets(svc *wafregional.Client) e
 	for _, sizeConstraintSet := range output.SizeConstraintSets {
 		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 			*sizeConstraintSet.SizeConstraintSetId,
-			*sizeConstraintSet.Name,
+			*sizeConstraintSet.Name+"_"+(*sizeConstraintSet.SizeConstraintSetId)[0:8],
 			"aws_wafregional_size_constraint_set",
 			"aws",
 			wafAllowEmptyValues))
@@ -241,7 +241,7 @@ func (g *WafRegionalGenerator) loadSqlInjectionMatchSets(svc *wafregional.Client
 	for _, sqlInjectionMatchSet := range output.SqlInjectionMatchSets {
 		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 			*sqlInjectionMatchSet.SqlInjectionMatchSetId,
-			*sqlInjectionMatchSet.Name,
+			*sqlInjectionMatchSet.Name+"_"+(*sqlInjectionMatchSet.SqlInjectionMatchSetId)[0:8],
 			"aws_wafregional_sql_injection_match_set",
 			"aws",
 			wafAllowEmptyValues))
@@ -257,7 +257,7 @@ func (g *WafRegionalGenerator) loadXssMatchSet(svc *wafregional.Client) error {
 	for _, xssMatchSet := range output.XssMatchSets {
 		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
 			*xssMatchSet.XssMatchSetId,
-			*xssMatchSet.Name,
+			*xssMatchSet.Name+"_"+(*xssMatchSet.XssMatchSetId)[0:8],
 			"aws_wafregional_xss_match_set",
 			"aws",
 			wafAllowEmptyValues))
