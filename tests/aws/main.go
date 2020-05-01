@@ -30,7 +30,7 @@ func main() {
 		"import",
 		"aws",
 		"--regions=ap-southeast-1",
-		"--resources=*",
+		"--resources=vpc,sg",
 		"--profile=personal",
 		"--compact",
 		"--path-pattern=" + pathPattern,
