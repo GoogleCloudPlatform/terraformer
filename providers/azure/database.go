@@ -24,7 +24,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/services/postgresql/mgmt/2017-12-01/postgresql"
 	"github.com/Azure/azure-sdk-for-go/services/preview/sql/mgmt/2017-03-01-preview/sql"
 	"github.com/Azure/go-autorest/autorest"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/hashicorp/go-azure-helpers/authentication"
 )
 
@@ -48,11 +48,11 @@ func (g *DatabasesGenerator) getMariaDBServers() ([]mariadb.Server, error) {
 	return *Servers.Value, nil
 }
 
-func (g *DatabasesGenerator) createMariaDBServerResources(Servers []mariadb.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createMariaDBServerResources(Servers []mariadb.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 
 	for _, server := range Servers {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			*server.ID,
 			*server.Name,
 			"azurerm_mariadb_server",
@@ -67,8 +67,8 @@ func (g *DatabasesGenerator) createMariaDBServerResources(Servers []mariadb.Serv
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createMariaDBConfigurationResources(Servers []mariadb.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createMariaDBConfigurationResources(Servers []mariadb.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
 	Authorizer := g.Args["authorizer"].(autorest.Authorizer)
@@ -87,7 +87,7 @@ func (g *DatabasesGenerator) createMariaDBConfigurationResources(Servers []maria
 		}
 
 		for _, config := range *configs.Value {
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				*config.ID,
 				*config.Name,
 				"azurerm_mariadb_configuration",
@@ -99,8 +99,8 @@ func (g *DatabasesGenerator) createMariaDBConfigurationResources(Servers []maria
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createMariaDBDatabaseResources(Servers []mariadb.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createMariaDBDatabaseResources(Servers []mariadb.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
 	Authorizer := g.Args["authorizer"].(autorest.Authorizer)
@@ -119,7 +119,7 @@ func (g *DatabasesGenerator) createMariaDBDatabaseResources(Servers []mariadb.Se
 		}
 
 		for _, database := range *databases.Value {
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				*database.ID,
 				*database.Name,
 				"azurerm_mariadb_database",
@@ -131,8 +131,8 @@ func (g *DatabasesGenerator) createMariaDBDatabaseResources(Servers []mariadb.Se
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createMariaDBFirewallRuleResources(Servers []mariadb.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createMariaDBFirewallRuleResources(Servers []mariadb.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
 	Authorizer := g.Args["authorizer"].(autorest.Authorizer)
@@ -150,7 +150,7 @@ func (g *DatabasesGenerator) createMariaDBFirewallRuleResources(Servers []mariad
 			return nil, err
 		}
 		for _, rule := range *rules.Value {
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				*rule.ID,
 				*rule.Name,
 				"azurerm_mariadb_firewall_rule",
@@ -162,8 +162,8 @@ func (g *DatabasesGenerator) createMariaDBFirewallRuleResources(Servers []mariad
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createMariaDBVirtualNetworkRuleResources(Servers []mariadb.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createMariaDBVirtualNetworkRuleResources(Servers []mariadb.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
 	Authorizer := g.Args["authorizer"].(autorest.Authorizer)
@@ -182,7 +182,7 @@ func (g *DatabasesGenerator) createMariaDBVirtualNetworkRuleResources(Servers []
 		}
 		for iter.NotDone() {
 			rule := iter.Value()
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				*rule.ID,
 				*rule.Name,
 				"azurerm_mariadb_virtual_network_rule",
@@ -213,11 +213,11 @@ func (g *DatabasesGenerator) getMySQLServers() ([]mysql.Server, error) {
 	return *Servers.Value, nil
 }
 
-func (g *DatabasesGenerator) createMySQLServerResources(Servers []mysql.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createMySQLServerResources(Servers []mysql.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 
 	for _, server := range Servers {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			*server.ID,
 			*server.Name,
 			"azurerm_mysql_server",
@@ -232,8 +232,8 @@ func (g *DatabasesGenerator) createMySQLServerResources(Servers []mysql.Server) 
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createMySQLConfigurationResources(Servers []mysql.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createMySQLConfigurationResources(Servers []mysql.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
 	Authorizer := g.Args["authorizer"].(autorest.Authorizer)
@@ -252,7 +252,7 @@ func (g *DatabasesGenerator) createMySQLConfigurationResources(Servers []mysql.S
 			return nil, err
 		}
 		for _, config := range *configs.Value {
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				*config.ID,
 				*config.Name,
 				"azurerm_mysql_configuration",
@@ -264,8 +264,8 @@ func (g *DatabasesGenerator) createMySQLConfigurationResources(Servers []mysql.S
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createMySQLDatabaseResources(Servers []mysql.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createMySQLDatabaseResources(Servers []mysql.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
 	Authorizer := g.Args["authorizer"].(autorest.Authorizer)
@@ -284,7 +284,7 @@ func (g *DatabasesGenerator) createMySQLDatabaseResources(Servers []mysql.Server
 		}
 
 		for _, database := range *databases.Value {
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				*database.ID,
 				*database.Name,
 				"azurerm_mysql_database",
@@ -295,8 +295,8 @@ func (g *DatabasesGenerator) createMySQLDatabaseResources(Servers []mysql.Server
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createMySQLFirewallRuleResources(Servers []mysql.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createMySQLFirewallRuleResources(Servers []mysql.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
 	Authorizer := g.Args["authorizer"].(autorest.Authorizer)
@@ -315,7 +315,7 @@ func (g *DatabasesGenerator) createMySQLFirewallRuleResources(Servers []mysql.Se
 		}
 
 		for _, rule := range *rules.Value {
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				*rule.ID,
 				*rule.Name,
 				"azurerm_mysql_firewall_rule",
@@ -327,8 +327,8 @@ func (g *DatabasesGenerator) createMySQLFirewallRuleResources(Servers []mysql.Se
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createMySQLVirtualNetworkRuleResources(Servers []mysql.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createMySQLVirtualNetworkRuleResources(Servers []mysql.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
 	Authorizer := g.Args["authorizer"].(autorest.Authorizer)
@@ -349,7 +349,7 @@ func (g *DatabasesGenerator) createMySQLVirtualNetworkRuleResources(Servers []my
 
 		for iter.NotDone() {
 			rule := iter.Value()
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				*rule.ID,
 				*rule.Name,
 				"azurerm_mysql_virtual_network_rule",
@@ -381,11 +381,11 @@ func (g *DatabasesGenerator) getPostgreSQLServers() ([]postgresql.Server, error)
 	return *Servers.Value, nil
 }
 
-func (g *DatabasesGenerator) createPostgreSQLServerResources(Servers []postgresql.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createPostgreSQLServerResources(Servers []postgresql.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 
 	for _, server := range Servers {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			*server.ID,
 			*server.Name,
 			"azurerm_postgresql_server",
@@ -400,8 +400,8 @@ func (g *DatabasesGenerator) createPostgreSQLServerResources(Servers []postgresq
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createPostgreSQLDatabaseResources(Servers []postgresql.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createPostgreSQLDatabaseResources(Servers []postgresql.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
 	Authorizer := g.Args["authorizer"].(autorest.Authorizer)
@@ -420,7 +420,7 @@ func (g *DatabasesGenerator) createPostgreSQLDatabaseResources(Servers []postgre
 		}
 
 		for _, database := range *databases.Value {
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				*database.ID,
 				*database.Name,
 				"azurerm_postgresql_database",
@@ -431,8 +431,8 @@ func (g *DatabasesGenerator) createPostgreSQLDatabaseResources(Servers []postgre
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createPostgreSQLConfigurationResources(Servers []postgresql.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createPostgreSQLConfigurationResources(Servers []postgresql.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
 	Authorizer := g.Args["authorizer"].(autorest.Authorizer)
@@ -450,7 +450,7 @@ func (g *DatabasesGenerator) createPostgreSQLConfigurationResources(Servers []po
 		}
 
 		for _, config := range *configs.Value {
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				*config.ID,
 				*config.Name,
 				"azurerm_postgresql_configuration",
@@ -461,8 +461,8 @@ func (g *DatabasesGenerator) createPostgreSQLConfigurationResources(Servers []po
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createPostgreSQLFirewallRuleResources(Servers []postgresql.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createPostgreSQLFirewallRuleResources(Servers []postgresql.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
 	Authorizer := g.Args["authorizer"].(autorest.Authorizer)
@@ -481,7 +481,7 @@ func (g *DatabasesGenerator) createPostgreSQLFirewallRuleResources(Servers []pos
 		}
 
 		for _, rule := range *rules.Value {
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				*rule.ID,
 				*rule.Name,
 				"azurerm_postgresql_firewall_rule",
@@ -492,8 +492,8 @@ func (g *DatabasesGenerator) createPostgreSQLFirewallRuleResources(Servers []pos
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createPostgreSQLVirtualNetworkRuleResources(Servers []postgresql.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createPostgreSQLVirtualNetworkRuleResources(Servers []postgresql.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
 	Authorizer := g.Args["authorizer"].(autorest.Authorizer)
@@ -513,7 +513,7 @@ func (g *DatabasesGenerator) createPostgreSQLVirtualNetworkRuleResources(Servers
 
 		for rulePages.NotDone() {
 			rule := rulePages.Value()
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				*rule.ID,
 				*rule.Name,
 				"azurerm_postgresql_virtual_network_rule",
@@ -547,11 +547,11 @@ func (g *DatabasesGenerator) getSQLServers() ([]sql.Server, error) {
 	return servers, nil
 }
 
-func (g *DatabasesGenerator) createSQLServerResources(Servers []sql.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createSQLServerResources(Servers []sql.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 
 	for _, server := range Servers {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			*server.ID,
 			*server.Name,
 			"azurerm_sql_server",
@@ -566,8 +566,8 @@ func (g *DatabasesGenerator) createSQLServerResources(Servers []sql.Server) ([]t
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createSQLDatabaseResources(Servers []sql.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createSQLDatabaseResources(Servers []sql.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
 	Authorizer := g.Args["authorizer"].(autorest.Authorizer)
@@ -586,7 +586,7 @@ func (g *DatabasesGenerator) createSQLDatabaseResources(Servers []sql.Server) ([
 		}
 
 		for _, database := range *databases.Value {
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				*database.ID,
 				*database.Name,
 				"azurerm_sql_database",
@@ -597,8 +597,8 @@ func (g *DatabasesGenerator) createSQLDatabaseResources(Servers []sql.Server) ([
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createSQLFirewallRuleResources(Servers []sql.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createSQLFirewallRuleResources(Servers []sql.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
 	Authorizer := g.Args["authorizer"].(autorest.Authorizer)
@@ -617,7 +617,7 @@ func (g *DatabasesGenerator) createSQLFirewallRuleResources(Servers []sql.Server
 		}
 
 		for _, rule := range *rules.Value {
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				*rule.ID,
 				*rule.Name,
 				"azurerm_sql_firewall_rule",
@@ -628,8 +628,8 @@ func (g *DatabasesGenerator) createSQLFirewallRuleResources(Servers []sql.Server
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createSQLVirtualNetworkRuleResources(Servers []sql.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createSQLVirtualNetworkRuleResources(Servers []sql.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
 	Authorizer := g.Args["authorizer"].(autorest.Authorizer)
@@ -649,7 +649,7 @@ func (g *DatabasesGenerator) createSQLVirtualNetworkRuleResources(Servers []sql.
 
 		for ruleIter.NotDone() {
 			rule := ruleIter.Value()
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				*rule.ID,
 				*rule.Name,
 				"azurerm_sql_virtual_network_rule",
@@ -663,8 +663,8 @@ func (g *DatabasesGenerator) createSQLVirtualNetworkRuleResources(Servers []sql.
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createSQLElasticPoolResources(Servers []sql.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createSQLElasticPoolResources(Servers []sql.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
 	Authorizer := g.Args["authorizer"].(autorest.Authorizer)
@@ -683,7 +683,7 @@ func (g *DatabasesGenerator) createSQLElasticPoolResources(Servers []sql.Server)
 		}
 
 		for _, pool := range *pools.Value {
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				*pool.ID,
 				*pool.Name,
 				"azurerm_sql_elasticpool",
@@ -694,8 +694,8 @@ func (g *DatabasesGenerator) createSQLElasticPoolResources(Servers []sql.Server)
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createSQLFailoverResources(Servers []sql.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createSQLFailoverResources(Servers []sql.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
 	Authorizer := g.Args["authorizer"].(autorest.Authorizer)
@@ -717,7 +717,7 @@ func (g *DatabasesGenerator) createSQLFailoverResources(Servers []sql.Server) ([
 		for iter.NotDone() {
 			failoverGroup := iter.Value()
 
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				*failoverGroup.ID,
 				*failoverGroup.Name,
 				"azurerm_sql_failover_group",
@@ -728,8 +728,8 @@ func (g *DatabasesGenerator) createSQLFailoverResources(Servers []sql.Server) ([
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createSQLADAdministratorResources(Servers []sql.Server) ([]terraform_utils.Resource, error) {
-	var resources []terraform_utils.Resource
+func (g *DatabasesGenerator) createSQLADAdministratorResources(Servers []sql.Server) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
 	Authorizer := g.Args["authorizer"].(autorest.Authorizer)
@@ -749,7 +749,7 @@ func (g *DatabasesGenerator) createSQLADAdministratorResources(Servers []sql.Ser
 		}
 
 		for _, administrator := range *administrators.Value {
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				*administrator.ID,
 				*administrator.Name,
 				"azurerm_sql_active_directory_administrator",
@@ -781,7 +781,7 @@ func (g *DatabasesGenerator) InitResources() error {
 		return err
 	}
 
-	mariadbFunctions := []func([]mariadb.Server) ([]terraform_utils.Resource, error){
+	mariadbFunctions := []func([]mariadb.Server) ([]terraformutils.Resource, error){
 		g.createMariaDBServerResources,
 		g.createMariaDBDatabaseResources,
 		g.createMariaDBConfigurationResources,
@@ -789,7 +789,7 @@ func (g *DatabasesGenerator) InitResources() error {
 		g.createMariaDBVirtualNetworkRuleResources,
 	}
 
-	mysqlFunctions := []func([]mysql.Server) ([]terraform_utils.Resource, error){
+	mysqlFunctions := []func([]mysql.Server) ([]terraformutils.Resource, error){
 		g.createMySQLServerResources,
 		g.createMySQLDatabaseResources,
 		g.createMySQLConfigurationResources,
@@ -797,7 +797,7 @@ func (g *DatabasesGenerator) InitResources() error {
 		g.createMySQLVirtualNetworkRuleResources,
 	}
 
-	postgresqlFunctions := []func([]postgresql.Server) ([]terraform_utils.Resource, error){
+	postgresqlFunctions := []func([]postgresql.Server) ([]terraformutils.Resource, error){
 		g.createPostgreSQLServerResources,
 		g.createPostgreSQLDatabaseResources,
 		g.createPostgreSQLConfigurationResources,
@@ -805,7 +805,7 @@ func (g *DatabasesGenerator) InitResources() error {
 		g.createPostgreSQLVirtualNetworkRuleResources,
 	}
 
-	sqlFunctions := []func([]sql.Server) ([]terraform_utils.Resource, error){
+	sqlFunctions := []func([]sql.Server) ([]terraformutils.Resource, error){
 		g.createSQLServerResources,
 		g.createSQLDatabaseResources,
 		g.createSQLADAdministratorResources,

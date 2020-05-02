@@ -19,12 +19,12 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	cf "github.com/cloudflare/cloudflare-go"
 )
 
-type CloudflareService struct {
-	terraform_utils.Service
+type CloudflareService struct { //nolint
+	terraformutils.Service
 }
 
 func (s *CloudflareService) initializeAPI() (*cf.API, error) {

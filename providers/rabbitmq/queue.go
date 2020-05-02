@@ -18,7 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type QueueGenerator struct {
@@ -35,10 +35,10 @@ type Queues []Queue
 var QueueAllowEmptyValues = []string{}
 var QueueAdditionalFields = map[string]interface{}{}
 
-func (g QueueGenerator) createResources(queues Queues) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g QueueGenerator) createResources(queues Queues) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, queue := range queues {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			fmt.Sprintf("%s@%s", queue.Name, queue.Vhost),
 			fmt.Sprintf("queue_%s_%s", normalizeResourceName(queue.Vhost), normalizeResourceName(queue.Name)),
 			"rabbitmq_queue",

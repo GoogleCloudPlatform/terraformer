@@ -3,7 +3,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentity"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
@@ -29,7 +29,7 @@ func (g *CognitoGenerator) loadIdentityPools(svc *cognitoidentity.Client) error 
 		for _, pool := range pools.IdentityPools {
 			var id = *pool.IdentityPoolId
 			var resourceName = *pool.IdentityPoolName
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				id,
 				resourceName,
 				"aws_cognito_identity_pool",
@@ -55,7 +55,7 @@ func (g *CognitoGenerator) loadUserPools(svc *cognitoidentityprovider.Client) er
 		for _, pool := range page.UserPools {
 			id := *pool.Id
 			resourceName := *pool.Name
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				id,
 				resourceName,
 				"aws_cognito_user_pool",

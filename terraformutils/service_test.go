@@ -1,4 +1,4 @@
-package terraform_utils
+package terraformutils
 
 import (
 	"reflect"

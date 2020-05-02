@@ -18,7 +18,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 
 	"github.com/aws/aws-sdk-go-v2/service/organizations"
@@ -30,14 +30,14 @@ type OrganizationGenerator struct {
 	AWSService
 }
 
-func (g *OrganizationGenerator) traverseNode(svc *organizations.Client, parentId string) {
+func (g *OrganizationGenerator) traverseNode(svc *organizations.Client, parentID string) {
 	accountsForParent, err := svc.ListAccountsForParentRequest(
-		&organizations.ListAccountsForParentInput{ParentId: aws.String(parentId)}).Send(context.Background())
+		&organizations.ListAccountsForParentInput{ParentId: aws.String(parentID)}).Send(context.Background())
 	if err != nil {
 		return
 	}
 	for _, account := range accountsForParent.Accounts {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraformutils.NewResource(
 			aws.StringValue(account.Id),
 			aws.StringValue(account.Name),
 			"aws_organizations_organization",
@@ -49,7 +49,7 @@ func (g *OrganizationGenerator) traverseNode(svc *organizations.Client, parentId
 			organizationAllowEmptyValues,
 			map[string]interface{}{},
 		))
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraformutils.NewResource(
 			aws.StringValue(account.Id),
 			aws.StringValue(account.Name),
 			"aws_organizations_account",
@@ -64,12 +64,12 @@ func (g *OrganizationGenerator) traverseNode(svc *organizations.Client, parentId
 	}
 
 	unitsForParent, err := svc.ListOrganizationalUnitsForParentRequest(
-		&organizations.ListOrganizationalUnitsForParentInput{ParentId: aws.String(parentId)}).Send(context.Background())
+		&organizations.ListOrganizationalUnitsForParentInput{ParentId: aws.String(parentID)}).Send(context.Background())
 	if err != nil {
 		return
 	}
 	for _, unit := range unitsForParent.OrganizationalUnits {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraformutils.NewResource(
 			aws.StringValue(unit.Id),
 			aws.StringValue(unit.Name),
 			"aws_organizations_organizational_unit",
@@ -99,8 +99,8 @@ func (g *OrganizationGenerator) InitResources() error {
 	}
 
 	for _, root := range roots.Roots {
-		nodeId := aws.StringValue(root.Id)
-		g.traverseNode(svc, nodeId)
+		nodeID := aws.StringValue(root.Id)
+		g.traverseNode(svc, nodeID)
 	}
 
 	p := organizations.NewListPoliciesPaginator(svc.ListPoliciesRequest(&organizations.ListPoliciesInput{
@@ -109,15 +109,15 @@ func (g *OrganizationGenerator) InitResources() error {
 	for p.Next(context.Background()) {
 		for _, policy := range p.CurrentPage().Policies {
 
-			policyId := aws.StringValue(policy.Id)
+			policyID := aws.StringValue(policy.Id)
 			policyName := aws.StringValue(policy.Name)
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
-				policyId,
+			g.Resources = append(g.Resources, terraformutils.NewResource(
+				policyID,
 				policyName,
 				"aws_organizations_policy",
 				"aws",
 				map[string]string{
-					"id":  policyId,
+					"id":  policyID,
 					"arn": aws.StringValue(policy.Arn),
 				},
 				organizationAllowEmptyValues,
@@ -131,13 +131,13 @@ func (g *OrganizationGenerator) InitResources() error {
 				continue
 			}
 			for _, target := range targetsForPolicy.Targets {
-				g.Resources = append(g.Resources, terraform_utils.NewResource(
-					aws.StringValue(target.TargetId)+":"+policyId,
+				g.Resources = append(g.Resources, terraformutils.NewResource(
+					aws.StringValue(target.TargetId)+":"+policyID,
 					"pa-"+aws.StringValue(target.TargetId)+":"+policyName,
 					"aws_organizations_policy_attachment",
 					"aws",
 					map[string]string{
-						"policy_id": policyId,
+						"policy_id": policyID,
 						"target_id": aws.StringValue(target.TargetId),
 					},
 					organizationAllowEmptyValues,

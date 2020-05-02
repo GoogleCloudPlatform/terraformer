@@ -18,7 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type PolicyGenerator struct {
@@ -35,10 +35,10 @@ type Policies []Policy
 var PolicyAllowEmptyValues = []string{}
 var PolicyAdditionalFields = map[string]interface{}{}
 
-func (g PolicyGenerator) createResources(policies Policies) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g PolicyGenerator) createResources(policies Policies) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, policy := range policies {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			fmt.Sprintf("%s@%s", policy.Name, policy.Vhost),
 			fmt.Sprintf("policy_%s_%s", normalizeResourceName(policy.Vhost), normalizeResourceName(policy.Name)),
 			"rabbitmq_policy",

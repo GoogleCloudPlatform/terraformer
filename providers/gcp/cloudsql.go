@@ -17,7 +17,7 @@ package gcp
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	sqladmin "google.golang.org/api/sqladmin/v1beta4"
 )
@@ -36,7 +36,7 @@ func (g *CloudSQLGenerator) loadDBInstances(svc *sqladmin.Service, project strin
 		return err
 	}
 	for _, dbInstance := range dbInstances.Items {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraformutils.NewResource(
 			dbInstance.Name,
 			dbInstance.Name,
 			"google_sql_database_instance",
@@ -63,7 +63,7 @@ func (g *CloudSQLGenerator) loadDBs(svc *sqladmin.Service, instanceName, project
 		return err
 	}
 	for _, db := range DBs.Items {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraformutils.NewResource(
 			instanceName+":"+db.Name,
 			instanceName+"-"+db.Name,
 			"google_sql_database",

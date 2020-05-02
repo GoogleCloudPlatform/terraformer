@@ -18,7 +18,7 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/digitalocean/godo"
 )
 
@@ -38,7 +38,7 @@ func (g *DomainGenerator) loadDomains(ctx context.Context, client *godo.Client) 
 		}
 
 		for _, domain := range domains {
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				domain.Name,
 				domain.Name,
 				"digitalocean_domain",
@@ -74,7 +74,7 @@ func (g *DomainGenerator) loadRecords(ctx context.Context, client *godo.Client, 
 		}
 
 		for _, record := range records {
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraformutils.NewResource(
 				strconv.Itoa(record.ID),
 				strconv.Itoa(record.ID),
 				"digitalocean_record",

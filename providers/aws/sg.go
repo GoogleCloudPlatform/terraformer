@@ -21,7 +21,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/hashicorp/terraform/flatmap"
@@ -55,18 +55,18 @@ func (b ByGroupPair) Less(i, j int) bool {
 	panic("mismatched security group rules, may be a terraform bug")
 }
 
-func (SecurityGenerator) createResources(securityGroups []ec2.SecurityGroup) []terraform_utils.Resource {
-	sgIdsToMoveOut := findSgsToMoveOut(securityGroups)
+func (SecurityGenerator) createResources(securityGroups []ec2.SecurityGroup) []terraformutils.Resource {
+	sgIDsToMoveOut := findSgsToMoveOut(securityGroups)
 
-	var resources []terraform_utils.Resource
+	var resources []terraformutils.Resource
 	for _, sg := range securityGroups {
 		if sg.VpcId == nil {
 			continue
 		}
 		ruleAttributes := map[string]interface{}{}
 		// we must move out all of the rules - https://github.com/hashicorp/terraform/issues/11011#issuecomment-283076580
-		for _, groupIdToMoveOut := range sgIdsToMoveOut {
-			if groupIdToMoveOut == *sg.GroupId {
+		for _, groupIDToMoveOut := range sgIDsToMoveOut {
+			if groupIDToMoveOut == *sg.GroupId {
 				ruleAttributes["clearRules"] = true
 				for _, rule := range sg.IpPermissions {
 					resources = processRule(rule, "ingress", sg, resources)
@@ -77,7 +77,7 @@ func (SecurityGenerator) createResources(securityGroups []ec2.SecurityGroup) []t
 			}
 		}
 
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			aws.StringValue(sg.GroupId),
 			strings.Trim(aws.StringValue(sg.GroupName)+"_"+aws.StringValue(sg.GroupId), " "),
 			"aws_security_group",
@@ -89,13 +89,13 @@ func (SecurityGenerator) createResources(securityGroups []ec2.SecurityGroup) []t
 	return resources
 }
 
-func processRule(rule ec2.IpPermission, ruleType string, sg ec2.SecurityGroup, resources []terraform_utils.Resource) []terraform_utils.Resource {
+func processRule(rule ec2.IpPermission, ruleType string, sg ec2.SecurityGroup, resources []terraformutils.Resource) []terraformutils.Resource {
 	if rule.UserIdGroupPairs != nil && len(rule.UserIdGroupPairs) > 0 {
 		if len(rule.IpRanges) > 0 { // we must unwind coupled CIDR IPv4 range + security group rules
 			attributes := baseRuleAttributes(ruleType, rule, sg)
-			resources = append(resources, terraform_utils.NewResource(
-				permissionId(*sg.GroupId, ruleType, "", rule),
-				permissionId(*sg.GroupId, ruleType, "", rule),
+			resources = append(resources, terraformutils.NewResource(
+				permissionID(*sg.GroupId, ruleType, "", rule),
+				permissionID(*sg.GroupId, ruleType, "", rule),
 				"aws_security_group_rule",
 				"aws",
 				flatmap.Flatten(attributes),
@@ -104,9 +104,9 @@ func processRule(rule ec2.IpPermission, ruleType string, sg ec2.SecurityGroup, r
 		}
 		if len(rule.Ipv6Ranges) > 0 { // we must unwind coupled CIDR IPv6 range + security group rules
 			attributes := baseRuleAttributes(ruleType, rule, sg)
-			resources = append(resources, terraform_utils.NewResource(
-				permissionId(*sg.GroupId, ruleType, "", rule),
-				permissionId(*sg.GroupId, ruleType, "", rule),
+			resources = append(resources, terraformutils.NewResource(
+				permissionID(*sg.GroupId, ruleType, "", rule),
+				permissionID(*sg.GroupId, ruleType, "", rule),
 				"aws_security_group_rule",
 				"aws",
 				flatmap.Flatten(attributes),
@@ -124,9 +124,9 @@ func processRule(rule ec2.IpPermission, ruleType string, sg ec2.SecurityGroup, r
 				attributes["source_security_group_id"] = *groupPair.GroupId
 			}
 
-			resources = append(resources, terraform_utils.NewResource(
-				permissionId(*sg.GroupId, ruleType, *groupPair.GroupId, rule),
-				permissionId(*sg.GroupId, ruleType, *groupPair.GroupId, rule),
+			resources = append(resources, terraformutils.NewResource(
+				permissionID(*sg.GroupId, ruleType, *groupPair.GroupId, rule),
+				permissionID(*sg.GroupId, ruleType, *groupPair.GroupId, rule),
 				"aws_security_group_rule",
 				"aws",
 				flatmap.Flatten(attributes),
@@ -135,9 +135,9 @@ func processRule(rule ec2.IpPermission, ruleType string, sg ec2.SecurityGroup, r
 		}
 	} else {
 		attributes := baseRuleAttributes(ruleType, rule, sg)
-		resources = append(resources, terraform_utils.NewResource(
-			permissionId(*sg.GroupId, ruleType, "", rule),
-			permissionId(*sg.GroupId, ruleType, "", rule),
+		resources = append(resources, terraformutils.NewResource(
+			permissionID(*sg.GroupId, ruleType, "", rule),
+			permissionID(*sg.GroupId, ruleType, "", rule),
 			"aws_security_group_rule",
 			"aws",
 			flatmap.Flatten(attributes),
@@ -222,8 +222,8 @@ func findSgsToMoveOut(securityGroups []ec2.SecurityGroup) []string {
 func elementAlreadyFound(resultingSet map[string]void, v []graph.Node, idToSg map[int]ec2.SecurityGroup) bool {
 	for k := range resultingSet {
 		for _, vi := range v {
-			viGroupId := *idToSg[int(vi.ID())].GroupId
-			if k == viGroupId {
+			viGroupID := *idToSg[int(vi.ID())].GroupId
+			if k == viGroupID {
 				return true
 			}
 		}
@@ -298,13 +298,13 @@ func (g *SecurityGenerator) sortIfExist(attribute string, ruleMap map[string]int
 	}
 }
 
-func permissionId(sg_id, ruleType, groupId string, ip ec2.IpPermission) string {
+func permissionID(sgID, ruleType, groupID string, IP ec2.IpPermission) string {
 	var buf bytes.Buffer
-	buf.WriteString(fmt.Sprintf("%s_%s_%s_%d_%d_", sg_id, ruleType, *ip.IpProtocol, fromPort(ip), toPort(ip)))
+	buf.WriteString(fmt.Sprintf("%s_%s_%s_%d_%d_", sgID, ruleType, *IP.IpProtocol, fromPort(IP), toPort(IP)))
 
-	if len(ip.IpRanges) > 0 {
-		s := make([]string, len(ip.IpRanges))
-		for i, r := range ip.IpRanges {
+	if len(IP.IpRanges) > 0 {
+		s := make([]string, len(IP.IpRanges))
+		for i, r := range IP.IpRanges {
 			s[i] = *r.CidrIp
 		}
 		sort.Strings(s)
@@ -314,9 +314,9 @@ func permissionId(sg_id, ruleType, groupId string, ip ec2.IpPermission) string {
 		}
 	}
 
-	if len(ip.Ipv6Ranges) > 0 {
-		s := make([]string, len(ip.Ipv6Ranges))
-		for i, r := range ip.Ipv6Ranges {
+	if len(IP.Ipv6Ranges) > 0 {
+		s := make([]string, len(IP.Ipv6Ranges))
+		for i, r := range IP.Ipv6Ranges {
 			s[i] = *r.CidrIpv6
 		}
 		sort.Strings(s)
@@ -326,9 +326,9 @@ func permissionId(sg_id, ruleType, groupId string, ip ec2.IpPermission) string {
 		}
 	}
 
-	if len(ip.PrefixListIds) > 0 {
-		s := make([]string, len(ip.PrefixListIds))
-		for i, pl := range ip.PrefixListIds {
+	if len(IP.PrefixListIds) > 0 {
+		s := make([]string, len(IP.PrefixListIds))
+		for i, pl := range IP.PrefixListIds {
 			s[i] = *pl.PrefixListId
 		}
 		sort.Strings(s)
@@ -338,8 +338,8 @@ func permissionId(sg_id, ruleType, groupId string, ip ec2.IpPermission) string {
 		}
 	}
 
-	if groupId != "" {
-		buf.WriteString(fmt.Sprintf("%s_", groupId))
+	if groupID != "" {
+		buf.WriteString(fmt.Sprintf("%s_", groupID))
 	}
 
 	idPreformatted := buf.String()

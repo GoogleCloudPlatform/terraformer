@@ -21,26 +21,26 @@ import (
 	"os"
 
 	"github.com/Azure/go-autorest/autorest"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/hashicorp/go-azure-helpers/authentication"
 	"github.com/hashicorp/go-azure-helpers/sender"
 )
 
-type AzureProvider struct {
-	terraform_utils.Provider
+type AzureProvider struct { //nolint
+	terraformutils.Provider
 	config     authentication.Config
 	authorizer autorest.Authorizer
 }
 
 func (p *AzureProvider) setEnvConfig() error {
-	subscription_id := os.Getenv("ARM_SUBSCRIPTION_ID")
-	if subscription_id == "" {
+	subscriptionID := os.Getenv("ARM_SUBSCRIPTION_ID")
+	if subscriptionID == "" {
 		return errors.New("set ARM_SUBSCRIPTION_ID env var")
 	}
 	builder := &authentication.Builder{
 		ClientID:                 os.Getenv("ARM_CLIENT_ID"),
-		SubscriptionID:           subscription_id,
+		SubscriptionID:           subscriptionID,
 		TenantID:                 os.Getenv("ARM_TENANT_ID"),
 		Environment:              os.Getenv("ARM_ENVIRONMENT"),
 		ClientSecret:             os.Getenv("ARM_CLIENT_SECRET"),
@@ -117,7 +117,7 @@ func (p *AzureProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"azurerm": map[string]interface{}{
-				"version": provider_wrapper.GetProviderVersion(p.GetName()),
+				"version": providerwrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}
@@ -127,8 +127,8 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{}
 }
 
-func (p *AzureProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	return map[string]terraform_utils.ServiceGenerator{
+func (p *AzureProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+	return map[string]terraformutils.ServiceGenerator{
 		"analysis":               &AnalysisGenerator{},
 		"database":               &DatabasesGenerator{},
 		"disk":                   &DiskGenerator{},

@@ -15,7 +15,7 @@
 package fastly
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/fastly/go-fastly/fastly"
 )
 
@@ -29,7 +29,7 @@ func (g *ServiceV1Generator) loadServices(client *fastly.Client) ([]*fastly.Serv
 		return nil, err
 	}
 	for _, service := range services {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			service.ID,
 			service.ID,
 			"fastly_service_v1",
@@ -54,7 +54,7 @@ func (g *ServiceV1Generator) loadDictionaryItems(client *fastly.Client, serviceI
 		return err
 	}
 	for _, dictionary := range dictionaries {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraformutils.NewResource(
 			dictionary.ID,
 			dictionary.ID,
 			"fastly_service_dictionary_items_v1",
@@ -69,7 +69,7 @@ func (g *ServiceV1Generator) loadDictionaryItems(client *fastly.Client, serviceI
 	return nil
 }
 
-func (g *ServiceV1Generator) loadAclEntries(client *fastly.Client, serviceID string) error {
+func (g *ServiceV1Generator) loadACLEntries(client *fastly.Client, serviceID string) error {
 	latest, err := client.LatestVersion(&fastly.LatestVersionInput{
 		Service: serviceID,
 	})
@@ -84,7 +84,7 @@ func (g *ServiceV1Generator) loadAclEntries(client *fastly.Client, serviceID str
 		return err
 	}
 	for _, acl := range acls {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraformutils.NewResource(
 			acl.ID,
 			acl.ID,
 			"fastly_service_acl_entries_v1",
@@ -116,7 +116,7 @@ func (g *ServiceV1Generator) loadDynamicSnippetContent(client *fastly.Client, se
 	for _, snippet := range snippets {
 		// check if dynamic
 		if snippet.Dynamic == 1 {
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraformutils.NewResource(
 				snippet.ID,
 				snippet.ID,
 				"fastly_service_dynamic_snippet_content_v1",
@@ -146,7 +146,7 @@ func (g *ServiceV1Generator) InitResources() error {
 		if err != nil {
 			return err
 		}
-		err = g.loadAclEntries(client, service.ID)
+		err = g.loadACLEntries(client, service.ID)
 		if err != nil {
 			return err
 		}

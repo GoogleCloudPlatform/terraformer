@@ -18,7 +18,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	heroku "github.com/heroku/heroku-go/v5"
 )
 
@@ -26,8 +26,8 @@ type TeamCollaboratorGenerator struct {
 	HerokuService
 }
 
-func (g TeamCollaboratorGenerator) createResources(svc *heroku.Service, teamList []heroku.Team) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g TeamCollaboratorGenerator) createResources(svc *heroku.Service, teamList []heroku.Team) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, team := range teamList {
 		apps, err := svc.TeamAppListByTeam(context.TODO(), team.ID, &heroku.ListRange{Field: "id"})
 		if err != nil {
@@ -39,7 +39,7 @@ func (g TeamCollaboratorGenerator) createResources(svc *heroku.Service, teamList
 				log.Println(err)
 			}
 			for _, collaborator := range collaborators {
-				resources = append(resources, terraform_utils.NewResource(
+				resources = append(resources, terraformutils.NewResource(
 					collaborator.ID,
 					collaborator.ID,
 					"heroku_team_collaborator",

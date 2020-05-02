@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
 )
 
@@ -46,7 +46,7 @@ func (g *KmsGenerator) addKeys(client *kms.Client) error {
 	p := kms.NewListKeysPaginator(client.ListKeysRequest(&kms.ListKeysInput{}))
 	for p.Next(context.Background()) {
 		for _, key := range p.CurrentPage().Keys {
-			resource := terraform_utils.NewResource(
+			resource := terraformutils.NewResource(
 				*key.KeyId,
 				*key.KeyId,
 				"aws_kms_key",
@@ -68,7 +68,7 @@ func (g *KmsGenerator) addAliases(client *kms.Client) error {
 	p := kms.NewListAliasesPaginator(client.ListAliasesRequest(&kms.ListAliasesInput{}))
 	for p.Next(context.Background()) {
 		for _, alias := range p.CurrentPage().Aliases {
-			resource := terraform_utils.NewSimpleResource(
+			resource := terraformutils.NewSimpleResource(
 				*alias.AliasName,
 				*alias.AliasName,
 				"aws_kms_alias",

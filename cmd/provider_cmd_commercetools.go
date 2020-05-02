@@ -18,7 +18,7 @@ import (
 	"os"
 
 	commercetools_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/commercetools"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -70,6 +70,6 @@ func newCmdCommercetoolsImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newCommercetoolsProvider() terraform_utils.ProviderGenerator {
+func newCommercetoolsProvider() terraformutils.ProviderGenerator {
 	return &commercetools_terraforming.CommercetoolsProvider{}
 }

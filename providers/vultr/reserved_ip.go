@@ -17,7 +17,7 @@ package vultr
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/vultr/govultr"
 )
 
@@ -25,10 +25,10 @@ type ReservedIPGenerator struct {
 	VultrService
 }
 
-func (g ReservedIPGenerator) createResources(ipList []govultr.ReservedIP) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g ReservedIPGenerator) createResources(ipList []govultr.ReservedIP) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, ip := range ipList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			ip.ReservedIPID,
 			ip.ReservedIPID,
 			"vultr_reserved_ip",

@@ -17,7 +17,7 @@ package newrelic
 import (
 	"fmt"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	newrelic "github.com/paultyng/go-newrelic/v4/api"
 )
 
@@ -37,7 +37,7 @@ func (g *InfraGenerator) createAlertInfraConditionResources(client *newrelic.Cli
 			return err
 		}
 		for _, alertInfraCondition := range alertInfraConditions {
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraformutils.NewResource(
 				fmt.Sprintf("%d:%d", alertPolicy.ID, alertInfraCondition.ID),
 				fmt.Sprintf("%s-%d", normalizeResourceName(alertInfraCondition.Name), alertInfraCondition.ID),
 				"newrelic_infra_alert_condition",

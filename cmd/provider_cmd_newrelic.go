@@ -16,7 +16,7 @@ package cmd
 import (
 	newrelic_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/newrelic"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -40,6 +40,6 @@ func newCmdNewRelicImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newNewRelicProvider() terraform_utils.ProviderGenerator {
+func newNewRelicProvider() terraformutils.ProviderGenerator {
 	return &newrelic_terraforming.NewRelicProvider{}
 }

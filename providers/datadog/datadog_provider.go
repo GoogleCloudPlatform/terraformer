@@ -18,13 +18,13 @@ import (
 	"errors"
 	"os"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/zclconf/go-cty/cty"
 )
 
-type DatadogProvider struct {
-	terraform_utils.Provider
+type DatadogProvider struct { //nolint
+	terraformutils.Provider
 	apiKey string
 	appKey string
 }
@@ -85,8 +85,8 @@ func (p *DatadogProvider) InitService(serviceName string, verbose bool) error {
 }
 
 // GetSupportedService return map of support service for Datadog
-func (p *DatadogProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	return map[string]terraform_utils.ServiceGenerator{
+func (p *DatadogProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+	return map[string]terraformutils.ServiceGenerator{
 		"dashboard":   &DashboardGenerator{},
 		"downtime":    &DowntimeGenerator{},
 		"monitor":     &MonitorGenerator{},
@@ -107,7 +107,7 @@ func (p DatadogProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			p.GetName(): map[string]interface{}{
-				"version": provider_wrapper.GetProviderVersion(p.GetName()),
+				"version": providerwrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}

@@ -22,7 +22,7 @@ import (
 	cloudscheduler "google.golang.org/api/cloudscheduler/v1beta1"
 	"google.golang.org/api/compute/v1"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 var schedulerJobsAllowEmptyValues = []string{""}
@@ -34,13 +34,13 @@ type SchedulerJobsGenerator struct {
 }
 
 // Run on SchedulerJobsList and create for each TerraformResource
-func (g SchedulerJobsGenerator) createResources(jobsList *cloudscheduler.ProjectsLocationsJobsListCall, ctx context.Context) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g SchedulerJobsGenerator) createResources(ctx context.Context, jobsList *cloudscheduler.ProjectsLocationsJobsListCall) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	if err := jobsList.Pages(ctx, func(page *cloudscheduler.ListJobsResponse) error {
 		for _, obj := range page.Jobs {
 			t := strings.Split(obj.Name, "/")
 			name := t[len(t)-1]
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				obj.Name,
 				name,
 				"google_cloud_scheduler_job",
@@ -71,6 +71,6 @@ func (g *SchedulerJobsGenerator) InitResources() error {
 
 	jobsList := cloudSchedulerService.Projects.Locations.Jobs.List("projects/" + g.GetArgs()["project"].(string) + "/locations/" + g.GetArgs()["region"].(compute.Region).Name)
 
-	g.Resources = g.createResources(jobsList, ctx)
+	g.Resources = g.createResources(ctx, jobsList)
 	return nil
 }

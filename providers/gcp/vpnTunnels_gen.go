@@ -19,7 +19,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"google.golang.org/api/compute/v1"
 )
@@ -33,11 +33,11 @@ type VpnTunnelsGenerator struct {
 }
 
 // Run on vpnTunnelsList and create for each TerraformResource
-func (g VpnTunnelsGenerator) createResources(ctx context.Context, vpnTunnelsList *compute.VpnTunnelsListCall) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g VpnTunnelsGenerator) createResources(ctx context.Context, vpnTunnelsList *compute.VpnTunnelsListCall) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	if err := vpnTunnelsList.Pages(ctx, func(page *compute.VpnTunnelList) error {
 		for _, obj := range page.Items {
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				obj.Name,
 				obj.Name,
 				"google_compute_vpn_tunnel",

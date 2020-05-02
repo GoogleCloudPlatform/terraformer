@@ -3,13 +3,13 @@ package aws
 import (
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
-type AwsFacade struct {
+type AwsFacade struct { //nolint
 	AWSService
-	service terraform_utils.ServiceGenerator
+	service terraformutils.ServiceGenerator
 }
 
 func (s *AwsFacade) SetProviderName(providerName string) {
@@ -24,7 +24,7 @@ func (s *AwsFacade) ParseFilters(rawFilters []string) {
 	s.service.ParseFilters(rawFilters)
 }
 
-func (s *AwsFacade) ParseFilter(rawFilter string) []terraform_utils.ResourceFilter {
+func (s *AwsFacade) ParseFilter(rawFilter string) []terraformutils.ResourceFilter {
 	return s.service.ParseFilter(rawFilter)
 }
 
@@ -50,10 +50,10 @@ func (s *AwsFacade) SetArgs(args map[string]interface{}) {
 	s.service.SetArgs(args)
 }
 
-func (s *AwsFacade) GetResources() []terraform_utils.Resource {
+func (s *AwsFacade) GetResources() []terraformutils.Resource {
 	return s.service.GetResources()
 }
-func (s *AwsFacade) SetResources(resources []terraform_utils.Resource) {
+func (s *AwsFacade) SetResources(resources []terraformutils.Resource) {
 	s.service.SetResources(resources)
 }
 
@@ -61,20 +61,18 @@ func (s *AwsFacade) InitResources() error {
 	err := s.service.InitResources()
 	if err == nil {
 		return nil
-	} else {
-		message := err.Error()
-		if strings.Contains(message, "no such host") || strings.Contains(message, "i/o timeout") { // skip not available AWS services
-			return nil
-		} else {
-			return err
-		}
 	}
+	message := err.Error()
+	if strings.Contains(message, "no such host") || strings.Contains(message, "i/o timeout") { // skip not available AWS services
+		return nil
+	}
+	return err
 }
 
 func (s *AwsFacade) PostConvertHook() error {
 	return s.service.PostConvertHook()
 }
 
-func (s *AwsFacade) PopulateIgnoreKeys(providerWrapper *provider_wrapper.ProviderWrapper) {
+func (s *AwsFacade) PopulateIgnoreKeys(providerWrapper *providerwrapper.ProviderWrapper) {
 	s.service.PopulateIgnoreKeys(providerWrapper)
 }

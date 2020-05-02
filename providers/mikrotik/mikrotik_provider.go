@@ -18,12 +18,12 @@ import (
 	"errors"
 	"os"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
-type MikrotikProvider struct {
-	terraform_utils.Provider
+type MikrotikProvider struct { //nolint
+	terraformutils.Provider
 	host     string
 	user     string
 	password string
@@ -56,7 +56,7 @@ func (p *MikrotikProvider) GetProviderData(arg ...string) map[string]interface{}
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"mikrotik": map[string]interface{}{
-				"version":  provider_wrapper.GetProviderVersion(p.GetName()),
+				"version":  providerwrapper.GetProviderVersion(p.GetName()),
 				"host":     p.host,
 				"user":     p.user,
 				"password": p.password,
@@ -69,8 +69,8 @@ func (MikrotikProvider) GetResourceConnections() map[string]map[string][]string 
 	return map[string]map[string][]string{}
 }
 
-func (p *MikrotikProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	return map[string]terraform_utils.ServiceGenerator{
+func (p *MikrotikProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+	return map[string]terraformutils.ServiceGenerator{
 		"dhcp_lease": &DhcpLeaseGenerator{},
 	}
 }

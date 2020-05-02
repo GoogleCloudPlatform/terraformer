@@ -18,7 +18,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/digitalocean/godo"
 )
 
@@ -38,7 +38,7 @@ func (g *DatabaseClusterGenerator) loadDatabaseClusters(ctx context.Context, cli
 		}
 
 		for _, cluster := range clusters {
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				cluster.ID,
 				cluster.Name,
 				"digitalocean_database_cluster",
@@ -74,7 +74,7 @@ func (g *DatabaseClusterGenerator) loadDatabaseConnectionPools(ctx context.Conte
 		}
 
 		for _, pool := range pools {
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				fmt.Sprintf("%s/%s", clusterID, pool.Name),
 				pool.Name,
 				"digitalocean_database_connection_pool",
@@ -111,7 +111,7 @@ func (g *DatabaseClusterGenerator) loadDatabaseDBs(ctx context.Context, client *
 		for _, db := range dbs {
 			// skip default database created by the digitalocean database cluster
 			if db.Name != "defaultdb" {
-				g.Resources = append(g.Resources, terraform_utils.NewResource(
+				g.Resources = append(g.Resources, terraformutils.NewResource(
 					db.Name,
 					db.Name,
 					"digitalocean_database_db",
@@ -152,7 +152,7 @@ func (g *DatabaseClusterGenerator) loadDatabaseReplicas(ctx context.Context, cli
 		}
 
 		for _, replica := range replicas {
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraformutils.NewResource(
 				replica.Name,
 				replica.Name,
 				"digitalocean_database_replica",
@@ -194,7 +194,7 @@ func (g *DatabaseClusterGenerator) loadDatabaseUsers(ctx context.Context, client
 		for _, user := range users {
 			// skip default user created by the digitalocean database cluster
 			if user.Name != "doadmin" {
-				g.Resources = append(g.Resources, terraform_utils.NewResource(
+				g.Resources = append(g.Resources, terraformutils.NewResource(
 					user.Name,
 					user.Name,
 					"digitalocean_database_user",

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package terraform_utils
+package terraformutils
 
 import (
 	"fmt"
@@ -20,7 +20,7 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/zclconf/go-cty/cty"
 )
@@ -113,7 +113,7 @@ func NewSimpleResource(ID, resourceName, resourceType, provider string, allowEmp
 	)
 }
 
-func (r *Resource) Refresh(provider *provider_wrapper.ProviderWrapper) {
+func (r *Resource) Refresh(provider *providerwrapper.ProviderWrapper) {
 	var err error
 	if r.SlowQueryRequired {
 		time.Sleep(200 * time.Millisecond)
@@ -150,7 +150,7 @@ func (r *Resource) ParseTFstate(parser Flatmapper, impliedType cty.Type) error {
 	return nil
 }
 
-func (r *Resource) ConvertTFstate(provider *provider_wrapper.ProviderWrapper) error {
+func (r *Resource) ConvertTFstate(provider *providerwrapper.ProviderWrapper) error {
 	ignoreKeys := []*regexp.Regexp{}
 	for _, pattern := range r.IgnoreKeys {
 		ignoreKeys = append(ignoreKeys, regexp.MustCompile(pattern))

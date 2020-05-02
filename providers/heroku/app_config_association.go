@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	heroku "github.com/heroku/heroku-go/v5"
 )
 
@@ -27,14 +27,14 @@ type AppConfigAssociationGenerator struct {
 	HerokuService
 }
 
-func (g AppConfigAssociationGenerator) createResources(svc *heroku.Service, appList []heroku.App) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g AppConfigAssociationGenerator) createResources(svc *heroku.Service, appList []heroku.App) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, app := range appList {
 		output, err := svc.ConfigVarInfoForApp(context.TODO(), app.ID)
 		if err != nil {
 			log.Println(err)
 		}
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			fmt.Sprintf("%s-config-association", app.Name),
 			fmt.Sprintf("%s-config-association", app.Name),
 			"heroku_app_config_association",

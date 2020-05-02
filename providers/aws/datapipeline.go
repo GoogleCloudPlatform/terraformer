@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/datapipeline"
 )
@@ -35,12 +35,12 @@ func (g *DataPipelineGenerator) InitResources() error {
 	}
 	svc := datapipeline.New(config)
 	p := datapipeline.NewListPipelinesPaginator(svc.ListPipelinesRequest(&datapipeline.ListPipelinesInput{}))
-	var resources []terraform_utils.Resource
+	var resources []terraformutils.Resource
 	for p.Next(context.Background()) {
 		for _, pipeline := range p.CurrentPage().PipelineIdList {
 			pipelineID := aws.StringValue(pipeline.Id)
 			pipelineName := aws.StringValue(pipeline.Name)
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				pipelineID,
 				pipelineName,
 				"aws_datapipeline_pipeline",

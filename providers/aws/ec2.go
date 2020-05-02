@@ -18,7 +18,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -65,7 +65,7 @@ func (g *Ec2Generator) InitResources() error {
 				if err == nil && attr.UserData != nil && attr.UserData.Value != nil {
 					userDataBase64 = aws.StringValue(attr.UserData.Value)
 				}
-				r := terraform_utils.NewResource(
+				r := terraformutils.NewResource(
 					aws.StringValue(instance.InstanceId),
 					aws.StringValue(instance.InstanceId)+"_"+name,
 					"aws_instance",

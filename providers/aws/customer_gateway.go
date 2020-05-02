@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -29,10 +29,10 @@ type CustomerGatewayGenerator struct {
 	AWSService
 }
 
-func (CustomerGatewayGenerator) createResources(cgws *ec2.DescribeCustomerGatewaysResponse) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (CustomerGatewayGenerator) createResources(cgws *ec2.DescribeCustomerGatewaysResponse) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	for _, cgws := range cgws.CustomerGateways {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			aws.StringValue(cgws.CustomerGatewayId),
 			aws.StringValue(cgws.CustomerGatewayId),
 			"aws_customer_gateway",

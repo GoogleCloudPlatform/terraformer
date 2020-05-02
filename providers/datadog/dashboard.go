@@ -19,7 +19,7 @@ import (
 
 	datadog "github.com/zorkian/go-datadog-api"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 var (
@@ -32,11 +32,11 @@ type DashboardGenerator struct {
 	DatadogService
 }
 
-func (DashboardGenerator) createResources(dashboards []datadog.BoardLite) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (DashboardGenerator) createResources(dashboards []datadog.BoardLite) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	for _, dashboard := range dashboards {
 		resourceName := dashboard.GetId()
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			resourceName,
 			fmt.Sprintf("dashboard_%s", resourceName),
 			"datadog_dashboard",

@@ -17,7 +17,7 @@ package gcp
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"google.golang.org/api/iterator"
 
 	"cloud.google.com/go/logging/logadmin"
@@ -43,7 +43,7 @@ func (g *LoggingGenerator) loadLoggingMetrics(ctx context.Context, client *logad
 		if err != nil {
 			return err
 		}
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraformutils.NewResource(
 			metric.ID,
 			metric.ID,
 			"google_logging_metric",

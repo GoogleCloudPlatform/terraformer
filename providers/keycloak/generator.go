@@ -109,7 +109,7 @@ func (g *RealmGenerator) InitResources() error {
 		if err != nil {
 			return errors.New("keycloak: could not get open id clients of realm " + realm.Id + " in Keycloak")
 		}
-		g.Resources = append(g.Resources, g.createOpenIdClientResources(realmClients)...)
+		g.Resources = append(g.Resources, g.createOpenIDClientResources(realmClients)...)
 
 		// For earch open id client, get resources
 		mapServiceAccountIds := map[string]map[string]string{}
@@ -124,7 +124,7 @@ func (g *RealmGenerator) InitResources() error {
 			if err != nil {
 				return errors.New("keycloak: could not get protocol mappers of open id client " + client.ClientId + " of realm " + realm.Id + " in Keycloak")
 			}
-			g.Resources = append(g.Resources, g.createOpenIdProtocolMapperResources(client.ClientId, clientMappers)...)
+			g.Resources = append(g.Resources, g.createOpenIDProtocolMapperResources(client.ClientId, clientMappers)...)
 
 			// Get open id client default scopes resources
 			clientScopes, err := kck.GetOpenidDefaultClientScopes(realm.Id, client.Id)

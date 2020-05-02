@@ -19,7 +19,7 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	githubAPI "github.com/google/go-github/v25/github"
 	"golang.org/x/oauth2"
@@ -50,7 +50,7 @@ func (g *OrganizationWebhooksGenerator) InitResources() error {
 		}
 
 		for _, hook := range hooks {
-			resource := terraform_utils.NewSimpleResource(
+			resource := terraformutils.NewSimpleResource(
 				strconv.FormatInt(hook.GetID(), 10),
 				strconv.FormatInt(hook.GetID(), 10),
 				"github_organization_webhook",

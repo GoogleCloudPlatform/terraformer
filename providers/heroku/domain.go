@@ -18,7 +18,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	heroku "github.com/heroku/heroku-go/v5"
 )
 
@@ -26,15 +26,15 @@ type DomainGenerator struct {
 	HerokuService
 }
 
-func (g DomainGenerator) createResources(svc *heroku.Service, appList []heroku.App) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g DomainGenerator) createResources(svc *heroku.Service, appList []heroku.App) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, app := range appList {
 		output, err := svc.DomainList(context.TODO(), app.ID, &heroku.ListRange{Field: "id"})
 		if err != nil {
 			log.Println(err)
 		}
 		for _, domain := range output {
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				domain.ID,
 				domain.ID,
 				"heroku_domain",

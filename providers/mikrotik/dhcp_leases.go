@@ -16,7 +16,7 @@ package mikrotik
 import (
 	"fmt"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/ddelnano/terraform-provider-mikrotik/client"
 )
 
@@ -24,14 +24,14 @@ type DhcpLeaseGenerator struct {
 	MikrotikService
 }
 
-func (g DhcpLeaseGenerator) createResources(leases []client.DhcpLease) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g DhcpLeaseGenerator) createResources(leases []client.DhcpLease) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, lease := range leases {
 		resourceName := lease.Id
 		if lease.Hostname != "" {
 			resourceName = fmt.Sprintf("%s-%s", lease.Hostname, lease.Id)
 		}
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			lease.Id,
 			resourceName,
 			"mikrotik_dhcp_lease",

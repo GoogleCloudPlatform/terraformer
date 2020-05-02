@@ -3,7 +3,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/xray"
 )
 
@@ -25,7 +25,7 @@ func (g *XrayGenerator) InitResources() error {
 		for _, samplingRule := range p.CurrentPage().SamplingRuleRecords {
 			// NOTE: Builtin rule with unmodifiable name and 10000 prirority (lowest)
 			if *samplingRule.SamplingRule.RuleName != "Default" {
-				g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+				g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 					*samplingRule.SamplingRule.RuleName,
 					*samplingRule.SamplingRule.RuleName,
 					"aws_xray_sampling_rule",

@@ -16,7 +16,7 @@ package cmd
 import (
 	azure_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/azure"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -40,6 +40,6 @@ func newCmdAzureImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newAzureProvider() terraform_utils.ProviderGenerator {
+func newAzureProvider() terraformutils.ProviderGenerator {
 	return &azure_terraforming.AzureProvider{}
 }

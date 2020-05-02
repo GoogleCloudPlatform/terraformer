@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package terraform_utils
+package terraformutils
 
 import (
 	"reflect"
@@ -62,9 +62,8 @@ func walkAndGet(pathSegments []string, data interface{}) []interface{} {
 				}
 			}
 			return []interface{}{}
-		} else {
-			return []interface{}{}
 		}
+		return []interface{}{}
 	}
 }
 

@@ -17,7 +17,7 @@ package openstack
 import (
 	"log"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack"
 	"github.com/gophercloud/gophercloud/openstack/blockstorage/v3/volumes"
@@ -36,8 +36,8 @@ type BlockStorageGenerator struct {
 }
 
 // createResources iterate on all openstack_blockstorage_volume
-func (g *BlockStorageGenerator) createResources(list *pagination.Pager, clientType string) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g *BlockStorageGenerator) createResources(list *pagination.Pager, clientType string) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 
 	err := list.EachPage(func(page pagination.Page) (bool, error) {
 		volumes, err := volumes.ExtractVolumes(page)
@@ -52,7 +52,7 @@ func (g *BlockStorageGenerator) createResources(list *pagination.Pager, clientTy
 				name = v.ID
 			}
 
-			resource := terraform_utils.NewSimpleResource(
+			resource := terraformutils.NewSimpleResource(
 				v.ID,
 				name,
 				resourceType[clientType],

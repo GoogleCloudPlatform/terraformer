@@ -15,7 +15,7 @@
 package gcp
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 var projectAllowEmptyValues = []string{""}
@@ -28,7 +28,7 @@ type ProjectGenerator struct {
 
 // Generate TerraformResources from GCP API,
 func (g *ProjectGenerator) InitResources() error {
-	g.Resources = append(g.Resources, terraform_utils.NewResource(
+	g.Resources = append(g.Resources, terraformutils.NewResource(
 		g.GetArgs()["project"].(string),
 		g.GetArgs()["project"].(string),
 		"google_project",

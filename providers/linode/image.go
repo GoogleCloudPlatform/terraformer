@@ -17,7 +17,7 @@ package linode
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/linode/linodego"
 )
 
@@ -25,10 +25,10 @@ type ImageGenerator struct {
 	LinodeService
 }
 
-func (g ImageGenerator) createResources(imageList []linodego.Image) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g ImageGenerator) createResources(imageList []linodego.Image) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, image := range imageList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			image.ID,
 			image.ID,
 			"linode_image",
