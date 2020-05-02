@@ -36,9 +36,7 @@ func (g TagGenerator) listTags(ctx context.Context, client *godo.Client) ([]godo
 			return nil, err
 		}
 
-		for _, tag := range tags {
-			list = append(list, tag)
-		}
+		list = append(list, tags...)
 
 		// if we are at the last page, break out the for loop
 		if resp.Links == nil || resp.Links.IsLastPage() {

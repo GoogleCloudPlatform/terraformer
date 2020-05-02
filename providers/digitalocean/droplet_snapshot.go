@@ -36,9 +36,7 @@ func (g DropletSnapshotGenerator) listDropletSnapshots(ctx context.Context, clie
 			return nil, err
 		}
 
-		for _, snapshot := range snapshots {
-			list = append(list, snapshot)
-		}
+		list = append(list, snapshots...)
 
 		// if we are at the last page, break out the for loop
 		if resp.Links == nil || resp.Links.IsLastPage() {

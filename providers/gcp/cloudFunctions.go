@@ -27,8 +27,6 @@ import (
 
 var cloudFunctionsAllowEmptyValues = []string{""}
 
-var cloudFunctionsAdditionalFields = map[string]string{}
-
 type CloudFunctionsGenerator struct {
 	GCPService
 }

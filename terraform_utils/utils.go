@@ -31,7 +31,7 @@ type BaseResource struct {
 func NewTfState(resources []Resource) *terraform.State {
 	tfstate := &terraform.State{
 		Version:   terraform.StateVersion,
-		TFVersion: terraform.VersionString(),
+		TFVersion: terraform.VersionString(), //nolint
 		Serial:    1,
 	}
 	outputs := map[string]*terraform.OutputState{}

@@ -34,9 +34,7 @@ func walkAndGet(pathSegments []string, data interface{}) []interface{} {
 	if isArray(val.Interface()) {
 		var arrayValues []interface{}
 		for i := 0; i < val.Len(); i++ {
-			for _, subValue := range walkAndGet(pathSegments, val.Index(i).Interface()) {
-				arrayValues = append(arrayValues, subValue)
-			}
+			arrayValues = append(arrayValues, walkAndGet(pathSegments, val.Index(i).Interface())...)
 		}
 		return arrayValues
 	} else if len(pathSegments) == 1 {

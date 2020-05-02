@@ -62,10 +62,7 @@ func (g *NatGatewayGenerator) InitResources() error {
 		}
 
 		response := raw.(*vpc.DescribeNatGatewaysResponse)
-		for _, NatGateway := range response.NatGateways.NatGateway {
-			allNatGateways = append(allNatGateways, NatGateway)
-
-		}
+		allNatGateways = append(allNatGateways, response.NatGateways.NatGateway...)
 		remaining = response.TotalCount - pageNumber*pageSize
 		pageNumber++
 	}

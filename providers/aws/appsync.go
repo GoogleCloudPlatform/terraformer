@@ -2,6 +2,7 @@ package aws
 
 import (
 	"context"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/aws/aws-sdk-go-v2/service/appsync"
 )

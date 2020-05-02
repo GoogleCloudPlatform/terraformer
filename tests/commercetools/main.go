@@ -71,7 +71,10 @@ func main() {
 			log.Println(err)
 			os.Exit(1)
 		}
-		os.Chdir(rootPath)
+		err := os.Chdir(rootPath)
+		if err != nil {
+			log.Println(err)
+		}
 	}
 
 }

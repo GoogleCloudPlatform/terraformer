@@ -29,7 +29,7 @@ type DnsGenerator struct {
 func resourceFromDomain(domain alidns.Domain) terraform_utils.Resource {
 	return terraform_utils.NewResource(
 		domain.DomainName,                      // id
-		domain.DomainId+"__"+domain.DomainName, // name
+		domain.DomainId+"__"+domain.DomainName, // nolint
 		"alicloud_dns",
 		"alicloud",
 		map[string]string{},
@@ -40,8 +40,8 @@ func resourceFromDomain(domain alidns.Domain) terraform_utils.Resource {
 
 func resourceFromDomainRecord(record alidns.Record) terraform_utils.Resource {
 	return terraform_utils.NewResource(
-		record.RecordId,                        // id
-		record.RecordId+"__"+record.DomainName, // name
+		record.RecordId,                        // nolint
+		record.RecordId+"__"+record.DomainName, // nolint
 		"alicloud_dns_record",
 		"alicloud",
 		map[string]string{},
@@ -70,10 +70,7 @@ func initDomains(client *connectivity.AliyunClient) ([]alidns.Domain, error) {
 		}
 
 		response := raw.(*alidns.DescribeDomainsResponse)
-		for _, domain := range response.Domains.Domain {
-			allDomains = append(allDomains, domain)
-
-		}
+		allDomains = append(allDomains, response.Domains.Domain...)
 		remaining = int(response.TotalCount) - pageNumber*pageSize
 		pageNumber++
 	}
@@ -103,10 +100,7 @@ func initDomainRecords(client *connectivity.AliyunClient, allDomains []alidns.Do
 			}
 
 			response := raw.(*alidns.DescribeDomainRecordsResponse)
-			for _, record := range response.DomainRecords.Record {
-				allDomainRecords = append(allDomainRecords, record)
-
-			}
+			allDomainRecords = append(allDomainRecords, response.DomainRecords.Record...)
 			remaining = int(response.TotalCount) - pageNumber*pageSize
 			pageNumber++
 		}

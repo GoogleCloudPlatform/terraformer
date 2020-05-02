@@ -114,10 +114,7 @@ func initSecurityGroups(client *connectivity.AliyunClient) ([]ecs.SecurityGroup,
 		}
 
 		response := raw.(*ecs.DescribeSecurityGroupsResponse)
-		for _, securitygroup := range response.SecurityGroups.SecurityGroup {
-			allSecurityGroups = append(allSecurityGroups, securitygroup)
-
-		}
+		allSecurityGroups = append(allSecurityGroups, response.SecurityGroups.SecurityGroup...)
 		remaining = response.TotalCount - pageNumber*pageSize
 		pageNumber++
 	}

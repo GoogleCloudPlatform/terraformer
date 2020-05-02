@@ -36,9 +36,7 @@ func (g LoadBalancerGenerator) listLoadBalancers(ctx context.Context, client *go
 			return nil, err
 		}
 
-		for _, loadBalancer := range loadBalancers {
-			list = append(list, loadBalancer)
-		}
+		list = append(list, loadBalancers...)
 
 		// if we are at the last page, break out the for loop
 		if resp.Links == nil || resp.Links.IsLastPage() {

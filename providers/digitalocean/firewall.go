@@ -36,9 +36,7 @@ func (g FirewallGenerator) listFirewalls(ctx context.Context, client *godo.Clien
 			return nil, err
 		}
 
-		for _, firewall := range firewalls {
-			list = append(list, firewall)
-		}
+		list = append(list, firewalls...)
 
 		// if we are at the last page, break out the for loop
 		if resp.Links == nil || resp.Links.IsLastPage() {

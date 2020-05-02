@@ -32,7 +32,10 @@ func main() {
 		}
 	}
 	// move files for deleted providers
-	os.MkdirAll(packageCmdPath+"/tmp", os.ModePerm)
+	err = os.MkdirAll(packageCmdPath+"/tmp", os.ModePerm)
+	if err != nil {
+		log.Println(err)
+	}
 	for _, provider := range deletedProvider {
 		err := os.Rename(packageCmdPath+"/"+filePrefix+provider+fileSuffix, packageCmdPath+"/tmp/"+filePrefix+provider+fileSuffix)
 		if err != nil {
@@ -42,6 +45,9 @@ func main() {
 
 	// comment deleted providers in code
 	rootCode, err := ioutil.ReadFile(packageCmdPath + "/root.go")
+	if err != nil {
+		log.Println(err)
+	}
 	lines := strings.Split(string(rootCode), "\n")
 	newRootCodeLines := make([]string, len(lines))
 	for i, line := range lines {
@@ -56,8 +62,10 @@ func main() {
 		newRootCodeLines[i] = line
 	}
 	newRootCode := strings.Join(newRootCodeLines, "\n")
-	ioutil.WriteFile(packageCmdPath+"/root.go", []byte(newRootCode), os.ModePerm)
-
+	err = ioutil.WriteFile(packageCmdPath+"/root.go", []byte(newRootCode), os.ModePerm)
+	if err != nil {
+		log.Println(err)
+	}
 	// build....
 	cmd := exec.Command("go", "build", "-o", "terraformer-"+provider)
 	var outb, errb bytes.Buffer
@@ -70,7 +78,10 @@ func main() {
 	fmt.Println(outb.String())
 
 	//revert code and files
-	ioutil.WriteFile(packageCmdPath+"/root.go", []byte(rootCode), os.ModePerm)
+	err = ioutil.WriteFile(packageCmdPath+"/root.go", []byte(rootCode), os.ModePerm)
+	if err != nil {
+		log.Println(err)
+	}
 	for _, provider := range deletedProvider {
 		err := os.Rename(packageCmdPath+"/tmp/"+filePrefix+provider+fileSuffix, "cmd/"+filePrefix+provider+fileSuffix)
 		if err != nil {

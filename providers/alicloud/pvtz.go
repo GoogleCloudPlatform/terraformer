@@ -84,9 +84,7 @@ func initZones(client *connectivity.AliyunClient) ([]pvtz.Zone, error) {
 		}
 
 		response := raw.(*pvtz.DescribeZonesResponse)
-		for _, Zone := range response.Zones.Zone {
-			allZones = append(allZones, Zone)
-		}
+		allZones = append(allZones, response.Zones.Zone...)
 		remaining = response.TotalItems - pageNumber*pageSize
 		pageNumber++
 	}

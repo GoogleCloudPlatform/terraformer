@@ -37,9 +37,7 @@ func (g SSHKeyGenerator) listKeys(ctx context.Context, client *godo.Client) ([]g
 			return nil, err
 		}
 
-		for _, key := range keys {
-			list = append(list, key)
-		}
+		list = append(list, keys...)
 
 		// if we are at the last page, break out the for loop
 		if resp.Links == nil || resp.Links.IsLastPage() {

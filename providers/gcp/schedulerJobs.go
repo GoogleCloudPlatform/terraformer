@@ -19,7 +19,7 @@ import (
 	"log"
 	"strings"
 
-	"google.golang.org/api/cloudscheduler/v1beta1"
+	cloudscheduler "google.golang.org/api/cloudscheduler/v1beta1"
 	"google.golang.org/api/compute/v1"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
