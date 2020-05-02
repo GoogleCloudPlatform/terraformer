@@ -18,7 +18,7 @@ import (
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/providers/alicloud/connectivity"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ecs"
 )
@@ -28,8 +28,8 @@ type SgGenerator struct {
 	AliCloudService
 }
 
-func resourceFromSecurityGroup(securitygroup ecs.SecurityGroup) terraform_utils.Resource {
-	return terraform_utils.NewResource(
+func resourceFromSecurityGroup(securitygroup ecs.SecurityGroup) terraformutils.Resource {
+	return terraformutils.NewResource(
 		securitygroup.SecurityGroupId,                                      // id
 		securitygroup.SecurityGroupId+"__"+securitygroup.SecurityGroupName, // name
 		"alicloud_security_group",
@@ -40,7 +40,7 @@ func resourceFromSecurityGroup(securitygroup ecs.SecurityGroup) terraform_utils.
 	)
 }
 
-func resourceFromSecurityGroupAttribute(permission ecs.Permission, securityGroup ecs.SecurityGroup) terraform_utils.Resource {
+func resourceFromSecurityGroupAttribute(permission ecs.Permission, securityGroup ecs.SecurityGroup) terraformutils.Resource {
 	// https://github.com/terraform-providers/terraform-provider-alicloud/blob/master/alicloud/resource_alicloud_security_group_rule.go#L153
 	// sgId + ":" + direction + ":" + ptl + ":" + port + ":" + nicType + ":" + cidr_ip + ":" + policy + ":" + strconv.Itoa(priority)
 	id := strings.Join([]string{
@@ -55,7 +55,7 @@ func resourceFromSecurityGroupAttribute(permission ecs.Permission, securityGroup
 	}, ":")
 	id = strings.ToLower(id)
 
-	return terraform_utils.NewResource(
+	return terraformutils.NewResource(
 		id, // id
 		id+"__"+securityGroup.SecurityGroupName, // name
 		"alicloud_security_group_rule",
@@ -76,7 +76,7 @@ func initSecurityGroupRules(client *connectivity.AliyunClient, securityGroups []
 		}
 		raw, err := client.WithEcsClient(func(ecsClient *ecs.Client) (interface{}, error) {
 			request := ecs.CreateDescribeSecurityGroupAttributeRequest()
-			request.RegionId = client.RegionId
+			request.RegionId = client.RegionID
 			request.SecurityGroupId = securityGroup.SecurityGroupId
 			return ecsClient.DescribeSecurityGroupAttribute(request)
 		})
@@ -89,7 +89,6 @@ func initSecurityGroupRules(client *connectivity.AliyunClient, securityGroups []
 			allPermissions = append(allPermissions, zoneRecord)
 			alignedSecurityGroups = append(alignedSecurityGroups, securityGroup)
 		}
-
 	}
 	return allPermissions, alignedSecurityGroups, nil
 }
@@ -104,7 +103,7 @@ func initSecurityGroups(client *connectivity.AliyunClient) ([]ecs.SecurityGroup,
 	for remaining > 0 {
 		raw, err := client.WithEcsClient(func(ecsClient *ecs.Client) (interface{}, error) {
 			request := ecs.CreateDescribeSecurityGroupsRequest()
-			request.RegionId = client.RegionId
+			request.RegionId = client.RegionID
 			request.PageSize = requests.NewInteger(pageSize)
 			request.PageNumber = requests.NewInteger(pageNumber)
 			return ecsClient.DescribeSecurityGroups(request)

@@ -19,7 +19,7 @@ import (
 
 	datadog "github.com/zorkian/go-datadog-api"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 var (
@@ -32,11 +32,11 @@ type UserGenerator struct {
 	DatadogService
 }
 
-func (UserGenerator) createResources(users []datadog.User) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (UserGenerator) createResources(users []datadog.User) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	for _, user := range users {
 		resourceName := user.GetHandle()
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			resourceName,
 			fmt.Sprintf("user_%s", resourceName),
 			"datadog_user",

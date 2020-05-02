@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation"
 )
@@ -40,7 +40,7 @@ func (g *CloudFormationGenerator) InitResources() error {
 			if stackSummary.StackStatus == cloudformation.StackStatusDeleteComplete {
 				continue
 			}
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				*stackSummary.StackId,
 				*stackSummary.StackName,
 				"aws_cloudformation_stack",
@@ -60,7 +60,7 @@ func (g *CloudFormationGenerator) InitResources() error {
 		if stackSetSummary.Status == cloudformation.StackSetStatusDeleted {
 			continue
 		}
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			*stackSetSummary.StackSetId,
 			*stackSetSummary.StackSetName,
 			"aws_cloudformation_stack_set",
@@ -77,7 +77,7 @@ func (g *CloudFormationGenerator) InitResources() error {
 		for _, stackSetI := range stackSetInstances.Summaries {
 			id := aws.StringValue(stackSetI.StackSetId) + "," + aws.StringValue(stackSetI.Account) + "," + aws.StringValue(stackSetI.Region)
 
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				id,
 				id,
 				"aws_cloudformation_stack_set_instance",

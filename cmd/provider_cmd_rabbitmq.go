@@ -19,7 +19,7 @@ import (
 
 	rabbitmq_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/rabbitmq"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -53,6 +53,6 @@ func newCmdRabbitMQImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newRabbitMQProvider() terraform_utils.ProviderGenerator {
+func newRabbitMQProvider() terraformutils.ProviderGenerator {
 	return &rabbitmq_terraforming.RBTProvider{}
 }

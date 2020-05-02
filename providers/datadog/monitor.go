@@ -20,7 +20,7 @@ import (
 
 	datadog "github.com/zorkian/go-datadog-api"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 var (
@@ -33,11 +33,11 @@ type MonitorGenerator struct {
 	DatadogService
 }
 
-func (MonitorGenerator) createResources(monitors []datadog.Monitor) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (MonitorGenerator) createResources(monitors []datadog.Monitor) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	for _, monitor := range monitors {
 		resourceName := strconv.Itoa(monitor.GetId())
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			resourceName,
 			fmt.Sprintf("monitor_%s", resourceName),
 			"datadog_monitor",

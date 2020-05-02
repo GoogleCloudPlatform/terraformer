@@ -54,7 +54,6 @@ func (g *RealmGenerator) InitResources() error {
 
 	// For each realm, get resources
 	for _, realm := range realms {
-
 		// Get required actions resources
 		requiredActions, err := kck.GetRequiredActions(realm.Id)
 		if err != nil {
@@ -72,8 +71,7 @@ func (g *RealmGenerator) InitResources() error {
 
 		// For each custom federation, get mappers resources
 		for _, customUserFederation := range *customUserFederations {
-			switch customUserFederation.ProviderId {
-			case "ldap":
+			if customUserFederation.ProviderId == "ldap" {
 				mappers, err := kck.GetLdapUserFederationMappers(realm.Id, customUserFederation.Id)
 				if err != nil {
 					return errors.New("keycloak: could not get mappers of ldap user federation " + customUserFederation.Name + " of realm " + realm.Id + " in Keycloak")
@@ -109,7 +107,7 @@ func (g *RealmGenerator) InitResources() error {
 		if err != nil {
 			return errors.New("keycloak: could not get open id clients of realm " + realm.Id + " in Keycloak")
 		}
-		g.Resources = append(g.Resources, g.createOpenIdClientResources(realmClients)...)
+		g.Resources = append(g.Resources, g.createOpenIDClientResources(realmClients)...)
 
 		// For earch open id client, get resources
 		mapServiceAccountIds := map[string]map[string]string{}
@@ -124,7 +122,7 @@ func (g *RealmGenerator) InitResources() error {
 			if err != nil {
 				return errors.New("keycloak: could not get protocol mappers of open id client " + client.ClientId + " of realm " + realm.Id + " in Keycloak")
 			}
-			g.Resources = append(g.Resources, g.createOpenIdProtocolMapperResources(client.ClientId, clientMappers)...)
+			g.Resources = append(g.Resources, g.createOpenIDProtocolMapperResources(client.ClientId, clientMappers)...)
 
 			// Get open id client default scopes resources
 			clientScopes, err := kck.GetOpenidDefaultClientScopes(realm.Id, client.Id)
@@ -188,12 +186,11 @@ func (g *RealmGenerator) InitResources() error {
 
 	// Parse the groups trees, and get all the groups
 	// Get groups resources
-	groups := g.flattenGroups(realmsGroups, "", "")
+	groups := g.flattenGroups(realmsGroups, "")
 	g.Resources = append(g.Resources, g.createGroupResources(groups)...)
 
 	// For each group, get group memberships and roles resources
 	for _, group := range groups {
-
 		// Get group members resources
 		members, err := kck.GetGroupMembers(group.RealmId, group.Id)
 		if err != nil {
@@ -295,7 +292,6 @@ func (g *RealmGenerator) PostConvertHook() error {
 
 	// For each resources, modify import if needed...
 	for i, r := range g.Resources {
-
 		// Escape keycloak text inputs not to get unpredictable results or errors when Terraform will try to interpret variables ($ vs $$)
 		// TODO: ensure that we escape all existing fields
 		if strings.Contains(r.InstanceState.Attributes["consent_screen_text"], "$") {

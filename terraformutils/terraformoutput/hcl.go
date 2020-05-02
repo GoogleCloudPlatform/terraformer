@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package terraform_output
+package terraformoutput
 
 import (
 	"io/ioutil"
@@ -19,17 +19,17 @@ import (
 	"os"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func OutputHclFiles(resources []terraform_utils.Resource, provider terraform_utils.ProviderGenerator, path string, serviceName string, isCompact bool, output string) error {
+func OutputHclFiles(resources []terraformutils.Resource, provider terraformutils.ProviderGenerator, path string, serviceName string, isCompact bool, output string) error {
 	if err := os.MkdirAll(path, os.ModePerm); err != nil {
 		return err
 	}
 	// create provider file
-	providerDataFile, err := terraform_utils.Print(provider.GetProviderData(), map[string]struct{}{}, output)
+	providerDataFile, err := terraformutils.Print(provider.GetProviderData(), map[string]struct{}{}, output)
 	if err != nil {
 		return err
 	}
@@ -72,7 +72,7 @@ func OutputHclFiles(resources []terraform_utils.Resource, provider terraform_uti
 	}
 	if len(outputsByResource) > 0 {
 		outputs["output"] = outputsByResource
-		outputsFile, err := terraform_utils.Print(outputs, map[string]struct{}{}, output)
+		outputsFile, err := terraformutils.Print(outputs, map[string]struct{}{}, output)
 		if err != nil {
 			return err
 		}
@@ -80,7 +80,7 @@ func OutputHclFiles(resources []terraform_utils.Resource, provider terraform_uti
 	}
 
 	// group by resource by type
-	typeOfServices := map[string][]terraform_utils.Resource{}
+	typeOfServices := map[string][]terraformutils.Resource{}
 	for _, r := range resources {
 		typeOfServices[r.InstanceInfo.Type] = append(typeOfServices[r.InstanceInfo.Type], r)
 	}
@@ -101,8 +101,8 @@ func OutputHclFiles(resources []terraform_utils.Resource, provider terraform_uti
 	return nil
 }
 
-func printFile(v []terraform_utils.Resource, fileName, path, output string) error {
-	tfFile, err := terraform_utils.HclPrintResource(v, map[string]interface{}{}, output)
+func printFile(v []terraformutils.Resource, fileName, path, output string) error {
+	tfFile, err := terraformutils.HclPrintResource(v, map[string]interface{}{}, output)
 	if err != nil {
 		return err
 	}

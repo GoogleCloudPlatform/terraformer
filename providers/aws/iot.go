@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/iot"
 )
 
@@ -56,7 +56,7 @@ func (g *IotGenerator) loadThingTypes(svc *iot.Client) error {
 		return err
 	}
 	for _, thingType := range output.ThingTypes {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraformutils.NewResource(
 			*thingType.ThingTypeName,
 			*thingType.ThingTypeName,
 			"aws_iot_thing_type",
@@ -77,7 +77,7 @@ func (g *IotGenerator) loadThings(svc *iot.Client) error {
 		return err
 	}
 	for _, thing := range output.Things {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraformutils.NewResource(
 			*thing.ThingName,
 			*thing.ThingName,
 			"aws_iot_thing",
@@ -98,7 +98,7 @@ func (g *IotGenerator) loadTopicRules(svc *iot.Client) error {
 		return err
 	}
 	for _, rule := range output.Rules {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			*rule.RuleName,
 			*rule.RuleName,
 			"aws_iot_topic_rule",
@@ -114,7 +114,7 @@ func (g *IotGenerator) loadRoleAliases(svc *iot.Client) error {
 		return err
 	}
 	for _, roleAlias := range output.RoleAliases {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			roleAlias,
 			roleAlias,
 			"aws_iot_role_alias",

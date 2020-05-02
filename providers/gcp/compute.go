@@ -16,18 +16,18 @@
 package gcp
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 // Map of supported GCP compute service with code generate
-var ComputeServices = map[string]terraform_utils.ServiceGenerator{
+var ComputeServices = map[string]terraformutils.ServiceGenerator{
 
 	"addresses":                   &AddressesGenerator{},
 	"autoscalers":                 &AutoscalersGenerator{},
 	"backendBuckets":              &BackendBucketsGenerator{},
 	"backendServices":             &BackendServicesGenerator{},
 	"disks":                       &DisksGenerator{},
-	"firewalls":                   &FirewallsGenerator{},
+	"firewall":                   &firewallGenerator{},
 	"forwardingRules":             &ForwardingRulesGenerator{},
 	"globalAddresses":             &GlobalAddressesGenerator{},
 	"globalForwardingRules":       &GlobalForwardingRulesGenerator{},

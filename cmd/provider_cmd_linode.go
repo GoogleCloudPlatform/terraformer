@@ -16,7 +16,7 @@ package cmd
 import (
 	linode_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/linode"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -40,6 +40,6 @@ func newCmdLinodeImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newLinodeProvider() terraform_utils.ProviderGenerator {
+func newLinodeProvider() terraformutils.ProviderGenerator {
 	return &linode_terraforming.LinodeProvider{}
 }

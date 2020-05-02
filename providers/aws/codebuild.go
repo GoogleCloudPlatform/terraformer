@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/codebuild"
 )
 
@@ -27,10 +27,10 @@ type CodeBuildGenerator struct {
 	AWSService
 }
 
-func (g *CodeBuildGenerator) createResources(projectList []string) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g *CodeBuildGenerator) createResources(projectList []string) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, project := range projectList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			project,
 			project,
 			"aws_codebuild_project",

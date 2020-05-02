@@ -18,7 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type PermissionsGenerator struct {
@@ -35,10 +35,10 @@ type AllPermissions []Permissions
 var PermissionsAllowEmptyValues = []string{"configure", "write", "read"}
 var PermissionsAdditionalFields = map[string]interface{}{}
 
-func (g PermissionsGenerator) createResources(allPermissions AllPermissions) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g PermissionsGenerator) createResources(allPermissions AllPermissions) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, permissions := range allPermissions {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			fmt.Sprintf("%s@%s", permissions.User, permissions.Vhost),
 			fmt.Sprintf("permissions_%s_%s", normalizeResourceName(permissions.User), normalizeResourceName(permissions.Vhost)),
 			"rabbitmq_permissions",
@@ -60,7 +60,7 @@ func (g *PermissionsGenerator) InitResources() error {
 		return err
 	}
 	var permissions AllPermissions
-	err = json.Unmarshal([]byte(body), &permissions)
+	err = json.Unmarshal(body, &permissions)
 	if err != nil {
 		return err
 	}

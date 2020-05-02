@@ -20,7 +20,7 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/services/analysisservices/mgmt/2017-08-01/analysisservices"
 	"github.com/Azure/go-autorest/autorest"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/hashicorp/go-azure-helpers/authentication"
 )
 
@@ -28,9 +28,9 @@ type AnalysisGenerator struct {
 	AzureService
 }
 
-func (g *AnalysisGenerator) listServiceServers() ([]terraform_utils.Resource, error) {
+func (g *AnalysisGenerator) listServiceServers() ([]terraformutils.Resource, error) {
 	log.Println("\tImporting Service Servers")
-	var resources []terraform_utils.Resource
+	var resources []terraformutils.Resource
 	ctx := context.Background()
 	AnalysisClient := analysisservices.NewServersClient(g.Args["config"].(authentication.Config).SubscriptionID)
 	AnalysisClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
@@ -40,7 +40,7 @@ func (g *AnalysisGenerator) listServiceServers() ([]terraform_utils.Resource, er
 		return nil, err
 	}
 	for _, svr := range *servers.Value {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			*svr.ID,
 			*svr.Name,
 			"azurerm_analysis_services_server",
@@ -52,7 +52,7 @@ func (g *AnalysisGenerator) listServiceServers() ([]terraform_utils.Resource, er
 }
 
 func (g *AnalysisGenerator) InitResources() error {
-	functions := []func() ([]terraform_utils.Resource, error){
+	functions := []func() ([]terraformutils.Resource, error){
 		g.listServiceServers,
 	}
 

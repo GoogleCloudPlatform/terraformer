@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 )
 
@@ -36,7 +36,7 @@ func (g *DynamoDbGenerator) InitResources() error {
 	p := dynamodb.NewListTablesPaginator(svc.ListTablesRequest(&dynamodb.ListTablesInput{}))
 	for p.Next(context.Background()) {
 		for _, tableName := range p.CurrentPage().TableNames {
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				tableName,
 				tableName,
 				"aws_dynamodb_table",

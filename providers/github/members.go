@@ -18,7 +18,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	githubAPI "github.com/google/go-github/v25/github"
 	"golang.org/x/oauth2"
@@ -52,7 +52,7 @@ func (g *MembersGenerator) InitResources() error {
 		}
 
 		for _, member := range members {
-			resource := terraform_utils.NewSimpleResource(
+			resource := terraformutils.NewSimpleResource(
 				g.Args["organization"].(string)+":"+member.GetLogin(),
 				member.GetLogin(),
 				"github_membership",

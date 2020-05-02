@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package terraform_utils
+package terraformutils
 
 import (
 	"bytes"
@@ -60,7 +60,6 @@ func (v *astSanitizer) visit(n interface{}) {
 	default:
 		fmt.Printf(" unknown type: %T\n", n)
 	}
-
 }
 
 func (v *astSanitizer) visitObjectItem(o *ast.ObjectItem) {
@@ -99,9 +98,9 @@ func (v *astSanitizer) visitObjectItem(o *ast.ObjectItem) {
 			// it's json we convert to heredoc back
 			err := json.Unmarshal([]byte(jsonTest), &tmp)
 			if err == nil {
-				dataJsonBytes, err := json.MarshalIndent(tmp, "", "  ")
+				dataJSONBytes, err := json.MarshalIndent(tmp, "", "  ")
 				if err == nil {
-					jsonData := strings.Split(string(dataJsonBytes), "\n")
+					jsonData := strings.Split(string(dataJSONBytes), "\n")
 					// first line for heredoc
 					jsonData = append([]string{lines[0]}, jsonData...)
 					// last line for heredoc
@@ -131,14 +130,14 @@ func Print(data interface{}, mapsObjects map[string]struct{}, format string) ([]
 }
 
 func hclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error) {
-	dataBytesJson, err := jsonPrint(data)
+	dataBytesJSON, err := jsonPrint(data)
 	if err != nil {
-		return dataBytesJson, err
+		return dataBytesJSON, err
 	}
-	dataJson := string(dataBytesJson)
-	nodes, err := hclParcer.Parse([]byte(dataJson))
+	dataJSON := string(dataBytesJSON)
+	nodes, err := hclParcer.Parse([]byte(dataJSON))
 	if err != nil {
-		log.Println(dataJson)
+		log.Println(dataJSON)
 		return []byte{}, fmt.Errorf("error parsing terraform json: %v", err)
 	}
 	var sanitizer astSanitizer
@@ -212,7 +211,6 @@ func HclPrintResource(resources []Resource, providerData map[string]interface{},
 	resourcesByType := map[string]map[string]interface{}{}
 	mapsObjects := map[string]struct{}{}
 	for _, res := range resources {
-
 		r := resourcesByType[res.InstanceInfo.Type]
 		if r == nil {
 			r = make(map[string]interface{})

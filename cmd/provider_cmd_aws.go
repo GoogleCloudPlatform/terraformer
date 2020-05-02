@@ -17,7 +17,7 @@ import (
 	"log"
 
 	awsterraformer "github.com/GoogleCloudPlatform/terraformer/providers/aws"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -55,11 +55,10 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 					}
 				}
 				return nil
-			} else {
-				err := importRegionResources(options, options.PathPattern, awsterraformer.NoRegion, false)
-				if err != nil {
-					return err
-				}
+			}
+			err := importRegionResources(options, options.PathPattern, awsterraformer.NoRegion, false)
+			if err != nil {
+				return err
 			}
 			return nil
 		},
@@ -85,9 +84,8 @@ func parseGlobalResources(allResources []string) []string {
 func importGlobalResources(options ImportOptions) error {
 	if len(options.Resources) > 0 {
 		return importRegionResources(options, options.PathPattern, awsterraformer.GlobalRegion, false)
-	} else {
-		return nil
 	}
+	return nil
 }
 
 func parseRegionalResources(allResources []string) []string {
@@ -118,7 +116,7 @@ func importRegionResources(options ImportOptions, originalPathPattern string, re
 	return nil
 }
 
-func newAWSProvider() terraform_utils.ProviderGenerator {
+func newAWSProvider() terraformutils.ProviderGenerator {
 	return &awsterraformer.AWSProvider{}
 }
 

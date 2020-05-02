@@ -82,7 +82,7 @@ Flags:
   -p, --path-pattern string   {output}/{provider}/ (default "{output}/{provider}/{service}/")
       --projects strings
   -z, --regions strings       europe-west1, (default [global])
-  -r, --resources strings     firewalls,networks or * for all services
+  -r, --resources strings     firewall,networks or * for all services
   -s, --state string          local or bucket (default "local")
   -v, --verbose               verbose mode
 
@@ -116,7 +116,7 @@ The `plan` command generates a planfile that contains all the resources set to b
 The rest of subcommands and parameters are identical to the `import` command.
 
 ```
-$ terraformer plan google --resources=networks,firewalls --projects=my-project --regions=europe-west1-d
+$ terraformer plan google --resources=networks,firewall --projects=my-project --regions=europe-west1-d
 (snip)
 
 Saving planfile to generated/google/my-project/terraformer/plan.json
@@ -247,7 +247,7 @@ List of supported GCP services:
 *   `dns`
     * `google_dns_managed_zone`
     * `google_dns_record_set`
-*   `firewalls`
+*   `firewall`
     * `google_compute_firewall`
 *   `forwardingRules`
     * `google_compute_forwarding_rule`

@@ -15,14 +15,14 @@
 package keycloak
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
 )
 
-func (g RealmGenerator) createUserResources(users []*keycloak.User) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g RealmGenerator) createUserResources(users []*keycloak.User) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, user := range users {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			user.Id,
 			"user_"+normalizeResourceName(user.RealmId)+"_"+normalizeResourceName(user.Username),
 			"keycloak_user",

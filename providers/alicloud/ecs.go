@@ -17,7 +17,7 @@ package alicloud
 import (
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ecs"
 )
@@ -27,8 +27,8 @@ type EcsGenerator struct {
 	AliCloudService
 }
 
-func resourceFromInstance(instance ecs.Instance) terraform_utils.Resource {
-	return terraform_utils.NewResource(
+func resourceFromInstance(instance ecs.Instance) terraformutils.Resource {
+	return terraformutils.NewResource(
 		instance.InstanceId, // id
 		instance.InstanceId+"__"+instance.InstanceName, // name
 		"alicloud_instance",
@@ -65,7 +65,7 @@ func (g *EcsGenerator) InitResources() error {
 		raw, err := client.WithEcsClient(func(ecsClient *ecs.Client) (interface{}, error) {
 			request := ecs.CreateDescribeInstancesRequest()
 			request.Tag = &filters
-			request.RegionId = client.RegionId
+			request.RegionId = client.RegionID
 			request.PageSize = requests.NewInteger(pageSize)
 			request.PageNumber = requests.NewInteger(pageNumber)
 			return ecsClient.DescribeInstances(request)

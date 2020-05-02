@@ -19,7 +19,7 @@ import (
 
 	datadog "github.com/zorkian/go-datadog-api"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 var (
@@ -32,11 +32,11 @@ type SyntheticsGenerator struct {
 	DatadogService
 }
 
-func (SyntheticsGenerator) createResources(syntheticsList []datadog.SyntheticsTest) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (SyntheticsGenerator) createResources(syntheticsList []datadog.SyntheticsTest) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	for _, synthetics := range syntheticsList {
 		resourceName := synthetics.GetPublicId()
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			resourceName,
 			fmt.Sprintf("synthetics_%s", resourceName),
 			"datadog_synthetics_test",

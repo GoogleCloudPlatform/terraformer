@@ -17,7 +17,7 @@ package cloudflare
 import (
 	"fmt"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	cf "github.com/cloudflare/cloudflare-go"
 )
 
@@ -25,15 +25,15 @@ type AccessGenerator struct {
 	CloudflareService
 }
 
-func (g *AccessGenerator) createAccessApplications(api *cf.API, zoneID string) ([]terraform_utils.Resource, error) {
-	resources := []terraform_utils.Resource{}
+func (g *AccessGenerator) createAccessApplications(api *cf.API, zoneID string) ([]terraformutils.Resource, error) {
+	resources := []terraformutils.Resource{}
 	accessApplications, _, err := api.AccessApplications(zoneID, cf.PaginationOptions{})
 	if err != nil {
-		return []terraform_utils.Resource{}, err
+		return []terraformutils.Resource{}, err
 	}
 
 	for _, app := range accessApplications {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			app.ID,
 			fmt.Sprintf("%s_%s", app.Name, app.ID),
 			"cloudflare_access_application",

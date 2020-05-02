@@ -21,14 +21,14 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/terraformer_string"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/terraformerstring"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 
 	"github.com/spf13/pflag"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/terraform_output"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/terraformoutput"
 
 	"github.com/spf13/cobra"
 )
@@ -75,7 +75,7 @@ func newImportCmd() *cobra.Command {
 	return cmd
 }
 
-func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, args []string) error {
+func Import(provider terraformutils.ProviderGenerator, options ImportOptions, args []string) error {
 	err := provider.Init(args)
 	if err != nil {
 		return err
@@ -84,10 +84,10 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 		Provider:         provider.GetName(),
 		Options:          options,
 		Args:             args,
-		ImportedResource: map[string][]terraform_utils.Resource{},
+		ImportedResource: map[string][]terraformutils.Resource{},
 	}
 
-	if terraformer_string.ContainsString(options.Resources, "*") {
+	if terraformerstring.ContainsString(options.Resources, "*") {
 		log.Println("Attempting an import of ALL resources in " + provider.GetName())
 		options.Resources = providerServices(provider)
 	}
@@ -104,7 +104,7 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 			return err
 		}
 
-		providerWrapper, err := provider_wrapper.NewProviderWrapper(provider.GetName(), provider.GetConfig(), options.Verbose)
+		providerWrapper, err := providerwrapper.NewProviderWrapper(provider.GetName(), provider.GetConfig(), options.Verbose)
 		if err != nil {
 			return err
 		}
@@ -112,7 +112,7 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 		provider.GetService().PopulateIgnoreKeys(providerWrapper)
 		provider.GetService().InitialCleanup()
 
-		refreshedResources, err := terraform_utils.RefreshResources(provider.GetService().GetResources(), providerWrapper)
+		refreshedResources, err := terraformutils.RefreshResources(provider.GetService().GetResources(), providerWrapper)
 		if err != nil {
 			return err
 		}
@@ -139,23 +139,22 @@ func Import(provider terraform_utils.ProviderGenerator, options ImportOptions, a
 	if options.Plan {
 		path := Path(options.PathPattern, provider.GetName(), "terraformer", options.PathOutput)
 		return ExportPlanFile(plan, path, "plan.json")
-	} else {
-		return ImportFromPlan(provider, plan)
 	}
+	return ImportFromPlan(provider, plan)
 }
 
-func ImportFromPlan(provider terraform_utils.ProviderGenerator, plan *ImportPlan) error {
+func ImportFromPlan(provider terraformutils.ProviderGenerator, plan *ImportPlan) error {
 	options := plan.Options
 	importedResource := plan.ImportedResource
 	isServicePath := strings.Contains(options.PathPattern, "{service}")
 
 	if options.Connect {
 		log.Println(provider.GetName() + " Connecting.... ")
-		importedResource = terraform_utils.ConnectServices(importedResource, isServicePath, provider.GetResourceConnections())
+		importedResource = terraformutils.ConnectServices(importedResource, isServicePath, provider.GetResourceConnections())
 	}
 
 	if !isServicePath {
-		var compactedResources []terraform_utils.Resource
+		var compactedResources []terraformutils.Resource
 		for _, resources := range importedResource {
 			compactedResources = append(compactedResources, resources...)
 		}
@@ -174,30 +173,30 @@ func ImportFromPlan(provider terraform_utils.ProviderGenerator, plan *ImportPlan
 	return nil
 }
 
-func printService(provider terraform_utils.ProviderGenerator, serviceName string, options ImportOptions, resources []terraform_utils.Resource, importedResource map[string][]terraform_utils.Resource) error {
+func printService(provider terraformutils.ProviderGenerator, serviceName string, options ImportOptions, resources []terraformutils.Resource, importedResource map[string][]terraformutils.Resource) error {
 	log.Println(provider.GetName() + " save " + serviceName)
 	// Print HCL files for Resources
 	path := Path(options.PathPattern, provider.GetName(), serviceName, options.PathOutput)
-	err := terraform_output.OutputHclFiles(resources, provider, path, serviceName, options.Compact, options.Output)
+	err := terraformoutput.OutputHclFiles(resources, provider, path, serviceName, options.Compact, options.Output)
 	if err != nil {
 		return err
 	}
-	tfStateFile, err := terraform_utils.PrintTfState(resources)
+	tfStateFile, err := terraformutils.PrintTfState(resources)
 	if err != nil {
 		return err
 	}
 	// print or upload State file
 	if options.State == "bucket" {
 		log.Println(provider.GetName() + " upload tfstate to  bucket " + options.Bucket)
-		bucket := terraform_output.BucketState{
+		bucket := terraformoutput.BucketState{
 			Name: options.Bucket,
 		}
 		if err := bucket.BucketUpload(path, tfStateFile); err != nil {
 			return err
 		}
 		// create Bucket file
-		if bucketStateDataFile, err := terraform_utils.Print(bucket.BucketGetTfData(path), map[string]struct{}{}, options.Output); err == nil {
-			terraform_output.PrintFile(path+"/bucket.tf", bucketStateDataFile)
+		if bucketStateDataFile, err := terraformutils.Print(bucket.BucketGetTfData(path), map[string]struct{}{}, options.Output); err == nil {
+			terraformoutput.PrintFile(path+"/bucket.tf", bucketStateDataFile)
 		}
 	} else {
 		if serviceName == "" {
@@ -216,7 +215,7 @@ func printService(provider terraform_utils.ProviderGenerator, serviceName string
 			variables["data"] = map[string]map[string]interface{}{}
 			variables["data"]["terraform_remote_state"] = map[string]interface{}{}
 			if options.State == "bucket" {
-				bucket := terraform_output.BucketState{
+				bucket := terraformoutput.BucketState{
 					Name: options.Bucket,
 				}
 				for k := range provider.GetResourceConnections()[serviceName] {
@@ -243,11 +242,11 @@ func printService(provider terraform_utils.ProviderGenerator, serviceName string
 			}
 			// create variables file
 			if len(provider.GetResourceConnections()[serviceName]) > 0 && options.Connect && len(variables["data"]["terraform_remote_state"]) > 0 {
-				variablesFile, err := terraform_utils.Print(variables, map[string]struct{}{"config": {}}, options.Output)
+				variablesFile, err := terraformutils.Print(variables, map[string]struct{}{"config": {}}, options.Output)
 				if err != nil {
 					return err
 				}
-				terraform_output.PrintFile(path+"/variables."+terraform_output.GetFileExtension(options.Output), variablesFile)
+				terraformoutput.PrintFile(path+"/variables."+terraformoutput.GetFileExtension(options.Output), variablesFile)
 			}
 		}
 	} else {
@@ -256,7 +255,7 @@ func printService(provider terraform_utils.ProviderGenerator, serviceName string
 			variables["data"] = map[string]map[string]interface{}{}
 			variables["data"]["terraform_remote_state"] = map[string]interface{}{}
 			if options.State == "bucket" {
-				bucket := terraform_output.BucketState{
+				bucket := terraformoutput.BucketState{
 					Name: options.Bucket,
 				}
 				variables["data"]["terraform_remote_state"]["local"] = map[string]interface{}{
@@ -273,11 +272,11 @@ func printService(provider terraform_utils.ProviderGenerator, serviceName string
 			}
 			// create variables file
 			if options.Connect {
-				variablesFile, err := terraform_utils.Print(variables, map[string]struct{}{"config": {}}, options.Output)
+				variablesFile, err := terraformutils.Print(variables, map[string]struct{}{"config": {}}, options.Output)
 				if err != nil {
 					return err
 				}
-				terraform_output.PrintFile(path+"/variables."+terraform_output.GetFileExtension(options.Output), variablesFile)
+				terraformoutput.PrintFile(path+"/variables."+terraformoutput.GetFileExtension(options.Output), variablesFile)
 			}
 		}
 	}
@@ -292,7 +291,7 @@ func Path(pathPattern, providerName, serviceName, output string) string {
 	).Replace(pathPattern)
 }
 
-func listCmd(provider terraform_utils.ProviderGenerator) *cobra.Command {
+func listCmd(provider terraformutils.ProviderGenerator) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "List supported resources for " + provider.GetName() + " provider",
@@ -309,7 +308,7 @@ func listCmd(provider terraform_utils.ProviderGenerator) *cobra.Command {
 	return cmd
 }
 
-func providerServices(provider terraform_utils.ProviderGenerator) []string {
+func providerServices(provider terraformutils.ProviderGenerator) []string {
 	var services []string
 	for k := range provider.GetSupportedService() {
 		services = append(services, k)

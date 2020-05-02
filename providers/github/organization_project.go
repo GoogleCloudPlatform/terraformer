@@ -19,7 +19,7 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	githubAPI "github.com/google/go-github/v25/github"
 	"golang.org/x/oauth2"
@@ -52,7 +52,7 @@ func (g *OrganizationProjectGenerator) InitResources() error {
 		}
 
 		for _, project := range projects {
-			resource := terraform_utils.NewSimpleResource(
+			resource := terraformutils.NewSimpleResource(
 				strconv.FormatInt(project.GetID(), 10),
 				strconv.FormatInt(project.GetID(), 10),
 				"github_organization_project",

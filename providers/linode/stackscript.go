@@ -18,7 +18,7 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/linode/linodego"
 )
 
@@ -26,12 +26,12 @@ type StackScriptGenerator struct {
 	LinodeService
 }
 
-func (g StackScriptGenerator) createResources(stackscriptList []linodego.Stackscript) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g StackScriptGenerator) createResources(stackscriptList []linodego.Stackscript) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, stackscript := range stackscriptList {
 		// Avoid importing all community stackscripts
 		if !stackscript.IsPublic {
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				strconv.Itoa(stackscript.ID),
 				strconv.Itoa(stackscript.ID),
 				"linode_stackscript",

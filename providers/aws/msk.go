@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/kafka"
 )
@@ -37,7 +37,7 @@ func (g *MskGenerator) InitResources() error {
 	p := kafka.NewListClustersPaginator(svc.ListClustersRequest(&kafka.ListClustersInput{}))
 	for p.Next(context.Background()) {
 		for _, clusterInfo := range p.CurrentPage().ClusterInfoList {
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				aws.StringValue(clusterInfo.ClusterArn),
 				aws.StringValue(clusterInfo.ClusterName),
 				"aws_msk_cluster",

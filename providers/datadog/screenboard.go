@@ -20,7 +20,7 @@ import (
 
 	datadog "github.com/zorkian/go-datadog-api"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 var (
@@ -33,11 +33,11 @@ type ScreenboardGenerator struct {
 	DatadogService
 }
 
-func (ScreenboardGenerator) createResources(screenboards []*datadog.ScreenboardLite) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (ScreenboardGenerator) createResources(screenboards []*datadog.ScreenboardLite) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	for _, screenboard := range screenboards {
 		resourceName := strconv.Itoa(screenboard.GetId())
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			resourceName,
 			fmt.Sprintf("screenboard_%s", resourceName),
 			"datadog_screenboard",

@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/resourcegroups"
 )
@@ -35,11 +35,11 @@ func (g *ResourceGroupsGenerator) InitResources() error {
 	}
 	svc := resourcegroups.New(config)
 	p := resourcegroups.NewListGroupsPaginator(svc.ListGroupsRequest(&resourcegroups.ListGroupsInput{}))
-	var resources []terraform_utils.Resource
+	var resources []terraformutils.Resource
 	for p.Next(context.Background()) {
 		for _, group := range p.CurrentPage().Groups {
 			groupName := aws.StringValue(group.Name)
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				groupName,
 				groupName,
 				"aws_resourcegroups_group",
