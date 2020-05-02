@@ -10,8 +10,6 @@ run:
   # exit code when at least one issue was found, default is 1
   issues-exit-code: 1
 
-  max-issues-per-linter: 0
-  max-same-issues: 100
   # which dirs to skip: issues from them won't be reported;
   # can use regexp here: generated.*, regexp is applied on full path;
   # default value is empty list, but default dirs are skipped independently
@@ -52,6 +50,9 @@ output:
 
   # make issues output unique by line, default is true
   uniq-by-line: true
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
 linters:
   enable:
   - deadcode
@@ -69,4 +70,5 @@ linters:
   - goimports
   - gocritic
   - unconvert
+  - unparam
   fast: false
