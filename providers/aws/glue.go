@@ -40,7 +40,7 @@ func (g *GlueGenerator) loadGlueCrawlers(svc *glue.Client) error {
 	return p.Err()
 }
 
-func (g *GlueGenerator) loadGlueCatalogDatabase(svc *glue.Client, account *string) (DatabaseNames []*string, error error) {
+func (g *GlueGenerator) loadGlueCatalogDatabase(svc *glue.Client, account *string) (databaseNames []*string, error error) {
 	var GlueCatalogDatabaseAllowEmptyValues = []string{"tags."}
 	p := glue.NewGetDatabasesPaginator(svc.GetDatabasesRequest(&glue.GetDatabasesInput{}))
 	for p.Next(context.Background()) {
@@ -54,10 +54,10 @@ func (g *GlueGenerator) loadGlueCatalogDatabase(svc *glue.Client, account *strin
 				"aws",
 				GlueCatalogDatabaseAllowEmptyValues)
 			g.Resources = append(g.Resources, resource)
-			DatabaseNames = append(DatabaseNames, catalogDatabase.Name)
+			databaseNames = append(databaseNames, catalogDatabase.Name)
 		}
 	}
-	return DatabaseNames, p.Err()
+	return databaseNames, p.Err()
 }
 
 func (g *GlueGenerator) loadGlueCatalogTable(svc *glue.Client, account *string, databaseName *string) error {

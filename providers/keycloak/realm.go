@@ -59,8 +59,7 @@ func (g RealmGenerator) createRequiredActionResources(requiredActions []*keycloa
 func (g RealmGenerator) createCustomUserFederationResources(customUserFederations *[]keycloak.CustomUserFederation) []terraformutils.Resource {
 	var resources []terraformutils.Resource
 	for _, customUserFederation := range *customUserFederations {
-		switch customUserFederation.ProviderId {
-		case "ldap":
+		if customUserFederation.ProviderId == "ldap" {
 			if customUserFederation.Config["bindCredential"][0] != "" {
 				var bindDn string
 				for _, i := range strings.Split(customUserFederation.Config["bindDn"][0], ",") {
@@ -158,7 +157,7 @@ func (g RealmGenerator) createLdapMapperResources(realmID, providerName string, 
 		for k, v := range mapperNames {
 			if k == name {
 				v++
-				name = name + strconv.Itoa(v)
+				name += strconv.Itoa(v)
 			}
 		}
 		if name == "ldap_"+mapperType+"_mapper_"+normalizeResourceName(realmID)+"_"+normalizeResourceName(providerName)+"_"+normalizeResourceName(mapperName) {

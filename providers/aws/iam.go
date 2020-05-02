@@ -290,20 +290,21 @@ func (g *IamGenerator) getInstanceProfiles(svc *iam.Client) error {
 // PostGenerateHook for add policy json as heredoc
 func (g *IamGenerator) PostConvertHook() error {
 	for i, resource := range g.Resources {
-		if resource.InstanceInfo.Type == "aws_iam_policy" ||
+		switch {
+		case resource.InstanceInfo.Type == "aws_iam_policy" ||
 			resource.InstanceInfo.Type == "aws_iam_user_policy" ||
 			resource.InstanceInfo.Type == "aws_iam_group_policy" ||
-			resource.InstanceInfo.Type == "aws_iam_role_policy" {
+			resource.InstanceInfo.Type == "aws_iam_role_policy":
 			policy := g.escapeAwsInterpolation(resource.Item["policy"].(string))
 			resource.Item["policy"] = fmt.Sprintf(`<<POLICY
 %s
 POLICY`, policy)
-		} else if resource.InstanceInfo.Type == "aws_iam_role" {
+		case resource.InstanceInfo.Type == "aws_iam_role":
 			policy := g.escapeAwsInterpolation(resource.Item["assume_role_policy"].(string))
 			g.Resources[i].Item["assume_role_policy"] = fmt.Sprintf(`<<POLICY
 %s
 POLICY`, policy)
-		} else if resource.InstanceInfo.Type == "aws_iam_instance_profile" {
+		case resource.InstanceInfo.Type == "aws_iam_instance_profile":
 			delete(resource.Item, "roles")
 		}
 	}

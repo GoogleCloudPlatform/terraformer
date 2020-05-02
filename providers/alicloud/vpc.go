@@ -25,10 +25,10 @@ type VpcGenerator struct {
 	AliCloudService
 }
 
-func resourceFromVpcResponse(Vpc vpc.Vpc) terraformutils.Resource {
+func resourceFromVpcResponse(vpc vpc.Vpc) terraformutils.Resource {
 	return terraformutils.NewResource(
-		Vpc.VpcId,                  // id
-		Vpc.VpcId+"__"+Vpc.VpcName, // name
+		vpc.VpcId,                  // id
+		vpc.VpcId+"__"+vpc.VpcName, // name
 		"alicloud_vpc",
 		"alicloud",
 		map[string]string{},

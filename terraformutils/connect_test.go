@@ -133,12 +133,12 @@ func TestNestedReference(t *testing.T) {
 	}
 }
 
-func prepareNoAttrs(ID, resourceType string) Resource {
-	return prepare(ID, resourceType, map[string]string{}, map[string]interface{}{})
+func prepareNoAttrs(id, resourceType string) Resource {
+	return prepare(id, resourceType, map[string]string{}, map[string]interface{}{})
 }
 
-func prepare(ID, resourceType string, attributes map[string]string, attributesParsed map[string]interface{}) Resource {
-	r := NewResource(ID, "name-"+resourceType, resourceType, "provider", attributes, []string{}, map[string]interface{}{})
+func prepare(id, resourceType string, attributes map[string]string, attributesParsed map[string]interface{}) Resource {
+	r := NewResource(id, "name-"+resourceType, resourceType, "provider", attributes, []string{}, map[string]interface{}{})
 	r.InstanceState.Attributes["id"] = r.InstanceState.ID
 	err := r.ParseTFstate(&MockedFlatmapParser{
 		attributesParsed: attributesParsed,

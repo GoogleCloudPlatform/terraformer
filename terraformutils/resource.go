@@ -80,7 +80,7 @@ func (rf *ResourceFilter) isInitial() bool {
 	return rf.FieldPath == "id"
 }
 
-func NewResource(ID, resourceName, resourceType, provider string,
+func NewResource(id, resourceName, resourceType, provider string,
 	attributes map[string]string,
 	allowEmptyValues []string,
 	additionalFields map[string]interface{}) Resource {
@@ -89,7 +89,7 @@ func NewResource(ID, resourceName, resourceType, provider string,
 		Item:         nil,
 		Provider:     provider,
 		InstanceState: &terraform.InstanceState{
-			ID:         ID,
+			ID:         id,
 			Attributes: attributes,
 		},
 		InstanceInfo: &terraform.InstanceInfo{
@@ -101,9 +101,9 @@ func NewResource(ID, resourceName, resourceType, provider string,
 	}
 }
 
-func NewSimpleResource(ID, resourceName, resourceType, provider string, allowEmptyValues []string) Resource {
+func NewSimpleResource(id, resourceName, resourceType, provider string, allowEmptyValues []string) Resource {
 	return NewResource(
-		ID,
+		id,
 		resourceName,
 		resourceType,
 		provider,

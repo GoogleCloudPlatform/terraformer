@@ -25,10 +25,10 @@ type VSwitchGenerator struct {
 	AliCloudService
 }
 
-func resourceFromVSwitchResponse(VSwitch vpc.VSwitch) terraformutils.Resource {
+func resourceFromVSwitchResponse(vswitch vpc.VSwitch) terraformutils.Resource {
 	return terraformutils.NewResource(
-		VSwitch.VSwitchId,                          // nolint
-		VSwitch.VSwitchId+"__"+VSwitch.VSwitchName, // nolint
+		vswitch.VSwitchId,                          // nolint
+		vswitch.VSwitchId+"__"+vswitch.VSwitchName, // nolint
 		"alicloud_vswitch",
 		"alicloud",
 		map[string]string{},
