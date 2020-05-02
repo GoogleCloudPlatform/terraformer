@@ -10,6 +10,8 @@ run:
   # exit code when at least one issue was found, default is 1
   issues-exit-code: 1
 
+  max-issues-per-linter: 0
+  max-same-issues: 0
   # which dirs to skip: issues from them won't be reported;
   # can use regexp here: generated.*, regexp is applied on full path;
   # default value is empty list, but default dirs are skipped independently
@@ -64,8 +66,7 @@ linters:
   - varcheck
   - gofmt
   #- gomnd
-  #- gosec
-  #- golint
+  - golint
   - goimports
   #- gocritic
   #- wsl

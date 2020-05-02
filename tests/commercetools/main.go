@@ -21,7 +21,7 @@ import (
 	"sort"
 
 	"github.com/GoogleCloudPlatform/terraformer/cmd"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	commercetools_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/commercetools"
 )
@@ -43,7 +43,7 @@ func main() {
 	}
 	sort.Strings(services)
 	provider = &commercetools_terraforming.CommercetoolsProvider{
-		Provider: terraform_utils.Provider{},
+		Provider: terraformutils.Provider{},
 	}
 	err := cmd.Import(provider, cmd.ImportOptions{
 		Resources:   services,

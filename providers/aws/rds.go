@@ -18,7 +18,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"github.com/aws/aws-sdk-go-v2/service/rds"
 
@@ -36,7 +36,7 @@ func (g *RDSGenerator) loadDBInstances(svc *rds.Client) error {
 	for p.Next(context.Background()) {
 		for _, db := range p.CurrentPage().DBInstances {
 			resourceName := aws.StringValue(db.DBInstanceIdentifier)
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_db_instance",
@@ -57,7 +57,7 @@ func (g *RDSGenerator) loadDBParameterGroups(svc *rds.Client) error {
 			if strings.Contains(resourceName, ".") {
 				continue // skip default Default ParameterGroups like default.mysql5.6
 			}
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_db_parameter_group",
@@ -74,7 +74,7 @@ func (g *RDSGenerator) loadDBSubnetGroups(svc *rds.Client) error {
 	for p.Next(context.Background()) {
 		for _, subnet := range p.CurrentPage().DBSubnetGroups {
 			resourceName := aws.StringValue(subnet.DBSubnetGroupName)
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_db_subnet_group",
@@ -94,7 +94,7 @@ func (g *RDSGenerator) loadOptionGroups(svc *rds.Client) error {
 			if strings.Contains(resourceName, ".") || strings.Contains(resourceName, ":") {
 				continue // skip default Default OptionGroups like default.mysql5.6
 			}
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_db_option_group",
@@ -111,7 +111,7 @@ func (g *RDSGenerator) loadEventSubscription(svc *rds.Client) error {
 	for p.Next(context.Background()) {
 		for _, eventSubscription := range p.CurrentPage().EventSubscriptionsList {
 			resourceName := aws.StringValue(eventSubscription.CustomerAwsId)
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_db_event_subscription",

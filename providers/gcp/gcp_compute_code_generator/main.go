@@ -49,7 +49,7 @@ import (
 	"log"
 	{{ if .byZone  }}"strings"{{end}}
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"google.golang.org/api/compute/v1"
 )
@@ -66,11 +66,11 @@ type {{.titleResourceName}}Generator struct {
 }
 
 // Run on {{.resource}}List and create for each TerraformResource
-func (g {{.titleResourceName}}Generator) createResources(ctx context.Context, {{.resource}}List *compute.{{.titleResourceName}}ListCall{{ if .byZone  }}, zone string{{end}}) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g {{.titleResourceName}}Generator) createResources(ctx context.Context, {{.resource}}List *compute.{{.titleResourceName}}ListCall{{ if .byZone  }}, zone string{{end}}) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	if err := {{.resource}}List.Pages(ctx, func(page *compute.{{.responseName}}) error {
 		for _, obj := range page.Items {
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				{{ if .idWithZone  }}zone+"/"+obj.Name,{{else}}obj.Name,{{end}}
 				{{ if .idWithZone  }}zone+"/"+obj.Name,{{else}}obj.Name,{{end}}
 				"{{.terraformName}}",
@@ -139,11 +139,11 @@ const computeTemplate = `
 package gcp
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 // Map of supported GCP compute service with code generate
-var ComputeServices = map[string]terraform_utils.ServiceGenerator{
+var ComputeServices = map[string]terraformutils.ServiceGenerator{
 {{ range $key, $value := .services }}
 	"{{$key}}":                   &{{title $key}}Generator{},{{ end }}
 

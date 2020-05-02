@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/mediastore"
 )
@@ -35,11 +35,11 @@ func (g *MediaStoreGenerator) InitResources() error {
 	}
 	svc := mediastore.New(config)
 	p := mediastore.NewListContainersPaginator(svc.ListContainersRequest(&mediastore.ListContainersInput{}))
-	var resources []terraform_utils.Resource
+	var resources []terraformutils.Resource
 	for p.Next(context.Background()) {
 		for _, container := range p.CurrentPage().Containers {
 			containerName := aws.StringValue(container.Name)
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				containerName,
 				containerName,
 				"aws_media_store_container",

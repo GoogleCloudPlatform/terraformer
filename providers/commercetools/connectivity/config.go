@@ -1,7 +1,7 @@
 package connectivity
 
 type Config struct {
-	ClientId     string
+	ClientID     string
 	ClientSecret string
 	ClientScope  string
 	ProjectKey   string

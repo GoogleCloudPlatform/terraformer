@@ -62,7 +62,7 @@ type Endpoint struct {
 }
 
 type RegionIds struct {
-	RegionId string `xml:"RegionId"`
+	RegionID string `xml:"RegionId"`
 }
 
 type Products struct {
@@ -95,7 +95,7 @@ func loadEndpoint(region string, serviceCode ServiceCode) string {
 		return ""
 	}
 	for _, endpoint := range endpoints.Endpoint {
-		if endpoint.RegionIds.RegionId == string(region) {
+		if endpoint.RegionIds.RegionID == string(region) {
 			for _, product := range endpoint.Products.Product {
 				if strings.EqualFold(product.ProductName, string(serviceCode)) {
 					return strings.TrimSpace(product.DomainName)

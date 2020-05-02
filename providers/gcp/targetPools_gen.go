@@ -19,7 +19,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"google.golang.org/api/compute/v1"
 )
@@ -33,11 +33,11 @@ type TargetPoolsGenerator struct {
 }
 
 // Run on targetPoolsList and create for each TerraformResource
-func (g TargetPoolsGenerator) createResources(ctx context.Context, targetPoolsList *compute.TargetPoolsListCall) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g TargetPoolsGenerator) createResources(ctx context.Context, targetPoolsList *compute.TargetPoolsListCall) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	if err := targetPoolsList.Pages(ctx, func(page *compute.TargetPoolList) error {
 		for _, obj := range page.Items {
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				obj.Name,
 				obj.Name,
 				"google_compute_target_pool",

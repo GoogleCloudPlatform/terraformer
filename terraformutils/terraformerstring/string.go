@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package terraformer_string
+package terraformerstring
 
 func ContainsString(s []string, e string) bool {
 	for _, a := range s {

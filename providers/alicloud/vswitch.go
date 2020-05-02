@@ -15,7 +15,7 @@
 package alicloud
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/vpc"
 )
@@ -25,8 +25,8 @@ type VSwitchGenerator struct {
 	AliCloudService
 }
 
-func resourceFromVSwitchResponse(VSwitch vpc.VSwitch) terraform_utils.Resource {
-	return terraform_utils.NewResource(
+func resourceFromVSwitchResponse(VSwitch vpc.VSwitch) terraformutils.Resource {
+	return terraformutils.NewResource(
 		VSwitch.VSwitchId,                          // nolint
 		VSwitch.VSwitchId+"__"+VSwitch.VSwitchName, // nolint
 		"alicloud_vswitch",
@@ -52,7 +52,7 @@ func (g *VSwitchGenerator) InitResources() error {
 	for remaining > 0 {
 		raw, err := client.WithVpcClient(func(vpcClient *vpc.Client) (interface{}, error) {
 			request := vpc.CreateDescribeVSwitchesRequest()
-			request.RegionId = client.RegionId
+			request.RegionId = client.RegionID
 			request.PageSize = requests.NewInteger(pageSize)
 			request.PageNumber = requests.NewInteger(pageNumber)
 			return vpcClient.DescribeVSwitches(request)

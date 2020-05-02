@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -32,13 +32,13 @@ type IgwGenerator struct {
 // Generate TerraformResources from AWS API,
 // from each Internet gateway create 1 TerraformResource.
 // Need InternetGatewayId as ID for terraform resource
-func (g *IgwGenerator) createResources(igws *ec2.DescribeInternetGatewaysOutput) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g *IgwGenerator) createResources(igws *ec2.DescribeInternetGatewaysOutput) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	for _, internetGateway := range igws.InternetGateways {
 		if len(internetGateway.Attachments) == 0 {
 			continue
 		}
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			aws.StringValue(internetGateway.InternetGatewayId),
 			aws.StringValue(internetGateway.InternetGatewayId),
 			"aws_internet_gateway",

@@ -22,7 +22,7 @@ import (
 	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/redis/v1"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 var redisAllowEmptyValues = []string{""}
@@ -34,13 +34,13 @@ type MemoryStoreGenerator struct {
 }
 
 // Run on redisInstancesList and create for each TerraformResource
-func (g MemoryStoreGenerator) createResources(redisInstancesList *redis.ProjectsLocationsInstancesListCall, ctx context.Context) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g MemoryStoreGenerator) createResources(ctx context.Context, redisInstancesList *redis.ProjectsLocationsInstancesListCall) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	if err := redisInstancesList.Pages(ctx, func(page *redis.ListInstancesResponse) error {
 		for _, obj := range page.Instances {
 			t := strings.Split(obj.Name, "/")
 			name := t[len(t)-1]
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				obj.Name,
 				name,
 				"google_redis_instance",
@@ -73,6 +73,6 @@ func (g *MemoryStoreGenerator) InitResources() error {
 
 	redisInstancesList := redisService.Projects.Locations.Instances.List("projects/" + g.GetArgs()["project"].(string) + "/locations/" + g.GetArgs()["region"].(compute.Region).Name)
 
-	g.Resources = g.createResources(redisInstancesList, ctx)
+	g.Resources = g.createResources(ctx, redisInstancesList)
 	return nil
 }

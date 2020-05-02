@@ -17,14 +17,14 @@ package keycloak
 import (
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
 )
 
-func (g RealmGenerator) createGroupResources(groups []*keycloak.Group) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g RealmGenerator) createGroupResources(groups []*keycloak.Group) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, group := range groups {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			group.Id,
 			"group_"+normalizeResourceName(group.RealmId)+"_"+normalizeResourceName(group.Name),
 			"keycloak_group",
@@ -39,29 +39,29 @@ func (g RealmGenerator) createGroupResources(groups []*keycloak.Group) []terrafo
 	return resources
 }
 
-func (g RealmGenerator) createDefaultGroupResource(realmId string) terraform_utils.Resource {
-	return terraform_utils.NewResource(
-		realmId+"/default-groups",
-		"default_groups_"+normalizeResourceName(realmId),
+func (g RealmGenerator) createDefaultGroupResource(realmID string) terraformutils.Resource {
+	return terraformutils.NewResource(
+		realmID+"/default-groups",
+		"default_groups_"+normalizeResourceName(realmID),
 		"keycloak_default_groups",
 		"keycloak",
 		map[string]string{
-			"realm_id": realmId,
+			"realm_id": realmID,
 		},
 		[]string{},
 		map[string]interface{}{},
 	)
 }
 
-func (g RealmGenerator) createGroupMembershipsResource(realmId, groupId, groupName string, members []string) terraform_utils.Resource {
-	return terraform_utils.NewResource(
-		realmId+"/group-memberships/"+groupId,
-		"group_memberships_"+normalizeResourceName(realmId)+"_"+normalizeResourceName(groupName),
+func (g RealmGenerator) createGroupMembershipsResource(realmID, groupID, groupName string, members []string) terraformutils.Resource {
+	return terraformutils.NewResource(
+		realmID+"/group-memberships/"+groupID,
+		"group_memberships_"+normalizeResourceName(realmID)+"_"+normalizeResourceName(groupName),
 		"keycloak_group_memberships",
 		"keycloak",
 		map[string]string{
-			"realm_id": realmId,
-			"group_id": groupId,
+			"realm_id": realmID,
+			"group_id": groupID,
 			"members":  strings.Join(members, ","),
 		},
 		[]string{},
@@ -69,15 +69,15 @@ func (g RealmGenerator) createGroupMembershipsResource(realmId, groupId, groupNa
 	)
 }
 
-func (g RealmGenerator) createGroupRolesResource(realmId, groupId, groupName string, roles []string) terraform_utils.Resource {
-	return terraform_utils.NewResource(
-		realmId+"/"+groupId,
-		"group_roles_"+normalizeResourceName(realmId)+"_"+normalizeResourceName(groupName),
+func (g RealmGenerator) createGroupRolesResource(realmID, groupID, groupName string, roles []string) terraformutils.Resource {
+	return terraformutils.NewResource(
+		realmID+"/"+groupID,
+		"group_roles_"+normalizeResourceName(realmID)+"_"+normalizeResourceName(groupName),
 		"keycloak_group_roles",
 		"keycloak",
 		map[string]string{
-			"realm_id":  realmId,
-			"group_id":  groupId,
+			"realm_id":  realmID,
+			"group_id":  groupID,
 			"roles_ids": strings.Join(roles, ","),
 		},
 		[]string{},
@@ -85,11 +85,11 @@ func (g RealmGenerator) createGroupRolesResource(realmId, groupId, groupName str
 	)
 }
 
-func (g *RealmGenerator) flattenGroups(groups []*keycloak.Group, realmId, parentId string) []*keycloak.Group {
+func (g *RealmGenerator) flattenGroups(groups []*keycloak.Group, realmID, parentID string) []*keycloak.Group {
 	var flattenedGroups []*keycloak.Group
 	for _, group := range groups {
-		if realmId != "" {
-			group.RealmId = realmId
+		if realmID != "" {
+			group.RealmId = realmID
 		}
 		flattenedGroups = append(flattenedGroups, group)
 		if len(group.SubGroups) > 0 {

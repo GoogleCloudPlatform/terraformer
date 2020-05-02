@@ -19,7 +19,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"google.golang.org/api/compute/v1"
 )
@@ -33,11 +33,11 @@ type HttpsHealthChecksGenerator struct {
 }
 
 // Run on httpsHealthChecksList and create for each TerraformResource
-func (g HttpsHealthChecksGenerator) createResources(ctx context.Context, httpsHealthChecksList *compute.HttpsHealthChecksListCall) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g HttpsHealthChecksGenerator) createResources(ctx context.Context, httpsHealthChecksList *compute.HttpsHealthChecksListCall) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	if err := httpsHealthChecksList.Pages(ctx, func(page *compute.HttpsHealthCheckList) error {
 		for _, obj := range page.Items {
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				obj.Name,
 				obj.Name,
 				"google_compute_https_health_check",

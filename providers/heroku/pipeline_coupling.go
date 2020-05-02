@@ -17,7 +17,7 @@ package heroku
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	heroku "github.com/heroku/heroku-go/v5"
 )
 
@@ -25,10 +25,10 @@ type PipelineCouplingGenerator struct {
 	HerokuService
 }
 
-func (g PipelineCouplingGenerator) createResources(pipelineCouplingList []heroku.PipelineCoupling) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g PipelineCouplingGenerator) createResources(pipelineCouplingList []heroku.PipelineCoupling) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, pipelineCoupling := range pipelineCouplingList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			pipelineCoupling.ID,
 			pipelineCoupling.ID,
 			"heroku_pipeline_coupling",

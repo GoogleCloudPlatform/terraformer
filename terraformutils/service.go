@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package terraform_utils
+package terraformutils
 
 import (
 	"log"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
 type ServiceGenerator interface {
@@ -35,7 +35,7 @@ type ServiceGenerator interface {
 	SetProviderName(name string)
 	GetName() string
 	InitialCleanup()
-	PopulateIgnoreKeys(*provider_wrapper.ProviderWrapper)
+	PopulateIgnoreKeys(*providerwrapper.ProviderWrapper)
 	PostRefreshCleanup()
 }
 
@@ -141,7 +141,7 @@ func (s *Service) PostConvertHook() error {
 	return nil
 }
 
-func (s *Service) PopulateIgnoreKeys(providerWrapper *provider_wrapper.ProviderWrapper) {
+func (s *Service) PopulateIgnoreKeys(providerWrapper *providerwrapper.ProviderWrapper) {
 	var resourcesTypes []string
 	for _, r := range s.Resources {
 		resourcesTypes = append(resourcesTypes, r.InstanceInfo.Type)

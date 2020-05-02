@@ -19,14 +19,14 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
 )
 
-func (g RealmGenerator) createRealmResources(realms []*keycloak.Realm) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g RealmGenerator) createRealmResources(realms []*keycloak.Realm) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, realm := range realms {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			realm.Id,
 			"realm_"+normalizeResourceName(realm.Realm),
 			"keycloak_realm",
@@ -37,10 +37,10 @@ func (g RealmGenerator) createRealmResources(realms []*keycloak.Realm) []terrafo
 	return resources
 }
 
-func (g RealmGenerator) createRequiredActionResources(requiredActions []*keycloak.RequiredAction) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g RealmGenerator) createRequiredActionResources(requiredActions []*keycloak.RequiredAction) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, requiredAction := range requiredActions {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			requiredAction.RealmId+"/"+requiredAction.Alias,
 			"required_action_"+normalizeResourceName(requiredAction.RealmId)+"_"+normalizeResourceName(requiredAction.Alias),
 			"keycloak_required_action",
@@ -56,8 +56,8 @@ func (g RealmGenerator) createRequiredActionResources(requiredActions []*keycloa
 	return resources
 }
 
-func (g RealmGenerator) createCustomUserFederationResources(customUserFederations *[]keycloak.CustomUserFederation) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g RealmGenerator) createCustomUserFederationResources(customUserFederations *[]keycloak.CustomUserFederation) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, customUserFederation := range *customUserFederations {
 		switch customUserFederation.ProviderId {
 		case "ldap":
@@ -69,7 +69,7 @@ func (g RealmGenerator) createCustomUserFederationResources(customUserFederation
 						bindDn = attrib[1]
 					}
 				}
-				resources = append(resources, terraform_utils.NewResource(
+				resources = append(resources, terraformutils.NewResource(
 					customUserFederation.Id,
 					"ldap_user_federation_"+normalizeResourceName(customUserFederation.RealmId)+"_"+normalizeResourceName(customUserFederation.Name)+"_"+normalizeResourceName(bindDn),
 					"keycloak_ldap_user_federation",
@@ -83,7 +83,7 @@ func (g RealmGenerator) createCustomUserFederationResources(customUserFederation
 					map[string]interface{}{},
 				))
 			} else {
-				resources = append(resources, terraform_utils.NewResource(
+				resources = append(resources, terraformutils.NewResource(
 					customUserFederation.Id,
 					"ldap_user_federation_"+normalizeResourceName(customUserFederation.RealmId)+"_"+normalizeResourceName(customUserFederation.Name),
 					"keycloak_ldap_user_federation",
@@ -101,10 +101,10 @@ func (g RealmGenerator) createCustomUserFederationResources(customUserFederation
 	return resources
 }
 
-func (g RealmGenerator) createLdapMapperResources(realmId, providerName string, mappers *[]interface{}) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
-	var providerId string
-	var mapperId string
+func (g RealmGenerator) createLdapMapperResources(realmID, providerName string, mappers *[]interface{}) []terraformutils.Resource {
+	var resources []terraformutils.Resource
+	var providerID string
+	var mapperID string
 	var mapperName string
 	var mapperType string
 	var name string
@@ -112,66 +112,66 @@ func (g RealmGenerator) createLdapMapperResources(realmId, providerName string, 
 	for _, mapper := range *mappers {
 		switch reflect.TypeOf(mapper).String() {
 		case "*keycloak.LdapFullNameMapper":
-			providerId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapFullNameMapper).LdapUserFederationId
-			mapperId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapFullNameMapper).Id
+			providerID = reflect.ValueOf(mapper).Interface().(*keycloak.LdapFullNameMapper).LdapUserFederationId
+			mapperID = reflect.ValueOf(mapper).Interface().(*keycloak.LdapFullNameMapper).Id
 			mapperName = reflect.ValueOf(mapper).Interface().(*keycloak.LdapFullNameMapper).Name
 			mapperType = "full_name"
 		case "*keycloak.LdapGroupMapper":
-			providerId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapGroupMapper).LdapUserFederationId
-			mapperId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapGroupMapper).Id
+			providerID = reflect.ValueOf(mapper).Interface().(*keycloak.LdapGroupMapper).LdapUserFederationId
+			mapperID = reflect.ValueOf(mapper).Interface().(*keycloak.LdapGroupMapper).Id
 			mapperName = reflect.ValueOf(mapper).Interface().(*keycloak.LdapGroupMapper).Name
 			mapperType = "group"
 		case "*keycloak.LdapRoleMapper":
-			providerId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapRoleMapper).LdapUserFederationId
-			mapperId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapRoleMapper).Id
+			providerID = reflect.ValueOf(mapper).Interface().(*keycloak.LdapRoleMapper).LdapUserFederationId
+			mapperID = reflect.ValueOf(mapper).Interface().(*keycloak.LdapRoleMapper).Id
 			mapperName = reflect.ValueOf(mapper).Interface().(*keycloak.LdapRoleMapper).Name
 			mapperType = "role"
 		case "*keycloak.LdapHardcodedGroupMapper":
-			providerId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapHardcodedGroupMapper).LdapUserFederationId
-			mapperId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapHardcodedGroupMapper).Id
+			providerID = reflect.ValueOf(mapper).Interface().(*keycloak.LdapHardcodedGroupMapper).LdapUserFederationId
+			mapperID = reflect.ValueOf(mapper).Interface().(*keycloak.LdapHardcodedGroupMapper).Id
 			mapperName = reflect.ValueOf(mapper).Interface().(*keycloak.LdapHardcodedGroupMapper).Name
 			mapperType = "hardcoded_group"
 		case "*keycloak.LdapHardcodedRoleMapper":
-			providerId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapHardcodedRoleMapper).LdapUserFederationId
-			mapperId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapHardcodedRoleMapper).Id
+			providerID = reflect.ValueOf(mapper).Interface().(*keycloak.LdapHardcodedRoleMapper).LdapUserFederationId
+			mapperID = reflect.ValueOf(mapper).Interface().(*keycloak.LdapHardcodedRoleMapper).Id
 			mapperName = reflect.ValueOf(mapper).Interface().(*keycloak.LdapHardcodedRoleMapper).Name
 			mapperType = "hardcoded_role"
 		case "*keycloak.LdapMsadLdsUserAccountControlMapper":
-			providerId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapMsadLdsUserAccountControlMapper).LdapUserFederationId
-			mapperId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapMsadLdsUserAccountControlMapper).Id
+			providerID = reflect.ValueOf(mapper).Interface().(*keycloak.LdapMsadLdsUserAccountControlMapper).LdapUserFederationId
+			mapperID = reflect.ValueOf(mapper).Interface().(*keycloak.LdapMsadLdsUserAccountControlMapper).Id
 			mapperName = reflect.ValueOf(mapper).Interface().(*keycloak.LdapMsadLdsUserAccountControlMapper).Name
 			mapperType = "msad_lds_user_account_control"
 		case "*keycloak.LdapMsadUserAccountControlMapper":
-			providerId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapMsadUserAccountControlMapper).LdapUserFederationId
-			mapperId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapMsadUserAccountControlMapper).Id
+			providerID = reflect.ValueOf(mapper).Interface().(*keycloak.LdapMsadUserAccountControlMapper).LdapUserFederationId
+			mapperID = reflect.ValueOf(mapper).Interface().(*keycloak.LdapMsadUserAccountControlMapper).Id
 			mapperName = reflect.ValueOf(mapper).Interface().(*keycloak.LdapMsadUserAccountControlMapper).Name
 			mapperType = "msad_user_account_control"
 		case "*keycloak.LdapUserAttributeMapper":
-			providerId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapUserAttributeMapper).LdapUserFederationId
-			mapperId = reflect.ValueOf(mapper).Interface().(*keycloak.LdapUserAttributeMapper).Id
+			providerID = reflect.ValueOf(mapper).Interface().(*keycloak.LdapUserAttributeMapper).LdapUserFederationId
+			mapperID = reflect.ValueOf(mapper).Interface().(*keycloak.LdapUserAttributeMapper).Id
 			mapperName = reflect.ValueOf(mapper).Interface().(*keycloak.LdapUserAttributeMapper).Name
 			mapperType = "user_attribute"
 		default:
 			continue
 		}
-		name = "ldap_" + mapperType + "_mapper_" + normalizeResourceName(realmId) + "_" + normalizeResourceName(providerName) + "_" + normalizeResourceName(mapperName)
+		name = "ldap_" + mapperType + "_mapper_" + normalizeResourceName(realmID) + "_" + normalizeResourceName(providerName) + "_" + normalizeResourceName(mapperName)
 		for k, v := range mapperNames {
 			if k == name {
 				v++
 				name = name + strconv.Itoa(v)
 			}
 		}
-		if name == "ldap_"+mapperType+"_mapper_"+normalizeResourceName(realmId)+"_"+normalizeResourceName(providerName)+"_"+normalizeResourceName(mapperName) {
+		if name == "ldap_"+mapperType+"_mapper_"+normalizeResourceName(realmID)+"_"+normalizeResourceName(providerName)+"_"+normalizeResourceName(mapperName) {
 			mapperNames[name] = 1
 		}
-		resources = append(resources, terraform_utils.NewResource(
-			mapperId,
+		resources = append(resources, terraformutils.NewResource(
+			mapperID,
 			name,
 			"keycloak_ldap_"+mapperType+"_mapper",
 			"keycloak",
 			map[string]string{
-				"realm_id":    realmId,
-				"provider_id": providerId,
+				"realm_id":    realmID,
+				"provider_id": providerID,
 			},
 			[]string{},
 			map[string]interface{}{},

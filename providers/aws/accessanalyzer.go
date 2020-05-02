@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/accessanalyzer"
 )
@@ -35,11 +35,11 @@ func (g *AccessAnalyzerGenerator) InitResources() error {
 	}
 	svc := accessanalyzer.New(config)
 	p := accessanalyzer.NewListAnalyzersPaginator(svc.ListAnalyzersRequest(&accessanalyzer.ListAnalyzersInput{}))
-	var resources []terraform_utils.Resource
+	var resources []terraformutils.Resource
 	for p.Next(context.Background()) {
 		for _, analyzer := range p.CurrentPage().Analyzers {
 			resourceName := aws.StringValue(analyzer.Name)
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_accessanalyzer_analyzer",

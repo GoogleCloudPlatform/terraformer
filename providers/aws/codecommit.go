@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/codecommit"
 )
@@ -35,11 +35,11 @@ func (g *CodeCommitGenerator) InitResources() error {
 	}
 	svc := codecommit.New(config)
 	p := codecommit.NewListRepositoriesPaginator(svc.ListRepositoriesRequest(&codecommit.ListRepositoriesInput{}))
-	var resources []terraform_utils.Resource
+	var resources []terraformutils.Resource
 	for p.Next(context.Background()) {
 		for _, repository := range p.CurrentPage().Repositories {
 			resourceName := aws.StringValue(repository.RepositoryName)
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_codecommit_repository",

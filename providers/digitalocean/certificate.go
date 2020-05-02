@@ -17,7 +17,7 @@ package digitalocean
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/digitalocean/godo"
 )
 
@@ -55,10 +55,10 @@ func (g CertificateGenerator) listCertificates(ctx context.Context, client *godo
 	return list, nil
 }
 
-func (g CertificateGenerator) createResources(certificateList []godo.Certificate) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g CertificateGenerator) createResources(certificateList []godo.Certificate) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, certificate := range certificateList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			certificate.ID,
 			certificate.Name,
 			"digitalocean_certificate",

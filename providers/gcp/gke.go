@@ -20,7 +20,7 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	container "google.golang.org/api/container/v1beta1"
 )
@@ -33,13 +33,13 @@ type GkeGenerator struct {
 	GCPService
 }
 
-func (g *GkeGenerator) initClusters(clusters *container.ListClustersResponse, service *container.Service) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g *GkeGenerator) initClusters(clusters *container.ListClustersResponse, service *container.Service) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	for _, cluster := range clusters.Clusters {
 		if _, exist := cluster.ResourceLabels["goog-composer-environment"]; exist { // don't manage composer clusters
 			continue
 		}
-		resource := terraform_utils.NewResource(
+		resource := terraformutils.NewResource(
 			cluster.Name,
 			cluster.Name,
 			"google_container_cluster",
@@ -67,10 +67,10 @@ func (g *GkeGenerator) initClusters(clusters *container.ListClustersResponse, se
 	return resources
 }
 
-func (g *GkeGenerator) initNodePools(nodePools []*container.NodePool, clusterName, location, zone string) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g *GkeGenerator) initNodePools(nodePools []*container.NodePool, clusterName, location, zone string) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	for _, nodePool := range nodePools {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			fmt.Sprintf("%s/%s/%s", location, clusterName, nodePool.Name),
 			clusterName+"_"+nodePool.Name,
 			"google_container_node_pool",

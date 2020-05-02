@@ -19,7 +19,7 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	githubAPI "github.com/google/go-github/v25/github"
 	"golang.org/x/oauth2"
@@ -50,7 +50,7 @@ func (g *UserSSHKeyGenerator) InitResources() error {
 		}
 
 		for _, key := range keys {
-			resource := terraform_utils.NewSimpleResource(
+			resource := terraformutils.NewSimpleResource(
 				strconv.FormatInt(key.GetID(), 10),
 				strconv.FormatInt(key.GetID(), 10),
 				"github_user_ssh_key",

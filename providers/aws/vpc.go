@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -29,10 +29,10 @@ type VpcGenerator struct {
 	AWSService
 }
 
-func (VpcGenerator) createResources(vpcs *ec2.DescribeVpcsOutput) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (VpcGenerator) createResources(vpcs *ec2.DescribeVpcsOutput) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, vpc := range vpcs.Vpcs {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			aws.StringValue(vpc.VpcId),
 			aws.StringValue(vpc.VpcId),
 			"aws_vpc",

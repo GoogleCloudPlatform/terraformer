@@ -17,7 +17,7 @@ package rabbitmq
 import (
 	"encoding/json"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type UserGenerator struct {
@@ -32,10 +32,10 @@ type Users []User
 
 var UserAllowEmptyValues = []string{}
 
-func (g UserGenerator) createResources(users Users) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g UserGenerator) createResources(users Users) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, user := range users {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			user.Name,
 			"user_"+normalizeResourceName(user.Name),
 			"rabbitmq_user",

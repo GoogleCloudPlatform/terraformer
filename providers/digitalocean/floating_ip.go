@@ -17,7 +17,7 @@ package digitalocean
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/digitalocean/godo"
 )
 
@@ -55,10 +55,10 @@ func (g FloatingIPGenerator) listFloatingIPs(ctx context.Context, client *godo.C
 	return list, nil
 }
 
-func (g FloatingIPGenerator) createResources(floatingIPList []godo.FloatingIP) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g FloatingIPGenerator) createResources(floatingIPList []godo.FloatingIP) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, floatingIP := range floatingIPList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			floatingIP.IP,
 			floatingIP.IP,
 			"digitalocean_floating_ip",

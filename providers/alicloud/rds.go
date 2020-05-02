@@ -15,7 +15,7 @@
 package alicloud
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/rds"
 )
@@ -25,8 +25,8 @@ type RdsGenerator struct {
 	AliCloudService
 }
 
-func resourceFromrdsResponse(rds rds.DBInstance) terraform_utils.Resource {
-	return terraform_utils.NewResource(
+func resourceFromrdsResponse(rds rds.DBInstance) terraformutils.Resource {
+	return terraformutils.NewResource(
 		rds.DBInstanceId,                                // nolint
 		rds.DBInstanceId+"__"+rds.DBInstanceDescription, // nolint
 		"alicloud_db_instance",
@@ -52,7 +52,7 @@ func (g *RdsGenerator) InitResources() error {
 	for remaining > 0 {
 		raw, err := client.WithRdsClient(func(rdsClient *rds.Client) (interface{}, error) {
 			request := rds.CreateDescribeDBInstancesRequest()
-			request.RegionId = client.RegionId
+			request.RegionId = client.RegionID
 			request.PageSize = requests.NewInteger(pageSize)
 			request.PageNumber = requests.NewInteger(pageNumber)
 			return rdsClient.DescribeDBInstances(request)

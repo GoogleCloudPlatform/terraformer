@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 )
@@ -35,12 +35,12 @@ func (g *SecretsManagerGenerator) InitResources() error {
 	}
 	svc := secretsmanager.New(config)
 	p := secretsmanager.NewListSecretsPaginator(svc.ListSecretsRequest(&secretsmanager.ListSecretsInput{}))
-	var resources []terraform_utils.Resource
+	var resources []terraformutils.Resource
 	for p.Next(context.Background()) {
 		for _, secret := range p.CurrentPage().SecretList {
 			secretArn := aws.StringValue(secret.ARN)
 			secretName := aws.StringValue(secret.Name)
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				secretArn,
 				secretName,
 				"aws_secretsmanager_secret",

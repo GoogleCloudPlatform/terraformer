@@ -17,7 +17,7 @@ package vultr
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/vultr/govultr"
 )
 
@@ -25,10 +25,10 @@ type BlockStorageGenerator struct {
 	VultrService
 }
 
-func (g BlockStorageGenerator) createResources(blockStorageList []govultr.BlockStorage) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g BlockStorageGenerator) createResources(blockStorageList []govultr.BlockStorage) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, blockStorage := range blockStorageList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			blockStorage.BlockStorageID,
 			blockStorage.BlockStorageID,
 			"vultr_block_storage",

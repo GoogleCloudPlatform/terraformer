@@ -14,8 +14,8 @@
 
 package commercetools
 
-import "github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+import "github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
-type CommercetoolsService struct {
-	terraform_utils.Service
+type CommercetoolsService struct { //nolint
+	terraformutils.Service
 }

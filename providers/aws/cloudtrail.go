@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cloudtrail"
 )
@@ -28,11 +28,11 @@ type CloudTrailGenerator struct {
 	AWSService
 }
 
-func (g *CloudTrailGenerator) createResources(trailList []cloudtrail.Trail) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g *CloudTrailGenerator) createResources(trailList []cloudtrail.Trail) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, trail := range trailList {
 		resourceName := aws.StringValue(trail.Name)
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			resourceName,
 			resourceName,
 			"aws_cloudtrail",

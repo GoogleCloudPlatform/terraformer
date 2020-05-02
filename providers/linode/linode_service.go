@@ -17,13 +17,13 @@ package linode
 import (
 	"net/http"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/linode/linodego"
 	"golang.org/x/oauth2"
 )
 
-type LinodeService struct {
-	terraform_utils.Service
+type LinodeService struct { //nolint
+	terraformutils.Service
 }
 
 func (s *LinodeService) generateClient() linodego.Client {

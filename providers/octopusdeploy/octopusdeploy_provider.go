@@ -4,13 +4,13 @@ import (
 	"errors"
 	"os"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/zclconf/go-cty/cty"
 )
 
-type OctopusDeployProvider struct {
-	terraform_utils.Provider
+type OctopusDeployProvider struct { //nolint
+	terraformutils.Provider
 	address string
 	apiKey  string
 }
@@ -47,7 +47,7 @@ func (p *OctopusDeployProvider) GetProviderData(arg ...string) map[string]interf
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"octopusdeploy": map[string]interface{}{
-				"version": provider_wrapper.GetProviderVersion(p.GetName()),
+				"version": providerwrapper.GetProviderVersion(p.GetName()),
 				"address": p.address,
 				"apikey":  p.apiKey,
 			},
@@ -59,8 +59,8 @@ func (OctopusDeployProvider) GetResourceConnections() map[string]map[string][]st
 	return map[string]map[string][]string{}
 }
 
-func (p *OctopusDeployProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	return map[string]terraform_utils.ServiceGenerator{
+func (p *OctopusDeployProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+	return map[string]terraformutils.ServiceGenerator{
 		"accounts": &GenericGenerator{APIService: "accounts"},
 		// "channels":      &GenericGenerator{APIService: "channels"},
 		"certificates":        &GenericGenerator{APIService: "certificates"},

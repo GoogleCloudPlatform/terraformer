@@ -17,7 +17,7 @@ package digitalocean
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/digitalocean/godo"
 )
 
@@ -55,10 +55,10 @@ func (g DropletSnapshotGenerator) listDropletSnapshots(ctx context.Context, clie
 	return list, nil
 }
 
-func (g DropletSnapshotGenerator) createResources(snapshotList []godo.Snapshot) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g DropletSnapshotGenerator) createResources(snapshotList []godo.Snapshot) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, snapshot := range snapshotList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			snapshot.ID,
 			snapshot.Name,
 			"digitalocean_droplet_snapshot",

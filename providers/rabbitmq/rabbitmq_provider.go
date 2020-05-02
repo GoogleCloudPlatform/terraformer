@@ -17,13 +17,13 @@ package rabbitmq
 import (
 	"errors"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/zclconf/go-cty/cty"
 )
 
-type RBTProvider struct {
-	terraform_utils.Provider
+type RBTProvider struct { //nolint
+	terraformutils.Provider
 	endpoint string
 	username string
 	password string
@@ -44,7 +44,7 @@ func (p *RBTProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			p.GetName(): map[string]interface{}{
-				"version": provider_wrapper.GetProviderVersion(p.GetName()),
+				"version": providerwrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}
@@ -79,8 +79,8 @@ func (p *RBTProvider) InitService(serviceName string, verbose bool) error {
 	return nil
 }
 
-func (p *RBTProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	return map[string]terraform_utils.ServiceGenerator{
+func (p *RBTProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+	return map[string]terraformutils.ServiceGenerator{
 		"bindings":    &BindingGenerator{},
 		"exchanges":   &ExchangeGenerator{},
 		"permissions": &PermissionsGenerator{},

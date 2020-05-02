@@ -19,7 +19,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
@@ -51,12 +51,12 @@ func (g *SqsGenerator) InitResources() error {
 		return err
 	}
 
-	for _, queueUrl := range queuesList.QueueUrls {
-		urlParts := strings.Split(queueUrl, "/")
+	for _, queueURL := range queuesList.QueueUrls {
+		urlParts := strings.Split(queueURL, "/")
 		queueName := urlParts[len(urlParts)-1]
 
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-			queueUrl,
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+			queueURL,
 			queueName,
 			"aws_sqs_queue",
 			"aws",

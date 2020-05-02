@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
@@ -28,10 +28,10 @@ type NaclGenerator struct {
 	AWSService
 }
 
-func (NaclGenerator) createResources(nacls *ec2.DescribeNetworkAclsOutput) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (NaclGenerator) createResources(nacls *ec2.DescribeNetworkAclsOutput) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	for _, nacl := range nacls.NetworkAcls {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			aws.StringValue(nacl.NetworkAclId),
 			aws.StringValue(nacl.NetworkAclId),
 			"aws_network_acl",

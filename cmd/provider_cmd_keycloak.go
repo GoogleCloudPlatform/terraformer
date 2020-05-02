@@ -22,7 +22,7 @@ import (
 
 	keycloak_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/keycloak"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -92,6 +92,6 @@ func newCmdKeycloakImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newKeycloakProvider() terraform_utils.ProviderGenerator {
+func newKeycloakProvider() terraformutils.ProviderGenerator {
 	return &keycloak_terraforming.KeycloakProvider{}
 }

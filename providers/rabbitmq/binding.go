@@ -18,7 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type BindingGenerator struct {
@@ -38,10 +38,10 @@ type Bindings []Binding
 var BindingAllowEmptyValues = []string{"source"}
 var BindingAdditionalFields = map[string]interface{}{}
 
-func (g BindingGenerator) createResources(bindings Bindings) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g BindingGenerator) createResources(bindings Bindings) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, binding := range bindings {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			fmt.Sprintf("%s/%s/%s/%s/%s", binding.Vhost, binding.Source, binding.Destination, binding.DestinationType, binding.PropertiesKey),
 			fmt.Sprintf("binding_%s_%s_%s_%s", normalizeResourceName(binding.Source), normalizeResourceName(binding.Vhost), normalizeResourceName(binding.Destination), normalizeResourceName(binding.DestinationType)),
 			"rabbitmq_binding",

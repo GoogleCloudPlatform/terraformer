@@ -22,12 +22,12 @@ import (
 	"runtime"
 
 	"github.com/GoogleCloudPlatform/terraformer/providers/alicloud/connectivity"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 // AliCloudService Service struct for AliCloud
-type AliCloudService struct {
-	terraform_utils.Service
+type AliCloudService struct { //nolint
+	terraformutils.Service
 }
 
 // ConfigFile go struct for ~/.aliyun/config.json
@@ -67,8 +67,8 @@ func (s *AliCloudService) LoadClientFromProfile() (*connectivity.AliyunClient, e
 		return nil, err
 	}
 
-	config.RegionId = region
-	config.Region = connectivity.Region(config.RegionId)
+	config.RegionID = region
+	config.Region = connectivity.Region(config.RegionID)
 
 	return config.Client()
 }
@@ -127,10 +127,10 @@ func LoadConfigFromProfile(profileName string) (*connectivity.Config, error) {
 		SecretKey:          config.AccessKeySecret,
 		EcsRoleName:        config.Name,
 		Region:             connectivity.Region(config.RegionID),
-		RegionId:           config.RegionID,
+		RegionID:           config.RegionID,
 		SecurityToken:      config.StsToken,
-		RamRoleArn:         config.RAMRoleArn,
-		RamRoleSessionName: config.RAMSessionName,
+		RAMRoleArn:         config.RAMRoleArn,
+		RAMRoleSessionName: config.RAMSessionName,
 		// OtsInstanceName:    "", // TODO: Figure out what to do with this
 		// AccountId:          "", // TODO: Figure out what to do with this
 		// RamRolePolicy:      "", // TODO: Figure out what to do with this

@@ -15,7 +15,7 @@ package cmd
 
 import (
 	mikrotik_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/mikrotik"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -39,6 +39,6 @@ func newCmdMikrotikImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newMikrotikProvider() terraform_utils.ProviderGenerator {
+func newMikrotikProvider() terraformutils.ProviderGenerator {
 	return &mikrotik_terraforming.MikrotikProvider{}
 }

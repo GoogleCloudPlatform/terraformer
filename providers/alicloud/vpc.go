@@ -15,7 +15,7 @@
 package alicloud
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/vpc"
 )
@@ -25,8 +25,8 @@ type VpcGenerator struct {
 	AliCloudService
 }
 
-func resourceFromVpcResponse(Vpc vpc.Vpc) terraform_utils.Resource {
-	return terraform_utils.NewResource(
+func resourceFromVpcResponse(Vpc vpc.Vpc) terraformutils.Resource {
+	return terraformutils.NewResource(
 		Vpc.VpcId,                  // id
 		Vpc.VpcId+"__"+Vpc.VpcName, // name
 		"alicloud_vpc",
@@ -52,7 +52,7 @@ func (g *VpcGenerator) InitResources() error {
 	for remaining > 0 {
 		raw, err := client.WithVpcClient(func(vpcClient *vpc.Client) (interface{}, error) {
 			request := vpc.CreateDescribeVpcsRequest()
-			request.RegionId = client.RegionId
+			request.RegionId = client.RegionID
 			request.PageSize = requests.NewInteger(pageSize)
 			request.PageNumber = requests.NewInteger(pageNumber)
 			return vpcClient.DescribeVpcs(request)

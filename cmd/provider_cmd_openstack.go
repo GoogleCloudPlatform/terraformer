@@ -17,7 +17,7 @@ import (
 	"log"
 
 	openstack_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/openstack"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -47,6 +47,6 @@ func newCmdOpenStackImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newOpenStackProvider() terraform_utils.ProviderGenerator {
+func newOpenStackProvider() terraformutils.ProviderGenerator {
 	return &openstack_terraforming.OpenStackProvider{}
 }

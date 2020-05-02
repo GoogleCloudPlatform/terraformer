@@ -14,12 +14,12 @@
 package mikrotik
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/ddelnano/terraform-provider-mikrotik/client"
 )
 
-type MikrotikService struct {
-	terraform_utils.Service
+type MikrotikService struct { //nolint
+	terraformutils.Service
 }
 
 func (m *MikrotikService) generateClient() client.Mikrotik {

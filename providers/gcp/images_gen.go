@@ -19,7 +19,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"google.golang.org/api/compute/v1"
 )
@@ -33,11 +33,11 @@ type ImagesGenerator struct {
 }
 
 // Run on imagesList and create for each TerraformResource
-func (g ImagesGenerator) createResources(ctx context.Context, imagesList *compute.ImagesListCall) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g ImagesGenerator) createResources(ctx context.Context, imagesList *compute.ImagesListCall) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	if err := imagesList.Pages(ctx, func(page *compute.ImageList) error {
 		for _, obj := range page.Items {
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				obj.Name,
 				obj.Name,
 				"google_compute_image",

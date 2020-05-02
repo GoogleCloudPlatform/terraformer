@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/codepipeline"
 )
@@ -33,7 +33,7 @@ func (g *CodePipelineGenerator) loadPipelines(svc *codepipeline.Client) error {
 	for p.Next(context.Background()) {
 		for _, pipeline := range p.CurrentPage().Pipelines {
 			resourceName := aws.StringValue(pipeline.Name)
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_codepipeline",
@@ -49,7 +49,7 @@ func (g *CodePipelineGenerator) loadWebhooks(svc *codepipeline.Client) error {
 	for p.Next(context.Background()) {
 		for _, webhook := range p.CurrentPage().Webhooks {
 			resourceArn := aws.StringValue(webhook.Arn)
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				resourceArn,
 				resourceArn,
 				"aws_codepipeline_webhook",

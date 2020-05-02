@@ -15,9 +15,9 @@
 package azure
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
-type AzureService struct {
-	terraform_utils.Service
+type AzureService struct { //nolint
+	terraformutils.Service
 }

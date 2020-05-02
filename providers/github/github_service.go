@@ -14,8 +14,8 @@
 
 package github
 
-import "github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+import "github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
-type GithubService struct {
-	terraform_utils.Service
+type GithubService struct { //nolint
+	terraformutils.Service
 }

@@ -17,7 +17,7 @@ package digitalocean
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/digitalocean/godo"
 )
 
@@ -55,10 +55,10 @@ func (g ProjectGenerator) listProjects(ctx context.Context, client *godo.Client)
 	return list, nil
 }
 
-func (g ProjectGenerator) createResources(projectList []godo.Project) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g ProjectGenerator) createResources(projectList []godo.Project) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, project := range projectList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			project.ID,
 			project.Name,
 			"digitalocean_project",

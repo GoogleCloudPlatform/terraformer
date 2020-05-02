@@ -20,7 +20,7 @@ import (
 
 	datadog "github.com/zorkian/go-datadog-api"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 var (
@@ -33,11 +33,11 @@ type DowntimeGenerator struct {
 	DatadogService
 }
 
-func (DowntimeGenerator) createResources(downtimes []datadog.Downtime) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (DowntimeGenerator) createResources(downtimes []datadog.Downtime) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	for _, downtime := range downtimes {
 		resourceName := strconv.Itoa(downtime.GetId())
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			resourceName,
 			fmt.Sprintf("downtime_%s", resourceName),
 			"datadog_downtime",

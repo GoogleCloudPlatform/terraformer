@@ -17,7 +17,7 @@ package digitalocean
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/digitalocean/godo"
 )
 
@@ -55,10 +55,10 @@ func (g LoadBalancerGenerator) listLoadBalancers(ctx context.Context, client *go
 	return list, nil
 }
 
-func (g LoadBalancerGenerator) createResources(loadBalancerList []godo.LoadBalancer) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g LoadBalancerGenerator) createResources(loadBalancerList []godo.LoadBalancer) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, loadBalancer := range loadBalancerList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			loadBalancer.ID,
 			loadBalancer.Name,
 			"digitalocean_loadbalancer",
