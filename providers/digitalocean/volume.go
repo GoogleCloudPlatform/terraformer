@@ -36,9 +36,7 @@ func (g VolumeGenerator) listVolumes(ctx context.Context, client *godo.Client) (
 			return nil, err
 		}
 
-		for _, volume := range volumes {
-			list = append(list, volume)
-		}
+		list = append(list, volumes...)
 
 		// if we are at the last page, break out the for loop
 		if resp.Links == nil || resp.Links.IsLastPage() {

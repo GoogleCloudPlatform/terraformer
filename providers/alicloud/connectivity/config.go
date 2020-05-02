@@ -19,55 +19,53 @@ var securityCredURL = "http://100.100.100.200/latest/meta-data/ram/security-cred
 
 // Config of aliyun
 type Config struct {
-	AccessKey       string
-	SecretKey       string
-	EcsRoleName     string
-	Region          Region
-	RegionId        string
-	SecurityToken   string
-	OtsInstanceName string
-	AccountId       string
-
+	AccessKey                string
+	SecretKey                string
+	EcsRoleName              string
+	Region                   Region
+	RegionId                 string
+	SecurityToken            string
+	OtsInstanceName          string
+	AccountId                string
 	RamRoleArn               string
 	RamRoleSessionName       string
 	RamRolePolicy            string
 	RamRoleSessionExpiration int
-
-	EcsEndpoint           string
-	RdsEndpoint           string
-	SlbEndpoint           string
-	VpcEndpoint           string
-	CenEndpoint           string
-	EssEndpoint           string
-	OssEndpoint           string
-	OnsEndpoint           string
-	AlikafkaEndpoint      string
-	DnsEndpoint           string
-	RamEndpoint           string
-	CsEndpoint            string
-	CrEndpoint            string
-	CdnEndpoint           string
-	KmsEndpoint           string
-	OtsEndpoint           string
-	CmsEndpoint           string
-	PvtzEndpoint          string
-	StsEndpoint           string
-	LogEndpoint           string
-	DrdsEndpoint          string
-	DdsEndpoint           string
-	GpdbEnpoint           string
-	KVStoreEndpoint       string
-	FcEndpoint            string
-	ApigatewayEndpoint    string
-	DatahubEndpoint       string
-	MnsEndpoint           string
-	LocationEndpoint      string
-	ElasticsearchEndpoint string
-	NasEndpoint           string
-	ActionTrailEndpoint   string
-	BssOpenApiEndpoint    string
-	DdoscooEndpoint       string
-	DdosbgpEndpoint       string
+	EcsEndpoint              string
+	RdsEndpoint              string
+	SlbEndpoint              string
+	VpcEndpoint              string
+	CenEndpoint              string
+	EssEndpoint              string
+	OssEndpoint              string
+	OnsEndpoint              string
+	AlikafkaEndpoint         string
+	DnsEndpoint              string
+	RamEndpoint              string
+	CsEndpoint               string
+	CrEndpoint               string
+	CdnEndpoint              string
+	KmsEndpoint              string
+	OtsEndpoint              string
+	CmsEndpoint              string
+	PvtzEndpoint             string
+	StsEndpoint              string
+	LogEndpoint              string
+	DrdsEndpoint             string
+	DdsEndpoint              string
+	GpdbEnpoint              string
+	KVStoreEndpoint          string
+	FcEndpoint               string
+	ApigatewayEndpoint       string
+	DatahubEndpoint          string
+	MnsEndpoint              string
+	LocationEndpoint         string
+	ElasticsearchEndpoint    string
+	NasEndpoint              string
+	ActionTrailEndpoint      string
+	BssOpenApiEndpoint       string
+	DdoscooEndpoint          string
+	DdosbgpEndpoint          string
 
 	SkipRegionValidation bool
 	ConfigurationSource  string

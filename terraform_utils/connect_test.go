@@ -15,6 +15,7 @@
 package terraform_utils
 
 import (
+	"log"
 	"reflect"
 	"testing"
 
@@ -139,9 +140,12 @@ func prepareNoAttrs(ID, resourceType string) Resource {
 func prepare(ID, resourceType string, attributes map[string]string, attributesParsed map[string]interface{}) Resource {
 	r := NewResource(ID, "name-"+resourceType, resourceType, "provider", attributes, []string{}, map[string]interface{}{})
 	r.InstanceState.Attributes["id"] = r.InstanceState.ID
-	r.ParseTFstate(&MockedFlatmapParser{
+	err := r.ParseTFstate(&MockedFlatmapParser{
 		attributesParsed: attributesParsed,
 	}, cty.NilType)
+	if err != nil {
+		log.Println(err)
+	}
 	return r
 }
 

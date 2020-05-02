@@ -36,9 +36,7 @@ func (g ProjectGenerator) listProjects(ctx context.Context, client *godo.Client)
 			return nil, err
 		}
 
-		for _, project := range projects {
-			list = append(list, project)
-		}
+		list = append(list, projects...)
 
 		// if we are at the last page, break out the for loop
 		if resp.Links == nil || resp.Links.IsLastPage() {

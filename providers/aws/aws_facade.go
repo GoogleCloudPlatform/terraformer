@@ -1,9 +1,10 @@
 package aws
 
 import (
+	"strings"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
-	"strings"
 )
 
 type AwsFacade struct {

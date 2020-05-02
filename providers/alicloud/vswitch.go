@@ -27,8 +27,8 @@ type VSwitchGenerator struct {
 
 func resourceFromVSwitchResponse(VSwitch vpc.VSwitch) terraform_utils.Resource {
 	return terraform_utils.NewResource(
-		VSwitch.VSwitchId,                          // id
-		VSwitch.VSwitchId+"__"+VSwitch.VSwitchName, // name
+		VSwitch.VSwitchId,                          // nolint
+		VSwitch.VSwitchId+"__"+VSwitch.VSwitchName, // nolint
 		"alicloud_vswitch",
 		"alicloud",
 		map[string]string{},
@@ -62,10 +62,7 @@ func (g *VSwitchGenerator) InitResources() error {
 		}
 
 		response := raw.(*vpc.DescribeVSwitchesResponse)
-		for _, VSwitch := range response.VSwitches.VSwitch {
-			allVSwitchs = append(allVSwitchs, VSwitch)
-
-		}
+		allVSwitchs = append(allVSwitchs, response.VSwitches.VSwitch...)
 		remaining = response.TotalCount - pageNumber*pageSize
 		pageNumber++
 	}

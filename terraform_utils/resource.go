@@ -166,14 +166,3 @@ func (r *Resource) ConvertTFstate(provider *provider_wrapper.ProviderWrapper) er
 	impliedType := schema.ResourceTypes[r.InstanceInfo.Type].Block.ImpliedType()
 	return r.ParseTFstate(parser, impliedType)
 }
-
-// isAllowedEmptyValue checks if a key is an allowed empty value with regular expression
-func (r *Resource) isAllowedEmptyValue(key string) bool {
-	for _, pattern := range r.AllowEmptyValues {
-		match, err := regexp.MatchString(pattern, key)
-		if match && err == nil && pattern != "" {
-			return true
-		}
-	}
-	return false
-}

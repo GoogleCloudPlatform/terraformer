@@ -158,7 +158,10 @@ func main() {
 
 	}
 	computeAPI := map[string]interface{}{}
-	json.Unmarshal(computeAPIData, &computeAPI)
+	err = json.Unmarshal(computeAPIData, &computeAPI)
+	if err != nil {
+		log.Fatal(err)
+	}
 	funcMap := template.FuncMap{
 		"title":   strings.Title,
 		"toLower": strings.ToLower,

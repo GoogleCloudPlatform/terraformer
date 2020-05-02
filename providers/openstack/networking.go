@@ -15,6 +15,8 @@
 package openstack
 
 import (
+	"log"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack"
@@ -31,7 +33,7 @@ type NetworkingGenerator struct {
 func (g *NetworkingGenerator) createSecgroupResources(list *pagination.Pager) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 
-	list.EachPage(func(page pagination.Page) (bool, error) {
+	err := list.EachPage(func(page pagination.Page) (bool, error) {
 		groups, err := groups.ExtractGroups(page)
 		if err != nil {
 			return false, err
@@ -51,7 +53,9 @@ func (g *NetworkingGenerator) createSecgroupResources(list *pagination.Pager) []
 
 		return true, nil
 	})
-
+	if err != nil {
+		log.Println(err)
+	}
 	return resources
 }
 

@@ -215,15 +215,11 @@ func (g *RealmGenerator) InitResources() error {
 		}
 		groupRoles := []string{}
 		if len(groupDetails.RealmRoles) > 0 {
-			for _, realmRole := range groupDetails.RealmRoles {
-				groupRoles = append(groupRoles, realmRole)
-			}
+			groupRoles = append(groupRoles, groupDetails.RealmRoles...)
 		}
 		if len(groupDetails.ClientRoles) > 0 {
 			for _, clientRoles := range groupDetails.ClientRoles {
-				for _, clientRole := range clientRoles {
-					groupRoles = append(groupRoles, clientRole)
-				}
+				groupRoles = append(groupRoles, clientRoles...)
 			}
 		}
 		if len(groupRoles) > 0 {
