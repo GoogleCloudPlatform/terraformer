@@ -186,7 +186,7 @@ func (g *RealmGenerator) InitResources() error {
 
 	// Parse the groups trees, and get all the groups
 	// Get groups resources
-	groups := g.flattenGroups(realmsGroups, "", "")
+	groups := g.flattenGroups(realmsGroups, "")
 	g.Resources = append(g.Resources, g.createGroupResources(groups)...)
 
 	// For each group, get group memberships and roles resources

@@ -89,9 +89,9 @@ func (c *Config) validateRegion() error {
 	return fmt.Errorf("Invalid Alibaba Cloud region: %s", c.RegionID)
 }
 
-func (c *Config) getAuthCredential(stsSupported bool) auth.Credential {
+func (c *Config) getAuthCredential() auth.Credential {
 	if c.AccessKey != "" && c.SecretKey != "" {
-		if stsSupported && c.SecurityToken != "" {
+		if c.SecurityToken != "" {
 			return credentials.NewStsTokenCredential(c.AccessKey, c.SecretKey, c.SecurityToken)
 		}
 		if c.RAMRoleArn != "" {

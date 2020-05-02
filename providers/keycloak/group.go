@@ -85,7 +85,7 @@ func (g RealmGenerator) createGroupRolesResource(realmID, groupID, groupName str
 	)
 }
 
-func (g *RealmGenerator) flattenGroups(groups []*keycloak.Group, realmID, parentID string) []*keycloak.Group {
+func (g *RealmGenerator) flattenGroups(groups []*keycloak.Group, realmID string) []*keycloak.Group {
 	var flattenedGroups []*keycloak.Group
 	for _, group := range groups {
 		if realmID != "" {
@@ -93,7 +93,7 @@ func (g *RealmGenerator) flattenGroups(groups []*keycloak.Group, realmID, parent
 		}
 		flattenedGroups = append(flattenedGroups, group)
 		if len(group.SubGroups) > 0 {
-			subGroups := g.flattenGroups(group.SubGroups, group.RealmId, group.Id)
+			subGroups := g.flattenGroups(group.SubGroups, group.RealmId)
 			flattenedGroups = append(flattenedGroups, subGroups...)
 		}
 	}

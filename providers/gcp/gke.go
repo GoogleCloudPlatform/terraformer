@@ -33,7 +33,7 @@ type GkeGenerator struct {
 	GCPService
 }
 
-func (g *GkeGenerator) initClusters(clusters *container.ListClustersResponse, service *container.Service) []terraformutils.Resource {
+func (g *GkeGenerator) initClusters(clusters *container.ListClustersResponse) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	for _, cluster := range clusters.Clusters {
 		if _, exist := cluster.ResourceLabels["goog-composer-environment"]; exist { // don't manage composer clusters
@@ -62,12 +62,12 @@ func (g *GkeGenerator) initClusters(clusters *container.ListClustersResponse, se
 			"^ip_allocation_policy\\.[0-9]\\.services_secondary_range_name$", // conflict with services_ipv4_cidr_block
 			"^ip_allocation_policy\\.[0-9]\\.create_subnetwork")              //only for create new cluster conflict with others ip_allocation_policy fields
 		resources = append(resources, resource)
-		resources = append(resources, g.initNodePools(cluster.NodePools, cluster.Name, cluster.Location, cluster.Zone)...)
+		resources = append(resources, g.initNodePools(cluster.NodePools, cluster.Name, cluster.Location)...)
 	}
 	return resources
 }
 
-func (g *GkeGenerator) initNodePools(nodePools []*container.NodePool, clusterName, location, zone string) []terraformutils.Resource {
+func (g *GkeGenerator) initNodePools(nodePools []*container.NodePool, clusterName, location string) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	for _, nodePool := range nodePools {
 		resources = append(resources, terraformutils.NewResource(
@@ -104,7 +104,7 @@ func (g *GkeGenerator) InitResources() error {
 		return err
 	}
 
-	g.Resources = g.initClusters(clusters, service)
+	g.Resources = g.initClusters(clusters)
 	return nil
 }
 

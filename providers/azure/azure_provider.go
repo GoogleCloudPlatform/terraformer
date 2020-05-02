@@ -15,7 +15,6 @@
 package azure
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -69,7 +68,7 @@ func (p *AzureProvider) setEnvConfig() error {
 	return nil
 }
 
-func (p *AzureProvider) getAuthorizer(ctx context.Context) (autorest.Authorizer, error) {
+func (p *AzureProvider) getAuthorizer() (autorest.Authorizer, error) {
 	env, err := authentication.DetermineEnvironment(p.config.Environment)
 	if err != nil {
 		return nil, err
@@ -100,7 +99,7 @@ func (p *AzureProvider) Init(args []string) error {
 		return err
 	}
 
-	authorizer, err := p.getAuthorizer(context.Background())
+	authorizer, err := p.getAuthorizer()
 	if err != nil {
 		return err
 	}

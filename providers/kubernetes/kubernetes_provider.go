@@ -143,7 +143,7 @@ func (p *KubernetesProvider) GetSupportedService() map[string]terraformutils.Ser
 // InitClientAndConfig uses the KUBECONFIG environment variable to create
 // a new rest client and config object based on the existing kubectl config
 // and options passed from the plugin framework via environment variables
-func initClientAndConfig() (*restclient.Config, clientcmd.ClientConfig, error) {
+func initClientAndConfig() (*restclient.Config, clientcmd.ClientConfig, error) { //nolint
 	// resolve kubeconfig location, prioritizing the --config global flag,
 	// then the value of the KUBECONFIG env var (if any), and defaulting
 	// to ~/.kube/config as a last resort.

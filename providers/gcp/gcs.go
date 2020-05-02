@@ -107,7 +107,7 @@ func (g *GcsGenerator) createBucketsResources(ctx context.Context, gcsService *s
 				GcsAllowEmptyValues,
 				GcsAdditionalFields,
 			))
-			resources = append(resources, g.createNotificationResources(ctx, gcsService, bucket)...)
+			resources = append(resources, g.createNotificationResources(gcsService, bucket)...)
 		}
 		return nil
 	}); err != nil {
@@ -116,7 +116,7 @@ func (g *GcsGenerator) createBucketsResources(ctx context.Context, gcsService *s
 	return resources
 }
 
-func (g *GcsGenerator) createNotificationResources(ctx context.Context, gcsService *storage.Service, bucket *storage.Bucket) []terraformutils.Resource {
+func (g *GcsGenerator) createNotificationResources(gcsService *storage.Service, bucket *storage.Bucket) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	notificationList, err := gcsService.Notifications.List(bucket.Name).Do()
 	if err != nil {

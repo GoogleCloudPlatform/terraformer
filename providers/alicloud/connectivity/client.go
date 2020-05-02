@@ -101,7 +101,7 @@ func (client *AliyunClient) WithEcsClient(do func(*ecs.Client) (interface{}, err
 			}
 		}
 
-		ecsconn, err := ecs.NewClientWithOptions(client.config.RegionID, client.getSdkConfig().WithTimeout(time.Duration(60)*time.Second), client.config.getAuthCredential(true))
+		ecsconn, err := ecs.NewClientWithOptions(client.config.RegionID, client.getSdkConfig().WithTimeout(time.Duration(60)*time.Second), client.config.getAuthCredential())
 
 		if err != nil {
 			return nil, fmt.Errorf("unable to initialize the ECS client: %#v", err)
@@ -137,7 +137,7 @@ func (client *AliyunClient) WithRdsClient(do func(*rds.Client) (interface{}, err
 				return nil, err
 			}
 		}
-		rdsconn, err := rds.NewClientWithOptions(client.config.RegionID, client.getSdkConfig(), client.config.getAuthCredential(true))
+		rdsconn, err := rds.NewClientWithOptions(client.config.RegionID, client.getSdkConfig(), client.config.getAuthCredential())
 		if err != nil {
 			return nil, fmt.Errorf("unable to initialize the RDS client: %#v", err)
 		}
@@ -169,7 +169,7 @@ func (client *AliyunClient) WithSlbClient(do func(*slb.Client) (interface{}, err
 				return nil, err
 			}
 		}
-		slbconn, err := slb.NewClientWithOptions(client.config.RegionID, client.getSdkConfig(), client.config.getAuthCredential(true))
+		slbconn, err := slb.NewClientWithOptions(client.config.RegionID, client.getSdkConfig(), client.config.getAuthCredential())
 		if err != nil {
 			return nil, fmt.Errorf("unable to initialize the SLB client: %#v", err)
 		}
@@ -201,7 +201,7 @@ func (client *AliyunClient) WithVpcClient(do func(*vpc.Client) (interface{}, err
 				return nil, err
 			}
 		}
-		vpcconn, err := vpc.NewClientWithOptions(client.config.RegionID, client.getSdkConfig(), client.config.getAuthCredential(true))
+		vpcconn, err := vpc.NewClientWithOptions(client.config.RegionID, client.getSdkConfig(), client.config.getAuthCredential())
 		if err != nil {
 			return nil, fmt.Errorf("unable to initialize the VPC client: %#v", err)
 		}
@@ -234,7 +234,7 @@ func (client *AliyunClient) WithDNSClient(do func(*alidns.Client) (interface{}, 
 			}
 		}
 
-		dnsconn, err := alidns.NewClientWithOptions(client.config.RegionID, client.getSdkConfig(), client.config.getAuthCredential(true))
+		dnsconn, err := alidns.NewClientWithOptions(client.config.RegionID, client.getSdkConfig(), client.config.getAuthCredential())
 		if err != nil {
 			return nil, fmt.Errorf("unable to initialize the DNS client: %#v", err)
 		}
@@ -269,7 +269,7 @@ func (client *AliyunClient) WithRAMClient(do func(*ram.Client) (interface{}, err
 			}
 		}
 
-		ramconn, err := ram.NewClientWithOptions(client.config.RegionID, client.getSdkConfig(), client.config.getAuthCredential(true))
+		ramconn, err := ram.NewClientWithOptions(client.config.RegionID, client.getSdkConfig(), client.config.getAuthCredential())
 		if err != nil {
 			return nil, fmt.Errorf("unable to initialize the RAM client: %#v", err)
 		}
@@ -305,7 +305,7 @@ func (client *AliyunClient) WithPvtzClient(do func(*pvtz.Client) (interface{}, e
 				return nil, err
 			}
 		}
-		pvtzconn, err := pvtz.NewClientWithOptions(client.config.RegionID, client.getSdkConfig(), client.config.getAuthCredential(true))
+		pvtzconn, err := pvtz.NewClientWithOptions(client.config.RegionID, client.getSdkConfig(), client.config.getAuthCredential())
 		if err != nil {
 			return nil, fmt.Errorf("unable to initialize the PVTZ client: %#v", err)
 		}
