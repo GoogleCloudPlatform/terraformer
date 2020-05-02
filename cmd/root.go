@@ -65,6 +65,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdKeycloakImporter,
 		newCmdLogzioImporter,
 		newCmdCommercetoolsImporter,
+		newCmdMikrotikImporter,
 	}
 }
 
@@ -98,6 +99,7 @@ func providerGenerators() map[string]func() terraform_utils.ProviderGenerator {
 		newKeycloakProvider,
 		newLogzioProvider,
 		newCommercetoolsProvider,
+		newMikrotikProvider,
 	} {
 		list[providerGen().GetName()] = providerGen
 	}
