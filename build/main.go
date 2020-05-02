@@ -78,7 +78,7 @@ func main() {
 	fmt.Println(outb.String())
 
 	//revert code and files
-	err = ioutil.WriteFile(packageCmdPath+"/root.go", []byte(rootCode), os.ModePerm)
+	err = ioutil.WriteFile(packageCmdPath+"/root.go", rootCode, os.ModePerm)
 	if err != nil {
 		log.Println(err)
 	}

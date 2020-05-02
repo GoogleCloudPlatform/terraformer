@@ -47,7 +47,6 @@ func (g *AlbGenerator) loadLB(svc *elasticloadbalancingv2.Client) error {
 			if err != nil {
 				log.Println(err)
 			}
-
 		}
 	}
 	return p.Err()

@@ -114,7 +114,6 @@ func processRule(rule ec2.IpPermission, ruleType string, sg ec2.SecurityGroup, r
 				map[string]interface{}{}))
 		}
 		for _, groupPair := range rule.UserIdGroupPairs {
-
 			attributes := baseRuleAttributes(ruleType, rule, sg)
 			delete(attributes, "cidr_blocks")
 			delete(attributes, "ipv6_cidr_blocks")

@@ -80,7 +80,6 @@ func (c *Config) loadAndValidate() error {
 }
 
 func (c *Config) validateRegion() error {
-
 	for _, valid := range ValidRegions {
 		if c.Region == valid {
 			return nil

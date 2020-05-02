@@ -60,7 +60,6 @@ func (v *astSanitizer) visit(n interface{}) {
 	default:
 		fmt.Printf(" unknown type: %T\n", n)
 	}
-
 }
 
 func (v *astSanitizer) visitObjectItem(o *ast.ObjectItem) {
@@ -212,7 +211,6 @@ func HclPrintResource(resources []Resource, providerData map[string]interface{},
 	resourcesByType := map[string]map[string]interface{}{}
 	mapsObjects := map[string]struct{}{}
 	for _, res := range resources {
-
 		r := resourcesByType[res.InstanceInfo.Type]
 		if r == nil {
 			r = make(map[string]interface{})

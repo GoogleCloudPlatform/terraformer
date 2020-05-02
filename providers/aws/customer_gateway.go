@@ -58,5 +58,4 @@ func (g *CustomerGatewayGenerator) InitResources() error {
 	}
 	g.Resources = g.createResources(cgws)
 	return nil
-
 }

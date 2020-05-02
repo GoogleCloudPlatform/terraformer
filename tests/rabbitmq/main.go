@@ -73,5 +73,4 @@ func main() {
 			log.Println(err)
 		}
 	}
-
 }

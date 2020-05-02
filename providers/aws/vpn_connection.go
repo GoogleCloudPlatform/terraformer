@@ -58,5 +58,4 @@ func (g *VpnConnectionGenerator) InitResources() error {
 	}
 	g.Resources = g.createResources(vpncs)
 	return nil
-
 }

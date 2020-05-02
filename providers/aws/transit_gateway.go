@@ -31,7 +31,6 @@ type TransitGatewayGenerator struct {
 }
 
 func (g *TransitGatewayGenerator) getTransitGateways(svc *ec2.Client) error {
-
 	p := ec2.NewDescribeTransitGatewaysPaginator(svc.DescribeTransitGatewaysRequest(&ec2.DescribeTransitGatewaysInput{}))
 	for p.Next(context.Background()) {
 		for _, tgw := range p.CurrentPage().TransitGateways {
@@ -48,7 +47,6 @@ func (g *TransitGatewayGenerator) getTransitGateways(svc *ec2.Client) error {
 }
 
 func (g *TransitGatewayGenerator) getTransitGatewayRouteTables(svc *ec2.Client) error {
-
 	p := ec2.NewDescribeTransitGatewayRouteTablesPaginator(svc.DescribeTransitGatewayRouteTablesRequest(&ec2.DescribeTransitGatewayRouteTablesInput{}))
 	for p.Next(context.Background()) {
 		for _, tgwrt := range p.CurrentPage().TransitGatewayRouteTables {
@@ -81,7 +79,6 @@ func (g *TransitGatewayGenerator) getTransitGatewayVpcAttachments(svc *ec2.Clien
 				tgwAllowEmptyValues,
 			))
 		}
-
 	}
 	return p.Err()
 }

@@ -56,7 +56,6 @@ func (g *EbsGenerator) InitResources() error {
 	}))
 	for p.Next(context.Background()) {
 		for _, volume := range p.CurrentPage().Volumes {
-
 			isRootDevice := false // Let's leave root device configuration to be done in ec2_instance resources
 
 			for _, attachment := range volume.Attachments {
@@ -83,7 +82,6 @@ func (g *EbsGenerator) InitResources() error {
 
 				for _, attachment := range volume.Attachments {
 					if attachment.State == ec2.VolumeAttachmentStateAttached {
-
 						attachmentID := g.volumeAttachmentID(
 							aws.StringValue(attachment.Device),
 							aws.StringValue(attachment.VolumeId),

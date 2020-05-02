@@ -139,5 +139,4 @@ func (g *IamGenerator) InitResources() error {
 	g.Resources = append(g.Resources, g.createIamCustomRoleResources(rolesResponse, projectID)...)
 	g.Resources = append(g.Resources, g.createIamMemberResources(policyResponse, projectID)...)
 	return nil
-
 }

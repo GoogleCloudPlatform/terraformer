@@ -194,7 +194,6 @@ func (g *IamGenerator) getPolicies(svc *iam.Client) error {
 				"aws_iam_policy",
 				"aws",
 				IamAllowEmptyValues))
-
 		}
 	}
 	return p.Err()

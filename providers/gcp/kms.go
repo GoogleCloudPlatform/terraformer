@@ -98,7 +98,6 @@ func (g *KmsGenerator) InitResources() error {
 
 	g.Resources = g.createKmsRingResources(ctx, keyRingList, kmsService)
 	return nil
-
 }
 
 func (g *KmsGenerator) PostConvertHook() error {

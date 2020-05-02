@@ -31,7 +31,6 @@ type SubnetGenerator struct {
 func (SubnetGenerator) createResources(subnets *ec2.DescribeSubnetsOutput) []terraformutils.Resource {
 	var resources []terraformutils.Resource
 	for _, subnet := range subnets.Subnets {
-
 		resource := terraformutils.NewSimpleResource(
 			aws.StringValue(subnet.SubnetId),
 			aws.StringValue(subnet.SubnetId),

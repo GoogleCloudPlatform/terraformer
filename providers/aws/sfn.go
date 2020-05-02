@@ -23,7 +23,6 @@ func (g *SfnGenerator) InitResources() error {
 	p := sfn.NewListStateMachinesPaginator(svc.ListStateMachinesRequest(&sfn.ListStateMachinesInput{}))
 	for p.Next(context.Background()) {
 		for _, stateMachine := range p.CurrentPage().StateMachines {
-
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				*stateMachine.StateMachineArn,
 				*stateMachine.Name,
@@ -41,7 +40,6 @@ func (g *SfnGenerator) InitResources() error {
 	pActivity := sfn.NewListActivitiesPaginator(svc.ListActivitiesRequest(&sfn.ListActivitiesInput{}))
 	for pActivity.Next(context.Background()) {
 		for _, stateMachine := range pActivity.CurrentPage().Activities {
-
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				*stateMachine.ActivityArn,
 				*stateMachine.Name,

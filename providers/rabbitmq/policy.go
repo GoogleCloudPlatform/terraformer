@@ -60,7 +60,7 @@ func (g *PolicyGenerator) InitResources() error {
 		return err
 	}
 	var policies Policies
-	err = json.Unmarshal([]byte(body), &policies)
+	err = json.Unmarshal(body, &policies)
 	if err != nil {
 		return err
 	}

@@ -111,7 +111,6 @@ func (g *TeamsGenerator) InitResources() error {
 	}
 
 	return nil
-
 }
 
 // PostConvertHook for connect between team and members

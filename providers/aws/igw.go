@@ -60,5 +60,4 @@ func (g *IgwGenerator) InitResources() error {
 		g.Resources = append(g.Resources, g.createResources(p.CurrentPage())...)
 	}
 	return p.Err()
-
 }

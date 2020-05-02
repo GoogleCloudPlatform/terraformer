@@ -55,7 +55,6 @@ func main() {
 			continue
 		}
 		services = append(services, service)
-
 	}
 	sort.Strings(services)
 	provider = &gcp_terraforming.GCPProvider{
@@ -93,5 +92,4 @@ func main() {
 			log.Println(err)
 		}
 	}
-
 }

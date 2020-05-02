@@ -60,7 +60,7 @@ func (g *PermissionsGenerator) InitResources() error {
 		return err
 	}
 	var permissions AllPermissions
-	err = json.Unmarshal([]byte(body), &permissions)
+	err = json.Unmarshal(body, &permissions)
 	if err != nil {
 		return err
 	}

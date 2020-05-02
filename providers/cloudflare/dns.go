@@ -108,7 +108,6 @@ func (g *DNSGenerator) InitResources() error {
 		}
 	}
 	return nil
-
 }
 
 func (g *DNSGenerator) PostConvertHook() error {
