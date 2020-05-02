@@ -216,11 +216,6 @@ func (g *DatabasesGenerator) getMySQLServers() ([]mysql.Server, error) {
 func (g *DatabasesGenerator) createMySQLServerResources(Servers []mysql.Server) ([]terraform_utils.Resource, error) {
 	var resources []terraform_utils.Resource
 
-	Servers, err := g.getMySQLServers()
-	if err != nil {
-		return nil, err
-	}
-
 	for _, server := range Servers {
 		resources = append(resources, terraform_utils.NewResource(
 			*server.ID,

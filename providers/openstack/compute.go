@@ -15,16 +15,17 @@
 package openstack
 
 import (
+	"log"
+	"sort"
+	"strconv"
+	"strings"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack"
 	"github.com/gophercloud/gophercloud/openstack/blockstorage/v3/volumes"
 	"github.com/gophercloud/gophercloud/openstack/compute/v2/servers"
 	"github.com/gophercloud/gophercloud/pagination"
-	"log"
-	"sort"
-	"strconv"
-	"strings"
 )
 
 type ComputeGenerator struct {
@@ -35,7 +36,7 @@ type ComputeGenerator struct {
 func (g *ComputeGenerator) createResources(list *pagination.Pager, volclient *gophercloud.ServiceClient) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 
-	list.EachPage(func(page pagination.Page) (bool, error) {
+	err := list.EachPage(func(page pagination.Page) (bool, error) {
 		servers, err := servers.ExtractServers(page)
 		if err != nil {
 			return false, err
@@ -118,7 +119,9 @@ func (g *ComputeGenerator) createResources(list *pagination.Pager, volclient *go
 
 		return true, nil
 	})
-
+	if err != nil {
+		log.Println(err)
+	}
 	return resources
 }
 

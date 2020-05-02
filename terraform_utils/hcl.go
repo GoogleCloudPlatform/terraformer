@@ -22,8 +22,6 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/hashicorp/hcl/v2/hclwrite"
-
 	"github.com/hashicorp/hcl/hcl/ast"
 	hclPrinter "github.com/hashicorp/hcl/hcl/printer"
 	hclParcer "github.com/hashicorp/hcl/json/parser"
@@ -160,8 +158,10 @@ func hclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error)
 	s = strings.Replace(s, "}\nresource", "}\n\nresource", -1)
 
 	// Apply Terraform style (alignment etc.)
-	formatted := hclwrite.Format([]byte(s))
-	formatted, err = hclPrinter.Format([]byte(s))
+	formatted, err := hclPrinter.Format([]byte(s))
+	if err != nil {
+		return nil, err
+	}
 	// hack for support terraform 0.12
 	formatted = terraform12Adjustments(formatted, mapsObjects)
 	if err != nil {

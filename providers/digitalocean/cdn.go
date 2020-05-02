@@ -36,9 +36,7 @@ func (g CDNGenerator) listCDNs(ctx context.Context, client *godo.Client) ([]godo
 			return nil, err
 		}
 
-		for _, cdn := range cdns {
-			list = append(list, cdn)
-		}
+		list = append(list, cdns...)
 
 		// if we are at the last page, break out the for loop
 		if resp.Links == nil || resp.Links.IsLastPage() {

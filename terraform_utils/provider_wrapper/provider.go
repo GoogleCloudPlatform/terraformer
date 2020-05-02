@@ -64,6 +64,7 @@ func NewProviderWrapper(providerName string, providerConfig cty.Value, verbose b
 	p.providerName = providerName
 	p.config = providerConfig
 	err := p.initProvider(verbose)
+
 	return p, err
 }
 
@@ -157,6 +158,9 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 	if resp.Diagnostics.HasErrors() {
 		// retry with different serialization mechanism
 		priorState, err = gocty.ToCtyValue(state, impliedType)
+		if err != nil {
+			return nil, err
+		}
 		resp = p.Provider.ReadResource(providers.ReadResourceRequest{
 			TypeName:   info.Type,
 			PriorState: priorState,

@@ -64,10 +64,10 @@ func (HerokuProvider) GetResourceConnections() map[string]map[string][]string {
 
 func (p *HerokuProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
 	return map[string]terraform_utils.ServiceGenerator{
-		"account_feature":  &AccountFeatureGenerator{},
-		"addon":            &AddOnGenerator{},
-		"addon_attachment": &AddOnAttachmentGenerator{},
-		"app":              &AppGenerator{},
+		"account_feature":        &AccountFeatureGenerator{},
+		"addon":                  &AddOnGenerator{},
+		"addon_attachment":       &AddOnAttachmentGenerator{},
+		"app":                    &AppGenerator{},
 		"app_config_association": &AppConfigAssociationGenerator{},
 		"app_feature":            &AppFeatureGenerator{},
 		"app_webhook":            &AppWebhookGenerator{},

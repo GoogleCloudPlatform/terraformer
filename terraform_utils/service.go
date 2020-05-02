@@ -60,9 +60,7 @@ func (s *Service) ParseFilters(rawFilters []string) {
 	s.Filter = []ResourceFilter{}
 	for _, rawFilter := range rawFilters {
 		filters := s.ParseFilter(rawFilter)
-		for _, resourceFilter := range filters {
-			s.Filter = append(s.Filter, resourceFilter)
-		}
+		s.Filter = append(s.Filter, filters...)
 	}
 }
 

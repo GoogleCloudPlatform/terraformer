@@ -62,7 +62,7 @@ func (g *SyntheticsGenerator) createSyntheticsMonitorResources(client *synthetic
 	for allMonitors.Count > 0 {
 		for _, monitor := range allMonitors.Monitors {
 			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-				fmt.Sprintf("%s", monitor.ID),
+				fmt.Sprint(monitor.ID),
 				fmt.Sprintf("%s-%s", normalizeResourceName(monitor.Name), monitor.ID),
 				"newrelic_synthetics_monitor",
 				g.ProviderName,

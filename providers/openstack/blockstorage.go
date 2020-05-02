@@ -39,7 +39,7 @@ type BlockStorageGenerator struct {
 func (g *BlockStorageGenerator) createResources(list *pagination.Pager, clientType string) []terraform_utils.Resource {
 	resources := []terraform_utils.Resource{}
 
-	list.EachPage(func(page pagination.Page) (bool, error) {
+	err := list.EachPage(func(page pagination.Page) (bool, error) {
 		volumes, err := volumes.ExtractVolumes(page)
 		if err != nil {
 			return false, err
@@ -65,6 +65,9 @@ func (g *BlockStorageGenerator) createResources(list *pagination.Pager, clientTy
 
 		return true, nil
 	})
+	if err != nil {
+		log.Println(err)
+	}
 
 	return resources
 }

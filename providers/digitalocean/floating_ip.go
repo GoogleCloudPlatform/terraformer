@@ -36,9 +36,7 @@ func (g FloatingIPGenerator) listFloatingIPs(ctx context.Context, client *godo.C
 			return nil, err
 		}
 
-		for _, floatingIP := range floatingIPs {
-			list = append(list, floatingIP)
-		}
+		list = append(list, floatingIPs...)
 
 		// if we are at the last page, break out the for loop
 		if resp.Links == nil || resp.Links.IsLastPage() {

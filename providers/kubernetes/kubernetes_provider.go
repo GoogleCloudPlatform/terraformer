@@ -40,7 +40,6 @@ import (
 
 type KubernetesProvider struct {
 	terraform_utils.Provider
-	region  string
 	verbose string
 }
 
@@ -150,7 +149,7 @@ func initClientAndConfig() (*restclient.Config, clientcmd.ClientConfig, error) {
 	// to ~/.kube/config as a last resort.
 	home := os.Getenv("HOME")
 	if runtime.GOOS == "windows" {
-		home := os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
+		home = os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
 		if home == "" {
 			home = os.Getenv("USERPROFILE")
 		}
@@ -249,16 +248,6 @@ func applyGlobalOptionsToConfig(config *restclient.Config) error {
 	clientKey := os.Getenv("KUBECTL_PLUGINS_GLOBAL_FLAG_CLIENT_KEY")
 	if len(clientKey) > 0 {
 		config.TLSClientConfig.KeyFile = clientKey
-	}
-
-	cluster := os.Getenv("KUBECTL_PLUGINS_GLOBAL_FLAG_CLUSTER")
-	if len(cluster) > 0 {
-		// TODO(jvallejo): figure out how to override kubeconfig options
-	}
-
-	user := os.Getenv("KUBECTL_PLUGINS_GLOBAL_FLAG_USER")
-	if len(user) > 0 {
-		// TODO(jvallejo): figure out how to override kubeconfig options
 	}
 
 	// user / misc request config

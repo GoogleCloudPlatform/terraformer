@@ -144,13 +144,11 @@ func (*FirewallGenerator) createFirewallRuleResources(api *cf.API, zoneID, zoneN
 func (g *FirewallGenerator) InitResources() error {
 	api, err := g.initializeAPI()
 	if err != nil {
-		panic(err)
 		return err
 	}
 
 	zones, err := api.ListZones()
 	if err != nil {
-		panic(err)
 		return err
 	}
 
@@ -166,7 +164,6 @@ func (g *FirewallGenerator) InitResources() error {
 			// Getting all firewall filters
 			tmpRes, err := f(api, zone.ID, zone.Name)
 			if err != nil {
-				panic(err)
 				return err
 			}
 			g.Resources = append(g.Resources, tmpRes...)

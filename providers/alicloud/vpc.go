@@ -62,10 +62,7 @@ func (g *VpcGenerator) InitResources() error {
 		}
 
 		response := raw.(*vpc.DescribeVpcsResponse)
-		for _, Vpc := range response.Vpcs.Vpc {
-			allVpcs = append(allVpcs, Vpc)
-
-		}
+		allVpcs = append(allVpcs, response.Vpcs.Vpc...)
 		remaining = response.TotalCount - pageNumber*pageSize
 		pageNumber++
 	}
