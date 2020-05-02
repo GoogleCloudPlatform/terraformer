@@ -72,8 +72,7 @@ func (g *RealmGenerator) InitResources() error {
 
 		// For each custom federation, get mappers resources
 		for _, customUserFederation := range *customUserFederations {
-			switch customUserFederation.ProviderId {
-			case "ldap":
+			if customUserFederation.ProviderId == "ldap" {
 				mappers, err := kck.GetLdapUserFederationMappers(realm.Id, customUserFederation.Id)
 				if err != nil {
 					return errors.New("keycloak: could not get mappers of ldap user federation " + customUserFederation.Name + " of realm " + realm.Id + " in Keycloak")

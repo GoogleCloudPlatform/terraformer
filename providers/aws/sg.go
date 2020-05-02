@@ -292,19 +292,19 @@ func (g *SecurityGenerator) sortRules(rules []interface{}) {
 
 func (g *SecurityGenerator) sortIfExist(attribute string, ruleMap map[string]interface{}) {
 	if val, ok := ruleMap[attribute]; ok {
-		sort.Slice(val.([]interface{})[:], func(i, j int) bool {
+		sort.Slice(val.([]interface{}), func(i, j int) bool {
 			return val.([]interface{})[i].(string) < val.([]interface{})[j].(string)
 		})
 	}
 }
 
-func permissionID(sgID, ruleType, groupID string, IP ec2.IpPermission) string {
+func permissionID(sgID, ruleType, groupID string, ip ec2.IpPermission) string {
 	var buf bytes.Buffer
-	buf.WriteString(fmt.Sprintf("%s_%s_%s_%d_%d_", sgID, ruleType, *IP.IpProtocol, fromPort(IP), toPort(IP)))
+	buf.WriteString(fmt.Sprintf("%s_%s_%s_%d_%d_", sgID, ruleType, *ip.IpProtocol, fromPort(ip), toPort(ip)))
 
-	if len(IP.IpRanges) > 0 {
-		s := make([]string, len(IP.IpRanges))
-		for i, r := range IP.IpRanges {
+	if len(ip.IpRanges) > 0 {
+		s := make([]string, len(ip.IpRanges))
+		for i, r := range ip.IpRanges {
 			s[i] = *r.CidrIp
 		}
 		sort.Strings(s)
@@ -314,9 +314,9 @@ func permissionID(sgID, ruleType, groupID string, IP ec2.IpPermission) string {
 		}
 	}
 
-	if len(IP.Ipv6Ranges) > 0 {
-		s := make([]string, len(IP.Ipv6Ranges))
-		for i, r := range IP.Ipv6Ranges {
+	if len(ip.Ipv6Ranges) > 0 {
+		s := make([]string, len(ip.Ipv6Ranges))
+		for i, r := range ip.Ipv6Ranges {
 			s[i] = *r.CidrIpv6
 		}
 		sort.Strings(s)
@@ -326,9 +326,9 @@ func permissionID(sgID, ruleType, groupID string, IP ec2.IpPermission) string {
 		}
 	}
 
-	if len(IP.PrefixListIds) > 0 {
-		s := make([]string, len(IP.PrefixListIds))
-		for i, pl := range IP.PrefixListIds {
+	if len(ip.PrefixListIds) > 0 {
+		s := make([]string, len(ip.PrefixListIds))
+		for i, pl := range ip.PrefixListIds {
 			s[i] = *pl.PrefixListId
 		}
 		sort.Strings(s)
@@ -347,21 +347,23 @@ func permissionID(sgID, ruleType, groupID string, IP ec2.IpPermission) string {
 }
 
 func fromPort(ip ec2.IpPermission) int {
-	if *ip.IpProtocol == "icmp" {
+	switch {
+	case *ip.IpProtocol == "icmp":
 		return -1
-	} else if ip.FromPort != nil && *ip.FromPort > 0 {
+	case ip.FromPort != nil && *ip.FromPort > 0:
 		return int(*ip.FromPort)
-	} else {
+	default:
 		return 0
 	}
 }
 
 func toPort(ip ec2.IpPermission) int {
-	if *ip.IpProtocol == "icmp" {
+	switch {
+	case *ip.IpProtocol == "icmp":
 		return -1
-	} else if ip.ToPort != nil && *ip.ToPort > 0 {
+	case ip.ToPort != nil && *ip.ToPort > 0:
 		return int(*ip.ToPort)
-	} else {
+	default:
 		return 65536
 	}
 }

@@ -31,29 +31,31 @@ func WalkAndOverride(path, oldValue, newValue string, data interface{}) {
 
 func walkAndGet(pathSegments []string, data interface{}) []interface{} {
 	val := reflect.ValueOf(data)
-	if isArray(val.Interface()) {
+	switch {
+	case isArray(val.Interface()):
 		var arrayValues []interface{}
 		for i := 0; i < val.Len(); i++ {
 			arrayValues = append(arrayValues, walkAndGet(pathSegments, val.Index(i).Interface())...)
 		}
 		return arrayValues
-	} else if len(pathSegments) == 1 {
+	case len(pathSegments) == 1:
 		if val.Kind() == reflect.Map {
 			for _, e := range val.MapKeys() {
 				v := val.MapIndex(e)
 				if e.String() == pathSegments[0] {
-					if isArray(v.Interface()) {
+					switch {
+					case isArray(v.Interface()):
 						return v.Interface().([]interface{})
-					} else if isStringArray(v.Interface()) {
+					case isStringArray(v.Interface()):
 						return v.Interface().([]interface{})
-					} else {
+					default:
 						return []interface{}{v.Interface()}
 					}
 				}
 			}
 		}
 		return []interface{}{}
-	} else {
+	default:
 		if val.Kind() == reflect.Map {
 			for _, e := range val.MapKeys() {
 				v := val.MapIndex(e)
@@ -69,39 +71,39 @@ func walkAndGet(pathSegments []string, data interface{}) []interface{} {
 
 func walkAndOverride(pathSegments []string, oldValue, newValue string, data interface{}) {
 	val := reflect.ValueOf(data)
-	if isArray(val.Interface()) {
+	switch {
+	case isArray(val.Interface()):
 		for i := 0; i < val.Len(); i++ {
 			arrayValue := val.Index(i).Interface()
 			walkAndOverride(pathSegments, oldValue, newValue, arrayValue)
 		}
-	} else if len(pathSegments) == 1 {
+	case len(pathSegments) == 1:
 		if val.Kind() == reflect.Map {
 			for _, e := range val.MapKeys() {
 				v := val.MapIndex(e)
 				if e.String() == pathSegments[0] {
-					if isArray(v.Interface()) {
+					switch {
+					case isArray(v.Interface()):
 						valss := v.Interface().([]interface{})
 						for idx, currentValue := range valss {
 							if oldValue == currentValue.(string) {
 								valss[idx] = newValue
 							}
 						}
-					} else if isStringArray(v.Interface()) {
+					case isStringArray(v.Interface()):
 						valss := v.Interface().([]string)
 						for idx, currentValue := range valss {
 							if oldValue == currentValue {
 								valss[idx] = newValue
 							}
 						}
-					} else {
-						if oldValue == v.Interface().(string) {
-							val.Interface().(map[string]interface{})[pathSegments[0]] = newValue
-						}
+					case oldValue == v.Interface().(string):
+						val.Interface().(map[string]interface{})[pathSegments[0]] = newValue
 					}
 				}
 			}
 		}
-	} else if val.Kind() == reflect.Map {
+	case val.Kind() == reflect.Map:
 		for _, e := range val.MapKeys() {
 			v := val.MapIndex(e)
 			if e.String() == pathSegments[0] {

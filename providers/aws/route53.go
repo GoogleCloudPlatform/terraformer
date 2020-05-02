@@ -141,11 +141,11 @@ func wildcardUnescape(s string) string {
 }
 
 // cleanZoneID is used to remove the leading /hostedzone/
-func cleanZoneID(ID string) string {
-	return cleanPrefix(ID, "/hostedzone/")
+func cleanZoneID(id string) string {
+	return cleanPrefix(id, "/hostedzone/")
 }
 
 // cleanPrefix removes a string prefix from an ID
-func cleanPrefix(ID, prefix string) string {
-	return strings.TrimPrefix(ID, prefix)
+func cleanPrefix(id, prefix string) string {
+	return strings.TrimPrefix(id, prefix)
 }

@@ -48,10 +48,10 @@ func (g *DatabasesGenerator) getMariaDBServers() ([]mariadb.Server, error) {
 	return *Servers.Value, nil
 }
 
-func (g *DatabasesGenerator) createMariaDBServerResources(Servers []mariadb.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createMariaDBServerResources(servers []mariadb.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 
-	for _, server := range Servers {
+	for _, server := range servers {
 		resources = append(resources, terraformutils.NewResource(
 			*server.ID,
 			*server.Name,
@@ -67,7 +67,7 @@ func (g *DatabasesGenerator) createMariaDBServerResources(Servers []mariadb.Serv
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createMariaDBConfigurationResources(Servers []mariadb.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createMariaDBConfigurationResources(servers []mariadb.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -76,7 +76,7 @@ func (g *DatabasesGenerator) createMariaDBConfigurationResources(Servers []maria
 	Client := mariadb.NewConfigurationsClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
-	for _, server := range Servers {
+	for _, server := range servers {
 		id, err := ParseAzureResourceID(*server.ID)
 		if err != nil {
 			return nil, err
@@ -99,7 +99,7 @@ func (g *DatabasesGenerator) createMariaDBConfigurationResources(Servers []maria
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createMariaDBDatabaseResources(Servers []mariadb.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createMariaDBDatabaseResources(servers []mariadb.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -108,7 +108,7 @@ func (g *DatabasesGenerator) createMariaDBDatabaseResources(Servers []mariadb.Se
 	Client := mariadb.NewDatabasesClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
-	for _, server := range Servers {
+	for _, server := range servers {
 		id, err := ParseAzureResourceID(*server.ID)
 		if err != nil {
 			return nil, err
@@ -131,7 +131,7 @@ func (g *DatabasesGenerator) createMariaDBDatabaseResources(Servers []mariadb.Se
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createMariaDBFirewallRuleResources(Servers []mariadb.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createMariaDBFirewallRuleResources(servers []mariadb.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -139,7 +139,7 @@ func (g *DatabasesGenerator) createMariaDBFirewallRuleResources(Servers []mariad
 
 	Client := mariadb.NewFirewallRulesClient(SubscriptionID)
 	Client.Authorizer = Authorizer
-	for _, server := range Servers {
+	for _, server := range servers {
 		id, err := ParseAzureResourceID(*server.ID)
 		if err != nil {
 			return nil, err
@@ -162,7 +162,7 @@ func (g *DatabasesGenerator) createMariaDBFirewallRuleResources(Servers []mariad
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createMariaDBVirtualNetworkRuleResources(Servers []mariadb.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createMariaDBVirtualNetworkRuleResources(servers []mariadb.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -171,7 +171,7 @@ func (g *DatabasesGenerator) createMariaDBVirtualNetworkRuleResources(Servers []
 	Client := mariadb.NewVirtualNetworkRulesClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
-	for _, server := range Servers {
+	for _, server := range servers {
 		id, err := ParseAzureResourceID(*server.ID)
 		if err != nil {
 			return nil, err
@@ -213,10 +213,10 @@ func (g *DatabasesGenerator) getMySQLServers() ([]mysql.Server, error) {
 	return *Servers.Value, nil
 }
 
-func (g *DatabasesGenerator) createMySQLServerResources(Servers []mysql.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createMySQLServerResources(servers []mysql.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 
-	for _, server := range Servers {
+	for _, server := range servers {
 		resources = append(resources, terraformutils.NewResource(
 			*server.ID,
 			*server.Name,
@@ -232,7 +232,7 @@ func (g *DatabasesGenerator) createMySQLServerResources(Servers []mysql.Server) 
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createMySQLConfigurationResources(Servers []mysql.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createMySQLConfigurationResources(servers []mysql.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -241,7 +241,7 @@ func (g *DatabasesGenerator) createMySQLConfigurationResources(Servers []mysql.S
 	Client := mysql.NewConfigurationsClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
-	for _, server := range Servers {
+	for _, server := range servers {
 		id, err := ParseAzureResourceID(*server.ID)
 		if err != nil {
 			return nil, err
@@ -264,7 +264,7 @@ func (g *DatabasesGenerator) createMySQLConfigurationResources(Servers []mysql.S
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createMySQLDatabaseResources(Servers []mysql.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createMySQLDatabaseResources(servers []mysql.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -273,7 +273,7 @@ func (g *DatabasesGenerator) createMySQLDatabaseResources(Servers []mysql.Server
 	Client := mysql.NewDatabasesClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
-	for _, server := range Servers {
+	for _, server := range servers {
 		id, err := ParseAzureResourceID(*server.ID)
 		if err != nil {
 			return nil, err
@@ -295,7 +295,7 @@ func (g *DatabasesGenerator) createMySQLDatabaseResources(Servers []mysql.Server
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createMySQLFirewallRuleResources(Servers []mysql.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createMySQLFirewallRuleResources(servers []mysql.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -304,7 +304,7 @@ func (g *DatabasesGenerator) createMySQLFirewallRuleResources(Servers []mysql.Se
 	Client := mysql.NewFirewallRulesClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
-	for _, server := range Servers {
+	for _, server := range servers {
 		id, err := ParseAzureResourceID(*server.ID)
 		if err != nil {
 			return nil, err
@@ -327,7 +327,7 @@ func (g *DatabasesGenerator) createMySQLFirewallRuleResources(Servers []mysql.Se
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createMySQLVirtualNetworkRuleResources(Servers []mysql.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createMySQLVirtualNetworkRuleResources(servers []mysql.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -336,7 +336,7 @@ func (g *DatabasesGenerator) createMySQLVirtualNetworkRuleResources(Servers []my
 	Client := mysql.NewVirtualNetworkRulesClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
-	for _, server := range Servers {
+	for _, server := range servers {
 		id, err := ParseAzureResourceID(*server.ID)
 		if err != nil {
 			return nil, err
@@ -381,10 +381,10 @@ func (g *DatabasesGenerator) getPostgreSQLServers() ([]postgresql.Server, error)
 	return *Servers.Value, nil
 }
 
-func (g *DatabasesGenerator) createPostgreSQLServerResources(Servers []postgresql.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createPostgreSQLServerResources(servers []postgresql.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 
-	for _, server := range Servers {
+	for _, server := range servers {
 		resources = append(resources, terraformutils.NewResource(
 			*server.ID,
 			*server.Name,
@@ -400,7 +400,7 @@ func (g *DatabasesGenerator) createPostgreSQLServerResources(Servers []postgresq
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createPostgreSQLDatabaseResources(Servers []postgresql.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createPostgreSQLDatabaseResources(servers []postgresql.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -409,7 +409,7 @@ func (g *DatabasesGenerator) createPostgreSQLDatabaseResources(Servers []postgre
 	Client := postgresql.NewDatabasesClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
-	for _, server := range Servers {
+	for _, server := range servers {
 		id, err := ParseAzureResourceID(*server.ID)
 		if err != nil {
 			return nil, err
@@ -431,7 +431,7 @@ func (g *DatabasesGenerator) createPostgreSQLDatabaseResources(Servers []postgre
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createPostgreSQLConfigurationResources(Servers []postgresql.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createPostgreSQLConfigurationResources(servers []postgresql.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -439,7 +439,7 @@ func (g *DatabasesGenerator) createPostgreSQLConfigurationResources(Servers []po
 	Client := postgresql.NewConfigurationsClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
-	for _, server := range Servers {
+	for _, server := range servers {
 		id, err := ParseAzureResourceID(*server.ID)
 		if err != nil {
 			return nil, err
@@ -461,7 +461,7 @@ func (g *DatabasesGenerator) createPostgreSQLConfigurationResources(Servers []po
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createPostgreSQLFirewallRuleResources(Servers []postgresql.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createPostgreSQLFirewallRuleResources(servers []postgresql.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -470,7 +470,7 @@ func (g *DatabasesGenerator) createPostgreSQLFirewallRuleResources(Servers []pos
 	Client := postgresql.NewFirewallRulesClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
-	for _, server := range Servers {
+	for _, server := range servers {
 		id, err := ParseAzureResourceID(*server.ID)
 		if err != nil {
 			return nil, err
@@ -492,7 +492,7 @@ func (g *DatabasesGenerator) createPostgreSQLFirewallRuleResources(Servers []pos
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createPostgreSQLVirtualNetworkRuleResources(Servers []postgresql.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createPostgreSQLVirtualNetworkRuleResources(servers []postgresql.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -501,7 +501,7 @@ func (g *DatabasesGenerator) createPostgreSQLVirtualNetworkRuleResources(Servers
 	Client := postgresql.NewVirtualNetworkRulesClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
-	for _, server := range Servers {
+	for _, server := range servers {
 		id, err := ParseAzureResourceID(*server.ID)
 		if err != nil {
 			return nil, err
@@ -547,10 +547,10 @@ func (g *DatabasesGenerator) getSQLServers() ([]sql.Server, error) {
 	return servers, nil
 }
 
-func (g *DatabasesGenerator) createSQLServerResources(Servers []sql.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createSQLServerResources(servers []sql.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 
-	for _, server := range Servers {
+	for _, server := range servers {
 		resources = append(resources, terraformutils.NewResource(
 			*server.ID,
 			*server.Name,
@@ -566,7 +566,7 @@ func (g *DatabasesGenerator) createSQLServerResources(Servers []sql.Server) ([]t
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createSQLDatabaseResources(Servers []sql.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createSQLDatabaseResources(servers []sql.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -575,7 +575,7 @@ func (g *DatabasesGenerator) createSQLDatabaseResources(Servers []sql.Server) ([
 	Client := sql.NewDatabasesClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
-	for _, server := range Servers {
+	for _, server := range servers {
 		id, err := ParseAzureResourceID(*server.ID)
 		if err != nil {
 			return nil, err
@@ -597,7 +597,7 @@ func (g *DatabasesGenerator) createSQLDatabaseResources(Servers []sql.Server) ([
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createSQLFirewallRuleResources(Servers []sql.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createSQLFirewallRuleResources(servers []sql.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -606,7 +606,7 @@ func (g *DatabasesGenerator) createSQLFirewallRuleResources(Servers []sql.Server
 	Client := sql.NewFirewallRulesClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
-	for _, server := range Servers {
+	for _, server := range servers {
 		id, err := ParseAzureResourceID(*server.ID)
 		if err != nil {
 			return nil, err
@@ -628,7 +628,7 @@ func (g *DatabasesGenerator) createSQLFirewallRuleResources(Servers []sql.Server
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createSQLVirtualNetworkRuleResources(Servers []sql.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createSQLVirtualNetworkRuleResources(servers []sql.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -637,7 +637,7 @@ func (g *DatabasesGenerator) createSQLVirtualNetworkRuleResources(Servers []sql.
 	Client := sql.NewVirtualNetworkRulesClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
-	for _, server := range Servers {
+	for _, server := range servers {
 		id, err := ParseAzureResourceID(*server.ID)
 		if err != nil {
 			return nil, err
@@ -663,7 +663,7 @@ func (g *DatabasesGenerator) createSQLVirtualNetworkRuleResources(Servers []sql.
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createSQLElasticPoolResources(Servers []sql.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createSQLElasticPoolResources(servers []sql.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -672,7 +672,7 @@ func (g *DatabasesGenerator) createSQLElasticPoolResources(Servers []sql.Server)
 	Client := sql.NewElasticPoolsClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
-	for _, server := range Servers {
+	for _, server := range servers {
 		id, err := ParseAzureResourceID(*server.ID)
 		if err != nil {
 			return nil, err
@@ -694,7 +694,7 @@ func (g *DatabasesGenerator) createSQLElasticPoolResources(Servers []sql.Server)
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createSQLFailoverResources(Servers []sql.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createSQLFailoverResources(servers []sql.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -703,7 +703,7 @@ func (g *DatabasesGenerator) createSQLFailoverResources(Servers []sql.Server) ([
 	Client := sql.NewFailoverGroupsClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
-	for _, server := range Servers {
+	for _, server := range servers {
 		id, err := ParseAzureResourceID(*server.ID)
 		if err != nil {
 			return nil, err
@@ -728,7 +728,7 @@ func (g *DatabasesGenerator) createSQLFailoverResources(Servers []sql.Server) ([
 	return resources, nil
 }
 
-func (g *DatabasesGenerator) createSQLADAdministratorResources(Servers []sql.Server) ([]terraformutils.Resource, error) {
+func (g *DatabasesGenerator) createSQLADAdministratorResources(servers []sql.Server) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	SubscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -737,7 +737,7 @@ func (g *DatabasesGenerator) createSQLADAdministratorResources(Servers []sql.Ser
 	Client := sql.NewServerAzureADAdministratorsClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
-	for _, server := range Servers {
+	for _, server := range servers {
 		id, err := ParseAzureResourceID(*server.ID)
 		if err != nil {
 			return nil, err
