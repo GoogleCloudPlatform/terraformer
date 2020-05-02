@@ -131,7 +131,6 @@ func (g *RepositoriesGenerator) createRepositoryCollaboratorResources(ctx contex
 		))
 	}
 	return resources
-
 }
 
 func (g *RepositoriesGenerator) createRepositoryDeployKeyResources(ctx context.Context, client *githubAPI.Client, repo *githubAPI.Repository) []terraformutils.Resource {

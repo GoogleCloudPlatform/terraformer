@@ -35,7 +35,6 @@ type MonitoringGenerator struct {
 }
 
 func (g *MonitoringGenerator) loadAlerts(ctx context.Context, project string) error {
-
 	client, err := monitoring.NewAlertPolicyClient(ctx)
 	if err != nil {
 		return err

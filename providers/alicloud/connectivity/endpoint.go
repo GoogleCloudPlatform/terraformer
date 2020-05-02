@@ -95,7 +95,7 @@ func loadEndpoint(region string, serviceCode ServiceCode) string {
 		return ""
 	}
 	for _, endpoint := range endpoints.Endpoint {
-		if endpoint.RegionIds.RegionID == string(region) {
+		if endpoint.RegionIds.RegionID == region {
 			for _, product := range endpoint.Products.Product {
 				if strings.EqualFold(product.ProductName, string(serviceCode)) {
 					return strings.TrimSpace(product.DomainName)

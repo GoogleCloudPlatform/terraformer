@@ -104,5 +104,4 @@ func (g *DataprocGenerator) InitResources() error {
 	//g.Resources = append(g.Resources, g.createJobResources(jobList, ctx)...)
 
 	return nil
-
 }

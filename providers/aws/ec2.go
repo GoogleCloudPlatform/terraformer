@@ -80,7 +80,6 @@ func (g *Ec2Generator) InitResources() error {
 				r.IgnoreKeys = append(r.IgnoreKeys, "^ebs_block_device.(.*)")
 				g.Resources = append(g.Resources, r)
 			}
-
 		}
 	}
 	return p.Err()

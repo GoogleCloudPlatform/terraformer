@@ -60,7 +60,7 @@ func (g *QueueGenerator) InitResources() error {
 		return err
 	}
 	var queues Queues
-	err = json.Unmarshal([]byte(body), &queues)
+	err = json.Unmarshal(body, &queues)
 	if err != nil {
 		return err
 	}

@@ -71,7 +71,6 @@ func (g *CognitoGenerator) loadUserPools(svc *cognitoidentityprovider.Client) er
 }
 
 func (g *CognitoGenerator) InitResources() error {
-
 	config, e := g.generateConfig()
 	if e != nil {
 		return e

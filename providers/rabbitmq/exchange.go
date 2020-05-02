@@ -63,7 +63,7 @@ func (g *ExchangeGenerator) InitResources() error {
 		return err
 	}
 	var exchanges Exchanges
-	err = json.Unmarshal([]byte(body), &exchanges)
+	err = json.Unmarshal(body, &exchanges)
 	if err != nil {
 		return err
 	}

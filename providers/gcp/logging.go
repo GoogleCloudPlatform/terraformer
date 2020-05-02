@@ -55,7 +55,6 @@ func (g *LoggingGenerator) loadLoggingMetrics(ctx context.Context, client *logad
 			loggingAllowEmptyValues,
 			loggingAdditionalFields,
 		))
-
 	}
 	return nil
 }

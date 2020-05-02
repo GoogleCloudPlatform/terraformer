@@ -68,6 +68,5 @@ linters:
   - golint
   - goimports
   - gocritic
-  #- wsl
-  #- whitespace
+  - unconvert
   fast: false

@@ -97,7 +97,6 @@ func (p *ProviderWrapper) GetReadOnlyAttributes(resourceTypes []string) (map[str
 					} else {
 						readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], "^"+k+"$")
 					}
-
 				}
 			}
 			readOnlyAttributes[resourceName] = p.readObjBlocks(obj.Block.BlockTypes, readOnlyAttributes[resourceName], "-1")

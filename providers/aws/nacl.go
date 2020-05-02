@@ -55,5 +55,4 @@ func (g *NaclGenerator) InitResources() error {
 		g.Resources = append(g.Resources, g.createResources(p.CurrentPage())...)
 	}
 	return p.Err()
-
 }

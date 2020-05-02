@@ -66,7 +66,7 @@ func (g *BindingGenerator) InitResources() error {
 		return err
 	}
 	var bindings Bindings
-	err = json.Unmarshal([]byte(body), &bindings)
+	err = json.Unmarshal(body, &bindings)
 	if err != nil {
 		return err
 	}

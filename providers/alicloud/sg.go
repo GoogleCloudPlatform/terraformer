@@ -89,7 +89,6 @@ func initSecurityGroupRules(client *connectivity.AliyunClient, securityGroups []
 			allPermissions = append(allPermissions, zoneRecord)
 			alignedSecurityGroups = append(alignedSecurityGroups, securityGroup)
 		}
-
 	}
 	return allPermissions, alignedSecurityGroups, nil
 }

@@ -52,7 +52,7 @@ func (g *VhostGenerator) InitResources() error {
 		return err
 	}
 	var vhosts Vhosts
-	err = json.Unmarshal([]byte(body), &vhosts)
+	err = json.Unmarshal(body, &vhosts)
 	if err != nil {
 		return err
 	}

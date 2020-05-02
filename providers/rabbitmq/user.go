@@ -52,7 +52,7 @@ func (g *UserGenerator) InitResources() error {
 		return err
 	}
 	var users Users
-	err = json.Unmarshal([]byte(body), &users)
+	err = json.Unmarshal(body, &users)
 	if err != nil {
 		return err
 	}

@@ -62,7 +62,6 @@ func (g *ComputeGenerator) createResources(list *pagination.Pager, volclient *go
 				var dependsOn = ""
 				for _, v := range vol {
 					if v.Bootable == "true" && v.VolumeImageMetadata != nil {
-
 						bds = append(bds, map[string]interface{}{
 							"source_type":           "image",
 							"uuid":                  v.VolumeImageMetadata["image_id"],

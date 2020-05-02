@@ -67,5 +67,4 @@ func (g *CloudFunctionsGenerator) InitResources() error {
 
 	g.Resources = g.createResources(ctx, functionsList)
 	return nil
-
 }

@@ -46,7 +46,6 @@ func (g *RDSGenerator) loadDBInstances(svc *rds.Client) error {
 		}
 	}
 	return p.Err()
-
 }
 
 func (g *RDSGenerator) loadDBParameterGroups(svc *rds.Client) error {
@@ -152,7 +151,6 @@ func (g *RDSGenerator) InitResources() error {
 	}
 
 	return nil
-
 }
 
 func (g *RDSGenerator) PostConvertHook() error {

@@ -58,5 +58,4 @@ func (g *VpnGatewayGenerator) InitResources() error {
 	}
 	g.Resources = g.createResources(vpnGws)
 	return nil
-
 }

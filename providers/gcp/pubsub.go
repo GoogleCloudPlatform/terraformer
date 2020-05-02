@@ -113,7 +113,6 @@ func (g *PubsubGenerator) PostConvertHook() error {
 				g.Resources[i].Item["topic"] = "${google_pubsub_topic." + topic.ResourceName + ".name}"
 			}
 		}
-
 	}
 	return nil
 }

@@ -83,7 +83,6 @@ func (g *OrganizationGenerator) traverseNode(svc *organizations.Client, parentID
 		))
 		g.traverseNode(svc, aws.StringValue(unit.Id))
 	}
-
 }
 
 func (g *OrganizationGenerator) InitResources() error {
@@ -108,7 +107,6 @@ func (g *OrganizationGenerator) InitResources() error {
 	}))
 	for p.Next(context.Background()) {
 		for _, policy := range p.CurrentPage().Policies {
-
 			policyID := aws.StringValue(policy.Id)
 			policyName := aws.StringValue(policy.Name)
 			g.Resources = append(g.Resources, terraformutils.NewResource(

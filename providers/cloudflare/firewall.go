@@ -138,7 +138,6 @@ func (*FirewallGenerator) createFirewallRuleResources(api *cf.API, zoneID, zoneN
 	}
 
 	return resources, nil
-
 }
 
 func (g *FirewallGenerator) InitResources() error {

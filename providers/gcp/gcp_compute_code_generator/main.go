@@ -155,7 +155,6 @@ func main() {
 	computeAPIData, err := ioutil.ReadFile("vendor/google.golang.org/api/compute/v1/compute-api.json") //TODO delete this hack
 	if err != nil {
 		log.Fatal(err)
-
 	}
 	computeAPI := map[string]interface{}{}
 	err = json.Unmarshal(computeAPIData, &computeAPI)
@@ -182,7 +181,6 @@ func main() {
 				case "zone":
 					parameters = append(parameters, `g.GetArgs()["zone"].(string)`)
 				}
-
 			}
 			parameterOrder := strings.Join(parameters, ", ")
 			var tpl bytes.Buffer

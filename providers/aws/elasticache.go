@@ -153,7 +153,6 @@ func (g *ElastiCacheGenerator) InitResources() error {
 	}
 
 	return nil
-
 }
 
 func (g *ElastiCacheGenerator) PostConvertHook() error {
