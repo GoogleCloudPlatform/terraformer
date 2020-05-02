@@ -85,9 +85,7 @@ func initSlb(client *connectivity.AliyunClient) ([]slb.LoadBalancer, error) {
 		}
 
 		response := raw.(*slb.DescribeLoadBalancersResponse)
-		for _, loadBalancer := range response.LoadBalancers.LoadBalancer {
-			allLoadBalancers = append(allLoadBalancers, loadBalancer)
-		}
+		allLoadBalancers = append(allLoadBalancers, response.LoadBalancers.LoadBalancer...)
 		remaining = response.TotalCount - pageNumber*pageSize
 		pageNumber++
 	}
@@ -111,9 +109,7 @@ func initVServerGroups(client *connectivity.AliyunClient, allLoadBalancers []slb
 			return nil, err
 		}
 		response := raw.(*slb.DescribeVServerGroupsResponse)
-		for _, vServerGroup := range response.VServerGroups.VServerGroup {
-			allVserverGroups = append(allVserverGroups, vServerGroup)
-		}
+		allVserverGroups = append(allVserverGroups, response.VServerGroups.VServerGroup...)
 	}
 
 	return allVserverGroups, nil

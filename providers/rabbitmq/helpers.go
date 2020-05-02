@@ -26,7 +26,7 @@ import (
 func normalizeResourceName(s string) string {
 	normalize := precis.NewIdentifier(
 		precis.AdditionalMapping(func() transform.Transformer {
-			return transform.Chain(norm.NFD, transform.RemoveFunc(func(r rune) bool {
+			return transform.Chain(norm.NFD, transform.RemoveFunc(func(r rune) bool { //nolint
 				return unicode.Is(unicode.Mn, r)
 			}))
 		}),

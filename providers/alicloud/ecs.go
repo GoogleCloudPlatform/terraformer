@@ -29,7 +29,7 @@ type EcsGenerator struct {
 
 func resourceFromInstance(instance ecs.Instance) terraform_utils.Resource {
 	return terraform_utils.NewResource(
-		instance.InstanceId,                            // id
+		instance.InstanceId, // id
 		instance.InstanceId+"__"+instance.InstanceName, // name
 		"alicloud_instance",
 		"alicloud",
@@ -75,10 +75,7 @@ func (g *EcsGenerator) InitResources() error {
 		}
 
 		response := raw.(*ecs.DescribeInstancesResponse)
-		for _, instance := range response.Instances.Instance {
-			allInstances = append(allInstances, instance)
-
-		}
+		allInstances = append(allInstances, response.Instances.Instance...)
 		remaining = response.TotalCount - pageNumber*pageSize
 		pageNumber++
 	}

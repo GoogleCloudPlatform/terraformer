@@ -36,9 +36,7 @@ func (g CertificateGenerator) listCertificates(ctx context.Context, client *godo
 			return nil, err
 		}
 
-		for _, certificate := range certificates {
-			list = append(list, certificate)
-		}
+		list = append(list, certificates...)
 
 		// if we are at the last page, break out the for loop
 		if resp.Links == nil || resp.Links.IsLastPage() {

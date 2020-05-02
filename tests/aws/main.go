@@ -15,12 +15,13 @@
 package main
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/cmd"
-	aws_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/aws"
 	"log"
 	"os"
 	"os/exec"
 	"time"
+
+	"github.com/GoogleCloudPlatform/terraformer/cmd"
+	aws_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/aws"
 )
 
 func main() {
@@ -63,5 +64,8 @@ func runTerraform(pathPattern string) {
 		log.Println(err)
 		os.Exit(1)
 	}
-	os.Chdir(rootPath)
+	err = os.Chdir(rootPath)
+	if err != nil {
+		log.Println(err)
+	}
 }

@@ -44,7 +44,7 @@ func (p *AliCloudProvider) GetConfig() cty.Value {
 		region = config.RegionId
 	}
 
-	val := cty.Value{}
+	var val cty.Value
 	if config.RamRoleArn != "" {
 		val = cty.ObjectVal(map[string]cty.Value{
 			"region":  cty.StringVal(region),

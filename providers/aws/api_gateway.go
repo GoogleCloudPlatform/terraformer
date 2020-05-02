@@ -16,6 +16,7 @@ package aws
 
 import (
 	"context"
+	"log"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
@@ -146,7 +147,10 @@ func (g *ApiGatewayGenerator) loadResources(svc *apigateway.Client, restApiId *s
 				apiGatewayAllowEmptyValues,
 				map[string]interface{}{},
 			))
-			g.loadResourceMethods(svc, restApiId, resource)
+			err := g.loadResourceMethods(svc, restApiId, resource)
+			if err != nil {
+				log.Println(err)
+			}
 		}
 	}
 	return p.Err()

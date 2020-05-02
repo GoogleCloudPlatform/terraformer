@@ -67,10 +67,7 @@ func initRoles(client *connectivity.AliyunClient) ([]ram.Role, error) {
 	}
 
 	response := raw.(*ram.ListRolesResponse)
-	for _, role := range response.Roles.Role {
-		allRoles = append(allRoles, role)
-
-	}
+	allRoles = append(allRoles, response.Roles.Role...)
 
 	return allRoles, nil
 }

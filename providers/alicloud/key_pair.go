@@ -27,8 +27,8 @@ type KeyPairGenerator struct {
 
 func resourceFromKeyPair(keyPair ecs.KeyPair) terraform_utils.Resource {
 	return terraform_utils.NewResource(
-		keyPair.KeyPairName,                          // id
-		keyPair.KeyPairName+"__"+keyPair.KeyPairName, // name
+		keyPair.KeyPairName,                          // nolint
+		keyPair.KeyPairName+"__"+keyPair.KeyPairName, // nolint
 		"alicloud_key_pair",
 		"alicloud",
 		map[string]string{},
@@ -62,10 +62,7 @@ func (g *KeyPairGenerator) InitResources() error {
 		}
 
 		response := raw.(*ecs.DescribeKeyPairsResponse)
-		for _, keypair := range response.KeyPairs.KeyPair {
-			allKeyPairs = append(allKeyPairs, keypair)
-
-		}
+		allKeyPairs = append(allKeyPairs, response.KeyPairs.KeyPair...)
 		remaining = response.TotalCount - pageNumber*pageSize
 		pageNumber++
 	}

@@ -27,8 +27,8 @@ type RdsGenerator struct {
 
 func resourceFromrdsResponse(rds rds.DBInstance) terraform_utils.Resource {
 	return terraform_utils.NewResource(
-		rds.DBInstanceId,                                // id
-		rds.DBInstanceId+"__"+rds.DBInstanceDescription, // name
+		rds.DBInstanceId,                                // nolint
+		rds.DBInstanceId+"__"+rds.DBInstanceDescription, // nolint
 		"alicloud_db_instance",
 		"alicloud",
 		map[string]string{},
@@ -62,10 +62,7 @@ func (g *RdsGenerator) InitResources() error {
 		}
 
 		response := raw.(*rds.DescribeDBInstancesResponse)
-		for _, rds := range response.Items.DBInstance {
-			allrdss = append(allrdss, rds)
-
-		}
+		allrdss = append(allrdss, response.Items.DBInstance...)
 		remaining = response.TotalRecordCount - pageNumber*pageSize
 		pageNumber++
 	}

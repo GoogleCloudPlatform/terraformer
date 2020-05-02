@@ -55,7 +55,7 @@ func (g *FirehoseGenerator) InitResources() error {
 			return err
 		}
 		streamNames = append(streamNames, output.DeliveryStreamNames...)
-		if *output.HasMoreDeliveryStreams == false {
+		if !*output.HasMoreDeliveryStreams {
 			break
 		}
 	}

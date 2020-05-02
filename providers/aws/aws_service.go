@@ -16,9 +16,10 @@ package aws
 
 import (
 	"context"
-	"github.com/aws/aws-sdk-go-v2/service/sts"
 	"os"
 	"regexp"
+
+	"github.com/aws/aws-sdk-go-v2/service/sts"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/aws/external"

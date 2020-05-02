@@ -15,14 +15,9 @@
 package azure
 
 import (
-	"context"
 	"fmt"
 	"net/url"
 	"strings"
-
-	"github.com/Azure/azure-sdk-for-go/services/compute/mgmt/2019-07-01/compute"
-	"github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2019-05-01/resources"
-	"github.com/Azure/go-autorest/autorest"
 )
 
 // FROM https://github.com/terraform-providers/terraform-provider-azurerm/blob/6e006ff4e5d1fb200a6b37eb2743ff0ec8b11e0d/azurerm/helpers/azure/resourceid.go#L24
@@ -112,48 +107,4 @@ func ParseAzureResourceID(id string) (*ResourceID, error) {
 	}
 
 	return idObj, nil
-}
-
-// END
-
-func listResourceGroups(SubscriptionID string, authorizer autorest.Authorizer) ([]resources.Group, error) {
-	ctx := context.Background()
-	var ResourceGroups []resources.Group
-	GroupClient := resources.NewGroupsClient(SubscriptionID)
-	GroupClient.Authorizer = authorizer
-
-	output, err := GroupClient.ListComplete(ctx, "", nil)
-	if err != nil {
-		return nil, err
-	}
-
-	for output.NotDone() {
-		ResourceGroups = append(ResourceGroups, output.Value())
-		if err := output.NextWithContext(ctx); err != nil {
-			return nil, err
-		}
-	}
-
-	return ResourceGroups, err
-}
-
-func listVMs(SubscriptionID string, authorizer autorest.Authorizer) ([]compute.VirtualMachine, error) {
-	var virtualMachines []compute.VirtualMachine
-	ctx := context.Background()
-	VMsClient := compute.NewVirtualMachinesClient(SubscriptionID)
-	VMsClient.Authorizer = authorizer
-	VMIterator, err := VMsClient.ListAllComplete(ctx, "false")
-	if err != nil {
-		return nil, err
-	}
-
-	for VMIterator.NotDone() {
-		virtualMachines = append(virtualMachines, VMIterator.Value())
-
-		if err := VMIterator.NextWithContext(ctx); err != nil {
-			return nil, err
-		}
-	}
-
-	return virtualMachines, err
 }
