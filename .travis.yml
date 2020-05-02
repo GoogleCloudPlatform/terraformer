@@ -4,7 +4,7 @@ language: go
 go:
   - 1.14.x
 
-before_script: go mod vendor
+before_script: go mod download
 
 script:
   - go build -v
