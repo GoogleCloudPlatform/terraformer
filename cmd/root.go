@@ -15,7 +15,7 @@
 package cmd
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -69,9 +69,9 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 	}
 }
 
-func providerGenerators() map[string]func() terraform_utils.ProviderGenerator {
-	list := make(map[string]func() terraform_utils.ProviderGenerator)
-	for _, providerGen := range []func() terraform_utils.ProviderGenerator{
+func providerGenerators() map[string]func() terraformutils.ProviderGenerator {
+	list := make(map[string]func() terraformutils.ProviderGenerator)
+	for _, providerGen := range []func() terraformutils.ProviderGenerator{
 		// Major Cloud
 		newGoogleProvider,
 		newAWSProvider,

@@ -17,7 +17,7 @@ package digitalocean
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/digitalocean/godo"
 )
 
@@ -55,10 +55,10 @@ func (g CDNGenerator) listCDNs(ctx context.Context, client *godo.Client) ([]godo
 	return list, nil
 }
 
-func (g CDNGenerator) createResources(cdnList []godo.CDN) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g CDNGenerator) createResources(cdnList []godo.CDN) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, cdn := range cdnList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			cdn.ID,
 			cdn.ID,
 			"digitalocean_cdn",

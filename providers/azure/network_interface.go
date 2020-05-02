@@ -20,7 +20,7 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2019-08-01/network"
 	"github.com/Azure/go-autorest/autorest"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/hashicorp/go-azure-helpers/authentication"
 )
 
@@ -28,12 +28,12 @@ type NetworkInterfaceGenerator struct {
 	AzureService
 }
 
-func (g NetworkInterfaceGenerator) createResources(interfaceListResultPage network.InterfaceListResultPage) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g NetworkInterfaceGenerator) createResources(interfaceListResultPage network.InterfaceListResultPage) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for interfaceListResultPage.NotDone() {
 		networkInterfaces := interfaceListResultPage.Values()
 		for _, networkInterface := range networkInterfaces {
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				*networkInterface.ID,
 				*networkInterface.Name,
 				"azurerm_network_interface",

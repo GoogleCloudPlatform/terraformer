@@ -20,7 +20,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"google.golang.org/api/compute/v1"
 )
@@ -34,11 +34,11 @@ type AutoscalersGenerator struct {
 }
 
 // Run on autoscalersList and create for each TerraformResource
-func (g AutoscalersGenerator) createResources(ctx context.Context, autoscalersList *compute.AutoscalersListCall, zone string) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g AutoscalersGenerator) createResources(ctx context.Context, autoscalersList *compute.AutoscalersListCall, zone string) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	if err := autoscalersList.Pages(ctx, func(page *compute.AutoscalerList) error {
 		for _, obj := range page.Items {
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				zone+"/"+obj.Name,
 				zone+"/"+obj.Name,
 				"google_compute_autoscaler",

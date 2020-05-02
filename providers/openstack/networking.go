@@ -17,7 +17,7 @@ package openstack
 import (
 	"log"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack"
 	"github.com/gophercloud/gophercloud/openstack/networking/v2/extensions/security/groups"
@@ -30,8 +30,8 @@ type NetworkingGenerator struct {
 }
 
 // createResources iterate on all openstack_networking_secgroup_v2
-func (g *NetworkingGenerator) createSecgroupResources(list *pagination.Pager) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g *NetworkingGenerator) createSecgroupResources(list *pagination.Pager) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 
 	err := list.EachPage(func(page pagination.Page) (bool, error) {
 		groups, err := groups.ExtractGroups(page)
@@ -40,7 +40,7 @@ func (g *NetworkingGenerator) createSecgroupResources(list *pagination.Pager) []
 		}
 
 		for _, grp := range groups {
-			resource := terraform_utils.NewSimpleResource(
+			resource := terraformutils.NewSimpleResource(
 				grp.ID,
 				grp.Name,
 				"openstack_networking_secgroup_v2",
@@ -60,10 +60,10 @@ func (g *NetworkingGenerator) createSecgroupResources(list *pagination.Pager) []
 }
 
 // createResources iterate on all openstack_networking_secgroup_v2
-func (g *NetworkingGenerator) createSecgroupRuleResources(rules []rules.SecGroupRule) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g *NetworkingGenerator) createSecgroupRuleResources(rules []rules.SecGroupRule) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	for _, r := range rules {
-		resource := terraform_utils.NewSimpleResource(
+		resource := terraformutils.NewSimpleResource(
 			r.ID,
 			r.ID,
 			"openstack_networking_secgroup_rule_v2",

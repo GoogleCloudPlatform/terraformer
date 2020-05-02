@@ -4,7 +4,7 @@
 # options for analysis running
 run:
   # default concurrency is a available CPU number
-  concurrency: 4
+  concurrency: 8
   # timeout for analysis, e.g. 30s, 5m, default is 1m
   timeout: 30m
   # exit code when at least one issue was found, default is 1
@@ -50,6 +50,9 @@ output:
 
   # make issues output unique by line, default is true
   uniq-by-line: true
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
 linters:
   enable:
   - deadcode
@@ -63,11 +66,9 @@ linters:
   - unused
   - varcheck
   - gofmt
-  #- gomnd
-  #- gosec
-  #- golint
+  - golint
   - goimports
-  #- gocritic
-  #- wsl
-  #- whitespace
+  - gocritic
+  - unconvert
+  - unparam
   fast: false

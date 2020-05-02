@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -29,10 +29,10 @@ type VpcPeeringConnectionGenerator struct {
 	AWSService
 }
 
-func (g *VpcPeeringConnectionGenerator) createResources(peerings *ec2.DescribeVpcPeeringConnectionsOutput) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g *VpcPeeringConnectionGenerator) createResources(peerings *ec2.DescribeVpcPeeringConnectionsOutput) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	for _, peering := range peerings.VpcPeeringConnections {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			aws.StringValue(peering.VpcPeeringConnectionId),
 			aws.StringValue(peering.VpcPeeringConnectionId),
 			"aws_vpc_peering_connection",

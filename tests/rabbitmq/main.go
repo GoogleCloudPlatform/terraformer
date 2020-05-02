@@ -21,7 +21,7 @@ import (
 	"sort"
 
 	"github.com/GoogleCloudPlatform/terraformer/cmd"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	rabbitmq_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/rabbitmq"
 )
@@ -40,7 +40,7 @@ func main() {
 	}
 	sort.Strings(services)
 	provider = &rabbitmq_terraforming.RBTProvider{
-		Provider: terraform_utils.Provider{},
+		Provider: terraformutils.Provider{},
 	}
 	err := cmd.Import(provider, cmd.ImportOptions{
 		Resources:   services,
@@ -73,5 +73,4 @@ func main() {
 			log.Println(err)
 		}
 	}
-
 }

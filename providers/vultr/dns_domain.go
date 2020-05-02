@@ -18,7 +18,7 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/vultr/govultr"
 )
 
@@ -32,7 +32,7 @@ func (g *DNSDomainGenerator) loadDNSDomains(client *govultr.Client) ([]govultr.D
 		return nil, err
 	}
 	for _, domain := range domainList {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			domain.Domain,
 			domain.Domain,
 			"vultr_dns_domain",
@@ -48,7 +48,7 @@ func (g *DNSDomainGenerator) loadDNSRecords(client *govultr.Client, domain strin
 		return err
 	}
 	for _, record := range recordList {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraformutils.NewResource(
 			strconv.Itoa(record.RecordID),
 			strconv.Itoa(record.RecordID),
 			"vultr_dns_record",

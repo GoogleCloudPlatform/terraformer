@@ -51,11 +51,11 @@ var DrdsSupportedRegions = []Region{Beijing, Shenzhen, Hangzhou, Qingdao, Hongko
 var DrdsClassicNoSupportedRegions = []Region{Hongkong}
 var GpdbSupportedRegions = []Region{Beijing, Shenzhen, Hangzhou, Shanghai, Hongkong}
 
-// Some Ram resources only one can be owned by one account at the same time,
+// RAMNoSkipRegions resources only one can be owned by one account at the same time,
 // skipped here to avoid multi regions concurrency conflict.
-var RamNoSkipRegions = []Region{Hangzhou, EUCentral1, APSouth1}
+var RAMNoSkipRegions = []Region{Hangzhou, EUCentral1, APSouth1}
 
-// Actiontrail only one can be owned by one account at the same time,
+// ActiontrailNoSkipRegions only one can be owned by one account at the same time,
 // skipped here to avoid multi regions concurrency conflict.
 var ActiontrailNoSkipRegions = []Region{Hangzhou, EUCentral1, APSouth1}
 var FcNoSupportedRegions = []Region{Zhangjiakou, Huhehaote, APSouthEast3, APSouthEast5, EUWest1, USEast1, MEEast1}
@@ -64,10 +64,10 @@ var RdsClassicNoSupportedRegions = []Region{APSouth1, APSouthEast2, APSouthEast3
 var RdsMultiAzNoSupportedRegions = []Region{Qingdao, APNorthEast1, APSouthEast5, MEEast1}
 var RdsPPASNoSupportedRegions = []Region{Qingdao, USEast1, APNorthEast1, EUCentral1, MEEast1, APSouthEast2, APSouthEast3, APSouth1, APSouthEast5, ChengDu, EUWest1}
 var RouteTableNoSupportedRegions = []Region{Beijing, Hangzhou, Shenzhen}
-var ApiGatewayNoSupportedRegions = []Region{Zhangjiakou, Huhehaote, USEast1, USWest1, EUWest1, MEEast1}
+var APIGatewayNoSupportedRegions = []Region{Zhangjiakou, Huhehaote, USEast1, USWest1, EUWest1, MEEast1}
 var OtsHighPerformanceNoSupportedRegions = []Region{Qingdao, Zhangjiakou, Huhehaote, Hongkong, APSouthEast2, APSouthEast5, APNorthEast1, EUCentral1, MEEast1, APSouth1}
 var OtsCapacityNoSupportedRegions = []Region{APSouthEast1, USWest1, USEast1}
-var PrivateIpNoSupportedRegions = []Region{Beijing, Hangzhou, Shenzhen}
+var PrivateIPNoSupportedRegions = []Region{Beijing, Hangzhou, Shenzhen}
 var SwarmSupportedRegions = []Region{Qingdao, Beijing, Zhangjiakou, Huhehaote, Hangzhou, Shanghai, Shenzhen, Hongkong, APNorthEast1, APSouthEast1, APSouthEast2,
 	APSouthEast3, USWest1, USEast1, EUCentral1}
 var ManagedKubernetesSupportedRegions = []Region{Beijing, Hangzhou, Shanghai, APSouthEast1, APSouthEast3, APSouthEast5, APSouth1}
@@ -80,7 +80,7 @@ var MongoDBClassicNoSupportedRegions = []Region{Huhehaote, Zhangjiakou, APSouthE
 var MongoDBMultiAzSupportedRegions = []Region{Hangzhou, Beijing, Shenzhen, EUCentral1}
 var DdoscooSupportedRegions = []Region{Hangzhou}
 var DdosbgpSupportedRegions = []Region{Hangzhou, Beijing, Shenzhen, Qingdao, Shanghai, Zhangjiakou, Huhehaote}
-var NetworkAclSupportedRegions = []Region{Hongkong, APSouthEast5, APSouth1}
+var NetworkACLSupportedRegions = []Region{Hongkong, APSouthEast5, APSouth1}
 var EssScalingConfigurationMultiSgSupportedRegions = []Region{APSouthEast1, APSouth1}
 var SlbClassicNoSupportedRegions = []Region{APNorthEast1, APSouthEast2, APSouthEast3, APSouthEast5, APSouth1, USEast1, MEEast1, EUCentral1, EUWest1, Huhehaote, Zhangjiakou}
 var NasNoSupportedRegions = []Region{Qingdao, APSouth1, APSouthEast3, APSouthEast5}

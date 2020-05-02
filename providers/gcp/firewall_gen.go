@@ -19,25 +19,25 @@ import (
 	"context"
 	"log"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"google.golang.org/api/compute/v1"
 )
 
-var firewallsAllowEmptyValues = []string{""}
+var firewallAllowEmptyValues = []string{""}
 
-var firewallsAdditionalFields = map[string]interface{}{}
+var firewallAdditionalFields = map[string]interface{}{}
 
-type FirewallsGenerator struct {
+type firewallGenerator struct {
 	GCPService
 }
 
-// Run on firewallsList and create for each TerraformResource
-func (g FirewallsGenerator) createResources(ctx context.Context, firewallsList *compute.FirewallsListCall) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
-	if err := firewallsList.Pages(ctx, func(page *compute.FirewallList) error {
+// Run on firewallList and create for each TerraformResource
+func (g firewallGenerator) createResources(ctx context.Context, firewallList *compute.FirewallsListCall) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
+	if err := firewallList.Pages(ctx, func(page *compute.FirewallList) error {
 		for _, obj := range page.Items {
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				obj.Name,
 				obj.Name,
 				"google_compute_firewall",
@@ -47,8 +47,8 @@ func (g FirewallsGenerator) createResources(ctx context.Context, firewallsList *
 					"project": g.GetArgs()["project"].(string),
 					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
-				firewallsAllowEmptyValues,
-				firewallsAdditionalFields,
+				firewallAllowEmptyValues,
+				firewallAdditionalFields,
 			))
 		}
 		return nil
@@ -59,17 +59,17 @@ func (g FirewallsGenerator) createResources(ctx context.Context, firewallsList *
 }
 
 // Generate TerraformResources from GCP API,
-// from each firewalls create 1 TerraformResource
-// Need firewalls name as ID for terraform resource
-func (g *FirewallsGenerator) InitResources() error {
+// from each firewall create 1 TerraformResource
+// Need firewall name as ID for terraform resource
+func (g *firewallGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
 		return err
 	}
 
-	firewallsList := computeService.Firewalls.List(g.GetArgs()["project"].(string))
-	g.Resources = g.createResources(ctx, firewallsList)
+	firewallList := computeService.Firewalls.List(g.GetArgs()["project"].(string))
+	g.Resources = g.createResources(ctx, firewallList)
 
 	return nil
 

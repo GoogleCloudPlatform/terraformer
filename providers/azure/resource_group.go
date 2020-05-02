@@ -20,7 +20,7 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2019-05-01/resources"
 	"github.com/Azure/go-autorest/autorest"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/hashicorp/go-azure-helpers/authentication"
 )
 
@@ -28,11 +28,11 @@ type ResourceGroupGenerator struct {
 	AzureService
 }
 
-func (g ResourceGroupGenerator) createResources(groupListResultIterator resources.GroupListResultIterator) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g ResourceGroupGenerator) createResources(groupListResultIterator resources.GroupListResultIterator) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for groupListResultIterator.NotDone() {
 		group := groupListResultIterator.Value()
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			*group.ID,
 			*group.Name,
 			"azurerm_resource_group",

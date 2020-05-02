@@ -20,7 +20,7 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2019-08-01/network"
 	"github.com/Azure/go-autorest/autorest"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/hashicorp/go-azure-helpers/authentication"
 )
 
@@ -28,12 +28,12 @@ type VirtualNetworkGenerator struct {
 	AzureService
 }
 
-func (g VirtualNetworkGenerator) createResources(virtualNetworkListResultPage network.VirtualNetworkListResultPage) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g VirtualNetworkGenerator) createResources(virtualNetworkListResultPage network.VirtualNetworkListResultPage) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for virtualNetworkListResultPage.NotDone() {
 		virtualNetworks := virtualNetworkListResultPage.Values()
 		for _, virtualNetwork := range virtualNetworks {
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				*virtualNetwork.ID,
 				*virtualNetwork.Name,
 				"azurerm_virtual_network",

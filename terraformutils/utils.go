@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package terraform_utils
+package terraformutils
 
 import (
 	"bytes"
 	"log"
 	"sync"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -65,7 +65,7 @@ func PrintTfState(resources []Resource) ([]byte, error) {
 	return buf.Bytes(), err
 }
 
-func RefreshResources(resources []Resource, provider *provider_wrapper.ProviderWrapper) ([]Resource, error) {
+func RefreshResources(resources []Resource, provider *providerwrapper.ProviderWrapper) ([]Resource, error) {
 	refreshedResources := []Resource{}
 	input := make(chan *Resource, 100)
 	var wg sync.WaitGroup
@@ -101,7 +101,7 @@ func slowProcessingRequired(resources []Resource) bool {
 	return false
 }
 
-func RefreshResourceWorker(input chan *Resource, wg *sync.WaitGroup, provider *provider_wrapper.ProviderWrapper) {
+func RefreshResourceWorker(input chan *Resource, wg *sync.WaitGroup, provider *providerwrapper.ProviderWrapper) {
 	for r := range input {
 		log.Println("Refreshing state...", r.InstanceInfo.Id)
 		r.Refresh(provider)
@@ -109,7 +109,7 @@ func RefreshResourceWorker(input chan *Resource, wg *sync.WaitGroup, provider *p
 	}
 }
 
-func IgnoreKeys(resourcesTypes []string, p *provider_wrapper.ProviderWrapper) map[string][]string {
+func IgnoreKeys(resourcesTypes []string, p *providerwrapper.ProviderWrapper) map[string][]string {
 	readOnlyAttributes, err := p.GetReadOnlyAttributes(resourcesTypes)
 	if err != nil {
 		log.Println("plugin error 2:", err)

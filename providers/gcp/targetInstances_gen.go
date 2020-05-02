@@ -20,7 +20,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"google.golang.org/api/compute/v1"
 )
@@ -34,11 +34,11 @@ type TargetInstancesGenerator struct {
 }
 
 // Run on targetInstancesList and create for each TerraformResource
-func (g TargetInstancesGenerator) createResources(ctx context.Context, targetInstancesList *compute.TargetInstancesListCall, zone string) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g TargetInstancesGenerator) createResources(ctx context.Context, targetInstancesList *compute.TargetInstancesListCall, zone string) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	if err := targetInstancesList.Pages(ctx, func(page *compute.TargetInstanceList) error {
 		for _, obj := range page.Items {
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				zone+"/"+obj.Name,
 				zone+"/"+obj.Name,
 				"google_compute_target_instance",

@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -29,10 +29,10 @@ type VpnConnectionGenerator struct {
 	AWSService
 }
 
-func (VpnConnectionGenerator) createResources(vpncs *ec2.DescribeVpnConnectionsResponse) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (VpnConnectionGenerator) createResources(vpncs *ec2.DescribeVpnConnectionsResponse) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	for _, vpnc := range vpncs.VpnConnections {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			aws.StringValue(vpnc.ConnectionId),
 			aws.StringValue(vpnc.ConnectionId),
 			"aws_vpn_connection",
@@ -58,5 +58,4 @@ func (g *VpnConnectionGenerator) InitResources() error {
 	}
 	g.Resources = g.createResources(vpncs)
 	return nil
-
 }

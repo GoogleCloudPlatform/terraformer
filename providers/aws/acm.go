@@ -19,7 +19,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/acm"
@@ -33,14 +33,14 @@ type ACMGenerator struct {
 	AWSService
 }
 
-func (g *ACMGenerator) createCertificatesResources(svc *acm.Client) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g *ACMGenerator) createCertificatesResources(svc *acm.Client) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	p := acm.NewListCertificatesPaginator(svc.ListCertificatesRequest(&acm.ListCertificatesInput{}))
 	for p.Next(context.Background()) {
 		for _, cert := range p.CurrentPage().CertificateSummaryList {
 			certArn := aws.StringValue(cert.CertificateArn)
 			certID := extractCertificateUUID(certArn)
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				certArn,
 				certID+"_"+strings.TrimSuffix(aws.StringValue(cert.DomainName), "."),
 				"aws_acm_certificate",

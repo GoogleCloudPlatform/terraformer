@@ -15,9 +15,9 @@
 package keycloak
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
-type KeycloakService struct {
-	terraform_utils.Service
+type KeycloakService struct { //nolint
+	terraformutils.Service
 }

@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 	"github.com/hashicorp/terraform/helper/resource"
@@ -36,7 +36,7 @@ func (g *AlbGenerator) loadLB(svc *elasticloadbalancingv2.Client) error {
 	for p.Next(context.Background()) {
 		for _, lb := range p.CurrentPage().LoadBalancers {
 			resourceName := aws.StringValue(lb.LoadBalancerName)
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				aws.StringValue(lb.LoadBalancerArn),
 				resourceName,
 				"aws_lb",
@@ -47,7 +47,6 @@ func (g *AlbGenerator) loadLB(svc *elasticloadbalancingv2.Client) error {
 			if err != nil {
 				log.Println(err)
 			}
-
 		}
 	}
 	return p.Err()
@@ -58,7 +57,7 @@ func (g *AlbGenerator) loadLBListener(svc *elasticloadbalancingv2.Client, loadBa
 	for p.Next(context.Background()) {
 		for _, ls := range p.CurrentPage().Listeners {
 			resourceName := aws.StringValue(ls.ListenerArn)
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_lb_listener",
@@ -92,7 +91,7 @@ func (g *AlbGenerator) loadLBListenerRule(svc *elasticloadbalancingv2.Client, li
 		for _, lsr := range lsrs.Rules {
 			if !aws.BoolValue(lsr.IsDefault) {
 				resourceName := aws.StringValue(lsr.RuleArn)
-				g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+				g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 					resourceName,
 					resourceName,
 					"aws_lb_listener_rule",
@@ -121,7 +120,7 @@ func (g *AlbGenerator) loadLBListenerCertificate(svc *elasticloadbalancingv2.Cli
 		if certificateArn == *loadBalancer.Certificates[0].CertificateArn { // discard default certificate
 			continue
 		}
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraformutils.NewResource(
 			certificateArn,
 			certificateArn,
 			"aws_lb_listener_certificate",
@@ -142,7 +141,7 @@ func (g *AlbGenerator) loadLBTargetGroup(svc *elasticloadbalancingv2.Client) err
 	for p.Next(context.Background()) {
 		for _, tg := range p.CurrentPage().TargetGroups {
 			resourceName := aws.StringValue(tg.TargetGroupName)
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				aws.StringValue(tg.TargetGroupArn),
 				resourceName,
 				"aws_lb_target_group",
@@ -167,7 +166,7 @@ func (g *AlbGenerator) loadTargetGroupTargets(svc *elasticloadbalancingv2.Client
 	}
 	for _, tgh := range targetHealths.TargetHealthDescriptions {
 		id := resource.PrefixedUniqueId(fmt.Sprintf("%s-", aws.StringValue(targetGroupArn)))
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraformutils.NewResource(
 			id,
 			id,
 			"aws_lb_target_group_attachment",

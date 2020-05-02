@@ -18,7 +18,7 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/linode/linodego"
 )
 
@@ -26,10 +26,10 @@ type SSHKeyGenerator struct {
 	LinodeService
 }
 
-func (g SSHKeyGenerator) createResources(keyList []linodego.SSHKey) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g SSHKeyGenerator) createResources(keyList []linodego.SSHKey) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, key := range keyList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			strconv.Itoa(key.ID),
 			strconv.Itoa(key.ID),
 			"linode_sshkey",

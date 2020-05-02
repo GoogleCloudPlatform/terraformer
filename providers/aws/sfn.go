@@ -3,7 +3,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/sfn"
 )
 
@@ -23,8 +23,7 @@ func (g *SfnGenerator) InitResources() error {
 	p := sfn.NewListStateMachinesPaginator(svc.ListStateMachinesRequest(&sfn.ListStateMachinesInput{}))
 	for p.Next(context.Background()) {
 		for _, stateMachine := range p.CurrentPage().StateMachines {
-
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				*stateMachine.StateMachineArn,
 				*stateMachine.Name,
 				"aws_sfn_state_machine",
@@ -41,8 +40,7 @@ func (g *SfnGenerator) InitResources() error {
 	pActivity := sfn.NewListActivitiesPaginator(svc.ListActivitiesRequest(&sfn.ListActivitiesInput{}))
 	for pActivity.Next(context.Background()) {
 		for _, stateMachine := range pActivity.CurrentPage().Activities {
-
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				*stateMachine.ActivityArn,
 				*stateMachine.Name,
 				"aws_sfn_activity",

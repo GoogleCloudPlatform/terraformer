@@ -18,7 +18,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/securityhub"
 )
 
@@ -62,18 +62,16 @@ func (g *SecurityhubGenerator) addAccount(client *securityhub.Client, accountNum
 		errorMsg := err.Error()
 		if !strings.Contains(errorMsg, "not subscribed to AWS Security Hub") {
 			return false, err
-		} else {
-			return true, nil
 		}
-	} else {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-			accountNumber,
-			accountNumber,
-			"aws_securityhub_account",
-			"aws",
-			securityhubAllowEmptyValues,
-		))
+		return true, nil
 	}
+	g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+		accountNumber,
+		accountNumber,
+		"aws_securityhub_account",
+		"aws",
+		securityhubAllowEmptyValues,
+	))
 	return false, nil
 }
 
@@ -84,7 +82,7 @@ func (g *SecurityhubGenerator) addMembers(svc *securityhub.Client, accountNumber
 		page := p.CurrentPage()
 		for _, member := range page.Members {
 			id := *member.AccountId
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraformutils.NewResource(
 				id,
 				"securityhub_member_"+id,
 				"aws_securityhub_member",
@@ -111,7 +109,7 @@ func (g *SecurityhubGenerator) addStandardsSubscription(svc *securityhub.Client,
 		page := p.CurrentPage()
 		for _, standardsSubscription := range page.StandardsSubscriptions {
 			id := *standardsSubscription.StandardsSubscriptionArn
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraformutils.NewResource(
 				id,
 				id,
 				"aws_securityhub_standards_subscription",

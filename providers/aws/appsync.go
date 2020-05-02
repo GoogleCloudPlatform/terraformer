@@ -3,7 +3,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/appsync"
 )
 
@@ -31,7 +31,7 @@ func (g *AppSyncGenerator) InitResources() error {
 		for _, api := range apis.GraphqlApis {
 			var id = *api.ApiId
 			var name = *api.Name
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				id,
 				name,
 				"aws_appsync_graphql_api",

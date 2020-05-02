@@ -18,7 +18,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	heroku "github.com/heroku/heroku-go/v5"
 )
 
@@ -26,15 +26,15 @@ type FormationGenerator struct {
 	HerokuService
 }
 
-func (g FormationGenerator) createResources(svc *heroku.Service, appList []heroku.App) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g FormationGenerator) createResources(svc *heroku.Service, appList []heroku.App) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, app := range appList {
 		output, err := svc.FormationList(context.TODO(), app.ID, &heroku.ListRange{Field: "id"})
 		if err != nil {
 			log.Println(err)
 		}
 		for _, formation := range output {
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				formation.ID,
 				formation.ID,
 				"heroku_formation",

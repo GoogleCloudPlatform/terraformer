@@ -18,7 +18,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/budgets"
 )
@@ -27,11 +27,11 @@ type BudgetsGenerator struct {
 	AWSService
 }
 
-func (g *BudgetsGenerator) createResources(budgets []budgets.Budget, account *string) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g *BudgetsGenerator) createResources(budgets []budgets.Budget, account *string) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, budget := range budgets {
 		resourceName := aws.StringValue(budget.BudgetName)
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			fmt.Sprintf("%s:%s", *account, resourceName),
 			resourceName,
 			"aws_budgets_budget",

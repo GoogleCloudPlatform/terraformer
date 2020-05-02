@@ -20,7 +20,7 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2019-08-01/network"
 	"github.com/Azure/go-autorest/autorest"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/hashicorp/go-azure-helpers/authentication"
 )
 
@@ -28,12 +28,12 @@ type NetworkSecurityGroupGenerator struct {
 	AzureService
 }
 
-func (g NetworkSecurityGroupGenerator) createResources(securityGroupListResultPage network.SecurityGroupListResultPage) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g NetworkSecurityGroupGenerator) createResources(securityGroupListResultPage network.SecurityGroupListResultPage) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for securityGroupListResultPage.NotDone() {
 		nsgs := securityGroupListResultPage.Values()
 		for _, nsg := range nsgs {
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				*nsg.ID,
 				*nsg.Name,
 				"azurerm_network_security_group",

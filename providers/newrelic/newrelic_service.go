@@ -18,13 +18,13 @@ import (
 	"errors"
 	"os"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	synthetics "github.com/dollarshaveclub/new-relic-synthetics-go"
 	newrelic "github.com/paultyng/go-newrelic/v4/api"
 )
 
-type NewRelicService struct {
-	terraform_utils.Service
+type NewRelicService struct { //nolint
+	terraformutils.Service
 }
 
 func (s *NewRelicService) Client() (*newrelic.Client, error) {

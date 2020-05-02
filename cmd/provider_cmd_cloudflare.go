@@ -16,7 +16,7 @@ package cmd
 import (
 	cloudflare_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/cloudflare"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -40,6 +40,6 @@ func newCmdCloudflareImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newCloudflareProvider() terraform_utils.ProviderGenerator {
+func newCloudflareProvider() terraformutils.ProviderGenerator {
 	return &cloudflare_terraforming.CloudflareProvider{}
 }

@@ -17,13 +17,13 @@ package openstack
 import (
 	"os"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/pkg/errors"
 )
 
-type OpenStackProvider struct {
-	terraform_utils.Provider
+type OpenStackProvider struct { //nolint
+	terraformutils.Provider
 	region string
 }
 
@@ -35,7 +35,7 @@ func (p OpenStackProvider) GetProviderData(arg ...string) map[string]interface{}
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"openstack": map[string]interface{}{
-				"version": provider_wrapper.GetProviderVersion(p.GetName()),
+				"version": providerwrapper.GetProviderVersion(p.GetName()),
 				"region":  p.region,
 			},
 		},
@@ -73,8 +73,8 @@ func (p *OpenStackProvider) InitService(serviceName string, verbose bool) error 
 }
 
 // GetOpenStackSupportService return map of support service for OpenStack
-func (p *OpenStackProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	return map[string]terraform_utils.ServiceGenerator{
+func (p *OpenStackProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+	return map[string]terraformutils.ServiceGenerator{
 		"blockstorage": &BlockStorageGenerator{},
 		"compute":      &ComputeGenerator{},
 		"networking":   &NetworkingGenerator{},

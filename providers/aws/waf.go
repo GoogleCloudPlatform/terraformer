@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/waf"
 )
 
@@ -64,10 +64,10 @@ func (g *WafGenerator) InitResources() error {
 	if err := g.loadSizeConstraintSets(svc); err != nil {
 		return err
 	}
-	if err := g.loadSqlInjectionMatchSets(svc); err != nil {
+	if err := g.loadSQLInjectionMatchSets(svc); err != nil {
 		return err
 	}
-	if err := g.loadXssMatchSet(svc); err != nil {
+	if err := g.loadXSSMatchSet(svc); err != nil {
 		return err
 	}
 
@@ -80,7 +80,7 @@ func (g *WafGenerator) loadWebACL(svc *waf.Client) error {
 		return err
 	}
 	for _, acl := range output.WebACLs {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			*acl.WebACLId,
 			*acl.Name+"_"+(*acl.WebACLId)[0:8],
 			"aws_waf_web_acl",
@@ -96,7 +96,7 @@ func (g *WafGenerator) loadByteMatchSet(svc *waf.Client) error {
 		return err
 	}
 	for _, byteMatchSet := range output.ByteMatchSets {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			*byteMatchSet.ByteMatchSetId,
 			*byteMatchSet.Name+"_"+(*byteMatchSet.ByteMatchSetId)[0:8],
 			"aws_waf_byte_match_set",
@@ -112,7 +112,7 @@ func (g *WafGenerator) loadGeoMatchSet(svc *waf.Client) error {
 		return err
 	}
 	for _, matchSet := range output.GeoMatchSets {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			*matchSet.GeoMatchSetId,
 			*matchSet.Name+"_"+(*matchSet.GeoMatchSetId)[0:8],
 			"aws_waf_geo_match_set",
@@ -128,7 +128,7 @@ func (g *WafGenerator) loadIPSet(svc *waf.Client) error {
 		return err
 	}
 	for _, IPSet := range output.IPSets {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			*IPSet.IPSetId,
 			*IPSet.Name+"_"+(*IPSet.IPSetId)[0:8],
 			"aws_waf_ipset",
@@ -144,7 +144,7 @@ func (g *WafGenerator) loadRateBasedRules(svc *waf.Client) error {
 		return err
 	}
 	for _, rule := range output.Rules {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			*rule.RuleId,
 			*rule.Name+"_"+(*rule.RuleId)[0:8],
 			"aws_waf_rate_based_rule",
@@ -160,7 +160,7 @@ func (g *WafGenerator) loadRegexMatchSets(svc *waf.Client) error {
 		return err
 	}
 	for _, regexMatchSet := range output.RegexMatchSets {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			*regexMatchSet.RegexMatchSetId,
 			*regexMatchSet.Name+"_"+(*regexMatchSet.RegexMatchSetId)[0:8],
 			"aws_waf_regex_match_set",
@@ -176,7 +176,7 @@ func (g *WafGenerator) loadRegexPatternSets(svc *waf.Client) error {
 		return err
 	}
 	for _, regexPatternSet := range output.RegexPatternSets {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			*regexPatternSet.RegexPatternSetId,
 			*regexPatternSet.Name+"_"+(*regexPatternSet.RegexPatternSetId)[0:8],
 			"aws_waf_regex_pattern_set",
@@ -192,7 +192,7 @@ func (g *WafGenerator) loadWafRules(svc *waf.Client) error {
 		return err
 	}
 	for _, rule := range output.Rules {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			*rule.RuleId,
 			*rule.Name+"_"+(*rule.RuleId)[0:8],
 			"aws_waf_rule",
@@ -208,7 +208,7 @@ func (g *WafGenerator) loadWafRuleGroups(svc *waf.Client) error {
 		return err
 	}
 	for _, ruleGroup := range output.RuleGroups {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			*ruleGroup.RuleGroupId,
 			*ruleGroup.Name+"_"+(*ruleGroup.RuleGroupId)[0:8],
 			"aws_waf_rule_group",
@@ -224,7 +224,7 @@ func (g *WafGenerator) loadSizeConstraintSets(svc *waf.Client) error {
 		return err
 	}
 	for _, sizeConstraintSet := range output.SizeConstraintSets {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			*sizeConstraintSet.SizeConstraintSetId,
 			*sizeConstraintSet.Name+"_"+(*sizeConstraintSet.SizeConstraintSetId)[0:8],
 			"aws_waf_size_constraint_set",
@@ -234,13 +234,13 @@ func (g *WafGenerator) loadSizeConstraintSets(svc *waf.Client) error {
 	return nil
 }
 
-func (g *WafGenerator) loadSqlInjectionMatchSets(svc *waf.Client) error {
+func (g *WafGenerator) loadSQLInjectionMatchSets(svc *waf.Client) error {
 	output, err := svc.ListSqlInjectionMatchSetsRequest(&waf.ListSqlInjectionMatchSetsInput{}).Send(context.Background())
 	if err != nil {
 		return err
 	}
 	for _, sqlInjectionMatchSet := range output.SqlInjectionMatchSets {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			*sqlInjectionMatchSet.SqlInjectionMatchSetId,
 			*sqlInjectionMatchSet.Name+"_"+(*sqlInjectionMatchSet.SqlInjectionMatchSetId)[0:8],
 			"aws_waf_sql_injection_match_set",
@@ -250,13 +250,13 @@ func (g *WafGenerator) loadSqlInjectionMatchSets(svc *waf.Client) error {
 	return nil
 }
 
-func (g *WafGenerator) loadXssMatchSet(svc *waf.Client) error {
+func (g *WafGenerator) loadXSSMatchSet(svc *waf.Client) error {
 	output, err := svc.ListXssMatchSetsRequest(&waf.ListXssMatchSetsInput{}).Send(context.Background())
 	if err != nil {
 		return err
 	}
 	for _, xssMatchSet := range output.XssMatchSets {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			*xssMatchSet.XssMatchSetId,
 			*xssMatchSet.Name+"_"+(*xssMatchSet.XssMatchSetId)[0:8],
 			"aws_waf_xss_match_set",

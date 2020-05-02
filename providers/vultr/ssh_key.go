@@ -17,7 +17,7 @@ package vultr
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/vultr/govultr"
 )
 
@@ -25,10 +25,10 @@ type SSHKeyGenerator struct {
 	VultrService
 }
 
-func (g SSHKeyGenerator) createResources(keyList []govultr.SSHKey) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g SSHKeyGenerator) createResources(keyList []govultr.SSHKey) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, key := range keyList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			key.SSHKeyID,
 			key.SSHKeyID,
 			"vultr_ssh_key",

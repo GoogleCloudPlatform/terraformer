@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/cloud9"
 )
 
@@ -37,17 +37,17 @@ func (g *Cloud9Generator) InitResources() error {
 	if err != nil {
 		return err
 	}
-	for _, environmentId := range output.EnvironmentIds {
+	for _, environmentID := range output.EnvironmentIds {
 		details, _ := svc.DescribeEnvironmentStatusRequest(&cloud9.DescribeEnvironmentStatusInput{
-			EnvironmentId: &environmentId,
+			EnvironmentId: &environmentID,
 		}).Send(context.Background())
 		if details.Status == cloud9.EnvironmentStatusError ||
 			details.Status == cloud9.EnvironmentStatusDeleting {
 			continue
 		}
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-			environmentId,
-			environmentId,
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+			environmentID,
+			environmentID,
 			"aws_cloud9_environment_ec2",
 			"aws",
 			cloud9AllowEmptyValues))

@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatch"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchevents"
 )
@@ -63,7 +63,7 @@ func (g *CloudWatchGenerator) createMetricAlarms(cloudwatchSvc *cloudwatch.Clien
 			return err
 		}
 		for _, metricAlarm := range output.MetricAlarms {
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				*metricAlarm.AlarmName,
 				*metricAlarm.AlarmName,
 				"aws_cloudwatch_metric_alarm",
@@ -88,7 +88,7 @@ func (g *CloudWatchGenerator) createDashboards(cloudwatchSvc *cloudwatch.Client)
 			return err
 		}
 		for _, dashboardEntry := range output.DashboardEntries {
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				*dashboardEntry.DashboardName,
 				*dashboardEntry.DashboardName,
 				"aws_cloudwatch_dashboard",
@@ -113,7 +113,7 @@ func (g *CloudWatchGenerator) createRules(cloudwatcheventsSvc *cloudwatchevents.
 			return err
 		}
 		for _, rule := range output.Rules {
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				*rule.Name,
 				*rule.Name,
 				"aws_cloudwatch_event_rule",
@@ -131,7 +131,7 @@ func (g *CloudWatchGenerator) createRules(cloudwatcheventsSvc *cloudwatchevents.
 				}
 				for _, target := range targetResponse.Targets {
 					targetRef := *rule.Name + "/" + *target.Id
-					g.Resources = append(g.Resources, terraform_utils.NewResource(
+					g.Resources = append(g.Resources, terraformutils.NewResource(
 						targetRef,
 						targetRef,
 						"aws_cloudwatch_event_target",

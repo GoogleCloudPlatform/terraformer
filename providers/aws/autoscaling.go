@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"github.com/aws/aws-sdk-go-v2/service/autoscaling"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -36,7 +36,7 @@ func (g *AutoScalingGenerator) loadAutoScalingGroups(svc *autoscaling.Client) er
 	for p.Next(context.Background()) {
 		for _, asg := range p.CurrentPage().AutoScalingGroups {
 			resourceName := aws.StringValue(asg.AutoScalingGroupName)
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraformutils.NewResource(
 				resourceName,
 				resourceName,
 				"aws_autoscaling_group",
@@ -64,7 +64,7 @@ func (g *AutoScalingGenerator) loadLaunchConfigurations(svc *autoscaling.Client)
 			if aws.StringValue(lc.UserData) != "" {
 				attributes["user_data_base64"] = "=" //need set not empty string to get user_data_base64 from provider
 			}
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraformutils.NewResource(
 				resourceName,
 				resourceName,
 				"aws_launch_configuration",
@@ -84,7 +84,7 @@ func (g *AutoScalingGenerator) loadLaunchTemplates(config aws.Config) error {
 	p := ec2.NewDescribeLaunchTemplatesPaginator(ec2svc.DescribeLaunchTemplatesRequest(&ec2.DescribeLaunchTemplatesInput{}))
 	for p.Next(context.Background()) {
 		for _, lt := range p.CurrentPage().LaunchTemplates {
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				aws.StringValue(lt.LaunchTemplateId),
 				aws.StringValue(lt.LaunchTemplateName),
 				"aws_launch_template",
@@ -138,7 +138,7 @@ func (g *AutoScalingGenerator) PostConvertHook() error {
 	}
 	// TODO fix tfVar value
 	/*
-		templateFiles := []terraform_utils.Resource{}
+		templateFiles := []terraformutils.Resource{}
 		for i, r := range g.Resources {
 			if r.InstanceInfo.Type != "aws_launch_configuration" {
 				continue
@@ -153,7 +153,7 @@ func (g *AutoScalingGenerator) PostConvertHook() error {
 				if err != nil {
 					continue
 				}
-				userDataFile := terraform_utils.NewResource(
+				userDataFile := terraformutils.NewResource(
 					r.ResourceName+"_userdata",
 					r.ResourceName+"_userdata",
 					"template_file",

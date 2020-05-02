@@ -18,7 +18,7 @@ import (
 	"strings"
 
 	gcp_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/gcp"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -52,6 +52,6 @@ func newCmdGoogleImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newGoogleProvider() terraform_utils.ProviderGenerator {
+func newGoogleProvider() terraformutils.ProviderGenerator {
 	return &gcp_terraforming.GCPProvider{}
 }

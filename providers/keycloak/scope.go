@@ -17,20 +17,20 @@ package keycloak
 import (
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
 )
 
-func (g RealmGenerator) createScopeResources(realmId string, openidClientScopes []*keycloak.OpenidClientScope) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g RealmGenerator) createScopeResources(realmID string, openidClientScopes []*keycloak.OpenidClientScope) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, openidClientScope := range openidClientScopes {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			openidClientScope.Id,
-			"openid_client_scope_"+normalizeResourceName(realmId)+"_"+normalizeResourceName(openidClientScope.Name),
+			"openid_client_scope_"+normalizeResourceName(realmID)+"_"+normalizeResourceName(openidClientScope.Name),
 			"keycloak_openid_client_scope",
 			"keycloak",
 			map[string]string{
-				"realm_id": realmId,
+				"realm_id": realmID,
 			},
 			[]string{},
 			map[string]interface{}{},
@@ -39,19 +39,19 @@ func (g RealmGenerator) createScopeResources(realmId string, openidClientScopes 
 	return resources
 }
 
-func (g RealmGenerator) createOpenidClientScopesResources(realmId, clientId, clientClientId, t string, openidClientScopes *[]keycloak.OpenidClientScope) terraform_utils.Resource {
+func (g RealmGenerator) createOpenidClientScopesResources(realmID, clientID, clientClientID, t string, openidClientScopes *[]keycloak.OpenidClientScope) terraformutils.Resource {
 	var scopes []string
 	for _, openidClientScope := range *openidClientScopes {
 		scopes = append(scopes, openidClientScope.Name)
 	}
-	return terraform_utils.NewResource(
-		realmId+"/"+clientId,
-		"openid_client_"+t+"_scopes_"+normalizeResourceName(realmId)+"_"+normalizeResourceName(clientClientId),
+	return terraformutils.NewResource(
+		realmID+"/"+clientID,
+		"openid_client_"+t+"_scopes_"+normalizeResourceName(realmID)+"_"+normalizeResourceName(clientClientID),
 		"keycloak_openid_client_"+t+"_scopes",
 		"keycloak",
 		map[string]string{
-			"realm_id":    realmId,
-			"client_id":   clientId,
+			"realm_id":    realmID,
+			"client_id":   clientID,
 			t + "_scopes": strings.Join(scopes, ","),
 		},
 		[]string{},

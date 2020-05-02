@@ -18,14 +18,14 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/zclconf/go-cty/cty"
 )
 
 // AliCloudProvider Provider for alicloud
-type AliCloudProvider struct {
-	terraform_utils.Provider
+type AliCloudProvider struct { //nolint
+	terraformutils.Provider
 	region  string
 	profile string
 }
@@ -41,17 +41,17 @@ func (p *AliCloudProvider) GetConfig() cty.Value {
 
 	region := p.region
 	if region == "" {
-		region = config.RegionId
+		region = config.RegionID
 	}
 
 	var val cty.Value
-	if config.RamRoleArn != "" {
+	if config.RAMRoleArn != "" {
 		val = cty.ObjectVal(map[string]cty.Value{
 			"region":  cty.StringVal(region),
 			"profile": cty.StringVal(profile),
 			"assume_role": cty.SetVal([]cty.Value{
 				cty.ObjectVal(map[string]cty.Value{
-					"role_arn": cty.StringVal(config.RamRoleArn),
+					"role_arn": cty.StringVal(config.RAMRoleArn),
 				}),
 			}),
 		})
@@ -83,18 +83,18 @@ func (p AliCloudProvider) GetProviderData(arg ...string) map[string]interface{} 
 
 	region := p.region
 	if region == "" {
-		region = config.RegionId
+		region = config.RegionID
 	}
 
-	if config.RamRoleArn != "" {
+	if config.RAMRoleArn != "" {
 		return map[string]interface{}{
 			"provider": map[string]interface{}{
 				"alicloud": map[string]interface{}{
-					"version": provider_wrapper.GetProviderVersion(p.GetName()),
+					"version": providerwrapper.GetProviderVersion(p.GetName()),
 					"region":  region,
 					"profile": profile,
 					"assume_role": map[string]interface{}{
-						"role_arn": config.RamRoleArn,
+						"role_arn": config.RAMRoleArn,
 					},
 				},
 			},
@@ -105,7 +105,7 @@ func (p AliCloudProvider) GetProviderData(arg ...string) map[string]interface{} 
 			"alicloud": map[string]interface{}{
 				"region":  region,
 				"profile": profile,
-				"version": provider_wrapper.GetProviderVersion(p.GetName()),
+				"version": providerwrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}
@@ -141,9 +141,9 @@ func (p *AliCloudProvider) InitService(serviceName string, verbose bool) error {
 }
 
 // GetSupportedService Gets a list of all supported services
-func (p *AliCloudProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	return map[string]terraform_utils.ServiceGenerator{
-		"dns":     &DnsGenerator{},
+func (p *AliCloudProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+	return map[string]terraformutils.ServiceGenerator{
+		"dns":     &DNSGenerator{},
 		"ecs":     &EcsGenerator{},
 		"keypair": &KeyPairGenerator{},
 		"nat":     &NatGatewayGenerator{},

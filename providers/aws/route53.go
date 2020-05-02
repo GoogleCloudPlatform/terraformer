@@ -20,7 +20,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/route53"
@@ -34,13 +34,13 @@ type Route53Generator struct {
 	AWSService
 }
 
-func (g *Route53Generator) createZonesResources(svc *route53.Client) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g *Route53Generator) createZonesResources(svc *route53.Client) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	p := route53.NewListHostedZonesPaginator(svc.ListHostedZonesRequest(&route53.ListHostedZonesInput{}))
 	for p.Next(context.Background()) {
 		for _, zone := range p.CurrentPage().HostedZones {
 			zoneID := cleanZoneID(aws.StringValue(zone.Id))
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				zoneID,
 				zoneID+"_"+strings.TrimSuffix(aws.StringValue(zone.Name), "."),
 				"aws_route53_zone",
@@ -62,8 +62,8 @@ func (g *Route53Generator) createZonesResources(svc *route53.Client) []terraform
 	return resources
 }
 
-func (Route53Generator) createRecordsResources(svc *route53.Client, zoneID string) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (Route53Generator) createRecordsResources(svc *route53.Client, zoneID string) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	listParams := &route53.ListResourceRecordSetsInput{
 		HostedZoneId: aws.String(zoneID),
 	}
@@ -73,7 +73,7 @@ func (Route53Generator) createRecordsResources(svc *route53.Client, zoneID strin
 		for _, record := range p.CurrentPage().ResourceRecordSets {
 			recordName := wildcardUnescape(aws.StringValue(record.Name))
 			typeString, _ := record.Type.MarshalValue()
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				fmt.Sprintf("%s_%s_%s_%s", zoneID, recordName, typeString, aws.StringValue(record.SetIdentifier)),
 				fmt.Sprintf("%s_%s_%s_%s", zoneID, recordName, typeString, aws.StringValue(record.SetIdentifier)),
 				"aws_route53_record",
@@ -91,7 +91,7 @@ func (Route53Generator) createRecordsResources(svc *route53.Client, zoneID strin
 	}
 	if err := p.Err(); err != nil {
 		log.Println(err)
-		return []terraform_utils.Resource{}
+		return []terraformutils.Resource{}
 	}
 	return resources
 }
@@ -141,11 +141,11 @@ func wildcardUnescape(s string) string {
 }
 
 // cleanZoneID is used to remove the leading /hostedzone/
-func cleanZoneID(ID string) string {
-	return cleanPrefix(ID, "/hostedzone/")
+func cleanZoneID(id string) string {
+	return cleanPrefix(id, "/hostedzone/")
 }
 
 // cleanPrefix removes a string prefix from an ID
-func cleanPrefix(ID, prefix string) string {
-	return strings.TrimPrefix(ID, prefix)
+func cleanPrefix(id, prefix string) string {
+	return strings.TrimPrefix(id, prefix)
 }

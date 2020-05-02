@@ -17,7 +17,7 @@ package digitalocean
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/digitalocean/godo"
 )
 
@@ -55,10 +55,10 @@ func (g TagGenerator) listTags(ctx context.Context, client *godo.Client) ([]godo
 	return list, nil
 }
 
-func (g TagGenerator) createResources(tagList []godo.Tag) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g TagGenerator) createResources(tagList []godo.Tag) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, tag := range tagList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			tag.Name,
 			tag.Name,
 			"digitalocean_tag",

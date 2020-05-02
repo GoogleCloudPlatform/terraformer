@@ -15,13 +15,13 @@
 package commercetools
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/pkg/errors"
 )
 
-type CommercetoolsProvider struct {
-	terraform_utils.Provider
+type CommercetoolsProvider struct { //nolint
+	terraformutils.Provider
 	clientID     string
 	clientSecret string
 	clientScope  string
@@ -38,7 +38,7 @@ func (p CommercetoolsProvider) GetProviderData(arg ...string) map[string]interfa
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"commercetools": map[string]interface{}{
-				"version": provider_wrapper.GetProviderVersion(p.GetName()),
+				"version": providerwrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}
@@ -80,9 +80,9 @@ func (p *CommercetoolsProvider) InitService(serviceName string, verbose bool) er
 }
 
 // GetSupportedService return map of support service for Logzio
-func (p *CommercetoolsProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	return map[string]terraform_utils.ServiceGenerator{
-		"api_extension":   &ApiExtensionGenerator{},
+func (p *CommercetoolsProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+	return map[string]terraformutils.ServiceGenerator{
+		"api_extension":   &APIExtensionGenerator{},
 		"channel":         &ChannelGenerator{},
 		"product_type":    &ProductTypeGenerator{},
 		"shipping_zone":   &ShippingZoneGenerator{},

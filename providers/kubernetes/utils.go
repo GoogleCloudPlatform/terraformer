@@ -24,9 +24,8 @@ func extractClientSetFuncGroupName(group, version string) string {
 	v := strings.Title(version)
 	if len(group) > 0 {
 		return strings.Title(strings.Split(group, ".")[0]) + v
-	} else {
-		return "Core" + v
 	}
+	return "Core" + v
 }
 
 func extractClientSetFuncTypeName(kind string) string {

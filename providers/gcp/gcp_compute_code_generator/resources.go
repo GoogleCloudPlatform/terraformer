@@ -33,7 +33,7 @@ var terraformResources = map[string]gcpResourceRenderable{
 	"disks": basicGCPResource{
 		terraformName: "google_compute_disk",
 	},
-	"firewalls": basicGCPResource{
+	"firewall": basicGCPResource{
 		terraformName: "google_compute_firewall",
 	},
 	"forwardingRules": basicGCPResource{

@@ -18,14 +18,14 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/pkg/errors"
 	"github.com/zclconf/go-cty/cty"
 )
 
-type AWSProvider struct {
-	terraform_utils.Provider
+type AWSProvider struct { //nolint
+	terraformutils.Provider
 	region  string
 	profile string
 }
@@ -33,7 +33,7 @@ type AWSProvider struct {
 const GlobalRegion = "aws-global"
 const NoRegion = ""
 
-// global resources should be bound to a default region. AWS doesn't specify in which region default services are
+// SupportedGlobalResources should be bound to a default region. AWS doesn't specify in which region default services are
 // placed (see  https://docs.aws.amazon.com/general/latest/gr/rande.html), so we shouldn't assume any region as well
 //
 // AWS WAF V2 if added, should not be included in this list since it is a composition of regional and global resources.
@@ -140,7 +140,7 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 
 func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
 	awsConfig := map[string]interface{}{
-		"version": provider_wrapper.GetProviderVersion(p.GetName()),
+		"version": providerwrapper.GetProviderVersion(p.GetName()),
 	}
 
 	if p.region == GlobalRegion {
@@ -162,12 +162,11 @@ func (p *AWSProvider) GetConfig() cty.Value {
 			"region":                 cty.StringVal(p.region),
 			"skip_region_validation": cty.True,
 		})
-	} else {
-		return cty.ObjectVal(map[string]cty.Value{
-			"region":                 cty.StringVal(""),
-			"skip_region_validation": cty.True,
-		})
 	}
+	return cty.ObjectVal(map[string]cty.Value{
+		"region":                 cty.StringVal(""),
+		"skip_region_validation": cty.True,
+	})
 }
 
 func (p *AWSProvider) GetBasicConfig() cty.Value {
@@ -228,12 +227,12 @@ func (p *AWSProvider) InitService(serviceName string, verbose bool) error {
 }
 
 // GetAWSSupportService return map of support service for AWS
-func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	return map[string]terraform_utils.ServiceGenerator{
+func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+	return map[string]terraformutils.ServiceGenerator{
 		"accessanalyzer":    &AwsFacade{service: &AccessAnalyzerGenerator{}},
 		"acm":               &AwsFacade{service: &ACMGenerator{}},
 		"alb":               &AwsFacade{service: &AlbGenerator{}},
-		"api_gateway":       &AwsFacade{service: &ApiGatewayGenerator{}},
+		"api_gateway":       &AwsFacade{service: &APIGatewayGenerator{}},
 		"appsync":           &AwsFacade{service: &AppSyncGenerator{}},
 		"auto_scaling":      &AwsFacade{service: &AutoScalingGenerator{}},
 		"budgets":           &AwsFacade{service: &BudgetsGenerator{}},
@@ -257,7 +256,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 		"ecr":               &AwsFacade{service: &EcrGenerator{}},
 		"ecs":               &AwsFacade{service: &EcsGenerator{}},
 		"eks":               &AwsFacade{service: &EksGenerator{}},
-		"eip":               &AwsFacade{service: &ElasticIpGenerator{}},
+		"eip":               &AwsFacade{service: &ElasticIPGenerator{}},
 		"elasticache":       &AwsFacade{service: &ElastiCacheGenerator{}},
 		"elastic_beanstalk": &AwsFacade{service: &BeanstalkGenerator{}},
 		"elb":               &AwsFacade{service: &ElbGenerator{}},

@@ -18,13 +18,13 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/zclconf/go-cty/cty"
 )
 
-type KeycloakProvider struct {
-	terraform_utils.Provider
+type KeycloakProvider struct { //nolint
+	terraformutils.Provider
 	url                   string
 	clientID              string
 	clientSecret          string
@@ -38,9 +38,8 @@ type KeycloakProvider struct {
 func getArg(arg string) string {
 	if arg == "-" {
 		return ""
-	} else {
-		return arg
 	}
+	return arg
 }
 
 func (p *KeycloakProvider) Init(args []string) error {
@@ -63,7 +62,7 @@ func (p *KeycloakProvider) GetProviderData(arg ...string) map[string]interface{}
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			p.GetName(): map[string]interface{}{
-				"version": provider_wrapper.GetProviderVersion(p.GetName()),
+				"version": providerwrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}
@@ -107,8 +106,8 @@ func (p *KeycloakProvider) InitService(serviceName string, verbose bool) error {
 	return nil
 }
 
-func (p *KeycloakProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	return map[string]terraform_utils.ServiceGenerator{
+func (p *KeycloakProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+	return map[string]terraformutils.ServiceGenerator{
 		"realms": &RealmGenerator{},
 	}
 }

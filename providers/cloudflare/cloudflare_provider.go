@@ -17,12 +17,12 @@ package cloudflare
 import (
 	"errors"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
-type CloudflareProvider struct {
-	terraform_utils.Provider
+type CloudflareProvider struct { //nolint
+	terraformutils.Provider
 }
 
 func (p *CloudflareProvider) Init(args []string) error {
@@ -37,7 +37,7 @@ func (p *CloudflareProvider) GetProviderData(arg ...string) map[string]interface
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"cloudflare": map[string]interface{}{
-				"version": provider_wrapper.GetProviderVersion(p.GetName()),
+				"version": providerwrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}
@@ -47,8 +47,8 @@ func (CloudflareProvider) GetResourceConnections() map[string]map[string][]strin
 	return map[string]map[string][]string{}
 }
 
-func (p *CloudflareProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	return map[string]terraform_utils.ServiceGenerator{
+func (p *CloudflareProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+	return map[string]terraformutils.ServiceGenerator{
 		"access":   &AccessGenerator{},
 		"dns":      &DNSGenerator{},
 		"firewall": &FirewallGenerator{},

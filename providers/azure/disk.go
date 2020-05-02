@@ -20,7 +20,7 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/services/compute/mgmt/2019-07-01/compute"
 	"github.com/Azure/go-autorest/autorest"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/hashicorp/go-azure-helpers/authentication"
 )
 
@@ -28,11 +28,11 @@ type DiskGenerator struct {
 	AzureService
 }
 
-func (g DiskGenerator) createResources(diskListIterator compute.DiskListIterator) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g DiskGenerator) createResources(diskListIterator compute.DiskListIterator) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for diskListIterator.NotDone() {
 		disk := diskListIterator.Value()
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			*disk.ID,
 			*disk.Name,
 			"azurerm_managed_disk",

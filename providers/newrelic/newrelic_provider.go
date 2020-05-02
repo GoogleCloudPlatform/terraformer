@@ -17,12 +17,12 @@ package newrelic
 import (
 	"errors"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
-type NewRelicProvider struct {
-	terraform_utils.Provider
+type NewRelicProvider struct { //nolint
+	terraformutils.Provider
 }
 
 func (p *NewRelicProvider) Init(args []string) error {
@@ -37,7 +37,7 @@ func (p *NewRelicProvider) GetProviderData(arg ...string) map[string]interface{}
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"newrelic": map[string]interface{}{
-				"version": provider_wrapper.GetProviderVersion(p.GetName()),
+				"version": providerwrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}
@@ -47,8 +47,8 @@ func (NewRelicProvider) GetResourceConnections() map[string]map[string][]string 
 	return map[string]map[string][]string{}
 }
 
-func (p *NewRelicProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	return map[string]terraform_utils.ServiceGenerator{
+func (p *NewRelicProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+	return map[string]terraformutils.ServiceGenerator{
 		"alert":      &AlertGenerator{},
 		"dashboard":  &DashboardGenerator{},
 		"infra":      &InfraGenerator{},

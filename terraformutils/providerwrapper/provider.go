@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package provider_wrapper
+package providerwrapper //nolint
 
 import (
 	"errors"
@@ -24,7 +24,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/terraformer_string"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/terraformerstring"
 
 	"github.com/zclconf/go-cty/cty/gocty"
 
@@ -88,7 +88,7 @@ func (p *ProviderWrapper) GetReadOnlyAttributes(resourceTypes []string) (map[str
 	}
 	readOnlyAttributes := map[string][]string{}
 	for resourceName, obj := range r.ResourceTypes {
-		if terraformer_string.ContainsString(resourceTypes, resourceName) {
+		if terraformerstring.ContainsString(resourceTypes, resourceName) {
 			readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], "^id$")
 			for k, v := range obj.Block.Attributes {
 				if !v.Optional && !v.Required {
@@ -97,7 +97,6 @@ func (p *ProviderWrapper) GetReadOnlyAttributes(resourceTypes []string) (map[str
 					} else {
 						readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], "^"+k+"$")
 					}
-
 				}
 			}
 			readOnlyAttributes[resourceName] = p.readObjBlocks(obj.Block.BlockTypes, readOnlyAttributes[resourceName], "-1")

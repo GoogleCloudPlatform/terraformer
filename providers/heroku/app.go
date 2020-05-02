@@ -17,7 +17,7 @@ package heroku
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	heroku "github.com/heroku/heroku-go/v5"
 )
 
@@ -25,10 +25,10 @@ type AppGenerator struct {
 	HerokuService
 }
 
-func (g AppGenerator) createResources(appList []heroku.App) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g AppGenerator) createResources(appList []heroku.App) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, app := range appList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			app.ID,
 			app.Name,
 			"heroku_app",

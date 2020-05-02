@@ -19,7 +19,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"google.golang.org/api/compute/v1"
 )
@@ -33,11 +33,11 @@ type TargetHttpProxiesGenerator struct {
 }
 
 // Run on targetHttpProxiesList and create for each TerraformResource
-func (g TargetHttpProxiesGenerator) createResources(ctx context.Context, targetHttpProxiesList *compute.TargetHttpProxiesListCall) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g TargetHttpProxiesGenerator) createResources(ctx context.Context, targetHttpProxiesList *compute.TargetHttpProxiesListCall) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	if err := targetHttpProxiesList.Pages(ctx, func(page *compute.TargetHttpProxyList) error {
 		for _, obj := range page.Items {
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				obj.Name,
 				obj.Name,
 				"google_compute_target_http_proxy",

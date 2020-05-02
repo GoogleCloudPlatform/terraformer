@@ -62,7 +62,7 @@ type Endpoint struct {
 }
 
 type RegionIds struct {
-	RegionId string `xml:"RegionId"`
+	RegionID string `xml:"RegionId"`
 }
 
 type Products struct {
@@ -82,7 +82,7 @@ func loadEndpoint(region string, serviceCode ServiceCode) string {
 
 	// Load current path endpoint file endpoints.xml, if failed, it will load from environment variables TF_ENDPOINT_PATH
 	data, err := ioutil.ReadFile("./endpoints.xml")
-	if err != nil || len(data) <= 0 {
+	if err != nil || len(data) == 0 {
 		d, e := ioutil.ReadFile(os.Getenv("TF_ENDPOINT_PATH"))
 		if e != nil {
 			return ""
@@ -95,7 +95,7 @@ func loadEndpoint(region string, serviceCode ServiceCode) string {
 		return ""
 	}
 	for _, endpoint := range endpoints.Endpoint {
-		if endpoint.RegionIds.RegionId == string(region) {
+		if endpoint.RegionIds.RegionID == region {
 			for _, product := range endpoint.Products.Product {
 				if strings.EqualFold(product.ProductName, string(serviceCode)) {
 					return strings.TrimSpace(product.DomainName)
