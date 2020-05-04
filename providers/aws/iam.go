@@ -142,6 +142,10 @@ func (g *IamGenerator) getUsers(svc *iam.Client) error {
 			if err != nil {
 				log.Println(err)
 			}
+			err = g.getUserPolicyAttachment(svc, user.UserName)
+			if err != nil {
+				log.Println(err)
+			}
 			err = g.getUserGroup(svc, user.UserName)
 			if err != nil {
 				log.Println(err)
@@ -187,6 +191,28 @@ func (g *IamGenerator) getUserPolices(svc *iam.Client, userName *string) error {
 				"aws_iam_user_policy",
 				"aws",
 				IamAllowEmptyValues))
+		}
+	}
+	return p.Err()
+}
+
+func (g *IamGenerator) getUserPolicyAttachment(svc *iam.Client, userName *string) error {
+	p := iam.NewListAttachedUserPoliciesPaginator(svc.ListAttachedUserPoliciesRequest(&iam.ListAttachedUserPoliciesInput{
+		UserName: userName,
+	}))
+	for p.Next(context.Background()) {
+		for _, attachedPolicy := range p.CurrentPage().AttachedPolicies {
+			g.Resources = append(g.Resources, terraformutils.NewResource(
+				*userName+"/"+*attachedPolicy.PolicyArn,
+				*userName+"_"+*attachedPolicy.PolicyName,
+				"aws_iam_user_policy_attachment",
+				"aws",
+				map[string]string{
+					"user":       *userName,
+					"policy_arn": *attachedPolicy.PolicyArn,
+				},
+				IamAllowEmptyValues,
+				map[string]interface{}{}))
 		}
 	}
 	return p.Err()

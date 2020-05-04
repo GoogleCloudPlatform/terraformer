@@ -496,12 +496,13 @@ In that case terraformer will not know with which region resources are associate
     * `aws_iam_group_policy_attachment`
     * `aws_iam_instance_profile`
     * `aws_iam_policy`
-    * `aws_iam_policy_attachment`
     * `aws_iam_role`
     * `aws_iam_role_policy`
+    * `aws_iam_role_policy_attachment`
     * `aws_iam_user`
     * `aws_iam_user_group_membership`
     * `aws_iam_user_policy`
+    * `aws_iam_user_policy_attachment`
 *   `igw`
     * `aws_internet_gateway`
 *   `iot`
