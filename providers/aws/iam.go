@@ -96,6 +96,28 @@ func (g *IamGenerator) getRoles(svc *iam.Client) error {
 				log.Println(err)
 				continue
 			}
+			roleAttachedPoliciesPage := iam.NewListAttachedRolePoliciesPaginator(svc.ListAttachedRolePoliciesRequest(&iam.ListAttachedRolePoliciesInput{
+				RoleName: &roleName,
+			}))
+			for roleAttachedPoliciesPage.Next(context.Background()) {
+				for _, attachedPolicy := range roleAttachedPoliciesPage.CurrentPage().AttachedPolicies {
+					g.Resources = append(g.Resources, terraformutils.NewResource(
+						roleName+"/"+*attachedPolicy.PolicyArn,
+						roleName+"_"+*attachedPolicy.PolicyName,
+						"aws_iam_role_policy_attachment",
+						"aws",
+						map[string]string{
+							"name":       roleName,
+							"policy_arn": *attachedPolicy.PolicyArn,
+						},
+						IamAllowEmptyValues,
+						map[string]interface{}{}))
+				}
+			}
+			if err := roleAttachedPoliciesPage.Err(); err != nil {
+				log.Println(err)
+				continue
+			}
 		}
 	}
 	return p.Err()
@@ -177,17 +199,6 @@ func (g *IamGenerator) getPolicies(svc *iam.Client) error {
 			resourceName := aws.StringValue(policy.PolicyName)
 			policyARN := aws.StringValue(policy.Arn)
 
-			g.Resources = append(g.Resources, terraformutils.NewResource(
-				policyARN,
-				resourceName,
-				"aws_iam_policy_attachment",
-				"aws",
-				map[string]string{
-					"policy_arn": policyARN,
-					"name":       resourceName,
-				},
-				IamAllowEmptyValues,
-				IamAdditionalFields))
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				policyARN,
 				resourceName,
