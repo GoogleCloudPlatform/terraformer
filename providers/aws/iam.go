@@ -107,7 +107,7 @@ func (g *IamGenerator) getRoles(svc *iam.Client) error {
 						"aws_iam_role_policy_attachment",
 						"aws",
 						map[string]string{
-							"name":       roleName,
+							"role":       roleName,
 							"policy_arn": *attachedPolicy.PolicyArn,
 						},
 						IamAllowEmptyValues,
