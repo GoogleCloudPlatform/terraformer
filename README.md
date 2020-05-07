@@ -45,6 +45,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [Logz.io](#use-with-logzio)
         * [Commercetools](#use-with-commercetools)
         * [Mikrotik](#use-with-mikrotik)
+        * [GmailFilter](#use-with-gmailfilter)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
@@ -207,6 +208,7 @@ Links to download Terraform Providers:
     * Logz.io provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
     * Commercetools provider >= 0.21.0 - [here](https://github.com/labd/terraform-provider-commercetools)
     * Mikrotik provider >= 0.2.2 - [here](https://github.com/labd/terraform-provider-commercetools)
+    * GmailFilter provider >= 1.0.1 - [here](https://github.com/yamamoto-febc/terraform-provider-gmailfilter)
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
@@ -1312,6 +1314,35 @@ MIKROTIK_HOST=router-hostname:8728 MIKROTIK_USER=username MIKROTIK_PASSWORD=pass
 List of supported mikrotik resources:
 
 * `mikrotik_dhcp_lease`
+
+
+### Use with GmailFilter
+
+Support [Using Service Accounts](https://github.com/yamamoto-febc/terraform-provider-gmailfilter/blob/master/README.md#using-a-service-accountg-suite-users-only) or [Using Application Default Credentials](https://github.com/yamamoto-febc/terraform-provider-gmailfilter/blob/master/README.md#using-an-application-default-credential).
+
+Example:
+
+```
+# Using Service Accounts
+export GOOGLE_CREDENTIALS=/path/to/client_secret.json
+export IMPERSONATED_USER_EMAIL="foobar@example.com"
+  
+# Using Application Default Credentials
+gcloud auth application-default login \
+  --client-id-file=client_secret.json \
+  --scopes \
+https://www.googleapis.com/auth/gmail.labels,\
+https://www.googleapis.com/auth/gmail.settings.basic
+
+./terraformer import gmailfilter -r=filter,label 
+```
+
+List of supported GmailFilter resources:
+
+*   `label`
+    * `gmailfilter_label`
+*   `filter`
+    * `gmailfilter_filter`
 
 ## Contributing
 
