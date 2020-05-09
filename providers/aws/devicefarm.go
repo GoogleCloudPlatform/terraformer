@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/devicefarm"
 )
@@ -35,12 +35,12 @@ func (g *DeviceFarmGenerator) InitResources() error {
 	}
 	svc := devicefarm.New(config)
 	p := devicefarm.NewListProjectsPaginator(svc.ListProjectsRequest(&devicefarm.ListProjectsInput{}))
-	var resources []terraform_utils.Resource
+	var resources []terraformutils.Resource
 	for p.Next(context.Background()) {
 		for _, project := range p.CurrentPage().Projects {
 			projectArn := aws.StringValue(project.Arn)
 			projectName := aws.StringValue(project.Name)
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				projectArn,
 				projectName,
 				"aws_devicefarm_project",

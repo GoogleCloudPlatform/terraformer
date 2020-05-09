@@ -19,7 +19,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"google.golang.org/api/compute/v1"
 )
@@ -33,11 +33,11 @@ type SslPoliciesGenerator struct {
 }
 
 // Run on sslPoliciesList and create for each TerraformResource
-func (g SslPoliciesGenerator) createResources(ctx context.Context, sslPoliciesList *compute.SslPoliciesListCall) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g SslPoliciesGenerator) createResources(ctx context.Context, sslPoliciesList *compute.SslPoliciesListCall) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	if err := sslPoliciesList.Pages(ctx, func(page *compute.SslPoliciesList) error {
 		for _, obj := range page.Items {
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				obj.Name,
 				obj.Name,
 				"google_compute_ssl_policy",

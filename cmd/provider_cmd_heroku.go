@@ -16,7 +16,7 @@ package cmd
 import (
 	heroku_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/heroku"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -40,6 +40,6 @@ func newCmdHerokuImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newHerokuProvider() terraform_utils.ProviderGenerator {
+func newHerokuProvider() terraformutils.ProviderGenerator {
 	return &heroku_terraforming.HerokuProvider{}
 }

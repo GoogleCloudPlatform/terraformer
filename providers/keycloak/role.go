@@ -15,14 +15,14 @@
 package keycloak
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/mrparkers/terraform-provider-keycloak/keycloak"
 )
 
-func (g RealmGenerator) createRoleResources(roles []*keycloak.Role) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g RealmGenerator) createRoleResources(roles []*keycloak.Role) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, role := range roles {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			role.Id,
 			"role_"+normalizeResourceName(role.RealmId)+normalizeResourceName(role.ContainerId)+"_"+normalizeResourceName(role.Name),
 			"keycloak_role",

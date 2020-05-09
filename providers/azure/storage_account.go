@@ -20,7 +20,7 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/services/storage/mgmt/2019-04-01/storage"
 	"github.com/Azure/go-autorest/autorest"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/hashicorp/go-azure-helpers/authentication"
 )
 
@@ -28,11 +28,11 @@ type StorageAccountGenerator struct {
 	AzureService
 }
 
-func (g StorageAccountGenerator) createResources(accountListResultIterator storage.AccountListResultIterator) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g StorageAccountGenerator) createResources(accountListResultIterator storage.AccountListResultIterator) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for accountListResultIterator.NotDone() {
 		account := accountListResultIterator.Value()
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			*account.ID,
 			*account.Name,
 			"azurerm_storage_account",

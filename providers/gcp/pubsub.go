@@ -21,7 +21,7 @@ import (
 
 	"google.golang.org/api/pubsub/v1"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 var pubsubAllowEmptyValues = []string{""}
@@ -33,13 +33,13 @@ type PubsubGenerator struct {
 }
 
 // Run on subscriptionsList and create for each TerraformResource
-func (g PubsubGenerator) createSubscriptionsResources(ctx context.Context, subscriptionsList *pubsub.ProjectsSubscriptionsListCall) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g PubsubGenerator) createSubscriptionsResources(ctx context.Context, subscriptionsList *pubsub.ProjectsSubscriptionsListCall) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	if err := subscriptionsList.Pages(ctx, func(page *pubsub.ListSubscriptionsResponse) error {
 		for _, obj := range page.Subscriptions {
 			t := strings.Split(obj.Name, "/")
 			name := t[len(t)-1]
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				name,
 				obj.Name,
 				"google_pubsub_subscription",
@@ -60,13 +60,13 @@ func (g PubsubGenerator) createSubscriptionsResources(ctx context.Context, subsc
 }
 
 // Run on topicsList and create for each TerraformResource
-func (g PubsubGenerator) createTopicsListResources(ctx context.Context, topicsList *pubsub.ProjectsTopicsListCall) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g PubsubGenerator) createTopicsListResources(ctx context.Context, topicsList *pubsub.ProjectsTopicsListCall) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	if err := topicsList.Pages(ctx, func(page *pubsub.ListTopicsResponse) error {
 		for _, obj := range page.Topics {
 			t := strings.Split(obj.Name, "/")
 			name := t[len(t)-1]
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				g.GetArgs()["project"].(string)+"/"+name,
 				obj.Name,
 				"google_pubsub_topic",
@@ -113,7 +113,6 @@ func (g *PubsubGenerator) PostConvertHook() error {
 				g.Resources[i].Item["topic"] = "${google_pubsub_topic." + topic.ResourceName + ".name}"
 			}
 		}
-
 	}
 	return nil
 }

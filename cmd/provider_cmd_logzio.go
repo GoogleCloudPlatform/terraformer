@@ -18,7 +18,7 @@ import (
 	"os"
 
 	logzio_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/logzio"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -54,6 +54,6 @@ func newCmdLogzioImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newLogzioProvider() terraform_utils.ProviderGenerator {
+func newLogzioProvider() terraformutils.ProviderGenerator {
 	return &logzio_terraforming.LogzioProvider{}
 }

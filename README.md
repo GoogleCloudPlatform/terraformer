@@ -44,6 +44,8 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [Keycloak](#use-with-keycloak)
         * [Logz.io](#use-with-logzio)
         * [Commercetools](#use-with-commercetools)
+        * [Mikrotik](#use-with-mikrotik)
+        * [GmailFilter](#use-with-gmailfilter)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
@@ -81,7 +83,7 @@ Flags:
   -p, --path-pattern string   {output}/{provider}/ (default "{output}/{provider}/{service}/")
       --projects strings
   -z, --regions strings       europe-west1, (default [global])
-  -r, --resources strings     firewalls,networks or * for all services
+  -r, --resources strings     firewall,networks or * for all services
   -s, --state string          local or bucket (default "local")
   -v, --verbose               verbose mode
 
@@ -115,7 +117,7 @@ The `plan` command generates a planfile that contains all the resources set to b
 The rest of subcommands and parameters are identical to the `import` command.
 
 ```
-$ terraformer plan google --resources=networks,firewalls --projects=my-project --regions=europe-west1-d
+$ terraformer plan google --resources=networks,firewall --projects=my-project --regions=europe-west1-d
 (snip)
 
 Saving planfile to generated/google/my-project/terraformer/plan.json
@@ -143,7 +145,7 @@ It's possible to combine `--compact` `--path-pattern` parameters together.
 
 From source:
 1.  Run `git clone <terraformer repo>`
-2.  Run `GO111MODULE=on go mod vendor`
+2.  Run `go mod download`
 3.  Run `go build -v` for all providers OR build with one provider `go run build/main.go {google,aws,azure,kubernetes and etc}`
 4.  Run ```terraform init``` against an ```init.tf``` file to install the plugins required for your platform. For example, if you need plugins for the google provider, ```init.tf``` should contain:
 ```
@@ -205,6 +207,8 @@ Links to download Terraform Providers:
     * Keycloak provider >=1.12.0 - [here](https://github.com/mrparkers/terraform-provider-keycloak/)
     * Logz.io provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
     * Commercetools provider >= 0.21.0 - [here](https://github.com/labd/terraform-provider-commercetools)
+    * Mikrotik provider >= 0.2.2 - [here](https://github.com/labd/terraform-provider-commercetools)
+    * GmailFilter provider >= 1.0.1 - [here](https://github.com/yamamoto-febc/terraform-provider-gmailfilter)
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
@@ -245,7 +249,7 @@ List of supported GCP services:
 *   `dns`
     * `google_dns_managed_zone`
     * `google_dns_record_set`
-*   `firewalls`
+*   `firewall`
     * `google_compute_firewall`
 *   `forwardingRules`
     * `google_compute_forwarding_rule`
@@ -270,6 +274,10 @@ List of supported GCP services:
     * `google_compute_http_health_check`
 *   `httpsHealthChecks`
     * `google_compute_https_health_check`
+*   `iam`
+    * `google_project_iam_custom_role`
+    * `google_project_iam_member`
+    * `google_service_account`
 *   `images`
     * `google_compute_image`
 *   `instanceGroupManagers`
@@ -549,6 +557,8 @@ In that case terraformer will not know with which region resources are associate
 *   `s3`
     * `aws_s3_bucket`
     * `aws_s3_bucket_policy`
+*   `secretsmanager`
+    * `aws_secretsmanager_secret`
 *   `securityhub`
     * `aws_securityhub_account`
     * `aws_securityhub_member`
@@ -1285,6 +1295,54 @@ List of supported [commercetools](https://commercetools.com/de/) resources:
     * `commercetools_tax_category`
 *   `types`
     * `commercetools_type`
+
+### Use with [Mikrotik](https://wiki.mikrotik.com/wiki/Manual:TOC)
+
+This provider uses the [terraform-provider-mikrotik](https://github.com/ddelnano/terraform-provider-mikrotik). The terraformer provider was build by [Dom Del Nano](https://github.com/ddelnano).
+
+Example:
+
+```
+## Warning! You should not expose your mikrotik creds through your bash history. Export them to your shell in a safe way when doing this for real!
+
+MIKROTIK_HOST=router-hostname:8728 MIKROTIK_USER=username MIKROTIK_PASSWORD=password terraformer  import mikrotik -r=dhcp_lease
+
+# Import only static IPs
+MIKROTIK_HOST=router-hostname:8728 MIKROTIK_USER=username MIKROTIK_PASSWORD=password terraformer  import mikrotik -r=dhcp_lease --filter='Name=dynamic;Value=false'
+```
+
+List of supported mikrotik resources:
+
+* `mikrotik_dhcp_lease`
+
+
+### Use with GmailFilter
+
+Support [Using Service Accounts](https://github.com/yamamoto-febc/terraform-provider-gmailfilter/blob/master/README.md#using-a-service-accountg-suite-users-only) or [Using Application Default Credentials](https://github.com/yamamoto-febc/terraform-provider-gmailfilter/blob/master/README.md#using-an-application-default-credential).
+
+Example:
+
+```
+# Using Service Accounts
+export GOOGLE_CREDENTIALS=/path/to/client_secret.json
+export IMPERSONATED_USER_EMAIL="foobar@example.com"
+  
+# Using Application Default Credentials
+gcloud auth application-default login \
+  --client-id-file=client_secret.json \
+  --scopes \
+https://www.googleapis.com/auth/gmail.labels,\
+https://www.googleapis.com/auth/gmail.settings.basic
+
+./terraformer import gmailfilter -r=filter,label 
+```
+
+List of supported GmailFilter resources:
+
+*   `label`
+    * `gmailfilter_label`
+*   `filter`
+    * `gmailfilter_filter`
 
 ## Contributing
 

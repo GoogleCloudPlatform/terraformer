@@ -18,7 +18,7 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/vultr/govultr"
 )
 
@@ -32,7 +32,7 @@ func (g *FirewallGroupGenerator) loadFirewallGroups(client *govultr.Client) ([]g
 		return nil, err
 	}
 	for _, firewallGroup := range firewallGroups {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			firewallGroup.FirewallGroupID,
 			firewallGroup.FirewallGroupID,
 			"vultr_firewall_group",
@@ -42,19 +42,19 @@ func (g *FirewallGroupGenerator) loadFirewallGroups(client *govultr.Client) ([]g
 	return firewallGroups, nil
 }
 
-func (g *FirewallGroupGenerator) loadFirewallRulesByIPType(client *govultr.Client, firewallGroupId string, ipType string) error {
-	firewallRules, err := client.FirewallRule.ListByIPType(context.Background(), firewallGroupId, ipType)
+func (g *FirewallGroupGenerator) loadFirewallRulesByIPType(client *govultr.Client, firewallGroupID string, ipType string) error {
+	firewallRules, err := client.FirewallRule.ListByIPType(context.Background(), firewallGroupID, ipType)
 	if err != nil {
 		return err
 	}
 	for _, firewallRule := range firewallRules {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraformutils.NewResource(
 			strconv.Itoa(firewallRule.RuleNumber),
 			strconv.Itoa(firewallRule.RuleNumber),
 			"vultr_firewall_rule",
 			"vultr",
 			map[string]string{
-				"firewall_group_id": firewallGroupId,
+				"firewall_group_id": firewallGroupID,
 				"ip_type":           ipType,
 			},
 			[]string{},

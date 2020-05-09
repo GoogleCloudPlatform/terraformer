@@ -18,14 +18,14 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/pkg/errors"
 	"github.com/zclconf/go-cty/cty"
 )
 
-type LogzioProvider struct {
-	terraform_utils.Provider
+type LogzioProvider struct { //nolint
+	terraformutils.Provider
 	apiToken string
 	baseURL  string
 }
@@ -44,7 +44,7 @@ func (p LogzioProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"logzio": map[string]interface{}{
-				"version": provider_wrapper.GetProviderVersion(p.GetName()),
+				"version": providerwrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}
@@ -85,8 +85,8 @@ func (p *LogzioProvider) InitService(serviceName string, verbose bool) error {
 }
 
 // GetSupportedService return map of support service for Logzio
-func (p *LogzioProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	return map[string]terraform_utils.ServiceGenerator{
+func (p *LogzioProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+	return map[string]terraformutils.ServiceGenerator{
 		"alerts":                       &AlertsGenerator{},
 		"alert_notification_endpoints": &AlertNotificationEndpointsGenerator{},
 	}

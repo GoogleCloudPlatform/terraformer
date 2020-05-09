@@ -17,7 +17,7 @@ package vultr
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/vultr/govultr"
 )
 
@@ -25,10 +25,10 @@ type UserGenerator struct {
 	VultrService
 }
 
-func (g UserGenerator) createResources(userList []govultr.User) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g UserGenerator) createResources(userList []govultr.User) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, user := range userList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			user.UserID,
 			user.UserID,
 			"vultr_user",

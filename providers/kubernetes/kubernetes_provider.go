@@ -27,8 +27,8 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/zclconf/go-cty/cty"
 
 	"github.com/pkg/errors"
@@ -38,9 +38,8 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp" // GKE support
 )
 
-type KubernetesProvider struct {
-	terraform_utils.Provider
-	region  string
+type KubernetesProvider struct { //nolint
+	terraformutils.Provider
 	verbose string
 }
 
@@ -52,7 +51,7 @@ func (p KubernetesProvider) GetProviderData(arg ...string) map[string]interface{
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"kubernetes": map[string]interface{}{
-				"version": provider_wrapper.GetProviderVersion(p.GetName()),
+				"version": providerwrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}
@@ -80,8 +79,8 @@ func (p *KubernetesProvider) InitService(serviceName string, verbose bool) error
 }
 
 // GetSupportService return map of supported resource for Kubernetes
-func (p *KubernetesProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	resources := make(map[string]terraform_utils.ServiceGenerator)
+func (p *KubernetesProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+	resources := make(map[string]terraformutils.ServiceGenerator)
 
 	config, _, err := initClientAndConfig()
 	if err != nil {
@@ -99,7 +98,7 @@ func (p *KubernetesProvider) GetSupportedService() map[string]terraform_utils.Se
 		log.Println(err)
 		return resources
 	}
-	provider, err := provider_wrapper.NewProviderWrapper("kubernetes", cty.Value{}, p.verbose == "true")
+	provider, err := providerwrapper.NewProviderWrapper("kubernetes", cty.Value{}, p.verbose == "true")
 	if err != nil {
 		log.Println(err)
 		return resources
@@ -144,13 +143,13 @@ func (p *KubernetesProvider) GetSupportedService() map[string]terraform_utils.Se
 // InitClientAndConfig uses the KUBECONFIG environment variable to create
 // a new rest client and config object based on the existing kubectl config
 // and options passed from the plugin framework via environment variables
-func initClientAndConfig() (*restclient.Config, clientcmd.ClientConfig, error) {
+func initClientAndConfig() (*restclient.Config, clientcmd.ClientConfig, error) { //nolint
 	// resolve kubeconfig location, prioritizing the --config global flag,
 	// then the value of the KUBECONFIG env var (if any), and defaulting
 	// to ~/.kube/config as a last resort.
 	home := os.Getenv("HOME")
 	if runtime.GOOS == "windows" {
-		home := os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
+		home = os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
 		if home == "" {
 			home = os.Getenv("USERPROFILE")
 		}
@@ -171,7 +170,7 @@ func initClientAndConfig() (*restclient.Config, clientcmd.ClientConfig, error) {
 	}
 
 	if len(kubeconfig) == 0 {
-		return nil, nil, fmt.Errorf("error initializing config. The KUBECONFIG environment variable must be defined.")
+		return nil, nil, fmt.Errorf("error initializing config. The KUBECONFIG environment variable must be defined")
 	}
 
 	config, err := configFromPath(kubeconfig)
@@ -249,16 +248,6 @@ func applyGlobalOptionsToConfig(config *restclient.Config) error {
 	clientKey := os.Getenv("KUBECTL_PLUGINS_GLOBAL_FLAG_CLIENT_KEY")
 	if len(clientKey) > 0 {
 		config.TLSClientConfig.KeyFile = clientKey
-	}
-
-	cluster := os.Getenv("KUBECTL_PLUGINS_GLOBAL_FLAG_CLUSTER")
-	if len(cluster) > 0 {
-		// TODO(jvallejo): figure out how to override kubeconfig options
-	}
-
-	user := os.Getenv("KUBECTL_PLUGINS_GLOBAL_FLAG_USER")
-	if len(user) > 0 {
-		// TODO(jvallejo): figure out how to override kubeconfig options
 	}
 
 	// user / misc request config

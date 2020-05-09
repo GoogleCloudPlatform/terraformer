@@ -18,7 +18,7 @@ import (
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/providers/alicloud/connectivity"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/slb"
 )
@@ -28,9 +28,9 @@ type SlbGenerator struct {
 	AliCloudService
 }
 
-func resourceFromSlbListener(loadBalancer slb.LoadBalancer, suffix string) terraform_utils.Resource {
+func resourceFromSlbListener(loadBalancer slb.LoadBalancer, suffix string) terraformutils.Resource {
 	id := loadBalancer.LoadBalancerId + ":" + suffix
-	return terraform_utils.NewResource(
+	return terraformutils.NewResource(
 		id, // id
 		id+"__"+loadBalancer.LoadBalancerName, // name
 		"alicloud_slb_listener",
@@ -41,8 +41,8 @@ func resourceFromSlbListener(loadBalancer slb.LoadBalancer, suffix string) terra
 	)
 }
 
-func resourceFromSlbResponse(loadBalancer slb.LoadBalancer) terraform_utils.Resource {
-	return terraform_utils.NewResource(
+func resourceFromSlbResponse(loadBalancer slb.LoadBalancer) terraformutils.Resource {
+	return terraformutils.NewResource(
 		loadBalancer.LoadBalancerId,                                    // id
 		loadBalancer.LoadBalancerId+"__"+loadBalancer.LoadBalancerName, // name
 		"alicloud_slb",
@@ -53,8 +53,8 @@ func resourceFromSlbResponse(loadBalancer slb.LoadBalancer) terraform_utils.Reso
 	)
 }
 
-func resourceFromVServerGroupResponse(vServerGroup slb.VServerGroup) terraform_utils.Resource {
-	return terraform_utils.NewResource(
+func resourceFromVServerGroupResponse(vServerGroup slb.VServerGroup) terraformutils.Resource {
+	return terraformutils.NewResource(
 		vServerGroup.VServerGroupId,                                    // id
 		vServerGroup.VServerGroupId+"__"+vServerGroup.VServerGroupName, // name
 		"alicloud_slb_server_group",
@@ -75,7 +75,7 @@ func initSlb(client *connectivity.AliyunClient) ([]slb.LoadBalancer, error) {
 	for remaining > 0 {
 		raw, err := client.WithSlbClient(func(slbClient *slb.Client) (interface{}, error) {
 			request := slb.CreateDescribeLoadBalancersRequest()
-			request.RegionId = client.RegionId
+			request.RegionId = client.RegionID
 			request.PageSize = requests.NewInteger(pageSize)
 			request.PageNumber = requests.NewInteger(pageNumber)
 			return slbClient.DescribeLoadBalancers(request)
@@ -85,9 +85,7 @@ func initSlb(client *connectivity.AliyunClient) ([]slb.LoadBalancer, error) {
 		}
 
 		response := raw.(*slb.DescribeLoadBalancersResponse)
-		for _, loadBalancer := range response.LoadBalancers.LoadBalancer {
-			allLoadBalancers = append(allLoadBalancers, loadBalancer)
-		}
+		allLoadBalancers = append(allLoadBalancers, response.LoadBalancers.LoadBalancer...)
 		remaining = response.TotalCount - pageNumber*pageSize
 		pageNumber++
 	}
@@ -103,7 +101,7 @@ func initVServerGroups(client *connectivity.AliyunClient, allLoadBalancers []slb
 		}
 		raw, err := client.WithSlbClient(func(slbClient *slb.Client) (interface{}, error) {
 			request := slb.CreateDescribeVServerGroupsRequest()
-			request.RegionId = client.RegionId
+			request.RegionId = client.RegionID
 			request.LoadBalancerId = loadBalancer.LoadBalancerId
 			return slbClient.DescribeVServerGroups(request)
 		})
@@ -111,9 +109,7 @@ func initVServerGroups(client *connectivity.AliyunClient, allLoadBalancers []slb
 			return nil, err
 		}
 		response := raw.(*slb.DescribeVServerGroupsResponse)
-		for _, vServerGroup := range response.VServerGroups.VServerGroup {
-			allVserverGroups = append(allVserverGroups, vServerGroup)
-		}
+		allVserverGroups = append(allVserverGroups, response.VServerGroups.VServerGroup...)
 	}
 
 	return allVserverGroups, nil
@@ -128,7 +124,7 @@ func initSlbListeners(client *connectivity.AliyunClient, allLoadBalancers []slb.
 		}
 		raw, err := client.WithSlbClient(func(slbClient *slb.Client) (interface{}, error) {
 			request := slb.CreateDescribeLoadBalancerAttributeRequest()
-			request.RegionId = client.RegionId
+			request.RegionId = client.RegionID
 			request.LoadBalancerId = loadBalancer.LoadBalancerId
 			return slbClient.DescribeLoadBalancerAttribute(request)
 		})

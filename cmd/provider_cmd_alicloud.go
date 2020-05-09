@@ -17,7 +17,7 @@ import (
 	"log"
 
 	alicloud_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/alicloud"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -49,6 +49,6 @@ func newCmdAliCloudImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newAliCloudProvider() terraform_utils.ProviderGenerator {
+func newAliCloudProvider() terraformutils.ProviderGenerator {
 	return &alicloud_terraforming.AliCloudProvider{}
 }

@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	cf "github.com/cloudflare/cloudflare-go"
 )
 
@@ -26,14 +26,14 @@ type DNSGenerator struct {
 	CloudflareService
 }
 
-func (*DNSGenerator) createZonesResource(api *cf.API, zoneID string) ([]terraform_utils.Resource, error) {
+func (*DNSGenerator) createZonesResource(api *cf.API, zoneID string) ([]terraformutils.Resource, error) {
 	zoneDetails, err := api.ZoneDetails(zoneID)
 	if err != nil {
 		log.Println(err)
-		return []terraform_utils.Resource{}, err
+		return []terraformutils.Resource{}, err
 	}
 
-	resource := terraform_utils.NewResource(
+	resource := terraformutils.NewResource(
 		zoneDetails.ID,
 		zoneDetails.Name,
 		"cloudflare_zone",
@@ -46,11 +46,11 @@ func (*DNSGenerator) createZonesResource(api *cf.API, zoneID string) ([]terrafor
 	)
 	resource.IgnoreKeys = append(resource.IgnoreKeys, "^meta$")
 
-	return []terraform_utils.Resource{resource}, nil
+	return []terraformutils.Resource{resource}, nil
 }
 
-func (*DNSGenerator) createRecordsResources(api *cf.API, zoneID string) ([]terraform_utils.Resource, error) {
-	resources := []terraform_utils.Resource{}
+func (*DNSGenerator) createRecordsResources(api *cf.API, zoneID string) ([]terraformutils.Resource, error) {
+	resources := []terraformutils.Resource{}
 	records, err := api.DNSRecords(zoneID, cf.DNSRecord{})
 	if err != nil {
 		log.Println(err)
@@ -58,7 +58,7 @@ func (*DNSGenerator) createRecordsResources(api *cf.API, zoneID string) ([]terra
 	}
 
 	for _, record := range records {
-		r := terraform_utils.NewResource(
+		r := terraformutils.NewResource(
 			record.ID,
 			fmt.Sprintf("%s_%s_%s", record.Type, record.ZoneName, record.ID),
 			"cloudflare_record",
@@ -92,7 +92,7 @@ func (g *DNSGenerator) InitResources() error {
 		return err
 	}
 
-	funcs := []func(*cf.API, string) ([]terraform_utils.Resource, error){
+	funcs := []func(*cf.API, string) ([]terraformutils.Resource, error){
 		g.createZonesResource,
 		g.createRecordsResources,
 	}
@@ -108,7 +108,6 @@ func (g *DNSGenerator) InitResources() error {
 		}
 	}
 	return nil
-
 }
 
 func (g *DNSGenerator) PostConvertHook() error {

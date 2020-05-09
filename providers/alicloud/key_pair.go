@@ -15,7 +15,7 @@
 package alicloud
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ecs"
 )
@@ -25,10 +25,10 @@ type KeyPairGenerator struct {
 	AliCloudService
 }
 
-func resourceFromKeyPair(keyPair ecs.KeyPair) terraform_utils.Resource {
-	return terraform_utils.NewResource(
-		keyPair.KeyPairName,                          // id
-		keyPair.KeyPairName+"__"+keyPair.KeyPairName, // name
+func resourceFromKeyPair(keyPair ecs.KeyPair) terraformutils.Resource {
+	return terraformutils.NewResource(
+		keyPair.KeyPairName,                          // nolint
+		keyPair.KeyPairName+"__"+keyPair.KeyPairName, // nolint
 		"alicloud_key_pair",
 		"alicloud",
 		map[string]string{},
@@ -52,7 +52,7 @@ func (g *KeyPairGenerator) InitResources() error {
 	for remaining > 0 {
 		raw, err := client.WithEcsClient(func(ecsClient *ecs.Client) (interface{}, error) {
 			request := ecs.CreateDescribeKeyPairsRequest()
-			request.RegionId = client.RegionId
+			request.RegionId = client.RegionID
 			request.PageSize = requests.NewInteger(pageSize)
 			request.PageNumber = requests.NewInteger(pageNumber)
 			return ecsClient.DescribeKeyPairs(request)
@@ -62,10 +62,7 @@ func (g *KeyPairGenerator) InitResources() error {
 		}
 
 		response := raw.(*ecs.DescribeKeyPairsResponse)
-		for _, keypair := range response.KeyPairs.KeyPair {
-			allKeyPairs = append(allKeyPairs, keypair)
-
-		}
+		allKeyPairs = append(allKeyPairs, response.KeyPairs.KeyPair...)
 		remaining = response.TotalCount - pageNumber*pageSize
 		pageNumber++
 	}

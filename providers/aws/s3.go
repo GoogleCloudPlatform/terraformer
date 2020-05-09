@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"github.com/aws/aws-sdk-go-v2/aws/awserr"
 
@@ -38,8 +38,8 @@ type S3Generator struct {
 // createResources iterate on all buckets
 // for each bucket we check region and choose only bucket from set region
 // for each bucket try get bucket policy, if policy exist create additional NewTerraformResource for policy
-func (g *S3Generator) createResources(config aws.Config, buckets *s3.ListBucketsResponse, region string) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g *S3Generator) createResources(config aws.Config, buckets *s3.ListBucketsResponse, region string) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	svc := s3.New(config)
 	for _, bucket := range buckets.Buckets {
 		resourceName := aws.StringValue(bucket.Name)
@@ -51,7 +51,7 @@ func (g *S3Generator) createResources(config aws.Config, buckets *s3.ListBuckets
 		// check if bucket in region
 		constraintString, _ := s3.NormalizeBucketLocation(location.LocationConstraint).MarshalValue()
 		if constraintString == region {
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				resourceName,
 				resourceName,
 				"aws_s3_bucket",
@@ -76,7 +76,7 @@ func (g *S3Generator) createResources(config aws.Config, buckets *s3.ListBuckets
 				continue
 			}
 			// if bucket policy exist create TerraformResource with bucket name as ID
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_s3_bucket_policy",
@@ -124,13 +124,13 @@ POLICY`, policy)
 }
 
 func (g *S3Generator) ParseFilters(rawFilters []string) {
-	g.Filter = []terraform_utils.ResourceFilter{}
+	g.Filter = []terraformutils.ResourceFilter{}
 	for _, rawFilter := range rawFilters {
 		filters := g.ParseFilter(rawFilter)
 		for _, resourceFilter := range filters {
 			g.Filter = append(g.Filter, resourceFilter)
 			if resourceFilter.ResourceName == "aws_s3_bucket" {
-				g.Filter = append(g.Filter, terraform_utils.ResourceFilter{
+				g.Filter = append(g.Filter, terraformutils.ResourceFilter{
 					ResourceName:     "aws_s3_bucket_policy",
 					FieldPath:        resourceFilter.FieldPath,
 					AcceptableValues: resourceFilter.AcceptableValues,

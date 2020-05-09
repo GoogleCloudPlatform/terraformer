@@ -10,7 +10,7 @@ import (
 
 func (c *Config) NewClient() *commercetools.Client {
 	oauth2Config := &clientcredentials.Config{
-		ClientID:     c.ClientId,
+		ClientID:     c.ClientID,
 		ClientSecret: c.ClientSecret,
 		Scopes:       strings.Split(c.ClientScope, " "),
 		TokenURL:     c.TokenURL,

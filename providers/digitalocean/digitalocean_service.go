@@ -17,13 +17,13 @@ package digitalocean
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/digitalocean/godo"
 	"golang.org/x/oauth2"
 )
 
-type DigitalOceanService struct {
-	terraform_utils.Service
+type DigitalOceanService struct { //nolint
+	terraformutils.Service
 }
 
 func (s *DigitalOceanService) generateClient() *godo.Client {

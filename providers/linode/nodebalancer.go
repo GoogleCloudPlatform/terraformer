@@ -18,7 +18,7 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/linode/linodego"
 )
 
@@ -32,7 +32,7 @@ func (g *NodeBalancerGenerator) loadNodeBalancers(client linodego.Client) ([]lin
 		return nil, err
 	}
 	for _, nodeBalancer := range nodeBalancerList {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			strconv.Itoa(nodeBalancer.ID),
 			strconv.Itoa(nodeBalancer.ID),
 			"linode_nodebalancer",
@@ -48,7 +48,7 @@ func (g *NodeBalancerGenerator) loadNodeBalancerConfigs(client linodego.Client, 
 		return nil, err
 	}
 	for _, nodeBalancerConfig := range nodeBalancerConfigList {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraformutils.NewResource(
 			strconv.Itoa(nodeBalancerConfig.ID),
 			strconv.Itoa(nodeBalancerConfig.ID),
 			"linode_nodebalancer_config",
@@ -66,7 +66,7 @@ func (g *NodeBalancerGenerator) loadNodeBalancerNodes(client linodego.Client, no
 		return err
 	}
 	for _, nodeBalancerNode := range nodeBalancerNodeList {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraformutils.NewResource(
 			strconv.Itoa(nodeBalancerNode.ID),
 			strconv.Itoa(nodeBalancerNode.ID),
 			"linode_nodebalancer_node",

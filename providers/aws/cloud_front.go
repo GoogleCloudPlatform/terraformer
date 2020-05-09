@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cloudfront"
 )
@@ -37,7 +37,7 @@ func (g *CloudFrontGenerator) InitResources() error {
 	p := cloudfront.NewListDistributionsPaginator(svc.ListDistributionsRequest(&cloudfront.ListDistributionsInput{}))
 	for p.Next(context.Background()) {
 		for _, distribution := range p.CurrentPage().DistributionList.Items {
-			r := terraform_utils.NewResource(
+			r := terraformutils.NewResource(
 				aws.StringValue(distribution.Id),
 				aws.StringValue(distribution.Id),
 				"aws_cloudfront_distribution",

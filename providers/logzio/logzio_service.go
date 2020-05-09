@@ -14,8 +14,8 @@
 
 package logzio
 
-import "github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+import "github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
-type LogzioService struct {
-	terraform_utils.Service
+type LogzioService struct { //nolint
+	terraformutils.Service
 }

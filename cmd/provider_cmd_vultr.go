@@ -16,7 +16,7 @@ package cmd
 import (
 	vultr_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/vultr"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -40,6 +40,6 @@ func newCmdVultrImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newVultrProvider() terraform_utils.ProviderGenerator {
+func newVultrProvider() terraformutils.ProviderGenerator {
 	return &vultr_terraforming.VultrProvider{}
 }

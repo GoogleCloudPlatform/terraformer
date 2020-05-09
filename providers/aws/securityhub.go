@@ -16,10 +16,9 @@ package aws
 
 import (
 	"context"
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/securityhub"
 )
 
@@ -41,7 +40,10 @@ func (g *SecurityhubGenerator) InitResources() error {
 		return err
 	}
 
-	err = g.addAccount(client, *account)
+	accountDisabled, err := g.addAccount(client, *account)
+	if accountDisabled {
+		return nil
+	}
 	if err != nil {
 		return err
 	}
@@ -53,23 +55,24 @@ func (g *SecurityhubGenerator) InitResources() error {
 	return err
 }
 
-func (g *SecurityhubGenerator) addAccount(client *securityhub.Client, accountNumber string) error {
+func (g *SecurityhubGenerator) addAccount(client *securityhub.Client, accountNumber string) (bool, error) {
 	_, err := client.GetEnabledStandardsRequest(&securityhub.GetEnabledStandardsInput{}).Send(context.Background())
 
 	if err != nil {
-		if !strings.Contains(err.(awserr.Error).Message(), "not subscribed to AWS Security Hub") {
-			return err
+		errorMsg := err.Error()
+		if !strings.Contains(errorMsg, "not subscribed to AWS Security Hub") {
+			return false, err
 		}
-	} else {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-			accountNumber,
-			accountNumber,
-			"aws_securityhub_account",
-			"aws",
-			securityhubAllowEmptyValues,
-		))
+		return true, nil
 	}
-	return nil
+	g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+		accountNumber,
+		accountNumber,
+		"aws_securityhub_account",
+		"aws",
+		securityhubAllowEmptyValues,
+	))
+	return false, nil
 }
 
 func (g *SecurityhubGenerator) addMembers(svc *securityhub.Client, accountNumber string) error {
@@ -79,7 +82,7 @@ func (g *SecurityhubGenerator) addMembers(svc *securityhub.Client, accountNumber
 		page := p.CurrentPage()
 		for _, member := range page.Members {
 			id := *member.AccountId
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraformutils.NewResource(
 				id,
 				"securityhub_member_"+id,
 				"aws_securityhub_member",
@@ -106,7 +109,7 @@ func (g *SecurityhubGenerator) addStandardsSubscription(svc *securityhub.Client,
 		page := p.CurrentPage()
 		for _, standardsSubscription := range page.StandardsSubscriptions {
 			id := *standardsSubscription.StandardsSubscriptionArn
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraformutils.NewResource(
 				id,
 				id,
 				"aws_securityhub_standards_subscription",

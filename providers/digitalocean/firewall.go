@@ -17,7 +17,7 @@ package digitalocean
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/digitalocean/godo"
 )
 
@@ -36,9 +36,7 @@ func (g FirewallGenerator) listFirewalls(ctx context.Context, client *godo.Clien
 			return nil, err
 		}
 
-		for _, firewall := range firewalls {
-			list = append(list, firewall)
-		}
+		list = append(list, firewalls...)
 
 		// if we are at the last page, break out the for loop
 		if resp.Links == nil || resp.Links.IsLastPage() {
@@ -57,10 +55,10 @@ func (g FirewallGenerator) listFirewalls(ctx context.Context, client *godo.Clien
 	return list, nil
 }
 
-func (g FirewallGenerator) createResources(firewallList []godo.Firewall) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g FirewallGenerator) createResources(firewallList []godo.Firewall) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, firewall := range firewallList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			firewall.ID,
 			firewall.Name,
 			"digitalocean_firewall",

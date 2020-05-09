@@ -20,7 +20,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 
@@ -41,7 +41,7 @@ func (g *IamGenerator) InitResources() error {
 		return e
 	}
 	svc := iam.New(config)
-	g.Resources = []terraform_utils.Resource{}
+	g.Resources = []terraformutils.Resource{}
 	err := g.getUsers(svc)
 	if err != nil {
 		log.Println(err)
@@ -75,7 +75,7 @@ func (g *IamGenerator) getRoles(svc *iam.Client) error {
 	for p.Next(context.Background()) {
 		for _, role := range p.CurrentPage().Roles {
 			roleName := aws.StringValue(role.RoleName)
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				roleName,
 				roleName,
 				"aws_iam_role",
@@ -84,7 +84,7 @@ func (g *IamGenerator) getRoles(svc *iam.Client) error {
 			rolePoliciesPage := iam.NewListRolePoliciesPaginator(svc.ListRolePoliciesRequest(&iam.ListRolePoliciesInput{RoleName: role.RoleName}))
 			for rolePoliciesPage.Next(context.Background()) {
 				for _, policyName := range rolePoliciesPage.CurrentPage().PolicyNames {
-					g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+					g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 						roleName+":"+policyName,
 						roleName+"_"+policyName,
 						"aws_iam_role_policy",
@@ -106,7 +106,7 @@ func (g *IamGenerator) getUsers(svc *iam.Client) error {
 	for p.Next(context.Background()) {
 		for _, user := range p.CurrentPage().Users {
 			resourceName := aws.StringValue(user.UserName)
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraformutils.NewResource(
 				resourceName,
 				aws.StringValue(user.UserId),
 				"aws_iam_user",
@@ -134,7 +134,7 @@ func (g *IamGenerator) getUserGroup(svc *iam.Client, userName *string) error {
 	for p.Next(context.Background()) {
 		for _, group := range p.CurrentPage().Groups {
 			userGroupMembership := *userName + "/" + *group.GroupName
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraformutils.NewResource(
 				userGroupMembership,
 				userGroupMembership,
 				"aws_iam_user_group_membership",
@@ -159,7 +159,7 @@ func (g *IamGenerator) getUserPolices(svc *iam.Client, userName *string) error {
 			resourceName := aws.StringValue(userName) + "_" + policy
 			resourceName = strings.Replace(resourceName, "@", "", -1)
 			policyID := aws.StringValue(userName) + ":" + policy
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				policyID,
 				resourceName,
 				"aws_iam_user_policy",
@@ -177,7 +177,7 @@ func (g *IamGenerator) getPolicies(svc *iam.Client) error {
 			resourceName := aws.StringValue(policy.PolicyName)
 			policyARN := aws.StringValue(policy.Arn)
 
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraformutils.NewResource(
 				policyARN,
 				resourceName,
 				"aws_iam_policy_attachment",
@@ -188,13 +188,12 @@ func (g *IamGenerator) getPolicies(svc *iam.Client) error {
 				},
 				IamAllowEmptyValues,
 				IamAdditionalFields))
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				policyARN,
 				resourceName,
 				"aws_iam_policy",
 				"aws",
 				IamAllowEmptyValues))
-
 		}
 	}
 	return p.Err()
@@ -205,7 +204,7 @@ func (g *IamGenerator) getGroups(svc *iam.Client) error {
 	for p.Next(context.Background()) {
 		for _, group := range p.CurrentPage().Groups {
 			resourceName := aws.StringValue(group.GroupName)
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_iam_group",
@@ -224,7 +223,7 @@ func (g *IamGenerator) getGroupPolicies(svc *iam.Client, group iam.Group) {
 		for _, policy := range groupPoliciesPage.CurrentPage().PolicyNames {
 			id := *group.GroupName + ":" + policy
 			groupPolicyName := *group.GroupName + "_" + policy
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraformutils.NewResource(
 				id,
 				groupPolicyName,
 				"aws_iam_group_policy",
@@ -248,7 +247,7 @@ func (g *IamGenerator) getAttachedGroupPolicies(svc *iam.Client, group iam.Group
 				continue // map only AWS managed policies since others should be managed by
 			}
 			id := *group.GroupName + "/" + *attachedPolicy.PolicyArn
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraformutils.NewResource(
 				id,
 				*group.GroupName+"_"+*attachedPolicy.PolicyName,
 				"aws_iam_group_policy_attachment",
@@ -272,7 +271,7 @@ func (g *IamGenerator) getInstanceProfiles(svc *iam.Client) error {
 		for _, instanceProfile := range p.CurrentPage().InstanceProfiles {
 			resourceName := *instanceProfile.InstanceProfileName
 
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraformutils.NewResource(
 				resourceName,
 				resourceName,
 				"aws_iam_instance_profile",
@@ -290,20 +289,21 @@ func (g *IamGenerator) getInstanceProfiles(svc *iam.Client) error {
 // PostGenerateHook for add policy json as heredoc
 func (g *IamGenerator) PostConvertHook() error {
 	for i, resource := range g.Resources {
-		if resource.InstanceInfo.Type == "aws_iam_policy" ||
+		switch {
+		case resource.InstanceInfo.Type == "aws_iam_policy" ||
 			resource.InstanceInfo.Type == "aws_iam_user_policy" ||
 			resource.InstanceInfo.Type == "aws_iam_group_policy" ||
-			resource.InstanceInfo.Type == "aws_iam_role_policy" {
+			resource.InstanceInfo.Type == "aws_iam_role_policy":
 			policy := g.escapeAwsInterpolation(resource.Item["policy"].(string))
 			resource.Item["policy"] = fmt.Sprintf(`<<POLICY
 %s
 POLICY`, policy)
-		} else if resource.InstanceInfo.Type == "aws_iam_role" {
+		case resource.InstanceInfo.Type == "aws_iam_role":
 			policy := g.escapeAwsInterpolation(resource.Item["assume_role_policy"].(string))
 			g.Resources[i].Item["assume_role_policy"] = fmt.Sprintf(`<<POLICY
 %s
 POLICY`, policy)
-		} else if resource.InstanceInfo.Type == "aws_iam_instance_profile" {
+		case resource.InstanceInfo.Type == "aws_iam_instance_profile":
 			delete(resource.Item, "roles")
 		}
 	}

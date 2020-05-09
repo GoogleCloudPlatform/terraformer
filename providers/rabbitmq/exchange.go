@@ -18,7 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type ExchangeGenerator struct {
@@ -35,13 +35,13 @@ type Exchanges []Exchange
 var ExchangeAllowEmptyValues = []string{}
 var ExchangeAdditionalFields = map[string]interface{}{}
 
-func (g ExchangeGenerator) createResources(exchanges Exchanges) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g ExchangeGenerator) createResources(exchanges Exchanges) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, exchange := range exchanges {
 		if len(exchange.Name) == 0 {
 			continue
 		}
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			fmt.Sprintf("%s@%s", exchange.Name, exchange.Vhost),
 			fmt.Sprintf("exchange_%s_%s", normalizeResourceName(exchange.Vhost), normalizeResourceName(exchange.Name)),
 			"rabbitmq_exchange",
@@ -63,7 +63,7 @@ func (g *ExchangeGenerator) InitResources() error {
 		return err
 	}
 	var exchanges Exchanges
-	err = json.Unmarshal([]byte(body), &exchanges)
+	err = json.Unmarshal(body, &exchanges)
 	if err != nil {
 		return err
 	}

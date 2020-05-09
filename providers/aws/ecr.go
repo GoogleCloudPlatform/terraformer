@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/ecr"
 )
 
@@ -37,19 +37,19 @@ func (g *EcrGenerator) InitResources() error {
 	p := ecr.NewDescribeRepositoriesPaginator(svc.DescribeRepositoriesRequest(&ecr.DescribeRepositoriesInput{}))
 	for p.Next(context.Background()) {
 		for _, repository := range p.CurrentPage().Repositories {
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				*repository.RepositoryName,
 				*repository.RepositoryName,
 				"aws_ecr_repository",
 				"aws",
 				ecrAllowEmptyValues))
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				*repository.RepositoryName,
 				*repository.RepositoryName,
 				"aws_ecr_repository_policy",
 				"aws",
 				ecrAllowEmptyValues))
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				*repository.RepositoryName,
 				*repository.RepositoryName,
 				"aws_ecr_lifecycle_policy",

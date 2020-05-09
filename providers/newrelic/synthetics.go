@@ -17,7 +17,7 @@ package newrelic
 import (
 	"fmt"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	synthetics "github.com/dollarshaveclub/new-relic-synthetics-go"
 	newrelic "github.com/paultyng/go-newrelic/v4/api"
 )
@@ -38,7 +38,7 @@ func (g *SyntheticsGenerator) createSyntheticsAlertConditionResources(client *ne
 			return err
 		}
 		for _, syntheticsAlertCondition := range syntheticsAlertConditions {
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				fmt.Sprintf("%d:%d", alertPolicy.ID, syntheticsAlertCondition.ID),
 				fmt.Sprintf("%s-%d", normalizeResourceName(alertPolicy.Name), alertPolicy.ID),
 				"newrelic_synthetics_alert_condition",
@@ -61,8 +61,8 @@ func (g *SyntheticsGenerator) createSyntheticsMonitorResources(client *synthetic
 
 	for allMonitors.Count > 0 {
 		for _, monitor := range allMonitors.Monitors {
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
-				fmt.Sprintf("%s", monitor.ID),
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+				fmt.Sprint(monitor.ID),
 				fmt.Sprintf("%s-%s", normalizeResourceName(monitor.Name), monitor.ID),
 				"newrelic_synthetics_monitor",
 				g.ProviderName,

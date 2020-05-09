@@ -19,7 +19,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 
 	"github.com/aws/aws-sdk-go-v2/service/sns"
@@ -32,8 +32,8 @@ type SnsGenerator struct {
 }
 
 // TF currently doesn't support email subscriptions + subscriptions with pending confirmations
-func (g *SnsGenerator) isSupportedSubscription(protocol, subscriptionId string) bool {
-	return protocol != "email" && protocol != "email-json" && subscriptionId != "PendingConfirmation"
+func (g *SnsGenerator) isSupportedSubscription(protocol, subscriptionID string) bool {
+	return protocol != "email" && protocol != "email-json" && subscriptionID != "PendingConfirmation"
 }
 
 func (g *SnsGenerator) InitResources() error {
@@ -48,7 +48,7 @@ func (g *SnsGenerator) InitResources() error {
 			arnParts := strings.Split(aws.StringValue(topic.TopicArn), ":")
 			topicName := arnParts[len(arnParts)-1]
 
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				aws.StringValue(topic.TopicArn),
 				topicName,
 				"aws_sns_topic",
@@ -62,12 +62,12 @@ func (g *SnsGenerator) InitResources() error {
 			for topicSubsPage.Next(context.Background()) {
 				for _, subscription := range topicSubsPage.CurrentPage().Subscriptions {
 					subscriptionArnParts := strings.Split(aws.StringValue(subscription.SubscriptionArn), ":")
-					subscriptionId := subscriptionArnParts[len(subscriptionArnParts)-1]
+					subscriptionID := subscriptionArnParts[len(subscriptionArnParts)-1]
 
-					if g.isSupportedSubscription(aws.StringValue(subscription.Protocol), subscriptionId) {
-						g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+					if g.isSupportedSubscription(aws.StringValue(subscription.Protocol), subscriptionID) {
+						g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 							aws.StringValue(subscription.SubscriptionArn),
-							"subscription-"+subscriptionId,
+							"subscription-"+subscriptionID,
 							"aws_sns_topic_subscription",
 							"aws",
 							snsAllowEmptyValues,

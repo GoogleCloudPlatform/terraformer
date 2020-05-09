@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/hashicorp/terraform/helper/hashcode"
 
@@ -32,7 +32,7 @@ type EbsGenerator struct {
 	AWSService
 }
 
-func (g *EbsGenerator) volumeAttachmentId(device, volumeID, instanceID string) string {
+func (g *EbsGenerator) volumeAttachmentID(device, volumeID, instanceID string) string {
 	return fmt.Sprintf("vai-%d", hashcode.String(fmt.Sprintf("%s-%s-%s-", device, instanceID, volumeID)))
 }
 
@@ -56,7 +56,6 @@ func (g *EbsGenerator) InitResources() error {
 	}))
 	for p.Next(context.Background()) {
 		for _, volume := range p.CurrentPage().Volumes {
-
 			isRootDevice := false // Let's leave root device configuration to be done in ec2_instance resources
 
 			for _, attachment := range volume.Attachments {
@@ -73,7 +72,7 @@ func (g *EbsGenerator) InitResources() error {
 			}
 
 			if !isRootDevice {
-				g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+				g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 					aws.StringValue(volume.VolumeId),
 					aws.StringValue(volume.VolumeId),
 					"aws_ebs_volume",
@@ -83,13 +82,12 @@ func (g *EbsGenerator) InitResources() error {
 
 				for _, attachment := range volume.Attachments {
 					if attachment.State == ec2.VolumeAttachmentStateAttached {
-
-						attachmentId := g.volumeAttachmentId(
+						attachmentID := g.volumeAttachmentID(
 							aws.StringValue(attachment.Device),
 							aws.StringValue(attachment.VolumeId),
 							aws.StringValue(attachment.InstanceId))
-						g.Resources = append(g.Resources, terraform_utils.NewResource(
-							attachmentId,
+						g.Resources = append(g.Resources, terraformutils.NewResource(
+							attachmentID,
 							aws.StringValue(attachment.InstanceId)+":"+aws.StringValue(attachment.Device),
 							"aws_volume_attachment",
 							"aws",

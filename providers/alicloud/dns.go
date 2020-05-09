@@ -16,20 +16,20 @@ package alicloud
 
 import (
 	"github.com/GoogleCloudPlatform/terraformer/providers/alicloud/connectivity"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/alidns"
 )
 
-// DnsGenerator Struct for generating AliCloud Elastic Compute Service
-type DnsGenerator struct {
+// DNSGenerator Struct for generating AliCloud Elastic Compute Service
+type DNSGenerator struct {
 	AliCloudService
 }
 
-func resourceFromDomain(domain alidns.Domain) terraform_utils.Resource {
-	return terraform_utils.NewResource(
+func resourceFromDomain(domain alidns.Domain) terraformutils.Resource {
+	return terraformutils.NewResource(
 		domain.DomainName,                      // id
-		domain.DomainId+"__"+domain.DomainName, // name
+		domain.DomainId+"__"+domain.DomainName, // nolint
 		"alicloud_dns",
 		"alicloud",
 		map[string]string{},
@@ -38,10 +38,10 @@ func resourceFromDomain(domain alidns.Domain) terraform_utils.Resource {
 	)
 }
 
-func resourceFromDomainRecord(record alidns.Record) terraform_utils.Resource {
-	return terraform_utils.NewResource(
-		record.RecordId,                        // id
-		record.RecordId+"__"+record.DomainName, // name
+func resourceFromDomainRecord(record alidns.Record) terraformutils.Resource {
+	return terraformutils.NewResource(
+		record.RecordId,                        // nolint
+		record.RecordId+"__"+record.DomainName, // nolint
 		"alicloud_dns_record",
 		"alicloud",
 		map[string]string{},
@@ -58,9 +58,9 @@ func initDomains(client *connectivity.AliyunClient) ([]alidns.Domain, error) {
 	allDomains := make([]alidns.Domain, 0)
 
 	for remaining > 0 {
-		raw, err := client.WithDnsClient(func(alidnsClient *alidns.Client) (interface{}, error) {
+		raw, err := client.WithDNSClient(func(alidnsClient *alidns.Client) (interface{}, error) {
 			request := alidns.CreateDescribeDomainsRequest()
-			request.RegionId = client.RegionId
+			request.RegionId = client.RegionID
 			request.PageSize = requests.NewInteger(pageSize)
 			request.PageNumber = requests.NewInteger(pageNumber)
 			return alidnsClient.DescribeDomains(request)
@@ -70,10 +70,7 @@ func initDomains(client *connectivity.AliyunClient) ([]alidns.Domain, error) {
 		}
 
 		response := raw.(*alidns.DescribeDomainsResponse)
-		for _, domain := range response.Domains.Domain {
-			allDomains = append(allDomains, domain)
-
-		}
+		allDomains = append(allDomains, response.Domains.Domain...)
 		remaining = int(response.TotalCount) - pageNumber*pageSize
 		pageNumber++
 	}
@@ -90,9 +87,9 @@ func initDomainRecords(client *connectivity.AliyunClient, allDomains []alidns.Do
 		pageSize := 10
 
 		for remaining > 0 {
-			raw, err := client.WithDnsClient(func(alidnsClient *alidns.Client) (interface{}, error) {
+			raw, err := client.WithDNSClient(func(alidnsClient *alidns.Client) (interface{}, error) {
 				request := alidns.CreateDescribeDomainRecordsRequest()
-				request.RegionId = client.RegionId
+				request.RegionId = client.RegionID
 				request.DomainName = domain.DomainName
 				request.PageSize = requests.NewInteger(pageSize)
 				request.PageNumber = requests.NewInteger(pageNumber)
@@ -103,10 +100,7 @@ func initDomainRecords(client *connectivity.AliyunClient, allDomains []alidns.Do
 			}
 
 			response := raw.(*alidns.DescribeDomainRecordsResponse)
-			for _, record := range response.DomainRecords.Record {
-				allDomainRecords = append(allDomainRecords, record)
-
-			}
+			allDomainRecords = append(allDomainRecords, response.DomainRecords.Record...)
 			remaining = int(response.TotalCount) - pageNumber*pageSize
 			pageNumber++
 		}
@@ -116,7 +110,7 @@ func initDomainRecords(client *connectivity.AliyunClient, allDomains []alidns.Do
 }
 
 // InitResources Gets the list of all alidns domain ids and generates resources
-func (g *DnsGenerator) InitResources() error {
+func (g *DNSGenerator) InitResources() error {
 	client, err := g.LoadClientFromProfile()
 	if err != nil {
 		return err

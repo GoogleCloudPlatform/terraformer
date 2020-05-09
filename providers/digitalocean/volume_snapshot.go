@@ -17,7 +17,7 @@ package digitalocean
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/digitalocean/godo"
 )
 
@@ -36,9 +36,7 @@ func (g VolumeSnapshotGenerator) listVolumeSnapshots(ctx context.Context, client
 			return nil, err
 		}
 
-		for _, snapshot := range snapshots {
-			list = append(list, snapshot)
-		}
+		list = append(list, snapshots...)
 
 		// if we are at the last page, break out the for loop
 		if resp.Links == nil || resp.Links.IsLastPage() {
@@ -57,10 +55,10 @@ func (g VolumeSnapshotGenerator) listVolumeSnapshots(ctx context.Context, client
 	return list, nil
 }
 
-func (g VolumeSnapshotGenerator) createResources(snapshotList []godo.Snapshot) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g VolumeSnapshotGenerator) createResources(snapshotList []godo.Snapshot) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, snapshot := range snapshotList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			snapshot.ID,
 			snapshot.Name,
 			"digitalocean_volume_snapshot",

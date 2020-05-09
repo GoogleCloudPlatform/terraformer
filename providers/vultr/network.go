@@ -17,7 +17,7 @@ package vultr
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/vultr/govultr"
 )
 
@@ -25,10 +25,10 @@ type NetworkGenerator struct {
 	VultrService
 }
 
-func (g NetworkGenerator) createResources(networkList []govultr.Network) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g NetworkGenerator) createResources(networkList []govultr.Network) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, network := range networkList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			network.NetworkID,
 			network.NetworkID,
 			"vultr_network",

@@ -16,7 +16,8 @@ package aws
 
 import (
 	"context"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/configservice"
 )
 
@@ -55,7 +56,7 @@ func (g *ConfigGenerator) addConfigurationRecorders(svc *configservice.Client) (
 	var configurationRecorderRefs []string
 	for _, configurationRecorder := range configurationRecorders.ConfigurationRecorders {
 		name := *configurationRecorder.Name
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			name,
 			name,
 			"aws_config_configuration_recorder",
@@ -82,7 +83,7 @@ func (g *ConfigGenerator) addConfigRules(svc *configservice.Client, configuratio
 		}
 		for _, configRule := range configRules.ConfigRules {
 			name := *configRule.ConfigRuleName
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraformutils.NewResource(
 				name,
 				name,
 				"aws_config_config_rule",
@@ -111,7 +112,7 @@ func (g *ConfigGenerator) addDeliveryChannels(svc *configservice.Client, configu
 	}
 	for _, deliveryChannel := range deliveryChannels.DeliveryChannels {
 		name := *deliveryChannel.Name
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraformutils.NewResource(
 			name,
 			name,
 			"aws_config_delivery_channel",

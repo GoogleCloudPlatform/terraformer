@@ -18,7 +18,7 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/linode/linodego"
 )
 
@@ -26,10 +26,10 @@ type VolumeGenerator struct {
 	LinodeService
 }
 
-func (g VolumeGenerator) createResources(volumeList []linodego.Volume) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g VolumeGenerator) createResources(volumeList []linodego.Volume) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, volume := range volumeList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			strconv.Itoa(volume.ID),
 			strconv.Itoa(volume.ID),
 			"linode_volume",

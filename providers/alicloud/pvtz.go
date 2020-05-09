@@ -18,7 +18,7 @@ import (
 	"strconv"
 
 	"github.com/GoogleCloudPlatform/terraformer/providers/alicloud/connectivity"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/pvtz"
 )
@@ -28,8 +28,8 @@ type PvtzGenerator struct {
 	AliCloudService
 }
 
-func resourceFromZoneResponse(zone pvtz.Zone) terraform_utils.Resource {
-	return terraform_utils.NewResource(
+func resourceFromZoneResponse(zone pvtz.Zone) terraformutils.Resource {
+	return terraformutils.NewResource(
 		zone.ZoneId,                    // id
 		zone.ZoneId+"__"+zone.ZoneName, // name
 		"alicloud_pvtz_zone",
@@ -40,8 +40,8 @@ func resourceFromZoneResponse(zone pvtz.Zone) terraform_utils.Resource {
 	)
 }
 
-func resourceFromZoneAttachmentResponse(zone pvtz.Zone) terraform_utils.Resource {
-	return terraform_utils.NewResource(
+func resourceFromZoneAttachmentResponse(zone pvtz.Zone) terraformutils.Resource {
+	return terraformutils.NewResource(
 		zone.ZoneId, // id
 		zone.ZoneId+"__"+zone.ZoneName+"_attachment", // name
 		"alicloud_pvtz_zone_attachment",
@@ -52,9 +52,9 @@ func resourceFromZoneAttachmentResponse(zone pvtz.Zone) terraform_utils.Resource
 	)
 }
 
-func resourceFromZoneRecordResponse(record pvtz.Record, ZoneID string) terraform_utils.Resource {
-	return terraform_utils.NewResource(
-		strconv.Itoa(record.RecordId)+":"+ZoneID,     // id
+func resourceFromZoneRecordResponse(record pvtz.Record, zoneID string) terraformutils.Resource {
+	return terraformutils.NewResource(
+		strconv.Itoa(record.RecordId)+":"+zoneID,     // id
 		strconv.Itoa(record.RecordId)+"__"+record.Rr, // name
 		"alicloud_pvtz_zone_record",
 		"alicloud",
@@ -74,7 +74,7 @@ func initZones(client *connectivity.AliyunClient) ([]pvtz.Zone, error) {
 	for remaining > 0 {
 		raw, err := client.WithPvtzClient(func(pvtzClient *pvtz.Client) (interface{}, error) {
 			request := pvtz.CreateDescribeZonesRequest()
-			request.RegionId = client.RegionId
+			request.RegionId = client.RegionID
 			request.PageSize = requests.NewInteger(pageSize)
 			request.PageNumber = requests.NewInteger(pageNumber)
 			return pvtzClient.DescribeZones(request)
@@ -84,9 +84,7 @@ func initZones(client *connectivity.AliyunClient) ([]pvtz.Zone, error) {
 		}
 
 		response := raw.(*pvtz.DescribeZonesResponse)
-		for _, Zone := range response.Zones.Zone {
-			allZones = append(allZones, Zone)
-		}
+		allZones = append(allZones, response.Zones.Zone...)
 		remaining = response.TotalItems - pageNumber*pageSize
 		pageNumber++
 	}
@@ -107,7 +105,7 @@ func initZoneRecords(client *connectivity.AliyunClient, allZones []pvtz.Zone) ([
 		for remaining > 0 {
 			raw, err := client.WithPvtzClient(func(pvtzClient *pvtz.Client) (interface{}, error) {
 				request := pvtz.CreateDescribeZoneRecordsRequest()
-				request.RegionId = client.RegionId
+				request.RegionId = client.RegionID
 				request.ZoneId = zone.ZoneId
 				request.PageSize = requests.NewInteger(pageSize)
 				request.PageNumber = requests.NewInteger(pageNumber)
