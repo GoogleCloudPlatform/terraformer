@@ -6,3 +6,4 @@ terraformer
 .vscode
 terraform.tfstate
 terraform.tfstate.backup
+vendor
