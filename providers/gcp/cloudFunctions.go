@@ -16,6 +16,7 @@ package gcp
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"strings"
 
@@ -48,7 +49,11 @@ func (g CloudFunctionsGenerator) createResources(ctx context.Context, functionsL
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		if strings.Contains(err.Error(), "403: Permission denied") {
+			log.Print(fmt.Sprint("Got PermissionDenied for region %", g.GetArgs()["region"].(compute.Region).Name))
+		} else {
+			log.Fatal(err)
+		}
 	}
 	return resources
 }
