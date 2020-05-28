@@ -19,6 +19,7 @@ run_terraformer(){
 aws s3 cp s3://${RESULT_BUCKET}/${CREDENTIALS_FILE_KEY} "./credentials.json"
 
 if [ "$CSP" == "GCP" ]; then
+	export GOOGLE_APPLICATION_CREDENTIALS="./credentials.json"
 	services=$(./terraformer-google import google list --projects ${PROJECT_ID})
 else
 	services=$(./terraformer-azure import azure list)
