@@ -31,6 +31,7 @@ func (s *CloudflareService) initializeAPI() (*cf.API, error) {
 	apiKey := os.Getenv("CLOUDFLARE_API_KEY")
 	apiEmail := os.Getenv("CLOUDFLARE_EMAIL")
 	apiToken := os.Getenv("CLOUDFLARE_API_TOKEN")
+	accountID := os.Getenv("CLOUDFLARE_ACCOUNT_ID")
 
 	if apiToken == "" && (apiEmail == "" || apiKey == "") {
 		err := errors.New("Either CLOUDFLARE_API_TOKEN or CLOUDFLARE_API_KEY/CLOUDFLARE_EMAIL environment variables must be set")
@@ -39,7 +40,8 @@ func (s *CloudflareService) initializeAPI() (*cf.API, error) {
 	}
 
 	if apiToken != "" {
-		return cf.NewWithAPIToken(apiToken)
+		return cf.NewWithAPIToken(apiToken, cf.UsingAccount(accountID))
 	}
-	return cf.New(apiKey, apiEmail)
+
+	return cf.New(apiKey, apiEmail, cf.UsingAccount(accountID))
 }
