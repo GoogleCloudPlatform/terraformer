@@ -1092,6 +1092,7 @@ Example using a Cloudflare API Key and corresponding email:
 ```
 export CLOUDFLARE_API_KEY=[CLOUDFLARE_API_KEY]
 export CLOUDFLARE_EMAIL=[CLOUDFLARE_EMAIL]
+export CLOUDFLARE_ACCOUNT_ID=[CLOUDFLARE_ACCOUNT_ID]
  ./terraformer import cloudflare --resources=firewall,dns
 ```
 
@@ -1099,6 +1100,7 @@ or using a Cloudflare API Token:
 
 ```
 export CLOUDFLARE_API_TOKEN=[CLOUDFLARE_API_TOKEN]
+export CLOUDFLARE_ACCOUNT_ID=[CLOUDFLARE_ACCOUNT_ID]
  ./terraformer import cloudflare --resources=firewall,dns
 ```
 
@@ -1326,7 +1328,7 @@ Example:
 # Using Service Accounts
 export GOOGLE_CREDENTIALS=/path/to/client_secret.json
 export IMPERSONATED_USER_EMAIL="foobar@example.com"
-  
+
 # Using Application Default Credentials
 gcloud auth application-default login \
   --client-id-file=client_secret.json \
@@ -1334,7 +1336,7 @@ gcloud auth application-default login \
 https://www.googleapis.com/auth/gmail.labels,\
 https://www.googleapis.com/auth/gmail.settings.basic
 
-./terraformer import gmailfilter -r=filter,label 
+./terraformer import gmailfilter -r=filter,label
 ```
 
 List of supported GmailFilter resources:
