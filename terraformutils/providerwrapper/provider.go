@@ -26,8 +26,6 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils/terraformerstring"
 
-	"github.com/zclconf/go-cty/cty/gocty"
-
 	"github.com/zclconf/go-cty/cty"
 
 	"github.com/hashicorp/go-hclog"
@@ -155,19 +153,18 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 	})
 
 	if resp.Diagnostics.HasErrors() {
-		// retry with different serialization mechanism
-		priorState, err = gocty.ToCtyValue(state, impliedType)
-		if err != nil {
-			return nil, err
-		}
-		resp = p.Provider.ReadResource(providers.ReadResourceRequest{
-			TypeName:   info.Type,
-			PriorState: priorState,
-			Private:    []byte{},
+		// retry with regular import command - without resource attributes
+		importResponse := p.Provider.ImportResourceState(providers.ImportResourceStateRequest{
+			TypeName: info.Type,
+			ID:       state.ID,
 		})
-		if resp.Diagnostics.HasErrors() {
+		if importResponse.Diagnostics.HasErrors() {
 			return nil, resp.Diagnostics.Err()
 		}
+		if len(importResponse.ImportedResources) == 0 {
+			return nil, errors.New("not able to import resource for a given ID")
+		}
+		return terraform.NewInstanceStateShimmedFromValue(importResponse.ImportedResources[0].State, int(schema.ResourceTypes[info.Type].Version)), nil
 	}
 
 	if resp.NewState.IsNull() {
