@@ -1119,6 +1119,11 @@ List of supported Cloudflare services:
   * `cloudflare_filter`
   * `cloudflare_firewall_rule`
   * `cloudflare_zone_lockdown`
+  * `cloudflare_rate_limit`
+* `page_rule`
+  * `cloudflare_page_rule`
+* `account_member`
+  * `cloudflare_account_member`
 
 ### Use with GitHub
 

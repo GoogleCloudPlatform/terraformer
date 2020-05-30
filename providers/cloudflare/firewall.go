@@ -193,6 +193,25 @@ func (*FirewallGenerator) createFirewallRuleResources(api *cf.API, zoneID, zoneN
 	return resources, nil
 }
 
+func (g *FirewallGenerator) createRateLimitResources(api *cf.API, zoneID, zoneName string) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
+
+	rateLimits, err := api.ListAllRateLimits(zoneID)
+	if err != nil {
+		return resources, err
+	}
+	for _, rateLimit := range rateLimits {
+		resources = append(resources, terraformutils.NewSimpleResource(
+			rateLimit.ID,
+			fmt.Sprintf("%s_%s", zoneID, rateLimit.ID),
+			"cloudflare_rate_limit",
+			"cloudflare",
+			[]string{}))
+	}
+
+	return resources, nil
+}
+
 func (g *FirewallGenerator) InitResources() error {
 	api, err := g.initializeAPI()
 	if err != nil {
@@ -218,6 +237,7 @@ func (g *FirewallGenerator) InitResources() error {
 		g.createFilterResources,
 		g.createZoneAccessRuleResources,
 		g.createZoneLockdownsResources,
+		g.createRateLimitResources,
 	}
 
 	for _, zone := range zones {
