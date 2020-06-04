@@ -1,7 +1,7 @@
 FROM golang:alpine
 
-RUN apk --update --no-cache add bash musl-dev gcc git terraform python3
-RUN pip install --upgrade pip && pip install awscli
+RUN apk --update --no-cache add bash musl-dev gcc git terraform python3-pip
+RUN pip3 install --upgrade pip && pip install awscli
 
 RUN git clone https://github.com/bridgecrewio/terraformer.git
 WORKDIR ./terraformer
