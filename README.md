@@ -832,6 +832,7 @@ Example:
 
 ```
 export FASTLY_API_KEY=[FASTLY_API_KEY]
+export FASTLY_CUSTOMER_ID=[FASTLY_CUSTOMER_ID]
 ./terraformer import fastly -r service_v1,user
 ```
 
