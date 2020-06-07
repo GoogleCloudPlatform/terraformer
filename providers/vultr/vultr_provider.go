@@ -45,7 +45,6 @@ func (p *VultrProvider) GetProviderData(arg ...string) map[string]interface{} {
 		"provider": map[string]interface{}{
 			"vultr": map[string]interface{}{
 				"version": providerwrapper.GetProviderVersion(p.GetName()),
-				"api_key": p.apiKey,
 			},
 		},
 	}

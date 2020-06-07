@@ -45,7 +45,6 @@ func (p *LinodeProvider) GetProviderData(arg ...string) map[string]interface{} {
 		"provider": map[string]interface{}{
 			"linode": map[string]interface{}{
 				"version": providerwrapper.GetProviderVersion(p.GetName()),
-				"token":   p.token,
 			},
 		},
 	}
