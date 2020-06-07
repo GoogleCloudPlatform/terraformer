@@ -49,7 +49,6 @@ require (
 	google.golang.org/api v0.22.0
 	google.golang.org/genproto v0.0.0-20200430143042-b979b6f78d84
 	gopkg.in/jarcoal/httpmock.v1 v1.0.0-00010101000000-000000000000 // indirect
-	gopkg.in/ns1/ns1-go.v2 v2.4.0 // indirect
 	k8s.io/apimachinery v0.17.5
 	k8s.io/client-go v0.17.5
 	k8s.io/utils v0.0.0-20191218082557-f07c713de883 // indirect
