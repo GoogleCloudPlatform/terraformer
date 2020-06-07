@@ -34,6 +34,7 @@ require (
 	github.com/labd/commercetools-go-sdk v0.0.0-20200309143931-ca72e918a79d
 	github.com/linode/linodego v0.15.0
 	github.com/mrparkers/terraform-provider-keycloak v0.0.0-20200506151941-509881368409
+	github.com/ns1/ns1-go v2.4.0+incompatible
 	github.com/paultyng/go-newrelic/v4 v4.10.0
 	github.com/pkg/errors v0.9.1
 	github.com/smartystreets/goconvey v1.6.4 // indirect
@@ -48,6 +49,7 @@ require (
 	google.golang.org/api v0.22.0
 	google.golang.org/genproto v0.0.0-20200430143042-b979b6f78d84
 	gopkg.in/jarcoal/httpmock.v1 v1.0.0-00010101000000-000000000000 // indirect
+	gopkg.in/ns1/ns1-go.v2 v2.4.0 // indirect
 	k8s.io/apimachinery v0.17.5
 	k8s.io/client-go v0.17.5
 	k8s.io/utils v0.0.0-20191218082557-f07c713de883 // indirect
