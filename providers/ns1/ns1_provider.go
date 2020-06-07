@@ -56,8 +56,9 @@ func (Ns1Provider) GetResourceConnections() map[string]map[string][]string {
 
 func (p *Ns1Provider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"zone":          &ZoneGenerator{},
 		"monitoringjob": &MonitoringJobGenerator{},
+		"team":          &TeamGenerator{},
+		"zone":          &ZoneGenerator{},
 	}
 }
 
