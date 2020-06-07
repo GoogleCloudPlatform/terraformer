@@ -188,7 +188,7 @@ Links to download Terraform Providers:
     * Alicloud provider >1.57.1 - [here](https://releases.hashicorp.com/terraform-provider-alicloud/)
 * Cloud
     * DigitalOcean provider >1.9.1 - [here](https://releases.hashicorp.com/terraform-provider-digitalocean/)
-    * Fastly provider >0.11.0 - [here](https://releases.hashicorp.com/terraform-provider-fastly/)
+    * Fastly provider >0.16.1 - [here](https://releases.hashicorp.com/terraform-provider-fastly/)
     * Heroku provider >2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-heroku/)
     * Linode provider >1.8.0 - [here](https://releases.hashicorp.com/terraform-provider-linode/)
     * OpenStack provider >1.21.1 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
@@ -832,7 +832,7 @@ Example:
 
 ```
 export FASTLY_API_KEY=[FASTLY_API_KEY]
-./terraformer import fastly -r service_v1
+./terraformer import fastly -r service_v1,user
 ```
 
 List of supported Fastly resources:
@@ -842,6 +842,8 @@ List of supported Fastly resources:
     * `fastly_service_dictionary_items_v1`
     * `fastly_service_dynamic_snippet_content_v1`
     * `fastly_service_v1`
+*   `user`
+    * `fastly_user_v1`
 
 ### Use with Heroku
 
