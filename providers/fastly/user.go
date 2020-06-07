@@ -24,7 +24,7 @@ type UserGenerator struct {
 }
 
 func (g *UserGenerator) loadUsers(client *fastly.Client, customerID string) error {
-	users, err := client.ListCustomerUsers(&fastly.ListCustomerUsersInput{ CustomerID: customerID })
+	users, err := client.ListCustomerUsers(&fastly.ListCustomerUsersInput{CustomerID: customerID})
 	if err != nil {
 		return err
 	}
