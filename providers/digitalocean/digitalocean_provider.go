@@ -45,7 +45,6 @@ func (p *DigitalOceanProvider) GetProviderData(arg ...string) map[string]interfa
 		"provider": map[string]interface{}{
 			"digitalocean": map[string]interface{}{
 				"version": providerwrapper.GetProviderVersion(p.GetName()),
-				"token":   p.token,
 			},
 		},
 	}

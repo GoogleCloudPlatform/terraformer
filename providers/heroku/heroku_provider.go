@@ -52,7 +52,6 @@ func (p *HerokuProvider) GetProviderData(arg ...string) map[string]interface{} {
 			"heroku": map[string]interface{}{
 				"version": providerwrapper.GetProviderVersion(p.GetName()),
 				"email":   p.email,
-				"api_key": p.apiKey,
 			},
 		},
 	}

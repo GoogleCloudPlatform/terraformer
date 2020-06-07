@@ -49,7 +49,6 @@ func (p *OctopusDeployProvider) GetProviderData(arg ...string) map[string]interf
 			"octopusdeploy": map[string]interface{}{
 				"version": providerwrapper.GetProviderVersion(p.GetName()),
 				"address": p.address,
-				"apikey":  p.apiKey,
 			},
 		},
 	}
