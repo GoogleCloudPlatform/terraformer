@@ -52,7 +52,6 @@ func (p *FastlyProvider) GetProviderData(arg ...string) map[string]interface{} {
 			"fastly": map[string]interface{}{
 				"version": providerwrapper.GetProviderVersion(p.GetName()),
 				"customer_id": p.customerID,
-				"api_key": p.apiKey,
 			},
 		},
 	}
