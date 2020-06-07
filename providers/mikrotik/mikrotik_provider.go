@@ -59,7 +59,6 @@ func (p *MikrotikProvider) GetProviderData(arg ...string) map[string]interface{}
 				"version":  providerwrapper.GetProviderVersion(p.GetName()),
 				"host":     p.host,
 				"user":     p.user,
-				"password": p.password,
 			},
 		},
 	}
