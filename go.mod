@@ -19,7 +19,7 @@ require (
 	github.com/denverdino/aliyungo v0.0.0-20200327235253-d59c209c7e93
 	github.com/digitalocean/godo v1.35.1
 	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
-	github.com/fastly/go-fastly v1.10.0
+	github.com/fastly/go-fastly v1.15.0
 	github.com/google/go-github/v25 v25.1.3
 	github.com/gophercloud/gophercloud v0.10.0
 	github.com/hashicorp/go-azure-helpers v0.10.0
