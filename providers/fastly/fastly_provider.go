@@ -25,7 +25,7 @@ import (
 type FastlyProvider struct { //nolint
 	terraformutils.Provider
 	customerID string
-	apiKey string
+	apiKey     string
 }
 
 func (p *FastlyProvider) Init(args []string) error {
@@ -50,7 +50,7 @@ func (p *FastlyProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"fastly": map[string]interface{}{
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
+				"version":     providerwrapper.GetProviderVersion(p.GetName()),
 				"customer_id": p.customerID,
 			},
 		},
@@ -64,7 +64,7 @@ func (FastlyProvider) GetResourceConnections() map[string]map[string][]string {
 func (p *FastlyProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
 		"service_v1": &ServiceV1Generator{},
-		"user": &UserGenerator{},
+		"user":       &UserGenerator{},
 	}
 }
 
@@ -79,7 +79,7 @@ func (p *FastlyProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
 		"customer_id": p.customerID,
-		"api_key": p.apiKey,
+		"api_key":     p.apiKey,
 	})
 	return nil
 }
