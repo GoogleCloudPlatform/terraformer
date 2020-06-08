@@ -30,7 +30,7 @@ type BigQueryGenerator struct {
 }
 
 // Run on datasetsList and create for each TerraformResource
-func (g BigQueryGenerator) createResources(ctx context.Context, dataSetsList *bigquery.DatasetsListCall, bigQueryService *bigquery.Service) []terraformutils.Resource {
+func (g BigQueryGenerator) createDatasets(ctx context.Context, dataSetsList *bigquery.DatasetsListCall, bigQueryService *bigquery.Service) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	if err := dataSetsList.Pages(ctx, func(page *bigquery.DatasetList) error {
 		for _, dataset := range page.Datasets {
@@ -39,12 +39,17 @@ func (g BigQueryGenerator) createResources(ctx context.Context, dataSetsList *bi
 				name = dataset.Id
 			}
 			ID := strings.Split(dataset.Id, ":")[1]
-			resources = append(resources, terraformutils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewResource(
 				dataset.Id,
 				name,
 				"google_bigquery_dataset",
 				"google",
+				map[string]string{
+					"project":    g.GetArgs()["project"].(string),
+					"dataset_id": ID,
+				},
 				bigQueryAllowEmptyValues,
+				map[string]interface{}{},
 			))
 			resources = append(resources, g.createResourcesTables(ctx, ID, bigQueryService)...)
 		}
@@ -64,12 +69,19 @@ func (g *BigQueryGenerator) createResourcesTables(ctx context.Context, datasetID
 			if name == "" {
 				name = table.Id
 			}
-			resources = append(resources, terraformutils.NewSimpleResource(
+			ID := strings.Split(table.Id, ".")[1]
+			resources = append(resources, terraformutils.NewResource(
 				table.Id,
 				name,
 				"google_bigquery_table",
 				"google",
+				map[string]string{
+					"project":    g.GetArgs()["project"].(string),
+					"table_id":   ID,
+					"dataset_id": datasetID,
+				},
 				bigQueryAllowEmptyValues,
+				map[string]interface{}{},
 			))
 		}
 		return nil
@@ -89,7 +101,7 @@ func (g *BigQueryGenerator) InitResources() error {
 
 	datasetsList := bigQueryService.Datasets.List(g.GetArgs()["project"].(string))
 
-	g.Resources = g.createResources(ctx, datasetsList, bigQueryService)
+	g.Resources = g.createDatasets(ctx, datasetsList, bigQueryService)
 	return nil
 }
 
