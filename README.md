@@ -27,6 +27,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [Fastly](#use-with-fastly)
         * [Heroku](#use-with-heroku)
         * [Linode](#use-with-linode)
+        * [NS1](#use-with-ns1)
         * [OpenStack](#use-with-openstack)
         * [Vultr](#use-with-vultr)
     * Infrastructure Software
@@ -191,6 +192,7 @@ Links to download Terraform Providers:
     * Fastly provider >0.16.1 - [here](https://releases.hashicorp.com/terraform-provider-fastly/)
     * Heroku provider >2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-heroku/)
     * Linode provider >1.8.0 - [here](https://releases.hashicorp.com/terraform-provider-linode/)
+    * NS1 provider >1.8.3 - [here](https://releases.hashicorp.com/terraform-provider-ns1/)
     * OpenStack provider >1.21.1 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
     * Vultr provider >1.0.5 - [here](https://releases.hashicorp.com/terraform-provider-vultr/)
 * Infrastructure Software
@@ -923,6 +925,24 @@ List of supported Linode resources:
     * `linode_token`
 *   `volume`
     * `linode_volume`
+
+### Use with NS1
+
+Example:
+
+```
+$ export NS1_APIKEY=[NS1_APIKEY]
+$ terraformer import ns1 -r zone,monitoringjob,team
+```
+
+List of supported NS1 resources:
+
+*   `zone`
+    * `ns1_zone`
+*   `monitoringjob`
+    * `ns1_monitoringjob`
+*   `team`
+    * `ns1_team`
 
 ### Use with OpenStack
 

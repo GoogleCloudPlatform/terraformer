@@ -48,6 +48,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdFastlyImporter,
 		newCmdHerokuImporter,
 		newCmdLinodeImporter,
+		newCmdNs1Importer,
 		newCmdOpenStackImporter,
 		newCmdVultrImporter,
 		// Infrastructure Software
@@ -83,6 +84,7 @@ func providerGenerators() map[string]func() terraformutils.ProviderGenerator {
 		newFastlyProvider,
 		newHerokuProvider,
 		newLinodeProvider,
+		newNs1Provider,
 		newOpenStackProvider,
 		newVultrProvider,
 		// Infrastructure Software

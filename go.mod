@@ -34,6 +34,7 @@ require (
 	github.com/labd/commercetools-go-sdk v0.0.0-20200309143931-ca72e918a79d
 	github.com/linode/linodego v0.15.0
 	github.com/mrparkers/terraform-provider-keycloak v0.0.0-20200506151941-509881368409
+	github.com/ns1/ns1-go v2.4.0+incompatible
 	github.com/paultyng/go-newrelic/v4 v4.10.0
 	github.com/pkg/errors v0.9.1
 	github.com/smartystreets/goconvey v1.6.4 // indirect
