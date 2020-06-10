@@ -46,10 +46,10 @@ case $CSP in
 		services=$(./terraformer-google import google list --projects ${PROJECT_ID})
 		;;
 	"Azure")
-		export ARM_SUBSCRIPTION_ID=$(cat credentials.json | jq .subscriptionId | sed s/\"//g)
-		export ARM_CLIENT_ID=$(cat credentials.json | jq .clientId | sed s/\"//g)
-		export ARM_CLIENT_SECRET=$(cat credentials.json | jq .clientSecret | sed s/\"//g)
-		export ARM_TENANT_ID=$(cat credentials.json | jq .tenantId | sed s/\"//g)
+		export ARM_SUBSCRIPTION_ID=$(cat credentials.json | jq .subscriptionId)
+		export ARM_CLIENT_ID=$(cat credentials.json | jq .clientId)
+		export ARM_CLIENT_SECRET=$(cat credentials.json | jq .clientSecret)
+		export ARM_TENANT_ID=$(cat credentials.json | jq .tenantId)
 		services=$(./terraformer-azure import azure list)
 		;;
 	*)
