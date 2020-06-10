@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package vultr
+package ns1
 
 import (
 	"errors"
@@ -22,58 +22,50 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
-type VultrProvider struct { //nolint
+type Ns1Provider struct { //nolint
 	terraformutils.Provider
 	apiKey string
 }
 
-func (p *VultrProvider) Init(args []string) error {
-	if os.Getenv("VULTR_API_KEY") == "" {
-		return errors.New("set VULTR_API_KEY env var")
+func (p *Ns1Provider) Init(args []string) error {
+	if os.Getenv("NS1_APIKEY") == "" {
+		return errors.New("set NS1_APIKEY env var")
 	}
-	p.apiKey = os.Getenv("VULTR_API_KEY")
+	p.apiKey = os.Getenv("NS1_APIKEY")
 
 	return nil
 }
 
-func (p *VultrProvider) GetName() string {
-	return "vultr"
+func (p *Ns1Provider) GetName() string {
+	return "ns1"
 }
 
-func (p *VultrProvider) GetProviderData(arg ...string) map[string]interface{} {
+func (p *Ns1Provider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
-			"vultr": map[string]interface{}{
+			"ns1": map[string]interface{}{
 				"version": providerwrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}
 }
 
-func (VultrProvider) GetResourceConnections() map[string]map[string][]string {
+func (Ns1Provider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{}
 }
 
-func (p *VultrProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+func (p *Ns1Provider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"bare_metal_server": &BareMetalServerGenerator{},
-		"block_storage":     &BlockStorageGenerator{},
-		"dns_domain":        &DNSDomainGenerator{},
-		"firewall_group":    &FirewallGroupGenerator{},
-		"network":           &NetworkGenerator{},
-		"reserved_ip":       &ReservedIPGenerator{},
-		"server":            &ServerGenerator{},
-		"snapshot":          &SnapshotGenerator{},
-		"ssh_key":           &SSHKeyGenerator{},
-		"startup_script":    &StartupScriptGenerator{},
-		"user":              &UserGenerator{},
+		"monitoringjob": &MonitoringJobGenerator{},
+		"team":          &TeamGenerator{},
+		"zone":          &ZoneGenerator{},
 	}
 }
 
-func (p *VultrProvider) InitService(serviceName string, verbose bool) error {
+func (p *Ns1Provider) InitService(serviceName string, verbose bool) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
-		return errors.New("vultr: " + serviceName + " not supported service")
+		return errors.New("ns1: " + serviceName + " not supported service")
 	}
 	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)

@@ -24,7 +24,8 @@ import (
 
 type FastlyProvider struct { //nolint
 	terraformutils.Provider
-	apiKey string
+	customerID string
+	apiKey     string
 }
 
 func (p *FastlyProvider) Init(args []string) error {
@@ -32,6 +33,11 @@ func (p *FastlyProvider) Init(args []string) error {
 		return errors.New("set FASTLY_API_KEY env var")
 	}
 	p.apiKey = os.Getenv("FASTLY_API_KEY")
+
+	if os.Getenv("FASTLY_CUSTOMER_ID") == "" {
+		return errors.New("set FASTLY_CUSTOMER_ID env var")
+	}
+	p.customerID = os.Getenv("FASTLY_CUSTOMER_ID")
 
 	return nil
 }
@@ -44,8 +50,8 @@ func (p *FastlyProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"fastly": map[string]interface{}{
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
-				"api_key": p.apiKey,
+				"version":     providerwrapper.GetProviderVersion(p.GetName()),
+				"customer_id": p.customerID,
 			},
 		},
 	}
@@ -58,6 +64,7 @@ func (FastlyProvider) GetResourceConnections() map[string]map[string][]string {
 func (p *FastlyProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
 		"service_v1": &ServiceV1Generator{},
+		"user":       &UserGenerator{},
 	}
 }
 
@@ -71,7 +78,8 @@ func (p *FastlyProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"api_key": p.apiKey,
+		"customer_id": p.customerID,
+		"api_key":     p.apiKey,
 	})
 	return nil
 }

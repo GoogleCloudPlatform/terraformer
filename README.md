@@ -27,6 +27,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [Fastly](#use-with-fastly)
         * [Heroku](#use-with-heroku)
         * [Linode](#use-with-linode)
+        * [NS1](#use-with-ns1)
         * [OpenStack](#use-with-openstack)
         * [Vultr](#use-with-vultr)
     * Infrastructure Software
@@ -188,9 +189,10 @@ Links to download Terraform Providers:
     * Alicloud provider >1.57.1 - [here](https://releases.hashicorp.com/terraform-provider-alicloud/)
 * Cloud
     * DigitalOcean provider >1.9.1 - [here](https://releases.hashicorp.com/terraform-provider-digitalocean/)
-    * Fastly provider >0.11.0 - [here](https://releases.hashicorp.com/terraform-provider-fastly/)
+    * Fastly provider >0.16.1 - [here](https://releases.hashicorp.com/terraform-provider-fastly/)
     * Heroku provider >2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-heroku/)
     * Linode provider >1.8.0 - [here](https://releases.hashicorp.com/terraform-provider-linode/)
+    * NS1 provider >1.8.3 - [here](https://releases.hashicorp.com/terraform-provider-ns1/)
     * OpenStack provider >1.21.1 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
     * Vultr provider >1.0.5 - [here](https://releases.hashicorp.com/terraform-provider-vultr/)
 * Infrastructure Software
@@ -498,12 +500,13 @@ In that case terraformer will not know with which region resources are associate
     * `aws_iam_group_policy_attachment`
     * `aws_iam_instance_profile`
     * `aws_iam_policy`
-    * `aws_iam_policy_attachment`
     * `aws_iam_role`
     * `aws_iam_role_policy`
+    * `aws_iam_role_policy_attachment`
     * `aws_iam_user`
     * `aws_iam_user_group_membership`
     * `aws_iam_user_policy`
+    * `aws_iam_user_policy_attachment`
 *   `igw`
     * `aws_internet_gateway`
 *   `iot`
@@ -546,7 +549,7 @@ In that case terraformer will not know with which region resources are associate
     * `aws_db_option_group`
     * `aws_db_event_subscription`
 *   `resourcegroups`
-    `aws_resourcegroups_group`
+    * `aws_resourcegroups_group`
 *   `route53`
     * `aws_route53_zone`
     * `aws_route53_record`
@@ -563,6 +566,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_securityhub_account`
     * `aws_securityhub_member`
     * `aws_securityhub_standards_subscription`
+*   `servicecatalog`
+    * `aws_servicecatalog_portfolio`
 *   `ses`
     * `aws_ses_configuration_set`
     * `aws_ses_domain_identity`
@@ -829,7 +834,8 @@ Example:
 
 ```
 export FASTLY_API_KEY=[FASTLY_API_KEY]
-./terraformer import fastly -r service_v1
+export FASTLY_CUSTOMER_ID=[FASTLY_CUSTOMER_ID]
+./terraformer import fastly -r service_v1,user
 ```
 
 List of supported Fastly resources:
@@ -839,6 +845,8 @@ List of supported Fastly resources:
     * `fastly_service_dictionary_items_v1`
     * `fastly_service_dynamic_snippet_content_v1`
     * `fastly_service_v1`
+*   `user`
+    * `fastly_user_v1`
 
 ### Use with Heroku
 
@@ -917,6 +925,24 @@ List of supported Linode resources:
     * `linode_token`
 *   `volume`
     * `linode_volume`
+
+### Use with NS1
+
+Example:
+
+```
+$ export NS1_APIKEY=[NS1_APIKEY]
+$ terraformer import ns1 -r zone,monitoringjob,team
+```
+
+List of supported NS1 resources:
+
+*   `zone`
+    * `ns1_zone`
+*   `monitoringjob`
+    * `ns1_monitoringjob`
+*   `team`
+    * `ns1_team`
 
 ### Use with OpenStack
 
@@ -1092,6 +1118,7 @@ Example using a Cloudflare API Key and corresponding email:
 ```
 export CLOUDFLARE_API_KEY=[CLOUDFLARE_API_KEY]
 export CLOUDFLARE_EMAIL=[CLOUDFLARE_EMAIL]
+export CLOUDFLARE_ACCOUNT_ID=[CLOUDFLARE_ACCOUNT_ID]
  ./terraformer import cloudflare --resources=firewall,dns
 ```
 
@@ -1099,6 +1126,7 @@ or using a Cloudflare API Token:
 
 ```
 export CLOUDFLARE_API_TOKEN=[CLOUDFLARE_API_TOKEN]
+export CLOUDFLARE_ACCOUNT_ID=[CLOUDFLARE_ACCOUNT_ID]
  ./terraformer import cloudflare --resources=firewall,dns
 ```
 
@@ -1114,6 +1142,11 @@ List of supported Cloudflare services:
   * `cloudflare_filter`
   * `cloudflare_firewall_rule`
   * `cloudflare_zone_lockdown`
+  * `cloudflare_rate_limit`
+* `page_rule`
+  * `cloudflare_page_rule`
+* `account_member`
+  * `cloudflare_account_member`
 
 ### Use with GitHub
 
@@ -1326,7 +1359,7 @@ Example:
 # Using Service Accounts
 export GOOGLE_CREDENTIALS=/path/to/client_secret.json
 export IMPERSONATED_USER_EMAIL="foobar@example.com"
-  
+
 # Using Application Default Credentials
 gcloud auth application-default login \
   --client-id-file=client_secret.json \
@@ -1334,7 +1367,7 @@ gcloud auth application-default login \
 https://www.googleapis.com/auth/gmail.labels,\
 https://www.googleapis.com/auth/gmail.settings.basic
 
-./terraformer import gmailfilter -r=filter,label 
+./terraformer import gmailfilter -r=filter,label
 ```
 
 List of supported GmailFilter resources:

@@ -49,9 +49,11 @@ func (CloudflareProvider) GetResourceConnections() map[string]map[string][]strin
 
 func (p *CloudflareProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"access":   &AccessGenerator{},
-		"dns":      &DNSGenerator{},
-		"firewall": &FirewallGenerator{},
+		"access":         &AccessGenerator{},
+		"dns":            &DNSGenerator{},
+		"firewall":       &FirewallGenerator{},
+		"page_rule":      &PageRulesGenerator{},
+		"account_member": &AccountMemberGenerator{},
 	}
 }
 
