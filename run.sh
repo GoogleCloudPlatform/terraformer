@@ -61,6 +61,12 @@ for service in $services; do
   if [[ $service == "kms" && $CSP == "GCP" ]]; then
     continue
   fi
+  if [[ $service == "monitoring" && $CSP == "GCP" ]]; then
+    continue
+  fi
+  if [[ $service == "schedulerJobs" && $CSP == "GCP" ]]; then
+    continue
+  fi
 	run_terraformer $service &
 done
 
