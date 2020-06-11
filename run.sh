@@ -58,6 +58,9 @@ case $CSP in
 esac
 
 for service in $services; do
+  if [[ $service == "kms" && $CSP == "GCP" ]]; then
+    continue
+  fi
 	run_terraformer $service &
 done
 
