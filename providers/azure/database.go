@@ -89,7 +89,7 @@ func (g *DatabasesGenerator) createMariaDBConfigurationResources(servers []maria
 		for _, config := range *configs.Value {
 			resources = append(resources, terraformutils.NewSimpleResource(
 				*config.ID,
-				*config.Name,
+				*config.Name+"-"+*server.Name,
 				"azurerm_mariadb_configuration",
 				g.ProviderName,
 				[]string{"value"}))
@@ -121,7 +121,7 @@ func (g *DatabasesGenerator) createMariaDBDatabaseResources(servers []mariadb.Se
 		for _, database := range *databases.Value {
 			resources = append(resources, terraformutils.NewSimpleResource(
 				*database.ID,
-				*database.Name,
+				*database.Name+"-"+*server.Name,
 				"azurerm_mariadb_database",
 				g.ProviderName,
 				[]string{}))
@@ -254,7 +254,7 @@ func (g *DatabasesGenerator) createMySQLConfigurationResources(servers []mysql.S
 		for _, config := range *configs.Value {
 			resources = append(resources, terraformutils.NewSimpleResource(
 				*config.ID,
-				*config.Name,
+				*config.Name+"-"+*server.Name,
 				"azurerm_mysql_configuration",
 				g.ProviderName,
 				[]string{"value"}))
@@ -286,7 +286,7 @@ func (g *DatabasesGenerator) createMySQLDatabaseResources(servers []mysql.Server
 		for _, database := range *databases.Value {
 			resources = append(resources, terraformutils.NewSimpleResource(
 				*database.ID,
-				*database.Name,
+				*database.Name+"-"+*server.Name,
 				"azurerm_mysql_database",
 				g.ProviderName,
 				[]string{}))
@@ -422,7 +422,7 @@ func (g *DatabasesGenerator) createPostgreSQLDatabaseResources(servers []postgre
 		for _, database := range *databases.Value {
 			resources = append(resources, terraformutils.NewSimpleResource(
 				*database.ID,
-				*database.Name,
+				*database.Name+"-"+*server.Name,
 				"azurerm_postgresql_database",
 				g.ProviderName,
 				[]string{}))
@@ -452,7 +452,7 @@ func (g *DatabasesGenerator) createPostgreSQLConfigurationResources(servers []po
 		for _, config := range *configs.Value {
 			resources = append(resources, terraformutils.NewSimpleResource(
 				*config.ID,
-				*config.Name,
+				*config.Name+"-"+*server.Name,
 				"azurerm_postgresql_configuration",
 				g.ProviderName,
 				[]string{"value"}))
@@ -588,7 +588,7 @@ func (g *DatabasesGenerator) createSQLDatabaseResources(servers []sql.Server) ([
 		for _, database := range *databases.Value {
 			resources = append(resources, terraformutils.NewSimpleResource(
 				*database.ID,
-				*database.Name,
+				*database.Name+"-"+*server.Name,
 				"azurerm_sql_database",
 				g.ProviderName,
 				[]string{}))
