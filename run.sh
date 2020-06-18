@@ -1,6 +1,6 @@
 #!/bin/bash
 
-GLOBAL_GCP_SERVICES=",dns,gcs,globalAddresses,globalForwardingRules,iam,"
+GLOBAL_GCP_SERVICES=",dns,gcs,globalAddresses,globalForwardingRules,iam,gke,backendServices,bigQuery,disks,firewall,healthChecks,httpHealthChecks,instanceGroupManagers,instanceGroups,instances,instanceTemplates,networkEndpointGroups,networks,project,routes,targetHttpsProxies,urlMaps,"
 
 case $CSP in
 	"GCP")
