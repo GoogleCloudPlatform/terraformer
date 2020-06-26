@@ -206,7 +206,7 @@ Links to download Terraform Providers:
     * Datadog provider >2.1.0 - [here](https://releases.hashicorp.com/terraform-provider-datadog/)
     * New Relic provider >1.5.0 - [here](https://releases.hashicorp.com/terraform-provider-newrelic/)
 * Community
-    * Keycloak provider >=1.12.0 - [here](https://github.com/mrparkers/terraform-provider-keycloak/)
+    * Keycloak provider >=1.19.0 - [here](https://github.com/mrparkers/terraform-provider-keycloak/)
     * Logz.io provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
     * Commercetools provider >= 0.21.0 - [here](https://github.com/labd/terraform-provider-commercetools)
     * Mikrotik provider >= 0.2.2 - [here](https://github.com/labd/terraform-provider-commercetools)
@@ -1247,7 +1247,7 @@ Example:
  terraformer import keycloak --resources=realms --targets realmA,realmB
 ```
 
-Here is the list of resources which are currently supported by Keycloak provider v.1.17.1:
+Here is the list of resources which are currently supported by Keycloak provider v.1.19.0:
 
 - `realms`
   - `keycloak_default_groups`
@@ -1272,14 +1272,17 @@ Here is the list of resources which are currently supported by Keycloak provider
   - `keycloak_openid_group_membership_protocol_mapper`
   - `keycloak_openid_hardcoded_claim_protocol_mapper`
   - `keycloak_openid_hardcoded_group_protocol_mapper`
-  - `keycloak_openid_hardcoded_role_protocol_mapper`
+  - `keycloak_openid_hardcoded_role_protocol_mapper` (only for client roles)
   - `keycloak_openid_user_attribute_protocol_mapper`
   - `keycloak_openid_user_property_protocol_mapper`
+  - `keycloak_openid_user_realm_role_protocol_mapper`
+  - `keycloak_openid_user_client_role_protocol_mapper`
+  - `keycloak_openid_user_session_note_protocol_mapper`
   - `keycloak_realm`
   - `keycloak_required_action`
   - `keycloak_role`
   - `keycloak_user`
-
+  
 ### Use with Logz.io
 
 Example:
