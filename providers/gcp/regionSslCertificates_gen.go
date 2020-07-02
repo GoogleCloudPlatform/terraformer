@@ -24,31 +24,31 @@ import (
 	"google.golang.org/api/compute/v1"
 )
 
-var firewallAllowEmptyValues = []string{""}
+var regionSslCertificatesAllowEmptyValues = []string{""}
 
-var firewallAdditionalFields = map[string]interface{}{}
+var regionSslCertificatesAdditionalFields = map[string]interface{}{}
 
-type FirewallGenerator struct {
+type RegionSslCertificatesGenerator struct {
 	GCPService
 }
 
-// Run on firewallList and create for each TerraformResource
-func (g FirewallGenerator) createResources(ctx context.Context, firewallList *compute.FirewallsListCall) []terraformutils.Resource {
+// Run on regionSslCertificatesList and create for each TerraformResource
+func (g RegionSslCertificatesGenerator) createResources(ctx context.Context, regionSslCertificatesList *compute.RegionSslCertificatesListCall) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	if err := firewallList.Pages(ctx, func(page *compute.FirewallList) error {
+	if err := regionSslCertificatesList.Pages(ctx, func(page *compute.SslCertificateList) error {
 		for _, obj := range page.Items {
 			resources = append(resources, terraformutils.NewResource(
 				obj.Name,
 				obj.Name,
-				"google_compute_firewall",
+				"google_compute_region_ssl_certificate",
 				"google",
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),
 					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
-				firewallAllowEmptyValues,
-				firewallAdditionalFields,
+				regionSslCertificatesAllowEmptyValues,
+				regionSslCertificatesAdditionalFields,
 			))
 		}
 		return nil
@@ -59,17 +59,17 @@ func (g FirewallGenerator) createResources(ctx context.Context, firewallList *co
 }
 
 // Generate TerraformResources from GCP API,
-// from each firewall create 1 TerraformResource
-// Need firewall name as ID for terraform resource
-func (g *FirewallGenerator) InitResources() error {
+// from each regionSslCertificates create 1 TerraformResource
+// Need regionSslCertificates name as ID for terraform resource
+func (g *RegionSslCertificatesGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
 		return err
 	}
 
-	firewallList := computeService.Firewalls.List(g.GetArgs()["project"].(string))
-	g.Resources = g.createResources(ctx, firewallList)
+	regionSslCertificatesList := computeService.RegionSslCertificates.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
+	g.Resources = g.createResources(ctx, regionSslCertificatesList)
 
 	return nil
 

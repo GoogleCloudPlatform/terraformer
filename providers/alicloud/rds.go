@@ -27,7 +27,7 @@ type RdsGenerator struct {
 
 func resourceFromrdsResponse(rds rds.DBInstance) terraformutils.Resource {
 	return terraformutils.NewResource(
-		rds.DBInstanceId,                                // nolint
+		rds.DBInstanceId, // nolint
 		rds.DBInstanceId+"__"+rds.DBInstanceDescription, // nolint
 		"alicloud_db_instance",
 		"alicloud",
