@@ -24,31 +24,31 @@ import (
 	"google.golang.org/api/compute/v1"
 )
 
-var firewallAllowEmptyValues = []string{""}
+var regionHealthChecksAllowEmptyValues = []string{""}
 
-var firewallAdditionalFields = map[string]interface{}{}
+var regionHealthChecksAdditionalFields = map[string]interface{}{}
 
-type FirewallGenerator struct {
+type RegionHealthChecksGenerator struct {
 	GCPService
 }
 
-// Run on firewallList and create for each TerraformResource
-func (g FirewallGenerator) createResources(ctx context.Context, firewallList *compute.FirewallsListCall) []terraformutils.Resource {
+// Run on regionHealthChecksList and create for each TerraformResource
+func (g RegionHealthChecksGenerator) createResources(ctx context.Context, regionHealthChecksList *compute.RegionHealthChecksListCall) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	if err := firewallList.Pages(ctx, func(page *compute.FirewallList) error {
+	if err := regionHealthChecksList.Pages(ctx, func(page *compute.HealthCheckList) error {
 		for _, obj := range page.Items {
 			resources = append(resources, terraformutils.NewResource(
 				obj.Name,
 				obj.Name,
-				"google_compute_firewall",
+				"google_compute_region_health_check",
 				"google",
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),
 					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
-				firewallAllowEmptyValues,
-				firewallAdditionalFields,
+				regionHealthChecksAllowEmptyValues,
+				regionHealthChecksAdditionalFields,
 			))
 		}
 		return nil
@@ -59,17 +59,17 @@ func (g FirewallGenerator) createResources(ctx context.Context, firewallList *co
 }
 
 // Generate TerraformResources from GCP API,
-// from each firewall create 1 TerraformResource
-// Need firewall name as ID for terraform resource
-func (g *FirewallGenerator) InitResources() error {
+// from each regionHealthChecks create 1 TerraformResource
+// Need regionHealthChecks name as ID for terraform resource
+func (g *RegionHealthChecksGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
 		return err
 	}
 
-	firewallList := computeService.Firewalls.List(g.GetArgs()["project"].(string))
-	g.Resources = g.createResources(ctx, firewallList)
+	regionHealthChecksList := computeService.RegionHealthChecks.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
+	g.Resources = g.createResources(ctx, regionHealthChecksList)
 
 	return nil
 

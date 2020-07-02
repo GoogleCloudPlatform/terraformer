@@ -24,31 +24,31 @@ import (
 	"google.golang.org/api/compute/v1"
 )
 
-var firewallAllowEmptyValues = []string{""}
+var externalVpnGatewaysAllowEmptyValues = []string{""}
 
-var firewallAdditionalFields = map[string]interface{}{}
+var externalVpnGatewaysAdditionalFields = map[string]interface{}{}
 
-type FirewallGenerator struct {
+type ExternalVpnGatewaysGenerator struct {
 	GCPService
 }
 
-// Run on firewallList and create for each TerraformResource
-func (g FirewallGenerator) createResources(ctx context.Context, firewallList *compute.FirewallsListCall) []terraformutils.Resource {
+// Run on externalVpnGatewaysList and create for each TerraformResource
+func (g ExternalVpnGatewaysGenerator) createResources(ctx context.Context, externalVpnGatewaysList *compute.ExternalVpnGatewaysListCall) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	if err := firewallList.Pages(ctx, func(page *compute.FirewallList) error {
+	if err := externalVpnGatewaysList.Pages(ctx, func(page *compute.ExternalVpnGatewayList) error {
 		for _, obj := range page.Items {
 			resources = append(resources, terraformutils.NewResource(
 				obj.Name,
 				obj.Name,
-				"google_compute_firewall",
+				"google_compute_external_vpn_gateway",
 				"google",
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),
 					"region":  g.GetArgs()["region"].(compute.Region).Name,
 				},
-				firewallAllowEmptyValues,
-				firewallAdditionalFields,
+				externalVpnGatewaysAllowEmptyValues,
+				externalVpnGatewaysAdditionalFields,
 			))
 		}
 		return nil
@@ -59,17 +59,17 @@ func (g FirewallGenerator) createResources(ctx context.Context, firewallList *co
 }
 
 // Generate TerraformResources from GCP API,
-// from each firewall create 1 TerraformResource
-// Need firewall name as ID for terraform resource
-func (g *FirewallGenerator) InitResources() error {
+// from each externalVpnGateways create 1 TerraformResource
+// Need externalVpnGateways name as ID for terraform resource
+func (g *ExternalVpnGatewaysGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
 		return err
 	}
 
-	firewallList := computeService.Firewalls.List(g.GetArgs()["project"].(string))
-	g.Resources = g.createResources(ctx, firewallList)
+	externalVpnGatewaysList := computeService.ExternalVpnGateways.List(g.GetArgs()["project"].(string))
+	g.Resources = g.createResources(ctx, externalVpnGatewaysList)
 
 	return nil
 
