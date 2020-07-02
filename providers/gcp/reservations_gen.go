@@ -18,37 +18,39 @@ package gcp
 import (
 	"context"
 	"log"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"google.golang.org/api/compute/v1"
 )
 
-var firewallAllowEmptyValues = []string{""}
+var reservationsAllowEmptyValues = []string{""}
 
-var firewallAdditionalFields = map[string]interface{}{}
+var reservationsAdditionalFields = map[string]interface{}{}
 
-type FirewallGenerator struct {
+type ReservationsGenerator struct {
 	GCPService
 }
 
-// Run on firewallList and create for each TerraformResource
-func (g FirewallGenerator) createResources(ctx context.Context, firewallList *compute.FirewallsListCall) []terraformutils.Resource {
+// Run on reservationsList and create for each TerraformResource
+func (g ReservationsGenerator) createResources(ctx context.Context, reservationsList *compute.ReservationsListCall, zone string) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	if err := firewallList.Pages(ctx, func(page *compute.FirewallList) error {
+	if err := reservationsList.Pages(ctx, func(page *compute.ReservationList) error {
 		for _, obj := range page.Items {
 			resources = append(resources, terraformutils.NewResource(
-				obj.Name,
-				obj.Name,
-				"google_compute_firewall",
+				zone+"/"+obj.Name,
+				zone+"/"+obj.Name,
+				"google_compute_reservation",
 				"google",
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),
 					"region":  g.GetArgs()["region"].(compute.Region).Name,
+					"zone":    zone,
 				},
-				firewallAllowEmptyValues,
-				firewallAdditionalFields,
+				reservationsAllowEmptyValues,
+				reservationsAdditionalFields,
 			))
 		}
 		return nil
@@ -59,17 +61,21 @@ func (g FirewallGenerator) createResources(ctx context.Context, firewallList *co
 }
 
 // Generate TerraformResources from GCP API,
-// from each firewall create 1 TerraformResource
-// Need firewall name as ID for terraform resource
-func (g *FirewallGenerator) InitResources() error {
+// from each reservations create 1 TerraformResource
+// Need reservations name as ID for terraform resource
+func (g *ReservationsGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {
 		return err
 	}
 
-	firewallList := computeService.Firewalls.List(g.GetArgs()["project"].(string))
-	g.Resources = g.createResources(ctx, firewallList)
+	for _, zoneLink := range g.GetArgs()["region"].(compute.Region).Zones {
+		t := strings.Split(zoneLink, "/")
+		zone := t[len(t)-1]
+		reservationsList := computeService.Reservations.List(g.GetArgs()["project"].(string), zone)
+		g.Resources = append(g.Resources, g.createResources(ctx, reservationsList, zone)...)
+	}
 
 	return nil
 

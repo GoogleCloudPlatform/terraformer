@@ -3,9 +3,9 @@ module github.com/GoogleCloudPlatform/terraformer
 go 1.14
 
 require (
-	cloud.google.com/go v0.56.0
+	cloud.google.com/go v0.60.0
 	cloud.google.com/go/logging v1.0.0
-	cloud.google.com/go/storage v1.6.0
+	cloud.google.com/go/storage v1.8.0
 	github.com/Azure/azure-sdk-for-go v42.0.0+incompatible
 	github.com/Azure/go-autorest/autorest v0.10.0
 	github.com/OctopusDeploy/go-octopusdeploy v1.6.0
@@ -46,8 +46,8 @@ require (
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	golang.org/x/text v0.3.2
 	gonum.org/v1/gonum v0.7.0
-	google.golang.org/api v0.22.0
-	google.golang.org/genproto v0.0.0-20200430143042-b979b6f78d84
+	google.golang.org/api v0.28.0
+	google.golang.org/genproto v0.0.0-20200626011028-ee7919e894b5
 	gopkg.in/jarcoal/httpmock.v1 v1.0.0-00010101000000-000000000000 // indirect
 	k8s.io/apimachinery v0.17.5
 	k8s.io/client-go v0.17.5
