@@ -248,6 +248,8 @@ List of supported GCP services:
     * `google_dataproc_cluster`
 *   `disks`
     * `google_compute_disk`
+*   `externalVpnGateways`
+    * `google_compute_external_vpn_gateway`
 *   `dns`
     * `google_dns_managed_zone`
     * `google_dns_record_set`
@@ -306,6 +308,8 @@ List of supported GCP services:
     * `google_monitoring_uptime_check_config`
 *   `networks`
     * `google_compute_network`
+*   `packetMirrorings`
+    * `google_compute_packet_mirroring`
 *   `nodeGroups`
     * `google_compute_node_group`
 *   `nodeTemplates`
@@ -321,6 +325,22 @@ List of supported GCP services:
     * `google_compute_region_backend_service`
 *   `regionDisks`
     * `google_compute_region_disk`
+*   `regionHealthChecks`
+    * `google_compute_region_health_check`
+*   `regionInstanceGroups`
+    * `google_compute_region_instance_group`
+*   `regionSslCertificates`
+    * `google_compute_region_ssl_certificate`
+*   `regionTargetHttpProxies`
+    * `google_compute_region_target_http_proxy`
+*   `regionTargetHttpsProxies`
+    * `google_compute_region_target_https_proxy`
+*   `regionUrlMaps`
+    * `google_compute_region_url_map`
+*   `reservations`
+    * `google_compute_reservation`
+*   `resourcePolicies`
+    * `google_compute_resource_policy`    
 *   `regionInstanceGroupManagers`
     * `google_compute_region_instance_group_manager`
 *   `routers`
@@ -331,6 +351,8 @@ List of supported GCP services:
     * `google_cloud_scheduler_job`
 *   `securityPolicies`
     * `google_compute_security_policy`
+*   `sslCertificates`
+    * `google_compute_managed_ssl_certificate`
 *   `sslPolicies`
     * `google_compute_ssl_policy`
 *   `subnetworks`
