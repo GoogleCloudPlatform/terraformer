@@ -18,6 +18,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -113,12 +114,29 @@ func (p *AzureProvider) GetName() string {
 }
 
 func (p *AzureProvider) GetProviderData(arg ...string) map[string]interface{} {
-	return map[string]interface{}{
-		"provider": map[string]interface{}{
-			"azurerm": map[string]interface{}{
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
+	version := providerwrapper.GetProviderVersion(p.GetName())
+	if strings.Contains(version, "v2.") {
+		return map[string]interface{}{
+			"provider": map[string]interface{}{
+				"azurerm": map[string]interface{}{
+					"version": providerwrapper.GetProviderVersion(p.GetName()),
+					// NOTE:
+					// Workaround for azurerm v2 provider changes
+					// Tested with azurerm_resource_group under v2.17.0
+					// https://github.com/terraform-providers/terraform-provider-azurerm/issues/5866#issuecomment-594239342
+					// https://github.com/hashicorp/terraform/issues/24200#issuecomment-594745861
+					"features": map[string]interface{}{},
+				},
 			},
-		},
+		}
+	} else {
+		return map[string]interface{}{
+			"provider": map[string]interface{}{
+				"azurerm": map[string]interface{}{
+					"version": providerwrapper.GetProviderVersion(p.GetName()),
+				},
+			},
+		}
 	}
 }
 
