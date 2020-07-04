@@ -15,12 +15,12 @@
 package vultr
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/vultr/govultr"
 )
 
-type VultrService struct {
-	terraform_utils.Service
+type VultrService struct { //nolint
+	terraformutils.Service
 }
 
 func (s *VultrService) generateClient() *govultr.Client {

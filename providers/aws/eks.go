@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/eks"
 )
 
@@ -36,7 +36,7 @@ func (g *EksGenerator) InitResources() error {
 	p := eks.NewListClustersPaginator(svc.ListClustersRequest(&eks.ListClustersInput{}))
 	for p.Next(context.Background()) {
 		for _, clusterName := range p.CurrentPage().Clusters {
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				clusterName,
 				clusterName,
 				"aws_eks_cluster",

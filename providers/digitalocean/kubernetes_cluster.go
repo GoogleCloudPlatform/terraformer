@@ -17,7 +17,7 @@ package digitalocean
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/digitalocean/godo"
 )
 
@@ -40,7 +40,7 @@ func (g *KubernetesClusterGenerator) loadKubernetesClusters(ctx context.Context,
 		}
 
 		for _, cluster := range clusters {
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				cluster.ID,
 				cluster.Name,
 				"digitalocean_kubernetes_cluster",
@@ -78,7 +78,7 @@ func (g *KubernetesClusterGenerator) loadKubernetesNodePools(cluster *godo.Kuber
 
 		// skip default node pool since it is included in the digitalocean_kubernetes_cluster resource
 		if !isDefaultPool {
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraformutils.NewResource(
 				nodePool.ID,
 				nodePool.Name,
 				"digitalocean_kubernetes_node_pool",

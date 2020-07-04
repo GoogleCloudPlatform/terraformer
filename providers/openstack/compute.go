@@ -15,16 +15,17 @@
 package openstack
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"log"
+	"sort"
+	"strconv"
+	"strings"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/gophercloud/gophercloud"
 	"github.com/gophercloud/gophercloud/openstack"
 	"github.com/gophercloud/gophercloud/openstack/blockstorage/v3/volumes"
 	"github.com/gophercloud/gophercloud/openstack/compute/v2/servers"
 	"github.com/gophercloud/gophercloud/pagination"
-	"log"
-	"sort"
-	"strconv"
-	"strings"
 )
 
 type ComputeGenerator struct {
@@ -32,10 +33,10 @@ type ComputeGenerator struct {
 }
 
 // createResources iterate on all openstack_compute_instance_v2
-func (g *ComputeGenerator) createResources(list *pagination.Pager, volclient *gophercloud.ServiceClient) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g *ComputeGenerator) createResources(list *pagination.Pager, volclient *gophercloud.ServiceClient) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 
-	list.EachPage(func(page pagination.Page) (bool, error) {
+	err := list.EachPage(func(page pagination.Page) (bool, error) {
 		servers, err := servers.ExtractServers(page)
 		if err != nil {
 			return false, err
@@ -58,10 +59,9 @@ func (g *ComputeGenerator) createResources(list *pagination.Pager, volclient *go
 				})
 
 				var bindex = 0
-				var depends_on = ""
+				var dependsOn = ""
 				for _, v := range vol {
 					if v.Bootable == "true" && v.VolumeImageMetadata != nil {
-
 						bds = append(bds, map[string]interface{}{
 							"source_type":           "image",
 							"uuid":                  v.VolumeImageMetadata["image_id"],
@@ -73,13 +73,13 @@ func (g *ComputeGenerator) createResources(list *pagination.Pager, volclient *go
 						bindex++
 					} else {
 						tv := map[string]interface{}{}
-						if depends_on != "" {
-							tv["depends_on"] = []string{depends_on}
+						if dependsOn != "" {
+							tv["depends_on"] = []string{dependsOn}
 						}
 
 						name := s.Name + strings.Replace(v.Attachments[0].Device, "/dev/", "", -1)
 						rid := s.ID + "/" + v.ID
-						resource := terraform_utils.NewResource(
+						resource := terraformutils.NewResource(
 							rid,
 							name,
 							"openstack_compute_volume_attach_v2",
@@ -88,12 +88,12 @@ func (g *ComputeGenerator) createResources(list *pagination.Pager, volclient *go
 							[]string{},
 							tv,
 						)
-						depends_on = "openstack_compute_volume_attach_v2.tfer--" + name
-						tv["instance_name"] = terraform_utils.TfSanitize(s.Name)
+						dependsOn = "openstack_compute_volume_attach_v2.tfer--" + name
+						tv["instance_name"] = terraformutils.TfSanitize(s.Name)
 						if v.Name == "" {
 							v.Name = v.ID
 						}
-						tv["volume_name"] = terraform_utils.TfSanitize(v.Name)
+						tv["volume_name"] = terraformutils.TfSanitize(v.Name)
 						resources = append(resources, resource)
 					}
 				}
@@ -103,7 +103,7 @@ func (g *ComputeGenerator) createResources(list *pagination.Pager, volclient *go
 				t = map[string]interface{}{"block_device": bds}
 			}
 
-			resource := terraform_utils.NewResource(
+			resource := terraformutils.NewResource(
 				s.ID,
 				s.Name,
 				"openstack_compute_instance_v2",
@@ -118,7 +118,9 @@ func (g *ComputeGenerator) createResources(list *pagination.Pager, volclient *go
 
 		return true, nil
 	})
-
+	if err != nil {
+		log.Println(err)
+	}
 	return resources
 }
 

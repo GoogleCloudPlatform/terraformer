@@ -20,7 +20,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -29,7 +29,7 @@ type ImportPlan struct {
 	Provider         string
 	Options          ImportOptions
 	Args             []string
-	ImportedResource map[string][]terraform_utils.Resource
+	ImportedResource map[string][]terraformutils.Resource
 }
 
 func newPlanCmd() *cobra.Command {
@@ -63,7 +63,7 @@ func newCmdPlanImporter(options ImportOptions) *cobra.Command {
 				return err
 			}
 
-			var provider terraform_utils.ProviderGenerator
+			var provider terraformutils.ProviderGenerator
 			if providerGen, ok := providerGenerators()[plan.Provider]; ok {
 				provider = providerGen()
 			} else {
@@ -117,7 +117,7 @@ func ExportPlanFile(plan *ImportPlan, path, filename string) error {
 		return err
 	}
 
-	f, err := os.OpenFile(planfilePath, os.O_RDWR|os.O_CREATE, os.ModePerm)
+	f, err := os.OpenFile(planfilePath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, os.ModePerm)
 	if err != nil {
 		return err
 	}

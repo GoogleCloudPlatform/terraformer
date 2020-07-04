@@ -12,16 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//cloudflare_access_rule
-//cloudflare_rate_limit
-
 package cloudflare
 
 import (
 	"fmt"
-	"log"
+	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	cf "github.com/cloudflare/cloudflare-go"
 )
 
@@ -29,18 +26,17 @@ type FirewallGenerator struct {
 	CloudflareService
 }
 
-func (*FirewallGenerator) createZoneLockdownsResources(api *cf.API, zoneID, zoneName string) ([]terraform_utils.Resource, error) {
-	resources := []terraform_utils.Resource{}
+func (*FirewallGenerator) createZoneLockdownsResources(api *cf.API, zoneID, zoneName string) ([]terraformutils.Resource, error) {
+	resources := []terraformutils.Resource{}
 	page := 1
 
 	for {
 		zonelockdowns, err := api.ListZoneLockdowns(zoneID, page)
 		if err != nil {
-			log.Println(err)
 			return resources, err
 		}
 		for _, zonelockdown := range zonelockdowns.Result {
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				zonelockdown.ID,
 				fmt.Sprintf("%s_%s", zoneName, zonelockdown.ID),
 				"cloudflare_zone_lockdown",
@@ -64,42 +60,101 @@ func (*FirewallGenerator) createZoneLockdownsResources(api *cf.API, zoneID, zone
 	return resources, nil
 }
 
-func (*FirewallGenerator) createAccessRuleResources(api *cf.API, zoneID, zoneName string) ([]terraform_utils.Resource, error) {
-	resources := []terraform_utils.Resource{}
-	accessRules, err := api.ListZoneAccessRules(zoneID, cf.AccessRule{}, 1)
+func (g *FirewallGenerator) createAccountAccessRuleResources(api *cf.API) ([]terraformutils.Resource, error) {
+	resources := []terraformutils.Resource{}
+	rules, err := api.ListAccountAccessRules(api.AccountID, cf.AccessRule{}, 1)
 	if err != nil {
-		log.Println(err)
 		return resources, err
 	}
 
-	for _, r := range accessRules.Result {
-		resources = append(resources, terraform_utils.NewResource(
-			r.ID,
-			fmt.Sprintf("%s_%s", zoneName, r.ID),
+	totalPages := rules.TotalPages
+	for _, rule := range rules.Result {
+		resources = append(resources, terraformutils.NewSimpleResource(
+			rule.ID,
+			rule.ID,
 			"cloudflare_access_rule",
 			"cloudflare",
-			map[string]string{
-				"zone_id": zoneID,
-				"zone":    zoneName,
-			},
 			[]string{},
-			map[string]interface{}{},
 		))
+	}
+
+	for page := 2; page <= totalPages; page++ {
+		rules, err := api.ListAccountAccessRules(api.AccountID, cf.AccessRule{}, page)
+		if err != nil {
+			return resources, err
+		}
+		for _, rule := range rules.Result {
+			resources = append(resources, terraformutils.NewSimpleResource(
+				rule.ID,
+				rule.ID,
+				"cloudflare_access_rule",
+				"cloudflare",
+				[]string{},
+			))
+		}
 	}
 
 	return resources, nil
 }
 
-func (*FirewallGenerator) createFilterResources(api *cf.API, zoneID, zoneName string) ([]terraform_utils.Resource, error) {
-	resources := []terraform_utils.Resource{}
+func (*FirewallGenerator) createZoneAccessRuleResources(api *cf.API, zoneID, zoneName string) ([]terraformutils.Resource, error) {
+	resources := []terraformutils.Resource{}
+	rules, err := api.ListZoneAccessRules(zoneID, cf.AccessRule{}, 1)
+	if err != nil {
+		return resources, err
+	}
+
+	totalPages := rules.TotalPages
+	for _, r := range rules.Result {
+		if strings.Compare(r.Scope.Type, "organization") != 0 {
+			resources = append(resources, terraformutils.NewResource(
+				r.ID,
+				fmt.Sprintf("%s_%s", zoneName, r.ID),
+				"cloudflare_access_rule",
+				"cloudflare",
+				map[string]string{
+					"zone_id": zoneID,
+				},
+				[]string{},
+				map[string]interface{}{},
+			))
+		}
+	}
+
+	for page := 2; page <= totalPages; page++ {
+		rules, err := api.ListZoneAccessRules(zoneID, cf.AccessRule{}, page)
+		if err != nil {
+			return resources, err
+		}
+		for _, r := range rules.Result {
+			if strings.Compare(r.Scope.Type, "organization") != 0 {
+				resources = append(resources, terraformutils.NewResource(
+					r.ID,
+					fmt.Sprintf("%s_%s", zoneName, r.ID),
+					"cloudflare_access_rule",
+					"cloudflare",
+					map[string]string{
+						"zone_id": zoneID,
+					},
+					[]string{},
+					map[string]interface{}{},
+				))
+			}
+		}
+	}
+
+	return resources, nil
+}
+
+func (*FirewallGenerator) createFilterResources(api *cf.API, zoneID, zoneName string) ([]terraformutils.Resource, error) {
+	resources := []terraformutils.Resource{}
 	filters, err := api.Filters(zoneID, cf.PaginationOptions{})
 	if err != nil {
-		log.Println(err)
 		return resources, err
 	}
 
 	for _, filter := range filters {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			filter.ID,
 			fmt.Sprintf("%s_%s", zoneName, filter.ID),
 			"cloudflare_filter",
@@ -115,16 +170,15 @@ func (*FirewallGenerator) createFilterResources(api *cf.API, zoneID, zoneName st
 	return resources, nil
 }
 
-func (*FirewallGenerator) createFirewallRuleResources(api *cf.API, zoneID, zoneName string) ([]terraform_utils.Resource, error) {
-	resources := []terraform_utils.Resource{}
+func (*FirewallGenerator) createFirewallRuleResources(api *cf.API, zoneID, zoneName string) ([]terraformutils.Resource, error) {
+	resources := []terraformutils.Resource{}
 
 	fwrules, err := api.FirewallRules(zoneID, cf.PaginationOptions{})
 	if err != nil {
-		log.Println(err)
 		return resources, err
 	}
 	for _, rule := range fwrules {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			rule.ID,
 			fmt.Sprintf("%s_%s", zoneName, rule.ID),
 			"cloudflare_firewall_rule",
@@ -138,27 +192,53 @@ func (*FirewallGenerator) createFirewallRuleResources(api *cf.API, zoneID, zoneN
 	}
 
 	return resources, nil
+}
 
+func (g *FirewallGenerator) createRateLimitResources(api *cf.API, zoneID, zoneName string) ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
+
+	rateLimits, err := api.ListAllRateLimits(zoneID)
+	if err != nil {
+		return resources, err
+	}
+	for _, rateLimit := range rateLimits {
+		resources = append(resources, terraformutils.NewSimpleResource(
+			rateLimit.ID,
+			fmt.Sprintf("%s_%s", zoneID, rateLimit.ID),
+			"cloudflare_rate_limit",
+			"cloudflare",
+			[]string{}))
+	}
+
+	return resources, nil
 }
 
 func (g *FirewallGenerator) InitResources() error {
 	api, err := g.initializeAPI()
 	if err != nil {
-		panic(err)
 		return err
+	}
+
+	if len(api.AccountID) > 0 {
+		resources, err := g.createAccountAccessRuleResources(api)
+		if err != nil {
+			return err
+		}
+		g.Resources = append(g.Resources, resources...)
+
 	}
 
 	zones, err := api.ListZones()
 	if err != nil {
-		panic(err)
 		return err
 	}
 
-	funcs := []func(*cf.API, string, string) ([]terraform_utils.Resource, error){
+	funcs := []func(*cf.API, string, string) ([]terraformutils.Resource, error){
 		g.createFirewallRuleResources,
 		g.createFilterResources,
-		g.createAccessRuleResources,
+		g.createZoneAccessRuleResources,
 		g.createZoneLockdownsResources,
+		g.createRateLimitResources,
 	}
 
 	for _, zone := range zones {
@@ -166,7 +246,6 @@ func (g *FirewallGenerator) InitResources() error {
 			// Getting all firewall filters
 			tmpRes, err := f(api, zone.ID, zone.Name)
 			if err != nil {
-				panic(err)
 				return err
 			}
 			g.Resources = append(g.Resources, tmpRes...)

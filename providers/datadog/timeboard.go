@@ -20,7 +20,7 @@ import (
 
 	datadog "github.com/zorkian/go-datadog-api"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 var (
@@ -33,11 +33,11 @@ type TimeboardGenerator struct {
 	DatadogService
 }
 
-func (TimeboardGenerator) createResources(timeboards []datadog.DashboardLite) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (TimeboardGenerator) createResources(timeboards []datadog.DashboardLite) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	for _, timeboard := range timeboards {
 		resourceName := strconv.Itoa(timeboard.GetId())
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			resourceName,
 			fmt.Sprintf("timeboard_%s", resourceName),
 			"datadog_timeboard",

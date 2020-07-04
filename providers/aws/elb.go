@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancing"
 )
@@ -42,7 +42,7 @@ func (g *ElbGenerator) InitResources() error {
 	for p.Next(context.Background()) {
 		for _, loadBalancer := range p.CurrentPage().LoadBalancerDescriptions {
 			resourceName := aws.StringValue(loadBalancer.LoadBalancerName)
-			resource := terraform_utils.NewSimpleResource(
+			resource := terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_elb",

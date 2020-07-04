@@ -17,7 +17,7 @@ package vultr
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/vultr/govultr"
 )
 
@@ -25,10 +25,10 @@ type StartupScriptGenerator struct {
 	VultrService
 }
 
-func (g StartupScriptGenerator) createResources(scriptList []govultr.StartupScript) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g StartupScriptGenerator) createResources(scriptList []govultr.StartupScript) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, script := range scriptList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			script.ScriptID,
 			script.ScriptID,
 			"vultr_startup_script",

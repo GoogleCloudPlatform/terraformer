@@ -18,7 +18,7 @@ import (
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/providers/alicloud/connectivity"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/ram"
 )
 
@@ -27,8 +27,8 @@ type RAMGenerator struct {
 	AliCloudService
 }
 
-func resourceFromRAMRole(role ram.Role) terraform_utils.Resource {
-	return terraform_utils.NewResource(
+func resourceFromRAMRole(role ram.Role) terraformutils.Resource {
+	return terraformutils.NewResource(
 		role.RoleName,                  // id
 		role.RoleId+"__"+role.RoleName, // name
 		"alicloud_ram_role",
@@ -39,11 +39,11 @@ func resourceFromRAMRole(role ram.Role) terraform_utils.Resource {
 	)
 }
 
-func resourceFromRAMPolicy(policy ram.Policy, roleName string) terraform_utils.Resource {
+func resourceFromRAMPolicy(policy ram.Policy, roleName string) terraformutils.Resource {
 	// https://github.com/terraform-providers/terraform-provider-alicloud/blob/master/alicloud/resource_alicloud_ram_role_policy_attachment.go#L93
 	id := strings.Join([]string{"role", policy.PolicyName, policy.PolicyType, roleName}, ":")
 
-	return terraform_utils.NewResource(
+	return terraformutils.NewResource(
 		id, // id
 		id+"__"+roleName+"_"+policy.PolicyName, // name
 		"alicloud_ram_role_policy_attachment",
@@ -57,9 +57,9 @@ func resourceFromRAMPolicy(policy ram.Policy, roleName string) terraform_utils.R
 func initRoles(client *connectivity.AliyunClient) ([]ram.Role, error) {
 	allRoles := make([]ram.Role, 0)
 
-	raw, err := client.WithRamClient(func(ramClient *ram.Client) (interface{}, error) {
+	raw, err := client.WithRAMClient(func(ramClient *ram.Client) (interface{}, error) {
 		request := ram.CreateListRolesRequest()
-		request.RegionId = client.RegionId
+		request.RegionId = client.RegionID
 		return ramClient.ListRoles(request)
 	})
 	if err != nil {
@@ -67,10 +67,7 @@ func initRoles(client *connectivity.AliyunClient) ([]ram.Role, error) {
 	}
 
 	response := raw.(*ram.ListRolesResponse)
-	for _, role := range response.Roles.Role {
-		allRoles = append(allRoles, role)
-
-	}
+	allRoles = append(allRoles, response.Roles.Role...)
 
 	return allRoles, nil
 }
@@ -80,9 +77,9 @@ func initRAMPolicyAttachment(client *connectivity.AliyunClient, allRoles []ram.R
 	roleNames := make([]string, 0)
 
 	for _, role := range allRoles {
-		raw, err := client.WithRamClient(func(ramClient *ram.Client) (interface{}, error) {
+		raw, err := client.WithRAMClient(func(ramClient *ram.Client) (interface{}, error) {
 			request := ram.CreateListPoliciesForRoleRequest()
-			request.RegionId = client.RegionId
+			request.RegionId = client.RegionID
 			request.RoleName = role.RoleName
 			return ramClient.ListPoliciesForRole(request)
 		})

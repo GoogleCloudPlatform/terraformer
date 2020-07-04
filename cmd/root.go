@@ -15,7 +15,7 @@
 package cmd
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -48,6 +48,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdFastlyImporter,
 		newCmdHerokuImporter,
 		newCmdLinodeImporter,
+		newCmdNs1Importer,
 		newCmdOpenStackImporter,
 		newCmdVultrImporter,
 		// Infrastructure Software
@@ -65,12 +66,14 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdKeycloakImporter,
 		newCmdLogzioImporter,
 		newCmdCommercetoolsImporter,
+		newCmdMikrotikImporter,
+		newCmdGmailfilterImporter,
 	}
 }
 
-func providerGenerators() map[string]func() terraform_utils.ProviderGenerator {
-	list := make(map[string]func() terraform_utils.ProviderGenerator)
-	for _, providerGen := range []func() terraform_utils.ProviderGenerator{
+func providerGenerators() map[string]func() terraformutils.ProviderGenerator {
+	list := make(map[string]func() terraformutils.ProviderGenerator)
+	for _, providerGen := range []func() terraformutils.ProviderGenerator{
 		// Major Cloud
 		newGoogleProvider,
 		newAWSProvider,
@@ -81,6 +84,7 @@ func providerGenerators() map[string]func() terraform_utils.ProviderGenerator {
 		newFastlyProvider,
 		newHerokuProvider,
 		newLinodeProvider,
+		newNs1Provider,
 		newOpenStackProvider,
 		newVultrProvider,
 		// Infrastructure Software
@@ -98,6 +102,8 @@ func providerGenerators() map[string]func() terraform_utils.ProviderGenerator {
 		newKeycloakProvider,
 		newLogzioProvider,
 		newCommercetoolsProvider,
+		newMikrotikProvider,
+		newGmailfilterProvider,
 	} {
 		list[providerGen().GetName()] = providerGen
 	}

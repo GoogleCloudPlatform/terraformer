@@ -21,7 +21,7 @@ import (
 	"sort"
 
 	"github.com/GoogleCloudPlatform/terraformer/cmd"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	gcp_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/gcp"
 )
@@ -55,11 +55,10 @@ func main() {
 			continue
 		}
 		services = append(services, service)
-
 	}
 	sort.Strings(services)
 	provider = &gcp_terraforming.GCPProvider{
-		Provider: terraform_utils.Provider{},
+		Provider: terraformutils.Provider{},
 	}
 	err := cmd.Import(provider, cmd.ImportOptions{
 		Resources:   services,
@@ -88,7 +87,9 @@ func main() {
 			log.Println(err)
 			os.Exit(1)
 		}
-		os.Chdir(rootPath)
+		err := os.Chdir(rootPath)
+		if err != nil {
+			log.Println(err)
+		}
 	}
-
 }

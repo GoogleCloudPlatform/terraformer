@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 
 	es "github.com/aws/aws-sdk-go-v2/service/elasticsearchservice"
@@ -42,7 +42,7 @@ func (g *EsGenerator) InitResources() error {
 	}
 
 	for _, domainName := range domainNames.DomainNames {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraformutils.NewResource(
 			aws.StringValue(domainName.DomainName),
 			aws.StringValue(domainName.DomainName),
 			"aws_elasticsearch_domain",

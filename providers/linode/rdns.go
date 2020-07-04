@@ -17,7 +17,7 @@ package linode
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/linode/linodego"
 )
 
@@ -25,10 +25,10 @@ type RDNSGenerator struct {
 	LinodeService
 }
 
-func (g RDNSGenerator) createResources(instanceIPList []linodego.InstanceIP) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g RDNSGenerator) createResources(instanceIPList []linodego.InstanceIP) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, instanceIP := range instanceIPList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			instanceIP.Address,
 			instanceIP.Address,
 			"linode_rdns",

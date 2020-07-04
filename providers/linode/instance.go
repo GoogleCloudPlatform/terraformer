@@ -18,7 +18,7 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/linode/linodego"
 )
 
@@ -26,10 +26,10 @@ type InstanceGenerator struct {
 	LinodeService
 }
 
-func (g InstanceGenerator) createResources(instanceList []linodego.Instance) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g InstanceGenerator) createResources(instanceList []linodego.Instance) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, instance := range instanceList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			strconv.Itoa(instance.ID),
 			strconv.Itoa(instance.ID),
 			"linode_instance",

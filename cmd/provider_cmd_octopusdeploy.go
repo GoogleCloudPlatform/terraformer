@@ -3,7 +3,7 @@ package cmd
 import (
 	octopusdeploy_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/octopusdeploy"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -31,6 +31,6 @@ func newCmdOctopusDeployImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newOctopusDeployProvider() terraform_utils.ProviderGenerator {
+func newOctopusDeployProvider() terraformutils.ProviderGenerator {
 	return &octopusdeploy_terraforming.OctopusDeployProvider{}
 }

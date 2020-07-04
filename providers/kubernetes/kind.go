@@ -17,7 +17,7 @@ package kubernetes
 import (
 	"reflect"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -78,7 +78,7 @@ func (k *Kind) InitResources() error {
 			name = item.FieldByName("Name").String()
 		}
 
-		k.Resources = append(k.Resources, terraform_utils.NewSimpleResource(
+		k.Resources = append(k.Resources, terraformutils.NewSimpleResource(
 			name,
 			name,
 			extractTfResourceName(k.Name),

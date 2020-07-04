@@ -17,7 +17,7 @@ package newrelic
 import (
 	"fmt"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	newrelic "github.com/paultyng/go-newrelic/v4/api"
 )
 
@@ -32,7 +32,7 @@ func (g *DashboardGenerator) createDashboardResources(client *newrelic.Client) e
 	}
 
 	for _, dashboard := range dashboards {
-		resource := terraform_utils.NewSimpleResource(
+		resource := terraformutils.NewSimpleResource(
 			fmt.Sprintf("%d", dashboard.ID),
 			fmt.Sprintf("%s-%d", normalizeResourceName(dashboard.Title), dashboard.ID),
 			"newrelic_dashboard",

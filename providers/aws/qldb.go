@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/qldb"
 )
@@ -35,11 +35,11 @@ func (g *QLDBGenerator) InitResources() error {
 	}
 	svc := qldb.New(config)
 	p := qldb.NewListLedgersPaginator(svc.ListLedgersRequest(&qldb.ListLedgersInput{}))
-	var resources []terraform_utils.Resource
+	var resources []terraformutils.Resource
 	for p.Next(context.Background()) {
 		for _, ledger := range p.CurrentPage().Ledgers {
 			ledgerName := aws.StringValue(ledger.Name)
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewSimpleResource(
 				ledgerName,
 				ledgerName,
 				"aws_qldb_ledger",

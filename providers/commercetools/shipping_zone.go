@@ -16,7 +16,7 @@ package commercetools
 
 import (
 	"github.com/GoogleCloudPlatform/terraformer/providers/commercetools/connectivity"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/labd/commercetools-go-sdk/commercetools"
 )
 
@@ -27,7 +27,7 @@ type ShippingZoneGenerator struct {
 // InitResources generates Terraform Resources from Commercetools API
 func (g *ShippingZoneGenerator) InitResources() error {
 	cfg := connectivity.Config{
-		ClientId:     g.GetArgs()["client_id"].(string),
+		ClientID:     g.GetArgs()["client_id"].(string),
 		ClientSecret: g.GetArgs()["client_secret"].(string),
 		ClientScope:  g.GetArgs()["client_scope"].(string),
 		TokenURL:     g.GetArgs()["token_url"].(string) + "/oauth/token",
@@ -41,9 +41,14 @@ func (g *ShippingZoneGenerator) InitResources() error {
 		return err
 	}
 	for _, zone := range zones.Results {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		resourceName := zone.Key
+		if resourceName == "" {
+			resourceName = zone.Name
+		}
+
+		g.Resources = append(g.Resources, terraformutils.NewResource(
 			zone.ID,
-			zone.Key,
+			resourceName,
 			"commercetools_shipping_zone",
 			"commercetools",
 			map[string]string{},

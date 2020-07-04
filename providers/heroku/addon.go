@@ -17,7 +17,7 @@ package heroku
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	heroku "github.com/heroku/heroku-go/v5"
 )
 
@@ -25,10 +25,10 @@ type AddOnGenerator struct {
 	HerokuService
 }
 
-func (g AddOnGenerator) createResources(addOnList []heroku.AddOn) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g AddOnGenerator) createResources(addOnList []heroku.AddOn) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, addOn := range addOnList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			addOn.ID,
 			addOn.Name,
 			"heroku_addon",

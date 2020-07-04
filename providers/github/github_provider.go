@@ -17,14 +17,14 @@ package github
 import (
 	"os"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/pkg/errors"
 	"github.com/zclconf/go-cty/cty"
 )
 
-type GithubProvider struct {
-	terraform_utils.Provider
+type GithubProvider struct { //nolint
+	terraformutils.Provider
 	organization string
 	token        string
 }
@@ -37,7 +37,7 @@ func (p GithubProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"github": map[string]interface{}{
-				"version":      provider_wrapper.GetProviderVersion(p.GetName()),
+				"version":      providerwrapper.GetProviderVersion(p.GetName()),
 				"organization": p.organization,
 			},
 		},
@@ -57,9 +57,8 @@ func (p *GithubProvider) Init(args []string) error {
 	if len(args) < 2 {
 		if os.Getenv("GITHUB_TOKEN") == "" {
 			return errors.New("token requirement")
-		} else {
-			p.token = os.Getenv("GITHUB_TOKEN")
 		}
+		p.token = os.Getenv("GITHUB_TOKEN")
 	} else {
 		p.token = args[1]
 	}
@@ -87,8 +86,8 @@ func (p *GithubProvider) InitService(serviceName string, verbose bool) error {
 }
 
 // GetSupportedService return map of support service for Github
-func (p *GithubProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	return map[string]terraform_utils.ServiceGenerator{
+func (p *GithubProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+	return map[string]terraformutils.ServiceGenerator{
 		"members":               &MembersGenerator{},
 		"organization_blocks":   &OrganizationBlockGenerator{},
 		"organization_projects": &OrganizationProjectGenerator{},

@@ -17,7 +17,7 @@ package heroku
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	heroku "github.com/heroku/heroku-go/v5"
 )
 
@@ -25,10 +25,10 @@ type AccountFeatureGenerator struct {
 	HerokuService
 }
 
-func (g AccountFeatureGenerator) createResources(accountFeatureList []heroku.AccountFeature) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g AccountFeatureGenerator) createResources(accountFeatureList []heroku.AccountFeature) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, accountFeature := range accountFeatureList {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			accountFeature.ID,
 			accountFeature.Name,
 			"heroku_account_feature",

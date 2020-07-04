@@ -22,7 +22,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/cmd"
 	openstack_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/openstack"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 const command = "terraform init && terraform plan"
@@ -36,7 +36,7 @@ func main() {
 	}
 	sort.Strings(services)
 	provider = &openstack_terraforming.OpenStackProvider{
-		Provider: terraform_utils.Provider{},
+		Provider: terraformutils.Provider{},
 	}
 	err := cmd.Import(provider, cmd.ImportOptions{
 		Resources:   services,
@@ -64,6 +64,9 @@ func main() {
 			log.Println(err)
 			os.Exit(1)
 		}
-		os.Chdir(rootPath)
+		err := os.Chdir(rootPath)
+		if err != nil {
+			log.Println(err)
+		}
 	}
 }

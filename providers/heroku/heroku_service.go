@@ -15,12 +15,12 @@
 package heroku
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	heroku "github.com/heroku/heroku-go/v5"
 )
 
-type HerokuService struct {
-	terraform_utils.Service
+type HerokuService struct { //nolint
+	terraformutils.Service
 }
 
 func (s *HerokuService) generateService() *heroku.Service {

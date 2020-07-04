@@ -18,11 +18,11 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
-type RBTService struct {
-	terraform_utils.Service
+type RBTService struct { //nolint
+	terraformutils.Service
 }
 
 func (s *RBTService) generateRequest(uri string) ([]byte, error) {

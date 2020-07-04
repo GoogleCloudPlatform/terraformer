@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/kinesis"
 )
 
@@ -27,10 +27,10 @@ type KinesisGenerator struct {
 	AWSService
 }
 
-func (g *KinesisGenerator) createResources(streamNames []string) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g *KinesisGenerator) createResources(streamNames []string) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, resourceName := range streamNames {
-		resources = append(resources, terraform_utils.NewResource(
+		resources = append(resources, terraformutils.NewResource(
 			resourceName,
 			resourceName,
 			"aws_kinesis_stream",

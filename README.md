@@ -27,6 +27,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [Fastly](#use-with-fastly)
         * [Heroku](#use-with-heroku)
         * [Linode](#use-with-linode)
+        * [NS1](#use-with-ns1)
         * [OpenStack](#use-with-openstack)
         * [Vultr](#use-with-vultr)
     * Infrastructure Software
@@ -44,6 +45,8 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [Keycloak](#use-with-keycloak)
         * [Logz.io](#use-with-logzio)
         * [Commercetools](#use-with-commercetools)
+        * [Mikrotik](#use-with-mikrotik)
+        * [GmailFilter](#use-with-gmailfilter)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
@@ -81,7 +84,7 @@ Flags:
   -p, --path-pattern string   {output}/{provider}/ (default "{output}/{provider}/{service}/")
       --projects strings
   -z, --regions strings       europe-west1, (default [global])
-  -r, --resources strings     firewalls,networks or * for all services
+  -r, --resources strings     firewall,networks or * for all services
   -s, --state string          local or bucket (default "local")
   -v, --verbose               verbose mode
 
@@ -115,7 +118,7 @@ The `plan` command generates a planfile that contains all the resources set to b
 The rest of subcommands and parameters are identical to the `import` command.
 
 ```
-$ terraformer plan google --resources=networks,firewalls --projects=my-project --regions=europe-west1-d
+$ terraformer plan google --resources=networks,firewall --projects=my-project --regions=europe-west1-d
 (snip)
 
 Saving planfile to generated/google/my-project/terraformer/plan.json
@@ -143,7 +146,7 @@ It's possible to combine `--compact` `--path-pattern` parameters together.
 
 From source:
 1.  Run `git clone <terraformer repo>`
-2.  Run `GO111MODULE=on go mod vendor`
+2.  Run `go mod download`
 3.  Run `go build -v` for all providers OR build with one provider `go run build/main.go {google,aws,azure,kubernetes and etc}`
 4.  Run ```terraform init``` against an ```init.tf``` file to install the plugins required for your platform. For example, if you need plugins for the google provider, ```init.tf``` should contain:
 ```
@@ -186,9 +189,10 @@ Links to download Terraform Providers:
     * Alicloud provider >1.57.1 - [here](https://releases.hashicorp.com/terraform-provider-alicloud/)
 * Cloud
     * DigitalOcean provider >1.9.1 - [here](https://releases.hashicorp.com/terraform-provider-digitalocean/)
-    * Fastly provider >0.11.0 - [here](https://releases.hashicorp.com/terraform-provider-fastly/)
+    * Fastly provider >0.16.1 - [here](https://releases.hashicorp.com/terraform-provider-fastly/)
     * Heroku provider >2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-heroku/)
     * Linode provider >1.8.0 - [here](https://releases.hashicorp.com/terraform-provider-linode/)
+    * NS1 provider >1.8.3 - [here](https://releases.hashicorp.com/terraform-provider-ns1/)
     * OpenStack provider >1.21.1 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
     * Vultr provider >1.0.5 - [here](https://releases.hashicorp.com/terraform-provider-vultr/)
 * Infrastructure Software
@@ -202,9 +206,11 @@ Links to download Terraform Providers:
     * Datadog provider >2.1.0 - [here](https://releases.hashicorp.com/terraform-provider-datadog/)
     * New Relic provider >1.5.0 - [here](https://releases.hashicorp.com/terraform-provider-newrelic/)
 * Community
-    * Keycloak provider >=1.12.0 - [here](https://github.com/mrparkers/terraform-provider-keycloak/)
+    * Keycloak provider >=1.19.0 - [here](https://github.com/mrparkers/terraform-provider-keycloak/)
     * Logz.io provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
-    * Commercetools provider >= 0.19.0 - [here](https://github.com/labd/terraform-provider-commercetools)
+    * Commercetools provider >= 0.21.0 - [here](https://github.com/labd/terraform-provider-commercetools)
+    * Mikrotik provider >= 0.2.2 - [here](https://github.com/labd/terraform-provider-commercetools)
+    * GmailFilter provider >= 1.0.1 - [here](https://github.com/yamamoto-febc/terraform-provider-gmailfilter)
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
@@ -242,10 +248,12 @@ List of supported GCP services:
     * `google_dataproc_cluster`
 *   `disks`
     * `google_compute_disk`
+*   `externalVpnGateways`
+    * `google_compute_external_vpn_gateway`
 *   `dns`
     * `google_dns_managed_zone`
     * `google_dns_record_set`
-*   `firewalls`
+*   `firewall`
     * `google_compute_firewall`
 *   `forwardingRules`
     * `google_compute_forwarding_rule`
@@ -270,6 +278,10 @@ List of supported GCP services:
     * `google_compute_http_health_check`
 *   `httpsHealthChecks`
     * `google_compute_https_health_check`
+*   `iam`
+    * `google_project_iam_custom_role`
+    * `google_project_iam_member`
+    * `google_service_account`
 *   `images`
     * `google_compute_image`
 *   `instanceGroupManagers`
@@ -296,6 +308,8 @@ List of supported GCP services:
     * `google_monitoring_uptime_check_config`
 *   `networks`
     * `google_compute_network`
+*   `packetMirrorings`
+    * `google_compute_packet_mirroring`
 *   `nodeGroups`
     * `google_compute_node_group`
 *   `nodeTemplates`
@@ -311,6 +325,22 @@ List of supported GCP services:
     * `google_compute_region_backend_service`
 *   `regionDisks`
     * `google_compute_region_disk`
+*   `regionHealthChecks`
+    * `google_compute_region_health_check`
+*   `regionInstanceGroups`
+    * `google_compute_region_instance_group`
+*   `regionSslCertificates`
+    * `google_compute_region_ssl_certificate`
+*   `regionTargetHttpProxies`
+    * `google_compute_region_target_http_proxy`
+*   `regionTargetHttpsProxies`
+    * `google_compute_region_target_https_proxy`
+*   `regionUrlMaps`
+    * `google_compute_region_url_map`
+*   `reservations`
+    * `google_compute_reservation`
+*   `resourcePolicies`
+    * `google_compute_resource_policy`    
 *   `regionInstanceGroupManagers`
     * `google_compute_region_instance_group_manager`
 *   `routers`
@@ -321,6 +351,8 @@ List of supported GCP services:
     * `google_cloud_scheduler_job`
 *   `securityPolicies`
     * `google_compute_security_policy`
+*   `sslCertificates`
+    * `google_compute_managed_ssl_certificate`
 *   `sslPolicies`
     * `google_compute_ssl_policy`
 *   `subnetworks`
@@ -397,6 +429,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_api_gateway_stage`
     * `aws_api_gateway_usage_plan`
     * `aws_api_gateway_vpc_link`
+*   `appsync`
+    * `aws_appsync_graphql_api`
 *   `auto_scaling`
     * `aws_autoscaling_group`
     * `aws_launch_configuration`
@@ -427,8 +461,15 @@ In that case terraformer will not know with which region resources are associate
 *   `codepipeline`
     * `aws_codepipeline`
     * `aws_codepipeline_webhook`
+*   `cognito`
+    * `aws_cognito_identity_pool`
+    * `aws_cognito_user_pool`
 *   `customer_gateway`
     * `aws_customer_gateway`
+*   `config`
+    * `aws_config_config_rule`
+    * `aws_config_configuration_recorder`
+    * `aws_config_delivery_channel`
 *   `datapipeline`
     * `aws_datapipeline_pipeline`
 *   `devicefarm`
@@ -481,12 +522,13 @@ In that case terraformer will not know with which region resources are associate
     * `aws_iam_group_policy_attachment`
     * `aws_iam_instance_profile`
     * `aws_iam_policy`
-    * `aws_iam_policy_attachment`
     * `aws_iam_role`
     * `aws_iam_role_policy`
+    * `aws_iam_role_policy_attachment`
     * `aws_iam_user`
     * `aws_iam_user_group_membership`
     * `aws_iam_user_policy`
+    * `aws_iam_user_policy_attachment`
 *   `igw`
     * `aws_internet_gateway`
 *   `iot`
@@ -528,6 +570,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_db_subnet_group`
     * `aws_db_option_group`
     * `aws_db_event_subscription`
+*   `resourcegroups`
+    * `aws_resourcegroups_group`
 *   `route53`
     * `aws_route53_zone`
     * `aws_route53_record`
@@ -538,6 +582,14 @@ In that case terraformer will not know with which region resources are associate
 *   `s3`
     * `aws_s3_bucket`
     * `aws_s3_bucket_policy`
+*   `secretsmanager`
+    * `aws_secretsmanager_secret`
+*   `securityhub`
+    * `aws_securityhub_account`
+    * `aws_securityhub_member`
+    * `aws_securityhub_standards_subscription`
+*   `servicecatalog`
+    * `aws_servicecatalog_portfolio`
 *   `ses`
     * `aws_ses_configuration_set`
     * `aws_ses_domain_identity`
@@ -545,6 +597,9 @@ In that case terraformer will not know with which region resources are associate
     * `aws_ses_receipt_rule`
     * `aws_ses_receipt_rule_set`
     * `aws_ses_template`
+*   `sfn`
+    * `aws_sfn_activity`
+    * `aws_sfn_state_machine`
 *   `sg`
     * `aws_security_group`
     * `aws_security_group_rule` (if a rule cannot be inlined)
@@ -555,6 +610,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_sqs_queue`
 *   `subnet`
     * `aws_subnet`
+*   `swf`
+    * `aws_swf_domain`
 *   `transit_gateway`
     * `aws_ec2_transit_gateway_route_table`
     * `aws_ec2_transit_gateway_vpc_attachment`
@@ -592,6 +649,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_vpn_connection`
 *   `vpn_gateway`
     * `aws_vpn_gateway`
+*   `xray`
+    * `aws_xray_sampling_rule`
 
 #### Global services
 
@@ -623,6 +682,10 @@ Due to fact API Gateway generates a lot of resources, it's possible to issue a f
 #### SQS queues retrieval
 
 Terraformer uses AWS [ListQueues](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_ListQueues.html) API call to fetch available queues. The API is able to return only up to 1000 queues and an additional name prefix should be passed to filter the list results. It's possible to pass `QueueNamePrefix` parameter by environmental variable `SQS_PREFIX`.
+
+#### Security groups and rules
+
+Terraformer by default will try to keep rules in security groups as long as no circular dependencies are detected. This approach is implemented to keep the rules as tidy as possible but there can be cases when this behaviour is not desirable (see [GoogleCloudPlatform/terraformer#493](https://github.com/GoogleCloudPlatform/terraformer/issues/493)). To make Terraformer split rules from security groups, add `SPLIT_SG_RULES` environmental variable with any value.
 
 ### Use with Azure
 Support [Azure CLI](https://www.terraform.io/docs/providers/azurerm/guides/azure_cli.html), [Service Principal with Client Certificate](https://www.terraform.io/docs/providers/azurerm/guides/service_principal_client_certificate.html) & [Service Principal with Client Secret](https://www.terraform.io/docs/providers/azurerm/guides/service_principal_client_secret.html)
@@ -797,7 +860,8 @@ Example:
 
 ```
 export FASTLY_API_KEY=[FASTLY_API_KEY]
-./terraformer import fastly -r service_v1
+export FASTLY_CUSTOMER_ID=[FASTLY_CUSTOMER_ID]
+./terraformer import fastly -r service_v1,user
 ```
 
 List of supported Fastly resources:
@@ -807,6 +871,8 @@ List of supported Fastly resources:
     * `fastly_service_dictionary_items_v1`
     * `fastly_service_dynamic_snippet_content_v1`
     * `fastly_service_v1`
+*   `user`
+    * `fastly_user_v1`
 
 ### Use with Heroku
 
@@ -885,6 +951,24 @@ List of supported Linode resources:
     * `linode_token`
 *   `volume`
     * `linode_volume`
+
+### Use with NS1
+
+Example:
+
+```
+$ export NS1_APIKEY=[NS1_APIKEY]
+$ terraformer import ns1 -r zone,monitoringjob,team
+```
+
+List of supported NS1 resources:
+
+*   `zone`
+    * `ns1_zone`
+*   `monitoringjob`
+    * `ns1_monitoringjob`
+*   `team`
+    * `ns1_team`
 
 ### Use with OpenStack
 
@@ -1060,6 +1144,7 @@ Example using a Cloudflare API Key and corresponding email:
 ```
 export CLOUDFLARE_API_KEY=[CLOUDFLARE_API_KEY]
 export CLOUDFLARE_EMAIL=[CLOUDFLARE_EMAIL]
+export CLOUDFLARE_ACCOUNT_ID=[CLOUDFLARE_ACCOUNT_ID]
  ./terraformer import cloudflare --resources=firewall,dns
 ```
 
@@ -1067,6 +1152,7 @@ or using a Cloudflare API Token:
 
 ```
 export CLOUDFLARE_API_TOKEN=[CLOUDFLARE_API_TOKEN]
+export CLOUDFLARE_ACCOUNT_ID=[CLOUDFLARE_ACCOUNT_ID]
  ./terraformer import cloudflare --resources=firewall,dns
 ```
 
@@ -1082,6 +1168,11 @@ List of supported Cloudflare services:
   * `cloudflare_filter`
   * `cloudflare_firewall_rule`
   * `cloudflare_zone_lockdown`
+  * `cloudflare_rate_limit`
+* `page_rule`
+  * `cloudflare_page_rule`
+* `account_member`
+  * `cloudflare_account_member`
 
 ### Use with GitHub
 
@@ -1177,45 +1268,47 @@ Example:
  export KEYCLOAK_CLIENT_ID=[KEYCLOAK_CLIENT_ID]
  export KEYCLOAK_CLIENT_SECRET=[KEYCLOAK_CLIENT_SECRET]
 
- terraformer import keycloak --resources=realms,openid_clients
+ terraformer import keycloak --resources=realms
  terraformer import keycloak --resources=realms --filter=keycloak_realm=name1:name2:name3
- terraformer import keycloak --resources=realms,groups --targets realmA,realmB
+ terraformer import keycloak --resources=realms --targets realmA,realmB
 ```
 
-Here is the list of resources which are currently supported by Keycloak provider v.1.12.0:
+Here is the list of resources which are currently supported by Keycloak provider v.1.19.0:
 
-- `groups`
+- `realms`
+  - `keycloak_default_groups`
   - `keycloak_group`
   - `keycloak_group_memberships`
   - `keycloak_group_roles`
-  - `keycloak_default_groups`
-- `openid_clients`
-  - `keycloak_openid_client`
-  - `keycloak_openid_client_service_account_role`
-  - `keycloak_openid_user_attribute_protocol_mapper`
-  - `keycloak_openid_user_property_protocol_mapper`
-  - `keycloak_openid_full_name_protocol_mapper`
-  - `keycloak_openid_audience_protocol_mapper`
-  - `keycloak_openid_group_membership_protocol_mapper`
-  - `keycloak_openid_hardcoded_claim_protocol_mapper`
-  - `keycloak_openid_hardcoded_role_protocol_mapper`
-- `realms`
-  - `keycloak_realm`
-  - `keycloak_ldap_user_federation`
   - `keycloak_ldap_full_name_mapper`
   - `keycloak_ldap_group_mapper`
+  - `keycloak_ldap_hardcoded_group_mapper`
+  - `keycloak_ldap_hardcoded_role_mapper`
+  - `keycloak_ldap_msad_lds_user_account_control_mapper`
   - `keycloak_ldap_msad_user_account_control_mapper`
   - `keycloak_ldap_user_attribute_mapper`
-  - `keycloak_required_action`
-- `roles`
-  - `keycloak_role`
-- `scopes`
-  - `keycloak_openid_client_scope`
+  - `keycloak_ldap_user_federation`
+  - `keycloak_openid_audience_protocol_mapper`
+  - `keycloak_openid_client`
   - `keycloak_openid_client_default_scopes`
   - `keycloak_openid_client_optional_scopes`
-- `users`
+  - `keycloak_openid_client_scope`
+  - `keycloak_openid_client_service_account_role`
+  - `keycloak_openid_full_name_protocol_mapper`
+  - `keycloak_openid_group_membership_protocol_mapper`
+  - `keycloak_openid_hardcoded_claim_protocol_mapper`
+  - `keycloak_openid_hardcoded_group_protocol_mapper`
+  - `keycloak_openid_hardcoded_role_protocol_mapper` (only for client roles)
+  - `keycloak_openid_user_attribute_protocol_mapper`
+  - `keycloak_openid_user_property_protocol_mapper`
+  - `keycloak_openid_user_realm_role_protocol_mapper`
+  - `keycloak_openid_user_client_role_protocol_mapper`
+  - `keycloak_openid_user_session_note_protocol_mapper`
+  - `keycloak_realm`
+  - `keycloak_required_action`
+  - `keycloak_role`
   - `keycloak_user`
-
+  
 ### Use with Logz.io
 
 Example:
@@ -1250,6 +1343,8 @@ List of supported [commercetools](https://commercetools.com/de/) resources:
     * `commercetools_channel`
 *   `product_type`
     * `commercetools_product_type`
+*   `shipping_method`
+    * `commercetools_shipping_method`
 *   `shipping_zone`
     * `commercetools_shipping_zone`
 *   `state`
@@ -1262,6 +1357,54 @@ List of supported [commercetools](https://commercetools.com/de/) resources:
     * `commercetools_tax_category`
 *   `types`
     * `commercetools_type`
+
+### Use with [Mikrotik](https://wiki.mikrotik.com/wiki/Manual:TOC)
+
+This provider uses the [terraform-provider-mikrotik](https://github.com/ddelnano/terraform-provider-mikrotik). The terraformer provider was build by [Dom Del Nano](https://github.com/ddelnano).
+
+Example:
+
+```
+## Warning! You should not expose your mikrotik creds through your bash history. Export them to your shell in a safe way when doing this for real!
+
+MIKROTIK_HOST=router-hostname:8728 MIKROTIK_USER=username MIKROTIK_PASSWORD=password terraformer  import mikrotik -r=dhcp_lease
+
+# Import only static IPs
+MIKROTIK_HOST=router-hostname:8728 MIKROTIK_USER=username MIKROTIK_PASSWORD=password terraformer  import mikrotik -r=dhcp_lease --filter='Name=dynamic;Value=false'
+```
+
+List of supported mikrotik resources:
+
+* `mikrotik_dhcp_lease`
+
+
+### Use with GmailFilter
+
+Support [Using Service Accounts](https://github.com/yamamoto-febc/terraform-provider-gmailfilter/blob/master/README.md#using-a-service-accountg-suite-users-only) or [Using Application Default Credentials](https://github.com/yamamoto-febc/terraform-provider-gmailfilter/blob/master/README.md#using-an-application-default-credential).
+
+Example:
+
+```
+# Using Service Accounts
+export GOOGLE_CREDENTIALS=/path/to/client_secret.json
+export IMPERSONATED_USER_EMAIL="foobar@example.com"
+
+# Using Application Default Credentials
+gcloud auth application-default login \
+  --client-id-file=client_secret.json \
+  --scopes \
+https://www.googleapis.com/auth/gmail.labels,\
+https://www.googleapis.com/auth/gmail.settings.basic
+
+./terraformer import gmailfilter -r=filter,label
+```
+
+List of supported GmailFilter resources:
+
+*   `label`
+    * `gmailfilter_label`
+*   `filter`
+    * `gmailfilter_filter`
 
 ## Contributing
 

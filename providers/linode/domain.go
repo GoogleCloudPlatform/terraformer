@@ -18,7 +18,7 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/linode/linodego"
 )
 
@@ -32,7 +32,7 @@ func (g *DomainGenerator) loadDomains(client linodego.Client) ([]linodego.Domain
 		return nil, err
 	}
 	for _, domain := range domainList {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			strconv.Itoa(domain.ID),
 			strconv.Itoa(domain.ID),
 			"linode_domain",
@@ -48,7 +48,7 @@ func (g *DomainGenerator) loadDomainRecords(client linodego.Client, domainID int
 		return err
 	}
 	for _, domainRecord := range domainRecordList {
-		g.Resources = append(g.Resources, terraform_utils.NewResource(
+		g.Resources = append(g.Resources, terraformutils.NewResource(
 			strconv.Itoa(domainRecord.ID),
 			strconv.Itoa(domainRecord.ID),
 			"linode_domain_record",
