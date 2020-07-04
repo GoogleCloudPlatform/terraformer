@@ -119,7 +119,7 @@ func (p *AzureProvider) GetProviderData(arg ...string) map[string]interface{} {
 		return map[string]interface{}{
 			"provider": map[string]interface{}{
 				"azurerm": map[string]interface{}{
-					"version": providerwrapper.GetProviderVersion(p.GetName()),
+					"version": version,
 					// NOTE:
 					// Workaround for azurerm v2 provider changes
 					// Tested with azurerm_resource_group under v2.17.0
@@ -133,7 +133,7 @@ func (p *AzureProvider) GetProviderData(arg ...string) map[string]interface{} {
 		return map[string]interface{}{
 			"provider": map[string]interface{}{
 				"azurerm": map[string]interface{}{
-					"version": providerwrapper.GetProviderVersion(p.GetName()),
+					"version": version,
 				},
 			},
 		}
