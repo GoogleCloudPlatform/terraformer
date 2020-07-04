@@ -129,14 +129,13 @@ func (p *AzureProvider) GetProviderData(arg ...string) map[string]interface{} {
 				},
 			},
 		}
-	} else {
-		return map[string]interface{}{
-			"provider": map[string]interface{}{
-				"azurerm": map[string]interface{}{
-					"version": version,
-				},
+	}
+	return map[string]interface{}{
+		"provider": map[string]interface{}{
+			"azurerm": map[string]interface{}{
+				"version": version,
 			},
-		}
+		},
 	}
 }
 
