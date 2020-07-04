@@ -17,9 +17,8 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/glue"
-	"github.com/aws/aws-sdk-go-v2/service/sts"
 )
 
 type GlueGenerator struct {
@@ -31,7 +30,7 @@ func (g *GlueGenerator) loadGlueCrawlers(svc *glue.Client) error {
 	p := glue.NewGetCrawlersPaginator(svc.GetCrawlersRequest(&glue.GetCrawlersInput{}))
 	for p.Next(context.Background()) {
 		for _, crawler := range p.CurrentPage().Crawlers {
-			resource := terraform_utils.NewSimpleResource(*crawler.Name, *crawler.Name,
+			resource := terraformutils.NewSimpleResource(*crawler.Name, *crawler.Name,
 				"aws_glue_crawler",
 				"aws",
 				GlueCrawlerAllowEmptyValues)
@@ -41,7 +40,7 @@ func (g *GlueGenerator) loadGlueCrawlers(svc *glue.Client) error {
 	return p.Err()
 }
 
-func (g *GlueGenerator) loadGlueCatalogDatabase(svc *glue.Client, account *string) (DatabaseNames []*string, error error) {
+func (g *GlueGenerator) loadGlueCatalogDatabase(svc *glue.Client, account *string) (databaseNames []*string, error error) {
 	var GlueCatalogDatabaseAllowEmptyValues = []string{"tags."}
 	p := glue.NewGetDatabasesPaginator(svc.GetDatabasesRequest(&glue.GetDatabasesInput{}))
 	for p.Next(context.Background()) {
@@ -50,15 +49,15 @@ func (g *GlueGenerator) loadGlueCatalogDatabase(svc *glue.Client, account *strin
 			// CATALOG-ID is AWS Account ID
 			// https://docs.aws.amazon.com/cli/latest/reference/glue/create-database.html#options
 			id := *account + ":" + *catalogDatabase.Name
-			resource := terraform_utils.NewSimpleResource(id, *catalogDatabase.Name,
+			resource := terraformutils.NewSimpleResource(id, *catalogDatabase.Name,
 				"aws_glue_catalog_database",
 				"aws",
 				GlueCatalogDatabaseAllowEmptyValues)
 			g.Resources = append(g.Resources, resource)
-			DatabaseNames = append(DatabaseNames, catalogDatabase.Name)
+			databaseNames = append(databaseNames, catalogDatabase.Name)
 		}
 	}
-	return DatabaseNames, p.Err()
+	return databaseNames, p.Err()
 }
 
 func (g *GlueGenerator) loadGlueCatalogTable(svc *glue.Client, account *string, databaseName *string) error {
@@ -69,8 +68,9 @@ func (g *GlueGenerator) loadGlueCatalogTable(svc *glue.Client, account *string, 
 	p := glue.NewGetTablesPaginator(svc.GetTablesRequest(&glue.GetTablesInput{DatabaseName: databaseName}))
 	for p.Next(context.Background()) {
 		for _, catalogTable := range p.CurrentPage().TableList {
-			id := *account + ":" + *databaseName + ":" + *catalogTable.Name
-			resource := terraform_utils.NewSimpleResource(id, *catalogTable.Name,
+			databaseTable := *databaseName + ":" + *catalogTable.Name
+			id := *account + ":" + databaseTable
+			resource := terraformutils.NewSimpleResource(id, databaseTable,
 				"aws_glue_catalog_table",
 				"aws",
 				GlueCatalogTableAllowEmptyValues)
@@ -91,12 +91,10 @@ func (g *GlueGenerator) InitResources() error {
 	}
 	svc := glue.New(config)
 
-	stsSvc := sts.New(config)
-	identity, err := stsSvc.GetCallerIdentityRequest(&sts.GetCallerIdentityInput{}).Send(context.Background())
+	account, err := g.getAccountNumber(config)
 	if err != nil {
 		return err
 	}
-	account := identity.Account
 
 	if err := g.loadGlueCrawlers(svc); err != nil {
 		return err

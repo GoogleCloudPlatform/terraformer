@@ -20,7 +20,7 @@ import (
 
 	"github.com/Azure/azure-sdk-for-go/services/compute/mgmt/2019-03-01/compute"
 	"github.com/Azure/go-autorest/autorest"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/hashicorp/go-azure-helpers/authentication"
 )
 
@@ -28,17 +28,29 @@ type VirtualMachineGenerator struct {
 	AzureService
 }
 
-func (g VirtualMachineGenerator) createResources(virtualMachineListResultPage compute.VirtualMachineListResultPage) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g VirtualMachineGenerator) createResources(virtualMachineListResultPage compute.VirtualMachineListResultPage) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for virtualMachineListResultPage.NotDone() {
 		vms := virtualMachineListResultPage.Values()
 		for _, vm := range vms {
-			resources = append(resources, terraform_utils.NewSimpleResource(
-				*vm.ID,
-				*vm.Name,
-				"azurerm_virtual_machine",
-				"azurerm",
-				[]string{}))
+			var newResource terraformutils.Resource
+			if vm.VirtualMachineProperties.OsProfile.WindowsConfiguration != nil {
+				newResource = terraformutils.NewSimpleResource(
+					*vm.ID,
+					*vm.Name,
+					"azurerm_windows_virtual_machine",
+					"azurerm",
+					[]string{})
+			} else {
+				newResource = terraformutils.NewSimpleResource(
+					*vm.ID,
+					*vm.Name,
+					"azurerm_linux_virtual_machine",
+					"azurerm",
+					[]string{})
+			}
+
+			resources = append(resources, newResource)
 		}
 		if err := virtualMachineListResultPage.Next(); err != nil {
 			log.Println(err)

@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
@@ -29,10 +29,10 @@ type EniGenerator struct {
 	AWSService
 }
 
-func (EniGenerator) createResources(enis *ec2.DescribeNetworkInterfacesOutput) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (EniGenerator) createResources(enis *ec2.DescribeNetworkInterfacesOutput) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, eni := range enis.NetworkInterfaces {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			aws.StringValue(eni.NetworkInterfaceId),
 			aws.StringValue(eni.NetworkInterfaceId),
 			"aws_network_interface",

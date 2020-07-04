@@ -19,7 +19,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"google.golang.org/api/bigquery/v2"
 )
 
@@ -30,8 +30,8 @@ type BigQueryGenerator struct {
 }
 
 // Run on datasetsList and create for each TerraformResource
-func (g BigQueryGenerator) createResources(dataSetsList *bigquery.DatasetsListCall, ctx context.Context, bigQueryService *bigquery.Service) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g BigQueryGenerator) createDatasets(ctx context.Context, dataSetsList *bigquery.DatasetsListCall, bigQueryService *bigquery.Service) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	if err := dataSetsList.Pages(ctx, func(page *bigquery.DatasetList) error {
 		for _, dataset := range page.Datasets {
 			name := dataset.FriendlyName
@@ -39,14 +39,19 @@ func (g BigQueryGenerator) createResources(dataSetsList *bigquery.DatasetsListCa
 				name = dataset.Id
 			}
 			ID := strings.Split(dataset.Id, ":")[1]
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			resources = append(resources, terraformutils.NewResource(
 				dataset.Id,
 				name,
 				"google_bigquery_dataset",
 				"google",
+				map[string]string{
+					"project":    g.GetArgs()["project"].(string),
+					"dataset_id": ID,
+				},
 				bigQueryAllowEmptyValues,
+				map[string]interface{}{},
 			))
-			resources = append(resources, g.createResourcesTables(ID, ctx, bigQueryService)...)
+			resources = append(resources, g.createResourcesTables(ctx, ID, bigQueryService)...)
 		}
 		return nil
 	}); err != nil {
@@ -55,8 +60,8 @@ func (g BigQueryGenerator) createResources(dataSetsList *bigquery.DatasetsListCa
 	return resources
 }
 
-func (g *BigQueryGenerator) createResourcesTables(datasetID string, ctx context.Context, bigQueryService *bigquery.Service) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g *BigQueryGenerator) createResourcesTables(ctx context.Context, datasetID string, bigQueryService *bigquery.Service) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	tableList := bigQueryService.Tables.List(g.Args["project"].(string), datasetID)
 	if err := tableList.Pages(ctx, func(page *bigquery.TableList) error {
 		for _, table := range page.Tables {
@@ -64,12 +69,19 @@ func (g *BigQueryGenerator) createResourcesTables(datasetID string, ctx context.
 			if name == "" {
 				name = table.Id
 			}
-			resources = append(resources, terraform_utils.NewSimpleResource(
+			ID := strings.Split(table.Id, ".")[1]
+			resources = append(resources, terraformutils.NewResource(
 				table.Id,
 				name,
 				"google_bigquery_table",
 				"google",
+				map[string]string{
+					"project":    g.GetArgs()["project"].(string),
+					"table_id":   ID,
+					"dataset_id": datasetID,
+				},
 				bigQueryAllowEmptyValues,
+				map[string]interface{}{},
 			))
 		}
 		return nil
@@ -89,7 +101,7 @@ func (g *BigQueryGenerator) InitResources() error {
 
 	datasetsList := bigQueryService.Datasets.List(g.GetArgs()["project"].(string))
 
-	g.Resources = g.createResources(datasetsList, ctx, bigQueryService)
+	g.Resources = g.createDatasets(ctx, datasetsList, bigQueryService)
 	return nil
 }
 

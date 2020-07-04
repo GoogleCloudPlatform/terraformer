@@ -16,19 +16,30 @@ package keycloak
 
 import (
 	"errors"
+	"strconv"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/zclconf/go-cty/cty"
 )
 
-type KeycloakProvider struct {
-	terraform_utils.Provider
-	url          string
-	clientID     string
-	clientSecret string
-	realm        string
-	target       string
+type KeycloakProvider struct { //nolint
+	terraformutils.Provider
+	url                   string
+	clientID              string
+	clientSecret          string
+	realm                 string
+	clientTimeout         int
+	caCert                string
+	tlsInsecureSkipVerify bool
+	target                string
+}
+
+func getArg(arg string) string {
+	if arg == "-" {
+		return ""
+	}
+	return arg
 }
 
 func (p *KeycloakProvider) Init(args []string) error {
@@ -36,7 +47,10 @@ func (p *KeycloakProvider) Init(args []string) error {
 	p.clientID = args[1]
 	p.clientSecret = args[2]
 	p.realm = args[3]
-	p.target = args[4]
+	p.clientTimeout, _ = strconv.Atoi(args[4])
+	p.caCert = getArg(args[5])
+	p.tlsInsecureSkipVerify, _ = strconv.ParseBool(args[6])
+	p.target = getArg(args[7])
 	return nil
 }
 
@@ -48,7 +62,7 @@ func (p *KeycloakProvider) GetProviderData(arg ...string) map[string]interface{}
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			p.GetName(): map[string]interface{}{
-				"version": provider_wrapper.GetProviderVersion(p.GetName()),
+				"version": providerwrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}
@@ -56,10 +70,13 @@ func (p *KeycloakProvider) GetProviderData(arg ...string) map[string]interface{}
 
 func (p *KeycloakProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
-		"url":           cty.StringVal(p.url),
-		"client_id":     cty.StringVal(p.clientID),
-		"client_secret": cty.StringVal(p.clientSecret),
-		"realm":         cty.StringVal(p.realm),
+		"url":                      cty.StringVal(p.url),
+		"client_id":                cty.StringVal(p.clientID),
+		"client_secret":            cty.StringVal(p.clientSecret),
+		"realm":                    cty.StringVal(p.realm),
+		"client_timeout":           cty.NumberIntVal(int64(p.clientTimeout)),
+		"root_ca_certificate":      cty.StringVal(p.caCert),
+		"tls_insecure_skip_verify": cty.BoolVal(p.tlsInsecureSkipVerify),
 	})
 }
 
@@ -77,46 +94,24 @@ func (p *KeycloakProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"url":           p.url,
-		"client_id":     p.clientID,
-		"client_secret": p.clientSecret,
-		"realm":         p.realm,
-		"target":        p.target,
+		"url":                      p.url,
+		"client_id":                p.clientID,
+		"client_secret":            p.clientSecret,
+		"realm":                    p.realm,
+		"client_timeout":           p.clientTimeout,
+		"root_ca_certificate":      p.caCert,
+		"tls_insecure_skip_verify": p.tlsInsecureSkipVerify,
+		"target":                   p.target,
 	})
 	return nil
 }
 
-func (p *KeycloakProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	return map[string]terraform_utils.ServiceGenerator{
-		"groups":         &GroupGenerator{},
-		"openid_clients": &OpenIDClientGenerator{},
-		"realms":         &RealmGenerator{},
-		"roles":          &RoleGenerator{},
-		"scopes":         &ScopeGenerator{},
-		"users":          &UserGenerator{},
+func (p *KeycloakProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+	return map[string]terraformutils.ServiceGenerator{
+		"realms": &RealmGenerator{},
 	}
 }
 
 func (KeycloakProvider) GetResourceConnections() map[string]map[string][]string {
-	return map[string]map[string][]string{
-		"openid_clients": {
-			"realms": []string{"realm_id", "self_link"},
-		},
-		"users": {
-			"realms": []string{"realm_id", "self_link"},
-		},
-		"roles": {
-			"openid_clients": []string{"client_id", "self_link"},
-			"realms":         []string{"realm_id", "self_link"},
-		},
-		"scopes": {
-			"openid_clients": []string{"client_id", "self_link"},
-			"realms":         []string{"realm_id", "self_link"},
-		},
-		"groups": {
-			"realms": []string{"realm_id", "self_link"},
-			"roles":  []string{"role_ids", "self_link"},
-			"users":  []string{"members", "username"},
-		},
-	}
+	return map[string]map[string][]string{}
 }

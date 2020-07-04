@@ -16,18 +16,19 @@
 package gcp
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 // Map of supported GCP compute service with code generate
-var ComputeServices = map[string]terraform_utils.ServiceGenerator{
+var ComputeServices = map[string]terraformutils.ServiceGenerator{
 
 	"addresses":                   &AddressesGenerator{},
 	"autoscalers":                 &AutoscalersGenerator{},
 	"backendBuckets":              &BackendBucketsGenerator{},
 	"backendServices":             &BackendServicesGenerator{},
 	"disks":                       &DisksGenerator{},
-	"firewalls":                   &FirewallsGenerator{},
+	"externalVpnGateways":         &ExternalVpnGatewaysGenerator{},
+	"firewall":                    &FirewallGenerator{},
 	"forwardingRules":             &ForwardingRulesGenerator{},
 	"globalAddresses":             &GlobalAddressesGenerator{},
 	"globalForwardingRules":       &GlobalForwardingRulesGenerator{},
@@ -38,19 +39,28 @@ var ComputeServices = map[string]terraform_utils.ServiceGenerator{
 	"instanceGroupManagers":       &InstanceGroupManagersGenerator{},
 	"instanceGroups":              &InstanceGroupsGenerator{},
 	"instanceTemplates":           &InstanceTemplatesGenerator{},
-	"instances":                   &InstancesGenerator{},
 	"interconnectAttachments":     &InterconnectAttachmentsGenerator{},
 	"networkEndpointGroups":       &NetworkEndpointGroupsGenerator{},
 	"networks":                    &NetworksGenerator{},
 	"nodeGroups":                  &NodeGroupsGenerator{},
 	"nodeTemplates":               &NodeTemplatesGenerator{},
+	"packetMirrorings":            &PacketMirroringsGenerator{},
 	"regionAutoscalers":           &RegionAutoscalersGenerator{},
 	"regionBackendServices":       &RegionBackendServicesGenerator{},
 	"regionDisks":                 &RegionDisksGenerator{},
+	"regionHealthChecks":          &RegionHealthChecksGenerator{},
 	"regionInstanceGroupManagers": &RegionInstanceGroupManagersGenerator{},
+	"regionInstanceGroups":        &RegionInstanceGroupsGenerator{},
+	"regionSslCertificates":       &RegionSslCertificatesGenerator{},
+	"regionTargetHttpProxies":     &RegionTargetHttpProxiesGenerator{},
+	"regionTargetHttpsProxies":    &RegionTargetHttpsProxiesGenerator{},
+	"regionUrlMaps":               &RegionUrlMapsGenerator{},
+	"reservations":                &ReservationsGenerator{},
+	"resourcePolicies":            &ResourcePoliciesGenerator{},
 	"routers":                     &RoutersGenerator{},
 	"routes":                      &RoutesGenerator{},
 	"securityPolicies":            &SecurityPoliciesGenerator{},
+	"sslCertificates":             &SslCertificatesGenerator{},
 	"sslPolicies":                 &SslPoliciesGenerator{},
 	"subnetworks":                 &SubnetworksGenerator{},
 	"targetHttpProxies":           &TargetHttpProxiesGenerator{},

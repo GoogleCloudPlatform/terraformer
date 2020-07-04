@@ -18,12 +18,12 @@ import (
 	"errors"
 	"os"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
-type DigitalOceanProvider struct {
-	terraform_utils.Provider
+type DigitalOceanProvider struct { //nolint
+	terraformutils.Provider
 	token string
 }
 
@@ -44,8 +44,7 @@ func (p *DigitalOceanProvider) GetProviderData(arg ...string) map[string]interfa
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"digitalocean": map[string]interface{}{
-				"version": provider_wrapper.GetProviderVersion(p.GetName()),
-				"token":   p.token,
+				"version": providerwrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}
@@ -55,8 +54,8 @@ func (DigitalOceanProvider) GetResourceConnections() map[string]map[string][]str
 	return map[string]map[string][]string{}
 }
 
-func (p *DigitalOceanProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	return map[string]terraform_utils.ServiceGenerator{
+func (p *DigitalOceanProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+	return map[string]terraformutils.ServiceGenerator{
 		"cdn":                &CDNGenerator{},
 		"certificate":        &CertificateGenerator{},
 		"database_cluster":   &DatabaseClusterGenerator{},

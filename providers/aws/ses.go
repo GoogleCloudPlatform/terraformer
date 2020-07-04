@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/ses"
 	"github.com/aws/aws-sdk-go/aws"
 )
@@ -60,7 +60,7 @@ func (g *SesGenerator) loadDomainIdentities(svc *ses.Client) error {
 	}))
 	for p.Next(context.Background()) {
 		for _, identity := range p.CurrentPage().Identities {
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				identity,
 				identity,
 				"aws_ses_domain_identity",
@@ -77,7 +77,7 @@ func (g *SesGenerator) loadMailIdentities(svc *ses.Client) error {
 	}))
 	for p.Next(context.Background()) {
 		for _, identity := range p.CurrentPage().Identities {
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				identity,
 				identity,
 				"aws_ses_email_identity",
@@ -95,7 +95,7 @@ func (g *SesGenerator) loadTemplates(svc *ses.Client) error {
 	}
 
 	for _, templateMetadata := range templates.TemplatesMetadata {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			aws.StringValue(templateMetadata.Name),
 			aws.StringValue(templateMetadata.Name),
 			"aws_ses_template",
@@ -112,7 +112,7 @@ func (g *SesGenerator) loadConfigurationSets(svc *ses.Client) error {
 	}
 
 	for _, configurationSet := range configurationSets.ConfigurationSets {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			aws.StringValue(configurationSet.Name),
 			aws.StringValue(configurationSet.Name),
 			"aws_ses_configuration_set",
@@ -130,7 +130,7 @@ func (g *SesGenerator) loadRuleSets(svc *ses.Client) error {
 
 	for _, ruleSet := range ruleSets.RuleSets {
 		ruleSetName := aws.StringValue(ruleSet.Name)
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			ruleSetName,
 			ruleSetName,
 			"aws_ses_receipt_rule_set",
@@ -143,10 +143,10 @@ func (g *SesGenerator) loadRuleSets(svc *ses.Client) error {
 			return err
 		}
 		for _, rule := range rules.Rules {
-			ruleId := ruleSetName + ":" + *rule.Name
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			ruleID := ruleSetName + ":" + *rule.Name
+			g.Resources = append(g.Resources, terraformutils.NewResource(
 				*rule.Name,
-				ruleId,
+				ruleID,
 				"aws_ses_receipt_rule",
 				"aws",
 				map[string]string{

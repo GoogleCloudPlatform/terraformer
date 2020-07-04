@@ -19,13 +19,13 @@ import (
 	"errors"
 	"os"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"google.golang.org/api/compute/v1"
 )
 
-type GCPProvider struct {
-	terraform_utils.Provider
+type GCPProvider struct { //nolint
+	terraformutils.Provider
 	projectName string
 	region      compute.Region
 }
@@ -93,7 +93,7 @@ func (p *GCPProvider) InitService(serviceName string, verbose bool) error {
 }
 
 // GetGCPSupportService return map of support service for GCP
-func (p *GCPProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
+func (p *GCPProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	services := ComputeServices
 	services["bigQuery"] = &BigQueryGenerator{}
 	services["cloudFunctions"] = &CloudFunctionsGenerator{}
@@ -116,7 +116,7 @@ func (p *GCPProvider) GetSupportedService() map[string]terraform_utils.ServiceGe
 func (GCPProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{
 		"backendBuckets": {"gcs": []string{"bucket_name", "name"}},
-		"firewalls":      {"networks": []string{"network", "self_link"}},
+		"firewall":       {"networks": []string{"network", "self_link"}},
 		"gke": {
 			"networks":    []string{"network", "self_link"},
 			"subnetworks": []string{"subnetwork", "self_link"},
@@ -125,19 +125,58 @@ func (GCPProvider) GetResourceConnections() map[string]map[string][]string {
 			"networks":    []string{"network", "self_link"},
 			"subnetworks": []string{"subnetworks", "self_link"},
 		},
-		"regionBackendServices":       {"healthChecks": []string{"health_checks", "self_link"}},
-		"regionInstanceGroupManagers": {"instanceTemplates": []string{"instance_template", "self_link"}},
+		"regionInstanceGroupManagers": {"instanceTemplates": []string{"version.instance_template", "self_link"}},
+		"instanceGroups":              {"instanceTemplates": []string{"version.instance_template", "self_link"}},
 		"routes":                      {"networks": []string{"network", "self_link"}},
 		"subnetworks":                 {"networks": []string{"network", "self_link"}},
+		"forwardingRules": {
+			"regionBackendServices": []string{"backend_service", "self_link"},
+			"networks":              []string{"network", "self_link"},
+		},
+		"globalForwardingRules": {
+			"targetHttpsProxies": []string{"target", "self_link"},
+			"targetHttpProxies":  []string{"target", "self_link"},
+			"targetSslProxies":   []string{"target", "self_link"},
+		},
+		"targetHttpsProxies": {
+			"urlMaps": []string{"url_map", "self_link"},
+		},
+		"targetHttpProxies": {
+			"urlMaps": []string{"url_map", "self_link"},
+		},
+		"targetSslProxies": {
+			"backendServices": []string{"backend_service", "self_link"},
+		},
+		"backendServices": {
+			"regionInstanceGroupManagers": []string{"backend.group", "instance_group"},
+			"instanceGroupManagers":       []string{"backend.group", "instance_group"},
+			"healthChecks":                []string{"health_checks", "self_link"},
+		},
+		"regionBackendServices": {
+			"regionInstanceGroupManagers": []string{"backend.group", "instance_group"},
+			"instanceGroupManagers":       []string{"backend.group", "instance_group"},
+			"healthChecks":                []string{"health_checks", "self_link"},
+		},
+		"urlMaps": {
+			"backendServices": []string{
+				"default_service", "self_link",
+				"path_matcher.default_service", "self_link",
+				"path_matcher.path_rule.service", "self_link",
+			},
+			"regionBackendServices": []string{
+				"default_service", "self_link",
+				"path_matcher.default_service", "self_link",
+				"path_matcher.path_rule.service", "self_link",
+			},
+		},
 	}
 }
-
 func (p GCPProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			p.GetName(): map[string]interface{}{
 				"project": p.projectName,
-				"version": provider_wrapper.GetProviderVersion(p.GetName()),
+				"version": providerwrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}

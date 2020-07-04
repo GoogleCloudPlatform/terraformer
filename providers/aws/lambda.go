@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
 )
 
@@ -73,7 +73,7 @@ func (g *LambdaGenerator) addFunctions(svc *lambda.Client) error {
 	p := lambda.NewListFunctionsPaginator(svc.ListFunctionsRequest(&lambda.ListFunctionsInput{}))
 	for p.Next(context.Background()) {
 		for _, function := range p.CurrentPage().Functions {
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraformutils.NewResource(
 				*function.FunctionArn,
 				*function.FunctionName,
 				"aws_lambda_function",
@@ -91,7 +91,7 @@ func (g *LambdaGenerator) addFunctions(svc *lambda.Client) error {
 				}))
 			for pi.Next(context.Background()) {
 				for _, functionEventInvokeConfig := range pi.CurrentPage().FunctionEventInvokeConfigs {
-					g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+					g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 						*function.FunctionArn,
 						"feic_"+*functionEventInvokeConfig.FunctionArn,
 						"aws_lambda_function_event_invoke_config",
@@ -112,7 +112,7 @@ func (g *LambdaGenerator) addEventSourceMappings(svc *lambda.Client) error {
 	p := lambda.NewListEventSourceMappingsPaginator(svc.ListEventSourceMappingsRequest(&lambda.ListEventSourceMappingsInput{}))
 	for p.Next(context.Background()) {
 		for _, mapping := range p.CurrentPage().EventSourceMappings {
-			g.Resources = append(g.Resources, terraform_utils.NewResource(
+			g.Resources = append(g.Resources, terraformutils.NewResource(
 				*mapping.UUID,
 				*mapping.UUID,
 				"aws_lambda_event_source_mapping",
@@ -138,7 +138,7 @@ func (g *LambdaGenerator) addLayerVersions(svc *lambda.Client) error {
 			}))
 			for pv.Next(context.Background()) {
 				for _, layerVersion := range pv.CurrentPage().LayerVersions {
-					g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+					g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 						*layerVersion.LayerVersionArn,
 						*layerVersion.LayerVersionArn,
 						"aws_lambda_layer_version",

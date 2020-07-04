@@ -20,7 +20,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"google.golang.org/api/compute/v1"
 )
@@ -34,11 +34,11 @@ type NodeGroupsGenerator struct {
 }
 
 // Run on nodeGroupsList and create for each TerraformResource
-func (g NodeGroupsGenerator) createResources(ctx context.Context, nodeGroupsList *compute.NodeGroupsListCall, zone string) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g NodeGroupsGenerator) createResources(ctx context.Context, nodeGroupsList *compute.NodeGroupsListCall, zone string) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	if err := nodeGroupsList.Pages(ctx, func(page *compute.NodeGroupList) error {
 		for _, obj := range page.Items {
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				zone+"/"+obj.Name,
 				zone+"/"+obj.Name,
 				"google_compute_node_group",

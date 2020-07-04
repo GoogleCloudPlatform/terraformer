@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/elasticbeanstalk"
 )
 
@@ -49,7 +49,7 @@ func (g *BeanstalkGenerator) addApplications(client *elasticbeanstalk.Client) er
 		return err
 	}
 	for _, application := range response.Applications {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			*application.ApplicationName,
 			*application.ApplicationName,
 			"aws_elastic_beanstalk_application",
@@ -67,7 +67,7 @@ func (g *BeanstalkGenerator) addEnvironments(client *elasticbeanstalk.Client) er
 		return err
 	}
 	for _, environment := range response.Environments {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			*environment.EnvironmentId,
 			*environment.EnvironmentName,
 			"aws_elastic_beanstalk_environment",

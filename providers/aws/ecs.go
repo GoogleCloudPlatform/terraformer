@@ -20,7 +20,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 )
@@ -44,7 +44,7 @@ func (g *EcsGenerator) InitResources() error {
 			arnParts := strings.Split(clusterArn, "/")
 			clusterName := arnParts[len(arnParts)-1]
 
-			g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				clusterArn,
 				clusterName,
 				"aws_ecs_cluster",
@@ -72,7 +72,7 @@ func (g *EcsGenerator) InitResources() error {
 					}
 					serviceDetails := serResp.Services[0]
 
-					g.Resources = append(g.Resources, terraform_utils.NewResource(
+					g.Resources = append(g.Resources, terraformutils.NewResource(
 						serviceArn,
 						clusterName+"_"+serviceName,
 						"aws_ecs_service",
@@ -98,7 +98,7 @@ func (g *EcsGenerator) InitResources() error {
 		return err
 	}
 
-	taskDefinitionsMap := map[string]terraform_utils.Resource{}
+	taskDefinitionsMap := map[string]terraformutils.Resource{}
 	taskDefinitionsPage := ecs.NewListTaskDefinitionsPaginator(svc.ListTaskDefinitionsRequest(&ecs.ListTaskDefinitionsInput{}))
 	for taskDefinitionsPage.Next(context.Background()) {
 		for _, taskDefinitionArn := range taskDefinitionsPage.CurrentPage().TaskDefinitionArns {
@@ -108,7 +108,7 @@ func (g *EcsGenerator) InitResources() error {
 
 			// fetch only latest revision of task definitions
 			if val, ok := taskDefinitionsMap[definitionWithFamily]; !ok || val.AdditionalFields["revision"].(int) < revision {
-				taskDefinitionsMap[definitionWithFamily] = terraform_utils.NewResource(
+				taskDefinitionsMap[definitionWithFamily] = terraformutils.NewResource(
 					taskDefinitionArn,
 					definitionWithFamily,
 					"aws_ecs_task_definition",

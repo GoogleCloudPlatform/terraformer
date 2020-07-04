@@ -1,10 +1,9 @@
 package connectivity
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
-
-	"encoding/json"
 	"net/http"
 	"strings"
 
@@ -19,55 +18,53 @@ var securityCredURL = "http://100.100.100.200/latest/meta-data/ram/security-cred
 
 // Config of aliyun
 type Config struct {
-	AccessKey       string
-	SecretKey       string
-	EcsRoleName     string
-	Region          Region
-	RegionId        string
-	SecurityToken   string
-	OtsInstanceName string
-	AccountId       string
-
-	RamRoleArn               string
-	RamRoleSessionName       string
-	RamRolePolicy            string
-	RamRoleSessionExpiration int
-
-	EcsEndpoint           string
-	RdsEndpoint           string
-	SlbEndpoint           string
-	VpcEndpoint           string
-	CenEndpoint           string
-	EssEndpoint           string
-	OssEndpoint           string
-	OnsEndpoint           string
-	AlikafkaEndpoint      string
-	DnsEndpoint           string
-	RamEndpoint           string
-	CsEndpoint            string
-	CrEndpoint            string
-	CdnEndpoint           string
-	KmsEndpoint           string
-	OtsEndpoint           string
-	CmsEndpoint           string
-	PvtzEndpoint          string
-	StsEndpoint           string
-	LogEndpoint           string
-	DrdsEndpoint          string
-	DdsEndpoint           string
-	GpdbEnpoint           string
-	KVStoreEndpoint       string
-	FcEndpoint            string
-	ApigatewayEndpoint    string
-	DatahubEndpoint       string
-	MnsEndpoint           string
-	LocationEndpoint      string
-	ElasticsearchEndpoint string
-	NasEndpoint           string
-	ActionTrailEndpoint   string
-	BssOpenApiEndpoint    string
-	DdoscooEndpoint       string
-	DdosbgpEndpoint       string
+	AccessKey                string
+	SecretKey                string
+	EcsRoleName              string
+	Region                   Region
+	RegionID                 string
+	SecurityToken            string
+	OtsInstanceName          string
+	AccountID                string
+	RAMRoleArn               string
+	RAMRoleSessionName       string
+	RAMRolePolicy            string
+	RAMRoleSessionExpiration int
+	EcsEndpoint              string
+	RdsEndpoint              string
+	SlbEndpoint              string
+	VpcEndpoint              string
+	CenEndpoint              string
+	EssEndpoint              string
+	OssEndpoint              string
+	OnsEndpoint              string
+	AlikafkaEndpoint         string
+	DNSEndpoint              string
+	RAMEndpoint              string
+	CsEndpoint               string
+	CrEndpoint               string
+	CdnEndpoint              string
+	KmsEndpoint              string
+	OtsEndpoint              string
+	CmsEndpoint              string
+	PvtzEndpoint             string
+	StsEndpoint              string
+	LogEndpoint              string
+	DrdsEndpoint             string
+	DdsEndpoint              string
+	GpdbEnpoint              string
+	KVStoreEndpoint          string
+	FcEndpoint               string
+	ApigatewayEndpoint       string
+	DatahubEndpoint          string
+	MnsEndpoint              string
+	LocationEndpoint         string
+	ElasticsearchEndpoint    string
+	NasEndpoint              string
+	ActionTrailEndpoint      string
+	BssOpenAPIEndpoint       string
+	DdoscooEndpoint          string
+	DdosbgpEndpoint          string
 
 	SkipRegionValidation bool
 	ConfigurationSource  string
@@ -83,26 +80,25 @@ func (c *Config) loadAndValidate() error {
 }
 
 func (c *Config) validateRegion() error {
-
 	for _, valid := range ValidRegions {
 		if c.Region == valid {
 			return nil
 		}
 	}
 
-	return fmt.Errorf("Invalid Alibaba Cloud region: %s", c.RegionId)
+	return fmt.Errorf("Invalid Alibaba Cloud region: %s", c.RegionID)
 }
 
-func (c *Config) getAuthCredential(stsSupported bool) auth.Credential {
+func (c *Config) getAuthCredential() auth.Credential {
 	if c.AccessKey != "" && c.SecretKey != "" {
-		if stsSupported && c.SecurityToken != "" {
+		if c.SecurityToken != "" {
 			return credentials.NewStsTokenCredential(c.AccessKey, c.SecretKey, c.SecurityToken)
 		}
-		if c.RamRoleArn != "" {
+		if c.RAMRoleArn != "" {
 			log.Printf("[INFO] Assume RAM Role specified in provider block assume_role { ... }")
 			return credentials.NewRamRoleArnWithPolicyCredential(
-				c.AccessKey, c.SecretKey, c.RamRoleArn,
-				c.RamRoleSessionName, c.RamRolePolicy, c.RamRoleSessionExpiration)
+				c.AccessKey, c.SecretKey, c.RAMRoleArn,
+				c.RAMRoleSessionName, c.RAMRolePolicy, c.RAMRoleSessionExpiration)
 		}
 		return credentials.NewAccessKeyCredential(c.AccessKey, c.SecretKey)
 	}
@@ -125,8 +121,8 @@ func (c *Config) getAuthCredentialByEcsRoleName() (accessKey, secretKey, token s
 	if c.EcsRoleName == "" {
 		return
 	}
-	requestUrl := securityCredURL + c.EcsRoleName
-	httpRequest, err := http.NewRequest(requests.GET, requestUrl, strings.NewReader(""))
+	requestURL := securityCredURL + c.EcsRoleName
+	httpRequest, err := http.NewRequest(requests.GET, requestURL, strings.NewReader(""))
 	if err != nil {
 		err = fmt.Errorf("build sts requests err: %s", err.Error())
 		return
@@ -164,7 +160,7 @@ func (c *Config) getAuthCredentialByEcsRoleName() (accessKey, secretKey, token s
 		err = fmt.Errorf("refresh Ecs sts token err, Code is not Success")
 		return
 	}
-	accessKeyId, err := jmespath.Search("AccessKeyId", data)
+	accessKeyID, err := jmespath.Search("AccessKeyId", data)
 	if err != nil {
 		err = fmt.Errorf("refresh Ecs sts token err, fail to get AccessKeyId: %s", err.Error())
 		return
@@ -180,12 +176,12 @@ func (c *Config) getAuthCredentialByEcsRoleName() (accessKey, secretKey, token s
 		return
 	}
 
-	if accessKeyId == nil || accessKeySecret == nil || securityToken == nil {
+	if accessKeyID == nil || accessKeySecret == nil || securityToken == nil {
 		err = fmt.Errorf("there is no any available accesskey, secret and security token for Ecs role %s", c.EcsRoleName)
 		return
 	}
 
-	return accessKeyId.(string), accessKeySecret.(string), securityToken.(string), nil
+	return accessKeyID.(string), accessKeySecret.(string), securityToken.(string), nil
 }
 
 func (c *Config) MakeConfigByEcsRoleName() error {

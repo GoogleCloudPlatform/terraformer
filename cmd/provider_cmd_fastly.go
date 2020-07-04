@@ -16,7 +16,7 @@ package cmd
 import (
 	fastly_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/fastly"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -40,6 +40,6 @@ func newCmdFastlyImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newFastlyProvider() terraform_utils.ProviderGenerator {
+func newFastlyProvider() terraformutils.ProviderGenerator {
 	return &fastly_terraforming.FastlyProvider{}
 }

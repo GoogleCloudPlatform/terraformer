@@ -17,7 +17,7 @@ package logzio
 import (
 	"strconv"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"github.com/jonboydell/logzio_client/endpoints"
 )
@@ -36,7 +36,7 @@ func (g *AlertNotificationEndpointsGenerator) InitResources() error {
 		return err
 	}
 	for _, endpoint := range endpoints {
-		g.Resources = append(g.Resources, terraform_utils.NewSimpleResource(
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			strconv.FormatInt(endpoint.Id, 10),
 			createSlug(endpoint.Title+"-"+string(endpoint.EndpointType)+"-"+strconv.FormatInt(endpoint.Id, 10)),
 			"logzio_endpoint",

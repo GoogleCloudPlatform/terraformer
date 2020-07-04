@@ -4,12 +4,12 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/OctopusDeploy/go-octopusdeploy/octopusdeploy"
 )
 
-type OctopusDeployService struct {
-	terraform_utils.Service
+type OctopusDeployService struct { //nolint
+	terraformutils.Service
 }
 
 func (s *OctopusDeployService) Client() (*octopusdeploy.Client, error) {

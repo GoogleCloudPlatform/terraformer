@@ -17,7 +17,7 @@ package rabbitmq
 import (
 	"encoding/json"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type VhostGenerator struct {
@@ -32,10 +32,10 @@ type Vhosts []Vhost
 
 var VhostAllowEmptyValues = []string{}
 
-func (g VhostGenerator) createResources(vhosts Vhosts) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g VhostGenerator) createResources(vhosts Vhosts) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, vhost := range vhosts {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			vhost.Name,
 			"vhost_"+normalizeResourceName(vhost.Name),
 			"rabbitmq_vhost",
@@ -52,7 +52,7 @@ func (g *VhostGenerator) InitResources() error {
 		return err
 	}
 	var vhosts Vhosts
-	err = json.Unmarshal([]byte(body), &vhosts)
+	err = json.Unmarshal(body, &vhosts)
 	if err != nil {
 		return err
 	}

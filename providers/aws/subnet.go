@@ -17,7 +17,7 @@ package aws
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
@@ -28,11 +28,10 @@ type SubnetGenerator struct {
 	AWSService
 }
 
-func (SubnetGenerator) createResources(subnets *ec2.DescribeSubnetsOutput) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (SubnetGenerator) createResources(subnets *ec2.DescribeSubnetsOutput) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, subnet := range subnets.Subnets {
-
-		resource := terraform_utils.NewSimpleResource(
+		resource := terraformutils.NewSimpleResource(
 			aws.StringValue(subnet.SubnetId),
 			aws.StringValue(subnet.SubnetId),
 			"aws_subnet",

@@ -17,7 +17,7 @@ package vultr
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/vultr/govultr"
 )
 
@@ -25,10 +25,10 @@ type BareMetalServerGenerator struct {
 	VultrService
 }
 
-func (g BareMetalServerGenerator) createResources(serverList []govultr.BareMetalServer) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g BareMetalServerGenerator) createResources(serverList []govultr.BareMetalServer) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, server := range serverList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			server.BareMetalServerID,
 			server.BareMetalServerID,
 			"vultr_bare_metal_server",

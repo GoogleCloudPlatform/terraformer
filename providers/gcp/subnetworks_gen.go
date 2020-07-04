@@ -19,7 +19,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"google.golang.org/api/compute/v1"
 )
@@ -33,11 +33,11 @@ type SubnetworksGenerator struct {
 }
 
 // Run on subnetworksList and create for each TerraformResource
-func (g SubnetworksGenerator) createResources(ctx context.Context, subnetworksList *compute.SubnetworksListCall) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g SubnetworksGenerator) createResources(ctx context.Context, subnetworksList *compute.SubnetworksListCall) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	if err := subnetworksList.Pages(ctx, func(page *compute.SubnetworkList) error {
 		for _, obj := range page.Items {
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				obj.Name,
 				obj.Name,
 				"google_compute_subnetwork",

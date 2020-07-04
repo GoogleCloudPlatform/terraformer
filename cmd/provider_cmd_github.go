@@ -18,7 +18,7 @@ import (
 	"strings"
 
 	github_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/github"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -51,6 +51,6 @@ func newCmdGithubImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newGitHubProvider() terraform_utils.ProviderGenerator {
+func newGitHubProvider() terraformutils.ProviderGenerator {
 	return &github_terraforming.GithubProvider{}
 }

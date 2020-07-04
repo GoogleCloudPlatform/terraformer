@@ -17,7 +17,7 @@ package digitalocean
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/digitalocean/godo"
 )
 
@@ -36,9 +36,7 @@ func (g VolumeGenerator) listVolumes(ctx context.Context, client *godo.Client) (
 			return nil, err
 		}
 
-		for _, volume := range volumes {
-			list = append(list, volume)
-		}
+		list = append(list, volumes...)
 
 		// if we are at the last page, break out the for loop
 		if resp.Links == nil || resp.Links.IsLastPage() {
@@ -57,10 +55,10 @@ func (g VolumeGenerator) listVolumes(ctx context.Context, client *godo.Client) (
 	return list, nil
 }
 
-func (g VolumeGenerator) createResources(volumeList []godo.Volume) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g VolumeGenerator) createResources(volumeList []godo.Volume) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, volume := range volumeList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			volume.ID,
 			volume.Name,
 			"digitalocean_volume",

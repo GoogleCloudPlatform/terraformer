@@ -17,7 +17,7 @@ import (
 	"strconv"
 
 	kubernetes_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/kubernetes"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -41,6 +41,6 @@ func newCmdKubernetesImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newKubernetesProvider() terraform_utils.ProviderGenerator {
+func newKubernetesProvider() terraformutils.ProviderGenerator {
 	return &kubernetes_terraforming.KubernetesProvider{}
 }

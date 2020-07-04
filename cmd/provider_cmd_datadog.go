@@ -15,7 +15,7 @@ package cmd
 
 import (
 	datadog_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/datadog"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -41,6 +41,6 @@ func newCmdDatadogImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newDataDogProvider() terraform_utils.ProviderGenerator {
+func newDataDogProvider() terraformutils.ProviderGenerator {
 	return &datadog_terraforming.DatadogProvider{}
 }

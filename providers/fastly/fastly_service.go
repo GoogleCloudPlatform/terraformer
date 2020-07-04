@@ -15,9 +15,9 @@
 package fastly
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
-type FastlyService struct {
-	terraform_utils.Service
+type FastlyService struct { //nolint
+	terraformutils.Service
 }

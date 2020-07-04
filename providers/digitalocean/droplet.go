@@ -18,7 +18,7 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/digitalocean/godo"
 )
 
@@ -37,9 +37,7 @@ func (g DropletGenerator) listDroplets(ctx context.Context, client *godo.Client)
 			return nil, err
 		}
 
-		for _, droplet := range droplets {
-			list = append(list, droplet)
-		}
+		list = append(list, droplets...)
 
 		// if we are at the last page, break out the for loop
 		if resp.Links == nil || resp.Links.IsLastPage() {
@@ -58,10 +56,10 @@ func (g DropletGenerator) listDroplets(ctx context.Context, client *godo.Client)
 	return list, nil
 }
 
-func (g DropletGenerator) createResources(dropletList []godo.Droplet) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g DropletGenerator) createResources(dropletList []godo.Droplet) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, droplet := range dropletList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			strconv.Itoa(droplet.ID),
 			droplet.Name,
 			"digitalocean_droplet",

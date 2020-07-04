@@ -18,12 +18,12 @@ import (
 	"errors"
 	"os"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
-type LinodeProvider struct {
-	terraform_utils.Provider
+type LinodeProvider struct { //nolint
+	terraformutils.Provider
 	token string
 }
 
@@ -44,8 +44,7 @@ func (p *LinodeProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"linode": map[string]interface{}{
-				"version": provider_wrapper.GetProviderVersion(p.GetName()),
-				"token":   p.token,
+				"version": providerwrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}
@@ -55,8 +54,8 @@ func (LinodeProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{}
 }
 
-func (p *LinodeProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	return map[string]terraform_utils.ServiceGenerator{
+func (p *LinodeProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+	return map[string]terraformutils.ServiceGenerator{
 		"domain":       &DomainGenerator{},
 		"image":        &ImageGenerator{},
 		"instance":     &InstanceGenerator{},

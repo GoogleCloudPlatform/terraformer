@@ -16,7 +16,7 @@ package cmd
 import (
 	digitalocean_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/digitalocean"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
@@ -41,6 +41,6 @@ func newCmdDigitalOceanImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func newDigitalOceanProvider() terraform_utils.ProviderGenerator {
+func newDigitalOceanProvider() terraformutils.ProviderGenerator {
 	return &digitalocean_terraforming.DigitalOceanProvider{}
 }

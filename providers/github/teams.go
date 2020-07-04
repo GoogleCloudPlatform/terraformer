@@ -19,7 +19,7 @@ import (
 	"log"
 	"strconv"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	githubAPI "github.com/google/go-github/v25/github"
 	"golang.org/x/oauth2"
@@ -29,10 +29,10 @@ type TeamsGenerator struct {
 	GithubService
 }
 
-func (g *TeamsGenerator) createTeamsResources(ctx context.Context, teams []*githubAPI.Team, client *githubAPI.Client) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g *TeamsGenerator) createTeamsResources(ctx context.Context, teams []*githubAPI.Team, client *githubAPI.Client) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	for _, team := range teams {
-		resource := terraform_utils.NewSimpleResource(
+		resource := terraformutils.NewSimpleResource(
 			strconv.FormatInt(team.GetID(), 10),
 			team.GetName(),
 			"github_team",
@@ -47,14 +47,14 @@ func (g *TeamsGenerator) createTeamsResources(ctx context.Context, teams []*gith
 	return resources
 }
 
-func (g *TeamsGenerator) createTeamMembersResources(ctx context.Context, team *githubAPI.Team, client *githubAPI.Client) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g *TeamsGenerator) createTeamMembersResources(ctx context.Context, team *githubAPI.Team, client *githubAPI.Client) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	members, _, err := client.Teams.ListTeamMembers(ctx, team.GetID(), nil)
 	if err != nil {
 		log.Println(err)
 	}
 	for _, member := range members {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			strconv.FormatInt(team.GetID(), 10)+":"+member.GetLogin(),
 			team.GetName()+"_"+member.GetLogin(),
 			"github_team_membership",
@@ -65,14 +65,14 @@ func (g *TeamsGenerator) createTeamMembersResources(ctx context.Context, team *g
 	return resources
 }
 
-func (g *TeamsGenerator) createTeamRepositoriesResources(ctx context.Context, team *githubAPI.Team, client *githubAPI.Client) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g *TeamsGenerator) createTeamRepositoriesResources(ctx context.Context, team *githubAPI.Team, client *githubAPI.Client) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	repos, _, err := client.Teams.ListTeamRepos(ctx, team.GetID(), nil)
 	if err != nil {
 		log.Println(err)
 	}
 	for _, repo := range repos {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			strconv.FormatInt(team.GetID(), 10)+":"+repo.GetName(),
 			team.GetName()+"_"+repo.GetName(),
 			"github_team_repository",
@@ -111,7 +111,6 @@ func (g *TeamsGenerator) InitResources() error {
 	}
 
 	return nil
-
 }
 
 // PostConvertHook for connect between team and members

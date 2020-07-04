@@ -17,7 +17,7 @@ package vultr
 import (
 	"context"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/vultr/govultr"
 )
 
@@ -25,10 +25,10 @@ type SnapshotGenerator struct {
 	VultrService
 }
 
-func (g SnapshotGenerator) createResources(snapshotList []govultr.Snapshot) []terraform_utils.Resource {
-	var resources []terraform_utils.Resource
+func (g SnapshotGenerator) createResources(snapshotList []govultr.Snapshot) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, snapshot := range snapshotList {
-		resources = append(resources, terraform_utils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewSimpleResource(
 			snapshot.SnapshotID,
 			snapshot.SnapshotID,
 			"vultr_snapshot",

@@ -15,7 +15,7 @@
 package alicloud
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aliyun/alibaba-cloud-sdk-go/sdk/requests"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/vpc"
 )
@@ -25,8 +25,8 @@ type NatGatewayGenerator struct {
 	AliCloudService
 }
 
-func resourceFromNatGatewayResponse(natGateway vpc.NatGateway) terraform_utils.Resource {
-	return terraform_utils.NewResource(
+func resourceFromNatGatewayResponse(natGateway vpc.NatGateway) terraformutils.Resource {
+	return terraformutils.NewResource(
 		natGateway.NatGatewayId,                      // id
 		natGateway.NatGatewayId+"__"+natGateway.Name, // name
 		"alicloud_nat_gateway",
@@ -52,7 +52,7 @@ func (g *NatGatewayGenerator) InitResources() error {
 	for remaining > 0 {
 		raw, err := client.WithVpcClient(func(vpcClient *vpc.Client) (interface{}, error) {
 			request := vpc.CreateDescribeNatGatewaysRequest()
-			request.RegionId = client.RegionId
+			request.RegionId = client.RegionID
 			request.PageSize = requests.NewInteger(pageSize)
 			request.PageNumber = requests.NewInteger(pageNumber)
 			return vpcClient.DescribeNatGateways(request)
@@ -62,10 +62,7 @@ func (g *NatGatewayGenerator) InitResources() error {
 		}
 
 		response := raw.(*vpc.DescribeNatGatewaysResponse)
-		for _, NatGateway := range response.NatGateways.NatGateway {
-			allNatGateways = append(allNatGateways, NatGateway)
-
-		}
+		allNatGateways = append(allNatGateways, response.NatGateways.NatGateway...)
 		remaining = response.TotalCount - pageNumber*pageSize
 		pageNumber++
 	}

@@ -18,12 +18,12 @@ import (
 	"errors"
 	"os"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
-type HerokuProvider struct {
-	terraform_utils.Provider
+type HerokuProvider struct { //nolint
+	terraformutils.Provider
 	email  string
 	apiKey string
 }
@@ -50,9 +50,8 @@ func (p *HerokuProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"heroku": map[string]interface{}{
-				"version": provider_wrapper.GetProviderVersion(p.GetName()),
+				"version": providerwrapper.GetProviderVersion(p.GetName()),
 				"email":   p.email,
-				"api_key": p.apiKey,
 			},
 		},
 	}
@@ -62,12 +61,12 @@ func (HerokuProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{}
 }
 
-func (p *HerokuProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	return map[string]terraform_utils.ServiceGenerator{
-		"account_feature":  &AccountFeatureGenerator{},
-		"addon":            &AddOnGenerator{},
-		"addon_attachment": &AddOnAttachmentGenerator{},
-		"app":              &AppGenerator{},
+func (p *HerokuProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+	return map[string]terraformutils.ServiceGenerator{
+		"account_feature":        &AccountFeatureGenerator{},
+		"addon":                  &AddOnGenerator{},
+		"addon_attachment":       &AddOnAttachmentGenerator{},
+		"app":                    &AppGenerator{},
 		"app_config_association": &AppConfigAssociationGenerator{},
 		"app_feature":            &AppFeatureGenerator{},
 		"app_webhook":            &AppWebhookGenerator{},

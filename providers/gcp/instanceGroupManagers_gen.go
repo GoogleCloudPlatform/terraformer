@@ -20,7 +20,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"google.golang.org/api/compute/v1"
 )
@@ -34,11 +34,11 @@ type InstanceGroupManagersGenerator struct {
 }
 
 // Run on instanceGroupManagersList and create for each TerraformResource
-func (g InstanceGroupManagersGenerator) createResources(ctx context.Context, instanceGroupManagersList *compute.InstanceGroupManagersListCall, zone string) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g InstanceGroupManagersGenerator) createResources(ctx context.Context, instanceGroupManagersList *compute.InstanceGroupManagersListCall, zone string) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	if err := instanceGroupManagersList.Pages(ctx, func(page *compute.InstanceGroupManagerList) error {
 		for _, obj := range page.Items {
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				obj.Name,
 				obj.Name,
 				"google_compute_instance_group_manager",

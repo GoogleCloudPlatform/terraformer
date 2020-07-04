@@ -19,7 +19,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"google.golang.org/api/compute/v1"
 )
@@ -33,11 +33,11 @@ type GlobalAddressesGenerator struct {
 }
 
 // Run on globalAddressesList and create for each TerraformResource
-func (g GlobalAddressesGenerator) createResources(ctx context.Context, globalAddressesList *compute.GlobalAddressesListCall) []terraform_utils.Resource {
-	resources := []terraform_utils.Resource{}
+func (g GlobalAddressesGenerator) createResources(ctx context.Context, globalAddressesList *compute.GlobalAddressesListCall) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	if err := globalAddressesList.Pages(ctx, func(page *compute.AddressList) error {
 		for _, obj := range page.Items {
-			resources = append(resources, terraform_utils.NewResource(
+			resources = append(resources, terraformutils.NewResource(
 				obj.Name,
 				obj.Name,
 				"google_compute_global_address",

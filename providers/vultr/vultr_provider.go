@@ -18,12 +18,12 @@ import (
 	"errors"
 	"os"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils"
-	"github.com/GoogleCloudPlatform/terraformer/terraform_utils/provider_wrapper"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
-type VultrProvider struct {
-	terraform_utils.Provider
+type VultrProvider struct { //nolint
+	terraformutils.Provider
 	apiKey string
 }
 
@@ -44,8 +44,7 @@ func (p *VultrProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"vultr": map[string]interface{}{
-				"version": provider_wrapper.GetProviderVersion(p.GetName()),
-				"api_key": p.apiKey,
+				"version": providerwrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}
@@ -55,8 +54,8 @@ func (VultrProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{}
 }
 
-func (p *VultrProvider) GetSupportedService() map[string]terraform_utils.ServiceGenerator {
-	return map[string]terraform_utils.ServiceGenerator{
+func (p *VultrProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+	return map[string]terraformutils.ServiceGenerator{
 		"bare_metal_server": &BareMetalServerGenerator{},
 		"block_storage":     &BlockStorageGenerator{},
 		"dns_domain":        &DNSDomainGenerator{},
