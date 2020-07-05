@@ -136,20 +136,14 @@ func (g *CosmosDBGenerator) listAndAddForDatabaseAccounts() ([]terraformutils.Re
 		if err != nil {
 			return nil, err
 		}
-		for _, table := range tables {
-			resources = append(resources, table)
-		}
+		resources = append(resources, tables...)
 
 		sqlDatabases, sqlContainers, err := g.listSQLDatabasesAndContainersBehind(id.ResourceGroup, *account.Name)
 		if err != nil {
 			return nil, err
 		}
-		for _, sqlDatabase := range sqlDatabases {
-			resources = append(resources, sqlDatabase)
-		}
-		for _, sqlContainer := range sqlContainers {
-			resources = append(resources, sqlContainer)
-		}
+		resources = append(resources, sqlDatabases...)
+		resources = append(resources, sqlContainers...)
 	}
 
 	return resources, nil
