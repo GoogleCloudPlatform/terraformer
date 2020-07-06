@@ -716,6 +716,11 @@ List of supported Azure resources:
 
 *   `analysis`
     * `azurerm_analysis_services_server`
+*   `cosmosdb`
+	* `azurerm_cosmosdb_account`
+	* `azurerm_cosmosdb_sql_container`
+	* `azurerm_cosmosdb_sql_database`
+	* `azurerm_cosmosdb_table`
 *   `database`
 	* `azurerm_mariadb_configuration`
 	* `azurerm_mariadb_database`
