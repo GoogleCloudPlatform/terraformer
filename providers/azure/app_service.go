@@ -2,6 +2,7 @@ package azure
 
 import (
 	"context"
+	"log"
 
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/hashicorp/go-azure-helpers/authentication"
@@ -20,17 +21,23 @@ func (g AppServiceGenerator) listApps() ([]terraformutils.Resource, error) {
 
 	appServiceClient := web.NewAppsClient(g.Args["config"].(authentication.Config).SubscriptionID)
 	appServiceClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
-	apps, err := appServiceClient.List(ctx)
+	appsIterator, err := appServiceClient.ListComplete(ctx)
 	if err != nil {
 		return nil, err
 	}
-	for _, site := range apps.Values() {
+	for appsIterator.NotDone() {
+		site := appsIterator.Value()
 		resources = append(resources, terraformutils.NewSimpleResource(
 			*site.ID,
 			*site.Name,
 			"azurerm_app_service",
 			g.ProviderName,
 			[]string{}))
+
+		if err := appsIterator.NextWithContext(ctx); err != nil {
+			log.Println(err)
+			return resources, err
+		}
 	}
 
 	return resources, nil
