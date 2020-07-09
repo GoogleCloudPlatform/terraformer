@@ -145,7 +145,7 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 
 func (p *AzureProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"app_service":            				&AppServiceGenerator{},
+		"app_service":                          &AppServiceGenerator{},
 		"analysis":                             &AnalysisGenerator{},
 		"cosmosdb":                             &CosmosDBGenerator{},
 		"database":                             &DatabasesGenerator{},
