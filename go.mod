@@ -7,6 +7,7 @@ require (
 	cloud.google.com/go/logging v1.0.0
 	cloud.google.com/go/storage v1.6.0
 	github.com/Azure/azure-sdk-for-go v42.0.0+incompatible
+	github.com/Azure/azure-storage-blob-go v0.10.0
 	github.com/Azure/go-autorest/autorest v0.10.0
 	github.com/OctopusDeploy/go-octopusdeploy v1.6.0
 	github.com/aliyun/alibaba-cloud-sdk-go v1.60.295
