@@ -721,6 +721,9 @@ List of supported Azure resources:
     * `azurerm_network_security_group`
 *   `resource_group`
     * `azurerm_resource_group`
+*   `security_center`
+    * `azurerm_security_center_contact`
+    * `azurerm_security_center_subscription_pricing`
 *   `storage_account`
     * `azurerm_storage_account`
 *   `virtual_machine`
