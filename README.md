@@ -748,6 +748,11 @@ List of supported Azure resources:
 	* `azurerm_sql_virtual_network_rule`
 *   `disk`
     * `azurerm_managed_disk`
+*   `load_balancer`
+    * `azurerm_lb`
+    * `azurerm_lb_backend_address_pool`
+    * `azurerm_lb_nat_rule`
+    * `azurerm_lb_probe`
 *   `network_interface`
     * `azurerm_network_interface`
 *   `network_security_group`
