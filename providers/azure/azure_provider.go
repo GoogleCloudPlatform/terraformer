@@ -151,6 +151,7 @@ func (p *AzureProvider) GetSupportedService() map[string]terraformutils.ServiceG
 		"database":                             &DatabasesGenerator{},
 		"disk":                                 &DiskGenerator{},
 		"keyvault":                             &KeyVaultGenerator{},
+		"load_balancer":                        &LoadBalancerGenerator{},
 		"network_interface":                    &NetworkInterfaceGenerator{},
 		"network_security_group":               &NetworkSecurityGroupGenerator{},
 		"resource_group":                       &ResourceGroupGenerator{},
