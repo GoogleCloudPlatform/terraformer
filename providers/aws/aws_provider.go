@@ -300,6 +300,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"vpc_peering":       &AwsFacade{service: &VpcPeeringConnectionGenerator{}},
 		"vpn_connection":    &AwsFacade{service: &VpnConnectionGenerator{}},
 		"vpn_gateway":       &AwsFacade{service: &VpnGatewayGenerator{}},
+		"workspaces":        &AwsFacade{service: &WorkspacesGenerator{}},
 		"xray":              &AwsFacade{service: &XrayGenerator{}},
 	}
 }
