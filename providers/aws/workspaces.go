@@ -38,10 +38,10 @@ func (g *WorkspacesGenerator) InitResources() error {
 	var resources []terraformutils.Resource
 	for p.Next(context.Background()) {
 		for _, workspace := range p.CurrentPage().Workspaces {
-			directoryId := aws.StringValue(workspace.DirectoryId)
+			directoryID := aws.StringValue(workspace.DirectoryId)
 			resources = append(resources, terraformutils.NewSimpleResource(
-				directoryId,
-				directoryId,
+				directoryID,
+				directoryID,
 				"aws_workspaces_directory",
 				"aws",
 				workspacesAllowEmptyValues))
