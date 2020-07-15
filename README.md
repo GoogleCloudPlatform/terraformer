@@ -649,6 +649,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_vpn_connection`
 *   `vpn_gateway`
     * `aws_vpn_gateway`
+*   `workspaces`
+    * `aws_workspaces_directory`
 *   `xray`
     * `aws_xray_sampling_rule`
 
