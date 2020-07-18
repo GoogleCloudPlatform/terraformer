@@ -148,6 +148,7 @@ func (p *AzureProvider) GetSupportedService() map[string]terraformutils.ServiceG
 		"app_service":                          &AppServiceGenerator{},
 		"analysis":                             &AnalysisGenerator{},
 		"cosmosdb":                             &CosmosDBGenerator{},
+		"container":                            &ContainerGenerator{},
 		"database":                             &DatabasesGenerator{},
 		"disk":                                 &DiskGenerator{},
 		"keyvault":                             &KeyVaultGenerator{},
