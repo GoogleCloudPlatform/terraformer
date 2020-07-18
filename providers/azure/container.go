@@ -18,6 +18,7 @@ import (
 	"context"
 	"log"
 
+	"github.com/Azure/azure-sdk-for-go/services/containerinstance/mgmt/2018-10-01/containerinstance"
 	"github.com/Azure/azure-sdk-for-go/services/containerregistry/mgmt/2019-05-01/containerregistry"
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -28,54 +29,34 @@ type ContainerGenerator struct {
 	AzureService
 }
 
-// func (g *ContainerGenerator) listSQLDatabasesAndContainersBehind(resourceGroupName string, accountName string) ([]terraformutils.Resource, []terraformutils.Resource, error) {
-// 	var resourcesDatabase []terraformutils.Resource
-// 	var resourcesContainer []terraformutils.Resource
-// 	ctx := context.Background()
-// 	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
-// 	SQLResourcesClient := documentdb.NewSQLResourcesClient(subscriptionID, subscriptionID)
-// 	SQLResourcesClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
+func (g *ContainerGenerator) listAndAddForContainerGroup() ([]terraformutils.Resource, error) {
+	var resources []terraformutils.Resource
+	ctx := context.Background()
+	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
+	ContainerGroupsClient := containerinstance.NewContainerGroupsClient(subscriptionID)
+	ContainerGroupsClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
-// 	sqlDatabases, err := SQLResourcesClient.ListSQLDatabases(ctx, resourceGroupName, accountName)
-// 	if err != nil {
-// 		return nil, nil, err
-// 	}
-// 	for _, sqlDatabase := range *sqlDatabases.Value {
-// 		// NOTE:
-// 		// For a similar reason as
-// 		// https://github.com/terraform-providers/terraform-provider-azurerm/issues/7472#issuecomment-650684349
-// 		// The cosmosdb resource format change is NOT yet addressed in terraform provider
-// 		// This line is a workaround to convert to old format, and might be removed if they deprecate the old format
-// 		sqlDatabaseIDInOldFormat := strings.Replace(*sqlDatabase.ID, "sqlDatabases", "databases", 1)
-// 		resourcesDatabase = append(resourcesDatabase, terraformutils.NewSimpleResource(
-// 			sqlDatabaseIDInOldFormat,
-// 			*sqlDatabase.Name,
-// 			"azurerm_cosmosdb_sql_database",
-// 			g.ProviderName,
-// 			[]string{}))
+	containerGroupIterator, err := ContainerGroupsClient.ListComplete(ctx)
+	if err != nil {
+		return nil, err
+	}
+	for containerGroupIterator.NotDone() {
+		containerGroup := containerGroupIterator.Value()
+		resources = append(resources, terraformutils.NewSimpleResource(
+			*containerGroup.ID,
+			*containerGroup.Name,
+			"azurerm_container_group",
+			g.ProviderName,
+			[]string{}))
 
-// 		sqlContainers, err := SQLResourcesClient.ListSQLContainers(ctx, resourceGroupName, accountName, *sqlDatabase.Name)
-// 		if err != nil {
-// 			return nil, nil, err
-// 		}
-// 		for _, sqlContainer := range *sqlContainers.Value {
-// 			// NOTE:
-// 			// For a similar reason as
-// 			// https://github.com/terraform-providers/terraform-provider-azurerm/issues/7472#issuecomment-650684349
-// 			// The cosmosdb resource format change is NOT yet addressed in terraform provider
-// 			// This line is a workaround to convert to old format, and might be removed if they deprecate the old format
-// 			sqlContainerIDInOldFormat := strings.Replace(*sqlContainer.ID, "sqlDatabases", "databases", 1)
-// 			resourcesContainer = append(resourcesContainer, terraformutils.NewSimpleResource(
-// 				sqlContainerIDInOldFormat,
-// 				*sqlContainer.Name,
-// 				"azurerm_cosmosdb_sql_container",
-// 				g.ProviderName,
-// 				[]string{}))
-// 		}
-// 	}
+		if err := containerGroupIterator.Next(); err != nil {
+			log.Println(err)
+			break
+		}
+	}
 
-// 	return resourcesDatabase, resourcesContainer, nil
-// }
+	return resources, nil
+}
 
 func (g *ContainerGenerator) listRegistryWebhooks(resourceGroupName string, registryName string) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
@@ -147,6 +128,7 @@ func (g *ContainerGenerator) listAndAddForContainerRegistry() ([]terraformutils.
 
 func (g *ContainerGenerator) InitResources() error {
 	functions := []func() ([]terraformutils.Resource, error){
+		g.listAndAddForContainerGroup,
 		g.listAndAddForContainerRegistry,
 	}
 
