@@ -720,6 +720,9 @@ List of supported Azure resources:
     * `azurerm_analysis_services_server`
 *   `app_service`
     * `azurerm_app_service`
+*   `container`
+    * `azurerm_container_registry`
+    * `azurerm_container_registry_webhook`
 *   `cosmosdb`
 	* `azurerm_cosmosdb_account`
 	* `azurerm_cosmosdb_sql_container`
