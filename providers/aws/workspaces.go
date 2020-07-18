@@ -39,10 +39,17 @@ func (g *WorkspacesGenerator) InitResources() error {
 	for p.Next(context.Background()) {
 		for _, workspace := range p.CurrentPage().Workspaces {
 			directoryID := aws.StringValue(workspace.DirectoryId)
+			workspaceID := aws.StringValue(workspace.WorkspaceId)
 			resources = append(resources, terraformutils.NewSimpleResource(
 				directoryID,
 				directoryID,
 				"aws_workspaces_directory",
+				"aws",
+				workspacesAllowEmptyValues))
+			resources = append(resources, terraformutils.NewSimpleResource(
+				workspaceID,
+				workspaceID,
+				"aws_workspaces_workspace",
 				"aws",
 				workspacesAllowEmptyValues))
 		}
