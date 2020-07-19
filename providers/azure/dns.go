@@ -45,63 +45,64 @@ func (g *DNSGenerator) listRecordSets(resourceGroupName string, zoneName string,
 		// NOTE:
 		// Format example: "Microsoft.Network/dnszones/AAAA"
 		recordType := *recordSet.Type
-		if strings.HasSuffix(recordType, "/A") {
+		switch {
+		case strings.HasSuffix(recordType, "/A"):
 			resources = append(resources, terraformutils.NewSimpleResource(
 				*recordSet.ID,
 				*recordSet.Name,
 				"azurerm_dns_a_record",
 				g.ProviderName,
 				[]string{}))
-		} else if strings.HasSuffix(recordType, "/AAAA") {
+		case strings.HasSuffix(recordType, "/AAAA"):
 			resources = append(resources, terraformutils.NewSimpleResource(
 				*recordSet.ID,
 				*recordSet.Name,
 				"azurerm_dns_aaaa_record",
 				g.ProviderName,
 				[]string{}))
-		} else if strings.HasSuffix(recordType, "/CAA") {
+		case strings.HasSuffix(recordType, "/CAA"):
 			resources = append(resources, terraformutils.NewSimpleResource(
 				*recordSet.ID,
 				*recordSet.Name,
 				"azurerm_dns_caa_record",
 				g.ProviderName,
 				[]string{}))
-		} else if strings.HasSuffix(recordType, "/CNAME") {
+		case strings.HasSuffix(recordType, "/CNAME"):
 			resources = append(resources, terraformutils.NewSimpleResource(
 				*recordSet.ID,
 				*recordSet.Name,
 				"azurerm_dns_cname_record",
 				g.ProviderName,
 				[]string{}))
-		} else if strings.HasSuffix(recordType, "/NS") {
+		case strings.HasSuffix(recordType, "/NS"):
 			resources = append(resources, terraformutils.NewSimpleResource(
 				*recordSet.ID,
 				*recordSet.Name,
 				"azurerm_dns_ns_record",
 				g.ProviderName,
 				[]string{}))
-		} else if strings.HasSuffix(recordType, "/MX") {
+		case strings.HasSuffix(recordType, "/MX"):
 			resources = append(resources, terraformutils.NewSimpleResource(
 				*recordSet.ID,
 				*recordSet.Name,
 				"azurerm_dns_mx_record",
 				g.ProviderName,
 				[]string{}))
-		} else if strings.HasSuffix(recordType, "/PTR") {
+		case strings.HasSuffix(recordType, "/PTR"):
 			resources = append(resources, terraformutils.NewSimpleResource(
 				*recordSet.ID,
 				*recordSet.Name,
 				"azurerm_dns_ptr_record",
 				g.ProviderName,
 				[]string{}))
-		} else if strings.HasSuffix(recordType, "/SRV") {
+		case strings.HasSuffix(recordType, "/SRV"):
 			resources = append(resources, terraformutils.NewSimpleResource(
 				*recordSet.ID,
 				*recordSet.Name,
 				"azurerm_dns_srv_record",
 				g.ProviderName,
 				[]string{}))
-		} else if strings.HasSuffix(recordType, "/TXT") {
+		case strings.HasSuffix(recordType, "/TXT"):
 			resources = append(resources, terraformutils.NewSimpleResource(
 				*recordSet.ID,
 				*recordSet.Name,
