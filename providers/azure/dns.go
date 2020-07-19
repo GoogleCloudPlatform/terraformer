@@ -44,72 +44,28 @@ func (g *DNSGenerator) listRecordSets(resourceGroupName string, zoneName string,
 		recordSet := recordSetIterator.Value()
 		// NOTE:
 		// Format example: "Microsoft.Network/dnszones/AAAA"
-		recordType := *recordSet.Type
-		switch {
-		case strings.HasSuffix(recordType, "/A"):
+		recordTypeSplitted := strings.Split(*recordSet.Type, "/")
+		recordType := recordTypeSplitted[len(recordTypeSplitted)-1]
+		typeResourceNameMap := map[string]string{
+			"A":     "azurerm_dns_a_record",
+			"AAAA":  "azurerm_dns_aaaa_record",
+			"CAA":   "azurerm_dns_caa_record",
+			"CNAME": "azurerm_dns_cname_record",
+			"MX":    "azurerm_dns_mx_record",
+			"NS":    "azurerm_dns_ns_record",
+			"PTR":   "azurerm_dns_ptr_record",
+			"SRV":   "azurerm_dns_srv_record",
+			"TXT":   "azurerm_dns_txt_record",
+		}
+		if resName, exist := typeResourceNameMap[recordType]; exist {
 			resources = append(resources, terraformutils.NewSimpleResource(
 				*recordSet.ID,
 				*recordSet.Name,
-				"azurerm_dns_a_record",
-				g.ProviderName,
-				[]string{}))
-		case strings.HasSuffix(recordType, "/AAAA"):
-			resources = append(resources, terraformutils.NewSimpleResource(
-				*recordSet.ID,
-				*recordSet.Name,
-				"azurerm_dns_aaaa_record",
-				g.ProviderName,
-				[]string{}))
-		case strings.HasSuffix(recordType, "/CAA"):
-			resources = append(resources, terraformutils.NewSimpleResource(
-				*recordSet.ID,
-				*recordSet.Name,
-				"azurerm_dns_caa_record",
-				g.ProviderName,
-				[]string{}))
-		case strings.HasSuffix(recordType, "/CNAME"):
-			resources = append(resources, terraformutils.NewSimpleResource(
-				*recordSet.ID,
-				*recordSet.Name,
-				"azurerm_dns_cname_record",
-				g.ProviderName,
-				[]string{}))
-		case strings.HasSuffix(recordType, "/NS"):
-			resources = append(resources, terraformutils.NewSimpleResource(
-				*recordSet.ID,
-				*recordSet.Name,
-				"azurerm_dns_ns_record",
-				g.ProviderName,
-				[]string{}))
-		case strings.HasSuffix(recordType, "/MX"):
-			resources = append(resources, terraformutils.NewSimpleResource(
-				*recordSet.ID,
-				*recordSet.Name,
-				"azurerm_dns_mx_record",
-				g.ProviderName,
-				[]string{}))
-		case strings.HasSuffix(recordType, "/PTR"):
-			resources = append(resources, terraformutils.NewSimpleResource(
-				*recordSet.ID,
-				*recordSet.Name,
-				"azurerm_dns_ptr_record",
-				g.ProviderName,
-				[]string{}))
-		case strings.HasSuffix(recordType, "/SRV"):
-			resources = append(resources, terraformutils.NewSimpleResource(
-				*recordSet.ID,
-				*recordSet.Name,
-				"azurerm_dns_srv_record",
-				g.ProviderName,
-				[]string{}))
-		case strings.HasSuffix(recordType, "/TXT"):
-			resources = append(resources, terraformutils.NewSimpleResource(
-				*recordSet.ID,
-				*recordSet.Name,
-				"azurerm_dns_txt_record",
+				resName,
 				g.ProviderName,
 				[]string{}))
 		}
+
 		if err := recordSetIterator.Next(); err != nil {
 			log.Println(err)
 			break
