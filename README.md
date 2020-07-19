@@ -760,7 +760,11 @@ List of supported Azure resources:
     * `azurerm_dns_aaaa_record`
     * `azurerm_dns_caa_record`
     * `azurerm_dns_cname_record`
+    * `azurerm_dns_mx_record`
     * `azurerm_dns_ns_record`
+    * `azurerm_dns_ptr_record`
+    * `azurerm_dns_srv_record`
+    * `azurerm_dns_txt_record`
     * `azurerm_dns_zone`
 *   `load_balancer`
     * `azurerm_lb`

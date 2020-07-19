@@ -80,6 +80,34 @@ func (g *DnsGenerator) listRecordSets(resourceGroupName string, zoneName string,
 				"azurerm_dns_ns_record",
 				g.ProviderName,
 				[]string{}))
+		} else if strings.HasSuffix(recordType, "/MX") {
+			resources = append(resources, terraformutils.NewSimpleResource(
+				*recordSet.ID,
+				*recordSet.Name,
+				"azurerm_dns_mx_record",
+				g.ProviderName,
+				[]string{}))
+		} else if strings.HasSuffix(recordType, "/PTR") {
+			resources = append(resources, terraformutils.NewSimpleResource(
+				*recordSet.ID,
+				*recordSet.Name,
+				"azurerm_dns_ptr_record",
+				g.ProviderName,
+				[]string{}))
+		} else if strings.HasSuffix(recordType, "/SRV") {
+			resources = append(resources, terraformutils.NewSimpleResource(
+				*recordSet.ID,
+				*recordSet.Name,
+				"azurerm_dns_srv_record",
+				g.ProviderName,
+				[]string{}))
+		} else if strings.HasSuffix(recordType, "/TXT") {
+			resources = append(resources, terraformutils.NewSimpleResource(
+				*recordSet.ID,
+				*recordSet.Name,
+				"azurerm_dns_txt_record",
+				g.ProviderName,
+				[]string{}))
 		}
 		if err := recordSetIterator.Next(); err != nil {
 			log.Println(err)
