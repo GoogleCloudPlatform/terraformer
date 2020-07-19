@@ -25,11 +25,11 @@ import (
 	"github.com/hashicorp/go-azure-helpers/authentication"
 )
 
-type DnsGenerator struct {
+type DNSGenerator struct {
 	AzureService
 }
 
-func (g *DnsGenerator) listRecordSets(resourceGroupName string, zoneName string, top *int32) ([]terraformutils.Resource, error) {
+func (g *DNSGenerator) listRecordSets(resourceGroupName string, zoneName string, top *int32) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
@@ -118,15 +118,15 @@ func (g *DnsGenerator) listRecordSets(resourceGroupName string, zoneName string,
 	return resources, nil
 }
 
-func (g *DnsGenerator) listAndAddForDnsZone() ([]terraformutils.Resource, error) {
+func (g *DNSGenerator) listAndAddForDNSZone() ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
-	DnsZonesClient := dns.NewZonesClient(subscriptionID)
-	DnsZonesClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
+	DNSZonesClient := dns.NewZonesClient(subscriptionID)
+	DNSZonesClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	var pageSize int32 = 50
-	dnsZoneIterator, err := DnsZonesClient.ListComplete(ctx, &pageSize)
+	dnsZoneIterator, err := DNSZonesClient.ListComplete(ctx, &pageSize)
 	if err != nil {
 		return nil, err
 	}
@@ -159,9 +159,9 @@ func (g *DnsGenerator) listAndAddForDnsZone() ([]terraformutils.Resource, error)
 	return resources, nil
 }
 
-func (g *DnsGenerator) InitResources() error {
+func (g *DNSGenerator) InitResources() error {
 	functions := []func() ([]terraformutils.Resource, error){
-		g.listAndAddForDnsZone,
+		g.listAndAddForDNSZone,
 	}
 
 	for _, f := range functions {
