@@ -775,6 +775,16 @@ List of supported Azure resources:
     * `azurerm_network_interface`
 *   `network_security_group`
     * `azurerm_network_security_group`
+*   `private_dns`
+    * `azurerm_private_dns_a_record`
+    * `azurerm_private_dns_aaaa_record`
+    * `azurerm_private_dns_cname_record`
+    * `azurerm_private_dns_mx_record`
+    * `azurerm_private_dns_ptr_record`
+    * `azurerm_private_dns_srv_record`
+    * `azurerm_private_dns_txt_record`
+    * `azurerm_private_dns_zone`
+    * `azurerm_private_dns_zone_virtual_network_link`
 *   `resource_group`
     * `azurerm_resource_group`
 *   `scaleset`
