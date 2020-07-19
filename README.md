@@ -755,6 +755,13 @@ List of supported Azure resources:
 	* `azurerm_sql_virtual_network_rule`
 *   `disk`
     * `azurerm_managed_disk`
+*   `dns`
+    * `azurerm_dns_a_record`
+    * `azurerm_dns_aaaa_record`
+    * `azurerm_dns_caa_record`
+    * `azurerm_dns_cname_record`
+    * `azurerm_dns_ns_record`
+    * `azurerm_dns_zone`
 *   `load_balancer`
     * `azurerm_lb`
     * `azurerm_lb_backend_address_pool`
