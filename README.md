@@ -785,7 +785,7 @@ List of supported Azure resources:
     * `azurerm_private_dns_txt_record`
     * `azurerm_private_dns_zone`
     * `azurerm_private_dns_zone_virtual_network_link`
-*   `pubilc`
+*   `pubilc_ip`
     * `azurerm_public_ip`
     * `azurerm_public_ip_prefix`
 *   `resource_group`
