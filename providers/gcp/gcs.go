@@ -194,10 +194,12 @@ func (g *GcsGenerator) PostConvertHook() error {
 		if resource.InstanceInfo.Type != "google_storage_bucket_iam_policy" {
 			continue
 		}
-		policy := resource.Item["policy_data"].(string)
-		g.Resources[i].Item["policy_data"] = fmt.Sprintf(`<<POLICY
+		if _, exist := resource.Item["policy_data"]; exist {
+			policy := resource.Item["policy_data"].(string)
+			g.Resources[i].Item["policy_data"] = fmt.Sprintf(`<<POLICY
 %s
 POLICY`, policy)
+		}
 	}
 	return nil
 }
