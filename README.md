@@ -30,6 +30,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [NS1](#use-with-ns1)
         * [OpenStack](#use-with-openstack)
         * [Vultr](#use-with-vultr)
+        * [Yandex.Cloud](#use-with-yandex)
     * Infrastructure Software
         * [Kubernetes](#use-with-kubernetes)
         * [OctopusDeploy](#use-with-octopusdeploy)
@@ -195,6 +196,7 @@ Links to download Terraform Providers:
     * NS1 provider >1.8.3 - [here](https://releases.hashicorp.com/terraform-provider-ns1/)
     * OpenStack provider >1.21.1 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
     * Vultr provider >1.0.5 - [here](https://releases.hashicorp.com/terraform-provider-vultr/)
+    * Yandex provider >0.42.0 - [here](https://releases.hashicorp.com/terraform-provider-yandex/)
 * Infrastructure Software
     * Kubernetes provider >=1.9.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
     * RabbitMQ provider >=1.1.0 - [here](https://releases.hashicorp.com/terraform-provider-rabbitmq/)
@@ -1075,6 +1077,30 @@ List of supported Vultr resources:
     * `vultr_startup_script`
 *   `user`
     * `vultr_user`
+
+### Use with Yandex
+
+Example:
+
+```
+export YC_TOKEN=[YANDEX_CLOUD_OAUTH_TOKEN]
+export YC_FOLDER_ID=[YANDEX_FOLDER_ID]
+./terraformer import yandex -r subnet
+```
+
+List of supported Yandex resources:
+
+*   `instance`
+    * `yandex_compute_instance`
+*   `disk`
+    * `yandex_compute_disk`
+*   `subnet`
+    * `yandex_vpc_subnet`
+*   `network`
+    * `yandex_vpc_network`
+
+Your `tf` and `tfstate` files are written by default to
+`generated/yandex/service`.
 
 ### Use with Kubernetes
 
