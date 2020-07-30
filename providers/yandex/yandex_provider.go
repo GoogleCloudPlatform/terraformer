@@ -37,6 +37,11 @@ func (p *YandexProvider) Init(args []string) error {
 	if len(args) > 0 {
 		//  first args is target folder ID
 		p.folderID = args[0]
+	} else {
+		if os.Getenv("YC_FOLDER_ID") == "" {
+			return errors.New("set YC_FOLDER_ID env var")
+		}
+		p.folderID = os.Getenv("YC_FOLDER_ID")
 	}
 
 	return nil
