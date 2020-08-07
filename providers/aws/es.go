@@ -66,6 +66,9 @@ func (g *EsGenerator) PostConvertHook() error {
 		if r.InstanceState.Attributes["cognito_options.0.enabled"] == "false" {
 			delete(r.Item, "cognito_options")
 		}
+		if r.InstanceState.Attributes["cluster_config.0.warm_count"] == "0" {
+			delete(r.Item["cluster_config"].([]interface{})[0].(map[string]interface{}), "warm_count")
+		}
 	}
 	return nil
 }
