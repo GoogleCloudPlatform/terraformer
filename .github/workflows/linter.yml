@@ -1,3 +1,5 @@
+name: linter
+
 on:
   push:
     branches:
@@ -5,7 +7,7 @@ on:
   pull_request:
     branches:
     - master
-name: linter
+
 jobs:
   linter:
     name: golangci-lint
@@ -16,5 +18,5 @@ jobs:
     - name: golangci-lint
       uses: reviewdog/action-golangci-lint@v1
       with:
-        github_token: ${{ secrets.github_token }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
         tool_name: golangci-lint

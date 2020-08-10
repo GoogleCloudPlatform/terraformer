@@ -1,3 +1,5 @@
+name: tests
+
 on:
   push:
     branches:
@@ -5,7 +7,7 @@ on:
   pull_request:
     branches:
     - master
-name: tests
+
 jobs:
   test:
     strategy:
