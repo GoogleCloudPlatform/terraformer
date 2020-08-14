@@ -36,7 +36,7 @@ func newCmdVultrImporter(options ImportOptions) *cobra.Command {
 	}
 
 	cmd.AddCommand(listCmd(newVultrProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "server", "vultr_server=name1:name2:name3")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "server", "server=name1:name2:name3")
 	return cmd
 }
 

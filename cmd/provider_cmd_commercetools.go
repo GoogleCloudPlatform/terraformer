@@ -66,7 +66,7 @@ func newCmdCommercetoolsImporter(options ImportOptions) *cobra.Command {
 		},
 	}
 	cmd.AddCommand(listCmd(newCommercetoolsProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "types", "commercetools_type=id1:id2:id4")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "types", "type=id1:id2:id4")
 	return cmd
 }
 

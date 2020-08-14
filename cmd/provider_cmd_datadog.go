@@ -35,7 +35,7 @@ func newCmdDatadogImporter(options ImportOptions) *cobra.Command {
 		},
 	}
 	cmd.AddCommand(listCmd(newDataDogProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "monitors,users", "datadog_monitor=id1:id2:id4")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "monitors,users", "monitor=id1:id2:id4")
 	cmd.PersistentFlags().StringVarP(&apiKey, "api-key", "", "", "YOUR_DATADOG_API_KEY or env param DATADOG_API_KEY")
 	cmd.PersistentFlags().StringVarP(&appKey, "app-key", "", "", "YOUR_DATADOG_APP_KEY or env param DATADOG_APP_KEY")
 	return cmd

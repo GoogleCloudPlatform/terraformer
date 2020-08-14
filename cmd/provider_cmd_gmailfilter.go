@@ -40,7 +40,7 @@ func newCmdGmailfilterImporter(options ImportOptions) *cobra.Command {
 	}
 
 	cmd.AddCommand(listCmd(newGmailfilterProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "label,filter", "gmailfilter_label=name1:name2")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "label,filter", "label=name1:name2")
 	cmd.PersistentFlags().StringVarP(&creds, "credentials", "", "", "/path/to/client_secret.json")
 	cmd.PersistentFlags().StringVarP(&impersonatedUserEmail, "email", "", "", "foobar@example.com")
 	return cmd

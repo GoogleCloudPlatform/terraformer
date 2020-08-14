@@ -78,7 +78,7 @@ Flags:
   -b, --bucket string         gs://terraform-state
   -c, --connect                (default true)
   -С, --compact                (default false)
-  -f, --filter strings        google_compute_firewall=id1:id2:id4
+  -f, --filter strings        compute_firewall=id1:id2:id4
   -h, --help                  help for google
   -O, --output string         output format hcl or json (default "hcl")
   -o, --path-output string     (default "generated")
@@ -108,7 +108,7 @@ Filtering is based on Terraform resource ID patterns. To find valid ID patterns 
 Example usage:
 
 ```
-terraformer import aws --resources=vpc,subnet --filter=aws_vpc=myvpcid --regions=eu-west-1
+terraformer import aws --resources=vpc,subnet --filter=vpc=myvpcid --regions=eu-west-1
 ```
 Will only import the vpc with id `myvpcid`. This form of filters can help when it's necessary to select resources by its identifiers.
 
@@ -225,7 +225,7 @@ Example:
 
 ```
 terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --connect=true --regions=europe-west1,europe-west4 --projects=aaa,fff
-terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --filter=google_compute_firewall=rule1:rule2:rule3 --regions=europe-west1 --projects=aaa,fff
+terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --filter=compute_firewall=rule1:rule2:rule3 --regions=europe-west1 --projects=aaa,fff
 ```
 
 List of supported GCP services:
@@ -387,7 +387,7 @@ Example:
 
 ```
  terraformer import aws --resources=vpc,subnet --connect=true --regions=eu-west-1 --profile=prod
- terraformer import aws --resources=vpc,subnet --filter=aws_vpc=vpc_id1:vpc_id2:vpc_id3 --regions=eu-west-1
+ terraformer import aws --resources=vpc,subnet --filter=vpc=vpc_id1:vpc_id2:vpc_id3 --regions=eu-west-1
 ```
 
 #### Profiles support
@@ -682,7 +682,7 @@ terraformer import aws --resources=ec2_instance,ebs --filter=Type=ec2_instance;N
 ```
 Will work as same as example above with a change the filter will be applicable only to `ec2_instance` resources.
 
-Due to fact API Gateway generates a lot of resources, it's possible to issue a filtering query to retrieve resources related to a given REST API by tags. To fetch resources related to a REST API resource with a tag `STAGE` and value `dev`, add parameter `--filter="Type=aws_api_gateway_rest_api;Name=tags.STAGE;Value=dev"`.
+Due to fact API Gateway generates a lot of resources, it's possible to issue a filtering query to retrieve resources related to a given REST API by tags. To fetch resources related to a REST API resource with a tag `STAGE` and value `dev`, add parameter `--filter="Type=api_gateway_rest_api;Name=tags.STAGE;Value=dev"`.
 
 #### SQS queues retrieval
 
@@ -1108,7 +1108,7 @@ Example:
 
 ```
  terraformer import kubernetes --resources=deployments,services,storageclasses
- terraformer import kubernetes --resources=deployments,services,storageclasses --filter=kubernetes_deployment=name1:name2:name3
+ terraformer import kubernetes --resources=deployments,services,storageclasses --filter=deployment=name1:name2:name3
 ```
 
 All Kubernetes resources that are currently supported by the Kubernetes provider, are also supported by this module. Here is the list of resources which are currently supported by Kubernetes provider v.1.4:
@@ -1194,7 +1194,7 @@ Example:
  export RABBITMQ_PASSWORD=[RABBITMQ_PASSWORD]
 
  terraformer import rabbitmq --resources=vhosts,queues,exchanges
- terraformer import rabbitmq --resources=vhosts,queues,exchanges --filter=rabbitmq_vhost=name1:name2:name3
+ terraformer import rabbitmq --resources=vhosts,queues,exchanges --filter=vhost=name1:name2:name3
 ```
 
 All RabbitMQ resources that are currently supported by the RabbitMQ provider, are also supported by this module. Here is the list of resources which are currently supported by RabbitMQ provider v.1.1.0:
@@ -1256,7 +1256,7 @@ Example:
 
 ```
  ./terraformer import github --organizations=YOUR_ORGANIZATION --resources=repositories --token=YOUR_TOKEN // or GITHUB_TOKEN in env
- ./terraformer import github --organizations=YOUR_ORGANIZATION --resources=repositories --filter=github_repository=id1:id2:id4 --token=YOUR_TOKEN // or GITHUB_TOKEN in env
+ ./terraformer import github --organizations=YOUR_ORGANIZATION --resources=repositories --filter=repository=id1:id2:id4 --token=YOUR_TOKEN // or GITHUB_TOKEN in env
 ```
 
 Supports only organizational resources. List of supported resources:
@@ -1292,7 +1292,7 @@ Example:
 
 ```
  ./terraformer import datadog --resources=monitor --api-key=YOUR_DATADOG_API_KEY // or DATADOG_API_KEY in env --app-key=YOUR_DATADOG_APP_KEY // or DATADOG_APP_KEY in env
- ./terraformer import datadog --resources=monitor --filter=datadog_monitor=id1:id2:id4 --api-key=YOUR_DATADOG_API_KEY // or DATADOG_API_KEY in env --app-key=YOUR_DATADOG_APP_KEY // or DATADOG_APP_KEY in env
+ ./terraformer import datadog --resources=monitor --filter=monitor=id1:id2:id4 --api-key=YOUR_DATADOG_API_KEY // or DATADOG_API_KEY in env --app-key=YOUR_DATADOG_APP_KEY // or DATADOG_APP_KEY in env
 ```
 
 List of supported Datadog services:
@@ -1345,7 +1345,7 @@ Example:
  export KEYCLOAK_CLIENT_SECRET=[KEYCLOAK_CLIENT_SECRET]
 
  terraformer import keycloak --resources=realms
- terraformer import keycloak --resources=realms --filter=keycloak_realm=name1:name2:name3
+ terraformer import keycloak --resources=realms --filter=realm=name1:name2:name3
  terraformer import keycloak --resources=realms --targets realmA,realmB
 ```
 
