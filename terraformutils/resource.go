@@ -51,7 +51,7 @@ type ResourceFilter struct {
 }
 
 func (rf *ResourceFilter) Filter(resource Resource) bool {
-	if !rf.IsApplicable(strings.TrimPrefix(resource.InstanceInfo.Type, resource.Provider + "_")) {
+	if !rf.IsApplicable(strings.TrimPrefix(resource.InstanceInfo.Type, resource.Provider+"_")) {
 		return true
 	}
 	var vals []interface{}
