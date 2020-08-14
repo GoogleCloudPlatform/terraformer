@@ -36,7 +36,7 @@ func newCmdFastlyImporter(options ImportOptions) *cobra.Command {
 	}
 
 	cmd.AddCommand(listCmd(newFastlyProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "service_v1", "fastly_service_v1=id1:id2:id3")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "service_v1", "service_v1=id1:id2:id3")
 	return cmd
 }
 

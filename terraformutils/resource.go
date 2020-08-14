@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
@@ -44,13 +45,13 @@ type ApplicableFilter interface {
 
 type ResourceFilter struct {
 	ApplicableFilter
-	ResourceName     string
+	ServiceName      string
 	FieldPath        string
 	AcceptableValues []string
 }
 
 func (rf *ResourceFilter) Filter(resource Resource) bool {
-	if !rf.IsApplicable(resource.InstanceInfo.Type) {
+	if !rf.IsApplicable(strings.TrimPrefix(resource.InstanceInfo.Type, resource.Provider + "_")) {
 		return true
 	}
 	var vals []interface{}
@@ -72,8 +73,8 @@ func (rf *ResourceFilter) Filter(resource Resource) bool {
 	return false
 }
 
-func (rf *ResourceFilter) IsApplicable(resourceName string) bool {
-	return rf.ResourceName == "" || rf.ResourceName == resourceName
+func (rf *ResourceFilter) IsApplicable(serviceName string) bool {
+	return rf.ServiceName == "" || rf.ServiceName == serviceName
 }
 
 func (rf *ResourceFilter) isInitial() bool {
