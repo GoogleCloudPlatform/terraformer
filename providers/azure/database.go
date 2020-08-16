@@ -40,7 +40,15 @@ func (g *DatabasesGenerator) getMariaDBServers() ([]mariadb.Server, error) {
 	Client := mariadb.NewServersClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
-	Servers, err := Client.List(ctx)
+	var (
+		Servers mariadb.ServerListResult
+		err     error
+	)
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		Servers, err = Client.ListByResourceGroup(ctx, rg)
+	} else {
+		Servers, err = Client.List(ctx)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -205,7 +213,16 @@ func (g *DatabasesGenerator) getMySQLServers() ([]mysql.Server, error) {
 	Client := mysql.NewServersClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
-	Servers, err := Client.List(ctx)
+	var (
+		Servers mysql.ServerListResult
+		err     error
+	)
+
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		Servers, err = Client.ListByResourceGroup(ctx, rg)
+	} else {
+		Servers, err = Client.List(ctx)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -373,7 +390,17 @@ func (g *DatabasesGenerator) getPostgreSQLServers() ([]postgresql.Server, error)
 	Client := postgresql.NewServersClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
-	Servers, err := Client.List(ctx)
+	var (
+		Servers postgresql.ServerListResult
+		err     error
+	)
+
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		Servers, err = Client.ListByResourceGroup(ctx, rg)
+	} else {
+		Servers, err = Client.List(ctx)
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -533,7 +560,16 @@ func (g *DatabasesGenerator) getSQLServers() ([]sql.Server, error) {
 	Client := sql.NewServersClient(SubscriptionID)
 	Client.Authorizer = Authorizer
 
-	ServerPages, err := Client.List(ctx)
+	var (
+		ServerPages sql.ServerListResultPage
+		err         error
+	)
+
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		ServerPages, err = Client.ListByResourceGroup(ctx, rg)
+	} else {
+		ServerPages, err = Client.List(ctx)
+	}
 	if err != nil {
 		return nil, err
 	}

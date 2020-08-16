@@ -29,8 +29,9 @@ import (
 
 type AzureProvider struct { //nolint
 	terraformutils.Provider
-	config     authentication.Config
-	authorizer autorest.Authorizer
+	config        authentication.Config
+	authorizer    autorest.Authorizer
+	resourceGroup string
 }
 
 func (p *AzureProvider) setEnvConfig() error {
@@ -105,6 +106,7 @@ func (p *AzureProvider) Init(args []string) error {
 		return err
 	}
 	p.authorizer = authorizer
+	p.resourceGroup = args[0]
 
 	return nil
 }
@@ -180,8 +182,9 @@ func (p *AzureProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"config":     p.config,
-		"authorizer": p.authorizer,
+		"config":         p.config,
+		"authorizer":     p.authorizer,
+		"resource_group": p.resourceGroup,
 	})
 	return nil
 }

@@ -68,7 +68,7 @@ func (g *DNSGenerator) listRecordSets(resourceGroupName string, zoneName string,
 
 		if err := recordSetIterator.Next(); err != nil {
 			log.Println(err)
-			break
+			return resources, err
 		}
 
 	}
@@ -83,7 +83,17 @@ func (g *DNSGenerator) listAndAddForDNSZone() ([]terraformutils.Resource, error)
 	DNSZonesClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	var pageSize int32 = 50
-	dnsZoneIterator, err := DNSZonesClient.ListComplete(ctx, &pageSize)
+
+	var (
+		dnsZoneIterator dns.ZoneListResultIterator
+		err             error
+	)
+
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		dnsZoneIterator, err = DNSZonesClient.ListByResourceGroupComplete(ctx, rg, &pageSize)
+	} else {
+		dnsZoneIterator, err = DNSZonesClient.ListComplete(ctx, &pageSize)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +119,7 @@ func (g *DNSGenerator) listAndAddForDNSZone() ([]terraformutils.Resource, error)
 
 		if err := dnsZoneIterator.Next(); err != nil {
 			log.Println(err)
-			break
+			return resources, err
 		}
 	}
 
