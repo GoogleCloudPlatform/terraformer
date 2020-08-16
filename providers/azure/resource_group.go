@@ -51,6 +51,22 @@ func (g *ResourceGroupGenerator) InitResources() error {
 	groupsClient := resources.NewGroupsClient(g.Args["config"].(authentication.Config).SubscriptionID)
 
 	groupsClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
+
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		group, err := groupsClient.Get(ctx, rg)
+		if err != nil {
+			return err
+		}
+		g.Resources = []terraformutils.Resource{
+			terraformutils.NewSimpleResource(
+				*group.ID,
+				*group.Name,
+				"azurerm_resource_group",
+				"azurerm",
+				[]string{}),
+		}
+		return nil
+	}
 	output, err := groupsClient.ListComplete(ctx, "", nil)
 	if err != nil {
 		return err

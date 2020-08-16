@@ -18,11 +18,12 @@ type StorageContainerGenerator struct {
 	AzureService
 }
 
-func NewStorageContainerGenerator(subscriptionID string, authorizer autorest.Authorizer) *StorageContainerGenerator {
+func NewStorageContainerGenerator(subscriptionID string, authorizer autorest.Authorizer, rg string) *StorageContainerGenerator {
 	storageContainerGenerator := new(StorageContainerGenerator)
 	storageContainerGenerator.Args = map[string]interface{}{}
 	storageContainerGenerator.Args["config"] = authentication.Config{SubscriptionID: subscriptionID}
 	storageContainerGenerator.Args["authorizer"] = authorizer
+	storageContainerGenerator.Args["resource_group"] = rg
 
 	return storageContainerGenerator
 }
@@ -33,13 +34,12 @@ func (g StorageContainerGenerator) ListBlobContainers() ([]terraformutils.Resour
 	blobContainersClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 	ctx := context.Background()
 
-	accountListResultIterator, err := g.getStorageAccountsIterator()
+	accounts, err := g.getStorageAccounts()
 	if err != nil {
 		return containerResources, err
 	}
 
-	for accountListResultIterator.NotDone() {
-		storageAccount := accountListResultIterator.Value()
+	for _, storageAccount := range accounts {
 		parsedStorageAccountResourceID, err := ParseAzureResourceID(*storageAccount.ID)
 		if err != nil {
 			break
@@ -68,23 +68,42 @@ func (g StorageContainerGenerator) ListBlobContainers() ([]terraformutils.Resour
 				return containerResources, err
 			}
 		}
-
-		if err := accountListResultIterator.NextWithContext(ctx); err != nil {
-			return containerResources, err
-		}
 	}
 
 	return containerResources, nil
 }
 
-func (g *StorageContainerGenerator) getStorageAccountsIterator() (storage.AccountListResultIterator, error) {
+func (g *StorageContainerGenerator) getStorageAccounts() ([]storage.Account, error) {
 	ctx := context.Background()
 	accountsClient := storage.NewAccountsClient(g.Args["config"].(authentication.Config).SubscriptionID)
 
 	accountsClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
-	accountsIterator, err := accountsClient.ListComplete(ctx)
+	var accounts []storage.Account
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		accountsResult, err := accountsClient.ListByResourceGroup(ctx, rg)
+		if err != nil {
+			return nil, err
+		}
+		if paccounts := accountsResult.Value; paccounts != nil {
+			for _, account := range *paccounts {
+				accounts = append(accounts, account)
+			}
+		}
+	} else {
+		accountsIterator, err := accountsClient.ListComplete(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for accountsIterator.NotDone() {
+			account := accountsIterator.Value()
+			accounts = append(accounts, account)
+			if err := accountsIterator.NextWithContext(ctx); err != nil {
+				return accounts, err
+			}
+		}
+	}
 
-	return accountsIterator, err
+	return accounts, nil
 }
 
 func (g *StorageContainerGenerator) InitResources() error {

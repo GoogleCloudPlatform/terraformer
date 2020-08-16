@@ -28,7 +28,11 @@ type KeyVaultGenerator struct {
 	AzureService
 }
 
-func (g KeyVaultGenerator) createResources(resourceListResultIterator keyvault.ResourceListResultIterator) []terraformutils.Resource {
+func (g KeyVaultGenerator) createResources(ctx context.Context, client keyvault.VaultsClient) ([]terraformutils.Resource, error) {
+	resourceListResultIterator, err := client.ListComplete(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
 	var resources []terraformutils.Resource
 	for resourceListResultIterator.NotDone() {
 		vault := resourceListResultIterator.Value()
@@ -38,12 +42,34 @@ func (g KeyVaultGenerator) createResources(resourceListResultIterator keyvault.R
 			"azurerm_key_vault",
 			"azurerm",
 			[]string{}))
-		if err := resourceListResultIterator.Next(); err != nil {
+		if err := resourceListResultIterator.NextWithContext(ctx); err != nil {
 			log.Println(err)
-			break
+			return resources, err
 		}
 	}
-	return resources
+	return resources, nil
+}
+
+func (g KeyVaultGenerator) createResourcesByResourceGroup(ctx context.Context, rg string, client keyvault.VaultsClient) ([]terraformutils.Resource, error) {
+	iterator, err := client.ListByResourceGroupComplete(ctx, rg, nil)
+	if err != nil {
+		return nil, err
+	}
+	var resources []terraformutils.Resource
+	for iterator.NotDone() {
+		vault := iterator.Value()
+		resources = append(resources, terraformutils.NewSimpleResource(
+			*vault.ID,
+			*vault.Name,
+			"azurerm_key_vault",
+			"azurerm",
+			[]string{}))
+		if err := iterator.NextWithContext(ctx); err != nil {
+			log.Println(err)
+			return resources, err
+		}
+	}
+	return resources, nil
 }
 
 func (g *KeyVaultGenerator) InitResources() error {
@@ -51,10 +77,12 @@ func (g *KeyVaultGenerator) InitResources() error {
 	vaultsClient := keyvault.NewVaultsClient(g.Args["config"].(authentication.Config).SubscriptionID)
 
 	vaultsClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
-	output, err := vaultsClient.ListComplete(ctx, nil)
-	if err != nil {
+
+	var err error
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		g.Resources, err = g.createResourcesByResourceGroup(ctx, rg, vaultsClient)
 		return err
 	}
-	g.Resources = g.createResources(output)
-	return nil
+	g.Resources, err = g.createResources(ctx, vaultsClient)
+	return err
 }

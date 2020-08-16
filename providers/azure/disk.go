@@ -28,7 +28,7 @@ type DiskGenerator struct {
 	AzureService
 }
 
-func (g DiskGenerator) createResources(diskListIterator compute.DiskListIterator) []terraformutils.Resource {
+func (g DiskGenerator) createResources(diskListIterator compute.DiskListIterator) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	for diskListIterator.NotDone() {
 		disk := diskListIterator.Value()
@@ -40,10 +40,10 @@ func (g DiskGenerator) createResources(diskListIterator compute.DiskListIterator
 			[]string{}))
 		if err := diskListIterator.Next(); err != nil {
 			log.Println(err)
-			break
+			return resources, err
 		}
 	}
-	return resources
+	return resources, nil
 }
 
 func (g *DiskGenerator) InitResources() error {
@@ -51,10 +51,20 @@ func (g *DiskGenerator) InitResources() error {
 	disksClient := compute.NewDisksClient(g.Args["config"].(authentication.Config).SubscriptionID)
 
 	disksClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
-	output, err := disksClient.ListComplete(ctx)
+
+	var (
+		output compute.DiskListIterator
+		err    error
+	)
+
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		output, err = disksClient.ListByResourceGroupComplete(ctx, rg)
+	} else {
+		output, err = disksClient.ListComplete(ctx)
+	}
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(output)
-	return nil
+	g.Resources, err = g.createResources(output)
+	return err
 }

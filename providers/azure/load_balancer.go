@@ -157,7 +157,17 @@ func (g *LoadBalancerGenerator) listAndAddForLoadBalancers() ([]terraformutils.R
 
 	LoadBalancersClient := network.NewLoadBalancersClient(subscriptionID)
 	LoadBalancersClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
-	loadBalancerIterator, err := LoadBalancersClient.ListAllComplete(ctx)
+
+	var (
+		loadBalancerIterator network.LoadBalancerListResultIterator
+		err                  error
+	)
+
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		loadBalancerIterator, err = LoadBalancersClient.ListComplete(ctx, rg)
+	} else {
+		loadBalancerIterator, err = LoadBalancersClient.ListAllComplete(ctx)
+	}
 
 	if err != nil {
 		return nil, err
@@ -196,7 +206,7 @@ func (g *LoadBalancerGenerator) listAndAddForLoadBalancers() ([]terraformutils.R
 
 		if err := loadBalancerIterator.Next(); err != nil {
 			log.Println(err)
-			break
+			return resources, err
 		}
 	}
 

@@ -28,34 +28,41 @@ type NetworkSecurityGroupGenerator struct {
 	AzureService
 }
 
-func (g NetworkSecurityGroupGenerator) createResources(securityGroupListResultPage network.SecurityGroupListResultPage) []terraformutils.Resource {
+func (g NetworkSecurityGroupGenerator) createResources(securityGroupListResult network.SecurityGroupListResultIterator) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
-	for securityGroupListResultPage.NotDone() {
-		nsgs := securityGroupListResultPage.Values()
-		for _, nsg := range nsgs {
-			resources = append(resources, terraformutils.NewSimpleResource(
-				*nsg.ID,
-				*nsg.Name,
-				"azurerm_network_security_group",
-				"azurerm",
-				[]string{}))
-		}
-		if err := securityGroupListResultPage.Next(); err != nil {
+	for securityGroupListResult.NotDone() {
+		nsg := securityGroupListResult.Value()
+		resources = append(resources, terraformutils.NewSimpleResource(
+			*nsg.ID,
+			*nsg.Name,
+			"azurerm_network_security_group",
+			"azurerm",
+			[]string{}))
+		if err := securityGroupListResult.Next(); err != nil {
 			log.Println(err)
-			break
+			return resources, err
 		}
 	}
-	return resources
+	return resources, nil
 }
 
 func (g *NetworkSecurityGroupGenerator) InitResources() error {
 	ctx := context.Background()
 	securityGroupsClient := network.NewSecurityGroupsClient(g.Args["config"].(authentication.Config).SubscriptionID)
 	securityGroupsClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
-	output, err := securityGroupsClient.ListAll(ctx)
+
+	var (
+		output network.SecurityGroupListResultIterator
+		err    error
+	)
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		output, err = securityGroupsClient.ListComplete(ctx, rg)
+	} else {
+		output, err = securityGroupsClient.ListAllComplete(ctx)
+	}
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(output)
-	return nil
+	g.Resources, err = g.createResources(output)
+	return err
 }

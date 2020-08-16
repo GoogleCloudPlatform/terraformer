@@ -35,7 +35,15 @@ func (g *PublicIPGenerator) listAndAddForPublicIPAddress() ([]terraformutils.Res
 	PublicIPAddressesClient := network.NewPublicIPAddressesClient(subscriptionID)
 	PublicIPAddressesClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
-	publicIPAddressIterator, err := PublicIPAddressesClient.ListAllComplete(ctx)
+	var (
+		publicIPAddressIterator network.PublicIPAddressListResultIterator
+		err                     error
+	)
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		publicIPAddressIterator, err = PublicIPAddressesClient.ListComplete(ctx, rg)
+	} else {
+		publicIPAddressIterator, err = PublicIPAddressesClient.ListAllComplete(ctx)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +58,7 @@ func (g *PublicIPGenerator) listAndAddForPublicIPAddress() ([]terraformutils.Res
 
 		if err := publicIPAddressIterator.Next(); err != nil {
 			log.Println(err)
-			break
+			return resources, err
 		}
 	}
 
@@ -64,7 +72,16 @@ func (g *PublicIPGenerator) listAndAddForPublicIPPrefix() ([]terraformutils.Reso
 	PublicIPPrefixesClient := network.NewPublicIPPrefixesClient(subscriptionID)
 	PublicIPPrefixesClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
-	publicIPPrefixIterator, err := PublicIPPrefixesClient.ListAllComplete(ctx)
+	var (
+		publicIPPrefixIterator network.PublicIPPrefixListResultIterator
+		err                    error
+	)
+
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		publicIPPrefixIterator, err = PublicIPPrefixesClient.ListComplete(ctx, rg)
+	} else {
+		publicIPPrefixIterator, err = PublicIPPrefixesClient.ListAllComplete(ctx)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +96,7 @@ func (g *PublicIPGenerator) listAndAddForPublicIPPrefix() ([]terraformutils.Reso
 
 		if err := publicIPPrefixIterator.Next(); err != nil {
 			log.Println(err)
-			break
+			return resources, err
 		}
 	}
 
