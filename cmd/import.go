@@ -80,6 +80,7 @@ func Import(provider terraformutils.ProviderGenerator, options ImportOptions, ar
 	if err != nil {
 		return err
 	}
+
 	plan := &ImportPlan{
 		Provider:         provider.GetName(),
 		Options:          options,
@@ -92,6 +93,12 @@ func Import(provider terraformutils.ProviderGenerator, options ImportOptions, ar
 		options.Resources = providerServices(provider)
 	}
 
+	providerWrapper, err := providerwrapper.NewProviderWrapper(provider.GetName(), provider.GetConfig(), options.Verbose)
+	if err != nil {
+		return err
+	}
+	defer providerWrapper.Kill()
+
 	for _, service := range options.Resources {
 		log.Println(provider.GetName() + " importing... " + service)
 		err = provider.InitService(service, options.Verbose)
@@ -100,11 +107,6 @@ func Import(provider terraformutils.ProviderGenerator, options ImportOptions, ar
 		}
 		provider.GetService().ParseFilters(options.Filter)
 		err = provider.GetService().InitResources()
-		if err != nil {
-			return err
-		}
-
-		providerWrapper, err := providerwrapper.NewProviderWrapper(provider.GetName(), provider.GetConfig(), options.Verbose)
 		if err != nil {
 			return err
 		}
@@ -124,9 +126,6 @@ func Import(provider terraformutils.ProviderGenerator, options ImportOptions, ar
 				return err
 			}
 		}
-
-		providerWrapper.Kill()
-
 		provider.GetService().PostRefreshCleanup()
 
 		// change structs with additional data for each resource
