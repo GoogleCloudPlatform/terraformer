@@ -36,7 +36,7 @@ func newCmdHerokuImporter(options ImportOptions) *cobra.Command {
 	}
 
 	cmd.AddCommand(listCmd(newHerokuProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "app,addon", "heroku_app=name1:name2:name3")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "app,addon", "app=name1:name2:name3")
 	return cmd
 }
 

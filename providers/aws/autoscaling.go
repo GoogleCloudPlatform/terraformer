@@ -148,14 +148,14 @@ func (g *AutoScalingGenerator) PostConvertHook() error {
 				if err != nil {
 					continue
 				}
-				fileName := "userdata-" + r.ResourceName + ".txt"
+				fileName := "userdata-" + r.ServiceName + ".txt"
 				err = ioutil.WriteFile(fileName, userData, os.ModePerm) // TODO write files in tf file path
 				if err != nil {
 					continue
 				}
 				userDataFile := terraformutils.NewResource(
-					r.ResourceName+"_userdata",
-					r.ResourceName+"_userdata",
+					r.ServiceName+"_userdata",
+					r.ServiceName+"_userdata",
 					"template_file",
 					"",
 					map[string]string{},
@@ -168,7 +168,7 @@ func (g *AutoScalingGenerator) PostConvertHook() error {
 				}
 
 				delete(g.Resources[i].Item, "user_data_base64")
-				g.Resources[i].Item["user_data"] = "${template_file." + userDataFile.ResourceName + ".rendered}"
+				g.Resources[i].Item["user_data"] = "${template_file." + userDataFile.ServiceName + ".rendered}"
 				templateFiles = append(templateFiles, userDataFile)
 			}
 		}
