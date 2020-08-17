@@ -68,9 +68,9 @@ func (s *Service) ParseFilter(rawFilter string) []ResourceFilter {
 	var filters []ResourceFilter
 	if len(strings.Split(rawFilter, "=")) == 2 {
 		parts := strings.Split(rawFilter, "=")
-		resourceName, resourcesID := parts[0], parts[1]
+		serviceName, resourcesID := parts[0], parts[1]
 		filters = append(filters, ResourceFilter{
-			ResourceName:     resourceName,
+			ServiceName:      serviceName,
 			FieldPath:        "id",
 			AcceptableValues: ParseFilterValues(resourcesID),
 		})
@@ -80,21 +80,21 @@ func (s *Service) ParseFilter(rawFilter string) []ResourceFilter {
 			log.Print("Invalid filter: " + rawFilter)
 			return filters
 		}
-		var ResourceNamePart string
+		var ServiceNamePart string
 		var FieldPathPart string
 		var AcceptableValuesPart string
 		if len(parts) == 2 {
-			ResourceNamePart = ""
+			ServiceNamePart = ""
 			FieldPathPart = parts[0]
 			AcceptableValuesPart = parts[1]
 		} else {
-			ResourceNamePart = strings.TrimPrefix(parts[0], "Type=")
+			ServiceNamePart = strings.TrimPrefix(parts[0], "Type=")
 			FieldPathPart = parts[1]
 			AcceptableValuesPart = parts[2]
 		}
 
 		filters = append(filters, ResourceFilter{
-			ResourceName:     ResourceNamePart,
+			ServiceName:      ServiceNamePart,
 			FieldPath:        strings.TrimPrefix(FieldPathPart, "Name="),
 			AcceptableValues: ParseFilterValues(strings.TrimPrefix(AcceptableValuesPart, "Value=")),
 		})

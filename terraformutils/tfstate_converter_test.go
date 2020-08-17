@@ -34,7 +34,7 @@ func TestBasicConvert(t *testing.T) {
 		name:         "basic tfstate",
 		expect: []TerraformResource{
 			{
-				ResourceName: "resource-id",
+				ServiceName: "resource-id",
 				ResourceType: "google_compute_firewall",
 				ID:           "resource-id",
 				Item: map[string]interface{}{
@@ -60,7 +60,7 @@ func TestBasicIgnoreKeyConvert(t *testing.T) {
 		name:         "basic tfstate",
 		expect: []TerraformResource{
 			{
-				ResourceName: "resource-id",
+				ServiceName: "resource-id",
 				ResourceType: "google_compute_firewall",
 				ID:           "resource-id",
 				Item: map[string]interface{}{
@@ -90,7 +90,7 @@ func TestBasicAllowEmptyConvert(t *testing.T) {
 		name:         "basic tfstate",
 		expect: []TerraformResource{
 			{
-				ResourceName: "resource-id",
+				ServiceName: "resource-id",
 				ResourceType: "google_compute_firewall",
 				ID:           "resource-id",
 				Item: map[string]interface{}{
@@ -120,7 +120,7 @@ func TestBasicAdditionalFieldsConvert(t *testing.T) {
 		name:         "basic tfstate",
 		expect: []TerraformResource{
 			{
-				ResourceName: "resource-id",
+				ServiceName: "resource-id",
 				ResourceType: "google_compute_firewall",
 				ID:           "resource-id",
 				Item: map[string]interface{}{
@@ -150,7 +150,7 @@ func TestBasicTfstate2(t *testing.T) {
 		name:         "basic tfstate 2",
 		expect: []TerraformResource{
 			{
-				ResourceName: "resource-idA",
+				ServiceName: "resource-idA",
 				ResourceType: "google_compute_firewall",
 				ID:           "resource-idA",
 				Item: map[string]interface{}{
@@ -162,7 +162,7 @@ func TestBasicTfstate2(t *testing.T) {
 				Provider: "google",
 			},
 			{
-				ResourceName: "resource-idB",
+				ServiceName: "resource-idB",
 				ResourceType: "google_compute_firewall",
 				ID:           "resource-idB",
 				Item: map[string]interface{}{
@@ -191,7 +191,7 @@ func TestBasicArray(t *testing.T) {
 		name:         "basic array",
 		expect: []TerraformResource{
 			{
-				ResourceName: "resource-id",
+				ServiceName: "resource-id",
 				ResourceType: "google_compute_firewall",
 				ID:           "resource-id",
 				Item: map[string]interface{}{
@@ -227,7 +227,7 @@ func TestBasicArray2(t *testing.T) {
 		name:         "basic array 2",
 		expect: []TerraformResource{
 			{
-				ResourceName: "resource-id",
+				ServiceName: "resource-id",
 				ResourceType: "google_compute_firewall",
 				ID:           "resource-id",
 				Item: map[string]interface{}{
@@ -265,7 +265,7 @@ func TestBasicArray3(t *testing.T) {
 		name:         "basic array 3",
 		expect: []TerraformResource{
 			{
-				ResourceName: "resource-id",
+				ServiceName: "resource-id",
 				ResourceType: "google_compute_firewall",
 				ID:           "resource-id",
 				Item: map[string]interface{}{
@@ -304,7 +304,7 @@ func TestBasicArray4(t *testing.T) {
 		name:         "basic array 4",
 		expect: []TerraformResource{
 			{
-				ResourceName: "resource-id",
+				ServiceName: "resource-id",
 				ResourceType: "google_compute_firewall",
 				ID:           "resource-id",
 				Item: map[string]interface{}{

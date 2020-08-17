@@ -87,7 +87,7 @@ func newCmdKeycloakImporter(options ImportOptions) *cobra.Command {
 	}
 
 	cmd.AddCommand(listCmd(newKeycloakProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "realms", "keycloak_type=id1:id2:id4")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "realms", "type=id1:id2:id4")
 	cmd.PersistentFlags().StringSliceVarP(&targets, "targets", "", []string{}, "")
 	return cmd
 }

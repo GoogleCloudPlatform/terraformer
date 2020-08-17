@@ -43,7 +43,7 @@ func newCmdAliCloudImporter(options ImportOptions) *cobra.Command {
 		},
 	}
 	cmd.AddCommand(listCmd(newAliCloudProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "vpc,subnet,nacl", "alicloud_slb=id1:id2:id4")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "vpc,subnet,nacl", "slb=id1:id2:id4")
 	cmd.PersistentFlags().StringVar(&options.Profile, "profile", "default", "prod")
 	cmd.PersistentFlags().StringSliceVarP(&options.Regions, "regions", "", []string{}, "cn-hangzhou")
 	return cmd

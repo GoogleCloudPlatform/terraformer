@@ -49,7 +49,7 @@ func newCmdRabbitMQImporter(options ImportOptions) *cobra.Command {
 	}
 
 	cmd.AddCommand(listCmd(newRabbitMQProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "vhosts", "rabbitmq_type=id1:id2:id4")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "vhosts", "type=id1:id2:id4")
 	return cmd
 }
 

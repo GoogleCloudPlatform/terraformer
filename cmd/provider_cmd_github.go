@@ -45,7 +45,7 @@ func newCmdGithubImporter(options ImportOptions) *cobra.Command {
 		},
 	}
 	cmd.AddCommand(listCmd(newGitHubProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "repository", "github_repository=id1:id2:id4")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "repository", "repository=id1:id2:id4")
 	cmd.PersistentFlags().StringVarP(&token, "token", "t", "", "YOUR_GITHUB_TOKEN or env param GITHUB_TOKEN")
 	cmd.PersistentFlags().StringSliceVarP(&organizations, "organizations", "", []string{}, "")
 	return cmd
