@@ -167,3 +167,7 @@ func (r *Resource) ConvertTFstate(provider *providerwrapper.ProviderWrapper) err
 	impliedType := schema.ResourceTypes[r.InstanceInfo.Type].Block.ImpliedType()
 	return r.ParseTFstate(parser, impliedType)
 }
+
+func (r *Resource) ServiceName() string {
+	return strings.TrimPrefix(r.InstanceInfo.Type, r.Provider+"_")
+}
