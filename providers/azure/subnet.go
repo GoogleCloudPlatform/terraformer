@@ -16,6 +16,7 @@ package azure
 
 import (
 	"context"
+	"fmt"
 	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2019-08-01/network"
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -30,9 +31,13 @@ func (g SubnetGenerator) createResources(ctx context.Context, iter network.Subne
 	var resources []terraformutils.Resource
 	for iter.NotDone() {
 		subnet := iter.Value()
+		subnetID, err := ParseAzureResourceID(*subnet.ID)
+		if err != nil {
+			return nil, err
+		}
 		resources = append(resources, terraformutils.NewSimpleResource(
 			*subnet.ID,
-			*subnet.Name,
+			fmt.Sprintf("%s-%s-%s", subnetID.ResourceGroup, subnetID.Path["virtualNetworks"], *subnet.Name),
 			"azurerm_subnet",
 			"azurerm",
 			[]string{}))
@@ -70,7 +75,7 @@ func (g *SubnetGenerator) InitResources() error {
 
 		vnetID, err := ParseAzureResourceID(*vnet.ID)
 		if err != nil {
-			break
+			return err
 		}
 		subnetIter, err := client.ListComplete(ctx, vnetID.ResourceGroup, *vnet.Name)
 		if err != nil {
