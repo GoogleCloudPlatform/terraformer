@@ -48,6 +48,16 @@ func (g VirtualNetworkGenerator) createResources(virtualNetworkListResultPage ne
 	return resources
 }
 
+func (g *VirtualNetworkGenerator) PostConvertHook() error {
+	for _, resource := range g.Resources {
+		if resource.InstanceInfo.Type != "azurerm_virtual_network" {
+			continue
+		}
+		delete(resource.Item, "subnet")
+	}
+	return nil
+}
+
 func (g *VirtualNetworkGenerator) InitResources() error {
 	ctx := context.Background()
 	virtualNetworkClient := network.NewVirtualNetworksClient(g.Args["config"].(authentication.Config).SubscriptionID)

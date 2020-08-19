@@ -805,6 +805,11 @@ List of supported Azure resources:
     * `azurerm_virtual_machine`
 *   `virtual_network`
     * `azurerm_virtual_network`
+    * `azurerm_subnet`
+
+#### Virtual networks and subnets
+
+Terraformer will import `azurerm_virtual_network` config with inlined subnet information swipped, in order to avoid any potential circular dependencies. To import the subnet information, please also import `azurerm_subnet`.
 
 ### Use with AliCloud
 
