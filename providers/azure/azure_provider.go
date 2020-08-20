@@ -140,31 +140,90 @@ func (p *AzureProvider) GetProviderData(arg ...string) map[string]interface{} {
 }
 
 func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
-	return map[string]map[string][]string{}
+	return map[string]map[string][]string{
+		"analysis": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"app_service": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"cosmosdb": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"container": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"database": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"disk": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"dns": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"keyvault": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"load_balancer": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"network_interface": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"network_security_group": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"private_dns": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"public_ip": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"scaleset": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"storage_account": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"storage_blob": {
+			"storage_account":   []string{"storage_account_name", "name"},
+			"storage_container": []string{"storage_container_name", "name"},
+		},
+		"storage_container": {
+			"storage_account": []string{"storage_account_name", "name"},
+		},
+		"virtual_machine": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"virtual_network": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+	}
 }
 
 func (p *AzureProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"app_service":                          &AppServiceGenerator{},
 		"analysis":                             &AnalysisGenerator{},
+		"app_service":                          &AppServiceGenerator{},
 		"cosmosdb":                             &CosmosDBGenerator{},
 		"container":                            &ContainerGenerator{},
 		"database":                             &DatabasesGenerator{},
-		"dns":                                  &DNSGenerator{},
 		"disk":                                 &DiskGenerator{},
+		"dns":                                  &DNSGenerator{},
 		"keyvault":                             &KeyVaultGenerator{},
 		"load_balancer":                        &LoadBalancerGenerator{},
 		"network_interface":                    &NetworkInterfaceGenerator{},
 		"network_security_group":               &NetworkSecurityGroupGenerator{},
-		"public_ip":                            &PublicIPGenerator{},
 		"private_dns":                          &PrivateDNSGenerator{},
+		"public_ip":                            &PublicIPGenerator{},
 		"resource_group":                       &ResourceGroupGenerator{},
 		"scaleset":                             &ScaleSetGenerator{},
 		"security_center_contact":              &SecurityCenterContactGenerator{},
 		"security_center_subscription_pricing": &SecurityCenterSubscriptionPricingGenerator{},
 		"storage_account":                      &StorageAccountGenerator{},
-		"storage_container":                    &StorageContainerGenerator{},
 		"storage_blob":                         &StorageBlobGenerator{},
+		"storage_container":                    &StorageContainerGenerator{},
 		"virtual_machine":                      &VirtualMachineGenerator{},
 		"virtual_network":                      &VirtualNetworkGenerator{},
 	}
