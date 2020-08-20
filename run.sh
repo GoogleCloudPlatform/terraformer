@@ -9,6 +9,9 @@ case $CSP in
 	"Azure")
 		path="generated/azurerm"
 		;;
+	"AWS")
+		path="generated/aws"
+		;;
 	*)
 		echo "What is the local path for $CSP?"
 		exit 1
