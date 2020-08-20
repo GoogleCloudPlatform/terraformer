@@ -1,6 +1,7 @@
 #!/bin/bash
 
 GLOBAL_GCP_SERVICES=",dns,gcs,globalAddresses,globalForwardingRules,iam,gke,backendServices,bigQuery,disks,firewall,healthChecks,httpHealthChecks,instanceTemplates,networks,project,routes,targetHttpsProxies,urlMaps,"
+GLOBAL_AWS_SERVICES=",sts,iam,route53,route53domains,s3,s3control,cloudfront,organizations,"
 
 case $CSP in
 	"GCP")
@@ -33,6 +34,16 @@ run_terraformer(){
 			./terraformer-azure import azure -r ${1}
 			aws s3 sync --delete ${path}/${1}/ s3://${RESULT_BUCKET}/terraformer/${CUSTOMER_NAME}/${ARM_SUBSCRIPTION_ID}/${TIMESTAMP}/${1}/
 			;;
+		"AWS")
+			if [[ "$GLOBAL_AWS_SERVICES" =~ .*",$1,".* ]]; then
+				#	To be inline with the above regex, GLOBAL_GCP_SERVICES must start and end with a ","
+				regions="global"
+			else
+				regions="us-east-1,us-east-2,us-west-1,us-west-2........TODO!!!!!!!!!!!!!!!"
+			fi
+			./terraformer-aws import aws -r ${1} -z ${regions}
+			aws s3 sync --delete ${path}/${1}/ s3://${RESULT_BUCKET}/terraformer/${CUSTOMER_NAME}/${AWS_ACCESS_KEY_ID}/${TIMESTAMP}/${1}/
+			;;
 		*)
 			echo "terraformer doesn't run on $CSP"
 			exit 1
@@ -54,6 +65,12 @@ case $CSP in
 		export ARM_TENANT_ID=$(cat credentials.json | jq .tenantId | sed s/\"//g)
 		export ARM_CLIENT_SECRET=$(cat credentials.json | jq .clientSecret | sed s/\"//g)
 		services=$(./terraformer-azure import azure list)
+		;;
+	"AWS")
+		export AWS_ACCESS_KEY_ID=$(cat credentials.json | jq .aws_access_key_id | sed s/\"//g)
+		export AWS_SECRET_ACCESS_KEY=$(cat credentials.json | jq .aws_secret_access_key | sed s/\"//g)
+		export AWS_DEFAULT_REGION=$(cat credentials.json | jq .region | sed s/\"//g)
+		services=$(./terraformer-aws import aws list)
 		;;
 	*)
 		echo "$CSP isn't supported"
