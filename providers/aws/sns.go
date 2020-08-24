@@ -16,6 +16,7 @@ package aws
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"strings"
 
@@ -81,4 +82,19 @@ func (g *SnsGenerator) InitResources() error {
 		}
 	}
 	return p.Err()
+}
+
+// PostConvertHook for add policy json as heredoc
+func (g *SnsGenerator) PostConvertHook() error {
+	for i, resource := range g.Resources {
+		if resource.InstanceInfo.Type == "aws_sns_topic" {
+			if val, ok := g.Resources[i].Item["policy"]; ok {
+				policy := g.escapeAwsInterpolation(val.(string))
+				g.Resources[i].Item["policy"] = fmt.Sprintf(`<<POLICY
+%s
+POLICY`, policy)
+			}
+		}
+	}
+	return nil
 }
