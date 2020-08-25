@@ -6,3 +6,7 @@ provider "azurerm" {
 provider "google" {
   version = "3.22"
 }
+
+provider "aws" {
+  version = "~> 3.0"
+}
