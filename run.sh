@@ -38,11 +38,13 @@ run_terraformer(){
 			if [[ "$GLOBAL_AWS_SERVICES" =~ .*",$1,".* ]]; then
 				#	To be inline with the above regex, GLOBAL_GCP_SERVICES must start and end with a ","
 				regions="global"
+			elif [[ $1 == "s3" ]]; then
+			  regions="us-east-1"
 			else
 				regions="us-east-1,us-east-2,us-west-1,us-west-2,ap-south-1,ap-southeast-1,ap-southeast-2,ap-northeast-1,ap-northeast-2,ca-central-1,eu-central-1,eu-west-1,eu-west-2,eu-west-3,eu-north-1,sa-east-1"
 			fi
 
-			AWS_ACCESS_KEY_ID=${CUSTOMER_AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${CUSTOMER_AWS_SECRET_ACCESS_KEY} AWS_SESSION_TOKEN=${CUSTOMER_AWS_SESSION_TOKEN} ./terraformer-aws import aws --resources ${1} --regions ${regions}
+			AWS_ACCESS_KEY_ID=${CUSTOMER_AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${CUSTOMER_AWS_SECRET_ACCESS_KEY} AWS_SESSION_TOKEN=${CUSTOMER_AWS_SESSION_TOKEN} ./terraformer-aws import aws --resources ${1} --regions ${regions} || true
 			aws s3 sync --delete ${path}/${1}/ s3://${RESULT_BUCKET}/terraformer/${CUSTOMER_NAME}/${ACCOUNT_ID}/${TIMESTAMP}/${1}/
 			;;
 		*)
