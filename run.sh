@@ -41,11 +41,13 @@ run_terraformer(){
 			else
 				regions="us-east-1,us-east-2,us-west-1,us-west-2,af-south-1,ap-east-1,ap-south-1,ap-southeast-1,ap-southeast-2,ap-northeast-1,ap-northeast-2,ca-central-1,eu-central-1,eu-west-1,eu-west-2,eu-west-3,eu-south-1,eu-north-1,me-south-1,se-east-1"
 			fi
-			echo "!!!! before ${1} ${ACCOUNT_ID}"
-			./terraformer-aws import aws --resources ${1} --regions ${regions}
+
+			AWS_ACCESS_KEY_ID=${CUSTOMER_AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${CUSTOMER_AWS_SECRET_ACCESS_KEY} AWS_SESSION_TOKEN=${CUSTOMER_AWS_SESSION_TOKEN} ./terraformer-aws import aws --resources ${1} --regions ${regions}
+
 			echo "!!!! after ${1} ${ACCOUNT_ID}"
 			ls -la ${path}/${1}/
 			echo "!!!! finish"
+
 			aws s3 sync --delete ${path}/${1}/ s3://${RESULT_BUCKET}/terraformer/${CUSTOMER_NAME}/${ACCOUNT_ID}/${TIMESTAMP}/${1}/
 			;;
 		*)
@@ -71,9 +73,9 @@ case $CSP in
 		services=$(./terraformer-azure import azure list)
 		;;
 	"AWS")
-		export AWS_ACCESS_KEY_ID=$(cat credentials.json | jq .accessKeyId | sed s/\"//g)
-		export AWS_SECRET_ACCESS_KEY=$(cat credentials.json | jq .secretAccessKey | sed s/\"//g)
-		export AWS_SESSION_TOKEN=$(cat credentials.json | jq .sessionToken | sed s/\"//g)
+		export CUSTOMER_AWS_ACCESS_KEY_ID=$(cat credentials.json | jq .accessKeyId | sed s/\"//g)
+		export CUSTOMER_AWS_SECRET_ACCESS_KEY=$(cat credentials.json | jq .secretAccessKey | sed s/\"//g)
+		export CUSTOMER_AWS_SESSION_TOKEN=$(cat credentials.json | jq .sessionToken | sed s/\"//g)
 		services=$(./terraformer-aws import aws list)
 		;;
 	*)
