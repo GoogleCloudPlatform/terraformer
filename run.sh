@@ -88,7 +88,11 @@ for service in $services; do
   if [[ $service == "schedulerJobs" && $CSP == "GCP" ]]; then
     continue
   fi
-	run_terraformer $service &
+  if [[ $CSP == "AWS" ]]; then
+	  run_terraformer $service
+	else
+	  run_terraformer $service &
+	fi
 done
 
 wait
