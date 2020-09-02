@@ -47,7 +47,6 @@ run_terraformer(){
 			fi
 
 			AWS_ACCESS_KEY_ID=${CUSTOMER_AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${CUSTOMER_AWS_SECRET_ACCESS_KEY} AWS_SESSION_TOKEN=${CUSTOMER_AWS_SESSION_TOKEN} ./terraformer-aws import aws --resources ${1} --regions ${regions} || true
-			aws s3 sync --delete ${path}/${1}/ s3://${RESULT_BUCKET}/terraformer/${CUSTOMER_NAME}/${ACCOUNT_ID}/${TIMESTAMP}/${1}/
 			;;
 		*)
 			echo "terraformer doesn't run on $CSP"
@@ -98,3 +97,7 @@ for service in $services; do
 done
 
 wait
+
+if [[ $CSP == "AWS" ]]; then
+  aws s3 sync ${path}/ s3://${RESULT_BUCKET}/terraformer/${CUSTOMER_NAME}/${ACCOUNT_ID}/${TIMESTAMP}/
+fi
