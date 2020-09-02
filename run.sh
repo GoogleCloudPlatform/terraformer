@@ -139,11 +139,8 @@ for service in $services; do
     continue
   fi
   
-  if [[ $CSP == "AWS" ]]; then
-	  run_terraformer $service
-	else
-	  run_terraformer $service &
-	fi
+  run_terraformer $service &
+	
 done
 
 wait
