@@ -16,6 +16,7 @@ package aws
 
 import (
 	"context"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
@@ -68,6 +69,9 @@ func (g *KmsGenerator) addAliases(client *kms.Client) error {
 	p := kms.NewListAliasesPaginator(client.ListAliasesRequest(&kms.ListAliasesInput{}))
 	for p.Next(context.Background()) {
 		for _, alias := range p.CurrentPage().Aliases {
+			if strings.HasPrefix(*alias.AliasName, "alias/aws/") {
+				continue
+			}
 			resource := terraformutils.NewSimpleResource(
 				*alias.AliasName,
 				*alias.AliasName,
