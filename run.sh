@@ -40,6 +40,12 @@ run_terraformer(){
 				regions="global"
 			elif [[ $1 == "s3" ]]; then
 			  regions="us-east-1"
+			elif [[ $1 == "devicefarm" ]]; then
+			  regions="us-east-1"
+			elif [[ $1 == "eks" ]]; then
+			  regions="us-east-1"
+			elif [[ $1 == "media_store" ]]; then
+			  regions="us-east-1"
 			else
 				regions="us-east-1,us-east-2,us-west-1,us-west-2,ap-south-1,ap-southeast-1,ap-southeast-2,ap-northeast-1,ap-northeast-2,ca-central-1,eu-central-1,eu-west-1,eu-west-2,eu-west-3,eu-north-1,sa-east-1"
 			fi
@@ -90,6 +96,49 @@ for service in $services; do
   if [[ $service == "schedulerJobs" && $CSP == "GCP" ]]; then
     continue
   fi
+  if [[ $service == "api_gateway" && $CSP == "AWS" ]]; then ### us-east-1
+    continue
+  fi
+  if [[ $service == "budgets" && $CSP == "AWS" ]]; then ### >>>>>>>>>>>     default region
+    continue
+  fi
+  if [[ $service == "cloudwatch" && $CSP == "AWS" ]]; then ### us-east-1
+    continue
+  fi
+  if [[ $service == "codepipeline" && $CSP == "AWS" ]]; then ### us-east-1
+    continue
+  fi
+  if [[ $service == "emr" && $CSP == "AWS" ]]; then ### us-east-1
+    continue
+  fi
+  if [[ $service == "glue" && $CSP == "AWS" ]]; then ### us-east-1
+    continue
+  fi
+  if [[ $service == "media_package" && $CSP == "AWS" ]]; then ### us-east-1
+    continue
+  fi
+  if [[ $service == "msk" && $CSP == "AWS" ]]; then ### us-east-1
+    continue
+  fi
+  if [[ $service == "qldb" && $CSP == "AWS" ]]; then ### us-east-1
+    continue
+  fi
+  if [[ $service == "resourcegroups" && $CSP == "AWS" ]]; then ### us-east-1
+    continue
+  fi
+  if [[ $service == "servicecatalog" && $CSP == "AWS" ]]; then ### us-east-1
+    continue
+  fi
+  if [[ $service == "ses" && $CSP == "AWS" ]]; then ### us-east-1
+    continue
+  fi
+  if [[ $service == "waf" && $CSP == "AWS" ]]; then ### >>>>>>>>>>>     default region
+    continue
+  fi
+  if [[ $service == "waf_regional" && $CSP == "AWS" ]]; then ### us-east-1
+    continue
+  fi
+  
   if [[ $CSP == "AWS" ]]; then
 	  run_terraformer $service
 	else
