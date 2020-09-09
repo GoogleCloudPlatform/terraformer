@@ -73,8 +73,6 @@ case $CSP in
 	"AWS")
 		CUSTOMER_ARN_ROLE=$(cat credentials.json | jq .roleArn | sed s/\"//g)
 		EXTERNAL_ID=$(cat credentials.json | jq .externalId | sed s/\"//g)
-		echo "!!!!!!!!!!!! $CUSTOMER_ARN_ROLE"
-		echo "!!!!!!!!!!!! $EXTERNAL_ID"
 		mkdir ~/.aws
 		cat << AWS_CREDS > ~/.aws/credentials
 [${ACCOUNT_ID}]
