@@ -80,7 +80,7 @@ credential_source = EcsContainer
 role_arn = ${CUSTOMER_ARN_ROLE}
 external_id = ${EXTERNAL_ID}
 AWS_CREDS
-		services="vpc,sg,nacl,nat,igw,vpc_peering,vpn_connection,vpn_gateway,transit_gateway,subnet,eni,ec2_instance,eip,route_table,customer_gateway,ebs alb,elb,auto_scaling codecommit eks sts,iam,route53,route53domains,cloudfront,accessanalyzer ecr,ecs,acm,cognito s3,s3control es,cloud9,kinesis,firehose,elasticache,elastic_beanstalk lambda,kms,dynamodb,rds,secretsmanager sns,sqs,sfn,securityhub cloud9,swf,xray cloudtrail,config cloudformation"
+		services="vpc,sg,nacl,nat,igw,vpc_peering,vpn_connection,vpn_gateway,transit_gateway,subnet,eni,ec2_instance,eip,route_table,customer_gateway,ebs alb,elb,auto_scaling codebuild,codecommit eks sts,iam,route53,route53domains,cloudfront,accessanalyzer ecr,ecs,acm,cognito s3,s3control es,cloud9,kinesis,firehose,elasticache,elastic_beanstalk lambda,kms,dynamodb,rds,secretsmanager sns,sqs,sfn,securityhub cloud9,swf,xray cloudtrail,config cloudformation"
 		;;
 	*)
 		echo "$CSP isn't supported"
