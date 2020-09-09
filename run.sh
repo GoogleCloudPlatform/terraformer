@@ -74,7 +74,7 @@ case $CSP in
 		export CUSTOMER_AWS_ACCESS_KEY_ID=$(cat credentials.json | jq .accessKeyId | sed s/\"//g)
 		export CUSTOMER_AWS_SECRET_ACCESS_KEY=$(cat credentials.json | jq .secretAccessKey | sed s/\"//g)
 		export CUSTOMER_AWS_SESSION_TOKEN=$(cat credentials.json | jq .sessionToken | sed s/\"//g)
-		services="vpc,sg,nacl,nat,igw,vpc_peering,vpn_connection,vpn_gateway,transit_gateway,subnet,eni,ec2_instance,eip,route_table,customer_gateway,ebs alb,elb,auto_scaling codebuild,codecommit eks sts,iam,route53,route53domains,cloudfront,accessanalyzer ecr,ecs,acm,cognito s3,s3control es,cloud9,kinesis,firehose,elasticache,elastic_beanstalk lambda,kms,dynamodb,rds,secretsmanager sns,sqs,sfn,securityhub cloud9,swf,xray cloudtrail,config cloudformation"
+		services="vpc,sg,nacl,nat,igw,vpc_peering,vpn_connection,vpn_gateway,transit_gateway,subnet,eni,ec2_instance,eip,route_table,customer_gateway,ebs alb,elb,auto_scaling codecommit eks sts,iam,route53,route53domains,cloudfront,accessanalyzer ecr,ecs,acm,cognito s3,s3control es,cloud9,kinesis,firehose,elasticache,elastic_beanstalk lambda,kms,dynamodb,rds,secretsmanager sns,sqs,sfn,securityhub cloud9,swf,xray cloudtrail,config cloudformation"
 		;;
 	*)
 		echo "$CSP isn't supported"
