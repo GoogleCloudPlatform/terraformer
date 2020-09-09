@@ -50,7 +50,7 @@ run_terraformer(){
 				regions="us-east-1,us-east-2,us-west-1,us-west-2,ap-south-1,ap-southeast-1,ap-southeast-2,ap-northeast-1,ap-northeast-2,ca-central-1,eu-central-1,eu-west-1,eu-west-2,eu-west-3,eu-north-1,sa-east-1"
 			fi
 
-			AWS_ACCESS_KEY_ID=${CUSTOMER_AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${CUSTOMER_AWS_SECRET_ACCESS_KEY} AWS_SESSION_TOKEN=${CUSTOMER_AWS_SESSION_TOKEN} ./terraformer-aws import aws --resources ${1} --regions ${regions} || true
+			./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions ${regions} || true
 			aws s3 sync --delete ${path}/${1}/ s3://${RESULT_BUCKET}/terraformer/${CUSTOMER_NAME}/${ACCOUNT_ID}/${TIMESTAMP}/${1}/
 			;;
 		*)
@@ -76,9 +76,15 @@ case $CSP in
 		services=$(./terraformer-azure import azure list)
 		;;
 	"AWS")
-		export CUSTOMER_AWS_ACCESS_KEY_ID=$(cat credentials.json | jq .accessKeyId | sed s/\"//g)
-		export CUSTOMER_AWS_SECRET_ACCESS_KEY=$(cat credentials.json | jq .secretAccessKey | sed s/\"//g)
-		export CUSTOMER_AWS_SESSION_TOKEN=$(cat credentials.json | jq .sessionToken | sed s/\"//g)
+		CUSTOMER_ARN_ROLE=$(cat credentials.json | jq .roleArn | sed s/\"//g)
+		EXTERNAL_ID=$(cat credentials.json | jq .externalId | sed s/\"//g)
+		mkdir ~/.aws
+		cat << AWS_CREDS > ~/.aws/credentials
+[${ACCOUNT_ID}]
+credential_source = EcsContainer
+role_arn = ${CUSTOMER_ARN_ROLE}
+external_id = ${EXTERNAL_ID}
+AWS_CREDS
 		services=$(./terraformer-aws import aws list)
 		;;
 	*)
