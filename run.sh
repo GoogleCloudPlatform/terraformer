@@ -18,8 +18,6 @@ case $CSP in
 		exit 1
 esac
 
-completed_services=""
-
 run_terraformer(){
 	case $CSP in
 		"GCP")
@@ -48,8 +46,7 @@ run_terraformer(){
   			./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions ap-south-1,ap-southeast-1,ap-southeast-2,ap-northeast-1,ap-northeast-2 || true
   			./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions eu-central-1,eu-west-1,eu-west-2,eu-west-3,eu-north-1 || true
 			fi
-			completed_services="${completed_services},${1}"
-			echo "${completed_services}"
+			echo "Completed ${1}"
 			;;
 		*)
 			echo "terraformer doesn't run on $CSP"
@@ -84,7 +81,7 @@ role_arn = ${CUSTOMER_ARN_ROLE}
 external_id = ${EXTERNAL_ID}
 AWS_CREDS
 
-		services="vpc,sg,nacl,nat,igw,vpc_peering,vpn_connection,vpn_gateway,transit_gateway,subnet,eni,ec2_instance,eip,route_table,customer_gateway,ebs alb,elb,auto_scaling codecommit eks sts,iam,route53,route53domains,cloudfront,accessanalyzer ecr,ecs,acm,cognito s3 es,cloud9,kinesis,firehose,elasticache,elastic_beanstalk lambda,kms,dynamodb,rds,secretsmanager sns,sqs,sfn,securityhub cloud9,swf,xray cloudtrail,config cloudformation"
+		services="vpc,sg,nacl,nat,igw,subnet,vpc_peering,route_table vpn_connection,vpn_gateway,transit_gateway eni,ec2_instance,eip,customer_gateway,ebs alb,elb,auto_scaling codecommit eks sts,iam,route53,route53domains,cloudfront,accessanalyzer ecr,ecs,acm,cognito s3 es,cloud9,kinesis,firehose,elasticache,elastic_beanstalk lambda,kms,dynamodb,rds,secretsmanager sns,sqs,sfn,securityhub cloud9,swf,xray cloudtrail,config cloudformation"
 		;;
 	*)
 		echo "$CSP isn't supported"
