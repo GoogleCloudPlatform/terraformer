@@ -35,18 +35,21 @@ func (g *KmsGenerator) InitResources() error {
 	}
 	client := kms.New(config)
 
-	err := g.addKeys(client)
+	err, aliases := g.addAliases(client)
 	if err != nil {
 		return err
 	}
-	err = g.addAliases(client)
+	err = g.addKeys(client, aliases)
 	return err
 }
 
-func (g *KmsGenerator) addKeys(client *kms.Client) error {
+func (g *KmsGenerator) addKeys(client *kms.Client, aliases map[string]string) error {
 	p := kms.NewListKeysPaginator(client.ListKeysRequest(&kms.ListKeysInput{}))
 	for p.Next(context.Background()) {
 		for _, key := range p.CurrentPage().Keys {
+			if strings.HasPrefix(aliases[*key.KeyId], "alias/aws/") {
+				continue
+			}
 			resource := terraformutils.NewResource(
 				*key.KeyId,
 				*key.KeyId,
@@ -65,11 +68,15 @@ func (g *KmsGenerator) addKeys(client *kms.Client) error {
 	return p.Err()
 }
 
-func (g *KmsGenerator) addAliases(client *kms.Client) error {
+func (g *KmsGenerator) addAliases(client *kms.Client) (error, map[string]string) {
 	p := kms.NewListAliasesPaginator(client.ListAliasesRequest(&kms.ListAliasesInput{}))
+	aliases := make(map[string]string)
 	for p.Next(context.Background()) {
 		for _, alias := range p.CurrentPage().Aliases {
 			if strings.HasPrefix(*alias.AliasName, "alias/aws/") {
+				if alias.TargetKeyId != nil {
+					aliases[*alias.TargetKeyId] = *alias.AliasName
+				}
 				continue
 			}
 			resource := terraformutils.NewSimpleResource(
@@ -83,5 +90,5 @@ func (g *KmsGenerator) addAliases(client *kms.Client) error {
 			g.Resources = append(g.Resources, resource)
 		}
 	}
-	return p.Err()
+	return p.Err(), aliases
 }
