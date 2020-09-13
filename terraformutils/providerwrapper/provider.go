@@ -152,7 +152,7 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 		Private:    []byte{},
 	})
 
-	if !resp.Diagnostics.HasErrors() {
+	if resp.Diagnostics.HasErrors() {
 		log.Println("Fail read resource from provider, trying import command")
 		// retry with regular import command - without resource attributes
 		importResponse := p.Provider.ImportResourceState(providers.ImportResourceStateRequest{

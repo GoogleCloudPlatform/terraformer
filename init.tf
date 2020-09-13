@@ -8,5 +8,5 @@ provider "google" {
 }
 
 provider "aws" {
-  version = "2.70"
+  version = "3.4"
 }
