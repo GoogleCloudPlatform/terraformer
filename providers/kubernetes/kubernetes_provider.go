@@ -48,13 +48,7 @@ func (p KubernetesProvider) GetResourceConnections() map[string]map[string][]str
 }
 
 func (p KubernetesProvider) GetProviderData(arg ...string) map[string]interface{} {
-	return map[string]interface{}{
-		"provider": map[string]interface{}{
-			"kubernetes": map[string]interface{}{
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
-			},
-		},
-	}
+	return map[string]interface{}{}
 }
 
 func (p *KubernetesProvider) Init(args []string) error {

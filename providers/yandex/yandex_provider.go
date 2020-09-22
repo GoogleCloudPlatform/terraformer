@@ -19,7 +19,6 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
 type YandexProvider struct { //nolint
@@ -52,14 +51,7 @@ func (p *YandexProvider) GetName() string {
 }
 
 func (p *YandexProvider) GetProviderData(arg ...string) map[string]interface{} {
-	return map[string]interface{}{
-		"provider": map[string]interface{}{
-			"yandex": map[string]interface{}{
-				"version":   providerwrapper.GetProviderVersion(p.GetName()),
-				"folder_id": p.folderID,
-			},
-		},
-	}
+	return map[string]interface{}{}
 }
 
 func (YandexProvider) GetResourceConnections() map[string]map[string][]string {
