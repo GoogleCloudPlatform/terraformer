@@ -44,7 +44,8 @@ const DefaultDataDir = ".terraform"
 // DefaultPluginVendorDir is the location in the config directory to look for
 // user-added plugin binaries. Terraform only reads from this path if it
 // exists, it is never created by terraform.
-const DefaultPluginVendorDir = "terraform.d/plugins/" + pluginMachineName
+const DefaultPluginVendorDirV12 = "terraform.d/plugins/" + pluginMachineName
+const DefaultPluginVendorDirV13 = "terraform.d/plugins/registry.terraform.io/hashicorp"
 
 // pluginMachineName is the directory name used in new plugin paths.
 const pluginMachineName = runtime.GOOS + "_" + runtime.GOARCH
@@ -237,6 +238,51 @@ func (p *ProviderWrapper) initProvider(verbose bool) error {
 }
 
 func getProviderFileName(providerName string) (string, error) {
+	providerFilePath, err := getProviderFileNameV13(providerName)
+	if err != nil || providerFilePath == "" {
+		return getProviderFileNameV12(providerName)
+	}
+	return providerFilePath, nil
+}
+
+func getProviderFileNameV13(providerName string) (string, error) {
+	defaultDataDir := os.Getenv("TF_DATA_DIR")
+	if defaultDataDir == "" {
+		defaultDataDir = DefaultDataDir
+	}
+	pluginPath := defaultDataDir + string(os.PathSeparator) + "plugins" + string(os.PathSeparator) +
+		"registry.terraform.io" + string(os.PathSeparator) + "hashicorp" + string(os.PathSeparator) + providerName
+	dirs, err := ioutil.ReadDir(pluginPath)
+	if err != nil {
+		pluginPath = os.Getenv("HOME") + string(os.PathSeparator) + "." + DefaultPluginVendorDirV13 +
+			string(os.PathSeparator) + providerName
+		dirs, err = ioutil.ReadDir(pluginPath)
+		if err != nil {
+			return "", err
+		}
+	}
+	providerFilePath := ""
+	for _, dir := range dirs {
+		if !dir.IsDir() {
+			continue
+		}
+		for _, dir := range dirs {
+			fullPluginPath := pluginPath + string(os.PathSeparator) + dir.Name() +
+				string(os.PathSeparator) + runtime.GOOS + "_" + runtime.GOARCH
+			files, err := ioutil.ReadDir(fullPluginPath)
+			if err == nil {
+				for _, file := range files {
+					if strings.HasPrefix(file.Name(), "terraform-provider-"+providerName) {
+						providerFilePath = fullPluginPath + string(os.PathSeparator) + file.Name()
+					}
+				}
+			}
+		}
+	}
+	return providerFilePath, nil
+}
+
+func getProviderFileNameV12(providerName string) (string, error) {
 	defaultDataDir := os.Getenv("TF_DATA_DIR")
 	if defaultDataDir == "" {
 		defaultDataDir = DefaultDataDir
@@ -244,7 +290,7 @@ func getProviderFileName(providerName string) (string, error) {
 	pluginPath := defaultDataDir + string(os.PathSeparator) + "plugins" + string(os.PathSeparator) + runtime.GOOS + "_" + runtime.GOARCH
 	files, err := ioutil.ReadDir(pluginPath)
 	if err != nil {
-		pluginPath = os.Getenv("HOME") + string(os.PathSeparator) + "." + DefaultPluginVendorDir
+		pluginPath = os.Getenv("HOME") + string(os.PathSeparator) + "." + DefaultPluginVendorDirV12
 		files, err = ioutil.ReadDir(pluginPath)
 		if err != nil {
 			return "", err
@@ -276,5 +322,5 @@ func GetProviderVersion(providerName string) string {
 		return ""
 	}
 	providerVersion := providerFileNameParts[1]
-	return "~>" + providerVersion
+	return "~> " + strings.TrimPrefix(providerVersion, "v")
 }

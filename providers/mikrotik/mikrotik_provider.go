@@ -19,7 +19,6 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
 type MikrotikProvider struct { //nolint
@@ -56,9 +55,8 @@ func (p *MikrotikProvider) GetProviderData(arg ...string) map[string]interface{}
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"mikrotik": map[string]interface{}{
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
-				"host":    p.host,
-				"user":    p.user,
+				"host": p.host,
+				"user": p.user,
 			},
 		},
 	}
