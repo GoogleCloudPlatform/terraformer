@@ -24,6 +24,8 @@ run_terraformer(){
 			if [[ "$GLOBAL_GCP_SERVICES" =~ .*",$1,".* ]]; then
 				#	To be inline with the above regex, GLOBAL_GCP_SERVICES must start and end with a ","
 				regions="global"
+			elif [[ "$1" == "cloudFunctions" ]]; then
+			  regions="us-central1,us-east1,us-east4,europe-west1,europe-west2,asia-east2,asia-northeast1,asia-northeast2,europe-west3,europe-west6,us-west3,northamerica-northeast1,australia-southeast1,us-west2,us-west4,southamerica-east1,asia-south1,asia-southeast2,asia-northeast3"
 			else
 				regions="asia-east1,asia-east2,asia-northeast1,asia-northeast2,asia-northeast3,asia-south1,asia-southeast1,australia-southeast1,europe-north1,europe-west1,europe-west2,europe-west3,europe-west4,europe-west6,northamerica-northeast1,southamerica-east1,us-central1,us-east1,us-east4,us-west1,us-west2,us-west3,us-west4"
 			fi
@@ -81,7 +83,7 @@ role_arn = ${CUSTOMER_ARN_ROLE}
 external_id = ${EXTERNAL_ID}
 AWS_CREDS
 
-		services="vpc,sg,nacl,nat,igw,subnet,vpc_peering,route_table vpn_connection,vpn_gateway,transit_gateway eni,ec2_instance,eip,customer_gateway,ebs alb,elb,auto_scaling codecommit eks sts,iam,route53,route53domains,cloudfront,accessanalyzer ecs,acm,kinesis,firehose,elasticache rds,sqs,cloudtrail,config"
+		services="vpc,sg,nacl,nat,igw,subnet,vpc_peering,route_table vpn_connection,vpn_gateway,transit_gateway eni,ec2_instance,eip,customer_gateway,ebs alb,elb,auto_scaling eks sts,iam,route53,route53domains,cloudfront,accessanalyzer ecs,acm,kinesis,firehose,elasticache,codecommit rds,sqs,cloudtrail,config,kms"
 		;;
 	*)
 		echo "$CSP isn't supported"
