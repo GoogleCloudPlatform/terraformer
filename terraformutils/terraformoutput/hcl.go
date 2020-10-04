@@ -14,13 +14,13 @@
 package terraformoutput
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"io/ioutil"
 	"log"
 	"os"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 
 	"github.com/hashicorp/terraform/terraform"
 )

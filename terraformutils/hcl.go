@@ -164,7 +164,7 @@ func hclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error)
 	// hack for support terraform 0.12
 	formatted = terraform12Adjustments(formatted, mapsObjects)
 	// hack for support terraform 0.13
-	formatted = terraform13Adjustments(formatted, mapsObjects)
+	formatted = terraform13Adjustments(formatted)
 	if err != nil {
 		log.Println("Invalid HCL follows:")
 		for i, line := range strings.Split(s, "\n") {
@@ -197,7 +197,7 @@ func terraform12Adjustments(formatted []byte, mapsObjects map[string]struct{}) [
 	return []byte(s)
 }
 
-func terraform13Adjustments(formatted []byte, mapsObjects map[string]struct{}) []byte {
+func terraform13Adjustments(formatted []byte) []byte {
 	s := string(formatted)
 	oldRequiredProviders := "\"required_providers\""
 	newRequiredProviders := "required_providers"
