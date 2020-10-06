@@ -15,9 +15,10 @@
 package datadog
 
 import (
+	"context"
 	"fmt"
 
-	datadog "github.com/zorkian/go-datadog-api"
+	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -32,35 +33,68 @@ type DashboardGenerator struct {
 	DatadogService
 }
 
-func (DashboardGenerator) createResources(dashboards []datadog.BoardLite) []terraformutils.Resource {
+func (g *DashboardGenerator) createResources(dashboards []datadogV1.DashboardSummaryDashboards) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	for _, dashboard := range dashboards {
 		resourceName := dashboard.GetId()
-		resources = append(resources, terraformutils.NewSimpleResource(
-			resourceName,
-			fmt.Sprintf("dashboard_%s", resourceName),
-			"datadog_dashboard",
-			"datadog",
-			DashboardAllowEmptyValues,
-		))
+		resources = append(resources, g.createResource(resourceName))
 	}
 
 	return resources
+}
+
+func (g *DashboardGenerator) createResource(dashboardId string) terraformutils.Resource {
+	return terraformutils.NewSimpleResource(
+		dashboardId,
+		fmt.Sprintf("dashboard_%s", dashboardId),
+		"datadog_dashboard",
+		"datadog",
+		DashboardAllowEmptyValues,
+	)
 }
 
 // InitResources Generate TerraformResources from Datadog API,
 // from each dashboard create 1 TerraformResource.
 // Need Dashboard ID as ID for terraform resource
 func (g *DashboardGenerator) InitResources() error {
-	client := datadog.NewClient(g.Args["api-key"].(string), g.Args["app-key"].(string))
-	_, err := client.Validate()
+	authV1 := context.WithValue(
+		context.Background(),
+		datadogV1.ContextAPIKeys,
+		map[string]datadogV1.APIKey{
+			"apiKeyAuth": {
+				Key: g.Args["api-key"].(string),
+			},
+			"appKeyAuth": {
+				Key: g.Args["app-key"].(string),
+			},
+		},
+	)
+	config := datadogV1.NewConfiguration()
+	client := datadogV1.NewAPIClient(config)
+
+	resources := []terraformutils.Resource{}
+	for _, filter := range g.Filter {
+		if filter.FieldPath == "id" && filter.IsApplicable("dashboard") {
+			for _, value := range filter.AcceptableValues {
+				dashboard, _, err := client.DashboardsApi.GetDashboard(authV1, value).Execute()
+				if err != nil {
+					return err
+				}
+
+				resources = append(resources, g.createResource(dashboard.GetId()))
+			}
+		}
+	}
+
+	if len(resources) > 0 {
+		g.Resources = resources
+		return nil
+	}
+
+	summary, _, err := client.DashboardsApi.ListDashboards(authV1).Execute()
 	if err != nil {
 		return err
 	}
-	boards, err := client.GetBoards()
-	if err != nil {
-		return err
-	}
-	g.Resources = g.createResources(boards)
+	g.Resources = g.createResources(summary.GetDashboards())
 	return nil
 }
