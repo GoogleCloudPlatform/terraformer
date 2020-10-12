@@ -43,10 +43,10 @@ func (g *DashboardGenerator) createResources(dashboards []datadogV1.DashboardSum
 	return resources
 }
 
-func (g *DashboardGenerator) createResource(dashboardId string) terraformutils.Resource {
+func (g *DashboardGenerator) createResource(dashboardID string) terraformutils.Resource {
 	return terraformutils.NewSimpleResource(
-		dashboardId,
-		fmt.Sprintf("dashboard_%s", dashboardId),
+		dashboardID,
+		fmt.Sprintf("dashboard_%s", dashboardID),
 		"datadog_dashboard",
 		"datadog",
 		DashboardAllowEmptyValues,
