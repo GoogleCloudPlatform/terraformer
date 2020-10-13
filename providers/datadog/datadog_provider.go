@@ -29,8 +29,8 @@ type DatadogProvider struct { //nolint
 	terraformutils.Provider
 	apiKey string
 	appKey string
-	AuthV1 context.Context
-	DatadogClientV1 *datadogV1.APIClient
+	authV1 context.Context
+	datadogClientV1 *datadogV1.APIClient
 }
 
 // Init check env params and initialize API Client
@@ -68,11 +68,11 @@ func (p *DatadogProvider) Init(args []string) error {
 			},
 		},
 	)
-	p.AuthV1 = authV1
+	p.authV1 = authV1
 
 	configV1 := datadogV1.NewConfiguration()
 	datadogClientV1 := datadogV1.NewAPIClient(configV1)
-	p.DatadogClientV1 = datadogClientV1
+	p.datadogClientV1 = datadogClientV1
 
 	return nil
 }
@@ -103,8 +103,8 @@ func (p *DatadogProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetArgs(map[string]interface{}{
 		"api-key": p.apiKey,
 		"app-key": p.appKey,
-		"AuthV1": p.AuthV1,
-		"DatadogClientV1": p.DatadogClientV1,
+		"authV1": p.authV1,
+		"datadogClientV1": p.datadogClientV1,
 	})
 	return nil
 }
