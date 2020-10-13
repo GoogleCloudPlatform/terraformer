@@ -15,10 +15,11 @@
 package datadog
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 
-	datadog "github.com/zorkian/go-datadog-api"
+	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -33,35 +34,61 @@ type MonitorGenerator struct {
 	DatadogService
 }
 
-func (MonitorGenerator) createResources(monitors []datadog.Monitor) []terraformutils.Resource {
+func (g *MonitorGenerator) createResources(monitors []datadogV1.Monitor) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	for _, monitor := range monitors {
-		resourceName := strconv.Itoa(monitor.GetId())
-		resources = append(resources, terraformutils.NewSimpleResource(
-			resourceName,
-			fmt.Sprintf("monitor_%s", resourceName),
-			"datadog_monitor",
-			"datadog",
-			MonitorAllowEmptyValues,
-		))
+		resourceName := strconv.FormatInt(monitor.GetId(), 10)
+		resources = append(resources, g.createResource(resourceName))
 	}
 
 	return resources
+}
+
+func (g *MonitorGenerator) createResource(monitorID string) terraformutils.Resource {
+	return terraformutils.NewSimpleResource(
+		monitorID,
+		fmt.Sprintf("monitor_%s", monitorID),
+		"datadog_monitor",
+		"datadog",
+		MonitorAllowEmptyValues,
+	)
 }
 
 // InitResources Generate TerraformResources from Datadog API,
 // from each monitor create 1 TerraformResource.
 // Need Monitor ID as ID for terraform resource
 func (g *MonitorGenerator) InitResources() error {
-	client := datadog.NewClient(g.Args["api-key"].(string), g.Args["app-key"].(string))
-	_, err := client.Validate()
+	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
+	authV1 := g.Args["authV1"].(context.Context)
+
+	resources := []terraformutils.Resource{}
+	for _, filter := range g.Filter {
+		if filter.FieldPath == "id" && filter.IsApplicable("monitor") {
+			for _, value := range filter.AcceptableValues {
+				i, err := strconv.ParseInt(value, 10, 64)
+				if err != nil {
+					return err
+				}
+
+				monitor, _, err := datadogClientV1.MonitorsApi.GetMonitor(authV1, i).Execute()
+				if err != nil {
+					return err
+				}
+
+				resources = append(resources, g.createResource(strconv.FormatInt(monitor.GetId(), 10)))
+			}
+		}
+	}
+
+	if len(resources) > 0 {
+		g.Resources = resources
+		return nil
+	}
+
+	summary, _, err := datadogClientV1.MonitorsApi.ListMonitors(authV1).Execute()
 	if err != nil {
 		return err
 	}
-	monitors, err := client.GetMonitors()
-	if err != nil {
-		return err
-	}
-	g.Resources = g.createResources(monitors)
+	g.Resources = g.createResources(summary)
 	return nil
 }
