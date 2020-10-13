@@ -57,26 +57,14 @@ func (g *DashboardGenerator) createResource(dashboardID string) terraformutils.R
 // from each dashboard create 1 TerraformResource.
 // Need Dashboard ID as ID for terraform resource
 func (g *DashboardGenerator) InitResources() error {
-	authV1 := context.WithValue(
-		context.Background(),
-		datadogV1.ContextAPIKeys,
-		map[string]datadogV1.APIKey{
-			"apiKeyAuth": {
-				Key: g.Args["api-key"].(string),
-			},
-			"appKeyAuth": {
-				Key: g.Args["app-key"].(string),
-			},
-		},
-	)
-	config := datadogV1.NewConfiguration()
-	client := datadogV1.NewAPIClient(config)
+	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
+	authV1 := g.Args["authV1"].(context.Context)
 
 	resources := []terraformutils.Resource{}
 	for _, filter := range g.Filter {
 		if filter.FieldPath == "id" && filter.IsApplicable("dashboard") {
 			for _, value := range filter.AcceptableValues {
-				dashboard, _, err := client.DashboardsApi.GetDashboard(authV1, value).Execute()
+				dashboard, _, err := datadogClientV1.DashboardsApi.GetDashboard(authV1, value).Execute()
 				if err != nil {
 					return err
 				}
@@ -91,7 +79,7 @@ func (g *DashboardGenerator) InitResources() error {
 		return nil
 	}
 
-	summary, _, err := client.DashboardsApi.ListDashboards(authV1).Execute()
+	summary, _, err := datadogClientV1.DashboardsApi.ListDashboards(authV1).Execute()
 	if err != nil {
 		return err
 	}
