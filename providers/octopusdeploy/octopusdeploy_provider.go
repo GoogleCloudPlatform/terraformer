@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/zclconf/go-cty/cty"
 )
 
@@ -47,7 +46,6 @@ func (p *OctopusDeployProvider) GetProviderData(arg ...string) map[string]interf
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"octopusdeploy": map[string]interface{}{
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
 				"address": p.address,
 			},
 		},

@@ -18,7 +18,6 @@ import (
 	"errors"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
 type CloudflareProvider struct { //nolint
@@ -34,13 +33,7 @@ func (p *CloudflareProvider) GetName() string {
 }
 
 func (p *CloudflareProvider) GetProviderData(arg ...string) map[string]interface{} {
-	return map[string]interface{}{
-		"provider": map[string]interface{}{
-			"cloudflare": map[string]interface{}{
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
-			},
-		},
-	}
+	return map[string]interface{}{}
 }
 
 func (CloudflareProvider) GetResourceConnections() map[string]map[string][]string {

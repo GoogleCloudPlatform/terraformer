@@ -19,7 +19,6 @@ import (
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/zclconf/go-cty/cty"
 )
 
@@ -90,7 +89,6 @@ func (p AliCloudProvider) GetProviderData(arg ...string) map[string]interface{} 
 		return map[string]interface{}{
 			"provider": map[string]interface{}{
 				"alicloud": map[string]interface{}{
-					"version": providerwrapper.GetProviderVersion(p.GetName()),
 					"region":  region,
 					"profile": profile,
 					"assume_role": map[string]interface{}{
@@ -105,7 +103,6 @@ func (p AliCloudProvider) GetProviderData(arg ...string) map[string]interface{} 
 			"alicloud": map[string]interface{}{
 				"region":  region,
 				"profile": profile,
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}

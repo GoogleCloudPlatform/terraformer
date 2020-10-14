@@ -20,7 +20,6 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"google.golang.org/api/compute/v1"
 )
 
@@ -176,7 +175,6 @@ func (p GCPProvider) GetProviderData(arg ...string) map[string]interface{} {
 		"provider": map[string]interface{}{
 			p.GetName(): map[string]interface{}{
 				"project": p.projectName,
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}
