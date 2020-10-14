@@ -20,6 +20,7 @@ import (
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -29,7 +30,16 @@ func OutputHclFiles(resources []terraformutils.Resource, provider terraformutils
 		return err
 	}
 	// create provider file
-	providerDataFile, err := terraformutils.Print(provider.GetProviderData(), map[string]struct{}{}, output)
+	providerData := provider.GetProviderData()
+	providerData["terraform"] = map[string]interface{}{
+		"required_providers": []map[string]interface{}{{
+			provider.GetName(): []map[string]interface{}{{
+				"version": providerwrapper.GetProviderVersion(provider.GetName()),
+			}},
+		}},
+	}
+
+	providerDataFile, err := terraformutils.Print(providerData, map[string]struct{}{}, output)
 	if err != nil {
 		return err
 	}

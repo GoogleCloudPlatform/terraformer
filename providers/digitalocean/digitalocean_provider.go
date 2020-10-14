@@ -19,7 +19,6 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
 type DigitalOceanProvider struct { //nolint
@@ -41,13 +40,7 @@ func (p *DigitalOceanProvider) GetName() string {
 }
 
 func (p *DigitalOceanProvider) GetProviderData(arg ...string) map[string]interface{} {
-	return map[string]interface{}{
-		"provider": map[string]interface{}{
-			"digitalocean": map[string]interface{}{
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
-			},
-		},
-	}
+	return map[string]interface{}{}
 }
 
 func (DigitalOceanProvider) GetResourceConnections() map[string]map[string][]string {
