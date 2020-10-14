@@ -18,7 +18,6 @@ import (
 	"errors"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
 type NewRelicProvider struct { //nolint
@@ -34,13 +33,7 @@ func (p *NewRelicProvider) GetName() string {
 }
 
 func (p *NewRelicProvider) GetProviderData(arg ...string) map[string]interface{} {
-	return map[string]interface{}{
-		"provider": map[string]interface{}{
-			"newrelic": map[string]interface{}{
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
-			},
-		},
-	}
+	return map[string]interface{}{}
 }
 
 func (NewRelicProvider) GetResourceConnections() map[string]map[string][]string {

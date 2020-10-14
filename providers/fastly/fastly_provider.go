@@ -19,7 +19,6 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
 type FastlyProvider struct { //nolint
@@ -50,7 +49,6 @@ func (p *FastlyProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"fastly": map[string]interface{}{
-				"version":     providerwrapper.GetProviderVersion(p.GetName()),
 				"customer_id": p.customerID,
 			},
 		},

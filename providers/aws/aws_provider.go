@@ -19,7 +19,6 @@ import (
 	"strconv"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/pkg/errors"
 	"github.com/zclconf/go-cty/cty"
 )
@@ -139,9 +138,7 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 }
 
 func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
-	awsConfig := map[string]interface{}{
-		"version": providerwrapper.GetProviderVersion(p.GetName()),
-	}
+	awsConfig := map[string]interface{}{}
 
 	if p.region == GlobalRegion {
 		awsConfig["region"] = "us-east-1" // For TF to workaround terraform-providers/terraform-provider-aws#1043
