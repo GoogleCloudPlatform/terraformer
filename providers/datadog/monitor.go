@@ -85,10 +85,10 @@ func (g *MonitorGenerator) InitResources() error {
 		return nil
 	}
 
-	summary, _, err := datadogClientV1.MonitorsApi.ListMonitors(authV1).Execute()
+	monitors, _, err := datadogClientV1.MonitorsApi.ListMonitors(authV1).Execute()
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(summary)
+	g.Resources = g.createResources(monitors)
 	return nil
 }
