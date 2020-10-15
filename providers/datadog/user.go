@@ -15,9 +15,9 @@
 package datadog
 
 import (
+	"context"
 	"fmt"
-
-	datadog "github.com/zorkian/go-datadog-api"
+	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -32,35 +32,56 @@ type UserGenerator struct {
 	DatadogService
 }
 
-func (UserGenerator) createResources(users []datadog.User) []terraformutils.Resource {
+func (g *UserGenerator) createResources(users []datadogV1.User) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	for _, user := range users {
 		resourceName := user.GetHandle()
-		resources = append(resources, terraformutils.NewSimpleResource(
-			resourceName,
-			fmt.Sprintf("user_%s", resourceName),
-			"datadog_user",
-			"datadog",
-			UserAllowEmptyValues,
-		))
+		resources = append(resources, g.createResource(resourceName))
 	}
 
 	return resources
+}
+
+func (g *UserGenerator) createResource(userID string) terraformutils.Resource {
+	return terraformutils.NewSimpleResource(
+		userID,
+		fmt.Sprintf("user_%s", userID),
+		"datadog_user",
+		"datadog",
+		UserAllowEmptyValues,
+	)
 }
 
 // InitResources Generate TerraformResources from Datadog API,
 // from each user create 1 TerraformResource.
 // Need User ID as ID for terraform resource
 func (g *UserGenerator) InitResources() error {
-	client := datadog.NewClient(g.Args["api-key"].(string), g.Args["app-key"].(string))
-	_, err := client.Validate()
+	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
+	authV1 := g.Args["authV1"].(context.Context)
+
+	resources := []terraformutils.Resource{}
+	for _, filter := range g.Filter {
+		if filter.FieldPath == "id" && filter.IsApplicable("user") {
+			for _, value := range filter.AcceptableValues {
+				user, _, err := datadogClientV1.UsersApi.GetUser(authV1, value).Execute()
+				if err != nil {
+					return err
+				}
+
+				resources = append(resources, g.createResource(user.User.GetHandle()))
+			}
+		}
+	}
+
+	if len(resources) > 0 {
+		g.Resources = resources
+		return nil
+	}
+
+	users, _, err := datadogClientV1.UsersApi.ListUsers(authV1).Execute()
 	if err != nil {
 		return err
 	}
-	users, err := client.GetUsers()
-	if err != nil {
-		return err
-	}
-	g.Resources = g.createResources(users)
+	g.Resources = g.createResources(users.GetUsers())
 	return nil
 }
