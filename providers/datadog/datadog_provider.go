@@ -30,9 +30,9 @@ type DatadogProvider struct { //nolint
 	terraformutils.Provider
 	apiKey string
 	appKey string
+	apiUrl string
 	authV1 context.Context
 	datadogClientV1 *datadogV1.APIClient
-	apiUrl string
 }
 
 // Init check env params and initialize API Client
