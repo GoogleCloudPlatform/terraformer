@@ -63,6 +63,7 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 		"ec2_instance": {
 			"sg":     []string{"vpc_security_group_ids", "id"},
 			"subnet": []string{"subnet_id", "id"},
+			"ebs":    []string{"ebs_block_device", "id"},
 		},
 		"elasticache": {
 			"vpc":    []string{"vpc_id", "id"},
