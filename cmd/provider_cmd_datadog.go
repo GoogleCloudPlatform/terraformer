@@ -20,14 +20,14 @@ import (
 )
 
 func newCmdDatadogImporter(options ImportOptions) *cobra.Command {
-	var apiKey, appKey string
+	var apiKey, appKey, apiUrl string
 	cmd := &cobra.Command{
 		Use:   "datadog",
 		Short: "Import current state to Terraform configuration from Datadog",
 		Long:  "Import current state to Terraform configuration from Datadog",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			provider := newDataDogProvider()
-			err := Import(provider, options, []string{apiKey, appKey})
+			err := Import(provider, options, []string{apiKey, appKey, apiUrl})
 			if err != nil {
 				return err
 			}
@@ -38,6 +38,7 @@ func newCmdDatadogImporter(options ImportOptions) *cobra.Command {
 	baseProviderFlags(cmd.PersistentFlags(), &options, "monitors,users", "monitor=id1:id2:id4")
 	cmd.PersistentFlags().StringVarP(&apiKey, "api-key", "", "", "YOUR_DATADOG_API_KEY or env param DATADOG_API_KEY")
 	cmd.PersistentFlags().StringVarP(&appKey, "app-key", "", "", "YOUR_DATADOG_APP_KEY or env param DATADOG_APP_KEY")
+	cmd.PersistentFlags().StringVarP(&apiUrl, "api-url", "", "", "YOUR_DATADOG_API_URL or env param DATADOG_HOST")
 	return cmd
 }
 

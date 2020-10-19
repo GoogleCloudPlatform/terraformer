@@ -17,6 +17,8 @@ package datadog
 import (
 	"context"
 	"errors"
+	"fmt"
+	"net/url"
 	"os"
 
 	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
@@ -30,6 +32,7 @@ type DatadogProvider struct { //nolint
 	appKey string
 	authV1 context.Context
 	datadogClientV1 *datadogV1.APIClient
+	apiUrl string
 }
 
 // Init check env params and initialize API Client
@@ -54,6 +57,12 @@ func (p *DatadogProvider) Init(args []string) error {
 		}
 	}
 
+	if args[2] != "" {
+		p.apiUrl = args[2]
+	} else if v := os.Getenv("DATADOG_HOST"); v != "" {
+		p.apiUrl = v
+	}
+
 	// Initialize the Datadog API client
 	authV1 := context.WithValue(
 		context.Background(),
@@ -67,6 +76,21 @@ func (p *DatadogProvider) Init(args []string) error {
 			},
 		},
 	)
+	if  p.apiUrl != "" {
+		parsedApiUrl, parseErr := url.Parse(p.apiUrl)
+		if parseErr != nil {
+			return fmt.Errorf(`invalid API Url : %v`, parseErr)
+		}
+		if parsedApiUrl.Host == "" || parsedApiUrl.Scheme == "" {
+			return fmt.Errorf(`missing protocol or host : %v`, p.apiUrl)
+		}
+		// If api url is passed, set and use the api name and protocol on ServerIndex{1}
+		authV1 = context.WithValue(authV1, datadogV1.ContextServerIndex, 1)
+		authV1 = context.WithValue(authV1, datadogV1.ContextServerVariables, map[string]string{
+			"name":     parsedApiUrl.Host,
+			"protocol": parsedApiUrl.Scheme,
+		})
+	}
 	p.authV1 = authV1
 
 	configV1 := datadogV1.NewConfiguration()
@@ -86,6 +110,7 @@ func (p *DatadogProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
 		"api_key": cty.StringVal(p.apiKey),
 		"app_key": cty.StringVal(p.appKey),
+		"api_url": cty.StringVal(p.apiUrl),
 	})
 }
 
@@ -102,6 +127,7 @@ func (p *DatadogProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetArgs(map[string]interface{}{
 		"api-key": p.apiKey,
 		"app-key": p.appKey,
+		"api-url": p.apiUrl,
 		"authV1": p.authV1,
 		"datadogClientV1": p.datadogClientV1,
 	})
