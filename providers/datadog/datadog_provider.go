@@ -28,10 +28,10 @@ import (
 
 type DatadogProvider struct { //nolint
 	terraformutils.Provider
-	apiKey string
-	appKey string
-	apiURL string
-	authV1 context.Context
+	apiKey          string
+	appKey          string
+	apiURL          string
+	authV1          context.Context
 	datadogClientV1 *datadogV1.APIClient
 }
 
@@ -76,7 +76,7 @@ func (p *DatadogProvider) Init(args []string) error {
 			},
 		},
 	)
-	if  p.apiURL != "" {
+	if p.apiURL != "" {
 		parsedAPIURL, parseErr := url.Parse(p.apiURL)
 		if parseErr != nil {
 			return fmt.Errorf(`invalid API Url : %v`, parseErr)
@@ -125,10 +125,10 @@ func (p *DatadogProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"api-key": p.apiKey,
-		"app-key": p.appKey,
-		"api-url": p.apiURL,
-		"authV1": p.authV1,
+		"api-key":         p.apiKey,
+		"app-key":         p.appKey,
+		"api-url":         p.apiURL,
+		"authV1":          p.authV1,
 		"datadogClientV1": p.datadogClientV1,
 	})
 	return nil
