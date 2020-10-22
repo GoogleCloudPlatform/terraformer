@@ -28,12 +28,12 @@ var firewallAllowEmptyValues = []string{""}
 
 var firewallAdditionalFields = map[string]interface{}{}
 
-type firewallGenerator struct {
+type FirewallGenerator struct {
 	GCPService
 }
 
 // Run on firewallList and create for each TerraformResource
-func (g firewallGenerator) createResources(ctx context.Context, firewallList *compute.FirewallsListCall) []terraformutils.Resource {
+func (g FirewallGenerator) createResources(ctx context.Context, firewallList *compute.FirewallsListCall) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	if err := firewallList.Pages(ctx, func(page *compute.FirewallList) error {
 		for _, obj := range page.Items {
@@ -61,7 +61,7 @@ func (g firewallGenerator) createResources(ctx context.Context, firewallList *co
 // Generate TerraformResources from GCP API,
 // from each firewall create 1 TerraformResource
 // Need firewall name as ID for terraform resource
-func (g *firewallGenerator) InitResources() error {
+func (g *FirewallGenerator) InitResources() error {
 	ctx := context.Background()
 	computeService, err := compute.NewService(ctx)
 	if err != nil {

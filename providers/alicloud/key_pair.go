@@ -27,7 +27,7 @@ type KeyPairGenerator struct {
 
 func resourceFromKeyPair(keyPair ecs.KeyPair) terraformutils.Resource {
 	return terraformutils.NewResource(
-		keyPair.KeyPairName,                          // nolint
+		keyPair.KeyPairName, // nolint
 		keyPair.KeyPairName+"__"+keyPair.KeyPairName, // nolint
 		"alicloud_key_pair",
 		"alicloud",

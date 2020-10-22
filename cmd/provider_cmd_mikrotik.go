@@ -35,7 +35,7 @@ func newCmdMikrotikImporter(options ImportOptions) *cobra.Command {
 	}
 
 	cmd.AddCommand(listCmd(newMikrotikProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "instance", "mikrotik_dhcp_lease=name1:name2:name3")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "instance", "dhcp_lease=name1:name2:name3")
 	return cmd
 }
 

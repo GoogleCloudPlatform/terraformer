@@ -64,7 +64,7 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 		},
 	}
 	cmd.AddCommand(listCmd(newAWSProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "vpc,subnet,nacl", "aws_elb=id1:id2:id4")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "vpc,subnet,nacl", "elb=id1:id2:id4")
 
 	cmd.PersistentFlags().StringVarP(&options.Profile, "profile", "", "default", "prod")
 	cmd.PersistentFlags().StringSliceVarP(&options.Regions, "regions", "", []string{}, "eu-west-1,eu-west-2,us-east-1")

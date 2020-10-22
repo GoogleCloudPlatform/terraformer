@@ -19,7 +19,6 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
 type GmailfilterProvider struct { //nolint
@@ -85,11 +84,5 @@ func (p *GmailfilterProvider) GetResourceConnections() map[string]map[string][]s
 }
 
 func (p *GmailfilterProvider) GetProviderData(arg ...string) map[string]interface{} {
-	return map[string]interface{}{
-		"provider": map[string]interface{}{
-			p.GetName(): map[string]interface{}{
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
-			},
-		},
-	}
+	return map[string]interface{}{}
 }
