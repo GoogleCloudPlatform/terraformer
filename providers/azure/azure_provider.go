@@ -18,6 +18,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -113,30 +114,117 @@ func (p *AzureProvider) GetName() string {
 }
 
 func (p *AzureProvider) GetProviderData(arg ...string) map[string]interface{} {
+	version := providerwrapper.GetProviderVersion(p.GetName())
+	if strings.Contains(version, "v2.") {
+		return map[string]interface{}{
+			"provider": map[string]interface{}{
+				"azurerm": map[string]interface{}{
+					// NOTE:
+					// Workaround for azurerm v2 provider changes
+					// Tested with azurerm_resource_group under v2.17.0
+					// https://github.com/terraform-providers/terraform-provider-azurerm/issues/5866#issuecomment-594239342
+					// https://github.com/hashicorp/terraform/issues/24200#issuecomment-594745861
+					"features": map[string]interface{}{},
+				},
+			},
+		}
+	}
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"azurerm": map[string]interface{}{
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
+				"version": version,
 			},
 		},
 	}
 }
 
 func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
-	return map[string]map[string][]string{}
+	return map[string]map[string][]string{
+		"analysis": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"app_service": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"cosmosdb": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"container": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"database": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"disk": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"dns": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"keyvault": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"load_balancer": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"network_interface": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"network_security_group": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"private_dns": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"public_ip": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"scaleset": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"storage_account": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"storage_blob": {
+			"storage_account":   []string{"storage_account_name", "name"},
+			"storage_container": []string{"storage_container_name", "name"},
+		},
+		"storage_container": {
+			"storage_account": []string{"storage_account_name", "name"},
+		},
+		"virtual_machine": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+		"virtual_network": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
+	}
 }
 
 func (p *AzureProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"analysis":               &AnalysisGenerator{},
-		"database":               &DatabasesGenerator{},
-		"disk":                   &DiskGenerator{},
-		"network_interface":      &NetworkInterfaceGenerator{},
-		"network_security_group": &NetworkSecurityGroupGenerator{},
-		"resource_group":         &ResourceGroupGenerator{},
-		"storage_account":        &StorageAccountGenerator{},
-		"virtual_machine":        &VirtualMachineGenerator{},
-		"virtual_network":        &VirtualNetworkGenerator{},
+		"analysis":                             &AnalysisGenerator{},
+		"app_service":                          &AppServiceGenerator{},
+		"cosmosdb":                             &CosmosDBGenerator{},
+		"container":                            &ContainerGenerator{},
+		"database":                             &DatabasesGenerator{},
+		"disk":                                 &DiskGenerator{},
+		"dns":                                  &DNSGenerator{},
+		"keyvault":                             &KeyVaultGenerator{},
+		"load_balancer":                        &LoadBalancerGenerator{},
+		"network_interface":                    &NetworkInterfaceGenerator{},
+		"network_security_group":               &NetworkSecurityGroupGenerator{},
+		"private_dns":                          &PrivateDNSGenerator{},
+		"public_ip":                            &PublicIPGenerator{},
+		"resource_group":                       &ResourceGroupGenerator{},
+		"scaleset":                             &ScaleSetGenerator{},
+		"security_center_contact":              &SecurityCenterContactGenerator{},
+		"security_center_subscription_pricing": &SecurityCenterSubscriptionPricingGenerator{},
+		"storage_account":                      &StorageAccountGenerator{},
+		"storage_blob":                         &StorageBlobGenerator{},
+		"storage_container":                    &StorageContainerGenerator{},
+		"virtual_machine":                      &VirtualMachineGenerator{},
+		"virtual_network":                      &VirtualNetworkGenerator{},
 	}
 }
 

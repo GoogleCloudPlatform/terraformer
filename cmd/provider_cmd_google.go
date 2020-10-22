@@ -45,7 +45,7 @@ func newCmdGoogleImporter(options ImportOptions) *cobra.Command {
 		},
 	}
 	cmd.AddCommand(listCmd(newGoogleProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "firewalls,networks", "google_compute_firewall=id1:id2:id4")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "firewalls,networks", "compute_firewall=id1:id2:id4")
 	cmd.PersistentFlags().StringSliceVarP(&options.Regions, "regions", "z", []string{"global"}, "europe-west1,")
 	cmd.PersistentFlags().StringSliceVarP(&options.Projects, "projects", "", []string{}, "")
 	_ = cmd.MarkPersistentFlagRequired("projects")

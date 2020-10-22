@@ -15,11 +15,12 @@
 package datadog
 
 import (
+	"context"
 	"errors"
 	"os"
 
+	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/zclconf/go-cty/cty"
 )
 
@@ -27,9 +28,11 @@ type DatadogProvider struct { //nolint
 	terraformutils.Provider
 	apiKey string
 	appKey string
+	authV1 context.Context
+	datadogClientV1 *datadogV1.APIClient
 }
 
-// Init check env params
+// Init check env params and initialize API Client
 func (p *DatadogProvider) Init(args []string) error {
 	if args[0] != "" {
 		p.apiKey = args[0]
@@ -50,6 +53,25 @@ func (p *DatadogProvider) Init(args []string) error {
 			return errors.New("app-key requirement")
 		}
 	}
+
+	// Initialize the Datadog API client
+	authV1 := context.WithValue(
+		context.Background(),
+		datadogV1.ContextAPIKeys,
+		map[string]datadogV1.APIKey{
+			"apiKeyAuth": {
+				Key: p.apiKey,
+			},
+			"appKeyAuth": {
+				Key: p.appKey,
+			},
+		},
+	)
+	p.authV1 = authV1
+
+	configV1 := datadogV1.NewConfiguration()
+	datadogClientV1 := datadogV1.NewAPIClient(configV1)
+	p.datadogClientV1 = datadogClientV1
 
 	return nil
 }
@@ -80,6 +102,8 @@ func (p *DatadogProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetArgs(map[string]interface{}{
 		"api-key": p.apiKey,
 		"app-key": p.appKey,
+		"authV1": p.authV1,
+		"datadogClientV1": p.datadogClientV1,
 	})
 	return nil
 }
@@ -104,11 +128,5 @@ func (DatadogProvider) GetResourceConnections() map[string]map[string][]string {
 
 // GetProviderData return map of provider data for Datadog
 func (p DatadogProvider) GetProviderData(arg ...string) map[string]interface{} {
-	return map[string]interface{}{
-		"provider": map[string]interface{}{
-			p.GetName(): map[string]interface{}{
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
-			},
-		},
-	}
+	return map[string]interface{}{}
 }

@@ -16,9 +16,10 @@ package cloudflare
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	cf "github.com/cloudflare/cloudflare-go"
-	"strings"
 )
 
 type FirewallGenerator struct {

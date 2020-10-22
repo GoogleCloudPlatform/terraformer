@@ -36,7 +36,7 @@ func newCmdNewRelicImporter(options ImportOptions) *cobra.Command {
 	}
 
 	cmd.AddCommand(listCmd(newNewRelicProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "alert", "newrelic_dashboard=id1:id2:id4")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "alert", "dashboard=id1:id2:id4")
 	return cmd
 }
 

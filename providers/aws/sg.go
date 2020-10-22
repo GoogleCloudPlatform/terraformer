@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"os"
 	"sort"
 	"strings"
 
@@ -56,7 +57,15 @@ func (b ByGroupPair) Less(i, j int) bool {
 }
 
 func (SecurityGenerator) createResources(securityGroups []ec2.SecurityGroup) []terraformutils.Resource {
-	sgIDsToMoveOut := findSgsToMoveOut(securityGroups)
+	var sgIDsToMoveOut []string
+	_, shouldSplitRules := os.LookupEnv("SPLIT_SG_RULES")
+	if shouldSplitRules {
+		for _, sg := range securityGroups {
+			sgIDsToMoveOut = append(sgIDsToMoveOut, *sg.GroupId)
+		}
+	} else {
+		sgIDsToMoveOut = findSgsToMoveOut(securityGroups)
+	}
 
 	var resources []terraformutils.Resource
 	for _, sg := range securityGroups {
