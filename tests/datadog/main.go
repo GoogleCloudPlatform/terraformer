@@ -75,7 +75,7 @@ func main() {
 		Output:      "hcl",
 		Filter:      terraformerFilters,
 		Verbose:     true,
-	}, []string{cfg.Datadog.apiKey, cfg.Datadog.appKey})
+	}, []string{cfg.Datadog.apiKey, cfg.Datadog.appKey, cfg.Datadog.apiURL})
 	if err != nil {
 		handleFatalErr(cfg, err, "Error while importing resources")
 	}
