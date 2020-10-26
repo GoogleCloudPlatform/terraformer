@@ -152,7 +152,7 @@ var ComputeServices = map[string]terraformutils.ServiceGenerator{
 `
 
 func main() {
-	computeAPIData, err := ioutil.ReadFile(os.Getenv("GOPATH") + "/src/google.golang.org/api/compute/v1/compute-api.json") //TODO delete this hack
+	computeAPIData, err := ioutil.ReadFile(os.Getenv("GOPATH") + "/src/google.golang.org/api/compute/v1/compute-api.json") // TODO delete this hack
 	if err != nil {
 		log.Fatal(err)
 	}

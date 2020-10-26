@@ -100,8 +100,8 @@ func (g *DataprocGenerator) InitResources() error {
 	clusterList := dataprocService.Projects.Regions.Clusters.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createClusterResources(ctx, clusterList)
 
-	//jobList := dataprocService.Projects.Regions.Jobs.List(g.GetArgs()["project"].(string), g.GetArgs()["region"])
-	//g.Resources = append(g.Resources, g.createJobResources(jobList, ctx)...)
+	// jobList := dataprocService.Projects.Regions.Jobs.List(g.GetArgs()["project"].(string), g.GetArgs()["region"])
+	// g.Resources = append(g.Resources, g.createJobResources(jobList, ctx)...)
 
 	return nil
 }
