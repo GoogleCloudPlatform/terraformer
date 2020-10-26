@@ -20,7 +20,6 @@ import (
 	"os"
 	"sort"
 	"strings"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils/terraformerstring"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
@@ -35,6 +34,7 @@ import (
 
 type ImportOptions struct {
 	Resources   []string
+	Excludes    []string
 	PathPattern string
 	PathOutput  string
 	State       string
@@ -93,10 +93,28 @@ func Import(provider terraformutils.ProviderGenerator, options ImportOptions, ar
 		options.Resources = providerServices(provider)
 	}
 
+	if (options.Excludes != nil) {
+		localSlice := []string{}
+		for _, r := range options.Resources {
+			remove := false
+			for _, e := range options.Excludes {
+				if (r == e) {
+					remove = true
+					log.Println("Excluding resource " + e)
+				}
+			}
+			if !remove {
+				localSlice = append(localSlice, r)
+			}
+		}
+		options.Resources = localSlice
+	}
+
 	providerWrapper, err := providerwrapper.NewProviderWrapper(provider.GetName(), provider.GetConfig(), options.Verbose)
 	if err != nil {
 		return err
 	}
+
 	defer providerWrapper.Kill()
 
 	for _, service := range options.Resources {
@@ -320,6 +338,7 @@ func baseProviderFlags(flag *pflag.FlagSet, options *ImportOptions, sampleRes, s
 	flag.BoolVarP(&options.Connect, "connect", "c", true, "")
 	flag.BoolVarP(&options.Compact, "compact", "C", false, "")
 	flag.StringSliceVarP(&options.Resources, "resources", "r", []string{}, sampleRes)
+	flag.StringSliceVarP(&options.Excludes, "excludes", "x", []string{}, sampleRes)
 	flag.StringVarP(&options.PathPattern, "path-pattern", "p", DefaultPathPattern, "{output}/{provider}/")
 	flag.StringVarP(&options.PathOutput, "path-output", "o", DefaultPathOutput, "")
 	flag.StringVarP(&options.State, "state", "s", DefaultState, "local or bucket")
