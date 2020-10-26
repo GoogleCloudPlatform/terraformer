@@ -18,9 +18,9 @@ func jsonPrint(data interface{}) ([]byte, error) {
 		return []byte{}, fmt.Errorf("error marshalling terraform data to json: %v", err)
 	}
 	// We don't need to escape > or <
-	s := strings.Replace(string(dataJSONBytes), "\\u003c", "<", -1)
+	s := strings.ReplaceAll(string(dataJSONBytes), "\\u003c", "<")
 	s = OpeningBracketRegexp.ReplaceAllStringFunc(s, escapingBackslashReplacer("<"))
-	s = strings.Replace(s, "\\u003e", ">", -1)
+	s = strings.ReplaceAll(s, "\\u003e", ">")
 	s = ClosingBracketRegexp.ReplaceAllStringFunc(s, escapingBackslashReplacer(">"))
 	return []byte(s), nil
 }

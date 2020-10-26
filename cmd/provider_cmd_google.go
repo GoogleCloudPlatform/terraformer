@@ -33,7 +33,7 @@ func newCmdGoogleImporter(options ImportOptions) *cobra.Command {
 				for _, region := range options.Regions {
 					provider := newGoogleProvider()
 					options.PathPattern = originalPathPattern
-					options.PathPattern = strings.Replace(options.PathPattern, "{provider}/{service}", "{provider}/"+project+"/{service}/"+region, -1)
+					options.PathPattern = strings.ReplaceAll(options.PathPattern, "{provider}/{service}", "{provider}/"+project+"/{service}/"+region)
 					log.Println(provider.GetName() + " importing project " + project + " region " + region)
 					err := Import(provider, options, []string{region, project})
 					if err != nil {

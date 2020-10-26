@@ -178,12 +178,12 @@ func (g *GcsGenerator) InitResources() error {
 	g.Resources = g.createBucketsResources(ctx, gcsService)
 
 	// TODO find bug with storageTransferService.TransferJobs.List().Pages
-	//storageTransferService, err := storagetransfer.NewService(ctx)
-	//if err != nil {
-	//	log.Print(err)
-	//		return err
-	//	}
-	//g.Resources = append(g.Resources, g.createTransferJobsResources(ctx, storageTransferService)...)
+	// storageTransferService, err := storagetransfer.NewService(ctx)
+	// if err != nil {
+	// 	log.Print(err)
+	// 		return err
+	// 	}
+	// g.Resources = append(g.Resources, g.createTransferJobsResources(ctx, storageTransferService)...)
 	return nil
 }
 

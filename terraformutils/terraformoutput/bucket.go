@@ -26,7 +26,7 @@ type BucketState struct {
 }
 
 func (b BucketState) BucketGetTfData(path string) interface{} {
-	name := strings.Replace(b.Name, "gs://", "", -1)
+	name := strings.ReplaceAll(b.Name, "gs://", "")
 	bucketStateData := map[string]interface{}{
 		"terraform": map[string]interface{}{
 			"backend": []map[string]interface{}{
@@ -52,7 +52,7 @@ func (b BucketState) BucketUpload(path string, file []byte) error {
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)
 	}
-	name := strings.Replace(b.Name, "gs://", "", -1)
+	name := strings.ReplaceAll(b.Name, "gs://", "")
 	wc := client.Bucket(name).Object(b.BucketPrefix(path) + "/default.tfstate").NewWriter(ctx)
 	if _, err = wc.Write(file); err != nil {
 		return err
