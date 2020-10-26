@@ -55,7 +55,7 @@ func getConfig() (*Config, error) {
 		Datadog: DatadogConfig{
 			apiKey: os.Getenv("DD_TEST_CLIENT_API_KEY"),
 			appKey: os.Getenv("DD_TEST_CLIENT_APP_KEY"),
-			apiURL: os.Getenv("DATADOG_API_URL"),
+			apiURL: os.Getenv("DATADOG_HOST"),
 		},
 		Terraform: TerraformConfig{
 			target: os.Getenv("DATADOG_TERRAFORM_TARGET"),
