@@ -1,6 +1,6 @@
 # Testing the Datadog provider 
 
-The CLI script in this directory is provided to test importing Datadog resources. The tool will create resources using Terraform CLI and import them using terraformer. The imported resources are 
+The CLI script in this directory is provided to test importing Datadog resources. The tool will create resources using Terraform CLI and import them using terraformer. The imported resources are stored in the `generated/` directory.
 
 _Note_: The script will create and destroy real resources. Never run this on a production Datadog organization.
 
@@ -46,3 +46,19 @@ Changes to Outputs:
 | **DATADOG_TERRAFORM_TARGET**    | Colon separated list of resource addresses to [target](https://www.terraform.io/docs/commands/plan.html#resource-targeting). Example: `DATADOG_TERRAFORM_TARGET="datadog_dashboard.free_dashboard_example:datadog_monitor.monitor_example"`      |
 | **LOG_CMD_OUTPUT**    | Print outputs of stderr and stdout from `terraform` commands. Default `false`      |
 
+
+**Frequently Asked Questions**
+
+```
+2020/10/26 15:08:34 Message: Error while importing resources. Error: fork/exec : no such file or directory
+```
+- Above error indicates that Terraformer is unable to locate the datadog provider executable. Manually pass the dir of the plugins directory using env var `TF_PLUGIN_DIR`. E.g. `TF_PLUGIN_DIR=~/.terraform.d/`
+
+```
+Error: Unsupported argument
+...
+An argument named "<variable>" is not expected here. Did you mean to define a block
+of type "<variable>"?
+```
+
+Terraformer imports resources utilizing HCLv1 standards where blocks and arguments were interchangeable. If using terraform 0.12.x, run the terraform provided upgraded command: `terraform 0.12upgrade .`. If 0.13.x, manually update `blocks <--> arguments`.

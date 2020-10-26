@@ -65,6 +65,9 @@ func main() {
 		terraformerServices = getAllServices(provider)
 	}
 
+	// Delete the 'generated/' directory if it already exists
+	_ = os.RemoveAll("generated/")
+
 	// Import created resources with Terraformer
 	err = cmd.Import(provider, cmd.ImportOptions{
 		Resources:   terraformerServices,
@@ -102,10 +105,6 @@ func terraformerResourcesTest(cfg *Config, resourcesMap *map[string][]string) er
 
 	// Check if terraform version is 0.13.x. If so, remove the generated provider file and upgrade
 	if strings.Contains(cfg.tfVersion, "0.13.") {
-		e := os.Remove("provider.tf")
-		if e != nil {
-			log.Printf("provider.tf file does not exist in the directory")
-		}
 		if err := cmdRun(cfg, []string{commandTerraformV13Upgrade}); err != nil {
 			return err
 		}
@@ -133,7 +132,7 @@ func terraformerResourcesTest(cfg *Config, resourcesMap *map[string][]string) er
 		sort.Strings(v)
 	}
 
-	log.Printf("Comparing resource names and resources ids. \n Created resources: %s \n Imported Resources: %s", resourcesMap, terraformResourcesMap)
+	log.Println("Comparing resource names and resources ids. \n Created resources:", resourcesMap,"\n Imported Resources:", terraformResourcesMap)
 	match := reflect.DeepEqual(resourcesMap, terraformResourcesMap)
 	if match {
 		// Run plan against the generated resources to make sure there is no diff
@@ -147,7 +146,6 @@ func terraformerResourcesTest(cfg *Config, resourcesMap *map[string][]string) er
 			return err
 		}
 	} else {
-		log.Printf("Imported resources did not match the created. \n Created resources: %s \n Imported Resources: %s", resourcesMap, terraformResourcesMap)
 		return errors.New("imported resource names and/or ids did not match the created")
 	}
 
