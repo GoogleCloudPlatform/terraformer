@@ -9,7 +9,7 @@ _Note_: The script will create and destroy real resources. Never run this on a p
 
 ### Script usage
 
-#####Terraform 0.12.x
+**Terraform 0.12.x**
 
    Run the script from the projects root directory:
     
@@ -17,7 +17,7 @@ _Note_: The script will create and destroy real resources. Never run this on a p
     go run ./tests/datadog/
     ``` 
 
-#####Terraform 0.13.x
+**Terraform 0.13.x**
 
    Run the script from the projects root directory and pass the terraform version using DATADOG_TF_VERSION env var:
 
