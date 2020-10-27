@@ -45,7 +45,7 @@ func main() {
 			handleFatalErr(cfg, err, "Error running command 'terraform 0.13upgrade'")
 		}
 	}
-	// Initialize the Datadog provider for resource creation
+	// Initialize the Datadog provider in dir 'tests/datadog/resources'
 	err = initializeDatadogProvider(cfg)
 	if err != nil {
 		handleFatalErr(cfg, err, "Error initializing the Datadog provider: ")
@@ -57,6 +57,7 @@ func main() {
 		handleFatalErr(cfg, err, "Error creating resources")
 	}
 
+	// Get list of terraformerServices and terraformerFilters from created resources
 	for resource, resourceId := range *resourcesMap {
 		terraformerServices = append(terraformerServices, resource)
 		terraformerFilters = append(terraformerFilters, fmt.Sprintf("%s=%s", resource, strings.Join(resourceId, ":")))
@@ -83,7 +84,7 @@ func main() {
 		handleFatalErr(cfg, err, "Error while importing resources")
 	}
 
-	// Run tests to ensure created and imported resources match
+	// Run tests on created and imported resources
 	err = terraformerResourcesTest(cfg, resourcesMap)
 	if err != nil {
 		handleFatalErr(cfg, err, "Terraform resource test step failed")
@@ -103,7 +104,7 @@ func terraformerResourcesTest(cfg *Config, resourcesMap *map[string][]string) er
 		return err
 	}
 
-	// Check if terraform version is 0.13.x. If so, remove the generated provider file and upgrade
+	// Run TF 0.13 upgrade command if applicable
 	if strings.Contains(cfg.tfVersion, "0.13.") {
 		if err := cmdRun(cfg, []string{commandTerraformV13Upgrade}); err != nil {
 			return err
@@ -116,7 +117,7 @@ func terraformerResourcesTest(cfg *Config, resourcesMap *map[string][]string) er
 		handleFatalErr(cfg, err, "Error initializing the Datadog provider: ")
 	}
 
-	// Collect outputs from generated resources
+	// Collect tf outputs from generated resources
 	terraformerResourcesOutput, err := terraformOutput()
 	if err != nil {
 		log.Println(err)
@@ -124,7 +125,7 @@ func terraformerResourcesTest(cfg *Config, resourcesMap *map[string][]string) er
 	}
 	terraformResourcesMap := parseTerraformOutput(string(terraformerResourcesOutput))
 
-	// Sort the map values for easier comparison
+	// Sort the map values
 	for _, v := range *terraformResourcesMap {
 		sort.Strings(v)
 	}
@@ -135,7 +136,8 @@ func terraformerResourcesTest(cfg *Config, resourcesMap *map[string][]string) er
 	log.Println("Comparing resource names and resources ids. \n Created resources:", resourcesMap,"\n Imported Resources:", terraformResourcesMap)
 	match := reflect.DeepEqual(resourcesMap, terraformResourcesMap)
 	if match {
-		// Run plan against the generated resources to make sure there is no diff
+		// Run 'terraform plan' against the generated resources
+		// Command will exit with exit code 2 if diff is produced
 		log.Println("Running terraform plan on generated resources. This should produce no diff")
 		err := terraformPlan(cfg)
 		if err != nil {
