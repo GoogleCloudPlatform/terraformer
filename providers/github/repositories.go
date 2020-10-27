@@ -41,7 +41,7 @@ func (g *RepositoriesGenerator) InitResources() error {
 	opt := &githubAPI.RepositoryListByOrgOptions{
 		ListOptions: githubAPI.ListOptions{PerPage: 100},
 	}
-	//list all repositories for the authenticated user
+	// list all repositories for the authenticated user
 	for {
 		repos, resp, err := client.Repositories.ListByOrg(ctx, g.GetArgs()["organization"].(string), opt)
 		if err != nil {
