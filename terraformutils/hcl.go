@@ -17,6 +17,7 @@ package terraformutils
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"regexp"
@@ -86,15 +87,15 @@ func (v *astSanitizer) visitObjectItem(o *ast.ObjectItem) {
 		if strings.HasPrefix(t.Token.Text, `"<<`) {
 			t.Token.Text = t.Token.Text[1:]
 			t.Token.Text = t.Token.Text[:len(t.Token.Text)-1]
-			t.Token.Text = strings.Replace(t.Token.Text, `\n`, "\n", -1)
-			t.Token.Text = strings.Replace(t.Token.Text, `\t`, "", -1)
+			t.Token.Text = strings.ReplaceAll(t.Token.Text, `\n`, "\n")
+			t.Token.Text = strings.ReplaceAll(t.Token.Text, `\t`, "")
 			t.Token.Type = 10
 			// check if text json for Unquote and Indent
 			tmp := map[string]interface{}{}
 			jsonTest := t.Token.Text
 			lines := strings.Split(jsonTest, "\n")
 			jsonTest = strings.Join(lines[1:len(lines)-1], "\n")
-			jsonTest = strings.Replace(jsonTest, "\\\"", "\"", -1)
+			jsonTest = strings.ReplaceAll(jsonTest, "\\\"", "\"")
 			// it's json we convert to heredoc back
 			err := json.Unmarshal([]byte(jsonTest), &tmp)
 			if err == nil {
@@ -126,7 +127,7 @@ func Print(data interface{}, mapsObjects map[string]struct{}, format string) ([]
 	case "json":
 		return jsonPrint(data)
 	}
-	return []byte{}, fmt.Errorf("error: unknown output format")
+	return []byte{}, errors.New("error: unknown output format")
 }
 
 func hclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error) {
@@ -151,10 +152,10 @@ func hclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error)
 	s := b.String()
 
 	// Remove extra whitespace...
-	s = strings.Replace(s, "\n\n", "\n", -1)
+	s = strings.ReplaceAll(s, "\n\n", "\n")
 
 	// ...but leave whitespace between resources
-	s = strings.Replace(s, "}\nresource", "}\n\nresource", -1)
+	s = strings.ReplaceAll(s, "}\nresource", "}\n\nresource")
 
 	// Apply Terraform style (alignment etc.)
 	formatted, err := hclPrinter.Format([]byte(s))

@@ -68,7 +68,7 @@ func newCmdKeycloakImporter(options ImportOptions) *cobra.Command {
 					provider := newKeycloakProvider()
 					log.Println(provider.GetName() + " importing realm " + target)
 					options.PathPattern = originalPathPattern
-					options.PathPattern = strings.Replace(options.PathPattern, "{provider}", "{provider}/"+target, -1)
+					options.PathPattern = strings.ReplaceAll(options.PathPattern, "{provider}", "{provider}/"+target)
 					err := Import(provider, options, []string{url, clientID, clientSecret, realm, strconv.FormatInt(clientTimeout, 10), caCert, strconv.FormatBool(tlsInsecureSkipVerify), target})
 					if err != nil {
 						return err

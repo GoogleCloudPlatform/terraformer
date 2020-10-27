@@ -101,7 +101,7 @@ func OutputHclFiles(resources []terraformutils.Resource, provider terraformutils
 		}
 	} else {
 		for k, v := range typeOfServices {
-			fileName := strings.Replace(k, strings.Split(k, "_")[0]+"_", "", -1)
+			fileName := strings.ReplaceAll(k, strings.Split(k, "_")[0]+"_", "")
 			err := printFile(v, fileName, path, output)
 			if err != nil {
 				return err

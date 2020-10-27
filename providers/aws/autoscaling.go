@@ -62,7 +62,7 @@ func (g *AutoScalingGenerator) loadLaunchConfigurations(svc *autoscaling.Client)
 			attributes := map[string]string{}
 			// only for LaunchConfigurations with userdata, we want get user_data_base64
 			if aws.StringValue(lc.UserData) != "" {
-				attributes["user_data_base64"] = "=" //need set not empty string to get user_data_base64 from provider
+				attributes["user_data_base64"] = "=" // need set not empty string to get user_data_base64 from provider
 			}
 			g.Resources = append(g.Resources, terraformutils.NewResource(
 				resourceName,

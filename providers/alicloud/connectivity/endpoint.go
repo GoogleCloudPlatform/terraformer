@@ -50,7 +50,7 @@ const (
 	DDOSBGPCode       = ServiceCode("DDOSBGP")
 )
 
-//xml
+// xml
 type Endpoints struct {
 	Endpoint []Endpoint `xml:"Endpoint"`
 }

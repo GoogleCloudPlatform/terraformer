@@ -36,7 +36,7 @@ func newCmdYandexImporter(options ImportOptions) *cobra.Command {
 			for _, folderID := range options.Projects {
 				provider := newYandexProvider()
 				options.PathPattern = originalPathPattern
-				options.PathPattern = strings.Replace(options.PathPattern, "{provider}/{service}", "{provider}/"+folderID+"/{service}", -1)
+				options.PathPattern = strings.ReplaceAll(options.PathPattern, "{provider}/{service}", "{provider}/"+folderID+"/{service}")
 				log.Println(provider.GetName() + " importing folder id " + folderID)
 				err := Import(provider, options, []string{folderID})
 				if err != nil {
