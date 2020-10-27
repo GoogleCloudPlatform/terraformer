@@ -25,8 +25,8 @@ func main() {
 	for _, f := range files {
 		if strings.HasPrefix(f.Name(), filePrefix) {
 			if !strings.HasPrefix(f.Name(), filePrefix+provider+fileSuffix) {
-				providerName := strings.Replace(f.Name(), filePrefix, "", -1)
-				providerName = strings.Replace(providerName, fileSuffix, "", -1)
+				providerName := strings.ReplaceAll(f.Name(), filePrefix, "")
+				providerName = strings.ReplaceAll(providerName, fileSuffix, "")
 				deletedProvider = append(deletedProvider, providerName)
 			}
 		}
@@ -77,7 +77,7 @@ func main() {
 	}
 	fmt.Println(outb.String())
 
-	//revert code and files
+	// revert code and files
 	err = ioutil.WriteFile(packageCmdPath+"/root.go", rootCode, os.ModePerm)
 	if err != nil {
 		log.Println(err)

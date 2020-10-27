@@ -37,7 +37,7 @@ func (g InstancesGenerator) createResources(ctx context.Context, instancesList *
 	resources := []terraformutils.Resource{}
 	if err := instancesList.Pages(ctx, func(page *compute.InstanceList) error {
 		for _, obj := range page.Items {
-			if strings.HasPrefix("gke-", obj.Name) {
+			if strings.HasPrefix(obj.Name, "gke-") {
 				continue
 			}
 			resources = append(resources, terraformutils.NewResource(

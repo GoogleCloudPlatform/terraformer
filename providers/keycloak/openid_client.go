@@ -114,23 +114,23 @@ func (g RealmGenerator) createOpenIDProtocolMapperResources(clientID string, ope
 			resources = append(resources, g.createOpenIDGenericProtocolMapperResource("user_session_note", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
 		case "oidc-address-mapper":
 			// Not supported for the moment
-			//resources = append(resources, g.createOpenIDGenericProtocolMapperResource("address", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
+			// resources = append(resources, g.createOpenIDGenericProtocolMapperResource("address", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
 			continue
 		case "oidc-role-name-mapper":
 			// Not supported for the moment
-			//resources = append(resources, g.createOpenIDGenericProtocolMapperResource("role_name", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
+			// resources = append(resources, g.createOpenIDGenericProtocolMapperResource("role_name", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
 			continue
 		case "oidc-sha256-pairwise-sub-mapper":
 			// Not supported for the moment
-			//resources = append(resources, g.createOpenIDGenericProtocolMapperResource("pairwise_subject_identifier", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
+			// resources = append(resources, g.createOpenIDGenericProtocolMapperResource("pairwise_subject_identifier", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
 			continue
 		case "oidc-allowed-origins-mapper":
 			// Not supported for the moment
-			//resources = append(resources, g.createOpenIDGenericProtocolMapperResource("allowed_web_origins", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
+			// resources = append(resources, g.createOpenIDGenericProtocolMapperResource("allowed_web_origins", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
 			continue
 		case "oidc-audience-resolve-mapper":
 			// Not supported for the moment
-			//resources = append(resources, g.createOpenIDGenericProtocolMapperResource("audience_resolve", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
+			// resources = append(resources, g.createOpenIDGenericProtocolMapperResource("audience_resolve", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
 			continue
 		}
 	}
