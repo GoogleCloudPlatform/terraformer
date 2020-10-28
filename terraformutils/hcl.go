@@ -237,6 +237,7 @@ func TfSanitize(name string) string {
 func HclPrintResource(resources []Resource, providerData map[string]interface{}, output string) ([]byte, error) {
 	resourcesByType := map[string]map[string]interface{}{}
 	mapsObjects := map[string]struct{}{}
+	indexRe := regexp.MustCompile(`\.[0-9]+`)
 	for _, res := range resources {
 		r := resourcesByType[res.InstanceInfo.Type]
 		if r == nil {
@@ -254,7 +255,7 @@ func HclPrintResource(resources []Resource, providerData map[string]interface{},
 		for k := range res.InstanceState.Attributes {
 			if strings.HasSuffix(k, ".%") {
 				key := strings.TrimSuffix(k, ".%")
-				mapsObjects[key] = struct{}{}
+				mapsObjects[indexRe.ReplaceAllString(key, "")] = struct{}{}
 			}
 		}
 	}
