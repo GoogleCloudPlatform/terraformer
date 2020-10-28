@@ -508,26 +508,26 @@ resource "datadog_dashboard" "free_dashboard_example" {
     }
   }
 
-//  widget {
-//    log_stream_definition {
-//      indexes = ["main"]
-//      query = "error"
-//      columns = ["core_host", "core_service", "tag_source"]
-//      show_date_column = true
-//      show_message_column = true
-//      message_display = "expanded-md"
-//      sort {
-//        column = "time"
-//        order = "desc"
-//      }
-//    }
-//    layout = {
-//      height = 36
-//      width = 32
-//      x = 5
-//      y = 51
-//    }
-//  }
+  widget {
+    log_stream_definition {
+      indexes = ["main"]
+      query = "error"
+      columns = ["core_host", "core_service", "tag_source"]
+      show_date_column = true
+      show_message_column = true
+      message_display = "expanded-md"
+      sort {
+        column = "time"
+        order = "desc"
+      }
+    }
+    layout = {
+      height = 36
+      width = 32
+      x = 5
+      y = 51
+    }
+  }
 
   widget {
     manage_status_definition {
