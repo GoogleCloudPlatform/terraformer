@@ -133,7 +133,7 @@ func terraformerResourcesTest(cfg *Config, resourcesMap *map[string][]string) er
 		sort.Strings(v)
 	}
 
-	log.Println("Comparing resource names and resources ids. \n Created resources:", resourcesMap,"\n Imported Resources:", terraformResourcesMap)
+	log.Println("Comparing resource names and resources ids. \n Created resources:", resourcesMap, "\n Imported Resources:", terraformResourcesMap)
 	match := reflect.DeepEqual(resourcesMap, terraformResourcesMap)
 	if match {
 		// Run 'terraform plan' against the generated resources
@@ -165,5 +165,5 @@ func handleFatalErr(cfg *Config, err error, msg string) {
 		log.Printf("Error while destroying resources: %s", err)
 	}
 
-	log.Fatalf("Message: %s. Error: %s",msg,  err)
+	log.Fatalf("Message: %s. Error: %s", msg, err)
 }

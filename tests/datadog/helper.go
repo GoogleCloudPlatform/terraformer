@@ -61,8 +61,8 @@ func getConfig() (*Config, error) {
 			target: os.Getenv("DATADOG_TERRAFORM_TARGET"),
 		},
 		logCMDOutput: logCMDOutput,
-		rootPath: rootPath,
-		tfVersion: os.Getenv("DATADOG_TF_VERSION"),
+		rootPath:     rootPath,
+		tfVersion:    os.Getenv("DATADOG_TF_VERSION"),
 	}, nil
 }
 
@@ -119,7 +119,7 @@ func createDatadogResource(cfg *Config) (*map[string][]string, error) {
 	return resources, nil
 }
 
-func terraformOutput() ([]byte, error){
+func terraformOutput() ([]byte, error) {
 	output, err := exec.Command("sh", "-c", commandTerraformOutput).Output()
 	if err != nil {
 		log.Println(err)

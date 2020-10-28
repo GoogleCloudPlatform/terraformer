@@ -54,12 +54,3 @@ Changes to Outputs:
 2020/10/26 15:08:34 Message: Error while importing resources. Error: fork/exec : no such file or directory
 ```
 - Above error indicates that Terraformer is unable to locate the datadog provider executable. Manually pass the dir of the plugin's directory using env var `TF_PLUGIN_DIR`. E.g. `TF_PLUGIN_DIR=~/.terraform.d/`
-
-```
-Error: Unsupported argument
-...
-An argument named "<variable>" is not expected here. Did you mean to define a block
-of type "<variable>"?
-```
-
-Terraformer imports resources utilizing HCLv1 standards where blocks and arguments were interchangeable. If using terraform 0.12.x, run the terraform provided upgraded command: `terraform 0.12upgrade .`. If 0.13.x, manually update `blocks <--> arguments`.
