@@ -111,7 +111,7 @@ func (g *GcsGenerator) createBucketsResources(ctx context.Context, gcsService *s
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -120,7 +120,7 @@ func (g *GcsGenerator) createNotificationResources(gcsService *storage.Service, 
 	resources := []terraformutils.Resource{}
 	notificationList, err := gcsService.Notifications.List(bucket.Name).Do()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return resources
 	}
 	for _, notification := range notificationList.Items {
