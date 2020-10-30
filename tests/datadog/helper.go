@@ -173,12 +173,12 @@ func parseTerraformOutput(output string) *map[string][]string {
 }
 
 func cmdRun(cfg *Config, args []string) error {
-	terraformApiKeyEnvVariable := fmt.Sprintf("DATADOG_API_KEY=%s", cfg.Datadog.apiKey)
+	terraformAPIKeyEnvVariable := fmt.Sprintf("DATADOG_API_KEY=%s", cfg.Datadog.apiKey)
 	terraformAppKeyEnvVariable := fmt.Sprintf("DATADOG_APP_KEY=%s", cfg.Datadog.appKey)
 
 	cmd := exec.Command("sh", "-c", strings.Join(args, " "))
 	cmd.Env = os.Environ()
-	cmd.Env = append(cmd.Env, terraformApiKeyEnvVariable, terraformAppKeyEnvVariable)
+	cmd.Env = append(cmd.Env, terraformAPIKeyEnvVariable, terraformAppKeyEnvVariable)
 	if cfg.logCMDOutput {
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
