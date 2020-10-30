@@ -37,6 +37,9 @@ type MonitorGenerator struct {
 func (g *MonitorGenerator) createResources(monitors []datadogV1.Monitor) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	for _, monitor := range monitors {
+		if monitor.GetType() == datadogV1.MONITORTYPE_SYNTHETICS_ALERT {
+			continue
+		}
 		resourceName := strconv.FormatInt(monitor.GetId(), 10)
 		resources = append(resources, g.createResource(resourceName))
 	}
