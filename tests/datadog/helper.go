@@ -160,13 +160,13 @@ func parseTerraformOutput(output string) *map[string][]string {
 	for _, resourceOutput := range outputArr {
 		if len(resourceOutput) > 0 {
 			resourceArr := strings.Split(resourceOutput, " = ")
-			resourceId := resourceArr[len(resourceArr)-1]
+			resourceID := resourceArr[len(resourceArr)-1]
 			// Get resource name
 			re := regexp.MustCompile("_(.*?)(--|_)")
 			match := re.FindStringSubmatch(resourceArr[0])
 			resourceName := match[1]
 
-			resources[resourceName] = append(resources[resourceName], resourceId)
+			resources[resourceName] = append(resources[resourceName], resourceID)
 		}
 	}
 	return &resources

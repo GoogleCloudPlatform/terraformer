@@ -17,13 +17,13 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/GoogleCloudPlatform/terraformer/cmd"
 	"log"
 	"os"
 	"reflect"
 	"sort"
 	"strings"
 
+	"github.com/GoogleCloudPlatform/terraformer/cmd"
 	datadog_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/datadog"
 )
 
@@ -58,9 +58,9 @@ func main() {
 	}
 
 	// Get list of terraformerServices and terraformerFilters from created resources
-	for resource, resourceId := range *resourcesMap {
+	for resource, resourceID := range *resourcesMap {
 		terraformerServices = append(terraformerServices, resource)
-		terraformerFilters = append(terraformerFilters, fmt.Sprintf("%s=%s", resource, strings.Join(resourceId, ":")))
+		terraformerFilters = append(terraformerFilters, fmt.Sprintf("%s=%s", resource, strings.Join(resourceID, ":")))
 	}
 	if len(terraformerServices) == 0 {
 		terraformerServices = getAllServices(provider)
@@ -111,7 +111,7 @@ func terraformerResourcesTest(cfg *Config, resourcesMap *map[string][]string) er
 		}
 	}
 
-	//Initialize Datadog provider in the 'generated/' directory
+	// Initialize Datadog provider in the 'generated/' directory
 	err := initializeDatadogProvider(cfg)
 	if err != nil {
 		handleFatalErr(cfg, err, "Error initializing the Datadog provider: ")
