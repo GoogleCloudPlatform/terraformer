@@ -107,6 +107,7 @@ func (p *GCPProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 	services["memoryStore"] = &MemoryStoreGenerator{}
 	services["monitoring"] = &MonitoringGenerator{}
 	services["project"] = &ProjectGenerator{}
+	services["instances"] = &InstancesGenerator{}
 	services["pubsub"] = &PubsubGenerator{}
 	services["schedulerJobs"] = &SchedulerJobsGenerator{}
 	return services
