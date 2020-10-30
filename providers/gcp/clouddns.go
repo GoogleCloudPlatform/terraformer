@@ -97,7 +97,7 @@ func (g *CloudDNSGenerator) InitResources() error {
 	ctx := context.Background()
 	svc, err := dns.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	g.Resources = g.createZonesResources(ctx, svc, project)

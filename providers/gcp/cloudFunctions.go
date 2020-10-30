@@ -48,7 +48,7 @@ func (g CloudFunctionsGenerator) createResources(ctx context.Context, functionsL
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -60,7 +60,7 @@ func (g *CloudFunctionsGenerator) InitResources() error {
 	ctx := context.Background()
 	cloudfunctionsService, err := cloudfunctions.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	functionsList := cloudfunctionsService.Projects.Locations.Functions.List("projects/" + g.GetArgs()["project"].(string) + "/locations/" + g.GetArgs()["region"].(compute.Region).Name)

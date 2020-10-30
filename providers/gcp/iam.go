@@ -117,22 +117,22 @@ func (g *IamGenerator) InitResources() error {
 	projectID := g.GetArgs()["project"].(string)
 	client, err := admin.NewIamClient(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	serviceAccountsIterator := client.ListServiceAccounts(ctx, &adminpb.ListServiceAccountsRequest{Name: "projects/" + projectID})
 	rolesResponse, err := client.ListRoles(ctx, &adminpb.ListRolesRequest{Parent: "projects/" + projectID})
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	cm, err := cloudresourcemanager.NewService(context.Background())
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	rb := &cloudresourcemanager.GetIamPolicyRequest{}
 	policyResponse, err := cm.Projects.GetIamPolicy(projectID, rb).Context(context.Background()).Do()
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	g.Resources = g.createServiceAccountResources(serviceAccountsIterator)
