@@ -55,7 +55,7 @@ func (g DataprocGenerator) createClusterResources(ctx context.Context, clusterLi
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -94,7 +94,7 @@ func (g *DataprocGenerator) InitResources() error {
 	ctx := context.Background()
 	dataprocService, err := dataproc.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	clusterList := dataprocService.Projects.Regions.Clusters.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)

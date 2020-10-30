@@ -55,7 +55,7 @@ func (g KmsGenerator) createKmsRingResources(ctx context.Context, keyRingList *c
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -81,7 +81,7 @@ func (g *KmsGenerator) createKmsKeyResources(ctx context.Context, keyRingName st
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -91,7 +91,7 @@ func (g *KmsGenerator) InitResources() error {
 	ctx := context.Background()
 	kmsService, err := cloudkms.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	keyRingList := kmsService.Projects.Locations.KeyRings.List("projects/" + g.GetArgs()["project"].(string) + "/locations/global")

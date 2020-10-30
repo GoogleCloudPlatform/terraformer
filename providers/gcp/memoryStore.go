@@ -56,7 +56,7 @@ func (g MemoryStoreGenerator) createResources(ctx context.Context, redisInstance
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -68,7 +68,7 @@ func (g *MemoryStoreGenerator) InitResources() error {
 	ctx := context.Background()
 	redisService, err := redis.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	redisInstancesList := redisService.Projects.Locations.Instances.List("projects/" + g.GetArgs()["project"].(string) + "/locations/" + g.GetArgs()["region"].(compute.Region).Name)
