@@ -83,7 +83,7 @@ role_arn = ${CUSTOMER_ARN_ROLE}
 external_id = ${EXTERNAL_ID}
 AWS_CREDS
 
-		services="vpc,sg,nacl,nat,igw,subnet,vpc_peering,route_table vpn_connection,vpn_gateway,transit_gateway eni,eip,customer_gateway,ebs alb ec2_instance elb,auto_scaling eks sts,iam,route53,route53domains,cloudfront,accessanalyzer ecs,acm,kinesis,firehose,elasticache,codecommit rds,sqs,cloudtrail,config,kms lambda,s3,sns,dynamodb,es"
+		services="vpc,sg,nacl,nat,igw,subnet,vpc_peering,route_table vpn_connection,vpn_gateway,transit_gateway eni,eip,customer_gateway,ebs alb ec2_instance elb,auto_scaling eks sts,iam,route53,route53domains,cloudfront,accessanalyzer ecs,acm,kinesis,elasticache,codecommit rds,sqs,cloudtrail,config,kms lambda,s3,sns,dynamodb,es"
 		;;
 	*)
 		echo "$CSP isn't supported"
