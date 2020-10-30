@@ -43,7 +43,7 @@ func (b BucketState) BucketGetTfData(path string) interface{} {
 }
 
 func (b BucketState) BucketPrefix(path string) string {
-	return path
+	return strings.TrimSuffix(path, "/")
 }
 
 func (b BucketState) BucketUpload(path string, file []byte) error {
