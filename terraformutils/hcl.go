@@ -179,17 +179,24 @@ func hclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error)
 
 func terraform12Adjustments(formatted []byte, mapsObjects map[string]struct{}) []byte {
 	singletonListFix := regexp.MustCompile(`^\s*\w+ = {`)
+	singletonListFixEnd := regexp.MustCompile(`^\s*}`)
 
 	s := string(formatted)
 	old := " = {"
 	newEquals := " {"
 	lines := strings.Split(s, "\n")
+	prefix := make([]string, 0)
 	for i, line := range lines {
+		if singletonListFixEnd.MatchString(line) && len(prefix) > 0 {
+			prefix = prefix[:len(prefix)-1]
+			continue
+		}
 		if !singletonListFix.MatchString(line) {
 			continue
 		}
 		key := strings.Trim(strings.Split(line, old)[0], " ")
-		if _, exist := mapsObjects[key]; exist {
+		prefix = append(prefix, key)
+		if _, exist := mapsObjects[strings.Join(prefix, ".")]; exist {
 			continue
 		}
 		lines[i] = strings.ReplaceAll(line, old, newEquals)
@@ -230,6 +237,7 @@ func TfSanitize(name string) string {
 func HclPrintResource(resources []Resource, providerData map[string]interface{}, output string) ([]byte, error) {
 	resourcesByType := map[string]map[string]interface{}{}
 	mapsObjects := map[string]struct{}{}
+	indexRe := regexp.MustCompile(`\.[0-9]+`)
 	for _, res := range resources {
 		r := resourcesByType[res.InstanceInfo.Type]
 		if r == nil {
@@ -246,9 +254,8 @@ func HclPrintResource(resources []Resource, providerData map[string]interface{},
 
 		for k := range res.InstanceState.Attributes {
 			if strings.HasSuffix(k, ".%") {
-				t := strings.Split(k, ".")
-				key := t[len(t)-2]
-				mapsObjects[key] = struct{}{}
+				key := strings.TrimSuffix(k, ".%")
+				mapsObjects[indexRe.ReplaceAllString(key, "")] = struct{}{}
 			}
 		}
 	}
