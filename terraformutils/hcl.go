@@ -188,7 +188,7 @@ func terraform12Adjustments(formatted []byte, mapsObjects map[string]struct{}) [
 	prefix := make([]string, 0)
 	for i, line := range lines {
 		if singletonListFixEnd.MatchString(line) && len(prefix) > 0 {
-			prefix = prefix[:len(prefix) - 1]
+			prefix = prefix[:len(prefix)-1]
 			continue
 		}
 		if !singletonListFix.MatchString(line) {
