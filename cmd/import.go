@@ -15,12 +15,12 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/terraformerstring"
 	"io/ioutil"
 	"log"
 	"os"
 	"sort"
 	"strings"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/terraformerstring"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 
@@ -93,12 +93,12 @@ func Import(provider terraformutils.ProviderGenerator, options ImportOptions, ar
 		options.Resources = providerServices(provider)
 	}
 
-	if (options.Excludes != nil) {
+	if options.Excludes != nil {
 		localSlice := []string{}
 		for _, r := range options.Resources {
 			remove := false
 			for _, e := range options.Excludes {
-				if (r == e) {
+				if r == e {
 					remove = true
 					log.Println("Excluding resource " + e)
 				}
@@ -118,46 +118,56 @@ func Import(provider terraformutils.ProviderGenerator, options ImportOptions, ar
 	defer providerWrapper.Kill()
 
 	for _, service := range options.Resources {
-		log.Println(provider.GetName() + " importing... " + service)
-		err = provider.InitService(service, options.Verbose)
+		resources, err := buildServiceResources(service, provider, options, providerWrapper)
 		if err != nil {
-			return err
+			log.Println(err)
+			continue
 		}
-		provider.GetService().ParseFilters(options.Filter)
-		err = provider.GetService().InitResources()
-		if err != nil {
-			return err
-		}
-
-		provider.GetService().PopulateIgnoreKeys(providerWrapper)
-		provider.GetService().InitialCleanup()
-
-		refreshedResources, err := terraformutils.RefreshResources(provider.GetService().GetResources(), providerWrapper)
-		if err != nil {
-			return err
-		}
-		provider.GetService().SetResources(refreshedResources)
-
-		for i := range provider.GetService().GetResources() {
-			err = provider.GetService().GetResources()[i].ConvertTFstate(providerWrapper)
-			if err != nil {
-				return err
-			}
-		}
-		provider.GetService().PostRefreshCleanup()
-
-		// change structs with additional data for each resource
-		err = provider.GetService().PostConvertHook()
-		if err != nil {
-			return err
-		}
-		plan.ImportedResource[service] = append(plan.ImportedResource[service], provider.GetService().GetResources()...)
+		plan.ImportedResource[service] = append(plan.ImportedResource[service], resources...)
 	}
 	if options.Plan {
 		path := Path(options.PathPattern, provider.GetName(), "terraformer", options.PathOutput)
 		return ExportPlanFile(plan, path, "plan.json")
 	}
 	return ImportFromPlan(provider, plan)
+}
+
+func buildServiceResources(service string, provider terraformutils.ProviderGenerator,
+	options ImportOptions, providerWrapper *providerwrapper.ProviderWrapper) ([]terraformutils.Resource, error) {
+	log.Println(provider.GetName() + " importing... " + service)
+	err := provider.InitService(service, options.Verbose)
+	if err != nil {
+		return nil, err
+	}
+	provider.GetService().ParseFilters(options.Filter)
+	err = provider.GetService().InitResources()
+	if err != nil {
+		return nil, err
+	}
+
+	provider.GetService().PopulateIgnoreKeys(providerWrapper)
+	provider.GetService().InitialCleanup()
+
+	refreshedResources, err := terraformutils.RefreshResources(provider.GetService().GetResources(), providerWrapper)
+	if err != nil {
+		return nil, err
+	}
+	provider.GetService().SetResources(refreshedResources)
+
+	for i := range provider.GetService().GetResources() {
+		err = provider.GetService().GetResources()[i].ConvertTFstate(providerWrapper)
+		if err != nil {
+			return nil, err
+		}
+	}
+	provider.GetService().PostRefreshCleanup()
+
+	// change structs with additional data for each resource
+	err = provider.GetService().PostConvertHook()
+	if err != nil {
+		return nil, err
+	}
+	return provider.GetService().GetResources(), nil
 }
 
 func ImportFromPlan(provider terraformutils.ProviderGenerator, plan *ImportPlan) error {
