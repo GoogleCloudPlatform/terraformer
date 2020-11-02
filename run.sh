@@ -100,6 +100,9 @@ for service in $services; do
   if [[ $service == "schedulerJobs" && $CSP == "GCP" ]]; then
     continue
   fi
+  if [[ $service == "storage_blob" && $CSP == "Azure" ]]; then
+    continue
+  fi
   if [[ $service == "alb" && $CSP == "AWS" && $CUSTOMER_NAME == "marqeta" ]]; then
     continue
   fi
