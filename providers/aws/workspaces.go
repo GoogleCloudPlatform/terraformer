@@ -37,7 +37,7 @@ func (g *WorkspacesGenerator) InitResources() error {
 	if err := g.loadWorkspaces(svc); err != nil {
 		return err
 	}
-	if err := g.loadWorkspacesIpGroup(svc); err != nil {
+	if err := g.loadWorkspacesIPGroup(svc); err != nil {
 		return err
 	}
 	return nil
@@ -66,7 +66,7 @@ func (g *WorkspacesGenerator) loadWorkspaces(svc *workspaces.Client) error {
 	return p.Err()
 }
 
-func (g *WorkspacesGenerator) loadWorkspacesIpGroup(svc *workspaces.Client) error {
+func (g *WorkspacesGenerator) loadWorkspacesIPGroup(svc *workspaces.Client) error {
 	var nextToken *string
 	for {
 		response, err := svc.DescribeIpGroupsRequest(&workspaces.DescribeIpGroupsInput{NextToken: nextToken}).Send(context.Background())
