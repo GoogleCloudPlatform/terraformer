@@ -247,7 +247,8 @@ func HclPrintResource(resources []Resource, providerData map[string]interface{},
 
 		if r[res.ResourceName] != nil {
 			log.Println(resources)
-			return []byte{}, fmt.Errorf("[ERR]: duplicate resource found: %s.%s", res.InstanceInfo.Type, res.ResourceName)
+			log.Printf("[ERR]: duplicate resource found: %s.%s", res.InstanceInfo.Type, res.ResourceName)
+			continue
 		}
 
 		r[res.ResourceName] = res.Item
