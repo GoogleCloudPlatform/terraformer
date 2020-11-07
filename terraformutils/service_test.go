@@ -18,7 +18,7 @@ func TestEmptyFiltersParsing(t *testing.T) {
 
 func TestIdFiltersParsing(t *testing.T) {
 	service := Service{}
-	service.ParseFilters([]string{"aws_vpc=myid"})
+	service.ParseFilters([]string{"vpc=myid"})
 
 	if !reflect.DeepEqual(service.Filter, []ResourceFilter{
 		{
@@ -46,7 +46,7 @@ func TestComplexIdFiltersParsing(t *testing.T) {
 
 func TestEdgeIdFiltersParsing(t *testing.T) {
 	service := Service{}
-	service.ParseFilters([]string{"aws_vpc=:myid"})
+	service.ParseFilters([]string{"vpc=:myid"})
 
 	if !reflect.DeepEqual(service.Filter, []ResourceFilter{
 		{
