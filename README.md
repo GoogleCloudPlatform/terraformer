@@ -60,7 +60,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
 3.  Connect between resources with `terraform_remote_state` (local and bucket).
 4.  Save `tf`/`json` files using a custom folder tree pattern.
 5.  Import by resource name and type.
-6.  Support terraform 0.12 (for terraform 0.11 use v0.7.9).
+6.  Support terraform 0.13 (for terraform 0.11 use v0.7.9).
 
 Terraformer uses Terraform providers and is designed to easily support newly added resources.
 To upgrade resources with new fields, all you need to do is upgrade the relevant Terraform providers.
@@ -653,6 +653,7 @@ In that case terraformer will not know with which region resources are associate
     * `aws_vpn_gateway`
 *   `workspaces`
     * `aws_workspaces_directory`
+    * `aws_workspaces_ip_group`
     * `aws_workspaces_workspace`
 *   `xray`
     * `aws_xray_sampling_rule`
@@ -1291,7 +1292,7 @@ Notes:
 Example:
 
 ```
- ./terraformer import datadog --resources=monitor --api-key=YOUR_DATADOG_API_KEY // or DATADOG_API_KEY in env --app-key=YOUR_DATADOG_APP_KEY // or DATADOG_APP_KEY in env
+ ./terraformer import datadog --resources=monitor --api-key=YOUR_DATADOG_API_KEY // or DATADOG_API_KEY in env --app-key=YOUR_DATADOG_APP_KEY // or DATADOG_APP_KEY in env --api-url=DATADOG_API_URL // or DATADOG_HOST in env
  ./terraformer import datadog --resources=monitor --filter=monitor=id1:id2:id4 --api-key=YOUR_DATADOG_API_KEY // or DATADOG_API_KEY in env --app-key=YOUR_DATADOG_APP_KEY // or DATADOG_APP_KEY in env
 ```
 

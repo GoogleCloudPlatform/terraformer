@@ -55,7 +55,7 @@ func (g BigQueryGenerator) createDatasets(ctx context.Context, dataSetsList *big
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -86,7 +86,7 @@ func (g *BigQueryGenerator) createResourcesTables(ctx context.Context, datasetID
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -96,7 +96,7 @@ func (g *BigQueryGenerator) InitResources() error {
 	ctx := context.Background()
 	bigQueryService, err := bigquery.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	datasetsList := bigQueryService.Datasets.List(g.GetArgs()["project"].(string))

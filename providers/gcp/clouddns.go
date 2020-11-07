@@ -97,7 +97,7 @@ func (g *CloudDNSGenerator) InitResources() error {
 	ctx := context.Background()
 	svc, err := dns.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	g.Resources = g.createZonesResources(ctx, svc, project)
@@ -118,7 +118,7 @@ func (g *CloudDNSGenerator) PostConvertHook() error {
 			if zoneID == resourceZone.InstanceState.ID {
 				g.Resources[i].Item["managed_zone"] = "${google_dns_managed_zone." + resourceZone.ResourceName + ".name}"
 				name := g.Resources[i].Item["name"].(string)
-				name = strings.Replace(name, resourceZone.Item["dns_name"].(string), "", -1)
+				name = strings.ReplaceAll(name, resourceZone.Item["dns_name"].(string), "")
 				g.Resources[i].Item["name"] = name + "${google_dns_managed_zone." + resourceZone.ResourceName + ".dns_name}"
 			}
 		}

@@ -34,7 +34,7 @@ func newCmdGithubImporter(options ImportOptions) *cobra.Command {
 			for _, organization := range organizations {
 				provider := newGitHubProvider()
 				options.PathPattern = originalPathPattern
-				options.PathPattern = strings.Replace(options.PathPattern, "{provider}", "{provider}/"+organization, -1)
+				options.PathPattern = strings.ReplaceAll(options.PathPattern, "{provider}", "{provider}/"+organization)
 				log.Println(provider.GetName() + " importing organization " + organization)
 				err := Import(provider, options, []string{organization, token})
 				if err != nil {

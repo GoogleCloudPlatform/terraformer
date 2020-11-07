@@ -111,7 +111,7 @@ func (g *GcsGenerator) createBucketsResources(ctx context.Context, gcsService *s
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -120,7 +120,7 @@ func (g *GcsGenerator) createNotificationResources(gcsService *storage.Service, 
 	resources := []terraformutils.Resource{}
 	notificationList, err := gcsService.Notifications.List(bucket.Name).Do()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return resources
 	}
 	for _, notification := range notificationList.Items {
@@ -178,12 +178,12 @@ func (g *GcsGenerator) InitResources() error {
 	g.Resources = g.createBucketsResources(ctx, gcsService)
 
 	// TODO find bug with storageTransferService.TransferJobs.List().Pages
-	//storageTransferService, err := storagetransfer.NewService(ctx)
-	//if err != nil {
-	//	log.Print(err)
-	//		return err
-	//	}
-	//g.Resources = append(g.Resources, g.createTransferJobsResources(ctx, storageTransferService)...)
+	// storageTransferService, err := storagetransfer.NewService(ctx)
+	// if err != nil {
+	// 	log.Print(err)
+	// 		return err
+	// 	}
+	// g.Resources = append(g.Resources, g.createTransferJobsResources(ctx, storageTransferService)...)
 	return nil
 }
 
