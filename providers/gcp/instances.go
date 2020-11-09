@@ -40,7 +40,7 @@ func (g InstancesGenerator) createResources(ctx context.Context, instancesList *
 			if strings.HasPrefix(obj.Name, "gke-") {
 				continue
 			}
-			resources = append(resources, terraformutils.NewResource(
+			resource := terraformutils.NewResource(
 				obj.Name,
 				obj.Name,
 				"google_compute_instance",
@@ -53,7 +53,9 @@ func (g InstancesGenerator) createResources(ctx context.Context, instancesList *
 				},
 				instancesAllowEmptyValues,
 				instancesAdditionalFields,
-			))
+			)
+			resource.IgnoreKeys = append(resource.IgnoreKeys, "^boot_disk.[0-9].initialize_params\\.(.*)")
+			resources = append(resources, resource)
 		}
 		return nil
 	}); err != nil {
