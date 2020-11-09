@@ -23,7 +23,7 @@ require (
 	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
 	github.com/fastly/go-fastly v1.15.0
 	github.com/google/go-github/v25 v25.1.3
-	github.com/gophercloud/gophercloud v0.10.0
+	github.com/gophercloud/gophercloud v0.13.0
 	github.com/hashicorp/go-azure-helpers v0.10.0
 	github.com/hashicorp/go-hclog v0.14.1
 	github.com/hashicorp/go-plugin v1.3.0
