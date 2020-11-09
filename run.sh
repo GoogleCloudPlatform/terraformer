@@ -103,7 +103,7 @@ for service in $services; do
   if [[ $service == "storage_blob" && $CSP == "Azure" ]]; then
     continue
   fi
-  if [[ $service == "alb,elb" && $CSP == "AWS" && ($CUSTOMER_NAME == "marqeta" || $CUSTOMER_NAME == "nubank" ]]; then
+  if [[ $service == "alb,elb" && $CSP == "AWS" && ($CUSTOMER_NAME == "marqeta" || $CUSTOMER_NAME == "nubank") ]]; then
     continue
   fi
   if [[ $service == "ec2_instance" && $CSP == "AWS" && ($CUSTOMER_NAME == "marqeta" || $CUSTOMER_NAME == "nubank") ]]; then
