@@ -29,24 +29,24 @@ run_terraformer(){
 			else
 				regions="asia-east1,asia-east2,asia-northeast1,asia-northeast2,asia-northeast3,asia-south1,asia-southeast1,australia-southeast1,europe-north1,europe-west1,europe-west2,europe-west3,europe-west4,europe-west6,northamerica-northeast1,southamerica-east1,us-central1,us-east1,us-east4,us-west1,us-west2,us-west3,us-west4"
 			fi
-			./terraformer-google import google --projects ${PROJECT_ID} -r ${1} -z ${regions}
+			./terraformer-google import google --projects ${PROJECT_ID} -r ${1} -z ${regions} -c=false
 			aws s3 sync --delete ${path}/${1}/ s3://${RESULT_BUCKET}/terraformer/${CUSTOMER_NAME}/${PROJECT_ID}/${TIMESTAMP}/${1}/
 			;;
 		"Azure")
 			./terraformer-azure import azure -r ${1}
-			aws s3 sync --delete ${path}/${1}/ s3://${RESULT_BUCKET}/terraformer/${CUSTOMER_NAME}/${ARM_SUBSCRIPTION_ID}/${TIMESTAMP}/${1}/
+			aws s3 sync --delete ${path}/${1}/ s3://${RESULT_BUCKET}/terraformer/${CUSTOMER_NAME}/${ARM_SUBSCRIPTION_ID}/${TIMESTAMP}/${1}/ -c=false
 			;;
 		"AWS")
 			if [[ "$GLOBAL_AWS_SERVICES" =~ .*",$1,".* ]]; then
 				#	To be inline with the above regex, GLOBAL_GCP_SERVICES must start and end with a ","
 				regions="global"
-  			./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions global || true
+  			./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions global -c=false || true
 			elif [[ $1 == "eks" ]]; then
-  			./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions us-east-1,us-east-2,us-west-2,ap-south-1,ap-southeast-1,ap-southeast-2,ap-northeast-1,ap-northeast-2,ca-central-1,eu-central-1,eu-west-1,eu-west-2,eu-west-3,eu-north-1,sa-east-1 || true
+  			./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions us-east-1,us-east-2,us-west-2,ap-south-1,ap-southeast-1,ap-southeast-2,ap-northeast-1,ap-northeast-2,ca-central-1,eu-central-1,eu-west-1,eu-west-2,eu-west-3,eu-north-1,sa-east-1 -c=false || true
 			else
-  			./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions us-east-1,us-east-2,us-west-1,us-west-2,ca-central-1,sa-east-1 || true
-  			./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions ap-south-1,ap-southeast-1,ap-southeast-2,ap-northeast-1,ap-northeast-2 || true
-  			./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions eu-central-1,eu-west-1,eu-west-2,eu-west-3,eu-north-1 || true
+  			./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions us-east-1,us-east-2,us-west-1,us-west-2,ca-central-1,sa-east-1 -c=false || true
+  			./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions ap-south-1,ap-southeast-1,ap-southeast-2,ap-northeast-1,ap-northeast-2 -c=false || true
+  			./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions eu-central-1,eu-west-1,eu-west-2,eu-west-3,eu-north-1 -c=false || true
 			fi
 			echo "Completed ${1}"
 			;;
