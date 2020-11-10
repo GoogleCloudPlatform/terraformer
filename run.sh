@@ -33,8 +33,8 @@ run_terraformer(){
 			aws s3 sync --delete ${path}/${1}/ s3://${RESULT_BUCKET}/terraformer/${CUSTOMER_NAME}/${PROJECT_ID}/${TIMESTAMP}/${1}/
 			;;
 		"Azure")
-			./terraformer-azure import azure -r ${1}
-			aws s3 sync --delete ${path}/${1}/ s3://${RESULT_BUCKET}/terraformer/${CUSTOMER_NAME}/${ARM_SUBSCRIPTION_ID}/${TIMESTAMP}/${1}/ -c=false
+			./terraformer-azure import azure -r ${1} -c=false
+			aws s3 sync --delete ${path}/${1}/ s3://${RESULT_BUCKET}/terraformer/${CUSTOMER_NAME}/${ARM_SUBSCRIPTION_ID}/${TIMESTAMP}/${1}/
 			;;
 		"AWS")
 			if [[ "$GLOBAL_AWS_SERVICES" =~ .*",$1,".* ]]; then
