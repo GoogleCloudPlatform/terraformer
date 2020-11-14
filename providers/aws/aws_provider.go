@@ -253,6 +253,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"ec2_instance":      &AwsFacade{service: &Ec2Generator{}},
 		"ecr":               &AwsFacade{service: &EcrGenerator{}},
 		"ecs":               &AwsFacade{service: &EcsGenerator{}},
+		"efs":               &AwsFacade{service: &EfsGenerator{}},
 		"eks":               &AwsFacade{service: &EksGenerator{}},
 		"eip":               &AwsFacade{service: &ElasticIPGenerator{}},
 		"elasticache":       &AwsFacade{service: &ElastiCacheGenerator{}},
