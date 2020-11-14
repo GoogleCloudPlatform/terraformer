@@ -501,6 +501,11 @@ In that case terraformer will not know with which region resources are associate
     * `aws_ecr_lifecycle_policy`
     * `aws_ecr_repository`
     * `aws_ecr_repository_policy`
+*   `efs`
+    * `aws_efs_access_point`
+    * `aws_efs_file_system`
+    * `aws_efs_file_system_policy`
+    * `aws_efs_mount_target`
 *   `eks`
     * `aws_eks_cluster`
 *   `elb`
