@@ -78,6 +78,7 @@ Flags:
   -b, --bucket string         gs://terraform-state
   -c, --connect                (default true)
   -С, --compact                (default false)
+  -x, --excludes strings      firewalls,networks
   -f, --filter strings        compute_firewall=id1:id2:id4
   -h, --help                  help for google
   -O, --output string         output format hcl or json (default "hcl")
@@ -93,7 +94,13 @@ Use " import [provider] [command] --help" for more information about a command.
 ```
 #### Permissions
 
-Read-only permissions
+The tool requires read-only permissions to list service resources.
+
+#### Resources
+
+You can use `--resources` parameter to tell resources from what service you want to import.
+
+To import resources from all services, use `--resources="*"` . If you want to exclude certain services, you can combine the parameter with `--excludes` to exclude resources from services you don't want to import e.g. `--resources="*" --excludes="iam"`.
 
 #### Filtering
 
@@ -832,14 +839,6 @@ It defaults to the first config in the config array.
 
 ```sh
 terraformer import alicloud --resources=ecs --regions=ap-southeast-3 --profile=default
-```
-
-For all *supported* resources, you can do
-
-```sh
-# https://unix.stackexchange.com/a/114948/203870
-export ALL_SUPPORTED_ALICLOUD_RESOURCES=$(terraformer import alicloud list | sed -e 'H;1h;$!d;x;y/\n/,/')
-terraformer import alicloud --resources=$ALL_SUPPORTED_ALICLOUD_RESOURCES --regions=ap-southeast-3
 ```
 
 List of supported AliCloud resources:
