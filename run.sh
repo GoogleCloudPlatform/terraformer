@@ -83,7 +83,7 @@ role_arn = ${CUSTOMER_ARN_ROLE}
 external_id = ${EXTERNAL_ID}
 AWS_CREDS
 
-		services="vpc,sg,nacl,nat,igw,subnet,vpc_peering,route_table vpn_connection,vpn_gateway,transit_gateway eni,eip,customer_gateway,ebs alb,elb ec2_instance auto_scaling eks sts,iam,route53,route53domains,cloudfront,accessanalyzer ecs,acm,kinesis,elasticache,codecommit rds,sqs,cloudtrail,config,kms lambda,s3,sns,dynamodb,es"
+		services="vpc,sg,nacl,nat,igw,subnet,vpc_peering,route_table vpn_connection,vpn_gateway,transit_gateway eni,eip,customer_gateway,ebs alb,elb ec2_instance auto_scaling eks sts,iam,route53,route53domains,cloudfront,accessanalyzer ecs,acm,kinesis,elasticache,codecommit rds,sqs,cloudtrail,config kms lambda,s3,sns,dynamodb,es"
 		;;
 	*)
 		echo "$CSP isn't supported"
@@ -107,6 +107,9 @@ for service in $services; do
     continue
   fi
   if [[ $service == "ec2_instance" && $CSP == "AWS" && ($CUSTOMER_NAME == "marqeta" || $CUSTOMER_NAME == "nubank") ]]; then
+    continue
+  fi
+  if [[ $service == "kms" && $CSP == "AWS" && $CUSTOMER_NAME == "nubank" ]]; then
     continue
   fi
   run_terraformer $service &
