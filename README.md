@@ -150,6 +150,8 @@ From source:
 2.  Run `go mod download`
 3.  Run `go build -v` for all providers OR build with one provider `go run build/main.go {google,aws,azure,kubernetes and etc}`
 4.  Run ```terraform init``` against an ```versions.tf``` file to install the plugins required for your platform. For example, if you need plugins for the google provider, ```versions.tf``` should contain:
+
+```
 terraform {
   required_providers {
     google = {
@@ -161,12 +163,13 @@ terraform {
 ```
 Or alternatively
 
-4.  Copy your Terraform provider's plugin(s) to folder
+*  Copy your Terraform provider's plugin(s) to folder
     `~/.terraform.d/plugins/{darwin,linux}_amd64/`, as appropriate.
 
 From Releases:
 
 * Linux
+
 ```
 export PROVIDER={all,google,aws,kubernetes}
 curl -LO https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | grep tag_name | cut -d '"' -f 4)/terraformer-${PROVIDER}-linux-amd64
@@ -174,6 +177,7 @@ chmod +x terraformer-${PROVIDER}-linux-amd64
 sudo mv terraformer-${PROVIDER}-linux-amd64 /usr/local/bin/terraformer
 ```
 * MacOS
+
 ```
 export PROVIDER={all,google,aws,kubernetes}
 curl -LO https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | grep tag_name | cut -d '"' -f 4)/terraformer-${PROVIDER}-darwin-amd64
@@ -348,7 +352,7 @@ List of supported GCP services:
 *   `reservations`
     * `google_compute_reservation`
 *   `resourcePolicies`
-    * `google_compute_resource_policy`    
+    * `google_compute_resource_policy`
 *   `regionInstanceGroupManagers`
     * `google_compute_region_instance_group_manager`
 *   `routers`
@@ -1396,7 +1400,7 @@ Here is the list of resources which are currently supported by Keycloak provider
   - `keycloak_required_action`
   - `keycloak_role`
   - `keycloak_user`
-  
+
 ### Use with Logz.io
 
 Example:
