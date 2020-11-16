@@ -29,7 +29,7 @@ require (
 	github.com/hashicorp/go-plugin v1.3.0
 	github.com/hashicorp/hcl v1.0.0
 	github.com/hashicorp/terraform v0.12.29
-	github.com/heroku/heroku-go/v5 v5.1.0
+	github.com/heroku/heroku-go/v5 v5.2.0
 	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
 	github.com/jmespath/go-jmespath v0.3.0
 	github.com/jonboydell/logzio_client v1.2.0
