@@ -48,7 +48,7 @@ require (
 	github.com/zclconf/go-cty v1.7.0
 	github.com/zorkian/go-datadog-api v2.29.0+incompatible
 	golang.org/x/oauth2 v0.0.0-20200902213428-5d25da1a8d43
-	golang.org/x/text v0.3.3
+	golang.org/x/text v0.3.4
 	gonum.org/v1/gonum v0.7.0
 	google.golang.org/api v0.32.0
 	google.golang.org/genproto v0.0.0-20200921151605-7abf4a1a14d5
