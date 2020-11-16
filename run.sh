@@ -106,7 +106,7 @@ for service in $services; do
   if [[ $service == "alb,elb" && $CSP == "AWS" && ($CUSTOMER_NAME == "marqeta" || $CUSTOMER_NAME == "nubank") ]]; then
     continue
   fi
-  if [[ $service == "ec2_instance" && $CSP == "AWS" && ($CUSTOMER_NAME == "marqeta" || $CUSTOMER_NAME == "nubank") ]]; then
+  if [[ $service == "ec2_instance" && $CSP == "AWS" && ($CUSTOMER_NAME == "marqeta" || $CUSTOMER_NAME == "robinhood" || $CUSTOMER_NAME == "nubank") ]]; then
     continue
   fi
   if [[ $service == "kms" && $CSP == "AWS" && $CUSTOMER_NAME == "nubank" ]]; then
