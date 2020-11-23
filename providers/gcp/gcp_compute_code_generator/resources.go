@@ -33,6 +33,9 @@ var terraformResources = map[string]gcpResourceRenderable{
 	"disks": basicGCPResource{
 		terraformName: "google_compute_disk",
 	},
+	"externalVpnGateways": basicGCPResource{
+		terraformName: "google_compute_external_vpn_gateway",
+	},
 	"firewall": basicGCPResource{
 		terraformName: "google_compute_firewall",
 	},
@@ -47,6 +50,9 @@ var terraformResources = map[string]gcpResourceRenderable{
 			terraformName: "google_compute_global_forwarding_rule",
 		},
 	},
+	// "globalNetworkEndpointGroups": basicGCPResource{
+	// 	terraformName: "google_compute_global_network_endpoint",
+	// },
 	"healthChecks": basicGCPResource{
 		terraformName: "google_compute_health_check",
 	},
@@ -83,6 +89,9 @@ var terraformResources = map[string]gcpResourceRenderable{
 	"networks": basicGCPResource{
 		terraformName: "google_compute_network",
 	},
+	"packetMirrorings": basicGCPResource{
+		terraformName: "google_compute_packet_mirroring",
+	},
 	"regionAutoscalers": basicGCPResource{
 		terraformName: "google_compute_region_autoscaler",
 	},
@@ -92,9 +101,33 @@ var terraformResources = map[string]gcpResourceRenderable{
 	"regionDisks": basicGCPResource{
 		terraformName: "google_compute_region_disk",
 	},
+	"regionHealthChecks": basicGCPResource{
+		terraformName: "google_compute_region_health_check",
+	},
 	"regionInstanceGroupManagers": basicGCPResource{
 		terraformName:    "google_compute_region_instance_group_manager",
 		allowEmptyValues: []string{"name", "health_check"},
+	},
+	"regionInstanceGroups": basicGCPResource{
+		terraformName: "google_compute_region_instance_group",
+	},
+	"regionSslCertificates": basicGCPResource{
+		terraformName: "google_compute_region_ssl_certificate",
+	},
+	"regionTargetHttpProxies": basicGCPResource{
+		terraformName: "google_compute_region_target_http_proxy",
+	},
+	"regionTargetHttpsProxies": basicGCPResource{
+		terraformName: "google_compute_region_target_https_proxy",
+	},
+	"regionUrlMaps": basicGCPResource{
+		terraformName: "google_compute_region_url_map",
+	},
+	"reservations": basicGCPResource{
+		terraformName: "google_compute_reservation",
+	},
+	"resourcePolicies": basicGCPResource{
+		terraformName: "google_compute_resource_policy",
 	},
 	"routers": basicGCPResource{
 		terraformName: "google_compute_router",
@@ -113,6 +146,9 @@ var terraformResources = map[string]gcpResourceRenderable{
 			"source_disk_link",
 		},
 	},*/
+	"sslCertificates": basicGCPResource{
+		terraformName: "google_compute_managed_ssl_certificate",
+	},
 	"sslPolicies": basicGCPResource{
 		terraformName: "google_compute_ssl_policy",
 	},

@@ -111,7 +111,7 @@ func (g *GcsGenerator) createBucketsResources(ctx context.Context, gcsService *s
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -120,7 +120,7 @@ func (g *GcsGenerator) createNotificationResources(gcsService *storage.Service, 
 	resources := []terraformutils.Resource{}
 	notificationList, err := gcsService.Notifications.List(bucket.Name).Do()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return resources
 	}
 	for _, notification := range notificationList.Items {
@@ -178,12 +178,12 @@ func (g *GcsGenerator) InitResources() error {
 	g.Resources = g.createBucketsResources(ctx, gcsService)
 
 	// TODO find bug with storageTransferService.TransferJobs.List().Pages
-	//storageTransferService, err := storagetransfer.NewService(ctx)
-	//if err != nil {
-	//	log.Print(err)
-	//		return err
-	//	}
-	//g.Resources = append(g.Resources, g.createTransferJobsResources(ctx, storageTransferService)...)
+	// storageTransferService, err := storagetransfer.NewService(ctx)
+	// if err != nil {
+	// 	log.Print(err)
+	// 		return err
+	// 	}
+	// g.Resources = append(g.Resources, g.createTransferJobsResources(ctx, storageTransferService)...)
 	return nil
 }
 
@@ -194,10 +194,12 @@ func (g *GcsGenerator) PostConvertHook() error {
 		if resource.InstanceInfo.Type != "google_storage_bucket_iam_policy" {
 			continue
 		}
-		policy := resource.Item["policy_data"].(string)
-		g.Resources[i].Item["policy_data"] = fmt.Sprintf(`<<POLICY
+		if _, exist := resource.Item["policy_data"]; exist {
+			policy := resource.Item["policy_data"].(string)
+			g.Resources[i].Item["policy_data"] = fmt.Sprintf(`<<POLICY
 %s
 POLICY`, policy)
+		}
 	}
 	return nil
 }

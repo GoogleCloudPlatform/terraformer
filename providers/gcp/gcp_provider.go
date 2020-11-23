@@ -20,7 +20,6 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"google.golang.org/api/compute/v1"
 )
 
@@ -108,6 +107,7 @@ func (p *GCPProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 	services["memoryStore"] = &MemoryStoreGenerator{}
 	services["monitoring"] = &MonitoringGenerator{}
 	services["project"] = &ProjectGenerator{}
+	services["instances"] = &InstancesGenerator{}
 	services["pubsub"] = &PubsubGenerator{}
 	services["schedulerJobs"] = &SchedulerJobsGenerator{}
 	return services
@@ -176,7 +176,6 @@ func (p GCPProvider) GetProviderData(arg ...string) map[string]interface{} {
 		"provider": map[string]interface{}{
 			p.GetName(): map[string]interface{}{
 				"project": p.projectName,
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}

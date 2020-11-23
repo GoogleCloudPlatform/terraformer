@@ -36,7 +36,7 @@ func newCmdDigitalOceanImporter(options ImportOptions) *cobra.Command {
 	}
 
 	cmd.AddCommand(listCmd(newDigitalOceanProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "project,droplet", "digitalocean_project=name1:name2:name3")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "project,droplet", "project=name1:name2:name3")
 
 	return cmd
 }

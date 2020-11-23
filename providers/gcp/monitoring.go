@@ -22,7 +22,7 @@ import (
 
 	"google.golang.org/api/iterator"
 
-	monitoring "cloud.google.com/go/monitoring/apiv3"
+	monitoring "cloud.google.com/go/monitoring/apiv3" // nolint
 	monitoringpb "google.golang.org/genproto/googleapis/monitoring/v3"
 )
 

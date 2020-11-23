@@ -42,7 +42,7 @@ func newCmdOpenStackImporter(options ImportOptions) *cobra.Command {
 		},
 	}
 	cmd.AddCommand(listCmd(newOpenStackProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "compute,networking", "openstack_compute_instance_v2=id1:id2:id4")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "compute,networking", "compute_instance_v2=id1:id2:id4")
 	cmd.PersistentFlags().StringSliceVarP(&options.Regions, "regions", "", []string{}, "RegionOne")
 	return cmd
 }

@@ -38,7 +38,7 @@ func (g *Ec2Generator) InitResources() error {
 	svc := ec2.New(config)
 	var filters []ec2.Filter
 	for _, filter := range g.Filter {
-		if strings.HasPrefix(filter.FieldPath, "tags.") && filter.IsApplicable("aws_instance") {
+		if strings.HasPrefix(filter.FieldPath, "tags.") && filter.IsApplicable("instance") {
 			filters = append(filters, ec2.Filter{
 				Name:   aws.String("tag:" + strings.TrimPrefix(filter.FieldPath, "tags.")),
 				Values: filter.AcceptableValues,
@@ -77,7 +77,6 @@ func (g *Ec2Generator) InitResources() error {
 					ec2AllowEmptyValues,
 					map[string]interface{}{},
 				)
-				r.IgnoreKeys = append(r.IgnoreKeys, "^ebs_block_device.(.*)")
 				g.Resources = append(g.Resources, r)
 			}
 		}

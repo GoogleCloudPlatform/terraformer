@@ -16,7 +16,6 @@ package commercetools
 
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/pkg/errors"
 )
 
@@ -35,13 +34,7 @@ func (p CommercetoolsProvider) GetResourceConnections() map[string]map[string][]
 }
 
 func (p CommercetoolsProvider) GetProviderData(arg ...string) map[string]interface{} {
-	return map[string]interface{}{
-		"provider": map[string]interface{}{
-			"commercetools": map[string]interface{}{
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
-			},
-		},
-	}
+	return map[string]interface{}{}
 }
 
 // Init CommerectoolsProvider

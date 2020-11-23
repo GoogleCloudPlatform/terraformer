@@ -30,6 +30,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [NS1](#use-with-ns1)
         * [OpenStack](#use-with-openstack)
         * [Vultr](#use-with-vultr)
+        * [Yandex.Cloud](#use-with-yandex)
     * Infrastructure Software
         * [Kubernetes](#use-with-kubernetes)
         * [OctopusDeploy](#use-with-octopusdeploy)
@@ -59,7 +60,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
 3.  Connect between resources with `terraform_remote_state` (local and bucket).
 4.  Save `tf`/`json` files using a custom folder tree pattern.
 5.  Import by resource name and type.
-6.  Support terraform 0.12 (for terraform 0.11 use v0.7.9).
+6.  Support terraform 0.13 (for terraform 0.11 use v0.7.9).
 
 Terraformer uses Terraform providers and is designed to easily support newly added resources.
 To upgrade resources with new fields, all you need to do is upgrade the relevant Terraform providers.
@@ -77,7 +78,8 @@ Flags:
   -b, --bucket string         gs://terraform-state
   -c, --connect                (default true)
   -С, --compact                (default false)
-  -f, --filter strings        google_compute_firewall=id1:id2:id4
+  -x, --excludes strings      firewalls,networks
+  -f, --filter strings        compute_firewall=id1:id2:id4
   -h, --help                  help for google
   -O, --output string         output format hcl or json (default "hcl")
   -o, --path-output string     (default "generated")
@@ -92,7 +94,13 @@ Use " import [provider] [command] --help" for more information about a command.
 ```
 #### Permissions
 
-Read-only permissions
+The tool requires read-only permissions to list service resources.
+
+#### Resources
+
+You can use `--resources` parameter to tell resources from what service you want to import.
+
+To import resources from all services, use `--resources="*"` . If you want to exclude certain services, you can combine the parameter with `--excludes` to exclude resources from services you don't want to import e.g. `--resources="*" --excludes="iam"`.
 
 #### Filtering
 
@@ -107,7 +115,7 @@ Filtering is based on Terraform resource ID patterns. To find valid ID patterns 
 Example usage:
 
 ```
-terraformer import aws --resources=vpc,subnet --filter=aws_vpc=myvpcid --regions=eu-west-1
+terraformer import aws --resources=vpc,subnet --filter=vpc=myvpcid --regions=eu-west-1
 ```
 Will only import the vpc with id `myvpcid`. This form of filters can help when it's necessary to select resources by its identifiers.
 
@@ -148,18 +156,27 @@ From source:
 1.  Run `git clone <terraformer repo>`
 2.  Run `go mod download`
 3.  Run `go build -v` for all providers OR build with one provider `go run build/main.go {google,aws,azure,kubernetes and etc}`
-4.  Run ```terraform init``` against an ```init.tf``` file to install the plugins required for your platform. For example, if you need plugins for the google provider, ```init.tf``` should contain:
+4.  Run ```terraform init``` against an ```versions.tf``` file to install the plugins required for your platform. For example, if you need plugins for the google provider, ```versions.tf``` should contain:
+
 ```
-provider "google" {}
+terraform {
+  required_providers {
+    google = {
+      source = "hashicorp/google"
+    }
+  }
+  required_version = ">= 0.13"
+}
 ```
 Or alternatively
 
-4.  Copy your Terraform provider's plugin(s) to folder
+*  Copy your Terraform provider's plugin(s) to folder
     `~/.terraform.d/plugins/{darwin,linux}_amd64/`, as appropriate.
 
 From Releases:
 
 * Linux
+
 ```
 export PROVIDER={all,google,aws,kubernetes}
 curl -LO https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | grep tag_name | cut -d '"' -f 4)/terraformer-${PROVIDER}-linux-amd64
@@ -167,6 +184,7 @@ chmod +x terraformer-${PROVIDER}-linux-amd64
 sudo mv terraformer-${PROVIDER}-linux-amd64 /usr/local/bin/terraformer
 ```
 * MacOS
+
 ```
 export PROVIDER={all,google,aws,kubernetes}
 curl -LO https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | grep tag_name | cut -d '"' -f 4)/terraformer-${PROVIDER}-darwin-amd64
@@ -195,6 +213,7 @@ Links to download Terraform Providers:
     * NS1 provider >1.8.3 - [here](https://releases.hashicorp.com/terraform-provider-ns1/)
     * OpenStack provider >1.21.1 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
     * Vultr provider >1.0.5 - [here](https://releases.hashicorp.com/terraform-provider-vultr/)
+    * Yandex provider >0.42.0 - [here](https://releases.hashicorp.com/terraform-provider-yandex/)
 * Infrastructure Software
     * Kubernetes provider >=1.9.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
     * RabbitMQ provider >=1.1.0 - [here](https://releases.hashicorp.com/terraform-provider-rabbitmq/)
@@ -223,7 +242,7 @@ Example:
 
 ```
 terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --connect=true --regions=europe-west1,europe-west4 --projects=aaa,fff
-terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --filter=google_compute_firewall=rule1:rule2:rule3 --regions=europe-west1 --projects=aaa,fff
+terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --filter=compute_firewall=rule1:rule2:rule3 --regions=europe-west1 --projects=aaa,fff
 ```
 
 List of supported GCP services:
@@ -248,6 +267,8 @@ List of supported GCP services:
     * `google_dataproc_cluster`
 *   `disks`
     * `google_compute_disk`
+*   `externalVpnGateways`
+    * `google_compute_external_vpn_gateway`
 *   `dns`
     * `google_dns_managed_zone`
     * `google_dns_record_set`
@@ -306,6 +327,8 @@ List of supported GCP services:
     * `google_monitoring_uptime_check_config`
 *   `networks`
     * `google_compute_network`
+*   `packetMirrorings`
+    * `google_compute_packet_mirroring`
 *   `nodeGroups`
     * `google_compute_node_group`
 *   `nodeTemplates`
@@ -321,6 +344,22 @@ List of supported GCP services:
     * `google_compute_region_backend_service`
 *   `regionDisks`
     * `google_compute_region_disk`
+*   `regionHealthChecks`
+    * `google_compute_region_health_check`
+*   `regionInstanceGroups`
+    * `google_compute_region_instance_group`
+*   `regionSslCertificates`
+    * `google_compute_region_ssl_certificate`
+*   `regionTargetHttpProxies`
+    * `google_compute_region_target_http_proxy`
+*   `regionTargetHttpsProxies`
+    * `google_compute_region_target_https_proxy`
+*   `regionUrlMaps`
+    * `google_compute_region_url_map`
+*   `reservations`
+    * `google_compute_reservation`
+*   `resourcePolicies`
+    * `google_compute_resource_policy`
 *   `regionInstanceGroupManagers`
     * `google_compute_region_instance_group_manager`
 *   `routers`
@@ -331,6 +370,8 @@ List of supported GCP services:
     * `google_cloud_scheduler_job`
 *   `securityPolicies`
     * `google_compute_security_policy`
+*   `sslCertificates`
+    * `google_compute_managed_ssl_certificate`
 *   `sslPolicies`
     * `google_compute_ssl_policy`
 *   `subnetworks`
@@ -363,7 +404,7 @@ Example:
 
 ```
  terraformer import aws --resources=vpc,subnet --connect=true --regions=eu-west-1 --profile=prod
- terraformer import aws --resources=vpc,subnet --filter=aws_vpc=vpc_id1:vpc_id2:vpc_id3 --regions=eu-west-1
+ terraformer import aws --resources=vpc,subnet --filter=vpc=vpc_id1:vpc_id2:vpc_id3 --regions=eu-west-1
 ```
 
 #### Profiles support
@@ -477,6 +518,11 @@ In that case terraformer will not know with which region resources are associate
     * `aws_ecr_lifecycle_policy`
     * `aws_ecr_repository`
     * `aws_ecr_repository_policy`
+*   `efs`
+    * `aws_efs_access_point`
+    * `aws_efs_file_system`
+    * `aws_efs_file_system_policy`
+    * `aws_efs_mount_target`
 *   `eks`
     * `aws_eks_cluster`
 *   `elb`
@@ -627,6 +673,10 @@ In that case terraformer will not know with which region resources are associate
     * `aws_vpn_connection`
 *   `vpn_gateway`
     * `aws_vpn_gateway`
+*   `workspaces`
+    * `aws_workspaces_directory`
+    * `aws_workspaces_ip_group`
+    * `aws_workspaces_workspace`
 *   `xray`
     * `aws_xray_sampling_rule`
 
@@ -655,11 +705,15 @@ terraformer import aws --resources=ec2_instance,ebs --filter=Type=ec2_instance;N
 ```
 Will work as same as example above with a change the filter will be applicable only to `ec2_instance` resources.
 
-Due to fact API Gateway generates a lot of resources, it's possible to issue a filtering query to retrieve resources related to a given REST API by tags. To fetch resources related to a REST API resource with a tag `STAGE` and value `dev`, add parameter `--filter="Type=aws_api_gateway_rest_api;Name=tags.STAGE;Value=dev"`.
+Due to fact API Gateway generates a lot of resources, it's possible to issue a filtering query to retrieve resources related to a given REST API by tags. To fetch resources related to a REST API resource with a tag `STAGE` and value `dev`, add parameter `--filter="Type=api_gateway_rest_api;Name=tags.STAGE;Value=dev"`.
 
 #### SQS queues retrieval
 
 Terraformer uses AWS [ListQueues](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/APIReference/API_ListQueues.html) API call to fetch available queues. The API is able to return only up to 1000 queues and an additional name prefix should be passed to filter the list results. It's possible to pass `QueueNamePrefix` parameter by environmental variable `SQS_PREFIX`.
+
+#### Security groups and rules
+
+Terraformer by default will try to keep rules in security groups as long as no circular dependencies are detected. This approach is implemented to keep the rules as tidy as possible but there can be cases when this behaviour is not desirable (see [GoogleCloudPlatform/terraformer#493](https://github.com/GoogleCloudPlatform/terraformer/issues/493)). To make Terraformer split rules from security groups, add `SPLIT_SG_RULES` environmental variable with any value.
 
 ### Use with Azure
 Support [Azure CLI](https://www.terraform.io/docs/providers/azurerm/guides/azure_cli.html), [Service Principal with Client Certificate](https://www.terraform.io/docs/providers/azurerm/guides/service_principal_client_certificate.html) & [Service Principal with Client Secret](https://www.terraform.io/docs/providers/azurerm/guides/service_principal_client_secret.html)
@@ -690,6 +744,17 @@ List of supported Azure resources:
 
 *   `analysis`
     * `azurerm_analysis_services_server`
+*   `app_service`
+    * `azurerm_app_service`
+*   `container`
+    * `azurerm_container_group`
+    * `azurerm_container_registry`
+    * `azurerm_container_registry_webhook`
+*   `cosmosdb`
+	* `azurerm_cosmosdb_account`
+	* `azurerm_cosmosdb_sql_container`
+	* `azurerm_cosmosdb_sql_database`
+	* `azurerm_cosmosdb_table`
 *   `database`
 	* `azurerm_mariadb_configuration`
 	* `azurerm_mariadb_database`
@@ -715,12 +780,43 @@ List of supported Azure resources:
 	* `azurerm_sql_virtual_network_rule`
 *   `disk`
     * `azurerm_managed_disk`
+*   `dns`
+    * `azurerm_dns_a_record`
+    * `azurerm_dns_aaaa_record`
+    * `azurerm_dns_caa_record`
+    * `azurerm_dns_cname_record`
+    * `azurerm_dns_mx_record`
+    * `azurerm_dns_ns_record`
+    * `azurerm_dns_ptr_record`
+    * `azurerm_dns_srv_record`
+    * `azurerm_dns_txt_record`
+    * `azurerm_dns_zone`
+*   `load_balancer`
+    * `azurerm_lb`
+    * `azurerm_lb_backend_address_pool`
+    * `azurerm_lb_nat_rule`
+    * `azurerm_lb_probe`
 *   `network_interface`
     * `azurerm_network_interface`
 *   `network_security_group`
     * `azurerm_network_security_group`
+*   `private_dns`
+    * `azurerm_private_dns_a_record`
+    * `azurerm_private_dns_aaaa_record`
+    * `azurerm_private_dns_cname_record`
+    * `azurerm_private_dns_mx_record`
+    * `azurerm_private_dns_ptr_record`
+    * `azurerm_private_dns_srv_record`
+    * `azurerm_private_dns_txt_record`
+    * `azurerm_private_dns_zone`
+    * `azurerm_private_dns_zone_virtual_network_link`
+*   `pubilc_ip`
+    * `azurerm_public_ip`
+    * `azurerm_public_ip_prefix`
 *   `resource_group`
     * `azurerm_resource_group`
+*   `scaleset`
+    * `azurerm_virtual_machine_scale_set`
 *   `security_center`
     * `azurerm_security_center_contact`
     * `azurerm_security_center_subscription_pricing`
@@ -743,14 +839,6 @@ It defaults to the first config in the config array.
 
 ```sh
 terraformer import alicloud --resources=ecs --regions=ap-southeast-3 --profile=default
-```
-
-For all *supported* resources, you can do
-
-```sh
-# https://unix.stackexchange.com/a/114948/203870
-export ALL_SUPPORTED_ALICLOUD_RESOURCES=$(terraformer import alicloud list | sed -e 'H;1h;$!d;x;y/\n/,/')
-terraformer import alicloud --resources=$ALL_SUPPORTED_ALICLOUD_RESOURCES --regions=ap-southeast-3
 ```
 
 List of supported AliCloud resources:
@@ -1005,13 +1093,37 @@ List of supported Vultr resources:
 *   `user`
     * `vultr_user`
 
+### Use with Yandex
+
+Example:
+
+```
+export YC_TOKEN=[YANDEX_CLOUD_OAUTH_TOKEN]
+export YC_FOLDER_ID=[YANDEX_FOLDER_ID]
+./terraformer import yandex -r subnet
+```
+
+List of supported Yandex resources:
+
+*   `instance`
+    * `yandex_compute_instance`
+*   `disk`
+    * `yandex_compute_disk`
+*   `subnet`
+    * `yandex_vpc_subnet`
+*   `network`
+    * `yandex_vpc_network`
+
+Your `tf` and `tfstate` files are written by default to
+`generated/yandex/service`.
+
 ### Use with Kubernetes
 
 Example:
 
 ```
  terraformer import kubernetes --resources=deployments,services,storageclasses
- terraformer import kubernetes --resources=deployments,services,storageclasses --filter=kubernetes_deployment=name1:name2:name3
+ terraformer import kubernetes --resources=deployments,services,storageclasses --filter=deployment=name1:name2:name3
 ```
 
 All Kubernetes resources that are currently supported by the Kubernetes provider, are also supported by this module. Here is the list of resources which are currently supported by Kubernetes provider v.1.4:
@@ -1097,7 +1209,7 @@ Example:
  export RABBITMQ_PASSWORD=[RABBITMQ_PASSWORD]
 
  terraformer import rabbitmq --resources=vhosts,queues,exchanges
- terraformer import rabbitmq --resources=vhosts,queues,exchanges --filter=rabbitmq_vhost=name1:name2:name3
+ terraformer import rabbitmq --resources=vhosts,queues,exchanges --filter=vhost=name1:name2:name3
 ```
 
 All RabbitMQ resources that are currently supported by the RabbitMQ provider, are also supported by this module. Here is the list of resources which are currently supported by RabbitMQ provider v.1.1.0:
@@ -1159,7 +1271,7 @@ Example:
 
 ```
  ./terraformer import github --organizations=YOUR_ORGANIZATION --resources=repositories --token=YOUR_TOKEN // or GITHUB_TOKEN in env
- ./terraformer import github --organizations=YOUR_ORGANIZATION --resources=repositories --filter=github_repository=id1:id2:id4 --token=YOUR_TOKEN // or GITHUB_TOKEN in env
+ ./terraformer import github --organizations=YOUR_ORGANIZATION --resources=repositories --filter=repository=id1:id2:id4 --token=YOUR_TOKEN // or GITHUB_TOKEN in env
 ```
 
 Supports only organizational resources. List of supported resources:
@@ -1194,8 +1306,8 @@ Notes:
 Example:
 
 ```
- ./terraformer import datadog --resources=monitor --api-key=YOUR_DATADOG_API_KEY // or DATADOG_API_KEY in env --app-key=YOUR_DATADOG_APP_KEY // or DATADOG_APP_KEY in env
- ./terraformer import datadog --resources=monitor --filter=datadog_monitor=id1:id2:id4 --api-key=YOUR_DATADOG_API_KEY // or DATADOG_API_KEY in env --app-key=YOUR_DATADOG_APP_KEY // or DATADOG_APP_KEY in env
+ ./terraformer import datadog --resources=monitor --api-key=YOUR_DATADOG_API_KEY // or DATADOG_API_KEY in env --app-key=YOUR_DATADOG_APP_KEY // or DATADOG_APP_KEY in env --api-url=DATADOG_API_URL // or DATADOG_HOST in env
+ ./terraformer import datadog --resources=monitor --filter=monitor=id1:id2:id4 --api-key=YOUR_DATADOG_API_KEY // or DATADOG_API_KEY in env --app-key=YOUR_DATADOG_APP_KEY // or DATADOG_APP_KEY in env
 ```
 
 List of supported Datadog services:
@@ -1248,7 +1360,7 @@ Example:
  export KEYCLOAK_CLIENT_SECRET=[KEYCLOAK_CLIENT_SECRET]
 
  terraformer import keycloak --resources=realms
- terraformer import keycloak --resources=realms --filter=keycloak_realm=name1:name2:name3
+ terraformer import keycloak --resources=realms --filter=realm=name1:name2:name3
  terraformer import keycloak --resources=realms --targets realmA,realmB
 ```
 
@@ -1287,7 +1399,7 @@ Here is the list of resources which are currently supported by Keycloak provider
   - `keycloak_required_action`
   - `keycloak_role`
   - `keycloak_user`
-  
+
 ### Use with Logz.io
 
 Example:
