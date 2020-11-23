@@ -17,15 +17,13 @@ package providerwrapper //nolint
 import (
 	"errors"
 	"fmt"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/terraformerstring"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
 	"runtime"
 	"strings"
-	"time"
-
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/terraformerstring"
 
 	"github.com/zclconf/go-cty/cty"
 
@@ -147,25 +145,14 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 	if err != nil {
 		return nil, err
 	}
-	successReadResource := false
 	resp := providers.ReadResourceResponse{}
-	for i := 0; i < 5; i++ {
-		resp = p.Provider.ReadResource(providers.ReadResourceRequest{
-			TypeName:   info.Type,
-			PriorState: priorState,
-			Private:    []byte{},
-		})
-		if resp.Diagnostics.HasErrors() {
-			log.Println("WARN: Fail read resource from provider, wait 300ms before retry")
-			time.Sleep(300 * time.Millisecond)
-			continue
-		} else {
-			successReadResource = true
-			break
-		}
-	}
+	resp = p.Provider.ReadResource(providers.ReadResourceRequest{
+		TypeName:   info.Type,
+		PriorState: priorState,
+		Private:    []byte{},
+	})
 
-	if !successReadResource {
+	if resp.Diagnostics.HasErrors() {
 		log.Println("Fail read resource from provider, trying import command")
 		// retry with regular import command - without resource attributes
 		importResponse := p.Provider.ImportResourceState(providers.ImportResourceStateRequest{

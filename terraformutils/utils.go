@@ -69,9 +69,9 @@ func RefreshResources(resources []Resource, provider *providerwrapper.ProviderWr
 	refreshedResources := []Resource{}
 	input := make(chan *Resource, 100)
 	var wg sync.WaitGroup
-	poolSize := 15
+	poolSize := 10
 	if slowProcessingRequired(resources) {
-		poolSize = 1
+		poolSize = 3
 	}
 	for i := 0; i < poolSize; i++ {
 		go RefreshResourceWorker(input, &wg, provider)
@@ -106,6 +106,7 @@ func RefreshResourceWorker(input chan *Resource, wg *sync.WaitGroup, provider *p
 		log.Println("Refreshing state...", r.InstanceInfo.Id)
 		r.Refresh(provider)
 		wg.Done()
+		log.Println("Refreshed state for", r.InstanceInfo.Id)
 	}
 }
 
