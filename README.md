@@ -813,6 +813,8 @@ List of supported Azure resources:
 *   `pubilc_ip`
     * `azurerm_public_ip`
     * `azurerm_public_ip_prefix`
+*   `redis`
+    * `azurerm_redis_cache
 *   `resource_group`
     * `azurerm_resource_group`
 *   `scaleset`
