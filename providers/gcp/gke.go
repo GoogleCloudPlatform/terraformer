@@ -45,9 +45,10 @@ func (g *GkeGenerator) initClusters(clusters *container.ListClustersResponse) []
 			"google_container_cluster",
 			g.ProviderName,
 			map[string]string{
-				"name":    cluster.Name, // provider need cluster name as Required
-				"project": g.GetArgs()["project"].(string),
-				"zone":    cluster.Zone, // provider need zone as Required
+				"name":     cluster.Name, // provider need cluster name as Required
+				"project":  g.GetArgs()["project"].(string),
+				"location": cluster.Location,
+				"zone":     cluster.Zone,
 			},
 			GkeAllowEmptyValues,
 			GkeAdditionalFields,
@@ -76,10 +77,11 @@ func (g *GkeGenerator) initNodePools(nodePools []*container.NodePool, clusterNam
 			"google_container_node_pool",
 			g.ProviderName,
 			map[string]string{
-				"zone":    location,
-				"project": g.GetArgs()["project"].(string),
-				"cluster": clusterName, // provider need cluster name as Required
-				"name":    nodePool.Name,
+				"location": location,
+				"zone":     location,
+				"project":  g.GetArgs()["project"].(string),
+				"cluster":  clusterName, // provider need cluster name as Required
+				"name":     nodePool.Name,
 			},
 			GkeAllowEmptyValues,
 			GkeAdditionalFields,
