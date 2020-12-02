@@ -41,7 +41,7 @@ func (g SslCertificatesGenerator) createResources(ctx context.Context, sslCertif
 				obj.Name,
 				obj.Name,
 				"google_compute_managed_ssl_certificate",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

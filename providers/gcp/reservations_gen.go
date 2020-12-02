@@ -42,7 +42,7 @@ func (g ReservationsGenerator) createResources(ctx context.Context, reservations
 				zone+"/"+obj.Name,
 				zone+"/"+obj.Name,
 				"google_compute_reservation",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

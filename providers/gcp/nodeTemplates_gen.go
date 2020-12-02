@@ -41,7 +41,7 @@ func (g NodeTemplatesGenerator) createResources(ctx context.Context, nodeTemplat
 				obj.Name,
 				obj.Name,
 				"google_compute_node_template",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

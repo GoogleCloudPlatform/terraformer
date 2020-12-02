@@ -42,7 +42,7 @@ func (g AutoscalersGenerator) createResources(ctx context.Context, autoscalersLi
 				zone+"/"+obj.Name,
 				zone+"/"+obj.Name,
 				"google_compute_autoscaler",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

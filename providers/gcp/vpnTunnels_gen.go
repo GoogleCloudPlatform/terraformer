@@ -41,7 +41,7 @@ func (g VpnTunnelsGenerator) createResources(ctx context.Context, vpnTunnelsList
 				obj.Name,
 				obj.Name,
 				"google_compute_vpn_tunnel",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

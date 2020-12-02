@@ -40,7 +40,7 @@ func (g *CloudSQLGenerator) loadDBInstances(svc *sqladmin.Service, project strin
 			dbInstance.Name,
 			dbInstance.Name,
 			"google_sql_database_instance",
-			"google",
+			g.ProviderName,
 			map[string]string{
 				"project": project,
 				"name":    dbInstance.Name,
@@ -67,7 +67,7 @@ func (g *CloudSQLGenerator) loadDBs(svc *sqladmin.Service, instanceName, project
 			instanceName+":"+db.Name,
 			instanceName+"-"+db.Name,
 			"google_sql_database",
-			"google",
+			g.ProviderName,
 			map[string]string{
 				"instance": instanceName,
 				"project":  project,

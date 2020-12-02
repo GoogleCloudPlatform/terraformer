@@ -42,7 +42,7 @@ func (g InstanceGroupManagersGenerator) createResources(ctx context.Context, ins
 				obj.Name,
 				obj.Name,
 				"google_compute_instance_group_manager",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

@@ -74,7 +74,7 @@ func (g {{.titleResourceName}}Generator) createResources(ctx context.Context, {{
 				{{ if .idWithZone  }}zone+"/"+obj.Name,{{else}}obj.Name,{{end}}
 				{{ if .idWithZone  }}zone+"/"+obj.Name,{{else}}obj.Name,{{end}}
 				"{{.terraformName}}",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),
@@ -145,7 +145,7 @@ import (
 // Map of supported GCP compute service with code generate
 var ComputeServices = map[string]terraformutils.ServiceGenerator{
 {{ range $key, $value := .services }}
-	"{{$key}}":                   &{{title $key}}Generator{},{{ end }}
+	"{{$key}}":                   &GCPFacade{service: &{{title $key}}Generator{}},{{ end }}
 
 }
 
