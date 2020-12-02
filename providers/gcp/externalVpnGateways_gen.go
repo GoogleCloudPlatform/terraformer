@@ -41,7 +41,7 @@ func (g ExternalVpnGatewaysGenerator) createResources(ctx context.Context, exter
 				obj.Name,
 				obj.Name,
 				"google_compute_external_vpn_gateway",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

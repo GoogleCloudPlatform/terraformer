@@ -41,7 +41,7 @@ func (g SslPoliciesGenerator) createResources(ctx context.Context, sslPoliciesLi
 				obj.Name,
 				obj.Name,
 				"google_compute_ssl_policy",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

@@ -33,6 +33,7 @@ type ServiceGenerator interface {
 	SetName(name string)
 	SetVerbose(bool)
 	SetProviderName(name string)
+	GetProviderName() string
 	GetName() string
 	InitialCleanup()
 	PopulateIgnoreKeys(*providerwrapper.ProviderWrapper)
@@ -50,6 +51,10 @@ type Service struct {
 
 func (s *Service) SetProviderName(providerName string) {
 	s.ProviderName = providerName
+}
+
+func (s *Service) GetProviderName() string {
+	return s.ProviderName
 }
 
 func (s *Service) SetVerbose(verbose bool) {

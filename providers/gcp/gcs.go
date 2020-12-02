@@ -42,7 +42,7 @@ func (g *GcsGenerator) createBucketsResources(ctx context.Context, gcsService *s
 				bucket.Name,
 				bucket.Name,
 				"google_storage_bucket",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":          bucket.Name,
 					"force_destroy": "false",
@@ -54,7 +54,7 @@ func (g *GcsGenerator) createBucketsResources(ctx context.Context, gcsService *s
 				bucket.Name,
 				bucket.Name,
 				"google_storage_bucket_acl",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"bucket":        bucket.Name,
 					"role_entity.#": strconv.Itoa(len(bucket.Acl)),
@@ -66,7 +66,7 @@ func (g *GcsGenerator) createBucketsResources(ctx context.Context, gcsService *s
 				bucket.Name,
 				bucket.Name,
 				"google_storage_default_object_acl",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"bucket":        bucket.Name,
 					"role_entity.#": strconv.Itoa(len(bucket.Acl)),
@@ -78,7 +78,7 @@ func (g *GcsGenerator) createBucketsResources(ctx context.Context, gcsService *s
 				bucket.Name,
 				bucket.Name,
 				"google_storage_bucket_iam_binding",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"bucket": bucket.Name,
 				},
@@ -89,7 +89,7 @@ func (g *GcsGenerator) createBucketsResources(ctx context.Context, gcsService *s
 				bucket.Name,
 				bucket.Name,
 				"google_storage_bucket_iam_member",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"bucket": bucket.Name,
 				},
@@ -100,7 +100,7 @@ func (g *GcsGenerator) createBucketsResources(ctx context.Context, gcsService *s
 				bucket.Name,
 				bucket.Name,
 				"google_storage_bucket_iam_policy",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"bucket": bucket.Name,
 				},
@@ -128,7 +128,7 @@ func (g *GcsGenerator) createNotificationResources(gcsService *storage.Service, 
 			bucket.Name+"/notificationConfigs/"+notification.Id,
 			bucket.Name+"/"+notification.Id,
 			"google_storage_notification",
-			"google",
+			g.ProviderName,
 			map[string]string{},
 			GcsAllowEmptyValues,
 			GcsAdditionalFields,
@@ -148,7 +148,7 @@ func (g *GcsGenerator) createTransferJobsResources(ctx context.Context, storageT
 				transferJob.Name,
 				transferJob.Name,
 				"google_storage_transfer_job",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name": transferJob.Name,
 				},

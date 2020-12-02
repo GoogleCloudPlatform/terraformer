@@ -44,7 +44,7 @@ func (g MemoryStoreGenerator) createResources(ctx context.Context, redisInstance
 				obj.Name,
 				name,
 				"google_redis_instance",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    name,
 					"project": g.GetArgs()["project"].(string),

@@ -41,7 +41,7 @@ func (g RegionInstanceGroupsGenerator) createResources(ctx context.Context, regi
 				obj.Name,
 				obj.Name,
 				"google_compute_region_instance_group",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

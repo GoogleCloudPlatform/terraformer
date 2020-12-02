@@ -41,7 +41,7 @@ func (g HttpsHealthChecksGenerator) createResources(ctx context.Context, httpsHe
 				obj.Name,
 				obj.Name,
 				"google_compute_https_health_check",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),
