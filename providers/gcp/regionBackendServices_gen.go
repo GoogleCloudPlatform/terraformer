@@ -41,7 +41,7 @@ func (g RegionBackendServicesGenerator) createResources(ctx context.Context, reg
 				obj.Name,
 				obj.Name,
 				"google_compute_region_backend_service",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

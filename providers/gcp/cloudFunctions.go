@@ -42,7 +42,7 @@ func (g CloudFunctionsGenerator) createResources(ctx context.Context, functionsL
 				g.GetArgs()["project"].(string)+"/"+g.GetArgs()["region"].(compute.Region).Name+"/"+name,
 				g.GetArgs()["region"].(compute.Region).Name+"_"+name,
 				"google_cloudfunctions_function",
-				"google",
+				g.ProviderName,
 				cloudFunctionsAllowEmptyValues,
 			))
 		}

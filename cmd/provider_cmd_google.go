@@ -23,6 +23,7 @@ import (
 )
 
 func newCmdGoogleImporter(options ImportOptions) *cobra.Command {
+	providerType := ""
 	cmd := &cobra.Command{
 		Use:   "google",
 		Short: "Import current state to Terraform configuration from Google Cloud",
@@ -35,7 +36,7 @@ func newCmdGoogleImporter(options ImportOptions) *cobra.Command {
 					options.PathPattern = originalPathPattern
 					options.PathPattern = strings.ReplaceAll(options.PathPattern, "{provider}/{service}", "{provider}/"+project+"/{service}/"+region)
 					log.Println(provider.GetName() + " importing project " + project + " region " + region)
-					err := Import(provider, options, []string{region, project})
+					err := Import(provider, options, []string{region, project, providerType})
 					if err != nil {
 						return err
 					}
@@ -48,6 +49,7 @@ func newCmdGoogleImporter(options ImportOptions) *cobra.Command {
 	baseProviderFlags(cmd.PersistentFlags(), &options, "firewalls,networks", "compute_firewall=id1:id2:id4")
 	cmd.PersistentFlags().StringSliceVarP(&options.Regions, "regions", "z", []string{"global"}, "europe-west1,")
 	cmd.PersistentFlags().StringSliceVarP(&options.Projects, "projects", "", []string{}, "")
+	cmd.PersistentFlags().StringVarP(&providerType, "provider-type", "", "", "beta")
 	_ = cmd.MarkPersistentFlagRequired("projects")
 	return cmd
 }

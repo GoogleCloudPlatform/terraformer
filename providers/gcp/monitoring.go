@@ -59,7 +59,7 @@ func (g *MonitoringGenerator) loadAlerts(ctx context.Context, project string) er
 			alert.Name,
 			alert.Name,
 			"google_monitoring_alert_policy",
-			"google",
+			g.ProviderName,
 			map[string]string{
 				"name":    alert.Name,
 				"project": project,
@@ -95,7 +95,7 @@ func (g *MonitoringGenerator) loadGroups(ctx context.Context, project string) er
 			group.Name,
 			group.Name,
 			"google_monitoring_group",
-			"google",
+			g.ProviderName,
 			map[string]string{
 				"name":    group.Name,
 				"project": project,
@@ -131,7 +131,7 @@ func (g *MonitoringGenerator) loadNotificationChannel(ctx context.Context, proje
 			notificationChannel.Name,
 			notificationChannel.Name,
 			"google_monitoring_notification_channel",
-			"google",
+			g.ProviderName,
 			map[string]string{
 				"name":    notificationChannel.Name,
 				"project": project,
@@ -166,7 +166,7 @@ func (g *MonitoringGenerator) loadUptimeCheck(ctx context.Context, project strin
 			uptimeCheckConfigs.Name,
 			uptimeCheckConfigs.Name,
 			"google_monitoring_uptime_check_config",
-			"google",
+			g.ProviderName,
 			map[string]string{
 				"name":    uptimeCheckConfigs.Name,
 				"project": project,

@@ -41,7 +41,7 @@ func (g ResourcePoliciesGenerator) createResources(ctx context.Context, resource
 				obj.Name,
 				obj.Name,
 				"google_compute_resource_policy",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

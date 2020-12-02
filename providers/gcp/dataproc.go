@@ -41,7 +41,7 @@ func (g DataprocGenerator) createClusterResources(ctx context.Context, clusterLi
 				cluster.ClusterName,
 				cluster.ClusterName,
 				"google_dataproc_cluster",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    cluster.ClusterName,
 					"project": g.GetArgs()["project"].(string),
@@ -70,7 +70,7 @@ func (g DataprocGenerator) createJobResources(jobList *dataproc.ProjectsRegionsJ
 				job.Reference.JobId,
 				job.Reference.JobId,
 				"google_dataproc_job",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"project": g.GetArgs()["project"].(string),
 					"region":  g.GetArgs()["region"].(compute.Region).Name,

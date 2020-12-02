@@ -245,6 +245,12 @@ terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --con
 terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --filter=compute_firewall=rule1:rule2:rule3 --regions=europe-west1 --projects=aaa,fff
 ```
 
+For google-beta provider:
+
+```
+terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --regions=europe-west4 --projects=aaa --provider-type beta
+```
+
 List of supported GCP services:
 
 *   `addresses`
