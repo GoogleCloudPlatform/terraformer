@@ -41,7 +41,7 @@ func (g GlobalForwardingRulesGenerator) createResources(ctx context.Context, glo
 				obj.Name,
 				obj.Name,
 				"google_compute_global_forwarding_rule",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

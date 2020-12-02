@@ -41,7 +41,7 @@ func (g SubnetworksGenerator) createResources(ctx context.Context, subnetworksLi
 				obj.Name,
 				obj.Name,
 				"google_compute_subnetwork",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

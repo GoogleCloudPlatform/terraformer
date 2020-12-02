@@ -44,7 +44,7 @@ func (g SchedulerJobsGenerator) createResources(ctx context.Context, jobsList *c
 				obj.Name,
 				name,
 				"google_cloud_scheduler_job",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    name,
 					"project": g.GetArgs()["project"].(string),

@@ -43,7 +43,7 @@ func (g PubsubGenerator) createSubscriptionsResources(ctx context.Context, subsc
 				name,
 				obj.Name,
 				"google_pubsub_subscription",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    name,
 					"project": g.GetArgs()["project"].(string),
@@ -70,7 +70,7 @@ func (g PubsubGenerator) createTopicsListResources(ctx context.Context, topicsLi
 				g.GetArgs()["project"].(string)+"/"+name,
 				obj.Name,
 				"google_pubsub_topic",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    name,
 					"project": g.GetArgs()["project"].(string),

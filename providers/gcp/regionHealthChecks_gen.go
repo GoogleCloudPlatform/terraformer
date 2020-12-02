@@ -41,7 +41,7 @@ func (g RegionHealthChecksGenerator) createResources(ctx context.Context, region
 				obj.Name,
 				obj.Name,
 				"google_compute_region_health_check",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

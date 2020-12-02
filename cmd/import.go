@@ -15,12 +15,13 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/terraformerstring"
 	"io/ioutil"
 	"log"
 	"os"
 	"sort"
 	"strings"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/terraformerstring"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 

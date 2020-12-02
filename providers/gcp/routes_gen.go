@@ -41,7 +41,7 @@ func (g RoutesGenerator) createResources(ctx context.Context, routesList *comput
 				obj.Name,
 				obj.Name,
 				"google_compute_route",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

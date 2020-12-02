@@ -42,7 +42,7 @@ func (g TargetInstancesGenerator) createResources(ctx context.Context, targetIns
 				zone+"/"+obj.Name,
 				zone+"/"+obj.Name,
 				"google_compute_target_instance",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

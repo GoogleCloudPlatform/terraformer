@@ -41,7 +41,7 @@ func (g PacketMirroringsGenerator) createResources(ctx context.Context, packetMi
 				obj.Name,
 				obj.Name,
 				"google_compute_packet_mirroring",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

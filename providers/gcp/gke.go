@@ -43,7 +43,7 @@ func (g *GkeGenerator) initClusters(clusters *container.ListClustersResponse) []
 			cluster.Name,
 			cluster.Name,
 			"google_container_cluster",
-			"google",
+			g.ProviderName,
 			map[string]string{
 				"name":    cluster.Name, // provider need cluster name as Required
 				"project": g.GetArgs()["project"].(string),
@@ -74,7 +74,7 @@ func (g *GkeGenerator) initNodePools(nodePools []*container.NodePool, clusterNam
 			fmt.Sprintf("%s/%s/%s", location, clusterName, nodePool.Name),
 			clusterName+"_"+nodePool.Name,
 			"google_container_node_pool",
-			"google",
+			g.ProviderName,
 			map[string]string{
 				"zone":    location,
 				"project": g.GetArgs()["project"].(string),
