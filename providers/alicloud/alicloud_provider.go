@@ -31,8 +31,7 @@ type AliCloudProvider struct { //nolint
 
 // GetConfig Converts json config to go-cty
 func (p *AliCloudProvider) GetConfig() cty.Value {
-	args := p.Service.GetArgs()
-	profile := args["profile"].(string)
+	profile := p.profile
 	config, err := LoadConfigFromProfile(profile)
 	if err != nil {
 		fmt.Println("ERROR:", err)

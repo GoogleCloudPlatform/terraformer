@@ -245,6 +245,12 @@ terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --con
 terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --filter=compute_firewall=rule1:rule2:rule3 --regions=europe-west1 --projects=aaa,fff
 ```
 
+For google-beta provider:
+
+```
+terraformer import google --resources=gcs,forwardingRules,httpHealthChecks --regions=europe-west4 --projects=aaa --provider-type beta
+```
+
 List of supported GCP services:
 
 *   `addresses`
@@ -810,9 +816,11 @@ List of supported Azure resources:
     * `azurerm_private_dns_txt_record`
     * `azurerm_private_dns_zone`
     * `azurerm_private_dns_zone_virtual_network_link`
-*   `pubilc_ip`
+*   `public_ip`
     * `azurerm_public_ip`
     * `azurerm_public_ip_prefix`
+*   `redis`
+    * `azurerm_redis_cache
 *   `resource_group`
     * `azurerm_resource_group`
 *   `scaleset`

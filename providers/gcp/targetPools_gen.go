@@ -41,7 +41,7 @@ func (g TargetPoolsGenerator) createResources(ctx context.Context, targetPoolsLi
 				obj.Name,
 				obj.Name,
 				"google_compute_target_pool",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

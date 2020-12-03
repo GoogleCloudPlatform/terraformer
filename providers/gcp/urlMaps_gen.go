@@ -41,7 +41,7 @@ func (g UrlMapsGenerator) createResources(ctx context.Context, urlMapsList *comp
 				obj.Name,
 				obj.Name,
 				"google_compute_url_map",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

@@ -41,7 +41,7 @@ func (g NetworksGenerator) createResources(ctx context.Context, networksList *co
 				obj.Name,
 				obj.Name,
 				"google_compute_network",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

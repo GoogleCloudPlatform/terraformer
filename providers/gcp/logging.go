@@ -47,7 +47,7 @@ func (g *LoggingGenerator) loadLoggingMetrics(ctx context.Context, client *logad
 			metric.ID,
 			metric.ID,
 			"google_logging_metric",
-			"google",
+			g.ProviderName,
 			map[string]string{
 				"name":    metric.ID,
 				"project": g.GetArgs()["project"].(string),

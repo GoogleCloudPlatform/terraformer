@@ -32,7 +32,7 @@ func (g *ProjectGenerator) InitResources() error {
 		g.GetArgs()["project"].(string),
 		g.GetArgs()["project"].(string),
 		"google_project",
-		"google",
+		g.ProviderName,
 		map[string]string{
 			"auto_create_network": "true",
 		},
