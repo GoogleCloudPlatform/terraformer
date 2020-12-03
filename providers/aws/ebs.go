@@ -56,50 +56,33 @@ func (g *EbsGenerator) InitResources() error {
 	}))
 	for p.Next(context.Background()) {
 		for _, volume := range p.CurrentPage().Volumes {
-			isRootDevice := false // Let's leave root device configuration to be done in ec2_instance resources
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+				aws.StringValue(volume.VolumeId),
+				aws.StringValue(volume.VolumeId),
+				"aws_ebs_volume",
+				"aws",
+				ebsAllowEmptyValues,
+			))
 
 			for _, attachment := range volume.Attachments {
-				instances, _ := svc.DescribeInstancesRequest(&ec2.DescribeInstancesInput{
-					InstanceIds: []string{aws.StringValue(attachment.InstanceId)},
-				}).Send(context.Background())
-				for _, reservation := range instances.Reservations {
-					for _, instance := range reservation.Instances {
-						if aws.StringValue(instance.RootDeviceName) == aws.StringValue(attachment.Device) {
-							isRootDevice = true
-						}
-					}
-				}
-			}
-
-			if !isRootDevice {
-				g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-					aws.StringValue(volume.VolumeId),
-					aws.StringValue(volume.VolumeId),
-					"aws_ebs_volume",
-					"aws",
-					ebsAllowEmptyValues,
-				))
-
-				for _, attachment := range volume.Attachments {
-					if attachment.State == ec2.VolumeAttachmentStateAttached {
-						attachmentID := g.volumeAttachmentID(
-							aws.StringValue(attachment.Device),
-							aws.StringValue(attachment.VolumeId),
-							aws.StringValue(attachment.InstanceId))
-						g.Resources = append(g.Resources, terraformutils.NewResource(
-							attachmentID,
-							aws.StringValue(attachment.InstanceId)+":"+aws.StringValue(attachment.Device),
-							"aws_volume_attachment",
-							"aws",
-							map[string]string{
-								"device_name": aws.StringValue(attachment.Device),
-								"volume_id":   aws.StringValue(attachment.VolumeId),
-								"instance_id": aws.StringValue(attachment.InstanceId),
-							},
-							[]string{},
-							map[string]interface{}{},
-						))
-					}
+				if attachment.State == ec2.VolumeAttachmentStateAttached {
+					attachmentID := g.volumeAttachmentID(
+						aws.StringValue(attachment.Device),
+						aws.StringValue(attachment.VolumeId),
+						aws.StringValue(attachment.InstanceId))
+					g.Resources = append(g.Resources, terraformutils.NewResource(
+						attachmentID,
+						aws.StringValue(attachment.InstanceId)+":"+aws.StringValue(attachment.Device),
+						"aws_volume_attachment",
+						"aws",
+						map[string]string{
+							"device_name": aws.StringValue(attachment.Device),
+							"volume_id":   aws.StringValue(attachment.VolumeId),
+							"instance_id": aws.StringValue(attachment.InstanceId),
+						},
+						[]string{},
+						map[string]interface{}{},
+					))
 				}
 			}
 		}
