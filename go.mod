@@ -6,14 +6,14 @@ require (
 	cloud.google.com/go v0.71.0
 	cloud.google.com/go/logging v1.1.2
 	cloud.google.com/go/storage v1.12.0
-	github.com/Azure/azure-sdk-for-go v42.0.0+incompatible
+	github.com/Azure/azure-sdk-for-go v45.0.0+incompatible
 	github.com/Azure/azure-storage-blob-go v0.10.0
 	github.com/Azure/go-autorest/autorest v0.11.12
 	github.com/DataDog/datadog-api-client-go v1.0.0-beta.9
 	github.com/OctopusDeploy/go-octopusdeploy v1.6.0
 	github.com/aliyun/alibaba-cloud-sdk-go v1.60.295
 	github.com/aliyun/aliyun-tablestore-go-sdk v4.1.2+incompatible
-	github.com/aws/aws-sdk-go v1.30.19
+	github.com/aws/aws-sdk-go v1.31.9
 	github.com/aws/aws-sdk-go-v2 v0.24.0
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/cloudflare/cloudflare-go v0.13.5
@@ -24,11 +24,11 @@ require (
 	github.com/fastly/go-fastly v1.15.0
 	github.com/google/go-github/v25 v25.1.3
 	github.com/gophercloud/gophercloud v0.13.0
-	github.com/hashicorp/go-azure-helpers v0.10.0
+	github.com/hashicorp/go-azure-helpers v0.12.0
 	github.com/hashicorp/go-hclog v0.14.1
 	github.com/hashicorp/go-plugin v1.3.0
 	github.com/hashicorp/hcl v1.0.0
-	github.com/hashicorp/terraform v0.12.29
+	github.com/hashicorp/terraform v0.13.5
 	github.com/heroku/heroku-go/v5 v5.1.0
 	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
 	github.com/jmespath/go-jmespath v0.3.0
@@ -42,6 +42,7 @@ require (
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5
+	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/vultr/govultr v0.5.0
 	github.com/yandex-cloud/go-genproto v0.0.0-20200722140432-762fe965ce77
 	github.com/yandex-cloud/go-sdk v0.0.0-20200722140627-2194e5077f13
@@ -53,9 +54,11 @@ require (
 	google.golang.org/api v0.35.0
 	google.golang.org/genproto v0.0.0-20201106154455-f9bfe239b0ba
 	gopkg.in/jarcoal/httpmock.v1 v1.0.0-00010101000000-000000000000 // indirect
-	k8s.io/apimachinery v0.17.5
-	k8s.io/client-go v0.17.5
-	k8s.io/utils v0.0.0-20191218082557-f07c713de883 // indirect
+	k8s.io/apimachinery v0.19.1
+	k8s.io/client-go v10.0.0+incompatible
 )
 
-replace gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
+replace (
+	gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
+	k8s.io/client-go => k8s.io/client-go v0.19.1
+)
