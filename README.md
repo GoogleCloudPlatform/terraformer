@@ -864,21 +864,8 @@ List of supported AliCloud resources:
 
 If you want to run Terraformer with the IBM Cloud provider plugin on your system, complete the following steps:
 
-1. [Download the IBM Cloud provider plugin for Terraform](https://github.com/IBM-Bluemix/terraform-provider-ibm/releases).
 
-2. Unzip the release archive to extract the plugin binary(`terraform-provider-ibm_vX.Y.Z`).
-
-3. Move the binary into the Terraform [plugins directory](https://www.terraform.io/docs/configuration/providers.html#third-party-plugins) for the platform.
-    - Linux/Unix/OS X: `~/.terraform.d/plugins/<os_arch>` e.g `~/.terraform.d/plugins/darwin_amd64`
-    - Windows: `%APPDATA%\terraform.d\plugins\<os_arch>`
-
-4. [Download the Terraformer](https://github.ibm.com/blueprint/terraformer/releases).
-
-5. chmod +x terraformer-all--${OS}--${ARCH}
-
-6. sudo mv terraformer-all--${OS}--${ARCH} /usr/local/bin/terraformer
-
-7. Export IBM Cloud API key as environment variables.
+1. Export IBM Cloud API key as environment variables.
     Example:
 
     ```
@@ -886,7 +873,7 @@ If you want to run Terraformer with the IBM Cloud provider plugin on your system
     export IC_REGION=<IBMCLOUD_REGION>
     terraformer import ibm -r ibm_cos,ibm_iam....
     ```
-8. Use flag for Resource Group to classify resources accordingly.
+2. Use flag for Resource Group to classify resources accordingly.
     Example:
 
     ```
@@ -896,6 +883,9 @@ If you want to run Terraformer with the IBM Cloud provider plugin on your system
     ```
 List of supported IBM Cloud resources:
 
+*   `ibm_kp`
+    * `ibm_resource_instance`
+    * `ibm_kms_key`
 *   `ibm_cos`
     * `ibm_resource_instance`
     * `ibm_cos_bucket`
@@ -930,6 +920,15 @@ List of supported IBM Cloud resources:
 *   `ibm_is_instance`
 *   `ibm_is_security_group`
     * `ibm_is_security_group_rule` 
+*   `ibm_cis`
+    * `ibm_cis`
+    * `ibm_cis_dns_record`
+    * `ibm_cis_firewall`
+    * `ibm_cis_domain_settings`
+    * `ibm_cis_global_load_balancer`
+    * `ibm_cis_origin_pool`
+    * `ibm_cis_healthcheck`
+    * `ibm_cis_rate_limit`     
 
 ### Use with DigitalOcean
 

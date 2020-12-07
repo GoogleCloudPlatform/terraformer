@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"time"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	bluemix "github.com/IBM-Cloud/bluemix-go"
@@ -57,8 +56,8 @@ func (g IAMGenerator) loadAccessGroups(grpID, grpName string) terraformutils.Res
 func (g IAMGenerator) loadAccessGroupMembers(grpID string) terraformutils.Resource {
 	var resources terraformutils.Resource
 	resources = terraformutils.NewSimpleResource(
-		fmt.Sprintf("%s/%s", grpID, time.Now().UTC().String()),
-		time.Now().UTC().String(),
+		fmt.Sprintf("%s/%s", grpID, grpID),
+		grpID,
 		"ibm_iam_access_group_members",
 		"ibm",
 		[]string{})
