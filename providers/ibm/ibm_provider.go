@@ -18,7 +18,6 @@ import (
 	"errors"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
 type IBMProvider struct {
@@ -40,9 +39,7 @@ func (p *IBMProvider) GetName() string {
 func (p *IBMProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
-			"ibm": map[string]interface{}{
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
-			},
+			"ibm": map[string]interface{}{},
 		},
 	}
 }
@@ -53,7 +50,7 @@ func (IBMProvider) GetResourceConnections() map[string]map[string][]string {
 
 func (p *IBMProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"keyprotect":                 &KPGenerator{},
+		"ibm_kp":                     &KPGenerator{},
 		"ibm_container_vpc_cluster":  &VPCClusterGenerator{},
 		"ibm_container_cluster":      &ContainerClusterGenerator{},
 		"ibm_cos":                    &COSGenerator{},

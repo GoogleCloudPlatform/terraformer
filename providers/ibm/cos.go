@@ -94,12 +94,12 @@ func (g *COSGenerator) InitResources() error {
 		s3Conf := ibmaws.NewConfig().WithCredentials(ibmiam.NewStaticCredentials(ibmaws.NewConfig(), authEndpoint, os.Getenv("IC_API_KEY"), cs.ID)).WithS3ForcePathStyle(true).WithEndpoint("s3.us-south.cloud-object-storage.appdomain.cloud")
 		s3Sess := cossession.Must(cossession.NewSession())
 		s3Client := coss3.New(s3Sess, s3Conf)
+		singleSiteLocationRegex, _ := regexp.Compile("^[a-z]{3}[0-9][0-9]-[a-z]{4,8}$")
+		regionLocationRegex, _ := regexp.Compile("^[a-z]{2}-[a-z]{2,5}-[a-z]{4,8}$")
+		crossRegionLocationRegex, _ := regexp.Compile("^[a-z]{2}-[a-z]{4,8}$")
 		d, _ := s3Client.ListBucketsExtended(&coss3.ListBucketsExtendedInput{})
 		for _, b := range d.Buckets {
 			var apiType, location string
-			singleSiteLocationRegex, _ := regexp.Compile("^[a-z]{3}[0-9][0-9]-[a-z]{4,8}$")
-			regionLocationRegex, _ := regexp.Compile("^[a-z]{2}-[a-z]{2,5}-[a-z]{4,8}$")
-			crossRegionLocationRegex, _ := regexp.Compile("^[a-z]{2}-[a-z]{4,8}$")
 			bLocationConstraint := *b.LocationConstraint
 			if singleSiteLocationRegex.MatchString(bLocationConstraint) {
 				apiType = "ss1"

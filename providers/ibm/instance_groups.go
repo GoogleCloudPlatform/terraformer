@@ -16,9 +16,9 @@ package ibm
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"os"
+	"sync"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/IBM/go-sdk-core/v4/core"
@@ -27,7 +27,6 @@ import (
 
 type InstanceGroupGenerator struct {
 	IBMService
-	importDone  chan bool
 	fatalErrors chan error
 }
 
@@ -70,7 +69,8 @@ func (g *InstanceGroupGenerator) loadInstanceGroupMangerPolicy(instanceGroupID, 
 	return resources
 }
 
-func (g *InstanceGroupGenerator) handlePolicies(sess *vpcv1.VpcV1, instanceGroupID, instanceGroupManagerID string, policies []string) {
+func (g *InstanceGroupGenerator) handlePolicies(sess *vpcv1.VpcV1, instanceGroupID, instanceGroupManagerID string, policies []string, waitGroup *sync.WaitGroup) {
+	defer waitGroup.Done()
 	for _, instanceGroupManagerPolicyID := range policies {
 		getInstanceGroupManagerPolicyOptions := vpcv1.GetInstanceGroupManagerPolicyOptions{
 			ID:                     &instanceGroupManagerPolicyID,
@@ -89,7 +89,9 @@ func (g *InstanceGroupGenerator) handlePolicies(sess *vpcv1.VpcV1, instanceGroup
 	}
 }
 
-func (g *InstanceGroupGenerator) handleManagers(sess *vpcv1.VpcV1, instanceGroupID string, managers []string) {
+func (g *InstanceGroupGenerator) handleManagers(sess *vpcv1.VpcV1, instanceGroupID string, managers []string, waitGroup *sync.WaitGroup) {
+	defer waitGroup.Done()
+	var policiesWG sync.WaitGroup
 	for _, instanceGroupManagerID := range managers {
 		getInstanceGroupManagerOptions := vpcv1.GetInstanceGroupManagerOptions{
 			ID:              &instanceGroupManagerID,
@@ -106,13 +108,15 @@ func (g *InstanceGroupGenerator) handleManagers(sess *vpcv1.VpcV1, instanceGroup
 		for i := 0; i < len(instanceGroupManager.Policies); i++ {
 			policies = append(policies, string(*(instanceGroupManager.Policies[i].ID)))
 		}
-
-		go g.handlePolicies(sess, instanceGroupID, instanceGroupManagerID, policies)
+		policiesWG.Add(1)
+		go g.handlePolicies(sess, instanceGroupID, instanceGroupManagerID, policies, &policiesWG)
 	}
+	policiesWG.Wait()
 }
 
-func (g *InstanceGroupGenerator) handleInstanceGroups(sess *vpcv1.VpcV1) {
+func (g *InstanceGroupGenerator) handleInstanceGroups(sess *vpcv1.VpcV1, waitGroup *sync.WaitGroup) {
 	// Support for pagination
+	defer waitGroup.Done()
 	start := ""
 	allrecs := []vpcv1.InstanceGroup{}
 	for {
@@ -131,6 +135,8 @@ func (g *InstanceGroupGenerator) handleInstanceGroups(sess *vpcv1.VpcV1) {
 		}
 	}
 
+	var managersWG sync.WaitGroup
+
 	for _, instanceGroup := range allrecs {
 		instanceGoupID := *instanceGroup.ID
 		g.Resources = append(g.Resources, g.loadInstanceGroup(instanceGoupID, *instanceGroup.Name))
@@ -138,15 +144,16 @@ func (g *InstanceGroupGenerator) handleInstanceGroups(sess *vpcv1.VpcV1) {
 		for i := 0; i < len(instanceGroup.Managers); i++ {
 			managers = append(managers, string(*(instanceGroup.Managers[i].ID)))
 		}
-		go g.handleManagers(sess, instanceGoupID, managers)
+		managersWG.Add(1)
+		go g.handleManagers(sess, instanceGoupID, managers, &managersWG)
 	}
-	close(g.importDone)
+	managersWG.Wait()
 }
 
 func (g *InstanceGroupGenerator) InitResources() error {
 	apiKey := os.Getenv("IBMCLOUD_API_KEY")
 	if apiKey == "" {
-		log.Fatal("No API key set")
+		return fmt.Errorf("No API key set")
 	}
 
 	// Instantiate the service with an API key based IAM authenticator
@@ -156,23 +163,20 @@ func (g *InstanceGroupGenerator) InitResources() error {
 		},
 	})
 	if err != nil {
-		log.Fatal("Error creating VPC Service.")
 		return err
 	}
 
-	g.importDone = make(chan bool)
 	g.fatalErrors = make(chan error)
 
-	go g.handleInstanceGroups(sess)
+	var instanceGroupWG sync.WaitGroup
+	instanceGroupWG.Add(1)
+	go g.handleInstanceGroups(sess, &instanceGroupWG)
 
 	select {
-	case <-g.importDone:
-		log.Println("Done Importing")
-		break
 	case err := <-g.fatalErrors:
 		close(g.fatalErrors)
-		log.Fatal("Error: ", err)
 		return err
 	}
+	instanceGroupWG.Wait()
 	return nil
 }
