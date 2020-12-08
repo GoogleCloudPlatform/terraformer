@@ -22,6 +22,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [AWS](#use-with-aws)
         * [Azure](#use-with-azure)
         * [AliCloud](#use-with-alicloud)
+        * [IBM Cloud](#use-with-ibm-cloud)
     * Cloud
         * [DigitalOcean](#use-with-digitalocean)
         * [Fastly](#use-with-fastly)
@@ -881,6 +882,76 @@ List of supported AliCloud resources:
 * `vswitch`
   * `alicloud_vswitch`
 
+ ### Use with IBM Cloud
+
+If you want to run Terraformer with the IBM Cloud provider plugin on your system, complete the following steps:
+
+
+1. Export IBM Cloud API key as environment variables.
+    Example:
+
+    ```
+    export IC_API_KEY=<IBMCLOUD_API_KEY>
+    export IC_REGION=<IBMCLOUD_REGION>
+    terraformer import ibm -r ibm_cos,ibm_iam....
+    ```
+2. Use flag for Resource Group to classify resources accordingly.
+    Example:
+
+    ```
+    export IC_API_KEY=<IBMCLOUD_API_KEY>
+    export IC_REGION=<IBMCLOUD_REGION>
+    terraformer import ibm --resources=ibm_is_vpc --resource_group=a0d5213d831a454ebace7ed38ca9c8ca
+    ```
+List of supported IBM Cloud resources:
+
+*   `ibm_kp`
+    * `ibm_resource_instance`
+    * `ibm_kms_key`
+*   `ibm_cos`
+    * `ibm_resource_instance`
+    * `ibm_cos_bucket`
+*   `ibm_iam`
+    * `ibm_iam_user_policy`
+    * `ibm_iam_access_group`
+    * `ibm_iam_access_group_members`
+    * `ibm_iam_access_group_policy`
+    * `ibm_iam_access_group_dynamic_rule`
+*   `ibm_container_vpc_cluster`
+    * `ibm_container_vpc_cluster`
+    * `ibm_container_vpc_worker_pool`
+*   `ibm_database_etcd`
+    * `ibm_database`
+*   `ibm_database_mongo`
+    * `ibm_database`
+*   `ibm_database_postgresql`
+    * `ibm_database`
+*   `ibm_database_rabbitmq`
+    * `ibm_database`
+*   `ibm_database_redis`
+    * `ibm_database`
+*   `ibm_is_instance_group`
+    * `ibm_is_instance_group`
+    * `ibm_is_instance_group_manager`
+    * `ibm_is_instance_group_manager_policy`
+*   `ibm_is_vpc`
+    * `ibm_is_vpc`
+    * `ibm_is_vpc_address_prefix`
+    * `ibm_is_vpc_route`
+*   `ibm_is_subnet`
+*   `ibm_is_instance`
+*   `ibm_is_security_group`
+    * `ibm_is_security_group_rule` 
+*   `ibm_cis`
+    * `ibm_cis`
+    * `ibm_cis_dns_record`
+    * `ibm_cis_firewall`
+    * `ibm_cis_domain_settings`
+    * `ibm_cis_global_load_balancer`
+    * `ibm_cis_origin_pool`
+    * `ibm_cis_healthcheck`
+    * `ibm_cis_rate_limit`     
+
 ### Use with DigitalOcean
 
 Example:
@@ -993,6 +1064,7 @@ List of supported Heroku resources:
     * `heroku_team_collaborator`
 *   `team_member`
     * `heroku_team_member`
+
 
 ### Use with Linode
 
