@@ -85,7 +85,7 @@ func (g *StorageContainerGenerator) getStorageAccounts() ([]storage.Account, err
 			return nil, err
 		}
 		if paccounts := accountsResult.Value; paccounts != nil {
-			accounts = append(accounts, *paccount...)
+			accounts = append(accounts, *paccounts...)
 		}
 	} else {
 		accountsIterator, err := accountsClient.ListComplete(ctx)
