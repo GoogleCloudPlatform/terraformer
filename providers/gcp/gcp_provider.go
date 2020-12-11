@@ -20,14 +20,14 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"google.golang.org/api/compute/v1"
 )
 
 type GCPProvider struct { //nolint
 	terraformutils.Provider
-	projectName string
-	region      compute.Region
+	projectName  string
+	region       compute.Region
+	providerType string
 }
 
 func GetRegions(project string) []string {
@@ -69,10 +69,14 @@ func (p *GCPProvider) Init(args []string) error {
 	}
 	p.projectName = projectName
 	p.region = *getRegion(projectName, args[0])
+	p.providerType = args[2]
 	return nil
 }
 
 func (p *GCPProvider) GetName() string {
+	if p.providerType != "" {
+		return "google-" + p.providerType
+	}
 	return "google"
 }
 
@@ -95,21 +99,22 @@ func (p *GCPProvider) InitService(serviceName string, verbose bool) error {
 // GetGCPSupportService return map of support service for GCP
 func (p *GCPProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	services := ComputeServices
-	services["bigQuery"] = &BigQueryGenerator{}
-	services["cloudFunctions"] = &CloudFunctionsGenerator{}
-	services["cloudsql"] = &CloudSQLGenerator{}
-	services["dataProc"] = &DataprocGenerator{}
-	services["dns"] = &CloudDNSGenerator{}
-	services["gcs"] = &GcsGenerator{}
-	services["gke"] = &GkeGenerator{}
-	services["iam"] = &IamGenerator{}
-	services["kms"] = &KmsGenerator{}
-	services["logging"] = &LoggingGenerator{}
-	services["memoryStore"] = &MemoryStoreGenerator{}
-	services["monitoring"] = &MonitoringGenerator{}
-	services["project"] = &ProjectGenerator{}
-	services["pubsub"] = &PubsubGenerator{}
-	services["schedulerJobs"] = &SchedulerJobsGenerator{}
+	services["bigQuery"] = &GCPFacade{service: &BigQueryGenerator{}}
+	services["cloudFunctions"] = &GCPFacade{service: &CloudFunctionsGenerator{}}
+	services["cloudsql"] = &GCPFacade{service: &CloudSQLGenerator{}}
+	services["dataProc"] = &GCPFacade{service: &DataprocGenerator{}}
+	services["dns"] = &GCPFacade{service: &CloudDNSGenerator{}}
+	services["gcs"] = &GCPFacade{service: &GcsGenerator{}}
+	services["gke"] = &GCPFacade{service: &GkeGenerator{}}
+	services["iam"] = &GCPFacade{service: &IamGenerator{}}
+	services["kms"] = &GCPFacade{service: &KmsGenerator{}}
+	services["logging"] = &GCPFacade{service: &LoggingGenerator{}}
+	services["memoryStore"] = &GCPFacade{service: &MemoryStoreGenerator{}}
+	services["monitoring"] = &GCPFacade{service: &MonitoringGenerator{}}
+	services["project"] = &GCPFacade{service: &ProjectGenerator{}}
+	services["instances"] = &GCPFacade{service: &InstancesGenerator{}}
+	services["pubsub"] = &GCPFacade{service: &PubsubGenerator{}}
+	services["schedulerJobs"] = &GCPFacade{service: &SchedulerJobsGenerator{}}
 	return services
 }
 
@@ -176,7 +181,6 @@ func (p GCPProvider) GetProviderData(arg ...string) map[string]interface{} {
 		"provider": map[string]interface{}{
 			p.GetName(): map[string]interface{}{
 				"project": p.projectName,
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}

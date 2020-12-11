@@ -41,7 +41,7 @@ func (g DataprocGenerator) createClusterResources(ctx context.Context, clusterLi
 				cluster.ClusterName,
 				cluster.ClusterName,
 				"google_dataproc_cluster",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    cluster.ClusterName,
 					"project": g.GetArgs()["project"].(string),
@@ -55,7 +55,7 @@ func (g DataprocGenerator) createClusterResources(ctx context.Context, clusterLi
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -70,7 +70,7 @@ func (g DataprocGenerator) createJobResources(jobList *dataproc.ProjectsRegionsJ
 				job.Reference.JobId,
 				job.Reference.JobId,
 				"google_dataproc_job",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"project": g.GetArgs()["project"].(string),
 					"region":  g.GetArgs()["region"].(compute.Region).Name,
@@ -94,14 +94,14 @@ func (g *DataprocGenerator) InitResources() error {
 	ctx := context.Background()
 	dataprocService, err := dataproc.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	clusterList := dataprocService.Projects.Regions.Clusters.List(g.GetArgs()["project"].(string), g.GetArgs()["region"].(compute.Region).Name)
 	g.Resources = g.createClusterResources(ctx, clusterList)
 
-	//jobList := dataprocService.Projects.Regions.Jobs.List(g.GetArgs()["project"].(string), g.GetArgs()["region"])
-	//g.Resources = append(g.Resources, g.createJobResources(jobList, ctx)...)
+	// jobList := dataprocService.Projects.Regions.Jobs.List(g.GetArgs()["project"].(string), g.GetArgs()["region"])
+	// g.Resources = append(g.Resources, g.createJobResources(jobList, ctx)...)
 
 	return nil
 }

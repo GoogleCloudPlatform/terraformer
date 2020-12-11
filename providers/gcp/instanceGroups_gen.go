@@ -42,7 +42,7 @@ func (g InstanceGroupsGenerator) createResources(ctx context.Context, instanceGr
 				zone+"/"+obj.Name,
 				zone+"/"+obj.Name,
 				"google_compute_instance_group",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

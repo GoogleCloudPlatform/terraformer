@@ -129,9 +129,9 @@ func (g *S3Generator) ParseFilters(rawFilters []string) {
 		filters := g.ParseFilter(rawFilter)
 		for _, resourceFilter := range filters {
 			g.Filter = append(g.Filter, resourceFilter)
-			if resourceFilter.ResourceName == "aws_s3_bucket" {
+			if resourceFilter.ServiceName == "aws_s3_bucket" {
 				g.Filter = append(g.Filter, terraformutils.ResourceFilter{
-					ResourceName:     "aws_s3_bucket_policy",
+					ServiceName:      "aws_s3_bucket_policy",
 					FieldPath:        resourceFilter.FieldPath,
 					AcceptableValues: resourceFilter.AcceptableValues,
 				})

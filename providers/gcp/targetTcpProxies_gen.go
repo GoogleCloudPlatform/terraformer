@@ -41,7 +41,7 @@ func (g TargetTcpProxiesGenerator) createResources(ctx context.Context, targetTc
 				obj.Name,
 				obj.Name,
 				"google_compute_target_tcp_proxy",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

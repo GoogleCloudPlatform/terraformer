@@ -43,7 +43,7 @@ func (g PubsubGenerator) createSubscriptionsResources(ctx context.Context, subsc
 				name,
 				obj.Name,
 				"google_pubsub_subscription",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    name,
 					"project": g.GetArgs()["project"].(string),
@@ -54,7 +54,7 @@ func (g PubsubGenerator) createSubscriptionsResources(ctx context.Context, subsc
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -70,7 +70,7 @@ func (g PubsubGenerator) createTopicsListResources(ctx context.Context, topicsLi
 				g.GetArgs()["project"].(string)+"/"+name,
 				obj.Name,
 				"google_pubsub_topic",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    name,
 					"project": g.GetArgs()["project"].(string),
@@ -81,7 +81,7 @@ func (g PubsubGenerator) createTopicsListResources(ctx context.Context, topicsLi
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -91,7 +91,7 @@ func (g *PubsubGenerator) InitResources() error {
 	ctx := context.Background()
 	pubsubService, err := pubsub.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	subscriptionsList := pubsubService.Projects.Subscriptions.List("projects/" + g.GetArgs()["project"].(string))

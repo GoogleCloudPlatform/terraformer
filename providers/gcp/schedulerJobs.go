@@ -44,7 +44,7 @@ func (g SchedulerJobsGenerator) createResources(ctx context.Context, jobsList *c
 				obj.Name,
 				name,
 				"google_cloud_scheduler_job",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    name,
 					"project": g.GetArgs()["project"].(string),
@@ -56,7 +56,7 @@ func (g SchedulerJobsGenerator) createResources(ctx context.Context, jobsList *c
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -66,7 +66,7 @@ func (g *SchedulerJobsGenerator) InitResources() error {
 	ctx := context.Background()
 	cloudSchedulerService, err := cloudscheduler.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	jobsList := cloudSchedulerService.Projects.Locations.Jobs.List("projects/" + g.GetArgs()["project"].(string) + "/locations/" + g.GetArgs()["region"].(compute.Region).Name)

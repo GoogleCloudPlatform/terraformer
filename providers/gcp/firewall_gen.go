@@ -41,7 +41,7 @@ func (g FirewallGenerator) createResources(ctx context.Context, firewallList *co
 				obj.Name,
 				obj.Name,
 				"google_compute_firewall",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

@@ -77,7 +77,7 @@ func (g *ComputeGenerator) createResources(list *pagination.Pager, volclient *go
 							tv["depends_on"] = []string{dependsOn}
 						}
 
-						name := s.Name + strings.Replace(v.Attachments[0].Device, "/dev/", "", -1)
+						name := s.Name + strings.ReplaceAll(v.Attachments[0].Device, "/dev/", "")
 						rid := s.ID + "/" + v.ID
 						resource := terraformutils.NewResource(
 							rid,
@@ -88,7 +88,7 @@ func (g *ComputeGenerator) createResources(list *pagination.Pager, volclient *go
 							[]string{},
 							tv,
 						)
-						dependsOn = "openstack_compute_volume_attach_v2.tfer--" + name
+						dependsOn = "openstack_compute_volume_attach_v2." + terraformutils.TfSanitize(name)
 						tv["instance_name"] = terraformutils.TfSanitize(s.Name)
 						if v.Name == "" {
 							v.Name = v.ID

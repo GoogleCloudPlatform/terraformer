@@ -41,7 +41,7 @@ func (g GlobalAddressesGenerator) createResources(ctx context.Context, globalAdd
 				obj.Name,
 				obj.Name,
 				"google_compute_global_address",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

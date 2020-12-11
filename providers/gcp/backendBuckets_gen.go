@@ -41,7 +41,7 @@ func (g BackendBucketsGenerator) createResources(ctx context.Context, backendBuc
 				obj.Name,
 				obj.Name,
 				"google_compute_backend_bucket",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

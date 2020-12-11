@@ -19,7 +19,6 @@ import (
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/zclconf/go-cty/cty"
 )
 
@@ -32,8 +31,7 @@ type AliCloudProvider struct { //nolint
 
 // GetConfig Converts json config to go-cty
 func (p *AliCloudProvider) GetConfig() cty.Value {
-	args := p.Service.GetArgs()
-	profile := args["profile"].(string)
+	profile := p.profile
 	config, err := LoadConfigFromProfile(profile)
 	if err != nil {
 		fmt.Println("ERROR:", err)
@@ -90,7 +88,6 @@ func (p AliCloudProvider) GetProviderData(arg ...string) map[string]interface{} 
 		return map[string]interface{}{
 			"provider": map[string]interface{}{
 				"alicloud": map[string]interface{}{
-					"version": providerwrapper.GetProviderVersion(p.GetName()),
 					"region":  region,
 					"profile": profile,
 					"assume_role": map[string]interface{}{
@@ -105,7 +102,6 @@ func (p AliCloudProvider) GetProviderData(arg ...string) map[string]interface{} 
 			"alicloud": map[string]interface{}{
 				"region":  region,
 				"profile": profile,
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
 			},
 		},
 	}

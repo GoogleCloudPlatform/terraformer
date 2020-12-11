@@ -37,7 +37,7 @@ func newCmdKubernetesImporter(options ImportOptions) *cobra.Command {
 	}
 
 	cmd.AddCommand(listCmd(newKubernetesProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "configmaps,deployments,services", "kubernetes_deployment=name1:name2:name3")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "configmaps,deployments,services", "deployment=name1:name2:name3")
 	return cmd
 }
 

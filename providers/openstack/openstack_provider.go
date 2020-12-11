@@ -18,7 +18,6 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/pkg/errors"
 )
 
@@ -35,8 +34,7 @@ func (p OpenStackProvider) GetProviderData(arg ...string) map[string]interface{}
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"openstack": map[string]interface{}{
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
-				"region":  p.region,
+				"region": p.region,
 			},
 		},
 	}

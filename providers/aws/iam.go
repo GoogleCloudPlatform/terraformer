@@ -183,7 +183,7 @@ func (g *IamGenerator) getUserPolices(svc *iam.Client, userName *string) error {
 	for p.Next(context.Background()) {
 		for _, policy := range p.CurrentPage().PolicyNames {
 			resourceName := aws.StringValue(userName) + "_" + policy
-			resourceName = strings.Replace(resourceName, "@", "", -1)
+			resourceName = strings.ReplaceAll(resourceName, "@", "")
 			policyID := aws.StringValue(userName) + ":" + policy
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				policyID,

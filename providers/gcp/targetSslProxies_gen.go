@@ -41,7 +41,7 @@ func (g TargetSslProxiesGenerator) createResources(ctx context.Context, targetSs
 				obj.Name,
 				obj.Name,
 				"google_compute_target_ssl_proxy",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

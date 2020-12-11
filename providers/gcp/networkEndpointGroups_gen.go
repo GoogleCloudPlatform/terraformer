@@ -42,7 +42,7 @@ func (g NetworkEndpointGroupsGenerator) createResources(ctx context.Context, net
 				zone+"/"+obj.Name,
 				zone+"/"+obj.Name,
 				"google_compute_network_endpoint_group",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),
