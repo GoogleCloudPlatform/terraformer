@@ -34,23 +34,23 @@ import (
 )
 
 type ImportOptions struct {
-	Resources   []string
-	Excludes    []string
-	PathPattern string
-	PathOutput  string
-	State       string
-	Bucket      string
-	Profile     string
-	Verbose     bool
-	Zone        string
-	Regions     []string
-	Projects    []string
+	Resources     []string
+	Excludes      []string
+	PathPattern   string
+	PathOutput    string
+	State         string
+	Bucket        string
+	Profile       string
+	Verbose       bool
+	Zone          string
+	Regions       []string
+	Projects      []string
 	ResourceGroup string
-	Connect     bool
-	Compact     bool
-	Filter      []string
-	Plan        bool `json:"-"`
-	Output      string
+	Connect       bool
+	Compact       bool
+	Filter        []string
+	Plan          bool `json:"-"`
+	Output        string
 }
 
 const DefaultPathPattern = "{output}/{provider}/{service}/"
