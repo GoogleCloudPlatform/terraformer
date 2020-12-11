@@ -35,7 +35,7 @@ type IamGenerator struct {
 	GCPService
 }
 
-func (IamGenerator) createServiceAccountResources(serviceAccountsIterator *admin.ServiceAccountIterator) []terraformutils.Resource {
+func (g IamGenerator) createServiceAccountResources(serviceAccountsIterator *admin.ServiceAccountIterator) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	re := regexp.MustCompile(`^[a-z]`)
 	for {
@@ -55,7 +55,7 @@ func (IamGenerator) createServiceAccountResources(serviceAccountsIterator *admin
 			serviceAccount.Name,
 			serviceAccount.UniqueId,
 			"google_service_account",
-			"google",
+			g.ProviderName,
 			IamAllowEmptyValues,
 		))
 	}
@@ -73,7 +73,7 @@ func (g *IamGenerator) createIamCustomRoleResources(rolesResponse *adminpb.ListR
 			role.Name,
 			role.Name,
 			"google_project_iam_custom_role",
-			"google",
+			g.ProviderName,
 			map[string]string{
 				"role_id": role.Name,
 				"project": project,
@@ -96,7 +96,7 @@ func (g *IamGenerator) createIamMemberResources(policy *cloudresourcemanager.Pol
 				b.Role+m,
 				b.Role+m,
 				"google_project_iam_member",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"role":    b.Role,
 					"project": project,
@@ -117,22 +117,22 @@ func (g *IamGenerator) InitResources() error {
 	projectID := g.GetArgs()["project"].(string)
 	client, err := admin.NewIamClient(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	serviceAccountsIterator := client.ListServiceAccounts(ctx, &adminpb.ListServiceAccountsRequest{Name: "projects/" + projectID})
 	rolesResponse, err := client.ListRoles(ctx, &adminpb.ListRolesRequest{Parent: "projects/" + projectID})
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	cm, err := cloudresourcemanager.NewService(context.Background())
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	rb := &cloudresourcemanager.GetIamPolicyRequest{}
 	policyResponse, err := cm.Projects.GetIamPolicy(projectID, rb).Context(context.Background()).Do()
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	g.Resources = g.createServiceAccountResources(serviceAccountsIterator)

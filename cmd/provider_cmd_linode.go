@@ -36,7 +36,7 @@ func newCmdLinodeImporter(options ImportOptions) *cobra.Command {
 	}
 
 	cmd.AddCommand(listCmd(newLinodeProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "instance", "linode_instance=name1:name2:name3")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "instance", "instance=name1:name2:name3")
 	return cmd
 }
 

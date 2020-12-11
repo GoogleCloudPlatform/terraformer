@@ -19,7 +19,6 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
 type HerokuProvider struct { //nolint
@@ -50,8 +49,7 @@ func (p *HerokuProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"heroku": map[string]interface{}{
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
-				"email":   p.email,
+				"email": p.email,
 			},
 		},
 	}

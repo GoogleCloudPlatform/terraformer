@@ -42,7 +42,7 @@ func (g CloudDNSGenerator) createZonesResources(ctx context.Context, svc *dns.Se
 				zone.Name,
 				zone.Name,
 				"google_dns_managed_zone",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    zone.Name,
 					"project": project,
@@ -61,7 +61,7 @@ func (g CloudDNSGenerator) createZonesResources(ctx context.Context, svc *dns.Se
 	}
 	return resources
 }
-func (CloudDNSGenerator) createRecordsResources(ctx context.Context, svc *dns.Service, project, zoneName string) []terraformutils.Resource {
+func (g CloudDNSGenerator) createRecordsResources(ctx context.Context, svc *dns.Service, project, zoneName string) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	managedRecordsListCall := svc.ResourceRecordSets.List(project, zoneName)
 	err := managedRecordsListCall.Pages(ctx, func(listDNS *dns.ResourceRecordSetsListResponse) error {
@@ -70,7 +70,7 @@ func (CloudDNSGenerator) createRecordsResources(ctx context.Context, svc *dns.Se
 				fmt.Sprintf("%s/%s/%s", zoneName, record.Name, record.Type),
 				zoneName+"_"+strings.TrimSuffix(record.Name+"-"+record.Type, "."),
 				"google_dns_record_set",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":         record.Name,
 					"managed_zone": zoneName,
@@ -97,7 +97,7 @@ func (g *CloudDNSGenerator) InitResources() error {
 	ctx := context.Background()
 	svc, err := dns.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	g.Resources = g.createZonesResources(ctx, svc, project)
@@ -118,7 +118,7 @@ func (g *CloudDNSGenerator) PostConvertHook() error {
 			if zoneID == resourceZone.InstanceState.ID {
 				g.Resources[i].Item["managed_zone"] = "${google_dns_managed_zone." + resourceZone.ResourceName + ".name}"
 				name := g.Resources[i].Item["name"].(string)
-				name = strings.Replace(name, resourceZone.Item["dns_name"].(string), "", -1)
+				name = strings.ReplaceAll(name, resourceZone.Item["dns_name"].(string), "")
 				g.Resources[i].Item["name"] = name + "${google_dns_managed_zone." + resourceZone.ResourceName + ".dns_name}"
 			}
 		}

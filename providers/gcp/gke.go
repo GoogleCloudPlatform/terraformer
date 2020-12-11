@@ -43,11 +43,12 @@ func (g *GkeGenerator) initClusters(clusters *container.ListClustersResponse) []
 			cluster.Name,
 			cluster.Name,
 			"google_container_cluster",
-			"google",
+			g.ProviderName,
 			map[string]string{
-				"name":    cluster.Name, // provider need cluster name as Required
-				"project": g.GetArgs()["project"].(string),
-				"zone":    cluster.Zone, // provider need zone as Required
+				"name":     cluster.Name, // provider need cluster name as Required
+				"project":  g.GetArgs()["project"].(string),
+				"location": cluster.Location,
+				"zone":     cluster.Zone,
 			},
 			GkeAllowEmptyValues,
 			GkeAdditionalFields,
@@ -60,7 +61,7 @@ func (g *GkeGenerator) initClusters(clusters *container.ListClustersResponse) []
 			"^node_config\\.(.*)", // delete node_config config from google_container_cluster
 			"^ip_allocation_policy\\.[0-9]\\.cluster_secondary_range_name$",  // conflict with cluster_ipv4_cidr_block
 			"^ip_allocation_policy\\.[0-9]\\.services_secondary_range_name$", // conflict with services_ipv4_cidr_block
-			"^ip_allocation_policy\\.[0-9]\\.create_subnetwork")              //only for create new cluster conflict with others ip_allocation_policy fields
+			"^ip_allocation_policy\\.[0-9]\\.create_subnetwork")              // only for create new cluster conflict with others ip_allocation_policy fields
 		resources = append(resources, resource)
 		resources = append(resources, g.initNodePools(cluster.NodePools, cluster.Name, cluster.Location)...)
 	}
@@ -74,12 +75,13 @@ func (g *GkeGenerator) initNodePools(nodePools []*container.NodePool, clusterNam
 			fmt.Sprintf("%s/%s/%s", location, clusterName, nodePool.Name),
 			clusterName+"_"+nodePool.Name,
 			"google_container_node_pool",
-			"google",
+			g.ProviderName,
 			map[string]string{
-				"zone":    location,
-				"project": g.GetArgs()["project"].(string),
-				"cluster": clusterName, // provider need cluster name as Required
-				"name":    nodePool.Name,
+				"location": location,
+				"zone":     location,
+				"project":  g.GetArgs()["project"].(string),
+				"cluster":  clusterName, // provider need cluster name as Required
+				"name":     nodePool.Name,
 			},
 			GkeAllowEmptyValues,
 			GkeAdditionalFields,

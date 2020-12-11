@@ -41,7 +41,7 @@ func (g InterconnectAttachmentsGenerator) createResources(ctx context.Context, i
 				obj.Name,
 				obj.Name,
 				"google_compute_interconnect_attachment",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

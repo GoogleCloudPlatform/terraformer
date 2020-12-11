@@ -41,7 +41,7 @@ func (g InstanceTemplatesGenerator) createResources(ctx context.Context, instanc
 				obj.Name,
 				obj.Name,
 				"google_compute_instance_template",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

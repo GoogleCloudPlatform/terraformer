@@ -42,7 +42,7 @@ func (g DisksGenerator) createResources(ctx context.Context, disksList *compute.
 				zone+"/"+obj.Name,
 				zone+"/"+obj.Name,
 				"google_compute_disk",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

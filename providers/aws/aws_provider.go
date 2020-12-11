@@ -19,7 +19,6 @@ import (
 	"strconv"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/pkg/errors"
 	"github.com/zclconf/go-cty/cty"
 )
@@ -64,6 +63,7 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 		"ec2_instance": {
 			"sg":     []string{"vpc_security_group_ids", "id"},
 			"subnet": []string{"subnet_id", "id"},
+			"ebs":    []string{"ebs_block_device", "id"},
 		},
 		"elasticache": {
 			"vpc":    []string{"vpc_id", "id"},
@@ -139,9 +139,7 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 }
 
 func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
-	awsConfig := map[string]interface{}{
-		"version": providerwrapper.GetProviderVersion(p.GetName()),
-	}
+	awsConfig := map[string]interface{}{}
 
 	if p.region == GlobalRegion {
 		awsConfig["region"] = "us-east-1" // For TF to workaround terraform-providers/terraform-provider-aws#1043
@@ -255,6 +253,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"ec2_instance":      &AwsFacade{service: &Ec2Generator{}},
 		"ecr":               &AwsFacade{service: &EcrGenerator{}},
 		"ecs":               &AwsFacade{service: &EcsGenerator{}},
+		"efs":               &AwsFacade{service: &EfsGenerator{}},
 		"eks":               &AwsFacade{service: &EksGenerator{}},
 		"eip":               &AwsFacade{service: &ElasticIPGenerator{}},
 		"elasticache":       &AwsFacade{service: &ElastiCacheGenerator{}},

@@ -41,7 +41,7 @@ func (g RegionAutoscalersGenerator) createResources(ctx context.Context, regionA
 				obj.Name,
 				obj.Name,
 				"google_compute_region_autoscaler",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

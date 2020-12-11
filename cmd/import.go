@@ -34,22 +34,23 @@ import (
 )
 
 type ImportOptions struct {
-	Resources     []string
-	PathPattern   string
-	PathOutput    string
-	State         string
-	Bucket        string
-	Profile       string
-	Verbose       bool
-	Zone          string
-	Regions       []string
-	Projects      []string
+	Resources   []string
+	Excludes    []string
+	PathPattern string
+	PathOutput  string
+	State       string
+	Bucket      string
+	Profile     string
+	Verbose     bool
+	Zone        string
+	Regions     []string
+	Projects    []string
 	ResourceGroup string
-	Connect       bool
-	Compact       bool
-	Filter        []string
-	Plan          bool `json:"-"`
-	Output        string
+	Connect     bool
+	Compact     bool
+	Filter      []string
+	Plan        bool `json:"-"`
+	Output      string
 }
 
 const DefaultPathPattern = "{output}/{provider}/{service}/"
@@ -81,6 +82,7 @@ func Import(provider terraformutils.ProviderGenerator, options ImportOptions, ar
 	if err != nil {
 		return err
 	}
+
 	plan := &ImportPlan{
 		Provider:         provider.GetName(),
 		Options:          options,
@@ -93,55 +95,81 @@ func Import(provider terraformutils.ProviderGenerator, options ImportOptions, ar
 		options.Resources = providerServices(provider)
 	}
 
-	for _, service := range options.Resources {
-		log.Println(provider.GetName() + " importing... " + service)
-		err = provider.InitService(service, options.Verbose)
-		if err != nil {
-			return err
-		}
-		provider.GetService().ParseFilters(options.Filter)
-		err = provider.GetService().InitResources()
-		if err != nil {
-			return err
-		}
-
-		providerWrapper, err := providerwrapper.NewProviderWrapper(provider.GetName(), provider.GetConfig(), options.Verbose)
-		if err != nil {
-			return err
-		}
-
-		provider.GetService().PopulateIgnoreKeys(providerWrapper)
-		provider.GetService().InitialCleanup()
-
-		refreshedResources, err := terraformutils.RefreshResources(provider.GetService().GetResources(), providerWrapper)
-		if err != nil {
-			return err
-		}
-		provider.GetService().SetResources(refreshedResources)
-
-		for i := range provider.GetService().GetResources() {
-			err = provider.GetService().GetResources()[i].ConvertTFstate(providerWrapper)
-			if err != nil {
-				return err
+	if options.Excludes != nil {
+		localSlice := []string{}
+		for _, r := range options.Resources {
+			remove := false
+			for _, e := range options.Excludes {
+				if r == e {
+					remove = true
+					log.Println("Excluding resource " + e)
+				}
+			}
+			if !remove {
+				localSlice = append(localSlice, r)
 			}
 		}
+		options.Resources = localSlice
+	}
 
-		providerWrapper.Kill()
+	providerWrapper, err := providerwrapper.NewProviderWrapper(provider.GetName(), provider.GetConfig(), options.Verbose)
+	if err != nil {
+		return err
+	}
 
-		provider.GetService().PostRefreshCleanup()
+	defer providerWrapper.Kill()
 
-		// change structs with additional data for each resource
-		err = provider.GetService().PostConvertHook()
+	for _, service := range options.Resources {
+		resources, err := buildServiceResources(service, provider, options, providerWrapper)
 		if err != nil {
-			return err
+			log.Println(err)
+			continue
 		}
-		plan.ImportedResource[service] = append(plan.ImportedResource[service], provider.GetService().GetResources()...)
+		plan.ImportedResource[service] = append(plan.ImportedResource[service], resources...)
 	}
 	if options.Plan {
 		path := Path(options.PathPattern, provider.GetName(), "terraformer", options.PathOutput)
 		return ExportPlanFile(plan, path, "plan.json")
 	}
 	return ImportFromPlan(provider, plan)
+}
+
+func buildServiceResources(service string, provider terraformutils.ProviderGenerator,
+	options ImportOptions, providerWrapper *providerwrapper.ProviderWrapper) ([]terraformutils.Resource, error) {
+	log.Println(provider.GetName() + " importing... " + service)
+	err := provider.InitService(service, options.Verbose)
+	if err != nil {
+		return nil, err
+	}
+	provider.GetService().ParseFilters(options.Filter)
+	err = provider.GetService().InitResources()
+	if err != nil {
+		return nil, err
+	}
+
+	provider.GetService().PopulateIgnoreKeys(providerWrapper)
+	provider.GetService().InitialCleanup()
+
+	refreshedResources, err := terraformutils.RefreshResources(provider.GetService().GetResources(), providerWrapper)
+	if err != nil {
+		return nil, err
+	}
+	provider.GetService().SetResources(refreshedResources)
+
+	for i := range provider.GetService().GetResources() {
+		err = provider.GetService().GetResources()[i].ConvertTFstate(providerWrapper)
+		if err != nil {
+			return nil, err
+		}
+	}
+	provider.GetService().PostRefreshCleanup()
+
+	// change structs with additional data for each resource
+	err = provider.GetService().PostConvertHook()
+	if err != nil {
+		return nil, err
+	}
+	return provider.GetService().GetResources(), nil
 }
 
 func ImportFromPlan(provider terraformutils.ProviderGenerator, plan *ImportPlan) error {
@@ -225,7 +253,7 @@ func printService(provider terraformutils.ProviderGenerator, serviceName string,
 					}
 					variables["data"]["terraform_remote_state"][k] = map[string]interface{}{
 						"backend": "gcs",
-						"config":  bucket.BucketGetTfData(strings.Replace(path, serviceName, k, -1)),
+						"config":  bucket.BucketGetTfData(strings.ReplaceAll(path, serviceName, k)),
 					}
 				}
 			} else {
@@ -236,7 +264,7 @@ func printService(provider terraformutils.ProviderGenerator, serviceName string,
 					variables["data"]["terraform_remote_state"][k] = map[string]interface{}{
 						"backend": "local",
 						"config": [1]interface{}{map[string]interface{}{
-							"path": strings.Repeat("../", strings.Count(path, "/")) + strings.Replace(path, serviceName, k, -1) + "terraform.tfstate",
+							"path": strings.Repeat("../", strings.Count(path, "/")) + strings.ReplaceAll(path, serviceName, k) + "terraform.tfstate",
 						}},
 					}
 				}
@@ -322,6 +350,7 @@ func baseProviderFlags(flag *pflag.FlagSet, options *ImportOptions, sampleRes, s
 	flag.BoolVarP(&options.Connect, "connect", "c", true, "")
 	flag.BoolVarP(&options.Compact, "compact", "C", false, "")
 	flag.StringSliceVarP(&options.Resources, "resources", "r", []string{}, sampleRes)
+	flag.StringSliceVarP(&options.Excludes, "excludes", "x", []string{}, sampleRes)
 	flag.StringVarP(&options.PathPattern, "path-pattern", "p", DefaultPathPattern, "{output}/{provider}/")
 	flag.StringVarP(&options.PathOutput, "path-output", "o", DefaultPathOutput, "")
 	flag.StringVarP(&options.State, "state", "s", DefaultState, "local or bucket")

@@ -16,6 +16,7 @@ package aws
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"strings"
 
@@ -64,5 +65,20 @@ func (g *SqsGenerator) InitResources() error {
 		))
 	}
 
+	return nil
+}
+
+// PostConvertHook for add policy json as heredoc
+func (g *SqsGenerator) PostConvertHook() error {
+	for i, resource := range g.Resources {
+		if resource.InstanceInfo.Type == "aws_sqs_queue" {
+			if val, ok := g.Resources[i].Item["policy"]; ok {
+				policy := g.escapeAwsInterpolation(val.(string))
+				g.Resources[i].Item["policy"] = fmt.Sprintf(`<<POLICY
+%s
+POLICY`, policy)
+			}
+		}
+	}
 	return nil
 }

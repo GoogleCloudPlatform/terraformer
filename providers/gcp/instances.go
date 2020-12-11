@@ -37,14 +37,14 @@ func (g InstancesGenerator) createResources(ctx context.Context, instancesList *
 	resources := []terraformutils.Resource{}
 	if err := instancesList.Pages(ctx, func(page *compute.InstanceList) error {
 		for _, obj := range page.Items {
-			if strings.HasPrefix("gke-", obj.Name) {
+			if strings.HasPrefix(obj.Name, "gke-") {
 				continue
 			}
-			resources = append(resources, terraformutils.NewResource(
+			resource := terraformutils.NewResource(
 				obj.Name,
 				obj.Name,
 				"google_compute_instance",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),
@@ -53,7 +53,9 @@ func (g InstancesGenerator) createResources(ctx context.Context, instancesList *
 				},
 				instancesAllowEmptyValues,
 				instancesAdditionalFields,
-			))
+			)
+			resource.IgnoreKeys = append(resource.IgnoreKeys, "^boot_disk.[0-9].initialize_params\\.(.*)")
+			resources = append(resources, resource)
 		}
 		return nil
 	}); err != nil {

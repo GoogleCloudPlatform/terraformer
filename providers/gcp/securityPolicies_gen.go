@@ -41,7 +41,7 @@ func (g SecurityPoliciesGenerator) createResources(ctx context.Context, security
 				obj.Name,
 				obj.Name,
 				"google_compute_security_policy",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

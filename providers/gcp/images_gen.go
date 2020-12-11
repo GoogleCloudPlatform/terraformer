@@ -41,7 +41,7 @@ func (g ImagesGenerator) createResources(ctx context.Context, imagesList *comput
 				obj.Name,
 				obj.Name,
 				"google_compute_image",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

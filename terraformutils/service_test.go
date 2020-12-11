@@ -22,7 +22,7 @@ func TestIdFiltersParsing(t *testing.T) {
 
 	if !reflect.DeepEqual(service.Filter, []ResourceFilter{
 		{
-			ResourceName:     "aws_vpc",
+			ServiceName:      "aws_vpc",
 			FieldPath:        "id",
 			AcceptableValues: []string{"myid"},
 		}}) {
@@ -36,7 +36,7 @@ func TestComplexIdFiltersParsing(t *testing.T) {
 
 	if !reflect.DeepEqual(service.Filter, []ResourceFilter{
 		{
-			ResourceName:     "resource",
+			ServiceName:      "resource",
 			FieldPath:        "id",
 			AcceptableValues: []string{"id1", "project:dataset_id"},
 		}}) {
@@ -50,7 +50,7 @@ func TestEdgeIdFiltersParsing(t *testing.T) {
 
 	if !reflect.DeepEqual(service.Filter, []ResourceFilter{
 		{
-			ResourceName:     "aws_vpc",
+			ServiceName:      "aws_vpc",
 			FieldPath:        "id",
 			AcceptableValues: []string{"myid"},
 		}}) {

@@ -42,7 +42,7 @@ func (g NodeGroupsGenerator) createResources(ctx context.Context, nodeGroupsList
 				zone+"/"+obj.Name,
 				zone+"/"+obj.Name,
 				"google_compute_node_group",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

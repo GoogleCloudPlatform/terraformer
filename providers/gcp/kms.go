@@ -42,7 +42,7 @@ func (g KmsGenerator) createKmsRingResources(ctx context.Context, keyRingList *c
 				ID,
 				tm[len(tm)-3]+"_"+tm[len(tm)-1],
 				"google_kms_key_ring",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"project":  g.GetArgs()["project"].(string),
 					"location": tm[3],
@@ -55,7 +55,7 @@ func (g KmsGenerator) createKmsRingResources(ctx context.Context, keyRingList *c
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -70,7 +70,7 @@ func (g *KmsGenerator) createKmsKeyResources(ctx context.Context, keyRingName st
 				key.Name,
 				tm[1]+"_"+tm[3]+"_"+tm[5]+"_"+tm[7],
 				"google_kms_crypto_key",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"project": g.GetArgs()["project"].(string),
 					"name":    key.Name,
@@ -81,7 +81,7 @@ func (g *KmsGenerator) createKmsKeyResources(ctx context.Context, keyRingName st
 		}
 		return nil
 	}); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	return resources
 }
@@ -91,7 +91,7 @@ func (g *KmsGenerator) InitResources() error {
 	ctx := context.Background()
 	kmsService, err := cloudkms.NewService(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	keyRingList := kmsService.Projects.Locations.KeyRings.List("projects/" + g.GetArgs()["project"].(string) + "/locations/global")

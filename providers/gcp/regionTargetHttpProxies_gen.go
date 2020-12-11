@@ -41,7 +41,7 @@ func (g RegionTargetHttpProxiesGenerator) createResources(ctx context.Context, r
 				obj.Name,
 				obj.Name,
 				"google_compute_region_target_http_proxy",
-				"google",
+				g.ProviderName,
 				map[string]string{
 					"name":    obj.Name,
 					"project": g.GetArgs()["project"].(string),

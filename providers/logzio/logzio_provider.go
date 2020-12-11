@@ -19,7 +19,6 @@ import (
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/pkg/errors"
 	"github.com/zclconf/go-cty/cty"
 )
@@ -41,13 +40,7 @@ func (p LogzioProvider) GetResourceConnections() map[string]map[string][]string 
 }
 
 func (p LogzioProvider) GetProviderData(arg ...string) map[string]interface{} {
-	return map[string]interface{}{
-		"provider": map[string]interface{}{
-			"logzio": map[string]interface{}{
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
-			},
-		},
-	}
+	return map[string]interface{}{}
 }
 
 func (p *LogzioProvider) GetConfig() cty.Value {

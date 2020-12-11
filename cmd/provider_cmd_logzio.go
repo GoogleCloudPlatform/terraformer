@@ -50,7 +50,7 @@ func newCmdLogzioImporter(options ImportOptions) *cobra.Command {
 		},
 	}
 	cmd.AddCommand(listCmd(newLogzioProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "repository", "logzio_alert=id1:id2:id4")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "repository", "alert=id1:id2:id4")
 	return cmd
 }
 

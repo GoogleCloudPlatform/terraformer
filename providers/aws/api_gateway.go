@@ -89,7 +89,7 @@ func (g *APIGatewayGenerator) loadRestApis(svc *apigateway.Client) error {
 
 func (g *APIGatewayGenerator) shouldFilterRestAPI(tags map[string]string) bool {
 	for _, filter := range g.Filter {
-		if strings.HasPrefix(filter.FieldPath, "tags.") && filter.IsApplicable("aws_api_gateway_rest_api") {
+		if strings.HasPrefix(filter.FieldPath, "tags.") && filter.IsApplicable("api_gateway_rest_api") {
 			tagName := strings.Replace(filter.FieldPath, "tags.", "", 1)
 			if val, ok := tags[tagName]; ok {
 				return !terraformerstring.ContainsString(filter.AcceptableValues, val)
