@@ -115,7 +115,15 @@ func (g *CosmosDBGenerator) listAndAddForDatabaseAccounts() ([]terraformutils.Re
 	DatabaseAccountsClient := documentdb.NewDatabaseAccountsClient(subscriptionID, subscriptionID)
 	DatabaseAccountsClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
-	accounts, err := DatabaseAccountsClient.List(ctx)
+	var (
+		accounts documentdb.DatabaseAccountsListResult
+		err      error
+	)
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		accounts, err = DatabaseAccountsClient.ListByResourceGroup(ctx, rg)
+	} else {
+		accounts, err = DatabaseAccountsClient.List(ctx)
+	}
 	if err != nil {
 		return nil, err
 	}

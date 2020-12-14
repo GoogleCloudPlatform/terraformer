@@ -111,7 +111,16 @@ func (g *PrivateDNSGenerator) listAndAddForPrivateDNSZone() ([]terraformutils.Re
 	PrivateDNSZonesClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	var pageSize int32 = 50
-	dnsZoneIterator, err := PrivateDNSZonesClient.ListComplete(ctx, &pageSize)
+
+	var (
+		dnsZoneIterator privatedns.PrivateZoneListResultIterator
+		err             error
+	)
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		dnsZoneIterator, err = PrivateDNSZonesClient.ListByResourceGroupComplete(ctx, rg, &pageSize)
+	} else {
+		dnsZoneIterator, err = PrivateDNSZonesClient.ListComplete(ctx, &pageSize)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -143,7 +152,7 @@ func (g *PrivateDNSGenerator) listAndAddForPrivateDNSZone() ([]terraformutils.Re
 
 		if err := dnsZoneIterator.Next(); err != nil {
 			log.Println(err)
-			break
+			return resources, err
 		}
 	}
 

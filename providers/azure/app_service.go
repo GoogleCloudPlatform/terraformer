@@ -21,7 +21,15 @@ func (g AppServiceGenerator) listApps() ([]terraformutils.Resource, error) {
 
 	appServiceClient := web.NewAppsClient(g.Args["config"].(authentication.Config).SubscriptionID)
 	appServiceClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
-	appsIterator, err := appServiceClient.ListComplete(ctx)
+	var (
+		appsIterator web.AppCollectionIterator
+		err          error
+	)
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		appsIterator, err = appServiceClient.ListByResourceGroupComplete(ctx, rg, nil)
+	} else {
+		appsIterator, err = appServiceClient.ListComplete(ctx)
+	}
 	if err != nil {
 		return nil, err
 	}

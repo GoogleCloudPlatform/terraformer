@@ -28,7 +28,29 @@ type StorageAccountGenerator struct {
 	AzureService
 }
 
-func (g StorageAccountGenerator) createResources(accountListResultIterator storage.AccountListResultIterator) []terraformutils.Resource {
+func (g StorageAccountGenerator) createResourcesByResourceGroup(ctx context.Context, client storage.AccountsClient, rg string) ([]terraformutils.Resource, error) {
+	accountListResult, err := client.ListByResourceGroup(ctx, rg)
+	if err != nil {
+		return nil, err
+	}
+	var resources []terraformutils.Resource
+	if accounts := accountListResult.Value; accounts != nil {
+		for _, account := range *accounts {
+			resources = append(resources, terraformutils.NewSimpleResource(
+				*account.ID,
+				*account.Name,
+				"azurerm_storage_account",
+				"azurerm",
+				[]string{}))
+		}
+	}
+	return resources, nil
+}
+func (g StorageAccountGenerator) createResources(ctx context.Context, client storage.AccountsClient) ([]terraformutils.Resource, error) {
+	accountListResultIterator, err := client.ListComplete(ctx)
+	if err != nil {
+		return nil, err
+	}
 	var resources []terraformutils.Resource
 	for accountListResultIterator.NotDone() {
 		account := accountListResultIterator.Value()
@@ -40,21 +62,22 @@ func (g StorageAccountGenerator) createResources(accountListResultIterator stora
 			[]string{}))
 		if err := accountListResultIterator.Next(); err != nil {
 			log.Println(err)
-			break
+			return resources, err
 		}
 	}
-	return resources
+	return resources, nil
 }
 
 func (g *StorageAccountGenerator) InitResources() error {
 	ctx := context.Background()
 	accountsClient := storage.NewAccountsClient(g.Args["config"].(authentication.Config).SubscriptionID)
-
 	accountsClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
-	output, err := accountsClient.ListComplete(ctx)
-	if err != nil {
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		output, err := g.createResourcesByResourceGroup(ctx, accountsClient, rg)
+		g.Resources = output
 		return err
 	}
-	g.Resources = g.createResources(output)
-	return nil
+	output, err := g.createResources(ctx, accountsClient)
+	g.Resources = output
+	return err
 }

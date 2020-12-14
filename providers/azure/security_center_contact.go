@@ -22,6 +22,9 @@ func (g SecurityCenterContactGenerator) listContacts() ([]terraformutils.Resourc
 	securityCenterContactClient := security.NewContactsClient(subscriptionID, "")
 	securityCenterContactClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		return resources, nil
+	}
 	contactsIterator, err := securityCenterContactClient.ListComplete(ctx)
 	if err != nil {
 		return resources, err
