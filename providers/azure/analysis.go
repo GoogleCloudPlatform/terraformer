@@ -35,7 +35,16 @@ func (g *AnalysisGenerator) listServiceServers() ([]terraformutils.Resource, err
 	AnalysisClient := analysisservices.NewServersClient(g.Args["config"].(authentication.Config).SubscriptionID)
 	AnalysisClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
-	servers, err := AnalysisClient.List(ctx)
+	var (
+		servers analysisservices.Servers
+		err     error
+	)
+
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		servers, err = AnalysisClient.ListByResourceGroup(ctx, rg)
+	} else {
+		servers, err = AnalysisClient.List(ctx)
+	}
 	if err != nil {
 		return nil, err
 	}

@@ -28,24 +28,22 @@ type VirtualNetworkGenerator struct {
 	AzureService
 }
 
-func (g VirtualNetworkGenerator) createResources(virtualNetworkListResultPage network.VirtualNetworkListResultPage) []terraformutils.Resource {
+func (g VirtualNetworkGenerator) createResources(ctx context.Context, iterator network.VirtualNetworkListResultIterator) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
-	for virtualNetworkListResultPage.NotDone() {
-		virtualNetworks := virtualNetworkListResultPage.Values()
-		for _, virtualNetwork := range virtualNetworks {
-			resources = append(resources, terraformutils.NewSimpleResource(
-				*virtualNetwork.ID,
-				*virtualNetwork.Name,
-				"azurerm_virtual_network",
-				"azurerm",
-				[]string{}))
-		}
-		if err := virtualNetworkListResultPage.Next(); err != nil {
+	for iterator.NotDone() {
+		virtualNetwork := iterator.Value()
+		resources = append(resources, terraformutils.NewSimpleResource(
+			*virtualNetwork.ID,
+			*virtualNetwork.Name,
+			"azurerm_virtual_network",
+			"azurerm",
+			[]string{}))
+		if err := iterator.NextWithContext(ctx); err != nil {
 			log.Println(err)
-			break
+			return resources, err
 		}
 	}
-	return resources
+	return resources, nil
 }
 
 func (g *VirtualNetworkGenerator) InitResources() error {
@@ -53,10 +51,20 @@ func (g *VirtualNetworkGenerator) InitResources() error {
 	virtualNetworkClient := network.NewVirtualNetworksClient(g.Args["config"].(authentication.Config).SubscriptionID)
 
 	virtualNetworkClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
-	output, err := virtualNetworkClient.ListAll(ctx)
+
+	var (
+		output network.VirtualNetworkListResultIterator
+		err    error
+	)
+
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		output, err = virtualNetworkClient.ListComplete(ctx, rg)
+	} else {
+		output, err = virtualNetworkClient.ListAllComplete(ctx)
+	}
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(output)
-	return nil
+	g.Resources, err = g.createResources(ctx, output)
+	return err
 }

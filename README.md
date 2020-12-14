@@ -751,6 +751,7 @@ export ARM_CLIENT_SECRET=[CLIENT_SECRET]
 export ARM_TENANT_ID=[TENANT_ID]
 
 ./terraformer import azure -r resource_group
+./terraformer import azure -R my_resource_group -r virtual_network,resource_group
 ```
 
 List of supported Azure resources:
