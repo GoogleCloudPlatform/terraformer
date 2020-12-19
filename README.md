@@ -576,6 +576,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_lambda_function`
     * `aws_lambda_function_event_invoke_config`
     * `aws_lambda_layer_version`
+*   `logs`
+    * `aws_cloudwatch_log_group`
 *   `media_package`
     * `aws_media_package_channel`
 *   `media_store`
