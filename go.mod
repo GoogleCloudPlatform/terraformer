@@ -34,7 +34,7 @@ require (
 	github.com/gophercloud/gophercloud v0.13.0
 	github.com/hashicorp/go-azure-helpers v0.10.0
 	github.com/hashicorp/go-hclog v0.14.1
-	github.com/hashicorp/go-plugin v1.3.0
+	github.com/hashicorp/go-plugin v1.4.0
 	github.com/hashicorp/hcl v1.0.0
 	github.com/hashicorp/terraform v0.12.29
 	github.com/heroku/heroku-go/v5 v5.1.0
