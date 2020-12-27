@@ -17,7 +17,6 @@ package rabbitmq
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -55,7 +54,6 @@ func (g ShovelGenerator) createResources(shovels Shovels) []terraformutils.Resou
 			ShovelAdditionalFields,
 		))
 	}
-	log.Println(resources)
 	return resources
 }
 
