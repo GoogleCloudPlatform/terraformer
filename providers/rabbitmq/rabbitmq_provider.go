@@ -81,6 +81,7 @@ func (p *RBTProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"queues":      &QueueGenerator{},
 		"users":       &UserGenerator{},
 		"vhosts":      &VhostGenerator{},
+		"shovels":     &ShovelGenerator{},
 	}
 }
 
@@ -92,6 +93,9 @@ func (RBTProvider) GetResourceConnections() map[string]map[string][]string {
 			"vhosts":    []string{"vhost", "self_link"},
 		},
 		"exchanges": {
+			"vhosts": []string{"vhost", "self_link"},
+		},
+		"shovels": {
 			"vhosts": []string{"vhost", "self_link"},
 		},
 		"permissions": {
