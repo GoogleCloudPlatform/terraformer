@@ -64,6 +64,4 @@ require (
 	k8s.io/client-go v0.20.1
 )
 
-replace github.com/GoogleCloudPlatform/terraformer => ../terraformer
-
 replace gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
