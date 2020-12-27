@@ -7,4 +7,3 @@ terraformer
 terraform.tfstate
 terraform.tfstate.backup
 init.tf
-lab/
