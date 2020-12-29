@@ -18,12 +18,12 @@ require (
 	github.com/IBM/networking-go-sdk v0.12.1
 	github.com/IBM/vpc-go-sdk v0.3.1
 	github.com/OctopusDeploy/go-octopusdeploy v1.6.0
-	github.com/aliyun/alibaba-cloud-sdk-go v1.60.295
+	github.com/aliyun/alibaba-cloud-sdk-go v1.61.814
 	github.com/aliyun/aliyun-tablestore-go-sdk v4.1.2+incompatible
 	github.com/aws/aws-sdk-go v1.36.7
 	github.com/aws/aws-sdk-go-v2 v0.24.0
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
-	github.com/cloudflare/cloudflare-go v0.13.5
+	github.com/cloudflare/cloudflare-go v0.13.6
 	github.com/ddelnano/terraform-provider-mikrotik v0.0.0-20200501162830-a217572b326c
 	github.com/denverdino/aliyungo v0.0.0-20200327235253-d59c209c7e93
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
