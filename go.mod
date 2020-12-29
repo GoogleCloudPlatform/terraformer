@@ -23,7 +23,7 @@ require (
 	github.com/aws/aws-sdk-go v1.36.7
 	github.com/aws/aws-sdk-go-v2 v0.24.0
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
-	github.com/cloudflare/cloudflare-go v0.13.5
+	github.com/cloudflare/cloudflare-go v0.13.6
 	github.com/ddelnano/terraform-provider-mikrotik v0.0.0-20200501162830-a217572b326c
 	github.com/denverdino/aliyungo v0.0.0-20200327235253-d59c209c7e93
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
