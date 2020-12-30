@@ -235,7 +235,7 @@ Links to download Terraform Providers:
     * Keycloak provider >=1.19.0 - [here](https://github.com/mrparkers/terraform-provider-keycloak/)
     * Logz.io provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
     * Commercetools provider >= 0.21.0 - [here](https://github.com/labd/terraform-provider-commercetools)
-    * Mikrotik provider >= 0.2.2 - [here](https://github.com/labd/terraform-provider-commercetools)
+    * Mikrotik provider >= 0.2.2 - [here](https://github.com/ddelnano/terraform-provider-mikrotik)
     * GmailFilter provider >= 1.0.1 - [here](https://github.com/yamamoto-febc/terraform-provider-gmailfilter)
 
 Information on provider plugins:
