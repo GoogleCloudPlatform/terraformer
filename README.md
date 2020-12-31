@@ -50,6 +50,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [Logz.io](#use-with-logzio)
         * [Commercetools](#use-with-commercetools)
         * [Mikrotik](#use-with-mikrotik)
+        * [Xen Orchestra](#use-with-xenorchestra)
         * [GmailFilter](#use-with-gmailfilter)
 - [Contributing](#contributing)
 - [Developing](#developing)
@@ -264,6 +265,7 @@ Links to download Terraform Providers:
     * Logz.io provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
     * Commercetools provider >= 0.21.0 - [here](https://github.com/labd/terraform-provider-commercetools)
     * Mikrotik provider >= 0.2.2 - [here](https://github.com/ddelnano/terraform-provider-mikrotik)
+    * Xen Orchestra provider >= 0.XX.XX - [here](https://github.com/ddelnano/terraform-provider-xenorchestra)
     * GmailFilter provider >= 1.0.1 - [here](https://github.com/yamamoto-febc/terraform-provider-gmailfilter)
 
 Information on provider plugins:
