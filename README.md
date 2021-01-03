@@ -477,6 +477,9 @@ In that case terraformer will not know with which region resources are associate
     * `aws_cloudformation_stack`
     * `aws_cloudformation_stack_set`
     * `aws_cloudformation_stack_set_instance`
+*   `cloudhsm`
+    * `aws_cloudhsm_v2_cluster`
+    * `aws_cloudhsm_v2_hsm`
 *   `cloudtrail`
     * `aws_cloudtrail`
 *   `cloudwatch`
