@@ -22,6 +22,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [AWS](#use-with-aws)
         * [Azure](#use-with-azure)
         * [AliCloud](#use-with-alicloud)
+        * [IBM Cloud](#use-with-ibm-cloud)
     * Cloud
         * [DigitalOcean](#use-with-digitalocean)
         * [Fastly](#use-with-fastly)
@@ -105,6 +106,12 @@ To import resources from all services, use `--resources="*"` . If you want to ex
 #### Filtering
 
 Filters are a way to choose which resources `terraformer` imports. It's possible to filter resources by its identifiers or attributes. Multiple filtering values are separated by `:`. If an identifier contains this symbol, value should be wrapped in `'` e.g. `--filter=resource=id1:'project:dataset_id'`. Identifier based filters will be executed before Terraformer will try to refresh remote state.
+
+Use `Type` when you need to filter only one of several types of resources. Multiple filters can be combined when importing different resource types. An example would be importing all AWS security groups from a specific AWS VPC: 
+```
+terraformer import aws -r sg,vpc --filter Type=sg;Name=vpc_id;Value=VPC_ID --filter Type=vpc;Name=id;Value=VPC_ID 
+```
+Notice how the `Name` is different for `sg` than it is for `vpc`.
 
 ##### Resource ID
 
@@ -228,7 +235,7 @@ Links to download Terraform Providers:
     * Keycloak provider >=1.19.0 - [here](https://github.com/mrparkers/terraform-provider-keycloak/)
     * Logz.io provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
     * Commercetools provider >= 0.21.0 - [here](https://github.com/labd/terraform-provider-commercetools)
-    * Mikrotik provider >= 0.2.2 - [here](https://github.com/labd/terraform-provider-commercetools)
+    * Mikrotik provider >= 0.2.2 - [here](https://github.com/ddelnano/terraform-provider-mikrotik)
     * GmailFilter provider >= 1.0.1 - [here](https://github.com/yamamoto-febc/terraform-provider-gmailfilter)
 
 Information on provider plugins:
@@ -470,6 +477,9 @@ In that case terraformer will not know with which region resources are associate
     * `aws_cloudformation_stack`
     * `aws_cloudformation_stack_set`
     * `aws_cloudformation_stack_set_instance`
+*   `cloudhsm`
+    * `aws_cloudhsm_v2_cluster`
+    * `aws_cloudhsm_v2_hsm`
 *   `cloudtrail`
     * `aws_cloudtrail`
 *   `cloudwatch`
@@ -746,6 +756,7 @@ export ARM_CLIENT_SECRET=[CLIENT_SECRET]
 export ARM_TENANT_ID=[TENANT_ID]
 
 ./terraformer import azure -r resource_group
+./terraformer import azure -R my_resource_group -r virtual_network,resource_group
 ```
 
 List of supported Azure resources:
@@ -883,6 +894,76 @@ List of supported AliCloud resources:
 * `vswitch`
   * `alicloud_vswitch`
 
+ ### Use with IBM Cloud
+
+If you want to run Terraformer with the IBM Cloud provider plugin on your system, complete the following steps:
+
+
+1. Export IBM Cloud API key as environment variables.
+    Example:
+
+    ```
+    export IC_API_KEY=<IBMCLOUD_API_KEY>
+    export IC_REGION=<IBMCLOUD_REGION>
+    terraformer import ibm -r ibm_cos,ibm_iam....
+    ```
+2. Use flag for Resource Group to classify resources accordingly.
+    Example:
+
+    ```
+    export IC_API_KEY=<IBMCLOUD_API_KEY>
+    export IC_REGION=<IBMCLOUD_REGION>
+    terraformer import ibm --resources=ibm_is_vpc --resource_group=a0d5213d831a454ebace7ed38ca9c8ca
+    ```
+List of supported IBM Cloud resources:
+
+*   `ibm_kp`
+    * `ibm_resource_instance`
+    * `ibm_kms_key`
+*   `ibm_cos`
+    * `ibm_resource_instance`
+    * `ibm_cos_bucket`
+*   `ibm_iam`
+    * `ibm_iam_user_policy`
+    * `ibm_iam_access_group`
+    * `ibm_iam_access_group_members`
+    * `ibm_iam_access_group_policy`
+    * `ibm_iam_access_group_dynamic_rule`
+*   `ibm_container_vpc_cluster`
+    * `ibm_container_vpc_cluster`
+    * `ibm_container_vpc_worker_pool`
+*   `ibm_database_etcd`
+    * `ibm_database`
+*   `ibm_database_mongo`
+    * `ibm_database`
+*   `ibm_database_postgresql`
+    * `ibm_database`
+*   `ibm_database_rabbitmq`
+    * `ibm_database`
+*   `ibm_database_redis`
+    * `ibm_database`
+*   `ibm_is_instance_group`
+    * `ibm_is_instance_group`
+    * `ibm_is_instance_group_manager`
+    * `ibm_is_instance_group_manager_policy`
+*   `ibm_is_vpc`
+    * `ibm_is_vpc`
+    * `ibm_is_vpc_address_prefix`
+    * `ibm_is_vpc_route`
+*   `ibm_is_subnet`
+*   `ibm_is_instance`
+*   `ibm_is_security_group`
+    * `ibm_is_security_group_rule` 
+*   `ibm_cis`
+    * `ibm_cis`
+    * `ibm_cis_dns_record`
+    * `ibm_cis_firewall`
+    * `ibm_cis_domain_settings`
+    * `ibm_cis_global_load_balancer`
+    * `ibm_cis_origin_pool`
+    * `ibm_cis_healthcheck`
+    * `ibm_cis_rate_limit`     
+
 ### Use with DigitalOcean
 
 Example:
@@ -995,6 +1076,7 @@ List of supported Heroku resources:
     * `heroku_team_collaborator`
 *   `team_member`
     * `heroku_team_member`
+
 
 ### Use with Linode
 

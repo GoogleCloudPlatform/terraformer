@@ -28,24 +28,22 @@ type NetworkInterfaceGenerator struct {
 	AzureService
 }
 
-func (g NetworkInterfaceGenerator) createResources(interfaceListResultPage network.InterfaceListResultPage) []terraformutils.Resource {
+func (g NetworkInterfaceGenerator) createResources(interfaceListResult network.InterfaceListResultIterator) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
-	for interfaceListResultPage.NotDone() {
-		networkInterfaces := interfaceListResultPage.Values()
-		for _, networkInterface := range networkInterfaces {
-			resources = append(resources, terraformutils.NewSimpleResource(
-				*networkInterface.ID,
-				*networkInterface.Name,
-				"azurerm_network_interface",
-				"azurerm",
-				[]string{}))
-		}
-		if err := interfaceListResultPage.Next(); err != nil {
+	for interfaceListResult.NotDone() {
+		networkInterface := interfaceListResult.Value()
+		resources = append(resources, terraformutils.NewSimpleResource(
+			*networkInterface.ID,
+			*networkInterface.Name,
+			"azurerm_network_interface",
+			"azurerm",
+			[]string{}))
+		if err := interfaceListResult.Next(); err != nil {
 			log.Println(err)
-			break
+			return resources, err
 		}
 	}
-	return resources
+	return resources, nil
 }
 
 func (g *NetworkInterfaceGenerator) InitResources() error {
@@ -53,10 +51,18 @@ func (g *NetworkInterfaceGenerator) InitResources() error {
 	interfacesClient := network.NewInterfacesClient(g.Args["config"].(authentication.Config).SubscriptionID)
 
 	interfacesClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
-	output, err := interfacesClient.ListAll(ctx)
+	var (
+		output network.InterfaceListResultIterator
+		err    error
+	)
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		output, err = interfacesClient.ListComplete(ctx, rg)
+	} else {
+		output, err = interfacesClient.ListAllComplete(ctx)
+	}
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(output)
-	return nil
+	g.Resources, err = g.createResources(output)
+	return err
 }

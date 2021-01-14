@@ -22,6 +22,9 @@ func (g SecurityCenterSubscriptionPricingGenerator) listSubscriptionPricing() ([
 	securityCenterPricingClient := security.NewPricingsClient(subscriptionID, "")
 	securityCenterPricingClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		return resources, nil
+	}
 	pricingList, err := securityCenterPricingClient.List(ctx)
 	if err != nil {
 		return resources, err

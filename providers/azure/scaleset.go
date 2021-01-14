@@ -28,7 +28,11 @@ type ScaleSetGenerator struct {
 	AzureService
 }
 
-func (g ScaleSetGenerator) createResources(scaleSetIterator compute.VirtualMachineScaleSetListWithLinkResultIterator) []terraformutils.Resource {
+func (g ScaleSetGenerator) createResourcesByResourceGroup(ctx context.Context, client compute.VirtualMachineScaleSetsClient, rg string) ([]terraformutils.Resource, error) {
+	scaleSetIterator, err := client.ListComplete(ctx, rg)
+	if err != nil {
+		return nil, err
+	}
 	var resources []terraformutils.Resource
 	for scaleSetIterator.NotDone() {
 		scaleSet := scaleSetIterator.Value()
@@ -41,10 +45,33 @@ func (g ScaleSetGenerator) createResources(scaleSetIterator compute.VirtualMachi
 		resources = append(resources, newResource)
 		if err := scaleSetIterator.Next(); err != nil {
 			log.Println(err)
-			break
+			return resources, err
 		}
 	}
-	return resources
+	return resources, nil
+}
+
+func (g ScaleSetGenerator) createResources(ctx context.Context, client compute.VirtualMachineScaleSetsClient) ([]terraformutils.Resource, error) {
+	scaleSetIterator, err := client.ListAllComplete(ctx)
+	if err != nil {
+		return nil, err
+	}
+	var resources []terraformutils.Resource
+	for scaleSetIterator.NotDone() {
+		scaleSet := scaleSetIterator.Value()
+		newResource := terraformutils.NewSimpleResource(
+			*scaleSet.ID,
+			*scaleSet.Name,
+			"azurerm_virtual_machine_scale_set",
+			"azurerm",
+			[]string{})
+		resources = append(resources, newResource)
+		if err := scaleSetIterator.Next(); err != nil {
+			log.Println(err)
+			return resources, err
+		}
+	}
+	return resources, nil
 }
 
 func (g *ScaleSetGenerator) InitResources() error {
@@ -52,10 +79,13 @@ func (g *ScaleSetGenerator) InitResources() error {
 	ScaleSetClient := compute.NewVirtualMachineScaleSetsClient(g.Args["config"].(authentication.Config).SubscriptionID)
 
 	ScaleSetClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
-	output, err := ScaleSetClient.ListAllComplete(ctx)
-	if err != nil {
+
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		var err error
+		g.Resources, err = g.createResourcesByResourceGroup(ctx, ScaleSetClient, rg)
 		return err
 	}
-	g.Resources = g.createResources(output)
-	return nil
+	var err error
+	g.Resources, err = g.createResources(ctx, ScaleSetClient)
+	return err
 }

@@ -36,7 +36,16 @@ func (g *ContainerGenerator) listAndAddForContainerGroup() ([]terraformutils.Res
 	ContainerGroupsClient := containerinstance.NewContainerGroupsClient(subscriptionID)
 	ContainerGroupsClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
-	containerGroupIterator, err := ContainerGroupsClient.ListComplete(ctx)
+	var (
+		containerGroupIterator containerinstance.ContainerGroupListResultIterator
+		err                    error
+	)
+
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		containerGroupIterator, err = ContainerGroupsClient.ListByResourceGroupComplete(ctx, rg)
+	} else {
+		containerGroupIterator, err = ContainerGroupsClient.ListComplete(ctx)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +60,7 @@ func (g *ContainerGenerator) listAndAddForContainerGroup() ([]terraformutils.Res
 
 		if err := containerGroupIterator.Next(); err != nil {
 			log.Println(err)
-			break
+			return resources, err
 		}
 	}
 
@@ -93,7 +102,16 @@ func (g *ContainerGenerator) listAndAddForContainerRegistry() ([]terraformutils.
 	ContainerRegistriesClient := containerregistry.NewRegistriesClient(subscriptionID)
 	ContainerRegistriesClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
-	containerRegistryIterator, err := ContainerRegistriesClient.ListComplete(ctx)
+	var (
+		containerRegistryIterator containerregistry.RegistryListResultIterator
+		err                       error
+	)
+
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		containerRegistryIterator, err = ContainerRegistriesClient.ListByResourceGroupComplete(ctx, rg)
+	} else {
+		containerRegistryIterator, err = ContainerRegistriesClient.ListComplete(ctx)
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +137,7 @@ func (g *ContainerGenerator) listAndAddForContainerRegistry() ([]terraformutils.
 
 		if err := containerRegistryIterator.Next(); err != nil {
 			log.Println(err)
-			break
+			return resources, err
 		}
 	}
 

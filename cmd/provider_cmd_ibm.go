@@ -14,20 +14,21 @@
 package cmd
 
 import (
-	azure_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/azure"
+	ibm_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/ibm"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
 )
 
-func newCmdAzureImporter(options ImportOptions) *cobra.Command {
+func newCmdIbmImporter(options ImportOptions) *cobra.Command {
+	var resourceGroup string
 	cmd := &cobra.Command{
-		Use:   "azure",
-		Short: "Import current state to Terraform configuration from Azure",
-		Long:  "Import current state to Terraform configuration from Azure",
+		Use:   "ibm",
+		Short: "Import current state to Terraform configuration from ibm",
+		Long:  "Import current state to Terraform configuration from ibm",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			provider := newAzureProvider()
-			err := Import(provider, options, []string{options.ResourceGroup})
+			provider := newIbmProvider()
+			err := Import(provider, options, []string{resourceGroup})
 			if err != nil {
 				return err
 			}
@@ -35,12 +36,13 @@ func newCmdAzureImporter(options ImportOptions) *cobra.Command {
 		},
 	}
 
-	cmd.AddCommand(listCmd(newAzureProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "resource_group", "resource_group=name1:name2:name3")
-	cmd.PersistentFlags().StringVarP(&options.ResourceGroup, "resource-group", "R", "", "")
+	cmd.AddCommand(listCmd(newIbmProvider()))
+	baseProviderFlags(cmd.PersistentFlags(), &options, "server", "ibm_server=name1:name2:name3")
+	// baseProviderFlags(cmd.PersistentFlags(), &options, "resource_group", "resource_group=name1:name2:name3")
+	cmd.PersistentFlags().StringVarP(&resourceGroup, "resource_group", "", "", "resource_group=default")
 	return cmd
 }
 
-func newAzureProvider() terraformutils.ProviderGenerator {
-	return &azure_terraforming.AzureProvider{}
+func newIbmProvider() terraformutils.ProviderGenerator {
+	return &ibm_terraforming.IBMProvider{}
 }

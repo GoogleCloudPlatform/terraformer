@@ -78,7 +78,7 @@ func (g StorageBlobGenerator) listStorageBlobs() ([]terraformutils.Resource, err
 	var storageBlobsResources []terraformutils.Resource
 	ctx := context.Background()
 
-	blobContainerGenerator := NewStorageContainerGenerator(g.Args["config"].(authentication.Config).SubscriptionID, g.Args["authorizer"].(autorest.Authorizer))
+	blobContainerGenerator := NewStorageContainerGenerator(g.Args["config"].(authentication.Config).SubscriptionID, g.Args["authorizer"].(autorest.Authorizer), g.Args["resource_group"].(string))
 	blobContainersResources, err := blobContainerGenerator.ListBlobContainers()
 	if err != nil {
 		return storageBlobsResources, err

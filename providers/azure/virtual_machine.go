@@ -28,36 +28,34 @@ type VirtualMachineGenerator struct {
 	AzureService
 }
 
-func (g VirtualMachineGenerator) createResources(virtualMachineListResultPage compute.VirtualMachineListResultPage) []terraformutils.Resource {
+func (g VirtualMachineGenerator) createResources(virtualMachineListResultIterator compute.VirtualMachineListResultIterator) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
-	for virtualMachineListResultPage.NotDone() {
-		vms := virtualMachineListResultPage.Values()
-		for _, vm := range vms {
-			var newResource terraformutils.Resource
-			if vm.VirtualMachineProperties.OsProfile.WindowsConfiguration != nil {
-				newResource = terraformutils.NewSimpleResource(
-					*vm.ID,
-					*vm.Name,
-					"azurerm_windows_virtual_machine",
-					"azurerm",
-					[]string{})
-			} else {
-				newResource = terraformutils.NewSimpleResource(
-					*vm.ID,
-					*vm.Name,
-					"azurerm_linux_virtual_machine",
-					"azurerm",
-					[]string{})
-			}
-
-			resources = append(resources, newResource)
+	for virtualMachineListResultIterator.NotDone() {
+		vm := virtualMachineListResultIterator.Value()
+		var newResource terraformutils.Resource
+		if vm.VirtualMachineProperties.OsProfile.WindowsConfiguration != nil {
+			newResource = terraformutils.NewSimpleResource(
+				*vm.ID,
+				*vm.Name,
+				"azurerm_windows_virtual_machine",
+				"azurerm",
+				[]string{})
+		} else {
+			newResource = terraformutils.NewSimpleResource(
+				*vm.ID,
+				*vm.Name,
+				"azurerm_linux_virtual_machine",
+				"azurerm",
+				[]string{})
 		}
-		if err := virtualMachineListResultPage.Next(); err != nil {
+
+		resources = append(resources, newResource)
+		if err := virtualMachineListResultIterator.Next(); err != nil {
 			log.Println(err)
-			break
+			return resources, err
 		}
 	}
-	return resources
+	return resources, nil
 }
 
 func (g *VirtualMachineGenerator) InitResources() error {
@@ -65,10 +63,19 @@ func (g *VirtualMachineGenerator) InitResources() error {
 	vmClient := compute.NewVirtualMachinesClient(g.Args["config"].(authentication.Config).SubscriptionID)
 
 	vmClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
-	output, err := vmClient.ListAll(ctx)
+
+	var (
+		output compute.VirtualMachineListResultIterator
+		err    error
+	)
+	if rg := g.Args["resource_group"].(string); rg != "" {
+		output, err = vmClient.ListComplete(ctx, rg)
+	} else {
+		output, err = vmClient.ListAllComplete(ctx)
+	}
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(output)
-	return nil
+	g.Resources, err = g.createResources(output)
+	return err
 }
