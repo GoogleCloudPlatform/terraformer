@@ -16,10 +16,9 @@ package terraformutils
 
 import (
 	"bytes"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"log"
 	"sync"
-
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -70,9 +69,7 @@ func RefreshResources(resources []*Resource, provider *providerwrapper.ProviderW
 	input := make(chan *Resource, 100)
 	var wg sync.WaitGroup
 	poolSize := 15
-	//if slowProcessingRequired(resources) {
-	//	poolSize = 1
-	//}
+
 	for i := 0; i < poolSize; i++ {
 		go RefreshResourceWorker(input, &wg, provider)
 	}
@@ -117,24 +114,20 @@ func RefreshResources(resources []*Resource, provider *providerwrapper.ProviderW
 	return refreshedResources, nil
 }
 
-func RefreshResourcesByProvider(resourcesByProvider []map[*Resource]ProviderGenerator, providerWrapper *providerwrapper.ProviderWrapper) (map[*Resource]ProviderGenerator, error) {
-	flattenedResourcesByProvider := make(map[*Resource]ProviderGenerator)
-	refreshedResourcesByProvider := make(map[*Resource]ProviderGenerator)
+func RefreshResourcesByProvider(providersMapping *ProvidersMapping, providerWrapper *providerwrapper.ProviderWrapper) error {
+	allResources := providersMapping.ShuffleResources()
 	slowProcessingResources := make(map[ProviderGenerator][]*Resource)
-	var resources []*Resource
-	for _, resourceProviderPair := range resourcesByProvider {
-		for resourcePtr := range resourceProviderPair {
-			if resourcePtr.SlowQueryRequired {
-				provider := resourceProviderPair[resourcePtr]
-				if slowProcessingResources[provider] == nil {
-					slowProcessingResources[provider] = []*Resource{}
-				}
-				slowProcessingResources[provider] = append(slowProcessingResources[provider], resourcePtr)
-				flattenedResourcesByProvider[resourcePtr] = resourceProviderPair[resourcePtr]
-			} else {
-				flattenedResourcesByProvider[resourcePtr] = resourceProviderPair[resourcePtr]
-				resources = append(resources, resourcePtr)
+	regularResources := []*Resource{}
+	for i := range allResources {
+		resource := allResources[i]
+		if resource.SlowQueryRequired {
+			provider := providersMapping.MatchProvider(resource)
+			if slowProcessingResources[provider] == nil {
+				slowProcessingResources[provider] = []*Resource{}
 			}
+			slowProcessingResources[provider] = append(slowProcessingResources[provider], resource)
+		} else {
+			regularResources = append(regularResources, resource)
 		}
 	}
 
@@ -143,23 +136,13 @@ func RefreshResourcesByProvider(resourcesByProvider []map[*Resource]ProviderGene
 		spResourcesList = append(spResourcesList, slowProcessingResources[p])
 	}
 
-	refreshedResources, err := RefreshResources(resources, providerWrapper, spResourcesList)
+	refreshedResources, err := RefreshResources(regularResources, providerWrapper, spResourcesList)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	for _, r := range refreshedResources {
-		refreshedResourcesByProvider[r] = flattenedResourcesByProvider[r]
-	}
-	return refreshedResourcesByProvider, nil
-}
 
-func slowProcessingRequired(resources []*Resource) bool {
-	for _, r := range resources {
-		if r.SlowQueryRequired {
-			return true
-		}
-	}
-	return false
+	providersMapping.SetResources(refreshedResources)
+	return nil
 }
 
 func RefreshResourceWorker(input chan *Resource, wg *sync.WaitGroup, provider *providerwrapper.ProviderWrapper) {
