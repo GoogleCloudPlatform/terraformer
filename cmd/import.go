@@ -148,7 +148,7 @@ func initAllServicesResources(providersMapping *terraformutils.ProvidersMapping,
 	var wg sync.WaitGroup
 	wg.Add(numOfResources)
 
-	failedServicesChan := make(chan string, numOfResources)
+	failedServices := make(chan string, numOfResources)
 
 	for _, service := range options.Resources {
 		serviceProvider := providersMapping.AddServiceToProvider(service)
@@ -156,17 +156,12 @@ func initAllServicesResources(providersMapping *terraformutils.ProvidersMapping,
 		if err != nil {
 			return err
 		}
-		go initServiceResourcesWorker(service, serviceProvider, options, providerWrapper, &wg, failedServicesChan)
+		go initServiceResourcesWorker(service, serviceProvider, options, providerWrapper, &wg, failedServices)
 	}
 	wg.Wait()
-	close(failedServicesChan)
+	close(failedServices)
 
 	// remove providers that failed to init their service
-	var failedServices []string
-	for failedService := range failedServicesChan {
-		failedServices = append(failedServices, failedService)
-	}
-
 	providersMapping.RemoveServices(failedServices)
 	providersMapping.ProcessResources()
 
@@ -217,15 +212,6 @@ func initServiceResourcesWorker(service string, provider terraformutils.Provider
 	provider.GetService().InitialCleanup()
 	log.Println(provider.GetName() + " done importing " + service)
 	wg.Done()
-}
-
-func getResourcesAddresses(resources []terraformutils.Resource) []*terraformutils.Resource {
-	results := []*terraformutils.Resource{}
-	for i := range resources {
-		results = append(results, &resources[i])
-	}
-
-	return results
 }
 
 func ImportFromPlan(provider terraformutils.ProviderGenerator, plan *ImportPlan) error {

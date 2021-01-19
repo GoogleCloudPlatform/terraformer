@@ -62,8 +62,8 @@ func (p *ProvidersMapping) GetServices() []string {
 	return services
 }
 
-func (p *ProvidersMapping) RemoveServices(services []string) {
-	for _, service := range services {
+func (p *ProvidersMapping) RemoveServices(services chan string) {
+	for service := range services {
 		delete(p.Services, service)
 
 		matchingProvider := p.serviceToProvider[service]
