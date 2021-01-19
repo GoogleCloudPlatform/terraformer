@@ -48,6 +48,7 @@ func (p *ProvidersMapping) AddServiceToProvider(service string) ProviderGenerato
 	p.Providers[newProvider] = true
 	p.Services[service] = true
 	p.providerToService[newProvider] = service
+	p.serviceToProvider[service] = newProvider
 
 	return newProvider
 }
@@ -86,6 +87,7 @@ func (p *ProvidersMapping) ShuffleResources() []*Resource {
 func (p *ProvidersMapping) ProcessResources() {
 	for provider := range p.Providers {
 		resources := provider.GetService().GetResources()
+		log.Printf("num of resources for service %s: %d", p.providerToService[provider], len(provider.GetService().GetResources()))
 		for i := range resources {
 			resource := resources[i]
 			p.Resources[&resource] = true
