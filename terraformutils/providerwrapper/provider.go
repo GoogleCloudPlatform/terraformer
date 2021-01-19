@@ -56,12 +56,23 @@ type ProviderWrapper struct {
 	providerName string
 	config       cty.Value
 	schema       *providers.GetSchemaResponse
+	retryCount   int
+	retrySleepMs int
 }
 
-func NewProviderWrapper(providerName string, providerConfig cty.Value, verbose bool) (*ProviderWrapper, error) {
+func NewProviderWrapper(providerName string, providerConfig cty.Value, verbose bool, retryOptions ...int) (*ProviderWrapper, error) {
 	p := &ProviderWrapper{}
 	p.providerName = providerName
 	p.config = providerConfig
+
+	if len(retryOptions) == 2 {
+		p.retryCount = retryOptions[0]
+		p.retrySleepMs = retryOptions[1]
+	} else {
+		p.retryCount = 5
+		p.retrySleepMs = 300
+	}
+
 	err := p.initProvider(verbose)
 
 	return p, err
@@ -149,15 +160,15 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 	}
 	successReadResource := false
 	resp := providers.ReadResourceResponse{}
-	for i := 0; i < 5; i++ {
+	for i := 0; i < p.retryCount; i++ {
 		resp = p.Provider.ReadResource(providers.ReadResourceRequest{
 			TypeName:   info.Type,
 			PriorState: priorState,
 			Private:    []byte{},
 		})
 		if resp.Diagnostics.HasErrors() {
-			log.Println("WARN: Fail read resource from provider, wait 300ms before retry")
-			time.Sleep(300 * time.Millisecond)
+			log.Printf("WARN: Fail read resource from provider, wait %dms before retry\n", p.retrySleepMs)
+			time.Sleep(time.Duration(p.retrySleepMs) * time.Millisecond)
 			continue
 		} else {
 			successReadResource = true

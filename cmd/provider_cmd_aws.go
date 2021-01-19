@@ -109,7 +109,15 @@ func importRegionResources(options ImportOptions, originalPathPattern string, re
 	} else {
 		log.Println(provider.GetName() + " importing default region")
 	}
-	err := Import(provider, options, []string{region, options.Profile})
+	args := []string{region, options.Profile}
+
+	providerWrapper, options, err := initOptionsAndWrapper(provider, options, args)
+	providersPerResources := make([]terraformutils.ProviderGenerator, len(options.Resources))
+	for i := range options.Resources {
+		providersPerResources[i] = newAWSProvider()
+	}
+	err = ImportRoundRobin(providersPerResources, options, args, providerWrapper)
+	//err := Import(provider, options, []string{region, options.Profile})
 	if err != nil {
 		return err
 	}
