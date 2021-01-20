@@ -20,7 +20,6 @@ import (
 	"os"
 	"sort"
 	"strings"
-	"sync"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils/terraformerstring"
 
@@ -35,25 +34,22 @@ import (
 )
 
 type ImportOptions struct {
-	Resources     []string
-	Excludes      []string
-	PathPattern   string
-	PathOutput    string
-	State         string
-	Bucket        string
-	Profile       string
-	Verbose       bool
-	Zone          string
-	Regions       []string
-	Projects      []string
-	ResourceGroup string
-	Connect       bool
-	Compact       bool
-	Filter        []string
-	Plan          bool `json:"-"`
-	Output        string
-	RetryCount    int
-	RetrySleepMs  int
+	Resources   []string
+	Excludes    []string
+	PathPattern string
+	PathOutput  string
+	State       string
+	Bucket      string
+	Profile     string
+	Verbose     bool
+	Zone        string
+	Regions     []string
+	Projects    []string
+	Connect     bool
+	Compact     bool
+	Filter      []string
+	Plan        bool `json:"-"`
+	Output      string
 }
 
 const DefaultPathPattern = "{output}/{provider}/{service}/"
@@ -81,37 +77,16 @@ func newImportCmd() *cobra.Command {
 }
 
 func Import(provider terraformutils.ProviderGenerator, options ImportOptions, args []string) error {
-
-	providerWrapper, options, err := initOptionsAndWrapper(provider, options, args)
-	if err != nil {
-		return err
-	}
-	defer providerWrapper.Kill()
-	providerMapping := terraformutils.NewProvidersMapping(provider)
-
-	err = initAllServicesResources(providerMapping, options, args, providerWrapper)
-	if err != nil {
-		return err
-	}
-
-	err = terraformutils.RefreshResourcesByProvider(providerMapping, providerWrapper)
-	if err != nil {
-		return err
-	}
-
-	providerMapping.ConvertTFStates(providerWrapper)
-	// change structs with additional data for each resource
-	providerMapping.CleanupProviders()
-
-	err = importFromPlan(providerMapping, options, args)
-
-	return err
-}
-
-func initOptionsAndWrapper(provider terraformutils.ProviderGenerator, options ImportOptions, args []string) (*providerwrapper.ProviderWrapper, ImportOptions, error) {
 	err := provider.Init(args)
 	if err != nil {
-		return nil, options, err
+		return err
+	}
+
+	plan := &ImportPlan{
+		Provider:         provider.GetName(),
+		Options:          options,
+		Args:             args,
+		ImportedResource: map[string][]terraformutils.Resource{},
 	}
 
 	if terraformerstring.ContainsString(options.Resources, "*") {
@@ -136,83 +111,64 @@ func initOptionsAndWrapper(provider terraformutils.ProviderGenerator, options Im
 		options.Resources = localSlice
 	}
 
-	providerWrapper, err := providerwrapper.NewProviderWrapper(provider.GetName(), provider.GetConfig(), options.Verbose, options.RetryCount, options.RetrySleepMs)
+	providerWrapper, err := providerwrapper.NewProviderWrapper(provider.GetName(), provider.GetConfig(), options.Verbose)
 	if err != nil {
-		return nil, options, err
+		return err
 	}
 
-	return providerWrapper, options, nil
-}
-
-func initAllServicesResources(providersMapping *terraformutils.ProvidersMapping, options ImportOptions, args []string, providerWrapper *providerwrapper.ProviderWrapper) error {
-	numOfResources := len(options.Resources)
-	var wg sync.WaitGroup
-	wg.Add(numOfResources)
-
-	failedServices := make(chan string, numOfResources)
+	defer providerWrapper.Kill()
 
 	for _, service := range options.Resources {
-		serviceProvider := providersMapping.AddServiceToProvider(service)
-		err := serviceProvider.Init(args)
+		resources, err := buildServiceResources(service, provider, options, providerWrapper)
 		if err != nil {
-			return err
+			log.Println(err)
+			continue
 		}
-		go initServiceResourcesWorker(service, serviceProvider, options, providerWrapper, &wg, failedServices)
+		plan.ImportedResource[service] = append(plan.ImportedResource[service], resources...)
 	}
-	wg.Wait()
-	close(failedServices)
-
-	// remove providers that failed to init their service
-	providersMapping.RemoveServices(failedServices)
-	providersMapping.ProcessResources()
-
-	return nil
-}
-
-func importFromPlan(providerMapping *terraformutils.ProvidersMapping, options ImportOptions, args []string) error {
-	plan := &ImportPlan{
-		Provider:         providerMapping.GetBaseProvider().GetName(),
-		Options:          options,
-		Args:             args,
-		ImportedResource: map[string][]terraformutils.Resource{},
-	}
-
-	resourcesByService := providerMapping.GetResourcesByService()
-	for service := range resourcesByService {
-		plan.ImportedResource[service] = append(plan.ImportedResource[service], resourcesByService[service]...)
-	}
-
 	if options.Plan {
-		path := Path(options.PathPattern, providerMapping.GetBaseProvider().GetName(), "terraformer", options.PathOutput)
+		path := Path(options.PathPattern, provider.GetName(), "terraformer", options.PathOutput)
 		return ExportPlanFile(plan, path, "plan.json")
 	}
-
-	return ImportFromPlan(providerMapping.GetBaseProvider(), plan)
+	return ImportFromPlan(provider, plan)
 }
 
-func initServiceResourcesWorker(service string, provider terraformutils.ProviderGenerator,
-	options ImportOptions, providerWrapper *providerwrapper.ProviderWrapper, wg *sync.WaitGroup, failedServices chan string) {
+func buildServiceResources(service string, provider terraformutils.ProviderGenerator,
+	options ImportOptions, providerWrapper *providerwrapper.ProviderWrapper) ([]terraformutils.Resource, error) {
 	log.Println(provider.GetName() + " importing... " + service)
 	err := provider.InitService(service, options.Verbose)
 	if err != nil {
-		failedServices <- service
-		log.Printf("%s error importing %s, err: %s\n", provider.GetName(), service, err)
-		wg.Done()
-		return
+		return nil, err
 	}
 	provider.GetService().ParseFilters(options.Filter)
 	err = provider.GetService().InitResources()
 	if err != nil {
-		failedServices <- service
-		log.Printf("%s error initializing resources in service %s, err: %s\n", provider.GetName(), service, err)
-		wg.Done()
-		return
+		return nil, err
 	}
 
 	provider.GetService().PopulateIgnoreKeys(providerWrapper)
 	provider.GetService().InitialCleanup()
-	log.Println(provider.GetName() + " done importing " + service)
-	wg.Done()
+
+	refreshedResources, err := terraformutils.RefreshResources(provider.GetService().GetResources(), providerWrapper)
+	if err != nil {
+		return nil, err
+	}
+	provider.GetService().SetResources(refreshedResources)
+
+	for i := range provider.GetService().GetResources() {
+		err = provider.GetService().GetResources()[i].ConvertTFstate(providerWrapper)
+		if err != nil {
+			return nil, err
+		}
+	}
+	provider.GetService().PostRefreshCleanup()
+
+	// change structs with additional data for each resource
+	err = provider.GetService().PostConvertHook()
+	if err != nil {
+		return nil, err
+	}
+	return provider.GetService().GetResources(), nil
 }
 
 func ImportFromPlan(provider terraformutils.ProviderGenerator, plan *ImportPlan) error {
@@ -401,6 +357,4 @@ func baseProviderFlags(flag *pflag.FlagSet, options *ImportOptions, sampleRes, s
 	flag.StringSliceVarP(&options.Filter, "filter", "f", []string{}, sampleFilters)
 	flag.BoolVarP(&options.Verbose, "verbose", "v", false, "")
 	flag.StringVarP(&options.Output, "output", "O", "hcl", "output format hcl or json")
-	flag.IntVarP(&options.RetryCount, "retry-number", "n", 5, "number of retries to perform when refresh fails")
-	flag.IntVarP(&options.RetrySleepMs, "retry-sleep-ms", "m", 300, "time in ms to sleep between retries")
 }
