@@ -16,9 +16,10 @@ package terraformutils
 
 import (
 	"bytes"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"log"
 	"sync"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 
 	"github.com/hashicorp/terraform/terraform"
 )

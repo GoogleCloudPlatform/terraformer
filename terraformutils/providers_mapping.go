@@ -1,11 +1,12 @@
 package terraformutils
 
 import (
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"log"
 	"math/rand"
 	"reflect"
 	"time"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
 type ProvidersMapping struct {
@@ -33,10 +34,7 @@ func NewProvidersMapping(baseProvider ProviderGenerator) *ProvidersMapping {
 }
 
 func deepCopyProvider(provider ProviderGenerator) ProviderGenerator {
-	var copy ProviderGenerator
-	copy = reflect.New(reflect.ValueOf(provider).Elem().Type()).Interface().(ProviderGenerator)
-
-	return copy
+	return reflect.New(reflect.ValueOf(provider).Elem().Type()).Interface().(ProviderGenerator)
 }
 
 func (p *ProvidersMapping) GetBaseProvider() ProviderGenerator {
@@ -140,6 +138,20 @@ func (p *ProvidersMapping) ConvertTFStates(providerWrapper *providerwrapper.Prov
 			log.Printf("failed to convert resources %s because of error %s", resource.InstanceInfo.Id, err)
 		}
 	}
+
+	resourcesGroupsByProviders := map[ProviderGenerator][]Resource{}
+	for resource := range p.Resources {
+		provider := p.resourceToProvider[resource]
+		if resourcesGroupsByProviders[provider] == nil {
+			resourcesGroupsByProviders[provider] = []Resource{}
+		}
+		resourcesGroupsByProviders[provider] = append(resourcesGroupsByProviders[provider], *resource)
+	}
+
+	for provider := range p.Providers {
+		provider.GetService().SetResources(resourcesGroupsByProviders[provider])
+	}
+
 }
 
 func (p *ProvidersMapping) CleanupProviders() {
