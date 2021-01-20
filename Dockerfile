@@ -1,6 +1,9 @@
 FROM golang:alpine
 
-RUN apk --update --no-cache add bash musl-dev gcc terraform py3-pip jq
+RUN apk --update --no-cache add bash musl-dev gcc py3-pip jq
+RUN wget https://releases.hashicorp.com/terraform/0.12.29/terraform_0.12.29_linux_amd64.zip \
+    && unzip terraform_0.12.29_linux_amd64.zip \
+    && mv terraform /usr/local/bin/
 RUN pip3 install --upgrade pip && pip3 install awscli
 
 WORKDIR ./terraformer

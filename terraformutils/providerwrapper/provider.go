@@ -17,13 +17,15 @@ package providerwrapper //nolint
 import (
 	"errors"
 	"fmt"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/terraformerstring"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
 	"runtime"
 	"strings"
+	"time"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/terraformerstring"
 
 	"github.com/zclconf/go-cty/cty"
 
@@ -54,12 +56,23 @@ type ProviderWrapper struct {
 	providerName string
 	config       cty.Value
 	schema       *providers.GetSchemaResponse
+	retryCount   int
+	retrySleepMs int
 }
 
-func NewProviderWrapper(providerName string, providerConfig cty.Value, verbose bool) (*ProviderWrapper, error) {
+func NewProviderWrapper(providerName string, providerConfig cty.Value, verbose bool, retryOptions ...int) (*ProviderWrapper, error) {
 	p := &ProviderWrapper{}
 	p.providerName = providerName
 	p.config = providerConfig
+
+	if len(retryOptions) == 2 {
+		p.retryCount = retryOptions[0]
+		p.retrySleepMs = retryOptions[1]
+	} else {
+		p.retryCount = 5
+		p.retrySleepMs = 300
+	}
+
 	err := p.initProvider(verbose)
 
 	return p, err
@@ -145,14 +158,25 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 	if err != nil {
 		return nil, err
 	}
+	successReadResource := false
 	resp := providers.ReadResourceResponse{}
-	resp = p.Provider.ReadResource(providers.ReadResourceRequest{
-		TypeName:   info.Type,
-		PriorState: priorState,
-		Private:    []byte{},
-	})
+	for i := 0; i < p.retryCount; i++ {
+		resp = p.Provider.ReadResource(providers.ReadResourceRequest{
+			TypeName:   info.Type,
+			PriorState: priorState,
+			Private:    []byte{},
+		})
+		if resp.Diagnostics.HasErrors() {
+			log.Printf("WARN: Fail read resource from provider, wait %dms before retry\n", p.retrySleepMs)
+			time.Sleep(time.Duration(p.retrySleepMs) * time.Millisecond)
+			continue
+		} else {
+			successReadResource = true
+			break
+		}
+	}
 
-	if resp.Diagnostics.HasErrors() {
+	if !successReadResource {
 		log.Println("Fail read resource from provider, trying import command")
 		// retry with regular import command - without resource attributes
 		importResponse := p.Provider.ImportResourceState(providers.ImportResourceStateRequest{

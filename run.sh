@@ -90,6 +90,8 @@ AWS_CREDS
 		exit 1
 esac
 
+services_to_run=""
+
 for service in $services; do
   if [[ $service == "kms" && $CSP == "GCP" ]]; then
     continue
@@ -115,9 +117,20 @@ for service in $services; do
   if [[ $service == "elasticache" && $CSP == "AWS" && $CUSTOMER_NAME == "robinhood" ]]; then
     continue
   fi
-  run_terraformer $service &
-
+  if [[ $CUSTOMER_NAME != "nubank" ]]; then
+    run_terraformer $service &
+    continue
+  fi
+  if [[ $services_to_run == "" ]]; then
+    services_to_run="$service"
+    continue
+  fi
+  services_to_run="$services_to_run,$service"
 done
+
+if [[ $CUSTOMER_NAME == "nubank" ]]; then
+    run_terraformer $services_to_run &
+fi
 
 wait
 

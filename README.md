@@ -89,6 +89,8 @@ Flags:
   -r, --resources strings     firewall,networks or * for all services
   -s, --state string          local or bucket (default "local")
   -v, --verbose               verbose mode
+  -n, --retry-number          number of retries to perform if refresh fails
+  -m, --retry-sleep-ms        time in ms to sleep between retries
 
 Use " import [provider] [command] --help" for more information about a command.
 ```

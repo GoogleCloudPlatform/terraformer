@@ -65,21 +65,33 @@ func PrintTfState(resources []Resource) ([]byte, error) {
 	return buf.Bytes(), err
 }
 
-func RefreshResources(resources []Resource, provider *providerwrapper.ProviderWrapper) ([]Resource, error) {
-	refreshedResources := []Resource{}
+func RefreshResources(resources []*Resource, provider *providerwrapper.ProviderWrapper, slowProcessingResources [][]*Resource) ([]*Resource, error) {
+	refreshedResources := []*Resource{}
 	input := make(chan *Resource, 100)
 	var wg sync.WaitGroup
-	poolSize := 10
-	if slowProcessingRequired(resources) {
-		poolSize = 3
-	}
+	poolSize := 15
+
 	for i := 0; i < poolSize; i++ {
 		go RefreshResourceWorker(input, &wg, provider)
 	}
 	for i := range resources {
 		wg.Add(1)
-		input <- &resources[i]
+		input <- resources[i]
 	}
+
+	spInputs := []chan *Resource{}
+	for i, resourceGroup := range slowProcessingResources {
+		spInputs = append(spInputs, make(chan *Resource, 100))
+		for j := range resourceGroup {
+			spInputs[i] <- resourceGroup[j]
+		}
+	}
+
+	for i := 0; i < len(spInputs); i++ {
+		go RefreshResourceWorker(spInputs[i], &wg, provider)
+		wg.Add(len(slowProcessingResources[i]))
+	}
+
 	wg.Wait()
 	close(input)
 	for _, r := range resources {
@@ -89,16 +101,49 @@ func RefreshResources(resources []Resource, provider *providerwrapper.ProviderWr
 			log.Printf("ERROR: Unable to refresh resource %s", r.ResourceName)
 		}
 	}
+
+	for _, resourceGroup := range slowProcessingResources {
+		for i := range resourceGroup {
+			r := resourceGroup[i]
+			if r.InstanceState != nil && r.InstanceState.ID != "" {
+				refreshedResources = append(refreshedResources, r)
+			} else {
+				log.Printf("ERROR: Unable to refresh resource %s", r.ResourceName)
+			}
+		}
+	}
 	return refreshedResources, nil
 }
 
-func slowProcessingRequired(resources []Resource) bool {
-	for _, r := range resources {
-		if r.SlowQueryRequired {
-			return true
+func RefreshResourcesByProvider(providersMapping *ProvidersMapping, providerWrapper *providerwrapper.ProviderWrapper) error {
+	allResources := providersMapping.ShuffleResources()
+	slowProcessingResources := make(map[ProviderGenerator][]*Resource)
+	regularResources := []*Resource{}
+	for i := range allResources {
+		resource := allResources[i]
+		if resource.SlowQueryRequired {
+			provider := providersMapping.MatchProvider(resource)
+			if slowProcessingResources[provider] == nil {
+				slowProcessingResources[provider] = []*Resource{}
+			}
+			slowProcessingResources[provider] = append(slowProcessingResources[provider], resource)
+		} else {
+			regularResources = append(regularResources, resource)
 		}
 	}
-	return false
+
+	var spResourcesList [][]*Resource
+	for p := range slowProcessingResources {
+		spResourcesList = append(spResourcesList, slowProcessingResources[p])
+	}
+
+	refreshedResources, err := RefreshResources(regularResources, providerWrapper, spResourcesList)
+	if err != nil {
+		return err
+	}
+
+	providersMapping.SetResources(refreshedResources)
+	return nil
 }
 
 func RefreshResourceWorker(input chan *Resource, wg *sync.WaitGroup, provider *providerwrapper.ProviderWrapper) {
@@ -106,7 +151,6 @@ func RefreshResourceWorker(input chan *Resource, wg *sync.WaitGroup, provider *p
 		log.Println("Refreshing state...", r.InstanceInfo.Id)
 		r.Refresh(provider)
 		wg.Done()
-		log.Println("Refreshed state for", r.InstanceInfo.Id)
 	}
 }
 
