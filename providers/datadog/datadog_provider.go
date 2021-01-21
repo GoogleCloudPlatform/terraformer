@@ -194,6 +194,8 @@ func (p *DatadogProvider) GetSupportedService() map[string]terraformutils.Servic
 		"integration_aws_lambda_arn":       &IntegrationAWSLambdaARNGenerator{},
 		"integration_aws_log_collection":   &IntegrationAWSLogCollectionGenerator{},
 		"integration_azure":                &IntegrationAzureGenerator{},
+		"integration_pagerduty":                &IntegrationPagerdutyGenerator{},
+		"integration_pagerduty_service_object": &IntegrationPagerdutyServiceObjectGenerator{},
 		"integration_gcp":                  &IntegrationGCPGenerator{},
 		"metric_metadata":                  &MetricMetadataGenerator{},
 		"monitor":                          &MonitorGenerator{},
