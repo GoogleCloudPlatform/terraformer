@@ -140,6 +140,7 @@ func (p *DatadogProvider) GetSupportedService() map[string]terraformutils.Servic
 		"dashboard":   &DashboardGenerator{},
 		"downtime":    &DowntimeGenerator{},
 		"monitor":     &MonitorGenerator{},
+		"role":        &RoleGenerator{},
 		"screenboard": &ScreenboardGenerator{},
 		"synthetics":  &SyntheticsGenerator{},
 		"timeboard":   &TimeboardGenerator{},
