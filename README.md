@@ -1552,6 +1552,10 @@ List of supported Datadog services:
 *   `integration_gcp`
     * `datadog_integration_gcp`
         * **_NOTE:_** Sensitive fields `private_key, private_key_id, client_id` is not generated and needs to be manually set
+*   `integration_pagerduty`
+    * `datadog_integration_pagerduty`
+*   `integration_pagerduty_service_object`
+    * `datadog_integration_pagerduty_service_object`
 *   `metric_metadata`
     * `datadog_metric_metadata`
         * **_NOTE:_** Importing resource requires resource ID's to be passed via [Filter](#filtering) option
