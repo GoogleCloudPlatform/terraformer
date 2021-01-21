@@ -37,7 +37,7 @@ func (g *LogsCustomPipelineGenerator) createResources(logsCustomPipelines []data
 	resources := []terraformutils.Resource{}
 	for _, logsCustomPipeline := range logsCustomPipelines {
 		// Import logs custom pipelines only
-		if !logsCustomPipeline.GetIsReadOnly(){
+		if !logsCustomPipeline.GetIsReadOnly() {
 			resourceName := logsCustomPipeline.GetId()
 			resources = append(resources, g.createResource(resourceName))
 		}

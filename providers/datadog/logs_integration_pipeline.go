@@ -35,10 +35,10 @@ func (g *LogsIntegrationPipelineGenerator) createResources(logsIntegrationPipeli
 	resources := []terraformutils.Resource{}
 	for _, logsIntegrationPipeline := range logsIntegrationPipelines {
 		// Import logs integration pipelines only
-		if logsIntegrationPipeline.GetIsReadOnly(){
+		if logsIntegrationPipeline.GetIsReadOnly() {
 			resourceId := logsIntegrationPipeline.GetId()
 			resourceName := logsIntegrationPipeline.GetName()
-			resources = append(resources, g.createResource(resourceId,  resourceName))
+			resources = append(resources, g.createResource(resourceId, resourceName))
 		}
 	}
 
