@@ -1408,6 +1408,18 @@ List of supported Datadog services:
     * `datadog_dashboard`
 *   `downtime`
     * `datadog_downtime`
+*   `integration_aws`
+    * `datadog_integration_aws`
+*   `integration_aws_lambda_arn`
+    * `datadog_integration_aws_lambda_arn`
+*   `integration_aws_log_collection`
+    * `datadog_integration_aws_log_collection`
+*   `integration_azure`
+    * `datadog_integration_azure`
+        * **_NOTE:_** Sensitive field `client_secret` is not generated and needs to be manually set
+*   `integration_gcp`
+    * `datadog_integration_gcp`
+        * **_NOTE:_** Sensitive fields `private_key, private_key_id, client_id` is not generated and needs to be manually set
 *   `monitor`
     * `datadog_monitor`
 *   `screenboard`
