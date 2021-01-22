@@ -39,21 +39,6 @@ func (g *IntegrationPagerdutyGenerator) createResources(pdSubdomain string) []te
 	return resources
 }
 
-func (g *IntegrationPagerdutyGenerator) createIntegrationPDServiceObjectResources(serviceNames []string) []terraformutils.Resource {
-	resources := []terraformutils.Resource{}
-	for _, serviceName := range serviceNames {
-		resources = append(resources, terraformutils.NewSimpleResource(
-			serviceName,
-			fmt.Sprintf("integration_pagerduty_service_object_%s", serviceName),
-			"datadog_integration_pagerduty_service_object",
-			"datadog",
-			[]string{},
-		))
-	}
-
-	return resources
-}
-
 func (g *IntegrationPagerdutyGenerator) createResource(serviceName string) terraformutils.Resource {
 	return terraformutils.NewSimpleResource(
 		serviceName,

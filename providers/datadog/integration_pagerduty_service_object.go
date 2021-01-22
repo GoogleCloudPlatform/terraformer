@@ -56,8 +56,6 @@ func (g *IntegrationPagerdutyServiceObjectGenerator) createResource(serviceName 
 // from each PD Service create 1 TerraformResource.
 // Need IntegrationPagerdutyServiceObject ServiceName as ID for terraform resource
 func (g *IntegrationPagerdutyServiceObjectGenerator) InitResources() error {
-	//datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
-	//authV1 := g.Args["authV1"].(context.Context)
 	client := datadogCommunity.NewClient(g.Args["api-key"].(string), g.Args["app-key"].(string))
 
 	pdIntegration, err := client.GetIntegrationPD()
