@@ -1406,6 +1406,8 @@ List of supported Datadog services:
 
 *   `dashboard`
     * `datadog_dashboard`
+*   `dashboard_list`
+    * `datadog_dashboard_list`
 *   `downtime`
     * `datadog_downtime`
 *   `monitor`
