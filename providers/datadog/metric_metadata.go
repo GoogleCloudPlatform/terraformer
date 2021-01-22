@@ -15,8 +15,8 @@
 package datadog
 
 import (
-	"errors"
 	"fmt"
+	"log"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -61,7 +61,8 @@ func (g *MetricMetadataGenerator) InitResources() error {
 	// Collecting all metrics_metadata can be an expensive task.
 	// Hence, only allow collections of metrics passed via filter
 	if len(resources) == 0 {
-		return errors.New("filtering is required for importing datadog_metric_metadata resource")
+		log.Print("Filter(metric names as IDs) is required for importing datadog_metric_metadata resource")
+		return nil
 	}
 	g.Resources = resources
 	return nil
