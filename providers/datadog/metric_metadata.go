@@ -17,6 +17,7 @@ package datadog
 import (
 	"errors"
 	"fmt"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -28,16 +29,6 @@ var (
 // MetricMetadataGenerator ...
 type MetricMetadataGenerator struct {
 	DatadogService
-}
-
-func (g *MetricMetadataGenerator) createResources(metrics []string) []terraformutils.Resource {
-	resources := []terraformutils.Resource{}
-	for _, metric := range metrics {
-		resourceName := metric
-		resources = append(resources, g.createResource(resourceName))
-	}
-
-	return resources
 }
 
 func (g *MetricMetadataGenerator) createResource(metricName string) terraformutils.Resource {
@@ -68,11 +59,10 @@ func (g *MetricMetadataGenerator) InitResources() error {
 	}
 
 	// Collecting all metrics_metadata can be an expensive task.
-	// Hence, only allow collections of metrics from filter
+	// Hence, only allow collections of metrics passed via filter
 	if len(resources) == 0 {
 		return errors.New("filtering is required for importing datadog_metric_metadata resource")
 	}
 	g.Resources = resources
-
 	return nil
 }
