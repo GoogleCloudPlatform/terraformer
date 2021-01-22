@@ -36,18 +36,18 @@ func (g *LogsIntegrationPipelineGenerator) createResources(logsIntegrationPipeli
 	for _, logsIntegrationPipeline := range logsIntegrationPipelines {
 		// Import logs integration pipelines only
 		if logsIntegrationPipeline.GetIsReadOnly() {
-			resourceId := logsIntegrationPipeline.GetId()
+			resourceID := logsIntegrationPipeline.GetId()
 			resourceName := logsIntegrationPipeline.GetName()
-			resources = append(resources, g.createResource(resourceId, resourceName))
+			resources = append(resources, g.createResource(resourceID, resourceName))
 		}
 	}
 
 	return resources
 }
 
-func (g *LogsIntegrationPipelineGenerator) createResource(LogsIntegrationPipelineID string, LogsIntegrationPipelineName string) terraformutils.Resource {
+func (g *LogsIntegrationPipelineGenerator) createResource(logsIntegrationPipelineID string, LogsIntegrationPipelineName string) terraformutils.Resource {
 	return terraformutils.NewSimpleResource(
-		LogsIntegrationPipelineID,
+		logsIntegrationPipelineID,
 		LogsIntegrationPipelineName,
 		"datadog_logs_integration_pipeline",
 		"datadog",

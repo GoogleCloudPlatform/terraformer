@@ -33,9 +33,9 @@ type LogsIndexGenerator struct {
 	DatadogService
 }
 
-func (g *LogsIndexGenerator) createResources(logs_indexes []datadogV1.LogsIndex) []terraformutils.Resource {
+func (g *LogsIndexGenerator) createResources(logsIndexes []datadogV1.LogsIndex) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	for _, logsIndex := range logs_indexes {
+	for _, logsIndex := range logsIndexes {
 		resourceName := logsIndex.GetName()
 		resources = append(resources, g.createResource(resourceName))
 	}

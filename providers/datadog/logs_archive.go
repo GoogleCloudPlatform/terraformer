@@ -36,8 +36,8 @@ type LogsArchiveGenerator struct {
 func (g *LogsArchiveGenerator) createResources(logsArchives []datadogV2.LogsArchiveDefinition) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	for _, logsArchive := range logsArchives {
-		logsArchiveId := logsArchive.GetId()
-		resources = append(resources, g.createResource(logsArchiveId))
+		logsArchiveID := logsArchive.GetId()
+		resources = append(resources, g.createResource(logsArchiveID))
 	}
 
 	return resources

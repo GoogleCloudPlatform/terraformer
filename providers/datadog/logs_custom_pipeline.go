@@ -18,9 +18,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"strings"
+
+	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 var (
@@ -46,10 +48,10 @@ func (g *LogsCustomPipelineGenerator) createResources(logsCustomPipelines []data
 	return resources
 }
 
-func (g *LogsCustomPipelineGenerator) createResource(LogsCustomPipelineID string) terraformutils.Resource {
+func (g *LogsCustomPipelineGenerator) createResource(logsCustomPipelineID string) terraformutils.Resource {
 	return terraformutils.NewSimpleResource(
-		LogsCustomPipelineID,
-		fmt.Sprintf("logs_custom_pipeline_%s", LogsCustomPipelineID),
+		logsCustomPipelineID,
+		fmt.Sprintf("logs_custom_pipeline_%s", logsCustomPipelineID),
 		"datadog_logs_custom_pipeline",
 		"datadog",
 		LogsCustomPipelineAllowEmptyValues,
@@ -101,7 +103,6 @@ func (g *LogsCustomPipelineGenerator) PostConvertHook() error {
 					continue
 				}
 				jsonByte = []byte(strings.ReplaceAll(string(jsonByte), "%{", "%%{"))
-				err = json.Unmarshal(jsonByte, &z)
 				if err = json.Unmarshal(jsonByte, &z); err != nil {
 					continue
 				}
