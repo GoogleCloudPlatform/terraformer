@@ -17,6 +17,7 @@ package datadog
 import (
 	"context"
 	"fmt"
+
 	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -32,9 +33,9 @@ type IntegrationAzureGenerator struct {
 	DatadogService
 }
 
-func (g *IntegrationAzureGenerator) createResources(AzureAccounts []datadogV1.AzureAccount) []terraformutils.Resource {
+func (g *IntegrationAzureGenerator) createResources(azureAccounts []datadogV1.AzureAccount) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	for _, account := range AzureAccounts {
+	for _, account := range azureAccounts {
 		resourceID := fmt.Sprintf("%s:%s", account.GetTenantName(), account.GetClientId())
 		resources = append(resources, g.createResource(resourceID))
 	}

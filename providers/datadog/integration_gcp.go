@@ -17,6 +17,7 @@ package datadog
 import (
 	"context"
 	"fmt"
+
 	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -32,9 +33,9 @@ type IntegrationGCPGenerator struct {
 	DatadogService
 }
 
-func (g *IntegrationGCPGenerator) createResources(GCPAccounts []datadogV1.GCPAccount) []terraformutils.Resource {
+func (g *IntegrationGCPGenerator) createResources(gcpAccounts []datadogV1.GCPAccount) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	for _, account := range GCPAccounts {
+	for _, account := range gcpAccounts {
 		resourceID := account.GetProjectId()
 		resources = append(resources, g.createResource(resourceID))
 	}

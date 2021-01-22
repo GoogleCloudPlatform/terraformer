@@ -33,9 +33,9 @@ type IntegrationAWSGenerator struct {
 	DatadogService
 }
 
-func (g *IntegrationAWSGenerator) createResources(AWSAccounts []datadogV1.AWSAccount) []terraformutils.Resource {
+func (g *IntegrationAWSGenerator) createResources(awsAccounts []datadogV1.AWSAccount) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	for _, account := range AWSAccounts {
+	for _, account := range awsAccounts {
 		resourceID := fmt.Sprintf("%s:%s", account.GetAccountId(), account.GetRoleName())
 		resources = append(resources, g.createResource(resourceID))
 	}
