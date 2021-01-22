@@ -45,10 +45,10 @@ func (g *LogsIntegrationPipelineGenerator) createResources(logsIntegrationPipeli
 	return resources
 }
 
-func (g *LogsIntegrationPipelineGenerator) createResource(logsIntegrationPipelineID string, LogsIntegrationPipelineName string) terraformutils.Resource {
+func (g *LogsIntegrationPipelineGenerator) createResource(logsIntegrationPipelineID string, logsIntegrationPipelineName string) terraformutils.Resource {
 	return terraformutils.NewSimpleResource(
 		logsIntegrationPipelineID,
-		LogsIntegrationPipelineName,
+		logsIntegrationPipelineName,
 		"datadog_logs_integration_pipeline",
 		"datadog",
 		LogsIntegrationPipelineAllowEmptyValues,
