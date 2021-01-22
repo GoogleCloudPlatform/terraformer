@@ -22,6 +22,7 @@ import (
 	"os"
 
 	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
+	datadogV2 "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/zclconf/go-cty/cty"
 )
@@ -32,7 +33,9 @@ type DatadogProvider struct { //nolint
 	appKey          string
 	apiURL          string
 	authV1          context.Context
+	authV2          context.Context
 	datadogClientV1 *datadogV1.APIClient
+	datadogClientV2 *datadogV2.APIClient
 }
 
 // Init check env params and initialize API Client
@@ -63,7 +66,7 @@ func (p *DatadogProvider) Init(args []string) error {
 		p.apiURL = v
 	}
 
-	// Initialize the Datadog API client
+	// Initialize the Datadog V1 API client
 	authV1 := context.WithValue(
 		context.Background(),
 		datadogV1.ContextAPIKeys,
@@ -91,11 +94,49 @@ func (p *DatadogProvider) Init(args []string) error {
 			"protocol": parsedAPIURL.Scheme,
 		})
 	}
-	p.authV1 = authV1
-
 	configV1 := datadogV1.NewConfiguration()
+
+	// Enable unstable operations
+	configV1.SetUnstableOperationEnabled("GetLogsIndex", true)
+	configV1.SetUnstableOperationEnabled("ListLogIndexes", true)
+
 	datadogClientV1 := datadogV1.NewAPIClient(configV1)
+
+	// Initialize the Datadog V2 API client
+	authV2 := context.WithValue(
+		context.Background(),
+		datadogV2.ContextAPIKeys,
+		map[string]datadogV2.APIKey{
+			"apiKeyAuth": {
+				Key: p.apiKey,
+			},
+			"appKeyAuth": {
+				Key: p.appKey,
+			},
+		},
+	)
+	if p.apiURL != "" {
+		parsedAPIURL, parseErr := url.Parse(p.apiURL)
+		if parseErr != nil {
+			return fmt.Errorf(`invalid API Url : %v`, parseErr)
+		}
+		if parsedAPIURL.Host == "" || parsedAPIURL.Scheme == "" {
+			return fmt.Errorf(`missing protocol or host : %v`, p.apiURL)
+		}
+		// If api url is passed, set and use the api name and protocol on ServerIndex{1}
+		authV2 = context.WithValue(authV2, datadogV2.ContextServerIndex, 1)
+		authV2 = context.WithValue(authV2, datadogV2.ContextServerVariables, map[string]string{
+			"name":     parsedAPIURL.Host,
+			"protocol": parsedAPIURL.Scheme,
+		})
+	}
+	configV2 := datadogV2.NewConfiguration()
+	datadogClientV2 := datadogV2.NewAPIClient(configV2)
+
+	p.authV1 = authV1
+	p.authV2 = authV2
 	p.datadogClientV1 = datadogClientV1
+	p.datadogClientV2 = datadogClientV2
 
 	return nil
 }
@@ -129,7 +170,9 @@ func (p *DatadogProvider) InitService(serviceName string, verbose bool) error {
 		"app-key":         p.appKey,
 		"api-url":         p.apiURL,
 		"authV1":          p.authV1,
+		"authV2":          p.authV2,
 		"datadogClientV1": p.datadogClientV1,
+		"datadogClientV2": p.datadogClientV2,
 	})
 	return nil
 }

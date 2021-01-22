@@ -6,10 +6,10 @@ require (
 	cloud.google.com/go v0.74.0
 	cloud.google.com/go/logging v1.1.2
 	cloud.google.com/go/storage v1.12.0
-	github.com/Azure/azure-sdk-for-go v42.0.0+incompatible
+	github.com/Azure/azure-sdk-for-go v42.3.0+incompatible
 	github.com/Azure/azure-storage-blob-go v0.10.0
 	github.com/Azure/go-autorest/autorest v0.11.12
-	github.com/DataDog/datadog-api-client-go v1.0.0-beta.9
+	github.com/DataDog/datadog-api-client-go v1.0.0-beta.14
 	github.com/IBM-Cloud/bluemix-go v0.0.0-20201210085054-cdf09378fdd9
 	github.com/IBM/go-sdk-core/v3 v3.3.1
 	github.com/IBM/go-sdk-core/v4 v4.9.0
