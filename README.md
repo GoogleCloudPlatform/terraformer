@@ -1412,8 +1412,17 @@ List of supported Datadog services:
     * `datadog_monitor`
 *   `screenboard`
     * `datadog_screenboard`
+*   `service_level_objective`
+    * `datadog_service_level_objective`
+        * **_NOTE:_** Importing resource requires resource ID's to be passed via [Filter](#filtering) option
 *   `synthetics`
     * `datadog_synthetics_test`
+*   `synthetics_global_variables`
+    * `datadog_synthetics_global_variables`
+        * **_NOTE:_** Importing resource requires resource ID's to be passed via [Filter](#filtering) option
+*   `synthetics_private_location`
+    * `datadog_synthetics_private_location`
+        * **_NOTE:_** Importing resource requires resource ID's to be passed via [Filter](#filtering) option
 *   `timeboard`
     * `datadog_timeboard`
 *   `user`

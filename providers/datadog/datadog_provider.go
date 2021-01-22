@@ -180,13 +180,16 @@ func (p *DatadogProvider) InitService(serviceName string, verbose bool) error {
 // GetSupportedService return map of support service for Datadog
 func (p *DatadogProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"dashboard":   &DashboardGenerator{},
-		"downtime":    &DowntimeGenerator{},
-		"monitor":     &MonitorGenerator{},
-		"screenboard": &ScreenboardGenerator{},
-		"synthetics":  &SyntheticsGenerator{},
-		"timeboard":   &TimeboardGenerator{},
-		"user":        &UserGenerator{},
+		"dashboard":                   &DashboardGenerator{},
+		"downtime":                    &DowntimeGenerator{},
+		"monitor":                     &MonitorGenerator{},
+		"screenboard":                 &ScreenboardGenerator{},
+		"service_level_objective":     &ServiceLevelObjectiveGenerator{},
+		"synthetics":                  &SyntheticsGenerator{},
+		"synthetics_global_variable":  &SyntheticsGlobalVariableGenerator{},
+		"synthetics_private_location": &SyntheticsPrivateLocationGenerator{},
+		"timeboard":                   &TimeboardGenerator{},
+		"user":                        &UserGenerator{},
 	}
 }
 
