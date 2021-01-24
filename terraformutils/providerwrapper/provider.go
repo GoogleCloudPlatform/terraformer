@@ -167,7 +167,7 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 			Private:    []byte{},
 		})
 		if resp.Diagnostics.HasErrors() {
-			log.Printf("WARN: Fail read resource from provider, wait %dms before retry\n", p.retrySleepMs)
+			log.Printf("WARN: Fail read resource from provider, wait %dms before retry, error is: %s\n", p.retrySleepMs, resp.Diagnostics.ErrWithWarnings())
 			time.Sleep(time.Duration(p.retrySleepMs) * time.Millisecond)
 			continue
 		} else {
