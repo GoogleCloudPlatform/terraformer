@@ -27,7 +27,7 @@ import (
 var (
 	// SyntheticsPrivateLocationAllowEmptyValues ...
 	SyntheticsPrivateLocationAllowEmptyValues = []string{"tags."}
-	plIDRegex = regexp.MustCompile("^pl:.*")
+	plIDRegex                                 = regexp.MustCompile("^pl:.*")
 )
 
 // SyntheticsPrivateLocationGenerator ...
