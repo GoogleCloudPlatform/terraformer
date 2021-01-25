@@ -241,9 +241,9 @@ func getProviderFileName(providerName string) (string, error) {
 	if defaultDataDir == "" {
 		defaultDataDir = DefaultDataDir
 	}
-	providerFilePath, err := getProviderFileNameV13(defaultDataDir, providerName)
+	providerFilePath, err := getProviderFileNameV13andV14(defaultDataDir, providerName)
 	if err != nil || providerFilePath == "" {
-		providerFilePath, err = getProviderFileNameV13(os.Getenv("HOME")+string(os.PathSeparator)+
+		providerFilePath, err = getProviderFileNameV13andV14(os.Getenv("HOME")+string(os.PathSeparator)+
 			".terraform.d", providerName)
 	}
 	if err != nil || providerFilePath == "" {
@@ -252,13 +252,19 @@ func getProviderFileName(providerName string) (string, error) {
 	return providerFilePath, nil
 }
 
-func getProviderFileNameV13(prefix, providerName string) (string, error) {
-
-	registryDir := prefix + string(os.PathSeparator) + "plugins" + string(os.PathSeparator) +
+func getProviderFileNameV13andV14(prefix, providerName string) (string, error) {
+	// Read terraform v14 file path
+	registryDir := prefix + string(os.PathSeparator) + "providers" + string(os.PathSeparator) +
 		"registry.terraform.io"
 	providerDirs, err := ioutil.ReadDir(registryDir)
 	if err != nil {
-		return "", err
+		// Read terraform v13 file path
+		registryDir = prefix + string(os.PathSeparator) + "plugins" + string(os.PathSeparator) +
+			"registry.terraform.io"
+		providerDirs, err = ioutil.ReadDir(registryDir)
+		if err != nil {
+			return "", err
+		}
 	}
 	providerFilePath := ""
 	for _, providerDir := range providerDirs {
