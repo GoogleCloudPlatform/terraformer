@@ -1422,6 +1422,8 @@ List of supported Datadog services:
         * **_NOTE:_** Sensitive fields `private_key, private_key_id, client_id` is not generated and needs to be manually set
 *   `monitor`
     * `datadog_monitor`
+*   `role`
+    * `datadog_role`
 *   `screenboard`
     * `datadog_screenboard`
 *   `synthetics`

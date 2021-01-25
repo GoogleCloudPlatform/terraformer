@@ -192,6 +192,7 @@ func (p *DatadogProvider) GetSupportedService() map[string]terraformutils.Servic
 		"synthetics":                     &SyntheticsGenerator{},
 		"timeboard":                      &TimeboardGenerator{},
 		"user":                           &UserGenerator{},
+		"role":                           &RoleGenerator{},
 	}
 }
 
