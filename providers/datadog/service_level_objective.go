@@ -67,9 +67,10 @@ func (g *ServiceLevelObjectiveGenerator) InitResources() error {
 			for _, v := range filter.AcceptableValues {
 				resp, _, err := datadogClientV1.ServiceLevelObjectivesApi.GetSLO(authV1, v).Execute()
 				if err != nil {
-					log.Printf("error retrieving service level objective id:%s - %s", v, err)
+					log.Printf("error retrieving slo id:%s - %s", v, err)
 					continue
 				}
+
 				data := resp.GetData()
 				slos = append(slos, data)
 			}

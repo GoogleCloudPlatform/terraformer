@@ -1456,7 +1456,6 @@ List of supported Datadog services:
         * **_NOTE:_** Importing resource requires resource ID's to be passed via [Filter](#filtering) option
 *   `synthetics_private_location`
     * `datadog_synthetics_private_location`
-        * **_NOTE:_** Importing resource requires resource ID's to be passed via [Filter](#filtering) option
 *   `timeboard`
     * `datadog_timeboard`
 *   `user`

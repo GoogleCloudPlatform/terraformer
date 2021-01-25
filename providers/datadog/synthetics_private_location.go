@@ -17,7 +17,7 @@ package datadog
 import (
 	"context"
 	"fmt"
-	"log"
+	"regexp"
 
 	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
 
@@ -27,6 +27,7 @@ import (
 var (
 	// SyntheticsPrivateLocationAllowEmptyValues ...
 	SyntheticsPrivateLocationAllowEmptyValues = []string{"tags."}
+	plIDRegex = regexp.MustCompile("^pl:.*")
 )
 
 // SyntheticsPrivateLocationGenerator ...
@@ -34,13 +35,14 @@ type SyntheticsPrivateLocationGenerator struct {
 	DatadogService
 }
 
-func (g *SyntheticsPrivateLocationGenerator) createResources(privateLocations []datadogV1.SyntheticsPrivateLocation) []terraformutils.Resource {
+func (g *SyntheticsPrivateLocationGenerator) createResources(locations []datadogV1.SyntheticsLocation) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	for _, privateLocation := range privateLocations {
-		resourceName := privateLocation.GetId()
-		resources = append(resources, g.createResource(resourceName))
+	for _, location := range locations {
+		locationID := location.GetId()
+		if plIDRegex.MatchString(locationID) {
+			resources = append(resources, g.createResource(locationID))
+		}
 	}
-
 	return resources
 }
 
@@ -61,25 +63,11 @@ func (g *SyntheticsPrivateLocationGenerator) InitResources() error {
 	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
 	authV1 := g.Args["authV1"].(context.Context)
 
-	var privateLocations []datadogV1.SyntheticsPrivateLocation
-	for _, filter := range g.Filter {
-		if filter.FieldPath == "id" && filter.IsApplicable("synthetics_private_location") {
-			for _, v := range filter.AcceptableValues {
-				resp, _, err := datadogClientV1.SyntheticsApi.GetPrivateLocation(authV1, v).Execute()
-				if err != nil {
-					log.Printf("error retrieving synthetics private location with id:%s - %s", v, err)
-					continue
-				}
-				privateLocations = append(privateLocations, resp)
-			}
-		}
+	data, _, err := datadogClientV1.SyntheticsApi.ListLocations(authV1).Execute()
+	if err != nil {
+		return err
 	}
 
-	if len(privateLocations) == 0 {
-		log.Print("Filter(Synthetics Private Location IDs) is required for importing datadog_synthetics_private_location resource")
-		return nil
-	}
-
-	g.Resources = g.createResources(privateLocations)
+	g.Resources = g.createResources(data.GetLocations())
 	return nil
 }
