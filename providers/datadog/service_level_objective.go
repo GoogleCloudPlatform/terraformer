@@ -17,10 +17,8 @@ package datadog
 import (
 	"context"
 	"fmt"
-	"log"
-	"strings"
-
 	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
+	"log"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -62,7 +60,7 @@ func (g *ServiceLevelObjectiveGenerator) InitResources() error {
 	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
 	authV1 := g.Args["authV1"].(context.Context)
 
-	var sloIDs []string
+	var slos []datadogV1.ServiceLevelObjective
 	for _, filter := range g.Filter {
 		if filter.FieldPath == "id" && filter.IsApplicable("service_level_objective") {
 			for _, v := range filter.AcceptableValues {
@@ -72,20 +70,16 @@ func (g *ServiceLevelObjectiveGenerator) InitResources() error {
 					continue
 				}
 				data := resp.GetData()
-				sloIDs = append(sloIDs, data.GetId())
+				slos = append(slos, data)
 			}
 		}
 	}
 
-	if len(sloIDs) == 0 {
+	if len(slos) == 0 {
 		log.Print("Filter(SLO IDs) is required for importing datadog_service_level_objective resource")
 		return nil
 	}
 
-	resp, _, err := datadogClientV1.ServiceLevelObjectivesApi.ListSLOs(authV1).Ids(strings.Join(sloIDs, ",")).Execute()
-	if err != nil {
-		return err
-	}
-	g.Resources = g.createResources(resp.GetData())
+	g.Resources = g.createResources(slos)
 	return nil
 }
