@@ -8,8 +8,8 @@ import (
 	"github.com/zclconf/go-cty/cty"
 )
 
-func TestAuthenticationValidate(t *testing.T) {
-	attribute := map[string]*configschema.Attribute{
+func TestIgnoredAttributes(t *testing.T) {
+	attributes := map[string]*configschema.Attribute{
 		"computed_attribute": {
 			Type:     cty.Number,
 			Computed: true,
@@ -28,7 +28,7 @@ func TestAuthenticationValidate(t *testing.T) {
 		"nesting_set": {map[string]*configschema.NestedBlock{
 			"attribute_one": {
 				Block: configschema.Block{
-					Attributes: attribute,
+					Attributes: attributes,
 				},
 				Nesting: configschema.NestingSet,
 			},
@@ -42,7 +42,7 @@ func TestAuthenticationValidate(t *testing.T) {
 						"attribute_two_nested": {
 							Nesting: configschema.NestingList,
 							Block: configschema.Block{
-								Attributes: attribute,
+								Attributes: attributes,
 							},
 						},
 					},
