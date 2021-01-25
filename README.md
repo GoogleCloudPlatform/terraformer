@@ -1440,6 +1440,10 @@ List of supported Datadog services:
     * `datadog_role`
 *   `screenboard`
     * `datadog_screenboard`
+*   `security_monitoring_default_rule`
+    * `datadog_security_monitoring_default_rule`
+*   `security_monitoring_rule`
+    * `datadog_security_monitoring_rule`
 *   `synthetics`
     * `datadog_synthetics_test`
 *   `timeboard`
