@@ -21,8 +21,8 @@ func TestAuthenticationValidate(t *testing.T) {
 	}
 
 	testCases := map[string]struct {
-		block             map[string]*configschema.NestedBlock
-		ignoredAttributes []string
+		block                map[string]*configschema.NestedBlock
+		ignoredAttributes    []string
 		notIgnoredAttributes []string
 	}{
 		"nesting_set": {map[string]*configschema.NestedBlock{
@@ -50,7 +50,7 @@ func TestAuthenticationValidate(t *testing.T) {
 				Nesting: configschema.NestingList,
 			},
 		}, []string{"nesting_list.0.attribute_one.0.attribute_two_nested.computed_attribute"},
-		[]string{"nesting_list.0.attribute_one.0.attribute_two_nested.required_attribute"}},
+			[]string{"nesting_list.0.attribute_one.0.attribute_two_nested.required_attribute"}},
 	}
 
 	for key, tc := range testCases {
