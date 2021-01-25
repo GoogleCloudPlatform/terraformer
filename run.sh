@@ -40,12 +40,17 @@ run_terraformer(){
 			if [[ "$GLOBAL_AWS_SERVICES" =~ .*",$1,".* ]]; then
 				#	To be inline with the above regex, GLOBAL_GCP_SERVICES must start and end with a ","
 				regions="global"
+				echo "running command: ./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions global -c=false? || true"
   			./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions global -c=false || true
 			elif [[ $1 == "eks" ]]; then
+			  echo "running command: ./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions us-east-1,us-east-2,us-west-2,ap-south-1,ap-southeast-1,ap-southeast-2,ap-northeast-1,ap-northeast-2,ca-central-1,eu-central-1,eu-west-1,eu-west-2,eu-west-3,eu-north-1,sa-east-1 -c=false || true"
   			./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions us-east-1,us-east-2,us-west-2,ap-south-1,ap-southeast-1,ap-southeast-2,ap-northeast-1,ap-northeast-2,ca-central-1,eu-central-1,eu-west-1,eu-west-2,eu-west-3,eu-north-1,sa-east-1 -c=false || true
 			else
+			  echo "running command: ./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1}  --regions us-east-1,us-east-2,us-west-1,us-west-2,ca-central-1,sa-east-1 -c=false --retry-number=2 --retry-sleep-ms=5000 -|| true"
   			./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions us-east-1,us-east-2,us-west-1,us-west-2,ca-central-1,sa-east-1 -c=false --retry-number=2 --retry-sleep-ms=5000 -|| true
+			  echo "running command: ./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1}  --regions ap-south-1,ap-southeast-1,ap-southeast-2,ap-northeast-1,ap-northeast-2 -c=false || true"
   			./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions ap-south-1,ap-southeast-1,ap-southeast-2,ap-northeast-1,ap-northeast-2 -c=false || true
+			  echo "running command: ./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1}  --regions eu-central-1,eu-west-1,eu-west-2,eu-west-3,eu-north-1 -c=false || true"
   			./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions eu-central-1,eu-west-1,eu-west-2,eu-west-3,eu-north-1 -c=false || true
 			fi
 			echo "Completed ${1}"
@@ -105,10 +110,10 @@ for service in $services; do
   if [[ $service == "storage_blob" && $CSP == "Azure" ]]; then
     continue
   fi
-  if [[ $service == "alb,elb" && $CSP == "AWS" && ($CUSTOMER_NAME == "marqeta" || $CUSTOMER_NAME == "nubank" || $CUSTOMER_NAME == "brex" || $CUSTOMER_NAME == "lendinghome") ]]; then
+  if [[ $service == "alb,elb" && $CSP == "AWS" && ($CUSTOMER_NAME == "nubank" || $CUSTOMER_NAME == "brex" || $CUSTOMER_NAME == "lendinghome") ]]; then
     continue
   fi
-  if [[ $service == "ec2_instance,ebs" && $CSP == "AWS" && ($CUSTOMER_NAME == "marqeta" || $CUSTOMER_NAME == "robinhood" || $CUSTOMER_NAME == "nubank") ]]; then
+  if [[ $service == "ec2_instance,ebs" && $CSP == "AWS" && ($CUSTOMER_NAME == "robinhood" || $CUSTOMER_NAME == "nubank") ]]; then
     continue
   fi
   if [[ $service == "kms" && $CSP == "AWS" && $CUSTOMER_NAME == "nubank" ]]; then
@@ -128,8 +133,12 @@ for service in $services; do
   services_to_run="$services_to_run,$service"
 done
 
-if [[ $CUSTOMER_NAME == "nubank" ]]; then
+if [[ $CUSTOMER_NAME == "marqeta" ]]; then
     run_terraformer $services_to_run &
+fi
+if [[ $CUSTOMER_NAME == "nubank" ]]; then
+  echo "./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources=* --excludes=alb,elb,ec2_instance,ebs,kms,iam,cloudfront --regions=us-east-1 -c=false || true"
+  ./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources=* --excludes=alb,elb,ec2_instance,ebs,kms,iam,cloudfront --regions=us-east-1 -c=false || true
 fi
 
 wait
