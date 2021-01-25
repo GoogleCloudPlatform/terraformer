@@ -17,8 +17,9 @@ package datadog
 import (
 	"context"
 	"fmt"
-	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
 	"log"
+
+	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
