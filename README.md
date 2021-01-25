@@ -1408,6 +1408,20 @@ List of supported Datadog services:
     * `datadog_dashboard`
 *   `downtime`
     * `datadog_downtime`
+*   `logs_archive`
+    * `datadog_logs_archive`
+*   `logs_archive_order`
+    * `datadog_logs_archive_order`
+*   `logs_custom_pipeline`
+    * `datadog_logs_custom_pipeline`
+*   `logs_integration_pipeline`
+    * `datadog_logs_integration_pipeline`
+*   `logs_pipeline_order`
+    * `datadog_logs_pipeline_order`
+*   `logs_index`
+    * `datadog_logs_index`
+*   `logs_index_order`
+    * `datadog_logs_index_order`
 *   `integration_aws`
     * `datadog_integration_aws`
 *   `integration_aws_lambda_arn`

@@ -182,6 +182,13 @@ func (p *DatadogProvider) GetSupportedService() map[string]terraformutils.Servic
 	return map[string]terraformutils.ServiceGenerator{
 		"dashboard":                      &DashboardGenerator{},
 		"downtime":                       &DowntimeGenerator{},
+    "logs_archive":                   &LogsArchiveGenerator{},
+		"logs_archive_order":             &LogsArchiveOrderGenerator{},
+		"logs_custom_pipeline":           &LogsCustomPipelineGenerator{},
+		"logs_index":                     &LogsIndexGenerator{},
+		"logs_index_order":               &LogsIndexOrderGenerator{},
+		"logs_integration_pipeline":      &LogsIntegrationPipelineGenerator{},
+		"logs_pipeline_order":            &LogsPipelineOrderGenerator{},
 		"integration_aws":                &IntegrationAWSGenerator{},
 		"integration_aws_lambda_arn":     &IntegrationAWSLambdaARNGenerator{},
 		"integration_aws_log_collection": &IntegrationAWSLogCollectionGenerator{},
