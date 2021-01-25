@@ -1410,6 +1410,7 @@ List of supported Datadog services:
     * `datadog_downtime`
 *   `metric_metadata`
     * `datadog_metric_metadata`
+        * **_NOTE:_** Importing resource requires resource ID's to be passed via [Filter](#filtering) option
 *   `monitor`
     * `datadog_monitor`
 *   `screenboard`
