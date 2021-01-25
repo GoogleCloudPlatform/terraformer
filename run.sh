@@ -122,7 +122,7 @@ for service in $services; do
   if [[ $service == "elasticache" && $CSP == "AWS" && $CUSTOMER_NAME == "robinhood" ]]; then
     continue
   fi
-  if [[ $CUSTOMER_NAME != "nubank" ]]; then
+  if [[ $CUSTOMER_NAME != "nubank" && $CUSTOMER_NAME != "marqeta" ]]; then
     run_terraformer $service &
     continue
   fi
@@ -134,11 +134,16 @@ for service in $services; do
 done
 
 if [[ $CUSTOMER_NAME == "marqeta" ]]; then
-    run_terraformer $services_to_run &
+   echo "running not global ./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources=vpc,sg,nacl,nat,igw,subnet,vpc_peering,route_table,vpn_connection,vpn_gateway,transit_gateway,eip,customer_gateway,alb,elb,ec2_instance,ebs,auto_scaling,eks,ecr,ecs,acm,kinesis,codecommit,elasticache,rds,sqs,cloudtrail,conig,kms,lambda,s3,sns,dynamodb,es,logs --regions=us-east-1,us-east-2,us-west-1,us-west-2,ca-central-1,sa-east-1,ap-south-1,ap-southeast-1,ap-southeast-2,ap-northeast-1,ap-northeast-2,eu-central-1,eu-west-1,eu-west-2,eu-west-3,eu-north-1 -c=false || true"
+  ./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources=vpc,sg,nacl,nat,igw,subnet,vpc_peering,route_table,vpn_connection,vpn_gateway,transit_gateway,eip,customer_gateway,alb,elb,ec2_instance,ebs,auto_scaling,eks,ecr,ecs,acm,kinesis,codecommit,elasticache,rds,sqs,cloudtrail,conig,kms,lambda,s3,sns,dynamodb,es,logs --regions=us-east-1,us-east-2,us-west-1,us-west-2,ca-central-1,sa-east-1,ap-south-1,ap-southeast-1,ap-southeast-2,ap-northeast-1,ap-northeast-2,eu-central-1,eu-west-1,eu-west-2,eu-west-3,eu-north-1 -c=false || true
+  echo "running global import aws --profile ${ACCOUNT_ID} --resources=sts,iam,cloudfront,accessanalyzer --regions global -c=false || true"
+  ./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources=sts,iam,cloudfront,accessanalyzer --regions global -c=false || true
 fi
 if [[ $CUSTOMER_NAME == "nubank" ]]; then
-  echo "./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources=* --excludes=alb,elb,ec2_instance,ebs,kms,iam,cloudfront --regions=us-east-1 -c=false || true"
-  ./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources=* --excludes=alb,elb,ec2_instance,ebs,kms,iam,cloudfront --regions=us-east-1 -c=false || true
+  echo "running not global ./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources=vpc,sg,nacl,nat,igw,subnet,vpc_peering,route_table,vpn_connection,vpn_gateway,transit_gateway,eip,customer_gateway,auto_scaling,eks,sts,iam,cloudfront,accessanalyzer,ecr,ecs,acm,kinesis,codecommit,elasticache,rds,sqs,cloudtrail,config,lambda,s3,sns,dynamodb,es,logs --regions=us-east-1 -c=false || true"
+  ./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources=vpc,sg,nacl,nat,igw,subnet,vpc_peering,route_table,vpn_connection,vpn_gateway,transit_gateway,eip,customer_gateway,auto_scaling,eks,sts,iam,cloudfront,accessanalyzer,ecr,ecs,acm,kinesis,codecommit,elasticache,rds,sqs,cloudtrail,config,lambda,s3,sns,dynamodb,es,logs --regions=us-east-1 -c=false || true
+  echo "running global ./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources=sts,iam,cloudfront,accessanalyzer --regions global -c=false || true"
+  ./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources=sts,iam,cloudfront,accessanalyzer --regions global -c=false || true
 fi
 
 wait
