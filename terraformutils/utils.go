@@ -67,33 +67,34 @@ func PrintTfState(resources []Resource) ([]byte, error) {
 
 func RefreshResources(resources []*Resource, provider *providerwrapper.ProviderWrapper, slowProcessingResources [][]*Resource) ([]*Resource, error) {
 	refreshedResources := []*Resource{}
-	input := make(chan *Resource, 100)
+	input := make(chan *Resource, len(resources))
 	var wg sync.WaitGroup
 	poolSize := 15
-
-	for i := 0; i < poolSize; i++ {
-		go RefreshResourceWorker(input, &wg, provider)
-	}
 	for i := range resources {
 		wg.Add(1)
 		input <- resources[i]
 	}
+	close(input)
+
+	for i := 0; i < poolSize; i++ {
+		go RefreshResourceWorker(input, &wg, provider)
+	}
 
 	spInputs := []chan *Resource{}
 	for i, resourceGroup := range slowProcessingResources {
-		spInputs = append(spInputs, make(chan *Resource, 100))
+		spInputs = append(spInputs, make(chan *Resource, len(resourceGroup)))
 		for j := range resourceGroup {
 			spInputs[i] <- resourceGroup[j]
 		}
+		close(spInputs[i])
 	}
 
 	for i := 0; i < len(spInputs); i++ {
-		go RefreshResourceWorker(spInputs[i], &wg, provider)
 		wg.Add(len(slowProcessingResources[i]))
+		go RefreshResourceWorker(spInputs[i], &wg, provider)
 	}
 
 	wg.Wait()
-	close(input)
 	for _, r := range resources {
 		if r.InstanceState != nil && r.InstanceState.ID != "" {
 			refreshedResources = append(refreshedResources, r)
