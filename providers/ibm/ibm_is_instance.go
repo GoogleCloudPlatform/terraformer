@@ -23,6 +23,7 @@ import (
 	"github.com/IBM/vpc-go-sdk/vpcv1"
 )
 
+// InstanceGenerator ...
 type InstanceGenerator struct {
 	IBMService
 }
@@ -38,6 +39,7 @@ func (g InstanceGenerator) createInstanceResources(instanceID, instanceName stri
 	return resources
 }
 
+// InitResources ...
 func (g *InstanceGenerator) InitResources() error {
 	var resoureGroup string
 	region := envFallBack([]string{"IC_REGION"}, "us-south")

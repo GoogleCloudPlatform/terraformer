@@ -16,6 +16,7 @@ package ibm
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -23,29 +24,29 @@ import (
 	"github.com/IBM/vpc-go-sdk/vpcv1"
 )
 
-// SubnetGenerator ...
-type SubnetGenerator struct {
+// NetworkACLGenerator ...
+type NetworkACLGenerator struct {
 	IBMService
 }
 
-func (g SubnetGenerator) createSubnetResources(subnetID, subnetName string) terraformutils.Resource {
+func (g NetworkACLGenerator) createNetworkACLResources(nwaclID, nwaclName string) terraformutils.Resource {
 	var resources terraformutils.Resource
 	resources = terraformutils.NewSimpleResource(
-		subnetID,
-		subnetName,
-		"ibm_is_subnet",
+		nwaclID,
+		nwaclName,
+		"ibm_is_network_acl",
 		"ibm",
 		[]string{})
 	return resources
 }
 
 // InitResources ...
-func (g *SubnetGenerator) InitResources() error {
+func (g *NetworkACLGenerator) InitResources() error {
 	var resoureGroup string
 	region := envFallBack([]string{"IC_REGION"}, "us-south")
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
-		return fmt.Errorf("No API key set")
+		log.Fatal("No API key set")
 	}
 
 	rg := g.Args["resource_group"]
@@ -64,30 +65,29 @@ func (g *SubnetGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
-
 	start := ""
-	allrecs := []vpcv1.Subnet{}
+	allrecs := []vpcv1.NetworkACL{}
 	for {
-		options := &vpcv1.ListSubnetsOptions{}
+		options := &vpcv1.ListNetworkAclsOptions{}
 		if start != "" {
 			options.Start = &start
 		}
 		if resoureGroup != "" {
 			options.ResourceGroupID = &resoureGroup
 		}
-		subnets, response, err := vpcclient.ListSubnets(options)
+		nwacls, response, err := vpcclient.ListNetworkAcls(options)
 		if err != nil {
-			return fmt.Errorf("Error Fetching subnets %s\n%s", err, response)
+			return fmt.Errorf("Error Fetching Network ACLs %s\n%s", err, response)
 		}
-		start = GetNext(subnets.Next)
-		allrecs = append(allrecs, subnets.Subnets...)
+		start = GetNext(nwacls.Next)
+		allrecs = append(allrecs, nwacls.NetworkAcls...)
 		if start == "" {
 			break
 		}
 	}
 
-	for _, subnet := range allrecs {
-		g.Resources = append(g.Resources, g.createSubnetResources(*subnet.ID, *subnet.Name))
+	for _, nwacl := range allrecs {
+		g.Resources = append(g.Resources, g.createNetworkACLResources(*nwacl.ID, *nwacl.Name))
 	}
 	return nil
 }

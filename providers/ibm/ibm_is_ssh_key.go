@@ -16,6 +16,7 @@ package ibm
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -23,36 +24,35 @@ import (
 	"github.com/IBM/vpc-go-sdk/vpcv1"
 )
 
-// SubnetGenerator ...
-type SubnetGenerator struct {
+// SSHKeyGenerator ...
+type SSHKeyGenerator struct {
 	IBMService
 }
 
-func (g SubnetGenerator) createSubnetResources(subnetID, subnetName string) terraformutils.Resource {
+func (g SSHKeyGenerator) createSSHKeyResources(sshKeyID, sshKeyName string) terraformutils.Resource {
 	var resources terraformutils.Resource
 	resources = terraformutils.NewSimpleResource(
-		subnetID,
-		subnetName,
-		"ibm_is_subnet",
+		sshKeyID,
+		sshKeyName,
+		"ibm_is_ssh_key",
 		"ibm",
 		[]string{})
 	return resources
 }
 
 // InitResources ...
-func (g *SubnetGenerator) InitResources() error {
+func (g *SSHKeyGenerator) InitResources() error {
 	var resoureGroup string
 	region := envFallBack([]string{"IC_REGION"}, "us-south")
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
-		return fmt.Errorf("No API key set")
+		log.Fatal("No API key set")
 	}
 
 	rg := g.Args["resource_group"]
 	if rg != nil {
 		resoureGroup = rg.(string)
 	}
-
 	vpcurl := fmt.Sprintf("https://%s.iaas.cloud.ibm.com/v1", region)
 	vpcoptions := &vpcv1.VpcV1Options{
 		URL: envFallBack([]string{"IBMCLOUD_IS_API_ENDPOINT"}, vpcurl),
@@ -64,30 +64,17 @@ func (g *SubnetGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
-
-	start := ""
-	allrecs := []vpcv1.Subnet{}
-	for {
-		options := &vpcv1.ListSubnetsOptions{}
-		if start != "" {
-			options.Start = &start
-		}
-		if resoureGroup != "" {
-			options.ResourceGroupID = &resoureGroup
-		}
-		subnets, response, err := vpcclient.ListSubnets(options)
-		if err != nil {
-			return fmt.Errorf("Error Fetching subnets %s\n%s", err, response)
-		}
-		start = GetNext(subnets.Next)
-		allrecs = append(allrecs, subnets.Subnets...)
-		if start == "" {
-			break
-		}
+	options := &vpcv1.ListKeysOptions{}
+	if resoureGroup != "" {
+		options.ResourceGroupID = &resoureGroup
+	}
+	keys, response, err := vpcclient.ListKeys(options)
+	if err != nil {
+		return fmt.Errorf("Error Fetching SSH Keys %s\n%s", err, response)
 	}
 
-	for _, subnet := range allrecs {
-		g.Resources = append(g.Resources, g.createSubnetResources(*subnet.ID, *subnet.Name))
+	for _, key := range keys.Keys {
+		g.Resources = append(g.Resources, g.createSSHKeyResources(*key.ID, *key.Name))
 	}
 	return nil
 }

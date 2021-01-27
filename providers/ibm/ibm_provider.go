@@ -23,12 +23,13 @@ import (
 type IBMProvider struct {
 	terraformutils.Provider
 	ResourceGroup string
+	Region        string
 }
 
 func (p *IBMProvider) Init(args []string) error {
-	if args[0] != "" {
-		p.ResourceGroup = args[0]
-	}
+	p.ResourceGroup = args[0]
+	p.Region = args[1]
+
 	return nil
 }
 
@@ -67,6 +68,19 @@ func (p *IBMProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"ibm_is_instance":            &InstanceGenerator{},
 		"ibm_is_security_group":      &SecurityGroupGenerator{},
 		"ibm_cis":                    &CISGenerator{},
+		"ibm_is_network_acl":         &NetworkACLGenerator{},
+		"ibm_is_public_gateway":      &PublicGatewayGenerator{},
+		"ibm_is_volume":              &VolumeGenerator{},
+		"ibm_is_vpn_gateway":         &VPNGatewayGenerator{},
+		"ibm_is_lb":                  &LBGenerator{},
+		"ibm_is_ssh_key":             &SSHKeyGenerator{},
+		"ibm_is_floating_ip":         &FloatingIPGenerator{},
+		"ibm_is_image":               &ImageGenerator{},
+		"ibm_is_ipsec_policy":        &IpsecGenerator{},
+		"ibm_is_ike_policy":          &IkeGenerator{},
+		"ibm_is_flow_log":            &FlowLogGenerator{},
+		"ibm_is_instance_template":   &InstanceTemplateGenerator{},
+		"ibm_function":               &CloudFunctionGenerator{},
 	}
 }
 
@@ -82,6 +96,7 @@ func (p *IBMProvider) InitService(serviceName string, verbose bool) error {
 
 	p.Service.SetArgs(map[string]interface{}{
 		"resource_group": p.ResourceGroup,
+		"region":         p.Region,
 	})
 	return nil
 }
