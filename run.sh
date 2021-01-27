@@ -141,7 +141,7 @@ if [[ $CUSTOMER_NAME == "marqeta" || $CUSTOMER_NAME == "lendinghome" || $CUSTOME
 fi
 if [[ $CUSTOMER_NAME == "nubank" ]]; then
   echo "running not global ./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources=vpc,sg,nacl,nat,igw,subnet,vpc_peering,route_table,vpn_connection,vpn_gateway,transit_gateway,eip,customer_gateway,auto_scaling,eks,sts,ecr,ecs,acm,kinesis,codecommit,elasticache,rds,sqs,cloudtrail,config,lambda,s3,sns,dynamodb,es,logs --regions=us-east-1 -c=false || true"
-  ./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources=vpc,sg,nacl,nat,igw,subnet,vpc_peering,route_table,vpn_connection,vpn_gateway,transit_gateway,eip,customer_gateway,auto_scaling,eks,sts,ecr,ecs,acm,kinesis,codecommit,elasticache,rds,sqs,cloudtrail,config,lambda,s3,sns,dynamodb,es,logs --regions=us-east-1 -c=false || true
+  ./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources=vpc,sg,nacl,nat,igw,subnet,vpc_peering,route_table,vpn_connection,vpn_gateway,transit_gateway,eip,customer_gateway,ec2_instance,auto_scaling,eks,sts,ecr,ecs,acm,kinesis,codecommit,elasticache,rds,sqs,cloudtrail,config,lambda,s3,sns,dynamodb,es,logs --regions=us-east-1 -c=false || true
   echo "running global ./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources=sts,cloudfront,accessanalyzer --regions global -c=false || true"
   ./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources=sts,cloudfront,accessanalyzer --regions global -c=false || true
 fi
