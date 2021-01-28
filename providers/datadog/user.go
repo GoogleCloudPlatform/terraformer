@@ -17,9 +17,7 @@ package datadog
 import (
 	"context"
 	"fmt"
-
 	datadogV2 "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -38,7 +36,8 @@ func (g *UserGenerator) createResources(users []datadogV2.User) []terraformutils
 	for _, user := range users {
 		relations := user.GetRelationships()
 		roles := relations.GetRoles()
-		// If not roles are present, we can assume user was created via V1 API
+		// If no roles are present, we can assume user was created via the V1 API
+		// Hence, import the user via their handle
 		if len(roles.GetData()) == 0 {
 			attr := user.GetAttributes()
 			resources = append(resources, g.createResource(attr.GetHandle()))
@@ -64,13 +63,26 @@ func (g *UserGenerator) createResource(userID string) terraformutils.Resource {
 // from each user create 1 TerraformResource.
 // Need User ID as ID for terraform resource
 func (g *UserGenerator) InitResources() error {
+	var users []datadogV2.User
+
 	datadogClientV2 := g.Args["datadogClientV2"].(*datadogV2.APIClient)
 	authV2 := g.Args["authV2"].(context.Context)
 
-	resp, _, err := datadogClientV2.UsersApi.ListUsers(authV2).PageSize(int64(1000)).Execute()
-	if err != nil {
-		return err
+	pageSize := int64(1000)
+	pageNumber := int64(1)
+	remaining := int64(1)
+
+	for remaining > int64(0) {
+		resp, _, err := datadogClientV2.UsersApi.ListUsers(authV2).PageSize(pageSize).PageNumber(pageNumber).Execute()
+		if err != nil {
+			return err
+		}
+		users = append(users, resp.GetData()...)
+
+		remaining = resp.Meta.Page.GetTotalCount() - pageSize*pageNumber
+		pageNumber++
 	}
-	g.Resources = g.createResources(resp.GetData())
+
+	g.Resources = g.createResources(users)
 	return nil
 }
