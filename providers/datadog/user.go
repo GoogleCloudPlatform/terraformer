@@ -71,7 +71,7 @@ func (g *UserGenerator) InitResources() error {
 	authV2 := g.Args["authV2"].(context.Context)
 
 	pageSize := int64(1000)
-	pageNumber := int64(1)
+	pageNumber := int64(0)
 	remaining := int64(1)
 
 	for remaining > int64(0) {
