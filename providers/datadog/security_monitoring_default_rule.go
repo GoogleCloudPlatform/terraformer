@@ -73,7 +73,7 @@ func (g *SecurityMonitoringDefaultRuleGenerator) InitResources() error {
 		if err != nil {
 			return err
 		}
-	    securityMonitoringRuleResponses = append(securityMonitoringRuleResponses, resp.GetData()...)
+		securityMonitoringRuleResponses = append(securityMonitoringRuleResponses, resp.GetData()...)
 
 		remaining = resp.Meta.Page.GetTotalCount() - pageSize*pageNumber
 		pageNumber++
