@@ -17,7 +17,6 @@ package datadog
 import (
 	"context"
 	"fmt"
-
 	datadogV2 "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -81,7 +80,7 @@ func (g *UserGenerator) InitResources() error {
 		}
 		users = append(users, resp.GetData()...)
 
-		remaining = resp.Meta.Page.GetTotalCount() - pageSize*pageNumber
+		remaining = resp.Meta.Page.GetTotalCount() - pageSize*(pageNumber+1)
 		pageNumber++
 	}
 
