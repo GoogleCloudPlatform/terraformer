@@ -124,8 +124,8 @@ github.com/IBM/keyprotect-go-client v0.5.2 h1:A4yp2Fc7mg4dtotZErZXwJb9XKpb3ONexn
 github.com/IBM/keyprotect-go-client v0.5.2/go.mod h1:5TwDM/4FRJq1ZOlwQL1xFahLWQ3TveR88VmL1u3njyI=
 github.com/IBM/networking-go-sdk v0.12.1 h1:GmzrRjvAyqKMfUPM8Y/R5dce0x5AXTqmseVZ3n7eZks=
 github.com/IBM/networking-go-sdk v0.12.1/go.mod h1:lzkGBnw5glMB7Nxawfgu19MH4Tjy3KRQ2SYMYl2ck7o=
-github.com/IBM/vpc-go-sdk v0.3.1 h1:v7jSq+pkORQOTUxsb/114TzSXvVu1+EIM53Tu/hkJ5o=
-github.com/IBM/vpc-go-sdk v0.3.1/go.mod h1:QlPyV8sf1K4Si7CgEyAbmDonabnhJ7tC4owcjrTz3Ys=
+github.com/IBM/vpc-go-sdk v0.4.1 h1:aBjdeVW3dDry+x1B2je06Ga47FgRn9QstTjMr0RxcJY=
+github.com/IBM/vpc-go-sdk v0.4.1/go.mod h1:QlPyV8sf1K4Si7CgEyAbmDonabnhJ7tC4owcjrTz3Ys=
 github.com/NYTimes/gziphandler v0.0.0-20170623195520-56545f4a5d46/go.mod h1:3wb06e3pkSAbeQ52E9H9iFoQsEEwGN64994WTCIhntQ=
 github.com/OctopusDeploy/go-octopusdeploy v1.6.0 h1:r9ThVuANGkzm3noAjLF/i7LUcxQxbCJwpvn1DLwPoOA=
 github.com/OctopusDeploy/go-octopusdeploy v1.6.0/go.mod h1:maPbD8azyb2mcNN6E4SGrwiLN7XmDSML5ui+mcWR/R0=
@@ -490,6 +490,8 @@ github.com/hashicorp/go-hclog v0.0.0-20181001195459-61d530d6c27f/go.mod h1:5CU+a
 github.com/hashicorp/go-hclog v0.9.2/go.mod h1:5CU+agLiy3J7N7QjHK5d05KxGsuXiQLrjA0H7acj2lQ=
 github.com/hashicorp/go-hclog v0.14.1 h1:nQcJDQwIAGnmoUWp8ubocEX40cCml/17YkF6csQLReU=
 github.com/hashicorp/go-hclog v0.14.1/go.mod h1:whpDNt7SSdeAju8AWKIWsul05p54N/39EeqMAyrmvFQ=
+github.com/hashicorp/go-hclog v0.15.0 h1:qMuK0wxsoW4D0ddCCYwPSTm4KQv1X1ke3WmPWZ0Mvsk=
+github.com/hashicorp/go-hclog v0.15.0/go.mod h1:whpDNt7SSdeAju8AWKIWsul05p54N/39EeqMAyrmvFQ=
 github.com/hashicorp/go-immutable-radix v0.0.0-20180129170900-7f3cd4390caa/go.mod h1:6ij3Z20p+OhOkCSrA0gImAWoHYQRGbnlcuk6XYTiaRw=
 github.com/hashicorp/go-immutable-radix v1.0.0/go.mod h1:0y9vanUI8NX6FsYoO3zeMjhV/C5i9g4Q3DwcSNZ4P60=
 github.com/hashicorp/go-msgpack v0.5.3/go.mod h1:ahLV/dePpqEmjfWmKiqvPkv/twdG7iPBM1vqhUKIvfM=

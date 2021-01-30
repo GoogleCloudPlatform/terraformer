@@ -16,7 +16,7 @@ require (
 	github.com/IBM/ibm-cos-sdk-go v1.5.0
 	github.com/IBM/keyprotect-go-client v0.5.2
 	github.com/IBM/networking-go-sdk v0.12.1
-	github.com/IBM/vpc-go-sdk v0.3.1
+	github.com/IBM/vpc-go-sdk v0.4.1
 	github.com/OctopusDeploy/go-octopusdeploy v1.6.0
 	github.com/aliyun/alibaba-cloud-sdk-go v1.60.295
 	github.com/aliyun/aliyun-tablestore-go-sdk v4.1.2+incompatible
@@ -33,7 +33,7 @@ require (
 	github.com/google/go-github/v25 v25.1.3
 	github.com/gophercloud/gophercloud v0.13.0
 	github.com/hashicorp/go-azure-helpers v0.10.0
-	github.com/hashicorp/go-hclog v0.14.1
+	github.com/hashicorp/go-hclog v0.15.0
 	github.com/hashicorp/go-plugin v1.4.0
 	github.com/hashicorp/hcl v1.0.0
 	github.com/hashicorp/terraform v0.12.29
