@@ -42,47 +42,59 @@ func (g IAMGenerator) loadUserPolicies(policyID string, user string) terraformut
 	return resources
 }
 
-func (g IAMGenerator) loadAccessGroups(grpID, grpName string) terraformutils.Resource {
+func (g IAMGenerator) loadAccessGroups(grpID string) terraformutils.Resource {
 	var resources terraformutils.Resource
 	resources = terraformutils.NewSimpleResource(
-		fmt.Sprintf("%s/%s", grpID, grpName),
-		grpName,
+		grpID,
+		grpID,
 		"ibm_iam_access_group",
 		"ibm",
 		[]string{})
 	return resources
 }
 
-func (g IAMGenerator) loadAccessGroupMembers(grpID string) terraformutils.Resource {
+func (g IAMGenerator) loadAccessGroupMembers(grpID string, dependsOn []string) terraformutils.Resource {
 	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources = terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", grpID, grpID),
 		grpID,
 		"ibm_iam_access_group_members",
 		"ibm",
-		[]string{})
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{
+			"depends_on": dependsOn,
+		})
 	return resources
 }
 
-func (g IAMGenerator) loadAccessGroupPolicies(grpID, policyID string) terraformutils.Resource {
+func (g IAMGenerator) loadAccessGroupPolicies(grpID, policyID string, dependsOn []string) terraformutils.Resource {
 	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources = terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", grpID, policyID),
 		policyID,
 		"ibm_iam_access_group_policy",
 		"ibm",
-		[]string{})
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{
+			"depends_on": dependsOn,
+		})
 	return resources
 }
 
-func (g IAMGenerator) loadAccessGroupDynamicPolicies(grpID, ruleID string) terraformutils.Resource {
+func (g IAMGenerator) loadAccessGroupDynamicPolicies(grpID, ruleID string, dependsOn []string) terraformutils.Resource {
 	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources = terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", grpID, ruleID),
 		ruleID,
 		"ibm_iam_access_group_dynamic_rule",
 		"ibm",
-		[]string{})
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{
+			"depends_on": dependsOn,
+		})
 	return resources
 }
 
@@ -148,8 +160,11 @@ func (g *IAMGenerator) InitResources() error {
 		return err
 	}
 	for _, group := range agrps {
-		g.Resources = append(g.Resources, g.loadAccessGroups(group.ID, group.Name))
-		g.Resources = append(g.Resources, g.loadAccessGroupMembers(group.ID))
+		g.Resources = append(g.Resources, g.loadAccessGroups(group.ID))
+		var dependsOn []string
+		dependsOn = append(dependsOn,
+			"ibm_iam_access_group."+terraformutils.TfSanitize(group.ID))
+		g.Resources = append(g.Resources, g.loadAccessGroupMembers(group.ID, dependsOn))
 
 		policies, err := iampap.V1Policy().List(iampapv1.SearchParams{
 			AccountID:     accountID,
@@ -160,7 +175,7 @@ func (g *IAMGenerator) InitResources() error {
 			return fmt.Errorf("Error retrieving access group policy: %s", err)
 		}
 		for _, p := range policies {
-			g.Resources = append(g.Resources, g.loadAccessGroupPolicies(group.ID, p.ID))
+			g.Resources = append(g.Resources, g.loadAccessGroupPolicies(group.ID, p.ID, dependsOn))
 		}
 
 		dynamicPolicies, err := iamuumClient.DynamicRule().List(group.ID)
@@ -168,7 +183,7 @@ func (g *IAMGenerator) InitResources() error {
 			return err
 		}
 		for _, d := range dynamicPolicies {
-			g.Resources = append(g.Resources, g.loadAccessGroupDynamicPolicies(group.ID, d.RuleID))
+			g.Resources = append(g.Resources, g.loadAccessGroupDynamicPolicies(group.ID, d.RuleID, dependsOn))
 		}
 	}
 

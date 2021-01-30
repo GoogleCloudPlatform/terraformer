@@ -39,14 +39,18 @@ func (g VPCClusterGenerator) loadcluster(clustersID, clusterName string) terrafo
 	return resources
 }
 
-func (g VPCClusterGenerator) loadWorkerPools(clustersID, poolID, PoolName string) terraformutils.Resource {
+func (g VPCClusterGenerator) loadWorkerPools(clustersID, poolID string, dependsOn []string) terraformutils.Resource {
 	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources = terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", clustersID, poolID),
-		PoolName,
+		poolID,
 		"ibm_container_vpc_worker_pool",
 		"ibm",
-		[]string{})
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{
+			"depends_on": dependsOn,
+		})
 	return resources
 }
 
@@ -77,7 +81,10 @@ func (g *VPCClusterGenerator) InitResources() error {
 
 		for _, pool := range workerPools {
 			if pool.PoolName != "default" {
-				g.Resources = append(g.Resources, g.loadWorkerPools(cs.ID, pool.ID, pool.PoolName))
+				var dependsOn []string
+				dependsOn = append(dependsOn,
+					"ibm_container_vpc_cluster."+terraformutils.TfSanitize(cs.Name))
+				g.Resources = append(g.Resources, g.loadWorkerPools(cs.ID, pool.ID, dependsOn))
 			}
 		}
 

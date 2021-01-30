@@ -16,6 +16,7 @@ package ibm
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -23,34 +24,28 @@ import (
 	"github.com/IBM/vpc-go-sdk/vpcv1"
 )
 
-// SubnetGenerator ...
-type SubnetGenerator struct {
+// IpsecGenerator ...
+type IpsecGenerator struct {
 	IBMService
 }
 
-func (g SubnetGenerator) createSubnetResources(subnetID, subnetName string) terraformutils.Resource {
+func (g IpsecGenerator) createIpsecResources(ipsecID, ipsecName string) terraformutils.Resource {
 	var resources terraformutils.Resource
 	resources = terraformutils.NewSimpleResource(
-		subnetID,
-		subnetName,
-		"ibm_is_subnet",
+		ipsecID,
+		ipsecName,
+		"ibm_is_ipsec_policy",
 		"ibm",
 		[]string{})
 	return resources
 }
 
 // InitResources ...
-func (g *SubnetGenerator) InitResources() error {
-	var resoureGroup string
+func (g *IpsecGenerator) InitResources() error {
 	region := envFallBack([]string{"IC_REGION"}, "us-south")
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
-		return fmt.Errorf("No API key set")
-	}
-
-	rg := g.Args["resource_group"]
-	if rg != nil {
-		resoureGroup = rg.(string)
+		log.Fatal("No API key set")
 	}
 
 	vpcurl := fmt.Sprintf("https://%s.iaas.cloud.ibm.com/v1", region)
@@ -64,30 +59,26 @@ func (g *SubnetGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
-
 	start := ""
-	allrecs := []vpcv1.Subnet{}
+	allrecs := []vpcv1.IPsecPolicy{}
 	for {
-		options := &vpcv1.ListSubnetsOptions{}
+		options := &vpcv1.ListIpsecPoliciesOptions{}
 		if start != "" {
 			options.Start = &start
 		}
-		if resoureGroup != "" {
-			options.ResourceGroupID = &resoureGroup
-		}
-		subnets, response, err := vpcclient.ListSubnets(options)
+		policies, response, err := vpcclient.ListIpsecPolicies(options)
 		if err != nil {
-			return fmt.Errorf("Error Fetching subnets %s\n%s", err, response)
+			return fmt.Errorf("Error Fetching IPSEC Policies %s\n%s", err, response)
 		}
-		start = GetNext(subnets.Next)
-		allrecs = append(allrecs, subnets.Subnets...)
+		start = GetNext(policies.Next)
+		allrecs = append(allrecs, policies.IpsecPolicies...)
 		if start == "" {
 			break
 		}
 	}
 
-	for _, subnet := range allrecs {
-		g.Resources = append(g.Resources, g.createSubnetResources(*subnet.ID, *subnet.Name))
+	for _, policy := range allrecs {
+		g.Resources = append(g.Resources, g.createIpsecResources(*policy.ID, *policy.Name))
 	}
 	return nil
 }

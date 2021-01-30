@@ -23,6 +23,7 @@ import (
 	"github.com/IBM/vpc-go-sdk/vpcv1"
 )
 
+// VPCGenerator ...
 type VPCGenerator struct {
 	IBMService
 }
@@ -38,28 +39,67 @@ func (g VPCGenerator) createVPCResources(vpcID, vpcName string) terraformutils.R
 	return resources
 }
 
-func (g VPCGenerator) createVPCAddressPrefixResources(vpcID, addPrefixID, addPrefixName string) terraformutils.Resource {
+func (g VPCGenerator) createVPCAddressPrefixResources(vpcID, addPrefixID, addPrefixName string, dependsOn []string) terraformutils.Resource {
 	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources = terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", vpcID, addPrefixID),
 		addPrefixName,
 		"ibm_is_vpc_address_prefix",
 		"ibm",
-		[]string{})
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{
+			"depends_on": dependsOn,
+		})
 	return resources
 }
 
-func (g VPCGenerator) createVPCRouteResources(vpcID, routeID, routeName string) terraformutils.Resource {
+func (g VPCGenerator) createVPCRouteResources(vpcID, routeID, routeName string, dependsOn []string) terraformutils.Resource {
 	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources = terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", vpcID, routeID),
 		routeName,
 		"ibm_is_vpc_route",
 		"ibm",
-		[]string{})
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{
+			"depends_on": dependsOn,
+		})
 	return resources
 }
 
+func (g VPCGenerator) createVPCRouteTableResources(vpcID, routeTableID, routeTableName string, dependsOn []string) terraformutils.Resource {
+	var resources terraformutils.Resource
+	resources = terraformutils.NewResource(
+		fmt.Sprintf("%s/%s", vpcID, routeTableID),
+		routeTableName,
+		"ibm_is_vpc_routing_table",
+		"ibm",
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{
+			"depends_on": dependsOn,
+		})
+	return resources
+}
+
+func (g VPCGenerator) createVPCRouteTableRouteResources(vpcID, routeTableID, routeTableRouteID, routeTableRouteName string, dependsOn []string) terraformutils.Resource {
+	var resources terraformutils.Resource
+	resources = terraformutils.NewResource(
+		fmt.Sprintf("%s/%s/%s", vpcID, routeTableID, routeTableRouteID),
+		routeTableRouteName,
+		"ibm_is_vpc_routing_table_route",
+		"ibm",
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{
+			"depends_on": dependsOn,
+		})
+	return resources
+}
+
+// InitResources ...
 func (g *VPCGenerator) InitResources() error {
 	var resoureGroup string
 	region := envFallBack([]string{"IC_REGION"}, "us-south")
@@ -106,6 +146,9 @@ func (g *VPCGenerator) InitResources() error {
 	}
 
 	for _, vpc := range allrecs {
+		var dependsOn []string
+		dependsOn = append(dependsOn,
+			"ibm_is_vpc."+terraformutils.TfSanitize(*vpc.Name))
 		g.Resources = append(g.Resources, g.createVPCResources(*vpc.ID, *vpc.Name))
 		listVPCAddressPrefixesOptions := &vpcv1.ListVPCAddressPrefixesOptions{
 			VPCID: vpc.ID,
@@ -115,8 +158,9 @@ func (g *VPCGenerator) InitResources() error {
 			return fmt.Errorf("Error Fetching vpc address prefixes %s\n%s", err, response)
 		}
 		for _, addprefix := range addprefixes.AddressPrefixes {
-			g.Resources = append(g.Resources, g.createVPCAddressPrefixResources(*vpc.ID, *addprefix.ID, *addprefix.Name))
+			g.Resources = append(g.Resources, g.createVPCAddressPrefixResources(*vpc.ID, *addprefix.ID, *addprefix.Name, dependsOn))
 		}
+
 		listVPCRoutesOptions := &vpcv1.ListVPCRoutesOptions{
 			VPCID: vpc.ID,
 		}
@@ -125,9 +169,32 @@ func (g *VPCGenerator) InitResources() error {
 			return fmt.Errorf("Error Fetching vpc routes %s\n%s", err, response)
 		}
 		for _, route := range routes.Routes {
-			g.Resources = append(g.Resources, g.createVPCRouteResources(*vpc.ID, *route.ID, *route.Name))
+			g.Resources = append(g.Resources, g.createVPCRouteResources(*vpc.ID, *route.ID, *route.Name, dependsOn))
 		}
 
+		listVPCRoutingTablesOptions := &vpcv1.ListVPCRoutingTablesOptions{
+			VPCID: vpc.ID,
+		}
+		tables, response, err := vpcclient.ListVPCRoutingTables(listVPCRoutingTablesOptions)
+		if err != nil {
+			return fmt.Errorf("Error Fetching vpc routing tables %s\n%s", err, response)
+		}
+		for _, table := range tables.RoutingTables {
+			g.Resources = append(g.Resources, g.createVPCRouteTableResources(*vpc.ID, *table.ID, *table.Name, dependsOn))
+			dependsOn = append(dependsOn,
+				"ibm_is_vpc_routing_table."+terraformutils.TfSanitize(*table.Name))
+			listVPCRoutingTableRoutesOptions := &vpcv1.ListVPCRoutingTableRoutesOptions{
+				VPCID:          vpc.ID,
+				RoutingTableID: table.ID,
+			}
+			tableroutes, response, err := vpcclient.ListVPCRoutingTableRoutes(listVPCRoutingTableRoutesOptions)
+			if err != nil {
+				return fmt.Errorf("Error Fetching vpc route table routes %s\n%s", err, response)
+			}
+			for _, tableroute := range tableroutes.Routes {
+				g.Resources = append(g.Resources, g.createVPCRouteTableRouteResources(*vpc.ID, *table.ID, *tableroute.ID, *tableroute.Name, dependsOn))
+			}
+		}
 	}
 	return nil
 }

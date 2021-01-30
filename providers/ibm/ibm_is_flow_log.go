@@ -16,6 +16,7 @@ package ibm
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -23,36 +24,35 @@ import (
 	"github.com/IBM/vpc-go-sdk/vpcv1"
 )
 
-// SubnetGenerator ...
-type SubnetGenerator struct {
+// FlowLogGenerator ...
+type FlowLogGenerator struct {
 	IBMService
 }
 
-func (g SubnetGenerator) createSubnetResources(subnetID, subnetName string) terraformutils.Resource {
+func (g FlowLogGenerator) createFlowLogResources(flogID, flogName string) terraformutils.Resource {
 	var resources terraformutils.Resource
 	resources = terraformutils.NewSimpleResource(
-		subnetID,
-		subnetName,
-		"ibm_is_subnet",
+		flogID,
+		flogName,
+		"ibm_is_flow_log",
 		"ibm",
 		[]string{})
 	return resources
 }
 
 // InitResources ...
-func (g *SubnetGenerator) InitResources() error {
+func (g *FlowLogGenerator) InitResources() error {
 	var resoureGroup string
 	region := envFallBack([]string{"IC_REGION"}, "us-south")
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
-		return fmt.Errorf("No API key set")
+		log.Fatal("No API key set")
 	}
 
 	rg := g.Args["resource_group"]
 	if rg != nil {
 		resoureGroup = rg.(string)
 	}
-
 	vpcurl := fmt.Sprintf("https://%s.iaas.cloud.ibm.com/v1", region)
 	vpcoptions := &vpcv1.VpcV1Options{
 		URL: envFallBack([]string{"IBMCLOUD_IS_API_ENDPOINT"}, vpcurl),
@@ -64,30 +64,29 @@ func (g *SubnetGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
-
 	start := ""
-	allrecs := []vpcv1.Subnet{}
+	allrecs := []vpcv1.FlowLogCollector{}
 	for {
-		options := &vpcv1.ListSubnetsOptions{}
+		options := &vpcv1.ListFlowLogCollectorsOptions{}
 		if start != "" {
 			options.Start = &start
 		}
 		if resoureGroup != "" {
 			options.ResourceGroupID = &resoureGroup
 		}
-		subnets, response, err := vpcclient.ListSubnets(options)
+		flogs, response, err := vpcclient.ListFlowLogCollectors(options)
 		if err != nil {
-			return fmt.Errorf("Error Fetching subnets %s\n%s", err, response)
+			return fmt.Errorf("Error Fetching Flow Logs %s\n%s", err, response)
 		}
-		start = GetNext(subnets.Next)
-		allrecs = append(allrecs, subnets.Subnets...)
+		start = GetNext(flogs.Next)
+		allrecs = append(allrecs, flogs.FlowLogCollectors...)
 		if start == "" {
 			break
 		}
 	}
 
-	for _, subnet := range allrecs {
-		g.Resources = append(g.Resources, g.createSubnetResources(*subnet.ID, *subnet.Name))
+	for _, flog := range allrecs {
+		g.Resources = append(g.Resources, g.createFlowLogResources(*flog.ID, *flog.Name))
 	}
 	return nil
 }

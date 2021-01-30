@@ -16,6 +16,7 @@ package ibm
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -23,34 +24,28 @@ import (
 	"github.com/IBM/vpc-go-sdk/vpcv1"
 )
 
-// SubnetGenerator ...
-type SubnetGenerator struct {
+// IkeGenerator ...
+type IkeGenerator struct {
 	IBMService
 }
 
-func (g SubnetGenerator) createSubnetResources(subnetID, subnetName string) terraformutils.Resource {
+func (g IkeGenerator) createIkeResources(ikeID, ikeName string) terraformutils.Resource {
 	var resources terraformutils.Resource
 	resources = terraformutils.NewSimpleResource(
-		subnetID,
-		subnetName,
-		"ibm_is_subnet",
+		ikeID,
+		ikeName,
+		"ibm_is_ike_policy",
 		"ibm",
 		[]string{})
 	return resources
 }
 
 // InitResources ...
-func (g *SubnetGenerator) InitResources() error {
-	var resoureGroup string
+func (g *IkeGenerator) InitResources() error {
 	region := envFallBack([]string{"IC_REGION"}, "us-south")
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
-		return fmt.Errorf("No API key set")
-	}
-
-	rg := g.Args["resource_group"]
-	if rg != nil {
-		resoureGroup = rg.(string)
+		log.Fatal("No API key set")
 	}
 
 	vpcurl := fmt.Sprintf("https://%s.iaas.cloud.ibm.com/v1", region)
@@ -64,30 +59,26 @@ func (g *SubnetGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
-
 	start := ""
-	allrecs := []vpcv1.Subnet{}
+	allrecs := []vpcv1.IkePolicy{}
 	for {
-		options := &vpcv1.ListSubnetsOptions{}
+		options := &vpcv1.ListIkePoliciesOptions{}
 		if start != "" {
 			options.Start = &start
 		}
-		if resoureGroup != "" {
-			options.ResourceGroupID = &resoureGroup
-		}
-		subnets, response, err := vpcclient.ListSubnets(options)
+		policies, response, err := vpcclient.ListIkePolicies(options)
 		if err != nil {
-			return fmt.Errorf("Error Fetching subnets %s\n%s", err, response)
+			return fmt.Errorf("Error Fetching IKE Policies %s\n%s", err, response)
 		}
-		start = GetNext(subnets.Next)
-		allrecs = append(allrecs, subnets.Subnets...)
+		start = GetNext(policies.Next)
+		allrecs = append(allrecs, policies.IkePolicies...)
 		if start == "" {
 			break
 		}
 	}
 
-	for _, subnet := range allrecs {
-		g.Resources = append(g.Resources, g.createSubnetResources(*subnet.ID, *subnet.Name))
+	for _, policy := range allrecs {
+		g.Resources = append(g.Resources, g.createIkeResources(*policy.ID, *policy.Name))
 	}
 	return nil
 }
