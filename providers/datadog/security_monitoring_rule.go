@@ -64,14 +64,26 @@ func (g *SecurityMonitoringRuleGenerator) createResource(ruleID string, ruleEnab
 // from each SecurityMonitoringRule create 1 TerraformResource.
 // Need SecurityMonitoringRule ID as ID for terraform resource
 func (g *SecurityMonitoringRuleGenerator) InitResources() error {
+	var securityMonitoringRuleResponses []datadogV2.SecurityMonitoringRuleResponse
+
 	datadogClientV2 := g.Args["datadogClientV2"].(*datadogV2.APIClient)
 	authV2 := g.Args["authV2"].(context.Context)
 
 	pageSize := int64(1000)
-	resp, _, err := datadogClientV2.SecurityMonitoringApi.ListSecurityMonitoringRules(authV2).PageSize(pageSize).Execute()
-	if err != nil {
-		return err
+	pageNumber := int64(0)
+	remaining := int64(1)
+
+	for remaining > int64(0) {
+		resp, _, err := datadogClientV2.SecurityMonitoringApi.ListSecurityMonitoringRules(authV2).PageSize(pageSize).PageNumber(pageNumber).Execute()
+		if err != nil {
+			return err
+		}
+		securityMonitoringRuleResponses = append(securityMonitoringRuleResponses, resp.GetData()...)
+
+		remaining = resp.Meta.Page.GetTotalCount() - pageSize*(pageNumber+1)
+		pageNumber++
 	}
-	g.Resources = g.createResources(resp.GetData())
+
+	g.Resources = g.createResources(securityMonitoringRuleResponses)
 	return nil
 }
