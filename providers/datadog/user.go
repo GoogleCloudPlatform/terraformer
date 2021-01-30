@@ -17,8 +17,7 @@ package datadog
 import (
 	"context"
 	"fmt"
-
-	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
+	datadogV2 "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -33,13 +32,21 @@ type UserGenerator struct {
 	DatadogService
 }
 
-func (g *UserGenerator) createResources(users []datadogV1.User) []terraformutils.Resource {
+func (g *UserGenerator) createResources(users []datadogV2.User) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	for _, user := range users {
-		resourceName := user.GetHandle()
-		resources = append(resources, g.createResource(resourceName))
-	}
+		relations := user.GetRelationships()
+		roles := relations.GetRoles()
+		// If no roles are present, we can assume user was created via the V1 API
+		// Hence, import the user via their handle
+		if len(roles.GetData()) == 0 {
+			attr := user.GetAttributes()
+			resources = append(resources, g.createResource(attr.GetHandle()))
+			continue
+		}
 
+		resources = append(resources, g.createResource(user.GetId()))
+	}
 	return resources
 }
 
@@ -57,32 +64,26 @@ func (g *UserGenerator) createResource(userID string) terraformutils.Resource {
 // from each user create 1 TerraformResource.
 // Need User ID as ID for terraform resource
 func (g *UserGenerator) InitResources() error {
-	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
-	authV1 := g.Args["authV1"].(context.Context)
+	var users []datadogV2.User
 
-	resources := []terraformutils.Resource{}
-	for _, filter := range g.Filter {
-		if filter.FieldPath == "id" && filter.IsApplicable("user") {
-			for _, value := range filter.AcceptableValues {
-				user, _, err := datadogClientV1.UsersApi.GetUser(authV1, value).Execute()
-				if err != nil {
-					return err
-				}
+	datadogClientV2 := g.Args["datadogClientV2"].(*datadogV2.APIClient)
+	authV2 := g.Args["authV2"].(context.Context)
 
-				resources = append(resources, g.createResource(user.User.GetHandle()))
-			}
+	pageSize := int64(1000)
+	pageNumber := int64(0)
+	remaining := int64(1)
+
+	for remaining > int64(0) {
+		resp, _, err := datadogClientV2.UsersApi.ListUsers(authV2).PageSize(pageSize).PageNumber(pageNumber).Execute()
+		if err != nil {
+			return err
 		}
+		users = append(users, resp.GetData()...)
+
+		remaining = resp.Meta.Page.GetTotalCount() - pageSize*(pageNumber+1)
+		pageNumber++
 	}
 
-	if len(resources) > 0 {
-		g.Resources = resources
-		return nil
-	}
-
-	users, _, err := datadogClientV1.UsersApi.ListUsers(authV1).Execute()
-	if err != nil {
-		return err
-	}
-	g.Resources = g.createResources(users.GetUsers())
+	g.Resources = g.createResources(users)
 	return nil
 }
