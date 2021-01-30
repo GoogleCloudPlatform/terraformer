@@ -25,7 +25,7 @@ import (
 
 	"github.com/hashicorp/hcl/hcl/ast"
 	hclPrinter "github.com/hashicorp/hcl/hcl/printer"
-	hclParcer "github.com/hashicorp/hcl/json/parser"
+	hclParser "github.com/hashicorp/hcl/json/parser"
 )
 
 // Copy code from https://github.com/kubernetes/kops project with few changes for support many provider and heredoc
@@ -136,7 +136,7 @@ func hclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error)
 		return dataBytesJSON, err
 	}
 	dataJSON := string(dataBytesJSON)
-	nodes, err := hclParcer.Parse([]byte(dataJSON))
+	nodes, err := hclParser.Parse([]byte(dataJSON))
 	if err != nil {
 		log.Println(dataJSON)
 		return []byte{}, fmt.Errorf("error parsing terraform json: %v", err)
