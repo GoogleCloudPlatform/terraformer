@@ -107,7 +107,11 @@ func (p *ProviderWrapper) GetReadOnlyAttributes(resourceTypes []string) (map[str
 func (p *ProviderWrapper) readObjBlocks(block map[string]*configschema.NestedBlock, readOnlyAttributes []string, parent string) []string {
 	for k, v := range block {
 		if len(v.BlockTypes) > 0 {
-			readOnlyAttributes = p.readObjBlocks(v.BlockTypes, readOnlyAttributes, k)
+			if parent == "-1" {
+				readOnlyAttributes = p.readObjBlocks(v.BlockTypes, readOnlyAttributes, k)
+			} else {
+				readOnlyAttributes = p.readObjBlocks(v.BlockTypes, readOnlyAttributes, parent+".[0-9]+."+k)
+			}
 		}
 		fieldCount := 0
 		for key, l := range v.Attributes {
@@ -116,13 +120,13 @@ func (p *ProviderWrapper) readObjBlocks(block map[string]*configschema.NestedBlo
 				switch v.Nesting {
 				case configschema.NestingList:
 					if parent == "-1" {
-						readOnlyAttributes = append(readOnlyAttributes, "^"+k+".[0-9]."+key+"($|\\.[0-9]|\\.#)")
+						readOnlyAttributes = append(readOnlyAttributes, "^"+k+".[0-9]+."+key+"($|\\.[0-9]+|\\.#)")
 					} else {
 						readOnlyAttributes = append(readOnlyAttributes, "^"+parent+".(.*)."+key+"$")
 					}
 				case configschema.NestingSet:
 					if parent == "-1" {
-						readOnlyAttributes = append(readOnlyAttributes, "^"+k+".[0-9]."+key+"$")
+						readOnlyAttributes = append(readOnlyAttributes, "^"+k+".[0-9]+."+key+"$")
 					} else {
 						readOnlyAttributes = append(readOnlyAttributes, "^"+parent+".(.*)."+key+"($|\\.(.*))")
 					}
