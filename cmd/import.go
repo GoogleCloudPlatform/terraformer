@@ -136,7 +136,7 @@ func initOptionsAndWrapper(provider terraformutils.ProviderGenerator, options Im
 		options.Resources = localSlice
 	}
 
-	providerWrapper, err := providerwrapper.NewProviderWrapper(provider.GetName(), provider.GetConfig(), options.Verbose, options.RetryCount, options.RetrySleepMs)
+	providerWrapper, err := providerwrapper.NewProviderWrapper(provider.GetName(), provider.GetConfig(), options.Verbose, map[string]int{"retryCount": options.RetryCount, "retrySleepMs": options.RetrySleepMs})
 	if err != nil {
 		return nil, options, err
 	}

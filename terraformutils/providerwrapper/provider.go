@@ -60,17 +60,20 @@ type ProviderWrapper struct {
 	retrySleepMs int
 }
 
-func NewProviderWrapper(providerName string, providerConfig cty.Value, verbose bool, retryOptions ...int) (*ProviderWrapper, error) {
-	p := &ProviderWrapper{}
+func NewProviderWrapper(providerName string, providerConfig cty.Value, verbose bool, options ...map[string]int) (*ProviderWrapper, error) {
+	p := &ProviderWrapper{retryCount: 5, retrySleepMs: 300}
 	p.providerName = providerName
 	p.config = providerConfig
 
-	if len(retryOptions) == 2 {
-		p.retryCount = retryOptions[0]
-		p.retrySleepMs = retryOptions[1]
-	} else {
-		p.retryCount = 5
-		p.retrySleepMs = 300
+	if len(options) > 0 {
+		retryCount, hasOption := options[0]["retryCount"]
+		if hasOption {
+			p.retryCount = retryCount
+		}
+		retrySleepMs, hasOption := options[0]["retrySleepMs"]
+		if hasOption {
+			p.retrySleepMs = retrySleepMs
+		}
 	}
 
 	err := p.initProvider(verbose)
