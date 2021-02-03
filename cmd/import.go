@@ -149,7 +149,7 @@ func initAllServicesResources(providersMapping *terraformutils.ProvidersMapping,
 	var wg sync.WaitGroup
 	wg.Add(numOfResources)
 
-	failedServices := make(chan string, numOfResources)
+	failedServices := []string{}
 
 	for _, service := range options.Resources {
 		serviceProvider := providersMapping.AddServiceToProvider(service)
@@ -157,10 +157,11 @@ func initAllServicesResources(providersMapping *terraformutils.ProvidersMapping,
 		if err != nil {
 			return err
 		}
-		go initServiceResourcesWorker(service, serviceProvider, options, providerWrapper, &wg, failedServices)
+		err = initServiceResources(service, serviceProvider, options, providerWrapper)
+		if err != nil {
+			failedServices = append(failedServices, service)
+		}
 	}
-	wg.Wait()
-	close(failedServices)
 
 	// remove providers that failed to init their service
 	providersMapping.RemoveServices(failedServices)
@@ -190,29 +191,26 @@ func importFromPlan(providerMapping *terraformutils.ProvidersMapping, options Im
 	return ImportFromPlan(providerMapping.GetBaseProvider(), plan)
 }
 
-func initServiceResourcesWorker(service string, provider terraformutils.ProviderGenerator,
-	options ImportOptions, providerWrapper *providerwrapper.ProviderWrapper, wg *sync.WaitGroup, failedServices chan string) {
+func initServiceResources(service string, provider terraformutils.ProviderGenerator,
+	options ImportOptions, providerWrapper *providerwrapper.ProviderWrapper) error {
 	log.Println(provider.GetName() + " importing... " + service)
 	err := provider.InitService(service, options.Verbose)
 	if err != nil {
-		failedServices <- service
 		log.Printf("%s error importing %s, err: %s\n", provider.GetName(), service, err)
-		wg.Done()
-		return
+		return err
 	}
 	provider.GetService().ParseFilters(options.Filter)
 	err = provider.GetService().InitResources()
 	if err != nil {
-		failedServices <- service
 		log.Printf("%s error initializing resources in service %s, err: %s\n", provider.GetName(), service, err)
-		wg.Done()
-		return
+		return err
 	}
 
 	provider.GetService().PopulateIgnoreKeys(providerWrapper)
 	provider.GetService().InitialCleanup()
 	log.Println(provider.GetName() + " done importing " + service)
-	wg.Done()
+
+	return nil
 }
 
 func ImportFromPlan(provider terraformutils.ProviderGenerator, plan *ImportPlan) error {
