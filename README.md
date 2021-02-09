@@ -990,6 +990,15 @@ List of supported IBM Cloud resources:
     * `ibm_function_action`
     * `ibm_function_rule`
     * `ibm_function_trigger`
+* `ibm_private_dns`
+    * `ibm_resource_instance`
+    * `ibm_dns_zone`
+    * `ibm_dns_resource_record`
+    * `ibm_dns_permitted_network`
+    * `ibm_dns_glb_monitor`
+    * `ibm_dns_glb_pool`
+    * `ibm_dns_glb`
+ 
 
 ### Use with DigitalOcean
 
