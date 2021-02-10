@@ -24,7 +24,7 @@ import (
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 )
 
-type TencentCloudProvider struct {
+type TencentCloudProvider struct { //nolint
 	terraformutils.Provider
 	region     string
 	credential common.Credential
