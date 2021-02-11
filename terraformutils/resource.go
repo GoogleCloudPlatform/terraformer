@@ -57,6 +57,13 @@ func (rf *ResourceFilter) Filter(resource Resource) bool {
 	var vals []interface{}
 	if rf.FieldPath == "id" {
 		vals = []interface{}{resource.InstanceState.ID}
+	} else if rf.AcceptableValues == nil {
+		var hasField = WalkAndCheckField(rf.FieldPath, resource.InstanceState.Attributes)
+		if hasField {
+			return true
+		} else {
+			return WalkAndCheckField(rf.FieldPath, resource.Item)
+		}
 	} else {
 		vals = WalkAndGet(rf.FieldPath, resource.InstanceState.Attributes)
 		if len(vals) == 0 {

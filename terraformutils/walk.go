@@ -21,7 +21,13 @@ import (
 
 func WalkAndGet(path string, data interface{}) []interface{} {
 	pathSegments := strings.Split(path, ".")
-	return walkAndGet(pathSegments, data)
+	_, values := walkAndGet(pathSegments, data)
+	return values
+}
+func WalkAndCheckField(path string, data interface{}) bool {
+	pathSegments := strings.Split(path, ".")
+	hasField, _ := walkAndGet(pathSegments, data)
+	return hasField
 }
 
 func WalkAndOverride(path, oldValue, newValue string, data interface{}) {
@@ -29,15 +35,18 @@ func WalkAndOverride(path, oldValue, newValue string, data interface{}) {
 	walkAndOverride(pathSegments, oldValue, newValue, data)
 }
 
-func walkAndGet(pathSegments []string, data interface{}) []interface{} {
+func walkAndGet(pathSegments []string, data interface{}) (bool, []interface{}) {
 	val := reflect.ValueOf(data)
 	switch {
 	case isArray(val.Interface()):
 		var arrayValues []interface{}
 		for i := 0; i < val.Len(); i++ {
-			arrayValues = append(arrayValues, walkAndGet(pathSegments, val.Index(i).Interface())...)
+			foundField, fieldValue := walkAndGet(pathSegments, val.Index(i).Interface())
+			if foundField {
+				arrayValues = append(arrayValues, fieldValue...)
+			}
 		}
-		return arrayValues
+		return len(arrayValues) > 0, arrayValues
 	case len(pathSegments) == 1:
 		if val.Kind() == reflect.Map {
 			for _, e := range val.MapKeys() {
@@ -45,16 +54,16 @@ func walkAndGet(pathSegments []string, data interface{}) []interface{} {
 				if e.String() == pathSegments[0] {
 					switch {
 					case isArray(v.Interface()):
-						return v.Interface().([]interface{})
+						return true, v.Interface().([]interface{})
 					case isStringArray(v.Interface()):
-						return v.Interface().([]interface{})
+						return true, v.Interface().([]interface{})
 					default:
-						return []interface{}{v.Interface()}
+						return true, []interface{}{v.Interface()}
 					}
 				}
 			}
 		}
-		return []interface{}{}
+		return false, []interface{}{}
 	default:
 		if val.Kind() == reflect.Map {
 			for _, e := range val.MapKeys() {
@@ -63,9 +72,9 @@ func walkAndGet(pathSegments []string, data interface{}) []interface{} {
 					return walkAndGet(pathSegments[1:], v.Interface())
 				}
 			}
-			return []interface{}{}
+			return false, []interface{}{}
 		}
-		return []interface{}{}
+		return false, []interface{}{}
 	}
 }
 
