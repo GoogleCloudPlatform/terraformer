@@ -83,3 +83,20 @@ func (g *Ec2Generator) InitResources() error {
 	}
 	return p.Err()
 }
+
+func (g *Ec2Generator) PostConvertHook() error {
+	for _, r := range g.Resources {
+		if r.InstanceInfo.Type != "aws_instance" {
+			continue
+		}
+		rootDeviceVolumeType := r.InstanceState.Attributes["root_block_device.0.volume_type"]
+		if !(rootDeviceVolumeType == "io1" || rootDeviceVolumeType == "io2" || rootDeviceVolumeType == "gp3") {
+			delete(r.Item["root_block_device"].([]interface{})[0].(map[string]interface{}), "iops")
+		}
+		if rootDeviceVolumeType != "gp3" {
+			delete(r.Item["root_block_device"].([]interface{})[0].(map[string]interface{}), "throughput")
+		}
+	}
+
+	return nil
+}
