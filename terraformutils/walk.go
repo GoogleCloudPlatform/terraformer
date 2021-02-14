@@ -36,6 +36,14 @@ func WalkAndOverride(path, oldValue, newValue string, data interface{}) {
 func walkAndGet(path string, data interface{}) (bool, []interface{}) {
 	val := reflect.ValueOf(data)
 
+	if data == nil {
+		if path == "" {
+			return true, []interface{}{}
+		} else {
+			return false, []interface{}{}
+		}
+	}
+
 	if isArray(val.Interface()) {
 		var arrayValues []interface{}
 		for i := 0; i < val.Len(); i++ {
