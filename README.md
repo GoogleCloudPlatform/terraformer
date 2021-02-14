@@ -138,6 +138,16 @@ terraformer import aws --resources=s3 --filter="Name=tags.Abc" --regions=eu-west
 ```
 Will only import the s3 resources that have tag `Abc`. This form of filters can help when the field values are not important from filtering perspective.
 
+##### Field with dots
+
+It is possible to filter by a field that contains a dot.
+
+Example usage:
+
+```
+terraformer import aws --resources=s3 --filter="Name=tags.Abc.def" --regions=eu-west-1
+```
+Will only import the s3 resources that have tag `Abc.def`.
 
 #### Planning
 

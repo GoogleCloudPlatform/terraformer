@@ -20,13 +20,11 @@ import (
 )
 
 func WalkAndGet(path string, data interface{}) []interface{} {
-	pathSegments := strings.Split(path, ".")
-	_, values := walkAndGet(pathSegments, data)
+	_, values := walkAndGet(path, data)
 	return values
 }
 func WalkAndCheckField(path string, data interface{}) bool {
-	pathSegments := strings.Split(path, ".")
-	hasField, _ := walkAndGet(pathSegments, data)
+	hasField, _ := walkAndGet(path, data)
 	return hasField
 }
 
@@ -35,47 +33,45 @@ func WalkAndOverride(path, oldValue, newValue string, data interface{}) {
 	walkAndOverride(pathSegments, oldValue, newValue, data)
 }
 
-func walkAndGet(pathSegments []string, data interface{}) (bool, []interface{}) {
+func walkAndGet(path string, data interface{}) (bool, []interface{}) {
 	val := reflect.ValueOf(data)
-	switch {
-	case isArray(val.Interface()):
+
+	if isArray(val.Interface()) {
 		var arrayValues []interface{}
 		for i := 0; i < val.Len(); i++ {
-			foundField, fieldValue := walkAndGet(pathSegments, val.Index(i).Interface())
+			foundField, fieldValue := walkAndGet(path, val.Index(i).Interface())
 			if foundField {
 				arrayValues = append(arrayValues, fieldValue...)
 			}
 		}
 		return len(arrayValues) > 0, arrayValues
-	case len(pathSegments) == 1:
-		if val.Kind() == reflect.Map {
-			for _, e := range val.MapKeys() {
-				v := val.MapIndex(e)
-				if e.String() == pathSegments[0] {
-					switch {
-					case isArray(v.Interface()):
-						return true, v.Interface().([]interface{})
-					case isStringArray(v.Interface()):
-						return true, v.Interface().([]interface{})
-					default:
-						return true, []interface{}{v.Interface()}
-					}
-				}
-			}
-		}
-		return false, []interface{}{}
-	default:
-		if val.Kind() == reflect.Map {
-			for _, e := range val.MapKeys() {
-				v := val.MapIndex(e)
-				if e.String() == pathSegments[0] {
-					return walkAndGet(pathSegments[1:], v.Interface())
-				}
-			}
-			return false, []interface{}{}
-		}
-		return false, []interface{}{}
 	}
+
+	if val.Kind() == reflect.Map {
+		for _, e := range val.MapKeys() {
+			v := val.MapIndex(e)
+			pathFirstElement := strings.SplitN(path, ".", 2)
+			if e.String() == pathFirstElement[0] {
+				var pathReminder = ""
+				if len(pathFirstElement) > 1 {
+					pathReminder = pathFirstElement[1]
+				}
+				hasField, value := walkAndGet(pathReminder, v.Interface())
+				if !hasField {
+					hasField, value = walkAndGet(path, v.Interface())
+				}
+				return hasField, value
+			} else if e.String() == path {
+				return walkAndGet("", v.Interface())
+			}
+		}
+	}
+
+	if val.Kind() == reflect.String && path == "" {
+		return true, []interface{}{val.Interface()}
+	}
+
+	return false, []interface{}{}
 }
 
 func walkAndOverride(pathSegments []string, oldValue, newValue string, data interface{}) {

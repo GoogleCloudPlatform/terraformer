@@ -58,6 +58,19 @@ func TestNestedWalkAndGet(t *testing.T) {
 	}
 }
 
+func TestNestedWalkWithDotInKeyAndGet(t *testing.T) {
+	structure := map[string]map[string]interface{}{
+		"attr1": {
+			"attr2.attr3": "value",
+		},
+	}
+	value := WalkAndGet("attr1.attr2.attr3", structure)
+
+	if !reflect.DeepEqual(value, []interface{}{"value"}) {
+		t.Errorf("failed to get value %v", value)
+	}
+}
+
 func TestNestedArrayWalkAndGet(t *testing.T) {
 	structure := mapI("attr1", []interface{}{
 		mapI("attr2", "value1"),
