@@ -88,15 +88,16 @@ func (s *Service) ParseFilter(rawFilter string) []ResourceFilter {
 		var ServiceNamePart string
 		var FieldPathPart string
 		var AcceptableValuesPart string
-		if len(parts) == 1 {
+		switch len(parts) {
+		case 1:
 			ServiceNamePart = ""
 			FieldPathPart = parts[0]
 			AcceptableValuesPart = ""
-		} else if len(parts) == 2 {
+		case 2:
 			ServiceNamePart = ""
 			FieldPathPart = parts[0]
 			AcceptableValuesPart = parts[1]
-		} else {
+		default:
 			ServiceNamePart = strings.TrimPrefix(parts[0], "Type=")
 			FieldPathPart = parts[1]
 			AcceptableValuesPart = parts[2]

@@ -39,9 +39,8 @@ func walkAndGet(path string, data interface{}) (bool, []interface{}) {
 	if data == nil {
 		if path == "" {
 			return true, []interface{}{}
-		} else {
-			return false, []interface{}{}
 		}
+		return false, []interface{}{}
 	}
 
 	if isArray(val.Interface()) {

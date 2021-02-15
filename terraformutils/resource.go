@@ -61,9 +61,8 @@ func (rf *ResourceFilter) Filter(resource Resource) bool {
 		var hasField = WalkAndCheckField(rf.FieldPath, resource.InstanceState.Attributes)
 		if hasField {
 			return true
-		} else {
-			return WalkAndCheckField(rf.FieldPath, resource.Item)
 		}
+		return WalkAndCheckField(rf.FieldPath, resource.Item)
 	} else {
 		vals = WalkAndGet(rf.FieldPath, resource.InstanceState.Attributes)
 		if len(vals) == 0 {
