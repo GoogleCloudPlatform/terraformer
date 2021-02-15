@@ -51,37 +51,31 @@ func (g *S3Generator) createResources(config aws.Config, buckets *s3.ListBuckets
 		// check if bucket in region
 		constraintString, _ := s3.NormalizeBucketLocation(location.LocationConstraint).MarshalValue()
 		if constraintString == region {
+			attributes := map[string]string{
+				"force_destroy": "false",
+				"acl":           "private",
+			}
+			// try get policy
+			policy, err := svc.GetBucketPolicyRequest(&s3.GetBucketPolicyInput{
+				Bucket: bucket.Name,
+			}).Send(context.Background())
+
+			if err != nil {
+				if awsErr, ok := err.(awserr.Error); ok && awsErr.Code() != "NoSuchBucketPolicy" {
+					log.Println(err)
+					continue
+				}
+			} else {
+				attributes["policy"] = *policy.Policy
+			}
 			resources = append(resources, terraformutils.NewResource(
 				resourceName,
 				resourceName,
 				"aws_s3_bucket",
 				"aws",
-				map[string]string{
-					"force_destroy": "false",
-					"acl":           "private",
-				},
+				attributes,
 				S3AllowEmptyValues,
 				S3AdditionalFields))
-			// try get policy
-			_, err := svc.GetBucketPolicyRequest(&s3.GetBucketPolicyInput{
-				Bucket: bucket.Name,
-			}).Send(context.Background())
-
-			if err != nil {
-				if awsErr, ok := err.(awserr.Error); ok && awsErr.Code() == "NoSuchBucketPolicy" {
-					// Bucket without policy
-					continue
-				}
-				log.Println(err)
-				continue
-			}
-			// if bucket policy exist create TerraformResource with bucket name as ID
-			resources = append(resources, terraformutils.NewSimpleResource(
-				resourceName,
-				resourceName,
-				"aws_s3_bucket_policy",
-				"aws",
-				S3AllowEmptyValues))
 		}
 	}
 	return resources
@@ -109,33 +103,16 @@ func (g *S3Generator) InitResources() error {
 // support only bucket with policy
 func (g *S3Generator) PostConvertHook() error {
 	for i, resource := range g.Resources {
-		if resource.InstanceInfo.Type == "aws_s3_bucket_policy" {
-			policy := g.escapeAwsInterpolation(resource.Item["policy"].(string))
-			g.Resources[i].Item["policy"] = fmt.Sprintf(`<<POLICY
-%s
-POLICY`, policy)
-		} else if resource.InstanceInfo.Type == "aws_s3_bucket" {
+		if resource.InstanceInfo.Type == "aws_s3_bucket" {
 			if val, ok := g.Resources[i].Item["acl"]; ok && val == "private" {
 				delete(g.Resources[i].Item, "acl")
+			}
+			if val, ok := g.Resources[i].Item["policy"]; ok {
+				g.Resources[i].Item["policy"] = fmt.Sprintf(`<<POLICY
+%s
+POLICY`, g.escapeAwsInterpolation(val.(string)))
 			}
 		}
 	}
 	return nil
-}
-
-func (g *S3Generator) ParseFilters(rawFilters []string) {
-	g.Filter = []terraformutils.ResourceFilter{}
-	for _, rawFilter := range rawFilters {
-		filters := g.ParseFilter(rawFilter)
-		for _, resourceFilter := range filters {
-			g.Filter = append(g.Filter, resourceFilter)
-			if resourceFilter.ServiceName == "aws_s3_bucket" {
-				g.Filter = append(g.Filter, terraformutils.ResourceFilter{
-					ServiceName:      "aws_s3_bucket_policy",
-					FieldPath:        resourceFilter.FieldPath,
-					AcceptableValues: resourceFilter.AcceptableValues,
-				})
-			}
-		}
-	}
 }

@@ -127,6 +127,28 @@ terraformer import aws --resources=vpc,subnet --filter=vpc=myvpcid --regions=eu-
 ```
 Will only import the vpc with id `myvpcid`. This form of filters can help when it's necessary to select resources by its identifiers.
 
+##### Field name only
+
+It is possible to filter by specific field name only. It can be used e.g. when you want to retrieve resources only with a specific tag key.
+
+Example usage:
+
+```
+terraformer import aws --resources=s3 --filter="Name=tags.Abc" --regions=eu-west-1
+```
+Will only import the s3 resources that have tag `Abc`. This form of filters can help when the field values are not important from filtering perspective.
+
+##### Field with dots
+
+It is possible to filter by a field that contains a dot.
+
+Example usage:
+
+```
+terraformer import aws --resources=s3 --filter="Name=tags.Abc.def" --regions=eu-west-1
+```
+Will only import the s3 resources that have tag `Abc.def`.
+
 #### Planning
 
 The `plan` command generates a planfile that contains all the resources set to be imported. By modifying the planfile before running the `import` command, you can rename or filter the resources you'd like to import.

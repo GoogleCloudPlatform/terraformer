@@ -58,6 +58,19 @@ func TestNestedWalkAndGet(t *testing.T) {
 	}
 }
 
+func TestNestedWalkWithDotInKeyAndGet(t *testing.T) {
+	structure := map[string]map[string]interface{}{
+		"attr1": {
+			"attr2.attr3": "value",
+		},
+	}
+	value := WalkAndGet("attr1.attr2.attr3", structure)
+
+	if !reflect.DeepEqual(value, []interface{}{"value"}) {
+		t.Errorf("failed to get value %v", value)
+	}
+}
+
 func TestNestedArrayWalkAndGet(t *testing.T) {
 	structure := mapI("attr1", []interface{}{
 		mapI("attr2", "value1"),
@@ -146,5 +159,25 @@ func TestNestedArrayWalkAndOverride(t *testing.T) {
 
 	if structure["attr1"].([]interface{})[0].(map[string]interface{})["attr2"] != "value1" || structure["attr1"].([]interface{})[1].(map[string]interface{})["attr2"] != "newValue" {
 		t.Errorf("failed to set value")
+	}
+}
+
+func TestEmptyWalkAndCheckField(t *testing.T) {
+	structure := map[string]interface{}{}
+	value := WalkAndCheckField("attr1", structure)
+
+	if !reflect.DeepEqual(value, false) {
+		t.Errorf("failed to get value %v", value)
+	}
+}
+
+func TestSimpleWalkAndCheckField(t *testing.T) {
+	structure := map[string]interface{}{
+		"attr1": "value",
+	}
+	value := WalkAndCheckField("attr1", structure)
+
+	if !reflect.DeepEqual(value, true) {
+		t.Errorf("failed to get value %v", value)
 	}
 }

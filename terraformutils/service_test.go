@@ -109,3 +109,31 @@ func TestServiceAttributeCleanupWithFilter(t *testing.T) {
 		t.Errorf("failed to cleanup")
 	}
 }
+
+func TestServiceAttributeNameOnlyCleanupWithFilter(t *testing.T) {
+	service := Service{
+		Resources: []Resource{
+			{
+				InstanceInfo: &terraform.InstanceInfo{
+					Type: "aws_vpc",
+				},
+				InstanceState: &terraform.InstanceState{
+					ID: "vpc1",
+				},
+				Item: mapI("tags", mapI("Abc", nil))},
+			{
+				InstanceInfo: &terraform.InstanceInfo{
+					Type: "aws_vpc",
+				},
+				InstanceState: &terraform.InstanceState{
+					ID: "vpc2",
+				},
+				Item: mapI("tags", mapI("Name", "default"))}},
+	}
+	service.ParseFilters([]string{"Name=tags.Abc"})
+	service.PostRefreshCleanup()
+
+	if !reflect.DeepEqual(len(service.Resources), 1) {
+		t.Errorf("failed to cleanup")
+	}
+}
