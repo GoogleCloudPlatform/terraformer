@@ -18,7 +18,7 @@ require (
 	github.com/IBM/networking-go-sdk v0.12.1
 	github.com/IBM/vpc-go-sdk v0.4.1
 	github.com/OctopusDeploy/go-octopusdeploy v1.6.0
-	github.com/aliyun/alibaba-cloud-sdk-go v1.60.295
+	github.com/aliyun/alibaba-cloud-sdk-go v1.61.920
 	github.com/aliyun/aliyun-tablestore-go-sdk v4.1.2+incompatible
 	github.com/apache/openwhisk-client-go v0.0.0-20210106144548-17d556327cd3
 	github.com/aws/aws-sdk-go v1.36.19
