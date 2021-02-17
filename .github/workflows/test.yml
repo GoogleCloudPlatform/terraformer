@@ -12,15 +12,13 @@ jobs:
   test:
     strategy:
       matrix:
-        go-version: [1.15.x]
         platform: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.platform }}
     steps:
+    - uses: actions/checkout@v2
     - name: Install Go
       uses: actions/setup-go@v2
       with:
-        go-version: 1.14
-    - name: Checkout code
-      uses: actions/checkout@v2
+        go-version: 1.16
     - name: Test
       run: go build -v && go test ./...
