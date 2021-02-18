@@ -48,9 +48,9 @@ func (p *KibanaProvider) GetResourceConnections() map[string]map[string][]string
 
 func (p *KibanaProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"search": &SearchGenerator{},
-		// "dashboard":     &DashboardGenerator{},
-		// "visualization": &VisualizationClusterGenerator{},
+		"search":        &SearchGenerator{},
+		"dashboard":     &DashboardGenerator{},
+		"visualization": &VisualizationGenerator{},
 	}
 }
 
