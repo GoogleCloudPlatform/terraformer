@@ -16,7 +16,6 @@ package datadog
 
 import (
 	"fmt"
-
 	datadogCommunity "github.com/zorkian/go-datadog-api"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -40,13 +39,21 @@ func (g *IntegrationPagerdutyGenerator) createResources(pdSubdomain string) []te
 }
 
 func (g *IntegrationPagerdutyGenerator) createResource(serviceName string) terraformutils.Resource {
-	return terraformutils.NewSimpleResource(
+	resource := terraformutils.NewResource(
 		serviceName,
 		fmt.Sprintf("integration_pagerduty_%s", serviceName),
 		"datadog_integration_pagerduty",
 		"datadog",
+		map[string]string{
+			"individual_services": "true",
+		},
 		IntegrationPagerdutyAllowEmptyValues,
+		map[string]interface{}{},
 	)
+	// Ignore services in favor of individual_services
+	resource.IgnoreKeys = append(resource.IgnoreKeys, "^services$")
+
+	return resource
 }
 
 // InitResources Generate TerraformResources from Datadog API,
