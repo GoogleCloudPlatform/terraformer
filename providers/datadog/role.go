@@ -80,5 +80,4 @@ func (g *RoleGenerator) InitResources() error {
 
 	g.Resources = g.createResources(roles)
 	return nil
-
 }
