@@ -89,7 +89,7 @@ func (g *MonitorGenerator) InitResources() error {
 	}
 
 	var monitors []datadogV1.Monitor
-	pageSize := int32(10000)
+	pageSize := int32(1000)
 	pageNumber := int64(0)
 	for {
 		resp, _, err := datadogClientV1.MonitorsApi.ListMonitors(authV1).PageSize(pageSize).Page(pageNumber).Execute()
