@@ -647,7 +647,6 @@ In that case terraformer will not know with which region resources are associate
     * `aws_route_table_association`
 *   `s3`
     * `aws_s3_bucket`
-    * `aws_s3_bucket_policy`
 *   `secretsmanager`
     * `aws_secretsmanager_secret`
 *   `securityhub`

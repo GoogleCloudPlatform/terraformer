@@ -22,8 +22,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/aws/external"
-	"github.com/aws/aws-sdk-go-v2/aws/stscreds"
+	"github.com/aws/aws-sdk-go-v2/config"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -41,10 +40,10 @@ func (s *AWSService) generateConfig() (aws.Config, error) {
 		return config, e
 	}
 	if s.Verbose {
-		config.LogLevel = aws.LogDebugWithHTTPBody
+		config.ClientLogMode = aws.LogRequestWithBody & aws.LogResponseWithBody & aws.LogRetries
 	}
 
-	creds, e := config.Credentials.Retrieve(context.Background())
+	creds, e := config.Credentials.Retrieve(context.TODO())
 
 	if e != nil {
 		return config, e
@@ -66,11 +65,10 @@ func (s *AWSService) generateConfig() (aws.Config, error) {
 
 func (s *AWSService) buildBaseConfig() (aws.Config, error) {
 	if s.GetArgs()["region"].(string) != "" {
-		return external.LoadDefaultAWSConfig(
-			external.WithRegion(s.GetArgs()["region"].(string)),
-			external.WithMFATokenFunc(stscreds.StdinTokenProvider))
+
+		return config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-west-2"))
 	}
-	return external.LoadDefaultAWSConfig(external.WithMFATokenFunc(stscreds.StdinTokenProvider))
+	return config.LoadDefaultConfig(context.TODO())
 }
 
 // for CF interpolation and IAM Policy variables
@@ -79,8 +77,8 @@ func (*AWSService) escapeAwsInterpolation(str string) string {
 }
 
 func (s *AWSService) getAccountNumber(config aws.Config) (*string, error) {
-	stsSvc := sts.New(config)
-	identity, err := stsSvc.GetCallerIdentityRequest(&sts.GetCallerIdentityInput{}).Send(context.Background())
+	stsSvc := sts.NewFromConfig(config)
+	identity, err := stsSvc.GetCallerIdentity(context.TODO(), &sts.GetCallerIdentityInput{})
 	if err != nil {
 		return nil, err
 	}
