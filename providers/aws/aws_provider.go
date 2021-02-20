@@ -305,3 +305,10 @@ func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"xray":              &AwsFacade{service: &XrayGenerator{}},
 	}
 }
+
+func StringValue(value *string) string {
+	if value != nil {
+		return *value
+	}
+	return ""
+}

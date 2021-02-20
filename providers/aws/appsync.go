@@ -17,13 +17,13 @@ func (g *AppSyncGenerator) InitResources() error {
 		return e
 	}
 
-	svc := appsync.New(config)
+	svc := appsync.NewFromConfig(config)
 
 	var nextToken *string
 	for {
-		apis, err := svc.ListGraphqlApisRequest(&appsync.ListGraphqlApisInput{
+		apis, err := svc.ListGraphqlApis(context.TODO(), &appsync.ListGraphqlApisInput{
 			NextToken: nextToken,
-		}).Send(context.Background())
+		})
 		if err != nil {
 			return err
 		}

@@ -64,8 +64,10 @@ func (s *AWSService) generateConfig() (aws.Config, error) {
 }
 
 func (s *AWSService) buildBaseConfig() (aws.Config, error) {
+	if s.GetArgs()["profile"].(string) != "" {
+		os.Setenv("AWS_PROFILE", s.GetArgs()["profile"].(string))
+	}
 	if s.GetArgs()["region"].(string) != "" {
-
 		return config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-west-2"))
 	}
 	return config.LoadDefaultConfig(context.TODO())

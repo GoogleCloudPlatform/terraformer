@@ -18,8 +18,8 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation"
+	"github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
 )
 
 var cloudFormationAllowEmptyValues = []string{"tags."}
@@ -33,11 +33,15 @@ func (g *CloudFormationGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := cloudformation.New(config)
-	p := cloudformation.NewListStacksPaginator(svc.ListStacksRequest(&cloudformation.ListStacksInput{}))
-	for p.Next(context.Background()) {
-		for _, stackSummary := range p.CurrentPage().StackSummaries {
-			if stackSummary.StackStatus == cloudformation.StackStatusDeleteComplete {
+	svc := cloudformation.NewFromConfig(config)
+	p := cloudformation.NewListStacksPaginator(svc, &cloudformation.ListStacksInput{})
+	for p.HasMorePages() {
+		page, e := p.NextPage(context.TODO())
+		if e != nil {
+			return e
+		}
+		for _, stackSummary := range page.StackSummaries {
+			if stackSummary.StackStatus == types.StackStatusDeleteComplete {
 				continue
 			}
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
@@ -49,15 +53,12 @@ func (g *CloudFormationGenerator) InitResources() error {
 			))
 		}
 	}
-	if err := p.Err(); err != nil {
-		return err
-	}
-	stackSets, err := svc.ListStackSetsRequest(&cloudformation.ListStackSetsInput{}).Send(context.Background())
+	stackSets, err := svc.ListStackSets(context.TODO(), &cloudformation.ListStackSetsInput{})
 	if err != nil {
 		return err
 	}
 	for _, stackSetSummary := range stackSets.Summaries {
-		if stackSetSummary.Status == cloudformation.StackSetStatusDeleted {
+		if stackSetSummary.Status == types.StackSetStatusDeleted {
 			continue
 		}
 		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
@@ -68,14 +69,14 @@ func (g *CloudFormationGenerator) InitResources() error {
 			cloudFormationAllowEmptyValues,
 		))
 
-		stackSetInstances, err := svc.ListStackInstancesRequest(&cloudformation.ListStackInstancesInput{
+		stackSetInstances, err := svc.ListStackInstances(context.TODO(), &cloudformation.ListStackInstancesInput{
 			StackSetName: stackSetSummary.StackSetName,
-		}).Send(context.Background())
+		})
 		if err != nil {
 			return err
 		}
 		for _, stackSetI := range stackSetInstances.Summaries {
-			id := aws.StringValue(stackSetI.StackSetId) + "," + aws.StringValue(stackSetI.Account) + "," + aws.StringValue(stackSetI.Region)
+			id := StringValue(stackSetI.StackSetId) + "," + StringValue(stackSetI.Account) + "," + StringValue(stackSetI.Region)
 
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				id,
