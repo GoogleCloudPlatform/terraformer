@@ -18,7 +18,6 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/datapipeline"
 )
 
@@ -33,13 +32,17 @@ func (g *DataPipelineGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := datapipeline.New(config)
-	p := datapipeline.NewListPipelinesPaginator(svc.ListPipelinesRequest(&datapipeline.ListPipelinesInput{}))
+	svc := datapipeline.NewFromConfig(config)
+	p := datapipeline.NewListPipelinesPaginator(svc, &datapipeline.ListPipelinesInput{})
 	var resources []terraformutils.Resource
-	for p.Next(context.Background()) {
-		for _, pipeline := range p.CurrentPage().PipelineIdList {
-			pipelineID := aws.StringValue(pipeline.Id)
-			pipelineName := aws.StringValue(pipeline.Name)
+	for p.HasMorePages() {
+		page, e := p.NextPage(context.TODO())
+		if e != nil {
+			return e
+		}
+		for _, pipeline := range page.PipelineIdList {
+			pipelineID := StringValue(pipeline.Id)
+			pipelineName := StringValue(pipeline.Name)
 			resources = append(resources, terraformutils.NewSimpleResource(
 				pipelineID,
 				pipelineName,
@@ -49,5 +52,5 @@ func (g *DataPipelineGenerator) InitResources() error {
 		}
 	}
 	g.Resources = resources
-	return p.Err()
+	return nil
 }

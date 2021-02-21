@@ -18,7 +18,6 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancing"
 )
 
@@ -37,11 +36,15 @@ func (g *ElbGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := elasticloadbalancing.New(config)
-	p := elasticloadbalancing.NewDescribeLoadBalancersPaginator(svc.DescribeLoadBalancersRequest(&elasticloadbalancing.DescribeLoadBalancersInput{}))
-	for p.Next(context.Background()) {
-		for _, loadBalancer := range p.CurrentPage().LoadBalancerDescriptions {
-			resourceName := aws.StringValue(loadBalancer.LoadBalancerName)
+	svc := elasticloadbalancing.NewFromConfig(config)
+	p := elasticloadbalancing.NewDescribeLoadBalancersPaginator(svc, &elasticloadbalancing.DescribeLoadBalancersInput{})
+	for p.HasMorePages() {
+		page, e := p.NextPage(context.TODO())
+		if e != nil {
+			return e
+		}
+		for _, loadBalancer := range page.LoadBalancerDescriptions {
+			resourceName := StringValue(loadBalancer.LoadBalancerName)
 			resource := terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
@@ -53,5 +56,5 @@ func (g *ElbGenerator) InitResources() error {
 			g.Resources = append(g.Resources, resource)
 		}
 	}
-	return p.Err()
+	return nil
 }

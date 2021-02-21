@@ -32,10 +32,14 @@ func (g *DynamoDbGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := dynamodb.New(config)
-	p := dynamodb.NewListTablesPaginator(svc.ListTablesRequest(&dynamodb.ListTablesInput{}))
-	for p.Next(context.Background()) {
-		for _, tableName := range p.CurrentPage().TableNames {
+	svc := dynamodb.NewFromConfig(config)
+	p := dynamodb.NewListTablesPaginator(svc, &dynamodb.ListTablesInput{})
+	for p.HasMorePages() {
+		page, e := p.NextPage(context.TODO())
+		if e != nil {
+			return e
+		}
+		for _, tableName := range page.TableNames {
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				tableName,
 				tableName,
@@ -45,7 +49,7 @@ func (g *DynamoDbGenerator) InitResources() error {
 			))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *DynamoDbGenerator) PostConvertHook() error {

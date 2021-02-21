@@ -17,9 +17,9 @@ package aws
 import (
 	"context"
 	"fmt"
+	"github.com/IBM/ibm-cos-sdk-go/aws"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/efs"
 )
 
@@ -34,7 +34,7 @@ func (g *EfsGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := efs.New(config)
+	svc := efs.NewFromConfig(config)
 	if err := g.loadFileSystem(svc); err != nil {
 		return err
 	}
@@ -48,19 +48,23 @@ func (g *EfsGenerator) InitResources() error {
 }
 
 func (g *EfsGenerator) loadFileSystem(svc *efs.Client) error {
-	p := efs.NewDescribeFileSystemsPaginator(svc.DescribeFileSystemsRequest(&efs.DescribeFileSystemsInput{}))
-	for p.Next(context.Background()) {
-		for _, fileSystem := range p.CurrentPage().FileSystems {
+	p := efs.NewDescribeFileSystemsPaginator(svc, &efs.DescribeFileSystemsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, fileSystem := range page.FileSystems {
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-				aws.StringValue(fileSystem.FileSystemId),
-				aws.StringValue(fileSystem.FileSystemId),
+				StringValue(fileSystem.FileSystemId),
+				StringValue(fileSystem.FileSystemId),
 				"aws_efs_file_system",
 				"aws",
 				efsAllowEmptyValues))
 
-			targetsResponse, err := svc.DescribeMountTargetsRequest(&efs.DescribeMountTargetsInput{
+			targetsResponse, err := svc.DescribeMountTargets(context.TODO(), &efs.DescribeMountTargetsInput{
 				FileSystemId: fileSystem.FileSystemId,
-			}).Send(context.Background())
+			})
 			if err != nil {
 				fmt.Println(err.Error())
 				continue
@@ -74,9 +78,9 @@ func (g *EfsGenerator) loadFileSystem(svc *efs.Client) error {
 					efsAllowEmptyValues))
 			}
 
-			policyResponse, err := svc.DescribeFileSystemPolicyRequest(&efs.DescribeFileSystemPolicyInput{
+			policyResponse, err := svc.DescribeFileSystemPolicy(context.TODO(), &efs.DescribeFileSystemPolicyInput{
 				FileSystemId: fileSystem.FileSystemId,
-			}).Send(context.Background())
+			})
 			if err != nil {
 				fmt.Println(err.Error())
 				continue
@@ -97,13 +101,17 @@ POLICY`, escapedPolicy),
 				map[string]interface{}{}))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *EfsGenerator) loadMountTarget(svc *efs.Client) error {
-	p := efs.NewDescribeFileSystemsPaginator(svc.DescribeFileSystemsRequest(&efs.DescribeFileSystemsInput{}))
-	for p.Next(context.Background()) {
-		for _, fileSystem := range p.CurrentPage().FileSystems {
+	p := efs.NewDescribeFileSystemsPaginator(svc, &efs.DescribeFileSystemsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, fileSystem := range page.FileSystems {
 			id := aws.StringValue(fileSystem.FileSystemId)
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				id,
@@ -113,13 +121,17 @@ func (g *EfsGenerator) loadMountTarget(svc *efs.Client) error {
 				efsAllowEmptyValues))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *EfsGenerator) loadAccessPoint(svc *efs.Client) error {
-	p := efs.NewDescribeAccessPointsPaginator(svc.DescribeAccessPointsRequest(&efs.DescribeAccessPointsInput{}))
-	for p.Next(context.Background()) {
-		for _, fileSystem := range p.CurrentPage().AccessPoints {
+	p := efs.NewDescribeAccessPointsPaginator(svc, &efs.DescribeAccessPointsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, fileSystem := range page.AccessPoints {
 			id := aws.StringValue(fileSystem.AccessPointId)
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				id,
@@ -129,5 +141,5 @@ func (g *EfsGenerator) loadAccessPoint(svc *efs.Client) error {
 				efsAllowEmptyValues))
 		}
 	}
-	return p.Err()
+	return nil
 }

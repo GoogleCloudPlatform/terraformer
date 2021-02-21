@@ -16,17 +16,15 @@ type CognitoGenerator struct {
 const CognitoMaxResults = 60 // Required field for Cognito API
 
 func (g *CognitoGenerator) loadIdentityPools(svc *cognitoidentity.Client) error {
-	var nextToken *string
-	for {
-		pools, err := svc.ListIdentityPoolsRequest(&cognitoidentity.ListIdentityPoolsInput{
-			NextToken:  nextToken,
-			MaxResults: aws.Int64(CognitoMaxResults),
-		}).Send(context.Background())
+	p := cognitoidentity.NewListIdentityPoolsPaginator(svc, &cognitoidentity.ListIdentityPoolsInput{
+		MaxResults: *aws.Int32(CognitoMaxResults),
+	})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
 		if err != nil {
 			return err
 		}
-
-		for _, pool := range pools.IdentityPools {
+		for _, pool := range page.IdentityPools {
 			var id = *pool.IdentityPoolId
 			var resourceName = *pool.IdentityPoolName
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
@@ -36,22 +34,21 @@ func (g *CognitoGenerator) loadIdentityPools(svc *cognitoidentity.Client) error 
 				"aws",
 				[]string{}))
 		}
-
-		nextToken = pools.NextToken
-		if nextToken == nil {
-			break
-		}
 	}
 
 	return nil
 }
 
 func (g *CognitoGenerator) loadUserPools(svc *cognitoidentityprovider.Client) error {
-	req := svc.ListUserPoolsRequest(&cognitoidentityprovider.ListUserPoolsInput{MaxResults: aws.Int64(CognitoMaxResults)})
-	p := cognitoidentityprovider.NewListUserPoolsPaginator(req)
+	p := cognitoidentityprovider.NewListUserPoolsPaginator(svc, &cognitoidentityprovider.ListUserPoolsInput{
+		MaxResults: *aws.Int32(CognitoMaxResults),
+	})
 
-	for p.Next(context.Background()) {
-		page := p.CurrentPage()
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
 		for _, pool := range page.UserPools {
 			id := *pool.Id
 			resourceName := *pool.Name
@@ -63,10 +60,6 @@ func (g *CognitoGenerator) loadUserPools(svc *cognitoidentityprovider.Client) er
 				[]string{}))
 		}
 	}
-
-	if err := p.Err(); err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -76,11 +69,11 @@ func (g *CognitoGenerator) InitResources() error {
 		return e
 	}
 
-	svcCognitoIdentity := cognitoidentity.New(config)
+	svcCognitoIdentity := cognitoidentity.NewFromConfig(config)
 	if err := g.loadIdentityPools(svcCognitoIdentity); err != nil {
 		return err
 	}
-	svcCognitoIdentityProvider := cognitoidentityprovider.New(config)
+	svcCognitoIdentityProvider := cognitoidentityprovider.NewFromConfig(config)
 	if err := g.loadUserPools(svcCognitoIdentityProvider); err != nil {
 		return err
 	}

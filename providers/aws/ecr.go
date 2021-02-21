@@ -32,11 +32,15 @@ func (g *EcrGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := ecr.New(config)
+	svc := ecr.NewFromConfig(config)
 
-	p := ecr.NewDescribeRepositoriesPaginator(svc.DescribeRepositoriesRequest(&ecr.DescribeRepositoriesInput{}))
-	for p.Next(context.Background()) {
-		for _, repository := range p.CurrentPage().Repositories {
+	p := ecr.NewDescribeRepositoriesPaginator(svc, &ecr.DescribeRepositoriesInput{})
+	for p.HasMorePages() {
+		page, e := p.NextPage(context.TODO())
+		if e != nil {
+			return e
+		}
+		for _, repository := range page.Repositories {
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				*repository.RepositoryName,
 				*repository.RepositoryName,
@@ -57,5 +61,5 @@ func (g *EcrGenerator) InitResources() error {
 				ecrAllowEmptyValues))
 		}
 	}
-	return p.Err()
+	return nil
 }
