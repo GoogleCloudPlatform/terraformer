@@ -18,7 +18,6 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/resourcegroups"
 )
 
@@ -33,12 +32,16 @@ func (g *ResourceGroupsGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := resourcegroups.New(config)
-	p := resourcegroups.NewListGroupsPaginator(svc.ListGroupsRequest(&resourcegroups.ListGroupsInput{}))
+	svc := resourcegroups.NewFromConfig(config)
+	p := resourcegroups.NewListGroupsPaginator(svc, &resourcegroups.ListGroupsInput{})
 	var resources []terraformutils.Resource
-	for p.Next(context.Background()) {
-		for _, group := range p.CurrentPage().Groups {
-			groupName := aws.StringValue(group.Name)
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, groupIdentifier := range page.GroupIdentifiers {
+			groupName := StringValue(groupIdentifier.GroupName)
 			resources = append(resources, terraformutils.NewSimpleResource(
 				groupName,
 				groupName,
@@ -48,5 +51,5 @@ func (g *ResourceGroupsGenerator) InitResources() error {
 		}
 	}
 	g.Resources = resources
-	return p.Err()
+	return nil
 }

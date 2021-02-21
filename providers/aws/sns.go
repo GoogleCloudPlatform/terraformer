@@ -21,8 +21,6 @@ import (
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
-
 	"github.com/aws/aws-sdk-go-v2/service/sns"
 )
 
@@ -42,32 +40,41 @@ func (g *SnsGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := sns.New(config)
-	p := sns.NewListTopicsPaginator(svc.ListTopicsRequest(&sns.ListTopicsInput{}))
-	for p.Next(context.Background()) {
-		for _, topic := range p.CurrentPage().Topics {
-			arnParts := strings.Split(aws.StringValue(topic.TopicArn), ":")
+	svc := sns.NewFromConfig(config)
+	p := sns.NewListTopicsPaginator(svc, &sns.ListTopicsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, topic := range page.Topics {
+			arnParts := strings.Split(StringValue(topic.TopicArn), ":")
 			topicName := arnParts[len(arnParts)-1]
 
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-				aws.StringValue(topic.TopicArn),
+				StringValue(topic.TopicArn),
 				topicName,
 				"aws_sns_topic",
 				"aws",
 				snsAllowEmptyValues,
 			))
 
-			topicSubsPage := sns.NewListSubscriptionsByTopicPaginator(svc.ListSubscriptionsByTopicRequest(&sns.ListSubscriptionsByTopicInput{
+			topicSubsPage := sns.NewListSubscriptionsByTopicPaginator(svc, &sns.ListSubscriptionsByTopicInput{
 				TopicArn: topic.TopicArn,
-			}))
-			for topicSubsPage.Next(context.Background()) {
-				for _, subscription := range topicSubsPage.CurrentPage().Subscriptions {
-					subscriptionArnParts := strings.Split(aws.StringValue(subscription.SubscriptionArn), ":")
+			})
+			for topicSubsPage.HasMorePages() {
+				topicSubsNextPage, err := topicSubsPage.NextPage(context.TODO())
+				if err != nil {
+					log.Println(err)
+					continue
+				}
+				for _, subscription := range topicSubsNextPage.Subscriptions {
+					subscriptionArnParts := strings.Split(StringValue(subscription.SubscriptionArn), ":")
 					subscriptionID := subscriptionArnParts[len(subscriptionArnParts)-1]
 
-					if g.isSupportedSubscription(aws.StringValue(subscription.Protocol), subscriptionID) {
+					if g.isSupportedSubscription(StringValue(subscription.Protocol), subscriptionID) {
 						g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-							aws.StringValue(subscription.SubscriptionArn),
+							StringValue(subscription.SubscriptionArn),
 							"subscription-"+subscriptionID,
 							"aws_sns_topic_subscription",
 							"aws",
@@ -76,12 +83,9 @@ func (g *SnsGenerator) InitResources() error {
 					}
 				}
 			}
-			if err := topicSubsPage.Err(); err != nil {
-				log.Println(err)
-			}
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 // PostConvertHook for add policy json as heredoc

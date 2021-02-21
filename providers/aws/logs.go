@@ -19,7 +19,6 @@ import (
 	"strconv"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 )
 
@@ -29,15 +28,15 @@ type LogsGenerator struct {
 	AWSService
 }
 
-func (g *LogsGenerator) createResources(logGroups *cloudwatchlogs.DescribeLogGroupsResponse) []terraformutils.Resource {
+func (g *LogsGenerator) createResources(logGroups *cloudwatchlogs.DescribeLogGroupsOutput) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	for _, logGroup := range logGroups.LogGroups {
-		resourceName := aws.StringValue(logGroup.LogGroupName)
+		resourceName := StringValue(logGroup.LogGroupName)
 
 		attributes := map[string]string{}
 
 		if logGroup.RetentionInDays != nil {
-			attributes["retention_in_days"] = strconv.FormatInt(*logGroup.RetentionInDays, 10)
+			attributes["retention_in_days"] = strconv.FormatInt(int64(*logGroup.RetentionInDays), 10)
 		}
 
 		if logGroup.KmsKeyId != nil {
@@ -62,13 +61,16 @@ func (g *LogsGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := cloudwatchlogs.New(config)
+	svc := cloudwatchlogs.NewFromConfig(config)
 
-	logGroups, err := svc.DescribeLogGroupsRequest(&cloudwatchlogs.DescribeLogGroupsInput{}).Send(context.Background())
-	if err != nil {
-		return err
+	p := cloudwatchlogs.NewDescribeLogGroupsPaginator(svc, &cloudwatchlogs.DescribeLogGroupsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		g.Resources = append(g.Resources, g.createResources(page)...)
 	}
-	g.Resources = g.createResources(logGroups)
 	return nil
 }
 

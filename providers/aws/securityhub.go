@@ -33,7 +33,7 @@ func (g *SecurityhubGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	client := securityhub.New(config)
+	client := securityhub.NewFromConfig(config)
 
 	account, err := g.getAccountNumber(config)
 	if err != nil {
@@ -56,7 +56,7 @@ func (g *SecurityhubGenerator) InitResources() error {
 }
 
 func (g *SecurityhubGenerator) addAccount(client *securityhub.Client, accountNumber string) (bool, error) {
-	_, err := client.GetEnabledStandardsRequest(&securityhub.GetEnabledStandardsInput{}).Send(context.Background())
+	_, err := client.GetEnabledStandards(context.TODO(), &securityhub.GetEnabledStandardsInput{})
 
 	if err != nil {
 		errorMsg := err.Error()
@@ -76,10 +76,13 @@ func (g *SecurityhubGenerator) addAccount(client *securityhub.Client, accountNum
 }
 
 func (g *SecurityhubGenerator) addMembers(svc *securityhub.Client, accountNumber string) error {
-	p := securityhub.NewListMembersPaginator(svc.ListMembersRequest(&securityhub.ListMembersInput{}))
+	p := securityhub.NewListMembersPaginator(svc, &securityhub.ListMembersInput{})
 
-	for p.Next(context.Background()) {
-		page := p.CurrentPage()
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
 		for _, member := range page.Members {
 			id := *member.AccountId
 			g.Resources = append(g.Resources, terraformutils.NewResource(
@@ -98,15 +101,17 @@ func (g *SecurityhubGenerator) addMembers(svc *securityhub.Client, accountNumber
 			))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *SecurityhubGenerator) addStandardsSubscription(svc *securityhub.Client, accountNumber string) error {
-	p := securityhub.NewGetEnabledStandardsPaginator(
-		svc.GetEnabledStandardsRequest(&securityhub.GetEnabledStandardsInput{}))
+	p := securityhub.NewGetEnabledStandardsPaginator(svc, &securityhub.GetEnabledStandardsInput{})
 
-	for p.Next(context.Background()) {
-		page := p.CurrentPage()
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
 		for _, standardsSubscription := range page.StandardsSubscriptions {
 			id := *standardsSubscription.StandardsSubscriptionArn
 			g.Resources = append(g.Resources, terraformutils.NewResource(
@@ -124,5 +129,5 @@ func (g *SecurityhubGenerator) addStandardsSubscription(svc *securityhub.Client,
 			))
 		}
 	}
-	return p.Err()
+	return nil
 }

@@ -32,7 +32,7 @@ func (g *KmsGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	client := kms.New(config)
+	client := kms.NewFromConfig(config)
 
 	err := g.addKeys(client)
 	if err != nil {
@@ -43,9 +43,13 @@ func (g *KmsGenerator) InitResources() error {
 }
 
 func (g *KmsGenerator) addKeys(client *kms.Client) error {
-	p := kms.NewListKeysPaginator(client.ListKeysRequest(&kms.ListKeysInput{}))
-	for p.Next(context.Background()) {
-		for _, key := range p.CurrentPage().Keys {
+	p := kms.NewListKeysPaginator(client, &kms.ListKeysInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, key := range page.Keys {
 			resource := terraformutils.NewResource(
 				*key.KeyId,
 				*key.KeyId,
@@ -61,13 +65,17 @@ func (g *KmsGenerator) addKeys(client *kms.Client) error {
 			g.Resources = append(g.Resources, resource)
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *KmsGenerator) addAliases(client *kms.Client) error {
-	p := kms.NewListAliasesPaginator(client.ListAliasesRequest(&kms.ListAliasesInput{}))
-	for p.Next(context.Background()) {
-		for _, alias := range p.CurrentPage().Aliases {
+	p := kms.NewListAliasesPaginator(client, &kms.ListAliasesInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, alias := range page.Aliases {
 			resource := terraformutils.NewSimpleResource(
 				*alias.AliasName,
 				*alias.AliasName,
@@ -79,5 +87,5 @@ func (g *KmsGenerator) addAliases(client *kms.Client) error {
 			g.Resources = append(g.Resources, resource)
 		}
 	}
-	return p.Err()
+	return nil
 }

@@ -37,7 +37,7 @@ func (g *SqsGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := sqs.New(config)
+	svc := sqs.NewFromConfig(config)
 
 	listQueuesInput := sqs.ListQueuesInput{}
 
@@ -46,7 +46,7 @@ func (g *SqsGenerator) InitResources() error {
 		listQueuesInput.QueueNamePrefix = aws.String(sqsPrefix)
 	}
 
-	queuesList, err := svc.ListQueuesRequest(&listQueuesInput).Send(context.Background())
+	queuesList, err := svc.ListQueues(context.TODO(), &listQueuesInput)
 
 	if err != nil {
 		return err
