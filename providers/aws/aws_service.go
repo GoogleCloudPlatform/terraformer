@@ -16,6 +16,7 @@ package aws
 
 import (
 	"context"
+	"github.com/aws/aws-sdk-go-v2/credentials/stscreds"
 	"os"
 	"regexp"
 
@@ -64,13 +65,17 @@ func (s *AWSService) generateConfig() (aws.Config, error) {
 }
 
 func (s *AWSService) buildBaseConfig() (aws.Config, error) {
+	var loadOptions []func(*config.LoadOptions) error
 	if s.GetArgs()["profile"].(string) != "" {
-		os.Setenv("AWS_PROFILE", s.GetArgs()["profile"].(string))
+		loadOptions = append(loadOptions, config.WithSharedConfigProfile(s.GetArgs()["profile"].(string)))
 	}
 	if s.GetArgs()["region"].(string) != "" {
-		return config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-west-2"))
+		os.Setenv("AWS_REGION", s.GetArgs()["region"].(string))
 	}
-	return config.LoadDefaultConfig(context.TODO())
+	loadOptions = append(loadOptions, config.WithAssumeRoleCredentialOptions(func(options *stscreds.AssumeRoleOptions) {
+		options.TokenProvider = stscreds.StdinTokenProvider
+	}))
+	return config.LoadDefaultConfig(context.TODO(), loadOptions...)
 }
 
 // for CF interpolation and IAM Policy variables

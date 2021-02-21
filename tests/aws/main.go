@@ -32,7 +32,7 @@ func main() {
 		"aws",
 		"--regions=ap-southeast-1",
 		"--resources=vpc,sg",
-		"--profile=personal",
+		"--profile=personal_diagrams",
 		"--compact",
 		"--path-pattern=" + pathPattern,
 	})

@@ -23,6 +23,7 @@ require (
 	github.com/apache/openwhisk-client-go v0.0.0-20210106144548-17d556327cd3
 	github.com/aws/aws-sdk-go-v2 v1.2.0
 	github.com/aws/aws-sdk-go-v2/config v1.1.1
+	github.com/aws/aws-sdk-go-v2/credentials v1.1.1
 	github.com/aws/aws-sdk-go-v2/service/accessanalyzer v1.1.1
 	github.com/aws/aws-sdk-go-v2/service/acm v1.1.1
 	github.com/aws/aws-sdk-go-v2/service/apigateway v1.1.1

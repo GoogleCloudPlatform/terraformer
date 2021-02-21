@@ -32,7 +32,7 @@ func (g *WafGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := waf.New(config)
+	svc := waf.NewFromConfig(config)
 
 	if err := g.loadWebACL(svc); err != nil {
 		return err
@@ -75,7 +75,7 @@ func (g *WafGenerator) InitResources() error {
 }
 
 func (g *WafGenerator) loadWebACL(svc *waf.Client) error {
-	output, err := svc.ListWebACLsRequest(&waf.ListWebACLsInput{}).Send(context.Background())
+	output, err := svc.ListWebACLs(context.TODO(), &waf.ListWebACLsInput{})
 	if err != nil {
 		return err
 	}
@@ -91,7 +91,7 @@ func (g *WafGenerator) loadWebACL(svc *waf.Client) error {
 }
 
 func (g *WafGenerator) loadByteMatchSet(svc *waf.Client) error {
-	output, err := svc.ListByteMatchSetsRequest(&waf.ListByteMatchSetsInput{}).Send(context.Background())
+	output, err := svc.ListByteMatchSets(context.TODO(), &waf.ListByteMatchSetsInput{})
 	if err != nil {
 		return err
 	}
@@ -107,7 +107,7 @@ func (g *WafGenerator) loadByteMatchSet(svc *waf.Client) error {
 }
 
 func (g *WafGenerator) loadGeoMatchSet(svc *waf.Client) error {
-	output, err := svc.ListGeoMatchSetsRequest(&waf.ListGeoMatchSetsInput{}).Send(context.Background())
+	output, err := svc.ListGeoMatchSets(context.TODO(), &waf.ListGeoMatchSetsInput{})
 	if err != nil {
 		return err
 	}
@@ -123,7 +123,7 @@ func (g *WafGenerator) loadGeoMatchSet(svc *waf.Client) error {
 }
 
 func (g *WafGenerator) loadIPSet(svc *waf.Client) error {
-	output, err := svc.ListIPSetsRequest(&waf.ListIPSetsInput{}).Send(context.Background())
+	output, err := svc.ListIPSets(context.TODO(), &waf.ListIPSetsInput{})
 	if err != nil {
 		return err
 	}
@@ -139,7 +139,7 @@ func (g *WafGenerator) loadIPSet(svc *waf.Client) error {
 }
 
 func (g *WafGenerator) loadRateBasedRules(svc *waf.Client) error {
-	output, err := svc.ListRateBasedRulesRequest(&waf.ListRateBasedRulesInput{}).Send(context.Background())
+	output, err := svc.ListRateBasedRules(context.TODO(), &waf.ListRateBasedRulesInput{})
 	if err != nil {
 		return err
 	}
@@ -155,7 +155,7 @@ func (g *WafGenerator) loadRateBasedRules(svc *waf.Client) error {
 }
 
 func (g *WafGenerator) loadRegexMatchSets(svc *waf.Client) error {
-	output, err := svc.ListRegexMatchSetsRequest(&waf.ListRegexMatchSetsInput{}).Send(context.Background())
+	output, err := svc.ListRegexMatchSets(context.TODO(), &waf.ListRegexMatchSetsInput{})
 	if err != nil {
 		return err
 	}
@@ -171,7 +171,7 @@ func (g *WafGenerator) loadRegexMatchSets(svc *waf.Client) error {
 }
 
 func (g *WafGenerator) loadRegexPatternSets(svc *waf.Client) error {
-	output, err := svc.ListRegexPatternSetsRequest(&waf.ListRegexPatternSetsInput{}).Send(context.Background())
+	output, err := svc.ListRegexPatternSets(context.TODO(), &waf.ListRegexPatternSetsInput{})
 	if err != nil {
 		return err
 	}
@@ -187,7 +187,7 @@ func (g *WafGenerator) loadRegexPatternSets(svc *waf.Client) error {
 }
 
 func (g *WafGenerator) loadWafRules(svc *waf.Client) error {
-	output, err := svc.ListRulesRequest(&waf.ListRulesInput{}).Send(context.Background())
+	output, err := svc.ListRules(context.TODO(), &waf.ListRulesInput{})
 	if err != nil {
 		return err
 	}
@@ -203,7 +203,7 @@ func (g *WafGenerator) loadWafRules(svc *waf.Client) error {
 }
 
 func (g *WafGenerator) loadWafRuleGroups(svc *waf.Client) error {
-	output, err := svc.ListRuleGroupsRequest(&waf.ListRuleGroupsInput{}).Send(context.Background())
+	output, err := svc.ListRuleGroups(context.TODO(), &waf.ListRuleGroupsInput{})
 	if err != nil {
 		return err
 	}
@@ -219,7 +219,7 @@ func (g *WafGenerator) loadWafRuleGroups(svc *waf.Client) error {
 }
 
 func (g *WafGenerator) loadSizeConstraintSets(svc *waf.Client) error {
-	output, err := svc.ListSizeConstraintSetsRequest(&waf.ListSizeConstraintSetsInput{}).Send(context.Background())
+	output, err := svc.ListSizeConstraintSets(context.TODO(), &waf.ListSizeConstraintSetsInput{})
 	if err != nil {
 		return err
 	}
@@ -235,7 +235,7 @@ func (g *WafGenerator) loadSizeConstraintSets(svc *waf.Client) error {
 }
 
 func (g *WafGenerator) loadSQLInjectionMatchSets(svc *waf.Client) error {
-	output, err := svc.ListSqlInjectionMatchSetsRequest(&waf.ListSqlInjectionMatchSetsInput{}).Send(context.Background())
+	output, err := svc.ListSqlInjectionMatchSets(context.TODO(), &waf.ListSqlInjectionMatchSetsInput{})
 	if err != nil {
 		return err
 	}
@@ -251,7 +251,7 @@ func (g *WafGenerator) loadSQLInjectionMatchSets(svc *waf.Client) error {
 }
 
 func (g *WafGenerator) loadXSSMatchSet(svc *waf.Client) error {
-	output, err := svc.ListXssMatchSetsRequest(&waf.ListXssMatchSetsInput{}).Send(context.Background())
+	output, err := svc.ListXssMatchSets(context.TODO(), &waf.ListXssMatchSetsInput{})
 	if err != nil {
 		return err
 	}
