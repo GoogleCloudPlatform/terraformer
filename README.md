@@ -53,6 +53,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
+- [Stargazers over time](#stargazers-over-time)
 
 ## Capabilities
 
@@ -1812,3 +1813,7 @@ Terraforming lacks full coverage for resources - as an example you can see that 
 
 * terraforming - https://github.com/dtan4/terraforming/blob/master/lib/terraforming/template/tf/s3.erb
 * official S3 support - https://www.terraform.io/docs/providers/aws/r/s3_bucket.html
+
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/GoogleCloudPlatform/terraformer.svg)](https://starchart.cc/GoogleCloudPlatform/terraformer)
