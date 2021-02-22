@@ -88,10 +88,24 @@ func (g *MonitorGenerator) InitResources() error {
 		return nil
 	}
 
-	monitors, _, err := datadogClientV1.MonitorsApi.ListMonitors(authV1).Execute()
-	if err != nil {
-		return err
+	var monitors []datadogV1.Monitor
+	pageSize := int32(1000)
+	pageNumber := int64(0)
+	for {
+		resp, _, err := datadogClientV1.MonitorsApi.ListMonitors(authV1).PageSize(pageSize).Page(pageNumber).Execute()
+		if err != nil {
+			return err
+		}
+
+		if len(resp) == 0 || int32(len(resp)) < pageSize {
+			monitors = append(monitors, resp...)
+			break
+		}
+
+		monitors = append(monitors, resp...)
+		pageNumber++
 	}
+
 	g.Resources = g.createResources(monitors)
 	return nil
 }
