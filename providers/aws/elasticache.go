@@ -16,7 +16,6 @@ package aws
 
 import (
 	"context"
-	"github.com/IBM/ibm-cos-sdk-go/aws"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -130,7 +129,7 @@ func (g *ElastiCacheGenerator) loadReplicationGroups(svc *elasticache.Client) er
 			return err
 		}
 		for _, replicationGroup := range page.ReplicationGroups {
-			resourceName := aws.StringValue(replicationGroup.ReplicationGroupId)
+			resourceName := StringValue(replicationGroup.ReplicationGroupId)
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,

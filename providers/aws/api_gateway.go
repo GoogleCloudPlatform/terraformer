@@ -16,7 +16,6 @@ package aws
 
 import (
 	"context"
-	"github.com/IBM/ibm-cos-sdk-go/aws"
 	"log"
 	"strings"
 
@@ -374,7 +373,7 @@ func (g *APIGatewayGenerator) loadAuthorizers(svc *apigateway.Client, restAPIID 
 				"aws",
 				map[string]string{
 					"rest_api_id": *restAPIID,
-					"name":        aws.StringValue(authorizer.Name),
+					"name":        StringValue(authorizer.Name),
 				},
 				apiGatewayAllowEmptyValues,
 				map[string]interface{}{},

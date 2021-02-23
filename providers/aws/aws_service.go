@@ -34,14 +34,20 @@ type AWSService struct { //nolint
 
 var awsVariable = regexp.MustCompile(`(\${[0-9A-Za-z:]+})`)
 
+var configCache *aws.Config
+
 func (s *AWSService) generateConfig() (aws.Config, error) {
+	if configCache != nil {
+		return *configCache, nil
+	}
+
 	config, e := s.buildBaseConfig()
 
 	if e != nil {
 		return config, e
 	}
 	if s.Verbose {
-		config.ClientLogMode = aws.LogRequestWithBody & aws.LogResponseWithBody & aws.LogRetries
+		config.ClientLogMode = aws.LogRequestWithBody & aws.LogResponseWithBody
 	}
 
 	creds, e := config.Credentials.Retrieve(context.TODO())
@@ -60,7 +66,7 @@ func (s *AWSService) generateConfig() (aws.Config, error) {
 			os.Setenv("AWS_SESSION_TOKEN", creds.SessionToken)
 		}
 	}
-
+	configCache = &config
 	return config, nil
 }
 

@@ -17,10 +17,8 @@ package aws
 import (
 	"context"
 	"fmt"
-	"github.com/IBM/ibm-cos-sdk-go/aws/awserr"
-	"log"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -55,16 +53,12 @@ func (g *S3Generator) createResources(config aws.Config, buckets *s3.ListBuckets
 				"acl":           "private",
 			}
 			// try get policy
-			policy, err := svc.GetBucketPolicy(context.TODO(), &s3.GetBucketPolicyInput{
+			var policy *s3.GetBucketPolicyOutput
+			policy, err = svc.GetBucketPolicy(context.TODO(), &s3.GetBucketPolicyInput{
 				Bucket: bucket.Name,
 			})
 
-			if err != nil {
-				if awsErr, ok := err.(awserr.Error); ok && awsErr.Code() != "NoSuchBucketPolicy" {
-					log.Println(err)
-					continue
-				}
-			} else {
+			if err == nil && policy.Policy != nil {
 				attributes["policy"] = *policy.Policy
 			}
 			resources = append(resources, terraformutils.NewResource(
@@ -89,7 +83,7 @@ func (g *S3Generator) InitResources() error {
 	}
 	svc := s3.NewFromConfig(config)
 
-	buckets, err := svc.ListBuckets(context.TODO(), &s3.ListBucketsInput{})
+	buckets, err := svc.ListBuckets(context.TODO(), nil)
 	if err != nil {
 		return err
 	}

@@ -17,7 +17,6 @@ package aws
 import (
 	"context"
 	"fmt"
-	"github.com/IBM/ibm-cos-sdk-go/aws"
 	"strconv"
 	"strings"
 
@@ -73,7 +72,7 @@ func (g *EcsGenerator) InitResources() error {
 						Services: []string{
 							serviceName,
 						},
-						Cluster: aws.String(clusterArn),
+						Cluster: &clusterArn,
 					})
 					if err != nil {
 						fmt.Println(err.Error())
@@ -87,7 +86,7 @@ func (g *EcsGenerator) InitResources() error {
 						"aws_ecs_service",
 						"aws",
 						map[string]string{
-							"task_definition": aws.StringValue(serviceDetails.TaskDefinition),
+							"task_definition": StringValue(serviceDetails.TaskDefinition),
 							"cluster":         clusterName,
 							"name":            serviceName,
 							"id":              serviceArn,
