@@ -16,6 +16,7 @@ package datadog
 
 import (
 	"fmt"
+
 	datadogCommunity "github.com/zorkian/go-datadog-api"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
