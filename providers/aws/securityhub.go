@@ -85,15 +85,18 @@ func (g *SecurityhubGenerator) addMembers(svc *securityhub.Client, accountNumber
 		}
 		for _, member := range page.Members {
 			id := *member.AccountId
+			attributes := map[string]string{
+				"account_id": id,
+			}
+			if member.Email != nil {
+				attributes["email"] = *member.Email
+			}
 			g.Resources = append(g.Resources, terraformutils.NewResource(
 				id,
 				"securityhub_member_"+id,
 				"aws_securityhub_member",
 				"aws",
-				map[string]string{
-					"account_id": id,
-					"email":      *member.Email,
-				},
+				attributes,
 				securityhubAllowEmptyValues,
 				map[string]interface{}{
 					"depends_on": []string{"${aws_securityhub_account.tfer--" + accountNumber + "}"},
