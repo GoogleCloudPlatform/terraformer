@@ -17,6 +17,7 @@ package gcp
 import (
 	"context"
 	"errors"
+	"log"
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -49,10 +50,12 @@ func GetRegions(project string) []string {
 func getRegion(project, regionName string) *compute.Region {
 	computeService, err := compute.NewService(context.Background())
 	if err != nil {
+		log.Println(err)
 		return &compute.Region{}
 	}
 	region, err := computeService.Regions.Get(project, regionName).Do()
 	if err != nil {
+		log.Println(err)
 		return &compute.Region{}
 	}
 	return region
