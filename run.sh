@@ -1,6 +1,6 @@
 #!/bin/bash
 
-GLOBAL_GCP_SERVICES=",dns,gcs,globalAddresses,globalForwardingRules,iam,gke,backendServices,bigQuery,disks,firewall,healthChecks,httpHealthChecks,instanceTemplates,networks,project,routes,targetHttpsProxies,urlMaps,cloudsql,pubsub,"
+GLOBAL_GCP_SERVICES=",dns,gcs,globalAddresses,globalForwardingRules,iam,gke,backendServices,backendBuckets,bigQuery,disks,firewall,healthChecks,httpHealthChecks,instanceTemplates,networks,project,routes,targetHttpsProxies,urlMaps,cloudsql,pubsub,"
 GLOBAL_AWS_SERVICES=",sts,iam,cloudfront,accessanalyzer,"
 
 case $CSP in
