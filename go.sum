@@ -415,6 +415,8 @@ github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7
 github.com/evanphx/json-patch v4.9.0+incompatible/go.mod h1:50XU6AFN0ol/bzJsmQLiYLvXMP4fmwYFNcr97nuDLSk=
 github.com/ewilde/go-kibana v0.0.0-20210218122029-f32b783f7d78 h1:9wXLiBtr5ltx+blo5kRRuu+xeM/wfbhvndS3pFe3/lY=
 github.com/ewilde/go-kibana v0.0.0-20210218122029-f32b783f7d78/go.mod h1:K+8PTkSI50Vkys20TW58s9VfmnfMGk5jNlbJ67nsJP4=
+github.com/ewilde/go-kibana v0.0.0-20210308173242-50256c0d763b h1:k4To6EaqgX4SuuE4up3aGOg9M2ZBPKYiSf2VnEQ14Wo=
+github.com/ewilde/go-kibana v0.0.0-20210308173242-50256c0d763b/go.mod h1:QqYl0aCvJWhxdEEk/fleOzj9syUnx63B7DSaT4MEDrU=
 github.com/fastly/go-fastly v1.18.0 h1:fyVq/142VTFz5ZkNE5d57K+NkTmtwxt2K2Mh5sV5scg=
 github.com/fastly/go-fastly v1.18.0/go.mod h1:fwYSSnZ6zEClwRS65T0f57Yh83Tc4gL12GgttQwJZfA=
 github.com/fatih/color v1.7.0 h1:DkWD4oS2D8LGGgTQ6IvwJJXSL5Vp2ffcQg58nFV38Ys=
