@@ -32,7 +32,11 @@ type GrafanaProvider struct { //nolint
 }
 
 func (p GrafanaProvider) GetResourceConnections() map[string]map[string][]string {
-	return map[string]map[string][]string{}
+	return map[string]map[string][]string{
+		"grafana_dashboard": {
+			"folder": []string{"grafana_folder", "id"},
+		},
+	}
 }
 
 func (p GrafanaProvider) GetProviderData(arg ...string) map[string]interface{} {

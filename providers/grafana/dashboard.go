@@ -28,12 +28,13 @@ func (g *DashboardGenerator) InitResources() error {
 		if err != nil {
 			return errors.Wrapf(err, "unable to read dashboard %s", dashboard.Title)
 		}
-		configJson, err := json.Marshal(dash.Model)
+		configJson, err := json.MarshalIndent(dash.Model, "", "  ")
 		if err != nil {
 			return errors.Wrapf(err, "unable to marshal configuration for dashboard %s", dashboard.Title)
 		}
 
-		g.Resources = append(g.Resources, terraformutils.NewResource(
+		filename := fmt.Sprintf("dashboard-%s.json", dash.Meta.Slug)
+		resource := terraformutils.NewResource(
 			dash.Meta.Slug,
 			dashboard.Title,
 			"grafana_dashboard",
@@ -41,12 +42,14 @@ func (g *DashboardGenerator) InitResources() error {
 			map[string]string{},
 			[]string{},
 			map[string]interface{}{
-				"config_json":  string(configJson),
-				"folder":       dashboard.FolderID,
-				"slug":         dash.Meta.Slug,
-				"dashboard_id": fmt.Sprint(dashboard.ID),
+				"config_json": fmt.Sprintf("file(\"data/%s\")", filename),
+				"folder":      dashboard.FolderID,
 			},
-		))
+		)
+		resource.DataFiles = map[string][]byte{
+			filename: configJson,
+		}
+		g.Resources = append(g.Resources, resource)
 	}
 
 	return nil
