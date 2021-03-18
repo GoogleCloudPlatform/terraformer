@@ -110,8 +110,8 @@ github.com/IBM/ibm-cos-sdk-go v1.5.0 h1:YCmAgsdtp/irQep5g+62OvjLNj35tMXLqTC5jQ+Y
 github.com/IBM/ibm-cos-sdk-go v1.5.0/go.mod h1:4mqv/ejW1PKW+Ij6ytU+W8j1UZeLmSEsR5K+flBaWMY=
 github.com/IBM/keyprotect-go-client v0.6.0 h1:jZExoYSaoQ5TrfEzPOmBLc1vJ0VWA0RfKC+Bx39IeGo=
 github.com/IBM/keyprotect-go-client v0.6.0/go.mod h1:SVr2ylV/fhSQPDiUjWirN9fsyWFCNNbt8GIT8hPJVjE=
-github.com/IBM/networking-go-sdk v0.12.1 h1:GmzrRjvAyqKMfUPM8Y/R5dce0x5AXTqmseVZ3n7eZks=
-github.com/IBM/networking-go-sdk v0.12.1/go.mod h1:lzkGBnw5glMB7Nxawfgu19MH4Tjy3KRQ2SYMYl2ck7o=
+github.com/IBM/networking-go-sdk v0.13.0 h1:MKDL0c5Gnc6BT10lCS1S1pZVz71UmX4mJC4eXQqWwHE=
+github.com/IBM/networking-go-sdk v0.13.0/go.mod h1:3/QnBTwCXAWoz98dw3z37UUfpkIwAwi8qDGntNt6F6A=
 github.com/IBM/vpc-go-sdk v0.4.1 h1:aBjdeVW3dDry+x1B2je06Ga47FgRn9QstTjMr0RxcJY=
 github.com/IBM/vpc-go-sdk v0.4.1/go.mod h1:QlPyV8sf1K4Si7CgEyAbmDonabnhJ7tC4owcjrTz3Ys=
 github.com/NYTimes/gziphandler v0.0.0-20170623195520-56545f4a5d46/go.mod h1:3wb06e3pkSAbeQ52E9H9iFoQsEEwGN64994WTCIhntQ=
