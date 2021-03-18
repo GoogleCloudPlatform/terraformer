@@ -51,6 +51,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [Commercetools](#use-with-commercetools)
         * [Mikrotik](#use-with-mikrotik)
         * [GmailFilter](#use-with-gmailfilter)
+        * [Kibana](#use-with-kibana)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
@@ -1732,8 +1733,6 @@ List of supported mikrotik resources:
 
 ### Use with GmailFilter
 
-Support [Using Service Accounts](https://github.com/yamamoto-febc/terraform-provider-gmailfilter/blob/master/README.md#using-a-service-accountg-suite-users-only) or [Using Application Default Credentials](https://github.com/yamamoto-febc/terraform-provider-gmailfilter/blob/master/README.md#using-an-application-default-credential).
-
 Example:
 
 ```
@@ -1757,6 +1756,30 @@ List of supported GmailFilter resources:
     * `gmailfilter_label`
 *   `filter`
     * `gmailfilter_filter`
+
+### Use with Kibana
+
+Check the documentation of [go-kibana](https://github.com/ewilde/go-kibana) for which env vars to set
+
+Example:
+
+```
+export KIBANA_USERNAME=user
+export KIBANA_PASSWORD=password
+export KIBANA_TYPE=KibanaVanilla
+export ELK_VERSION=7.2.1
+
+./terraformer import kibana -r=search,visualization,dashboard
+```
+
+List of supported Kibana resources:
+
+*   `search`
+    * `kibana_search`
+*   `visualization`
+    * `kibana_visualization`
+*   `dashboard`
+    * `kibana_dashboard`
 
 ## Contributing
 
