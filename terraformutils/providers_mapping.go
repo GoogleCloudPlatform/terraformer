@@ -83,13 +83,28 @@ func (p *ProvidersMapping) ShuffleResources() []*Resource {
 }
 
 func (p *ProvidersMapping) ProcessResources() {
-	for provider := range p.Providers {
-		resources := provider.GetService().GetResources()
-		log.Printf("num of resources for service %s: %d", p.providerToService[provider], len(provider.GetService().GetResources()))
-		for i := range resources {
-			resource := resources[i]
-			p.Resources[&resource] = true
-			p.resourceToProvider[&resource] = provider
+	initialResources := p.resourceToProvider
+	if len(initialResources) > 0 {
+		p.Resources = map[*Resource]bool{}
+		p.resourceToProvider = map[*Resource]ProviderGenerator{}
+		for provider := range p.Providers {
+			resources := provider.GetService().GetResources()
+			log.Printf("Filtered number of resources for service %s: %d", p.providerToService[provider], len(provider.GetService().GetResources()))
+			for i := range resources {
+				resource := resources[i]
+				p.Resources[&resource] = true
+				p.resourceToProvider[&resource] = provider
+			}
+		}
+	} else {
+		for provider := range p.Providers {
+			resources := provider.GetService().GetResources()
+			log.Printf("Number of resources for service %s: %d", p.providerToService[provider], len(provider.GetService().GetResources()))
+			for i := range resources {
+				resource := resources[i]
+				p.Resources[&resource] = true
+				p.resourceToProvider[&resource] = provider
+			}
 		}
 	}
 }
@@ -161,5 +176,6 @@ func (p *ProvidersMapping) CleanupProviders() {
 		if err != nil {
 			log.Printf("failed run PostConvertHook because of error %s", err)
 		}
+		p.ProcessResources()
 	}
 }
