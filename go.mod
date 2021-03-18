@@ -9,13 +9,13 @@ require (
 	github.com/Azure/azure-sdk-for-go v42.3.0+incompatible
 	github.com/Azure/azure-storage-blob-go v0.10.0
 	github.com/Azure/go-autorest/autorest v0.11.12
-	github.com/DataDog/datadog-api-client-go v1.0.0-beta.14
+	github.com/DataDog/datadog-api-client-go v1.0.0-beta.17
 	github.com/IBM-Cloud/bluemix-go v0.0.0-20210203095940-db28d5e07b55
 	github.com/IBM/go-sdk-core/v3 v3.3.1
 	github.com/IBM/go-sdk-core/v4 v4.9.0
 	github.com/IBM/ibm-cos-sdk-go v1.5.0
 	github.com/IBM/keyprotect-go-client v0.6.0
-	github.com/IBM/networking-go-sdk v0.12.1
+	github.com/IBM/networking-go-sdk v0.13.0
 	github.com/IBM/vpc-go-sdk v0.4.1
 	github.com/OctopusDeploy/go-octopusdeploy v1.6.0
 	github.com/aliyun/alibaba-cloud-sdk-go v1.60.295
