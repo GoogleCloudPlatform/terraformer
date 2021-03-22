@@ -1733,6 +1733,8 @@ List of supported mikrotik resources:
 
 ### Use with GmailFilter
 
+Support [Using Service Accounts](https://github.com/yamamoto-febc/terraform-provider-gmailfilter/blob/master/README.md#using-a-service-accountg-suite-users-only) or [Using Application Default Credentials](https://github.com/yamamoto-febc/terraform-provider-gmailfilter/blob/master/README.md#using-an-application-default-credential).
+
 Example:
 
 ```
