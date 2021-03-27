@@ -16,6 +16,7 @@ package aws
 
 import (
 	"context"
+	"log"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/kms"
@@ -46,19 +47,30 @@ func (g *KmsGenerator) addKeys(client *kms.Client) error {
 	p := kms.NewListKeysPaginator(client.ListKeysRequest(&kms.ListKeysInput{}))
 	for p.Next(context.Background()) {
 		for _, key := range p.CurrentPage().Keys {
-			resource := terraformutils.NewResource(
-				*key.KeyId,
-				*key.KeyId,
-				"aws_kms_key",
-				"aws",
-				map[string]string{
-					"key_id": *key.KeyId,
-				},
-				kmsAllowEmptyValues,
-				map[string]interface{}{},
-			)
-			resource.SlowQueryRequired = true
-			g.Resources = append(g.Resources, resource)
+			keyDescription, err := client.DescribeKeyRequest(&kms.DescribeKeyInput{
+				KeyId: key.KeyId,
+			}).Send(context.TODO())
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+			if keyDescription.KeyMetadata.KeyManager == kms.KeyManagerTypeCustomer {
+				resource := terraformutils.NewResource(
+					*key.KeyId,
+					*key.KeyId,
+					"aws_kms_key",
+					"aws",
+					map[string]string{
+						"key_id": *key.KeyId,
+					},
+					kmsAllowEmptyValues,
+					map[string]interface{}{},
+				)
+				resource.SlowQueryRequired = true
+				g.Resources = append(g.Resources, resource)
+
+				g.addGrants(key.KeyId, client)
+			}
 		}
 	}
 	return p.Err()
@@ -68,10 +80,43 @@ func (g *KmsGenerator) addAliases(client *kms.Client) error {
 	p := kms.NewListAliasesPaginator(client.ListAliasesRequest(&kms.ListAliasesInput{}))
 	for p.Next(context.Background()) {
 		for _, alias := range p.CurrentPage().Aliases {
+			if alias.TargetKeyId == nil {
+				continue
+			}
+			keyDescription, err := client.DescribeKeyRequest(&kms.DescribeKeyInput{
+				KeyId: alias.TargetKeyId,
+			}).Send(context.TODO())
+			if err != nil {
+				log.Println(err)
+				continue
+			}
+			if keyDescription.KeyMetadata.KeyManager == kms.KeyManagerTypeCustomer {
+				resource := terraformutils.NewSimpleResource(
+					*alias.AliasName,
+					*alias.AliasName,
+					"aws_kms_alias",
+					"aws",
+					kmsAllowEmptyValues,
+				)
+				resource.SlowQueryRequired = true
+				g.Resources = append(g.Resources, resource)
+			}
+		}
+	}
+	return p.Err()
+}
+
+func (g *KmsGenerator) addGrants(keyId *string, client *kms.Client) {
+	p := kms.NewListGrantsPaginator(client.ListGrantsRequest(&kms.ListGrantsInput{
+		KeyId: keyId,
+	}))
+	for p.Next(context.Background()) {
+		for _, grant := range p.CurrentPage().Grants {
+			grantId := *grant.KeyId + ":" + *grant.GrantId
 			resource := terraformutils.NewSimpleResource(
-				*alias.AliasName,
-				*alias.AliasName,
-				"aws_kms_alias",
+				grantId,
+				grantId,
+				"aws_kms_grant",
 				"aws",
 				kmsAllowEmptyValues,
 			)
@@ -79,5 +124,7 @@ func (g *KmsGenerator) addAliases(client *kms.Client) error {
 			g.Resources = append(g.Resources, resource)
 		}
 	}
-	return p.Err()
+	if p.Err() != nil {
+		log.Println(p.Err())
+	}
 }
