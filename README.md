@@ -236,7 +236,7 @@ If you want to use a package manager:
 Links to download Terraform Providers:
 * Major Cloud
     * Google Cloud provider >2.11.0 - [here](https://releases.hashicorp.com/terraform-provider-google/)
-    * AWS provider >2.25.0 - [here](https://releases.hashicorp.com/terraform-provider-aws/)
+    * AWS provider >3.34.0 - [here](https://releases.hashicorp.com/terraform-provider-aws/)
     * Azure provider >1.35.0 - [here](https://releases.hashicorp.com/terraform-provider-azurerm/)
     * Alicloud provider >1.57.1 - [here](https://releases.hashicorp.com/terraform-provider-alicloud/)
 * Cloud
@@ -609,6 +609,7 @@ In that case terraformer will not know with which region resources are associate
 *   `kms`
     * `aws_kms_key`
     * `aws_kms_alias`
+    * `aws_kms_grant`
 *   `lambda`
     * `aws_lambda_event_source_mapping`
     * `aws_lambda_function`

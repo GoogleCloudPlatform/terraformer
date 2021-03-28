@@ -18,12 +18,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/pathorcontents"
 	"os"
 	"strings"
 	"time"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/hashicorp/terraform/helper/pathorcontents"
 	"golang.org/x/oauth2"
 	googleoauth "golang.org/x/oauth2/google"
 	"golang.org/x/oauth2/jwt"
