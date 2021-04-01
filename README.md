@@ -265,7 +265,7 @@ Links to download Terraform Providers:
     * Logz.io provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
     * Commercetools provider >= 0.21.0 - [here](https://github.com/labd/terraform-provider-commercetools)
     * Mikrotik provider >= 0.2.2 - [here](https://github.com/ddelnano/terraform-provider-mikrotik)
-    * Xen Orchestra provider >= 0.XX.XX - [here](https://github.com/ddelnano/terraform-provider-xenorchestra)
+    * Xen Orchestra provider >= 0.18.0 - [here](https://github.com/ddelnano/terraform-provider-xenorchestra)
     * GmailFilter provider >= 1.0.1 - [here](https://github.com/yamamoto-febc/terraform-provider-gmailfilter)
 
 Information on provider plugins:
@@ -1714,7 +1714,7 @@ List of supported [commercetools](https://commercetools.com/de/) resources:
 
 ### Use with [Mikrotik](https://wiki.mikrotik.com/wiki/Manual:TOC)
 
-This provider uses the [terraform-provider-mikrotik](https://github.com/ddelnano/terraform-provider-mikrotik). The terraformer provider was build by [Dom Del Nano](https://github.com/ddelnano).
+This provider uses the [terraform-provider-mikrotik](https://github.com/ddelnano/terraform-provider-mikrotik). The terraformer provider was built by [Dom Del Nano](https://github.com/ddelnano).
 
 Example:
 
@@ -1730,6 +1730,23 @@ MIKROTIK_HOST=router-hostname:8728 MIKROTIK_USER=username MIKROTIK_PASSWORD=pass
 List of supported mikrotik resources:
 
 * `mikrotik_dhcp_lease`
+
+### Use with [Xen Orchestra](https://xen-orchestra.com/)
+
+This provider uses the [terraform-provider-xenorchestra](https://github.com/ddelnano/terraform-provider-xenorchestra). The terraformer provider was built by [Dom Del Nano](https://github.com/ddelnano) on behalf of [Vates SAS](https://vates.fr/) who is sponsoring Dom to work on the project.
+
+Example:
+
+```
+## Warning! You should not expose your xenorchestra creds through your bash history. Export them to your shell in a safe way when doing this for real!
+
+XOA_URL=ws://your-xenorchestra-domain XOA_USER=username XOA_PASSWORD=password terraformer import xenorchestra -r=acl
+```
+
+List of supported xenorchestra resources:
+
+* `xenorchestra_acl`
+* `xenorchestra_resource_set`
 
 
 ### Use with GmailFilter
