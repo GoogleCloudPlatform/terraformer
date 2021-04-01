@@ -69,7 +69,8 @@ func (XenorchestraProvider) GetResourceConnections() map[string]map[string][]str
 
 func (p *XenorchestraProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"acl": &AclGenerator{},
+		"acl":          &AclGenerator{},
+		"resource_set": &ResourceSetGenerator{},
 	}
 }
 
