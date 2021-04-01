@@ -16,34 +16,19 @@ package mikrotik
 
 import (
 	"errors"
-	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/ddelnano/terraform-provider-mikrotik/client"
 )
 
 type MikrotikProvider struct { //nolint
 	terraformutils.Provider
-	host     string
-	user     string
-	password string
+	client.Mikrotik
 }
 
 func (p *MikrotikProvider) Init(args []string) error {
-	if os.Getenv("MIKROTIK_HOST") == "" {
-		return errors.New("set MIKROTIK_HOST env var")
-	}
-	p.host = os.Getenv("MIKROTIK_HOST")
-
-	if os.Getenv("MIKROTIK_USER") == "" {
-		return errors.New("set MIKROTIK_USER env var")
-	}
-	p.user = os.Getenv("MIKROTIK_USER")
-
-	if os.Getenv("MIKROTIK_PASSWORD") == "" {
-		return errors.New("set MIKROTIK_PASSWORD env var")
-	}
-	p.password = os.Getenv("MIKROTIK_PASSWORD")
-
+	// The mikrotik provider gets its credentials through environment variables
+	// and therefore nothing needs to be done here
 	return nil
 }
 
@@ -55,8 +40,8 @@ func (p *MikrotikProvider) GetProviderData(arg ...string) map[string]interface{}
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"mikrotik": map[string]interface{}{
-				"host": p.host,
-				"user": p.user,
+				"host": p.Host,
+				"user": p.Username,
 			},
 		},
 	}
@@ -82,9 +67,12 @@ func (p *MikrotikProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"host":     p.host,
-		"user":     p.user,
-		"password": p.password,
+		"host":           p.Host,
+		"user":           p.Username,
+		"password":       p.Password,
+		"tls":            p.TLS,
+		"ca_certificate": p.CA,
+		"insecure":       p.Insecure,
 	})
 	return nil
 }
