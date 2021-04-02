@@ -25,7 +25,7 @@ var (
 	// DashboardAllowEmptyValues ...
 	DashboardAllowEmptyValues  = []string{"tags."}
 	DashboardReferenceIDValues = map[string]string{
-		"slo_id": "datadog_service_level_objective",
+		"slo_id":   "datadog_service_level_objective",
 		"alert_id": "datadog_monitor",
 	}
 )
