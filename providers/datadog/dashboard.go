@@ -16,8 +16,6 @@ package datadog
 
 import (
 	"context"
-	"fmt"
-
 	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -25,7 +23,11 @@ import (
 
 var (
 	// DashboardAllowEmptyValues ...
-	DashboardAllowEmptyValues = []string{"tags."}
+	DashboardAllowEmptyValues  = []string{"tags."}
+	DashboardReferenceIDValues = map[string]string{
+		"slo_id": "datadog_service_level_objective",
+		"alert_id": "datadog_monitor",
+	}
 )
 
 // DashboardGenerator ...
@@ -37,7 +39,9 @@ func (g *DashboardGenerator) createResources(dashboards []datadogV1.DashboardSum
 	resources := []terraformutils.Resource{}
 	for _, dashboard := range dashboards {
 		resourceName := dashboard.GetId()
-		resources = append(resources, g.createResource(resourceName))
+		resource := g.createResource(resourceName)
+		resource.ReferenceIDValues = DashboardReferenceIDValues
+		resources = append(resources, resource)
 	}
 
 	return resources
@@ -46,7 +50,7 @@ func (g *DashboardGenerator) createResources(dashboards []datadogV1.DashboardSum
 func (g *DashboardGenerator) createResource(dashboardID string) terraformutils.Resource {
 	return terraformutils.NewSimpleResource(
 		dashboardID,
-		fmt.Sprintf("dashboard_%s", dashboardID),
+		dashboardID,
 		"datadog_dashboard",
 		"datadog",
 		DashboardAllowEmptyValues,

@@ -16,7 +16,6 @@ package datadog
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -51,7 +50,7 @@ func (g *MonitorGenerator) createResources(monitors []datadogV1.Monitor) []terra
 func (g *MonitorGenerator) createResource(monitorID string) terraformutils.Resource {
 	return terraformutils.NewSimpleResource(
 		monitorID,
-		fmt.Sprintf("monitor_%s", monitorID),
+		monitorID,
 		"datadog_monitor",
 		"datadog",
 		MonitorAllowEmptyValues,

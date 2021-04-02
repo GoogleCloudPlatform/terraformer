@@ -16,7 +16,6 @@ package datadog
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
@@ -47,7 +46,7 @@ func (g *ServiceLevelObjectiveGenerator) createResources(sloList []datadogV1.Ser
 func (g *ServiceLevelObjectiveGenerator) createResource(sloID string) terraformutils.Resource {
 	return terraformutils.NewSimpleResource(
 		sloID,
-		fmt.Sprintf("service_level_objective_%s", sloID),
+		sloID,
 		"datadog_service_level_objective",
 		"datadog",
 		ServiceLevelObjectiveAllowEmptyValues,

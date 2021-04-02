@@ -35,25 +35,26 @@ import (
 )
 
 type ImportOptions struct {
-	Resources     []string
-	Excludes      []string
-	PathPattern   string
-	PathOutput    string
-	State         string
-	Bucket        string
-	Profile       string
-	Verbose       bool
-	Zone          string
-	Regions       []string
-	Projects      []string
-	ResourceGroup string
-	Connect       bool
-	Compact       bool
-	Filter        []string
-	Plan          bool `json:"-"`
-	Output        string
-	RetryCount    int
-	RetrySleepMs  int
+	Resources         []string
+	Excludes          []string
+	PathPattern       string
+	PathOutput        string
+	State             string
+	Bucket            string
+	Profile           string
+	Verbose           bool
+	Zone              string
+	Regions           []string
+	Projects          []string
+	ResourceGroup     string
+	Connect           bool
+	Compact           bool
+	Filter            []string
+	Plan              bool `json:"-"`
+	Output            string
+	RetryCount        int
+	RetrySleepMs      int
+	ShouldReferenceID bool
 }
 
 const DefaultPathPattern = "{output}/{provider}/{service}/"
@@ -206,6 +207,7 @@ func initServiceResources(service string, provider terraformutils.ProviderGenera
 		return err
 	}
 
+	provider.GetService().PopulateReferenceIDValues(options.ShouldReferenceID)
 	provider.GetService().PopulateIgnoreKeys(providerWrapper)
 	provider.GetService().InitialCleanup()
 	log.Println(provider.GetName() + " done importing " + service)
@@ -401,4 +403,5 @@ func baseProviderFlags(flag *pflag.FlagSet, options *ImportOptions, sampleRes, s
 	flag.StringVarP(&options.Output, "output", "O", "hcl", "output format hcl or json")
 	flag.IntVarP(&options.RetryCount, "retry-number", "n", 5, "number of retries to perform when refresh fails")
 	flag.IntVarP(&options.RetrySleepMs, "retry-sleep-ms", "m", 300, "time in ms to sleep between retries")
+	flag.BoolVarP(&options.ShouldReferenceID, "reference-id", "", false, "")
 }

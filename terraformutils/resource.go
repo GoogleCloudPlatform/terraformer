@@ -37,6 +37,7 @@ type Resource struct {
 	AllowEmptyValues  []string               `json:",omitempty"`
 	AdditionalFields  map[string]interface{} `json:",omitempty"`
 	SlowQueryRequired bool
+	ReferenceIDValues map[string]string
 }
 
 type ApplicableFilter interface {
@@ -168,7 +169,13 @@ func (r *Resource) ConvertTFstate(provider *providerwrapper.ProviderWrapper) err
 			allowEmptyValues = append(allowEmptyValues, regexp.MustCompile(pattern))
 		}
 	}
-	parser := NewFlatmapParser(r.InstanceState.Attributes, ignoreKeys, allowEmptyValues)
+	referenceIDValues := map[*regexp.Regexp]string{}
+	for k, v := range r.ReferenceIDValues {
+		re := regexp.MustCompile(k)
+		referenceIDValues[re] = v
+	}
+
+	parser := NewFlatmapParser(r.InstanceState.Attributes, ignoreKeys, allowEmptyValues, referenceIDValues)
 	schema := provider.GetSchema()
 	impliedType := schema.ResourceTypes[r.InstanceInfo.Type].Block.ImpliedType()
 	return r.ParseTFstate(parser, impliedType)

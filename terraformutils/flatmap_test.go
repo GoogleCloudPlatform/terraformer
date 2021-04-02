@@ -16,7 +16,7 @@ func TestNestedAttributeFiltering(t *testing.T) {
 	ignoreKeys := []*regexp.Regexp{
 		regexp.MustCompile(`^attribute$`),
 	}
-	parser := NewFlatmapParser(attributes, ignoreKeys, []*regexp.Regexp{})
+	parser := NewFlatmapParser(attributes, ignoreKeys, []*regexp.Regexp{}, map[*regexp.Regexp]string{})
 
 	attributesType := cty.Object(map[string]cty.Type{
 		"attribute": cty.String,

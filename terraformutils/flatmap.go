@@ -31,16 +31,18 @@ type Flatmapper interface {
 
 type FlatmapParser struct {
 	Flatmapper
-	attributes       map[string]string
-	ignoreKeys       []*regexp.Regexp
-	allowEmptyValues []*regexp.Regexp
+	attributes        map[string]string
+	ignoreKeys        []*regexp.Regexp
+	allowEmptyValues  []*regexp.Regexp
+	referenceIDValues map[*regexp.Regexp]string
 }
 
-func NewFlatmapParser(attributes map[string]string, ignoreKeys []*regexp.Regexp, allowEmptyValues []*regexp.Regexp) *FlatmapParser {
+func NewFlatmapParser(attributes map[string]string, ignoreKeys []*regexp.Regexp, allowEmptyValues []*regexp.Regexp, referenceIDValues map[*regexp.Regexp]string) *FlatmapParser {
 	return &FlatmapParser{
-		attributes:       attributes,
-		ignoreKeys:       ignoreKeys,
-		allowEmptyValues: allowEmptyValues,
+		attributes:        attributes,
+		ignoreKeys:        ignoreKeys,
+		allowEmptyValues:  allowEmptyValues,
+		referenceIDValues: referenceIDValues,
 	}
 }
 
@@ -144,6 +146,11 @@ func (p *FlatmapParser) fromFlatmapObject(prefix string, tys map[string]cty.Type
 		if err != nil {
 			return nil, err
 		}
+
+		if len(p.referenceIDValues) > 0 && p.referenceIDValues != nil {
+			value = p.isAttributeReferencedID(name, value)
+		}
+
 		if p.isValueAllowed(value, attributeName) {
 			values[name] = value
 		}
@@ -398,4 +405,16 @@ func (p *FlatmapParser) isValueAllowed(value interface{}, prefix string) bool {
 		}
 	}
 	return allowed
+}
+
+// If attr exists in p.referenceIDValues return the new referenced value. Else, return original value
+func (p *FlatmapParser) isAttributeReferencedID(name string, value interface{}) interface{} {
+	for k, v := range p.referenceIDValues {
+		if k.MatchString(name) {
+			nValue := TfSanitize(value.(string))
+			nValue = fmt.Sprintf("${%s.%s.id}", v, nValue)
+			return nValue
+		}
+	}
+	return value
 }

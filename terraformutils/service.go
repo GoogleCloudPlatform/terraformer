@@ -38,6 +38,7 @@ type ServiceGenerator interface {
 	InitialCleanup()
 	PopulateIgnoreKeys(*providerwrapper.ProviderWrapper)
 	PostRefreshCleanup()
+	PopulateReferenceIDValues(bool)
 }
 
 type Service struct {
@@ -162,6 +163,15 @@ func (s *Service) PopulateIgnoreKeys(providerWrapper *providerwrapper.ProviderWr
 			if s.Resources[i].InstanceInfo.Type == k {
 				s.Resources[i].IgnoreKeys = append(s.Resources[i].IgnoreKeys, v...)
 			}
+		}
+	}
+}
+
+// PopulateReferenceIDValues set ReferenceIDValues to nil if ShouldReferenceID is false
+func (s *Service) PopulateReferenceIDValues(v bool) {
+	if !v {
+		for i := range s.Resources {
+			s.Resources[i].ReferenceIDValues = map[string]string{}
 		}
 	}
 }
