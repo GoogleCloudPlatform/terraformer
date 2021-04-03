@@ -16,7 +16,6 @@ package aws
 
 import (
 	"context"
-	"github.com/aws/aws-sdk-go-v2/credentials/stscreds"
 	"os"
 	"regexp"
 
@@ -24,6 +23,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials/stscreds"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -41,19 +41,19 @@ func (s *AWSService) generateConfig() (aws.Config, error) {
 		return *configCache, nil
 	}
 
-	config, e := s.buildBaseConfig()
+	baseConfig, e := s.buildBaseConfig()
 
 	if e != nil {
-		return config, e
+		return baseConfig, e
 	}
 	if s.Verbose {
-		config.ClientLogMode = aws.LogRequestWithBody & aws.LogResponseWithBody
+		baseConfig.ClientLogMode = aws.LogRequestWithBody & aws.LogResponseWithBody
 	}
 
-	creds, e := config.Credentials.Retrieve(context.TODO())
+	creds, e := baseConfig.Credentials.Retrieve(context.TODO())
 
 	if e != nil {
-		return config, e
+		return baseConfig, e
 	}
 
 	// terraform cannot ask for MFA token, so we need to pass STS session token, which might contain credentials with MFA requirement
@@ -66,8 +66,8 @@ func (s *AWSService) generateConfig() (aws.Config, error) {
 			os.Setenv("AWS_SESSION_TOKEN", creds.SessionToken)
 		}
 	}
-	configCache = &config
-	return config, nil
+	configCache = &baseConfig
+	return baseConfig, nil
 }
 
 func (s *AWSService) buildBaseConfig() (aws.Config, error) {
