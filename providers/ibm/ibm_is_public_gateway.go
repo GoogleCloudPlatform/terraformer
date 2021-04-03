@@ -30,8 +30,7 @@ type PublicGatewayGenerator struct {
 }
 
 func (g PublicGatewayGenerator) createPublicGatewayResources(publicGatewayID, publicGatewayName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		publicGatewayID,
 		publicGatewayName,
 		"ibm_is_public_gateway",
@@ -65,7 +64,7 @@ func (g *PublicGatewayGenerator) InitResources() error {
 		return err
 	}
 	start := ""
-	allrecs := []vpcv1.PublicGateway{}
+	var allrecs []vpcv1.PublicGateway
 	for {
 		options := &vpcv1.ListPublicGatewaysOptions{}
 		if start != "" {

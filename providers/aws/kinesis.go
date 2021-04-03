@@ -58,6 +58,9 @@ func (g *KinesisGenerator) InitResources() error {
 		if err != nil {
 			return err
 		}
+
+		g.Resources = append(g.Resources, g.createResources(results.StreamNames)...)
+
 		if len(results.StreamNames) > 0 {
 			request = kinesis.ListStreamsInput{
 				ExclusiveStartStreamName: &results.StreamNames[len(results.StreamNames)-1],

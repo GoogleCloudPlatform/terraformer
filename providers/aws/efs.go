@@ -17,9 +17,9 @@ package aws
 import (
 	"context"
 	"fmt"
-	"github.com/IBM/ibm-cos-sdk-go/aws"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+
 	"github.com/aws/aws-sdk-go-v2/service/efs"
 )
 
@@ -71,8 +71,8 @@ func (g *EfsGenerator) loadFileSystem(svc *efs.Client) error {
 			}
 			for _, mountTarget := range targetsResponse.MountTargets {
 				g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-					aws.StringValue(mountTarget.MountTargetId),
-					aws.StringValue(mountTarget.MountTargetId),
+					StringValue(mountTarget.MountTargetId),
+					StringValue(mountTarget.MountTargetId),
 					"aws_efs_mount_target",
 					"aws",
 					efsAllowEmptyValues))
@@ -85,14 +85,14 @@ func (g *EfsGenerator) loadFileSystem(svc *efs.Client) error {
 				fmt.Println(err.Error())
 				continue
 			}
-			escapedPolicy := g.escapeAwsInterpolation(aws.StringValue(policyResponse.Policy))
+			escapedPolicy := g.escapeAwsInterpolation(StringValue(policyResponse.Policy))
 			g.Resources = append(g.Resources, terraformutils.NewResource(
-				aws.StringValue(fileSystem.FileSystemId),
-				aws.StringValue(fileSystem.FileSystemId),
+				StringValue(fileSystem.FileSystemId),
+				StringValue(fileSystem.FileSystemId),
 				"aws_efs_file_system_policy",
 				"aws",
 				map[string]string{
-					"file_system_id": aws.StringValue(fileSystem.FileSystemId),
+					"file_system_id": StringValue(fileSystem.FileSystemId),
 					"policy": fmt.Sprintf(`<<POLICY
 %s
 POLICY`, escapedPolicy),
@@ -112,7 +112,7 @@ func (g *EfsGenerator) loadMountTarget(svc *efs.Client) error {
 			return err
 		}
 		for _, fileSystem := range page.FileSystems {
-			id := aws.StringValue(fileSystem.FileSystemId)
+			id := StringValue(fileSystem.FileSystemId)
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				id,
 				id,
@@ -132,7 +132,7 @@ func (g *EfsGenerator) loadAccessPoint(svc *efs.Client) error {
 			return err
 		}
 		for _, fileSystem := range page.AccessPoints {
-			id := aws.StringValue(fileSystem.AccessPointId)
+			id := StringValue(fileSystem.AccessPointId)
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				id,
 				id,

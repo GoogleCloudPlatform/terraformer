@@ -17,8 +17,9 @@ package aws
 import (
 	"context"
 	"fmt"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"log"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"

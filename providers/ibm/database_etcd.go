@@ -31,8 +31,7 @@ type DatabaseETCDGenerator struct {
 
 // loadETCDDB ...
 func (g DatabaseETCDGenerator) loadETCDDB(dbID string, dbName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		dbID,
 		dbName,
 		"ibm_database",
@@ -41,7 +40,7 @@ func (g DatabaseETCDGenerator) loadETCDDB(dbID string, dbName string) terraformu
 	return resources
 }
 
-//InitResources ...
+// InitResources ...
 func (g *DatabaseETCDGenerator) InitResources() error {
 
 	region := os.Getenv("IC_REGION")

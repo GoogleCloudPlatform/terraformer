@@ -20,7 +20,7 @@ import (
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/api/resource/resourcev1/catalog"
 	"github.com/IBM-Cloud/bluemix-go/api/resource/resourcev2/controllerv2"
 	"github.com/IBM-Cloud/bluemix-go/session"
@@ -41,8 +41,7 @@ type CISGenerator struct {
 }
 
 func (g CISGenerator) loadInstances(crn, name, resGrpID string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		crn,
 		name,
 		"ibm_cis",
@@ -56,8 +55,7 @@ func (g CISGenerator) loadInstances(crn, name, resGrpID string) terraformutils.R
 }
 
 func (g CISGenerator) loadDomains(crn, domainID string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s:%s", domainID, crn),
 		domainID,
 		"ibm_cis_domain",
@@ -71,8 +69,7 @@ func (g CISGenerator) loadDomains(crn, domainID string, dependsOn []string) terr
 }
 
 func (g CISGenerator) loadDNSRecords(crn, domainID, dnsRecordID string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s:%s:%s", dnsRecordID, domainID, crn),
 		dnsRecordID,
 		"ibm_cis_dns_record",
@@ -86,8 +83,7 @@ func (g CISGenerator) loadDNSRecords(crn, domainID, dnsRecordID string, dependsO
 }
 
 func (g CISGenerator) loadFirewallLockdown(resourceName, crn, domainID, fID, fType string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s:%s:%s:%s", fType, fID, domainID, crn),
 		resourceName,
 		"ibm_cis_firewall",
@@ -101,8 +97,7 @@ func (g CISGenerator) loadFirewallLockdown(resourceName, crn, domainID, fID, fTy
 }
 
 func (g CISGenerator) loadDomainSettings(crn, dID string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s:%s", dID, crn),
 		dID,
 		"ibm_cis_domain_settings",
@@ -116,8 +111,7 @@ func (g CISGenerator) loadDomainSettings(crn, dID string, dependsOn []string) te
 }
 
 func (g CISGenerator) loadGlobalBalancer(crn, dID, gID string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s:%s:%s", gID, dID, crn),
 		fmt.Sprintf("%s:%s:%s", gID, dID, crn),
 		"ibm_cis_global_load_balancer",
@@ -130,20 +124,8 @@ func (g CISGenerator) loadGlobalBalancer(crn, dID, gID string, dependsOn []strin
 	return resources
 }
 
-func (g CISGenerator) loadGlobalBalancerPool(crn, pID string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
-		fmt.Sprintf("%s:%s", pID, crn),
-		pID,
-		"ibm_cis_origin_pool",
-		g.ProviderName,
-		[]string{})
-	return resources
-}
-
 func (g CISGenerator) loadGlobalBalancerMonitor(crn, gblmID string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s:%s", gblmID, crn),
 		gblmID,
 		"ibm_cis_healthcheck",
@@ -157,8 +139,7 @@ func (g CISGenerator) loadGlobalBalancerMonitor(crn, gblmID string, dependsOn []
 }
 
 func (g CISGenerator) loadRateLimit(resourceName, crn, dID, rID string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s:%s:%s", rID, dID, crn),
 		resourceName,
 		"ibm_cis_rate_limit",
@@ -172,8 +153,7 @@ func (g CISGenerator) loadRateLimit(resourceName, crn, dID, rID string, dependsO
 }
 
 func (g CISGenerator) loadEdgeFunctionAction(crn, dID, actionID string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s:%s:%s", actionID, dID, crn),
 		actionID,
 		"ibm_cis_edge_functions_action",
@@ -187,8 +167,7 @@ func (g CISGenerator) loadEdgeFunctionAction(crn, dID, actionID string, dependsO
 }
 
 func (g CISGenerator) loadEdgeFunctionTrigger(crn, dID, triggerID string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s:%s:%s", triggerID, dID, crn),
 		triggerID,
 		"ibm_cis_edge_functions_trigger",
@@ -201,38 +180,11 @@ func (g CISGenerator) loadEdgeFunctionTrigger(crn, dID, triggerID string, depend
 	return resources
 }
 
-func (g CISGenerator) loadWafRulePackage(crn, dID, pkgID string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
-		fmt.Sprintf("%s:%s:%s", pkgID, dID, crn),
-		pkgID,
-		"ibm_cis_waf_package",
-		"ibm",
-		map[string]string{},
-		[]string{},
-		map[string]interface{}{})
-	return resources
-}
-
-func (g CISGenerator) loadPageRule(crn, dID, ruleID string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+func (g CISGenerator) loadPageRule(crn, dID, ruleID string) terraformutils.Resource {
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s:%s:%s", ruleID, dID, crn),
 		ruleID,
 		"ibm_cis_page_rule",
-		"ibm",
-		map[string]string{},
-		[]string{},
-		map[string]interface{}{})
-	return resources
-}
-
-func (g CISGenerator) loadCustomPage(crn, dID, cpID string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
-		fmt.Sprintf("%s:%s:%s", cpID, dID, crn),
-		cpID,
-		"ibm_cis_custom_page",
 		"ibm",
 		map[string]string{},
 		[]string{},
@@ -288,7 +240,7 @@ func (g *CISGenerator) InitResources() error {
 	}
 
 	for _, c := range cisInstances {
-		//Instance
+		// Instance
 		crn := c.Crn.String()
 		g.Resources = append(g.Resources, g.loadInstances(crn, c.Name, c.ResourceGroupID))
 
@@ -296,7 +248,7 @@ func (g *CISGenerator) InitResources() error {
 		cisDependsOn = append(cisDependsOn,
 			"ibm_cis."+terraformutils.TfSanitize(c.Name))
 
-		//Domain
+		// Domain
 		zoneOpts := &zonesv1.ZonesV1Options{
 			URL: DefaultCisURL,
 			Authenticator: &core.BearerTokenAuthenticator{
@@ -316,7 +268,7 @@ func (g *CISGenerator) InitResources() error {
 			return err
 		}
 
-		//Health Monitor
+		// Health Monitor
 		gblmOpts := &globalloadbalancermonitorv1.GlobalLoadBalancerMonitorV1Options{
 			URL:           DefaultCisURL,
 			Authenticator: &core.BearerTokenAuthenticator{BearerToken: bluemixToken},
@@ -342,7 +294,7 @@ func (g *CISGenerator) InitResources() error {
 
 			g.Resources = append(g.Resources, g.loadDomains(crn, *z.ID, domainDependsOn))
 
-			//DNS Record
+			// DNS Record
 			zoneID := *z.ID
 			dnsOpts := &dnsrecordsv1.DnsRecordsV1Options{
 				URL: DefaultCisURL,
@@ -353,7 +305,7 @@ func (g *CISGenerator) InitResources() error {
 				ZoneIdentifier: &zoneID,
 			}
 
-			//Domain Setting
+			// Domain Setting
 			g.Resources = append(g.Resources, g.loadDomainSettings(crn, *z.ID, domainDependsOn))
 
 			dnsService, err := dnsrecordsv1.NewDnsRecordsV1(dnsOpts)
@@ -367,7 +319,7 @@ func (g *CISGenerator) InitResources() error {
 				return err
 			}
 
-			//IBM Network CIS WAF Package
+			// IBM Network CIS WAF Package
 			// cisWAFPackageOpt := &wafrulepackagesapiv1.WafRulePackagesApiV1Options{
 			// 	URL: DefaultCisURL,
 			// 	Authenticator: &core.BearerTokenAuthenticator{
@@ -387,7 +339,7 @@ func (g *CISGenerator) InitResources() error {
 			// 	//g.Resources = append(g.Resources, g.loadWafRulePackage(crn, *z.ID, *wafPkg.ID, domainDependsOn))
 			// }
 
-			//IBM Network CIS Page Rules
+			// IBM Network CIS Page Rules
 			cisPageRuleOpt := &pageruleapiv1.PageRuleApiV1Options{
 				URL: DefaultCisURL,
 				Authenticator: &core.BearerTokenAuthenticator{
@@ -403,10 +355,10 @@ func (g *CISGenerator) InitResources() error {
 			}
 
 			for _, pg := range cisPgList.Result {
-				g.Resources = append(g.Resources, g.loadPageRule(crn, *z.ID, *pg.ID, domainDependsOn))
+				g.Resources = append(g.Resources, g.loadPageRule(crn, *z.ID, *pg.ID))
 			}
 
-			//Rate Limit
+			// Rate Limit
 			rateLimitPoolOpts := &zoneratelimitsv1.ZoneRateLimitsV1Options{
 				URL:            DefaultCisURL,
 				Authenticator:  &core.BearerTokenAuthenticator{BearerToken: bluemixToken},
@@ -425,7 +377,7 @@ func (g *CISGenerator) InitResources() error {
 				g.Resources = append(g.Resources, g.loadRateLimit(resourceName, crn, *z.ID, *rl.ID, domainDependsOn))
 			}
 
-			//Firewall Lockdown
+			// Firewall Lockdown
 			firewallOpts := &zonelockdownv1.ZoneLockdownV1Options{
 				URL: DefaultCisURL,
 				Authenticator: &core.BearerTokenAuthenticator{
@@ -482,7 +434,7 @@ func (g *CISGenerator) InitResources() error {
 
 				g.Resources = append(g.Resources, g.loadDNSRecords(crn, *z.ID, *d.ID, domainDependsOn))
 
-				//Global Load Balancer
+				// Global Load Balancer
 				gblSetttingOpts := &globalloadbalancerv1.GlobalLoadBalancerV1Options{
 					URL: DefaultCisURL,
 					Authenticator: &core.BearerTokenAuthenticator{

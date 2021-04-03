@@ -29,8 +29,7 @@ type ContainerClusterGenerator struct {
 }
 
 func (g ContainerClusterGenerator) loadcluster(clustersID, clusterName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		clustersID,
 		clusterName,
 		"ibm_container_cluster",
@@ -40,8 +39,7 @@ func (g ContainerClusterGenerator) loadcluster(clustersID, clusterName string) t
 }
 
 func (g ContainerClusterGenerator) loadWorkerPools(clustersID, poolID string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", clustersID, poolID),
 		poolID,
 		"ibm_container_worker_pool",
@@ -55,8 +53,7 @@ func (g ContainerClusterGenerator) loadWorkerPools(clustersID, poolID string, de
 }
 
 func (g ContainerClusterGenerator) loadWorkerPoolZones(clustersID, poolID, zoneID string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s/%s", clustersID, poolID, zoneID),
 		fmt.Sprintf("%s/%s/%s", clustersID, poolID, zoneID),
 		"ibm_container_worker_pool_zone_attachment",
