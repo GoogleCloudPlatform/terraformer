@@ -259,7 +259,7 @@ Links to download Terraform Providers:
     * GitHub provider >=2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-github/)
 * Monitoring & System Management
     * Datadog provider >2.1.0 - [here](https://releases.hashicorp.com/terraform-provider-datadog/)
-    * New Relic provider >1.5.0 - [here](https://releases.hashicorp.com/terraform-provider-newrelic/)
+    * New Relic provider >2.0.0 - [here](https://releases.hashicorp.com/terraform-provider-newrelic/)
 * Community
     * Keycloak provider >=1.19.0 - [here](https://github.com/mrparkers/terraform-provider-keycloak/)
     * Logz.io provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
@@ -1595,8 +1595,7 @@ List of supported Datadog services:
 Example:
 
 ```
-NEWRELIC_API_KEY=[API-KEY]
-./terraformer import newrelic -r alert,dashboard,infra,synthetics
+./terraformer import newrelic -r alert,dashboard,infra,synthetics --api-key=NRAK-XXXXXXXX --account-id=XXXXX
 ```
 
 List of supported New Relic resources:
