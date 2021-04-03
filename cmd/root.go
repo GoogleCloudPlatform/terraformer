@@ -70,6 +70,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdLogzioImporter,
 		newCmdCommercetoolsImporter,
 		newCmdMikrotikImporter,
+		newCmdXenorchestraImporter,
 		newCmdGmailfilterImporter,
 	}
 }
@@ -108,6 +109,7 @@ func providerGenerators() map[string]func() terraformutils.ProviderGenerator {
 		newLogzioProvider,
 		newCommercetoolsProvider,
 		newMikrotikProvider,
+		newXenorchestraProvider,
 		newGmailfilterProvider,
 	} {
 		list[providerGen().GetName()] = providerGen
