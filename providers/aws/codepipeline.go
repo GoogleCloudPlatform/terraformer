@@ -18,7 +18,6 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/codepipeline"
 )
 
@@ -29,10 +28,14 @@ type CodePipelineGenerator struct {
 }
 
 func (g *CodePipelineGenerator) loadPipelines(svc *codepipeline.Client) error {
-	p := codepipeline.NewListPipelinesPaginator(svc.ListPipelinesRequest(&codepipeline.ListPipelinesInput{}))
-	for p.Next(context.Background()) {
-		for _, pipeline := range p.CurrentPage().Pipelines {
-			resourceName := aws.StringValue(pipeline.Name)
+	p := codepipeline.NewListPipelinesPaginator(svc, &codepipeline.ListPipelinesInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, pipeline := range page.Pipelines {
+			resourceName := StringValue(pipeline.Name)
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
@@ -41,14 +44,18 @@ func (g *CodePipelineGenerator) loadPipelines(svc *codepipeline.Client) error {
 				codepipelineAllowEmptyValues))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *CodePipelineGenerator) loadWebhooks(svc *codepipeline.Client) error {
-	p := codepipeline.NewListWebhooksPaginator(svc.ListWebhooksRequest(&codepipeline.ListWebhooksInput{}))
-	for p.Next(context.Background()) {
-		for _, webhook := range p.CurrentPage().Webhooks {
-			resourceArn := aws.StringValue(webhook.Arn)
+	p := codepipeline.NewListWebhooksPaginator(svc, &codepipeline.ListWebhooksInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, webhook := range page.Webhooks {
+			resourceArn := StringValue(webhook.Arn)
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				resourceArn,
 				resourceArn,
@@ -57,7 +64,7 @@ func (g *CodePipelineGenerator) loadWebhooks(svc *codepipeline.Client) error {
 				codepipelineAllowEmptyValues))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *CodePipelineGenerator) InitResources() error {
@@ -65,7 +72,7 @@ func (g *CodePipelineGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := codepipeline.New(config)
+	svc := codepipeline.NewFromConfig(config)
 
 	if err := g.loadPipelines(svc); err != nil {
 		return err

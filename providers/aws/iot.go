@@ -32,7 +32,7 @@ func (g *IotGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := iot.New(config)
+	svc := iot.NewFromConfig(config)
 
 	if err := g.loadThingTypes(svc); err != nil {
 		return err
@@ -51,7 +51,7 @@ func (g *IotGenerator) InitResources() error {
 }
 
 func (g *IotGenerator) loadThingTypes(svc *iot.Client) error {
-	output, err := svc.ListThingTypesRequest(&iot.ListThingTypesInput{}).Send(context.Background())
+	output, err := svc.ListThingTypes(context.TODO(), &iot.ListThingTypesInput{})
 	if err != nil {
 		return err
 	}
@@ -72,7 +72,7 @@ func (g *IotGenerator) loadThingTypes(svc *iot.Client) error {
 }
 
 func (g *IotGenerator) loadThings(svc *iot.Client) error {
-	output, err := svc.ListThingsRequest(&iot.ListThingsInput{}).Send(context.Background())
+	output, err := svc.ListThings(context.TODO(), &iot.ListThingsInput{})
 	if err != nil {
 		return err
 	}
@@ -93,7 +93,7 @@ func (g *IotGenerator) loadThings(svc *iot.Client) error {
 }
 
 func (g *IotGenerator) loadTopicRules(svc *iot.Client) error {
-	output, err := svc.ListTopicRulesRequest(&iot.ListTopicRulesInput{}).Send(context.Background())
+	output, err := svc.ListTopicRules(context.TODO(), &iot.ListTopicRulesInput{})
 	if err != nil {
 		return err
 	}
@@ -109,7 +109,7 @@ func (g *IotGenerator) loadTopicRules(svc *iot.Client) error {
 }
 
 func (g *IotGenerator) loadRoleAliases(svc *iot.Client) error {
-	output, err := svc.ListRoleAliasesRequest(&iot.ListRoleAliasesInput{}).Send(context.Background())
+	output, err := svc.ListRoleAliases(context.TODO(), &iot.ListRoleAliasesInput{})
 	if err != nil {
 		return err
 	}

@@ -609,6 +609,7 @@ In that case terraformer will not know with which region resources are associate
 *   `kms`
     * `aws_kms_key`
     * `aws_kms_alias`
+    * `aws_kms_grant`
 *   `lambda`
     * `aws_lambda_event_source_mapping`
     * `aws_lambda_function`
@@ -651,7 +652,6 @@ In that case terraformer will not know with which region resources are associate
     * `aws_route_table_association`
 *   `s3`
     * `aws_s3_bucket`
-    * `aws_s3_bucket_policy`
 *   `secretsmanager`
     * `aws_secretsmanager_secret`
 *   `securityhub`

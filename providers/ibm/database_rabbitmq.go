@@ -31,8 +31,7 @@ type DatabaseRabbitMQGenerator struct {
 
 // loadRabbitMQDB ...
 func (g DatabaseRabbitMQGenerator) loadRabbitMQDB(dbID string, dbName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		dbID,
 		dbName,
 		"ibm_database",
@@ -41,7 +40,7 @@ func (g DatabaseRabbitMQGenerator) loadRabbitMQDB(dbID string, dbName string) te
 	return resources
 }
 
-//InitResources ...
+// InitResources ...
 func (g *DatabaseRabbitMQGenerator) InitResources() error {
 
 	region := os.Getenv("IC_REGION")

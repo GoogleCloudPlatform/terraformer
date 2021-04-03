@@ -32,10 +32,14 @@ type AutoScalingGenerator struct {
 }
 
 func (g *AutoScalingGenerator) loadAutoScalingGroups(svc *autoscaling.Client) error {
-	p := autoscaling.NewDescribeAutoScalingGroupsPaginator(svc.DescribeAutoScalingGroupsRequest(&autoscaling.DescribeAutoScalingGroupsInput{}))
-	for p.Next(context.Background()) {
-		for _, asg := range p.CurrentPage().AutoScalingGroups {
-			resourceName := aws.StringValue(asg.AutoScalingGroupName)
+	p := autoscaling.NewDescribeAutoScalingGroupsPaginator(svc, &autoscaling.DescribeAutoScalingGroupsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, asg := range page.AutoScalingGroups {
+			resourceName := StringValue(asg.AutoScalingGroupName)
 			g.Resources = append(g.Resources, terraformutils.NewResource(
 				resourceName,
 				resourceName,
@@ -51,17 +55,21 @@ func (g *AutoScalingGenerator) loadAutoScalingGroups(svc *autoscaling.Client) er
 			))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *AutoScalingGenerator) loadLaunchConfigurations(svc *autoscaling.Client) error {
-	p := autoscaling.NewDescribeLaunchConfigurationsPaginator(svc.DescribeLaunchConfigurationsRequest(&autoscaling.DescribeLaunchConfigurationsInput{}))
-	for p.Next(context.Background()) {
-		for _, lc := range p.CurrentPage().LaunchConfigurations {
-			resourceName := aws.StringValue(lc.LaunchConfigurationName)
+	p := autoscaling.NewDescribeLaunchConfigurationsPaginator(svc, &autoscaling.DescribeLaunchConfigurationsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, lc := range page.LaunchConfigurations {
+			resourceName := StringValue(lc.LaunchConfigurationName)
 			attributes := map[string]string{}
 			// only for LaunchConfigurations with userdata, we want get user_data_base64
-			if aws.StringValue(lc.UserData) != "" {
+			if StringValue(lc.UserData) != "" {
 				attributes["user_data_base64"] = "=" // need set not empty string to get user_data_base64 from provider
 			}
 			g.Resources = append(g.Resources, terraformutils.NewResource(
@@ -75,25 +83,29 @@ func (g *AutoScalingGenerator) loadLaunchConfigurations(svc *autoscaling.Client)
 			))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *AutoScalingGenerator) loadLaunchTemplates(config aws.Config) error {
-	ec2svc := ec2.New(config)
+	ec2svc := ec2.NewFromConfig(config)
 
-	p := ec2.NewDescribeLaunchTemplatesPaginator(ec2svc.DescribeLaunchTemplatesRequest(&ec2.DescribeLaunchTemplatesInput{}))
-	for p.Next(context.Background()) {
-		for _, lt := range p.CurrentPage().LaunchTemplates {
+	p := ec2.NewDescribeLaunchTemplatesPaginator(ec2svc, &ec2.DescribeLaunchTemplatesInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, lt := range page.LaunchTemplates {
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-				aws.StringValue(lt.LaunchTemplateId),
-				aws.StringValue(lt.LaunchTemplateName),
+				StringValue(lt.LaunchTemplateId),
+				StringValue(lt.LaunchTemplateName),
 				"aws_launch_template",
 				"aws",
 				AsgAllowEmptyValues,
 			))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 // Generate TerraformResources from AWS API,
@@ -105,7 +117,7 @@ func (g *AutoScalingGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := autoscaling.New(config)
+	svc := autoscaling.NewFromConfig(config)
 	if err := g.loadAutoScalingGroups(svc); err != nil {
 		return err
 	}

@@ -29,8 +29,7 @@ type InstanceGenerator struct {
 }
 
 func (g InstanceGenerator) createInstanceResources(instanceID, instanceName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		instanceID,
 		instanceName,
 		"ibm_is_instance",
@@ -65,7 +64,7 @@ func (g *InstanceGenerator) InitResources() error {
 		return err
 	}
 	start := ""
-	allrecs := []vpcv1.Instance{}
+	var allrecs []vpcv1.Instance
 	for {
 		options := &vpcv1.ListInstancesOptions{}
 		if start != "" {

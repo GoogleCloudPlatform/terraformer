@@ -22,6 +22,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 )
 
 var ec2AllowEmptyValues = []string{"tags."}
@@ -35,39 +36,43 @@ func (g *Ec2Generator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := ec2.New(config)
-	var filters []ec2.Filter
+	svc := ec2.NewFromConfig(config)
+	var filters []types.Filter
 	for _, filter := range g.Filter {
 		if strings.HasPrefix(filter.FieldPath, "tags.") && filter.IsApplicable("instance") {
-			filters = append(filters, ec2.Filter{
+			filters = append(filters, types.Filter{
 				Name:   aws.String("tag:" + strings.TrimPrefix(filter.FieldPath, "tags.")),
 				Values: filter.AcceptableValues,
 			})
 		}
 	}
-	p := ec2.NewDescribeInstancesPaginator(svc.DescribeInstancesRequest(&ec2.DescribeInstancesInput{
+	p := ec2.NewDescribeInstancesPaginator(svc, &ec2.DescribeInstancesInput{
 		Filters: filters,
-	}))
-	for p.Next(context.Background()) {
-		for _, reservation := range p.CurrentPage().Reservations {
+	})
+	for p.HasMorePages() {
+		page, e := p.NextPage(context.TODO())
+		if e != nil {
+			return e
+		}
+		for _, reservation := range page.Reservations {
 			for _, instance := range reservation.Instances {
 				name := ""
 				for _, tag := range instance.Tags {
-					if strings.ToLower(aws.StringValue(tag.Key)) == "name" {
-						name = aws.StringValue(tag.Value)
+					if strings.ToLower(*tag.Key) == "name" {
+						name = *tag.Value
 					}
 				}
-				attr, err := svc.DescribeInstanceAttributeRequest(&ec2.DescribeInstanceAttributeInput{
-					Attribute:  ec2.InstanceAttributeNameUserData,
+				attr, err := svc.DescribeInstanceAttribute(context.TODO(), &ec2.DescribeInstanceAttributeInput{
+					Attribute:  types.InstanceAttributeNameUserData,
 					InstanceId: instance.InstanceId,
-				}).Send(context.Background())
+				})
 				userDataBase64 := ""
 				if err == nil && attr.UserData != nil && attr.UserData.Value != nil {
-					userDataBase64 = aws.StringValue(attr.UserData.Value)
+					userDataBase64 = *attr.UserData.Value
 				}
 				r := terraformutils.NewResource(
-					aws.StringValue(instance.InstanceId),
-					aws.StringValue(instance.InstanceId)+"_"+name,
+					*instance.InstanceId,
+					*instance.InstanceId+"_"+name,
 					"aws_instance",
 					"aws",
 					map[string]string{
@@ -81,7 +86,7 @@ func (g *Ec2Generator) InitResources() error {
 			}
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *Ec2Generator) PostConvertHook() error {

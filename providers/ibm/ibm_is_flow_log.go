@@ -30,8 +30,7 @@ type FlowLogGenerator struct {
 }
 
 func (g FlowLogGenerator) createFlowLogResources(flogID, flogName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		flogID,
 		flogName,
 		"ibm_is_flow_log",
@@ -65,7 +64,7 @@ func (g *FlowLogGenerator) InitResources() error {
 		return err
 	}
 	start := ""
-	allrecs := []vpcv1.FlowLogCollector{}
+	var allrecs []vpcv1.FlowLogCollector
 	for {
 		options := &vpcv1.ListFlowLogCollectorsOptions{}
 		if start != "" {

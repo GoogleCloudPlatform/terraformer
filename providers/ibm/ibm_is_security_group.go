@@ -30,8 +30,7 @@ type SecurityGroupGenerator struct {
 }
 
 func (g SecurityGroupGenerator) createSecurityGroupResources(sgID, sgName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		sgID,
 		sgName,
 		"ibm_is_security_group",
@@ -41,8 +40,7 @@ func (g SecurityGroupGenerator) createSecurityGroupResources(sgID, sgName string
 }
 
 func (g SecurityGroupGenerator) createSecurityGroupRuleResources(sgID, sgRuleID string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s.%s", sgID, sgRuleID),
 		sgRuleID,
 		"ibm_is_security_group_rule",
@@ -81,7 +79,7 @@ func (g *SecurityGroupGenerator) InitResources() error {
 		return err
 	}
 	start := ""
-	allrecs := []vpcv1.SecurityGroup{}
+	var allrecs []vpcv1.SecurityGroup
 	for {
 		options := &vpcv1.ListSecurityGroupsOptions{}
 		if start != "" {

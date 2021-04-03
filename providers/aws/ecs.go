@@ -21,7 +21,6 @@ import (
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ecs"
 )
 
@@ -36,11 +35,15 @@ func (g *EcsGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := ecs.New(config)
+	svc := ecs.NewFromConfig(config)
 
-	p := ecs.NewListClustersPaginator(svc.ListClustersRequest(&ecs.ListClustersInput{}))
-	for p.Next(context.Background()) {
-		for _, clusterArn := range p.CurrentPage().ClusterArns {
+	p := ecs.NewListClustersPaginator(svc, &ecs.ListClustersInput{})
+	for p.HasMorePages() {
+		page, e := p.NextPage(context.TODO())
+		if e != nil {
+			return e
+		}
+		for _, clusterArn := range page.ClusterArns {
 			arnParts := strings.Split(clusterArn, "/")
 			clusterName := arnParts[len(arnParts)-1]
 
@@ -52,20 +55,25 @@ func (g *EcsGenerator) InitResources() error {
 				ecsAllowEmptyValues,
 			))
 
-			servicePage := ecs.NewListServicesPaginator(svc.ListServicesRequest(&ecs.ListServicesInput{
-				Cluster: aws.String(clusterArn),
-			}))
-			for servicePage.Next(context.Background()) {
-				for _, serviceArn := range servicePage.CurrentPage().ServiceArns {
+			servicePage := ecs.NewListServicesPaginator(svc, &ecs.ListServicesInput{
+				Cluster: &clusterArn,
+			})
+			for servicePage.HasMorePages() {
+				serviceNextPage, err := servicePage.NextPage(context.TODO())
+				if err != nil {
+					fmt.Println(err.Error())
+					continue
+				}
+				for _, serviceArn := range serviceNextPage.ServiceArns {
 					arnParts := strings.Split(serviceArn, "/")
 					serviceName := arnParts[len(arnParts)-1]
 
-					serResp, err := svc.DescribeServicesRequest(&ecs.DescribeServicesInput{
+					serResp, err := svc.DescribeServices(context.TODO(), &ecs.DescribeServicesInput{
 						Services: []string{
 							serviceName,
 						},
-						Cluster: aws.String(clusterArn),
-					}).Send(context.Background())
+						Cluster: &clusterArn,
+					})
 					if err != nil {
 						fmt.Println(err.Error())
 						continue
@@ -78,7 +86,7 @@ func (g *EcsGenerator) InitResources() error {
 						"aws_ecs_service",
 						"aws",
 						map[string]string{
-							"task_definition": aws.StringValue(serviceDetails.TaskDefinition),
+							"task_definition": StringValue(serviceDetails.TaskDefinition),
 							"cluster":         clusterName,
 							"name":            serviceName,
 							"id":              serviceArn,
@@ -88,20 +96,18 @@ func (g *EcsGenerator) InitResources() error {
 					))
 				}
 			}
-			if err := servicePage.Err(); err != nil {
-				return err
-			}
 		}
 	}
 
-	if err := p.Err(); err != nil {
-		return err
-	}
-
 	taskDefinitionsMap := map[string]terraformutils.Resource{}
-	taskDefinitionsPage := ecs.NewListTaskDefinitionsPaginator(svc.ListTaskDefinitionsRequest(&ecs.ListTaskDefinitionsInput{}))
-	for taskDefinitionsPage.Next(context.Background()) {
-		for _, taskDefinitionArn := range taskDefinitionsPage.CurrentPage().TaskDefinitionArns {
+	taskDefinitionsPage := ecs.NewListTaskDefinitionsPaginator(svc, &ecs.ListTaskDefinitionsInput{})
+	for taskDefinitionsPage.HasMorePages() {
+		taskDefinitionsNextPage, e := taskDefinitionsPage.NextPage(context.TODO())
+		if e != nil {
+			fmt.Println(e.Error())
+			continue
+		}
+		for _, taskDefinitionArn := range taskDefinitionsNextPage.TaskDefinitionArns {
 			arnParts := strings.Split(taskDefinitionArn, ":")
 			definitionWithFamily := arnParts[len(arnParts)-2]
 			revision, _ := strconv.Atoi(arnParts[len(arnParts)-1])
@@ -132,7 +138,7 @@ func (g *EcsGenerator) InitResources() error {
 		g.Resources = append(g.Resources, v)
 	}
 
-	return taskDefinitionsPage.Err()
+	return nil
 }
 
 func (g *EcsGenerator) PostConvertHook() error {

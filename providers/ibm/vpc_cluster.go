@@ -19,7 +19,7 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/api/container/containerv2"
 	"github.com/IBM-Cloud/bluemix-go/session"
 )
@@ -29,8 +29,7 @@ type VPCClusterGenerator struct {
 }
 
 func (g VPCClusterGenerator) loadcluster(clustersID, clusterName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		clustersID,
 		clusterName,
 		"ibm_container_vpc_cluster",
@@ -40,8 +39,7 @@ func (g VPCClusterGenerator) loadcluster(clustersID, clusterName string) terrafo
 }
 
 func (g VPCClusterGenerator) loadWorkerPools(clustersID, poolID string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", clustersID, poolID),
 		poolID,
 		"ibm_container_vpc_worker_pool",

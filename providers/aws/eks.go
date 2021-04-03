@@ -32,10 +32,14 @@ func (g *EksGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := eks.New(config)
-	p := eks.NewListClustersPaginator(svc.ListClustersRequest(&eks.ListClustersInput{}))
-	for p.Next(context.Background()) {
-		for _, clusterName := range p.CurrentPage().Clusters {
+	svc := eks.NewFromConfig(config)
+	p := eks.NewListClustersPaginator(svc, &eks.ListClustersInput{})
+	for p.HasMorePages() {
+		page, e := p.NextPage(context.TODO())
+		if e != nil {
+			return e
+		}
+		for _, clusterName := range page.Clusters {
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				clusterName,
 				clusterName,
@@ -45,5 +49,5 @@ func (g *EksGenerator) InitResources() error {
 			))
 		}
 	}
-	return p.Err()
+	return nil
 }

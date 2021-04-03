@@ -18,7 +18,6 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/mediastore"
 )
 
@@ -33,12 +32,16 @@ func (g *MediaStoreGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := mediastore.New(config)
-	p := mediastore.NewListContainersPaginator(svc.ListContainersRequest(&mediastore.ListContainersInput{}))
+	svc := mediastore.NewFromConfig(config)
+	p := mediastore.NewListContainersPaginator(svc, &mediastore.ListContainersInput{})
 	var resources []terraformutils.Resource
-	for p.Next(context.Background()) {
-		for _, container := range p.CurrentPage().Containers {
-			containerName := aws.StringValue(container.Name)
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, container := range page.Containers {
+			containerName := StringValue(container.Name)
 			resources = append(resources, terraformutils.NewSimpleResource(
 				containerName,
 				containerName,
@@ -48,5 +51,5 @@ func (g *MediaStoreGenerator) InitResources() error {
 		}
 	}
 	g.Resources = resources
-	return p.Err()
+	return nil
 }

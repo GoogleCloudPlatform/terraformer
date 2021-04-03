@@ -29,8 +29,7 @@ type VPCGenerator struct {
 }
 
 func (g VPCGenerator) createVPCResources(vpcID, vpcName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		vpcID,
 		vpcName,
 		"ibm_is_vpc",
@@ -40,8 +39,7 @@ func (g VPCGenerator) createVPCResources(vpcID, vpcName string) terraformutils.R
 }
 
 func (g VPCGenerator) createVPCAddressPrefixResources(vpcID, addPrefixID, addPrefixName string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", vpcID, addPrefixID),
 		addPrefixName,
 		"ibm_is_vpc_address_prefix",
@@ -55,8 +53,7 @@ func (g VPCGenerator) createVPCAddressPrefixResources(vpcID, addPrefixID, addPre
 }
 
 func (g VPCGenerator) createVPCRouteResources(vpcID, routeID, routeName string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", vpcID, routeID),
 		routeName,
 		"ibm_is_vpc_route",
@@ -70,8 +67,7 @@ func (g VPCGenerator) createVPCRouteResources(vpcID, routeID, routeName string, 
 }
 
 func (g VPCGenerator) createVPCRouteTableResources(vpcID, routeTableID, routeTableName string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", vpcID, routeTableID),
 		routeTableName,
 		"ibm_is_vpc_routing_table",
@@ -85,8 +81,7 @@ func (g VPCGenerator) createVPCRouteTableResources(vpcID, routeTableID, routeTab
 }
 
 func (g VPCGenerator) createVPCRouteTableRouteResources(vpcID, routeTableID, routeTableRouteID, routeTableRouteName string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s/%s", vpcID, routeTableID, routeTableRouteID),
 		routeTableRouteName,
 		"ibm_is_vpc_routing_table_route",
@@ -105,7 +100,7 @@ func (g *VPCGenerator) InitResources() error {
 	region := envFallBack([]string{"IC_REGION"}, "us-south")
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
-		return fmt.Errorf("No API key set")
+		return fmt.Errorf("no API key set")
 	}
 
 	rg := g.Args["resource_group"]
@@ -125,7 +120,7 @@ func (g *VPCGenerator) InitResources() error {
 		return err
 	}
 	start := ""
-	allrecs := []vpcv1.VPC{}
+	var allrecs []vpcv1.VPC
 	for {
 		listVpcsOptions := &vpcv1.ListVpcsOptions{}
 		if start != "" {
