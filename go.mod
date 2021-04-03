@@ -26,8 +26,8 @@ require (
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/cloudflare/cloudflare-go v0.13.6
 	github.com/cloudfoundry/jibber_jabber v0.0.0-20151120183258-bcc4c8345a21 // indirect
-	github.com/ddelnano/terraform-provider-mikrotik v0.0.0-20200501162830-a217572b326c
 	github.com/ddelnano/terraform-provider-xenorchestra/client v0.0.0-20210401070256-0d721c6762ef // indirect
+	github.com/ddelnano/terraform-provider-mikrotik/client v0.0.0-20210401060029-7f652169b2c4
 	github.com/denverdino/aliyungo v0.0.0-20200327235253-d59c209c7e93
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/digitalocean/godo v1.57.0
@@ -48,6 +48,7 @@ require (
 	github.com/labd/commercetools-go-sdk v0.0.0-20200309143931-ca72e918a79d
 	github.com/linode/linodego v0.24.1
 	github.com/mrparkers/terraform-provider-keycloak v0.0.0-20200506151941-509881368409
+	github.com/nicksnyder/go-i18n v1.10.1 // indirect
 	github.com/ns1/ns1-go v2.4.0+incompatible
 	github.com/paultyng/go-newrelic/v4 v4.10.0
 	github.com/pkg/errors v0.9.1
