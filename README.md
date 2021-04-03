@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.com/GoogleCloudPlatform/terraformer.svg?branch=master)](https://travis-ci.com/GoogleCloudPlatform/terraformer)
 [![Go Report Card](https://goreportcard.com/badge/github.com/GoogleCloudPlatform/terraformer)](https://goreportcard.com/report/github.com/GoogleCloudPlatform/terraformer)
 [![AUR package](https://img.shields.io/aur/version/terraformer)](https://aur.archlinux.org/packages/terraformer/)
+[![Homebrew](https://img.shields.io/badge/dynamic/json.svg?url=https://formulae.brew.sh/api/formula/terraformer.json&query=$.versions.stable&label=homebrew)](https://formulae.brew.sh/formula/terraformer)
 
 A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infrastructure
 (reverse Terraform).
@@ -53,6 +54,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
+- [Stargazers over time](#stargazers-over-time)
 
 ## Capabilities
 
@@ -91,6 +93,8 @@ Flags:
   -r, --resources strings     firewall,networks or * for all services
   -s, --state string          local or bucket (default "local")
   -v, --verbose               verbose mode
+  -n, --retry-number          number of retries to perform if refresh fails
+  -m, --retry-sleep-ms        time in ms to sleep between retries
 
 Use " import [provider] [command] --help" for more information about a command.
 ```
@@ -1551,6 +1555,10 @@ List of supported Datadog services:
 *   `integration_gcp`
     * `datadog_integration_gcp`
         * **_NOTE:_** Sensitive fields `private_key, private_key_id, client_id` is not generated and needs to be manually set
+*   `integration_pagerduty`
+    * `datadog_integration_pagerduty`
+*   `integration_pagerduty_service_object`
+    * `datadog_integration_pagerduty_service_object`
 *   `metric_metadata`
     * `datadog_metric_metadata`
         * **_NOTE:_** Importing resource requires resource ID's to be passed via [Filter](#filtering) option
@@ -1809,3 +1817,7 @@ Terraforming lacks full coverage for resources - as an example you can see that 
 
 * terraforming - https://github.com/dtan4/terraforming/blob/master/lib/terraforming/template/tf/s3.erb
 * official S3 support - https://www.terraform.io/docs/providers/aws/r/s3_bucket.html
+
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/GoogleCloudPlatform/terraformer.svg)](https://starchart.cc/GoogleCloudPlatform/terraformer)

@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"strings"
 
 	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
 
@@ -63,6 +64,7 @@ func (g *MonitorGenerator) createResource(monitorID string) terraformutils.Resou
 func (g *MonitorGenerator) InitResources() error {
 	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
 	authV1 := g.Args["authV1"].(context.Context)
+	dclient := datadogClientV1.MonitorsApi.ListMonitors(authV1)
 
 	resources := []terraformutils.Resource{}
 	for _, filter := range g.Filter {
@@ -81,6 +83,9 @@ func (g *MonitorGenerator) InitResources() error {
 				resources = append(resources, g.createResource(strconv.FormatInt(monitor.GetId(), 10)))
 			}
 		}
+		if filter.FieldPath == "tags" && filter.IsApplicable("monitor") {
+			dclient = dclient.MonitorTags(strings.Join(filter.AcceptableValues, ","))
+		}
 	}
 
 	if len(resources) > 0 {
@@ -88,10 +93,24 @@ func (g *MonitorGenerator) InitResources() error {
 		return nil
 	}
 
-	monitors, _, err := datadogClientV1.MonitorsApi.ListMonitors(authV1).Execute()
-	if err != nil {
-		return err
+	var monitors []datadogV1.Monitor
+	pageSize := int32(1000)
+	pageNumber := int64(0)
+	for {
+		resp, _, err := dclient.PageSize(pageSize).Page(pageNumber).Execute()
+		if err != nil {
+			return err
+		}
+
+		if len(resp) == 0 || int32(len(resp)) < pageSize {
+			monitors = append(monitors, resp...)
+			break
+		}
+
+		monitors = append(monitors, resp...)
+		pageNumber++
 	}
+
 	g.Resources = g.createResources(monitors)
 	return nil
 }

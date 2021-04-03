@@ -59,13 +59,25 @@ func (g *RoleGenerator) createResource(roleID string) terraformutils.Resource {
 // from each role create 1 TerraformResource.
 // Need Role ID as ID for terraform resource
 func (g *RoleGenerator) InitResources() error {
-	datadogClientV1 := g.Args["datadogClientV2"].(*datadogV2.APIClient)
-	authV1 := g.Args["authV2"].(context.Context)
+	datadogClientV2 := g.Args["datadogClientV2"].(*datadogV2.APIClient)
+	authV2 := g.Args["authV2"].(context.Context)
 
-	roles, _, err := datadogClientV1.RolesApi.ListRoles(authV1).Execute()
-	if err != nil {
-		return err
+	pageSize := int64(100)
+	pageNumber := int64(0)
+	remaining := int64(1)
+
+	var roles []datadogV2.Role
+	for remaining > int64(0) {
+		resp, _, err := datadogClientV2.RolesApi.ListRoles(authV2).PageSize(pageSize).PageNumber(pageNumber).Execute()
+		if err != nil {
+			return err
+		}
+		roles = append(roles, resp.GetData()...)
+
+		remaining = resp.Meta.Page.GetTotalCount() - pageSize*(pageNumber+1)
+		pageNumber++
 	}
-	g.Resources = g.createResources(roles.GetData())
+
+	g.Resources = g.createResources(roles)
 	return nil
 }
