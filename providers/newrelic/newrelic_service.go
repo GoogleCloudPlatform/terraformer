@@ -15,9 +15,6 @@
 package newrelic
 
 import (
-	"errors"
-	"os"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	synthetics "github.com/dollarshaveclub/new-relic-synthetics-go"
 	newrelic "github.com/paultyng/go-newrelic/v4/api"
@@ -28,41 +25,18 @@ type NewRelicService struct { //nolint
 }
 
 func (s *NewRelicService) Client() (*newrelic.Client, error) {
-	apiKey := os.Getenv("NEWRELIC_API_KEY")
-
-	if apiKey == "" {
-		err := errors.New("No NEWRELIC_API_KEY environment set")
-		return nil, err
-	}
-
-	client := newrelic.New(newrelic.Config{APIKey: apiKey})
+	client := newrelic.New(newrelic.Config{APIKey: s.GetArgs()["apiKey"].(string)})
 	return &client, nil
 }
 
 func (s *NewRelicService) InfraClient() (*newrelic.InfraClient, error) {
-	apiKey := os.Getenv("NEWRELIC_API_KEY")
-
-	if apiKey == "" {
-		err := errors.New("No NEWRELIC_API_KEY environment set")
-		return nil, err
-	}
-
-	client := newrelic.NewInfraClient(newrelic.Config{APIKey: apiKey, Debug: s.Verbose})
-
+	client := newrelic.NewInfraClient(newrelic.Config{APIKey: s.GetArgs()["apiKey"].(string), Debug: s.Verbose})
 	return &client, nil
 }
 
 func (s *NewRelicService) SyntheticsClient() (*synthetics.Client, error) {
-	apiKey := os.Getenv("NEWRELIC_API_KEY")
-
-	if apiKey == "" {
-		err := errors.New("No NEWRELIC_API_KEY environment set")
-		return nil, err
-	}
-
 	conf := func(c *synthetics.Client) {
-		c.APIKey = apiKey
+		c.APIKey = s.GetArgs()["apiKey"].(string)
 	}
-
 	return synthetics.NewClient(conf)
 }

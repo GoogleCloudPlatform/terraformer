@@ -16,20 +16,61 @@ package newrelic
 
 import (
 	"errors"
+	"os"
+	"strconv"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/zclconf/go-cty/cty"
 )
 
 type NewRelicProvider struct { //nolint
 	terraformutils.Provider
+	accountID int
+	APIKey    string
+	Region    string
 }
 
 func (p *NewRelicProvider) Init(args []string) error {
+	if apiKey := os.Getenv("NEW_RELIC_API_KEY"); apiKey != "" {
+		p.APIKey = os.Getenv("NEW_RELIC_API_KEY")
+	}
+	if accountIDs := os.Getenv("NEW_RELIC_ACCOUNT_ID"); accountIDs != "" {
+		accountID, err := strconv.Atoi(accountIDs)
+		if err != nil {
+			return err
+
+		}
+		p.accountID = accountID
+	}
+	if len(args) > 0 {
+		p.APIKey = args[0]
+	}
+	if len(args) > 1 {
+		accountID, err := strconv.Atoi(args[1])
+		if err != nil {
+			return err
+		}
+		p.accountID = accountID
+	}
+	if len(args) > 1 {
+		p.Region = args[2]
+	}
+	if p.Region == "" {
+		p.Region = "US"
+	}
 	return nil
 }
 
 func (p *NewRelicProvider) GetName() string {
 	return "newrelic"
+}
+
+func (p *NewRelicProvider) GetConfig() cty.Value {
+	return cty.ObjectVal(map[string]cty.Value{
+		"account_id": cty.NumberIntVal(int64(p.accountID)),
+		"api_key":    cty.StringVal(p.APIKey),
+		"region":     cty.StringVal(p.Region),
+	})
 }
 
 func (p *NewRelicProvider) GetProviderData(arg ...string) map[string]interface{} {
@@ -57,6 +98,7 @@ func (p *NewRelicProvider) InitService(serviceName string, verbose bool) error {
 	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
+	p.Service.SetArgs(map[string]interface{}{"apiKey": p.APIKey})
 	p.Service.SetProviderName(p.GetName())
 
 	return nil
