@@ -15,6 +15,7 @@
 package kubernetes
 
 import (
+	"context"
 	"reflect"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -54,9 +55,10 @@ func (k *Kind) InitResources() error {
 	if k.Namespaced {
 		param = append(param, reflect.ValueOf(namespace))
 	}
+
 	resource := group.MethodByName(extractClientSetFuncTypeName(k.Name)).Call(param)[0]
 
-	results := resource.MethodByName("List").Call([]reflect.Value{
+	results := resource.MethodByName("List").Call([]reflect.Value{reflect.ValueOf(context.Background()),
 		reflect.ValueOf(metav1.ListOptions{})})
 
 	if !results[1].IsNil() {
