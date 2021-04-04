@@ -56,6 +56,9 @@ func (EquinixMetalProvider) GetResourceConnections() map[string]map[string][]str
 func (p *EquinixMetalProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
 		"device":                &DeviceGenerator{},
+		"sshkey":                &SshKeyGenerator{},
+		"spotmarketrequest":     &SpotMarketRequestGenerator{},
+		"volume":				 &VolumeGenerator{},
 	}
 }
 
