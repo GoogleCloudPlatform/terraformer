@@ -15,11 +15,8 @@
 package equinixmetal
 
 import (
-	// "context"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/packethost/packngo"
-	// "golang.org/x/oauth2"
 )
 
 type EquinixMetalService struct { //nolint

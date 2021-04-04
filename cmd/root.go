@@ -39,39 +39,39 @@ func Execute() error {
 func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command {
 	return []func(options ImportOptions) *cobra.Command{
 		// Major Cloud
-		newCmdGoogleImporter,
-		newCmdAwsImporter,
-		newCmdAzureImporter,
-		newCmdAliCloudImporter,
-		newCmdIbmImporter,
+// 		newCmdGoogleImporter,
+// 		newCmdAwsImporter,
+// 		newCmdAzureImporter,
+// 		newCmdAliCloudImporter,
+// 		newCmdIbmImporter,
 		// Cloud
-		newCmdDigitalOceanImporter,
+// 		newCmdDigitalOceanImporter,
 		newCmdEquinixMetalImporter,
-		newCmdFastlyImporter,
-		newCmdHerokuImporter,
-		newCmdLinodeImporter,
-		newCmdNs1Importer,
-		newCmdOpenStackImporter,
-		newCmdTencentCloudImporter,
-		newCmdVultrImporter,
-		newCmdYandexImporter,
+// 		newCmdFastlyImporter,
+// 		newCmdHerokuImporter,
+// 		newCmdLinodeImporter,
+// 		newCmdNs1Importer,
+// 		newCmdOpenStackImporter,
+// 		newCmdTencentCloudImporter,
+// 		newCmdVultrImporter,
+// 		newCmdYandexImporter,
 		// Infrastructure Software
-		newCmdKubernetesImporter,
-		newCmdOctopusDeployImporter,
-		newCmdRabbitMQImporter,
+// 		newCmdKubernetesImporter,
+// 		newCmdOctopusDeployImporter,
+// 		newCmdRabbitMQImporter,
 		// Network
-		newCmdCloudflareImporter,
+// 		newCmdCloudflareImporter,
 		// VCS
-		newCmdGithubImporter,
+// 		newCmdGithubImporter,
 		// Monitoring & System Management
-		newCmdDatadogImporter,
-		newCmdNewRelicImporter,
+// 		newCmdDatadogImporter,
+// 		newCmdNewRelicImporter,
 		// Community
-		newCmdKeycloakImporter,
-		newCmdLogzioImporter,
-		newCmdCommercetoolsImporter,
-		newCmdMikrotikImporter,
-		newCmdGmailfilterImporter,
+// 		newCmdKeycloakImporter,
+// 		newCmdLogzioImporter,
+// 		newCmdCommercetoolsImporter,
+// 		newCmdMikrotikImporter,
+// 		newCmdGmailfilterImporter,
 	}
 }
 
@@ -79,38 +79,38 @@ func providerGenerators() map[string]func() terraformutils.ProviderGenerator {
 	list := make(map[string]func() terraformutils.ProviderGenerator)
 	for _, providerGen := range []func() terraformutils.ProviderGenerator{
 		// Major Cloud
-		newGoogleProvider,
-		newAWSProvider,
-		newAzureProvider,
-		newAliCloudProvider,
-		newIbmProvider,
+// 		newGoogleProvider,
+// 		newAWSProvider,
+// 		newAzureProvider,
+// 		newAliCloudProvider,
+// 		newIbmProvider,
 		// Cloud
-		newDigitalOceanProvider,
+// 		newDigitalOceanProvider,
 		newEquinixMetalProvider,
-		newFastlyProvider,
-		newHerokuProvider,
-		newLinodeProvider,
-		newNs1Provider,
-		newOpenStackProvider,
-		newTencentCloudProvider,
-		newVultrProvider,
+// 		newFastlyProvider,
+// 		newHerokuProvider,
+// 		newLinodeProvider,
+// 		newNs1Provider,
+// 		newOpenStackProvider,
+// 		newTencentCloudProvider,
+// 		newVultrProvider,
 		// Infrastructure Software
-		newKubernetesProvider,
-		newOctopusDeployProvider,
-		newRabbitMQProvider,
+// 		newKubernetesProvider,
+// 		newOctopusDeployProvider,
+// 		newRabbitMQProvider,
 		// Network
-		newCloudflareProvider,
+// 		newCloudflareProvider,
 		// VCS
-		newGitHubProvider,
+// 		newGitHubProvider,
 		// Monitoring & System Management
-		newDataDogProvider,
-		newNewRelicProvider,
+// 		newDataDogProvider,
+// 		newNewRelicProvider,
 		// Community
-		newKeycloakProvider,
-		newLogzioProvider,
-		newCommercetoolsProvider,
-		newMikrotikProvider,
-		newGmailfilterProvider,
+// 		newKeycloakProvider,
+// 		newLogzioProvider,
+// 		newCommercetoolsProvider,
+// 		newMikrotikProvider,
+// 		newGmailfilterProvider,
 	} {
 		list[providerGen().GetName()] = providerGen
 	}
