@@ -30,6 +30,7 @@ type AWSProvider struct { //nolint
 }
 
 const GlobalRegion = "aws-global"
+const MainRegionPublicPartition = "us-east-1"
 const NoRegion = ""
 
 // SupportedGlobalResources should be bound to a default region. AWS doesn't specify in which region default services are
@@ -39,6 +40,7 @@ const NoRegion = ""
 var SupportedGlobalResources = []string{
 	"budgets",
 	"cloudfront",
+	"ecrpublic",
 	"iam",
 	"organization",
 	"route53",
@@ -142,7 +144,7 @@ func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
 	awsConfig := map[string]interface{}{}
 
 	if p.region == GlobalRegion {
-		awsConfig["region"] = "us-east-1" // For TF to workaround terraform-providers/terraform-provider-aws#1043
+		awsConfig["region"] = MainRegionPublicPartition // For TF to workaround terraform-providers/terraform-provider-aws#1043
 	} else if p.region != NoRegion {
 		awsConfig["region"] = p.region
 	}
@@ -253,6 +255,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"ebs":               &AwsFacade{service: &EbsGenerator{}},
 		"ec2_instance":      &AwsFacade{service: &Ec2Generator{}},
 		"ecr":               &AwsFacade{service: &EcrGenerator{}},
+		"ecrpublic":         &AwsFacade{service: &EcrPublicGenerator{}},
 		"ecs":               &AwsFacade{service: &EcsGenerator{}},
 		"efs":               &AwsFacade{service: &EfsGenerator{}},
 		"eks":               &AwsFacade{service: &EksGenerator{}},
