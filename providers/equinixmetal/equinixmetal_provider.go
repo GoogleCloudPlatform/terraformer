@@ -37,7 +37,7 @@ func (p *EquinixMetalProvider) Init(args []string) error {
 		return errors.New("set METAL_PROJECT_ID env var")
 	}
 	p.project_id = os.Getenv("METAL_PROJECT_ID")
-	
+
 	return nil
 }
 
@@ -55,10 +55,10 @@ func (EquinixMetalProvider) GetResourceConnections() map[string]map[string][]str
 
 func (p *EquinixMetalProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"device":                &DeviceGenerator{},
-		"sshkey":                &SshKeyGenerator{},
-		"spotmarketrequest":     &SpotMarketRequestGenerator{},
-		"volume":				 &VolumeGenerator{},
+		"device":            &DeviceGenerator{},
+		"sshkey":            &SshKeyGenerator{},
+		"spotmarketrequest": &SpotMarketRequestGenerator{},
+		"volume":            &VolumeGenerator{},
 	}
 }
 

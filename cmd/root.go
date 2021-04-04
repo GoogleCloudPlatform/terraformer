@@ -39,39 +39,39 @@ func Execute() error {
 func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command {
 	return []func(options ImportOptions) *cobra.Command{
 		// Major Cloud
- 		newCmdGoogleImporter,
- 		newCmdAwsImporter,
- 		newCmdAzureImporter,
- 		newCmdAliCloudImporter,
- 		newCmdIbmImporter,
+		newCmdGoogleImporter,
+		newCmdAwsImporter,
+		newCmdAzureImporter,
+		newCmdAliCloudImporter,
+		newCmdIbmImporter,
 		// Cloud
- 		newCmdDigitalOceanImporter,
+		newCmdDigitalOceanImporter,
 		newCmdEquinixMetalImporter,
- 		newCmdFastlyImporter,
- 		newCmdHerokuImporter,
- 		newCmdLinodeImporter,
- 		newCmdNs1Importer,
- 		newCmdOpenStackImporter,
- 		newCmdTencentCloudImporter,
- 		newCmdVultrImporter,
- 		newCmdYandexImporter,
+		newCmdFastlyImporter,
+		newCmdHerokuImporter,
+		newCmdLinodeImporter,
+		newCmdNs1Importer,
+		newCmdOpenStackImporter,
+		newCmdTencentCloudImporter,
+		newCmdVultrImporter,
+		newCmdYandexImporter,
 		// Infrastructure Software
- 		newCmdKubernetesImporter,
- 		newCmdOctopusDeployImporter,
- 		newCmdRabbitMQImporter,
+		newCmdKubernetesImporter,
+		newCmdOctopusDeployImporter,
+		newCmdRabbitMQImporter,
 		// Network
- 		newCmdCloudflareImporter,
+		newCmdCloudflareImporter,
 		// VCS
- 		newCmdGithubImporter,
+		newCmdGithubImporter,
 		// Monitoring & System Management
- 		newCmdDatadogImporter,
- 		newCmdNewRelicImporter,
+		newCmdDatadogImporter,
+		newCmdNewRelicImporter,
 		// Community
- 		newCmdKeycloakImporter,
- 		newCmdLogzioImporter,
- 		newCmdCommercetoolsImporter,
- 		newCmdMikrotikImporter,
- 		newCmdGmailfilterImporter,
+		newCmdKeycloakImporter,
+		newCmdLogzioImporter,
+		newCmdCommercetoolsImporter,
+		newCmdMikrotikImporter,
+		newCmdGmailfilterImporter,
 	}
 }
 
