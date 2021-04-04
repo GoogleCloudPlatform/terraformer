@@ -3,6 +3,9 @@ on:
   push:
     tags:
       - "*"
+  workflow_dispatch:
+      tags:
+        description: 'Release'
 jobs:
   tagged-release:
     name: "Tagged Release"
@@ -23,7 +26,7 @@ jobs:
       - name: Build for windows
         run: GOOS=windows go build -o terraformer-all-windows-amd64
       - name: Build for all providers
-        run: go run build/muilti-build/main.go
+        run: go run build/multi-build/main.go
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
