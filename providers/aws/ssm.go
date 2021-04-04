@@ -17,42 +17,39 @@ package aws
 import (
 	"context"
 
-	"github.com/aws/aws-sdk-go-v2/service/ecrpublic"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+
+	"github.com/aws/aws-sdk-go-v2/service/ssm"
 )
 
-var ecrPublicAllowEmptyValues = []string{"tags."}
+var ssmAllowEmptyValues = []string{"tags."}
 
-type EcrPublicGenerator struct {
+type SsmGenerator struct {
 	AWSService
 }
 
-func (g *EcrPublicGenerator) InitResources() error {
+func (g *SsmGenerator) InitResources() error {
 	config, e := g.generateConfig()
 	if e != nil {
 		return e
 	}
-
-	ecrPublicConfig := config.Copy()
-	ecrPublicConfig.Region = MainRegionPublicPartition
-	svc := ecrpublic.NewFromConfig(ecrPublicConfig)
-
-	p := ecrpublic.NewDescribeRepositoriesPaginator(svc, &ecrpublic.DescribeRepositoriesInput{})
+	svc := ssm.NewFromConfig(config)
+	p := ssm.NewDescribeParametersPaginator(svc, &ssm.DescribeParametersInput{})
 	for p.HasMorePages() {
-		page, e := p.NextPage(context.TODO())
-		if e != nil {
-			return e
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
 		}
-		for _, repository := range page.Repositories {
-			resource := terraformutils.NewSimpleResource(
-				*repository.RepositoryName,
-				*repository.RepositoryName,
-				"aws_ecrpublic_repository",
+		for _, parameter := range page.Parameters {
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+				StringValue(parameter.Name),
+				StringValue(parameter.Name),
+				"aws_ssm_parameter",
 				"aws",
-				ecrPublicAllowEmptyValues)
-			g.Resources = append(g.Resources, resource)
+				ssmAllowEmptyValues,
+			))
 		}
 	}
+
 	return nil
 }

@@ -682,6 +682,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_sns_topic_subscription`
 *   `sqs`
     * `aws_sqs_queue`
+*   `ssm`
+    * `aws_ssm_parameter`
 *   `subnet`
     * `aws_subnet`
 *   `swf`

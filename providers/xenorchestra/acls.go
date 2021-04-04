@@ -18,7 +18,7 @@ import (
 	"github.com/ddelnano/terraform-provider-xenorchestra/client"
 )
 
-type AclGenerator struct {
+type AclGenerator struct { //nolint
 	XenorchestraService
 }
 
