@@ -232,6 +232,7 @@ sudo mv terraformer-${PROVIDER}-darwin-amd64 /usr/local/bin/terraformer
 If you want to use a package manager:
 
 - [Homebrew](https://brew.sh/) users can use `brew install terraformer`.
+- [MacPorts](https://www.macports.org/) users can use `sudo port install terraformer`.
 - [Chocolatey](https://chocolatey.org/) users can use `choco install terraformer`.
 
 Links to download Terraform Providers:
