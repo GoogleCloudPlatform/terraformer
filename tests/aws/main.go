@@ -31,7 +31,7 @@ func main() {
 		"import",
 		"aws",
 		"--regions=ap-southeast-1",
-		"--resources=*",
+		"--resources=ssm",
 		"--profile=personal",
 		"--verbose",
 		"--compact",

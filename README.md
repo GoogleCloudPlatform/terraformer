@@ -564,6 +564,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_ecr_lifecycle_policy`
     * `aws_ecr_repository`
     * `aws_ecr_repository_policy`
+*   `ecrpublic`
+    * `aws_ecrpublic_repository`
 *   `efs`
     * `aws_efs_access_point`
     * `aws_efs_file_system`
@@ -680,6 +682,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_sns_topic_subscription`
 *   `sqs`
     * `aws_sqs_queue`
+*   `ssm`
+    * `aws_ssm_parameter`
 *   `subnet`
     * `aws_subnet`
 *   `swf`
@@ -735,6 +739,7 @@ AWS services that are global will be imported without specified region even if s
 List of global AWS services:
 *   `budgets`
 *   `cloudfront`
+*   `ecrpublic`
 *   `iam`
 *   `organization`
 *   `route53`

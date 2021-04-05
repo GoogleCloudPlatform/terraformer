@@ -50,6 +50,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.3.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.2.1
+	github.com/aws/aws-sdk-go-v2/service/ecrpublic v1.2.0
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/efs v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/eks v1.2.1
@@ -82,6 +83,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sfn v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/sns v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.3.0
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.3.0
 	github.com/aws/aws-sdk-go-v2/service/sts v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/swf v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/waf v1.1.4
