@@ -118,6 +118,7 @@ require (
 	github.com/mrparkers/terraform-provider-keycloak v0.0.0-20200506151941-509881368409
 	github.com/nicksnyder/go-i18n v1.10.1 // indirect
 	github.com/ns1/ns1-go v2.4.0+incompatible
+	github.com/ory/dockertest/v3 v3.6.0 // indirect
 	github.com/paultyng/go-newrelic/v4 v4.10.0
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.1.1
@@ -139,4 +140,7 @@ require (
 	k8s.io/client-go v0.20.2
 )
 
-replace gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
+replace (
+	github.com/ory/dockertest => github.com/ory/dockertest/v3 v3.5.1
+	gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
+)
