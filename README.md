@@ -26,6 +26,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [IBM Cloud](#use-with-ibm-cloud)
     * Cloud
         * [DigitalOcean](#use-with-digitalocean)
+        * [Equinix Metal](#use-with-equinixmetal)
         * [Fastly](#use-with-fastly)
         * [Heroku](#use-with-heroku)
         * [Linode](#use-with-linode)
@@ -1083,6 +1084,27 @@ List of supported DigitalOcean resources:
     * `digitalocean_volume`
 *   `volume_snapshot`
     * `digitalocean_volume_snapshot`
+
+### Use with Equinix Metal
+
+Example:
+
+```
+export METAL_AUTH_TOKEN=[METAL_AUTH_TOKEN]
+export PACKET_PROJECT_ID=[PROJECT_ID]
+./terraformer import metal -r volume,device
+```
+
+List of supported Equinix Metal resources:
+
+*   `device`
+    * `metal_device`
+*   `volume`
+    * `metal_volume`
+*   `sshkey`
+    * `metal_ssh_key`
+*   `spotmarketrequest`
+    * `metal_spot_market_request`
 
 ### Use with Fastly
 
