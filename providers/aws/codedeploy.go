@@ -33,11 +33,15 @@ func (g *CodeDeployGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := codedeploy.New(config)
-	p := codedeploy.NewListApplicationsPaginator(svc.ListApplicationsRequest(&codedeploy.ListApplicationsInput{}))
+	svc := codedeploy.NewFromConfig(config)
+	p := codedeploy.NewListApplicationsPaginator(svc, &codedeploy.ListApplicationsInput{})
 	var resources []terraformutils.Resource
-	for p.Next(context.Background()) {
-		for _, application := range p.CurrentPage().Applications {
+	for p.HasMorePages() {
+		page, e := p.NextPage(context.TODO())
+		if e != nil {
+			return e
+		}
+		for _, application := range page.Applications {
 			resources = append(resources, terraformutils.NewSimpleResource(
 				fmt.Sprintf(":%s", application),
 				application,
@@ -47,5 +51,5 @@ func (g *CodeDeployGenerator) InitResources() error {
 		}
 	}
 	g.Resources = resources
-	return p.Err()
+	return nil
 }

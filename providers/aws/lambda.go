@@ -32,7 +32,7 @@ func (g *LambdaGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := lambda.New(config)
+	svc := lambda.NewFromConfig(config)
 
 	err := g.addFunctions(svc)
 	if err != nil {
@@ -70,9 +70,13 @@ func (g *LambdaGenerator) PostConvertHook() error {
 }
 
 func (g *LambdaGenerator) addFunctions(svc *lambda.Client) error {
-	p := lambda.NewListFunctionsPaginator(svc.ListFunctionsRequest(&lambda.ListFunctionsInput{}))
-	for p.Next(context.Background()) {
-		for _, function := range p.CurrentPage().Functions {
+	p := lambda.NewListFunctionsPaginator(svc, &lambda.ListFunctionsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, function := range page.Functions {
 			g.Resources = append(g.Resources, terraformutils.NewResource(
 				*function.FunctionArn,
 				*function.FunctionName,
@@ -85,12 +89,16 @@ func (g *LambdaGenerator) addFunctions(svc *lambda.Client) error {
 				map[string]interface{}{},
 			))
 
-			pi := lambda.NewListFunctionEventInvokeConfigsPaginator(svc.ListFunctionEventInvokeConfigsRequest(
+			pi := lambda.NewListFunctionEventInvokeConfigsPaginator(svc,
 				&lambda.ListFunctionEventInvokeConfigsInput{
 					FunctionName: function.FunctionName,
-				}))
-			for pi.Next(context.Background()) {
-				for _, functionEventInvokeConfig := range pi.CurrentPage().FunctionEventInvokeConfigs {
+				})
+			for pi.HasMorePages() {
+				piage, err := pi.NextPage(context.TODO())
+				if err != nil {
+					return err
+				}
+				for _, functionEventInvokeConfig := range piage.FunctionEventInvokeConfigs {
 					g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 						*function.FunctionArn,
 						"feic_"+*functionEventInvokeConfig.FunctionArn,
@@ -100,18 +108,19 @@ func (g *LambdaGenerator) addFunctions(svc *lambda.Client) error {
 					))
 				}
 			}
-			if err := pi.Err(); err != nil {
-				return err
-			}
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *LambdaGenerator) addEventSourceMappings(svc *lambda.Client) error {
-	p := lambda.NewListEventSourceMappingsPaginator(svc.ListEventSourceMappingsRequest(&lambda.ListEventSourceMappingsInput{}))
-	for p.Next(context.Background()) {
-		for _, mapping := range p.CurrentPage().EventSourceMappings {
+	p := lambda.NewListEventSourceMappingsPaginator(svc, &lambda.ListEventSourceMappingsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, mapping := range page.EventSourceMappings {
 			g.Resources = append(g.Resources, terraformutils.NewResource(
 				*mapping.UUID,
 				*mapping.UUID,
@@ -126,18 +135,26 @@ func (g *LambdaGenerator) addEventSourceMappings(svc *lambda.Client) error {
 			))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *LambdaGenerator) addLayerVersions(svc *lambda.Client) error {
-	pl := lambda.NewListLayersPaginator(svc.ListLayersRequest(&lambda.ListLayersInput{}))
-	for pl.Next(context.Background()) {
-		for _, layer := range pl.CurrentPage().Layers {
-			pv := lambda.NewListLayerVersionsPaginator(svc.ListLayerVersionsRequest(&lambda.ListLayerVersionsInput{
+	pl := lambda.NewListLayersPaginator(svc, &lambda.ListLayersInput{})
+	for pl.HasMorePages() {
+		plage, err := pl.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, layer := range plage.Layers {
+			pv := lambda.NewListLayerVersionsPaginator(svc, &lambda.ListLayerVersionsInput{
 				LayerName: layer.LayerName,
-			}))
-			for pv.Next(context.Background()) {
-				for _, layerVersion := range pv.CurrentPage().LayerVersions {
+			})
+			for pv.HasMorePages() {
+				pvage, err := pv.NextPage(context.TODO())
+				if err != nil {
+					return err
+				}
+				for _, layerVersion := range pvage.LayerVersions {
 					g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 						*layerVersion.LayerVersionArn,
 						*layerVersion.LayerVersionArn,
@@ -147,10 +164,7 @@ func (g *LambdaGenerator) addLayerVersions(svc *lambda.Client) error {
 					))
 				}
 			}
-			if err := pv.Err(); err != nil {
-				return err
-			}
 		}
 	}
-	return pl.Err()
+	return nil
 }

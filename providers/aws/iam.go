@@ -23,8 +23,7 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"github.com/aws/aws-sdk-go-v2/service/iam"
-
-	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/iam/types"
 )
 
 var IamAllowEmptyValues = []string{"tags."}
@@ -40,7 +39,7 @@ func (g *IamGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := iam.New(config)
+	svc := iam.NewFromConfig(config)
 	g.Resources = []terraformutils.Resource{}
 	err := g.getUsers(svc)
 	if err != nil {
@@ -71,19 +70,28 @@ func (g *IamGenerator) InitResources() error {
 }
 
 func (g *IamGenerator) getRoles(svc *iam.Client) error {
-	p := iam.NewListRolesPaginator(svc.ListRolesRequest(&iam.ListRolesInput{}))
-	for p.Next(context.Background()) {
-		for _, role := range p.CurrentPage().Roles {
-			roleName := aws.StringValue(role.RoleName)
+	p := iam.NewListRolesPaginator(svc, &iam.ListRolesInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, role := range page.Roles {
+			roleName := StringValue(role.RoleName)
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				roleName,
 				roleName,
 				"aws_iam_role",
 				"aws",
 				IamAllowEmptyValues))
-			rolePoliciesPage := iam.NewListRolePoliciesPaginator(svc.ListRolePoliciesRequest(&iam.ListRolePoliciesInput{RoleName: role.RoleName}))
-			for rolePoliciesPage.Next(context.Background()) {
-				for _, policyName := range rolePoliciesPage.CurrentPage().PolicyNames {
+			rolePoliciesPage := iam.NewListRolePoliciesPaginator(svc, &iam.ListRolePoliciesInput{RoleName: role.RoleName})
+			for rolePoliciesPage.HasMorePages() {
+				rolePoliciesNextPage, err := rolePoliciesPage.NextPage(context.TODO())
+				if err != nil {
+					log.Println(err)
+					continue
+				}
+				for _, policyName := range rolePoliciesNextPage.PolicyNames {
 					g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 						roleName+":"+policyName,
 						roleName+"_"+policyName,
@@ -92,15 +100,16 @@ func (g *IamGenerator) getRoles(svc *iam.Client) error {
 						IamAllowEmptyValues))
 				}
 			}
-			if err := rolePoliciesPage.Err(); err != nil {
-				log.Println(err)
-				continue
-			}
-			roleAttachedPoliciesPage := iam.NewListAttachedRolePoliciesPaginator(svc.ListAttachedRolePoliciesRequest(&iam.ListAttachedRolePoliciesInput{
+			roleAttachedPoliciesPage := iam.NewListAttachedRolePoliciesPaginator(svc, &iam.ListAttachedRolePoliciesInput{
 				RoleName: &roleName,
-			}))
-			for roleAttachedPoliciesPage.Next(context.Background()) {
-				for _, attachedPolicy := range roleAttachedPoliciesPage.CurrentPage().AttachedPolicies {
+			})
+			for roleAttachedPoliciesPage.HasMorePages() {
+				roleAttachedPoliciesNextPage, err := roleAttachedPoliciesPage.NextPage(context.TODO())
+				if err != nil {
+					log.Println(err)
+					continue
+				}
+				for _, attachedPolicy := range roleAttachedPoliciesNextPage.AttachedPolicies {
 					g.Resources = append(g.Resources, terraformutils.NewResource(
 						roleName+"/"+*attachedPolicy.PolicyArn,
 						roleName+"_"+*attachedPolicy.PolicyName,
@@ -114,23 +123,23 @@ func (g *IamGenerator) getRoles(svc *iam.Client) error {
 						map[string]interface{}{}))
 				}
 			}
-			if err := roleAttachedPoliciesPage.Err(); err != nil {
-				log.Println(err)
-				continue
-			}
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *IamGenerator) getUsers(svc *iam.Client) error {
-	p := iam.NewListUsersPaginator(svc.ListUsersRequest(&iam.ListUsersInput{}))
-	for p.Next(context.Background()) {
-		for _, user := range p.CurrentPage().Users {
-			resourceName := aws.StringValue(user.UserName)
+	p := iam.NewListUsersPaginator(svc, &iam.ListUsersInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, user := range page.Users {
+			resourceName := StringValue(user.UserName)
 			g.Resources = append(g.Resources, terraformutils.NewResource(
 				resourceName,
-				aws.StringValue(user.UserId),
+				StringValue(user.UserId),
 				"aws_iam_user",
 				"aws",
 				map[string]string{
@@ -152,13 +161,17 @@ func (g *IamGenerator) getUsers(svc *iam.Client) error {
 			}
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *IamGenerator) getUserGroup(svc *iam.Client, userName *string) error {
-	p := iam.NewListGroupsForUserPaginator(svc.ListGroupsForUserRequest(&iam.ListGroupsForUserInput{UserName: userName}))
-	for p.Next(context.Background()) {
-		for _, group := range p.CurrentPage().Groups {
+	p := iam.NewListGroupsForUserPaginator(svc, &iam.ListGroupsForUserInput{UserName: userName})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, group := range page.Groups {
 			userGroupMembership := *userName + "/" + *group.GroupName
 			g.Resources = append(g.Resources, terraformutils.NewResource(
 				userGroupMembership,
@@ -175,16 +188,20 @@ func (g *IamGenerator) getUserGroup(svc *iam.Client, userName *string) error {
 			))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *IamGenerator) getUserPolices(svc *iam.Client, userName *string) error {
-	p := iam.NewListUserPoliciesPaginator(svc.ListUserPoliciesRequest(&iam.ListUserPoliciesInput{UserName: userName}))
-	for p.Next(context.Background()) {
-		for _, policy := range p.CurrentPage().PolicyNames {
-			resourceName := aws.StringValue(userName) + "_" + policy
+	p := iam.NewListUserPoliciesPaginator(svc, &iam.ListUserPoliciesInput{UserName: userName})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, policy := range page.PolicyNames {
+			resourceName := StringValue(userName) + "_" + policy
 			resourceName = strings.ReplaceAll(resourceName, "@", "")
-			policyID := aws.StringValue(userName) + ":" + policy
+			policyID := StringValue(userName) + ":" + policy
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				policyID,
 				resourceName,
@@ -193,15 +210,19 @@ func (g *IamGenerator) getUserPolices(svc *iam.Client, userName *string) error {
 				IamAllowEmptyValues))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *IamGenerator) getUserPolicyAttachment(svc *iam.Client, userName *string) error {
-	p := iam.NewListAttachedUserPoliciesPaginator(svc.ListAttachedUserPoliciesRequest(&iam.ListAttachedUserPoliciesInput{
+	p := iam.NewListAttachedUserPoliciesPaginator(svc, &iam.ListAttachedUserPoliciesInput{
 		UserName: userName,
-	}))
-	for p.Next(context.Background()) {
-		for _, attachedPolicy := range p.CurrentPage().AttachedPolicies {
+	})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, attachedPolicy := range page.AttachedPolicies {
 			g.Resources = append(g.Resources, terraformutils.NewResource(
 				*userName+"/"+*attachedPolicy.PolicyArn,
 				*userName+"_"+*attachedPolicy.PolicyName,
@@ -215,15 +236,19 @@ func (g *IamGenerator) getUserPolicyAttachment(svc *iam.Client, userName *string
 				map[string]interface{}{}))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *IamGenerator) getPolicies(svc *iam.Client) error {
-	p := iam.NewListPoliciesPaginator(svc.ListPoliciesRequest(&iam.ListPoliciesInput{Scope: iam.PolicyScopeTypeLocal}))
-	for p.Next(context.Background()) {
-		for _, policy := range p.CurrentPage().Policies {
-			resourceName := aws.StringValue(policy.PolicyName)
-			policyARN := aws.StringValue(policy.Arn)
+	p := iam.NewListPoliciesPaginator(svc, &iam.ListPoliciesInput{Scope: types.PolicyScopeTypeLocal})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, policy := range page.Policies {
+			resourceName := StringValue(policy.PolicyName)
+			policyARN := StringValue(policy.Arn)
 
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				policyARN,
@@ -233,14 +258,18 @@ func (g *IamGenerator) getPolicies(svc *iam.Client) error {
 				IamAllowEmptyValues))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *IamGenerator) getGroups(svc *iam.Client) error {
-	p := iam.NewListGroupsPaginator(svc.ListGroupsRequest(&iam.ListGroupsInput{}))
-	for p.Next(context.Background()) {
-		for _, group := range p.CurrentPage().Groups {
-			resourceName := aws.StringValue(group.GroupName)
+	p := iam.NewListGroupsPaginator(svc, &iam.ListGroupsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, group := range page.Groups {
+			resourceName := StringValue(group.GroupName)
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
@@ -251,13 +280,18 @@ func (g *IamGenerator) getGroups(svc *iam.Client) error {
 			g.getAttachedGroupPolicies(svc, group)
 		}
 	}
-	return p.Err()
+	return nil
 }
 
-func (g *IamGenerator) getGroupPolicies(svc *iam.Client, group iam.Group) {
-	groupPoliciesPage := iam.NewListGroupPoliciesPaginator(svc.ListGroupPoliciesRequest(&iam.ListGroupPoliciesInput{GroupName: group.GroupName}))
-	for groupPoliciesPage.Next(context.Background()) {
-		for _, policy := range groupPoliciesPage.CurrentPage().PolicyNames {
+func (g *IamGenerator) getGroupPolicies(svc *iam.Client, group types.Group) {
+	groupPoliciesPage := iam.NewListGroupPoliciesPaginator(svc, &iam.ListGroupPoliciesInput{GroupName: group.GroupName})
+	for groupPoliciesPage.HasMorePages() {
+		groupPoliciesNextPage, err := groupPoliciesPage.NextPage(context.TODO())
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		for _, policy := range groupPoliciesNextPage.PolicyNames {
 			id := *group.GroupName + ":" + policy
 			groupPolicyName := *group.GroupName + "_" + policy
 			g.Resources = append(g.Resources, terraformutils.NewResource(
@@ -270,16 +304,18 @@ func (g *IamGenerator) getGroupPolicies(svc *iam.Client, group iam.Group) {
 				IamAdditionalFields))
 		}
 	}
-	if err := groupPoliciesPage.Err(); err != nil {
-		log.Println(err)
-	}
 }
 
-func (g *IamGenerator) getAttachedGroupPolicies(svc *iam.Client, group iam.Group) {
-	groupAttachedPoliciesPage := iam.NewListAttachedGroupPoliciesPaginator(svc.ListAttachedGroupPoliciesRequest(
-		&iam.ListAttachedGroupPoliciesInput{GroupName: group.GroupName}))
-	for groupAttachedPoliciesPage.Next(context.Background()) {
-		for _, attachedPolicy := range groupAttachedPoliciesPage.CurrentPage().AttachedPolicies {
+func (g *IamGenerator) getAttachedGroupPolicies(svc *iam.Client, group types.Group) {
+	groupAttachedPoliciesPage := iam.NewListAttachedGroupPoliciesPaginator(svc,
+		&iam.ListAttachedGroupPoliciesInput{GroupName: group.GroupName})
+	for groupAttachedPoliciesPage.HasMorePages() {
+		groupAttachedPoliciesNextPage, err := groupAttachedPoliciesPage.NextPage(context.TODO())
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		for _, attachedPolicy := range groupAttachedPoliciesNextPage.AttachedPolicies {
 			if !strings.Contains(*attachedPolicy.PolicyArn, "arn:aws:iam::aws") {
 				continue // map only AWS managed policies since others should be managed by
 			}
@@ -297,15 +333,16 @@ func (g *IamGenerator) getAttachedGroupPolicies(svc *iam.Client, group iam.Group
 				IamAdditionalFields))
 		}
 	}
-	if err := groupAttachedPoliciesPage.Err(); err != nil {
-		log.Println(err)
-	}
 }
 
 func (g *IamGenerator) getInstanceProfiles(svc *iam.Client) error {
-	p := iam.NewListInstanceProfilesPaginator(svc.ListInstanceProfilesRequest(&iam.ListInstanceProfilesInput{}))
-	for p.Next(context.Background()) {
-		for _, instanceProfile := range p.CurrentPage().InstanceProfiles {
+	p := iam.NewListInstanceProfilesPaginator(svc, &iam.ListInstanceProfilesInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, instanceProfile := range page.InstanceProfiles {
 			resourceName := *instanceProfile.InstanceProfileName
 
 			g.Resources = append(g.Resources, terraformutils.NewResource(
@@ -320,7 +357,7 @@ func (g *IamGenerator) getInstanceProfiles(svc *iam.Client) error {
 				IamAdditionalFields))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 // PostGenerateHook for add policy json as heredoc

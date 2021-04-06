@@ -18,7 +18,6 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cloudfront"
 )
 
@@ -33,13 +32,17 @@ func (g *CloudFrontGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := cloudfront.New(config)
-	p := cloudfront.NewListDistributionsPaginator(svc.ListDistributionsRequest(&cloudfront.ListDistributionsInput{}))
-	for p.Next(context.Background()) {
-		for _, distribution := range p.CurrentPage().DistributionList.Items {
+	svc := cloudfront.NewFromConfig(config)
+	p := cloudfront.NewListDistributionsPaginator(svc, &cloudfront.ListDistributionsInput{})
+	for p.HasMorePages() {
+		page, e := p.NextPage(context.TODO())
+		if e != nil {
+			return e
+		}
+		for _, distribution := range page.DistributionList.Items {
 			r := terraformutils.NewResource(
-				aws.StringValue(distribution.Id),
-				aws.StringValue(distribution.Id),
+				StringValue(distribution.Id),
+				StringValue(distribution.Id),
 				"aws_cloudfront_distribution",
 				"aws",
 				map[string]string{
@@ -52,5 +55,5 @@ func (g *CloudFrontGenerator) InitResources() error {
 			g.Resources = append(g.Resources, r)
 		}
 	}
-	return p.Err()
+	return nil
 }

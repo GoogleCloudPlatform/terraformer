@@ -18,6 +18,6 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
-type IBMService struct {
+type IBMService struct { //nolint
 	terraformutils.Service
 }

@@ -23,8 +23,8 @@ import (
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/hashicorp/terraform/flatmap"
 	"gonum.org/v1/gonum/graph"
 	simplegraph "gonum.org/v1/gonum/graph/simple"
@@ -41,7 +41,7 @@ type SecurityGenerator struct {
 	AWSService
 }
 
-type ByGroupPair []ec2.UserIdGroupPair
+type ByGroupPair []types.UserIdGroupPair
 
 func (b ByGroupPair) Len() int      { return len(b) }
 func (b ByGroupPair) Swap(i, j int) { b[i], b[j] = b[j], b[i] }
@@ -56,7 +56,7 @@ func (b ByGroupPair) Less(i, j int) bool {
 	panic("mismatched security group rules, may be a terraform bug")
 }
 
-func (SecurityGenerator) createResources(securityGroups []ec2.SecurityGroup) []terraformutils.Resource {
+func (SecurityGenerator) createResources(securityGroups []types.SecurityGroup) []terraformutils.Resource {
 	var sgIDsToMoveOut []string
 	_, shouldSplitRules := os.LookupEnv("SPLIT_SG_RULES")
 	if shouldSplitRules {
@@ -87,8 +87,8 @@ func (SecurityGenerator) createResources(securityGroups []ec2.SecurityGroup) []t
 		}
 
 		resources = append(resources, terraformutils.NewResource(
-			aws.StringValue(sg.GroupId),
-			strings.Trim(aws.StringValue(sg.GroupName)+"_"+aws.StringValue(sg.GroupId), " "),
+			StringValue(sg.GroupId),
+			strings.Trim(StringValue(sg.GroupName)+"_"+StringValue(sg.GroupId), " "),
 			"aws_security_group",
 			"aws",
 			map[string]string{},
@@ -98,7 +98,7 @@ func (SecurityGenerator) createResources(securityGroups []ec2.SecurityGroup) []t
 	return resources
 }
 
-func processRule(rule ec2.IpPermission, ruleType string, sg ec2.SecurityGroup, resources []terraformutils.Resource) []terraformutils.Resource {
+func processRule(rule types.IpPermission, ruleType string, sg types.SecurityGroup, resources []terraformutils.Resource) []terraformutils.Resource {
 	if rule.UserIdGroupPairs != nil && len(rule.UserIdGroupPairs) > 0 {
 		if len(rule.IpRanges) > 0 { // we must unwind coupled CIDR IPv4 range + security group rules
 			attributes := baseRuleAttributes(ruleType, rule, sg)
@@ -155,7 +155,7 @@ func processRule(rule ec2.IpPermission, ruleType string, sg ec2.SecurityGroup, r
 	return resources
 }
 
-func baseRuleAttributes(ruleType string, rule ec2.IpPermission, sg ec2.SecurityGroup) map[string]interface{} {
+func baseRuleAttributes(ruleType string, rule types.IpPermission, sg types.SecurityGroup) map[string]interface{} {
 	attributes := map[string]interface{}{
 		"type":              ruleType,
 		"cidr_blocks":       ipRange(rule),
@@ -171,15 +171,15 @@ func baseRuleAttributes(ruleType string, rule ec2.IpPermission, sg ec2.SecurityG
 
 // Let's try to find all cycles by applying Johnson's method on the directed graph
 // We cannot build a line graph and move out only rules because of hashicorp/terraform#11011
-func findSgsToMoveOut(securityGroups []ec2.SecurityGroup) []string {
+func findSgsToMoveOut(securityGroups []types.SecurityGroup) []string {
 	// Vertexes are security groups, edges are rules. The task is to find correct set of rule definitions, so that we
 	// won't have cycles
 	sourceGraph := simplegraph.NewDirectedGraph()
-	idToSg := make(map[int]ec2.SecurityGroup)
+	idToSg := make(map[int]types.SecurityGroup)
 	sgToIdx := make(map[string]int64)
 	for idx, sg := range securityGroups {
 		idToSg[idx] = sg
-		sgToIdx[aws.StringValue(sg.GroupId)] = int64(idx)
+		sgToIdx[StringValue(sg.GroupId)] = int64(idx)
 		sourceGraph.AddNode(sourceGraph.NewNode())
 	}
 	for idx, sg := range securityGroups {
@@ -188,7 +188,7 @@ func findSgsToMoveOut(securityGroups []ec2.SecurityGroup) []string {
 			for _, pair := range pairs {
 				if pair.GroupId != nil {
 					fromNode := sourceGraph.Node(int64(idx))
-					toNode := sourceGraph.Node(sgToIdx[aws.StringValue(pair.GroupId)])
+					toNode := sourceGraph.Node(sgToIdx[StringValue(pair.GroupId)])
 					if fromNode.ID() != toNode.ID() {
 						sourceGraph.SetEdge(sourceGraph.NewEdge(fromNode, toNode))
 					}
@@ -227,7 +227,7 @@ func findSgsToMoveOut(securityGroups []ec2.SecurityGroup) []string {
 	return result
 }
 
-func elementAlreadyFound(resultingSet map[string]void, v []graph.Node, idToSg map[int]ec2.SecurityGroup) bool {
+func elementAlreadyFound(resultingSet map[string]void, v []graph.Node, idToSg map[int]types.SecurityGroup) bool {
 	for k := range resultingSet {
 		for _, vi := range v {
 			viGroupID := *idToSg[int(vi.ID())].GroupId
@@ -244,20 +244,21 @@ func (g *SecurityGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
-	svc := ec2.New(config)
-	p := ec2.NewDescribeSecurityGroupsPaginator(svc.DescribeSecurityGroupsRequest(&ec2.DescribeSecurityGroupsInput{}))
-	var resourcesToFilter []ec2.SecurityGroup
-	for p.Next(context.Background()) {
-		resourcesToFilter = append(resourcesToFilter, p.CurrentPage().SecurityGroups...)
+	svc := ec2.NewFromConfig(config)
+	p := ec2.NewDescribeSecurityGroupsPaginator(svc, &ec2.DescribeSecurityGroupsInput{})
+	var resourcesToFilter []types.SecurityGroup
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		resourcesToFilter = append(resourcesToFilter, page.SecurityGroups...)
 	}
 	sort.Slice(resourcesToFilter, func(i, j int) bool {
 		return *resourcesToFilter[i].GroupId < *resourcesToFilter[j].GroupId
 	})
 	g.Resources = g.createResources(resourcesToFilter)
 
-	if err := p.Err(); err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -306,7 +307,7 @@ func (g *SecurityGenerator) sortIfExist(attribute string, ruleMap map[string]int
 	}
 }
 
-func permissionID(sgID, ruleType, groupID string, ip ec2.IpPermission) string {
+func permissionID(sgID, ruleType, groupID string, ip types.IpPermission) string {
 	var buf bytes.Buffer
 	buf.WriteString(fmt.Sprintf("%s_%s_%s_%d_%d_", sgID, ruleType, *ip.IpProtocol, fromPort(ip), toPort(ip)))
 
@@ -354,29 +355,29 @@ func permissionID(sgID, ruleType, groupID string, ip ec2.IpPermission) string {
 	return idPreformatted[:len(idPreformatted)-1]
 }
 
-func fromPort(ip ec2.IpPermission) int {
+func fromPort(ip types.IpPermission) int {
 	switch {
 	case *ip.IpProtocol == "icmp":
 		return -1
-	case ip.FromPort != nil && *ip.FromPort > 0:
-		return int(*ip.FromPort)
+	case ip.FromPort > 0:
+		return int(ip.FromPort)
 	default:
 		return 0
 	}
 }
 
-func toPort(ip ec2.IpPermission) int {
+func toPort(ip types.IpPermission) int {
 	switch {
 	case *ip.IpProtocol == "icmp":
 		return -1
-	case ip.ToPort != nil && *ip.ToPort > 0:
-		return int(*ip.ToPort)
+	case ip.ToPort > 0:
+		return int(ip.ToPort)
 	default:
 		return 65536
 	}
 }
 
-func ipRange(rule ec2.IpPermission) []string {
+func ipRange(rule types.IpPermission) []string {
 	result := make([]string, len(rule.IpRanges))
 	for idx, rule := range rule.IpRanges {
 		result[idx] = *rule.CidrIp
@@ -384,7 +385,7 @@ func ipRange(rule ec2.IpPermission) []string {
 	return result
 }
 
-func ip6Range(rule ec2.IpPermission) []string {
+func ip6Range(rule types.IpPermission) []string {
 	result := make([]string, len(rule.Ipv6Ranges))
 	for idx, rule := range rule.Ipv6Ranges {
 		result[idx] = *rule.CidrIpv6
@@ -392,7 +393,7 @@ func ip6Range(rule ec2.IpPermission) []string {
 	return result
 }
 
-func prefixes(rule ec2.IpPermission) []string {
+func prefixes(rule types.IpPermission) []string {
 	result := make([]string, len(rule.PrefixListIds))
 	for idx, rule := range rule.PrefixListIds {
 		result[idx] = *rule.PrefixListId

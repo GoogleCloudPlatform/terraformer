@@ -18,7 +18,6 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/devicefarm"
 )
 
@@ -33,13 +32,17 @@ func (g *DeviceFarmGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := devicefarm.New(config)
-	p := devicefarm.NewListProjectsPaginator(svc.ListProjectsRequest(&devicefarm.ListProjectsInput{}))
+	svc := devicefarm.NewFromConfig(config)
+	p := devicefarm.NewListProjectsPaginator(svc, &devicefarm.ListProjectsInput{})
 	var resources []terraformutils.Resource
-	for p.Next(context.Background()) {
-		for _, project := range p.CurrentPage().Projects {
-			projectArn := aws.StringValue(project.Arn)
-			projectName := aws.StringValue(project.Name)
+	for p.HasMorePages() {
+		page, e := p.NextPage(context.TODO())
+		if e != nil {
+			return e
+		}
+		for _, project := range page.Projects {
+			projectArn := StringValue(project.Arn)
+			projectName := StringValue(project.Name)
 			resources = append(resources, terraformutils.NewSimpleResource(
 				projectArn,
 				projectName,
@@ -49,5 +52,5 @@ func (g *DeviceFarmGenerator) InitResources() error {
 		}
 	}
 	g.Resources = resources
-	return p.Err()
+	return nil
 }

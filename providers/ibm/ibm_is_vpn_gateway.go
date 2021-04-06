@@ -29,8 +29,7 @@ type VPNGatewayGenerator struct {
 }
 
 func (g VPNGatewayGenerator) createVPNGatewayResources(vpngwID, vpngwName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		vpngwID,
 		vpngwName,
 		"ibm_is_vpn_gateway",
@@ -40,8 +39,7 @@ func (g VPNGatewayGenerator) createVPNGatewayResources(vpngwID, vpngwName string
 }
 
 func (g VPNGatewayGenerator) createVPNGatewayConnectionResources(vpngwID, vpngwConnectionID, vpngwConnectionName string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", vpngwID, vpngwConnectionID),
 		vpngwConnectionName,
 		"ibm_is_vpn_gateway_connections",
@@ -60,7 +58,7 @@ func (g *VPNGatewayGenerator) InitResources() error {
 	region := envFallBack([]string{"IC_REGION"}, "us-south")
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
-		return fmt.Errorf("No API key set")
+		return fmt.Errorf("no API key set")
 	}
 
 	rg := g.Args["resource_group"]
@@ -80,7 +78,7 @@ func (g *VPNGatewayGenerator) InitResources() error {
 		return err
 	}
 	start := ""
-	allrecs := []vpcv1.VPNGatewayIntf{}
+	var allrecs []vpcv1.VPNGatewayIntf
 	for {
 		listVPNGatewaysOptions := &vpcv1.ListVPNGatewaysOptions{}
 		if start != "" {

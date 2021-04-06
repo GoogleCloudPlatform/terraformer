@@ -47,10 +47,10 @@ func (g *FirehoseGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := firehose.New(config)
+	svc := firehose.NewFromConfig(config)
 	var streamNames []string
 	for {
-		output, err := svc.ListDeliveryStreamsRequest(&firehose.ListDeliveryStreamsInput{}).Send(context.Background())
+		output, err := svc.ListDeliveryStreams(context.TODO(), &firehose.ListDeliveryStreamsInput{})
 		if err != nil {
 			return err
 		}

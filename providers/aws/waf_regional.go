@@ -30,7 +30,7 @@ func (g *WafRegionalGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := wafregional.New(config)
+	svc := wafregional.NewFromConfig(config)
 
 	if err := g.loadWebACL(svc); err != nil {
 		return err
@@ -74,7 +74,7 @@ func (g *WafRegionalGenerator) InitResources() error {
 }
 
 func (g *WafRegionalGenerator) loadWebACL(svc *wafregional.Client) error {
-	output, err := svc.ListWebACLsRequest(&wafregional.ListWebACLsInput{}).Send(context.Background())
+	output, err := svc.ListWebACLs(context.TODO(), &wafregional.ListWebACLsInput{})
 	if err != nil {
 		return err
 	}
@@ -90,7 +90,7 @@ func (g *WafRegionalGenerator) loadWebACL(svc *wafregional.Client) error {
 }
 
 func (g *WafRegionalGenerator) loadByteMatchSet(svc *wafregional.Client) error {
-	output, err := svc.ListByteMatchSetsRequest(&wafregional.ListByteMatchSetsInput{}).Send(context.Background())
+	output, err := svc.ListByteMatchSets(context.TODO(), &wafregional.ListByteMatchSetsInput{})
 	if err != nil {
 		return err
 	}
@@ -106,7 +106,7 @@ func (g *WafRegionalGenerator) loadByteMatchSet(svc *wafregional.Client) error {
 }
 
 func (g *WafRegionalGenerator) loadGeoMatchSet(svc *wafregional.Client) error {
-	output, err := svc.ListGeoMatchSetsRequest(&wafregional.ListGeoMatchSetsInput{}).Send(context.Background())
+	output, err := svc.ListGeoMatchSets(context.TODO(), &wafregional.ListGeoMatchSetsInput{})
 	if err != nil {
 		return err
 	}
@@ -122,7 +122,7 @@ func (g *WafRegionalGenerator) loadGeoMatchSet(svc *wafregional.Client) error {
 }
 
 func (g *WafRegionalGenerator) loadIPSet(svc *wafregional.Client) error {
-	output, err := svc.ListIPSetsRequest(&wafregional.ListIPSetsInput{}).Send(context.Background())
+	output, err := svc.ListIPSets(context.TODO(), &wafregional.ListIPSetsInput{})
 	if err != nil {
 		return err
 	}
@@ -138,7 +138,7 @@ func (g *WafRegionalGenerator) loadIPSet(svc *wafregional.Client) error {
 }
 
 func (g *WafRegionalGenerator) loadRateBasedRules(svc *wafregional.Client) error {
-	output, err := svc.ListRateBasedRulesRequest(&wafregional.ListRateBasedRulesInput{}).Send(context.Background())
+	output, err := svc.ListRateBasedRules(context.TODO(), &wafregional.ListRateBasedRulesInput{})
 	if err != nil {
 		return err
 	}
@@ -154,7 +154,7 @@ func (g *WafRegionalGenerator) loadRateBasedRules(svc *wafregional.Client) error
 }
 
 func (g *WafRegionalGenerator) loadRegexMatchSets(svc *wafregional.Client) error {
-	output, err := svc.ListRegexMatchSetsRequest(&wafregional.ListRegexMatchSetsInput{}).Send(context.Background())
+	output, err := svc.ListRegexMatchSets(context.TODO(), &wafregional.ListRegexMatchSetsInput{})
 	if err != nil {
 		return err
 	}
@@ -170,7 +170,7 @@ func (g *WafRegionalGenerator) loadRegexMatchSets(svc *wafregional.Client) error
 }
 
 func (g *WafRegionalGenerator) loadRegexPatternSets(svc *wafregional.Client) error {
-	output, err := svc.ListRegexPatternSetsRequest(&wafregional.ListRegexPatternSetsInput{}).Send(context.Background())
+	output, err := svc.ListRegexPatternSets(context.TODO(), &wafregional.ListRegexPatternSetsInput{})
 	if err != nil {
 		return err
 	}
@@ -186,7 +186,7 @@ func (g *WafRegionalGenerator) loadRegexPatternSets(svc *wafregional.Client) err
 }
 
 func (g *WafRegionalGenerator) loadWafRules(svc *wafregional.Client) error {
-	output, err := svc.ListRulesRequest(&wafregional.ListRulesInput{}).Send(context.Background())
+	output, err := svc.ListRules(context.TODO(), &wafregional.ListRulesInput{})
 	if err != nil {
 		return err
 	}
@@ -202,7 +202,7 @@ func (g *WafRegionalGenerator) loadWafRules(svc *wafregional.Client) error {
 }
 
 func (g *WafRegionalGenerator) loadWafRuleGroups(svc *wafregional.Client) error {
-	output, err := svc.ListRuleGroupsRequest(&wafregional.ListRuleGroupsInput{}).Send(context.Background())
+	output, err := svc.ListRuleGroups(context.TODO(), &wafregional.ListRuleGroupsInput{})
 	if err != nil {
 		return err
 	}
@@ -218,7 +218,7 @@ func (g *WafRegionalGenerator) loadWafRuleGroups(svc *wafregional.Client) error 
 }
 
 func (g *WafRegionalGenerator) loadSizeConstraintSets(svc *wafregional.Client) error {
-	output, err := svc.ListSizeConstraintSetsRequest(&wafregional.ListSizeConstraintSetsInput{}).Send(context.Background())
+	output, err := svc.ListSizeConstraintSets(context.TODO(), &wafregional.ListSizeConstraintSetsInput{})
 	if err != nil {
 		return err
 	}
@@ -234,7 +234,7 @@ func (g *WafRegionalGenerator) loadSizeConstraintSets(svc *wafregional.Client) e
 }
 
 func (g *WafRegionalGenerator) loadSQLInjectionMatchSets(svc *wafregional.Client) error {
-	output, err := svc.ListSqlInjectionMatchSetsRequest(&wafregional.ListSqlInjectionMatchSetsInput{}).Send(context.Background())
+	output, err := svc.ListSqlInjectionMatchSets(context.TODO(), &wafregional.ListSqlInjectionMatchSetsInput{})
 	if err != nil {
 		return err
 	}
@@ -250,7 +250,7 @@ func (g *WafRegionalGenerator) loadSQLInjectionMatchSets(svc *wafregional.Client
 }
 
 func (g *WafRegionalGenerator) loadXSSMatchSet(svc *wafregional.Client) error {
-	output, err := svc.ListXssMatchSetsRequest(&wafregional.ListXssMatchSetsInput{}).Send(context.Background())
+	output, err := svc.ListXssMatchSets(context.TODO(), &wafregional.ListXssMatchSetsInput{})
 	if err != nil {
 		return err
 	}

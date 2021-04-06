@@ -30,8 +30,7 @@ type FloatingIPGenerator struct {
 }
 
 func (g FloatingIPGenerator) createFloatingIPResources(fipID, fipName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		fipID,
 		fipName,
 		"ibm_is_floating_ip",
@@ -65,7 +64,7 @@ func (g *FloatingIPGenerator) InitResources() error {
 		return err
 	}
 	start := ""
-	allrecs := []vpcv1.FloatingIP{}
+	var allrecs []vpcv1.FloatingIP
 	for {
 		options := &vpcv1.ListFloatingIpsOptions{}
 		if start != "" {

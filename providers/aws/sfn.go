@@ -18,11 +18,15 @@ func (g *SfnGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := sfn.New(config)
+	svc := sfn.NewFromConfig(config)
 
-	p := sfn.NewListStateMachinesPaginator(svc.ListStateMachinesRequest(&sfn.ListStateMachinesInput{}))
-	for p.Next(context.Background()) {
-		for _, stateMachine := range p.CurrentPage().StateMachines {
+	p := sfn.NewListStateMachinesPaginator(svc, &sfn.ListStateMachinesInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, stateMachine := range page.StateMachines {
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				*stateMachine.StateMachineArn,
 				*stateMachine.Name,
@@ -30,16 +34,16 @@ func (g *SfnGenerator) InitResources() error {
 				"aws",
 				sfnAllowEmptyValues,
 			))
-
-			if err := p.Err(); err != nil {
-				return err
-			}
 		}
 	}
 
-	pActivity := sfn.NewListActivitiesPaginator(svc.ListActivitiesRequest(&sfn.ListActivitiesInput{}))
-	for pActivity.Next(context.Background()) {
-		for _, stateMachine := range pActivity.CurrentPage().Activities {
+	pActivity := sfn.NewListActivitiesPaginator(svc, &sfn.ListActivitiesInput{})
+	for pActivity.HasMorePages() {
+		pActivityNextPage, err := pActivity.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, stateMachine := range pActivityNextPage.Activities {
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				*stateMachine.ActivityArn,
 				*stateMachine.Name,
@@ -47,10 +51,6 @@ func (g *SfnGenerator) InitResources() error {
 				"aws",
 				sfnAllowEmptyValues,
 			))
-
-			if err := pActivity.Err(); err != nil {
-				return err
-			}
 		}
 	}
 

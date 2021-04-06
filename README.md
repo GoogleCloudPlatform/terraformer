@@ -50,6 +50,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [Logz.io](#use-with-logzio)
         * [Commercetools](#use-with-commercetools)
         * [Mikrotik](#use-with-mikrotik)
+        * [Xen Orchestra](#use-with-xenorchestra)
         * [GmailFilter](#use-with-gmailfilter)
 - [Contributing](#contributing)
 - [Developing](#developing)
@@ -231,6 +232,7 @@ sudo mv terraformer-${PROVIDER}-darwin-amd64 /usr/local/bin/terraformer
 If you want to use a package manager:
 
 - [Homebrew](https://brew.sh/) users can use `brew install terraformer`.
+- [MacPorts](https://www.macports.org/) users can use `sudo port install terraformer`.
 - [Chocolatey](https://chocolatey.org/) users can use `choco install terraformer`.
 
 Links to download Terraform Providers:
@@ -258,12 +260,13 @@ Links to download Terraform Providers:
     * GitHub provider >=2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-github/)
 * Monitoring & System Management
     * Datadog provider >2.1.0 - [here](https://releases.hashicorp.com/terraform-provider-datadog/)
-    * New Relic provider >1.5.0 - [here](https://releases.hashicorp.com/terraform-provider-newrelic/)
+    * New Relic provider >2.0.0 - [here](https://releases.hashicorp.com/terraform-provider-newrelic/)
 * Community
     * Keycloak provider >=1.19.0 - [here](https://github.com/mrparkers/terraform-provider-keycloak/)
     * Logz.io provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
     * Commercetools provider >= 0.21.0 - [here](https://github.com/labd/terraform-provider-commercetools)
     * Mikrotik provider >= 0.2.2 - [here](https://github.com/ddelnano/terraform-provider-mikrotik)
+    * Xen Orchestra provider >= 0.18.0 - [here](https://github.com/ddelnano/terraform-provider-xenorchestra)
     * GmailFilter provider >= 1.0.1 - [here](https://github.com/yamamoto-febc/terraform-provider-gmailfilter)
 
 Information on provider plugins:
@@ -562,6 +565,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_ecr_lifecycle_policy`
     * `aws_ecr_repository`
     * `aws_ecr_repository_policy`
+*   `ecrpublic`
+    * `aws_ecrpublic_repository`
 *   `efs`
     * `aws_efs_access_point`
     * `aws_efs_file_system`
@@ -609,6 +614,7 @@ In that case terraformer will not know with which region resources are associate
 *   `kms`
     * `aws_kms_key`
     * `aws_kms_alias`
+    * `aws_kms_grant`
 *   `lambda`
     * `aws_lambda_event_source_mapping`
     * `aws_lambda_function`
@@ -651,7 +657,6 @@ In that case terraformer will not know with which region resources are associate
     * `aws_route_table_association`
 *   `s3`
     * `aws_s3_bucket`
-    * `aws_s3_bucket_policy`
 *   `secretsmanager`
     * `aws_secretsmanager_secret`
 *   `securityhub`
@@ -678,6 +683,8 @@ In that case terraformer will not know with which region resources are associate
     * `aws_sns_topic_subscription`
 *   `sqs`
     * `aws_sqs_queue`
+*   `ssm`
+    * `aws_ssm_parameter`
 *   `subnet`
     * `aws_subnet`
 *   `swf`
@@ -733,6 +740,7 @@ AWS services that are global will be imported without specified region even if s
 List of global AWS services:
 *   `budgets`
 *   `cloudfront`
+*   `ecrpublic`
 *   `iam`
 *   `organization`
 *   `route53`
@@ -1593,8 +1601,7 @@ List of supported Datadog services:
 Example:
 
 ```
-NEWRELIC_API_KEY=[API-KEY]
-./terraformer import newrelic -r alert,dashboard,infra,synthetics
+./terraformer import newrelic -r alert,dashboard,infra,synthetics --api-key=NRAK-XXXXXXXX --account-id=XXXXX
 ```
 
 List of supported New Relic resources:
@@ -1712,7 +1719,7 @@ List of supported [commercetools](https://commercetools.com/de/) resources:
 
 ### Use with [Mikrotik](https://wiki.mikrotik.com/wiki/Manual:TOC)
 
-This provider uses the [terraform-provider-mikrotik](https://github.com/ddelnano/terraform-provider-mikrotik). The terraformer provider was build by [Dom Del Nano](https://github.com/ddelnano).
+This provider uses the [terraform-provider-mikrotik](https://github.com/ddelnano/terraform-provider-mikrotik). The terraformer provider was built by [Dom Del Nano](https://github.com/ddelnano).
 
 Example:
 
@@ -1728,6 +1735,23 @@ MIKROTIK_HOST=router-hostname:8728 MIKROTIK_USER=username MIKROTIK_PASSWORD=pass
 List of supported mikrotik resources:
 
 * `mikrotik_dhcp_lease`
+
+### Use with [Xen Orchestra](https://xen-orchestra.com/)
+
+This provider uses the [terraform-provider-xenorchestra](https://github.com/ddelnano/terraform-provider-xenorchestra). The terraformer provider was built by [Dom Del Nano](https://github.com/ddelnano) on behalf of [Vates SAS](https://vates.fr/) who is sponsoring Dom to work on the project.
+
+Example:
+
+```
+## Warning! You should not expose your xenorchestra creds through your bash history. Export them to your shell in a safe way when doing this for real!
+
+XOA_URL=ws://your-xenorchestra-domain XOA_USER=username XOA_PASSWORD=password terraformer import xenorchestra -r=acl
+```
+
+List of supported xenorchestra resources:
+
+* `xenorchestra_acl`
+* `xenorchestra_resource_set`
 
 
 ### Use with GmailFilter

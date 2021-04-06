@@ -32,8 +32,7 @@ type InstanceGroupGenerator struct {
 }
 
 func (g *InstanceGroupGenerator) loadInstanceGroup(instanceGroupID, instanceGroupName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		instanceGroupID,
 		instanceGroupName,
 		"ibm_is_instance_group",
@@ -46,8 +45,7 @@ func (g *InstanceGroupGenerator) loadInstanceGroupManger(instanceGroupID, instan
 	if managerName == "" {
 		managerName = fmt.Sprintf("manager-%d-%d", rand.Intn(100), rand.Intn(50))
 	}
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", instanceGroupID, instanceGroupManagerID),
 		managerName,
 		"ibm_is_instance_group_manager",
@@ -60,13 +58,12 @@ func (g *InstanceGroupGenerator) loadInstanceGroupManger(instanceGroupID, instan
 	return resources
 }
 
-func (g *InstanceGroupGenerator) loadInstanceGroupMangerPolicy(instanceGroupID, instanceGroupManagerID, PolicyID, policyName string, dependsOn []string) terraformutils.Resource {
+func (g *InstanceGroupGenerator) loadInstanceGroupMangerPolicy(instanceGroupID, instanceGroupManagerID, policyID, policyName string, dependsOn []string) terraformutils.Resource {
 	if policyName == "" {
 		policyName = fmt.Sprintf("manager-%d-%d", rand.Intn(100), rand.Intn(50))
 	}
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
-		fmt.Sprintf("%s/%s/%s", instanceGroupID, instanceGroupManagerID, PolicyID),
+	resources := terraformutils.NewResource(
+		fmt.Sprintf("%s/%s/%s", instanceGroupID, instanceGroupManagerID, policyID),
 		policyName,
 		"ibm_is_instance_group_manager_policy",
 		"ibm",
@@ -116,11 +113,10 @@ func (g *InstanceGroupGenerator) handleManagers(sess *vpcv1.VpcV1, instanceGroup
 		policies := make([]string, 0)
 
 		for i := 0; i < len(instanceGroupManager.Policies); i++ {
-			policies = append(policies, string(*(instanceGroupManager.Policies[i].ID)))
+			policies = append(policies, *(instanceGroupManager.Policies[i].ID))
 		}
 		policiesWG.Add(1)
-		var dependsOn1 []string
-		dependsOn1 = append(dependsOn,
+		dependsOn1 := append(dependsOn,
 			"ibm_is_instance_group_manger."+terraformutils.TfSanitize(*instanceGroupManager.Name))
 		go g.handlePolicies(sess, instanceGroupID, instanceGroupManagerID, policies, dependsOn1, &policiesWG)
 	}
@@ -131,7 +127,7 @@ func (g *InstanceGroupGenerator) handleInstanceGroups(sess *vpcv1.VpcV1, waitGro
 	// Support for pagination
 	defer waitGroup.Done()
 	start := ""
-	allrecs := []vpcv1.InstanceGroup{}
+	var allrecs []vpcv1.InstanceGroup
 	for {
 		listInstanceGroupOptions := vpcv1.ListInstanceGroupsOptions{}
 		if start != "" {
@@ -158,7 +154,7 @@ func (g *InstanceGroupGenerator) handleInstanceGroups(sess *vpcv1.VpcV1, waitGro
 		g.Resources = append(g.Resources, g.loadInstanceGroup(instanceGoupID, *instanceGroup.Name))
 		managers := make([]string, 0)
 		for i := 0; i < len(instanceGroup.Managers); i++ {
-			managers = append(managers, string(*(instanceGroup.Managers[i].ID)))
+			managers = append(managers, *(instanceGroup.Managers[i].ID))
 		}
 		managersWG.Add(1)
 		go g.handleManagers(sess, instanceGoupID, managers, dependsOn, &managersWG)
@@ -170,7 +166,7 @@ func (g *InstanceGroupGenerator) handleInstanceGroups(sess *vpcv1.VpcV1, waitGro
 func (g *InstanceGroupGenerator) InitResources() error {
 	apiKey := os.Getenv("IBMCLOUD_API_KEY")
 	if apiKey == "" {
-		return fmt.Errorf("No API key set")
+		return fmt.Errorf("no API key set")
 	}
 
 	// Instantiate the service with an API key based IAM authenticator
@@ -189,11 +185,11 @@ func (g *InstanceGroupGenerator) InitResources() error {
 	instanceGroupWG.Add(1)
 	go g.handleInstanceGroups(sess, &instanceGroupWG)
 
-	select {
+	select { //nolint
 	case err := <-g.fatalErrors:
 		close(g.fatalErrors)
 		return err
 	}
-	instanceGroupWG.Wait()
+	instanceGroupWG.Wait() //nolint:govet
 	return nil
 }

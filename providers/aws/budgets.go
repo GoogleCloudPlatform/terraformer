@@ -19,18 +19,18 @@ import (
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/budgets"
+	"github.com/aws/aws-sdk-go-v2/service/budgets/types"
 )
 
 type BudgetsGenerator struct {
 	AWSService
 }
 
-func (g *BudgetsGenerator) createResources(budgets []budgets.Budget, account *string) []terraformutils.Resource {
+func (g *BudgetsGenerator) createResources(budgets []types.Budget, account *string) []terraformutils.Resource {
 	var resources []terraformutils.Resource
 	for _, budget := range budgets {
-		resourceName := aws.StringValue(budget.BudgetName)
+		resourceName := StringValue(budget.BudgetName)
 		resources = append(resources, terraformutils.NewSimpleResource(
 			fmt.Sprintf("%s:%s", *account, resourceName),
 			resourceName,
@@ -46,14 +46,14 @@ func (g *BudgetsGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	budgetsSvc := budgets.New(config)
+	budgetsSvc := budgets.NewFromConfig(config)
 
 	account, err := g.getAccountNumber(config)
 	if err != nil {
 		return err
 	}
 
-	output, err := budgetsSvc.DescribeBudgetsRequest(&budgets.DescribeBudgetsInput{AccountId: account}).Send(context.Background())
+	output, err := budgetsSvc.DescribeBudgets(context.TODO(), &budgets.DescribeBudgetsInput{AccountId: account})
 	if err != nil {
 		return err
 	}

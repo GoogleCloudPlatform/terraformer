@@ -18,7 +18,6 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/kafka"
 )
 
@@ -33,13 +32,17 @@ func (g *MskGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := kafka.New(config)
-	p := kafka.NewListClustersPaginator(svc.ListClustersRequest(&kafka.ListClustersInput{}))
-	for p.Next(context.Background()) {
-		for _, clusterInfo := range p.CurrentPage().ClusterInfoList {
+	svc := kafka.NewFromConfig(config)
+	p := kafka.NewListClustersPaginator(svc, &kafka.ListClustersInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, clusterInfo := range page.ClusterInfoList {
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-				aws.StringValue(clusterInfo.ClusterArn),
-				aws.StringValue(clusterInfo.ClusterName),
+				StringValue(clusterInfo.ClusterArn),
+				StringValue(clusterInfo.ClusterName),
 				"aws_msk_cluster",
 				"aws",
 				mskAllowEmptyValues,
@@ -47,7 +50,7 @@ func (g *MskGenerator) InitResources() error {
 		}
 	}
 
-	return p.Err()
+	return nil
 }
 
 func (g *MskGenerator) PostConvertHook() error {

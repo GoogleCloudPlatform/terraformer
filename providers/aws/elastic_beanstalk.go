@@ -18,6 +18,7 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+
 	"github.com/aws/aws-sdk-go-v2/service/elasticbeanstalk"
 )
 
@@ -32,7 +33,7 @@ func (g *BeanstalkGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	client := elasticbeanstalk.New(config)
+	client := elasticbeanstalk.NewFromConfig(config)
 
 	err := g.addApplications(client)
 	if err != nil {
@@ -43,8 +44,7 @@ func (g *BeanstalkGenerator) InitResources() error {
 }
 
 func (g *BeanstalkGenerator) addApplications(client *elasticbeanstalk.Client) error {
-	request := client.DescribeApplicationsRequest(&elasticbeanstalk.DescribeApplicationsInput{})
-	response, err := request.Send(context.Background())
+	response, err := client.DescribeApplications(context.TODO(), &elasticbeanstalk.DescribeApplicationsInput{})
 	if err != nil {
 		return err
 	}
@@ -61,8 +61,7 @@ func (g *BeanstalkGenerator) addApplications(client *elasticbeanstalk.Client) er
 }
 
 func (g *BeanstalkGenerator) addEnvironments(client *elasticbeanstalk.Client) error {
-	request := client.DescribeEnvironmentsRequest(&elasticbeanstalk.DescribeEnvironmentsInput{})
-	response, err := request.Send(context.Background())
+	response, err := client.DescribeEnvironments(context.TODO(), &elasticbeanstalk.DescribeEnvironmentsInput{})
 	if err != nil {
 		return err
 	}

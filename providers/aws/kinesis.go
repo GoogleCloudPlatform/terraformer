@@ -47,10 +47,25 @@ func (g *KinesisGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := kinesis.New(config)
-	p := kinesis.NewListStreamsPaginator(svc.ListStreamsRequest(&kinesis.ListStreamsInput{}))
-	for p.Next(context.Background()) {
-		g.Resources = append(g.Resources, g.createResources(p.CurrentPage().StreamNames)...)
+	svc := kinesis.NewFromConfig(config)
+
+	var results *kinesis.ListStreamsOutput
+	var request = kinesis.ListStreamsInput{}
+	var err error
+
+	for results == nil || *results.HasMoreStreams {
+		results, err = svc.ListStreams(context.TODO(), &request)
+		if err != nil {
+			return err
+		}
+
+		g.Resources = append(g.Resources, g.createResources(results.StreamNames)...)
+
+		if len(results.StreamNames) > 0 {
+			request = kinesis.ListStreamsInput{
+				ExclusiveStartStreamName: &results.StreamNames[len(results.StreamNames)-1],
+			}
+		}
 	}
-	return p.Err()
+	return nil
 }

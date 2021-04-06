@@ -18,7 +18,6 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/mediapackage"
 )
 
@@ -33,12 +32,16 @@ func (g *MediaPackageGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := mediapackage.New(config)
-	p := mediapackage.NewListChannelsPaginator(svc.ListChannelsRequest(&mediapackage.ListChannelsInput{}))
+	svc := mediapackage.NewFromConfig(config)
+	p := mediapackage.NewListChannelsPaginator(svc, &mediapackage.ListChannelsInput{})
 	var resources []terraformutils.Resource
-	for p.Next(context.Background()) {
-		for _, channel := range p.CurrentPage().Channels {
-			channelID := aws.StringValue(channel.Id)
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, channel := range page.Channels {
+			channelID := StringValue(channel.Id)
 			resources = append(resources, terraformutils.NewSimpleResource(
 				channelID,
 				channelID,
@@ -48,5 +51,5 @@ func (g *MediaPackageGenerator) InitResources() error {
 		}
 	}
 	g.Resources = resources
-	return p.Err()
+	return nil
 }

@@ -30,8 +30,7 @@ type IpsecGenerator struct {
 }
 
 func (g IpsecGenerator) createIpsecResources(ipsecID, ipsecName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		ipsecID,
 		ipsecName,
 		"ibm_is_ipsec_policy",
@@ -60,7 +59,7 @@ func (g *IpsecGenerator) InitResources() error {
 		return err
 	}
 	start := ""
-	allrecs := []vpcv1.IPsecPolicy{}
+	var allrecs []vpcv1.IPsecPolicy
 	for {
 		options := &vpcv1.ListIpsecPoliciesOptions{}
 		if start != "" {

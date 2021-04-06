@@ -18,11 +18,15 @@ func (g *XrayGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := xray.New(config)
+	svc := xray.NewFromConfig(config)
 
-	p := xray.NewGetSamplingRulesPaginator(svc.GetSamplingRulesRequest(&xray.GetSamplingRulesInput{}))
-	for p.Next(context.Background()) {
-		for _, samplingRule := range p.CurrentPage().SamplingRuleRecords {
+	p := xray.NewGetSamplingRulesPaginator(svc, &xray.GetSamplingRulesInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, samplingRule := range page.SamplingRuleRecords {
 			// NOTE: Builtin rule with unmodifiable name and 10000 prirority (lowest)
 			if *samplingRule.SamplingRule.RuleName != "Default" {
 				g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
@@ -31,10 +35,6 @@ func (g *XrayGenerator) InitResources() error {
 					"aws_xray_sampling_rule",
 					"aws",
 					xrayAllowEmptyValues))
-
-				if err := p.Err(); err != nil {
-					return err
-				}
 			}
 		}
 	}
