@@ -26,7 +26,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [IBM Cloud](#use-with-ibm-cloud)
     * Cloud
         * [DigitalOcean](#use-with-digitalocean)
-        * [Equinix Metal](#use-with-equinixmetal)
+        * [Equinix Metal](#use-with-equinix-metal)
         * [Fastly](#use-with-fastly)
         * [Heroku](#use-with-heroku)
         * [Linode](#use-with-linode)
