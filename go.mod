@@ -99,6 +99,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/digitalocean/godo v1.57.0
 	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
+	github.com/ewilde/go-kibana v0.0.0-20210325142727-7a2d527c3f8c
 	github.com/fastly/go-fastly v1.18.0
 	github.com/google/go-github/v25 v25.1.3
 	github.com/gophercloud/gophercloud v0.13.0
@@ -117,6 +118,7 @@ require (
 	github.com/mrparkers/terraform-provider-keycloak v0.0.0-20200506151941-509881368409
 	github.com/nicksnyder/go-i18n v1.10.1 // indirect
 	github.com/ns1/ns1-go v2.4.0+incompatible
+	github.com/ory/dockertest/v3 v3.6.0 // indirect
 	github.com/paultyng/go-newrelic/v4 v4.10.0
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.1.1

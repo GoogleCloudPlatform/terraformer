@@ -52,6 +52,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [Mikrotik](#use-with-mikrotik)
         * [Xen Orchestra](#use-with-xenorchestra)
         * [GmailFilter](#use-with-gmailfilter)
+        * [Kibana](#use-with-kibana)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
@@ -1781,6 +1782,30 @@ List of supported GmailFilter resources:
     * `gmailfilter_label`
 *   `filter`
     * `gmailfilter_filter`
+
+### Use with Kibana
+
+Check the documentation of [go-kibana](https://github.com/ewilde/go-kibana) for which env vars to set
+
+Example:
+
+```
+export KIBANA_USERNAME=user
+export KIBANA_PASSWORD=password
+export KIBANA_TYPE=KibanaVanilla
+export ELK_VERSION=7.2.1
+
+./terraformer import kibana -r=search,visualization,dashboard
+```
+
+List of supported Kibana resources:
+
+*   `search`
+    * `kibana_search`
+*   `visualization`
+    * `kibana_visualization`
+*   `dashboard`
+    * `kibana_dashboard`
 
 ## Contributing
 
