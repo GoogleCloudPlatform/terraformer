@@ -33,7 +33,7 @@ type DashboardGenerator struct {
 	DatadogService
 }
 
-func (g *DashboardGenerator) createResources(dashboards []datadogV1.DashboardSummaryDashboards) []terraformutils.Resource {
+func (g *DashboardGenerator) createResources(dashboards []datadogV1.DashboardSummaryDefinition) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	for _, dashboard := range dashboards {
 		resourceName := dashboard.GetId()
