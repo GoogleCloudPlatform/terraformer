@@ -99,7 +99,7 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/digitalocean/godo v1.57.0
 	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
-	github.com/ewilde/go-kibana v0.0.0-20210308173242-50256c0d763b
+	github.com/ewilde/go-kibana v0.0.0-20210325142727-7a2d527c3f8c
 	github.com/fastly/go-fastly v1.18.0
 	github.com/google/go-github/v25 v25.1.3
 	github.com/gophercloud/gophercloud v0.13.0
@@ -140,7 +140,4 @@ require (
 	k8s.io/client-go v0.20.2
 )
 
-replace (
-	github.com/ory/dockertest => github.com/ory/dockertest/v3 v3.5.1
-	gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
-)
+replace gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
