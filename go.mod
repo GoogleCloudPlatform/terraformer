@@ -117,7 +117,7 @@ require (
 	github.com/mrparkers/terraform-provider-keycloak v0.0.0-20200506151941-509881368409
 	github.com/nicksnyder/go-i18n v1.10.1 // indirect
 	github.com/ns1/ns1-go v2.4.0+incompatible
-	github.com/packethost/packngo v0.9.0
+	github.com/packethost/packngo v0.9.0 // indirect
 	github.com/paultyng/go-newrelic/v4 v4.10.0
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.1.1
