@@ -197,6 +197,7 @@ func (p *DatadogProvider) GetSupportedService() map[string]terraformutils.Servic
 		"integration_gcp":                      &IntegrationGCPGenerator{},
 		"integration_pagerduty":                &IntegrationPagerdutyGenerator{},
 		"integration_pagerduty_service_object": &IntegrationPagerdutyServiceObjectGenerator{},
+		"integration_slack_channel":            &IntegrationSlackChannelGenerator{},
 		"metric_metadata":                      &MetricMetadataGenerator{},
 		"monitor":                              &MonitorGenerator{},
 		"screenboard":                          &ScreenboardGenerator{},
