@@ -50,13 +50,12 @@ func (g *IntegrationSlackChannelGenerator) createResource(id string) terraformut
 		fmt.Sprintf("integration_slack_channel_%s", id),
 		"datadog_integration_slack_channel",
 		"datadog",
-		DashboardAllowEmptyValues,
+		IntegrationSlackChannelAllowEmptyValues,
 	)
 }
 
 // InitResources Generate TerraformResources from Datadog API,
-// from each metric create 1 TerraformResource.
-// Need Metric Name as ID for terraform resource
+// from each slack channel create 1 TerraformResource.
 func (g *IntegrationSlackChannelGenerator) InitResources() error {
 	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
 	authV1 := g.Args["authV1"].(context.Context)
