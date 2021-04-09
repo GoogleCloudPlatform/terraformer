@@ -24,19 +24,20 @@ import (
 
 func newCmdGithubImporter(options ImportOptions) *cobra.Command {
 	token := ""
-	organizations := []string{}
+	baseURL := ""
+	owner := []string{}
 	cmd := &cobra.Command{
 		Use:   "github",
 		Short: "Import current state to Terraform configuration from GitHub",
 		Long:  "Import current state to Terraform configuration from GitHub",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			originalPathPattern := options.PathPattern
-			for _, organization := range organizations {
+			for _, organization := range owner {
 				provider := newGitHubProvider()
 				options.PathPattern = originalPathPattern
 				options.PathPattern = strings.ReplaceAll(options.PathPattern, "{provider}", "{provider}/"+organization)
 				log.Println(provider.GetName() + " importing organization " + organization)
-				err := Import(provider, options, []string{organization, token})
+				err := Import(provider, options, []string{organization, token, baseURL})
 				if err != nil {
 					return err
 				}
@@ -47,7 +48,8 @@ func newCmdGithubImporter(options ImportOptions) *cobra.Command {
 	cmd.AddCommand(listCmd(newGitHubProvider()))
 	baseProviderFlags(cmd.PersistentFlags(), &options, "repository", "repository=id1:id2:id4")
 	cmd.PersistentFlags().StringVarP(&token, "token", "t", "", "YOUR_GITHUB_TOKEN or env param GITHUB_TOKEN")
-	cmd.PersistentFlags().StringSliceVarP(&organizations, "organizations", "", []string{}, "")
+	cmd.PersistentFlags().StringSliceVarP(&owner, "owner", "", []string{}, "")
+	cmd.PersistentFlags().StringVarP(&baseURL, "base-url", "", "", "")
 	return cmd
 }
 
