@@ -63,7 +63,6 @@ List of supported Datadog services:
     * `datadog_security_monitoring_rule`
 *   `service_level_objective`
     * `datadog_service_level_objective`
-        * **_NOTE:_** Importing resource requires resource ID's to be passed via [Filter][1] option
 *   `synthetics`
     * `datadog_synthetics_test`
 *   `synthetics_global_variables`
