@@ -1,11 +1,10 @@
 name: "tagged-release"
-on:
-  push:
-    tags:
-      - "*"
+on: 
   workflow_dispatch:
-      tags:
-        description: 'Release'
+    inputs:
+      version:
+        description: Bump Version
+        required: true
 jobs:
   tagged-release:
     name: "Tagged Release"
@@ -34,3 +33,5 @@ jobs:
           prerelease: false
           files: |
             terraformer-*
+      - name: Create new tag
+        run: git tag ${{ github.event.inputs.version }}
