@@ -24,20 +24,20 @@ type SpotMarketRequestGenerator struct {
 }
 
 func (g SpotMarketRequestGenerator) listSpotMarketRequests(client *packngo.Client) ([]packngo.SpotMarketRequest, error) {
-	spot_market_requests, _, err := client.SpotMarketRequests.List(g.GetArgs()["project_id"].(string), nil)
+	spotMarketRequests, _, err := client.SpotMarketRequests.List(g.GetArgs()["project_id"].(string), nil)
 	if err != nil {
 		return nil, err
 	}
 
-	return spot_market_requests, nil
+	return spotMarketRequests, nil
 }
 
-func (g SpotMarketRequestGenerator) createResources(spot_market_requestList []packngo.SpotMarketRequest) []terraformutils.Resource {
+func (g SpotMarketRequestGenerator) createResources(spotMarketRequestsList []packngo.SpotMarketRequest) []terraformutils.Resource {
 	var resources []terraformutils.Resource
-	for _, spot_market_request := range spot_market_requestList {
+	for _, spotMarketRequests := range spotMarketRequestsList {
 		resources = append(resources, terraformutils.NewSimpleResource(
-			spot_market_request.ID,
-			spot_market_request.ID,
+			spotMarketRequests.ID,
+			spotMarketRequests.ID,
 			"metal_spot_market_request",
 			"equinixmetal",
 			[]string{}))

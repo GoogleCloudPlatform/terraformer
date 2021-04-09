@@ -23,20 +23,20 @@ import (
 
 type EquinixMetalProvider struct { //nolint
 	terraformutils.Provider
-	auth_token string
-	project_id string
+	authToken string
+	projectID string
 }
 
 func (p *EquinixMetalProvider) Init(args []string) error {
 	if os.Getenv("PACKET_AUTH_TOKEN") == "" {
 		return errors.New("set PACKET_AUTH_TOKEN env var")
 	}
-	p.auth_token = os.Getenv("PACKET_AUTH_TOKEN")
+	p.authToken = os.Getenv("PACKET_AUTH_TOKEN")
 
 	if os.Getenv("METAL_PROJECT_ID") == "" {
 		return errors.New("set METAL_PROJECT_ID env var")
 	}
-	p.project_id = os.Getenv("METAL_PROJECT_ID")
+	p.projectID = os.Getenv("METAL_PROJECT_ID")
 
 	return nil
 }
@@ -56,7 +56,7 @@ func (EquinixMetalProvider) GetResourceConnections() map[string]map[string][]str
 func (p *EquinixMetalProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
 		"device":            &DeviceGenerator{},
-		"sshkey":            &SshKeyGenerator{},
+		"sshkey":            &SSHKeyGenerator{},
 		"spotmarketrequest": &SpotMarketRequestGenerator{},
 		"volume":            &VolumeGenerator{},
 	}
@@ -72,8 +72,8 @@ func (p *EquinixMetalProvider) InitService(serviceName string, verbose bool) err
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"auth_token": p.auth_token,
-		"project_id": p.project_id,
+		"auth_token": p.authToken,
+		"project_id": p.projectID,
 	})
 	return nil
 }
