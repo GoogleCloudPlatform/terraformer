@@ -1,5 +1,9 @@
 ### Use with GCP
 
+In order to access the information from your Google Project, you need to provide authentication credentials
+by setting up the environment variable `GOOGLE_APPLICATION_CREDENTIALS` with the file path of the JSON
+file that contains your service account key. 
+
 [![asciicast](https://asciinema.org/a/243961.svg)](https://asciinema.org/a/243961)
 
 Example:
