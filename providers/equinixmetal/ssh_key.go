@@ -19,25 +19,25 @@ import (
 	"github.com/packethost/packngo"
 )
 
-type SshKeyGenerator struct {
+type SSHKeyGenerator struct {
 	EquinixMetalService
 }
 
-func (g SshKeyGenerator) listSshKeys(client *packngo.Client) ([]packngo.SSHKey, error) {
-	ssh_keys, _, err := client.SSHKeys.List()
+func (g SSHKeyGenerator) listSSHKeys(client *packngo.Client) ([]packngo.SSHKey, error) {
+	sshKeys, _, err := client.SSHKeys.List()
 	if err != nil {
 		return nil, err
 	}
 
-	return ssh_keys, nil
+	return sshKeys, nil
 }
 
-func (g SshKeyGenerator) createResources(ssh_keyList []packngo.SSHKey) []terraformutils.Resource {
+func (g SSHKeyGenerator) createResources(sshLeyList []packngo.SSHKey) []terraformutils.Resource {
 	var resources []terraformutils.Resource
-	for _, ssh_key := range ssh_keyList {
+	for _, sshKey := range sshLeyList {
 		resources = append(resources, terraformutils.NewSimpleResource(
-			ssh_key.ID,
-			ssh_key.Label,
+			sshKey.ID,
+			sshKey.Label,
 			"metal_ssh_key",
 			"equinixmetal",
 			[]string{}))
@@ -45,9 +45,9 @@ func (g SshKeyGenerator) createResources(ssh_keyList []packngo.SSHKey) []terrafo
 	return resources
 }
 
-func (g *SshKeyGenerator) InitResources() error {
+func (g *SSHKeyGenerator) InitResources() error {
 	client := g.generateClient()
-	output, err := g.listSshKeys(client)
+	output, err := g.listSSHKeys(client)
 	if err != nil {
 		return err
 	}
