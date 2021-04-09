@@ -45,9 +45,12 @@ List of supported Datadog services:
     * `datadog_integration_pagerduty`
 *   `integration_pagerduty_service_object`
     * `datadog_integration_pagerduty_service_object`
+*   `integration_slack_channel`
+    * `datadog_integration_slack_channel`
+      * **_NOTE:_** Importing resource requires resource ID or `account_name` to be passed via [Filter][1] option
 *   `metric_metadata`
     * `datadog_metric_metadata`
-        * **_NOTE:_** Importing resource requires resource ID's to be passed via [Filter](#filtering) option
+        * **_NOTE:_** Importing resource requires resource ID's to be passed via [Filter][1] option
 *   `monitor`
     * `datadog_monitor`
 *   `role`
@@ -60,15 +63,17 @@ List of supported Datadog services:
     * `datadog_security_monitoring_rule`
 *   `service_level_objective`
     * `datadog_service_level_objective`
-        * **_NOTE:_** Importing resource requires resource ID's to be passed via [Filter](#filtering) option
+        * **_NOTE:_** Importing resource requires resource ID's to be passed via [Filter][1] option
 *   `synthetics`
     * `datadog_synthetics_test`
 *   `synthetics_global_variables`
     * `datadog_synthetics_global_variables`
-        * **_NOTE:_** Importing resource requires resource ID's to be passed via [Filter](#filtering) option
+        * **_NOTE:_** Importing resource requires resource ID's to be passed via [Filter][1] option
 *   `synthetics_private_location`
     * `datadog_synthetics_private_location`
 *   `timeboard`
     * `datadog_timeboard`
 *   `user`
     * `datadog_user`
+
+[1]: https://github.com/GoogleCloudPlatform/terraformer/blob/master/README.md#filtering
