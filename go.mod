@@ -21,7 +21,7 @@ require (
 	github.com/aliyun/alibaba-cloud-sdk-go v1.60.295
 	github.com/aliyun/aliyun-tablestore-go-sdk v4.1.2+incompatible
 	github.com/apache/openwhisk-client-go v0.0.0-20210106144548-17d556327cd3
-	github.com/aws/aws-sdk-go-v2 v1.3.1
+	github.com/aws/aws-sdk-go-v2 v1.3.2
 	github.com/aws/aws-sdk-go-v2/config v1.1.4
 	github.com/aws/aws-sdk-go-v2/credentials v1.1.4
 	github.com/aws/aws-sdk-go-v2/service/accessanalyzer v1.2.0
@@ -70,6 +70,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/mediapackage v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/mediastore v1.1.4
+	github.com/aws/aws-sdk-go-v2/service/opsworks v1.2.2
 	github.com/aws/aws-sdk-go-v2/service/organizations v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/qldb v1.1.3
 	github.com/aws/aws-sdk-go-v2/service/rds v1.2.1

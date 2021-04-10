@@ -280,6 +280,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"msk":               &AwsFacade{service: &MskGenerator{}},
 		"nacl":              &AwsFacade{service: &NaclGenerator{}},
 		"nat":               &AwsFacade{service: &NatGatewayGenerator{}},
+		"opsworks":          &AwsFacade{service: &OpsworksGenerator{}},
 		"organization":      &AwsFacade{service: &OrganizationGenerator{}},
 		"qldb":              &AwsFacade{service: &QLDBGenerator{}},
 		"rds":               &AwsFacade{service: &RDSGenerator{}},
