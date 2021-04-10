@@ -47,9 +47,9 @@ func (g *OpsworksGenerator) InitResources() error {
 	return nil
 }
 
-func (g *OpsworksGenerator) fetchApps(stackId *string, svc *opsworks.Client) error {
+func (g *OpsworksGenerator) fetchApps(stackID *string, svc *opsworks.Client) error {
 	apps, err := svc.DescribeApps(context.TODO(), &opsworks.DescribeAppsInput{
-		StackId: stackId,
+		StackId: stackID,
 	})
 	if err != nil {
 		return err
@@ -66,15 +66,16 @@ func (g *OpsworksGenerator) fetchApps(stackId *string, svc *opsworks.Client) err
 	return nil
 }
 
-func (g *OpsworksGenerator) fetchLayers(stackId *string, svc *opsworks.Client) error {
+func (g *OpsworksGenerator) fetchLayers(stackID *string, svc *opsworks.Client) error {
 	apps, err := svc.DescribeLayers(context.TODO(), &opsworks.DescribeLayersInput{
-		StackId: stackId,
+		StackId: stackID,
 	})
 	if err != nil {
 		return err
 	}
 	for _, layer := range apps.Layers {
-		if layer.Type == types.LayerTypeCustom {
+		switch layer.Type {
+		case types.LayerTypeCustom:
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				StringValue(layer.LayerId),
 				StringValue(layer.LayerId),
@@ -82,7 +83,7 @@ func (g *OpsworksGenerator) fetchLayers(stackId *string, svc *opsworks.Client) e
 				"aws",
 				[]string{"tags."},
 			))
-		} else if layer.Type == types.LayerTypePhpApp {
+		case types.LayerTypePhpApp:
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				StringValue(layer.LayerId),
 				StringValue(layer.LayerId),
@@ -90,7 +91,7 @@ func (g *OpsworksGenerator) fetchLayers(stackId *string, svc *opsworks.Client) e
 				"aws",
 				[]string{"tags."},
 			))
-		} else if layer.Type == types.LayerTypeJavaApp {
+		case types.LayerTypeJavaApp:
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				StringValue(layer.LayerId),
 				StringValue(layer.LayerId),
@@ -98,7 +99,7 @@ func (g *OpsworksGenerator) fetchLayers(stackId *string, svc *opsworks.Client) e
 				"aws",
 				[]string{"tags."},
 			))
-		} else if layer.Type == types.LayerTypeWeb {
+		case types.LayerTypeWeb:
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				StringValue(layer.LayerId),
 				StringValue(layer.LayerId),
@@ -111,9 +112,9 @@ func (g *OpsworksGenerator) fetchLayers(stackId *string, svc *opsworks.Client) e
 	return nil
 }
 
-func (g *OpsworksGenerator) fetchInstances(stackId *string, svc *opsworks.Client) error {
+func (g *OpsworksGenerator) fetchInstances(stackID *string, svc *opsworks.Client) error {
 	apps, err := svc.DescribeInstances(context.TODO(), &opsworks.DescribeInstancesInput{
-		StackId: stackId,
+		StackId: stackID,
 	})
 	if err != nil {
 		return err
@@ -129,9 +130,9 @@ func (g *OpsworksGenerator) fetchInstances(stackId *string, svc *opsworks.Client
 	}
 	return nil
 }
-func (g *OpsworksGenerator) fetchRdsInstances(stackId *string, svc *opsworks.Client) error {
+func (g *OpsworksGenerator) fetchRdsInstances(stackID *string, svc *opsworks.Client) error {
 	apps, err := svc.DescribeRdsDbInstances(context.TODO(), &opsworks.DescribeRdsDbInstancesInput{
-		StackId: stackId,
+		StackId: stackID,
 	})
 	if err != nil {
 		return err
@@ -144,7 +145,7 @@ func (g *OpsworksGenerator) fetchRdsInstances(stackId *string, svc *opsworks.Cli
 			"aws",
 			map[string]string{
 				"rds_db_instance_arn": StringValue(rdsDbInstance.RdsDbInstanceArn),
-				"stack_id":            StringValue(stackId),
+				"stack_id":            StringValue(stackID),
 			},
 			[]string{"tags."},
 			map[string]interface{}{},
