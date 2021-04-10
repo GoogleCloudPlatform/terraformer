@@ -108,7 +108,7 @@ require (
 	github.com/hashicorp/go-plugin v1.4.0
 	github.com/hashicorp/hcl v1.0.0
 	github.com/hashicorp/terraform v0.12.29
-	github.com/heroku/heroku-go/v5 v5.1.0
+	github.com/heroku/heroku-go/v5 v5.2.1
 	github.com/hokaccha/go-prettyjson v0.0.0-20210113012101-fb4e108d2519 // indirect
 	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
 	github.com/jmespath/go-jmespath v0.4.0
