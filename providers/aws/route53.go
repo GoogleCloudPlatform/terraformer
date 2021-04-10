@@ -66,21 +66,20 @@ func (g *Route53Generator) createZonesResources(svc *route53.Client) []terraform
 
 func (Route53Generator) createRecordsResources(svc *route53.Client, zoneID string) []terraformutils.Resource {
 	var resources []terraformutils.Resource
-	var startRecordIdentifier *string
 	var sets *route53.ListResourceRecordSetsOutput
 	var err error
 	listParams := &route53.ListResourceRecordSetsInput{
 		HostedZoneId:          aws.String(zoneID),
-		StartRecordIdentifier: startRecordIdentifier,
+		StartRecordIdentifier: nil,
+		MaxItems:              aws.Int32(3),
 	}
 
-	sets, err = svc.ListResourceRecordSets(context.TODO(), listParams)
-	if err != nil {
-		log.Println(err)
-		return resources
-	}
-
-	for sets == nil || sets.NextRecordIdentifier != nil {
+	for {
+		sets, err = svc.ListResourceRecordSets(context.TODO(), listParams)
+		if err != nil {
+			log.Println(err)
+			return resources
+		}
 		for _, record := range sets.ResourceRecordSets {
 			recordName := wildcardUnescape(StringValue(record.Name))
 			typeString := string(record.Type)
@@ -98,6 +97,13 @@ func (Route53Generator) createRecordsResources(svc *route53.Client, zoneID strin
 				route53AllowEmptyValues,
 				route53AdditionalFields,
 			))
+		}
+
+		if sets.IsTruncated {
+			listParams.StartRecordName = sets.NextRecordName
+			listParams.StartRecordType = sets.NextRecordType
+		} else {
+			break
 		}
 	}
 	return resources
