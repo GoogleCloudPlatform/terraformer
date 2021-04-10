@@ -71,7 +71,6 @@ func (Route53Generator) createRecordsResources(svc *route53.Client, zoneID strin
 	listParams := &route53.ListResourceRecordSetsInput{
 		HostedZoneId:          aws.String(zoneID),
 		StartRecordIdentifier: nil,
-		MaxItems:              aws.Int32(3),
 	}
 
 	for {
