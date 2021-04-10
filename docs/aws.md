@@ -189,6 +189,16 @@ In that case terraformer will not know with which region resources are associate
     * `aws_nat_gateway`
 *   `nacl`
     * `aws_network_acl`
+*   `opsworks`
+    * `aws_opsworks_application`
+    * `aws_opsworks_custom_layer`
+    * `aws_opsworks_instance`
+    * `aws_opsworks_java_app_layer`
+    * `aws_opsworks_php_app_layer`
+    * `aws_opsworks_rds_db_instance`
+    * `aws_opsworks_stack`
+    * `aws_opsworks_static_web_layer`
+    * `aws_opsworks_user_profile`
 *   `organization`
     * `aws_organizations_account`
     * `aws_organizations_organization`
