@@ -101,6 +101,7 @@ func (Route53Generator) createRecordsResources(svc *route53.Client, zoneID strin
 		if sets.IsTruncated {
 			listParams.StartRecordName = sets.NextRecordName
 			listParams.StartRecordType = sets.NextRecordType
+			listParams.StartRecordIdentifier = sets.NextRecordIdentifier
 		} else {
 			break
 		}
