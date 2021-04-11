@@ -169,9 +169,10 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 	resp := providers.ReadResourceResponse{}
 	for i := 0; i < p.retryCount; i++ {
 		resp = p.Provider.ReadResource(providers.ReadResourceRequest{
-			TypeName:   info.Type,
-			PriorState: priorState,
-			Private:    []byte{},
+			TypeName:     info.Type,
+			PriorState:   priorState,
+			Private:      []byte{},
+			ProviderMeta: schema.ProviderMeta.Block.EmptyValue(),
 		})
 		if resp.Diagnostics.HasErrors() {
 			log.Printf("WARN: Fail read resource from provider, wait %dms before retry\n", p.retrySleepMs)

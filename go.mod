@@ -6,7 +6,7 @@ require (
 	cloud.google.com/go v0.77.0
 	cloud.google.com/go/logging v1.1.2
 	cloud.google.com/go/storage v1.12.0
-	github.com/Azure/azure-sdk-for-go v42.3.0+incompatible
+	github.com/Azure/azure-sdk-for-go v45.0.0+incompatible
 	github.com/Azure/azure-storage-blob-go v0.10.0
 	github.com/Azure/go-autorest/autorest v0.11.12
 	github.com/DataDog/datadog-api-client-go v1.0.0-beta.18
@@ -103,11 +103,12 @@ require (
 	github.com/fastly/go-fastly v1.18.0
 	github.com/google/go-github/v25 v25.1.3
 	github.com/gophercloud/gophercloud v0.13.0
-	github.com/hashicorp/go-azure-helpers v0.10.0
+	github.com/hashicorp/go-azure-helpers v0.12.0
 	github.com/hashicorp/go-hclog v0.15.0
 	github.com/hashicorp/go-plugin v1.4.0
 	github.com/hashicorp/hcl v1.0.0
-	github.com/hashicorp/terraform v0.12.29
+	github.com/hashicorp/terraform v0.14.10
+	github.com/hashicorp/terraform-plugin-sdk v1.6.0
 	github.com/heroku/heroku-go/v5 v5.1.0
 	github.com/hokaccha/go-prettyjson v0.0.0-20210113012101-fb4e108d2519 // indirect
 	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
@@ -128,7 +129,7 @@ require (
 	github.com/vultr/govultr v0.5.0
 	github.com/yandex-cloud/go-genproto v0.0.0-20200722140432-762fe965ce77
 	github.com/yandex-cloud/go-sdk v0.0.0-20200722140627-2194e5077f13
-	github.com/zclconf/go-cty v1.7.1
+	github.com/zclconf/go-cty v1.8.0
 	github.com/zorkian/go-datadog-api v2.30.0+incompatible
 	golang.org/x/oauth2 v0.0.0-20210113205817-d3ed898aa8a3
 	golang.org/x/text v0.3.5
@@ -137,7 +138,9 @@ require (
 	google.golang.org/genproto v0.0.0-20210212180131-e7f2df4ecc2d
 	gopkg.in/jarcoal/httpmock.v1 v1.0.0-00010101000000-000000000000 // indirect
 	k8s.io/apimachinery v0.20.2
-	k8s.io/client-go v0.20.2
+	k8s.io/client-go v10.0.0+incompatible
 )
 
 replace gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
+
+replace k8s.io/client-go => k8s.io/client-go v0.20.2
