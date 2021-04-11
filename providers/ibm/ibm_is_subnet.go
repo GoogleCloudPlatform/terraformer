@@ -29,8 +29,7 @@ type SubnetGenerator struct {
 }
 
 func (g SubnetGenerator) createSubnetResources(subnetID, subnetName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		subnetID,
 		subnetName,
 		"ibm_is_subnet",
@@ -66,7 +65,7 @@ func (g *SubnetGenerator) InitResources() error {
 	}
 
 	start := ""
-	allrecs := []vpcv1.Subnet{}
+	var allrecs []vpcv1.Subnet
 	for {
 		options := &vpcv1.ListSubnetsOptions{}
 		if start != "" {

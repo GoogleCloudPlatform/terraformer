@@ -24,8 +24,6 @@ type MikrotikService struct { //nolint
 
 func (m *MikrotikService) generateClient() client.Mikrotik {
 	return client.NewClient(
-		m.Args["host"].(string),
-		m.Args["user"].(string),
-		m.Args["password"].(string),
+		client.GetConfigFromEnv(),
 	)
 }

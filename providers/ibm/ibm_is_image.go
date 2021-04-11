@@ -30,8 +30,7 @@ type ImageGenerator struct {
 }
 
 func (g ImageGenerator) createImageResources(imageID, imageName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		imageID,
 		imageName,
 		"ibm_is_image",
@@ -66,7 +65,7 @@ func (g *ImageGenerator) InitResources() error {
 		return err
 	}
 	start := ""
-	allrecs := []vpcv1.Image{}
+	var allrecs []vpcv1.Image
 	for {
 		options := &vpcv1.ListImagesOptions{}
 		if start != "" {

@@ -20,7 +20,7 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/api/resource/resourcev1/catalog"
 	"github.com/IBM-Cloud/bluemix-go/api/resource/resourcev2/controllerv2"
 	"github.com/IBM-Cloud/bluemix-go/session"
@@ -31,11 +31,10 @@ type KPGenerator struct {
 	IBMService
 }
 
-func (g KPGenerator) loadKP(kpID, kpGuid string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+func (g KPGenerator) loadKP(kpID, kpGUID string) terraformutils.Resource {
+	resources := terraformutils.NewSimpleResource(
 		kpID,
-		kpGuid,
+		kpGUID,
 		"ibm_resource_instance",
 		"ibm",
 		[]string{})
@@ -43,8 +42,7 @@ func (g KPGenerator) loadKP(kpID, kpGuid string) terraformutils.Resource {
 }
 
 func (g KPGenerator) loadkPKeys(kpKeyCRN, kpKeyID string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		kpKeyCRN,
 		kpKeyID,
 		"ibm_kms_key",
@@ -99,9 +97,9 @@ func (g *KPGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
-	for _, kp := range kpInstances {
-		g.Resources = append(g.Resources, g.loadKP(kp.ID, kp.Guid))
-		client.Config.InstanceID = kp.Guid
+	for _, kpInstance := range kpInstances {
+		g.Resources = append(g.Resources, g.loadKP(kpInstance.ID, kpInstance.Guid))
+		client.Config.InstanceID = kpInstance.Guid
 
 		output, err := client.GetKeys(context.Background(), 100, 0)
 		if err != nil {
@@ -110,7 +108,7 @@ func (g *KPGenerator) InitResources() error {
 		for _, key := range output.Keys {
 			var dependsOn []string
 			dependsOn = append(dependsOn,
-				"ibm_resource_instance."+terraformutils.TfSanitize(kp.Guid))
+				"ibm_resource_instance."+terraformutils.TfSanitize(kpInstance.Guid))
 			g.Resources = append(g.Resources, g.loadkPKeys(key.CRN, key.ID, dependsOn))
 		}
 

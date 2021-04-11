@@ -31,8 +31,7 @@ type DatabaseElasticSearchGenerator struct {
 
 // loadElasticSearchDB ...
 func (g DatabaseElasticSearchGenerator) loadElasticSearchDB(dbID string, dbName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		dbID,
 		dbName,
 		"ibm_database",
@@ -41,7 +40,7 @@ func (g DatabaseElasticSearchGenerator) loadElasticSearchDB(dbID string, dbName 
 	return resources
 }
 
-//InitResources ...
+// InitResources ...
 func (g *DatabaseElasticSearchGenerator) InitResources() error {
 
 	region := os.Getenv("IC_REGION")

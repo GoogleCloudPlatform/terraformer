@@ -30,8 +30,7 @@ type VolumeGenerator struct {
 }
 
 func (g VolumeGenerator) createVolumeResources(volID, volName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		volID,
 		volName,
 		"ibm_is_volume",
@@ -60,7 +59,7 @@ func (g *VolumeGenerator) InitResources() error {
 		return err
 	}
 	start := ""
-	allrecs := []vpcv1.Volume{}
+	var allrecs []vpcv1.Volume
 	for {
 		options := &vpcv1.ListVolumesOptions{}
 		if start != "" {

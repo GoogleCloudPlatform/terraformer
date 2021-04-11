@@ -20,7 +20,7 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
-type IBMProvider struct {
+type IBMProvider struct { //nolint
 	terraformutils.Provider
 	ResourceGroup string
 	Region        string

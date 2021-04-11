@@ -36,8 +36,7 @@ type CloudFunctionGenerator struct {
 }
 
 func (g CloudFunctionGenerator) loadPackages(namespace, pkgName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s:%s", namespace, pkgName),
 		pkgName,
 		"ibm_function_package",
@@ -49,8 +48,7 @@ func (g CloudFunctionGenerator) loadPackages(namespace, pkgName string) terrafor
 }
 
 func (g CloudFunctionGenerator) loadRules(namespace, ruleName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s:%s", namespace, ruleName),
 		ruleName,
 		"ibm_function_rule",
@@ -62,8 +60,7 @@ func (g CloudFunctionGenerator) loadRules(namespace, ruleName string) terraformu
 }
 
 func (g CloudFunctionGenerator) loadTriggers(namespace, triggerName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s:%s", namespace, triggerName),
 		triggerName,
 		"ibm_function_trigger",
@@ -147,22 +144,18 @@ func (g *CloudFunctionGenerator) InitResources() error {
 	}
 
 	for _, n := range nsList.Namespaces {
-		var dependsOn []string
-		dependsOn = append(dependsOn,
-			"ibm_function_namespace."+terraformutils.TfSanitize(n.GetID()))
-
-		//Namespace
+		// Namespace
 		if n.IsCf() {
 			continue
 		}
 
-		//Build whisk object
+		// Build whisk object
 		wskClient, err := setupOpenWhiskClientConfigIAM(n, sess.Config, region)
 		if err != nil {
 			return err
 		}
 
-		//Package
+		// Package
 		packageService := wskClient.Packages
 		pkgOptions := &whisk.PackageListOptions{
 			Limit: 100,
@@ -177,7 +170,7 @@ func (g *CloudFunctionGenerator) InitResources() error {
 			g.Resources = append(g.Resources, g.loadPackages(n.GetName(), p.GetName()))
 		}
 
-		//Action
+		// Action
 		actionService := wskClient.Actions
 		actionOptions := &whisk.ActionListOptions{
 			Limit: 100,
@@ -218,7 +211,7 @@ func (g *CloudFunctionGenerator) InitResources() error {
 			}
 		}
 
-		//Rule
+		// Rule
 		ruleService := wskClient.Rules
 		ruleOptions := &whisk.RuleListOptions{
 			Limit: 100,
@@ -233,7 +226,7 @@ func (g *CloudFunctionGenerator) InitResources() error {
 			g.Resources = append(g.Resources, g.loadRules(n.GetName(), r.Name))
 		}
 
-		//Triggers
+		// Triggers
 		triggerService := wskClient.Triggers
 		triggerOptions := &whisk.TriggerListOptions{
 			Limit: 100,

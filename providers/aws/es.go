@@ -18,8 +18,6 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
-
 	es "github.com/aws/aws-sdk-go-v2/service/elasticsearchservice"
 )
 
@@ -34,21 +32,21 @@ func (g *EsGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := es.New(config)
+	svc := es.NewFromConfig(config)
 
-	domainNames, err := svc.ListDomainNamesRequest(&es.ListDomainNamesInput{}).Send(context.Background())
+	domainNames, err := svc.ListDomainNames(context.TODO(), &es.ListDomainNamesInput{})
 	if err != nil {
 		return err
 	}
 
 	for _, domainName := range domainNames.DomainNames {
 		g.Resources = append(g.Resources, terraformutils.NewResource(
-			aws.StringValue(domainName.DomainName),
-			aws.StringValue(domainName.DomainName),
+			StringValue(domainName.DomainName),
+			StringValue(domainName.DomainName),
 			"aws_elasticsearch_domain",
 			"aws",
 			map[string]string{
-				"domain_name": aws.StringValue(domainName.DomainName),
+				"domain_name": StringValue(domainName.DomainName),
 			},
 			esAllowEmptyValues,
 			map[string]interface{}{},

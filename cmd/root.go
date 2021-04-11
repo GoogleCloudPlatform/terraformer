@@ -46,6 +46,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdIbmImporter,
 		// Cloud
 		newCmdDigitalOceanImporter,
+		newCmdEquinixMetalImporter,
 		newCmdFastlyImporter,
 		newCmdHerokuImporter,
 		newCmdLinodeImporter,
@@ -70,6 +71,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdLogzioImporter,
 		newCmdCommercetoolsImporter,
 		newCmdMikrotikImporter,
+		newCmdXenorchestraImporter,
 		newCmdGmailfilterImporter,
 	}
 }
@@ -85,6 +87,7 @@ func providerGenerators() map[string]func() terraformutils.ProviderGenerator {
 		newIbmProvider,
 		// Cloud
 		newDigitalOceanProvider,
+		newEquinixMetalProvider,
 		newFastlyProvider,
 		newHerokuProvider,
 		newLinodeProvider,
@@ -108,6 +111,7 @@ func providerGenerators() map[string]func() terraformutils.ProviderGenerator {
 		newLogzioProvider,
 		newCommercetoolsProvider,
 		newMikrotikProvider,
+		newXenorchestraProvider,
 		newGmailfilterProvider,
 	} {
 		list[providerGen().GetName()] = providerGen

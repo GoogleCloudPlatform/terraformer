@@ -18,7 +18,6 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
@@ -32,8 +31,8 @@ func (NaclGenerator) createResources(nacls *ec2.DescribeNetworkAclsOutput) []ter
 	resources := []terraformutils.Resource{}
 	for _, nacl := range nacls.NetworkAcls {
 		resources = append(resources, terraformutils.NewSimpleResource(
-			aws.StringValue(nacl.NetworkAclId),
-			aws.StringValue(nacl.NetworkAclId),
+			StringValue(nacl.NetworkAclId),
+			StringValue(nacl.NetworkAclId),
 			"aws_network_acl",
 			"aws",
 			NaclAllowEmptyValues))
@@ -49,10 +48,14 @@ func (g *NaclGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := ec2.New(config)
-	p := ec2.NewDescribeNetworkAclsPaginator(svc.DescribeNetworkAclsRequest(&ec2.DescribeNetworkAclsInput{}))
-	for p.Next(context.Background()) {
-		g.Resources = append(g.Resources, g.createResources(p.CurrentPage())...)
+	svc := ec2.NewFromConfig(config)
+	p := ec2.NewDescribeNetworkAclsPaginator(svc, &ec2.DescribeNetworkAclsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		g.Resources = append(g.Resources, g.createResources(page)...)
 	}
-	return p.Err()
+	return nil
 }

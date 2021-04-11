@@ -21,8 +21,6 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
-	"github.com/aws/aws-sdk-go-v2/aws/awserr"
-
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
@@ -38,34 +36,30 @@ type S3Generator struct {
 // createResources iterate on all buckets
 // for each bucket we check region and choose only bucket from set region
 // for each bucket try get bucket policy, if policy exist create additional NewTerraformResource for policy
-func (g *S3Generator) createResources(config aws.Config, buckets *s3.ListBucketsResponse, region string) []terraformutils.Resource {
-	resources := []terraformutils.Resource{}
-	svc := s3.New(config)
+func (g *S3Generator) createResources(config aws.Config, buckets *s3.ListBucketsOutput, region string) []terraformutils.Resource {
+	var resources []terraformutils.Resource
+	svc := s3.NewFromConfig(config)
 	for _, bucket := range buckets.Buckets {
-		resourceName := aws.StringValue(bucket.Name)
-		location, err := svc.GetBucketLocationRequest(&s3.GetBucketLocationInput{Bucket: bucket.Name}).Send(context.Background())
+		resourceName := StringValue(bucket.Name)
+		location, err := svc.GetBucketLocation(context.TODO(), &s3.GetBucketLocationInput{Bucket: bucket.Name})
 		if err != nil {
 			log.Println(err)
 			continue
 		}
 		// check if bucket in region
-		constraintString, _ := s3.NormalizeBucketLocation(location.LocationConstraint).MarshalValue()
+		constraintString := string(location.LocationConstraint)
 		if constraintString == region {
 			attributes := map[string]string{
 				"force_destroy": "false",
 				"acl":           "private",
 			}
 			// try get policy
-			policy, err := svc.GetBucketPolicyRequest(&s3.GetBucketPolicyInput{
+			var policy *s3.GetBucketPolicyOutput
+			policy, err = svc.GetBucketPolicy(context.TODO(), &s3.GetBucketPolicyInput{
 				Bucket: bucket.Name,
-			}).Send(context.Background())
+			})
 
-			if err != nil {
-				if awsErr, ok := err.(awserr.Error); ok && awsErr.Code() != "NoSuchBucketPolicy" {
-					log.Println(err)
-					continue
-				}
-			} else {
+			if err == nil && policy.Policy != nil {
 				attributes["policy"] = *policy.Policy
 			}
 			resources = append(resources, terraformutils.NewResource(
@@ -82,16 +76,15 @@ func (g *S3Generator) createResources(config aws.Config, buckets *s3.ListBuckets
 }
 
 // Generate TerraformResources from AWS API,
-// from each s3 bucket create 2 TerraformResource(bucket and bucket policy)
 // Need bucket name as ID for terraform resource
 func (g *S3Generator) InitResources() error {
 	config, e := g.generateConfig()
 	if e != nil {
 		return e
 	}
-	svc := s3.New(config)
+	svc := s3.NewFromConfig(config)
 
-	buckets, err := svc.ListBucketsRequest(&s3.ListBucketsInput{}).Send(context.Background())
+	buckets, err := svc.ListBuckets(context.TODO(), nil)
 	if err != nil {
 		return err
 	}

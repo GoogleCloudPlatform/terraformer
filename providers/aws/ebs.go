@@ -24,6 +24,7 @@ import (
 	"github.com/hashicorp/terraform/helper/hashcode"
 
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 )
 
 var ebsAllowEmptyValues = []string{"tags."}
@@ -41,30 +42,34 @@ func (g *EbsGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := ec2.New(config)
-	var filters []ec2.Filter
+	svc := ec2.NewFromConfig(config)
+	var filters []types.Filter
 	for _, filter := range g.Filter {
 		if strings.HasPrefix(filter.FieldPath, "tags.") && filter.IsApplicable("ebs_volume") {
-			filters = append(filters, ec2.Filter{
+			filters = append(filters, types.Filter{
 				Name:   aws.String("tag:" + strings.TrimPrefix(filter.FieldPath, "tags.")),
 				Values: filter.AcceptableValues,
 			})
 		}
 	}
-	p := ec2.NewDescribeVolumesPaginator(svc.DescribeVolumesRequest(&ec2.DescribeVolumesInput{
+	p := ec2.NewDescribeVolumesPaginator(svc, &ec2.DescribeVolumesInput{
 		Filters: filters,
-	}))
-	for p.Next(context.Background()) {
-		for _, volume := range p.CurrentPage().Volumes {
+	})
+	for p.HasMorePages() {
+		page, e := p.NextPage(context.TODO())
+		if e != nil {
+			return e
+		}
+		for _, volume := range page.Volumes {
 			isRootDevice := false // Let's leave root device configuration to be done in ec2_instance resources
 
 			for _, attachment := range volume.Attachments {
-				instances, _ := svc.DescribeInstancesRequest(&ec2.DescribeInstancesInput{
-					InstanceIds: []string{aws.StringValue(attachment.InstanceId)},
-				}).Send(context.Background())
+				instances, _ := svc.DescribeInstances(context.TODO(), &ec2.DescribeInstancesInput{
+					InstanceIds: []string{StringValue(attachment.InstanceId)},
+				})
 				for _, reservation := range instances.Reservations {
 					for _, instance := range reservation.Instances {
-						if aws.StringValue(instance.RootDeviceName) == aws.StringValue(attachment.Device) {
+						if StringValue(instance.RootDeviceName) == StringValue(attachment.Device) {
 							isRootDevice = true
 						}
 					}
@@ -73,28 +78,28 @@ func (g *EbsGenerator) InitResources() error {
 
 			if !isRootDevice {
 				g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-					aws.StringValue(volume.VolumeId),
-					aws.StringValue(volume.VolumeId),
+					StringValue(volume.VolumeId),
+					StringValue(volume.VolumeId),
 					"aws_ebs_volume",
 					"aws",
 					ebsAllowEmptyValues,
 				))
 
 				for _, attachment := range volume.Attachments {
-					if attachment.State == ec2.VolumeAttachmentStateAttached {
+					if attachment.State == types.VolumeAttachmentStateAttached {
 						attachmentID := g.volumeAttachmentID(
-							aws.StringValue(attachment.Device),
-							aws.StringValue(attachment.VolumeId),
-							aws.StringValue(attachment.InstanceId))
+							StringValue(attachment.Device),
+							StringValue(attachment.VolumeId),
+							StringValue(attachment.InstanceId))
 						g.Resources = append(g.Resources, terraformutils.NewResource(
 							attachmentID,
-							aws.StringValue(attachment.InstanceId)+":"+aws.StringValue(attachment.Device),
+							StringValue(attachment.InstanceId)+":"+StringValue(attachment.Device),
 							"aws_volume_attachment",
 							"aws",
 							map[string]string{
-								"device_name": aws.StringValue(attachment.Device),
-								"volume_id":   aws.StringValue(attachment.VolumeId),
-								"instance_id": aws.StringValue(attachment.InstanceId),
+								"device_name": StringValue(attachment.Device),
+								"volume_id":   StringValue(attachment.VolumeId),
+								"instance_id": StringValue(attachment.InstanceId),
 							},
 							[]string{},
 							map[string]interface{}{},
@@ -104,5 +109,5 @@ func (g *EbsGenerator) InitResources() error {
 			}
 		}
 	}
-	return p.Err()
+	return nil
 }

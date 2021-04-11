@@ -29,6 +29,8 @@ type AliCloudProvider struct { //nolint
 	profile string
 }
 
+const GlobalRegion = "alicloud-global"
+
 // GetConfig Converts json config to go-cty
 func (p *AliCloudProvider) GetConfig() cty.Value {
 	profile := p.profile
@@ -72,37 +74,15 @@ func (p AliCloudProvider) GetResourceConnections() map[string]map[string][]strin
 
 // GetProviderData Used for generated HCL2 for the provider
 func (p AliCloudProvider) GetProviderData(arg ...string) map[string]interface{} {
-	args := p.Service.GetArgs()
-	profile := args["profile"].(string)
-	config, err := LoadConfigFromProfile(profile)
-	if err != nil {
-		fmt.Println("ERROR:", err)
-	}
-
-	region := p.region
-	if region == "" {
-		region = config.RegionID
-	}
-
-	if config.RAMRoleArn != "" {
-		return map[string]interface{}{
-			"provider": map[string]interface{}{
-				"alicloud": map[string]interface{}{
-					"region":  region,
-					"profile": profile,
-					"assume_role": map[string]interface{}{
-						"role_arn": config.RAMRoleArn,
-					},
-				},
-			},
-		}
+	alicloudConfig := map[string]interface{}{}
+	if p.region == GlobalRegion {
+		alicloudConfig["region"] = "cn-hangzhou"
+	} else {
+		alicloudConfig["region"] = p.region
 	}
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
-			"alicloud": map[string]interface{}{
-				"region":  region,
-				"profile": profile,
-			},
+			"alicloud": alicloudConfig,
 		},
 	}
 }

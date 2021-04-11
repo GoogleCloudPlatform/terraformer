@@ -18,7 +18,6 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/qldb"
 )
 
@@ -33,12 +32,16 @@ func (g *QLDBGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := qldb.New(config)
-	p := qldb.NewListLedgersPaginator(svc.ListLedgersRequest(&qldb.ListLedgersInput{}))
+	svc := qldb.NewFromConfig(config)
+	p := qldb.NewListLedgersPaginator(svc, &qldb.ListLedgersInput{})
 	var resources []terraformutils.Resource
-	for p.Next(context.Background()) {
-		for _, ledger := range p.CurrentPage().Ledgers {
-			ledgerName := aws.StringValue(ledger.Name)
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, ledger := range page.Ledgers {
+			ledgerName := StringValue(ledger.Name)
 			resources = append(resources, terraformutils.NewSimpleResource(
 				ledgerName,
 				ledgerName,
@@ -48,5 +51,5 @@ func (g *QLDBGenerator) InitResources() error {
 		}
 	}
 	g.Resources = resources
-	return p.Err()
+	return nil
 }

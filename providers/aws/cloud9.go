@@ -19,6 +19,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/cloud9"
+	"github.com/aws/aws-sdk-go-v2/service/cloud9/types"
 )
 
 var cloud9AllowEmptyValues = []string{"tags."}
@@ -32,17 +33,17 @@ func (g *Cloud9Generator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := cloud9.New(config)
-	output, err := svc.ListEnvironmentsRequest(&cloud9.ListEnvironmentsInput{}).Send(context.Background())
+	svc := cloud9.NewFromConfig(config)
+	output, err := svc.ListEnvironments(context.TODO(), &cloud9.ListEnvironmentsInput{})
 	if err != nil {
 		return err
 	}
 	for _, environmentID := range output.EnvironmentIds {
-		details, _ := svc.DescribeEnvironmentStatusRequest(&cloud9.DescribeEnvironmentStatusInput{
+		details, _ := svc.DescribeEnvironmentStatus(context.TODO(), &cloud9.DescribeEnvironmentStatusInput{
 			EnvironmentId: &environmentID,
-		}).Send(context.Background())
-		if details.Status == cloud9.EnvironmentStatusError ||
-			details.Status == cloud9.EnvironmentStatusDeleting {
+		})
+		if details.Status == types.EnvironmentStatusError ||
+			details.Status == types.EnvironmentStatusDeleting {
 			continue
 		}
 		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(

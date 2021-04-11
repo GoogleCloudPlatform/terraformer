@@ -32,7 +32,7 @@ func (g *EmrGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	client := emr.New(config)
+	client := emr.NewFromConfig(config)
 
 	err := g.addClusters(client)
 	if err != nil {
@@ -43,9 +43,13 @@ func (g *EmrGenerator) InitResources() error {
 }
 
 func (g *EmrGenerator) addClusters(client *emr.Client) error {
-	p := emr.NewListClustersPaginator(client.ListClustersRequest(&emr.ListClustersInput{}))
-	for p.Next(context.Background()) {
-		for _, cluster := range p.CurrentPage().Clusters {
+	p := emr.NewListClustersPaginator(client, &emr.ListClustersInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, cluster := range page.Clusters {
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				*cluster.Id,
 				*cluster.Name,
@@ -55,13 +59,17 @@ func (g *EmrGenerator) addClusters(client *emr.Client) error {
 			))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *EmrGenerator) addSecurityConfigurations(client *emr.Client) error {
-	p := emr.NewListSecurityConfigurationsPaginator(client.ListSecurityConfigurationsRequest(&emr.ListSecurityConfigurationsInput{}))
-	for p.Next(context.Background()) {
-		for _, securityConfiguration := range p.CurrentPage().SecurityConfigurations {
+	p := emr.NewListSecurityConfigurationsPaginator(client, &emr.ListSecurityConfigurationsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, securityConfiguration := range page.SecurityConfigurations {
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				*securityConfiguration.Name,
 				*securityConfiguration.Name,
@@ -71,5 +79,5 @@ func (g *EmrGenerator) addSecurityConfigurations(client *emr.Client) error {
 			))
 		}
 	}
-	return p.Err()
+	return nil
 }

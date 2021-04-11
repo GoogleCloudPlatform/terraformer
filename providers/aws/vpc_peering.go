@@ -19,7 +19,6 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
@@ -30,11 +29,11 @@ type VpcPeeringConnectionGenerator struct {
 }
 
 func (g *VpcPeeringConnectionGenerator) createResources(peerings *ec2.DescribeVpcPeeringConnectionsOutput) []terraformutils.Resource {
-	resources := []terraformutils.Resource{}
+	var resources []terraformutils.Resource
 	for _, peering := range peerings.VpcPeeringConnections {
 		resources = append(resources, terraformutils.NewSimpleResource(
-			aws.StringValue(peering.VpcPeeringConnectionId),
-			aws.StringValue(peering.VpcPeeringConnectionId),
+			StringValue(peering.VpcPeeringConnectionId),
+			StringValue(peering.VpcPeeringConnectionId),
 			"aws_vpc_peering_connection",
 			"aws",
 			peeringAllowEmptyValues,
@@ -51,10 +50,14 @@ func (g *VpcPeeringConnectionGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := ec2.New(config)
-	p := ec2.NewDescribeVpcPeeringConnectionsPaginator(svc.DescribeVpcPeeringConnectionsRequest(&ec2.DescribeVpcPeeringConnectionsInput{}))
-	for p.Next(context.Background()) {
-		g.Resources = append(g.Resources, g.createResources(p.CurrentPage())...)
+	svc := ec2.NewFromConfig(config)
+	p := ec2.NewDescribeVpcPeeringConnectionsPaginator(svc, &ec2.DescribeVpcPeeringConnectionsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		g.Resources = append(g.Resources, g.createResources(page)...)
 	}
-	return p.Err()
+	return nil
 }

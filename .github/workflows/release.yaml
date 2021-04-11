@@ -1,0 +1,37 @@
+name: "tagged-release"
+on: 
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Bump Version
+        required: true
+jobs:
+  tagged-release:
+    name: "Tagged Release"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+      - name: Test
+        run: go build -v && go test ./...
+      - name: Build for linux
+        run: go build -o terraformer-all-linux-amd64
+      - name: Build for mac
+        run: GOOS=darwin go build -o terraformer-all-darwin-amd64
+      - name: Build for windows
+        run: GOOS=windows go build -o terraformer-all-windows-amd64
+      - name: Build for all providers
+        run: go run build/multi-build/main.go
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          files: |
+            terraformer-*
+      - name: Create new tag
+        run: git tag ${{ github.event.inputs.version }}

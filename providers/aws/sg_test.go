@@ -19,11 +19,11 @@ import (
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/service/ec2"
+	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 )
 
 func TestEmptySgs(t *testing.T) {
-	var securityGroups []ec2.SecurityGroup
+	var securityGroups []types.SecurityGroup
 
 	rulesToMoveOut := findSgsToMoveOut(securityGroups)
 
@@ -33,11 +33,11 @@ func TestEmptySgs(t *testing.T) {
 }
 
 func Test1CycleReference(t *testing.T) {
-	sgA := ec2.SecurityGroup{
+	sgA := types.SecurityGroup{
 		GroupId: aws.String("aaaa"),
-		IpPermissions: []ec2.IpPermission{
+		IpPermissions: []types.IpPermission{
 			{
-				UserIdGroupPairs: []ec2.UserIdGroupPair{
+				UserIdGroupPairs: []types.UserIdGroupPair{
 					{
 						GroupId: aws.String("aaaa"),
 					},
@@ -46,7 +46,7 @@ func Test1CycleReference(t *testing.T) {
 			{},
 		},
 	}
-	securityGroups := []ec2.SecurityGroup{
+	securityGroups := []types.SecurityGroup{
 		sgA,
 	}
 
@@ -58,11 +58,11 @@ func Test1CycleReference(t *testing.T) {
 }
 
 func Test2CycleReference(t *testing.T) {
-	sgA := ec2.SecurityGroup{
+	sgA := types.SecurityGroup{
 		GroupId: aws.String("aaaa"),
-		IpPermissions: []ec2.IpPermission{
+		IpPermissions: []types.IpPermission{
 			{
-				UserIdGroupPairs: []ec2.UserIdGroupPair{
+				UserIdGroupPairs: []types.UserIdGroupPair{
 					{
 						GroupId: aws.String("bbbb"),
 					},
@@ -70,12 +70,12 @@ func Test2CycleReference(t *testing.T) {
 			},
 		},
 	}
-	securityGroups := []ec2.SecurityGroup{
+	securityGroups := []types.SecurityGroup{
 		{
 			GroupId: aws.String("bbbb"),
-			IpPermissions: []ec2.IpPermission{
+			IpPermissions: []types.IpPermission{
 				{
-					UserIdGroupPairs: []ec2.UserIdGroupPair{
+					UserIdGroupPairs: []types.UserIdGroupPair{
 						{
 							GroupId: aws.String("aaaa"),
 						},
@@ -95,11 +95,11 @@ func Test2CycleReference(t *testing.T) {
 }
 
 func TestNoCycleReference(t *testing.T) {
-	sgA := ec2.SecurityGroup{
+	sgA := types.SecurityGroup{
 		GroupId: aws.String("aaaa"),
-		IpPermissions: []ec2.IpPermission{
+		IpPermissions: []types.IpPermission{
 			{
-				UserIdGroupPairs: []ec2.UserIdGroupPair{
+				UserIdGroupPairs: []types.UserIdGroupPair{
 					{
 						GroupId: aws.String("bbbb"),
 					},
@@ -107,10 +107,10 @@ func TestNoCycleReference(t *testing.T) {
 			},
 		},
 	}
-	securityGroups := []ec2.SecurityGroup{
+	securityGroups := []types.SecurityGroup{
 		{
 			GroupId: aws.String("bbbb"),
-			IpPermissions: []ec2.IpPermission{
+			IpPermissions: []types.IpPermission{
 				{},
 				{},
 			},
@@ -126,18 +126,18 @@ func TestNoCycleReference(t *testing.T) {
 }
 
 func Test3Cycle1CycleReference(t *testing.T) {
-	sgA := ec2.SecurityGroup{
+	sgA := types.SecurityGroup{
 		GroupId: aws.String("aaaa"),
-		IpPermissions: []ec2.IpPermission{
+		IpPermissions: []types.IpPermission{
 			{
-				UserIdGroupPairs: []ec2.UserIdGroupPair{
+				UserIdGroupPairs: []types.UserIdGroupPair{
 					{
 						GroupId: aws.String("aaaa"),
 					},
 				},
 			},
 			{
-				UserIdGroupPairs: []ec2.UserIdGroupPair{
+				UserIdGroupPairs: []types.UserIdGroupPair{
 					{
 						GroupId: aws.String("bbbb"),
 					},
@@ -145,13 +145,13 @@ func Test3Cycle1CycleReference(t *testing.T) {
 			},
 		},
 	}
-	securityGroups := []ec2.SecurityGroup{
+	securityGroups := []types.SecurityGroup{
 		sgA,
 		{
 			GroupId: aws.String("bbbb"),
-			IpPermissions: []ec2.IpPermission{
+			IpPermissions: []types.IpPermission{
 				{
-					UserIdGroupPairs: []ec2.UserIdGroupPair{
+					UserIdGroupPairs: []types.UserIdGroupPair{
 						{
 							GroupId: aws.String("cccc"),
 						},
@@ -162,9 +162,9 @@ func Test3Cycle1CycleReference(t *testing.T) {
 		},
 		{
 			GroupId: aws.String("cccc"),
-			IpPermissions: []ec2.IpPermission{
+			IpPermissions: []types.IpPermission{
 				{
-					UserIdGroupPairs: []ec2.UserIdGroupPair{
+					UserIdGroupPairs: []types.UserIdGroupPair{
 						{
 							GroupId: aws.String("aaaa"),
 						},
@@ -175,9 +175,9 @@ func Test3Cycle1CycleReference(t *testing.T) {
 		},
 		{
 			GroupId: aws.String("dddd"),
-			IpPermissions: []ec2.IpPermission{
+			IpPermissions: []types.IpPermission{
 				{
-					UserIdGroupPairs: []ec2.UserIdGroupPair{
+					UserIdGroupPairs: []types.UserIdGroupPair{
 						{
 							GroupId: aws.String("aaaa"),
 						},

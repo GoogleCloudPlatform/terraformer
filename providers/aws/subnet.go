@@ -18,7 +18,6 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
@@ -32,8 +31,8 @@ func (SubnetGenerator) createResources(subnets *ec2.DescribeSubnetsOutput) []ter
 	var resources []terraformutils.Resource
 	for _, subnet := range subnets.Subnets {
 		resource := terraformutils.NewSimpleResource(
-			aws.StringValue(subnet.SubnetId),
-			aws.StringValue(subnet.SubnetId),
+			StringValue(subnet.SubnetId),
+			StringValue(subnet.SubnetId),
 			"aws_subnet",
 			"aws",
 			SubnetAllowEmptyValues,
@@ -52,10 +51,14 @@ func (g *SubnetGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := ec2.New(config)
-	p := ec2.NewDescribeSubnetsPaginator(svc.DescribeSubnetsRequest(&ec2.DescribeSubnetsInput{}))
-	for p.Next(context.Background()) {
-		g.Resources = append(g.Resources, g.createResources(p.CurrentPage())...)
+	svc := ec2.NewFromConfig(config)
+	p := ec2.NewDescribeSubnetsPaginator(svc, &ec2.DescribeSubnetsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		g.Resources = append(g.Resources, g.createResources(page)...)
 	}
-	return p.Err()
+	return nil
 }

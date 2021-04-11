@@ -21,7 +21,6 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/acm"
 )
 
@@ -34,29 +33,29 @@ type ACMGenerator struct {
 }
 
 func (g *ACMGenerator) createCertificatesResources(svc *acm.Client) []terraformutils.Resource {
-	resources := []terraformutils.Resource{}
-	p := acm.NewListCertificatesPaginator(svc.ListCertificatesRequest(&acm.ListCertificatesInput{}))
-	for p.Next(context.Background()) {
-		for _, cert := range p.CurrentPage().CertificateSummaryList {
-			certArn := aws.StringValue(cert.CertificateArn)
+	var resources []terraformutils.Resource
+	p := acm.NewListCertificatesPaginator(svc, &acm.ListCertificatesInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			log.Println(err)
+			return resources
+		}
+		for _, cert := range page.CertificateSummaryList {
+			certArn := *cert.CertificateArn
 			certID := extractCertificateUUID(certArn)
 			resources = append(resources, terraformutils.NewResource(
 				certArn,
-				certID+"_"+strings.TrimSuffix(aws.StringValue(cert.DomainName), "."),
+				certID+"_"+strings.TrimSuffix(*cert.DomainName, "."),
 				"aws_acm_certificate",
 				"aws",
 				map[string]string{
-					"domain_name": aws.StringValue(cert.DomainName),
+					"domain_name": *cert.DomainName,
 				},
 				acmAllowEmptyValues,
 				acmAdditionalFields,
 			))
 		}
-	}
-
-	if err := p.Err(); err != nil {
-		log.Println(err)
-		return resources
 	}
 	return resources
 }
@@ -68,7 +67,7 @@ func (g *ACMGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := acm.New(config)
+	svc := acm.NewFromConfig(config)
 
 	g.Resources = g.createCertificatesResources(svc)
 	return nil

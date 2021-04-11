@@ -30,8 +30,7 @@ type NetworkACLGenerator struct {
 }
 
 func (g NetworkACLGenerator) createNetworkACLResources(nwaclID, nwaclName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		nwaclID,
 		nwaclName,
 		"ibm_is_network_acl",
@@ -66,7 +65,7 @@ func (g *NetworkACLGenerator) InitResources() error {
 		return err
 	}
 	start := ""
-	allrecs := []vpcv1.NetworkACL{}
+	var allrecs []vpcv1.NetworkACL
 	for {
 		options := &vpcv1.ListNetworkAclsOptions{}
 		if start != "" {

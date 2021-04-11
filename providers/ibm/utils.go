@@ -28,7 +28,7 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-//UserConfig ...
+// UserConfig ...
 type UserConfig struct {
 	userID      string
 	userEmail   string
@@ -38,7 +38,7 @@ type UserConfig struct {
 	generation  int    `default:"2"`
 }
 
-//EnvFallBack ...
+// EnvFallBack ...
 func envFallBack(envs []string, defaultValue string) string {
 	for _, k := range envs {
 		if v := os.Getenv(k); v != "" {
@@ -62,7 +62,7 @@ func fetchUserDetails(sess *session.Session, generation int) (*UserConfig, error
 	token, err := jwt.Parse(bluemixToken, func(token *jwt.Token) (interface{}, error) {
 		return "", nil
 	})
-	//TODO validate with key
+	// TODO validate with key
 	if err != nil && !strings.Contains(err.Error(), "key is of invalid type") {
 		return &user, err
 	}
