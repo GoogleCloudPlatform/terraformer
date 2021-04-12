@@ -82,6 +82,7 @@ func (p *OctopusDeployProvider) InitService(serviceName string, verbose bool) er
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
+	p.Service.SetProviderPath("registry.terraform.io/OctopusDeployLabs/octopusdeploy")
 	p.Service.SetArgs(map[string]interface{}{
 		"apikey":  p.apiKey,
 		"address": p.address,

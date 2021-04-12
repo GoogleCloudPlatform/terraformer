@@ -72,6 +72,7 @@ func (p *VultrProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
+	p.Service.SetProviderPath("registry.terraform.io/vultr/vultr")
 	p.Service.SetArgs(map[string]interface{}{
 		"api_key": p.apiKey,
 	})

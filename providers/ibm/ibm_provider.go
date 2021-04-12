@@ -94,7 +94,7 @@ func (p *IBMProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
-
+	p.Service.SetProviderPath("registry.terraform.io/IBM-Cloud/ibm")
 	p.Service.SetArgs(map[string]interface{}{
 		"resource_group": p.ResourceGroup,
 		"region":         p.Region,

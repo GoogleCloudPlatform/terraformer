@@ -76,6 +76,7 @@ func (p *DigitalOceanProvider) InitService(serviceName string, verbose bool) err
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
+	p.Service.SetProviderPath("registry.terraform.io/digitalocean/digitalocean")
 	p.Service.SetArgs(map[string]interface{}{
 		"token": p.token,
 	})

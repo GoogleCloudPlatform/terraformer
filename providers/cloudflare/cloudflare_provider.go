@@ -58,6 +58,7 @@ func (p *CloudflareProvider) InitService(serviceName string, verbose bool) error
 	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
+	p.Service.SetProviderPath("registry.terraform.io/cloudflare/cloudflare")
 	p.Service.SetProviderName(p.GetName())
 
 	return nil

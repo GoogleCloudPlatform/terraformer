@@ -64,6 +64,7 @@ func (p *RBTProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
+	p.Service.SetProviderPath("registry.terraform.io/cyrilgdn/rabbitmq")
 	p.Service.SetArgs(map[string]interface{}{
 		"endpoint": p.endpoint,
 		"username": p.username,

@@ -100,6 +100,7 @@ func (p *NewRelicProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetVerbose(verbose)
 	p.Service.SetArgs(map[string]interface{}{"apiKey": p.APIKey})
 	p.Service.SetProviderName(p.GetName())
+	p.Service.SetProviderPath("registry.terraform.io/newrelic/newrelic")
 
 	return nil
 }

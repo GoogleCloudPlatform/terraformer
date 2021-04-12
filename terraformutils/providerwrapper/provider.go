@@ -50,14 +50,15 @@ const DefaultPluginVendorDirV12 = "terraform.d/plugins/" + pluginMachineName
 const pluginMachineName = runtime.GOOS + "_" + runtime.GOARCH
 
 type ProviderWrapper struct {
-	Provider     *tfplugin.GRPCProvider
-	client       *plugin.Client
-	rpcClient    plugin.ClientProtocol
-	providerName string
-	config       cty.Value
-	schema       *providers.GetSchemaResponse
-	retryCount   int
-	retrySleepMs int
+	Provider         *tfplugin.GRPCProvider
+	FullProviderName string
+	client           *plugin.Client
+	rpcClient        plugin.ClientProtocol
+	providerName     string
+	config           cty.Value
+	schema           *providers.GetSchemaResponse
+	retryCount       int
+	retrySleepMs     int
 }
 
 func NewProviderWrapper(providerName string, providerConfig cty.Value, verbose bool, options ...map[string]int) (*ProviderWrapper, error) {

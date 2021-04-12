@@ -83,6 +83,7 @@ func (p *XenorchestraProvider) InitService(serviceName string, verbose bool) err
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
+	p.Service.SetProviderPath("registry.terraform.io/terra-farm/xenorchestra")
 	p.Service.SetArgs(map[string]interface{}{
 		"url":      p.url,
 		"username": p.user,

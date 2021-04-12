@@ -75,6 +75,7 @@ func (p *FastlyProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
+	p.Service.SetProviderPath("registry.terraform.io/fastly/fastly")
 	p.Service.SetArgs(map[string]interface{}{
 		"customer_id": p.customerID,
 		"api_key":     p.apiKey,

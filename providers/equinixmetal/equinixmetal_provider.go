@@ -71,6 +71,7 @@ func (p *EquinixMetalProvider) InitService(serviceName string, verbose bool) err
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
+	p.Service.SetProviderPath("registry.terraform.io/equinix/metal")
 	p.Service.SetArgs(map[string]interface{}{
 		"auth_token": p.authToken,
 		"project_id": p.projectID,

@@ -64,6 +64,7 @@ func (p *OpenStackProvider) InitService(serviceName string, verbose bool) error 
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
+	p.Service.SetProviderPath("registry.terraform.io/terraform-provider-openstack/openstack")
 	p.Service.SetArgs(map[string]interface{}{
 		"region": p.region,
 	})

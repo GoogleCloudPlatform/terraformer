@@ -70,6 +70,7 @@ func (p *LogzioProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
+	p.Service.SetProviderPath("registry.terraform.io/logzio/logzio")
 	p.Service.SetArgs(map[string]interface{}{
 		"api_token": p.apiToken,
 		"base_url":  p.baseURL,

@@ -34,6 +34,8 @@ type ServiceGenerator interface {
 	SetVerbose(bool)
 	SetProviderName(name string)
 	GetProviderName() string
+	SetProviderPath(providerPath string)
+	GetProviderPath() string
 	GetName() string
 	InitialCleanup()
 	PopulateIgnoreKeys(*providerwrapper.ProviderWrapper)
@@ -44,6 +46,7 @@ type Service struct {
 	Name         string
 	Resources    []Resource
 	ProviderName string
+	ProviderPath string
 	Args         map[string]interface{}
 	Filter       []ResourceFilter
 	Verbose      bool
@@ -55,6 +58,14 @@ func (s *Service) SetProviderName(providerName string) {
 
 func (s *Service) GetProviderName() string {
 	return s.ProviderName
+}
+
+func (s *Service) SetProviderPath(providerPath string) {
+	s.ProviderPath = providerPath
+}
+
+func (s *Service) GetProviderPath() string {
+	return s.ProviderPath
 }
 
 func (s *Service) SetVerbose(verbose bool) {

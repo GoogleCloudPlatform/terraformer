@@ -58,6 +58,7 @@ func (p *GmailfilterProvider) InitService(serviceName string, verbose bool) erro
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
+	p.Service.SetProviderPath("github.com/yamamoto-febc/terraform-provider-gmailfilter") // TODO find out proper registry
 	p.Service.SetArgs(map[string]interface{}{
 		"credentials":           p.credentials,
 		"impersonatedUserEmail": p.impersonatedUserEmail,

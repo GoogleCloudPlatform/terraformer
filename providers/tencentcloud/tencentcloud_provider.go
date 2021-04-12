@@ -71,6 +71,7 @@ func (p *TencentCloudProvider) InitService(serviceName string, verbose bool) err
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
+	p.Service.SetProviderPath("registry.terraform.io/tencentcloudstack/tencentcloud")
 	p.Service.SetArgs(map[string]interface{}{
 		"region":     p.region,
 		"credential": p.credential,

@@ -61,6 +61,7 @@ func (p *CommercetoolsProvider) InitService(serviceName string, verbose bool) er
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
+	p.Service.SetProviderPath("registry.terraform.io/labd/commercetools")
 	p.Service.SetArgs(map[string]interface{}{
 		"client_id":     p.clientID,
 		"client_secret": p.clientSecret,
