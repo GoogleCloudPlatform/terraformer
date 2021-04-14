@@ -16,6 +16,7 @@ package terraformutils
 
 import (
 	"fmt"
+	"github.com/hashicorp/terraform/states"
 	"log"
 	"regexp"
 	"strings"
@@ -27,16 +28,17 @@ import (
 )
 
 type Resource struct {
-	InstanceInfo      *terraform.InstanceInfo
-	InstanceState     *terraform.InstanceState
-	Outputs           map[string]*terraform.OutputState `json:",omitempty"`
-	ResourceName      string
-	Provider          string
-	Item              map[string]interface{} `json:",omitempty"`
-	IgnoreKeys        []string               `json:",omitempty"`
-	AllowEmptyValues  []string               `json:",omitempty"`
-	AdditionalFields  map[string]interface{} `json:",omitempty"`
-	SlowQueryRequired bool
+	InstanceInfo              *terraform.InstanceInfo
+	InstanceState             *terraform.InstanceState
+	ResourceInstanceObjectSrc *states.ResourceInstanceObjectSrc
+	Outputs                   map[string]*terraform.OutputState `json:",omitempty"`
+	ResourceName              string
+	Provider                  string
+	Item                      map[string]interface{} `json:",omitempty"`
+	IgnoreKeys                []string               `json:",omitempty"`
+	AllowEmptyValues          []string               `json:",omitempty"`
+	AdditionalFields          map[string]interface{} `json:",omitempty"`
+	SlowQueryRequired         bool
 }
 
 type ApplicableFilter interface {
