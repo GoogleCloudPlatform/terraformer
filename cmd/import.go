@@ -251,7 +251,7 @@ func printService(provider terraformutils.ProviderGenerator, serviceName string,
 	if err != nil {
 		return err
 	}
-	tfStateFile, err := terraformutils.PrintTfState(resources)
+	tfStateFile, err := terraformutils.PrintTfState(resources, provider.GetProviderSource())
 	if err != nil {
 		return err
 	}

@@ -20,11 +20,13 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Azure/go-autorest/autorest"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
+
+	"github.com/Azure/go-autorest/autorest"
 	"github.com/hashicorp/go-azure-helpers/authentication"
 	"github.com/hashicorp/go-azure-helpers/sender"
+	"github.com/hashicorp/terraform/addrs"
 )
 
 type AzureProvider struct { //nolint
@@ -113,6 +115,10 @@ func (p *AzureProvider) Init(args []string) error {
 
 func (p *AzureProvider) GetName() string {
 	return "azurerm"
+}
+
+func (p *AzureProvider) GetProviderSource() addrs.Provider {
+	return addrs.NewDefaultProvider("azure")
 }
 
 func (p *AzureProvider) GetProviderData(arg ...string) map[string]interface{} {
@@ -243,7 +249,6 @@ func (p *AzureProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetProviderPath("registry.terraform.io/hashicorp/azure")
 	p.Service.SetArgs(map[string]interface{}{
 		"config":         p.config,
 		"authorizer":     p.authorizer,

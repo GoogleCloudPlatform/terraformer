@@ -16,6 +16,7 @@ package yandex
 
 import (
 	"errors"
+	"github.com/hashicorp/terraform/addrs"
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -50,6 +51,10 @@ func (p *YandexProvider) GetName() string {
 	return "yandex"
 }
 
+func (p *YandexProvider) GetProviderSource() addrs.Provider {
+	return addrs.NewProvider(addrs.DefaultRegistryHost, "yandex-cloud", "yandex")
+}
+
 func (p *YandexProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{}
 }
@@ -76,7 +81,6 @@ func (p *YandexProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetProviderPath("registry.terraform.io/yandex-cloud/yandex")
 	p.Service.SetArgs(map[string]interface{}{
 		"folder_id": p.folderID,
 		"token":     p.oauthToken,

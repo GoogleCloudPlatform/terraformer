@@ -20,8 +20,10 @@ import (
 	"log"
 	"os"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/hashicorp/terraform/addrs"
 	"google.golang.org/api/compute/v1"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type GCPProvider struct { //nolint
@@ -83,6 +85,10 @@ func (p *GCPProvider) GetName() string {
 	return "google"
 }
 
+func (p *GCPProvider) GetProviderSource() addrs.Provider {
+	return addrs.NewDefaultProvider("google")
+}
+
 func (p *GCPProvider) InitService(serviceName string, verbose bool) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
@@ -92,7 +98,6 @@ func (p *GCPProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetProviderPath("registry.terraform.io/hashicorp/google")
 	p.Service.SetArgs(map[string]interface{}{
 		"region":  p.region,
 		"project": p.projectName,

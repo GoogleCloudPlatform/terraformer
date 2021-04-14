@@ -17,8 +17,10 @@ package rabbitmq
 import (
 	"errors"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/hashicorp/terraform/addrs"
 	"github.com/zclconf/go-cty/cty"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type RBTProvider struct { //nolint
@@ -37,6 +39,10 @@ func (p *RBTProvider) Init(args []string) error {
 
 func (p *RBTProvider) GetName() string {
 	return "rabbitmq"
+}
+
+func (p *RBTProvider) GetProviderSource() addrs.Provider {
+	return addrs.NewProvider(addrs.DefaultRegistryHost, "cyrilgdn", "rabbitmq")
 }
 
 func (p *RBTProvider) GetProviderData(arg ...string) map[string]interface{} {
@@ -64,7 +70,6 @@ func (p *RBTProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetProviderPath("registry.terraform.io/cyrilgdn/rabbitmq")
 	p.Service.SetArgs(map[string]interface{}{
 		"endpoint": p.endpoint,
 		"username": p.username,

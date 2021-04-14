@@ -16,6 +16,7 @@ package commercetools
 
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/hashicorp/terraform/addrs"
 	"github.com/pkg/errors"
 )
 
@@ -52,6 +53,10 @@ func (p *CommercetoolsProvider) GetName() string {
 	return "commercetools"
 }
 
+func (p *CommercetoolsProvider) GetProviderSource() addrs.Provider {
+	return addrs.NewProvider(addrs.DefaultRegistryHost, "labd", "commercetools")
+}
+
 func (p *CommercetoolsProvider) InitService(serviceName string, verbose bool) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
@@ -61,7 +66,6 @@ func (p *CommercetoolsProvider) InitService(serviceName string, verbose bool) er
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetProviderPath("registry.terraform.io/labd/commercetools")
 	p.Service.SetArgs(map[string]interface{}{
 		"client_id":     p.clientID,
 		"client_secret": p.clientSecret,

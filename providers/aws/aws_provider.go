@@ -18,9 +18,11 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/hashicorp/terraform/addrs"
 	"github.com/pkg/errors"
 	"github.com/zclconf/go-cty/cty"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type AWSProvider struct { //nolint
@@ -209,6 +211,10 @@ func (p *AWSProvider) GetName() string {
 	return "aws"
 }
 
+func (p *AWSProvider) GetProviderSource() addrs.Provider {
+	return addrs.NewDefaultProvider("aws")
+}
+
 func (p *AWSProvider) InitService(serviceName string, verbose bool) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
@@ -218,7 +224,6 @@ func (p *AWSProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetProviderPath("registry.terraform.io/hashicorp/aws")
 	p.Service.SetArgs(map[string]interface{}{
 		"region":                 p.region,
 		"profile":                p.profile,

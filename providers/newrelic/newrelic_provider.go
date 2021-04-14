@@ -19,8 +19,10 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/hashicorp/terraform/addrs"
 	"github.com/zclconf/go-cty/cty"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type NewRelicProvider struct { //nolint
@@ -65,6 +67,10 @@ func (p *NewRelicProvider) GetName() string {
 	return "newrelic"
 }
 
+func (p *NewRelicProvider) GetProviderSource() addrs.Provider {
+	return addrs.NewProvider(addrs.DefaultRegistryHost, "newrelic", "newrelic")
+}
+
 func (p *NewRelicProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
 		"account_id": cty.NumberIntVal(int64(p.accountID)),
@@ -100,7 +106,6 @@ func (p *NewRelicProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetVerbose(verbose)
 	p.Service.SetArgs(map[string]interface{}{"apiKey": p.APIKey})
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetProviderPath("registry.terraform.io/newrelic/newrelic")
 
 	return nil
 }

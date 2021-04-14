@@ -18,6 +18,8 @@ import (
 	"errors"
 	"os"
 
+	"github.com/hashicorp/terraform/addrs"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -49,6 +51,10 @@ func (p *XenorchestraProvider) Init(args []string) error {
 
 func (p *XenorchestraProvider) GetName() string {
 	return "xenorchestra"
+}
+
+func (p *XenorchestraProvider) GetProviderSource() addrs.Provider {
+	return addrs.NewProvider(addrs.DefaultRegistryHost, "terra-farm", "xenorchestra")
 }
 
 func (p *XenorchestraProvider) GetProviderData(arg ...string) map[string]interface{} {
@@ -83,7 +89,6 @@ func (p *XenorchestraProvider) InitService(serviceName string, verbose bool) err
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetProviderPath("registry.terraform.io/terra-farm/xenorchestra")
 	p.Service.SetArgs(map[string]interface{}{
 		"url":      p.url,
 		"username": p.user,

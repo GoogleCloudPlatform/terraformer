@@ -15,6 +15,7 @@
 package terraformutils
 
 import (
+	"github.com/hashicorp/terraform/addrs"
 	"github.com/zclconf/go-cty/cty"
 )
 
@@ -22,6 +23,7 @@ type ProviderGenerator interface {
 	Init(args []string) error
 	InitService(serviceName string, verbose bool) error
 	GetName() string
+	GetProviderSource() addrs.Provider
 	GetService() ServiceGenerator
 	GetConfig() cty.Value
 	GetBasicConfig() cty.Value
@@ -46,6 +48,10 @@ func (p *Provider) GetConfig() cty.Value {
 }
 
 func (p *Provider) GetName() string {
+	panic("implement me")
+}
+
+func (p *Provider) GetProviderSource() addrs.Provider {
 	panic("implement me")
 }
 

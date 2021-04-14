@@ -17,8 +17,10 @@ package openstack
 import (
 	"os"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/hashicorp/terraform/addrs"
 	"github.com/pkg/errors"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type OpenStackProvider struct { //nolint
@@ -55,6 +57,10 @@ func (p *OpenStackProvider) GetName() string {
 	return "openstack"
 }
 
+func (p *OpenStackProvider) GetProviderSource() addrs.Provider {
+	return addrs.NewProvider(addrs.DefaultRegistryHost, "terraform-provider-openstack", "openstack")
+}
+
 func (p *OpenStackProvider) InitService(serviceName string, verbose bool) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
@@ -64,7 +70,6 @@ func (p *OpenStackProvider) InitService(serviceName string, verbose bool) error 
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetProviderPath("registry.terraform.io/terraform-provider-openstack/openstack")
 	p.Service.SetArgs(map[string]interface{}{
 		"region": p.region,
 	})

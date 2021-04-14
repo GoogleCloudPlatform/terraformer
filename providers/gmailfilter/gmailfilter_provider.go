@@ -18,6 +18,8 @@ import (
 	"errors"
 	"os"
 
+	"github.com/hashicorp/terraform/addrs"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -49,6 +51,10 @@ func (p *GmailfilterProvider) GetName() string {
 	return "gmailfilter"
 }
 
+func (p *GmailfilterProvider) GetProviderSource() addrs.Provider {
+	return addrs.NewProvider(addrs.DefaultRegistryHost, "yamamoto-febc", "terraform-provider-gmailfilter") // TODO find out proper registry
+}
+
 func (p *GmailfilterProvider) InitService(serviceName string, verbose bool) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
@@ -58,7 +64,6 @@ func (p *GmailfilterProvider) InitService(serviceName string, verbose bool) erro
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetProviderPath("github.com/yamamoto-febc/terraform-provider-gmailfilter") // TODO find out proper registry
 	p.Service.SetArgs(map[string]interface{}{
 		"credentials":           p.credentials,
 		"impersonatedUserEmail": p.impersonatedUserEmail,

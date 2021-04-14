@@ -16,6 +16,7 @@ package heroku
 
 import (
 	"errors"
+	"github.com/hashicorp/terraform/addrs"
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -43,6 +44,10 @@ func (p *HerokuProvider) Init(args []string) error {
 
 func (p *HerokuProvider) GetName() string {
 	return "heroku"
+}
+
+func (p *HerokuProvider) GetProviderSource() addrs.Provider {
+	return addrs.NewProvider(addrs.DefaultRegistryHost, "heroku", "heroku")
 }
 
 func (p *HerokuProvider) GetProviderData(arg ...string) map[string]interface{} {
@@ -89,7 +94,6 @@ func (p *HerokuProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetProviderPath("registry.terraform.io/heroku/heroku")
 	p.Service.SetArgs(map[string]interface{}{
 		"email":   p.email,
 		"api_key": p.apiKey,

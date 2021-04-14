@@ -18,6 +18,8 @@ import (
 	"errors"
 	"os"
 
+	"github.com/hashicorp/terraform/addrs"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -43,6 +45,10 @@ func (p *FastlyProvider) Init(args []string) error {
 
 func (p *FastlyProvider) GetName() string {
 	return "fastly"
+}
+
+func (p *FastlyProvider) GetProviderSource() addrs.Provider {
+	return addrs.NewProvider(addrs.DefaultRegistryHost, "fastly", "fastly")
 }
 
 func (p *FastlyProvider) GetProviderData(arg ...string) map[string]interface{} {
@@ -75,7 +81,6 @@ func (p *FastlyProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetProviderPath("registry.terraform.io/fastly/fastly")
 	p.Service.SetArgs(map[string]interface{}{
 		"customer_id": p.customerID,
 		"api_key":     p.apiKey,

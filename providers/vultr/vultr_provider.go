@@ -18,6 +18,8 @@ import (
 	"errors"
 	"os"
 
+	"github.com/hashicorp/terraform/addrs"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -37,6 +39,10 @@ func (p *VultrProvider) Init(args []string) error {
 
 func (p *VultrProvider) GetName() string {
 	return "vultr"
+}
+
+func (p *VultrProvider) GetProviderSource() addrs.Provider {
+	return addrs.NewProvider(addrs.DefaultRegistryHost, "vultr", "vultr")
 }
 
 func (p *VultrProvider) GetProviderData(arg ...string) map[string]interface{} {
@@ -72,7 +78,6 @@ func (p *VultrProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetProviderPath("registry.terraform.io/vultr/vultr")
 	p.Service.SetArgs(map[string]interface{}{
 		"api_key": p.apiKey,
 	})

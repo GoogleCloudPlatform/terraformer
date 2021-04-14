@@ -17,6 +17,8 @@ package ibm
 import (
 	"errors"
 
+	"github.com/hashicorp/terraform/addrs"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -35,6 +37,10 @@ func (p *IBMProvider) Init(args []string) error {
 
 func (p *IBMProvider) GetName() string {
 	return "ibm"
+}
+
+func (p *IBMProvider) GetProviderSource() addrs.Provider {
+	return addrs.NewProvider(addrs.DefaultRegistryHost, "IBM-Cloud", "ibm")
 }
 
 func (p *IBMProvider) GetProviderData(arg ...string) map[string]interface{} {
@@ -94,7 +100,6 @@ func (p *IBMProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetProviderPath("registry.terraform.io/IBM-Cloud/ibm")
 	p.Service.SetArgs(map[string]interface{}{
 		"resource_group": p.ResourceGroup,
 		"region":         p.Region,

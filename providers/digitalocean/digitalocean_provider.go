@@ -18,6 +18,8 @@ import (
 	"errors"
 	"os"
 
+	"github.com/hashicorp/terraform/addrs"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -37,6 +39,10 @@ func (p *DigitalOceanProvider) Init(args []string) error {
 
 func (p *DigitalOceanProvider) GetName() string {
 	return "digitalocean"
+}
+
+func (p *DigitalOceanProvider) GetProviderSource() addrs.Provider {
+	return addrs.NewProvider(addrs.DefaultRegistryHost, "digitalocean", "digitalocean")
 }
 
 func (p *DigitalOceanProvider) GetProviderData(arg ...string) map[string]interface{} {
@@ -76,7 +82,6 @@ func (p *DigitalOceanProvider) InitService(serviceName string, verbose bool) err
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetProviderPath("registry.terraform.io/digitalocean/digitalocean")
 	p.Service.SetArgs(map[string]interface{}{
 		"token": p.token,
 	})

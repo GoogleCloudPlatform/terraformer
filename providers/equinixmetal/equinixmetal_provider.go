@@ -18,6 +18,8 @@ import (
 	"errors"
 	"os"
 
+	"github.com/hashicorp/terraform/addrs"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -43,6 +45,10 @@ func (p *EquinixMetalProvider) Init(args []string) error {
 
 func (p *EquinixMetalProvider) GetName() string {
 	return "metal"
+}
+
+func (p *EquinixMetalProvider) GetProviderSource() addrs.Provider {
+	return addrs.NewProvider(addrs.DefaultRegistryHost, "equinix", "metal")
 }
 
 func (p *EquinixMetalProvider) GetProviderData(arg ...string) map[string]interface{} {
@@ -71,7 +77,6 @@ func (p *EquinixMetalProvider) InitService(serviceName string, verbose bool) err
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetProviderPath("registry.terraform.io/equinix/metal")
 	p.Service.SetArgs(map[string]interface{}{
 		"auth_token": p.authToken,
 		"project_id": p.projectID,

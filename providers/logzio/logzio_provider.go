@@ -18,9 +18,11 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/hashicorp/terraform/addrs"
 	"github.com/pkg/errors"
 	"github.com/zclconf/go-cty/cty"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type LogzioProvider struct { //nolint
@@ -61,6 +63,10 @@ func (p *LogzioProvider) GetName() string {
 	return "logzio"
 }
 
+func (p *LogzioProvider) GetProviderSource() addrs.Provider {
+	return addrs.NewProvider(addrs.DefaultRegistryHost, "logzio", "logzio")
+}
+
 func (p *LogzioProvider) InitService(serviceName string, verbose bool) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
@@ -70,7 +76,6 @@ func (p *LogzioProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetProviderPath("registry.terraform.io/logzio/logzio")
 	p.Service.SetArgs(map[string]interface{}{
 		"api_token": p.apiToken,
 		"base_url":  p.baseURL,

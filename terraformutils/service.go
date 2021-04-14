@@ -34,8 +34,6 @@ type ServiceGenerator interface {
 	SetVerbose(bool)
 	SetProviderName(name string)
 	GetProviderName() string
-	SetProviderPath(providerPath string)
-	GetProviderPath() string
 	GetName() string
 	InitialCleanup()
 	PopulateIgnoreKeys(*providerwrapper.ProviderWrapper)

@@ -17,9 +17,11 @@ package github
 import (
 	"os"
 
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/hashicorp/terraform/addrs"
 	"github.com/pkg/errors"
 	"github.com/zclconf/go-cty/cty"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type GithubProvider struct { //nolint
@@ -67,6 +69,10 @@ func (p *GithubProvider) GetName() string {
 	return "github"
 }
 
+func (p *GithubProvider) GetProviderSource() addrs.Provider {
+	return addrs.NewProvider(addrs.DefaultRegistryHost, "integrations", "github")
+}
+
 func (p *GithubProvider) InitService(serviceName string, verbose bool) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
@@ -76,7 +82,6 @@ func (p *GithubProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
-	p.Service.SetProviderPath("registry.terraform.io/integrations/github")
 	p.Service.SetArgs(map[string]interface{}{
 		"organization": p.organization,
 		"token":        p.token,
