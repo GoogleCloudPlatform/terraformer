@@ -22,7 +22,6 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	githubAPI "github.com/google/go-github/v25/github"
-	"golang.org/x/oauth2"
 )
 
 type TeamsGenerator struct {
@@ -86,12 +85,10 @@ func (g *TeamsGenerator) createTeamRepositoriesResources(ctx context.Context, te
 // InitResources generates TerraformResources from Github API,
 func (g *TeamsGenerator) InitResources() error {
 	ctx := context.Background()
-	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: g.Args["token"].(string)},
-	)
-	tc := oauth2.NewClient(ctx, ts)
-
-	client := githubAPI.NewClient(tc)
+	client, err := g.createClient()
+	if err != nil {
+		return err
+	}
 
 	opt := &githubAPI.ListOptions{PerPage: 1}
 

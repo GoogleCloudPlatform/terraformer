@@ -14,8 +14,41 @@
 
 package github
 
-import "github.com/GoogleCloudPlatform/terraformer/terraformutils"
+import (
+	"context"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/google/go-github/v25/github"
+	githubAPI "github.com/google/go-github/v25/github"
+	"golang.org/x/oauth2"
+)
 
 type GithubService struct { //nolint
 	terraformutils.Service
+}
+
+func (g *GithubService) createClient() (*github.Client, error) {
+	if g.GetArgs()["base_url"].(string) == "" {
+		return g.createRegularClient(), nil
+	}
+	return g.createEnterpriseClient()
+}
+
+func (g *GithubService) createRegularClient() *github.Client {
+	ctx := context.Background()
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: g.Args["token"].(string)},
+	)
+	tc := oauth2.NewClient(ctx, ts)
+	return githubAPI.NewClient(tc)
+}
+
+func (g *GithubService) createEnterpriseClient() (*github.Client, error) {
+	ctx := context.Background()
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: g.Args["token"].(string)},
+	)
+	tc := oauth2.NewClient(ctx, ts)
+	baseURL := g.GetArgs()["base_url"].(string) + "/api/v3/"
+	return githubAPI.NewEnterpriseClient(baseURL, baseURL, tc)
 }

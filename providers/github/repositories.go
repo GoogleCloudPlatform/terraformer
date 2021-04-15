@@ -21,7 +21,6 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	githubAPI "github.com/google/go-github/v25/github"
-	"golang.org/x/oauth2"
 )
 
 type RepositoriesGenerator struct {
@@ -31,12 +30,10 @@ type RepositoriesGenerator struct {
 // Generate TerraformResources from github API,
 func (g *RepositoriesGenerator) InitResources() error {
 	ctx := context.Background()
-	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: g.GetArgs()["token"].(string)},
-	)
-	tc := oauth2.NewClient(ctx, ts)
-
-	client := githubAPI.NewClient(tc)
+	client, err := g.createClient()
+	if err != nil {
+		return err
+	}
 
 	opt := &githubAPI.RepositoryListByOrgOptions{
 		ListOptions: githubAPI.ListOptions{PerPage: 100},
