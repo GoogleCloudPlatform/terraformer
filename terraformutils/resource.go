@@ -15,30 +15,27 @@
 package terraformutils
 
 import (
-	"fmt"
+	"github.com/hashicorp/terraform/addrs"
 	"github.com/hashicorp/terraform/states"
+	"github.com/zclconf/go-cty/cty/gocty"
 	"log"
-	"regexp"
 	"strings"
 	"time"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/zclconf/go-cty/cty"
 )
 
 type Resource struct {
-	InstanceInfo              *terraform.InstanceInfo
-	InstanceState             *terraform.InstanceState
-	ResourceInstanceObjectSrc *states.ResourceInstanceObjectSrc
-	Outputs                   map[string]*terraform.OutputState `json:",omitempty"`
-	ResourceName              string
-	Provider                  string
-	Item                      map[string]interface{} `json:",omitempty"`
-	IgnoreKeys                []string               `json:",omitempty"`
-	AllowEmptyValues          []string               `json:",omitempty"`
-	AdditionalFields          map[string]interface{} `json:",omitempty"`
-	SlowQueryRequired         bool
+	Address           addrs.Resource
+	InstanceState     *states.ResourceInstanceObject // the resource will always contain one instance as terraformer blocks don't use "count" or "for_each"
+	Outputs           map[string]*states.OutputValue
+	ImportID          string // identifier to be used by terraformer when importing a resource
+	Provider          string
+	PriorState        map[string]string
+	IgnoreKeys        []string               `json:",omitempty"`
+	AllowEmptyValues  []string               `json:",omitempty"`
+	AdditionalFields  map[string]interface{} `json:",omitempty"`
+	SlowQueryRequired bool
 }
 
 type ApplicableFilter interface {
@@ -53,24 +50,29 @@ type ResourceFilter struct {
 }
 
 func (rf *ResourceFilter) Filter(resource Resource) bool {
-	if !rf.IsApplicable(strings.TrimPrefix(resource.InstanceInfo.Type, resource.Provider+"_")) {
+	if !rf.IsApplicable(strings.TrimPrefix(resource.Address.Type, resource.Provider+"_")) {
 		return true
 	}
 	var vals []interface{}
 	switch {
 	case rf.FieldPath == "id":
-		vals = []interface{}{resource.InstanceState.ID}
+		vals = []interface{}{resource.ImportID}
 	case rf.AcceptableValues == nil:
-		var hasField = WalkAndCheckField(rf.FieldPath, resource.InstanceState.Attributes)
-		if hasField {
-			return true
+		var dst interface{}
+		err := gocty.FromCtyValue(resource.InstanceState.Value, &dst)
+		if err != nil {
+			log.Println(err.Error())
+			return false
 		}
-		return WalkAndCheckField(rf.FieldPath, resource.Item)
+		return WalkAndCheckField(rf.FieldPath, dst)
 	default:
-		vals = WalkAndGet(rf.FieldPath, resource.InstanceState.Attributes)
-		if len(vals) == 0 {
-			vals = WalkAndGet(rf.FieldPath, resource.Item)
+		var dst interface{}
+		err := gocty.FromCtyValue(resource.InstanceState.Value, &dst)
+		if err != nil {
+			log.Println(err.Error())
+			return false
 		}
+		vals = WalkAndGet(rf.FieldPath, dst)
 	}
 	for _, val := range vals {
 		for _, acceptableValue := range rf.AcceptableValues {
@@ -95,17 +97,14 @@ func NewResource(id, resourceName, resourceType, provider string,
 	allowEmptyValues []string,
 	additionalFields map[string]interface{}) Resource {
 	return Resource{
-		ResourceName: TfSanitize(resourceName),
-		Item:         nil,
-		Provider:     provider,
-		InstanceState: &terraform.InstanceState{
-			ID:         id,
-			Attributes: attributes,
-		},
-		InstanceInfo: &terraform.InstanceInfo{
+		Address:  addrs.Resource{
+			Mode: addrs.ManagedResourceMode,
 			Type: resourceType,
-			Id:   fmt.Sprintf("%s.%s", resourceType, TfSanitize(resourceName)),
+			Name: TfSanitize(resourceName),
 		},
+		ImportID: id,
+		Provider:      provider,
+		PriorState: attributes,
 		AdditionalFields: additionalFields,
 		AllowEmptyValues: allowEmptyValues,
 	}
@@ -128,55 +127,19 @@ func (r *Resource) Refresh(provider *providerwrapper.ProviderWrapper) {
 	if r.SlowQueryRequired {
 		time.Sleep(200 * time.Millisecond)
 	}
-	r.InstanceState, err = provider.Refresh(r.InstanceInfo, r.InstanceState)
+	r.InstanceState, err = provider.Refresh(&r.Address, r.PriorState, r.ImportID)
 	if err != nil {
 		log.Println(err)
 	}
 }
 
 func (r Resource) GetIDKey() string {
-	if _, exist := r.InstanceState.Attributes["self_link"]; exist {
+	if _, exist := r.PriorState["self_link"]; exist {
 		return "self_link"
 	}
 	return "id"
 }
 
-func (r *Resource) ParseTFstate(parser Flatmapper, impliedType cty.Type) error {
-	attributes, err := parser.Parse(impliedType)
-	if err != nil {
-		return err
-	}
-
-	// add Additional Fields to resource
-	for key, value := range r.AdditionalFields {
-		attributes[key] = value
-	}
-
-	if attributes == nil {
-		attributes = map[string]interface{}{} // ensure HCL can represent empty resource correctly
-	}
-
-	r.Item = attributes
-	return nil
-}
-
-func (r *Resource) ConvertTFstate(provider *providerwrapper.ProviderWrapper) error {
-	ignoreKeys := []*regexp.Regexp{}
-	for _, pattern := range r.IgnoreKeys {
-		ignoreKeys = append(ignoreKeys, regexp.MustCompile(pattern))
-	}
-	allowEmptyValues := []*regexp.Regexp{}
-	for _, pattern := range r.AllowEmptyValues {
-		if pattern != "" {
-			allowEmptyValues = append(allowEmptyValues, regexp.MustCompile(pattern))
-		}
-	}
-	parser := NewFlatmapParser(r.InstanceState.Attributes, ignoreKeys, allowEmptyValues)
-	schema := provider.GetSchema()
-	impliedType := schema.ResourceTypes[r.InstanceInfo.Type].Block.ImpliedType()
-	return r.ParseTFstate(parser, impliedType)
-}
-
 func (r *Resource) ServiceName() string {
-	return strings.TrimPrefix(r.InstanceInfo.Type, r.Provider+"_")
+	return strings.TrimPrefix(r.Address.Type, r.Provider+"_")
 }

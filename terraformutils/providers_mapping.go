@@ -5,8 +5,6 @@ import (
 	"math/rand"
 	"reflect"
 	"time"
-
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
 type ProvidersMapping struct {
@@ -146,14 +144,7 @@ func (p *ProvidersMapping) GetResourcesByService() map[string][]Resource {
 	return mapping
 }
 
-func (p *ProvidersMapping) ConvertTFStates(providerWrapper *providerwrapper.ProviderWrapper) {
-	for resource := range p.Resources {
-		err := resource.ConvertTFstate(providerWrapper)
-		if err != nil {
-			log.Printf("failed to convert resources %s because of error %s", resource.InstanceInfo.Id, err)
-		}
-	}
-
+func (p *ProvidersMapping) ReorganizeResources() {
 	resourcesGroupsByProviders := map[ProviderGenerator][]Resource{}
 	for resource := range p.Resources {
 		provider := p.resourceToProvider[resource]

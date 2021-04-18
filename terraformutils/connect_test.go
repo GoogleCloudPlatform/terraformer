@@ -139,7 +139,7 @@ func prepareNoAttrs(id, resourceType string) Resource {
 
 func prepare(id, resourceType string, attributes map[string]string, attributesParsed map[string]interface{}) Resource {
 	r := NewResource(id, "name-"+resourceType, resourceType, "provider", attributes, []string{}, map[string]interface{}{})
-	r.InstanceState.Attributes["id"] = r.InstanceState.ID
+	r.PriorState["id"] = r.ImportID // legacy support for before TF 0.12
 	err := r.ParseTFstate(&MockedFlatmapParser{
 		attributesParsed: attributesParsed,
 	}, cty.NilType)

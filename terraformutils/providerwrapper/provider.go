@@ -17,6 +17,10 @@ package providerwrapper //nolint
 import (
 	"errors"
 	"fmt"
+	"github.com/hashicorp/terraform/addrs"
+	"github.com/hashicorp/terraform/configs/hcl2shim"
+	"github.com/hashicorp/terraform/providers"
+	"github.com/hashicorp/terraform/states"
 	"io/ioutil"
 	"log"
 	"os"
@@ -33,8 +37,6 @@ import (
 	"github.com/hashicorp/go-plugin"
 	"github.com/hashicorp/terraform/configs/configschema"
 	tfplugin "github.com/hashicorp/terraform/plugin"
-	"github.com/hashicorp/terraform/providers"
-	"github.com/hashicorp/terraform/terraform"
 	"github.com/hashicorp/terraform/version"
 )
 
@@ -55,7 +57,7 @@ type ProviderWrapper struct {
 	rpcClient    plugin.ClientProtocol
 	providerName string
 	config       cty.Value
-	schema       *providers.GetSchemaResponse
+	schema       *providers.GetProviderSchemaResponse
 	retryCount   int
 	retrySleepMs int
 }
@@ -85,9 +87,9 @@ func (p *ProviderWrapper) Kill() {
 	p.client.Kill()
 }
 
-func (p *ProviderWrapper) GetSchema() *providers.GetSchemaResponse {
+func (p *ProviderWrapper) GetSchema() *providers.GetProviderSchemaResponse {
 	if p.schema == nil {
-		r := p.Provider.GetSchema()
+		r := p.Provider.GetProviderSchema()
 		p.schema = &r
 	}
 	return p.schema
@@ -158,10 +160,10 @@ func (p *ProviderWrapper) readObjBlocks(block map[string]*configschema.NestedBlo
 	return readOnlyAttributes
 }
 
-func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform.InstanceState) (*terraform.InstanceState, error) {
+func (p *ProviderWrapper) Refresh(resourceAddress *addrs.Resource, priorState map[string]string, importID string) (*states.ResourceInstanceObject, error) {
 	schema := p.GetSchema()
-	impliedType := schema.ResourceTypes[info.Type].Block.ImpliedType()
-	priorState, err := state.AttrsAsObjectValue(impliedType)
+	impliedType := schema.ResourceTypes[resourceAddress.Type].Block.ImpliedType()
+	val, err := hcl2shim.HCL2ValueFromFlatmap(priorState, impliedType)
 	if err != nil {
 		return nil, err
 	}
@@ -169,8 +171,8 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 	resp := providers.ReadResourceResponse{}
 	for i := 0; i < p.retryCount; i++ {
 		resp = p.Provider.ReadResource(providers.ReadResourceRequest{
-			TypeName:     info.Type,
-			PriorState:   priorState,
+			TypeName:     resourceAddress.Type,
+			PriorState:   val,
 			Private:      []byte{},
 			ProviderMeta: schema.ProviderMeta.Block.EmptyValue(),
 		})
@@ -188,8 +190,8 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 		log.Println("Fail read resource from provider, trying import command")
 		// retry with regular import command - without resource attributes
 		importResponse := p.Provider.ImportResourceState(providers.ImportResourceStateRequest{
-			TypeName: info.Type,
-			ID:       state.ID,
+			TypeName: resourceAddress.Type,
+			ID:       importID,
 		})
 		if importResponse.Diagnostics.HasErrors() {
 			return nil, resp.Diagnostics.Err()
@@ -197,15 +199,25 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 		if len(importResponse.ImportedResources) == 0 {
 			return nil, errors.New("not able to import resource for a given ID")
 		}
-		return terraform.NewInstanceStateShimmedFromValue(importResponse.ImportedResources[0].State, int(schema.ResourceTypes[info.Type].Version)), nil
+		return &states.ResourceInstanceObject{
+			Value: importResponse.ImportedResources[0].State,
+			Private: importResponse.ImportedResources[0].Private,
+			Status: states.ObjectReady,
+			Dependencies: nil, // TODO configure Terraformer to define dependencies
+		}, nil
 	}
 
 	if resp.NewState.IsNull() {
-		msg := fmt.Sprintf("ERROR: Read resource response is null for resource %s", info.Id)
+		msg := fmt.Sprintf("ERROR: Read resource response is null for resource %s", importID)
 		return nil, errors.New(msg)
 	}
 
-	return terraform.NewInstanceStateShimmedFromValue(resp.NewState, int(schema.ResourceTypes[info.Type].Version)), nil
+	return &states.ResourceInstanceObject{
+		Value: resp.NewState,
+		Private: resp.Private,
+		Status: states.ObjectReady,
+		Dependencies: nil, // TODO configure Terraformer to define dependencies
+	}, nil
 }
 
 func (p *ProviderWrapper) initProvider(verbose bool) error {
@@ -247,7 +259,7 @@ func (p *ProviderWrapper) initProvider(verbose bool) error {
 	if err != nil {
 		return err
 	}
-	p.Provider.Configure(providers.ConfigureRequest{
+	p.Provider.ConfigureProvider(providers.ConfigureProviderRequest{
 		TerraformVersion: version.Version,
 		Config:           config,
 	})

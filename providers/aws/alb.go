@@ -213,7 +213,7 @@ func (g *AlbGenerator) InitResources() error {
 
 func (g *AlbGenerator) PostConvertHook() error {
 	for _, r := range g.Resources {
-		if r.InstanceInfo.Type != "aws_lb_listener" {
+		if r.Address.Type != "aws_lb_listener" {
 			continue
 		}
 		if r.InstanceState.Attributes["default_action.0.order"] == "0" {

@@ -80,7 +80,7 @@ func newCmdPlanImporter(options ImportOptions) *cobra.Command {
 				}
 			}
 
-			return ImportFromPlan(provider, plan)
+			return ImportFromPlan(provider, nil, plan)
 		},
 	}
 	return cmd
