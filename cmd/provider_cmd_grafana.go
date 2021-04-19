@@ -15,8 +15,9 @@ package cmd
 
 import (
 	"errors"
-	"github.com/GoogleCloudPlatform/terraformer/providers/grafana"
 	"os"
+
+	"github.com/GoogleCloudPlatform/terraformer/providers/grafana"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"

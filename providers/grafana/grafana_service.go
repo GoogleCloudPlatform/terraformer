@@ -17,13 +17,14 @@ package grafana
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"io/ioutil"
+	"net/url"
+	"strings"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	gapi "github.com/grafana/grafana-api-golang-client"
 	"github.com/hashicorp/go-cleanhttp"
 	"github.com/hashicorp/terraform/helper/logging"
-	"io/ioutil"
-	"net/url"
-	"strings"
 )
 
 type GrafanaService struct { //nolint
