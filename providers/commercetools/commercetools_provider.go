@@ -77,6 +77,7 @@ func (p *CommercetoolsProvider) GetSupportedService() map[string]terraformutils.
 	return map[string]terraformutils.ServiceGenerator{
 		"api_extension":   &APIExtensionGenerator{},
 		"channel":         &ChannelGenerator{},
+		"custom_object":   &CustomObjectGenerator{},
 		"product_type":    &ProductTypeGenerator{},
 		"shipping_zone":   &ShippingZoneGenerator{},
 		"shipping_method": &ShippingMethodGenerator{},
