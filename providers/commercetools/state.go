@@ -15,6 +15,8 @@
 package commercetools
 
 import (
+	"context"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/commercetools/connectivity"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/labd/commercetools-go-sdk/commercetools"
@@ -36,7 +38,7 @@ func (g *StateGenerator) InitResources() error {
 
 	client := cfg.NewClient()
 
-	states, err := client.StateQuery(&commercetools.QueryInput{})
+	states, err := client.StateQuery(context.Background(), &commercetools.QueryInput{})
 	if err != nil {
 		return err
 	}

@@ -22,12 +22,12 @@ import (
 	"github.com/labd/commercetools-go-sdk/commercetools"
 )
 
-type SubscriptionGenerator struct {
+type CustomObjectGenerator struct {
 	CommercetoolsService
 }
 
 // InitResources generates Terraform Resources from Commercetools API
-func (g *SubscriptionGenerator) InitResources() error {
+func (g *CustomObjectGenerator) InitResources() error {
 	cfg := connectivity.Config{
 		ClientID:     g.GetArgs()["client_id"].(string),
 		ClientSecret: g.GetArgs()["client_secret"].(string),
@@ -38,15 +38,15 @@ func (g *SubscriptionGenerator) InitResources() error {
 
 	client := cfg.NewClient()
 
-	subscriptions, err := client.SubscriptionQuery(context.Background(), &commercetools.QueryInput{})
+	customObjects, err := client.CustomObjectQuery(context.Background(), &commercetools.QueryInput{})
 	if err != nil {
 		return err
 	}
-	for _, subscription := range subscriptions.Results {
+	for _, customObject := range customObjects.Results {
 		g.Resources = append(g.Resources, terraformutils.NewResource(
-			subscription.ID,
-			subscription.Key,
-			"commercetools_subscription",
+			customObject.ID,
+			customObject.Key,
+			"commercetools_custom_object",
 			"commercetools",
 			map[string]string{},
 			[]string{},
