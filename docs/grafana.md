@@ -1,6 +1,6 @@
 ### Use with [Grafana](https://grafana.com)
 
-This provider uses the [terraform-provider-commercetools](https://registry.terraform.io/providers/grafana/grafana/latest).
+This provider uses the [terraform-provider-grafana](https://registry.terraform.io/providers/grafana/grafana/latest).
 
 #### Example
 
