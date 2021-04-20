@@ -42,6 +42,7 @@ func (s *GrafanaService) buildClient() (*gapi.Client, error) {
 	tlsCert := s.Args["tls_cert"].(string)
 	caCert := s.Args["ca_cert"].(string)
 	insecure := s.Args["insecure_skip_verify"].(bool)
+
 	if caCert != "" {
 		ca, err := ioutil.ReadFile(caCert)
 		if err != nil {
@@ -51,6 +52,7 @@ func (s *GrafanaService) buildClient() (*gapi.Client, error) {
 		pool.AppendCertsFromPEM(ca)
 		transport.TLSClientConfig.RootCAs = pool
 	}
+
 	if tlsKey != "" && tlsCert != "" {
 		cert, err := tls.LoadX509KeyPair(tlsCert, tlsKey)
 		if err != nil {
@@ -58,6 +60,7 @@ func (s *GrafanaService) buildClient() (*gapi.Client, error) {
 		}
 		transport.TLSClientConfig.Certificates = []tls.Certificate{cert}
 	}
+
 	if insecure {
 		transport.TLSClientConfig.InsecureSkipVerify = true
 	}
@@ -67,11 +70,13 @@ func (s *GrafanaService) buildClient() (*gapi.Client, error) {
 		Client: cli,
 		OrgID:  int64(s.Args["org_id"].(int)),
 	}
+
 	if len(auth) == 2 {
 		cfg.BasicAuth = url.UserPassword(auth[0], auth[1])
 	} else {
 		cfg.APIKey = auth[0]
 	}
+
 	client, err := gapi.New(s.Args["url"].(string), cfg)
 	if err != nil {
 		return nil, err
