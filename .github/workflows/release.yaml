@@ -32,8 +32,7 @@ jobs:
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: ${{ github.event.inputs.version }}
           prerelease: false
           files: |
             terraformer-*
-      - name: Create new tag
-        run: git tag ${{ github.event.inputs.version }}
