@@ -37,6 +37,7 @@ type Resource struct {
 	AllowEmptyValues  []string               `json:",omitempty"`
 	AdditionalFields  map[string]interface{} `json:",omitempty"`
 	SlowQueryRequired bool
+	DataFiles         map[string][]byte
 }
 
 type ApplicableFilter interface {

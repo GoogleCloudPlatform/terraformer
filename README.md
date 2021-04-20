@@ -53,6 +53,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [Mikrotik](/docs/mikrotik.md)
         * [Xen Orchestra](/docs/xen.md)
         * [GmailFilter](/docs/gmailfilter.md)
+        * [Grafana](/docs/grafana.md)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
