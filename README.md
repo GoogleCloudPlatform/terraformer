@@ -51,6 +51,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [Commercetools](#use-with-commercetools)
         * [Mikrotik](#use-with-mikrotik)
         * [GmailFilter](#use-with-gmailfilter)
+        * [Grafana](#use-with-grafana)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
