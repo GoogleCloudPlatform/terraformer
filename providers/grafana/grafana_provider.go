@@ -15,6 +15,9 @@
 package grafana
 
 import (
+	"os"
+	"strconv"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/pkg/errors"
 	"github.com/zclconf/go-cty/cty"
@@ -24,7 +27,7 @@ type GrafanaProvider struct { //nolint
 	terraformutils.Provider
 	auth               string
 	url                string
-	organization       int
+	orgId              int
 	tlsKey             string
 	tlsCert            string
 	caCert             string
@@ -43,7 +46,7 @@ func (p GrafanaProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"grafana": map[string]interface{}{
-				"org_id":               p.organization,
+				"org_id":               p.orgId,
 				"url":                  p.url,
 				"auth":                 p.auth,
 				"tls_key":              p.tlsKey,
@@ -57,7 +60,7 @@ func (p GrafanaProvider) GetProviderData(arg ...string) map[string]interface{} {
 
 func (p *GrafanaProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
-		"org_id":               cty.NumberIntVal(int64(p.organization)),
+		"org_id":               cty.NumberIntVal(int64(p.orgId)),
 		"url":                  cty.StringVal(p.url),
 		"auth":                 cty.StringVal(p.auth),
 		"tls_key":              cty.StringVal(p.tlsKey),
@@ -67,12 +70,27 @@ func (p *GrafanaProvider) GetConfig() cty.Value {
 	})
 }
 
-// Init GrafanaProvider with API apiToken
 func (p *GrafanaProvider) Init(args []string) error {
-	p.auth = args[0]
-	p.url = args[1]
-	p.organization = 1
-	p.insecureSkipVerify = true
+	p.auth = os.Getenv("GRAFANA_AUTH")
+	if p.auth == "" {
+		return errors.New("Grafana API authentication must be set through `GRAFANA_AUTH` env var, either as an API token or as username:password for HTTP basic auth")
+	}
+
+	p.url = os.Getenv("GRAFANA_URL")
+	if p.url == "" {
+		return errors.New("Grafana API URL must be set through `GRAFANA_URL` env var")
+	}
+
+	orgId, err := strconv.Atoi(os.Getenv("GRAFANA_ORG_ID"))
+	if err != nil {
+		orgId = 1
+	}
+	p.orgId = orgId
+
+	if os.Getenv("HTTPS_INSECURE_SKIP_VERIFY") == "1" {
+		p.insecureSkipVerify = true
+	}
+
 	return nil
 }
 
@@ -85,12 +103,13 @@ func (p *GrafanaProvider) InitService(serviceName string, verbose bool) error {
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
 		return errors.New(p.GetName() + ": " + serviceName + " not supported service")
 	}
+
 	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"org_id":               p.organization,
+		"org_id":               p.orgId,
 		"url":                  p.url,
 		"auth":                 p.auth,
 		"tls_key":              p.tlsKey,

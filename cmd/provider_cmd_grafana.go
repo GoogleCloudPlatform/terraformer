@@ -14,9 +14,6 @@
 package cmd
 
 import (
-	"errors"
-	"os"
-
 	"github.com/GoogleCloudPlatform/terraformer/providers/grafana"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -26,19 +23,11 @@ import (
 func newCmdGrafanaImporter(options ImportOptions) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "grafana",
-		Short: "Import current state to Terraform configuration from grafana",
-		Long:  "Import current state to Terraform configuration from grafana",
+		Short: "Import current state to Terraform configuration from Grafana",
+		Long:  "Import current state to Terraform configuration from Grafana",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			auth := os.Getenv("GRAFANA_AUTH")
-			if len(auth) == 0 {
-				return errors.New("API Token must be set through `GRAFANA_AUTH` env var")
-			}
-			baseURL := os.Getenv("GRAFANA_URL")
-			if len(auth) == 0 {
-				return errors.New("grafana url must be set through `GRAFANA_URL` env var")
-			}
 			provider := newGrafanaProvider()
-			err := Import(provider, options, []string{auth, baseURL})
+			err := Import(provider, options, []string{})
 			if err != nil {
 				return err
 			}
