@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/pkg/errors"
+	gapi "github.com/grafana/grafana-api-golang-client"
 )
 
 type DashboardGenerator struct {
@@ -18,20 +18,30 @@ func (g *DashboardGenerator) InitResources() error {
 		return fmt.Errorf("unable to build grafana client: %v", err)
 	}
 
+	err = g.createDashboardResources(client)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (g *DashboardGenerator) createDashboardResources(client *gapi.Client) error {
 	dashboards, err := client.Dashboards()
 	if err != nil {
-		return fmt.Errorf("unable to list dashboards: %v", err)
+		return fmt.Errorf("unable to list grafana dashboards: %v", err)
 	}
 
 	for _, dashboard := range dashboards {
 		// search result doesn't include slug, so need to look up dashboard.
 		dash, err := client.DashboardByUID(dashboard.UID)
 		if err != nil {
-			return errors.Wrapf(err, "unable to read dashboard %s", dashboard.Title)
+			return fmt.Errorf("unable to read grafana dashboard %s: %v", dashboard.Title, err)
 		}
+
 		configJson, err := json.MarshalIndent(dash.Model, "", "  ")
 		if err != nil {
-			return errors.Wrapf(err, "unable to marshal configuration for dashboard %s", dashboard.Title)
+			return fmt.Errorf("unable to marshal configuration for grafana dashboard %s: %v", dashboard.Title, err)
 		}
 
 		filename := fmt.Sprintf("dashboard-%s.json", dash.Meta.Slug)
