@@ -35,7 +35,7 @@ func newCmdGrafanaImporter(options ImportOptions) *cobra.Command {
 		},
 	}
 	cmd.AddCommand(listCmd(newGrafanaProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "grafana_folders", "alert=id1:id2:id4")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "grafana_dashboard", "dashboard=slug1")
 	return cmd
 }
 

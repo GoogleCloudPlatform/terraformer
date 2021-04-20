@@ -15,12 +15,12 @@ type DashboardGenerator struct {
 func (g *DashboardGenerator) InitResources() error {
 	client, err := g.buildClient()
 	if err != nil {
-		return errors.Wrap(err, "unable to build grafana client")
+		return fmt.Errorf("unable to build grafana client: %v", err)
 	}
 
 	dashboards, err := client.Dashboards()
 	if err != nil {
-		return errors.Wrap(err, "unable to list dashboards")
+		return fmt.Errorf("unable to list dashboards: %v", err)
 	}
 
 	for _, dashboard := range dashboards {
