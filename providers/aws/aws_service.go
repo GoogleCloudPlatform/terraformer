@@ -22,8 +22,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/sts"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/aws/external"
-	"github.com/aws/aws-sdk-go-v2/aws/stscreds"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials/stscreds"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -34,20 +34,26 @@ type AWSService struct { //nolint
 
 var awsVariable = regexp.MustCompile(`(\${[0-9A-Za-z:]+})`)
 
+var configCache *aws.Config
+
 func (s *AWSService) generateConfig() (aws.Config, error) {
-	config, e := s.buildBaseConfig()
+	if configCache != nil {
+		return *configCache, nil
+	}
+
+	baseConfig, e := s.buildBaseConfig()
 
 	if e != nil {
-		return config, e
+		return baseConfig, e
 	}
 	if s.Verbose {
-		config.LogLevel = aws.LogDebugWithHTTPBody
+		baseConfig.ClientLogMode = aws.LogRequestWithBody & aws.LogResponseWithBody
 	}
 
-	creds, e := config.Credentials.Retrieve(context.Background())
+	creds, e := baseConfig.Credentials.Retrieve(context.TODO())
 
 	if e != nil {
-		return config, e
+		return baseConfig, e
 	}
 
 	// terraform cannot ask for MFA token, so we need to pass STS session token, which might contain credentials with MFA requirement
@@ -60,17 +66,22 @@ func (s *AWSService) generateConfig() (aws.Config, error) {
 			os.Setenv("AWS_SESSION_TOKEN", creds.SessionToken)
 		}
 	}
-
-	return config, nil
+	configCache = &baseConfig
+	return baseConfig, nil
 }
 
 func (s *AWSService) buildBaseConfig() (aws.Config, error) {
-	if s.GetArgs()["region"].(string) != "" {
-		return external.LoadDefaultAWSConfig(
-			external.WithRegion(s.GetArgs()["region"].(string)),
-			external.WithMFATokenFunc(stscreds.StdinTokenProvider))
+	var loadOptions []func(*config.LoadOptions) error
+	if s.GetArgs()["profile"].(string) != "" {
+		loadOptions = append(loadOptions, config.WithSharedConfigProfile(s.GetArgs()["profile"].(string)))
 	}
-	return external.LoadDefaultAWSConfig(external.WithMFATokenFunc(stscreds.StdinTokenProvider))
+	if s.GetArgs()["region"].(string) != "" {
+		os.Setenv("AWS_REGION", s.GetArgs()["region"].(string))
+	}
+	loadOptions = append(loadOptions, config.WithAssumeRoleCredentialOptions(func(options *stscreds.AssumeRoleOptions) {
+		options.TokenProvider = stscreds.StdinTokenProvider
+	}))
+	return config.LoadDefaultConfig(context.TODO(), loadOptions...)
 }
 
 // for CF interpolation and IAM Policy variables
@@ -79,8 +90,8 @@ func (*AWSService) escapeAwsInterpolation(str string) string {
 }
 
 func (s *AWSService) getAccountNumber(config aws.Config) (*string, error) {
-	stsSvc := sts.New(config)
-	identity, err := stsSvc.GetCallerIdentityRequest(&sts.GetCallerIdentityInput{}).Send(context.Background())
+	stsSvc := sts.NewFromConfig(config)
+	identity, err := stsSvc.GetCallerIdentity(context.TODO(), &sts.GetCallerIdentityInput{})
 	if err != nil {
 		return nil, err
 	}

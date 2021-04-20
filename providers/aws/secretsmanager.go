@@ -18,7 +18,6 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 )
 
@@ -33,13 +32,17 @@ func (g *SecretsManagerGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := secretsmanager.New(config)
-	p := secretsmanager.NewListSecretsPaginator(svc.ListSecretsRequest(&secretsmanager.ListSecretsInput{}))
+	svc := secretsmanager.NewFromConfig(config)
+	p := secretsmanager.NewListSecretsPaginator(svc, &secretsmanager.ListSecretsInput{})
 	var resources []terraformutils.Resource
-	for p.Next(context.Background()) {
-		for _, secret := range p.CurrentPage().SecretList {
-			secretArn := aws.StringValue(secret.ARN)
-			secretName := aws.StringValue(secret.Name)
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, secret := range page.SecretList {
+			secretArn := StringValue(secret.ARN)
+			secretName := StringValue(secret.Name)
 			resources = append(resources, terraformutils.NewSimpleResource(
 				secretArn,
 				secretName,
@@ -49,5 +52,5 @@ func (g *SecretsManagerGenerator) InitResources() error {
 		}
 	}
 	g.Resources = resources
-	return p.Err()
+	return nil
 }

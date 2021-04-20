@@ -15,7 +15,7 @@ const fileSuffix = ".go"
 const packageCmdPath = "cmd"
 
 func main() {
-	//provider := os.Args[1]
+	// provider := os.Args[1]
 	allProviders := []string{}
 	files, err := ioutil.ReadDir(packageCmdPath)
 	if err != nil {
@@ -23,8 +23,8 @@ func main() {
 	}
 	for _, f := range files {
 		if strings.HasPrefix(f.Name(), filePrefix) {
-			providerName := strings.Replace(f.Name(), filePrefix, "", -1)
-			providerName = strings.Replace(providerName, fileSuffix, "", -1)
+			providerName := strings.ReplaceAll(f.Name(), filePrefix, "")
+			providerName = strings.ReplaceAll(providerName, fileSuffix, "")
 			allProviders = append(allProviders, providerName)
 		}
 	}
@@ -48,14 +48,17 @@ func main() {
 			for _, f := range files {
 				if strings.HasPrefix(f.Name(), filePrefix) {
 					if !strings.HasPrefix(f.Name(), filePrefix+provider+fileSuffix) {
-						providerName := strings.Replace(f.Name(), filePrefix, "", -1)
-						providerName = strings.Replace(providerName, fileSuffix, "", -1)
+						providerName := strings.ReplaceAll(f.Name(), filePrefix, "")
+						providerName = strings.ReplaceAll(providerName, fileSuffix, "")
 						deletedProvider = append(deletedProvider, providerName)
 					}
 				}
 			}
 			// move files for deleted providers
-			os.MkdirAll(packageCmdPath+"/tmp", os.ModePerm)
+			err := os.MkdirAll(packageCmdPath+"/tmp", os.ModePerm)
+			if err != nil {
+				log.Fatal("err:", err)
+			}
 			for _, provider := range deletedProvider {
 				err := os.Rename(packageCmdPath+"/"+filePrefix+provider+fileSuffix, packageCmdPath+"/tmp/"+filePrefix+provider+fileSuffix)
 				if err != nil {
@@ -65,6 +68,9 @@ func main() {
 
 			// comment deleted providers in code
 			rootCode, err := ioutil.ReadFile(packageCmdPath + "/root.go")
+			if err != nil {
+				log.Fatal("err:", err)
+			}
 			lines := strings.Split(string(rootCode), "\n")
 			newRootCodeLines := make([]string, len(lines))
 			for i, line := range lines {
@@ -79,7 +85,10 @@ func main() {
 				newRootCodeLines[i] = line
 			}
 			newRootCode := strings.Join(newRootCodeLines, "\n")
-			ioutil.WriteFile(packageCmdPath+"/root.go", []byte(newRootCode), os.ModePerm)
+			err = ioutil.WriteFile(packageCmdPath+"/root.go", []byte(newRootCode), os.ModePerm)
+			if err != nil {
+				log.Fatal("err:", err)
+			}
 
 			// build....
 			cmd := exec.Command("go", "build", "-v", "-o", binaryName)
@@ -94,8 +103,11 @@ func main() {
 			}
 			fmt.Println(outb.String())
 
-			//revert code and files
-			ioutil.WriteFile(packageCmdPath+"/root.go", []byte(rootCode), os.ModePerm)
+			// revert code and files
+			err = ioutil.WriteFile(packageCmdPath+"/root.go", rootCode, os.ModePerm)
+			if err != nil {
+				log.Fatal("err:", err)
+			}
 			for _, provider := range deletedProvider {
 				err := os.Rename(packageCmdPath+"/tmp/"+filePrefix+provider+fileSuffix, "cmd/"+filePrefix+provider+fileSuffix)
 				if err != nil {

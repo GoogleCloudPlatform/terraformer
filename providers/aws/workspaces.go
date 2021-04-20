@@ -18,7 +18,6 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/workspaces"
 )
 
@@ -33,7 +32,7 @@ func (g *WorkspacesGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := workspaces.New(config)
+	svc := workspaces.NewFromConfig(config)
 	if err := g.loadWorkspaces(svc); err != nil {
 		return err
 	}
@@ -44,11 +43,15 @@ func (g *WorkspacesGenerator) InitResources() error {
 }
 
 func (g *WorkspacesGenerator) loadWorkspaces(svc *workspaces.Client) error {
-	p := workspaces.NewDescribeWorkspacesPaginator(svc.DescribeWorkspacesRequest(&workspaces.DescribeWorkspacesInput{}))
-	for p.Next(context.Background()) {
-		for _, workspace := range p.CurrentPage().Workspaces {
-			directoryID := aws.StringValue(workspace.DirectoryId)
-			workspaceID := aws.StringValue(workspace.WorkspaceId)
+	p := workspaces.NewDescribeWorkspacesPaginator(svc, &workspaces.DescribeWorkspacesInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, workspace := range page.Workspaces {
+			directoryID := StringValue(workspace.DirectoryId)
+			workspaceID := StringValue(workspace.WorkspaceId)
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				directoryID,
 				directoryID,
@@ -63,18 +66,18 @@ func (g *WorkspacesGenerator) loadWorkspaces(svc *workspaces.Client) error {
 				workspacesAllowEmptyValues))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *WorkspacesGenerator) loadWorkspacesIPGroup(svc *workspaces.Client) error {
 	var nextToken *string
 	for {
-		response, err := svc.DescribeIpGroupsRequest(&workspaces.DescribeIpGroupsInput{NextToken: nextToken}).Send(context.Background())
+		response, err := svc.DescribeIpGroups(context.TODO(), &workspaces.DescribeIpGroupsInput{NextToken: nextToken})
 		if err != nil {
 			return err
 		}
 		for _, ipGroup := range response.Result {
-			groupID := aws.StringValue(ipGroup.GroupId)
+			groupID := StringValue(ipGroup.GroupId)
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				groupID,
 				groupID,

@@ -18,7 +18,6 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/codecommit"
 )
 
@@ -33,12 +32,16 @@ func (g *CodeCommitGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := codecommit.New(config)
-	p := codecommit.NewListRepositoriesPaginator(svc.ListRepositoriesRequest(&codecommit.ListRepositoriesInput{}))
+	svc := codecommit.NewFromConfig(config)
+	p := codecommit.NewListRepositoriesPaginator(svc, &codecommit.ListRepositoriesInput{})
 	var resources []terraformutils.Resource
-	for p.Next(context.Background()) {
-		for _, repository := range p.CurrentPage().Repositories {
-			resourceName := aws.StringValue(repository.RepositoryName)
+	for p.HasMorePages() {
+		page, e := p.NextPage(context.TODO())
+		if e != nil {
+			return e
+		}
+		for _, repository := range page.Repositories {
+			resourceName := StringValue(repository.RepositoryName)
 			resources = append(resources, terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
@@ -48,5 +51,5 @@ func (g *CodeCommitGenerator) InitResources() error {
 		}
 	}
 	g.Resources = resources
-	return p.Err()
+	return nil
 }

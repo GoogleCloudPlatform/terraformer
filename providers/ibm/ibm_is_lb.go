@@ -29,8 +29,7 @@ type LBGenerator struct {
 }
 
 func (g LBGenerator) createLBResources(lbID, lbName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		lbID,
 		lbName,
 		"ibm_is_lb",
@@ -40,8 +39,7 @@ func (g LBGenerator) createLBResources(lbID, lbName string) terraformutils.Resou
 }
 
 func (g LBGenerator) createLBPoolResources(lbID, lbPoolID, lbPoolName string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", lbID, lbPoolID),
 		lbPoolName,
 		"ibm_is_lb_pool",
@@ -55,8 +53,7 @@ func (g LBGenerator) createLBPoolResources(lbID, lbPoolID, lbPoolName string, de
 }
 
 func (g LBGenerator) createLBPoolMemberResources(lbID, lbPoolID, lbPoolMemberID, lbPoolMemberName string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s/%s", lbID, lbPoolID, lbPoolMemberID),
 		lbPoolMemberName,
 		"ibm_is_lb_pool_member",
@@ -70,8 +67,7 @@ func (g LBGenerator) createLBPoolMemberResources(lbID, lbPoolID, lbPoolMemberID,
 }
 
 func (g LBGenerator) createLBListenerResources(lbID, lbListenerID, lbListenerName string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", lbID, lbListenerID),
 		lbListenerName,
 		"ibm_is_lb_listener",
@@ -85,8 +81,7 @@ func (g LBGenerator) createLBListenerResources(lbID, lbListenerID, lbListenerNam
 }
 
 func (g LBGenerator) createLBListenerPolicyResources(lbID, lbListenerID, lbListenerPolicyID, lbListenerPolicyName string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s/%s", lbID, lbListenerID, lbListenerPolicyID),
 		lbListenerPolicyName,
 		"ibm_is_lb_listener_policy",
@@ -100,8 +95,7 @@ func (g LBGenerator) createLBListenerPolicyResources(lbID, lbListenerID, lbListe
 }
 
 func (g LBGenerator) createLBListenerPolicyRuleResources(lbID, lbListenerID, lbListenerPolicyID, lbListenerPolicyRuleID, lbListenerPolicyName string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s/%s/%s", lbID, lbListenerID, lbListenerPolicyID, lbListenerPolicyRuleID),
 		lbListenerPolicyName,
 		"ibm_is_lb_listener_policy_rule",
@@ -119,7 +113,7 @@ func (g *LBGenerator) InitResources() error {
 	region := envFallBack([]string{"IC_REGION"}, "us-south")
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
-		return fmt.Errorf("No API key set")
+		return fmt.Errorf("no API key set")
 	}
 
 	rg := g.Args["resource_group"]
@@ -138,7 +132,7 @@ func (g *LBGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
-	allrecs := []vpcv1.LoadBalancer{}
+	var allrecs []vpcv1.LoadBalancer
 
 	listLoadBalancersOptions := &vpcv1.ListLoadBalancersOptions{}
 	lbs, response, err := vpcclient.ListLoadBalancers(listLoadBalancersOptions)
@@ -161,8 +155,7 @@ func (g *LBGenerator) InitResources() error {
 		}
 		for _, lbPool := range lbPools.Pools {
 			g.Resources = append(g.Resources, g.createLBPoolResources(*lb.ID, *lbPool.ID, *lbPool.Name, dependsOn))
-			var dependsOn1 []string
-			dependsOn1 = append(dependsOn,
+			dependsOn1 := append(dependsOn,
 				"ibm_is_lb_pool."+terraformutils.TfSanitize(*lbPool.Name))
 			listLoadBalancerPoolMembersOptions := &vpcv1.ListLoadBalancerPoolMembersOptions{
 				LoadBalancerID: lb.ID,
@@ -186,8 +179,7 @@ func (g *LBGenerator) InitResources() error {
 		}
 		for _, lbListener := range lbListeners.Listeners {
 			g.Resources = append(g.Resources, g.createLBListenerResources(*lb.ID, *lbListener.ID, *lbListener.ID, dependsOn))
-			var dependsOn2 []string
-			dependsOn2 = append(dependsOn,
+			var dependsOn2 = append(dependsOn, //nolint:goimports,gofmt
 				"ibm_is_lb_listener."+terraformutils.TfSanitize(*lbListener.ID))
 			listLoadBalancerListenerPoliciesOptions := &vpcv1.ListLoadBalancerListenerPoliciesOptions{
 				LoadBalancerID: lb.ID,

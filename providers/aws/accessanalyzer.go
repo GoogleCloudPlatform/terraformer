@@ -18,7 +18,6 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/accessanalyzer"
 )
 
@@ -33,12 +32,16 @@ func (g *AccessAnalyzerGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := accessanalyzer.New(config)
-	p := accessanalyzer.NewListAnalyzersPaginator(svc.ListAnalyzersRequest(&accessanalyzer.ListAnalyzersInput{}))
+	svc := accessanalyzer.NewFromConfig(config)
+	p := accessanalyzer.NewListAnalyzersPaginator(svc, &accessanalyzer.ListAnalyzersInput{})
 	var resources []terraformutils.Resource
-	for p.Next(context.Background()) {
-		for _, analyzer := range p.CurrentPage().Analyzers {
-			resourceName := aws.StringValue(analyzer.Name)
+	for p.HasMorePages() {
+		page, e := p.NextPage(context.TODO())
+		if e != nil {
+			return e
+		}
+		for _, analyzer := range page.Analyzers {
+			resourceName := *analyzer.Name
 			resources = append(resources, terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
@@ -48,5 +51,5 @@ func (g *AccessAnalyzerGenerator) InitResources() error {
 		}
 	}
 	g.Resources = resources
-	return p.Err()
+	return nil
 }

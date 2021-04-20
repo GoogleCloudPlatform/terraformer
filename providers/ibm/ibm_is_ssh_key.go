@@ -30,8 +30,7 @@ type SSHKeyGenerator struct {
 }
 
 func (g SSHKeyGenerator) createSSHKeyResources(sshKeyID, sshKeyName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		sshKeyID,
 		sshKeyName,
 		"ibm_is_ssh_key",

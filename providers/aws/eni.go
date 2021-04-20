@@ -19,7 +19,6 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
@@ -33,8 +32,8 @@ func (EniGenerator) createResources(enis *ec2.DescribeNetworkInterfacesOutput) [
 	var resources []terraformutils.Resource
 	for _, eni := range enis.NetworkInterfaces {
 		resources = append(resources, terraformutils.NewSimpleResource(
-			aws.StringValue(eni.NetworkInterfaceId),
-			aws.StringValue(eni.NetworkInterfaceId),
+			StringValue(eni.NetworkInterfaceId),
+			StringValue(eni.NetworkInterfaceId),
 			"aws_network_interface",
 			"aws",
 			EniAllowEmptyValues,
@@ -50,13 +49,16 @@ func (g *EniGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := ec2.New(config)
-	p := ec2.NewDescribeNetworkInterfacesPaginator(
-		svc.DescribeNetworkInterfacesRequest(&ec2.DescribeNetworkInterfacesInput{}))
-	for p.Next(context.Background()) {
-		g.Resources = append(g.Resources, g.createResources(p.CurrentPage())...)
+	svc := ec2.NewFromConfig(config)
+	p := ec2.NewDescribeNetworkInterfacesPaginator(svc, &ec2.DescribeNetworkInterfacesInput{})
+	for p.HasMorePages() {
+		page, e := p.NextPage(context.TODO())
+		if e != nil {
+			return e
+		}
+		g.Resources = append(g.Resources, g.createResources(page)...)
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *EniGenerator) PostConvertHook() error {

@@ -19,7 +19,6 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
@@ -30,11 +29,11 @@ type NatGatewayGenerator struct {
 }
 
 func (g *NatGatewayGenerator) createResources(ngws *ec2.DescribeNatGatewaysOutput) []terraformutils.Resource {
-	resources := []terraformutils.Resource{}
+	var resources []terraformutils.Resource
 	for _, ngw := range ngws.NatGateways {
 		resources = append(resources, terraformutils.NewSimpleResource(
-			aws.StringValue(ngw.NatGatewayId),
-			aws.StringValue(ngw.NatGatewayId),
+			StringValue(ngw.NatGatewayId),
+			StringValue(ngw.NatGatewayId),
 			"aws_nat_gateway",
 			"aws",
 			ngwAllowEmptyValues,
@@ -51,10 +50,14 @@ func (g *NatGatewayGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := ec2.New(config)
-	p := ec2.NewDescribeNatGatewaysPaginator(svc.DescribeNatGatewaysRequest(&ec2.DescribeNatGatewaysInput{}))
-	for p.Next(context.Background()) {
-		g.Resources = append(g.Resources, g.createResources(p.CurrentPage())...)
+	svc := ec2.NewFromConfig(config)
+	p := ec2.NewDescribeNatGatewaysPaginator(svc, &ec2.DescribeNatGatewaysInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		g.Resources = append(g.Resources, g.createResources(page)...)
 	}
-	return p.Err()
+	return nil
 }

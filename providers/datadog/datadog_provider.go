@@ -95,11 +95,6 @@ func (p *DatadogProvider) Init(args []string) error {
 		})
 	}
 	configV1 := datadogV1.NewConfiguration()
-
-	// Enable unstable operations
-	configV1.SetUnstableOperationEnabled("GetLogsIndex", true)
-	configV1.SetUnstableOperationEnabled("ListLogIndexes", true)
-
 	datadogClientV1 := datadogV1.NewAPIClient(configV1)
 
 	// Initialize the Datadog V2 API client
@@ -197,6 +192,7 @@ func (p *DatadogProvider) GetSupportedService() map[string]terraformutils.Servic
 		"integration_gcp":                      &IntegrationGCPGenerator{},
 		"integration_pagerduty":                &IntegrationPagerdutyGenerator{},
 		"integration_pagerduty_service_object": &IntegrationPagerdutyServiceObjectGenerator{},
+		"integration_slack_channel":            &IntegrationSlackChannelGenerator{},
 		"metric_metadata":                      &MetricMetadataGenerator{},
 		"monitor":                              &MonitorGenerator{},
 		"screenboard":                          &ScreenboardGenerator{},
@@ -213,8 +209,104 @@ func (p *DatadogProvider) GetSupportedService() map[string]terraformutils.Servic
 }
 
 // GetResourceConnections return map of resource connections for Datadog
-func (DatadogProvider) GetResourceConnections() map[string]map[string][]string {
-	return map[string]map[string][]string{}
+func (p DatadogProvider) GetResourceConnections() map[string]map[string][]string {
+	return map[string]map[string][]string{
+		"dashboard": {
+			"monitor": {
+				"widget.alert_graph_definition.alert_id", "id",
+				"widget.group_definition.widget.alert_graph_definition.alert_id", "id",
+				"widget.alert_value_definition.alert_id", "id",
+				"widget.group_definition.widget.alert_value_definition.alert_id", "id",
+			},
+			"service_level_objective": {
+				"widget.service_level_objective_definition.slo_id", "id",
+				"widget.group_definition.widget.service_level_objective_definition.slo_id", "id",
+			},
+		},
+		"dashboard_list": {
+			"dashboard": {
+				"dash_item.dash_id", "id",
+			},
+		},
+		"downtime": {
+			"monitor": {
+				"monitor_id", "id",
+			},
+		},
+		"integration_aws_lambda_arn": {
+			"integration_aws": {
+				"account_id", "account_id",
+			},
+		},
+		"integration_aws_log_collection": {
+			"integration_aws": {
+				"account_id", "account_id",
+			},
+		},
+		"logs_archive": {
+			"integration_aws": {
+				"s3.account_id", "account_id",
+				"s3.role_name", "role_name",
+				"s3_archive.account_id", "account_id",
+				"s3_archive.role_name", "role_name",
+			},
+			"integration_gcp": {
+				"gcs.project_id", "project_id",
+				"gcs.client_email", "client_email",
+				"gcs_archive.project_id", "project_id",
+				"gcs_archive.client_email", "client_email",
+			},
+			"integration_azure": {
+				"azure.client_id", "client_id",
+				"azure.tenant_id", "tenant_name",
+				"azure_archive.client_id", "client_id",
+				"azure_archive.tenant_id", "tenant_name",
+			},
+		},
+		"logs_archive_order": {
+			"logs_archive": {
+				"archive_ids", "id",
+			},
+		},
+		"logs_index_order": {
+			"logs_index": {
+				"indexes", "id",
+			},
+		},
+		"logs_pipeline_order": {
+			"logs_integration_pipeline": {
+				"pipelines", "id",
+			},
+			"logs_custom_pipeline": {
+				"pipelines", "id",
+			},
+		},
+		"monitor": {
+			"role": {
+				"restricted_roles", "id",
+			},
+		},
+		"service_level_objective": {
+			"monitor": {
+				"monitor_ids", "id",
+			},
+		},
+		"synthetics": {
+			"synthetics_private_location": {
+				"locations", "id",
+			},
+		},
+		"synthetics_global_variable": {
+			"synthetics": {
+				"parse_test_id", "id",
+			},
+		},
+		"user": {
+			"role": {
+				"roles", "id",
+			},
+		},
+	}
 }
 
 // GetProviderData return map of provider data for Datadog

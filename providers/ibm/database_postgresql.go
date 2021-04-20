@@ -18,7 +18,7 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/api/resource/resourcev1/catalog"
 	"github.com/IBM-Cloud/bluemix-go/api/resource/resourcev2/controllerv2"
 	"github.com/IBM-Cloud/bluemix-go/session"
@@ -31,8 +31,7 @@ type DatabasePostgresqlGenerator struct {
 
 // loadPostgresqlDB ...
 func (g DatabasePostgresqlGenerator) loadPostgresqlDB(dbID string, dbName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		dbID,
 		dbName,
 		"ibm_database",
@@ -41,7 +40,7 @@ func (g DatabasePostgresqlGenerator) loadPostgresqlDB(dbID string, dbName string
 	return resources
 }
 
-//InitResources ...
+// InitResources ...
 func (g *DatabasePostgresqlGenerator) InitResources() error {
 	region := os.Getenv("IC_REGION")
 	bmxConfig := &bluemix.Config{

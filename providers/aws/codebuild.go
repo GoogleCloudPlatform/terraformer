@@ -45,11 +45,14 @@ func (g *CodeBuildGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := codebuild.New(config)
-	output, err := svc.ListProjectsRequest(&codebuild.ListProjectsInput{}).Send(context.Background())
-	if err != nil {
-		return err
+	svc := codebuild.NewFromConfig(config)
+	p := codebuild.NewListProjectsPaginator(svc, &codebuild.ListProjectsInput{})
+	for p.HasMorePages() {
+		page, e := p.NextPage(context.TODO())
+		if e != nil {
+			return e
+		}
+		g.Resources = g.createResources(page.Projects)
 	}
-	g.Resources = g.createResources(output.Projects)
 	return nil
 }

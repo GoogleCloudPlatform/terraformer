@@ -31,8 +31,7 @@ type DatabaseMongoGenerator struct {
 
 // loadMongoDB ...
 func (g DatabaseMongoGenerator) loadMongoDB(dbID string, dbName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		dbID,
 		dbName,
 		"ibm_database",
@@ -41,7 +40,7 @@ func (g DatabaseMongoGenerator) loadMongoDB(dbID string, dbName string) terrafor
 	return resources
 }
 
-//InitResources ...
+// InitResources ...
 func (g *DatabaseMongoGenerator) InitResources() error {
 
 	region := os.Getenv("IC_REGION")

@@ -30,8 +30,7 @@ type IkeGenerator struct {
 }
 
 func (g IkeGenerator) createIkeResources(ikeID, ikeName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		ikeID,
 		ikeName,
 		"ibm_is_ike_policy",
@@ -60,7 +59,7 @@ func (g *IkeGenerator) InitResources() error {
 		return err
 	}
 	start := ""
-	allrecs := []vpcv1.IkePolicy{}
+	var allrecs []vpcv1.IkePolicy
 	for {
 		options := &vpcv1.ListIkePoliciesOptions{}
 		if start != "" {

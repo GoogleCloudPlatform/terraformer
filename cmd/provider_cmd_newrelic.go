@@ -21,13 +21,16 @@ import (
 )
 
 func newCmdNewRelicImporter(options ImportOptions) *cobra.Command {
+	apiKey := ""
+	accountID := ""
+	region := ""
 	cmd := &cobra.Command{
 		Use:   "newrelic",
 		Short: "Import current state to Terraform configuration from New Relic",
 		Long:  "Import current state to Terraform configuration from New Relic",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			provider := newNewRelicProvider()
-			err := Import(provider, options, []string{})
+			err := Import(provider, options, []string{apiKey, accountID, region})
 			if err != nil {
 				return err
 			}
@@ -36,6 +39,9 @@ func newCmdNewRelicImporter(options ImportOptions) *cobra.Command {
 	}
 
 	cmd.AddCommand(listCmd(newNewRelicProvider()))
+	cmd.PersistentFlags().StringVar(&apiKey, "api-key", "", "Your Personal API Key")
+	cmd.PersistentFlags().StringVar(&accountID, "account-id", "", "Your Account ID")
+	cmd.PersistentFlags().StringVar(&region, "region", "US", "")
 	baseProviderFlags(cmd.PersistentFlags(), &options, "alert", "dashboard=id1:id2:id4")
 	return cmd
 }

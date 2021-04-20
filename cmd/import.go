@@ -149,7 +149,7 @@ func initAllServicesResources(providersMapping *terraformutils.ProvidersMapping,
 	var wg sync.WaitGroup
 	wg.Add(numOfResources)
 
-	failedServices := []string{}
+	var failedServices []string
 
 	for _, service := range options.Resources {
 		serviceProvider := providersMapping.AddServiceToProvider(service)
@@ -165,7 +165,7 @@ func initAllServicesResources(providersMapping *terraformutils.ProvidersMapping,
 
 	// remove providers that failed to init their service
 	providersMapping.RemoveServices(failedServices)
-	providersMapping.ProcessResources()
+	providersMapping.ProcessResources(false)
 
 	return nil
 }

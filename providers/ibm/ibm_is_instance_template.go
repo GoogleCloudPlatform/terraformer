@@ -29,8 +29,7 @@ type InstanceTemplateGenerator struct {
 }
 
 func (g InstanceTemplateGenerator) createInstanceTemplateResources(templateID, templateName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		templateID,
 		templateName,
 		"ibm_is_instance_template",
@@ -44,7 +43,7 @@ func (g *InstanceTemplateGenerator) InitResources() error {
 	region := envFallBack([]string{"IC_REGION"}, "us-south")
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
-		return fmt.Errorf("No API key set")
+		return fmt.Errorf("no API key set")
 	}
 
 	vpcurl := fmt.Sprintf("https://%s.iaas.cloud.ibm.com/v1", region)

@@ -52,7 +52,7 @@ func OutputHclFiles(resources []terraformutils.Resource, provider terraformutils
 	for i, r := range resources {
 		outputState := map[string]*terraform.OutputState{}
 		outputsByResource[r.InstanceInfo.Type+"_"+r.ResourceName+"_"+r.GetIDKey()] = map[string]interface{}{
-			"value": r.InstanceInfo.Type + "." + r.ResourceName + "." + r.GetIDKey(),
+			"value": "${" + r.InstanceInfo.Type + "." + r.ResourceName + "." + r.GetIDKey() + "}",
 		}
 		outputState[r.InstanceInfo.Type+"_"+r.ResourceName+"_"+r.GetIDKey()] = &terraform.OutputState{
 			Type:  "string",
@@ -68,7 +68,7 @@ func OutputHclFiles(resources []terraformutils.Resource, provider terraformutils
 						}
 						linkKey := r.InstanceInfo.Type + "_" + r.ResourceName + "_" + key
 						outputsByResource[linkKey] = map[string]interface{}{
-							"value": r.InstanceInfo.Type + "." + r.ResourceName + "." + key,
+							"value": "${" + r.InstanceInfo.Type + "." + r.ResourceName + "." + key + "}",
 						}
 						outputState[linkKey] = &terraform.OutputState{
 							Type:  "string",

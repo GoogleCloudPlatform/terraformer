@@ -19,7 +19,6 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
@@ -33,8 +32,8 @@ func (VpcGenerator) createResources(vpcs *ec2.DescribeVpcsOutput) []terraformuti
 	var resources []terraformutils.Resource
 	for _, vpc := range vpcs.Vpcs {
 		resources = append(resources, terraformutils.NewSimpleResource(
-			aws.StringValue(vpc.VpcId),
-			aws.StringValue(vpc.VpcId),
+			StringValue(vpc.VpcId),
+			StringValue(vpc.VpcId),
 			"aws_vpc",
 			"aws",
 			VpcAllowEmptyValues,
@@ -51,10 +50,14 @@ func (g *VpcGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := ec2.New(config)
-	p := ec2.NewDescribeVpcsPaginator(svc.DescribeVpcsRequest(&ec2.DescribeVpcsInput{}))
-	for p.Next(context.Background()) {
-		g.Resources = append(g.Resources, g.createResources(p.CurrentPage())...)
+	svc := ec2.NewFromConfig(config)
+	p := ec2.NewDescribeVpcsPaginator(svc, &ec2.DescribeVpcsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		g.Resources = append(g.Resources, g.createResources(page)...)
 	}
-	return p.Err()
+	return nil
 }

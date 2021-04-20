@@ -82,9 +82,9 @@ func (p *ProvidersMapping) ShuffleResources() []*Resource {
 	return resources
 }
 
-func (p *ProvidersMapping) ProcessResources() {
+func (p *ProvidersMapping) ProcessResources(isCleanup bool) {
 	initialResources := p.resourceToProvider
-	if len(initialResources) > 0 {
+	if isCleanup && len(initialResources) > 0 {
 		p.Resources = map[*Resource]bool{}
 		p.resourceToProvider = map[*Resource]ProviderGenerator{}
 		for provider := range p.Providers {
@@ -96,7 +96,7 @@ func (p *ProvidersMapping) ProcessResources() {
 				p.resourceToProvider[&resource] = provider
 			}
 		}
-	} else {
+	} else if !isCleanup {
 		for provider := range p.Providers {
 			resources := provider.GetService().GetResources()
 			log.Printf("Number of resources for service %s: %d", p.providerToService[provider], len(provider.GetService().GetResources()))
@@ -176,6 +176,6 @@ func (p *ProvidersMapping) CleanupProviders() {
 		if err != nil {
 			log.Printf("failed run PostConvertHook because of error %s", err)
 		}
-		p.ProcessResources()
 	}
+	p.ProcessResources(true)
 }

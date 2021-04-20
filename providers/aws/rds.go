@@ -21,8 +21,6 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	"github.com/aws/aws-sdk-go-v2/service/rds"
-
-	"github.com/aws/aws-sdk-go-v2/aws"
 )
 
 var RDSAllowEmptyValues = []string{"tags."}
@@ -32,10 +30,14 @@ type RDSGenerator struct {
 }
 
 func (g *RDSGenerator) loadDBInstances(svc *rds.Client) error {
-	p := rds.NewDescribeDBInstancesPaginator(svc.DescribeDBInstancesRequest(&rds.DescribeDBInstancesInput{}))
-	for p.Next(context.Background()) {
-		for _, db := range p.CurrentPage().DBInstances {
-			resourceName := aws.StringValue(db.DBInstanceIdentifier)
+	p := rds.NewDescribeDBInstancesPaginator(svc, &rds.DescribeDBInstancesInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, db := range page.DBInstances {
+			resourceName := StringValue(db.DBInstanceIdentifier)
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
@@ -45,14 +47,18 @@ func (g *RDSGenerator) loadDBInstances(svc *rds.Client) error {
 			))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *RDSGenerator) loadDBParameterGroups(svc *rds.Client) error {
-	p := rds.NewDescribeDBParameterGroupsPaginator(svc.DescribeDBParameterGroupsRequest(&rds.DescribeDBParameterGroupsInput{}))
-	for p.Next(context.Background()) {
-		for _, parameterGroup := range p.CurrentPage().DBParameterGroups {
-			resourceName := aws.StringValue(parameterGroup.DBParameterGroupName)
+	p := rds.NewDescribeDBParameterGroupsPaginator(svc, &rds.DescribeDBParameterGroupsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, parameterGroup := range page.DBParameterGroups {
+			resourceName := StringValue(parameterGroup.DBParameterGroupName)
 			if strings.Contains(resourceName, ".") {
 				continue // skip default Default ParameterGroups like default.mysql5.6
 			}
@@ -65,14 +71,18 @@ func (g *RDSGenerator) loadDBParameterGroups(svc *rds.Client) error {
 			))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *RDSGenerator) loadDBSubnetGroups(svc *rds.Client) error {
-	p := rds.NewDescribeDBSubnetGroupsPaginator(svc.DescribeDBSubnetGroupsRequest(&rds.DescribeDBSubnetGroupsInput{}))
-	for p.Next(context.Background()) {
-		for _, subnet := range p.CurrentPage().DBSubnetGroups {
-			resourceName := aws.StringValue(subnet.DBSubnetGroupName)
+	p := rds.NewDescribeDBSubnetGroupsPaginator(svc, &rds.DescribeDBSubnetGroupsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, subnet := range page.DBSubnetGroups {
+			resourceName := StringValue(subnet.DBSubnetGroupName)
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
@@ -82,14 +92,18 @@ func (g *RDSGenerator) loadDBSubnetGroups(svc *rds.Client) error {
 			))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *RDSGenerator) loadOptionGroups(svc *rds.Client) error {
-	p := rds.NewDescribeOptionGroupsPaginator(svc.DescribeOptionGroupsRequest(&rds.DescribeOptionGroupsInput{}))
-	for p.Next(context.Background()) {
-		for _, optionGroup := range p.CurrentPage().OptionGroupsList {
-			resourceName := aws.StringValue(optionGroup.OptionGroupName)
+	p := rds.NewDescribeOptionGroupsPaginator(svc, &rds.DescribeOptionGroupsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, optionGroup := range page.OptionGroupsList {
+			resourceName := StringValue(optionGroup.OptionGroupName)
 			if strings.Contains(resourceName, ".") || strings.Contains(resourceName, ":") {
 				continue // skip default Default OptionGroups like default.mysql5.6
 			}
@@ -102,14 +116,18 @@ func (g *RDSGenerator) loadOptionGroups(svc *rds.Client) error {
 			))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *RDSGenerator) loadEventSubscription(svc *rds.Client) error {
-	p := rds.NewDescribeEventSubscriptionsPaginator(svc.DescribeEventSubscriptionsRequest(&rds.DescribeEventSubscriptionsInput{}))
-	for p.Next(context.Background()) {
-		for _, eventSubscription := range p.CurrentPage().EventSubscriptionsList {
-			resourceName := aws.StringValue(eventSubscription.CustomerAwsId)
+	p := rds.NewDescribeEventSubscriptionsPaginator(svc, &rds.DescribeEventSubscriptionsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, eventSubscription := range page.EventSubscriptionsList {
+			resourceName := StringValue(eventSubscription.CustomerAwsId)
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
@@ -119,7 +137,7 @@ func (g *RDSGenerator) loadEventSubscription(svc *rds.Client) error {
 			))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 // Generate TerraformResources from AWS API,
@@ -131,7 +149,7 @@ func (g *RDSGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := rds.New(config)
+	svc := rds.NewFromConfig(config)
 
 	if err := g.loadDBInstances(svc); err != nil {
 		return err

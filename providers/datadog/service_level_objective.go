@@ -17,7 +17,6 @@ package datadog
 import (
 	"context"
 	"fmt"
-	"log"
 
 	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
 
@@ -62,26 +61,12 @@ func (g *ServiceLevelObjectiveGenerator) InitResources() error {
 	authV1 := g.Args["authV1"].(context.Context)
 
 	var slos []datadogV1.ServiceLevelObjective
-	for _, filter := range g.Filter {
-		if filter.FieldPath == "id" && filter.IsApplicable("service_level_objective") {
-			for _, v := range filter.AcceptableValues {
-				resp, _, err := datadogClientV1.ServiceLevelObjectivesApi.GetSLO(authV1, v).Execute()
-				if err != nil {
-					log.Printf("error retrieving slo id:%s - %s", v, err)
-					continue
-				}
-
-				data := resp.GetData()
-				slos = append(slos, data)
-			}
-		}
+	resp, _, err := datadogClientV1.ServiceLevelObjectivesApi.ListSLOs(authV1).Execute()
+	if err != nil {
+		return err
 	}
 
-	if len(slos) == 0 {
-		log.Print("Filter(SLO IDs) is required for importing datadog_service_level_objective resource")
-		return nil
-	}
-
+	slos = append(slos, resp.GetData()...)
 	g.Resources = g.createResources(slos)
 	return nil
 }

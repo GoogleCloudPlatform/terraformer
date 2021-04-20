@@ -19,7 +19,6 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
@@ -29,12 +28,12 @@ type VpnGatewayGenerator struct {
 	AWSService
 }
 
-func (VpnGatewayGenerator) createResources(vpnGws *ec2.DescribeVpnGatewaysResponse) []terraformutils.Resource {
-	resources := []terraformutils.Resource{}
+func (VpnGatewayGenerator) createResources(vpnGws *ec2.DescribeVpnGatewaysOutput) []terraformutils.Resource {
+	var resources []terraformutils.Resource
 	for _, vpnGw := range vpnGws.VpnGateways {
 		resources = append(resources, terraformutils.NewSimpleResource(
-			aws.StringValue(vpnGw.VpnGatewayId),
-			aws.StringValue(vpnGw.VpnGatewayId),
+			StringValue(vpnGw.VpnGatewayId),
+			StringValue(vpnGw.VpnGatewayId),
 			"aws_vpn_gateway",
 			"aws",
 			VpnAllowEmptyValues,
@@ -51,8 +50,8 @@ func (g *VpnGatewayGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := ec2.New(config)
-	vpnGws, err := svc.DescribeVpnGatewaysRequest(&ec2.DescribeVpnGatewaysInput{}).Send(context.Background())
+	svc := ec2.NewFromConfig(config)
+	vpnGws, err := svc.DescribeVpnGateways(context.TODO(), &ec2.DescribeVpnGatewaysInput{})
 	if err != nil {
 		return err
 	}

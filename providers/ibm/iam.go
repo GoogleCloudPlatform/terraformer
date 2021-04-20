@@ -32,8 +32,7 @@ type IAMGenerator struct {
 }
 
 func (g IAMGenerator) loadUserPolicies(policyID string, user string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		fmt.Sprintf("%s/%s", user, policyID),
 		policyID,
 		"ibm_iam_user_policy",
@@ -43,8 +42,7 @@ func (g IAMGenerator) loadUserPolicies(policyID string, user string) terraformut
 }
 
 func (g IAMGenerator) loadAccessGroups(grpID string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		grpID,
 		grpID,
 		"ibm_iam_access_group",
@@ -54,8 +52,7 @@ func (g IAMGenerator) loadAccessGroups(grpID string) terraformutils.Resource {
 }
 
 func (g IAMGenerator) loadAccessGroupMembers(grpID string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", grpID, grpID),
 		grpID,
 		"ibm_iam_access_group_members",
@@ -69,8 +66,7 @@ func (g IAMGenerator) loadAccessGroupMembers(grpID string, dependsOn []string) t
 }
 
 func (g IAMGenerator) loadAccessGroupPolicies(grpID, policyID string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", grpID, policyID),
 		policyID,
 		"ibm_iam_access_group_policy",
@@ -84,8 +80,7 @@ func (g IAMGenerator) loadAccessGroupPolicies(grpID, policyID string, dependsOn 
 }
 
 func (g IAMGenerator) loadAccessGroupDynamicPolicies(grpID, ruleID string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", grpID, ruleID),
 		ruleID,
 		"ibm_iam_access_group_dynamic_rule",
@@ -172,7 +167,7 @@ func (g *IAMGenerator) InitResources() error {
 			Type:          iampapv1.AccessPolicyType,
 		})
 		if err != nil {
-			return fmt.Errorf("Error retrieving access group policy: %s", err)
+			return fmt.Errorf("error retrieving access group policy: %s", err)
 		}
 		for _, p := range policies {
 			g.Resources = append(g.Resources, g.loadAccessGroupPolicies(group.ID, p.ID, dependsOn))

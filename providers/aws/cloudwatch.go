@@ -34,7 +34,7 @@ func (g *CloudWatchGenerator) InitResources() error {
 		return e
 	}
 
-	cloudwatchSvc := cloudwatch.New(config)
+	cloudwatchSvc := cloudwatch.NewFromConfig(config)
 	err := g.createMetricAlarms(cloudwatchSvc)
 	if err != nil {
 		return err
@@ -44,7 +44,7 @@ func (g *CloudWatchGenerator) InitResources() error {
 		return err
 	}
 
-	cloudwatcheventsSvc := cloudwatchevents.New(config)
+	cloudwatcheventsSvc := cloudwatchevents.NewFromConfig(config)
 	err = g.createRules(cloudwatcheventsSvc)
 	if err != nil {
 		return err
@@ -56,9 +56,9 @@ func (g *CloudWatchGenerator) InitResources() error {
 func (g *CloudWatchGenerator) createMetricAlarms(cloudwatchSvc *cloudwatch.Client) error {
 	var nextToken *string
 	for {
-		output, err := cloudwatchSvc.DescribeAlarmsRequest(&cloudwatch.DescribeAlarmsInput{
+		output, err := cloudwatchSvc.DescribeAlarms(context.TODO(), &cloudwatch.DescribeAlarmsInput{
 			NextToken: nextToken,
-		}).Send(context.Background())
+		})
 		if err != nil {
 			return err
 		}
@@ -81,9 +81,9 @@ func (g *CloudWatchGenerator) createMetricAlarms(cloudwatchSvc *cloudwatch.Clien
 func (g *CloudWatchGenerator) createDashboards(cloudwatchSvc *cloudwatch.Client) error {
 	var nextToken *string
 	for {
-		output, err := cloudwatchSvc.ListDashboardsRequest(&cloudwatch.ListDashboardsInput{
+		output, err := cloudwatchSvc.ListDashboards(context.TODO(), &cloudwatch.ListDashboardsInput{
 			NextToken: nextToken,
-		}).Send(context.Background())
+		})
 		if err != nil {
 			return err
 		}
@@ -106,9 +106,9 @@ func (g *CloudWatchGenerator) createDashboards(cloudwatchSvc *cloudwatch.Client)
 func (g *CloudWatchGenerator) createRules(cloudwatcheventsSvc *cloudwatchevents.Client) error {
 	var listRulesNextToken *string
 	for {
-		output, err := cloudwatcheventsSvc.ListRulesRequest(&cloudwatchevents.ListRulesInput{
+		output, err := cloudwatcheventsSvc.ListRules(context.TODO(), &cloudwatchevents.ListRulesInput{
 			NextToken: listRulesNextToken,
-		}).Send(context.Background())
+		})
 		if err != nil {
 			return err
 		}
@@ -122,10 +122,10 @@ func (g *CloudWatchGenerator) createRules(cloudwatcheventsSvc *cloudwatchevents.
 
 			var listTargetsNextToken *string
 			for {
-				targetResponse, err := cloudwatcheventsSvc.ListTargetsByRuleRequest(&cloudwatchevents.ListTargetsByRuleInput{
+				targetResponse, err := cloudwatcheventsSvc.ListTargetsByRule(context.TODO(), &cloudwatchevents.ListTargetsByRuleInput{
 					Rule:      rule.Name,
 					NextToken: listTargetsNextToken,
-				}).Send(context.Background())
+				})
 				if err != nil {
 					return err
 				}

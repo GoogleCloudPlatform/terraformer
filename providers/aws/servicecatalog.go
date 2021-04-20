@@ -18,7 +18,6 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/servicecatalog"
 )
 
@@ -33,13 +32,17 @@ func (g *ServiceCatalogGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := servicecatalog.New(config)
-	p := servicecatalog.NewListPortfoliosPaginator(svc.ListPortfoliosRequest(&servicecatalog.ListPortfoliosInput{}))
+	svc := servicecatalog.NewFromConfig(config)
+	p := servicecatalog.NewListPortfoliosPaginator(svc, &servicecatalog.ListPortfoliosInput{})
 	var resources []terraformutils.Resource
-	for p.Next(context.Background()) {
-		for _, portfolio := range p.CurrentPage().PortfolioDetails {
-			portfolioID := aws.StringValue(portfolio.Id)
-			portfolioName := aws.StringValue(portfolio.DisplayName)
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, portfolio := range page.PortfolioDetails {
+			portfolioID := StringValue(portfolio.Id)
+			portfolioName := StringValue(portfolio.DisplayName)
 			resources = append(resources, terraformutils.NewSimpleResource(
 				portfolioID,
 				portfolioName,
@@ -49,5 +52,5 @@ func (g *ServiceCatalogGenerator) InitResources() error {
 		}
 	}
 	g.Resources = resources
-	return p.Err()
+	return nil
 }

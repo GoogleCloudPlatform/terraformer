@@ -16,10 +16,10 @@ package aws
 
 import (
 	"context"
+
 	"github.com/aws/aws-sdk-go-v2/service/cloudhsmv2"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go-v2/aws"
 )
 
 var cloudHsmAllowEmptyValues = []string{"tags."}
@@ -33,14 +33,18 @@ func (g *CloudHsmGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := cloudhsmv2.New(config)
+	svc := cloudhsmv2.NewFromConfig(config)
 
-	p := cloudhsmv2.NewDescribeClustersPaginator(svc.DescribeClustersRequest(&cloudhsmv2.DescribeClustersInput{}))
-	for p.Next(context.Background()) {
-		for _, cluster := range p.CurrentPage().Clusters {
+	p := cloudhsmv2.NewDescribeClustersPaginator(svc, &cloudhsmv2.DescribeClustersInput{})
+	for p.HasMorePages() {
+		page, e := p.NextPage(context.TODO())
+		if e != nil {
+			return e
+		}
+		for _, cluster := range page.Clusters {
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-				aws.StringValue(cluster.ClusterId),
-				aws.StringValue(cluster.ClusterId),
+				StringValue(cluster.ClusterId),
+				StringValue(cluster.ClusterId),
 				"aws_cloudhsm_v2_cluster",
 				"aws",
 				cloudHsmAllowEmptyValues,
@@ -48,12 +52,12 @@ func (g *CloudHsmGenerator) InitResources() error {
 
 			for _, hsm := range cluster.Hsms {
 				g.Resources = append(g.Resources, terraformutils.NewResource(
-					aws.StringValue(hsm.HsmId),
-					aws.StringValue(hsm.HsmId),
+					StringValue(hsm.HsmId),
+					StringValue(hsm.HsmId),
 					"aws_cloudhsm_v2_hsm",
 					"aws",
 					map[string]string{
-						"cluster_id": aws.StringValue(hsm.ClusterId),
+						"cluster_id": StringValue(hsm.ClusterId),
 					},
 					cloudHsmAllowEmptyValues,
 					map[string]interface{}{},
@@ -62,5 +66,5 @@ func (g *CloudHsmGenerator) InitResources() error {
 			}
 		}
 	}
-	return p.Err()
+	return nil
 }

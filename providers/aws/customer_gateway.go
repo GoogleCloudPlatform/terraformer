@@ -19,7 +19,6 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 )
 
@@ -29,12 +28,12 @@ type CustomerGatewayGenerator struct {
 	AWSService
 }
 
-func (CustomerGatewayGenerator) createResources(cgws *ec2.DescribeCustomerGatewaysResponse) []terraformutils.Resource {
+func (CustomerGatewayGenerator) createResources(cgws *ec2.DescribeCustomerGatewaysOutput) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	for _, cgws := range cgws.CustomerGateways {
 		resources = append(resources, terraformutils.NewSimpleResource(
-			aws.StringValue(cgws.CustomerGatewayId),
-			aws.StringValue(cgws.CustomerGatewayId),
+			StringValue(cgws.CustomerGatewayId),
+			StringValue(cgws.CustomerGatewayId),
 			"aws_customer_gateway",
 			"aws",
 			customerGatewayAllowEmptyValues,
@@ -51,8 +50,8 @@ func (g *CustomerGatewayGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := ec2.New(config)
-	cgws, err := svc.DescribeCustomerGatewaysRequest(&ec2.DescribeCustomerGatewaysInput{}).Send(context.Background())
+	svc := ec2.NewFromConfig(config)
+	cgws, err := svc.DescribeCustomerGateways(context.TODO(), &ec2.DescribeCustomerGatewaysInput{})
 	if err != nil {
 		return err
 	}

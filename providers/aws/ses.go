@@ -19,7 +19,6 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/ses"
-	"github.com/aws/aws-sdk-go/aws"
 )
 
 var sesAllowEmptyValues = []string{"tags."}
@@ -33,7 +32,7 @@ func (g *SesGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	svc := ses.New(config)
+	svc := ses.NewFromConfig(config)
 
 	if err := g.loadDomainIdentities(svc); err != nil {
 		return err
@@ -55,11 +54,15 @@ func (g *SesGenerator) InitResources() error {
 }
 
 func (g *SesGenerator) loadDomainIdentities(svc *ses.Client) error {
-	p := ses.NewListIdentitiesPaginator(svc.ListIdentitiesRequest(&ses.ListIdentitiesInput{
+	p := ses.NewListIdentitiesPaginator(svc, &ses.ListIdentitiesInput{
 		IdentityType: "Domain",
-	}))
-	for p.Next(context.Background()) {
-		for _, identity := range p.CurrentPage().Identities {
+	})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, identity := range page.Identities {
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				identity,
 				identity,
@@ -68,15 +71,19 @@ func (g *SesGenerator) loadDomainIdentities(svc *ses.Client) error {
 				sesAllowEmptyValues))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *SesGenerator) loadMailIdentities(svc *ses.Client) error {
-	p := ses.NewListIdentitiesPaginator(svc.ListIdentitiesRequest(&ses.ListIdentitiesInput{
+	p := ses.NewListIdentitiesPaginator(svc, &ses.ListIdentitiesInput{
 		IdentityType: "EmailAddress",
-	}))
-	for p.Next(context.Background()) {
-		for _, identity := range p.CurrentPage().Identities {
+	})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, identity := range page.Identities {
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				identity,
 				identity,
@@ -85,19 +92,19 @@ func (g *SesGenerator) loadMailIdentities(svc *ses.Client) error {
 				sesAllowEmptyValues))
 		}
 	}
-	return p.Err()
+	return nil
 }
 
 func (g *SesGenerator) loadTemplates(svc *ses.Client) error {
-	templates, err := svc.ListTemplatesRequest(&ses.ListTemplatesInput{}).Send(context.Background())
+	templates, err := svc.ListTemplates(context.TODO(), &ses.ListTemplatesInput{})
 	if err != nil {
 		return err
 	}
 
 	for _, templateMetadata := range templates.TemplatesMetadata {
 		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-			aws.StringValue(templateMetadata.Name),
-			aws.StringValue(templateMetadata.Name),
+			StringValue(templateMetadata.Name),
+			StringValue(templateMetadata.Name),
 			"aws_ses_template",
 			"aws",
 			sesAllowEmptyValues))
@@ -106,15 +113,15 @@ func (g *SesGenerator) loadTemplates(svc *ses.Client) error {
 }
 
 func (g *SesGenerator) loadConfigurationSets(svc *ses.Client) error {
-	configurationSets, err := svc.ListConfigurationSetsRequest(&ses.ListConfigurationSetsInput{}).Send(context.Background())
+	configurationSets, err := svc.ListConfigurationSets(context.TODO(), &ses.ListConfigurationSetsInput{})
 	if err != nil {
 		return err
 	}
 
 	for _, configurationSet := range configurationSets.ConfigurationSets {
 		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-			aws.StringValue(configurationSet.Name),
-			aws.StringValue(configurationSet.Name),
+			StringValue(configurationSet.Name),
+			StringValue(configurationSet.Name),
 			"aws_ses_configuration_set",
 			"aws",
 			sesAllowEmptyValues))
@@ -123,22 +130,22 @@ func (g *SesGenerator) loadConfigurationSets(svc *ses.Client) error {
 }
 
 func (g *SesGenerator) loadRuleSets(svc *ses.Client) error {
-	ruleSets, err := svc.ListReceiptRuleSetsRequest(&ses.ListReceiptRuleSetsInput{}).Send(context.Background())
+	ruleSets, err := svc.ListReceiptRuleSets(context.TODO(), &ses.ListReceiptRuleSetsInput{})
 	if err != nil {
 		return err
 	}
 
 	for _, ruleSet := range ruleSets.RuleSets {
-		ruleSetName := aws.StringValue(ruleSet.Name)
+		ruleSetName := StringValue(ruleSet.Name)
 		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			ruleSetName,
 			ruleSetName,
 			"aws_ses_receipt_rule_set",
 			"aws",
 			sesAllowEmptyValues))
-		rules, err := svc.DescribeReceiptRuleSetRequest(&ses.DescribeReceiptRuleSetInput{
+		rules, err := svc.DescribeReceiptRuleSet(context.TODO(), &ses.DescribeReceiptRuleSetInput{
 			RuleSetName: ruleSet.Name,
-		}).Send(context.Background())
+		})
 		if err != nil {
 			return err
 		}

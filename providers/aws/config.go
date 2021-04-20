@@ -32,7 +32,7 @@ func (g *ConfigGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
-	client := configservice.New(config)
+	client := configservice.NewFromConfig(config)
 
 	configurationRecorderRefs, err := g.addConfigurationRecorders(client)
 	if err != nil {
@@ -47,8 +47,8 @@ func (g *ConfigGenerator) InitResources() error {
 }
 
 func (g *ConfigGenerator) addConfigurationRecorders(svc *configservice.Client) ([]string, error) {
-	configurationRecorders, err := svc.DescribeConfigurationRecordersRequest(
-		&configservice.DescribeConfigurationRecordersInput{}).Send(context.Background())
+	configurationRecorders, err := svc.DescribeConfigurationRecorders(context.TODO(),
+		&configservice.DescribeConfigurationRecordersInput{})
 
 	if err != nil {
 		return nil, err
@@ -73,10 +73,11 @@ func (g *ConfigGenerator) addConfigRules(svc *configservice.Client, configuratio
 	var nextToken *string
 
 	for {
-		configRules, err := svc.DescribeConfigRulesRequest(
+		configRules, err := svc.DescribeConfigRules(
+			context.TODO(),
 			&configservice.DescribeConfigRulesInput{
 				NextToken: nextToken,
-			}).Send(context.Background())
+			})
 
 		if err != nil {
 			return err
@@ -104,8 +105,8 @@ func (g *ConfigGenerator) addConfigRules(svc *configservice.Client, configuratio
 }
 
 func (g *ConfigGenerator) addDeliveryChannels(svc *configservice.Client, configurationRecorderRefs []string) error {
-	deliveryChannels, err := svc.DescribeDeliveryChannelsRequest(
-		&configservice.DescribeDeliveryChannelsInput{}).Send(context.Background())
+	deliveryChannels, err := svc.DescribeDeliveryChannels(context.TODO(),
+		&configservice.DescribeDeliveryChannelsInput{})
 
 	if err != nil {
 		return err

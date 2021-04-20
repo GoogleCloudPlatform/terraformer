@@ -37,8 +37,7 @@ type COSGenerator struct {
 }
 
 func (g COSGenerator) loadCOS(cosID string, cosName string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewSimpleResource(
+	resources := terraformutils.NewSimpleResource(
 		cosID,
 		cosName,
 		"ibm_resource_instance",
@@ -48,8 +47,7 @@ func (g COSGenerator) loadCOS(cosID string, cosName string) terraformutils.Resou
 }
 
 func (g COSGenerator) loadCOSBuckets(bucketID, bucketName string, dependsOn []string) terraformutils.Resource {
-	var resources terraformutils.Resource
-	resources = terraformutils.NewResource(
+	resources := terraformutils.NewResource(
 		bucketID,
 		bucketName,
 		"ibm_cos_bucket",
@@ -98,9 +96,9 @@ func (g *COSGenerator) InitResources() error {
 		s3Conf := ibmaws.NewConfig().WithCredentials(ibmiam.NewStaticCredentials(ibmaws.NewConfig(), authEndpoint, os.Getenv("IC_API_KEY"), cs.ID)).WithS3ForcePathStyle(true).WithEndpoint("s3.us-south.cloud-object-storage.appdomain.cloud")
 		s3Sess := cossession.Must(cossession.NewSession())
 		s3Client := coss3.New(s3Sess, s3Conf)
-		singleSiteLocationRegex, _ := regexp.Compile("^[a-z]{3}[0-9][0-9]-[a-z]{4,8}$")
-		regionLocationRegex, _ := regexp.Compile("^[a-z]{2}-[a-z]{2,5}-[a-z]{4,8}$")
-		crossRegionLocationRegex, _ := regexp.Compile("^[a-z]{2}-[a-z]{4,8}$")
+		singleSiteLocationRegex := regexp.MustCompile("^[a-z]{3}[0-9][0-9]-[a-z]{4,8}$")
+		regionLocationRegex := regexp.MustCompile("^[a-z]{2}-[a-z]{2,5}-[a-z]{4,8}$")
+		crossRegionLocationRegex := regexp.MustCompile("^[a-z]{2}-[a-z]{4,8}$")
 		d, _ := s3Client.ListBucketsExtended(&coss3.ListBucketsExtendedInput{})
 		for _, b := range d.Buckets {
 			var dependsOn []string
@@ -120,7 +118,7 @@ func (g *COSGenerator) InitResources() error {
 				apiType = "crl"
 				location = strings.Split(bLocationConstraint, "-")[0]
 			}
-			bucketID := fmt.Sprintf("%s:%s:%s:meta:%s:%s", strings.Replace(cs.ID, "::", "", -1), "bucket", *b.Name, apiType, location)
+			bucketID := fmt.Sprintf("%s:%s:%s:meta:%s:%s", strings.ReplaceAll(cs.ID, "::", ""), "bucket", *b.Name, apiType, location)
 			g.Resources = append(g.Resources, g.loadCOSBuckets(bucketID, *b.Name, dependsOn))
 		}
 	}
