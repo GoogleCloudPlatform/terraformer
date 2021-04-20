@@ -27,7 +27,7 @@ type GrafanaProvider struct { //nolint
 	terraformutils.Provider
 	auth               string
 	url                string
-	orgId              int
+	orgID              int
 	tlsKey             string
 	tlsCert            string
 	caCert             string
@@ -46,7 +46,7 @@ func (p GrafanaProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"grafana": map[string]interface{}{
-				"org_id":               p.orgId,
+				"org_id":               p.orgID,
 				"url":                  p.url,
 				"auth":                 p.auth,
 				"tls_key":              p.tlsKey,
@@ -60,7 +60,7 @@ func (p GrafanaProvider) GetProviderData(arg ...string) map[string]interface{} {
 
 func (p *GrafanaProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
-		"org_id":               cty.NumberIntVal(int64(p.orgId)),
+		"org_id":               cty.NumberIntVal(int64(p.orgID)),
 		"url":                  cty.StringVal(p.url),
 		"auth":                 cty.StringVal(p.auth),
 		"tls_key":              cty.StringVal(p.tlsKey),
@@ -85,7 +85,7 @@ func (p *GrafanaProvider) Init(args []string) error {
 	if err != nil {
 		orgId = 1
 	}
-	p.orgId = orgId
+	p.orgID = orgId
 
 	p.tlsKey = os.Getenv("HTTPS_TLS_KEY")
 	p.tlsCert = os.Getenv("HTTPS_TLS_CERT")
@@ -113,7 +113,7 @@ func (p *GrafanaProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"org_id":               p.orgId,
+		"org_id":               p.orgID,
 		"url":                  p.url,
 		"auth":                 p.auth,
 		"tls_key":              p.tlsKey,
