@@ -39,7 +39,7 @@ func (g *DashboardGenerator) createDashboardResources(client *gapi.Client) error
 			return fmt.Errorf("unable to read grafana dashboard %s: %v", dashboard.Title, err)
 		}
 
-		configJson, err := json.MarshalIndent(dash.Model, "", "  ")
+		configJSON, err := json.MarshalIndent(dash.Model, "", "  ")
 		if err != nil {
 			return fmt.Errorf("unable to marshal configuration for grafana dashboard %s: %v", dashboard.Title, err)
 		}
@@ -58,7 +58,7 @@ func (g *DashboardGenerator) createDashboardResources(client *gapi.Client) error
 			},
 		)
 		resource.DataFiles = map[string][]byte{
-			filename: configJson,
+			filename: configJSON,
 		}
 		g.Resources = append(g.Resources, resource)
 	}
