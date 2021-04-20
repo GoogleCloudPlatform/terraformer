@@ -87,6 +87,10 @@ func (p *GrafanaProvider) Init(args []string) error {
 	}
 	p.orgId = orgId
 
+	p.tlsKey = os.Getenv("HTTPS_TLS_KEY")
+	p.tlsCert = os.Getenv("HTTPS_TLS_CERT")
+	p.caCert = os.Getenv("HTTPS_CA_CERT")
+
 	if os.Getenv("HTTPS_INSECURE_SKIP_VERIFY") == "1" {
 		p.insecureSkipVerify = true
 	}
