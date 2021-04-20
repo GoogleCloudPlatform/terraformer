@@ -81,11 +81,11 @@ func (p *GrafanaProvider) Init(args []string) error {
 		return errors.New("Grafana API URL must be set through `GRAFANA_URL` env var")
 	}
 
-	orgId, err := strconv.Atoi(os.Getenv("GRAFANA_ORG_ID"))
+	orgID, err := strconv.Atoi(os.Getenv("GRAFANA_ORG_ID"))
 	if err != nil {
-		orgId = 1
+		orgID = 1
 	}
-	p.orgID = orgId
+	p.orgID = orgID
 
 	p.tlsKey = os.Getenv("HTTPS_TLS_KEY")
 	p.tlsCert = os.Getenv("HTTPS_TLS_CERT")
