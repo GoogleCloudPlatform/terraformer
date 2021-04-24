@@ -100,7 +100,7 @@ func Import(provider terraformutils.ProviderGenerator, options ImportOptions, ar
 		return err
 	}
 
-	providerMapping.ReorganizeResources(providerWrapper)
+	providerMapping.ReorganizeResources()
 	// change structs with additional data for each resource
 	providerMapping.CleanupProviders()
 
@@ -221,7 +221,8 @@ func ImportFromPlan(provider terraformutils.ProviderGenerator, resourceTypes map
 
 	if options.Connect {
 		log.Println(provider.GetName() + " Connecting.... ")
-		importedResource = terraformutils.ConnectServices(importedResource, isServicePath, provider.GetResourceConnections())
+		// TODO: fix connecting resources
+		//importedResource = terraformutils.ConnectServices(importedResource, isServicePath, provider.GetResourceConnections())
 	}
 
 	if !isServicePath {

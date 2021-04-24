@@ -14,6 +14,8 @@
 package terraformoutput
 
 import (
+	"github.com/hashicorp/terraform/addrs"
+	"github.com/hashicorp/terraform/states"
 	"io/ioutil"
 	"log"
 	"os"
@@ -21,8 +23,6 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
-
-	"github.com/hashicorp/terraform/terraform"
 )
 
 func OutputHclFiles(resources []terraformutils.Resource, provider terraformutils.ProviderGenerator, path string, serviceName string, isCompact bool, output string) error {
@@ -50,29 +50,30 @@ func OutputHclFiles(resources []terraformutils.Resource, provider terraformutils
 	outputsByResource := map[string]map[string]interface{}{}
 
 	for i, r := range resources {
-		outputState := map[string]*terraform.OutputState{}
-		outputsByResource[r.InstanceInfo.Type+"_"+r.ResourceName+"_"+r.GetIDKey()] = map[string]interface{}{
-			"value": "${" + r.InstanceInfo.Type + "." + r.ResourceName + "." + r.GetIDKey() + "}",
+		outputState := map[string]*states.OutputValue{}
+		resourceNameRef := r.Address.Type + "_" + r.Address.Name + "_" + r.GetIDKey()
+		outputsByResource[resourceNameRef] = map[string]interface{}{
+			"value": "${" + r.Address.Type + "." + r.Address.Name + "." + r.GetIDKey() + "}",
 		}
-		outputState[r.InstanceInfo.Type+"_"+r.ResourceName+"_"+r.GetIDKey()] = &terraform.OutputState{
-			Type:  "string",
-			Value: r.InstanceState.Attributes[r.GetIDKey()],
+		outputState[r.Address.Type+"_"+r.Address.Name+"_"+r.GetIDKey()] = &states.OutputValue{
+			Addr: addrs.RootModuleInstance.OutputValue(resourceNameRef),
+			Value: r.InstanceState.Value.GetAttr(r.GetIDKey()),
 		}
 		for _, v := range provider.GetResourceConnections() {
 			for k, ids := range v {
 				if (serviceName != "" && k == serviceName) || (serviceName == "" && k == r.ServiceName()) {
-					if _, exist := r.InstanceState.Attributes[ids[1]]; exist {
+					if r.InstanceState.Value.Type().HasAttribute(ids[1]) {
 						key := ids[1]
 						if ids[1] == "self_link" || ids[1] == "id" {
 							key = r.GetIDKey()
 						}
-						linkKey := r.InstanceInfo.Type + "_" + r.ResourceName + "_" + key
+						linkKey := r.Address.Type + "_" + r.Address.Name + "_" + key
 						outputsByResource[linkKey] = map[string]interface{}{
-							"value": "${" + r.InstanceInfo.Type + "." + r.ResourceName + "." + key + "}",
+							"value": "${" + r.Address.Type + "." + r.Address.Name + "." + key + "}",
 						}
-						outputState[linkKey] = &terraform.OutputState{
-							Type:  "string",
-							Value: r.InstanceState.Attributes[ids[1]],
+						outputState[linkKey] = &states.OutputValue{
+							Addr:  addrs.RootModuleInstance.OutputValue(linkKey),
+							Value: r.InstanceState.Value.GetAttr(ids[1]),
 						}
 					}
 				}
@@ -92,7 +93,7 @@ func OutputHclFiles(resources []terraformutils.Resource, provider terraformutils
 	// group by resource by type
 	typeOfServices := map[string][]terraformutils.Resource{}
 	for _, r := range resources {
-		typeOfServices[r.InstanceInfo.Type] = append(typeOfServices[r.InstanceInfo.Type], r)
+		typeOfServices[r.Address.Type] = append(typeOfServices[r.Address.Type], r)
 	}
 	if isCompact {
 		err := printFile(resources, "resources", path, output)

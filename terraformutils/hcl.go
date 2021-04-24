@@ -19,6 +19,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/zclconf/go-cty/cty"
+	"github.com/zclconf/go-cty/cty/gocty"
 	"log"
 	"regexp"
 	"strings"
@@ -239,21 +241,26 @@ func HclPrintResource(resources []Resource, providerData map[string]interface{},
 	mapsObjects := map[string]struct{}{}
 	indexRe := regexp.MustCompile(`\.[0-9]+`)
 	for _, res := range resources {
-		r := resourcesByType[res.InstanceInfo.Type]
+		r := resourcesByType[res.Address.Type]
 		if r == nil {
 			r = make(map[string]interface{})
-			resourcesByType[res.InstanceInfo.Type] = r
+			resourcesByType[res.Address.Type] = r
 		}
 
-		if r[res.ResourceName] != nil {
+		if r[res.Address.Name] != cty.NilVal {
 			log.Println(resources)
-			log.Printf("[ERR]: duplicate resource found: %s.%s", res.InstanceInfo.Type, res.ResourceName)
+			log.Printf("[ERR]: duplicate resource found: %s", res.Address.String())
 			continue
 		}
 
-		r[res.ResourceName] = res.Item
+		var val interface{}
+		err := gocty.FromCtyValue(res.InstanceState.Value, &val)
+		if err != nil {
+			return []byte{}, err
+		}
+		r[res.Address.Name] = val
 
-		for k := range res.InstanceState.Attributes {
+		for k := range res.InstanceState.Value.AsValueMap() {
 			if strings.HasSuffix(k, ".%") {
 				key := strings.TrimSuffix(k, ".%")
 				mapsObjects[indexRe.ReplaceAllString(key, "")] = struct{}{}
