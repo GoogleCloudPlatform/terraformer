@@ -170,7 +170,6 @@ func (p *ProviderWrapper) readObjBlocks(block map[string]*configschema.NestedBlo
 func (p *ProviderWrapper) Refresh(resourceAddress *addrs.Resource, priorState map[string]string, importID string) (*states.ResourceInstanceObject, error) {
 	schema := p.GetSchema()
 	impliedType := schema.ResourceTypes[resourceAddress.Type].Block.ImpliedType()
-	priorState["id"] = importID
 	val, err := hcl2shim.HCL2ValueFromFlatmap(priorState, impliedType)
 	if err != nil {
 		return nil, err

@@ -96,6 +96,7 @@ func NewResource(id, resourceName, resourceType, provider string,
 	attributes map[string]string,
 	allowEmptyValues []string,
 	additionalFields map[string]interface{}) Resource {
+	attributes["id"] = id // to ensure resource refresh will work well
 	return Resource{
 		Address: addrs.Resource{
 			Mode: addrs.ManagedResourceMode,
