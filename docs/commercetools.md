@@ -13,7 +13,7 @@ export CTP_CLIENT_SECRET=bar
 export CTP_CLIENT_SCOPE=scope
 ```
 
-Export optional variables in case default values are not appropiate:
+Export optional variables in case default values are not appropriate:
 
 ```bash
 export CTP_BASE_URL=base_url # default: https://api.sphere.io
