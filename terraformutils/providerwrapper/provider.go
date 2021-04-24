@@ -21,6 +21,7 @@ import (
 	"github.com/hashicorp/terraform/configs/hcl2shim"
 	"github.com/hashicorp/terraform/providers"
 	"github.com/hashicorp/terraform/states"
+	"github.com/hashicorp/terraform/version"
 	"io/ioutil"
 	"log"
 	"os"
@@ -37,7 +38,7 @@ import (
 	"github.com/hashicorp/go-plugin"
 	"github.com/hashicorp/terraform/configs/configschema"
 	tfplugin "github.com/hashicorp/terraform/plugin"
-	"github.com/hashicorp/terraform/version"
+	tfplugin6 "github.com/hashicorp/terraform/plugin6"
 )
 
 // DefaultDataDir is the default directory for storing local data.
@@ -52,7 +53,8 @@ const DefaultPluginVendorDirV12 = "terraform.d/plugins/" + pluginMachineName
 const pluginMachineName = runtime.GOOS + "_" + runtime.GOARCH
 
 type ProviderWrapper struct {
-	Provider     *tfplugin.GRPCProvider
+	provider5    *tfplugin.GRPCProvider
+	provider6    *tfplugin6.GRPCProvider
 	client       *plugin.Client
 	rpcClient    plugin.ClientProtocol
 	providerName string
@@ -89,8 +91,13 @@ func (p *ProviderWrapper) Kill() {
 
 func (p *ProviderWrapper) GetSchema() *providers.GetProviderSchemaResponse {
 	if p.schema == nil {
-		r := p.Provider.GetProviderSchema()
-		p.schema = &r
+		if p.provider6 != nil {
+			r := p.provider6.GetProviderSchema()
+			p.schema = &r
+		} else {
+			r := p.provider5.GetProviderSchema()
+			p.schema = &r
+		}
 	}
 	return p.schema
 }
@@ -163,6 +170,7 @@ func (p *ProviderWrapper) readObjBlocks(block map[string]*configschema.NestedBlo
 func (p *ProviderWrapper) Refresh(resourceAddress *addrs.Resource, priorState map[string]string, importID string) (*states.ResourceInstanceObject, error) {
 	schema := p.GetSchema()
 	impliedType := schema.ResourceTypes[resourceAddress.Type].Block.ImpliedType()
+	priorState["id"] = importID
 	val, err := hcl2shim.HCL2ValueFromFlatmap(priorState, impliedType)
 	if err != nil {
 		return nil, err
@@ -170,12 +178,17 @@ func (p *ProviderWrapper) Refresh(resourceAddress *addrs.Resource, priorState ma
 	successReadResource := false
 	resp := providers.ReadResourceResponse{}
 	for i := 0; i < p.retryCount; i++ {
-		resp = p.Provider.ReadResource(providers.ReadResourceRequest{
+		readResourceRequest := providers.ReadResourceRequest{
 			TypeName:     resourceAddress.Type,
 			PriorState:   val,
 			Private:      []byte{},
 			ProviderMeta: schema.ProviderMeta.Block.EmptyValue(),
-		})
+		}
+		if p.provider6 != nil {
+			resp = p.provider6.ReadResource(readResourceRequest)
+		} else {
+			resp = p.provider5.ReadResource(readResourceRequest)
+		}
 		if resp.Diagnostics.HasErrors() {
 			log.Printf("WARN: Fail read resource from provider, wait %dms before retry\n", p.retrySleepMs)
 			time.Sleep(time.Duration(p.retrySleepMs) * time.Millisecond)
@@ -189,10 +202,16 @@ func (p *ProviderWrapper) Refresh(resourceAddress *addrs.Resource, priorState ma
 	if !successReadResource {
 		log.Println("Fail read resource from provider, trying import command")
 		// retry with regular import command - without resource attributes
-		importResponse := p.Provider.ImportResourceState(providers.ImportResourceStateRequest{
+		resourceStateRequest := providers.ImportResourceStateRequest{
 			TypeName: resourceAddress.Type,
 			ID:       importID,
-		})
+		}
+		importResponse := providers.ImportResourceStateResponse{}
+		if p.provider6 != nil {
+			importResponse = p.provider6.ImportResourceState(resourceStateRequest)
+		} else {
+			importResponse = p.provider5.ImportResourceState(resourceStateRequest)
+		}
 		if importResponse.Diagnostics.HasErrors() {
 			return nil, resp.Diagnostics.Err()
 		}
@@ -200,9 +219,9 @@ func (p *ProviderWrapper) Refresh(resourceAddress *addrs.Resource, priorState ma
 			return nil, errors.New("not able to import resource for a given ID")
 		}
 		return &states.ResourceInstanceObject{
-			Value: importResponse.ImportedResources[0].State,
-			Private: importResponse.ImportedResources[0].Private,
-			Status: states.ObjectReady,
+			Value:        importResponse.ImportedResources[0].State,
+			Private:      importResponse.ImportedResources[0].Private,
+			Status:       states.ObjectReady,
 			Dependencies: nil, // TODO configure Terraformer to define dependencies
 		}, nil
 	}
@@ -213,9 +232,9 @@ func (p *ProviderWrapper) Refresh(resourceAddress *addrs.Resource, priorState ma
 	}
 
 	return &states.ResourceInstanceObject{
-		Value: resp.NewState,
-		Private: resp.Private,
-		Status: states.ObjectReady,
+		Value:        resp.NewState,
+		Private:      resp.Private,
+		Status:       states.ObjectReady,
 		Dependencies: nil, // TODO configure Terraformer to define dependencies
 	}, nil
 }
@@ -234,6 +253,7 @@ func (p *ProviderWrapper) initProvider(verbose bool) error {
 		options.Level = hclog.Trace
 	}
 	logger := hclog.New(&options)
+	var enableProviderAutoMTLS = os.Getenv("TF_DISABLE_PLUGIN_TLS") == ""
 	p.client = plugin.NewClient(
 		&plugin.ClientConfig{
 			Cmd:              exec.Command(providerFilePath),
@@ -242,7 +262,7 @@ func (p *ProviderWrapper) initProvider(verbose bool) error {
 			Managed:          true,
 			Logger:           logger,
 			AllowedProtocols: []plugin.Protocol{plugin.ProtocolGRPC},
-			AutoMTLS:         true,
+			AutoMTLS:         enableProviderAutoMTLS,
 		})
 	p.rpcClient, err = p.client.Client()
 	if err != nil {
@@ -253,16 +273,37 @@ func (p *ProviderWrapper) initProvider(verbose bool) error {
 		return err
 	}
 
-	p.Provider = raw.(*tfplugin.GRPCProvider)
-
-	config, err := p.GetSchema().Provider.Block.CoerceValue(p.config)
-	if err != nil {
-		return err
+	protoVer := p.client.NegotiatedVersion()
+	switch protoVer {
+	case 5:
+		p.provider5 = raw.(*tfplugin.GRPCProvider)
+		config, err := p.GetSchema().Provider.Block.CoerceValue(p.config)
+		if err != nil {
+			return err
+		}
+		response := p.provider5.ConfigureProvider(providers.ConfigureProviderRequest{
+			TerraformVersion: version.Version,
+			Config:           config,
+		})
+		if response.Diagnostics.HasErrors() {
+			return response.Diagnostics.Err()
+		}
+	case 6:
+		p.provider6 = raw.(*tfplugin6.GRPCProvider)
+		config, err := p.GetSchema().Provider.Block.CoerceValue(p.config)
+		if err != nil {
+			return err
+		}
+		response := p.provider6.ConfigureProvider(providers.ConfigureProviderRequest{
+			TerraformVersion: version.Version,
+			Config:           config,
+		})
+		if response.Diagnostics.HasErrors() {
+			return response.Diagnostics.Err()
+		}
+	default:
+		panic("unsupported protocol version")
 	}
-	p.Provider.ConfigureProvider(providers.ConfigureProviderRequest{
-		TerraformVersion: version.Version,
-		Config:           config,
-	})
 
 	return nil
 }

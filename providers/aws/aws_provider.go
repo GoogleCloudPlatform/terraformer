@@ -235,7 +235,8 @@ func (p *AWSProvider) InitService(serviceName string, verbose bool) error {
 // GetAWSSupportService return map of support service for AWS
 func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"ec2_instance":      &AwsFacade{service: &Ec2Generator{}},
+		"ec2_instance": &AwsFacade{service: &Ec2Generator{}},
+		"vpc":          &AwsFacade{service: &VpcGenerator{}},
 	}
 }
 

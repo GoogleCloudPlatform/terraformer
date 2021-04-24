@@ -31,7 +31,7 @@ type Resource struct {
 	Outputs           map[string]*states.OutputValue
 	ImportID          string // identifier to be used by terraformer when importing a resource
 	Provider          string
-	PriorState        map[string]string
+	PriorState        map[string]string      // used when refreshing a resource
 	IgnoreKeys        []string               `json:",omitempty"`
 	AllowEmptyValues  []string               `json:",omitempty"`
 	AdditionalFields  map[string]interface{} `json:",omitempty"`
@@ -97,14 +97,14 @@ func NewResource(id, resourceName, resourceType, provider string,
 	allowEmptyValues []string,
 	additionalFields map[string]interface{}) Resource {
 	return Resource{
-		Address:  addrs.Resource{
+		Address: addrs.Resource{
 			Mode: addrs.ManagedResourceMode,
 			Type: resourceType,
 			Name: TfSanitize(resourceName),
 		},
-		ImportID: id,
-		Provider:      provider,
-		PriorState: attributes,
+		ImportID:         id,
+		Provider:         provider,
+		PriorState:       attributes,
 		AdditionalFields: additionalFields,
 		AllowEmptyValues: allowEmptyValues,
 	}

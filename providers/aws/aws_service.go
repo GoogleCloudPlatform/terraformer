@@ -51,7 +51,7 @@ func (s *AWSService) generateConfig() (aws.Config, error) {
 	}
 
 	creds, e := baseConfig.Credentials.Retrieve(context.TODO())
-
+	// TODO: make sure MFA is fetched and new session is generated
 	if e != nil {
 		return baseConfig, e
 	}
