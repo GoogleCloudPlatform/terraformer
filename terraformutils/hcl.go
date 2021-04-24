@@ -19,8 +19,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/zclconf/go-cty/cty"
-	"github.com/zclconf/go-cty/cty/gocty"
+	"github.com/hashicorp/terraform/configs/hcl2shim"
 	"log"
 	"regexp"
 	"strings"
@@ -247,16 +246,17 @@ func HclPrintResource(resources []Resource, providerData map[string]interface{},
 			resourcesByType[res.Address.Type] = r
 		}
 
-		if r[res.Address.Name] != cty.NilVal {
+		if r[res.Address.Name] != nil {
 			log.Println(resources)
 			log.Printf("[ERR]: duplicate resource found: %s", res.Address.String())
 			continue
 		}
 
-		var val interface{}
-		err := gocty.FromCtyValue(res.InstanceState.Value, &val)
-		if err != nil {
-			return []byte{}, err
+		val := hcl2shim.ConfigValueFromHCL2(res.InstanceState.Value).(map[string]interface{})
+		for _, ignoreKey := range res.IgnoreKeys {
+			if _, exist := val[ignoreKey]; exist {
+				delete(val, ignoreKey)
+			}
 		}
 		r[res.Address.Name] = val
 
