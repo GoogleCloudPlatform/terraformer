@@ -15,6 +15,8 @@
 package commercetools
 
 import (
+	"context"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/commercetools/connectivity"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/labd/commercetools-go-sdk/commercetools"
@@ -36,7 +38,7 @@ func (g *TaxCategoryGenerator) InitResources() error {
 
 	client := cfg.NewClient()
 
-	categories, err := client.TaxCategoryQuery(&commercetools.QueryInput{})
+	categories, err := client.TaxCategoryQuery(context.Background(), &commercetools.QueryInput{})
 	if err != nil {
 		return err
 	}

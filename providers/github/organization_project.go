@@ -22,7 +22,6 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	githubAPI "github.com/google/go-github/v25/github"
-	"golang.org/x/oauth2"
 )
 
 type OrganizationProjectGenerator struct {
@@ -32,12 +31,10 @@ type OrganizationProjectGenerator struct {
 // Generate TerraformResources from Github API,
 func (g *OrganizationProjectGenerator) InitResources() error {
 	ctx := context.Background()
-	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: g.Args["token"].(string)},
-	)
-	tc := oauth2.NewClient(ctx, ts)
-
-	client := githubAPI.NewClient(tc)
+	client, err := g.createClient()
+	if err != nil {
+		return err
+	}
 
 	opt := &githubAPI.ProjectListOptions{
 		ListOptions: githubAPI.ListOptions{PerPage: 100},
@@ -45,7 +42,7 @@ func (g *OrganizationProjectGenerator) InitResources() error {
 
 	// List all organization projects for the authenticated user
 	for {
-		projects, resp, err := client.Organizations.ListProjects(ctx, g.Args["organization"].(string), opt)
+		projects, resp, err := client.Organizations.ListProjects(ctx, g.Args["owner"].(string), opt)
 		if err != nil {
 			log.Println(err)
 			return nil

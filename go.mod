@@ -5,7 +5,7 @@ go 1.16
 require (
 	cloud.google.com/go v0.77.0
 	cloud.google.com/go/logging v1.1.2
-	cloud.google.com/go/storage v1.12.0
+	cloud.google.com/go/storage v1.14.0
 	github.com/Azure/azure-sdk-for-go v53.4.0+incompatible
 	github.com/Azure/azure-storage-blob-go v0.10.0
 	github.com/Azure/go-autorest/autorest v0.11.18
@@ -32,12 +32,12 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/budgets v1.1.3
 	github.com/aws/aws-sdk-go-v2/service/cloud9 v1.1.3
 	github.com/aws/aws-sdk-go-v2/service/cloudformation v1.3.0
-	github.com/aws/aws-sdk-go-v2/service/cloudfront v1.2.1
+	github.com/aws/aws-sdk-go-v2/service/cloudfront v1.3.0
 	github.com/aws/aws-sdk-go-v2/service/cloudhsmv2 v1.1.3
 	github.com/aws/aws-sdk-go-v2/service/cloudtrail v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/cloudwatch v1.3.0
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchevents v1.2.0
-	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.2.1
+	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.2.2
 	github.com/aws/aws-sdk-go-v2/service/codebuild v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/codecommit v1.1.3
 	github.com/aws/aws-sdk-go-v2/service/codedeploy v1.2.1
@@ -66,7 +66,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/iot v1.2.0
 	github.com/aws/aws-sdk-go-v2/service/kafka v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/kinesis v1.2.1
-	github.com/aws/aws-sdk-go-v2/service/kms v1.2.1
+	github.com/aws/aws-sdk-go-v2/service/kms v1.2.2
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/mediapackage v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/mediastore v1.1.4
@@ -103,7 +103,9 @@ require (
 	github.com/fastly/go-fastly v1.18.0
 	github.com/google/go-github/v25 v25.1.3
 	github.com/gophercloud/gophercloud v0.13.0
+	github.com/grafana/grafana-api-golang-client v0.0.0-20210218192924-9ccd2365d2a6
 	github.com/hashicorp/go-azure-helpers v0.14.0
+	github.com/hashicorp/go-cleanhttp v0.5.1
 	github.com/hashicorp/go-hclog v0.15.0
 	github.com/hashicorp/go-plugin v1.4.1
 	github.com/hashicorp/hcl v1.0.0
@@ -114,7 +116,7 @@ require (
 	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
 	github.com/jmespath/go-jmespath v0.4.0
 	github.com/jonboydell/logzio_client v1.2.0
-	github.com/labd/commercetools-go-sdk v0.0.0-20200309143931-ca72e918a79d
+	github.com/labd/commercetools-go-sdk v0.3.1
 	github.com/linode/linodego v0.24.1
 	github.com/mrparkers/terraform-provider-keycloak v0.0.0-20200506151941-509881368409
 	github.com/nicksnyder/go-i18n v1.10.1 // indirect
@@ -131,11 +133,11 @@ require (
 	github.com/yandex-cloud/go-sdk v0.0.0-20200722140627-2194e5077f13
 	github.com/zclconf/go-cty v1.8.2
 	github.com/zorkian/go-datadog-api v2.30.0+incompatible
-	golang.org/x/oauth2 v0.0.0-20210113205817-d3ed898aa8a3
+	golang.org/x/oauth2 v0.0.0-20210218202405-ba52d332ba99
 	golang.org/x/text v0.3.5
 	gonum.org/v1/gonum v0.7.0
 	google.golang.org/api v0.40.0
-	google.golang.org/genproto v0.0.0-20210212180131-e7f2df4ecc2d
+	google.golang.org/genproto v0.0.0-20210226172003-ab064af71705
 	gopkg.in/jarcoal/httpmock.v1 v1.0.0-00010101000000-000000000000 // indirect
 	k8s.io/apimachinery v0.20.2
 	k8s.io/client-go v10.0.0+incompatible

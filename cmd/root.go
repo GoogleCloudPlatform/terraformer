@@ -66,6 +66,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		// Monitoring & System Management
 		newCmdDatadogImporter,
 		newCmdNewRelicImporter,
+		newCmdGrafanaImporter,
 		// Community
 		newCmdKeycloakImporter,
 		newCmdLogzioImporter,

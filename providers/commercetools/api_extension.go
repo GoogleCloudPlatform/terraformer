@@ -15,6 +15,8 @@
 package commercetools
 
 import (
+	"context"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/commercetools/connectivity"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/labd/commercetools-go-sdk/commercetools"
@@ -36,7 +38,7 @@ func (g *APIExtensionGenerator) InitResources() error {
 
 	client := cfg.NewClient()
 
-	extensions, err := client.ExtensionQuery(&commercetools.QueryInput{})
+	extensions, err := client.ExtensionQuery(context.Background(), &commercetools.QueryInput{})
 	if err != nil {
 		return err
 	}

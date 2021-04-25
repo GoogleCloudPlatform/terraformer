@@ -21,7 +21,6 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	githubAPI "github.com/google/go-github/v25/github"
-	"golang.org/x/oauth2"
 )
 
 // MembersGenerator holds GithubService struct of Terraform service information
@@ -32,12 +31,10 @@ type MembersGenerator struct {
 // InitResources generates TerraformResources from Github API,
 func (g *MembersGenerator) InitResources() error {
 	ctx := context.Background()
-	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: g.Args["token"].(string)},
-	)
-	tc := oauth2.NewClient(ctx, ts)
-
-	client := githubAPI.NewClient(tc)
+	client, err := g.createClient()
+	if err != nil {
+		return err
+	}
 
 	opt := &githubAPI.ListMembersOptions{
 		ListOptions: githubAPI.ListOptions{PerPage: 100},
@@ -45,7 +42,7 @@ func (g *MembersGenerator) InitResources() error {
 
 	// List all organization members for the authenticated user
 	for {
-		members, resp, err := client.Organizations.ListMembers(ctx, g.Args["organization"].(string), opt)
+		members, resp, err := client.Organizations.ListMembers(ctx, g.Args["owner"].(string), opt)
 		if err != nil {
 			log.Println(err)
 			return nil
@@ -53,7 +50,7 @@ func (g *MembersGenerator) InitResources() error {
 
 		for _, member := range members {
 			resource := terraformutils.NewSimpleResource(
-				g.Args["organization"].(string)+":"+member.GetLogin(),
+				g.Args["owner"].(string)+":"+member.GetLogin(),
 				member.GetLogin(),
 				"github_membership",
 				"github",

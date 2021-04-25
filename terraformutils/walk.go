@@ -15,6 +15,7 @@
 package terraformutils
 
 import (
+	"fmt"
 	"reflect"
 	"strings"
 )
@@ -109,7 +110,7 @@ func walkAndOverride(pathSegments []string, oldValue, newValue string, data inte
 								valss[idx] = newValue
 							}
 						}
-					case oldValue == v.Interface().(string):
+					case oldValue == fmt.Sprint(v.Interface()):
 						val.Interface().(map[string]interface{})[pathSegments[0]] = newValue
 					}
 				}

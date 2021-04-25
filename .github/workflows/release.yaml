@@ -22,6 +22,8 @@ jobs:
         run: go build -o terraformer-all-linux-amd64
       - name: Build for mac
         run: GOOS=darwin go build -o terraformer-all-darwin-amd64
+      - name: Build for mac Apple Silicon
+        run: GOOS=darwin GOARCH=arm64 go build -o terraformer-all-darwin-arm64
       - name: Build for windows
         run: GOOS=windows go build -o terraformer-all-windows-amd64
       - name: Build for all providers
@@ -30,8 +32,7 @@ jobs:
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: ${{ github.event.inputs.version }}
           prerelease: false
           files: |
             terraformer-*
-      - name: Create new tag
-        run: git tag ${{ github.event.inputs.version }}

@@ -26,8 +26,9 @@ import (
 
 type GithubProvider struct { //nolint
 	terraformutils.Provider
-	organization string
-	token        string
+	owner   string
+	token   string
+	baseURL string
 }
 
 func (p GithubProvider) GetResourceConnections() map[string]map[string][]string {
@@ -38,7 +39,7 @@ func (p GithubProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"github": map[string]interface{}{
-				"organization": p.organization,
+				"owner": p.owner,
 			},
 		},
 	}
@@ -46,14 +47,15 @@ func (p GithubProvider) GetProviderData(arg ...string) map[string]interface{} {
 
 func (p *GithubProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
-		"organization": cty.StringVal(p.organization),
-		"token":        cty.StringVal(p.token),
+		"owner":    cty.StringVal(p.owner),
+		"token":    cty.StringVal(p.token),
+		"base_url": cty.StringVal(p.baseURL),
 	})
 }
 
-// Init GithubProvider with organization
+// Init GithubProvider with owner
 func (p *GithubProvider) Init(args []string) error {
-	p.organization = args[0]
+	p.owner = args[0]
 	if len(args) < 2 {
 		if os.Getenv("GITHUB_TOKEN") == "" {
 			return errors.New("token requirement")
@@ -61,6 +63,11 @@ func (p *GithubProvider) Init(args []string) error {
 		p.token = os.Getenv("GITHUB_TOKEN")
 	} else {
 		p.token = args[1]
+	}
+	if len(args) > 2 {
+		if args[2] != "" {
+			p.baseURL = args[2]
+		}
 	}
 	return nil
 }
@@ -83,8 +90,9 @@ func (p *GithubProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"organization": p.organization,
-		"token":        p.token,
+		"owner":    p.owner,
+		"token":    p.token,
+		"base_url": p.baseURL,
 	})
 	return nil
 }

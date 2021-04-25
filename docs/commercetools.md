@@ -4,30 +4,50 @@ This provider use the [terraform-provider-commercetools](https://github.com/labd
 
 Example:
 
+Export required variables:
+
+```bash
+export CTP_PROJECT_KEY=key
+export CTP_CLIENT_ID=foo
+export CTP_CLIENT_SECRET=bar
+export CTP_CLIENT_SCOPE=scope
 ```
-CTP_CLIENT_ID=foo CTP_CLIENT_SCOPE=scope CTP_CLIENT_SECRET=bar CTP_PROJECT_KEY=key ./terraformer plan commercetools -r=types // Only planning
-CTP_CLIENT_ID=foo CTP_CLIENT_SCOPE=scope CTP_CLIENT_SECRET=bar CTP_PROJECT_KEY=key ./terraformer import commercetools -r=types // Import commercetools types
+
+Export optional variables in case default values are not appropriate:
+
+```bash
+export CTP_BASE_URL=base_url # default: https://api.sphere.io
+export CTP_TOKEN_URL=token_url # default: https://auth.sphere.io
+```
+
+Run terraformer
+
+```bash
+./terraformer plan commercetools -r=types # Only planning
+./terraformer import commercetools -r=types # Import commercetools types
 ```
 
 List of supported [commercetools](https://commercetools.com/de/) resources:
 
-*   `api_extension`
-    * `commercetools_api_extension`
-*   `channel`
-    * `commercetools_channel`
-*   `product_type`
-    * `commercetools_product_type`
-*   `shipping_method`
-    * `commercetools_shipping_method`
-*   `shipping_zone`
-    * `commercetools_shipping_zone`
-*   `state`
-    * `commercetools_state`
-*   `store`
-    * `commercetools_store`
-*   `subscription`
-    * `commercetools_subscription`
-*   `tax_category`
-    * `commercetools_tax_category`
-*   `types`
-    * `commercetools_type`
+- `api_extension`
+  - `commercetools_api_extension`
+- `channel`
+  - `commercetools_channel`
+- `custom_object`
+  - `commercetools_custom_object`
+- `product_type`
+  - `commercetools_product_type`
+- `shipping_method`
+  - `commercetools_shipping_method`
+- `shipping_zone`
+  - `commercetools_shipping_zone`
+- `state`
+  - `commercetools_state`
+- `store`
+  - `commercetools_store`
+- `subscription`
+  - `commercetools_subscription`
+- `tax_category`
+  - `commercetools_tax_category`
+- `types`
+  - `commercetools_type`
