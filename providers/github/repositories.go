@@ -40,7 +40,7 @@ func (g *RepositoriesGenerator) InitResources() error {
 	}
 	// list all repositories for the authenticated user
 	for {
-		repos, resp, err := client.Repositories.ListByOrg(ctx, g.GetArgs()["organization"].(string), opt)
+		repos, resp, err := client.Repositories.ListByOrg(ctx, g.GetArgs()["owner"].(string), opt)
 		if err != nil {
 			log.Println(err)
 			return nil
@@ -72,7 +72,7 @@ func (g *RepositoriesGenerator) InitResources() error {
 
 func (g *RepositoriesGenerator) createRepositoryWebhookResources(ctx context.Context, client *githubAPI.Client, repo *githubAPI.Repository) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	hooks, _, err := client.Repositories.ListHooks(ctx, g.GetArgs()["organization"].(string), repo.GetName(), nil)
+	hooks, _, err := client.Repositories.ListHooks(ctx, g.GetArgs()["owner"].(string), repo.GetName(), nil)
 	if err != nil {
 		log.Println(err)
 	}
@@ -94,7 +94,7 @@ func (g *RepositoriesGenerator) createRepositoryWebhookResources(ctx context.Con
 
 func (g *RepositoriesGenerator) createRepositoryBranchProtectionResources(ctx context.Context, client *githubAPI.Client, repo *githubAPI.Repository) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	branches, _, err := client.Repositories.ListBranches(ctx, g.GetArgs()["organization"].(string), repo.GetName(), nil)
+	branches, _, err := client.Repositories.ListBranches(ctx, g.GetArgs()["owner"].(string), repo.GetName(), nil)
 	if err != nil {
 		log.Println(err)
 	}
@@ -114,7 +114,7 @@ func (g *RepositoriesGenerator) createRepositoryBranchProtectionResources(ctx co
 
 func (g *RepositoriesGenerator) createRepositoryCollaboratorResources(ctx context.Context, client *githubAPI.Client, repo *githubAPI.Repository) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	collaborators, _, err := client.Repositories.ListCollaborators(ctx, g.GetArgs()["organization"].(string), repo.GetName(), nil)
+	collaborators, _, err := client.Repositories.ListCollaborators(ctx, g.GetArgs()["owner"].(string), repo.GetName(), nil)
 	if err != nil {
 		log.Println(err)
 	}
@@ -132,7 +132,7 @@ func (g *RepositoriesGenerator) createRepositoryCollaboratorResources(ctx contex
 
 func (g *RepositoriesGenerator) createRepositoryDeployKeyResources(ctx context.Context, client *githubAPI.Client, repo *githubAPI.Repository) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	deployKeys, _, err := client.Repositories.ListKeys(ctx, g.GetArgs()["organization"].(string), repo.GetName(), nil)
+	deployKeys, _, err := client.Repositories.ListKeys(ctx, g.GetArgs()["owner"].(string), repo.GetName(), nil)
 	if err != nil {
 		log.Println(err)
 	}

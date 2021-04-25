@@ -42,7 +42,7 @@ func (g *OrganizationProjectGenerator) InitResources() error {
 
 	// List all organization projects for the authenticated user
 	for {
-		projects, resp, err := client.Organizations.ListProjects(ctx, g.Args["organization"].(string), opt)
+		projects, resp, err := client.Organizations.ListProjects(ctx, g.Args["owner"].(string), opt)
 		if err != nil {
 			log.Println(err)
 			return nil

@@ -93,7 +93,7 @@ func (g *TeamsGenerator) InitResources() error {
 	opt := &githubAPI.ListOptions{PerPage: 1}
 
 	for {
-		teams, resp, err := client.Teams.ListTeams(ctx, g.Args["organization"].(string), opt)
+		teams, resp, err := client.Teams.ListTeams(ctx, g.Args["owner"].(string), opt)
 		if err != nil {
 			log.Println(err)
 			return nil
