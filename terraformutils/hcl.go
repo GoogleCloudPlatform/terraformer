@@ -163,61 +163,26 @@ func hclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error)
 	if err != nil {
 		return nil, err
 	}
-	// hack for support terraform 0.12
-	formatted = terraform12Adjustments(formatted, mapsObjects)
-	// hack for support terraform 0.13
-	formatted = terraform13Adjustments(formatted)
-	if err != nil {
-		log.Println("Invalid HCL follows:")
-		for i, line := range strings.Split(s, "\n") {
-			fmt.Printf("%4d|\t%s\n", i+1, line)
-		}
-		return nil, fmt.Errorf("error formatting HCL: %v", err)
-	}
+	// hack for support terraform 0.15
+	formatted = terraform15Adjustments(formatted)
 
 	return formatted, nil
 }
 
-func terraform12Adjustments(formatted []byte, mapsObjects map[string]struct{}) []byte {
-	singletonListFix := regexp.MustCompile(`^\s*\w+ = {`)
-	singletonListFixEnd := regexp.MustCompile(`^\s*}`)
-
+func terraform15Adjustments(formatted []byte) []byte {
 	s := string(formatted)
-	old := " = {"
-	newEquals := " {"
+	oldTerraformConfiguration := "terraform = {"
+	oldRequiredProviders := "  required_providers = {"
+	newTerraformConfiguration := "terraform {"
+	newRequiredProviders := "  required_providers {"
 	lines := strings.Split(s, "\n")
-	prefix := make([]string, 0)
 	for i, line := range lines {
-		if singletonListFixEnd.MatchString(line) && len(prefix) > 0 {
-			prefix = prefix[:len(prefix)-1]
-			continue
+		if line == oldTerraformConfiguration {
+			lines[i] = newTerraformConfiguration
 		}
-		if !singletonListFix.MatchString(line) {
-			continue
+		if line == oldRequiredProviders {
+			lines[i] = newRequiredProviders
 		}
-		key := strings.Trim(strings.Split(line, old)[0], " ")
-		prefix = append(prefix, key)
-		if _, exist := mapsObjects[strings.Join(prefix, ".")]; exist {
-			continue
-		}
-		lines[i] = strings.ReplaceAll(line, old, newEquals)
-	}
-	s = strings.Join(lines, "\n")
-	return []byte(s)
-}
-
-func terraform13Adjustments(formatted []byte) []byte {
-	s := string(formatted)
-	oldRequiredProviders := "\"required_providers\""
-	newRequiredProviders := "required_providers"
-	lines := strings.Split(s, "\n")
-	providerRequirementDefinition := false
-	for i, line := range lines {
-		if providerRequirementDefinition {
-			line = strings.ReplaceAll(line, " {", " = {")
-		}
-		providerRequirementDefinition = strings.Contains(line, newRequiredProviders)
-		lines[i] = strings.Replace(line, oldRequiredProviders, newRequiredProviders, 1)
 	}
 	s = strings.Join(lines, "\n")
 	return []byte(s)
