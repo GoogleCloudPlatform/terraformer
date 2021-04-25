@@ -131,23 +131,23 @@ func (g *AutoScalingGenerator) InitResources() error {
 }
 
 func (g *AutoScalingGenerator) PostConvertHook() error {
-	for i, r := range g.Resources {
-		if r.InstanceInfo.Type != "aws_autoscaling_group" {
-			continue
-		}
-		if lcName, exist := r.InstanceState.Attributes["launch_configuration"]; exist {
-			for _, lc := range g.Resources {
-				if lc.InstanceInfo.Type != "aws_launch_configuration" {
-					continue
-				}
-				if lcName == lc.InstanceState.Attributes["name"] {
-					g.Resources[i].Item["launch_configuration"] = "${aws_launch_configuration." + lc.ResourceName + ".name}"
-					continue
-				}
-			}
-		}
-		// TODO add LaunchTemplate and mix policy connection naming
-	}
+	//for i, r := range g.Resources { // TODO restore references
+	//	if r.Address.Type != "aws_autoscaling_group" {
+	//		continue
+	//	}
+	//	if lcName, exist := r.InstanceState.Attributes["launch_configuration"]; exist {
+	//		for _, lc := range g.Resources {
+	//			if lc.InstanceInfo.Type != "aws_launch_configuration" {
+	//				continue
+	//			}
+	//			if lcName == lc.InstanceState.Attributes["name"] {
+	//				g.Resources[i].Item["launch_configuration"] = "${aws_launch_configuration." + lc.ResourceName + ".name}"
+	//				continue
+	//			}
+	//		}
+	//	}
+	//	// TODO add LaunchTemplate and mix policy connection naming
+	//}
 	// TODO fix tfVar value
 	/*
 		templateFiles := []terraformutils.Resource{}

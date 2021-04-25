@@ -17,13 +17,14 @@ package aws
 import (
 	"context"
 	"fmt"
+	"github.com/zclconf/go-cty/cty"
 	"log"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
-	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 var AlbAllowEmptyValues = []string{"tags.", "^condition."}
@@ -216,34 +217,46 @@ func (g *AlbGenerator) PostConvertHook() error {
 		if r.Address.Type != "aws_lb_listener" {
 			continue
 		}
-		if r.InstanceState.Attributes["default_action.0.order"] == "0" {
-			delete(r.Item["default_action"].([]interface{})[0].(map[string]interface{}), "order")
+		if r.InstanceState.Value.GetAttr("default_action").AsValueSlice()[0].GetAttr("order").AsString() == "0" {
+			instanceStateMap := r.InstanceState.Value.AsValueMap()
+			rootBlockDeviceMap := instanceStateMap["default_action"].AsValueSlice()[0].AsValueMap()
+			delete(rootBlockDeviceMap, "order")
+			instanceStateMap["default_action"] = cty.ListVal([]cty.Value{cty.ObjectVal(rootBlockDeviceMap)})
+			r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 		}
 	}
 
-	for i, r := range g.Resources {
-		if r.InstanceInfo.Type != "aws_lb_listener_rule" {
+	for _, r := range g.Resources {
+		if r.Address.Type != "aws_lb_listener_rule" {
 			continue
 		}
-		if r.InstanceState.Attributes["action.0.order"] == "0" {
-			delete(r.Item["action"].([]interface{})[0].(map[string]interface{}), "order")
+		if r.InstanceState.Value.GetAttr("action").AsValueSlice()[0].GetAttr("order").AsString() == "0" {
+			instanceStateMap := r.InstanceState.Value.AsValueMap()
+			rootBlockDeviceMap := instanceStateMap["action"].AsValueSlice()[0].AsValueMap()
+			delete(rootBlockDeviceMap, "order")
+			instanceStateMap["action"] = cty.ListVal([]cty.Value{cty.ObjectVal(rootBlockDeviceMap)})
+			r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 		}
 		for _, lb := range g.Resources {
-			if lb.InstanceInfo.Type != "aws_lb_listener_certificate" {
+			if lb.Address.Type != "aws_lb_listener_certificate" {
 				continue
 			}
-			if r.InstanceState.Attributes["certificate_arn"] == lb.InstanceState.Attributes["arn"] {
-				g.Resources[i].Item["certificate_arn"] = "${aws_lb_listener_certificate." + lb.ResourceName + ".arn}"
+			if r.InstanceState.Value.GetAttr("certificate_arn").AsString() == r.InstanceState.Value.GetAttr("arn").AsString() {
+				instanceStateMap := r.InstanceState.Value.AsValueMap()
+				instanceStateMap["certificate_arn"] = cty.StringVal("${aws_lb_listener_certificate." + lb.Address.Name + ".arn}")
+				r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 			}
 		}
 	}
 
 	for _, r := range g.Resources {
-		if r.InstanceInfo.Type != "aws_lb" {
+		if r.Address.Type != "aws_lb" {
 			continue
 		}
-		if val, ok := r.InstanceState.Attributes["access_logs.0.enabled"]; ok && val == "false" {
-			delete(r.Item, "access_logs")
+		if r.InstanceState.Value.GetAttr("access_logs").AsValueSlice()[0].GetAttr("enabled").AsString() == "false" {
+			instanceStateMap := r.InstanceState.Value.AsValueMap()
+			delete(instanceStateMap, "access_logs")
+			r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 		}
 	}
 	return nil

@@ -95,21 +95,20 @@ func (g *Ec2Generator) PostConvertHook() error {
 		if r.Address.Type != "aws_instance" {
 			continue
 		}
+		instanceStateMap := r.InstanceState.Value.AsValueMap()
+
 		rootDeviceVolumeType := r.InstanceState.Value.GetAttr("root_block_device").AsValueSlice()[0].GetAttr("volume_type").AsString()
 		if !(rootDeviceVolumeType == "io1" || rootDeviceVolumeType == "io2" || rootDeviceVolumeType == "gp3") {
-			instanceStateMap := r.InstanceState.Value.AsValueMap()
 			rootBlockDeviceMap := instanceStateMap["root_block_device"].AsValueSlice()[0].AsValueMap()
 			delete(rootBlockDeviceMap, "ipos")
 			instanceStateMap["root_block_device"] = cty.ListVal([]cty.Value{cty.ObjectVal(rootBlockDeviceMap)})
-			r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 		}
 		if rootDeviceVolumeType != "gp3" {
-			instanceStateMap := r.InstanceState.Value.AsValueMap()
 			rootBlockDeviceMap := instanceStateMap["root_block_device"].AsValueSlice()[0].AsValueMap()
 			delete(rootBlockDeviceMap, "throughput")
 			instanceStateMap["root_block_device"] = cty.ListVal([]cty.Value{cty.ObjectVal(rootBlockDeviceMap)})
-			r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 		}
+		r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 	}
 
 	return nil

@@ -142,7 +142,7 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 	}
 }
 
-func (p AWSProvider) GetProviderData(arg ...string) map[string]interface{} {
+func (p AWSProvider) GetProviderData(_ ...string) map[string]interface{} {
 	awsConfig := map[string]interface{}{}
 
 	if p.region == GlobalRegion {
@@ -175,7 +175,7 @@ func (p *AWSProvider) GetBasicConfig() cty.Value {
 	return p.GetConfig()
 }
 
-// check projectName in env params
+// Init check projectName in env params
 func (p *AWSProvider) Init(args []string) error {
 	p.region = args[0]
 	p.profile = args[1]
@@ -232,7 +232,7 @@ func (p *AWSProvider) InitService(serviceName string, verbose bool) error {
 	return nil
 }
 
-// GetAWSSupportService return map of support service for AWS
+// GetSupportedService GetAWSSupportService return map of support service for AWS
 func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
 		"accessanalyzer":    &AwsFacade{service: &AccessAnalyzerGenerator{}},

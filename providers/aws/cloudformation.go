@@ -16,6 +16,7 @@ package aws
 
 import (
 	"context"
+	"github.com/zclconf/go-cty/cty"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation"
@@ -93,11 +94,14 @@ func (g *CloudFormationGenerator) InitResources() error {
 
 func (g *CloudFormationGenerator) PostConvertHook() error {
 	for _, resource := range g.Resources {
-		if resource.InstanceInfo.Type == "aws_cloudformation_stack" {
-			delete(resource.Item, "outputs")
-			if templateBody, ok := resource.InstanceState.Attributes["template_body"]; ok {
-				resource.Item["template_body"] = g.escapeAwsInterpolation(templateBody)
+		if resource.Address.Type == "aws_cloudformation_stack" {
+			instanceStateMap := resource.InstanceState.Value.AsValueMap()
+			delete(instanceStateMap, "outputs")
+
+			if resource.InstanceState.Value.HasIndex(cty.StringVal("template_body")) == cty.True {
+				instanceStateMap["template_body"] = cty.StringVal(g.escapeAwsInterpolation(resource.InstanceState.Value.GetAttr("template_body").AsString()))
 			}
+			resource.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 		}
 	}
 	return nil

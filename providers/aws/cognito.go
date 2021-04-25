@@ -83,7 +83,7 @@ func (g *CognitoGenerator) InitResources() error {
 
 func (g *CognitoGenerator) PostConvertHook() error {
 	for _, r := range g.Resources {
-		if r.InstanceInfo.Type != "aws_cognito_user_pool" {
+		if r.Address.Type != "aws_cognito_user_pool" {
 			continue
 		}
 		if _, ok := r.InstanceState.Attributes["admin_create_user_config.0.unused_account_validity_days"]; ok {
