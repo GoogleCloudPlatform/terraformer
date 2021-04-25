@@ -110,13 +110,6 @@ func (g *Ec2Generator) PostConvertHook() error {
 			instanceStateMap["root_block_device"] = cty.ListVal([]cty.Value{cty.ObjectVal(rootBlockDeviceMap)})
 			r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 		}
-		//
-		//networkInterfaces := r.InstanceState.Value.GetAttr("network_interface").AsValueSlice()
-		//if len(networkInterfaces) == 0 {
-		//	instanceStateMap := r.InstanceState.Value.AsValueMap()
-		//	delete(instanceStateMap, "network_interface")
-		//	r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
-		//}
 	}
 
 	return nil

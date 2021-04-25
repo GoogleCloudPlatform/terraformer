@@ -36,7 +36,9 @@ func NewTfState(resources []Resource, providerSource addrs.Provider, resourceTyp
 		instance := resource.Address.Instance(addrs.NoKey).Absolute(addrs.RootModuleInstance)
 		providerConfig := addrs.RootModuleInstance.ProviderConfigDefault(providerSource)
 		typeSchema := resourceTypes[resource.Address.Type]
-		objectSrc, err := resource.InstanceState.Encode(typeSchema.Block.ImpliedType(), uint64(typeSchema.Version))
+
+		// we need to use type stored in the instance state as we modify the attributes to make it writable to HCL
+		objectSrc, err := resource.InstanceState.Encode(resource.InstanceState.Value.Type(), uint64(typeSchema.Version))
 		if err != nil {
 			log.Println(err.Error())
 			continue
