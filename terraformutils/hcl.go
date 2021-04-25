@@ -19,7 +19,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/hashicorp/terraform/configs/hcl2shim"
 	"log"
 	"regexp"
 	"strings"
@@ -121,17 +120,17 @@ func (v *astSanitizer) visitObjectItem(o *ast.ObjectItem) {
 	v.visit(o.Val)
 }
 
-func Print(data interface{}, mapsObjects map[string]struct{}, format string) ([]byte, error) {
+func Print(data interface{}, mapsObjects map[string]struct{}, format string, isResourceFile bool) ([]byte, error) {
 	switch format {
 	case "hcl":
-		return hclPrint(data, mapsObjects)
+		return hclPrint(data, mapsObjects, isResourceFile)
 	case "json":
 		return jsonPrint(data)
 	}
 	return []byte{}, errors.New("error: unknown output format")
 }
 
-func hclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error) {
+func hclPrint(data interface{}, mapsObjects map[string]struct{}, isResourceFile bool) ([]byte, error) {
 	dataBytesJSON, err := jsonPrint(data)
 	if err != nil {
 		return dataBytesJSON, err
@@ -163,13 +162,46 @@ func hclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error)
 	if err != nil {
 		return nil, err
 	}
+	if isResourceFile {
+		// hack for support terraform 0.12
+		formatted = terraform12Adjustments(formatted, mapsObjects)
+	}
 	// hack for support terraform 0.15
-	formatted = terraform15Adjustments(formatted)
+	formatted = terraform15Adjustments1(formatted)
+	formatted = terraform15Adjustments2(formatted)
 
 	return formatted, nil
 }
 
-func terraform15Adjustments(formatted []byte) []byte {
+func terraform12Adjustments(formatted []byte, mapsObjects map[string]struct{}) []byte {
+	singletonListFix := regexp.MustCompile(`^\s*\w+ = {`)
+	singletonListFixEnd := regexp.MustCompile(`^\s*}`)
+
+	s := string(formatted)
+	old := " = {"
+	newEquals := " {"
+	lines := strings.Split(s, "\n")
+	prefix := make([]string, 0)
+	for i, line := range lines {
+		if singletonListFixEnd.MatchString(line) && len(prefix) > 0 {
+			prefix = prefix[:len(prefix)-1]
+			continue
+		}
+		if !singletonListFix.MatchString(line) {
+			continue
+		}
+		key := strings.Trim(strings.Split(line, old)[0], " ")
+		prefix = append(prefix, key)
+		if _, exist := mapsObjects[strings.Join(prefix, ".")]; exist {
+			continue
+		}
+		lines[i] = strings.ReplaceAll(line, old, newEquals)
+	}
+	s = strings.Join(lines, "\n")
+	return []byte(s)
+}
+
+func terraform15Adjustments1(formatted []byte) []byte {
 	s := string(formatted)
 	oldTerraformConfiguration := "terraform = {"
 	oldRequiredProviders := "  required_providers = {"
@@ -186,6 +218,18 @@ func terraform15Adjustments(formatted []byte) []byte {
 	}
 	s = strings.Join(lines, "\n")
 	return []byte(s)
+}
+
+func terraform15Adjustments2(formatted []byte) []byte {
+	s := string(formatted)
+	lines := strings.Split(s, "\n")
+	var newLines []string
+	for _, line := range lines {
+		if !strings.Contains(line, "= {}") && !strings.Contains(line, "= []") {
+			newLines = append(newLines, line)
+		}
+	}
+	return []byte(strings.Join(newLines, "\n"))
 }
 
 func escapeRune(s string) string {
@@ -217,13 +261,23 @@ func HclPrintResource(resources []Resource, providerData map[string]interface{},
 			continue
 		}
 
-		val := hcl2shim.ConfigValueFromHCL2(res.InstanceState.Value).(map[string]interface{})
-		for _, ignoreKey := range res.IgnoreKeys {
-			if _, exist := val[ignoreKey]; exist {
-				delete(val, ignoreKey)
+		var ignoreKeys []*regexp.Regexp
+		for _, pattern := range res.IgnoreKeys {
+			ignoreKeys = append(ignoreKeys, regexp.MustCompile(pattern))
+		}
+		var allowEmptyValues []*regexp.Regexp
+		for _, pattern := range res.AllowEmptyValues {
+			if pattern != "" {
+				allowEmptyValues = append(allowEmptyValues, regexp.MustCompile(pattern))
 			}
 		}
-		r[res.Address.Name] = val
+		parser := NewFlatmapParser(res.InstanceState.Value, ignoreKeys, allowEmptyValues)
+		attributes, err := parser.Parse()
+		if err != nil {
+			return []byte{}, err
+		}
+
+		r[res.Address.Name] = attributes
 
 		for k := range res.InstanceState.Value.AsValueMap() {
 			if strings.HasSuffix(k, ".%") {
@@ -242,7 +296,7 @@ func HclPrintResource(resources []Resource, providerData map[string]interface{},
 	}
 	var err error
 
-	hclBytes, err := Print(data, mapsObjects, output)
+	hclBytes, err := Print(data, mapsObjects, output, true)
 	if err != nil {
 		return []byte{}, err
 	}

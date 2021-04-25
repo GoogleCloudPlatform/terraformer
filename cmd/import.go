@@ -207,7 +207,6 @@ func initServiceResources(service string, provider terraformutils.ProviderGenera
 		return err
 	}
 
-	provider.GetService().PopulateIgnoreKeys(providerWrapper)
 	provider.GetService().InitialCleanup()
 	log.Println(provider.GetName() + " done importing " + service)
 
@@ -269,7 +268,7 @@ func printService(provider terraformutils.ProviderGenerator, serviceName string,
 			return err
 		}
 		// create Bucket file
-		if bucketStateDataFile, err := terraformutils.Print(bucket.BucketGetTfData(path), map[string]struct{}{}, options.Output); err == nil {
+		if bucketStateDataFile, err := terraformutils.Print(bucket.BucketGetTfData(path), map[string]struct{}{}, options.Output, false); err == nil {
 			terraformoutput.PrintFile(path+"/bucket.tf", bucketStateDataFile)
 		}
 	} else {
@@ -316,7 +315,7 @@ func printService(provider terraformutils.ProviderGenerator, serviceName string,
 			}
 			// create variables file
 			if len(provider.GetResourceConnections()[serviceName]) > 0 && options.Connect && len(variables["data"]["terraform_remote_state"]) > 0 {
-				variablesFile, err := terraformutils.Print(variables, map[string]struct{}{"config": {}}, options.Output)
+				variablesFile, err := terraformutils.Print(variables, map[string]struct{}{"config": {}}, options.Output, false)
 				if err != nil {
 					return err
 				}
@@ -346,7 +345,7 @@ func printService(provider terraformutils.ProviderGenerator, serviceName string,
 			}
 			// create variables file
 			if options.Connect {
-				variablesFile, err := terraformutils.Print(variables, map[string]struct{}{"config": {}}, options.Output)
+				variablesFile, err := terraformutils.Print(variables, map[string]struct{}{"config": {}}, options.Output, false)
 				if err != nil {
 					return err
 				}

@@ -39,7 +39,7 @@ func OutputHclFiles(resources []terraformutils.Resource, provider terraformutils
 		}},
 	}
 
-	providerDataFile, err := terraformutils.Print(providerData, map[string]struct{}{}, output)
+	providerDataFile, err := terraformutils.Print(providerData, map[string]struct{}{}, output, false)
 	if err != nil {
 		return err
 	}
@@ -56,7 +56,7 @@ func OutputHclFiles(resources []terraformutils.Resource, provider terraformutils
 			"value": "${" + r.Address.Type + "." + r.Address.Name + "." + r.GetIDKey() + "}",
 		}
 		outputState[r.Address.Type+"_"+r.Address.Name+"_"+r.GetIDKey()] = &states.OutputValue{
-			Addr: addrs.RootModuleInstance.OutputValue(resourceNameRef),
+			Addr:  addrs.RootModuleInstance.OutputValue(resourceNameRef),
 			Value: r.InstanceState.Value.GetAttr(r.GetIDKey()),
 		}
 		for _, v := range provider.GetResourceConnections() {
@@ -83,7 +83,7 @@ func OutputHclFiles(resources []terraformutils.Resource, provider terraformutils
 	}
 	if len(outputsByResource) > 0 {
 		outputs["output"] = outputsByResource
-		outputsFile, err := terraformutils.Print(outputs, map[string]struct{}{}, output)
+		outputsFile, err := terraformutils.Print(outputs, map[string]struct{}{}, output, false)
 		if err != nil {
 			return err
 		}

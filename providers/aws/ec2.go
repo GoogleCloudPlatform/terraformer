@@ -16,6 +16,7 @@ package aws
 
 import (
 	"context"
+	"github.com/zclconf/go-cty/cty"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -94,13 +95,32 @@ func (g *Ec2Generator) PostConvertHook() error {
 		if r.Address.Type != "aws_instance" {
 			continue
 		}
-		//rootDeviceVolumeType := r.InstanceState.Value.GetAttr("root_block_device").GetAttr("volume_type").AsString()
-		//if !(rootDeviceVolumeType == "io1" || rootDeviceVolumeType == "io2" || rootDeviceVolumeType == "gp3") {
-		//	delete(r.InstanceState.Value["root_block_device"].([]interface{})[0].(map[string]interface{}), "iops")
-		//}
-		//if rootDeviceVolumeType != "gp3" {
-		//	delete(r.Item["root_block_device"].([]interface{})[0].(map[string]interface{}), "throughput")
-		//}
+		rootDeviceVolumeType := r.InstanceState.Value.GetAttr("root_block_device").AsValueSlice()[0].GetAttr("volume_type").AsString()
+		if !(rootDeviceVolumeType == "io1" || rootDeviceVolumeType == "io2" || rootDeviceVolumeType == "gp3") {
+			instanceStateMap := r.InstanceState.Value.AsValueMap()
+			rootBlockDeviceMap := instanceStateMap["root_block_device"].AsValueSlice()[0].AsValueMap()
+			delete(rootBlockDeviceMap, "ipos")
+			instanceStateMap["root_block_device"] = cty.ObjectVal(rootBlockDeviceMap)
+			r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
+		}
+		if rootDeviceVolumeType != "gp3" {
+			instanceStateMap := r.InstanceState.Value.AsValueMap()
+			rootBlockDeviceMap := instanceStateMap["root_block_device"].AsValueMap()
+			delete(rootBlockDeviceMap, "throughput")
+			instanceStateMap["root_block_device"] = cty.ObjectVal(rootBlockDeviceMap)
+			r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
+		}
+
+		networkInterfaces := r.InstanceState.Value.GetAttr("network_interface").AsValueSlice()
+		if len(networkInterfaces) == 0 {
+			instanceStateMap := r.InstanceState.Value.AsValueMap()
+			delete(instanceStateMap, "network_interface")
+			r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
+		}
+
+		instanceStateMap := r.InstanceState.Value.AsValueMap()
+		instanceStateMap["enclave_options"] = instanceStateMap["enclave_options"].AsValueSlice()[0]
+		r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 	}
 
 	return nil

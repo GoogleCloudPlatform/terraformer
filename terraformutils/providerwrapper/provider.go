@@ -113,8 +113,12 @@ func (p *ProviderWrapper) GetReadOnlyAttributes(resourceTypes []string) (map[str
 		if terraformerstring.ContainsString(resourceTypes, resourceName) {
 			readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], "^id$")
 			for k, v := range obj.Block.Attributes {
-				if (!v.Optional && !v.Required) || v.Computed {
-					readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], k)
+				if !v.Optional && !v.Required {
+					if v.Type.IsListType() || v.Type.IsSetType() {
+						readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], "^"+k+"\\.(.*)")
+					} else {
+						readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], "^"+k+"$")
+					}
 				}
 			}
 			readOnlyAttributes[resourceName] = p.readObjBlocks(obj.Block.BlockTypes, readOnlyAttributes[resourceName], "-1")

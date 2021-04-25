@@ -31,7 +31,7 @@ func main() {
 		"import",
 		"aws",
 		"--regions=ap-southeast-1",
-		"--resources=vpc",
+		"--resources=ec2_instance",
 		"--profile=personal",
 		"--verbose",
 		"--compact",

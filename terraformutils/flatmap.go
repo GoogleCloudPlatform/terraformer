@@ -26,19 +26,19 @@ import (
 )
 
 type Flatmapper interface {
-	Parse(ty cty.Type) (map[string]interface{}, error)
+	Parse() (map[string]interface{}, error)
 }
 
 type FlatmapParser struct {
 	Flatmapper
-	attributes       map[string]string
+	state            cty.Value
 	ignoreKeys       []*regexp.Regexp
 	allowEmptyValues []*regexp.Regexp
 }
 
-func NewFlatmapParser(attributes map[string]string, ignoreKeys []*regexp.Regexp, allowEmptyValues []*regexp.Regexp) *FlatmapParser {
+func NewFlatmapParser(state cty.Value, ignoreKeys []*regexp.Regexp, allowEmptyValues []*regexp.Regexp) *FlatmapParser {
 	return &FlatmapParser{
-		attributes:       attributes,
+		state:            state,
 		ignoreKeys:       ignoreKeys,
 		allowEmptyValues: allowEmptyValues,
 	}
@@ -57,14 +57,14 @@ func NewFlatmapParser(attributes map[string]string, ignoreKeys []*regexp.Regexp,
 //
 // The result may contain null values if the given map does not contain keys
 // for all of the different key paths implied by the given type.
-func (p *FlatmapParser) Parse(ty cty.Type) (map[string]interface{}, error) {
-	if p.attributes == nil {
+func (p *FlatmapParser) Parse() (map[string]interface{}, error) {
+	if p.state == cty.NilVal {
 		return nil, nil
 	}
-	if !ty.IsObjectType() {
-		return nil, fmt.Errorf("FlatmapParser#Parse called on %#v", ty)
+	if !p.state.Type().IsObjectType() {
+		return nil, fmt.Errorf("FlatmapParser#Parse called on %#v", p.state.Type().GoString())
 	}
-	return p.fromFlatmapObject("", ty.AttributeTypes())
+	return p.fromFlatmapObject("", p.state.Type().AttributeTypes())
 }
 
 func (p *FlatmapParser) fromFlatmapValue(key string, ty cty.Type) (interface{}, error) {
