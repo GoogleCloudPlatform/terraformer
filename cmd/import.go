@@ -207,6 +207,7 @@ func initServiceResources(service string, provider terraformutils.ProviderGenera
 		return err
 	}
 
+	provider.GetService().PopulateIgnoreKeys(providerWrapper)
 	provider.GetService().InitialCleanup()
 	log.Println(provider.GetName() + " done importing " + service)
 

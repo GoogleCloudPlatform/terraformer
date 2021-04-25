@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/hashicorp/terraform/configs/hcl2shim"
 	"log"
 	"regexp"
 	"strings"
@@ -271,13 +272,14 @@ func HclPrintResource(resources []Resource, providerData map[string]interface{},
 				allowEmptyValues = append(allowEmptyValues, regexp.MustCompile(pattern))
 			}
 		}
-		parser := NewFlatmapParser(res.InstanceState.Value, ignoreKeys, allowEmptyValues)
-		attributes, err := parser.Parse()
+
+		flattenedAttributes := hcl2shim.FlatmapValueFromHCL2(res.InstanceState.Value)
+		parser := NewFlatmapParser(flattenedAttributes, ignoreKeys, allowEmptyValues)
+		parsedAttributes, err := parser.Parse(res.InstanceState.Value.Type())
 		if err != nil {
 			return []byte{}, err
 		}
-
-		r[res.Address.Name] = attributes
+		r[res.Address.Name] = parsedAttributes
 
 		for k := range res.InstanceState.Value.AsValueMap() {
 			if strings.HasSuffix(k, ".%") {
