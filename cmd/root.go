@@ -67,6 +67,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdDatadogImporter,
 		newCmdNewRelicImporter,
 		newCmdGrafanaImporter,
+		newCmdPagerDutyImporter,
 		// Community
 		newCmdKeycloakImporter,
 		newCmdLogzioImporter,
@@ -107,6 +108,7 @@ func providerGenerators() map[string]func() terraformutils.ProviderGenerator {
 		// Monitoring & System Management
 		newDataDogProvider,
 		newNewRelicProvider,
+		newPagerDutyProvider,
 		// Community
 		newKeycloakProvider,
 		newLogzioProvider,
