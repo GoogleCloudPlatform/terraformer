@@ -102,7 +102,7 @@ require (
 	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
 	github.com/fastly/go-fastly v1.18.0
 	github.com/google/go-github/v25 v25.1.3
-	github.com/gophercloud/gophercloud v0.13.0
+	github.com/gophercloud/gophercloud v0.17.0
 	github.com/grafana/grafana-api-golang-client v0.0.0-20210218192924-9ccd2365d2a6
 	github.com/hashicorp/go-azure-helpers v0.10.0
 	github.com/hashicorp/go-cleanhttp v0.5.1
