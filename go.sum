@@ -691,8 +691,8 @@ github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d h1:kJCB4vdITiW1eC1
 github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d/go.mod h1:+NfK9FKeTrX5uv1uIXGdwYDTeHna2qgaIlx54MXqjAM=
 github.com/heimweh/go-pagerduty v0.0.0-20210412205347-cc0e5d3c14d4 h1:uyHgKwTluKHt2ctmyZfdVxECwSqYflYDo+RwyZZEdR0=
 github.com/heimweh/go-pagerduty v0.0.0-20210412205347-cc0e5d3c14d4/go.mod h1:6+bccpjQ/PM8uQY9m8avM4MJea+3vo3ta9r8kGQ4XFY=
-github.com/heroku/heroku-go/v5 v5.1.0 h1:3Qx1MxjzczSakhAZN4yRsvCI7kP0ldijK1XvfoYa4DE=
-github.com/heroku/heroku-go/v5 v5.1.0/go.mod h1:d+1QrZyjbnQJG1f8xIoVvMQRFLt3XRVZOdlm26Sr73U=
+github.com/heroku/heroku-go/v5 v5.3.0 h1:Tnm+IJZEhtaWN4BfWJeEB2dzMYvkQBN+oeeGOXGFO54=
+github.com/heroku/heroku-go/v5 v5.3.0/go.mod h1:d+1QrZyjbnQJG1f8xIoVvMQRFLt3XRVZOdlm26Sr73U=
 github.com/hokaccha/go-prettyjson v0.0.0-20210113012101-fb4e108d2519 h1:nqAlWFEdqI0ClbTDrhDvE/8LeQ4pftrqKUX9w5k0j3s=
 github.com/hokaccha/go-prettyjson v0.0.0-20210113012101-fb4e108d2519/go.mod h1:pFlLw2CfqZiIBOx6BuCeRLCrfxBJipTY0nIOF/VbGcI=
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
