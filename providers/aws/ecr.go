@@ -17,6 +17,7 @@ package aws
 import (
 	"context"
 	"fmt"
+	"github.com/zclconf/go-cty/cty"
 
 	"github.com/aws/aws-sdk-go-v2/service/ecr"
 
@@ -82,20 +83,15 @@ func (g *EcrGenerator) InitResources() error {
 }
 
 func (g *EcrGenerator) PostConvertHook() error {
-	for i, resource := range g.Resources {
-		if resource.InstanceInfo.Type == "aws_ecr_repository_policy" {
-			if val, ok := g.Resources[i].Item["policy"]; ok {
-				policy := g.escapeAwsInterpolation(val.(string))
-				g.Resources[i].Item["policy"] = fmt.Sprintf(`<<POLICY
+	for _, resource := range g.Resources {
+		if resource.Address.Type == "aws_ecr_repository_policy" || resource.Address.Type == "aws_ecr_lifecycle_policy" {
+			if resource.InstanceState.Value.HasIndex(cty.StringVal("policy")) == cty.True {
+				instanceStateMap := resource.InstanceState.Value.AsValueMap()
+				policy := g.escapeAwsInterpolation(instanceStateMap["policy"].AsString())
+				instanceStateMap["policy"] = cty.StringVal(fmt.Sprintf(`<<POLICY
 %s
-POLICY`, policy)
-			}
-		} else if resource.InstanceInfo.Type == "aws_ecr_lifecycle_policy" {
-			if val, ok := g.Resources[i].Item["policy"]; ok {
-				policy := g.escapeAwsInterpolation(val.(string))
-				g.Resources[i].Item["policy"] = fmt.Sprintf(`<<POLICY
-%s
-POLICY`, policy)
+POLICY`, policy))
+				resource.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 			}
 		}
 	}

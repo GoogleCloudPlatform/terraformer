@@ -16,6 +16,7 @@ package aws
 
 import (
 	"context"
+	"github.com/zclconf/go-cty/cty"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
@@ -54,11 +55,13 @@ func (g *DynamoDbGenerator) InitResources() error {
 
 func (g *DynamoDbGenerator) PostConvertHook() error {
 	for _, r := range g.Resources {
-		if r.InstanceInfo.Type != "aws_dynamodb_table" {
+		if r.Address.Type != "aws_dynamodb_table" {
 			continue
 		}
-		if val, ok := r.InstanceState.Attributes["ttl.0.enabled"]; ok && val == "false" {
-			delete(r.Item, "ttl")
+		if r.InstanceState.Value.GetAttr("ttl").AsValueSlice()[0].GetAttr("enabled").AsString() == "false" {
+			instanceStateMap := r.InstanceState.Value.AsValueMap()
+			delete(instanceStateMap, "ttl")
+			r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 		}
 	}
 	return nil

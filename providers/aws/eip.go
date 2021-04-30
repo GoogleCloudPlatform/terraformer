@@ -30,7 +30,7 @@ type ElasticIPGenerator struct {
 }
 
 func (g *ElasticIPGenerator) createElasticIpsResources(svc *ec2.Client) []terraformutils.Resource {
-	resources := []terraformutils.Resource{}
+	var resources []terraformutils.Resource
 	addresses, err := svc.DescribeAddresses(context.TODO(), &ec2.DescribeAddressesInput{})
 
 	if err != nil {

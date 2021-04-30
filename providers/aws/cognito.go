@@ -2,6 +2,7 @@ package aws
 
 import (
 	"context"
+	"github.com/zclconf/go-cty/cty"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -86,26 +87,23 @@ func (g *CognitoGenerator) PostConvertHook() error {
 		if r.Address.Type != "aws_cognito_user_pool" {
 			continue
 		}
-		if _, ok := r.InstanceState.Attributes["admin_create_user_config.0.unused_account_validity_days"]; ok {
-			if _, okpp := r.InstanceState.Attributes["admin_create_user_config.0.unused_account_validity_days"]; okpp {
-				delete(r.Item["admin_create_user_config"].([]interface{})[0].(map[string]interface{}), "unused_account_validity_days")
+		instanceStateMap := r.InstanceState.Value.AsValueMap()
+		if r.InstanceState.Value.HasIndex(cty.StringVal("sms_verification_message")) == cty.True {
+			if r.InstanceState.Value.GetAttr("verification_message_template").AsValueSlice()[0].HasIndex(cty.StringVal("sms_message")) == cty.True {
+				delete(instanceStateMap, "sms_verification_message")
 			}
 		}
-		if _, ok := r.InstanceState.Attributes["sms_verification_message"]; ok {
-			if _, oktmp := r.InstanceState.Attributes["verification_message_template.0.sms_message"]; oktmp {
-				delete(r.Item, "sms_verification_message")
+		if r.InstanceState.Value.HasIndex(cty.StringVal("email_verification_message")) == cty.True {
+			if r.InstanceState.Value.GetAttr("verification_message_template").AsValueSlice()[0].HasIndex(cty.StringVal("email_message")) == cty.True {
+				delete(instanceStateMap, "email_verification_message")
 			}
 		}
-		if _, ok := r.InstanceState.Attributes["email_verification_message"]; ok {
-			if _, oktmp := r.InstanceState.Attributes["verification_message_template.0.email_message"]; oktmp {
-				delete(r.Item, "email_verification_message")
+		if r.InstanceState.Value.HasIndex(cty.StringVal("email_verification_subject")) == cty.True {
+			if r.InstanceState.Value.GetAttr("verification_message_template").AsValueSlice()[0].HasIndex(cty.StringVal("email_subject")) == cty.True {
+				delete(instanceStateMap, "email_verification_subject")
 			}
 		}
-		if _, ok := r.InstanceState.Attributes["email_verification_subject"]; ok {
-			if _, oktmp := r.InstanceState.Attributes["verification_message_template.0.email_subject"]; oktmp {
-				delete(r.Item, "email_verification_subject")
-			}
-		}
+		r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 	}
 	return nil
 }

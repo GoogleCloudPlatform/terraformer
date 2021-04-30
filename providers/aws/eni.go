@@ -16,6 +16,7 @@ package aws
 
 import (
 	"context"
+	"github.com/zclconf/go-cty/cty"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
@@ -63,13 +64,17 @@ func (g *EniGenerator) InitResources() error {
 
 func (g *EniGenerator) PostConvertHook() error {
 	for _, r := range g.Resources {
-		if r.InstanceInfo.Type != "aws_network_interface" {
+		if r.Address.Type != "aws_network_interface" {
 			continue
 		}
-		if _, hasAttachment := r.Item["attachment"]; hasAttachment {
-			if attInstance, hasAttachment := r.InstanceState.Attributes["attachment.0.instance"]; !hasAttachment || attInstance == "" {
-				delete(r.Item, "attachment")
+		if r.InstanceState.Value.HasIndex(cty.StringVal("attachment")) == cty.True {
+			if r.InstanceState.Value.GetAttr("attachment").AsValueSlice()[0].HasIndex(cty.StringVal("instance")) == cty.True ||
+				r.InstanceState.Value.GetAttr("attachment").AsValueSlice()[0].GetAttr("instance").AsString() == "" {
+				instanceStateMap := r.InstanceState.Value.AsValueMap()
+				delete(instanceStateMap, "attachment")
+				r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 			}
+
 		}
 	}
 	return nil

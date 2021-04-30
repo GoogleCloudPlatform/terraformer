@@ -16,6 +16,7 @@ package aws
 
 import (
 	"context"
+	"github.com/zclconf/go-cty/cty"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	es "github.com/aws/aws-sdk-go-v2/service/elasticsearchservice"
@@ -58,15 +59,20 @@ func (g *EsGenerator) InitResources() error {
 
 func (g *EsGenerator) PostConvertHook() error {
 	for _, r := range g.Resources {
-		if r.InstanceInfo.Type != "aws_elasticsearch_domain" {
+		if r.Address.Type != "aws_elasticsearch_domain" {
 			continue
 		}
-		if r.InstanceState.Attributes["cognito_options.0.enabled"] == "false" {
-			delete(r.Item, "cognito_options")
+		instanceStateMap := r.InstanceState.Value.AsValueMap()
+
+		if r.InstanceState.Value.GetAttr("cognito_options").AsValueSlice()[0].GetAttr("enabled").AsString() == "false" {
+			delete(instanceStateMap, "cognito_options")
 		}
-		if r.InstanceState.Attributes["cluster_config.0.warm_count"] == "0" {
-			delete(r.Item["cluster_config"].([]interface{})[0].(map[string]interface{}), "warm_count")
+		if r.InstanceState.Value.GetAttr("cluster_config").AsValueSlice()[0].GetAttr("warm_count").AsString() == "0" {
+			clusterConfigMap := instanceStateMap["cluster_config"].AsValueSlice()[0].AsValueMap()
+			delete(clusterConfigMap, "warm_count")
+			instanceStateMap["cluster_config"] = cty.ListVal([]cty.Value{cty.ObjectVal(clusterConfigMap)})
 		}
+		r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 	}
 	return nil
 }
