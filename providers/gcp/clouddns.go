@@ -17,6 +17,7 @@ package gcp
 import (
 	"context"
 	"fmt"
+	"github.com/zclconf/go-cty/cty"
 	"log"
 	"strings"
 
@@ -105,21 +106,20 @@ func (g *CloudDNSGenerator) InitResources() error {
 }
 
 func (g *CloudDNSGenerator) PostConvertHook() error {
-	for i, resourceRecord := range g.Resources {
-		if resourceRecord.InstanceInfo.Type == "google_dns_managed_zone" {
+	for _, resourceRecord := range g.Resources {
+		if resourceRecord.Address.Type == "google_dns_managed_zone" {
 			continue
 		}
-		item := resourceRecord.Item
-		zoneID := item["managed_zone"].(string)
+		zoneID := resourceRecord.GetStateAttr("managed_zone")
 		for _, resourceZone := range g.Resources {
-			if resourceZone.InstanceInfo.Type != "google_dns_managed_zone" {
+			if resourceZone.Address.Type != "google_dns_managed_zone" {
 				continue
 			}
-			if zoneID == resourceZone.InstanceState.ID {
-				g.Resources[i].Item["managed_zone"] = "google_dns_managed_zone." + resourceZone.ResourceName + ".name"
-				name := g.Resources[i].Item["name"].(string)
-				name = strings.ReplaceAll(name, resourceZone.Item["dns_name"].(string), "")
-				g.Resources[i].Item["name"] = name + "google_dns_managed_zone." + resourceZone.ResourceName + ".dns_name"
+			if zoneID == resourceZone.ImportID {
+				resourceRecord.SetStateAttr("managed_zone", cty.StringVal(resourceZone.Address.String()+".name"))
+				name := resourceRecord.GetStateAttr("name")
+				name = strings.ReplaceAll(name, resourceZone.GetStateAttr("dns_name"), "")
+				resourceRecord.SetStateAttr("name", cty.StringVal(name+resourceZone.Address.String()+".dns_name"))
 			}
 		}
 	}

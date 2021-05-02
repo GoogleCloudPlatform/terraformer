@@ -17,6 +17,7 @@ package gcp
 import (
 	"context"
 	"fmt"
+	"github.com/zclconf/go-cty/cty"
 	"log"
 	"strconv"
 
@@ -190,15 +191,15 @@ func (g *GcsGenerator) InitResources() error {
 // PostGenerateHook for add bucket policy json as heredoc
 // support only bucket with policy
 func (g *GcsGenerator) PostConvertHook() error {
-	for i, resource := range g.Resources {
-		if resource.InstanceInfo.Type != "google_storage_bucket_iam_policy" {
+	for _, resource := range g.Resources {
+		if resource.Address.Type != "google_storage_bucket_iam_policy" {
 			continue
 		}
-		if _, exist := resource.Item["policy_data"]; exist {
-			policy := resource.Item["policy_data"].(string)
-			g.Resources[i].Item["policy_data"] = fmt.Sprintf(`<<POLICY
+		if resource.HasStateAttr("policy_data") {
+			policy := resource.GetStateAttr("policy_data")
+			resource.SetStateAttr("policy_data", cty.StringVal(fmt.Sprintf(`<<POLICY
 %s
-POLICY`, policy)
+POLICY`, policy)))
 		}
 	}
 	return nil

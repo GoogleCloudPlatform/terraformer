@@ -16,6 +16,7 @@ package github
 
 import (
 	"context"
+	"github.com/zclconf/go-cty/cty"
 	"log"
 	"strconv"
 
@@ -113,23 +114,23 @@ func (g *TeamsGenerator) InitResources() error {
 // PostConvertHook for connect between team and members
 func (g *TeamsGenerator) PostConvertHook() error {
 	for _, team := range g.Resources {
-		if team.InstanceInfo.Type != "github_team" {
+		if team.Address.Type != "github_team" {
 			continue
 		}
-		for i, member := range g.Resources {
-			if member.InstanceInfo.Type != "github_team_membership" {
+		for _, member := range g.Resources {
+			if member.Address.Type != "github_team_membership" {
 				continue
 			}
-			if member.InstanceState.Attributes["team_id"] == team.InstanceState.Attributes["id"] {
-				g.Resources[i].Item["team_id"] = "${github_team." + team.ResourceName + ".id}"
+			if member.GetStateAttr("team_id") == team.ImportID {
+				member.SetStateAttr("team_id", cty.StringVal("${"+team.Address.String()+".id}"))
 			}
 		}
-		for i, repo := range g.Resources {
-			if repo.InstanceInfo.Type != "github_team_repository" {
+		for _, repo := range g.Resources {
+			if repo.Address.Type != "github_team_repository" {
 				continue
 			}
-			if repo.InstanceState.Attributes["team_id"] == team.InstanceState.Attributes["id"] {
-				g.Resources[i].Item["team_id"] = "${github_team." + team.ResourceName + ".id}"
+			if repo.GetStateAttr("team_id") == team.ImportID {
+				repo.SetStateAttr("team_id", cty.StringVal("${"+team.Address.String()+".id}"))
 			}
 		}
 	}

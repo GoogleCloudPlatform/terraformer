@@ -16,6 +16,7 @@ package github
 
 import (
 	"context"
+	"github.com/zclconf/go-cty/cty"
 	"log"
 	"strconv"
 
@@ -151,39 +152,39 @@ func (g *RepositoriesGenerator) createRepositoryDeployKeyResources(ctx context.C
 // PostGenerateHook for connect between resources
 func (g *RepositoriesGenerator) PostConvertHook() error {
 	for _, repo := range g.Resources {
-		if repo.InstanceInfo.Type != "github_repository" {
+		if repo.Address.Type != "github_repository" {
 			continue
 		}
-		for i, member := range g.Resources {
-			if member.InstanceInfo.Type != "github_repository_webhook" {
+		for _, member := range g.Resources {
+			if member.Address.Type != "github_repository_webhook" {
 				continue
 			}
-			if member.InstanceState.Attributes["repository"] == repo.InstanceState.Attributes["name"] {
-				g.Resources[i].Item["repository"] = "${github_repository." + repo.ResourceName + ".name}"
+			if member.GetStateAttr("repository") == repo.GetStateAttr("name") {
+				member.SetStateAttr("repository", cty.StringVal("${"+repo.Address.String()+".name}"))
 			}
 		}
-		for i, branch := range g.Resources {
-			if branch.InstanceInfo.Type != "github_branch_protection" {
+		for _, branch := range g.Resources {
+			if branch.Address.Type != "github_branch_protection" {
 				continue
 			}
-			if branch.InstanceState.Attributes["repository"] == repo.InstanceState.Attributes["name"] {
-				g.Resources[i].Item["repository"] = "${github_repository." + repo.ResourceName + ".name}"
+			if branch.GetStateAttr("repository") == repo.GetStateAttr("name") {
+				branch.SetStateAttr("repository", cty.StringVal("${"+repo.Address.String()+".name}"))
 			}
 		}
-		for i, collaborator := range g.Resources {
-			if collaborator.InstanceInfo.Type != "github_repository_collaborator" {
+		for _, collaborator := range g.Resources {
+			if collaborator.Address.Type != "github_repository_collaborator" {
 				continue
 			}
-			if collaborator.InstanceState.Attributes["repository"] == repo.InstanceState.Attributes["name"] {
-				g.Resources[i].Item["repository"] = "${github_repository." + repo.ResourceName + ".name}"
+			if collaborator.GetStateAttr("repository") == repo.GetStateAttr("name") {
+				collaborator.SetStateAttr("repository", cty.StringVal("${"+repo.Address.String()+".name}"))
 			}
 		}
-		for i, key := range g.Resources {
-			if key.InstanceInfo.Type != "github_repository_deploy_key" {
+		for _, key := range g.Resources {
+			if key.Address.Type != "github_repository_deploy_key" {
 				continue
 			}
-			if key.InstanceState.Attributes["repository"] == repo.InstanceState.Attributes["name"] {
-				g.Resources[i].Item["repository"] = "${github_repository." + repo.ResourceName + ".name}"
+			if key.GetStateAttr("repository") == repo.GetStateAttr("name") {
+				key.SetStateAttr("repository", cty.StringVal("${"+repo.Address.String()+".name}"))
 			}
 		}
 	}

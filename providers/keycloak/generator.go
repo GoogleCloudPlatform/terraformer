@@ -17,6 +17,7 @@ package keycloak
 import (
 	"errors"
 	"fmt"
+	"github.com/zclconf/go-cty/cty"
 	"sort"
 	"strings"
 
@@ -363,256 +364,227 @@ func (g *RealmGenerator) PostConvertHook() error {
 
 	// Set slices to be able to map IDs with Terraform variables
 	for _, r := range g.Resources {
-		if r.InstanceInfo.Type != "keycloak_realm" &&
-			r.InstanceInfo.Type != "keycloak_ldap_user_federation" &&
-			r.InstanceInfo.Type != "keycloak_group" &&
-			r.InstanceInfo.Type != "keycloak_openid_client" &&
-			r.InstanceInfo.Type != "keycloak_role" &&
-			r.InstanceInfo.Type != "keycloak_openid_client_scope" &&
-			r.InstanceInfo.Type != "keycloak_user" &&
-			r.InstanceInfo.Type != "keycloak_authentication_flow" &&
-			r.InstanceInfo.Type != "keycloak_authentication_subflow" &&
-			r.InstanceInfo.Type != "keycloak_authentication_execution" {
+		if r.Address.Type != "keycloak_realm" &&
+			r.Address.Type != "keycloak_ldap_user_federation" &&
+			r.Address.Type != "keycloak_group" &&
+			r.Address.Type != "keycloak_openid_client" &&
+			r.Address.Type != "keycloak_role" &&
+			r.Address.Type != "keycloak_openid_client_scope" &&
+			r.Address.Type != "keycloak_user" &&
+			r.Address.Type != "keycloak_authentication_flow" &&
+			r.Address.Type != "keycloak_authentication_subflow" &&
+			r.Address.Type != "keycloak_authentication_execution" {
 			continue
 		}
-		if r.InstanceInfo.Type == "keycloak_realm" {
-			mapRealmIDs[r.InstanceState.ID] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".id}"
+		if r.Address.Type == "keycloak_realm" {
+			mapRealmIDs[r.ImportID] = "${" + r.Address.String() + ".id}"
 		}
-		if r.InstanceInfo.Type == "keycloak_ldap_user_federation" {
-			mapUserFederationIDs[r.Item["realm_id"].(string)+"_"+r.InstanceState.ID] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".id}"
+		if r.Address.Type == "keycloak_ldap_user_federation" {
+			mapUserFederationIDs[r.GetStateAttr("realm_id")+"_"+r.ImportID] = "${" + r.Address.String() + ".id}"
 		}
-		if r.InstanceInfo.Type == "keycloak_group" {
-			mapGroupIDs[r.Item["realm_id"].(string)+"_"+r.InstanceState.ID] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".id}"
-			mapGroupNames[r.Item["realm_id"].(string)+"_"+r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+		if r.Address.Type == "keycloak_group" {
+			mapGroupIDs[r.GetStateAttr("realm_id")+"_"+r.ImportID] = "${" + r.Address.String() + ".id}"
+			mapGroupNames[r.GetStateAttr("realm_id")+"_"+r.GetStateAttr("name")] = "${" + r.Address.String() + ".name}"
 		}
-		if r.InstanceInfo.Type == "keycloak_openid_client" {
-			mapClientIDs[r.Item["realm_id"].(string)+"_"+r.InstanceState.ID] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".id}"
-			mapClientNames[r.Item["realm_id"].(string)+"_"+r.InstanceState.ID] = r.Item["client_id"].(string)
-			mapClientClientNames[r.Item["realm_id"].(string)+"_"+r.InstanceState.ID] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".client_id}"
-			mapClientClientIDs[r.Item["realm_id"].(string)+"_"+r.InstanceState.Attributes["client_id"]] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".client_id}"
-			if _, exist := r.InstanceState.Attributes["service_account_user_id"]; exist {
-				mapServiceAccountUserIDs[r.Item["realm_id"].(string)+"_"+r.InstanceState.Attributes["service_account_user_id"]] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".service_account_user_id}"
+		if r.Address.Type == "keycloak_openid_client" {
+			mapClientIDs[r.GetStateAttr("realm_id")+"_"+r.ImportID] = "${" + r.Address.String() + ".id}"
+			mapClientNames[r.GetStateAttr("realm_id")+"_"+r.ImportID] = r.GetStateAttr("client_id")
+			mapClientClientNames[r.GetStateAttr("realm_id")+"_"+r.ImportID] = "${" + r.Address.String() + ".client_id}"
+			mapClientClientIDs[r.GetStateAttr("realm_id")+"_"+r.GetStateAttr("client_id")] = "${" + r.Address.String() + ".client_id}"
+			if r.HasStateAttr("service_account_user_id") {
+				mapServiceAccountUserIDs[r.GetStateAttr("realm_id")+"_"+r.GetStateAttr("service_account_user_id")] = "${" + r.Address.String() + ".service_account_user_id}"
 			}
 		}
-		if r.InstanceInfo.Type == "keycloak_role" {
-			mapRoleIDs[r.Item["realm_id"].(string)+"_"+r.InstanceState.ID] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".id}"
-			if _, exist := r.Item["client_id"]; exist {
-				mapClientRoleNames[r.Item["realm_id"].(string)+"_"+mapClientNames[r.Item["realm_id"].(string)+"_"+r.Item["client_id"].(string)]+"."+r.Item["name"].(string)] = mapClientClientNames[r.Item["realm_id"].(string)+"_"+r.Item["client_id"].(string)] + ".${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
-				mapClientRoleShortNames[r.Item["realm_id"].(string)+"_"+mapClientNames[r.Item["realm_id"].(string)+"_"+r.Item["client_id"].(string)]+"."+r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+		if r.Address.Type == "keycloak_role" {
+			mapRoleIDs[r.GetStateAttr("realm_id")+"_"+r.ImportID] = "${" + r.Address.String() + ".id}"
+			if r.HasStateAttr("client_id") {
+				mapClientRoleNames[r.GetStateAttr("realm_id")+"_"+mapClientNames[r.GetStateAttr("realm_id")+"_"+r.GetStateAttr("client_id")]+"."+r.GetStateAttr("name")] = mapClientClientNames[r.GetStateAttr("realm_id")+"_"+r.GetStateAttr("client_id")] + ".${" + r.Address.String() + ".name}"
+				mapClientRoleShortNames[r.GetStateAttr("realm_id")+"_"+mapClientNames[r.GetStateAttr("realm_id")+"_"+r.GetStateAttr("client_id")]+"."+r.GetStateAttr("name")] = "${" + r.Address.String() + ".name}"
 			} else {
-				mapClientRoleNames[r.Item["realm_id"].(string)+"_"+r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+				mapClientRoleNames[r.GetStateAttr("realm_id")+"_"+r.GetStateAttr("name")] = "${" + r.Address.String() + ".name}"
 			}
 		}
-		if r.InstanceInfo.Type == "keycloak_openid_client_scope" {
-			mapScopeNames[r.Item["realm_id"].(string)+"_"+r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+		if r.Address.Type == "keycloak_openid_client_scope" {
+			mapScopeNames[r.GetStateAttr("realm_id")+"_"+r.GetStateAttr("name")] = "${" + r.Address.String() + ".name}"
 		}
-		if r.InstanceInfo.Type == "keycloak_user" {
-			mapUserNames[r.Item["realm_id"].(string)+"_"+r.Item["username"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".username}"
+		if r.Address.Type == "keycloak_user" {
+			mapUserNames[r.GetStateAttr("realm_id")+"_"+r.GetStateAttr("username")] = "${" + r.Address.String() + ".username}"
 		}
-		if r.InstanceInfo.Type == "keycloak_authentication_flow" || r.InstanceInfo.Type == "keycloak_authentication_subflow" {
-			mapAuthenticationFlowAliases[r.Item["realm_id"].(string)+"_"+r.Item["alias"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".alias}"
+		if r.Address.Type == "keycloak_authentication_flow" || r.Address.Type == "keycloak_authentication_subflow" {
+			mapAuthenticationFlowAliases[r.GetStateAttr("realm_id")+"_"+r.GetStateAttr("alias")] = "${" + r.Address.String() + ".alias}"
 		}
-		if r.InstanceInfo.Type == "keycloak_authentication_execution" {
-			mapAuthenticationExecutionIDs[r.Item["realm_id"].(string)+"_"+r.InstanceState.ID] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".id}"
+		if r.Address.Type == "keycloak_authentication_execution" {
+			mapAuthenticationExecutionIDs[r.GetStateAttr("realm_id")+"_"+r.ImportID] = "${" + r.Address.String() + ".id}"
 		}
 	}
 
 	// For each resources, modify import if needed...
-	for i, r := range g.Resources {
+	for _, r := range g.Resources {
 		// Escape keycloak text inputs not to get unpredictable results or errors when Terraform will try to interpret variables ($ vs $$)
 		// TODO: ensure that we escape all existing fields
-		if strings.Contains(r.InstanceState.Attributes["consent_screen_text"], "$") {
-			g.Resources[i].Item["consent_screen_text"] = strings.ReplaceAll(r.InstanceState.Attributes["consent_screen_text"], "$", "$$")
+		if strings.Contains(r.GetStateAttr("consent_screen_text"), "$") {
+			r.SetStateAttr("consent_screen_text", cty.StringVal(strings.ReplaceAll(r.GetStateAttr("consent_screen_text"), "$", "$$")))
 		}
-		if strings.Contains(r.InstanceState.Attributes["name"], "$") {
-			g.Resources[i].Item["name"] = strings.ReplaceAll(r.InstanceState.Attributes["name"], "$", "$$")
+		if strings.Contains(r.GetStateAttr("name"), "$") {
+			r.SetStateAttr("name", cty.StringVal(strings.ReplaceAll(r.GetStateAttr("name"), "$", "$$")))
 		}
-		if strings.Contains(r.InstanceState.Attributes["description"], "$") {
-			g.Resources[i].Item["description"] = strings.ReplaceAll(r.InstanceState.Attributes["description"], "$", "$$")
+		if strings.Contains(r.GetStateAttr("description"), "$") {
+			r.SetStateAttr("description", cty.StringVal(strings.ReplaceAll(r.GetStateAttr("description"), "$", "$$")))
 		}
-		if strings.Contains(r.InstanceState.Attributes["root_url"], "$") {
-			g.Resources[i].Item["root_url"] = strings.ReplaceAll(r.InstanceState.Attributes["root_url"], "$", "$$")
+		if strings.Contains(r.GetStateAttr("root_url"), "$") {
+			r.SetStateAttr("root_url", cty.StringVal(strings.ReplaceAll(r.GetStateAttr("root_url"), "$", "$$")))
 		}
 
 		// Sort supported_locales to get reproducible results for keycloak_realm resources
-		if r.InstanceInfo.Type == "keycloak_realm" {
-			if _, exist := r.Item["internationalization"]; exist {
-				for _, v := range r.Item["internationalization"].([]interface{}) {
-					sortedSupportedLocales := make([]string, len(v.(map[string]interface{})["supported_locales"].([]interface{})))
-					for k, vv := range v.(map[string]interface{})["supported_locales"].([]interface{}) {
-						sortedSupportedLocales[k] = vv.(string)
-					}
-					sort.Strings(sortedSupportedLocales)
-					v.(map[string]interface{})["supported_locales"] = sortedSupportedLocales
-				}
-			}
+		if r.Address.Type == "keycloak_realm" {
+			r.SortStateAttrEachAttrStringSlice("internationalization", "supported_locales")
 		}
 
 		// Sort group_ids to get reproducible results for keycloak_default_groups resources
 		// Set an empty string slice if the attribute doesn't exist as it is mandatory
-		if r.InstanceInfo.Type == "keycloak_default_groups" {
-			if _, exist := r.Item["group_ids"]; exist {
-				renamedGroupIDs := make([]string, len(r.Item["group_ids"].([]interface{})))
-				for k, v := range r.Item["group_ids"].([]interface{}) {
-					renamedGroupIDs[k] = mapGroupIDs[r.Item["realm_id"].(string)+"_"+v.(string)]
-				}
-				sort.Strings(renamedGroupIDs)
-				g.Resources[i].Item["group_ids"] = renamedGroupIDs
+		if r.Address.Type == "keycloak_default_groups" {
+			if r.HasStateAttr("group_ids") {
+				g.sortAttrWithRealmId(r, "group_ids", mapGroupIDs)
 			} else {
-				g.Resources[i].Item["group_ids"] = []string{}
+				r.SetStateAttr("group_ids", cty.ListVal([]cty.Value{}))
 			}
 		}
 
 		// Sort valid_redirect_uris and web_origins to get reproducible results for keycloak_openid_client resources
-		if r.InstanceInfo.Type == "keycloak_openid_client" {
-			if _, exist := r.Item["valid_redirect_uris"]; exist {
-				sortedValidRedirectUris := make([]string, len(r.Item["valid_redirect_uris"].([]interface{})))
-				for k, v := range r.Item["valid_redirect_uris"].([]interface{}) {
-					sortedValidRedirectUris[k] = v.(string)
-				}
-				sort.Strings(sortedValidRedirectUris)
-				g.Resources[i].Item["valid_redirect_uris"] = sortedValidRedirectUris
-			}
-
-			if _, exist := r.Item["web_origins"]; exist {
-				sortedWebOrigins := make([]string, len(r.Item["web_origins"].([]interface{})))
-				for k, v := range r.Item["web_origins"].([]interface{}) {
-					sortedWebOrigins[k] = v.(string)
-				}
-				sort.Strings(sortedWebOrigins)
-				g.Resources[i].Item["web_origins"] = sortedWebOrigins
-			}
+		if r.Address.Type == "keycloak_openid_client" {
+			r.SortStateAttrStringSlice("valid_redirect_uris")
+			r.SortStateAttrStringSlice("web_origins")
 		}
 
 		// Sort composite_roles to get reproducible results for keycloak_role resources
-		if _, exist := r.Item["composite_roles"]; exist && r.InstanceInfo.Type == "keycloak_role" {
-			renamedCompositeRoles := make([]string, len(r.Item["composite_roles"].([]interface{})))
-			for k, v := range r.Item["composite_roles"].([]interface{}) {
-				renamedCompositeRoles[k] = mapRoleIDs[r.Item["realm_id"].(string)+"_"+v.(string)]
-			}
-			sort.Strings(renamedCompositeRoles)
-			g.Resources[i].Item["composite_roles"] = renamedCompositeRoles
+		if r.Address.Type == "keycloak_role" && r.HasStateAttr("composite_roles") {
+			g.sortAttrWithRealmId(r, "composite_roles", mapGroupIDs)
 		}
 
 		// Sort default_scopes to get reproducible results for keycloak_openid_client_default_scopes resources
-		if _, exist := r.Item["default_scopes"]; exist && r.InstanceInfo.Type == "keycloak_openid_client_default_scopes" {
-			renamedScopes := make([]string, len(r.Item["default_scopes"].([]interface{})))
-			for k, v := range r.Item["default_scopes"].([]interface{}) {
-				renamedScopes[k] = mapScopeNames[r.Item["realm_id"].(string)+"_"+v.(string)]
-			}
-			sort.Strings(renamedScopes)
-			g.Resources[i].Item["default_scopes"] = renamedScopes
+		if r.Address.Type == "keycloak_openid_client_default_scopes" && r.HasStateAttr("default_scopes") {
+			g.sortAttrWithRealmId(r, "default_scopes", mapGroupIDs)
 		}
 
 		// Sort optional_scopes to get reproducible results for keycloak_openid_client_optional_scopes resources
-		if _, exist := r.Item["optional_scopes"]; exist && r.InstanceInfo.Type == "keycloak_openid_client_optional_scopes" {
-			renamedScopes := make([]string, len(r.Item["optional_scopes"].([]interface{})))
-			for k, v := range r.Item["optional_scopes"].([]interface{}) {
-				renamedScopes[k] = mapScopeNames[r.Item["realm_id"].(string)+"_"+v.(string)]
-			}
-			sort.Strings(renamedScopes)
-			g.Resources[i].Item["optional_scopes"] = renamedScopes
+		if r.Address.Type == "keycloak_openid_client_optional_scopes" && r.HasStateAttr("optional_scopes") {
+			g.sortAttrWithRealmId(r, "optional_scopes", mapGroupIDs)
 		}
 
 		// Sort role_ids to get reproducible results for keycloak_group_roles resources
-		if r.InstanceInfo.Type == "keycloak_group_roles" {
-			sortedRoles := make([]string, len(r.Item["role_ids"].([]interface{})))
-			for k, v := range r.Item["role_ids"].([]interface{}) {
-				sortedRoles[k] = mapRoleIDs[r.Item["realm_id"].(string)+"_"+v.(string)]
-			}
-			sort.Strings(sortedRoles)
-			g.Resources[i].Item["role_ids"] = sortedRoles
+		if r.Address.Type == "keycloak_group_roles" {
+			g.sortAttrWithRealmId(r, "role_ids", mapGroupIDs)
 		}
 
 		// Sort members to get reproducible results for keycloak_group_memberships resources
 		// Map members to keycloak_user.foo.username Terraform variables
-		if r.InstanceInfo.Type == "keycloak_group_memberships" {
-			sortedMembers := make([]string, len(r.Item["members"].([]interface{})))
-			for k, v := range r.Item["members"].([]interface{}) {
-				if mapUserNames[r.Item["realm_id"].(string)+"_"+v.(string)] != "" {
-					sortedMembers[k] = mapUserNames[r.Item["realm_id"].(string)+"_"+v.(string)]
+		if r.Address.Type == "keycloak_group_memberships" {
+			var sortedMembers []string
+			for _, v := range r.GetStateAttrSlice("members") {
+				if mapUserNames[r.GetStateAttr("realm_id")+"_"+v.AsString()] != "" {
+					sortedMembers = append(sortedMembers, mapUserNames[r.GetStateAttr("realm_id")+"_"+v.AsString()])
 				} else {
-					sortedMembers[k] = v.(string)
+					sortedMembers = append(sortedMembers, v.AsString())
 				}
 			}
 			sort.Strings(sortedMembers)
-			g.Resources[i].Item["members"] = sortedMembers
+			var sortedValues []cty.Value
+			for _, v := range sortedMembers {
+				sortedValues = append(sortedValues, cty.StringVal(v))
+			}
+			r.SetStateAttr("members", cty.ListVal(sortedValues))
 		}
 
 		// Map ldap_user_federation_id attributes to keycloak_ldap_user_federation.foo.id Terraform variables for ldap mappers resources
-		if r.InstanceInfo.Type == "keycloak_ldap_full_name_mapper" ||
-			r.InstanceInfo.Type == "keycloak_ldap_group_mapper" ||
-			r.InstanceInfo.Type == "keycloak_ldap_role_mapper" ||
-			r.InstanceInfo.Type == "keycloak_ldap_hardcoded_group_mapper" ||
-			r.InstanceInfo.Type == "keycloak_ldap_hardcoded_role_mapper" ||
-			r.InstanceInfo.Type == "keycloak_ldap_msad_lds_user_account_control_mapper" ||
-			r.InstanceInfo.Type == "keycloak_ldap_msad_user_account_control_mapper" ||
-			r.InstanceInfo.Type == "keycloak_ldap_user_attribute_mapper" {
-			g.Resources[i].Item["ldap_user_federation_id"] = mapUserFederationIDs[r.Item["realm_id"].(string)+"_"+g.Resources[i].Item["ldap_user_federation_id"].(string)]
+		if r.Address.Type == "keycloak_ldap_full_name_mapper" ||
+			r.Address.Type == "keycloak_ldap_group_mapper" ||
+			r.Address.Type == "keycloak_ldap_role_mapper" ||
+			r.Address.Type == "keycloak_ldap_hardcoded_group_mapper" ||
+			r.Address.Type == "keycloak_ldap_hardcoded_role_mapper" ||
+			r.Address.Type == "keycloak_ldap_msad_lds_user_account_control_mapper" ||
+			r.Address.Type == "keycloak_ldap_msad_user_account_control_mapper" ||
+			r.Address.Type == "keycloak_ldap_user_attribute_mapper" {
+			r.SetStateAttr("ldap_user_federation_id", cty.StringVal(mapUserFederationIDs[r.GetStateAttr("realm_id")+"_"+r.GetStateAttr("ldap_user_federation_id")]))
 		}
 
 		// Map group to keycloak_group.foo.name Terraform variables for ldap hardcoded group mapper resources
-		if r.InstanceInfo.Type == "keycloak_ldap_hardcoded_group_mapper" {
-			g.Resources[i].Item["group"] = mapGroupNames[r.Item["realm_id"].(string)+"_"+r.Item["group"].(string)]
+		if r.Address.Type == "keycloak_ldap_hardcoded_group_mapper" {
+			r.SetStateAttr("group", cty.StringVal(mapGroupNames[r.GetStateAttr("realm_id")+"_"+r.GetStateAttr("group")]))
+
 		}
 
 		// Map role to Terraform variables for ldap hardcoded role mapper resources
-		if r.InstanceInfo.Type == "keycloak_ldap_hardcoded_role_mapper" {
-			g.Resources[i].Item["role"] = mapClientRoleNames[r.Item["realm_id"].(string)+"_"+r.Item["role"].(string)]
+		if r.Address.Type == "keycloak_ldap_hardcoded_role_mapper" {
+			r.SetStateAttr("role", cty.StringVal(mapClientRoleNames[r.GetStateAttr("realm_id")+"_"+r.GetStateAttr("role")]))
+
 		}
 
 		// Map parent_id to keycloak_group.foo.id Terraform variables for keycloak_group resources
-		if _, exist := r.Item["parent_id"]; exist && r.InstanceInfo.Type == "keycloak_group" {
-			g.Resources[i].Item["parent_id"] = mapGroupIDs[r.Item["realm_id"].(string)+"_"+r.Item["parent_id"].(string)]
+		if r.Address.Type == "keycloak_group" && r.HasStateAttr("parent_id") {
+			r.SetStateAttr("parent_id", cty.StringVal(mapGroupIDs[r.GetStateAttr("realm_id")+"_"+r.GetStateAttr("parent_id")]))
+
 		}
 
 		// Map group_id to keycloak_group.foo.id Terraform variables for keycloak_group_memberships and keycloak_group_roles resources
-		if r.InstanceInfo.Type == "keycloak_group_memberships" || r.InstanceInfo.Type == "keycloak_group_roles" {
-			g.Resources[i].Item["group_id"] = mapGroupIDs[r.Item["realm_id"].(string)+"_"+r.Item["group_id"].(string)]
+		if r.Address.Type == "keycloak_group_memberships" || r.Address.Type == "keycloak_group_roles" {
+			r.SetStateAttr("group_id", cty.StringVal(mapGroupIDs[r.GetStateAttr("realm_id")+"_"+r.GetStateAttr("group_id")]))
 		}
 
 		// Map service_account_user_id to keycloak_openid_client.foo.service_account_user_id Terraform variables for service account role resources
-		if r.InstanceInfo.Type == "keycloak_openid_client_service_account_role" {
-			g.Resources[i].Item["service_account_user_id"] = mapServiceAccountUserIDs[r.Item["realm_id"].(string)+"_"+r.Item["service_account_user_id"].(string)]
-			g.Resources[i].Item["role"] = mapClientRoleShortNames[r.Item["realm_id"].(string)+"_"+mapClientNames[r.Item["realm_id"].(string)+"_"+r.Item["client_id"].(string)]+"."+r.Item["role"].(string)]
+		if r.Address.Type == "keycloak_openid_client_service_account_role" {
+			r.SetStateAttr("service_account_user_id", cty.StringVal(mapServiceAccountUserIDs[r.GetStateAttr("realm_id")+"_"+r.GetStateAttr("service_account_user_id")]))
+			r.SetStateAttr("role", cty.StringVal(mapClientRoleShortNames[r.GetStateAttr("realm_id")+"_"+mapClientNames[r.GetStateAttr("realm_id")+"_"+r.GetStateAttr("client_id")]+"."+r.GetStateAttr("role")]))
 		}
 
 		// Map client_id attributes to keycloak_openid_client.foo.id Terraform variables for open id mappers resources
-		if _, exist := r.Item["client_id"]; exist && (r.InstanceInfo.Type == "keycloak_openid_client_service_account_role" ||
-			r.InstanceInfo.Type == "keycloak_openid_audience_protocol_mapper" ||
-			r.InstanceInfo.Type == "keycloak_openid_full_name_protocol_mapper" ||
-			r.InstanceInfo.Type == "keycloak_openid_group_membership_protocol_mapper" ||
-			r.InstanceInfo.Type == "keycloak_openid_hardcoded_claim_protocol_mapper" ||
-			r.InstanceInfo.Type == "keycloak_openid_hardcoded_group_protocol_mapper" ||
-			r.InstanceInfo.Type == "keycloak_openid_hardcoded_role_protocol_mapper" ||
-			r.InstanceInfo.Type == "keycloak_openid_user_attribute_protocol_mapper" ||
-			r.InstanceInfo.Type == "keycloak_openid_user_property_protocol_mapper" ||
-			r.InstanceInfo.Type == "keycloak_openid_user_realm_role_protocol_mapper" ||
-			r.InstanceInfo.Type == "keycloak_openid_client_default_scopes" ||
-			r.InstanceInfo.Type == "keycloak_openid_client_optional_scopes" ||
-			r.InstanceInfo.Type == "keycloak_role") {
-			g.Resources[i].Item["client_id"] = mapClientIDs[r.Item["realm_id"].(string)+"_"+r.Item["client_id"].(string)]
+		if r.HasStateAttr("client_id") && (r.Address.Type == "keycloak_openid_client_service_account_role" ||
+			r.Address.Type == "keycloak_openid_audience_protocol_mapper" ||
+			r.Address.Type == "keycloak_openid_full_name_protocol_mapper" ||
+			r.Address.Type == "keycloak_openid_group_membership_protocol_mapper" ||
+			r.Address.Type == "keycloak_openid_hardcoded_claim_protocol_mapper" ||
+			r.Address.Type == "keycloak_openid_hardcoded_group_protocol_mapper" ||
+			r.Address.Type == "keycloak_openid_hardcoded_role_protocol_mapper" ||
+			r.Address.Type == "keycloak_openid_user_attribute_protocol_mapper" ||
+			r.Address.Type == "keycloak_openid_user_property_protocol_mapper" ||
+			r.Address.Type == "keycloak_openid_user_realm_role_protocol_mapper" ||
+			r.Address.Type == "keycloak_openid_client_default_scopes" ||
+			r.Address.Type == "keycloak_openid_client_optional_scopes" ||
+			r.Address.Type == "keycloak_role") {
+			r.SetStateAttr("client_id", cty.StringVal(mapClientIDs[r.GetStateAttr("realm_id")+"_"+r.GetStateAttr("client_id")]))
 		}
 
 		// Map included_client_audience to keycloak_openid_client.foo.client_id Terraform variables for open id audience mapper resources
-		if _, exist := r.Item["included_client_audience"]; exist && r.InstanceInfo.Type == "keycloak_openid_audience_protocol_mapper" {
-			g.Resources[i].Item["included_client_audience"] = mapClientClientIDs[r.Item["realm_id"].(string)+"_"+r.Item["included_client_audience"].(string)]
+		if r.Address.Type == "keycloak_openid_audience_protocol_mapper" && r.HasStateAttr("included_client_audience") {
+			r.SetStateAttr("included_client_audience", cty.StringVal(mapClientClientIDs[r.GetStateAttr("realm_id")+"_"+r.GetStateAttr("included_client_audience")]))
 		}
 
 		// Map parent_flow_alias attributes to keycloak_authentication_(sub)flow.foo.alias Terraform variables for authentication subflow and execution resources
-		if r.InstanceInfo.Type == "keycloak_authentication_subflow" || r.InstanceInfo.Type == "keycloak_authentication_execution" {
-			g.Resources[i].Item["parent_flow_alias"] = mapAuthenticationFlowAliases[r.Item["realm_id"].(string)+"_"+r.Item["parent_flow_alias"].(string)]
+		if r.Address.Type == "keycloak_authentication_subflow" || r.Address.Type == "keycloak_authentication_execution" {
+			r.SetStateAttr("parent_flow_alias", cty.StringVal(mapAuthenticationFlowAliases[r.GetStateAttr("realm_id")+"_"+r.GetStateAttr("parent_flow_alias")]))
 		}
 
 		// Map execution_id attributes to keycloak_authentication_execution_config.foo.execution_id Terraform variables for authentication execution config resources
-		if r.InstanceInfo.Type == "keycloak_authentication_execution_config" {
-			g.Resources[i].Item["execution_id"] = mapAuthenticationExecutionIDs[r.Item["realm_id"].(string)+"_"+r.Item["execution_id"].(string)]
+		if r.Address.Type == "keycloak_authentication_execution_config" {
+			r.SetStateAttr("execution_id", cty.StringVal(mapAuthenticationExecutionIDs[r.GetStateAttr("realm_id")+"_"+r.GetStateAttr("execution_id")]))
 		}
 
 		// Map realm_id attributes to keycloak_realm.foo.id Terraform variables for all the resources (almost all resources have this attribute)
-		if _, exist := r.Item["realm_id"]; exist {
-			g.Resources[i].Item["realm_id"] = mapRealmIDs[r.Item["realm_id"].(string)]
+		if r.HasStateAttr("realm_id") {
+			r.SetStateAttr("realm_id", cty.StringVal(mapRealmIDs[r.GetStateAttr("realm_id")]))
 		}
 	}
 	return nil
+}
+
+func (g *RealmGenerator) sortAttrWithRealmId(r terraformutils.Resource, attr string, mapGroupIDs map[string]string) {
+	var renamedStrings []string
+	for _, v := range r.GetStateAttrSlice(attr) {
+		renamedStrings = append(renamedStrings, mapGroupIDs[r.GetStateAttr("realm_id")+"_"+v.AsString()])
+	}
+	sort.Strings(renamedStrings)
+	var renamedValues []cty.Value
+	for _, v := range renamedStrings {
+		renamedValues = append(renamedValues, cty.StringVal(v))
+	}
+	r.SetStateAttr(attr, cty.ListVal(renamedValues))
 }

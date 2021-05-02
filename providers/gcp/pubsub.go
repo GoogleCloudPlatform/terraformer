@@ -16,6 +16,7 @@ package gcp
 
 import (
 	"context"
+	"github.com/zclconf/go-cty/cty"
 	"log"
 	"strings"
 
@@ -107,10 +108,10 @@ func (g *PubsubGenerator) InitResources() error {
 }
 
 func (g *PubsubGenerator) PostConvertHook() error {
-	for i, r := range g.Resources {
+	for _, r := range g.Resources {
 		for _, topic := range g.Resources {
-			if r.InstanceState.Attributes["topic"] == "projects/"+g.GetArgs()["project"].(string)+"/topics/"+topic.InstanceState.Attributes["name"] {
-				g.Resources[i].Item["topic"] = "${google_pubsub_topic." + topic.ResourceName + ".name}"
+			if r.GetStateAttr("topic") == "projects/"+g.GetArgs()["project"].(string)+"/topics/"+topic.GetStateAttr("name") {
+				r.SetStateAttr("topic", cty.StringVal("${"+topic.Address.String()+".name}"))
 			}
 		}
 	}

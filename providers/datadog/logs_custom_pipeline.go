@@ -18,6 +18,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/zclconf/go-cty/cty/gocty"
 	"strings"
 
 	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
@@ -93,21 +94,26 @@ func (g *LogsCustomPipelineGenerator) InitResources() error {
 }
 
 func (g *LogsCustomPipelineGenerator) PostConvertHook() error {
-	for i, r := range g.Resources {
-		for k, v := range r.Item {
-			// Hack to properly escape `%{` used in pipeline processors
-			if k == "processor" {
-				var z interface{}
-				jsonByte, err := json.Marshal(v)
-				if err != nil {
-					continue
-				}
-				jsonByte = []byte(strings.ReplaceAll(string(jsonByte), "%{", "%%{"))
-				if err = json.Unmarshal(jsonByte, &z); err != nil {
-					continue
-				}
-				g.Resources[i].Item[k] = z
+	for _, r := range g.Resources {
+		if r.HasStateAttr("processor") {
+			var z interface{}
+			jsonByte, err := json.Marshal(r.GetStateAttr("processor"))
+			if err != nil {
+				continue
 			}
+			jsonByte = []byte(strings.ReplaceAll(string(jsonByte), "%{", "%%{"))
+			if err = json.Unmarshal(jsonByte, &z); err != nil {
+				continue
+			}
+			impliedType, err := gocty.ImpliedType(z)
+			if err != nil {
+				return err
+			}
+			ctyValue, err := gocty.ToCtyValue(z, impliedType)
+			if err != nil {
+				return err
+			}
+			r.SetStateAttr("processor", ctyValue)
 		}
 	}
 	return nil

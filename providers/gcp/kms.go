@@ -16,6 +16,7 @@ package gcp
 
 import (
 	"context"
+	"github.com/zclconf/go-cty/cty"
 	"log"
 	"strings"
 
@@ -101,16 +102,16 @@ func (g *KmsGenerator) InitResources() error {
 }
 
 func (g *KmsGenerator) PostConvertHook() error {
-	for i, key := range g.Resources {
-		if key.InstanceInfo.Type != "google_kms_crypto_key" {
+	for _, key := range g.Resources {
+		if key.Address.Type != "google_kms_crypto_key" {
 			continue
 		}
 		for _, keyRing := range g.Resources {
-			if keyRing.InstanceInfo.Type != "google_kms_key_ring" {
+			if keyRing.Address.Type != "google_kms_key_ring" {
 				continue
 			}
-			if key.Item["key_ring"] == keyRing.InstanceState.ID {
-				g.Resources[i].Item["key_ring"] = "${google_kms_key_ring." + keyRing.ResourceName + ".self_link}"
+			if key.GetStateAttr("key_ring") == keyRing.ImportID {
+				key.SetStateAttr("key_ring", cty.StringVal("${"+keyRing.Address.String()+".self_link}"))
 			}
 		}
 	}

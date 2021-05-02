@@ -17,6 +17,7 @@ package gcp
 import (
 	"context"
 	"fmt"
+	"github.com/zclconf/go-cty/cty"
 	"log"
 	"strconv"
 
@@ -111,41 +112,39 @@ func (g *GkeGenerator) InitResources() error {
 }
 
 func (g *GkeGenerator) PostConvertHook() error {
-	for i, r := range g.Resources {
-		if r.InstanceInfo.Type != "google_container_node_pool" {
+	for _, r := range g.Resources {
+		if r.Address.Type != "google_container_node_pool" {
 			continue
 		}
-		if _, existNodeConfig := g.Resources[i].Item["node_config"]; existNodeConfig {
-			if _, existMetadata := g.Resources[i].Item["node_config"].([]interface{})[0].(map[string]interface{})["metadata"]; existMetadata {
-				for k, v := range g.Resources[i].Item["node_config"].([]interface{})[0].(map[string]interface{})["metadata"].(map[string]interface{}) {
-					switch x := v.(type) {
-					case bool:
-						g.Resources[i].Item["node_config"].([]interface{})[0].(map[string]interface{})["metadata"].(map[string]interface{})[k] = strconv.FormatBool(x)
-					default:
-					}
+		if r.HasStateAttrFirstAttr("node_config", "metadata") {
+			metadataMap := r.GetStateAttrFirstAttrMap("node_config", "metadata")
+			for k, v := range metadataMap {
+				if v.Type() == cty.Bool {
+					metadataMap[k] = cty.StringVal(strconv.FormatBool(v.True()))
 				}
 			}
+			r.SetStateAttrFirstAttr("node_config", "metadata", cty.ObjectVal(metadataMap))
 		}
 		for _, cluster := range g.Resources {
-			if cluster.InstanceState.Attributes["name"] == r.InstanceState.Attributes["cluster"] {
-				g.Resources[i].Item["cluster"] = "${google_container_cluster." + cluster.ResourceName + ".name}"
+			if cluster.GetStateAttr("name") == r.GetStateAttr("cluster") {
+				r.SetStateAttr("cluster", cty.StringVal("${"+cluster.Address.String()+".name}"))
 			}
 		}
 	}
 
 	// hacks for fix GCP API<=>provider<=>parser inconsistency
-	for i, r := range g.Resources {
-		if r.InstanceInfo.Type != "google_container_cluster" {
+	for _, r := range g.Resources {
+		if r.Address.Type != "google_container_cluster" {
 			continue
 		}
-		if r.Item["master_authorized_networks_config"] != nil {
-			if len(r.Item["master_authorized_networks_config"].([]interface{})) == 0 {
-				g.Resources[i].Item["master_authorized_networks_config"] = map[string]interface{}{}
+		if r.HasStateAttr("master_authorized_networks_config") {
+			if len(r.GetStateAttrSlice("master_authorized_networks_config")) == 0 {
+				r.SetStateAttr("master_authorized_networks_config", cty.ObjectVal(map[string]cty.Value{}))
 			}
 		}
-		if r.Item["ip_allocation_policy"] != nil {
-			if len(r.Item["ip_allocation_policy"].([]interface{})) == 0 {
-				g.Resources[i].Item["ip_allocation_policy"] = map[string]interface{}{}
+		if r.HasStateAttr("ip_allocation_policy") {
+			if len(r.GetStateAttrSlice("ip_allocation_policy")) == 0 {
+				r.SetStateAttr("ip_allocation_policy", cty.ObjectVal(map[string]cty.Value{}))
 			}
 		}
 	}

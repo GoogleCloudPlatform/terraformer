@@ -16,6 +16,7 @@ package gcp
 
 import (
 	"context"
+	"github.com/zclconf/go-cty/cty"
 	"log"
 	"strings"
 
@@ -107,21 +108,19 @@ func (g *BigQueryGenerator) InitResources() error {
 
 // PostGenerateHook for convert schema json as heredoc
 func (g *BigQueryGenerator) PostConvertHook() error {
-	for i, dataset := range g.Resources {
-		if dataset.InstanceInfo.Type != "google_bigquery_dataset" {
+	for _, dataset := range g.Resources {
+		if dataset.Address.Type != "google_bigquery_dataset" {
 			continue
 		}
-		if val, ok := dataset.Item["default_table_expiration_ms"].(string); ok { // TODO zero int issue
-			if val == "0" {
-				delete(g.Resources[i].Item, "default_table_expiration_ms")
-			}
+		if dataset.GetStateAttr("default_table_expiration_ms") == "0" { // TODO zero int issue
+			dataset.DeleteStateAttr("default_table_expiration_ms")
 		}
-		for j, table := range g.Resources {
-			if table.InstanceInfo.Type != "google_bigquery_table" {
+		for _, table := range g.Resources {
+			if table.Address.Type != "google_bigquery_table" {
 				continue
 			}
-			if table.InstanceState.Attributes["dataset_id"] == dataset.InstanceState.Attributes["dataset_id"] {
-				g.Resources[j].Item["dataset_id"] = "${google_bigquery_dataset." + dataset.ResourceName + ".dataset_id}"
+			if table.GetStateAttr("dataset_id") == dataset.GetStateAttr("dataset_id") {
+				table.SetStateAttr("dataset_id", cty.StringVal("${"+dataset.Address.String()+".dataset_id}"))
 			}
 		}
 	}

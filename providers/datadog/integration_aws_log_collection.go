@@ -17,6 +17,7 @@ package datadog
 import (
 	"context"
 	"fmt"
+	"github.com/zclconf/go-cty/cty"
 
 	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
 
@@ -70,8 +71,8 @@ func (g *IntegrationAWSLogCollectionGenerator) InitResources() error {
 func (g *IntegrationAWSLogCollectionGenerator) PostConvertHook() error {
 	for _, r := range g.Resources {
 		// services is a required attribute but can be empty. This ensures we append an empty list
-		if r.Item["services"] == nil {
-			r.Item["services"] = []string{}
+		if !r.HasStateAttr("services") {
+			r.SetStateAttr("services", cty.ListVal([]cty.Value{}))
 		}
 	}
 	return nil

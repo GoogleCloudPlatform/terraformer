@@ -15,13 +15,17 @@
 package terraformutils
 
 import (
+	"fmt"
+	"log"
+	"sort"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/hashicorp/terraform/addrs"
 	"github.com/hashicorp/terraform/states"
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/gocty"
-	"log"
-	"strings"
-	"time"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
@@ -152,14 +156,23 @@ func (r *Resource) HasStateAttr(attr string) bool {
 }
 
 func (r *Resource) GetStateAttr(attr string) string {
-	return r.InstanceState.Value.GetAttr(attr).AsString()
+	if !r.HasStateAttr(attr) {
+		return ""
+	}
+	return r.valueToString(r.InstanceState.Value.GetAttr(attr))
 }
 
 func (r *Resource) GetStateAttrSlice(attr string) []cty.Value {
+	if !r.HasStateAttr(attr) {
+		return []cty.Value{}
+	}
 	return r.InstanceState.Value.GetAttr(attr).AsValueSlice()
 }
 
 func (r *Resource) GetStateAttrMap(attr string) map[string]cty.Value {
+	if !r.HasStateAttr(attr) {
+		return map[string]cty.Value{}
+	}
 	return r.InstanceState.Value.GetAttr(attr).AsValueMap()
 }
 
@@ -175,13 +188,38 @@ func (r *Resource) DeleteStateAttr(attr string) {
 	r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 }
 
+func (r *Resource) SortStateAttrStringSlice(attr string) {
+	if r.HasStateAttr(attr) {
+		var sortedStrings []string
+		for _, v := range r.GetStateAttrSlice(attr) {
+			sortedStrings = append(sortedStrings, v.AsString())
+		}
+		sort.Strings(sortedStrings)
+		var sortedValues []cty.Value
+		for _, v := range sortedStrings {
+			sortedValues = append(sortedValues, cty.StringVal(v))
+		}
+		r.SetStateAttr(attr, cty.ListVal(sortedValues))
+	}
+}
+
 func (r *Resource) HasStateAttrFirstAttr(firstAttr string, secondAttr string) bool {
 	return r.HasStateAttr(firstAttr) &&
 		r.InstanceState.Value.GetAttr(firstAttr).AsValueSlice()[0].HasIndex(cty.StringVal(secondAttr)) == cty.True
 }
 
 func (r *Resource) GetStateAttrFirstAttr(firstAttr string, secondAttr string) string {
-	return r.InstanceState.Value.GetAttr(firstAttr).AsValueSlice()[0].GetAttr(secondAttr).AsString()
+	if !r.HasStateAttrFirstAttr(firstAttr, secondAttr) {
+		return ""
+	}
+	return r.valueToString(r.InstanceState.Value.GetAttr(firstAttr).AsValueSlice()[0].GetAttr(secondAttr))
+}
+
+func (r *Resource) GetStateAttrFirstAttrMap(firstAttr string, secondAttr string) map[string]cty.Value {
+	if !r.HasStateAttrFirstAttr(firstAttr, secondAttr) {
+		return map[string]cty.Value{}
+	}
+	return r.InstanceState.Value.GetAttr(firstAttr).AsValueSlice()[0].GetAttr(secondAttr).AsValueMap()
 }
 
 func (r *Resource) DeleteStateAttrFirstAttr(firstAttr string, secondAttr string) {
@@ -190,4 +228,54 @@ func (r *Resource) DeleteStateAttrFirstAttr(firstAttr string, secondAttr string)
 	delete(firstAttrMap, secondAttr)
 	instanceStateMap[firstAttr] = cty.ListVal([]cty.Value{cty.ObjectVal(firstAttrMap)})
 	r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
+}
+
+func (r *Resource) SetStateAttrFirstAttr(firstAttr string, secondAttr string, val cty.Value) {
+	instanceStateMap := r.InstanceState.Value.AsValueMap()
+	firstAttrMap := instanceStateMap[firstAttr].AsValueSlice()[0].AsValueMap()
+	firstAttrMap[secondAttr] = val
+	instanceStateMap[firstAttr] = cty.ListVal([]cty.Value{cty.ObjectVal(firstAttrMap)})
+	r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
+}
+
+func (r *Resource) SortStateAttrEachAttrStringSlice(firstAttr string, secondAttr string) {
+	if r.HasStateAttr(firstAttr) {
+		firstAttrSlice := r.GetStateAttrSlice(firstAttr)
+		for i, firstAttrSliceItem := range firstAttrSlice {
+			if firstAttrSliceItem.HasIndex(cty.StringVal(secondAttr)) == cty.False {
+				continue
+			}
+			secondAttrSlice := firstAttrSliceItem.GetAttr(secondAttr).AsValueSlice()
+			var sortedSecondAttrSliceStrings []string
+			for _, secondAttrSliceString := range secondAttrSlice {
+				sortedSecondAttrSliceStrings = append(sortedSecondAttrSliceStrings, secondAttrSliceString.AsString())
+			}
+			sort.Strings(sortedSecondAttrSliceStrings)
+			var sortedSecondAttrSliceValues []cty.Value
+			for _, ssl := range sortedSecondAttrSliceStrings {
+				sortedSecondAttrSliceValues = append(sortedSecondAttrSliceValues, cty.StringVal(ssl))
+			}
+			valueMap := firstAttrSliceItem.AsValueMap()
+			valueMap[secondAttr] = cty.ListVal(sortedSecondAttrSliceValues)
+			firstAttrSlice[i] = cty.ObjectVal(valueMap)
+		}
+		r.SetStateAttr(firstAttr, cty.ListVal(firstAttrSlice))
+	}
+}
+
+func (r *Resource) valueToString(val cty.Value) string {
+	switch val.Type() {
+	case cty.String:
+		return val.AsString()
+	case cty.Number:
+		fv := val.AsBigFloat()
+		if fv.IsInt() {
+			intVal, _ := fv.Int64()
+			return strconv.FormatInt(intVal, 10)
+		} else {
+			return fmt.Sprintf("%f", fv)
+		}
+	default:
+		return val.GoString()
+	}
 }
