@@ -165,11 +165,11 @@ func (g *PvtzGenerator) InitResources() error {
 // PostConvertHook Runs before HCL files are generated
 func (g *PvtzGenerator) PostConvertHook() error {
 	for _, r := range g.Resources {
-		if r.InstanceInfo.Type == "alicloud_pvtz_zone_record" {
+		if r.Address.Type == "alicloud_pvtz_zone_record" {
 			// https://www.terraform.io/docs/providers/alicloud/r/pvtz_zone_record.html#priority
-			v, e := strconv.Atoi(r.Item["priority"].(string))
+			v, e := strconv.Atoi(r.GetStateAttr("priority"))
 			if v < 1 || v > 50 || e != nil {
-				delete(r.Item, "priority")
+				r.DeleteStateAttr("priority")
 			}
 		}
 	}

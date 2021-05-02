@@ -85,14 +85,14 @@ func (g StorageBlobGenerator) listStorageBlobs() ([]terraformutils.Resource, err
 	}
 
 	for _, blobContainerResource := range blobContainersResources {
-		containerID := blobContainerResource.InstanceState.ID
+		containerID := blobContainerResource.ImportID
 		parsedContainerID, err := ParseAzureResourceID(containerID)
 		if err != nil {
 			return storageBlobsResources, err
 		}
 
-		storageAccountName := blobContainerResource.InstanceState.Attributes["storage_account_name"]
-		containerName := blobContainerResource.InstanceState.Attributes["name"]
+		storageAccountName := blobContainerResource.GetStateAttr("storage_account_name")
+		containerName := blobContainerResource.GetStateAttr("name")
 		blobsList, err := g.getBlobsFromContainer(ctx, storageAccountName, parsedContainerID.ResourceGroup, containerName)
 		if err != nil {
 			return storageBlobsResources, err

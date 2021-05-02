@@ -17,6 +17,7 @@ package azure
 import (
 	"context"
 	"fmt"
+	"github.com/zclconf/go-cty/cty"
 	"strings"
 
 	"github.com/Azure/azure-sdk-for-go/services/mariadb/mgmt/2018-06-01/mariadb"
@@ -897,13 +898,13 @@ func (g *DatabasesGenerator) PostConvertHook() error {
 	for _, engineName := range dbEngines {
 		for _, resource := range g.Resources {
 			dbServerResourceType := fmt.Sprintf("azurerm_%s_server", engineName)
-			if resource.InstanceInfo.Type == dbServerResourceType {
-				dbName := resource.Item["name"]
+			if resource.Address.Type == dbServerResourceType {
+				dbName := resource.GetStateAttr("name")
 				for rIdx, r := range g.Resources {
-					if r.InstanceInfo.Type != dbServerResourceType &&
-						strings.Contains(r.InstanceInfo.Type, engineName) &&
-						r.Item["server_name"] == dbName {
-						g.Resources[rIdx].Item["server_name"] = fmt.Sprintf("${%s.%s}", resource.InstanceInfo.Id, "name")
+					if r.Address.Type != dbServerResourceType &&
+						strings.Contains(r.Address.Type, engineName) &&
+						r.GetStateAttr("server_name") == dbName {
+						g.Resources[rIdx].SetStateAttr("server_name", cty.StringVal(fmt.Sprintf("${%s.%s}", resource.ImportID, "name")))
 					}
 				}
 			}

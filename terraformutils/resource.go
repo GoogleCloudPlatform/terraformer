@@ -159,6 +159,10 @@ func (r *Resource) GetStateAttrSlice(attr string) []cty.Value {
 	return r.InstanceState.Value.GetAttr(attr).AsValueSlice()
 }
 
+func (r *Resource) GetStateAttrMap(attr string) map[string]cty.Value {
+	return r.InstanceState.Value.GetAttr(attr).AsValueMap()
+}
+
 func (r *Resource) SetStateAttr(attr string, value cty.Value) {
 	instanceStateMap := r.InstanceState.Value.AsValueMap()
 	instanceStateMap[attr] = value

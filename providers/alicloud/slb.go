@@ -184,14 +184,14 @@ func (g *SlbGenerator) InitResources() error {
 // PostConvertHook Runs before HCL files are generated
 func (g *SlbGenerator) PostConvertHook() error {
 	for _, r := range g.Resources {
-		if r.InstanceInfo.Type == "alicloud_slb" {
+		if r.Address.Type == "alicloud_slb" {
 			// internet is deprecrated
 			// https://www.terraform.io/docs/providers/alicloud/r/slb.html#internet
-			delete(r.Item, "internet")
+			r.DeleteStateAttr("internet")
 
 			// https://www.terraform.io/docs/providers/alicloud/r/slb.html#bandwidth
-			if r.Item["internet_charge_type"] == "PayByTraffic" {
-				delete(r.Item, "bandwidth")
+			if r.GetStateAttr("internet_charge_type") == "PayByTraffic" {
+				r.DeleteStateAttr("bandwidth")
 			}
 		}
 	}

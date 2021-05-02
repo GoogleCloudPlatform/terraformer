@@ -16,6 +16,7 @@ package cloudflare
 
 import (
 	"fmt"
+	"github.com/zclconf/go-cty/cty"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -256,29 +257,32 @@ func (g *FirewallGenerator) InitResources() error {
 }
 
 func (g *FirewallGenerator) PostConvertHook() error {
-	for i, resourceRecord := range g.Resources {
+	for _, resourceRecord := range g.Resources {
 		// If Zone Name exists, delete ZoneID
-		if _, zoneIDExist := resourceRecord.Item["zone_id"]; zoneIDExist {
-			delete(g.Resources[i].Item, "zone")
+		if resourceRecord.HasStateAttr("zone_id") {
+			resourceRecord.DeleteStateAttr("zone")
 		}
 
-		if resourceRecord.InstanceInfo.Type == "cloudflare_firewall_rule" {
-			if resourceRecord.Item["priority"].(string) == "0" {
-				delete(g.Resources[i].Item, "priority")
+		if resourceRecord.Address.Type == "cloudflare_firewall_rule" {
+			if resourceRecord.GetStateAttr("priority") == "0" {
+				resourceRecord.DeleteStateAttr("priority")
 			}
 		}
 
 		// Reference to 'cloudflare_filter' resource in 'cloudflare_firewall_rule'
-		if resourceRecord.InstanceInfo.Type == "cloudflare_filter" {
+		if resourceRecord.Address.Type == "cloudflare_filter" {
 			continue
 		}
-		filterID := resourceRecord.Item["filter_id"]
+		if !resourceRecord.HasStateAttr("cloudflare_filter") {
+			continue
+		}
+		filterID := resourceRecord.GetStateAttr("filter_id")
 		for _, filterResource := range g.Resources {
-			if filterResource.InstanceInfo.Type != "cloudflare_filter" {
+			if filterResource.Address.Type != "cloudflare_filter" {
 				continue
 			}
-			if filterID == filterResource.InstanceState.ID {
-				g.Resources[i].Item["filter_id"] = "${cloudflare_filter." + filterResource.ResourceName + ".id}"
+			if filterID == filterResource.ImportID {
+				resourceRecord.SetStateAttr("filter_id", cty.StringVal("${cloudflare_filter."+filterResource.Address.Name+".id}"))
 			}
 		}
 	}

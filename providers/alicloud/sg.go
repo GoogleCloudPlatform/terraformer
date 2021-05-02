@@ -154,10 +154,10 @@ func (g *SgGenerator) InitResources() error {
 // PostConvertHook Runs before HCL files are generated
 func (g *SgGenerator) PostConvertHook() error {
 	for _, r := range g.Resources {
-		if r.InstanceInfo.Type == "alicloud_security_group" {
+		if r.Address.Type == "alicloud_security_group" {
 			// inner_access is deprecrated
 			// https://www.terraform.io/docs/providers/alicloud/r/security_group.html#inner_access
-			delete(r.Item, "inner_access")
+			r.DeleteStateAttr("inner_access")
 		}
 	}
 

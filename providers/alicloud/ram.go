@@ -130,11 +130,11 @@ func (g *RAMGenerator) InitResources() error {
 // PostConvertHook Runs before HCL files are generated
 func (g *RAMGenerator) PostConvertHook() error {
 	for _, r := range g.Resources {
-		if r.InstanceInfo.Type == "alicloud_ram_role" {
+		if r.Address.Type == "alicloud_ram_role" {
 			// https://www.terraform.io/docs/providers/alicloud/r/ram_role.html
-			delete(r.Item, "services")  // deprecated
-			delete(r.Item, "ram_users") // deprecated
-			delete(r.Item, "version")   // deprecated
+			r.DeleteStateAttr("services")  // deprecated
+			r.DeleteStateAttr("ram_users") // deprecated
+			r.DeleteStateAttr("version")   // deprecated
 		}
 	}
 

@@ -113,12 +113,12 @@ func (g *DNSGenerator) InitResources() error {
 func (g *DNSGenerator) PostConvertHook() error {
 	// 'record' resource have 'data' and 'value' is mutual-exclude
 	// delete which one have empty value
-	for i, resource := range g.Resources {
-		if resource.InstanceInfo.Type == "cloudflare_record" {
-			if val, ok := resource.Item["data"]; ok && len(val.(map[string]interface{})) == 0 {
-				delete(g.Resources[i].Item, "data")
-			} else if val, ok := resource.Item["value"]; ok && len(val.(string)) == 0 {
-				delete(g.Resources[i].Item, "value")
+	for _, resource := range g.Resources {
+		if resource.Address.Type == "cloudflare_record" {
+			if resource.HasStateAttr("data") && len(resource.GetStateAttrMap("data")) == 0 {
+				resource.DeleteStateAttr("data")
+			} else if resource.HasStateAttr("value") && len(resource.GetStateAttrMap("value")) == 0 {
+				resource.DeleteStateAttr("value")
 			}
 		}
 	}

@@ -78,10 +78,10 @@ func (g *RdsGenerator) InitResources() error {
 // PostConvertHook Runs before HCL files are generated
 func (g *RdsGenerator) PostConvertHook() error {
 	for _, r := range g.Resources {
-		if r.InstanceInfo.Type == "alicloud_db_instance" {
+		if r.Address.Type == "alicloud_db_instance" {
 			// https://www.terraform.io/docs/providers/alicloud/r/db_instance.html#period
-			if r.Item["instance_charge_type"] != "PrePaid" {
-				delete(r.Item, "period")
+			if r.GetStateAttr("instance_charge_type") != "PrePaid" {
+				r.DeleteStateAttr("period")
 			}
 		}
 	}
