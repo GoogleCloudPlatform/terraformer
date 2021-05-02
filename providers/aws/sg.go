@@ -18,6 +18,9 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/hashicorp/terraform/configs/hcl2shim"
+	"github.com/zclconf/go-cty/cty"
+	"github.com/zclconf/go-cty/cty/gocty"
 	"os"
 	"sort"
 	"strings"
@@ -25,7 +28,6 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
-	"github.com/hashicorp/terraform/flatmap"
 	"gonum.org/v1/gonum/graph"
 	simplegraph "gonum.org/v1/gonum/graph/simple"
 	"gonum.org/v1/gonum/graph/topo"
@@ -76,7 +78,7 @@ func (SecurityGenerator) createResources(securityGroups []types.SecurityGroup) [
 		// we must move out all of the rules - https://github.com/hashicorp/terraform/issues/11011#issuecomment-283076580
 		for _, groupIDToMoveOut := range sgIDsToMoveOut {
 			if groupIDToMoveOut == *sg.GroupId {
-				ruleAttributes["clearRules"] = true
+				ruleAttributes["clearRules"] = "true"
 				for _, rule := range sg.IpPermissions {
 					resources = processRule(rule, "ingress", sg, resources)
 				}
@@ -102,23 +104,27 @@ func processRule(rule types.IpPermission, ruleType string, sg types.SecurityGrou
 	if rule.UserIdGroupPairs != nil && len(rule.UserIdGroupPairs) > 0 {
 		if len(rule.IpRanges) > 0 { // we must unwind coupled CIDR IPv4 range + security group rules
 			attributes := baseRuleAttributes(ruleType, rule, sg)
+			impliedType, _ := gocty.ImpliedType(attributes)
+			value, _ := gocty.ToCtyValue(attributes, impliedType)
 			resources = append(resources, terraformutils.NewResource(
 				permissionID(*sg.GroupId, ruleType, "", rule),
 				permissionID(*sg.GroupId, ruleType, "", rule),
 				"aws_security_group_rule",
 				"aws",
-				flatmap.Flatten(attributes),
+				hcl2shim.FlatmapValueFromHCL2(value),
 				SgAllowEmptyValues,
 				map[string]interface{}{}))
 		}
 		if len(rule.Ipv6Ranges) > 0 { // we must unwind coupled CIDR IPv6 range + security group rules
 			attributes := baseRuleAttributes(ruleType, rule, sg)
+			impliedType, _ := gocty.ImpliedType(attributes)
+			value, _ := gocty.ToCtyValue(attributes, impliedType)
 			resources = append(resources, terraformutils.NewResource(
 				permissionID(*sg.GroupId, ruleType, "", rule),
 				permissionID(*sg.GroupId, ruleType, "", rule),
 				"aws_security_group_rule",
 				"aws",
-				flatmap.Flatten(attributes),
+				hcl2shim.FlatmapValueFromHCL2(value),
 				SgAllowEmptyValues,
 				map[string]interface{}{}))
 		}
@@ -131,24 +137,27 @@ func processRule(rule types.IpPermission, ruleType string, sg types.SecurityGrou
 			} else {
 				attributes["source_security_group_id"] = *groupPair.GroupId
 			}
-
+			impliedType, _ := gocty.ImpliedType(attributes)
+			value, _ := gocty.ToCtyValue(attributes, impliedType)
 			resources = append(resources, terraformutils.NewResource(
 				permissionID(*sg.GroupId, ruleType, *groupPair.GroupId, rule),
 				permissionID(*sg.GroupId, ruleType, *groupPair.GroupId, rule),
 				"aws_security_group_rule",
 				"aws",
-				flatmap.Flatten(attributes),
+				hcl2shim.FlatmapValueFromHCL2(value),
 				SgAllowEmptyValues,
 				map[string]interface{}{}))
 		}
 	} else {
 		attributes := baseRuleAttributes(ruleType, rule, sg)
+		impliedType, _ := gocty.ImpliedType(attributes)
+		value, _ := gocty.ToCtyValue(attributes, impliedType)
 		resources = append(resources, terraformutils.NewResource(
 			permissionID(*sg.GroupId, ruleType, "", rule),
 			permissionID(*sg.GroupId, ruleType, "", rule),
 			"aws_security_group_rule",
 			"aws",
-			flatmap.Flatten(attributes),
+			hcl2shim.FlatmapValueFromHCL2(value),
 			SgAllowEmptyValues,
 			map[string]interface{}{}))
 	}
@@ -264,46 +273,51 @@ func (g *SecurityGenerator) InitResources() error {
 
 func (g *SecurityGenerator) PostConvertHook() error {
 	for _, resource := range g.Resources {
-		if resource.InstanceInfo.Type == "aws_security_group_rule" {
-			if resource.Item["self"] == "true" {
-				delete(resource.Item, "source_security_group_id")
+		if resource.Address.Type == "aws_security_group_rule" {
+			if resource.GetStateAttr("self") == "true" {
+				resource.DeleteStateAttr("source_security_group_id")
 			}
-		} else if resource.InstanceInfo.Type == "aws_security_group" {
-			if resource.Item["clearRules"] == true {
-				delete(resource.Item, "ingress")
-				delete(resource.Item, "egress")
-				delete(resource.Item, "clearRules")
+		} else if resource.Address.Type == "aws_security_group" {
+			if resource.GetStateAttr("clearRules") == "true" {
+				resource.DeleteStateAttr("ingress")
+				resource.DeleteStateAttr("egress")
+				resource.DeleteStateAttr("clearRules")
 				continue
 			}
 
-			if val, ok := resource.Item["ingress"]; ok {
-				g.sortRules(val.([]interface{}))
+			if resource.HasStateAttr("ingress") {
+				g.sortRules(&resource, "ingress")
 			}
-			if val, ok := resource.Item["egress"]; ok {
-				g.sortRules(val.([]interface{}))
+			if resource.HasStateAttr("egress") {
+				g.sortRules(&resource, "egress")
 			}
 		}
 	}
 	return nil
 }
 
-func (g *SecurityGenerator) sortRules(rules []interface{}) {
-	for _, rule := range rules {
-		ruleMap := rule.(map[string]interface{})
+func (g *SecurityGenerator) sortRules(resource *terraformutils.Resource, attr string) {
+	var rules []cty.Value
+	for _, rule := range resource.GetStateAttrSlice(attr) {
+		ruleMap := rule.AsValueMap()
 		g.sortIfExist("cidr_blocks", ruleMap)
 		g.sortIfExist("ipv6_cidr_blocks", ruleMap)
 		g.sortIfExist("security_groups", ruleMap)
+		rules = append(rules, cty.ObjectVal(ruleMap))
 	}
 	sort.Slice(rules, func(i, j int) bool {
-		return fmt.Sprintf("%v", rules[i]) < fmt.Sprintf("%v", rules[j])
+		return fmt.Sprintf("%v", rules[i].Hash()) < fmt.Sprintf("%v", rules[j].Hash())
 	})
+	resource.SetStateAttr(attr, cty.ListVal(rules))
 }
 
-func (g *SecurityGenerator) sortIfExist(attribute string, ruleMap map[string]interface{}) {
+func (g *SecurityGenerator) sortIfExist(attribute string, ruleMap map[string]cty.Value) {
 	if val, ok := ruleMap[attribute]; ok {
-		sort.Slice(val.([]interface{}), func(i, j int) bool {
-			return val.([]interface{})[i].(string) < val.([]interface{})[j].(string)
+		valueList := val.AsValueSlice()
+		sort.Slice(valueList, func(i, j int) bool {
+			return valueList[i].Hash() < valueList[j].Hash()
 		})
+		ruleMap[attribute] = cty.ListVal(valueList)
 	}
 }
 
