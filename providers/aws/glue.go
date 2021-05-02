@@ -92,6 +92,44 @@ func (g *GlueGenerator) loadGlueCatalogTable(svc *glue.Client, account *string, 
 	return nil
 }
 
+func (g *GlueGenerator) loadGlueJobs(svc *glue.Client) error {
+	var GlueJobAllowEmptyValues = []string{"tags."}
+	p := glue.NewGetJobsPaginator(svc, &glue.GetJobsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, job := range page.Jobs {
+			resource := terraformutils.NewSimpleResource(*job.Name, *job.Name,
+				"aws_glue_job",
+				"aws",
+				GlueJobAllowEmptyValues)
+			g.Resources = append(g.Resources, resource)
+		}
+	}
+	return nil
+}
+
+func (g *GlueGenerator) loadGlueTriggers(svc *glue.Client) error {
+	var GlueTriggerAllowEmptyValues = []string{"tags."}
+	p := glue.NewGetTriggersPaginator(svc, &glue.GetTriggersInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, trigger := range page.Triggers {
+			resource := terraformutils.NewSimpleResource(*trigger.Name, *trigger.Name,
+				"aws_glue_trigger",
+				"aws",
+				GlueTriggerAllowEmptyValues)
+			g.Resources = append(g.Resources, resource)
+		}
+	}
+	return nil
+}
+
 // Generate TerraformResources from AWS API,
 // from each database create 1 TerraformResource.
 // Need only database name as ID for terraform resource
@@ -119,6 +157,14 @@ func (g *GlueGenerator) InitResources() error {
 		if err := g.loadGlueCatalogTable(svc, account, DatabaseName); err != nil {
 			return err
 		}
+	}
+
+	if err := g.loadGlueJobs(svc); err != nil {
+		return err
+	}
+
+	if err := g.loadGlueTriggers(svc); err != nil {
+		return err
 	}
 
 	return nil
