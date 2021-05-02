@@ -17,6 +17,7 @@ package aws
 import (
 	"context"
 	"fmt"
+	"github.com/zclconf/go-cty/cty"
 	"log"
 	"strings"
 
@@ -316,9 +317,6 @@ func (g *IamGenerator) getAttachedGroupPolicies(svc *iam.Client, group types.Gro
 			continue
 		}
 		for _, attachedPolicy := range groupAttachedPoliciesNextPage.AttachedPolicies {
-			if !strings.Contains(*attachedPolicy.PolicyArn, "arn:aws:iam::aws") {
-				continue // map only AWS managed policies since others should be managed by
-			}
 			id := *group.GroupName + "/" + *attachedPolicy.PolicyArn
 			g.Resources = append(g.Resources, terraformutils.NewResource(
 				id,
@@ -362,23 +360,23 @@ func (g *IamGenerator) getInstanceProfiles(svc *iam.Client) error {
 
 // PostGenerateHook for add policy json as heredoc
 func (g *IamGenerator) PostConvertHook() error {
-	for i, resource := range g.Resources {
+	for _, resource := range g.Resources {
 		switch {
-		case resource.InstanceInfo.Type == "aws_iam_policy" ||
-			resource.InstanceInfo.Type == "aws_iam_user_policy" ||
-			resource.InstanceInfo.Type == "aws_iam_group_policy" ||
-			resource.InstanceInfo.Type == "aws_iam_role_policy":
-			policy := g.escapeAwsInterpolation(resource.Item["policy"].(string))
-			resource.Item["policy"] = fmt.Sprintf(`<<POLICY
+		case resource.Address.Type == "aws_iam_policy" ||
+			resource.Address.Type == "aws_iam_user_policy" ||
+			resource.Address.Type == "aws_iam_group_policy" ||
+			resource.Address.Type == "aws_iam_role_policy":
+			policy := g.escapeAwsInterpolation(resource.GetStateAttr("policy"))
+			resource.SetStateAttr("policy", cty.StringVal(fmt.Sprintf(`<<POLICY
 %s
-POLICY`, policy)
-		case resource.InstanceInfo.Type == "aws_iam_role":
-			policy := g.escapeAwsInterpolation(resource.Item["assume_role_policy"].(string))
-			g.Resources[i].Item["assume_role_policy"] = fmt.Sprintf(`<<POLICY
+POLICY`, policy)))
+		case resource.Address.Type == "aws_iam_role":
+			policy := g.escapeAwsInterpolation(resource.GetStateAttr("assume_role_policy"))
+			resource.SetStateAttr("assume_role_policy", cty.StringVal(fmt.Sprintf(`<<POLICY
 %s
-POLICY`, policy)
-		case resource.InstanceInfo.Type == "aws_iam_instance_profile":
-			delete(resource.Item, "roles")
+POLICY`, policy)))
+		case resource.Address.Type == "aws_iam_instance_profile":
+			resource.DeleteStateAttr("roles")
 		}
 	}
 	return nil

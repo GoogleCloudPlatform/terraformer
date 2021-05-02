@@ -16,6 +16,7 @@ package aws
 
 import (
 	"context"
+	"github.com/zclconf/go-cty/cty"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
@@ -47,23 +48,22 @@ func (g *LambdaGenerator) InitResources() error {
 }
 
 func (g *LambdaGenerator) PostConvertHook() error {
-	for i, r := range g.Resources {
-		if _, exist := r.Item["environment"]; !exist {
-			continue
-		}
-		variables := g.Resources[i].Item["environment"].([]interface{})[0].(map[string]interface{})["variables"]
-		g.Resources[i].Item["environment"] = []interface{}{
-			map[string]interface{}{
-				"variables": []map[string]interface{}{variables.(map[string]interface{})},
-			},
+	for _, r := range g.Resources {
+		if r.HasStateAttrFirstAttr("environment", "variables") {
+			variables := r.InstanceState.Value.GetAttr("environment").AsValueSlice()[0].GetAttr("variables")
+			instanceStateMap := r.InstanceState.Value.AsValueMap()
+			environmentMap := instanceStateMap["environment"].AsValueSlice()[0].AsValueMap()
+			environmentMap["variables"] = variables
+			instanceStateMap["environment"] = cty.ObjectVal(environmentMap)
+			r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 		}
 	}
 	for _, r := range g.Resources {
-		if r.InstanceInfo.Type != "aws_lambda_function_event_invoke_config" {
+		if r.Address.Type != "aws_lambda_function_event_invoke_config" {
 			continue
 		}
-		if r.InstanceState.Attributes["maximum_event_age_in_seconds"] == "0" {
-			delete(r.Item, "maximum_event_age_in_seconds")
+		if r.GetStateAttr("maximum_event_age_in_seconds") == "0" {
+			r.DeleteStateAttr("maximum_event_age_in_seconds")
 		}
 	}
 	return nil

@@ -16,6 +16,7 @@ package aws
 
 import (
 	"context"
+	"github.com/zclconf/go-cty/cty"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/kafka"
@@ -55,11 +56,13 @@ func (g *MskGenerator) InitResources() error {
 
 func (g *MskGenerator) PostConvertHook() error {
 	for _, r := range g.Resources {
-		if r.InstanceInfo.Type != "aws_msk_cluster" {
+		if r.Address.Type != "aws_msk_cluster" {
 			continue
 		}
-		if r.InstanceState.Attributes["configuration_info.0.revision"] == "0" {
-			delete(r.Item, "configuration_info")
+		if r.InstanceState.Value.GetAttr("configuration_info").AsValueSlice()[0].GetAttr("revision").AsString() == "0" {
+			instanceStateMap := r.InstanceState.Value.AsValueMap()
+			delete(instanceStateMap, "configuration_info")
+			r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 		}
 	}
 	return nil

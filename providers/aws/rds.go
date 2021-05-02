@@ -171,37 +171,37 @@ func (g *RDSGenerator) InitResources() error {
 	return nil
 }
 
-func (g *RDSGenerator) PostConvertHook() error {
-	for i, r := range g.Resources {
-		if r.InstanceInfo.Type != "aws_db_instance" {
-			continue
-		}
-		for _, parameterGroup := range g.Resources {
-			if parameterGroup.InstanceInfo.Type != "aws_db_parameter_group" {
-				continue
-			}
-			if parameterGroup.InstanceState.Attributes["name"] == r.InstanceState.Attributes["parameter_group_name"] {
-				g.Resources[i].Item["parameter_group_name"] = "${aws_db_parameter_group." + parameterGroup.ResourceName + ".name}"
-			}
-		}
-
-		for _, subnet := range g.Resources {
-			if subnet.InstanceInfo.Type != "aws_db_subnet_group" {
-				continue
-			}
-			if subnet.InstanceState.Attributes["name"] == r.InstanceState.Attributes["db_subnet_group_name"] {
-				g.Resources[i].Item["db_subnet_group_name"] = "${aws_db_subnet_group." + subnet.ResourceName + ".name}"
-			}
-		}
-
-		for _, optionGroup := range g.Resources {
-			if optionGroup.InstanceInfo.Type != "aws_db_option_group" {
-				continue
-			}
-			if optionGroup.InstanceState.Attributes["name"] == r.InstanceState.Attributes["option_group_name"] {
-				g.Resources[i].Item["option_group_name"] = "${aws_db_option_group." + optionGroup.ResourceName + ".name}"
-			}
-		}
-	}
-	return nil
-}
+//func (g *RDSGenerator) PostConvertHook() error {
+//	for i, r := range g.Resources {
+//		if r.Address.Type != "aws_db_instance" {
+//			continue
+//		}
+//		for _, parameterGroup := range g.Resources {
+//			if parameterGroup.Address.Type != "aws_db_parameter_group" {
+//				continue
+//			}
+//			if parameterGroup.InstanceState.Attributes["name"] == r.InstanceState.Attributes["parameter_group_name"] {
+//				g.Resources[i].Item["parameter_group_name"] = "${aws_db_parameter_group." + parameterGroup.ResourceName + ".name}"
+//			}
+//		}
+//
+//		for _, subnet := range g.Resources {
+//			if subnet.Address.Type != "aws_db_subnet_group" {
+//				continue
+//			}
+//			if subnet.InstanceState.Attributes["name"] == r.InstanceState.Attributes["db_subnet_group_name"] {
+//				g.Resources[i].Item["db_subnet_group_name"] = "${aws_db_subnet_group." + subnet.ResourceName + ".name}"
+//			}
+//		}
+//
+//		for _, optionGroup := range g.Resources {
+//			if optionGroup.Address.Type != "aws_db_option_group" {
+//				continue
+//			}
+//			if optionGroup.InstanceState.Attributes["name"] == r.InstanceState.Attributes["option_group_name"] {
+//				g.Resources[i].Item["option_group_name"] = "${aws_db_option_group." + optionGroup.ResourceName + ".name}"
+//			}
+//		}
+//	}
+//	return nil
+//}

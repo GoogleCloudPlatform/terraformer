@@ -16,7 +16,6 @@ package aws
 
 import (
 	"context"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/firehose"
 )
@@ -67,10 +66,11 @@ func (g *FirehoseGenerator) InitResources() error {
 
 func (g *FirehoseGenerator) PostConvertHook() error {
 	for _, resource := range g.Resources {
-		_, hasExtendedS3Configuration := resource.Item["extended_s3_configuration"]
-		_, hasS3Configuration := resource.Item["s3_configuration"]
-		if hasExtendedS3Configuration && hasS3Configuration {
-			delete(resource.Item, "s3_configuration")
+		if resource.Address.Type != "aws_kinesis_firehose_delivery_stream" {
+			continue
+		}
+		if resource.HasStateAttr("extended_s3_configuration") && resource.HasStateAttr("s3_configuration") {
+			resource.DeleteStateAttr("s3_configuration")
 		}
 	}
 	return nil

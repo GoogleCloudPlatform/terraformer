@@ -16,7 +16,6 @@ package aws
 
 import (
 	"context"
-	"github.com/zclconf/go-cty/cty"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -92,23 +91,17 @@ func (g *Ec2Generator) InitResources() error {
 
 func (g *Ec2Generator) PostConvertHook() error {
 	for _, r := range g.Resources {
-		if r.Address.Type != "aws_instance" {
+		if r.Address.Type != "aws_instance" && !r.HasStateAttrFirstAttr("root_block_device", "volume_type") {
 			continue
 		}
-		instanceStateMap := r.InstanceState.Value.AsValueMap()
 
-		rootDeviceVolumeType := r.InstanceState.Value.GetAttr("root_block_device").AsValueSlice()[0].GetAttr("volume_type").AsString()
+		rootDeviceVolumeType := r.GetStateAttrFirstAttr("root_block_device", "volume_type")
 		if !(rootDeviceVolumeType == "io1" || rootDeviceVolumeType == "io2" || rootDeviceVolumeType == "gp3") {
-			rootBlockDeviceMap := instanceStateMap["root_block_device"].AsValueSlice()[0].AsValueMap()
-			delete(rootBlockDeviceMap, "ipos")
-			instanceStateMap["root_block_device"] = cty.ListVal([]cty.Value{cty.ObjectVal(rootBlockDeviceMap)})
+			r.DeleteStateAttrFirstAttr("root_block_device", "ipos")
 		}
 		if rootDeviceVolumeType != "gp3" {
-			rootBlockDeviceMap := instanceStateMap["root_block_device"].AsValueSlice()[0].AsValueMap()
-			delete(rootBlockDeviceMap, "throughput")
-			instanceStateMap["root_block_device"] = cty.ListVal([]cty.Value{cty.ObjectVal(rootBlockDeviceMap)})
+			r.DeleteStateAttrFirstAttr("root_block_device", "throughput")
 		}
-		r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 	}
 
 	return nil

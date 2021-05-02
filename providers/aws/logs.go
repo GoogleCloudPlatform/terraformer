@@ -29,7 +29,7 @@ type LogsGenerator struct {
 }
 
 func (g *LogsGenerator) createResources(logGroups *cloudwatchlogs.DescribeLogGroupsOutput) []terraformutils.Resource {
-	resources := []terraformutils.Resource{}
+	var resources []terraformutils.Resource
 	for _, logGroup := range logGroups.LogGroups {
 		resourceName := StringValue(logGroup.LogGroupName)
 
@@ -76,9 +76,9 @@ func (g *LogsGenerator) InitResources() error {
 
 // remove retention_in_days if it is 0 (it gets added by the "refresh" stage)
 func (g *LogsGenerator) PostConvertHook() error {
-	for _, resource := range g.Resources {
-		if resource.Item["retention_in_days"] == "0" {
-			delete(resource.Item, "retention_in_days")
+	for _, r := range g.Resources {
+		if r.GetStateAttr("retention_in_days") == "0" {
+			r.DeleteStateAttr("retention_in_days")
 		}
 	}
 	return nil

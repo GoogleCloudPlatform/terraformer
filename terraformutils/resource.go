@@ -17,6 +17,7 @@ package terraformutils
 import (
 	"github.com/hashicorp/terraform/addrs"
 	"github.com/hashicorp/terraform/states"
+	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/gocty"
 	"log"
 	"strings"
@@ -144,4 +145,41 @@ func (r Resource) GetIDKey() string {
 
 func (r *Resource) ServiceName() string {
 	return strings.TrimPrefix(r.Address.Type, r.Provider+"_")
+}
+
+func (r *Resource) HasStateAttr(attr string) bool {
+	return r.InstanceState.Value.HasIndex(cty.StringVal(attr)) == cty.True
+}
+
+func (r *Resource) GetStateAttr(attr string) string {
+	return r.InstanceState.Value.GetAttr(attr).AsString()
+}
+
+func (r *Resource) SetStateAttr(attr string, value cty.Value) {
+	instanceStateMap := r.InstanceState.Value.AsValueMap()
+	instanceStateMap[attr] = value
+	r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
+}
+
+func (r *Resource) DeleteStateAttr(attr string) {
+	instanceStateMap := r.InstanceState.Value.AsValueMap()
+	delete(instanceStateMap, attr)
+	r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
+}
+
+func (r *Resource) HasStateAttrFirstAttr(firstAttr string, secondAttr string) bool {
+	return r.HasStateAttr(firstAttr) &&
+		r.InstanceState.Value.GetAttr(firstAttr).AsValueSlice()[0].HasIndex(cty.StringVal(secondAttr)) == cty.True
+}
+
+func (r *Resource) GetStateAttrFirstAttr(firstAttr string, secondAttr string) string {
+	return r.InstanceState.Value.GetAttr(firstAttr).AsValueSlice()[0].GetAttr(secondAttr).AsString()
+}
+
+func (r *Resource) DeleteStateAttrFirstAttr(firstAttr string, secondAttr string) {
+	instanceStateMap := r.InstanceState.Value.AsValueMap()
+	firstAttrMap := instanceStateMap[firstAttr].AsValueSlice()[0].AsValueMap()
+	delete(firstAttrMap, secondAttr)
+	instanceStateMap[firstAttr] = cty.ListVal([]cty.Value{cty.ObjectVal(firstAttrMap)})
+	r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 }

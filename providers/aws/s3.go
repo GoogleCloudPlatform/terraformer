@@ -17,6 +17,7 @@ package aws
 import (
 	"context"
 	"fmt"
+	"github.com/zclconf/go-cty/cty"
 	"log"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -95,15 +96,15 @@ func (g *S3Generator) InitResources() error {
 // PostGenerateHook for add bucket policy json as heredoc
 // support only bucket with policy
 func (g *S3Generator) PostConvertHook() error {
-	for i, resource := range g.Resources {
-		if resource.InstanceInfo.Type == "aws_s3_bucket" {
-			if val, ok := g.Resources[i].Item["acl"]; ok && val == "private" {
-				delete(g.Resources[i].Item, "acl")
+	for _, resource := range g.Resources {
+		if resource.Address.Type == "aws_s3_bucket" {
+			if resource.HasStateAttr("acl") && resource.GetStateAttr("acl") == "private" {
+				resource.DeleteStateAttr("acl")
 			}
-			if val, ok := g.Resources[i].Item["policy"]; ok {
-				g.Resources[i].Item["policy"] = fmt.Sprintf(`<<POLICY
+			if resource.HasStateAttr("policy") {
+				resource.SetStateAttr("policy", cty.StringVal(fmt.Sprintf(`<<POLICY
 %s
-POLICY`, g.escapeAwsInterpolation(val.(string)))
+POLICY`, g.escapeAwsInterpolation(resource.GetStateAttr("policy")))))
 			}
 		}
 	}

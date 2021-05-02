@@ -85,13 +85,11 @@ func (g *EcrGenerator) InitResources() error {
 func (g *EcrGenerator) PostConvertHook() error {
 	for _, resource := range g.Resources {
 		if resource.Address.Type == "aws_ecr_repository_policy" || resource.Address.Type == "aws_ecr_lifecycle_policy" {
-			if resource.InstanceState.Value.HasIndex(cty.StringVal("policy")) == cty.True {
-				instanceStateMap := resource.InstanceState.Value.AsValueMap()
-				policy := g.escapeAwsInterpolation(instanceStateMap["policy"].AsString())
-				instanceStateMap["policy"] = cty.StringVal(fmt.Sprintf(`<<POLICY
+			if resource.HasStateAttr("policy") {
+				policy := g.escapeAwsInterpolation(resource.GetStateAttr("policy"))
+				resource.SetStateAttr("policy", cty.StringVal(fmt.Sprintf(`<<POLICY
 %s
-POLICY`, policy))
-				resource.InstanceState.Value = cty.ObjectVal(instanceStateMap)
+POLICY`, policy)))
 			}
 		}
 	}

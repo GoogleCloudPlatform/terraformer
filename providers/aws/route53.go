@@ -122,23 +122,27 @@ func (g *Route53Generator) InitResources() error {
 }
 
 func (g *Route53Generator) PostConvertHook() error {
-	for i, resourceRecord := range g.Resources {
-		if resourceRecord.InstanceInfo.Type == "aws_route53_zone" {
+	for _, r := range g.Resources {
+		if r.Address.Type == "aws_route53_zone" {
 			continue
 		}
-		item := resourceRecord.Item
-		zoneID := item["zone_id"].(string)
-		for _, resourceZone := range g.Resources {
-			if resourceZone.InstanceInfo.Type != "aws_route53_zone" {
-				continue
-			}
-			if zoneID == resourceZone.InstanceState.ID {
-				g.Resources[i].Item["zone_id"] = "${aws_route53_zone." + resourceZone.ResourceName + ".zone_id}"
-			}
+		//item := resourceRecord.Item
+		//zoneID := item["zone_id"].(string)
+		//for _, resourceZone := range g.Resources {
+		//	if resourceZone.Address.Type != "aws_route53_zone" {
+		//		continue
+		//	}
+		//	if zoneID == resourceZone.InstanceState.ID {
+		//		g.Resources[i].Item["zone_id"] = "${aws_route53_zone." + resourceZone.ResourceName + ".zone_id}"
+		//	}
+		//}
+
+		if r.GetStateAttrFirstAttr("configuration_info", "revision") == "0" {
+			r.DeleteStateAttr("configuration_info")
 		}
-		if _, aliasExist := resourceRecord.Item["alias"]; aliasExist {
-			if _, ttlExist := resourceRecord.Item["ttl"]; ttlExist {
-				delete(g.Resources[i].Item, "ttl")
+		if r.HasStateAttr("alias") {
+			if r.HasStateAttr("ttl") {
+				r.DeleteStateAttr("ttl")
 			}
 		}
 	}

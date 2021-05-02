@@ -17,7 +17,6 @@ package aws
 import (
 	"context"
 	"fmt"
-	"github.com/zclconf/go-cty/cty"
 	"strconv"
 	"strings"
 
@@ -147,12 +146,10 @@ func (g *EcsGenerator) PostConvertHook() error {
 		if r.Address.Type != "aws_ecs_service" {
 			continue
 		}
-		instanceStateMap := r.InstanceState.Value.AsValueMap()
-		if r.InstanceState.Value.GetAttr("propagate_tags").AsString() == "NONE" {
-			delete(instanceStateMap, "propagate_tags")
+		if r.GetStateAttr("propagate_tags") == "NONE" {
+			r.DeleteStateAttr("propagate_tags")
 		}
-		delete(instanceStateMap, "iam_role")
-		r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
+		r.DeleteStateAttr("iam_role")
 	}
 
 	return nil
