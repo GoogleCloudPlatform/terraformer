@@ -18,12 +18,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"strings"
 	"time"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/pathorcontents"
 	"golang.org/x/oauth2"
 	googleoauth "golang.org/x/oauth2/google"
 	"golang.org/x/oauth2/jwt"
@@ -76,13 +76,13 @@ func (s *GmailfilterService) getTokenSource(creds string, impersonatedEmailAddr 
 		if err := s.validateCredentials(creds); err != nil {
 			return nil, err
 		}
-		contents, _, err := pathorcontents.Read(creds)
+		contents, err := ioutil.ReadFile(creds)
 		if err != nil {
 			return nil, fmt.Errorf("Error loading credentials: %s", err)
 		}
 
 		var serviceAccount serviceAccountFile
-		if err := parseJSON(&serviceAccount, contents); err != nil {
+		if err := parseJSON(&serviceAccount, string(contents)); err != nil {
 			return nil, fmt.Errorf("error parsing credentials %q: %s", contents, err)
 		}
 

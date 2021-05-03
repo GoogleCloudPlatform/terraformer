@@ -109,10 +109,10 @@ func (g *AlertGenerator) InitResources() error {
 }
 
 func (g *AlertGenerator) PostConvertHook() error {
-	for i, resource := range g.Resources {
-		if resource.InstanceInfo.Type == "newrelic_alert_condition" {
-			if resource.Item["violation_close_timer"] == "0" {
-				delete(g.Resources[i].Item, "violation_close_timer")
+	for _, resource := range g.Resources {
+		if resource.Address.Type == "newrelic_alert_condition" {
+			if resource.GetStateAttr("violation_close_timer") == "0" {
+				resource.DeleteStateAttr("violation_close_timer")
 			}
 		}
 	}

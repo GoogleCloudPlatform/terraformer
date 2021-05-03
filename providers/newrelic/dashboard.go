@@ -16,6 +16,7 @@ package newrelic
 
 import (
 	"fmt"
+	"github.com/zclconf/go-cty/cty"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	newrelic "github.com/paultyng/go-newrelic/v4/api"
@@ -62,16 +63,19 @@ func (g *DashboardGenerator) InitResources() error {
 func (g *DashboardGenerator) PostConvertHook() error {
 	// Widget's title is a `required` field
 	// Setting title to empty string for those resources missing this property
-	for i, resource := range g.Resources {
-		widgets := resource.Item["widget"]
-		if widgets == nil {
+	for _, resource := range g.Resources {
+		if !resource.HasStateAttr("widget") {
 			continue
 		}
-		for wIdx, w := range resource.Item["widget"].([]interface{}) {
-			if _, ok := w.(map[string]interface{})["title"]; !ok {
-				g.Resources[i].Item["widget"].([]interface{})[wIdx].(map[string]interface{})["title"] = ""
+		widgetSlice := resource.GetStateAttrSlice("widget")
+		for wIdx, w := range widgetSlice {
+			if w.HasIndex(cty.StringVal("title")).False() {
+				widgetItemMap := w.AsValueMap()
+				widgetItemMap["title"] = cty.StringVal("")
+				widgetSlice[wIdx] = cty.ObjectVal(widgetItemMap)
 			}
 		}
+		resource.SetStateAttr("widget", cty.ListVal(widgetSlice))
 	}
 
 	return nil

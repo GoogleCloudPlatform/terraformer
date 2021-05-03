@@ -15,6 +15,7 @@
 package openstack
 
 import (
+	"github.com/zclconf/go-cty/cty"
 	"log"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -102,16 +103,16 @@ func (g *NetworkingGenerator) InitResources() error {
 }
 
 func (g *NetworkingGenerator) PostConvertHook() error {
-	for i, r := range g.Resources {
-		if r.InstanceInfo.Type != "openstack_networking_secgroup_rule_v2" {
+	for _, r := range g.Resources {
+		if r.Address.Type != "openstack_networking_secgroup_rule_v2" {
 			continue
 		}
 		for _, sg := range g.Resources {
-			if sg.InstanceInfo.Type != "openstack_networking_secgroup_v2" {
+			if sg.Address.Type != "openstack_networking_secgroup_v2" {
 				continue
 			}
-			if r.InstanceState.Attributes["security_group_id"] == sg.InstanceState.Attributes["id"] {
-				g.Resources[i].Item["security_group_id"] = "${openstack_networking_secgroup_v2." + sg.ResourceName + ".id}"
+			if r.GetStateAttr("security_group_id") == sg.ImportID {
+				r.SetStateAttr("security_group_id", cty.StringVal("${"+sg.Address.String()+".id}"))
 			}
 		}
 	}

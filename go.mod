@@ -110,7 +110,7 @@ require (
 	github.com/hashicorp/go-plugin v1.4.1
 	github.com/hashicorp/hcl v1.0.0
 	github.com/hashicorp/terraform v0.15.0
-	github.com/hashicorp/terraform-plugin-sdk/v2 v2.6.1 // indirect
+	github.com/hashicorp/terraform-plugin-sdk/v2 v2.6.1
 	github.com/heroku/heroku-go/v5 v5.1.0
 	github.com/hokaccha/go-prettyjson v0.0.0-20210113012101-fb4e108d2519 // indirect
 	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
@@ -139,10 +139,10 @@ require (
 	google.golang.org/api v0.40.0
 	google.golang.org/genproto v0.0.0-20210226172003-ab064af71705
 	gopkg.in/jarcoal/httpmock.v1 v1.0.0-00010101000000-000000000000 // indirect
-	k8s.io/apimachinery v0.20.2
+	k8s.io/apimachinery v0.19.1
 	k8s.io/client-go v10.0.0+incompatible
 )
 
 replace gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
 
-replace k8s.io/client-go => k8s.io/client-go v0.20.2
+replace k8s.io/client-go => k8s.io/client-go v0.19.1

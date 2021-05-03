@@ -18,6 +18,7 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	cdb "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdb/v20170320"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
+	"github.com/zclconf/go-cty/cty"
 )
 
 type MysqlGenerator struct {
@@ -125,20 +126,20 @@ func (g *MysqlGenerator) loadMysqlReadOnly(client *cdb.Client) error {
 }
 
 func (g *MysqlGenerator) PostConvertHook() error {
-	for i, resource := range g.Resources {
-		if resource.InstanceInfo.Type == "tencentcloud_mysql_instance" {
-			delete(resource.Item, "pay_type")
-			delete(resource.Item, "period")
+	for _, resource := range g.Resources {
+		if resource.Address.Type == "tencentcloud_mysql_instance" {
+			resource.DeleteStateAttr("pay_type")
+			resource.DeleteStateAttr("period")
 		}
 
-		if resource.InstanceInfo.Type != "tencentcloud_mysql_readonly_instance" {
-			if masterID, exist := resource.InstanceState.Attributes["master_instance_id"]; exist {
+		if resource.Address.Type != "tencentcloud_mysql_readonly_instance" {
+			if resource.HasStateAttr("master_instance_id") {
 				for _, r := range g.Resources {
-					if r.InstanceInfo.Type != "tencentcloud_mysql_instance" {
+					if r.Address.Type != "tencentcloud_mysql_instance" {
 						continue
 					}
-					if masterID == r.InstanceState.Attributes["id"] {
-						g.Resources[i].Item["master_instance_id"] = "${tencentcloud_mysql_instance." + r.ResourceName + ".id}"
+					if resource.GetStateAttr("master_instance_id") == r.ImportID {
+						resource.SetStateAttr("master_instance_id", cty.StringVal("${"+r.Address.String()+".id}"))
 					}
 				}
 			}

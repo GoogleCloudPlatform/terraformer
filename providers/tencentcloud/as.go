@@ -18,6 +18,7 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	as "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/as/v20180419"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
+	"github.com/zclconf/go-cty/cty"
 )
 
 type AsGenerator struct {
@@ -121,17 +122,17 @@ func (g *AsGenerator) loadScalingConfigs(client *as.Client) error {
 }
 
 func (g *AsGenerator) PostConvertHook() error {
-	for i, resource := range g.Resources {
-		if resource.InstanceInfo.Type != "tencentcloud_as_scaling_group" {
+	for _, resource := range g.Resources {
+		if resource.Address.Type != "tencentcloud_as_scaling_group" {
 			continue
 		}
-		if configID, exist := resource.InstanceState.Attributes["configuration_id"]; exist {
+		if resource.HasStateAttr("configuration_id") {
 			for _, r := range g.Resources {
-				if r.InstanceInfo.Type != "tencentcloud_as_scaling_config" {
+				if r.Address.Type != "tencentcloud_as_scaling_config" {
 					continue
 				}
-				if configID == r.InstanceState.Attributes["id"] {
-					g.Resources[i].Item["configuration_id"] = "${tencentcloud_as_scaling_config." + r.ResourceName + ".id}"
+				if resource.GetStateAttr("configuration_id") == r.ImportID {
+					r.SetStateAttr("configuration_id", cty.StringVal("${"+r.Address.String()+".id}"))
 				}
 			}
 		}

@@ -15,6 +15,7 @@
 package openstack
 
 import (
+	"github.com/zclconf/go-cty/cty"
 	"log"
 	"sort"
 	"strconv"
@@ -156,43 +157,37 @@ func (g *ComputeGenerator) InitResources() error {
 }
 
 func (g *ComputeGenerator) PostConvertHook() error {
-	for i, r := range g.Resources {
-		if r.InstanceInfo.Type == "openstack_compute_volume_attach_v2" {
-			g.Resources[i].Item["volume_id"] = "${openstack_blockstorage_volume_v3." + r.AdditionalFields["volume_name"].(string) + ".id}"
-			g.Resources[i].Item["instance_id"] = "${openstack_compute_instance_v2." + r.AdditionalFields["instance_name"].(string) + ".id}"
-			delete(g.Resources[i].Item, "volume_name")
-			delete(g.Resources[i].Item, "instance_name")
-			delete(g.Resources[i].Item, "device")
+	for _, r := range g.Resources {
+		if r.Address.Type == "openstack_compute_volume_attach_v2" {
+			r.SetStateAttr("volume_id", cty.StringVal("${openstack_blockstorage_volume_v3."+r.AdditionalFields["volume_name"].(string)+".id}"))
+			r.SetStateAttr("instance_id", cty.StringVal("${openstack_compute_instance_v2."+r.AdditionalFields["instance_name"].(string)+".id}"))
+			r.DeleteStateAttr("volume_name")
+			r.DeleteStateAttr("instance_name")
+			r.DeleteStateAttr("device")
 		}
-		if r.InstanceInfo.Type != "openstack_compute_instance_v2" {
+		if r.Address.Type != "openstack_compute_instance_v2" {
 			continue
 		}
 
-		// Copy "all_metadata.%" to "metadata.%"
-		for k, v := range g.Resources[i].InstanceState.Attributes {
-			if strings.HasPrefix(k, "all_metadata") {
-				newKey := strings.Replace(k, "all_metadata", "metadata", 1)
-				g.Resources[i].InstanceState.Attributes[newKey] = v
+		// Copy "all_metadata" to "metadata"
+		if r.HasStateAttr("all_metadata") {
+			metadata := r.GetStateAttrMap("metadata")
+			for k, v := range r.GetStateAttrMap("all_metadata") {
+				metadata[k] = v
 			}
-		}
-		// Replace "all_metadata" to "metadata"
-		// because "all_metadata" field cannot be set as resource argument
-		for k, v := range g.Resources[i].Item {
-			if strings.HasPrefix(k, "all_metadata") {
-				newKey := strings.Replace(k, "all_metadata", "metadata", 1)
-				g.Resources[i].Item[newKey] = v
-				delete(g.Resources[i].Item, k)
-			}
+			r.SetStateAttr("metadata", cty.ObjectVal(metadata))
 		}
 		if r.AdditionalFields["block_device"] != nil {
 			bds := r.AdditionalFields["block_device"].([]map[string]interface{})
-			for bi, bd := range bds {
+			var blockDevices []cty.Value
+			for _, bd := range bds {
+				var blockDeviceMap = map[string]cty.Value{}
 				for k, v := range bd {
-					g.Resources[i].InstanceState.Attributes["block_device."+strconv.Itoa(bi)+"."+k] = v.(string)
+					blockDeviceMap[k] = cty.StringVal(v.(string))
 				}
+				blockDevices = append(blockDevices, cty.ObjectVal(blockDeviceMap))
 			}
-
-			g.Resources[i].InstanceState.Attributes["block_device.#"] = strconv.Itoa(len(bds))
+			r.SetStateAttr("block_device", cty.ListVal(blockDevices))
 		}
 	}
 

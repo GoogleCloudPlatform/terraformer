@@ -16,6 +16,7 @@ package gcp
 
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/zclconf/go-cty/cty"
 )
 
 type GCPService struct { //nolint
@@ -25,7 +26,7 @@ type GCPService struct { //nolint
 func (s *GCPService) applyCustomProviderType(resources []terraformutils.Resource, providerName string) []terraformutils.Resource {
 	editedResources := []terraformutils.Resource{}
 	for _, r := range resources {
-		r.Item["provider"] = providerName
+		r.SetStateAttr("provider", cty.StringVal(providerName))
 		editedResources = append(editedResources, r)
 	}
 	return editedResources
