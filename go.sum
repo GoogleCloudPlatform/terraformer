@@ -312,8 +312,8 @@ github.com/aws/aws-sdk-go-v2/service/sso v1.1.4 h1:Tr/SsFDXWN8rntdzTNrDs/MvuBXRC
 github.com/aws/aws-sdk-go-v2/service/sso v1.1.4/go.mod h1:yQayEbOWH75NaKFylsFocBc3yanYEGndlOaH4i/Lvno=
 github.com/aws/aws-sdk-go-v2/service/sts v1.2.1 h1:1koRvKlZMN+FhTGV5f4q6vRHXNJzeZlPKzbs1/Y32Kg=
 github.com/aws/aws-sdk-go-v2/service/sts v1.2.1/go.mod h1:L1LH5nHMXxdkKj057ZUx7Wi50CCrkZ+9jkTnBnY2j/w=
-github.com/aws/aws-sdk-go-v2/service/swf v1.2.1 h1:oRzuG8uLuYbUysx6lSJ/h1yHItT7CCq8wNjKt2SO5Yo=
-github.com/aws/aws-sdk-go-v2/service/swf v1.2.1/go.mod h1:8oZdl0gL0mdCdkAqDvr2f2DFNCWgFmiUnRSJv/4qQ8c=
+github.com/aws/aws-sdk-go-v2/service/swf v1.2.2 h1:DPm8xVttctfEAALcJArYJxmI4SObDIftsipl4ykhF0E=
+github.com/aws/aws-sdk-go-v2/service/swf v1.2.2/go.mod h1:JiYj3t717Tna1ylyqV8KZZq3yPdvt0693LvytZ8OKeI=
 github.com/aws/aws-sdk-go-v2/service/waf v1.1.4 h1:Wh0YMwF394A9eBC8Pv8Uxk6CBx9KTWmoqyflQIBx6DU=
 github.com/aws/aws-sdk-go-v2/service/waf v1.1.4/go.mod h1:Ujifac0yyu5RLw3cPCGua50uHnsjiJo9LAhXEJZ+tVk=
 github.com/aws/aws-sdk-go-v2/service/wafregional v1.2.1 h1:Re8Uwffnndo9t8V46kT3aruMvVXHXUmuYKhIF1U9CBc=
