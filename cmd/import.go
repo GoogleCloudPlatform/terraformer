@@ -304,9 +304,9 @@ func printService(provider terraformutils.ProviderGenerator, serviceName string,
 					}
 					variables["data"]["terraform_remote_state"][k] = map[string]interface{}{
 						"backend": "local",
-						"config": [1]interface{}{map[string]interface{}{
+						"config": map[string]interface{}{
 							"path": strings.Repeat("../", strings.Count(path, "/")) + strings.ReplaceAll(path, serviceName, k) + "terraform.tfstate",
-						}},
+						},
 					}
 				}
 			}
