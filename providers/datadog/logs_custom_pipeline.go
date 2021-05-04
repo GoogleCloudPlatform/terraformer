@@ -69,7 +69,7 @@ func (g *LogsCustomPipelineGenerator) InitResources() error {
 	for _, filter := range g.Filter {
 		if filter.FieldPath == "id" && filter.IsApplicable("logs_custom_pipeline") {
 			for _, value := range filter.AcceptableValues {
-				logsCustomPipeline, _, err := datadogClientV1.LogsPipelinesApi.GetLogsPipeline(authV1, value).Execute()
+				logsCustomPipeline, _, err := datadogClientV1.LogsPipelinesApi.GetLogsPipeline(authV1, value)
 				if err != nil {
 					return err
 				}
@@ -84,7 +84,7 @@ func (g *LogsCustomPipelineGenerator) InitResources() error {
 		return nil
 	}
 
-	logsCustomPipelines, _, err := datadogClientV1.LogsPipelinesApi.ListLogsPipelines(authV1).Execute()
+	logsCustomPipelines, _, err := datadogClientV1.LogsPipelinesApi.ListLogsPipelines(authV1)
 	if err != nil {
 		return err
 	}

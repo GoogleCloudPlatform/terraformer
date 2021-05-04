@@ -64,7 +64,7 @@ func (g *LogsArchiveGenerator) InitResources() error {
 	for _, filter := range g.Filter {
 		if filter.FieldPath == "id" && filter.IsApplicable("logs_archive") {
 			for _, value := range filter.AcceptableValues {
-				resp, _, err := datadogClientV2.LogsArchivesApi.GetLogsArchive(authV2, value).Execute()
+				resp, _, err := datadogClientV2.LogsArchivesApi.GetLogsArchive(authV2, value)
 				if err != nil {
 					return err
 				}
@@ -79,7 +79,7 @@ func (g *LogsArchiveGenerator) InitResources() error {
 		return nil
 	}
 
-	logsArchiveListResp, _, err := datadogClientV2.LogsArchivesApi.ListLogsArchives(authV2).Execute()
+	logsArchiveListResp, _, err := datadogClientV2.LogsArchivesApi.ListLogsArchives(authV2)
 	logsArchiveList := logsArchiveListResp.GetData()
 	if err != nil {
 		return err

@@ -60,7 +60,7 @@ func (g *IntegrationAWSGenerator) InitResources() error {
 	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
 	authV1 := g.Args["authV1"].(context.Context)
 
-	integrations, _, err := datadogClientV1.AWSIntegrationApi.ListAWSAccounts(authV1).Execute()
+	integrations, _, err := datadogClientV1.AWSIntegrationApi.ListAWSAccounts(authV1)
 	if err != nil {
 		return err
 	}

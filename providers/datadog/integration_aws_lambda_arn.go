@@ -64,7 +64,7 @@ func (g *IntegrationAWSLambdaARNGenerator) InitResources() error {
 	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
 	authV1 := g.Args["authV1"].(context.Context)
 
-	logCollections, _, err := datadogClientV1.AWSLogsIntegrationApi.ListAWSLogsIntegrations(authV1).Execute()
+	logCollections, _, err := datadogClientV1.AWSLogsIntegrationApi.ListAWSLogsIntegrations(authV1)
 	if err != nil {
 		return err
 	}

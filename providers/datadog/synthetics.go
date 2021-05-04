@@ -64,7 +64,7 @@ func (g *SyntheticsGenerator) InitResources() error {
 	for _, filter := range g.Filter {
 		if filter.FieldPath == "id" && filter.IsApplicable("synthetics") {
 			for _, value := range filter.AcceptableValues {
-				syntheticsTest, _, err := datadogClientV1.SyntheticsApi.GetTest(authV1, value).Execute()
+				syntheticsTest, _, err := datadogClientV1.SyntheticsApi.GetTest(authV1, value)
 				if err != nil {
 					return err
 				}
@@ -79,7 +79,7 @@ func (g *SyntheticsGenerator) InitResources() error {
 		return nil
 	}
 
-	syntheticsTests, _, err := datadogClientV1.SyntheticsApi.ListTests(authV1).Execute()
+	syntheticsTests, _, err := datadogClientV1.SyntheticsApi.ListTests(authV1)
 	if err != nil {
 		return err
 	}

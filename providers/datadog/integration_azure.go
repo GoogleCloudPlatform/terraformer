@@ -60,7 +60,7 @@ func (g *IntegrationAzureGenerator) InitResources() error {
 	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
 	authV1 := g.Args["authV1"].(context.Context)
 
-	integrations, _, err := datadogClientV1.AzureIntegrationApi.ListAzureIntegration(authV1).Execute()
+	integrations, _, err := datadogClientV1.AzureIntegrationApi.ListAzureIntegration(authV1)
 	if err != nil {
 		return err
 	}

@@ -17,7 +17,6 @@ package datadog
 import (
 	"context"
 	"fmt"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	datadogV2 "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
@@ -66,16 +65,23 @@ func (g *UserGenerator) createResource(userID string) terraformutils.Resource {
 // Need User ID as ID for terraform resource
 func (g *UserGenerator) InitResources() error {
 	var users []datadogV2.User
-
 	datadogClientV2 := g.Args["datadogClientV2"].(*datadogV2.APIClient)
 	authV2 := g.Args["authV2"].(context.Context)
+
+	optionalParams := datadogV2.NewListUsersOptionalParameters()
+	for _, filter := range g.Filter {
+		if filter.FieldPath == "status" && filter.IsApplicable("user") {
+			optionalParams = optionalParams.WithFilterStatus(filter.AcceptableValues[0])
+		}
+	}
 
 	pageSize := int64(1000)
 	pageNumber := int64(0)
 	remaining := int64(1)
-
 	for remaining > int64(0) {
-		resp, _, err := datadogClientV2.UsersApi.ListUsers(authV2).PageSize(pageSize).PageNumber(pageNumber).Execute()
+		resp, _, err := datadogClientV2.UsersApi.ListUsers(authV2, *optionalParams.
+			WithPageSize(pageSize).
+			WithPageNumber(pageNumber))
 		if err != nil {
 			return err
 		}

@@ -70,7 +70,7 @@ func (g *DowntimeGenerator) InitResources() error {
 					return err
 				}
 
-				monitor, _, err := datadogClientV1.DowntimesApi.GetDowntime(authV1, i).Execute()
+				monitor, _, err := datadogClientV1.DowntimesApi.GetDowntime(authV1, i)
 				if err != nil {
 					return err
 				}
@@ -85,7 +85,7 @@ func (g *DowntimeGenerator) InitResources() error {
 		return nil
 	}
 
-	downtimes, _, err := datadogClientV1.DowntimesApi.ListDowntimes(authV1).Execute()
+	downtimes, _, err := datadogClientV1.DowntimesApi.ListDowntimes(authV1)
 	if err != nil {
 		return err
 	}
