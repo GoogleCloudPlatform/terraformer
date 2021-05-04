@@ -102,7 +102,7 @@ require (
 	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
 	github.com/fastly/go-fastly v1.18.0
 	github.com/google/go-github/v25 v25.1.3
-	github.com/gophercloud/gophercloud v0.13.0
+	github.com/gophercloud/gophercloud v0.17.0
 	github.com/grafana/grafana-api-golang-client v0.0.0-20210218192924-9ccd2365d2a6
 	github.com/hashicorp/go-azure-helpers v0.10.0
 	github.com/hashicorp/go-cleanhttp v0.5.1
@@ -110,6 +110,7 @@ require (
 	github.com/hashicorp/go-plugin v1.4.0
 	github.com/hashicorp/hcl v1.0.0
 	github.com/hashicorp/terraform v0.12.29
+	github.com/heimweh/go-pagerduty v0.0.0-20210412205347-cc0e5d3c14d4
 	github.com/heroku/heroku-go/v5 v5.1.0
 	github.com/hokaccha/go-prettyjson v0.0.0-20210113012101-fb4e108d2519 // indirect
 	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
