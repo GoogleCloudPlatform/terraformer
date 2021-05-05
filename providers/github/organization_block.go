@@ -20,7 +20,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
-	githubAPI "github.com/google/go-github/v25/github"
+	githubAPI "github.com/google/go-github/v35/github"
 )
 
 type OrganizationBlockGenerator struct {

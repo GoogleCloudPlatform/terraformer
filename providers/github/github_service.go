@@ -18,17 +18,19 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/google/go-github/v25/github"
-	githubAPI "github.com/google/go-github/v25/github"
+	"github.com/google/go-github/v35/github"
+	githubAPI "github.com/google/go-github/v35/github"
 	"golang.org/x/oauth2"
 )
+
+const githubDefaultURL = "https://api.github.com/"
 
 type GithubService struct { //nolint
 	terraformutils.Service
 }
 
 func (g *GithubService) createClient() (*github.Client, error) {
-	if g.GetArgs()["base_url"].(string) == "" {
+	if g.GetArgs()["base_url"].(string) == githubDefaultURL {
 		return g.createRegularClient(), nil
 	}
 	return g.createEnterpriseClient()
@@ -49,6 +51,6 @@ func (g *GithubService) createEnterpriseClient() (*github.Client, error) {
 		&oauth2.Token{AccessToken: g.Args["token"].(string)},
 	)
 	tc := oauth2.NewClient(ctx, ts)
-	baseURL := g.GetArgs()["base_url"].(string) + "/api/v3/"
+	baseURL := g.GetArgs()["base_url"].(string)
 	return githubAPI.NewEnterpriseClient(baseURL, baseURL, tc)
 }
