@@ -21,7 +21,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
-	githubAPI "github.com/google/go-github/v25/github"
+	githubAPI "github.com/google/go-github/v35/github"
 )
 
 type TeamsGenerator struct {
@@ -48,7 +48,7 @@ func (g *TeamsGenerator) createTeamsResources(ctx context.Context, teams []*gith
 
 func (g *TeamsGenerator) createTeamMembersResources(ctx context.Context, team *githubAPI.Team, client *githubAPI.Client) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	members, _, err := client.Teams.ListTeamMembers(ctx, team.GetID(), nil)
+	members, _, err := client.Teams.ListTeamMembersBySlug(ctx, g.Args["owner"].(string), team.GetSlug(), nil)
 	if err != nil {
 		log.Println(err)
 	}
@@ -66,7 +66,7 @@ func (g *TeamsGenerator) createTeamMembersResources(ctx context.Context, team *g
 
 func (g *TeamsGenerator) createTeamRepositoriesResources(ctx context.Context, team *githubAPI.Team, client *githubAPI.Client) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	repos, _, err := client.Teams.ListTeamRepos(ctx, team.GetID(), nil)
+	repos, _, err := client.Teams.ListTeamReposBySlug(ctx, g.Args["owner"].(string), team.GetSlug(), nil)
 	if err != nil {
 		log.Println(err)
 	}
