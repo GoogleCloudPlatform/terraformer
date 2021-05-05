@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"strconv"
 
 	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
 	datadogV2 "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
@@ -32,6 +33,7 @@ type DatadogProvider struct { //nolint
 	apiKey          string
 	appKey          string
 	apiURL          string
+	validate        bool
 	authV1          context.Context
 	authV2          context.Context
 	datadogClientV1 *datadogV1.APIClient
@@ -64,6 +66,22 @@ func (p *DatadogProvider) Init(args []string) error {
 		p.apiURL = args[2]
 	} else if v := os.Getenv("DATADOG_HOST"); v != "" {
 		p.apiURL = v
+	}
+
+	if args[3] != "" {
+		validate, validateErr := strconv.ParseBool(args[3])
+		if validateErr != nil {
+			return fmt.Errorf(`invalid validate arg : %v`, validateErr)
+		}
+		p.validate = validate
+	} else if os.Getenv("DATADOG_VALIDATE") != "" {
+		validate, validateErr := strconv.ParseBool(os.Getenv("DATADOG_VALIDATE"))
+		if validateErr != nil {
+			return fmt.Errorf(`invalid DATADOG_VALIDATE env var : %v`, validateErr)
+		}
+		p.validate = validate
+	} else {
+		p.validate = true
 	}
 
 	// Initialize the Datadog V1 API client
@@ -147,6 +165,7 @@ func (p *DatadogProvider) GetConfig() cty.Value {
 		"api_key": cty.StringVal(p.apiKey),
 		"app_key": cty.StringVal(p.appKey),
 		"api_url": cty.StringVal(p.apiURL),
+		"validate": cty.BoolVal(p.validate),
 	})
 }
 
@@ -164,6 +183,7 @@ func (p *DatadogProvider) InitService(serviceName string, verbose bool) error {
 		"api-key":         p.apiKey,
 		"app-key":         p.appKey,
 		"api-url":         p.apiURL,
+		"validate":        p.validate,
 		"authV1":          p.authV1,
 		"authV2":          p.authV2,
 		"datadogClientV1": p.datadogClientV1,
