@@ -102,6 +102,7 @@ require (
 	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
 	github.com/fastly/go-fastly v1.18.0
 	github.com/google/go-github/v25 v25.1.3
+	github.com/google/uuid v1.2.0 // indirect
 	github.com/gophercloud/gophercloud v0.13.0
 	github.com/grafana/grafana-api-golang-client v0.0.0-20210218192924-9ccd2365d2a6
 	github.com/hashicorp/go-azure-helpers v0.14.0
@@ -110,7 +111,6 @@ require (
 	github.com/hashicorp/go-plugin v1.4.1
 	github.com/hashicorp/hcl v1.0.0
 	github.com/hashicorp/terraform v0.15.0
-	github.com/hashicorp/terraform-plugin-sdk/v2 v2.6.1
 	github.com/heroku/heroku-go/v5 v5.1.0
 	github.com/hokaccha/go-prettyjson v0.0.0-20210113012101-fb4e108d2519 // indirect
 	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
@@ -118,7 +118,6 @@ require (
 	github.com/jonboydell/logzio_client v1.2.0
 	github.com/labd/commercetools-go-sdk v0.3.1
 	github.com/linode/linodego v0.24.1
-	github.com/mrparkers/terraform-provider-keycloak v0.0.0-20200506151941-509881368409
 	github.com/nicksnyder/go-i18n v1.10.1 // indirect
 	github.com/ns1/ns1-go v2.4.0+incompatible
 	github.com/packethost/packngo v0.9.0

@@ -17,7 +17,6 @@ package grafana
 import (
 	"crypto/tls"
 	"crypto/x509"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"io/ioutil"
 	"net/url"
 	"strings"
@@ -65,7 +64,7 @@ func (s *GrafanaService) buildClient() (*gapi.Client, error) {
 		transport.TLSClientConfig.InsecureSkipVerify = true
 	}
 
-	cli.Transport = logging.NewTransport("Grafana", transport)
+	cli.Transport = transport
 	cfg := gapi.Config{
 		Client: cli,
 		OrgID:  int64(s.Args["org_id"].(int)),

@@ -17,6 +17,7 @@ package aws
 import (
 	"context"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/zclconf/go-cty/cty"
 	"log"
 
@@ -24,7 +25,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
 var AlbAllowEmptyValues = []string{"tags.", "^condition."}
@@ -179,7 +179,7 @@ func (g *AlbGenerator) loadTargetGroupTargets(svc *elasticloadbalancingv2.Client
 		return err
 	}
 	for _, tgh := range targetHealths.TargetHealthDescriptions {
-		id := resource.PrefixedUniqueId(fmt.Sprintf("%s-", *targetGroupArn))
+		id := fmt.Sprintf("%s-%s", *targetGroupArn, uuid.NewString())
 		g.Resources = append(g.Resources, terraformutils.NewResource(
 			id,
 			id,

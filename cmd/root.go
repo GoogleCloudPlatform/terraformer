@@ -68,7 +68,6 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdNewRelicImporter,
 		newCmdGrafanaImporter,
 		// Community
-		newCmdKeycloakImporter,
 		newCmdLogzioImporter,
 		newCmdCommercetoolsImporter,
 		newCmdMikrotikImporter,
@@ -108,7 +107,6 @@ func providerGenerators() map[string]func() terraformutils.ProviderGenerator {
 		newDataDogProvider,
 		newNewRelicProvider,
 		// Community
-		newKeycloakProvider,
 		newLogzioProvider,
 		newCommercetoolsProvider,
 		newMikrotikProvider,
