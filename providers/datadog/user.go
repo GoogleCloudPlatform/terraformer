@@ -68,16 +68,11 @@ func (g *UserGenerator) InitResources() error {
 	datadogClientV2 := g.Args["datadogClientV2"].(*datadogV2.APIClient)
 	authV2 := g.Args["authV2"].(context.Context)
 
-	optionalParams := datadogV2.NewListUsersOptionalParameters()
-	for _, filter := range g.Filter {
-		if filter.FieldPath == "status" && filter.IsApplicable("user") {
-			optionalParams = optionalParams.WithFilterStatus(filter.AcceptableValues[0])
-		}
-	}
-
 	pageSize := int64(1000)
 	pageNumber := int64(0)
 	remaining := int64(1)
+	optionalParams := datadogV2.NewListUsersOptionalParameters()
+
 	for remaining > int64(0) {
 		resp, _, err := datadogClientV2.UsersApi.ListUsers(authV2, *optionalParams.
 			WithPageSize(pageSize).
