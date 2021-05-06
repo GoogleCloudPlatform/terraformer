@@ -42,31 +42,6 @@ type DatadogProvider struct { //nolint
 
 // Init check env params and initialize API Client
 func (p *DatadogProvider) Init(args []string) error {
-	if args[0] != "" {
-		p.apiKey = args[0]
-	} else {
-		if apiKey := os.Getenv("DATADOG_API_KEY"); apiKey != "" {
-			p.apiKey = apiKey
-		} else {
-			return errors.New("api-key requirement")
-		}
-	}
-
-	if args[1] != "" {
-		p.appKey = args[1]
-	} else {
-		if appKey := os.Getenv("DATADOG_APP_KEY"); appKey != "" {
-			p.appKey = appKey
-		} else {
-			return errors.New("app-key requirement")
-		}
-	}
-
-	if args[2] != "" {
-		p.apiURL = args[2]
-	} else if v := os.Getenv("DATADOG_HOST"); v != "" {
-		p.apiURL = v
-	}
 
 	if args[3] != "" {
 		validate, validateErr := strconv.ParseBool(args[3])
@@ -82,6 +57,32 @@ func (p *DatadogProvider) Init(args []string) error {
 		p.validate = validate
 	} else {
 		p.validate = true
+	}
+
+	if args[0] != "" {
+		p.apiKey = args[0]
+	} else {
+		if apiKey := os.Getenv("DATADOG_API_KEY"); apiKey != "" {
+			p.apiKey = apiKey
+		} else if p.validate {
+			return errors.New("api-key requirement")
+		}
+	}
+
+	if args[1] != "" {
+		p.appKey = args[1]
+	} else {
+		if appKey := os.Getenv("DATADOG_APP_KEY"); appKey != "" {
+			p.appKey = appKey
+		} else if p.validate {
+			return errors.New("app-key requirement")
+		}
+	}
+
+	if args[2] != "" {
+		p.apiURL = args[2]
+	} else if v := os.Getenv("DATADOG_HOST"); v != "" {
+		p.apiURL = v
 	}
 
 	// Initialize the Datadog V1 API client
