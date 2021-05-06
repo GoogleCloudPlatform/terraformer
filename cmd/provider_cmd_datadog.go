@@ -20,14 +20,14 @@ import (
 )
 
 func newCmdDatadogImporter(options ImportOptions) *cobra.Command {
-	var apiKey, appKey, apiURL string
+	var apiKey, appKey, apiURL, validate string
 	cmd := &cobra.Command{
 		Use:   "datadog",
 		Short: "Import current state to Terraform configuration from Datadog",
 		Long:  "Import current state to Terraform configuration from Datadog",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			provider := newDataDogProvider()
-			err := Import(provider, options, []string{apiKey, appKey, apiURL})
+			err := Import(provider, options, []string{apiKey, appKey, apiURL, validate})
 			if err != nil {
 				return err
 			}
@@ -39,6 +39,7 @@ func newCmdDatadogImporter(options ImportOptions) *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&apiKey, "api-key", "", "", "YOUR_DATADOG_API_KEY or env param DATADOG_API_KEY")
 	cmd.PersistentFlags().StringVarP(&appKey, "app-key", "", "", "YOUR_DATADOG_APP_KEY or env param DATADOG_APP_KEY")
 	cmd.PersistentFlags().StringVarP(&apiURL, "api-url", "", "", "YOUR_DATADOG_API_URL or env param DATADOG_HOST")
+	cmd.PersistentFlags().StringVar(&validate, "validate", "", "bool-parsable values only or env param DATADOG_VALIDATE. Enables validation of the provided API and APP keys during provider initialization. Default is true. When false, api_key and app_key won't be checked")
 	return cmd
 }
 
