@@ -102,6 +102,9 @@ func NewResource(id, resourceName, resourceType, provider string,
 	attributes map[string]string,
 	allowEmptyValues []string,
 	additionalFields map[string]interface{}) Resource {
+	if attributes == nil {
+		attributes = map[string]string{}
+	}
 	attributes["id"] = id // to ensure resource refresh will work well
 	return Resource{
 		Address: addrs.Resource{
@@ -152,28 +155,32 @@ func (r *Resource) ServiceName() string {
 }
 
 func (r *Resource) HasStateAttr(attr string) bool {
-	return r.InstanceState.Value.HasIndex(cty.StringVal(attr)) == cty.True
+	value := r.InstanceState.Value
+	return hasValueAttr(value, attr)
 }
 
 func (r *Resource) GetStateAttr(attr string) string {
 	if !r.HasStateAttr(attr) {
 		return ""
 	}
-	return r.valueToString(r.InstanceState.Value.GetAttr(attr))
+	value := r.InstanceState.Value
+	return valueToString(getValueAttr(value, attr))
 }
 
 func (r *Resource) GetStateAttrSlice(attr string) []cty.Value {
 	if !r.HasStateAttr(attr) {
 		return []cty.Value{}
 	}
-	return r.InstanceState.Value.GetAttr(attr).AsValueSlice()
+	value := r.InstanceState.Value
+	return getValueAttr(value, attr).AsValueSlice()
 }
 
 func (r *Resource) GetStateAttrMap(attr string) map[string]cty.Value {
 	if !r.HasStateAttr(attr) {
 		return map[string]cty.Value{}
 	}
-	return r.InstanceState.Value.GetAttr(attr).AsValueMap()
+	value := r.InstanceState.Value
+	return getValueAttr(value, attr).AsValueMap()
 }
 
 func (r *Resource) SetStateAttr(attr string, value cty.Value) {
@@ -204,22 +211,26 @@ func (r *Resource) SortStateAttrStringSlice(attr string) {
 }
 
 func (r *Resource) HasStateAttrFirstAttr(firstAttr string, secondAttr string) bool {
-	return r.HasStateAttr(firstAttr) &&
-		r.InstanceState.Value.GetAttr(firstAttr).AsValueSlice()[0].HasIndex(cty.StringVal(secondAttr)) == cty.True
+	if r.HasStateAttr(firstAttr) {
+		value := r.GetStateAttrSlice(firstAttr)[0]
+		return hasValueAttr(value, secondAttr)
+	} else {
+		return false
+	}
 }
 
 func (r *Resource) GetStateAttrFirstAttr(firstAttr string, secondAttr string) string {
 	if !r.HasStateAttrFirstAttr(firstAttr, secondAttr) {
 		return ""
 	}
-	return r.valueToString(r.InstanceState.Value.GetAttr(firstAttr).AsValueSlice()[0].GetAttr(secondAttr))
+	return valueToString(getValueAttr(r.GetStateAttrSlice(firstAttr)[0], secondAttr))
 }
 
 func (r *Resource) GetStateAttrFirstAttrMap(firstAttr string, secondAttr string) map[string]cty.Value {
 	if !r.HasStateAttrFirstAttr(firstAttr, secondAttr) {
 		return map[string]cty.Value{}
 	}
-	return r.InstanceState.Value.GetAttr(firstAttr).AsValueSlice()[0].GetAttr(secondAttr).AsValueMap()
+	return getValueAttr(r.GetStateAttrSlice(firstAttr)[0], secondAttr).AsValueMap()
 }
 
 func (r *Resource) DeleteStateAttrFirstAttr(firstAttr string, secondAttr string) {
@@ -242,10 +253,10 @@ func (r *Resource) SortStateAttrEachAttrStringSlice(firstAttr string, secondAttr
 	if r.HasStateAttr(firstAttr) {
 		firstAttrSlice := r.GetStateAttrSlice(firstAttr)
 		for i, firstAttrSliceItem := range firstAttrSlice {
-			if firstAttrSliceItem.HasIndex(cty.StringVal(secondAttr)) == cty.False {
+			if hasValueAttr(firstAttrSliceItem, secondAttr) {
 				continue
 			}
-			secondAttrSlice := firstAttrSliceItem.GetAttr(secondAttr).AsValueSlice()
+			secondAttrSlice := getValueAttr(firstAttrSliceItem, secondAttr).AsValueSlice()
 			var sortedSecondAttrSliceStrings []string
 			for _, secondAttrSliceString := range secondAttrSlice {
 				sortedSecondAttrSliceStrings = append(sortedSecondAttrSliceStrings, secondAttrSliceString.AsString())
@@ -263,7 +274,23 @@ func (r *Resource) SortStateAttrEachAttrStringSlice(firstAttr string, secondAttr
 	}
 }
 
-func (r *Resource) valueToString(val cty.Value) string {
+func hasValueAttr(value cty.Value, attr string) bool {
+	if value.Type().IsObjectType() {
+		return value.Type().HasAttribute(attr) && !value.GetAttr(attr).IsNull()
+	} else {
+		return value.HasIndex(cty.StringVal(attr)) == cty.True && !value.Index(cty.StringVal(attr)).IsNull()
+	}
+}
+
+func getValueAttr(value cty.Value, attr string) cty.Value {
+	if value.Type().IsObjectType() {
+		return value.GetAttr(attr)
+	} else {
+		return value.Index(cty.StringVal(attr))
+	}
+}
+
+func valueToString(val cty.Value) string {
 	switch val.Type() {
 	case cty.String:
 		return val.AsString()
