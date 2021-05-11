@@ -17,6 +17,8 @@ package datadog
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
 	datadogV2 "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
@@ -72,6 +74,13 @@ func (g *UserGenerator) InitResources() error {
 	pageNumber := int64(0)
 	remaining := int64(1)
 	optionalParams := datadogV2.NewListUsersOptionalParameters()
+	for _, filter := range g.Filter {
+		if filter.IsApplicable("user") && filter.FieldPath == "disabled" {
+			if len(filter.AcceptableValues) == 1 && strings.ToLower(filter.AcceptableValues[0]) == "false" {
+				optionalParams = optionalParams.WithFilterStatus("Active,Pending")
+			}
+		}
+	}
 
 	for remaining > int64(0) {
 		resp, _, err := datadogClientV2.UsersApi.ListUsers(authV2, *optionalParams.

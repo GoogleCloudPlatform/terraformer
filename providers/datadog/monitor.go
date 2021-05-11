@@ -27,7 +27,7 @@ import (
 
 var (
 	// MonitorAllowEmptyValues ...
-	MonitorAllowEmptyValues = []string{"tags."}
+	MonitorAllowEmptyValues = []string{"tags.", "message"}
 )
 
 // MonitorGenerator ...
