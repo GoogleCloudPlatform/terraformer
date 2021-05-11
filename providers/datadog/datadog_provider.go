@@ -177,6 +177,7 @@ func (p *DatadogProvider) GetSupportedService() map[string]terraformutils.Servic
 	return map[string]terraformutils.ServiceGenerator{
 		"dashboard_list":                       &DashboardListGenerator{},
 		"dashboard":                            &DashboardGenerator{},
+		"dashboard_json":                       &DashboardJsonGenerator{},
 		"downtime":                             &DowntimeGenerator{},
 		"logs_archive":                         &LogsArchiveGenerator{},
 		"logs_archive_order":                   &LogsArchiveOrderGenerator{},
@@ -199,7 +200,7 @@ func (p *DatadogProvider) GetSupportedService() map[string]terraformutils.Servic
 		"security_monitoring_default_rule":     &SecurityMonitoringDefaultRuleGenerator{},
 		"security_monitoring_rule":             &SecurityMonitoringRuleGenerator{},
 		"service_level_objective":              &ServiceLevelObjectiveGenerator{},
-		"synthetics":                           &SyntheticsGenerator{},
+		"synthetics_test":                      &SyntheticsTestGenerator{},
 		"synthetics_global_variable":           &SyntheticsGlobalVariableGenerator{},
 		"synthetics_private_location":          &SyntheticsPrivateLocationGenerator{},
 		"timeboard":                            &TimeboardGenerator{},
@@ -291,13 +292,13 @@ func (p DatadogProvider) GetResourceConnections() map[string]map[string][]string
 				"monitor_ids", "id",
 			},
 		},
-		"synthetics": {
+		"synthetics_test": {
 			"synthetics_private_location": {
 				"locations", "id",
 			},
 		},
 		"synthetics_global_variable": {
-			"synthetics": {
+			"synthetics_test": {
 				"parse_test_id", "id",
 			},
 		},

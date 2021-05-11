@@ -24,52 +24,52 @@ import (
 )
 
 var (
-	// SyntheticsAllowEmptyValues ...
-	SyntheticsAllowEmptyValues = []string{"tags."}
+	// DashboardJsonAllowEmptyValues ...
+	DashboardJsonAllowEmptyValues = []string{"tags."}
 )
 
-// SyntheticsGenerator ...
-type SyntheticsGenerator struct {
+// DashboardJsonGenerator ...
+type DashboardJsonGenerator struct {
 	DatadogService
 }
 
-func (g *SyntheticsGenerator) createResources(syntheticsList []datadogV1.SyntheticsTestDetails) []terraformutils.Resource {
+func (g *DashboardJsonGenerator) createResources(dashboards []datadogV1.DashboardSummaryDefinition) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	for _, synthetics := range syntheticsList {
-		resourceName := synthetics.GetPublicId()
+	for _, dashboard := range dashboards {
+		resourceName := dashboard.GetId()
 		resources = append(resources, g.createResource(resourceName))
 	}
 
 	return resources
 }
 
-func (g *SyntheticsGenerator) createResource(syntheticsID string) terraformutils.Resource {
+func (g *DashboardJsonGenerator) createResource(dashboard_jsonID string) terraformutils.Resource {
 	return terraformutils.NewSimpleResource(
-		syntheticsID,
-		fmt.Sprintf("synthetics_%s", syntheticsID),
-		"datadog_synthetics_test",
+		dashboard_jsonID,
+		fmt.Sprintf("dashboard_json_%s", dashboard_jsonID),
+		"datadog_dashboard_json",
 		"datadog",
-		SyntheticsAllowEmptyValues,
+		DashboardJsonAllowEmptyValues,
 	)
 }
 
 // InitResources Generate TerraformResources from Datadog API,
-// from each synthetics create 1 TerraformResource.
-// Need Synthetics ID as ID for terraform resource
-func (g *SyntheticsGenerator) InitResources() error {
+// from each dashboard_json create 1 TerraformResource.
+// Need Dashboard ID as ID for terraform resource
+func (g *DashboardJsonGenerator) InitResources() error {
 	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
 	authV1 := g.Args["authV1"].(context.Context)
 
 	resources := []terraformutils.Resource{}
 	for _, filter := range g.Filter {
-		if filter.FieldPath == "id" && filter.IsApplicable("synthetics") {
+		if filter.FieldPath == "id" && filter.IsApplicable("dashboard_json") {
 			for _, value := range filter.AcceptableValues {
-				syntheticsTest, _, err := datadogClientV1.SyntheticsApi.GetTest(authV1, value)
+				dashboard, _, err := datadogClientV1.DashboardsApi.GetDashboard(authV1, value)
 				if err != nil {
 					return err
 				}
 
-				resources = append(resources, g.createResource(syntheticsTest.GetPublicId()))
+				resources = append(resources, g.createResource(dashboard.GetId()))
 			}
 		}
 	}
@@ -79,10 +79,10 @@ func (g *SyntheticsGenerator) InitResources() error {
 		return nil
 	}
 
-	syntheticsTests, _, err := datadogClientV1.SyntheticsApi.ListTests(authV1)
+	summary, _, err := datadogClientV1.DashboardsApi.ListDashboards(authV1)
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(syntheticsTests.GetTests())
+	g.Resources = g.createResources(summary.GetDashboards())
 	return nil
 }
