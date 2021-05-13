@@ -47,7 +47,7 @@ func (g *ServiceV1Generator) loadDictionaryItems(client *fastly.Client, serviceI
 		return err
 	}
 	dictionaries, err := client.ListDictionaries(&fastly.ListDictionariesInput{
-		ServiceID: serviceID,
+		ServiceID:      serviceID,
 		ServiceVersion: latest.Number,
 	})
 	if err != nil {
@@ -77,7 +77,7 @@ func (g *ServiceV1Generator) loadACLEntries(client *fastly.Client, serviceID str
 		return err
 	}
 	acls, err := client.ListACLs(&fastly.ListACLsInput{
-		ServiceID: serviceID,
+		ServiceID:      serviceID,
 		ServiceVersion: latest.Number,
 	})
 	if err != nil {
@@ -107,7 +107,7 @@ func (g *ServiceV1Generator) loadDynamicSnippetContent(client *fastly.Client, se
 		return err
 	}
 	snippets, err := client.ListSnippets(&fastly.ListSnippetsInput{
-		ServiceID: serviceID,
+		ServiceID:      serviceID,
 		ServiceVersion: latest.Number,
 	})
 	if err != nil {
