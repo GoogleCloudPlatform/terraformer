@@ -177,7 +177,7 @@ func (p *DatadogProvider) GetSupportedService() map[string]terraformutils.Servic
 	return map[string]terraformutils.ServiceGenerator{
 		"dashboard_list":                       &DashboardListGenerator{},
 		"dashboard":                            &DashboardGenerator{},
-		"dashboard_json":                       &DashboardJsonGenerator{},
+		"dashboard_json":                       &DashboardJSONGenerator{},
 		"downtime":                             &DowntimeGenerator{},
 		"logs_archive":                         &LogsArchiveGenerator{},
 		"logs_archive_order":                   &LogsArchiveOrderGenerator{},

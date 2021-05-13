@@ -71,8 +71,8 @@ func (g *SecurityMonitoringDefaultRuleGenerator) InitResources() error {
 	for remaining > int64(0) {
 		resp, _, err := datadogClientV2.SecurityMonitoringApi.ListSecurityMonitoringRules(authV2,
 			*datadogV2.NewListSecurityMonitoringRulesOptionalParameters().
-			WithPageSize(pageSize).
-			WithPageNumber(pageNumber))
+				WithPageSize(pageSize).
+				WithPageNumber(pageNumber))
 		if err != nil {
 			return err
 		}

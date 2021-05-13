@@ -24,16 +24,16 @@ import (
 )
 
 var (
-	// DashboardJsonAllowEmptyValues ...
-	DashboardJsonAllowEmptyValues = []string{"tags."}
+	// DashboardJSONAllowEmptyValues ...
+	DashboardJSONAllowEmptyValues = []string{"tags."}
 )
 
-// DashboardJsonGenerator ...
-type DashboardJsonGenerator struct {
+// DashboardJSONGenerator ...
+type DashboardJSONGenerator struct {
 	DatadogService
 }
 
-func (g *DashboardJsonGenerator) createResources(dashboards []datadogV1.DashboardSummaryDefinition) []terraformutils.Resource {
+func (g *DashboardJSONGenerator) createResources(dashboards []datadogV1.DashboardSummaryDefinition) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	for _, dashboard := range dashboards {
 		resourceName := dashboard.GetId()
@@ -43,20 +43,20 @@ func (g *DashboardJsonGenerator) createResources(dashboards []datadogV1.Dashboar
 	return resources
 }
 
-func (g *DashboardJsonGenerator) createResource(dashboard_jsonID string) terraformutils.Resource {
+func (g *DashboardJSONGenerator) createResource(dashboardID string) terraformutils.Resource {
 	return terraformutils.NewSimpleResource(
-		dashboard_jsonID,
-		fmt.Sprintf("dashboard_json_%s", dashboard_jsonID),
+		dashboardID,
+		fmt.Sprintf("dashboard_json_%s", dashboardID),
 		"datadog_dashboard_json",
 		"datadog",
-		DashboardJsonAllowEmptyValues,
+		DashboardJSONAllowEmptyValues,
 	)
 }
 
 // InitResources Generate TerraformResources from Datadog API,
 // from each dashboard_json create 1 TerraformResource.
 // Need Dashboard ID as ID for terraform resource
-func (g *DashboardJsonGenerator) InitResources() error {
+func (g *DashboardJSONGenerator) InitResources() error {
 	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
 	authV1 := g.Args["authV1"].(context.Context)
 
