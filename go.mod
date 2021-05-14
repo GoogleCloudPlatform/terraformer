@@ -28,7 +28,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/acm v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/apigateway v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/appsync v1.2.1
-	github.com/aws/aws-sdk-go-v2/service/autoscaling v1.2.1
+	github.com/aws/aws-sdk-go-v2/service/autoscaling v1.3.1
 	github.com/aws/aws-sdk-go-v2/service/budgets v1.1.3
 	github.com/aws/aws-sdk-go-v2/service/cloud9 v1.1.3
 	github.com/aws/aws-sdk-go-v2/service/cloudformation v1.3.0
