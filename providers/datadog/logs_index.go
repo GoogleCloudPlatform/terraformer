@@ -64,7 +64,7 @@ func (g *LogsIndexGenerator) InitResources() error {
 	for _, filter := range g.Filter {
 		if filter.FieldPath == "id" && filter.IsApplicable("logs_index") {
 			for _, value := range filter.AcceptableValues {
-				logsIndex, _, err := datadogClientV1.LogsIndexesApi.GetLogsIndex(authV1, value).Execute()
+				logsIndex, _, err := datadogClientV1.LogsIndexesApi.GetLogsIndex(authV1, value)
 				if err != nil {
 					return err
 				}
@@ -79,7 +79,7 @@ func (g *LogsIndexGenerator) InitResources() error {
 		return nil
 	}
 
-	logsIndexList, _, err := datadogClientV1.LogsIndexesApi.ListLogIndexes(authV1).Execute()
+	logsIndexList, _, err := datadogClientV1.LogsIndexesApi.ListLogIndexes(authV1)
 	logsIndex := logsIndexList.GetIndexes()
 	if err != nil {
 		return err

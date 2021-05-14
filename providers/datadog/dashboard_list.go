@@ -61,7 +61,7 @@ func (g *DashboardListGenerator) InitResources() error {
 	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
 	authV1 := g.Args["authV1"].(context.Context)
 
-	dlResponse, _, err := datadogClientV1.DashboardListsApi.ListDashboardLists(authV1).Execute()
+	dlResponse, _, err := datadogClientV1.DashboardListsApi.ListDashboardLists(authV1)
 	if err != nil {
 		return err
 	}

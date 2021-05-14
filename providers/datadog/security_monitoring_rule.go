@@ -74,7 +74,10 @@ func (g *SecurityMonitoringRuleGenerator) InitResources() error {
 	remaining := int64(1)
 
 	for remaining > int64(0) {
-		resp, _, err := datadogClientV2.SecurityMonitoringApi.ListSecurityMonitoringRules(authV2).PageSize(pageSize).PageNumber(pageNumber).Execute()
+		resp, _, err := datadogClientV2.SecurityMonitoringApi.ListSecurityMonitoringRules(authV2,
+			*datadogV2.NewListSecurityMonitoringRulesOptionalParameters().
+				WithPageNumber(pageNumber).
+				WithPageSize(pageSize))
 		if err != nil {
 			return err
 		}

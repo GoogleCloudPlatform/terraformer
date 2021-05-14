@@ -11,6 +11,8 @@ List of supported Datadog services:
 
 *   `dashboard`
     * `datadog_dashboard`
+*   `dashboard_json`
+    * `datadog_dashboard_json`
 *   `dashboard_list`
     * `datadog_dashboard_list`
 *   `downtime`
@@ -63,7 +65,7 @@ List of supported Datadog services:
     * `datadog_security_monitoring_rule`
 *   `service_level_objective`
     * `datadog_service_level_objective`
-*   `synthetics`
+*   `synthetics_test`
     * `datadog_synthetics_test`
 *   `synthetics_global_variables`
     * `datadog_synthetics_global_variables`

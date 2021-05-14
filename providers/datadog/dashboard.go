@@ -64,7 +64,7 @@ func (g *DashboardGenerator) InitResources() error {
 	for _, filter := range g.Filter {
 		if filter.FieldPath == "id" && filter.IsApplicable("dashboard") {
 			for _, value := range filter.AcceptableValues {
-				dashboard, _, err := datadogClientV1.DashboardsApi.GetDashboard(authV1, value).Execute()
+				dashboard, _, err := datadogClientV1.DashboardsApi.GetDashboard(authV1, value)
 				if err != nil {
 					return err
 				}
@@ -79,7 +79,7 @@ func (g *DashboardGenerator) InitResources() error {
 		return nil
 	}
 
-	summary, _, err := datadogClientV1.DashboardsApi.ListDashboards(authV1).Execute()
+	summary, _, err := datadogClientV1.DashboardsApi.ListDashboards(authV1)
 	if err != nil {
 		return err
 	}

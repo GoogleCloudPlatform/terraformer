@@ -17,7 +17,6 @@ package datadog
 import (
 	"context"
 	"fmt"
-	"strconv"
 
 	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
 
@@ -25,57 +24,52 @@ import (
 )
 
 var (
-	// DowntimeAllowEmptyValues ...
-	DowntimeAllowEmptyValues = []string{}
+	// DashboardJSONAllowEmptyValues ...
+	DashboardJSONAllowEmptyValues = []string{"tags."}
 )
 
-// DowntimeGenerator ...
-type DowntimeGenerator struct {
+// DashboardJSONGenerator ...
+type DashboardJSONGenerator struct {
 	DatadogService
 }
 
-func (g *DowntimeGenerator) createResources(downtimes []datadogV1.Downtime) []terraformutils.Resource {
+func (g *DashboardJSONGenerator) createResources(dashboards []datadogV1.DashboardSummaryDefinition) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	for _, downtime := range downtimes {
-		resourceName := strconv.FormatInt(downtime.GetId(), 10)
+	for _, dashboard := range dashboards {
+		resourceName := dashboard.GetId()
 		resources = append(resources, g.createResource(resourceName))
 	}
 
 	return resources
 }
 
-func (g *DowntimeGenerator) createResource(downtimeID string) terraformutils.Resource {
+func (g *DashboardJSONGenerator) createResource(dashboardID string) terraformutils.Resource {
 	return terraformutils.NewSimpleResource(
-		downtimeID,
-		fmt.Sprintf("downtime_%s", downtimeID),
-		"datadog_downtime",
+		dashboardID,
+		fmt.Sprintf("dashboard_json_%s", dashboardID),
+		"datadog_dashboard_json",
 		"datadog",
-		DowntimeAllowEmptyValues,
+		DashboardJSONAllowEmptyValues,
 	)
 }
 
 // InitResources Generate TerraformResources from Datadog API,
-// from each downtime create 1 TerraformResource.
-// Need Downtime ID as ID for terraform resource
-func (g *DowntimeGenerator) InitResources() error {
+// from each dashboard_json create 1 TerraformResource.
+// Need Dashboard ID as ID for terraform resource
+func (g *DashboardJSONGenerator) InitResources() error {
 	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
 	authV1 := g.Args["authV1"].(context.Context)
 
 	resources := []terraformutils.Resource{}
 	for _, filter := range g.Filter {
-		if filter.FieldPath == "id" && filter.IsApplicable("downtime") {
+		if filter.FieldPath == "id" && filter.IsApplicable("dashboard_json") {
 			for _, value := range filter.AcceptableValues {
-				i, err := strconv.ParseInt(value, 10, 64)
+				dashboard, _, err := datadogClientV1.DashboardsApi.GetDashboard(authV1, value)
 				if err != nil {
 					return err
 				}
 
-				monitor, _, err := datadogClientV1.DowntimesApi.GetDowntime(authV1, i)
-				if err != nil {
-					return err
-				}
-
-				resources = append(resources, g.createResource(strconv.FormatInt(monitor.GetId(), 10)))
+				resources = append(resources, g.createResource(dashboard.GetId()))
 			}
 		}
 	}
@@ -85,10 +79,10 @@ func (g *DowntimeGenerator) InitResources() error {
 		return nil
 	}
 
-	downtimes, _, err := datadogClientV1.DowntimesApi.ListDowntimes(authV1)
+	summary, _, err := datadogClientV1.DashboardsApi.ListDashboards(authV1)
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(downtimes)
+	g.Resources = g.createResources(summary.GetDashboards())
 	return nil
 }

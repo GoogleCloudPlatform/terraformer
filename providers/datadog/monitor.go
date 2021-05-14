@@ -27,7 +27,7 @@ import (
 
 var (
 	// MonitorAllowEmptyValues ...
-	MonitorAllowEmptyValues = []string{"tags."}
+	MonitorAllowEmptyValues = []string{"tags.", "message"}
 )
 
 // MonitorGenerator ...
@@ -64,8 +64,8 @@ func (g *MonitorGenerator) createResource(monitorID string) terraformutils.Resou
 func (g *MonitorGenerator) InitResources() error {
 	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
 	authV1 := g.Args["authV1"].(context.Context)
-	dclient := datadogClientV1.MonitorsApi.ListMonitors(authV1)
 
+	optionalParams := datadogV1.NewListMonitorsOptionalParameters()
 	resources := []terraformutils.Resource{}
 	for _, filter := range g.Filter {
 		if filter.FieldPath == "id" && filter.IsApplicable("monitor") {
@@ -75,7 +75,7 @@ func (g *MonitorGenerator) InitResources() error {
 					return err
 				}
 
-				monitor, _, err := datadogClientV1.MonitorsApi.GetMonitor(authV1, i).Execute()
+				monitor, _, err := datadogClientV1.MonitorsApi.GetMonitor(authV1, i)
 				if err != nil {
 					return err
 				}
@@ -84,7 +84,7 @@ func (g *MonitorGenerator) InitResources() error {
 			}
 		}
 		if filter.FieldPath == "tags" && filter.IsApplicable("monitor") {
-			dclient = dclient.MonitorTags(strings.Join(filter.AcceptableValues, ","))
+			optionalParams.WithMonitorTags(strings.Join(filter.AcceptableValues, ","))
 		}
 	}
 
@@ -97,7 +97,9 @@ func (g *MonitorGenerator) InitResources() error {
 	pageSize := int32(1000)
 	pageNumber := int64(0)
 	for {
-		resp, _, err := dclient.PageSize(pageSize).Page(pageNumber).Execute()
+		resp, _, err := datadogClientV1.MonitorsApi.ListMonitors(authV1, *optionalParams.
+			WithPageSize(pageSize).
+			WithPage(pageNumber))
 		if err != nil {
 			return err
 		}

@@ -61,7 +61,7 @@ func (g *ServiceLevelObjectiveGenerator) InitResources() error {
 	authV1 := g.Args["authV1"].(context.Context)
 
 	var slos []datadogV1.ServiceLevelObjective
-	resp, _, err := datadogClientV1.ServiceLevelObjectivesApi.ListSLOs(authV1).Execute()
+	resp, _, err := datadogClientV1.ServiceLevelObjectivesApi.ListSLOs(authV1)
 	if err != nil {
 		return err
 	}

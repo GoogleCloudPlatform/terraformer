@@ -65,7 +65,7 @@ func (g *SyntheticsGlobalVariableGenerator) InitResources() error {
 	for _, filter := range g.Filter {
 		if filter.FieldPath == "id" && filter.IsApplicable("synthetics_global_variable") {
 			for _, v := range filter.AcceptableValues {
-				resp, _, err := datadogClientV1.SyntheticsApi.GetGlobalVariable(authV1, v).Execute()
+				resp, _, err := datadogClientV1.SyntheticsApi.GetGlobalVariable(authV1, v)
 				if err != nil {
 					log.Printf("error retrieving synthetics gloval variable with id:%s - %s", v, err)
 					continue

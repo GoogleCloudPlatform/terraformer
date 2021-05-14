@@ -28,12 +28,12 @@ var (
 	SyntheticsAllowEmptyValues = []string{"tags."}
 )
 
-// SyntheticsGenerator ...
-type SyntheticsGenerator struct {
+// SyntheticsTestGenerator ...
+type SyntheticsTestGenerator struct {
 	DatadogService
 }
 
-func (g *SyntheticsGenerator) createResources(syntheticsList []datadogV1.SyntheticsTestDetails) []terraformutils.Resource {
+func (g *SyntheticsTestGenerator) createResources(syntheticsList []datadogV1.SyntheticsTestDetails) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	for _, synthetics := range syntheticsList {
 		resourceName := synthetics.GetPublicId()
@@ -43,7 +43,7 @@ func (g *SyntheticsGenerator) createResources(syntheticsList []datadogV1.Synthet
 	return resources
 }
 
-func (g *SyntheticsGenerator) createResource(syntheticsID string) terraformutils.Resource {
+func (g *SyntheticsTestGenerator) createResource(syntheticsID string) terraformutils.Resource {
 	return terraformutils.NewSimpleResource(
 		syntheticsID,
 		fmt.Sprintf("synthetics_%s", syntheticsID),
@@ -56,15 +56,15 @@ func (g *SyntheticsGenerator) createResource(syntheticsID string) terraformutils
 // InitResources Generate TerraformResources from Datadog API,
 // from each synthetics create 1 TerraformResource.
 // Need Synthetics ID as ID for terraform resource
-func (g *SyntheticsGenerator) InitResources() error {
+func (g *SyntheticsTestGenerator) InitResources() error {
 	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
 	authV1 := g.Args["authV1"].(context.Context)
 
 	resources := []terraformutils.Resource{}
 	for _, filter := range g.Filter {
-		if filter.FieldPath == "id" && filter.IsApplicable("synthetics") {
+		if filter.FieldPath == "id" && filter.IsApplicable("synthetics_test") {
 			for _, value := range filter.AcceptableValues {
-				syntheticsTest, _, err := datadogClientV1.SyntheticsApi.GetTest(authV1, value).Execute()
+				syntheticsTest, _, err := datadogClientV1.SyntheticsApi.GetTest(authV1, value)
 				if err != nil {
 					return err
 				}
@@ -79,7 +79,7 @@ func (g *SyntheticsGenerator) InitResources() error {
 		return nil
 	}
 
-	syntheticsTests, _, err := datadogClientV1.SyntheticsApi.ListTests(authV1).Execute()
+	syntheticsTests, _, err := datadogClientV1.SyntheticsApi.ListTests(authV1)
 	if err != nil {
 		return err
 	}
