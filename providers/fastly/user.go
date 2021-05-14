@@ -16,7 +16,7 @@ package fastly
 
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/fastly/go-fastly/fastly"
+	"github.com/fastly/go-fastly/v3/fastly"
 )
 
 type UserGenerator struct {

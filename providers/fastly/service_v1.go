@@ -16,7 +16,7 @@ package fastly
 
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/fastly/go-fastly/fastly"
+	"github.com/fastly/go-fastly/v3/fastly"
 )
 
 type ServiceV1Generator struct {
@@ -41,14 +41,14 @@ func (g *ServiceV1Generator) loadServices(client *fastly.Client) ([]*fastly.Serv
 
 func (g *ServiceV1Generator) loadDictionaryItems(client *fastly.Client, serviceID string) error {
 	latest, err := client.LatestVersion(&fastly.LatestVersionInput{
-		Service: serviceID,
+		ServiceID: serviceID,
 	})
 	if err != nil {
 		return err
 	}
 	dictionaries, err := client.ListDictionaries(&fastly.ListDictionariesInput{
-		Service: serviceID,
-		Version: latest.Number,
+		ServiceID:      serviceID,
+		ServiceVersion: latest.Number,
 	})
 	if err != nil {
 		return err
@@ -71,14 +71,14 @@ func (g *ServiceV1Generator) loadDictionaryItems(client *fastly.Client, serviceI
 
 func (g *ServiceV1Generator) loadACLEntries(client *fastly.Client, serviceID string) error {
 	latest, err := client.LatestVersion(&fastly.LatestVersionInput{
-		Service: serviceID,
+		ServiceID: serviceID,
 	})
 	if err != nil {
 		return err
 	}
 	acls, err := client.ListACLs(&fastly.ListACLsInput{
-		Service: serviceID,
-		Version: latest.Number,
+		ServiceID:      serviceID,
+		ServiceVersion: latest.Number,
 	})
 	if err != nil {
 		return err
@@ -101,14 +101,14 @@ func (g *ServiceV1Generator) loadACLEntries(client *fastly.Client, serviceID str
 
 func (g *ServiceV1Generator) loadDynamicSnippetContent(client *fastly.Client, serviceID string) error {
 	latest, err := client.LatestVersion(&fastly.LatestVersionInput{
-		Service: serviceID,
+		ServiceID: serviceID,
 	})
 	if err != nil {
 		return err
 	}
 	snippets, err := client.ListSnippets(&fastly.ListSnippetsInput{
-		Service: serviceID,
-		Version: latest.Number,
+		ServiceID:      serviceID,
+		ServiceVersion: latest.Number,
 	})
 	if err != nil {
 		return err
