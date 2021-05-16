@@ -109,7 +109,7 @@ require (
 	github.com/hashicorp/go-hclog v0.15.0
 	github.com/hashicorp/go-plugin v1.4.0
 	github.com/hashicorp/hcl v1.0.0
-	github.com/hashicorp/terraform v0.12.29
+	github.com/hashicorp/terraform v0.12.31
 	github.com/heimweh/go-pagerduty v0.0.0-20210412205347-cc0e5d3c14d4
 	github.com/heroku/heroku-go/v5 v5.1.0
 	github.com/hokaccha/go-prettyjson v0.0.0-20210113012101-fb4e108d2519 // indirect

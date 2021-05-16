@@ -87,8 +87,6 @@ github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/ChrisTrenkamp/goxpath v0.0.0-20170922090931-c385f95c6022/go.mod h1:nuWgzSkT5PnyOd+272uUmV0dnAnAn42Mk7PiQC5VzN4=
-github.com/DataDog/datadog-api-client-go v1.0.0-beta.18 h1:4i51yRTWm8SEuc9iRxxFicm59jQcAo70v+3ddZhEq8Q=
-github.com/DataDog/datadog-api-client-go v1.0.0-beta.18/go.mod h1:Gn0fZwIOBbSidO0OaPEh9nO5EmIPsxJrHfHvfVXEaoU=
 github.com/DataDog/datadog-api-client-go v1.0.0-beta.20 h1:VwdZv6Mm4d7Jx9qawTNM6FlShdlE1d/J+64X3Izd574=
 github.com/DataDog/datadog-api-client-go v1.0.0-beta.20/go.mod h1:T4YUFSUXoBbhxY5qq5V/1llk5U1o6vTjYFS3dk3uH74=
 github.com/DataDog/datadog-go v4.4.0+incompatible h1:R7WqXWP4fIOAqWJtUKmSfuc7eDsBT58k9AY5WSHVosk=
@@ -427,8 +425,7 @@ github.com/fsnotify/fsnotify v1.4.9/go.mod h1:znqG4EE+3YCdAaPaxE2ZRY/06pZUdp0tY4
 github.com/ghodss/yaml v1.0.0 h1:wQHKEahhL6wmXdzwWG11gIVCkOv05bNOh+Rxn0yngAk=
 github.com/ghodss/yaml v1.0.0/go.mod h1:4dBDuWmgqj2HViK6kFavaiC9ZROes6MMH2rRYeMEF04=
 github.com/go-bdd/assert v0.0.0-20190820124234-20d47a68475d/go.mod h1:dOoqt7g2I/fpR7/Pyz0P19J3xjDj5lsHn3v9EaFLRjM=
-github.com/go-bdd/gobdd v1.1.3-0.20210205100305-4910f932a786 h1:upeQpV8AFGWxWvlu2LpJojgvWOU2SyiG+XvYerMGaCw=
-github.com/go-bdd/gobdd v1.1.3-0.20210205100305-4910f932a786/go.mod h1:Q3mXpW/Qm9GJCPLxFCTXdTtRBdHzcTfrbeLlaqAPtXM=
+github.com/go-bdd/gobdd v1.1.3 h1:eirGvZ9gMz6clOo2k6O7+Ys3iHAaFZoRQXVwV76B3JI=
 github.com/go-bdd/gobdd v1.1.3/go.mod h1:Q3mXpW/Qm9GJCPLxFCTXdTtRBdHzcTfrbeLlaqAPtXM=
 github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
 github.com/go-gl/glfw/v3.3/glfw v0.0.0-20191125211704-12ad95a8df72/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
@@ -678,8 +675,8 @@ github.com/hashicorp/memberlist v0.1.0/go.mod h1:ncdBp14cuox2iFOq3kDiquKU6fqsTBc
 github.com/hashicorp/memberlist v0.1.3/go.mod h1:ajVTdAv/9Im8oMAAj5G31PhhMCZJV2pPBoIllUwCN7I=
 github.com/hashicorp/serf v0.0.0-20160124182025-e4ec8cc423bb/go.mod h1:h/Ru6tmZazX7WO/GDmwdpS975F019L4t5ng5IgwbNrE=
 github.com/hashicorp/serf v0.8.2/go.mod h1:6hOLApaqBFA1NXqRQAsxw9QxuDEvNxSQRwA/JwenrHc=
-github.com/hashicorp/terraform v0.12.29 h1:UkuApT6qh6KONIT1Jz7HoV8f4B+x71db3bmGcBzjBB0=
-github.com/hashicorp/terraform v0.12.29/go.mod h1:CBxNAiTW0pLap44/3GU4j7cYE2bMhkKZNlHPcr4P55U=
+github.com/hashicorp/terraform v0.12.31 h1:df2bOxAOaR2r8kDfkqNlNk4anH2DjkPwJ4K7mEwUd9M=
+github.com/hashicorp/terraform v0.12.31/go.mod h1:CBxNAiTW0pLap44/3GU4j7cYE2bMhkKZNlHPcr4P55U=
 github.com/hashicorp/terraform-config-inspect v0.0.0-20191115094559-17f92b0546e8/go.mod h1:p+ivJws3dpqbp1iP84+npOyAmTTOLMgCzrXd3GSdn/A=
 github.com/hashicorp/terraform-config-inspect v0.0.0-20191212124732-c6ae6269b9d7 h1:Pc5TCv9mbxFN6UVX0LH6CpQrdTM5YjbVI2w15237Pjk=
 github.com/hashicorp/terraform-config-inspect v0.0.0-20191212124732-c6ae6269b9d7/go.mod h1:p+ivJws3dpqbp1iP84+npOyAmTTOLMgCzrXd3GSdn/A=
@@ -1445,8 +1442,7 @@ google.golang.org/protobuf v1.23.1-0.20200526195155-81db48ad09cc/go.mod h1:EGpAD
 google.golang.org/protobuf v1.24.0/go.mod h1:r/3tXBNzIEhYS9I1OUVjXDlt8tc493IdKGjtUeSXeh4=
 google.golang.org/protobuf v1.25.0 h1:Ejskq+SyPohKW+1uil0JJMtmHCgJPJ/qWTxr8qp+R4c=
 google.golang.org/protobuf v1.25.0/go.mod h1:9JNX74DMeImyA3h4bdi1ymwjUzf21/xIlbajtzgsN7c=
-gopkg.in/DataDog/dd-trace-go.v1 v1.29.0-rc.1.0.20210226170446-a8dc39ec3484 h1:gv8e5qO2QJPaYAcGrgu4jex1zo4IlxKxzmUSQ++sufQ=
-gopkg.in/DataDog/dd-trace-go.v1 v1.29.0-rc.1.0.20210226170446-a8dc39ec3484/go.mod h1:H9vSLD4Qlnl3rH2fUT6jyP9qwq1lDo0ikaDqSJo8t/U=
+gopkg.in/DataDog/dd-trace-go.v1 v1.30.0-rc.1.0.20210420124628-f63633f38e8f h1:LmMng8lsMr7BkXin76L6+LsUFr1GSnmySvO5LaR6rhc=
 gopkg.in/DataDog/dd-trace-go.v1 v1.30.0-rc.1.0.20210420124628-f63633f38e8f/go.mod h1:I3nUNop4UZaHSj2C2OBCHezmsQIHczbUps8nHgw/HXs=
 gopkg.in/alecthomas/kingpin.v2 v2.2.6/go.mod h1:FMv+mEhP44yOT+4EoQTLFTRgOQ1FBLkstjWtayDeSgw=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
