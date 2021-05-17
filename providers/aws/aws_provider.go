@@ -235,6 +235,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"api_gateway":       &AwsFacade{service: &APIGatewayGenerator{}},
 		"appsync":           &AwsFacade{service: &AppSyncGenerator{}},
 		"auto_scaling":      &AwsFacade{service: &AutoScalingGenerator{}},
+		"batch":             &AwsFacade{service: &BatchGenerator{}},
 		"budgets":           &AwsFacade{service: &BudgetsGenerator{}},
 		"cloud9":            &AwsFacade{service: &Cloud9Generator{}},
 		"cloudformation":    &AwsFacade{service: &CloudFormationGenerator{}},
