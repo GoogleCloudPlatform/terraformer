@@ -41,6 +41,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [RabbitMQ](/docs/rabbitmq.md)
     * Network
         * [Cloudflare](/docs/cloudflare.md)
+        * [PAN-OS](/docs/panos.md)
     * VCS
         * [GitHub](/docs/github.md)
     * Monitoring & System Management
@@ -262,6 +263,7 @@ Links to download Terraform Providers:
     * Cloudflare provider >1.16 - [here](https://releases.hashicorp.com/terraform-provider-cloudflare/)
     * Fastly provider >0.16.1 - [here](https://releases.hashicorp.com/terraform-provider-fastly/)
     * NS1 provider >1.8.3 - [here](https://releases.hashicorp.com/terraform-provider-ns1/)
+    * PAN-OS provider >= 1.8.3 - [here](https://github.com/PaloAltoNetworks/terraform-provider-panos)
 * VCS
     * GitHub provider >=2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-github/)
 * Monitoring & System Management
