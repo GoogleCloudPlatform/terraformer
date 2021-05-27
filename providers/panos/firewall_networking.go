@@ -432,11 +432,27 @@ func (g *FirewallNetworkingGenerator) createLoopbackInterfaceResources() []terra
 	)
 }
 
-func (g *FirewallNetworkingGenerator) createManagementProfileResources() []terraformutils.Resource {
-	return g.createResourcesFromList(
-		getGeneric{g.client.Network.ManagementProfile, []string{}},
-		"", false, "panos_management_profile", false, "",
-	)
+func (g *FirewallNetworkingGenerator) createManagementProfileResources() (resources []terraformutils.Resource) {
+	l, err := g.client.Network.ManagementProfile.GetList()
+	if err != nil {
+		return []terraformutils.Resource{}
+	}
+
+	for _, managementProfile := range l {
+		resources = append(resources, terraformutils.NewResource(
+			managementProfile,
+			normalizeResourceName(managementProfile),
+			"panos_management_profile",
+			"panos",
+			map[string]string{
+				"name": managementProfile,
+			},
+			[]string{},
+			map[string]interface{}{},
+		))
+	}
+
+	return resources
 }
 
 func (g *FirewallNetworkingGenerator) createMonitorProfileResources() []terraformutils.Resource {
@@ -670,6 +686,44 @@ func (g *FirewallNetworkingGenerator) PostConvertHook() error {
 			r.InstanceInfo.Type == "panos_layer3_subinterface" {
 			if _, ok := mapInterfaceNames[r.Item["parent_interface"].(string)]; ok {
 				r.Item["parent_interface"] = mapInterfaceNames[r.Item["parent_interface"].(string)]
+			}
+		}
+
+		if r.InstanceInfo.Type == "panos_virtual_router" {
+			if r.Item["ospfv3_ext_dist"].(string) == "0" {
+				r.Item["ospfv3_ext_dist"] = "10"
+			}
+
+			if r.Item["ebgp_dist"].(string) == "0" {
+				r.Item["ebgp_dist"] = "10"
+			}
+
+			if r.Item["rip_dist"].(string) == "0" {
+				r.Item["rip_dist"] = "10"
+			}
+
+			if r.Item["ibgp_dist"].(string) == "0" {
+				r.Item["ibgp_dist"] = "10"
+			}
+
+			if r.Item["static_dist"].(string) == "0" {
+				r.Item["static_dist"] = "10"
+			}
+
+			if r.Item["ospf_int_dist"].(string) == "0" {
+				r.Item["ospf_int_dist"] = "10"
+			}
+
+			if r.Item["static_ipv6_dist"].(string) == "0" {
+				r.Item["static_ipv6_dist"] = "10"
+			}
+
+			if r.Item["ospf_ext_dist"].(string) == "0" {
+				r.Item["ospf_ext_dist"] = "10"
+			}
+
+			if r.Item["ospfv3_int_dist"].(string) == "0" {
+				r.Item["ospfv3_int_dist"] = "10"
 			}
 		}
 

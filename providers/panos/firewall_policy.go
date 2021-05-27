@@ -80,6 +80,32 @@ func (g *FirewallPolicyGenerator) InitResources() error {
 }
 
 func (g *FirewallPolicyGenerator) PostConvertHook() error {
+	for _, res := range g.Resources {
+		if res.InstanceInfo.Type == "panos_nat_rule_group" {
+			for _, rule := range res.Item["rule"].([]interface{}) {
+				a := rule.(map[string]interface{})["translated_packet"].([]interface{})
+				for _, b := range a {
+					if _, ok := b.(map[string]interface{})["source"]; !ok {
+						b.(map[string]interface{})["source"] = make(map[string]interface{})
+					}
+				}
+
+				for _, b := range a {
+					if _, ok := b.(map[string]interface{})["destination"]; !ok {
+						b.(map[string]interface{})["destination"] = make(map[string]interface{})
+					}
+				}
+			}
+		}
+
+		if res.InstanceInfo.Type == "panos_security_rule_group" {
+			for _, rule := range res.Item["rule"].([]interface{}) {
+				if _, ok := rule.(map[string]interface{})["hip_profiles"]; !ok {
+					rule.(map[string]interface{})["hip_profiles"] = []string{"any"}
+				}
+			}
+		}
+	}
 
 	return nil
 }

@@ -42,6 +42,31 @@ func (g *FirewallObjectsGenerator) createResourcesFromList(o getGeneric, idPrefi
 	return resources
 }
 
+func (g *FirewallObjectsGenerator) createResourcesFromListWithVsys(o getGeneric, idPrefix string, terraformResourceName string) (resources []terraformutils.Resource) {
+	l, err := o.i.(getListWithOneArg).GetList(o.params[0])
+	if err != nil {
+		return []terraformutils.Resource{}
+	}
+
+	for _, r := range l {
+		id := idPrefix + r
+		resources = append(resources, terraformutils.NewResource(
+			id,
+			normalizeResourceName(r),
+			terraformResourceName,
+			"panos",
+			map[string]string{
+				"vsys":         g.vsys,
+				"device_group": "shared",
+			},
+			[]string{},
+			map[string]interface{}{},
+		))
+	}
+
+	return resources
+}
+
 func (g *FirewallObjectsGenerator) createAddressGroupResources() []terraformutils.Resource {
 	return g.createResourcesFromList(
 		getGeneric{g.client.Objects.AddressGroup, []string{g.vsys}},
@@ -129,70 +154,70 @@ func (g *FirewallObjectsGenerator) createAddressObjectResources() []terraformuti
 }
 
 func (g *FirewallObjectsGenerator) createAntiSpywareSecurityProfileResources() []terraformutils.Resource {
-	return g.createResourcesFromList(
+	return g.createResourcesFromListWithVsys(
 		getGeneric{g.client.Objects.AntiSpywareProfile, []string{g.vsys}},
 		g.vsys+":", "panos_anti_spyware_security_profile",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createAntivirusSecurityProfileResources() []terraformutils.Resource {
-	return g.createResourcesFromList(
+	return g.createResourcesFromListWithVsys(
 		getGeneric{g.client.Objects.AntivirusProfile, []string{g.vsys}},
 		g.vsys+":", "panos_antivirus_security_profile",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createCustomDataPatternObjectResources() []terraformutils.Resource {
-	return g.createResourcesFromList(
+	return g.createResourcesFromListWithVsys(
 		getGeneric{g.client.Objects.DataPattern, []string{g.vsys}},
 		g.vsys+":", "panos_custom_data_pattern_object",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createDataFilteringSecurityProfileResources() []terraformutils.Resource {
-	return g.createResourcesFromList(
+	return g.createResourcesFromListWithVsys(
 		getGeneric{g.client.Objects.DataFilteringProfile, []string{g.vsys}},
 		g.vsys+":", "panos_data_filtering_security_profile",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createDOSProtectionProfileResources() []terraformutils.Resource {
-	return g.createResourcesFromList(
+	return g.createResourcesFromListWithVsys(
 		getGeneric{g.client.Objects.DosProtectionProfile, []string{g.vsys}},
 		g.vsys+":", "panos_dos_protection_profile",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createDynamicUserGroupResources() []terraformutils.Resource {
-	return g.createResourcesFromList(
+	return g.createResourcesFromListWithVsys(
 		getGeneric{g.client.Objects.DynamicUserGroup, []string{g.vsys}},
 		g.vsys+":", "panos_dynamic_user_group",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createFileBlockingSecurityProfileResources() []terraformutils.Resource {
-	return g.createResourcesFromList(
+	return g.createResourcesFromListWithVsys(
 		getGeneric{g.client.Objects.FileBlockingProfile, []string{g.vsys}},
 		g.vsys+":", "panos_file_blocking_security_profile",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createURLFilteringSecurityProfileResources() []terraformutils.Resource {
-	return g.createResourcesFromList(
+	return g.createResourcesFromListWithVsys(
 		getGeneric{g.client.Objects.UrlFilteringProfile, []string{g.vsys}},
 		g.vsys+":", "panos_url_filtering_security_profile",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createVulnerabilitySecurityProfileResources() []terraformutils.Resource {
-	return g.createResourcesFromList(
+	return g.createResourcesFromListWithVsys(
 		getGeneric{g.client.Objects.VulnerabilityProfile, []string{g.vsys}},
 		g.vsys+":", "panos_vulnerability_security_profile",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createWildfireAnalysisSecurityProfileResources() []terraformutils.Resource {
-	return g.createResourcesFromList(
+	return g.createResourcesFromListWithVsys(
 		getGeneric{g.client.Objects.WildfireAnalysisProfile, []string{g.vsys}},
 		g.vsys+":", "panos_wildfire_analysis_security_profile",
 	)
@@ -247,10 +272,6 @@ func (g *FirewallObjectsGenerator) PostConvertHook() error {
 	}
 
 	for _, r := range g.Resources {
-		if r.InstanceInfo.Type == "panos_address_object" {
-			delete(r.Item, "device_group")
-		}
-
 		if r.InstanceInfo.Type == "panos_address_group" {
 			if _, ok := r.Item["static_addresses"]; ok {
 				staticAddresses := make([]string, len(r.Item["static_addresses"].([]interface{})))
