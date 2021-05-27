@@ -61,6 +61,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdCloudflareImporter,
 		newCmdFastlyImporter,
 		newCmdNs1Importer,
+		newCmdPanosImporter,
 		// VCS
 		newCmdGithubImporter,
 		// Monitoring & System Management
