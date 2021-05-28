@@ -691,19 +691,19 @@ func (g *FirewallNetworkingGenerator) PostConvertHook() error {
 
 		if r.InstanceInfo.Type == "panos_virtual_router" {
 			if r.Item["ospfv3_ext_dist"].(string) == "0" {
-				r.Item["ospfv3_ext_dist"] = "10"
+				r.Item["ospfv3_ext_dist"] = "110"
 			}
 
 			if r.Item["ebgp_dist"].(string) == "0" {
-				r.Item["ebgp_dist"] = "10"
+				r.Item["ebgp_dist"] = "20"
 			}
 
 			if r.Item["rip_dist"].(string) == "0" {
-				r.Item["rip_dist"] = "10"
+				r.Item["rip_dist"] = "120"
 			}
 
 			if r.Item["ibgp_dist"].(string) == "0" {
-				r.Item["ibgp_dist"] = "10"
+				r.Item["ibgp_dist"] = "200"
 			}
 
 			if r.Item["static_dist"].(string) == "0" {
@@ -711,7 +711,7 @@ func (g *FirewallNetworkingGenerator) PostConvertHook() error {
 			}
 
 			if r.Item["ospf_int_dist"].(string) == "0" {
-				r.Item["ospf_int_dist"] = "10"
+				r.Item["ospf_int_dist"] = "30"
 			}
 
 			if r.Item["static_ipv6_dist"].(string) == "0" {
@@ -719,11 +719,11 @@ func (g *FirewallNetworkingGenerator) PostConvertHook() error {
 			}
 
 			if r.Item["ospf_ext_dist"].(string) == "0" {
-				r.Item["ospf_ext_dist"] = "10"
+				r.Item["ospf_ext_dist"] = "110"
 			}
 
 			if r.Item["ospfv3_int_dist"].(string) == "0" {
-				r.Item["ospfv3_int_dist"] = "10"
+				r.Item["ospfv3_int_dist"] = "30"
 			}
 		}
 
