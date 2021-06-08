@@ -9,6 +9,19 @@ Example:
 
  terraformer import panos --resources=device_config,firewall_networking,firewall_objects,firewall_policy
 ```
+The list of usable environment variables is the same as the [pango go-client](https://github.com/PaloAltoNetworks/pango):
+*  `PANOS_HOSTNAME`
+*  `PANOS_USERNAME`
+*  `PANOS_PASSWORD`
+*  `PANOS_API_KEY`
+*  `PANOS_PROTOCOL`
+*  `PANOS_PORT`
+*  `PANOS_TIMEOUT`
+*  `PANOS_TARGET`
+*  `PANOS_HEADERS`
+*  `PANOS_VERIFY_CERTIFICATE`
+*  `PANOS_LOGGING`
+
 Here is the list of resources which are currently supported:
 
 *   `device_config`

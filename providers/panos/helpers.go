@@ -15,6 +15,7 @@
 package panos
 
 import (
+	"os"
 	"strings"
 	"unicode"
 
@@ -25,19 +26,22 @@ import (
 	"golang.org/x/text/unicode/norm"
 )
 
-func Initialize(hostname, username, password string) (*pango.Firewall, error) {
-	client := &pango.Firewall{Client: pango.Client{
-		Hostname: hostname,
-		Username: username,
-		Password: password,
-		Logging:  pango.LogQuiet,
-	}}
+func Initialize() (*pango.Firewall, error) {
+	fw := &pango.Firewall{
+		Client: pango.Client{
+			CheckEnvironment: true,
+		},
+	}
 
-	return client, client.Initialize()
+	if val := os.Getenv("PANOS_LOGGING"); val == "" {
+		fw.Client.Logging = pango.LogQuiet
+	}
+
+	return fw, fw.Initialize()
 }
 
-func GetVsysList(hostname, username, password string) ([]string, error) {
-	client, err := Initialize(hostname, username, password)
+func GetVsysList() ([]string, error) {
+	client, err := Initialize()
 	if err != nil {
 		return []string{}, err
 	}

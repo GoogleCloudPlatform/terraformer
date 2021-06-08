@@ -23,17 +23,11 @@ import (
 
 type PanosProvider struct { //nolint
 	terraformutils.Provider
-	hostname string
-	username string
-	password string
-	vsys     string
+	vsys string
 }
 
 func (p *PanosProvider) Init(args []string) error {
-	p.hostname = args[0]
-	p.username = args[1]
-	p.password = args[2]
-	p.vsys = args[3]
+	p.vsys = args[0]
 
 	return nil
 }
@@ -47,11 +41,7 @@ func (p *PanosProvider) GetProviderData(arg ...string) map[string]interface{} {
 }
 
 func (p *PanosProvider) GetConfig() cty.Value {
-	return cty.ObjectVal(map[string]cty.Value{
-		"hostname": cty.StringVal(p.hostname),
-		"username": cty.StringVal(p.username),
-		"password": cty.StringVal(p.password),
-	})
+	return cty.ObjectVal(map[string]cty.Value{})
 }
 
 func (p *PanosProvider) GetBasicConfig() cty.Value {
@@ -69,10 +59,7 @@ func (p *PanosProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"hostname": p.hostname,
-		"username": p.username,
-		"password": p.password,
-		"vsys":     p.vsys,
+		"vsys": p.vsys,
 	})
 
 	return nil
