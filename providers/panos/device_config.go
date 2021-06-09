@@ -16,21 +16,10 @@ package panos
 
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/PaloAltoNetworks/pango/dev/general"
 )
 
 type DeviceConfigGenerator struct {
 	PanosService
-}
-
-func (g *DeviceConfigGenerator) createSimpleResource(hostname, terraformResourceName string) terraformutils.Resource {
-	return terraformutils.NewSimpleResource(
-		hostname,
-		normalizeResourceName(hostname),
-		terraformResourceName,
-		"panos",
-		[]string{},
-	)
 }
 
 func (g *DeviceConfigGenerator) createResourcesFromList(o getGeneric, idPrefix, terraformResourceName string) (resources []terraformutils.Resource) {
@@ -53,12 +42,24 @@ func (g *DeviceConfigGenerator) createResourcesFromList(o getGeneric, idPrefix, 
 	return resources
 }
 
-func (g *DeviceConfigGenerator) createGeneralSettingsResource(generalConfig general.Config) terraformutils.Resource {
-	return g.createSimpleResource(generalConfig.Hostname, "panos_general_settings")
+func (g *DeviceConfigGenerator) createGeneralSettingsResource(hostname string) terraformutils.Resource {
+	return terraformutils.NewSimpleResource(
+		hostname,
+		normalizeResourceName(hostname),
+		"panos_general_settings",
+		"panos",
+		[]string{},
+	)
 }
 
-func (g *DeviceConfigGenerator) createTelemetryResource(generalConfig general.Config) terraformutils.Resource {
-	return g.createSimpleResource(generalConfig.IpAddress, "panos_telemetry")
+func (g *DeviceConfigGenerator) createTelemetryResource(ipAddress, hostname string) terraformutils.Resource {
+	return terraformutils.NewSimpleResource(
+		ipAddress,
+		normalizeResourceName(hostname),
+		"panos_telemetry",
+		"panos",
+		[]string{},
+	)
 }
 
 func (g *DeviceConfigGenerator) createEmailServerProfileResources() []terraformutils.Resource {
@@ -99,8 +100,8 @@ func (g *DeviceConfigGenerator) InitResources() error {
 		return err
 	}
 
-	g.Resources = append(g.Resources, g.createGeneralSettingsResource(generalConfig))
-	g.Resources = append(g.Resources, g.createTelemetryResource(generalConfig))
+	g.Resources = append(g.Resources, g.createGeneralSettingsResource(generalConfig.Hostname))
+	g.Resources = append(g.Resources, g.createTelemetryResource(generalConfig.IpAddress, generalConfig.Hostname))
 	g.Resources = append(g.Resources, g.createEmailServerProfileResources()...)
 	g.Resources = append(g.Resources, g.createHTTPServerProfileResources()...)
 	g.Resources = append(g.Resources, g.createSNMPTrapServerProfileResources()...)
