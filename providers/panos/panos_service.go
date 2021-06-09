@@ -28,7 +28,7 @@ type PanosService struct { //nolint
 func (p *PanosService) Initialize() error {
 	p.vsys = p.Args["vsys"].(string)
 
-	c, err := Initialize(p.Args["hostname"].(string), p.Args["username"].(string), p.Args["password"].(string))
+	c, err := Initialize()
 	if err != nil {
 		return err
 	}

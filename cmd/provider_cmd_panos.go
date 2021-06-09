@@ -16,18 +16,11 @@ package cmd
 
 import (
 	"log"
-	"os"
 	"strings"
 
 	panos_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/panos"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
-)
-
-const (
-	defaultPanosHostname = "192.168.1.1"
-	defaultPanosUsername = "admin"
-	defaultPanosPassword = "admin"
 )
 
 func newCmdPanosImporter(options ImportOptions) *cobra.Command {
@@ -37,25 +30,10 @@ func newCmdPanosImporter(options ImportOptions) *cobra.Command {
 		Short: "Import current state to Terraform configuration from a PAN-OS",
 		Long:  "Import current state to Terraform configuration from a PAN-OS",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			hostname := os.Getenv("PANOS_HOSTNAME")
-			if len(hostname) == 0 {
-				hostname = defaultPanosHostname
-			}
-
-			username := os.Getenv("PANOS_USERNAME")
-			if len(username) == 0 {
-				username = defaultPanosUsername
-			}
-
-			password := os.Getenv("PANOS_PASSWORD")
-			if len(password) == 0 {
-				password = defaultPanosPassword
-			}
-
 			if len(vsys) == 0 {
 				var err error
 
-				vsys, err = panos_terraforming.GetVsysList(hostname, username, password)
+				vsys, err = panos_terraforming.GetVsysList()
 				if err != nil {
 					return err
 				}
@@ -68,7 +46,7 @@ func newCmdPanosImporter(options ImportOptions) *cobra.Command {
 				options.PathPattern = originalPathPattern
 				options.PathPattern = strings.ReplaceAll(options.PathPattern, "{provider}", "{provider}/"+v)
 
-				err := Import(provider, options, []string{hostname, username, password, v})
+				err := Import(provider, options, []string{v})
 				if err != nil {
 					return err
 				}
