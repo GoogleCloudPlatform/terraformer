@@ -75,7 +75,7 @@ func (g *DashboardGenerator) PostConvertHook() error {
 				widgetSlice[wIdx] = cty.ObjectVal(widgetItemMap)
 			}
 		}
-		resource.SetStateAttr("widget", cty.ListVal(widgetSlice))
+		resource.SetStateAttr("widget", terraformutils.ListToValue(widgetSlice))
 	}
 
 	return nil

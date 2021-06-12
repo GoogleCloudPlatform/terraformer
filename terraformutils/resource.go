@@ -16,6 +16,7 @@ package terraformutils
 
 import (
 	"fmt"
+	"github.com/zclconf/go-cty/cty/convert"
 	"log"
 	"sort"
 	"strconv"
@@ -206,7 +207,7 @@ func (r *Resource) SortStateAttrStringSlice(attr string) {
 		for _, v := range sortedStrings {
 			sortedValues = append(sortedValues, cty.StringVal(v))
 		}
-		r.SetStateAttr(attr, cty.ListVal(sortedValues))
+		r.SetStateAttr(attr, ListToValue(sortedValues))
 	}
 }
 
@@ -237,7 +238,7 @@ func (r *Resource) DeleteStateAttrFirstAttr(firstAttr string, secondAttr string)
 	instanceStateMap := r.InstanceState.Value.AsValueMap()
 	firstAttrMap := instanceStateMap[firstAttr].AsValueSlice()[0].AsValueMap()
 	delete(firstAttrMap, secondAttr)
-	instanceStateMap[firstAttr] = cty.ListVal([]cty.Value{cty.ObjectVal(firstAttrMap)})
+	instanceStateMap[firstAttr] = ListToValue([]cty.Value{cty.ObjectVal(firstAttrMap)})
 	r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 }
 
@@ -245,7 +246,7 @@ func (r *Resource) SetStateAttrFirstAttr(firstAttr string, secondAttr string, va
 	instanceStateMap := r.InstanceState.Value.AsValueMap()
 	firstAttrMap := instanceStateMap[firstAttr].AsValueSlice()[0].AsValueMap()
 	firstAttrMap[secondAttr] = val
-	instanceStateMap[firstAttr] = cty.ListVal([]cty.Value{cty.ObjectVal(firstAttrMap)})
+	instanceStateMap[firstAttr] = ListToValue([]cty.Value{cty.ObjectVal(firstAttrMap)})
 	r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 }
 
@@ -267,10 +268,44 @@ func (r *Resource) SortStateAttrEachAttrStringSlice(firstAttr string, secondAttr
 				sortedSecondAttrSliceValues = append(sortedSecondAttrSliceValues, cty.StringVal(ssl))
 			}
 			valueMap := firstAttrSliceItem.AsValueMap()
-			valueMap[secondAttr] = cty.ListVal(sortedSecondAttrSliceValues)
+			valueMap[secondAttr] = ListToValue(sortedSecondAttrSliceValues)
 			firstAttrSlice[i] = cty.ObjectVal(valueMap)
 		}
-		r.SetStateAttr(firstAttr, cty.ListVal(firstAttrSlice))
+		r.SetStateAttr(firstAttr, ListToValue(firstAttrSlice))
+	}
+}
+
+func ListToValue(value []cty.Value) cty.Value {
+	if len(value) == 0 {
+		return cty.ListValEmpty(cty.EmptyObject)
+	} else {
+		return ListVal(value)
+	}
+}
+
+func ListVal(vals []cty.Value) cty.Value {
+
+	if vals[0].Type().IsMapType() || vals[0].Type().IsObjectType() {
+		vals[0].Type().AttributeTypes()
+		types := make([]cty.Type, len(vals))
+		for i, val := range vals {
+			types[i] = val.Type()
+		}
+		unifiedType, _ := convert.Unify(types)
+
+		convertedItems := make([]cty.Value, len(vals))
+		for i, val := range vals {
+			value, err := convert.Convert(val, unifiedType)
+			if err != nil {
+				panic(err)
+			}
+			convertedItems[i] = value
+		}
+
+		return cty.ListVal(convertedItems)
+
+	} else {
+		return cty.ListVal(vals)
 	}
 }
 

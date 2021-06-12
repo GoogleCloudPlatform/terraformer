@@ -72,7 +72,7 @@ func (g *IntegrationAWSLogCollectionGenerator) PostConvertHook() error {
 	for _, r := range g.Resources {
 		// services is a required attribute but can be empty. This ensures we append an empty list
 		if !r.HasStateAttr("services") {
-			r.SetStateAttr("services", cty.ListVal([]cty.Value{}))
+			r.SetStateAttr("services", terraformutils.ListToValue([]cty.Value{}))
 		}
 	}
 	return nil

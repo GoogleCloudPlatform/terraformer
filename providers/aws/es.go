@@ -70,7 +70,7 @@ func (g *EsGenerator) PostConvertHook() error {
 		if r.InstanceState.Value.GetAttr("cluster_config").AsValueSlice()[0].GetAttr("warm_count").AsString() == "0" {
 			clusterConfigMap := instanceStateMap["cluster_config"].AsValueSlice()[0].AsValueMap()
 			delete(clusterConfigMap, "warm_count")
-			instanceStateMap["cluster_config"] = cty.ListVal([]cty.Value{cty.ObjectVal(clusterConfigMap)})
+			instanceStateMap["cluster_config"] = terraformutils.ListToValue([]cty.Value{cty.ObjectVal(clusterConfigMap)})
 		}
 		r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 	}

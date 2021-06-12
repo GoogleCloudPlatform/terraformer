@@ -187,7 +187,7 @@ func (g *ComputeGenerator) PostConvertHook() error {
 				}
 				blockDevices = append(blockDevices, cty.ObjectVal(blockDeviceMap))
 			}
-			r.SetStateAttr("block_device", cty.ListVal(blockDevices))
+			r.SetStateAttr("block_device", terraformutils.ListToValue(blockDevices))
 		}
 	}
 

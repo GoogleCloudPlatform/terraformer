@@ -221,7 +221,7 @@ func (g *AlbGenerator) PostConvertHook() error {
 			instanceStateMap := r.InstanceState.Value.AsValueMap()
 			rootBlockDeviceMap := instanceStateMap["default_action"].AsValueSlice()[0].AsValueMap()
 			delete(rootBlockDeviceMap, "order")
-			instanceStateMap["default_action"] = cty.ListVal([]cty.Value{cty.ObjectVal(rootBlockDeviceMap)})
+			instanceStateMap["default_action"] = terraformutils.ListToValue([]cty.Value{cty.ObjectVal(rootBlockDeviceMap)})
 			r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 		}
 	}
@@ -234,7 +234,7 @@ func (g *AlbGenerator) PostConvertHook() error {
 			instanceStateMap := r.InstanceState.Value.AsValueMap()
 			rootBlockDeviceMap := instanceStateMap["action"].AsValueSlice()[0].AsValueMap()
 			delete(rootBlockDeviceMap, "order")
-			instanceStateMap["action"] = cty.ListVal([]cty.Value{cty.ObjectVal(rootBlockDeviceMap)})
+			instanceStateMap["action"] = terraformutils.ListToValue([]cty.Value{cty.ObjectVal(rootBlockDeviceMap)})
 			r.InstanceState.Value = cty.ObjectVal(instanceStateMap)
 		}
 		for _, lb := range g.Resources {

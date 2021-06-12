@@ -308,7 +308,7 @@ func (g *SecurityGenerator) sortRules(resource *terraformutils.Resource, attr st
 	sort.Slice(rules, func(i, j int) bool {
 		return fmt.Sprintf("%v", rules[i].Hash()) < fmt.Sprintf("%v", rules[j].Hash())
 	})
-	resource.SetStateAttr(attr, cty.ListVal(rules))
+	resource.SetStateAttr(attr, terraformutils.ListToValue(rules))
 }
 
 func (g *SecurityGenerator) sortIfExist(attribute string, ruleMap map[string]cty.Value) {
@@ -317,7 +317,7 @@ func (g *SecurityGenerator) sortIfExist(attribute string, ruleMap map[string]cty
 		sort.Slice(valueList, func(i, j int) bool {
 			return valueList[i].Hash() < valueList[j].Hash()
 		})
-		ruleMap[attribute] = cty.ListVal(valueList)
+		ruleMap[attribute] = terraformutils.ListToValue(valueList)
 	}
 }
 
