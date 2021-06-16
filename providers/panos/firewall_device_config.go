@@ -16,15 +16,16 @@ package panos
 
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/PaloAltoNetworks/pango"
 )
 
-type DeviceConfigGenerator struct {
+type FirewallDeviceConfigGenerator struct {
 	PanosService
 }
 
-func (g *DeviceConfigGenerator) createResourcesFromList(o getGeneric, idPrefix, terraformResourceName string) (resources []terraformutils.Resource) {
+func (g *FirewallDeviceConfigGenerator) createResourcesFromList(o getGeneric, idPrefix, terraformResourceName string) (resources []terraformutils.Resource) {
 	l, err := o.i.(getListWithOneArg).GetList(o.params[0])
-	if err != nil {
+	if err != nil || len(l) == 0 {
 		return []terraformutils.Resource{}
 	}
 
@@ -42,7 +43,7 @@ func (g *DeviceConfigGenerator) createResourcesFromList(o getGeneric, idPrefix, 
 	return resources
 }
 
-func (g *DeviceConfigGenerator) createGeneralSettingsResource(hostname string) terraformutils.Resource {
+func (g *FirewallDeviceConfigGenerator) createGeneralSettingsResource(hostname string) terraformutils.Resource {
 	return terraformutils.NewSimpleResource(
 		hostname,
 		normalizeResourceName(hostname),
@@ -52,7 +53,7 @@ func (g *DeviceConfigGenerator) createGeneralSettingsResource(hostname string) t
 	)
 }
 
-func (g *DeviceConfigGenerator) createTelemetryResource(ipAddress, hostname string) terraformutils.Resource {
+func (g *FirewallDeviceConfigGenerator) createTelemetryResource(ipAddress, hostname string) terraformutils.Resource {
 	return terraformutils.NewSimpleResource(
 		ipAddress,
 		normalizeResourceName(hostname),
@@ -62,31 +63,31 @@ func (g *DeviceConfigGenerator) createTelemetryResource(ipAddress, hostname stri
 	)
 }
 
-func (g *DeviceConfigGenerator) createEmailServerProfileResources() []terraformutils.Resource {
-	return g.createResourcesFromList(getGeneric{g.client.Device.EmailServerProfile, []string{g.vsys}},
+func (g *FirewallDeviceConfigGenerator) createEmailServerProfileResources() []terraformutils.Resource {
+	return g.createResourcesFromList(getGeneric{g.client.(*pango.Firewall).Device.EmailServerProfile, []string{g.vsys}},
 		g.vsys+":", "panos_email_server_profile",
 	)
 }
 
-func (g *DeviceConfigGenerator) createHTTPServerProfileResources() []terraformutils.Resource {
-	return g.createResourcesFromList(getGeneric{g.client.Device.HttpServerProfile, []string{g.vsys}},
+func (g *FirewallDeviceConfigGenerator) createHTTPServerProfileResources() []terraformutils.Resource {
+	return g.createResourcesFromList(getGeneric{g.client.(*pango.Firewall).Device.HttpServerProfile, []string{g.vsys}},
 		g.vsys+":", "panos_http_server_profile",
 	)
 }
 
-func (g *DeviceConfigGenerator) createSNMPTrapServerProfileResources() []terraformutils.Resource {
-	return g.createResourcesFromList(getGeneric{g.client.Device.SnmpServerProfile, []string{g.vsys}},
+func (g *FirewallDeviceConfigGenerator) createSNMPTrapServerProfileResources() []terraformutils.Resource {
+	return g.createResourcesFromList(getGeneric{g.client.(*pango.Firewall).Device.SnmpServerProfile, []string{g.vsys}},
 		g.vsys+":", "panos_snmptrap_server_profile",
 	)
 }
 
-func (g *DeviceConfigGenerator) createSyslogServerProfileResources() []terraformutils.Resource {
-	return g.createResourcesFromList(getGeneric{g.client.Device.SyslogServerProfile, []string{g.vsys}},
+func (g *FirewallDeviceConfigGenerator) createSyslogServerProfileResources() []terraformutils.Resource {
+	return g.createResourcesFromList(getGeneric{g.client.(*pango.Firewall).Device.SyslogServerProfile, []string{g.vsys}},
 		g.vsys+":", "panos_syslog_server_profile",
 	)
 }
 
-func (g *DeviceConfigGenerator) InitResources() error {
+func (g *FirewallDeviceConfigGenerator) InitResources() error {
 	if err := g.Initialize(); err != nil {
 		return err
 	}
@@ -95,7 +96,7 @@ func (g *DeviceConfigGenerator) InitResources() error {
 		g.vsys = "shared"
 	}
 
-	generalConfig, err := g.client.Device.GeneralSettings.Get()
+	generalConfig, err := g.client.(*pango.Firewall).Device.GeneralSettings.Get()
 	if err != nil {
 		return err
 	}

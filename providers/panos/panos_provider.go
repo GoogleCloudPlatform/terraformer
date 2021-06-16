@@ -68,10 +68,15 @@ func (p *PanosProvider) InitService(serviceName string, verbose bool) error {
 func (p *PanosProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 
 	return map[string]terraformutils.ServiceGenerator{
-		"device_config":       &DeviceConfigGenerator{},
-		"firewall_networking": &FirewallNetworkingGenerator{},
-		"firewall_objects":    &FirewallObjectsGenerator{},
-		"firewall_policy":     &FirewallPolicyGenerator{},
+		"firewall_device_config": &FirewallDeviceConfigGenerator{},
+		"firewall_networking":    &FirewallNetworkingGenerator{},
+		"firewall_objects":       &FirewallObjectsGenerator{},
+		"firewall_policy":        &FirewallPolicyGenerator{},
+		"panorama_device_config": &PanoramaDeviceConfigGenerator{},
+		"panorama_networking":    &PanoramaNetworkingGenerator{},
+		"panorama_objects":       &PanoramaObjectsGenerator{},
+		"panorama_plugins":       &PanoramaPluginsGenerator{},
+		"panorama_policy":        &PanoramaPolicyGenerator{},
 	}
 }
 

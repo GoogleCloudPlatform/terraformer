@@ -19,6 +19,7 @@ import (
 	"strconv"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/PaloAltoNetworks/pango"
 	"github.com/PaloAltoNetworks/pango/util"
 )
 
@@ -28,7 +29,7 @@ type FirewallPolicyGenerator struct {
 
 func (g *FirewallPolicyGenerator) createResourcesFromList(o getGeneric, terraformResourceName string) (resources []terraformutils.Resource) {
 	l, err := o.i.(getListWithOneArg).GetList(o.params[0])
-	if err != nil {
+	if err != nil || len(l) == 0 {
 		return []terraformutils.Resource{}
 	}
 
@@ -56,15 +57,15 @@ func (g *FirewallPolicyGenerator) createResourcesFromList(o getGeneric, terrafor
 }
 
 func (g *FirewallPolicyGenerator) createNATRuleGroupResources() []terraformutils.Resource {
-	return g.createResourcesFromList(getGeneric{g.client.Policies.Nat, []string{g.vsys}}, "panos_nat_rule_group")
+	return g.createResourcesFromList(getGeneric{g.client.(*pango.Firewall).Policies.Nat, []string{g.vsys}}, "panos_nat_rule_group")
 }
 
 func (g *FirewallPolicyGenerator) createPBFRuleGroupResources() []terraformutils.Resource {
-	return g.createResourcesFromList(getGeneric{g.client.Policies.PolicyBasedForwarding, []string{g.vsys}}, "panos_pbf_rule_group")
+	return g.createResourcesFromList(getGeneric{g.client.(*pango.Firewall).Policies.PolicyBasedForwarding, []string{g.vsys}}, "panos_pbf_rule_group")
 }
 
 func (g *FirewallPolicyGenerator) createSecurityRuleGroupResources() []terraformutils.Resource {
-	return g.createResourcesFromList(getGeneric{g.client.Policies.Security, []string{g.vsys}}, "panos_security_rule_group")
+	return g.createResourcesFromList(getGeneric{g.client.(*pango.Firewall).Policies.Security, []string{g.vsys}}, "panos_security_rule_group")
 }
 
 func (g *FirewallPolicyGenerator) InitResources() error {
@@ -83,16 +84,18 @@ func (g *FirewallPolicyGenerator) PostConvertHook() error {
 	for _, res := range g.Resources {
 		if res.InstanceInfo.Type == "panos_nat_rule_group" {
 			for _, rule := range res.Item["rule"].([]interface{}) {
-				a := rule.(map[string]interface{})["translated_packet"].([]interface{})
-				for _, b := range a {
-					if _, ok := b.(map[string]interface{})["source"]; !ok {
-						b.(map[string]interface{})["source"] = make(map[string]interface{})
+				if _, ok := rule.(map[string]interface{})["translated_packet"]; ok {
+					a := rule.(map[string]interface{})["translated_packet"].([]interface{})
+					for _, b := range a {
+						if _, okb := b.(map[string]interface{})["source"]; !okb {
+							b.(map[string]interface{})["source"] = make(map[string]interface{})
+						}
 					}
-				}
 
-				for _, b := range a {
-					if _, ok := b.(map[string]interface{})["destination"]; !ok {
-						b.(map[string]interface{})["destination"] = make(map[string]interface{})
+					for _, b := range a {
+						if _, okb := b.(map[string]interface{})["destination"]; !okb {
+							b.(map[string]interface{})["destination"] = make(map[string]interface{})
+						}
 					}
 				}
 			}

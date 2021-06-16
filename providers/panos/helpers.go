@@ -15,48 +15,59 @@
 package panos
 
 import (
-	"os"
+	"fmt"
 	"strings"
 	"unicode"
 
 	"github.com/PaloAltoNetworks/pango"
-	"github.com/PaloAltoNetworks/pango/util"
 	"golang.org/x/text/secure/precis"
 	"golang.org/x/text/transform"
 	"golang.org/x/text/unicode/norm"
 )
 
-func Initialize() (*pango.Firewall, error) {
-	fw := &pango.Firewall{
-		Client: pango.Client{
-			CheckEnvironment: true,
-		},
-	}
-
-	if val := os.Getenv("PANOS_LOGGING"); val == "" {
-		fw.Client.Logging = pango.LogQuiet
-	}
-
-	return fw, fw.Initialize()
+func Initialize() (interface{}, error) {
+	return pango.Connect(pango.Client{
+		CheckEnvironment: true,
+	})
 }
 
-func GetVsysList() ([]string, error) {
+func GetVsysList() ([]string, interface{}, error) {
 	client, err := Initialize()
 	if err != nil {
-		return []string{}, err
+		return []string{}, nil, err
 	}
 
-	vsysList, err := client.EntryListUsing(client.Get, []string{
-		"config",
-		"devices",
-		util.AsEntryXpath([]string{"localhost.localdomain"}),
-		"vsys",
-	})
-	if err != nil {
-		return []string{}, err
+	switch c := client.(type) {
+	case *pango.Panorama:
+		return []string{"shared"}, pango.Panorama{}, nil
+	case *pango.Firewall:
+		var vsysList []string
+		vsysList, err = c.Vsys.GetList()
+		return vsysList, pango.Firewall{}, err
 	}
 
-	return vsysList, nil
+	return []string{}, nil, fmt.Errorf("client type not supported")
+}
+
+func FilterCallableResources(t interface{}, resources []string) []string {
+	var filteredResources []string
+
+	switch t.(type) {
+	case pango.Panorama:
+		for _, r := range resources {
+			if strings.HasPrefix(r, "panorama_") {
+				filteredResources = append(filteredResources, r)
+			}
+		}
+	case pango.Firewall:
+		for _, r := range resources {
+			if strings.HasPrefix(r, "firewall_") {
+				filteredResources = append(filteredResources, r)
+			}
+		}
+	}
+
+	return filteredResources
 }
 
 func normalizeResourceName(s string) string {
@@ -127,7 +138,24 @@ type getListWithThreeArgs interface {
 	GetList(string, string, string) ([]string, error)
 }
 
+type getListWithFourArgs interface {
+	GetList(string, string, string, string) ([]string, error)
+}
+
+type getListWithFiveArgs interface {
+	GetList(string, string, string, string, string) ([]string, error)
+}
+
 type getGeneric struct {
 	i      interface{}
 	params []string
+}
+
+func contains(s []string, e string) bool {
+	for _, v := range s {
+		if v == e {
+			return true
+		}
+	}
+	return false
 }
