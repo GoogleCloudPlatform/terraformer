@@ -9,6 +9,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 )
 
+var CognitoAllowEmptyValues = []string{"tags."}
+
+var CognitoAdditionalFields = map[string]interface{}{}
+
 type CognitoGenerator struct {
 	AWSService
 }
@@ -39,15 +43,16 @@ func (g *CognitoGenerator) loadIdentityPools(svc *cognitoidentity.Client) error 
 	return nil
 }
 
-func (g *CognitoGenerator) loadUserPools(svc *cognitoidentityprovider.Client) error {
+func (g *CognitoGenerator) loadUserPools(svc *cognitoidentityprovider.Client) ([]string, error) {
 	p := cognitoidentityprovider.NewListUserPoolsPaginator(svc, &cognitoidentityprovider.ListUserPoolsInput{
 		MaxResults: *aws.Int32(CognitoMaxResults),
 	})
 
+	var userPoolIds []string
 	for p.HasMorePages() {
 		page, err := p.NextPage(context.TODO())
 		if err != nil {
-			return err
+			return nil, err
 		}
 		for _, pool := range page.UserPools {
 			id := *pool.Id
@@ -58,6 +63,39 @@ func (g *CognitoGenerator) loadUserPools(svc *cognitoidentityprovider.Client) er
 				"aws_cognito_user_pool",
 				"aws",
 				[]string{}))
+
+			userPoolIds = append(userPoolIds, *pool.Id)
+		}
+	}
+	return userPoolIds, nil
+}
+
+func (g *CognitoGenerator) loadUserPoolClients(svc *cognitoidentityprovider.Client, userPoolIds []string) error {
+	for _, userPoolID := range userPoolIds {
+		p := cognitoidentityprovider.NewListUserPoolClientsPaginator(svc, &cognitoidentityprovider.ListUserPoolClientsInput{
+			UserPoolId: aws.String(userPoolID),
+			MaxResults: *aws.Int32(CognitoMaxResults),
+		})
+
+		for p.HasMorePages() {
+			page, err := p.NextPage(context.TODO())
+			if err != nil {
+				return err
+			}
+			for _, poolClient := range page.UserPoolClients {
+				id := *poolClient.ClientId
+				resourceName := *poolClient.ClientName
+				g.Resources = append(g.Resources, terraformutils.NewResource(
+					id,
+					resourceName,
+					"aws_cognito_user_pool_client",
+					"aws",
+					map[string]string{
+						"user_pool_id": *poolClient.UserPoolId,
+					},
+					CognitoAllowEmptyValues,
+					CognitoAdditionalFields))
+			}
 		}
 	}
 	return nil
@@ -74,7 +112,12 @@ func (g *CognitoGenerator) InitResources() error {
 		return err
 	}
 	svcCognitoIdentityProvider := cognitoidentityprovider.NewFromConfig(config)
-	if err := g.loadUserPools(svcCognitoIdentityProvider); err != nil {
+
+	userPoolIds, err := g.loadUserPools(svcCognitoIdentityProvider)
+	if err != nil {
+		return err
+	}
+	if err = g.loadUserPoolClients(svcCognitoIdentityProvider, userPoolIds); err != nil {
 		return err
 	}
 
