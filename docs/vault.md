@@ -43,6 +43,8 @@ List of supported Datadog services:
     * `gcp_auth_backend_role`
 * `gcp_secret_backend`
     * `gcp_secret_backend`
+* `generic_secret`
+    * `generic_secret`
 * `github_auth_backend`
     * `github_auth_backend`
 * `jwt_auth_backend`

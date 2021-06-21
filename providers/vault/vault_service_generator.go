@@ -45,6 +45,8 @@ func (g *ServiceGenerator) InitResources() error {
 		return g.createAuthBackendEntityResources("groups", "group")
 	case "policy":
 		return g.createPolicyResources()
+	case "generic_secret":
+		return g.createGenericSecretResources()
 	default:
 		return errors.New("unsupported service type. shouldn't ever reach here")
 	}
@@ -229,6 +231,40 @@ func (g *ServiceGenerator) createPolicyResources() error {
 				"vault_policy",
 				g.ProviderName,
 				[]string{}))
+	}
+	return nil
+}
+
+func (g *ServiceGenerator) createGenericSecretResources() error {
+	mounts, err := g.mountsByType()
+	if err != nil {
+		return err
+	}
+	for _, mount := range mounts {
+		path := fmt.Sprintf("%s/", mount)
+		s, err := g.client.Logical().List(path)
+		if err != nil {
+			log.Printf("error calling path %s: %s", path, err)
+			continue
+		}
+		if s == nil {
+			log.Printf("call to %s returned nil result", path)
+			continue
+		}
+		secrets, ok := s.Data["keys"]
+		if !ok {
+			log.Printf("no keys in call to %s", path)
+			continue
+		}
+		for _, secret := range secrets.([]interface{}) {
+			g.Resources = append(g.Resources,
+				terraformutils.NewSimpleResource(
+					fmt.Sprintf("%s/%s", mount, secret),
+					fmt.Sprintf("%s_%s", mount, secret),
+					"vault_generic_secret",
+					g.ProviderName,
+					[]string{}))
+		}
 	}
 	return nil
 }

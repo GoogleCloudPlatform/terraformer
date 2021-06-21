@@ -3,11 +3,9 @@ package vault
 import (
 	"errors"
 	"fmt"
-	"os"
-	"strings"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/zclconf/go-cty/cty"
+	"os"
 )
 
 type Provider struct {
@@ -66,8 +64,10 @@ func (p *Provider) InitService(serviceName string, verbose bool) error {
 	return errors.New(p.GetName() + ": " + serviceName + " not supported service")
 }
 
-func getSupportedEngineServices() []string {
-	var services []string
+
+
+func getSupportedMountServices() map[string]terraformutils.ServiceGenerator {
+	services := make(map[string]terraformutils.ServiceGenerator)
 	mapping := map[string][]string{
 		"secret_backend":      {"ad", "aws", "azure", "consul", "gcp", "nomad", "pki", "rabbitmq", "terraform_cloud"},
 		"secret_backend_role": {"ad", "aws", "azure", "consul", "database", "pki", "rabbitmq", "ssh"},
@@ -78,19 +78,17 @@ func getSupportedEngineServices() []string {
 	}
 	for resource, mountTypes := range mapping {
 		for _, mountType := range mountTypes {
-			services = append(services, fmt.Sprintf("%s_%s", mountType, resource))
+			services[fmt.Sprintf("%s_%s", mountType, resource)] =
+				&ServiceGenerator{mountType: mountType, resource: resource}
 		}
 	}
 	return services
 }
 
 func (p *Provider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
-	generators := make(map[string]terraformutils.ServiceGenerator)
-	for _, service := range getSupportedEngineServices() {
-		split := strings.SplitN(service, "_", 2)
-		generators[service] = &ServiceGenerator{mountType: split[0], resource: split[1]}
-	}
+	generators := getSupportedMountServices()
 	generators["policy"] = &ServiceGenerator{resource: "policy"}
+	generators["generic_secret"] = &ServiceGenerator{resource: "generic_secret", mountType: "kv"}
 	return generators
 }
 
