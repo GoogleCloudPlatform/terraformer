@@ -114,25 +114,27 @@ func (g *ServiceGenerator) mountsByType() ([]string, error) {
 			continue
 		}
 		id := strings.ReplaceAll(name, "/", "")
-		add := true
-		for _, filter := range g.Filter {
+		if g.filterAllow(fmt.Sprintf("%s_secret_backend", mount.Type), id) {
+			typeMounts = append(typeMounts, id)
+		}
+	}
+	return typeMounts, nil
+}
+
+func(g *ServiceGenerator) filterAllow(serviceName, id string) bool {
+	add := true
+	for _, filter := range g.Filter {
+		if filter.FieldPath == "id" &&
+			filter.IsApplicable(serviceName) {
 			for _, value := range filter.AcceptableValues {
 				add = value == id
 				if add {
 					break
 				}
 			}
-			add = add && filter.FieldPath == "id" &&
-				filter.IsApplicable(fmt.Sprintf("%s_secret_backend", mount.Type))
-			if add {
-				break
-			}
-		}
-		if add {
-			typeMounts = append(typeMounts, id)
 		}
 	}
-	return typeMounts, nil
+	return add
 }
 
 func (g *ServiceGenerator) createAuthBackendResources() error {
@@ -197,21 +199,7 @@ func (g *ServiceGenerator) backendsByType() ([]string, error) {
 			continue
 		}
 		id := strings.ReplaceAll(name, "/", "")
-		add := true
-		for _, filter := range g.Filter {
-			for _, value := range filter.AcceptableValues {
-				add = value == id
-				if add {
-					break
-				}
-			}
-			add = add && filter.FieldPath == "id" &&
-				filter.IsApplicable(fmt.Sprintf("%s_auth_backend", authBackend.Type))
-			if add {
-				break
-			}
-		}
-		if add {
+		if g.filterAllow(fmt.Sprintf("%s_auth_backend", authBackend.Type), id) {
 			typeBackends = append(typeBackends, id)
 		}
 	}
