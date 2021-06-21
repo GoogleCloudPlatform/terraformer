@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"regexp"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -121,7 +122,7 @@ func (g *ServiceGenerator) mountsByType() ([]string, error) {
 	return typeMounts, nil
 }
 
-func(g *ServiceGenerator) filterAllow(serviceName, id string) bool {
+func (g *ServiceGenerator) filterAllow(serviceName, id string) bool {
 	add := true
 	for _, filter := range g.Filter {
 		if filter.FieldPath == "id" &&
@@ -252,6 +253,27 @@ func (g *ServiceGenerator) createGenericSecretResources() error {
 					"vault_generic_secret",
 					g.ProviderName,
 					[]string{}))
+		}
+	}
+	return nil
+}
+
+func (g *ServiceGenerator) PostConvertHook() error {
+	for _, resource := range g.Resources {
+		switch resource.InstanceInfo.Type {
+		case "vault_aws_secret_backend_role":
+			if policyDocument, ok := resource.Item["policy_document"]; ok {
+				//borrowed from providers/aws/aws_service.go
+				sanitizedPolicy := regexp.MustCompile(`(\${[0-9A-Za-z:]+})`).
+					ReplaceAllString(policyDocument.(string), "$$$1")
+				resource.Item["policy_document"] = fmt.Sprintf(`<<POLICY
+%s
+POLICY`, sanitizedPolicy)
+			}
+		case "vault_policy":
+			if _, ok := resource.Item["policy"]; !ok {
+				resource.Item["policy"] = ""
+			}
 		}
 	}
 	return nil
