@@ -3,10 +3,11 @@ package vault
 import (
 	"errors"
 	"fmt"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	vault "github.com/hashicorp/vault/api"
 	"log"
 	"strings"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	vault "github.com/hashicorp/vault/api"
 )
 
 type ServiceGenerator struct { //nolint

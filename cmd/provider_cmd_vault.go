@@ -44,5 +44,5 @@ func newCmdVaultImporter(options ImportOptions) *cobra.Command {
 }
 
 func newVaultProvider() terraformutils.ProviderGenerator {
-	return &vault_terraforming.VaultProvider{}
+	return &vault_terraforming.Provider{}
 }

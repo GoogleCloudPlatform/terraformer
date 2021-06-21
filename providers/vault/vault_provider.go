@@ -3,19 +3,20 @@ package vault
 import (
 	"errors"
 	"fmt"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/zclconf/go-cty/cty"
 	"os"
 	"strings"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/zclconf/go-cty/cty"
 )
 
-type VaultProvider struct {
+type Provider struct {
 	terraformutils.Provider
 	token   string
 	address string
 }
 
-func (p *VaultProvider) Init(args []string) error {
+func (p *Provider) Init(args []string) error {
 
 	if address := os.Getenv("VAULT_ADDR"); address != "" {
 		p.address = os.Getenv("VAULT_ADDR")
@@ -36,18 +37,18 @@ func (p *VaultProvider) Init(args []string) error {
 	return nil
 }
 
-func (p *VaultProvider) GetConfig() cty.Value {
+func (p *Provider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
 		"token":   cty.StringVal(p.token),
 		"address": cty.StringVal(p.address),
 	})
 }
 
-func (p *VaultProvider) GetName() string {
+func (p *Provider) GetName() string {
 	return "vault"
 }
 
-func (p *VaultProvider) InitService(serviceName string, verbose bool) error {
+func (p *Provider) InitService(serviceName string, verbose bool) error {
 	if service, ok := p.GetSupportedService()[serviceName]; ok {
 		p.Service = service
 		p.Service.SetName(serviceName)
@@ -68,12 +69,12 @@ func (p *VaultProvider) InitService(serviceName string, verbose bool) error {
 func getSupportedEngineServices() []string {
 	var services []string
 	mapping := map[string][]string{
-		"secret_backend": {"ad", "aws", "azure", "consul", "gcp", "nomad", "pki", "rabbitmq", "terraform_cloud"},
+		"secret_backend":      {"ad", "aws", "azure", "consul", "gcp", "nomad", "pki", "rabbitmq", "terraform_cloud"},
 		"secret_backend_role": {"ad", "aws", "azure", "consul", "database", "pki", "rabbitmq", "ssh"},
-		"auth_backend": {"gcp", "github", "jwt", "ldap", "okta"},
-		"auth_backend_role": {"alicloud", "approle", "aws", "azure", "cert", "gcp", "jwt", "kubernetes", "token"},
-		"auth_backend_user": {"ldap", "okta"},
-		"auth_backend_group": {"ldap", "okta"},
+		"auth_backend":        {"gcp", "github", "jwt", "ldap", "okta"},
+		"auth_backend_role":   {"alicloud", "approle", "aws", "azure", "cert", "gcp", "jwt", "kubernetes", "token"},
+		"auth_backend_user":   {"ldap", "okta"},
+		"auth_backend_group":  {"ldap", "okta"},
 	}
 	for resource, mountTypes := range mapping {
 		for _, mountType := range mountTypes {
@@ -83,7 +84,7 @@ func getSupportedEngineServices() []string {
 	return services
 }
 
-func (p *VaultProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+func (p *Provider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	generators := make(map[string]terraformutils.ServiceGenerator)
 	for _, service := range getSupportedEngineServices() {
 		split := strings.SplitN(service, "_", 2)
@@ -93,10 +94,10 @@ func (p *VaultProvider) GetSupportedService() map[string]terraformutils.ServiceG
 	return generators
 }
 
-func (VaultProvider) GetResourceConnections() map[string]map[string][]string {
+func (Provider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{}
 }
 
-func (VaultProvider) GetProviderData(_ ...string) map[string]interface{} {
+func (Provider) GetProviderData(_ ...string) map[string]interface{} {
 	return map[string]interface{}{}
 }
