@@ -263,7 +263,7 @@ func (g *ServiceGenerator) PostConvertHook() error {
 		switch resource.InstanceInfo.Type {
 		case "vault_aws_secret_backend_role":
 			if policyDocument, ok := resource.Item["policy_document"]; ok {
-				//borrowed from providers/aws/aws_service.go
+				// borrowed from providers/aws/aws_service.go
 				sanitizedPolicy := regexp.MustCompile(`(\${[0-9A-Za-z:]+})`).
 					ReplaceAllString(policyDocument.(string), "$$$1")
 				resource.Item["policy_document"] = fmt.Sprintf(`<<POLICY

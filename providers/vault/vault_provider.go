@@ -3,9 +3,10 @@ package vault
 import (
 	"errors"
 	"fmt"
+	"os"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/zclconf/go-cty/cty"
-	"os"
 )
 
 type Provider struct {
@@ -63,8 +64,6 @@ func (p *Provider) InitService(serviceName string, verbose bool) error {
 	}
 	return errors.New(p.GetName() + ": " + serviceName + " not supported service")
 }
-
-
 
 func getSupportedMountServices() map[string]terraformutils.ServiceGenerator {
 	services := make(map[string]terraformutils.ServiceGenerator)
