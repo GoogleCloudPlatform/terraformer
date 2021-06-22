@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -273,6 +274,15 @@ POLICY`, sanitizedPolicy)
 		case "vault_policy":
 			if _, ok := resource.Item["policy"]; !ok {
 				resource.Item["policy"] = ""
+			}
+		case "vault_ldap_auth_backend_group":
+			if policies, ok := resource.Item["policies"]; ok {
+				var strPolicies []string
+				for _, policy := range policies.([]interface{}) {
+					strPolicies = append(strPolicies, policy.(string))
+				}
+				sort.Strings(strPolicies)
+				resource.Item["policies"] = strPolicies
 			}
 		}
 	}
