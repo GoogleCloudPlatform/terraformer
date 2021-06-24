@@ -91,13 +91,17 @@ func (v *astSanitizer) visitObjectItem(o *ast.ObjectItem) {
 			t.Token.Text = strings.ReplaceAll(t.Token.Text, `\t`, "")
 			t.Token.Type = 10
 			// check if text json for Unquote and Indent
-			tmp := map[string]interface{}{}
 			jsonTest := t.Token.Text
 			lines := strings.Split(jsonTest, "\n")
 			jsonTest = strings.Join(lines[1:len(lines)-1], "\n")
 			jsonTest = strings.ReplaceAll(jsonTest, "\\\"", "\"")
 			// it's json we convert to heredoc back
+			var tmp interface{} = map[string]interface{}{}
 			err := json.Unmarshal([]byte(jsonTest), &tmp)
+			if err != nil {
+				tmp = make([]interface{}, 0)
+				err = json.Unmarshal([]byte(jsonTest), &tmp)
+			}
 			if err == nil {
 				dataJSONBytes, err := json.MarshalIndent(tmp, "", "  ")
 				if err == nil {
