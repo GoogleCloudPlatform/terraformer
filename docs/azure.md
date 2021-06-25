@@ -62,6 +62,43 @@ List of supported Azure resources:
 	* `azurerm_sql_firewall_rule`
 	* `azurerm_sql_server`
 	* `azurerm_sql_virtual_network_rule`
+*   `data_factory`
+    * `azurerm_data_factory`
+    * `azurerm_data_factory_pipeline`
+    * `azurerm_data_factory_trigger_schedule`
+    * `azurerm_data_factory_dataset_azure_blob`
+    * `azurerm_data_factory_dataset_cosmosdb_sqlapi`
+    * `azurerm_data_factory_dataset_delimited_text`
+    * `azurerm_data_factory_dataset_http`
+    * `azurerm_data_factory_dataset_json`
+    * `azurerm_data_factory_dataset_mysql`
+    * `azurerm_data_factory_dataset_parquet`
+    * `azurerm_data_factory_dataset_postgresql`
+    * `azurerm_data_factory_dataset_snowflake`
+    * `azurerm_data_factory_dataset_sql_server_table`
+    * `azurerm_data_factory_integration_runtime_azure`
+    * `azurerm_data_factory_integration_runtime_managed`
+    * `azurerm_data_factory_integration_runtime_azure_ssis`
+    * `azurerm_data_factory_integration_runtime_self_hosted`
+    * `azurerm_data_factory_linked_service_azure_blob_storage`
+    * `azurerm_data_factory_linked_service_azure_databricks`
+    * `azurerm_data_factory_linked_service_azure_file_storage`
+    * `azurerm_data_factory_linked_service_azure_function`
+    * `azurerm_data_factory_linked_service_azure_search`
+    * `azurerm_data_factory_linked_service_azure_sql_database`
+    * `azurerm_data_factory_linked_service_azure_table_storage`
+    * `azurerm_data_factory_linked_service_cosmosdb`
+    * `azurerm_data_factory_linked_service_data_lake_storage_gen2`
+    * `azurerm_data_factory_linked_service_key_vault`
+    * `azurerm_data_factory_linked_service_kusto`
+    * `azurerm_data_factory_linked_service_mysql`
+    * `azurerm_data_factory_linked_service_odata`
+    * `azurerm_data_factory_linked_service_postgresql`
+    * `azurerm_data_factory_linked_service_sftp`
+    * `azurerm_data_factory_linked_service_snowflake`
+    * `azurerm_data_factory_linked_service_sql_server`
+    * `azurerm_data_factory_linked_service_synapse`
+    * `azurerm_data_factory_linked_service_web`
 *   `disk`
     * `azurerm_managed_disk`
 *   `dns`
