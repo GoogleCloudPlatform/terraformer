@@ -46,7 +46,7 @@ func (g *DashboardGenerator) createDashboardResources(client *gapi.Client) error
 
 		filename := fmt.Sprintf("dashboard-%s.json", dash.Meta.Slug)
 		resource := terraformutils.NewResource(
-			dash.Meta.Slug,
+			dashboard.UID,
 			dashboard.Title,
 			"grafana_dashboard",
 			"grafana",
