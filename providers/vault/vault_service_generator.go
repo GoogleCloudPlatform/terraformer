@@ -49,6 +49,8 @@ func (g *ServiceGenerator) InitResources() error {
 		return g.createPolicyResources()
 	case "generic_secret":
 		return g.createGenericSecretResources()
+	case "mount":
+		return g.createMountResources()
 	default:
 		return errors.New("unsupported service type. shouldn't ever reach here")
 	}
@@ -112,31 +114,12 @@ func (g *ServiceGenerator) mountsByType() ([]string, error) {
 	}
 	var typeMounts []string
 	for name, mount := range mounts {
-		if mount.Type != g.mountType {
-			continue
-		}
-		id := strings.ReplaceAll(name, "/", "")
-		if g.filterAllow(fmt.Sprintf("%s_secret_backend", mount.Type), id) {
+		if g.mountType == "" || mount.Type == g.mountType {
+			id := strings.ReplaceAll(name, "/", "")
 			typeMounts = append(typeMounts, id)
 		}
 	}
 	return typeMounts, nil
-}
-
-func (g *ServiceGenerator) filterAllow(serviceName, id string) bool {
-	add := true
-	for _, filter := range g.Filter {
-		if filter.FieldPath == "id" &&
-			filter.IsApplicable(serviceName) {
-			for _, value := range filter.AcceptableValues {
-				add = value == id
-				if add {
-					break
-				}
-			}
-		}
-	}
-	return add
 }
 
 func (g *ServiceGenerator) createAuthBackendResources() error {
@@ -201,9 +184,7 @@ func (g *ServiceGenerator) backendsByType() ([]string, error) {
 			continue
 		}
 		id := strings.ReplaceAll(name, "/", "")
-		if g.filterAllow(fmt.Sprintf("%s_auth_backend", authBackend.Type), id) {
-			typeBackends = append(typeBackends, id)
-		}
+		typeBackends = append(typeBackends, id)
 	}
 	return typeBackends, nil
 }
@@ -255,6 +236,23 @@ func (g *ServiceGenerator) createGenericSecretResources() error {
 					g.ProviderName,
 					[]string{}))
 		}
+	}
+	return nil
+}
+
+func (g *ServiceGenerator) createMountResources() error {
+	mounts, err := g.mountsByType()
+	if err != nil {
+		return err
+	}
+	for _, mount := range mounts {
+		g.Resources = append(g.Resources,
+			terraformutils.NewSimpleResource(
+				mount,
+				mount,
+				"vault_mount",
+				g.ProviderName,
+				[]string{}))
 	}
 	return nil
 }

@@ -87,6 +87,7 @@ func getSupportedMountServices() map[string]terraformutils.ServiceGenerator {
 func (p *Provider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	generators := getSupportedMountServices()
 	generators["policy"] = &ServiceGenerator{resource: "policy"}
+	generators["mount"] = &ServiceGenerator{resource: "mount"}
 	generators["generic_secret"] = &ServiceGenerator{resource: "generic_secret", mountType: "kv"}
 	return generators
 }
