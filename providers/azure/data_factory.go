@@ -18,11 +18,11 @@ type DataFactoryGenerator struct {
 	AzureService
 }
 
-// See: SupportedResources
+// Information extracted from
+//   SupportedResources
 //   @ github.com/terraform-providers/terraform-provider-azurerm/azurerm/internal/services/datafactory/registration.go
-// And:ß
-// PossibleTypeBasicDatasetValues, PossibleTypeBasicIntegrationRuntimeValues, PossibleTypeBasicLinkedServiceValues
-//  @ github.com/azure/azure-sdk-for-go@v42.3.0+incompatible/services/datafactory/mgmt/2018-06-01/datafactory/models.go
+//   PossibleTypeBasicDatasetValues, PossibleTypeBasicIntegrationRuntimeValues, PossibleTypeBasicLinkedServiceValues
+//   @ github.com/azure/azure-sdk-for-go@v42.3.0+incompatible/services/datafactory/mgmt/2018-06-01/datafactory/models.go
 
 var (
 	// Maps item.Properties.Type -> terraform.ResoruceType
@@ -87,15 +87,15 @@ func getFieldAsString(v interface{}, field string) string {
 	return ""
 }
 
-func (g *DataFactoryGenerator) appendResourceFrom(resources []terraformutils.Resource, ID string, name string, properties interface{}) []terraformutils.Resource {
+func (g *DataFactoryGenerator) appendResourceFrom(resources []terraformutils.Resource, id string, name string, properties interface{}) []terraformutils.Resource {
 	azureType := getFieldAsString(properties, "Type")
 	if azureType != "" {
 		resourceType := getResourceTypeFrom(azureType)
 		if resourceType == "" {
-			msg := fmt.Sprintf(`azurerm_data_factory: resource "%s" id: %s type: %s not handled yet by terraform or terraformer`, name, ID, azureType)
+			msg := fmt.Sprintf(`azurerm_data_factory: resource "%s" id: %s type: %s not handled yet by terraform or terraformer`, name, id, azureType)
 			log.Println(msg)
 		} else {
-			resources = g.appendResourceAs(resources, ID, name, resourceType)
+			resources = g.appendResourceAs(resources, id, name, resourceType)
 		}
 	}
 	return resources
@@ -111,9 +111,9 @@ func (g *DataFactoryGenerator) appendResourceAs(resources []terraformutils.Resou
 }
 
 func (g *DataFactoryGenerator) getArgsProperties() (subscriptionID string, authorizer autorest.Authorizer) {
-	suId := g.Args["config"].(authentication.Config).SubscriptionID
+	subs := g.Args["config"].(authentication.Config).SubscriptionID
 	auth := g.Args["authorizer"].(autorest.Authorizer)
-	return suId, auth
+	return subs, auth
 }
 
 func (g *DataFactoryGenerator) listFactories() ([]datafactory.Factory, error) {
