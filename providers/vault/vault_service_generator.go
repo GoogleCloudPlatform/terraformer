@@ -49,6 +49,8 @@ func (g *ServiceGenerator) InitResources() error {
 		return g.createPolicyResources()
 	case "generic_secret":
 		return g.createGenericSecretResources()
+	case "mount":
+		return g.createMountResources()
 	default:
 		return errors.New("unsupported service type. shouldn't ever reach here")
 	}
@@ -112,11 +114,10 @@ func (g *ServiceGenerator) mountsByType() ([]string, error) {
 	}
 	var typeMounts []string
 	for name, mount := range mounts {
-		if mount.Type != g.mountType {
-			continue
+		if g.mountType == "" || mount.Type == g.mountType {
+			id := strings.ReplaceAll(name, "/", "")
+			typeMounts = append(typeMounts, id)
 		}
-		id := strings.ReplaceAll(name, "/", "")
-		typeMounts = append(typeMounts, id)
 	}
 	return typeMounts, nil
 }
@@ -235,6 +236,23 @@ func (g *ServiceGenerator) createGenericSecretResources() error {
 					g.ProviderName,
 					[]string{}))
 		}
+	}
+	return nil
+}
+
+func (g *ServiceGenerator) createMountResources() error {
+	mounts, err := g.mountsByType()
+	if err != nil {
+		return err
+	}
+	for _, mount := range mounts {
+		g.Resources = append(g.Resources,
+			terraformutils.NewSimpleResource(
+				mount,
+				mount,
+				"vault_mount",
+				g.ProviderName,
+				[]string{}))
 	}
 	return nil
 }
