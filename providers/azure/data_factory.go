@@ -18,6 +18,7 @@ type DataFactoryGenerator struct {
 	AzureService
 }
 
+// Maps item.Properties.Type -> terraform.ResoruceType
 // Information extracted from
 //   SupportedResources
 //   @ github.com/terraform-providers/terraform-provider-azurerm/azurerm/internal/services/datafactory/registration.go
@@ -25,7 +26,6 @@ type DataFactoryGenerator struct {
 //   @ github.com/azure/azure-sdk-for-go@v42.3.0+incompatible/services/datafactory/mgmt/2018-06-01/datafactory/models.go
 
 var (
-	// Maps item.Properties.Type -> terraform.ResoruceType
 	SupportedResources = map[string]string{
 		"ScheduleTrigger":          "azurerm_data_factory_trigger_schedule",
 		"AzureBlob":                "azurerm_data_factory_dataset_azure_blob",
