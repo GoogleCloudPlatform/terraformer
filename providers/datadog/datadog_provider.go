@@ -163,9 +163,9 @@ func (p *DatadogProvider) GetName() string {
 // GetConfig return map of provider config for Datadog
 func (p *DatadogProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
-		"api_key": cty.StringVal(p.apiKey),
-		"app_key": cty.StringVal(p.appKey),
-		"api_url": cty.StringVal(p.apiURL),
+		"api_key":  cty.StringVal(p.apiKey),
+		"app_key":  cty.StringVal(p.appKey),
+		"api_url":  cty.StringVal(p.apiURL),
 		"validate": cty.BoolVal(p.validate),
 	})
 }

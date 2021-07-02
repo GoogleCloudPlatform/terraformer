@@ -16,6 +16,7 @@ package aws
 
 import (
 	"context"
+	"github.com/aws/aws-sdk-go-v2/aws"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/firehose"
@@ -49,8 +50,12 @@ func (g *FirehoseGenerator) InitResources() error {
 	}
 	svc := firehose.NewFromConfig(config)
 	var streamNames []string
+	var lastStreamName *string
 	for {
-		output, err := svc.ListDeliveryStreams(context.TODO(), &firehose.ListDeliveryStreamsInput{})
+		output, err := svc.ListDeliveryStreams(context.TODO(), &firehose.ListDeliveryStreamsInput{
+			ExclusiveStartDeliveryStreamName: lastStreamName,
+			Limit:                            aws.Int32(100),
+		})
 		if err != nil {
 			return err
 		}
@@ -58,6 +63,8 @@ func (g *FirehoseGenerator) InitResources() error {
 		if !*output.HasMoreDeliveryStreams {
 			break
 		}
+
+		lastStreamName = aws.String(streamNames[len(streamNames)-1])
 	}
 
 	g.Resources = g.createResources(streamNames)
