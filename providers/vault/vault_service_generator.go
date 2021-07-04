@@ -195,6 +195,9 @@ func (g *ServiceGenerator) createPolicyResources() error {
 		return err
 	}
 	for _, policy := range policies {
+		if policy == "root" {
+			continue
+		}
 		g.Resources = append(g.Resources,
 			terraformutils.NewSimpleResource(
 				policy,
@@ -268,10 +271,6 @@ func (g *ServiceGenerator) PostConvertHook() error {
 				resource.Item["policy_document"] = fmt.Sprintf(`<<POLICY
 %s
 POLICY`, sanitizedPolicy)
-			}
-		case "vault_policy":
-			if _, ok := resource.Item["policy"]; !ok {
-				resource.Item["policy"] = ""
 			}
 		case "vault_ldap_auth_backend_group":
 			if policies, ok := resource.Item["policies"]; ok {
