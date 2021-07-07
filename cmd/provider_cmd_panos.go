@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"log"
+	"reflect"
 	"strings"
 
 	panos_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/panos"
@@ -30,14 +31,26 @@ func newCmdPanosImporter(options ImportOptions) *cobra.Command {
 		Short: "Import current state to Terraform configuration from a PAN-OS",
 		Long:  "Import current state to Terraform configuration from a PAN-OS",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			var t interface{}
+
 			if len(vsys) == 0 {
 				var err error
 
-				vsys, err = panos_terraforming.GetVsysList()
+				vsys, t, err = panos_terraforming.GetVsysList()
 				if err != nil {
 					return err
 				}
+			} else {
+				c, err := panos_terraforming.Initialize()
+				if err != nil {
+					return err
+				}
+
+				t = reflect.TypeOf(c)
 			}
+
+			resources := panos_terraforming.FilterCallableResources(t, options.Resources)
+			options.Resources = resources
 
 			originalPathPattern := options.PathPattern
 			for _, v := range vsys {
@@ -57,7 +70,7 @@ func newCmdPanosImporter(options ImportOptions) *cobra.Command {
 	}
 
 	cmd.AddCommand(listCmd(newPanosProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "device_config,firewall_networking,firewall_objects", "")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "firewall_device_config,firewall_networking,firewall_objects,firewall_policy", "")
 	cmd.PersistentFlags().StringSliceVarP(&vsys, "vsys", "", []string{}, "")
 
 	return cmd

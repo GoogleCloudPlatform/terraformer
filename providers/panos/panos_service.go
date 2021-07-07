@@ -16,12 +16,11 @@ package panos
 
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/PaloAltoNetworks/pango"
 )
 
 type PanosService struct { //nolint
 	terraformutils.Service
-	client *pango.Firewall
+	client interface{}
 	vsys   string
 }
 

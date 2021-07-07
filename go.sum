@@ -117,6 +117,8 @@ github.com/OctopusDeploy/go-octopusdeploy v1.6.0/go.mod h1:maPbD8azyb2mcNN6E4SGr
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/PaloAltoNetworks/pango v0.5.2-0.20210514062125-b809b85eb51c h1:4uQRvqtOkn0n4zb9BbYHhXzAmWDd25T6TfnE5I5gpFg=
 github.com/PaloAltoNetworks/pango v0.5.2-0.20210514062125-b809b85eb51c/go.mod h1:xpwEKL6CHhniRcqKYTjIiGBzPd3QIyto3sz2ynsP1qg=
+github.com/PaloAltoNetworks/pango v0.5.2-0.20210623211916-8215a371076b h1:vgiDrkHzELo/8a+iHGLuWYphXVmBkYsD4updPD6HKmw=
+github.com/PaloAltoNetworks/pango v0.5.2-0.20210623211916-8215a371076b/go.mod h1:xpwEKL6CHhniRcqKYTjIiGBzPd3QIyto3sz2ynsP1qg=
 github.com/PuerkitoBio/purell v1.1.1/go.mod h1:c11w/QuzBsJSee3cPx9rAFu61PvFxuPbtSwDGJws/X0=
 github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578/go.mod h1:uGdkoq3SwY9Y+13GIhn11/XLaGBb4BfwItxLd5jeuXE=
 github.com/QcloudApi/qcloud_sign_golang v0.0.0-20141224014652-e4130a326409/go.mod h1:1pk82RBxDY/JZnPQrtqHlUFfCctgdorsd9M06fMynOM=
