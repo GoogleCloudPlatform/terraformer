@@ -33,20 +33,38 @@ func (g VirtualMachineGenerator) createResources(virtualMachineListResultIterato
 	for virtualMachineListResultIterator.NotDone() {
 		vm := virtualMachineListResultIterator.Value()
 		var newResource terraformutils.Resource
-		if vm.VirtualMachineProperties.OsProfile.WindowsConfiguration != nil {
-			newResource = terraformutils.NewSimpleResource(
-				*vm.ID,
-				*vm.Name,
-				"azurerm_windows_virtual_machine",
-				"azurerm",
-				[]string{})
+		if vm.VirtualMachineProperties.OsProfile == nil {
+			if vm.VirtualMachineProperties.StorageProfile.OsDisk.OsType == "Windows" {
+				newResource = terraformutils.NewSimpleResource(
+					*vm.ID,
+					*vm.Name,
+					"azurerm_windows_virtual_machine",
+					"azurerm",
+					[]string{})
+			} else {
+				newResource = terraformutils.NewSimpleResource(
+					*vm.ID,
+					*vm.Name,
+					"azurerm_linux_virtual_machine",
+					"azurerm",
+					[]string{})
+			}
 		} else {
-			newResource = terraformutils.NewSimpleResource(
-				*vm.ID,
-				*vm.Name,
-				"azurerm_linux_virtual_machine",
-				"azurerm",
-				[]string{})
+			if vm.VirtualMachineProperties.OsProfile.WindowsConfiguration != nil {
+				newResource = terraformutils.NewSimpleResource(
+					*vm.ID,
+					*vm.Name,
+					"azurerm_windows_virtual_machine",
+					"azurerm",
+					[]string{})
+			} else {
+				newResource = terraformutils.NewSimpleResource(
+					*vm.ID,
+					*vm.Name,
+					"azurerm_linux_virtual_machine",
+					"azurerm",
+					[]string{})
+			}
 		}
 
 		resources = append(resources, newResource)
