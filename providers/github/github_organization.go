@@ -16,12 +16,6 @@ package github
 
 import (
 	"context"
-	"log"
-	"strconv"
-
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-
-	githubAPI "github.com/google/go-github/v35/github"
 )
 
 type OrganizationGenerator struct {
@@ -36,115 +30,10 @@ func (g *OrganizationGenerator) InitResources() error {
 		return err
 	}
 
-	g.Resources = append(g.Resources, g.createMembershipsResources(ctx, client)...)
-	g.Resources = append(g.Resources, g.createOrganizationBlocksResources(ctx, client)...)
-	g.Resources = append(g.Resources, g.createOrganizationProjects(ctx, client)...)
+	owner := g.Args["owner"].(string)
+	g.Resources = append(g.Resources, createMembershipsResources(ctx, client, owner)...)
+	g.Resources = append(g.Resources, createOrganizationBlocksResources(ctx, client, owner)...)
+	g.Resources = append(g.Resources, createOrganizationProjects(ctx, client, owner)...)
 
 	return nil
-}
-
-func (g *OrganizationGenerator) createOrganizationProjects(ctx context.Context, client *githubAPI.Client) []terraformutils.Resource {
-	resources := []terraformutils.Resource{}
-
-	opt := &githubAPI.ProjectListOptions{
-		ListOptions: githubAPI.ListOptions{PerPage: 100},
-	}
-
-	// List all organization projects for the authenticated user
-	for {
-		projects, resp, err := client.Organizations.ListProjects(ctx, g.Args["owner"].(string), opt)
-		if err != nil {
-			log.Println(err)
-			return nil
-		}
-
-		for _, project := range projects {
-			resource := terraformutils.NewSimpleResource(
-				strconv.FormatInt(project.GetID(), 10),
-				strconv.FormatInt(project.GetID(), 10),
-				"github_organization_project",
-				"github",
-				[]string{},
-			)
-			resource.SlowQueryRequired = true
-			resources = append(resources, resource)
-		}
-
-		if resp.NextPage == 0 {
-			break
-		}
-		opt.Page = resp.NextPage
-	}
-	return resources
-}
-
-func (g *OrganizationGenerator) createOrganizationBlocksResources(ctx context.Context, client *githubAPI.Client) []terraformutils.Resource {
-	resources := []terraformutils.Resource{}
-
-	opt := &githubAPI.ListOptions{PerPage: 100}
-
-	// List all organization blocks for the authenticated user
-	for {
-		blocks, resp, err := client.Organizations.ListBlockedUsers(ctx, g.Args["owner"].(string), opt)
-		if err != nil {
-			log.Println(err)
-			return nil
-		}
-
-		for _, block := range blocks {
-			resource := terraformutils.NewSimpleResource(
-				block.GetLogin(),
-				block.GetLogin(),
-				"github_organization_block",
-				"github",
-				[]string{},
-			)
-			resource.SlowQueryRequired = true
-
-			resources = append(resources, resource)
-		}
-
-		if resp.NextPage == 0 {
-			break
-		}
-		opt.Page = resp.NextPage
-	}
-	return resources
-}
-
-func (g *OrganizationGenerator) createMembershipsResources(ctx context.Context, client *githubAPI.Client) []terraformutils.Resource {
-	resources := []terraformutils.Resource{}
-
-	opt := &githubAPI.ListMembersOptions{
-		ListOptions: githubAPI.ListOptions{PerPage: 100},
-	}
-
-	// List all organization members for the authenticated user
-	for {
-		members, resp, err := client.Organizations.ListMembers(ctx, g.Args["owner"].(string), opt)
-		if err != nil {
-			log.Println(err)
-			return nil
-		}
-
-		for _, member := range members {
-			resource := terraformutils.NewSimpleResource(
-				g.Args["owner"].(string)+":"+member.GetLogin(),
-				member.GetLogin(),
-				"github_membership",
-				"github",
-				[]string{},
-			)
-			resource.SlowQueryRequired = true
-
-			resources = append(resources, resource)
-		}
-
-		if resp.NextPage == 0 {
-			break
-		}
-		opt.Page = resp.NextPage
-	}
-
-	return resources
 }

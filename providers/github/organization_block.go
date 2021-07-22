@@ -35,11 +35,20 @@ func (g *OrganizationBlockGenerator) InitResources() error {
 		return err
 	}
 
+	owner := g.Args["owner"].(string)
+	g.Resources = append(g.Resources, createOrganizationBlocksResources(ctx, client, owner)...)
+
+	return nil
+}
+
+func createOrganizationBlocksResources(ctx context.Context, client *githubAPI.Client, owner string) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
+
 	opt := &githubAPI.ListOptions{PerPage: 100}
 
 	// List all organization blocks for the authenticated user
 	for {
-		blocks, resp, err := client.Organizations.ListBlockedUsers(ctx, g.Args["owner"].(string), opt)
+		blocks, resp, err := client.Organizations.ListBlockedUsers(ctx, owner, opt)
 		if err != nil {
 			log.Println(err)
 			return nil
@@ -54,7 +63,8 @@ func (g *OrganizationBlockGenerator) InitResources() error {
 				[]string{},
 			)
 			resource.SlowQueryRequired = true
-			g.Resources = append(g.Resources, resource)
+
+			resources = append(resources, resource)
 		}
 
 		if resp.NextPage == 0 {
@@ -62,5 +72,5 @@ func (g *OrganizationBlockGenerator) InitResources() error {
 		}
 		opt.Page = resp.NextPage
 	}
-	return nil
+	return resources
 }

@@ -19,7 +19,6 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/google/go-github/v35/github"
-	githubAPI "github.com/google/go-github/v35/github"
 	"golang.org/x/oauth2"
 )
 
@@ -42,7 +41,7 @@ func (g *GithubService) createRegularClient() *github.Client {
 		&oauth2.Token{AccessToken: g.Args["token"].(string)},
 	)
 	tc := oauth2.NewClient(ctx, ts)
-	return githubAPI.NewClient(tc)
+	return github.NewClient(tc)
 }
 
 func (g *GithubService) createEnterpriseClient() (*github.Client, error) {
@@ -52,5 +51,5 @@ func (g *GithubService) createEnterpriseClient() (*github.Client, error) {
 	)
 	tc := oauth2.NewClient(ctx, ts)
 	baseURL := g.GetArgs()["base_url"].(string)
-	return githubAPI.NewEnterpriseClient(baseURL, baseURL, tc)
+	return github.NewEnterpriseClient(baseURL, baseURL, tc)
 }

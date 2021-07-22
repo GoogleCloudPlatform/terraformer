@@ -36,13 +36,22 @@ func (g *OrganizationProjectGenerator) InitResources() error {
 		return err
 	}
 
+	owner := g.Args["owner"].(string)
+	g.Resources = append(g.Resources, createOrganizationProjects(ctx, client, owner)...)
+
+	return nil
+}
+
+func createOrganizationProjects(ctx context.Context, client *githubAPI.Client, owner string) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
+
 	opt := &githubAPI.ProjectListOptions{
 		ListOptions: githubAPI.ListOptions{PerPage: 100},
 	}
 
 	// List all organization projects for the authenticated user
 	for {
-		projects, resp, err := client.Organizations.ListProjects(ctx, g.Args["owner"].(string), opt)
+		projects, resp, err := client.Organizations.ListProjects(ctx, owner, opt)
 		if err != nil {
 			log.Println(err)
 			return nil
@@ -57,7 +66,7 @@ func (g *OrganizationProjectGenerator) InitResources() error {
 				[]string{},
 			)
 			resource.SlowQueryRequired = true
-			g.Resources = append(g.Resources, resource)
+			resources = append(resources, resource)
 		}
 
 		if resp.NextPage == 0 {
@@ -65,5 +74,5 @@ func (g *OrganizationProjectGenerator) InitResources() error {
 		}
 		opt.Page = resp.NextPage
 	}
-	return nil
+	return resources
 }
