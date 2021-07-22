@@ -45,7 +45,7 @@ func (g *ServiceGenerator) createServiceResources(client *pagerduty.Client) erro
 			))
 		}
 
-		if resp.More != true {
+		if !resp.More {
 			break
 		}
 		offset += resp.Limit
@@ -75,12 +75,12 @@ func (g *ServiceGenerator) createServiceEventRuleResources(client *pagerduty.Cli
 
 			for _, rule := range rules.EventRules {
 				g.Resources = append(g.Resources, terraformutils.NewResource(
-					fmt.Sprintf("%s", rule.ID),
+					rule.ID,
 					fmt.Sprintf("%s_%s", service.Name, rule.ID),
 					"pagerduty_service_event_rule",
 					g.ProviderName,
 					map[string]string{
-						"service": fmt.Sprintf("%s", service.ID),
+						"service": service.ID,
 					},
 					[]string{},
 					map[string]interface{}{},
@@ -88,7 +88,7 @@ func (g *ServiceGenerator) createServiceEventRuleResources(client *pagerduty.Cli
 			}
 		}
 
-		if resp.More != true {
+		if !resp.More {
 			break
 		}
 		offset += resp.Limit

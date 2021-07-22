@@ -42,6 +42,8 @@ func (g *RulesetGenerator) createRulesetResources(client *pagerduty.Client) erro
 	return nil
 }
 
+// golangci-lint says this function isn't used anywhere. Do we need it? Commenting it out to make the linter happy
+/*
 func (g *RulesetGenerator) createRulesetRuleResources(client *pagerduty.Client) error {
 	resp, _, err := client.Rulesets.List()
 	if err != nil {
@@ -67,7 +69,7 @@ func (g *RulesetGenerator) createRulesetRuleResources(client *pagerduty.Client) 
 
 	return nil
 }
-
+*/
 func (g *RulesetGenerator) InitResources() error {
 	client, err := g.Client()
 	if err != nil {
