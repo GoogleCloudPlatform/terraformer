@@ -239,7 +239,7 @@ func (g *ServiceGenerator) createGenericSecretResourcesPerMount(path string) {
 	for _, secret := range secrets.([]interface{}) {
 		secretStr := secret.(string)
 		secretLen := len(secretStr)
-		newPath := path+secretStr
+		newPath := path + secretStr
 		// Folders are suffixed with `/`: https://www.vaultproject.io/api-docs/secret/kv/kv-v1#list-secrets
 		if secretStr[secretLen-1:secretLen] == "/" {
 			g.createGenericSecretResourcesPerMount(newPath)
@@ -248,7 +248,7 @@ func (g *ServiceGenerator) createGenericSecretResourcesPerMount(path string) {
 		g.Resources = append(g.Resources,
 			terraformutils.NewSimpleResource(
 				newPath,
-				strings.Replace(newPath, "/", "_", -1),
+				strings.ReplaceAll(newPath, "/", "_"),
 				"vault_generic_secret",
 				g.ProviderName,
 				[]string{}))
