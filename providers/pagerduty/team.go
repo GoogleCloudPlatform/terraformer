@@ -44,7 +44,7 @@ func (g *TeamGenerator) createTeamResources(client *pagerduty.Client) error {
 				[]string{},
 			))
 		}
-		if resp.More != true {
+		if !resp.More {
 			break
 		}
 
@@ -84,7 +84,7 @@ func (g *TeamGenerator) createTeamMembershipResources(client *pagerduty.Client) 
 			}
 		}
 
-		if resp.More != true {
+		if !resp.More {
 			break
 		}
 

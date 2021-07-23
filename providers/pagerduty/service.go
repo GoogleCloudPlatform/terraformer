@@ -30,7 +30,7 @@ func (g *ServiceGenerator) createServiceResources(client *pagerduty.Client) erro
 	options := pagerduty.ListServicesOptions{}
 	for {
 		options.Offset = offset
-		resp, _, err := client.Services.List(&pagerduty.ListServicesOptions{})
+		resp, _, err := client.Services.List(&options)
 		if err != nil {
 			return err
 		}
@@ -45,10 +45,9 @@ func (g *ServiceGenerator) createServiceResources(client *pagerduty.Client) erro
 			))
 		}
 
-		if resp.More != true {
+		if !resp.More {
 			break
 		}
-
 		offset += resp.Limit
 	}
 
@@ -56,29 +55,44 @@ func (g *ServiceGenerator) createServiceResources(client *pagerduty.Client) erro
 }
 
 func (g *ServiceGenerator) createServiceEventRuleResources(client *pagerduty.Client) error {
-	resp, _, err := client.Services.List(&pagerduty.ListServicesOptions{})
-	if err != nil {
-		return err
-	}
-
-	for _, service := range resp.Services {
-		rules, _, err := client.Services.ListEventRules(service.ID, &pagerduty.ListServiceEventRuleOptions{})
-
+	var offset = 0
+	options := pagerduty.ListServicesOptions{}
+	optionsEventRules := pagerduty.ListServiceEventRuleOptions{}
+	for {
+		options.Offset = offset
+		optionsEventRules.Offset = offset
+		resp, _, err := client.Services.List(&options)
 		if err != nil {
 			return err
 		}
 
-		for _, rule := range rules.EventRules {
-			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-				fmt.Sprintf("%s.%s", service.ID, rule.ID),
-				fmt.Sprintf("%s_%s", service.Name, rule.ID),
-				"pagerduty_service_event_rule",
-				g.ProviderName,
-				[]string{},
-			))
-		}
-	}
+		for _, service := range resp.Services {
+			rules, _, err := client.Services.ListEventRules(service.ID, &optionsEventRules)
 
+			if err != nil {
+				return err
+			}
+
+			for _, rule := range rules.EventRules {
+				g.Resources = append(g.Resources, terraformutils.NewResource(
+					rule.ID,
+					fmt.Sprintf("%s_%s", service.Name, rule.ID),
+					"pagerduty_service_event_rule",
+					g.ProviderName,
+					map[string]string{
+						"service": service.ID,
+					},
+					[]string{},
+					map[string]interface{}{},
+				))
+			}
+		}
+
+		if !resp.More {
+			break
+		}
+		offset += resp.Limit
+	}
 	return nil
 }
 

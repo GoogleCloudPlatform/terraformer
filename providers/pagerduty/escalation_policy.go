@@ -43,7 +43,7 @@ func (g *EscalationPolicyGenerator) createEscalationPolicyResources(client *page
 			))
 		}
 
-		if resp.More != true {
+		if !resp.More {
 			break
 		}
 

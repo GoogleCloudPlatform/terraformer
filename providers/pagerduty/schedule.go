@@ -44,7 +44,7 @@ func (g *ScheduleGenerator) createScheduleResources(client *pagerduty.Client) er
 				[]string{},
 			))
 		}
-		if resp.More != true {
+		if !resp.More {
 			break
 		}
 

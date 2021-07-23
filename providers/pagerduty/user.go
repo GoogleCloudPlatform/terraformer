@@ -45,7 +45,7 @@ func (g *UserGenerator) createUserResources(client *pagerduty.Client) error {
 			))
 		}
 
-		if resp.More != true {
+		if !resp.More {
 			break
 		}
 
