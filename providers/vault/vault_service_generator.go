@@ -293,6 +293,13 @@ POLICY`, sanitizedPolicy)
 				sort.Strings(strPolicies)
 				resource.Item["policies"] = strPolicies
 			}
+		case "vault_generic_secret":
+			if data, ok := resource.Item["data_json"]; ok {
+				dataStr := data.(string)
+				strings.ReplaceAll(dataStr, "%{", "%%{")
+				strings.ReplaceAll(dataStr, "${", "$${")
+				resource.Item["data_json"] = dataStr
+			}
 		}
 	}
 	return nil
