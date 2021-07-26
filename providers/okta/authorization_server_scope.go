@@ -29,7 +29,7 @@ func (g AuthorizationServerScopeGenerator) createResources(authorizationServerSc
 	for _, authorizationServerScope := range authorizationServerScopeList {
 		resources = append(resources, terraformutils.NewResource(
 			authorizationServerScope.Id,
-			normalizeResourceName("auth_server_" + authorizationServerName + "_scope_"+ authorizationServerScope.Name),
+			normalizeResourceName("auth_server_"+authorizationServerName+"_scope_"+authorizationServerScope.Name),
 			"okta_auth_server_scope",
 			"okta",
 			map[string]string{
@@ -60,7 +60,7 @@ func (g *AuthorizationServerScopeGenerator) InitResources() error {
 			return err
 		}
 
-		resources = append(resources,g.createResources(output, authorizationServer.Id, authorizationServer.Name)...)
+		resources = append(resources, g.createResources(output, authorizationServer.Id, authorizationServer.Name)...)
 	}
 
 	g.Resources = resources

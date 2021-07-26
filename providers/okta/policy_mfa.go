@@ -50,7 +50,7 @@ func (g *MFAPolicyGenerator) InitResources() error {
 		return e
 	}
 
-	output, _ = getMFAPolicies(ctx,client)
+	output, _ = getMFAPolicies(ctx, client)
 	g.Resources = g.createResources(output)
 	return nil
 }

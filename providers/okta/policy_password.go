@@ -50,7 +50,7 @@ func (g *PasswordPolicyGenerator) InitResources() error {
 		return e
 	}
 
-	output, _ = getPasswordPolicies(ctx,client)
+	output, _ = getPasswordPolicies(ctx, client)
 	g.Resources = g.createResources(output)
 	return nil
 }

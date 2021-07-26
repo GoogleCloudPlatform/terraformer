@@ -48,7 +48,7 @@ func (g *SignOnPolicyGenerator) InitResources() error {
 		return e
 	}
 
-	output, _ = getSignOnPolicies(ctx,client)
+	output, _ = getSignOnPolicies(ctx, client)
 	g.Resources = g.createResources(output)
 	return nil
 }

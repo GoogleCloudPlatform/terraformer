@@ -33,7 +33,7 @@ func (g AuthorizationServerClaimGenerator) createResources(authorizationServerCl
 		}
 		resources = append(resources, terraformutils.NewResource(
 			authorizationServerClaim.Id,
-			normalizeResourceName("auth_server_" + authorizationServerName + "_claim_"+ authorizationServerClaim.Id),
+			normalizeResourceName("auth_server_"+authorizationServerName+"_claim_"+authorizationServerClaim.Id),
 			resourceType,
 			"okta",
 			map[string]string{
@@ -64,7 +64,7 @@ func (g *AuthorizationServerClaimGenerator) InitResources() error {
 			return err
 		}
 
-		resources = append(resources,g.createResources(output, authorizationServer.Id, authorizationServer.Name)...)
+		resources = append(resources, g.createResources(output, authorizationServer.Id, authorizationServer.Name)...)
 	}
 
 	g.Resources = resources

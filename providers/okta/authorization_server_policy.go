@@ -29,7 +29,7 @@ func (g AuthorizationServerPolicyGenerator) createResources(authorizationServerP
 	for _, authorizationServerPolicy := range authorizationServerPolicyList {
 		resources = append(resources, terraformutils.NewResource(
 			authorizationServerPolicy.Id,
-			normalizeResourceName("auth_server_" + authorizationServerName + "_policy_"+ authorizationServerPolicy.Name),
+			normalizeResourceName("auth_server_"+authorizationServerName+"_policy_"+authorizationServerPolicy.Name),
 			"okta_auth_server_policy",
 			"okta",
 			map[string]string{
@@ -60,7 +60,7 @@ func (g *AuthorizationServerPolicyGenerator) InitResources() error {
 			return err
 		}
 
-		resources = append(resources,g.createResources(output, authorizationServer.Id, authorizationServer.Name)...)
+		resources = append(resources, g.createResources(output, authorizationServer.Id, authorizationServer.Name)...)
 	}
 
 	g.Resources = resources

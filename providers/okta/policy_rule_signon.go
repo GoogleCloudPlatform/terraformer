@@ -62,7 +62,7 @@ func (g *SignOnPolicyRuleGenerator) InitResources() error {
 			return err
 		}
 
-		resources = append(resources,g.createResources(output, policy.Id, policy.Name)...)
+		resources = append(resources, g.createResources(output, policy.Id, policy.Name)...)
 	}
 
 	g.Resources = resources
