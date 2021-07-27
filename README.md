@@ -57,6 +57,8 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [GmailFilter](/docs/gmailfilter.md)
         * [Grafana](/docs/grafana.md)
         * [Vault](/docs/vault.md)
+    * Identity
+        * [Okta](/docs/okta.md)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
