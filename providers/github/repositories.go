@@ -120,8 +120,8 @@ func (g *RepositoriesGenerator) createRepositoryCollaboratorResources(ctx contex
 	}
 	for _, collaborator := range collaborators {
 		resources = append(resources, terraformutils.NewSimpleResource(
-			repo.GetName()+":"+collaborator.GetName(),
-			repo.GetName()+":"+collaborator.GetName(),
+			repo.GetName()+":"+collaborator.GetLogin(),
+			repo.GetName()+":"+collaborator.GetLogin(),
 			"github_repository_collaborator",
 			"github",
 			[]string{},
