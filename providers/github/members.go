@@ -36,13 +36,22 @@ func (g *MembersGenerator) InitResources() error {
 		return err
 	}
 
+	owner := g.Args["owner"].(string)
+	g.Resources = append(g.Resources, createMembershipsResources(ctx, client, owner)...)
+
+	return nil
+}
+
+func createMembershipsResources(ctx context.Context, client *githubAPI.Client, owner string) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
+
 	opt := &githubAPI.ListMembersOptions{
 		ListOptions: githubAPI.ListOptions{PerPage: 100},
 	}
 
 	// List all organization members for the authenticated user
 	for {
-		members, resp, err := client.Organizations.ListMembers(ctx, g.Args["owner"].(string), opt)
+		members, resp, err := client.Organizations.ListMembers(ctx, owner, opt)
 		if err != nil {
 			log.Println(err)
 			return nil
@@ -50,14 +59,15 @@ func (g *MembersGenerator) InitResources() error {
 
 		for _, member := range members {
 			resource := terraformutils.NewSimpleResource(
-				g.Args["owner"].(string)+":"+member.GetLogin(),
+				owner+":"+member.GetLogin(),
 				member.GetLogin(),
 				"github_membership",
 				"github",
 				[]string{},
 			)
 			resource.SlowQueryRequired = true
-			g.Resources = append(g.Resources, resource)
+
+			resources = append(resources, resource)
 		}
 
 		if resp.NextPage == 0 {
@@ -65,5 +75,6 @@ func (g *MembersGenerator) InitResources() error {
 		}
 		opt.Page = resp.NextPage
 	}
-	return nil
+
+	return resources
 }
