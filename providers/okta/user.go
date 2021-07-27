@@ -50,7 +50,7 @@ func (g *UserGenerator) InitResources() error {
 
 	for resp.HasNextPage() {
 		var nextUserSet []*okta.User
-		resp, err = resp.Next(ctx, &nextUserSet)
+		resp, _ = resp.Next(ctx, &nextUserSet)
 		output = append(output, nextUserSet...)
 	}
 

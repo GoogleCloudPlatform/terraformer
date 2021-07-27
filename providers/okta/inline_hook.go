@@ -50,7 +50,7 @@ func (g *InlineHookGenerator) InitResources() error {
 
 	for resp.HasNextPage() {
 		var nextInlineHookSet []*okta.InlineHook
-		resp, err = resp.Next(ctx, &nextInlineHookSet)
+		resp, _ = resp.Next(ctx, &nextInlineHookSet)
 		output = append(output, nextInlineHookSet...)
 	}
 

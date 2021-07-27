@@ -17,13 +17,13 @@ package okta
 import (
 	"context"
 	"fmt"
-	"github.com/okta/terraform-provider-okta/sdk"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-type OktaService struct {
+type OktaService struct {	//nolint
 	terraformutils.Service
 }
 

@@ -50,7 +50,7 @@ func (g *EventHookGenerator) InitResources() error {
 
 	for resp.HasNextPage() {
 		var nextEventHookSet []*okta.EventHook
-		resp, err = resp.Next(ctx, &nextEventHookSet)
+		resp, _ = resp.Next(ctx, &nextEventHookSet)
 		output = append(output, nextEventHookSet...)
 	}
 

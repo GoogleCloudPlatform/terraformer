@@ -16,10 +16,10 @@ package okta
 
 import (
 	"errors"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
 type OktaProvider struct { //nolint

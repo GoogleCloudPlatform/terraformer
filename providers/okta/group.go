@@ -52,7 +52,7 @@ func (g *GroupGenerator) InitResources() error {
 
 	for resp.HasNextPage() {
 		var nextGroupSet []*okta.Group
-		resp, err = resp.Next(ctx, &nextGroupSet)
+		resp, _ = resp.Next(ctx, &nextGroupSet)
 		output = append(output, nextGroupSet...)
 	}
 

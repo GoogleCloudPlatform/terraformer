@@ -16,6 +16,7 @@ package okta
 
 import (
 	"context"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
@@ -44,7 +45,7 @@ func (g PasswordPolicyGenerator) createResources(passwordPolicyList []*okta.Poli
 }
 
 func (g *PasswordPolicyGenerator) InitResources() error {
-	var output = []*okta.Policy{}
+	var output []*okta.Policy
 	ctx, client, e := g.Client()
 	if e != nil {
 		return e
@@ -64,7 +65,7 @@ func getPasswordPolicies(ctx context.Context, client *okta.Client) ([]*okta.Poli
 
 	for resp.HasNextPage() {
 		var nextPolicySet []*okta.Policy
-		resp, err = resp.Next(ctx, &nextPolicySet)
+		resp, _ = resp.Next(ctx, &nextPolicySet)
 		output = append(output, nextPolicySet...)
 	}
 

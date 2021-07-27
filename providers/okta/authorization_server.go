@@ -16,6 +16,7 @@ package okta
 
 import (
 	"context"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
@@ -48,7 +49,7 @@ func (g *AuthorizationServerGenerator) InitResources() error {
 		return e
 	}
 
-	output, err := getAuthorizationServers(client, ctx)
+	output, err := getAuthorizationServers(ctx, client)
 	if err != nil {
 		return e
 	}
@@ -57,7 +58,7 @@ func (g *AuthorizationServerGenerator) InitResources() error {
 	return nil
 }
 
-func getAuthorizationServers(client *okta.Client, ctx context.Context) ([]*okta.AuthorizationServer, error) {
+func getAuthorizationServers(ctx context.Context, client *okta.Client) ([]*okta.AuthorizationServer, error) {
 	output, resp, err := client.AuthorizationServer.ListAuthorizationServers(ctx, nil)
 	if err != nil {
 		return nil, err
@@ -65,7 +66,7 @@ func getAuthorizationServers(client *okta.Client, ctx context.Context) ([]*okta.
 
 	for resp.HasNextPage() {
 		var nextAuthorizationServerSet []*okta.AuthorizationServer
-		resp, err = resp.Next(ctx, &nextAuthorizationServerSet)
+		resp, _ = resp.Next(ctx, &nextAuthorizationServerSet)
 		output = append(output, nextAuthorizationServerSet...)
 	}
 

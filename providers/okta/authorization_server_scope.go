@@ -49,7 +49,7 @@ func (g *AuthorizationServerScopeGenerator) InitResources() error {
 		return e
 	}
 
-	authorizationServers, err := getAuthorizationServers(client, ctx)
+	authorizationServers, err := getAuthorizationServers(ctx, client)
 	if err != nil {
 		return err
 	}
