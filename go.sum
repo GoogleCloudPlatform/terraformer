@@ -131,8 +131,8 @@ github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5/go.mod h1:lmUJ/7eu/Q8
 github.com/OctopusDeploy/go-octopusdeploy v1.6.0 h1:r9ThVuANGkzm3noAjLF/i7LUcxQxbCJwpvn1DLwPoOA=
 github.com/OctopusDeploy/go-octopusdeploy v1.6.0/go.mod h1:maPbD8azyb2mcNN6E4SGrwiLN7XmDSML5ui+mcWR/R0=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
-github.com/PaloAltoNetworks/pango v0.5.2-0.20210514062125-b809b85eb51c h1:4uQRvqtOkn0n4zb9BbYHhXzAmWDd25T6TfnE5I5gpFg=
-github.com/PaloAltoNetworks/pango v0.5.2-0.20210514062125-b809b85eb51c/go.mod h1:xpwEKL6CHhniRcqKYTjIiGBzPd3QIyto3sz2ynsP1qg=
+github.com/PaloAltoNetworks/pango v0.6.0 h1:QKe17XsICz2P1S6sKpaH1w8zr/4Q3jYsYVq7bQTjfv8=
+github.com/PaloAltoNetworks/pango v0.6.0/go.mod h1:xpwEKL6CHhniRcqKYTjIiGBzPd3QIyto3sz2ynsP1qg=
 github.com/ProtonMail/go-crypto v0.0.0-20210428141323-04723f9f07d7/go.mod h1:z4/9nQmJSSwwds7ejkxaJwO37dru3geImFUdJlaLzQo=
 github.com/PuerkitoBio/purell v1.1.1/go.mod h1:c11w/QuzBsJSee3cPx9rAFu61PvFxuPbtSwDGJws/X0=
 github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578/go.mod h1:uGdkoq3SwY9Y+13GIhn11/XLaGBb4BfwItxLd5jeuXE=

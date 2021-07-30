@@ -16,6 +16,7 @@ package panos
 
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/PaloAltoNetworks/pango"
 )
 
 type FirewallObjectsGenerator struct {
@@ -24,7 +25,7 @@ type FirewallObjectsGenerator struct {
 
 func (g *FirewallObjectsGenerator) createResourcesFromList(o getGeneric, idPrefix string, terraformResourceName string) (resources []terraformutils.Resource) {
 	l, err := o.i.(getListWithOneArg).GetList(o.params[0])
-	if err != nil {
+	if err != nil || len(l) == 0 {
 		return []terraformutils.Resource{}
 	}
 
@@ -69,27 +70,27 @@ func (g *FirewallObjectsGenerator) createResourcesFromListWithVsys(o getGeneric,
 
 func (g *FirewallObjectsGenerator) createAddressGroupResources() []terraformutils.Resource {
 	return g.createResourcesFromList(
-		getGeneric{g.client.Objects.AddressGroup, []string{g.vsys}},
+		getGeneric{g.client.(*pango.Firewall).Objects.AddressGroup, []string{g.vsys}},
 		g.vsys+":", "panos_address_group",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createAdministrativeTagResources() []terraformutils.Resource {
 	return g.createResourcesFromList(
-		getGeneric{g.client.Objects.Tags, []string{g.vsys}},
+		getGeneric{g.client.(*pango.Firewall).Objects.Tags, []string{g.vsys}},
 		g.vsys+":", "panos_administrative_tag",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createApplicationGroupResources() []terraformutils.Resource {
 	return g.createResourcesFromList(
-		getGeneric{g.client.Objects.AppGroup, []string{g.vsys}},
+		getGeneric{g.client.(*pango.Firewall).Objects.AppGroup, []string{g.vsys}},
 		g.vsys+":", "panos_application_group",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createApplicationObjectResources() (resources []terraformutils.Resource) {
-	l, err := g.client.Objects.Application.GetList(g.vsys)
+	l, err := g.client.(*pango.Firewall).Objects.Application.GetList(g.vsys)
 	if err != nil {
 		return []terraformutils.Resource{}
 	}
@@ -113,112 +114,112 @@ func (g *FirewallObjectsGenerator) createApplicationObjectResources() (resources
 
 // func (g *FirewallObjectsGenerator) createApplicationSignatureResources(applicationObject string) []terraformutils.Resource {
 // 	return g.createResourcesFromList(
-// 		getGeneric{g.client.Objects.AppSignature, []string{g.vsys, applicationObject}},
+// 		getGeneric{g.client.(*pango.Firewall).Objects.AppSignature, []string{g.vsys, applicationObject}},
 // 		g.vsys+":"+applicationObject+":", "panos_application_signature",
 // 	)
 // }
 
 func (g *FirewallObjectsGenerator) createEDLResources() []terraformutils.Resource {
 	return g.createResourcesFromList(
-		getGeneric{g.client.Objects.Edl, []string{g.vsys}},
+		getGeneric{g.client.(*pango.Firewall).Objects.Edl, []string{g.vsys}},
 		g.vsys+":", "panos_edl",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createLogForwardingResources() []terraformutils.Resource {
 	return g.createResourcesFromList(
-		getGeneric{g.client.Objects.LogForwardingProfile, []string{g.vsys}},
+		getGeneric{g.client.(*pango.Firewall).Objects.LogForwardingProfile, []string{g.vsys}},
 		g.vsys+":", "panos_log_forwarding_profile",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createServiceGroupResources() []terraformutils.Resource {
 	return g.createResourcesFromList(
-		getGeneric{g.client.Objects.ServiceGroup, []string{g.vsys}},
+		getGeneric{g.client.(*pango.Firewall).Objects.ServiceGroup, []string{g.vsys}},
 		g.vsys+":", "panos_service_group",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createServiceObjectResources() []terraformutils.Resource {
 	return g.createResourcesFromList(
-		getGeneric{g.client.Objects.Services, []string{g.vsys}},
+		getGeneric{g.client.(*pango.Firewall).Objects.Services, []string{g.vsys}},
 		g.vsys+":", "panos_service_object",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createAddressObjectResources() []terraformutils.Resource {
 	return g.createResourcesFromList(
-		getGeneric{g.client.Objects.Address, []string{g.vsys}},
+		getGeneric{g.client.(*pango.Firewall).Objects.Address, []string{g.vsys}},
 		g.vsys+":", "panos_address_object",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createAntiSpywareSecurityProfileResources() []terraformutils.Resource {
 	return g.createResourcesFromListWithVsys(
-		getGeneric{g.client.Objects.AntiSpywareProfile, []string{g.vsys}},
+		getGeneric{g.client.(*pango.Firewall).Objects.AntiSpywareProfile, []string{g.vsys}},
 		g.vsys+":", "panos_anti_spyware_security_profile",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createAntivirusSecurityProfileResources() []terraformutils.Resource {
 	return g.createResourcesFromListWithVsys(
-		getGeneric{g.client.Objects.AntivirusProfile, []string{g.vsys}},
+		getGeneric{g.client.(*pango.Firewall).Objects.AntivirusProfile, []string{g.vsys}},
 		g.vsys+":", "panos_antivirus_security_profile",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createCustomDataPatternObjectResources() []terraformutils.Resource {
 	return g.createResourcesFromListWithVsys(
-		getGeneric{g.client.Objects.DataPattern, []string{g.vsys}},
+		getGeneric{g.client.(*pango.Firewall).Objects.DataPattern, []string{g.vsys}},
 		g.vsys+":", "panos_custom_data_pattern_object",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createDataFilteringSecurityProfileResources() []terraformutils.Resource {
 	return g.createResourcesFromListWithVsys(
-		getGeneric{g.client.Objects.DataFilteringProfile, []string{g.vsys}},
+		getGeneric{g.client.(*pango.Firewall).Objects.DataFilteringProfile, []string{g.vsys}},
 		g.vsys+":", "panos_data_filtering_security_profile",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createDOSProtectionProfileResources() []terraformutils.Resource {
 	return g.createResourcesFromListWithVsys(
-		getGeneric{g.client.Objects.DosProtectionProfile, []string{g.vsys}},
+		getGeneric{g.client.(*pango.Firewall).Objects.DosProtectionProfile, []string{g.vsys}},
 		g.vsys+":", "panos_dos_protection_profile",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createDynamicUserGroupResources() []terraformutils.Resource {
 	return g.createResourcesFromListWithVsys(
-		getGeneric{g.client.Objects.DynamicUserGroup, []string{g.vsys}},
+		getGeneric{g.client.(*pango.Firewall).Objects.DynamicUserGroup, []string{g.vsys}},
 		g.vsys+":", "panos_dynamic_user_group",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createFileBlockingSecurityProfileResources() []terraformutils.Resource {
 	return g.createResourcesFromListWithVsys(
-		getGeneric{g.client.Objects.FileBlockingProfile, []string{g.vsys}},
+		getGeneric{g.client.(*pango.Firewall).Objects.FileBlockingProfile, []string{g.vsys}},
 		g.vsys+":", "panos_file_blocking_security_profile",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createURLFilteringSecurityProfileResources() []terraformutils.Resource {
 	return g.createResourcesFromListWithVsys(
-		getGeneric{g.client.Objects.UrlFilteringProfile, []string{g.vsys}},
+		getGeneric{g.client.(*pango.Firewall).Objects.UrlFilteringProfile, []string{g.vsys}},
 		g.vsys+":", "panos_url_filtering_security_profile",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createVulnerabilitySecurityProfileResources() []terraformutils.Resource {
 	return g.createResourcesFromListWithVsys(
-		getGeneric{g.client.Objects.VulnerabilityProfile, []string{g.vsys}},
+		getGeneric{g.client.(*pango.Firewall).Objects.VulnerabilityProfile, []string{g.vsys}},
 		g.vsys+":", "panos_vulnerability_security_profile",
 	)
 }
 
 func (g *FirewallObjectsGenerator) createWildfireAnalysisSecurityProfileResources() []terraformutils.Resource {
 	return g.createResourcesFromListWithVsys(
-		getGeneric{g.client.Objects.WildfireAnalysisProfile, []string{g.vsys}},
+		getGeneric{g.client.(*pango.Firewall).Objects.WildfireAnalysisProfile, []string{g.vsys}},
 		g.vsys+":", "panos_wildfire_analysis_security_profile",
 	)
 }
