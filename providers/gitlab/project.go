@@ -83,7 +83,7 @@ func createProjects(ctx context.Context, client *gitLabAPI.Client, group string)
 			)
 
 			//mirror fields from API doesn't match with the ones from terraform provider
-			resource.IgnoreKeys = []string{"mirror"}
+			resource.IgnoreKeys = []string{"mirror_trigger_builds", "only_mirror_protected_branches", "mirror", "mirror_overwrites_diverged_branches"}
 
 			resource.SlowQueryRequired = true
 			resources = append(resources, resource)
