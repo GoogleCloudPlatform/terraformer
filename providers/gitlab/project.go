@@ -20,6 +20,7 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"log"
 	"strconv"
+	"strings"
 
 	gitLabAPI "github.com/xanzy/go-gitlab"
 )
@@ -42,6 +43,20 @@ func (g *ProjectGenerator) InitResources() error {
 	return nil
 }
 
+// PostConvertHook for add policy json as heredoc
+func (g *ProjectGenerator) PostConvertHook() error {
+	for i, resource := range g.Resources {
+		if resource.InstanceInfo.Type == "gitlab_project_variable" {
+			if val, ok := g.Resources[i].Item["value"]; ok {
+				g.Resources[i].Item["value"] = fmt.Sprintf(`<<PROJECTVARIABLE
+%s
+PROJECTVARIABLE`, val.(string))
+			}
+		}
+	}
+	return nil
+}
+
 func createProjects(ctx context.Context, client *gitLabAPI.Client, group string) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	opt := &gitLabAPI.ListGroupProjectsOptions{
@@ -61,11 +76,15 @@ func createProjects(ctx context.Context, client *gitLabAPI.Client, group string)
 		for _, project := range projects {
 			resource := terraformutils.NewSimpleResource(
 				strconv.FormatInt(int64(project.ID), 10),
-				project.PathWithNamespace,
+				getProjectResourceName(project),
 				"gitlab_project",
 				"gitlab",
 				[]string{},
 			)
+
+			//mirror fields from API doesn't match with the ones from terraform provider
+			resource.IgnoreKeys = []string{"mirror"}
+
 			resource.SlowQueryRequired = true
 			resources = append(resources, resource)
 			resources = append(resources, createProjectVariables(ctx, client, project)...)
@@ -94,7 +113,7 @@ func createProjectVariables(ctx context.Context, client *gitLabAPI.Client, proje
 
 			resource := terraformutils.NewSimpleResource(
 				fmt.Sprintf("%d:%s:%s", project.ID, projectVariable.Key, projectVariable.EnvironmentScope),
-				fmt.Sprintf("%s:%s:%s", project.PathWithNamespace, projectVariable.Key, projectVariable.EnvironmentScope),
+				fmt.Sprintf("%s___%s___%s", getProjectResourceName(project), projectVariable.Key, projectVariable.EnvironmentScope),
 				"gitlab_project_variable",
 				"gitlab",
 				[]string{},
@@ -109,4 +128,8 @@ func createProjectVariables(ctx context.Context, client *gitLabAPI.Client, proje
 		opt.Page = resp.NextPage
 	}
 	return resources
+}
+
+func getProjectResourceName(project *gitLabAPI.Project) string {
+	return fmt.Sprintf("%d___%s", project.ID, strings.ReplaceAll(project.PathWithNamespace, "/", "__"))
 }
