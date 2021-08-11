@@ -97,13 +97,7 @@ func (p *GitLabProvider) InitService(serviceName string, verbose bool) error {
 // GetSupportedService return map of support service for gitlab
 func (p *GitLabProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		//"members":               &MembersGenerator{},
-		//"organization":          &OrganizationGenerator{},
-		//"organization_blocks":   &OrganizationBlockGenerator{},
 		"projects": &ProjectGenerator{},
-		//"organization_webhooks": &OrganizationWebhooksGenerator{},
-		//"repositories":          &RepositoriesGenerator{},
-		//"teams":                 &TeamsGenerator{},
-		//"user_ssh_keys":         &UserSSHKeyGenerator{},
+		"groups":   &GroupGenerator{},
 	}
 }
