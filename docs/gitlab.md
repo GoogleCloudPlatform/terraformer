@@ -9,8 +9,14 @@ Example:
   ./terraformer import gitlab --group=YOUR_GROUP --resources=projects --base-url=https://your-self-hosted-gitlab-url
 ```
 
-Supports only organizational resources. List of supported resources:
+List of supported resources:
 
 *   `projects`
     * `gitlab_project`
     * `gitlab_project_value`
+    * `gitlab_project_membership`
+    * `gitlab_tag_protection`
+    * `gitlab_branch_protection`
+*   `groups`
+    * `gitlab_group_membership`
+    * `gitlab_group_variable`
