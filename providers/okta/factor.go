@@ -16,7 +16,6 @@ package okta
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -69,7 +68,7 @@ func (g *FactorGenerator) InitResources() error {
 
 func getListFactors(ctx context.Context, m *sdk.ApiSupplement) ([]*sdk.Factor, *okta.Response, error) {
 	//NOTE: Okta SDK does not support general ListFactors method so we got to manually implement the REST calls.
-	url := fmt.Sprintf("/api/v1/org/factors")
+	url := "/api/v1/org/factors"
 	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
