@@ -74,15 +74,6 @@ func attributesNetworkZone(networkZone *sdk.NetworkZone) map[string]interface{} 
 			attributes["dynamic_locations"] = networkZone.Locations
 		}
 	} else if networkZone.Type == "IP" {
-		// if networkZone.Proxies != nil && networkZone.Gateways != nil {
-		// 	attributes["proxies"] = networkZone.Proxies
-		// 	attributes["gateways"] = networkZone.Gateways
-		// } else if networkZone.Proxies != nil && networkZone.Gateways == nil {
-		// 	attributes["proxies"] = networkZone.Proxies
-		// } else if networkZone.Proxies == nil && networkZone.Gateways != nil {
-		// 	attributes["gateways"] = networkZone.Gateways
-		// }
-
 		switch {
 		case networkZone.Proxies != nil && networkZone.Gateways != nil:
 			attributes["proxies"] = networkZone.Proxies
