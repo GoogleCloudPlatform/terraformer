@@ -138,7 +138,7 @@ require (
 	github.com/mrparkers/terraform-provider-keycloak v0.0.0-20200506151941-509881368409
 	github.com/nicksnyder/go-i18n v1.10.1 // indirect
 	github.com/ns1/ns1-go v2.4.0+incompatible
-	github.com/okta/okta-sdk-golang/v2 v2.3.1
+	github.com/okta/okta-sdk-golang/v2 v2.6.1
 	github.com/okta/terraform-provider-okta v0.0.0-20210723144213-09bad12091e9
 	github.com/opencontainers/image-spec v1.0.1 // indirect
 	github.com/opencontainers/runc v1.0.1 // indirect
