@@ -25,6 +25,9 @@ import (
 	"github.com/IBM-Cloud/bluemix-go/api/iamuum/iamuumv2"
 	"github.com/IBM-Cloud/bluemix-go/api/usermanagement/usermanagementv2"
 	"github.com/IBM-Cloud/bluemix-go/session"
+	"github.com/IBM/go-sdk-core/v4/core"
+	"github.com/IBM/platform-services-go-sdk/iamidentityv1"
+	"github.com/IBM/platform-services-go-sdk/iampolicymanagementv1"
 )
 
 type IAMGenerator struct {
@@ -48,6 +51,50 @@ func (g IAMGenerator) loadAccessGroups(grpID string) terraformutils.Resource {
 		"ibm_iam_access_group",
 		"ibm",
 		[]string{})
+	return resources
+}
+
+func (g IAMGenerator) loadServiceIDs(serviceID string) terraformutils.Resource {
+	resources := terraformutils.NewSimpleResource(
+		serviceID,
+		serviceID,
+		"ibm_iam_service_id",
+		"ibm",
+		[]string{})
+	return resources
+}
+
+func (g IAMGenerator) loadAuthPolicies(policyID string) terraformutils.Resource {
+	resources := terraformutils.NewSimpleResource(
+		policyID,
+		policyID,
+		"ibm_iam_authorization_policy",
+		"ibm",
+		[]string{})
+	return resources
+}
+
+func (g IAMGenerator) loadCustomRoles(roleID string) terraformutils.Resource {
+	resources := terraformutils.NewSimpleResource(
+		roleID,
+		roleID,
+		"ibm_iam_custom_role",
+		"ibm",
+		[]string{})
+	return resources
+}
+
+func (g IAMGenerator) loadServicePolicies(serviceID, policyID string, dependsOn []string) terraformutils.Resource {
+	resources := terraformutils.NewResource(
+		fmt.Sprintf("%s/%s", serviceID, policyID),
+		policyID,
+		"ibm_iam_service_policy",
+		"ibm",
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{
+			"depends_on": dependsOn,
+		})
 	return resources
 }
 
@@ -131,6 +178,7 @@ func (g *IAMGenerator) InitResources() error {
 	}
 
 	for _, u := range users.Resources {
+		// User policies
 		policies, err := iampap.V1Policy().List(iampapv1.SearchParams{
 			AccountID: accountID,
 			IAMID:     u.IamID,
@@ -142,7 +190,6 @@ func (g *IAMGenerator) InitResources() error {
 		for _, p := range policies {
 			g.Resources = append(g.Resources, g.loadUserPolicies(p.ID, u.Email))
 		}
-
 	}
 
 	iamuumClient, err := iamuumv2.New(sess)
@@ -180,6 +227,119 @@ func (g *IAMGenerator) InitResources() error {
 		for _, d := range dynamicPolicies {
 			g.Resources = append(g.Resources, g.loadAccessGroupDynamicPolicies(group.ID, d.RuleID, dependsOn))
 		}
+	}
+
+	// service id and service policy
+	apiKey := os.Getenv("IC_API_KEY")
+	if apiKey == "" {
+		return fmt.Errorf("no API key set")
+	}
+
+	iamIDurl := "https://iam.cloud.ibm.com"
+	iamOptions := &iamidentityv1.IamIdentityV1Options{
+		URL: envFallBack([]string{"IBMCLOUD_IAM_API_ENDPOINT"}, iamIDurl),
+		Authenticator: &core.IamAuthenticator{
+			ApiKey: apiKey,
+		},
+	}
+
+	iamPolicyOptions := &iampolicymanagementv1.IamPolicyManagementV1Options{
+		URL: envFallBack([]string{"IBMCLOUD_IAM_API_ENDPOINT"}, iamIDurl),
+		Authenticator: &core.IamAuthenticator{
+			ApiKey: apiKey,
+		},
+	}
+
+	iamIDClient, err := iamidentityv1.NewIamIdentityV1(iamOptions)
+	if err != nil {
+		return err
+	}
+
+	iamPolicyClient, err := iampolicymanagementv1.NewIamPolicyManagementV1(iamPolicyOptions)
+	if err != nil {
+		return err
+	}
+
+	start := ""
+	allrecs := []iamidentityv1.ServiceID{}
+	var pg int64 = 100
+
+	for {
+		listServiceIDOptions := iamidentityv1.ListServiceIdsOptions{
+			AccountID: &accountID,
+			Pagesize:  &pg,
+		}
+		if start != "" {
+			listServiceIDOptions.Pagetoken = &start
+		}
+
+		serviceIDs, resp, err := iamIDClient.ListServiceIds(&listServiceIDOptions)
+		if err != nil {
+			return fmt.Errorf("[ERROR] Error listing Service Ids %s %s", err, resp)
+		}
+		start = GetNextIAM(serviceIDs.Next)
+		allrecs = append(allrecs, serviceIDs.Serviceids...)
+		if start == "" {
+			break
+		}
+	}
+
+	// loop through all service IDs and fetch policies correspponds to each service ID
+	for _, service := range allrecs {
+		g.Resources = append(g.Resources, g.loadServiceIDs(*service.ID))
+		var dependsOn []string
+		dependsOn = append(dependsOn,
+			"ibm_iam_service_id."+terraformutils.TfSanitize(*service.ID))
+
+		listServicePolicyOptions := iampolicymanagementv1.ListPoliciesOptions{
+			AccountID: core.StringPtr(accountID),
+			IamID:     core.StringPtr(*service.IamID),
+			Type:      core.StringPtr("access"),
+		}
+
+		policyList, _, err := iamPolicyClient.ListPolicies(&listServicePolicyOptions)
+		policies := policyList.Policies
+
+		if err != nil {
+			return fmt.Errorf("error retrieving service policy: %s", err)
+		}
+
+		for _, p := range policies {
+			g.Resources = append(g.Resources, g.loadServicePolicies(*service.ID, *p.ID, dependsOn))
+		}
+	}
+
+	// Authorization policy
+	listAuthPolicyOptions := iampolicymanagementv1.ListPoliciesOptions{
+		AccountID: core.StringPtr(accountID),
+		Type:      core.StringPtr("authorization"),
+	}
+
+	authPolicyList, _, err := iamPolicyClient.ListPolicies(&listAuthPolicyOptions)
+	authPolicies := authPolicyList.Policies
+
+	if err != nil {
+		return fmt.Errorf("error retrieving authorization policy: %s", err)
+	}
+
+	for _, ap := range authPolicies {
+		g.Resources = append(g.Resources, g.loadAuthPolicies(*ap.ID))
+	}
+
+	// Custom role
+	listCustomRoleOptions := iampolicymanagementv1.ListRolesOptions{
+		AccountID: core.StringPtr(accountID),
+	}
+
+	rolesList, _, err := iamPolicyClient.ListRoles(&listCustomRoleOptions)
+	customRoles := rolesList.CustomRoles
+
+	if err != nil {
+		return fmt.Errorf("error retrieving custom roles: %s", err)
+	}
+
+	for _, r := range customRoles {
+		g.Resources = append(g.Resources, g.loadCustomRoles(*r.ID))
 	}
 
 	return nil

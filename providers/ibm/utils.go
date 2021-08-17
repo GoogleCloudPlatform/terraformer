@@ -123,3 +123,17 @@ func GetNext(next interface{}) string {
 	q := u.Query()
 	return q.Get("start")
 }
+
+// GetNextIAM ...
+func GetNextIAM(next interface{}) string {
+	if reflect.ValueOf(next).IsNil() {
+		return ""
+	}
+
+	u, err := url.Parse(reflect.ValueOf(next).Elem().String())
+	if err != nil {
+		return ""
+	}
+	q := u.Query()
+	return q.Get("pagetoken")
+}
