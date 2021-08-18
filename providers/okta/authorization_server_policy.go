@@ -23,7 +23,7 @@ type AuthorizationServerPolicyGenerator struct {
 	OktaService
 }
 
-func (g AuthorizationServerPolicyGenerator) createResources(authorizationServerPolicyList []*okta.Policy, authorizationServerID string, authorizationServerName string) []terraformutils.Resource {
+func (g AuthorizationServerPolicyGenerator) createResources(authorizationServerPolicyList []*okta.AuthorizationServerPolicy, authorizationServerID string, authorizationServerName string) []terraformutils.Resource {
 	var resources []terraformutils.Resource
 
 	for _, authorizationServerPolicy := range authorizationServerPolicyList {
