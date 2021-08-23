@@ -90,6 +90,9 @@ func (p *OktaProvider) InitService(serviceName string, verbose bool) error {
 
 func (p *OktaProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
+		"okta_idp_oidc":             &IdpOIDCGenerator{},
+		"okta_idp_saml":             &IdpSAMLGenerator{},
+		"okta_idp_social":           &IdpSocialGenerator{},
 		"okta_factor":               &FactorGenerator{},
 		"okta_network_zone":         &NetworkZoneGenerator{},
 		"okta_trusted_origin":       &TrustedOriginGenerator{},

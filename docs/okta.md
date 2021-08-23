@@ -35,6 +35,10 @@ List of supported Okta services:
      * `okta_factor`
 *    `inline_hook`
 *    * `okta_inline_hook`
+*    `idp`
+     * `okta_idp_oidc`
+     * `okta_idp_saml`
+     * `okta_idp_social`
 *    `network_zone`
      * `okta_network_zone`
 *    `template_sms`
