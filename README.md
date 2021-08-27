@@ -44,6 +44,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [PAN-OS](/docs/panos.md)
     * VCS
         * [GitHub](/docs/github.md)
+        * [Gitlab](/docs/gitlab.md)
     * Monitoring & System Management
         * [Datadog](/docs/datadog.md)
         * [New Relic](/docs/relic.md)

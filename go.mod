@@ -152,6 +152,7 @@ require (
 	github.com/tencentcloud/tencentcloud-sdk-go v3.0.233+incompatible
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.19
 	github.com/vultr/govultr v0.5.0
+	github.com/xanzy/go-gitlab v0.50.2
 	github.com/yandex-cloud/go-genproto v0.0.0-20200722140432-762fe965ce77
 	github.com/yandex-cloud/go-sdk v0.0.0-20200722140627-2194e5077f13
 	github.com/zclconf/go-cty v1.8.4
