@@ -17,11 +17,12 @@ package gitlab
 import (
 	"context"
 	"fmt"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	gitLabAPI "github.com/xanzy/go-gitlab"
 	"log"
 	"strconv"
 	"strings"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/xanzy/go-gitlab"
 )
 
 type GroupGenerator struct {
@@ -42,9 +43,9 @@ func (g *GroupGenerator) InitResources() error {
 	return nil
 }
 
-func createGroups(ctx context.Context, client *gitLabAPI.Client, groupID string) []terraformutils.Resource {
+func createGroups(ctx context.Context, client *gitlab.Client, groupID string) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	group, _, err := client.Groups.GetGroup(groupID, gitLabAPI.WithContext(ctx))
+	group, _, err := client.Groups.GetGroup(groupID, gitlab.WithContext(ctx))
 	if err != nil {
 		log.Println(err)
 		return nil
@@ -68,12 +69,12 @@ func createGroups(ctx context.Context, client *gitLabAPI.Client, groupID string)
 
 	return resources
 }
-func createGroupVariables(ctx context.Context, client *gitLabAPI.Client, group *gitLabAPI.Group) []terraformutils.Resource {
+func createGroupVariables(ctx context.Context, client *gitlab.Client, group *gitlab.Group) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	opt := &gitLabAPI.ListGroupVariablesOptions{}
+	opt := &gitlab.ListGroupVariablesOptions{}
 
 	for {
-		groupVariables, resp, err := client.GroupVariables.ListVariables(group.ID, opt, gitLabAPI.WithContext(ctx))
+		groupVariables, resp, err := client.GroupVariables.ListVariables(group.ID, opt, gitlab.WithContext(ctx))
 		if err != nil {
 			log.Println(err)
 			return nil
@@ -100,12 +101,12 @@ func createGroupVariables(ctx context.Context, client *gitLabAPI.Client, group *
 	return resources
 }
 
-func createGroupMembership(ctx context.Context, client *gitLabAPI.Client, group *gitLabAPI.Group) []terraformutils.Resource {
+func createGroupMembership(ctx context.Context, client *gitlab.Client, group *gitlab.Group) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	opt := &gitLabAPI.ListGroupMembersOptions{}
+	opt := &gitlab.ListGroupMembersOptions{}
 
 	for {
-		groupMembers, resp, err := client.Groups.ListGroupMembers(group.ID, opt, gitLabAPI.WithContext(ctx))
+		groupMembers, resp, err := client.Groups.ListGroupMembers(group.ID, opt, gitlab.WithContext(ctx))
 		if err != nil {
 			log.Println(err)
 			return nil
@@ -132,6 +133,6 @@ func createGroupMembership(ctx context.Context, client *gitLabAPI.Client, group 
 	return resources
 }
 
-func getGroupResourceName(group *gitLabAPI.Group) string {
+func getGroupResourceName(group *gitlab.Group) string {
 	return fmt.Sprintf("%d___%s", group.ID, strings.ReplaceAll(group.FullPath, "/", "__"))
 }

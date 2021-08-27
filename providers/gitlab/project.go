@@ -17,11 +17,12 @@ package gitlab
 import (
 	"context"
 	"fmt"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	gitLabAPI "github.com/xanzy/go-gitlab"
 	"log"
 	"strconv"
 	"strings"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/xanzy/go-gitlab"
 )
 
 type ProjectGenerator struct {
@@ -42,16 +43,16 @@ func (g *ProjectGenerator) InitResources() error {
 	return nil
 }
 
-func createProjects(ctx context.Context, client *gitLabAPI.Client, group string) []terraformutils.Resource {
+func createProjects(ctx context.Context, client *gitlab.Client, group string) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	opt := &gitLabAPI.ListGroupProjectsOptions{
-		ListOptions: gitLabAPI.ListOptions{
+	opt := &gitlab.ListGroupProjectsOptions{
+		ListOptions: gitlab.ListOptions{
 			PerPage: 100,
 		},
 	}
 
 	for {
-		projects, resp, err := client.Groups.ListGroupProjects(group, opt, gitLabAPI.WithContext(ctx))
+		projects, resp, err := client.Groups.ListGroupProjects(group, opt, gitlab.WithContext(ctx))
 		if err != nil {
 			log.Println(err)
 			return nil
@@ -66,7 +67,7 @@ func createProjects(ctx context.Context, client *gitLabAPI.Client, group string)
 				[]string{},
 			)
 
-			//mirror fields from API doesn't match with the ones from terraform provider
+			// NOTE: mirror fields from API doesn't match with the ones from terraform provider
 			resource.IgnoreKeys = []string{"mirror_trigger_builds", "only_mirror_protected_branches", "mirror", "mirror_overwrites_diverged_branches"}
 
 			resource.SlowQueryRequired = true
@@ -84,12 +85,12 @@ func createProjects(ctx context.Context, client *gitLabAPI.Client, group string)
 	}
 	return resources
 }
-func createProjectVariables(ctx context.Context, client *gitLabAPI.Client, project *gitLabAPI.Project) []terraformutils.Resource {
+func createProjectVariables(ctx context.Context, client *gitlab.Client, project *gitlab.Project) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	opt := &gitLabAPI.ListProjectVariablesOptions{}
+	opt := &gitlab.ListProjectVariablesOptions{}
 
 	for {
-		projectVariables, resp, err := client.ProjectVariables.ListVariables(project.ID, opt, gitLabAPI.WithContext(ctx))
+		projectVariables, resp, err := client.ProjectVariables.ListVariables(project.ID, opt, gitlab.WithContext(ctx))
 		if err != nil {
 			log.Println(err)
 			return nil
@@ -116,12 +117,12 @@ func createProjectVariables(ctx context.Context, client *gitLabAPI.Client, proje
 	return resources
 }
 
-func createBranchProtections(ctx context.Context, client *gitLabAPI.Client, project *gitLabAPI.Project) []terraformutils.Resource {
+func createBranchProtections(ctx context.Context, client *gitlab.Client, project *gitlab.Project) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	opt := &gitLabAPI.ListProtectedBranchesOptions{}
+	opt := &gitlab.ListProtectedBranchesOptions{}
 
 	for {
-		protectedBranches, resp, err := client.ProtectedBranches.ListProtectedBranches(project.ID, opt, gitLabAPI.WithContext(ctx))
+		protectedBranches, resp, err := client.ProtectedBranches.ListProtectedBranches(project.ID, opt, gitlab.WithContext(ctx))
 		if err != nil {
 			log.Println(err)
 			return nil
@@ -148,12 +149,12 @@ func createBranchProtections(ctx context.Context, client *gitLabAPI.Client, proj
 	return resources
 }
 
-func createTagProtections(ctx context.Context, client *gitLabAPI.Client, project *gitLabAPI.Project) []terraformutils.Resource {
+func createTagProtections(ctx context.Context, client *gitlab.Client, project *gitlab.Project) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	opt := &gitLabAPI.ListProtectedTagsOptions{}
+	opt := &gitlab.ListProtectedTagsOptions{}
 
 	for {
-		protectedTags, resp, err := client.ProtectedTags.ListProtectedTags(project.ID, opt, gitLabAPI.WithContext(ctx))
+		protectedTags, resp, err := client.ProtectedTags.ListProtectedTags(project.ID, opt, gitlab.WithContext(ctx))
 		if err != nil {
 			log.Println(err)
 			return nil
@@ -180,12 +181,12 @@ func createTagProtections(ctx context.Context, client *gitLabAPI.Client, project
 	return resources
 }
 
-func createProjectMembership(ctx context.Context, client *gitLabAPI.Client, project *gitLabAPI.Project) []terraformutils.Resource {
+func createProjectMembership(ctx context.Context, client *gitlab.Client, project *gitlab.Project) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	opt := &gitLabAPI.ListProjectMembersOptions{}
+	opt := &gitlab.ListProjectMembersOptions{}
 
 	for {
-		projectMembers, resp, err := client.ProjectMembers.ListProjectMembers(project.ID, opt, gitLabAPI.WithContext(ctx))
+		projectMembers, resp, err := client.ProjectMembers.ListProjectMembers(project.ID, opt, gitlab.WithContext(ctx))
 		if err != nil {
 			log.Println(err)
 			return nil
@@ -212,6 +213,6 @@ func createProjectMembership(ctx context.Context, client *gitLabAPI.Client, proj
 	return resources
 }
 
-func getProjectResourceName(project *gitLabAPI.Project) string {
+func getProjectResourceName(project *gitlab.Project) string {
 	return fmt.Sprintf("%d___%s", project.ID, strings.ReplaceAll(project.PathWithNamespace, "/", "__"))
 }
