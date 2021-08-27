@@ -18,11 +18,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	gitLabAPI "github.com/xanzy/go-gitlab"
 	"log"
 	"strconv"
 	"strings"
-
-	gitLabAPI "github.com/xanzy/go-gitlab"
 )
 
 type GroupGenerator struct {
@@ -43,24 +42,9 @@ func (g *GroupGenerator) InitResources() error {
 	return nil
 }
 
-//TODO: Heredoc will create newline at the end so disable for now (will break password env)
-// PostConvertHook for add policy json as heredoc
-//func (g *GroupGenerator) PostConvertHook() error {
-//	for i, resource := range g.Resources {
-//		if resource.InstanceInfo.Type == "gitlab_group_variable" {
-//			if val, ok := g.Resources[i].Item["value"]; ok {
-//				g.Resources[i].Item["value"] = fmt.Sprintf(`<<GROUPVARIABLE
-//%s
-//GROUPVARIABLE`, val.(string))
-//			}
-//		}
-//	}
-//	return nil
-//}
-
-func createGroups(ctx context.Context, client *gitLabAPI.Client, groupId string) []terraformutils.Resource {
+func createGroups(ctx context.Context, client *gitLabAPI.Client, groupID string) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	group, _, err := client.Groups.GetGroup(groupId, gitLabAPI.WithContext(ctx))
+	group, _, err := client.Groups.GetGroup(groupID, gitLabAPI.WithContext(ctx))
 	if err != nil {
 		log.Println(err)
 		return nil
@@ -74,7 +58,7 @@ func createGroups(ctx context.Context, client *gitLabAPI.Client, groupId string)
 		[]string{},
 	)
 
-	//mirror fields from API doesn't match with the ones from terraform provider
+	// NOTE: mirror fields from API doesn't match with the ones from terraform provider
 	resource.IgnoreKeys = []string{"mirror_trigger_builds", "only_mirror_protected_branches", "mirror", "mirror_overwrites_diverged_branches"}
 
 	resource.SlowQueryRequired = true

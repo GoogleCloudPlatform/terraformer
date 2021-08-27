@@ -18,11 +18,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	gitLabAPI "github.com/xanzy/go-gitlab"
 	"log"
 	"strconv"
 	"strings"
-
-	gitLabAPI "github.com/xanzy/go-gitlab"
 )
 
 type ProjectGenerator struct {
@@ -42,21 +41,6 @@ func (g *ProjectGenerator) InitResources() error {
 
 	return nil
 }
-
-//TODO: Heredoc will create newline at the end so disable for now (will break password env)
-// PostConvertHook for add policy json as heredoc
-//func (g *ProjectGenerator) PostConvertHook() error {
-//	for i, resource := range g.Resources {
-//		if resource.InstanceInfo.Type == "gitlab_project_variable" {
-//			if val, ok := g.Resources[i].Item["value"]; ok {
-//				g.Resources[i].Item["value"] = fmt.Sprintf(`<<PROJECTVARIABLE
-//%s
-//PROJECTVARIABLE`, val.(string))
-//			}
-//		}
-//	}
-//	return nil
-//}
 
 func createProjects(ctx context.Context, client *gitLabAPI.Client, group string) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}

@@ -37,9 +37,9 @@ func (p GitLabProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"gitlab": map[string]interface{}{
-				//TODO: Should I add some default config here?
-				//"token": p.token,
-				//"base_url": p.baseURL,
+				// TODO: Should I add some default config here?
+				// "token": p.token,
+				// "base_url": p.baseURL,
 			},
 		},
 	}
@@ -48,7 +48,7 @@ func (p GitLabProvider) GetProviderData(arg ...string) map[string]interface{} {
 func (p *GitLabProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
 		"token": cty.StringVal(p.token),
-		//TODO Real provider doesn't support empty/null base_url, only set when there's value
+		// NOTE: Real provider doesn't support empty/null base_url, only set when there's value
 		"base_url": cty.StringVal(p.baseURL),
 	})
 }
