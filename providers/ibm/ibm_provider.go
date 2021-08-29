@@ -24,11 +24,13 @@ type IBMProvider struct { //nolint
 	terraformutils.Provider
 	ResourceGroup string
 	Region        string
+	CIS           string
 }
 
 func (p *IBMProvider) Init(args []string) error {
 	p.ResourceGroup = args[0]
 	p.Region = args[1]
+	p.CIS = args[2]
 
 	return nil
 }
@@ -82,6 +84,7 @@ func (p *IBMProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"ibm_is_instance_template":   &InstanceTemplateGenerator{},
 		"ibm_function":               &CloudFunctionGenerator{},
 		"ibm_private_dns":            &privateDNSTemplateGenerator{},
+		"ibm_certificate_manager":    &CMGenerator{},
 	}
 }
 
@@ -98,6 +101,7 @@ func (p *IBMProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetArgs(map[string]interface{}{
 		"resource_group": p.ResourceGroup,
 		"region":         p.Region,
+		"cis":            p.CIS,
 	})
 	return nil
 }
