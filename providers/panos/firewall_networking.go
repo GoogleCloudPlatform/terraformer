@@ -94,7 +94,7 @@ func (g *FirewallNetworkingGenerator) createAggregateInterfaceResources() (resou
 		resources = append(resources, terraformutils.NewSimpleResource(
 			id,
 			normalizeResourceName(aggregateInterface),
-			"panos_aggregate_interface_",
+			"panos_aggregate_interface",
 			"panos",
 			[]string{},
 		))
