@@ -26,7 +26,7 @@ type DNSGenerator struct {
 	AliCloudService
 }
 
-func resourceFromDomain(domain alidns.Domain) terraformutils.Resource {
+func resourceFromDomain(domain alidns.DomainInDescribeDomains) terraformutils.Resource {
 	return terraformutils.NewResource(
 		domain.DomainName,                      // id
 		domain.DomainId+"__"+domain.DomainName, // nolint
@@ -50,12 +50,12 @@ func resourceFromDomainRecord(record alidns.Record) terraformutils.Resource {
 	)
 }
 
-func initDomains(client *connectivity.AliyunClient) ([]alidns.Domain, error) {
+func initDomains(client *connectivity.AliyunClient) ([]alidns.DomainInDescribeDomains, error) {
 	remaining := 1
 	pageNumber := 1
 	pageSize := 10
 
-	allDomains := make([]alidns.Domain, 0)
+	allDomains := make([]alidns.DomainInDescribeDomains, 0)
 
 	for remaining > 0 {
 		raw, err := client.WithDNSClient(func(alidnsClient *alidns.Client) (interface{}, error) {
@@ -78,7 +78,7 @@ func initDomains(client *connectivity.AliyunClient) ([]alidns.Domain, error) {
 	return allDomains, nil
 }
 
-func initDomainRecords(client *connectivity.AliyunClient, allDomains []alidns.Domain) ([]alidns.Record, error) {
+func initDomainRecords(client *connectivity.AliyunClient, allDomains []alidns.DomainInDescribeDomains) ([]alidns.Record, error) {
 	allDomainRecords := make([]alidns.Record, 0)
 
 	for _, domain := range allDomains {
