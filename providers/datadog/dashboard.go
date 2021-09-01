@@ -25,7 +25,7 @@ import (
 
 var (
 	// DashboardAllowEmptyValues ...
-	DashboardAllowEmptyValues = []string{"tags."}
+	DashboardAllowEmptyValues = []string{"tags.", "manage_status_definition.*.query"}
 )
 
 // DashboardGenerator ...
