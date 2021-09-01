@@ -27,19 +27,6 @@ type CodeBuildGenerator struct {
 	AWSService
 }
 
-func (g *CodeBuildGenerator) createResources(projectList []string) []terraformutils.Resource {
-	var resources []terraformutils.Resource
-	for _, project := range projectList {
-		resources = append(resources, terraformutils.NewSimpleResource(
-			project,
-			project,
-			"aws_codebuild_project",
-			"aws",
-			codebuildAllowEmptyValues))
-	}
-	return resources
-}
-
 func (g *CodeBuildGenerator) InitResources() error {
 	config, e := g.generateConfig()
 	if e != nil {
@@ -52,7 +39,14 @@ func (g *CodeBuildGenerator) InitResources() error {
 		if e != nil {
 			return e
 		}
-		g.Resources = g.createResources(page.Projects)
+		for _, project := range page.Projects {
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+				project,
+				project,
+				"aws_codebuild_project",
+				"aws",
+				codebuildAllowEmptyValues))
+		}
 	}
 	return nil
 }
