@@ -31,7 +31,7 @@ func (p *PagerDutyProvider) Init(args []string) error {
 	if token := os.Getenv("PAGERDUTY_TOKEN"); token != "" {
 		p.token = os.Getenv("PAGERDUTY_TOKEN")
 	}
-	if len(args) > 0 {
+	if len(args) > 0 && args[0] != "" {
 		p.token = args[0]
 	}
 	return nil
