@@ -5,10 +5,6 @@ import (
 	"fmt"
 	"log"
 	"reflect"
-	"strings"
-
-	"github.com/Azure/go-autorest/autorest"
-	"github.com/hashicorp/go-azure-helpers/authentication"
 
 	"github.com/Azure/azure-sdk-for-go/services/datafactory/mgmt/2018-06-01/datafactory"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -95,25 +91,10 @@ func (g *DataFactoryGenerator) appendResourceFrom(resources []terraformutils.Res
 			msg := fmt.Sprintf(`azurerm_data_factory: resource "%s" id: %s type: %s not handled yet by terraform or terraformer`, name, id, azureType)
 			log.Println(msg)
 		} else {
-			resources = g.appendResourceAs(resources, id, name, resourceType)
+			resources = g.appendResourceAs(resources, id, name, resourceType, "adf")
 		}
 	}
 	return resources
-}
-
-func (g *DataFactoryGenerator) appendResourceAs(resources []terraformutils.Resource, itemID string, itemName string, resourceType string) []terraformutils.Resource {
-	prefix := strings.ReplaceAll(resourceType, "azurerm_data_factory", "adf")
-	suffix := strings.ReplaceAll(itemName, "-", "_")
-	resourceName := prefix + "_" + suffix
-	res := terraformutils.NewSimpleResource(itemID, resourceName, resourceType, g.ProviderName, []string{})
-	resources = append(resources, res)
-	return resources
-}
-
-func (g *DataFactoryGenerator) getArgsProperties() (subscriptionID string, authorizer autorest.Authorizer) {
-	subs := g.Args["config"].(authentication.Config).SubscriptionID
-	auth := g.Args["authorizer"].(autorest.Authorizer)
-	return subs, auth
 }
 
 func (g *DataFactoryGenerator) listFactories() ([]datafactory.Factory, error) {
@@ -148,7 +129,7 @@ func (g *DataFactoryGenerator) listFactories() ([]datafactory.Factory, error) {
 func (g *DataFactoryGenerator) createDataFactoryResources(dataFactories []datafactory.Factory) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	for _, item := range dataFactories {
-		resources = g.appendResourceAs(resources, *item.ID, *item.Name, "azurerm_data_factory")
+		resources = g.appendResourceAs(resources, *item.ID, *item.Name, "azurerm_data_factory", "adf")
 	}
 	return resources, nil
 }
@@ -187,7 +168,7 @@ func (g *DataFactoryGenerator) createIntegrationRuntimesResources(dataFactories 
 		for iterator.NotDone() {
 			item := iterator.Value()
 			resourceType := getIntegrationRuntimeType(item.Properties)
-			resources = g.appendResourceAs(resources, *item.ID, *item.Name, resourceType)
+			resources = g.appendResourceAs(resources, *item.ID, *item.Name, resourceType, "adf")
 			if err := iterator.NextWithContext(ctx); err != nil {
 				log.Println(err)
 				return resources, err
@@ -241,7 +222,7 @@ func (g *DataFactoryGenerator) createPipelineResources(dataFactories []datafacto
 		}
 		for iterator.NotDone() {
 			item := iterator.Value()
-			resources = g.appendResourceAs(resources, *item.ID, *item.Name, "azurerm_data_factory_pipeline")
+			resources = g.appendResourceAs(resources, *item.ID, *item.Name, "azurerm_data_factory_pipeline", "adf")
 			if err := iterator.NextWithContext(ctx); err != nil {
 				log.Println(err)
 				return resources, err
@@ -268,7 +249,7 @@ func (g *DataFactoryGenerator) createPipelineTriggerScheduleResources(dataFactor
 		}
 		for iterator.NotDone() {
 			item := iterator.Value()
-			resources = g.appendResourceAs(resources, *item.ID, *item.Name, "azurerm_data_factory_trigger_schedule")
+			resources = g.appendResourceAs(resources, *item.ID, *item.Name, "azurerm_data_factory_trigger_schedule", "adf")
 			if err := iterator.NextWithContext(ctx); err != nil {
 				log.Println(err)
 				return resources, err
@@ -329,12 +310,6 @@ func (g *DataFactoryGenerator) InitResources() error {
 		g.Resources = append(g.Resources, resources...)
 	}
 	return nil
-}
-
-func asHereDoc(json string) string {
-	return fmt.Sprintf(`<<JSON
-%s
-JSON`, json)
 }
 
 // PostGenerateHook for formatting json properties as heredoc
