@@ -16,16 +16,17 @@ type DataFactoryGenerator struct {
 
 // Maps item.Properties.Type -> terraform.ResoruceType
 // Information extracted from
-//   SupportedResources
-//   @ github.com/terraform-providers/terraform-provider-azurerm/azurerm/internal/services/datafactory/registration.go
-//   PossibleTypeBasicDatasetValues, PossibleTypeBasicIntegrationRuntimeValues, PossibleTypeBasicLinkedServiceValues
+//   SupportedResources are in:
 //   @ github.com/azure/azure-sdk-for-go@v42.3.0+incompatible/services/datafactory/mgmt/2018-06-01/datafactory/models.go
+//   PossibleTypeBasicDatasetValues, PossibleTypeBasicIntegrationRuntimeValues, PossibleTypeBasicLinkedServiceValues, PossibleTypeBasicTriggerValues
+//   TypeBasicDataset,TypeBasicIntegrationRuntime, TypeBasicLinkedService, TypeBasicTrigger, TypeBasicDataFlow
 
 var (
 	SupportedResources = map[string]string{
-		"ScheduleTrigger":          "azurerm_data_factory_trigger_schedule",
 		"AzureBlob":                "azurerm_data_factory_dataset_azure_blob",
+		"Binary":                   "azurerm_data_factory_dataset_binary",
 		"CosmosDbSqlApiCollection": "azurerm_data_factory_dataset_cosmosdb_sqlapi",
+		"CustomDataset":            "azurerm_data_factory_custom_dataset",
 		"DelimitedText":            "azurerm_data_factory_dataset_delimited_text",
 		"HttpFile":                 "azurerm_data_factory_dataset_http",
 		"Json":                     "azurerm_data_factory_dataset_json",
@@ -45,6 +46,7 @@ var (
 		"AzureSqlDatabase":         "azurerm_data_factory_linked_service_azure_sql_database",
 		"AzureTableStorage":        "azurerm_data_factory_linked_service_azure_table_storage",
 		"CosmosDb":                 "azurerm_data_factory_linked_service_cosmosdb",
+		"CustomDataSource":         "azurerm_data_factory_linked_custom_service",
 		"AzureBlobFS":              "azurerm_data_factory_linked_service_data_lake_storage_gen2",
 		"AzureKeyVault":            "azurerm_data_factory_linked_service_key_vault",
 		"AzureDataExplore":         "azurerm_data_factory_linked_service_kusto",
@@ -56,6 +58,9 @@ var (
 		"SqlServer":                "azurerm_data_factory_linked_service_sql_server",
 		"AzureSqlDW":               "azurerm_data_factory_linked_service_synapse",
 		"Web":                      "azurerm_data_factory_linked_service_web",
+		"BlobEventsTrigger":        "azurerm_data_factory_trigger_blob_event",
+		"ScheduleTrigger":          "azurerm_data_factory_trigger_schedule",
+		"TumblingWindowTrigger":    "azurerm_data_factory_trigger_tumbling_window",
 	}
 )
 
@@ -249,7 +254,34 @@ func (g *DataFactoryGenerator) createPipelineTriggerScheduleResources(dataFactor
 		}
 		for iterator.NotDone() {
 			item := iterator.Value()
-			resources = g.appendResourceAs(resources, *item.ID, *item.Name, "azurerm_data_factory_trigger_schedule", "adf")
+			resources = g.appendResourceFrom(resources, *item.ID, *item.Name, item.Properties)
+			if err := iterator.NextWithContext(ctx); err != nil {
+				log.Println(err)
+				return resources, err
+			}
+		}
+	}
+	return resources, nil
+}
+
+func (g *DataFactoryGenerator) createDataFlowResources(dataFactories []datafactory.Factory) ([]terraformutils.Resource, error) {
+	subscriptionID, authorizer := g.getArgsProperties()
+	client := datafactory.NewDataFlowsClient(subscriptionID)
+	client.Authorizer = authorizer
+	ctx := context.Background()
+	var resources []terraformutils.Resource
+	for _, factory := range dataFactories {
+		id, err := ParseAzureResourceID(*factory.ID)
+		if err != nil {
+			return nil, err
+		}
+		iterator, err := client.ListByFactoryComplete(ctx, id.ResourceGroup, *factory.Name)
+		if err != nil {
+			return nil, err
+		}
+		for iterator.NotDone() {
+			item := iterator.Value()
+			resources = g.appendResourceAs(resources, *item.ID, *item.Name, "azurerm_data_factory_data_flow", "adf")
 			if err := iterator.NextWithContext(ctx); err != nil {
 				log.Println(err)
 				return resources, err
@@ -300,6 +332,7 @@ func (g *DataFactoryGenerator) InitResources() error {
 		g.createPipelineResources,
 		g.createPipelineTriggerScheduleResources,
 		g.createPipelineDatasetResources,
+		g.createDataFlowResources,
 	}
 
 	for _, f := range factoriesFunctions {
