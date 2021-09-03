@@ -157,6 +157,9 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 		"database": {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
+		"databricks": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
 		"data_factory": {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
@@ -216,6 +219,7 @@ func (p *AzureProvider) GetSupportedService() map[string]terraformutils.ServiceG
 		"cosmosdb":                             &CosmosDBGenerator{},
 		"container":                            &ContainerGenerator{},
 		"database":                             &DatabasesGenerator{},
+		"databricks":                           &DatabricksGenerator{},
 		"data_factory":                         &DataFactoryGenerator{},
 		"disk":                                 &DiskGenerator{},
 		"dns":                                  &DNSGenerator{},

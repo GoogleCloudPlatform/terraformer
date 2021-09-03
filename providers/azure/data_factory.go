@@ -5,10 +5,6 @@ import (
 	"fmt"
 	"log"
 	"reflect"
-	"strings"
-
-	"github.com/Azure/go-autorest/autorest"
-	"github.com/hashicorp/go-azure-helpers/authentication"
 
 	"github.com/Azure/azure-sdk-for-go/services/datafactory/mgmt/2018-06-01/datafactory"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -20,16 +16,17 @@ type DataFactoryGenerator struct {
 
 // Maps item.Properties.Type -> terraform.ResoruceType
 // Information extracted from
-//   SupportedResources
-//   @ github.com/terraform-providers/terraform-provider-azurerm/azurerm/internal/services/datafactory/registration.go
-//   PossibleTypeBasicDatasetValues, PossibleTypeBasicIntegrationRuntimeValues, PossibleTypeBasicLinkedServiceValues
+//   SupportedResources are in:
 //   @ github.com/azure/azure-sdk-for-go@v42.3.0+incompatible/services/datafactory/mgmt/2018-06-01/datafactory/models.go
+//   PossibleTypeBasicDatasetValues, PossibleTypeBasicIntegrationRuntimeValues, PossibleTypeBasicLinkedServiceValues, PossibleTypeBasicTriggerValues
+//   TypeBasicDataset,TypeBasicIntegrationRuntime, TypeBasicLinkedService, TypeBasicTrigger, TypeBasicDataFlow
 
 var (
 	SupportedResources = map[string]string{
-		"ScheduleTrigger":          "azurerm_data_factory_trigger_schedule",
 		"AzureBlob":                "azurerm_data_factory_dataset_azure_blob",
+		"Binary":                   "azurerm_data_factory_dataset_binary",
 		"CosmosDbSqlApiCollection": "azurerm_data_factory_dataset_cosmosdb_sqlapi",
+		"CustomDataset":            "azurerm_data_factory_custom_dataset",
 		"DelimitedText":            "azurerm_data_factory_dataset_delimited_text",
 		"HttpFile":                 "azurerm_data_factory_dataset_http",
 		"Json":                     "azurerm_data_factory_dataset_json",
@@ -49,6 +46,7 @@ var (
 		"AzureSqlDatabase":         "azurerm_data_factory_linked_service_azure_sql_database",
 		"AzureTableStorage":        "azurerm_data_factory_linked_service_azure_table_storage",
 		"CosmosDb":                 "azurerm_data_factory_linked_service_cosmosdb",
+		"CustomDataSource":         "azurerm_data_factory_linked_custom_service",
 		"AzureBlobFS":              "azurerm_data_factory_linked_service_data_lake_storage_gen2",
 		"AzureKeyVault":            "azurerm_data_factory_linked_service_key_vault",
 		"AzureDataExplore":         "azurerm_data_factory_linked_service_kusto",
@@ -60,6 +58,9 @@ var (
 		"SqlServer":                "azurerm_data_factory_linked_service_sql_server",
 		"AzureSqlDW":               "azurerm_data_factory_linked_service_synapse",
 		"Web":                      "azurerm_data_factory_linked_service_web",
+		"BlobEventsTrigger":        "azurerm_data_factory_trigger_blob_event",
+		"ScheduleTrigger":          "azurerm_data_factory_trigger_schedule",
+		"TumblingWindowTrigger":    "azurerm_data_factory_trigger_tumbling_window",
 	}
 )
 
@@ -95,25 +96,10 @@ func (g *DataFactoryGenerator) appendResourceFrom(resources []terraformutils.Res
 			msg := fmt.Sprintf(`azurerm_data_factory: resource "%s" id: %s type: %s not handled yet by terraform or terraformer`, name, id, azureType)
 			log.Println(msg)
 		} else {
-			resources = g.appendResourceAs(resources, id, name, resourceType)
+			resources = g.appendResourceAs(resources, id, name, resourceType, "adf")
 		}
 	}
 	return resources
-}
-
-func (g *DataFactoryGenerator) appendResourceAs(resources []terraformutils.Resource, itemID string, itemName string, resourceType string) []terraformutils.Resource {
-	prefix := strings.ReplaceAll(resourceType, "azurerm_data_factory", "adf")
-	suffix := strings.ReplaceAll(itemName, "-", "_")
-	resourceName := prefix + "_" + suffix
-	res := terraformutils.NewSimpleResource(itemID, resourceName, resourceType, g.ProviderName, []string{})
-	resources = append(resources, res)
-	return resources
-}
-
-func (g *DataFactoryGenerator) getArgsProperties() (subscriptionID string, authorizer autorest.Authorizer) {
-	subs := g.Args["config"].(authentication.Config).SubscriptionID
-	auth := g.Args["authorizer"].(autorest.Authorizer)
-	return subs, auth
 }
 
 func (g *DataFactoryGenerator) listFactories() ([]datafactory.Factory, error) {
@@ -148,7 +134,7 @@ func (g *DataFactoryGenerator) listFactories() ([]datafactory.Factory, error) {
 func (g *DataFactoryGenerator) createDataFactoryResources(dataFactories []datafactory.Factory) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	for _, item := range dataFactories {
-		resources = g.appendResourceAs(resources, *item.ID, *item.Name, "azurerm_data_factory")
+		resources = g.appendResourceAs(resources, *item.ID, *item.Name, "azurerm_data_factory", "adf")
 	}
 	return resources, nil
 }
@@ -187,7 +173,7 @@ func (g *DataFactoryGenerator) createIntegrationRuntimesResources(dataFactories 
 		for iterator.NotDone() {
 			item := iterator.Value()
 			resourceType := getIntegrationRuntimeType(item.Properties)
-			resources = g.appendResourceAs(resources, *item.ID, *item.Name, resourceType)
+			resources = g.appendResourceAs(resources, *item.ID, *item.Name, resourceType, "adf")
 			if err := iterator.NextWithContext(ctx); err != nil {
 				log.Println(err)
 				return resources, err
@@ -241,7 +227,7 @@ func (g *DataFactoryGenerator) createPipelineResources(dataFactories []datafacto
 		}
 		for iterator.NotDone() {
 			item := iterator.Value()
-			resources = g.appendResourceAs(resources, *item.ID, *item.Name, "azurerm_data_factory_pipeline")
+			resources = g.appendResourceAs(resources, *item.ID, *item.Name, "azurerm_data_factory_pipeline", "adf")
 			if err := iterator.NextWithContext(ctx); err != nil {
 				log.Println(err)
 				return resources, err
@@ -268,7 +254,34 @@ func (g *DataFactoryGenerator) createPipelineTriggerScheduleResources(dataFactor
 		}
 		for iterator.NotDone() {
 			item := iterator.Value()
-			resources = g.appendResourceAs(resources, *item.ID, *item.Name, "azurerm_data_factory_trigger_schedule")
+			resources = g.appendResourceFrom(resources, *item.ID, *item.Name, item.Properties)
+			if err := iterator.NextWithContext(ctx); err != nil {
+				log.Println(err)
+				return resources, err
+			}
+		}
+	}
+	return resources, nil
+}
+
+func (g *DataFactoryGenerator) createDataFlowResources(dataFactories []datafactory.Factory) ([]terraformutils.Resource, error) {
+	subscriptionID, authorizer := g.getArgsProperties()
+	client := datafactory.NewDataFlowsClient(subscriptionID)
+	client.Authorizer = authorizer
+	ctx := context.Background()
+	var resources []terraformutils.Resource
+	for _, factory := range dataFactories {
+		id, err := ParseAzureResourceID(*factory.ID)
+		if err != nil {
+			return nil, err
+		}
+		iterator, err := client.ListByFactoryComplete(ctx, id.ResourceGroup, *factory.Name)
+		if err != nil {
+			return nil, err
+		}
+		for iterator.NotDone() {
+			item := iterator.Value()
+			resources = g.appendResourceAs(resources, *item.ID, *item.Name, "azurerm_data_factory_data_flow", "adf")
 			if err := iterator.NextWithContext(ctx); err != nil {
 				log.Println(err)
 				return resources, err
@@ -319,6 +332,7 @@ func (g *DataFactoryGenerator) InitResources() error {
 		g.createPipelineResources,
 		g.createPipelineTriggerScheduleResources,
 		g.createPipelineDatasetResources,
+		g.createDataFlowResources,
 	}
 
 	for _, f := range factoriesFunctions {
@@ -329,12 +343,6 @@ func (g *DataFactoryGenerator) InitResources() error {
 		g.Resources = append(g.Resources, resources...)
 	}
 	return nil
-}
-
-func asHereDoc(json string) string {
-	return fmt.Sprintf(`<<JSON
-%s
-JSON`, json)
 }
 
 // PostGenerateHook for formatting json properties as heredoc
