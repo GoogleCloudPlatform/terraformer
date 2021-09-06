@@ -18,10 +18,6 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
-
-	"github.com/Azure/go-autorest/autorest"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/hashicorp/go-azure-helpers/authentication"
 )
 
 // FROM https://github.com/terraform-providers/terraform-provider-azurerm/blob/6e006ff4e5d1fb200a6b37eb2743ff0ec8b11e0d/azurerm/helpers/azure/resourceid.go#L24
@@ -115,19 +111,4 @@ func asHereDoc(json string) string {
 	return fmt.Sprintf(`<<JSON
 %s
 JSON`, json)
-}
-
-func (g *AzureService) appendResourceAs(resources []terraformutils.Resource, itemID string, itemName string, resourceType string, abbreviation string) []terraformutils.Resource {
-	prefix := strings.ReplaceAll(resourceType, resourceType, abbreviation)
-	suffix := strings.ReplaceAll(itemName, "-", "_")
-	resourceName := prefix + "_" + suffix
-	res := terraformutils.NewSimpleResource(itemID, resourceName, resourceType, g.ProviderName, []string{})
-	resources = append(resources, res)
-	return resources
-}
-
-func (g *AzureService) getArgsProperties() (subscriptionID string, authorizer autorest.Authorizer) {
-	subs := g.Args["config"].(authentication.Config).SubscriptionID
-	auth := g.Args["authorizer"].(autorest.Authorizer)
-	return subs, auth
 }
