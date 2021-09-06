@@ -203,6 +203,9 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 		"storage_container": {
 			"storage_account": []string{"storage_account_name", "name"},
 		},
+		"synapse": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
 		"virtual_machine": {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
@@ -237,6 +240,7 @@ func (p *AzureProvider) GetSupportedService() map[string]terraformutils.ServiceG
 		"storage_account":                      &StorageAccountGenerator{},
 		"storage_blob":                         &StorageBlobGenerator{},
 		"storage_container":                    &StorageContainerGenerator{},
+		"synapse":                              &SynapseGenerator{},
 		"virtual_machine":                      &VirtualMachineGenerator{},
 		"virtual_network":                      &VirtualNetworkGenerator{},
 	}
@@ -257,4 +261,20 @@ func (p *AzureProvider) InitService(serviceName string, verbose bool) error {
 		"resource_group": p.resourceGroup,
 	})
 	return nil
+}
+
+func (p *AzureService) getClientArgs() (subscriptionID string, resourceGroup string, authorizer autorest.Authorizer) {
+	subs := p.Args["config"].(authentication.Config).SubscriptionID
+	auth := p.Args["authorizer"].(autorest.Authorizer)
+	resg := p.Args["resource_group"].(string)
+	return subs, resg, auth
+}
+
+func (p *AzureService) AppendSimpleResource(itemID string, itemName string, resourceType string, abbreviation string) {
+	resourceName := strings.ReplaceAll(itemName, "-", "_")
+	if abbreviation != "" {
+		resourceName = abbreviation + "_" + resourceName
+	}
+	newResource := terraformutils.NewSimpleResource(itemID, resourceName, resourceType, p.ProviderName, []string{})
+	p.Resources = append(p.Resources, newResource)
 }

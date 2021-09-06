@@ -156,6 +156,13 @@ export ARM_TENANT_ID=[TENANT_ID]
     * `azurerm_storage_account`
     * `azurerm_storage_blob`
     * `azurerm_storage_container`
+*   `synapse`
+    * `azurerm_synapse_workspace`
+    * `azurerm_synapse_sql_pool`
+    * `azurerm_synapse_spark_pool`
+    * `azurerm_synapse_firewall_rule`
+    * `azurerm_synapse_managed_private_endpoint`
+    * `azurerm_synapse_private_link_hub`
 *   `virtual_machine`
     * `azurerm_virtual_machine`
 *   `virtual_network`
