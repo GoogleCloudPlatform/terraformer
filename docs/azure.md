@@ -145,6 +145,8 @@ export ARM_TENANT_ID=[TENANT_ID]
     * `azurerm_public_ip_prefix`
 *   `redis`
     * `azurerm_redis_cache`
+*   `purview`
+    * `azurerm_purview_account`
 *   `resource_group`
     * `azurerm_resource_group`
 *   `scaleset`
