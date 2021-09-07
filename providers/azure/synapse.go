@@ -176,10 +176,22 @@ func (az *SynapseGenerator) InitResources() error {
 		if err != nil {
 			return err
 		}
-		az.appendSQLPools(&workspace, workspaceRg)
-		az.appendSparkPools(&workspace, workspaceRg)
-		az.appendFirewallRule(&workspace, workspaceRg)
-		az.appendManagedPrivateEndpoint(&workspace)
+		err = az.appendSQLPools(&workspace, workspaceRg)
+		if err != nil {
+			return err
+		}
+		err = az.appendSparkPools(&workspace, workspaceRg)
+		if err != nil {
+			return err
+		}
+		err = az.appendFirewallRule(&workspace, workspaceRg)
+		if err != nil {
+			return err
+		}
+		err = az.appendManagedPrivateEndpoint(&workspace)
+		if err != nil {
+			return err
+		}
 	}
 
 	hubs, err := az.listPrivateLinkHubs()

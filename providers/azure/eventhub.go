@@ -122,8 +122,14 @@ func (az *EventHubGenerator) InitResources() error {
 		if err != nil {
 			return err
 		}
-		az.appendEventHubs(&namespace, namespaceRg)
-		az.appendAuthorizationRules(&namespace, namespaceRg)
+		err = az.appendEventHubs(&namespace, namespaceRg)
+		if err != nil {
+			return err
+		}
+		err = az.appendAuthorizationRules(&namespace, namespaceRg)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }

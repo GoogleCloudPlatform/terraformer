@@ -183,7 +183,7 @@ func (az *DataFactoryGenerator) createIntegrationRuntimesResources(dataFactories
 		for iterator.NotDone() {
 			item := iterator.Value()
 			resourceType := getIntegrationRuntimeType(item.Properties)
-			resources = az.appendResourceAs(resources, *item.ID, *item.Name, resourceType, "adf")
+			resources = az.appendResourceAs(resources, *item.ID, *item.Name, resourceType, "adfr")
 			if err := iterator.NextWithContext(ctx); err != nil {
 				log.Println(err)
 				return resources, err
@@ -237,7 +237,7 @@ func (az *DataFactoryGenerator) createPipelineResources(dataFactories []datafact
 		}
 		for iterator.NotDone() {
 			item := iterator.Value()
-			resources = az.appendResourceAs(resources, *item.ID, *item.Name, "azurerm_data_factory_pipeline", "adf")
+			resources = az.appendResourceAs(resources, *item.ID, *item.Name, "azurerm_data_factory_pipeline", "adfp")
 			if err := iterator.NextWithContext(ctx); err != nil {
 				log.Println(err)
 				return resources, err
@@ -291,7 +291,7 @@ func (az *DataFactoryGenerator) createDataFlowResources(dataFactories []datafact
 		}
 		for iterator.NotDone() {
 			item := iterator.Value()
-			resources = az.appendResourceAs(resources, *item.ID, *item.Name, "azurerm_data_factory_data_flow", "adf")
+			resources = az.appendResourceAs(resources, *item.ID, *item.Name, "azurerm_data_factory_data_flow", "adfl")
 			if err := iterator.NextWithContext(ctx); err != nil {
 				log.Println(err)
 				return resources, err
