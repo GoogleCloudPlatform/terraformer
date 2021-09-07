@@ -169,6 +169,9 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 		"dns": {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
+		"eventhub": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
 		"keyvault": {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
@@ -229,6 +232,7 @@ func (p *AzureProvider) GetSupportedService() map[string]terraformutils.ServiceG
 		"data_factory":                         &DataFactoryGenerator{},
 		"disk":                                 &DiskGenerator{},
 		"dns":                                  &DNSGenerator{},
+		"eventhub":                             &EventHubGenerator{},
 		"keyvault":                             &KeyVaultGenerator{},
 		"load_balancer":                        &LoadBalancerGenerator{},
 		"network_interface":                    &NetworkInterfaceGenerator{},

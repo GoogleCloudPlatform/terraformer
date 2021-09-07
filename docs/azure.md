@@ -126,6 +126,11 @@ export ARM_TENANT_ID=[TENANT_ID]
     * `azurerm_lb_backend_address_pool`
     * `azurerm_lb_nat_rule`
     * `azurerm_lb_probe`
+*   `eventhub`
+    * `azurerm_eventhub_namespace`
+    * `azurerm_eventhub`
+    * `azurerm_eventhub_consumer_group`
+    * `azurerm_eventhub_namespace_authorization_rule`
 *   `network_interface`
     * `azurerm_network_interface`
 *   `network_security_group`
