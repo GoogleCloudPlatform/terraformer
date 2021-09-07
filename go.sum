@@ -112,8 +112,6 @@ github.com/IBM/ibm-cos-sdk-go v1.5.0 h1:YCmAgsdtp/irQep5g+62OvjLNj35tMXLqTC5jQ+Y
 github.com/IBM/ibm-cos-sdk-go v1.5.0/go.mod h1:4mqv/ejW1PKW+Ij6ytU+W8j1UZeLmSEsR5K+flBaWMY=
 github.com/IBM/keyprotect-go-client v0.6.0 h1:jZExoYSaoQ5TrfEzPOmBLc1vJ0VWA0RfKC+Bx39IeGo=
 github.com/IBM/keyprotect-go-client v0.6.0/go.mod h1:SVr2ylV/fhSQPDiUjWirN9fsyWFCNNbt8GIT8hPJVjE=
-github.com/IBM/networking-go-sdk v0.13.0 h1:MKDL0c5Gnc6BT10lCS1S1pZVz71UmX4mJC4eXQqWwHE=
-github.com/IBM/networking-go-sdk v0.13.0/go.mod h1:3/QnBTwCXAWoz98dw3z37UUfpkIwAwi8qDGntNt6F6A=
 github.com/IBM/networking-go-sdk v0.19.0 h1:oXmRZPLnL28OE7bVRJLvKB6vGYjCG58pLWAeTjVBajs=
 github.com/IBM/networking-go-sdk v0.19.0/go.mod h1:nViqUm1Bv+ke8dyOhjQ6e+2U1XeqZX2y4bQbR8Od3Hc=
 github.com/IBM/platform-services-go-sdk v0.19.1 h1:RDxIHiqmxQWSYrJGm4oGSvvbKg4TXY1ox53ORsX6zvE=
@@ -487,8 +485,8 @@ github.com/envoyproxy/go-control-plane v0.9.7/go.mod h1:cwu0lG7PUMfa9snN8LXBig5y
 github.com/envoyproxy/go-control-plane v0.9.9-0.20201210154907-fd9021fe5dad/go.mod h1:cXg6YxExXjJnVBQHBLXeUAgxn2UodCpnH306RInaBQk=
 github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
 github.com/evanphx/json-patch v4.9.0+incompatible/go.mod h1:50XU6AFN0ol/bzJsmQLiYLvXMP4fmwYFNcr97nuDLSk=
-github.com/fastly/go-fastly/v3 v3.6.0 h1:sRnI+MhyMkgZbQWaUnhr70gHk39kfpG9JpMUlSoIsCg=
-github.com/fastly/go-fastly/v3 v3.6.0/go.mod h1:KOaCWsmkIKSASPzADl8PT/bTQIghOw/eEaxlHOu3jMA=
+github.com/fastly/go-fastly/v3 v3.9.3 h1:/uwbNqS3zU9QaAXeSlZ3zXjF1fBw7CdoPj6RQLQm/bg=
+github.com/fastly/go-fastly/v3 v3.9.3/go.mod h1:KOaCWsmkIKSASPzADl8PT/bTQIghOw/eEaxlHOu3jMA=
 github.com/fatih/color v1.7.0 h1:DkWD4oS2D8LGGgTQ6IvwJJXSL5Vp2ffcQg58nFV38Ys=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/fatih/structs v1.1.0 h1:Q7juDM0QtcnhCpeyLGQKyg4TOIghuNXrkL32pHAUMxo=
