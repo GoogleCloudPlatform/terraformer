@@ -65,7 +65,7 @@ func (az *SubnetGenerator) AppendSubnet(subnet *network.Subnet) {
 func (az *SubnetGenerator) appendRouteTable(subnet *network.Subnet) {
 	if props := subnet.SubnetPropertiesFormat; props != nil {
 		if prop := props.RouteTable; prop != nil {
-			named := *(*subnet).Name + "_RouteTable"
+			named := *subnet.Name + "_RouteTable"
 			az.appendSimpleAssociation(
 				*subnet.ID, named,
 				"azurerm_subnet_route_table_association", "snetrt",
@@ -80,7 +80,7 @@ func (az *SubnetGenerator) appendRouteTable(subnet *network.Subnet) {
 func (az *SubnetGenerator) appendNetworkSecurityGroupAssociation(subnet *network.Subnet) {
 	if props := subnet.SubnetPropertiesFormat; props != nil {
 		if prop := props.NetworkSecurityGroup; prop != nil {
-			named := *(*subnet).Name + "_NetworkSecurityGroup"
+			named := *subnet.Name + "_NetworkSecurityGroup"
 			az.appendSimpleAssociation(
 				*subnet.ID, named,
 				"azurerm_subnet_network_security_group_association", "snetsg",
@@ -95,7 +95,7 @@ func (az *SubnetGenerator) appendNetworkSecurityGroupAssociation(subnet *network
 func (az *SubnetGenerator) appendNatGateway(subnet *network.Subnet) {
 	if props := subnet.SubnetPropertiesFormat; props != nil {
 		if prop := props.NatGateway; prop != nil {
-			named := *(*subnet).Name + "_NatGateway"
+			named := *subnet.Name + "_NatGateway"
 			az.appendSimpleAssociation(
 				*subnet.ID, named,
 				"azurerm_subnet_nat_gateway_association", "snetnat",
