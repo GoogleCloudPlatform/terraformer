@@ -5,16 +5,14 @@ import (
 	"log"
 
 	"github.com/Azure/azure-sdk-for-go/services/databricks/mgmt/2018-04-01/databricks"
-
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type DatabricksGenerator struct {
 	AzureService
 }
 
-func (g *DatabricksGenerator) listWorkspaces() ([]databricks.Workspace, error) {
-	subscriptionID, authorizer := g.getArgsProperties()
+func (az *DatabricksGenerator) listWorkspaces() ([]databricks.Workspace, error) {
+	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
 	client := databricks.NewWorkspacesClient(subscriptionID)
 	client.Authorizer = authorizer
 	var (
@@ -22,8 +20,8 @@ func (g *DatabricksGenerator) listWorkspaces() ([]databricks.Workspace, error) {
 		err      error
 	)
 	ctx := context.Background()
-	if rg := g.Args["resource_group"].(string); rg != "" {
-		iterator, err = client.ListByResourceGroupComplete(ctx, rg)
+	if resourceGroup != "" {
+		iterator, err = client.ListByResourceGroupComplete(ctx, resourceGroup)
 	} else {
 		iterator, err = client.ListBySubscriptionComplete(ctx)
 	}
@@ -42,31 +40,18 @@ func (g *DatabricksGenerator) listWorkspaces() ([]databricks.Workspace, error) {
 	return resources, nil
 }
 
-func (g *DatabricksGenerator) createDatabricksWorkspaces(workspaces []databricks.Workspace) ([]terraformutils.Resource, error) {
-	var resources []terraformutils.Resource
-	for _, item := range workspaces {
-		resources = g.appendResourceAs(resources, *item.ID, *item.Name, "azurerm_databricks_workspace", "dbw")
-	}
-	return resources, nil
+func (az *DatabricksGenerator) AppendWorkspace(workspace *databricks.Workspace) {
+	az.AppendSimpleResource(*workspace.ID, *workspace.Name, "azurerm_databricks_workspace", "dbw")
 }
 
-func (g *DatabricksGenerator) InitResources() error {
+func (az *DatabricksGenerator) InitResources() error {
 
-	workspaces, err := g.listWorkspaces()
+	workspaces, err := az.listWorkspaces()
 	if err != nil {
 		return err
 	}
-
-	workspacesFunctions := []func([]databricks.Workspace) ([]terraformutils.Resource, error){
-		g.createDatabricksWorkspaces,
-	}
-
-	for _, f := range workspacesFunctions {
-		resources, ero := f(workspaces)
-		if ero != nil {
-			return ero
-		}
-		g.Resources = append(g.Resources, resources...)
+	for _, workspace := range workspaces {
+		az.AppendWorkspace(&workspace)
 	}
 	return nil
 }

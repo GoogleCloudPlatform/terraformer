@@ -1,9 +1,10 @@
-### Use with Azure
-Support [Azure CLI](https://www.terraform.io/docs/providers/azurerm/guides/azure_cli.html), [Service Principal with Client Certificate](https://www.terraform.io/docs/providers/azurerm/guides/service_principal_client_certificate.html) & [Service Principal with Client Secret](https://www.terraform.io/docs/providers/azurerm/guides/service_principal_client_secret.html)
+# Use with Azure
 
-Example:
+Supports [Azure CLI](https://www.terraform.io/docs/providers/azurerm/guides/azure_cli.html), [Service Principal with Client Certificate](https://www.terraform.io/docs/providers/azurerm/guides/service_principal_client_certificate.html), and [Service Principal with Client Secret](https://www.terraform.io/docs/providers/azurerm/guides/service_principal_client_secret.html).
 
-```
+## Example
+
+``` sh
 # Using Azure CLI (az login)
 export ARM_SUBSCRIPTION_ID=[SUBSCRIPTION_ID]
 
@@ -24,7 +25,7 @@ export ARM_TENANT_ID=[TENANT_ID]
 ./terraformer import azure -R my_resource_group -r virtual_network,resource_group
 ```
 
-List of supported Azure resources:
+## List of supported Azure resources
 
 *   `analysis`
     * `azurerm_analysis_services_server`
@@ -62,12 +63,16 @@ List of supported Azure resources:
 	* `azurerm_sql_firewall_rule`
 	* `azurerm_sql_server`
 	* `azurerm_sql_virtual_network_rule`
+*   `databricks`
+    * `azurerm_databricks_workspace`
 *   `data_factory`
     * `azurerm_data_factory`
     * `azurerm_data_factory_pipeline`
-    * `azurerm_data_factory_trigger_schedule`
+    * `azurerm_data_factory_data_flow`
     * `azurerm_data_factory_dataset_azure_blob`
+    * `azurerm_data_factory_dataset_binary`
     * `azurerm_data_factory_dataset_cosmosdb_sqlapi`
+    * `azurerm_data_factory_custom_dataset`
     * `azurerm_data_factory_dataset_delimited_text`
     * `azurerm_data_factory_dataset_http`
     * `azurerm_data_factory_dataset_json`
@@ -88,6 +93,7 @@ List of supported Azure resources:
     * `azurerm_data_factory_linked_service_azure_sql_database`
     * `azurerm_data_factory_linked_service_azure_table_storage`
     * `azurerm_data_factory_linked_service_cosmosdb`
+    * `azurerm_data_factory_linked_custom_service`
     * `azurerm_data_factory_linked_service_data_lake_storage_gen2`
     * `azurerm_data_factory_linked_service_key_vault`
     * `azurerm_data_factory_linked_service_kusto`
@@ -99,6 +105,9 @@ List of supported Azure resources:
     * `azurerm_data_factory_linked_service_sql_server`
     * `azurerm_data_factory_linked_service_synapse`
     * `azurerm_data_factory_linked_service_web`
+    * `azurerm_data_factory_trigger_blob_event`
+    * `azurerm_data_factory_trigger_schedule`
+    * `azurerm_data_factory_trigger_tumbling_window`
 *   `disk`
     * `azurerm_managed_disk`
 *   `dns`
@@ -117,6 +126,11 @@ List of supported Azure resources:
     * `azurerm_lb_backend_address_pool`
     * `azurerm_lb_nat_rule`
     * `azurerm_lb_probe`
+*   `eventhub`
+    * `azurerm_eventhub_namespace`
+    * `azurerm_eventhub`
+    * `azurerm_eventhub_consumer_group`
+    * `azurerm_eventhub_namespace_authorization_rule`
 *   `network_interface`
     * `azurerm_network_interface`
 *   `network_security_group`
@@ -135,7 +149,9 @@ List of supported Azure resources:
     * `azurerm_public_ip`
     * `azurerm_public_ip_prefix`
 *   `redis`
-    * `azurerm_redis_cache
+    * `azurerm_redis_cache`
+*   `purview`
+    * `azurerm_purview_account`
 *   `resource_group`
     * `azurerm_resource_group`
 *   `scaleset`
@@ -147,6 +163,13 @@ List of supported Azure resources:
     * `azurerm_storage_account`
     * `azurerm_storage_blob`
     * `azurerm_storage_container`
+*   `synapse`
+    * `azurerm_synapse_workspace`
+    * `azurerm_synapse_sql_pool`
+    * `azurerm_synapse_spark_pool`
+    * `azurerm_synapse_firewall_rule`
+    * `azurerm_synapse_managed_private_endpoint`
+    * `azurerm_synapse_private_link_hub`
 *   `virtual_machine`
     * `azurerm_virtual_machine`
 *   `virtual_network`

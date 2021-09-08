@@ -18,7 +18,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/Azure/azure-sdk-for-go/services/cosmos-db/mgmt/2020-03-01/documentdb"
+	"github.com/Azure/azure-sdk-for-go/services/cosmos-db/mgmt/2021-06-15/documentdb"
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/hashicorp/go-azure-helpers/authentication"
@@ -33,7 +33,7 @@ func (g *CosmosDBGenerator) listSQLDatabasesAndContainersBehind(resourceGroupNam
 	var resourcesContainer []terraformutils.Resource
 	ctx := context.Background()
 	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
-	SQLResourcesClient := documentdb.NewSQLResourcesClient(subscriptionID, subscriptionID)
+	SQLResourcesClient := documentdb.NewSQLResourcesClient(subscriptionID)
 	SQLResourcesClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	sqlDatabases, err := SQLResourcesClient.ListSQLDatabases(ctx, resourceGroupName, accountName)
@@ -81,11 +81,7 @@ func (g *CosmosDBGenerator) listTables(resourceGroupName string, accountName str
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
-	// NOTE:
-	// there will be a parameter simplification for interface if we update the package
-	// https://github.com/Azure/azure-sdk-for-go/blob/v42.0.0/services/cosmos-db/mgmt/2020-03-01/documentdb/tableresources.go#L35
-	// https://github.com/Azure/azure-sdk-for-go/blob/v44.0.0/services/cosmos-db/mgmt/2020-03-01/documentdb/tableresources.go#L35
-	TableResourcesClient := documentdb.NewTableResourcesClient(subscriptionID, subscriptionID)
+	TableResourcesClient := documentdb.NewTableResourcesClient(subscriptionID)
 	TableResourcesClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	tables, err := TableResourcesClient.ListTables(ctx, resourceGroupName, accountName)
@@ -108,11 +104,7 @@ func (g *CosmosDBGenerator) listAndAddForDatabaseAccounts() ([]terraformutils.Re
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
-	// NOTE:
-	// there will be a parameter simplification for interface if we update the package
-	// https://github.com/Azure/azure-sdk-for-go/blob/v42.0.0/services/cosmos-db/mgmt/2020-03-01/documentdb/databaseaccounts.go#L35
-	// https://github.com/Azure/azure-sdk-for-go/blob/v44.0.0/services/cosmos-db/mgmt/2020-03-01/documentdb/databaseaccounts.go#L35
-	DatabaseAccountsClient := documentdb.NewDatabaseAccountsClient(subscriptionID, subscriptionID)
+	DatabaseAccountsClient := documentdb.NewDatabaseAccountsClient(subscriptionID)
 	DatabaseAccountsClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	var (
