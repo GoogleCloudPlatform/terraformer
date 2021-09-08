@@ -174,3 +174,15 @@ export ARM_TENANT_ID=[TENANT_ID]
     * `azurerm_virtual_machine`
 *   `virtual_network`
     * `azurerm_virtual_network`
+*   `subnet`
+    * `azurerm_subnet`
+    * `azurerm_subnet_service_endpoint_storage_policy`
+    * `azurerm_subnet_nat_gateway_association`
+    * `azurerm_subnet_route_table_association`
+    * `azurerm_subnet_network_security_group_association`
+
+## Notes
+
+### Virtual networks and subnets
+
+Terraformer will import `azurerm_virtual_network` config with inlined subnet information swipped, in order to avoid any potential circular dependencies. To import the subnet information, please also import `azurerm_subnet`.

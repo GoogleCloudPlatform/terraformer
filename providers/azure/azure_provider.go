@@ -212,6 +212,9 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 		"synapse": {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
+		"subnet": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
 		"virtual_machine": {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
@@ -249,6 +252,7 @@ func (p *AzureProvider) GetSupportedService() map[string]terraformutils.ServiceG
 		"storage_blob":                         &StorageBlobGenerator{},
 		"storage_container":                    &StorageContainerGenerator{},
 		"synapse":                              &SynapseGenerator{},
+		"subnet":                               &SubnetGenerator{},
 		"virtual_machine":                      &VirtualMachineGenerator{},
 		"virtual_network":                      &VirtualNetworkGenerator{},
 	}
@@ -278,11 +282,27 @@ func (p *AzureService) getClientArgs() (subscriptionID string, resourceGroup str
 	return subs, resg, auth
 }
 
-func (p *AzureService) AppendSimpleResource(itemID string, itemName string, resourceType string, abbreviation string) {
+func sanitizeResourceName(itemName string, abbreviation string) string {
 	resourceName := strings.ReplaceAll(itemName, "-", "_")
+	resourceName = strings.ReplaceAll(resourceName, "_002D_", "-")
 	if abbreviation != "" {
 		resourceName = abbreviation + "_" + resourceName
 	}
+	return resourceName
+}
+
+func (p *AzureService) AppendSimpleResource(itemID string, itemName string, resourceType string, abbreviation string) {
+	resourceName := sanitizeResourceName(itemName, abbreviation)
 	newResource := terraformutils.NewSimpleResource(itemID, resourceName, resourceType, p.ProviderName, []string{})
+	p.Resources = append(p.Resources, newResource)
+}
+
+func (p *AzureService) appendSimpleAssociation(itemID string, itemName string, resourceType string, abbreviation string, attributes map[string]string) {
+	resourceName := sanitizeResourceName(itemName, abbreviation)
+	newResource := terraformutils.NewResource(
+		itemID, resourceName, resourceType, p.ProviderName, attributes,
+		[]string{"name"},
+		map[string]interface{}{},
+	)
 	p.Resources = append(p.Resources, newResource)
 }
