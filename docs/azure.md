@@ -145,6 +145,9 @@ export ARM_TENANT_ID=[TENANT_ID]
     * `azurerm_private_dns_txt_record`
     * `azurerm_private_dns_zone`
     * `azurerm_private_dns_zone_virtual_network_link`
+*   `private_endpoint`
+    * `azurerm_private_endpoint`
+    * `azurerm_private_link_service`
 *   `public_ip`
     * `azurerm_public_ip`
     * `azurerm_public_ip_prefix`

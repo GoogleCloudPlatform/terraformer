@@ -187,6 +187,10 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 		"private_dns": {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
+		"private_endpoint": {
+			"resource_group": []string{"resource_group_name", "name"},
+			"subnet":         []string{"subnet_id", "ID"},
+		},
 		"public_ip": {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
@@ -238,6 +242,7 @@ func (p *AzureProvider) GetSupportedService() map[string]terraformutils.ServiceG
 		"network_interface":                    &NetworkInterfaceGenerator{},
 		"network_security_group":               &NetworkSecurityGroupGenerator{},
 		"private_dns":                          &PrivateDNSGenerator{},
+		"private_endpoint":                     &PrivateEndpointGenerator{},
 		"public_ip":                            &PublicIPGenerator{},
 		"purview":                              &PurviewGenerator{},
 		"redis":                                &RedisGenerator{},
