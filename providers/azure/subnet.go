@@ -154,8 +154,8 @@ func (az *SubnetGenerator) InitResources() error {
 	return nil
 }
 
-func (g *SubnetGenerator) PostConvertHook() error {
-	for _, resource := range g.Resources {
+func (az *SubnetGenerator) PostConvertHook() error {
+	for _, resource := range az.Resources {
 		if resource.InstanceInfo.Type != "azurerm_subnet" {
 			continue
 		}
