@@ -158,10 +158,20 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
 		"databricks": {
-			"resource_group": []string{"resource_group_name", "name"},
+			"resource_group": []string{
+				"resource_group_name", "name",
+				"managed_resource_group_name", "name",
+			},
+			"storage_account": []string{"storage_account_name", "name"},
+			"subnet": []string{
+				"public_subnet_name", "name",
+				"private_subnet_name", "name",
+			},
+			"virtual_network": []string{"virtual_network_id", "id"},
 		},
 		"data_factory": {
 			"resource_group": []string{"resource_group_name", "name"},
+			"data_factory":   []string{"data_factory_name", "name"},
 		},
 		"disk": {
 			"resource_group": []string{"resource_group_name", "name"},
@@ -171,6 +181,10 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 		},
 		"eventhub": {
 			"resource_group": []string{"resource_group_name", "name"},
+			"eventhub": []string{
+				"eventhub_name", "name",
+				"namespace_name", "name",
+			},
 		},
 		"keyvault": {
 			"resource_group": []string{"resource_group_name", "name"},
@@ -180,16 +194,18 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 		},
 		"network_interface": {
 			"resource_group": []string{"resource_group_name", "name"},
+			"subnet":         []string{"subnet_id", "id"},
 		},
 		"network_security_group": {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
 		"private_dns": {
-			"resource_group": []string{"resource_group_name", "name"},
+			"resource_group":  []string{"resource_group_name", "name"},
+			"virtual_network": []string{"virtual_network_id", "id"},
 		},
 		"private_endpoint": {
 			"resource_group": []string{"resource_group_name", "name"},
-			"subnet":         []string{"subnet_id", "ID"},
+			"subnet":         []string{"subnet_id", "id"},
 		},
 		"public_ip": {
 			"resource_group": []string{"resource_group_name", "name"},
@@ -204,7 +220,8 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
 		"storage_account": {
-			"resource_group": []string{"resource_group_name", "name"},
+			"resource_group":  []string{"resource_group_name", "name"},
+			"virtual_network": []string{"virtual_network_subnet_ids", "id"},
 		},
 		"storage_blob": {
 			"storage_account":   []string{"storage_account_name", "name"},
@@ -213,14 +230,25 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 		"storage_container": {
 			"storage_account": []string{"storage_account_name", "name"},
 		},
+		"subnet": {
+			"resource_group":         []string{"resource_group_name", "name"},
+			"virtual_network":        []string{"virtual_network_name", "name"},
+			"network_security_group": []string{"network_security_group_id", "id"},
+			"subnet":                 []string{"subnet_id", "id"},
+		},
 		"synapse": {
-			"resource_group": []string{"resource_group_name", "name"},
+			"resource_group": []string{
+				"resource_group_name", "name",
+				"managed_resource_group_name", "name",
+			},
+			"synapse": []string{"synapse_workspace_id", "id"},
 		},
 		"subnet": {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
 		"virtual_machine": {
-			"resource_group": []string{"resource_group_name", "name"},
+			"resource_group":     []string{"resource_group_name", "name"},
+			"network_interface_": []string{"network_interface_ids", "id"},
 		},
 		"virtual_network": {
 			"resource_group": []string{"resource_group_name", "name"},
