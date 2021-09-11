@@ -172,6 +172,7 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 		"data_factory": {
 			"resource_group": []string{"resource_group_name", "name"},
 			"data_factory":   []string{"data_factory_name", "name"},
+			"keyvault":       []string{"keyvault_id", "id"},
 		},
 		"disk": {
 			"resource_group": []string{"resource_group_name", "name"},
@@ -230,12 +231,6 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 		"storage_container": {
 			"storage_account": []string{"storage_account_name", "name"},
 		},
-		"subnet": {
-			"resource_group":         []string{"resource_group_name", "name"},
-			"virtual_network":        []string{"virtual_network_name", "name"},
-			"network_security_group": []string{"network_security_group_id", "id"},
-			"subnet":                 []string{"subnet_id", "id"},
-		},
 		"synapse": {
 			"resource_group": []string{
 				"resource_group_name", "name",
@@ -244,11 +239,14 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 			"synapse": []string{"synapse_workspace_id", "id"},
 		},
 		"subnet": {
-			"resource_group": []string{"resource_group_name", "name"},
+			"resource_group":         []string{"resource_group_name", "name"},
+			"virtual_network":        []string{"virtual_network_name", "name"},
+			"network_security_group": []string{"network_security_group_id", "id"},
+			"subnet":                 []string{"subnet_id", "id"},
 		},
 		"virtual_machine": {
-			"resource_group":     []string{"resource_group_name", "name"},
-			"network_interface_": []string{"network_interface_ids", "id"},
+			"resource_group":    []string{"resource_group_name", "name"},
+			"network_interface": []string{"network_interface_ids", "id"},
 		},
 		"virtual_network": {
 			"resource_group": []string{"resource_group_name", "name"},
@@ -328,7 +326,7 @@ func (p *AzureService) appendSimpleAssociation(id string, linkedResourceName str
 		resourceName0 := strings.ReplaceAll(resourceType, "azurerm_", "")
 		resourceName1 := resourceName0[strings.IndexByte(resourceName0, '_'):]
 		resourceName2 = linkedResourceName + resourceName1
-}
+	}
 	newResource := terraformutils.NewResource(
 		id, resourceName2, resourceType, p.ProviderName, attributes,
 		[]string{"name"},
