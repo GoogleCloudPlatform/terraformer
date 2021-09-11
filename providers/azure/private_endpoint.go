@@ -41,7 +41,7 @@ func (az *PrivateEndpointGenerator) listServices() ([]network.PrivateLinkService
 }
 
 func (az *PrivateEndpointGenerator) AppendServices(link *network.PrivateLinkService) {
-	az.AppendSimpleResource(*link.ID, *link.Name, "azurerm_private_link_service", "pls")
+	az.AppendSimpleResource(*link.ID, *link.Name, "azurerm_private_link_service")
 }
 
 func (az *PrivateEndpointGenerator) listEndpoints() ([]network.PrivateEndpoint, error) {
@@ -74,7 +74,7 @@ func (az *PrivateEndpointGenerator) listEndpoints() ([]network.PrivateEndpoint, 
 }
 
 func (az *PrivateEndpointGenerator) AppendEndpoint(link *network.PrivateEndpoint) {
-	az.AppendSimpleResource(*link.ID, *link.Name, "azurerm_private_endpoint", "pep")
+	az.AppendSimpleResource(*link.ID, *link.Name, "azurerm_private_endpoint")
 }
 
 func (az *PrivateEndpointGenerator) InitResources() error {

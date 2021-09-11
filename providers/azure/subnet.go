@@ -59,16 +59,15 @@ func (az *SubnetGenerator) lisSubnets() ([]network.Subnet, error) {
 }
 
 func (az *SubnetGenerator) AppendSubnet(subnet *network.Subnet) {
-	az.AppendSimpleResource(*subnet.ID, *subnet.Name, "azurerm_subnet", "snet")
+	az.AppendSimpleResource(*subnet.ID, *subnet.Name, "azurerm_subnet")
 }
 
 func (az *SubnetGenerator) appendRouteTable(subnet *network.Subnet) {
 	if props := subnet.SubnetPropertiesFormat; props != nil {
 		if prop := props.RouteTable; prop != nil {
-			named := *subnet.Name + "_RouteTable"
 			az.appendSimpleAssociation(
-				*subnet.ID, named,
-				"azurerm_subnet_route_table_association", "snetrt",
+				*subnet.ID, *subnet.Name, prop.Name,
+				"azurerm_subnet_route_table_association",
 				map[string]string{
 					"subnet_id":      *subnet.ID,
 					"route_table_id": *prop.ID,
@@ -80,10 +79,9 @@ func (az *SubnetGenerator) appendRouteTable(subnet *network.Subnet) {
 func (az *SubnetGenerator) appendNetworkSecurityGroupAssociation(subnet *network.Subnet) {
 	if props := subnet.SubnetPropertiesFormat; props != nil {
 		if prop := props.NetworkSecurityGroup; prop != nil {
-			named := *subnet.Name + "_NetworkSecurityGroup"
 			az.appendSimpleAssociation(
-				*subnet.ID, named,
-				"azurerm_subnet_network_security_group_association", "snetsg",
+				*subnet.ID, *subnet.Name, prop.Name,
+				"azurerm_subnet_network_security_group_association",
 				map[string]string{
 					"subnet_id":                 *subnet.ID,
 					"network_security_group_id": *prop.ID,
@@ -95,10 +93,9 @@ func (az *SubnetGenerator) appendNetworkSecurityGroupAssociation(subnet *network
 func (az *SubnetGenerator) appendNatGateway(subnet *network.Subnet) {
 	if props := subnet.SubnetPropertiesFormat; props != nil {
 		if prop := props.NatGateway; prop != nil {
-			named := *subnet.Name + "_NatGateway"
 			az.appendSimpleAssociation(
-				*subnet.ID, named,
-				"azurerm_subnet_nat_gateway_association", "snetnat",
+				*subnet.ID, *subnet.Name, nil,
+				"azurerm_subnet_nat_gateway_association",
 				map[string]string{
 					"subnet_id":      *subnet.ID,
 					"nat_gateway_id": *prop.ID,
@@ -127,7 +124,7 @@ func (az *SubnetGenerator) appendServiceEndpointPolicies() error {
 
 	for iterator.NotDone() {
 		item := iterator.Value()
-		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_subnet_service_endpoint_storage_policy", "snetpol")
+		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_subnet_service_endpoint_storage_policy")
 		if err := iterator.NextWithContext(ctx); err != nil {
 			log.Println(err)
 			return err

@@ -43,7 +43,7 @@ func (az *SynapseGenerator) listWorkspaces() ([]synapse.Workspace, error) {
 }
 
 func (az *SynapseGenerator) appendWorkspace(workspace *synapse.Workspace) {
-	az.AppendSimpleResource(*workspace.ID, *workspace.Name, "azurerm_synapse_workspace", "syn")
+	az.AppendSimpleResource(*workspace.ID, *workspace.Name, "azurerm_synapse_workspace")
 }
 
 func (az *SynapseGenerator) appendSQLPools(workspace *synapse.Workspace, workspaceRg *ResourceID) error {
@@ -57,7 +57,7 @@ func (az *SynapseGenerator) appendSQLPools(workspace *synapse.Workspace, workspa
 	}
 	for iterator.NotDone() {
 		item := iterator.Value()
-		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_synapse_sql_pool", "synp")
+		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_synapse_sql_pool")
 		if err := iterator.NextWithContext(ctx); err != nil {
 			log.Println(err)
 			return err
@@ -77,7 +77,7 @@ func (az *SynapseGenerator) appendSparkPools(workspace *synapse.Workspace, works
 	}
 	for iterator.NotDone() {
 		item := iterator.Value()
-		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_synapse_spark_pool", "synp")
+		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_synapse_spark_pool")
 		if err := iterator.NextWithContext(ctx); err != nil {
 			log.Println(err)
 			return err
@@ -97,7 +97,7 @@ func (az *SynapseGenerator) appendFirewallRule(workspace *synapse.Workspace, wor
 	}
 	for iterator.NotDone() {
 		item := iterator.Value()
-		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_synapse_firewall_rule", "synf")
+		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_synapse_firewall_rule")
 		if err := iterator.NextWithContext(ctx); err != nil {
 			log.Println(err)
 			return err
@@ -122,7 +122,7 @@ func (az *SynapseGenerator) appendManagedPrivateEndpoint(workspace *synapse.Work
 	}
 	for iterator.NotDone() {
 		item := iterator.Value()
-		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_synapse_managed_private_endpoint", "syne")
+		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_synapse_managed_private_endpoint")
 		if err := iterator.NextWithContext(ctx); err != nil {
 			log.Println(err)
 			return err
@@ -161,7 +161,7 @@ func (az *SynapseGenerator) listPrivateLinkHubs() ([]synapse.PrivateLinkHub, err
 }
 
 func (az *SynapseGenerator) appendtPrivateLinkHubs(workspace *synapse.PrivateLinkHub) {
-	az.AppendSimpleResource(*workspace.ID, *workspace.Name, "azurerm_synapse_private_link_hub", "synl")
+	az.AppendSimpleResource(*workspace.ID, *workspace.Name, "azurerm_synapse_private_link_hub")
 }
 
 func (az *SynapseGenerator) InitResources() error {

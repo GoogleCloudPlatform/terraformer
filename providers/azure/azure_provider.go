@@ -315,25 +315,22 @@ func (p *AzureService) getClientArgs() (subscriptionID string, resourceGroup str
 	return subs, resg, auth
 }
 
-func sanitizeResourceName(itemName string, abbreviation string) string {
-	resourceName := strings.ReplaceAll(itemName, "-", "_")
-	resourceName = strings.ReplaceAll(resourceName, "_002D_", "-")
-	if abbreviation != "" {
-		resourceName = abbreviation + "_" + resourceName
-	}
-	return resourceName
-}
-
-func (p *AzureService) AppendSimpleResource(itemID string, itemName string, resourceType string, abbreviation string) {
-	resourceName := sanitizeResourceName(itemName, abbreviation)
-	newResource := terraformutils.NewSimpleResource(itemID, resourceName, resourceType, p.ProviderName, []string{})
+func (p *AzureService) AppendSimpleResource(id string, resourceName string, resourceType string) {
+	newResource := terraformutils.NewSimpleResource(id, resourceName, resourceType, p.ProviderName, []string{})
 	p.Resources = append(p.Resources, newResource)
 }
 
-func (p *AzureService) appendSimpleAssociation(itemID string, itemName string, resourceType string, abbreviation string, attributes map[string]string) {
-	resourceName := sanitizeResourceName(itemName, abbreviation)
+func (p *AzureService) appendSimpleAssociation(id string, linkedResourceName string, resourceName *string, resourceType string, attributes map[string]string) {
+	var resourceName2 string
+	if resourceName != nil {
+		resourceName2 = *resourceName
+	} else {
+		resourceName0 := strings.ReplaceAll(resourceType, "azurerm_", "")
+		resourceName1 := resourceName0[strings.IndexByte(resourceName0, '_'):]
+		resourceName2 = linkedResourceName + resourceName1
+}
 	newResource := terraformutils.NewResource(
-		itemID, resourceName, resourceType, p.ProviderName, attributes,
+		id, resourceName2, resourceType, p.ProviderName, attributes,
 		[]string{"name"},
 		map[string]interface{}{},
 	)
