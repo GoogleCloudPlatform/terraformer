@@ -32,7 +32,7 @@ import (
 
 const safeChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
 
-var unsafeChars = regexp.MustCompile(`[^0-9A-Za-z_]`)
+var unsafeChars = regexp.MustCompile(`[^0-9A-Za-z_\-]`)
 
 // sanitizer fixes up an invalid HCL AST, as produced by the HCL parser for JSON
 type astSanitizer struct{}
