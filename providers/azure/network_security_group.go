@@ -34,7 +34,7 @@ func (g NetworkSecurityGroupGenerator) createResources(securityGroupListResult n
 		nsg := securityGroupListResult.Value()
 		resources = append(resources, terraformutils.NewSimpleResource(
 			*nsg.ID,
-			*nsg.Name+"-"+*nsg.ID,
+			*nsg.Name,
 			"azurerm_network_security_group",
 			"azurerm",
 			[]string{}))
