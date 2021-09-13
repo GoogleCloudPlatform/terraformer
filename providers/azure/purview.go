@@ -41,7 +41,7 @@ func (az *PurviewGenerator) listAccounts() ([]purview.Account, error) {
 }
 
 func (az *PurviewGenerator) AppendAccount(account *purview.Account) {
-	az.AppendSimpleResource(*account.ID, *account.Name, "azurerm_purview_account", "pur")
+	az.AppendSimpleResource(*account.ID, *account.Name, "azurerm_purview_account")
 }
 
 func (az *PurviewGenerator) InitResources() error {

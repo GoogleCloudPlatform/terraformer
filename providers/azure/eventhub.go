@@ -41,7 +41,7 @@ func (az *EventHubGenerator) listNamespaces() ([]eventhub.EHNamespace, error) {
 }
 
 func (az *EventHubGenerator) AppendNamespace(namespace *eventhub.EHNamespace) {
-	az.AppendSimpleResource(*namespace.ID, *namespace.Name, "azurerm_eventhub_namespace", "evhn")
+	az.AppendSimpleResource(*namespace.ID, *namespace.Name, "azurerm_eventhub_namespace")
 }
 
 func (az *EventHubGenerator) appendEventHubs(namespace *eventhub.EHNamespace, namespaceRg *ResourceID) error {
@@ -56,7 +56,7 @@ func (az *EventHubGenerator) appendEventHubs(namespace *eventhub.EHNamespace, na
 	for iterator.NotDone() {
 		item := iterator.Value()
 
-		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_eventhub", "evh")
+		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_eventhub")
 		err = az.appendConsumerGroups(namespace, namespaceRg, *item.Name)
 		if err != nil {
 			return err
@@ -80,7 +80,7 @@ func (az *EventHubGenerator) appendConsumerGroups(namespace *eventhub.EHNamespac
 	}
 	for iterator.NotDone() {
 		item := iterator.Value()
-		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_eventhub_consumer_group", "evhg")
+		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_eventhub_consumer_group")
 		if err := iterator.NextWithContext(ctx); err != nil {
 			log.Println(err)
 			return err
@@ -101,7 +101,7 @@ func (az *EventHubGenerator) appendAuthorizationRules(namespace *eventhub.EHName
 	for iterator.NotDone() {
 		item := iterator.Value()
 
-		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_eventhub_namespace_authorization_rule", "evar")
+		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_eventhub_namespace_authorization_rule")
 		if err := iterator.NextWithContext(ctx); err != nil {
 			log.Println(err)
 			return err

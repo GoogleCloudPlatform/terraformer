@@ -41,7 +41,7 @@ func (az *DatabricksGenerator) listWorkspaces() ([]databricks.Workspace, error) 
 }
 
 func (az *DatabricksGenerator) AppendWorkspace(workspace *databricks.Workspace) {
-	az.AppendSimpleResource(*workspace.ID, *workspace.Name, "azurerm_databricks_workspace", "dbw")
+	az.AppendSimpleResource(*workspace.ID, *workspace.Name, "azurerm_databricks_workspace")
 }
 
 func (az *DatabricksGenerator) InitResources() error {

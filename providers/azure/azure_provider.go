@@ -158,10 +158,21 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
 		"databricks": {
-			"resource_group": []string{"resource_group_name", "name"},
+			"resource_group": []string{
+				"resource_group_name", "name",
+				"managed_resource_group_name", "name",
+			},
+			"storage_account": []string{"storage_account_name", "name"},
+			"subnet": []string{
+				"public_subnet_name", "name",
+				"private_subnet_name", "name",
+			},
+			"virtual_network": []string{"virtual_network_id", "id"},
 		},
 		"data_factory": {
 			"resource_group": []string{"resource_group_name", "name"},
+			"data_factory":   []string{"data_factory_name", "name"},
+			"keyvault":       []string{"keyvault_id", "id"},
 		},
 		"disk": {
 			"resource_group": []string{"resource_group_name", "name"},
@@ -171,6 +182,10 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 		},
 		"eventhub": {
 			"resource_group": []string{"resource_group_name", "name"},
+			"eventhub": []string{
+				"eventhub_name", "name",
+				"namespace_name", "name",
+			},
 		},
 		"keyvault": {
 			"resource_group": []string{"resource_group_name", "name"},
@@ -180,16 +195,18 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 		},
 		"network_interface": {
 			"resource_group": []string{"resource_group_name", "name"},
+			"subnet":         []string{"subnet_id", "id"},
 		},
 		"network_security_group": {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
 		"private_dns": {
-			"resource_group": []string{"resource_group_name", "name"},
+			"resource_group":  []string{"resource_group_name", "name"},
+			"virtual_network": []string{"virtual_network_id", "id"},
 		},
 		"private_endpoint": {
 			"resource_group": []string{"resource_group_name", "name"},
-			"subnet":         []string{"subnet_id", "ID"},
+			"subnet":         []string{"subnet_id", "id"},
 		},
 		"public_ip": {
 			"resource_group": []string{"resource_group_name", "name"},
@@ -204,7 +221,8 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
 		"storage_account": {
-			"resource_group": []string{"resource_group_name", "name"},
+			"resource_group":  []string{"resource_group_name", "name"},
+			"virtual_network": []string{"virtual_network_subnet_ids", "id"},
 		},
 		"storage_blob": {
 			"storage_account":   []string{"storage_account_name", "name"},
@@ -214,13 +232,21 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 			"storage_account": []string{"storage_account_name", "name"},
 		},
 		"synapse": {
-			"resource_group": []string{"resource_group_name", "name"},
+			"resource_group": []string{
+				"resource_group_name", "name",
+				"managed_resource_group_name", "name",
+			},
+			"synapse": []string{"synapse_workspace_id", "id"},
 		},
 		"subnet": {
-			"resource_group": []string{"resource_group_name", "name"},
+			"resource_group":         []string{"resource_group_name", "name"},
+			"virtual_network":        []string{"virtual_network_name", "name"},
+			"network_security_group": []string{"network_security_group_id", "id"},
+			"subnet":                 []string{"subnet_id", "id"},
 		},
 		"virtual_machine": {
-			"resource_group": []string{"resource_group_name", "name"},
+			"resource_group":    []string{"resource_group_name", "name"},
+			"network_interface": []string{"network_interface_ids", "id"},
 		},
 		"virtual_network": {
 			"resource_group": []string{"resource_group_name", "name"},
@@ -287,25 +313,22 @@ func (p *AzureService) getClientArgs() (subscriptionID string, resourceGroup str
 	return subs, resg, auth
 }
 
-func sanitizeResourceName(itemName string, abbreviation string) string {
-	resourceName := strings.ReplaceAll(itemName, "-", "_")
-	resourceName = strings.ReplaceAll(resourceName, "_002D_", "-")
-	if abbreviation != "" {
-		resourceName = abbreviation + "_" + resourceName
-	}
-	return resourceName
-}
-
-func (p *AzureService) AppendSimpleResource(itemID string, itemName string, resourceType string, abbreviation string) {
-	resourceName := sanitizeResourceName(itemName, abbreviation)
-	newResource := terraformutils.NewSimpleResource(itemID, resourceName, resourceType, p.ProviderName, []string{})
+func (p *AzureService) AppendSimpleResource(id string, resourceName string, resourceType string) {
+	newResource := terraformutils.NewSimpleResource(id, resourceName, resourceType, p.ProviderName, []string{})
 	p.Resources = append(p.Resources, newResource)
 }
 
-func (p *AzureService) appendSimpleAssociation(itemID string, itemName string, resourceType string, abbreviation string, attributes map[string]string) {
-	resourceName := sanitizeResourceName(itemName, abbreviation)
+func (p *AzureService) appendSimpleAssociation(id string, linkedResourceName string, resourceName *string, resourceType string, attributes map[string]string) {
+	var resourceName2 string
+	if resourceName != nil {
+		resourceName2 = *resourceName
+	} else {
+		resourceName0 := strings.ReplaceAll(resourceType, "azurerm_", "")
+		resourceName1 := resourceName0[strings.IndexByte(resourceName0, '_'):]
+		resourceName2 = linkedResourceName + resourceName1
+	}
 	newResource := terraformutils.NewResource(
-		itemID, resourceName, resourceType, p.ProviderName, attributes,
+		id, resourceName2, resourceType, p.ProviderName, attributes,
 		[]string{"name"},
 		map[string]interface{}{},
 	)
