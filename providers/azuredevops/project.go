@@ -11,6 +11,7 @@ type ProjectGenerator struct {
 }
 
 func (az *ProjectGenerator) listProjects() ([]core.TeamProjectReference, error) {
+
 	client, err := az.getCoreClient()
 	if err != nil {
 		return nil, err
@@ -22,9 +23,7 @@ func (az *ProjectGenerator) listProjects() ([]core.TeamProjectReference, error) 
 	}
 	var resources []core.TeamProjectReference
 	for projects != nil {
-		for _, item := range (*projects).Value {
-			resources = append(resources, item)
-		}
+		resources = append(resources, (*projects).Value...)
 		if projects.ContinuationToken != "" {
 			// Get next page of team projects
 			projectArgs := core.GetProjectsArgs{
@@ -51,8 +50,8 @@ func (az *ProjectGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
-	for _, workspace := range projects {
-		az.AppendProject(&workspace)
+	for _, project := range projects {
+		az.AppendProject(&project)
 	}
 	return nil
 }

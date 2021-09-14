@@ -21,6 +21,7 @@ import (
 )
 
 func newCmdAzureDevOpsImporter(options ImportOptions) *cobra.Command {
+
 	cmd := &cobra.Command{
 		Use:   "azuredevops",
 		Short: "Import current state to Terraform configuration from Azure DevOps",
@@ -34,11 +35,8 @@ func newCmdAzureDevOpsImporter(options ImportOptions) *cobra.Command {
 			return nil
 		},
 	}
-
 	cmd.AddCommand(listCmd(newAzureDevOpsProvider()))
 	baseProviderFlags(cmd.PersistentFlags(), &options, "project,team,git", "project=name1:name2:name3")
-	// cmd.PersistentFlags().StringSliceVarP(&options.Projects, "project", "P", []string{}, "project=name1:name2:name3")
-	// _ = cmd.MarkPersistentFlagRequired("projects")
 	return cmd
 }
 

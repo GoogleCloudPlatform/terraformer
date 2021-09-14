@@ -26,20 +26,26 @@ import (
 
 type AzureDevOpsService struct { //nolint
 	terraformutils.Service
-	connection *azuredevops.Connection
 }
 
-func (p *AzureDevOpsService) getCoreClient() (core.Client, error) {
+func (az *AzureDevOpsService) getConnection() *azuredevops.Connection {
+
+	organizationUrl := az.Args["organizationUrl"].(string)
+	personalAccessToken := az.Args["personalAccessToken"].(string)
+	return azuredevops.NewPatConnection(organizationUrl, personalAccessToken)
+}
+
+func (az *AzureDevOpsService) getCoreClient() (core.Client, error) {
 	ctx := context.Background()
-	client, err := core.NewClient(ctx, p.connection)
+	client, err := core.NewClient(ctx, az.getConnection())
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return nil, err
 	}
 	return client, nil
 }
 
-func (p *AzureDevOpsService) AppendSimpleResource(id string, resourceName string, resourceType string) {
-	newResource := terraformutils.NewSimpleResource(id, resourceName, resourceType, p.ProviderName, []string{})
-	p.Resources = append(p.Resources, newResource)
+func (az *AzureDevOpsService) AppendSimpleResource(id string, resourceName string, resourceType string) {
+	newResource := terraformutils.NewSimpleResource(id, resourceName, resourceType, az.ProviderName, []string{})
+	az.Resources = append(az.Resources, newResource)
 }

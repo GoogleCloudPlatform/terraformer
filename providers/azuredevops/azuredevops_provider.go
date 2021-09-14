@@ -19,15 +19,13 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
-	"github.com/microsoft/azure-devops-go-api/azuredevops"
+	// "github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
 type AzureDevOpsProvider struct { //nolint
 	terraformutils.Provider
 	organizationUrl     string
 	personalAccessToken string
-	connection          *azuredevops.Connection
 }
 
 func (p *AzureDevOpsProvider) setEnvConfig() error {
@@ -42,7 +40,6 @@ func (p *AzureDevOpsProvider) setEnvConfig() error {
 	}
 	p.organizationUrl = organizationUrl
 	p.personalAccessToken = personalAccessToken
-	p.connection = azuredevops.NewPatConnection(organizationUrl, personalAccessToken)
 	return nil
 }
 
@@ -55,19 +52,11 @@ func (p *AzureDevOpsProvider) Init(args []string) error {
 }
 
 func (p *AzureDevOpsProvider) GetName() string {
-	return "azuredevpos"
+	return "azuredevops"
 }
 
 func (p *AzureDevOpsProvider) GetProviderData(arg ...string) map[string]interface{} {
-	version := providerwrapper.GetProviderVersion(p.GetName())
-	return map[string]interface{}{
-		"provider": map[string]interface{}{
-			"azuredevpos": map[string]interface{}{
-				"version":  version,
-				"features": map[string]interface{}{},
-			},
-		},
-	}
+	return map[string]interface{}{}
 }
 
 func (AzureDevOpsProvider) GetResourceConnections() map[string]map[string][]string {
@@ -94,9 +83,8 @@ func (p *AzureDevOpsProvider) InitService(serviceName string, verbose bool) erro
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"url":   p.organizationUrl,
-		"token": p.personalAccessToken,
+		"organizationUrl":     p.organizationUrl,
+		"personalAccessToken": p.personalAccessToken,
 	})
-	p.Service.(*AzureDevOpsService).connection = p.connection
 	return nil
 }
