@@ -102,4 +102,10 @@ List of supported IBM Cloud resources:
     * `ibm_dns_glb_monitor`
     * `ibm_dns_glb_pool`
     * `ibm_dns_glb`
- 
+* `ibm_transit_gateway`
+    * `ibm_tg_gateway`
+    * `ibm_tg_connection`
+* `ibm_direct_link`
+    * `ibm_dl_gateway`
+    * `ibm_dl_virtual_connection`
+    * `ibm_dl_provider_gateway`
