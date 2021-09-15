@@ -10,7 +10,7 @@ type ProjectGenerator struct {
 	AzureDevOpsService
 }
 
-func (az *ProjectGenerator) listProjects() ([]core.TeamProjectReference, error) {
+func (az *ProjectGenerator) listResources() ([]core.TeamProjectReference, error) {
 
 	client, err := az.getCoreClient()
 	if err != nil {
@@ -40,18 +40,18 @@ func (az *ProjectGenerator) listProjects() ([]core.TeamProjectReference, error) 
 	return resources, nil
 }
 
-func (az *ProjectGenerator) AppendProject(project *core.TeamProjectReference) {
-	az.AppendSimpleResource((*project.Id).String(), *project.Name, "azuredevops_project")
+func (az *ProjectGenerator) appendResource(project *core.TeamProjectReference) {
+	az.appendSimpleResource((*project.Id).String(), *project.Name, "azuredevops_project")
 }
 
 func (az *ProjectGenerator) InitResources() error {
 
-	projects, err := az.listProjects()
+	projects, err := az.listResources()
 	if err != nil {
 		return err
 	}
 	for _, project := range projects {
-		az.AppendProject(&project)
+		az.appendResource(&project)
 	}
 	return nil
 }

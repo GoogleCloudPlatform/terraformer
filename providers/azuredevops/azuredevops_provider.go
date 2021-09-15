@@ -19,7 +19,6 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	// "github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
 type AzureDevOpsProvider struct { //nolint
@@ -32,11 +31,11 @@ func (p *AzureDevOpsProvider) setEnvConfig() error {
 
 	organizationUrl := os.Getenv("AZDO_ORG_SERVICE_URL")
 	if organizationUrl == "" {
-		return errors.New("set AZDO_ORG_SERVICE_URL env var")
+		return errors.New("environment variable AZDO_ORG_SERVICE_URL missing")
 	}
 	personalAccessToken := os.Getenv("AZDO_PERSONAL_ACCESS_TOKEN")
 	if personalAccessToken == "" {
-		return errors.New("set AZDO_PERSONAL_ACCESS_TOKEN env var")
+		return errors.New("environment variable AZDO_PERSONAL_ACCESS_TOKEN missing")
 	}
 	p.organizationUrl = organizationUrl
 	p.personalAccessToken = personalAccessToken
@@ -59,12 +58,17 @@ func (p *AzureDevOpsProvider) GetProviderData(arg ...string) map[string]interfac
 	return map[string]interface{}{}
 }
 
-func (AzureDevOpsProvider) GetResourceConnections() map[string]map[string][]string {
-	return map[string]map[string][]string{
-		"git_repository": {
-			"project": []string{"project_id", "id"},
-		},
+func (p AzureDevOpsProvider) GetResourceConnections() map[string]map[string][]string {
+	supported := p.GetSupportedService()
+	connections := make(map[string]map[string][]string)
+	for serviceName, service := range supported {
+		if service2, ok := service.(AzureDevOpsServiceGenerator); ok {
+			if conn := service2.GetResourceConnections(); conn != nil {
+				connections[serviceName] = conn
+			}
+		}
 	}
+	return connections
 }
 
 func (p *AzureDevOpsProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {

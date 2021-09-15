@@ -24,8 +24,17 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
+type AzureDevOpsServiceGenerator interface {
+	terraformutils.ServiceGenerator
+	GetResourceConnections() map[string][]string
+}
+
 type AzureDevOpsService struct { //nolint
 	terraformutils.Service
+}
+
+func (az *AzureDevOpsService) GetResourceConnections() map[string][]string {
+	return nil
 }
 
 func (az *AzureDevOpsService) getConnection() *azuredevops.Connection {

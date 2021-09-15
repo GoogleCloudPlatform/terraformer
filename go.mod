@@ -135,6 +135,7 @@ require (
 	github.com/jonboydell/logzio_client v1.2.0
 	github.com/labd/commercetools-go-sdk v0.3.1
 	github.com/linode/linodego v0.24.1
+	github.com/microsoft/azure-devops-go-api/azuredevops v1.0.0-b5
 	github.com/mrparkers/terraform-provider-keycloak v0.0.0-20200506151941-509881368409
 	github.com/nicksnyder/go-i18n v1.10.1 // indirect
 	github.com/ns1/ns1-go v2.4.0+incompatible
@@ -261,7 +262,6 @@ require (
 	github.com/mattn/go-colorable v0.1.4 // indirect
 	github.com/mattn/go-ieproxy v0.0.0-20190702010315-6dee0af9227d // indirect
 	github.com/mattn/go-isatty v0.0.10 // indirect
-	github.com/microsoft/azure-devops-go-api/azuredevops v1.0.0-b5 // indirect
 	github.com/mitchellh/cli v1.1.2 // indirect
 	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
