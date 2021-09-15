@@ -97,6 +97,9 @@ In that case terraformer will not know with which region resources are associate
     * `aws_datapipeline_pipeline`
 *   `devicefarm`
     * `aws_devicefarm_project`
+*   `docdb`
+    * `aws_docdb_cluster`
+    * `aws_docdb_cluster_instance`
 *   `dynamodb`
     * `aws_dynamodb_table`
 *   `ec2_instance`

@@ -252,6 +252,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"customer_gateway":  &AwsFacade{service: &CustomerGatewayGenerator{}},
 		"datapipeline":      &AwsFacade{service: &DataPipelineGenerator{}},
 		"devicefarm":        &AwsFacade{service: &DeviceFarmGenerator{}},
+		"docdb":             &AwsFacade{service: &DocDBGenerator{}},
 		"dynamodb":          &AwsFacade{service: &DynamoDbGenerator{}},
 		"ebs":               &AwsFacade{service: &EbsGenerator{}},
 		"ec2_instance":      &AwsFacade{service: &Ec2Generator{}},
