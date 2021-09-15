@@ -20,6 +20,7 @@ import (
 
 	"github.com/microsoft/azure-devops-go-api/azuredevops"
 	"github.com/microsoft/azure-devops-go-api/azuredevops/core"
+	"github.com/microsoft/azure-devops-go-api/azuredevops/git"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -54,7 +55,17 @@ func (az *AzureDevOpsService) getCoreClient() (core.Client, error) {
 	return client, nil
 }
 
-func (az *AzureDevOpsService) AppendSimpleResource(id string, resourceName string, resourceType string) {
+func (az *AzureDevOpsService) getGitClient() (git.Client, error) {
+	ctx := context.Background()
+	client, err := git.NewClient(ctx, az.getConnection())
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return client, nil
+}
+
+func (az *AzureDevOpsService) appendSimpleResource(id string, resourceName string, resourceType string) {
 	newResource := terraformutils.NewSimpleResource(id, resourceName, resourceType, az.ProviderName, []string{})
 	az.Resources = append(az.Resources, newResource)
 }

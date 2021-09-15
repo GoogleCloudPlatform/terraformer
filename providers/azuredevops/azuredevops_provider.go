@@ -73,7 +73,8 @@ func (p AzureDevOpsProvider) GetResourceConnections() map[string]map[string][]st
 
 func (p *AzureDevOpsProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"project": &ProjectGenerator{},
+		"project":        &ProjectGenerator{},
+		"git_repository": &GitRepositoryGenerator{},
 	}
 }
 
