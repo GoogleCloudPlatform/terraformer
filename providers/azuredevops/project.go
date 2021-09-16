@@ -11,47 +11,38 @@ type ProjectGenerator struct {
 }
 
 func (az *ProjectGenerator) listResources() ([]core.TeamProjectReference, error) {
-
-	client, err := az.getCoreClient()
-	if err != nil {
-		return nil, err
+	client, fail := az.getCoreClient()
+	if fail != nil {
+		return nil, fail
 	}
 	ctx := context.Background()
-	projects, err := client.GetProjects(ctx, core.GetProjectsArgs{})
-	if err != nil {
-		return nil, err
-	}
 	var resources []core.TeamProjectReference
-	for projects != nil {
-		resources = append(resources, (*projects).Value...)
-		if projects.ContinuationToken != "" {
-			// Get next page of team projects
-			projectArgs := core.GetProjectsArgs{
-				ContinuationToken: &projects.ContinuationToken,
-			}
-			projects, err = client.GetProjects(ctx, projectArgs)
-			if err != nil {
-				return nil, err
-			}
-		} else {
-			projects = nil
+	pageArgs := core.GetProjectsArgs{}
+	pages, err := client.GetProjects(ctx, pageArgs)
+	for ; err == nil; pages, err = client.GetProjects(ctx, pageArgs) {
+		resources = append(resources, (*pages).Value...)
+		if pages.ContinuationToken == "" {
+			return resources, nil
+		}
+		pageArgs = core.GetProjectsArgs{
+			ContinuationToken: &pages.ContinuationToken,
 		}
 	}
-	return resources, nil
+	return nil, err
 }
 
-func (az *ProjectGenerator) appendResource(project *core.TeamProjectReference) {
-	az.appendSimpleResource((*project.Id).String(), *project.Name, "azuredevops_project")
+func (az *ProjectGenerator) appendResource(resource *core.TeamProjectReference) {
+	az.appendSimpleResource((*resource.Id).String(), *resource.Name, "azuredevops_project")
 }
 
 func (az *ProjectGenerator) InitResources() error {
 
-	projects, err := az.listResources()
+	resources, err := az.listResources()
 	if err != nil {
 		return err
 	}
-	for _, project := range projects {
-		az.appendResource(&project)
+	for _, resource := range resources {
+		az.appendResource(&resource)
 	}
 	return nil
 }

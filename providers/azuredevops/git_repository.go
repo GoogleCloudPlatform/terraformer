@@ -17,26 +17,26 @@ func (az *GitRepositoryGenerator) listResources() ([]git.GitRepository, error) {
 		return nil, err
 	}
 	ctx := context.Background()
-	projects, err := client.GetRepositories(ctx, git.GetRepositoriesArgs{})
+	resources, err := client.GetRepositories(ctx, git.GetRepositoriesArgs{})
 	if err != nil {
 		return nil, err
 	}
-	return *projects, nil
+	return *resources, nil
 }
 
-func (az *GitRepositoryGenerator) appendResource(project *git.GitRepository) {
+func (az *GitRepositoryGenerator) appendResource(resource *git.GitRepository) {
 
-	az.appendSimpleResource((*project.Id).String(), *project.Name, "azuredevops_git_repository")
+	az.appendSimpleResource((*resource.Id).String(), *resource.Name, "azuredevops_git_repository")
 }
 
 func (az *GitRepositoryGenerator) InitResources() error {
 
-	projects, err := az.listResources()
+	resources, err := az.listResources()
 	if err != nil {
 		return err
 	}
-	for _, project := range projects {
-		az.appendResource(&project)
+	for _, resource := range resources {
+		az.appendResource(&resource)
 	}
 	return nil
 }
