@@ -21,6 +21,7 @@ import (
 	"github.com/microsoft/azure-devops-go-api/azuredevops"
 	"github.com/microsoft/azure-devops-go-api/azuredevops/core"
 	"github.com/microsoft/azure-devops-go-api/azuredevops/git"
+	"github.com/microsoft/azure-devops-go-api/azuredevops/graph"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -48,6 +49,16 @@ func (az *AzureDevOpsService) getConnection() *azuredevops.Connection {
 func (az *AzureDevOpsService) getCoreClient() (core.Client, error) {
 	ctx := context.Background()
 	client, err := core.NewClient(ctx, az.getConnection())
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return client, nil
+}
+
+func (az *AzureDevOpsService) getGraphClient() (graph.Client, error) {
+	ctx := context.Background()
+	client, err := graph.NewClient(ctx, az.getConnection())
 	if err != nil {
 		log.Println(err)
 		return nil, err
