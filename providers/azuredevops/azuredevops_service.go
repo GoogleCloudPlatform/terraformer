@@ -41,9 +41,9 @@ func (az *AzureDevOpsService) GetResourceConnections() map[string][]string {
 
 func (az *AzureDevOpsService) getConnection() *azuredevops.Connection {
 
-	organizationUrl := az.Args["organizationUrl"].(string)
+	organizationURL := az.Args["organizationURL"].(string)
 	personalAccessToken := az.Args["personalAccessToken"].(string)
-	return azuredevops.NewPatConnection(organizationUrl, personalAccessToken)
+	return azuredevops.NewPatConnection(organizationURL, personalAccessToken)
 }
 
 func (az *AzureDevOpsService) getCoreClient() (core.Client, error) {

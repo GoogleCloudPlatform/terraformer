@@ -20,7 +20,8 @@ func (az *ProjectGenerator) listResources() ([]core.TeamProjectReference, error)
 	pageArgs := core.GetProjectsArgs{}
 	pages, err := client.GetProjects(ctx, pageArgs)
 	for ; err == nil; pages, err = client.GetProjects(ctx, pageArgs) {
-		resources = append(resources, (*pages).Value...)
+		items := (*pages).Value
+		resources = append(resources, items...)
 		if pages.ContinuationToken == "" {
 			return resources, nil
 		}
@@ -32,7 +33,8 @@ func (az *ProjectGenerator) listResources() ([]core.TeamProjectReference, error)
 }
 
 func (az *ProjectGenerator) appendResource(resource *core.TeamProjectReference) {
-	az.appendSimpleResource((*resource.Id).String(), *resource.Name, "azuredevops_project")
+	id := *resource.Id
+	az.appendSimpleResource(id.String(), *resource.Name, "azuredevops_project")
 }
 
 func (az *ProjectGenerator) InitResources() error {

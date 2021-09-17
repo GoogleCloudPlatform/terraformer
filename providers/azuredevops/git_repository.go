@@ -26,7 +26,8 @@ func (az *GitRepositoryGenerator) listResources() ([]git.GitRepository, error) {
 
 func (az *GitRepositoryGenerator) appendResource(resource *git.GitRepository) {
 
-	az.appendSimpleResource((*resource.Id).String(), *resource.Name, "azuredevops_git_repository")
+	id := *resource.Id
+	az.appendSimpleResource(id.String(), *resource.Name, "azuredevops_git_repository")
 }
 
 func (az *GitRepositoryGenerator) InitResources() error {

@@ -53,6 +53,6 @@ func (az *GroupGenerator) InitResources() error {
 func (az *GroupGenerator) GetResourceConnections() map[string][]string {
 
 	return map[string][]string{
-		"project": {"project_id", "id"},
+		"project": {"scope", "id"},
 	}
 }

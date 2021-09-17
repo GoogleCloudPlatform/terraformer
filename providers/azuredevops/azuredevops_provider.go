@@ -23,21 +23,21 @@ import (
 
 type AzureDevOpsProvider struct { //nolint
 	terraformutils.Provider
-	organizationUrl     string
+	organizationURL     string
 	personalAccessToken string
 }
 
 func (p *AzureDevOpsProvider) setEnvConfig() error {
 
-	organizationUrl := os.Getenv("AZDO_ORG_SERVICE_URL")
-	if organizationUrl == "" {
+	organizationURL := os.Getenv("AZDO_ORG_SERVICE_URL")
+	if organizationURL == "" {
 		return errors.New("environment variable AZDO_ORG_SERVICE_URL missing")
 	}
 	personalAccessToken := os.Getenv("AZDO_PERSONAL_ACCESS_TOKEN")
 	if personalAccessToken == "" {
 		return errors.New("environment variable AZDO_PERSONAL_ACCESS_TOKEN missing")
 	}
-	p.organizationUrl = organizationUrl
+	p.organizationURL = organizationURL
 	p.personalAccessToken = personalAccessToken
 	return nil
 }
@@ -89,7 +89,7 @@ func (p *AzureDevOpsProvider) InitService(serviceName string, verbose bool) erro
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"organizationUrl":     p.organizationUrl,
+		"organizationURL":     p.organizationURL,
 		"personalAccessToken": p.personalAccessToken,
 	})
 	return nil
