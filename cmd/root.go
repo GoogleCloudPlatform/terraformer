@@ -63,6 +63,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdNs1Importer,
 		newCmdPanosImporter,
 		// VCS
+		newCmdAzureDevOpsImporter,
 		newCmdGithubImporter,
 		newCmdGitLabImporter,
 		// Monitoring & System Management
@@ -108,6 +109,7 @@ func providerGenerators() map[string]func() terraformutils.ProviderGenerator {
 		// Network
 		newCloudflareProvider,
 		// VCS
+		newAzureDevOpsProvider,
 		newGitHubProvider,
 		newGitLabProvider,
 		// Monitoring & System Management

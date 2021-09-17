@@ -34,6 +34,10 @@ List of supported IBM Cloud resources:
     * `ibm_iam_access_group_members`
     * `ibm_iam_access_group_policy`
     * `ibm_iam_access_group_dynamic_rule`
+    * `ibm_iam_service_id`
+    * `ibm_iam_authorization_policy`
+    * `ibm_iam_custom_role`
+    * `ibm_iam_service_policy`
 *   `ibm_container_vpc_cluster`
     * `ibm_container_vpc_cluster`
     * `ibm_container_vpc_worker_pool`
@@ -61,6 +65,18 @@ List of supported IBM Cloud resources:
     * `ibm_cis_edge_functions_trigger`
     * `ibm_cis_healthcheck`
     * `ibm_cis_rate_limit` 
+    * `ibm_cis_domain`
+    * `ibm_cis_origin_pool`
+    * `ibm_cis_waf_package`
+    * `ibm_cis_waf_group`
+    * `ibm_cis_page_rule`
+    * `ibm_cis_custom_page`
+    * `ibm_cis_range_app`
+    * `ibm_cis_certificate_order`
+    * `ibm_cis_routing`
+    * `ibm_cis_cache_settings`
+    * `ibm_cis_tls_settings`
+    * `ibm_cis_filter`
 *   `ibm_is_vpc`
     * `ibm_is_vpc`
     * `ibm_is_vpc_address_prefix`
@@ -69,12 +85,14 @@ List of supported IBM Cloud resources:
     * `ibm_is_vpc_routing_table_route`
 *   `ibm_is_subnet`
 *   `ibm_is_instance`
-*   `ibm_is_security_group`
+* `ibm_is_security_group`
+    * `ibm_is_security_group`
     * `ibm_is_security_group_rule`
 *   `ibm_is_network_acl`
 *   `ibm_is_public_gateway`
 *   `ibm_is_volume`
-*   `ibm_is_vpn_gateway`
+* `ibm_is_vpn_gateway`
+    * `ibm_is_vpn_gateway`
     * `ibm_is_vpn_gateway_connections`
 *   `ibm_is_lb`
     * `ibm_is_lb_pool`
@@ -109,3 +127,14 @@ List of supported IBM Cloud resources:
     * `ibm_dl_gateway`
     * `ibm_dl_virtual_connection`
     * `ibm_dl_provider_gateway`
+* `ibm_container_cluster`
+    * `ibm_container_cluster`
+    * `ibm_container_worker_pool`
+    * `ibm_container_worker_pool_zone_attachment`
+* `ibm_certificate_manager`
+    * `ibm_resource_instance`
+    * `ibm_certificate_manager_import`  
+    * `ibm_certificate_manager_order`  
+* `ibm_vpe_gateway`
+    * `ibm_is_virtual_endpoint_gateway`
+    * `ibm_is_virtual_endpoint_gateway_ip`
