@@ -20,7 +20,8 @@ func (az *ProjectGenerator) listResources() ([]core.TeamProjectReference, error)
 	pageArgs := core.GetProjectsArgs{}
 	pages, err := client.GetProjects(ctx, pageArgs)
 	for ; err == nil; pages, err = client.GetProjects(ctx, pageArgs) {
-		items := (*pages).Value
+		fetched := *pages
+		items := fetched.Value
 		resources = append(resources, items...)
 		if pages.ContinuationToken == "" {
 			return resources, nil
