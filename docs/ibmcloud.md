@@ -120,6 +120,13 @@ List of supported IBM Cloud resources:
     * `ibm_dns_glb_monitor`
     * `ibm_dns_glb_pool`
     * `ibm_dns_glb`
+* `ibm_transit_gateway`
+    * `ibm_tg_gateway`
+    * `ibm_tg_connection`
+* `ibm_direct_link`
+    * `ibm_dl_gateway`
+    * `ibm_dl_virtual_connection`
+    * `ibm_dl_provider_gateway`
 * `ibm_container_cluster`
     * `ibm_container_cluster`
     * `ibm_container_worker_pool`
@@ -131,6 +138,3 @@ List of supported IBM Cloud resources:
 * `ibm_vpe_gateway`
     * `ibm_is_virtual_endpoint_gateway`
     * `ibm_is_virtual_endpoint_gateway_ip`
-
-
- 
