@@ -37,57 +37,72 @@ type IAMGenerator struct {
 func (g IAMGenerator) loadUserPolicies(policyID string, user string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
 		fmt.Sprintf("%s/%s", user, policyID),
-		policyID,
+		normalizeResourceName("iam_user_policy", true),
 		"ibm_iam_user_policy",
 		"ibm",
 		[]string{})
 	return resources
 }
 
-func (g IAMGenerator) loadAccessGroups(grpID string) terraformutils.Resource {
-	resources := terraformutils.NewSimpleResource(
-		grpID,
-		grpID,
-		"ibm_iam_access_group",
-		"ibm",
-		[]string{})
-	return resources
+func (g IAMGenerator) loadAccessGroups() func(grpID, grpName string) terraformutils.Resource {
+	names := make(map[string]struct{})
+	random := false
+	return func(grpID, grpName string) terraformutils.Resource {
+		names, random = getRandom(names, grpName, random)
+		resources := terraformutils.NewSimpleResource(
+			grpID,
+			normalizeResourceName(grpName, random),
+			"ibm_iam_access_group",
+			"ibm",
+			[]string{})
+		return resources
+	}
 }
 
-func (g IAMGenerator) loadServiceIDs(serviceID string) terraformutils.Resource {
-	resources := terraformutils.NewSimpleResource(
-		serviceID,
-		serviceID,
-		"ibm_iam_service_id",
-		"ibm",
-		[]string{})
-	return resources
+func (g IAMGenerator) loadServiceIDs() func(serviceID, grpName string) terraformutils.Resource {
+	names := make(map[string]struct{})
+	random := false
+	return func(grpID, grpName string) terraformutils.Resource {
+		names, random = getRandom(names, grpName, random)
+		resources := terraformutils.NewSimpleResource(
+			grpID,
+			normalizeResourceName(grpName, random),
+			"ibm_iam_service_id",
+			"ibm",
+			[]string{})
+		return resources
+	}
 }
 
 func (g IAMGenerator) loadAuthPolicies(policyID string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
 		policyID,
-		policyID,
+		normalizeResourceName("iam_authorization_policy", true),
 		"ibm_iam_authorization_policy",
 		"ibm",
 		[]string{})
 	return resources
 }
 
-func (g IAMGenerator) loadCustomRoles(roleID string) terraformutils.Resource {
-	resources := terraformutils.NewSimpleResource(
-		roleID,
-		roleID,
-		"ibm_iam_custom_role",
-		"ibm",
-		[]string{})
-	return resources
+func (g IAMGenerator) loadCustomRoles() func(roleID, roleName string) terraformutils.Resource {
+	names := make(map[string]struct{})
+	random := false
+	return func(roleID, roleName string) terraformutils.Resource {
+		names, random = getRandom(names, roleName, random)
+		resources := terraformutils.NewSimpleResource(
+			roleID,
+			normalizeResourceName(roleName, random),
+			"ibm_iam_custom_role",
+			"ibm",
+			[]string{})
+		return resources
+	}
 }
 
 func (g IAMGenerator) loadServicePolicies(serviceID, policyID string, dependsOn []string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", serviceID, policyID),
-		policyID,
+		normalizeResourceName("iam_service_policy", true),
 		"ibm_iam_service_policy",
 		"ibm",
 		map[string]string{},
@@ -98,24 +113,29 @@ func (g IAMGenerator) loadServicePolicies(serviceID, policyID string, dependsOn 
 	return resources
 }
 
-func (g IAMGenerator) loadAccessGroupMembers(grpID string, dependsOn []string) terraformutils.Resource {
-	resources := terraformutils.NewResource(
-		fmt.Sprintf("%s/%s", grpID, grpID),
-		grpID,
-		"ibm_iam_access_group_members",
-		"ibm",
-		map[string]string{},
-		[]string{},
-		map[string]interface{}{
-			"depends_on": dependsOn,
-		})
-	return resources
+func (g IAMGenerator) loadAccessGroupMembers() func(grpID string, dependsOn []string, grpName string) terraformutils.Resource {
+	names := make(map[string]struct{})
+	random := false
+	return func(grpID string, dependsOn []string, grpName string) terraformutils.Resource {
+		names, random = getRandom(names, grpName, random)
+		resources := terraformutils.NewResource(
+			fmt.Sprintf("%s/%s", grpID, grpID),
+			normalizeResourceName(grpName, random),
+			"ibm_iam_access_group_members",
+			"ibm",
+			map[string]string{},
+			[]string{},
+			map[string]interface{}{
+				"depends_on": dependsOn,
+			})
+		return resources
+	}
 }
 
 func (g IAMGenerator) loadAccessGroupPolicies(grpID, policyID string, dependsOn []string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", grpID, policyID),
-		policyID,
+		normalizeResourceName("iam_access_group_policy", true),
 		"ibm_iam_access_group_policy",
 		"ibm",
 		map[string]string{},
@@ -126,18 +146,23 @@ func (g IAMGenerator) loadAccessGroupPolicies(grpID, policyID string, dependsOn 
 	return resources
 }
 
-func (g IAMGenerator) loadAccessGroupDynamicPolicies(grpID, ruleID string, dependsOn []string) terraformutils.Resource {
-	resources := terraformutils.NewResource(
-		fmt.Sprintf("%s/%s", grpID, ruleID),
-		ruleID,
-		"ibm_iam_access_group_dynamic_rule",
-		"ibm",
-		map[string]string{},
-		[]string{},
-		map[string]interface{}{
-			"depends_on": dependsOn,
-		})
-	return resources
+func (g IAMGenerator) loadAccessGroupDynamicPolicies() func(grpID, ruleID, name string, dependsOn []string) terraformutils.Resource {
+	names := make(map[string]struct{})
+	random := false
+	return func(grpID, ruleID, name string, dependsOn []string) terraformutils.Resource {
+		names, random = getRandom(names, name, random)
+		resources := terraformutils.NewResource(
+			fmt.Sprintf("%s/%s", grpID, ruleID),
+			normalizeResourceName(name, random),
+			"ibm_iam_access_group_dynamic_rule",
+			"ibm",
+			map[string]string{},
+			[]string{},
+			map[string]interface{}{
+				"depends_on": dependsOn,
+			})
+		return resources
+	}
 }
 
 func (g *IAMGenerator) InitResources() error {
@@ -201,12 +226,15 @@ func (g *IAMGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
+	fnObjt := g.loadAccessGroups()
+	agmfnObj := g.loadAccessGroupMembers()
 	for _, group := range agrps {
-		g.Resources = append(g.Resources, g.loadAccessGroups(group.ID))
+		g.Resources = append(g.Resources, fnObjt(group.ID, group.Name))
+		resourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
 		var dependsOn []string
 		dependsOn = append(dependsOn,
-			"ibm_iam_access_group."+terraformutils.TfSanitize(group.ID))
-		g.Resources = append(g.Resources, g.loadAccessGroupMembers(group.ID, dependsOn))
+			"ibm_iam_access_group."+resourceName)
+		g.Resources = append(g.Resources, agmfnObj(group.ID, dependsOn, group.Name))
 
 		policies, err := iampap.V1Policy().List(iampapv1.SearchParams{
 			AccountID:     accountID,
@@ -224,8 +252,9 @@ func (g *IAMGenerator) InitResources() error {
 		if err != nil {
 			return err
 		}
+		dpfnObj := g.loadAccessGroupDynamicPolicies()
 		for _, d := range dynamicPolicies {
-			g.Resources = append(g.Resources, g.loadAccessGroupDynamicPolicies(group.ID, d.RuleID, dependsOn))
+			g.Resources = append(g.Resources, dpfnObj(group.ID, d.RuleID, d.Name, dependsOn))
 		}
 	}
 
@@ -283,13 +312,14 @@ func (g *IAMGenerator) InitResources() error {
 			break
 		}
 	}
-
+	servicefnObjt := g.loadServiceIDs()
 	// loop through all service IDs and fetch policies correspponds to each service ID
 	for _, service := range allrecs {
-		g.Resources = append(g.Resources, g.loadServiceIDs(*service.ID))
+		g.Resources = append(g.Resources, servicefnObjt(*service.ID, *service.Name))
+		resourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
 		var dependsOn []string
 		dependsOn = append(dependsOn,
-			"ibm_iam_service_id."+terraformutils.TfSanitize(*service.ID))
+			"ibm_iam_service_id."+resourceName)
 
 		listServicePolicyOptions := iampolicymanagementv1.ListPoliciesOptions{
 			AccountID: core.StringPtr(accountID),
@@ -337,9 +367,9 @@ func (g *IAMGenerator) InitResources() error {
 	if err != nil {
 		return fmt.Errorf("error retrieving custom roles: %s", err)
 	}
-
+	rolefnObjt := g.loadCustomRoles()
 	for _, r := range customRoles {
-		g.Resources = append(g.Resources, g.loadCustomRoles(*r.ID))
+		g.Resources = append(g.Resources, rolefnObjt(*r.ID, *r.Name))
 	}
 
 	return nil

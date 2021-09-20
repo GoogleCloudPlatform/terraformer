@@ -33,7 +33,7 @@ type DatabasePostgresqlGenerator struct {
 func (g DatabasePostgresqlGenerator) loadPostgresqlDB(dbID string, dbName string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
 		dbID,
-		dbName,
+		normalizeResourceName(dbName, false),
 		"ibm_database",
 		"ibm",
 		[]string{})

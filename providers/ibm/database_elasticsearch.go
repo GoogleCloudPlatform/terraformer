@@ -33,7 +33,7 @@ type DatabaseElasticSearchGenerator struct {
 func (g DatabaseElasticSearchGenerator) loadElasticSearchDB(dbID string, dbName string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
 		dbID,
-		dbName,
+		normalizeResourceName(dbName, false),
 		"ibm_database",
 		"ibm",
 		[]string{})

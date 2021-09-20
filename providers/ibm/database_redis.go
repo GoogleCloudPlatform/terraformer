@@ -33,7 +33,7 @@ type DatabaseRedisGenerator struct {
 func (g DatabaseRedisGenerator) loadRedisDB(dbID string, dbName string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
 		dbID,
-		dbName,
+		normalizeResourceName(dbName, false),
 		"ibm_database",
 		"ibm",
 		[]string{})
