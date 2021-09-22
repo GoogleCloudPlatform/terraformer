@@ -33,7 +33,7 @@ type DatabaseRabbitMQGenerator struct {
 func (g DatabaseRabbitMQGenerator) loadRabbitMQDB(dbID string, dbName string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
 		dbID,
-		dbName,
+		normalizeResourceName(dbName, false),
 		"ibm_database",
 		"ibm",
 		[]string{})

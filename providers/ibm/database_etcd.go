@@ -33,7 +33,7 @@ type DatabaseETCDGenerator struct {
 func (g DatabaseETCDGenerator) loadETCDDB(dbID string, dbName string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
 		dbID,
-		dbName,
+		normalizeResourceName(dbName, false),
 		"ibm_database",
 		"ibm",
 		[]string{})
