@@ -217,6 +217,13 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 		"redis": {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
+		"route_table": {
+			"resource_group": []string{
+				"resource_group_name", "name",
+				"location", "location",
+			},
+			"route_table": []string{"route_table_name", "name"},
+		},
 		"scaleset": {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
@@ -276,6 +283,7 @@ func (p *AzureProvider) GetSupportedService() map[string]terraformutils.ServiceG
 		"purview":                              &PurviewGenerator{},
 		"redis":                                &RedisGenerator{},
 		"resource_group":                       &ResourceGroupGenerator{},
+		"route_table":                          &RouteTableGenerator{},
 		"scaleset":                             &ScaleSetGenerator{},
 		"security_center_contact":              &SecurityCenterContactGenerator{},
 		"security_center_subscription_pricing": &SecurityCenterSubscriptionPricingGenerator{},

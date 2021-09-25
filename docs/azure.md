@@ -157,6 +157,10 @@ export ARM_TENANT_ID=[TENANT_ID]
     * `azurerm_purview_account`
 *   `resource_group`
     * `azurerm_resource_group`
+*   `route_table`
+    * `azurerm_route_table`
+    * `azurerm_route`
+    * `azurerm_route_filter`
 *   `scaleset`
     * `azurerm_virtual_machine_scale_set`
 *   `security_center`
