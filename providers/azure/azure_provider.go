@@ -198,7 +198,11 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 			"subnet":         []string{"subnet_id", "id"},
 		},
 		"network_security_group": {
-			"resource_group": []string{"resource_group_name", "name"},
+			"resource_group": []string{
+				"resource_group_name", "name",
+				"location", "location",
+			},
+			"network_security_group": []string{"network_security_group_name", "name"},
 		},
 		"private_dns": {
 			"resource_group":  []string{"resource_group_name", "name"},
