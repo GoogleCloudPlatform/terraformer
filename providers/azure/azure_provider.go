@@ -297,6 +297,7 @@ func (p *AzureProvider) GetSupportedService() map[string]terraformutils.ServiceG
 		"eventhub":                             &EventHubGenerator{},
 		"keyvault":                             &KeyVaultGenerator{},
 		"load_balancer":                        &LoadBalancerGenerator{},
+		"management_lock":                      &ManagementLockGenerator{},
 		"network_interface":                    &NetworkInterfaceGenerator{},
 		"network_security_group":               &NetworkSecurityGroupGenerator{},
 		"network_watcher":                      &NetworkWatcherGenerator{},

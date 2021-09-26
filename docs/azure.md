@@ -162,6 +162,7 @@ export ARM_TENANT_ID=[TENANT_ID]
     * `azurerm_purview_account`
 *   `resource_group`
     * `azurerm_resource_group`
+    * `azurerm_management_lock`
 *   `route_table`
     * `azurerm_route_table`
     * `azurerm_route`
