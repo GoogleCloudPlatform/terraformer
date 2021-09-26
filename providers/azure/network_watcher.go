@@ -35,12 +35,12 @@ func (az *NetworkWatcherGenerator) appendResource(resource *network.Watcher) {
 	az.AppendSimpleResource(*resource.ID, *resource.Name, "azurerm_network_watcher")
 }
 
-func (az *NetworkWatcherGenerator) appendFlowLogs(parent *network.Watcher, resourceGroupId *ResourceID) error {
+func (az *NetworkWatcherGenerator) appendFlowLogs(parent *network.Watcher, resourceGroupID *ResourceID) error {
 	subscriptionID, _, authorizer := az.getClientArgs()
 	client := network.NewFlowLogsClient(subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
-	iterator, err := client.ListComplete(ctx, resourceGroupId.ResourceGroup, *parent.Name)
+	iterator, err := client.ListComplete(ctx, resourceGroupID.ResourceGroup, *parent.Name)
 	if err != nil {
 		return err
 	}
@@ -55,12 +55,12 @@ func (az *NetworkWatcherGenerator) appendFlowLogs(parent *network.Watcher, resou
 	return nil
 }
 
-func (az *NetworkWatcherGenerator) appendPacketCaptures(parent *network.Watcher, resourceGroupId *ResourceID) error {
+func (az *NetworkWatcherGenerator) appendPacketCaptures(parent *network.Watcher, resourceGroupID *ResourceID) error {
 	subscriptionID, _, authorizer := az.getClientArgs()
 	client := network.NewPacketCapturesClient(subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
-	resources, err := client.List(ctx, resourceGroupId.ResourceGroup, *parent.Name)
+	resources, err := client.List(ctx, resourceGroupID.ResourceGroup, *parent.Name)
 	if err != nil {
 		return err
 	}
@@ -78,15 +78,15 @@ func (az *NetworkWatcherGenerator) InitResources() error {
 	}
 	for _, resource := range resources {
 		az.appendResource(&resource)
-		resourceGroupId, err := ParseAzureResourceID(*resource.ID)
+		resourceGroupID, err := ParseAzureResourceID(*resource.ID)
 		if err != nil {
 			return err
 		}
-		err = az.appendFlowLogs(&resource, resourceGroupId)
+		err = az.appendFlowLogs(&resource, resourceGroupID)
 		if err != nil {
 			return err
 		}
-		err = az.appendPacketCaptures(&resource, resourceGroupId)
+		err = az.appendPacketCaptures(&resource, resourceGroupID)
 		if err != nil {
 			return err
 		}

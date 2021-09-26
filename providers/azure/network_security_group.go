@@ -44,12 +44,12 @@ func (az *NetworkSecurityGroupGenerator) appendResource(resource *network.Securi
 	az.AppendSimpleResource(*resource.ID, *resource.Name, "azurerm_network_security_group")
 }
 
-func (az *NetworkSecurityGroupGenerator) appendRules(parent *network.SecurityGroup, resourceGroupId *ResourceID) error {
+func (az *NetworkSecurityGroupGenerator) appendRules(parent *network.SecurityGroup, resourceGroupID *ResourceID) error {
 	subscriptionID, _, authorizer := az.getClientArgs()
 	client := network.NewSecurityRulesClient(subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
-	iterator, err := client.ListComplete(ctx, resourceGroupId.ResourceGroup, *parent.Name)
+	iterator, err := client.ListComplete(ctx, resourceGroupID.ResourceGroup, *parent.Name)
 	if err != nil {
 		return err
 	}
@@ -72,11 +72,11 @@ func (az *NetworkSecurityGroupGenerator) InitResources() error {
 	}
 	for _, resource := range resources {
 		az.appendResource(&resource)
-		resourceGroupId, err := ParseAzureResourceID(*resource.ID)
+		resourceGroupID, err := ParseAzureResourceID(*resource.ID)
 		if err != nil {
 			return err
 		}
-		err = az.appendRules(&resource, resourceGroupId)
+		err = az.appendRules(&resource, resourceGroupID)
 		if err != nil {
 			return err
 		}

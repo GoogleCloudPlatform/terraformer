@@ -44,12 +44,12 @@ func (az *RouteTableGenerator) appendResource(resource *network.RouteTable) {
 	az.AppendSimpleResource(*resource.ID, *resource.Name, "azurerm_route_table")
 }
 
-func (az *RouteTableGenerator) appendRoutes(parent *network.RouteTable, resourceGroupId *ResourceID) error {
+func (az *RouteTableGenerator) appendRoutes(parent *network.RouteTable, resourceGroupID *ResourceID) error {
 	subscriptionID, _, authorizer := az.getClientArgs()
 	client := network.NewRoutesClient(subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
-	iterator, err := client.ListComplete(ctx, resourceGroupId.ResourceGroup, *parent.Name)
+	iterator, err := client.ListComplete(ctx, resourceGroupID.ResourceGroup, *parent.Name)
 	if err != nil {
 		return err
 	}
@@ -105,11 +105,11 @@ func (az *RouteTableGenerator) InitResources() error {
 	}
 	for _, resource := range resources {
 		az.appendResource(&resource)
-		resourceGroupId, err := ParseAzureResourceID(*resource.ID)
+		resourceGroupID, err := ParseAzureResourceID(*resource.ID)
 		if err != nil {
 			return err
 		}
-		err = az.appendRoutes(&resource, resourceGroupId)
+		err = az.appendRoutes(&resource, resourceGroupID)
 		if err != nil {
 			return err
 		}
