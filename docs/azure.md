@@ -183,6 +183,7 @@ export ARM_TENANT_ID=[TENANT_ID]
     * `azurerm_synapse_managed_private_endpoint`
     * `azurerm_synapse_private_link_hub`
 *   `virtual_machine`
+    * `azurerm_ssh_public_key`
     * `azurerm_virtual_machine`
 *   `virtual_network`
     * `azurerm_virtual_network`

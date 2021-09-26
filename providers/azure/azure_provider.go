@@ -243,6 +243,12 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 		"scaleset": {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
+		"ssh_public_key": {
+			"resource_group": []string{
+				"resource_group_name", "name",
+				"location", "location",
+			},
+		},
 		"storage_account": {
 			"resource_group":  []string{"resource_group_name", "name"},
 			"virtual_network": []string{"virtual_network_subnet_ids", "id"},
@@ -304,6 +310,7 @@ func (p *AzureProvider) GetSupportedService() map[string]terraformutils.ServiceG
 		"scaleset":                             &ScaleSetGenerator{},
 		"security_center_contact":              &SecurityCenterContactGenerator{},
 		"security_center_subscription_pricing": &SecurityCenterSubscriptionPricingGenerator{},
+		"ssh_public_key":                       &SSHPublicKeyGenerator{},
 		"storage_account":                      &StorageAccountGenerator{},
 		"storage_blob":                         &StorageBlobGenerator{},
 		"storage_container":                    &StorageContainerGenerator{},
