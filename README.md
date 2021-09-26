@@ -43,6 +43,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [Cloudflare](/docs/cloudflare.md)
         * [PAN-OS](/docs/panos.md)
     * VCS
+        * [Azure DevOps](/docs/azuredevops.md)
         * [GitHub](/docs/github.md)
         * [Gitlab](/docs/gitlab.md)
     * Monitoring & System Management
