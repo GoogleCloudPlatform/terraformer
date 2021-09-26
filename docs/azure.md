@@ -136,6 +136,10 @@ export ARM_TENANT_ID=[TENANT_ID]
 *   `network_security_group`
     * `azurerm_network_security_group`
     * `azurerm_network_security_rule`
+*   `network_watcher`
+    * `azurerm_network_watcher`
+    * `azurerm_network_watcher_flow_log`
+    * `azurerm_network_packet_capture`
 *   `private_dns`
     * `azurerm_private_dns_a_record`
     * `azurerm_private_dns_aaaa_record`

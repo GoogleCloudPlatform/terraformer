@@ -204,9 +204,21 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 			},
 			"network_security_group": []string{"network_security_group_name", "name"},
 		},
+		"network_watcher": {
+			"resource_group": []string{
+				"resource_group_name", "name",
+				"location", "location",
+			},
+			"network_watcher": []string{"network_watcher_name", "name"},
+			"storage_account": []string{"storage_account_id", "id"},
+		},
 		"private_dns": {
 			"resource_group":  []string{"resource_group_name", "name"},
 			"virtual_network": []string{"virtual_network_id", "id"},
+			"private_dns": []string{
+				"zone_name", "name",
+				"private_dns_zone_name", "name",
+			},
 		},
 		"private_endpoint": {
 			"resource_group": []string{"resource_group_name", "name"},
@@ -281,6 +293,7 @@ func (p *AzureProvider) GetSupportedService() map[string]terraformutils.ServiceG
 		"load_balancer":                        &LoadBalancerGenerator{},
 		"network_interface":                    &NetworkInterfaceGenerator{},
 		"network_security_group":               &NetworkSecurityGroupGenerator{},
+		"network_watcher":                      &NetworkWatcherGenerator{},
 		"private_dns":                          &PrivateDNSGenerator{},
 		"private_endpoint":                     &PrivateEndpointGenerator{},
 		"public_ip":                            &PublicIPGenerator{},
