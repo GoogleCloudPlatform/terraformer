@@ -18,31 +18,31 @@ import (
 	"context"
 	"log"
 
-	"github.com/Azure/azure-sdk-for-go/services/purview/mgmt/2021-07-01/purview"
+	"github.com/Azure/azure-sdk-for-go/services/compute/mgmt/2020-12-01/compute"
 )
 
-type PurviewGenerator struct {
+type SSHPublicKeyGenerator struct {
 	AzureService
 }
 
-func (az *PurviewGenerator) listAccounts() ([]purview.Account, error) {
+func (az *SSHPublicKeyGenerator) listResources() ([]compute.SSHPublicKeyResource, error) {
 	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
-	client := purview.NewAccountsClient(subscriptionID)
+	client := compute.NewSSHPublicKeysClient(subscriptionID)
 	client.Authorizer = authorizer
 	var (
-		iterator purview.AccountListIterator
+		iterator compute.SSHPublicKeysGroupListResultIterator
 		err      error
 	)
 	ctx := context.Background()
 	if resourceGroup != "" {
-		iterator, err = client.ListByResourceGroupComplete(ctx, resourceGroup, "")
+		iterator, err = client.ListByResourceGroupComplete(ctx, resourceGroup)
 	} else {
-		iterator, err = client.ListBySubscriptionComplete(ctx, "")
+		iterator, err = client.ListBySubscriptionComplete(ctx)
 	}
 	if err != nil {
 		return nil, err
 	}
-	var resources []purview.Account
+	var resources []compute.SSHPublicKeyResource
 	for iterator.NotDone() {
 		item := iterator.Value()
 		resources = append(resources, item)
@@ -54,18 +54,18 @@ func (az *PurviewGenerator) listAccounts() ([]purview.Account, error) {
 	return resources, nil
 }
 
-func (az *PurviewGenerator) AppendAccount(account *purview.Account) {
-	az.AppendSimpleResource(*account.ID, *account.Name, "azurerm_purview_account")
+func (az *SSHPublicKeyGenerator) appendResource(resource *compute.SSHPublicKeyResource) {
+	az.AppendSimpleResource(*resource.ID, *resource.Name, "azurerm_ssh_public_key")
 }
 
-func (az *PurviewGenerator) InitResources() error {
+func (az *SSHPublicKeyGenerator) InitResources() error {
 
-	accounts, err := az.listAccounts()
+	resources, err := az.listResources()
 	if err != nil {
 		return err
 	}
-	for _, account := range accounts {
-		az.AppendAccount(&account)
+	for _, resource := range resources {
+		az.appendResource(&resource)
 	}
 	return nil
 }

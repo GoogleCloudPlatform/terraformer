@@ -21,46 +21,37 @@ import (
 	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2020-03-01/network"
 )
 
-type NetworkSecurityGroupGenerator struct {
+type NetworkWatcherGenerator struct {
 	AzureService
 }
 
-func (az *NetworkSecurityGroupGenerator) listResources() ([]network.SecurityGroup, error) {
+func (az *NetworkWatcherGenerator) listResources() ([]network.Watcher, error) {
 	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
-	client := network.NewSecurityGroupsClient(subscriptionID)
+	client := network.NewWatchersClient(subscriptionID)
 	client.Authorizer = authorizer
 	var (
-		iterator network.SecurityGroupListResultIterator
-		err      error
+		resources network.WatcherListResult
+		err       error
 	)
 	ctx := context.Background()
 	if resourceGroup != "" {
-		iterator, err = client.ListComplete(ctx, resourceGroup)
+		resources, err = client.List(ctx, resourceGroup)
 	} else {
-		iterator, err = client.ListAllComplete(ctx)
+		resources, err = client.ListAll(ctx)
 	}
 	if err != nil {
 		return nil, err
 	}
-	var resources []network.SecurityGroup
-	for iterator.NotDone() {
-		item := iterator.Value()
-		resources = append(resources, item)
-		if err := iterator.NextWithContext(ctx); err != nil {
-			log.Println(err)
-			return resources, err
-		}
-	}
-	return resources, nil
+	return *resources.Value, nil
 }
 
-func (az *NetworkSecurityGroupGenerator) appendResource(resource *network.SecurityGroup) {
-	az.AppendSimpleResource(*resource.ID, *resource.Name, "azurerm_network_security_group")
+func (az *NetworkWatcherGenerator) appendResource(resource *network.Watcher) {
+	az.AppendSimpleResource(*resource.ID, *resource.Name, "azurerm_network_watcher")
 }
 
-func (az *NetworkSecurityGroupGenerator) appendRules(parent *network.SecurityGroup, resourceGroupID *ResourceID) error {
+func (az *NetworkWatcherGenerator) appendFlowLogs(parent *network.Watcher, resourceGroupID *ResourceID) error {
 	subscriptionID, _, authorizer := az.getClientArgs()
-	client := network.NewSecurityRulesClient(subscriptionID)
+	client := network.NewFlowLogsClient(subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
 	iterator, err := client.ListComplete(ctx, resourceGroupID.ResourceGroup, *parent.Name)
@@ -69,7 +60,7 @@ func (az *NetworkSecurityGroupGenerator) appendRules(parent *network.SecurityGro
 	}
 	for iterator.NotDone() {
 		item := iterator.Value()
-		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_network_security_rule")
+		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_network_watcher_flow_log")
 		if err := iterator.NextWithContext(ctx); err != nil {
 			log.Println(err)
 			return err
@@ -78,7 +69,22 @@ func (az *NetworkSecurityGroupGenerator) appendRules(parent *network.SecurityGro
 	return nil
 }
 
-func (az *NetworkSecurityGroupGenerator) InitResources() error {
+func (az *NetworkWatcherGenerator) appendPacketCaptures(parent *network.Watcher, resourceGroupID *ResourceID) error {
+	subscriptionID, _, authorizer := az.getClientArgs()
+	client := network.NewPacketCapturesClient(subscriptionID)
+	client.Authorizer = authorizer
+	ctx := context.Background()
+	resources, err := client.List(ctx, resourceGroupID.ResourceGroup, *parent.Name)
+	if err != nil {
+		return err
+	}
+	for _, item := range *resources.Value {
+		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_network_packet_capture")
+	}
+	return nil
+}
+
+func (az *NetworkWatcherGenerator) InitResources() error {
 
 	resources, err := az.listResources()
 	if err != nil {
@@ -90,7 +96,11 @@ func (az *NetworkSecurityGroupGenerator) InitResources() error {
 		if err != nil {
 			return err
 		}
-		err = az.appendRules(&resource, resourceGroupID)
+		err = az.appendFlowLogs(&resource, resourceGroupID)
+		if err != nil {
+			return err
+		}
+		err = az.appendPacketCaptures(&resource, resourceGroupID)
 		if err != nil {
 			return err
 		}

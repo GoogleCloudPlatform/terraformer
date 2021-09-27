@@ -135,6 +135,11 @@ export ARM_TENANT_ID=[TENANT_ID]
     * `azurerm_network_interface`
 *   `network_security_group`
     * `azurerm_network_security_group`
+    * `azurerm_network_security_rule`
+*   `network_watcher`
+    * `azurerm_network_watcher`
+    * `azurerm_network_watcher_flow_log`
+    * `azurerm_network_packet_capture`
 *   `private_dns`
     * `azurerm_private_dns_a_record`
     * `azurerm_private_dns_aaaa_record`
@@ -157,6 +162,11 @@ export ARM_TENANT_ID=[TENANT_ID]
     * `azurerm_purview_account`
 *   `resource_group`
     * `azurerm_resource_group`
+    * `azurerm_management_lock`
+*   `route_table`
+    * `azurerm_route_table`
+    * `azurerm_route`
+    * `azurerm_route_filter`
 *   `scaleset`
     * `azurerm_virtual_machine_scale_set`
 *   `security_center`
@@ -174,6 +184,7 @@ export ARM_TENANT_ID=[TENANT_ID]
     * `azurerm_synapse_managed_private_endpoint`
     * `azurerm_synapse_private_link_hub`
 *   `virtual_machine`
+    * `azurerm_ssh_public_key`
     * `azurerm_virtual_machine`
 *   `virtual_network`
     * `azurerm_virtual_network`

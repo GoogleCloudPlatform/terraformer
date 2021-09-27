@@ -18,31 +18,31 @@ import (
 	"context"
 	"log"
 
-	"github.com/Azure/azure-sdk-for-go/services/purview/mgmt/2021-07-01/purview"
+	"github.com/Azure/azure-sdk-for-go/services/resources/mgmt/2016-09-01/locks"
 )
 
-type PurviewGenerator struct {
+type ManagementLockGenerator struct {
 	AzureService
 }
 
-func (az *PurviewGenerator) listAccounts() ([]purview.Account, error) {
+func (az *ManagementLockGenerator) listResources() ([]locks.ManagementLockObject, error) {
 	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
-	client := purview.NewAccountsClient(subscriptionID)
+	client := locks.NewManagementLocksClient(subscriptionID)
 	client.Authorizer = authorizer
 	var (
-		iterator purview.AccountListIterator
+		iterator locks.ManagementLockListResultIterator
 		err      error
 	)
 	ctx := context.Background()
 	if resourceGroup != "" {
-		iterator, err = client.ListByResourceGroupComplete(ctx, resourceGroup, "")
+		iterator, err = client.ListAtResourceGroupLevelComplete(ctx, resourceGroup, "")
 	} else {
-		iterator, err = client.ListBySubscriptionComplete(ctx, "")
+		iterator, err = client.ListAtSubscriptionLevelComplete(ctx, "")
 	}
 	if err != nil {
 		return nil, err
 	}
-	var resources []purview.Account
+	var resources []locks.ManagementLockObject
 	for iterator.NotDone() {
 		item := iterator.Value()
 		resources = append(resources, item)
@@ -54,18 +54,18 @@ func (az *PurviewGenerator) listAccounts() ([]purview.Account, error) {
 	return resources, nil
 }
 
-func (az *PurviewGenerator) AppendAccount(account *purview.Account) {
-	az.AppendSimpleResource(*account.ID, *account.Name, "azurerm_purview_account")
+func (az *ManagementLockGenerator) appendResource(resource *locks.ManagementLockObject) {
+	az.AppendSimpleResource(*resource.ID, *resource.Name, "azurerm_management_lock")
 }
 
-func (az *PurviewGenerator) InitResources() error {
+func (az *ManagementLockGenerator) InitResources() error {
 
-	accounts, err := az.listAccounts()
+	resources, err := az.listResources()
 	if err != nil {
 		return err
 	}
-	for _, account := range accounts {
-		az.AppendAccount(&account)
+	for _, resource := range resources {
+		az.appendResource(&resource)
 	}
 	return nil
 }

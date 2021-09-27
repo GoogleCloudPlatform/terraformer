@@ -21,16 +21,16 @@ import (
 	"github.com/Azure/azure-sdk-for-go/services/network/mgmt/2020-03-01/network"
 )
 
-type NetworkSecurityGroupGenerator struct {
+type RouteTableGenerator struct {
 	AzureService
 }
 
-func (az *NetworkSecurityGroupGenerator) listResources() ([]network.SecurityGroup, error) {
+func (az *RouteTableGenerator) listResources() ([]network.RouteTable, error) {
 	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
-	client := network.NewSecurityGroupsClient(subscriptionID)
+	client := network.NewRouteTablesClient(subscriptionID)
 	client.Authorizer = authorizer
 	var (
-		iterator network.SecurityGroupListResultIterator
+		iterator network.RouteTableListResultIterator
 		err      error
 	)
 	ctx := context.Background()
@@ -42,7 +42,7 @@ func (az *NetworkSecurityGroupGenerator) listResources() ([]network.SecurityGrou
 	if err != nil {
 		return nil, err
 	}
-	var resources []network.SecurityGroup
+	var resources []network.RouteTable
 	for iterator.NotDone() {
 		item := iterator.Value()
 		resources = append(resources, item)
@@ -54,13 +54,13 @@ func (az *NetworkSecurityGroupGenerator) listResources() ([]network.SecurityGrou
 	return resources, nil
 }
 
-func (az *NetworkSecurityGroupGenerator) appendResource(resource *network.SecurityGroup) {
-	az.AppendSimpleResource(*resource.ID, *resource.Name, "azurerm_network_security_group")
+func (az *RouteTableGenerator) appendResource(resource *network.RouteTable) {
+	az.AppendSimpleResource(*resource.ID, *resource.Name, "azurerm_route_table")
 }
 
-func (az *NetworkSecurityGroupGenerator) appendRules(parent *network.SecurityGroup, resourceGroupID *ResourceID) error {
+func (az *RouteTableGenerator) appendRoutes(parent *network.RouteTable, resourceGroupID *ResourceID) error {
 	subscriptionID, _, authorizer := az.getClientArgs()
-	client := network.NewSecurityRulesClient(subscriptionID)
+	client := network.NewRoutesClient(subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
 	iterator, err := client.ListComplete(ctx, resourceGroupID.ResourceGroup, *parent.Name)
@@ -69,7 +69,7 @@ func (az *NetworkSecurityGroupGenerator) appendRules(parent *network.SecurityGro
 	}
 	for iterator.NotDone() {
 		item := iterator.Value()
-		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_network_security_rule")
+		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_route")
 		if err := iterator.NextWithContext(ctx); err != nil {
 			log.Println(err)
 			return err
@@ -78,7 +78,40 @@ func (az *NetworkSecurityGroupGenerator) appendRules(parent *network.SecurityGro
 	return nil
 }
 
-func (az *NetworkSecurityGroupGenerator) InitResources() error {
+func (az *RouteTableGenerator) listRouteFilters() ([]network.RouteFilter, error) {
+	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
+	client := network.NewRouteFiltersClient(subscriptionID)
+	client.Authorizer = authorizer
+	var (
+		iterator network.RouteFilterListResultIterator
+		err      error
+	)
+	ctx := context.Background()
+	if resourceGroup != "" {
+		iterator, err = client.ListByResourceGroupComplete(ctx, resourceGroup)
+	} else {
+		iterator, err = client.ListComplete(ctx)
+	}
+	if err != nil {
+		return nil, err
+	}
+	var resources []network.RouteFilter
+	for iterator.NotDone() {
+		item := iterator.Value()
+		resources = append(resources, item)
+		if err := iterator.NextWithContext(ctx); err != nil {
+			log.Println(err)
+			return resources, err
+		}
+	}
+	return resources, nil
+}
+
+func (az *RouteTableGenerator) appendRouteFilters(resource *network.RouteFilter) {
+	az.AppendSimpleResource(*resource.ID, *resource.Name, "azurerm_route_filter")
+}
+
+func (az *RouteTableGenerator) InitResources() error {
 
 	resources, err := az.listResources()
 	if err != nil {
@@ -90,7 +123,18 @@ func (az *NetworkSecurityGroupGenerator) InitResources() error {
 		if err != nil {
 			return err
 		}
-		err = az.appendRules(&resource, resourceGroupID)
+		err = az.appendRoutes(&resource, resourceGroupID)
+		if err != nil {
+			return err
+		}
+	}
+
+	filters, err := az.listRouteFilters()
+	if err != nil {
+		return err
+	}
+	for _, resource := range filters {
+		az.appendRouteFilters(&resource)
 		if err != nil {
 			return err
 		}
