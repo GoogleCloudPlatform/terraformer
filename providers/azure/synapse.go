@@ -126,6 +126,9 @@ func (az *SynapseGenerator) appendManagedPrivateEndpoint(workspace *synapse.Work
 		return nil
 	}
 	virtualNetworkName := *workspace.WorkspaceProperties.ManagedVirtualNetwork
+	if virtualNetworkName == "" || virtualNetworkName == "default" {
+		return nil
+	}
 	subscriptionID, _, authorizer := az.getClientArgs()
 	client := managedvirtualnetwork.NewManagedPrivateEndpointsClient(subscriptionID)
 	client.Authorizer = authorizer
@@ -209,11 +212,10 @@ func (az *SynapseGenerator) InitResources() error {
 	}
 
 	hubs, err := az.listPrivateLinkHubs()
-	if err != nil {
-		return err
-	}
-	for _, hub := range hubs {
-		az.appendtPrivateLinkHubs(&hub)
+	if err == nil {
+		for _, hub := range hubs {
+			az.appendtPrivateLinkHubs(&hub)
+		}
 	}
 	return nil
 }
