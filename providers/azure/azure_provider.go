@@ -21,10 +21,11 @@ import (
 	"strings"
 
 	"github.com/Azure/go-autorest/autorest"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/hashicorp/go-azure-helpers/authentication"
 	"github.com/hashicorp/go-azure-helpers/sender"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 )
 
 type AzureProvider struct { //nolint
@@ -376,33 +377,4 @@ func (p *AzureProvider) InitService(serviceName string, verbose bool) error {
 		"resource_group": p.resourceGroup,
 	})
 	return nil
-}
-
-func (p *AzureService) getClientArgs() (subscriptionID string, resourceGroup string, authorizer autorest.Authorizer) {
-	subs := p.Args["config"].(authentication.Config).SubscriptionID
-	auth := p.Args["authorizer"].(autorest.Authorizer)
-	resg := p.Args["resource_group"].(string)
-	return subs, resg, auth
-}
-
-func (p *AzureService) AppendSimpleResource(id string, resourceName string, resourceType string) {
-	newResource := terraformutils.NewSimpleResource(id, resourceName, resourceType, p.ProviderName, []string{})
-	p.Resources = append(p.Resources, newResource)
-}
-
-func (p *AzureService) appendSimpleAssociation(id string, linkedResourceName string, resourceName *string, resourceType string, attributes map[string]string) {
-	var resourceName2 string
-	if resourceName != nil {
-		resourceName2 = *resourceName
-	} else {
-		resourceName0 := strings.ReplaceAll(resourceType, "azurerm_", "")
-		resourceName1 := resourceName0[strings.IndexByte(resourceName0, '_'):]
-		resourceName2 = linkedResourceName + resourceName1
-	}
-	newResource := terraformutils.NewResource(
-		id, resourceName2, resourceType, p.ProviderName, attributes,
-		[]string{"name"},
-		map[string]interface{}{},
-	)
-	p.Resources = append(p.Resources, newResource)
 }
