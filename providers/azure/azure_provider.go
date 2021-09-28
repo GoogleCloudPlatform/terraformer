@@ -149,18 +149,28 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
 		"cosmosdb": {
-			"resource_group": []string{"resource_group_name", "name"},
+			"resource_group": []string{
+				"resource_group_name", "name",
+				"location", "location",
+			},
 		},
 		"container": {
-			"resource_group": []string{"resource_group_name", "name"},
+			"resource_group": []string{
+				"resource_group_name", "name",
+				"location", "location",
+			},
 		},
 		"database": {
-			"resource_group": []string{"resource_group_name", "name"},
+			"resource_group": []string{
+				"resource_group_name", "name",
+				"location", "location",
+			},
 		},
 		"databricks": {
 			"resource_group": []string{
 				"resource_group_name", "name",
 				"managed_resource_group_name", "name",
+				"location", "location",
 			},
 			"storage_account": []string{"storage_account_name", "name"},
 			"subnet": []string{
@@ -170,9 +180,19 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 			"virtual_network": []string{"virtual_network_id", "id"},
 		},
 		"data_factory": {
-			"resource_group": []string{"resource_group_name", "name"},
-			"data_factory":   []string{"data_factory_name", "name"},
-			"keyvault":       []string{"keyvault_id", "id"},
+			"resource_group": []string{
+				"resource_group_name", "name",
+				"location", "location",
+			},
+			"data_factory": []string{
+				"data_factory_name", "name",
+				"data_factory_id", "id",
+				"linked_service_name", "name",
+				"integration_runtime_name", "name",
+			},
+			"databricks":      []string{"existing_cluster_id", "id"},
+			"keyvault":        []string{"keyvault_id", "id"},
+			"storage_account": []string{"storage_account_id", "id"},
 		},
 		"disk": {
 			"resource_group": []string{"resource_group_name", "name"},
@@ -188,14 +208,20 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 			},
 		},
 		"keyvault": {
-			"resource_group": []string{"resource_group_name", "name"},
+			"resource_group": []string{
+				"resource_group_name", "name",
+				"location", "location",
+			},
 		},
 		"load_balancer": {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
 		"network_interface": {
-			"resource_group": []string{"resource_group_name", "name"},
-			"subnet":         []string{"subnet_id", "id"},
+			"resource_group": []string{
+				"resource_group_name", "name",
+				"location", "location",
+			},
+			"subnet": []string{"subnet_id", "id"},
 		},
 		"network_security_group": {
 			"resource_group": []string{
@@ -221,11 +247,17 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 			},
 		},
 		"private_endpoint": {
-			"resource_group": []string{"resource_group_name", "name"},
-			"subnet":         []string{"subnet_id", "id"},
+			"resource_group": []string{
+				"resource_group_name", "name",
+				"location", "location",
+			},
+			"subnet": []string{"subnet_id", "id"},
 		},
 		"public_ip": {
-			"resource_group": []string{"resource_group_name", "name"},
+			"resource_group": []string{
+				"resource_group_name", "name",
+				"location", "location",
+			},
 		},
 		"purview": {
 			"resource_group": []string{"resource_group_name", "name"},
@@ -250,7 +282,10 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 			},
 		},
 		"storage_account": {
-			"resource_group":  []string{"resource_group_name", "name"},
+			"resource_group": []string{
+				"resource_group_name", "name",
+				"location", "location",
+			},
 			"virtual_network": []string{"virtual_network_subnet_ids", "id"},
 		},
 		"storage_blob": {
@@ -271,10 +306,14 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 			"resource_group":         []string{"resource_group_name", "name"},
 			"virtual_network":        []string{"virtual_network_name", "name"},
 			"network_security_group": []string{"network_security_group_id", "id"},
+			"route_table":            []string{"route_table_id", "id"},
 			"subnet":                 []string{"subnet_id", "id"},
 		},
 		"virtual_machine": {
-			"resource_group":    []string{"resource_group_name", "name"},
+			"resource_group": []string{
+				"resource_group_name", "name",
+				"location", "location",
+			},
 			"network_interface": []string{"network_interface_ids", "id"},
 		},
 		"virtual_network": {
