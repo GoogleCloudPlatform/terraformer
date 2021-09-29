@@ -16,42 +16,43 @@ package okta
 
 import (
 	"context"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/okta/okta-sdk-golang/v2/okta"
 	"net/url"
 	"strings"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 type UserSchemaPropertyGenerator struct {
 	OktaService
 }
 
-func (g UserSchemaPropertyGenerator) createResources(userSchema *okta.UserSchema, userTypeId string, userTypeName string) []terraformutils.Resource {
+func (g UserSchemaPropertyGenerator) createResources(userSchema *okta.UserSchema, userTypeID string, userTypeName string) []terraformutils.Resource {
 	var resources []terraformutils.Resource
-	for index, _ := range userSchema.Definitions.Custom.Properties {
+	for index := range userSchema.Definitions.Custom.Properties {
 		resources = append(resources, terraformutils.NewResource(
 			index,
 			normalizeResourceName(userTypeName)+"_property_"+normalizeResourceName(index),
 			"okta_user_schema_property",
 			"okta",
 			map[string]string{
-				"index": index,
-				"user_type": userTypeId,
+				"index":     index,
+				"user_type": userTypeID,
 			},
 			[]string{},
 			map[string]interface{}{},
 		))
 	}
 
-	for index, _ := range userSchema.Definitions.Base.Properties {
+	for index := range userSchema.Definitions.Base.Properties {
 		resources = append(resources, terraformutils.NewResource(
 			index,
 			normalizeResourceName(userTypeName)+"_property_"+normalizeResourceName(index),
 			"okta_user_base_schema_property",
 			"okta",
 			map[string]string{
-				"index": index,
-				"user_type": userTypeId,
+				"index":     index,
+				"user_type": userTypeID,
 			},
 			[]string{},
 			map[string]interface{}{},
@@ -74,13 +75,13 @@ func (g *UserSchemaPropertyGenerator) InitResources() error {
 
 	for _, userType := range userTypes {
 		schemaID := getUserTypeSchemaID(userType)
-		if schemaID != ""{
+		if schemaID != "" {
 			schema, _, err := client.UserSchema.GetUserSchema(ctx, schemaID)
 			if err != nil {
 				return err
 			}
 
-			userTypeID:= "default"
+			userTypeID := "default"
 			if userType.Name != "user" {
 				userTypeID = userType.Id
 			}

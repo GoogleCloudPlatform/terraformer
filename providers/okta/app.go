@@ -16,6 +16,7 @@ package okta
 
 import (
 	"context"
+
 	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
@@ -28,7 +29,7 @@ func getApplications(ctx context.Context, client *okta.Client, signOnMode string
 	}
 
 	var filterApps []*okta.Application
-	for _,app := range supportedApps {
+	for _, app := range supportedApps {
 		if app.SignOnMode == signOnMode {
 			filterApps = append(filterApps, app)
 		}

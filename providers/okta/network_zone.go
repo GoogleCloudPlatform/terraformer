@@ -49,7 +49,7 @@ func (g *NetworkZoneGenerator) InitResources() error {
 		return err
 	}
 
-	output, resp, err := client.NetworkZone.ListNetworkZones(ctx,nil)
+	output, resp, err := client.NetworkZone.ListNetworkZones(ctx, nil)
 	if err != nil {
 		return err
 	}

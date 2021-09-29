@@ -57,11 +57,3 @@ func RandStringBytes(n int) string {
 	}
 	return string(b)
 }
-
-func getRandom(names map[string]struct{}, name string, random bool) (map[string]struct{}, bool) {
-	if _, ok := names[name]; ok {
-		random = true
-	}
-	names[name] = struct{}{}
-	return names, random
-}

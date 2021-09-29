@@ -23,32 +23,32 @@ type AppUserSchemaPropertyGenerator struct {
 	OktaService
 }
 
-func (g AppUserSchemaPropertyGenerator) createResources(appUserSchema *okta.UserSchema, appId string) []terraformutils.Resource {
+func (g AppUserSchemaPropertyGenerator) createResources(appUserSchema *okta.UserSchema, appID string) []terraformutils.Resource {
 	var resources []terraformutils.Resource
-	for index, _ := range appUserSchema.Definitions.Custom.Properties {
+	for index := range appUserSchema.Definitions.Custom.Properties {
 		resources = append(resources, terraformutils.NewResource(
 			index,
-			normalizeResourceName(appId)+"_property_"+normalizeResourceName(index),
+			normalizeResourceName(appID)+"_property_"+normalizeResourceName(index),
 			"okta_app_user_schema_property",
 			"okta",
 			map[string]string{
-				"app_id": appId,
-				"index": index,
+				"app_id": appID,
+				"index":  index,
 			},
 			[]string{},
 			map[string]interface{}{},
 		))
 	}
 
-	for index, _ := range appUserSchema.Definitions.Base.Properties {
+	for index := range appUserSchema.Definitions.Base.Properties {
 		resources = append(resources, terraformutils.NewResource(
 			index,
-			normalizeResourceName(appId)+"_property_"+normalizeResourceName(index),
+			normalizeResourceName(appID)+"_property_"+normalizeResourceName(index),
 			"okta_app_user_base_schema_property",
 			"okta",
 			map[string]string{
-				"app_id": appId,
-				"index": index,
+				"app_id": appID,
+				"index":  index,
 			},
 			[]string{},
 			map[string]interface{}{},
