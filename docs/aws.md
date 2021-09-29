@@ -55,6 +55,10 @@ In that case terraformer will not know with which region resources are associate
     * `aws_autoscaling_group`
     * `aws_launch_configuration`
     * `aws_launch_template`
+*   `batch`
+    * `aws_batch_compute_environment`
+    * `aws_batch_job_definition`
+    * `aws_batch_job_queue`
 *   `budgets`
     * `aws_budgets_budget`
 *   `cloud9`
