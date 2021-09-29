@@ -59,12 +59,12 @@ In that case terraformer will not know with which region resources are associate
     * `aws_budgets_budget`
 *   `cloud9`
     * `aws_cloud9_environment_ec2`
-*   `cloudfront`
-    * `aws_cloudfront_distribution`
 *   `cloudformation`
     * `aws_cloudformation_stack`
     * `aws_cloudformation_stack_set`
     * `aws_cloudformation_stack_set_instance`
+*   `cloudfront`
+    * `aws_cloudfront_distribution`
 *   `cloudhsm`
     * `aws_cloudhsm_v2_cluster`
     * `aws_cloudhsm_v2_hsm`
@@ -87,12 +87,12 @@ In that case terraformer will not know with which region resources are associate
 *   `cognito`
     * `aws_cognito_identity_pool`
     * `aws_cognito_user_pool`
-*   `customer_gateway`
-    * `aws_customer_gateway`
 *   `config`
     * `aws_config_config_rule`
     * `aws_config_configuration_recorder`
     * `aws_config_delivery_channel`
+*   `customer_gateway`
+    * `aws_customer_gateway`
 *   `datapipeline`
     * `aws_datapipeline_pipeline`
 *   `devicefarm`
@@ -104,38 +104,38 @@ In that case terraformer will not know with which region resources are associate
     * `aws_docdb_subnet_group`
 *   `dynamodb`
     * `aws_dynamodb_table`
-*   `ec2_instance`
-    * `aws_instance`
-*   `eip`
-    * `aws_eip`
-*   `elasticache`
-    * `aws_elasticache_cluster`
-    * `aws_elasticache_parameter_group`
-    * `aws_elasticache_subnet_group`
-    * `aws_elasticache_replication_group`
 *   `ebs`
     * `aws_ebs_volume`
     * `aws_volume_attachment`
-*   `elastic_beanstalk`
-    * `aws_elastic_beanstalk_application`
-    * `aws_elastic_beanstalk_environment`
-*   `ecs`
-    * `aws_ecs_cluster`
-    * `aws_ecs_service`
-    * `aws_ecs_task_definition`
+*   `ec2_instance`
+    * `aws_instance`
 *   `ecr`
     * `aws_ecr_lifecycle_policy`
     * `aws_ecr_repository`
     * `aws_ecr_repository_policy`
 *   `ecrpublic`
     * `aws_ecrpublic_repository`
+*   `ecs`
+    * `aws_ecs_cluster`
+    * `aws_ecs_service`
+    * `aws_ecs_task_definition`
 *   `efs`
     * `aws_efs_access_point`
     * `aws_efs_file_system`
     * `aws_efs_file_system_policy`
     * `aws_efs_mount_target`
+*   `eip`
+    * `aws_eip`
 *   `eks`
     * `aws_eks_cluster`
+*   `elasticache`
+    * `aws_elasticache_cluster`
+    * `aws_elasticache_parameter_group`
+    * `aws_elasticache_subnet_group`
+    * `aws_elasticache_replication_group`
+*   `elastic_beanstalk`
+    * `aws_elastic_beanstalk_application`
+    * `aws_elastic_beanstalk_environment`
 *   `elb`
     * `aws_elb`
 *   `emr`
@@ -192,10 +192,10 @@ In that case terraformer will not know with which region resources are associate
     * `aws_media_store_container`
 *   `msk`
     * `aws_msk_cluster`
-*   `nat`
-    * `aws_nat_gateway`
 *   `nacl`
     * `aws_network_acl`
+*   `nat`
+    * `aws_nat_gateway`
 *   `opsworks`
     * `aws_opsworks_application`
     * `aws_opsworks_custom_layer`
