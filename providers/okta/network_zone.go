@@ -16,20 +16,19 @@ package okta
 
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-
-	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 )
 
 type NetworkZoneGenerator struct {
 	OktaService
 }
 
-func (g NetworkZoneGenerator) createResources(networkZoneList []*sdk.NetworkZone) []terraformutils.Resource {
+func (g NetworkZoneGenerator) createResources(networkZoneList []*okta.NetworkZone) []terraformutils.Resource {
 	var resources []terraformutils.Resource
 	for _, networkZone := range networkZoneList {
 
 		resources = append(resources, terraformutils.NewResource(
-			networkZone.ID,
+			networkZone.Id,
 			networkZone.Name,
 			"okta_network_zone",
 			"okta",
@@ -45,18 +44,18 @@ func (g NetworkZoneGenerator) createResources(networkZoneList []*sdk.NetworkZone
 }
 
 func (g *NetworkZoneGenerator) InitResources() error {
-	ctx, client, err := g.APISupplementClient()
+	ctx, client, err := g.Client()
 	if err != nil {
 		return err
 	}
 
-	output, resp, err := client.ListNetworkZones(ctx)
+	output, resp, err := client.NetworkZone.ListNetworkZones(ctx, nil)
 	if err != nil {
 		return err
 	}
 
 	for resp.HasNextPage() {
-		var networkZoneSet []*sdk.NetworkZone
+		var networkZoneSet []*okta.NetworkZone
 		resp, _ = resp.Next(ctx, &networkZoneSet)
 		output = append(output, networkZoneSet...)
 	}
@@ -65,7 +64,7 @@ func (g *NetworkZoneGenerator) InitResources() error {
 	return nil
 }
 
-func attributesNetworkZone(networkZone *sdk.NetworkZone) map[string]interface{} {
+func attributesNetworkZone(networkZone *okta.NetworkZone) map[string]interface{} {
 	attributes := map[string]interface{}{}
 	attributes["usage"] = networkZone.Usage
 

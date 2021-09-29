@@ -121,5 +121,7 @@ func (p *OktaProvider) GetSupportedService() map[string]terraformutils.ServiceGe
 		"okta_auth_server_scope":         &AuthorizationServerScopeGenerator{},
 		"okta_auth_server_claim":         &AuthorizationServerClaimGenerator{},
 		"okta_auth_server_policy":        &AuthorizationServerPolicyGenerator{},
+		"okta_user_schema":               &UserSchemaPropertyGenerator{},
+		"okta_app_user_schema":           &AppUserSchemaPropertyGenerator{},
 	}
 }
