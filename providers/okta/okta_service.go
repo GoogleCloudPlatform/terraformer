@@ -46,7 +46,7 @@ func (s *OktaService) Client() (context.Context, *okta.Client, error) {
 	return ctx, client, nil
 }
 
-func (s *OktaService) APISupplementClient() (context.Context, *sdk.ApiSupplement, error) {
+func (s *OktaService) APISupplementClient() (context.Context, *sdk.APISupplement, error) {
 	baseURL := s.Args["base_url"].(string)
 	orgName := s.Args["org_name"].(string)
 	apiToken := s.Args["api_token"].(string)
@@ -62,8 +62,8 @@ func (s *OktaService) APISupplementClient() (context.Context, *sdk.ApiSupplement
 		return ctx, nil, err
 	}
 
-	apiSupplementClient := &sdk.ApiSupplement{
-		RequestExecutor: client.GetRequestExecutor(),
+	apiSupplementClient := &sdk.APISupplement{
+		RequestExecutor: client.CloneRequestExecutor(),
 	}
 
 	return ctx, apiSupplementClient, nil

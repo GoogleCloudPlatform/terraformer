@@ -16,7 +16,6 @@ package okta
 
 import (
 	"context"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 
@@ -27,13 +26,13 @@ type FactorGenerator struct {
 	OktaService
 }
 
-func (g FactorGenerator) createResources(factorList []*sdk.Factor) []terraformutils.Resource {
+func (g FactorGenerator) createResources(factorList []*okta.UserFactor, ctx context.Context, client *sdk.APISupplement) []terraformutils.Resource {
 	var resources []terraformutils.Resource
 	for _, factor := range factorList {
 		if factor.Status == "ACTIVE" {
 			resources = append(resources, terraformutils.NewResource(
 				factor.Id,
-				factor.Id,
+				"factor_"+normalizeResourceNameWithRandom(factor.Id,true),
 				"okta_factor",
 				"okta",
 				map[string]string{
@@ -43,13 +42,37 @@ func (g FactorGenerator) createResources(factorList []*sdk.Factor) []terraformut
 				map[string]interface{}{},
 			))
 
+			if factor.FactorType == "token:hotp"{
+				hotpFactorProfiles,_,_ := getHotpFactorProfiles(ctx, client)
+
+				for _, factorProfile := range hotpFactorProfiles{
+					if factorProfile != nil{
+						resources = append(resources, terraformutils.NewResource(
+							factorProfile.ID,
+							"factor_totp_"+normalizeResourceNameWithRandom(factorProfile.Name,true),
+							"okta_factor_totp",
+							"okta",
+							map[string]string{},
+							[]string{},
+							map[string]interface{}{
+								"name": factorProfile.Name,
+								"otp_length": factorProfile.Settings.OtpLength,
+								"time_step": factorProfile.Settings.TimeStep,
+								"clock_drift_interval": factorProfile.Settings.AcceptableAdjacentIntervals,
+								"shared_secret_encoding": factorProfile.Settings.Encoding,
+								"hmac_algorithm": factorProfile.Settings.TimeStep,
+							},
+						))
+					}
+				}
+			}
 		}
 	}
 	return resources
 }
 
 func (g *FactorGenerator) InitResources() error {
-	var factors = []*sdk.Factor{}
+	var factors []*okta.UserFactor
 
 	ctx, client, err := g.APISupplementClient()
 	if err != nil {
@@ -60,20 +83,35 @@ func (g *FactorGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
+
 	factors = append(factors, output...)
 
-	g.Resources = g.createResources(factors)
+	g.Resources = g.createResources(factors, ctx, client)
 	return nil
 }
 
-func getListFactors(ctx context.Context, m *sdk.ApiSupplement) ([]*sdk.Factor, *okta.Response, error) {
+func getListFactors(ctx context.Context, m *sdk.APISupplement) ([]*okta.UserFactor, *okta.Response, error) {
 	//NOTE: Okta SDK does not support general ListFactors method so we got to manually implement the REST calls.
 	url := "/api/v1/org/factors"
 	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, nil, err
 	}
-	var factors []*sdk.Factor
+	var factors []*okta.UserFactor
+	resp, err := m.RequestExecutor.Do(ctx, req, &factors)
+	if err != nil {
+		return nil, resp, err
+	}
+	return factors, resp, nil
+}
+
+func getHotpFactorProfiles(ctx context.Context, m *sdk.APISupplement)([]*sdk.HotpFactorProfile, *okta.Response, error){
+	url := "/api/v1/org/factors/hotp/profiles"
+	req, err := m.RequestExecutor.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+	var factors []*sdk.HotpFactorProfile
 	resp, err := m.RequestExecutor.Do(ctx, req, &factors)
 	if err != nil {
 		return nil, resp, err

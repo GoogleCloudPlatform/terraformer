@@ -15,43 +15,40 @@
 package okta
 
 import (
-	"context"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/okta/okta-sdk-golang/v2/okta"
-	"net/url"
-	"strings"
 )
 
-type UserSchemaPropertyGenerator struct {
+type AppUserSchemaPropertyGenerator struct {
 	OktaService
 }
 
-func (g UserSchemaPropertyGenerator) createResources(userSchema *okta.UserSchema, userTypeId string, userTypeName string) []terraformutils.Resource {
+func (g AppUserSchemaPropertyGenerator) createResources(appUserSchema *okta.UserSchema, appId string) []terraformutils.Resource {
 	var resources []terraformutils.Resource
-	for index, _ := range userSchema.Definitions.Custom.Properties {
+	for index, _ := range appUserSchema.Definitions.Custom.Properties {
 		resources = append(resources, terraformutils.NewResource(
 			index,
-			normalizeResourceName(userTypeName)+"_property_"+normalizeResourceName(index),
-			"okta_user_schema_property",
+			normalizeResourceName(appId)+"_property_"+normalizeResourceName(index),
+			"okta_app_user_schema_property",
 			"okta",
 			map[string]string{
+				"app_id": appId,
 				"index": index,
-				"user_type": userTypeId,
 			},
 			[]string{},
 			map[string]interface{}{},
 		))
 	}
 
-	for index, _ := range userSchema.Definitions.Base.Properties {
+	for index, _ := range appUserSchema.Definitions.Base.Properties {
 		resources = append(resources, terraformutils.NewResource(
 			index,
-			normalizeResourceName(userTypeName)+"_property_"+normalizeResourceName(index),
-			"okta_user_base_schema_property",
+			normalizeResourceName(appId)+"_property_"+normalizeResourceName(index),
+			"okta_app_user_base_schema_property",
 			"okta",
 			map[string]string{
+				"app_id": appId,
 				"index": index,
-				"user_type": userTypeId,
 			},
 			[]string{},
 			map[string]interface{}{},
@@ -60,65 +57,26 @@ func (g UserSchemaPropertyGenerator) createResources(userSchema *okta.UserSchema
 	return resources
 }
 
-func (g *UserSchemaPropertyGenerator) InitResources() error {
+func (g *AppUserSchemaPropertyGenerator) InitResources() error {
 	var resources []terraformutils.Resource
 	ctx, client, e := g.Client()
 	if e != nil {
 		return e
 	}
 
-	userTypes, err := getUserTypes(ctx, client)
+	apps, err := getAllApplications(ctx, client)
 	if err != nil {
 		return err
 	}
 
-	for _, userType := range userTypes {
-		schemaID := getUserTypeSchemaID(userType)
-		if schemaID != ""{
-			schema, _, err := client.UserSchema.GetUserSchema(ctx, schemaID)
-			if err != nil {
-				return err
-			}
-
-			userTypeID:= "default"
-			if userType.Name != "user" {
-				userTypeID = userType.Id
-			}
-
-			resources = append(resources, g.createResources(schema, userTypeID, userType.Name)...)
+	for _, app := range apps {
+		appUserSchema, _, err := client.UserSchema.GetApplicationUserSchema(ctx, app.Id)
+		if err != nil {
+			return err
 		}
-	}
 
+		resources = append(resources, g.createResources(appUserSchema, app.Id)...)
+	}
 	g.Resources = resources
 	return nil
-}
-
-func getUserTypes(ctx context.Context, client *okta.Client) ([]*okta.UserType, error) {
-	output, resp, err := client.UserType.ListUserTypes(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	for resp.HasNextPage() {
-		var nextUserTypeSet []*okta.UserType
-		resp, _ = resp.Next(ctx, &nextUserTypeSet)
-		output = append(output, nextUserTypeSet...)
-	}
-
-	return output, nil
-}
-
-func getUserTypeSchemaID(ut *okta.UserType) string {
-	fm, ok := ut.Links.(map[string]interface{})
-	if ok {
-		sm, ok := fm["schema"].(map[string]interface{})
-		if ok {
-			href, ok := sm["href"].(string)
-			if ok {
-				u, _ := url.Parse(href)
-				return strings.TrimPrefix(u.EscapedPath(), "/api/v1/meta/schemas/user/")
-			}
-		}
-	}
-	return ""
 }
