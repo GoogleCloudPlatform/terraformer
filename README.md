@@ -203,7 +203,8 @@ It's possible to combine `--compact` `--path-pattern` parameters together.
 From source:
 1.  Run `git clone <terraformer repo> && cd terraformer/`
 2.  Run `go mod download`
-3.  Run `go build -v` for all providers OR build with one provider `go run build/main.go {google,aws,azure,kubernetes and etc}`
+3.  Run `go build -v` for all providers OR build with one provider 
+`go run build/main.go {google,aws,azure,kubernetes,etc}`
 4.  Run ```terraform init``` against a ```versions.tf``` file to install the plugins required for your platform. For example, if you need plugins for the google provider, ```versions.tf``` should contain:
 
 ```
