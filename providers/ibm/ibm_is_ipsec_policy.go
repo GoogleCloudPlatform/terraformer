@@ -29,19 +29,24 @@ type IpsecGenerator struct {
 	IBMService
 }
 
-func (g IpsecGenerator) createIpsecResources(ipsecID, ipsecName string) terraformutils.Resource {
-	resources := terraformutils.NewSimpleResource(
-		ipsecID,
-		ipsecName,
-		"ibm_is_ipsec_policy",
-		"ibm",
-		[]string{})
-	return resources
+func (g IpsecGenerator) createIpsecResources() func(ipsecID, ipsecName string) terraformutils.Resource {
+	names := make(map[string]struct{})
+	random := false
+	return func(ipsecID, ipsecName string) terraformutils.Resource {
+		names, random = getRandom(names, ipsecName, random)
+		resources := terraformutils.NewSimpleResource(
+			ipsecID,
+			normalizeResourceName(ipsecName, random),
+			"ibm_is_ipsec_policy",
+			"ibm",
+			[]string{})
+		return resources
+	}
 }
 
 // InitResources ...
 func (g *IpsecGenerator) InitResources() error {
-	region := envFallBack([]string{"IC_REGION"}, "us-south")
+	region := g.Args["region"].(string)
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
 		log.Fatal("No API key set")
@@ -76,8 +81,9 @@ func (g *IpsecGenerator) InitResources() error {
 		}
 	}
 
+	fnObjt := g.createIpsecResources()
 	for _, policy := range allrecs {
-		g.Resources = append(g.Resources, g.createIpsecResources(*policy.ID, *policy.Name))
+		g.Resources = append(g.Resources, fnObjt(*policy.ID, *policy.Name))
 	}
 	return nil
 }

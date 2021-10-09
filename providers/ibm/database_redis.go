@@ -43,7 +43,7 @@ func (g DatabaseRedisGenerator) loadRedisDB(dbID string, dbName string) terrafor
 // InitResources ...
 func (g *DatabaseRedisGenerator) InitResources() error {
 
-	region := os.Getenv("IC_REGION")
+	region := g.Args["region"].(string)
 	bmxConfig := &bluemix.Config{
 		BluemixAPIKey: os.Getenv("IC_API_KEY"),
 		Region:        region,

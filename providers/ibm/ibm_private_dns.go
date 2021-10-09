@@ -34,25 +34,30 @@ type privateDNSTemplateGenerator struct {
 }
 
 // loadPrivateDNS ...
-func (g privateDNSTemplateGenerator) loadPrivateDNS(pDNSID string, pDNSName string, resGrpID string) terraformutils.Resource {
-	resources := terraformutils.NewResource(
-		pDNSID,
-		pDNSName,
-		"ibm_resource_instance",
-		"ibm",
-		map[string]string{
-			"resource_group_id": resGrpID,
-		},
-		[]string{},
-		map[string]interface{}{})
-	return resources
+func (g privateDNSTemplateGenerator) loadPrivateDNS() func(pDNSID, pDNSName, resGrpID string) terraformutils.Resource {
+	names := make(map[string]struct{})
+	random := true
+	return func(pDNSID, pDNSName, resGrpID string) terraformutils.Resource {
+		names, random = getRandom(names, pDNSName, random)
+		resource := terraformutils.NewResource(
+			pDNSID,
+			normalizeResourceName(pDNSName, random),
+			"ibm_resource_instance",
+			"ibm",
+			map[string]string{
+				"resource_group_id": resGrpID,
+			},
+			[]string{},
+			map[string]interface{}{})
+		return resource
+	}
 }
 
 // loadPrivateDNSZone ...
 func (g privateDNSTemplateGenerator) loadPrivateDNSZone(pDNSGuid string, zoneID string, dependsOn []string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", pDNSGuid, zoneID),
-		zoneID,
+		normalizeResourceName("ibm_dns_zone", true),
 		"ibm_dns_zone",
 		"ibm",
 		map[string]string{},
@@ -67,7 +72,7 @@ func (g privateDNSTemplateGenerator) loadPrivateDNSZone(pDNSGuid string, zoneID 
 func (g privateDNSTemplateGenerator) loadPrivateDNSPermittedNetwork(pDNSGuid string, zoneID string, permittedNetworkID string, dependsOn []string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s/%s", pDNSGuid, zoneID, permittedNetworkID),
-		permittedNetworkID,
+		normalizeResourceName("ibm_dns_permitted_network", true),
 		"ibm_dns_permitted_network",
 		"ibm",
 		map[string]string{},
@@ -79,69 +84,89 @@ func (g privateDNSTemplateGenerator) loadPrivateDNSPermittedNetwork(pDNSGuid str
 }
 
 // loadPrivateDNSResourceRecord ...
-func (g privateDNSTemplateGenerator) loadPrivateDNSResourceRecord(pDNSGuid string, zoneID string, recordID string, dependsOn []string) terraformutils.Resource {
-	resources := terraformutils.NewResource(
-		fmt.Sprintf("%s/%s/%s", pDNSGuid, zoneID, recordID),
-		recordID,
-		"ibm_dns_resource_record",
-		"ibm",
-		map[string]string{},
-		[]string{},
-		map[string]interface{}{
-			"depends_on": dependsOn,
-		})
-	return resources
+func (g privateDNSTemplateGenerator) loadPrivateDNSResourceRecord() func(pDNSGuid, zoneID, recordID, recordName string, dependsOn []string) terraformutils.Resource {
+	names := make(map[string]struct{})
+	random := false
+	return func(pDNSGuid, zoneID, recordID, recordName string, dependsOn []string) terraformutils.Resource {
+		names, random = getRandom(names, recordName, random)
+		resources := terraformutils.NewResource(
+			fmt.Sprintf("%s/%s/%s", pDNSGuid, zoneID, recordID),
+			normalizeResourceName(recordName, random),
+			"ibm_dns_resource_record",
+			"ibm",
+			map[string]string{},
+			[]string{},
+			map[string]interface{}{
+				"depends_on": dependsOn,
+			})
+		return resources
+	}
 }
 
 // loadPrivateDNSGLBMonitor ...
-func (g privateDNSTemplateGenerator) loadPrivateDNSGLBMonitor(pDNSGuid string, monitorID string, dependsOn []string) terraformutils.Resource {
-	resources := terraformutils.NewResource(
-		fmt.Sprintf("%s/%s", pDNSGuid, monitorID),
-		monitorID,
-		"ibm_dns_glb_monitor",
-		"ibm",
-		map[string]string{},
-		[]string{},
-		map[string]interface{}{
-			"depends_on": dependsOn,
-		})
-	return resources
+func (g privateDNSTemplateGenerator) loadPrivateDNSGLBMonitor() func(pDNSGuid, monitorID, monitorName string, dependsOn []string) terraformutils.Resource {
+	names := make(map[string]struct{})
+	random := false
+	return func(pDNSGuid, monitorID, monitorName string, dependsOn []string) terraformutils.Resource {
+		names, random = getRandom(names, monitorName, random)
+		resources := terraformutils.NewResource(
+			fmt.Sprintf("%s/%s", pDNSGuid, monitorID),
+			normalizeResourceName(monitorName, random),
+			"ibm_dns_glb_monitor",
+			"ibm",
+			map[string]string{},
+			[]string{},
+			map[string]interface{}{
+				"depends_on": dependsOn,
+			})
+		return resources
+	}
 }
 
 // loadPrivateDNSGLBPool ...
-func (g privateDNSTemplateGenerator) loadPrivateDNSGLBPool(pDNSGuid string, poolID string, dependsOn []string) terraformutils.Resource {
-	resources := terraformutils.NewResource(
-		fmt.Sprintf("%s/%s", pDNSGuid, poolID),
-		poolID,
-		"ibm_dns_glb_pool",
-		"ibm",
-		map[string]string{},
-		[]string{},
-		map[string]interface{}{
-			"depends_on": dependsOn,
-		})
-	return resources
+func (g privateDNSTemplateGenerator) loadPrivateDNSGLBPool() func(pDNSGuid, poolID, poolName string, dependsOn []string) terraformutils.Resource {
+	names := make(map[string]struct{})
+	random := false
+	return func(pDNSGuid, poolID, poolName string, dependsOn []string) terraformutils.Resource {
+		names, random = getRandom(names, poolName, random)
+		resources := terraformutils.NewResource(
+			fmt.Sprintf("%s/%s", pDNSGuid, poolID),
+			normalizeResourceName(poolName, random),
+			"ibm_dns_glb_pool",
+			"ibm",
+			map[string]string{},
+			[]string{},
+			map[string]interface{}{
+				"depends_on": dependsOn,
+			})
+		return resources
+	}
 }
 
 // loadPrivateDNSGLB ...
-func (g privateDNSTemplateGenerator) loadPrivateDNSGLB(pDNSGuid string, zoneID string, lbID string, dependsOn []string) terraformutils.Resource {
-	resources := terraformutils.NewResource(
-		fmt.Sprintf("%s/%s/%s", pDNSGuid, zoneID, lbID),
-		lbID,
-		"ibm_dns_glb",
-		"ibm",
-		map[string]string{},
-		[]string{},
-		map[string]interface{}{
-			"depends_on": dependsOn,
-		})
-	return resources
+func (g privateDNSTemplateGenerator) loadPrivateDNSGLB() func(pDNSGuid, zoneID, lbID, lbName string, dependsOn []string) terraformutils.Resource {
+	names := make(map[string]struct{})
+	random := false
+	return func(pDNSGuid, zoneID, lbID, lbName string, dependsOn []string) terraformutils.Resource {
+		names, random = getRandom(names, lbName, random)
+		resources := terraformutils.NewResource(
+			fmt.Sprintf("%s/%s/%s", pDNSGuid, zoneID, lbID),
+			normalizeResourceName(lbName, random),
+			"ibm_dns_glb",
+			"ibm",
+			map[string]string{},
+			[]string{},
+			map[string]interface{}{
+				"depends_on": dependsOn,
+			})
+		return resources
+	}
 }
 
 // InitResources ...
 func (g *privateDNSTemplateGenerator) InitResources() error {
 
-	region := os.Getenv("IC_REGION")
+	region := g.Args["region"].(string)
 	bmxConfig := &bluemix.Config{
 		BluemixAPIKey: os.Getenv("IC_API_KEY"),
 		Region:        region,
@@ -190,10 +215,12 @@ func (g *privateDNSTemplateGenerator) InitResources() error {
 		instanceID := instance.ID
 		instanceGUID := instance.Guid
 		// Instance
-		g.Resources = append(g.Resources, g.loadPrivateDNS(instanceID, instance.Name, instance.ResourceGroupID))
+		fnObjt := g.loadPrivateDNS()
+		g.Resources = append(g.Resources, fnObjt(instanceID, instance.Name, instance.ResourceGroupID))
+		resourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
 		var pDNSDependsOn []string
 		pDNSDependsOn = append(pDNSDependsOn,
-			"ibm_resource_instance."+terraformutils.TfSanitize(instance.Name))
+			"ibm_resource_instance."+resourceName)
 
 		// Zones
 		zoneOpts := &dns.DnsSvcsV1Options{
@@ -217,9 +244,8 @@ func (g *privateDNSTemplateGenerator) InitResources() error {
 		for _, zone := range zoneList.Dnszones {
 			zoneID := *zone.ID
 			g.Resources = append(g.Resources, g.loadPrivateDNSZone(instanceGUID, zoneID, pDNSDependsOn))
-
-			domainDependsOn := append(pDNSDependsOn,
-				"ibm_dns_zone."+terraformutils.TfSanitize(zoneID))
+			domainResourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
+			domainDependsOn := makeDependsOn(pDNSDependsOn, "ibm_dns_zone."+domainResourceName)
 
 			// Permitted Network Records
 			permittedNetworkOpt := dns.ListPermittedNetworksOptions{
@@ -244,9 +270,10 @@ func (g *privateDNSTemplateGenerator) InitResources() error {
 			if err != nil {
 				return fmt.Errorf("error Listing Resource Records %s", err)
 			}
+
+			pdnsFnObjt := g.loadPrivateDNSResourceRecord()
 			for _, record := range resourceRecordList.ResourceRecords {
-				recordID := *record.ID
-				g.Resources = append(g.Resources, g.loadPrivateDNSResourceRecord(instanceGUID, zoneID, recordID, domainDependsOn))
+				g.Resources = append(g.Resources, pdnsFnObjt(instanceGUID, zoneID, *record.ID, *record.Name, domainDependsOn))
 			}
 
 			// GLB Records
@@ -258,9 +285,9 @@ func (g *privateDNSTemplateGenerator) InitResources() error {
 			if err != nil {
 				return fmt.Errorf("error Listing GLBs %s", err)
 			}
+			glbFntObj := g.loadPrivateDNSGLB()
 			for _, lb := range glbOptList.LoadBalancers {
-				lbID := *lb.ID
-				g.Resources = append(g.Resources, g.loadPrivateDNSGLB(instanceGUID, zoneID, lbID, domainDependsOn))
+				g.Resources = append(g.Resources, glbFntObj(instanceGUID, zoneID, *lb.ID, *lb.Name, domainDependsOn))
 			}
 		}
 		// Monitor Records
@@ -271,9 +298,10 @@ func (g *privateDNSTemplateGenerator) InitResources() error {
 		if err != nil {
 			return fmt.Errorf("error Listing GLB Monitor %s", err)
 		}
+
+		lbMonitorObjt := g.loadPrivateDNSGLBMonitor()
 		for _, monitor := range glbMonitorList.Monitors {
-			monitorID := *monitor.ID
-			g.Resources = append(g.Resources, g.loadPrivateDNSGLBMonitor(instanceGUID, monitorID, pDNSDependsOn))
+			g.Resources = append(g.Resources, lbMonitorObjt(instanceGUID, *monitor.ID, *monitor.Name, pDNSDependsOn))
 		}
 
 		// Pool Records
@@ -284,9 +312,9 @@ func (g *privateDNSTemplateGenerator) InitResources() error {
 		if err != nil {
 			return fmt.Errorf("error Listing GLB Pools %s", err)
 		}
+		dnsGlbfnObj := g.loadPrivateDNSGLBPool()
 		for _, pool := range glbPoolOptList.Pools {
-			poolID := *pool.ID
-			g.Resources = append(g.Resources, g.loadPrivateDNSGLBPool(instanceGUID, poolID, pDNSDependsOn))
+			g.Resources = append(g.Resources, dnsGlbfnObj(instanceGUID, *pool.ID, *pool.Name, pDNSDependsOn))
 		}
 
 	}

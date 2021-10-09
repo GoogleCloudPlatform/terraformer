@@ -31,32 +31,42 @@ type KPGenerator struct {
 	IBMService
 }
 
-func (g KPGenerator) loadKP(kpID, kpGUID string) terraformutils.Resource {
-	resources := terraformutils.NewSimpleResource(
-		kpID,
-		kpGUID,
-		"ibm_resource_instance",
-		"ibm",
-		[]string{})
-	return resources
+func (g KPGenerator) loadKP() func(kpID, kpName string) terraformutils.Resource {
+	names := make(map[string]struct{})
+	random := true
+	return func(kpID, kpName string) terraformutils.Resource {
+		names, random = getRandom(names, kpName, random)
+		resource := terraformutils.NewSimpleResource(
+			kpID,
+			normalizeResourceName(kpName, random),
+			"ibm_resource_instance",
+			"ibm",
+			[]string{})
+		return resource
+	}
 }
 
-func (g KPGenerator) loadkPKeys(kpKeyCRN, kpKeyID string, dependsOn []string) terraformutils.Resource {
-	resources := terraformutils.NewResource(
-		kpKeyCRN,
-		kpKeyID,
-		"ibm_kms_key",
-		"ibm",
-		map[string]string{},
-		[]string{},
-		map[string]interface{}{
-			"depends_on": dependsOn,
-		})
-	return resources
+func (g KPGenerator) loadkPKeys() func(kpKeyCRN, kpKeyName string, dependsOn []string) terraformutils.Resource {
+	names := make(map[string]struct{})
+	random := true
+	return func(kpKeyCRN, kpKeyName string, dependsOn []string) terraformutils.Resource {
+		names, random = getRandom(names, kpKeyName, random)
+		resource := terraformutils.NewResource(
+			kpKeyCRN,
+			normalizeResourceName(kpKeyName, random),
+			"ibm_kms_key",
+			"ibm",
+			map[string]string{},
+			[]string{},
+			map[string]interface{}{
+				"depends_on": dependsOn,
+			})
+		return resource
+	}
 }
 
 func (g *KPGenerator) InitResources() error {
-	region := envFallBack([]string{"IC_REGION"}, "us-south")
+	region := g.Args["region"].(string)
 	bmxConfig := &bluemix.Config{
 		BluemixAPIKey: os.Getenv("IC_API_KEY"),
 	}
@@ -97,19 +107,22 @@ func (g *KPGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
+	fnObjt := g.loadKP()
 	for _, kpInstance := range kpInstances {
-		g.Resources = append(g.Resources, g.loadKP(kpInstance.ID, kpInstance.Guid))
+		g.Resources = append(g.Resources, fnObjt(kpInstance.ID, kpInstance.Name))
+		resourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
 		client.Config.InstanceID = kpInstance.Guid
 
 		output, err := client.GetKeys(context.Background(), 100, 0)
 		if err != nil {
 			return err
 		}
+		fnObjt := g.loadkPKeys()
 		for _, key := range output.Keys {
 			var dependsOn []string
 			dependsOn = append(dependsOn,
-				"ibm_resource_instance."+terraformutils.TfSanitize(kpInstance.Guid))
-			g.Resources = append(g.Resources, g.loadkPKeys(key.CRN, key.ID, dependsOn))
+				"ibm_resource_instance."+resourceName)
+			g.Resources = append(g.Resources, fnObjt(key.CRN, key.Name, dependsOn))
 		}
 
 	}

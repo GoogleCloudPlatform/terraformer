@@ -30,28 +30,30 @@ type FloatingIPGenerator struct {
 }
 
 func (g FloatingIPGenerator) createFloatingIPResources(fipID, fipName string) terraformutils.Resource {
-	resources := terraformutils.NewSimpleResource(
+	resource := terraformutils.NewResource(
 		fipID,
-		fipName,
+		normalizeResourceName(fipName, false),
 		"ibm_is_floating_ip",
 		"ibm",
-		[]string{})
-	return resources
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{})
+
+	// Conflict parameters
+	resource.IgnoreKeys = append(resource.IgnoreKeys,
+		"^zone$",
+	)
+	return resource
 }
 
 // InitResources ...
 func (g *FloatingIPGenerator) InitResources() error {
-	var resoureGroup string
-	region := envFallBack([]string{"IC_REGION"}, "us-south")
+	region := g.Args["region"].(string)
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
 		log.Fatal("No API key set")
 	}
 
-	rg := g.Args["resource_group"]
-	if rg != nil {
-		resoureGroup = rg.(string)
-	}
 	vpcurl := fmt.Sprintf("https://%s.iaas.cloud.ibm.com/v1", region)
 	vpcoptions := &vpcv1.VpcV1Options{
 		URL: envFallBack([]string{"IBMCLOUD_IS_API_ENDPOINT"}, vpcurl),
@@ -70,8 +72,12 @@ func (g *FloatingIPGenerator) InitResources() error {
 		if start != "" {
 			options.Start = &start
 		}
-		if resoureGroup != "" {
-			options.ResourceGroupID = &resoureGroup
+		if rg := g.Args["resource_group"].(string); rg != "" {
+			rg, err = GetResourceGroupID(apiKey, rg, region)
+			if err != nil {
+				return fmt.Errorf("Error Fetching Resource Group Id %s", err)
+			}
+			options.ResourceGroupID = &rg
 		}
 		fips, response, err := vpcclient.ListFloatingIps(options)
 		if err != nil {

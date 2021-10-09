@@ -32,7 +32,7 @@ type SecurityGroupGenerator struct {
 func (g SecurityGroupGenerator) createSecurityGroupResources(sgID, sgName string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
 		sgID,
-		sgName,
+		normalizeResourceName(sgName, false),
 		"ibm_is_security_group",
 		"ibm",
 		[]string{})
@@ -42,7 +42,7 @@ func (g SecurityGroupGenerator) createSecurityGroupResources(sgID, sgName string
 func (g SecurityGroupGenerator) createSecurityGroupRuleResources(sgID, sgRuleID string, dependsOn []string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s.%s", sgID, sgRuleID),
-		sgRuleID,
+		normalizeResourceName("ibm_is_security_group_rule", true),
 		"ibm_is_security_group_rule",
 		"ibm",
 		map[string]string{},
@@ -55,16 +55,10 @@ func (g SecurityGroupGenerator) createSecurityGroupRuleResources(sgID, sgRuleID 
 
 // InitResources ...
 func (g *SecurityGroupGenerator) InitResources() error {
-	var resoureGroup string
-	region := envFallBack([]string{"IC_REGION"}, "us-south")
+	region := g.Args["region"].(string)
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
 		return fmt.Errorf("No API key set")
-	}
-
-	rg := g.Args["resource_group"]
-	if rg != nil {
-		resoureGroup = rg.(string)
 	}
 
 	vpcurl := fmt.Sprintf("https://%s.iaas.cloud.ibm.com/v1", region)
@@ -85,8 +79,12 @@ func (g *SecurityGroupGenerator) InitResources() error {
 		if start != "" {
 			options.Start = &start
 		}
-		if resoureGroup != "" {
-			options.ResourceGroupID = &resoureGroup
+		if rg := g.Args["resource_group"].(string); rg != "" {
+			rg, err = GetResourceGroupID(apiKey, rg, region)
+			if err != nil {
+				return fmt.Errorf("Error Fetching Resource Group Id %s", err)
+			}
+			options.ResourceGroupID = &rg
 		}
 		sgs, response, err := vpcclient.ListSecurityGroups(options)
 		if err != nil {
@@ -101,9 +99,11 @@ func (g *SecurityGroupGenerator) InitResources() error {
 
 	for _, group := range allrecs {
 		var dependsOn []string
-		dependsOn = append(dependsOn,
-			"ibm_is_security_group"+terraformutils.TfSanitize(*group.Name))
+
 		g.Resources = append(g.Resources, g.createSecurityGroupResources(*group.ID, *group.Name))
+		sgResourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
+		dependsOn = append(dependsOn,
+			"ibm_is_security_group."+sgResourceName)
 		listSecurityGroupRulesOptions := &vpcv1.ListSecurityGroupRulesOptions{
 			SecurityGroupID: group.ID,
 		}

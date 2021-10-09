@@ -32,7 +32,7 @@ type NetworkACLGenerator struct {
 func (g NetworkACLGenerator) createNetworkACLResources(nwaclID, nwaclName string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
 		nwaclID,
-		nwaclName,
+		normalizeResourceName(nwaclName, true),
 		"ibm_is_network_acl",
 		"ibm",
 		[]string{})
@@ -41,16 +41,10 @@ func (g NetworkACLGenerator) createNetworkACLResources(nwaclID, nwaclName string
 
 // InitResources ...
 func (g *NetworkACLGenerator) InitResources() error {
-	var resoureGroup string
-	region := envFallBack([]string{"IC_REGION"}, "us-south")
+	region := g.Args["region"].(string)
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
 		log.Fatal("No API key set")
-	}
-
-	rg := g.Args["resource_group"]
-	if rg != nil {
-		resoureGroup = rg.(string)
 	}
 
 	vpcurl := fmt.Sprintf("https://%s.iaas.cloud.ibm.com/v1", region)
@@ -71,8 +65,12 @@ func (g *NetworkACLGenerator) InitResources() error {
 		if start != "" {
 			options.Start = &start
 		}
-		if resoureGroup != "" {
-			options.ResourceGroupID = &resoureGroup
+		if rg := g.Args["resource_group"].(string); rg != "" {
+			rg, err = GetResourceGroupID(apiKey, rg, region)
+			if err != nil {
+				return fmt.Errorf("Error Fetching Resource Group Id %s", err)
+			}
+			options.ResourceGroupID = &rg
 		}
 		nwacls, response, err := vpcclient.ListNetworkAcls(options)
 		if err != nil {

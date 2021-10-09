@@ -31,7 +31,7 @@ type VPNGatewayGenerator struct {
 func (g VPNGatewayGenerator) createVPNGatewayResources(vpngwID, vpngwName string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
 		vpngwID,
-		vpngwName,
+		normalizeResourceName(vpngwName, false),
 		"ibm_is_vpn_gateway",
 		"ibm",
 		[]string{})
@@ -41,7 +41,7 @@ func (g VPNGatewayGenerator) createVPNGatewayResources(vpngwID, vpngwName string
 func (g VPNGatewayGenerator) createVPNGatewayConnectionResources(vpngwID, vpngwConnectionID, vpngwConnectionName string, dependsOn []string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", vpngwID, vpngwConnectionID),
-		vpngwConnectionName,
+		normalizeResourceName(vpngwConnectionName, false),
 		"ibm_is_vpn_gateway_connections",
 		"ibm",
 		map[string]string{},
@@ -54,16 +54,10 @@ func (g VPNGatewayGenerator) createVPNGatewayConnectionResources(vpngwID, vpngwC
 
 // InitResources ...
 func (g *VPNGatewayGenerator) InitResources() error {
-	var resoureGroup string
-	region := envFallBack([]string{"IC_REGION"}, "us-south")
+	region := g.Args["region"].(string)
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
 		return fmt.Errorf("no API key set")
-	}
-
-	rg := g.Args["resource_group"]
-	if rg != nil {
-		resoureGroup = rg.(string)
 	}
 
 	vpcurl := fmt.Sprintf("https://%s.iaas.cloud.ibm.com/v1", region)
@@ -84,8 +78,12 @@ func (g *VPNGatewayGenerator) InitResources() error {
 		if start != "" {
 			listVPNGatewaysOptions.Start = &start
 		}
-		if resoureGroup != "" {
-			listVPNGatewaysOptions.ResourceGroupID = &resoureGroup
+		if rg := g.Args["resource_group"].(string); rg != "" {
+			rg, err = GetResourceGroupID(apiKey, rg, region)
+			if err != nil {
+				return fmt.Errorf("Error Fetching Resource Group Id %s", err)
+			}
+			listVPNGatewaysOptions.ResourceGroupID = &rg
 		}
 		vpngws, response, err := vpcclient.ListVPNGateways(listVPNGatewaysOptions)
 		if err != nil {
@@ -101,9 +99,11 @@ func (g *VPNGatewayGenerator) InitResources() error {
 	for _, gw := range allrecs {
 		vpngw := gw.(*vpcv1.VPNGateway)
 		var dependsOn []string
-		dependsOn = append(dependsOn,
-			"ibm_is_vpn_gateway."+terraformutils.TfSanitize(*vpngw.Name))
+
 		g.Resources = append(g.Resources, g.createVPNGatewayResources(*vpngw.ID, *vpngw.Name))
+		resourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
+		dependsOn = append(dependsOn,
+			"ibm_is_vpn_gateway."+resourceName)
 		listVPNGatewayConnectionsOptions := &vpcv1.ListVPNGatewayConnectionsOptions{
 			VPNGatewayID: vpngw.ID,
 		}
