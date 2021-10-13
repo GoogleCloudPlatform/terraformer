@@ -29,19 +29,29 @@ type ContainerClusterGenerator struct {
 }
 
 func (g ContainerClusterGenerator) loadcluster(clustersID, clusterName string) terraformutils.Resource {
-	resources := terraformutils.NewSimpleResource(
+	resource := terraformutils.NewResource(
 		clustersID,
-		clusterName,
+		normalizeResourceName(clusterName, false),
 		"ibm_container_cluster",
 		"ibm",
-		[]string{})
-	return resources
+		map[string]string{
+			"force_delete_storage":   "true",
+			"update_all_workers":     "false",
+			"wait_for_worker_update": "true",
+		},
+		[]string{},
+		map[string]interface{}{})
+
+	resource.IgnoreKeys = append(resource.IgnoreKeys,
+		"^worker_num$", "^region$",
+	)
+	return resource
 }
 
-func (g ContainerClusterGenerator) loadWorkerPools(clustersID, poolID string, dependsOn []string) terraformutils.Resource {
+func (g ContainerClusterGenerator) loadWorkerPools(clustersID, poolID, poolName string, dependsOn []string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", clustersID, poolID),
-		poolID,
+		normalizeResourceName(poolName, true),
 		"ibm_container_worker_pool",
 		"ibm",
 		map[string]string{},
@@ -55,7 +65,7 @@ func (g ContainerClusterGenerator) loadWorkerPools(clustersID, poolID string, de
 func (g ContainerClusterGenerator) loadWorkerPoolZones(clustersID, poolID, zoneID string, dependsOn []string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s/%s", clustersID, poolID, zoneID),
-		fmt.Sprintf("%s/%s/%s", clustersID, poolID, zoneID),
+		normalizeResourceName("ibm_container_worker_pool_zone_attachment", true),
 		"ibm_container_worker_pool_zone_attachment",
 		"ibm",
 		map[string]string{},
@@ -86,23 +96,25 @@ func (g *ContainerClusterGenerator) InitResources() error {
 
 	for _, cs := range clusters {
 		g.Resources = append(g.Resources, g.loadcluster(cs.ID, cs.Name))
-		workerPools, err := client.WorkerPools().ListWorkerPools(cs.ID, containerv1.ClusterTargetHeader{})
+		clusterResourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
+		workerPools, err := client.WorkerPools().ListWorkerPools(cs.ID, containerv1.ClusterTargetHeader{
+			ResourceGroup: cs.ResourceGroupID,
+		})
 		if err != nil {
 			return err
 		}
 		for _, pool := range workerPools {
-			if pool.Name != "default" {
-				var dependsOn []string
-				dependsOn = append(dependsOn,
-					"ibm_container_cluster."+terraformutils.TfSanitize(cs.Name))
-				g.Resources = append(g.Resources, g.loadWorkerPools(cs.ID, pool.ID, dependsOn))
+			var dependsOn []string
+			dependsOn = append(dependsOn,
+				"ibm_container_cluster."+clusterResourceName)
+			g.Resources = append(g.Resources, g.loadWorkerPools(cs.ID, pool.ID, pool.Name, dependsOn))
+			poolResourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
 
-				dependsOn = append(dependsOn,
-					"ibm_container_worker_pool."+terraformutils.TfSanitize(pool.ID))
-				zones := pool.Zones
-				for _, zone := range zones {
-					g.Resources = append(g.Resources, g.loadWorkerPoolZones(cs.ID, pool.ID, zone.ID, dependsOn))
-				}
+			dependsOn = append(dependsOn,
+				"ibm_container_worker_pool."+poolResourceName)
+			zones := pool.Zones
+			for _, zone := range zones {
+				g.Resources = append(g.Resources, g.loadWorkerPoolZones(cs.ID, pool.ID, zone.ID, dependsOn))
 			}
 		}
 	}

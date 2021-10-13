@@ -28,28 +28,33 @@ type InstanceGenerator struct {
 	IBMService
 }
 
-func (g InstanceGenerator) createInstanceResources(instanceID, instanceName string) terraformutils.Resource {
-	resources := terraformutils.NewSimpleResource(
+func (g InstanceGenerator) createInstanceResources(instanceID, instanceName, instanceImgID string) terraformutils.Resource {
+	resource := terraformutils.NewResource(
 		instanceID,
-		instanceName,
+		normalizeResourceName(instanceName, false),
 		"ibm_is_instance",
 		"ibm",
-		[]string{})
-	return resources
+		map[string]string{
+			"image": instanceImgID,
+		},
+		[]string{},
+		map[string]interface{}{
+			"keys": []string{},
+		})
+
+	// Deprecated parameters
+	resource.IgnoreKeys = append(resource.IgnoreKeys,
+		"^port$",
+	)
+	return resource
 }
 
 // InitResources ...
 func (g *InstanceGenerator) InitResources() error {
-	var resoureGroup string
-	region := envFallBack([]string{"IC_REGION"}, "us-south")
+	region := g.Args["region"].(string)
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
 		return fmt.Errorf("No API key set")
-	}
-
-	rg := g.Args["resource_group"]
-	if rg != nil {
-		resoureGroup = rg.(string)
 	}
 
 	vpcurl := fmt.Sprintf("https://%s.iaas.cloud.ibm.com/v1", region)
@@ -70,8 +75,12 @@ func (g *InstanceGenerator) InitResources() error {
 		if start != "" {
 			options.Start = &start
 		}
-		if resoureGroup != "" {
-			options.ResourceGroupID = &resoureGroup
+		if rg := g.Args["resource_group"].(string); rg != "" {
+			rg, err = GetResourceGroupID(apiKey, rg, region)
+			if err != nil {
+				return fmt.Errorf("Error Fetching Resource Group Id %s", err)
+			}
+			options.ResourceGroupID = &rg
 		}
 		instances, response, err := vpcclient.ListInstances(options)
 		if err != nil {
@@ -85,7 +94,7 @@ func (g *InstanceGenerator) InitResources() error {
 	}
 
 	for _, instance := range allrecs {
-		g.Resources = append(g.Resources, g.createInstanceResources(*instance.ID, *instance.Name))
+		g.Resources = append(g.Resources, g.createInstanceResources(*instance.ID, *instance.Name, *instance.Image.ID))
 	}
 	return nil
 }

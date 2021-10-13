@@ -116,7 +116,7 @@ func (g *InstanceGroupGenerator) handleManagers(sess *vpcv1.VpcV1, instanceGroup
 			policies = append(policies, *(instanceGroupManager.Policies[i].ID))
 		}
 		policiesWG.Add(1)
-		dependsOn1 := append(dependsOn,
+		dependsOn1 := makeDependsOn(dependsOn,
 			"ibm_is_instance_group_manger."+terraformutils.TfSanitize(*instanceGroupManager.Name))
 		go g.handlePolicies(sess, instanceGroupID, instanceGroupManagerID, policies, dependsOn1, &policiesWG)
 	}
@@ -164,7 +164,7 @@ func (g *InstanceGroupGenerator) handleInstanceGroups(sess *vpcv1.VpcV1, waitGro
 
 // InitResources ...
 func (g *InstanceGroupGenerator) InitResources() error {
-	apiKey := os.Getenv("IBMCLOUD_API_KEY")
+	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
 		return fmt.Errorf("no API key set")
 	}

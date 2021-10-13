@@ -31,7 +31,7 @@ type InstanceTemplateGenerator struct {
 func (g InstanceTemplateGenerator) createInstanceTemplateResources(templateID, templateName string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
 		templateID,
-		templateName,
+		normalizeResourceName(templateName, false),
 		"ibm_is_instance_template",
 		"ibm",
 		[]string{})
@@ -40,7 +40,7 @@ func (g InstanceTemplateGenerator) createInstanceTemplateResources(templateID, t
 
 // InitResources ...
 func (g *InstanceTemplateGenerator) InitResources() error {
-	region := envFallBack([]string{"IC_REGION"}, "us-south")
+	region := g.Args["region"].(string)
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
 		return fmt.Errorf("no API key set")

@@ -30,19 +30,19 @@ type DLGenerator struct {
 }
 
 func (g DLGenerator) createDirectLinkGatewayResources(gatewayID, gatewayName string) terraformutils.Resource {
-	resources := terraformutils.NewSimpleResource(
+	resource := terraformutils.NewSimpleResource(
 		gatewayID,
-		gatewayName,
+		normalizeResourceName(gatewayName, false),
 		"ibm_dl_gateway",
 		"ibm",
 		[]string{})
-	return resources
+	return resource
 }
 
 func (g DLGenerator) createDirectLinkVirtualConnectionResources(gatewayID, connectionID, connectionName string, dependsOn []string) terraformutils.Resource {
-	resources := terraformutils.NewResource(
+	resource := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", gatewayID, connectionID),
-		connectionName,
+		normalizeResourceName(connectionName, false),
 		"ibm_dl_virtual_connection",
 		"ibm",
 		map[string]string{},
@@ -50,17 +50,17 @@ func (g DLGenerator) createDirectLinkVirtualConnectionResources(gatewayID, conne
 		map[string]interface{}{
 			"depends_on": dependsOn,
 		})
-	return resources
+	return resource
 }
 
 func (g DLGenerator) createDirectLinkProviderGatewayResources(providerGatewayID, providerGatewayName string) terraformutils.Resource {
-	resources := terraformutils.NewSimpleResource(
+	resource := terraformutils.NewSimpleResource(
 		providerGatewayID,
-		providerGatewayName,
+		normalizeResourceName(providerGatewayName, false),
 		"ibm_dl_provider_gateway",
 		"ibm",
 		[]string{})
-	return resources
+	return resource
 }
 
 // InitResources ...
@@ -87,20 +87,22 @@ func (g *DLGenerator) InitResources() error {
 	if err != nil {
 		return fmt.Errorf("Error Fetching Direct Link Gateways %s\n%s", err, response)
 	}
-	for _, gateway := range gateways.Gateways {
-		g.Resources = append(g.Resources, g.createDirectLinkGatewayResources(*gateway.ID, *gateway.Name))
-		var dependsOn []string
-		dependsOn = append(dependsOn,
-			"ibm_dl_gateway."+terraformutils.TfSanitize(*gateway.Name))
-		listGatewayVirtualConnectionsOptions := &dl.ListGatewayVirtualConnectionsOptions{
-			GatewayID: gateway.ID,
-		}
-		connections, response, err := dlclient.ListGatewayVirtualConnections(listGatewayVirtualConnectionsOptions)
-		if err != nil {
-			return fmt.Errorf("Error Fetching Direct Link Virtual connections %s\n%s", err, response)
-		}
-		for _, connection := range connections.VirtualConnections {
-			g.Resources = append(g.Resources, g.createDirectLinkVirtualConnectionResources(*gateway.ID, *connection.ID, *connection.Name, dependsOn))
+	if gateways.Gateways != nil {
+		for _, gateway := range gateways.Gateways {
+			g.Resources = append(g.Resources, g.createDirectLinkGatewayResources(*gateway.ID, *gateway.Name))
+			resourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
+			var dependsOn []string
+			dependsOn = append(dependsOn, "ibm_dl_gateway."+resourceName)
+			listGatewayVirtualConnectionsOptions := &dl.ListGatewayVirtualConnectionsOptions{
+				GatewayID: gateway.ID,
+			}
+			connections, response, err := dlclient.ListGatewayVirtualConnections(listGatewayVirtualConnectionsOptions)
+			if err != nil {
+				return fmt.Errorf("Error Fetching Direct Link Virtual connections %s\n%s", err, response)
+			}
+			for _, connection := range connections.VirtualConnections {
+				g.Resources = append(g.Resources, g.createDirectLinkVirtualConnectionResources(*gateway.ID, *connection.ID, *connection.Name, dependsOn))
+			}
 		}
 	}
 

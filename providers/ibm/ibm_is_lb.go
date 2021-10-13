@@ -29,19 +29,26 @@ type LBGenerator struct {
 }
 
 func (g LBGenerator) createLBResources(lbID, lbName string) terraformutils.Resource {
-	resources := terraformutils.NewSimpleResource(
+	resource := terraformutils.NewResource(
 		lbID,
-		lbName,
+		normalizeResourceName(lbName, true),
 		"ibm_is_lb",
 		"ibm",
-		[]string{})
-	return resources
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{})
+
+	// Deprecated parameters
+	resource.IgnoreKeys = append(resource.IgnoreKeys,
+		"^profile$",
+	)
+	return resource
 }
 
 func (g LBGenerator) createLBPoolResources(lbID, lbPoolID, lbPoolName string, dependsOn []string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", lbID, lbPoolID),
-		lbPoolName,
+		normalizeResourceName(lbPoolName, true),
 		"ibm_is_lb_pool",
 		"ibm",
 		map[string]string{},
@@ -55,7 +62,7 @@ func (g LBGenerator) createLBPoolResources(lbID, lbPoolID, lbPoolName string, de
 func (g LBGenerator) createLBPoolMemberResources(lbID, lbPoolID, lbPoolMemberID, lbPoolMemberName string, dependsOn []string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s/%s", lbID, lbPoolID, lbPoolMemberID),
-		lbPoolMemberName,
+		normalizeResourceName(lbPoolMemberName, true),
 		"ibm_is_lb_pool_member",
 		"ibm",
 		map[string]string{},
@@ -69,7 +76,7 @@ func (g LBGenerator) createLBPoolMemberResources(lbID, lbPoolID, lbPoolMemberID,
 func (g LBGenerator) createLBListenerResources(lbID, lbListenerID, lbListenerName string, dependsOn []string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", lbID, lbListenerID),
-		lbListenerName,
+		normalizeResourceName(lbListenerName, true),
 		"ibm_is_lb_listener",
 		"ibm",
 		map[string]string{},
@@ -83,7 +90,7 @@ func (g LBGenerator) createLBListenerResources(lbID, lbListenerID, lbListenerNam
 func (g LBGenerator) createLBListenerPolicyResources(lbID, lbListenerID, lbListenerPolicyID, lbListenerPolicyName string, dependsOn []string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s/%s", lbID, lbListenerID, lbListenerPolicyID),
-		lbListenerPolicyName,
+		normalizeResourceName(lbListenerPolicyName, true),
 		"ibm_is_lb_listener_policy",
 		"ibm",
 		map[string]string{},
@@ -97,7 +104,7 @@ func (g LBGenerator) createLBListenerPolicyResources(lbID, lbListenerID, lbListe
 func (g LBGenerator) createLBListenerPolicyRuleResources(lbID, lbListenerID, lbListenerPolicyID, lbListenerPolicyRuleID, lbListenerPolicyName string, dependsOn []string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s/%s/%s", lbID, lbListenerID, lbListenerPolicyID, lbListenerPolicyRuleID),
-		lbListenerPolicyName,
+		normalizeResourceName(lbListenerPolicyName, true),
 		"ibm_is_lb_listener_policy_rule",
 		"ibm",
 		map[string]string{},
@@ -110,7 +117,7 @@ func (g LBGenerator) createLBListenerPolicyRuleResources(lbID, lbListenerID, lbL
 
 // InitResources ...
 func (g *LBGenerator) InitResources() error {
-	region := envFallBack([]string{"IC_REGION"}, "us-south")
+	region := g.Args["region"].(string)
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
 		return fmt.Errorf("no API key set")
@@ -143,9 +150,10 @@ func (g *LBGenerator) InitResources() error {
 
 	for _, lb := range allrecs {
 		var dependsOn []string
-		dependsOn = append(dependsOn,
-			"ibm_is_lb."+terraformutils.TfSanitize(*lb.Name))
 		g.Resources = append(g.Resources, g.createLBResources(*lb.ID, *lb.Name))
+		resourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
+		dependsOn = append(dependsOn,
+			"ibm_is_lb."+resourceName)
 		listLoadBalancerPoolsOptions := &vpcv1.ListLoadBalancerPoolsOptions{
 			LoadBalancerID: lb.ID,
 		}
@@ -155,8 +163,9 @@ func (g *LBGenerator) InitResources() error {
 		}
 		for _, lbPool := range lbPools.Pools {
 			g.Resources = append(g.Resources, g.createLBPoolResources(*lb.ID, *lbPool.ID, *lbPool.Name, dependsOn))
-			dependsOn1 := append(dependsOn,
-				"ibm_is_lb_pool."+terraformutils.TfSanitize(*lbPool.Name))
+			lbPoolResourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
+			dependsOn1 := makeDependsOn(dependsOn,
+				"ibm_is_lb_pool."+lbPoolResourceName)
 			listLoadBalancerPoolMembersOptions := &vpcv1.ListLoadBalancerPoolMembersOptions{
 				LoadBalancerID: lb.ID,
 				PoolID:         lbPool.ID,
@@ -179,8 +188,9 @@ func (g *LBGenerator) InitResources() error {
 		}
 		for _, lbListener := range lbListeners.Listeners {
 			g.Resources = append(g.Resources, g.createLBListenerResources(*lb.ID, *lbListener.ID, *lbListener.ID, dependsOn))
+			lbListenerResourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
 			var dependsOn2 = append(dependsOn, //nolint:goimports,gofmt
-				"ibm_is_lb_listener."+terraformutils.TfSanitize(*lbListener.ID))
+				"ibm_is_lb_listener."+lbListenerResourceName)
 			listLoadBalancerListenerPoliciesOptions := &vpcv1.ListLoadBalancerListenerPoliciesOptions{
 				LoadBalancerID: lb.ID,
 				ListenerID:     lbListener.ID,
@@ -191,8 +201,9 @@ func (g *LBGenerator) InitResources() error {
 			}
 			for _, lbListenerPolicy := range lbListenerPolicies.Policies {
 				g.Resources = append(g.Resources, g.createLBListenerPolicyResources(*lb.ID, *lbListener.ID, *lbListenerPolicy.ID, *lbListenerPolicy.Name, dependsOn2))
+				lbListenerPolicyResourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
 				dependsOn2 = append(dependsOn2,
-					"ibm_is_lb_listener_policy."+terraformutils.TfSanitize(*lbListenerPolicy.Name))
+					"ibm_is_lb_listener_policy."+lbListenerPolicyResourceName)
 				listLoadBalancerListenerPolicyRulesOptions := &vpcv1.ListLoadBalancerListenerPolicyRulesOptions{
 					LoadBalancerID: lb.ID,
 					ListenerID:     lbListener.ID,

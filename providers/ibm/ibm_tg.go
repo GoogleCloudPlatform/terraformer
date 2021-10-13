@@ -30,19 +30,19 @@ type TGGenerator struct {
 }
 
 func (g TGGenerator) createTransitGatewayResources(gatewayID, gatewayName string) terraformutils.Resource {
-	resources := terraformutils.NewSimpleResource(
+	resource := terraformutils.NewSimpleResource(
 		gatewayID,
-		gatewayName,
+		normalizeResourceName(gatewayName, false),
 		"ibm_tg_gateway",
 		"ibm",
 		[]string{})
-	return resources
+	return resource
 }
 
 func (g TGGenerator) createTransitGatewayConnectionResources(gatewayID, connectionID, connectionName string, dependsOn []string) terraformutils.Resource {
-	resources := terraformutils.NewResource(
+	resource := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", gatewayID, connectionID),
-		connectionName,
+		normalizeResourceName(connectionName, false),
 		"ibm_tg_connection",
 		"ibm",
 		map[string]string{},
@@ -50,7 +50,7 @@ func (g TGGenerator) createTransitGatewayConnectionResources(gatewayID, connecti
 		map[string]interface{}{
 			"depends_on": dependsOn,
 		})
-	return resources
+	return resource
 }
 
 // CreateVersionDate requires mandatory version attribute. Any date from 2019-12-13 up to the currentdate may be provided. Specify the current date to request the latest version.
@@ -98,9 +98,10 @@ func (g *TGGenerator) InitResources() error {
 	}
 	for _, gateway := range allrecs {
 		g.Resources = append(g.Resources, g.createTransitGatewayResources(*gateway.ID, *gateway.Name))
+		resourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
 		var dependsOn []string
 		dependsOn = append(dependsOn,
-			"ibm_tg_gateway."+terraformutils.TfSanitize(*gateway.Name))
+			"ibm_tg_gateway."+resourceName)
 		listTransitGatewayConnectionsOptions := &tg.ListTransitGatewayConnectionsOptions{
 			TransitGatewayID: gateway.ID,
 		}

@@ -32,7 +32,7 @@ type VolumeGenerator struct {
 func (g VolumeGenerator) createVolumeResources(volID, volName string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
 		volID,
-		volName,
+		normalizeResourceName(volName, true),
 		"ibm_is_volume",
 		"ibm",
 		[]string{})
@@ -41,7 +41,7 @@ func (g VolumeGenerator) createVolumeResources(volID, volName string) terraformu
 
 // InitResources ...
 func (g *VolumeGenerator) InitResources() error {
-	region := envFallBack([]string{"IC_REGION"}, "us-south")
+	region := g.Args["region"].(string)
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
 		log.Fatal("No API key set")

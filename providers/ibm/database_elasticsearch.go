@@ -43,7 +43,7 @@ func (g DatabaseElasticSearchGenerator) loadElasticSearchDB(dbID string, dbName 
 // InitResources ...
 func (g *DatabaseElasticSearchGenerator) InitResources() error {
 
-	region := os.Getenv("IC_REGION")
+	region := g.Args["region"].(string)
 	bmxConfig := &bluemix.Config{
 		BluemixAPIKey: os.Getenv("IC_API_KEY"),
 		Region:        region,

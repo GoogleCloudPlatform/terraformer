@@ -15,17 +15,22 @@
 package ibm
 
 import (
+	"fmt"
 	gohttp "net/http"
 	"net/url"
 	"os"
 	"reflect"
+	"strconv"
 	"strings"
 
+	bluemix "github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/authentication"
 	"github.com/IBM-Cloud/bluemix-go/http"
 	"github.com/IBM-Cloud/bluemix-go/rest"
 	"github.com/IBM-Cloud/bluemix-go/session"
 	"github.com/dgrijalva/jwt-go"
+
+	"github.com/IBM-Cloud/bluemix-go/api/resource/resourcev2/managementv2"
 )
 
 // UserConfig ...
@@ -136,4 +141,51 @@ func GetNextIAM(next interface{}) string {
 	}
 	q := u.Query()
 	return q.Get("pagetoken")
+}
+
+func GetResourceGroupID(apiKey, name, region string) (string, error) {
+	bmxConfig := &bluemix.Config{
+		BluemixAPIKey: apiKey,
+		Region:        region,
+	}
+
+	sess, err := session.New(bmxConfig)
+	if err != nil {
+		return "", err
+	}
+
+	err = authenticateAPIKey(sess)
+	if err != nil {
+		return "", err
+	}
+
+	generation := envFallBack([]string{"Generation"}, "2")
+	gen, err := strconv.Atoi(generation)
+	if err != nil {
+		return "", err
+	}
+	userInfo, err := fetchUserDetails(sess, gen)
+	if err != nil {
+		return "", err
+	}
+
+	accountID := userInfo.userAccount
+	rsManagementAPI, err := managementv2.New(sess)
+	if err != nil {
+		return "", err
+	}
+
+	rsGroup := rsManagementAPI.ResourceGroup()
+	resourceGroupQuery := &managementv2.ResourceGroupQuery{
+		AccountID: accountID,
+	}
+	grp, err := rsGroup.FindByName(resourceGroupQuery, name)
+	if err != nil {
+		return "", err
+	}
+	if len(grp) > 0 {
+		return grp[0].ID, nil
+	}
+
+	return "", fmt.Errorf("Unable to get ID of resource group")
 }

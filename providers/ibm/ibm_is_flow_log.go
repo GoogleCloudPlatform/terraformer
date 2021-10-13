@@ -30,28 +30,23 @@ type FlowLogGenerator struct {
 }
 
 func (g FlowLogGenerator) createFlowLogResources(flogID, flogName string) terraformutils.Resource {
-	resources := terraformutils.NewSimpleResource(
+	resource := terraformutils.NewSimpleResource(
 		flogID,
-		flogName,
+		normalizeResourceName(flogName, false),
 		"ibm_is_flow_log",
 		"ibm",
 		[]string{})
-	return resources
+	return resource
 }
 
 // InitResources ...
 func (g *FlowLogGenerator) InitResources() error {
-	var resoureGroup string
-	region := envFallBack([]string{"IC_REGION"}, "us-south")
+	region := g.Args["region"].(string)
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
 		log.Fatal("No API key set")
 	}
 
-	rg := g.Args["resource_group"]
-	if rg != nil {
-		resoureGroup = rg.(string)
-	}
 	vpcurl := fmt.Sprintf("https://%s.iaas.cloud.ibm.com/v1", region)
 	vpcoptions := &vpcv1.VpcV1Options{
 		URL: envFallBack([]string{"IBMCLOUD_IS_API_ENDPOINT"}, vpcurl),
@@ -70,8 +65,12 @@ func (g *FlowLogGenerator) InitResources() error {
 		if start != "" {
 			options.Start = &start
 		}
-		if resoureGroup != "" {
-			options.ResourceGroupID = &resoureGroup
+		if rg := g.Args["resource_group"].(string); rg != "" {
+			rg, err = GetResourceGroupID(apiKey, rg, region)
+			if err != nil {
+				return fmt.Errorf("Error Fetching Resource Group Id %s", err)
+			}
+			options.ResourceGroupID = &rg
 		}
 		flogs, response, err := vpcclient.ListFlowLogCollectors(options)
 		if err != nil {

@@ -43,7 +43,7 @@ func (g DatabaseRabbitMQGenerator) loadRabbitMQDB(dbID string, dbName string) te
 // InitResources ...
 func (g *DatabaseRabbitMQGenerator) InitResources() error {
 
-	region := os.Getenv("IC_REGION")
+	region := g.Args["region"].(string)
 	bmxConfig := &bluemix.Config{
 		BluemixAPIKey: os.Getenv("IC_API_KEY"),
 		Region:        region,

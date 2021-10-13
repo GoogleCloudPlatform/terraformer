@@ -36,7 +36,7 @@ type CloudFunctionGenerator struct {
 }
 
 func (g CloudFunctionGenerator) loadPackages(namespace, pkgName string) terraformutils.Resource {
-	resources := terraformutils.NewResource(
+	resource := terraformutils.NewResource(
 		fmt.Sprintf("%s:%s", namespace, pkgName),
 		pkgName,
 		"ibm_function_package",
@@ -44,31 +44,31 @@ func (g CloudFunctionGenerator) loadPackages(namespace, pkgName string) terrafor
 		map[string]string{},
 		[]string{},
 		map[string]interface{}{})
-	return resources
+	return resource
 }
 
 func (g CloudFunctionGenerator) loadRules(namespace, ruleName string) terraformutils.Resource {
-	resources := terraformutils.NewResource(
+	resource := terraformutils.NewResource(
 		fmt.Sprintf("%s:%s", namespace, ruleName),
-		ruleName,
+		normalizeResourceName(ruleName, false),
 		"ibm_function_rule",
 		"ibm",
 		map[string]string{},
 		[]string{},
 		map[string]interface{}{})
-	return resources
+	return resource
 }
 
 func (g CloudFunctionGenerator) loadTriggers(namespace, triggerName string) terraformutils.Resource {
-	resources := terraformutils.NewResource(
+	resource := terraformutils.NewResource(
 		fmt.Sprintf("%s:%s", namespace, triggerName),
-		triggerName,
+		normalizeResourceName(triggerName, false),
 		"ibm_function_trigger",
 		"ibm",
 		map[string]string{},
 		[]string{},
 		map[string]interface{}{})
-	return resources
+	return resource
 }
 
 /*
@@ -105,17 +105,11 @@ func setupOpenWhiskClientConfigIAM(response ns.NamespaceResponse, c *bluemix.Con
 
 // InitResources ..
 func (g *CloudFunctionGenerator) InitResources() error {
-	var region string
+	region := g.Args["region"].(string)
 	bmxConfig := &bluemix.Config{
 		BluemixAPIKey: os.Getenv("IC_API_KEY"),
 	}
 
-	rg := g.Args["region"]
-	if rg != "" {
-		region = rg.(string)
-	} else {
-		region = "us-south"
-	}
 	bmxConfig.Region = region
 
 	sess, err := session.New(bmxConfig)
@@ -145,7 +139,7 @@ func (g *CloudFunctionGenerator) InitResources() error {
 
 	for _, n := range nsList.Namespaces {
 		// Namespace
-		if n.IsCf() {
+		if !n.IsIamEnabled() {
 			continue
 		}
 
@@ -191,7 +185,7 @@ func (g *CloudFunctionGenerator) InitResources() error {
 				actionID = fmt.Sprintf("%s/%s", parts[1], a.Name)
 				g.Resources = append(g.Resources, terraformutils.NewResource(
 					fmt.Sprintf("%s:%s", n.GetName(), actionID),
-					a.Name,
+					normalizeResourceName(a.Name, false),
 					"ibm_function_action",
 					"ibm",
 					map[string]string{},
@@ -202,7 +196,7 @@ func (g *CloudFunctionGenerator) InitResources() error {
 			} else {
 				g.Resources = append(g.Resources, terraformutils.NewResource(
 					fmt.Sprintf("%s:%s", n.GetName(), a.Name),
-					a.Name,
+					normalizeResourceName(a.Name, false),
 					"ibm_function_action",
 					"ibm",
 					map[string]string{},

@@ -39,7 +39,7 @@ type COSGenerator struct {
 func (g COSGenerator) loadCOS(cosID string, cosName string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
 		cosID,
-		cosName,
+		normalizeResourceName(cosName, false),
 		"ibm_resource_instance",
 		"ibm",
 		[]string{})
@@ -49,7 +49,7 @@ func (g COSGenerator) loadCOS(cosID string, cosName string) terraformutils.Resou
 func (g COSGenerator) loadCOSBuckets(bucketID, bucketName string, dependsOn []string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		bucketID,
-		bucketName,
+		normalizeResourceName(bucketName, false),
 		"ibm_cos_bucket",
 		"ibm",
 		map[string]string{},
@@ -93,6 +93,7 @@ func (g *COSGenerator) InitResources() error {
 	authEndpoint := "https://iam.cloud.ibm.com/identity/token"
 	for _, cs := range cosInstances {
 		g.Resources = append(g.Resources, g.loadCOS(cs.ID, cs.Name))
+		csResourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
 		s3Conf := ibmaws.NewConfig().WithCredentials(ibmiam.NewStaticCredentials(ibmaws.NewConfig(), authEndpoint, os.Getenv("IC_API_KEY"), cs.ID)).WithS3ForcePathStyle(true).WithEndpoint("s3.us-south.cloud-object-storage.appdomain.cloud")
 		s3Sess := cossession.Must(cossession.NewSession())
 		s3Client := coss3.New(s3Sess, s3Conf)
@@ -103,7 +104,7 @@ func (g *COSGenerator) InitResources() error {
 		for _, b := range d.Buckets {
 			var dependsOn []string
 			dependsOn = append(dependsOn,
-				"ibm_resource_instance."+terraformutils.TfSanitize(cs.Name))
+				"ibm_resource_instance."+csResourceName)
 			var apiType, location string
 			bLocationConstraint := *b.LocationConstraint
 			if singleSiteLocationRegex.MatchString(bLocationConstraint) {

@@ -42,7 +42,7 @@ func (g DatabasePostgresqlGenerator) loadPostgresqlDB(dbID string, dbName string
 
 // InitResources ...
 func (g *DatabasePostgresqlGenerator) InitResources() error {
-	region := os.Getenv("IC_REGION")
+	region := g.Args["region"].(string)
 	bmxConfig := &bluemix.Config{
 		BluemixAPIKey: os.Getenv("IC_API_KEY"),
 		Region:        region,

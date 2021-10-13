@@ -8,7 +8,6 @@ If you want to run Terraformer with the IBM Cloud provider plugin on your system
 
     ```
     export IC_API_KEY=<IBMCLOUD_API_KEY>
-    export IC_REGION=<IBMCLOUD_REGION>
     terraformer import ibm -r ibm_cos,ibm_iam....
     ```
 2. Use flag for Resource Group to classify resources accordingly.
@@ -16,8 +15,7 @@ If you want to run Terraformer with the IBM Cloud provider plugin on your system
 
     ```
     export IC_API_KEY=<IBMCLOUD_API_KEY>
-    export IC_REGION=<IBMCLOUD_REGION>
-    terraformer import ibm --resources=ibm_is_vpc --resource_group=a0d5213d831a454ebace7ed38ca9c8ca
+    terraformer import ibm --resources=ibm_is_vpc --resource_group=default
     terraformer import ibm --resources=ibm_function --region=us-south
     ```
 List of supported IBM Cloud resources:
@@ -138,3 +136,6 @@ List of supported IBM Cloud resources:
 * `ibm_vpe_gateway`
     * `ibm_is_virtual_endpoint_gateway`
     * `ibm_is_virtual_endpoint_gateway_ip`
+* `ibm_satellite`
+    * `ibm_satellite_location`
+    * `ibm_satellite_host`    

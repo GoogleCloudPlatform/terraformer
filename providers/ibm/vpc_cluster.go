@@ -29,19 +29,19 @@ type VPCClusterGenerator struct {
 }
 
 func (g VPCClusterGenerator) loadcluster(clustersID, clusterName string) terraformutils.Resource {
-	resources := terraformutils.NewSimpleResource(
+	resource := terraformutils.NewSimpleResource(
 		clustersID,
-		clusterName,
+		normalizeResourceName(clusterName, false),
 		"ibm_container_vpc_cluster",
 		"ibm",
 		[]string{})
-	return resources
+	return resource
 }
 
-func (g VPCClusterGenerator) loadWorkerPools(clustersID, poolID string, dependsOn []string) terraformutils.Resource {
-	resources := terraformutils.NewResource(
+func (g VPCClusterGenerator) loadWorkerPools(clustersID, poolID, poolName string, dependsOn []string) terraformutils.Resource {
+	resource := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", clustersID, poolID),
-		poolID,
+		normalizeResourceName(poolName, true),
 		"ibm_container_vpc_worker_pool",
 		"ibm",
 		map[string]string{},
@@ -49,7 +49,7 @@ func (g VPCClusterGenerator) loadWorkerPools(clustersID, poolID string, dependsO
 		map[string]interface{}{
 			"depends_on": dependsOn,
 		})
-	return resources
+	return resource
 }
 
 func (g *VPCClusterGenerator) InitResources() error {
@@ -72,6 +72,7 @@ func (g *VPCClusterGenerator) InitResources() error {
 
 	for _, cs := range clusters {
 		g.Resources = append(g.Resources, g.loadcluster(cs.ID, cs.Name))
+		resourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
 		workerPools, err := client.WorkerPools().ListWorkerPools(cs.ID, containerv2.ClusterTargetHeader{})
 		if err != nil {
 			return err
@@ -81,8 +82,8 @@ func (g *VPCClusterGenerator) InitResources() error {
 			if pool.PoolName != "default" {
 				var dependsOn []string
 				dependsOn = append(dependsOn,
-					"ibm_container_vpc_cluster."+terraformutils.TfSanitize(cs.Name))
-				g.Resources = append(g.Resources, g.loadWorkerPools(cs.ID, pool.ID, dependsOn))
+					"ibm_container_vpc_cluster."+resourceName)
+				g.Resources = append(g.Resources, g.loadWorkerPools(cs.ID, pool.ID, pool.PoolName, dependsOn))
 			}
 		}
 

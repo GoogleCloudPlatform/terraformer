@@ -31,7 +31,7 @@ type VPEGenerator struct {
 func (g VPEGenerator) createVPEGatewayResources(gatewayID, gatewayName string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
 		gatewayID,
-		gatewayName,
+		normalizeResourceName(gatewayName, false),
 		"ibm_is_virtual_endpoint_gateway",
 		"ibm",
 		[]string{})
@@ -41,7 +41,7 @@ func (g VPEGenerator) createVPEGatewayResources(gatewayID, gatewayName string) t
 func (g VPEGenerator) createVPEGatewayIPResources(gatewayID, gatewayIPID, gatewayIPName string, dependsOn []string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", gatewayID, gatewayIPID),
-		gatewayIPName,
+		normalizeResourceName(gatewayIPName, false),
 		"ibm_is_virtual_endpoint_gateway_ip",
 		"ibm",
 		map[string]string{},
@@ -54,16 +54,10 @@ func (g VPEGenerator) createVPEGatewayIPResources(gatewayID, gatewayIPID, gatewa
 
 // InitResources ...
 func (g *VPEGenerator) InitResources() error {
-	var resoureGroup string
-	region := envFallBack([]string{"IC_REGION"}, "us-south")
+	region := g.Args["region"].(string)
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
 		return fmt.Errorf("No API key set")
-	}
-
-	rg := g.Args["resource_group"]
-	if rg != nil {
-		resoureGroup = rg.(string)
 	}
 
 	vpcurl := fmt.Sprintf("https://%s.iaas.cloud.ibm.com/v1", region)
@@ -85,8 +79,12 @@ func (g *VPEGenerator) InitResources() error {
 		if start != "" {
 			listEndpointGatewaysOptions.Start = &start
 		}
-		if resoureGroup != "" {
-			listEndpointGatewaysOptions.ResourceGroupID = &resoureGroup
+		if rg := g.Args["resource_group"].(string); rg != "" {
+			rg, err = GetResourceGroupID(apiKey, rg, region)
+			if err != nil {
+				return fmt.Errorf("Error Fetching Resource Group Id %s", err)
+			}
+			listEndpointGatewaysOptions.ResourceGroupID = &rg
 		}
 		gateways, response, err := vpcclient.ListEndpointGateways(listEndpointGatewaysOptions)
 		if err != nil {

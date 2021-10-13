@@ -32,7 +32,7 @@ type IkeGenerator struct {
 func (g IkeGenerator) createIkeResources(ikeID, ikeName string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
 		ikeID,
-		ikeName,
+		normalizeResourceName(ikeName, false),
 		"ibm_is_ike_policy",
 		"ibm",
 		[]string{})
@@ -41,7 +41,7 @@ func (g IkeGenerator) createIkeResources(ikeID, ikeName string) terraformutils.R
 
 // InitResources ...
 func (g *IkeGenerator) InitResources() error {
-	region := envFallBack([]string{"IC_REGION"}, "us-south")
+	region := g.Args["region"].(string)
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
 		log.Fatal("No API key set")
