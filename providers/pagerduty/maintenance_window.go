@@ -17,40 +17,39 @@ package pagerduty
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	pagerduty "github.com/heimweh/go-pagerduty/pagerduty"
-	"strings"
+
+	"fmt"
 )
 
-type BusinessServiceGenerator struct {
+type MaintenanceWindowGenerator struct {
 	PagerDutyService
 }
 
-func (g *BusinessServiceGenerator) createBusinessServiceResources(client *pagerduty.Client) error {
-	resp, _, err := client.BusinessServices.List()
+func (g *MaintenanceWindowGenerator) createMaintenanceWindowResources(client *pagerduty.Client) error {
+	resp, _, err := client.MaintenanceWindows.List(&pagerduty.ListMaintenanceWindowsOptions{})
 	if err != nil {
 		return err
 	}
-
-	for _, service := range resp.BusinessServices {
+	for _, maintenance_window := range resp.MaintenanceWindows {
 		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-			service.ID,
-			strings.Replace(service.Name, " ", "_", -1),
-			"pagerduty_business_service",
+			maintenance_window.ID,
+			fmt.Sprintf("maintenance_window_%s", maintenance_window.ID),
+			"pagerduty_maintenance_window",
 			g.ProviderName,
 			[]string{},
 		))
 	}
-
 	return nil
 }
 
-func (g *BusinessServiceGenerator) InitResources() error {
+func (g *MaintenanceWindowGenerator) InitResources() error {
 	client, err := g.Client()
 	if err != nil {
 		return err
 	}
 
 	funcs := []func(*pagerduty.Client) error{
-		g.createBusinessServiceResources,
+		g.createMaintenanceWindowResources,
 	}
 
 	for _, f := range funcs {

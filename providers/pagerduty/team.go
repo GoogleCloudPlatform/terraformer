@@ -16,6 +16,7 @@ package pagerduty
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	pagerduty "github.com/heimweh/go-pagerduty/pagerduty"
@@ -38,7 +39,7 @@ func (g *TeamGenerator) createTeamResources(client *pagerduty.Client) error {
 		for _, team := range resp.Teams {
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				team.ID,
-				fmt.Sprintf("Team_%s", team.Name),
+				fmt.Sprintf("%s", strings.Replace(team.Name, " ", "_", -1)),
 				"pagerduty_team",
 				g.ProviderName,
 				[]string{},
@@ -66,6 +67,7 @@ func (g *TeamGenerator) createTeamMembershipResources(client *pagerduty.Client) 
 		}
 
 		memberOptions := pagerduty.GetMembersOptions{}
+		userOptions := pagerduty.GetUserOptions{}
 		for _, team := range resp.Teams {
 			members, _, err := client.Teams.GetMembers(team.ID, &memberOptions)
 
@@ -74,9 +76,14 @@ func (g *TeamGenerator) createTeamMembershipResources(client *pagerduty.Client) 
 			}
 
 			for _, member := range members.Members {
+				user, _, err := client.Users.Get(member.User.ID, &userOptions)
+
+				if err != nil {
+					return err
+				}
 				g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 					fmt.Sprintf("%s:%s", member.User.ID, team.ID),
-					fmt.Sprintf("%s_%s", member.User.ID, team.Name),
+					fmt.Sprintf("%s_%s", strings.Replace(team.Name, " ", "_", -1), strings.Replace(user.Name, " ", "_", -1)),
 					"pagerduty_team_membership",
 					g.ProviderName,
 					[]string{},

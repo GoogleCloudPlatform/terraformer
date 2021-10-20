@@ -20,13 +20,15 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	pagerduty "github.com/heimweh/go-pagerduty/pagerduty"
+	"log"
+	"strconv"
 )
 
-type ServiceGenerator struct {
+type ServiceIntegrationGenerator struct {
 	PagerDutyService
 }
 
-func (g *ServiceGenerator) createServiceResources(client *pagerduty.Client) error {
+func (g *ServiceIntegrationGenerator) createServiceIntegrationResources(client *pagerduty.Client) error {
 	var offset = 0
 	options := pagerduty.ListServicesOptions{}
 	for {
@@ -35,50 +37,17 @@ func (g *ServiceGenerator) createServiceResources(client *pagerduty.Client) erro
 		if err != nil {
 			return err
 		}
-
+		log.Printf("Offset is at: %s", strconv.Itoa(offset))
 		for _, service := range resp.Services {
-			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-				service.ID,
-				fmt.Sprintf("%s", strings.Replace(service.Name, " ", "_", -1)),
-				"pagerduty_service",
-				g.ProviderName,
-				[]string{},
-			))
-		}
-
-		if !resp.More {
-			break
-		}
-		offset += resp.Limit
-	}
-
-	return nil
-}
-
-func (g *ServiceGenerator) createServiceEventRuleResources(client *pagerduty.Client) error {
-	var offset = 0
-	options := pagerduty.ListServicesOptions{}
-	optionsEventRules := pagerduty.ListServiceEventRuleOptions{}
-	for {
-		options.Offset = offset
-		optionsEventRules.Offset = offset
-		resp, _, err := client.Services.List(&options)
-		if err != nil {
-			return err
-		}
-
-		for _, service := range resp.Services {
-			rules, _, err := client.Services.ListEventRules(service.ID, &optionsEventRules)
-
-			if err != nil {
-				return err
-			}
-
-			for _, rule := range rules.EventRules {
+			for _, serviceIntegration := range service.Integrations {
+				respServiceIntegration, _, err := client.Services.GetIntegration(service.ID, serviceIntegration.ID, &pagerduty.GetIntegrationOptions{})
+				if err != nil {
+					return err
+				}
 				g.Resources = append(g.Resources, terraformutils.NewResource(
-					rule.ID,
-					fmt.Sprintf("%s_%s", service.Name, rule.ID),
-					"pagerduty_service_event_rule",
+					respServiceIntegration.ID,
+					fmt.Sprintf("&s_%s", strings.Replace(service.Name, " ", "_", -1), strings.Replace(respServiceIntegration.Name, " ", "_", -1)),
+					"pagerduty_service_integration",
 					g.ProviderName,
 					map[string]string{
 						"service": service.ID,
@@ -88,7 +57,6 @@ func (g *ServiceGenerator) createServiceEventRuleResources(client *pagerduty.Cli
 				))
 			}
 		}
-
 		if !resp.More {
 			break
 		}
@@ -97,15 +65,14 @@ func (g *ServiceGenerator) createServiceEventRuleResources(client *pagerduty.Cli
 	return nil
 }
 
-func (g *ServiceGenerator) InitResources() error {
+func (g *ServiceIntegrationGenerator) InitResources() error {
 	client, err := g.Client()
 	if err != nil {
 		return err
 	}
 
 	funcs := []func(*pagerduty.Client) error{
-		g.createServiceResources,
-		g.createServiceEventRuleResources,
+		g.createServiceIntegrationResources,
 	}
 
 	for _, f := range funcs {

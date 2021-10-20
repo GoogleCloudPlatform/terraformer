@@ -17,40 +17,52 @@ package pagerduty
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	pagerduty "github.com/heimweh/go-pagerduty/pagerduty"
+
+	"fmt"
+	"strconv"
 	"strings"
 )
 
-type BusinessServiceGenerator struct {
+type RulesetRuleGenerator struct {
 	PagerDutyService
 }
 
-func (g *BusinessServiceGenerator) createBusinessServiceResources(client *pagerduty.Client) error {
-	resp, _, err := client.BusinessServices.List()
+func (g *RulesetRuleGenerator) createRulesetRuleResources(client *pagerduty.Client) error {
+	respRulesets, _, err := client.Rulesets.List()
 	if err != nil {
 		return err
 	}
-
-	for _, service := range resp.BusinessServices {
-		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-			service.ID,
-			strings.Replace(service.Name, " ", "_", -1),
-			"pagerduty_business_service",
-			g.ProviderName,
-			[]string{},
-		))
+	for _, ruleset := range respRulesets.Rulesets {
+		resp, _, err := client.Rulesets.ListRules(ruleset.ID)
+		if err != nil {
+			return err
+		}
+		for _, rulesetRule := range resp.Rules {
+			g.Resources = append(g.Resources, terraformutils.NewResource(
+				rulesetRule.ID,
+				fmt.Sprintf("%s_%s", strings.Replace(ruleset.Name, " ", "_", -1), strconv.Itoa(*rulesetRule.Position)),
+				"pagerduty_ruleset_rule",
+				g.ProviderName,
+				map[string]string{
+					"ruleset": ruleset.ID,
+				},
+				[]string{},
+				map[string]interface{}{},
+			))
+		}
 	}
 
 	return nil
 }
 
-func (g *BusinessServiceGenerator) InitResources() error {
+func (g *RulesetRuleGenerator) InitResources() error {
 	client, err := g.Client()
 	if err != nil {
 		return err
 	}
 
 	funcs := []func(*pagerduty.Client) error{
-		g.createBusinessServiceResources,
+		g.createRulesetRuleResources,
 	}
 
 	for _, f := range funcs {

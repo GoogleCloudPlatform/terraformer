@@ -16,6 +16,7 @@ package pagerduty
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	pagerduty "github.com/heimweh/go-pagerduty/pagerduty"
@@ -38,7 +39,7 @@ func (g *UserGenerator) createUserResources(client *pagerduty.Client) error {
 		for _, user := range resp.Users {
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				user.ID,
-				fmt.Sprintf("user_%s", user.ID),
+				fmt.Sprintf("%s", strings.Replace(user.Name, " ", "_", -1)),
 				"pagerduty_user",
 				g.ProviderName,
 				[]string{},

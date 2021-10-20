@@ -15,97 +15,65 @@
 package pagerduty
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	pagerduty "github.com/heimweh/go-pagerduty/pagerduty"
+
+	"fmt"
+	"strings"
 )
 
-type ServiceGenerator struct {
+type ResponsePlayGenerator struct {
 	PagerDutyService
 }
 
-func (g *ServiceGenerator) createServiceResources(client *pagerduty.Client) error {
+func (g *ResponsePlayGenerator) createResponsePlayResources(client *pagerduty.Client) error {
 	var offset = 0
-	options := pagerduty.ListServicesOptions{}
+	options := pagerduty.ListUsersOptions{}
+	responsePlayOptions := pagerduty.ListResponsePlayOptions{}
 	for {
 		options.Offset = offset
-		resp, _, err := client.Services.List(&options)
+		resp, _, err := client.Users.List(&options)
 		if err != nil {
 			return err
 		}
-
-		for _, service := range resp.Services {
-			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-				service.ID,
-				fmt.Sprintf("%s", strings.Replace(service.Name, " ", "_", -1)),
-				"pagerduty_service",
-				g.ProviderName,
-				[]string{},
-			))
-		}
-
-		if !resp.More {
-			break
-		}
-		offset += resp.Limit
-	}
-
-	return nil
-}
-
-func (g *ServiceGenerator) createServiceEventRuleResources(client *pagerduty.Client) error {
-	var offset = 0
-	options := pagerduty.ListServicesOptions{}
-	optionsEventRules := pagerduty.ListServiceEventRuleOptions{}
-	for {
-		options.Offset = offset
-		optionsEventRules.Offset = offset
-		resp, _, err := client.Services.List(&options)
-		if err != nil {
-			return err
-		}
-
-		for _, service := range resp.Services {
-			rules, _, err := client.Services.ListEventRules(service.ID, &optionsEventRules)
-
+		for _, user := range resp.Users {
+			responsePlayOptions.From = user.Email
+			resp, _, err := client.ResponsePlays.List(&responsePlayOptions)
 			if err != nil {
 				return err
 			}
-
-			for _, rule := range rules.EventRules {
+			for _, responsePlay := range resp.ResponsePlays {
 				g.Resources = append(g.Resources, terraformutils.NewResource(
-					rule.ID,
-					fmt.Sprintf("%s_%s", service.Name, rule.ID),
-					"pagerduty_service_event_rule",
+					responsePlay.ID,
+					fmt.Sprintf("%s_%s", strings.Replace(responsePlay.Name, " ", "_", -1), strings.ToLower(strings.TrimSuffix(strings.Replace(user.Name, " ", "_", -1), "_("))),
+					"pagerduty_response_play",
 					g.ProviderName,
 					map[string]string{
-						"service": service.ID,
+						"from": user.Email,
 					},
 					[]string{},
 					map[string]interface{}{},
 				))
 			}
 		}
-
 		if !resp.More {
 			break
 		}
+
 		offset += resp.Limit
 	}
+
 	return nil
 }
 
-func (g *ServiceGenerator) InitResources() error {
+func (g *ResponsePlayGenerator) InitResources() error {
 	client, err := g.Client()
 	if err != nil {
 		return err
 	}
 
 	funcs := []func(*pagerduty.Client) error{
-		g.createServiceResources,
-		g.createServiceEventRuleResources,
+		g.createResponsePlayResources,
 	}
 
 	for _, f := range funcs {
