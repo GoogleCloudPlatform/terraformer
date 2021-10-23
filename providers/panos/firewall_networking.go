@@ -706,7 +706,7 @@ func (g *FirewallNetworkingGenerator) PostConvertHook() error {
 		}
 
 		if r.InstanceInfo.Type == "panos_ipsec_tunnel_proxy_id_ipv4" {
-			r.Item["tunnel_interface"] = mapInterfaceNames[r.Item["tunnel_interface"].(string)]
+			r.Item["ipsec_tunnel"] = "${panos_ipsec_tunnel." + normalizeResourceName(r.Item["panos_ipsec_tunnel"].(string)) + ".name}"
 		}
 
 		if r.InstanceInfo.Type == "panos_layer2_subinterface" {
