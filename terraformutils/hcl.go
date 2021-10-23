@@ -40,15 +40,15 @@ func sortHclTree(tree interface{}) {
 	switch t := tree.(type) {
 	case []*ast.ObjectItem:
 		sort.Slice(t, func(i, j int) bool {
-			var b_i, b_j bytes.Buffer
-			_, _ = hclPrinter.Fprint(&b_i, t[i]), hclPrinter.Fprint(&b_j, t[j])
-			return b_i.String() < b_j.String()
+			var bI, bJ bytes.Buffer
+			_, _ = hclPrinter.Fprint(&bI, t[i]), hclPrinter.Fprint(&bJ, t[j])
+			return bI.String() < bJ.String()
 		})
 	case []ast.Node:
 		sort.Slice(t, func(i, j int) bool {
-			var b_i, b_j bytes.Buffer
-			_, _ = hclPrinter.Fprint(&b_i, t[i]), hclPrinter.Fprint(&b_j, t[j])
-			return b_i.String() < b_j.String()
+			var bI, bJ bytes.Buffer
+			_, _ = hclPrinter.Fprint(&bI, t[i]), hclPrinter.Fprint(&bJ, t[j])
+			return bI.String() < bJ.String()
 		})
 	default:
 	}
