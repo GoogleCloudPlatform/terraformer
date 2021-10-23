@@ -19,9 +19,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"sort"
 	"log"
 	"regexp"
+	"sort"
 	"strings"
 
 	"github.com/hashicorp/hcl/hcl/ast"
@@ -35,26 +35,24 @@ const safeChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345678
 
 var unsafeChars = regexp.MustCompile(`[^0-9A-Za-z_\-]`)
 
-
 // make HCL output reproducible by sorting the AST nodes
 func sortHclTree(tree interface{}) {
 	switch t := tree.(type) {
 	case []*ast.ObjectItem:
-			sort.Slice(t, func(i, j int) bool {
-					var b_i, b_j bytes.Buffer
-					_, _ = hclPrinter.Fprint(&b_i, t[i]), hclPrinter.Fprint(&b_j, t[j])
-					return fmt.Sprintf("%s", b_i) < fmt.Sprintf("%s", b_j)
-			})
+		sort.Slice(t, func(i, j int) bool {
+			var b_i, b_j bytes.Buffer
+			_, _ = hclPrinter.Fprint(&b_i, t[i]), hclPrinter.Fprint(&b_j, t[j])
+			return b_i.String() < b_j.String()
+		})
 	case []ast.Node:
-			sort.Slice(t, func(i, j int) bool {
-					var b_i, b_j bytes.Buffer
-					_, _ = hclPrinter.Fprint(&b_i, t[i]), hclPrinter.Fprint(&b_j, t[j])
-					return fmt.Sprintf("%s", b_i) < fmt.Sprintf("%s", b_j)
-			})
+		sort.Slice(t, func(i, j int) bool {
+			var b_i, b_j bytes.Buffer
+			_, _ = hclPrinter.Fprint(&b_i, t[i]), hclPrinter.Fprint(&b_j, t[j])
+			return b_i.String() < b_j.String()
+		})
 	default:
 	}
 }
-
 
 // sanitizer fixes up an invalid HCL AST, as produced by the HCL parser for JSON
 type astSanitizer struct{}
