@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"sort"
 	"log"
 	"regexp"
 	"strings"
@@ -34,6 +35,27 @@ const safeChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345678
 
 var unsafeChars = regexp.MustCompile(`[^0-9A-Za-z_\-]`)
 
+
+// make HCL output reproducible by sorting the AST nodes
+func sortHclTree(tree interface{}) {
+	switch t := tree.(type) {
+	case []*ast.ObjectItem:
+			sort.Slice(t, func(i, j int) bool {
+					var b_i, b_j bytes.Buffer
+					_, _ = hclPrinter.Fprint(&b_i, t[i]), hclPrinter.Fprint(&b_j, t[j])
+					return fmt.Sprintf("%s", b_i) < fmt.Sprintf("%s", b_j)
+			})
+	case []ast.Node:
+			sort.Slice(t, func(i, j int) bool {
+					var b_i, b_j bytes.Buffer
+					_, _ = hclPrinter.Fprint(&b_i, t[i]), hclPrinter.Fprint(&b_j, t[j])
+					return fmt.Sprintf("%s", b_i) < fmt.Sprintf("%s", b_j)
+			})
+	default:
+	}
+}
+
+
 // sanitizer fixes up an invalid HCL AST, as produced by the HCL parser for JSON
 type astSanitizer struct{}
 
@@ -44,6 +66,7 @@ func (v *astSanitizer) visit(n interface{}) {
 		v.visit(t.Node)
 	case *ast.ObjectList:
 		var index int
+		sortHclTree(t.Items)
 		for {
 			if index == len(t.Items) {
 				break
@@ -56,7 +79,9 @@ func (v *astSanitizer) visit(n interface{}) {
 		v.visitObjectItem(t)
 	case *ast.LiteralType:
 	case *ast.ListType:
+		sortHclTree(t.List)
 	case *ast.ObjectType:
+		sortHclTree(t.List)
 		v.visit(t.List)
 	default:
 		fmt.Printf(" unknown type: %T\n", n)
@@ -115,6 +140,8 @@ func (v *astSanitizer) visitObjectItem(o *ast.ObjectItem) {
 				}
 			}
 		}
+	case *ast.ListType:
+		sortHclTree(t.List)
 	default:
 	}
 
