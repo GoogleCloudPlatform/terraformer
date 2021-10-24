@@ -150,7 +150,7 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
                 "application_gateway": {
-                       "resource_group": []string{"resource_group_name", "name"},
+                        "resource_group": []string{"resource_group_name", "name"},
                 },
 		"cosmosdb": {
 			"resource_group": []string{
