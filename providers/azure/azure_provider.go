@@ -149,9 +149,9 @@ func (AzureProvider) GetResourceConnections() map[string]map[string][]string {
 		"app_service": {
 			"resource_group": []string{"resource_group_name", "name"},
 		},
-                "application_gateway": {
-                        "resource_group": []string{"resource_group_name", "name"},
-                },
+		"application_gateway": {
+			"resource_group": []string{"resource_group_name", "name"},
+		},
 		"cosmosdb": {
 			"resource_group": []string{
 				"resource_group_name", "name",
@@ -330,7 +330,7 @@ func (p *AzureProvider) GetSupportedService() map[string]terraformutils.ServiceG
 	return map[string]terraformutils.ServiceGenerator{
 		"analysis":                             &AnalysisGenerator{},
 		"app_service":                          &AppServiceGenerator{},
-	        "application_gateway":                  &ApplicationGatewayGenerator{},
+		"application_gateway":                  &ApplicationGatewayGenerator{},
 		"cosmosdb":                             &CosmosDBGenerator{},
 		"container":                            &ContainerGenerator{},
 		"database":                             &DatabasesGenerator{},
