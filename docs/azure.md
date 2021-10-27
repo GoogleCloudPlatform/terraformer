@@ -31,6 +31,8 @@ export ARM_TENANT_ID=[TENANT_ID]
     * `azurerm_analysis_services_server`
 *   `app_service`
     * `azurerm_app_service`
+*   `application_gateway`
+    * `azurerm_application_gateway`
 *   `container`
     * `azurerm_container_group`
     * `azurerm_container_registry`
