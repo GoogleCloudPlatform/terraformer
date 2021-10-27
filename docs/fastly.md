@@ -17,3 +17,5 @@ List of supported Fastly resources:
     * `fastly_service_v1`
 *   `user`
     * `fastly_user_v1`
+*   `tls_subscription`
+    * `fastly_tls_subscription`

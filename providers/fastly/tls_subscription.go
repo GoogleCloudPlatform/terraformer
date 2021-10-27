@@ -19,33 +19,32 @@ import (
 	"github.com/fastly/go-fastly/v5/fastly"
 )
 
-type UserGenerator struct {
+type TLSSubscriptionGenerator struct {
 	FastlyService
 }
 
-func (g *UserGenerator) loadUsers(client *fastly.Client, customerID string) error {
-	users, err := client.ListCustomerUsers(&fastly.ListCustomerUsersInput{CustomerID: customerID})
+func (g *TLSSubscriptionGenerator) loadSubscriptions(client *fastly.Client) ([]*fastly.TLSSubscription, error) {
+	subscriptions, err := client.ListTLSSubscriptions(&fastly.ListTLSSubscriptionsInput{})
 	if err != nil {
-		return err
+		return nil, err
 	}
-	for _, user := range users {
+	for _, subscription := range subscriptions {
 		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-			user.ID,
-			user.ID,
-			"fastly_user_v1",
+			subscription.ID,
+			subscription.ID,
+			"fastly_tls_subscription",
 			"fastly",
 			[]string{}))
 	}
-	return nil
+	return subscriptions, nil
 }
 
-func (g *UserGenerator) InitResources() error {
+func (g *TLSSubscriptionGenerator) InitResources() error {
 	client, err := fastly.NewClient(g.Args["api_key"].(string))
 	if err != nil {
 		return err
 	}
-
-	if err := g.loadUsers(client, g.Args["customer_id"].(string)); err != nil {
+	if _, err := g.loadSubscriptions(client); err != nil {
 		return err
 	}
 
