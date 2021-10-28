@@ -12,6 +12,7 @@ List of supported Fastly resources:
 
 *   `service_v1`
     * `fastly_service_acl_entries_v1`
+    * `fastly_service_compute`
     * `fastly_service_dictionary_items_v1`
     * `fastly_service_dynamic_snippet_content_v1`
     * `fastly_service_v1`
