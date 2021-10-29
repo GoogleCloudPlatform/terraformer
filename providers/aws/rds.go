@@ -29,6 +29,27 @@ type RDSGenerator struct {
 	AWSService
 }
 
+func (g *RDSGenerator) loadDBClusters(svc *rds.Client) error {
+	p := rds.NewDescribeDBClustersPaginator(svc, &rds.DescribeDBClustersInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, cluster := range page.DBClusters {
+			resourceName := StringValue(cluster.DBClusterIdentifier)
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+				resourceName,
+				resourceName,
+				"aws_rds_cluster",
+				"aws",
+				RDSAllowEmptyValues,
+			))
+		}
+	}
+	return nil
+}
+
 func (g *RDSGenerator) loadDBInstances(svc *rds.Client) error {
 	p := rds.NewDescribeDBInstancesPaginator(svc, &rds.DescribeDBInstancesInput{})
 	for p.HasMorePages() {
@@ -151,6 +172,9 @@ func (g *RDSGenerator) InitResources() error {
 	}
 	svc := rds.NewFromConfig(config)
 
+	if err := g.loadDBClusters(svc); err != nil {
+		return err
+	}
 	if err := g.loadDBInstances(svc); err != nil {
 		return err
 	}
@@ -173,34 +197,36 @@ func (g *RDSGenerator) InitResources() error {
 
 func (g *RDSGenerator) PostConvertHook() error {
 	for i, r := range g.Resources {
-		if r.InstanceInfo.Type != "aws_db_instance" {
+		if (r.InstanceInfo.Type == "aws_db_instance" || r.InstanceInfo.Type == "aws_rds_cluster") {
+
+			for _, parameterGroup := range g.Resources {
+				if parameterGroup.InstanceInfo.Type != "aws_db_parameter_group" {
+					continue
+				}
+				if parameterGroup.InstanceState.Attributes["name"] == r.InstanceState.Attributes["parameter_group_name"] {
+					g.Resources[i].Item["parameter_group_name"] = "${aws_db_parameter_group." + parameterGroup.ResourceName + ".name}"
+				}
+			}
+
+			for _, subnet := range g.Resources {
+				if subnet.InstanceInfo.Type != "aws_db_subnet_group" {
+					continue
+				}
+				if subnet.InstanceState.Attributes["name"] == r.InstanceState.Attributes["db_subnet_group_name"] {
+					g.Resources[i].Item["db_subnet_group_name"] = "${aws_db_subnet_group." + subnet.ResourceName + ".name}"
+				}
+			}
+
+			for _, optionGroup := range g.Resources {
+				if optionGroup.InstanceInfo.Type != "aws_db_option_group" {
+					continue
+				}
+				if optionGroup.InstanceState.Attributes["name"] == r.InstanceState.Attributes["option_group_name"] {
+					g.Resources[i].Item["option_group_name"] = "${aws_db_option_group." + optionGroup.ResourceName + ".name}"
+				}
+			}
+		} else {
 			continue
-		}
-		for _, parameterGroup := range g.Resources {
-			if parameterGroup.InstanceInfo.Type != "aws_db_parameter_group" {
-				continue
-			}
-			if parameterGroup.InstanceState.Attributes["name"] == r.InstanceState.Attributes["parameter_group_name"] {
-				g.Resources[i].Item["parameter_group_name"] = "${aws_db_parameter_group." + parameterGroup.ResourceName + ".name}"
-			}
-		}
-
-		for _, subnet := range g.Resources {
-			if subnet.InstanceInfo.Type != "aws_db_subnet_group" {
-				continue
-			}
-			if subnet.InstanceState.Attributes["name"] == r.InstanceState.Attributes["db_subnet_group_name"] {
-				g.Resources[i].Item["db_subnet_group_name"] = "${aws_db_subnet_group." + subnet.ResourceName + ".name}"
-			}
-		}
-
-		for _, optionGroup := range g.Resources {
-			if optionGroup.InstanceInfo.Type != "aws_db_option_group" {
-				continue
-			}
-			if optionGroup.InstanceState.Attributes["name"] == r.InstanceState.Attributes["option_group_name"] {
-				g.Resources[i].Item["option_group_name"] = "${aws_db_option_group." + optionGroup.ResourceName + ".name}"
-			}
 		}
 	}
 	return nil
