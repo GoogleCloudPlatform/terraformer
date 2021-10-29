@@ -220,6 +220,7 @@ In that case terraformer will not know with which region resources are associate
     * `aws_qldb_ledger`
 *   `rds`
     * `aws_db_instance`
+    * `aws_db_cluster`
     * `aws_db_parameter_group`
     * `aws_db_subnet_group`
     * `aws_db_option_group`
