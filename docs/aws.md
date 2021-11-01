@@ -8,6 +8,16 @@ Example:
  terraformer import aws --resources=vpc,subnet --filter=vpc=vpc_id1:vpc_id2:vpc_id3 --regions=eu-west-1
 ```
 
+**Few more examples** - How to import ec2 instance based on instance name and id
+```
+terraformer import aws --resources=ec2_instance --filter="Name=tags.Name;Value=Terraformer" --regions=us-east-1
+```
+This command imports ec2 instance having name as Terraformer.
+```
+terraformer import aws --resources=ec2_instance --filter="Name=id;Value=i-0xxxxxxxxx" --regions=us-east-1
+```
+This command imports ec2 instance having insatnce-id as i-0xxxxxxxxx.
+
 #### Profiles support
 
 AWS configuration including environmental variables, shared credentials file (\~/.aws/credentials), and shared config file (\~/.aws/config) will be loaded by the tool by default. To use a specific profile, you can use the following command:
