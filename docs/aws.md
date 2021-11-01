@@ -8,7 +8,7 @@ Example:
  terraformer import aws --resources=vpc,subnet --filter=vpc=vpc_id1:vpc_id2:vpc_id3 --regions=eu-west-1
 ```
 
-**Few more examples** - How to import ec2 instance based on instance name and id
+**Few more examples** - Import ec2 instance based on instance name and id
 ```
 terraformer import aws --resources=ec2_instance --filter="Name=tags.Name;Value=Terraformer" --regions=us-east-1
 ```
