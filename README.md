@@ -51,6 +51,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [Datadog](/docs/datadog.md)
         * [New Relic](/docs/relic.md)
         * [PagerDuty](/docs/pagerduty.md)
+        * [Opsgenie](/docs/opsgenie.md)
     * Community
         * [Keycloak](/docs/keycloak.md)
         * [Logz.io](/docs/logz.md)
@@ -277,6 +278,7 @@ Links to download Terraform Providers:
     * Datadog provider >2.1.0 - [here](https://releases.hashicorp.com/terraform-provider-datadog/)
     * New Relic provider >2.0.0 - [here](https://releases.hashicorp.com/terraform-provider-newrelic/)
     * Pagerduty >=1.9 - [here](https://releases.hashicorp.com/terraform-provider-pagerduty/)
+    * Opsgenie >= 0.6.0 [here](https://releases.hashicorp.com/terraform-provider-opsgenie/)
 * Community
     * Keycloak provider >=1.19.0 - [here](https://github.com/mrparkers/terraform-provider-keycloak/)
     * Logz.io provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
