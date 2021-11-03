@@ -50,6 +50,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
     * Monitoring & System Management
         * [Datadog](/docs/datadog.md)
         * [New Relic](/docs/relic.md)
+        * [Mackerel](/docs/mackerel.md)
         * [PagerDuty](/docs/pagerduty.md)
     * Community
         * [Keycloak](/docs/keycloak.md)
@@ -276,6 +277,7 @@ Links to download Terraform Providers:
 * Monitoring & System Management
     * Datadog provider >2.1.0 - [here](https://releases.hashicorp.com/terraform-provider-datadog/)
     * New Relic provider >2.0.0 - [here](https://releases.hashicorp.com/terraform-provider-newrelic/)
+    * Mackerel provider > 0.0.6 - [here](https://github.com/mackerelio-labs/terraform-provider-mackerel)
     * Pagerduty >=1.9 - [here](https://releases.hashicorp.com/terraform-provider-pagerduty/)
 * Community
     * Keycloak provider >=1.19.0 - [here](https://github.com/mrparkers/terraform-provider-keycloak/)

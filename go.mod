@@ -174,6 +174,7 @@ require (
 	github.com/IBM/go-sdk-core v1.1.0
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.2.2 // indirect
 	github.com/hashicorp/terraform-svchost v0.0.0-20200729002733-f050f53b9734 // indirect
+	github.com/mackerelio/mackerel-client-go v0.19.0
 	github.com/okta/terraform-provider-okta v0.0.0-20210924173942-a5a664459d3b
 	github.com/zclconf/go-cty-yaml v1.0.2 // indirect
 )
@@ -205,8 +206,10 @@ require (
 	github.com/aws/aws-sdk-go v1.37.0 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.0.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.0.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.4.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.2.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.1.4 // indirect
+	github.com/aws/smithy-go v1.8.1 // indirect
 	github.com/beevik/etree v1.1.0 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
