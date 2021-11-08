@@ -338,6 +338,16 @@ terraformer import aws --resources=ec2_instance,ebs --filter=Type=ec2_instance;N
 ```
 Will work as same as example above with a change the filter will be applicable only to `ec2_instance` resources.
 
+Few more examples - How to import ec2 instance based on instance name and id
+```
+terraformer import aws --resources=ec2_instance --filter="Name=tags.Name;Value=Terraformer" --regions=us-east-1
+```
+This command imports ec2 instance having name as Terraformer.
+```
+terraformer import aws --resources=ec2_instance --filter="Name=id;Value=i-0xxxxxxxxx" --regions=us-east-1
+```
+This command imports ec2 instance having insatnce-id as i-0xxxxxxxxx.
+
 Due to fact API Gateway generates a lot of resources, it's possible to issue a filtering query to retrieve resources related to a given REST API by tags. To fetch resources related to a REST API resource with a tag `STAGE` and value `dev`, add parameter `--filter="Type=api_gateway_rest_api;Name=tags.STAGE;Value=dev"`.
 
 #### SQS queues retrieval
