@@ -15,7 +15,6 @@
 package azure
 
 import (
-	"fmt"
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/hashicorp/go-azure-helpers/authentication"
@@ -35,19 +34,13 @@ func (az *AzureService) getClientArgs() (subscriptionID string, resourceGroup st
 
 func (az *AzureService) AppendSimpleResource(id string, resourceName string, resourceType string) {
 	newResource := terraformutils.NewSimpleResource(id, resourceName, resourceType, az.ProviderName, []string{})
-	fmt.Println("AppendSimpleResourcei->newResource", newResource.ResourceName, "ID", newResource.InstanceState.ID)
 	az.Resources = append(az.Resources, newResource)
-	fmt.Println("az.Resources", az.Resources)
 }
 
 func (az *AzureService) AppendSimpleResourceWithDuplicateCheck(id string, resourceName string, resourceType string) {
-	tferexist, idexist := az.DuplicateCheck(id, resourceName, resourceType)
-	fmt.Println("tferexist", tferexist, "idexist", idexist)
-	if tferexist == false {
-		fmt.Println("AppendSimpleResourceWithDuplicateCheck-> resourceName not exist", resourceName)
-	} else {
+	tferexist, _ := az.DuplicateCheck(id, resourceName, resourceType)
+	if !tferexist {
 		resourceName = resourceName + "_" + GenerateRandomString(6)
-		fmt.Println("AppendSimpleResourceWithDuplicateCheck-> New resourceName", resourceName)
 	}
 	newResource := terraformutils.NewSimpleResource(id, resourceName, resourceType, az.ProviderName, []string{})
 	az.Resources = append(az.Resources, newResource)
@@ -58,7 +51,6 @@ func (az *AzureService) AppendSimpleResourceWithDuplicateCheck(id string, resour
 func (az *AzureService) DuplicateCheck(id string, resourceName string, resourceType string) (bool, bool) {
 	var tferexist, idexist bool
 	tferName := terraformutils.TfSanitize(resourceName)
-	fmt.Println("AppendSimpleResourceWithDuplicateCheck->tferName", tferName)
 	for _, resource := range az.Resources {
 		if tferName == resource.ResourceName {
 			if id == resource.InstanceState.ID {
