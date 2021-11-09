@@ -113,7 +113,7 @@ require (
 	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
 	github.com/duosecurity/duo_api_golang v0.0.0-20201112143038-0e07e9f869e3 // indirect
 	github.com/elazarl/go-bindata-assetfs v1.0.1 // indirect
-	github.com/fastly/go-fastly/v5 v5.1.1
+	github.com/fastly/go-fastly/v5 v5.1.2
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/gocql/gocql v0.0.0-20210707082121-9a3953d1826d // indirect
 	github.com/google/go-github/v35 v35.1.0
@@ -195,7 +195,6 @@ require (
 	github.com/Masterminds/sprig v2.22.0+incompatible // indirect
 	github.com/Microsoft/go-winio v0.5.1 // indirect
 	github.com/agext/levenshtein v1.2.2 // indirect
-	github.com/ajg/form v0.0.0-20160802194845-cc2954064ec9 // indirect
 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
 	github.com/apparentlymart/go-textseg/v12 v12.0.0 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
@@ -205,8 +204,10 @@ require (
 	github.com/aws/aws-sdk-go v1.37.0 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.0.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.0.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.4.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.2.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.1.4 // indirect
+	github.com/aws/smithy-go v1.8.1 // indirect
 	github.com/beevik/etree v1.1.0 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
