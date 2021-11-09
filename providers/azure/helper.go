@@ -16,6 +16,7 @@ package azure
 
 import (
 	"fmt"
+	"math/rand"
 	"net/url"
 	"strings"
 )
@@ -42,7 +43,7 @@ func ParseAzureResourceID(id string) (*ResourceID, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Cannot parse Azure ID: %s", err)
 	}
-
+	fmt.Println("ParseAzureResourceID->idURL", idURL)
 	path := idURL.Path
 
 	path = strings.TrimPrefix(path, "/")
@@ -50,6 +51,8 @@ func ParseAzureResourceID(id string) (*ResourceID, error) {
 
 	components := strings.Split(path, "/")
 
+	fmt.Println("ParseAzureResourceID->components", components)
+	fmt.Println("len components", len(components))
 	// We should have an even number of key-value pairs.
 	if len(components)%2 != 0 {
 		return nil, fmt.Errorf("The number of path segments is not divisible by 2 in %q", path)
@@ -105,6 +108,15 @@ func ParseAzureResourceID(id string) (*ResourceID, error) {
 	}
 
 	return idObj, nil
+}
+
+func GenerateRandomString(StrLen int) string {
+	var lettersToUsed = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	RandomSlice := make([]rune, StrLen)
+	for index := range RandomSlice {
+		RandomSlice[index] = lettersToUsed[rand.Intn(len(lettersToUsed))]
+	}
+	return string(RandomSlice)
 }
 
 func asHereDoc(json string) string {

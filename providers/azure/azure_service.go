@@ -15,71 +15,77 @@
 package azure
 
 import (
-        "strings"
-
-        "github.com/Azure/go-autorest/autorest"
-        "github.com/hashicorp/go-azure-helpers/authentication"
-
-        "github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"fmt"
+	"github.com/Azure/go-autorest/autorest"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/hashicorp/go-azure-helpers/authentication"
+	"strings"
 )
 
 type AzureService struct { //nolint
-        terraformutils.Service
+	terraformutils.Service
 }
 
 func (az *AzureService) getClientArgs() (subscriptionID string, resourceGroup string, authorizer autorest.Authorizer) {
-        subs := az.Args["config"].(authentication.Config).SubscriptionID
-        auth := az.Args["authorizer"].(autorest.Authorizer)
-        resg := az.Args["resource_group"].(string)
-        return subs, resg, auth
+	subs := az.Args["config"].(authentication.Config).SubscriptionID
+	auth := az.Args["authorizer"].(autorest.Authorizer)
+	resg := az.Args["resource_group"].(string)
+	return subs, resg, auth
 }
 
 func (az *AzureService) AppendSimpleResource(id string, resourceName string, resourceType string) {
-        newResource := terraformutils.NewSimpleResource(id, resourceName, resourceType, az.ProviderName, []string{})
-        az.Resources = append(az.Resources, newResource)
+	newResource := terraformutils.NewSimpleResource(id, resourceName, resourceType, az.ProviderName, []string{})
+	fmt.Println("AppendSimpleResourcei->newResource", newResource.ResourceName, "ID", newResource.InstanceState.ID)
+	az.Resources = append(az.Resources, newResource)
+	fmt.Println("az.Resources", az.Resources)
 }
 
 func (az *AzureService) AppendSimpleResourceWithDuplicateCheck(id string, resourceName string, resourceType string) {
-        tferexist, _ := az.DuplicateCheck(id, resourceName, resourceType)
-        if tferexist == true {
-                resourceName = resourceName + "_" + GenerateRandomString(6)
-        }
-        newResource := terraformutils.NewSimpleResource(id, resourceName, resourceType, az.ProviderName, []string{})
-        az.Resources = append(az.Resources, newResource)
+	tferexist, idexist := az.DuplicateCheck(id, resourceName, resourceType)
+	fmt.Println("tferexist", tferexist, "idexist", idexist)
+	if tferexist == false {
+		fmt.Println("AppendSimpleResourceWithDuplicateCheck-> resourceName not exist", resourceName)
+	} else {
+		resourceName = resourceName + "_" + GenerateRandomString(6)
+		fmt.Println("AppendSimpleResourceWithDuplicateCheck-> New resourceName", resourceName)
+	}
+	newResource := terraformutils.NewSimpleResource(id, resourceName, resourceType, az.ProviderName, []string{})
+	az.Resources = append(az.Resources, newResource)
 }
 
 // This method checks if same resource name(tfer) exists with
 // same id
 func (az *AzureService) DuplicateCheck(id string, resourceName string, resourceType string) (bool, bool) {
-        var tferexist, idexist bool
-        tferName := terraformutils.TfSanitize(resourceName)
-        for _, resource := range az.Resources {
-                if tferName == resource.ResourceName {
-                        if id == resource.InstanceState.ID {
-                                tferexist = true
-                                idexist = true
-                        } else {
-                                tferexist = true
-                                idexist = false
-                        }
-                }
-        }
-        return tferexist, idexist
+	var tferexist, idexist bool
+	tferName := terraformutils.TfSanitize(resourceName)
+	fmt.Println("AppendSimpleResourceWithDuplicateCheck->tferName", tferName)
+	for _, resource := range az.Resources {
+		if tferName == resource.ResourceName {
+			if id == resource.InstanceState.ID {
+				tferexist = true
+				idexist = true
+			} else {
+				tferexist = true
+				idexist = false
+			}
+		}
+	}
+	return tferexist, idexist
 }
 
 func (az *AzureService) appendSimpleAssociation(id string, linkedResourceName string, resourceName *string, resourceType string, attributes map[string]string) {
-        var resourceName2 string
-        if resourceName != nil {
-                resourceName2 = *resourceName
-        } else {
-                resourceName0 := strings.ReplaceAll(resourceType, "azurerm_", "")
-                resourceName1 := resourceName0[strings.IndexByte(resourceName0, '_'):]
-                resourceName2 = linkedResourceName + resourceName1
-        }
-        newResource := terraformutils.NewResource(
-                id, resourceName2, resourceType, az.ProviderName, attributes,
-                []string{"name"},
-                map[string]interface{}{},
-        )
-        az.Resources = append(az.Resources, newResource)
+	var resourceName2 string
+	if resourceName != nil {
+		resourceName2 = *resourceName
+	} else {
+		resourceName0 := strings.ReplaceAll(resourceType, "azurerm_", "")
+		resourceName1 := resourceName0[strings.IndexByte(resourceName0, '_'):]
+		resourceName2 = linkedResourceName + resourceName1
+	}
+	newResource := terraformutils.NewResource(
+		id, resourceName2, resourceType, az.ProviderName, attributes,
+		[]string{"name"},
+		map[string]interface{}{},
+	)
+	az.Resources = append(az.Resources, newResource)
 }
