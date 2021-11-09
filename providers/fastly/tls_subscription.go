@@ -15,6 +15,8 @@
 package fastly
 
 import (
+	"log"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/fastly/go-fastly/v5/fastly"
 )
@@ -23,7 +25,7 @@ type TLSSubscriptionGenerator struct {
 	FastlyService
 }
 
-func (g *TLSSubscriptionGenerator) loadSubscriptions(client *fastly.Client) ([]*fastly.TLSSubscription, error) {
+func (g *TLSSubscriptionGenerator) loadTLSSubscriptions(client *fastly.Client) ([]*fastly.TLSSubscription, error) {
 	subscriptions, err := client.ListTLSSubscriptions(&fastly.ListTLSSubscriptionsInput{})
 	if err != nil {
 		return nil, err
@@ -39,12 +41,36 @@ func (g *TLSSubscriptionGenerator) loadSubscriptions(client *fastly.Client) ([]*
 	return subscriptions, nil
 }
 
+func (g *TLSSubscriptionGenerator) loadTLSActivations(client *fastly.Client) ([]*fastly.TLSActivation, error) {
+	activations, err := client.ListTLSActivations(&fastly.ListTLSActivationsInput{})
+	if err != nil {
+		return nil, err
+	}
+	for _, activation := range activations {
+		log.Println("certicate: ", activation.ID)
+
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+			activation.ID,
+			activation.ID,
+			"fastly_tls_activation",
+			"fastly",
+			[]string{},
+		))
+	}
+	return activations, nil
+}
+
 func (g *TLSSubscriptionGenerator) InitResources() error {
 	client, err := fastly.NewClient(g.Args["api_key"].(string))
 	if err != nil {
 		return err
 	}
-	if _, err := g.loadSubscriptions(client); err != nil {
+
+	if _, err := g.loadTLSSubscriptions(client); err != nil {
+		return err
+	}
+
+	if _, err := g.loadTLSActivations(client); err != nil {
 		return err
 	}
 
