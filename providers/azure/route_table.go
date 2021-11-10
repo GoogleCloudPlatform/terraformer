@@ -55,7 +55,7 @@ func (az *RouteTableGenerator) listResources() ([]network.RouteTable, error) {
 }
 
 func (az *RouteTableGenerator) appendResource(resource *network.RouteTable) {
-	az.AppendSimpleResource(*resource.ID, *resource.Name, "azurerm_route_table")
+	az.AppendSimpleResourceWithDuplicateCheck(*resource.ID, *resource.Name, "azurerm_route_table")
 }
 
 func (az *RouteTableGenerator) appendRoutes(parent *network.RouteTable, resourceGroupID *ResourceID) error {
@@ -69,7 +69,7 @@ func (az *RouteTableGenerator) appendRoutes(parent *network.RouteTable, resource
 	}
 	for iterator.NotDone() {
 		item := iterator.Value()
-		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_route")
+		az.AppendSimpleResourceWithDuplicateCheck(*item.ID, *item.Name, "azurerm_route")
 		if err := iterator.NextWithContext(ctx); err != nil {
 			log.Println(err)
 			return err

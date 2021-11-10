@@ -15,12 +15,10 @@
 package azure
 
 import (
-	"strings"
-
 	"github.com/Azure/go-autorest/autorest"
-	"github.com/hashicorp/go-azure-helpers/authentication"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/hashicorp/go-azure-helpers/authentication"
+	"strings"
 )
 
 type AzureService struct { //nolint
@@ -37,6 +35,34 @@ func (az *AzureService) getClientArgs() (subscriptionID string, resourceGroup st
 func (az *AzureService) AppendSimpleResource(id string, resourceName string, resourceType string) {
 	newResource := terraformutils.NewSimpleResource(id, resourceName, resourceType, az.ProviderName, []string{})
 	az.Resources = append(az.Resources, newResource)
+}
+
+func (az *AzureService) AppendSimpleResourceWithDuplicateCheck(id string, resourceName string, resourceType string) {
+	tferexist, _ := az.DuplicateCheck(id, resourceName, resourceType)
+	if !tferexist {
+		resourceName = resourceName + "_" + GenerateRandomString(6)
+	}
+	newResource := terraformutils.NewSimpleResource(id, resourceName, resourceType, az.ProviderName, []string{})
+	az.Resources = append(az.Resources, newResource)
+}
+
+// This method checks if same resource name(tfer) exists with
+// same id
+func (az *AzureService) DuplicateCheck(id string, resourceName string, resourceType string) (bool, bool) {
+	var tferexist, idexist bool
+	tferName := terraformutils.TfSanitize(resourceName)
+	for _, resource := range az.Resources {
+		if tferName == resource.ResourceName {
+			if id == resource.InstanceState.ID {
+				tferexist = true
+				idexist = true
+			} else {
+				tferexist = true
+				idexist = false
+			}
+		}
+	}
+	return tferexist, idexist
 }
 
 func (az *AzureService) appendSimpleAssociation(id string, linkedResourceName string, resourceName *string, resourceType string, attributes map[string]string) {
