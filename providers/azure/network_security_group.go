@@ -55,7 +55,7 @@ func (az *NetworkSecurityGroupGenerator) listResources() ([]network.SecurityGrou
 }
 
 func (az *NetworkSecurityGroupGenerator) appendResource(resource *network.SecurityGroup) {
-	az.AppendSimpleResource(*resource.ID, *resource.Name, "azurerm_network_security_group")
+	az.AppendSimpleResourceWithDuplicateCheck(*resource.ID, *resource.Name, "azurerm_network_security_group")
 }
 
 func (az *NetworkSecurityGroupGenerator) appendRules(parent *network.SecurityGroup, resourceGroupID *ResourceID) error {
@@ -69,7 +69,7 @@ func (az *NetworkSecurityGroupGenerator) appendRules(parent *network.SecurityGro
 	}
 	for iterator.NotDone() {
 		item := iterator.Value()
-		az.AppendSimpleResource(*item.ID, *item.Name, "azurerm_network_security_rule")
+		az.AppendSimpleResourceWithDuplicateCheck(*item.ID, *item.Name, "azurerm_network_security_rule")
 		if err := iterator.NextWithContext(ctx); err != nil {
 			log.Println(err)
 			return err
