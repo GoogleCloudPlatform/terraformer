@@ -21,51 +21,54 @@ import (
 	"github.com/mackerelio/mackerel-client-go"
 )
 
-// RoleGenerator ...
 type RoleGenerator struct {
+	serviceName string
 	MackerelService
 }
 
-func (g *RoleGenerator) createResources(serviceName string, roles []*mackerel.Role) []terraformutils.Resource {
-	resources := []terraformutils.Resource{}
-	for _, role := range roles {
-		resources = append(resources, g.createResource(serviceName, role.Name))
-	}
-	return resources
-}
-
-func (g *RoleGenerator) createResource(serviceName string, roleName string) terraformutils.Resource {
-	return terraformutils.NewResource(
-		fmt.Sprintf("%s:%s", serviceName, roleName),
-		fmt.Sprintf("role_%s_%s", serviceName, roleName),
-		"mackerel_role",
-		"mackerel",
-		map[string]string{
-			"service": serviceName,
-			"name":    roleName,
-		},
-		[]string{},
-		map[string]interface{}{},
-	)
-}
-
-// InitResources Generate TerraformResources from Mackerel API,
-// from each role create 1 TerraformResource.
-// Need Service Name And Role Name as ID for terraform resource
-func (g *RoleGenerator) InitResources() error {
-	client := g.Args["mackerelClient"].(*mackerel.Client)
-
-	services, err := client.FindServices()
+func (g *RoleGenerator) createRoleResources(client *mackerel.Client) error {
+	roles, err := client.FindRoles(g.serviceName)
 	if err != nil {
 		return err
 	}
 
-	for _, service := range services {
-		roles, err := client.FindRoles(service.Name)
+	for _, role := range roles {
+		g.Resources = append(g.Resources, terraformutils.NewResource(
+			role.Name,
+			fmt.Sprintf("role_%s", role.Name),
+			"mackerel_role",
+			g.ProviderName,
+			map[string]string{
+				"service": g.serviceName,
+				"name":    role.Name,
+				"memo":    role.Memo,
+			},
+			[]string{},
+			map[string]interface{}{},
+		))
+	}
+	return nil
+}
+
+// InitResources Generate TerraformResources from Mackerel API,
+// from each role create 1 TerraformResource.
+// Need Role Name as ID for terraform resource
+func (g *RoleGenerator) InitResources() error {
+	client, err := g.Client()
+	if err != nil {
+		return err
+	}
+
+	funcs := []func(*mackerel.Client) error{
+		g.createRoleResources,
+	}
+
+	for _, f := range funcs {
+		err := f(client)
 		if err != nil {
 			return err
 		}
-		g.Resources = append(g.Resources, g.createResources(service.Name, roles)...)
 	}
+
 	return nil
 }

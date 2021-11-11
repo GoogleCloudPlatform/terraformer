@@ -21,38 +21,57 @@ import (
 	"github.com/mackerelio/mackerel-client-go"
 )
 
-// ServiceGenerator ...
 type ServiceGenerator struct {
+	serviceName string
 	MackerelService
 }
 
-func (g *ServiceGenerator) createResources(services []*mackerel.Service) []terraformutils.Resource {
-	resources := []terraformutils.Resource{}
-	for _, service := range services {
-		resources = append(resources, g.createResource(service.Name))
+func (g *ServiceGenerator) createServiceResources(client *mackerel.Client) error {
+	services, err := client.FindServices()
+	if err != nil {
+		return err
 	}
-	return resources
-}
 
-func (g *ServiceGenerator) createResource(serviceName string) terraformutils.Resource {
-	return terraformutils.NewSimpleResource(
-		serviceName,
-		fmt.Sprintf("service_%s", serviceName),
-		"mackerel_service",
-		"mackerel",
-		[]string{},
-	)
+	for _, service := range services {
+		if service.Name != g.serviceName {
+			continue
+		}
+		g.Resources = append(g.Resources, terraformutils.NewResource(
+			service.Name,
+			fmt.Sprintf("service_%s", service.Name),
+			"mackerel_service",
+			g.ProviderName,
+			map[string]string{
+				"name": service.Name,
+				"memo": service.Memo,
+			},
+			[]string{},
+			map[string]interface{}{},
+		))
+	}
+
+	return nil
 }
 
 // InitResources Generate TerraformResources from Mackerel API,
 // from each service create 1 TerraformResource.
 // Need Service Name as ID for terraform resource
 func (g *ServiceGenerator) InitResources() error {
-	client := g.Args["mackerelClient"].(*mackerel.Client)
-	services, err := client.FindServices()
+	client, err := g.Client()
 	if err != nil {
 		return err
 	}
-	g.Resources = append(g.Resources, g.createResources(services)...)
+
+	funcs := []func(*mackerel.Client) error{
+		g.createServiceResources,
+	}
+
+	for _, f := range funcs {
+		err := f(client)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

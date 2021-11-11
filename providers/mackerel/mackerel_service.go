@@ -14,8 +14,25 @@
 
 package mackerel
 
-import "github.com/GoogleCloudPlatform/terraformer/terraformutils"
+import (
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/mackerelio/mackerel-client-go"
+)
 
-type MackerelService struct { // nolint
+type MackerelService struct { //nolint
 	terraformutils.Service
+}
+
+func (s *MackerelService) Client() (*mackerel.Client, error) {
+	apiKey := s.GetArgs()["api_key"].(string)
+	apiBase := s.GetArgs()["api_base"].(string)
+	if apiBase == "" {
+		return mackerel.NewClient(apiKey), nil
+	}
+
+	c, err := mackerel.NewClientWithOptions(apiKey, apiBase, false)
+	if err != nil {
+		return nil, err
+	}
+	return c, nil
 }

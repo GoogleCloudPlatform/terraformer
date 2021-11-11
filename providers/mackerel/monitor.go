@@ -16,43 +16,131 @@ package mackerel
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/mackerelio/mackerel-client-go"
 )
 
-// MonitorGenerator ...
 type MonitorGenerator struct {
+	serviceName string
 	MackerelService
 }
 
-func (g *MonitorGenerator) createResources(monitors []mackerel.Monitor) []terraformutils.Resource {
-	resources := []terraformutils.Resource{}
-	for _, monitor := range monitors {
-		resources = append(resources, g.createResource(monitor.MonitorID()))
+const (
+	monitorTypeConnectivity     = "connectivity"
+	monitorTypeHostMetric       = "host"
+	monitorTypeServiceMetric    = "service"
+	monitorTypeExternalHTTP     = "external"
+	monitorTypeExpression       = "expression"
+	monitorTypeAnomalyDetection = "anomalyDetection"
+)
+
+func (g *MonitorGenerator) isMonitorTarget(serviceName string, scopes, excludeScopes []string) bool {
+	if serviceName == g.serviceName {
+		return true
 	}
-	return resources
+
+	isTarget := false
+	for _, scope := range scopes {
+		sp := strings.Split(scope, ":")
+		if sp[0] == g.serviceName {
+			isTarget = true
+			continue
+		}
+	}
+	if len(scopes) > 0 && isTarget {
+		return true
+	}
+
+	isTarget = true
+	for _, scope := range excludeScopes {
+		sp := strings.Split(scope, ":")
+		if sp[0] == g.serviceName {
+			isTarget = false
+			break
+		}
+	}
+	if len(excludeScopes) > 0 && isTarget {
+		return true
+	}
+	return false
 }
 
-func (g *MonitorGenerator) createResource(monitorID string) terraformutils.Resource {
-	return terraformutils.NewSimpleResource(
-		monitorID,
-		fmt.Sprintf("monitor_%s", monitorID),
-		"mackerel_monitor",
-		"mackerel",
-		[]string{},
-	)
+func (g *MonitorGenerator) createMonitorResources(client *mackerel.Client) error {
+	monitors, err := client.FindMonitors()
+	if err != nil {
+		return err
+	}
+
+	countByMonitorName := map[string]int{}
+	for _, monitor := range monitors {
+		var mService string
+		var scopes, excludeScopes []string
+		switch monitor.MonitorType() {
+		case monitorTypeConnectivity:
+			scopes = monitor.(*mackerel.MonitorConnectivity).Scopes
+			excludeScopes = monitor.(*mackerel.MonitorConnectivity).ExcludeScopes
+		case monitorTypeHostMetric:
+			scopes = monitor.(*mackerel.MonitorHostMetric).Scopes
+			excludeScopes = monitor.(*mackerel.MonitorHostMetric).ExcludeScopes
+		case monitorTypeServiceMetric:
+			mService = monitor.(*mackerel.MonitorServiceMetric).Service
+		case monitorTypeExternalHTTP:
+			mService = monitor.(*mackerel.MonitorExternalHTTP).Service
+		case monitorTypeExpression:
+			// nothing to do
+		case monitorTypeAnomalyDetection:
+			scopes = monitor.(*mackerel.MonitorAnomalyDetection).Scopes
+		default:
+			return fmt.Errorf("unsupported monitor type: %s(%s)", monitor.MonitorType(), monitor.MonitorName())
+		}
+
+		if len(scopes) == 0 && len(excludeScopes) == 0 && len(mService) == 0 {
+			// all of scope and excludes and service are empty, we can't detect which service use it.
+			continue
+		}
+
+		if !g.isMonitorTarget(mService, scopes, excludeScopes) {
+			continue
+		}
+
+		g.Resources = append(g.Resources, terraformutils.NewResource(
+			monitor.MonitorID(),
+			fmt.Sprintf("monitor_%s-%d", monitor.MonitorName(), countByMonitorName[monitor.MonitorName()]),
+			"mackerel_monitor",
+			g.ProviderName,
+			map[string]string{
+				"name": monitor.MonitorName(),
+			},
+			[]string{},
+			map[string]interface{}{},
+		))
+		countByMonitorName[monitor.MonitorName()]++
+
+	}
+	return nil
 }
 
 // InitResources Generate TerraformResources from Mackerel API,
 // from each monitor create 1 TerraformResource.
 // Need Monitor ID as ID for terraform resource
 func (g *MonitorGenerator) InitResources() error {
-	client := g.Args["mackerelClient"].(*mackerel.Client)
-	monitors, err := client.FindMonitors()
+	client, err := g.Client()
 	if err != nil {
 		return err
 	}
-	g.Resources = append(g.Resources, g.createResources(monitors)...)
+
+	funcs := []func(*mackerel.Client) error{
+		g.createMonitorResources,
+	}
+
+	for _, f := range funcs {
+		err := f(client)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
