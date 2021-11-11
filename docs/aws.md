@@ -347,7 +347,7 @@ This command imports ec2 instance having name as Terraformer.
 ```
 terraformer import aws --resources=ec2_instance --filter="Name=id;Value=i-0xxxxxxxxx" --regions=us-east-1
 ```
-This command imports ec2 instance having insatnce-id as i-0xxxxxxxxx.
+This command imports ec2 instance having instance-id as i-0xxxxxxxxx.
 
 Due to fact API Gateway generates a lot of resources, it's possible to issue a filtering query to retrieve resources related to a given REST API by tags. To fetch resources related to a REST API resource with a tag `STAGE` and value `dev`, add parameter `--filter="Type=api_gateway_rest_api;Name=tags.STAGE;Value=dev"`.
 
