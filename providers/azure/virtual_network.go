@@ -35,7 +35,7 @@ func (g VirtualNetworkGenerator) createResources(ctx context.Context, iterator n
 		tferName := terraformutils.TfSanitize(*virtualNetwork.Name)
 		for _, resource := range resources {
 			if tferName == resource.ResourceName {
-				*virtualNetwork.Name = *virtualNetwork.Name + "_" + GenerateRandomString(6)
+				*virtualNetwork.Name = *virtualNetwork.Name + "_" + *virtualNetwork.ID
 			}
 		}
 
