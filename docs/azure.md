@@ -23,7 +23,9 @@ export ARM_TENANT_ID=[TENANT_ID]
 
 ./terraformer import azure -r resource_group
 ./terraformer import azure -R my_resource_group -r virtual_network,resource_group
+./terraformer import azure -r resource_group --filter=resource_group=/subscriptions/<Subscription id>/resourceGroups/<RGNAME>
 ```
+
 
 ## List of supported Azure resources
 
