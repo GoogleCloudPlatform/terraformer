@@ -1,7 +1,7 @@
 #!/bin/bash
 
 GLOBAL_GCP_SERVICES=",dns,gcs,globalAddresses,globalForwardingRules,iam,gke,backendServices,backendBuckets,bigQuery,disks,firewall,healthChecks,httpHealthChecks,instanceTemplates,networks,project,routes,targetHttpsProxies,urlMaps,cloudsql,pubsub,networkEndpointGroups,instanceGroupManagers,instanceGroups,"
-GLOBAL_AWS_SERVICES=",sts,iam,cloudfront,accessanalyzer,"
+GLOBAL_AWS_SERVICES=",sts,iam,cloudfront,accessanalyzer,waf,"
 
 case $CSP in
 	"GCP")
@@ -88,7 +88,7 @@ role_arn = ${CUSTOMER_ARN_ROLE}
 external_id = ${EXTERNAL_ID}
 AWS_CREDS
 
-		services="vpc,sg,nacl,nat,igw,subnet,vpc_peering,route_table vpn_connection,vpn_gateway,transit_gateway eip,customer_gateway alb,elb ec2_instance,ebs auto_scaling eks sts,iam,cloudfront,accessanalyzer ecr,ecs,acm,kinesis,codecommit elasticache rds,sqs,cloudtrail,config kms lambda,s3,sns,dynamodb,es logs"
+		services="vpc,sg,nacl,nat,igw,subnet,vpc_peering,route_table vpn_connection,vpn_gateway,transit_gateway eip,customer_gateway alb,elb ec2_instance,ebs auto_scaling eks sts,iam,cloudfront,accessanalyzer,waf ecr,ecs,acm,kinesis,codecommit elasticache rds,sqs,cloudtrail,config kms lambda,s3,sns,dynamodb,es logs,glue,waf_regional"
 		;;
 	*)
 		echo "$CSP isn't supported"
