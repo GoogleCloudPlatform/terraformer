@@ -2,8 +2,6 @@ name: docker-build
 
 on:
   push:
-    paths-ignore:
-      - '.github/**'
     branches:
       - develop
   workflow_dispatch:
