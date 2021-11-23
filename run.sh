@@ -1,7 +1,7 @@
 #!/bin/bash
 
 GLOBAL_GCP_SERVICES=",dns,gcs,globalAddresses,globalForwardingRules,iam,gke,backendServices,backendBuckets,bigQuery,disks,firewall,healthChecks,httpHealthChecks,instanceTemplates,networks,project,routes,targetHttpsProxies,urlMaps,cloudsql,pubsub,networkEndpointGroups,instanceGroupManagers,instanceGroups,"
-GLOBAL_AWS_SERVICES=",sts,iam,cloudfront,accessanalyzer,waf,"
+GLOBAL_AWS_SERVICES=",sts,iam,cloudfront,accessanalyzer,waf,route53,"
 
 case $CSP in
 	"GCP")
@@ -39,7 +39,6 @@ run_terraformer(){
 		"AWS")
 			if [[ "$GLOBAL_AWS_SERVICES" =~ .*",$1,".* ]]; then
 				#	To be inline with the above regex, GLOBAL_GCP_SERVICES must start and end with a ","
-				regions="global"
 				echo "running command: ./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions global -c=false? || true"
   			./terraformer-aws import aws --profile ${ACCOUNT_ID} --resources ${1} --regions global -c=false || true
 			elif [[ $1 == "eks" ]]; then
@@ -88,7 +87,7 @@ role_arn = ${CUSTOMER_ARN_ROLE}
 external_id = ${EXTERNAL_ID}
 AWS_CREDS
 
-		services="vpc,sg,nacl,nat,igw,subnet,vpc_peering,route_table vpn_connection,vpn_gateway,transit_gateway eip,customer_gateway alb,elb ec2_instance,ebs auto_scaling eks sts,iam,cloudfront,accessanalyzer,waf ecr,ecs,acm,kinesis,codecommit elasticache rds,sqs,cloudtrail,config kms lambda,s3,sns,dynamodb,es logs,glue,waf_regional"
+		services="vpc,sg,nacl,nat,igw,subnet,vpc_peering,route_table vpn_connection,vpn_gateway,transit_gateway eip,customer_gateway alb,elb ec2_instance,ebs auto_scaling eks sts,iam,cloudfront,accessanalyzer,waf,route53 ecr,ecs,acm,kinesis,codecommit elasticache rds,sqs,cloudtrail,config kms lambda,s3,sns,dynamodb,es logs,glue,waf_regional"
 		;;
 	*)
 		echo "$CSP isn't supported"
