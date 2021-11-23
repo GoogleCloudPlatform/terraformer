@@ -3,9 +3,10 @@ package gcp
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"google.golang.org/api/iterator"
-	"strings"
 
 	"cloud.google.com/go/cloudtasks/apiv2"
 	"google.golang.org/api/compute/v1"
