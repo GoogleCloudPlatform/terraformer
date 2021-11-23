@@ -79,7 +79,7 @@ func (g *GlueGenerator) loadGlueCatalogTable(svc *glue.Client, account *string, 
 	return p.Err()
 }
 
-func (g *GlueGenerator) loadGlueSecurityConfiguration(svc *glue.Client, account *string) error {
+func (g *GlueGenerator) loadGlueSecurityConfiguration(svc *glue.Client) error {
 	p := glue.NewGetSecurityConfigurationsPaginator(svc.GetSecurityConfigurationsRequest(&glue.GetSecurityConfigurationsInput{}))
 	var GlueSecurityConfigurationAllowEmptyValues = []string{"tags."}
 	for p.Next(context.Background()) {
@@ -96,23 +96,24 @@ func (g *GlueGenerator) loadGlueSecurityConfiguration(svc *glue.Client, account 
 	return p.Err()
 }
 
-//func (g *GlueGenerator) loadGlueDataCatalogEncryptionSettings(svc *glue.Client, account *string) error {
-//
-//	p := glue.GetDataCatalogEncryptionSettingsInput{}(svc.Ge(&glue.GetSecurityConfigurationsInput{}))
-//	var GlueSecurityConfigurationAllowEmptyValues = []string{"tags."}
-//	for p.Next(context.Background()) {
-//		for _, securityConfiguration := range p.CurrentPage().SecurityConfigurations {
-//			resource := terraformutils.NewSimpleResource(
-//				*securityConfiguration.Name,
-//				*securityConfiguration.Name,
-//				"aws_glue_security_configuration",
-//				"aws",
-//				GlueSecurityConfigurationAllowEmptyValues)
-//			g.Resources = append(g.Resources, resource)
-//		}
-//	}
-//	return p.Err()
-//}
+func (g *GlueGenerator) loadGlueDataCatalogEncryptionSettings(svc *glue.Client, account *string) error {
+
+	req := svc.GetDataCatalogEncryptionSettingsRequest(&glue.GetDataCatalogEncryptionSettingsInput{})
+	_, err := req.Send(context.Background())
+	if err != nil {
+		return err
+	}
+	//output := resp.GetDataCatalogEncryptionSettingsOutput
+	g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+		*account,
+		*account,
+		"aws_glue_data_catalog_encryption_settings",
+		"aws",
+		[]string{"tags."}))
+
+	return nil
+}
+
 // InitResources Generate TerraformResources from AWS API,
 // from each database create 1 TerraformResource.
 // Need only database name as ID for terraform resource
@@ -129,10 +130,6 @@ func (g *GlueGenerator) InitResources() error {
 		return err
 	}
 
-	if err := g.loadGlueSecurityConfiguration(svc, account); err != nil {
-		return err
-	}
-
 	if err := g.loadGlueCrawlers(svc); err != nil {
 		return err
 	}
@@ -144,6 +141,14 @@ func (g *GlueGenerator) InitResources() error {
 		if err := g.loadGlueCatalogTable(svc, account, DatabaseName); err != nil {
 			return err
 		}
+	}
+
+	if err := g.loadGlueSecurityConfiguration(svc); err != nil {
+		return err
+	}
+
+	if err := g.loadGlueDataCatalogEncryptionSettings(svc, account); err != nil {
+		return err
 	}
 
 	return nil
