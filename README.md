@@ -548,6 +548,8 @@ In that case terraformer will not know with which region resources are associate
     * `glue_crawler`
     * `aws_glue_catalog_database`
     * `aws_glue_catalog_table`
+    * `aws_glue_security_configuration`
+    * `aws_glue_data_catalog_encryption_settings`
 *   `iam`
     * `aws_iam_group`
     * `aws_iam_group_policy`
