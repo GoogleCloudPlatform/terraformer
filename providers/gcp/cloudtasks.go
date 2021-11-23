@@ -8,7 +8,7 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"google.golang.org/api/iterator"
 
-	"cloud.google.com/go/cloudtasks/apiv2"
+	cloudtasks "cloud.google.com/go/cloudtasks/apiv2"
 	"google.golang.org/api/compute/v1"
 	taskspb "google.golang.org/genproto/googleapis/cloud/tasks/v2"
 )
