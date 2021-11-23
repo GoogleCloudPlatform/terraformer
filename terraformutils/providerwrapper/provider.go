@@ -103,7 +103,7 @@ func (p *ProviderWrapper) GetReadOnlyAttributes(resourceTypes []string) (map[str
 			for k, v := range obj.Block.Attributes {
 				if !v.Optional && !v.Required {
 					if v.Type.IsListType() || v.Type.IsSetType() {
-						readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], "^"+k+".(.*)")
+						readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], "^"+k+"\\.(.*)")
 					} else {
 						readOnlyAttributes[resourceName] = append(readOnlyAttributes[resourceName], "^"+k+"$")
 					}
@@ -118,7 +118,11 @@ func (p *ProviderWrapper) GetReadOnlyAttributes(resourceTypes []string) (map[str
 func (p *ProviderWrapper) readObjBlocks(block map[string]*configschema.NestedBlock, readOnlyAttributes []string, parent string) []string {
 	for k, v := range block {
 		if len(v.BlockTypes) > 0 {
-			readOnlyAttributes = p.readObjBlocks(v.BlockTypes, readOnlyAttributes, k)
+			if parent == "-1" {
+				readOnlyAttributes = p.readObjBlocks(v.BlockTypes, readOnlyAttributes, k)
+			} else {
+				readOnlyAttributes = p.readObjBlocks(v.BlockTypes, readOnlyAttributes, parent+"\\.[0-9]+\\."+k)
+			}
 		}
 		fieldCount := 0
 		for key, l := range v.Attributes {
@@ -127,24 +131,24 @@ func (p *ProviderWrapper) readObjBlocks(block map[string]*configschema.NestedBlo
 				switch v.Nesting {
 				case configschema.NestingList:
 					if parent == "-1" {
-						readOnlyAttributes = append(readOnlyAttributes, "^"+k+".[0-9]."+key+"($|\\.[0-9]|\\.#)")
+						readOnlyAttributes = append(readOnlyAttributes, "^"+k+"\\.[0-9]+\\."+key+"($|\\.[0-9]+|\\.#)")
 					} else {
-						readOnlyAttributes = append(readOnlyAttributes, "^"+parent+".(.*)."+key+"$")
+						readOnlyAttributes = append(readOnlyAttributes, "^"+parent+"\\.(.*)\\."+key+"$")
 					}
 				case configschema.NestingSet:
 					if parent == "-1" {
-						readOnlyAttributes = append(readOnlyAttributes, "^"+k+".[0-9]."+key+"$")
+						readOnlyAttributes = append(readOnlyAttributes, "^"+k+"\\.[0-9]+\\."+key+"$")
 					} else {
-						readOnlyAttributes = append(readOnlyAttributes, "^"+parent+".(.*)."+key+"($|\\.(.*))")
+						readOnlyAttributes = append(readOnlyAttributes, "^"+parent+"\\.(.*)\\."+key+"($|\\.(.*))")
 					}
 				case configschema.NestingMap:
-					readOnlyAttributes = append(readOnlyAttributes, parent+"."+key)
+					readOnlyAttributes = append(readOnlyAttributes, parent+"\\."+key)
 				default:
-					readOnlyAttributes = append(readOnlyAttributes, parent+"."+key+"$")
+					readOnlyAttributes = append(readOnlyAttributes, parent+"\\."+key+"$")
 				}
 			}
 		}
-		if fieldCount == len(v.Block.Attributes) && fieldCount > 0 {
+		if fieldCount == len(v.Block.Attributes) && fieldCount > 0 && len(v.BlockTypes) == 0 {
 			readOnlyAttributes = append(readOnlyAttributes, "^"+k)
 		}
 	}
@@ -167,7 +171,8 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 			Private:    []byte{},
 		})
 		if resp.Diagnostics.HasErrors() {
-			log.Printf("WARN: Fail read resource from provider, wait %dms before retry, error is: %s\n", p.retrySleepMs, resp.Diagnostics.ErrWithWarnings())
+			log.Println(resp.Diagnostics.Err())
+			log.Printf("WARN: Fail read resource from provider, wait %dms before retry\n", p.retrySleepMs)
 			time.Sleep(time.Duration(p.retrySleepMs) * time.Millisecond)
 			continue
 		} else {
@@ -252,9 +257,9 @@ func getProviderFileName(providerName string) (string, error) {
 	if defaultDataDir == "" {
 		defaultDataDir = DefaultDataDir
 	}
-	providerFilePath, err := getProviderFileNameV13(defaultDataDir, providerName)
+	providerFilePath, err := getProviderFileNameV13andV14(defaultDataDir, providerName)
 	if err != nil || providerFilePath == "" {
-		providerFilePath, err = getProviderFileNameV13(os.Getenv("HOME")+string(os.PathSeparator)+
+		providerFilePath, err = getProviderFileNameV13andV14(os.Getenv("HOME")+string(os.PathSeparator)+
 			".terraform.d", providerName)
 	}
 	if err != nil || providerFilePath == "" {
@@ -263,13 +268,19 @@ func getProviderFileName(providerName string) (string, error) {
 	return providerFilePath, nil
 }
 
-func getProviderFileNameV13(prefix, providerName string) (string, error) {
-
-	registryDir := prefix + string(os.PathSeparator) + "plugins" + string(os.PathSeparator) +
+func getProviderFileNameV13andV14(prefix, providerName string) (string, error) {
+	// Read terraform v14 file path
+	registryDir := prefix + string(os.PathSeparator) + "providers" + string(os.PathSeparator) +
 		"registry.terraform.io"
 	providerDirs, err := ioutil.ReadDir(registryDir)
 	if err != nil {
-		return "", err
+		// Read terraform v13 file path
+		registryDir = prefix + string(os.PathSeparator) + "plugins" + string(os.PathSeparator) +
+			"registry.terraform.io"
+		providerDirs, err = ioutil.ReadDir(registryDir)
+		if err != nil {
+			return "", err
+		}
 	}
 	providerFilePath := ""
 	for _, providerDir := range providerDirs {

@@ -16,7 +16,6 @@ package aws
 
 import (
 	"context"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/glue"
 )
@@ -80,7 +79,41 @@ func (g *GlueGenerator) loadGlueCatalogTable(svc *glue.Client, account *string, 
 	return p.Err()
 }
 
-// Generate TerraformResources from AWS API,
+func (g *GlueGenerator) loadGlueSecurityConfiguration(svc *glue.Client, account *string) error {
+	p := glue.NewGetSecurityConfigurationsPaginator(svc.GetSecurityConfigurationsRequest(&glue.GetSecurityConfigurationsInput{}))
+	var GlueSecurityConfigurationAllowEmptyValues = []string{"tags."}
+	for p.Next(context.Background()) {
+		for _, securityConfiguration := range p.CurrentPage().SecurityConfigurations {
+			resource := terraformutils.NewSimpleResource(
+				*securityConfiguration.Name,
+				*securityConfiguration.Name,
+				"aws_glue_security_configuration",
+				"aws",
+				GlueSecurityConfigurationAllowEmptyValues)
+			g.Resources = append(g.Resources, resource)
+		}
+	}
+	return p.Err()
+}
+
+//func (g *GlueGenerator) loadGlueDataCatalogEncryptionSettings(svc *glue.Client, account *string) error {
+//
+//	p := glue.GetDataCatalogEncryptionSettingsInput{}(svc.Ge(&glue.GetSecurityConfigurationsInput{}))
+//	var GlueSecurityConfigurationAllowEmptyValues = []string{"tags."}
+//	for p.Next(context.Background()) {
+//		for _, securityConfiguration := range p.CurrentPage().SecurityConfigurations {
+//			resource := terraformutils.NewSimpleResource(
+//				*securityConfiguration.Name,
+//				*securityConfiguration.Name,
+//				"aws_glue_security_configuration",
+//				"aws",
+//				GlueSecurityConfigurationAllowEmptyValues)
+//			g.Resources = append(g.Resources, resource)
+//		}
+//	}
+//	return p.Err()
+//}
+// InitResources Generate TerraformResources from AWS API,
 // from each database create 1 TerraformResource.
 // Need only database name as ID for terraform resource
 // AWS api support paging
@@ -93,6 +126,10 @@ func (g *GlueGenerator) InitResources() error {
 
 	account, err := g.getAccountNumber(config)
 	if err != nil {
+		return err
+	}
+
+	if err := g.loadGlueSecurityConfiguration(svc, account); err != nil {
 		return err
 	}
 
