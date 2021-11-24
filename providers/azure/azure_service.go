@@ -40,7 +40,7 @@ func (az *AzureService) AppendSimpleResource(id string, resourceName string, res
 func (az *AzureService) AppendSimpleResourceWithDuplicateCheck(id string, resourceName string, resourceType string) {
 	tferexist, _ := az.DuplicateCheck(id, resourceName, resourceType)
 	if !tferexist {
-		resourceName = resourceName + "_" + GenerateRandomString(6)
+		resourceName = resourceName + "_" + id
 	}
 	newResource := terraformutils.NewSimpleResource(id, resourceName, resourceType, az.ProviderName, []string{})
 	az.Resources = append(az.Resources, newResource)
