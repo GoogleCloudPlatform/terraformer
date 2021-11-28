@@ -82,6 +82,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdGmailfilterImporter,
 		newCmdVaultImporter,
 		newCmdOktaImporter,
+		newCmdHashicupsImporter,
 	}
 }
 
@@ -127,6 +128,7 @@ func providerGenerators() map[string]func() terraformutils.ProviderGenerator {
 		newGmailfilterProvider,
 		newVaultProvider,
 		newOktaProvider,
+		newHashicupsProvider,
 	} {
 		list[providerGen().GetName()] = providerGen
 	}
