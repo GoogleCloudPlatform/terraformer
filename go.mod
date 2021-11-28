@@ -192,6 +192,7 @@ require (
 	github.com/Azure/go-autorest/tracing v0.6.0 // indirect
 	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/IBM/go-sdk-core/v5 v5.5.1 // indirect
+	github.com/Jeffail/gabs v1.4.0
 	github.com/Masterminds/goutils v1.1.0 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig v2.22.0+incompatible // indirect

@@ -62,6 +62,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [GmailFilter](/docs/gmailfilter.md)
         * [Grafana](/docs/grafana.md)
         * [Vault](/docs/vault.md)
+        * [Hashicups](/docs/hashicups.md)
     * Identity
         * [Okta](/docs/okta.md)
 - [Contributing](#contributing)
@@ -289,6 +290,7 @@ Links to download Terraform Providers:
     * Xen Orchestra provider >= 0.18.0 - [here](https://github.com/ddelnano/terraform-provider-xenorchestra)
     * GmailFilter provider >= 1.0.1 - [here](https://github.com/yamamoto-febc/terraform-provider-gmailfilter)
     * Vault provider - [here](https://github.com/hashicorp/terraform-provider-vault)
+    * Hashicups provider - [here](https://github.com/hashicorp/terraform-provider-hashicups)
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
