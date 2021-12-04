@@ -30,6 +30,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [Equinix Metal](/docs/equinixmetal.md)
         * [Fastly](/docs/fastly.md)
         * [Heroku](/docs/heroku.md)
+        * [LaunchDarkly](/docs/launchdarkly.md)
         * [Linode](/docs/linode.md)
         * [NS1](/docs/ns1.md)
         * [OpenStack](/docs/openstack.md)
@@ -205,7 +206,7 @@ It's possible to combine `--compact` `--path-pattern` parameters together.
 From source:
 1.  Run `git clone <terraformer repo> && cd terraformer/`
 2.  Run `go mod download`
-3.  Run `go build -v` for all providers OR build with one provider 
+3.  Run `go build -v` for all providers OR build with one provider
 `go run build/main.go {google,aws,azure,kubernetes,etc}`
 4.  Run ```terraform init``` against a ```versions.tf``` file to install the plugins required for your platform. For example, if you need plugins for the google provider, ```versions.tf``` should contain:
 
@@ -260,6 +261,7 @@ Links to download Terraform Providers:
 * Cloud
     * DigitalOcean provider >1.9.1 - [here](https://releases.hashicorp.com/terraform-provider-digitalocean/)
     * Heroku provider >2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-heroku/)
+    * LaunchDarkly provider >=2.1.1 - [here](https://releases.hashicorp.com/terraform-provider-launchdarkly/)
     * Linode provider >1.8.0 - [here](https://releases.hashicorp.com/terraform-provider-linode/)
     * OpenStack provider >1.21.1 - [here](https://releases.hashicorp.com/terraform-provider-openstack/)
     * TencentCloud provider >1.50.0 - [here](https://releases.hashicorp.com/terraform-provider-tencentcloud/)

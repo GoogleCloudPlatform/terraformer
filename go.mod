@@ -197,6 +197,7 @@ require (
 	github.com/Masterminds/sprig v2.22.0+incompatible // indirect
 	github.com/Microsoft/go-winio v0.5.1 // indirect
 	github.com/agext/levenshtein v1.2.2 // indirect
+	github.com/antihax/optional v1.0.0 // indirect
 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
 	github.com/apparentlymart/go-textseg/v12 v12.0.0 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
@@ -268,6 +269,7 @@ require (
 	github.com/jstemmer/go-junit-report v0.9.1 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0 // indirect
 	github.com/klauspost/compress v1.11.2 // indirect
+	github.com/launchdarkly/api-client-go v5.3.0+incompatible
 	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/mattermost/xml-roundtrip-validator v0.0.0-20201213122252-bcd7e1b9601e // indirect
 	github.com/mattn/go-colorable v0.1.4 // indirect
