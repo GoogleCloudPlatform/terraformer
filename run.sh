@@ -121,6 +121,9 @@ for service in $services; do
   if [[ $service == "elasticache" && $CSP == "AWS" && $CUSTOMER_NAME == "robinhood" ]]; then
     continue
   fi
+  if [[ $service == "route53" && $CSP == "AWS" && $CUSTOMER_NAME == "realgeeks" ]]; then
+    continue
+  fi
   if [[ $CUSTOMER_NAME != "nubank" && $CUSTOMER_NAME != "bridgecrew66" ]]; then
     run_terraformer $service &
     continue

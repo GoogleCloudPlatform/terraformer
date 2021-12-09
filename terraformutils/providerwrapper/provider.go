@@ -172,7 +172,7 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 		})
 		if resp.Diagnostics.HasErrors() {
 			log.Println(resp.Diagnostics.Err())
-			log.Printf("WARN: Fail read resource from provider, wait %dms before retry\n", p.retrySleepMs)
+			log.Printf("WARN: Fail read resource %d from provider, wait %dms before retry\n", impliedType, p.retrySleepMs)
 			time.Sleep(time.Duration(p.retrySleepMs) * time.Millisecond)
 			continue
 		} else {
@@ -182,7 +182,7 @@ func (p *ProviderWrapper) Refresh(info *terraform.InstanceInfo, state *terraform
 	}
 
 	if !successReadResource {
-		log.Println("Fail read resource from provider, trying import command")
+		log.Printf("Fail read resource %d from provider, trying import command\n", impliedType)
 		// retry with regular import command - without resource attributes
 		importResponse := p.Provider.ImportResourceState(providers.ImportResourceStateRequest{
 			TypeName: info.Type,
