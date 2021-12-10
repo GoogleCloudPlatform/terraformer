@@ -159,7 +159,7 @@ require (
 	github.com/yandex-cloud/go-sdk v0.0.0-20200722140627-2194e5077f13
 	github.com/zclconf/go-cty v1.8.4
 	github.com/zorkian/go-datadog-api v2.30.0+incompatible
-	golang.org/x/oauth2 v0.0.0-20210218202405-ba52d332ba99
+	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8
 	golang.org/x/text v0.3.6
 	gonum.org/v1/gonum v0.7.0
 	google.golang.org/api v0.40.0
@@ -335,5 +335,7 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.1.0 // indirect
 	sigs.k8s.io/yaml v1.2.0 // indirect
 )
+
+require github.com/saurabh-agarwals/sumologic-api-client-go v0.0.0-20211202112918-ce8a38e51bfc // indirect
 
 replace gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
