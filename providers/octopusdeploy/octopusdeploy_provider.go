@@ -76,14 +76,14 @@ func (p *OctopusDeployProvider) GetSupportedService() map[string]terraformutils.
 func (p *OctopusDeployProvider) InitService(serviceName string, verbose bool) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
-		return errors.New("octopusdeploy: " + serviceName + " not supported service")
+		return errors.New("octopusdeploy: " + serviceName + " not supported service, see list sub-command")
 	}
 	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"apikey":  p.apiKey,
+		"api_key": p.apiKey,
 		"address": p.address,
 	})
 
@@ -93,7 +93,7 @@ func (p *OctopusDeployProvider) InitService(serviceName string, verbose bool) er
 // GetConfig return map of provider config for OctopusDeployProvider
 func (p *OctopusDeployProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
-		"apikey":  cty.StringVal(p.apiKey),
+		"api_key": cty.StringVal(p.apiKey),
 		"address": cty.StringVal(p.address),
 	})
 }
