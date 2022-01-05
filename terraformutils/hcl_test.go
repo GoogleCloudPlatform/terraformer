@@ -39,6 +39,7 @@ func TestPrintResource(t *testing.T) {
 		"map1":    mapI("foo", "bar"),
 		"nested":  mapI("map1", nested),
 		"nested2": map[string]interface{}{"map2": mapI("bar", "foo"), "field1": "egg"},
+		"nested3": map[string]interface{}{"map2": mapI("1bar", "foo"), "field1": "egg"},
 	})
 	resources = append(resources, importResource)
 	providerData := map[string]interface{}{}
