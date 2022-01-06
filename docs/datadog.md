@@ -67,8 +67,8 @@ List of supported Datadog services:
     * `datadog_service_level_objective`
 *   `synthetics_test`
     * `datadog_synthetics_test`
-*   `synthetics_global_variables`
-    * `datadog_synthetics_global_variables`
+*   `synthetics_global_variable`
+    * `datadog_synthetics_global_variable`
         * **_NOTE:_** Importing resource requires resource ID's to be passed via [Filter][1] option
 *   `synthetics_private_location`
     * `datadog_synthetics_private_location`
