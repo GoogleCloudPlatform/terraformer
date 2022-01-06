@@ -336,4 +336,10 @@ require (
 	sigs.k8s.io/yaml v1.2.0 // indirect
 )
 
+require (
+	github.com/mongodb-forks/digest v1.0.3 // indirect
+	github.com/openlyinc/pointy v1.1.2 // indirect
+	go.mongodb.org/atlas v0.14.0 // indirect
+)
+
 replace gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
