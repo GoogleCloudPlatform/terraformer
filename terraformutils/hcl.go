@@ -71,7 +71,7 @@ func (v *astSanitizer) visitObjectItem(o *ast.ObjectItem) {
 				v := text[1 : len(text)-1]
 				safe := true
 				for i, c := range v {
-					if i == 0 && (c >= '0' || c <= '9') {
+					if i == 0 && c >= '0' && c <= '9' {
 						// The text begins with a number, keep it as a string
 						safe = false
 						break
