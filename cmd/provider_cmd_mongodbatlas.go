@@ -37,9 +37,9 @@ func newCmdMongoDBAtlasImporter(options ImportOptions) *cobra.Command {
 	}
 	cmd.AddCommand(listCmd(newMongoDBAtlasProvider()))
 	baseProviderFlags(cmd.PersistentFlags(), &options, "project,cluster", "project=name1:name2:name3")
-	cmd.PersistentFlags().StringVarP(&privateKey, "private-key", "", "", "YOUR_MONGODBATLAS_PRIVATE_KEY or env param MCLI_PRIVATE_API_KEY")
-	cmd.PersistentFlags().StringVarP(&publicKey, "public-key", "", "", "YOUR_MONGODBATLAS_PUBLIC_KEY or env param MCLI_PUBLIC_API_KEY")
-	cmd.PersistentFlags().StringVarP(&orgID, "org-id", "", "", "YOUR_MONGODBATLAS_ORG_ID or env param MCLI_ORG_ID")
+	cmd.PersistentFlags().StringVarP(&privateKey, "private-key", "", "", "YOUR_MONGODBATLAS_PRIVATE_KEY or env param MONGODB_ATLAS_PRIVATE_KEY")
+	cmd.PersistentFlags().StringVarP(&publicKey, "public-key", "", "", "YOUR_MONGODBATLAS_PUBLIC_KEY or env param MONGODB_ATLAS_PUBLIC_KEY")
+	cmd.PersistentFlags().StringVarP(&orgID, "org-id", "", "", "YOUR_MONGODBATLAS_ORG_ID or env param MONGODB_ATLAS_ORG_ID")
 	return cmd
 }
 

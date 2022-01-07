@@ -33,7 +33,7 @@ func (p *MongoDBAtlasProvider) Init(args []string) error {
 	if args[0] != "" {
 		p.publicKey = args[0]
 	} else {
-		if publicKey := os.Getenv("MCLI_PUBLIC_API_KEY"); publicKey != "" {
+		if publicKey := os.Getenv("MONGODB_ATLAS_PUBLIC_KEY"); publicKey != "" {
 			p.publicKey = publicKey
 		} else {
 			return errors.New("publicKey requirement")
@@ -43,7 +43,7 @@ func (p *MongoDBAtlasProvider) Init(args []string) error {
 	if args[1] != "" {
 		p.privateKey = args[1]
 	} else {
-		if privateKey := os.Getenv("MCLI_PRIVATE_API_KEY"); privateKey != "" {
+		if privateKey := os.Getenv("MONGODB_ATLAS_PRIVATE_KEY"); privateKey != "" {
 			p.privateKey = privateKey
 		} else {
 			return errors.New("privateKey requirement")
@@ -53,7 +53,7 @@ func (p *MongoDBAtlasProvider) Init(args []string) error {
 	if args[2] != "" {
 		p.orgID = args[2]
 	} else {
-		if orgID := os.Getenv("MCLI_ORG_ID"); orgID != "" {
+		if orgID := os.Getenv("MONGODB_ATLAS_ORG_ID"); orgID != "" {
 			p.orgID = orgID
 		} else {
 			return errors.New("orgID requirement")
