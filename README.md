@@ -243,6 +243,14 @@ curl -LO https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(
 chmod +x terraformer-${PROVIDER}-darwin-amd64
 sudo mv terraformer-${PROVIDER}-darwin-amd64 /usr/local/bin/terraformer
 ```
+* Windows
+1. Install Terraform - https://www.terraform.io/downloads
+2. Download exe file for required provider from here - https://github.com/GoogleCloudPlatform/terraformer/releases
+3. Add the exe file path to path variable
+4. Create a folder and initialize the terraform provider and run terraformer commands from there
+   * For AWS -  refer https://learn.hashicorp.com/tutorials/terraform/aws-build?in=terraform/aws-get-started
+
+
 
 #### Using a package manager
 
