@@ -1,4 +1,4 @@
-package azuredevpos
+package azuredevops
 
 func firstNonEmpty(values ...*string) *string {
 	for _, val := range values {
