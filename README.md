@@ -304,6 +304,14 @@ Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
 
 
+## High-Level steps to add new provider
+ * Initialize provider details in cmd/root.go and create a provider initialization file in the terraformer/cmd folder
+ * Create a folder under terraformer/providers/ for your provider
+ * Create two files under this folder
+   * <provide_name>_provider.go
+   * <provide_name>_service.go
+* Initialize all provider's supported services in <provide_name>_provider.go file
+* Create script for each supported service in same folder
 
 ## Contributing
 
