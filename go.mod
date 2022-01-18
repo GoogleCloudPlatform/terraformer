@@ -128,7 +128,7 @@ require (
 	github.com/hashicorp/terraform v0.12.31
 	github.com/hashicorp/vault v0.10.4
 	github.com/heimweh/go-pagerduty v0.0.0-20210930203304-530eff2acdc6
-	github.com/heroku/heroku-go/v5 v5.1.0
+	github.com/heroku/heroku-go/v5 v5.4.1
 	github.com/hokaccha/go-prettyjson v0.0.0-20210113012101-fb4e108d2519 // indirect
 	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
 	github.com/jefferai/jsonx v1.0.1 // indirect
@@ -143,7 +143,7 @@ require (
 	github.com/okta/okta-sdk-golang/v2 v2.9.2
 	github.com/opencontainers/image-spec v1.0.1 // indirect
 	github.com/opencontainers/runc v1.0.1 // indirect
-	github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.8
+	github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.9
 	github.com/ory/dockertest v3.3.5+incompatible // indirect
 	github.com/packethost/packngo v0.9.0
 	github.com/paultyng/go-newrelic/v4 v4.10.0
