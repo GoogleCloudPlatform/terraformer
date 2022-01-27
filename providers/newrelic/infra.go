@@ -18,21 +18,21 @@ import (
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	newrelic "github.com/paultyng/go-newrelic/v4/api"
+	newrelic "github.com/newrelic/newrelic-client-go/newrelic"
 )
 
 type InfraGenerator struct {
 	NewRelicService
 }
 
-func (g *InfraGenerator) createAlertInfraConditionResources(client *newrelic.Client, infraClient *newrelic.InfraClient) error {
-	alertPolicies, err := client.ListAlertPolicies()
+func (g *InfraGenerator) createAlertInfraConditionResources(client *newrelic.NewRelic) error {
+	alertPolicies, err := client.Alerts.ListPolicies(nil)
 	if err != nil {
 		return err
 	}
 
 	for _, alertPolicy := range alertPolicies {
-		alertInfraConditions, err := infraClient.ListAlertInfraConditions(alertPolicy.ID)
+		alertInfraConditions, err := client.Alerts.ListInfrastructureConditions(alertPolicy.ID)
 		if err != nil {
 			return err
 		}
@@ -53,17 +53,12 @@ func (g *InfraGenerator) createAlertInfraConditionResources(client *newrelic.Cli
 }
 
 func (g *InfraGenerator) InitResources() error {
-	infraClient, err := g.InfraClient()
-	if err != nil {
-		return err
-	}
-
 	client, err := g.Client()
 	if err != nil {
 		return err
 	}
 
-	err = g.createAlertInfraConditionResources(client, infraClient)
+	err = g.createAlertInfraConditionResources(client)
 	if err != nil {
 		return err
 	}

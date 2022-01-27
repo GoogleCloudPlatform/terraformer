@@ -18,15 +18,15 @@ import (
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	newrelic "github.com/paultyng/go-newrelic/v4/api"
+	newrelic "github.com/newrelic/newrelic-client-go/newrelic"
 )
 
 type DashboardGenerator struct {
 	NewRelicService
 }
 
-func (g *DashboardGenerator) createDashboardResources(client *newrelic.Client) error {
-	dashboards, err := client.ListDashboards()
+func (g *DashboardGenerator) createDashboardResources(client *newrelic.NewRelic) error {
+	dashboards, err := client.Dashboards.ListDashboards(nil)
 	if err != nil {
 		return err
 	}
