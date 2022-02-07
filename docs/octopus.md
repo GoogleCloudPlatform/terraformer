@@ -19,9 +19,9 @@ terraformer import octopusdeploy --resources=tagsets
   * `octopusdeploy_feed`
 * `libraryvariablesets`
   * `octopusdeploy_library_variable_set`
-* `lifecycle`
+* `lifecycles`
   * `octopusdeploy_lifecycle`
-* `project`
+* `projects`
   * `octopusdeploy_project`
 * `projectgroups`
   * `octopusdeploy_project_group`
