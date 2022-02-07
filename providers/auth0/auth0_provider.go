@@ -30,35 +30,23 @@ type Auth0Provider struct { //nolint
 }
 
 func (p *Auth0Provider) Init(args []string) error {
-	if args[0] != "" {
-		p.domain = args[0]
-	} else {
-		if domain := os.Getenv("AUTH0_DOMAIN"); domain != "" {
-			p.domain = domain
-		} else {
-			return errors.New("domain requirement")
-		}
+	orgName := os.Getenv("AUTH0_DOMAIN")
+	if orgName == "" {
+		return errors.New("set AUTH0_DOMAIN env var")
 	}
+	p.domain = orgName
 
-	if args[1] != "" {
-		p.clientID = args[1]
-	} else {
-		if clientID := os.Getenv("AUTH0_CLIENT_ID"); clientID != "" {
-			p.clientID = clientID
-		} else {
-			return errors.New("clientID requirement")
-		}
+	baseURL := os.Getenv("AUTH0_CLIENT_ID")
+	if baseURL == "" {
+		return errors.New("set AUTH0_CLIENT_ID env var")
 	}
+	p.clientID = baseURL
 
-	if args[2] != "" {
-		p.clientSecret = args[2]
-	} else {
-		if clientSecret := os.Getenv("AUTH0_CLIENT_SECRET"); clientSecret != "" {
-			p.clientSecret = clientSecret
-		} else {
-			return errors.New("clientSecret requirement")
-		}
+	apiToken := os.Getenv("AUTH0_CLIENT_SECRET")
+	if apiToken == "" {
+		return errors.New("set AUTH0_CLIENT_SECRET env var")
 	}
+	p.clientSecret = apiToken
 
 	return nil
 }
@@ -94,16 +82,16 @@ func (p *Auth0Provider) InitService(serviceName string, verbose bool) error {
 
 func (p *Auth0Provider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"action":          &ActionGenerator{},
-		"client":          &ClientGenerator{},
-		"client_grant":    &ClientGrantGenerator{},
-		"hook":            &HookGenerator{},
-		"resource_server": &ResourceServerGenerator{},
-		"role":            &RoleGenerator{},
-		"rule":            &RuleGenerator{},
-		"rule_config":     &RuleConfigGenerator{},
-		"trigger":         &TriggerBindingGenerator{},
-		"user":            &UserGenerator{},
+		"auth0_action":          &ActionGenerator{},
+		"auth0_client":          &ClientGenerator{},
+		"auth0_client_grant":    &ClientGrantGenerator{},
+		"auth0_hook":            &HookGenerator{},
+		"auth0_resource_server": &ResourceServerGenerator{},
+		"auth0_role":            &RoleGenerator{},
+		"auth0_rule":            &RuleGenerator{},
+		"auth0_rule_config":     &RuleConfigGenerator{},
+		"auth0_trigger":         &TriggerBindingGenerator{},
+		"auth0_user":            &UserGenerator{},
 	}
 }
 

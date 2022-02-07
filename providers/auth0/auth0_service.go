@@ -29,7 +29,10 @@ type Auth0Service struct { //nolint
 func (s *Auth0Service) generateClient() *management.Management {
 	m, err := management.New(
 		s.Args["domain"].(string),
-		management.WithClientCredentials(s.Args["client_id"].(string), s.Args["client_secret"].(string)),
+		management.WithClientCredentials(
+			s.Args["client_id"].(string),
+			s.Args["client_secret"].(string),
+		),
 	)
 	if err != nil {
 		log.Fatalf(err.Error())
