@@ -1061,8 +1061,8 @@ github.com/opencontainers/runc v1.0.1 h1:G18PGckGdAm3yVQRWDVQ1rLSLntiniKJ0cNRT2T
 github.com/opencontainers/runc v1.0.1/go.mod h1:aTaHFFwQXuA71CiyxOdFFIorAoemI04suvGRQFzWTD0=
 github.com/opencontainers/runtime-spec v1.0.3-0.20210326190908-1c3f411f0417/go.mod h1:jwyrGlmzljRJv/Fgzds9SsS/C5hL+LL3ko9hs6T5lQ0=
 github.com/opencontainers/selinux v1.8.2/go.mod h1:MUIHuUEvKB1wtJjQdOyYRgOnLD2xAPP8dBsCoU0KuF8=
-github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.8 h1:qF/rRi8GSU2mjBXfJIyMj9GGmjedsV3Gm1uYbiGlCRk=
-github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.8/go.mod h1:4OjcxgwdXzezqytxN534MooNmrxRD50geWZxTD7845s=
+github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.9 h1:HwHlfhYFjvgB0mPrXiQFLfAGA5wEpbfNfmceMT3Cw/M=
+github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.9/go.mod h1:4OjcxgwdXzezqytxN534MooNmrxRD50geWZxTD7845s=
 github.com/ory/dockertest v3.3.5+incompatible h1:iLLK6SQwIhcbrG783Dghaaa3WPzGc+4Emza6EbVUUGA=
 github.com/ory/dockertest v3.3.5+incompatible/go.mod h1:1vX4m9wsvi00u5bseYwXaSnhNrne+V0E6LAcBILJdPs=
 github.com/packer-community/winrmcp v0.0.0-20180102160824-81144009af58/go.mod h1:f6Izs6JvFTdnRbziASagjZ2vmf55NSIkC/weStxCHqk=

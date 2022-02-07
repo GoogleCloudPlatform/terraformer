@@ -143,7 +143,7 @@ require (
 	github.com/okta/okta-sdk-golang/v2 v2.9.2
 	github.com/opencontainers/image-spec v1.0.1 // indirect
 	github.com/opencontainers/runc v1.0.1 // indirect
-	github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.8
+	github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.9
 	github.com/ory/dockertest v3.3.5+incompatible // indirect
 	github.com/packethost/packngo v0.9.0
 	github.com/paultyng/go-newrelic/v4 v4.10.0
