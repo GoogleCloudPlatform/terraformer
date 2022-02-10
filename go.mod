@@ -54,7 +54,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/configservice v1.3.0
 	github.com/aws/aws-sdk-go-v2/service/datapipeline v1.1.3
 	github.com/aws/aws-sdk-go-v2/service/devicefarm v1.1.3
-	github.com/aws/aws-sdk-go-v2/service/docdb v1.9.0
+	github.com/aws/aws-sdk-go-v2/service/docdb v1.15.0
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.3.0
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.2.1
@@ -112,7 +112,7 @@ require (
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/duosecurity/duo_api_golang v0.0.0-20201112143038-0e07e9f869e3 // indirect
 	github.com/elazarl/go-bindata-assetfs v1.0.1 // indirect
-	github.com/fastly/go-fastly/v5 v5.3.0
+	github.com/fastly/go-fastly/v6 v6.0.1
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/gocql/gocql v0.0.0-20210707082121-9a3953d1826d // indirect
 	github.com/google/go-github/v35 v35.1.0
@@ -142,7 +142,7 @@ require (
 	github.com/okta/okta-sdk-golang/v2 v2.9.2
 	github.com/opencontainers/image-spec v1.0.1 // indirect
 	github.com/opencontainers/runc v1.0.1 // indirect
-	github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.8
+	github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.9
 	github.com/ory/dockertest v3.3.5+incompatible // indirect
 	github.com/packethost/packngo v0.9.0
 	github.com/pkg/errors v0.9.1
@@ -158,7 +158,7 @@ require (
 	github.com/zclconf/go-cty v1.8.4
 	github.com/zorkian/go-datadog-api v2.30.0+incompatible
 	golang.org/x/oauth2 v0.0.0-20210218202405-ba52d332ba99
-	golang.org/x/text v0.3.6
+	golang.org/x/text v0.3.7
 	gonum.org/v1/gonum v0.7.0
 	google.golang.org/api v0.40.0
 	google.golang.org/genproto v0.0.0-20210226172003-ab064af71705
@@ -213,7 +213,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.4 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.2.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.0.3 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.5.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.7.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.2.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.1.4 // indirect
 	github.com/aws/smithy-go v1.10.0 // indirect
@@ -246,7 +246,7 @@ require (
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/gofuzz v1.1.0 // indirect
-	github.com/google/jsonapi v0.0.0-20201022225600-f822737867f6 // indirect
+	github.com/google/jsonapi v1.0.0 // indirect
 	github.com/google/uuid v1.2.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.0.5 // indirect
 	github.com/googleapis/gnostic v0.4.1 // indirect
@@ -283,7 +283,7 @@ require (
 	github.com/mitchellh/go-testing-interface v1.0.4 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.0 // indirect
 	github.com/mitchellh/hashstructure v1.0.0 // indirect
-	github.com/mitchellh/mapstructure v1.4.2 // indirect
+	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
@@ -315,17 +315,18 @@ require (
 	go.opencensus.io v0.22.5 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/lint v0.0.0-20201208152925-83fdc39ff7b5 // indirect
-	golang.org/x/mod v0.4.1 // indirect
-	golang.org/x/net v0.0.0-20210428140749-89ef3d95e781 // indirect
+	golang.org/x/mod v0.5.1 // indirect
+	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.0.0-20210616094352-59db8d763f22 // indirect
+	golang.org/x/sys v0.0.0-20211019181941-9d821ace8654 // indirect
 	golang.org/x/term v0.0.0-20210220032956-6a3ed077a48d // indirect
 	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
-	golang.org/x/tools v0.1.0 // indirect
+	golang.org/x/tools v0.1.8 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/grpc v1.35.0 // indirect
 	google.golang.org/protobuf v1.26.0 // indirect
+	gopkg.in/auth0.v5 v5.21.1
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.31.0 // indirect
@@ -340,5 +341,9 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.1.0 // indirect
 	sigs.k8s.io/yaml v1.2.0 // indirect
 )
+
+require github.com/PuerkitoBio/rehttp v1.0.0 // indirect
+
+require github.com/peterhellberg/link v1.1.0 // indirect
 
 replace gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
