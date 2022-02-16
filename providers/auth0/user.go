@@ -1,4 +1,4 @@
-// Copyright 2019 The Terraformer Authors.
+// Copyright 2018 The Terraformer Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,42 +12,53 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package fastly
+package auth0
 
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/fastly/go-fastly/v6/fastly"
+	"gopkg.in/auth0.v5/management"
+)
+
+var (
+	UserAllowEmptyValues = []string{}
 )
 
 type UserGenerator struct {
-	FastlyService
+	Auth0Service
 }
 
-func (g *UserGenerator) loadUsers(client *fastly.Client, customerID string) error {
-	users, err := client.ListCustomerUsers(&fastly.ListCustomerUsersInput{CustomerID: customerID})
-	if err != nil {
-		return err
-	}
+func (g UserGenerator) createResources(users []*management.User) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
 	for _, user := range users {
-		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-			user.ID,
-			user.ID,
-			"fastly_user_v1",
-			"fastly",
-			[]string{}))
+		resourceName := user.ID
+		resources = append(resources, terraformutils.NewSimpleResource(
+			*resourceName,
+			*resourceName,
+			"auth0_user",
+			"auth0",
+			UserAllowEmptyValues,
+		))
 	}
-	return nil
+	return resources
 }
 
 func (g *UserGenerator) InitResources() error {
-	client, err := fastly.NewClient(g.Args["api_key"].(string))
-	if err != nil {
-		return err
+	m := g.generateClient()
+	list := []*management.User{}
+
+	var page int
+	for {
+		l, err := m.User.List(management.Page(page))
+		if err != nil {
+			return err
+		}
+		list = append(list, l.Users...)
+		if !l.HasNext() {
+			break
+		}
+		page++
 	}
 
-	if err := g.loadUsers(client, g.Args["customer_id"].(string)); err != nil {
-		return err
-	}
-
+	g.Resources = g.createResources(list)
 	return nil
 }

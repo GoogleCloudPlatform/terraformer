@@ -99,8 +99,12 @@ func walkAndOverride(pathSegments []string, oldValue, newValue string, data inte
 					case isArray(v.Interface()):
 						valss := v.Interface().([]interface{})
 						for idx, currentValue := range valss {
-							if oldValue == currentValue.(string) {
+							curValString, ok := currentValue.(string)
+							if ok && oldValue == curValString {
 								valss[idx] = newValue
+							}
+							if !ok {
+								fmt.Printf("Warning: expected string at path: %s, but found: %+v\n", e.String(), currentValue)
 							}
 						}
 					case isStringArray(v.Interface()):

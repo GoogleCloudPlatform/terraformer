@@ -65,6 +65,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [Vault](/docs/vault.md)
     * Identity
         * [Okta](/docs/okta.md)
+        * [Auth0](/docs/auth0.md)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
@@ -243,6 +244,14 @@ curl -LO https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(
 chmod +x terraformer-${PROVIDER}-darwin-amd64
 sudo mv terraformer-${PROVIDER}-darwin-amd64 /usr/local/bin/terraformer
 ```
+* Windows
+1. Install Terraform - https://www.terraform.io/downloads
+2. Download exe file for required provider from here - https://github.com/GoogleCloudPlatform/terraformer/releases
+3. Add the exe file path to path variable
+4. Create a folder and initialize the terraform provider and run terraformer commands from there
+   * For AWS -  refer https://learn.hashicorp.com/tutorials/terraform/aws-build?in=terraform/aws-get-started
+
+
 
 #### Using a package manager
 
@@ -291,11 +300,20 @@ Links to download Terraform Providers:
     * Xen Orchestra provider >= 0.18.0 - [here](https://github.com/ddelnano/terraform-provider-xenorchestra)
     * GmailFilter provider >= 1.0.1 - [here](https://github.com/yamamoto-febc/terraform-provider-gmailfilter)
     * Vault provider - [here](https://github.com/hashicorp/terraform-provider-vault)
+    * Auth0 provider - [here](https://github.com/alexkappa/terraform-provider-auth0)
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
 
 
+## High-Level steps to add new provider
+ * Initialize provider details in cmd/root.go and create a provider initialization file in the terraformer/cmd folder
+ * Create a folder under terraformer/providers/ for your provider
+ * Create two files under this folder
+   * <provide_name>_provider.go
+   * <provide_name>_service.go
+* Initialize all provider's supported services in <provide_name>_provider.go file
+* Create script for each supported service in same folder
 
 ## Contributing
 

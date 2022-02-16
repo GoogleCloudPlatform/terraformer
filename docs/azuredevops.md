@@ -1,6 +1,6 @@
 # Use with Azure DevOps
 
-Supports acess via [Personal Access Token](https://registry.terraform.io/providers/microsoft/azuredevops/latest/docs/guides/authenticating_using_the_personal_access_token).
+Supports access via [Personal Access Token](https://registry.terraform.io/providers/microsoft/azuredevops/latest/docs/guides/authenticating_using_the_personal_access_token).
 
 ## Example
 
@@ -12,7 +12,7 @@ export AZDO_PERSONAL_ACCESS_TOKEN="<Personal Access Token>"
 ./terraformer import azuredevops -r project,git_repository
 ```
 
-## List of supported Azure resources
+## List of supported Azure DevOps resources
 
 * `project`
   * `azuredevops_project`
