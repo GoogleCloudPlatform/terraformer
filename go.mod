@@ -338,6 +338,7 @@ require (
 )
 
 require github.com/PuerkitoBio/rehttp v1.0.0 // indirect
+
 require github.com/peterhellberg/link v1.1.0 // indirect
 
 replace gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
