@@ -204,7 +204,7 @@ It's possible to combine `--compact` `--path-pattern` parameters together.
 
 ### Installation
 
-From source:
+#### From source:
 1.  Run `git clone <terraformer repo> && cd terraformer/`
 2.  Run `go mod download`
 3.  Run `go build -v` for all providers OR build with one provider
@@ -226,25 +226,45 @@ Or alternatively
 *  Copy your Terraform provider's plugin(s) to folder
     `~/.terraform.d/plugins/{darwin,linux}_amd64/`, as appropriate.
 
-From Releases:
+#### From Releases:
 
-* Linux
+##### Linux
 
+* Using `jq`:
 ```
 export PROVIDER={all,google,aws,kubernetes}
-curl -LO https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | grep tag_name | cut -d '"' -f 4)/terraformer-${PROVIDER}-linux-amd64
+curl -LO https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | jq -r '.tag_name')/terraformer-${PROVIDER}-linux-amd64
 chmod +x terraformer-${PROVIDER}-linux-amd64
 sudo mv terraformer-${PROVIDER}-linux-amd64 /usr/local/bin/terraformer
 ```
-* MacOS
 
+* Without `jq`:
 ```
 export PROVIDER={all,google,aws,kubernetes}
-curl -LO https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | grep tag_name | cut -d '"' -f 4)/terraformer-${PROVIDER}-darwin-amd64
+curl -LO https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | grep -oP '"tag_name":"\K[^"]+')/terraformer-${PROVIDER}-linux-amd64
+chmod +x terraformer-${PROVIDER}-linux-amd64
+sudo mv terraformer-${PROVIDER}-linux-amd64 /usr/local/bin/terraformer
+```
+
+##### MacOS
+
+* Using `jq`:
+```
+export PROVIDER={all,google,aws,kubernetes}
+curl -LO https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | jq -r '.tag_name')/terraformer-${PROVIDER}-darwin-amd64
 chmod +x terraformer-${PROVIDER}-darwin-amd64
 sudo mv terraformer-${PROVIDER}-darwin-amd64 /usr/local/bin/terraformer
 ```
-* Windows
+
+* Without `jq`:
+```
+export PROVIDER={all,google,aws,kubernetes}
+curl -LO https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | grep -oP '"tag_name":"\K[^"]+')/terraformer-${PROVIDER}-darwin-amd64
+chmod +x terraformer-${PROVIDER}-darwin-amd64
+sudo mv terraformer-${PROVIDER}-darwin-amd64 /usr/local/bin/terraformer
+```
+
+##### Windows
 1. Install Terraform - https://www.terraform.io/downloads
 2. Download exe file for required provider from here - https://github.com/GoogleCloudPlatform/terraformer/releases
 3. Add the exe file path to path variable
