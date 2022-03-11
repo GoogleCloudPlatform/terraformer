@@ -73,32 +73,37 @@ func (g *Wafv2Generator) loadWebACL(svc *wafv2.Client) error {
 			wafv2AllowEmptyValues,
 			map[string]interface{}{},
 		))
-		err = g.loadWebACLAssociations(svc, acl.ARN)
-		if err != nil {
-			return err
+		if scope == types.ScopeRegional {
+			err = g.loadWebACLAssociations(svc, acl.ARN)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
 }
 
 func (g *Wafv2Generator) loadWebACLAssociations(svc *wafv2.Client, webACLArn *string) error {
-	output, err := svc.ListResourcesForWebACL(context.TODO(), &wafv2.ListResourcesForWebACLInput{WebACLArn: webACLArn})
-	if err != nil {
-		return err
-	}
-	for _, resource := range output.ResourceArns {
-		g.Resources = append(g.Resources, terraformutils.NewResource(
-			resource,
-			resource,
-			"aws_wafv2_web_acl_association",
-			"aws",
-			map[string]string{
-				"resource_arn": resource,
-				"web_acl_arn":  *webACLArn,
-			},
-			wafv2AllowEmptyValues,
-			map[string]interface{}{},
-		))
+	for _, resourceType := range types.ResourceTypeApplicationLoadBalancer.Values() {
+		output, err := svc.ListResourcesForWebACL(context.TODO(),
+			&wafv2.ListResourcesForWebACLInput{WebACLArn: webACLArn, ResourceType: resourceType})
+		if err != nil {
+			return err
+		}
+		for _, resource := range output.ResourceArns {
+			g.Resources = append(g.Resources, terraformutils.NewResource(
+				resource,
+				resource,
+				"aws_wafv2_web_acl_association",
+				"aws",
+				map[string]string{
+					"resource_arn": resource,
+					"web_acl_arn":  *webACLArn,
+				},
+				wafv2AllowEmptyValues,
+				map[string]interface{}{},
+			))
+		}
 	}
 	return nil
 }
