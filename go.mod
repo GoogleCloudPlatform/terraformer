@@ -97,6 +97,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/swf v1.10.0
 	github.com/aws/aws-sdk-go-v2/service/waf v1.1.4
 	github.com/aws/aws-sdk-go-v2/service/wafregional v1.2.1
+	github.com/aws/aws-sdk-go-v2/service/wafv2 v1.18.0
 	github.com/aws/aws-sdk-go-v2/service/workspaces v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/xray v1.2.1
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
@@ -338,9 +339,6 @@ require (
 )
 
 require github.com/PuerkitoBio/rehttp v1.0.0 // indirect
-
-require github.com/aws/aws-sdk-go-v2/service/wafv2 v1.18.0
-
 require github.com/peterhellberg/link v1.1.0 // indirect
 
 replace gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
