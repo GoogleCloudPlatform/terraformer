@@ -307,6 +307,19 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_wafregional_sql_injection_match_set`
     * `aws_wafregional_web_acl`
     * `aws_wafregional_xss_match_set`
+*   `wafv2_cloudfront`
+    * `aws_wafv2_ip_set`
+    * `aws_wafv2_regex_pattern_set`
+    * `aws_wafv2_rule_group`
+    * `aws_wafv2_web_acl`
+    * `aws_wafv2_web_acl_logging_configuration`
+*   `wafv2_regional`
+    * `aws_wafv2_ip_set`
+    * `aws_wafv2_regex_pattern_set`
+    * `aws_wafv2_rule_group`
+    * `aws_wafv2_web_acl`
+    * `aws_wafv2_web_acl_association`
+    * `aws_wafv2_web_acl_logging_configuration`
 *   `vpc`
     * `aws_vpc`
 *   `vpc_peering`
