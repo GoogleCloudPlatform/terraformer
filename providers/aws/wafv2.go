@@ -23,10 +23,18 @@ import (
 )
 
 var wafv2AllowEmptyValues = []string{"tags."}
-var scope = types.ScopeRegional
 
 type Wafv2Generator struct {
 	AWSService
+	scope types.Scope
+}
+
+func NewWafv2CloudfrontGenerator() *Wafv2Generator {
+	return &Wafv2Generator{scope: types.ScopeCloudfront}
+}
+
+func NewWafv2RegionalGenerator() *Wafv2Generator {
+	return &Wafv2Generator{scope: types.ScopeRegional}
 }
 
 func (g *Wafv2Generator) InitResources() error {
@@ -56,7 +64,7 @@ func (g *Wafv2Generator) InitResources() error {
 }
 
 func (g *Wafv2Generator) loadWebACL(svc *wafv2.Client) error {
-	output, err := svc.ListWebACLs(context.TODO(), &wafv2.ListWebACLsInput{Scope: scope})
+	output, err := svc.ListWebACLs(context.TODO(), &wafv2.ListWebACLsInput{Scope: g.scope})
 	if err != nil {
 		return err
 	}
@@ -68,12 +76,14 @@ func (g *Wafv2Generator) loadWebACL(svc *wafv2.Client) error {
 			"aws",
 			map[string]string{
 				"name":  *acl.Name,
-				"scope": string(scope),
+				"scope": string(g.scope),
 			},
 			wafv2AllowEmptyValues,
 			map[string]interface{}{},
 		))
-		if scope == types.ScopeRegional {
+		if g.scope == types.ScopeRegional {
+			// cloudfront associations are not listed here since they should to defined in
+			// aws_cloudfront_distribution resource instead
 			err = g.loadWebACLAssociations(svc, acl.ARN)
 			if err != nil {
 				return err
@@ -109,7 +119,7 @@ func (g *Wafv2Generator) loadWebACLAssociations(svc *wafv2.Client, webACLArn *st
 }
 
 func (g *Wafv2Generator) loadIPSet(svc *wafv2.Client) error {
-	output, err := svc.ListIPSets(context.TODO(), &wafv2.ListIPSetsInput{Scope: scope})
+	output, err := svc.ListIPSets(context.TODO(), &wafv2.ListIPSetsInput{Scope: g.scope})
 	if err != nil {
 		return err
 	}
@@ -121,7 +131,7 @@ func (g *Wafv2Generator) loadIPSet(svc *wafv2.Client) error {
 			"aws",
 			map[string]string{
 				"name":  *IPSet.Name,
-				"scope": string(types.ScopeCloudfront),
+				"scope": string(g.scope),
 			},
 			wafv2AllowEmptyValues,
 			map[string]interface{}{},
@@ -131,7 +141,7 @@ func (g *Wafv2Generator) loadIPSet(svc *wafv2.Client) error {
 }
 
 func (g *Wafv2Generator) loadRegexPatternSets(svc *wafv2.Client) error {
-	output, err := svc.ListRegexPatternSets(context.TODO(), &wafv2.ListRegexPatternSetsInput{Scope: scope})
+	output, err := svc.ListRegexPatternSets(context.TODO(), &wafv2.ListRegexPatternSetsInput{Scope: g.scope})
 	if err != nil {
 		return err
 	}
@@ -143,7 +153,7 @@ func (g *Wafv2Generator) loadRegexPatternSets(svc *wafv2.Client) error {
 			"aws",
 			map[string]string{
 				"name":  *regexPatternSet.Name,
-				"scope": string(types.ScopeCloudfront),
+				"scope": string(g.scope),
 			},
 			wafv2AllowEmptyValues,
 			map[string]interface{}{},
@@ -153,7 +163,7 @@ func (g *Wafv2Generator) loadRegexPatternSets(svc *wafv2.Client) error {
 }
 
 func (g *Wafv2Generator) loadWafRuleGroups(svc *wafv2.Client) error {
-	output, err := svc.ListRuleGroups(context.TODO(), &wafv2.ListRuleGroupsInput{Scope: scope})
+	output, err := svc.ListRuleGroups(context.TODO(), &wafv2.ListRuleGroupsInput{Scope: g.scope})
 	if err != nil {
 		return err
 	}
@@ -166,7 +176,7 @@ func (g *Wafv2Generator) loadWafRuleGroups(svc *wafv2.Client) error {
 			map[string]string{
 				"arn":   *ruleGroup.ARN,
 				"name":  *ruleGroup.Name,
-				"scope": string(types.ScopeCloudfront),
+				"scope": string(g.scope),
 			},
 			wafv2AllowEmptyValues,
 			map[string]interface{}{},
@@ -176,7 +186,7 @@ func (g *Wafv2Generator) loadWafRuleGroups(svc *wafv2.Client) error {
 }
 
 func (g *Wafv2Generator) loadWebACLLoggingConfiguration(svc *wafv2.Client) error {
-	output, err := svc.ListLoggingConfigurations(context.TODO(), &wafv2.ListLoggingConfigurationsInput{Scope: scope})
+	output, err := svc.ListLoggingConfigurations(context.TODO(), &wafv2.ListLoggingConfigurationsInput{Scope: g.scope})
 	if err != nil {
 		return err
 	}
