@@ -289,6 +289,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"organization":      &AwsFacade{service: &OrganizationGenerator{}},
 		"qldb":              &AwsFacade{service: &QLDBGenerator{}},
 		"rds":               &AwsFacade{service: &RDSGenerator{}},
+		"redshift":          &AwsFacade{service: &RedshiftGenerator{}},
 		"resourcegroups":    &AwsFacade{service: &ResourceGroupsGenerator{}},
 		"route53":           &AwsFacade{service: &Route53Generator{}},
 		"route_table":       &AwsFacade{service: &RouteTableGenerator{}},
