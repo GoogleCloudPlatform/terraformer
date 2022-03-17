@@ -36,7 +36,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [OpenStack](/docs/openstack.md)
         * [TencentCloud](/docs/tencentcloud.md)
         * [Vultr](/docs/vultr.md)
-        * [Yandex.Cloud](/docs/yandex.md)
+        * [Yandex Cloud](/docs/yandex.md)
     * Infrastructure Software
         * [Kubernetes](/docs/kubernetes.md)
         * [OctopusDeploy](/docs/octopus.md)
