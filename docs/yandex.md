@@ -1,11 +1,10 @@
-### Use with Yandex
+### Use with Yandex Cloud
 
 Example:
 
 ```
-export YC_TOKEN=[YANDEX_CLOUD_OAUTH_TOKEN]
-export YC_FOLDER_ID=[YANDEX_FOLDER_ID]
-./terraformer import yandex -r subnet
+export YC_TOKEN=[YANDEX_CLOUD_OAUTH_OR_IAM_TOKEN]
+./terraformer import yandex -r subnet --folder_ids <comma-separated folder IDs>
 ```
 
 List of supported Yandex resources:
