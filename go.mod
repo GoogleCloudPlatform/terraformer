@@ -81,7 +81,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/opsworks v1.2.2
 	github.com/aws/aws-sdk-go-v2/service/organizations v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/qldb v1.1.3
-	github.com/aws/aws-sdk-go-v2/service/rds v1.11.0
+	github.com/aws/aws-sdk-go-v2/service/rds v1.18.1
 	github.com/aws/aws-sdk-go-v2/service/resourcegroups v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/route53 v1.3.0
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.4.0
@@ -210,13 +210,11 @@ require (
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.6 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.0.3 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.7.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.2.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/redshift v1.10.0 // indirect
+	github.com/aws/aws-sdk-go-v2/service/redshift v1.10.0
 	github.com/aws/aws-sdk-go-v2/service/sso v1.1.4 // indirect
-
 	github.com/aws/smithy-go v1.11.1 // indirect
-
 	github.com/beevik/etree v1.1.0 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
