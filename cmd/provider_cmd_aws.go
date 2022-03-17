@@ -33,7 +33,7 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 
 			if len(options.Regions) > 0 {
 				shouldSpecifyPathRegion := len(options.Regions) > 1
-				globalResources := parseGlobalResources(originalResources)
+				globalResources, eastOnlyResources, regionalResources := parseAndGroupResources(originalResources)
 				options.Resources = globalResources
 				options.Regions = []string{awsterraformer.GlobalRegion}
 				e := importGlobalResources(options)
@@ -41,7 +41,14 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 					return e
 				}
 
-				options.Resources = parseRegionalResources(originalResources)
+				options.Resources = eastOnlyResources
+				options.Regions = []string{awsterraformer.MainRegionPublicPartition}
+				e = importEastOnlyResources(options)
+				if e != nil {
+					return e
+				}
+
+				options.Resources = regionalResources
 				options.Regions = originalRegions
 				if len(options.Resources) > 0 { // don't import anything and potentially override global resources
 					if len(globalResources) > 0 {
@@ -71,14 +78,19 @@ func newCmdAwsImporter(options ImportOptions) *cobra.Command {
 	return cmd
 }
 
-func parseGlobalResources(allResources []string) []string {
-	var globalResources []string
+// returns global, east-only, regional resources
+func parseAndGroupResources(allResources []string) ([]string, []string, []string) {
+	var globalResources, eastOnlyResources, regionalResources []string
 	for _, resourceName := range allResources {
 		if contains(awsterraformer.SupportedGlobalResources, resourceName) {
 			globalResources = append(globalResources, resourceName)
+		} else if contains(awsterraformer.SupportedEastOnlyResources, resourceName) {
+			eastOnlyResources = append(eastOnlyResources, resourceName)
+		} else {
+			regionalResources = append(regionalResources, resourceName)
 		}
 	}
-	return globalResources
+	return globalResources, eastOnlyResources, regionalResources
 }
 
 func importGlobalResources(options ImportOptions) error {
@@ -88,14 +100,11 @@ func importGlobalResources(options ImportOptions) error {
 	return nil
 }
 
-func parseRegionalResources(allResources []string) []string {
-	var localResources []string
-	for _, resourceName := range allResources {
-		if !contains(awsterraformer.SupportedGlobalResources, resourceName) {
-			localResources = append(localResources, resourceName)
-		}
+func importEastOnlyResources(options ImportOptions) error {
+	if len(options.Resources) > 0 {
+		return importRegionResources(options, options.PathPattern, awsterraformer.MainRegionPublicPartition, false)
 	}
-	return localResources
+	return nil
 }
 
 func importRegionResources(options ImportOptions, originalPathPattern string, region string, shouldSpecifyPathRegion bool) error {
