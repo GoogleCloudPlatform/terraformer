@@ -21,17 +21,25 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
+const KeyToken = "token"
+const KeyFolderID = "folder_id"
+const KeySaKeyFileOrContent = "sa_key_or_content"
+
 type YandexProvider struct { //nolint
 	terraformutils.Provider
-	oauthToken string
-	folderID   string
+	token              string
+	saKeyFileOrContent string
+	folderID           string
 }
 
 func (p *YandexProvider) Init(args []string) error {
-	if os.Getenv("YC_TOKEN") == "" {
-		return errors.New("set YC_TOKEN env var")
+	if ycToken, ok := os.LookupEnv("YC_TOKEN"); ok {
+		p.token = ycToken
 	}
-	p.oauthToken = os.Getenv("YC_TOKEN")
+
+	if saKeyFileOrContent, ok := os.LookupEnv("YC_SERVICE_ACCOUNT_KEY_FILE"); ok {
+		p.saKeyFileOrContent = saKeyFileOrContent
+	}
 
 	if len(args) > 0 {
 		//  first args is target folder ID
@@ -77,8 +85,9 @@ func (p *YandexProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"folder_id": p.folderID,
-		"token":     p.oauthToken,
+		KeyFolderID:           p.folderID,
+		KeyToken:              p.token,
+		KeySaKeyFileOrContent: p.saKeyFileOrContent,
 	})
 	return nil
 }

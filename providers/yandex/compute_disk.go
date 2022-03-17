@@ -52,9 +52,7 @@ func (g *DiskGenerator) loadDisks(sdk *ycsdk.SDK, folderID string) ([]*compute.D
 }
 
 func (g *DiskGenerator) InitResources() error {
-	sdk, err := ycsdk.Build(context.Background(), ycsdk.Config{
-		Credentials: ycsdk.OAuthToken(g.Args["token"].(string)),
-	})
+	sdk, err := g.InitSDK()
 	if err != nil {
 		return err
 	}
