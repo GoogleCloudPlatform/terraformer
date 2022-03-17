@@ -35,7 +35,7 @@ type YandexService struct { //nolint
 }
 
 func (y *YandexService) InitSDK() (*ycsdk.SDK, error) {
-	if saKeyOrContent := y.Args[KEY_SA_KEY_FILE_OR_CONTENT].(string); saKeyOrContent != "" {
+	if saKeyOrContent := y.Args[KeySaKeyFileOrContent].(string); saKeyOrContent != "" {
 		contents, _, err := pathOrContents(saKeyOrContent)
 		if err != nil {
 			return nil, fmt.Errorf("Error loading credentials: %s", err)
@@ -54,7 +54,7 @@ func (y *YandexService) InitSDK() (*ycsdk.SDK, error) {
 		)
 	}
 
-	if cToken := y.Args[KEY_TOKEN].(string); cToken != "" {
+	if cToken := y.Args[KeyToken].(string); cToken != "" {
 		if strings.HasPrefix(cToken, "t1.") && strings.Count(cToken, ".") == 2 {
 			return ycsdk.Build(context.Background(), ycsdk.Config{
 				Credentials: ycsdk.NewIAMTokenCredentials(cToken)},

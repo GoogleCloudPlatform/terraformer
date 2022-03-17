@@ -21,9 +21,9 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
-const KEY_TOKEN = "token"
-const KEY_FOLDER_ID = "folder_id"
-const KEY_SA_KEY_FILE_OR_CONTENT = "sa_key_or_content"
+const KeyToken = "token"
+const KeyFolderID = "folder_id"
+const KeySaKeyFileOrContent = "sa_key_or_content"
 
 type YandexProvider struct { //nolint
 	terraformutils.Provider
@@ -85,9 +85,9 @@ func (p *YandexProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		KEY_FOLDER_ID:              p.folderID,
-		KEY_TOKEN:                  p.token,
-		KEY_SA_KEY_FILE_OR_CONTENT: p.saKeyFileOrContent,
+		KeyFolderID:           p.folderID,
+		KeyToken:              p.token,
+		KeySaKeyFileOrContent: p.saKeyFileOrContent,
 	})
 	return nil
 }
