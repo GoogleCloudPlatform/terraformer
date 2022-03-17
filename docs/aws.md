@@ -141,6 +141,7 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_eip`
 *   `eks`
     * `aws_eks_cluster`
+    * `aws_eks_node_group`
 *   `elasticache`
     * `aws_elasticache_cluster`
     * `aws_elasticache_parameter_group`
