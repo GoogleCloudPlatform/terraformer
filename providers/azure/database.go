@@ -691,9 +691,10 @@ func (g *DatabasesGenerator) createSQLVirtualNetworkRuleResources(servers []sql.
 				"azurerm_sql_virtual_network_rule",
 				g.ProviderName,
 				[]string{}))
-		}
-		if err := ruleIter.NextWithContext(ctx); err != nil {
-			return nil, err
+
+			if err := ruleIter.NextWithContext(ctx); err != nil {
+				return nil, err
+			}
 		}
 	}
 	return resources, nil
