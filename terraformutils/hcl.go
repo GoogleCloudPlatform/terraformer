@@ -99,6 +99,9 @@ func (v *astSanitizer) visitObjectItem(o *ast.ObjectItem) {
 						break
 					}
 				}
+				if strings.HasPrefix(v, "--") { // if the key starts with "--", we must quote it. Seen in aws_glue_job.default_arguments parameter
+					v = fmt.Sprintf(`"%s"`, v)
+				}
 				if safe {
 					k.Token.Text = v
 				}
