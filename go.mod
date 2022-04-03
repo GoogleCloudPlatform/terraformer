@@ -16,7 +16,7 @@ require (
 	github.com/IBM/go-sdk-core/v4 v4.9.0
 	github.com/IBM/ibm-cos-sdk-go v1.5.0
 	github.com/IBM/keyprotect-go-client v0.6.0
-	github.com/IBM/networking-go-sdk v0.19.0
+	github.com/IBM/networking-go-sdk v0.28.0
 	github.com/IBM/platform-services-go-sdk v0.19.1
 	github.com/IBM/vpc-go-sdk v0.4.1
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
@@ -27,7 +27,7 @@ require (
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1247
 	github.com/aliyun/aliyun-tablestore-go-sdk v4.1.2+incompatible
 	github.com/apache/openwhisk-client-go v0.0.0-20210106144548-17d556327cd3
-	github.com/aws/aws-sdk-go-v2 v1.15.0
+	github.com/aws/aws-sdk-go-v2 v1.16.1
 	github.com/aws/aws-sdk-go-v2/config v1.1.4
 	github.com/aws/aws-sdk-go-v2/credentials v1.1.4
 	github.com/aws/aws-sdk-go-v2/service/accessanalyzer v1.2.0
@@ -66,7 +66,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/elasticbeanstalk v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/elasticloadbalancing v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2 v1.2.1
-	github.com/aws/aws-sdk-go-v2/service/elasticsearchservice v1.2.1
+	github.com/aws/aws-sdk-go-v2/service/elasticsearchservice v1.15.2
 	github.com/aws/aws-sdk-go-v2/service/emr v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/firehose v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/glue v1.3.0
@@ -192,7 +192,7 @@ require (
 	github.com/Azure/go-autorest/logger v0.2.1 // indirect
 	github.com/Azure/go-autorest/tracing v0.6.0 // indirect
 	github.com/BurntSushi/toml v0.3.1 // indirect
-	github.com/IBM/go-sdk-core/v5 v5.5.1 // indirect
+	github.com/IBM/go-sdk-core/v5 v5.8.0 // indirect
 	github.com/Masterminds/goutils v1.1.0 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig v2.22.0+incompatible // indirect
@@ -207,14 +207,14 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef // indirect
 	github.com/aws/aws-sdk-go v1.37.0 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.0.5 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.6 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.0 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.8 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.2 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.0.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.2.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/redshift v1.10.0
 	github.com/aws/aws-sdk-go-v2/service/sso v1.1.4 // indirect
-	github.com/aws/smithy-go v1.11.1 // indirect
+	github.com/aws/smithy-go v1.11.2 // indirect
 	github.com/beevik/etree v1.1.0 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
@@ -231,7 +231,7 @@ require (
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-logr/logr v0.4.0 // indirect
 	github.com/go-openapi/errors v0.19.8 // indirect
-	github.com/go-openapi/strfmt v0.20.1 // indirect
+	github.com/go-openapi/strfmt v0.20.2 // indirect
 	github.com/go-playground/locales v0.13.0 // indirect
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/go-resty/resty/v2 v2.1.1-0.20191201195748-d7b97669fe48 // indirect
