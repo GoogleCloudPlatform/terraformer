@@ -136,6 +136,14 @@ terraformer import aws -r sg,vpc --filter Type=sg;Name=vpc_id;Value=VPC_ID --fil
 ```
 Notice how the `Name` is different for `sg` than it is for `vpc`.
 
+##### Migration state version
+For terraform >= 0.13, you can use `replace-provider` to migrate state from previous versions.
+
+Example usage:
+```
+terraform state replace-provider -auto-approve "registry.terraform.io/-/aws" "hashicorp/aws"
+```
+
 ##### Resource ID
 
 Filtering is based on Terraform resource ID patterns. To find valid ID patterns for your resource, check the import part of the [Terraform documentation][terraform-providers].
