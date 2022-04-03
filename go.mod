@@ -153,7 +153,7 @@ require (
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/pflag v1.0.5
 	github.com/tencentcloud/tencentcloud-sdk-go v3.0.233+incompatible
-	github.com/tencentyun/cos-go-sdk-v5 v0.7.19
+	github.com/tencentyun/cos-go-sdk-v5 v0.7.34
 	github.com/vultr/govultr v0.5.0
 	github.com/xanzy/go-gitlab v0.50.2
 	github.com/yandex-cloud/go-genproto v0.0.0-20220314102905-1acaee8ca7eb
@@ -347,6 +347,7 @@ require (
 
 require (
 	cloud.google.com/go/compute v1.3.0 // indirect
+	github.com/clbanning/mxj v1.8.4 // indirect
 	github.com/golang-jwt/jwt/v4 v4.3.0 // indirect
 	github.com/peterhellberg/link v1.1.0 // indirect
 )
