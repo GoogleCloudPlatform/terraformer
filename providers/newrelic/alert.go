@@ -95,6 +95,7 @@ func (g *AlertGenerator) InitResources() error {
 	funcs := []func(*newrelic.NewRelic) error{
 		g.createAlertChannelResources,
 		g.createAlertConditionResources,
+		g.createAlertNrqlConditionResources,
 		g.createAlertPolicyResources,
 	}
 

@@ -66,6 +66,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
     * Identity
         * [Okta](/docs/okta.md)
         * [Auth0](/docs/auth0.md)
+        * [AzureAD](/docs/azuread.md)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
@@ -135,6 +136,14 @@ Use `Type` when you need to filter only one of several types of resources. Multi
 terraformer import aws -r sg,vpc --filter Type=sg;Name=vpc_id;Value=VPC_ID --filter Type=vpc;Name=id;Value=VPC_ID
 ```
 Notice how the `Name` is different for `sg` than it is for `vpc`.
+
+##### Migration state version
+For terraform >= 0.13, you can use `replace-provider` to migrate state from previous versions.
+
+Example usage:
+```
+terraform state replace-provider -auto-approve "registry.terraform.io/-/aws" "hashicorp/aws"
+```
 
 ##### Resource ID
 
@@ -301,6 +310,7 @@ Links to download Terraform Providers:
     * GmailFilter provider >= 1.0.1 - [here](https://github.com/yamamoto-febc/terraform-provider-gmailfilter)
     * Vault provider - [here](https://github.com/hashicorp/terraform-provider-vault)
     * Auth0 provider - [here](https://github.com/alexkappa/terraform-provider-auth0)
+    * AzureAD provider - [here](https://github.com/hashicorp/terraform-provider-azuread)
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html

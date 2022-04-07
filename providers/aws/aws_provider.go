@@ -35,8 +35,6 @@ const NoRegion = ""
 
 // SupportedGlobalResources should be bound to a default region. AWS doesn't specify in which region default services are
 // placed (see  https://docs.aws.amazon.com/general/latest/gr/rande.html), so we shouldn't assume any region as well
-//
-// AWS WAF V2 if added, should not be included in this list since it is a composition of regional and global resources.
 var SupportedGlobalResources = []string{
 	"budgets",
 	"cloudfront",
@@ -45,6 +43,11 @@ var SupportedGlobalResources = []string{
 	"organization",
 	"route53",
 	"waf",
+}
+
+// SupportedEastOnlyResources should be bound to us-east-1 region only, and does not work in any other region.
+var SupportedEastOnlyResources = []string{
+	"wafv2_cloudfront",
 }
 
 func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
@@ -286,6 +289,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"organization":      &AwsFacade{service: &OrganizationGenerator{}},
 		"qldb":              &AwsFacade{service: &QLDBGenerator{}},
 		"rds":               &AwsFacade{service: &RDSGenerator{}},
+		"redshift":          &AwsFacade{service: &RedshiftGenerator{}},
 		"resourcegroups":    &AwsFacade{service: &ResourceGroupsGenerator{}},
 		"route53":           &AwsFacade{service: &Route53Generator{}},
 		"route_table":       &AwsFacade{service: &RouteTableGenerator{}},
@@ -304,6 +308,8 @@ func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"transit_gateway":   &AwsFacade{service: &TransitGatewayGenerator{}},
 		"waf":               &AwsFacade{service: &WafGenerator{}},
 		"waf_regional":      &AwsFacade{service: &WafRegionalGenerator{}},
+		"wafv2_cloudfront":  &AwsFacade{service: NewWafv2CloudfrontGenerator()},
+		"wafv2_regional":    &AwsFacade{service: NewWafv2RegionalGenerator()},
 		"vpc":               &AwsFacade{service: &VpcGenerator{}},
 		"vpc_peering":       &AwsFacade{service: &VpcPeeringConnectionGenerator{}},
 		"vpn_connection":    &AwsFacade{service: &VpnConnectionGenerator{}},
