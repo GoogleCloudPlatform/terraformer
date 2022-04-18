@@ -7,7 +7,7 @@ require (
 	cloud.google.com/go/logging v1.1.2
 	cloud.google.com/go/storage v1.14.0
 	github.com/Azure/azure-sdk-for-go v63.1.0+incompatible
-	github.com/Azure/azure-storage-blob-go v0.10.0
+	github.com/Azure/azure-storage-blob-go v0.14.0
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
 	github.com/Azure/go-autorest/autorest v0.11.23
 	github.com/DataDog/datadog-api-client-go v1.4.0
@@ -182,7 +182,7 @@ require (
 )
 
 require (
-	github.com/Azure/azure-pipeline-go v0.2.2 // indirect
+	github.com/Azure/azure-pipeline-go v0.2.3 // indirect
 	github.com/Azure/go-autorest v14.2.0+incompatible // indirect
 	github.com/Azure/go-autorest/autorest/adal v0.9.14 // indirect
 	github.com/Azure/go-autorest/autorest/azure/cli v0.2.0 // indirect
@@ -274,7 +274,7 @@ require (
 	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/mattermost/xml-roundtrip-validator v0.0.0-20201213122252-bcd7e1b9601e // indirect
 	github.com/mattn/go-colorable v0.1.4 // indirect
-	github.com/mattn/go-ieproxy v0.0.0-20190702010315-6dee0af9227d // indirect
+	github.com/mattn/go-ieproxy v0.0.1 // indirect
 	github.com/mattn/go-isatty v0.0.10 // indirect
 	github.com/mitchellh/cli v1.1.2 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
@@ -322,7 +322,6 @@ require (
 	google.golang.org/grpc v1.45.0 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/auth0.v5 v5.21.1
-	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.31.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
