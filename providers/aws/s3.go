@@ -48,7 +48,7 @@ func (g *S3Generator) createResources(config aws.Config, buckets *s3.ListBuckets
 		}
 		// check if bucket in region
 		constraintString := string(location.LocationConstraint)
-		if constraintString == region {
+		if constraintString == region || (constraintString == "" && region == "us-east-1") {
 			attributes := map[string]string{
 				"force_destroy": "false",
 				"acl":           "private",
@@ -61,6 +61,14 @@ func (g *S3Generator) createResources(config aws.Config, buckets *s3.ListBuckets
 
 			if err == nil && policy.Policy != nil {
 				attributes["policy"] = *policy.Policy
+				resources = append(resources, terraformutils.NewResource(
+					resourceName,
+					resourceName,
+					"aws_s3_bucket_policy",
+					"aws",
+					nil,
+					S3AllowEmptyValues,
+					S3AdditionalFields))
 			}
 			resources = append(resources, terraformutils.NewResource(
 				resourceName,
