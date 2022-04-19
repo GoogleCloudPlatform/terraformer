@@ -15,6 +15,8 @@
 package cloudflare
 
 import (
+	"context"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	cf "github.com/cloudflare/cloudflare-go"
 )
@@ -23,9 +25,9 @@ type PageRulesGenerator struct {
 	CloudflareService
 }
 
-func (g *PageRulesGenerator) createPageRules(api *cf.API, zoneID string) ([]terraformutils.Resource, error) {
+func (g *PageRulesGenerator) createPageRules(ctx context.Context, api *cf.API, zoneID string) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
-	pageRules, err := api.ListPageRules(zoneID)
+	pageRules, err := api.ListPageRules(ctx, zoneID)
 	if err != nil {
 		return resources, err
 	}
@@ -48,18 +50,19 @@ func (g *PageRulesGenerator) createPageRules(api *cf.API, zoneID string) ([]terr
 }
 
 func (g *PageRulesGenerator) InitResources() error {
+	ctx := context.Background()
 	api, err := g.initializeAPI()
 	if err != nil {
 		return err
 	}
 
-	zones, err := api.ListZones()
+	zones, err := api.ListZones(ctx)
 	if err != nil {
 		return err
 	}
 
 	for _, zone := range zones {
-		resources, err := g.createPageRules(api, zone.ID)
+		resources, err := g.createPageRules(ctx, api, zone.ID)
 		if err != nil {
 			return err
 		}
