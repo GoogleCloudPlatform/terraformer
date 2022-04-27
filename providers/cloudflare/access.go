@@ -87,7 +87,9 @@ func (g *AccessGenerator) createAccessApplicationsAndPolicies(ctx context.Contex
 	}
 
 	for _, app := range accessApplications {
-		additionalFields := map[string]interface{}{}
+		additionalFields := map[string]interface{}{
+			"same_site_cookie_attribute": "none",
+		}
 		if len(app.AllowedIdps) > 0 {
 			additionalFields["allowed_idps"] = app.AllowedIdps
 		}
@@ -239,31 +241,40 @@ func (g *AccessGenerator) PostConvertHook() error {
 	for i, resourceRecord := range g.Resources {
 
 		// Reference to 'cloudflare_access_identity_provider' resource in 'cloudflare_access_group'
-		if !(resourceRecord.InstanceInfo.Type == "cloudflare_access_group" || resourceRecord.InstanceInfo.Type == "cloudflare_access_policy") {
-			continue
-		}
-		// fmt.Printf("Before: %+v\n", g.Resources[i].Item)
-		if requireConditions, ok := resourceRecord.Item["require"].([]interface{}); ok {
-			// fmt.Printf("requireConditions: %T %v %+v\n", resourceRecord.Item["require"], ok, requireConditions)
-			g.Resources[i].Item["require"] = g.replaceAccessIdentityProviderReferenceForAccessGroupConditions(idps, groups, requireConditions)
-		}
-		if excludeConditions, ok := resourceRecord.Item["exclude"].([]interface{}); ok {
-			// fmt.Printf("excludeConditions: %T %v %+v\n", resourceRecord.Item["exclude"], ok, excludeConditions)
-			g.Resources[i].Item["exclude"] = g.replaceAccessIdentityProviderReferenceForAccessGroupConditions(idps, groups, excludeConditions)
-		}
-		if includeConditions, ok := resourceRecord.Item["include"].([]interface{}); ok {
-			// fmt.Printf("includeConditions: %T %v %+v\n", resourceRecord.Item["include"], ok, includeConditions)
-			g.Resources[i].Item["include"] = g.replaceAccessIdentityProviderReferenceForAccessGroupConditions(idps, groups, includeConditions)
-		}
+		if resourceRecord.InstanceInfo.Type == "cloudflare_access_group" || resourceRecord.InstanceInfo.Type == "cloudflare_access_policy" {
+			// fmt.Printf("Before: %+v\n", g.Resources[i].Item)
+			if requireConditions, ok := resourceRecord.Item["require"].([]interface{}); ok {
+				// fmt.Printf("requireConditions: %T %v %+v\n", resourceRecord.Item["require"], ok, requireConditions)
+				g.Resources[i].Item["require"] = g.replaceAccessIdentityProviderReferenceForAccessGroupConditions(idps, groups, requireConditions)
+			}
+			if excludeConditions, ok := resourceRecord.Item["exclude"].([]interface{}); ok {
+				// fmt.Printf("excludeConditions: %T %v %+v\n", resourceRecord.Item["exclude"], ok, excludeConditions)
+				g.Resources[i].Item["exclude"] = g.replaceAccessIdentityProviderReferenceForAccessGroupConditions(idps, groups, excludeConditions)
+			}
+			if includeConditions, ok := resourceRecord.Item["include"].([]interface{}); ok {
+				// fmt.Printf("includeConditions: %T %v %+v\n", resourceRecord.Item["include"], ok, includeConditions)
+				g.Resources[i].Item["include"] = g.replaceAccessIdentityProviderReferenceForAccessGroupConditions(idps, groups, includeConditions)
+			}
 
-		// fmt.Printf("After: %+v\n", g.Resources[i].Item)
+			// fmt.Printf("After: %+v\n", g.Resources[i].Item)
 
-		if resourceRecord.InstanceInfo.Type != "cloudflare_access_policy" {
-			continue
 		}
+		if resourceRecord.InstanceInfo.Type == "cloudflare_access_policy" {
+			if appID, ok := resourceRecord.Item["application_id"].(string); ok {
+				g.Resources[i].Item["application_id"] = "${cloudflare_access_application." + apps[appID].ResourceName + ".id}"
+			}
+		}
+		if resourceRecord.InstanceInfo.Type == "cloudflare_access_application" {
 
-		if appID, ok := resourceRecord.Item["application_id"].(string); ok {
-			g.Resources[i].Item["application_id"] = "${cloudflare_access_application." + apps[appID].ResourceName + ".id}"
+			// fmt.Printf("Before: %+v\n", g.Resources[i].Item)
+			if allowedIdps, ok := resourceRecord.Item["allowed_idps"].([]string); ok {
+				newAllowedIdps := []string{}
+				for _, allowedIdp := range allowedIdps {
+					newAllowedIdps = append(newAllowedIdps, g.getAccessIdentityProviderReferenceById(idps, allowedIdp))
+				}
+				g.Resources[i].Item["allowed_idps"] = newAllowedIdps
+			}
+			// fmt.Printf("After: %+v\n", g.Resources[i].Item)
 		}
 	}
 
