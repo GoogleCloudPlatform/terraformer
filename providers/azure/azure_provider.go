@@ -15,6 +15,7 @@
 package azure
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -87,8 +88,9 @@ func (p *AzureProvider) getAuthorizer() (autorest.Authorizer, error) {
 	}
 
 	sender := sender.BuildSender("AzureRM")
+	ctx := context.Background()
 
-	auth, err := p.config.GetAuthorizationToken(sender, oauthConfig, env.ResourceManagerEndpoint)
+	auth, err := p.config.GetADALToken(ctx, sender, oauthConfig, env.ResourceManagerEndpoint)
 	if err != nil {
 		return nil, err
 	}
