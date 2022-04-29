@@ -111,7 +111,6 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/digitalocean/godo v1.57.0
 	github.com/docker/go-connections v0.4.0 // indirect
-	github.com/dollarshaveclub/new-relic-synthetics-go v0.0.0-20170605224734-4dc3dd6ae884
 	github.com/duosecurity/duo_api_golang v0.0.0-20201112143038-0e07e9f869e3 // indirect
 	github.com/elazarl/go-bindata-assetfs v1.0.1 // indirect
 	github.com/fastly/go-fastly/v6 v6.0.1
@@ -147,7 +146,6 @@ require (
 	github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.9
 	github.com/ory/dockertest v3.3.5+incompatible // indirect
 	github.com/packethost/packngo v0.9.0
-	github.com/paultyng/go-newrelic/v4 v4.10.0
 	github.com/pkg/errors v0.9.1
 	github.com/ryanuber/go-glob v1.0.0 // indirect
 	github.com/spf13/cobra v1.1.1
@@ -182,6 +180,15 @@ require (
 )
 
 require (
+	github.com/Microsoft/go-winio v0.5.1 // indirect
+	github.com/antihax/optional v1.0.0 // indirect
+	github.com/gofrs/uuid v3.2.0+incompatible // indirect
+	github.com/launchdarkly/api-client-go v5.3.0+incompatible
+)
+
+require github.com/newrelic/newrelic-client-go v0.71.0
+
+require (
 	github.com/Azure/azure-pipeline-go v0.2.2 // indirect
 	github.com/Azure/go-autorest v14.2.0+incompatible // indirect
 	github.com/Azure/go-autorest/autorest/adal v0.9.14 // indirect
@@ -196,9 +203,7 @@ require (
 	github.com/Masterminds/goutils v1.1.0 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig v2.22.0+incompatible // indirect
-	github.com/Microsoft/go-winio v0.5.1 // indirect
 	github.com/agext/levenshtein v1.2.2 // indirect
-	github.com/antihax/optional v1.0.0 // indirect
 	github.com/apparentlymart/go-cidr v1.1.0 // indirect
 	github.com/apparentlymart/go-textseg/v12 v12.0.0 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
@@ -237,7 +242,6 @@ require (
 	github.com/go-resty/resty/v2 v2.1.1-0.20191201195748-d7b97669fe48 // indirect
 	github.com/go-routeros/routeros v0.0.0-20210123142807-2a44d57c6730 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
-	github.com/gofrs/uuid v3.2.0+incompatible // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
@@ -270,7 +274,6 @@ require (
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0 // indirect
 	github.com/klauspost/compress v1.11.2 // indirect
-	github.com/launchdarkly/api-client-go v5.3.0+incompatible
 	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/mattermost/xml-roundtrip-validator v0.0.0-20201213122252-bcd7e1b9601e // indirect
 	github.com/mattn/go-colorable v0.1.4 // indirect
@@ -293,12 +296,15 @@ require (
 	github.com/patrickmn/go-cache v0.0.0-20180815053127-5633e0862627 // indirect
 	github.com/pborman/uuid v1.2.0 // indirect
 	github.com/pelletier/go-toml v1.7.0 // indirect
+	github.com/peterhellberg/link v1.1.0 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/posener/complete v1.2.1 // indirect
 	github.com/russellhaering/goxmldsig v1.1.0 // indirect
 	github.com/sergi/go-diff v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/sourcegraph/jsonrpc2 v0.0.0-20210201082850-366fbb520750 // indirect
 	github.com/spf13/afero v1.2.2 // indirect
+	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/tomnomnom/linkheader v0.0.0-20180905144013-02ca5825eb80 // indirect
 	github.com/ulikunitz/xz v0.5.8 // indirect
 	github.com/vmihailenco/msgpack/v4 v4.3.12 // indirect
@@ -339,6 +345,7 @@ require (
 
 require github.com/PuerkitoBio/rehttp v1.0.0 // indirect
 
+
 require (
 	cloud.google.com/go/cloudtasks v1.3.0
 	cloud.google.com/go/iam v0.3.0
@@ -352,5 +359,6 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.3.0 // indirect
 	github.com/peterhellberg/link v1.1.0 // indirect
 )
+
 
 replace gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
