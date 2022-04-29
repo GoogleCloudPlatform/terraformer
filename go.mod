@@ -117,7 +117,7 @@ require (
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/gocql/gocql v0.0.0-20210707082121-9a3953d1826d // indirect
 	github.com/google/go-github/v35 v35.1.0
-	github.com/gophercloud/gophercloud v0.17.0
+	github.com/gophercloud/gophercloud v0.24.0
 	github.com/grafana/grafana-api-golang-client v0.0.0-20210218192924-9ccd2365d2a6
 	github.com/hashicorp/go-azure-helpers v0.10.0
 	github.com/hashicorp/go-cleanhttp v0.5.2
