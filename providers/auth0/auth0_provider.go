@@ -94,7 +94,7 @@ func (p *Auth0Provider) GetSupportedService() map[string]terraformutils.ServiceG
 		"auth0_role":            &RoleGenerator{},
 		"auth0_rule":            &RuleGenerator{},
 		"auth0_rule_config":     &RuleConfigGenerator{},
-		"auth0_trigger":         &TriggerBindingGenerator{},
+		"auth0_trigger_binding": &TriggerBindingGenerator{},
 		"auth0_user":            &UserGenerator{},
 		"auth0_branding":        &BrandingGenerator{},
 		"auth0_custom_domain":   &CustomDomainGenerator{},
@@ -102,7 +102,6 @@ func (p *Auth0Provider) GetSupportedService() map[string]terraformutils.ServiceG
 		"auth0_prompt":          &PromptGenerator{},
 		"auth0_log_stream":      &LogStreamGenerator{},
 		"auth0_tenant":          &TenantGenerator{},
-		"auth0_trigger_binding": &TriggerBindingGenerator{},
 	}
 }
 
