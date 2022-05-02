@@ -22,6 +22,7 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
+	"github.com/zclconf/go-cty/cty"
 )
 
 type TencentCloudProvider struct { //nolint
@@ -53,6 +54,16 @@ func (p *TencentCloudProvider) GetName() string {
 	return "tencentcloud"
 }
 
+// GetConfig get region name to go-cty
+func (p *TencentCloudProvider) GetConfig() cty.Value {
+
+	region := p.region
+	val := cty.ObjectVal(map[string]cty.Value{
+		"region": cty.StringVal(region),
+	})
+	return val
+}
+
 func (p *TencentCloudProvider) Init(args []string) error {
 	err := p.getCredential()
 	if err != nil {
@@ -82,6 +93,8 @@ func (p *TencentCloudProvider) GetSupportedService() map[string]terraformutils.S
 	return map[string]terraformutils.ServiceGenerator{
 		"cvm":            &CvmGenerator{},
 		"vpc":            &VpcGenerator{},
+		"route_table":    &RouteTableGenerator{},
+		"nat_gateway":    &NatGatewayGenerator{},
 		"subnet":         &SubnetGenerator{},
 		"cdn":            &CdnGenerator{},
 		"as":             &AsGenerator{},
@@ -112,7 +125,17 @@ func (p *TencentCloudProvider) GetResourceConnections() map[string]map[string][]
 			"key_pair":       []string{"key_name", "id"},
 		},
 		"subnet": {
+			"vpc":         []string{"vpc_id", "id"},
+			"route_table": []string{"route_table_id", "id"},
+		},
+		"route_table": {
 			"vpc": []string{"vpc_id", "id"},
+		},
+		"nat_gateway": {
+			"vpc": []string{"vpc_id", "id"},
+		},
+		"security_group_lite_rule": {
+			"security_group": []string{"security_group_id", "id"},
 		},
 		"as": {
 			"vpc":    []string{"vpc_id", "id"},

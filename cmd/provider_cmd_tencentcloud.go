@@ -15,11 +15,11 @@
 package cmd
 
 import (
-	"log"
-
 	tencentcloud_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/tencentcloud"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/spf13/cobra"
+	"log"
+	"strings"
 )
 
 func newCmdTencentCloudImporter(options ImportOptions) *cobra.Command {
@@ -32,7 +32,11 @@ func newCmdTencentCloudImporter(options ImportOptions) *cobra.Command {
 			for _, region := range options.Regions {
 				provider := newTencentCloudProvider()
 				options.PathPattern = originalPathPattern
-				options.PathPattern += region + "/"
+				if !strings.Contains(originalPathPattern, "{region}") {
+					options.PathPattern += region + "/"
+				} else {
+					options.PathPattern = strings.NewReplacer("{region}", region).Replace(originalPathPattern)
+				}
 				log.Println(provider.GetName() + " importing region " + region)
 				err := Import(provider, options, []string{region})
 				if err != nil {
@@ -43,7 +47,7 @@ func newCmdTencentCloudImporter(options ImportOptions) *cobra.Command {
 		},
 	}
 	cmd.AddCommand(listCmd(newTencentCloudProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "cvm,vpc,cdn", "tencentcloud_vpc=id1:id2:id3")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "cvm,vpc,cdn", "vpc=id1:id2:id3")
 	cmd.PersistentFlags().StringSliceVarP(&options.Regions, "regions", "", []string{}, "ap-guangzhou")
 	return cmd
 }
