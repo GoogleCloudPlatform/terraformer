@@ -15,26 +15,40 @@
 package auth0
 
 import (
-	"log"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"gopkg.in/auth0.v5/management"
 )
 
-type Auth0Service struct { //nolint
-	terraformutils.Service
+var (
+	CustomDomainAllowEmptyValues = []string{}
+)
+
+type CustomDomainGenerator struct {
+	Auth0Service
 }
 
-func (s *Auth0Service) generateClient() *management.Management {
-	authenticationOption := management.WithClientCredentials(s.Args["client_id"].(string), s.Args["client_secret"].(string))
+func (g CustomDomainGenerator) createResources(customDomains []*management.CustomDomain) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
+	for _, CustomDomain := range customDomains {
+		resourceName := *CustomDomain.ID
+		resources = append(resources, terraformutils.NewSimpleResource(
+			resourceName,
+			resourceName+"_"+*CustomDomain.Domain,
+			"auth0_custom_domain",
+			"auth0",
+			CustomDomainAllowEmptyValues,
+		))
+	}
+	return resources
+}
 
-	apiClient, err := management.New(s.Args["domain"].(string),
-		authenticationOption,
-		management.WithDebug(false),
-	)
+func (g *CustomDomainGenerator) InitResources() error {
+	m := g.generateClient()
+	list, err := m.CustomDomain.List()
 	if err != nil {
-		log.Fatalf(err.Error())
+		return err
 	}
 
-	return apiClient
+	g.Resources = g.createResources(list)
+	return nil
 }
