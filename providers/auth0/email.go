@@ -1,4 +1,4 @@
-// Copyright 2018 The Terraformer Authors.
+// Copyright 2022 The Terraformer Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,26 +15,37 @@
 package auth0
 
 import (
-	"log"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"gopkg.in/auth0.v5/management"
 )
 
-type Auth0Service struct { //nolint
-	terraformutils.Service
+var (
+	EmailAllowEmptyValues = []string{}
+)
+
+type EmailGenerator struct {
+	Auth0Service
 }
 
-func (s *Auth0Service) generateClient() *management.Management {
-	authenticationOption := management.WithClientCredentials(s.Args["client_id"].(string), s.Args["client_secret"].(string))
+func (g EmailGenerator) createResources(email *management.Email) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
+	resourceName := *email.Name
+	resources = append(resources, terraformutils.NewSimpleResource(
+		resourceName,
+		resourceName,
+		"auth0_email",
+		"auth0",
+		EmailAllowEmptyValues,
+	))
+	return resources
+}
 
-	apiClient, err := management.New(s.Args["domain"].(string),
-		authenticationOption,
-		management.WithDebug(false),
-	)
+func (g *EmailGenerator) InitResources() error {
+	m := g.generateClient()
+	Email, err := m.Email.Read()
 	if err != nil {
-		log.Fatalf(err.Error())
+		return err
 	}
-
-	return apiClient
+	g.Resources = g.createResources(Email)
+	return nil
 }

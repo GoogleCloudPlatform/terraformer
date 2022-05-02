@@ -18,83 +18,38 @@ import (
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	synthetics "github.com/dollarshaveclub/new-relic-synthetics-go"
-	newrelic "github.com/paultyng/go-newrelic/v4/api"
+	newrelic "github.com/newrelic/newrelic-client-go/newrelic"
 )
 
 type SyntheticsGenerator struct {
 	NewRelicService
 }
 
-func (g *SyntheticsGenerator) createSyntheticsAlertConditionResources(client *newrelic.Client) error {
-	alertPolicies, err := client.ListAlertPolicies()
+func (g *SyntheticsGenerator) createSyntheticsMonitorResources(client *newrelic.NewRelic) error {
+	allMonitors, err := client.Synthetics.ListMonitors()
 	if err != nil {
 		return err
 	}
 
-	for _, alertPolicy := range alertPolicies {
-		syntheticsAlertConditions, err := client.ListAlertSyntheticsConditions(alertPolicy.ID)
-		if err != nil {
-			return err
-		}
-		for _, syntheticsAlertCondition := range syntheticsAlertConditions {
-			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-				fmt.Sprintf("%d:%d", alertPolicy.ID, syntheticsAlertCondition.ID),
-				fmt.Sprintf("%s-%d", normalizeResourceName(alertPolicy.Name), alertPolicy.ID),
-				"newrelic_synthetics_alert_condition",
-				g.ProviderName,
-				[]string{}))
-		}
-	}
-
-	return nil
-}
-
-func (g *SyntheticsGenerator) createSyntheticsMonitorResources(client *synthetics.Client) error {
-	var offset uint
-	offset = 0
-
-	allMonitors, err := client.GetAllMonitors(offset, 100)
-	if err != nil {
-		return err
-	}
-
-	for allMonitors.Count > 0 {
-		for _, monitor := range allMonitors.Monitors {
-			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-				fmt.Sprint(monitor.ID),
-				fmt.Sprintf("%s-%s", normalizeResourceName(monitor.Name), monitor.ID),
-				"newrelic_synthetics_monitor",
-				g.ProviderName,
-				[]string{}))
-		}
-
-		offset += allMonitors.Count
-		allMonitors, err = client.GetAllMonitors(offset, 100)
-		if err != nil {
-			return err
-		}
+	for _, monitor := range allMonitors {
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+			fmt.Sprint(monitor.ID),
+			fmt.Sprintf("%s-%s", normalizeResourceName(monitor.Name), monitor.ID),
+			"newrelic_synthetics_monitor",
+			g.ProviderName,
+			[]string{}))
 	}
 
 	return nil
 }
 
 func (g *SyntheticsGenerator) InitResources() error {
-	synctheticClient, err := g.SyntheticsClient()
-	if err != nil {
-		return err
-	}
 	client, err := g.Client()
 	if err != nil {
 		return err
 	}
 
-	err = g.createSyntheticsMonitorResources(synctheticClient)
-	if err != nil {
-		return err
-	}
-
-	err = g.createSyntheticsAlertConditionResources(client)
+	err = g.createSyntheticsMonitorResources(client)
 	if err != nil {
 		return err
 	}
