@@ -42,7 +42,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloudfront v1.3.0
 	github.com/aws/aws-sdk-go-v2/service/cloudhsmv2 v1.1.3
 	github.com/aws/aws-sdk-go-v2/service/cloudtrail v1.2.1
-	github.com/aws/aws-sdk-go-v2/service/cloudwatch v1.3.0
+	github.com/aws/aws-sdk-go-v2/service/cloudwatch v1.18.2
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchevents v1.2.0
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs v1.2.3
 	github.com/aws/aws-sdk-go-v2/service/codebuild v1.2.1
