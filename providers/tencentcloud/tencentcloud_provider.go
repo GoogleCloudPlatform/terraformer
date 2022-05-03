@@ -22,6 +22,7 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
+	"github.com/zclconf/go-cty/cty"
 )
 
 type TencentCloudProvider struct { //nolint
@@ -51,6 +52,16 @@ func (p *TencentCloudProvider) getCredential() error {
 
 func (p *TencentCloudProvider) GetName() string {
 	return "tencentcloud"
+}
+
+// GetConfig get region name to go-cty
+func (p *TencentCloudProvider) GetConfig() cty.Value {
+
+	region := p.region
+	val := cty.ObjectVal(map[string]cty.Value{
+		"region": cty.StringVal(region),
+	})
+	return val
 }
 
 func (p *TencentCloudProvider) Init(args []string) error {
