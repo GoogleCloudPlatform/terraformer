@@ -15,6 +15,7 @@
 package tencentcloud
 
 import (
+	"fmt"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	clb "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb/v20180317"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
@@ -65,6 +66,60 @@ func (g *ClbGenerator) InitResources() error {
 			map[string]interface{}{},
 		)
 		g.Resources = append(g.Resources, resource)
+	}
+
+	err = g.initListenerResources(client, allInstances)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (g *ClbGenerator) initListenerResources(client *clb.Client, clbs []*clb.LoadBalancer) error {
+
+	allListeners := make(map[string][]*clb.Listener)
+	clbNames := make(map[string]string)
+	for _, clbInstance := range clbs {
+		request := clb.NewDescribeListenersRequest()
+		request.LoadBalancerId = clbInstance.LoadBalancerId
+		response, err := client.DescribeListeners(request)
+		if err != nil {
+			return err
+		}
+		allListeners[*clbInstance.LoadBalancerId] = response.Response.Listeners
+		clbNames[*clbInstance.LoadBalancerId] = *clbInstance.LoadBalancerName
+	}
+
+	for lbId, listeners := range allListeners {
+		for _, listener := range listeners {
+			listenerId := *listener.ListenerId
+			resource := terraformutils.NewResource(
+				lbId+"#"+listenerId,
+				clbNames[lbId]+"_"+lbId+"#"+listenerId,
+				"tencentcloud_clb_listener",
+				"tencentcloud",
+				map[string]string{},
+				[]string{},
+				map[string]interface{}{},
+			)
+			g.Resources = append(g.Resources, resource)
+
+			for _, rule := range listener.Rules {
+				rouleId := fmt.Sprintf("%s#%s#%s", lbId, listenerId, *rule.LocationId)
+				ruleName := fmt.Sprintf("%s#%s#%s", clbNames[lbId], listenerId, *rule.LocationId)
+				resource := terraformutils.NewResource(
+					rouleId,
+					ruleName,
+					"tencentcloud_clb_listener_rule",
+					"tencentcloud",
+					map[string]string{},
+					[]string{},
+					map[string]interface{}{},
+				)
+				g.Resources = append(g.Resources, resource)
+			}
+		}
 	}
 
 	return nil

@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"log"
+	"strings"
 
 	tencentcloud_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/tencentcloud"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -32,7 +33,11 @@ func newCmdTencentCloudImporter(options ImportOptions) *cobra.Command {
 			for _, region := range options.Regions {
 				provider := newTencentCloudProvider()
 				options.PathPattern = originalPathPattern
-				options.PathPattern += region + "/"
+				if !strings.Contains(originalPathPattern, "{region}") {
+					options.PathPattern += region + "/"
+				} else {
+					options.PathPattern = strings.NewReplacer("{region}", region).Replace(originalPathPattern)
+				}
 				log.Println(provider.GetName() + " importing region " + region)
 				err := Import(provider, options, []string{region})
 				if err != nil {
