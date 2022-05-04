@@ -14,35 +14,55 @@ You can use `{region}` with -p or --path-pattern at any directory level.
 Example layouts:
 
 ```bash
-terragrunt import -r vpc tencentcloud -p `{output}/{provider}/{servce}/{region}`
-generated/
-  tencentcloud/
-    vpc/
-      ap-guangzhou/
-        vpc.tf
-      ap-nanjing/
-        vpc.tf
+terraformer import tencentcloud -r vpc --regions=ap-guangzhou,ap-nanjing -p '{output}/{provider}/{service}/{region}'
+generated
+└── tencentcloud
+    └── vpc
+        ├── ap-guangzhou
+        │   ├── outputs.tf
+        │   ├── provider.tf
+        │   ├── terraform.tfstate
+        │   └── vpc.tf
+        └── ap-nanjing
+            ├── outputs.tf
+            ├── provider.tf
+            ├── terraform.tfstate
+            └── vpc.tf
 ```
 ```bash
-terragrunt import -r vpc tencentcloud -p `{output}/{provider}/{region}/{servce}/`
-generated/
-  tencentcloud/
-    ap-guangzhou/
-      vpc/
-        vpc.tf
-    ap-nanjing/   
-      vpc/
-        vpc.tf
+terraformer import tencentcloud -r vpc --regions=ap-guangzhou,ap-nanjing -p '{output}/{provider}/{region}/{service}'
+generated
+└── tencentcloud
+    ├── ap-guangzhou
+    │   └── vpc
+    │       ├── outputs.tf
+    │       ├── provider.tf
+    │       ├── terraform.tfstate
+    │       └── vpc.tf
+    └── ap-nanjing
+        └── vpc
+            ├── outputs.tf
+            ├── provider.tf
+            ├── terraform.tfstate
+            └── vpc.tf
 ```
 ```bash
-terragrunt import -r vpc,subnet tencentcloud -p `{output}/{region}`
-generated/
-  ap-guangzhou/
-    vpc.tf
-    subnet.tf
-  ap-nanjing/   
-    vpc.tf
-    subnet.tf
+terraformer import tencentcloud -r vpc,subnet --regions=ap-guangzhou,ap-nanjing -p '{output}/{region}'
+generated
+├── ap-guangzhou
+│   ├── outputs.tf
+│   ├── provider.tf
+│   ├── subnet.tf
+│   ├── terraform.tfstate
+│   ├── variables.tf
+│   └── vpc.tf
+└── ap-nanjing
+    ├── outputs.tf
+    ├── provider.tf
+    ├── subnet.tf
+    ├── terraform.tfstate
+    ├── variables.tf
+    └── vpc.tf
 ```
 
 List of supported TencentCloud services:
