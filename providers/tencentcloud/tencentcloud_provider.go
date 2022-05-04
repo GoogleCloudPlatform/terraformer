@@ -134,7 +134,7 @@ func (p *TencentCloudProvider) GetResourceConnections() map[string]map[string][]
 		"nat_gateway": {
 			"vpc": []string{"vpc_id", "id"},
 		},
-		"security_group_lite_rule": {
+		"security_group": {
 			"security_group": []string{"security_group_id", "id"},
 		},
 		"as": {
