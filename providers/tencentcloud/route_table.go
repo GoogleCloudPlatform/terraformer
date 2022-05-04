@@ -15,6 +15,7 @@
 package tencentcloud
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -69,6 +70,32 @@ func (g *RouteTableGenerator) InitResources() error {
 			map[string]interface{}{},
 		)
 		g.Resources = append(g.Resources, resource)
+	}
+	err = g.initRouteTableEntryResources(allRouteTables)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (g *RouteTableGenerator) initRouteTableEntryResources(allRouteTables []*vpc.RouteTable) error {
+
+	for _, routeTable := range allRouteTables {
+
+		for _, route := range routeTable.RouteSet {
+			routeId := fmt.Sprintf("%v.%s", *route.RouteId, *routeTable.RouteTableId)
+			routeName := fmt.Sprintf("%s_%s_%v", *routeTable.RouteTableName, *routeTable.RouteTableId, *route.RouteId)
+			resource := terraformutils.NewResource(
+				routeId,
+				routeName,
+				"tencentcloud_route_table_entry",
+				"tencentcloud",
+				map[string]string{},
+				[]string{},
+				map[string]interface{}{},
+			)
+			g.Resources = append(g.Resources, resource)
+		}
 	}
 
 	return nil
