@@ -1,4 +1,4 @@
-// Copyright 2021 The Terraformer Authors.
+// Copyright 2022 The Terraformer Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -125,12 +125,12 @@ func (g *AsGenerator) PostConvertHook() error {
 		if resource.InstanceInfo.Type != "tencentcloud_as_scaling_group" {
 			continue
 		}
-		if configID, exist := resource.InstanceState.Attributes["configuration_id"]; exist {
+		if configId, exist := resource.InstanceState.Attributes["configuration_id"]; exist {
 			for _, r := range g.Resources {
 				if r.InstanceInfo.Type != "tencentcloud_as_scaling_config" {
 					continue
 				}
-				if configID == r.InstanceState.Attributes["id"] {
+				if configId == r.InstanceState.Attributes["id"] {
 					g.Resources[i].Item["configuration_id"] = "${tencentcloud_as_scaling_config." + r.ResourceName + ".id}"
 				}
 			}

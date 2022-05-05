@@ -15,6 +15,7 @@
 package tencentcloud
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -22,11 +23,11 @@ import (
 	vpc "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc/v20170312"
 )
 
-type SubnetGenerator struct {
+type RouteTableGenerator struct {
 	TencentCloudService
 }
 
-func (g *SubnetGenerator) InitResources() error {
+func (g *RouteTableGenerator) InitResources() error {
 	args := g.GetArgs()
 	region := args["region"].(string)
 	credential := args["credential"].(common.Credential)
@@ -36,50 +37,66 @@ func (g *SubnetGenerator) InitResources() error {
 		return err
 	}
 
-	request := vpc.NewDescribeSubnetsRequest()
-	/*
-		request.Filters = make([]*vpc.Filter, 0, 1)
-		name := "is-default"
-		value := "false"
-		filter := vpc.Filter{
-			Name:   &name,
-			Values: []*string{&value},
+	request := vpc.NewDescribeRouteTablesRequest()
+
+	filters := make([]string, 0)
+	for _, filter := range g.Filter {
+		if filter.FieldPath == "id" && filter.IsApplicable("tencentcloud_route_table") {
+			filters = append(filters, filter.AcceptableValues...)
 		}
-		request.Filters = append(request.Filters, &filter)
-	*/
+	}
+	for i := range filters {
+		request.RouteTableIds = append(request.RouteTableIds, &filters[i])
+	}
 
 	offset := 0
 	pageSize := 50
-	allSubnets := make([]*vpc.Subnet, 0)
+	allInstances := make([]*vpc.RouteTable, 0)
 
 	for {
 		offsetString := strconv.Itoa(offset)
 		limitString := strconv.Itoa(pageSize)
 		request.Offset = &offsetString
 		request.Limit = &limitString
-		response, err := client.DescribeSubnets(request)
+		response, err := client.DescribeRouteTables(request)
 		if err != nil {
 			return err
 		}
 
-		allSubnets = append(allSubnets, response.Response.SubnetSet...)
-		if len(response.Response.SubnetSet) < pageSize {
+		allInstances = append(allInstances, response.Response.RouteTableSet...)
+		if len(response.Response.RouteTableSet) < int(pageSize) {
 			break
 		}
 		offset += pageSize
 	}
 
-	for _, subnet := range allSubnets {
+	for _, instance := range allInstances {
 		resource := terraformutils.NewResource(
-			*subnet.SubnetId,
-			*subnet.SubnetName+"_"+*subnet.SubnetId,
-			"tencentcloud_subnet",
+			*instance.RouteTableId,
+			*instance.RouteTableName+"_"+*instance.RouteTableId,
+			"tencentcloud_route_table",
 			"tencentcloud",
 			map[string]string{},
 			[]string{},
 			map[string]interface{}{},
 		)
 		g.Resources = append(g.Resources, resource)
+
+		for _, entry := range instance.RouteSet {
+			entryId := fmt.Sprintf("%d.%s", *entry.RouteId, *instance.RouteTableId)
+			entryName := fmt.Sprintf("%s_%d", *instance.RouteTableId, *entry.RouteId)
+			entryResource := terraformutils.NewResource(
+				entryId,
+				entryName,
+				"tencentcloud_route_table_entry",
+				"tencentcloud",
+				map[string]string{},
+				[]string{},
+				map[string]interface{}{},
+			)
+			entryResource.AdditionalFields["route_table_id"] = "${tencentcloud_route_table." + resource.ResourceName + ".id}"
+			g.Resources = append(g.Resources, entryResource)
+		}
 	}
 
 	return nil

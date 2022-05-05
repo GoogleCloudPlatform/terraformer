@@ -1,4 +1,4 @@
-// Copyright 2021 The Terraformer Authors.
+// Copyright 2022 The Terraformer Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,17 +22,18 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
+	"github.com/zclconf/go-cty/cty"
 )
 
-type TencentCloudProvider struct { //nolint
+type TencentCloudProvider struct {
 	terraformutils.Provider
 	region     string
 	credential common.Credential
 }
 
 func (p *TencentCloudProvider) getCredential() error {
-	secretID := os.Getenv("TENCENTCLOUD_SECRET_ID")
-	if secretID == "" {
+	secretId := os.Getenv("TENCENTCLOUD_SECRET_ID")
+	if secretId == "" {
 		return errors.New("TENCENTCLOUD_SECRET_ID must be set")
 	}
 	secretKey := os.Getenv("TENCENTCLOUD_SECRET_KEY")
@@ -42,11 +43,17 @@ func (p *TencentCloudProvider) getCredential() error {
 	token := os.Getenv("TENCENTCLOUD_SECURITY_TOKEN")
 
 	p.credential = common.Credential{
-		SecretId:  secretID,
+		SecretId:  secretId,
 		SecretKey: secretKey,
 		Token:     token,
 	}
 	return nil
+}
+
+func (p *TencentCloudProvider) GetConfig() cty.Value {
+	return cty.ObjectVal(map[string]cty.Value{
+		"region": cty.StringVal(p.region),
+	})
 }
 
 func (p *TencentCloudProvider) GetName() string {
@@ -82,7 +89,6 @@ func (p *TencentCloudProvider) GetSupportedService() map[string]terraformutils.S
 	return map[string]terraformutils.ServiceGenerator{
 		"cvm":            &CvmGenerator{},
 		"vpc":            &VpcGenerator{},
-		"subnet":         &SubnetGenerator{},
 		"cdn":            &CdnGenerator{},
 		"as":             &AsGenerator{},
 		"clb":            &ClbGenerator{},
@@ -100,6 +106,11 @@ func (p *TencentCloudProvider) GetSupportedService() map[string]terraformutils.S
 		"scf":            &ScfGenerator{},
 		"tcaplus":        &TcaplusGenerator{},
 		"vpn":            &VpnGenerator{},
+		"eip":            &EipGenerator{},
+		"subnet":         &SubnetGenerator{},
+		"route_table":    &RouteTableGenerator{},
+		"nat_gateway":    &NatGatewayGenerator{},
+		"acl":            &AclGenerator{},
 	}
 }
 
@@ -109,10 +120,7 @@ func (p *TencentCloudProvider) GetResourceConnections() map[string]map[string][]
 			"vpc":            []string{"vpc_id", "id"},
 			"subnet":         []string{"subnet_id", "id"},
 			"security_group": []string{"security_groups", "id"},
-			"key_pair":       []string{"key_name", "id"},
-		},
-		"subnet": {
-			"vpc": []string{"vpc_id", "id"},
+			// "key_pair":       []string{"key_name", "id"},
 		},
 		"as": {
 			"vpc":    []string{"vpc_id", "id"},
@@ -120,9 +128,10 @@ func (p *TencentCloudProvider) GetResourceConnections() map[string]map[string][]
 			"clb":    []string{"forward_balancer_ids", "id"},
 		},
 		"clb": {
-			"vpc":            []string{"vpc_id", "id"},
+			"vpc":            []string{"vpc_id", "id", "target_region_info_vpc_id", "id"},
 			"subnet":         []string{"subnet_id", "id"},
 			"security_group": []string{"security_groups", "id"},
+			"cvm":            []string{"targets.instance_id", "id"},
 		},
 		"cfs": {
 			"vpc":    []string{"vpc_id", "id"},
@@ -156,6 +165,26 @@ func (p *TencentCloudProvider) GetResourceConnections() map[string]map[string][]
 		},
 		"vpn": {
 			"vpc": []string{"vpc_id", "id"},
+		},
+		"subnet": {
+			"vpc":         []string{"vpc_id", "id"},
+			"route_table": []string{"route_table_id", "id"},
+		},
+		"route_table": {
+			"vpc": []string{"vpc_id", "id"},
+		},
+		"nat_gateway": {
+			"vpc": []string{"vpc_id", "id"},
+		},
+		"acl": {
+			"vpc":    []string{"vpc_id", "id"},
+			"subnet": []string{"subnet_id", "id"},
+		},
+		"eip": {
+			"cvm": []string{"instance_id", "id"},
+		},
+		"cbs": {
+			"cvm": []string{"instance_id", "id"},
 		},
 	}
 }

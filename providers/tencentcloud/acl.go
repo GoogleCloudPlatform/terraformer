@@ -15,18 +15,16 @@
 package tencentcloud
 
 import (
-	"strconv"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	vpc "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc/v20170312"
 )
 
-type SubnetGenerator struct {
+type AclGenerator struct {
 	TencentCloudService
 }
 
-func (g *SubnetGenerator) InitResources() error {
+func (g *AclGenerator) InitResources() error {
 	args := g.GetArgs()
 	region := args["region"].(string)
 	credential := args["credential"].(common.Credential)
@@ -36,50 +34,61 @@ func (g *SubnetGenerator) InitResources() error {
 		return err
 	}
 
-	request := vpc.NewDescribeSubnetsRequest()
-	/*
-		request.Filters = make([]*vpc.Filter, 0, 1)
-		name := "is-default"
-		value := "false"
-		filter := vpc.Filter{
-			Name:   &name,
-			Values: []*string{&value},
+	request := vpc.NewDescribeNetworkAclsRequest()
+	filters := make([]string, 0)
+	for _, filter := range g.Filter {
+		if filter.FieldPath == "id" && filter.IsApplicable("tencentcloud_vpc_acl") {
+			filters = append(filters, filter.AcceptableValues...)
 		}
-		request.Filters = append(request.Filters, &filter)
-	*/
+	}
+	for i := range filters {
+		request.NetworkAclIds = append(request.NetworkAclIds, &filters[i])
+	}
 
-	offset := 0
-	pageSize := 50
-	allSubnets := make([]*vpc.Subnet, 0)
+	var offset uint64 = 0
+	var pageSize uint64 = 50
+	allInstances := make([]*vpc.NetworkAcl, 0)
 
 	for {
-		offsetString := strconv.Itoa(offset)
-		limitString := strconv.Itoa(pageSize)
-		request.Offset = &offsetString
-		request.Limit = &limitString
-		response, err := client.DescribeSubnets(request)
+		request.Offset = &offset
+		request.Limit = &pageSize
+		response, err := client.DescribeNetworkAcls(request)
 		if err != nil {
 			return err
 		}
 
-		allSubnets = append(allSubnets, response.Response.SubnetSet...)
-		if len(response.Response.SubnetSet) < pageSize {
+		allInstances = append(allInstances, response.Response.NetworkAclSet...)
+		if len(response.Response.NetworkAclSet) < int(pageSize) {
 			break
 		}
 		offset += pageSize
 	}
 
-	for _, subnet := range allSubnets {
+	for _, instance := range allInstances {
 		resource := terraformutils.NewResource(
-			*subnet.SubnetId,
-			*subnet.SubnetName+"_"+*subnet.SubnetId,
-			"tencentcloud_subnet",
+			*instance.NetworkAclId,
+			*instance.NetworkAclName+"_"+*instance.NetworkAclId,
+			"tencentcloud_vpc_acl",
 			"tencentcloud",
 			map[string]string{},
 			[]string{},
 			map[string]interface{}{},
 		)
 		g.Resources = append(g.Resources, resource)
+
+		for _, subnet := range instance.SubnetSet {
+			attachment := terraformutils.NewResource(
+				*instance.NetworkAclId+"#"+*subnet.SubnetId,
+				*instance.NetworkAclId+"_"+*subnet.SubnetId,
+				"tencentcloud_vpc_acl_attachment",
+				"tencentcloud",
+				map[string]string{},
+				[]string{},
+				map[string]interface{}{},
+			)
+			attachment.AdditionalFields["acl_id"] = "${tencentcloud_vpc_acl." + resource.ResourceName + ".id}"
+			g.Resources = append(g.Resources, attachment)
+		}
 	}
 
 	return nil

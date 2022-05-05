@@ -15,18 +15,16 @@
 package tencentcloud
 
 import (
-	"strconv"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	vpc "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc/v20170312"
 )
 
-type SubnetGenerator struct {
+type EipGenerator struct {
 	TencentCloudService
 }
 
-func (g *SubnetGenerator) InitResources() error {
+func (g *EipGenerator) InitResources() error {
 	args := g.GetArgs()
 	region := args["region"].(string)
 	credential := args["credential"].(common.Credential)
@@ -36,50 +34,60 @@ func (g *SubnetGenerator) InitResources() error {
 		return err
 	}
 
-	request := vpc.NewDescribeSubnetsRequest()
-	/*
-		request.Filters = make([]*vpc.Filter, 0, 1)
-		name := "is-default"
-		value := "false"
-		filter := vpc.Filter{
-			Name:   &name,
-			Values: []*string{&value},
+	var offset int64 = 0
+	var pageSize int64 = 50
+	allInstances := make([]*vpc.Address, 0)
+	request := vpc.NewDescribeAddressesRequest()
+	filters := make([]string, 0)
+	for _, filter := range g.Filter {
+		if filter.FieldPath == "id" && filter.IsApplicable("tencentcloud_eip") {
+			filters = append(filters, filter.AcceptableValues...)
 		}
-		request.Filters = append(request.Filters, &filter)
-	*/
-
-	offset := 0
-	pageSize := 50
-	allSubnets := make([]*vpc.Subnet, 0)
+	}
+	for i := range filters {
+		request.AddressIds = append(request.AddressIds, &filters[i])
+	}
 
 	for {
-		offsetString := strconv.Itoa(offset)
-		limitString := strconv.Itoa(pageSize)
-		request.Offset = &offsetString
-		request.Limit = &limitString
-		response, err := client.DescribeSubnets(request)
+		request.Offset = &offset
+		request.Limit = &pageSize
+		response, err := client.DescribeAddresses(request)
 		if err != nil {
 			return err
 		}
 
-		allSubnets = append(allSubnets, response.Response.SubnetSet...)
-		if len(response.Response.SubnetSet) < pageSize {
+		allInstances = append(allInstances, response.Response.AddressSet...)
+		if len(response.Response.AddressSet) < int(pageSize) {
 			break
 		}
 		offset += pageSize
 	}
 
-	for _, subnet := range allSubnets {
+	for _, instance := range allInstances {
 		resource := terraformutils.NewResource(
-			*subnet.SubnetId,
-			*subnet.SubnetName+"_"+*subnet.SubnetId,
-			"tencentcloud_subnet",
+			*instance.AddressId,
+			*instance.AddressId,
+			"tencentcloud_eip",
 			"tencentcloud",
 			map[string]string{},
 			[]string{},
 			map[string]interface{}{},
 		)
 		g.Resources = append(g.Resources, resource)
+
+		if instance.InstanceId != nil && *instance.InstanceId != "" {
+			association := terraformutils.NewResource(
+				*instance.AddressId+"::"+*instance.InstanceId,
+				*instance.AddressId,
+				"tencentcloud_eip_association",
+				"tencentcloud",
+				map[string]string{},
+				[]string{},
+				map[string]interface{}{},
+			)
+			association.AdditionalFields["eip_id"] = "${tencentcloud_eip." + resource.ResourceName + ".id}"
+			g.Resources = append(g.Resources, association)
+		}
 	}
 
 	return nil

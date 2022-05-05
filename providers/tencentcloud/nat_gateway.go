@@ -15,18 +15,16 @@
 package tencentcloud
 
 import (
-	"strconv"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	vpc "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc/v20170312"
 )
 
-type SubnetGenerator struct {
+type NatGatewayGenerator struct {
 	TencentCloudService
 }
 
-func (g *SubnetGenerator) InitResources() error {
+func (g *NatGatewayGenerator) InitResources() error {
 	args := g.GetArgs()
 	region := args["region"].(string)
 	credential := args["credential"].(common.Credential)
@@ -36,44 +34,32 @@ func (g *SubnetGenerator) InitResources() error {
 		return err
 	}
 
-	request := vpc.NewDescribeSubnetsRequest()
-	/*
-		request.Filters = make([]*vpc.Filter, 0, 1)
-		name := "is-default"
-		value := "false"
-		filter := vpc.Filter{
-			Name:   &name,
-			Values: []*string{&value},
-		}
-		request.Filters = append(request.Filters, &filter)
-	*/
+	request := vpc.NewDescribeNatGatewaysRequest()
 
-	offset := 0
-	pageSize := 50
-	allSubnets := make([]*vpc.Subnet, 0)
+	var offset uint64 = 0
+	var pageSize uint64 = 50
+	allInstances := make([]*vpc.NatGateway, 0)
 
 	for {
-		offsetString := strconv.Itoa(offset)
-		limitString := strconv.Itoa(pageSize)
-		request.Offset = &offsetString
-		request.Limit = &limitString
-		response, err := client.DescribeSubnets(request)
+		request.Offset = &offset
+		request.Limit = &pageSize
+		response, err := client.DescribeNatGateways(request)
 		if err != nil {
 			return err
 		}
 
-		allSubnets = append(allSubnets, response.Response.SubnetSet...)
-		if len(response.Response.SubnetSet) < pageSize {
+		allInstances = append(allInstances, response.Response.NatGatewaySet...)
+		if len(response.Response.NatGatewaySet) < int(pageSize) {
 			break
 		}
 		offset += pageSize
 	}
 
-	for _, subnet := range allSubnets {
+	for _, instance := range allInstances {
 		resource := terraformutils.NewResource(
-			*subnet.SubnetId,
-			*subnet.SubnetName+"_"+*subnet.SubnetId,
-			"tencentcloud_subnet",
+			*instance.NatGatewayId,
+			*instance.NatGatewayName+"_"+*instance.NatGatewayId,
+			"tencentcloud_nat_gateway",
 			"tencentcloud",
 			map[string]string{},
 			[]string{},

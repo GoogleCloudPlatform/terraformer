@@ -1,4 +1,4 @@
-// Copyright 2021 The Terraformer Authors.
+// Copyright 2022 The Terraformer Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,6 @@ package tencentcloud
 
 import "github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
-type TencentCloudService struct { //nolint
+type TencentCloudService struct {
 	terraformutils.Service
 }
