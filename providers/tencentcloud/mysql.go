@@ -1,4 +1,4 @@
-// Copyright 2021 The Terraformer Authors.
+// Copyright 2022 The Terraformer Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
 package tencentcloud
 
 import (
+	"math/rand"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	cdb "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdb/v20170320"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
@@ -34,22 +36,18 @@ func (g *MysqlGenerator) InitResources() error {
 		return err
 	}
 
-	if err := g.loadMysqlMaster(client); err != nil {
-		return err
-	}
-	if err := g.loadMysqlReadOnly(client); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (g *MysqlGenerator) loadMysqlMaster(client *cdb.Client) error {
 	request := cdb.NewDescribeDBInstancesRequest()
-	var instanceTypeMaster uint64 = 1
-	request.InstanceTypes = []*uint64{&instanceTypeMaster}
+	filters := make([]string, 0)
+	for _, filter := range g.Filter {
+		if filter.FieldPath == "id" && filter.IsApplicable("tencentcloud_mysql_instance") {
+			filters = append(filters, filter.AcceptableValues...)
+		}
+	}
+	for i := range filters {
+		request.InstanceIds = append(request.InstanceIds, &filters[i])
+	}
 
-	var offset uint64 = 0
+	var offset uint64
 	var pageSize uint64 = 50
 	allInstances := make([]*cdb.InstanceInfo, 0)
 
@@ -69,56 +67,35 @@ func (g *MysqlGenerator) loadMysqlMaster(client *cdb.Client) error {
 	}
 
 	for _, instance := range allInstances {
-		resource := terraformutils.NewResource(
-			*instance.InstanceId,
-			*instance.InstanceName+"_"+*instance.InstanceId,
-			"tencentcloud_mysql_instance",
-			"tencentcloud",
-			map[string]string{},
-			[]string{},
-			map[string]interface{}{},
-		)
-		g.Resources = append(g.Resources, resource)
-	}
-
-	return nil
-}
-
-func (g *MysqlGenerator) loadMysqlReadOnly(client *cdb.Client) error {
-	request := cdb.NewDescribeDBInstancesRequest()
-	var instanceTypeMaster uint64 = 3
-	request.InstanceTypes = []*uint64{&instanceTypeMaster}
-
-	var offset uint64 = 0
-	var pageSize uint64 = 50
-	allInstances := make([]*cdb.InstanceInfo, 0)
-
-	for {
-		request.Offset = &offset
-		request.Limit = &pageSize
-		response, err := client.DescribeDBInstances(request)
-		if err != nil {
-			return err
+		if *instance.InstanceType == 1 {
+			resource := terraformutils.NewResource(
+				*instance.InstanceId,
+				*instance.InstanceName+"_"+*instance.InstanceId,
+				"tencentcloud_mysql_instance",
+				"tencentcloud",
+				map[string]string{
+					"force_delete":   "false",
+					"prepaid_period": "1",
+				},
+				[]string{},
+				map[string]interface{}{},
+			)
+			g.Resources = append(g.Resources, resource)
+		} else if *instance.InstanceType == 3 {
+			resource := terraformutils.NewResource(
+				*instance.InstanceId,
+				*instance.InstanceName+"_"+*instance.InstanceId,
+				"tencentcloud_mysql_readonly_instance",
+				"tencentcloud",
+				map[string]string{
+					"force_delete":   "false",
+					"prepaid_period": "1",
+				},
+				[]string{},
+				map[string]interface{}{},
+			)
+			g.Resources = append(g.Resources, resource)
 		}
-
-		allInstances = append(allInstances, response.Response.Items...)
-		if len(response.Response.Items) < int(pageSize) {
-			break
-		}
-		offset += pageSize
-	}
-
-	for _, instance := range allInstances {
-		resource := terraformutils.NewResource(
-			*instance.InstanceId,
-			*instance.InstanceName+"_"+*instance.InstanceId,
-			"tencentcloud_mysql_readonly_instance",
-			"tencentcloud",
-			map[string]string{},
-			[]string{},
-			map[string]interface{}{},
-		)
-		g.Resources = append(g.Resources, resource)
 	}
 
 	return nil
@@ -127,23 +104,48 @@ func (g *MysqlGenerator) loadMysqlReadOnly(client *cdb.Client) error {
 func (g *MysqlGenerator) PostConvertHook() error {
 	for i, resource := range g.Resources {
 		if resource.InstanceInfo.Type == "tencentcloud_mysql_instance" {
-			delete(resource.Item, "pay_type")
-			delete(resource.Item, "period")
+			password := g.generatePassword(16)
+			g.Resources[i].Item["root_password"] = password
+			g.Resources[i].InstanceState.Attributes["root_password"] = password
 		}
+		delete(resource.Item, "pay_type")
+		delete(resource.Item, "period")
+	}
 
+	for i, resource := range g.Resources {
 		if resource.InstanceInfo.Type != "tencentcloud_mysql_readonly_instance" {
-			if masterID, exist := resource.InstanceState.Attributes["master_instance_id"]; exist {
-				for _, r := range g.Resources {
-					if r.InstanceInfo.Type != "tencentcloud_mysql_instance" {
-						continue
-					}
-					if masterID == r.InstanceState.Attributes["id"] {
-						g.Resources[i].Item["master_instance_id"] = "${tencentcloud_mysql_instance." + r.ResourceName + ".id}"
-					}
+			continue
+		}
+		delete(resource.Item, "pay_type")
+		delete(resource.Item, "period")
+		if masterID, exist := resource.InstanceState.Attributes["master_instance_id"]; exist {
+			for _, r := range g.Resources {
+				if r.InstanceInfo.Type != "tencentcloud_mysql_instance" {
+					continue
+				}
+				if masterID == r.InstanceState.Attributes["id"] {
+					g.Resources[i].Item["master_instance_id"] = "${tencentcloud_mysql_instance." + r.ResourceName + ".id}"
 				}
 			}
 		}
 	}
-
 	return nil
+}
+
+func (g *MysqlGenerator) generatePassword(length int) string {
+	digits := "0123456789"
+	alphabets := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	specials := "_+-!@#$"
+	all := digits + alphabets + specials
+
+	password := make([]byte, length)
+	password[0] = alphabets[rand.Intn(len(alphabets))]
+	password[1] = digits[rand.Intn(len(digits))]
+	for i := 2; i < length; i++ {
+		password[i] = all[rand.Intn(len(all))]
+	}
+	rand.Shuffle(len(password), func(i, j int) {
+		password[i], password[j] = password[j], password[i]
+	})
+	return string(password)
 }

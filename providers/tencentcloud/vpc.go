@@ -1,4 +1,4 @@
-// Copyright 2021 The Terraformer Authors.
+// Copyright 2022 The Terraformer Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,6 +37,20 @@ func (g *VpcGenerator) InitResources() error {
 	}
 
 	request := vpc.NewDescribeVpcsRequest()
+	request.Filters = make([]*vpc.Filter, 0)
+	vpcIds := make([]string, 0)
+	for _, filter := range g.Filter {
+		if filter.FieldPath == "id" && filter.IsApplicable("tencentcloud_vpc") {
+			vpcIds = append(vpcIds, filter.AcceptableValues...)
+		}
+	}
+	if len(vpcIds) > 0 {
+		request.VpcIds = make([]*string, 0, len(vpcIds))
+		for i := range vpcIds {
+			request.VpcIds = append(request.VpcIds, &vpcIds[i])
+		}
+	}
+
 	offset := 0
 	pageSize := 50
 	allVpcs := make([]*vpc.Vpc, 0)
@@ -68,6 +82,55 @@ func (g *VpcGenerator) InitResources() error {
 			[]string{},
 			map[string]interface{}{},
 		)
+		// g.loadSubnets(client, *vpcInstance.VpcId, resource.ResourceName)
+		g.Resources = append(g.Resources, resource)
+	}
+
+	return nil
+}
+
+func (g *VpcGenerator) loadSubnets(client *vpc.Client, vpcID, resourceName string) error {
+	request := vpc.NewDescribeSubnetsRequest()
+	request.Filters = make([]*vpc.Filter, 0, 1)
+	idKey := "vpc-id"
+	idFilter := vpc.Filter{
+		Name:   &idKey,
+		Values: []*string{&vpcID},
+	}
+	request.Filters = append(request.Filters, &idFilter)
+
+	offset := 0
+	pageSize := 50
+	allSubnets := make([]*vpc.Subnet, 0)
+
+	for {
+		offsetString := strconv.Itoa(offset)
+		limitString := strconv.Itoa(pageSize)
+		request.Offset = &offsetString
+		request.Limit = &limitString
+		response, err := client.DescribeSubnets(request)
+		if err != nil {
+			return err
+		}
+
+		allSubnets = append(allSubnets, response.Response.SubnetSet...)
+		if len(response.Response.SubnetSet) < pageSize {
+			break
+		}
+		offset += pageSize
+	}
+
+	for _, subnet := range allSubnets {
+		resource := terraformutils.NewResource(
+			*subnet.SubnetId,
+			*subnet.SubnetName+"_"+*subnet.SubnetId,
+			"tencentcloud_subnet",
+			"tencentcloud",
+			map[string]string{},
+			[]string{},
+			map[string]interface{}{},
+		)
+		resource.AdditionalFields["vpc_id"] = "${tencentcloud_vpc." + resourceName + ".id}"
 		g.Resources = append(g.Resources, resource)
 	}
 

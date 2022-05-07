@@ -1,4 +1,4 @@
-// Copyright 2021 The Terraformer Authors.
+// Copyright 2022 The Terraformer Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,8 +37,17 @@ func (g *SecurityGroupGenerator) InitResources() error {
 	}
 
 	request := vpc.NewDescribeSecurityGroupsRequest()
+	filters := make([]string, 0)
+	for _, filter := range g.Filter {
+		if filter.FieldPath == "id" && filter.IsApplicable("tencentcloud_security_group") {
+			filters = append(filters, filter.AcceptableValues...)
+		}
+	}
+	for i := range filters {
+		request.SecurityGroupIds = append(request.SecurityGroupIds, &filters[i])
+	}
 
-	var offset int64 = 0
+	var offset int64
 	var pageSize int64 = 50
 	allInstances := make([]*vpc.SecurityGroup, 0)
 
@@ -70,6 +79,18 @@ func (g *SecurityGroupGenerator) InitResources() error {
 			map[string]interface{}{},
 		)
 		g.Resources = append(g.Resources, resource)
+
+		ruleResource := terraformutils.NewResource(
+			*instance.SecurityGroupId,
+			*instance.SecurityGroupName+"_"+*instance.SecurityGroupId,
+			"tencentcloud_security_group_lite_rule",
+			"tencentcloud",
+			map[string]string{},
+			[]string{},
+			map[string]interface{}{},
+		)
+		ruleResource.AdditionalFields["security_group_id"] = "${tencentcloud_security_group." + resource.ResourceName + ".id}"
+		g.Resources = append(g.Resources, ruleResource)
 	}
 
 	return nil

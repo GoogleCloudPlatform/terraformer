@@ -1,4 +1,4 @@
-// Copyright 2021 The Terraformer Authors.
+// Copyright 2022 The Terraformer Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ func (g *MongodbGenerator) InitResources() error {
 
 	request := mongodb.NewDescribeDBInstancesRequest()
 
-	var offset uint64 = 0
+	var offset uint64
 	var pageSize uint64 = 50
 	allInstances := make([]*mongodb.MongoDBInstanceDetail, 0)
 
@@ -68,5 +68,14 @@ func (g *MongodbGenerator) InitResources() error {
 		g.Resources = append(g.Resources, resource)
 	}
 
+	return nil
+}
+
+func (g *MongodbGenerator) PostConvertHook() error {
+	for i, resource := range g.Resources {
+		if resource.InstanceInfo.Type == "tencentcloud_mongodb_instance" {
+			g.Resources[i].Item["password"] = "test1234;"
+		}
+	}
 	return nil
 }

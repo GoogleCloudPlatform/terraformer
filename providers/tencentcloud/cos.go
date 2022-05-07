@@ -1,4 +1,4 @@
-// Copyright 2021 The Terraformer Authors.
+// Copyright 2022 The Terraformer Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,12 +55,32 @@ func (g *CosGenerator) InitResources() error {
 			bucket.Name,
 			"tencentcloud_cos_bucket",
 			"tencentcloud",
-			map[string]string{},
+			map[string]string{
+				"acl": "private",
+			},
 			[]string{},
 			map[string]interface{}{},
 		)
 		g.Resources = append(g.Resources, resource)
 	}
 
+	return nil
+}
+
+func (g *CosGenerator) PostConvertHook() error {
+	for _, resource := range g.Resources {
+		if resource.InstanceInfo.Type == "tencentcloud_cos_bucket" {
+			if _, ok := resource.Item["lifecycle_rules"]; ok {
+				lifecycleRules := resource.Item["lifecycle_rules"].([]interface{})
+				for i := range lifecycleRules {
+					rule := lifecycleRules[i].(map[string]interface{})
+					if _, ok := rule["filter_prefix"]; !ok {
+						rule["filter_prefix"] = ""
+						lifecycleRules[i] = rule
+					}
+				}
+			}
+		}
+	}
 	return nil
 }

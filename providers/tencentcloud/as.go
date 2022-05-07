@@ -1,4 +1,4 @@
-// Copyright 2021 The Terraformer Authors.
+// Copyright 2022 The Terraformer Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ func (g *AsGenerator) InitResources() error {
 func (g *AsGenerator) loadScalingGroups(client *as.Client) error {
 	request := as.NewDescribeAutoScalingGroupsRequest()
 
-	var offset uint64 = 0
+	var offset uint64
 	var pageSize uint64 = 50
 	allInstances := make([]*as.AutoScalingGroup, 0)
 
@@ -85,7 +85,7 @@ func (g *AsGenerator) loadScalingGroups(client *as.Client) error {
 func (g *AsGenerator) loadScalingConfigs(client *as.Client) error {
 	request := as.NewDescribeLaunchConfigurationsRequest()
 
-	var offset uint64 = 0
+	var offset uint64
 	var pageSize uint64 = 50
 	allInstances := make([]*as.LaunchConfiguration, 0)
 
