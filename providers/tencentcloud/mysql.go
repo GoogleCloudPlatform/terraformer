@@ -118,12 +118,12 @@ func (g *MysqlGenerator) PostConvertHook() error {
 		}
 		delete(resource.Item, "pay_type")
 		delete(resource.Item, "period")
-		if masterId, exist := resource.InstanceState.Attributes["master_instance_id"]; exist {
+		if masterID, exist := resource.InstanceState.Attributes["master_instance_id"]; exist {
 			for _, r := range g.Resources {
 				if r.InstanceInfo.Type != "tencentcloud_mysql_instance" {
 					continue
 				}
-				if masterId == r.InstanceState.Attributes["id"] {
+				if masterID == r.InstanceState.Attributes["id"] {
 					g.Resources[i].Item["master_instance_id"] = "${tencentcloud_mysql_instance." + r.ResourceName + ".id}"
 				}
 			}

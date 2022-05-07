@@ -83,10 +83,10 @@ func (g *RouteTableGenerator) InitResources() error {
 		g.Resources = append(g.Resources, resource)
 
 		for _, entry := range instance.RouteSet {
-			entryId := fmt.Sprintf("%d.%s", *entry.RouteId, *instance.RouteTableId)
+			entryID := fmt.Sprintf("%d.%s", *entry.RouteId, *instance.RouteTableId)
 			entryName := fmt.Sprintf("%s_%d", *instance.RouteTableId, *entry.RouteId)
 			entryResource := terraformutils.NewResource(
-				entryId,
+				entryID,
 				entryName,
 				"tencentcloud_route_table_entry",
 				"tencentcloud",

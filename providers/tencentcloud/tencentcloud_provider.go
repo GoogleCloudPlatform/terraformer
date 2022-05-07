@@ -25,7 +25,7 @@ import (
 	"github.com/zclconf/go-cty/cty"
 )
 
-type TencentCloudProvider struct {
+type TencentCloudProvider struct { //nolint
 	terraformutils.Provider
 	region     string
 	credential common.Credential

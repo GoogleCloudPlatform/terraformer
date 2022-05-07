@@ -125,12 +125,12 @@ func (g *AsGenerator) PostConvertHook() error {
 		if resource.InstanceInfo.Type != "tencentcloud_as_scaling_group" {
 			continue
 		}
-		if configId, exist := resource.InstanceState.Attributes["configuration_id"]; exist {
+		if configID, exist := resource.InstanceState.Attributes["configuration_id"]; exist {
 			for _, r := range g.Resources {
 				if r.InstanceInfo.Type != "tencentcloud_as_scaling_config" {
 					continue
 				}
-				if configId == r.InstanceState.Attributes["id"] {
+				if configID == r.InstanceState.Attributes["id"] {
 					g.Resources[i].Item["configuration_id"] = "${tencentcloud_as_scaling_config." + r.ResourceName + ".id}"
 				}
 			}

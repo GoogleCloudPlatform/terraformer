@@ -39,14 +39,12 @@ func (g *GaapGenerator) InitResources() error {
 	if err := g.loadProxy(client); err != nil {
 		return err
 	}
-	/*
-		if err := g.loadRealServer(client); err != nil {
-			return err
-		}
-		if err := g.loadCertificate(client); err != nil {
-			return err
-		}
-	*/
+	if err := g.loadRealServer(client); err != nil {
+		return err
+	}
+	if err := g.loadCertificate(client); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -130,8 +128,8 @@ func (g *GaapGenerator) matchFilter(resource *terraformutils.Resource) bool {
 
 func (g *GaapGenerator) loadRealServer(client *gaap.Client) error {
 	request := gaap.NewDescribeRealServersRequest()
-	var projectId int64 = -1
-	request.ProjectId = &projectId
+	var projectID int64 = -1
+	request.ProjectId = &projectID
 
 	var offset uint64 = 0
 	var pageSize uint64 = 50

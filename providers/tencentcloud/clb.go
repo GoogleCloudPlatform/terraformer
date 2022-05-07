@@ -84,9 +84,9 @@ func (g *ClbGenerator) InitResources() error {
 	return nil
 }
 
-func (g *ClbGenerator) loadListener(client *clb.Client, loadBalancerId, resourceName string) error {
+func (g *ClbGenerator) loadListener(client *clb.Client, loadBalancerID, resourceName string) error {
 	request := clb.NewDescribeTargetsRequest()
-	request.LoadBalancerId = &loadBalancerId
+	request.LoadBalancerId = &loadBalancerID
 	response, err := client.DescribeTargets(request)
 	if err != nil {
 		return err
@@ -94,7 +94,7 @@ func (g *ClbGenerator) loadListener(client *clb.Client, loadBalancerId, resource
 
 	for _, listener := range response.Response.Listeners {
 		resource := terraformutils.NewResource(
-			loadBalancerId+"#"+*listener.ListenerId,
+			loadBalancerID+"#"+*listener.ListenerId,
 			*listener.ListenerId,
 			"tencentcloud_clb_listener",
 			"tencentcloud",
@@ -108,7 +108,7 @@ func (g *ClbGenerator) loadListener(client *clb.Client, loadBalancerId, resource
 		g.Resources = append(g.Resources, resource)
 		if len(listener.Targets) > 0 {
 			attachmentResource := terraformutils.NewResource(
-				"#"+*listener.ListenerId+"#"+loadBalancerId,
+				"#"+*listener.ListenerId+"#"+loadBalancerID,
 				*listener.ListenerId,
 				"tencentcloud_clb_attachment",
 				"tencentcloud",
@@ -123,7 +123,7 @@ func (g *ClbGenerator) loadListener(client *clb.Client, loadBalancerId, resource
 
 		for _, rule := range listener.Rules {
 			ruleResource := terraformutils.NewResource(
-				loadBalancerId+"#"+*listener.ListenerId+"#"+*rule.LocationId,
+				loadBalancerID+"#"+*listener.ListenerId+"#"+*rule.LocationId,
 				*rule.LocationId,
 				"tencentcloud_clb_listener_rule",
 				"tencentcloud",
@@ -137,7 +137,7 @@ func (g *ClbGenerator) loadListener(client *clb.Client, loadBalancerId, resource
 
 			if len(rule.Targets) > 0 {
 				attachmentResource := terraformutils.NewResource(
-					*rule.LocationId+"#"+*listener.ListenerId+"#"+loadBalancerId,
+					*rule.LocationId+"#"+*listener.ListenerId+"#"+loadBalancerID,
 					*rule.LocationId,
 					"tencentcloud_clb_attachment",
 					"tencentcloud",

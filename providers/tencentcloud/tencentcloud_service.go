@@ -16,6 +16,6 @@ package tencentcloud
 
 import "github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
-type TencentCloudService struct {
+type TencentCloudService struct { //nolint
 	terraformutils.Service
 }

@@ -37,17 +37,6 @@ func (g *SubnetGenerator) InitResources() error {
 	}
 
 	request := vpc.NewDescribeSubnetsRequest()
-	/*
-		request.Filters = make([]*vpc.Filter, 0, 1)
-		name := "is-default"
-		value := "false"
-		filter := vpc.Filter{
-			Name:   &name,
-			Values: []*string{&value},
-		}
-		request.Filters = append(request.Filters, &filter)
-	*/
-
 	offset := 0
 	pageSize := 50
 	allSubnets := make([]*vpc.Subnet, 0)

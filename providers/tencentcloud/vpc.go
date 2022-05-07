@@ -89,23 +89,13 @@ func (g *VpcGenerator) InitResources() error {
 	return nil
 }
 
-func (g *VpcGenerator) loadSubnets(client *vpc.Client, vpcId, resourceName string) error {
+func (g *VpcGenerator) loadSubnets(client *vpc.Client, vpcID, resourceName string) error {
 	request := vpc.NewDescribeSubnetsRequest()
 	request.Filters = make([]*vpc.Filter, 0, 1)
-	/*
-		defaultName := "is-default"
-		defaultValue := "false"
-		defaultFilter := vpc.Filter{
-			Name:   &defaultName,
-			Values: []*string{&defaultValue},
-		}
-		request.Filters = append(request.Filters, &defaultFilter)
-	*/
-
 	idKey := "vpc-id"
 	idFilter := vpc.Filter{
 		Name:   &idKey,
-		Values: []*string{&vpcId},
+		Values: []*string{&vpcID},
 	}
 	request.Filters = append(request.Filters, &idFilter)
 
