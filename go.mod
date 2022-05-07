@@ -71,7 +71,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/firehose v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/glue v1.3.0
 	github.com/aws/aws-sdk-go-v2/service/iam v1.3.0
-	github.com/aws/aws-sdk-go-v2/service/iot v1.2.0
+	github.com/aws/aws-sdk-go-v2/service/iot v1.24.1
 	github.com/aws/aws-sdk-go-v2/service/kafka v1.14.0
 	github.com/aws/aws-sdk-go-v2/service/kinesis v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/kms v1.2.2
