@@ -61,7 +61,7 @@ func (g *GaapGenerator) loadProxy(client *gaap.Client) error {
 		request.InstanceIds = append(request.InstanceIds, &filters[i])
 	}
 
-	var offset uint64 = 0
+	var offset uint64
 	var pageSize uint64 = 50
 	allInstances := make([]*gaap.ProxyInfo, 0)
 
@@ -104,16 +104,16 @@ func (g *GaapGenerator) loadProxy(client *gaap.Client) error {
 				continue
 			}
 		}
-		if err := g.loadHttpListener(client, *instance.ProxyId, resource.ResourceName); err != nil {
+		if err := g.loadHTTPListener(client, *instance.ProxyId, resource.ResourceName); err != nil {
 			return err
 		}
-		if err := g.loadHttpsListener(client, *instance.ProxyId, resource.ResourceName); err != nil {
+		if err := g.loadHTTPSListener(client, *instance.ProxyId, resource.ResourceName); err != nil {
 			return err
 		}
-		if err := g.loadTcpListener(client, *instance.ProxyId, resource.ResourceName); err != nil {
+		if err := g.loadTCPListener(client, *instance.ProxyId, resource.ResourceName); err != nil {
 			return err
 		}
-		if err := g.loadUdpListener(client, *instance.ProxyId, resource.ResourceName); err != nil {
+		if err := g.loadUDPListener(client, *instance.ProxyId, resource.ResourceName); err != nil {
 			return err
 		}
 	}
@@ -131,7 +131,7 @@ func (g *GaapGenerator) loadRealServer(client *gaap.Client) error {
 	var projectID int64 = -1
 	request.ProjectId = &projectID
 
-	var offset uint64 = 0
+	var offset uint64
 	var pageSize uint64 = 50
 	allInstances := make([]*gaap.BindRealServerInfo, 0)
 
@@ -166,10 +166,10 @@ func (g *GaapGenerator) loadRealServer(client *gaap.Client) error {
 	return nil
 }
 
-func (g *GaapGenerator) loadHttpListener(client *gaap.Client, proxyId, resourceName string) error {
+func (g *GaapGenerator) loadHTTPListener(client *gaap.Client, proxyID, resourceName string) error {
 	request := gaap.NewDescribeHTTPListenersRequest()
-	request.ProxyId = &proxyId
-	var offset uint64 = 0
+	request.ProxyId = &proxyID
+	var offset uint64
 	var pageSize uint64 = 50
 	allInstances := make([]*gaap.HTTPListener, 0)
 
@@ -194,7 +194,7 @@ func (g *GaapGenerator) loadHttpListener(client *gaap.Client, proxyId, resourceN
 			*instance.ListenerName+"_"+*instance.ListenerId,
 			"tencentcloud_gaap_layer7_listener",
 			"tencentcloud",
-			map[string]string{"proxy_id": proxyId},
+			map[string]string{"proxy_id": proxyID},
 			[]string{},
 			map[string]interface{}{},
 		)
@@ -208,10 +208,10 @@ func (g *GaapGenerator) loadHttpListener(client *gaap.Client, proxyId, resourceN
 	return nil
 }
 
-func (g *GaapGenerator) loadHttpsListener(client *gaap.Client, proxyId, resourceName string) error {
+func (g *GaapGenerator) loadHTTPSListener(client *gaap.Client, proxyID, resourceName string) error {
 	request := gaap.NewDescribeHTTPSListenersRequest()
-	request.ProxyId = &proxyId
-	var offset uint64 = 0
+	request.ProxyId = &proxyID
+	var offset uint64
 	var pageSize uint64 = 50
 	allInstances := make([]*gaap.HTTPSListener, 0)
 
@@ -236,7 +236,7 @@ func (g *GaapGenerator) loadHttpsListener(client *gaap.Client, proxyId, resource
 			*instance.ListenerName+"_"+*instance.ListenerId,
 			"tencentcloud_gaap_layer7_listener",
 			"tencentcloud",
-			map[string]string{"proxy_id": proxyId},
+			map[string]string{"proxy_id": proxyID},
 			[]string{},
 			map[string]interface{}{},
 		)
@@ -250,10 +250,10 @@ func (g *GaapGenerator) loadHttpsListener(client *gaap.Client, proxyId, resource
 	return nil
 }
 
-func (g *GaapGenerator) loadTcpListener(client *gaap.Client, proxyId, resourceName string) error {
+func (g *GaapGenerator) loadTCPListener(client *gaap.Client, proxyID, resourceName string) error {
 	request := gaap.NewDescribeTCPListenersRequest()
-	request.ProxyId = &proxyId
-	var offset uint64 = 0
+	request.ProxyId = &proxyID
+	var offset uint64
 	var pageSize uint64 = 50
 	allInstances := make([]*gaap.TCPListener, 0)
 
@@ -278,7 +278,7 @@ func (g *GaapGenerator) loadTcpListener(client *gaap.Client, proxyId, resourceNa
 			*instance.ListenerName+"_"+*instance.ListenerId,
 			"tencentcloud_gaap_layer4_listener",
 			"tencentcloud",
-			map[string]string{"proxy_id": proxyId},
+			map[string]string{"proxy_id": proxyID},
 			[]string{},
 			map[string]interface{}{},
 		)
@@ -288,10 +288,10 @@ func (g *GaapGenerator) loadTcpListener(client *gaap.Client, proxyId, resourceNa
 	return nil
 }
 
-func (g *GaapGenerator) loadUdpListener(client *gaap.Client, proxyId, resourceName string) error {
+func (g *GaapGenerator) loadUDPListener(client *gaap.Client, proxyID, resourceName string) error {
 	request := gaap.NewDescribeUDPListenersRequest()
-	request.ProxyId = &proxyId
-	var offset uint64 = 0
+	request.ProxyId = &proxyID
+	var offset uint64
 	var pageSize uint64 = 50
 	allInstances := make([]*gaap.UDPListener, 0)
 
@@ -316,7 +316,7 @@ func (g *GaapGenerator) loadUdpListener(client *gaap.Client, proxyId, resourceNa
 			*instance.ListenerName+"_"+*instance.ListenerId,
 			"tencentcloud_gaap_layer4_listener",
 			"tencentcloud",
-			map[string]string{"proxy_id": proxyId},
+			map[string]string{"proxy_id": proxyID},
 			[]string{},
 			map[string]interface{}{},
 		)
@@ -326,9 +326,9 @@ func (g *GaapGenerator) loadUdpListener(client *gaap.Client, proxyId, resourceNa
 	return nil
 }
 
-func (g *GaapGenerator) loadDomain(client *gaap.Client, listenerId, protocol, resourceName string) error {
+func (g *GaapGenerator) loadDomain(client *gaap.Client, listenerID, protocol, resourceName string) error {
 	request := gaap.NewDescribeRulesRequest()
-	request.ListenerId = &listenerId
+	request.ListenerId = &listenerID
 	response, err := client.DescribeRules(request)
 	if err != nil {
 		return err
@@ -336,8 +336,8 @@ func (g *GaapGenerator) loadDomain(client *gaap.Client, listenerId, protocol, re
 
 	for _, domain := range response.Response.DomainRuleSet {
 		resource := terraformutils.NewResource(
-			fmt.Sprintf("%s+%s+%s", listenerId, protocol, *domain.Domain),
-			fmt.Sprintf("%s+%s+%s", listenerId, protocol, *domain.Domain),
+			fmt.Sprintf("%s+%s+%s", listenerID, protocol, *domain.Domain),
+			fmt.Sprintf("%s+%s+%s", listenerID, protocol, *domain.Domain),
 			"tencentcloud_gaap_http_domain",
 			"tencentcloud",
 			map[string]string{},
@@ -367,7 +367,7 @@ func (g *GaapGenerator) loadDomain(client *gaap.Client, listenerId, protocol, re
 
 func (g *GaapGenerator) loadCertificate(client *gaap.Client) error {
 	request := gaap.NewDescribeCertificatesRequest()
-	var offset uint64 = 0
+	var offset uint64
 	var pageSize uint64 = 50
 	allInstances := make([]*gaap.Certificate, 0)
 

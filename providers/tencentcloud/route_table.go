@@ -64,7 +64,7 @@ func (g *RouteTableGenerator) InitResources() error {
 		}
 
 		allInstances = append(allInstances, response.Response.RouteTableSet...)
-		if len(response.Response.RouteTableSet) < int(pageSize) {
+		if len(response.Response.RouteTableSet) < pageSize {
 			break
 		}
 		offset += pageSize

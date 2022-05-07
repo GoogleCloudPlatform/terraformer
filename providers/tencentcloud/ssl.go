@@ -36,7 +36,7 @@ func (g *SslGenerator) InitResources() error {
 
 	request := ssl.NewDescribeCertificatesRequest()
 
-	var offset uint64 = 0
+	var offset uint64
 	var pageSize uint64 = 50
 	allInstances := make([]*ssl.Certificates, 0)
 

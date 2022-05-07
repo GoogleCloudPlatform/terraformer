@@ -36,7 +36,7 @@ func (g *MongodbGenerator) InitResources() error {
 
 	request := mongodb.NewDescribeDBInstancesRequest()
 
-	var offset uint64 = 0
+	var offset uint64
 	var pageSize uint64 = 50
 	allInstances := make([]*mongodb.MongoDBInstanceDetail, 0)
 

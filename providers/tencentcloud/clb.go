@@ -45,7 +45,7 @@ func (g *ClbGenerator) InitResources() error {
 		request.LoadBalancerIds = append(request.LoadBalancerIds, &filters[i])
 	}
 
-	var offset int64 = 0
+	var offset int64
 	var pageSize int64 = 50
 	allInstances := make([]*clb.LoadBalancer, 0)
 
@@ -167,8 +167,8 @@ func (g *ClbGenerator) PostConvertHook() error {
 					delete(resource.Item, "session_expire_time")
 				}
 			}
-			if v, ok := resource.Item["sni_switch"]; ok {
-				if v, ok = resource.Item["protocol"]; ok && v.(string) != "HTTPS" {
+			if _, ok := resource.Item["sni_switch"]; ok {
+				if v, ok := resource.Item["protocol"]; ok && v.(string) != "HTTPS" {
 					delete(resource.Item, "sni_switch")
 				}
 			}

@@ -36,7 +36,7 @@ func (g *CdnGenerator) InitResources() error {
 
 	request := cdn.NewDescribeDomainsConfigRequest()
 
-	var offset int64 = 0
+	var offset int64
 	var pageSize int64 = 50
 	allInstances := make([]*cdn.DetailDomain, 0)
 

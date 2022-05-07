@@ -20,11 +20,11 @@ import (
 	vpc "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc/v20170312"
 )
 
-type AclGenerator struct {
+type ACLGenerator struct {
 	TencentCloudService
 }
 
-func (g *AclGenerator) InitResources() error {
+func (g *ACLGenerator) InitResources() error {
 	args := g.GetArgs()
 	region := args["region"].(string)
 	credential := args["credential"].(common.Credential)
@@ -45,7 +45,7 @@ func (g *AclGenerator) InitResources() error {
 		request.NetworkAclIds = append(request.NetworkAclIds, &filters[i])
 	}
 
-	var offset uint64 = 0
+	var offset uint64
 	var pageSize uint64 = 50
 	allInstances := make([]*vpc.NetworkAcl, 0)
 

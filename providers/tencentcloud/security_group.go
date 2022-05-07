@@ -47,7 +47,7 @@ func (g *SecurityGroupGenerator) InitResources() error {
 		request.SecurityGroupIds = append(request.SecurityGroupIds, &filters[i])
 	}
 
-	var offset int64 = 0
+	var offset int64
 	var pageSize int64 = 50
 	allInstances := make([]*vpc.SecurityGroup, 0)
 

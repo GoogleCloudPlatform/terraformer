@@ -47,7 +47,7 @@ func (g *AsGenerator) InitResources() error {
 func (g *AsGenerator) loadScalingGroups(client *as.Client) error {
 	request := as.NewDescribeAutoScalingGroupsRequest()
 
-	var offset uint64 = 0
+	var offset uint64
 	var pageSize uint64 = 50
 	allInstances := make([]*as.AutoScalingGroup, 0)
 
@@ -85,7 +85,7 @@ func (g *AsGenerator) loadScalingGroups(client *as.Client) error {
 func (g *AsGenerator) loadScalingConfigs(client *as.Client) error {
 	request := as.NewDescribeLaunchConfigurationsRequest()
 
-	var offset uint64 = 0
+	var offset uint64
 	var pageSize uint64 = 50
 	allInstances := make([]*as.LaunchConfiguration, 0)
 

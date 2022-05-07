@@ -47,7 +47,7 @@ func (g *MysqlGenerator) InitResources() error {
 		request.InstanceIds = append(request.InstanceIds, &filters[i])
 	}
 
-	var offset uint64 = 0
+	var offset uint64
 	var pageSize uint64 = 50
 	allInstances := make([]*cdb.InstanceInfo, 0)
 

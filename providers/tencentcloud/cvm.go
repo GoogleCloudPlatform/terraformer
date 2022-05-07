@@ -47,7 +47,7 @@ func (g *CvmGenerator) InitResources() error {
 		request.InstanceIds = append(request.InstanceIds, &filters[i])
 	}
 
-	var offset int64 = 0
+	var offset int64
 	var pageSize int64 = 50
 	allInstances := make([]*cvm.Instance, 0)
 

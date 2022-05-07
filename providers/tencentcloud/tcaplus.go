@@ -37,7 +37,7 @@ func (g *TcaplusGenerator) InitResources() error {
 
 	request := tcaplus.NewDescribeClustersRequest()
 
-	var offset int64 = 0
+	var offset int64
 	var pageSize int64 = 50
 	allInstances := make([]*tcaplus.ClusterInfo, 0)
 

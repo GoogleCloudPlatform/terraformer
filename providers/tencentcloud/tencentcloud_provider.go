@@ -32,8 +32,8 @@ type TencentCloudProvider struct { //nolint
 }
 
 func (p *TencentCloudProvider) getCredential() error {
-	secretId := os.Getenv("TENCENTCLOUD_SECRET_ID")
-	if secretId == "" {
+	secretID := os.Getenv("TENCENTCLOUD_SECRET_ID")
+	if secretID == "" {
 		return errors.New("TENCENTCLOUD_SECRET_ID must be set")
 	}
 	secretKey := os.Getenv("TENCENTCLOUD_SECRET_KEY")
@@ -43,7 +43,7 @@ func (p *TencentCloudProvider) getCredential() error {
 	token := os.Getenv("TENCENTCLOUD_SECURITY_TOKEN")
 
 	p.credential = common.Credential{
-		SecretId:  secretId,
+		SecretId:  secretID,
 		SecretKey: secretKey,
 		Token:     token,
 	}
@@ -110,7 +110,7 @@ func (p *TencentCloudProvider) GetSupportedService() map[string]terraformutils.S
 		"subnet":         &SubnetGenerator{},
 		"route_table":    &RouteTableGenerator{},
 		"nat_gateway":    &NatGatewayGenerator{},
-		"acl":            &AclGenerator{},
+		"acl":            &ACLGenerator{},
 	}
 }
 

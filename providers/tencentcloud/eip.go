@@ -34,7 +34,7 @@ func (g *EipGenerator) InitResources() error {
 		return err
 	}
 
-	var offset int64 = 0
+	var offset int64
 	var pageSize int64 = 50
 	allInstances := make([]*vpc.Address, 0)
 	request := vpc.NewDescribeAddressesRequest()

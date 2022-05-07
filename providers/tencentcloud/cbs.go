@@ -46,7 +46,7 @@ func (g *CbsGenerator) InitResources() error {
 		request.DiskIds = append(request.DiskIds, &filters[i])
 	}
 
-	var offset uint64 = 0
+	var offset uint64
 	var pageSize uint64 = 50
 	allInstances := make([]*cbs.Disk, 0)
 

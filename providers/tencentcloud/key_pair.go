@@ -36,7 +36,7 @@ func (g *KeyPairGenerator) InitResources() error {
 
 	request := cvm.NewDescribeKeyPairsRequest()
 
-	var offset int64 = 0
+	var offset int64
 	var pageSize int64 = 50
 	allInstances := make([]*cvm.KeyPair, 0)
 

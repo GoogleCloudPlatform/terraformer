@@ -33,8 +33,8 @@ func (g *CosGenerator) InitResources() error {
 	args := g.GetArgs()
 	region := args["region"].(string)
 	credential := args["credential"].(common.Credential)
-	requestUrl := fmt.Sprintf("https://cos.%s.myqcloud.com", region)
-	u, _ := url.Parse(requestUrl)
+	requestURL := fmt.Sprintf("https://cos.%s.myqcloud.com", region)
+	u, _ := url.Parse(requestURL)
 	uri := &cos.BaseURL{ServiceURL: u}
 	client := cos.NewClient(uri, &http.Client{
 		Transport: &cos.AuthorizationTransport{
