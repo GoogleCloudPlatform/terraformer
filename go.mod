@@ -33,7 +33,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/accessanalyzer v1.2.0
 	github.com/aws/aws-sdk-go-v2/service/acm v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/apigateway v1.2.1
-	github.com/aws/aws-sdk-go-v2/service/appsync v1.2.1
+	github.com/aws/aws-sdk-go-v2/service/appsync v1.14.4
 	github.com/aws/aws-sdk-go-v2/service/autoscaling v1.3.1
 	github.com/aws/aws-sdk-go-v2/service/batch v1.3.1
 	github.com/aws/aws-sdk-go-v2/service/budgets v1.9.0
@@ -77,7 +77,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/kms v1.2.2
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/mediapackage v1.15.3
-	github.com/aws/aws-sdk-go-v2/service/mediastore v1.1.4
+	github.com/aws/aws-sdk-go-v2/service/mediastore v1.12.4
 	github.com/aws/aws-sdk-go-v2/service/opsworks v1.2.2
 	github.com/aws/aws-sdk-go-v2/service/organizations v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/qldb v1.1.3
@@ -185,7 +185,7 @@ require (
 	github.com/launchdarkly/api-client-go v5.3.0+incompatible
 )
 
-require github.com/newrelic/newrelic-client-go v0.71.0
+require github.com/newrelic/newrelic-client-go v0.79.0
 
 require (
 	github.com/Azure/azure-pipeline-go v0.2.2 // indirect
