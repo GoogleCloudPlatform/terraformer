@@ -259,8 +259,8 @@ github.com/aws/aws-sdk-go-v2/service/acm v1.2.1 h1:s3Yka4ZE67lTTbSG7ZXlgwIjC122R
 github.com/aws/aws-sdk-go-v2/service/acm v1.2.1/go.mod h1:X6p3MQnaIMOJ6+A1D7OfW3WKt7rJzgZzSeVkua6lZrg=
 github.com/aws/aws-sdk-go-v2/service/apigateway v1.2.1 h1:2kxNxcT9QVSckqagWevdNOAOCOAmGHsCbkowF6Rmur8=
 github.com/aws/aws-sdk-go-v2/service/apigateway v1.2.1/go.mod h1:4fO3jaFTaz/8ygZBVNSk4NSdAwcc/NZ++HUrG9kpJ0I=
-github.com/aws/aws-sdk-go-v2/service/appsync v1.2.1 h1:qHxx2jl6nI6Sn5fuXtBQVWbhaG+fErDAB47BHm+Kw1A=
-github.com/aws/aws-sdk-go-v2/service/appsync v1.2.1/go.mod h1:JkdNL71yKS0qmF+dFJJzxf1WJZWFGIhTepXHaxtKipE=
+github.com/aws/aws-sdk-go-v2/service/appsync v1.14.4 h1:HIuwaNjGn30p9lcM/RdgiWSG39pjo5nUClQwjrgcJik=
+github.com/aws/aws-sdk-go-v2/service/appsync v1.14.4/go.mod h1:8I0ugA1PropUiAA4y3Bou+tRZd+a2lAz/UhSJXMbmRk=
 github.com/aws/aws-sdk-go-v2/service/autoscaling v1.3.1 h1:fQkypDE1Ll/W61tm8GoswgLjWfO8y1f50yXw5lA4uFo=
 github.com/aws/aws-sdk-go-v2/service/autoscaling v1.3.1/go.mod h1:DVmOqpa3F7vhAuGfs2zse1f3N3mX64hCimRNSYiqnKE=
 github.com/aws/aws-sdk-go-v2/service/batch v1.3.1 h1:dZSRS8i4wL+lB87FCCHBynaD7BgrYyESuEzmx23/pOg=
