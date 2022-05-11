@@ -185,7 +185,7 @@ require (
 	github.com/launchdarkly/api-client-go v5.3.0+incompatible
 )
 
-require github.com/newrelic/newrelic-client-go v0.71.0
+require github.com/newrelic/newrelic-client-go v0.79.0
 
 require (
 	github.com/Azure/azure-pipeline-go v0.2.2 // indirect
