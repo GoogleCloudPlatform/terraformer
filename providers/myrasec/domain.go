@@ -63,8 +63,25 @@ func (g *DomainGenerator) InitResources() error {
 		g.createDomainResource,
 	}
 
+	res, err := createResourcesPerDomain(api, funcs)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	g.Resources = append(g.Resources, res...)
+
+	return nil
+}
+
+//
+// createResourcesPerDomain
+//
+func createResourcesPerDomain(api *mgo.API, funcs []func(*mgo.API, mgo.Domain) ([]terraformutils.Resource, error)) ([]terraformutils.Resource, error) {
+	resources := []terraformutils.Resource{}
+
 	page := 1
-	pageSize := 20
+	pageSize := 250
 	params := map[string]string{
 		"pageSize": strconv.Itoa(pageSize),
 		"page":     strconv.Itoa(page),
@@ -76,7 +93,7 @@ func (g *DomainGenerator) InitResources() error {
 		domains, err := api.ListDomains(params)
 		if err != nil {
 			log.Println(err)
-			return err
+			return nil, err
 		}
 
 		for _, d := range domains {
@@ -84,9 +101,9 @@ func (g *DomainGenerator) InitResources() error {
 				tmpRes, err := f(api, d)
 				if err != nil {
 					log.Println(err)
-					return err
+					return nil, err
 				}
-				g.Resources = append(g.Resources, tmpRes...)
+				resources = append(resources, tmpRes...)
 			}
 		}
 		if len(domains) < pageSize {
@@ -94,6 +111,5 @@ func (g *DomainGenerator) InitResources() error {
 		}
 		page++
 	}
-
-	return nil
+	return resources, nil
 }
