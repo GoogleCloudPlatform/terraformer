@@ -25,7 +25,7 @@ func newCmdMyrasecImporter(options ImportOptions) *cobra.Command {
 	}
 
 	cmd.AddCommand(listCmd(newMyrasecProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "zone", "access_application=id1:id2:id4")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "domain", "")
 	return cmd
 }
 
