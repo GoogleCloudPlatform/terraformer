@@ -32,6 +32,8 @@ func (s *MyrasecService) initializeAPI() (*mgo.API, error) {
 
 	api, err := mgo.New(apiKey, apiSecret)
 	api.BaseURL = apiUrl
+	api.EnableCaching()
+	api.SetCachingTTL(3600)
 
 	return api, err
 }

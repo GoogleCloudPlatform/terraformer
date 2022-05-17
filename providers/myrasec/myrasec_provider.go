@@ -47,6 +47,7 @@ func (MyrasecProvider) GetResourceConnections() map[string]map[string][]string {
 func (p *MyrasecProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
 		"domain": &DomainGenerator{},
+		"dns":    &DNSGenerator{},
 	}
 }
 

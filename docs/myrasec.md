@@ -11,3 +11,5 @@ export MYRASEC_API_TOKEN=[MYRASEC_API_TOKEN]
 List of supported Myra Security services:
 * `domain`
   * `myrasec_domain`
+* `dns`
+  * `myrasec_dns_record`
