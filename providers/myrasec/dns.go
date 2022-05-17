@@ -13,36 +13,10 @@ type DNSGenerator struct {
 	MyrasecService
 }
 
-func (g *DNSGenerator) createDNSRecordsResource(api *mgo.API, domain mgo.Domain, record mgo.DNSRecord) ([]terraformutils.Resource, error) {
-	resources := []terraformutils.Resource{}
-
-	r := terraformutils.NewResource(
-		strconv.Itoa(record.ID),
-		fmt.Sprintf("%s_%d", record.Name, record.ID),
-		"myrasec_dns_record",
-		"myrasec",
-		map[string]string{
-			"domain_name": domain.Name,
-			"name":        record.Name,
-			"value":       record.Value,
-			"record_type": record.RecordType,
-			"ttl":         strconv.Itoa(record.TTL),
-		},
-		[]string{},
-		map[string]interface{}{},
-	)
-
-	r.IgnoreKeys = append(r.IgnoreKeys, "^metadata")
-	resources = append(resources, r)
-
-	return resources, nil
-}
-
-func (g *DNSGenerator) InitDnsResources(api *mgo.API, domain mgo.Domain) ([]terraformutils.Resource, error) {
-	funcs := []func(*mgo.API, mgo.Domain, mgo.DNSRecord) ([]terraformutils.Resource, error){
-		g.createDNSRecordsResource,
-	}
-
+//
+// createDnsResources
+//
+func (g *DNSGenerator) createDnsResources(api *mgo.API, domain mgo.Domain) ([]terraformutils.Resource, error) {
 	page := 1
 	pageSize := 250
 	params := map[string]string{
@@ -59,15 +33,24 @@ func (g *DNSGenerator) InitDnsResources(api *mgo.API, domain mgo.Domain) ([]terr
 			return nil, err
 		}
 
-		for _, r := range records {
-			for _, f := range funcs {
-				tmpRes, err := f(api, domain, r)
-				if err != nil {
-					log.Println(err)
-					return g.Resources, nil
-				}
-				g.Resources = append(g.Resources, tmpRes...)
-			}
+		for _, d := range records {
+			r := terraformutils.NewResource(
+				strconv.Itoa(d.ID),
+				fmt.Sprintf("%s_%d", domain.Name, d.ID),
+				"myrasec_dns_record",
+				"myrasec",
+				map[string]string{
+					"domain_name": domain.Name,
+					"name":        d.Name,
+					"value":       d.Value,
+					"record_type": d.RecordType,
+					"ttl":         strconv.Itoa(d.TTL),
+				},
+				[]string{},
+				map[string]interface{}{},
+			)
+
+			g.Resources = append(g.Resources, r)
 		}
 		if len(records) < pageSize {
 			break
@@ -78,6 +61,9 @@ func (g *DNSGenerator) InitDnsResources(api *mgo.API, domain mgo.Domain) ([]terr
 	return g.Resources, nil
 }
 
+//
+// InitResources
+//
 func (g *DNSGenerator) InitResources() error {
 	api, err := g.initializeAPI()
 	if err != nil {
@@ -86,7 +72,7 @@ func (g *DNSGenerator) InitResources() error {
 	}
 
 	funcs := []func(*mgo.API, mgo.Domain) ([]terraformutils.Resource, error){
-		g.InitDnsResources,
+		g.createDnsResources,
 	}
 
 	res, err := createResourcesPerDomain(api, funcs)

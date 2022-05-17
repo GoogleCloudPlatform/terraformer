@@ -6,52 +6,80 @@ import (
 	"strconv"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	ms "github.com/Myra-Security-GmbH/myrasec-go/v2"
+	mgo "github.com/Myra-Security-GmbH/myrasec-go/v2"
 )
 
+//
+// ErrorPageGenerator
+//
 type ErrorPageGenerator struct {
 	MyrasecService
 }
 
-func (*ErrorPageGenerator) createErrorPageResources(api *ms.API) ([]terraformutils.Resource, error) {
+//
+// createErrorPageResources
+//
+func (g *ErrorPageGenerator) createErrorPageResources(api *mgo.API, domain mgo.Domain) ([]terraformutils.Resource, error) {
 	resources := []terraformutils.Resource{}
+
+	page := 1
+	pageSize := 250
 	params := map[string]string{
-		"pageSize": strconv.Itoa(20),
+		"pageSize": strconv.Itoa(pageSize),
+		"page":     strconv.Itoa(page),
 	}
 
-	pages, err := api.ListErrorPages(1001771, params)
-	if err != nil {
-		log.Println(err)
-		return resources, err
-	}
+	for {
+		params["page"] = strconv.Itoa(page)
 
-	for _, page := range pages {
-		p := terraformutils.NewResource(
-			strconv.Itoa(page.ID),
-			fmt.Sprintf("%s-%s", "p", page.SubDomainName),
-			"myrasec_error_page",
-			"myrasecfdasfasdf",
-			map[string]string{
-				"subdomain_name": page.SubDomainName,
-				"error_code":     strconv.Itoa(page.ErrorCode),
-				"content":        page.Content,
-			},
-			[]string{},
-			map[string]interface{}{},
-		)
-		resources = append(resources, p)
-	}
+		pages, err := api.ListErrorPages(domain.ID, params)
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
 
+		for _, p := range pages {
+			r := terraformutils.NewResource(
+				strconv.Itoa(p.ID),
+				fmt.Sprintf("%s_%d", p.SubDomainName, p.ID),
+				"myrasec_error_page",
+				"myrasec",
+				map[string]string{
+					"subdomain_name": p.SubDomainName,
+					"error_code":     strconv.Itoa(p.ErrorCode),
+					"content":        p.Content,
+				},
+				[]string{},
+				map[string]interface{}{},
+			)
+			r.IgnoreKeys = append(r.IgnoreKeys, "^metadata")
+			resources = append(resources, r)
+		}
+		if len(pages) < pageSize {
+			break
+		}
+		page++
+	}
 	return resources, nil
 }
 
+//
+// InitResources
+//
 func (g *ErrorPageGenerator) InitResources() error {
 	api, err := g.initializeAPI()
 	if err != nil {
 		return err
 	}
 
-	res, err := g.createErrorPageResources(api)
+	funcs := []func(*mgo.API, mgo.Domain) ([]terraformutils.Resource, error){
+		g.createErrorPageResources,
+	}
+	res, err := createResourcesPerDomain(api, funcs)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
 
 	g.Resources = res
 
