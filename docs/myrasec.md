@@ -13,3 +13,5 @@ List of supported Myra Security services:
   * `myrasec_domain`
 * `dns`
   * `myrasec_dns_record`
+* `error pages`
+  * `myrasec_error_pages`
