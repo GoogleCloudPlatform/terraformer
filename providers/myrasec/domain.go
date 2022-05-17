@@ -10,34 +10,30 @@ import (
 	mgo "github.com/Myra-Security-GmbH/myrasec-go/v2"
 )
 
+//
+// DomainGenerator
+//
 type DomainGenerator struct {
 	MyrasecService
 }
 
-func (g *DomainGenerator) createDomainResource(api *mgo.API, domainID string) ([]terraformutils.Resource, error) {
+//
+// createDomainResource
+//
+func (g *DomainGenerator) createDomainResource(api *mgo.API, domain mgo.Domain) ([]terraformutils.Resource, error) {
 	resources := []terraformutils.Resource{}
-	dID, err := strconv.Atoi(domainID)
-	if err != nil {
-		return resources, err
-	}
-
-	domain, err := api.GetDomain(dID)
-	if err != nil {
-		log.Println(err)
-		return resources, err
-	}
 
 	pausedUntil := ""
 	if domain.PausedUntil != nil {
 		pausedUntil = domain.PausedUntil.Format(time.RFC3339)
 	}
 	d := terraformutils.NewResource(
-		domainID,
+		strconv.Itoa(domain.ID),
 		fmt.Sprintf("%s_%d", domain.Name, domain.ID),
 		"myrasec_domain",
 		"myrasec",
 		map[string]string{
-			"domain_id":    domainID,
+			"domain_id":    strconv.Itoa(domain.ID),
 			"name":         domain.Name,
 			"auto_update":  strconv.FormatBool(domain.AutoUpdate),
 			"paused":       strconv.FormatBool(domain.Paused),
@@ -53,6 +49,9 @@ func (g *DomainGenerator) createDomainResource(api *mgo.API, domainID string) ([
 	return resources, nil
 }
 
+//
+// InitResources
+//
 func (g *DomainGenerator) InitResources() error {
 	api, err := g.initializeAPI()
 	if err != nil {
@@ -60,7 +59,7 @@ func (g *DomainGenerator) InitResources() error {
 		return err
 	}
 
-	funcs := []func(*mgo.API, string) ([]terraformutils.Resource, error){
+	funcs := []func(*mgo.API, mgo.Domain) ([]terraformutils.Resource, error){
 		g.createDomainResource,
 	}
 
@@ -82,7 +81,7 @@ func (g *DomainGenerator) InitResources() error {
 
 		for _, d := range domains {
 			for _, f := range funcs {
-				tmpRes, err := f(api, strconv.Itoa(d.ID))
+				tmpRes, err := f(api, d)
 				if err != nil {
 					log.Println(err)
 					return err
