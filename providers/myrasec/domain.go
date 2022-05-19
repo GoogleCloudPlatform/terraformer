@@ -113,3 +113,82 @@ func createResourcesPerDomain(api *mgo.API, funcs []func(*mgo.API, mgo.Domain) (
 	}
 	return resources, nil
 }
+
+//
+// createResourcesPerSubDomain
+//
+func createResourcesPerSubDomain(api *mgo.API, funcs []func(*mgo.API, int, mgo.VHost) ([]terraformutils.Resource, error)) ([]terraformutils.Resource, error) {
+	resources := []terraformutils.Resource{}
+
+	page := 1
+	pageSize := 250
+	params := map[string]string{
+		"pageSize": strconv.Itoa(pageSize),
+		"page":     strconv.Itoa(page),
+	}
+
+	for {
+		params["page"] = strconv.Itoa(page)
+
+		domains, err := api.ListDomains(params)
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+
+		for _, d := range domains {
+			res, err := createResourcesPerVHost(api, d, funcs)
+			if err != nil {
+				log.Println(err)
+				return nil, err
+			}
+			resources = append(resources, res...)
+		}
+		if len(domains) < pageSize {
+			break
+		}
+		page++
+	}
+	return resources, nil
+}
+
+//
+// createResourcesPerVHost
+//
+func createResourcesPerVHost(api *mgo.API, domain mgo.Domain, funcs []func(*mgo.API, int, mgo.VHost) ([]terraformutils.Resource, error)) ([]terraformutils.Resource, error) {
+	resources := []terraformutils.Resource{}
+
+	page := 1
+	pageSize := 250
+	params := map[string]string{
+		"pageSize": strconv.Itoa(pageSize),
+		"page":     strconv.Itoa(page),
+	}
+
+	for {
+		params["page"] = strconv.Itoa(page)
+
+		api.ListAllSubdomains(params)
+		vhosts, err := api.ListAllSubdomainsForDomain(domain.ID, params)
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+
+		for _, v := range vhosts {
+			for _, f := range funcs {
+				tmpRes, err := f(api, domain.ID, v)
+				if err != nil {
+					log.Println(err)
+					return nil, err
+				}
+				resources = append(resources, tmpRes...)
+			}
+		}
+		if len(vhosts) < pageSize {
+			break
+		}
+		page++
+	}
+	return resources, nil
+}
