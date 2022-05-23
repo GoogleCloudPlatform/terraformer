@@ -2,13 +2,15 @@ package myrasec
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	mgo "github.com/Myra-Security-GmbH/myrasec-go/v2"
 )
 
+//
+// DNSGenerator
+//
 type DNSGenerator struct {
 	MyrasecService
 }
@@ -29,7 +31,6 @@ func (g *DNSGenerator) createDnsResources(api *mgo.API, domain mgo.Domain) ([]te
 
 		records, err := api.ListDNSRecords(domain.ID, params)
 		if err != nil {
-			log.Println(err)
 			return nil, err
 		}
 
@@ -41,10 +42,6 @@ func (g *DNSGenerator) createDnsResources(api *mgo.API, domain mgo.Domain) ([]te
 				"myrasec",
 				map[string]string{
 					"domain_name": domain.Name,
-					"name":        d.Name,
-					"value":       d.Value,
-					"record_type": d.RecordType,
-					"ttl":         strconv.Itoa(d.TTL),
 				},
 				[]string{},
 				map[string]interface{}{},
@@ -67,7 +64,6 @@ func (g *DNSGenerator) createDnsResources(api *mgo.API, domain mgo.Domain) ([]te
 func (g *DNSGenerator) InitResources() error {
 	api, err := g.initializeAPI()
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 
@@ -77,7 +73,6 @@ func (g *DNSGenerator) InitResources() error {
 
 	res, err := createResourcesPerDomain(api, funcs)
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 

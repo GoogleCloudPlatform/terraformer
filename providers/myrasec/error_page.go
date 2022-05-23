@@ -2,7 +2,6 @@ package myrasec
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -34,7 +33,6 @@ func (g *ErrorPageGenerator) createErrorPageResources(api *mgo.API, domain mgo.D
 
 		pages, err := api.ListErrorPages(domain.ID, params)
 		if err != nil {
-			log.Println(err)
 			return nil, err
 		}
 
@@ -77,7 +75,6 @@ func (g *ErrorPageGenerator) InitResources() error {
 	}
 	res, err := createResourcesPerDomain(api, funcs)
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 
