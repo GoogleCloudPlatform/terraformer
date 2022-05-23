@@ -53,8 +53,8 @@ func (p *MyrasecProvider) GetSupportedService() map[string]terraformutils.Servic
 		"ratelimit":     &RatelimitGenerator{},
 		"ip_filter":     &IPFilterGenerator{},
 		"settings":      &SettingsGenerator{},
-
-		"error_page": &ErrorPageGenerator{},
+		"maintenance":   &MaintenanceGenerator{},
+		"error_page":    &ErrorPageGenerator{},
 	}
 }
 
