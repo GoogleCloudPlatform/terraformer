@@ -16,5 +16,7 @@ List of supported Myra Security services:
   * `myrasec_redirect`
 * `cache_setting`
   * `myrasec_cache_setting`
+* `ratelimit`
+  * `myrasec_ratelimit`
 * `error pages`
   * `myrasec_error_pages`
