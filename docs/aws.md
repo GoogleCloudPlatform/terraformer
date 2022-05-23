@@ -29,7 +29,11 @@ Examples to import other resources-
 terraformer import aws --resources=sg --regions=us-east-1
 ```
 
-
+#### Profile not set or assuming AWS Role
+set profile to empty string
+```
+terraformer import aws --resources=vpc,subnet --regions=eu-west-1 --profile=""
+```
 
 #### Supported services
 
