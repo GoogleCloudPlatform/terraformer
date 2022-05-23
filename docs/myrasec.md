@@ -18,5 +18,7 @@ List of supported Myra Security services:
   * `myrasec_cache_setting`
 * `ratelimit`
   * `myrasec_ratelimit`
+* `ip_filter`
+  * `myrasec_ip_filter`
 * `error pages`
   * `myrasec_error_pages`
