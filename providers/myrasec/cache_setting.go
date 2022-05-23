@@ -2,7 +2,6 @@ package myrasec
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -34,7 +33,6 @@ func (g *CacheSettingGenerator) createCacheSettingResources(api *mgo.API, domain
 
 		settings, err := api.ListCacheSettings(domainId, vhost.Label, params)
 		if err != nil {
-			log.Println(err)
 			return nil, err
 		}
 
@@ -46,10 +44,6 @@ func (g *CacheSettingGenerator) createCacheSettingResources(api *mgo.API, domain
 				"myrasec",
 				map[string]string{
 					"subdomain_name": vhost.Label,
-					"type":           s.Type,
-					"path":           s.Path,
-					"ttl":            strconv.Itoa(s.TTL),
-					"not_found_ttl":  strconv.Itoa(s.NotFoundTTL),
 				},
 				[]string{},
 				map[string]interface{}{},
@@ -70,7 +64,6 @@ func (g *CacheSettingGenerator) createCacheSettingResources(api *mgo.API, domain
 func (g *CacheSettingGenerator) InitResources() error {
 	api, err := g.initializeAPI()
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 
@@ -79,7 +72,6 @@ func (g *CacheSettingGenerator) InitResources() error {
 	}
 	res, err := createResourcesPerSubDomain(api, funcs)
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 

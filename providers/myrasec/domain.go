@@ -2,9 +2,7 @@ package myrasec
 
 import (
 	"fmt"
-	"log"
 	"strconv"
-	"time"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	mgo "github.com/Myra-Security-GmbH/myrasec-go/v2"
@@ -23,22 +21,12 @@ type DomainGenerator struct {
 func (g *DomainGenerator) createDomainResource(api *mgo.API, domain mgo.Domain) ([]terraformutils.Resource, error) {
 	resources := []terraformutils.Resource{}
 
-	pausedUntil := ""
-	if domain.PausedUntil != nil {
-		pausedUntil = domain.PausedUntil.Format(time.RFC3339)
-	}
 	d := terraformutils.NewResource(
 		strconv.Itoa(domain.ID),
 		fmt.Sprintf("%s_%d", domain.Name, domain.ID),
 		"myrasec_domain",
 		"myrasec",
-		map[string]string{
-			"domain_id":    strconv.Itoa(domain.ID),
-			"name":         domain.Name,
-			"auto_update":  strconv.FormatBool(domain.AutoUpdate),
-			"paused":       strconv.FormatBool(domain.Paused),
-			"paused_until": pausedUntil,
-		},
+		map[string]string{},
 		[]string{},
 		map[string]interface{}{},
 	)
@@ -55,7 +43,6 @@ func (g *DomainGenerator) createDomainResource(api *mgo.API, domain mgo.Domain) 
 func (g *DomainGenerator) InitResources() error {
 	api, err := g.initializeAPI()
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 
@@ -65,7 +52,6 @@ func (g *DomainGenerator) InitResources() error {
 
 	res, err := createResourcesPerDomain(api, funcs)
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 
@@ -92,7 +78,6 @@ func createResourcesPerDomain(api *mgo.API, funcs []func(*mgo.API, mgo.Domain) (
 
 		domains, err := api.ListDomains(params)
 		if err != nil {
-			log.Println(err)
 			return nil, err
 		}
 
@@ -100,7 +85,6 @@ func createResourcesPerDomain(api *mgo.API, funcs []func(*mgo.API, mgo.Domain) (
 			for _, f := range funcs {
 				tmpRes, err := f(api, d)
 				if err != nil {
-					log.Println(err)
 					return nil, err
 				}
 				resources = append(resources, tmpRes...)
@@ -132,14 +116,12 @@ func createResourcesPerSubDomain(api *mgo.API, funcs []func(*mgo.API, int, mgo.V
 
 		domains, err := api.ListDomains(params)
 		if err != nil {
-			log.Println(err)
 			return nil, err
 		}
 
 		for _, d := range domains {
 			res, err := createResourcesPerVHost(api, d, funcs)
 			if err != nil {
-				log.Println(err)
 				return nil, err
 			}
 			resources = append(resources, res...)
@@ -171,7 +153,6 @@ func createResourcesPerVHost(api *mgo.API, domain mgo.Domain, funcs []func(*mgo.
 		api.ListAllSubdomains(params)
 		vhosts, err := api.ListAllSubdomainsForDomain(domain.ID, params)
 		if err != nil {
-			log.Println(err)
 			return nil, err
 		}
 
@@ -179,7 +160,6 @@ func createResourcesPerVHost(api *mgo.API, domain mgo.Domain, funcs []func(*mgo.
 			for _, f := range funcs {
 				tmpRes, err := f(api, domain.ID, v)
 				if err != nil {
-					log.Println(err)
 					return nil, err
 				}
 				resources = append(resources, tmpRes...)
