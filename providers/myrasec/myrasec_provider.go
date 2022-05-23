@@ -50,6 +50,7 @@ func (p *MyrasecProvider) GetSupportedService() map[string]terraformutils.Servic
 		"dns_record":    &DNSGenerator{},
 		"cache_setting": &CacheSettingGenerator{},
 		"redirect":      &RedirectGenerator{},
+		"ratelimit":     &RatelimitGenerator{},
 
 		"error_page": &ErrorPageGenerator{},
 	}
