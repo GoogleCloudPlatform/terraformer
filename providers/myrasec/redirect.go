@@ -70,7 +70,7 @@ func (g *RedirectGenerator) InitResources() error {
 	funcs := []func(*mgo.API, int, mgo.VHost) ([]terraformutils.Resource, error){
 		g.createRedirectResources,
 	}
-	res, err := createResourcesPerSubDomain(api, funcs)
+	res, err := createResourcesPerSubDomain(api, funcs, false)
 	if err != nil {
 		return err
 	}

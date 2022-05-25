@@ -70,7 +70,7 @@ func (g *CacheSettingGenerator) InitResources() error {
 	funcs := []func(*mgo.API, int, mgo.VHost) ([]terraformutils.Resource, error){
 		g.createCacheSettingResources,
 	}
-	res, err := createResourcesPerSubDomain(api, funcs)
+	res, err := createResourcesPerSubDomain(api, funcs, true)
 	if err != nil {
 		return err
 	}
