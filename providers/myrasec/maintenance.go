@@ -71,7 +71,7 @@ func (g *MaintenanceGenerator) InitResources() error {
 		g.createMaintenanceResources,
 	}
 
-	res, err := createResourcesPerSubDomain(api, funcs)
+	res, err := createResourcesPerSubDomain(api, funcs, false)
 	if err != nil {
 		return err
 	}

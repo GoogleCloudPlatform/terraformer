@@ -57,7 +57,7 @@ func (g *SettingsGenerator) InitResources() error {
 		g.createSettingResources,
 	}
 
-	res, err := createResourcesPerSubDomain(api, funcs)
+	res, err := createResourcesPerSubDomain(api, funcs, false)
 	if err != nil {
 		return nil
 	}

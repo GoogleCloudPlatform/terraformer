@@ -101,7 +101,7 @@ func createResourcesPerDomain(api *mgo.API, funcs []func(*mgo.API, mgo.Domain) (
 //
 // createResourcesPerSubDomain
 //
-func createResourcesPerSubDomain(api *mgo.API, funcs []func(*mgo.API, int, mgo.VHost) ([]terraformutils.Resource, error)) ([]terraformutils.Resource, error) {
+func createResourcesPerSubDomain(api *mgo.API, funcs []func(*mgo.API, int, mgo.VHost) ([]terraformutils.Resource, error), onDomainLevel bool) ([]terraformutils.Resource, error) {
 	resources := []terraformutils.Resource{}
 
 	page := 1
@@ -120,6 +120,18 @@ func createResourcesPerSubDomain(api *mgo.API, funcs []func(*mgo.API, int, mgo.V
 		}
 
 		for _, d := range domains {
+			// try to load data for ALL-{domainId}.
+			if onDomainLevel {
+				for _, f := range funcs {
+					tmpRes, err := f(api, d.ID, mgo.VHost{
+						Label: fmt.Sprintf("ALL-%d.", d.ID),
+					})
+					if err == nil {
+						resources = append(resources, tmpRes...)
+					}
+				}
+
+			}
 			res, err := createResourcesPerVHost(api, d, funcs)
 			if err != nil {
 				return nil, err

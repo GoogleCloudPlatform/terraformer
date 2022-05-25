@@ -71,7 +71,7 @@ func (g *IPFilterGenerator) InitResources() error {
 		g.createIPFilterResources,
 	}
 
-	res, err := createResourcesPerSubDomain(api, funcs)
+	res, err := createResourcesPerSubDomain(api, funcs, false)
 	if err != nil {
 		return nil
 	}

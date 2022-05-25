@@ -9,16 +9,16 @@ import (
 )
 
 //
-// RateLimitGenerator
+// WafRuleGenerator
 //
-type RatelimitGenerator struct {
+type WafRuleGenerator struct {
 	MyrasecService
 }
 
 //
-// createRatelimitResources
+// createWafRuleResources
 //
-func (g *RatelimitGenerator) createRatelimitResources(api *mgo.API, domainId int, vhost mgo.VHost) ([]terraformutils.Resource, error) {
+func (g *WafRuleGenerator) createWafRuleResources(api *mgo.API, domainId int, vhost mgo.VHost) ([]terraformutils.Resource, error) {
 	resources := []terraformutils.Resource{}
 
 	page := 1
@@ -30,48 +30,53 @@ func (g *RatelimitGenerator) createRatelimitResources(api *mgo.API, domainId int
 
 	for {
 		params["page"] = strconv.Itoa(page)
+		if vhost.Label != "" {
+			params["subDomain"] = vhost.Label
+		}
 
-		ratelimits, err := api.ListRateLimits(domainId, vhost.Label, params)
+		waf, err := api.ListWAFRules(domainId, params)
 		if err != nil {
 			return nil, err
 		}
 
-		for _, rl := range ratelimits {
+		for _, w := range waf {
 			r := terraformutils.NewResource(
-				strconv.Itoa(rl.ID),
-				fmt.Sprintf("%s_%d", vhost.Label, rl.ID),
-				"myrasec_ratelimit",
+				strconv.Itoa(w.ID),
+				fmt.Sprintf("%s_%d", w.SubDomainName, w.ID),
+				"myrasec_waf_rule",
 				"myrasec",
 				map[string]string{
-					"subdomain_name": rl.SubDomainName,
+					"subdomain_name": w.SubDomainName,
 				},
 				[]string{},
 				map[string]interface{}{},
 			)
 			resources = append(resources, r)
 		}
-		if len(ratelimits) < pageSize {
+
+		if len(waf) < pageSize {
 			break
 		}
 		page++
 	}
+
 	return resources, nil
 }
 
 //
 // InitResources
 //
-func (g *RatelimitGenerator) InitResources() error {
+func (g *WafRuleGenerator) InitResources() error {
 	api, err := g.initializeAPI()
 	if err != nil {
 		return err
 	}
 
 	funcs := []func(*mgo.API, int, mgo.VHost) ([]terraformutils.Resource, error){
-		g.createRatelimitResources,
+		g.createWafRuleResources,
 	}
 
-	res, err := createResourcesPerSubDomain(api, funcs, false)
+	res, err := createResourcesPerSubDomain(api, funcs, true)
 	if err != nil {
 		return err
 	}
