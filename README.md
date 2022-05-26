@@ -67,6 +67,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [Okta](/docs/okta.md)
         * [Auth0](/docs/auth0.md)
         * [AzureAD](/docs/azuread.md)
+        * [Authlete](/docs/authlete.md)
 - [Contributing](#contributing)
 - [Developing](#developing)
 - [Infrastructure](#infrastructure)
@@ -309,8 +310,10 @@ Links to download Terraform Providers:
     * Xen Orchestra provider >= 0.18.0 - [here](https://github.com/ddelnano/terraform-provider-xenorchestra)
     * GmailFilter provider >= 1.0.1 - [here](https://github.com/yamamoto-febc/terraform-provider-gmailfilter)
     * Vault provider - [here](https://github.com/hashicorp/terraform-provider-vault)
+* Identity
     * Auth0 provider - [here](https://github.com/alexkappa/terraform-provider-auth0)
     * AzureAD provider - [here](https://github.com/hashicorp/terraform-provider-azuread)
+    * Authlete provider - [here](https://github.com/authlete/terraform-provider-authlete)
 
 Information on provider plugins:
 https://www.terraform.io/docs/configuration/providers.html
