@@ -275,9 +275,9 @@ require (
 	github.com/klauspost/compress v1.11.2 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/mattermost/xml-roundtrip-validator v0.0.0-20201213122252-bcd7e1b9601e // indirect
-	github.com/mattn/go-colorable v0.1.4 // indirect
+	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-ieproxy v0.0.0-20190702010315-6dee0af9227d // indirect
-	github.com/mattn/go-isatty v0.0.10 // indirect
+	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mitchellh/cli v1.1.2 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
