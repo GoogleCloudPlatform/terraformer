@@ -71,7 +71,7 @@ func (g *RatelimitGenerator) InitResources() error {
 		g.createRatelimitResources,
 	}
 
-	res, err := createResourcesPerSubDomain(api, funcs, false)
+	res, err := createResourcesPerSubDomain(api, funcs, true)
 	if err != nil {
 		return err
 	}
