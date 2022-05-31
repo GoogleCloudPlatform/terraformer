@@ -23,7 +23,9 @@ List of supported Myra Security services:
   * `myrasec_ip_filter`
 * `settings`
   * `myrasec_settings`
+* `waf_rule`
+  * `myrasec_waf_rule`
 * `maintenance`
   * `myrasec_maintenance`
-* `error pages`
-  * `myrasec_error_pages`
+* `error_page`
+  * `myrasec_error_page`
