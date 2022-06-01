@@ -3,6 +3,7 @@ package myrasec
 import (
 	"fmt"
 	"strconv"
+	"sync"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	mgo "github.com/Myra-Security-GmbH/myrasec-go/v2"
@@ -18,7 +19,7 @@ type DNSGenerator struct {
 //
 // createDnsResources
 //
-func (g *DNSGenerator) createDnsResources(api *mgo.API, domain mgo.Domain) ([]terraformutils.Resource, error) {
+func (g *DNSGenerator) createDnsResources(api *mgo.API, domain mgo.Domain, wg *sync.WaitGroup) error {
 	page := 1
 	pageSize := 250
 	params := map[string]string{
@@ -31,7 +32,8 @@ func (g *DNSGenerator) createDnsResources(api *mgo.API, domain mgo.Domain) ([]te
 
 		records, err := api.ListDNSRecords(domain.ID, params)
 		if err != nil {
-			return nil, err
+			wg.Done()
+			return err
 		}
 
 		for _, d := range records {
@@ -47,6 +49,7 @@ func (g *DNSGenerator) createDnsResources(api *mgo.API, domain mgo.Domain) ([]te
 				map[string]interface{}{},
 			)
 
+			r.IgnoreKeys = append(r.IgnoreKeys, "^metadata")
 			g.Resources = append(g.Resources, r)
 		}
 		if len(records) < pageSize {
@@ -54,29 +57,32 @@ func (g *DNSGenerator) createDnsResources(api *mgo.API, domain mgo.Domain) ([]te
 		}
 		page++
 	}
+	wg.Done()
 
-	return g.Resources, nil
+	return nil
 }
 
 //
 // InitResources
 //
 func (g *DNSGenerator) InitResources() error {
+	wg := sync.WaitGroup{}
+
 	api, err := g.initializeAPI()
 	if err != nil {
 		return err
 	}
 
-	funcs := []func(*mgo.API, mgo.Domain) ([]terraformutils.Resource, error){
+	funcs := []func(*mgo.API, mgo.Domain, *sync.WaitGroup) error{
 		g.createDnsResources,
 	}
 
-	res, err := createResourcesPerDomain(api, funcs)
+	err = createResourcesPerDomain(api, funcs, &wg)
 	if err != nil {
 		return err
 	}
 
-	g.Resources = append(g.Resources, res...)
+	wg.Wait()
 
 	return nil
 }

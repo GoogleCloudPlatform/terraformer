@@ -3,6 +3,7 @@ package myrasec
 import (
 	"fmt"
 	"strconv"
+	"sync"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	mgo "github.com/Myra-Security-GmbH/myrasec-go/v2"
@@ -18,9 +19,7 @@ type DomainGenerator struct {
 //
 // createDomainResource
 //
-func (g *DomainGenerator) createDomainResource(api *mgo.API, domain mgo.Domain) ([]terraformutils.Resource, error) {
-	resources := []terraformutils.Resource{}
-
+func (g *DomainGenerator) createDomainResource(api *mgo.API, domain mgo.Domain, wg *sync.WaitGroup) error {
 	d := terraformutils.NewResource(
 		strconv.Itoa(domain.ID),
 		fmt.Sprintf("%s_%d", domain.Name, domain.ID),
@@ -32,30 +31,33 @@ func (g *DomainGenerator) createDomainResource(api *mgo.API, domain mgo.Domain) 
 	)
 
 	d.IgnoreKeys = append(d.IgnoreKeys, "^metadata")
-	resources = append(resources, d)
+	g.Resources = append(g.Resources, d)
 
-	return resources, nil
+	wg.Done()
+
+	return nil
 }
 
 //
 // InitResources
 //
 func (g *DomainGenerator) InitResources() error {
+	var wg = sync.WaitGroup{}
+
 	api, err := g.initializeAPI()
 	if err != nil {
 		return err
 	}
 
-	funcs := []func(*mgo.API, mgo.Domain) ([]terraformutils.Resource, error){
+	funcs := []func(*mgo.API, mgo.Domain, *sync.WaitGroup) error{
 		g.createDomainResource,
 	}
 
-	res, err := createResourcesPerDomain(api, funcs)
+	err = createResourcesPerDomain(api, funcs, &wg)
 	if err != nil {
 		return err
 	}
-
-	g.Resources = append(g.Resources, res...)
+	wg.Wait()
 
 	return nil
 }
@@ -63,8 +65,7 @@ func (g *DomainGenerator) InitResources() error {
 //
 // createResourcesPerDomain
 //
-func createResourcesPerDomain(api *mgo.API, funcs []func(*mgo.API, mgo.Domain) ([]terraformutils.Resource, error)) ([]terraformutils.Resource, error) {
-	resources := []terraformutils.Resource{}
+func createResourcesPerDomain(api *mgo.API, funcs []func(*mgo.API, mgo.Domain, *sync.WaitGroup) error, wg *sync.WaitGroup) error {
 
 	page := 1
 	pageSize := 250
@@ -78,16 +79,13 @@ func createResourcesPerDomain(api *mgo.API, funcs []func(*mgo.API, mgo.Domain) (
 
 		domains, err := api.ListDomains(params)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
+		wg.Add(len(domains) * len(funcs))
 		for _, d := range domains {
 			for _, f := range funcs {
-				tmpRes, err := f(api, d)
-				if err != nil {
-					return nil, err
-				}
-				resources = append(resources, tmpRes...)
+				go f(api, d, wg)
 			}
 		}
 		if len(domains) < pageSize {
@@ -95,63 +93,64 @@ func createResourcesPerDomain(api *mgo.API, funcs []func(*mgo.API, mgo.Domain) (
 		}
 		page++
 	}
-	return resources, nil
+	return nil
 }
 
 //
 // createResourcesPerSubDomain
 //
-func createResourcesPerSubDomain(api *mgo.API, funcs []func(*mgo.API, int, mgo.VHost) ([]terraformutils.Resource, error), onDomainLevel bool) ([]terraformutils.Resource, error) {
-	resources := []terraformutils.Resource{}
-
+func createResourcesPerSubDomain(api *mgo.API, funcs []func(*mgo.API, int, mgo.VHost, *sync.WaitGroup) error, wg *sync.WaitGroup, onDomainLevel bool) error {
 	page := 1
 	pageSize := 250
 	params := map[string]string{
 		"pageSize": strconv.Itoa(pageSize),
 		"page":     strconv.Itoa(page),
 	}
+
+	waitChan := make(chan struct{}, MAX_CONCURRENT_JOBS)
+	count := 0
 
 	for {
 		params["page"] = strconv.Itoa(page)
 
 		domains, err := api.ListDomains(params)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
+		wg.Add(len(domains))
 		for _, d := range domains {
 			// try to load data for ALL-{domainId}.
 			if onDomainLevel {
+				wg.Add(len(funcs))
 				for _, f := range funcs {
-					tmpRes, err := f(api, d.ID, mgo.VHost{
+					go f(api, d.ID, mgo.VHost{
 						Label: fmt.Sprintf("ALL-%d.", d.ID),
-					})
-					if err == nil {
-						resources = append(resources, tmpRes...)
-					}
+					}, wg)
 				}
 
 			}
-			res, err := createResourcesPerVHost(api, d, funcs)
-			if err != nil {
-				return nil, err
-			}
-			resources = append(resources, res...)
+			waitChan <- struct{}{}
+			count++
+			go func(count int) {
+				createResourcesPerVHost(api, d, funcs, wg)
+				<-waitChan
+			}(count)
 		}
 		if len(domains) < pageSize {
 			break
 		}
 		page++
 	}
-	return resources, nil
+	return nil
 }
+
+const MAX_CONCURRENT_JOBS = 8
 
 //
 // createResourcesPerVHost
 //
-func createResourcesPerVHost(api *mgo.API, domain mgo.Domain, funcs []func(*mgo.API, int, mgo.VHost) ([]terraformutils.Resource, error)) ([]terraformutils.Resource, error) {
-	resources := []terraformutils.Resource{}
-
+func createResourcesPerVHost(api *mgo.API, domain mgo.Domain, funcs []func(*mgo.API, int, mgo.VHost, *sync.WaitGroup) error, wg *sync.WaitGroup) error {
 	page := 1
 	pageSize := 250
 	params := map[string]string{
@@ -159,22 +158,27 @@ func createResourcesPerVHost(api *mgo.API, domain mgo.Domain, funcs []func(*mgo.
 		"page":     strconv.Itoa(page),
 	}
 
+	waitChan := make(chan struct{}, MAX_CONCURRENT_JOBS)
+	count := 0
+
 	for {
 		params["page"] = strconv.Itoa(page)
 
-		api.ListAllSubdomains(params)
 		vhosts, err := api.ListAllSubdomainsForDomain(domain.ID, params)
 		if err != nil {
-			return nil, err
+			wg.Done()
+			return err
 		}
 
+		wg.Add(len(vhosts) * len(funcs))
 		for _, v := range vhosts {
 			for _, f := range funcs {
-				tmpRes, err := f(api, domain.ID, v)
-				if err != nil {
-					return nil, err
-				}
-				resources = append(resources, tmpRes...)
+				waitChan <- struct{}{}
+				count++
+				go func(count int) {
+					f(api, domain.ID, v, wg)
+					<-waitChan
+				}(count)
 			}
 		}
 		if len(vhosts) < pageSize {
@@ -182,5 +186,6 @@ func createResourcesPerVHost(api *mgo.API, domain mgo.Domain, funcs []func(*mgo.
 		}
 		page++
 	}
-	return resources, nil
+	wg.Done()
+	return nil
 }
