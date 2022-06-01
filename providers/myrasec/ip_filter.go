@@ -3,6 +3,7 @@ package myrasec
 import (
 	"fmt"
 	"strconv"
+	"sync"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	mgo "github.com/Myra-Security-GmbH/myrasec-go/v2"
@@ -18,9 +19,7 @@ type IPFilterGenerator struct {
 //
 // createIPFilterResources
 //
-func (g *IPFilterGenerator) createIPFilterResources(api *mgo.API, domainId int, vhost mgo.VHost) ([]terraformutils.Resource, error) {
-	resources := []terraformutils.Resource{}
-
+func (g *IPFilterGenerator) createIPFilterResources(api *mgo.API, domainId int, vhost mgo.VHost, wg *sync.WaitGroup) error {
 	page := 1
 	pageSize := 250
 	params := map[string]string{
@@ -33,7 +32,8 @@ func (g *IPFilterGenerator) createIPFilterResources(api *mgo.API, domainId int, 
 
 		filters, err := api.ListIPFilters(domainId, vhost.Label, params)
 		if err != err {
-			return nil, err
+			wg.Done()
+			return err
 		}
 
 		for _, f := range filters {
@@ -48,35 +48,38 @@ func (g *IPFilterGenerator) createIPFilterResources(api *mgo.API, domainId int, 
 				[]string{},
 				map[string]interface{}{},
 			)
-			resources = append(resources, r)
+			g.Resources = append(g.Resources, r)
 		}
 		if len(filters) < pageSize {
 			break
 		}
 		page++
 	}
-	return resources, nil
+	wg.Done()
+	return nil
 }
 
 //
 // InitResources
 //
 func (g *IPFilterGenerator) InitResources() error {
+	wg := sync.WaitGroup{}
+
 	api, err := g.initializeAPI()
 	if err != nil {
 		return err
 	}
 
-	funcs := []func(*mgo.API, int, mgo.VHost) ([]terraformutils.Resource, error){
+	funcs := []func(*mgo.API, int, mgo.VHost, *sync.WaitGroup) error{
 		g.createIPFilterResources,
 	}
 
-	res, err := createResourcesPerSubDomain(api, funcs, true)
+	err = createResourcesPerSubDomain(api, funcs, &wg, true)
 	if err != nil {
 		return nil
 	}
 
-	g.Resources = res
+	wg.Wait()
 
 	return nil
 }

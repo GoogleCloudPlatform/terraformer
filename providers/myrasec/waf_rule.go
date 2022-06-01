@@ -3,6 +3,7 @@ package myrasec
 import (
 	"fmt"
 	"strconv"
+	"sync"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	mgo "github.com/Myra-Security-GmbH/myrasec-go/v2"
@@ -18,9 +19,7 @@ type WafRuleGenerator struct {
 //
 // createWafRuleResources
 //
-func (g *WafRuleGenerator) createWafRuleResources(api *mgo.API, domainId int, vhost mgo.VHost) ([]terraformutils.Resource, error) {
-	resources := []terraformutils.Resource{}
-
+func (g *WafRuleGenerator) createWafRuleResources(api *mgo.API, domainId int, vhost mgo.VHost, wg *sync.WaitGroup) error {
 	page := 1
 	pageSize := 250
 	params := map[string]string{
@@ -36,7 +35,8 @@ func (g *WafRuleGenerator) createWafRuleResources(api *mgo.API, domainId int, vh
 
 		waf, err := api.ListWAFRules(domainId, params)
 		if err != nil {
-			return nil, err
+			wg.Done()
+			return err
 		}
 
 		for _, w := range waf {
@@ -51,7 +51,7 @@ func (g *WafRuleGenerator) createWafRuleResources(api *mgo.API, domainId int, vh
 				[]string{},
 				map[string]interface{}{},
 			)
-			resources = append(resources, r)
+			g.Resources = append(g.Resources, r)
 		}
 
 		if len(waf) < pageSize {
@@ -59,29 +59,32 @@ func (g *WafRuleGenerator) createWafRuleResources(api *mgo.API, domainId int, vh
 		}
 		page++
 	}
+	wg.Done()
 
-	return resources, nil
+	return nil
 }
 
 //
 // InitResources
 //
 func (g *WafRuleGenerator) InitResources() error {
+	wg := sync.WaitGroup{}
+
 	api, err := g.initializeAPI()
 	if err != nil {
 		return err
 	}
 
-	funcs := []func(*mgo.API, int, mgo.VHost) ([]terraformutils.Resource, error){
+	funcs := []func(*mgo.API, int, mgo.VHost, *sync.WaitGroup) error{
 		g.createWafRuleResources,
 	}
 
-	res, err := createResourcesPerSubDomain(api, funcs, true)
+	err = createResourcesPerSubDomain(api, funcs, &wg, true)
 	if err != nil {
 		return err
 	}
 
-	g.Resources = res
+	wg.Wait()
 
 	return nil
 }

@@ -3,6 +3,7 @@ package myrasec
 import (
 	"fmt"
 	"strconv"
+	"sync"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	mgo "github.com/Myra-Security-GmbH/myrasec-go/v2"
@@ -18,14 +19,13 @@ type SettingsGenerator struct {
 //
 // createSettingResources
 //
-func (g *SettingsGenerator) createSettingResources(api *mgo.API, domainId int, vhost mgo.VHost) ([]terraformutils.Resource, error) {
-	resources := []terraformutils.Resource{}
-
+func (g *SettingsGenerator) createSettingResources(api *mgo.API, domainId int, vhost mgo.VHost, wg *sync.WaitGroup) error {
 	params := map[string]string{}
 
 	s, err := api.ListSettings(domainId, vhost.Label, params)
 	if err != nil {
-		return nil, err
+		wg.Done()
+		return err
 	}
 
 	r := terraformutils.NewResource(
@@ -40,29 +40,32 @@ func (g *SettingsGenerator) createSettingResources(api *mgo.API, domainId int, v
 		[]string{},
 		map[string]interface{}{},
 	)
-	resources = append(resources, r)
-	return resources, nil
+	g.Resources = append(g.Resources, r)
+	wg.Done()
+	return nil
 }
 
 //
 // InitResources
 //
 func (g *SettingsGenerator) InitResources() error {
+	wg := sync.WaitGroup{}
+
 	api, err := g.initializeAPI()
 	if err != nil {
 		return nil
 	}
 
-	funcs := []func(*mgo.API, int, mgo.VHost) ([]terraformutils.Resource, error){
+	funcs := []func(*mgo.API, int, mgo.VHost, *sync.WaitGroup) error{
 		g.createSettingResources,
 	}
 
-	res, err := createResourcesPerSubDomain(api, funcs, true)
+	err = createResourcesPerSubDomain(api, funcs, &wg, true)
 	if err != nil {
 		return nil
 	}
 
-	g.Resources = res
+	wg.Wait()
 
 	return nil
 }
