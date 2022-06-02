@@ -2,6 +2,7 @@ package myrasec
 
 import (
 	"fmt"
+	"runtime"
 	"strconv"
 	"sync"
 
@@ -20,6 +21,8 @@ type DomainGenerator struct {
 // createDomainResource
 //
 func (g *DomainGenerator) createDomainResource(api *mgo.API, domain mgo.Domain, wg *sync.WaitGroup) error {
+	defer wg.Done()
+
 	d := terraformutils.NewResource(
 		strconv.Itoa(domain.ID),
 		fmt.Sprintf("%s_%d", domain.Name, domain.ID),
@@ -32,8 +35,6 @@ func (g *DomainGenerator) createDomainResource(api *mgo.API, domain mgo.Domain, 
 
 	d.IgnoreKeys = append(d.IgnoreKeys, "^metadata")
 	g.Resources = append(g.Resources, d)
-
-	wg.Done()
 
 	return nil
 }
@@ -96,6 +97,10 @@ func createResourcesPerDomain(api *mgo.API, funcs []func(*mgo.API, mgo.Domain, *
 	return nil
 }
 
+func getWaitChannel() chan struct{} {
+	return make(chan struct{}, runtime.NumCPU()/2)
+}
+
 //
 // createResourcesPerSubDomain
 //
@@ -107,7 +112,7 @@ func createResourcesPerSubDomain(api *mgo.API, funcs []func(*mgo.API, int, mgo.V
 		"page":     strconv.Itoa(page),
 	}
 
-	waitChan := make(chan struct{}, MAX_CONCURRENT_JOBS)
+	waitChan := getWaitChannel()
 	count := 0
 
 	for {
@@ -132,10 +137,10 @@ func createResourcesPerSubDomain(api *mgo.API, funcs []func(*mgo.API, int, mgo.V
 			}
 			waitChan <- struct{}{}
 			count++
-			go func(count int) {
+			go func(count int, d mgo.Domain) {
 				createResourcesPerVHost(api, d, funcs, wg)
 				<-waitChan
-			}(count)
+			}(count, d)
 		}
 		if len(domains) < pageSize {
 			break
@@ -145,12 +150,12 @@ func createResourcesPerSubDomain(api *mgo.API, funcs []func(*mgo.API, int, mgo.V
 	return nil
 }
 
-const MAX_CONCURRENT_JOBS = 8
-
 //
 // createResourcesPerVHost
 //
 func createResourcesPerVHost(api *mgo.API, domain mgo.Domain, funcs []func(*mgo.API, int, mgo.VHost, *sync.WaitGroup) error, wg *sync.WaitGroup) error {
+	defer wg.Done()
+
 	page := 1
 	pageSize := 250
 	params := map[string]string{
@@ -158,7 +163,7 @@ func createResourcesPerVHost(api *mgo.API, domain mgo.Domain, funcs []func(*mgo.
 		"page":     strconv.Itoa(page),
 	}
 
-	waitChan := make(chan struct{}, MAX_CONCURRENT_JOBS)
+	waitChan := getWaitChannel()
 	count := 0
 
 	for {
@@ -166,7 +171,6 @@ func createResourcesPerVHost(api *mgo.API, domain mgo.Domain, funcs []func(*mgo.
 
 		vhosts, err := api.ListAllSubdomainsForDomain(domain.ID, params)
 		if err != nil {
-			wg.Done()
 			return err
 		}
 
@@ -175,10 +179,10 @@ func createResourcesPerVHost(api *mgo.API, domain mgo.Domain, funcs []func(*mgo.
 			for _, f := range funcs {
 				waitChan <- struct{}{}
 				count++
-				go func(count int) {
+				go func(count int, v mgo.VHost, f func(*mgo.API, int, mgo.VHost, *sync.WaitGroup) error) {
 					f(api, domain.ID, v, wg)
 					<-waitChan
-				}(count)
+				}(count, v, f)
 			}
 		}
 		if len(vhosts) < pageSize {
@@ -186,6 +190,5 @@ func createResourcesPerVHost(api *mgo.API, domain mgo.Domain, funcs []func(*mgo.
 		}
 		page++
 	}
-	wg.Done()
 	return nil
 }

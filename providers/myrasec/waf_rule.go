@@ -20,6 +20,8 @@ type WafRuleGenerator struct {
 // createWafRuleResources
 //
 func (g *WafRuleGenerator) createWafRuleResources(api *mgo.API, domainId int, vhost mgo.VHost, wg *sync.WaitGroup) error {
+	defer wg.Done()
+
 	page := 1
 	pageSize := 250
 	params := map[string]string{
@@ -35,7 +37,6 @@ func (g *WafRuleGenerator) createWafRuleResources(api *mgo.API, domainId int, vh
 
 		waf, err := api.ListWAFRules(domainId, params)
 		if err != nil {
-			wg.Done()
 			return err
 		}
 
@@ -59,7 +60,6 @@ func (g *WafRuleGenerator) createWafRuleResources(api *mgo.API, domainId int, vh
 		}
 		page++
 	}
-	wg.Done()
 
 	return nil
 }

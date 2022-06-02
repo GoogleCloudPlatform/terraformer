@@ -20,6 +20,8 @@ type DNSGenerator struct {
 // createDnsResources
 //
 func (g *DNSGenerator) createDnsResources(api *mgo.API, domain mgo.Domain, wg *sync.WaitGroup) error {
+	defer wg.Done()
+
 	page := 1
 	pageSize := 250
 	params := map[string]string{
@@ -32,7 +34,6 @@ func (g *DNSGenerator) createDnsResources(api *mgo.API, domain mgo.Domain, wg *s
 
 		records, err := api.ListDNSRecords(domain.ID, params)
 		if err != nil {
-			wg.Done()
 			return err
 		}
 
@@ -57,7 +58,6 @@ func (g *DNSGenerator) createDnsResources(api *mgo.API, domain mgo.Domain, wg *s
 		}
 		page++
 	}
-	wg.Done()
 
 	return nil
 }

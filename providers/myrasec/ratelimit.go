@@ -20,6 +20,8 @@ type RatelimitGenerator struct {
 // createRatelimitResources
 //
 func (g *RatelimitGenerator) createRatelimitResources(api *mgo.API, domainId int, vhost mgo.VHost, wg *sync.WaitGroup) error {
+	defer wg.Done()
+
 	page := 1
 	pageSize := 250
 	params := map[string]string{
@@ -32,7 +34,6 @@ func (g *RatelimitGenerator) createRatelimitResources(api *mgo.API, domainId int
 
 		ratelimits, err := api.ListRateLimits(domainId, vhost.Label, params)
 		if err != nil {
-			wg.Done()
 			return err
 		}
 
@@ -55,7 +56,6 @@ func (g *RatelimitGenerator) createRatelimitResources(api *mgo.API, domainId int
 		}
 		page++
 	}
-	wg.Done()
 	return nil
 }
 
