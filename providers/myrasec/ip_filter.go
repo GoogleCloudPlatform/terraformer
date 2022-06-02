@@ -20,6 +20,8 @@ type IPFilterGenerator struct {
 // createIPFilterResources
 //
 func (g *IPFilterGenerator) createIPFilterResources(api *mgo.API, domainId int, vhost mgo.VHost, wg *sync.WaitGroup) error {
+	defer wg.Done()
+
 	page := 1
 	pageSize := 250
 	params := map[string]string{
@@ -32,7 +34,6 @@ func (g *IPFilterGenerator) createIPFilterResources(api *mgo.API, domainId int, 
 
 		filters, err := api.ListIPFilters(domainId, vhost.Label, params)
 		if err != err {
-			wg.Done()
 			return err
 		}
 
@@ -55,7 +56,6 @@ func (g *IPFilterGenerator) createIPFilterResources(api *mgo.API, domainId int, 
 		}
 		page++
 	}
-	wg.Done()
 	return nil
 }
 

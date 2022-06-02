@@ -20,11 +20,12 @@ type SettingsGenerator struct {
 // createSettingResources
 //
 func (g *SettingsGenerator) createSettingResources(api *mgo.API, domainId int, vhost mgo.VHost, wg *sync.WaitGroup) error {
+	defer wg.Done()
+
 	params := map[string]string{}
 
 	s, err := api.ListSettings(domainId, vhost.Label, params)
 	if err != nil {
-		wg.Done()
 		return err
 	}
 
@@ -41,7 +42,6 @@ func (g *SettingsGenerator) createSettingResources(api *mgo.API, domainId int, v
 		map[string]interface{}{},
 	)
 	g.Resources = append(g.Resources, r)
-	wg.Done()
 	return nil
 }
 
