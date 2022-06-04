@@ -7,7 +7,7 @@ require (
 	cloud.google.com/go/logging v1.1.2
 	cloud.google.com/go/storage v1.14.0
 	github.com/Azure/azure-sdk-for-go v63.4.0+incompatible
-	github.com/Azure/azure-storage-blob-go v0.10.0
+	github.com/Azure/azure-storage-blob-go v0.14.0
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
 	github.com/Azure/go-autorest/autorest v0.11.27
 	github.com/DataDog/datadog-api-client-go v1.13.0
@@ -28,8 +28,8 @@ require (
 	github.com/aliyun/aliyun-tablestore-go-sdk v4.1.2+incompatible
 	github.com/apache/openwhisk-client-go v0.0.0-20210106144548-17d556327cd3
 	github.com/aws/aws-sdk-go-v2 v1.16.4
-	github.com/aws/aws-sdk-go-v2/config v1.1.4
-	github.com/aws/aws-sdk-go-v2/credentials v1.1.4
+	github.com/aws/aws-sdk-go-v2/config v1.10.1
+	github.com/aws/aws-sdk-go-v2/credentials v1.6.1
 	github.com/aws/aws-sdk-go-v2/service/accessanalyzer v1.2.0
 	github.com/aws/aws-sdk-go-v2/service/acm v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/apigateway v1.2.1
@@ -84,7 +84,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/rds v1.18.1
 	github.com/aws/aws-sdk-go-v2/service/resourcegroups v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/route53 v1.3.0
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.4.0
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.19.0
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/securityhub v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/servicecatalog v1.2.1
@@ -93,7 +93,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sns v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.3.0
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.3.0
-	github.com/aws/aws-sdk-go-v2/service/sts v1.2.1
+	github.com/aws/aws-sdk-go-v2/service/sts v1.10.0
 	github.com/aws/aws-sdk-go-v2/service/swf v1.10.0
 	github.com/aws/aws-sdk-go-v2/service/waf v1.1.4
 	github.com/aws/aws-sdk-go-v2/service/wafregional v1.12.3
@@ -160,7 +160,7 @@ require (
 	github.com/zorkian/go-datadog-api v2.30.0+incompatible
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8
 	golang.org/x/text v0.3.7
-	gonum.org/v1/gonum v0.7.0
+	gonum.org/v1/gonum v0.9.3
 	google.golang.org/api v0.70.0
 	google.golang.org/genproto v0.0.0-20220314164441-57ef72a4c106
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22 // indirect
@@ -171,7 +171,7 @@ require (
 require (
 	github.com/IBM-Cloud/container-services-go-sdk v0.0.0-20210705152127-41ca00fc9a62
 	github.com/IBM/go-sdk-core v1.1.0
-	github.com/aws/aws-sdk-go-v2/internal/ini v1.2.2 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.0 // indirect
 	github.com/hashicorp/terraform-svchost v0.0.0-20200729002733-f050f53b9734 // indirect
 	github.com/mackerelio/mackerel-client-go v0.19.0
 	github.com/okta/terraform-provider-okta v0.0.0-20210924173942-a5a664459d3b
@@ -188,7 +188,7 @@ require (
 require github.com/newrelic/newrelic-client-go v0.79.0
 
 require (
-	github.com/Azure/azure-pipeline-go v0.2.2 // indirect
+	github.com/Azure/azure-pipeline-go v0.2.3 // indirect
 	github.com/Azure/go-autorest v14.2.0+incompatible // indirect
 	github.com/Azure/go-autorest/autorest/adal v0.9.18 // indirect
 	github.com/Azure/go-autorest/autorest/azure/cli v0.2.0 // indirect
@@ -210,14 +210,14 @@ require (
 	github.com/armon/go-radix v1.0.0 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef // indirect
 	github.com/aws/aws-sdk-go v1.37.0 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.0.5 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.8.0 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.11 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.5 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.0.3 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.5.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.4 // indirect
-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.2.1 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.9.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/redshift v1.10.0
-	github.com/aws/aws-sdk-go-v2/service/sso v1.1.4 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.6.0 // indirect
 	github.com/aws/smithy-go v1.11.2 // indirect
 	github.com/beevik/etree v1.1.0 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
@@ -231,7 +231,7 @@ require (
 	github.com/dimchansky/utfbom v1.1.0 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
 	github.com/fatih/color v1.7.0 // indirect
-	github.com/form3tech-oss/jwt-go v3.2.2+incompatible // indirect
+	github.com/form3tech-oss/jwt-go v3.2.5+incompatible // indirect
 	github.com/ghodss/yaml v1.0.0 // indirect
 	github.com/go-logr/logr v0.4.0 // indirect
 	github.com/go-openapi/errors v0.19.8 // indirect
@@ -249,7 +249,7 @@ require (
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/gofuzz v1.1.0 // indirect
 	github.com/google/jsonapi v1.0.0 // indirect
-	github.com/google/uuid v1.2.0 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.1.1 // indirect
 	github.com/googleapis/gnostic v0.4.1 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
@@ -271,12 +271,12 @@ require (
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jonboulle/clockwork v0.2.1 // indirect
 	github.com/json-iterator/go v1.1.10 // indirect
-	github.com/kelseyhightower/envconfig v1.4.0 // indirect
-	github.com/klauspost/compress v1.11.2 // indirect
+	github.com/kelseyhightower/envconfig v1.4.0
+	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/mattermost/xml-roundtrip-validator v0.0.0-20201213122252-bcd7e1b9601e // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
-	github.com/mattn/go-ieproxy v0.0.0-20190702010315-6dee0af9227d // indirect
+	github.com/mattn/go-ieproxy v0.0.1 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mitchellh/cli v1.1.2 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
@@ -327,7 +327,6 @@ require (
 	google.golang.org/grpc v1.45.0 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/auth0.v5 v5.21.1
-	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.31.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
@@ -348,13 +347,22 @@ require (
 	cloud.google.com/go/cloudtasks v1.3.0
 	cloud.google.com/go/iam v0.3.0
 	cloud.google.com/go/monitoring v1.4.0
+	github.com/jmoiron/sqlx v1.3.5
 	github.com/manicminer/hamilton v0.43.0
+	github.com/snowflakedb/gosnowflake v1.6.10
 )
 
 require (
 	cloud.google.com/go/compute v1.3.0 // indirect
+	github.com/apache/arrow/go/arrow v0.0.0-20211112161151-bc219186db40 // indirect
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.0.0 // indirect
+	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.7.1 // indirect
 	github.com/clbanning/mxj v1.8.4 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.0 // indirect
 	github.com/golang-jwt/jwt/v4 v4.3.0 // indirect
+	github.com/google/flatbuffers v2.0.0+incompatible // indirect
+	github.com/pierrec/lz4/v4 v4.1.11 // indirect
+	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8 // indirect
 )
 
 replace gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
