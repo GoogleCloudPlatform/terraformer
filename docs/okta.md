@@ -53,4 +53,4 @@ List of supported Okta services:
 *    `template_sms`
      * `okta_template_sms`
 *    `trusted_origin`
-     * `okta_trusted_orgin`
+     * `okta_trusted_origin`
