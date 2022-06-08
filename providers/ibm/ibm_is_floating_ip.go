@@ -32,7 +32,7 @@ type FloatingIPGenerator struct {
 func (g FloatingIPGenerator) createFloatingIPResources(fipID, fipName string) terraformutils.Resource {
 	resource := terraformutils.NewResource(
 		fipID,
-		normalizeResourceName(fipName, false),
+		normalizeResourceName(fipName, true),
 		"ibm_is_floating_ip",
 		"ibm",
 		map[string]string{},
@@ -54,11 +54,13 @@ func (g *FloatingIPGenerator) InitResources() error {
 		log.Fatal("No API key set")
 	}
 
-	vpcurl := fmt.Sprintf("https://%s.iaas.cloud.ibm.com/v1", region)
+	isURL := GetVPCEndPoint(region)
+	iamURL := GetAuthEndPoint()
 	vpcoptions := &vpcv1.VpcV1Options{
-		URL: envFallBack([]string{"IBMCLOUD_IS_API_ENDPOINT"}, vpcurl),
+		URL: isURL,
 		Authenticator: &core.IamAuthenticator{
 			ApiKey: apiKey,
+			URL:    iamURL,
 		},
 	}
 	vpcclient, err := vpcv1.NewVpcV1(vpcoptions)
@@ -91,7 +93,10 @@ func (g *FloatingIPGenerator) InitResources() error {
 	}
 
 	for _, fip := range allrecs {
-		g.Resources = append(g.Resources, g.createFloatingIPResources(*fip.ID, *fip.Name))
+		if fip.Target != nil {
+			g.Resources = append(g.Resources, g.createFloatingIPResources(*fip.ID, *fip.Name))
+		}
 	}
+
 	return nil
 }

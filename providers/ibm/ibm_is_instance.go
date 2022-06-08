@@ -31,7 +31,7 @@ type InstanceGenerator struct {
 func (g InstanceGenerator) createInstanceResources(instanceID, instanceName, instanceImgID string) terraformutils.Resource {
 	resource := terraformutils.NewResource(
 		instanceID,
-		normalizeResourceName(instanceName, false),
+		normalizeResourceName(instanceName, true),
 		"ibm_is_instance",
 		"ibm",
 		map[string]string{
@@ -45,6 +45,7 @@ func (g InstanceGenerator) createInstanceResources(instanceID, instanceName, ins
 	// Deprecated parameters
 	resource.IgnoreKeys = append(resource.IgnoreKeys,
 		"^port_speed$",
+		"^primary_network_interface.[0-9].port_speed$",
 		"^primary_network_interface.[0-9].primary_ip.[0-9].address$",
 		"^primary_network_interface.[0-9].primary_ip.[0-9].reserved_ip$",
 	)
@@ -59,11 +60,13 @@ func (g *InstanceGenerator) InitResources() error {
 		return fmt.Errorf("No API key set")
 	}
 
-	vpcurl := fmt.Sprintf("https://%s.iaas.cloud.ibm.com/v1", region)
+	isURL := GetVPCEndPoint(region)
+	iamURL := GetAuthEndPoint()
 	vpcoptions := &vpcv1.VpcV1Options{
-		URL: envFallBack([]string{"IBMCLOUD_IS_API_ENDPOINT"}, vpcurl),
+		URL: isURL,
 		Authenticator: &core.IamAuthenticator{
 			ApiKey: apiKey,
+			URL:    iamURL,
 		},
 	}
 	vpcclient, err := vpcv1.NewVpcV1(vpcoptions)

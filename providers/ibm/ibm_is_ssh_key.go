@@ -47,11 +47,13 @@ func (g *SSHKeyGenerator) InitResources() error {
 		log.Fatal("No API key set")
 	}
 
-	vpcurl := fmt.Sprintf("https://%s.iaas.cloud.ibm.com/v1", region)
+	isURL := GetVPCEndPoint(region)
+	iamURL := GetAuthEndPoint()
 	vpcoptions := &vpcv1.VpcV1Options{
-		URL: envFallBack([]string{"IBMCLOUD_IS_API_ENDPOINT"}, vpcurl),
+		URL: isURL,
 		Authenticator: &core.IamAuthenticator{
 			ApiKey: apiKey,
+			URL:    iamURL,
 		},
 	}
 	vpcclient, err := vpcv1.NewVpcV1(vpcoptions)
@@ -59,13 +61,6 @@ func (g *SSHKeyGenerator) InitResources() error {
 		return err
 	}
 	options := &vpcv1.ListKeysOptions{}
-	if rg := g.Args["resource_group"].(string); rg != "" {
-		rg, err = GetResourceGroupID(apiKey, rg, region)
-		if err != nil {
-			return fmt.Errorf("Error Fetching Resource Group Id %s", err)
-		}
-		options.ResourceGroupID = &rg
-	}
 	keys, response, err := vpcclient.ListKeys(options)
 	if err != nil {
 		return fmt.Errorf("Error Fetching SSH Keys %s\n%s", err, response)
