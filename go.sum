@@ -149,6 +149,8 @@ github.com/Masterminds/sprig v2.22.0+incompatible h1:z4yfnGrZ7netVz+0EDJ0Wi+5VZC
 github.com/Masterminds/sprig v2.22.0+incompatible/go.mod h1:y6hNFY5UBTIWBxnzTeuNhlNS5hqE0NB0E6fgfo2Br3o=
 github.com/Microsoft/go-winio v0.5.1 h1:aPJp2QD7OOrhO5tQXqQoGSJc+DjDtWTGLOmNyAm6FgY=
 github.com/Microsoft/go-winio v0.5.1/go.mod h1:JPGBdM1cNvN/6ISo+n8V5iA4v8pBzdOpzfwIujj1a84=
+github.com/Myra-Security-GmbH/myrasec-go/v2 v2.13.1 h1:kEy3UPsdddL3uhUEyR8r59BEZMYr+FnrMOclDkHFvME=
+github.com/Myra-Security-GmbH/myrasec-go/v2 v2.13.1/go.mod h1:6tD4BOqvYD12P0nkpr5VmTPSwkSe2BIMlvsjW16zmig=
 github.com/Myra-Security-GmbH/signature v1.0.0 h1:u46nIxnffLLb8pCe6ic2w7OmSSEJk4warn3W4Vp2GjQ=
 github.com/Myra-Security-GmbH/signature v1.0.0/go.mod h1:zgyy5MGBCezqxVOjrG3THQJqsIfJ04LWtQv3Q4Ug2+Y=
 github.com/NYTimes/gziphandler v0.0.0-20170623195520-56545f4a5d46 h1:lsxEuwrXEAokXB9qhlbKWPpo3KMLZQ5WB5WLQRW1uq0=
