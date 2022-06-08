@@ -179,17 +179,10 @@ func (g *InstanceGroupGenerator) InitResources() error {
 		return err
 	}
 
-	g.fatalErrors = make(chan error)
-
 	var instanceGroupWG sync.WaitGroup
 	instanceGroupWG.Add(1)
 	go g.handleInstanceGroups(sess, &instanceGroupWG)
 
-	select { //nolint
-	case err := <-g.fatalErrors:
-		close(g.fatalErrors)
-		return err
-	}
 	instanceGroupWG.Wait() //nolint:govet
 	return nil
 }

@@ -29,12 +29,14 @@ type IBMProvider struct { //nolint
 	ResourceGroup string
 	Region        string
 	CIS           string
+	VPC           string
 }
 
 func (p *IBMProvider) Init(args []string) error {
 	p.ResourceGroup = args[0]
 	p.Region = args[1]
 	p.CIS = args[2]
+	p.VPC = args[3]
 
 	var err error
 	if p.Region != DefaultRegion && p.Region != NoRegion {
@@ -69,42 +71,43 @@ func (IBMProvider) GetResourceConnections() map[string]map[string][]string {
 
 func (p *IBMProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"ibm_kp":                     &KPGenerator{},
-		"ibm_container_vpc_cluster":  &VPCClusterGenerator{},
-		"ibm_container_cluster":      &ContainerClusterGenerator{},
-		"ibm_cos":                    &COSGenerator{},
-		"ibm_database_elasticsearch": &DatabaseElasticSearchGenerator{},
-		"ibm_database_etcd":          &DatabaseETCDGenerator{},
-		"ibm_database_mongo":         &DatabaseMongoGenerator{},
-		"ibm_database_postgresql":    &DatabasePostgresqlGenerator{},
-		"ibm_database_rabbitmq":      &DatabaseRabbitMQGenerator{},
-		"ibm_database_redis":         &DatabaseRedisGenerator{},
-		"ibm_iam":                    &IAMGenerator{},
-		"ibm_is_instance_group":      &InstanceGroupGenerator{},
-		"ibm_is_vpc":                 &VPCGenerator{},
-		"ibm_is_subnet":              &SubnetGenerator{},
-		"ibm_is_instance":            &InstanceGenerator{},
-		"ibm_is_security_group":      &SecurityGroupGenerator{},
-		"ibm_cis":                    &CISGenerator{},
-		"ibm_is_network_acl":         &NetworkACLGenerator{},
-		"ibm_is_public_gateway":      &PublicGatewayGenerator{},
-		"ibm_is_volume":              &VolumeGenerator{},
-		"ibm_is_vpn_gateway":         &VPNGatewayGenerator{},
-		"ibm_is_lb":                  &LBGenerator{},
-		"ibm_is_ssh_key":             &SSHKeyGenerator{},
-		"ibm_is_floating_ip":         &FloatingIPGenerator{},
-		"ibm_is_image":               &ImageGenerator{},
-		"ibm_is_ipsec_policy":        &IpsecGenerator{},
-		"ibm_is_ike_policy":          &IkeGenerator{},
-		"ibm_is_flow_log":            &FlowLogGenerator{},
-		"ibm_is_instance_template":   &InstanceTemplateGenerator{},
-		"ibm_function":               &CloudFunctionGenerator{},
-		"ibm_private_dns":            &privateDNSTemplateGenerator{},
-		"ibm_certificate_manager":    &CMGenerator{},
-		"ibm_direct_link":            &DLGenerator{},
-		"ibm_transit_gateway":        &TGGenerator{},
-		"ibm_vpe_gateway":            &VPEGenerator{},
-		"ibm_satellite":              &SatelliteGenerator{},
+		"ibm_kp":                      &KPGenerator{},
+		"ibm_container_vpc_cluster":   &VPCClusterGenerator{},
+		"ibm_container_cluster":       &ContainerClusterGenerator{},
+		"ibm_cos":                     &COSGenerator{},
+		"ibm_database_elasticsearch":  &DatabaseElasticSearchGenerator{},
+		"ibm_database_etcd":           &DatabaseETCDGenerator{},
+		"ibm_database_mongo":          &DatabaseMongoGenerator{},
+		"ibm_database_postgresql":     &DatabasePostgresqlGenerator{},
+		"ibm_database_rabbitmq":       &DatabaseRabbitMQGenerator{},
+		"ibm_database_redis":          &DatabaseRedisGenerator{},
+		"ibm_iam":                     &IAMGenerator{},
+		"ibm_is_instance_group":       &InstanceGroupGenerator{},
+		"ibm_is_vpc":                  &VPCGenerator{},
+		"ibm_is_subnet":               &SubnetGenerator{},
+		"ibm_is_instance":             &InstanceGenerator{},
+		"ibm_is_security_group":       &SecurityGroupGenerator{},
+		"ibm_cis":                     &CISGenerator{},
+		"ibm_is_network_acl":          &NetworkACLGenerator{},
+		"ibm_is_public_gateway":       &PublicGatewayGenerator{},
+		"ibm_is_volume":               &VolumeGenerator{},
+		"ibm_is_vpn_gateway":          &VPNGatewayGenerator{},
+		"ibm_is_lb":                   &LBGenerator{},
+		"ibm_is_ssh_key":              &SSHKeyGenerator{},
+		"ibm_is_floating_ip":          &FloatingIPGenerator{},
+		"ibm_is_image":                &ImageGenerator{},
+		"ibm_is_ipsec_policy":         &IpsecGenerator{},
+		"ibm_is_ike_policy":           &IkeGenerator{},
+		"ibm_is_flow_log":             &FlowLogGenerator{},
+		"ibm_is_instance_template":    &InstanceTemplateGenerator{},
+		"ibm_function":                &CloudFunctionGenerator{},
+		"ibm_private_dns":             &privateDNSTemplateGenerator{},
+		"ibm_certificate_manager":     &CMGenerator{},
+		"ibm_direct_link":             &DLGenerator{},
+		"ibm_transit_gateway":         &TGGenerator{},
+		"ibm_vpe_gateway":             &VPEGenerator{},
+		"ibm_satellite_control_plane": &SatelliteControlPlaneGenerator{},
+		"ibm_satellite_data_plane":    &SatelliteDataPlaneGenerator{},
 	}
 }
 
@@ -122,6 +125,7 @@ func (p *IBMProvider) InitService(serviceName string, verbose bool) error {
 		"resource_group": p.ResourceGroup,
 		"region":         p.Region,
 		"cis":            p.CIS,
+		"vpc":            p.VPC,
 	})
 	return nil
 }
