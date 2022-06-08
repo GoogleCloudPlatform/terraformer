@@ -86,7 +86,7 @@ func createResourcesPerDomain(api *mgo.API, funcs []func(*mgo.API, mgo.Domain, *
 		wg.Add(len(domains) * len(funcs))
 		for _, d := range domains {
 			for _, f := range funcs {
-				go f(api, d, wg)
+				f(api, d, wg)
 			}
 		}
 		if len(domains) < pageSize {
