@@ -282,6 +282,14 @@ terraformer import aws --resources=sg --regions=us-east-1
 *   `transit_gateway`
     * `aws_ec2_transit_gateway_route_table`
     * `aws_ec2_transit_gateway_vpc_attachment`
+*   `vpc`
+    * `aws_vpc`
+*   `vpc_peering`
+    * `aws_vpc_peering_connection`
+*   `vpn_connection`
+    * `aws_vpn_connection`
+*   `vpn_gateway`
+    * `aws_vpn_gateway`
 *   `waf`
     * `aws_waf_byte_match_set`
     * `aws_waf_geo_match_set`
@@ -321,14 +329,6 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_wafv2_web_acl`
     * `aws_wafv2_web_acl_association`
     * `aws_wafv2_web_acl_logging_configuration`
-*   `vpc`
-    * `aws_vpc`
-*   `vpc_peering`
-    * `aws_vpc_peering_connection`
-*   `vpn_connection`
-    * `aws_vpn_connection`
-*   `vpn_gateway`
-    * `aws_vpn_gateway`
 *   `workspaces`
     * `aws_workspaces_directory`
     * `aws_workspaces_ip_group`

@@ -1,4 +1,4 @@
-// Copyright 2020 The Terraformer Authors.
+// Copyright 2022 The Terraformer Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,15 +15,20 @@
 package launchdarkly
 
 import (
+	"context"
 	"errors"
+	"fmt"
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	launchdarkly "github.com/launchdarkly/api-client-go"
 )
 
 type LaunchDarklyProvider struct { //nolint
 	terraformutils.Provider
 	apiKey string
+	client *launchdarkly.APIClient
+	ctx    context.Context
 }
 
 const (
@@ -38,6 +43,18 @@ func (p *LaunchDarklyProvider) Init(args []string) error {
 	}
 	p.apiKey = os.Getenv("LAUNCHDARKLY_ACCESS_TOKEN")
 
+	cfg := &launchdarkly.Configuration{
+		BasePath:      basePath,
+		DefaultHeader: make(map[string]string),
+		UserAgent:     fmt.Sprintf("launchdarkly-terraformer/%s", version),
+	}
+	cfg.AddDefaultHeader("LD-API-Version", APIVersion)
+
+	p.client = launchdarkly.NewAPIClient(cfg)
+
+	p.ctx = context.WithValue(context.Background(), launchdarkly.ContextAPIKey, launchdarkly.APIKey{
+		Key: p.apiKey,
+	})
 	return nil
 }
 
@@ -49,7 +66,7 @@ func (p *LaunchDarklyProvider) GetProviderData(arg ...string) map[string]interfa
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"launchdarkly": map[string]interface{}{
-				"api_key": p.apiKey,
+				"access_token": p.apiKey,
 			},
 		},
 	}
@@ -61,7 +78,9 @@ func (LaunchDarklyProvider) GetResourceConnections() map[string]map[string][]str
 
 func (p *LaunchDarklyProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"project": &ProjectGenerator{},
+		"project":     &ProjectGenerator{},
+		"featureFlag": &FeatureFlagsGenerator{},
+		"segment":     &SegmentGenerator{},
 	}
 }
 
@@ -76,6 +95,8 @@ func (p *LaunchDarklyProvider) InitService(serviceName string, verbose bool) err
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
 		"api_key": p.apiKey,
+		"client":  p.client,
+		"ctx":     p.ctx,
 	})
 	return nil
 }

@@ -9,14 +9,14 @@ require (
 	github.com/Azure/azure-sdk-for-go v63.4.0+incompatible
 	github.com/Azure/azure-storage-blob-go v0.10.0
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
-	github.com/Azure/go-autorest/autorest v0.11.23
+	github.com/Azure/go-autorest/autorest v0.11.27
 	github.com/DataDog/datadog-api-client-go v1.13.0
 	github.com/IBM-Cloud/bluemix-go v0.0.0-20210203095940-db28d5e07b55
 	github.com/IBM/go-sdk-core/v3 v3.3.1
 	github.com/IBM/go-sdk-core/v4 v4.9.0
 	github.com/IBM/ibm-cos-sdk-go v1.5.0
 	github.com/IBM/keyprotect-go-client v0.6.0
-	github.com/IBM/networking-go-sdk v0.28.0
+	github.com/IBM/networking-go-sdk v0.30.0
 	github.com/IBM/platform-services-go-sdk v0.19.1
 	github.com/IBM/vpc-go-sdk v0.4.1
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
@@ -27,7 +27,7 @@ require (
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1247
 	github.com/aliyun/aliyun-tablestore-go-sdk v4.1.2+incompatible
 	github.com/apache/openwhisk-client-go v0.0.0-20210106144548-17d556327cd3
-	github.com/aws/aws-sdk-go-v2 v1.16.3
+	github.com/aws/aws-sdk-go-v2 v1.16.4
 	github.com/aws/aws-sdk-go-v2/config v1.1.4
 	github.com/aws/aws-sdk-go-v2/credentials v1.1.4
 	github.com/aws/aws-sdk-go-v2/service/accessanalyzer v1.2.0
@@ -77,7 +77,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/kms v1.2.2
 	github.com/aws/aws-sdk-go-v2/service/lambda v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/mediapackage v1.15.3
-	github.com/aws/aws-sdk-go-v2/service/mediastore v1.1.4
+	github.com/aws/aws-sdk-go-v2/service/mediastore v1.12.5
 	github.com/aws/aws-sdk-go-v2/service/opsworks v1.2.2
 	github.com/aws/aws-sdk-go-v2/service/organizations v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/qldb v1.1.3
@@ -190,7 +190,7 @@ require github.com/newrelic/newrelic-client-go v0.79.0
 require (
 	github.com/Azure/azure-pipeline-go v0.2.2 // indirect
 	github.com/Azure/go-autorest v14.2.0+incompatible // indirect
-	github.com/Azure/go-autorest/autorest/adal v0.9.14 // indirect
+	github.com/Azure/go-autorest/autorest/adal v0.9.18 // indirect
 	github.com/Azure/go-autorest/autorest/azure/cli v0.2.0 // indirect
 	github.com/Azure/go-autorest/autorest/date v0.3.0 // indirect
 	github.com/Azure/go-autorest/autorest/to v0.3.0 // indirect
@@ -210,8 +210,8 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef // indirect
 	github.com/aws/aws-sdk-go v1.37.0 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.0.5 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.10 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.4 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.11 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.0.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.2.1 // indirect
