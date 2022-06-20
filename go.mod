@@ -173,7 +173,7 @@ require (
 	github.com/IBM/go-sdk-core v1.1.0
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.2.2 // indirect
 	github.com/hashicorp/terraform-svchost v0.0.0-20200729002733-f050f53b9734 // indirect
-	github.com/mackerelio/mackerel-client-go v0.19.0
+	github.com/mackerelio/mackerel-client-go v0.21.0
 	github.com/okta/terraform-provider-okta v0.0.0-20210924173942-a5a664459d3b
 	github.com/zclconf/go-cty-yaml v1.0.2 // indirect
 )
