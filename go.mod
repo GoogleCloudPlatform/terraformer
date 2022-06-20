@@ -10,7 +10,7 @@ require (
 	github.com/Azure/azure-storage-blob-go v0.10.0
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
 	github.com/Azure/go-autorest/autorest v0.11.27
-	github.com/DataDog/datadog-api-client-go v1.13.0
+	github.com/DataDog/datadog-api-client-go v1.14.0
 	github.com/IBM-Cloud/bluemix-go v0.0.0-20210203095940-db28d5e07b55
 	github.com/IBM/go-sdk-core/v3 v3.3.1
 	github.com/IBM/go-sdk-core/v4 v4.9.0
@@ -27,7 +27,7 @@ require (
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1247
 	github.com/aliyun/aliyun-tablestore-go-sdk v4.1.2+incompatible
 	github.com/apache/openwhisk-client-go v0.0.0-20210106144548-17d556327cd3
-	github.com/aws/aws-sdk-go-v2 v1.16.4
+	github.com/aws/aws-sdk-go-v2 v1.16.5
 	github.com/aws/aws-sdk-go-v2/config v1.1.4
 	github.com/aws/aws-sdk-go-v2/credentials v1.1.4
 	github.com/aws/aws-sdk-go-v2/service/accessanalyzer v1.2.0
@@ -52,12 +52,12 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cognitoidentity v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/configservice v1.3.0
-	github.com/aws/aws-sdk-go-v2/service/datapipeline v1.1.3
+	github.com/aws/aws-sdk-go-v2/service/datapipeline v1.13.6
 	github.com/aws/aws-sdk-go-v2/service/devicefarm v1.13.3
 	github.com/aws/aws-sdk-go-v2/service/docdb v1.18.1
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.3.0
-	github.com/aws/aws-sdk-go-v2/service/ecr v1.2.1
+	github.com/aws/aws-sdk-go-v2/service/ecr v1.17.6
 	github.com/aws/aws-sdk-go-v2/service/ecrpublic v1.2.0
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/efs v1.2.1
@@ -113,7 +113,7 @@ require (
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/duosecurity/duo_api_golang v0.0.0-20201112143038-0e07e9f869e3 // indirect
 	github.com/elazarl/go-bindata-assetfs v1.0.1 // indirect
-	github.com/fastly/go-fastly/v6 v6.0.1
+	github.com/fastly/go-fastly/v6 v6.3.2
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/gocql/gocql v0.0.0-20210707082121-9a3953d1826d // indirect
 	github.com/google/go-github/v35 v35.1.0
@@ -173,7 +173,7 @@ require (
 	github.com/IBM/go-sdk-core v1.1.0
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.2.2 // indirect
 	github.com/hashicorp/terraform-svchost v0.0.0-20200729002733-f050f53b9734 // indirect
-	github.com/mackerelio/mackerel-client-go v0.19.0
+	github.com/mackerelio/mackerel-client-go v0.21.0
 	github.com/okta/terraform-provider-okta v0.0.0-20210924173942-a5a664459d3b
 	github.com/zclconf/go-cty-yaml v1.0.2 // indirect
 )
@@ -211,14 +211,14 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef // indirect
 	github.com/aws/aws-sdk-go v1.37.0 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.0.5 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.11 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.5 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.12 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.6 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.0.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.4 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.2.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/redshift v1.10.0
 	github.com/aws/aws-sdk-go-v2/service/sso v1.1.4 // indirect
-	github.com/aws/smithy-go v1.11.2 // indirect
+	github.com/aws/smithy-go v1.11.3 // indirect
 	github.com/beevik/etree v1.1.0 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
@@ -245,7 +245,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.3 // indirect
-	github.com/google/go-cmp v0.5.7 // indirect
+	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/gofuzz v1.1.0 // indirect
 	github.com/google/jsonapi v1.0.0 // indirect
