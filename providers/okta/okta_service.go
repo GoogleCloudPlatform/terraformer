@@ -23,7 +23,7 @@ import (
 	"github.com/okta/terraform-provider-okta/sdk"
 )
 
-type OktaService struct {	//nolint
+type OktaService struct { //nolint
 	terraformutils.Service
 }
 
