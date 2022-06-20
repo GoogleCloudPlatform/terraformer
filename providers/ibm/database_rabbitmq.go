@@ -63,7 +63,7 @@ func (g *DatabaseRabbitMQGenerator) InitResources() error {
 		return err
 	}
 
-	serviceID, err := catalogClient.ResourceCatalog().FindByName("databases-for-rabbitmq", true)
+	serviceID, err := catalogClient.ResourceCatalog().FindByName("messages-for-rabbitmq", true)
 	if err != nil {
 		return err
 	}
