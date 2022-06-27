@@ -387,8 +387,8 @@ github.com/aws/aws-sdk-go-v2/service/securityhub v1.2.1 h1:qZplAHGJFl16wbZAWEnP7
 github.com/aws/aws-sdk-go-v2/service/securityhub v1.2.1/go.mod h1:SI3V2iXBWczkoetsurbZjbTNv2rCJihbo5APtlDLbCQ=
 github.com/aws/aws-sdk-go-v2/service/servicecatalog v1.2.1 h1:/FTF3YGI/WxRnRKhruU1nyhR/gzgfYP0kQF7yIaqEjU=
 github.com/aws/aws-sdk-go-v2/service/servicecatalog v1.2.1/go.mod h1:bivtoAQvh328aJFiY3+h4lQpyv9kPjJAP/y/PCQbnVY=
-github.com/aws/aws-sdk-go-v2/service/ses v1.2.1 h1:hHtrVZvqyYzXYzMyZb6ww8aOI7n3X61uughtdJ8v8E8=
-github.com/aws/aws-sdk-go-v2/service/ses v1.2.1/go.mod h1:l6zMRkVtC7WmAxDPRo/WwHSu+TXTKITQDPse/OgoViY=
+github.com/aws/aws-sdk-go-v2/service/ses v1.14.7 h1:NhMM6xuw63xnwlLRMVTSFrX5vddj/XKb5/Kz4qzDHks=
+github.com/aws/aws-sdk-go-v2/service/ses v1.14.7/go.mod h1:HVBkV9m4Pgdx7OTZ+vA/orEdso9F3I4GYGJTdXx7sJE=
 github.com/aws/aws-sdk-go-v2/service/sfn v1.2.1 h1:L9eiomAn2X5JnUbJs//EbLmbQAOwFIjxowjFTb1+mg0=
 github.com/aws/aws-sdk-go-v2/service/sfn v1.2.1/go.mod h1:E0SrMJis5ShsOfbc+WIpmn9sr7IbJV6puIBaWipvadE=
 github.com/aws/aws-sdk-go-v2/service/sns v1.2.1 h1:IVHrunoAsIp1OV445PE84mM+WArZChXrxNbFIx4uAWQ=
