@@ -16,12 +16,16 @@ func (g ServerGenerator) createResources(serversList []ionoscloud.Server) []terr
 	var resources []terraformutils.Resource
 	fmt.Printf("servers LIST %v", serversList)
 	for _, server := range serversList {
-		resources = append(resources, terraformutils.NewSimpleResource(
+		fmt.Printf("server ID: %v\n", *server.Id)
+
+		resources = append(resources, terraformutils.NewResource(
 			*server.Id,
 			*server.Properties.Name+"-"+*server.Id,
 			"ionoscloud_server",
 			"ionoscloud",
-			[]string{}))
+			map[string]string{},
+			[]string{},
+			map[string]interface{}{}))
 	}
 	return resources
 }

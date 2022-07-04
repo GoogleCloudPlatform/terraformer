@@ -13,12 +13,14 @@ type DBaaSClusterGenerator struct {
 func (g DBaaSClusterGenerator) createResources(clustersList []dbaas.ClusterResponse) []terraformutils.Resource {
 	var resources []terraformutils.Resource
 	for _, cluster := range clustersList {
-		resources = append(resources, terraformutils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewResource(
 			*cluster.Id,
 			*cluster.Properties.DisplayName+"-"+*cluster.Id,
 			"ionoscloud_pg_cluster",
 			"ionoscloud",
-			[]string{}))
+			map[string]string{},
+			[]string{},
+			map[string]interface{}{}))
 	}
 	return resources
 }

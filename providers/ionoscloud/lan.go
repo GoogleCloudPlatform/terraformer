@@ -4,28 +4,13 @@ import (
 	"context"
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	ionoscloud "github.com/ionos-cloud/sdk-go/v6"
 )
 
 type LanGenerator struct {
 	IonosCloudService
 }
 
-func (g LanGenerator) createResources(lansList []ionoscloud.Lan) []terraformutils.Resource {
-	var resources []terraformutils.Resource
-	for _, lan := range lansList {
-		resources = append(resources, terraformutils.NewSimpleResource(
-			*lan.Id,
-			*lan.Properties.Name+"-"+*lan.Id,
-			"ionoscloud_lan",
-			"ionoscloud",
-			[]string{}))
-	}
-	return resources
-}
-
 func (g *LanGenerator) InitResources() error {
-	var lansOuput []ionoscloud.Lan
 	client := g.generateClient()
 	cloudApiClient := client.CloudApiClient
 	datacenters, err := helpers.GetAllDatacenters(*cloudApiClient)
@@ -38,10 +23,19 @@ func (g *LanGenerator) InitResources() error {
 			if err != nil {
 				return err
 			}
-			lansToAdd := *lans.Items
-			lansOuput = append(lansOuput, lansToAdd...)
+			if lans.Items != nil {
+				for _, lan := range *lans.Items {
+					g.Resources = append(g.Resources, terraformutils.NewResource(
+						*lan.Id,
+						*lan.Properties.Name+"-"+*lan.Id,
+						"ionoscloud_lan",
+						"ionoscloud",
+						map[string]string{},
+						[]string{},
+						map[string]interface{}{}))
+				}
+			}
 		}
 	}
-	g.Resources = g.createResources(lansOuput)
 	return nil
 }

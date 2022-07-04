@@ -13,12 +13,14 @@ type DatacenterGenerator struct {
 func (g DatacenterGenerator) createResources(datacentersList []ionoscloud.Datacenter) []terraformutils.Resource {
 	var resources []terraformutils.Resource
 	for _, datacenter := range datacentersList {
-		resources = append(resources, terraformutils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewResource(
 			*datacenter.Id,
 			*datacenter.Properties.Name+"-"+*datacenter.Id,
 			"ionoscloud_datacenter",
 			"ionoscloud",
-			[]string{}))
+			map[string]string{},
+			[]string{},
+			map[string]interface{}{}))
 	}
 	return resources
 }
