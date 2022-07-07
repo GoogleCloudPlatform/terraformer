@@ -32,7 +32,7 @@ type IonosCloudService struct {
 	terraformutils.Service
 }
 
-type IonosCloudBundle struct {
+type Bundle struct {
 	CloudApiClient *ionoscloud.APIClient
 	DBaaSApiClient *dbaas.APIClient
 }
@@ -44,7 +44,7 @@ const (
 	dbaasClient
 )
 
-func (s *IonosCloudService) generateClient() *IonosCloudBundle {
+func (s *IonosCloudService) generateClient() *Bundle {
 	username := s.Args[helpers.UsernameArg].(string)
 	password := s.Args[helpers.PasswordArg].(string)
 	token := s.Args[helpers.TokenArg].(string)
@@ -58,14 +58,14 @@ func (s *IonosCloudService) generateClient() *IonosCloudBundle {
 		newConfig.Debug = true
 	}
 
-	newConfig.MaxRetries = 999
-	newConfig.WaitTime = 4 * time.Second
+	newConfig.MaxRetries = helpers.MaxRetries
+	newConfig.WaitTime = helpers.MaxWaitTime
 
 	clients := map[clientType]interface{}{
 		ionosClient: NewClientByType(username, password, token, cleanedUrl, ionosClient),
 		dbaasClient: NewClientByType(username, password, token, cleanedUrl, dbaasClient),
 	}
-	return &IonosCloudBundle{
+	return &Bundle{
 		CloudApiClient: clients[ionosClient].(*ionoscloud.APIClient),
 		DBaaSApiClient: clients[dbaasClient].(*dbaas.APIClient),
 	}
@@ -102,7 +102,7 @@ func NewClientByType(username, password, token, url string, clientType clientTyp
 			return dbaas.NewAPIClient(newConfig)
 		}
 	default:
-		log.Fatalf("[ERROR] unknown client type %d", clientType)
+		log.Printf("[ERROR] unknown client type %d", clientType)
 	}
 	return nil
 }

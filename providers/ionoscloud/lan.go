@@ -19,20 +19,22 @@ func (g *LanGenerator) InitResources() error {
 	}
 	if datacenters != nil {
 		for _, datacenter := range datacenters {
-			lans, _, err := cloudApiClient.LANsApi.DatacentersLansGet(context.TODO(), *datacenter.Id).Depth(10).Execute()
+			lans, _, err := cloudApiClient.LANsApi.DatacentersLansGet(context.TODO(), *datacenter.Id).Depth(1).Execute()
 			if err != nil {
 				return err
 			}
 			if lans.Items != nil {
 				for _, lan := range *lans.Items {
-					g.Resources = append(g.Resources, terraformutils.NewResource(
-						*lan.Id,
-						*lan.Properties.Name+"-"+*lan.Id,
-						"ionoscloud_lan",
-						"ionoscloud",
-						map[string]string{},
-						[]string{},
-						map[string]interface{}{}))
+					if lan.Properties != nil && lan.Properties.Name != nil {
+						g.Resources = append(g.Resources, terraformutils.NewResource(
+							*lan.Id,
+							*lan.Properties.Name+"-"+*lan.Id,
+							"ionoscloud_lan",
+							"ionoscloud",
+							map[string]string{helpers.DcId: *datacenter.Id},
+							[]string{},
+							map[string]interface{}{}))
+					}
 				}
 			}
 		}
