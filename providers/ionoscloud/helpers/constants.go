@@ -14,6 +14,8 @@ const (
 	IonosToken    = "IONOS_TOKEN"
 	IonosApiUrl   = "IONOS_API_URL"
 	IonosDebug    = "IONOS_DEBUG"
+	Ionos         = "ionoscloud"
+	DcId          = "datacenter_id"
 
 	UsernameArg = "username"
 	PasswordArg = "password"
@@ -25,11 +27,9 @@ const (
 	// MaxWaitTime - waits 4 seconds before retry in case of rate limit
 	MaxWaitTime = 4 * time.Second
 
-	sleepInterval = 5 * time.Second
-	available     = "Available"
+	available = "Available"
 )
 
-// Error Messages
 const (
 	CredentialsError = "set IONOS_USERNAME and IONOS_PASSWORD or IONOS_TOKEN env var"
 )

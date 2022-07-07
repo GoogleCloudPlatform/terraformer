@@ -2,6 +2,7 @@ package ionoscloud
 
 import (
 	"context"
+	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	dbaas "github.com/ionos-cloud/sdk-go-dbaas-postgres"
 )
@@ -13,14 +14,16 @@ type DBaaSClusterGenerator struct {
 func (g DBaaSClusterGenerator) createResources(clustersList []dbaas.ClusterResponse) []terraformutils.Resource {
 	var resources []terraformutils.Resource
 	for _, cluster := range clustersList {
-		resources = append(resources, terraformutils.NewResource(
-			*cluster.Id,
-			*cluster.Properties.DisplayName+"-"+*cluster.Id,
-			"ionoscloud_pg_cluster",
-			"ionoscloud",
-			map[string]string{},
-			[]string{},
-			map[string]interface{}{}))
+		if cluster.Properties != nil && cluster.Properties.DisplayName != nil {
+			resources = append(resources, terraformutils.NewResource(
+				*cluster.Id,
+				*cluster.Properties.DisplayName+"-"+*cluster.Id,
+				"ionoscloud_pg_cluster",
+				helpers.Ionos,
+				map[string]string{},
+				[]string{},
+				map[string]interface{}{}))
+		}
 	}
 	return resources
 }
@@ -32,6 +35,8 @@ func (g *DBaaSClusterGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(*output.Items)
+	if output.Items != nil {
+		g.Resources = g.createResources(*output.Items)
+	}
 	return nil
 }

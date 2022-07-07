@@ -6,7 +6,7 @@ import (
 )
 
 func GetAllDatacenters(client ionoscloud.APIClient) ([]ionoscloud.Datacenter, error) {
-	datacenters, _, err := client.DataCentersApi.DatacentersGet(context.TODO()).Depth(10).Execute()
+	datacenters, _, err := client.DataCentersApi.DatacentersGet(context.TODO()).Depth(1).Execute()
 	if err != nil {
 		return nil, err
 	}
