@@ -119,7 +119,7 @@ require (
 	github.com/google/go-github/v35 v35.1.0
 	github.com/gophercloud/gophercloud v0.24.0
 	github.com/grafana/grafana-api-golang-client v0.0.0-20210218192924-9ccd2365d2a6
-	github.com/hashicorp/go-azure-helpers v0.10.0
+	github.com/hashicorp/go-azure-helpers v0.36.0
 	github.com/hashicorp/go-cleanhttp v0.5.2
 	github.com/hashicorp/go-hclog v0.16.2
 	github.com/hashicorp/go-memdb v1.3.2 // indirect
@@ -191,10 +191,10 @@ require (
 	github.com/Azure/azure-pipeline-go v0.2.2 // indirect
 	github.com/Azure/go-autorest v14.2.0+incompatible // indirect
 	github.com/Azure/go-autorest/autorest/adal v0.9.18 // indirect
-	github.com/Azure/go-autorest/autorest/azure/cli v0.2.0 // indirect
+	github.com/Azure/go-autorest/autorest/azure/cli v0.4.4 // indirect
 	github.com/Azure/go-autorest/autorest/date v0.3.0 // indirect
-	github.com/Azure/go-autorest/autorest/to v0.3.0 // indirect
-	github.com/Azure/go-autorest/autorest/validation v0.2.0 // indirect
+	github.com/Azure/go-autorest/autorest/to v0.4.0 // indirect
+	github.com/Azure/go-autorest/autorest/validation v0.3.1 // indirect
 	github.com/Azure/go-autorest/logger v0.2.1 // indirect
 	github.com/Azure/go-autorest/tracing v0.6.0 // indirect
 	github.com/BurntSushi/toml v1.1.0 // indirect
@@ -228,7 +228,7 @@ require (
 	github.com/crewjam/saml v0.4.5 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dghubble/sling v1.1.0 // indirect
-	github.com/dimchansky/utfbom v1.1.0 // indirect
+	github.com/dimchansky/utfbom v1.1.1 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
 	github.com/fatih/color v1.7.0 // indirect
 	github.com/form3tech-oss/jwt-go v3.2.2+incompatible // indirect
@@ -348,13 +348,14 @@ require (
 	cloud.google.com/go/cloudtasks v1.3.0
 	cloud.google.com/go/iam v0.3.0
 	cloud.google.com/go/monitoring v1.4.0
-	github.com/manicminer/hamilton v0.43.0
+	github.com/manicminer/hamilton v0.44.0
 )
 
 require (
 	cloud.google.com/go/compute v1.3.0 // indirect
 	github.com/clbanning/mxj v1.8.4 // indirect
 	github.com/golang-jwt/jwt/v4 v4.3.0 // indirect
+	github.com/manicminer/hamilton-autorest v0.2.0 // indirect
 )
 
 replace gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
