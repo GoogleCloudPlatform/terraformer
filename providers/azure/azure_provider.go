@@ -101,9 +101,9 @@ func (p *AzureProvider) getAuthorizer() (autorest.Authorizer, error) {
 	var auth autorest.Authorizer
 
 	if p.config.UseMicrosoftGraph {
-		hamiltonEnv, err := environments.EnvironmentFromString(p.config.Environment)
-		if err != nil {
-			return nil, err
+		hamiltonEnv, ero := environments.EnvironmentFromString(p.config.Environment)
+		if ero != nil {
+			return nil, ero
 		}
 		auth, err = p.config.GetMSALToken(ctx, hamiltonEnv.ResourceManager, sender, oauthConfig, env.TokenAudience)
 	} else {
