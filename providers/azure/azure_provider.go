@@ -15,6 +15,7 @@
 package azure
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -23,6 +24,7 @@ import (
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/hashicorp/go-azure-helpers/authentication"
 	"github.com/hashicorp/go-azure-helpers/sender"
+	"github.com/manicminer/hamilton/environments"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
@@ -87,23 +89,30 @@ func (p *AzureProvider) getAuthorizer() (autorest.Authorizer, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	oauthConfig, err := p.config.BuildOAuthConfig(env.ActiveDirectoryEndpoint)
 	if err != nil {
 		return nil, err
 	}
-
 	if oauthConfig == nil {
-		return nil, fmt.Errorf("Unable to configure OAuthConfig for tenant %s", p.config.TenantID)
+		return nil, fmt.Errorf("unable to configure OAuthConfig for tenant %s", p.config.TenantID)
 	}
+	sender := sender.BuildSender("terraformer")
+	ctx := context.Background()
+	var auth autorest.Authorizer
 
-	sender := sender.BuildSender("AzureRM")
-
-	auth, err := p.config.GetAuthorizationToken(sender, oauthConfig, env.ResourceManagerEndpoint)
+	if p.config.UseMicrosoftGraph {
+		hamiltonEnv, err := environments.EnvironmentFromString(p.config.Environment)
+		if err != nil {
+			return nil, err
+		}
+		auth, err = p.config.GetMSALToken(ctx, hamiltonEnv.ResourceManager, sender, oauthConfig, env.TokenAudience)
+	} else {
+		// Deprecated
+		auth, err = p.config.GetADALToken(ctx, sender, oauthConfig, env.ResourceManagerEndpoint)
+	}
 	if err != nil {
 		return nil, err
 	}
-
 	return auth, nil
 }
 
