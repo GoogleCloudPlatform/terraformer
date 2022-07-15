@@ -30,6 +30,7 @@ type IBMProvider struct { //nolint
 	Region        string
 	CIS           string
 	VPC           string
+	Cluster       string
 }
 
 func (p *IBMProvider) Init(args []string) error {
@@ -37,6 +38,7 @@ func (p *IBMProvider) Init(args []string) error {
 	p.Region = args[1]
 	p.CIS = args[2]
 	p.VPC = args[3]
+	p.Cluster = args[4]
 
 	var err error
 	if p.Region != DefaultRegion && p.Region != NoRegion {
@@ -108,6 +110,7 @@ func (p *IBMProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"ibm_vpe_gateway":             &VPEGenerator{},
 		"ibm_satellite_control_plane": &SatelliteControlPlaneGenerator{},
 		"ibm_satellite_data_plane":    &SatelliteDataPlaneGenerator{},
+		"ibm_container_nlb_dns":       &ContainerNlbDnsGenerator{},
 	}
 }
 
@@ -126,6 +129,7 @@ func (p *IBMProvider) InitService(serviceName string, verbose bool) error {
 		"region":         p.Region,
 		"cis":            p.CIS,
 		"vpc":            p.VPC,
+		"cluster":        p.Cluster,
 	})
 	return nil
 }
