@@ -291,6 +291,7 @@ Links to download Terraform Providers:
     * Kubernetes provider >=1.9.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
     * RabbitMQ provider >=1.1.0 - [here](https://releases.hashicorp.com/terraform-provider-rabbitmq/)
 * Network
+    * Myrasec provider >1.44 - [here](https://github.com/Myra-Security-GmbH/terraform-provider-myrasec)
     * Cloudflare provider >1.16 - [here](https://releases.hashicorp.com/terraform-provider-cloudflare/)
     * Fastly provider >0.16.1 - [here](https://releases.hashicorp.com/terraform-provider-fastly/)
     * NS1 provider >1.8.3 - [here](https://releases.hashicorp.com/terraform-provider-ns1/)
