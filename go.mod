@@ -319,7 +319,7 @@ require (
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20220503163025-988cb79eb6c6 // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
-	golang.org/x/time v0.0.0-20220210224613-90d013bbcef8 // indirect
+	golang.org/x/time v0.0.0-20220609170525-579cf78fd858 // indirect
 	golang.org/x/tools v0.1.8 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
@@ -351,16 +351,18 @@ require (
 	github.com/DataDog/datadog-api-client-go/v2 v2.1.0
 	github.com/manicminer/hamilton v0.44.0
 	github.com/Myra-Security-GmbH/myrasec-go/v2 v2.19.0
+	github.com/manicminer/hamilton v0.44.0
 )
 
 require (
 	cloud.google.com/go/compute v1.3.0 // indirect
 	github.com/DataDog/zstd v1.5.0 // indirect
+	github.com/Myra-Security-GmbH/signature v1.0.0 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
-	github.com/Myra-Security-GmbH/signature v1.0.0 // indirect
 	github.com/clbanning/mxj v1.8.4 // indirect
 	github.com/emicklei/go-restful v2.9.5+incompatible // indirect
+	github.com/fatih/color v1.7.0 // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.19.5 // indirect
 	github.com/go-openapi/swag v0.19.14 // indirect
