@@ -126,12 +126,14 @@ func (g *TGGenerator) InitResources() error {
 		for _, connection := range connections.Connections {
 			g.Resources = append(g.Resources, g.createTransitGatewayConnectionResources(*gateway.ID, *connection.ID, *connection.Name, dependsOn))
 		}
-		//Trying to get Transit Gateway reports
+		// Trying to get Transit Gateway reports
 		listTransitGatewayRouteReportOptions := &tg.ListTransitGatewayRouteReportsOptions{
 			TransitGatewayID: gateway.ID,
 		}
 		routeReports, response, err := tgclient.ListTransitGatewayRouteReports(listTransitGatewayRouteReportOptions)
-
+		if err != nil {
+			return fmt.Errorf("Error Listing Transit Gateway route reports %s\n%s", err, response)
+		}
 		for _, routeReport := range routeReports.RouteReports {
 			g.Resources = append(g.Resources, g.loadTransitGatewayRouterResource(*gateway.ID, *routeReport.ID, dependsOn))
 		}
