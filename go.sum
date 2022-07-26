@@ -295,8 +295,8 @@ github.com/aws/aws-sdk-go-v2/service/cloudformation v1.3.0 h1:+eHZIcEQ7jMuAAWL9u
 github.com/aws/aws-sdk-go-v2/service/cloudformation v1.3.0/go.mod h1:9PLAEZCkzDVh+/fq7OwOloe/RqSpqwes2x+ozcRyloM=
 github.com/aws/aws-sdk-go-v2/service/cloudfront v1.3.0 h1:8fOeCj6bb2JtkWvxP6McS4RR/CV20IG4JzZWYz4Z12E=
 github.com/aws/aws-sdk-go-v2/service/cloudfront v1.3.0/go.mod h1:J04vwlb6n/oVJNtNyT+sLx2KDgzyo7nDRyHPnnZQYnk=
-github.com/aws/aws-sdk-go-v2/service/cloudhsmv2 v1.1.3 h1:otg0eUT5LROwUixNpOtjhYksgBurDIRi6ykUmsBBrA8=
-github.com/aws/aws-sdk-go-v2/service/cloudhsmv2 v1.1.3/go.mod h1:mtJg2sJe7X8jm/cL/OIxJkPPPGQbHNgQnipZgN6a4MU=
+github.com/aws/aws-sdk-go-v2/service/cloudhsmv2 v1.13.8 h1:27rT4JK+pAn01K+rxFDJPIPbA8N5cKAbWiqBpKO3E28=
+github.com/aws/aws-sdk-go-v2/service/cloudhsmv2 v1.13.8/go.mod h1:5lx95PpU76IcBIQ4VPWZCKlGyr7E24UBBaUd61NYIFI=
 github.com/aws/aws-sdk-go-v2/service/cloudtrail v1.2.1 h1:egAyiJ8xpfed+I+8t+71OxyNr4Vbw1xRA+9EjSu15tU=
 github.com/aws/aws-sdk-go-v2/service/cloudtrail v1.2.1/go.mod h1:GtzMwrY6i7/RXMKBZAMXyXFmZ1UHxtxDeIiUO3lBXRI=
 github.com/aws/aws-sdk-go-v2/service/cloudwatch v1.18.2 h1:UecVUEdx3xe80X+guNwR2hN1d4L4v4qX2SHLYd/4cIk=
@@ -341,8 +341,8 @@ github.com/aws/aws-sdk-go-v2/service/eks v1.2.1 h1:eNSGiZZKcrjT1/UlxOSL/v1gjR5be
 github.com/aws/aws-sdk-go-v2/service/eks v1.2.1/go.mod h1:XGNXr+eBGsXebPMHCHHJEaOWaenvyybnUU+dsdKpDXg=
 github.com/aws/aws-sdk-go-v2/service/elasticache v1.2.1 h1:r2GU9mRLlZtKNQiB8A6LeKMlxG0BK/LXU+86uv3zUos=
 github.com/aws/aws-sdk-go-v2/service/elasticache v1.2.1/go.mod h1:H/CnUlHdpSJ6bi4PTZn7H046nY+OF0O1ItZGpOHbZ1s=
-github.com/aws/aws-sdk-go-v2/service/elasticbeanstalk v1.2.1 h1:ngD2ETQ+bmpE9dXIwpovAKfEqhK0SODf0EQDMY7qkMA=
-github.com/aws/aws-sdk-go-v2/service/elasticbeanstalk v1.2.1/go.mod h1:h2ETsoGWjnQFCsd5aYeg6+sf/HqLo7Qr7OKjSe4Axs4=
+github.com/aws/aws-sdk-go-v2/service/elasticbeanstalk v1.14.9 h1:78ENf49ag/glp/z+6NR2lEoXWsnlHZUK1JLs5eNSm+M=
+github.com/aws/aws-sdk-go-v2/service/elasticbeanstalk v1.14.9/go.mod h1:BY71CNhZ9kzmpcDwKsPzyf1xt5PADO/+4Wmnopgyv6o=
 github.com/aws/aws-sdk-go-v2/service/elasticloadbalancing v1.2.1 h1:jN/we+fXuZeye2ZIPAGCI8xV6MT/JiT1JnpRUgkmG2M=
 github.com/aws/aws-sdk-go-v2/service/elasticloadbalancing v1.2.1/go.mod h1:2J/pAuvfB8TQHdrbVX3t4Udjv6Cd2JohqGnoMZHKhe0=
 github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2 v1.2.1 h1:4fbYf4lBHxmT0r48Ll7+Ls7e68jFdAgGs/JFXYeUiJA=
@@ -415,8 +415,8 @@ github.com/aws/aws-sdk-go-v2/service/sso v1.1.4 h1:Tr/SsFDXWN8rntdzTNrDs/MvuBXRC
 github.com/aws/aws-sdk-go-v2/service/sso v1.1.4/go.mod h1:yQayEbOWH75NaKFylsFocBc3yanYEGndlOaH4i/Lvno=
 github.com/aws/aws-sdk-go-v2/service/sts v1.2.1 h1:1koRvKlZMN+FhTGV5f4q6vRHXNJzeZlPKzbs1/Y32Kg=
 github.com/aws/aws-sdk-go-v2/service/sts v1.2.1/go.mod h1:L1LH5nHMXxdkKj057ZUx7Wi50CCrkZ+9jkTnBnY2j/w=
-github.com/aws/aws-sdk-go-v2/service/swf v1.10.0 h1:vsNJ68nRQOsmI6A9Y6cJJCaMVPWaNmuJxQTV6d5xvXA=
-github.com/aws/aws-sdk-go-v2/service/swf v1.10.0/go.mod h1:GNpBvuopB8fGxwS2mW5O8GZx0Hlu+rDJ53wSCb/TUdk=
+github.com/aws/aws-sdk-go-v2/service/swf v1.13.8 h1:MAx401meNHPqI26uecZhFKc3mn6sBB1fahWf1vDGUQY=
+github.com/aws/aws-sdk-go-v2/service/swf v1.13.8/go.mod h1:yyYUZEHRH1ORAX0m7Si84OpjXX+9h9ZIvYxt9sFY/6w=
 github.com/aws/aws-sdk-go-v2/service/waf v1.1.4 h1:Wh0YMwF394A9eBC8Pv8Uxk6CBx9KTWmoqyflQIBx6DU=
 github.com/aws/aws-sdk-go-v2/service/waf v1.1.4/go.mod h1:Ujifac0yyu5RLw3cPCGua50uHnsjiJo9LAhXEJZ+tVk=
 github.com/aws/aws-sdk-go-v2/service/wafregional v1.12.3 h1:2C2oz4tLCMqsNctS1jxP1HZbVn3NOzEVbNL1eDK61RI=

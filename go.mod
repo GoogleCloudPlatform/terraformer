@@ -40,7 +40,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cloud9 v1.1.3
 	github.com/aws/aws-sdk-go-v2/service/cloudformation v1.3.0
 	github.com/aws/aws-sdk-go-v2/service/cloudfront v1.3.0
-	github.com/aws/aws-sdk-go-v2/service/cloudhsmv2 v1.1.3
+	github.com/aws/aws-sdk-go-v2/service/cloudhsmv2 v1.13.8
 	github.com/aws/aws-sdk-go-v2/service/cloudtrail v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/cloudwatch v1.18.2
 	github.com/aws/aws-sdk-go-v2/service/cloudwatchevents v1.2.0
@@ -63,7 +63,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/efs v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/eks v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/elasticache v1.2.1
-	github.com/aws/aws-sdk-go-v2/service/elasticbeanstalk v1.2.1
+	github.com/aws/aws-sdk-go-v2/service/elasticbeanstalk v1.14.9
 	github.com/aws/aws-sdk-go-v2/service/elasticloadbalancing v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2 v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/elasticsearchservice v1.15.4
@@ -94,7 +94,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.3.0
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.3.0
 	github.com/aws/aws-sdk-go-v2/service/sts v1.2.1
-	github.com/aws/aws-sdk-go-v2/service/swf v1.10.0
+	github.com/aws/aws-sdk-go-v2/service/swf v1.13.8
 	github.com/aws/aws-sdk-go-v2/service/waf v1.1.4
 	github.com/aws/aws-sdk-go-v2/service/wafregional v1.12.3
 	github.com/aws/aws-sdk-go-v2/service/wafv2 v1.18.0
