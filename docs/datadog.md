@@ -57,8 +57,6 @@ List of supported Datadog services:
     * `datadog_monitor`
 *   `role`
     * `datadog_role`
-*   `screenboard`
-    * `datadog_screenboard`
 *   `security_monitoring_default_rule`
     * `datadog_security_monitoring_default_rule`
 *   `security_monitoring_rule`
@@ -72,8 +70,6 @@ List of supported Datadog services:
         * **_NOTE:_** Importing resource requires resource ID's to be passed via [Filter][1] option
 *   `synthetics_private_location`
     * `datadog_synthetics_private_location`
-*   `timeboard`
-    * `datadog_timeboard`
 *   `user`
     * `datadog_user`
 
