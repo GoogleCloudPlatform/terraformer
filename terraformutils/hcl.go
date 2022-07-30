@@ -33,6 +33,8 @@ import (
 
 const safeChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_"
 
+const ResourceNamePrefix = "tfer--"
+
 var unsafeChars = regexp.MustCompile(`[^0-9A-Za-z_\-]`)
 
 // make HCL output reproducible by sorting the AST nodes
@@ -243,12 +245,23 @@ func terraform13Adjustments(formatted []byte) []byte {
 	oldRequiredProviders := "\"required_providers\""
 	newRequiredProviders := "required_providers"
 	lines := strings.Split(s, "\n")
+	var replacedProvider, skipOne bool
 	for i, line := range lines {
 		if requiredProvidersRe.MatchString(line) {
 			parts := strings.Split(strings.TrimSpace(line), " ")
 			provider := strings.ReplaceAll(parts[1], "\"", "")
-			lines[i] = "\t" + newRequiredProviders + " {"
-			lines[i+1] = "\t\t" + provider + " = {\n\t" + lines[i+1] + "\n\t\t}"
+			lines[i] = "  " + newRequiredProviders + " {"
+			lines[i+1] = "    " + provider + " = {\n  " + lines[i+1]
+			replacedProvider = true
+			skipOne = true
+		} else if replacedProvider {
+			if strings.Contains(string(lines[i]), "}") && replacedProvider {
+				lines[i] = "    }\n" + lines[i]
+				replacedProvider = false
+			} else if !skipOne {
+				lines[i] = "  " + lines[i]
+			}
+			skipOne = false
 		}
 		lines[i] = strings.Replace(lines[i], oldRequiredProviders, newRequiredProviders, 1)
 	}
@@ -263,7 +276,7 @@ func escapeRune(s string) string {
 // Sanitize name for terraform style
 func TfSanitize(name string) string {
 	name = unsafeChars.ReplaceAllStringFunc(name, escapeRune)
-	name = "tfer--" + name
+	name = ResourceNamePrefix + name
 	return name
 }
 
