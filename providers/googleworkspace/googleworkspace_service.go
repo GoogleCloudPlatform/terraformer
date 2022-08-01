@@ -34,9 +34,15 @@ func (s *GoogleWorkspaceService) ChromePolicyClient() (*chromepolicy.Service, er
 		return nil, err
 	}
 
+	auth, err := google.JWTConfigFromJSON(credentialJson, chromepolicy.ChromeManagementPolicyScope)
+	if err != nil {
+		return nil, err
+	}
+	auth.Subject = s.Args["impersonated_user_email"].(string)
+
 	client, err := chromepolicy.NewService(
 		context.Background(),
-		option.WithCredentialsJSON(credentialJson))
+		option.WithTokenSource(auth.TokenSource(context.Background())))
 	if err != nil {
 		return nil, err
 	}
@@ -58,9 +64,7 @@ func (s *GoogleWorkspaceService) DirectoryClient() (*directory.Service, error) {
 	}
 	auth.Subject = s.Args["impersonated_user_email"].(string)
 
-	ts := auth.TokenSource(context.Background())
-
-	client, err := directory.NewService(context.Background(), option.WithTokenSource(ts))
+	client, err := directory.NewService(context.Background(), option.WithTokenSource(auth.TokenSource(context.Background())))
 	if err != nil {
 		return nil, err
 	}
@@ -76,4 +80,33 @@ func (s *GoogleWorkspaceService) EnsureStringRandomness(input string) string {
 		b[i] = letterRunes[rand.Intn(len(letterRunes))]
 	}
 	return input + "--" + string(b)
+}
+
+func (s *GoogleWorkspaceService) getAllOrgUnits() ([]*directory.OrgUnit, error) {
+	client, err := s.DirectoryClient()
+	if err != nil {
+		return nil, err
+	}
+
+	var orgUnitList []*directory.OrgUnit
+	rootOrgUnitListResponse, err := client.Orgunits.List(s.orgID).Do()
+	if err != nil {
+		return nil, err
+	}
+
+	orgUnitList = append(orgUnitList, rootOrgUnitListResponse.OrganizationUnits...)
+	orgUnitsCheckedForChildren := 0
+	for {
+		if orgUnitsCheckedForChildren >= len(orgUnitList) {
+			break
+		}
+		ChildOrgUnitListResponse, err := client.Orgunits.List(s.orgID).OrgUnitPath(orgUnitList[orgUnitsCheckedForChildren].OrgUnitPath).Do()
+		if err != nil {
+			return nil, err
+		}
+		orgUnitList = append(orgUnitList, ChildOrgUnitListResponse.OrganizationUnits...)
+		orgUnitsCheckedForChildren++
+	}
+
+	return orgUnitList, nil
 }

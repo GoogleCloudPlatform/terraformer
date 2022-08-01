@@ -10,29 +10,9 @@ type OrgUnitGenerator struct {
 }
 
 func (g *OrgUnitGenerator) InitResources() error {
-	client, err := g.DirectoryClient()
+	orgUnitList, err := g.getAllOrgUnits()
 	if err != nil {
 		return err
-	}
-
-	var orgUnitList []*directory.OrgUnit
-	rootOrgUnitListResponse, err := client.Orgunits.List(g.orgID).Do()
-	if err != nil {
-		return err
-	}
-
-	orgUnitList = append(orgUnitList, rootOrgUnitListResponse.OrganizationUnits...)
-	orgUnitsCheckedForChildren := 0
-	for {
-		if orgUnitsCheckedForChildren >= len(orgUnitList) {
-			break
-		}
-		ChildOrgUnitListResponse, err := client.Orgunits.List(g.orgID).OrgUnitPath(orgUnitList[orgUnitsCheckedForChildren].OrgUnitPath).Do()
-		if err != nil {
-			return err
-		}
-		orgUnitList = append(orgUnitList, ChildOrgUnitListResponse.OrganizationUnits...)
-		orgUnitsCheckedForChildren++
 	}
 
 	g.Resources = g.createResources(orgUnitList)
