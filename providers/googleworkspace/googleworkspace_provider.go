@@ -85,6 +85,7 @@ func (p *GoogleWorkspaceProvider) InitService(serviceName string, verbose bool) 
 
 func (p *GoogleWorkspaceProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"googleworkspace_org_unit": &OrgUnitGenerator{},
+		"googleworkspace_org_unit":      &OrgUnitGenerator{},
+		"googleworkspace_chrome_policy": &ChromePolicyGenerator{},
 	}
 }

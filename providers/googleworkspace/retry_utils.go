@@ -143,6 +143,7 @@ func retryTimeDuration(ctx context.Context, duration time.Duration, retryFunc fu
 			}
 			if isRetryableError(err) {
 				//TODO Make this use exponential backoff
+				log.Println("Pausing for 250ms due to retryable error")
 				time.Sleep(time.Duration(250) * time.Millisecond)
 			}
 		}
