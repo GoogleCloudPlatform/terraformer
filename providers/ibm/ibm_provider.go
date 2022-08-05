@@ -108,6 +108,8 @@ func (p *IBMProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"ibm_vpe_gateway":             &VPEGenerator{},
 		"ibm_satellite_control_plane": &SatelliteControlPlaneGenerator{},
 		"ibm_satellite_data_plane":    &SatelliteDataPlaneGenerator{},
+		"ibm_cloudant":                &CloudantGenerator{},
+
 	}
 }
 
