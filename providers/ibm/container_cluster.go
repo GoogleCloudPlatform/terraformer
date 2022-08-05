@@ -77,7 +77,7 @@ func (g ContainerClusterGenerator) loadWorkerPoolZones(clustersID, poolID, zoneI
 	return resources
 }
 
-func (g ContainerClusterGenerator) loadNlbDns(clusterID string, nlbIPs []interface{}) terraformutils.Resource {
+func (g ContainerClusterGenerator) loadNlbDNS(clusterID string, nlbIPs []interface{}) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		clusterID,
 		normalizeResourceName(clusterID, true),
@@ -144,7 +144,7 @@ func (g *ContainerClusterGenerator) InitResources() error {
 		}
 
 		for _, data := range nlbData {
-			g.Resources = append(g.Resources, g.loadNlbDns(data.Nlb.Cluster, data.Nlb.NlbIPArray))
+			g.Resources = append(g.Resources, g.loadNlbDNS(data.Nlb.Cluster, data.Nlb.NlbIPArray))
 		}
 	}
 	return nil

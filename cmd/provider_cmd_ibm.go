@@ -25,14 +25,13 @@ func newCmdIbmImporter(options ImportOptions) *cobra.Command {
 	var region string
 	var cis string
 	var vpc string
-	var cluster string
 	cmd := &cobra.Command{
 		Use:   "ibm",
 		Short: "Import current state to Terraform configuration from ibm",
 		Long:  "Import current state to Terraform configuration from ibm",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			provider := newIbmProvider()
-			err := Import(provider, options, []string{resourceGroup, region, cis, vpc, cluster})
+			err := Import(provider, options, []string{resourceGroup, region, cis, vpc})
 			if err != nil {
 				return err
 			}
@@ -46,7 +45,6 @@ func newCmdIbmImporter(options ImportOptions) *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&region, "region", "R", "", "region=us-south")
 	cmd.PersistentFlags().StringVarP(&cis, "cis", "", "", "cis=TestCIS")
 	cmd.PersistentFlags().StringVarP(&vpc, "vpc", "", "", "vpc=vpc01")
-	cmd.PersistentFlags().StringVarP(&cluster, "cluster", "", "", "cluster=testing")
 	return cmd
 }
 
