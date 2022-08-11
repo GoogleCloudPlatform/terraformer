@@ -37,6 +37,8 @@ cloud.google.com/go/bigquery v1.4.0/go.mod h1:S8dzgnTigyfTmLBfrtrhyYhwRxG72rYxvf
 cloud.google.com/go/bigquery v1.5.0/go.mod h1:snEHRnqQbz117VIFhE8bmtwIDY80NLUZUMb4Nv6dBIg=
 cloud.google.com/go/bigquery v1.7.0/go.mod h1://okPTzCYNXSlb24MZs83e2Do+h+VXtc4gLoIoXIAPc=
 cloud.google.com/go/bigquery v1.8.0/go.mod h1:J5hqkt3O0uAFnINi6JXValWIb1v0goeZM77hZzJN/fQ=
+cloud.google.com/go/cloudbuild v1.2.0 h1:QcHyULrphpqR992Ijv1M2rcp9451aV/ffHuqlfha6Cc=
+cloud.google.com/go/cloudbuild v1.2.0/go.mod h1:RraRjYXsYxOVnaZuOETdc3boabBTy2CBgPB9lerYsL4=
 cloud.google.com/go/cloudtasks v1.3.0 h1:FKRMPbCt3gzbhTG3tg1teiS2XssAJXaHFbfxH7SPY/8=
 cloud.google.com/go/cloudtasks v1.3.0/go.mod h1:ad5eT/0rBtD752/jsZUPqgT2u3YagyVd5KAmGLrFhjk=
 cloud.google.com/go/compute v0.1.0/go.mod h1:GAesmwr110a34z04OlxYkATPBEfVhkymfTBXtfbBFow=
