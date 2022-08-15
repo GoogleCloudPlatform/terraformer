@@ -21,7 +21,7 @@ require (
 	github.com/IBM/vpc-go-sdk v0.4.1
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
 	github.com/OctopusDeploy/go-octopusdeploy v1.6.0
-	github.com/PaloAltoNetworks/pango v0.6.0
+	github.com/PaloAltoNetworks/pango v0.8.0
 	github.com/SAP/go-hdb v0.105.2 // indirect
 	github.com/SermoDigital/jose v0.9.1 // indirect
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1247
@@ -344,6 +344,7 @@ require (
 require github.com/PuerkitoBio/rehttp v1.0.0 // indirect
 
 require (
+	cloud.google.com/go/cloudbuild v1.2.0
 	cloud.google.com/go/cloudtasks v1.3.0
 	cloud.google.com/go/iam v0.3.0
 	cloud.google.com/go/monitoring v1.4.0
@@ -351,7 +352,6 @@ require (
 )
 
 require (
-	cloud.google.com/go/cloudbuild v1.2.0 // indirect
 	cloud.google.com/go/compute v1.3.0 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
