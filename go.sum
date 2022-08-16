@@ -165,8 +165,8 @@ github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5/go.mod h1:lmUJ/7eu/Q8
 github.com/OctopusDeploy/go-octopusdeploy v1.6.0 h1:r9ThVuANGkzm3noAjLF/i7LUcxQxbCJwpvn1DLwPoOA=
 github.com/OctopusDeploy/go-octopusdeploy v1.6.0/go.mod h1:maPbD8azyb2mcNN6E4SGrwiLN7XmDSML5ui+mcWR/R0=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
-github.com/PaloAltoNetworks/pango v0.6.0 h1:QKe17XsICz2P1S6sKpaH1w8zr/4Q3jYsYVq7bQTjfv8=
-github.com/PaloAltoNetworks/pango v0.6.0/go.mod h1:xpwEKL6CHhniRcqKYTjIiGBzPd3QIyto3sz2ynsP1qg=
+github.com/PaloAltoNetworks/pango v0.8.0 h1:ABzKykGkKZSzsAMW3n2SQ3rwK+dXKDZQbQSSyDBuXmU=
+github.com/PaloAltoNetworks/pango v0.8.0/go.mod h1:xpwEKL6CHhniRcqKYTjIiGBzPd3QIyto3sz2ynsP1qg=
 github.com/PuerkitoBio/purell v1.1.1 h1:WEQqlqaGbrPkxLJWfBwQmfEAE1Z7ONdDLqrN38tNFfI=
 github.com/PuerkitoBio/purell v1.1.1/go.mod h1:c11w/QuzBsJSee3cPx9rAFu61PvFxuPbtSwDGJws/X0=
 github.com/PuerkitoBio/rehttp v1.0.0 h1:aJ7A7YI2lIvOxcJVeUZY4P6R7kKZtLeONjgyKGwOIu8=
