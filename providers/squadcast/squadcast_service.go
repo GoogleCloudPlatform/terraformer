@@ -1,8 +1,10 @@
 package squadcast
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -13,24 +15,26 @@ type SquadcastService struct {
 }
 
 func (s *SquadcastService) generateRequest(uri string) ([]byte, error) {
-	tr := &http.Transport{}
-	client := &http.Client{Transport: tr}
-	req, err := http.NewRequest("GET", uri, nil)
+
+	ctx := context.Background()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, uri, nil)
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
-	// req.Header.Set("Authorization", "Bearer "+s.Args["access_token"].(string))
+
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.Args["access_token"]))
+	req.Header.Set("User-Agent", UserAgent)
 
-	resp, err := client.Do(req)
-
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, err
+		log.Fatal(err)
 	}
 	defer resp.Body.Close()
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
+
 	return body, nil
 }

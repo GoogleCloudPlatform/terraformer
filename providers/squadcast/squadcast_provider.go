@@ -1,7 +1,12 @@
 package squadcast
 
 import (
+	"context"
+	"encoding/json"
 	"errors"
+	"io"
+	"log"
+	"net/http"
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -13,14 +18,38 @@ type SquadcastProvider struct {
 	refreshtoken string
 }
 
-func (p *SquadcastProvider) Init(args []string) error {
+type AccessToken struct {
+	Type         string `json:"type"`
+	AccessToken  string `json:"access_token"`
+	IssuedAt     int64  `json:"issued_at"`
+	ExpiresAt    int64  `json:"expires_at"`
+	RefreshToken string `json:"refresh_token"`
+}
 
-	if accessToken := os.Getenv("SQUADCAST_ACCESS_TOKEN"); accessToken != "" {
-		p.accesstoken = os.Getenv("SQUADCAST_ACCESS_TOKEN")
-	}
-	if p.accesstoken == "" {
-		return errors.New("requred Access Token missing")
-	}
+// Meta holds the status of the request informations
+type Meta struct {
+	Meta AppError `json:"meta,omitempty"`
+}
+
+type AppError struct {
+	Status       int           `json:"status"`
+	Message      string        `json:"error_message,omitempty"`
+	ConflictData *any          `json:"conflict_data,omitempty"`
+	ErrorDetails *ErrorDetails `json:"error_details,omitempty"`
+}
+
+type ErrorDetails struct {
+	Code        string `json:"code"`
+	Description string `json:"description,omitempty"`
+	Link        string `json:"link,omitempty"`
+	Errors      any    `json:"errors,omitempty"`
+}
+
+const (
+	UserAgent = "terraform-provider-squadcast"
+)
+
+func (p *SquadcastProvider) Init(args []string) error {
 
 	if refreshToken := os.Getenv("SQUADCAST_REFRESH_TOKEN"); refreshToken != "" {
 		p.refreshtoken = os.Getenv("SQUADCAST_REFRESH_TOKEN")
@@ -29,6 +58,7 @@ func (p *SquadcastProvider) Init(args []string) error {
 		return errors.New("requred refresh Token missing")
 	}
 
+	p.GetAccessToken()
 	return nil
 }
 
@@ -65,4 +95,40 @@ func (p *SquadcastProvider) GetSupportedService() map[string]terraformutils.Serv
 	return map[string]terraformutils.ServiceGenerator{
 		"user": &UserGenerator{},
 	}
+}
+
+func (p *SquadcastProvider) GetAccessToken() {
+	ctx := context.Background()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://auth.squadcast.com/oauth/access-token", nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	req.Header.Set("X-Refresh-Token", p.refreshtoken)
+	req.Header.Set("User-Agent", UserAgent)
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var response struct {
+		Data AccessToken `json:"data"`
+		*Meta
+	}
+
+	defer resp.Body.Close()
+	bytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err := json.Unmarshal(bytes, &response); err != nil {
+		log.Fatal(err)
+	}
+
+	if resp.StatusCode > 299 {
+		log.Fatal(err)
+	}
+
+	p.accesstoken = response.Data.AccessToken
 }
