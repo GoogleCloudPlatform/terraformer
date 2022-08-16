@@ -32,17 +32,8 @@ type Meta struct {
 }
 
 type AppError struct {
-	Status       int           `json:"status"`
-	Message      string        `json:"error_message,omitempty"`
-	ConflictData *any          `json:"conflict_data,omitempty"`
-	ErrorDetails *ErrorDetails `json:"error_details,omitempty"`
-}
-
-type ErrorDetails struct {
-	Code        string `json:"code"`
-	Description string `json:"description,omitempty"`
-	Link        string `json:"link,omitempty"`
-	Errors      any    `json:"errors,omitempty"`
+	Status  int    `json:"status"`
+	Message string `json:"error_message,omitempty"`
 }
 
 const (
