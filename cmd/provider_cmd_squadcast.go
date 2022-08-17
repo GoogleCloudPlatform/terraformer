@@ -14,8 +14,10 @@ const (
 )
 
 func newCmdSquadcastImporter(options ImportOptions) *cobra.Command {
-	var accessToken string
-	// accessToken := ""
+	var refreshToken string
+	var region string
+	var teamName string
+
 	cmd := &cobra.Command{
 		Use:   "squadcast",
 		Short: "Import current state to Terraform configuration from SquadCast",
@@ -26,7 +28,7 @@ func newCmdSquadcastImporter(options ImportOptions) *cobra.Command {
 				endpoint = defaultSquadcastEndpoint
 			}
 			provider := newSquadcastProvider()
-			err := Import(provider, options, []string{accessToken})
+			err := Import(provider, options, []string{refreshToken, region, teamName})
 			if err != nil {
 				return err
 			}
@@ -35,7 +37,9 @@ func newCmdSquadcastImporter(options ImportOptions) *cobra.Command {
 	}
 	cmd.AddCommand(listCmd(newSquadcastProvider()))
 	baseProviderFlags(cmd.PersistentFlags(), &options, "user", "")
-	cmd.PersistentFlags().StringVarP(&accessToken, "access-token", "", "", "YOUR_SQUADCAST_ACCESS_TOKEN or env param SQUADCAST_ACCESS_TOKEN")
+	cmd.PersistentFlags().StringVarP(&refreshToken, "refresh-token", "", "", "YOUR_SQUADCAST_REFRESH_TOKEN or env param SQUADCAST_REFRESH_TOKEN")
+	cmd.PersistentFlags().StringVarP(&region, "region", "", "", "")
+	cmd.PersistentFlags().StringVarP(&teamName, "team-name", "", "", "")
 	return cmd
 }
 

@@ -2,7 +2,8 @@ package squadcast
 
 import (
 	"encoding/json"
-
+	"errors"
+	"fmt"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -20,9 +21,7 @@ var response struct {
 
 type Users []User
 
-var UserAllowEmptyValues = []string{}
-
-func (g UserGenerator) createResources(users Users) []terraformutils.Resource {
+func (g *UserGenerator) createResources(users Users) []terraformutils.Resource {
 	var resources []terraformutils.Resource
 	for _, user := range users {
 		resources = append(resources, terraformutils.NewSimpleResource(
@@ -37,8 +36,24 @@ func (g UserGenerator) createResources(users Users) []terraformutils.Resource {
 }
 
 func (g *UserGenerator) InitResources() error {
-	// body, err := g.generateRequest("https://api.squadcast.com/v3/organizations/5a4262733c36823b3ed91fb9/users")
-	body, err := g.generateRequest("https://api.squadcast.com/v3/users")
+
+	var host string
+	switch g.Args["region"] {
+	case "us":
+		host = "squadcast.com"
+	case "eu":
+		host = "eu.squadcast.com"
+	case "internal":
+		host = "squadcast.xyz"
+	case "staging":
+		host = "squadcast.tech"
+	case "dev":
+		host = "localhost"
+	default:
+		return errors.New("unknown region")
+	}
+
+	body, err := g.generateRequest(fmt.Sprintf("https://api.%s/v3/users", host))
 	if err != nil {
 		return err
 	}

@@ -3,6 +3,7 @@ package squadcast
 import (
 	"context"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -29,7 +30,12 @@ func (s *SquadcastService) generateRequest(uri string) ([]byte, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(resp.Body)
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {

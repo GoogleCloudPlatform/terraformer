@@ -16,6 +16,8 @@ type SquadcastProvider struct {
 	terraformutils.Provider
 	accesstoken  string
 	refreshtoken string
+	region       string
+	teamName     string
 }
 
 type AccessToken struct {
@@ -45,8 +47,20 @@ func (p *SquadcastProvider) Init(args []string) error {
 	if refreshToken := os.Getenv("SQUADCAST_REFRESH_TOKEN"); refreshToken != "" {
 		p.refreshtoken = os.Getenv("SQUADCAST_REFRESH_TOKEN")
 	}
+	if args[0] != "" {
+		p.refreshtoken = args[0]
+	}
 	if p.refreshtoken == "" {
-		return errors.New("requred refresh Token missing")
+		return errors.New("required refresh Token missing")
+	}
+
+	if args[1] == "" {
+		return errors.New("required region missing")
+	}
+	p.region = args[1]
+
+	if args[2] != "" {
+		p.teamName = args[2]
 	}
 
 	p.GetAccessToken()
@@ -65,12 +79,14 @@ func (p *SquadcastProvider) InitService(serviceName string, verbose bool) error 
 	p.Service.SetArgs(map[string]interface{}{
 		"access_token":  p.accesstoken,
 		"refresh_token": p.refreshtoken,
+		"region":        p.region,
+		"team_name":     p.teamName,
 	})
 
 	return nil
 }
 
-func (p *SquadcastProvider) GetProviderData(arg ...string) map[string]interface{} {
+func (p *SquadcastProvider) GetProviderData(...string) map[string]interface{} {
 	return map[string]interface{}{}
 }
 
@@ -84,7 +100,8 @@ func (p *SquadcastProvider) GetName() string {
 
 func (p *SquadcastProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"user": &UserGenerator{},
+		"user":    &UserGenerator{},
+		"service": &ServiceGenerator{},
 	}
 }
 
@@ -107,7 +124,13 @@ func (p *SquadcastProvider) GetAccessToken() {
 		*Meta
 	}
 
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(resp.Body)
+
 	bytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatal(err)
