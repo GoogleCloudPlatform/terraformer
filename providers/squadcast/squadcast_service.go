@@ -2,6 +2,7 @@ package squadcast
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -16,9 +17,24 @@ type SquadcastService struct {
 }
 
 func (s *SquadcastService) generateRequest(uri string) ([]byte, error) {
+	var host string
+	switch s.Args["region"] {
+	case "us":
+		host = "squadcast.com"
+	case "eu":
+		host = "eu.squadcast.com"
+	case "internal":
+		host = "squadcast.xyz"
+	case "staging":
+		host = "squadcast.tech"
+	case "dev":
+		host = "localhost"
+	default:
+		return nil, errors.New("unknown region")
+	}
 
 	ctx := context.Background()
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, uri, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("https://api.%s%s",host,uri), nil)
 	if err != nil {
 		log.Fatal(err)
 	}
