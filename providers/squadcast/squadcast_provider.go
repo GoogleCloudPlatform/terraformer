@@ -102,6 +102,7 @@ func (p *SquadcastProvider) GetSupportedService() map[string]terraformutils.Serv
 	return map[string]terraformutils.ServiceGenerator{
 		"user":    &UserGenerator{},
 		"service": &ServiceGenerator{},
+		"team":    &TeamGenerator{},
 	}
 }
 
