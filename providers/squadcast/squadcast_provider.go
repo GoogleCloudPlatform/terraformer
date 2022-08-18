@@ -55,10 +55,17 @@ func (p *SquadcastProvider) Init(args []string) error {
 		return errors.New("required refresh Token missing")
 	}
 
-	if args[1] == "" {
+	if region := os.Getenv("SQUADCAST_REGION"); region != "" {
+		p.region = os.Getenv("SQUADCAST_REGION")
+	}
+	if p.region == "" {
 		return errors.New("required region missing")
 	}
-	p.region = args[1]
+
+	// if args[1] == "" {
+	// 	return errors.New("required region missing")
+	// }
+	// p.region = args[1]
 
 	if args[2] != "" {
 		p.teamName = args[2]
