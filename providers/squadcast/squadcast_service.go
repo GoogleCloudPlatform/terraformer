@@ -2,7 +2,6 @@ package squadcast
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -16,25 +15,30 @@ type SquadcastService struct {
 	terraformutils.Service
 }
 
-func (s *SquadcastService) generateRequest(uri string) ([]byte, error) {
-	var host string
-	switch s.Args["region"] {
+func GetHost(region string) string {
+	switch region {
 	case "us":
-		host = "squadcast.com"
+		return "squadcast.com"
 	case "eu":
-		host = "eu.squadcast.com"
+		return "eu.squadcast.com"
 	case "internal":
-		host = "squadcast.xyz"
+		return "squadcast.xyz"
 	case "staging":
-		host = "squadcast.tech"
+		return "squadcast.tech"
 	case "dev":
-		host = "localhost"
+		return "localhost"
 	default:
-		return nil, errors.New("unknown region")
+		return ""
 	}
+}
 
+func (s *SquadcastService) generateRequest(uri string) ([]byte, error) {
+	host := GetHost(s.Args["region"].(string))
+	if host == "" {
+		log.Fatal("unknown region")
+	}
 	ctx := context.Background()
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("https://api.%s%s",host,uri), nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("https://api.%s%s", host, uri), nil)
 	if err != nil {
 		log.Fatal(err)
 	}

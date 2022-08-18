@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -100,15 +101,18 @@ func (p *SquadcastProvider) GetName() string {
 
 func (p *SquadcastProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"user":    &UserGenerator{},
-		"service": &ServiceGenerator{},
-		"team":    &TeamGenerator{},
+		"user":        &UserGenerator{},
+		"service":     &ServiceGenerator{},
+		"team":        &TeamGenerator{},
+		"team_member": &TeamMemberGenerator{},
 	}
 }
 
 func (p *SquadcastProvider) GetAccessToken() {
+	host := GetHost(p.region)
 	ctx := context.Background()
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://auth.squadcast.com/oauth/access-token", nil)
+	//req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://auth.squadcast.com/oauth/access-token", nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("https://auth.%s/oauth/access-token", host), nil)
 	if err != nil {
 		log.Fatal(err)
 	}

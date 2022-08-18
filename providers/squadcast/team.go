@@ -10,11 +10,27 @@ type TeamGenerator struct {
 }
 
 type Team struct {
-	ID   string `json:"id" tf:"id"`
-	Name string `json:"name" tf:"name"`
+	ID          string            `json:"id" tf:"id"`
+	Name        string            `json:"name" tf:"name"`
+	Description string            `json:"description" tf:"description"`
+	Default     bool              `json:"default" tf:"default"`
+	Members     []*DataTeamMember `json:"members" tf:"-"`
+	Roles       []*TeamRole       `json:"roles" tf:"-"`
 }
 
-var responseTeam struct {
+type DataTeamMember struct {
+	UserID  string   `json:"user_id" tf:"user_id"`
+	RoleIDs []string `json:"role_ids" tf:"role_ids"`
+}
+
+type TeamRole struct {
+	ID      string `json:"id" tf:"id"`
+	Name    string `json:"name" tf:"name"`
+	Slug    string `json:"slug" tf:"-"`
+	Default bool   `json:"default" tf:"default"`
+}
+
+var responseTeams struct {
 	Data *[]Team `json:"data"`
 }
 
@@ -25,7 +41,7 @@ func (g *TeamGenerator) createResources(teams Teams) []terraformutils.Resource {
 	for _, team := range teams {
 		teamList = append(teamList, terraformutils.NewSimpleResource(
 			team.ID,
-			(team.Name),
+			team.Name,
 			"squadcast_team",
 			"squadcast",
 			[]string{},
@@ -40,12 +56,12 @@ func (g *TeamGenerator) InitResources() error {
 		return err
 	}
 
-	err = json.Unmarshal(body, &responseTeam)
+	err = json.Unmarshal(body, &responseTeams)
 	if err != nil {
 		return err
 	}
 
-	g.Resources = g.createResources(*responseTeam.Data)
+	g.Resources = g.createResources(*responseTeams.Data)
 
 	return nil
 }
