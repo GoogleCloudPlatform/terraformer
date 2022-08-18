@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/zclconf/go-cty/cty"
 	"io"
 	"log"
 	"net/http"
@@ -58,14 +59,10 @@ func (p *SquadcastProvider) Init(args []string) error {
 	if region := os.Getenv("SQUADCAST_REGION"); region != "" {
 		p.region = os.Getenv("SQUADCAST_REGION")
 	}
-	if p.region == "" {
+	if args[1] == "" {
 		return errors.New("required region missing")
 	}
-
-	// if args[1] == "" {
-	// 	return errors.New("required region missing")
-	// }
-	// p.region = args[1]
+	p.region = args[1]
 
 	if args[2] != "" {
 		p.teamName = args[2]
@@ -90,12 +87,23 @@ func (p *SquadcastProvider) InitService(serviceName string, verbose bool) error 
 		"region":        p.region,
 		"team_name":     p.teamName,
 	})
-
 	return nil
 }
 
+func (p *SquadcastProvider) GetConfig() cty.Value {
+	return cty.ObjectVal(map[string]cty.Value{
+		"region": cty.StringVal(p.region),
+	})
+}
+
 func (p *SquadcastProvider) GetProviderData(...string) map[string]interface{} {
-	return map[string]interface{}{}
+	return map[string]interface{}{
+		"provider": map[string]interface{}{
+			"squadcast": map[string]interface{}{
+				"region": p.region,
+			},
+		},
+	}
 }
 
 func (p *SquadcastProvider) GetResourceConnections() map[string]map[string][]string {

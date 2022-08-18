@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"log"
 	"os"
 
 	squadcast_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/squadcast"
@@ -15,7 +16,6 @@ const (
 
 func newCmdSquadcastImporter(options ImportOptions) *cobra.Command {
 	var refreshToken string
-	var region string
 	var teamName string
 
 	cmd := &cobra.Command{
@@ -27,10 +27,17 @@ func newCmdSquadcastImporter(options ImportOptions) *cobra.Command {
 			if len(endpoint) == 0 {
 				endpoint = defaultSquadcastEndpoint
 			}
-			provider := newSquadcastProvider()
-			err := Import(provider, options, []string{refreshToken, region, teamName})
-			if err != nil {
-				return err
+
+			originalPathPattern := options.PathPattern
+			for _, region := range options.Regions {
+				provider := newSquadcastProvider()
+				options.PathPattern = originalPathPattern
+				options.PathPattern += region + "/"
+				log.Println(provider.GetName() + " importing region " + region)
+				err := Import(provider, options, []string{refreshToken, region, teamName})
+				if err != nil {
+					return err
+				}
 			}
 			return nil
 		},
@@ -38,7 +45,7 @@ func newCmdSquadcastImporter(options ImportOptions) *cobra.Command {
 	cmd.AddCommand(listCmd(newSquadcastProvider()))
 	baseProviderFlags(cmd.PersistentFlags(), &options, "user", "")
 	cmd.PersistentFlags().StringVarP(&refreshToken, "refresh-token", "", "", "YOUR_SQUADCAST_REFRESH_TOKEN or env param SQUADCAST_REFRESH_TOKEN")
-	cmd.PersistentFlags().StringVarP(&region, "region", "", "", "")
+	cmd.PersistentFlags().StringSliceVarP(&options.Regions, "region", "", []string{}, "")
 	cmd.PersistentFlags().StringVarP(&teamName, "team-name", "", "", "")
 	return cmd
 }
