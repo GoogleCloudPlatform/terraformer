@@ -2,6 +2,7 @@ package squadcast
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"net/url"
@@ -36,6 +37,9 @@ func (g *TeamMemberGenerator) createResources(team Team) []terraformutils.Resour
 }
 
 func (g *TeamMemberGenerator) InitResources() error {
+	if len(g.Args["team_name"].(string)) == 0 {
+		return errors.New("--team-name is required")
+	}
 	body, err := g.generateRequest(fmt.Sprintf("/v3/teams/by-name?name=%s", url.QueryEscape(g.Args["team_name"].(string))))
 	if err != nil {
 		return err
