@@ -2,6 +2,7 @@ package squadcast
 
 import (
 	"encoding/json"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -23,7 +24,7 @@ type DataTeamMember struct {
 	RoleIDs []string `json:"role_ids" tf:"role_ids"`
 }
 
-var responseTeams struct {
+var getTeamsResponse struct {
 	Data *[]Team `json:"data"`
 }
 
@@ -44,17 +45,18 @@ func (g *TeamGenerator) createResources(teams Teams) []terraformutils.Resource {
 }
 
 func (g *TeamGenerator) InitResources() error {
-	body, err := g.generateRequest("/v3/teams")
+	getTeamsURL := "/v3/teams"
+	body, err := g.generateRequest(getTeamsURL)
 	if err != nil {
 		return err
 	}
 
-	err = json.Unmarshal(body, &responseTeams)
+	err = json.Unmarshal(body, &getTeamsResponse)
 	if err != nil {
 		return err
 	}
 
-	g.Resources = g.createResources(*responseTeams.Data)
+	g.Resources = g.createResources(*getTeamsResponse.Data)
 
 	return nil
 }

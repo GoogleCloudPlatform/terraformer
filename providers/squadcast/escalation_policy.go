@@ -4,17 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"net/url"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type EscalationPolicyGenerator struct {
 	SquadcastService
 	teamID string
-}
-
-var responseEscalationPolicy struct {
-	Data *[]EscalationPolicy `json:"data"`
 }
 
 type EscalationPolicy struct {
@@ -23,6 +20,10 @@ type EscalationPolicy struct {
 }
 
 type EscalationPolicies []EscalationPolicy
+
+var getEscalationPolicyResponse struct {
+	Data *[]EscalationPolicy `json:"data"`
+}
 
 func (g *EscalationPolicyGenerator) createResources(policies EscalationPolicies) []terraformutils.Resource {
 	var resourceList []terraformutils.Resource
@@ -44,29 +45,38 @@ func (g *EscalationPolicyGenerator) createResources(policies EscalationPolicies)
 }
 
 func (g *EscalationPolicyGenerator) InitResources() error {
-	if len(g.Args["team_name"].(string)) == 0 {
+	teamName := g.Args["team_name"].(string)
+	if len(teamName) == 0 {
 		return errors.New("--team-name is required")
 	}
-	team, err := g.generateRequest(fmt.Sprintf("/v3/teams/by-name?name=%s", url.QueryEscape(g.Args["team_name"].(string))))
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(team, &ResponseTeam)
-	if err != nil {
-		return err
-	}
-	g.teamID = ResponseTeam.Data.ID
 
-	body, err := g.generateRequest(fmt.Sprintf("/v3/escalation-policies?owner_id=%s", g.teamID))
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(body, &responseEscalationPolicy)
+	escapedTeamName := url.QueryEscape(teamName)
+	getTeamURL := fmt.Sprintf("/v3/teams/by-name?name=%s", escapedTeamName)
+
+	team, err := g.generateRequest(getTeamURL)
 	if err != nil {
 		return err
 	}
 
-	g.Resources = g.createResources(*responseEscalationPolicy.Data)
+	err = json.Unmarshal(team, &getTeamResponse)
+	if err != nil {
+		return err
+	}
+
+	g.teamID = getTeamResponse.Data.ID
+
+	getEscalationPolicyURL := fmt.Sprintf("/v3/escalation-policies?owner_id=%s", g.teamID)
+	body, err := g.generateRequest(getEscalationPolicyURL)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(body, &getEscalationPolicyResponse)
+	if err != nil {
+		return err
+	}
+
+	g.Resources = g.createResources(*getEscalationPolicyResponse.Data)
 
 	return nil
 }

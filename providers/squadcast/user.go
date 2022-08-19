@@ -14,7 +14,7 @@ type User struct {
 	ID string `json:"id" tf:"id"`
 }
 
-var response struct {
+var getUsersResponse struct {
 	Data *[]User `json:"data"`
 }
 
@@ -35,16 +35,17 @@ func (g *UserGenerator) createResources(users Users) []terraformutils.Resource {
 }
 
 func (g *UserGenerator) InitResources() error {
-	body, err := g.generateRequest("/v3/users")
+	getUsersURL := "/v3/users"
+	body, err := g.generateRequest(getUsersURL)
 	if err != nil {
 		return err
 	}
 
-	err = json.Unmarshal(body, &response)
+	err = json.Unmarshal(body, &getUsersResponse)
 	if err != nil {
 		return err
 	}
 
-	g.Resources = g.createResources(*response.Data)
+	g.Resources = g.createResources(*getUsersResponse.Data)
 	return nil
 }

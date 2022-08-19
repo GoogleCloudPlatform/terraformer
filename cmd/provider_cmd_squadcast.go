@@ -27,7 +27,6 @@ func newCmdSquadcastImporter(options ImportOptions) *cobra.Command {
 			if len(endpoint) == 0 {
 				endpoint = defaultSquadcastEndpoint
 			}
-
 			originalPathPattern := options.PathPattern
 			for _, region := range options.Regions {
 				provider := newSquadcastProvider()

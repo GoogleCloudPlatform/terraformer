@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/zclconf/go-cty/cty"
 	"io"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/zclconf/go-cty/cty"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -30,7 +31,7 @@ type AccessToken struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-// Meta holds the status of the request informations
+// Meta holds the status of the request information
 type Meta struct {
 	Meta AppError `json:"meta,omitempty"`
 }
@@ -119,6 +120,7 @@ func (p *SquadcastProvider) GetSupportedService() map[string]terraformutils.Serv
 	return map[string]terraformutils.ServiceGenerator{
 		"user":              &UserGenerator{},
 		"service":           &ServiceGenerator{},
+		"squad":             &SquadGenerator{},
 		"team":              &TeamGenerator{},
 		"team_member":       &TeamMemberGenerator{},
 		"team_roles":        &TeamRolesGenerator{},
@@ -129,11 +131,12 @@ func (p *SquadcastProvider) GetSupportedService() map[string]terraformutils.Serv
 func (p *SquadcastProvider) GetAccessToken() {
 	host := GetHost(p.region)
 	ctx := context.Background()
-	//req, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://auth.squadcast.com/oauth/access-token", nil)
+
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("https://auth.%s/oauth/access-token", host), nil)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	req.Header.Set("X-Refresh-Token", p.refreshtoken)
 	req.Header.Set("User-Agent", UserAgent)
 

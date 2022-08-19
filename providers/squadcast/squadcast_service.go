@@ -43,7 +43,9 @@ func (s *SquadcastService) generateRequest(uri string) ([]byte, error) {
 		log.Fatal(err)
 	}
 
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.Args["access_token"]))
+	AccessToken := fmt.Sprintf("Bearer %s", s.Args["access_token"])
+
+	req.Header.Set("Authorization", AccessToken)
 	req.Header.Set("User-Agent", UserAgent)
 
 	resp, err := http.DefaultClient.Do(req)

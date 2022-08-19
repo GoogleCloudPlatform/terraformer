@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"net/url"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type TeamRolesGenerator struct {
@@ -22,7 +23,7 @@ type TeamRole struct {
 
 type TeamRoles []TeamRole
 
-var responseTeamRoles struct {
+var getTeamRolesResponse struct {
 	Data *[]TeamRole `json:"data"`
 }
 
@@ -46,28 +47,37 @@ func (g *TeamRolesGenerator) createResources(teamRoles TeamRoles) []terraformuti
 }
 
 func (g *TeamRolesGenerator) InitResources() error {
-	if len(g.Args["team_name"].(string)) == 0 {
+	teamName := g.Args["team_name"].(string)
+	if(teamName == "") {
 		return errors.New("--team-name is required")
 	}
-	team, err := g.generateRequest(fmt.Sprintf("/v3/teams/by-name?name=%s", url.QueryEscape(g.Args["team_name"].(string))))
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(team, &ResponseTeam)
-	if err != nil {
-		return err
-	}
-	g.teamID = ResponseTeam.Data.ID
+	
+	escapedTeamName := url.QueryEscape(teamName)
+	getTeamURL := fmt.Sprintf("/v3/teams/by-name?name=%s",escapedTeamName)
 
-	body, err := g.generateRequest(fmt.Sprintf("/v3/teams/%s/roles", g.teamID))
+	team, err := g.generateRequest(getTeamURL)
 	if err != nil {
 		return err
 	}
-	err = json.Unmarshal(body, &responseTeamRoles)
+	
+	err = json.Unmarshal(team, &getTeamResponse)
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(*responseTeamRoles.Data)
+
+	g.teamID = getTeamResponse.Data.ID
+	getTeamRolesURL := fmt.Sprintf("/v3/teams/%s/roles", g.teamID)
+
+	body, err := g.generateRequest(getTeamRolesURL)
+	if err != nil {
+		return err
+	}
+	
+	err = json.Unmarshal(body, &getTeamRolesResponse)
+	if err != nil {
+		return err
+	}
+	g.Resources = g.createResources(*getTeamRolesResponse.Data)
 
 	return nil
 }

@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"net/url"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type TeamMemberGenerator struct {
@@ -13,7 +14,7 @@ type TeamMemberGenerator struct {
 	teamID string
 }
 
-var ResponseTeam struct {
+var getTeamResponse struct {
 	Data *Team `json:"data"`
 }
 
@@ -37,20 +38,25 @@ func (g *TeamMemberGenerator) createResources(team Team) []terraformutils.Resour
 }
 
 func (g *TeamMemberGenerator) InitResources() error {
-	if len(g.Args["team_name"].(string)) == 0 {
+	teamName := g.Args["team_name"].(string)
+	if len(teamName) == 0 {
 		return errors.New("--team-name is required")
 	}
-	body, err := g.generateRequest(fmt.Sprintf("/v3/teams/by-name?name=%s", url.QueryEscape(g.Args["team_name"].(string))))
+
+	escapedTeamName := url.QueryEscape(teamName)
+	getTeamURL := fmt.Sprintf("/v3/teams/by-name?name=%s", escapedTeamName)
+	
+	body, err := g.generateRequest(getTeamURL)
 	if err != nil {
 		return err
 	}
 
-	err = json.Unmarshal(body, &ResponseTeam)
+	err = json.Unmarshal(body, &getTeamResponse)
 	if err != nil {
 		return err
 	}
 
-	g.Resources = g.createResources(*ResponseTeam.Data)
+	g.Resources = g.createResources(*getTeamResponse.Data)
 
 	return nil
 }

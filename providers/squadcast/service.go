@@ -6,8 +6,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"net/url"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type ServiceGenerator struct {
@@ -20,11 +21,11 @@ type Service struct {
 	Name string `json:"name" tf:"name"`
 }
 
-var responseService struct {
+type Services []Service
+
+var getServicesResponse struct {
 	Data *[]Service `json:"data"`
 }
-
-type Services []Service
 
 func (g *ServiceGenerator) createResources(services Services) []terraformutils.Resource {
 	var serviceList []terraformutils.Resource
@@ -45,28 +46,35 @@ func (g *ServiceGenerator) createResources(services Services) []terraformutils.R
 }
 
 func (g *ServiceGenerator) InitResources() error {
-	if len(g.Args["team_name"].(string)) == 0 {
+	teamName := g.Args["team_name"].(string)
+	if len(teamName) == 0 {
 		return errors.New("--team-name is required")
 	}
-	team, err := g.generateRequest(fmt.Sprintf("/v3/teams/by-name?name=%s", url.QueryEscape(g.Args["team_name"].(string))))
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(team, &ResponseTeam)
-	if err != nil {
-		return err
-	}
-	g.teamID = ResponseTeam.Data.ID
 
-	body, err := g.generateRequest("/v3/services")
+	escapedTeamName := url.QueryEscape(teamName)
+	getTeamURL := fmt.Sprintf("/v3/teams/by-name?name=%s", escapedTeamName)
+	team, err := g.generateRequest(getTeamURL)
 	if err != nil {
 		return err
 	}
-	err = json.Unmarshal(body, &responseService)
+	
+	err = json.Unmarshal(team, &getTeamResponse)
+	if err != nil {
+		return err
+	}
+	g.teamID = getTeamResponse.Data.ID
+
+	getServicesURL := "/v3/services"
+	body, err := g.generateRequest(getServicesURL)
+	if err != nil {
+		return err
+	}
+	
+	err = json.Unmarshal(body, &getServicesResponse)
 	if err != nil {
 		return err
 	}
 
-	g.Resources = g.createResources(*responseService.Data)
+	g.Resources = g.createResources(*getServicesResponse.Data)
 	return nil
 }
