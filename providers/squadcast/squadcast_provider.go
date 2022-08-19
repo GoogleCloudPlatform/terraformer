@@ -116,10 +116,12 @@ func (p *SquadcastProvider) GetName() string {
 
 func (p *SquadcastProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"user":        &UserGenerator{},
-		"service":     &ServiceGenerator{},
-		"team":        &TeamGenerator{},
-		"team_member": &TeamMemberGenerator{},
+		"user":              &UserGenerator{},
+		"service":           &ServiceGenerator{},
+		"team":              &TeamGenerator{},
+		"team_member":       &TeamMemberGenerator{},
+		"team_roles":        &TeamRolesGenerator{},
+		"escalation_policy": &EscalationPolicyGenerator{},
 	}
 }
 

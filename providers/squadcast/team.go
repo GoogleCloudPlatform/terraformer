@@ -23,13 +23,6 @@ type DataTeamMember struct {
 	RoleIDs []string `json:"role_ids" tf:"role_ids"`
 }
 
-type TeamRole struct {
-	ID      string `json:"id" tf:"id"`
-	Name    string `json:"name" tf:"name"`
-	Slug    string `json:"slug" tf:"-"`
-	Default bool   `json:"default" tf:"default"`
-}
-
 var responseTeams struct {
 	Data *[]Team `json:"data"`
 }
