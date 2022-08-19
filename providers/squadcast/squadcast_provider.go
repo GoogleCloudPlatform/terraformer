@@ -92,7 +92,8 @@ func (p *SquadcastProvider) InitService(serviceName string, verbose bool) error 
 
 func (p *SquadcastProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
-		"region": cty.StringVal(p.region),
+		"region":        cty.StringVal(p.region),
+		"refresh_token": cty.StringVal(p.refreshtoken),
 	})
 }
 
