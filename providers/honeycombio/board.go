@@ -25,7 +25,7 @@ func (g *BoardGenerator) InitResources() error {
 	for _, board := range boards {
 		onlyValidDatasets := true
 		for _, query := range board.Queries {
-			_, present := g.dataset_map[query.Dataset]
+			_, present := g.datasetMap[query.Dataset]
 			if !present {
 				onlyValidDatasets = false
 			}

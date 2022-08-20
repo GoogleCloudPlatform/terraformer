@@ -28,7 +28,7 @@ const honeycombTerraformerProviderVersion = "0.0.1"
 type HoneycombProvider struct { //nolint
 	terraformutils.Provider
 	apiKey   string
-	apiUrl   string
+	apiURL   string
 	datasets []string
 }
 
@@ -36,7 +36,7 @@ func (p HoneycombProvider) GetProviderData(arg ...string) map[string]interface{}
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"honeycomb": map[string]interface{}{
-				"api_url": p.apiUrl,
+				"api_url": p.apiURL,
 			},
 		},
 	}
@@ -86,9 +86,9 @@ func (p *HoneycombProvider) Init(args []string) error {
 	if p.apiKey == "" {
 		return errors.New("the Honeycomb API key must be set via `HONEYCOMB_API_KEY` env var")
 	}
-	p.apiUrl = os.Getenv("HONEYCOMB_API_URL")
-	if p.apiUrl == "" {
-		p.apiUrl = honeycombDefaultURL
+	p.apiURL = os.Getenv("HONEYCOMB_API_URL")
+	if p.apiURL == "" {
+		p.apiURL = honeycombDefaultURL
 	}
 	// datasets are the only argument
 	p.datasets = args
@@ -99,7 +99,7 @@ func (p *HoneycombProvider) Init(args []string) error {
 func (p *HoneycombProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
 		"api_key": cty.StringVal(p.apiKey),
-		"api_url": cty.StringVal(p.apiUrl),
+		"api_url": cty.StringVal(p.apiURL),
 	})
 }
 
@@ -114,7 +114,7 @@ func (p *HoneycombProvider) InitService(serviceName string, verbose bool) error 
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
 		"api_key":  p.apiKey,
-		"api_url":  p.apiUrl,
+		"api_url":  p.apiURL,
 		"datasets": p.datasets,
 	})
 	return nil

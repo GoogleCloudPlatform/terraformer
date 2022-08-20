@@ -26,8 +26,8 @@ import (
 
 type HoneycombService struct { //nolint
 	terraformutils.Service
-	datasets    []hnyclient.Dataset
-	dataset_map map[string]bool
+	datasets   []hnyclient.Dataset
+	datasetMap map[string]bool
 }
 
 func (s *HoneycombService) newClient() (*hnyclient.Client, error) {
@@ -45,7 +45,7 @@ func (s *HoneycombService) newClient() (*hnyclient.Client, error) {
 
 	ctx := context.TODO()
 	datasets := s.GetArgs()["datasets"].([]string)
-	dataset_map := make(map[string]bool)
+	datasetMap := make(map[string]bool)
 	if len(datasets) == 0 {
 		// assume all datasets
 		s.datasets, err = client.Datasets.List(ctx)
@@ -53,7 +53,7 @@ func (s *HoneycombService) newClient() (*hnyclient.Client, error) {
 			return client, fmt.Errorf("unable to list Honeycomb datasets: %v", err)
 		}
 		for _, ds := range s.datasets {
-			dataset_map[ds.Name] = true
+			datasetMap[ds.Name] = true
 		}
 	} else {
 		// verify the provided datasets exist
@@ -63,10 +63,10 @@ func (s *HoneycombService) newClient() (*hnyclient.Client, error) {
 				return client, fmt.Errorf("unable to get Honeycomb dataset '%s': %v", d, err)
 			}
 			s.datasets = append(s.datasets, *ds)
-			dataset_map[ds.Name] = true
+			datasetMap[ds.Name] = true
 		}
 	}
-	s.dataset_map = dataset_map
+	s.datasetMap = datasetMap
 
 	return client, nil
 }

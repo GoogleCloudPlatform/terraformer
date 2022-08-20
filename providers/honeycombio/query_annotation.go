@@ -24,7 +24,7 @@ func (g *QueryAnnotationGenerator) InitResources() error {
 
 	for _, board := range boards {
 		for _, query := range board.Queries {
-			_, datasetSelected := g.dataset_map[query.Dataset]
+			_, datasetSelected := g.datasetMap[query.Dataset]
 			if datasetSelected && query.QueryAnnotationID != "" {
 				g.Resources = append(g.Resources, terraformutils.NewResource(
 					query.QueryAnnotationID,
