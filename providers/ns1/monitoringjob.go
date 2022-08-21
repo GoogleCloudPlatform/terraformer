@@ -44,7 +44,6 @@ func (g *MonitoringJobGenerator) createMonitoringJobResources(client *ns1.Client
 }
 
 func (g *MonitoringJobGenerator) InitResources() error {
-	//client := ns1.NewClient(g.Args["api_key"].(string))
 	httpClient := &http.Client{Timeout: time.Second * 10}
 	client := ns1.NewClient(httpClient, ns1.SetAPIKey(g.Args["api_key"].(string)))
 
