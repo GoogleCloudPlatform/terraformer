@@ -22,6 +22,12 @@ terraformer import squadcast --resources=user --region=us
 terraformer import squadcast --resources=team --region=us --team-name="Default Team"
 ```
 
+- `Import Resource by providing refresh-token as a flag`
+
+```
+terraformer import squadcast --resources=team --region=us --team-name="Default Team" --refresh-token=YOUR_REFRESH_TOKEN
+```
+
 ### Flags:
 
 - `--team-name`
