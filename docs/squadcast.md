@@ -4,8 +4,6 @@ Syntax:
 
 `export SQUADCAST_REFRESH_TOKEN=<YOUR_SQUADCAST_REFRESH_TOKEN>`
 
-OR set `SQUADCAST_REFRESH_TOKEN` in env
-
 ```
 terraformer import squadcast --resources=<SERVICE_NAMES> --region=SQUADCAST_REGION
 ```
