@@ -60,7 +60,7 @@ func (g *DashboardGenerator) createResource(dashboardID string) terraformutils.R
 func (g *DashboardGenerator) InitResources() error {
 	datadogClient := g.Args["datadogClient"].(*datadog.APIClient)
 	auth := g.Args["auth"].(context.Context)
-	api := datadogV1.NewDashboardsApi(datadogClientV1)
+	api := datadogV1.NewDashboardsApi(datadogClient)
 
 	resources := []terraformutils.Resource{}
 	for _, filter := range g.Filter {
