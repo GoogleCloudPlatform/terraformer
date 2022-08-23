@@ -111,6 +111,7 @@ func (p *TencentCloudProvider) GetSupportedService() map[string]terraformutils.S
 		"route_table":    &RouteTableGenerator{},
 		"nat_gateway":    &NatGatewayGenerator{},
 		"acl":            &ACLGenerator{},
+		"alarmNotice":    &AlarmNoticeGenerator{},
 	}
 }
 
