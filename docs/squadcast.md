@@ -38,6 +38,8 @@ terraformer import squadcast --resources=team --region=us --team-name="Default T
     - escalation_policy
     - team_member
     - team_roles
+    - slo
+    - runbook
 
 - `--region`
   - Supported Values:
@@ -60,3 +62,7 @@ terraformer import squadcast --resources=team --region=us --team-name="Default T
   - [squadcast_service](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/service)
 - `escalation_policy`
   - [squadcast_escalation_policy](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/escalation_policy)
+- `runbook`
+  - [squadcast_runbook](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/runbook)
+- `slo`
+  - [squadcast_slo](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/slo)

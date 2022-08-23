@@ -11,26 +11,25 @@ type TeamGenerator struct {
 }
 
 type Team struct {
-	ID          string            `json:"id" tf:"id"`
-	Name        string            `json:"name" tf:"name"`
-	Description string            `json:"description" tf:"description"`
-	Default     bool              `json:"default" tf:"default"`
-	Members     []*DataTeamMember `json:"members" tf:"-"`
-	Roles       []*TeamRole       `json:"roles" tf:"-"`
+	ID          string            `json:"id"`
+	Name        string            `json:"name"`
+	Description string            `json:"description"`
+	Default     bool              `json:"default"`
+	Members     []*DataTeamMember `json:"members"`
+	Roles       []*TeamRole       `json:"roles"`
 }
 
 type DataTeamMember struct {
-	UserID  string   `json:"user_id" tf:"user_id"`
-	RoleIDs []string `json:"role_ids" tf:"role_ids"`
+	UserID  string   `json:"user_id"`
+	RoleIDs []string `json:"role_ids"`
 }
 
 var getTeamsResponse struct {
 	Data *[]Team `json:"data"`
 }
 
-type Teams []Team
 
-func (g *TeamGenerator) createResources(teams Teams) []terraformutils.Resource {
+func (g *TeamGenerator) createResources(teams []Team) []terraformutils.Resource {
 	var teamList []terraformutils.Resource
 	for _, team := range teams {
 		teamList = append(teamList, terraformutils.NewSimpleResource(

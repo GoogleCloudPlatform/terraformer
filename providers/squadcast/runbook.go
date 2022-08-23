@@ -1,3 +1,5 @@
+// service resource is yet to be implemented
+
 package squadcast
 
 import (
@@ -9,27 +11,28 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
-type EscalationPolicyGenerator struct {
+type RunbookGenerator struct {
 	SquadcastService
 	teamID string
 }
 
-type EscalationPolicy struct {
+type Runbook struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
 }
 
-var getEscalationPolicyResponse struct {
-	Data *[]EscalationPolicy `json:"data"`
+
+var getRunbooksResponse struct {
+	Data *[]Runbook `json:"data"`
 }
 
-func (g *EscalationPolicyGenerator) createResources(policies []EscalationPolicy) []terraformutils.Resource {
-	var resourceList []terraformutils.Resource
-	for _, policy := range policies {
-		resourceList = append(resourceList, terraformutils.NewResource(
-			policy.ID,
-			"policy_"+(policy.ID),
-			"squadcast_escalation_policy",
+func (g *RunbookGenerator) createResources(runbooks []Runbook) []terraformutils.Resource {
+	var runbookList []terraformutils.Resource
+	for _, runbook := range runbooks {
+		runbookList = append(runbookList, terraformutils.NewResource(
+			runbook.ID,
+			"runbook_"+(runbook.Name),
+			"squadcast_runbook",
 			g.GetProviderName(),
 			map[string]string{
 				"team_id": g.teamID,
@@ -38,11 +41,10 @@ func (g *EscalationPolicyGenerator) createResources(policies []EscalationPolicy)
 			map[string]interface{}{},
 		))
 	}
-
-	return resourceList
+	return runbookList
 }
 
-func (g *EscalationPolicyGenerator) InitResources() error {
+func (g *RunbookGenerator) InitResources() error {
 	teamName := g.Args["team_name"].(string)
 	if len(teamName) == 0 {
 		return errors.New("--team-name is required")
@@ -50,31 +52,28 @@ func (g *EscalationPolicyGenerator) InitResources() error {
 
 	escapedTeamName := url.QueryEscape(teamName)
 	getTeamURL := fmt.Sprintf("/v3/teams/by-name?name=%s", escapedTeamName)
-
 	team, err := g.generateRequest(getTeamURL)
 	if err != nil {
 		return err
 	}
-
+	
 	err = json.Unmarshal(team, &getTeamResponse)
 	if err != nil {
 		return err
 	}
-
 	g.teamID = getTeamResponse.Data.ID
 
-	getEscalationPolicyURL := fmt.Sprintf("/v3/escalation-policies?owner_id=%s", g.teamID)
-	body, err := g.generateRequest(getEscalationPolicyURL)
+	getRunbooksURL := "/v3/runbooks"
+	body, err := g.generateRequest(getRunbooksURL)
+	if err != nil {
+		return err
+	}
+	
+	err = json.Unmarshal(body, &getRunbooksResponse)
 	if err != nil {
 		return err
 	}
 
-	err = json.Unmarshal(body, &getEscalationPolicyResponse)
-	if err != nil {
-		return err
-	}
-
-	g.Resources = g.createResources(*getEscalationPolicyResponse.Data)
-
+	g.Resources = g.createResources(*getRunbooksResponse.Data)
 	return nil
 }

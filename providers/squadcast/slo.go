@@ -11,27 +11,29 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
-type ServiceGenerator struct {
+type SLOGenerator struct {
 	SquadcastService
 	teamID string
 }
 
-type Service struct {
-	ID   string `json:"id"`
+type SLO struct {
+	ID   int `json:"id"`
 	Name string `json:"name"`
 }
 
-var getServicesResponse struct {
-	Data *[]Service `json:"data"`
+var getSLOsResponse struct {
+	Data struct {
+		SLOs *[]SLO `json:"slos"`
+	} `json:"data"`
 }
 
-func (g *ServiceGenerator) createResources(services []Service) []terraformutils.Resource {
-	var serviceList []terraformutils.Resource
-	for _, service := range services {
-		serviceList = append(serviceList, terraformutils.NewResource(
-			service.ID,
-			"service_"+(service.Name),
-			"squadcast_service",
+func (g *SLOGenerator) createResources(slo []SLO) []terraformutils.Resource {
+	var SLOList []terraformutils.Resource
+	for _, s := range slo {
+		SLOList = append(SLOList, terraformutils.NewResource(
+			fmt.Sprintf("%d", s.ID),
+			"slo_"+(s.Name),
+			"squadcast_slo",
 			g.GetProviderName(),
 			map[string]string{
 				"team_id": g.teamID,
@@ -40,10 +42,10 @@ func (g *ServiceGenerator) createResources(services []Service) []terraformutils.
 			map[string]interface{}{},
 		))
 	}
-	return serviceList
+	return SLOList
 }
 
-func (g *ServiceGenerator) InitResources() error {
+func (g *SLOGenerator) InitResources() error {
 	teamName := g.Args["team_name"].(string)
 	if len(teamName) == 0 {
 		return errors.New("--team-name is required")
@@ -62,17 +64,16 @@ func (g *ServiceGenerator) InitResources() error {
 	}
 	g.teamID = getTeamResponse.Data.ID
 
-	getServicesURL := "/v3/services"
-	body, err := g.generateRequest(getServicesURL)
+	getSLOsURL := "/v3/slo?owner_id=" + g.teamID
+	body, err := g.generateRequest(getSLOsURL)
 	if err != nil {
 		return err
 	}
 	
-	err = json.Unmarshal(body, &getServicesResponse)
+	err = json.Unmarshal(body, &getSLOsResponse)
 	if err != nil {
 		return err
 	}
-
-	g.Resources = g.createResources(*getServicesResponse.Data)
+	g.Resources = g.createResources(*getSLOsResponse.Data.SLOs)
 	return nil
 }

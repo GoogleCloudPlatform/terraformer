@@ -2,6 +2,7 @@ package squadcast
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -11,21 +12,20 @@ type UserGenerator struct {
 }
 
 type User struct {
-	ID string `json:"id" tf:"id"`
+	ID string `json:"id"`
 }
 
 var getUsersResponse struct {
 	Data *[]User `json:"data"`
 }
 
-type Users []User
 
-func (g *UserGenerator) createResources(users Users) []terraformutils.Resource {
+func (g *UserGenerator) createResources(users []User) []terraformutils.Resource {
 	var resources []terraformutils.Resource
 	for _, user := range users {
 		resources = append(resources, terraformutils.NewSimpleResource(
 			user.ID,
-			"user_"+(user.ID),
+			fmt.Sprintf("user_%s", user.ID),
 			"squadcast_user",
 			"squadcast",
 			[]string{},

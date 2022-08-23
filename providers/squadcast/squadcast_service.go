@@ -21,12 +21,6 @@ func GetHost(region string) string {
 		return "squadcast.com"
 	case "eu":
 		return "eu.squadcast.com"
-	case "internal":
-		return "squadcast.xyz"
-	case "staging":
-		return "squadcast.tech"
-	case "dev":
-		return "localhost"
 	default:
 		return ""
 	}
@@ -38,7 +32,17 @@ func (s *SquadcastService) generateRequest(uri string) ([]byte, error) {
 		log.Fatal("unknown region")
 	}
 	ctx := context.Background()
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, fmt.Sprintf("https://api.%s%s", host, uri), nil)
+
+	var url string
+
+	api_endpoint := GetHost(s.Args["api_endpoint"].(string))
+	if api_endpoint == "" {
+		url = fmt.Sprintf("https://api.%s%s", host, uri)
+	} else {
+		url = fmt.Sprintf("%s%s", api_endpoint, uri)
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		log.Fatal(err)
 	}

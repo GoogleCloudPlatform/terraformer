@@ -17,6 +17,7 @@ import (
 
 type SquadcastProvider struct {
 	terraformutils.Provider
+	apiEndpoint string
 	accesstoken  string
 	refreshtoken string
 	region       string
@@ -69,6 +70,10 @@ func (p *SquadcastProvider) Init(args []string) error {
 		p.teamName = args[2]
 	}
 
+	if args[3] != "" {
+		p.apiEndpoint = args[3]
+	}
+
 	p.GetAccessToken()
 	return nil
 }
@@ -83,6 +88,7 @@ func (p *SquadcastProvider) InitService(serviceName string, verbose bool) error 
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
+		"apiendpoint": 	 p.apiEndpoint,
 		"access_token":  p.accesstoken,
 		"refresh_token": p.refreshtoken,
 		"region":        p.region,
@@ -125,6 +131,8 @@ func (p *SquadcastProvider) GetSupportedService() map[string]terraformutils.Serv
 		"team_member":       &TeamMemberGenerator{},
 		"team_roles":        &TeamRolesGenerator{},
 		"escalation_policy": &EscalationPolicyGenerator{},
+		"runbook":           &RunbookGenerator{},
+		"slo":               &SLOGenerator{},
 	}
 }
 

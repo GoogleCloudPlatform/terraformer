@@ -15,17 +15,15 @@ type SquadGenerator struct {
 }
 
 type Squad struct {
-	ID string `json:"id" tf:"id"`
-	Name string `json:"name" tf:"name"`
+	ID string `json:"id"`
+	Name string `json:"name"`
 }
 
 var getSquadsResponse struct {
 	Data *[]Squad `json:"data"`
 }
 
-type Squads []Squad
-
-func (g *SquadGenerator) createResources(squads Squads) []terraformutils.Resource {
+func (g *SquadGenerator) createResources(squads []Squad) []terraformutils.Resource {
 	var resources []terraformutils.Resource
 	for _, squad := range squads {
 		resources = append(resources, terraformutils.NewResource(
