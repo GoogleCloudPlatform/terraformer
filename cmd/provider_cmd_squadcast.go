@@ -12,7 +12,6 @@ import (
 func newCmdSquadcastImporter(options ImportOptions) *cobra.Command {
 	var refreshToken string
 	var teamName string
-	var apiEndpoint string
 
 	cmd := &cobra.Command{
 		Use:   "squadcast",
@@ -25,7 +24,7 @@ func newCmdSquadcastImporter(options ImportOptions) *cobra.Command {
 				options.PathPattern = originalPathPattern
 				options.PathPattern += region + "/"
 				log.Println(provider.GetName() + " importing region " + region)
-				err := Import(provider, options, []string{refreshToken, region, teamName, apiEndpoint})
+				err := Import(provider, options, []string{refreshToken, region, teamName})
 				if err != nil {
 					return err
 				}
@@ -38,7 +37,6 @@ func newCmdSquadcastImporter(options ImportOptions) *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&refreshToken, "refresh-token", "", "", "YOUR_SQUADCAST_REFRESH_TOKEN or env param SQUADCAST_REFRESH_TOKEN")
 	cmd.PersistentFlags().StringSliceVarP(&options.Regions, "region", "", []string{}, "eu or us")
 	cmd.PersistentFlags().StringVarP(&teamName, "team-name", "", "", "Squadcast team name")
-	cmd.PersistentFlags().StringVarP(&apiEndpoint, "api-endpoint", "", "", "Custom Squadcast API endpoint")
 	return cmd
 }
 
