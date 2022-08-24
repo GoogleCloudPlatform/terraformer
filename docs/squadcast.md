@@ -46,7 +46,7 @@ terraformer import squadcast --resources=team --region=us --team-name="Default T
     - `us`
     - `eu`
 
-### Supported services:
+### Supported resources:
 
 - `user`
   - [squadcast_user](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/user)

@@ -35,12 +35,14 @@ func (s *SquadcastService) generateRequest(uri string) ([]byte, error) {
 
 	var url string
 
-	api_endpoint := GetHost(s.Args["api_endpoint"].(string))
+	api_endpoint := s.Args["api_endpoint"].(string)
 	if api_endpoint == "" {
 		url = fmt.Sprintf("https://api.%s%s", host, uri)
 	} else {
 		url = fmt.Sprintf("%s%s", api_endpoint, uri)
 	}
+
+	fmt.Println(api_endpoint)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {

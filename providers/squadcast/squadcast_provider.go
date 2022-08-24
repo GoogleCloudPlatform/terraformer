@@ -88,7 +88,7 @@ func (p *SquadcastProvider) InitService(serviceName string, verbose bool) error 
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"apiendpoint": 	 p.apiEndpoint,
+		"api_endpoint":  p.apiEndpoint,
 		"access_token":  p.accesstoken,
 		"refresh_token": p.refreshtoken,
 		"region":        p.region,
