@@ -11,7 +11,7 @@ require (
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
 	github.com/Azure/go-autorest/autorest v0.11.27
 	github.com/DataDog/datadog-api-client-go v1.14.0
-	github.com/IBM-Cloud/bluemix-go v0.0.0-20210203095940-db28d5e07b55
+	github.com/IBM-Cloud/bluemix-go v0.0.0-20220624043500-d538cb4fd9be
 	github.com/IBM/go-sdk-core/v3 v3.3.1
 	github.com/IBM/go-sdk-core/v4 v4.9.0
 	github.com/IBM/ibm-cos-sdk-go v1.5.0
