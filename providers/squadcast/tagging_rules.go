@@ -37,7 +37,8 @@ func (g *TaggingRulesGenerator) createResources(taggingRule TaggingRules) []terr
 			"squadcast_tagging_rules",
 			g.GetProviderName(),
 			map[string]string{
-				"team_id": g.teamID,
+				"team_id":    g.teamID,
+				"service_id": g.serviceID,
 			},
 			[]string{},
 			map[string]interface{}{},
