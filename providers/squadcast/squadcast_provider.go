@@ -134,6 +134,7 @@ func (p *SquadcastProvider) GetSupportedService() map[string]terraformutils.Serv
 		"runbook":           &RunbookGenerator{},
 		"slo":               &SLOGenerator{},
 		"tagging_rules":     &TaggingRulesGenerator{},
+		"routing_rules":     &RoutingRulesGenerator{},
 	}
 }
 
