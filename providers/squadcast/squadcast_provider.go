@@ -21,6 +21,7 @@ type SquadcastProvider struct {
 	refreshtoken string
 	region       string
 	teamName     string
+	serviceName  string
 }
 
 type AccessToken struct {
@@ -69,6 +70,10 @@ func (p *SquadcastProvider) Init(args []string) error {
 		p.teamName = args[2]
 	}
 
+	if args[3] != "" {
+		p.serviceName = args[3]
+	}
+
 	p.GetAccessToken()
 	return nil
 }
@@ -87,6 +92,7 @@ func (p *SquadcastProvider) InitService(serviceName string, verbose bool) error 
 		"refresh_token": p.refreshtoken,
 		"region":        p.region,
 		"team_name":     p.teamName,
+		"service_name":  p.serviceName,
 	})
 	return nil
 }
@@ -127,9 +133,9 @@ func (p *SquadcastProvider) GetSupportedService() map[string]terraformutils.Serv
 		"escalation_policy": &EscalationPolicyGenerator{},
 		"runbook":           &RunbookGenerator{},
 		"slo":               &SLOGenerator{},
+		"tagging_rules":     &TaggingRulesGenerator{},
 	}
 }
-
 
 func (p *SquadcastProvider) GetAccessToken() {
 	host := GetHost(p.region)
@@ -137,7 +143,7 @@ func (p *SquadcastProvider) GetAccessToken() {
 
 	url := fmt.Sprintf("https://auth.%s/oauth/access-token", host)
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet,url , nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
