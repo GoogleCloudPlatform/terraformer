@@ -136,6 +136,7 @@ func (p *SquadcastProvider) GetSupportedService() map[string]terraformutils.Serv
 		"tagging_rules":       &TaggingRulesGenerator{},
 		"routing_rules":       &RoutingRulesGenerator{},
 		"deduplication_rules": &DeduplicationRulesGenerator{},
+		"suppression_rules":   &SuppressionRulesGenerator{},
 	}
 }
 
