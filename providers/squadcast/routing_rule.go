@@ -8,33 +8,32 @@ import (
 	"net/url"
 )
 
-type TaggingRulesGenerator struct {
+type RoutingRulesGenerator struct {
 	SquadcastService
 	serviceID string
 	teamID    string
 }
 
-type TaggingRules struct {
-	ID        string         `json:"id"`
-	ServiceID string         `json:"service_id"`
-	Rules     []*TaggingRule `json:"rules"`
-}
-type TaggingRule struct {
-	IsBasic    bool   `json:"is_basic"`
-	Expression string `json:"expression"`
+type RoutingRules struct {
+	ID    string         `json:"id"`
+	Rules []*RoutingRule `json:"rules"`
 }
 
-var getTaggingRuleResponse struct {
-	Data *TaggingRules `json:"data"`
+type RoutingRule struct {
+	ID string `json:"rule_id"`
 }
 
-func (g *TaggingRulesGenerator) createResources(taggingRule TaggingRules) []terraformutils.Resource {
+var getRoutingRuleResponse struct {
+	Data *RoutingRules `json:"data"`
+}
+
+func (g *RoutingRulesGenerator) createResources(routingRules RoutingRules) []terraformutils.Resource {
 	var resourceList []terraformutils.Resource
-	for _, rule := range taggingRule.Rules {
+	for _, rule := range routingRules.Rules {
 		resourceList = append(resourceList, terraformutils.NewResource(
-			g.teamID+"_"+rule.Expression,
-			"tagging_rule_"+(rule.Expression),
-			"squadcast_tagging_rules",
+			rule.ID,
+			"routing_rule_"+(rule.ID),
+			"squadcast_routing_rules",
 			g.GetProviderName(),
 			map[string]string{
 				"team_id":    g.teamID,
@@ -48,7 +47,7 @@ func (g *TaggingRulesGenerator) createResources(taggingRule TaggingRules) []terr
 	return resourceList
 }
 
-func (g *TaggingRulesGenerator) InitResources() error {
+func (g *RoutingRulesGenerator) InitResources() error {
 	if len(g.Args["service_name"].(string)) == 0 {
 		return errors.New("--service-name is required")
 	}
@@ -70,16 +69,16 @@ func (g *TaggingRulesGenerator) InitResources() error {
 		return err
 	}
 	g.serviceID = service.ID
-	body, err := g.generateRequest(fmt.Sprintf("/v3/services/%s/tagging-rules", g.serviceID))
+	body, err := g.generateRequest(fmt.Sprintf("/v3/services/%s/routing-rules", g.serviceID))
 	if err != nil {
 		return err
 	}
-	err = json.Unmarshal(body, &getTaggingRuleResponse)
+	err = json.Unmarshal(body, &getRoutingRuleResponse)
 	if err != nil {
 		return err
 	}
 
-	g.Resources = g.createResources(*getTaggingRuleResponse.Data)
+	g.Resources = g.createResources(*getRoutingRuleResponse.Data)
 
 	return nil
 }
