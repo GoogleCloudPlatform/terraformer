@@ -21,8 +21,9 @@ type SquadcastProvider struct {
 	accesstoken  string
 	refreshtoken string
 	region       string
-	teamID     	 string
-	teamName 	 string
+	teamID       string
+	teamName     string
+	serviceName  string
 }
 
 type AccessToken struct {
@@ -73,6 +74,10 @@ func (p *SquadcastProvider) Init(args []string) error {
 		p.GetTeamID()
 	}
 
+	if args[3] != "" {
+		p.serviceName = args[3]
+	}
+
 	return nil
 }
 
@@ -87,10 +92,11 @@ func (p *SquadcastProvider) InitService(serviceName string, verbose bool) error 
 	p.Service.SetProviderName(p.GetName())
 	// SetArgs are used for fetching details within other files in the terraformer code.
 	p.Service.SetArgs(map[string]interface{}{
-		"access_token":  p.accesstoken,
-		"region":        p.region,
-		"team_id":       p.teamID,
-		"team_name":     p.teamName,
+		"access_token": p.accesstoken,
+		"region":       p.region,
+		"team_id":      p.teamID,
+		"team_name":    p.teamName,
+		"service_name": p.serviceName,
 	})
 	return nil
 }
@@ -124,18 +130,21 @@ func (p *SquadcastProvider) GetName() string {
 
 func (p *SquadcastProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"user":              &UserGenerator{},
-		"service":           &ServiceGenerator{},
-		"squad":             &SquadGenerator{},
-		"team":              &TeamGenerator{},
-		"team_member":       &TeamMemberGenerator{},
-		"team_roles":        &TeamRolesGenerator{},
-		"escalation_policy": &EscalationPolicyGenerator{},
-		"runbook":           &RunbookGenerator{},
-		"slo":               &SLOGenerator{},
+		"user":                &UserGenerator{},
+		"service":             &ServiceGenerator{},
+		"squad":               &SquadGenerator{},
+		"team":                &TeamGenerator{},
+		"team_member":         &TeamMemberGenerator{},
+		"team_roles":          &TeamRolesGenerator{},
+		"escalation_policy":   &EscalationPolicyGenerator{},
+		"runbook":             &RunbookGenerator{},
+		"slo":                 &SLOGenerator{},
+		"tagging_rules":       &TaggingRulesGenerator{},
+		"routing_rules":       &RoutingRulesGenerator{},
+		"deduplication_rules": &DeduplicationRulesGenerator{},
+		"suppression_rules":   &SuppressionRulesGenerator{},
 	}
 }
-
 
 func (p *SquadcastProvider) GetAccessToken() {
 	host := GetHost(p.region)
@@ -143,7 +152,7 @@ func (p *SquadcastProvider) GetAccessToken() {
 
 	url := fmt.Sprintf("https://auth.%s/oauth/access-token", host)
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet,url , nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -189,12 +198,12 @@ func (p *SquadcastProvider) GetTeamID() {
 	ctx := context.Background()
 
 	url := fmt.Sprintf("https://api.%s/v3/teams/by-name?name=%s", host, url.QueryEscape(p.teamName))
-	
+
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	accessToken := fmt.Sprintf("Bearer %s", p.accesstoken)
 
 	req.Header.Set("Authorization", accessToken)

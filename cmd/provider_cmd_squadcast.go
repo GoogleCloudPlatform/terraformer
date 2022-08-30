@@ -29,6 +29,7 @@ func newCmdSquadcastImporter(options ImportOptions) *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&refreshToken, "refresh-token", "", "", "YOUR_SQUADCAST_REFRESH_TOKEN or env param SQUADCAST_REFRESH_TOKEN")
 	cmd.PersistentFlags().StringVarP(&region, "region", "", "", "eu or us")
 	cmd.PersistentFlags().StringVarP(&teamName, "team-name", "", "", "Squadcast team name")
+	cmd.PersistentFlags().StringVarP(&serviceName, "service-name", "", "", "Squadcast service name")
 	return cmd
 }
 
