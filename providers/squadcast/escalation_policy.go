@@ -4,14 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/url"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type EscalationPolicyGenerator struct {
 	SquadcastService
-	teamID string
 }
 
 type EscalationPolicy struct {
@@ -32,7 +30,7 @@ func (g *EscalationPolicyGenerator) createResources(policies []EscalationPolicy)
 			"squadcast_escalation_policy",
 			g.GetProviderName(),
 			map[string]string{
-				"team_id": g.teamID,
+				"team_id": g.Args["team_id"].(string),
 			},
 			[]string{},
 			map[string]interface{}{},
@@ -43,27 +41,11 @@ func (g *EscalationPolicyGenerator) createResources(policies []EscalationPolicy)
 }
 
 func (g *EscalationPolicyGenerator) InitResources() error {
-	teamName := g.Args["team_name"].(string)
-	if len(teamName) == 0 {
+	teamID := g.Args["team_id"].(string)
+	if teamID == "" {
 		return errors.New("--team-name is required")
 	}
-
-	escapedTeamName := url.QueryEscape(teamName)
-	getTeamURL := fmt.Sprintf("/v3/teams/by-name?name=%s", escapedTeamName)
-
-	team, err := g.generateRequest(getTeamURL)
-	if err != nil {
-		return err
-	}
-
-	err = json.Unmarshal(team, &getTeamResponse)
-	if err != nil {
-		return err
-	}
-
-	g.teamID = getTeamResponse.Data.ID
-
-	getEscalationPolicyURL := fmt.Sprintf("/v3/escalation-policies?owner_id=%s", g.teamID)
+	getEscalationPolicyURL := fmt.Sprintf("/v3/escalation-policies?owner_id=%s", teamID)
 	body, err := g.generateRequest(getEscalationPolicyURL)
 	if err != nil {
 		return err

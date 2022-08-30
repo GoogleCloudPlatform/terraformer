@@ -26,6 +26,8 @@ func GetHost(region string) string {
 	}
 }
 
+
+
 func (s *SquadcastService) generateRequest(uri string) ([]byte, error) {
 	host := GetHost(s.Args["region"].(string))
 	if host == "" {
@@ -40,9 +42,9 @@ func (s *SquadcastService) generateRequest(uri string) ([]byte, error) {
 		log.Fatal(err)
 	}
 
-	AccessToken := fmt.Sprintf("Bearer %s", s.Args["access_token"])
+	accessToken := fmt.Sprintf("Bearer %s", s.Args["access_token"])
 
-	req.Header.Set("Authorization", AccessToken)
+	req.Header.Set("Authorization", accessToken)
 	req.Header.Set("User-Agent", UserAgent)
 
 	resp, err := http.DefaultClient.Do(req)

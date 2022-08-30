@@ -8,6 +8,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 
 	"github.com/zclconf/go-cty/cty"
@@ -20,7 +21,8 @@ type SquadcastProvider struct {
 	accesstoken  string
 	refreshtoken string
 	region       string
-	teamName     string
+	teamID     	 string
+	teamName 	 string
 }
 
 type AccessToken struct {
@@ -42,7 +44,7 @@ type AppError struct {
 }
 
 const (
-	UserAgent = "terraform-provider-squadcast"
+	UserAgent = "terraformer-squadcast"
 )
 
 func (p *SquadcastProvider) Init(args []string) error {
@@ -64,12 +66,13 @@ func (p *SquadcastProvider) Init(args []string) error {
 		return errors.New("required region missing")
 	}
 	p.region = args[1]
+	p.GetAccessToken()
 
 	if args[2] != "" {
 		p.teamName = args[2]
+		p.GetTeamID()
 	}
 
-	p.GetAccessToken()
 	return nil
 }
 
@@ -82,14 +85,17 @@ func (p *SquadcastProvider) InitService(serviceName string, verbose bool) error 
 	p.Service.SetName(serviceName)
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
+	// SetArgs are used for fetching details within other files in the terraformer code.
 	p.Service.SetArgs(map[string]interface{}{
 		"access_token":  p.accesstoken,
-		"refresh_token": p.refreshtoken,
 		"region":        p.region,
+		"team_id":       p.teamID,
 		"team_name":     p.teamName,
 	})
 	return nil
 }
+
+// @desc GetConfig is used to send details to provider block of terraform-provider-squadcast
 
 func (p *SquadcastProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
@@ -176,4 +182,53 @@ func (p *SquadcastProvider) GetAccessToken() {
 	}
 
 	p.accesstoken = response.Data.AccessToken
+}
+
+func (p *SquadcastProvider) GetTeamID() {
+	host := GetHost(p.region)
+	ctx := context.Background()
+
+	url := fmt.Sprintf("https://api.%s/v3/teams/by-name?name=%s", host, url.QueryEscape(p.teamName))
+	
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	
+	accessToken := fmt.Sprintf("Bearer %s", p.accesstoken)
+
+	req.Header.Set("Authorization", accessToken)
+	req.Header.Set("User-Agent", UserAgent)
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var response struct {
+		Data Team `json:"data"`
+		*Meta
+	}
+
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(resp.Body)
+
+	bytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err := json.Unmarshal(bytes, &response); err != nil {
+		log.Fatal(err)
+	}
+
+	if resp.StatusCode > 299 {
+		log.Fatal(err)
+	}
+
+	p.teamID = response.Data.ID
 }

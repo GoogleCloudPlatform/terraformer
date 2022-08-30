@@ -11,7 +11,6 @@ import (
 
 type TeamMemberGenerator struct {
 	SquadcastService
-	teamID string
 }
 
 var getTeamResponse struct {
@@ -20,7 +19,6 @@ var getTeamResponse struct {
 
 func (g *TeamMemberGenerator) createResources(team Team) []terraformutils.Resource {
 	var teamMemberList []terraformutils.Resource
-	g.teamID = team.ID
 	for _, member := range team.Members {
 		teamMemberList = append(teamMemberList, terraformutils.NewResource(
 			member.UserID,
@@ -28,7 +26,7 @@ func (g *TeamMemberGenerator) createResources(team Team) []terraformutils.Resour
 			"squadcast_team_member",
 			g.ProviderName,
 			map[string]string{
-				"team_id": g.teamID,
+				"team_id": team.ID,
 			},
 			[]string{},
 			map[string]interface{}{},

@@ -4,11 +4,22 @@ Syntax:
 
 `export SQUADCAST_REFRESH_TOKEN=<YOUR_SQUADCAST_REFRESH_TOKEN>`
 
+OR 
+
+Add `--refresh-token` flag in cmd
+
+
 ```
 terraformer import squadcast --resources=<SERVICE_NAMES> --region=SQUADCAST_REGION
 ```
 
 Examples:
+
+- `Import Resource by providing refresh-token as a flag`
+
+```
+terraformer import squadcast --resources=team --region=us --team-name="Default Team" --refresh-token=YOUR_REFRESH_TOKEN
+```
 
 - `Import User Resource`
 
@@ -22,11 +33,7 @@ terraformer import squadcast --resources=user --region=us
 terraformer import squadcast --resources=team --region=us --team-name="Default Team"
 ```
 
-- `Import Resource by providing refresh-token as a flag`
 
-```
-terraformer import squadcast --resources=team --region=us --team-name="Default Team" --refresh-token=YOUR_REFRESH_TOKEN
-```
 
 ### Flags:
 
@@ -42,6 +49,7 @@ terraformer import squadcast --resources=team --region=us --team-name="Default T
     - runbook
 
 - `--region`
+
   - Supported Values:
     - `us`
     - `eu`

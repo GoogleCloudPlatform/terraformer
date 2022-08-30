@@ -6,14 +6,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/url"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type SLOGenerator struct {
 	SquadcastService
-	teamID string
 }
 
 type SLO struct {
@@ -36,7 +34,7 @@ func (g *SLOGenerator) createResources(slo []SLO) []terraformutils.Resource {
 			"squadcast_slo",
 			g.GetProviderName(),
 			map[string]string{
-				"team_id": g.teamID,
+				"team_id": g.Args["team_id"].(string),
 			},
 			[]string{},
 			map[string]interface{}{},
@@ -46,25 +44,11 @@ func (g *SLOGenerator) createResources(slo []SLO) []terraformutils.Resource {
 }
 
 func (g *SLOGenerator) InitResources() error {
-	teamName := g.Args["team_name"].(string)
-	if len(teamName) == 0 {
+	teamID := g.Args["team_id"].(string)
+	if teamID == "" {
 		return errors.New("--team-name is required")
 	}
-
-	escapedTeamName := url.QueryEscape(teamName)
-	getTeamURL := fmt.Sprintf("/v3/teams/by-name?name=%s", escapedTeamName)
-	team, err := g.generateRequest(getTeamURL)
-	if err != nil {
-		return err
-	}
-	
-	err = json.Unmarshal(team, &getTeamResponse)
-	if err != nil {
-		return err
-	}
-	g.teamID = getTeamResponse.Data.ID
-
-	getSLOsURL := "/v3/slo?owner_id=" + g.teamID
+	getSLOsURL := fmt.Sprintf("/v3/slo?owner_id=%s", teamID)
 	body, err := g.generateRequest(getSLOsURL)
 	if err != nil {
 		return err

@@ -4,14 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/url"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type SquadGenerator struct {
 	SquadcastService
-	teamID string
 }
 
 type Squad struct {
@@ -32,7 +30,7 @@ func (g *SquadGenerator) createResources(squads []Squad) []terraformutils.Resour
 			"squadcast_squad",
 			"squadcast",
 			map[string]string{
-				"team_id": g.teamID,
+				"team_id": g.Args["team_id"].(string),
 				"name": squad.Name,
 			},
 			[]string{},
@@ -43,27 +41,11 @@ func (g *SquadGenerator) createResources(squads []Squad) []terraformutils.Resour
 }
 
 func (g *SquadGenerator) InitResources() error {
-	teamName := g.Args["team_name"].(string)
-	if(teamName == "") {
+	teamID := g.Args["team_id"].(string)
+	if teamID == "" {
 		return errors.New("--team-name is required")
 	}
-	
-	escapedTeamName := url.QueryEscape(teamName)
-	getTeamURL := fmt.Sprintf("/v3/teams/by-name?name=%s",escapedTeamName)
-
-	team, err := g.generateRequest(getTeamURL)
-	if err != nil {
-		return err
-	}
-	
-	err = json.Unmarshal(team, &getTeamResponse)
-	if err != nil {
-		return err
-	}
-
-	g.teamID = getTeamResponse.Data.ID
-
-	getSquadsURL := fmt.Sprintf("/v3/squads?owner_id=%s", g.teamID);
+	getSquadsURL := fmt.Sprintf("/v3/squads?owner_id=%s", teamID);
 	body, err := g.generateRequest(getSquadsURL)
 	if err != nil {
 		return err
