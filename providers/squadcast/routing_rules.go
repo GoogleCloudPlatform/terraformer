@@ -5,13 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"net/url"
 )
 
 type RoutingRulesGenerator struct {
 	SquadcastService
-	serviceID string
-	teamID    string
 }
 
 type RoutingRules struct {
@@ -36,8 +33,8 @@ func (g *RoutingRulesGenerator) createResources(routingRules RoutingRules) []ter
 			"squadcast_routing_rules",
 			g.GetProviderName(),
 			map[string]string{
-				"team_id":    g.teamID,
-				"service_id": g.serviceID,
+				"team_id":    g.Args["team_id"].(string),
+				"service_id": g.Args["service_id"].(string),
 			},
 			[]string{},
 			map[string]interface{}{},
@@ -55,21 +52,7 @@ func (g *RoutingRulesGenerator) InitResources() error {
 		return errors.New("--team-name is required")
 	}
 
-	team, err := g.generateRequest(fmt.Sprintf("/v3/teams/by-name?name=%s", url.QueryEscape(g.Args["team_name"].(string))))
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(team, &getTeamResponse)
-	if err != nil {
-		return err
-	}
-	g.teamID = getTeamResponse.Data.ID
-	service, err := g.getServiceByName(g.teamID, g.Args["service_name"].(string))
-	if err != nil {
-		return err
-	}
-	g.serviceID = service.ID
-	body, err := g.generateRequest(fmt.Sprintf("/v3/services/%s/routing-rules", g.serviceID))
+	body, err := g.generateRequest(fmt.Sprintf("/v3/services/%s/routing-rules", g.Args["service_id"]))
 	if err != nil {
 		return err
 	}

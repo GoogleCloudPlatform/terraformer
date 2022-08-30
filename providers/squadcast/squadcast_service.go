@@ -2,15 +2,12 @@ package squadcast
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
-
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type SquadcastService struct {
@@ -31,8 +28,6 @@ func GetHost(region string) string {
 		return ""
 	}
 }
-
-
 
 func (s *SquadcastService) generateRequest(uri string) ([]byte, error) {
 	host := GetHost(s.Args["region"].(string))
@@ -70,17 +65,4 @@ func (s *SquadcastService) generateRequest(uri string) ([]byte, error) {
 	}
 
 	return body, nil
-}
-
-func (s *SquadcastService) getServiceByName(teamID string, name string) (Service, error) {
-	body, err := s.generateRequest(fmt.Sprintf("/v3/services/by-name?name=%s&owner_id=%s", url.QueryEscape(name), teamID))
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = json.Unmarshal(body, &ResponseService)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return *ResponseService.Data, nil
 }

@@ -24,6 +24,7 @@ type SquadcastProvider struct {
 	teamID       string
 	teamName     string
 	serviceName  string
+	serviceID    string
 }
 
 type AccessToken struct {
@@ -76,6 +77,7 @@ func (p *SquadcastProvider) Init(args []string) error {
 
 	if args[3] != "" {
 		p.serviceName = args[3]
+		p.GetServiceID()
 	}
 
 	return nil
@@ -97,6 +99,7 @@ func (p *SquadcastProvider) InitService(serviceName string, verbose bool) error 
 		"team_id":      p.teamID,
 		"team_name":    p.teamName,
 		"service_name": p.serviceName,
+		"service_id":   p.serviceID,
 	})
 	return nil
 }
@@ -240,4 +243,52 @@ func (p *SquadcastProvider) GetTeamID() {
 	}
 
 	p.teamID = response.Data.ID
+}
+
+func (p *SquadcastProvider) GetServiceID() {
+	host := GetHost(p.region)
+	ctx := context.Background()
+
+	url := fmt.Sprintf("https://api.%s/v3/services/by-name?name=%s&owner_id=%s", host, url.QueryEscape(p.serviceName), p.teamID)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	accessToken := fmt.Sprintf("Bearer %s", p.accesstoken)
+
+	req.Header.Set("Authorization", accessToken)
+	req.Header.Set("User-Agent", UserAgent)
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var response struct {
+		Data Service `json:"data"`
+		*Meta
+	}
+
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(resp.Body)
+
+	bytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err := json.Unmarshal(bytes, &response); err != nil {
+		log.Fatal(err)
+	}
+
+	if resp.StatusCode > 299 {
+		log.Fatal(err)
+	}
+
+	p.serviceID = response.Data.ID
 }
