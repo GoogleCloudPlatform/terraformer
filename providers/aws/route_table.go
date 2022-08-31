@@ -63,7 +63,7 @@ func (g *RouteTableGenerator) createRouteTablesResources(svc *ec2.Client) []terr
 						rtbAllowEmptyValues,
 						map[string]interface{}{},
 					))
-				} else {
+				} else if len(*assoc.SubnetId) > 0 {
 					// subnet-specific route table association
 					resources = append(resources, terraformutils.NewResource(
 						StringValue(assoc.RouteTableAssociationId),
@@ -77,6 +77,20 @@ func (g *RouteTableGenerator) createRouteTablesResources(svc *ec2.Client) []terr
 						rtbAllowEmptyValues,
 						map[string]interface{}{},
 					))
+				} else if len(*assoc.GatewayId) > 0 {
+					resources = append(resources, terraformutils.NewResource(
+						StringValue(assoc.RouteTableAssociationId),
+						StringValue(assoc.GatewayId),
+						"aws_route_table_association",
+						"aws",
+						map[string]string{
+							"gateway_id":     StringValue(assoc.GatewayId),
+							"route_table_id": StringValue(table.RouteTableId),
+						},
+						rtbAllowEmptyValues,
+						map[string]interface{}{},
+					))
+
 				}
 			}
 		}
