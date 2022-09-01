@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -20,7 +21,7 @@ type DeduplicationRule struct {
 	ID string `json:"rule_id"`
 }
 
-var getDeduplicationRuleResponse struct {
+var getDeduplicationRulesResponse struct {
 	Data *DeduplicationRules `json:"data"`
 }
 
@@ -52,16 +53,17 @@ func (g *DeduplicationRulesGenerator) InitResources() error {
 		return errors.New("--team-name is required")
 	}
 
-	body, err := g.generateRequest(fmt.Sprintf("/v3/services/%s/deduplication-rules", g.Args["service_id"]))
+	getDeduplicationRulesURL := fmt.Sprintf("/v3/services/%s/deduplication-rules", g.Args["service_id"])
+	body, err := g.generateRequest(getDeduplicationRulesURL)
 	if err != nil {
 		return err
 	}
-	err = json.Unmarshal(body, &getDeduplicationRuleResponse)
+	err = json.Unmarshal(body, &getDeduplicationRulesResponse)
 	if err != nil {
 		return err
 	}
 
-	g.Resources = g.createResources(*getDeduplicationRuleResponse.Data)
+	g.Resources = g.createResources(*getDeduplicationRulesResponse.Data)
 
 	return nil
 }
