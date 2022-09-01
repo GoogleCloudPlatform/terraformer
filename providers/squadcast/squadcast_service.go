@@ -2,12 +2,14 @@ package squadcast
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type SquadcastService struct {
@@ -29,6 +31,48 @@ func GetHost(region string) string {
 	}
 }
 
+// @desc function used for GetAccessToken, GetTeamID, GetServiceID
+func Request [TRes any] (url string, header map[string]string) (*TRes, error) {
+	ctx := context.Background()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for k, v := range header {
+		req.Header.Set(k, v)
+	}
+	req.Header.Set("User-Agent", UserAgent)
+	resp, err := http.DefaultClient.Do(req)
+
+	var response struct {
+		Data *TRes `json:"data"`
+		*Meta
+	}
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(resp.Body)
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return nil, err
+	}
+	return response.Data, nil
+}
+
+// @desc function used for other APIs
 func (s *SquadcastService) generateRequest(uri string) ([]byte, error) {
 	host := GetHost(s.Args["region"].(string))
 	if host == "" {

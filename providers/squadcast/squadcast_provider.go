@@ -1,13 +1,9 @@
 package squadcast
 
 import (
-	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"log"
-	"net/http"
 	"net/url"
 	"os"
 
@@ -25,6 +21,7 @@ type SquadcastProvider struct {
 	teamName     string
 	serviceName  string
 	serviceID    string
+	scheduleName string
 }
 
 type AccessToken struct {
@@ -80,6 +77,10 @@ func (p *SquadcastProvider) Init(args []string) error {
 		p.GetServiceID()
 	}
 
+	if args[4] != "" {
+		p.scheduleName = args[4]
+	}
+
 	return nil
 }
 
@@ -100,11 +101,12 @@ func (p *SquadcastProvider) InitService(serviceName string, verbose bool) error 
 		"team_name":    p.teamName,
 		"service_name": p.serviceName,
 		"service_id":   p.serviceID,
+		"schedule_name":   p.scheduleName,
 	})
 	return nil
 }
 
-// @desc GetConfig is used to send details to provider block of terraform-provider-squadcast
+// @desc: GetConfig is used to send details to provider block of terraform-provider-squadcast
 
 func (p *SquadcastProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
@@ -146,149 +148,43 @@ func (p *SquadcastProvider) GetSupportedService() map[string]terraformutils.Serv
 		"routing_rules":       &RoutingRulesGenerator{},
 		"deduplication_rules": &DeduplicationRulesGenerator{},
 		"suppression_rules":   &SuppressionRulesGenerator{},
+		"schedule":            &SchedulesGenerator{},
 	}
 }
 
 func (p *SquadcastProvider) GetAccessToken() {
 	host := GetHost(p.region)
-	ctx := context.Background()
-
 	url := fmt.Sprintf("https://auth.%s/oauth/access-token", host)
+	header := map[string]string{"X-Refresh-Token": p.refreshtoken}
+	response, err := Request[AccessToken](url, header)
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	req.Header.Set("X-Refresh-Token", p.refreshtoken)
-	req.Header.Set("User-Agent", UserAgent)
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var response struct {
-		Data AccessToken `json:"data"`
-		*Meta
-	}
-
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}(resp.Body)
-
-	bytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err := json.Unmarshal(bytes, &response); err != nil {
-		log.Fatal(err)
-	}
-
-	if resp.StatusCode > 299 {
-		log.Fatal(err)
-	}
-
-	p.accesstoken = response.Data.AccessToken
+	p.accesstoken = response.AccessToken
 }
 
 func (p *SquadcastProvider) GetTeamID() {
 	host := GetHost(p.region)
-	ctx := context.Background()
-
 	url := fmt.Sprintf("https://api.%s/v3/teams/by-name?name=%s", host, url.QueryEscape(p.teamName))
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	header := map[string]string{"Authorization": fmt.Sprintf("Bearer %s", p.accesstoken)}
+	
+	response, err := Request[Team](url, header)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	accessToken := fmt.Sprintf("Bearer %s", p.accesstoken)
-
-	req.Header.Set("Authorization", accessToken)
-	req.Header.Set("User-Agent", UserAgent)
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var response struct {
-		Data Team `json:"data"`
-		*Meta
-	}
-
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}(resp.Body)
-
-	bytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err := json.Unmarshal(bytes, &response); err != nil {
-		log.Fatal(err)
-	}
-
-	if resp.StatusCode > 299 {
-		log.Fatal(err)
-	}
-
-	p.teamID = response.Data.ID
+	p.teamID = response.ID
 }
 
 func (p *SquadcastProvider) GetServiceID() {
 	host := GetHost(p.region)
-	ctx := context.Background()
 
 	url := fmt.Sprintf("https://api.%s/v3/services/by-name?name=%s&owner_id=%s", host, url.QueryEscape(p.serviceName), p.teamID)
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	header := map[string]string{"Authorization": fmt.Sprintf("Bearer %s", p.accesstoken)}
+	response, err := Request[Service](url, header)
+
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	accessToken := fmt.Sprintf("Bearer %s", p.accesstoken)
-
-	req.Header.Set("Authorization", accessToken)
-	req.Header.Set("User-Agent", UserAgent)
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var response struct {
-		Data Service `json:"data"`
-		*Meta
-	}
-
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}(resp.Body)
-
-	bytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err := json.Unmarshal(bytes, &response); err != nil {
-		log.Fatal(err)
-	}
-
-	if resp.StatusCode > 299 {
-		log.Fatal(err)
-	}
-
-	p.serviceID = response.Data.ID
+	p.serviceID = response.ID
 }

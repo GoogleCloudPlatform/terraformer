@@ -8,7 +8,7 @@ import (
 )
 
 func newCmdSquadcastImporter(options ImportOptions) *cobra.Command {
-	var refreshToken, teamName, region, serviceName string
+	var refreshToken, teamName, region, serviceName, scheduleName string
 
 	cmd := &cobra.Command{
 		Use:   "squadcast",
@@ -17,7 +17,7 @@ func newCmdSquadcastImporter(options ImportOptions) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			provider := newSquadcastProvider()
 			options.PathPattern += region + "/"
-			err := Import(provider, options, []string{refreshToken, region, teamName, serviceName})
+			err := Import(provider, options, []string{refreshToken, region, teamName, serviceName, scheduleName})
 			if err != nil {
 				return err
 			}
@@ -30,6 +30,7 @@ func newCmdSquadcastImporter(options ImportOptions) *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&region, "region", "", "", "eu or us")
 	cmd.PersistentFlags().StringVarP(&teamName, "team-name", "", "", "Squadcast team name")
 	cmd.PersistentFlags().StringVarP(&serviceName, "service-name", "", "", "Squadcast service name")
+	cmd.PersistentFlags().StringVarP(&scheduleName, "schedule-name", "", "", "Squadcast schedule name")
 	return cmd
 }
 
