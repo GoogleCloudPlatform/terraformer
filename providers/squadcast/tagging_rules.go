@@ -1,7 +1,6 @@
 package squadcast
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -20,10 +19,6 @@ type TaggingRule struct {
 	ID string `json:"rule_id"`
 }
 
-var getTaggingRuleResponse struct {
-	Data *TaggingRules `json:"data"`
-}
-
 func (g *TaggingRulesGenerator) createResources(taggingRule TaggingRules) []terraformutils.Resource {
 	var resourceList []terraformutils.Resource
 	for _, rule := range taggingRule.Rules {
@@ -40,7 +35,6 @@ func (g *TaggingRulesGenerator) createResources(taggingRule TaggingRules) []terr
 			map[string]interface{}{},
 		))
 	}
-
 	return resourceList
 }
 
@@ -52,16 +46,12 @@ func (g *TaggingRulesGenerator) InitResources() error {
 		return errors.New("--team-name is required")
 	}
 
-	body, err := g.generateRequest(fmt.Sprintf("/v3/services/%s/tagging-rules", g.Args["service_id"]))
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(body, &getTaggingRuleResponse)
+	getTaggingRulesURL := fmt.Sprintf("/v3/services/%s/tagging-rules", g.Args["service_id"])
+	response, err := Request[TaggingRules](getTaggingRulesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
 		return err
 	}
 
-	g.Resources = g.createResources(*getTaggingRuleResponse.Data)
-
+	g.Resources = g.createResources(*response)
 	return nil
 }

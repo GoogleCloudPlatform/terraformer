@@ -1,7 +1,6 @@
 package squadcast
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -18,10 +17,6 @@ type SuppressionRules struct {
 
 type SuppressionRule struct {
 	ID string `json:"rule_id"`
-}
-
-var getSuppressionRuleResponse struct {
-	Data *SuppressionRules `json:"data"`
 }
 
 func (g *SuppressionRulesGenerator) createResources(suppressionRules SuppressionRules) []terraformutils.Resource {
@@ -52,16 +47,12 @@ func (g *SuppressionRulesGenerator) InitResources() error {
 		return errors.New("--team-name is required")
 	}
 
-	body, err := g.generateRequest(fmt.Sprintf("/v3/services/%s/suppression-rules", g.Args["service_id"]))
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(body, &getSuppressionRuleResponse)
+	getSuppressionRulesURL := fmt.Sprintf("/v3/services/%s/suppression-rules", g.Args["service_id"])
+	response, err := Request[SuppressionRules](getSuppressionRulesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
 		return err
 	}
 
-	g.Resources = g.createResources(*getSuppressionRuleResponse.Data)
-
+	g.Resources = g.createResources(*response)
 	return nil
 }

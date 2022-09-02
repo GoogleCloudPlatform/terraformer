@@ -1,7 +1,6 @@
 package squadcast
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -21,16 +20,12 @@ type DeduplicationRule struct {
 	ID string `json:"rule_id"`
 }
 
-var getDeduplicationRulesResponse struct {
-	Data *DeduplicationRules `json:"data"`
-}
-
 func (g *DeduplicationRulesGenerator) createResources(deduplicationRules DeduplicationRules) []terraformutils.Resource {
 	var resourceList []terraformutils.Resource
 	for _, rule := range deduplicationRules.Rules {
 		resourceList = append(resourceList, terraformutils.NewResource(
 			rule.ID,
-			"deduplication_rule_"+(rule.ID),
+			fmt.Sprintf("deduplication_rule_%s", rule.ID),
 			"squadcast_deduplication_rules",
 			g.GetProviderName(),
 			map[string]string{
@@ -41,7 +36,6 @@ func (g *DeduplicationRulesGenerator) createResources(deduplicationRules Dedupli
 			map[string]interface{}{},
 		))
 	}
-
 	return resourceList
 }
 
@@ -54,16 +48,11 @@ func (g *DeduplicationRulesGenerator) InitResources() error {
 	}
 
 	getDeduplicationRulesURL := fmt.Sprintf("/v3/services/%s/deduplication-rules", g.Args["service_id"])
-	body, err := g.generateRequest(getDeduplicationRulesURL)
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(body, &getDeduplicationRulesResponse)
+	response, err := Request[DeduplicationRules](getDeduplicationRulesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
 		return err
 	}
 
-	g.Resources = g.createResources(*getDeduplicationRulesResponse.Data)
-
+	g.Resources = g.createResources(*response)
 	return nil
 }

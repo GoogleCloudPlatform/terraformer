@@ -1,8 +1,6 @@
 package squadcast
 
 import (
-	"encoding/json"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -11,12 +9,8 @@ type SchedulesGenerator struct {
 }
 
 type Schedule struct {
-	ID string `json:"id"`
+	ID   string `json:"id"`
 	Name string `json:"name"`
-}
-
-var getSchedulesResponse struct {
-	Data *[]Schedule `json:"data"`
 }
 
 func (g *SchedulesGenerator) createResources(schedules []Schedule) []terraformutils.Resource {
@@ -28,8 +22,8 @@ func (g *SchedulesGenerator) createResources(schedules []Schedule) []terraformut
 			"squadcast_schedule",
 			g.GetProviderName(),
 			map[string]string{
-				"team_id":  g.Args["team_id"].(string),
-				"name": 	g.Args["schedule_name"].(string),
+				"team_id": g.Args["team_id"].(string),
+				"name":    g.Args["schedule_name"].(string),
 			},
 			[]string{},
 			map[string]interface{}{},
@@ -40,17 +34,12 @@ func (g *SchedulesGenerator) createResources(schedules []Schedule) []terraformut
 }
 
 func (g *SchedulesGenerator) InitResources() error {
-	getSchedules := "/v3/schedules"
-	body, err := g.generateRequest(getSchedules)
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(body, &getSchedulesResponse)
+	getSchedulesURL := "/v3/schedules"
+	response, err := Request[[]Schedule](getSchedulesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
 		return err
 	}
 
-	g.Resources = g.createResources(*getSchedulesResponse.Data)
-
+	g.Resources = g.createResources(*response)
 	return nil
 }

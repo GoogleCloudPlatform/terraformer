@@ -1,7 +1,6 @@
 package squadcast
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -18,10 +17,6 @@ type RoutingRules struct {
 
 type RoutingRule struct {
 	ID string `json:"rule_id"`
-}
-
-var getRoutingRuleResponse struct {
-	Data *RoutingRules `json:"data"`
 }
 
 func (g *RoutingRulesGenerator) createResources(routingRules RoutingRules) []terraformutils.Resource {
@@ -52,16 +47,12 @@ func (g *RoutingRulesGenerator) InitResources() error {
 		return errors.New("--team-name is required")
 	}
 
-	body, err := g.generateRequest(fmt.Sprintf("/v3/services/%s/routing-rules", g.Args["service_id"]))
-	if err != nil {
-		return err
-	}
-	err = json.Unmarshal(body, &getRoutingRuleResponse)
+	getRoutingRulesURL := fmt.Sprintf("/v3/services/%s/routing-rules", g.Args["service_id"])
+	response, err := Request[RoutingRules](getRoutingRulesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
 		return err
 	}
 
-	g.Resources = g.createResources(*getRoutingRuleResponse.Data)
-
+	g.Resources = g.createResources(*response)
 	return nil
 }
