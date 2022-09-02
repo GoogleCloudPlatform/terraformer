@@ -3,7 +3,6 @@
 package squadcast
 
 import (
-	"encoding/json"
 	"errors"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -16,10 +15,6 @@ type ServiceGenerator struct {
 type Service struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
-}
-
-var getServicesResponse struct {
-	Data *[]Service `json:"data"`
 }
 
 func (g *ServiceGenerator) createResources(services []Service) []terraformutils.Resource {
@@ -45,16 +40,11 @@ func (g *ServiceGenerator) InitResources() error {
 		return errors.New("--team-name is required")
 	}
 	getServicesURL := "/v3/services"
-	body, err := g.generateRequest(getServicesURL)
-	if err != nil {
-		return err
-	}
-	
-	err = json.Unmarshal(body, &getServicesResponse)
+	response, err := Request[[]Service](getServicesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
 		return err
 	}
 
-	g.Resources = g.createResources(*getServicesResponse.Data)
+	g.Resources = g.createResources(*response)
 	return nil
 }

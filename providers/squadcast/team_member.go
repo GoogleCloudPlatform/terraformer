@@ -1,7 +1,6 @@
 package squadcast
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/url"
@@ -11,10 +10,6 @@ import (
 
 type TeamMemberGenerator struct {
 	SquadcastService
-}
-
-var getTeamResponse struct {
-	Data *Team `json:"data"`
 }
 
 func (g *TeamMemberGenerator) createResources(team Team) []terraformutils.Resource {
@@ -40,21 +35,13 @@ func (g *TeamMemberGenerator) InitResources() error {
 	if len(teamName) == 0 {
 		return errors.New("--team-name is required")
 	}
-
 	escapedTeamName := url.QueryEscape(teamName)
 	getTeamURL := fmt.Sprintf("/v3/teams/by-name?name=%s", escapedTeamName)
-	
-	body, err := g.generateRequest(getTeamURL)
+	response, err := Request[Team](getTeamURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
 		return err
 	}
 
-	err = json.Unmarshal(body, &getTeamResponse)
-	if err != nil {
-		return err
-	}
-
-	g.Resources = g.createResources(*getTeamResponse.Data)
-
+	g.Resources = g.createResources(*response)
 	return nil
 }

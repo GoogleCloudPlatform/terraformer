@@ -3,7 +3,6 @@
 package squadcast
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -15,14 +14,12 @@ type SLOGenerator struct {
 }
 
 type SLO struct {
-	ID   int `json:"id"`
+	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 
-var getSLOsResponse struct {
-	Data struct {
-		SLOs *[]SLO `json:"slos"`
-	} `json:"data"`
+type getSLOsResponse struct {
+	SLOs *[]SLO `json:"slos"`
 }
 
 func (g *SLOGenerator) createResources(slo []SLO) []terraformutils.Resource {
@@ -49,15 +46,11 @@ func (g *SLOGenerator) InitResources() error {
 		return errors.New("--team-name is required")
 	}
 	getSLOsURL := fmt.Sprintf("/v3/slo?owner_id=%s", teamID)
-	body, err := g.generateRequest(getSLOsURL)
+	response, err := Request[getSLOsResponse](getSLOsURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
 		return err
 	}
-	
-	err = json.Unmarshal(body, &getSLOsResponse)
-	if err != nil {
-		return err
-	}
-	g.Resources = g.createResources(*getSLOsResponse.Data.SLOs)
+
+	g.Resources = g.createResources(*response.SLOs)
 	return nil
 }

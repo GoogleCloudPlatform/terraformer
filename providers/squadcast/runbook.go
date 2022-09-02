@@ -3,7 +3,6 @@
 package squadcast
 
 import (
-	"encoding/json"
 	"errors"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -16,11 +15,6 @@ type RunbookGenerator struct {
 type Runbook struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
-}
-
-
-var getRunbooksResponse struct {
-	Data *[]Runbook `json:"data"`
 }
 
 func (g *RunbookGenerator) createResources(runbooks []Runbook) []terraformutils.Resource {
@@ -46,16 +40,11 @@ func (g *RunbookGenerator) InitResources() error {
 		return errors.New("--team-name is required")
 	}
 	getRunbooksURL := "/v3/runbooks"
-	body, err := g.generateRequest(getRunbooksURL)
-	if err != nil {
-		return err
-	}
-	
-	err = json.Unmarshal(body, &getRunbooksResponse)
+	response, err := Request[[]Runbook](getRunbooksURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
 		return err
 	}
 
-	g.Resources = g.createResources(*getRunbooksResponse.Data)
+	g.Resources = g.createResources(*response)
 	return nil
 }

@@ -18,10 +18,6 @@ type TeamRole struct {
 	Default bool   `json:"default"`
 }
 
-var getTeamRolesResponse struct {
-	Data *[]TeamRole `json:"data"`
-}
-
 func (g *TeamRolesGenerator) createResources(teamRoles []TeamRole) []terraformutils.Resource {
 	var teamRolesList []terraformutils.Resource
 	for _, role := range teamRoles {
@@ -47,11 +43,11 @@ func (g *TeamRolesGenerator) InitResources() error {
 		return errors.New("--team-name is required")
 	}
 	getTeamRolesURL := fmt.Sprintf("/v3/teams/%s/roles", teamID)
-	response,err := Request[[]TeamRole](getTeamRolesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+	response, err := Request[[]TeamRole](getTeamRolesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
 		return err
 	}
-	g.Resources = g.createResources(*response)
 
+	g.Resources = g.createResources(*response)
 	return nil
 }

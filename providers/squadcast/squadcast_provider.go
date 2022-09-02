@@ -17,8 +17,8 @@ type SquadcastProvider struct {
 	accesstoken  string
 	refreshtoken string
 	region       string
-	teamID     	 string
-	teamName 	 string
+	teamID       string
+	teamName     string
 }
 
 type AccessToken struct {
@@ -83,10 +83,10 @@ func (p *SquadcastProvider) InitService(serviceName string, verbose bool) error 
 	p.Service.SetProviderName(p.GetName())
 	// SetArgs are used for fetching details within other files in the terraformer code.
 	p.Service.SetArgs(map[string]interface{}{
-		"access_token":  p.accesstoken,
-		"region":        p.region,
-		"team_id":       p.teamID,
-		"team_name":     p.teamName,
+		"access_token": p.accesstoken,
+		"region":       p.region,
+		"team_id":      p.teamID,
+		"team_name":    p.teamName,
 	})
 	return nil
 }
@@ -120,18 +120,17 @@ func (p *SquadcastProvider) GetName() string {
 
 func (p *SquadcastProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		// "user":              &UserGenerator{},
-		// "service":           &ServiceGenerator{},
+		"user":              &UserGenerator{},
+		"service":           &ServiceGenerator{},
 		"squad":             &SquadGenerator{},
-		// "team":              &TeamGenerator{},
-		// "team_member":       &TeamMemberGenerator{},
-		// "team_roles":        &TeamRolesGenerator{},
-		// "escalation_policy": &EscalationPolicyGenerator{},
-		// "runbook":           &RunbookGenerator{},
-		// "slo":               &SLOGenerator{},
+		"team":              &TeamGenerator{},
+		"team_member":       &TeamMemberGenerator{},
+		"team_roles":        &TeamRolesGenerator{},
+		"escalation_policy": &EscalationPolicyGenerator{},
+		"runbook":           &RunbookGenerator{},
+		"slo":               &SLOGenerator{},
 	}
 }
-
 
 func (p *SquadcastProvider) GetAccessToken() {
 	url := "/oauth/access-token"

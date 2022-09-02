@@ -1,7 +1,6 @@
 package squadcast
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -14,11 +13,6 @@ type UserGenerator struct {
 type User struct {
 	ID string `json:"id"`
 }
-
-var getUsersResponse struct {
-	Data *[]User `json:"data"`
-}
-
 
 func (g *UserGenerator) createResources(users []User) []terraformutils.Resource {
 	var resources []terraformutils.Resource
@@ -36,16 +30,11 @@ func (g *UserGenerator) createResources(users []User) []terraformutils.Resource 
 
 func (g *UserGenerator) InitResources() error {
 	getUsersURL := "/v3/users"
-	body, err := g.generateRequest(getUsersURL)
+	response, err := Request[[]User](getUsersURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
 		return err
 	}
 
-	err = json.Unmarshal(body, &getUsersResponse)
-	if err != nil {
-		return err
-	}
-
-	g.Resources = g.createResources(*getUsersResponse.Data)
+	g.Resources = g.createResources(*response)
 	return nil
 }

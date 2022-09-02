@@ -1,7 +1,6 @@
 package squadcast
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -15,10 +14,6 @@ type EscalationPolicyGenerator struct {
 type EscalationPolicy struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
-}
-
-var getEscalationPolicyResponse struct {
-	Data *[]EscalationPolicy `json:"data"`
 }
 
 func (g *EscalationPolicyGenerator) createResources(policies []EscalationPolicy) []terraformutils.Resource {
@@ -46,17 +41,11 @@ func (g *EscalationPolicyGenerator) InitResources() error {
 		return errors.New("--team-name is required")
 	}
 	getEscalationPolicyURL := fmt.Sprintf("/v3/escalation-policies?owner_id=%s", teamID)
-	body, err := g.generateRequest(getEscalationPolicyURL)
+	response, err := Request[[]EscalationPolicy](getEscalationPolicyURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
 		return err
 	}
 
-	err = json.Unmarshal(body, &getEscalationPolicyResponse)
-	if err != nil {
-		return err
-	}
-
-	g.Resources = g.createResources(*getEscalationPolicyResponse.Data)
-
+	g.Resources = g.createResources(*response)
 	return nil
 }

@@ -27,7 +27,7 @@ func GetHost(region string) string {
 	}
 }
 
-func Request [TRes any] (url string, token string, region string, isAuthenticated bool) (*TRes, error) {
+func Request[TRes any](url string, token string, region string, isAuthenticated bool) (*TRes, error) {
 	ctx := context.Background()
 	var URL string
 	var req *http.Request

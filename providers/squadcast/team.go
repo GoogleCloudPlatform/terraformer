@@ -22,11 +22,6 @@ type DataTeamMember struct {
 	RoleIDs []string `json:"role_ids"`
 }
 
-var getTeamsResponse struct {
-	Data *[]Team `json:"data"`
-}
-
-
 func (g *TeamGenerator) createResources(teams []Team) []terraformutils.Resource {
 	var teamList []terraformutils.Resource
 	for _, team := range teams {
@@ -43,10 +38,11 @@ func (g *TeamGenerator) createResources(teams []Team) []terraformutils.Resource 
 
 func (g *TeamGenerator) InitResources() error {
 	getTeamsURL := "/v3/teams"
-	response,err := Request[[]Team](getTeamsURL, g.Args["access_token"].(string),  g.Args["region"].(string), true)
+	response, err := Request[[]Team](getTeamsURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
 		return err
 	}
+
 	g.Resources = g.createResources(*response)
 	return nil
 }

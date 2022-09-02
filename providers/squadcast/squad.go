@@ -12,12 +12,8 @@ type SquadGenerator struct {
 }
 
 type Squad struct {
-	ID string `json:"id"`
+	ID   string `json:"id"`
 	Name string `json:"name"`
-}
-
-var getSquadsResponse struct {
-	Data *[]Squad `json:"data"`
 }
 
 func (g *SquadGenerator) createResources(squads []Squad) []terraformutils.Resource {
@@ -30,7 +26,7 @@ func (g *SquadGenerator) createResources(squads []Squad) []terraformutils.Resour
 			"squadcast",
 			map[string]string{
 				"team_id": g.Args["team_id"].(string),
-				"name": squad.Name,
+				"name":    squad.Name,
 			},
 			[]string{},
 			map[string]interface{}{},
@@ -44,12 +40,12 @@ func (g *SquadGenerator) InitResources() error {
 	if teamID == "" {
 		return errors.New("--team-name is required")
 	}
-	getSquadsURL := fmt.Sprintf("/v3/squads?owner_id=%s", teamID);
-
+	getSquadsURL := fmt.Sprintf("/v3/squads?owner_id=%s", teamID)
 	response, err := Request[[]Squad](getSquadsURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
 		return err
 	}
+
 	g.Resources = g.createResources(*response)
 	return nil
 }
