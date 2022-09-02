@@ -19,6 +19,9 @@ type SquadcastProvider struct {
 	region       string
 	teamID       string
 	teamName     string
+	serviceName  string
+	serviceID    string
+	scheduleName string
 }
 
 type AccessToken struct {
@@ -61,6 +64,15 @@ func (p *SquadcastProvider) Init(args []string) error {
 		p.GetTeamID()
 	}
 
+	if args[3] != "" {
+		p.serviceName = args[3]
+		p.GetServiceID()
+	}
+
+	if args[4] != "" {
+		p.scheduleName = args[4]
+	}
+
 	return nil
 }
 
@@ -79,6 +91,9 @@ func (p *SquadcastProvider) InitService(serviceName string, verbose bool) error 
 		"region":       p.region,
 		"team_id":      p.teamID,
 		"team_name":    p.teamName,
+		"service_name": p.serviceName,
+		"service_id":   p.serviceID,
+		"schedule_name":   p.scheduleName,
 	})
 	return nil
 }
@@ -112,15 +127,20 @@ func (p *SquadcastProvider) GetName() string {
 
 func (p *SquadcastProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"user":              &UserGenerator{},
-		"service":           &ServiceGenerator{},
-		"squad":             &SquadGenerator{},
-		"team":              &TeamGenerator{},
-		"team_member":       &TeamMemberGenerator{},
-		"team_roles":        &TeamRolesGenerator{},
-		"escalation_policy": &EscalationPolicyGenerator{},
-		"runbook":           &RunbookGenerator{},
-		"slo":               &SLOGenerator{},
+		"user":                &UserGenerator{},
+		"service":             &ServiceGenerator{},
+		"squad":               &SquadGenerator{},
+		"team":                &TeamGenerator{},
+		"team_member":         &TeamMemberGenerator{},
+		"team_roles":          &TeamRolesGenerator{},
+		"escalation_policy":   &EscalationPolicyGenerator{},
+		"runbook":             &RunbookGenerator{},
+		"slo":                 &SLOGenerator{},
+		"tagging_rules":       &TaggingRulesGenerator{},
+		"routing_rules":       &RoutingRulesGenerator{},
+		"deduplication_rules": &DeduplicationRulesGenerator{},
+		"suppression_rules":   &SuppressionRulesGenerator{},
+		"schedule":            &SchedulesGenerator{},
 	}
 }
 
