@@ -14,19 +14,15 @@ import (
 
 type SquadcastProvider struct {
 	terraformutils.Provider
-	accesstoken  string
-	refreshtoken string
+	accessToken  string
+	refreshToken string
 	region       string
 	teamID       string
 	teamName     string
 }
 
 type AccessToken struct {
-	Type         string `json:"type"`
-	AccessToken  string `json:"access_token"`
-	IssuedAt     int64  `json:"issued_at"`
-	ExpiresAt    int64  `json:"expires_at"`
-	RefreshToken string `json:"refresh_token"`
+	AccessToken string `json:"access_token"`
 }
 
 // Meta holds the status of the request information
@@ -39,19 +35,15 @@ type AppError struct {
 	Message string `json:"error_message,omitempty"`
 }
 
-const (
-	UserAgent = "terraformer-squadcast"
-)
-
 func (p *SquadcastProvider) Init(args []string) error {
 
 	if refreshToken := os.Getenv("SQUADCAST_REFRESH_TOKEN"); refreshToken != "" {
-		p.refreshtoken = os.Getenv("SQUADCAST_REFRESH_TOKEN")
+		p.refreshToken = os.Getenv("SQUADCAST_REFRESH_TOKEN")
 	}
 	if args[0] != "" {
-		p.refreshtoken = args[0]
+		p.refreshToken = args[0]
 	}
-	if p.refreshtoken == "" {
+	if p.refreshToken == "" {
 		return errors.New("required refresh Token missing")
 	}
 
@@ -83,7 +75,7 @@ func (p *SquadcastProvider) InitService(serviceName string, verbose bool) error 
 	p.Service.SetProviderName(p.GetName())
 	// SetArgs are used for fetching details within other files in the terraformer code.
 	p.Service.SetArgs(map[string]interface{}{
-		"access_token": p.accesstoken,
+		"access_token": p.accessToken,
 		"region":       p.region,
 		"team_id":      p.teamID,
 		"team_name":    p.teamName,
@@ -96,7 +88,7 @@ func (p *SquadcastProvider) InitService(serviceName string, verbose bool) error 
 func (p *SquadcastProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
 		"region":        cty.StringVal(p.region),
-		"refresh_token": cty.StringVal(p.refreshtoken),
+		"refresh_token": cty.StringVal(p.refreshToken),
 	})
 }
 
@@ -134,19 +126,16 @@ func (p *SquadcastProvider) GetSupportedService() map[string]terraformutils.Serv
 
 func (p *SquadcastProvider) GetAccessToken() {
 	url := "/oauth/access-token"
-	// header := map[string]string{"X-Refresh-Token": p.refreshtoken}
-	response, err := Request[AccessToken](url, p.refreshtoken, p.region, false)
-
+	response, err := Request[AccessToken](url, p.refreshToken, p.region, false)
 	if err != nil {
 		log.Fatal(err)
 	}
-	p.accesstoken = response.AccessToken
+	p.accessToken = response.AccessToken
 }
 
 func (p *SquadcastProvider) GetTeamID() {
 	url := fmt.Sprintf("/v3/teams/by-name?name=%s", url.QueryEscape(p.teamName))
-	// header := map[string]string{"Authorization": fmt.Sprintf("Bearer %s", p.accesstoken)}
-	response, err := Request[Team](url, p.accesstoken, p.region, true)
+	response, err := Request[Team](url, p.accessToken, p.region, true)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -21,7 +21,7 @@ func (g *EscalationPolicyGenerator) createResources(policies []EscalationPolicy)
 	for _, policy := range policies {
 		resourceList = append(resourceList, terraformutils.NewResource(
 			policy.ID,
-			"policy_"+(policy.ID),
+			fmt.Sprintf("policy_%s", policy.Name),
 			"squadcast_escalation_policy",
 			g.GetProviderName(),
 			map[string]string{

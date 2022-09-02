@@ -21,9 +21,9 @@ func (g *SquadGenerator) createResources(squads []Squad) []terraformutils.Resour
 	for _, squad := range squads {
 		resources = append(resources, terraformutils.NewResource(
 			squad.ID,
-			squad.Name,
+			fmt.Sprintf("squad_%s", squad.Name),
 			"squadcast_squad",
-			"squadcast",
+			g.GetProviderName(),
 			map[string]string{
 				"team_id": g.Args["team_id"].(string),
 				"name":    squad.Name,

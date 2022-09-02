@@ -1,6 +1,7 @@
 package squadcast
 
 import (
+	"fmt"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -9,17 +10,10 @@ type TeamGenerator struct {
 }
 
 type Team struct {
-	ID          string            `json:"id"`
-	Name        string            `json:"name"`
-	Description string            `json:"description"`
-	Default     bool              `json:"default"`
-	Members     []*DataTeamMember `json:"members"`
-	Roles       []*TeamRole       `json:"roles"`
-}
-
-type DataTeamMember struct {
-	UserID  string   `json:"user_id"`
-	RoleIDs []string `json:"role_ids"`
+	ID      string        `json:"id"`
+	Name    string        `json:"name"`
+	Members []*TeamMember `json:"members"`
+	Roles   []*TeamRole   `json:"roles"`
 }
 
 func (g *TeamGenerator) createResources(teams []Team) []terraformutils.Resource {
@@ -27,9 +21,9 @@ func (g *TeamGenerator) createResources(teams []Team) []terraformutils.Resource 
 	for _, team := range teams {
 		teamList = append(teamList, terraformutils.NewSimpleResource(
 			team.ID,
-			team.Name,
+			fmt.Sprintf("team_%s", team.Name),
 			"squadcast_team",
-			"squadcast",
+			g.GetProviderName(),
 			[]string{},
 		))
 	}

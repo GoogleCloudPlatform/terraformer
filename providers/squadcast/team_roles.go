@@ -12,10 +12,8 @@ type TeamRolesGenerator struct {
 }
 
 type TeamRole struct {
-	ID      string `json:"id"`
-	Name    string `json:"name"`
-	Slug    string `json:"slug"`
-	Default bool   `json:"default"`
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
 func (g *TeamRolesGenerator) createResources(teamRoles []TeamRole) []terraformutils.Resource {
@@ -23,7 +21,7 @@ func (g *TeamRolesGenerator) createResources(teamRoles []TeamRole) []terraformut
 	for _, role := range teamRoles {
 		teamRolesList = append(teamRolesList, terraformutils.NewResource(
 			role.ID,
-			fmt.Sprintf("team_role_%s", role.ID),
+			fmt.Sprintf("team_role_%s", role.Name),
 			"squadcast_team_role",
 			g.GetProviderName(),
 			map[string]string{

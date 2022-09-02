@@ -21,7 +21,7 @@ func (g *UserGenerator) createResources(users []User) []terraformutils.Resource 
 			user.ID,
 			fmt.Sprintf("user_%s", user.ID),
 			"squadcast_user",
-			"squadcast",
+			g.GetProviderName(),
 			[]string{},
 		))
 	}

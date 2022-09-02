@@ -16,6 +16,10 @@ type SquadcastService struct {
 	terraformutils.Service
 }
 
+const (
+	UserAgent = "terraformer-squadcast"
+)
+
 func GetHost(region string) string {
 	switch region {
 	case "us":

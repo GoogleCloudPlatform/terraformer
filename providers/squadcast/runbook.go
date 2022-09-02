@@ -4,6 +4,7 @@ package squadcast
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -22,7 +23,7 @@ func (g *RunbookGenerator) createResources(runbooks []Runbook) []terraformutils.
 	for _, runbook := range runbooks {
 		runbookList = append(runbookList, terraformutils.NewResource(
 			runbook.ID,
-			"runbook_"+(runbook.Name),
+			fmt.Sprintf("runbook_%s", runbook.Name),
 			"squadcast_runbook",
 			g.GetProviderName(),
 			map[string]string{

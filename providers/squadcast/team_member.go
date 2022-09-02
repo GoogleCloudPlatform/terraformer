@@ -12,14 +12,18 @@ type TeamMemberGenerator struct {
 	SquadcastService
 }
 
+type TeamMember struct {
+	UserID string `json:"user_id"`
+}
+
 func (g *TeamMemberGenerator) createResources(team Team) []terraformutils.Resource {
 	var teamMemberList []terraformutils.Resource
 	for _, member := range team.Members {
 		teamMemberList = append(teamMemberList, terraformutils.NewResource(
 			member.UserID,
-			"squadcast_team_member_"+(member.UserID),
+			fmt.Sprintf("squadcast_team_member_%s", member.UserID),
 			"squadcast_team_member",
-			g.ProviderName,
+			g.GetProviderName(),
 			map[string]string{
 				"team_id": team.ID,
 			},

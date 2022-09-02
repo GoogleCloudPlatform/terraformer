@@ -4,6 +4,7 @@ package squadcast
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -22,7 +23,7 @@ func (g *ServiceGenerator) createResources(services []Service) []terraformutils.
 	for _, service := range services {
 		serviceList = append(serviceList, terraformutils.NewResource(
 			service.ID,
-			"service_"+(service.Name),
+			fmt.Sprintf("service_%s", service.Name),
 			"squadcast_service",
 			g.GetProviderName(),
 			map[string]string{

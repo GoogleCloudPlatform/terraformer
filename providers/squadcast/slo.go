@@ -27,7 +27,7 @@ func (g *SLOGenerator) createResources(slo []SLO) []terraformutils.Resource {
 	for _, s := range slo {
 		SLOList = append(SLOList, terraformutils.NewResource(
 			fmt.Sprintf("%d", s.ID),
-			"slo_"+(s.Name),
+			fmt.Sprintf("slo_%s", s.Name),
 			"squadcast_slo",
 			g.GetProviderName(),
 			map[string]string{
