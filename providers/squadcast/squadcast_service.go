@@ -2,6 +2,7 @@ package squadcast
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -26,28 +27,33 @@ func GetHost(region string) string {
 	}
 }
 
-
-
-func (s *SquadcastService) generateRequest(uri string) ([]byte, error) {
-	host := GetHost(s.Args["region"].(string))
-	if host == "" {
-		log.Fatal("unknown region")
-	}
-
+func Request [TRes any] (url string, token string, region string, isAuthenticated bool) (*TRes, error) {
 	ctx := context.Background()
-	url := fmt.Sprintf("https://api.%s%s", host, uri)
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	var URL string
+	var req *http.Request
+	var err error
+	host := GetHost(region)
+	if isAuthenticated {
+		URL = fmt.Sprintf("https://api.%s%s", host, url)
+		req, err = http.NewRequestWithContext(ctx, http.MethodGet, URL, nil)
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+	} else {
+		URL = fmt.Sprintf("https://auth.%s%s", host, url)
+		req, err = http.NewRequestWithContext(ctx, http.MethodGet, URL, nil)
+		req.Header.Set("X-Refresh-Token", token)
+	}
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	accessToken := fmt.Sprintf("Bearer %s", s.Args["access_token"])
-
-	req.Header.Set("Authorization", accessToken)
 	req.Header.Set("User-Agent", UserAgent)
-
 	resp, err := http.DefaultClient.Do(req)
+
+	var response struct {
+		Data *TRes `json:"data"`
+		*Meta
+	}
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -63,5 +69,10 @@ func (s *SquadcastService) generateRequest(uri string) ([]byte, error) {
 		return nil, err
 	}
 
-	return body, nil
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return nil, err
+	}
+
+	return response.Data, nil
 }

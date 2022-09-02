@@ -1,7 +1,6 @@
 package squadcast
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -48,17 +47,11 @@ func (g *TeamRolesGenerator) InitResources() error {
 		return errors.New("--team-name is required")
 	}
 	getTeamRolesURL := fmt.Sprintf("/v3/teams/%s/roles", teamID)
-
-	body, err := g.generateRequest(getTeamRolesURL)
+	response,err := Request[[]TeamRole](getTeamRolesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
 		return err
 	}
-	
-	err = json.Unmarshal(body, &getTeamRolesResponse)
-	if err != nil {
-		return err
-	}
-	g.Resources = g.createResources(*getTeamRolesResponse.Data)
+	g.Resources = g.createResources(*response)
 
 	return nil
 }

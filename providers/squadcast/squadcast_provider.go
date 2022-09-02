@@ -1,13 +1,9 @@
 package squadcast
 
 import (
-	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"log"
-	"net/http"
 	"net/url"
 	"os"
 
@@ -95,7 +91,7 @@ func (p *SquadcastProvider) InitService(serviceName string, verbose bool) error 
 	return nil
 }
 
-// @desc GetConfig is used to send details to provider block of terraform-provider-squadcast
+// @desc GetConfig: send details to provider block of terraform-provider-squadcast
 
 func (p *SquadcastProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
@@ -124,111 +120,36 @@ func (p *SquadcastProvider) GetName() string {
 
 func (p *SquadcastProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"user":              &UserGenerator{},
-		"service":           &ServiceGenerator{},
+		// "user":              &UserGenerator{},
+		// "service":           &ServiceGenerator{},
 		"squad":             &SquadGenerator{},
-		"team":              &TeamGenerator{},
-		"team_member":       &TeamMemberGenerator{},
-		"team_roles":        &TeamRolesGenerator{},
-		"escalation_policy": &EscalationPolicyGenerator{},
-		"runbook":           &RunbookGenerator{},
-		"slo":               &SLOGenerator{},
+		// "team":              &TeamGenerator{},
+		// "team_member":       &TeamMemberGenerator{},
+		// "team_roles":        &TeamRolesGenerator{},
+		// "escalation_policy": &EscalationPolicyGenerator{},
+		// "runbook":           &RunbookGenerator{},
+		// "slo":               &SLOGenerator{},
 	}
 }
 
 
 func (p *SquadcastProvider) GetAccessToken() {
-	host := GetHost(p.region)
-	ctx := context.Background()
+	url := "/oauth/access-token"
+	// header := map[string]string{"X-Refresh-Token": p.refreshtoken}
+	response, err := Request[AccessToken](url, p.refreshtoken, p.region, false)
 
-	url := fmt.Sprintf("https://auth.%s/oauth/access-token", host)
-
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet,url , nil)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	req.Header.Set("X-Refresh-Token", p.refreshtoken)
-	req.Header.Set("User-Agent", UserAgent)
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var response struct {
-		Data AccessToken `json:"data"`
-		*Meta
-	}
-
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}(resp.Body)
-
-	bytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err := json.Unmarshal(bytes, &response); err != nil {
-		log.Fatal(err)
-	}
-
-	if resp.StatusCode > 299 {
-		log.Fatal(err)
-	}
-
-	p.accesstoken = response.Data.AccessToken
+	p.accesstoken = response.AccessToken
 }
 
 func (p *SquadcastProvider) GetTeamID() {
-	host := GetHost(p.region)
-	ctx := context.Background()
-
-	url := fmt.Sprintf("https://api.%s/v3/teams/by-name?name=%s", host, url.QueryEscape(p.teamName))
-	
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	url := fmt.Sprintf("/v3/teams/by-name?name=%s", url.QueryEscape(p.teamName))
+	// header := map[string]string{"Authorization": fmt.Sprintf("Bearer %s", p.accesstoken)}
+	response, err := Request[Team](url, p.accesstoken, p.region, true)
 	if err != nil {
 		log.Fatal(err)
 	}
-	
-	accessToken := fmt.Sprintf("Bearer %s", p.accesstoken)
-
-	req.Header.Set("Authorization", accessToken)
-	req.Header.Set("User-Agent", UserAgent)
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var response struct {
-		Data Team `json:"data"`
-		*Meta
-	}
-
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}(resp.Body)
-
-	bytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err := json.Unmarshal(bytes, &response); err != nil {
-		log.Fatal(err)
-	}
-
-	if resp.StatusCode > 299 {
-		log.Fatal(err)
-	}
-
-	p.teamID = response.Data.ID
+	p.teamID = response.ID
 }

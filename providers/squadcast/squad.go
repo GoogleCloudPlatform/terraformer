@@ -1,7 +1,6 @@
 package squadcast
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 
@@ -46,16 +45,11 @@ func (g *SquadGenerator) InitResources() error {
 		return errors.New("--team-name is required")
 	}
 	getSquadsURL := fmt.Sprintf("/v3/squads?owner_id=%s", teamID);
-	body, err := g.generateRequest(getSquadsURL)
+
+	response, err := Request[[]Squad](getSquadsURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
 		return err
 	}
-
-	err = json.Unmarshal(body, &getSquadsResponse)
-	if err != nil {
-		return err
-	}
-
-	g.Resources = g.createResources(*getSquadsResponse.Data)
+	g.Resources = g.createResources(*response)
 	return nil
 }

@@ -1,8 +1,6 @@
 package squadcast
 
 import (
-	"encoding/json"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -45,17 +43,10 @@ func (g *TeamGenerator) createResources(teams []Team) []terraformutils.Resource 
 
 func (g *TeamGenerator) InitResources() error {
 	getTeamsURL := "/v3/teams"
-	body, err := g.generateRequest(getTeamsURL)
+	response,err := Request[[]Team](getTeamsURL, g.Args["access_token"].(string),  g.Args["region"].(string), true)
 	if err != nil {
 		return err
 	}
-
-	err = json.Unmarshal(body, &getTeamsResponse)
-	if err != nil {
-		return err
-	}
-
-	g.Resources = g.createResources(*getTeamsResponse.Data)
-
+	g.Resources = g.createResources(*response)
 	return nil
 }
