@@ -38,39 +38,53 @@ terraformer import squadcast --resources=team --region=us --team-name="Default T
 ### Flags:
 
 - `--team-name`
-
   - Required for the following resources:
-    - squad
-    - service
+    - deduplication_rules
     - escalation_policy
+    - routing_rules
+    - runbook
+    - schedules
+    - service
+    - slo
+    - squad
+    - suppression_rules
+    - tagging_rules
     - team_member
     - team_roles
-    - slo
-    - runbook
+
+- `--service-name`
+  - Required for the following resources:
+    - deduplication_rules
+    - routing_rules
+    - suppression_rules
+    - tagging_rules
+
+- `--schedule-name`
+  - Required for the following resources:
+    - schedule
 
 - `--region`
-
   - Supported Values:
     - `us`
     - `eu`
 
+- `--refresh-token` (optional)
+  - Supported Values:
+    - <YOUR_SQUADCAST_REFRESH_TOKEN>
+
 ### Supported resources:
 
-- `user`
-  - [squadcast_user](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/user)
-- `team`
-  - [squadcast_team](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/team)
-- `team_member`
-  - [squadcast_team_member](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/team_member)
-- `team_roles`
-  - [squadcast_team_roles](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/team_roles)
-- `squad`
-  - [squadcast_squad](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/squad)
-- `service`
-  - [squadcast_service](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/service)
+- `deduplication_rules`
 - `escalation_policy`
-  - [squadcast_escalation_policy](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/escalation_policy)
+- `routing_rules`
 - `runbook`
-  - [squadcast_runbook](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/runbook)
+- `schedule`
+- `service`
 - `slo`
-  - [squadcast_slo](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/slo)
+- `squad`
+- `suppression_rules`
+- `tagging_rules`
+- `team`
+- `team_member`
+- `team_roles`
+- `user`
