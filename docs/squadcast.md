@@ -43,7 +43,6 @@ terraformer import squadcast --resources=team --region=us --team-name="Default T
     - escalation_policy
     - routing_rules
     - runbook
-    - schedules
     - service
     - slo
     - squad
@@ -58,10 +57,6 @@ terraformer import squadcast --resources=team --region=us --team-name="Default T
     - routing_rules
     - suppression_rules
     - tagging_rules
-
-- `--schedule-name`
-  - Required for the following resources:
-    - schedule
 
 - `--region`
   - Supported Values:
@@ -78,7 +73,6 @@ terraformer import squadcast --resources=team --region=us --team-name="Default T
 - [`escalation_policy`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/escalation_policy)
 - [`routing_rules`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/routing_rules)
 - [`runbook`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/runbook)
-- [`schedule`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/schedule)
 - [`service`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/service)
 - [`slo`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/slo)
 - [`squad`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/squad)
