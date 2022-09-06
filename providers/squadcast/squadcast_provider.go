@@ -21,7 +21,6 @@ type SquadcastProvider struct {
 	teamName     string
 	serviceName  string
 	serviceID    string
-	scheduleName string
 }
 
 type AccessToken struct {
@@ -83,12 +82,12 @@ func (p *SquadcastProvider) InitService(serviceName string, verbose bool) error 
 	p.Service.SetProviderName(p.GetName())
 	// SetArgs are used for fetching details within other files in the terraformer code.
 	p.Service.SetArgs(map[string]interface{}{
-		"access_token":  p.accessToken,
-		"region":        p.region,
-		"team_id":       p.teamID,
-		"team_name":     p.teamName,
-		"service_name":  p.serviceName,
-		"service_id":    p.serviceID,
+		"access_token": p.accessToken,
+		"region":       p.region,
+		"team_id":      p.teamID,
+		"team_name":    p.teamName,
+		"service_name": p.serviceName,
+		"service_id":   p.serviceID,
 	})
 	return nil
 }
