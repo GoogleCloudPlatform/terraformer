@@ -1,6 +1,8 @@
 package squadcast
 
 import (
+	"errors"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -23,7 +25,6 @@ func (g *SchedulesGenerator) createResources(schedules []Schedule) []terraformut
 			g.GetProviderName(),
 			map[string]string{
 				"team_id": g.Args["team_id"].(string),
-				"name":    g.Args["schedule_name"].(string),
 			},
 			[]string{},
 			map[string]interface{}{},
@@ -34,6 +35,9 @@ func (g *SchedulesGenerator) createResources(schedules []Schedule) []terraformut
 }
 
 func (g *SchedulesGenerator) InitResources() error {
+	if g.Args["team_id"].(string) == "" {
+		return errors.New("--team-name is required")
+	}
 	getSchedulesURL := "/v3/schedules"
 	response, err := Request[[]Schedule](getSchedulesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {

@@ -69,10 +69,6 @@ func (p *SquadcastProvider) Init(args []string) error {
 		p.GetServiceID()
 	}
 
-	if args[4] != "" {
-		p.scheduleName = args[4]
-	}
-
 	return nil
 }
 
@@ -93,7 +89,6 @@ func (p *SquadcastProvider) InitService(serviceName string, verbose bool) error 
 		"team_name":     p.teamName,
 		"service_name":  p.serviceName,
 		"service_id":    p.serviceID,
-		"schedule_name": p.scheduleName,
 	})
 	return nil
 }
