@@ -384,7 +384,7 @@ Look for S3 support in terraforming here and official S3 support
 Terraforming lacks full coverage for resources - as an example you can see that 70% of S3 options are not supported:
 
 * terraforming - https://github.com/dtan4/terraforming/blob/master/lib/terraforming/template/tf/s3.erb
-* official S3 support - https://www.terraform.io/docs/providers/aws/r/s3_bucket.html
+* official S3 support - https://www.terraform.io/docs/providers/aws/r/s3_bucket
 
 ## Stargazers over time
 

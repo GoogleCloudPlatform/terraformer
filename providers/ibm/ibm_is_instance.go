@@ -44,7 +44,9 @@ func (g InstanceGenerator) createInstanceResources(instanceID, instanceName, ins
 
 	// Deprecated parameters
 	resource.IgnoreKeys = append(resource.IgnoreKeys,
-		"^port$",
+		"^port_speed$",
+		"^primary_network_interface.[0-9].primary_ip.[0-9].address$",
+		"^primary_network_interface.[0-9].primary_ip.[0-9].reserved_ip$",
 	)
 	return resource
 }

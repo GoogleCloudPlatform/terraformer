@@ -1,4 +1,4 @@
-// Copyright 2021 The Terraformer Authors.
+// Copyright 2022 The Terraformer Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ func (g *VpnGenerator) InitResources() error {
 
 	request := vpc.NewDescribeVpnGatewaysRequest()
 
-	var offset uint64 = 0
+	var offset uint64
 	var pageSize uint64 = 50
 	allInstances := make([]*vpc.VpnGateway, 0)
 

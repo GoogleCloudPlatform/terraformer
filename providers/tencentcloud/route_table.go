@@ -15,51 +15,56 @@
 package tencentcloud
 
 import (
+	"fmt"
+	"strconv"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	cbs "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cbs/v20170312"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
+	vpc "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc/v20170312"
 )
 
-type CbsGenerator struct {
+type RouteTableGenerator struct {
 	TencentCloudService
 }
 
-func (g *CbsGenerator) InitResources() error {
+func (g *RouteTableGenerator) InitResources() error {
 	args := g.GetArgs()
 	region := args["region"].(string)
 	credential := args["credential"].(common.Credential)
 	profile := NewTencentCloudClientProfile()
-	client, err := cbs.NewClient(&credential, region, profile)
+	client, err := vpc.NewClient(&credential, region, profile)
 	if err != nil {
 		return err
 	}
 
-	request := cbs.NewDescribeDisksRequest()
+	request := vpc.NewDescribeRouteTablesRequest()
 
 	filters := make([]string, 0)
 	for _, filter := range g.Filter {
-		if filter.FieldPath == "id" && filter.IsApplicable("tencentcloud_cbs_storage") {
+		if filter.FieldPath == "id" && filter.IsApplicable("tencentcloud_route_table") {
 			filters = append(filters, filter.AcceptableValues...)
 		}
 	}
 	for i := range filters {
-		request.DiskIds = append(request.DiskIds, &filters[i])
+		request.RouteTableIds = append(request.RouteTableIds, &filters[i])
 	}
 
-	var offset uint64
-	var pageSize uint64 = 50
-	allInstances := make([]*cbs.Disk, 0)
+	offset := 0
+	pageSize := 50
+	allInstances := make([]*vpc.RouteTable, 0)
 
 	for {
-		request.Offset = &offset
-		request.Limit = &pageSize
-		response, err := client.DescribeDisks(request)
+		offsetString := strconv.Itoa(offset)
+		limitString := strconv.Itoa(pageSize)
+		request.Offset = &offsetString
+		request.Limit = &limitString
+		response, err := client.DescribeRouteTables(request)
 		if err != nil {
 			return err
 		}
 
-		allInstances = append(allInstances, response.Response.DiskSet...)
-		if len(response.Response.DiskSet) < int(pageSize) {
+		allInstances = append(allInstances, response.Response.RouteTableSet...)
+		if len(response.Response.RouteTableSet) < pageSize {
 			break
 		}
 		offset += pageSize
@@ -67,9 +72,9 @@ func (g *CbsGenerator) InitResources() error {
 
 	for _, instance := range allInstances {
 		resource := terraformutils.NewResource(
-			*instance.DiskId,
-			*instance.DiskId,
-			"tencentcloud_cbs_storage",
+			*instance.RouteTableId,
+			*instance.RouteTableName+"_"+*instance.RouteTableId,
+			"tencentcloud_route_table",
 			"tencentcloud",
 			map[string]string{},
 			[]string{},
@@ -77,18 +82,20 @@ func (g *CbsGenerator) InitResources() error {
 		)
 		g.Resources = append(g.Resources, resource)
 
-		if *instance.Attached {
-			attachment := terraformutils.NewResource(
-				*instance.DiskId,
-				*instance.DiskId,
-				"tencentcloud_cbs_storage_attachment",
+		for _, entry := range instance.RouteSet {
+			entryID := fmt.Sprintf("%d.%s", *entry.RouteId, *instance.RouteTableId)
+			entryName := fmt.Sprintf("%s_%d", *instance.RouteTableId, *entry.RouteId)
+			entryResource := terraformutils.NewResource(
+				entryID,
+				entryName,
+				"tencentcloud_route_table_entry",
 				"tencentcloud",
 				map[string]string{},
 				[]string{},
 				map[string]interface{}{},
 			)
-			attachment.AdditionalFields["storage_id"] = "${tencentcloud_cbs_storage." + resource.ResourceName + ".id}"
-			g.Resources = append(g.Resources, attachment)
+			entryResource.AdditionalFields["route_table_id"] = "${tencentcloud_route_table." + resource.ResourceName + ".id}"
+			g.Resources = append(g.Resources, entryResource)
 		}
 	}
 

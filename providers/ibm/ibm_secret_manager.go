@@ -24,35 +24,38 @@ import (
 	"github.com/IBM-Cloud/bluemix-go/session"
 )
 
-// DatabaseRabbitMQGenerator ...
-type DatabaseRabbitMQGenerator struct {
+type SecretsManagerGenerator struct {
 	IBMService
 }
 
-// loadRabbitMQDB ...
-func (g DatabaseRabbitMQGenerator) loadRabbitMQDB(dbID string, dbName string) terraformutils.Resource {
-	resources := terraformutils.NewSimpleResource(
-		dbID,
-		normalizeResourceName(dbName, false),
-		"ibm_database",
+func (g SecretsManagerGenerator) loadSM(smID, smName, servicePlan string, timeout map[string]string) terraformutils.Resource {
+	resources := terraformutils.NewResource(
+		smID,
+		normalizeResourceName(smName, true),
+		"ibm_resource_instance",
 		"ibm",
-		[]string{})
+		map[string]string{
+			"plan": servicePlan,
+		},
+		[]string{},
+		map[string]interface{}{
+			"timeouts": timeout,
+		})
 	return resources
 }
 
-// InitResources ...
-func (g *DatabaseRabbitMQGenerator) InitResources() error {
+func (g *SecretsManagerGenerator) InitResources() error {
 
-	region := g.Args["region"].(string)
 	bmxConfig := &bluemix.Config{
 		BluemixAPIKey: os.Getenv("IC_API_KEY"),
-		Region:        region,
 	}
+
 	sess, err := session.New(bmxConfig)
 	if err != nil {
 		return err
 	}
 
+	// Client creation
 	catalogClient, err := catalog.New(sess)
 	if err != nil {
 		return err
@@ -63,22 +66,25 @@ func (g *DatabaseRabbitMQGenerator) InitResources() error {
 		return err
 	}
 
-	serviceID, err := catalogClient.ResourceCatalog().FindByName("messages-for-rabbitmq", true)
+	// Get ServiceID of secret manager service
+	serviceID, err := catalogClient.ResourceCatalog().FindByName("secrets-manager", true)
 	if err != nil {
 		return err
 	}
+
 	query := controllerv2.ServiceInstanceQuery{
 		ServiceID: serviceID[0].ID,
 	}
-	rabbitmqInstances, err := controllerClient.ResourceServiceInstanceV2().ListInstances(query)
+
+	// Get all Secret manager instances
+	smInstances, err := controllerClient.ResourceServiceInstanceV2().ListInstances(query)
 	if err != nil {
 		return err
 	}
-	for _, db := range rabbitmqInstances {
-		if db.RegionID == region {
-			g.Resources = append(g.Resources, g.loadRabbitMQDB(db.ID, db.Name))
-		}
-	}
 
+	for _, smInstance := range smInstances {
+		timeout := map[string]string{"create": "15m"}
+		g.Resources = append(g.Resources, g.loadSM(smInstance.ID, smInstance.Name, smInstance.ServicePlanName, timeout))
+	}
 	return nil
 }

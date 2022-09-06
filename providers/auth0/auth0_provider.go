@@ -55,6 +55,10 @@ func (p *Auth0Provider) GetName() string {
 	return "auth0"
 }
 
+func (p *Auth0Provider) GetSource() string {
+	return "auth0/auth0"
+}
+
 func (p *Auth0Provider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
 		"domain":        cty.StringVal(p.domain),
@@ -90,8 +94,14 @@ func (p *Auth0Provider) GetSupportedService() map[string]terraformutils.ServiceG
 		"auth0_role":            &RoleGenerator{},
 		"auth0_rule":            &RuleGenerator{},
 		"auth0_rule_config":     &RuleConfigGenerator{},
-		"auth0_trigger":         &TriggerBindingGenerator{},
+		"auth0_trigger_binding": &TriggerBindingGenerator{},
 		"auth0_user":            &UserGenerator{},
+		"auth0_branding":        &BrandingGenerator{},
+		"auth0_custom_domain":   &CustomDomainGenerator{},
+		"auth0_email":           &EmailGenerator{},
+		"auth0_prompt":          &PromptGenerator{},
+		"auth0_log_stream":      &LogStreamGenerator{},
+		"auth0_tenant":          &TenantGenerator{},
 	}
 }
 

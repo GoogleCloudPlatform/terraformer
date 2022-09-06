@@ -27,11 +27,11 @@ import (
 	"github.com/IBM/go-sdk-core/v3/core"
 )
 
-type SatelliteGenerator struct {
+type SatelliteControlPlaneGenerator struct {
 	IBMService
 }
 
-func (g SatelliteGenerator) loadLocations(locID, locName string) terraformutils.Resource {
+func (g SatelliteControlPlaneGenerator) loadLocations(locID, locName string) terraformutils.Resource {
 	resource := terraformutils.NewResource(
 		locID,
 		normalizeResourceName(locName, false),
@@ -49,7 +49,7 @@ func (g SatelliteGenerator) loadLocations(locID, locName string) terraformutils.
 	return resource
 }
 
-func (g SatelliteGenerator) loadAssignHostControlPlane(locID, hostID string, labels []string, dependsOn []string) terraformutils.Resource {
+func (g SatelliteControlPlaneGenerator) loadAssignHostControlPlane(locID, hostID string, labels []string, dependsOn []string) terraformutils.Resource {
 	resource := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", locID, hostID),
 		normalizeResourceName("ibm_satellite_host", true),
@@ -61,10 +61,29 @@ func (g SatelliteGenerator) loadAssignHostControlPlane(locID, hostID string, lab
 			"labels":     labels,
 			"depends_on": dependsOn,
 		})
+
 	return resource
 }
 
-func (g *SatelliteGenerator) InitResources() error {
+func (g SatelliteControlPlaneGenerator) loadROKSCluster(clusterName, locationID string, dependsOn []string) terraformutils.Resource {
+	resource := terraformutils.NewResource(
+		clusterName,
+		clusterName,
+		"ibm_satellite_cluster",
+		"ibm",
+		map[string]string{
+			"location":               locationID,
+			"wait_for_worker_update": "true",
+		},
+		[]string{},
+		map[string]interface{}{
+			"depends_on": dependsOn,
+		})
+
+	return resource
+}
+
+func (g *SatelliteControlPlaneGenerator) InitResources() error {
 	bmxConfig := &bluemix.Config{
 		BluemixAPIKey: os.Getenv("IC_API_KEY"),
 	}
@@ -131,6 +150,19 @@ func (g *SatelliteGenerator) InitResources() error {
 						hostLabels = append(hostLabels, fmt.Sprintf("%s=%s", key, value))
 					}
 					g.Resources = append(g.Resources, g.loadAssignHostControlPlane(*loc.ID, *host.ID, hostLabels, locDependsOn))
+				}
+			}
+
+			// Cluster
+			getSatClusterOptions := &kubernetesserviceapiv1.GetSatelliteClustersOptions{}
+			clusterFields, _, err := satelliteClient.GetSatelliteClusters(getSatClusterOptions)
+			if err != nil {
+				return fmt.Errorf("Error getting satellite cluster %s", err)
+			}
+
+			for _, cluster := range clusterFields {
+				if *cluster.Location == *loc.Name {
+					g.Resources = append(g.Resources, g.loadROKSCluster(*cluster.Name, *loc.ID, locDependsOn))
 				}
 			}
 

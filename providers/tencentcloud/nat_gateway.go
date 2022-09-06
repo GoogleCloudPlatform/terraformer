@@ -17,39 +17,39 @@ package tencentcloud
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
-	ssl "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl/v20191205"
+	vpc "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc/v20170312"
 )
 
-type SslGenerator struct {
+type NatGatewayGenerator struct {
 	TencentCloudService
 }
 
-func (g *SslGenerator) InitResources() error {
+func (g *NatGatewayGenerator) InitResources() error {
 	args := g.GetArgs()
 	region := args["region"].(string)
 	credential := args["credential"].(common.Credential)
 	profile := NewTencentCloudClientProfile()
-	client, err := ssl.NewClient(&credential, region, profile)
+	client, err := vpc.NewClient(&credential, region, profile)
 	if err != nil {
 		return err
 	}
 
-	request := ssl.NewDescribeCertificatesRequest()
+	request := vpc.NewDescribeNatGatewaysRequest()
 
 	var offset uint64
 	var pageSize uint64 = 50
-	allInstances := make([]*ssl.Certificates, 0)
+	allInstances := make([]*vpc.NatGateway, 0)
 
 	for {
 		request.Offset = &offset
 		request.Limit = &pageSize
-		response, err := client.DescribeCertificates(request)
+		response, err := client.DescribeNatGateways(request)
 		if err != nil {
 			return err
 		}
 
-		allInstances = append(allInstances, response.Response.Certificates...)
-		if len(response.Response.Certificates) < int(pageSize) {
+		allInstances = append(allInstances, response.Response.NatGatewaySet...)
+		if len(response.Response.NatGatewaySet) < int(pageSize) {
 			break
 		}
 		offset += pageSize
@@ -57,9 +57,9 @@ func (g *SslGenerator) InitResources() error {
 
 	for _, instance := range allInstances {
 		resource := terraformutils.NewResource(
-			*instance.CertificateId,
-			*instance.CertificateId,
-			"tencentcloud_ssl_certificate",
+			*instance.NatGatewayId,
+			*instance.NatGatewayName+"_"+*instance.NatGatewayId,
+			"tencentcloud_nat_gateway",
 			"tencentcloud",
 			map[string]string{},
 			[]string{},

@@ -15,8 +15,6 @@
 package auth0
 
 import (
-	"log"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"gopkg.in/auth0.v5/management"
 )
@@ -29,16 +27,21 @@ type TriggerBindingGenerator struct {
 	Auth0Service
 }
 
-func (g TriggerBindingGenerator) createResources(bindings []*management.ActionBinding) []terraformutils.Resource {
+func (g TriggerBindingGenerator) createResources(bindings map[string]*management.ActionBinding) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
+
 	for _, binding := range bindings {
-		resourceName := *binding.ID
-		resources = append(resources, terraformutils.NewSimpleResource(
+		resourceName := *binding.TriggerID
+		resources = append(resources, terraformutils.NewResource(
 			resourceName,
-			resourceName,
+			*binding.ID,
 			"auth0_trigger_binding",
 			"auth0",
+			map[string]string{},
 			TriggerBindingAllowEmptyValues,
+			map[string]interface{}{
+				"trigger": *binding.TriggerID,
+			},
 		))
 	}
 	return resources
@@ -46,7 +49,7 @@ func (g TriggerBindingGenerator) createResources(bindings []*management.ActionBi
 
 func (g *TriggerBindingGenerator) InitResources() error {
 	m := g.generateClient()
-	list := []*management.ActionBinding{}
+	bindings := map[string]*management.ActionBinding{}
 
 	t, err := m.Action.Triggers()
 	if err != nil {
@@ -54,22 +57,24 @@ func (g *TriggerBindingGenerator) InitResources() error {
 	}
 
 	for _, trigger := range t.Triggers {
-		log.Println(trigger.ID)
 		var page int
 		for {
 			l, err := m.Action.Bindings(*trigger.ID, management.Page(page))
 			if err != nil {
 				return err
 			}
-			list = append(list, l.Bindings...)
+			for _, binding := range l.Bindings {
+				if _, ok := bindings[*binding.ID]; !ok {
+					bindings[*binding.ID] = binding
+				}
+			}
 			if !l.HasNext() {
 				break
 			}
 			page++
-			log.Println(list)
 		}
 	}
 
-	g.Resources = g.createResources(list)
+	g.Resources = g.createResources(bindings)
 	return nil
 }

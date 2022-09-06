@@ -15,26 +15,40 @@
 package auth0
 
 import (
-	"log"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"gopkg.in/auth0.v5/management"
 )
 
-type Auth0Service struct { //nolint
-	terraformutils.Service
+var (
+	LogStreamAllowEmptyValues = []string{}
+)
+
+type LogStreamGenerator struct {
+	Auth0Service
 }
 
-func (s *Auth0Service) generateClient() *management.Management {
-	authenticationOption := management.WithClientCredentials(s.Args["client_id"].(string), s.Args["client_secret"].(string))
+func (g LogStreamGenerator) createResources(logStreams []*management.LogStream) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
+	for _, LogStream := range logStreams {
+		resourceName := *LogStream.ID
+		resources = append(resources, terraformutils.NewSimpleResource(
+			resourceName,
+			resourceName+"_"+*LogStream.Name,
+			"auth0_log_stream",
+			"auth0",
+			LogStreamAllowEmptyValues,
+		))
+	}
+	return resources
+}
 
-	apiClient, err := management.New(s.Args["domain"].(string),
-		authenticationOption,
-		management.WithDebug(false),
-	)
+func (g *LogStreamGenerator) InitResources() error {
+	m := g.generateClient()
+	list, err := m.LogStream.List()
 	if err != nil {
-		log.Fatalf(err.Error())
+		return err
 	}
 
-	return apiClient
+	g.Resources = g.createResources(list)
+	return nil
 }

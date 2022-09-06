@@ -1,4 +1,4 @@
-// Copyright 2021 The Terraformer Authors.
+// Copyright 2022 The Terraformer Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
 package tencentcloud
 
 import (
+	"fmt"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	cvm "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm/v20170312"
@@ -35,8 +37,17 @@ func (g *CvmGenerator) InitResources() error {
 	}
 
 	request := cvm.NewDescribeInstancesRequest()
+	filters := make([]string, 0)
+	for _, filter := range g.Filter {
+		if filter.FieldPath == "id" && filter.IsApplicable("tencentcloud_instance") {
+			filters = append(filters, filter.AcceptableValues...)
+		}
+	}
+	for i := range filters {
+		request.InstanceIds = append(request.InstanceIds, &filters[i])
+	}
 
-	var offset int64 = 0
+	var offset int64
 	var pageSize int64 = 50
 	allInstances := make([]*cvm.Instance, 0)
 
@@ -69,8 +80,60 @@ func (g *CvmGenerator) InitResources() error {
 			[]string{},
 			map[string]interface{}{},
 		)
+		if instance.LoginSettings != nil && len(instance.LoginSettings.KeyIds) > 0 {
+			keyPairName, err := g.loadKeyPairs(client, instance.LoginSettings.KeyIds)
+			if err == nil {
+				resource.AdditionalFields["key_name"] = "${tencentcloud_key_pair." + keyPairName + ".id}"
+			}
+		}
 		g.Resources = append(g.Resources, resource)
 	}
 
 	return nil
 }
+
+func (g *CvmGenerator) loadKeyPairs(client *cvm.Client, keyIds []*string) (resourceName string, errRet error) {
+	request := cvm.NewDescribeKeyPairsRequest()
+	request.KeyIds = keyIds
+	response, err := client.DescribeKeyPairs(request)
+	if err != nil {
+		errRet = err
+		return
+	}
+	if len(response.Response.KeyPairSet) < 1 {
+		errRet = fmt.Errorf("no key pair")
+		return
+	}
+
+	instance := response.Response.KeyPairSet[0]
+	resourceName = *instance.KeyName + "_" + *instance.KeyId
+	for _, r := range g.Resources {
+		if r.InstanceInfo.Type == "tencentcloud_key_pair" && r.ResourceName == resourceName {
+			return
+		}
+	}
+	resource := terraformutils.NewResource(
+		*instance.KeyId,
+		resourceName,
+		"tencentcloud_key_pair",
+		"tencentcloud",
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{},
+	)
+	g.Resources = append(g.Resources, resource)
+	return
+}
+
+/*
+func (g *CvmGenerator) PostConvertHook() error {
+	for _, resource := range g.Resources {
+		if resource.InstanceInfo.Type == "tencentcloud_instance" {
+			resource.InstanceState.Attributes["disable_monitor_service"] = "false"
+			resource.InstanceState.Attributes["disable_security_service"] = "false"
+			resource.InstanceState.Attributes["force_delete"] = "false"
+		}
+	}
+	return nil
+}
+*/

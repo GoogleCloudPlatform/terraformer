@@ -136,6 +136,14 @@ List of supported IBM Cloud resources:
 * `ibm_vpe_gateway`
     * `ibm_is_virtual_endpoint_gateway`
     * `ibm_is_virtual_endpoint_gateway_ip`
-* `ibm_satellite`
+* `ibm_satellite_control_plane`
     * `ibm_satellite_location`
     * `ibm_satellite_host`    
+    * `ibm_satellite_cluster` 
+* `ibm_satellite_data_plane`
+    * `ibm_is_vpc`
+    * `ibm_is_instance`    
+    * `ibm_is_floating_ip`
+    * `ibm_is_ssh_key`
+    * `ibm_is_security_group`
+    * `ibm_is_subnet`
