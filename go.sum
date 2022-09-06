@@ -121,8 +121,10 @@ github.com/BurntSushi/toml v1.1.0 h1:ksErzDEI1khOiGPgpwuI7x2ebx/uXQNw7xJpn9Eq1+I
 github.com/BurntSushi/toml v1.1.0/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/ChrisTrenkamp/goxpath v0.0.0-20170922090931-c385f95c6022/go.mod h1:nuWgzSkT5PnyOd+272uUmV0dnAnAn42Mk7PiQC5VzN4=
-github.com/DataDog/datadog-api-client-go v1.14.0 h1:7ZITahghFVmC32GZ7DFcoEPdajvkS7cPWYQ29WJR6ko=
-github.com/DataDog/datadog-api-client-go v1.14.0/go.mod h1:15sqwH81WH6nCgW+rWyHw6PdaBA3udYAOq0p5lntKcY=
+github.com/DataDog/datadog-api-client-go/v2 v2.1.0 h1:umvWLP/h7+pY5XFgPNzht1LwpSbsWzCZ8T3d69L+M98=
+github.com/DataDog/datadog-api-client-go/v2 v2.1.0/go.mod h1:98b/MtTwSAr/yhTfhCR1oxAqQ/4tMkdrgKH7fYiDA0g=
+github.com/DataDog/zstd v1.5.0 h1:+K/VEwIAaPcHiMtQvpLD4lqW7f0Gk3xdYZmI1hD+CXo=
+github.com/DataDog/zstd v1.5.0/go.mod h1:g4AWEaM3yOg3HYfnJ3YIawPnVdXJh9QME85blwSAmyw=
 github.com/IBM-Cloud/bluemix-go v0.0.0-20210203095940-db28d5e07b55 h1:sUpBb2/GC8L6UOKDnbEZLRTxQB2RQgMv1mxbnOHOQW4=
 github.com/IBM-Cloud/bluemix-go v0.0.0-20210203095940-db28d5e07b55/go.mod h1:kqTYO0mts71aa8PVwviaKlCKYud/NbEkFIqU8aHH3/g=
 github.com/IBM-Cloud/bluemix-go v0.0.0-20220624043500-d538cb4fd9be h1:PTW3J9z39tJYnmtdAxi8WvTWQXfkOflTJw6noyjnno4=

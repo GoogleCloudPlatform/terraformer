@@ -17,7 +17,9 @@ package datadog
 import (
 	"context"
 
-	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV1"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -59,10 +61,11 @@ func (g *LogsIntegrationPipelineGenerator) createResource(logsIntegrationPipelin
 // from each integration pipeline create 1 TerraformResource.
 // Need LogsPipeline ID as ID for terraform resource
 func (g *LogsIntegrationPipelineGenerator) InitResources() error {
-	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
-	authV1 := g.Args["authV1"].(context.Context)
+	datadogClient := g.Args["datadogClient"].(*datadog.APIClient)
+	auth := g.Args["auth"].(context.Context)
+	api := datadogV1.NewLogsPipelinesApi(datadogClient)
 
-	logsIntegrationPipelines, _, err := datadogClientV1.LogsPipelinesApi.ListLogsPipelines(authV1)
+	logsIntegrationPipelines, _, err := api.ListLogsPipelines(auth)
 	if err != nil {
 		return err
 	}

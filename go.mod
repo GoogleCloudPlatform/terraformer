@@ -348,11 +348,13 @@ require (
 	cloud.google.com/go/cloudtasks v1.3.0
 	cloud.google.com/go/iam v0.3.0
 	cloud.google.com/go/monitoring v1.4.0
+	github.com/DataDog/datadog-api-client-go/v2 v2.1.0
 	github.com/manicminer/hamilton v0.44.0
 )
 
 require (
 	cloud.google.com/go/compute v1.3.0 // indirect
+	github.com/DataDog/zstd v1.5.0 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
 	github.com/clbanning/mxj v1.8.4 // indirect
