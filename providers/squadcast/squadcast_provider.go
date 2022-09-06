@@ -19,6 +19,8 @@ type SquadcastProvider struct {
 	region       string
 	teamID       string
 	teamName     string
+	serviceName  string
+	serviceID    string
 }
 
 type AccessToken struct {
@@ -61,6 +63,11 @@ func (p *SquadcastProvider) Init(args []string) error {
 		p.GetTeamID()
 	}
 
+	if args[3] != "" {
+		p.serviceName = args[3]
+		p.GetServiceID()
+	}
+
 	return nil
 }
 
@@ -79,6 +86,8 @@ func (p *SquadcastProvider) InitService(serviceName string, verbose bool) error 
 		"region":       p.region,
 		"team_id":      p.teamID,
 		"team_name":    p.teamName,
+		"service_name": p.serviceName,
+		"service_id":   p.serviceID,
 	})
 	return nil
 }
@@ -112,15 +121,20 @@ func (p *SquadcastProvider) GetName() string {
 
 func (p *SquadcastProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"user":              &UserGenerator{},
-		"service":           &ServiceGenerator{},
-		"squad":             &SquadGenerator{},
-		"team":              &TeamGenerator{},
-		"team_member":       &TeamMemberGenerator{},
-		"team_roles":        &TeamRolesGenerator{},
-		"escalation_policy": &EscalationPolicyGenerator{},
-		"runbook":           &RunbookGenerator{},
-		"slo":               &SLOGenerator{},
+		"user":                &UserGenerator{},
+		"service":             &ServiceGenerator{},
+		"squad":               &SquadGenerator{},
+		"team":                &TeamGenerator{},
+		"team_member":         &TeamMemberGenerator{},
+		"team_roles":          &TeamRolesGenerator{},
+		"escalation_policy":   &EscalationPolicyGenerator{},
+		"runbook":             &RunbookGenerator{},
+		"slo":                 &SLOGenerator{},
+		"tagging_rules":       &TaggingRulesGenerator{},
+		"routing_rules":       &RoutingRulesGenerator{},
+		"deduplication_rules": &DeduplicationRulesGenerator{},
+		"suppression_rules":   &SuppressionRulesGenerator{},
+		"schedule":            &SchedulesGenerator{},
 	}
 }
 
@@ -140,4 +154,13 @@ func (p *SquadcastProvider) GetTeamID() {
 		log.Fatal(err)
 	}
 	p.teamID = response.ID
+}
+
+func (p *SquadcastProvider) GetServiceID() {
+	url := fmt.Sprintf("/v3/services/by-name?name=%s&owner_id=%s", url.QueryEscape(p.serviceName), p.teamID)
+	response, err := Request[Service](url, p.accessToken, p.region, true)
+	if err != nil {
+		log.Fatal(err)
+	}
+	p.serviceID = response.ID
 }

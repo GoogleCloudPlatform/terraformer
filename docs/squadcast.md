@@ -38,39 +38,47 @@ terraformer import squadcast --resources=team --region=us --team-name="Default T
 ### Flags:
 
 - `--team-name`
-
   - Required for the following resources:
-    - squad
-    - service
+    - deduplication_rules
     - escalation_policy
+    - routing_rules
+    - runbook
+    - service
+    - slo
+    - squad
+    - suppression_rules
+    - tagging_rules
     - team_member
     - team_roles
-    - slo
-    - runbook
+
+- `--service-name`
+  - Required for the following resources:
+    - deduplication_rules
+    - routing_rules
+    - suppression_rules
+    - tagging_rules
 
 - `--region`
-
   - Supported Values:
     - `us`
     - `eu`
 
+- `--refresh-token` (optional)
+  - Supported Values:
+    - <YOUR_SQUADCAST_REFRESH_TOKEN>
+
 ### Supported resources:
 
-- `user`
-  - [squadcast_user](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/user)
-- `team`
-  - [squadcast_team](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/team)
-- `team_member`
-  - [squadcast_team_member](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/team_member)
-- `team_roles`
-  - [squadcast_team_roles](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/team_roles)
-- `squad`
-  - [squadcast_squad](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/squad)
-- `service`
-  - [squadcast_service](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/service)
-- `escalation_policy`
-  - [squadcast_escalation_policy](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/escalation_policy)
-- `runbook`
-  - [squadcast_runbook](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/runbook)
-- `slo`
-  - [squadcast_slo](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/slo)
+- [`deduplication_rules`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/deduplication_rules)
+- [`escalation_policy`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/escalation_policy)
+- [`routing_rules`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/routing_rules)
+- [`runbook`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/runbook)
+- [`service`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/service)
+- [`slo`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/slo)
+- [`squad`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/squad)
+- [`suppression_rules`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/suppression_rules)
+- [`tagging_rules`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/tagging_rules)
+- [`team`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/team)
+- [`team_member`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/team_member)
+- [`team_roles`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/team_role)
+- [`user`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/user)
