@@ -18,7 +18,8 @@ import (
 	"context"
 	"fmt"
 
-	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV1"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -57,14 +58,15 @@ func (g *DashboardGenerator) createResource(dashboardID string) terraformutils.R
 // from each dashboard create 1 TerraformResource.
 // Need Dashboard ID as ID for terraform resource
 func (g *DashboardGenerator) InitResources() error {
-	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
-	authV1 := g.Args["authV1"].(context.Context)
+	datadogClient := g.Args["datadogClient"].(*datadog.APIClient)
+	auth := g.Args["auth"].(context.Context)
+	api := datadogV1.NewDashboardsApi(datadogClient)
 
 	resources := []terraformutils.Resource{}
 	for _, filter := range g.Filter {
 		if filter.FieldPath == "id" && filter.IsApplicable("dashboard") {
 			for _, value := range filter.AcceptableValues {
-				dashboard, _, err := datadogClientV1.DashboardsApi.GetDashboard(authV1, value)
+				dashboard, _, err := api.GetDashboard(auth, value)
 				if err != nil {
 					return err
 				}
@@ -79,7 +81,7 @@ func (g *DashboardGenerator) InitResources() error {
 		return nil
 	}
 
-	summary, _, err := datadogClientV1.DashboardsApi.ListDashboards(authV1)
+	summary, _, err := api.ListDashboards(auth)
 	if err != nil {
 		return err
 	}
