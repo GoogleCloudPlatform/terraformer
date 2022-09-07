@@ -39,7 +39,7 @@ func (p *IBMProvider) Init(args []string) error {
 	p.VPC = args[3]
 
 	var err error
-	if p.Region != DefaultRegion && p.Region != NoRegion {
+	if p.Region != NoRegion {
 		err = os.Setenv("IC_REGION", p.Region)
 	} else {
 		p.Region = DefaultRegion
@@ -109,7 +109,7 @@ func (p *IBMProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"ibm_satellite_control_plane": &SatelliteControlPlaneGenerator{},
 		"ibm_satellite_data_plane":    &SatelliteDataPlaneGenerator{},
 		"ibm_cloudant":                &CloudantGenerator{},
-
+		"ibm_secrets_manager":         &SecretsManagerGenerator{},
 	}
 }
 

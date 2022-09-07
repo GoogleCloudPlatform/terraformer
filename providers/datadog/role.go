@@ -18,7 +18,8 @@ import (
 	"context"
 	"fmt"
 
-	datadogV2 "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV2"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -59,8 +60,9 @@ func (g *RoleGenerator) createResource(roleID string) terraformutils.Resource {
 // from each role create 1 TerraformResource.
 // Need Role ID as ID for terraform resource
 func (g *RoleGenerator) InitResources() error {
-	datadogClientV2 := g.Args["datadogClientV2"].(*datadogV2.APIClient)
-	authV2 := g.Args["authV2"].(context.Context)
+	datadogClient := g.Args["datadogClient"].(*datadog.APIClient)
+	auth := g.Args["auth"].(context.Context)
+	api := datadogV2.NewRolesApi(datadogClient)
 
 	pageSize := int64(100)
 	pageNumber := int64(0)
@@ -68,7 +70,7 @@ func (g *RoleGenerator) InitResources() error {
 
 	var roles []datadogV2.Role
 	for remaining > int64(0) {
-		resp, _, err := datadogClientV2.RolesApi.ListRoles(authV2, *datadogV2.NewListRolesOptionalParameters().
+		resp, _, err := api.ListRoles(auth, *datadogV2.NewListRolesOptionalParameters().
 			WithPageSize(pageSize).
 			WithPageNumber(pageNumber))
 		if err != nil {

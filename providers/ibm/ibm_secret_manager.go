@@ -24,61 +24,67 @@ import (
 	"github.com/IBM-Cloud/bluemix-go/session"
 )
 
-// CloudantGenerator ...
-type CloudantGenerator struct {
+type SecretsManagerGenerator struct {
 	IBMService
 }
 
-// loadMongoDB ...
-func (g CloudantGenerator) loadCloudant(dbID string, dbName string) terraformutils.Resource {
-	resources := terraformutils.NewSimpleResource(
-		dbID,
-		normalizeResourceName(dbName, false),
-		"ibm_cloudant",
+func (g SecretsManagerGenerator) loadSM(smID, smName, servicePlan string, timeout map[string]string) terraformutils.Resource {
+	resources := terraformutils.NewResource(
+		smID,
+		normalizeResourceName(smName, true),
+		"ibm_resource_instance",
 		"ibm",
-		[]string{})
+		map[string]string{
+			"plan": servicePlan,
+		},
+		[]string{},
+		map[string]interface{}{
+			"timeouts": timeout,
+		})
 	return resources
 }
 
-// InitResources ...
-func (g *CloudantGenerator) InitResources() error {
-	region := g.Args["region"].(string)
+func (g *SecretsManagerGenerator) InitResources() error {
 
 	bmxConfig := &bluemix.Config{
 		BluemixAPIKey: os.Getenv("IC_API_KEY"),
-		Region:        region,
 	}
+
 	sess, err := session.New(bmxConfig)
 	if err != nil {
 		return err
 	}
 
+	// Client creation
 	catalogClient, err := catalog.New(sess)
 	if err != nil {
 		return err
 	}
+
 	controllerClient, err := controllerv2.New(sess)
 	if err != nil {
 		return err
 	}
-	serviceID, err := catalogClient.ResourceCatalog().FindByName("cloudantnosqldb", true)
+
+	// Get ServiceID of secret manager service
+	serviceID, err := catalogClient.ResourceCatalog().FindByName("secrets-manager", true)
 	if err != nil {
 		return err
 	}
-	for _, service := range serviceID {
-		query := controllerv2.ServiceInstanceQuery{
-			ServiceID: service.ID,
-		}
-		cloudantInstances, err := controllerClient.ResourceServiceInstanceV2().ListInstances(query)
-		if err != nil {
-			return err
-		}
-		for _, cloudantInstance := range cloudantInstances {
-			if cloudantInstance.RegionID == region {
-				// load Cloudant DBs for each Instance
-				g.Resources = append(g.Resources, g.loadCloudant(cloudantInstance.ID, cloudantInstance.Name))
-			}
-		}
+
+	query := controllerv2.ServiceInstanceQuery{
+		ServiceID: serviceID[0].ID,
+	}
+
+	// Get all Secret manager instances
+	smInstances, err := controllerClient.ResourceServiceInstanceV2().ListInstances(query)
+	if err != nil {
+		return err
+	}
+
+	for _, smInstance := range smInstances {
+		timeout := map[string]string{"create": "15m"}
+		g.Resources = append(g.Resources, g.loadSM(smInstance.ID, smInstance.Name, smInstance.ServicePlanName, timeout))
 	}
 	return nil
 }

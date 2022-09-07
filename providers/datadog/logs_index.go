@@ -18,7 +18,8 @@ import (
 	"context"
 	"fmt"
 
-	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV1"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -57,14 +58,15 @@ func (g *LogsIndexGenerator) createResource(logsIndexName string) terraformutils
 // from each index create 1 TerraformResource.
 // Need LogsIndex Name as ID for terraform resource
 func (g *LogsIndexGenerator) InitResources() error {
-	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
-	authV1 := g.Args["authV1"].(context.Context)
+	datadogClient := g.Args["datadogClient"].(*datadog.APIClient)
+	auth := g.Args["auth"].(context.Context)
+	api := datadogV1.NewLogsIndexesApi(datadogClient)
 
 	resources := []terraformutils.Resource{}
 	for _, filter := range g.Filter {
 		if filter.FieldPath == "id" && filter.IsApplicable("logs_index") {
 			for _, value := range filter.AcceptableValues {
-				logsIndex, _, err := datadogClientV1.LogsIndexesApi.GetLogsIndex(authV1, value)
+				logsIndex, _, err := api.GetLogsIndex(auth, value)
 				if err != nil {
 					return err
 				}
@@ -79,7 +81,7 @@ func (g *LogsIndexGenerator) InitResources() error {
 		return nil
 	}
 
-	logsIndexList, _, err := datadogClientV1.LogsIndexesApi.ListLogIndexes(authV1)
+	logsIndexList, _, err := api.ListLogIndexes(auth)
 	logsIndex := logsIndexList.GetIndexes()
 	if err != nil {
 		return err
