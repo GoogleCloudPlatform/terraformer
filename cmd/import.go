@@ -52,7 +52,7 @@ type ImportOptions struct {
 	Filter        []string
 	Plan          bool `json:"-"`
 	Output        string
-	Sort          bool
+	NoSort        bool
 	RetryCount    int
 	RetrySleepMs  int
 }
@@ -253,7 +253,7 @@ func printService(provider terraformutils.ProviderGenerator, serviceName string,
 	log.Println(provider.GetName() + " save " + serviceName)
 	// Print HCL files for Resources
 	path := Path(options.PathPattern, provider.GetName(), serviceName, options.PathOutput)
-	err := terraformoutput.OutputHclFiles(resources, provider, path, serviceName, options.Compact, options.Output, !options.Sort)
+	err := terraformoutput.OutputHclFiles(resources, provider, path, serviceName, options.Compact, options.Output, !options.NoSort)
 	if err != nil {
 		return err
 	}
@@ -271,7 +271,7 @@ func printService(provider terraformutils.ProviderGenerator, serviceName string,
 			return err
 		}
 		// create Bucket file
-		if bucketStateDataFile, err := terraformutils.Print(bucket.BucketGetTfData(path), map[string]struct{}{}, options.Output, !options.Sort); err == nil {
+		if bucketStateDataFile, err := terraformutils.Print(bucket.BucketGetTfData(path), map[string]struct{}{}, options.Output, !options.NoSort); err == nil {
 			terraformoutput.PrintFile(path+"/bucket.tf", bucketStateDataFile)
 		}
 	} else {
@@ -318,7 +318,7 @@ func printService(provider terraformutils.ProviderGenerator, serviceName string,
 			}
 			// create variables file
 			if len(provider.GetResourceConnections()[serviceName]) > 0 && options.Connect && len(variables["data"]["terraform_remote_state"]) > 0 {
-				variablesFile, err := terraformutils.Print(variables, map[string]struct{}{"config": {}}, options.Output, !options.Sort)
+				variablesFile, err := terraformutils.Print(variables, map[string]struct{}{"config": {}}, options.Output, !options.NoSort)
 				if err != nil {
 					return err
 				}
@@ -348,7 +348,7 @@ func printService(provider terraformutils.ProviderGenerator, serviceName string,
 			}
 			// create variables file
 			if options.Connect {
-				variablesFile, err := terraformutils.Print(variables, map[string]struct{}{"config": {}}, options.Output, !options.Sort)
+				variablesFile, err := terraformutils.Print(variables, map[string]struct{}{"config": {}}, options.Output, !options.NoSort)
 				if err != nil {
 					return err
 				}
@@ -404,7 +404,7 @@ func baseProviderFlags(flag *pflag.FlagSet, options *ImportOptions, sampleRes, s
 	flag.StringVarP(&options.Bucket, "bucket", "b", "", "gs://terraform-state")
 	flag.StringSliceVarP(&options.Filter, "filter", "f", []string{}, sampleFilters)
 	flag.BoolVarP(&options.Verbose, "verbose", "v", false, "")
-	flag.BoolVarP(&options.Sort, "no-sort", "S", false, "set to disable sorting of HCL")
+	flag.BoolVarP(&options.NoSort, "no-sort", "S", false, "set to disable sorting of HCL")
 	flag.StringVarP(&options.Output, "output", "O", "hcl", "output format hcl or json")
 	flag.IntVarP(&options.RetryCount, "retry-number", "n", 5, "number of retries to perform when refresh fails")
 	flag.IntVarP(&options.RetrySleepMs, "retry-sleep-ms", "m", 300, "time in ms to sleep between retries")
