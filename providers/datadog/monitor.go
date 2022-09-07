@@ -20,7 +20,8 @@ import (
 	"strconv"
 	"strings"
 
-	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV1"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -62,8 +63,9 @@ func (g *MonitorGenerator) createResource(monitorID string) terraformutils.Resou
 // from each monitor create 1 TerraformResource.
 // Need Monitor ID as ID for terraform resource
 func (g *MonitorGenerator) InitResources() error {
-	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
-	authV1 := g.Args["authV1"].(context.Context)
+	datadogClient := g.Args["datadogClient"].(*datadog.APIClient)
+	auth := g.Args["auth"].(context.Context)
+	api := datadogV1.NewMonitorsApi(datadogClient)
 
 	optionalParams := datadogV1.NewListMonitorsOptionalParameters()
 	resources := []terraformutils.Resource{}
@@ -75,7 +77,7 @@ func (g *MonitorGenerator) InitResources() error {
 					return err
 				}
 
-				monitor, _, err := datadogClientV1.MonitorsApi.GetMonitor(authV1, i)
+				monitor, _, err := api.GetMonitor(auth, i)
 				if err != nil {
 					return err
 				}
@@ -97,7 +99,7 @@ func (g *MonitorGenerator) InitResources() error {
 	pageSize := int32(1000)
 	pageNumber := int64(0)
 	for {
-		resp, _, err := datadogClientV1.MonitorsApi.ListMonitors(authV1, *optionalParams.
+		resp, _, err := api.ListMonitors(auth, *optionalParams.
 			WithPageSize(pageSize).
 			WithPage(pageNumber))
 		if err != nil {

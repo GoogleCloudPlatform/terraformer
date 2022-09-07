@@ -21,6 +21,7 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	bluemix "github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/api/container/containerv1"
+	"github.com/IBM-Cloud/bluemix-go/api/container/containerv2"
 	"github.com/IBM-Cloud/bluemix-go/session"
 )
 
@@ -76,6 +77,20 @@ func (g ContainerClusterGenerator) loadWorkerPoolZones(clustersID, poolID, zoneI
 	return resources
 }
 
+func (g ContainerClusterGenerator) loadNlbDNS(clusterID string, nlbIPs []interface{}) terraformutils.Resource {
+	resources := terraformutils.NewResource(
+		clusterID,
+		normalizeResourceName(clusterID, true),
+		"ibm_container_nlb_dns",
+		"ibm",
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{
+			"nlb_ips": nlbIPs,
+		})
+	return resources
+}
+
 func (g *ContainerClusterGenerator) InitResources() error {
 	bmxConfig := &bluemix.Config{
 		BluemixAPIKey: os.Getenv("IC_API_KEY"),
@@ -90,6 +105,11 @@ func (g *ContainerClusterGenerator) InitResources() error {
 	}
 
 	clusters, err := client.Clusters().List(containerv1.ClusterTargetHeader{})
+	if err != nil {
+		return err
+	}
+
+	clientNlb, err := containerv2.New(sess)
 	if err != nil {
 		return err
 	}
@@ -117,6 +137,16 @@ func (g *ContainerClusterGenerator) InitResources() error {
 				g.Resources = append(g.Resources, g.loadWorkerPoolZones(cs.ID, pool.ID, zone.ID, dependsOn))
 			}
 		}
+
+		nlbData, err := clientNlb.NlbDns().GetNLBDNSList(cs.Name)
+		if err != nil {
+			return err
+		}
+
+		for _, data := range nlbData {
+			g.Resources = append(g.Resources, g.loadNlbDNS(data.Nlb.Cluster, data.Nlb.NlbIPArray))
+		}
+
 	}
 	return nil
 }
