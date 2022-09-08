@@ -55,7 +55,9 @@ func sortHclTree(tree interface{}) {
 }
 
 // sanitizer fixes up an invalid HCL AST, as produced by the HCL parser for JSON
-type astSanitizer struct{}
+type astSanitizer struct {
+	sort bool
+}
 
 // output prints creates b printable HCL output and returns it.
 func (v *astSanitizer) visit(n interface{}) {
@@ -64,7 +66,9 @@ func (v *astSanitizer) visit(n interface{}) {
 		v.visit(t.Node)
 	case *ast.ObjectList:
 		var index int
-		sortHclTree(t.Items)
+		if v.sort {
+			sortHclTree(t.Items)
+		}
 		for {
 			if index == len(t.Items) {
 				break
@@ -77,9 +81,13 @@ func (v *astSanitizer) visit(n interface{}) {
 		v.visitObjectItem(t)
 	case *ast.LiteralType:
 	case *ast.ListType:
-		sortHclTree(t.List)
+		if v.sort {
+			sortHclTree(t.List)
+		}
 	case *ast.ObjectType:
-		sortHclTree(t.List)
+		if v.sort {
+			sortHclTree(t.List)
+		}
 		v.visit(t.List)
 	default:
 		fmt.Printf(" unknown type: %T\n", n)
@@ -152,17 +160,17 @@ func (v *astSanitizer) visitObjectItem(o *ast.ObjectItem) {
 	v.visit(o.Val)
 }
 
-func Print(data interface{}, mapsObjects map[string]struct{}, format string) ([]byte, error) {
+func Print(data interface{}, mapsObjects map[string]struct{}, format string, sort bool) ([]byte, error) {
 	switch format {
 	case "hcl":
-		return hclPrint(data, mapsObjects)
+		return hclPrint(data, mapsObjects, sort)
 	case "json":
 		return jsonPrint(data)
 	}
 	return []byte{}, errors.New("error: unknown output format")
 }
 
-func hclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error) {
+func hclPrint(data interface{}, mapsObjects map[string]struct{}, sort bool) ([]byte, error) {
 	dataBytesJSON, err := jsonPrint(data)
 	if err != nil {
 		return dataBytesJSON, err
@@ -174,6 +182,7 @@ func hclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error)
 		return []byte{}, fmt.Errorf("error parsing terraform json: %v", err)
 	}
 	var sanitizer astSanitizer
+	sanitizer.sort = sort
 	sanitizer.visit(nodes)
 
 	var b bytes.Buffer
@@ -268,7 +277,7 @@ func TfSanitize(name string) string {
 }
 
 // Print hcl file from TerraformResource + provider
-func HclPrintResource(resources []Resource, providerData map[string]interface{}, output string) ([]byte, error) {
+func HclPrintResource(resources []Resource, providerData map[string]interface{}, output string, sort bool) ([]byte, error) {
 	resourcesByType := map[string]map[string]interface{}{}
 	mapsObjects := map[string]struct{}{}
 	indexRe := regexp.MustCompile(`\.[0-9]+`)
@@ -304,7 +313,7 @@ func HclPrintResource(resources []Resource, providerData map[string]interface{},
 	}
 	var err error
 
-	hclBytes, err := Print(data, mapsObjects, output)
+	hclBytes, err := Print(data, mapsObjects, output, sort)
 	if err != nil {
 		return []byte{}, err
 	}

@@ -43,7 +43,7 @@ func TestPrintResource(t *testing.T) {
 	resources = append(resources, importResource)
 	providerData := map[string]interface{}{}
 	output := "hcl"
-	data, _ := HclPrintResource(resources, providerData, output)
+	data, _ := HclPrintResource(resources, providerData, output, true)
 
 	if strings.Count(string(data), "map1 = ") != 1 {
 		t.Errorf("failed to parse data %s", string(data))
