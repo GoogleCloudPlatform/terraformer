@@ -64,7 +64,7 @@ func (g *APIGatewayGenerator) loadRestApis(svc *apigateway.Client) error {
 			}
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				*restAPI.Id,
-				*restAPI.Name,
+				*restAPI.Id+"_"+*restAPI.Name,
 				"aws_api_gateway_rest_api",
 				"aws",
 				apiGatewayAllowEmptyValues))
