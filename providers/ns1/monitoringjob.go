@@ -16,23 +16,25 @@ package ns1
 
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	ns1 "github.com/ns1/ns1-go"
+	ns1 "gopkg.in/ns1/ns1-go.v2/rest"
+	"net/http"
+	"time"
 )
 
 type MonitoringJobGenerator struct {
 	Ns1Service
 }
 
-func (g *MonitoringJobGenerator) createMonitoringJobResources(client *ns1.APIClient) error {
-	jobs, err := client.GetMonitoringJobs()
+func (g *MonitoringJobGenerator) createMonitoringJobResources(client *ns1.Client) error {
+	jobs, _, err := client.Jobs.List()
 	if err != nil {
 		return err
 	}
 
 	for _, j := range jobs {
 		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-			j.Id,
-			j.Id,
+			j.ID,
+			j.ID,
 			"ns1_monitoringjob",
 			"ns1",
 			[]string{}))
@@ -42,7 +44,8 @@ func (g *MonitoringJobGenerator) createMonitoringJobResources(client *ns1.APICli
 }
 
 func (g *MonitoringJobGenerator) InitResources() error {
-	client := ns1.New(g.Args["api_key"].(string))
+	httpClient := &http.Client{Timeout: time.Second * 10}
+	client := ns1.NewClient(httpClient, ns1.SetAPIKey(g.Args["api_key"].(string)))
 
 	if err := g.createMonitoringJobResources(client); err != nil {
 		return err
