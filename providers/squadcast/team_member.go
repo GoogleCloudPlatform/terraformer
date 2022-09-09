@@ -17,9 +17,9 @@ type TeamMember struct {
 }
 
 func (g *TeamMemberGenerator) createResources(team Team) []terraformutils.Resource {
-	var teamMemberList []terraformutils.Resource
+	var resourceList []terraformutils.Resource
 	for _, member := range team.Members {
-		teamMemberList = append(teamMemberList, terraformutils.NewResource(
+		resourceList = append(resourceList, terraformutils.NewResource(
 			member.UserID,
 			fmt.Sprintf("squadcast_team_member_%s", member.UserID),
 			"squadcast_team_member",
@@ -31,16 +31,15 @@ func (g *TeamMemberGenerator) createResources(team Team) []terraformutils.Resour
 			map[string]interface{}{},
 		))
 	}
-	return teamMemberList
+	return resourceList
 }
 
 func (g *TeamMemberGenerator) InitResources() error {
-	teamName := g.Args["team_name"].(string)
-	if len(teamName) == 0 {
+	if len(g.Args["team_name"].(string)) == 0 {
 		return errors.New("--team-name is required")
 	}
-	escapedTeamName := url.QueryEscape(teamName)
-	getTeamURL := fmt.Sprintf("/v3/teams/by-name?name=%s", escapedTeamName)
+
+	getTeamURL := fmt.Sprintf("/v3/teams/by-name?name=%s", url.QueryEscape(g.Args["team_name"].(string)))
 	response, err := Request[Team](getTeamURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
 		return err

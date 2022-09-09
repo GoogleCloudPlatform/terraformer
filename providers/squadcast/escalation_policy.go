@@ -31,7 +31,6 @@ func (g *EscalationPolicyGenerator) createResources(policies []EscalationPolicy)
 			map[string]interface{}{},
 		))
 	}
-
 	return resourceList
 }
 
@@ -39,6 +38,7 @@ func (g *EscalationPolicyGenerator) InitResources() error {
 	if len(g.Args["team_name"].(string)) == 0 {
 		return errors.New("--team-name is required")
 	}
+
 	getEscalationPolicyURL := fmt.Sprintf("/v3/escalation-policies?owner_id=%s", g.Args["team_id"].(string))
 	response, err := Request[[]EscalationPolicy](getEscalationPolicyURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {

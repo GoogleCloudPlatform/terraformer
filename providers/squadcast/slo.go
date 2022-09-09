@@ -23,9 +23,9 @@ type getSLOsResponse struct {
 }
 
 func (g *SLOGenerator) createResources(slo []SLO) []terraformutils.Resource {
-	var SLOList []terraformutils.Resource
+	var resourceList []terraformutils.Resource
 	for _, s := range slo {
-		SLOList = append(SLOList, terraformutils.NewResource(
+		resourceList = append(resourceList, terraformutils.NewResource(
 			fmt.Sprintf("%d", s.ID),
 			fmt.Sprintf("slo_%s", s.Name),
 			"squadcast_slo",
@@ -37,15 +37,15 @@ func (g *SLOGenerator) createResources(slo []SLO) []terraformutils.Resource {
 			map[string]interface{}{},
 		))
 	}
-	return SLOList
+	return resourceList
 }
 
 func (g *SLOGenerator) InitResources() error {
-	teamID := g.Args["team_id"].(string)
-	if teamID == "" {
+	if len(g.Args["team_name"].(string)) == 0 {
 		return errors.New("--team-name is required")
 	}
-	getSLOsURL := fmt.Sprintf("/v3/slo?owner_id=%s", teamID)
+
+	getSLOsURL := fmt.Sprintf("/v3/slo?owner_id=%s", g.Args["team_id"].(string))
 	response, err := Request[getSLOsResponse](getSLOsURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
 		return err

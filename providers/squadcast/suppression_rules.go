@@ -36,7 +36,6 @@ func (g *SuppressionRulesGenerator) createResources(suppressionRules Suppression
 			map[string]interface{}{},
 		))
 	}
-
 	return resourceList
 }
 

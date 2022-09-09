@@ -17,9 +17,9 @@ type TeamRole struct {
 }
 
 func (g *TeamRolesGenerator) createResources(teamRoles []TeamRole) []terraformutils.Resource {
-	var teamRolesList []terraformutils.Resource
+	var resourceList []terraformutils.Resource
 	for _, role := range teamRoles {
-		teamRolesList = append(teamRolesList, terraformutils.NewResource(
+		resourceList = append(resourceList, terraformutils.NewResource(
 			role.ID,
 			fmt.Sprintf("team_role_%s", role.Name),
 			"squadcast_team_role",
@@ -31,14 +31,14 @@ func (g *TeamRolesGenerator) createResources(teamRoles []TeamRole) []terraformut
 			map[string]interface{}{},
 		))
 	}
-
-	return teamRolesList
+	return resourceList
 }
 
 func (g *TeamRolesGenerator) InitResources() error {
 	if len(g.Args["team_name"].(string)) == 0 {
 		return errors.New("--team-name is required")
 	}
+
 	getTeamRolesURL := fmt.Sprintf("/v3/teams/%s/roles", g.Args["team_id"].(string))
 	response, err := Request[[]TeamRole](getTeamRolesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
