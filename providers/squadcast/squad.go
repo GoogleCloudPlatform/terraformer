@@ -36,11 +36,10 @@ func (g *SquadGenerator) createResources(squads []Squad) []terraformutils.Resour
 }
 
 func (g *SquadGenerator) InitResources() error {
-	teamID := g.Args["team_id"].(string)
-	if teamID == "" {
+	if len(g.Args["team_name"].(string)) == 0 {
 		return errors.New("--team-name is required")
 	}
-	getSquadsURL := fmt.Sprintf("/v3/squads?owner_id=%s", teamID)
+	getSquadsURL := fmt.Sprintf("/v3/squads?owner_id=%s", g.Args["team_id"].(string))
 	response, err := Request[[]Squad](getSquadsURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
 		return err

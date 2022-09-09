@@ -3,6 +3,7 @@ package squadcast
 import (
 	"errors"
 	"fmt"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -24,7 +25,7 @@ func (g *SuppressionRulesGenerator) createResources(suppressionRules Suppression
 	for _, rule := range suppressionRules.Rules {
 		resourceList = append(resourceList, terraformutils.NewResource(
 			rule.ID,
-			"suppression_rule_"+(rule.ID),
+			fmt.Sprintf("suppression_rule_%s", rule.ID),
 			"squadcast_suppression_rules",
 			g.GetProviderName(),
 			map[string]string{

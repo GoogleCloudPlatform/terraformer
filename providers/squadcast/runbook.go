@@ -37,7 +37,7 @@ func (g *RunbookGenerator) createResources(runbooks []Runbook) []terraformutils.
 }
 
 func (g *RunbookGenerator) InitResources() error {
-	if g.Args["team_id"].(string) == "" {
+	if len(g.Args["team_name"].(string)) == 0 {
 		return errors.New("--team-name is required")
 	}
 	getRunbooksURL := "/v3/runbooks"

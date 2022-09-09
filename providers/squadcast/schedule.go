@@ -2,6 +2,7 @@ package squadcast
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -20,7 +21,7 @@ func (g *SchedulesGenerator) createResources(schedules []Schedule) []terraformut
 	for _, schedule := range schedules {
 		resourceList = append(resourceList, terraformutils.NewResource(
 			schedule.ID,
-			schedule.Name,
+			fmt.Sprintf("schedule_%s", schedule.Name),
 			"squadcast_schedule",
 			g.GetProviderName(),
 			map[string]string{
@@ -35,7 +36,7 @@ func (g *SchedulesGenerator) createResources(schedules []Schedule) []terraformut
 }
 
 func (g *SchedulesGenerator) InitResources() error {
-	if g.Args["team_id"].(string) == "" {
+	if len(g.Args["team_name"].(string)) == 0 {
 		return errors.New("--team-name is required")
 	}
 	getSchedulesURL := "/v3/schedules"

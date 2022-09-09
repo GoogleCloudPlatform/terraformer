@@ -36,11 +36,10 @@ func (g *TeamRolesGenerator) createResources(teamRoles []TeamRole) []terraformut
 }
 
 func (g *TeamRolesGenerator) InitResources() error {
-	teamID := g.Args["team_id"].(string)
-	if teamID == "" {
+	if len(g.Args["team_name"].(string)) == 0 {
 		return errors.New("--team-name is required")
 	}
-	getTeamRolesURL := fmt.Sprintf("/v3/teams/%s/roles", teamID)
+	getTeamRolesURL := fmt.Sprintf("/v3/teams/%s/roles", g.Args["team_id"].(string))
 	response, err := Request[[]TeamRole](getTeamRolesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
 		return err

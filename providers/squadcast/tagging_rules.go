@@ -3,6 +3,7 @@ package squadcast
 import (
 	"errors"
 	"fmt"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -23,8 +24,8 @@ func (g *TaggingRulesGenerator) createResources(taggingRule TaggingRules) []terr
 	var resourceList []terraformutils.Resource
 	for _, rule := range taggingRule.Rules {
 		resourceList = append(resourceList, terraformutils.NewResource(
-			g.Args["team_id"].(string)+"_"+rule.ID,
-			"tagging_rule_"+(rule.ID),
+			rule.ID,
+			fmt.Sprintf("tagging_rule_%s", rule.ID),
 			"squadcast_tagging_rules",
 			g.GetProviderName(),
 			map[string]string{
