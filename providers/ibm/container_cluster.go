@@ -46,10 +46,11 @@ func (g ContainerClusterGenerator) loadcluster(clustersID, clusterName string) t
 	resource.IgnoreKeys = append(resource.IgnoreKeys,
 		"^worker_num$", "^region$",
 	)
+
 	return resource
 }
 
-func (g ContainerClusterGenerator) loadWorkerPools(clustersID, poolID, poolName string, dependsOn []string) terraformutils.Resource {
+func (g ContainerClusterGenerator) loadWorkerPools(clustersID, poolID, poolName string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", clustersID, poolID),
 		normalizeResourceName(poolName, true),
@@ -57,23 +58,8 @@ func (g ContainerClusterGenerator) loadWorkerPools(clustersID, poolID, poolName 
 		"ibm",
 		map[string]string{},
 		[]string{},
-		map[string]interface{}{
-			"depends_on": dependsOn,
-		})
-	return resources
-}
+		map[string]interface{}{})
 
-func (g ContainerClusterGenerator) loadWorkerPoolZones(clustersID, poolID, zoneID string, dependsOn []string) terraformutils.Resource {
-	resources := terraformutils.NewResource(
-		fmt.Sprintf("%s/%s/%s", clustersID, poolID, zoneID),
-		normalizeResourceName("ibm_container_worker_pool_zone_attachment", true),
-		"ibm_container_worker_pool_zone_attachment",
-		"ibm",
-		map[string]string{},
-		[]string{},
-		map[string]interface{}{
-			"depends_on": dependsOn,
-		})
 	return resources
 }
 
@@ -88,10 +74,12 @@ func (g ContainerClusterGenerator) loadNlbDNS(clusterID string, nlbIPs []interfa
 		map[string]interface{}{
 			"nlb_ips": nlbIPs,
 		})
+
 	return resources
 }
 
 func (g *ContainerClusterGenerator) InitResources() error {
+	region := g.Args["region"].(string)
 	bmxConfig := &bluemix.Config{
 		BluemixAPIKey: os.Getenv("IC_API_KEY"),
 	}
@@ -115,38 +103,57 @@ func (g *ContainerClusterGenerator) InitResources() error {
 	}
 
 	for _, cs := range clusters {
-		g.Resources = append(g.Resources, g.loadcluster(cs.ID, cs.Name))
-		clusterResourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
-		workerPools, err := client.WorkerPools().ListWorkerPools(cs.ID, containerv1.ClusterTargetHeader{
-			ResourceGroup: cs.ResourceGroupID,
-		})
-		if err != nil {
-			return err
-		}
-		for _, pool := range workerPools {
-			var dependsOn []string
-			dependsOn = append(dependsOn,
-				"ibm_container_cluster."+clusterResourceName)
-			g.Resources = append(g.Resources, g.loadWorkerPools(cs.ID, pool.ID, pool.Name, dependsOn))
-			poolResourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
+		if region == cs.Region {
+			g.Resources = append(g.Resources, g.loadcluster(cs.ID, cs.Name))
+			workerPools, err := client.WorkerPools().ListWorkerPools(cs.ID, containerv1.ClusterTargetHeader{
+				ResourceGroup: cs.ResourceGroupID,
+			})
+			if err != nil {
+				return err
+			}
+			for _, pool := range workerPools {
+				g.Resources = append(g.Resources, g.loadWorkerPools(cs.ID, pool.ID, pool.Name))
+			}
 
-			dependsOn = append(dependsOn,
-				"ibm_container_worker_pool."+poolResourceName)
-			zones := pool.Zones
-			for _, zone := range zones {
-				g.Resources = append(g.Resources, g.loadWorkerPoolZones(cs.ID, pool.ID, zone.ID, dependsOn))
+			nlbData, err := clientNlb.NlbDns().GetNLBDNSList(cs.Name)
+			if err != nil {
+				return err
+			}
+
+			for _, data := range nlbData {
+				g.Resources = append(g.Resources, g.loadNlbDNS(data.Nlb.Cluster, data.Nlb.NlbIPArray))
+			}
+		}
+	}
+
+	return nil
+}
+
+func (g *ContainerClusterGenerator) PostConvertHook() error {
+	for _, r := range g.Resources {
+		if r.InstanceInfo.Type != "ibm_container_cluster" {
+			continue
+		}
+		for i, wp := range g.Resources {
+			if wp.InstanceInfo.Type != "ibm_container_worker_pool" {
+				continue
+			}
+
+			if wp.InstanceState.Attributes["cluster"] == r.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["cluster"] = "${ibm_container_cluster." + r.ResourceName + ".id}"
 			}
 		}
 
-		nlbData, err := clientNlb.NlbDns().GetNLBDNSList(cs.Name)
-		if err != nil {
-			return err
-		}
+		for i, nlb := range g.Resources {
+			if nlb.InstanceInfo.Type != "ibm_container_nlb_dns" {
+				continue
+			}
 
-		for _, data := range nlbData {
-			g.Resources = append(g.Resources, g.loadNlbDNS(data.Nlb.Cluster, data.Nlb.NlbIPArray))
+			if nlb.InstanceState.Attributes["cluster"] == r.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["cluster"] = "${ibm_container_cluster." + r.ResourceName + ".id}"
+			}
 		}
-
 	}
+
 	return nil
 }

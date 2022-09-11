@@ -86,7 +86,7 @@ func (g privateDNSTemplateGenerator) loadPrivateDNSPermittedNetwork(pDNSGuid str
 // loadPrivateDNSResourceRecord ...
 func (g privateDNSTemplateGenerator) loadPrivateDNSResourceRecord() func(pDNSGuid, zoneID, recordID, recordName string, dependsOn []string) terraformutils.Resource {
 	names := make(map[string]struct{})
-	random := false
+	random := true
 	return func(pDNSGuid, zoneID, recordID, recordName string, dependsOn []string) terraformutils.Resource {
 		names, random = getRandom(names, recordName, random)
 		resources := terraformutils.NewResource(

@@ -16,7 +16,6 @@ package ibm
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -24,27 +23,30 @@ import (
 	"github.com/IBM/vpc-go-sdk/vpcv1"
 )
 
-// FlowLogGenerator ...
-type FlowLogGenerator struct {
+// VPCRouteGenerator ...
+type VPCRouteGenerator struct {
 	IBMService
 }
 
-func (g FlowLogGenerator) createFlowLogResources(flogID, flogName string) terraformutils.Resource {
-	resource := terraformutils.NewSimpleResource(
-		flogID,
-		normalizeResourceName(flogName, false),
-		"ibm_is_flow_log",
+func (g VPCRouteGenerator) loadVPCRouteResources(vpcID, routeID, routeName string) terraformutils.Resource {
+	resources := terraformutils.NewResource(
+		fmt.Sprintf("%s/%s", vpcID, routeID),
+		normalizeResourceName(routeName, false),
+		"ibm_is_vpc_route",
 		"ibm",
-		[]string{})
-	return resource
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{})
+
+	return resources
 }
 
 // InitResources ...
-func (g *FlowLogGenerator) InitResources() error {
+func (g *VPCRouteGenerator) InitResources() error {
 	region := g.Args["region"].(string)
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
-		log.Fatal("No API key set")
+		return fmt.Errorf("no API key set")
 	}
 
 	isURL := GetVPCEndPoint(region)
@@ -61,32 +63,42 @@ func (g *FlowLogGenerator) InitResources() error {
 		return err
 	}
 	start := ""
-	var allrecs []vpcv1.FlowLogCollector
+	var allrecs []vpcv1.VPC
 	for {
-		options := &vpcv1.ListFlowLogCollectorsOptions{}
+		listVpcsOptions := &vpcv1.ListVpcsOptions{}
 		if start != "" {
-			options.Start = &start
+			listVpcsOptions.Start = &start
 		}
 		if rg := g.Args["resource_group"].(string); rg != "" {
 			rg, err = GetResourceGroupID(apiKey, rg, region)
 			if err != nil {
 				return fmt.Errorf("Error Fetching Resource Group Id %s", err)
 			}
-			options.ResourceGroupID = &rg
+			listVpcsOptions.ResourceGroupID = &rg
 		}
-		flogs, response, err := vpcclient.ListFlowLogCollectors(options)
+		vpcs, response, err := vpcclient.ListVpcs(listVpcsOptions)
 		if err != nil {
-			return fmt.Errorf("Error Fetching Flow Logs %s\n%s", err, response)
+			return fmt.Errorf("Error Fetching vpcs %s\n%s", err, response)
 		}
-		start = GetNext(flogs.Next)
-		allrecs = append(allrecs, flogs.FlowLogCollectors...)
+		start = GetNext(vpcs.Next)
+		allrecs = append(allrecs, vpcs.Vpcs...)
 		if start == "" {
 			break
 		}
 	}
 
-	for _, flog := range allrecs {
-		g.Resources = append(g.Resources, g.createFlowLogResources(*flog.ID, *flog.Name))
+	for _, vpc := range allrecs {
+		listVPCRoutesOptions := &vpcv1.ListVPCRoutesOptions{
+			VPCID: vpc.ID,
+		}
+		routes, response, err := vpcclient.ListVPCRoutes(listVPCRoutesOptions)
+		if err != nil {
+			return fmt.Errorf("Error Fetching vpc routes %s\n%s", err, response)
+		}
+		for _, route := range routes.Routes {
+			g.Resources = append(g.Resources, g.loadVPCRouteResources(*vpc.ID, *route.ID, *route.Name))
+		}
 	}
+
 	return nil
 }
