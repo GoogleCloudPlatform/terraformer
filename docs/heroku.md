@@ -38,6 +38,8 @@ List of supported Heroku resources:
     * `heroku_pipeline`
 *   `pipeline_coupling`
     * `heroku_pipeline_coupling`
+*   `team_app`
+    * `heroku_team_app`
 *   `team_collaborator`
     * `heroku_team_collaborator`
 *   `team_member`
