@@ -20,7 +20,8 @@ import (
 	"fmt"
 	"strings"
 
-	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV1"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -62,14 +63,15 @@ func (g *LogsCustomPipelineGenerator) createResource(logsCustomPipelineID string
 // from each custom pipeline create 1 TerraformResource.
 // Need LogsPipeline ID as ID for terraform resource
 func (g *LogsCustomPipelineGenerator) InitResources() error {
-	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
-	authV1 := g.Args["authV1"].(context.Context)
+	datadogClient := g.Args["datadogClient"].(*datadog.APIClient)
+	auth := g.Args["auth"].(context.Context)
+	api := datadogV1.NewLogsPipelinesApi(datadogClient)
 
 	resources := []terraformutils.Resource{}
 	for _, filter := range g.Filter {
 		if filter.FieldPath == "id" && filter.IsApplicable("logs_custom_pipeline") {
 			for _, value := range filter.AcceptableValues {
-				logsCustomPipeline, _, err := datadogClientV1.LogsPipelinesApi.GetLogsPipeline(authV1, value)
+				logsCustomPipeline, _, err := api.GetLogsPipeline(auth, value)
 				if err != nil {
 					return err
 				}
@@ -84,7 +86,7 @@ func (g *LogsCustomPipelineGenerator) InitResources() error {
 		return nil
 	}
 
-	logsCustomPipelines, _, err := datadogClientV1.LogsPipelinesApi.ListLogsPipelines(authV1)
+	logsCustomPipelines, _, err := api.ListLogsPipelines(auth)
 	if err != nil {
 		return err
 	}

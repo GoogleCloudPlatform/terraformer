@@ -16,23 +16,25 @@ package ns1
 
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	ns1 "github.com/ns1/ns1-go"
+	ns1 "gopkg.in/ns1/ns1-go.v2/rest"
+	"net/http"
+	"time"
 )
 
 type TeamGenerator struct {
 	Ns1Service
 }
 
-func (g *TeamGenerator) createTeamResources(client *ns1.APIClient) error {
-	teams, err := client.GetTeams()
+func (g *TeamGenerator) createTeamResources(client *ns1.Client) error {
+	teams, _, err := client.Teams.List()
 	if err != nil {
 		return err
 	}
 
 	for _, t := range teams {
 		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-			t.Id,
-			t.Id,
+			t.ID,
+			t.ID,
 			"ns1_team",
 			"ns1",
 			[]string{}))
@@ -42,7 +44,8 @@ func (g *TeamGenerator) createTeamResources(client *ns1.APIClient) error {
 }
 
 func (g *TeamGenerator) InitResources() error {
-	client := ns1.New(g.Args["api_key"].(string))
+	httpClient := &http.Client{Timeout: time.Second * 10}
+	client := ns1.NewClient(httpClient, ns1.SetAPIKey(g.Args["api_key"].(string)))
 
 	if err := g.createTeamResources(client); err != nil {
 		return err

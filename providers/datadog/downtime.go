@@ -19,7 +19,8 @@ import (
 	"fmt"
 	"strconv"
 
-	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV1"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -58,8 +59,9 @@ func (g *DowntimeGenerator) createResource(downtimeID string) terraformutils.Res
 // from each downtime create 1 TerraformResource.
 // Need Downtime ID as ID for terraform resource
 func (g *DowntimeGenerator) InitResources() error {
-	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
-	authV1 := g.Args["authV1"].(context.Context)
+	datadogClient := g.Args["datadogClient"].(*datadog.APIClient)
+	auth := g.Args["auth"].(context.Context)
+	api := datadogV1.NewDowntimesApi(datadogClient)
 
 	resources := []terraformutils.Resource{}
 	for _, filter := range g.Filter {
@@ -70,7 +72,7 @@ func (g *DowntimeGenerator) InitResources() error {
 					return err
 				}
 
-				monitor, _, err := datadogClientV1.DowntimesApi.GetDowntime(authV1, i)
+				monitor, _, err := api.GetDowntime(auth, i)
 				if err != nil {
 					return err
 				}
@@ -85,7 +87,7 @@ func (g *DowntimeGenerator) InitResources() error {
 		return nil
 	}
 
-	downtimes, _, err := datadogClientV1.DowntimesApi.ListDowntimes(authV1)
+	downtimes, _, err := api.ListDowntimes(auth)
 	if err != nil {
 		return err
 	}

@@ -73,7 +73,7 @@ func (g SatelliteDataPlaneGenerator) loadInstanceResources(instance vpcv1.Instan
 	return resource
 }
 
-func (g SatelliteDataPlaneGenerator) loadFloatingIPResources(floatingIPId, floatingIPName string, dependsOn []string) terraformutils.Resource {
+func (g SatelliteDataPlaneGenerator) loadFloatingIPResources(floatingIPId, floatingIPName string) terraformutils.Resource {
 	resource := terraformutils.NewResource(
 		floatingIPId,
 		floatingIPName,
@@ -91,7 +91,7 @@ func (g SatelliteDataPlaneGenerator) loadFloatingIPResources(floatingIPId, float
 	return resource
 }
 
-func (g SatelliteDataPlaneGenerator) loadSecurityGroupResources(sgID, sgName string, dependsOn []string) terraformutils.Resource {
+func (g SatelliteDataPlaneGenerator) loadSecurityGroupResources(sgID, sgName string) terraformutils.Resource {
 	resource := terraformutils.NewResource(
 		sgID,
 		sgName,
@@ -284,7 +284,7 @@ func (g *SatelliteDataPlaneGenerator) InitResources() error {
 				for _, ip := range allFloatingIPs {
 					target, _ := ip.Target.(*vpcv1.FloatingIPTarget)
 					if *target.ID == *instance.PrimaryNetworkInterface.ID {
-						g.Resources = append(g.Resources, g.loadFloatingIPResources(*ip.ID, *ip.Name, vpcDependsOn))
+						g.Resources = append(g.Resources, g.loadFloatingIPResources(*ip.ID, *ip.Name))
 					}
 				}
 			}
@@ -315,7 +315,7 @@ func (g *SatelliteDataPlaneGenerator) InitResources() error {
 				var sgDependsOn []string
 				sgDependsOn = append(sgDependsOn,
 					"ibm_is_security_group."+terraformutils.TfSanitize(*group.Name))
-				g.Resources = append(g.Resources, g.loadSecurityGroupResources(*group.ID, *group.Name, vpcDependsOn))
+				g.Resources = append(g.Resources, g.loadSecurityGroupResources(*group.ID, *group.Name))
 				listSecurityGroupRulesOptions := &vpcv1.ListSecurityGroupRulesOptions{
 					SecurityGroupID: group.ID,
 				}
