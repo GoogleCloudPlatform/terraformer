@@ -17,9 +17,9 @@ type Team struct {
 }
 
 func (g *TeamGenerator) createResources(teams []Team) []terraformutils.Resource {
-	var teamList []terraformutils.Resource
+	var resourceList []terraformutils.Resource
 	for _, team := range teams {
-		teamList = append(teamList, terraformutils.NewSimpleResource(
+		resourceList = append(resourceList, terraformutils.NewSimpleResource(
 			team.ID,
 			fmt.Sprintf("team_%s", team.Name),
 			"squadcast_team",
@@ -27,7 +27,7 @@ func (g *TeamGenerator) createResources(teams []Team) []terraformutils.Resource 
 			[]string{},
 		))
 	}
-	return teamList
+	return resourceList
 }
 
 func (g *TeamGenerator) InitResources() error {

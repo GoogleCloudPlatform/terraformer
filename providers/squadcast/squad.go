@@ -17,9 +17,9 @@ type Squad struct {
 }
 
 func (g *SquadGenerator) createResources(squads []Squad) []terraformutils.Resource {
-	var resources []terraformutils.Resource
+	var resourceList []terraformutils.Resource
 	for _, squad := range squads {
-		resources = append(resources, terraformutils.NewResource(
+		resourceList = append(resourceList, terraformutils.NewResource(
 			squad.ID,
 			fmt.Sprintf("squad_%s", squad.Name),
 			"squadcast_squad",
@@ -32,13 +32,14 @@ func (g *SquadGenerator) createResources(squads []Squad) []terraformutils.Resour
 			map[string]interface{}{},
 		))
 	}
-	return resources
+	return resourceList
 }
 
 func (g *SquadGenerator) InitResources() error {
 	if len(g.Args["team_name"].(string)) == 0 {
 		return errors.New("--team-name is required")
 	}
+
 	getSquadsURL := fmt.Sprintf("/v3/squads?owner_id=%s", g.Args["team_id"].(string))
 	response, err := Request[[]Squad](getSquadsURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {

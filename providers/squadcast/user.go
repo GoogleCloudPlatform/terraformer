@@ -15,9 +15,9 @@ type User struct {
 }
 
 func (g *UserGenerator) createResources(users []User) []terraformutils.Resource {
-	var resources []terraformutils.Resource
+	var resourceList []terraformutils.Resource
 	for _, user := range users {
-		resources = append(resources, terraformutils.NewSimpleResource(
+		resourceList = append(resourceList, terraformutils.NewSimpleResource(
 			user.ID,
 			fmt.Sprintf("user_%s", user.ID),
 			"squadcast_user",
@@ -25,7 +25,7 @@ func (g *UserGenerator) createResources(users []User) []terraformutils.Resource 
 			[]string{},
 		))
 	}
-	return resources
+	return resourceList
 }
 
 func (g *UserGenerator) InitResources() error {

@@ -19,9 +19,9 @@ type Service struct {
 }
 
 func (g *ServiceGenerator) createResources(services []Service) []terraformutils.Resource {
-	var serviceList []terraformutils.Resource
+	var resourceList []terraformutils.Resource
 	for _, service := range services {
-		serviceList = append(serviceList, terraformutils.NewResource(
+		resourceList = append(resourceList, terraformutils.NewResource(
 			service.ID,
 			fmt.Sprintf("service_%s", service.Name),
 			"squadcast_service",
@@ -33,13 +33,14 @@ func (g *ServiceGenerator) createResources(services []Service) []terraformutils.
 			map[string]interface{}{},
 		))
 	}
-	return serviceList
+	return resourceList
 }
 
 func (g *ServiceGenerator) InitResources() error {
-	if g.Args["team_id"].(string) == "" {
+	if len(g.Args["team_name"].(string)) == 0 {
 		return errors.New("--team-name is required")
 	}
+
 	getServicesURL := "/v3/services"
 	response, err := Request[[]Service](getServicesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {

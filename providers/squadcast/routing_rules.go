@@ -24,7 +24,7 @@ func (g *RoutingRulesGenerator) createResources(routingRules RoutingRules) []ter
 	for _, rule := range routingRules.Rules {
 		resourceList = append(resourceList, terraformutils.NewResource(
 			rule.ID,
-			"routing_rule_"+(rule.ID),
+			fmt.Sprintf("routing_rule_%s", rule.ID),
 			"squadcast_routing_rules",
 			g.GetProviderName(),
 			map[string]string{
@@ -35,7 +35,6 @@ func (g *RoutingRulesGenerator) createResources(routingRules RoutingRules) []ter
 			map[string]interface{}{},
 		))
 	}
-
 	return resourceList
 }
 
