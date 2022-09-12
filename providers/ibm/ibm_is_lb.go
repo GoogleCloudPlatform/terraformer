@@ -17,6 +17,7 @@ package ibm
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/IBM/go-sdk-core/v4/core"
@@ -45,7 +46,7 @@ func (g LBGenerator) createLBResources(lbID, lbName string) terraformutils.Resou
 	return resource
 }
 
-func (g LBGenerator) createLBPoolResources(lbID, lbPoolID, lbPoolName string, dependsOn []string) terraformutils.Resource {
+func (g LBGenerator) createLBPoolResources(lbID, lbPoolID, lbPoolName string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", lbID, lbPoolID),
 		normalizeResourceName(lbPoolName, true),
@@ -53,13 +54,11 @@ func (g LBGenerator) createLBPoolResources(lbID, lbPoolID, lbPoolName string, de
 		"ibm",
 		map[string]string{},
 		[]string{},
-		map[string]interface{}{
-			"depends_on": dependsOn,
-		})
+		map[string]interface{}{})
 	return resources
 }
 
-func (g LBGenerator) createLBPoolMemberResources(lbID, lbPoolID, lbPoolMemberID, lbPoolMemberName string, dependsOn []string) terraformutils.Resource {
+func (g LBGenerator) createLBPoolMemberResources(lbID, lbPoolID, lbPoolMemberID, lbPoolMemberName string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s/%s", lbID, lbPoolID, lbPoolMemberID),
 		normalizeResourceName(lbPoolMemberName, true),
@@ -67,13 +66,11 @@ func (g LBGenerator) createLBPoolMemberResources(lbID, lbPoolID, lbPoolMemberID,
 		"ibm",
 		map[string]string{},
 		[]string{},
-		map[string]interface{}{
-			"depends_on": dependsOn,
-		})
+		map[string]interface{}{})
 	return resources
 }
 
-func (g LBGenerator) createLBListenerResources(lbID, lbListenerID, lbListenerName string, dependsOn []string) terraformutils.Resource {
+func (g LBGenerator) createLBListenerResources(lbID, lbListenerID, lbListenerName string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", lbID, lbListenerID),
 		normalizeResourceName(lbListenerName, true),
@@ -81,27 +78,25 @@ func (g LBGenerator) createLBListenerResources(lbID, lbListenerID, lbListenerNam
 		"ibm",
 		map[string]string{},
 		[]string{},
-		map[string]interface{}{
-			"depends_on": dependsOn,
-		})
+		map[string]interface{}{})
 	return resources
 }
 
-func (g LBGenerator) createLBListenerPolicyResources(lbID, lbListenerID, lbListenerPolicyID, lbListenerPolicyName string, dependsOn []string) terraformutils.Resource {
+func (g LBGenerator) createLBListenerPolicyResources(lbID, lbListenerID, lbListenerPolicyID, lbListenerPolicyName string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s/%s", lbID, lbListenerID, lbListenerPolicyID),
 		normalizeResourceName(lbListenerPolicyName, true),
 		"ibm_is_lb_listener_policy",
 		"ibm",
-		map[string]string{},
+		map[string]string{
+			"target_http_status_code": "302",
+		},
 		[]string{},
-		map[string]interface{}{
-			"depends_on": dependsOn,
-		})
+		map[string]interface{}{})
 	return resources
 }
 
-func (g LBGenerator) createLBListenerPolicyRuleResources(lbID, lbListenerID, lbListenerPolicyID, lbListenerPolicyRuleID, lbListenerPolicyName string, dependsOn []string) terraformutils.Resource {
+func (g LBGenerator) createLBListenerPolicyRuleResources(lbID, lbListenerID, lbListenerPolicyID, lbListenerPolicyRuleID, lbListenerPolicyName string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s/%s/%s", lbID, lbListenerID, lbListenerPolicyID, lbListenerPolicyRuleID),
 		normalizeResourceName(lbListenerPolicyName, true),
@@ -109,9 +104,7 @@ func (g LBGenerator) createLBListenerPolicyRuleResources(lbID, lbListenerID, lbL
 		"ibm",
 		map[string]string{},
 		[]string{},
-		map[string]interface{}{
-			"depends_on": dependsOn,
-		})
+		map[string]interface{}{})
 	return resources
 }
 
@@ -128,11 +121,13 @@ func (g *LBGenerator) InitResources() error {
 		_ = rg.(string)
 	}
 
-	vpcurl := fmt.Sprintf("https://%s.iaas.cloud.ibm.com/v1", region)
+	isURL := GetVPCEndPoint(region)
+	iamURL := GetAuthEndPoint()
 	vpcoptions := &vpcv1.VpcV1Options{
-		URL: envFallBack([]string{"IBMCLOUD_IS_API_ENDPOINT"}, vpcurl),
+		URL: isURL,
 		Authenticator: &core.IamAuthenticator{
 			ApiKey: apiKey,
+			URL:    iamURL,
 		},
 	}
 	vpcclient, err := vpcv1.NewVpcV1(vpcoptions)
@@ -149,11 +144,8 @@ func (g *LBGenerator) InitResources() error {
 	allrecs = append(allrecs, lbs.LoadBalancers...)
 
 	for _, lb := range allrecs {
-		var dependsOn []string
 		g.Resources = append(g.Resources, g.createLBResources(*lb.ID, *lb.Name))
-		resourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
-		dependsOn = append(dependsOn,
-			"ibm_is_lb."+resourceName)
+
 		listLoadBalancerPoolsOptions := &vpcv1.ListLoadBalancerPoolsOptions{
 			LoadBalancerID: lb.ID,
 		}
@@ -162,10 +154,7 @@ func (g *LBGenerator) InitResources() error {
 			return fmt.Errorf("Error Fetching Load Balancer Pools %s\n%s", err, response)
 		}
 		for _, lbPool := range lbPools.Pools {
-			g.Resources = append(g.Resources, g.createLBPoolResources(*lb.ID, *lbPool.ID, *lbPool.Name, dependsOn))
-			lbPoolResourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
-			dependsOn1 := makeDependsOn(dependsOn,
-				"ibm_is_lb_pool."+lbPoolResourceName)
+			g.Resources = append(g.Resources, g.createLBPoolResources(*lb.ID, *lbPool.ID, *lbPool.Name))
 			listLoadBalancerPoolMembersOptions := &vpcv1.ListLoadBalancerPoolMembersOptions{
 				LoadBalancerID: lb.ID,
 				PoolID:         lbPool.ID,
@@ -175,7 +164,7 @@ func (g *LBGenerator) InitResources() error {
 				return fmt.Errorf("Error Fetching Load Balancer Pool Members %s\n%s", err, response)
 			}
 			for _, lbPoolMember := range lbPoolMembers.Members {
-				g.Resources = append(g.Resources, g.createLBPoolMemberResources(*lb.ID, *lbPool.ID, *lbPoolMember.ID, *lbPool.Name, dependsOn1))
+				g.Resources = append(g.Resources, g.createLBPoolMemberResources(*lb.ID, *lbPool.ID, *lbPoolMember.ID, *lbPool.Name))
 			}
 		}
 
@@ -187,10 +176,7 @@ func (g *LBGenerator) InitResources() error {
 			return fmt.Errorf("Error Fetching Load Balancer Listeners %s\n%s", err, response)
 		}
 		for _, lbListener := range lbListeners.Listeners {
-			g.Resources = append(g.Resources, g.createLBListenerResources(*lb.ID, *lbListener.ID, *lbListener.ID, dependsOn))
-			lbListenerResourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
-			var dependsOn2 = append(dependsOn, //nolint:goimports,gofmt
-				"ibm_is_lb_listener."+lbListenerResourceName)
+			g.Resources = append(g.Resources, g.createLBListenerResources(*lb.ID, *lbListener.ID, *lbListener.ID))
 			listLoadBalancerListenerPoliciesOptions := &vpcv1.ListLoadBalancerListenerPoliciesOptions{
 				LoadBalancerID: lb.ID,
 				ListenerID:     lbListener.ID,
@@ -200,10 +186,7 @@ func (g *LBGenerator) InitResources() error {
 				return fmt.Errorf("Error Fetching Load Balancer Listener Policies %s\n%s", err, response)
 			}
 			for _, lbListenerPolicy := range lbListenerPolicies.Policies {
-				g.Resources = append(g.Resources, g.createLBListenerPolicyResources(*lb.ID, *lbListener.ID, *lbListenerPolicy.ID, *lbListenerPolicy.Name, dependsOn2))
-				lbListenerPolicyResourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
-				dependsOn2 = append(dependsOn2,
-					"ibm_is_lb_listener_policy."+lbListenerPolicyResourceName)
+				g.Resources = append(g.Resources, g.createLBListenerPolicyResources(*lb.ID, *lbListener.ID, *lbListenerPolicy.ID, *lbListenerPolicy.Name))
 				listLoadBalancerListenerPolicyRulesOptions := &vpcv1.ListLoadBalancerListenerPolicyRulesOptions{
 					LoadBalancerID: lb.ID,
 					ListenerID:     lbListener.ID,
@@ -214,11 +197,86 @@ func (g *LBGenerator) InitResources() error {
 					return fmt.Errorf("Error Fetching Load Balancer Listener Policy Rules %s\n%s", err, response)
 				}
 				for _, lbListenerPolicyRule := range lbListenerPolicyRules.Rules {
-					g.Resources = append(g.Resources, g.createLBListenerPolicyRuleResources(*lb.ID, *lbListener.ID, *lbListenerPolicy.ID, *lbListenerPolicyRule.ID, *lbListenerPolicyRule.ID, dependsOn2))
+					g.Resources = append(g.Resources, g.createLBListenerPolicyRuleResources(*lb.ID, *lbListener.ID, *lbListenerPolicy.ID, *lbListenerPolicyRule.ID, *lbListenerPolicyRule.ID))
 
 				}
 			}
 		}
 	}
+	return nil
+}
+
+func (g *LBGenerator) PostConvertHook() error {
+	for _, r := range g.Resources {
+		if r.InstanceInfo.Type != "ibm_is_lb" {
+			continue
+		}
+
+		for i, pool := range g.Resources {
+			if pool.InstanceInfo.Type != "ibm_is_lb_pool" {
+				continue
+			}
+			if pool.InstanceState.Attributes["lb"] == r.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["lb"] = "${ibm_is_lb." + r.ResourceName + ".id}"
+			}
+			for i, poolMember := range g.Resources {
+				if poolMember.InstanceInfo.Type != "ibm_is_lb_pool_member" {
+					continue
+				}
+
+				poolID := strings.Split(pool.InstanceState.Attributes["id"], "/")[1]
+				if poolMember.InstanceState.Attributes["pool"] == poolID {
+					g.Resources[i].Item["pool"] = "${ibm_is_lb_pool." + pool.ResourceName + ".id}"
+				}
+			}
+		}
+
+		for i, poolMember := range g.Resources {
+			if poolMember.InstanceInfo.Type != "ibm_is_lb_pool_member" {
+				continue
+			}
+			if poolMember.InstanceState.Attributes["lb"] == r.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["lb"] = "${ibm_is_lb." + r.ResourceName + ".id}"
+			}
+		}
+
+		for i, listener := range g.Resources {
+			if listener.InstanceInfo.Type != "ibm_is_lb_listener" {
+				continue
+			}
+			if listener.InstanceState.Attributes["lb"] == r.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["lb"] = "${ibm_is_lb." + r.ResourceName + ".id}"
+			}
+		}
+
+		for i, listenerPolicy := range g.Resources {
+			if listenerPolicy.InstanceInfo.Type != "ibm_is_lb_listener_policy" {
+				continue
+			}
+			if listenerPolicy.InstanceState.Attributes["lb"] == r.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["lb"] = "${ibm_is_lb." + r.ResourceName + ".id}"
+			}
+			for i, listenerPolicyRule := range g.Resources {
+				if listenerPolicyRule.InstanceInfo.Type != "ibm_is_lb_listener_policy_rule" {
+					continue
+				}
+
+				if listenerPolicyRule.InstanceState.Attributes["listener"] == listenerPolicy.InstanceState.Attributes["id"] {
+					g.Resources[i].Item["listener"] = "${ibm_is_lb_listener_policy." + listenerPolicy.ResourceName + ".id}"
+				}
+			}
+		}
+
+		for i, listenerPolicyRule := range g.Resources {
+			if listenerPolicyRule.InstanceInfo.Type != "ibm_is_lb_listener_policy_rule" {
+				continue
+			}
+			if listenerPolicyRule.InstanceState.Attributes["lb"] == r.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["lb"] = "${ibm_is_lb." + r.ResourceName + ".id}"
+			}
+		}
+
+	}
+
 	return nil
 }

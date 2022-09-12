@@ -38,7 +38,7 @@ func (g VPCClusterGenerator) loadcluster(clustersID, clusterName string) terrafo
 	return resource
 }
 
-func (g VPCClusterGenerator) loadWorkerPools(clustersID, poolID, poolName string, dependsOn []string) terraformutils.Resource {
+func (g VPCClusterGenerator) loadWorkerPools(clustersID, poolID, poolName string) terraformutils.Resource {
 	resource := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", clustersID, poolID),
 		normalizeResourceName(poolName, true),
@@ -46,13 +46,12 @@ func (g VPCClusterGenerator) loadWorkerPools(clustersID, poolID, poolName string
 		"ibm",
 		map[string]string{},
 		[]string{},
-		map[string]interface{}{
-			"depends_on": dependsOn,
-		})
+		map[string]interface{}{})
 	return resource
 }
 
 func (g *VPCClusterGenerator) InitResources() error {
+	region := g.Args["region"].(string)
 	bmxConfig := &bluemix.Config{
 		BluemixAPIKey: os.Getenv("IC_API_KEY"),
 	}
@@ -71,22 +70,39 @@ func (g *VPCClusterGenerator) InitResources() error {
 	}
 
 	for _, cs := range clusters {
-		g.Resources = append(g.Resources, g.loadcluster(cs.ID, cs.Name))
-		resourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
-		workerPools, err := client.WorkerPools().ListWorkerPools(cs.ID, containerv2.ClusterTargetHeader{})
-		if err != nil {
-			return err
-		}
+		if cs.Region == region {
+			g.Resources = append(g.Resources, g.loadcluster(cs.ID, cs.Name))
+			workerPools, err := client.WorkerPools().ListWorkerPools(cs.ID, containerv2.ClusterTargetHeader{})
+			if err != nil {
+				return err
+			}
 
-		for _, pool := range workerPools {
-			if pool.PoolName != "default" {
-				var dependsOn []string
-				dependsOn = append(dependsOn,
-					"ibm_container_vpc_cluster."+resourceName)
-				g.Resources = append(g.Resources, g.loadWorkerPools(cs.ID, pool.ID, pool.PoolName, dependsOn))
+			for _, pool := range workerPools {
+				if pool.PoolName != "default" {
+					g.Resources = append(g.Resources, g.loadWorkerPools(cs.ID, pool.ID, pool.PoolName))
+				}
 			}
 		}
 
 	}
+
+	return nil
+}
+
+func (g *VPCClusterGenerator) PostConvertHook() error {
+	for i, r := range g.Resources {
+		if r.InstanceInfo.Type != "ibm_container_vpc_worker_pool" {
+			continue
+		}
+		for _, rt := range g.Resources {
+			if rt.InstanceInfo.Type != "ibm_container_vpc_cluster" {
+				continue
+			}
+			if r.InstanceState.Attributes["cluster"] == rt.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["cluster"] = "${ibm_container_vpc_cluster." + rt.ResourceName + ".id}"
+			}
+		}
+	}
+
 	return nil
 }

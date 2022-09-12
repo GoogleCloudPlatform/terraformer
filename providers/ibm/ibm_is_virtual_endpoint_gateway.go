@@ -38,7 +38,7 @@ func (g VPEGenerator) createVPEGatewayResources(gatewayID, gatewayName string) t
 	return resources
 }
 
-func (g VPEGenerator) createVPEGatewayIPResources(gatewayID, gatewayIPID, gatewayIPName string, dependsOn []string) terraformutils.Resource {
+func (g VPEGenerator) createVPEGatewayIPResources(gatewayID, gatewayIPID, gatewayIPName string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", gatewayID, gatewayIPID),
 		normalizeResourceName(gatewayIPName, false),
@@ -46,9 +46,7 @@ func (g VPEGenerator) createVPEGatewayIPResources(gatewayID, gatewayIPID, gatewa
 		"ibm",
 		map[string]string{},
 		[]string{},
-		map[string]interface{}{
-			"depends_on": dependsOn,
-		})
+		map[string]interface{}{})
 	return resources
 }
 
@@ -60,11 +58,13 @@ func (g *VPEGenerator) InitResources() error {
 		return fmt.Errorf("No API key set")
 	}
 
-	vpcurl := fmt.Sprintf("https://%s.iaas.cloud.ibm.com/v1", region)
+	isURL := GetVPCEndPoint(region)
+	iamURL := GetAuthEndPoint()
 	vpcoptions := &vpcv1.VpcV1Options{
-		URL: envFallBack([]string{"IBMCLOUD_IS_API_ENDPOINT"}, vpcurl),
+		URL: isURL,
 		Authenticator: &core.IamAuthenticator{
 			ApiKey: apiKey,
+			URL:    iamURL,
 		},
 	}
 	vpcclient, err := vpcv1.NewVpcV1(vpcoptions)
@@ -98,11 +98,8 @@ func (g *VPEGenerator) InitResources() error {
 	}
 
 	for _, gateway := range allrecs {
-		var dependsOn []string
 		start := ""
 		allrecs := []vpcv1.ReservedIP{}
-		dependsOn = append(dependsOn,
-			"ibm_is_virtual_endpoint_gateway."+terraformutils.TfSanitize(*gateway.Name))
 		g.Resources = append(g.Resources, g.createVPEGatewayResources(*gateway.ID, *gateway.Name))
 		listEndpointGatewayIpsOptions := &vpcv1.ListEndpointGatewayIpsOptions{
 			EndpointGatewayID: gateway.ID,
@@ -120,8 +117,26 @@ func (g *VPEGenerator) InitResources() error {
 			break
 		}
 		for _, ip := range allrecs {
-			g.Resources = append(g.Resources, g.createVPEGatewayIPResources(*gateway.ID, *ip.ID, *ip.Name, dependsOn))
+			g.Resources = append(g.Resources, g.createVPEGatewayIPResources(*gateway.ID, *ip.ID, *ip.Name))
 		}
 	}
+	return nil
+}
+
+func (g *VPEGenerator) PostConvertHook() error {
+	for i, r := range g.Resources {
+		if r.InstanceInfo.Type != "ibm_is_virtual_endpoint_gateway" {
+			continue
+		}
+		for _, gIP := range g.Resources {
+			if gIP.InstanceInfo.Type != "ibm_is_virtual_endpoint_gateway_ip" {
+				continue
+			}
+			if gIP.InstanceState.Attributes["gateway"] == r.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["gateway"] = "${ibm_is_virtual_endpoint_gateway." + r.ResourceName + ".id}"
+			}
+		}
+	}
+
 	return nil
 }

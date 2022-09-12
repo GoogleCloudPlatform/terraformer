@@ -18,42 +18,30 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	bluemix "github.com/IBM-Cloud/bluemix-go"
+	"github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/api/resource/resourcev1/catalog"
 	"github.com/IBM-Cloud/bluemix-go/api/resource/resourcev2/controllerv2"
 	"github.com/IBM-Cloud/bluemix-go/session"
 )
 
-// DatabaseRabbitMQGenerator ...
-type DatabaseRabbitMQGenerator struct {
+// DatabaseRedisGenerator ...
+type ContinuousDeliveryGenerator struct {
 	IBMService
 }
 
-// loadRabbitMQDB ...
-func (g DatabaseRabbitMQGenerator) loadRabbitMQDB(dbID string, dbName string) terraformutils.Resource {
-	resource := terraformutils.NewSimpleResource(
-		dbID,
-		normalizeResourceName(dbName, false),
-		"ibm_database",
+// loadRedisDB ...
+func (g ContinuousDeliveryGenerator) loadContinuousDelivery(cdID string, cdName string) terraformutils.Resource {
+	resources := terraformutils.NewSimpleResource(
+		cdID,
+		normalizeResourceName(cdName, false),
+		"ibm_resource_instance",
 		"ibm",
 		[]string{})
-
-	resource.IgnoreKeys = append(resource.IgnoreKeys,
-		"^node_count$",
-		"^members_memory_allocation_mb$",
-		"^node_memory_allocation_mb$",
-		"^members_disk_allocation_mb$",
-		"^members_cpu_allocation_count$",
-		"^node_cpu_allocation_count$",
-		"^node_disk_allocation_mb$",
-	)
-
-	return resource
+	return resources
 }
 
 // InitResources ...
-func (g *DatabaseRabbitMQGenerator) InitResources() error {
-
+func (g *ContinuousDeliveryGenerator) InitResources() error {
 	region := g.Args["region"].(string)
 	bmxConfig := &bluemix.Config{
 		BluemixAPIKey: os.Getenv("IC_API_KEY"),
@@ -74,20 +62,21 @@ func (g *DatabaseRabbitMQGenerator) InitResources() error {
 		return err
 	}
 
-	serviceID, err := catalogClient.ResourceCatalog().FindByName("messages-for-rabbitmq", true)
+	serviceID, err := catalogClient.ResourceCatalog().FindByName("continuous-delivery", true)
 	if err != nil {
 		return err
 	}
 	query := controllerv2.ServiceInstanceQuery{
 		ServiceID: serviceID[0].ID,
 	}
-	rabbitmqInstances, err := controllerClient.ResourceServiceInstanceV2().ListInstances(query)
+	continuousDeliveryInstances, err := controllerClient.ResourceServiceInstanceV2().ListInstances(query)
 	if err != nil {
 		return err
 	}
-	for _, db := range rabbitmqInstances {
-		if db.RegionID == region {
-			g.Resources = append(g.Resources, g.loadRabbitMQDB(db.ID, db.Name))
+
+	for _, cd := range continuousDeliveryInstances {
+		if cd.RegionID == region {
+			g.Resources = append(g.Resources, g.loadContinuousDelivery(cd.ID, cd.Name))
 		}
 	}
 

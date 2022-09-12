@@ -16,7 +16,6 @@ package ibm
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -24,27 +23,30 @@ import (
 	"github.com/IBM/vpc-go-sdk/vpcv1"
 )
 
-// FlowLogGenerator ...
-type FlowLogGenerator struct {
+// VPCGenerator ...
+type VPCAddressPrefixGenerator struct {
 	IBMService
 }
 
-func (g FlowLogGenerator) createFlowLogResources(flogID, flogName string) terraformutils.Resource {
-	resource := terraformutils.NewSimpleResource(
-		flogID,
-		normalizeResourceName(flogName, false),
-		"ibm_is_flow_log",
+func (g VPCAddressPrefixGenerator) createVPCAddressPrefixResources(vpcID, addPrefixID, addPrefixName string) terraformutils.Resource {
+	resource := terraformutils.NewResource(
+		fmt.Sprintf("%s/%s", vpcID, addPrefixID),
+		normalizeResourceName(addPrefixName, false),
+		"ibm_is_vpc_address_prefix",
 		"ibm",
-		[]string{})
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{})
+
 	return resource
 }
 
 // InitResources ...
-func (g *FlowLogGenerator) InitResources() error {
+func (g *VPCAddressPrefixGenerator) InitResources() error {
 	region := g.Args["region"].(string)
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
-		log.Fatal("No API key set")
+		return fmt.Errorf("no API key set")
 	}
 
 	isURL := GetVPCEndPoint(region)
@@ -56,37 +58,51 @@ func (g *FlowLogGenerator) InitResources() error {
 			URL:    iamURL,
 		},
 	}
+
 	vpcclient, err := vpcv1.NewVpcV1(vpcoptions)
 	if err != nil {
 		return err
 	}
 	start := ""
-	var allrecs []vpcv1.FlowLogCollector
+	var allrecs []vpcv1.VPC
 	for {
-		options := &vpcv1.ListFlowLogCollectorsOptions{}
+		listVpcsOptions := &vpcv1.ListVpcsOptions{}
 		if start != "" {
-			options.Start = &start
+			listVpcsOptions.Start = &start
 		}
 		if rg := g.Args["resource_group"].(string); rg != "" {
 			rg, err = GetResourceGroupID(apiKey, rg, region)
 			if err != nil {
 				return fmt.Errorf("Error Fetching Resource Group Id %s", err)
 			}
-			options.ResourceGroupID = &rg
+			listVpcsOptions.ResourceGroupID = &rg
 		}
-		flogs, response, err := vpcclient.ListFlowLogCollectors(options)
+		vpcs, response, err := vpcclient.ListVpcs(listVpcsOptions)
 		if err != nil {
-			return fmt.Errorf("Error Fetching Flow Logs %s\n%s", err, response)
+			return fmt.Errorf("Error Fetching vpcs %s\n%s", err, response)
 		}
-		start = GetNext(flogs.Next)
-		allrecs = append(allrecs, flogs.FlowLogCollectors...)
+		start = GetNext(vpcs.Next)
+		allrecs = append(allrecs, vpcs.Vpcs...)
 		if start == "" {
 			break
 		}
 	}
 
-	for _, flog := range allrecs {
-		g.Resources = append(g.Resources, g.createFlowLogResources(*flog.ID, *flog.Name))
+	for _, vpc := range allrecs {
+
+		// address prefix
+		listVPCAddressPrefixesOptions := &vpcv1.ListVPCAddressPrefixesOptions{
+			VPCID: vpc.ID,
+		}
+		addprefixes, response, err := vpcclient.ListVPCAddressPrefixes(listVPCAddressPrefixesOptions)
+		if err != nil {
+			return fmt.Errorf("Error Fetching vpc address prefixes %s\n%s", err, response)
+		}
+		for _, addprefix := range addprefixes.AddressPrefixes {
+			g.Resources = append(g.Resources, g.createVPCAddressPrefixResources(*vpc.ID, *addprefix.ID, *addprefix.Name))
+
+		}
+
 	}
 	return nil
 }
