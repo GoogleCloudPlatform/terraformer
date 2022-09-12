@@ -128,7 +128,7 @@ List of supported IBM Cloud resources:
 * `ibm_container_cluster`
     * `ibm_container_cluster`
     * `ibm_container_worker_pool`
-    * `ibm_container_worker_pool_zone_attachment`
+    * `ibm_container_nlb_dns`
 * `ibm_certificate_manager`
     * `ibm_resource_instance`
     * `ibm_certificate_manager_import`  
@@ -147,3 +147,10 @@ List of supported IBM Cloud resources:
     * `ibm_is_ssh_key`
     * `ibm_is_security_group`
     * `ibm_is_subnet`
+* `ibm_secrets_manager`
+* `ibm_continuous_delivery`
+* `ibm_cloud_sysdig_monitor`
+* `ibm_cloud_logdna`
+* `ibm_cloud_atracker`
+* `ibm_cloud_watson_studio`
+* `ibm_cloud_watson_machine_learning`
