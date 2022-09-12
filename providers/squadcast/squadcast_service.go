@@ -26,6 +26,8 @@ func GetHost(region string) string {
 		return "squadcast.com"
 	case "eu":
 		return "eu.squadcast.com"
+	case "staging":
+		return "squadcast.tech"
 	default:
 		return ""
 	}
