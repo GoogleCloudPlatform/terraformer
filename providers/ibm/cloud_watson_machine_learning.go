@@ -24,16 +24,16 @@ import (
 	"github.com/IBM-Cloud/bluemix-go/session"
 )
 
-// MonitoringGenerator ...
-type MonitoringGenerator struct {
+// WatsonMachineLearningGenerator ..
+type WatsonMachineLearningGenerator struct {
 	IBMService
 }
 
-// loadCloudMonitoring ...
-func (g MonitoringGenerator) loadCloudMonitoring(cdID string, cdName string) terraformutils.Resource {
+// loadWatsonMachineLearning ..
+func (g WatsonMachineLearningGenerator) loadWatsonMachineLearning(wmlID string, wmlName string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
-		cdID,
-		normalizeResourceName(cdName, false),
+		wmlID,
+		normalizeResourceName(wmlName, false),
 		"ibm_resource_instance",
 		"ibm",
 		[]string{})
@@ -41,7 +41,7 @@ func (g MonitoringGenerator) loadCloudMonitoring(cdID string, cdName string) ter
 }
 
 // InitResources ...
-func (g *MonitoringGenerator) InitResources() error {
+func (g *WatsonMachineLearningGenerator) InitResources() error {
 	region := g.Args["region"].(string)
 	bmxConfig := &bluemix.Config{
 		BluemixAPIKey: os.Getenv("IC_API_KEY"),
@@ -62,21 +62,21 @@ func (g *MonitoringGenerator) InitResources() error {
 		return err
 	}
 
-	serviceID, err := catalogClient.ResourceCatalog().FindByName("sysdig-monitor", true)
+	serviceID, err := catalogClient.ResourceCatalog().FindByName("pm-20", true)
 	if err != nil {
 		return err
 	}
 	query := controllerv2.ServiceInstanceQuery{
 		ServiceID: serviceID[0].ID,
 	}
-	continuousDeliveryInstances, err := controllerClient.ResourceServiceInstanceV2().ListInstances(query)
+	machineLearningInstances, err := controllerClient.ResourceServiceInstanceV2().ListInstances(query)
 	if err != nil {
 		return err
 	}
 
-	for _, cd := range continuousDeliveryInstances {
-		if cd.RegionID == region {
-			g.Resources = append(g.Resources, g.loadCloudMonitoring(cd.ID, cd.Name))
+	for _, wml := range machineLearningInstances {
+		if wml.RegionID == region {
+			g.Resources = append(g.Resources, g.loadWatsonMachineLearning(wml.ID, wml.Name))
 		}
 	}
 
