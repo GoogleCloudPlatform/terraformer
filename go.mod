@@ -89,7 +89,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/servicecatalog v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/ses v1.14.8
 	github.com/aws/aws-sdk-go-v2/service/sfn v1.2.1
-	github.com/aws/aws-sdk-go-v2/service/sns v1.2.1
+	github.com/aws/aws-sdk-go-v2/service/sns v1.17.17
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.3.0
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.3.0
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.13
