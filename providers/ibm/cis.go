@@ -477,6 +477,7 @@ func (g *CISGenerator) InitResources() error {
 		if err != nil {
 			return err
 		}
+
 		for _, gblm := range gblmList.Result {
 			if gblm.Port != nil {
 				port := strconv.FormatInt(*gblm.Port, 10)
@@ -560,6 +561,7 @@ func (g *CISGenerator) InitResources() error {
 					wasGrpList, _, err := cisWAFGroupClient.ListWafRuleGroups(&wafrulegroupsapiv1.ListWafRuleGroupsOptions{
 						PkgID: wafPkg.Result.ID,
 					})
+
 					if err != nil {
 						return err
 					}
@@ -580,11 +582,13 @@ func (g *CISGenerator) InitResources() error {
 			rateLimitService, _ := zoneratelimitsv1.NewZoneRateLimitsV1(rateLimitPoolOpts)
 			rateLimitList, _, err := rateLimitService.ListAllZoneRateLimits(&zoneratelimitsv1.ListAllZoneRateLimitsOptions{})
 			if err != nil {
-				return err
+				fmt.Printf("Error in getting rate limit.")
 			}
 
-			for _, rl := range rateLimitList.Result {
-				g.Resources = append(g.Resources, g.loadRateLimit(crn, *z.ID, *rl.ID, domainDependsOn))
+			if rateLimitList != nil {
+				for _, rl := range rateLimitList.Result {
+					g.Resources = append(g.Resources, g.loadRateLimit(crn, *z.ID, *rl.ID, domainDependsOn))
+				}
 			}
 
 			// Firewall -  Lockdown
@@ -631,9 +635,11 @@ func (g *CISGenerator) InitResources() error {
 				return err
 			}
 
-			for _, f := range firewalAccesslList.Result {
-				if f.Configuration.Target != nil {
-					g.Resources = append(g.Resources, g.loadFirewall(crn, *z.ID, *f.ID, "access_rules", domainDependsOn))
+			if firewalAccesslList != nil {
+				for _, f := range firewalAccesslList.Result {
+					if f.Configuration.Target != nil {
+						g.Resources = append(g.Resources, g.loadFirewall(crn, *z.ID, *f.ID, "access_rules", domainDependsOn))
+					}
 				}
 			}
 
@@ -705,11 +711,13 @@ func (g *CISGenerator) InitResources() error {
 			rangeAppClient, _ := rangeapplicationsv1.NewRangeApplicationsV1(rangeAppOpt)
 			ranegAppList, _, err := rangeAppClient.ListRangeApps(&rangeapplicationsv1.ListRangeAppsOptions{})
 			if err != nil {
-				return err
+				fmt.Printf("Error in getting range app list.")
 			}
 
-			for _, r := range ranegAppList.Result {
-				g.Resources = append(g.Resources, g.loadRangeApp(crn, *z.ID, *r.ID, domainDependsOn))
+			if ranegAppList != nil {
+				for _, r := range ranegAppList.Result {
+					g.Resources = append(g.Resources, g.loadRangeApp(crn, *z.ID, *r.ID, domainDependsOn))
+				}
 			}
 
 			// Page Rules
@@ -789,10 +797,12 @@ func (g *CISGenerator) InitResources() error {
 			if err != nil {
 				return err
 			}
+
 			routingList, _, err := routingClient.GetSmartRouting(&routingv1.GetSmartRoutingOptions{})
 			if err != nil {
-				return err
+				fmt.Printf("Error in getting routing list.")
 			}
+
 			if routingList != nil {
 				g.Resources = append(g.Resources, g.loadCISRouting(crn, *z.ID, domainDependsOn))
 			}

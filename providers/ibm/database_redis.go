@@ -31,18 +31,28 @@ type DatabaseRedisGenerator struct {
 
 // loadRedisDB ...
 func (g DatabaseRedisGenerator) loadRedisDB(dbID string, dbName string) terraformutils.Resource {
-	resources := terraformutils.NewSimpleResource(
+	resource := terraformutils.NewSimpleResource(
 		dbID,
 		normalizeResourceName(dbName, false),
 		"ibm_database",
 		"ibm",
 		[]string{})
-	return resources
+
+	resource.IgnoreKeys = append(resource.IgnoreKeys,
+		"^node_count$",
+		"^members_memory_allocation_mb$",
+		"^node_memory_allocation_mb$",
+		"^members_disk_allocation_mb$",
+		"^members_cpu_allocation_count$",
+		"^node_cpu_allocation_count$",
+		"^node_disk_allocation_mb$",
+	)
+
+	return resource
 }
 
 // InitResources ...
 func (g *DatabaseRedisGenerator) InitResources() error {
-
 	region := g.Args["region"].(string)
 	bmxConfig := &bluemix.Config{
 		BluemixAPIKey: os.Getenv("IC_API_KEY"),

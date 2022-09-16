@@ -59,6 +59,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdOctopusDeployImporter,
 		newCmdRabbitMQImporter,
 		// Network
+		newCmdMyrasecImporter,
 		newCmdCloudflareImporter,
 		newCmdFastlyImporter,
 		newCmdNs1Importer,
@@ -114,6 +115,7 @@ func providerGenerators() map[string]func() terraformutils.ProviderGenerator {
 		newOctopusDeployProvider,
 		newRabbitMQProvider,
 		// Network
+		newMyrasecProvider,
 		newCloudflareProvider,
 		// VCS
 		newAzureDevOpsProvider,
