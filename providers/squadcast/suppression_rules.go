@@ -43,9 +43,6 @@ func (g *SuppressionRulesGenerator) InitResources() error {
 	if len(g.Args["service_name"].(string)) == 0 {
 		return errors.New("--service-name is required")
 	}
-	if len(g.Args["team_name"].(string)) == 0 {
-		return errors.New("--team-name is required")
-	}
 
 	getSuppressionRulesURL := fmt.Sprintf("/v3/services/%s/suppression-rules", g.Args["service_id"])
 	response, err := Request[SuppressionRules](getSuppressionRulesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)

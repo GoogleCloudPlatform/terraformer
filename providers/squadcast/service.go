@@ -3,7 +3,6 @@
 package squadcast
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -37,10 +36,6 @@ func (g *ServiceGenerator) createResources(services []Service) []terraformutils.
 }
 
 func (g *ServiceGenerator) InitResources() error {
-	if len(g.Args["team_name"].(string)) == 0 {
-		return errors.New("--team-name is required")
-	}
-
 	getServicesURL := "/v3/services"
 	response, err := Request[[]Service](getServicesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {

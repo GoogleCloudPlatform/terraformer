@@ -3,6 +3,7 @@ package squadcast
 import (
 	"errors"
 	"fmt"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -41,9 +42,6 @@ func (g *RoutingRulesGenerator) createResources(routingRules RoutingRules) []ter
 func (g *RoutingRulesGenerator) InitResources() error {
 	if len(g.Args["service_name"].(string)) == 0 {
 		return errors.New("--service-name is required")
-	}
-	if len(g.Args["team_name"].(string)) == 0 {
-		return errors.New("--team-name is required")
 	}
 
 	getRoutingRulesURL := fmt.Sprintf("/v3/services/%s/routing-rules", g.Args["service_id"])

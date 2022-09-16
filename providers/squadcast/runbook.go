@@ -3,7 +3,6 @@
 package squadcast
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -37,10 +36,6 @@ func (g *RunbookGenerator) createResources(runbooks []Runbook) []terraformutils.
 }
 
 func (g *RunbookGenerator) InitResources() error {
-	if len(g.Args["team_name"].(string)) == 0 {
-		return errors.New("--team-name is required")
-	}
-
 	getRunbooksURL := "/v3/runbooks"
 	response, err := Request[[]Runbook](getRunbooksURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {

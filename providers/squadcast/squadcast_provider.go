@@ -58,10 +58,11 @@ func (p *SquadcastProvider) Init(args []string) error {
 	p.region = args[1]
 	p.GetAccessToken()
 
-	if args[2] != "" {
-		p.teamName = args[2]
-		p.GetTeamID()
+	if args[2] == "" {
+		return errors.New("required team name missing")
 	}
+	p.teamName = args[2]
+	p.GetTeamID()
 
 	if args[3] != "" {
 		p.serviceName = args[3]

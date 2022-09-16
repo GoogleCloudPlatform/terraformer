@@ -13,7 +13,7 @@ Add `--refresh-token` flag in cmd
 terraformer import squadcast --resources=<SERVICE_NAMES> --region=SQUADCAST_REGION
 ```
 
-Examples:
+### Examples:
 
 - `Import Resource by providing refresh-token as a flag`
 
@@ -34,6 +34,27 @@ terraformer import squadcast --resources=team --region=us --team-name="Default T
 ```
 
 
+### In order to use terraform files:
+
+- Update version and add source in  `provider.tf`
+  - Go to `/generated/squadcast/<RESOURCE>/<REGION>/provider.tf`
+  - Add `source = "SquadcastHub/squadcast"` to squadcast inside `required_providers`
+  - Update `version` in `required_providers` by removing `.exe` (Windows users only)
+- Update `terraform_version`
+  - `cd /generated/squadcast/<RESOURCE>/<REGION>`
+  - `terraform state replace-provider -auto-approve "registry.terraform.io/-/squadcast" "SquadcastHub/squadcast"`
+  
+### Example:
+```
+terraform {
+	required_providers {
+		squadcast = {
+	       version = "~> 1.0.5"
+           source = "SquadcastHub/squadcast"
+		}
+  }
+}
+```
 
 ### Flags:
 

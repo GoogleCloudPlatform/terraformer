@@ -3,7 +3,6 @@
 package squadcast
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -41,10 +40,6 @@ func (g *SLOGenerator) createResources(slo []SLO) []terraformutils.Resource {
 }
 
 func (g *SLOGenerator) InitResources() error {
-	if len(g.Args["team_name"].(string)) == 0 {
-		return errors.New("--team-name is required")
-	}
-
 	getSLOsURL := fmt.Sprintf("/v3/slo?owner_id=%s", g.Args["team_id"].(string))
 	response, err := Request[getSLOsResponse](getSLOsURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
 	if err != nil {
