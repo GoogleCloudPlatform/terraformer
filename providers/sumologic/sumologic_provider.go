@@ -75,6 +75,7 @@ func (p *SumoLogicProvider) GetConfig() cty.Value {
 
 func (p *SumoLogicProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
+		"role": &RoleGenerator{},
 		"user": &UserGenerator{},
 	}
 }
