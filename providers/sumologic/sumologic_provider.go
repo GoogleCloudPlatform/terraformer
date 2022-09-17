@@ -75,10 +75,11 @@ func (p *SumoLogicProvider) GetConfig() cty.Value {
 
 func (p *SumoLogicProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"monitor":   &MonitorGenerator{},
-		"partition": &PartitionGenerator{},
-		"role":      &RoleGenerator{},
-		"user":      &UserGenerator{},
+		"field_extraction_rule": &FieldExtractionRuleGenerator{},
+		"monitor":               &MonitorGenerator{},
+		"partition":             &PartitionGenerator{},
+		"role":                  &RoleGenerator{},
+		"user":                  &UserGenerator{},
 	}
 }
 
