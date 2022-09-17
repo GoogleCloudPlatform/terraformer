@@ -1,7 +1,6 @@
 package squadcast
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -12,8 +11,9 @@ type DeduplicationRulesGenerator struct {
 }
 
 type DeduplicationRules struct {
-	ID    string               `json:"id"`
-	Rules []*DeduplicationRule `json:"rules"`
+	ID        string               `json:"id"`
+	ServiceID string               `json:"service_id"`
+	Rules     []*DeduplicationRule `json:"rules"`
 }
 
 type DeduplicationRule struct {
@@ -30,7 +30,7 @@ func (g *DeduplicationRulesGenerator) createResources(deduplicationRules Dedupli
 			g.GetProviderName(),
 			map[string]string{
 				"team_id":    g.Args["team_id"].(string),
-				"service_id": g.Args["service_id"].(string),
+				"service_id": deduplicationRules.ServiceID,
 			},
 			[]string{},
 			map[string]interface{}{},
@@ -41,15 +41,29 @@ func (g *DeduplicationRulesGenerator) createResources(deduplicationRules Dedupli
 
 func (g *DeduplicationRulesGenerator) InitResources() error {
 	if len(g.Args["service_name"].(string)) == 0 {
-		return errors.New("--service-name is required")
-	}
+		getServicesURL := "/v3/services"
+		responseService, err := Request[[]Service](getServicesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+		if err != nil {
+			return err
+		}
 
-	getDeduplicationRulesURL := fmt.Sprintf("/v3/services/%s/deduplication-rules", g.Args["service_id"])
-	response, err := Request[DeduplicationRules](getDeduplicationRulesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
-	if err != nil {
-		return err
-	}
+		for _, service := range *responseService {
+			getDeduplicationRulesURL := fmt.Sprintf("/v3/services/%s/deduplication-rules", service.ID)
+			response, err := Request[DeduplicationRules](getDeduplicationRulesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+			if err != nil {
+				return err
+			}
 
-	g.Resources = g.createResources(*response)
+			g.Resources = append(g.Resources, g.createResources(*response)...)
+		}
+	} else {
+		getDeduplicationRulesURL := fmt.Sprintf("/v3/services/%s/deduplication-rules", g.Args["service_id"])
+		response, err := Request[DeduplicationRules](getDeduplicationRulesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+		if err != nil {
+			return err
+		}
+
+		g.Resources = g.createResources(*response)
+	}
 	return nil
 }

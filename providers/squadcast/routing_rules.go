@@ -1,7 +1,6 @@
 package squadcast
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -12,8 +11,9 @@ type RoutingRulesGenerator struct {
 }
 
 type RoutingRules struct {
-	ID    string         `json:"id"`
-	Rules []*RoutingRule `json:"rules"`
+	ID        string         `json:"id"`
+	ServiceID string         `json:"service_id"`
+	Rules     []*RoutingRule `json:"rules"`
 }
 
 type RoutingRule struct {
@@ -30,7 +30,7 @@ func (g *RoutingRulesGenerator) createResources(routingRules RoutingRules) []ter
 			g.GetProviderName(),
 			map[string]string{
 				"team_id":    g.Args["team_id"].(string),
-				"service_id": g.Args["service_id"].(string),
+				"service_id": routingRules.ServiceID,
 			},
 			[]string{},
 			map[string]interface{}{},
@@ -41,15 +41,29 @@ func (g *RoutingRulesGenerator) createResources(routingRules RoutingRules) []ter
 
 func (g *RoutingRulesGenerator) InitResources() error {
 	if len(g.Args["service_name"].(string)) == 0 {
-		return errors.New("--service-name is required")
-	}
+		getServicesURL := "/v3/services"
+		responseService, err := Request[[]Service](getServicesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+		if err != nil {
+			return err
+		}
 
-	getRoutingRulesURL := fmt.Sprintf("/v3/services/%s/routing-rules", g.Args["service_id"])
-	response, err := Request[RoutingRules](getRoutingRulesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
-	if err != nil {
-		return err
-	}
+		for _, service := range *responseService {
+			getRoutingRulesURL := fmt.Sprintf("/v3/services/%s/routing-rules", service.ID)
+			response, err := Request[RoutingRules](getRoutingRulesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+			if err != nil {
+				return err
+			}
 
-	g.Resources = g.createResources(*response)
+			g.Resources = append(g.Resources, g.createResources(*response)...)
+		}
+	} else {
+		getRoutingRulesURL := fmt.Sprintf("/v3/services/%s/routing-rules", g.Args["service_id"])
+		response, err := Request[RoutingRules](getRoutingRulesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+		if err != nil {
+			return err
+		}
+
+		g.Resources = g.createResources(*response)
+	}
 	return nil
 }
