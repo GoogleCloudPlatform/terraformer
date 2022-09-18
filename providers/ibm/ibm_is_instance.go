@@ -62,6 +62,11 @@ func (g InstanceGenerator) createVPCVolumeAttachmentResource(instanceID, volumeA
 		[]string{},
 		map[string]interface{}{})
 
+	resource.IgnoreKeys = append(resource.IgnoreKeys,
+		"^volume$",
+		"^iops$",
+	)
+
 	return resource
 }
 
