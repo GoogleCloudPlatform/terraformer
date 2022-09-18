@@ -52,6 +52,19 @@ func (g InstanceGenerator) createInstanceResources(instanceID, instanceName, ins
 	return resource
 }
 
+func (g InstanceGenerator) createVPCVolumeAttachmentResource(instanceID, volumeAttachedID, volumeAttachedName string) terraformutils.Resource {
+	resource := terraformutils.NewResource(
+		fmt.Sprintf("%s/%s", instanceID, volumeAttachedID),
+		normalizeResourceName(volumeAttachedName, true),
+		"ibm_is_instance_volume_attachment",
+		"ibm",
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{})
+
+	return resource
+}
+
 // InitResources ...
 func (g *InstanceGenerator) InitResources() error {
 	region := g.Args["region"].(string)
@@ -100,6 +113,20 @@ func (g *InstanceGenerator) InitResources() error {
 
 	for _, instance := range allrecs {
 		g.Resources = append(g.Resources, g.createInstanceResources(*instance.ID, *instance.Name, *instance.Image.ID))
+		listVPCInsVolOptions := &vpcv1.ListInstanceVolumeAttachmentsOptions{
+			InstanceID: instance.ID,
+		}
+
+		volumeAtts, response, err := vpcclient.ListInstanceVolumeAttachments(listVPCInsVolOptions)
+		if err != nil {
+			return fmt.Errorf("fetching vpc Instance volume Attachments %s\n%s", err, response)
+		}
+		allrecs := []vpcv1.VolumeAttachment{}
+		allrecs = append(allrecs, volumeAtts.VolumeAttachments...)
+
+		for _, volumeAtt := range allrecs {
+			g.Resources = append(g.Resources, g.createVPCVolumeAttachmentResource(*instance.ID, *volumeAtt.ID, *volumeAtt.Name))
+		}
 	}
 	return nil
 }
