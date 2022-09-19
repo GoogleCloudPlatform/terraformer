@@ -134,6 +134,7 @@ func (p *IBMProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"ibm_is_vpc_address_prefix":         &VPCAddressPrefixGenerator{},
 		"ibm_is_vpc_route":                  &VPCRouteGenerator{},
 		"ibm_is_vpc_routing_table":          &VPCRoutingTableGenerator{},
+		"ibm_is_placement_group":            &PlacementGroupGenerator{},
 		"ibm_is_subnet":                     &SubnetGenerator{},
 		"ibm_is_instance":                   &InstanceGenerator{},
 		"ibm_is_security_group":             &SecurityGroupGenerator{},
