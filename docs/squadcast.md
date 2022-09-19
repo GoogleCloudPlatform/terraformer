@@ -24,7 +24,7 @@ terraformer import squadcast --resources=team --region=us --team-name="Default T
 - `Import User Resource`
 
 ```
-terraformer import squadcast --resources=user --region=us
+terraformer import squadcast --resources=user --region=us --team-name="Defualt Team"
 ```
 
 - `Import Squad Resource`
@@ -33,6 +33,18 @@ terraformer import squadcast --resources=user --region=us
 terraformer import squadcast --resources=team --region=us --team-name="Default Team"
 ```
 
+- `Import Deduplication Rules Resource` (without `--service-name` flag)
+  - Deduplication Rules for all the services under Default Team will be generated.
+```
+terraformer import squadcast --resources=deduplication_rules --region=us --team-name="Default Team"
+```
+
+- `Import Deduplication Rules Resource`
+  - Deduplication Rules only for Example Service will be generated.
+
+```
+terraformer import squadcast --resources=deduplication_rules --region=us --team-name="Default Team" --service-name="Example Service"
+```
 
 ### In order to use terraform files:
 
@@ -47,12 +59,12 @@ terraformer import squadcast --resources=team --region=us --team-name="Default T
 ### Example:
 ```
 terraform {
-	required_providers {
-		squadcast = {
-	       version = "~> 1.0.5"
-           source = "SquadcastHub/squadcast"
-		}
-  }
+    required_providers {
+        squadcast = {
+            version = "~> 1.0.5"
+            source = "SquadcastHub/squadcast"
+        }
+    }
 }
 ```
 
@@ -64,6 +76,7 @@ terraform {
     - escalation_policy
     - routing_rules
     - runbook
+    - schedule
     - service
     - slo
     - squad
@@ -71,18 +84,20 @@ terraform {
     - tagging_rules
     - team_member
     - team_roles
-
-- `--service-name`
-  - Required for the following resources:
-    - deduplication_rules
-    - routing_rules
-    - suppression_rules
-    - tagging_rules
+    - user
 
 - `--region`
   - Supported Values:
     - `us`
     - `eu`
+
+- `--service-name` (optional)
+  - Supported for the following resources:
+    - deduplication_rules
+    - routing_rules
+    - suppression_rules
+    - tagging_rules
+  - If service name is not provided, resources for specified automation rule for all the service within the specified team will be generated. However it will only generate for a specific service when this flag is used. [see examples](squadcast.md:36)
 
 - `--refresh-token` (optional)
   - Supported Values:
@@ -94,6 +109,7 @@ terraform {
 - [`escalation_policy`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/escalation_policy)
 - [`routing_rules`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/routing_rules)
 - [`runbook`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/runbook)
+- [`schedule`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/schedule)
 - [`service`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/service)
 - [`slo`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/slo)
 - [`squad`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/squad)
