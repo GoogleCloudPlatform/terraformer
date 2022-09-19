@@ -83,6 +83,7 @@ List of supported IBM Cloud resources:
     * `ibm_is_vpc_routing_table_route`
 *   `ibm_is_subnet`
 *   `ibm_is_instance`
+*   `ibm_is_placement_group`
 * `ibm_is_security_group`
     * `ibm_is_security_group`
     * `ibm_is_security_group_rule`
