@@ -16,6 +16,8 @@ package github
 
 import (
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/pkg/errors"
@@ -24,9 +26,12 @@ import (
 
 type GithubProvider struct { //nolint
 	terraformutils.Provider
-	owner   string
-	token   string
-	baseURL string
+	owner          string
+	token          string
+	baseURL        string
+	appID          int64
+	installationID int64
+	pem            string
 }
 
 func (p GithubProvider) GetResourceConnections() map[string]map[string][]string {
@@ -44,6 +49,20 @@ func (p GithubProvider) GetProviderData(arg ...string) map[string]interface{} {
 }
 
 func (p *GithubProvider) GetConfig() cty.Value {
+	if p.appID != 0 && p.installationID != 0 && p.pem != "" {
+		return cty.ObjectVal(map[string]cty.Value{
+			"owner": cty.StringVal(p.owner),
+			"app_auth": cty.ListVal(
+				[]cty.Value{
+					cty.ObjectVal(map[string]cty.Value{
+						"id":              cty.NumberIntVal(p.appID),
+						"installation_id": cty.NumberIntVal(p.installationID),
+						"pem_file":        cty.StringVal(p.pem),
+					}),
+				},
+			),
+		})
+	}
 	return cty.ObjectVal(map[string]cty.Value{
 		"owner":    cty.StringVal(p.owner),
 		"token":    cty.StringVal(p.token),
@@ -53,6 +72,24 @@ func (p *GithubProvider) GetConfig() cty.Value {
 
 // Init GithubProvider with owner
 func (p *GithubProvider) Init(args []string) error {
+	if appIDValue, ok := os.LookupEnv("GITHUB_APP_ID"); ok {
+		appID, err := strconv.ParseInt(appIDValue, 10, 64)
+		if err != nil {
+			return err
+		}
+		p.appID = appID
+	}
+	if installationIDValue, ok := os.LookupEnv("GITHUB_APP_INSTALLATION_ID"); ok {
+		installationID, err := strconv.ParseInt(installationIDValue, 10, 64)
+		if err != nil {
+			return err
+		}
+		p.installationID = installationID
+	}
+	if pem, ok := os.LookupEnv("GITHUB_APP_PEM_FILE"); ok {
+		p.pem = strings.Replace(pem, `\n`, "\n", -1)
+	}
+
 	p.owner = args[0]
 	if len(args) < 2 {
 		if os.Getenv("GITHUB_TOKEN") == "" {
@@ -86,9 +123,12 @@ func (p *GithubProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"owner":    p.owner,
-		"token":    p.token,
-		"base_url": p.baseURL,
+		"owner":           p.owner,
+		"token":           p.token,
+		"base_url":        p.baseURL,
+		"app_id":          p.appID,
+		"installation_id": p.installationID,
+		"pem":             p.pem,
 	})
 	return nil
 }

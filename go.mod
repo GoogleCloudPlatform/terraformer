@@ -348,6 +348,7 @@ require (
 	cloud.google.com/go/monitoring v1.4.0
 	github.com/DataDog/datadog-api-client-go/v2 v2.1.0
 	github.com/Myra-Security-GmbH/myrasec-go/v2 v2.19.0
+	github.com/bradleyfalzon/ghinstallation/v2 v2.1.0
 	github.com/manicminer/hamilton v0.44.0
 	gopkg.in/ns1/ns1-go.v2 v2.6.5
 )
@@ -363,8 +364,9 @@ require (
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.19.5 // indirect
 	github.com/go-openapi/swag v0.19.14 // indirect
-	github.com/golang-jwt/jwt/v4 v4.3.0 // indirect
+	github.com/golang-jwt/jwt/v4 v4.4.1 // indirect
 	github.com/google/gnostic v0.5.7-v3refs // indirect
+	github.com/google/go-github/v45 v45.2.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/mailru/easyjson v0.7.6 // indirect
 	github.com/manicminer/hamilton-autorest v0.2.0 // indirect
