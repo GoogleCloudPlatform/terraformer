@@ -23,31 +23,25 @@ import (
 	"github.com/IBM/vpc-go-sdk/vpcv1"
 )
 
-// VPCGenerator ...
-type VPCGenerator struct {
+// PlacementGroupGenerator ...
+type PlacementGroupGenerator struct {
 	IBMService
 }
 
-func (g VPCGenerator) createVPCResources(vpcID, vpcName string) terraformutils.Resource {
-	resource := terraformutils.NewResource(
-		vpcID,
-		normalizeResourceName(vpcName, false),
-		"ibm_is_vpc",
+func (g PlacementGroupGenerator) createPlacementGroupResources(pGroupID, pGroupName string) terraformutils.Resource {
+	resources := terraformutils.NewResource(
+		pGroupID,
+		normalizeResourceName(pGroupName, false),
+		"ibm_is_placement_group",
 		"ibm",
 		map[string]string{},
 		[]string{},
 		map[string]interface{}{})
-
-	// Deprecated parameters
-	resource.IgnoreKeys = append(resource.IgnoreKeys,
-		"^default_network_acl$",
-	)
-
-	return resource
+	return resources
 }
 
 // InitResources ...
-func (g *VPCGenerator) InitResources() error {
+func (g *PlacementGroupGenerator) InitResources() error {
 	region := g.Args["region"].(string)
 	apiKey := os.Getenv("IC_API_KEY")
 	if apiKey == "" {
@@ -67,33 +61,28 @@ func (g *VPCGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
+
+	listPlacementGroupsOptions := &vpcv1.ListPlacementGroupsOptions{}
 	start := ""
-	var allrecs []vpcv1.VPC
+	allPlacementGroupsRecs := []vpcv1.PlacementGroup{}
 	for {
-		listVpcsOptions := &vpcv1.ListVpcsOptions{}
 		if start != "" {
-			listVpcsOptions.Start = &start
+			listPlacementGroupsOptions.Start = &start
 		}
-		if rg := g.Args["resource_group"].(string); rg != "" {
-			rg, err = GetResourceGroupID(apiKey, rg, region)
-			if err != nil {
-				return fmt.Errorf("Error Fetching Resource Group Id %s", err)
-			}
-			listVpcsOptions.ResourceGroupID = &rg
-		}
-		vpcs, response, err := vpcclient.ListVpcs(listVpcsOptions)
+		placementGroupCollection, response, err := vpcclient.ListPlacementGroups(listPlacementGroupsOptions)
 		if err != nil {
-			return fmt.Errorf("Error Fetching vpcs %s\n%s", err, response)
+			return fmt.Errorf("list PlacementGroups with Context failed %s\n%s", err, response)
 		}
-		start = GetNext(vpcs.Next)
-		allrecs = append(allrecs, vpcs.Vpcs...)
+		start = GetNext(placementGroupCollection.Next)
+		allPlacementGroupsRecs = append(allPlacementGroupsRecs, placementGroupCollection.PlacementGroups...)
 		if start == "" {
 			break
 		}
 	}
 
-	for _, vpc := range allrecs {
-		g.Resources = append(g.Resources, g.createVPCResources(*vpc.ID, *vpc.Name))
+	for _, pg := range allPlacementGroupsRecs {
+		g.Resources = append(g.Resources, g.createPlacementGroupResources(*pg.ID, *pg.Name))
 	}
+
 	return nil
 }
