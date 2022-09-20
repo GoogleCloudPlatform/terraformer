@@ -135,7 +135,6 @@ func (p *SquadcastProvider) GetSupportedService() map[string]terraformutils.Serv
 		"routing_rules":       &RoutingRulesGenerator{},
 		"deduplication_rules": &DeduplicationRulesGenerator{},
 		"suppression_rules":   &SuppressionRulesGenerator{},
-		"schedule":            &SchedulesGenerator{},
 	}
 }
 

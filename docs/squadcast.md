@@ -76,7 +76,6 @@ terraform {
     - escalation_policy
     - routing_rules
     - runbook
-    - schedule
     - service
     - slo
     - squad
@@ -109,7 +108,6 @@ terraform {
 - [`escalation_policy`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/escalation_policy)
 - [`routing_rules`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/routing_rules)
 - [`runbook`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/runbook)
-- [`schedule`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/schedule)
 - [`service`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/service)
 - [`slo`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/slo)
 - [`squad`](https://registry.terraform.io/providers/SquadcastHub/squadcast/latest/docs/resources/squad)
