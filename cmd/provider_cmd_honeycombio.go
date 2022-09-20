@@ -26,7 +26,7 @@ func newCmdHoneycombioImporter(options ImportOptions) *cobra.Command {
 		Short: "Import current state to Terraform configuration from Honeycomb.io",
 		Long:  "Import current state to Terraform configuration from Honeycomb.io",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			provider := newHoneycombProvider()
+			provider := newHoneycombioProvider()
 			err := Import(provider, options, options.Projects)
 			if err != nil {
 				return err
@@ -35,13 +35,13 @@ func newCmdHoneycombioImporter(options ImportOptions) *cobra.Command {
 		},
 	}
 
-	cmd.AddCommand(listCmd(newHoneycombProvider()))
+	cmd.AddCommand(listCmd(newHoneycombioProvider()))
 	baseProviderFlags(cmd.PersistentFlags(), &options, "derived_column,board", "board=id1,id2")
 	cmd.PersistentFlags().StringSliceVarP(&options.Projects, "datasets", "", []string{}, "hello-service,goodbye-service")
 
 	return cmd
 }
 
-func newHoneycombProvider() terraformutils.ProviderGenerator {
+func newHoneycombioProvider() terraformutils.ProviderGenerator {
 	return &honeycombio_terraforming.HoneycombProvider{}
 }
