@@ -2,6 +2,7 @@ package squadcast
 
 import (
 	"fmt"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
