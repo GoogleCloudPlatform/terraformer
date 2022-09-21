@@ -8,7 +8,7 @@ import (
 )
 
 type TeamMemberGenerator struct {
-	SquadcastService
+	SCService
 }
 
 type TeamMember struct {

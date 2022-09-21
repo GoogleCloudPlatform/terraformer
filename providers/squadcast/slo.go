@@ -9,7 +9,7 @@ import (
 )
 
 type SLOGenerator struct {
-	SquadcastService
+	SCService
 }
 
 type SLO struct {

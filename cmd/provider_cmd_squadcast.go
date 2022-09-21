@@ -34,5 +34,5 @@ func newCmdSquadcastImporter(options ImportOptions) *cobra.Command {
 }
 
 func newSquadcastProvider() terraformutils.ProviderGenerator {
-	return &squadcast_terraforming.SquadcastProvider{}
+	return &squadcast_terraforming.SCProvider{}
 }

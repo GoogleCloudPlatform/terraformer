@@ -7,7 +7,7 @@ import (
 )
 
 type RoutingRulesGenerator struct {
-	SquadcastService
+	SCService
 }
 
 type RoutingRules struct {

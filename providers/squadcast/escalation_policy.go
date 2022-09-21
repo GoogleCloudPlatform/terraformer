@@ -7,7 +7,7 @@ import (
 )
 
 type EscalationPolicyGenerator struct {
-	SquadcastService
+	SCService
 }
 
 type EscalationPolicy struct {

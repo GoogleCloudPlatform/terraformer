@@ -9,7 +9,7 @@ import (
 )
 
 type RunbookGenerator struct {
-	SquadcastService
+	SCService
 }
 
 type Runbook struct {

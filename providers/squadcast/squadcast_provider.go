@@ -12,7 +12,7 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
-type SquadcastProvider struct {
+type SCProvider struct {
 	terraformutils.Provider
 	accessToken  string
 	refreshToken string
@@ -37,7 +37,7 @@ type AppError struct {
 	Message string `json:"error_message,omitempty"`
 }
 
-func (p *SquadcastProvider) Init(args []string) error {
+func (p *SCProvider) Init(args []string) error {
 
 	if refreshToken := os.Getenv("SQUADCAST_REFRESH_TOKEN"); refreshToken != "" {
 		p.refreshToken = os.Getenv("SQUADCAST_REFRESH_TOKEN")
@@ -72,7 +72,7 @@ func (p *SquadcastProvider) Init(args []string) error {
 	return nil
 }
 
-func (p *SquadcastProvider) InitService(serviceName string, verbose bool) error {
+func (p *SCProvider) InitService(serviceName string, verbose bool) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
 		return errors.New(p.GetName() + ": " + serviceName + " not supported service")
@@ -95,14 +95,14 @@ func (p *SquadcastProvider) InitService(serviceName string, verbose bool) error 
 
 // @desc GetConfig: send details to provider block of terraform-provider-squadcast
 
-func (p *SquadcastProvider) GetConfig() cty.Value {
+func (p *SCProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
 		"region":        cty.StringVal(p.region),
 		"refresh_token": cty.StringVal(p.refreshToken),
 	})
 }
 
-func (p *SquadcastProvider) GetProviderData(...string) map[string]interface{} {
+func (p *SCProvider) GetProviderData(...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"squadcast": map[string]interface{}{
@@ -112,15 +112,15 @@ func (p *SquadcastProvider) GetProviderData(...string) map[string]interface{} {
 	}
 }
 
-func (p *SquadcastProvider) GetResourceConnections() map[string]map[string][]string {
+func (p *SCProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{}
 }
 
-func (p *SquadcastProvider) GetName() string {
+func (p *SCProvider) GetName() string {
 	return "squadcast"
 }
 
-func (p *SquadcastProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+func (p *SCProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
 		"user":                &UserGenerator{},
 		"service":             &ServiceGenerator{},
@@ -138,7 +138,7 @@ func (p *SquadcastProvider) GetSupportedService() map[string]terraformutils.Serv
 	}
 }
 
-func (p *SquadcastProvider) GetAccessToken() {
+func (p *SCProvider) GetAccessToken() {
 	url := "/oauth/access-token"
 	response, err := Request[AccessToken](url, p.refreshToken, p.region, false)
 	if err != nil {
@@ -147,7 +147,7 @@ func (p *SquadcastProvider) GetAccessToken() {
 	p.accessToken = response.AccessToken
 }
 
-func (p *SquadcastProvider) GetTeamID() {
+func (p *SCProvider) GetTeamID() {
 	url := fmt.Sprintf("/v3/teams/by-name?name=%s", url.QueryEscape(p.teamName))
 	response, err := Request[Team](url, p.accessToken, p.region, true)
 	if err != nil {
@@ -156,7 +156,7 @@ func (p *SquadcastProvider) GetTeamID() {
 	p.teamID = response.ID
 }
 
-func (p *SquadcastProvider) GetServiceID() {
+func (p *SCProvider) GetServiceID() {
 	url := fmt.Sprintf("/v3/services/by-name?name=%s&owner_id=%s", url.QueryEscape(p.serviceName), p.teamID)
 	response, err := Request[Service](url, p.accessToken, p.region, true)
 	if err != nil {

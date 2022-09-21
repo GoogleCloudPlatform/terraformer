@@ -11,7 +11,7 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
-type SquadcastService struct {
+type SCService struct {
 	terraformutils.Service
 }
 

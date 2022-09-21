@@ -7,7 +7,7 @@ import (
 )
 
 type SuppressionRulesGenerator struct {
-	SquadcastService
+	SCService
 }
 
 type SuppressionRules struct {

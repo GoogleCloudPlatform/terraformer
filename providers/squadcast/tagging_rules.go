@@ -7,7 +7,7 @@ import (
 )
 
 type TaggingRulesGenerator struct {
-	SquadcastService
+	SCService
 }
 
 type TaggingRules struct {

@@ -7,7 +7,7 @@ import (
 )
 
 type DeduplicationRulesGenerator struct {
-	SquadcastService
+	SCService
 }
 
 type DeduplicationRules struct {

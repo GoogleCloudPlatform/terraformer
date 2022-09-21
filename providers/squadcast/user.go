@@ -7,7 +7,7 @@ import (
 )
 
 type UserGenerator struct {
-	SquadcastService
+	SCService
 }
 
 type User struct {
