@@ -73,7 +73,9 @@ func (p *IonosCloudProvider) GetSupportedService() map[string]terraformutils.Ser
 	return map[string]terraformutils.ServiceGenerator{
 		"datacenter": &DatacenterGenerator{},
 		"lan":        &LanGenerator{},
+		"nic":        &NicGenerator{},
 		"server":     &ServerGenerator{},
+		"volume":     &VolumeGenerator{},
 		"pg_cluster": &DBaaSClusterGenerator{},
 	}
 }
@@ -81,7 +83,7 @@ func (p *IonosCloudProvider) GetSupportedService() map[string]terraformutils.Ser
 func (p *IonosCloudProvider) InitService(serviceName string, verbose bool) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
-		return errors.New("ionoscloud: " + serviceName + " not supported service")
+		return errors.New(helpers.Ionos + ": " + serviceName + " not supported service")
 	}
 	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)
