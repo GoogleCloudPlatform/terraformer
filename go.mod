@@ -26,7 +26,7 @@ require (
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1247
 	github.com/aliyun/aliyun-tablestore-go-sdk v4.1.2+incompatible
 	github.com/apache/openwhisk-client-go v0.0.0-20210106144548-17d556327cd3
-	github.com/aws/aws-sdk-go-v2 v1.16.14
+	github.com/aws/aws-sdk-go-v2 v1.16.16
 	github.com/aws/aws-sdk-go-v2/config v1.1.4
 	github.com/aws/aws-sdk-go-v2/credentials v1.12.14
 	github.com/aws/aws-sdk-go-v2/service/accessanalyzer v1.2.0
@@ -52,7 +52,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/configservice v1.25.4
 	github.com/aws/aws-sdk-go-v2/service/datapipeline v1.13.15
-	github.com/aws/aws-sdk-go-v2/service/devicefarm v1.13.3
+	github.com/aws/aws-sdk-go-v2/service/devicefarm v1.14.0
 	github.com/aws/aws-sdk-go-v2/service/docdb v1.18.1
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.52.1
@@ -209,14 +209,14 @@ require (
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef // indirect
 	github.com/aws/aws-sdk-go v1.37.0 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.12.12 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.21 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.15 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.23 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.17 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.0.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.12 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.2.1 // indirect
 	github.com/aws/aws-sdk-go-v2/service/redshift v1.10.0
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.17 // indirect
-	github.com/aws/smithy-go v1.13.2 // indirect
+	github.com/aws/smithy-go v1.13.3 // indirect
 	github.com/beevik/etree v1.1.0 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
