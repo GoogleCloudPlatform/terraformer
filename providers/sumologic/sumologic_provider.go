@@ -16,7 +16,9 @@ package sumologic
 
 import (
 	"errors"
+	"fmt"
 	"os"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/zclconf/go-cty/cty"
@@ -28,6 +30,32 @@ type SumoLogicProvider struct {
 	AccessKey   string
 	Environment string
 	baseUrl     string
+}
+
+var baseUrlMap = map[string]string{
+	"au":  "https://api.au.sumologic.com/api/",
+	"ca":  "https://api.ca.sumologic.com/api/",
+	"de":  "https://api.de.sumologic.com/api/",
+	"eu":  "https://api.eu.sumologic.com/api/",
+	"fed": "https://api.fed.sumologic.com/api/",
+	"in":  "https://api.in.sumologic.com/api/",
+	"jp":  "https://api.jp.sumologic.com/api/",
+	"us1": "https://api.sumologic.com/api/",
+	"us2": "https://api.us2.sumologic.com/api/",
+}
+
+func getBaseUrl(environment string) (string, error) {
+	env := strings.ToLower(environment)
+	if baseUrl, ok := baseUrlMap[env]; ok {
+		return baseUrl, nil
+	} else {
+		keys := []string{}
+		for k, _ := range baseUrlMap {
+			keys = append(keys, k)
+		}
+		return "", fmt.Errorf(
+			"invalid environment '%s', must be one of %s", environment, keys)
+	}
 }
 
 func (p *SumoLogicProvider) Init(args []string) error {
@@ -51,6 +79,11 @@ func (p *SumoLogicProvider) Init(args []string) error {
 		p.Environment = args[2]
 	} else if environment := os.Getenv("SUMOLOGIC_ENVIRONMENT"); environment != "" {
 		p.Environment = environment
+		if url, err := getBaseUrl(environment); err != nil {
+			return err
+		} else {
+			p.baseUrl = url
+		}
 	} else if baseUrl := os.Getenv("SUMOLOGIC_BASE_URL"); baseUrl != "" {
 		p.baseUrl = baseUrl
 	} else {

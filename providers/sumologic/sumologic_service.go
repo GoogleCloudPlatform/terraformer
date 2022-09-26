@@ -16,6 +16,7 @@ package sumologic
 
 import (
 	"context"
+	"log"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -28,8 +29,10 @@ type SumoLogicService struct { //nolint
 }
 
 func (s *SumoLogicService) Client() *sumologic.APIClient {
+	log.Printf("%s access id:%s, baseUrl:%s\n",
+		s.GetProviderName(), s.GetArgs()["accessId"].(string), s.GetArgs()["baseUrl"].(string))
+
 	config := sumologic.NewConfiguration()
-	// TODO: Use environment to set URL
 	config.Servers = []sumologic.ServerConfiguration{
 		{
 			URL:         strings.TrimSuffix(s.GetArgs()["baseUrl"].(string), "/"),
