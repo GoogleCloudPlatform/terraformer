@@ -56,6 +56,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [PagerDuty](/docs/pagerduty.md)
         * [Opsgenie](/docs/opsgenie.md)
         * [Honeycomb.io](/docs/honeycombio.md)
+        * [Opal](/docs/opal.md)
     * Community
         * [Keycloak](/docs/keycloak.md)
         * [Logz.io](/docs/logz.md)
@@ -305,6 +306,7 @@ Links to download Terraform Providers:
     * Pagerduty >=1.9 - [here](https://releases.hashicorp.com/terraform-provider-pagerduty/)
     * Opsgenie >= 0.6.0 [here](https://releases.hashicorp.com/terraform-provider-opsgenie/)
     * Honeycomb.io >= 0.10.0 - [here](https://github.com/honeycombio/terraform-provider-honeycombio/releases)
+    * Opal >= 0.0.2 - [here](https://github.com/opalsecurity/terraform-provider-opal/releases)
 * Community
     * Keycloak provider >=1.19.0 - [here](https://github.com/mrparkers/terraform-provider-keycloak/)
     * Logz.io provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
