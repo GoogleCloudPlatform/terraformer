@@ -3,7 +3,6 @@ package opal
 import (
 	"context"
 	"fmt"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -22,11 +21,21 @@ func (g *ResourceGenerator) InitResources() error {
 		return fmt.Errorf("unable to list opal resources: %v", err)
 	}
 
+	countByName := make(map[string]int)
+
 	for {
 		for _, resource := range resources.Results {
+			name := normalizeResourceName(*resource.Name)
+			if count, ok := countByName[name]; ok {
+				countByName[name] = count + 1
+				name = normalizeResourceName(fmt.Sprintf("%s_%d", *resource.Name, count+1))
+			} else {
+				countByName[name] = 1
+			}
+
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				resource.ResourceId,
-				normalizeResourceName(*resource.Name),
+				name,
 				"opal_resource",
 				"opal",
 				[]string{},
