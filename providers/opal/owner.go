@@ -22,11 +22,21 @@ func (g *OwnerGenerator) InitResources() error {
 		return fmt.Errorf("unable to list opal owners: %v", err)
 	}
 
+	countByName := make(map[string]int)
+
 	for {
 		for _, owner := range owners.Results {
+			name := normalizeResourceName(*owner.Name)
+			if count, ok := countByName[name]; ok {
+				countByName[name] = count + 1
+				name = normalizeResourceName(fmt.Sprintf("%s_%d", *owner.Name, count+1))
+			} else {
+				countByName[name] = 1
+			}
+
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				owner.OwnerId,
-				normalizeResourceName(*owner.Name),
+				name,
 				"opal_owner",
 				"opal",
 				[]string{},
