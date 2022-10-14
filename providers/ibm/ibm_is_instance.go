@@ -135,3 +135,21 @@ func (g *InstanceGenerator) InitResources() error {
 	}
 	return nil
 }
+
+func (g *InstanceGenerator) PostConvertHook() error {
+	for i, r := range g.Resources {
+		if r.InstanceInfo.Type != "ibm_is_instance_volume_attachment" {
+			continue
+		}
+		for _, ri := range g.Resources {
+			if ri.InstanceInfo.Type != "ibm_is_instance" {
+				continue
+			}
+			if r.InstanceState.Attributes["instance"] == ri.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["instance"] = "${ibm_is_instance." + ri.ResourceName + ".id}"
+			}
+		}
+	}
+
+	return nil
+}
