@@ -38,7 +38,7 @@ type CloudFunctionGenerator struct {
 func (g CloudFunctionGenerator) loadPackages(namespace, pkgName string) terraformutils.Resource {
 	resource := terraformutils.NewResource(
 		fmt.Sprintf("%s:%s", namespace, pkgName),
-		normalizeResourceName(pkgName, true),
+		normalizeResourceName(pkgName, false),
 		"ibm_function_package",
 		"ibm",
 		map[string]string{},
@@ -236,5 +236,25 @@ func (g *CloudFunctionGenerator) InitResources() error {
 		}
 	}
 
+	return nil
+}
+
+func (g *CloudFunctionGenerator) PostConvertHook() error {
+	for i, r := range g.Resources {
+		if r.InstanceInfo.Type != "ibm_function_action" {
+			continue
+		}
+		for _, ri := range g.Resources {
+			if ri.InstanceInfo.Type != "ibm_function_package" {
+				continue
+			}
+			fmt.Println("id = ", r.InstanceState.Attributes["id"])
+			if len(strings.Split(r.InstanceState.Attributes["id"], "/")) == 2 {
+				if strings.Split(r.InstanceState.Attributes["id"], "/")[0] == ri.InstanceState.Attributes["id"] {
+					g.Resources[i].Item["name"] = "${ibm_function_package." + ri.ResourceName + ".name}" + "/" + r.InstanceState.Attributes["action_id"]
+				}
+			}
+		}
+	}
 	return nil
 }
