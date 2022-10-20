@@ -63,6 +63,14 @@ func (p OpalProvider) GetResourceConnections() map[string]map[string][]string {
 				"reviewer.id", "id",
 			},
 			"group": {"visibility_group.id", "id"},
+			"message_channel": {
+				"audit_message_channel.id", "id",
+			},
+		},
+		"owner": {
+			"message_channel": {
+				"reviewer_message_channel_id", "id",
+			},
 		},
 	}
 }
@@ -105,8 +113,9 @@ func (p *OpalProvider) InitService(serviceName string, verbose bool) error {
 
 func (p *OpalProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"owner":    &OwnerGenerator{},
-		"resource": &ResourceGenerator{},
-		"group":    &GroupGenerator{},
+		"owner":           &OwnerGenerator{},
+		"resource":        &ResourceGenerator{},
+		"group":           &GroupGenerator{},
+		"message_channel": &MessageChannelGenerator{},
 	}
 }
