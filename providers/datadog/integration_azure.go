@@ -18,7 +18,8 @@ import (
 	"context"
 	"fmt"
 
-	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV1"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -57,10 +58,11 @@ func (g *IntegrationAzureGenerator) createResource(resourceID string) terraformu
 // from each monitor create 1 TerraformResource.
 // Need IntegrationAzure ID formatted as '<tenant_name>:<client_id>' as ID for terraform resource
 func (g *IntegrationAzureGenerator) InitResources() error {
-	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
-	authV1 := g.Args["authV1"].(context.Context)
+	datadogClient := g.Args["datadogClient"].(*datadog.APIClient)
+	auth := g.Args["auth"].(context.Context)
+	api := datadogV1.NewAzureIntegrationApi(datadogClient)
 
-	integrations, _, err := datadogClientV1.AzureIntegrationApi.ListAzureIntegration(authV1)
+	integrations, _, err := api.ListAzureIntegration(auth)
 	if err != nil {
 		return err
 	}

@@ -90,6 +90,7 @@ func (g IAMGenerator) loadAuthPolicies(policyID string) terraformutils.Resource 
 		"^resource_attributes$",
 		"^source_resource_instance_id$",
 		"^target_resource_instance_id$",
+		"^transaction_id$",
 	)
 	return resource
 }

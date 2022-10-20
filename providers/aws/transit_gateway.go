@@ -58,7 +58,7 @@ func (g *TransitGatewayGenerator) getTransitGatewayRouteTables(svc *ec2.Client) 
 		}
 		for _, tgwrt := range page.TransitGatewayRouteTables {
 			// Default route table are automatically created on the tgw creation
-			if tgwrt.DefaultAssociationRouteTable {
+			if *tgwrt.DefaultAssociationRouteTable {
 				continue
 			} else {
 				g.Resources = append(g.Resources, terraformutils.NewSimpleResource(

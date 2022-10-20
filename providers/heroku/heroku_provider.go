@@ -25,6 +25,7 @@ type HerokuProvider struct { //nolint
 	terraformutils.Provider
 	email  string
 	apiKey string
+	team   string
 }
 
 func (p *HerokuProvider) Init(args []string) error {
@@ -37,6 +38,11 @@ func (p *HerokuProvider) Init(args []string) error {
 		return errors.New("set HEROKU_API_KEY env var")
 	}
 	p.apiKey = os.Getenv("HEROKU_API_KEY")
+
+	// optional
+	if os.Getenv("HEROKU_TEAM") != "" {
+		p.team = os.Getenv("HEROKU_TEAM")
+	}
 
 	return nil
 }
@@ -75,6 +81,7 @@ func (p *HerokuProvider) GetSupportedService() map[string]terraformutils.Service
 		"formation":              &FormationGenerator{},
 		"pipeline":               &PipelineGenerator{},
 		"pipeline_coupling":      &PipelineCouplingGenerator{},
+		"team_app":               &TeamAppGenerator{},
 		"team_collaborator":      &TeamCollaboratorGenerator{},
 		"team_member":            &TeamMemberGenerator{},
 	}
@@ -92,6 +99,7 @@ func (p *HerokuProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetArgs(map[string]interface{}{
 		"email":   p.email,
 		"api_key": p.apiKey,
+		"team":    p.team,
 	})
 	return nil
 }

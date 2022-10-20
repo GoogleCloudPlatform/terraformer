@@ -16,35 +16,93 @@ package ns1
 
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	ns1 "github.com/ns1/ns1-go"
+	ns1 "gopkg.in/ns1/ns1-go.v2/rest"
+	"gopkg.in/ns1/ns1-go.v2/rest/model/dns"
+	"net/http"
+	"time"
 )
 
 type ZoneGenerator struct {
 	Ns1Service
 }
 
-func (g *ZoneGenerator) createZoneResources(client *ns1.APIClient) error {
-	zones, err := client.GetZones()
+func (g *ZoneGenerator) createZoneRecordResources(client *ns1.Client, zone_name string) error {
+
+	zone, _, err := client.Zones.Get(zone_name)
 	if err != nil {
 		return err
 	}
 
+	for _, record := range zone.Records {
+		r, _, err := client.Records.Get(zone_name, record.Domain, record.Type)
+		if err != nil {
+			return err
+		}
+
+		g.Resources = append(g.Resources, terraformutils.NewResource(
+			r.ID,
+			r.ID,
+			"ns1_record",
+			"ns1",
+			map[string]string{"zone": r.Zone, "domain": r.Domain, "type": r.Type},
+			[]string{},
+			map[string]interface{}{},
+		))
+
+	}
+
+	return nil
+}
+
+func (g *ZoneGenerator) createZoneResources(client *ns1.Client, includeZones []string) error {
+
+	var zones []*dns.Zone
+
+	if len(includeZones) > 0 {
+		for _, filter := range includeZones {
+			var z *dns.Zone
+			z, _, err := client.Zones.Get(filter)
+			if err != nil {
+				return err
+			}
+			zones = append(zones, z)
+		}
+	} else {
+		var err error
+		zones, _, err = client.Zones.List()
+		if err != nil {
+			return err
+		}
+	}
+
 	for _, zone := range zones {
-		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-			zone.Id,
-			zone.Id,
+		g.Resources = append(g.Resources, terraformutils.NewResource(
+			zone.ID,
+			zone.Zone,
 			"ns1_zone",
 			"ns1",
-			[]string{}))
+			map[string]string{"zone": zone.Zone},
+			[]string{},
+			map[string]interface{}{},
+		))
+
+		g.createZoneRecordResources(client, zone.Zone)
 	}
 
 	return nil
 }
 
 func (g *ZoneGenerator) InitResources() error {
-	client := ns1.New(g.Args["api_key"].(string))
+	filters := make([]string, 0)
+	for _, filter := range g.Filter {
+		if filter.FieldPath == "id" && filter.IsApplicable("zone") {
+			filters = append(filters, filter.AcceptableValues...)
+		}
+	}
+	httpClient := &http.Client{Timeout: time.Second * 10}
+	client := ns1.NewClient(httpClient, ns1.SetAPIKey(g.Args["api_key"].(string)))
 
-	if err := g.createZoneResources(client); err != nil {
+	if err := g.createZoneResources(client, filters); err != nil {
 		return err
 	}
 

@@ -43,6 +43,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [RabbitMQ](/docs/rabbitmq.md)
     * Network
         * [Cloudflare](/docs/cloudflare.md)
+        * [Myrasec](/docs/myrasec.md)
         * [PAN-OS](/docs/panos.md)
     * VCS
         * [Azure DevOps](/docs/azuredevops.md)
@@ -54,6 +55,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [Mackerel](/docs/mackerel.md)
         * [PagerDuty](/docs/pagerduty.md)
         * [Opsgenie](/docs/opsgenie.md)
+        * [Honeycomb.io](/docs/honeycombio.md)
     * Community
         * [Keycloak](/docs/keycloak.md)
         * [Logz.io](/docs/logz.md)
@@ -289,6 +291,7 @@ Links to download Terraform Providers:
     * Kubernetes provider >=1.9.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
     * RabbitMQ provider >=1.1.0 - [here](https://releases.hashicorp.com/terraform-provider-rabbitmq/)
 * Network
+    * Myrasec provider >1.44 - [here](https://github.com/Myra-Security-GmbH/terraform-provider-myrasec)
     * Cloudflare provider >1.16 - [here](https://releases.hashicorp.com/terraform-provider-cloudflare/)
     * Fastly provider >0.16.1 - [here](https://releases.hashicorp.com/terraform-provider-fastly/)
     * NS1 provider >1.8.3 - [here](https://releases.hashicorp.com/terraform-provider-ns1/)
@@ -301,6 +304,7 @@ Links to download Terraform Providers:
     * Mackerel provider > 0.0.6 - [here](https://github.com/mackerelio-labs/terraform-provider-mackerel)
     * Pagerduty >=1.9 - [here](https://releases.hashicorp.com/terraform-provider-pagerduty/)
     * Opsgenie >= 0.6.0 [here](https://releases.hashicorp.com/terraform-provider-opsgenie/)
+    * Honeycomb.io >= 0.10.0 - [here](https://github.com/honeycombio/terraform-provider-honeycombio/releases)
 * Community
     * Keycloak provider >=1.19.0 - [here](https://github.com/mrparkers/terraform-provider-keycloak/)
     * Logz.io provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
