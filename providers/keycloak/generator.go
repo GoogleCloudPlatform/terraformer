@@ -156,18 +156,18 @@ func (g *RealmGenerator) InitResources() error {
 
 				if len(stack) > 0 && authenticationSubFlowOrExecution.Index > 0 {
 					previous := stack[len(stack)-1]
-					var resouceType string
-					var resouceName string
+					var resourceType string
+					var resourceName string
 					if previous.AuthenticationFlow {
-						resouceType = "keycloak_authentication_subflow"
-						resouceName = "authentication_subflow_" +
+						resourceType = "keycloak_authentication_subflow"
+						resourceName = "authentication_subflow_" +
 							normalizeResourceName(realm.Realm) + "_" + normalizeResourceName(previous.FlowId)
 					} else {
-						resouceType = "keycloak_authentication_execution"
-						resouceName = "authentication_execution_" +
+						resourceType = "keycloak_authentication_execution"
+						resourceName = "authentication_execution_" +
 							normalizeResourceName(realm.Realm) + "_" + normalizeResourceName(previous.Id)
 					}
-					resource.AdditionalFields["depends_on"] = []string{resouceType + "." + terraformutils.TfSanitize(resouceName)}
+					resource.AdditionalFields["depends_on"] = []string{resourceType + "." + terraformutils.TfSanitize(resourceName)}
 				}
 
 				// Stack the current sub flow/execution
@@ -228,7 +228,7 @@ func (g *RealmGenerator) InitResources() error {
 		}
 		g.Resources = append(g.Resources, g.createOpenIDClientResources(realmClients)...)
 
-		// For earch open id client, get resources
+		// For each open id client, get resources
 		mapServiceAccountIds := map[string]map[string]string{}
 		mapContainerIDs := map[string]string{}
 		mapClientIDs := map[string]string{}
@@ -420,7 +420,7 @@ func (g *RealmGenerator) PostConvertHook() error {
 		}
 	}
 
-	// For each resources, modify import if needed...
+	// For each resource, modify import if needed...
 	for i, r := range g.Resources {
 		// Escape keycloak text inputs not to get unpredictable results or errors when Terraform will try to interpret variables ($ vs $$)
 		// TODO: ensure that we escape all existing fields
