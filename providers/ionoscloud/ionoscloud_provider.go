@@ -19,7 +19,6 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
-
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -72,13 +71,14 @@ func (IonosCloudProvider) GetResourceConnections() map[string]map[string][]strin
 
 func (p *IonosCloudProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"datacenter": &DatacenterGenerator{},
-		"lan":        &LanGenerator{},
-		"nic":        &NicGenerator{},
-		"server":     &ServerGenerator{},
-		"volume":     &VolumeGenerator{},
-		"pg_cluster": &DBaaSClusterGenerator{},
-		"ipblock":    &IPBlockGenerator{},
+		"datacenter":  &DatacenterGenerator{},
+		"lan":         &LanGenerator{},
+		"nic":         &NicGenerator{},
+		"server":      &ServerGenerator{},
+		"volume":      &VolumeGenerator{},
+		"pg_cluster":  &DBaaSClusterGenerator{},
+		"backup_unit": &BackupUnitGenerator{},
+		"ipblock":     &IPBlockGenerator{},
 	}
 }
 
