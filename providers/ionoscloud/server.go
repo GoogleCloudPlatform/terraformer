@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"log"
 )
 
 type ServerGenerator struct {
@@ -21,14 +20,12 @@ func (g *ServerGenerator) InitResources() error {
 
 	if datacenters != nil {
 		for _, datacenter := range datacenters {
-			log.Printf("Datacenter id: %v \n", *datacenter.Id)
 			servers, _, err := cloudApiClient.ServersApi.DatacentersServersGet(context.TODO(), *datacenter.Id).Depth(2).Execute()
 			if err != nil {
 				return err
 			}
 			if servers.Items != nil {
 				serversToAdd := *servers.Items
-				log.Printf("Servers to add %v \n", serversToAdd)
 
 				for _, server := range serversToAdd {
 					if server.Id != nil && server.Properties != nil && server.Properties.Name != nil {
