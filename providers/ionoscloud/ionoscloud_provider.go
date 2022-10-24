@@ -16,8 +16,9 @@ package ionoscloud
 
 import (
 	"errors"
-	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"os"
+
+	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -77,6 +78,7 @@ func (p *IonosCloudProvider) GetSupportedService() map[string]terraformutils.Ser
 		"server":     &ServerGenerator{},
 		"volume":     &VolumeGenerator{},
 		"pg_cluster": &DBaaSClusterGenerator{},
+		"ipblock":    &IPBlockGenerator{},
 	}
 }
 
