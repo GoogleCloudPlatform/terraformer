@@ -590,8 +590,8 @@ github.com/envoyproxy/go-control-plane v0.9.10-0.20210907150352-cf90f659a021/go.
 github.com/envoyproxy/go-control-plane v0.10.2-0.20220325020618-49ff273808a1/go.mod h1:KJwIaB5Mv44NWtYuAOFCVOjcI94vtpEz2JU/D2v6IjE=
 github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
 github.com/evanphx/json-patch v4.12.0+incompatible/go.mod h1:50XU6AFN0ol/bzJsmQLiYLvXMP4fmwYFNcr97nuDLSk=
-github.com/fastly/go-fastly/v6 v6.3.2 h1:MQawBCmIy/m9rs3aI0V+0N8P8UODJs1EfJPHJVBwEqI=
-github.com/fastly/go-fastly/v6 v6.3.2/go.mod h1:NrIbx45etTFv35rgfRe+eQY+8kA47arWABIkOaQ+roY=
+github.com/fastly/go-fastly/v6 v6.8.0 h1:Y5B3S5chYB2YCNDoKWYM8CK0mc5JxayTU/aneCgJfx8=
+github.com/fastly/go-fastly/v6 v6.8.0/go.mod h1:NrIbx45etTFv35rgfRe+eQY+8kA47arWABIkOaQ+roY=
 github.com/fatih/color v1.7.0/go.mod h1:Zm6kSWBoL9eyXnKyktHP6abPY2pDugNf5KwzbycvMj4=
 github.com/fatih/color v1.13.0 h1:8LOYc1KYPPmyKMuN8QV2DNRWNbLo6LZ0iLs8+mlH53w=
 github.com/fatih/color v1.13.0/go.mod h1:kLAiJbzzSOZDVNGyDpeOxJ47H46qBXwg5ILebYFFOfk=
