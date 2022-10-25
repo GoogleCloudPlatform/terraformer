@@ -25,12 +25,14 @@ import (
 type KeycloakProvider struct { //nolint
 	terraformutils.Provider
 	url                   string
+	basePath              string
 	clientID              string
 	clientSecret          string
 	realm                 string
 	clientTimeout         int
 	caCert                string
 	tlsInsecureSkipVerify bool
+	redHatSSO             bool
 	target                string
 }
 
@@ -43,13 +45,15 @@ func getArg(arg string) string {
 
 func (p *KeycloakProvider) Init(args []string) error {
 	p.url = args[0]
-	p.clientID = args[1]
-	p.clientSecret = args[2]
-	p.realm = args[3]
-	p.clientTimeout, _ = strconv.Atoi(args[4])
-	p.caCert = getArg(args[5])
-	p.tlsInsecureSkipVerify, _ = strconv.ParseBool(args[6])
-	p.target = getArg(args[7])
+	p.basePath = args[1]
+	p.clientID = args[2]
+	p.clientSecret = args[3]
+	p.realm = args[4]
+	p.clientTimeout, _ = strconv.Atoi(args[5])
+	p.caCert = getArg(args[6])
+	p.tlsInsecureSkipVerify, _ = strconv.ParseBool(args[7])
+	p.redHatSSO, _ = strconv.ParseBool(args[8])
+	p.target = getArg(args[9])
 	return nil
 }
 
@@ -64,12 +68,14 @@ func (p *KeycloakProvider) GetProviderData(arg ...string) map[string]interface{}
 func (p *KeycloakProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
 		"url":                      cty.StringVal(p.url),
+		"base_path":                cty.StringVal(p.basePath),
 		"client_id":                cty.StringVal(p.clientID),
 		"client_secret":            cty.StringVal(p.clientSecret),
 		"realm":                    cty.StringVal(p.realm),
 		"client_timeout":           cty.NumberIntVal(int64(p.clientTimeout)),
 		"root_ca_certificate":      cty.StringVal(p.caCert),
 		"tls_insecure_skip_verify": cty.BoolVal(p.tlsInsecureSkipVerify),
+		"red_hat_sso":              cty.BoolVal(p.redHatSSO),
 	})
 }
 
@@ -88,12 +94,14 @@ func (p *KeycloakProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
 		"url":                      p.url,
+		"base_path":                p.basePath,
 		"client_id":                p.clientID,
 		"client_secret":            p.clientSecret,
 		"realm":                    p.realm,
 		"client_timeout":           p.clientTimeout,
 		"root_ca_certificate":      p.caCert,
 		"tls_insecure_skip_verify": p.tlsInsecureSkipVerify,
+		"red_hat_sso":              p.redHatSSO,
 		"target":                   p.target,
 	})
 	return nil
