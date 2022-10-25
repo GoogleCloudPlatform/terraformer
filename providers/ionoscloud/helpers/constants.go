@@ -16,6 +16,7 @@ const (
 	IonosDebug    = "IONOS_DEBUG"
 	Ionos         = "ionoscloud"
 	DcId          = "datacenter_id"
+	K8sClusterId  = "k8s_cluster_id"
 
 	UsernameArg = "username"
 	PasswordArg = "password"
