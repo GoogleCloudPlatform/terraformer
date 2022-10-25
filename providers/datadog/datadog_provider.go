@@ -169,6 +169,7 @@ func (p *DatadogProvider) GetSupportedService() map[string]terraformutils.Servic
 		"logs_index":                           &LogsIndexGenerator{},
 		"logs_index_order":                     &LogsIndexOrderGenerator{},
 		"logs_integration_pipeline":            &LogsIntegrationPipelineGenerator{},
+		"logs_metric":                          &LogsMetricGenerator{},
 		"logs_pipeline_order":                  &LogsPipelineOrderGenerator{},
 		"integration_aws":                      &IntegrationAWSGenerator{},
 		"integration_aws_lambda_arn":           &IntegrationAWSLambdaARNGenerator{},
