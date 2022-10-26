@@ -165,6 +165,7 @@ func (p *IBMProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"ibm_cloud_atracker":                &ActivityTrackerGenerator{},
 		"ibm_cloud_watson_studio":           &WatsonStudioGenerator{},
 		"ibm_cloud_watson_machine_learning": &WatsonMachineLearningGenerator{},
+		"ibm_cloudant":                      &CloudantGenerator{},
 	}
 }
 
