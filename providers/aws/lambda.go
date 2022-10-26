@@ -34,8 +34,8 @@ type Statement struct {
 }
 
 type Policy struct {
-	Version string `json:"Version"`
-	Id string `json:"Id"`
+	Version   string       `json:"Version"`
+	Id        string       `json:"Id"`
 	Statement []*Statement `json:"Statement"`
 }
 
@@ -101,36 +101,36 @@ func (g *LambdaGenerator) addFunctions(svc *lambda.Client) error {
 				map[string]interface{}{},
 			))
 
-		gp, err := svc.GetPolicy(context.TODO(), &lambda.GetPolicyInput{
-			FunctionName: aws.String(*function.FunctionArn),
-		});
+			gp, err := svc.GetPolicy(context.TODO(), &lambda.GetPolicyInput{
+				FunctionName: aws.String(*function.FunctionArn),
+			})
 
-		if err != nil {
-			return err
-		}
+			if err != nil {
+				return err
+			}
 
-		outputPolicy := *gp.Policy;
-		var policy Policy;
-		err = json.Unmarshal([]byte(outputPolicy), &policy);
+			outputPolicy := *gp.Policy
+			var policy Policy
+			err = json.Unmarshal([]byte(outputPolicy), &policy)
 
-		if err != nil {
-			return err
-		}
+			if err != nil {
+				return err
+			}
 
-		for _, statement := range policy.Statement {
-			g.Resources = append(g.Resources, terraformutils.NewResource(
-				statement.Sid,
-				statement.Sid,
-				"aws_lambda_permission",
-				"aws",
-				map[string]string{
-					"statement_id": statement.Sid,
-					"function_name": *function.FunctionArn,
-				},
-				lambdaAllowEmptyValues,
-				map[string]interface{}{},
-			));
-		}
+			for _, statement := range policy.Statement {
+				g.Resources = append(g.Resources, terraformutils.NewResource(
+					statement.Sid,
+					statement.Sid,
+					"aws_lambda_permission",
+					"aws",
+					map[string]string{
+						"statement_id":  statement.Sid,
+						"function_name": *function.FunctionArn,
+					},
+					lambdaAllowEmptyValues,
+					map[string]interface{}{},
+				))
+			}
 
 			pi := lambda.NewListFunctionEventInvokeConfigsPaginator(svc,
 				&lambda.ListFunctionEventInvokeConfigsInput{
