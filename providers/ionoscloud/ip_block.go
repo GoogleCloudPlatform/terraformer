@@ -1,9 +1,9 @@
 package ionoscloud
 
 import (
+	"context"
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"golang.org/x/net/context"
 )
 
 type IPBlockGenerator struct {
