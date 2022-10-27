@@ -224,6 +224,27 @@ func (g *RDSGenerator) loadEventSubscription(svc *rds.Client) error {
 	return nil
 }
 
+func (g *RDSGenerator) loadRDSGlobalClusters(svc *rds.Client) error {
+	p := rds.NewDescribeGlobalClustersPaginator(svc, &rds.DescribeGlobalClustersInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, cluster := range page.GlobalClusters {
+			resourceName := StringValue(cluster.GlobalClusterIdentifier)
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+				resourceName,
+				resourceName,
+				"aws_rds_global_cluster",
+				"aws",
+				RDSAllowEmptyValues,
+			))
+		}
+	}
+	return nil
+}
+
 // Generate TerraformResources from AWS API,
 // from each database create 1 TerraformResource.
 // Need only database name as ID for terraform resource
@@ -261,6 +282,10 @@ func (g *RDSGenerator) InitResources() error {
 	}
 
 	if err := g.loadEventSubscription(svc); err != nil {
+		return err
+	}
+
+	if err := g.loadRDSGlobalClusters(svc); err != nil {
 		return err
 	}
 

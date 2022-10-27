@@ -240,6 +240,7 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_db_subnet_group`
     * `aws_db_option_group`
     * `aws_db_event_subscription`
+    * `aws_rds_global_cluster`
 *   `resourcegroups`
     * `aws_resourcegroups_group`
 *   `route53`
