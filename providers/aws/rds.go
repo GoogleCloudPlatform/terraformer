@@ -113,6 +113,27 @@ func (g *RDSGenerator) loadDBInstances(svc *rds.Client) error {
 	return nil
 }
 
+func (g *RDSGenerator) loadDBInstanceSnapshots(svc *rds.Client) error {
+	p := rds.NewDescribeDBSnapshotsPaginator(svc, &rds.DescribeDBSnapshotsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, snapshot := range page.DBSnapshots {
+			resourceName := StringValue(snapshot.DBSnapshotIdentifier)
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+				resourceName,
+				resourceName,
+				"aws_db_snapshot",
+				"aws",
+				RDSAllowEmptyValues,
+			))
+		}
+	}
+	return nil
+}
+
 func (g *RDSGenerator) loadDBParameterGroups(svc *rds.Client) error {
 	p := rds.NewDescribeDBParameterGroupsPaginator(svc, &rds.DescribeDBParameterGroupsInput{})
 	for p.HasMorePages() {
@@ -221,6 +242,9 @@ func (g *RDSGenerator) InitResources() error {
 		return err
 	}
 	if err := g.loadDBInstances(svc); err != nil {
+		return err
+	}
+	if err := g.loadDBInstanceSnapshots(svc); err != nil {
 		return err
 	}
 	if err := g.loadDBProxies(svc); err != nil {
