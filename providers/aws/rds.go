@@ -50,6 +50,27 @@ func (g *RDSGenerator) loadDBClusters(svc *rds.Client) error {
 	return nil
 }
 
+func (g *RDSGenerator) loadDBClusterSnapshots(svc *rds.Client) error {
+	p := rds.NewDescribeDBClusterSnapshotsPaginator(svc, &rds.DescribeDBClusterSnapshotsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, snapshot := range page.DBClusterSnapshots {
+			resourceName := StringValue(snapshot.DBClusterSnapshotIdentifier)
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+				resourceName,
+				resourceName,
+				"aws_db_cluster_snapshot",
+				"aws",
+				RDSAllowEmptyValues,
+			))
+		}
+	}
+	return nil
+}
+
 func (g *RDSGenerator) loadDBProxies(svc *rds.Client) error {
 	p := rds.NewDescribeDBProxiesPaginator(svc, &rds.DescribeDBProxiesInput{})
 	for p.HasMorePages() {
@@ -194,6 +215,9 @@ func (g *RDSGenerator) InitResources() error {
 	svc := rds.NewFromConfig(config)
 
 	if err := g.loadDBClusters(svc); err != nil {
+		return err
+	}
+	if err := g.loadDBClusterSnapshots(svc); err != nil {
 		return err
 	}
 	if err := g.loadDBInstances(svc); err != nil {
