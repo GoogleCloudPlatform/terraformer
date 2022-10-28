@@ -43,6 +43,9 @@ func (p *IonosCloudProvider) Init(args []string) error {
 	if username != "" && password != "" {
 		p.username = username
 		p.password = password
+	}
+
+	if token != "" {
 		p.token = token
 	}
 
