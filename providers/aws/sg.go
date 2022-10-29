@@ -359,6 +359,8 @@ func fromPort(ip types.IpPermission) int {
 	switch {
 	case *ip.IpProtocol == "icmp":
 		return -1
+	case *ip.IpProtocol == "-1":
+		return -1
 	case ip.FromPort != nil && *ip.FromPort > 0:
 		return int(*ip.FromPort)
 	default:
@@ -369,6 +371,8 @@ func fromPort(ip types.IpPermission) int {
 func toPort(ip types.IpPermission) int {
 	switch {
 	case *ip.IpProtocol == "icmp":
+		return -1
+	case *ip.IpProtocol == "-1":
 		return -1
 	case ip.ToPort != nil && *ip.ToPort > 0:
 		return int(*ip.ToPort)
