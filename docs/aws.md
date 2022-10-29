@@ -168,6 +168,7 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_glue_job`
     * `aws_glue_trigger`
 *   `iam`
+    * `aws_iam_access_key`
     * `aws_iam_group`
     * `aws_iam_group_policy`
     * `aws_iam_group_policy_attachment`
@@ -198,6 +199,7 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_lambda_function`
     * `aws_lambda_function_event_invoke_config`
     * `aws_lambda_layer_version`
+    * `aws_lambda_permission`
 *   `logs`
     * `aws_cloudwatch_log_group`
 *   `media_package`
