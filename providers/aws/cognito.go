@@ -33,7 +33,7 @@ func (g *CognitoGenerator) loadIdentityPools(svc *cognitoidentity.Client) error 
 			var resourceName = *pool.IdentityPoolName
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				id,
-				resourceName,
+				resourceName+"_"+id,
 				"aws_cognito_identity_pool",
 				"aws",
 				[]string{}))
@@ -59,7 +59,7 @@ func (g *CognitoGenerator) loadUserPools(svc *cognitoidentityprovider.Client) ([
 			resourceName := *pool.Name
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				id,
-				resourceName,
+				resourceName+"_"+id,
 				"aws_cognito_user_pool",
 				"aws",
 				[]string{}))
@@ -87,7 +87,7 @@ func (g *CognitoGenerator) loadUserPoolClients(svc *cognitoidentityprovider.Clie
 				resourceName := *poolClient.ClientName
 				g.Resources = append(g.Resources, terraformutils.NewResource(
 					id,
-					resourceName,
+					resourceName+"_"+id,
 					"aws_cognito_user_pool_client",
 					"aws",
 					map[string]string{

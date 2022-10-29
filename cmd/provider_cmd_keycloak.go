@@ -28,9 +28,11 @@ import (
 
 const (
 	defaultKeycloakEndpoint              = "https://localhost:8443"
+	defaultKeycloakBasePath              = "" // Override with `export KEYCLOAK_BASE_PATH=/auth` for the legacy version of Keycloak.
 	defaultKeycloakRealm                 = "master"
 	defaultKeycloakClientTimeout         = int64(30)
 	defaultKeycloakTLSInsecureSkipVerify = false
+	defaultRedHatSSO                     = false
 )
 
 func newCmdKeycloakImporter(options ImportOptions) *cobra.Command {
@@ -43,6 +45,14 @@ func newCmdKeycloakImporter(options ImportOptions) *cobra.Command {
 			url := os.Getenv("KEYCLOAK_URL")
 			if len(url) == 0 {
 				url = defaultKeycloakEndpoint
+			}
+			basePath, ok := os.LookupEnv("KEYCLOAK_BASE_PATH")
+			if !ok {
+				basePath = defaultKeycloakBasePath
+			}
+			redHatSSO, err := strconv.ParseBool(os.Getenv("RED_HAT_SSO"))
+			if err != nil {
+				redHatSSO = defaultRedHatSSO
 			}
 			clientID := os.Getenv("KEYCLOAK_CLIENT_ID")
 			clientSecret := os.Getenv("KEYCLOAK_CLIENT_SECRET")
@@ -69,7 +79,7 @@ func newCmdKeycloakImporter(options ImportOptions) *cobra.Command {
 					log.Println(provider.GetName() + " importing realm " + target)
 					options.PathPattern = originalPathPattern
 					options.PathPattern = strings.ReplaceAll(options.PathPattern, "{provider}", "{provider}/"+target)
-					err := Import(provider, options, []string{url, clientID, clientSecret, realm, strconv.FormatInt(clientTimeout, 10), caCert, strconv.FormatBool(tlsInsecureSkipVerify), target})
+					err := Import(provider, options, []string{url, basePath, clientID, clientSecret, realm, strconv.FormatInt(clientTimeout, 10), caCert, strconv.FormatBool(tlsInsecureSkipVerify), strconv.FormatBool(redHatSSO), target})
 					if err != nil {
 						return err
 					}
@@ -77,7 +87,7 @@ func newCmdKeycloakImporter(options ImportOptions) *cobra.Command {
 			} else {
 				provider := newKeycloakProvider()
 				log.Println(provider.GetName() + " importing all realms")
-				err := Import(provider, options, []string{url, clientID, clientSecret, realm, strconv.FormatInt(clientTimeout, 10), caCert, strconv.FormatBool(tlsInsecureSkipVerify), "-"})
+				err := Import(provider, options, []string{url, basePath, clientID, clientSecret, realm, strconv.FormatInt(clientTimeout, 10), caCert, strconv.FormatBool(tlsInsecureSkipVerify), strconv.FormatBool(redHatSSO), "-"})
 				if err != nil {
 					return err
 				}
