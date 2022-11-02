@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"log"
 )
 
 type ServerGenerator struct {
@@ -24,21 +25,31 @@ func (g *ServerGenerator) InitResources() error {
 			if err != nil {
 				return err
 			}
-			if servers.Items != nil {
-				serversToAdd := *servers.Items
-
-				for _, server := range serversToAdd {
-					if server.Id != nil && server.Properties != nil && server.Properties.Name != nil {
-						g.Resources = append(g.Resources, terraformutils.NewResource(
-							*server.Id,
-							*server.Properties.Name+"-"+*server.Id,
-							"ionoscloud_server",
-							helpers.Ionos,
-							map[string]string{helpers.DcId: *datacenter.Id},
-							[]string{},
-							map[string]interface{}{}))
-					}
+			if servers.Items == nil {
+				log.Printf(
+					"[WARNING] expected a response containing servers but received 'nil' instead, skipping search for datacenter with ID: %v.\n",
+					*datacenter.Id)
+				continue
+			}
+			serversToAdd := *servers.Items
+			for _, server := range serversToAdd {
+				server.Properties = nil
+				if server.Properties == nil || server.Properties.Name == nil {
+					log.Printf(
+						"[WARNING] 'nil' values in the response for server with ID %v, datacenter ID: %v, skipping this resource.\n",
+						*server.Id,
+						*datacenter.Id,
+					)
+					continue
 				}
+				g.Resources = append(g.Resources, terraformutils.NewResource(
+					*server.Id,
+					*server.Properties.Name+"-"+*server.Id,
+					"ionoscloud_server",
+					helpers.Ionos,
+					map[string]string{helpers.DcId: *datacenter.Id},
+					[]string{},
+					map[string]interface{}{}))
 			}
 		}
 	}
