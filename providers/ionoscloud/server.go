@@ -19,38 +19,35 @@ func (g *ServerGenerator) InitResources() error {
 		return err
 	}
 
-	if datacenters != nil {
-		for _, datacenter := range datacenters {
-			servers, _, err := cloudApiClient.ServersApi.DatacentersServersGet(context.TODO(), *datacenter.Id).Depth(2).Execute()
-			if err != nil {
-				return err
-			}
-			if servers.Items == nil {
+	for _, datacenter := range datacenters {
+		servers, _, err := cloudApiClient.ServersApi.DatacentersServersGet(context.TODO(), *datacenter.Id).Depth(2).Execute()
+		if err != nil {
+			return err
+		}
+		if servers.Items == nil {
+			log.Printf(
+				"[WARNING] expected a response containing servers but received 'nil' instead, skipping search for datacenter with ID: %v.\n",
+				*datacenter.Id)
+			continue
+		}
+		serversToAdd := *servers.Items
+		for _, server := range serversToAdd {
+			if server.Properties == nil || server.Properties.Name == nil {
 				log.Printf(
-					"[WARNING] expected a response containing servers but received 'nil' instead, skipping search for datacenter with ID: %v.\n",
-					*datacenter.Id)
+					"[WARNING] 'nil' values in the response for server with ID %v, datacenter ID: %v, skipping this resource.\n",
+					*server.Id,
+					*datacenter.Id,
+				)
 				continue
 			}
-			serversToAdd := *servers.Items
-			for _, server := range serversToAdd {
-				server.Properties = nil
-				if server.Properties == nil || server.Properties.Name == nil {
-					log.Printf(
-						"[WARNING] 'nil' values in the response for server with ID %v, datacenter ID: %v, skipping this resource.\n",
-						*server.Id,
-						*datacenter.Id,
-					)
-					continue
-				}
-				g.Resources = append(g.Resources, terraformutils.NewResource(
-					*server.Id,
-					*server.Properties.Name+"-"+*server.Id,
-					"ionoscloud_server",
-					helpers.Ionos,
-					map[string]string{helpers.DcId: *datacenter.Id},
-					[]string{},
-					map[string]interface{}{}))
-			}
+			g.Resources = append(g.Resources, terraformutils.NewResource(
+				*server.Id,
+				*server.Properties.Name+"-"+*server.Id,
+				"ionoscloud_server",
+				helpers.Ionos,
+				map[string]string{helpers.DcId: *datacenter.Id},
+				[]string{},
+				map[string]interface{}{}))
 		}
 	}
 	return nil
