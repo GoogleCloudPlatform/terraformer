@@ -46,6 +46,7 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_lb_target_group_attachment`
 *   `api_gateway`
     * `aws_api_gateway_authorizer`
+    * `aws_api_gateway_api_key`
     * `aws_api_gateway_documentation_part`
     * `aws_api_gateway_gateway_response`
     * `aws_api_gateway_integration`
