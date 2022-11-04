@@ -52,7 +52,9 @@ func (g COSGenerator) loadCOSBuckets(bucketID, bucketName string) terraformutils
 		normalizeResourceName(bucketName, false),
 		"ibm_cos_bucket",
 		"ibm",
-		map[string]string{},
+		map[string]string{
+			"force_delete": "true",
+		},
 		[]string{},
 		map[string]interface{}{})
 	return resources
