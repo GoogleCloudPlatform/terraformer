@@ -86,6 +86,7 @@ func (p *IonosCloudProvider) GetSupportedService() map[string]terraformutils.Ser
 		"k8s_node_pool":       &KubernetesNodePoolGenerator{},
 		"target_group":        &TargetGroupGenerator{},
 		"networkloadbalancer": &NetworkLoadBalancerGenerator{},
+		"natgateway": 		   &NATGatewayGenerator{},
 	}
 }
 
