@@ -94,7 +94,7 @@ func (g *RouteTableGenerator) InitResources() error {
 				[]string{},
 				map[string]interface{}{},
 			)
-			entryResource.AdditionalFields["route_table_id"] = "${tencentcloud_route_table." + resource.ResourceName + ".id}"
+			// Route table id could be connected
 			g.Resources = append(g.Resources, entryResource)
 		}
 	}
