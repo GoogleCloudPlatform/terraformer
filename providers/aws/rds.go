@@ -80,13 +80,15 @@ func (g *RDSGenerator) loadDBInstances(svc *rds.Client) error {
 		}
 		for _, db := range page.DBInstances {
 			resourceName := StringValue(db.DBInstanceIdentifier)
-			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+			r := terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_db_instance",
 				"aws",
 				RDSAllowEmptyValues,
-			))
+			)
+			r.IgnoreKeys = append(r.IgnoreKeys, "^name$")
+			g.Resources = append(g.Resources, r)
 		}
 	}
 	return nil
@@ -222,6 +224,17 @@ func (g *RDSGenerator) InitResources() error {
 func (g *RDSGenerator) PostConvertHook() error {
 	for i, r := range g.Resources {
 		if r.InstanceInfo.Type == "aws_db_instance" || r.InstanceInfo.Type == "aws_rds_cluster" {
+			for _, dbInstance := range g.Resources {
+				if dbInstance.InstanceInfo.Type != "aws_db_instance" {
+					continue
+				}
+				if g.Resources[i].Item["replicate_source_db"] != nil {
+					delete(g.Resources[i].Item, "username")
+					delete(g.Resources[i].Item, "engine_version")
+					delete(g.Resources[i].Item, "engine")
+					delete(g.Resources[i].Item, "db_name")
+				}
+			}
 
 			for _, parameterGroup := range g.Resources {
 				if parameterGroup.InstanceInfo.Type != "aws_db_parameter_group" {
