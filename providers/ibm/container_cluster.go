@@ -17,19 +17,29 @@ package ibm
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	bluemix "github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/api/container/containerv1"
+	v1 "github.com/IBM-Cloud/bluemix-go/api/container/containerv1"
 	"github.com/IBM-Cloud/bluemix-go/api/container/containerv2"
 	"github.com/IBM-Cloud/bluemix-go/session"
+)
+
+const (
+	defaultWorkerPool = "default"
+	hardwareShared    = "shared"
+	hardwareDedicated = "dedicated"
+	isolationPublic   = "public"
+	isolationPrivate  = "private"
 )
 
 type ContainerClusterGenerator struct {
 	IBMService
 }
 
-func (g ContainerClusterGenerator) loadcluster(clustersID, clusterName string) terraformutils.Resource {
+func (g ContainerClusterGenerator) loadcluster(clustersID, clusterName, datacenter, hardware string) terraformutils.Resource {
 	resource := terraformutils.NewResource(
 		clustersID,
 		normalizeResourceName(clusterName, false),
@@ -39,6 +49,8 @@ func (g ContainerClusterGenerator) loadcluster(clustersID, clusterName string) t
 			"force_delete_storage":   "true",
 			"update_all_workers":     "false",
 			"wait_for_worker_update": "true",
+			"datacenter":             datacenter,
+			"hardware":               hardware,
 		},
 		[]string{},
 		map[string]interface{}{})
@@ -60,6 +72,20 @@ func (g ContainerClusterGenerator) loadWorkerPools(clustersID, poolID, poolName 
 		[]string{},
 		map[string]interface{}{})
 
+	return resources
+}
+
+func (g ContainerClusterGenerator) loadWorkerPoolZones(clustersID, poolID, zoneID string) terraformutils.Resource {
+	resources := terraformutils.NewResource(
+		fmt.Sprintf("%s/%s/%s", clustersID, poolID, zoneID),
+		normalizeResourceName("ibm_container_worker_pool_zone_attachment", true),
+		"ibm_container_worker_pool_zone_attachment",
+		"ibm",
+		map[string]string{
+			"wait_till_albs": "true",
+		},
+		[]string{},
+		map[string]interface{}{})
 	return resources
 }
 
@@ -104,15 +130,36 @@ func (g *ContainerClusterGenerator) InitResources() error {
 
 	for _, cs := range clusters {
 		if region == cs.Region {
-			g.Resources = append(g.Resources, g.loadcluster(cs.ID, cs.Name))
+			hardware := hardwareShared
+
 			workerPools, err := client.WorkerPools().ListWorkerPools(cs.ID, containerv1.ClusterTargetHeader{
 				ResourceGroup: cs.ResourceGroupID,
 			})
 			if err != nil {
 				return err
 			}
+
+			if len(workerPools) > 0 && workerPoolContains(workerPools, defaultWorkerPool) {
+				hardware = workerPools[0].Isolation
+				switch strings.ToLower(hardware) {
+				case "":
+					hardware = hardwareShared
+				case isolationPrivate:
+					hardware = hardwareDedicated
+				case isolationPublic:
+					hardware = hardwareShared
+				}
+			}
+
+			g.Resources = append(g.Resources, g.loadcluster(cs.ID, cs.Name, cs.DataCenter, hardware))
+
 			for _, pool := range workerPools {
 				g.Resources = append(g.Resources, g.loadWorkerPools(cs.ID, pool.ID, pool.Name))
+
+				zones := pool.Zones
+				for _, zone := range zones {
+					g.Resources = append(g.Resources, g.loadWorkerPoolZones(cs.ID, pool.ID, zone.ID))
+				}
 			}
 
 			nlbData, err := clientNlb.NlbDns().GetNLBDNSList(cs.Name)
@@ -129,6 +176,15 @@ func (g *ContainerClusterGenerator) InitResources() error {
 	return nil
 }
 
+func workerPoolContains(workerPools []v1.WorkerPoolResponse, pool string) bool {
+	for _, workerPool := range workerPools {
+		if workerPool.Name == pool {
+			return true
+		}
+	}
+	return false
+}
+
 func (g *ContainerClusterGenerator) PostConvertHook() error {
 	for _, r := range g.Resources {
 		if r.InstanceInfo.Type != "ibm_container_cluster" {
@@ -139,6 +195,25 @@ func (g *ContainerClusterGenerator) PostConvertHook() error {
 				continue
 			}
 
+			if wp.InstanceState.Attributes["cluster"] == r.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["cluster"] = "${ibm_container_cluster." + r.ResourceName + ".id}"
+			}
+		}
+
+		for i, wpZoneAttach := range g.Resources {
+			if wpZoneAttach.InstanceInfo.Type != "ibm_container_worker_pool_zone_attachment" {
+				continue
+			}
+
+			if wpZoneAttach.InstanceState.Attributes["cluster"] == r.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["cluster"] = "${ibm_container_cluster." + r.ResourceName + ".id}"
+			}
+		}
+
+		for i, wp := range g.Resources {
+			if wp.InstanceInfo.Type != "ibm_container_worker_pool" {
+				continue
+			}
 			if wp.InstanceState.Attributes["cluster"] == r.InstanceState.Attributes["id"] {
 				g.Resources[i].Item["cluster"] = "${ibm_container_cluster." + r.ResourceName + ".id}"
 			}
