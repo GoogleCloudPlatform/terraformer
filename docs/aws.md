@@ -162,7 +162,7 @@ terraformer import aws --resources=sg --regions=us-east-1
 *   `firehose`
     * `aws_kinesis_firehose_delivery_stream`
 *   `glue`
-    * `glue_crawler`
+    * `aws_glue_crawler`
     * `aws_glue_catalog_database`
     * `aws_glue_catalog_table`
     * `aws_glue_job`
