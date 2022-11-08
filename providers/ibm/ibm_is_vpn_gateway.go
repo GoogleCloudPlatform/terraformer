@@ -115,16 +115,16 @@ func (g *VPNGatewayGenerator) InitResources() error {
 }
 
 func (g *VPNGatewayGenerator) PostConvertHook() error {
-	for i, r := range g.Resources {
-		if r.InstanceInfo.Type != "ibm_is_vpn_gateway" {
+	for i, con := range g.Resources {
+		if con.InstanceInfo.Type != "ibm_is_vpn_gateway_connection" {
 			continue
 		}
-		for _, con := range g.Resources {
-			if con.InstanceInfo.Type != "ibm_is_vpn_gateway_connection" {
+		for _, vpn := range g.Resources {
+			if vpn.InstanceInfo.Type != "ibm_is_vpn_gateway" {
 				continue
 			}
-			if con.InstanceState.Attributes["vpn_gateway"] == r.InstanceState.Attributes["id"] {
-				g.Resources[i].Item["vpn_gateway"] = "${ibm_is_vpn_gateway." + r.ResourceName + ".id}"
+			if con.InstanceState.Attributes["vpn_gateway"] == vpn.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["vpn_gateway"] = "${ibm_is_vpn_gateway." + vpn.ResourceName + ".id}"
 			}
 		}
 	}

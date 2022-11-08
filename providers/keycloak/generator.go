@@ -397,15 +397,6 @@ func (g *RealmGenerator) PostConvertHook() error {
 				mapServiceAccountUserIDs[r.Item["realm_id"].(string)+"_"+r.InstanceState.Attributes["service_account_user_id"]] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".service_account_user_id}"
 			}
 		}
-		if r.InstanceInfo.Type == "keycloak_role" {
-			mapRoleIDs[r.Item["realm_id"].(string)+"_"+r.InstanceState.ID] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".id}"
-			if _, exist := r.Item["client_id"]; exist {
-				mapClientRoleNames[r.Item["realm_id"].(string)+"_"+mapClientNames[r.Item["realm_id"].(string)+"_"+r.Item["client_id"].(string)]+"."+r.Item["name"].(string)] = mapClientClientNames[r.Item["realm_id"].(string)+"_"+r.Item["client_id"].(string)] + ".${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
-				mapClientRoleShortNames[r.Item["realm_id"].(string)+"_"+mapClientNames[r.Item["realm_id"].(string)+"_"+r.Item["client_id"].(string)]+"."+r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
-			} else {
-				mapClientRoleNames[r.Item["realm_id"].(string)+"_"+r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
-			}
-		}
 		if r.InstanceInfo.Type == "keycloak_openid_client_scope" {
 			mapScopeNames[r.Item["realm_id"].(string)+"_"+r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
 		}
@@ -417,6 +408,20 @@ func (g *RealmGenerator) PostConvertHook() error {
 		}
 		if r.InstanceInfo.Type == "keycloak_authentication_execution" {
 			mapAuthenticationExecutionIDs[r.Item["realm_id"].(string)+"_"+r.InstanceState.ID] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".id}"
+		}
+	}
+
+	// Set slices to be able to map IDs with Terraform variables
+	// Separate loop for roles to avoid fetching with a key that is not present in the map
+	for _, r := range g.Resources {
+		if r.InstanceInfo.Type == "keycloak_role" {
+			mapRoleIDs[r.Item["realm_id"].(string)+"_"+r.InstanceState.ID] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".id}"
+			if _, exist := r.Item["client_id"]; exist {
+				mapClientRoleNames[r.Item["realm_id"].(string)+"_"+mapClientNames[r.Item["realm_id"].(string)+"_"+r.Item["client_id"].(string)]+"."+r.Item["name"].(string)] = mapClientClientNames[r.Item["realm_id"].(string)+"_"+r.Item["client_id"].(string)] + ".${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+				mapClientRoleShortNames[r.Item["realm_id"].(string)+"_"+mapClientNames[r.Item["realm_id"].(string)+"_"+r.Item["client_id"].(string)]+"."+r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+			} else {
+				mapClientRoleNames[r.Item["realm_id"].(string)+"_"+r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+			}
 		}
 	}
 
