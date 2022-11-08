@@ -47,7 +47,7 @@ func (g *APIGatewayGenerator) InitResources() error {
 	if err := g.loadUsagePlans(svc); err != nil {
 		return err
 	}
-	if err := g.loadApiKeys(svc); err != nil {
+	if err := g.loadAPIKeys(svc); err != nil {
 		return err
 	}
 
@@ -428,7 +428,7 @@ func (g *APIGatewayGenerator) loadUsagePlans(svc *apigateway.Client) error {
 	return nil
 }
 
-func (g *APIGatewayGenerator) loadApiKeys(svc *apigateway.Client) error {
+func (g *APIGatewayGenerator) loadAPIKeys(svc *apigateway.Client) error {
 	p := apigateway.NewGetApiKeysPaginator(svc, &apigateway.GetApiKeysInput{})
 	for p.HasMorePages() {
 		page, err := p.NextPage(context.TODO())
