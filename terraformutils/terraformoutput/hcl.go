@@ -31,12 +31,15 @@ func OutputHclFiles(resources []terraformutils.Resource, provider terraformutils
 	}
 	// create provider file
 	providerData := provider.GetProviderData()
-	providerData["terraform"] = map[string]interface{}{
-		"required_providers": []map[string]interface{}{{
-			provider.GetName(): map[string]interface{}{
-				"version": providerwrapper.GetProviderVersion(provider.GetName()),
-			},
-		}},
+	_, ok := providerData["terraform"]
+	if !ok {
+		providerData["terraform"] = map[string]interface{}{
+			"required_providers": []map[string]interface{}{{
+				provider.GetName(): map[string]interface{}{
+					"version": providerwrapper.GetProviderVersion(provider.GetName()),
+				},
+			}},
+		}
 	}
 
 	providerDataFile, err := terraformutils.Print(providerData, map[string]struct{}{}, output, sort)
