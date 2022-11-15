@@ -66,13 +66,10 @@ func (g KPGenerator) loadkPKeys() func(kpKeyCRN, kpKeyName string, dependsOn []s
 }
 
 func (g KPGenerator) loadkPKeyAliases() func(kpKeyCRN, kpKeyAlias string, dependsOn []string) terraformutils.Resource {
-	names := make(map[string]struct{})
-	random := true
 	return func(kpKeyCRN, kpKeyAlias string, dependsOn []string) terraformutils.Resource {
-		names, random = getRandom(names, kpKeyAlias, random)
 		resource := terraformutils.NewResource(
 			fmt.Sprintf("%s:alias:%s", kpKeyAlias, kpKeyCRN),
-			normalizeResourceName(kpKeyAlias, random),
+			normalizeResourceName(kpKeyAlias, true),
 			"ibm_kms_key_alias",
 			"ibm",
 			map[string]string{},
@@ -85,13 +82,10 @@ func (g KPGenerator) loadkPKeyAliases() func(kpKeyCRN, kpKeyAlias string, depend
 }
 
 func (g KPGenerator) loadKpKeyPolicies() func(kpKeyCRN string, dependsOn []string) terraformutils.Resource {
-	names := make(map[string]struct{})
-	random := true
 	return func(kpKeyCRN string, dependsOn []string) terraformutils.Resource {
-		names, random = getRandom(names, kpKeyCRN, random)
 		resource := terraformutils.NewResource(
 			kpKeyCRN,
-			normalizeResourceName("kp_policies", random),
+			normalizeResourceName("kp_policies", true),
 			"ibm_kms_key_policies",
 			"ibm",
 			map[string]string{},
@@ -155,6 +149,7 @@ func (g *KPGenerator) InitResources() error {
 		if err != nil {
 			return err
 		}
+
 		fnObjt := g.loadkPKeys()
 		for _, key := range output.Keys {
 			var dependsOn []string
@@ -185,10 +180,12 @@ func (g *KPGenerator) PostConvertHook() error {
 		if rk.InstanceInfo.Type != "ibm_kms_key" {
 			continue
 		}
+
 		for _, ri := range g.Resources {
 			if ri.InstanceInfo.Type != "ibm_resource_instance" {
 				continue
 			}
+
 			if rk.InstanceState.Attributes["instance_id"] == ri.InstanceState.Attributes["guid"] {
 				g.Resources[i].Item["instance_id"] = "${ibm_resource_instance." + ri.ResourceName + ".guid}"
 			}
