@@ -374,6 +374,7 @@ require (
 )
 
 require (
+	github.com/paloaltonetworks/prisma-cloud-go v0.5.5
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/as v1.0.392
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cbs v1.0.392
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdb v1.0.392
