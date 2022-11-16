@@ -22,7 +22,7 @@ import (
 	"github.com/zclconf/go-cty/cty"
 )
 
-const opalDefaultURL = "https://api.opal.dev/v1"
+const opalDefaultURL = "https://api.opal.dev"
 
 type OpalProvider struct { //nolint
 	terraformutils.Provider

@@ -36,7 +36,7 @@ You should see the output: `Terraform has been successfully initialized!`
 ```bash
 export OPAL_AUTH_TOKEN=Your token from https://app.opal.dev/settings#api
 # If you are running an on-prem installation, you will need to provide a base url as well:
-# export OPAL_BASE_URL=Your token from https://my.opal.internal/v1
+# export OPAL_BASE_URL=Your token from https://my.opal.com
 
 ./terraformer import opal --resources=* --path-pattern {output}/{provider}
 ```

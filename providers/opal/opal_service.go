@@ -16,6 +16,8 @@ package opal
 
 import (
 	"fmt"
+	"net/url"
+	"path"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/opalsecurity/opal-go"
@@ -29,8 +31,13 @@ func (s *OpalService) newClient() (*opal.APIClient, error) {
 	conf := opal.NewConfiguration()
 
 	conf.DefaultHeader["Authorization"] = fmt.Sprintf("Bearer %s", s.GetArgs()["token"].(string))
+	u, err := url.Parse(s.GetArgs()["base_url"].(string))
+	if err != nil {
+		return nil, err
+	}
+	u.Path = path.Join(u.Path, "/v1")
 	conf.Servers = opal.ServerConfigurations{{
-		URL: s.GetArgs()["base_url"].(string),
+		URL: u.String(),
 	}}
 
 	return opal.NewAPIClient(conf), nil
