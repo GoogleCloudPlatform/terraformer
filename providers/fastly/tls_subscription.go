@@ -18,7 +18,7 @@ import (
 	"log"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/fastly/go-fastly/v6/fastly"
+	"github.com/fastly/go-fastly/v7/fastly"
 )
 
 type TLSSubscriptionGenerator struct {
