@@ -120,7 +120,7 @@ func (p *TencentCloudProvider) GetResourceConnections() map[string]map[string][]
 			"vpc":            []string{"vpc_id", "id"},
 			"subnet":         []string{"subnet_id", "id"},
 			"security_group": []string{"security_groups", "id"},
-			// "key_pair":       []string{"key_name", "id"},
+			"key_pair":       []string{"key_name", "id"},
 		},
 		"as": {
 			"vpc":    []string{"vpc_id", "id"},
@@ -171,7 +171,10 @@ func (p *TencentCloudProvider) GetResourceConnections() map[string]map[string][]
 			"route_table": []string{"route_table_id", "id"},
 		},
 		"route_table": {
-			"vpc": []string{"vpc_id", "id"},
+			"vpc":         []string{"vpc_id", "id"},
+			"route_table": []string{"route_table_id", "id"},
+			"nat_gateway": []string{"next_hub", "id"},
+			"vpn":         []string{"next_hub", "id"},
 		},
 		"nat_gateway": {
 			"vpc": []string{"vpc_id", "id"},
