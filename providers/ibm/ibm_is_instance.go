@@ -70,6 +70,24 @@ func (g InstanceGenerator) createVPCVolumeAttachmentResource(instanceID, volumeA
 	return resource
 }
 
+func (g InstanceGenerator) createInstanceActionResource(instanceID, instanceStatus string) terraformutils.Resource {
+	resource := terraformutils.NewResource(
+		instanceID,
+		normalizeResourceName(fmt.Sprintf("%s_%s", instanceID, instanceStatus), true),
+		"ibm_is_instance_action",
+		"ibm",
+		map[string]string{
+			"instance": instanceID,
+			"action":   getAction(instanceStatus),
+		},
+		[]string{},
+		map[string]interface{}{
+			"force_action": false,
+		})
+
+	return resource
+}
+
 // InitResources ...
 func (g *InstanceGenerator) InitResources() error {
 	region := g.Args["region"].(string)
@@ -118,6 +136,7 @@ func (g *InstanceGenerator) InitResources() error {
 
 	for _, instance := range allrecs {
 		g.Resources = append(g.Resources, g.createInstanceResources(*instance.ID, *instance.Name, *instance.Image.ID))
+
 		listVPCInsVolOptions := &vpcv1.ListInstanceVolumeAttachmentsOptions{
 			InstanceID: instance.ID,
 		}
@@ -132,6 +151,8 @@ func (g *InstanceGenerator) InitResources() error {
 		for _, volumeAtt := range allrecs {
 			g.Resources = append(g.Resources, g.createVPCVolumeAttachmentResource(*instance.ID, *volumeAtt.ID, *volumeAtt.Name))
 		}
+
+		g.Resources = append(g.Resources, g.createInstanceActionResource(*instance.ID, *instance.Status))
 	}
 	return nil
 }
@@ -139,6 +160,20 @@ func (g *InstanceGenerator) InitResources() error {
 func (g *InstanceGenerator) PostConvertHook() error {
 	for i, r := range g.Resources {
 		if r.InstanceInfo.Type != "ibm_is_instance_volume_attachment" {
+			continue
+		}
+		for _, ri := range g.Resources {
+			if ri.InstanceInfo.Type != "ibm_is_instance" {
+				continue
+			}
+			if r.InstanceState.Attributes["instance"] == ri.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["instance"] = "${ibm_is_instance." + ri.ResourceName + ".id}"
+			}
+		}
+	}
+
+	for i, r := range g.Resources {
+		if r.InstanceInfo.Type != "ibm_is_instance_action" {
 			continue
 		}
 		for _, ri := range g.Resources {
