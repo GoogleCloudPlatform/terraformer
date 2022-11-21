@@ -433,8 +433,8 @@ github.com/aws/aws-sdk-go-v2/service/sns v1.17.17 h1:VKMhV1kisP1oNtCZQ2b9Aj8Hx1v
 github.com/aws/aws-sdk-go-v2/service/sns v1.17.17/go.mod h1:hygPv9etah0QZWMe7TEE+PCPe1VL+1tfwYvJZz478uc=
 github.com/aws/aws-sdk-go-v2/service/sqs v1.3.0 h1:iePzn4Gr4p5QKat3G7snhUvopc/lOj25ZiPJ4/PPzq8=
 github.com/aws/aws-sdk-go-v2/service/sqs v1.3.0/go.mod h1:9bo6m/Pes+TR6ORT97E1BkczbSgbpKB1qTyFt08s9yw=
-github.com/aws/aws-sdk-go-v2/service/ssm v1.3.0 h1:0swJm4MqIjN1v1tM9GQ8hGv+KXv4smEiftpAXg84aZg=
-github.com/aws/aws-sdk-go-v2/service/ssm v1.3.0/go.mod h1:WX5OhauvURAo0+ljp29uEIitBkt3+Y3RGnVa9ix2xc8=
+github.com/aws/aws-sdk-go-v2/service/ssm v1.33.0 h1:Whr3iK4ZLynH73qlPI7DRhXmpbQ0GNYxVGPpCeUBiO0=
+github.com/aws/aws-sdk-go-v2/service/ssm v1.33.0/go.mod h1:rEsqsZrOp9YvSGPOrcL3pR9+i/QJaWRkAYbuxMa7yCU=
 github.com/aws/aws-sdk-go-v2/service/sso v1.1.4/go.mod h1:yQayEbOWH75NaKFylsFocBc3yanYEGndlOaH4i/Lvno=
 github.com/aws/aws-sdk-go-v2/service/sso v1.11.17 h1:pXxu9u2z1UqSbjO9YA8kmFJBhFc1EVTDaf7A+S+Ivq8=
 github.com/aws/aws-sdk-go-v2/service/sso v1.11.17/go.mod h1:mS5xqLZc/6kc06IpXn5vRxdLaED+jEuaSRv5BxtnsiY=
@@ -1176,10 +1176,6 @@ github.com/onsi/gomega v1.13.0/go.mod h1:lRk9szgn8TxENtWd0Tp4c3wjlRfMTMH27I+3Je4
 github.com/onsi/gomega v1.17.0/go.mod h1:HnhC7FXeEQY45zxNK3PPoIUhzk/80Xly9PcubAlGdZY=
 github.com/onsi/gomega v1.19.0 h1:4ieX6qQjPP/BfC3mpsAtIGGlxTWPeA3Inl/7DtXw1tw=
 github.com/onsi/gomega v1.19.0/go.mod h1:LY+I3pBVzYsTBU1AnDwOSxaYi9WoWiqgwooUqq9yPro=
-github.com/opalsecurity/opal-go v1.0.5 h1:ZDS6FYzUnbjRhnRx+TreTsSxtPdWjLDI4RpSQrbEUgM=
-github.com/opalsecurity/opal-go v1.0.5/go.mod h1:bzD4vZIbH+lKhsX8NJ5ISNU2Xgm2qzjj6O9G2ycj58c=
-github.com/opalsecurity/opal-go v1.0.8 h1:3o1qElrwZR+O1ma8YdaZbYYnzxxOsKQh0/2sWDJ7Idk=
-github.com/opalsecurity/opal-go v1.0.8/go.mod h1:bzD4vZIbH+lKhsX8NJ5ISNU2Xgm2qzjj6O9G2ycj58c=
 github.com/opalsecurity/opal-go v1.0.9 h1:NlP3K15cpEYwtwHMnpp9TbzaLILUtcTm+OQax0a8p88=
 github.com/opalsecurity/opal-go v1.0.9/go.mod h1:bzD4vZIbH+lKhsX8NJ5ISNU2Xgm2qzjj6O9G2ycj58c=
 github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
