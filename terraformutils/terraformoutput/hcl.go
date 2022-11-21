@@ -29,13 +29,20 @@ func OutputHclFiles(resources []terraformutils.Resource, provider terraformutils
 	if err := os.MkdirAll(path, os.ModePerm); err != nil {
 		return err
 	}
+
+	providerConfig := map[string]interface{}{
+		"version": providerwrapper.GetProviderVersion(provider.GetName()),
+	}
+
+	if providerWithSource, ok := provider.(terraformutils.ProviderWithSource); ok {
+		providerConfig["source"] = providerWithSource.GetSource()
+	}
+
 	// create provider file
 	providerData := provider.GetProviderData()
 	providerData["terraform"] = map[string]interface{}{
 		"required_providers": []map[string]interface{}{{
-			provider.GetName(): map[string]interface{}{
-				"version": providerwrapper.GetProviderVersion(provider.GetName()),
-			},
+			provider.GetName(): providerConfig,
 		}},
 	}
 

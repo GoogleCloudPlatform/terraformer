@@ -249,17 +249,22 @@ func terraform12Adjustments(formatted []byte, mapsObjects map[string]struct{}) [
 func terraform13Adjustments(formatted []byte) []byte {
 	s := string(formatted)
 	requiredProvidersRe := regexp.MustCompile("required_providers \".*\" {")
-	oldRequiredProviders := "\"required_providers\""
-	newRequiredProviders := "required_providers"
+	endBraceRe := regexp.MustCompile(`^\s*}`)
 	lines := strings.Split(s, "\n")
 	for i, line := range lines {
 		if requiredProvidersRe.MatchString(line) {
 			parts := strings.Split(strings.TrimSpace(line), " ")
 			provider := strings.ReplaceAll(parts[1], "\"", "")
-			lines[i] = "\t" + newRequiredProviders + " {"
-			lines[i+1] = "\t\t" + provider + " = {\n\t" + lines[i+1] + "\n\t\t}"
+			lines[i] = "\trequired_providers {"
+			var innerBlock []string
+			inner := i + 1
+			for ; !endBraceRe.MatchString(lines[inner]); inner++ {
+				innerBlock = append(innerBlock, "\t"+lines[inner])
+			}
+			lines[i+1] = "\t\t" + provider + " = {\n" + strings.Join(innerBlock, "\n") + "\n\t\t}"
+			lines = append(lines[:i+2], lines[inner:]...)
+			break
 		}
-		lines[i] = strings.Replace(lines[i], oldRequiredProviders, newRequiredProviders, 1)
 	}
 	s = strings.Join(lines, "\n")
 	return []byte(s)
