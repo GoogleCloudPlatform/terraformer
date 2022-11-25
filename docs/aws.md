@@ -207,6 +207,10 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_media_package_channel`
 *   `media_store`
     * `aws_media_store_container`
+*   `medialive`
+    * `aws_medialive_channel`
+    * `aws_medialive_input`
+    * `aws_medialive_input_security_group`
 *   `msk`
     * `aws_msk_cluster`
 *   `nacl`
