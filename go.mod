@@ -91,7 +91,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sfn v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/sns v1.17.17
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.3.0
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.3.0
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.33.0
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.13
 	github.com/aws/aws-sdk-go-v2/service/swf v1.13.8
 	github.com/aws/aws-sdk-go-v2/service/waf v1.1.4
@@ -369,13 +369,13 @@ require (
 	github.com/mailru/easyjson v0.7.6 // indirect
 	github.com/manicminer/hamilton-autorest v0.2.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
-	github.com/opalsecurity/opal-go v1.0.9 // indirect
 	k8s.io/kube-openapi v0.0.0-20220328201542-3ee0da9b0b42 // indirect
 	sigs.k8s.io/json v0.0.0-20211208200746-9f7c6b3444d2 // indirect
 )
 
 require (
 	github.com/aws/aws-sdk-go-v2/service/medialive v1.24.2
+	github.com/opalsecurity/opal-go v1.0.9
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/as v1.0.392
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cbs v1.0.392
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdb v1.0.392
