@@ -125,12 +125,13 @@ func (g *AlbGenerator) loadLBListenerCertificate(svc *elasticloadbalancingv2.Cli
 	}
 	for _, lc := range lcs.Certificates {
 		certificateArn := *lc.CertificateArn
+		listenerCertificateID := *loadBalancer.ListenerArn + "_" + certificateArn
 		if certificateArn == *loadBalancer.Certificates[0].CertificateArn { // discard default certificate
 			continue
 		}
 		g.Resources = append(g.Resources, terraformutils.NewResource(
-			certificateArn,
-			certificateArn,
+			listenerCertificateID,
+			listenerCertificateID,
 			"aws_lb_listener_certificate",
 			"aws",
 			map[string]string{
