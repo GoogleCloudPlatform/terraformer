@@ -26,8 +26,7 @@ import (
 
 type HoneycombService struct { //nolint
 	terraformutils.Service
-	datasets   []hnyclient.Dataset
-	datasetMap map[string]bool
+	datasets map[string]hnyclient.Dataset
 }
 
 func (s *HoneycombService) newClient() (*hnyclient.Client, error) {
@@ -40,33 +39,51 @@ func (s *HoneycombService) newClient() (*hnyclient.Client, error) {
 		Debug:     enableDebug,
 	})
 	if err != nil {
-		return client, err
+		return client, fmt.Errorf("unable to initialize Honeycomb client: %v", err)
 	}
 
 	ctx := context.TODO()
-	datasets := s.GetArgs()["datasets"].([]string)
-	datasetMap := make(map[string]bool)
-	if len(datasets) == 0 {
+	ds := s.GetArgs()["datasets"].([]string)
+	s.datasets = make(map[string]hnyclient.Dataset)
+	if len(ds) == 0 {
 		// assume all datasets
-		s.datasets, err = client.Datasets.List(ctx)
+		datasets, err := client.Datasets.List(ctx)
 		if err != nil {
 			return client, fmt.Errorf("unable to list Honeycomb datasets: %v", err)
 		}
-		for _, ds := range s.datasets {
-			datasetMap[ds.Name] = true
+		for _, d := range datasets {
+			s.datasets[d.Name] = d
+		}
+		if !s.isClassicEnvironment() {
+			s.datasets[environmentWideDatasetSlug] = s.environmentWideDataset()
 		}
 	} else {
 		// verify the provided datasets exist
-		for _, d := range datasets {
+		for _, d := range ds {
+			if d == environmentWideDatasetSlug {
+				if s.isClassicEnvironment() {
+					return client, fmt.Errorf("%q provided as a dataset but the API key is for a Classic environment", environmentWideDatasetSlug)
+				}
+				s.datasets[environmentWideDatasetSlug] = s.environmentWideDataset()
+				continue
+			}
 			ds, err := client.Datasets.Get(ctx, d)
 			if err != nil {
-				return client, fmt.Errorf("unable to get Honeycomb dataset '%s': %v", d, err)
+				return client, fmt.Errorf("unable to get Honeycomb dataset %q: %v", d, err)
 			}
-			s.datasets = append(s.datasets, *ds)
-			datasetMap[ds.Name] = true
+			s.datasets[ds.Name] = *ds
 		}
 	}
-	s.datasetMap = datasetMap
 
 	return client, nil
+}
+
+func (s *HoneycombService) isClassicEnvironment() bool {
+	return len(s.GetArgs()["api_key"].(string)) == 32
+}
+
+const environmentWideDatasetSlug = "__all__"
+
+func (s *HoneycombService) environmentWideDataset() hnyclient.Dataset {
+	return hnyclient.Dataset{Name: environmentWideDatasetSlug, Slug: environmentWideDatasetSlug}
 }

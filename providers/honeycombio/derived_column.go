@@ -17,12 +17,10 @@ func (g *DerivedColumnGenerator) InitResources() error {
 		return fmt.Errorf("unable to initialize Honeycomb client: %v", err)
 	}
 
-	ctx := context.TODO()
-
 	for _, dataset := range g.datasets {
-		columns, err := client.DerivedColumns.List(ctx, dataset.Slug)
+		columns, err := client.DerivedColumns.List(context.TODO(), dataset.Slug)
 		if err != nil {
-			return fmt.Errorf("unable to list Honeycomb derived columns for dataset %s: %v", dataset.Slug, err)
+			return fmt.Errorf("unable to list Honeycomb derived columns for dataset %q: %v", dataset.Slug, err)
 		}
 
 		for _, column := range columns {
