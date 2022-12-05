@@ -80,12 +80,7 @@ func (g *CvmGenerator) InitResources() error {
 			[]string{},
 			map[string]interface{}{},
 		)
-		if instance.LoginSettings != nil && len(instance.LoginSettings.KeyIds) > 0 {
-			keyPairName, err := g.loadKeyPairs(client, instance.LoginSettings.KeyIds)
-			if err == nil {
-				resource.AdditionalFields["key_name"] = "${tencentcloud_key_pair." + keyPairName + ".id}"
-			}
-		}
+		// Do not collect keys with CVM cause there can be keys not belong to any of them
 		g.Resources = append(g.Resources, resource)
 	}
 

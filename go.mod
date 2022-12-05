@@ -68,7 +68,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/elasticsearchservice v1.15.4
 	github.com/aws/aws-sdk-go-v2/service/emr v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/firehose v1.2.1
-	github.com/aws/aws-sdk-go-v2/service/glue v1.3.0
+	github.com/aws/aws-sdk-go-v2/service/glue v1.34.1
 	github.com/aws/aws-sdk-go-v2/service/iam v1.3.0
 	github.com/aws/aws-sdk-go-v2/service/iot v1.24.1
 	github.com/aws/aws-sdk-go-v2/service/kafka v1.14.0
@@ -91,7 +91,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sfn v1.2.1
 	github.com/aws/aws-sdk-go-v2/service/sns v1.17.17
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.3.0
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.3.0
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.33.0
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.13
 	github.com/aws/aws-sdk-go-v2/service/swf v1.13.8
 	github.com/aws/aws-sdk-go-v2/service/waf v1.1.4
@@ -112,7 +112,7 @@ require (
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/duosecurity/duo_api_golang v0.0.0-20201112143038-0e07e9f869e3 // indirect
 	github.com/elazarl/go-bindata-assetfs v1.0.1 // indirect
-	github.com/fastly/go-fastly/v6 v6.8.0
+	github.com/fastly/go-fastly/v7 v7.0.0
 	github.com/fatih/structs v1.1.0 // indirect
 	github.com/gocql/gocql v0.0.0-20210707082121-9a3953d1826d // indirect
 	github.com/google/go-github/v35 v35.1.0
@@ -151,7 +151,6 @@ require (
 	github.com/ryanuber/go-glob v1.0.0 // indirect
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/pflag v1.0.5
-	github.com/tencentcloud/tencentcloud-sdk-go v3.0.233+incompatible
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.34
 	github.com/vultr/govultr v1.1.1
 	github.com/xanzy/go-gitlab v0.50.2
@@ -376,6 +375,29 @@ require (
 	sigs.k8s.io/json v0.0.0-20211208200746-9f7c6b3444d2 // indirect
 )
 
+require (
+	github.com/aws/aws-sdk-go-v2/service/medialive v1.24.2
+	github.com/opalsecurity/opal-go v1.0.9
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/as v1.0.392
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cbs v1.0.392
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdb v1.0.392
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn v1.0.392
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cfs v1.0.392
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.392
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.392
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm v1.0.392
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/es v1.0.392
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/gaap v1.0.392
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/mongodb v1.0.392
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/redis v1.0.392
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/scf v1.0.392
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.392
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tcaplusdb v1.0.392
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc v1.0.392
+)
+
 replace gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
 
 replace gopkg.in/ns1/ns1-go.v2 => github.com/ns1/ns1-go/v2 v2.6.5
+
+replace github.com/tencentcloud/tencentcloud-sdk-go => github.com/tencentcloud/tencentcloud-sdk-go v1.0.392
