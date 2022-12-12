@@ -17,10 +17,11 @@ func (g *ColumnGenerator) InitResources() error {
 		return fmt.Errorf("unable to initialize Honeycomb client: %v", err)
 	}
 
-	ctx := context.TODO()
-
 	for _, dataset := range g.datasets {
-		columns, err := client.Columns.List(ctx, dataset.Slug)
+		if dataset.Slug == environmentWideDatasetSlug {
+			continue
+		}
+		columns, err := client.Columns.List(context.TODO(), dataset.Slug)
 		if err != nil {
 			return fmt.Errorf("unable to list Honeycomb columns for dataset %s: %v", dataset.Slug, err)
 		}
