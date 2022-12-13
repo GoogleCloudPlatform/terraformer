@@ -16,9 +16,10 @@ package ionoscloud
 
 import (
 	"errors"
+	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
+	ionoscloud "github.com/ionos-cloud/sdk-go/v6"
 	"os"
 
-	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -31,10 +32,10 @@ type IonosCloudProvider struct { //nolint
 }
 
 func (p *IonosCloudProvider) Init(args []string) error {
-	username := os.Getenv(helpers.IonosUsername)
-	password := os.Getenv(helpers.IonosPassword)
-	token := os.Getenv(helpers.IonosToken)
-	url := os.Getenv(helpers.IonosApiUrl)
+	username := os.Getenv(ionoscloud.IonosUsernameEnvVar)
+	password := os.Getenv(ionoscloud.IonosPasswordEnvVar)
+	token := os.Getenv(ionoscloud.IonosTokenEnvVar)
+	url := os.Getenv(ionoscloud.IonosApiUrlEnvVar)
 
 	if (username == "" || password == "") && token == "" {
 		return errors.New(helpers.CredentialsError)
@@ -64,10 +65,16 @@ func (p *IonosCloudProvider) GetProviderData(arg ...string) map[string]interface
 
 func (IonosCloudProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{
-		"compute": {
-			"datacenter": []string{
-				"lan", "id",
-				"server", "id"},
+		"server": {
+			"datacenter": []string{"datacenter_id", "id"},
+		},
+		"nic": {
+			"datacenter": []string{"datacenter_id", "id"},
+			"server":     []string{"server_id", "id"},
+		},
+		"volume": {
+			"datacenter": []string{"datacenter_id", "id"},
+			"server":     []string{"server_id", "id"},
 		},
 	}
 }

@@ -9,14 +9,10 @@ const (
 
 // Config Constants
 const (
-	IonosUsername = "IONOS_USERNAME"
-	IonosPassword = "IONOS_PASSWORD"
-	IonosToken    = "IONOS_TOKEN"
-	IonosApiUrl   = "IONOS_API_URL"
-	IonosDebug    = "IONOS_DEBUG"
-	Ionos         = "ionoscloud"
-	DcId          = "datacenter_id"
-	K8sClusterId  = "k8s_cluster_id"
+	IonosDebug   = "IONOS_DEBUG"
+	Ionos        = "ionoscloud"
+	DcId         = "datacenter_id"
+	K8sClusterId = "k8s_cluster_id"
 
 	UsernameArg = "username"
 	PasswordArg = "password"
