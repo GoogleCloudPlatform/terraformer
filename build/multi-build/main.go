@@ -44,7 +44,7 @@ func main() {
 					GOOS = "darwin"
 					binaryName = "terraformer-" + provider + "-darwin-" + arch
 				}
-				log.Println("Build terraformer with "+provider+" provider...", "GOOS=", GOOS, " for GOARCH=",arch)
+				log.Println("Build terraformer with "+provider+" provider...", "GOOS=", GOOS, " for GOARCH=", arch)
 				deletedProvider := []string{}
 				for _, f := range files {
 					if strings.HasPrefix(f.Name(), filePrefix) {
