@@ -7,11 +7,11 @@ import (
 	"log"
 )
 
-type ApplicationLoadBalancer struct {
+type ApplicationLoadBalancerGenerator struct {
 	IonosCloudService
 }
 
-func (g *ApplicationLoadBalancer) InitResources() error {
+func (g *ApplicationLoadBalancerGenerator) InitResources() error {
 	client := g.generateClient()
 	cloudApiClient := client.CloudApiClient
 	resource_type := "ionoscloud_application_loadbalancer"

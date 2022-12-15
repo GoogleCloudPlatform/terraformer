@@ -42,9 +42,10 @@ func (g *NicGenerator) InitResources() error {
 					*datacenter.Id)
 				continue
 			}
+			lastNicIdx := len(*nics.Items) - 1
 			for idx, nic := range *nics.Items {
-				//skip first nic, as it will be added to the server separately
-				if idx == 0 {
+				//skip the last nic from the list, as it will be added to the server separately.
+				if idx == lastNicIdx {
 					continue
 				}
 				if nic.Properties == nil || nic.Properties.Name == nil {
@@ -56,15 +57,13 @@ func (g *NicGenerator) InitResources() error {
 					)
 					continue
 				}
-				// Check if the NIC is not attached to a server, this is required in order to avoid NIC duplicates in
-				// plans.
 				g.Resources = append(g.Resources, terraformutils.NewResource(
 					*nic.Id,
 					*nic.Properties.Name+"-"+*nic.Id,
 					"ionoscloud_nic",
 					helpers.Ionos,
 					map[string]string{helpers.DcId: *datacenter.Id,
-						"server_id": *server.Id},
+						helpers.ServerId: *server.Id},
 					[]string{},
 					map[string]interface{}{}))
 			}

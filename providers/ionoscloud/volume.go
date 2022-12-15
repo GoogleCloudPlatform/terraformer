@@ -59,7 +59,7 @@ func (g *VolumeGenerator) InitResources() error {
 						"ionoscloud_volume",
 						helpers.Ionos,
 						map[string]string{helpers.DcId: *datacenter.Id,
-							"server_id": *server.Id},
+							helpers.ServerId: *server.Id},
 						[]string{},
 						map[string]interface{}{}))
 				}
