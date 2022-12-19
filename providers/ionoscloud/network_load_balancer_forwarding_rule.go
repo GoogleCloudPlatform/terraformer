@@ -40,7 +40,7 @@ func (g *NetworkLoadBalancerForwardingRuleGenerator) InitResources() error {
 			}
 			if forwardingRulesResponse.Items == nil {
 				log.Printf(
-					"[WARNING] expected a response containing forwarding rules but received 'ni' instead, skipping search for NLB with ID: %v, datacenter ID: %v",
+					"[WARNING] expected a response containing forwarding rules but received 'nil' instead, skipping search for NLB with ID: %v, datacenter ID: %v",
 					*nlb.Id,
 					*datacenter.Id)
 				continue
