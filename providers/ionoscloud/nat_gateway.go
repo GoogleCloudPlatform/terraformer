@@ -14,7 +14,7 @@ type NATGatewayGenerator struct {
 func (g *NATGatewayGenerator) InitResources() error {
 	client := g.generateClient()
 	cloudApiClient := client.CloudApiClient
-	resource_type := "ionoscloud_natgateway"
+	resourceType := "ionoscloud_natgateway"
 	datacenters, err := helpers.GetAllDatacenters(*cloudApiClient)
 	if err != nil {
 		return err
@@ -43,7 +43,7 @@ func (g *NATGatewayGenerator) InitResources() error {
 			g.Resources = append(g.Resources, terraformutils.NewResource(
 				*natGateway.Id,
 				*natGateway.Properties.Name+"-"+*natGateway.Id,
-				resource_type,
+				resourceType,
 				helpers.Ionos,
 				map[string]string{helpers.DcId: *datacenter.Id},
 				[]string{},

@@ -14,7 +14,7 @@ type IPBlockGenerator struct {
 func (g *IPBlockGenerator) InitResources() error {
 	client := g.generateClient()
 	cloudApiClient := client.CloudApiClient
-	resource_type := "ionoscloud_ipblock"
+	resourceType := "ionoscloud_ipblock"
 
 	ipBlockResponse, _, err := cloudApiClient.IPBlocksApi.IpblocksGet(context.TODO()).Depth(1).Execute()
 	if err != nil {
@@ -35,7 +35,7 @@ func (g *IPBlockGenerator) InitResources() error {
 		g.Resources = append(g.Resources, terraformutils.NewResource(
 			*ipBlock.Id,
 			*ipBlock.Properties.Name+"-"+*ipBlock.Id,
-			resource_type,
+			resourceType,
 			helpers.Ionos,
 			map[string]string{},
 			[]string{},

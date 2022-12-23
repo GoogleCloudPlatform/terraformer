@@ -14,7 +14,7 @@ type KubernetesNodePoolGenerator struct {
 func (g *KubernetesNodePoolGenerator) InitResources() error {
 	client := g.generateClient()
 	cloudApiClient := client.CloudApiClient
-	resource_type := "ionoscloud_k8s_node_pool"
+	resourceType := "ionoscloud_k8s_node_pool"
 
 	kubernetesClusters, _, err := cloudApiClient.KubernetesApi.K8sGet(context.TODO()).Depth(1).Execute()
 	if err != nil {
@@ -46,7 +46,7 @@ func (g *KubernetesNodePoolGenerator) InitResources() error {
 			g.Resources = append(g.Resources, terraformutils.NewResource(
 				*kubernetesNodePool.Id,
 				*kubernetesNodePool.Properties.Name+"-"+*kubernetesNodePool.Id,
-				resource_type,
+				resourceType,
 				helpers.Ionos,
 				map[string]string{helpers.K8sClusterId: *kubernetesCluster.Id},
 				[]string{},

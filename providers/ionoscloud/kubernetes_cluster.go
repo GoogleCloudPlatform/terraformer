@@ -14,7 +14,7 @@ type KubernetesClusterGenerator struct {
 func (g *KubernetesClusterGenerator) InitResources() error {
 	client := g.generateClient()
 	cloudApiClient := client.CloudApiClient
-	resource_type := "ionoscloud_k8s_cluster"
+	resourceType := "ionoscloud_k8s_cluster"
 
 	kubernetesClusterResponse, _, err := cloudApiClient.KubernetesApi.K8sGet(context.TODO()).Depth(1).Execute()
 	if err != nil {
@@ -35,7 +35,7 @@ func (g *KubernetesClusterGenerator) InitResources() error {
 		g.Resources = append(g.Resources, terraformutils.NewResource(
 			*kubernetesCluster.Id,
 			*kubernetesCluster.Properties.Name+"-"+*kubernetesCluster.Id,
-			resource_type,
+			resourceType,
 			helpers.Ionos,
 			map[string]string{},
 			[]string{},

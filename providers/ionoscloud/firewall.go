@@ -14,7 +14,7 @@ type FirewallGenerator struct {
 func (g *FirewallGenerator) InitResources() error {
 	client := g.generateClient()
 	cloudApiClient := client.CloudApiClient
-	resource_type := "ionoscloud_firewall"
+	resourceType := "ionoscloud_firewall"
 
 	datacenters, err := helpers.GetAllDatacenters(*cloudApiClient)
 	if err != nil {
@@ -77,7 +77,7 @@ func (g *FirewallGenerator) InitResources() error {
 					g.Resources = append(g.Resources, terraformutils.NewResource(
 						*firewall.Id,
 						*firewall.Properties.Name+"-"+*firewall.Id,
-						resource_type,
+						resourceType,
 						helpers.Ionos,
 						map[string]string{helpers.DcId: *datacenter.Id, helpers.ServerId: *server.Id, helpers.NicId: *nic.Id},
 						[]string{},

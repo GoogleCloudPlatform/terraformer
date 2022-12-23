@@ -14,7 +14,7 @@ type TargetGroupGenerator struct {
 func (g *TargetGroupGenerator) InitResources() error {
 	client := g.generateClient()
 	cloudApiClient := client.CloudApiClient
-	resource_type := "ionoscloud_target_group"
+	resourceType := "ionoscloud_target_group"
 
 	targetGroupResponse, _, err := cloudApiClient.TargetGroupsApi.TargetgroupsGet(context.TODO()).Depth(1).Execute()
 	if err != nil {
@@ -35,7 +35,7 @@ func (g *TargetGroupGenerator) InitResources() error {
 		g.Resources = append(g.Resources, terraformutils.NewResource(
 			*targetGroup.Id,
 			*targetGroup.Properties.Name+"-"+*targetGroup.Id,
-			resource_type,
+			resourceType,
 			helpers.Ionos,
 			map[string]string{},
 			[]string{},

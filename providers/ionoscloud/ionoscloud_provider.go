@@ -66,15 +66,44 @@ func (p *IonosCloudProvider) GetProviderData(arg ...string) map[string]interface
 func (IonosCloudProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{
 		"server": {
-			"datacenter": []string{"datacenter_id", "id"},
+			"datacenter": []string{helpers.DcId, "id"},
 		},
 		"nic": {
-			"datacenter": []string{"datacenter_id", "id"},
-			"server":     []string{"server_id", "id"},
+			"datacenter": []string{helpers.DcId, "id"},
+			"server":     []string{helpers.ServerId, "id"},
 		},
 		"volume": {
-			"datacenter": []string{"datacenter_id", "id"},
-			"server":     []string{"server_id", "id"},
+			"datacenter": []string{helpers.DcId, "id"},
+			"server":     []string{helpers.ServerId, "id"},
+		},
+		"firewall": {
+			"datacenter": []string{helpers.DcId, "id"},
+			"server":     []string{helpers.ServerId, "id"},
+			"nic":        []string{helpers.NicId, "id"},
+		},
+		"k8s_node_pool": {
+			"datacenter":  []string{helpers.DcId, "id"},
+			"k8s_cluster": []string{helpers.K8sClusterId, "id"},
+		},
+		"networkloadbalancer": {
+			"datacenter": []string{helpers.DcId, "id"},
+		},
+		"natgateway": {
+			"datacenter": []string{helpers.DcId, "id"},
+		},
+		"application_loadbalancer": {
+			"datacenter": []string{helpers.DcId, "id"},
+		},
+		"networkloadbalancer_forwardingrule": {
+			"datacenter":   []string{helpers.DcId, "id"},
+			"loadbalancer": []string{"networkloadbalancer_id", "id"},
+		},
+		"loadbalancer": {
+			"datacenter": []string{helpers.DcId, "id"},
+		},
+		"natgateway_rule": {
+			"datacenter": []string{helpers.DcId, "id"},
+			"natgateway": []string{"natgateway_id", "id"},
 		},
 	}
 }
