@@ -14,7 +14,7 @@ type ApplicationLoadBalancerGenerator struct {
 func (g *ApplicationLoadBalancerGenerator) InitResources() error {
 	client := g.generateClient()
 	cloudApiClient := client.CloudApiClient
-	resource_type := "ionoscloud_application_loadbalancer"
+	resourceType := "ionoscloud_application_loadbalancer"
 	datacenters, err := helpers.GetAllDatacenters(*cloudApiClient)
 	if err != nil {
 		return err
@@ -43,7 +43,7 @@ func (g *ApplicationLoadBalancerGenerator) InitResources() error {
 			g.Resources = append(g.Resources, terraformutils.NewResource(
 				*applicationLoadBalancer.Id,
 				*applicationLoadBalancer.Properties.Name+"-"+*applicationLoadBalancer.Id,
-				resource_type,
+				resourceType,
 				helpers.Ionos,
 				map[string]string{helpers.DcId: *datacenter.Id},
 				[]string{},

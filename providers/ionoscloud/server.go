@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	ionoscloud "github.com/ionos-cloud/sdk-go/v6"
 	"log"
 )
 
@@ -20,7 +21,7 @@ func (g *ServerGenerator) InitResources() error {
 	}
 
 	for _, datacenter := range datacenters {
-		servers, _, err := cloudApiClient.ServersApi.DatacentersServersGet(context.TODO(), *datacenter.Id).Depth(2).Execute()
+		servers, _, err := cloudApiClient.ServersApi.DatacentersServersGet(context.TODO(), *datacenter.Id).Depth(4).Execute()
 		if err != nil {
 			return err
 		}
@@ -32,14 +33,7 @@ func (g *ServerGenerator) InitResources() error {
 		}
 		serversToAdd := *servers.Items
 		for _, server := range serversToAdd {
-			// skip servers that do not contain NICs or Volumes. They would create
-			// invalid Terraform plans, as the server resource requires a NIC and a Volume
-			if server.Entities.Nics == nil || server.Entities.Nics.Items == nil || len(*server.Entities.Nics.Items) == 0 {
-				log.Printf("Server %s from datacenter %s contains no nics, moving on", *server.Id, *datacenter.Id)
-				continue
-			}
-			if server.Entities.Volumes == nil || server.Entities.Volumes.Items == nil || len(*server.Entities.Volumes.Items) == 0 {
-				log.Printf("Server %s from datacenter %s contains no volumes, moving on", *server.Id, *datacenter.Id)
+			if !isServerValid(server, *datacenter.Id) {
 				continue
 			}
 			_, apiResponse, err := cloudApiClient.LabelsApi.DatacentersServersLabelsFindByKey(context.TODO(), *datacenter.Id, *server.Id, "managedexternally").Execute()
@@ -48,17 +42,11 @@ func (g *ServerGenerator) InitResources() error {
 					return err
 				}
 			} else {
-				//the server is managed externally(eg : k8s nodepool). This means we do not want to write the server to the tf plan.
+				//the server is managed externally(eg : k8s nodepool).
+				//This means we do not want to write the server to the tf plan.
 				continue
 			}
-			if server.Properties == nil || server.Properties.Name == nil {
-				log.Printf(
-					"[WARNING] 'nil' values in the response for server with ID %v, datacenter ID: %v, skipping this resource.\n",
-					*server.Id,
-					*datacenter.Id,
-				)
-				continue
-			}
+
 			g.Resources = append(g.Resources, terraformutils.NewResource(
 				*server.Id,
 				*server.Properties.Name+"-"+*server.Id,
@@ -70,4 +58,31 @@ func (g *ServerGenerator) InitResources() error {
 		}
 	}
 	return nil
+}
+
+// isServerValid skips servers that would not create a valid tf plan.
+func isServerValid(server ionoscloud.Server, datacenterID string) bool {
+
+	if server.Properties == nil || server.Properties.Name == nil {
+		log.Printf(
+			"[WARNING] 'nil' values in the response for server with ID %v, datacenter ID: %v, skipping this resource.\n",
+			*server.Id,
+			datacenterID,
+		)
+		return false
+	}
+	if server.Entities.Nics == nil || len(*server.Entities.Nics.Items) == 0 {
+		log.Printf("Server %s, datacenter ID: %v  contains no nics, moving on", *server.Id, datacenterID)
+		return false
+	}
+	if server.Entities.Volumes == nil || len(*server.Entities.Volumes.Items) == 0 {
+		log.Printf("Server %s, datacenter ID: %v contains no volumes, moving on", *server.Id, datacenterID)
+		return false
+	}
+	if server.Properties.BootVolume == nil {
+		log.Printf("Server %s, datacenter ID: %v  contains no boot volume, moving on", *server.Id, datacenterID)
+		return false
+	}
+
+	return true
 }

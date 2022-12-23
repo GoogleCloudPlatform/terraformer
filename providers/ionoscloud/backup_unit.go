@@ -14,7 +14,7 @@ type BackupUnitGenerator struct {
 func (g *BackupUnitGenerator) InitResources() error {
 	client := g.generateClient()
 	cloudApiClient := client.CloudApiClient
-	resource_type := "ionoscloud_backup_unit"
+	resourceType := "ionoscloud_backup_unit"
 
 	backupUnitResponse, _, err := cloudApiClient.BackupUnitsApi.BackupunitsGet(context.TODO()).Depth(1).Execute()
 	if err != nil {
@@ -35,7 +35,7 @@ func (g *BackupUnitGenerator) InitResources() error {
 		g.Resources = append(g.Resources, terraformutils.NewResource(
 			*backupUnit.Id,
 			*backupUnit.Properties.Name+"-"+*backupUnit.Id,
-			resource_type,
+			resourceType,
 			helpers.Ionos,
 			map[string]string{},
 			[]string{},

@@ -14,7 +14,7 @@ type NetworkLoadBalancerGenerator struct {
 func (g *NetworkLoadBalancerGenerator) InitResources() error {
 	client := g.generateClient()
 	cloudApiClient := client.CloudApiClient
-	resource_type := "ionoscloud_networkloadbalancer"
+	resourceType := "ionoscloud_networkloadbalancer"
 	datacenters, err := helpers.GetAllDatacenters(*cloudApiClient)
 	if err != nil {
 		return err
@@ -43,7 +43,7 @@ func (g *NetworkLoadBalancerGenerator) InitResources() error {
 			g.Resources = append(g.Resources, terraformutils.NewResource(
 				*networkLoadBalancer.Id,
 				*networkLoadBalancer.Properties.Name+"-"+*networkLoadBalancer.Id,
-				resource_type,
+				resourceType,
 				helpers.Ionos,
 				map[string]string{helpers.DcId: *datacenter.Id},
 				[]string{},

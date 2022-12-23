@@ -76,6 +76,11 @@ func (IonosCloudProvider) GetResourceConnections() map[string]map[string][]strin
 			"datacenter": []string{"datacenter_id", "id"},
 			"server":     []string{"server_id", "id"},
 		},
+		"firewall": {
+			"datacenter": []string{"datacenter_id", "id"},
+			"server":     []string{"server_id", "id"},
+			"nic":        []string{"nic_id", "id"},
+		},
 	}
 }
 

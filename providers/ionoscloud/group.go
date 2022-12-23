@@ -14,7 +14,7 @@ type GroupGenerator struct {
 func (g *GroupGenerator) InitResources() error {
 	client := g.generateClient()
 	cloudApiClient := client.CloudApiClient
-	resource_type := "ionoscloud_group"
+	resourceType := "ionoscloud_group"
 
 	groupResponse, _, err := cloudApiClient.UserManagementApi.UmGroupsGet(context.TODO()).Depth(1).Execute()
 	if err != nil {
@@ -35,7 +35,7 @@ func (g *GroupGenerator) InitResources() error {
 		g.Resources = append(g.Resources, terraformutils.NewResource(
 			*group.Id,
 			*group.Properties.Name+"-"+*group.Id,
-			resource_type,
+			resourceType,
 			helpers.Ionos,
 			map[string]string{},
 			[]string{},
