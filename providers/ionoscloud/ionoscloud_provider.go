@@ -66,20 +66,20 @@ func (p *IonosCloudProvider) GetProviderData(arg ...string) map[string]interface
 func (IonosCloudProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{
 		"server": {
-			"datacenter": []string{"datacenter_id", "id"},
+			"datacenter": []string{helpers.DcId, "id"},
 		},
 		"nic": {
-			"datacenter": []string{"datacenter_id", "id"},
-			"server":     []string{"server_id", "id"},
+			"datacenter": []string{helpers.DcId, "id"},
+			"server":     []string{helpers.ServerId, "id"},
 		},
 		"volume": {
-			"datacenter": []string{"datacenter_id", "id"},
-			"server":     []string{"server_id", "id"},
+			"datacenter": []string{helpers.DcId, "id"},
+			"server":     []string{helpers.ServerId, "id"},
 		},
 		"firewall": {
-			"datacenter": []string{"datacenter_id", "id"},
-			"server":     []string{"server_id", "id"},
-			"nic":        []string{"nic_id", "id"},
+			"datacenter": []string{helpers.DcId, "id"},
+			"server":     []string{helpers.ServerId, "id"},
+			"nic":        []string{helpers.NicId, "id"},
 		},
 	}
 }
