@@ -81,6 +81,30 @@ func (IonosCloudProvider) GetResourceConnections() map[string]map[string][]strin
 			"server":     []string{helpers.ServerId, "id"},
 			"nic":        []string{helpers.NicId, "id"},
 		},
+		"k8s_node_pool": {
+			"datacenter":  []string{helpers.DcId, "id"},
+			"k8s_cluster": []string{helpers.K8sClusterId, "id"},
+		},
+		"networkloadbalancer": {
+			"datacenter": []string{helpers.DcId, "id"},
+		},
+		"natgateway": {
+			"datacenter": []string{helpers.DcId, "id"},
+		},
+		"application_loadbalancer": {
+			"datacenter": []string{helpers.DcId, "id"},
+		},
+		"networkloadbalancer_forwardingrule": {
+			"datacenter":   []string{helpers.DcId, "id"},
+			"loadbalancer": []string{"networkloadbalancer_id", "id"},
+		},
+		"loadbalancer": {
+			"datacenter": []string{helpers.DcId, "id"},
+		},
+		"natgateway_rule": {
+			"datacenter": []string{helpers.DcId, "id"},
+			"natgateway": []string{"natgateway_id", "id"},
+		},
 	}
 }
 
