@@ -375,6 +375,8 @@ require (
 
 require (
 	github.com/aws/aws-sdk-go-v2/service/medialive v1.24.2
+	github.com/confluentinc/ccloud-sdk-go-v2/iam v0.10.0
+	github.com/confluentinc/ccloud-sdk-go-v2/kafkarest v0.12.0
 	github.com/opalsecurity/opal-go v1.0.9
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/as v1.0.392
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cbs v1.0.392

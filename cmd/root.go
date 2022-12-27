@@ -58,6 +58,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdKubernetesImporter,
 		newCmdOctopusDeployImporter,
 		newCmdRabbitMQImporter,
+		newCmdConfluentImporter,
 		// Network
 		newCmdMyrasecImporter,
 		newCmdCloudflareImporter,
