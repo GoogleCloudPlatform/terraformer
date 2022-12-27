@@ -15,7 +15,6 @@ require (
 	github.com/aliyun/aliyun-tablestore-go-sdk v4.1.2+incompatible
 	github.com/aws/aws-sdk-go v1.30.19
 	github.com/aws/aws-sdk-go-v2 v0.24.0
-	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/cloudflare/cloudflare-go v0.13.5
 	github.com/ddelnano/terraform-provider-mikrotik v0.0.0-20200501162830-a217572b326c
 	github.com/denverdino/aliyungo v0.0.0-20200327235253-d59c209c7e93
@@ -58,4 +57,8 @@ require (
 	k8s.io/utils v0.0.0-20191218082557-f07c713de883 // indirect
 )
 
-replace gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
+replace (
+	github.com/hashicorp/go-getter => github.com/hashicorp/go-getter v1.6.2
+	github.com/hashicorp/vault => github.com/hashicorp/vault v1.2.5
+	gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
+)
