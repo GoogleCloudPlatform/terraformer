@@ -38,17 +38,19 @@ func (g *ProjectGenerator) InitResources() error {
 	}
 
 	group := g.Args["group"].(string)
-	g.Resources = append(g.Resources, createProjects(ctx, client, group)...)
+	includeSubGroups := g.Args["include_sub_groups"].(*bool)
+	g.Resources = append(g.Resources, createProjects(ctx, client, group, includeSubGroups)...)
 
 	return nil
 }
 
-func createProjects(ctx context.Context, client *gitlab.Client, group string) []terraformutils.Resource {
+func createProjects(ctx context.Context, client *gitlab.Client, group string, includeSubGroups *bool) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	opt := &gitlab.ListGroupProjectsOptions{
 		ListOptions: gitlab.ListOptions{
 			PerPage: 100,
 		},
+		IncludeSubGroups: includeSubGroups,
 	}
 
 	for {

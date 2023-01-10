@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//	http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,6 +26,7 @@ func newCmdGitLabImporter(options ImportOptions) *cobra.Command {
 	token := ""
 	baseURL := ""
 	groups := []string{}
+	includeSubGroups := ""
 	cmd := &cobra.Command{
 		Use:   "gitlab",
 		Short: "Import current state to Terraform configuration from GitLab",
@@ -37,7 +38,7 @@ func newCmdGitLabImporter(options ImportOptions) *cobra.Command {
 				options.PathPattern = originalPathPattern
 				options.PathPattern = strings.ReplaceAll(options.PathPattern, "{provider}", "{provider}/"+group)
 				log.Println(provider.GetName() + " importing group " + group)
-				err := Import(provider, options, []string{group, token, baseURL})
+				err := Import(provider, options, []string{group, token, baseURL, includeSubGroups})
 				if err != nil {
 					return err
 				}
@@ -50,6 +51,7 @@ func newCmdGitLabImporter(options ImportOptions) *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&token, "token", "t", "", "YOUR_GITLAB_TOKEN or env param GITLAB_TOKEN")
 	cmd.PersistentFlags().StringSliceVarP(&groups, "group", "", []string{}, "paths to groups")
 	cmd.PersistentFlags().StringVarP(&baseURL, "base-url", "", "", "")
+	cmd.PersistentFlags().StringVarP(&includeSubGroups, "include-sub-groups", "", "false", "Whether to include subgroups of the given group")
 	return cmd
 }
 

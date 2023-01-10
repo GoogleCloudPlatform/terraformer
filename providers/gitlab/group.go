@@ -45,7 +45,7 @@ func (g *GroupGenerator) InitResources() error {
 
 func createGroups(ctx context.Context, client *gitlab.Client, groupID string) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
-	group, _, err := client.Groups.GetGroup(groupID, gitlab.WithContext(ctx))
+	group, _, err := client.Groups.GetGroup(groupID, nil, gitlab.WithContext(ctx))
 	if err != nil {
 		log.Println(err)
 		return nil

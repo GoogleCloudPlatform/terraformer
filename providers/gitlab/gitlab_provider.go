@@ -16,6 +16,7 @@ package gitlab
 
 import (
 	"os"
+	"strconv"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/pkg/errors"
@@ -24,9 +25,10 @@ import (
 
 type GitLabProvider struct { //nolint
 	terraformutils.Provider
-	group   string
-	token   string
-	baseURL string
+	group            string
+	token            string
+	baseURL          string
+	includeSubGroups *bool
 }
 
 func (p GitLabProvider) GetResourceConnections() map[string]map[string][]string {
@@ -70,6 +72,13 @@ func (p *GitLabProvider) Init(args []string) error {
 			p.baseURL = args[2]
 		}
 	}
+	if len(args) > 3 {
+		includeSubGroups, err := strconv.ParseBool(args[3])
+		if err != nil {
+			includeSubGroups = false
+		}
+		p.includeSubGroups = &includeSubGroups
+	}
 	return nil
 }
 
@@ -87,9 +96,10 @@ func (p *GitLabProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"group":    p.group,
-		"token":    p.token,
-		"base_url": p.baseURL,
+		"group":              p.group,
+		"token":              p.token,
+		"base_url":           p.baseURL,
+		"include_sub_groups": p.includeSubGroups,
 	})
 	return nil
 }
