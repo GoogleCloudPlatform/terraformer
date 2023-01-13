@@ -16,27 +16,26 @@ export IONOS_TOKEN="token"
 
 ## List of supported IONOS Cloud resources
 
-* `datacenter`
-* `lan`
-* `server`
-* `volume`
-* `nic`
-* `firewall`
-* `group`
-* `backup_unit`
-* `ipblock`
-* `k8s_cluster`
-* `k8s_node_pool`
-* `target_group`
-* `networkloadbalancer`
-* `natgateway`
-* `group`
-* `application_loadbalancer`
-* `firewall`
-* `networkloadbalancer_forwardingrule`
-* `loadbalancer`
-* `natgateway_rule`
-* `pg_cluster`
+* [`datacenter`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/datacenter)
+* [`lan`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/lan)
+* [`server`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/server)
+* [`volume`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/volume)
+* [`nic`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/nic)
+* [`firewall`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/firewall)
+* [`group`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/group)
+* [`backup_unit`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/backup_unit)
+* [`ipblock`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/ipblock)
+* [`k8s_cluster`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/k8s_cluster)
+* [`k8s_node_pool`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/k8s_node_pool)
+* [`target_group`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/target_group)
+* [`networkloadbalancer`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/networkloadbalancer)
+* [`natgateway`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/natgateway)
+* [`natgateway_rule`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/natgateway_rule)
+* [`application_loadbalancer`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/application_loadbalancer)
+* [`application_loadbalancer`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/application_loadbalancer)
+* [`networkloadbalancer_forwardingrule`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/networkloadbalancer_forwardingrule)
+* [`loadbalancer`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/loadbalancer)
+* [`dbaas_pgsql_cluster`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/dbaas_pgsql_cluster)
 
 We allow only resources that provide valid terraform plans to be imported.
 If you do not see your resource in the tf plan, please enable TF_LOG=debug and check logs 
