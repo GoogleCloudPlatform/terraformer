@@ -546,6 +546,10 @@ func (g *DatabasesGenerator) createPostgreSQLVirtualNetworkRuleResources(servers
 				"azurerm_postgresql_virtual_network_rule",
 				g.ProviderName,
 				[]string{}))
+
+			if err := rulePages.NextWithContext(ctx); err != nil {
+				return nil, err
+			}
 		}
 	}
 	return resources, nil
@@ -760,6 +764,10 @@ func (g *DatabasesGenerator) createSQLFailoverResources(servers []sql.Server) ([
 				"azurerm_sql_failover_group",
 				g.ProviderName,
 				[]string{}))
+
+			if err := iter.NextWithContext(ctx); err != nil {
+				return nil, err
+			}
 		}
 	}
 	return resources, nil
