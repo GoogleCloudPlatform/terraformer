@@ -26,8 +26,8 @@ type PurviewGenerator struct {
 }
 
 func (az *PurviewGenerator) listAccounts() ([]purview.Account, error) {
-	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
-	client := purview.NewAccountsClient(subscriptionID)
+	subscriptionID, resourceGroup, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := purview.NewAccountsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	var (
 		iterator purview.AccountListIterator

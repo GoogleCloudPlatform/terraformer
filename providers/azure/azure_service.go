@@ -15,21 +15,23 @@
 package azure
 
 import (
+	"strings"
+
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/hashicorp/go-azure-helpers/authentication"
-	"strings"
 )
 
 type AzureService struct { //nolint
 	terraformutils.Service
 }
 
-func (az *AzureService) getClientArgs() (subscriptionID string, resourceGroup string, authorizer autorest.Authorizer) {
+func (az *AzureService) getClientArgs() (subscriptionID string, resourceGroup string, authorizer autorest.Authorizer, resourceManagerEndpoint string) {
 	subs := az.Args["config"].(authentication.Config).SubscriptionID
 	auth := az.Args["authorizer"].(autorest.Authorizer)
 	resg := az.Args["resource_group"].(string)
-	return subs, resg, auth
+	rEndpoint := az.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	return subs, resg, auth, rEndpoint
 }
 
 func (az *AzureService) AppendSimpleResource(id string, resourceName string, resourceType string) {

@@ -18,8 +18,9 @@ func (g SecurityCenterContactGenerator) listContacts() ([]terraformutils.Resourc
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
 
-	securityCenterContactClient := security.NewContactsClient(subscriptionID, "")
+	securityCenterContactClient := security.NewContactsClientWithBaseURI(resourceManagerEndpoint, subscriptionID, "")
 	securityCenterContactClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	if rg := g.Args["resource_group"].(string); rg != "" {
