@@ -18,7 +18,7 @@ type MyrasecService struct {
 func (s *MyrasecService) initializeAPI() (*mgo.API, error) {
 	apiKey := os.Getenv("MYRASEC_API_KEY")
 	apiSecret := os.Getenv("MYRASEC_API_SECRET")
-	apiUrl, urlPresent := os.LookupEnv("MYRASEC_API_BASE_URL")
+	apiURL, urlPresent := os.LookupEnv("MYRASEC_API_BASE_URL")
 
 	if apiKey == "" || apiSecret == "" {
 		err := errors.New("missing API credentials")
@@ -28,7 +28,7 @@ func (s *MyrasecService) initializeAPI() (*mgo.API, error) {
 
 	api, err := mgo.New(apiKey, apiSecret)
 	if urlPresent {
-		api.BaseURL = apiUrl
+		api.BaseURL = apiURL
 	}
 	api.EnableCaching()
 	api.SetCachingTTL(3600)
