@@ -222,7 +222,7 @@ require (
 	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/bmatcuk/doublestar v1.1.5 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.3 // indirect
-	github.com/crewjam/saml v0.4.5 // indirect
+	github.com/crewjam/saml v0.4.9 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dghubble/sling v1.1.0 // indirect
 	github.com/dimchansky/utfbom v1.1.1 // indirect
@@ -270,7 +270,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
-	github.com/mattermost/xml-roundtrip-validator v0.0.0-20201213122252-bcd7e1b9601e // indirect
+	github.com/mattermost/xml-roundtrip-validator v0.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-ieproxy v0.0.0-20190702010315-6dee0af9227d // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
@@ -361,7 +361,7 @@ require (
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.19.5 // indirect
 	github.com/go-openapi/swag v0.19.14 // indirect
-	github.com/golang-jwt/jwt/v4 v4.3.0 // indirect
+	github.com/golang-jwt/jwt/v4 v4.4.2 // indirect
 	github.com/google/gnostic v0.5.7-v3refs // indirect
 	github.com/hashicorp/terraform-plugin-log v0.7.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
