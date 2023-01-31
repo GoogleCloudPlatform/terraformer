@@ -121,8 +121,8 @@ github.com/BurntSushi/toml v1.1.0 h1:ksErzDEI1khOiGPgpwuI7x2ebx/uXQNw7xJpn9Eq1+I
 github.com/BurntSushi/toml v1.1.0/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/ChrisTrenkamp/goxpath v0.0.0-20170922090931-c385f95c6022/go.mod h1:nuWgzSkT5PnyOd+272uUmV0dnAnAn42Mk7PiQC5VzN4=
-github.com/DataDog/datadog-api-client-go/v2 v2.1.0 h1:umvWLP/h7+pY5XFgPNzht1LwpSbsWzCZ8T3d69L+M98=
-github.com/DataDog/datadog-api-client-go/v2 v2.1.0/go.mod h1:98b/MtTwSAr/yhTfhCR1oxAqQ/4tMkdrgKH7fYiDA0g=
+github.com/DataDog/datadog-api-client-go/v2 v2.7.0 h1:ntksthF3deJ67aPg6GxO7lDaMUXI9LIKnPj044E54aA=
+github.com/DataDog/datadog-api-client-go/v2 v2.7.0/go.mod h1:sHt3EuVMN8PSYJu065qwp3pZxCwR3RZP4sJnYwj/ZQY=
 github.com/DataDog/zstd v1.5.0 h1:+K/VEwIAaPcHiMtQvpLD4lqW7f0Gk3xdYZmI1hD+CXo=
 github.com/DataDog/zstd v1.5.0/go.mod h1:g4AWEaM3yOg3HYfnJ3YIawPnVdXJh9QME85blwSAmyw=
 github.com/IBM-Cloud/bluemix-go v0.0.0-20220624043500-d538cb4fd9be h1:PTW3J9z39tJYnmtdAxi8WvTWQXfkOflTJw6noyjnno4=
@@ -160,8 +160,6 @@ github.com/Masterminds/sprig v2.22.0+incompatible h1:z4yfnGrZ7netVz+0EDJ0Wi+5VZC
 github.com/Masterminds/sprig v2.22.0+incompatible/go.mod h1:y6hNFY5UBTIWBxnzTeuNhlNS5hqE0NB0E6fgfo2Br3o=
 github.com/Microsoft/go-winio v0.5.1 h1:aPJp2QD7OOrhO5tQXqQoGSJc+DjDtWTGLOmNyAm6FgY=
 github.com/Microsoft/go-winio v0.5.1/go.mod h1:JPGBdM1cNvN/6ISo+n8V5iA4v8pBzdOpzfwIujj1a84=
-github.com/Myra-Security-GmbH/myrasec-go/v2 v2.19.0 h1:0XpSWt52IgMm55dI5gNmsVNz4cAW1QXn7kRIkTFF2Uc=
-github.com/Myra-Security-GmbH/myrasec-go/v2 v2.19.0/go.mod h1:xclgEp2eEWeNxM3M3qde7noCqabK0hkMuLBLZ+TX6ig=
 github.com/Myra-Security-GmbH/myrasec-go/v2 v2.28.0 h1:/j5vGm0MB++gzimxjR53JCB/7PApCfxdaV52nU5FTC8=
 github.com/Myra-Security-GmbH/myrasec-go/v2 v2.28.0/go.mod h1:A3VaeNipYmfNnHIJVEzyBmfHSWjK7c9aNfbpmRbFiS8=
 github.com/Myra-Security-GmbH/signature v1.0.0 h1:u46nIxnffLLb8pCe6ic2w7OmSSEJk4warn3W4Vp2GjQ=
@@ -1870,8 +1868,6 @@ golang.org/x/time v0.0.0-20190308202827-9d24e82272b4/go.mod h1:tRJNPiyCQ0inRvYxb
 golang.org/x/time v0.0.0-20191024005414-555d28b269f0/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
 golang.org/x/time v0.0.0-20200630173020-3af7569d3a1e/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
 golang.org/x/time v0.0.0-20220210224613-90d013bbcef8/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
-golang.org/x/time v0.0.0-20220609170525-579cf78fd858 h1:Dpdu/EMxGMFgq0CeYMh4fazTD2vtlZRYE7wyynxJb9U=
-golang.org/x/time v0.0.0-20220609170525-579cf78fd858/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
 golang.org/x/time v0.0.0-20220922220347-f3bd1da661af h1:Yx9k8YCG3dvF87UAn2tu2HQLf2dt/eR1bXxpLMWeH+Y=
 golang.org/x/time v0.0.0-20220922220347-f3bd1da661af/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
 golang.org/x/tools v0.0.0-20180221164845-07fd8470d635/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
