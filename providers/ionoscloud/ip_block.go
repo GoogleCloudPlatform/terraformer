@@ -2,21 +2,22 @@ package ionoscloud
 
 import (
 	"context"
+	"log"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"log"
 )
 
 type IPBlockGenerator struct {
-	IonosCloudService
+	Service
 }
 
 func (g *IPBlockGenerator) InitResources() error {
 	client := g.generateClient()
-	cloudApiClient := client.CloudApiClient
+	cloudAPIClient := client.CloudAPIClient
 	resourceType := "ionoscloud_ipblock"
 
-	ipBlockResponse, _, err := cloudApiClient.IPBlocksApi.IpblocksGet(context.TODO()).Depth(1).Execute()
+	ipBlockResponse, _, err := cloudAPIClient.IPBlocksApi.IpblocksGet(context.TODO()).Depth(1).Execute()
 	if err != nil {
 		return err
 	}

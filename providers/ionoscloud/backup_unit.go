@@ -2,21 +2,22 @@ package ionoscloud
 
 import (
 	"context"
+	"log"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"log"
 )
 
 type BackupUnitGenerator struct {
-	IonosCloudService
+	Service
 }
 
 func (g *BackupUnitGenerator) InitResources() error {
 	client := g.generateClient()
-	cloudApiClient := client.CloudApiClient
+	cloudAPIClient := client.CloudAPIClient
 	resourceType := "ionoscloud_backup_unit"
 
-	backupUnitResponse, _, err := cloudApiClient.BackupUnitsApi.BackupunitsGet(context.TODO()).Depth(1).Execute()
+	backupUnitResponse, _, err := cloudAPIClient.BackupUnitsApi.BackupunitsGet(context.TODO()).Depth(1).Execute()
 	if err != nil {
 		return err
 	}

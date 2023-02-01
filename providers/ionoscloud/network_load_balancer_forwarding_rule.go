@@ -9,20 +9,20 @@ import (
 )
 
 type NetworkLoadBalancerForwardingRuleGenerator struct {
-	IonosCloudService
+	Service
 }
 
 func (g *NetworkLoadBalancerForwardingRuleGenerator) InitResources() error {
 	client := g.generateClient()
-	cloudApiClient := client.CloudApiClient
+	cloudAPIClient := client.CloudAPIClient
 	resourceType := "ionoscloud_networkloadbalancer_forwardingrule"
 
-	datacenters, err := helpers.GetAllDatacenters(*cloudApiClient)
+	datacenters, err := helpers.GetAllDatacenters(*cloudAPIClient)
 	if err != nil {
 		return err
 	}
 	for _, datacenter := range datacenters {
-		networkLoadBalancerResponse, _, err := cloudApiClient.NetworkLoadBalancersApi.DatacentersNetworkloadbalancersGet(context.TODO(), *datacenter.Id).Execute()
+		networkLoadBalancerResponse, _, err := cloudAPIClient.NetworkLoadBalancersApi.DatacentersNetworkloadbalancersGet(context.TODO(), *datacenter.Id).Execute()
 		if err != nil {
 			return err
 		}
@@ -34,7 +34,7 @@ func (g *NetworkLoadBalancerForwardingRuleGenerator) InitResources() error {
 		}
 		networkLoadBalancers := *networkLoadBalancerResponse.Items
 		for _, nlb := range networkLoadBalancers {
-			forwardingRulesResponse, _, err := cloudApiClient.NetworkLoadBalancersApi.DatacentersNetworkloadbalancersForwardingrulesGet(context.TODO(), *datacenter.Id, *nlb.Id).Depth(1).Execute()
+			forwardingRulesResponse, _, err := cloudAPIClient.NetworkLoadBalancersApi.DatacentersNetworkloadbalancersForwardingrulesGet(context.TODO(), *datacenter.Id, *nlb.Id).Depth(1).Execute()
 			if err != nil {
 				return err
 			}
@@ -60,7 +60,7 @@ func (g *NetworkLoadBalancerForwardingRuleGenerator) InitResources() error {
 					*fr.Properties.Name+"-"+*fr.Id,
 					resourceType,
 					helpers.Ionos,
-					map[string]string{helpers.DcId: *datacenter.Id, "networkloadbalancer_id": *nlb.Id},
+					map[string]string{helpers.DcID: *datacenter.Id, "networkloadbalancer_id": *nlb.Id},
 					[]string{},
 					map[string]interface{}{}))
 			}

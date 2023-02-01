@@ -2,25 +2,26 @@ package ionoscloud
 
 import (
 	"context"
+	"log"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"log"
 )
 
 type NetworkLoadBalancerGenerator struct {
-	IonosCloudService
+	Service
 }
 
 func (g *NetworkLoadBalancerGenerator) InitResources() error {
 	client := g.generateClient()
-	cloudApiClient := client.CloudApiClient
+	cloudAPIClient := client.CloudAPIClient
 	resourceType := "ionoscloud_networkloadbalancer"
-	datacenters, err := helpers.GetAllDatacenters(*cloudApiClient)
+	datacenters, err := helpers.GetAllDatacenters(*cloudAPIClient)
 	if err != nil {
 		return err
 	}
 	for _, datacenter := range datacenters {
-		networkLoadBalancerResponse, _, err := cloudApiClient.NetworkLoadBalancersApi.DatacentersNetworkloadbalancersGet(context.TODO(), *datacenter.Id).Depth(1).Execute()
+		networkLoadBalancerResponse, _, err := cloudAPIClient.NetworkLoadBalancersApi.DatacentersNetworkloadbalancersGet(context.TODO(), *datacenter.Id).Depth(1).Execute()
 		if err != nil {
 			return err
 		}
@@ -45,7 +46,7 @@ func (g *NetworkLoadBalancerGenerator) InitResources() error {
 				*networkLoadBalancer.Properties.Name+"-"+*networkLoadBalancer.Id,
 				resourceType,
 				helpers.Ionos,
-				map[string]string{helpers.DcId: *datacenter.Id},
+				map[string]string{helpers.DcID: *datacenter.Id},
 				[]string{},
 				map[string]interface{}{}))
 		}

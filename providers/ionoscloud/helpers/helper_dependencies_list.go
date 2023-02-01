@@ -2,8 +2,9 @@ package helpers
 
 import (
 	"context"
-	ionoscloud "github.com/ionos-cloud/sdk-go/v6"
 	"log"
+
+	ionoscloud "github.com/ionos-cloud/sdk-go/v6"
 )
 
 func GetAllDatacenters(client ionoscloud.APIClient) ([]ionoscloud.Datacenter, error) {

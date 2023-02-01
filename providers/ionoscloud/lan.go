@@ -2,24 +2,25 @@ package ionoscloud
 
 import (
 	"context"
+	"log"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"log"
 )
 
 type LanGenerator struct {
-	IonosCloudService
+	Service
 }
 
 func (g *LanGenerator) InitResources() error {
 	client := g.generateClient()
-	cloudApiClient := client.CloudApiClient
-	datacenters, err := helpers.GetAllDatacenters(*cloudApiClient)
+	cloudAPIClient := client.CloudAPIClient
+	datacenters, err := helpers.GetAllDatacenters(*cloudAPIClient)
 	if err != nil {
 		return err
 	}
 	for _, datacenter := range datacenters {
-		lans, _, err := cloudApiClient.LANsApi.DatacentersLansGet(context.TODO(), *datacenter.Id).Depth(1).Execute()
+		lans, _, err := cloudAPIClient.LANsApi.DatacentersLansGet(context.TODO(), *datacenter.Id).Depth(1).Execute()
 		if err != nil {
 			return err
 		}
@@ -44,7 +45,7 @@ func (g *LanGenerator) InitResources() error {
 					*lan.Properties.Name+"-"+*lan.Id,
 					"ionoscloud_lan",
 					"ionoscloud",
-					map[string]string{helpers.DcId: *datacenter.Id},
+					map[string]string{helpers.DcID: *datacenter.Id},
 					[]string{},
 					map[string]interface{}{}))
 			}

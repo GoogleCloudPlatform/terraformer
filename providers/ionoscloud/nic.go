@@ -9,18 +9,18 @@ import (
 )
 
 type NicGenerator struct {
-	IonosCloudService
+	Service
 }
 
 func (g *NicGenerator) InitResources() error {
 	client := g.generateClient()
-	cloudApiClient := client.CloudApiClient
-	datacenters, err := helpers.GetAllDatacenters(*cloudApiClient)
+	cloudAPIClient := client.CloudAPIClient
+	datacenters, err := helpers.GetAllDatacenters(*cloudAPIClient)
 	if err != nil {
 		return err
 	}
 	for _, datacenter := range datacenters {
-		servers, _, err := cloudApiClient.ServersApi.DatacentersServersGet(context.TODO(), *datacenter.Id).Depth(1).Execute()
+		servers, _, err := cloudAPIClient.ServersApi.DatacentersServersGet(context.TODO(), *datacenter.Id).Depth(1).Execute()
 		if err != nil {
 			return err
 		}
@@ -31,7 +31,7 @@ func (g *NicGenerator) InitResources() error {
 			continue
 		}
 		for _, server := range *servers.Items {
-			nics, _, err := cloudApiClient.NetworkInterfacesApi.DatacentersServersNicsGet(context.TODO(), *datacenter.Id, *server.Id).Depth(2).Execute()
+			nics, _, err := cloudAPIClient.NetworkInterfacesApi.DatacentersServersNicsGet(context.TODO(), *datacenter.Id, *server.Id).Depth(2).Execute()
 			if err != nil {
 				return err
 			}
@@ -44,7 +44,7 @@ func (g *NicGenerator) InitResources() error {
 			}
 			lastNicIdx := len(*nics.Items) - 1
 			for idx, nic := range *nics.Items {
-				//skip the last nic from the list, as it will be added to the server separately.
+				// skip the last nic from the list, as it will be added to the server separately.
 				if idx == lastNicIdx {
 					continue
 				}
@@ -62,8 +62,8 @@ func (g *NicGenerator) InitResources() error {
 					*nic.Properties.Name+"-"+*nic.Id,
 					"ionoscloud_nic",
 					helpers.Ionos,
-					map[string]string{helpers.DcId: *datacenter.Id,
-						helpers.ServerId: *server.Id},
+					map[string]string{helpers.DcID: *datacenter.Id,
+						helpers.ServerID: *server.Id},
 					[]string{},
 					map[string]interface{}{}))
 			}

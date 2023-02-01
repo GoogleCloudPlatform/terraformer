@@ -2,21 +2,22 @@ package ionoscloud
 
 import (
 	"context"
+	"log"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"log"
 )
 
 type TargetGroupGenerator struct {
-	IonosCloudService
+	Service
 }
 
 func (g *TargetGroupGenerator) InitResources() error {
 	client := g.generateClient()
-	cloudApiClient := client.CloudApiClient
+	cloudAPIClient := client.CloudAPIClient
 	resourceType := "ionoscloud_target_group"
 
-	targetGroupResponse, _, err := cloudApiClient.TargetGroupsApi.TargetgroupsGet(context.TODO()).Depth(1).Execute()
+	targetGroupResponse, _, err := cloudAPIClient.TargetGroupsApi.TargetgroupsGet(context.TODO()).Depth(1).Execute()
 	if err != nil {
 		return err
 	}

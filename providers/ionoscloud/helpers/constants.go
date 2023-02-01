@@ -11,22 +11,20 @@ const (
 const (
 	IonosDebug   = "IONOS_DEBUG"
 	Ionos        = "ionoscloud"
-	DcId         = "datacenter_id"
-	ServerId     = "server_id"
-	NicId        = "nic_id"
-	K8sClusterId = "k8s_cluster_id"
+	DcID         = "datacenter_id"
+	ServerID     = "server_id"
+	NicID        = "nic_id"
+	K8sClusterID = "k8s_cluster_id"
 
 	UsernameArg = "username"
 	PasswordArg = "password"
 	TokenArg    = "token"
-	UrlArg      = "url"
+	URLArg      = "url"
 	// MaxRetries - number of retries in case of rate-limit
 	MaxRetries = 999
 
 	// MaxWaitTime - waits 4 seconds before retry in case of rate limit
 	MaxWaitTime = 4 * time.Second
-
-	available = "Available"
 )
 
 const (

@@ -9,20 +9,20 @@ import (
 )
 
 type LoadBalancerGenerator struct {
-	IonosCloudService
+	Service
 }
 
 func (g *LoadBalancerGenerator) InitResources() error {
 	client := g.generateClient()
-	cloudApiClient := client.CloudApiClient
+	cloudAPIClient := client.CloudAPIClient
 	resourceType := "ionoscloud_loadbalancer"
 
-	datacenters, err := helpers.GetAllDatacenters(*cloudApiClient)
+	datacenters, err := helpers.GetAllDatacenters(*cloudAPIClient)
 	if err != nil {
 		return err
 	}
 	for _, datacenter := range datacenters {
-		loadBalancerResponse, _, err := cloudApiClient.LoadBalancersApi.DatacentersLoadbalancersGet(context.TODO(), *datacenter.Id).Depth(1).Execute()
+		loadBalancerResponse, _, err := cloudAPIClient.LoadBalancersApi.DatacentersLoadbalancersGet(context.TODO(), *datacenter.Id).Depth(1).Execute()
 		if err != nil {
 			return err
 		}
@@ -46,7 +46,7 @@ func (g *LoadBalancerGenerator) InitResources() error {
 				*loadBalancer.Properties.Name+"-"+*loadBalancer.Id,
 				resourceType,
 				helpers.Ionos,
-				map[string]string{helpers.DcId: *datacenter.Id},
+				map[string]string{helpers.DcID: *datacenter.Id},
 				[]string{},
 				map[string]interface{}{}))
 		}

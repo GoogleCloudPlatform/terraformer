@@ -2,26 +2,27 @@ package ionoscloud
 
 import (
 	"context"
+	"log"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"log"
 )
 
 type NATGatewayRuleGenerator struct {
-	IonosCloudService
+	Service
 }
 
 func (g *NATGatewayRuleGenerator) InitResources() error {
 	client := g.generateClient()
-	cloudApiClient := client.CloudApiClient
+	cloudAPIClient := client.CloudAPIClient
 	resourceType := "ionoscloud_natgateway_rule"
 
-	datacenters, err := helpers.GetAllDatacenters(*cloudApiClient)
+	datacenters, err := helpers.GetAllDatacenters(*cloudAPIClient)
 	if err != nil {
 		return err
 	}
 	for _, datacenter := range datacenters {
-		natGatewaysResponse, _, err := cloudApiClient.NATGatewaysApi.DatacentersNatgatewaysGet(context.TODO(), *datacenter.Id).Execute()
+		natGatewaysResponse, _, err := cloudAPIClient.NATGatewaysApi.DatacentersNatgatewaysGet(context.TODO(), *datacenter.Id).Execute()
 		if err != nil {
 			return err
 		}
@@ -33,7 +34,7 @@ func (g *NATGatewayRuleGenerator) InitResources() error {
 		}
 		natGateways := *natGatewaysResponse.Items
 		for _, natGateway := range natGateways {
-			rulesResponse, _, err := cloudApiClient.NATGatewaysApi.DatacentersNatgatewaysRulesGet(context.TODO(), *datacenter.Id, *natGateway.Id).Depth(1).Execute()
+			rulesResponse, _, err := cloudAPIClient.NATGatewaysApi.DatacentersNatgatewaysRulesGet(context.TODO(), *datacenter.Id, *natGateway.Id).Depth(1).Execute()
 			if err != nil {
 				return err
 			}
@@ -59,7 +60,7 @@ func (g *NATGatewayRuleGenerator) InitResources() error {
 					*rule.Properties.Name+"-"+*rule.Id,
 					resourceType,
 					helpers.Ionos,
-					map[string]string{helpers.DcId: *datacenter.Id, "natgateway_id": *natGateway.Id},
+					map[string]string{helpers.DcID: *datacenter.Id, "natgateway_id": *natGateway.Id},
 					[]string{},
 					map[string]interface{}{},
 				))

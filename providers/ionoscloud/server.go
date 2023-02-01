@@ -2,26 +2,27 @@ package ionoscloud
 
 import (
 	"context"
+	"log"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	ionoscloud "github.com/ionos-cloud/sdk-go/v6"
-	"log"
 )
 
 type ServerGenerator struct {
-	IonosCloudService
+	Service
 }
 
 func (g *ServerGenerator) InitResources() error {
 	client := g.generateClient()
-	cloudApiClient := client.CloudApiClient
-	datacenters, err := helpers.GetAllDatacenters(*cloudApiClient)
+	cloudAPIClient := client.CloudAPIClient
+	datacenters, err := helpers.GetAllDatacenters(*cloudAPIClient)
 	if err != nil {
 		return err
 	}
 
 	for _, datacenter := range datacenters {
-		servers, _, err := cloudApiClient.ServersApi.DatacentersServersGet(context.TODO(), *datacenter.Id).Depth(4).Execute()
+		servers, _, err := cloudAPIClient.ServersApi.DatacentersServersGet(context.TODO(), *datacenter.Id).Depth(4).Execute()
 		if err != nil {
 			return err
 		}
@@ -36,14 +37,14 @@ func (g *ServerGenerator) InitResources() error {
 			if !isServerValid(server, *datacenter.Id) {
 				continue
 			}
-			_, apiResponse, err := cloudApiClient.LabelsApi.DatacentersServersLabelsFindByKey(context.TODO(), *datacenter.Id, *server.Id, "managedexternally").Execute()
+			_, apiResponse, err := cloudAPIClient.LabelsApi.DatacentersServersLabelsFindByKey(context.TODO(), *datacenter.Id, *server.Id, "managedexternally").Execute()
 			if err != nil {
 				if !apiResponse.HttpNotFound() {
 					return err
 				}
 			} else {
-				//the server is managed externally(eg : k8s nodepool).
-				//This means we do not want to write the server to the tf plan.
+				// The server is managed externally(eg : k8s nodepool).
+				// This means we do not want to write the server to the tf plan.
 				continue
 			}
 
@@ -52,7 +53,7 @@ func (g *ServerGenerator) InitResources() error {
 				*server.Properties.Name+"-"+*server.Id,
 				"ionoscloud_server",
 				helpers.Ionos,
-				map[string]string{helpers.DcId: *datacenter.Id},
+				map[string]string{helpers.DcID: *datacenter.Id},
 				[]string{},
 				map[string]interface{}{}))
 		}

@@ -16,24 +16,25 @@ package ionoscloud
 
 import (
 	"fmt"
-	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	dbaas "github.com/ionos-cloud/sdk-go-dbaas-postgres"
-	ionoscloud "github.com/ionos-cloud/sdk-go/v6"
 	"log"
 	"net"
 	"net/http"
 	"os"
 	"runtime"
 	"time"
+
+	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	dbaas "github.com/ionos-cloud/sdk-go-dbaas-postgres"
+	ionoscloud "github.com/ionos-cloud/sdk-go/v6"
 )
 
-type IonosCloudService struct {
+type Service struct {
 	terraformutils.Service
 }
 
 type Bundle struct {
-	CloudApiClient *ionoscloud.APIClient
+	CloudAPIClient *ionoscloud.APIClient
 	DBaaSApiClient *dbaas.APIClient
 }
 
@@ -44,15 +45,15 @@ const (
 	dbaasClient
 )
 
-func (s *IonosCloudService) generateClient() *Bundle {
+func (s *Service) generateClient() *Bundle {
 	username := s.Args[helpers.UsernameArg].(string)
 	password := s.Args[helpers.PasswordArg].(string)
 	token := s.Args[helpers.TokenArg].(string)
-	url := s.Args[helpers.UrlArg].(string)
+	url := s.Args[helpers.URLArg].(string)
 
-	cleanedUrl := cleanURL(url)
+	cleanedURL := cleanURL(url)
 
-	newConfig := ionoscloud.NewConfiguration(username, password, token, cleanedUrl)
+	newConfig := ionoscloud.NewConfiguration(username, password, token, cleanedURL)
 
 	if os.Getenv(helpers.IonosDebug) != "" {
 		newConfig.Debug = true
@@ -62,11 +63,11 @@ func (s *IonosCloudService) generateClient() *Bundle {
 	newConfig.WaitTime = helpers.MaxWaitTime
 
 	clients := map[clientType]interface{}{
-		ionosClient: NewClientByType(username, password, token, cleanedUrl, ionosClient),
-		dbaasClient: NewClientByType(username, password, token, cleanedUrl, dbaasClient),
+		ionosClient: NewClientByType(username, password, token, cleanedURL, ionosClient),
+		dbaasClient: NewClientByType(username, password, token, cleanedURL, dbaasClient),
 	}
 	return &Bundle{
-		CloudApiClient: clients[ionosClient].(*ionoscloud.APIClient),
+		CloudAPIClient: clients[ionosClient].(*ionoscloud.APIClient),
 		DBaaSApiClient: clients[dbaasClient].(*dbaas.APIClient),
 	}
 }

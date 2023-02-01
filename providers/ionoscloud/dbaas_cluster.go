@@ -2,14 +2,15 @@ package ionoscloud
 
 import (
 	"context"
+	"log"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	dbaas "github.com/ionos-cloud/sdk-go-dbaas-postgres"
-	"log"
 )
 
 type DBaaSClusterGenerator struct {
-	IonosCloudService
+	Service
 }
 
 func (g DBaaSClusterGenerator) createResources(
@@ -38,8 +39,8 @@ func (g DBaaSClusterGenerator) createResources(
 
 func (g *DBaaSClusterGenerator) InitResources() error {
 	client := g.generateClient()
-	dbaasApiClient := client.DBaaSApiClient
-	output, _, err := dbaasApiClient.ClustersApi.ClustersGet(context.TODO()).Execute()
+	dbaasAPIClient := client.DBaaSApiClient
+	output, _, err := dbaasAPIClient.ClustersApi.ClustersGet(context.TODO()).Execute()
 	if err != nil {
 		return err
 	}

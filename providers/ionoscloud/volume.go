@@ -2,24 +2,25 @@ package ionoscloud
 
 import (
 	"context"
+	"log"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"log"
 )
 
 type VolumeGenerator struct {
-	IonosCloudService
+	Service
 }
 
 func (g *VolumeGenerator) InitResources() error {
 	client := g.generateClient()
-	cloudApiClient := client.CloudApiClient
-	datacenters, err := helpers.GetAllDatacenters(*cloudApiClient)
+	cloudAPIClient := client.CloudAPIClient
+	datacenters, err := helpers.GetAllDatacenters(*cloudAPIClient)
 	if err != nil {
 		return err
 	}
 	for _, datacenter := range datacenters {
-		servers, _, err := cloudApiClient.ServersApi.DatacentersServersGet(context.TODO(), *datacenter.Id).Depth(1).Execute()
+		servers, _, err := cloudAPIClient.ServersApi.DatacentersServersGet(context.TODO(), *datacenter.Id).Depth(1).Execute()
 		if err != nil {
 			return err
 		}
@@ -30,7 +31,7 @@ func (g *VolumeGenerator) InitResources() error {
 			continue
 		}
 		for _, server := range *servers.Items {
-			volumes, _, err := cloudApiClient.ServersApi.DatacentersServersVolumesGet(context.TODO(), *datacenter.Id, *server.Id).Depth(2).Execute()
+			volumes, _, err := cloudAPIClient.ServersApi.DatacentersServersVolumesGet(context.TODO(), *datacenter.Id, *server.Id).Depth(2).Execute()
 			if err != nil {
 				return err
 			}
@@ -58,8 +59,8 @@ func (g *VolumeGenerator) InitResources() error {
 						*volume.Properties.Name+"-"+*volume.Id,
 						"ionoscloud_volume",
 						helpers.Ionos,
-						map[string]string{helpers.DcId: *datacenter.Id,
-							helpers.ServerId: *server.Id},
+						map[string]string{helpers.DcID: *datacenter.Id,
+							helpers.ServerID: *server.Id},
 						[]string{},
 						map[string]interface{}{}))
 				}

@@ -16,9 +16,10 @@ package ionoscloud
 
 import (
 	"errors"
+	"os"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	ionoscloud "github.com/ionos-cloud/sdk-go/v6"
-	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -66,43 +67,43 @@ func (p *IonosCloudProvider) GetProviderData(arg ...string) map[string]interface
 func (IonosCloudProvider) GetResourceConnections() map[string]map[string][]string {
 	return map[string]map[string][]string{
 		"server": {
-			"datacenter": []string{helpers.DcId, "id"},
+			"datacenter": []string{helpers.DcID, "id"},
 		},
 		"nic": {
-			"datacenter": []string{helpers.DcId, "id"},
-			"server":     []string{helpers.ServerId, "id"},
+			"datacenter": []string{helpers.DcID, "id"},
+			"server":     []string{helpers.ServerID, "id"},
 		},
 		"volume": {
-			"datacenter": []string{helpers.DcId, "id"},
-			"server":     []string{helpers.ServerId, "id"},
+			"datacenter": []string{helpers.DcID, "id"},
+			"server":     []string{helpers.ServerID, "id"},
 		},
 		"firewall": {
-			"datacenter": []string{helpers.DcId, "id"},
-			"server":     []string{helpers.ServerId, "id"},
-			"nic":        []string{helpers.NicId, "id"},
+			"datacenter": []string{helpers.DcID, "id"},
+			"server":     []string{helpers.ServerID, "id"},
+			"nic":        []string{helpers.NicID, "id"},
 		},
 		"k8s_node_pool": {
-			"datacenter":  []string{helpers.DcId, "id"},
-			"k8s_cluster": []string{helpers.K8sClusterId, "id"},
+			"datacenter":  []string{helpers.DcID, "id"},
+			"k8s_cluster": []string{helpers.K8sClusterID, "id"},
 		},
 		"networkloadbalancer": {
-			"datacenter": []string{helpers.DcId, "id"},
+			"datacenter": []string{helpers.DcID, "id"},
 		},
 		"natgateway": {
-			"datacenter": []string{helpers.DcId, "id"},
+			"datacenter": []string{helpers.DcID, "id"},
 		},
 		"application_loadbalancer": {
-			"datacenter": []string{helpers.DcId, "id"},
+			"datacenter": []string{helpers.DcID, "id"},
 		},
 		"networkloadbalancer_forwardingrule": {
-			"datacenter":   []string{helpers.DcId, "id"},
+			"datacenter":   []string{helpers.DcID, "id"},
 			"loadbalancer": []string{"networkloadbalancer_id", "id"},
 		},
 		"loadbalancer": {
-			"datacenter": []string{helpers.DcId, "id"},
+			"datacenter": []string{helpers.DcID, "id"},
 		},
 		"natgateway_rule": {
-			"datacenter": []string{helpers.DcId, "id"},
+			"datacenter": []string{helpers.DcID, "id"},
 			"natgateway": []string{"natgateway_id", "id"},
 		},
 	}

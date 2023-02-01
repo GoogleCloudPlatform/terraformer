@@ -2,25 +2,26 @@ package ionoscloud
 
 import (
 	"context"
+	"log"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"log"
 )
 
 type NATGatewayGenerator struct {
-	IonosCloudService
+	Service
 }
 
 func (g *NATGatewayGenerator) InitResources() error {
 	client := g.generateClient()
-	cloudApiClient := client.CloudApiClient
+	cloudAPIClient := client.CloudAPIClient
 	resourceType := "ionoscloud_natgateway"
-	datacenters, err := helpers.GetAllDatacenters(*cloudApiClient)
+	datacenters, err := helpers.GetAllDatacenters(*cloudAPIClient)
 	if err != nil {
 		return err
 	}
 	for _, datacenter := range datacenters {
-		natGatewayResponse, _, err := cloudApiClient.NATGatewaysApi.DatacentersNatgatewaysGet(context.TODO(), *datacenter.Id).Depth(1).Execute()
+		natGatewayResponse, _, err := cloudAPIClient.NATGatewaysApi.DatacentersNatgatewaysGet(context.TODO(), *datacenter.Id).Depth(1).Execute()
 		if err != nil {
 			return err
 		}
@@ -45,7 +46,7 @@ func (g *NATGatewayGenerator) InitResources() error {
 				*natGateway.Properties.Name+"-"+*natGateway.Id,
 				resourceType,
 				helpers.Ionos,
-				map[string]string{helpers.DcId: *datacenter.Id},
+				map[string]string{helpers.DcID: *datacenter.Id},
 				[]string{},
 				map[string]interface{}{}))
 		}

@@ -1,14 +1,15 @@
 package ionoscloud
 
 import (
+	"log"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	ionoscloud "github.com/ionos-cloud/sdk-go/v6"
-	"log"
 )
 
 type DatacenterGenerator struct {
-	IonosCloudService
+	Service
 }
 
 func (g DatacenterGenerator) createResources(datacentersList []ionoscloud.Datacenter) []terraformutils.Resource {
@@ -32,8 +33,8 @@ func (g DatacenterGenerator) createResources(datacentersList []ionoscloud.Datace
 
 func (g *DatacenterGenerator) InitResources() error {
 	client := g.generateClient()
-	cloudApiClient := client.CloudApiClient
-	output, err := helpers.GetAllDatacenters(*cloudApiClient)
+	cloudAPIClient := client.CloudAPIClient
+	output, err := helpers.GetAllDatacenters(*cloudAPIClient)
 	if err != nil {
 		return err
 	}

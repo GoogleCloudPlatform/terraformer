@@ -2,26 +2,27 @@ package ionoscloud
 
 import (
 	"context"
+	"log"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"log"
 )
 
 type FirewallGenerator struct {
-	IonosCloudService
+	Service
 }
 
 func (g *FirewallGenerator) InitResources() error {
 	client := g.generateClient()
-	cloudApiClient := client.CloudApiClient
+	cloudAPIClient := client.CloudAPIClient
 	resourceType := "ionoscloud_firewall"
 
-	datacenters, err := helpers.GetAllDatacenters(*cloudApiClient)
+	datacenters, err := helpers.GetAllDatacenters(*cloudAPIClient)
 	if err != nil {
 		return err
 	}
 	for _, datacenter := range datacenters {
-		servers, _, err := cloudApiClient.ServersApi.DatacentersServersGet(context.TODO(), *datacenter.Id).Execute()
+		servers, _, err := cloudAPIClient.ServersApi.DatacentersServersGet(context.TODO(), *datacenter.Id).Execute()
 		if err != nil {
 			return err
 		}
@@ -32,7 +33,7 @@ func (g *FirewallGenerator) InitResources() error {
 			continue
 		}
 		for _, server := range *servers.Items {
-			nics, _, err := cloudApiClient.NetworkInterfacesApi.DatacentersServersNicsGet(context.TODO(), *datacenter.Id, *server.Id).Execute()
+			nics, _, err := cloudAPIClient.NetworkInterfacesApi.DatacentersServersNicsGet(context.TODO(), *datacenter.Id, *server.Id).Execute()
 			if err != nil {
 				return err
 			}
@@ -45,7 +46,7 @@ func (g *FirewallGenerator) InitResources() error {
 			}
 			lastNicIdx := len(*nics.Items) - 1
 			for nicIdx, nic := range *nics.Items {
-				firewalls, _, err := cloudApiClient.FirewallRulesApi.DatacentersServersNicsFirewallrulesGet(context.TODO(), *datacenter.Id, *server.Id, *nic.Id).Depth(1).Execute()
+				firewalls, _, err := cloudAPIClient.FirewallRulesApi.DatacentersServersNicsFirewallrulesGet(context.TODO(), *datacenter.Id, *server.Id, *nic.Id).Depth(1).Execute()
 				if err != nil {
 					return err
 				}
@@ -79,7 +80,7 @@ func (g *FirewallGenerator) InitResources() error {
 						*firewall.Properties.Name+"-"+*firewall.Id,
 						resourceType,
 						helpers.Ionos,
-						map[string]string{helpers.DcId: *datacenter.Id, helpers.ServerId: *server.Id, helpers.NicId: *nic.Id},
+						map[string]string{helpers.DcID: *datacenter.Id, helpers.ServerID: *server.Id, helpers.NicID: *nic.Id},
 						[]string{},
 						map[string]interface{}{}))
 				}
