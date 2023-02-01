@@ -96,8 +96,6 @@ func RefreshResources(resources []*Resource, provider *providerwrapper.ProviderW
 
 	wg.Wait()
 	for _, r := range resources {
-		log.Printf("Instance state %v  \n", r.InstanceState)
-
 		if r.InstanceState != nil && r.InstanceState.ID != "" {
 			refreshedResources = append(refreshedResources, r)
 		} else {
@@ -108,8 +106,6 @@ func RefreshResources(resources []*Resource, provider *providerwrapper.ProviderW
 	for _, resourceGroup := range slowProcessingResources {
 		for i := range resourceGroup {
 			r := resourceGroup[i]
-			log.Printf("slow processing Instance state %v  \n", r.InstanceState)
-
 			if r.InstanceState != nil && r.InstanceState.ID != "" {
 				refreshedResources = append(refreshedResources, r)
 			} else {
