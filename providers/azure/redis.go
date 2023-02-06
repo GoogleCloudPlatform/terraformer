@@ -31,7 +31,8 @@ func (g *RedisGenerator) listRedisServers() ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
-	RedisClient := redis.NewClient(subscriptionID)
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	RedisClient := redis.NewClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 
 	redisServersIterator, err := RedisClient.ListComplete(ctx)
 	if err != nil {
