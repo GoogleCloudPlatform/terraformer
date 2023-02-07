@@ -131,6 +131,8 @@ require (
 	github.com/hokaccha/go-prettyjson v0.0.0-20210113012101-fb4e108d2519 // indirect
 	github.com/honeycombio/terraform-provider-honeycombio v0.10.0
 	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
+	github.com/ionos-cloud/sdk-go-dbaas-postgres v1.0.3
+	github.com/ionos-cloud/sdk-go/v6 v6.1.3
 	github.com/jefferai/jsonx v1.0.1 // indirect
 	github.com/jmespath/go-jmespath v0.4.0
 	github.com/jonboydell/logzio_client v1.2.0

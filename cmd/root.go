@@ -54,6 +54,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdTencentCloudImporter,
 		newCmdVultrImporter,
 		newCmdYandexImporter,
+		newCmdIonosCloudImporter,
 		// Infrastructure Software
 		newCmdKubernetesImporter,
 		newCmdOctopusDeployImporter,
