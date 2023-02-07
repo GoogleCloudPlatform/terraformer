@@ -33,6 +33,19 @@ func (g *CloudFrontGenerator) InitResources() error {
 		return e
 	}
 	svc := cloudfront.NewFromConfig(config)
+
+	if err := g.loadDistribution(svc); err != nil {
+		return err
+	}
+
+	if err := g.loadCachePolicy(svc); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (g *CloudFrontGenerator) loadDistribution(svc *cloudfront.Client) error {
 	p := cloudfront.NewListDistributionsPaginator(svc, &cloudfront.ListDistributionsInput{})
 	for p.HasMorePages() {
 		page, e := p.NextPage(context.TODO())
@@ -53,7 +66,62 @@ func (g *CloudFrontGenerator) InitResources() error {
 			)
 			r.IgnoreKeys = append(r.IgnoreKeys, "^active_trusted_signers.(.*)")
 			g.Resources = append(g.Resources, r)
+
 		}
+	}
+	return nil
+}
+
+func (g *CloudFrontGenerator) loadCachePolicy(svc *cloudfront.Client) error {
+	var marker *string
+	for {
+		out, err := svc.ListCachePolicies(context.TODO(), &cloudfront.ListCachePoliciesInput{
+			Marker: marker,
+		})
+		if err != nil {
+			return err
+		}
+		for _, cachePolicy := range out.CachePolicyList.Items {
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+				StringValue(cachePolicy.CachePolicy.Id),
+				StringValue(cachePolicy.CachePolicy.Id),
+				"aws_cloudfront_cache_policy",
+				"aws",
+				cloudFrontAllowEmptyValues,
+			))
+		}
+		marker = out.CachePolicyList.NextMarker
+		if marker == nil {
+			break
+		}
+	}
+	return nil
+}
+
+func (g *CloudFrontGenerator) PostConvertHook() error {
+	for i, r := range g.Resources {
+		if r.InstanceInfo.Type != "aws_cloudfront_distribution" {
+			continue
+		}
+
+		for _, cachePolicy := range g.Resources {
+			if cachePolicy.InstanceInfo.Type != "aws_cloudfront_cache_policy" {
+				continue
+			}
+
+			if cachePolicy.InstanceState.Attributes["id"] == r.Item["default_cache_behavior"].([]interface{})[0].(map[string]interface{})["cache_policy_id"].(string) {
+				g.Resources[i].Item["default_cache_behavior"].([]interface{})[0].(map[string]interface{})["cache_policy_id"] = "${aws_cloudfront_cache_policy." + cachePolicy.ResourceName + ".id}"
+			}
+
+			if r.Item["ordered_cache_behavior"] != nil {
+				for j, orderedCacheBehavior := range r.Item["ordered_cache_behavior"].([]interface{}) {
+					if orderedCacheBehavior.(map[string]interface{})["cache_policy_id"].(string) == cachePolicy.InstanceState.Attributes["id"] {
+						g.Resources[i].Item["ordered_cache_behavior"].([]interface{})[j].(map[string]interface{})["cache_policy_id"] = "${aws_cloudfront_cache_policy." + cachePolicy.ResourceName + ".id}"
+					}
+				}
+			}
+		}
+
 	}
 	return nil
 }
