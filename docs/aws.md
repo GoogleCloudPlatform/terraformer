@@ -79,6 +79,7 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_cloudformation_stack_set_instance`
 *   `cloudfront`
     * `aws_cloudfront_distribution`
+    * `aws_cloudfront_cache_policy`
 *   `cloudhsm`
     * `aws_cloudhsm_v2_cluster`
     * `aws_cloudhsm_v2_hsm`
