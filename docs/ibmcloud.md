@@ -154,3 +154,4 @@ List of supported IBM Cloud resources:
 * `ibm_cloud_atracker`
 * `ibm_cloud_watson_studio`
 * `ibm_cloud_watson_machine_learning`
+* `ibm_code_engine`
