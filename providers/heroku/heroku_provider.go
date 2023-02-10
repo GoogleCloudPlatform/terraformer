@@ -23,17 +23,11 @@ import (
 
 type HerokuProvider struct { //nolint
 	terraformutils.Provider
-	email  string
 	apiKey string
 	team   string
 }
 
 func (p *HerokuProvider) Init(args []string) error {
-	if os.Getenv("HEROKU_EMAIL") == "" {
-		return errors.New("set HEROKU_EMAIL env var")
-	}
-	p.email = os.Getenv("HEROKU_EMAIL")
-
 	if os.Getenv("HEROKU_API_KEY") == "" {
 		return errors.New("set HEROKU_API_KEY env var")
 	}
@@ -54,9 +48,7 @@ func (p *HerokuProvider) GetName() string {
 func (p *HerokuProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
-			"heroku": map[string]interface{}{
-				"email": p.email,
-			},
+			"heroku": map[string]interface{}{},
 		},
 	}
 }
@@ -97,7 +89,6 @@ func (p *HerokuProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"email":   p.email,
 		"api_key": p.apiKey,
 		"team":    p.team,
 	})
