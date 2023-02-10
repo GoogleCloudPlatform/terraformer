@@ -16,6 +16,7 @@ package heroku
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	heroku "github.com/heroku/heroku-go/v5"
@@ -40,9 +41,38 @@ func (g AddOnGenerator) createResources(addOnList []heroku.AddOn) []terraformuti
 
 func (g *AddOnGenerator) InitResources() error {
 	svc := g.generateService()
-	output, err := svc.AddOnList(context.TODO(), &heroku.ListRange{Field: "id"})
-	if err != nil {
-		return err
+	ctx := context.Background()
+
+	var output []heroku.AddOn
+
+	// filter if necessary
+	if len(g.Filter) > 0 {
+		for _, filter := range g.Filter {
+			if filter.IsApplicable("app") {
+				for _, appID := range filter.AcceptableValues {
+					filterOutput, err := svc.AddOnListByApp(ctx, appID, &heroku.ListRange{Field: "id", Max: 1000})
+					if err != nil {
+						return fmt.Errorf("Error filtering by app, querying for %s: %w", appID, err)
+					}
+					for _, addOn := range filterOutput {
+						output = append(output, addOn)
+					}
+				}
+			}
+			if filter.IsApplicable("team_app") {
+				for _, appID := range filter.AcceptableValues {
+					filterOutput, err := svc.AddOnListByApp(ctx, appID, &heroku.ListRange{Field: "id", Max: 1000})
+					if err != nil {
+						return fmt.Errorf("Error filtering by team_app, querying for %s: %w", appID, err)
+					}
+					for _, addOn := range filterOutput {
+						output = append(output, addOn)
+					}
+				}
+			}
+		}
+	} else {
+		return fmt.Errorf("Heroku Addons must be filtered by app or team_app: --filter=app=<name or ID>")
 	}
 	g.Resources = g.createResources(output)
 	return nil
