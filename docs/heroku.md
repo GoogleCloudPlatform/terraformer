@@ -5,10 +5,10 @@ Example:
 ```
 export HEROKU_API_KEY=<token>
 
-./terraformer import heroku --resources=app,addon --filter=app=<name or ID>
+./terraformer import heroku --resources=app --filter=team=<name>
+./terraformer import heroku --resources=app --filter=app_id=<name or ID>
 
-export HEROKU_TEAM=<team name>
-./terraformer import heroku --resources=team_app,addon --filter=team_app=<name or ID>
+./terraformer import heroku --resources=app,addon --filter=app_id=<name or ID>
 ```
 
 List of supported Heroku resources:
@@ -41,8 +41,6 @@ List of supported Heroku resources:
     * `heroku_pipeline`
 *   `pipeline_coupling`
     * `heroku_pipeline_coupling`
-*   `team_app`
-    * `heroku_team_app`
 *   `team_collaborator`
     * `heroku_team_collaborator`
 *   `team_member`

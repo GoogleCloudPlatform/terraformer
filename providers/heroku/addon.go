@@ -45,35 +45,24 @@ func (g *AddOnGenerator) InitResources() error {
 
 	var output []heroku.AddOn
 
-	// filter if necessary
 	if len(g.Filter) > 0 {
 		for _, filter := range g.Filter {
-			if filter.IsApplicable("app") {
+			if filter.IsApplicable("app_id") {
 				for _, appID := range filter.AcceptableValues {
-					filterOutput, err := svc.AddOnListByApp(ctx, appID, &heroku.ListRange{Field: "id", Max: 1000})
+					appAddons, err := svc.AddOnListByApp(ctx, appID, &heroku.ListRange{Field: "id", Max: 1000})
 					if err != nil {
-						return fmt.Errorf("Error filtering by app, querying for %s: %w", appID, err)
+						return fmt.Errorf("Error filtering addons by app, querying for %s: %w", appID, err)
 					}
-					for _, addOn := range filterOutput {
-						output = append(output, addOn)
-					}
-				}
-			}
-			if filter.IsApplicable("team_app") {
-				for _, appID := range filter.AcceptableValues {
-					filterOutput, err := svc.AddOnListByApp(ctx, appID, &heroku.ListRange{Field: "id", Max: 1000})
-					if err != nil {
-						return fmt.Errorf("Error filtering by team_app, querying for %s: %w", appID, err)
-					}
-					for _, addOn := range filterOutput {
+					for _, addOn := range appAddons {
 						output = append(output, addOn)
 					}
 				}
 			}
 		}
 	} else {
-		return fmt.Errorf("Heroku Addons must be filtered by app or team_app: --filter=app=<name or ID>")
+		return fmt.Errorf("Heroku Addons must be filtered by app_id: --filter=app_id=<name or ID>")
 	}
+
 	g.Resources = g.createResources(output)
 	return nil
 }

@@ -73,7 +73,6 @@ func (p *HerokuProvider) GetSupportedService() map[string]terraformutils.Service
 		"formation":              &FormationGenerator{},
 		"pipeline":               &PipelineGenerator{},
 		"pipeline_coupling":      &PipelineCouplingGenerator{},
-		"team_app":               &TeamAppGenerator{},
 		"team_collaborator":      &TeamCollaboratorGenerator{},
 		"team_member":            &TeamMemberGenerator{},
 	}
