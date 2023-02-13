@@ -53,7 +53,7 @@ func (g *AddOnGenerator) InitResources() error {
 				for _, appID := range filter.AcceptableValues {
 					appAddons, err := svc.AddOnListByApp(ctx, appID, &heroku.ListRange{Field: "id", Max: 1000})
 					if err != nil {
-						return fmt.Errorf("Error filtering addons by app, querying for %s: %w", appID, err)
+						return fmt.Errorf("Error filtering addons by app '%s': %w", appID, err)
 					}
 					for _, addOn := range appAddons {
 						output = append(output, addOn)

@@ -36,13 +36,13 @@ func (g AppGenerator) createResources(appList []heroku.App) []terraformutils.Res
 			"heroku",
 			[]string{}))
 	}
-	fmt.Printf("created app resources %+v", resources)
 	return resources
 }
 
 func (g *AppGenerator) InitResources() error {
 	svc := g.generateService()
 	ctx := context.Background()
+	team := g.GetArgs()["team"].(string)
 
 	var output []heroku.App
 	var hasRequiredFilter bool
@@ -54,26 +54,27 @@ func (g *AppGenerator) InitResources() error {
 				for _, appID := range filter.AcceptableValues {
 					app, err := svc.AppInfo(ctx, appID)
 					if err != nil {
-						return fmt.Errorf("Error filtering apps by app, querying for %s: %w", appID, err)
+						return fmt.Errorf("Error filtering apps by app '%s': %w", appID, err)
 					}
 					output = append(output, heroku.App{ID: app.ID, Name: app.Name})
-				}
-			} else if filter.IsApplicable("team") {
-				hasRequiredFilter = true
-				for _, team := range filter.AcceptableValues {
-					teamApps, err := svc.TeamAppListByTeam(ctx, team, &heroku.ListRange{Field: "id", Max: 1000})
-					if err != nil {
-						return fmt.Errorf("Error filtering apps by team, querying for %s: %w", team, err)
-					}
-					for _, app := range teamApps {
-						output = append(output, heroku.App{ID: app.ID, Name: app.Name})
-					}
 				}
 			}
 		}
 	}
+
+	if team != "" {
+		hasRequiredFilter = true
+		teamApps, err := svc.TeamAppListByTeam(ctx, team, &heroku.ListRange{Field: "id", Max: 1000})
+		if err != nil {
+			return fmt.Errorf("Error querying apps by team '%s': %w", team, err)
+		}
+		for _, app := range teamApps {
+			output = append(output, heroku.App{ID: app.ID, Name: app.Name})
+		}
+	}
+
 	if !hasRequiredFilter {
-		return fmt.Errorf("Heroku Apps must be filtered by app or team: --filter=team=<name> or --filter=app=<ID>")
+		return fmt.Errorf("Heroku Apps must be scoped by team or filtered by app: --team=<name> or --filter=app=<ID>")
 	}
 
 	g.Resources = g.createResources(output)

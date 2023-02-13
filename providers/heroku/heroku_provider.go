@@ -16,7 +16,6 @@ package heroku
 
 import (
 	"errors"
-	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -27,17 +26,14 @@ type HerokuProvider struct { //nolint
 	team   string
 }
 
+// Init the Provider for imports. args are defined in cmd/provider_cmd_heroku.go
 func (p *HerokuProvider) Init(args []string) error {
-	if os.Getenv("HEROKU_API_KEY") == "" {
-		return errors.New("set HEROKU_API_KEY env var")
+	if len(args) > 0 {
+		p.apiKey = args[0]
 	}
-	p.apiKey = os.Getenv("HEROKU_API_KEY")
-
-	// optional
-	if os.Getenv("HEROKU_TEAM") != "" {
-		p.team = os.Getenv("HEROKU_TEAM")
+	if len(args) > 1 {
+		p.team = args[1]
 	}
-
 	return nil
 }
 
