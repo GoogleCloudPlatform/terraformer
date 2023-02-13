@@ -45,10 +45,12 @@ func (g *AppGenerator) InitResources() error {
 	ctx := context.Background()
 
 	var output []heroku.App
+	var hasRequiredFilter bool
 
 	if len(g.Filter) > 0 {
 		for _, filter := range g.Filter {
-			if filter.IsApplicable("app_id") {
+			if filter.IsApplicable("app") {
+				hasRequiredFilter = true
 				for _, appID := range filter.AcceptableValues {
 					app, err := svc.AppInfo(ctx, appID)
 					if err != nil {
@@ -57,6 +59,7 @@ func (g *AppGenerator) InitResources() error {
 					output = append(output, heroku.App{ID: app.ID, Name: app.Name})
 				}
 			} else if filter.IsApplicable("team") {
+				hasRequiredFilter = true
 				for _, team := range filter.AcceptableValues {
 					teamApps, err := svc.TeamAppListByTeam(ctx, team, &heroku.ListRange{Field: "id", Max: 1000})
 					if err != nil {
@@ -68,8 +71,9 @@ func (g *AppGenerator) InitResources() error {
 				}
 			}
 		}
-	} else {
-		return fmt.Errorf("Heroku Apps must be filtered by app_id or team: --filter=team=<name>")
+	}
+	if !hasRequiredFilter {
+		return fmt.Errorf("Heroku Apps must be filtered by app or team: --filter=team=<name> or --filter=app=<ID>")
 	}
 
 	g.Resources = g.createResources(output)

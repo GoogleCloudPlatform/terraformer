@@ -44,10 +44,12 @@ func (g *AddOnGenerator) InitResources() error {
 	ctx := context.Background()
 
 	var output []heroku.AddOn
+	var hasRequiredFilter bool
 
 	if len(g.Filter) > 0 {
 		for _, filter := range g.Filter {
-			if filter.IsApplicable("app_id") {
+			if filter.IsApplicable("app") {
+				hasRequiredFilter = true
 				for _, appID := range filter.AcceptableValues {
 					appAddons, err := svc.AddOnListByApp(ctx, appID, &heroku.ListRange{Field: "id", Max: 1000})
 					if err != nil {
@@ -59,8 +61,9 @@ func (g *AddOnGenerator) InitResources() error {
 				}
 			}
 		}
-	} else {
-		return fmt.Errorf("Heroku Addons must be filtered by app_id: --filter=app_id=<name or ID>")
+	}
+	if !hasRequiredFilter {
+		return fmt.Errorf("Heroku Addons must be filtered by app: --filter=app=<ID>")
 	}
 
 	g.Resources = g.createResources(output)

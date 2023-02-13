@@ -6,9 +6,9 @@ Example:
 export HEROKU_API_KEY=<token>
 
 ./terraformer import heroku --resources=app --filter=team=<name>
-./terraformer import heroku --resources=app --filter=app_id=<name or ID>
+./terraformer import heroku --resources=app --filter=app=<ID>
 
-./terraformer import heroku --resources=app,addon --filter=app_id=<name or ID>
+./terraformer import heroku --resources=app,addon --filter=app=<ID>
 ```
 
 List of supported Heroku resources:
