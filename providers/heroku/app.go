@@ -26,17 +26,27 @@ type AppGenerator struct {
 	HerokuService
 }
 
-func (g AppGenerator) createResources(appList []heroku.App) []terraformutils.Resource {
+func (g AppGenerator) createResources(appList []heroku.App) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
+	var resourcesEmpty []terraformutils.Resource
+
 	for _, app := range appList {
-		resources = append(resources, terraformutils.NewSimpleResource(
+		configVars, err := g.getSettableConfigVars(app.ID)
+		if err != nil {
+			return resourcesEmpty, fmt.Errorf("Error in getSettableConfigVars for '%s': %w", app.ID, err)
+		}
+		resources = append(resources, terraformutils.NewResource(
 			app.ID,
 			app.Name,
 			"heroku_app",
 			"heroku",
-			[]string{}))
+			map[string]string{},
+			[]string{},
+			map[string]interface{}{
+				"config_vars": configVars,
+			}))
 	}
-	return resources
+	return resources, nil
 }
 
 func (g *AppGenerator) InitResources() error {
@@ -77,6 +87,41 @@ func (g *AppGenerator) InitResources() error {
 		return fmt.Errorf("Heroku Apps must be scoped by team or filtered by app: --team=<name> or --filter=app=<ID>")
 	}
 
-	g.Resources = g.createResources(output)
+	resources, err := g.createResources(output)
+	if err != nil {
+		return fmt.Errorf("Error creating app resources: %w", err)
+	}
+	g.Resources = resources
+
 	return nil
+}
+
+func (g AppGenerator) getSettableConfigVars(appID string) (map[string]string, error) {
+	svc := g.generateService()
+	ctx := context.Background()
+	output := map[string]string{}
+	emptyOutput := map[string]string{}
+
+	vars, err := svc.ConfigVarInfoForApp(ctx, appID)
+	if err != nil {
+		return emptyOutput, fmt.Errorf("Error querying ConfigVarInfoForApp '%s': %w", appID, err)
+	}
+
+	for k, v := range vars {
+		if v != nil {
+			output[k] = *v
+		}
+	}
+
+	appAddons, err := svc.AddOnListByApp(ctx, appID, &heroku.ListRange{Field: "id", Max: 1000})
+	if err != nil {
+		return emptyOutput, fmt.Errorf("Error querying AddOnListByApp '%s': %w", appID, err)
+	}
+	for _, addOn := range appAddons {
+		for _, addOnConfigVar := range addOn.ConfigVars {
+			delete(output, addOnConfigVar)
+		}
+	}
+
+	return output, nil
 }

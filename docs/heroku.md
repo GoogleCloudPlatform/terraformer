@@ -2,13 +2,19 @@
 
 Heroku organizes itself by teams and apps. This importer tool is designed to capture complete apps with all their dependent resources like addons, domains, etc.
 
+#### Apps by ID, Not Name
+
 Apps must be identified by ID (UUID). Even though some resources may import successfully when filtering by app name, apps themselves must be identified by ID. To get an app ID, use Heroku CLI to get the top-level `id` property:
 
 ```
 heroku apps:info --json --app=NAME
 ```
 
-Example:
+#### App Config Vars
+
+When importing apps, their settable config vars (those not from add-ons) are added to the Terraform configuration as `config_vars`. These may contain secrets, and can manually be split into `sensitive_config_vars` before the plan/apply.
+
+#### Example
 
 ```
 export HEROKU_API_KEY=<token>
