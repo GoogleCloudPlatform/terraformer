@@ -42,7 +42,9 @@ func (g AccountFeatureGenerator) createResources(accountFeatureList []heroku.Acc
 
 func (g *AccountFeatureGenerator) InitResources() error {
 	svc := g.generateService()
-	output, err := svc.AccountFeatureList(context.TODO(), &heroku.ListRange{Field: "id"})
+	ctx := context.Background()
+
+	output, err := svc.AccountFeatureList(ctx, &heroku.ListRange{Field: "id"})
 	if err != nil {
 		return err
 	}

@@ -17,6 +17,8 @@ export HEROKU_API_KEY=<token>
 ./terraformer import heroku --resources=app --filter=app=<ID>
 
 ./terraformer import heroku --resources=app,addon --filter=app=<ID>
+
+./terraformer import heroku --resources=account_feature
 ```
 
 List of supported Heroku resources:
