@@ -29,8 +29,6 @@ List of supported Heroku resources:
     * `heroku_addon_attachment`
 *   `app`
     * `heroku_app`
-*   `app_config_association`
-    * `heroku_app_config_association`
 *   `app_feature`
     * `heroku_app_feature`
 *   `app_webhook`

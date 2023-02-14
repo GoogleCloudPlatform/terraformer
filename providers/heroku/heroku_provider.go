@@ -55,22 +55,21 @@ func (HerokuProvider) GetResourceConnections() map[string]map[string][]string {
 
 func (p *HerokuProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"account_feature":        &AccountFeatureGenerator{},
-		"addon":                  &AddOnGenerator{},
-		"addon_attachment":       &AddOnAttachmentGenerator{},
-		"app":                    &AppGenerator{},
-		"app_config_association": &AppConfigAssociationGenerator{},
-		"app_feature":            &AppFeatureGenerator{},
-		"app_webhook":            &AppWebhookGenerator{},
-		"build":                  &BuildGenerator{},
-		"cert":                   &CertGenerator{},
-		"domain":                 &DomainGenerator{},
-		"drain":                  &DrainGenerator{},
-		"formation":              &FormationGenerator{},
-		"pipeline":               &PipelineGenerator{},
-		"pipeline_coupling":      &PipelineCouplingGenerator{},
-		"team_collaborator":      &TeamCollaboratorGenerator{},
-		"team_member":            &TeamMemberGenerator{},
+		"account_feature":   &AccountFeatureGenerator{},
+		"addon":             &AddOnGenerator{},
+		"addon_attachment":  &AddOnAttachmentGenerator{},
+		"app":               &AppGenerator{},
+		"app_feature":       &AppFeatureGenerator{},
+		"app_webhook":       &AppWebhookGenerator{},
+		"build":             &BuildGenerator{},
+		"cert":              &CertGenerator{},
+		"domain":            &DomainGenerator{},
+		"drain":             &DrainGenerator{},
+		"formation":         &FormationGenerator{},
+		"pipeline":          &PipelineGenerator{},
+		"pipeline_coupling": &PipelineCouplingGenerator{},
+		"team_collaborator": &TeamCollaboratorGenerator{},
+		"team_member":       &TeamMemberGenerator{},
 	}
 }
 
