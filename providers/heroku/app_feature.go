@@ -17,7 +17,6 @@ package heroku
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	heroku "github.com/heroku/heroku-go/v5"
@@ -27,16 +26,12 @@ type AppFeatureGenerator struct {
 	HerokuService
 }
 
-func (g AppFeatureGenerator) createResources(svc *heroku.Service, appList []heroku.App) []terraformutils.Resource {
+func (g AppFeatureGenerator) createResources(appFeatures map[string][]heroku.AppFeature) []terraformutils.Resource {
 	var resources []terraformutils.Resource
-	for _, app := range appList {
-		output, err := svc.AppFeatureList(context.TODO(), app.ID, &heroku.ListRange{Field: "id"})
-		if err != nil {
-			log.Println(err)
-		}
-		for _, appFeature := range output {
+	for appID, appIDFeatures := range appFeatures {
+		for _, appFeature := range appIDFeatures {
 			resources = append(resources, terraformutils.NewSimpleResource(
-				fmt.Sprintf("%s:%s", app.Name, appFeature.ID),
+				fmt.Sprintf("%s:%s", appID, appFeature.Name),
 				appFeature.Name,
 				"heroku_app_feature",
 				"heroku",
@@ -48,10 +43,33 @@ func (g AppFeatureGenerator) createResources(svc *heroku.Service, appList []hero
 
 func (g *AppFeatureGenerator) InitResources() error {
 	svc := g.generateService()
-	output, err := svc.AppList(context.TODO(), &heroku.ListRange{Field: "id"})
-	if err != nil {
-		return err
+	ctx := context.Background()
+
+	output := map[string][]heroku.AppFeature{}
+	var hasRequiredFilter bool
+
+	if len(g.Filter) > 0 {
+		for _, filter := range g.Filter {
+			if filter.IsApplicable("app") {
+				hasRequiredFilter = true
+				for _, appID := range filter.AcceptableValues {
+					appFeatures, err := svc.AppFeatureList(ctx, appID, &heroku.ListRange{Field: "id", Max: 1000})
+					if err != nil {
+						return fmt.Errorf("Error listing for features for app '%s': %w", appID, err)
+					}
+					for _, appFeature := range appFeatures {
+						if appFeature.Enabled {
+							output[appID] = append(output[appID], appFeature)
+						}
+					}
+				}
+			}
+		}
 	}
-	g.Resources = g.createResources(svc, output)
+	if !hasRequiredFilter {
+		return fmt.Errorf("Heroku App Features must be filtered by app: --filter=app=<ID>")
+	}
+
+	g.Resources = g.createResources(output)
 	return nil
 }
