@@ -130,6 +130,12 @@ func (g *AppGenerator) InitResources() error {
 			return fmt.Errorf("Error creating domain resources: %w", err)
 		}
 		g.Resources = append(g.Resources, domains...)
+
+		drains, err := g.createDrainResources(ctx, svc, app)
+		if err != nil {
+			return fmt.Errorf("Error creating drain resources: %w", err)
+		}
+		g.Resources = append(g.Resources, drains...)
 	}
 
 	return nil
@@ -291,6 +297,25 @@ func (g AppGenerator) createDomainResources(ctx context.Context, svc *heroku.Ser
 			"heroku_domain",
 			"heroku",
 			map[string]string{"app_id": appID},
+			[]string{},
+			map[string]interface{}{}))
+	}
+	return resources, nil
+}
+
+func (g AppGenerator) createDrainResources(ctx context.Context, svc *heroku.Service, app heroku.App) ([]terraformutils.Resource, error) {
+	drains, err := svc.LogDrainList(ctx, app.ID, &heroku.ListRange{Field: "id", Max: 1000})
+	if err != nil {
+		return []terraformutils.Resource{}, fmt.Errorf("Error listing drains for app '%s': %w", app.ID, err)
+	}
+	var resources []terraformutils.Resource
+	for _, drain := range drains {
+		resources = append(resources, terraformutils.NewResource(
+			fmt.Sprintf("%s:%s", app.ID, drain.ID),
+			fmt.Sprintf("%s-%s", app.Name, drain.ID),
+			"heroku_drain",
+			"heroku",
+			map[string]string{"app_id": app.ID},
 			[]string{},
 			map[string]interface{}{}))
 	}
