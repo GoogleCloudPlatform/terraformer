@@ -59,7 +59,6 @@ func (p *HerokuProvider) GetSupportedService() map[string]terraformutils.Service
 		"addon":             &AddOnGenerator{},
 		"addon_attachment":  &AddOnAttachmentGenerator{},
 		"app":               &AppGenerator{},
-		"app_feature":       &AppFeatureGenerator{},
 		"app_webhook":       &AppWebhookGenerator{},
 		"build":             &BuildGenerator{},
 		"cert":              &CertGenerator{},

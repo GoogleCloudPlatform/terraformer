@@ -93,6 +93,14 @@ func (g *AppGenerator) InitResources() error {
 	}
 	g.Resources = resources
 
+	for _, app := range output {
+		appFeatures, err := g.createAppFeatureResources(ctx, svc, app.ID)
+		if err != nil {
+			return fmt.Errorf("Error creating app feature resources: %w", err)
+		}
+		g.Resources = append(g.Resources, appFeatures...)
+	}
+
 	return nil
 }
 
@@ -124,4 +132,28 @@ func (g AppGenerator) getSettableConfigVars(appID string) (map[string]string, er
 	}
 
 	return output, nil
+}
+
+func (g AppGenerator) createAppFeatureResources(ctx context.Context, svc *heroku.Service, appID string) ([]terraformutils.Resource, error) {
+	list := []heroku.AppFeature{}
+
+	appFeatures, err := svc.AppFeatureList(ctx, appID, &heroku.ListRange{Field: "id", Max: 1000})
+	if err != nil {
+		return []terraformutils.Resource{}, fmt.Errorf("Error listing for features for app '%s': %w", appID, err)
+	}
+	for _, appFeature := range appFeatures {
+		if appFeature.Enabled {
+			list = append(list, appFeature)
+		}
+	}
+	var resources []terraformutils.Resource
+	for _, appFeature := range list {
+		resources = append(resources, terraformutils.NewSimpleResource(
+			fmt.Sprintf("%s:%s", appID, appFeature.Name),
+			appFeature.Name,
+			"heroku_app_feature",
+			"heroku",
+			[]string{}))
+	}
+	return resources, nil
 }

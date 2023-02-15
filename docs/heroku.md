@@ -22,7 +22,7 @@ export HEROKU_API_KEY=<token>
 ./terraformer import heroku --resources=app --team=<name>
 ./terraformer import heroku --resources=app --filter=app=<ID>
 
-./terraformer import heroku --resources=app,addon,addon_attachment,app_feature --filter=app=<ID>
+./terraformer import heroku --resources=app,addon,addon_attachment --filter=app=<ID>
 
 ./terraformer import heroku --resources=account_feature
 ```
@@ -40,11 +40,8 @@ Heroku Terraformer resources with the terraform-provider-heroku resources they i
     * imports all attachments of the app's add-ons
 *   `app`
     * `heroku_app`
-    * requires `--team` name or `app` filter
-*   `app_feature`
     * `heroku_app_feature`
-    * requires `app` filter
-    * imports only `enabled = true` features
+    * requires `--team` name or `app` filter
 *   `app_webhook`
     * `heroku_app_webhook`
 *   `build`
