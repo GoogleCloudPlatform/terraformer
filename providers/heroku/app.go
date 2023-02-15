@@ -94,7 +94,7 @@ func (g *AppGenerator) InitResources() error {
 	g.Resources = resources
 
 	for _, app := range output {
-		appFeatures, err := g.createAppFeatureResources(ctx, svc, app.ID)
+		appFeatures, err := g.createAppFeatureResources(ctx, svc, app)
 		if err != nil {
 			return fmt.Errorf("Error creating app feature resources: %w", err)
 		}
@@ -146,12 +146,12 @@ func (g AppGenerator) getSettableConfigVars(appID string) (map[string]string, er
 	return output, nil
 }
 
-func (g AppGenerator) createAppFeatureResources(ctx context.Context, svc *heroku.Service, appID string) ([]terraformutils.Resource, error) {
+func (g AppGenerator) createAppFeatureResources(ctx context.Context, svc *heroku.Service, app heroku.App) ([]terraformutils.Resource, error) {
 	list := []heroku.AppFeature{}
 
-	appFeatures, err := svc.AppFeatureList(ctx, appID, &heroku.ListRange{Field: "id", Max: 1000})
+	appFeatures, err := svc.AppFeatureList(ctx, app.ID, &heroku.ListRange{Field: "id", Max: 1000})
 	if err != nil {
-		return []terraformutils.Resource{}, fmt.Errorf("Error listing for features for app '%s': %w", appID, err)
+		return []terraformutils.Resource{}, fmt.Errorf("Error listing for features for app '%s': %w", app.ID, err)
 	}
 	for _, appFeature := range appFeatures {
 		if appFeature.Enabled {
@@ -161,8 +161,8 @@ func (g AppGenerator) createAppFeatureResources(ctx context.Context, svc *heroku
 	var resources []terraformutils.Resource
 	for _, appFeature := range list {
 		resources = append(resources, terraformutils.NewSimpleResource(
-			fmt.Sprintf("%s:%s", appID, appFeature.Name),
-			appFeature.Name,
+			fmt.Sprintf("%s:%s", app.ID, appFeature.Name),
+			fmt.Sprintf("%s-%s", app.Name, appFeature.Name),
 			"heroku_app_feature",
 			"heroku",
 			[]string{}))
