@@ -1,6 +1,8 @@
 ### Use with Heroku
 
-Heroku organizes itself by teams and apps. This importer tool is designed to capture complete apps with all their dependent resources like addons, domains, etc.
+This utilizes [terraform-provider-heroku](https://registry.terraform.io/providers/heroku/heroku/latest).
+
+Heroku organizes itself by apps. This importer tool is designed to capture complete apps with all their dependent resources like addons, domains, etc.
 
 #### Apps by ID, Not Name
 
@@ -14,14 +16,20 @@ heroku apps:info --json --app=NAME
 
 When importing apps, their settable config vars (those not from add-ons) are added to the Terraform configuration as `config_vars`. These may contain secrets, and can manually be split into `sensitive_config_vars` before the plan/apply.
 
+#### Builds
+
+The imported configuration cannot build & launch apps in a new place. To launch apps that have been imported with Terraformer, one of the following is required:
+* source pushed to the new Heroku apps, `git push heroku master` from each app's repo
+* new apps added to an existing Heroku pipelines and promoted to, via the web dashbord or CLI
+* new apps connected for GitHub deployments, via the web dashboard
+* a [`heroku_build` resource](https://registry.terraform.io/providers/heroku/heroku/latest/docs/resources/build) added to the Terraform configuration.
+
 #### Example
 
 ```
 export HEROKU_API_KEY=<token>
 
 ./terraformer import heroku --resources=app --team=<name>
-./terraformer import heroku --resources=app --filter=app=<ID>
-
 ./terraformer import heroku --resources=app --filter=app=<ID>
 
 ./terraformer import heroku --resources=account_feature
@@ -37,8 +45,6 @@ Heroku Terraformer resources with the terraform-provider-heroku resources they i
     * `heroku_app_webhook`
     * `heroku_addon`
     * `heroku_addon_attachment` (includes attachments to other apps)
-*   `build`
-    * `heroku_build`
 *   `cert`
     * `heroku_cert`
 *   `domain`

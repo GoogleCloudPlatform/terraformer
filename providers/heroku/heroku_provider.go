@@ -57,7 +57,6 @@ func (p *HerokuProvider) GetSupportedService() map[string]terraformutils.Service
 	return map[string]terraformutils.ServiceGenerator{
 		"account_feature":   &AccountFeatureGenerator{},
 		"app":               &AppGenerator{},
-		"build":             &BuildGenerator{},
 		"cert":              &CertGenerator{},
 		"domain":            &DomainGenerator{},
 		"drain":             &DrainGenerator{},
