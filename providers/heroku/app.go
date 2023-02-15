@@ -136,6 +136,12 @@ func (g *AppGenerator) InitResources() error {
 			return fmt.Errorf("Error creating drain resources: %w", err)
 		}
 		g.Resources = append(g.Resources, drains...)
+
+		formations, err := g.createFormationResources(ctx, svc, app)
+		if err != nil {
+			return fmt.Errorf("Error creating formation resources: %w", err)
+		}
+		g.Resources = append(g.Resources, formations...)
 	}
 
 	return nil
@@ -314,6 +320,25 @@ func (g AppGenerator) createDrainResources(ctx context.Context, svc *heroku.Serv
 			fmt.Sprintf("%s:%s", app.ID, drain.ID),
 			fmt.Sprintf("%s-%s", app.Name, drain.ID),
 			"heroku_drain",
+			"heroku",
+			map[string]string{"app_id": app.ID},
+			[]string{},
+			map[string]interface{}{}))
+	}
+	return resources, nil
+}
+
+func (g AppGenerator) createFormationResources(ctx context.Context, svc *heroku.Service, app heroku.App) ([]terraformutils.Resource, error) {
+	formations, err := svc.FormationList(ctx, app.ID, &heroku.ListRange{Field: "id", Max: 1000})
+	if err != nil {
+		return []terraformutils.Resource{}, fmt.Errorf("Error listing formations for app '%s': %w", app.ID, err)
+	}
+	var resources []terraformutils.Resource
+	for _, formation := range formations {
+		resources = append(resources, terraformutils.NewResource(
+			formation.ID,
+			fmt.Sprintf("%s-%s", app.Name, formation.Type),
+			"heroku_formation",
 			"heroku",
 			map[string]string{"app_id": app.ID},
 			[]string{},
