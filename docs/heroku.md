@@ -22,7 +22,7 @@ export HEROKU_API_KEY=<token>
 ./terraformer import heroku --resources=app --team=<name>
 ./terraformer import heroku --resources=app --filter=app=<ID>
 
-./terraformer import heroku --resources=app,addon,addon_attachment --filter=app=<ID>
+./terraformer import heroku --resources=app,addon_attachment --filter=app=<ID>
 
 ./terraformer import heroku --resources=account_feature
 ```
@@ -31,9 +31,6 @@ Heroku Terraformer resources with the terraform-provider-heroku resources they i
 
 *   `account_feature`
     * `heroku_account_feature`
-*   `addon`
-    * `heroku_addon`
-    * requires `app` filter
 *   `addon_attachment`
     * `heroku_addon_attachment`
     * requires `app` filter
@@ -41,6 +38,7 @@ Heroku Terraformer resources with the terraform-provider-heroku resources they i
 *   `app`
     * `heroku_app`
     * `heroku_app_feature`
+    * `heroku_addon`
     * requires `--team` name or `app` filter
 *   `app_webhook`
     * `heroku_app_webhook`
