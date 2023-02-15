@@ -17,6 +17,7 @@ package heroku
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	heroku "github.com/heroku/heroku-go/v5"
@@ -123,6 +124,12 @@ func (g *AppGenerator) InitResources() error {
 			return fmt.Errorf("Error creating SSL resources: %w", err)
 		}
 		g.Resources = append(g.Resources, ssls...)
+
+		domains, err := g.createDomainResources(ctx, svc, app.ID)
+		if err != nil {
+			return fmt.Errorf("Error creating domain resources: %w", err)
+		}
+		g.Resources = append(g.Resources, domains...)
 	}
 
 	return nil
@@ -263,6 +270,25 @@ func (g AppGenerator) createSslResources(ctx context.Context, svc *heroku.Servic
 			sniEndpoint.ID,
 			sniEndpoint.Name,
 			"heroku_ssl",
+			"heroku",
+			map[string]string{"app_id": appID},
+			[]string{},
+			map[string]interface{}{}))
+	}
+	return resources, nil
+}
+
+func (g AppGenerator) createDomainResources(ctx context.Context, svc *heroku.Service, appID string) ([]terraformutils.Resource, error) {
+	domains, err := svc.DomainList(ctx, appID, &heroku.ListRange{Field: "id", Max: 1000})
+	if err != nil {
+		return []terraformutils.Resource{}, fmt.Errorf("Error listing domains for app '%s': %w", appID, err)
+	}
+	var resources []terraformutils.Resource
+	for _, domain := range domains {
+		resources = append(resources, terraformutils.NewResource(
+			domain.ID,
+			strings.ReplaceAll(domain.Hostname, ".", "-"),
+			"heroku_domain",
 			"heroku",
 			map[string]string{"app_id": appID},
 			[]string{},
