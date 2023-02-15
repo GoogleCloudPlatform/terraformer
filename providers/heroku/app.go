@@ -67,7 +67,7 @@ func (g *AppGenerator) InitResources() error {
 					if err != nil {
 						return fmt.Errorf("Error filtering apps by app '%s': %w", appID, err)
 					}
-					output = append(output, heroku.App{ID: app.ID, Name: app.Name})
+					output = append(output, *app)
 				}
 			}
 		}
@@ -119,7 +119,7 @@ func (g *AppGenerator) InitResources() error {
 		}
 		g.Resources = append(g.Resources, appWebooks...)
 
-		ssls, err := g.createSslResources(ctx, svc, app.ID)
+		ssls, err := g.createSslResources(ctx, svc, app)
 		if err != nil {
 			return fmt.Errorf("Error creating SSL resources: %w", err)
 		}
@@ -271,19 +271,27 @@ func (g AppGenerator) createAppWebhookResources(ctx context.Context, svc *heroku
 	return resources, nil
 }
 
-func (g AppGenerator) createSslResources(ctx context.Context, svc *heroku.Service, appID string) ([]terraformutils.Resource, error) {
-	sniEnpoints, err := svc.SniEndpointList(ctx, appID, &heroku.ListRange{Field: "id", Max: 1000})
+func (g AppGenerator) createSslResources(ctx context.Context, svc *heroku.Service, app heroku.App) ([]terraformutils.Resource, error) {
+	// When app is using automated certificate management, do not import this resource.
+	if app.Acm {
+		return []terraformutils.Resource{}, nil
+	}
+	sniEnpoints, err := svc.SniEndpointList(ctx, app.ID, &heroku.ListRange{Field: "id", Max: 1000})
 	if err != nil {
-		return []terraformutils.Resource{}, fmt.Errorf("Error listing SNI endpoints (SSL) for app '%s': %w", appID, err)
+		return []terraformutils.Resource{}, fmt.Errorf("Error listing SNI endpoints (SSL) for app '%s': %w", app.ID, err)
 	}
 	var resources []terraformutils.Resource
 	for _, sniEndpoint := range sniEnpoints {
+		// Empty domains indicates inactive endpoint, such as expired/past ACM cert
+		if len(sniEndpoint.Domains) < 1 {
+			continue
+		}
 		resources = append(resources, terraformutils.NewResource(
 			sniEndpoint.ID,
 			sniEndpoint.Name,
 			"heroku_ssl",
 			"heroku",
-			map[string]string{"app_id": appID},
+			map[string]string{"app_id": app.ID},
 			[]string{},
 			map[string]interface{}{}))
 	}
@@ -297,6 +305,9 @@ func (g AppGenerator) createDomainResources(ctx context.Context, svc *heroku.Ser
 	}
 	var resources []terraformutils.Resource
 	for _, domain := range domains {
+		if strings.HasSuffix(domain.Hostname, "herokuapp.com") {
+			continue
+		}
 		resources = append(resources, terraformutils.NewResource(
 			domain.ID,
 			strings.ReplaceAll(domain.Hostname, ".", "-"),
