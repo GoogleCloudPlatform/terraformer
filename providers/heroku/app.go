@@ -105,6 +105,12 @@ func (g *AppGenerator) InitResources() error {
 			return fmt.Errorf("Error creating app addon resources: %w", err)
 		}
 		g.Resources = append(g.Resources, addons...)
+
+		addonAttachments, err := g.createAddonAttachmentResources(ctx, svc, app.ID)
+		if err != nil {
+			return fmt.Errorf("Error creating app addon attachment resources: %w", err)
+		}
+		g.Resources = append(g.Resources, addonAttachments...)
 	}
 
 	return nil
@@ -180,6 +186,34 @@ func (g AppGenerator) createAddonResources(ctx context.Context, svc *heroku.Serv
 			addOn.ID,
 			addOn.Name,
 			"heroku_addon",
+			"heroku",
+			[]string{}))
+	}
+	return resources, nil
+}
+
+func (g AppGenerator) createAddonAttachmentResources(ctx context.Context, svc *heroku.Service, appID string) ([]terraformutils.Resource, error) {
+	list := []heroku.AddOnAttachment{}
+
+	appAddons, err := svc.AddOnListByApp(ctx, appID, &heroku.ListRange{Field: "id", Max: 1000})
+	if err != nil {
+		return []terraformutils.Resource{}, fmt.Errorf("Error listing addons by app '%s': %w", appID, err)
+	}
+	for _, addOn := range appAddons {
+		addonAttachments, err := svc.AddOnAttachmentListByAddOn(ctx, addOn.ID, &heroku.ListRange{Field: "id", Max: 1000})
+		if err != nil {
+			return []terraformutils.Resource{}, fmt.Errorf("Error listing addon attachments by addon '%s': %w", addOn.Name, err)
+		}
+		for _, attachment := range addonAttachments {
+			list = append(list, attachment)
+		}
+	}
+	var resources []terraformutils.Resource
+	for _, addOnAttachment := range list {
+		resources = append(resources, terraformutils.NewSimpleResource(
+			addOnAttachment.ID,
+			fmt.Sprintf("%s-%s", addOnAttachment.App.Name, addOnAttachment.Name),
+			"heroku_addon_attachment",
 			"heroku",
 			[]string{}))
 	}
