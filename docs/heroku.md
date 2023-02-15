@@ -34,10 +34,9 @@ Heroku Terraformer resources with the terraform-provider-heroku resources they i
 *   `app`
     * `heroku_app`
     * `heroku_app_feature`
+    * `heroku_app_webhook`
     * `heroku_addon`
     * `heroku_addon_attachment` (includes attachments to other apps)
-*   `app_webhook`
-    * `heroku_app_webhook`
 *   `build`
     * `heroku_build`
 *   `cert`

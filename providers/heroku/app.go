@@ -111,6 +111,12 @@ func (g *AppGenerator) InitResources() error {
 			return fmt.Errorf("Error creating app addon attachment resources: %w", err)
 		}
 		g.Resources = append(g.Resources, addonAttachments...)
+
+		appWebooks, err := g.createAppWebhookResources(ctx, svc, app.ID)
+		if err != nil {
+			return fmt.Errorf("Error creating app webhook resources: %w", err)
+		}
+		g.Resources = append(g.Resources, appWebooks...)
 	}
 
 	return nil
@@ -216,6 +222,26 @@ func (g AppGenerator) createAddonAttachmentResources(ctx context.Context, svc *h
 			"heroku_addon_attachment",
 			"heroku",
 			[]string{}))
+	}
+	return resources, nil
+}
+
+func (g AppGenerator) createAppWebhookResources(ctx context.Context, svc *heroku.Service, appID string) ([]terraformutils.Resource, error) {
+
+	appWebhooks, err := svc.AppWebhookList(ctx, appID, &heroku.ListRange{Field: "id", Max: 1000})
+	if err != nil {
+		return []terraformutils.Resource{}, fmt.Errorf("Error webhooks for app '%s': %w", appID, err)
+	}
+	var resources []terraformutils.Resource
+	for _, appWebhook := range appWebhooks {
+		resources = append(resources, terraformutils.NewResource(
+			appWebhook.ID,
+			appWebhook.ID,
+			"heroku_app_webhook",
+			"heroku",
+			map[string]string{"app_id": appID},
+			[]string{},
+			map[string]interface{}{}))
 	}
 	return resources, nil
 }
