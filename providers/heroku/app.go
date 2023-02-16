@@ -101,19 +101,19 @@ func (g *AppGenerator) InitResources() error {
 		}
 		g.Resources = append(g.Resources, appFeatures...)
 
-		addons, err := g.createAddonResources(ctx, svc, app.ID)
+		addons, err := g.createAddonResources(ctx, svc, app)
 		if err != nil {
 			return fmt.Errorf("Error creating app addon resources: %w", err)
 		}
 		g.Resources = append(g.Resources, addons...)
 
-		addonAttachments, err := g.createAddonAttachmentResources(ctx, svc, app.ID)
+		addonAttachments, err := g.createAddonAttachmentResources(ctx, svc, app)
 		if err != nil {
 			return fmt.Errorf("Error creating app addon attachment resources: %w", err)
 		}
 		g.Resources = append(g.Resources, addonAttachments...)
 
-		appWebooks, err := g.createAppWebhookResources(ctx, svc, app.ID)
+		appWebooks, err := g.createAppWebhookResources(ctx, svc, app)
 		if err != nil {
 			return fmt.Errorf("Error creating app webhook resources: %w", err)
 		}
@@ -125,7 +125,7 @@ func (g *AppGenerator) InitResources() error {
 		}
 		g.Resources = append(g.Resources, ssls...)
 
-		domains, err := g.createDomainResources(ctx, svc, app.ID)
+		domains, err := g.createDomainResources(ctx, svc, app)
 		if err != nil {
 			return fmt.Errorf("Error creating domain resources: %w", err)
 		}
@@ -191,44 +191,52 @@ func (g AppGenerator) createAppFeatureResources(ctx context.Context, svc *heroku
 	}
 	var resources []terraformutils.Resource
 	for _, appFeature := range list {
-		resources = append(resources, terraformutils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewResource(
 			fmt.Sprintf("%s:%s", app.ID, appFeature.Name),
 			fmt.Sprintf("%s-%s", app.Name, appFeature.Name),
 			"heroku_app_feature",
 			"heroku",
-			[]string{}))
+			map[string]string{"app_id": app.ID},
+			[]string{},
+			map[string]interface{}{
+				"app_id": fmt.Sprintf("${heroku_app.tfer--%s.id}", app.Name),
+			}))
 	}
 	return resources, nil
 }
 
-func (g AppGenerator) createAddonResources(ctx context.Context, svc *heroku.Service, appID string) ([]terraformutils.Resource, error) {
+func (g AppGenerator) createAddonResources(ctx context.Context, svc *heroku.Service, app heroku.App) ([]terraformutils.Resource, error) {
 	list := []heroku.AddOn{}
 
-	appAddons, err := svc.AddOnListByApp(ctx, appID, &heroku.ListRange{Field: "id", Max: 1000})
+	appAddons, err := svc.AddOnListByApp(ctx, app.ID, &heroku.ListRange{Field: "id", Max: 1000})
 	if err != nil {
-		return []terraformutils.Resource{}, fmt.Errorf("Error listing addons by app '%s': %w", appID, err)
+		return []terraformutils.Resource{}, fmt.Errorf("Error listing addons by app '%s': %w", app.ID, err)
 	}
 	for _, addOn := range appAddons {
 		list = append(list, addOn)
 	}
 	var resources []terraformutils.Resource
 	for _, addOn := range list {
-		resources = append(resources, terraformutils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewResource(
 			addOn.ID,
 			addOn.Name,
 			"heroku_addon",
 			"heroku",
-			[]string{}))
+			map[string]string{"app_id": app.ID},
+			[]string{},
+			map[string]interface{}{
+				"app_id": fmt.Sprintf("${heroku_app.tfer--%s.id}", app.Name),
+			}))
 	}
 	return resources, nil
 }
 
-func (g AppGenerator) createAddonAttachmentResources(ctx context.Context, svc *heroku.Service, appID string) ([]terraformutils.Resource, error) {
+func (g AppGenerator) createAddonAttachmentResources(ctx context.Context, svc *heroku.Service, app heroku.App) ([]terraformutils.Resource, error) {
 	list := []heroku.AddOnAttachment{}
 
-	appAddons, err := svc.AddOnListByApp(ctx, appID, &heroku.ListRange{Field: "id", Max: 1000})
+	appAddons, err := svc.AddOnListByApp(ctx, app.ID, &heroku.ListRange{Field: "id", Max: 1000})
 	if err != nil {
-		return []terraformutils.Resource{}, fmt.Errorf("Error listing addons by app '%s': %w", appID, err)
+		return []terraformutils.Resource{}, fmt.Errorf("Error listing addons by app '%s': %w", app.ID, err)
 	}
 	for _, addOn := range appAddons {
 		addonAttachments, err := svc.AddOnAttachmentListByAddOn(ctx, addOn.ID, &heroku.ListRange{Field: "id", Max: 1000})
@@ -241,21 +249,29 @@ func (g AppGenerator) createAddonAttachmentResources(ctx context.Context, svc *h
 	}
 	var resources []terraformutils.Resource
 	for _, addOnAttachment := range list {
-		resources = append(resources, terraformutils.NewSimpleResource(
+		resources = append(resources, terraformutils.NewResource(
 			addOnAttachment.ID,
 			fmt.Sprintf("%s-%s", addOnAttachment.App.Name, addOnAttachment.Name),
 			"heroku_addon_attachment",
 			"heroku",
-			[]string{}))
+			map[string]string{
+				"app_id":   addOnAttachment.App.ID,
+				"addon_id": addOnAttachment.Addon.ID,
+			},
+			[]string{},
+			map[string]interface{}{
+				"app_id":   fmt.Sprintf("${heroku_app.tfer--%s.id}", addOnAttachment.App.Name),
+				"addon_id": fmt.Sprintf("${heroku_addon.tfer--%s.id}", addOnAttachment.Addon.Name),
+			}))
 	}
 	return resources, nil
 }
 
-func (g AppGenerator) createAppWebhookResources(ctx context.Context, svc *heroku.Service, appID string) ([]terraformutils.Resource, error) {
+func (g AppGenerator) createAppWebhookResources(ctx context.Context, svc *heroku.Service, app heroku.App) ([]terraformutils.Resource, error) {
 
-	appWebhooks, err := svc.AppWebhookList(ctx, appID, &heroku.ListRange{Field: "id", Max: 1000})
+	appWebhooks, err := svc.AppWebhookList(ctx, app.ID, &heroku.ListRange{Field: "id", Max: 1000})
 	if err != nil {
-		return []terraformutils.Resource{}, fmt.Errorf("Error listing webhooks for app '%s': %w", appID, err)
+		return []terraformutils.Resource{}, fmt.Errorf("Error listing webhooks for app '%s': %w", app.ID, err)
 	}
 	var resources []terraformutils.Resource
 	for _, appWebhook := range appWebhooks {
@@ -264,9 +280,11 @@ func (g AppGenerator) createAppWebhookResources(ctx context.Context, svc *heroku
 			appWebhook.ID,
 			"heroku_app_webhook",
 			"heroku",
-			map[string]string{"app_id": appID},
+			map[string]string{"app_id": app.ID},
 			[]string{},
-			map[string]interface{}{}))
+			map[string]interface{}{
+				"app_id": fmt.Sprintf("${heroku_app.tfer--%s.id}", app.Name),
+			}))
 	}
 	return resources, nil
 }
@@ -293,15 +311,17 @@ func (g AppGenerator) createSslResources(ctx context.Context, svc *heroku.Servic
 			"heroku",
 			map[string]string{"app_id": app.ID},
 			[]string{},
-			map[string]interface{}{}))
+			map[string]interface{}{
+				"app_id": fmt.Sprintf("${heroku_app.tfer--%s.id}", app.Name),
+			}))
 	}
 	return resources, nil
 }
 
-func (g AppGenerator) createDomainResources(ctx context.Context, svc *heroku.Service, appID string) ([]terraformutils.Resource, error) {
-	domains, err := svc.DomainList(ctx, appID, &heroku.ListRange{Field: "id", Max: 1000})
+func (g AppGenerator) createDomainResources(ctx context.Context, svc *heroku.Service, app heroku.App) ([]terraformutils.Resource, error) {
+	domains, err := svc.DomainList(ctx, app.ID, &heroku.ListRange{Field: "id", Max: 1000})
 	if err != nil {
-		return []terraformutils.Resource{}, fmt.Errorf("Error listing domains for app '%s': %w", appID, err)
+		return []terraformutils.Resource{}, fmt.Errorf("Error listing domains for app '%s': %w", app.ID, err)
 	}
 	var resources []terraformutils.Resource
 	for _, domain := range domains {
@@ -313,9 +333,11 @@ func (g AppGenerator) createDomainResources(ctx context.Context, svc *heroku.Ser
 			strings.ReplaceAll(domain.Hostname, ".", "-"),
 			"heroku_domain",
 			"heroku",
-			map[string]string{"app_id": appID},
+			map[string]string{"app_id": app.ID},
 			[]string{},
-			map[string]interface{}{}))
+			map[string]interface{}{
+				"app_id": fmt.Sprintf("${heroku_app.tfer--%s.id}", app.Name),
+			}))
 	}
 	return resources, nil
 }
@@ -334,7 +356,9 @@ func (g AppGenerator) createDrainResources(ctx context.Context, svc *heroku.Serv
 			"heroku",
 			map[string]string{"app_id": app.ID},
 			[]string{},
-			map[string]interface{}{}))
+			map[string]interface{}{
+				"app_id": fmt.Sprintf("${heroku_app.tfer--%s.id}", app.Name),
+			}))
 	}
 	return resources, nil
 }
@@ -353,7 +377,9 @@ func (g AppGenerator) createFormationResources(ctx context.Context, svc *heroku.
 			"heroku",
 			map[string]string{"app_id": app.ID},
 			[]string{},
-			map[string]interface{}{}))
+			map[string]interface{}{
+				"app_id": fmt.Sprintf("${heroku_app.tfer--%s.id}", app.Name),
+			}))
 	}
 	return resources, nil
 }
