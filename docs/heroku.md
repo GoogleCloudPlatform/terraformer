@@ -9,7 +9,7 @@ Heroku organizes itself by apps. This importer tool is designed to capture compl
 Apps must be identified by ID (UUID). Even though some resources may import successfully when filtering by app name, apps themselves must be identified by ID. To get an app ID, use Heroku CLI to get the top-level `id` property:
 
 ```
-heroku apps:info --json --app=NAME
+heroku apps:info --json --app=<NAME>
 ```
 
 #### App Config Vars
@@ -26,12 +26,22 @@ The imported configuration cannot build & launch apps in a new place. To launch 
 
 #### Example
 
+✏️  *Please replace angle-bracketed* `<VALUES>` *with your specific values.*
+
 ```
 export HEROKU_API_KEY=<token>
 
-./terraformer import heroku --resources=app --team=<name>
-./terraformer import heroku --resources=app --filter=app=<ID>
+# All team's apps
+./terraformer import heroku --resources=app --team=<NAME>
 
+# Specific app(s), by UUID
+./terraformer import heroku --resources=app --filter=app=<ID>
+./terraformer import heroku --resources=app --filter=app=<ID>:<ID2>:<ID3>
+
+# Output directory
+./terraformer import heroku --resources=app --filter=app=<ID> --path-pattern='{output}/{provider}/<DIRECTORY NAME>'
+
+# All enabled features of HEROKU_API_KEY's Heroku account
 ./terraformer import heroku --resources=account_feature
 ```
 
