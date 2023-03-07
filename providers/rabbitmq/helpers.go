@@ -32,7 +32,7 @@ func normalizeResourceName(s string) string {
 		}),
 		precis.Norm(norm.NFC),
 	)
-	noWhiteSpacesString := strings.Replace(s, " ", "_", -1)
+	noWhiteSpacesString := strings.ReplaceAll(s, " ", "_")
 	normalizedLower, _ := normalize.String(strings.ToLower(noWhiteSpacesString))
 	r := strings.NewReplacer(" ", "_",
 		"!", "_",
@@ -71,5 +71,5 @@ func normalizeResourceName(s string) string {
 
 func percentEncodeSlashes(s string) string {
 	// Encode any percent signs, then encode any forward slashes.
-	return strings.Replace(strings.Replace(s, "%", "%25", -1), "/", "%2F", -1)
+	return strings.ReplaceAll(strings.ReplaceAll(s, "%", "%25"), "/", "%2F")
 }
