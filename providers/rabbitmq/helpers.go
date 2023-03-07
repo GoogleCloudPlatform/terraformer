@@ -32,7 +32,8 @@ func normalizeResourceName(s string) string {
 		}),
 		precis.Norm(norm.NFC),
 	)
-	normalizedLower, _ := normalize.String(strings.ToLower(s))
+	noWhiteSpacesString := strings.Replace(s, " ", "_", -1)
+	normalizedLower, _ := normalize.String(strings.ToLower(noWhiteSpacesString))
 	r := strings.NewReplacer(" ", "_",
 		"!", "_",
 		"\"", "_",
