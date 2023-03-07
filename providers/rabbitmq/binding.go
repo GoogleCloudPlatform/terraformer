@@ -42,8 +42,8 @@ func (g BindingGenerator) createResources(bindings Bindings) []terraformutils.Re
 	var resources []terraformutils.Resource
 	for _, binding := range bindings {
 		resources = append(resources, terraformutils.NewResource(
-			fmt.Sprintf("%s/%s/%s/%s/%s", binding.Vhost, binding.Source, binding.Destination, binding.DestinationType, binding.PropertiesKey),
-			fmt.Sprintf("binding_%s_%s_%s_%s", normalizeResourceName(binding.Source), normalizeResourceName(binding.Vhost), normalizeResourceName(binding.Destination), normalizeResourceName(binding.DestinationType)),
+			fmt.Sprintf("%s/%s/%s/%s/%s", percentEncodeSlashes(binding.Vhost), binding.Source, binding.Destination, binding.DestinationType, binding.PropertiesKey),
+			fmt.Sprintf("binding_%s_%s_%s_%s_%s", normalizeResourceName(binding.Source), normalizeResourceName(binding.Vhost), normalizeResourceName(binding.Destination), normalizeResourceName(binding.DestinationType), normalizeResourceName(binding.PropertiesKey)),
 			"rabbitmq_binding",
 			"rabbitmq",
 			map[string]string{

@@ -67,3 +67,8 @@ func normalizeResourceName(s string) string {
 		"@", "_at_")
 	return r.Replace(normalizedLower)
 }
+
+func percentEncodeSlashes(s string) string {
+	// Encode any percent signs, then encode any forward slashes.
+	return strings.Replace(strings.Replace(s, "%", "%25", -1), "/", "%2F", -1)
+}
