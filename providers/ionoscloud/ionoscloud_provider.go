@@ -130,6 +130,7 @@ func (p *IonosCloudProvider) GetSupportedService() map[string]terraformutils.Ser
 		"networkloadbalancer_forwardingrule": &NetworkLoadBalancerForwardingRuleGenerator{},
 		"loadbalancer":                       &LoadBalancerGenerator{},
 		"natgateway_rule":                    &NATGatewayRuleGenerator{},
+		"certificate":                        &CertificateGenerator{},
 	}
 }
 
