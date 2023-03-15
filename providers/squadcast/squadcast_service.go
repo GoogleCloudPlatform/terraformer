@@ -78,6 +78,11 @@ func Request[TRes any](url string, token string, region string, isAuthenticated 
 	if err != nil {
 		return nil, err
 	}
+	if response.Meta != nil {
+		if response.Meta.Meta.Status >= 400 {
+			return nil, fmt.Errorf("Error: %s", response.Meta.Meta.Message)
+		}
+	}
 
 	return response.Data, nil
 }
