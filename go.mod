@@ -370,6 +370,8 @@ require (
 	github.com/mailru/easyjson v0.7.6 // indirect
 	github.com/manicminer/hamilton-autorest v0.2.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssm v1.0.617 // indirect
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tat v1.0.617 // indirect
 	k8s.io/kube-openapi v0.0.0-20220328201542-3ee0da9b0b42 // indirect
 	sigs.k8s.io/json v0.0.0-20211208200746-9f7c6b3444d2 // indirect
 )
@@ -383,15 +385,19 @@ require (
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn v1.0.392
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cfs v1.0.392
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.392
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.617
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm v1.0.392
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/es v1.0.392
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/gaap v1.0.392
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/mongodb v1.0.392
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/pts v1.0.604 // indirect
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/redis v1.0.392
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/scf v1.0.392
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.392
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tcaplusdb v1.0.392
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tcm v1.0.611 // indirect
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tem v1.0.604 // indirect
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vod v1.0.606 // indirect
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc v1.0.392
 )
 

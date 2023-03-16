@@ -111,6 +111,11 @@ func (p *TencentCloudProvider) GetSupportedService() map[string]terraformutils.S
 		"route_table":    &RouteTableGenerator{},
 		"nat_gateway":    &NatGatewayGenerator{},
 		"acl":            &ACLGenerator{},
+		"tem":            &TemGenerator{},
+		"pts":            &PtsGenerator{},
+		"vod":            &VodGenerator{},
+		"tat":            &TatGenerator{},
+		"ssm":            &SsmGenerator{},
 	}
 }
 
@@ -188,6 +193,10 @@ func (p *TencentCloudProvider) GetResourceConnections() map[string]map[string][]
 		},
 		"cbs": {
 			"cvm": []string{"instance_id", "id"},
+		},
+		"tem": {
+			"vpc":    []string{"vpc_id", "id"},
+			"subnet": []string{"subnet_id", "id"},
 		},
 	}
 }
