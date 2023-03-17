@@ -109,13 +109,15 @@ func (g *CloudFrontGenerator) PostConvertHook() error {
 				continue
 			}
 
-			if cachePolicy.InstanceState.Attributes["id"] == r.Item["default_cache_behavior"].([]interface{})[0].(map[string]interface{})["cache_policy_id"].(string) {
-				g.Resources[i].Item["default_cache_behavior"].([]interface{})[0].(map[string]interface{})["cache_policy_id"] = "${aws_cloudfront_cache_policy." + cachePolicy.ResourceName + ".id}"
+			if defaultCacheBehavior, ok := r.Item["default_cache_behavior"].([]interface{})[0].(map[string]interface{})["cache_policy_id"]; ok {
+				if defaultCacheBehavior.(string) == cachePolicy.InstanceState.Attributes["id"] {
+					g.Resources[i].Item["default_cache_behavior"].([]interface{})[0].(map[string]interface{})["cache_policy_id"] = "${aws_cloudfront_cache_policy." + cachePolicy.ResourceName + ".id}"
+				}
 			}
 
-			if r.Item["ordered_cache_behavior"] != nil {
-				for j, orderedCacheBehavior := range r.Item["ordered_cache_behavior"].([]interface{}) {
-					if orderedCacheBehavior.(map[string]interface{})["cache_policy_id"].(string) == cachePolicy.InstanceState.Attributes["id"] {
+			if orderedCacheBehavior, ok := r.Item["ordered_cache_behavior"].([]interface{}); ok {
+				for j, behavior := range orderedCacheBehavior {
+					if behavior, ok := behavior.(map[string]interface{})["cache_policy_id"]; ok && behavior.(string) == cachePolicy.InstanceState.Attributes["id"] {
 						g.Resources[i].Item["ordered_cache_behavior"].([]interface{})[j].(map[string]interface{})["cache_policy_id"] = "${aws_cloudfront_cache_policy." + cachePolicy.ResourceName + ".id}"
 					}
 				}
