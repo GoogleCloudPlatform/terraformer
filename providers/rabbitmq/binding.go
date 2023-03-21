@@ -26,11 +26,12 @@ type BindingGenerator struct {
 }
 
 type Binding struct {
-	Source          string `json:"source"`
-	Vhost           string `json:"vhost"`
-	Destination     string `json:"destination"`
-	DestinationType string `json:"destination_type"`
-	PropertiesKey   string `json:"properties_key"`
+	Source          string                 `json:"source"`
+	Vhost           string                 `json:"vhost"`
+	Destination     string                 `json:"destination"`
+	DestinationType string                 `json:"destination_type"`
+	PropertiesKey   string                 `json:"properties_key"`
+	Arguments       map[string]interface{} `json:"arguments"`
 }
 
 type Bindings []Binding
@@ -41,6 +42,10 @@ var BindingAdditionalFields = map[string]interface{}{}
 func (g BindingGenerator) createResources(bindings Bindings) []terraformutils.Resource {
 	var resources []terraformutils.Resource
 	for _, binding := range bindings {
+		argumentsJSON, err := json.Marshal(binding.Arguments)
+		if err == nil {
+			argumentsJSON = []byte("{}")
+		}
 		resources = append(resources, terraformutils.NewResource(
 			fmt.Sprintf("%s/%s/%s/%s/%s", percentEncodeSlashes(binding.Vhost), binding.Source, binding.Destination, binding.DestinationType, binding.PropertiesKey),
 			fmt.Sprintf("binding_%s_%s_%s_%s_%s", normalizeResourceName(binding.Source), normalizeResourceName(binding.Vhost), normalizeResourceName(binding.Destination), normalizeResourceName(binding.DestinationType), normalizeResourceName(binding.PropertiesKey)),
@@ -52,6 +57,7 @@ func (g BindingGenerator) createResources(bindings Bindings) []terraformutils.Re
 				"destination":      binding.Destination,
 				"destination_type": binding.DestinationType,
 				"properties_key":   binding.PropertiesKey,
+				"arguments_json":   string(argumentsJSON),
 			},
 			BindingAllowEmptyValues,
 			BindingAdditionalFields,
@@ -61,7 +67,7 @@ func (g BindingGenerator) createResources(bindings Bindings) []terraformutils.Re
 }
 
 func (g *BindingGenerator) InitResources() error {
-	body, err := g.generateRequest("/api/bindings?columns=source,vhost,destination,destination_type,properties_key")
+	body, err := g.generateRequest("/api/bindings?columns=source,vhost,destination,destination_type,properties_key,arguments")
 	if err != nil {
 		return err
 	}
