@@ -24,16 +24,16 @@ import (
 	"github.com/IBM-Cloud/bluemix-go/session"
 )
 
-// LogAnalysisGenerator ..
-type LogAnalysisGenerator struct {
+// CodeEngineGenerator ...
+type CodeEngineGenerator struct {
 	IBMService
 }
 
-// loadCloudMonitoring ..
-func (g LogAnalysisGenerator) loadCloudMonitoring(logID string, logName string) terraformutils.Resource {
+// loadCodeEngine ...
+func (g CodeEngineGenerator) loadCodeEngine(ceID string, ceName string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
-		logID,
-		normalizeResourceName(logName, true),
+		ceID,
+		normalizeResourceName(ceName, false),
 		"ibm_resource_instance",
 		"ibm",
 		[]string{})
@@ -41,12 +41,13 @@ func (g LogAnalysisGenerator) loadCloudMonitoring(logID string, logName string) 
 }
 
 // InitResources ...
-func (g *LogAnalysisGenerator) InitResources() error {
+func (g *CodeEngineGenerator) InitResources() error {
 	region := g.Args["region"].(string)
 	bmxConfig := &bluemix.Config{
 		BluemixAPIKey: os.Getenv("IC_API_KEY"),
 		Region:        region,
 	}
+
 	sess, err := session.New(bmxConfig)
 	if err != nil {
 		return err
@@ -62,21 +63,21 @@ func (g *LogAnalysisGenerator) InitResources() error {
 		return err
 	}
 
-	serviceID, err := catalogClient.ResourceCatalog().FindByName("logdna", true)
+	serviceID, err := catalogClient.ResourceCatalog().FindByName("codeengine", true)
 	if err != nil {
 		return err
 	}
 	query := controllerv2.ServiceInstanceQuery{
 		ServiceID: serviceID[0].ID,
 	}
-	logAnalysisInstances, err := controllerClient.ResourceServiceInstanceV2().ListInstances(query)
+	codeEngineInstances, err := controllerClient.ResourceServiceInstanceV2().ListInstances(query)
 	if err != nil {
 		return err
 	}
 
-	for _, logDNA := range logAnalysisInstances {
-		if logDNA.RegionID == region {
-			g.Resources = append(g.Resources, g.loadCloudMonitoring(logDNA.ID, logDNA.Name))
+	for _, ce := range codeEngineInstances {
+		if ce.RegionID == region {
+			g.Resources = append(g.Resources, g.loadCodeEngine(ce.ID, ce.Name))
 		}
 	}
 
