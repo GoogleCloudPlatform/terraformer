@@ -106,6 +106,9 @@ func (IonosCloudProvider) GetResourceConnections() map[string]map[string][]strin
 			"datacenter": []string{helpers.DcID, "id"},
 			"natgateway": []string{"natgateway_id", "id"},
 		},
+		"s3_key": {
+			"user": []string{helpers.UserId, "id"},
+		},
 	}
 }
 
@@ -132,6 +135,7 @@ func (p *IonosCloudProvider) GetSupportedService() map[string]terraformutils.Ser
 		"natgateway_rule":                    &NATGatewayRuleGenerator{},
 		"certificate":                        &CertificateGenerator{},
 		"private_crossconnect":               &PrivateCrossConnectGenerator{},
+		"s3_key":                             &S3KeyGenerator{},
 	}
 }
 
