@@ -42,8 +42,8 @@ var BindingAdditionalFields = map[string]interface{}{}
 func (g BindingGenerator) createResources(bindings Bindings) []terraformutils.Resource {
 	var resources []terraformutils.Resource
 	for _, binding := range bindings {
-		argumentsJSON, err := json.Marshal(binding.Arguments)
-		if err == nil {
+		argumentsJSON, errArgumentsJSON := json.Marshal(binding.Arguments)
+		if errArgumentsJSON != nil {
 			argumentsJSON = []byte("{}")
 		}
 		resources = append(resources, terraformutils.NewResource(
