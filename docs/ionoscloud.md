@@ -38,6 +38,7 @@ export IONOS_TOKEN="token"
 * [`certificate`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/certificate)
 * [`private_crossconnect`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/private_crossconnect)
 * [`s3_key`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/s3_key)
+* [`container_registry`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/container_registry)
 
 We allow only resources that provide valid terraform plans to be imported.
 If you do not see your resource in the tf plan, please enable TF_LOG=debug and check logs 

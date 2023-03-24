@@ -136,6 +136,7 @@ func (p *IonosCloudProvider) GetSupportedService() map[string]terraformutils.Ser
 		"certificate":                        &CertificateGenerator{},
 		"private_crossconnect":               &PrivateCrossConnectGenerator{},
 		"s3_key":                             &S3KeyGenerator{},
+		"container_registry":                 &ContainerRegistryGenerator{},
 	}
 }
 
