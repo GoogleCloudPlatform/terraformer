@@ -14,21 +14,21 @@ type CertificateGenerator struct {
 
 func (g *CertificateGenerator) InitResources() error {
 	client := g.generateClient()
-	cloudAPIClient := client.CertificateManagerAPIClient
+	certManagerAPIClient := client.CertificateManagerAPIClient
 	resourceType := "ionoscloud_certificate"
 
-	response, _, err := cloudAPIClient.CertificatesApi.CertificatesGet(context.TODO()).Execute()
+	response, _, err := certManagerAPIClient.CertificatesApi.CertificatesGet(context.TODO()).Execute()
 	if err != nil {
 		return err
 	}
 	if response.Items == nil {
-		log.Printf("[WARNING] 'nil' expected a response containing certificates but received 'nil' instead.")
+		log.Printf("[WARNING] expected a response containing certificates but received 'nil' instead.")
 		return nil
 	}
 	certificates := *response.Items
 	for _, certificate := range certificates {
 		if certificate.Properties == nil || certificate.Properties.Name == nil {
-			log.Printf("[WARNING] 'nil' values in the response for the certificate with ID %v, skipping this resource.\n", *certificate.Id)
+			log.Printf("[WARNING] 'nil' values in the response for the certificate with ID %v, skipping this resource.", *certificate.Id)
 			continue
 		}
 		g.Resources = append(g.Resources, terraformutils.NewResource(
