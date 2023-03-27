@@ -11,7 +11,7 @@ export MYRASEC_API_KEY=[MYRASEC_API_KEY]
 List of supported Myra Security services:
 * `domain`
   * `myrasec_domain`
-* `dns`
+* `dns_record`
   * `myrasec_dns_record`
 * `redirect`
   * `myrasec_redirect`
