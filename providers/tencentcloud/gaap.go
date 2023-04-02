@@ -396,7 +396,6 @@ func (g *GaapGenerator) loadCertificate(client *gaap.Client) error {
 			[]string{},
 			map[string]interface{}{},
 		)
-		resource.Item["content"] = ""
 		g.Resources = append(g.Resources, resource)
 	}
 
@@ -410,6 +409,8 @@ func (g *GaapGenerator) PostConvertHook() error {
 			delete(resource.Item, "realserver_certificate_id")
 		} else if resource.InstanceInfo.Type == "tencentcloud_gaap_layer7_listener" {
 			delete(resource.Item, "client_certificate_id")
+		} else if resource.InstanceInfo.Type == "tencentcloud_gaap_certificate" {
+			resource.Item["content"] = ""
 		}
 	}
 
