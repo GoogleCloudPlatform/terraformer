@@ -73,10 +73,10 @@ Filtering based on resource ID:
 
 ```bash
 # Import dashboard based on the dashboard ID
-./terraformer import datadog --resource=dashboard --filter=dashboard=some-id
+./terraformer import datadog --resources=dashboard --filter=dashboard=some-id
 
 # Import based on multiple resource IDs
- ./terraformer import datadog --resource=monitor --filter=monitor=id1:id2:id4
+ ./terraformer import datadog --resources=monitor --filter=monitor=id1:id2:id4
 ```
 
 Tag filters are order specific. For example, if your monitor has tags (in the order) `atag: atagvalue`, `foo:bar` but you filter for `--filter="Name=tags;Value='foo:bar'" --filter="Name=tags;Value='atag: atagvalue'"`, the monitor would not be imported.
