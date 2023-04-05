@@ -1,6 +1,6 @@
 # Use with Azure
 
-## Autentication
+## Authentication
 
 ### Supported Methods
 
@@ -42,7 +42,7 @@ export ARM_CLIENT_ID=[CLIENT_ID]
 export ARM_TENANT_ID=[TENANT_ID]
 export ARM_USE_OIDC=true
 
-# Using deprecated ADAL authentication for throubleshooting
+# Using deprecated ADAL authentication for troubleshooting
 export ARM_USE_ADAL=true
 
 ./terraformer import azure -r resource_group
