@@ -378,6 +378,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/medialive v1.24.2
 	github.com/ionos-cloud/sdk-go-cert-manager v1.0.0
 	github.com/ionos-cloud/sdk-go-container-registry v1.0.0
+	github.com/ionos-cloud/sdk-go-dataplatform v1.0.1
 	github.com/opalsecurity/opal-go v1.0.9
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/as v1.0.392
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cbs v1.0.392

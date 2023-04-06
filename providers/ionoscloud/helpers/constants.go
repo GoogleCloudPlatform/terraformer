@@ -9,13 +9,14 @@ const (
 
 // Config Constants
 const (
-	IonosDebug   = "IONOS_DEBUG"
-	Ionos        = "ionoscloud"
-	DcID         = "datacenter_id"
-	ServerID     = "server_id"
-	NicID        = "nic_id"
-	K8sClusterID = "k8s_cluster_id"
-	UserId       = "user_id"
+	IonosDebug            = "IONOS_DEBUG"
+	Ionos                 = "ionoscloud"
+	DataPlatformClusterID = "cluster_id"
+	DcID                  = "datacenter_id"
+	ServerID              = "server_id"
+	NicID                 = "nic_id"
+	K8sClusterID          = "k8s_cluster_id"
+	UserId                = "user_id"
 
 	UsernameArg = "username"
 	PasswordArg = "password"
