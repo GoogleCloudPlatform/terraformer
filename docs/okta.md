@@ -29,6 +29,7 @@ List of supported Okta services:
      * `okta_auth_server_scope`
      * `okta_auth_server_claim`
      * `okta_auth_server_policy`
+     * `okta_auth_server_policy_rule`
 *    `app`
      * `okta_app_auto_login`
      * `okta_app_basic_auth`
