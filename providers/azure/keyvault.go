@@ -74,7 +74,9 @@ func (g KeyVaultGenerator) createResourcesByResourceGroup(ctx context.Context, r
 
 func (g *KeyVaultGenerator) InitResources() error {
 	ctx := context.Background()
-	vaultsClient := keyvault.NewVaultsClient(g.Args["config"].(authentication.Config).SubscriptionID)
+	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	vaultsClient := keyvault.NewVaultsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 
 	vaultsClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 

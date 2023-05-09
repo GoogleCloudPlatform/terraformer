@@ -26,8 +26,8 @@ type ManagementLockGenerator struct {
 }
 
 func (az *ManagementLockGenerator) listResources() ([]locks.ManagementLockObject, error) {
-	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
-	client := locks.NewManagementLocksClient(subscriptionID)
+	subscriptionID, resourceGroup, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := locks.NewManagementLocksClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	var (
 		iterator locks.ManagementLockListResultIterator

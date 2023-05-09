@@ -37,6 +37,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [TencentCloud](/docs/tencentcloud.md)
         * [Vultr](/docs/vultr.md)
         * [Yandex Cloud](/docs/yandex.md)
+        * [Ionos Cloud](/docs/ionoscloud.md)
     * Infrastructure Software
         * [Kubernetes](/docs/kubernetes.md)
         * [OctopusDeploy](/docs/octopus.md)
@@ -288,6 +289,7 @@ Links to download Terraform Providers:
     * TencentCloud provider >1.50.0 - [here](https://releases.hashicorp.com/terraform-provider-tencentcloud/)
     * Vultr provider >1.0.5 - [here](https://releases.hashicorp.com/terraform-provider-vultr/)
     * Yandex provider >0.42.0 - [here](https://releases.hashicorp.com/terraform-provider-yandex/)
+    * Ionoscloud provider >6.3.3 - [here](https://github.com/ionos-cloud/terraform-provider-ionoscloud/releases)
 * Infrastructure Software
     * Kubernetes provider >=1.9.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
     * RabbitMQ provider >=1.1.0 - [here](https://releases.hashicorp.com/terraform-provider-rabbitmq/)

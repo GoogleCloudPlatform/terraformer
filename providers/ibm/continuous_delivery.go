@@ -33,7 +33,7 @@ type ContinuousDeliveryGenerator struct {
 func (g ContinuousDeliveryGenerator) loadContinuousDelivery(cdID string, cdName string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
 		cdID,
-		normalizeResourceName(cdName, false),
+		normalizeResourceName(cdName, true),
 		"ibm_resource_instance",
 		"ibm",
 		[]string{})

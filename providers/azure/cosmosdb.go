@@ -33,7 +33,8 @@ func (g *CosmosDBGenerator) listSQLDatabasesAndContainersBehind(resourceGroupNam
 	var resourcesContainer []terraformutils.Resource
 	ctx := context.Background()
 	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
-	SQLResourcesClient := documentdb.NewSQLResourcesClient(subscriptionID)
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	SQLResourcesClient := documentdb.NewSQLResourcesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	SQLResourcesClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	sqlDatabases, err := SQLResourcesClient.ListSQLDatabases(ctx, resourceGroupName, accountName)
@@ -81,7 +82,8 @@ func (g *CosmosDBGenerator) listTables(resourceGroupName string, accountName str
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
-	TableResourcesClient := documentdb.NewTableResourcesClient(subscriptionID)
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	TableResourcesClient := documentdb.NewTableResourcesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	TableResourcesClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	tables, err := TableResourcesClient.ListTables(ctx, resourceGroupName, accountName)
@@ -104,7 +106,8 @@ func (g *CosmosDBGenerator) listAndAddForDatabaseAccounts() ([]terraformutils.Re
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
-	DatabaseAccountsClient := documentdb.NewDatabaseAccountsClient(subscriptionID)
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	DatabaseAccountsClient := documentdb.NewDatabaseAccountsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	DatabaseAccountsClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	var (

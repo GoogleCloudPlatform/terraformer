@@ -30,13 +30,19 @@ type MonitoringGenerator struct {
 }
 
 // loadCloudMonitoring ...
-func (g MonitoringGenerator) loadCloudMonitoring(cdID string, cdName string) terraformutils.Resource {
-	resources := terraformutils.NewSimpleResource(
+func (g MonitoringGenerator) loadCloudMonitoring(cdID, cdName, service, region string) terraformutils.Resource {
+	resources := terraformutils.NewResource(
 		cdID,
-		normalizeResourceName(cdName, false),
+		normalizeResourceName(cdName, true),
 		"ibm_resource_instance",
 		"ibm",
-		[]string{})
+		map[string]string{
+			"name":     cdName,
+			"service":  service,
+			"location": region,
+		},
+		[]string{},
+		map[string]interface{}{})
 	return resources
 }
 
@@ -75,8 +81,8 @@ func (g *MonitoringGenerator) InitResources() error {
 	}
 
 	for _, cd := range continuousDeliveryInstances {
-		if cd.RegionID == region {
-			g.Resources = append(g.Resources, g.loadCloudMonitoring(cd.ID, cd.Name))
+		if cd.RegionID == region && cd.Name != "" {
+			g.Resources = append(g.Resources, g.loadCloudMonitoring(cd.ID, cd.Name, cd.ServiceName, cd.RegionID))
 		}
 	}
 

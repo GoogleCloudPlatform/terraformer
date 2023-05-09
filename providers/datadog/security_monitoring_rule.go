@@ -38,9 +38,17 @@ type SecurityMonitoringRuleGenerator struct {
 func (g *SecurityMonitoringRuleGenerator) createResources(rulesResponse []datadogV2.SecurityMonitoringRuleResponse) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	for _, rule := range rulesResponse {
-		if !rule.GetIsDefault() {
-			resourceName := rule.GetId()
-			resources = append(resources, g.createResource(resourceName, rule.GetIsEnabled()))
+		if rule.SecurityMonitoringSignalRuleResponse != nil {
+			if !rule.SecurityMonitoringSignalRuleResponse.GetIsDefault() {
+				resourceName := rule.SecurityMonitoringSignalRuleResponse.GetId()
+				resources = append(resources, g.createResource(resourceName, rule.SecurityMonitoringSignalRuleResponse.GetIsEnabled()))
+			}
+		}
+		if rule.SecurityMonitoringStandardRuleResponse != nil {
+			if !rule.SecurityMonitoringStandardRuleResponse.GetIsDefault() {
+				resourceName := rule.SecurityMonitoringStandardRuleResponse.GetId()
+				resources = append(resources, g.createResource(resourceName, rule.SecurityMonitoringStandardRuleResponse.GetIsEnabled()))
+			}
 		}
 	}
 
