@@ -47,6 +47,9 @@ func (g *APIGatewayGenerator) InitResources() error {
 	if err := g.loadUsagePlans(svc); err != nil {
 		return err
 	}
+	if err := g.loadAPIKeys(svc); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -64,7 +67,7 @@ func (g *APIGatewayGenerator) loadRestApis(svc *apigateway.Client) error {
 			}
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				*restAPI.Id,
-				*restAPI.Name,
+				*restAPI.Id+"_"+*restAPI.Name,
 				"aws_api_gateway_rest_api",
 				"aws",
 				apiGatewayAllowEmptyValues))
@@ -422,5 +425,25 @@ func (g *APIGatewayGenerator) loadUsagePlans(svc *apigateway.Client) error {
 				apiGatewayAllowEmptyValues))
 		}
 	}
+	return nil
+}
+
+func (g *APIGatewayGenerator) loadAPIKeys(svc *apigateway.Client) error {
+	p := apigateway.NewGetApiKeysPaginator(svc, &apigateway.GetApiKeysInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, apiKey := range page.Items {
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+				*apiKey.Id,
+				*apiKey.Name,
+				"aws_api_gateway_api_key",
+				"aws",
+				apiGatewayAllowEmptyValues))
+		}
+	}
+
 	return nil
 }

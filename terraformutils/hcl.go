@@ -55,7 +55,9 @@ func sortHclTree(tree interface{}) {
 }
 
 // sanitizer fixes up an invalid HCL AST, as produced by the HCL parser for JSON
-type astSanitizer struct{}
+type astSanitizer struct {
+	sort bool
+}
 
 // output prints creates b printable HCL output and returns it.
 func (v *astSanitizer) visit(n interface{}) {
@@ -64,7 +66,9 @@ func (v *astSanitizer) visit(n interface{}) {
 		v.visit(t.Node)
 	case *ast.ObjectList:
 		var index int
-		sortHclTree(t.Items)
+		if v.sort {
+			sortHclTree(t.Items)
+		}
 		for {
 			if index == len(t.Items) {
 				break
@@ -77,9 +81,13 @@ func (v *astSanitizer) visit(n interface{}) {
 		v.visitObjectItem(t)
 	case *ast.LiteralType:
 	case *ast.ListType:
-		sortHclTree(t.List)
+		if v.sort {
+			sortHclTree(t.List)
+		}
 	case *ast.ObjectType:
-		sortHclTree(t.List)
+		if v.sort {
+			sortHclTree(t.List)
+		}
 		v.visit(t.List)
 	default:
 		fmt.Printf(" unknown type: %T\n", n)
@@ -98,6 +106,9 @@ func (v *astSanitizer) visitObjectItem(o *ast.ObjectItem) {
 						safe = false
 						break
 					}
+				}
+				if strings.HasPrefix(v, "--") { // if the key starts with "--", we must quote it. Seen in aws_glue_job.default_arguments parameter
+					v = fmt.Sprintf(`"%s"`, v)
 				}
 				if safe {
 					k.Token.Text = v
@@ -149,17 +160,17 @@ func (v *astSanitizer) visitObjectItem(o *ast.ObjectItem) {
 	v.visit(o.Val)
 }
 
-func Print(data interface{}, mapsObjects map[string]struct{}, format string) ([]byte, error) {
+func Print(data interface{}, mapsObjects map[string]struct{}, format string, sort bool) ([]byte, error) {
 	switch format {
 	case "hcl":
-		return hclPrint(data, mapsObjects)
+		return hclPrint(data, mapsObjects, sort)
 	case "json":
 		return jsonPrint(data)
 	}
 	return []byte{}, errors.New("error: unknown output format")
 }
 
-func hclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error) {
+func hclPrint(data interface{}, mapsObjects map[string]struct{}, sort bool) ([]byte, error) {
 	dataBytesJSON, err := jsonPrint(data)
 	if err != nil {
 		return dataBytesJSON, err
@@ -171,6 +182,7 @@ func hclPrint(data interface{}, mapsObjects map[string]struct{}) ([]byte, error)
 		return []byte{}, fmt.Errorf("error parsing terraform json: %v", err)
 	}
 	var sanitizer astSanitizer
+	sanitizer.sort = sort
 	sanitizer.visit(nodes)
 
 	var b bytes.Buffer
@@ -237,17 +249,22 @@ func terraform12Adjustments(formatted []byte, mapsObjects map[string]struct{}) [
 func terraform13Adjustments(formatted []byte) []byte {
 	s := string(formatted)
 	requiredProvidersRe := regexp.MustCompile("required_providers \".*\" {")
-	oldRequiredProviders := "\"required_providers\""
-	newRequiredProviders := "required_providers"
+	endBraceRe := regexp.MustCompile(`^\s*}`)
 	lines := strings.Split(s, "\n")
 	for i, line := range lines {
 		if requiredProvidersRe.MatchString(line) {
 			parts := strings.Split(strings.TrimSpace(line), " ")
 			provider := strings.ReplaceAll(parts[1], "\"", "")
-			lines[i] = "\t" + newRequiredProviders + " {"
-			lines[i+1] = "\t\t" + provider + " = {\n\t" + lines[i+1] + "\n\t\t}"
+			lines[i] = "\trequired_providers {"
+			var innerBlock []string
+			inner := i + 1
+			for ; !endBraceRe.MatchString(lines[inner]); inner++ {
+				innerBlock = append(innerBlock, "\t"+lines[inner])
+			}
+			lines[i+1] = "\t\t" + provider + " = {\n" + strings.Join(innerBlock, "\n") + "\n\t\t}"
+			lines = append(lines[:i+2], lines[inner:]...)
+			break
 		}
-		lines[i] = strings.Replace(lines[i], oldRequiredProviders, newRequiredProviders, 1)
 	}
 	s = strings.Join(lines, "\n")
 	return []byte(s)
@@ -265,7 +282,7 @@ func TfSanitize(name string) string {
 }
 
 // Print hcl file from TerraformResource + provider
-func HclPrintResource(resources []Resource, providerData map[string]interface{}, output string) ([]byte, error) {
+func HclPrintResource(resources []Resource, providerData map[string]interface{}, output string, sort bool) ([]byte, error) {
 	resourcesByType := map[string]map[string]interface{}{}
 	mapsObjects := map[string]struct{}{}
 	indexRe := regexp.MustCompile(`\.[0-9]+`)
@@ -301,7 +318,7 @@ func HclPrintResource(resources []Resource, providerData map[string]interface{},
 	}
 	var err error
 
-	hclBytes, err := Print(data, mapsObjects, output)
+	hclBytes, err := Print(data, mapsObjects, output, sort)
 	if err != nil {
 		return []byte{}, err
 	}

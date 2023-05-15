@@ -22,22 +22,20 @@ import (
 	"os"
 	"strconv"
 
-	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
-	datadogV2 "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/zclconf/go-cty/cty"
 )
 
 type DatadogProvider struct { //nolint
 	terraformutils.Provider
-	apiKey          string
-	appKey          string
-	apiURL          string
-	validate        bool
-	authV1          context.Context
-	authV2          context.Context
-	datadogClientV1 *datadogV1.APIClient
-	datadogClientV2 *datadogV2.APIClient
+	apiKey        string
+	appKey        string
+	apiURL        string
+	validate      bool
+	auth          context.Context
+	datadogClient *datadog.APIClient
 }
 
 // Init check env params and initialize API Client
@@ -86,10 +84,10 @@ func (p *DatadogProvider) Init(args []string) error {
 	}
 
 	// Initialize the Datadog V1 API client
-	authV1 := context.WithValue(
+	auth := context.WithValue(
 		context.Background(),
-		datadogV1.ContextAPIKeys,
-		map[string]datadogV1.APIKey{
+		datadog.ContextAPIKeys,
+		map[string]datadog.APIKey{
 			"apiKeyAuth": {
 				Key: p.apiKey,
 			},
@@ -107,50 +105,17 @@ func (p *DatadogProvider) Init(args []string) error {
 			return fmt.Errorf(`missing protocol or host : %v`, p.apiURL)
 		}
 		// If api url is passed, set and use the api name and protocol on ServerIndex{1}
-		authV1 = context.WithValue(authV1, datadogV1.ContextServerIndex, 1)
-		authV1 = context.WithValue(authV1, datadogV1.ContextServerVariables, map[string]string{
+		auth = context.WithValue(auth, datadog.ContextServerIndex, 1)
+		auth = context.WithValue(auth, datadog.ContextServerVariables, map[string]string{
 			"name":     parsedAPIURL.Host,
 			"protocol": parsedAPIURL.Scheme,
 		})
 	}
-	configV1 := datadogV1.NewConfiguration()
-	datadogClientV1 := datadogV1.NewAPIClient(configV1)
+	configV1 := datadog.NewConfiguration()
+	datadogClient := datadog.NewAPIClient(configV1)
 
-	// Initialize the Datadog V2 API client
-	authV2 := context.WithValue(
-		context.Background(),
-		datadogV2.ContextAPIKeys,
-		map[string]datadogV2.APIKey{
-			"apiKeyAuth": {
-				Key: p.apiKey,
-			},
-			"appKeyAuth": {
-				Key: p.appKey,
-			},
-		},
-	)
-	if p.apiURL != "" {
-		parsedAPIURL, parseErr := url.Parse(p.apiURL)
-		if parseErr != nil {
-			return fmt.Errorf(`invalid API Url : %v`, parseErr)
-		}
-		if parsedAPIURL.Host == "" || parsedAPIURL.Scheme == "" {
-			return fmt.Errorf(`missing protocol or host : %v`, p.apiURL)
-		}
-		// If api url is passed, set and use the api name and protocol on ServerIndex{1}
-		authV2 = context.WithValue(authV2, datadogV2.ContextServerIndex, 1)
-		authV2 = context.WithValue(authV2, datadogV2.ContextServerVariables, map[string]string{
-			"name":     parsedAPIURL.Host,
-			"protocol": parsedAPIURL.Scheme,
-		})
-	}
-	configV2 := datadogV2.NewConfiguration()
-	datadogClientV2 := datadogV2.NewAPIClient(configV2)
-
-	p.authV1 = authV1
-	p.authV2 = authV2
-	p.datadogClientV1 = datadogClientV1
-	p.datadogClientV2 = datadogClientV2
+	p.auth = auth
+	p.datadogClient = datadogClient
 
 	return nil
 }
@@ -181,14 +146,12 @@ func (p *DatadogProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"api-key":         p.apiKey,
-		"app-key":         p.appKey,
-		"api-url":         p.apiURL,
-		"validate":        p.validate,
-		"authV1":          p.authV1,
-		"authV2":          p.authV2,
-		"datadogClientV1": p.datadogClientV1,
-		"datadogClientV2": p.datadogClientV2,
+		"api-key":       p.apiKey,
+		"app-key":       p.appKey,
+		"api-url":       p.apiURL,
+		"validate":      p.validate,
+		"auth":          p.auth,
+		"datadogClient": p.datadogClient,
 	})
 	return nil
 }
@@ -206,6 +169,7 @@ func (p *DatadogProvider) GetSupportedService() map[string]terraformutils.Servic
 		"logs_index":                           &LogsIndexGenerator{},
 		"logs_index_order":                     &LogsIndexOrderGenerator{},
 		"logs_integration_pipeline":            &LogsIntegrationPipelineGenerator{},
+		"logs_metric":                          &LogsMetricGenerator{},
 		"logs_pipeline_order":                  &LogsPipelineOrderGenerator{},
 		"integration_aws":                      &IntegrationAWSGenerator{},
 		"integration_aws_lambda_arn":           &IntegrationAWSLambdaARNGenerator{},

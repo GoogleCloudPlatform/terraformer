@@ -1,31 +1,54 @@
 # Use with Azure
 
-Supports [Azure CLI](https://www.terraform.io/docs/providers/azurerm/guides/azure_cli.html), [Service Principal with Client Certificate](https://www.terraform.io/docs/providers/azurerm/guides/service_principal_client_certificate.html), and [Service Principal with Client Secret](https://www.terraform.io/docs/providers/azurerm/guides/service_principal_client_secret.html).
+## Authentication
 
-## Example
+### Supported Methods
+
+- [Azure CLI](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/azure_cli)
+- [managed identities for Azure resources](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/managed_service_identity)
+- [Service Principal with Client Certificate](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_certificate)
+- [Service Principal with Client Secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret)
+- [Service Principal with Open ID Connect](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_oidc)
+
+### Examples
 
 ``` sh
 # Using Azure CLI (az login)
 export ARM_SUBSCRIPTION_ID=[SUBSCRIPTION_ID]
 
+# Using Managed identities for Azure resources
+export ARM_SUBSCRIPTION_ID=[SUBSCRIPTION_ID]
+export ARM_CLIENT_ID=[CLIENT_ID]  # only necessary for user assigned identity
+export ARM_TENANT_ID=[TENANT_ID]
+export ARM_USE_MSI=true
+export ARM_MSI_ENDPOINT=[ARM_MSI_ENDPOINT] # only necessary when the msi endpoint is different than the well-known one
+
 # Using Service Principal with Client Certificate
 export ARM_SUBSCRIPTION_ID=[SUBSCRIPTION_ID]
-export ARM_CLIENT_ID=[CLIENT_ID]
+export ARM_CLIENT_ID=[CLIENT_ID] # only necessary for user assigned identity
+export ARM_TENANT_ID=[TENANT_ID]
 export ARM_CLIENT_CERTIFICATE_PATH="/path/to/my/client/certificate.pfx"
 export ARM_CLIENT_CERTIFICATE_PASSWORD=[CLIENT_CERTIFICATE_PASSWORD]
-export ARM_TENANT_ID=[TENANT_ID]
 
-# Service Principal with Client Secret
+# Using Service Principal with Client Secret
 export ARM_SUBSCRIPTION_ID=[SUBSCRIPTION_ID]
 export ARM_CLIENT_ID=[CLIENT_ID]
-export ARM_CLIENT_SECRET=[CLIENT_SECRET]
 export ARM_TENANT_ID=[TENANT_ID]
+export ARM_CLIENT_SECRET=[CLIENT_SECRET]
+
+# Using Service Principal with Open ID Connect
+export ARM_SUBSCRIPTION_ID=[SUBSCRIPTION_ID]
+export ARM_CLIENT_ID=[CLIENT_ID]
+export ARM_TENANT_ID=[TENANT_ID]
+export ARM_USE_OIDC=true
+
+# Using deprecated ADAL authentication for throubleshooting
+export ARM_USE_ADAL=true
 
 ./terraformer import azure -r resource_group
 ./terraformer import azure -R my_resource_group -r virtual_network,resource_group
 ./terraformer import azure -r resource_group --filter=resource_group=/subscriptions/<Subscription id>/resourceGroups/<RGNAME>
 ```
-
 
 ## List of supported Azure resources
 

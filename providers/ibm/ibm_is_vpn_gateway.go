@@ -38,17 +38,15 @@ func (g VPNGatewayGenerator) createVPNGatewayResources(vpngwID, vpngwName string
 	return resources
 }
 
-func (g VPNGatewayGenerator) createVPNGatewayConnectionResources(vpngwID, vpngwConnectionID, vpngwConnectionName string, dependsOn []string) terraformutils.Resource {
+func (g VPNGatewayGenerator) createVPNGatewayConnectionResources(vpngwID, vpngwConnectionID, vpngwConnectionName string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", vpngwID, vpngwConnectionID),
 		normalizeResourceName(vpngwConnectionName, false),
-		"ibm_is_vpn_gateway_connections",
+		"ibm_is_vpn_gateway_connection",
 		"ibm",
 		map[string]string{},
 		[]string{},
-		map[string]interface{}{
-			"depends_on": dependsOn,
-		})
+		map[string]interface{}{})
 	return resources
 }
 
@@ -60,11 +58,13 @@ func (g *VPNGatewayGenerator) InitResources() error {
 		return fmt.Errorf("no API key set")
 	}
 
-	vpcurl := fmt.Sprintf("https://%s.iaas.cloud.ibm.com/v1", region)
+	isURL := GetVPCEndPoint(region)
+	iamURL := GetAuthEndPoint()
 	vpcoptions := &vpcv1.VpcV1Options{
-		URL: envFallBack([]string{"IBMCLOUD_IS_API_ENDPOINT"}, vpcurl),
+		URL: isURL,
 		Authenticator: &core.IamAuthenticator{
 			ApiKey: apiKey,
+			URL:    iamURL,
 		},
 	}
 	vpcclient, err := vpcv1.NewVpcV1(vpcoptions)
@@ -98,12 +98,7 @@ func (g *VPNGatewayGenerator) InitResources() error {
 
 	for _, gw := range allrecs {
 		vpngw := gw.(*vpcv1.VPNGateway)
-		var dependsOn []string
-
 		g.Resources = append(g.Resources, g.createVPNGatewayResources(*vpngw.ID, *vpngw.Name))
-		resourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
-		dependsOn = append(dependsOn,
-			"ibm_is_vpn_gateway."+resourceName)
 		listVPNGatewayConnectionsOptions := &vpcv1.ListVPNGatewayConnectionsOptions{
 			VPNGatewayID: vpngw.ID,
 		}
@@ -113,8 +108,26 @@ func (g *VPNGatewayGenerator) InitResources() error {
 		}
 		for _, connection := range vpngwConnections.Connections {
 			vpngwConnection := connection.(*vpcv1.VPNGatewayConnection)
-			g.Resources = append(g.Resources, g.createVPNGatewayConnectionResources(*vpngw.ID, *vpngwConnection.ID, *vpngwConnection.Name, dependsOn))
+			g.Resources = append(g.Resources, g.createVPNGatewayConnectionResources(*vpngw.ID, *vpngwConnection.ID, *vpngwConnection.Name))
 		}
 	}
+	return nil
+}
+
+func (g *VPNGatewayGenerator) PostConvertHook() error {
+	for i, con := range g.Resources {
+		if con.InstanceInfo.Type != "ibm_is_vpn_gateway_connection" {
+			continue
+		}
+		for _, vpn := range g.Resources {
+			if vpn.InstanceInfo.Type != "ibm_is_vpn_gateway" {
+				continue
+			}
+			if con.InstanceState.Attributes["vpn_gateway"] == vpn.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["vpn_gateway"] = "${ibm_is_vpn_gateway." + vpn.ResourceName + ".id}"
+			}
+		}
+	}
+
 	return nil
 }

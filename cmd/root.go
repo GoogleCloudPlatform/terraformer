@@ -48,22 +48,26 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdDigitalOceanImporter,
 		newCmdEquinixMetalImporter,
 		newCmdHerokuImporter,
+		newCmdLaunchDarklyImporter,
 		newCmdLinodeImporter,
 		newCmdOpenStackImporter,
 		newCmdTencentCloudImporter,
 		newCmdVultrImporter,
 		newCmdYandexImporter,
+		newCmdIonosCloudImporter,
 		// Infrastructure Software
 		newCmdKubernetesImporter,
 		newCmdOctopusDeployImporter,
 		newCmdRabbitMQImporter,
 		// Network
+		newCmdMyrasecImporter,
 		newCmdCloudflareImporter,
 		newCmdFastlyImporter,
 		newCmdNs1Importer,
 		newCmdPanosImporter,
 		// VCS
 		newCmdAzureDevOpsImporter,
+		newCmdAzureADImporter,
 		newCmdGithubImporter,
 		newCmdGitLabImporter,
 		// Monitoring & System Management
@@ -73,6 +77,8 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdGrafanaImporter,
 		newCmdPagerDutyImporter,
 		newCmdOpsgenieImporter,
+		newCmdHoneycombioImporter,
+		newCmdOpalImporter,
 		// Community
 		newCmdKeycloakImporter,
 		newCmdLogzioImporter,
@@ -83,6 +89,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdVaultImporter,
 		newCmdOktaImporter,
 		newCmdHashicupsImporter,
+		newCmdAuth0Importer,
 	}
 }
 
@@ -100,6 +107,7 @@ func providerGenerators() map[string]func() terraformutils.ProviderGenerator {
 		newEquinixMetalProvider,
 		newFastlyProvider,
 		newHerokuProvider,
+		newLaunchDarklyProvider,
 		newLinodeProvider,
 		newNs1Provider,
 		newOpenStackProvider,
@@ -110,15 +118,19 @@ func providerGenerators() map[string]func() terraformutils.ProviderGenerator {
 		newOctopusDeployProvider,
 		newRabbitMQProvider,
 		// Network
+		newMyrasecProvider,
 		newCloudflareProvider,
 		// VCS
 		newAzureDevOpsProvider,
+		newAzureADProvider,
 		newGitHubProvider,
 		newGitLabProvider,
 		// Monitoring & System Management
 		newDataDogProvider,
 		newNewRelicProvider,
 		newPagerDutyProvider,
+		newHoneycombioProvider,
+		newOpalProvider,
 		// Community
 		newKeycloakProvider,
 		newLogzioProvider,
@@ -129,6 +141,7 @@ func providerGenerators() map[string]func() terraformutils.ProviderGenerator {
 		newVaultProvider,
 		newOktaProvider,
 		newHashicupsProvider,
+		newAuth0Provider,
 	} {
 		list[providerGen().GetName()] = providerGen
 	}

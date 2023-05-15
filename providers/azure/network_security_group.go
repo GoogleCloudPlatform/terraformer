@@ -26,8 +26,8 @@ type NetworkSecurityGroupGenerator struct {
 }
 
 func (az *NetworkSecurityGroupGenerator) listResources() ([]network.SecurityGroup, error) {
-	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
-	client := network.NewSecurityGroupsClient(subscriptionID)
+	subscriptionID, resourceGroup, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := network.NewSecurityGroupsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	var (
 		iterator network.SecurityGroupListResultIterator
@@ -59,8 +59,8 @@ func (az *NetworkSecurityGroupGenerator) appendResource(resource *network.Securi
 }
 
 func (az *NetworkSecurityGroupGenerator) appendRules(parent *network.SecurityGroup, resourceGroupID *ResourceID) error {
-	subscriptionID, _, authorizer := az.getClientArgs()
-	client := network.NewSecurityRulesClient(subscriptionID)
+	subscriptionID, _, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := network.NewSecurityRulesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
 	iterator, err := client.ListComplete(ctx, resourceGroupID.ResourceGroup, *parent.Name)

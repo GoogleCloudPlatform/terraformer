@@ -19,7 +19,9 @@ func (g AppServiceGenerator) listApps() ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 
-	appServiceClient := web.NewAppsClient(g.Args["config"].(authentication.Config).SubscriptionID)
+	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	appServiceClient := web.NewAppsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	appServiceClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 	var (
 		appsIterator web.AppCollectionIterator

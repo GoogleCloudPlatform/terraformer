@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package azuredevpos
+package azuredevops
 
 import (
 	"errors"
@@ -82,7 +82,7 @@ func (p *AzureDevOpsProvider) GetSupportedService() map[string]terraformutils.Se
 func (p *AzureDevOpsProvider) InitService(serviceName string, verbose bool) error {
 	var isSupported bool
 	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
-		return errors.New("azuredevpos: " + serviceName + " not supported service")
+		return errors.New("azuredevops: " + serviceName + " not supported service")
 	}
 	p.Service = p.GetSupportedService()[serviceName]
 	p.Service.SetName(serviceName)

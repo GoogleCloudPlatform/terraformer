@@ -162,6 +162,20 @@ func TestNestedArrayWalkAndOverride(t *testing.T) {
 	}
 }
 
+func TestNestedMapWalkAndOverride(t *testing.T) {
+	structure := mapI("x", []interface{}{
+		mapI("y", mapI("z", "42")),
+	})
+	WalkAndOverride("z.y", "z", "newValue", structure)
+
+	expected := mapI("x", []interface{}{
+		mapI("y", mapI("z", "42")),
+	})
+	if !reflect.DeepEqual(structure, expected) {
+		t.Errorf("failed to set value")
+	}
+}
+
 func TestEmptyWalkAndCheckField(t *testing.T) {
 	structure := map[string]interface{}{}
 	value := WalkAndCheckField("attr1", structure)

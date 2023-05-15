@@ -1,4 +1,4 @@
-package azuredevpos
+package azuredevops
 
 import (
 	"context"

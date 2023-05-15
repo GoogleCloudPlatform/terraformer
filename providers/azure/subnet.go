@@ -26,10 +26,10 @@ type SubnetGenerator struct {
 }
 
 func (az *SubnetGenerator) lisSubnets() ([]network.Subnet, error) {
-	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
-	subnetClient := network.NewSubnetsClient(subscriptionID)
+	subscriptionID, resourceGroup, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	subnetClient := network.NewSubnetsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	subnetClient.Authorizer = authorizer
-	vnetClient := network.NewVirtualNetworksClient(subscriptionID)
+	vnetClient := network.NewVirtualNetworksClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	vnetClient.Authorizer = authorizer
 	var (
 		vnetIter   network.VirtualNetworkListResultIterator
@@ -119,8 +119,8 @@ func (az *SubnetGenerator) appendNatGateway(subnet *network.Subnet) {
 }
 
 func (az *SubnetGenerator) appendServiceEndpointPolicies() error {
-	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
-	client := network.NewServiceEndpointPoliciesClient(subscriptionID)
+	subscriptionID, resourceGroup, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := network.NewServiceEndpointPoliciesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	var (
 		iterator network.ServiceEndpointPolicyListResultIterator

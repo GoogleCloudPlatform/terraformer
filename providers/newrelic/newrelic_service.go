@@ -16,27 +16,13 @@ package newrelic
 
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	synthetics "github.com/dollarshaveclub/new-relic-synthetics-go"
-	newrelic "github.com/paultyng/go-newrelic/v4/api"
+	newrelic "github.com/newrelic/newrelic-client-go/newrelic"
 )
 
 type NewRelicService struct { //nolint
 	terraformutils.Service
 }
 
-func (s *NewRelicService) Client() (*newrelic.Client, error) {
-	client := newrelic.New(newrelic.Config{APIKey: s.GetArgs()["apiKey"].(string)})
-	return &client, nil
-}
-
-func (s *NewRelicService) InfraClient() (*newrelic.InfraClient, error) {
-	client := newrelic.NewInfraClient(newrelic.Config{APIKey: s.GetArgs()["apiKey"].(string), Debug: s.Verbose})
-	return &client, nil
-}
-
-func (s *NewRelicService) SyntheticsClient() (*synthetics.Client, error) {
-	conf := func(c *synthetics.Client) {
-		c.APIKey = s.GetArgs()["apiKey"].(string)
-	}
-	return synthetics.NewClient(conf)
+func (s *NewRelicService) Client() (*newrelic.NewRelic, error) {
+	return newrelic.New(newrelic.ConfigPersonalAPIKey(s.GetArgs()["apiKey"].(string)))
 }

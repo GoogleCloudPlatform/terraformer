@@ -22,6 +22,15 @@ terraformer import aws --resources=cloudfront --profile=prod
 ```
 In that case terraformer will not know with which region resources are associated with and will not assume any region. That scenario is useful in case of global resources (e.g. CloudFront distributions or Route 53 records) and when region is passed implicitly through environmental variables or metadata service.
 
+Examples to import other resources-
+
+ * Security Group-
+```
+terraformer import aws --resources=sg --regions=us-east-1
+```
+
+
+
 #### Supported services
 
 *   `accessanalyzer`
@@ -37,6 +46,7 @@ In that case terraformer will not know with which region resources are associate
     * `aws_lb_target_group_attachment`
 *   `api_gateway`
     * `aws_api_gateway_authorizer`
+    * `aws_api_gateway_api_key`
     * `aws_api_gateway_documentation_part`
     * `aws_api_gateway_gateway_response`
     * `aws_api_gateway_integration`
@@ -69,6 +79,7 @@ In that case terraformer will not know with which region resources are associate
     * `aws_cloudformation_stack_set_instance`
 *   `cloudfront`
     * `aws_cloudfront_distribution`
+    * `aws_cloudfront_cache_policy`
 *   `cloudhsm`
     * `aws_cloudhsm_v2_cluster`
     * `aws_cloudhsm_v2_hsm`
@@ -132,6 +143,7 @@ In that case terraformer will not know with which region resources are associate
     * `aws_eip`
 *   `eks`
     * `aws_eks_cluster`
+    * `aws_eks_node_group`
 *   `elasticache`
     * `aws_elasticache_cluster`
     * `aws_elasticache_parameter_group`
@@ -152,12 +164,13 @@ In that case terraformer will not know with which region resources are associate
 *   `firehose`
     * `aws_kinesis_firehose_delivery_stream`
 *   `glue`
-    * `glue_crawler`
+    * `aws_glue_crawler`
     * `aws_glue_catalog_database`
     * `aws_glue_catalog_table`
     * `aws_glue_job`
     * `aws_glue_trigger`
 *   `iam`
+    * `aws_iam_access_key`
     * `aws_iam_group`
     * `aws_iam_group_policy`
     * `aws_iam_group_policy_attachment`
@@ -188,12 +201,17 @@ In that case terraformer will not know with which region resources are associate
     * `aws_lambda_function`
     * `aws_lambda_function_event_invoke_config`
     * `aws_lambda_layer_version`
+    * `aws_lambda_permission`
 *   `logs`
     * `aws_cloudwatch_log_group`
 *   `media_package`
     * `aws_media_package_channel`
 *   `media_store`
     * `aws_media_store_container`
+*   `medialive`
+    * `aws_medialive_channel`
+    * `aws_medialive_input`
+    * `aws_medialive_input_security_group`
 *   `msk`
     * `aws_msk_cluster`
 *   `nacl`
@@ -222,10 +240,13 @@ In that case terraformer will not know with which region resources are associate
     * `aws_db_instance`
     * `aws_db_proxy`
     * `aws_db_cluster`
+    * `aws_db_cluster_snapshot`
     * `aws_db_parameter_group`
+    * `aws_db_snapshot`
     * `aws_db_subnet_group`
     * `aws_db_option_group`
     * `aws_db_event_subscription`
+    * `aws_rds_global_cluster`
 *   `resourcegroups`
     * `aws_resourcegroups_group`
 *   `route53`
@@ -272,6 +293,14 @@ In that case terraformer will not know with which region resources are associate
 *   `transit_gateway`
     * `aws_ec2_transit_gateway_route_table`
     * `aws_ec2_transit_gateway_vpc_attachment`
+*   `vpc`
+    * `aws_vpc`
+*   `vpc_peering`
+    * `aws_vpc_peering_connection`
+*   `vpn_connection`
+    * `aws_vpn_connection`
+*   `vpn_gateway`
+    * `aws_vpn_gateway`
 *   `waf`
     * `aws_waf_byte_match_set`
     * `aws_waf_geo_match_set`
@@ -298,14 +327,19 @@ In that case terraformer will not know with which region resources are associate
     * `aws_wafregional_sql_injection_match_set`
     * `aws_wafregional_web_acl`
     * `aws_wafregional_xss_match_set`
-*   `vpc`
-    * `aws_vpc`
-*   `vpc_peering`
-    * `aws_vpc_peering_connection`
-*   `vpn_connection`
-    * `aws_vpn_connection`
-*   `vpn_gateway`
-    * `aws_vpn_gateway`
+*   `wafv2_cloudfront`
+    * `aws_wafv2_ip_set`
+    * `aws_wafv2_regex_pattern_set`
+    * `aws_wafv2_rule_group`
+    * `aws_wafv2_web_acl`
+    * `aws_wafv2_web_acl_logging_configuration`
+*   `wafv2_regional`
+    * `aws_wafv2_ip_set`
+    * `aws_wafv2_regex_pattern_set`
+    * `aws_wafv2_rule_group`
+    * `aws_wafv2_web_acl`
+    * `aws_wafv2_web_acl_association`
+    * `aws_wafv2_web_acl_logging_configuration`
 *   `workspaces`
     * `aws_workspaces_directory`
     * `aws_workspaces_ip_group`
@@ -347,7 +381,7 @@ This command imports ec2 instance having name as Terraformer.
 ```
 terraformer import aws --resources=ec2_instance --filter="Name=id;Value=i-0xxxxxxxxx" --regions=us-east-1
 ```
-This command imports ec2 instance having insatnce-id as i-0xxxxxxxxx.
+This command imports ec2 instance having instance-id as i-0xxxxxxxxx.
 
 Due to fact API Gateway generates a lot of resources, it's possible to issue a filtering query to retrieve resources related to a given REST API by tags. To fetch resources related to a REST API resource with a tag `STAGE` and value `dev`, add parameter `--filter="Type=api_gateway_rest_api;Name=tags.STAGE;Value=dev"`.
 

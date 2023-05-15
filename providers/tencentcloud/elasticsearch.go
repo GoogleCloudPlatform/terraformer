@@ -1,4 +1,4 @@
-// Copyright 2021 The Terraformer Authors.
+// Copyright 2022 The Terraformer Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ func (g *EsGenerator) InitResources() error {
 
 	request := es.NewDescribeInstancesRequest()
 
-	var offset uint64 = 0
+	var offset uint64
 	var pageSize uint64 = 50
 	allInstances := make([]*es.InstanceInfo, 0)
 
@@ -68,5 +68,12 @@ func (g *EsGenerator) InitResources() error {
 		g.Resources = append(g.Resources, resource)
 	}
 
+	return nil
+}
+
+func (g *EsGenerator) PostConvertHook() error {
+	for i := range g.Resources {
+		g.Resources[i].Item["password"] = "test1234;"
+	}
 	return nil
 }

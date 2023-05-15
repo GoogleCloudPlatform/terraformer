@@ -18,7 +18,8 @@ import (
 	"context"
 	"fmt"
 
-	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV1"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -57,14 +58,15 @@ func (g *SyntheticsTestGenerator) createResource(syntheticsID string) terraformu
 // from each synthetics create 1 TerraformResource.
 // Need Synthetics ID as ID for terraform resource
 func (g *SyntheticsTestGenerator) InitResources() error {
-	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
-	authV1 := g.Args["authV1"].(context.Context)
+	datadogClient := g.Args["datadogClient"].(*datadog.APIClient)
+	auth := g.Args["auth"].(context.Context)
+	api := datadogV1.NewSyntheticsApi(datadogClient)
 
 	resources := []terraformutils.Resource{}
 	for _, filter := range g.Filter {
 		if filter.FieldPath == "id" && filter.IsApplicable("synthetics_test") {
 			for _, value := range filter.AcceptableValues {
-				syntheticsTest, _, err := datadogClientV1.SyntheticsApi.GetTest(authV1, value)
+				syntheticsTest, _, err := api.GetTest(auth, value)
 				if err != nil {
 					return err
 				}
@@ -79,7 +81,7 @@ func (g *SyntheticsTestGenerator) InitResources() error {
 		return nil
 	}
 
-	syntheticsTests, _, err := datadogClientV1.SyntheticsApi.ListTests(authV1)
+	syntheticsTests, _, err := api.ListTests(auth)
 	if err != nil {
 		return err
 	}
