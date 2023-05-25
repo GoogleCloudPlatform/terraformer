@@ -17,6 +17,7 @@ package heroku
 import (
 	"context"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -345,7 +346,8 @@ func (g AppGenerator) createDomainResources(ctx context.Context, svc *heroku.Ser
 func (g AppGenerator) createDrainResources(ctx context.Context, svc *heroku.Service, app heroku.App) ([]terraformutils.Resource, error) {
 	drains, err := svc.LogDrainList(ctx, app.ID, &heroku.ListRange{Field: "id", Max: 1000})
 	if err != nil {
-		return []terraformutils.Resource{}, fmt.Errorf("Error listing drains for app '%s': %w", app.ID, err)
+		log.Printf("skipping App Drains due to error: '%s': %w", app.ID, err)
+		return []terraformutils.Resource{}, nil
 	}
 	var resources []terraformutils.Resource
 	for _, drain := range drains {
