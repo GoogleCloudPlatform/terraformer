@@ -217,32 +217,18 @@ It's possible to combine `--compact` `--path-pattern` parameters together.
 
 ### Installation
 
+Both Terraformer and a Terraform provider plugin need to be installed.
+
+#### Terraformer
+
 From source:
 1.  Run `git clone <terraformer repo> && cd terraformer/`
 2.  Run `go mod download`
 3.  Run `go build -v` for all providers OR build with one provider
 `go run build/main.go {google,aws,azure,kubernetes,etc}`
-4.  Run ```terraform init``` against a ```versions.tf``` file to install the plugins required for your platform. For example, if you need plugins for the google provider, ```versions.tf``` should contain:
 
-```
-terraform {
-  required_providers {
-    google = {
-      source = "hashicorp/google"
-    }
-  }
-  required_version = ">= 0.13"
-}
-```
-Or alternatively
-
-*  Copy your Terraform provider's plugin(s) to folder
-    `~/.terraform.d/plugins/{darwin,linux}_amd64/`, as appropriate.
-
-From Releases:
-
+From releases:
 * Linux
-
 ```
 export PROVIDER={all,google,aws,kubernetes}
 curl -LO "https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | grep tag_name | cut -d '"' -f 4)/terraformer-${PROVIDER}-linux-amd64"
@@ -250,7 +236,6 @@ chmod +x terraformer-${PROVIDER}-linux-amd64
 sudo mv terraformer-${PROVIDER}-linux-amd64 /usr/local/bin/terraformer
 ```
 * MacOS
-
 ```
 export PROVIDER={all,google,aws,kubernetes}
 curl -LO "https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | grep tag_name | cut -d '"' -f 4)/terraformer-${PROVIDER}-darwin-amd64"
@@ -261,20 +246,31 @@ sudo mv terraformer-${PROVIDER}-darwin-amd64 /usr/local/bin/terraformer
 1. Install Terraform - https://www.terraform.io/downloads
 2. Download exe file for required provider from here - https://github.com/GoogleCloudPlatform/terraformer/releases
 3. Add the exe file path to path variable
-4. Create a folder and initialize the terraform provider and run terraformer commands from there
-   * For AWS -  refer https://learn.hashicorp.com/tutorials/terraform/aws-build?in=terraform/aws-get-started
 
-
-
-#### Using a package manager
-
-If you want to use a package manager:
-
+From a package manager:
 - [Homebrew](https://brew.sh/) users can use `brew install terraformer`.
 - [MacPorts](https://www.macports.org/) users can use `sudo port install terraformer`.
 - [Chocolatey](https://chocolatey.org/) users can use `choco install terraformer`.
 
-Links to download Terraform Providers:
+#### Terraform Providers
+
+Create a working folder and initialize the Terraform provider plugin.  This folder will be where you run Terraformer commands.
+
+Run ```terraform init``` against a ```versions.tf``` file to install the plugins required for your platform. For example, if you need plugins for the google provider, ```versions.tf``` should contain:
+```
+terraform {
+  required_providers {
+    google = {
+      source = "hashicorp/google"
+    }
+  }
+  required_version = ">= 0.13"
+}
+```
+
+Or, copy your Terraform provider's plugin(s) from the list below to folder `~/.terraform.d/plugins/`, as appropriate.
+
+Links to download Terraform provider plugins:
 * Major Cloud
     * Google Cloud provider >2.11.0 - [here](https://releases.hashicorp.com/terraform-provider-google/)
     * AWS provider >2.25.0 - [here](https://releases.hashicorp.com/terraform-provider-aws/)
