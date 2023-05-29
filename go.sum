@@ -1188,8 +1188,8 @@ github.com/onsi/gomega v1.13.0/go.mod h1:lRk9szgn8TxENtWd0Tp4c3wjlRfMTMH27I+3Je4
 github.com/onsi/gomega v1.17.0/go.mod h1:HnhC7FXeEQY45zxNK3PPoIUhzk/80Xly9PcubAlGdZY=
 github.com/onsi/gomega v1.19.0 h1:4ieX6qQjPP/BfC3mpsAtIGGlxTWPeA3Inl/7DtXw1tw=
 github.com/onsi/gomega v1.19.0/go.mod h1:LY+I3pBVzYsTBU1AnDwOSxaYi9WoWiqgwooUqq9yPro=
-github.com/opalsecurity/opal-go v1.0.9 h1:NlP3K15cpEYwtwHMnpp9TbzaLILUtcTm+OQax0a8p88=
-github.com/opalsecurity/opal-go v1.0.9/go.mod h1:bzD4vZIbH+lKhsX8NJ5ISNU2Xgm2qzjj6O9G2ycj58c=
+github.com/opalsecurity/opal-go v1.0.19 h1:w9JPghoq9ks3/Br/KC/9h8jiJVlY3JJ/k/imq/pMVd8=
+github.com/opalsecurity/opal-go v1.0.19/go.mod h1:G7QQIi36kI3kiTl/Dp8AvLDNoui9jqFOSUthcZ0aof4=
 github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
 github.com/opencontainers/go-digest v1.0.0/go.mod h1:0JzlMkj0TRzQZfJkVvzbP0HBR3IKzErnv2BNG4W4MAM=
 github.com/opencontainers/image-spec v1.0.1 h1:JMemWkRwHx4Zj+fVxWoMCFm/8sYGGrUVojFA6h/TRcI=
