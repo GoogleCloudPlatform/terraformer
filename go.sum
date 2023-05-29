@@ -383,6 +383,10 @@ github.com/aws/aws-sdk-go-v2/service/glue v1.34.1 h1:efK/gymVkMAu/ZPFtBhDr9XVdUw
 github.com/aws/aws-sdk-go-v2/service/glue v1.34.1/go.mod h1:kgD6fBlQEkhJlffBbS8SGYtpjboavr9e8B1ZouD84pY=
 github.com/aws/aws-sdk-go-v2/service/iam v1.3.0 h1:V95YLxbxLGlTcFR0KMMSZEaudIxYCAhycSGcO7/Favs=
 github.com/aws/aws-sdk-go-v2/service/iam v1.3.0/go.mod h1:gPUYT7MBEb30j9eAsJ17LN9KbXtD1uqKOOKesCC4tjc=
+github.com/aws/aws-sdk-go-v2/service/identitystore v1.16.5 h1:Mbz3LjbbVE6fFwYEYf2cJFcmFmIOZhSOyuTGYY0CzgQ=
+github.com/aws/aws-sdk-go-v2/service/identitystore v1.16.5/go.mod h1:ZMSJuu9//YKamgC3vArYkljfp2wjbtwdqYAwclNfhXY=
+github.com/aws/aws-sdk-go-v2/service/identitystore v1.16.6 h1:tzB5Y88Xb4//jybVjrk6ECAcUhCk1ZwV2NuBnpil+w0=
+github.com/aws/aws-sdk-go-v2/service/identitystore v1.16.6/go.mod h1:qdai9l1KfhYZ4J0HWFtN9KJ8pG+TwG9UxCHcdf0EdTE=
 github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.0.3 h1:iLFz4nrWkXMTFeVn0n99wRyc4Xib4SlDbtAM3h2z8P8=
 github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.0.3/go.mod h1:g3Xw4tO/W+ae4EMzkxB6nGnJ48cLM4i1Z61WmD+IKtY=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.0.5/go.mod h1:MW0O/RpmVpS6MWKn6W03XEJmqXlG7+d3iaYLzkd2fAc=
@@ -443,6 +447,8 @@ github.com/aws/aws-sdk-go-v2/service/ssm v1.33.0/go.mod h1:rEsqsZrOp9YvSGPOrcL3p
 github.com/aws/aws-sdk-go-v2/service/sso v1.1.4/go.mod h1:yQayEbOWH75NaKFylsFocBc3yanYEGndlOaH4i/Lvno=
 github.com/aws/aws-sdk-go-v2/service/sso v1.11.17 h1:pXxu9u2z1UqSbjO9YA8kmFJBhFc1EVTDaf7A+S+Ivq8=
 github.com/aws/aws-sdk-go-v2/service/sso v1.11.17/go.mod h1:mS5xqLZc/6kc06IpXn5vRxdLaED+jEuaSRv5BxtnsiY=
+github.com/aws/aws-sdk-go-v2/service/ssoadmin v1.16.5 h1:m6DSJuVmP10bjNecNFwMCrTwneQHrTTZYt6V2JY4wuA=
+github.com/aws/aws-sdk-go-v2/service/ssoadmin v1.16.5/go.mod h1:4lVMiqLgfjalSs/EcVjhmDk+lD9y1hvekcUzEYGsYc8=
 github.com/aws/aws-sdk-go-v2/service/sts v1.2.1/go.mod h1:L1LH5nHMXxdkKj057ZUx7Wi50CCrkZ+9jkTnBnY2j/w=
 github.com/aws/aws-sdk-go-v2/service/sts v1.16.13 h1:dl8T0PJlN92rvEGOEUiD0+YPYdPEaCZK0TqHukvSfII=
 github.com/aws/aws-sdk-go-v2/service/sts v1.16.13/go.mod h1:Ru3QVMLygVs/07UQ3YDur1AQZZp2tUNje8wfloFttC0=
