@@ -132,10 +132,7 @@ func (g *AppGenerator) InitResources() error {
 		}
 		g.Resources = append(g.Resources, domains...)
 
-		drains, err := g.createDrainResources(ctx, svc, app)
-		if err != nil {
-			return fmt.Errorf("Error creating drain resources: %w", err)
-		}
+		drains := g.createDrainResources(ctx, svc, app)
 		g.Resources = append(g.Resources, drains...)
 
 		formations, err := g.createFormationResources(ctx, svc, app)
@@ -343,11 +340,11 @@ func (g AppGenerator) createDomainResources(ctx context.Context, svc *heroku.Ser
 	return resources, nil
 }
 
-func (g AppGenerator) createDrainResources(ctx context.Context, svc *heroku.Service, app heroku.App) ([]terraformutils.Resource, error) {
+func (g AppGenerator) createDrainResources(ctx context.Context, svc *heroku.Service, app heroku.App) []terraformutils.Resource {
 	drains, err := svc.LogDrainList(ctx, app.ID, &heroku.ListRange{Field: "id", Max: 1000})
 	if err != nil {
-		log.Printf("skipping App Drains due to error: '%s': %w", app.ID, err)
-		return []terraformutils.Resource{}, nil
+		log.Printf("skipping App Drains due to error: '%s': %s", app.ID, err)
+		return []terraformutils.Resource{}
 	}
 	var resources []terraformutils.Resource
 	for _, drain := range drains {
@@ -362,7 +359,7 @@ func (g AppGenerator) createDrainResources(ctx context.Context, svc *heroku.Serv
 				"app_id": fmt.Sprintf("${heroku_app.tfer--%s.id}", app.Name),
 			}))
 	}
-	return resources, nil
+	return resources
 }
 
 func (g AppGenerator) createFormationResources(ctx context.Context, svc *heroku.Service, app heroku.App) ([]terraformutils.Resource, error) {
