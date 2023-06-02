@@ -43,13 +43,6 @@ func (g *APIGatewayV2Generator) InitResources() error {
 	if err := g.loadVpcLinks(svc); err != nil {
 		return err
 	}
-	if err := g.loadUsagePlans(svc); err != nil {
-		return err
-	}
-	if err := g.loadAPIKeys(svc); err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -254,13 +247,5 @@ func (g *APIGatewayV2Generator) loadVpcLinks(svc *apigatewayv2.ApiGatewayV2) err
 			apiGatewayAllowEmptyValues))
 	}
 
-	return nil
-}
-
-func (g *APIGatewayV2Generator) loadUsagePlans(svc *apigatewayv2.ApiGatewayV2) error {
-	return nil
-}
-
-func (g *APIGatewayV2Generator) loadAPIKeys(svc *apigatewayv2.ApiGatewayV2) error {
 	return nil
 }
