@@ -42,12 +42,31 @@ func (g *APIGatewayV2Generator) InitResources() error {
 }
 
 func (g *APIGatewayV2Generator) loadRestApis(svc *apigatewayv2.ApiGatewayV2) error {
-	result, err := svc.GetApis(&apigatewayv2.GetApisInput{})
+	output, err := svc.GetApis(&apigatewayv2.GetApisInput{})
 	if err != nil {
 		fmt.Println("Failed to list APIs:", err)
 		return err
 	}
-	for _, restAPI := range result.Items {
+
+	g.processRestApis(svc, output.Items)
+
+	for output.NextToken != nil {
+		output, err = svc.GetApis(&apigatewayv2.GetApisInput{
+			NextToken: output.NextToken,
+		})
+		if err != nil {
+			fmt.Println("Failed to list APIs:", err)
+			return err
+		}
+		g.processRestApis(svc, output.Items)
+
+	}
+
+	return nil
+}
+
+func (g *APIGatewayV2Generator) processRestApis(svc *apigatewayv2.ApiGatewayV2, output []*apigatewayv2.Api) error {
+	for _, restAPI := range output {
 		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			*restAPI.ApiId,
 			*restAPI.ApiId+"_"+*restAPI.Name,
@@ -81,8 +100,23 @@ func (g *APIGatewayV2Generator) loadStages(svc *apigatewayv2.ApiGatewayV2, restA
 	if err != nil {
 		return err
 	}
+	g.processStages(output.Items, restAPIID)
 
-	for _, stage := range output.Items {
+	for output.NextToken != nil {
+		output, err = svc.GetStages(&apigatewayv2.GetStagesInput{
+			NextToken: output.NextToken,
+		})
+		if err != nil {
+			return err
+		}
+		g.processStages(output.Items, restAPIID)
+	}
+
+	return nil
+}
+
+func (g *APIGatewayV2Generator) processStages(output []*apigatewayv2.Stage, restAPIID *string) error {
+	for _, stage := range output {
 		stageID := *restAPIID + "/" + StringValue(stage.StageName)
 		g.Resources = append(g.Resources, terraformutils.NewResource(
 			stageID,
@@ -109,8 +143,24 @@ func (g *APIGatewayV2Generator) loadModels(svc *apigatewayv2.ApiGatewayV2, restA
 	if err != nil {
 		return err
 	}
+	g.processModels(output.Items, restAPIID)
 
-	for _, model := range output.Items {
+	for output.NextToken != nil {
+		output, err = svc.GetModels(
+			&apigatewayv2.GetModelsInput{
+				NextToken: output.NextToken,
+			})
+		if err != nil {
+			return err
+		}
+		g.processModels(output.Items, restAPIID)
+	}
+
+	return nil
+}
+
+func (g *APIGatewayV2Generator) processModels(output []*apigatewayv2.Model, restAPIID *string) error {
+	for _, model := range output {
 
 		g.Resources = append(g.Resources, terraformutils.NewResource(
 			*model.ModelId,
@@ -129,6 +179,7 @@ func (g *APIGatewayV2Generator) loadModels(svc *apigatewayv2.ApiGatewayV2, restA
 	}
 	return nil
 }
+
 func (g *APIGatewayV2Generator) loadRoutes(svc *apigatewayv2.ApiGatewayV2, restAPIID *string) error {
 
 	output, err := svc.GetRoutes(
@@ -139,7 +190,25 @@ func (g *APIGatewayV2Generator) loadRoutes(svc *apigatewayv2.ApiGatewayV2, restA
 		return err
 	}
 
-	for _, route := range output.Items {
+	g.processRoutes(svc, output.Items, restAPIID)
+
+	for output.NextToken != nil {
+		output, err := svc.GetRoutes(
+			&apigatewayv2.GetRoutesInput{
+				NextToken: output.NextToken,
+			})
+		if err != nil {
+			return err
+		}
+
+		g.processRoutes(svc, output.Items, restAPIID)
+	}
+
+	return nil
+}
+
+func (g *APIGatewayV2Generator) processRoutes(svc *apigatewayv2.ApiGatewayV2, output []*apigatewayv2.Route, restAPIID *string) error {
+	for _, route := range output {
 
 		g.Resources = append(g.Resources, terraformutils.NewResource(
 			*route.RouteId,
@@ -171,8 +240,24 @@ func (g *APIGatewayV2Generator) loadResponses(svc *apigatewayv2.ApiGatewayV2, re
 	if err != nil {
 		return err
 	}
+	g.processResponses(output.Items, restAPIID, routeID)
 
-	for _, response := range output.Items {
+	for output.NextToken != nil {
+		output, err = svc.GetRouteResponses(
+			&apigatewayv2.GetRouteResponsesInput{
+				NextToken: output.NextToken,
+			})
+
+		if err != nil {
+			return err
+		}
+		g.processResponses(output.Items, restAPIID, routeID)
+	}
+
+	return nil
+}
+func (g *APIGatewayV2Generator) processResponses(output []*apigatewayv2.RouteResponse, restAPIID *string, routeID *string) error {
+	for _, response := range output {
 
 		g.Resources = append(g.Resources, terraformutils.NewResource(
 			*response.RouteResponseId,
@@ -189,7 +274,6 @@ func (g *APIGatewayV2Generator) loadResponses(svc *apigatewayv2.ApiGatewayV2, re
 		))
 
 	}
-
 	return nil
 }
 
@@ -202,8 +286,24 @@ func (g *APIGatewayV2Generator) loadAuthorizers(svc *apigatewayv2.ApiGatewayV2, 
 	if err != nil {
 		return err
 	}
+	g.processAuthorizers(output.Items, restAPIID)
 
-	for _, authoriser := range output.Items {
+	for output.NextToken != nil {
+		output, err = svc.GetAuthorizers(
+			&apigatewayv2.GetAuthorizersInput{
+				NextToken: output.NextToken,
+			})
+		if err != nil {
+			return err
+		}
+		g.processAuthorizers(output.Items, restAPIID)
+	}
+
+	return nil
+}
+
+func (g *APIGatewayV2Generator) processAuthorizers(output []*apigatewayv2.Authorizer, restAPIID *string) error {
+	for _, authoriser := range output {
 
 		g.Resources = append(g.Resources, terraformutils.NewResource(
 			*authoriser.AuthorizerId,
@@ -220,7 +320,6 @@ func (g *APIGatewayV2Generator) loadAuthorizers(svc *apigatewayv2.ApiGatewayV2, 
 		))
 
 	}
-
 	return nil
 }
 
@@ -231,8 +330,24 @@ func (g *APIGatewayV2Generator) loadVpcLinks(svc *apigatewayv2.ApiGatewayV2) err
 	if err != nil {
 		return err
 	}
+	g.processVpcLinks(output.Items)
 
-	for _, vpcLink := range output.Items {
+	for output.NextToken != nil {
+		output, err := svc.GetVpcLinks(
+			&apigatewayv2.GetVpcLinksInput{
+				NextToken: output.NextToken,
+			})
+		if err != nil {
+			return err
+		}
+		g.processVpcLinks(output.Items)
+	}
+
+	return nil
+}
+
+func (g *APIGatewayV2Generator) processVpcLinks(output []*apigatewayv2.VpcLink) error {
+	for _, vpcLink := range output {
 
 		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			*vpcLink.VpcLinkId,
@@ -241,6 +356,5 @@ func (g *APIGatewayV2Generator) loadVpcLinks(svc *apigatewayv2.ApiGatewayV2) err
 			"aws",
 			apiGatewayAllowEmptyValues))
 	}
-
 	return nil
 }
