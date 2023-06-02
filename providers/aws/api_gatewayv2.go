@@ -210,6 +210,33 @@ func (g *APIGatewayV2Generator) loadResponses(svc *apigatewayv2.ApiGatewayV2, re
 
 func (g *APIGatewayV2Generator) loadAuthorizers(svc *apigatewayv2.ApiGatewayV2, restAPIID *string) error {
 
+	output, err := svc.GetAuthorizers(
+		&apigatewayv2.GetAuthorizersInput{
+			ApiId: restAPIID,
+		})
+	if err != nil {
+		return err
+	}
+
+	for _, authoriser := range output.Items {
+		resourceID := *authoriser.AuthorizerId
+
+		g.Resources = append(g.Resources, terraformutils.NewResource(
+			resourceID,
+			resourceID,
+			"aws_apigatewayv2_authorizer",
+			"aws",
+			map[string]string{
+				"api_id":          *restAPIID,
+				"name":            StringValue(authoriser.Name),
+				"authorizer_type": *authoriser.AuthorizerType,
+			},
+			apiGatewayAllowEmptyValues,
+			map[string]interface{}{},
+		))
+
+	}
+
 	return nil
 }
 
