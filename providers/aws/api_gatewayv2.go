@@ -123,10 +123,10 @@ func (g *APIGatewayV2Generator) loadModels(svc *apigatewayv2.ApiGatewayV2, restA
 	}
 
 	for _, model := range output.Items {
-		resourceID := *model.ModelId
+
 		g.Resources = append(g.Resources, terraformutils.NewResource(
-			resourceID,
-			resourceID,
+			*model.ModelId,
+			*model.ModelId,
 			"aws_apigatewayv2_model",
 			"aws",
 			map[string]string{
@@ -152,11 +152,10 @@ func (g *APIGatewayV2Generator) loadRoutes(svc *apigatewayv2.ApiGatewayV2, restA
 	}
 
 	for _, route := range output.Items {
-		resourceID := *route.RouteId
 
 		g.Resources = append(g.Resources, terraformutils.NewResource(
-			resourceID,
-			resourceID,
+			*route.RouteId,
+			*route.RouteId,
 			"aws_apigatewayv2_route",
 			"aws",
 			map[string]string{
@@ -187,11 +186,9 @@ func (g *APIGatewayV2Generator) loadResponses(svc *apigatewayv2.ApiGatewayV2, re
 
 	for _, response := range output.Items {
 
-		resourceID := *response.RouteResponseId
-
 		g.Resources = append(g.Resources, terraformutils.NewResource(
-			resourceID,
-			resourceID,
+			*response.RouteResponseId,
+			*response.RouteResponseId,
 			"aws_apigatewayv2_route_response",
 			"aws",
 			map[string]string{
@@ -219,11 +216,10 @@ func (g *APIGatewayV2Generator) loadAuthorizers(svc *apigatewayv2.ApiGatewayV2, 
 	}
 
 	for _, authoriser := range output.Items {
-		resourceID := *authoriser.AuthorizerId
 
 		g.Resources = append(g.Resources, terraformutils.NewResource(
-			resourceID,
-			resourceID,
+			*authoriser.AuthorizerId,
+			*authoriser.AuthorizerId,
 			"aws_apigatewayv2_authorizer",
 			"aws",
 			map[string]string{
@@ -241,6 +237,23 @@ func (g *APIGatewayV2Generator) loadAuthorizers(svc *apigatewayv2.ApiGatewayV2, 
 }
 
 func (g *APIGatewayV2Generator) loadVpcLinks(svc *apigatewayv2.ApiGatewayV2) error {
+
+	output, err := svc.GetVpcLinks(
+		&apigatewayv2.GetVpcLinksInput{})
+	if err != nil {
+		return err
+	}
+
+	for _, vpcLink := range output.Items {
+
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+			*vpcLink.VpcLinkId,
+			*vpcLink.VpcLinkId,
+			"aws_apigatewayv2_vpc_link",
+			"aws",
+			apiGatewayAllowEmptyValues))
+	}
+
 	return nil
 }
 
