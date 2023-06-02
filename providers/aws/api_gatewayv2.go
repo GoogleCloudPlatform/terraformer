@@ -56,9 +56,39 @@ func (g *APIGatewayV2Generator) loadRestApis(svc *apigatewayv2.ApiGatewayV2) err
 			*restAPI.ApiId+"_"+*restAPI.Name,
 			"aws_apigatewayv2_api",
 			"aws",
-			apiGatewayAllowEmptyValues,
+			apiGatewayV2AllowEmptyValues,
 		))
+		if err := g.loadStages(svc, restAPI.ApiId); err != nil {
+			return err
+		}
 
+	}
+	return nil
+}
+
+func (g *APIGatewayV2Generator) loadStages(svc *apigatewayv2.ApiGatewayV2, restAPIID *string) error {
+
+	output, err := svc.GetStages(&apigatewayv2.GetStagesInput{
+		ApiId: restAPIID,
+	})
+	if err != nil {
+		return err
+	}
+
+	for _, stage := range output.Items {
+		stageID := *restAPIID + "/" + StringValue(stage.StageName)
+		g.Resources = append(g.Resources, terraformutils.NewResource(
+			stageID,
+			stageID,
+			"aws_api_gateway_stage",
+			"aws",
+			map[string]string{
+				"rest_api_id": *restAPIID,
+				"stage_name":  *stage.StageName,
+			},
+			apiGatewayAllowEmptyValues,
+			map[string]interface{}{},
+		))
 	}
 	return nil
 }
