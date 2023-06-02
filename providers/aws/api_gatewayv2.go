@@ -40,6 +40,15 @@ func (g *APIGatewayV2Generator) InitResources() error {
 	if err := g.loadRestApis(svc); err != nil {
 		return err
 	}
+	if err := g.loadVpcLinks(svc); err != nil {
+		return err
+	}
+	if err := g.loadUsagePlans(svc); err != nil {
+		return err
+	}
+	if err := g.loadAPIKeys(svc); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -59,6 +68,18 @@ func (g *APIGatewayV2Generator) loadRestApis(svc *apigatewayv2.ApiGatewayV2) err
 			apiGatewayV2AllowEmptyValues,
 		))
 		if err := g.loadStages(svc, restAPI.ApiId); err != nil {
+			return err
+		}
+		if err := g.loadModels(svc, restAPI.ApiId); err != nil {
+			return err
+		}
+		if err := g.loadRoutes(svc, restAPI.ApiId); err != nil {
+			return err
+		}
+		if err := g.loadDocumentationParts(svc, restAPI.ApiId); err != nil {
+			return err
+		}
+		if err := g.loadAuthorizers(svc, restAPI.ApiId); err != nil {
 			return err
 		}
 
@@ -90,5 +111,123 @@ func (g *APIGatewayV2Generator) loadStages(svc *apigatewayv2.ApiGatewayV2, restA
 			map[string]interface{}{},
 		))
 	}
+	return nil
+}
+
+func (g *APIGatewayV2Generator) loadModels(svc *apigatewayv2.ApiGatewayV2, restAPIID *string) error {
+
+	output, err := svc.GetModels(
+		&apigatewayv2.GetModelsInput{
+			ApiId: restAPIID,
+		})
+	if err != nil {
+		return err
+	}
+
+	for _, model := range output.Items {
+		resourceID := *model.ModelId
+		g.Resources = append(g.Resources, terraformutils.NewResource(
+			resourceID,
+			resourceID,
+			"aws_apigatewayv2_model",
+			"aws",
+			map[string]string{
+				"name":         StringValue(model.Name),
+				"content_type": StringValue(model.ContentType),
+				"schema":       StringValue(model.Schema),
+				"api_id":       StringValue(restAPIID),
+			},
+			apiGatewayAllowEmptyValues,
+			map[string]interface{}{},
+		))
+	}
+	return nil
+}
+func (g *APIGatewayV2Generator) loadRoutes(svc *apigatewayv2.ApiGatewayV2, restAPIID *string) error {
+
+	output, err := svc.GetRoutes(
+		&apigatewayv2.GetRoutesInput{
+			ApiId: restAPIID,
+		})
+	if err != nil {
+		return err
+	}
+
+	for _, route := range output.Items {
+		resourceID := *route.RouteId
+
+		g.Resources = append(g.Resources, terraformutils.NewResource(
+			resourceID,
+			resourceID,
+			"aws_apigatewayv2_route",
+			"aws",
+			map[string]string{
+				"api_id":    *restAPIID,
+				"route_key": *route.RouteKey,
+			},
+			apiGatewayAllowEmptyValues,
+			map[string]interface{}{},
+		))
+		if err := g.loadResponses(svc, restAPIID, route.RouteId); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (g *APIGatewayV2Generator) loadResponses(svc *apigatewayv2.ApiGatewayV2, restAPIID *string, routeID *string) error {
+
+	output, err := svc.GetRouteResponses(
+		&apigatewayv2.GetRouteResponsesInput{
+			ApiId:   restAPIID,
+			RouteId: routeID,
+		})
+
+	if err != nil {
+		return err
+	}
+
+	for _, response := range output.Items {
+
+		resourceID := *response.RouteResponseId
+
+		g.Resources = append(g.Resources, terraformutils.NewResource(
+			resourceID,
+			resourceID,
+			"aws_apigatewayv2_route_response",
+			"aws",
+			map[string]string{
+				"api_id":             *restAPIID,
+				"route_id":           *routeID,
+				"route_response_key": "$default",
+			},
+			apiGatewayAllowEmptyValues,
+			map[string]interface{}{},
+		))
+
+	}
+
+	return nil
+}
+
+func (g *APIGatewayV2Generator) loadDocumentationParts(svc *apigatewayv2.ApiGatewayV2, restAPIID *string) error {
+
+	return nil
+}
+
+func (g *APIGatewayV2Generator) loadAuthorizers(svc *apigatewayv2.ApiGatewayV2, restAPIID *string) error {
+
+	return nil
+}
+
+func (g *APIGatewayV2Generator) loadVpcLinks(svc *apigatewayv2.ApiGatewayV2) error {
+	return nil
+}
+
+func (g *APIGatewayV2Generator) loadUsagePlans(svc *apigatewayv2.ApiGatewayV2) error {
+	return nil
+}
+
+func (g *APIGatewayV2Generator) loadAPIKeys(svc *apigatewayv2.ApiGatewayV2) error {
 	return nil
 }
