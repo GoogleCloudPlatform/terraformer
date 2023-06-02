@@ -76,9 +76,7 @@ func (g *APIGatewayV2Generator) loadRestApis(svc *apigatewayv2.ApiGatewayV2) err
 		if err := g.loadRoutes(svc, restAPI.ApiId); err != nil {
 			return err
 		}
-		if err := g.loadDocumentationParts(svc, restAPI.ApiId); err != nil {
-			return err
-		}
+
 		if err := g.loadAuthorizers(svc, restAPI.ApiId); err != nil {
 			return err
 		}
@@ -206,11 +204,6 @@ func (g *APIGatewayV2Generator) loadResponses(svc *apigatewayv2.ApiGatewayV2, re
 		))
 
 	}
-
-	return nil
-}
-
-func (g *APIGatewayV2Generator) loadDocumentationParts(svc *apigatewayv2.ApiGatewayV2, restAPIID *string) error {
 
 	return nil
 }
