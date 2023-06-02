@@ -18,7 +18,6 @@ import (
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/apigatewayv2"
 )
@@ -31,11 +30,7 @@ type APIGatewayV2Generator struct {
 
 func (g *APIGatewayV2Generator) InitResources() error {
 
-	sess, e := session.NewSession(&aws.Config{})
-	if e != nil {
-		return e
-	}
-	svc := apigatewayv2.New(sess)
+	svc := apigatewayv2.New(session.Must(session.NewSession()))
 
 	if err := g.loadRestApis(svc); err != nil {
 		return err
