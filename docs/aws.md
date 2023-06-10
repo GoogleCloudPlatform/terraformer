@@ -247,7 +247,7 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_db_option_group`
     * `aws_db_event_subscription`
     * `aws_rds_global_cluster`
-* `redshift`
+*   `redshift`
     * `aws_redshift_cluster`
     * `aws_redshift_event_subscription`
     * `aws_redshift_parameter_group`
