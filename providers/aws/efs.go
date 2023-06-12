@@ -41,9 +41,6 @@ func (g *EfsGenerator) InitResources() error {
 	if err := g.loadAccessPoint(svc); err != nil {
 		return err
 	}
-	if err := g.loadMountTarget(svc); err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -99,26 +96,6 @@ POLICY`, escapedPolicy),
 				},
 				efsAllowEmptyValues,
 				map[string]interface{}{}))
-		}
-	}
-	return nil
-}
-
-func (g *EfsGenerator) loadMountTarget(svc *efs.Client) error {
-	p := efs.NewDescribeFileSystemsPaginator(svc, &efs.DescribeFileSystemsInput{})
-	for p.HasMorePages() {
-		page, err := p.NextPage(context.TODO())
-		if err != nil {
-			return err
-		}
-		for _, fileSystem := range page.FileSystems {
-			id := StringValue(fileSystem.FileSystemId)
-			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-				id,
-				id,
-				"aws_efs_file_system",
-				"aws",
-				efsAllowEmptyValues))
 		}
 	}
 	return nil
