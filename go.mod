@@ -349,6 +349,7 @@ require (
 	github.com/DataDog/datadog-api-client-go/v2 v2.11.0
 	github.com/Myra-Security-GmbH/myrasec-go/v2 v2.28.0
 	github.com/manicminer/hamilton v0.44.0
+	github.com/opalsecurity/opal-go v1.0.19
 	gopkg.in/ns1/ns1-go.v2 v2.6.5
 )
 
@@ -375,10 +376,12 @@ require (
 )
 
 require (
+	github.com/aws/aws-sdk-go-v2/service/identitystore v1.16.5
 	github.com/aws/aws-sdk-go-v2/service/medialive v1.24.2
 	github.com/ionos-cloud/sdk-go-cert-manager v1.0.0
 	github.com/ionos-cloud/sdk-go-container-registry v1.0.0
 	github.com/ionos-cloud/sdk-go-dataplatform v1.0.1
+	github.com/aws/aws-sdk-go-v2/service/ssoadmin v1.16.5
 	github.com/opalsecurity/opal-go v1.0.9
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/as v1.0.392
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cbs v1.0.392
