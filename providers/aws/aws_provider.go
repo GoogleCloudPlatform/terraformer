@@ -92,6 +92,12 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 			"subnet": []string{"subnets", "id"},
 		},
 		"igw": {"vpc": []string{"vpc_id", "id"}},
+		"identitystore": {
+			"identitystore": []string{
+				"group_id", "id",
+				"member_id", "id",
+			},
+		},
 		"msk": {
 			"subnet": []string{"broker_node_group_info.client_subnets", "id"},
 			"sg":     []string{"broker_node_group_info.security_groups", "id"},
@@ -274,6 +280,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"firehose":          &AwsFacade{service: &FirehoseGenerator{}},
 		"glue":              &AwsFacade{service: &GlueGenerator{}},
 		"iam":               &AwsFacade{service: &IamGenerator{}},
+		"identitystore":     &AwsFacade{service: &IdentityStoreGenerator{}},
 		"igw":               &AwsFacade{service: &IgwGenerator{}},
 		"iot":               &AwsFacade{service: &IotGenerator{}},
 		"kinesis":           &AwsFacade{service: &KinesisGenerator{}},

@@ -68,3 +68,7 @@ $ terraform plan # No changes. Your infrastructure matches the configuration.
     * `opal_resource`
 *   `group`
     * `opal_group`
+*   `on_call_schedules`
+    * `opal_on_call_schedules`
+*   `message_channels`
+    * `opal_message_channels`
