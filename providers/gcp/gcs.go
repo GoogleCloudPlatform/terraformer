@@ -74,28 +74,7 @@ func (g *GcsGenerator) createBucketsResources(ctx context.Context, gcsService *s
 				GcsAllowEmptyValues,
 				GcsAdditionalFields,
 			))
-			resources = append(resources, terraformutils.NewResource(
-				bucket.Name,
-				bucket.Name,
-				"google_storage_bucket_iam_binding",
-				g.ProviderName,
-				map[string]string{
-					"bucket": bucket.Name,
-				},
-				GcsAllowEmptyValues,
-				GcsAdditionalFields,
-			))
-			resources = append(resources, terraformutils.NewResource(
-				bucket.Name,
-				bucket.Name,
-				"google_storage_bucket_iam_member",
-				g.ProviderName,
-				map[string]string{
-					"bucket": bucket.Name,
-				},
-				GcsAllowEmptyValues,
-				GcsAdditionalFields,
-			))
+
 			resources = append(resources, terraformutils.NewResource(
 				bucket.Name,
 				bucket.Name,
@@ -107,6 +86,40 @@ func (g *GcsGenerator) createBucketsResources(ctx context.Context, gcsService *s
 				GcsAllowEmptyValues,
 				GcsAdditionalFields,
 			))
+
+			if iam, err := gcsService.Buckets.GetIamPolicy(bucket.Name).Do(); err == nil {
+				for _, binding := range iam.Bindings {
+					resources = append(resources, terraformutils.NewResource(
+						bucket.Name,
+						bucket.Name,
+						"google_storage_bucket_iam_binding",
+						g.ProviderName,
+						map[string]string{
+							"bucket": bucket.Name,
+							"role":   binding.Role,
+						},
+						GcsAllowEmptyValues,
+						GcsAdditionalFields,
+					))
+
+					for _, member := range binding.Members {
+						resources = append(resources, terraformutils.NewResource(
+							bucket.Name,
+							bucket.Name,
+							"google_storage_bucket_iam_member",
+							g.ProviderName,
+							map[string]string{
+								"bucket": bucket.Name,
+								"role":   binding.Role,
+								"member": member,
+							},
+							GcsAllowEmptyValues,
+							GcsAdditionalFields,
+						))
+					}
+				}
+			}
+
 			resources = append(resources, g.createNotificationResources(gcsService, bucket)...)
 		}
 		return nil
