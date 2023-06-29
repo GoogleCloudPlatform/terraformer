@@ -26,8 +26,6 @@ jobs:
         run: GOOS=darwin go build -o terraformer-all-darwin-amd64
       - name: Build for mac Apple Silicon
         run: GOOS=darwin GOARCH=arm64 go build -o terraformer-all-darwin-arm64
-      - name: Build for windows
-        run: GOOS=windows go build -o terraformer-all-windows-amd64
       - name: Build for all providers
         run: go run build/multi-build/main.go
 
