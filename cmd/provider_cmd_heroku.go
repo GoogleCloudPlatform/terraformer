@@ -14,6 +14,9 @@
 package cmd
 
 import (
+	"errors"
+	"os"
+
 	heroku_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/heroku"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -21,13 +24,18 @@ import (
 )
 
 func newCmdHerokuImporter(options ImportOptions) *cobra.Command {
+	var apiKey, team string
+
 	cmd := &cobra.Command{
 		Use:   "heroku",
 		Short: "Import current state to Terraform configuration from Heroku",
 		Long:  "Import current state to Terraform configuration from Heroku",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if apiKey = os.Getenv("HEROKU_API_KEY"); apiKey == "" {
+				return errors.New("Requires HEROKU_API_KEY env var")
+			}
 			provider := newHerokuProvider()
-			err := Import(provider, options, []string{})
+			err := Import(provider, options, []string{apiKey, team})
 			if err != nil {
 				return err
 			}
@@ -36,7 +44,8 @@ func newCmdHerokuImporter(options ImportOptions) *cobra.Command {
 	}
 
 	cmd.AddCommand(listCmd(newHerokuProvider()))
-	baseProviderFlags(cmd.PersistentFlags(), &options, "app,addon", "app=name1:name2:name3")
+	baseProviderFlags(cmd.PersistentFlags(), &options, "app,addon", "app=ID")
+	cmd.PersistentFlags().StringVarP(&team, "team", "", "", "")
 	return cmd
 }
 

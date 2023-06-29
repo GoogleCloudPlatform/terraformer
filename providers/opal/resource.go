@@ -3,7 +3,9 @@ package opal
 import (
 	"context"
 	"fmt"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/opalsecurity/opal-go"
 )
 
 type ResourceGenerator struct {
@@ -21,25 +23,11 @@ func (g *ResourceGenerator) InitResources() error {
 		return fmt.Errorf("unable to list opal resources: %v", err)
 	}
 
-	countByName := make(map[string]int)
-
+	var opalResources []*opal.Resource
 	for {
 		for _, resource := range resources.Results {
-			name := normalizeResourceName(*resource.Name)
-			if count, ok := countByName[name]; ok {
-				countByName[name] = count + 1
-				name = normalizeResourceName(fmt.Sprintf("%s_%d", *resource.Name, count+1))
-			} else {
-				countByName[name] = 1
-			}
-
-			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-				resource.ResourceId,
-				name,
-				"opal_resource",
-				"opal",
-				[]string{},
-			))
+			resourceRef := resource
+			opalResources = append(opalResources, &resourceRef)
 		}
 
 		if !resources.HasNext() || resources.Next.Get() == nil {
@@ -50,6 +38,40 @@ func (g *ResourceGenerator) InitResources() error {
 		if err != nil {
 			return fmt.Errorf("unable to list opal resources: %v", err)
 		}
+	}
+
+	opalResourceByID := make(map[string]*opal.Resource)
+	for _, resource := range opalResources {
+		opalResourceByID[resource.ResourceId] = resource
+	}
+
+	seenNames := make(map[string]bool)
+	for _, resource := range opalResources {
+		tfname := *resource.Name
+		if resource.ResourceType != nil &&
+			*resource.ResourceType == opal.RESOURCETYPEENUM_AWS_SSO_PERMISSION_SET &&
+			resource.ParentResourceId != nil {
+			parentAccount, ok := opalResourceByID[*resource.ParentResourceId]
+			if !ok {
+				return fmt.Errorf("could not find account for permission set: %#v", resource)
+			}
+			tfname = fmt.Sprintf("%s_%s", *parentAccount.Name, *resource.Name)
+		}
+
+		if seenNames[tfname] {
+			tfname = tfname + "_" + resource.ResourceId[:8]
+		} else {
+			seenNames[tfname] = true
+		}
+
+		tfname = normalizeResourceName(tfname)
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+			resource.ResourceId,
+			tfname,
+			"opal_resource",
+			"opal",
+			[]string{},
+		))
 	}
 
 	return nil
