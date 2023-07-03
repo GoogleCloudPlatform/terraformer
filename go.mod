@@ -146,7 +146,7 @@ require (
 	github.com/opencontainers/runc v1.1.5 // indirect
 	github.com/opsgenie/opsgenie-go-sdk-v2 v1.2.9
 	github.com/ory/dockertest v3.3.5+incompatible // indirect
-	github.com/packethost/packngo v0.9.0
+	github.com/packethost/packngo v0.30.0
 	github.com/pkg/errors v0.9.1
 	github.com/ryanuber/go-glob v1.0.0 // indirect
 	github.com/spf13/cobra v1.1.1
@@ -301,7 +301,7 @@ require (
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/sourcegraph/jsonrpc2 v0.0.0-20210201082850-366fbb520750 // indirect
 	github.com/spf13/afero v1.2.2 // indirect
-	github.com/stretchr/testify v1.8.1 // indirect
+	github.com/stretchr/testify v1.8.2 // indirect
 	github.com/tomnomnom/linkheader v0.0.0-20180905144013-02ca5825eb80 // indirect
 	github.com/ulikunitz/xz v0.5.10 // indirect
 	github.com/vmihailenco/msgpack/v4 v4.3.12 // indirect
