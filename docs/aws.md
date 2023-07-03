@@ -247,6 +247,13 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_db_option_group`
     * `aws_db_event_subscription`
     * `aws_rds_global_cluster`
+*   `redshift`
+    * `aws_redshift_cluster`
+    * `aws_redshift_event_subscription`
+    * `aws_redshift_parameter_group`
+    * `aws_redshift_snapshot_schedule`
+    * `aws_redshift_snapshot_schedule_association`
+    * `aws_redshift_subnet_group`
 *   `resourcegroups`
     * `aws_resourcegroups_group`
 *   `route53`
