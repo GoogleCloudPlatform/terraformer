@@ -142,7 +142,7 @@ func (g *APIGatewayGenerator) loadResources(svc *apigateway.Client, restAPIID *s
 			return err
 		}
 		for _, resource := range page.Items {
-			resourceID := *resource.Id
+			resourceID := *restAPIID + "/" + *resource.Id
 			g.Resources = append(g.Resources, terraformutils.NewResource(
 				resourceID,
 				resourceID,
@@ -176,7 +176,7 @@ func (g *APIGatewayGenerator) loadModels(svc *apigateway.Client, restAPIID *stri
 			return nil
 		}
 		for _, model := range page.Items {
-			resourceID := *model.Id
+			resourceID := *restAPIID + "/" + *model.Id
 			g.Resources = append(g.Resources, terraformutils.NewResource(
 				resourceID,
 				resourceID,
