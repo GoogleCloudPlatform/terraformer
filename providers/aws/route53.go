@@ -108,6 +108,42 @@ func (Route53Generator) createRecordsResources(svc *route53.Client, zoneID strin
 	return resources
 }
 
+func (Route53Generator) createHealthChecksResources(svc *route53.Client) []terraformutils.Resource {
+	var resources []terraformutils.Resource
+	var err error
+	listParams := &route53.ListHealthChecksInput{}
+
+	r, err := svc.ListHealthChecks(context.TODO(), listParams)
+	if err != nil {
+		log.Println(err)
+		return resources
+	}
+
+	for {
+		for _, healthCheck := range r.HealthChecks {
+			healthCheckStringType := string(healthCheck.HealthCheckConfig.Type)
+
+			resources = append(resources, terraformutils.NewSimpleResource(
+				StringValue(healthCheck.Id),
+				fmt.Sprintf("%s_%s", StringValue(healthCheck.Id), healthCheckStringType),
+				"aws_route53_health_check",
+				"aws",
+				route53AllowEmptyValues,
+			))
+		}
+		if !r.IsTruncated {
+			break
+		}
+		listParams.Marker = r.NextMarker
+		r, err = svc.ListHealthChecks(context.TODO(), listParams)
+		if err != nil {
+			log.Println(err)
+			return resources
+		}
+	}
+	return resources
+}
+
 // Generate TerraformResources from AWS API,
 // create terraform resource for each zone + each record
 func (g *Route53Generator) InitResources() error {
@@ -117,16 +153,30 @@ func (g *Route53Generator) InitResources() error {
 	}
 	svc := route53.NewFromConfig(config)
 
-	g.Resources = g.createZonesResources(svc)
+	zonesAndRecordsResources := g.createZonesResources(svc)
+	healthCheckResources := g.createHealthChecksResources(svc)
+	g.Resources = append(zonesAndRecordsResources, healthCheckResources...)
+
 	return nil
 }
 
 func (g *Route53Generator) PostConvertHook() error {
-	for i, resourceRecord := range g.Resources {
-		if resourceRecord.InstanceInfo.Type == "aws_route53_zone" {
+	for i, resource := range g.Resources {
+		resourceType := resource.InstanceInfo.Type
+		if resourceType == "aws_route53_zone" {
 			continue
 		}
-		item := resourceRecord.Item
+
+		if resourceType == "aws_route53_health_check" {
+			if _, childHealthChecksExist := resource.Item["child_healthchecks"]; !childHealthChecksExist {
+				if _, childHealthCheckThreshholdExist := resource.Item["child_health_threshold"]; childHealthCheckThreshholdExist {
+					delete(g.Resources[i].Item, "child_health_threshold")
+				}
+			}
+			continue
+		}
+
+		item := resource.Item
 		zoneID := item["zone_id"].(string)
 		for _, resourceZone := range g.Resources {
 			if resourceZone.InstanceInfo.Type != "aws_route53_zone" {
@@ -136,8 +186,8 @@ func (g *Route53Generator) PostConvertHook() error {
 				g.Resources[i].Item["zone_id"] = "${aws_route53_zone." + resourceZone.ResourceName + ".zone_id}"
 			}
 		}
-		if _, aliasExist := resourceRecord.Item["alias"]; aliasExist {
-			if _, ttlExist := resourceRecord.Item["ttl"]; ttlExist {
+		if _, aliasExist := resource.Item["alias"]; aliasExist {
+			if _, ttlExist := resource.Item["ttl"]; ttlExist {
 				delete(g.Resources[i].Item, "ttl")
 			}
 		}
