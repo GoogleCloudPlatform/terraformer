@@ -107,7 +107,10 @@ func (IonosCloudProvider) GetResourceConnections() map[string]map[string][]strin
 			"natgateway": []string{"natgateway_id", "id"},
 		},
 		"s3_key": {
-			"user": []string{helpers.UserId, "id"},
+			"user": []string{helpers.UserID, "id"},
+		},
+		"share": {
+			"group": []string{helpers.GroupID, "id"},
 		},
 	}
 }
@@ -139,6 +142,7 @@ func (p *IonosCloudProvider) GetSupportedService() map[string]terraformutils.Ser
 		"container_registry":                 &ContainerRegistryGenerator{},
 		"dataplatform_cluster":               &DataPlatformClusterGenerator{},
 		"dataplatform_node_pool":             &DataPlatformNodePoolGenerator{},
+		"share":                              &ShareGenerator{},
 	}
 }
 

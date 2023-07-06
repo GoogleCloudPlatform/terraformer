@@ -16,7 +16,9 @@ const (
 	ServerID              = "server_id"
 	NicID                 = "nic_id"
 	K8sClusterID          = "k8s_cluster_id"
-	UserId                = "user_id"
+	UserID                = "user_id"
+	GroupID               = "group_id"
+	ResourceID            = "resource_id"
 
 	UsernameArg = "username"
 	PasswordArg = "password"
