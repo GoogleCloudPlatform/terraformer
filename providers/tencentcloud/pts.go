@@ -30,16 +30,11 @@ func (g *PtsGenerator) InitResources() error {
 	credential := args["credential"].(common.Credential)
 	profile := NewTencentCloudClientProfile()
 	client, err := pts.NewClient(&credential, region, profile)
-
 	if err != nil {
 		return err
 	}
 
-	if err = g.DescribeProjects(client); err != nil {
-		return err
-	}
-
-	return nil
+	return g.DescribeProjects(client)
 }
 func (g *PtsGenerator) DescribeProjects(client *pts.Client) error {
 	request := pts.NewDescribeProjectsRequest()

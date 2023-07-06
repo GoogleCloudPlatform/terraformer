@@ -39,11 +39,8 @@ func (g *SesGenerator) InitResources() error {
 	if err = g.ListEmailIdentities(client); err != nil {
 		return err
 	}
-	if err = g.ListEmailTemplates(client); err != nil {
-		return err
-	}
 
-	return nil
+	return g.ListEmailTemplates(client)
 }
 func (g *SesGenerator) ListEmailIdentities(client *ses.Client) error {
 	request := ses.NewListEmailIdentitiesRequest()
@@ -66,14 +63,14 @@ func (g *SesGenerator) ListEmailIdentities(client *ses.Client) error {
 			map[string]interface{}{},
 		)
 		g.Resources = append(g.Resources, resource)
-		if err := g.ListEmailAddress(client, resource.ResourceName); err != nil {
+		if err := g.ListEmailAddress(client); err != nil {
 			return err
 		}
 	}
 
 	return nil
 }
-func (g *SesGenerator) ListEmailAddress(client *ses.Client, resourceName string) error {
+func (g *SesGenerator) ListEmailAddress(client *ses.Client) error {
 	request := ses.NewListEmailAddressRequest()
 
 	var allInstances []*ses.EmailSender

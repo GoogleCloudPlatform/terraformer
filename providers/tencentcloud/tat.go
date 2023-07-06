@@ -34,11 +34,7 @@ func (g *TatGenerator) InitResources() error {
 		return err
 	}
 
-	if err := g.DescribeCommands(client); err != nil {
-		return err
-	}
-
-	return nil
+	return g.DescribeCommands(client)
 }
 func (g *TatGenerator) DescribeCommands(client *tat.Client) error {
 	request := tat.NewDescribeCommandsRequest()
@@ -89,15 +85,15 @@ func (g *TatGenerator) DescribeCommands(client *tat.Client) error {
 
 	return nil
 }
-func (g *TatGenerator) DescribeInvokers(client *tat.Client, commandId, resourceName string) error {
+func (g *TatGenerator) DescribeInvokers(client *tat.Client, commandID, resourceName string) error {
 	request := tat.NewDescribeInvokersRequest()
 	request.Filters = []*tat.Filter{
 		{
 			Name:   String("command-id"),
-			Values: []*string{&commandId},
+			Values: []*string{&commandID},
 		},
 	}
-	var offset uint64 = 0
+	var offset uint64
 	var limit uint64 = 50
 	allInstances := make([]*tat.Invoker, 0)
 	for {
