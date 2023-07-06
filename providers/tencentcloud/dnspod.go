@@ -15,10 +15,11 @@
 package tencentcloud
 
 import (
+	"strconv"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	dnspod "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod/v20210323"
-	"strconv"
 )
 
 type DnspodGenerator struct {
@@ -35,11 +36,7 @@ func (g *DnspodGenerator) InitResources() error {
 		return err
 	}
 
-	if err := g.DescribeDomainList(client); err != nil {
-		return err
-	}
-
-	return nil
+	return g.DescribeDomainList(client)
 }
 func (g *DnspodGenerator) DescribeDomainList(client *dnspod.Client) error {
 	request := dnspod.NewDescribeDomainListRequest()
