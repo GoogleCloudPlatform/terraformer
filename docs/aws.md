@@ -261,6 +261,7 @@ terraformer import aws --resources=sg --regions=us-east-1
 *   `route53`
     * `aws_route53_zone`
     * `aws_route53_record`
+    * `aws_route53_health_check`
 *   `route_table`
     * `aws_route_table`
     * `aws_main_route_table_association`
