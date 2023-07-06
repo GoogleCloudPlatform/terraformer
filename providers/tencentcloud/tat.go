@@ -53,7 +53,7 @@ func (g *TatGenerator) DescribeCommands(client *tat.Client) error {
 		request.CommandIds = append(request.CommandIds, &filters[i])
 	}
 
-	var offset uint64 = 0
+	var offset uint64
 	var limit uint64 = 50
 	allInstances := make([]*tat.Command, 0)
 	for {

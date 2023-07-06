@@ -36,10 +36,10 @@ func (g *SesGenerator) InitResources() error {
 		return err
 	}
 
-	if err := g.ListEmailIdentities(client); err != nil {
+	if err = g.ListEmailIdentities(client); err != nil {
 		return err
 	}
-	if err := g.ListEmailTemplates(client); err != nil {
+	if err = g.ListEmailTemplates(client); err != nil {
 		return err
 	}
 
@@ -101,7 +101,7 @@ func (g *SesGenerator) ListEmailAddress(client *ses.Client, resourceName string)
 func (g *SesGenerator) ListEmailTemplates(client *ses.Client) error {
 	request := ses.NewListEmailTemplatesRequest()
 
-	var offset uint64 = 0
+	var offset uint64
 	var limit uint64 = 50
 	allInstances := make([]*ses.TemplatesMetadata, 0)
 	for {

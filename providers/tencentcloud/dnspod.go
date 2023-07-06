@@ -44,7 +44,7 @@ func (g *DnspodGenerator) InitResources() error {
 func (g *DnspodGenerator) DescribeDomainList(client *dnspod.Client) error {
 	request := dnspod.NewDescribeDomainListRequest()
 
-	var offset int64 = 0
+	var offset int64
 	var limit int64 = 50
 	allInstances := make([]*dnspod.DomainListItem, 0)
 	for {
@@ -84,7 +84,7 @@ func (g *DnspodGenerator) DescribeRecordList(client *dnspod.Client, name, resour
 	request := dnspod.NewDescribeRecordListRequest()
 
 	request.Domain = &name
-	var offset uint64 = 0
+	var offset uint64
 	var limit uint64 = 50
 	allInstances := make([]*dnspod.RecordListItem, 0)
 	for {

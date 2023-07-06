@@ -35,7 +35,7 @@ func (g *PtsGenerator) InitResources() error {
 		return err
 	}
 
-	if err := g.DescribeProjects(client); err != nil {
+	if err = g.DescribeProjects(client); err != nil {
 		return err
 	}
 
@@ -54,7 +54,7 @@ func (g *PtsGenerator) DescribeProjects(client *pts.Client) error {
 		request.ProjectIds = append(request.ProjectIds, &filters[i])
 	}
 
-	var offset int64 = 0
+	var offset int64
 	var limit int64 = 50
 	allInstances := make([]*pts.Project, 0)
 	for {
