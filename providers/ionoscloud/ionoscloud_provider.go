@@ -143,6 +143,7 @@ func (p *IonosCloudProvider) GetSupportedService() map[string]terraformutils.Ser
 		"dataplatform_cluster":               &DataPlatformClusterGenerator{},
 		"dataplatform_node_pool":             &DataPlatformNodePoolGenerator{},
 		"share":                              &ShareGenerator{},
+		"user":                               &UserGenerator{},
 	}
 }
 

@@ -42,6 +42,8 @@ export IONOS_TOKEN="token"
 * [`dataplatform_cluster`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/dataplatform_cluster)
 * [`dataplatform_node_pool`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/dataplatform_node_pool)
 * [`share`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/share)
+* [`user`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/user)
+
 
 We allow only resources that provide valid terraform plans to be imported.
 If you do not see your resource in the tf plan, please enable TF_LOG=debug and check logs 
