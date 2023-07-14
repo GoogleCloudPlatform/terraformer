@@ -523,7 +523,7 @@ func (g *RealmGenerator) PostConvertHook() error {
 		}
 
 		// Sort role_ids to get reproducible results for keycloak_group_roles resources
-		if r.InstanceInfo.Type == "keycloak_group_roles" {
+		if _, exist := r.Item["role_ids"]; exist && r.InstanceInfo.Type == "keycloak_group_roles" {
 			sortedRoles := make([]string, len(r.Item["role_ids"].([]interface{})))
 			for k, v := range r.Item["role_ids"].([]interface{}) {
 				sortedRoles[k] = mapRoleIDs[r.Item["realm_id"].(string)+"_"+v.(string)]
