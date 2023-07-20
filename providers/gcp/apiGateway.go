@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 
 	apigateway "cloud.google.com/go/apigateway/apiv1"
 	pb "cloud.google.com/go/apigateway/apiv1/apigatewaypb"
@@ -62,7 +63,9 @@ func (g *ApiGatewayGenerator) createApis(client *apigateway.Client, it *apigatew
 				"region":  location,
 			},
 			apiGatewaysAllowEmptyValues,
-			apiGatewaysAdditionalFields,
+			map[string]interface{}{
+				"api_id": api.GetDisplayName(),
+			},
 		))
 
 		configsIterator := client.ListApiConfigs(context.Background(), &pb.ListApiConfigsRequest{Parent: fmt.Sprintf("projects/%s/locations/global/apis/%s", project, api.GetDisplayName())})
@@ -110,6 +113,11 @@ func (g *ApiGatewayGenerator) createGateways(it *apigateway.GatewayIterator) err
 			return err
 		}
 
+		project := g.GetArgs()["project"].(string)
+		location := g.GetArgs()["region"].(compute.Region).Name
+
+		projectRe := regexp.MustCompile(`^projects\/([^\/]+)\/`)
+
 		g.Resources = append(g.Resources, terraformutils.NewResource(
 			obj.GetName(),
 			obj.GetDisplayName(),
@@ -117,11 +125,14 @@ func (g *ApiGatewayGenerator) createGateways(it *apigateway.GatewayIterator) err
 			g.GetProviderName(),
 			map[string]string{
 				"name":    obj.GetName(),
-				"project": g.GetArgs()["project"].(string),
-				"region":  g.GetArgs()["region"].(compute.Region).Name,
+				"project": project,
+				"region":  location,
 			},
 			apiGatewaysAllowEmptyValues,
-			apiGatewaysAdditionalFields,
+			map[string]interface{}{
+				"display_name": obj.GetDisplayName(),
+				"api_config":   projectRe.ReplaceAllString(obj.GetApiConfig(), "projects/"+project+"/"),
+			},
 		))
 	}
 }
