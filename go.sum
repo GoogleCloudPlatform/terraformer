@@ -382,8 +382,9 @@ github.com/aws/aws-sdk-go-v2 v1.16.11/go.mod h1:WTACcleLz6VZTp7fak4EO5b9Q4foxbn+
 github.com/aws/aws-sdk-go-v2 v1.16.14/go.mod h1:s/G+UV29dECbF5rf+RNj1xhlmvoNurGSr+McVSRj59w=
 github.com/aws/aws-sdk-go-v2 v1.16.16/go.mod h1:SwiyXi/1zTUZ6KIAmLK5V5ll8SiURNUYOqTerZPaF9k=
 github.com/aws/aws-sdk-go-v2 v1.17.1/go.mod h1:JLnGeGONAyi2lWXI1p0PCIOIy333JMVK1U7Hf0aRFLw=
-github.com/aws/aws-sdk-go-v2 v1.17.6 h1:Y773UK7OBqhzi5VDXMi1zVGsoj+CVHs2eaC2bDsLwi0=
 github.com/aws/aws-sdk-go-v2 v1.17.6/go.mod h1:uzbQtefpm44goOPmdKyAlXSNcwlRgF3ePWVW6EtJvvw=
+github.com/aws/aws-sdk-go-v2 v1.19.0 h1:klAT+y3pGFBU/qVf1uzwttpBbiuozJYWzNLHioyDJ+k=
+github.com/aws/aws-sdk-go-v2 v1.19.0/go.mod h1:uzbQtefpm44goOPmdKyAlXSNcwlRgF3ePWVW6EtJvvw=
 github.com/aws/aws-sdk-go-v2/config v1.1.4 h1:2hjdDldmJJjb+rFieQySfOFt4WwxKZJVTEB6RBI74T4=
 github.com/aws/aws-sdk-go-v2/config v1.1.4/go.mod h1:op05ummoVoAqctpA80jVt/+hvEtLfuKmDyx0bIuvfbE=
 github.com/aws/aws-sdk-go-v2/credentials v1.1.4/go.mod h1:UQwsT2w2XelrWoVV2v/zL2uce1RxmVCiHaZsoKLamZg=
@@ -406,8 +407,9 @@ github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.18/go.mod h1:348MLhzV1G
 github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.21/go.mod h1:XsmHMV9c512xgsW01q7H0ut+UQQQpWX8QsFbdLHDwaU=
 github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.23/go.mod h1:2DFxAQ9pfIRy0imBCJv+vZ2X6RKxves6fbnEuSry6b4=
 github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.25/go.mod h1:Zb29PYkf42vVYQY6pvSyJCJcFHlPIiY+YKdPtwnvMkY=
-github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.30 h1:y+8n9AGDjikyXoMBTRaHHHSaFEB8267ykmvyPodJfys=
 github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.30/go.mod h1:LUBAO3zNXQjoONBKn/kR1y0Q4cj/D02Ts0uHYjcCQLM=
+github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.35 h1:hMUCiE3Zi5AHrRNGf5j985u0WyqI6r2NULhUfo0N/No=
+github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.35/go.mod h1:ipR5PvpSPqIqL5Mi82BxLnfMkHVbmco8kUwO2xrCi0M=
 github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.1.0/go.mod h1:KdVvdk4gb7iatuHZgIkIqvJlWHBtjCJLUtD/uO/FkWw=
 github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.2.0/go.mod h1:BsCSJHx5DnDXIrOcqB8KN1/B+hXLG/bi4Y6Vjcx/x9E=
 github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.0/go.mod h1:viTrxhAuejD+LszDahzAE2x40YjYWhMqzHxv2ZiWaME=
@@ -422,8 +424,9 @@ github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.12/go.mod h1:ckaCVTEdGAx
 github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.15/go.mod h1:kjJ4CyD9M3Wq88GYg3IPfj67Rs0Uvz8aXK7MJ8BvE4I=
 github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.17/go.mod h1:pRwaTYCJemADaqCbUAxltMoHKata7hmB5PjEXeu0kfg=
 github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.19/go.mod h1:6Q0546uHDp421okhmmGfbxzq2hBqbXFNpi4k+Q1JnQA=
-github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.24 h1:r+Kv+SEJquhAZXaJ7G4u44cIwXV3f8K+N482NNAzJZA=
 github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.24/go.mod h1:gAuCezX/gob6BSMbItsSlMb6WZGV7K2+fWOvk8xBSto=
+github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.29 h1:yOpYx+FTBdpk/g+sBU6Cb1H0U/TLEcYYp66mYqsPpcc=
+github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.29/go.mod h1:M/eUABlDbw2uVrdAn+UsI6M727qp2fxkp8K0ejcBDUY=
 github.com/aws/aws-sdk-go-v2/internal/ini v1.2.2 h1:d95cddM3yTm4qffj3P6EnP+TzX1SSkWaQypXSgT/hpA=
 github.com/aws/aws-sdk-go-v2/internal/ini v1.2.2/go.mod h1:BQV0agm+JEhqR+2RT5e1XTFIDcAAV0eW6z2trp+iduw=
 github.com/aws/aws-sdk-go-v2/service/accessanalyzer v1.2.0 h1:G7NSCbvUWDp4B0ny7tjHfuZvadphb7M66/1cYN9AnAg=
@@ -535,6 +538,8 @@ github.com/aws/aws-sdk-go-v2/service/mediapackage v1.15.3 h1:g15aLD4lFFtmSwfN+Hz
 github.com/aws/aws-sdk-go-v2/service/mediapackage v1.15.3/go.mod h1:Kw3/17Bg+Ce7jgQCLCMUtvK2wlaAiMprDmZB3Q2XZgM=
 github.com/aws/aws-sdk-go-v2/service/mediastore v1.12.5 h1:aA1A23eOoj+HlKXPV12G/CVFLQ1DrS3JiB72wf8fHS4=
 github.com/aws/aws-sdk-go-v2/service/mediastore v1.12.5/go.mod h1:d4R/3w6MFeN4VV6Qi0MpHfFzO7ZaKjQAyZ3nVc+2rbM=
+github.com/aws/aws-sdk-go-v2/service/mq v1.15.1 h1:TW18FUzhvAFZpGhvSiJYw/1z3sq+2pZl61YwLP7Ukzg=
+github.com/aws/aws-sdk-go-v2/service/mq v1.15.1/go.mod h1:98Ia1qM4KLiezDJ001VFhzTgFU2XpBtiFveZ5CcoZ1c=
 github.com/aws/aws-sdk-go-v2/service/opsworks v1.2.2 h1:CMif3Cy79NfLPcYuyYidNdynqeEZCK0i2LTPKB4sMQQ=
 github.com/aws/aws-sdk-go-v2/service/opsworks v1.2.2/go.mod h1:elwiAmL4KdGNzNE5HjyxgKBoj7pjOhyOof0KGciJRAg=
 github.com/aws/aws-sdk-go-v2/service/organizations v1.2.1 h1:TvDVD1mBXP60NIHrqbP8uuzTf4vu48HlOm5jtoQQcW0=
@@ -1617,7 +1622,6 @@ github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ses v1.0.392 h1:X7JfN/P
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ses v1.0.392/go.mod h1:H9la1JWDbuXCx0XVtBRl85uJcYSV+U5SMqYFkQn9wHU=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/smh v1.0.392/go.mod h1:WJZvkOhnu9hrxb98KFyKylBdY1AadH1rxiSBHpU4a/k=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/smpn v1.0.392/go.mod h1:8KuArM+vHCijgUsnXmxkpYgtz7niFMLC32GCjeNcYLE=
-github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms v1.0.392 h1:zlJERQC6KQ1ye4TCmAM4xiji46mrL9moTgzUAKJB2OA=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms v1.0.392/go.mod h1:ak0fr7abDiet+ndTza5RMOt2Gc2plLQzoLbLbay/pqo=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/soe v1.0.392/go.mod h1:Xys81ogDoqhHma+wp2eZtUgR522a0DSo+OIPUeahupw=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/solar v1.0.392/go.mod h1:ER+ETUwbMzHiU4IdtlSwxTcapTCOnJvKBa+4HWLSeaM=
@@ -1647,7 +1651,6 @@ github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tcss v1.0.392/go.mod h1
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tdcpg v1.0.392/go.mod h1:m21mWip509ME/nUwrA+n9rBLpBb8Bjuo/HkHuEojkZo=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tdid v1.0.392/go.mod h1:Do7u7dYFlitjrrXXMcnLivCGKVXI+mIENqFmqT4V/fs=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tdmq v1.0.392/go.mod h1:LfFhQr0uPl2GrjE0r7XghDu0PUWCoGBilP9NooPmpog=
-github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tem v1.0.392 h1:tt84c79EpBcD4lygiDMvtHKdhpeWVX0R0pjTWQRecWY=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tem v1.0.392/go.mod h1:afUYlMwHkDmUle3ZGxz32+Q/cwyjFgMgaF62Q+qg6DU=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo v1.0.392/go.mod h1:kHQx6ynDcmtj3hjL8HFn8f0VCa88y8j3CouKZAHrEiU=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/thpc v1.0.392/go.mod h1:ujCoikwjBD2UmfZspopyqjmEXfpcEma5b3vGxuWYCoU=
@@ -1671,7 +1674,6 @@ github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tts v1.0.392/go.mod h1:
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ump v1.0.392/go.mod h1:lYZ7A6MWoBw4FbxJKHTkebpHnbmxoHRIy2PJS5hmBVA=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vm v1.0.392/go.mod h1:OhyaYhAbA0D8t4KeW9c0apOwDw1Hqzol0eY4Ez81IOI=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vms v1.0.392/go.mod h1:PowsbqMUl5Rvy5LcO5aN8QTdI+9xAHxzDEpjMJ0tZ64=
-github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vod v1.0.392 h1:heWRTAVG9vK6/dERomXs+VSHbPtktQC1xQ/6+1syjxo=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vod v1.0.392/go.mod h1:sSLZPQ/C1k3HDBkNUpDxs5vWua7D7QRlBqYzWG+1FEA=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc v1.0.392 h1:nx8MQ8yJ3srpfEAlKLQKtOsBCBc30QJ3Q0RsSOGSphQ=
 github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc v1.0.392/go.mod h1:IAl660UAxdUtp1rHUwbUwxFCVqwk61xAIRbBk6QtTy8=
