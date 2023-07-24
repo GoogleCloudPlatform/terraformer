@@ -11,12 +11,13 @@ import (
 	pb "cloud.google.com/go/apigateway/apiv1/apigatewaypb"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"google.golang.org/api/compute/v1"
+	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
 )
 
 var apiGatewaysAllowEmptyValues = []string{""}
 
-var apiGatewaysAdditionalFields = map[string]interface{}{}
+// var apiGatewaysAdditionalFields = map[string]interface{}{}
 
 type ApiGatewayGenerator struct {
 	GCPService
@@ -46,6 +47,9 @@ func (g *ApiGatewayGenerator) createApis(client *apigateway.Client, it *apigatew
 	for {
 		api, err := it.Next()
 		if err != nil {
+			if err == iterator.Done {
+				return nil
+			}
 			return err
 		}
 
@@ -84,7 +88,30 @@ func (g *ApiGatewayGenerator) createConfigs(client *apigateway.Client, it *apiga
 	for {
 		obj, err := it.Next()
 		if err != nil {
+			if err == iterator.Done {
+				return nil
+			}
 			return err
+		}
+
+		resp, err := client.GetApiConfig(context.Background(), &pb.GetApiConfigRequest{Name: obj.Name, View: pb.GetApiConfigRequest_FULL})
+		if err != nil {
+			return err
+		}
+
+		additionalFields := map[string]interface{}{}
+
+		if len(resp.Labels) > 0 {
+			additionalFields["labels"] = resp.Labels
+		}
+		if len(resp.OpenapiDocuments) > 0 {
+			additionalFields["openapi_documents"] = resp.OpenapiDocuments
+		}
+		if len(resp.GrpcServices) > 0 {
+			additionalFields["grpc_services"] = resp.GrpcServices
+		}
+		if len(resp.ManagedServiceConfigs) > 0 {
+			additionalFields["managed_service_configs"] = resp.ManagedServiceConfigs
 		}
 
 		project := g.GetArgs()["project"].(string)
@@ -101,7 +128,7 @@ func (g *ApiGatewayGenerator) createConfigs(client *apigateway.Client, it *apiga
 				"region":  location,
 			},
 			apiGatewaysAllowEmptyValues,
-			apiGatewaysAdditionalFields,
+			additionalFields,
 		))
 	}
 }
@@ -110,6 +137,9 @@ func (g *ApiGatewayGenerator) createGateways(it *apigateway.GatewayIterator) err
 	for {
 		obj, err := it.Next()
 		if err != nil {
+			if err == iterator.Done {
+				return nil
+			}
 			return err
 		}
 
