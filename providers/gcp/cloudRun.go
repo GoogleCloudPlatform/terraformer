@@ -55,7 +55,11 @@ func (g *CloudRunGenerator) createServices(it *run.ServiceIterator) error {
 		project := g.GetArgs()["project"].(string)
 		location := g.GetArgs()["region"].(compute.Region).Name
 
-		resource := terraformutils.NewResource(
+		// if enc, err := json.MarshalIndent(svc, "", "    "); err == nil {
+		// 	fmt.Printf("SVC: %s\n", enc)
+		// }
+
+		g.Resources = append(g.Resources, terraformutils.NewResource(
 			svc.GetName(),
 			svc.GetName(),
 			"google_cloud_run_v2_service",
@@ -66,14 +70,10 @@ func (g *CloudRunGenerator) createServices(it *run.ServiceIterator) error {
 				"region":  location,
 			},
 			cloudRunAllowEmptyValues,
-			cloudRunAdditionalFields,
-		)
-
-		// if enc, err := json.MarshalIndent(resource, "", "    "); err == nil {
-		// 	fmt.Printf("SVC: %s\n", enc)
-		// }
-
-		g.Resources = append(g.Resources, resource)
+			map[string]interface{}{
+				"template": svc.Template,
+			},
+		))
 
 	}
 }
