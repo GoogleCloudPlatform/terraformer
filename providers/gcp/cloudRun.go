@@ -2,7 +2,6 @@ package gcp
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"os"
 
@@ -97,10 +96,6 @@ func (g *CloudRunGenerator) createJobs(it *run.JobIterator) error {
 
 		project := g.GetArgs()["project"].(string)
 		location := g.GetArgs()["region"].(compute.Region).Name
-
-		if enc, err := json.MarshalIndent(job, "", "    "); err == nil {
-			fmt.Printf("SVC: %s\n", enc)
-		}
 
 		g.Resources = append(g.Resources, terraformutils.NewResource(
 			job.GetName(),
