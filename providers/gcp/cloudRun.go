@@ -2,6 +2,7 @@ package gcp
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 
@@ -34,8 +35,19 @@ func (g *CloudRunGenerator) InitResources() error {
 	}
 	defer serviceClient.Close()
 
-	it := serviceClient.ListServices(ctx, &runpb.ListServicesRequest{Parent: fmt.Sprintf("projects/%s/locations/%s", project, location)})
-	if err := g.createServices(it); err != nil {
+	sit := serviceClient.ListServices(ctx, &runpb.ListServicesRequest{Parent: fmt.Sprintf("projects/%s/locations/%s", project, location)})
+	if err := g.createServices(sit); err != nil {
+		return err
+	}
+
+	jobsClient, err := run.NewJobsClient(ctx, option.WithCredentialsFile(filename))
+	if err != nil {
+		return err
+	}
+	defer jobsClient.Close()
+
+	jit := jobsClient.ListJobs(ctx, &runpb.ListJobsRequest{Parent: fmt.Sprintf("projects/%s/locations/%s", project, location)})
+	if err := g.createJobs(jit); err != nil {
 		return err
 	}
 
@@ -55,10 +67,6 @@ func (g *CloudRunGenerator) createServices(it *run.ServiceIterator) error {
 		project := g.GetArgs()["project"].(string)
 		location := g.GetArgs()["region"].(compute.Region).Name
 
-		// if enc, err := json.MarshalIndent(svc, "", "    "); err == nil {
-		// 	fmt.Printf("SVC: %s\n", enc)
-		// }
-
 		g.Resources = append(g.Resources, terraformutils.NewResource(
 			svc.GetName(),
 			svc.GetName(),
@@ -74,6 +82,40 @@ func (g *CloudRunGenerator) createServices(it *run.ServiceIterator) error {
 				"template": svc.Template,
 			},
 		))
+	}
+}
 
+func (g *CloudRunGenerator) createJobs(it *run.JobIterator) error {
+	for {
+		job, err := it.Next()
+		if err != nil {
+			if err == iterator.Done {
+				return nil
+			}
+			return err
+		}
+
+		project := g.GetArgs()["project"].(string)
+		location := g.GetArgs()["region"].(compute.Region).Name
+
+		if enc, err := json.MarshalIndent(job, "", "    "); err == nil {
+			fmt.Printf("SVC: %s\n", enc)
+		}
+
+		g.Resources = append(g.Resources, terraformutils.NewResource(
+			job.GetName(),
+			job.GetName(),
+			"google_cloud_run_v2_job",
+			g.GetProviderName(),
+			map[string]string{
+				"name":    job.GetName(),
+				"project": project,
+				"region":  location,
+			},
+			cloudRunAllowEmptyValues,
+			map[string]interface{}{
+				"template": job.Template,
+			},
+		))
 	}
 }
