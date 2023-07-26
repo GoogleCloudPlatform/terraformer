@@ -384,6 +384,7 @@ require (
 
 require (
 	cloud.google.com/go/apigateway v1.6.1
+	cloud.google.com/go/run v0.9.0
 	github.com/aws/aws-sdk-go-v2/service/identitystore v1.16.5
 	github.com/aws/aws-sdk-go-v2/service/medialive v1.24.2
 	github.com/aws/aws-sdk-go-v2/service/ssoadmin v1.16.5
