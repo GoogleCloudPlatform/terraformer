@@ -73,20 +73,20 @@ func (g *CloudRunGenerator) createServices(client *run.ServicesClient, it *run.S
 		}
 
 		if len(policy.GetBindings()) > 0 {
-			if policyData, err := json.Marshal(policy); err == nil {
+			if policyData, err := json.Marshal(map[string]interface{}{"bindings": policy.GetBindings()}); err == nil {
 				g.Resources = append(g.Resources, terraformutils.NewResource(
 					svc.GetName(),
 					svc.GetName(),
 					"google_cloud_run_v2_service_iam_policy",
 					g.GetProviderName(),
 					map[string]string{
-						"name":    svc.GetName(),
-						"project": project,
-						"region":  location,
+						"name":     svc.GetName(),
+						"project":  project,
+						"location": location,
 					},
 					cloudRunAllowEmptyValues,
 					map[string]interface{}{
-						"policy_data": policyData,
+						"policy_data": string(policyData),
 					},
 				))
 			}
@@ -129,20 +129,20 @@ func (g *CloudRunGenerator) createJobs(client *run.JobsClient, it *run.JobIterat
 		}
 
 		if len(policy.GetBindings()) > 0 {
-			if policyData, err := json.Marshal(policy); err == nil {
+			if policyData, err := json.Marshal(map[string]interface{}{"bindings": policy.GetBindings()}); err == nil {
 				g.Resources = append(g.Resources, terraformutils.NewResource(
 					job.GetName(),
 					job.GetName(),
-					"google_cloud_run_v2_service_iam_policy",
+					"google_cloud_run_v2_job_iam_policy",
 					g.GetProviderName(),
 					map[string]string{
-						"name":    job.GetName(),
-						"project": project,
-						"region":  location,
+						"name":     job.GetName(),
+						"project":  project,
+						"location": location,
 					},
 					cloudRunAllowEmptyValues,
 					map[string]interface{}{
-						"policy_data": policyData,
+						"policy_data": string(policyData),
 					},
 				))
 			}
