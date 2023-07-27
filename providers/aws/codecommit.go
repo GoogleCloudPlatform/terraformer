@@ -16,6 +16,7 @@ package aws
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/service/codecommit"
@@ -80,5 +81,18 @@ func (g *CodeCommitGenerator) InitResources() error {
 		return err
 	}
 
+	return nil
+}
+
+func (g *CodeCommitGenerator) PostConvertHook() error {
+	for i, resource := range g.Resources {
+		if resource.InstanceInfo.Type == "aws_codecommit_approval_rule_template" {
+			if content, ok := g.Resources[i].Item["content"]; ok {
+				g.Resources[i].Item["content"] = fmt.Sprintf(`<<CONTENT
+%s
+CONTENT`, content)
+			}
+		}
+	}
 	return nil
 }
