@@ -27,14 +27,8 @@ type CodeCommitGenerator struct {
 	AWSService
 }
 
-func (g *CodeCommitGenerator) InitResources() error {
-	config, e := g.generateConfig()
-	if e != nil {
-		return e
-	}
-	svc := codecommit.NewFromConfig(config)
+func (g *CodeCommitGenerator) loadRepository(svc *codecommit.Client) error {
 	p := codecommit.NewListRepositoriesPaginator(svc, &codecommit.ListRepositoriesInput{})
-	var resources []terraformutils.Resource
 	for p.HasMorePages() {
 		page, e := p.NextPage(context.TODO())
 		if e != nil {
@@ -42,7 +36,7 @@ func (g *CodeCommitGenerator) InitResources() error {
 		}
 		for _, repository := range page.Repositories {
 			resourceName := StringValue(repository.RepositoryName)
-			resources = append(resources, terraformutils.NewSimpleResource(
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_codecommit_repository",
@@ -50,6 +44,41 @@ func (g *CodeCommitGenerator) InitResources() error {
 				codecommitAllowEmptyValues))
 		}
 	}
-	g.Resources = resources
+	return nil
+}
+
+func (g *CodeCommitGenerator) loadApprovalRuleTemplate(svc *codecommit.Client) error {
+	p := codecommit.NewListApprovalRuleTemplatesPaginator(svc, &codecommit.ListApprovalRuleTemplatesInput{})
+	for p.HasMorePages() {
+		page, e := p.NextPage(context.TODO())
+		if e != nil {
+			return e
+		}
+		for _, templateName := range page.ApprovalRuleTemplateNames {
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+				templateName,
+				templateName,
+				"aws_codecommit_approval_rule_template",
+				"aws",
+				codecommitAllowEmptyValues))
+		}
+	}
+	return nil
+}
+
+func (g *CodeCommitGenerator) InitResources() error {
+	config, e := g.generateConfig()
+	if e != nil {
+		return e
+	}
+	svc := codecommit.NewFromConfig(config)
+
+	if err := g.loadRepository(svc); err != nil {
+		return err
+	}
+	if err := g.loadApprovalRuleTemplate(svc); err != nil {
+		return err
+	}
+
 	return nil
 }
