@@ -1457,6 +1457,8 @@ github.com/sumovishal/sumologic-go-sdk v0.0.0-20220806134908-7d671aa8dc0f h1:AQk
 github.com/sumovishal/sumologic-go-sdk v0.0.0-20220806134908-7d671aa8dc0f/go.mod h1:DG0EwAJA796aYF/O79yUQ5rlp5loiPU1Sf/TRXOpCmM=
 github.com/sumovishal/sumologic-go-sdk v0.0.0-20220807145511-cf1ced70723b h1:+msQGas9ER8bzezyR+hLAhdKgMURIsVd9lLs30A+cI8=
 github.com/sumovishal/sumologic-go-sdk v0.0.0-20220807145511-cf1ced70723b/go.mod h1:yqBp0ZPIjBtPjYPuxg/84peHkSFfRwEYqhZu27+xmxc=
+github.com/sumovishal/sumologic-go-sdk v0.0.0-20230810134622-c151e5f7d9f6 h1:JRqRDIVZRWiSPen/5SghdPOedtplPdBjoKMJ5xtnoKg=
+github.com/sumovishal/sumologic-go-sdk v0.0.0-20230810134622-c151e5f7d9f6/go.mod h1:DG0EwAJA796aYF/O79yUQ5rlp5loiPU1Sf/TRXOpCmM=
 github.com/svanharmelen/jsonapi v0.0.0-20180618144545-0c0828c3f16d/go.mod h1:BSTlc8jOjh0niykqEGVXOLXdi9o0r0kR8tCYiMvjFgw=
 github.com/syndtr/gocapability v0.0.0-20200815063812-42c35b437635/go.mod h1:hkRG7XYTFWNJGYcbNJQlaLq0fg1yr4J4t/NcTQtrfww=
 github.com/tencentcloud/tencentcloud-sdk-go v1.0.392/go.mod h1:l8PU0g9KTDkwn6R4F9WbXXSUwRgKs6k7rj52H4uAcM0=
