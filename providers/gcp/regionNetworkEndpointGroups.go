@@ -17,8 +17,6 @@ package gcp
 
 import (
 	"context"
-	"log"
-	
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"google.golang.org/api/iterator"
@@ -77,7 +75,6 @@ func (g *RegionNetworkEndpointGroupsGenerator) InitResources() error {
 			regionNetworkEndpointGroupsAllowEmptyValues,
 			regionNetworkEndpointGroupsAdditionalFields,
 		)
-		log.Printf("REGION NETWORK ENDPOINT %#v\n", res)
 		g.Resources = append(g.Resources, res)
 	}
 }
