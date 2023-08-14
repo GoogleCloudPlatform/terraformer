@@ -354,7 +354,6 @@ require (
 )
 
 require (
-	cloud.google.com/go/compute v1.19.3 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
 	cloud.google.com/go/longrunning v0.5.0 // indirect
 	github.com/DataDog/zstd v1.5.2 // indirect
@@ -384,6 +383,7 @@ require (
 
 require (
 	cloud.google.com/go/apigateway v1.6.1
+	cloud.google.com/go/compute v1.19.3
 	cloud.google.com/go/run v0.9.0
 	github.com/aws/aws-sdk-go-v2/service/identitystore v1.16.5
 	github.com/aws/aws-sdk-go-v2/service/medialive v1.24.2

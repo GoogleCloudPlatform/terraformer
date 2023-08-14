@@ -17,39 +17,45 @@ package gcp
 
 import (
 	"context"
+	"log"
+	
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"google.golang.org/api/iterator"
 
 	compute "cloud.google.com/go/compute/apiv1"
 	computepb "cloud.google.com/go/compute/apiv1/computepb"
+
+	comp "google.golang.org/api/compute/v1"
 )
 
-var networkEndpointGroupsAllowEmptyValues = []string{""}
+var regionNetworkEndpointGroupsAllowEmptyValues = []string{""}
 
-var networkEndpointGroupsAdditionalFields = map[string]interface{}{}
+var regionNetworkEndpointGroupsAdditionalFields = map[string]interface{}{}
 
-type NetworkEndpointGroupsGenerator struct {
+type RegionNetworkEndpointGroupsGenerator struct {
 	GCPService
 }
 
 // Generate TerraformResources from GCP API,
 // from each networkEndpointGroups create 1 TerraformResource
 // Need networkEndpointGroups name as ID for terraform resource
-func (g *NetworkEndpointGroupsGenerator) InitResources() error {
+func (g *RegionNetworkEndpointGroupsGenerator) InitResources() error {
 	ctx := context.Background()
-	computeService, err := compute.NewNetworkEndpointGroupsRESTClient(ctx)
+	computeService, err := compute.NewRegionNetworkEndpointGroupsRESTClient(ctx)
 	if err != nil {
 		return err
 	}
 	defer computeService.Close()
 
-	req := &computepb.AggregatedListNetworkEndpointGroupsRequest{Project: g.GetArgs()["project"].(string)}
+	region := g.GetArgs()["region"].(comp.Region).Name
 
-	it := computeService.AggregatedList(ctx, req)
+	req := &computepb.ListRegionNetworkEndpointGroupsRequest{Project: g.GetArgs()["project"].(string), Region: region}
+
+	it := computeService.List(ctx, req)
 
 	for {
-		pair, err := it.Next()
+		group, err := it.Next()
 		if err != nil {
 			if err == iterator.Done {
 				return nil
@@ -57,26 +63,21 @@ func (g *NetworkEndpointGroupsGenerator) InitResources() error {
 			return err
 		}
 		
-		groups := pair.Value.GetNetworkEndpointGroups()
-		
-		for i := 0; i < len(groups); i++ {
-			group := groups[i]
-			zone := group.GetZone()
-			res := terraformutils.NewResource(
-				zone+"/"+group.GetName(),
-				zone+"/"+group.GetName(),
-				"google_compute_network_endpoint_group",
-				g.ProviderName,
-				map[string]string{
-					"name":    group.GetName(),
-					"project": g.GetArgs()["project"].(string),
-					"region":  group.GetRegion(),
-					"zone":    zone,
-				},
-				networkEndpointGroupsAllowEmptyValues,
-				networkEndpointGroupsAdditionalFields,
-			)
-			g.Resources = append(g.Resources, res)
-		}	
+		res := terraformutils.NewResource(
+			group.GetName(),
+			group.GetName(),
+			"google_compute_region_network_endpoint_group",
+			g.ProviderName,
+			map[string]string{
+				"name":    group.GetName(),
+				"project": g.GetArgs()["project"].(string),
+				"region":  group.GetRegion(),
+				"zone":    group.GetZone(),
+			},
+			regionNetworkEndpointGroupsAllowEmptyValues,
+			regionNetworkEndpointGroupsAdditionalFields,
+		)
+		log.Printf("REGION NETWORK ENDPOINT %#v\n", res)
+		g.Resources = append(g.Resources, res)
 	}
 }
