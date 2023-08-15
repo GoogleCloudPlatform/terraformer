@@ -43,17 +43,16 @@ func (g *NetworkEndpointGroupsGenerator) InitResources() error {
 
 		for i := 0; i < len(groups); i++ {
 			group := groups[i]
-			zone := group.GetZone()
 			res := terraformutils.NewResource(
-				zone+"/"+group.GetName(),
-				zone+"/"+group.GetName(),
+				group.GetName(),
+				group.GetName(),
 				"google_compute_network_endpoint_group",
 				g.ProviderName,
 				map[string]string{
 					"name":    group.GetName(),
 					"project": g.GetArgs()["project"].(string),
 					"region":  group.GetRegion(),
-					"zone":    zone,
+					"zone":    group.GetZone(),
 				},
 				networkEndpointGroupsAllowEmptyValues,
 				networkEndpointGroupsAdditionalFields,
