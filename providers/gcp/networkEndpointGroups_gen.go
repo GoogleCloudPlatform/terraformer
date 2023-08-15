@@ -2,6 +2,7 @@ package gcp
 
 import (
 	"context"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"google.golang.org/api/iterator"
@@ -43,16 +44,19 @@ func (g *NetworkEndpointGroupsGenerator) InitResources() error {
 
 		for i := 0; i < len(groups); i++ {
 			group := groups[i]
+			zoneparts := strings.Split(group.GetZone(), "/")
+			zone := zoneparts[len(zoneparts)-1]
+
 			res := terraformutils.NewResource(
-				group.GetName(),
-				group.GetName(),
+				zone+"/"+group.GetName(),
+				zone+"/"+group.GetName(),
 				"google_compute_network_endpoint_group",
 				g.ProviderName,
 				map[string]string{
 					"name":    group.GetName(),
 					"project": g.GetArgs()["project"].(string),
 					"region":  group.GetRegion(),
-					"zone":    group.GetZone(),
+					"zone":    zone,
 				},
 				networkEndpointGroupsAllowEmptyValues,
 				networkEndpointGroupsAdditionalFields,

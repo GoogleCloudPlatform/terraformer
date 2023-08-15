@@ -2,6 +2,7 @@ package gcp
 
 import (
 	"context"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"google.golang.org/api/iterator"
@@ -28,9 +29,7 @@ func (g *RegionNetworkEndpointGroupsGenerator) InitResources() error {
 	}
 	defer computeService.Close()
 
-	region := g.GetArgs()["region"].(comp.Region).Name
-
-	req := &computepb.ListRegionNetworkEndpointGroupsRequest{Project: g.GetArgs()["project"].(string), Region: region}
+	req := &computepb.ListRegionNetworkEndpointGroupsRequest{Project: g.GetArgs()["project"].(string), Region: g.GetArgs()["region"].(comp.Region).Name}
 
 	it := computeService.List(ctx, req)
 
@@ -43,6 +42,12 @@ func (g *RegionNetworkEndpointGroupsGenerator) InitResources() error {
 			return err
 		}
 
+		zoneparts := strings.Split(group.GetZone(), "/")
+		zone := zoneparts[len(zoneparts)-1]
+
+		regionparts := strings.Split(group.GetRegion(), "/")
+		region := regionparts[len(regionparts)-1]
+
 		res := terraformutils.NewResource(
 			group.GetName(),
 			group.GetName(),
@@ -51,8 +56,8 @@ func (g *RegionNetworkEndpointGroupsGenerator) InitResources() error {
 			map[string]string{
 				"name":    group.GetName(),
 				"project": g.GetArgs()["project"].(string),
-				"region":  group.GetRegion(),
-				"zone":    group.GetZone(),
+				"region":  region,
+				"zone":    zone,
 			},
 			regionNetworkEndpointGroupsAllowEmptyValues,
 			regionNetworkEndpointGroupsAdditionalFields,
