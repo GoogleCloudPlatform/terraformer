@@ -1,28 +1,14 @@
-// Copyright 2018 The Terraformer Authors.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-// AUTO-GENERATED CODE. DO NOT EDIT.
 package gcp
 
 import (
 	"context"
-	"log"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"google.golang.org/api/iterator"
 
-	"google.golang.org/api/compute/v1"
+	compute "cloud.google.com/go/compute/apiv1"
+	computepb "cloud.google.com/go/compute/apiv1/computepb"
 )
 
 var networkEndpointGroupsAllowEmptyValues = []string{""}
@@ -33,50 +19,49 @@ type NetworkEndpointGroupsGenerator struct {
 	GCPService
 }
 
-// Run on networkEndpointGroupsList and create for each TerraformResource
-func (g NetworkEndpointGroupsGenerator) createResources(ctx context.Context, networkEndpointGroupsList *compute.NetworkEndpointGroupsListCall, zone string) []terraformutils.Resource {
-	resources := []terraformutils.Resource{}
-	if err := networkEndpointGroupsList.Pages(ctx, func(page *compute.NetworkEndpointGroupList) error {
-		for _, obj := range page.Items {
-			resources = append(resources, terraformutils.NewResource(
-				zone+"/"+obj.Name,
-				zone+"/"+obj.Name,
+func (g *NetworkEndpointGroupsGenerator) InitResources() error {
+	ctx := context.Background()
+	computeService, err := compute.NewNetworkEndpointGroupsRESTClient(ctx)
+	if err != nil {
+		return err
+	}
+	defer computeService.Close()
+
+	req := &computepb.AggregatedListNetworkEndpointGroupsRequest{Project: g.GetArgs()["project"].(string)}
+
+	it := computeService.AggregatedList(ctx, req)
+
+	for {
+		pair, err := it.Next()
+		if err != nil {
+			if err == iterator.Done {
+				return nil
+			}
+			return err
+		}
+
+		groups := pair.Value.GetNetworkEndpointGroups()
+
+		for i := 0; i < len(groups); i++ {
+			group := groups[i]
+			zoneparts := strings.Split(group.GetZone(), "/")
+			zone := zoneparts[len(zoneparts)-1]
+
+			res := terraformutils.NewResource(
+				zone+"/"+group.GetName(),
+				zone+"/"+group.GetName(),
 				"google_compute_network_endpoint_group",
 				g.ProviderName,
 				map[string]string{
-					"name":    obj.Name,
+					"name":    group.GetName(),
 					"project": g.GetArgs()["project"].(string),
-					"region":  g.GetArgs()["region"].(compute.Region).Name,
+					"region":  group.GetRegion(),
 					"zone":    zone,
 				},
 				networkEndpointGroupsAllowEmptyValues,
 				networkEndpointGroupsAdditionalFields,
-			))
+			)
+			g.Resources = append(g.Resources, res)
 		}
-		return nil
-	}); err != nil {
-		log.Println(err)
 	}
-	return resources
-}
-
-// Generate TerraformResources from GCP API,
-// from each networkEndpointGroups create 1 TerraformResource
-// Need networkEndpointGroups name as ID for terraform resource
-func (g *NetworkEndpointGroupsGenerator) InitResources() error {
-	ctx := context.Background()
-	computeService, err := compute.NewService(ctx)
-	if err != nil {
-		return err
-	}
-
-	for _, zoneLink := range g.GetArgs()["region"].(compute.Region).Zones {
-		t := strings.Split(zoneLink, "/")
-		zone := t[len(t)-1]
-		networkEndpointGroupsList := computeService.NetworkEndpointGroups.List(g.GetArgs()["project"].(string), zone)
-		g.Resources = append(g.Resources, g.createResources(ctx, networkEndpointGroupsList, zone)...)
-	}
-
-	return nil
-
 }
