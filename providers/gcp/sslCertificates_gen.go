@@ -37,19 +37,21 @@ func (g SslCertificatesGenerator) createResources(ctx context.Context, sslCertif
 	resources := []terraformutils.Resource{}
 	if err := sslCertificatesList.Pages(ctx, func(page *compute.SslCertificateList) error {
 		for _, obj := range page.Items {
-			resources = append(resources, terraformutils.NewResource(
-				obj.Name,
-				obj.Name,
-				"google_compute_managed_ssl_certificate",
-				g.ProviderName,
-				map[string]string{
-					"name":    obj.Name,
-					"project": g.GetArgs()["project"].(string),
-					"region":  g.GetArgs()["region"].(compute.Region).Name,
-				},
-				sslCertificatesAllowEmptyValues,
-				sslCertificatesAdditionalFields,
-			))
+			if obj.Type == "MANAGED" {
+				resources = append(resources, terraformutils.NewResource(
+					obj.Name,
+					obj.Name,
+					"google_compute_managed_ssl_certificate",
+					g.ProviderName,
+					map[string]string{
+						"name":    obj.Name,
+						"project": g.GetArgs()["project"].(string),
+						"region":  g.GetArgs()["region"].(compute.Region).Name,
+					},
+					sslCertificatesAllowEmptyValues,
+					sslCertificatesAdditionalFields,
+				))
+			}
 		}
 		return nil
 	}); err != nil {
@@ -72,5 +74,4 @@ func (g *SslCertificatesGenerator) InitResources() error {
 	g.Resources = g.createResources(ctx, sslCertificatesList)
 
 	return nil
-
 }
