@@ -122,6 +122,7 @@ func (p *GCPProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 	services["cloudbuild"] = &GCPFacade{service: &CloudBuildGenerator{}}
 	services["eventarc"] = &GCPFacade{service: &EventarcGenerator{}}
 	services["cloudrun"] = &GCPFacade{service: &CloudRunGenerator{}}
+	services["sourcerepo"] = &GCPFacade{service: &SourceRepoGenerator{}}
 
 	if p.providerType == "beta" {
 		services["apiGateway"] = &GCPFacade{service: &ApiGatewayGenerator{}}
