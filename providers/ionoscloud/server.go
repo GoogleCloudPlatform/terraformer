@@ -48,10 +48,18 @@ func (g *ServerGenerator) InitResources() error {
 				continue
 			}
 
+			var resourceType string
+
+			resourceType = getServerResourceType(*server.Properties.Type)
+			if resourceType == "" {
+				log.Printf("[WARNING] unknown server type: %v for server with ID: %v, skipping this server", *server.Properties.Type, *server.Id)
+				continue
+			}
+
 			g.Resources = append(g.Resources, terraformutils.NewResource(
 				*server.Id,
 				*server.Properties.Name+"-"+*server.Id,
-				"ionoscloud_server",
+				resourceType,
 				helpers.Ionos,
 				map[string]string{helpers.DcID: *datacenter.Id},
 				[]string{},
@@ -86,4 +94,17 @@ func isServerValid(server ionoscloud.Server, datacenterID string) bool {
 	}
 
 	return true
+}
+
+func getServerResourceType(serverType string) string {
+	resourceType := ""
+	switch serverType {
+	case "ENTERPRISE":
+		resourceType = "ionoscloud_server"
+	case "CUBE":
+		resourceType = "ionoscloud_cube_server"
+	case "VCPU":
+		resourceType = "ionoscloud_vcpu_server"
+	}
+	return resourceType
 }
