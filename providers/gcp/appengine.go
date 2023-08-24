@@ -75,8 +75,8 @@ func (g *AppengineGenerator) loadVersions(service *appenginepb.Service) error {
 				map[string]interface{}{
 					"runtime":         version.Runtime,
 					"deployment":      version.Deployment,
-					"handlers":        version.Handlers,
 					"version_id":      version.Id,
+					"entrypoint":      version.Entrypoint,
 					"service_account": version.ServiceAccount,
 				},
 			))
