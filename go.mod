@@ -383,6 +383,7 @@ require (
 
 require (
 	cloud.google.com/go/apigateway v1.6.1
+	cloud.google.com/go/appengine v1.7.1
 	cloud.google.com/go/compute v1.19.3
 	cloud.google.com/go/run v0.9.0
 	github.com/aws/aws-sdk-go-v2/service/identitystore v1.16.5

@@ -39,6 +39,8 @@ cloud.google.com/go/analytics v0.11.0/go.mod h1:DjEWCu41bVbYcKyvlws9Er60YE4a//bK
 cloud.google.com/go/analytics v0.12.0/go.mod h1:gkfj9h6XRf9+TS4bmuhPEShsh3hH8PAZzm/41OOhQd4=
 cloud.google.com/go/apigateway v1.6.1 h1:aBSwCQPcp9rZ0zVEUeJbR623palnqtvxJlUyvzsKGQc=
 cloud.google.com/go/apigateway v1.6.1/go.mod h1:ufAS3wpbRjqfZrzpvLC2oh0MFlpRJm2E/ts25yyqmXA=
+cloud.google.com/go/appengine v1.7.1 h1:aBGDKmRIaRRoWJ2tAoN0oVSHoWLhtO9aj/NvUyP4aYs=
+cloud.google.com/go/appengine v1.7.1/go.mod h1:IHLToyb/3fKutRysUlFO0BPt5j7RiQ45nrzEJmKTo6E=
 cloud.google.com/go/area120 v0.5.0/go.mod h1:DE/n4mp+iqVyvxHN41Vf1CR602GiHQjFPusMFW6bGR4=
 cloud.google.com/go/area120 v0.6.0/go.mod h1:39yFJqWVgm0UZqWTOdqkLhjoC7uFfgXRC8g/ZegeAh0=
 cloud.google.com/go/artifactregistry v1.6.0/go.mod h1:IYt0oBPSAGYj/kprzsBjZ/4LnG/zOcHyFHjWPCi6SAQ=
