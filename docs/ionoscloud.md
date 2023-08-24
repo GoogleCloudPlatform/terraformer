@@ -44,6 +44,7 @@ export IONOS_TOKEN="token"
 * [`share`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/share)
 * [`user`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/user)
 * [`container_registry_token`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/container_registry_token)
+* [`application_loadbalancer_forwardingrule`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/application_loadbalancer_forwardingrule)
 
 
 We allow only resources that provide valid terraform plans to be imported.
