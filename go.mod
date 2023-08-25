@@ -351,6 +351,8 @@ require (
 	github.com/manicminer/hamilton v0.44.0
 	github.com/opalsecurity/opal-go v1.0.19
 	gopkg.in/ns1/ns1-go.v2 v2.6.5
+	github.com/sumovishal/sumologic-go-sdk v0.0.0-20220807145511-cf1ced70723b
+	github.com/sumovishal/sumologic-go-sdk v0.0.0-20230810134622-c151e5f7d9f6
 )
 
 require (
