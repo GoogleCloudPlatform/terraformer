@@ -64,7 +64,8 @@ func (p *OpsgenieProvider) GetName() string {
 
 func (p *OpsgenieProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"user": &UserGenerator{},
-		"team": &TeamGenerator{},
+		"user":    &UserGenerator{},
+		"team":    &TeamGenerator{},
+		"service": &ServiceGenerator{},
 	}
 }
