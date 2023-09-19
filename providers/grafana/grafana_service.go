@@ -17,8 +17,8 @@ package grafana
 import (
 	"crypto/tls"
 	"crypto/x509"
-	"io/ioutil"
 	"net/url"
+	"os"
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -44,7 +44,7 @@ func (s *GrafanaService) buildClient() (*gapi.Client, error) {
 	insecure := s.Args["insecure_skip_verify"].(bool)
 
 	if caCert != "" {
-		ca, err := ioutil.ReadFile(caCert)
+		ca, err := os.ReadFile(caCert)
 		if err != nil {
 			return nil, err
 		}
