@@ -62,8 +62,10 @@ func (g *APIGatewayV2Generator) loadRestApis(svc *apigatewayv2.ApiGatewayV2) err
 			fmt.Println("Failed to list APIs:", err)
 			return err
 		}
-		g.processRestApis(svc, output.Items)
-
+		if err = g.processRestApis(svc, output.Items); err! = nil {
+			fmt.Println("Failed to list APIs:", err)
+			return err
+		}
 	}
 
 	return nil
@@ -104,7 +106,10 @@ func (g *APIGatewayV2Generator) loadStages(svc *apigatewayv2.ApiGatewayV2, restA
 	if err != nil {
 		return err
 	}
-	g.processStages(output.Items, restAPIID)
+	err = g.processStages(output.Items, restAPIID)
+	if err != nil {
+		return err
+	}
 
 	for output.NextToken != nil {
 		output, err = svc.GetStages(&apigatewayv2.GetStagesInput{
@@ -113,7 +118,10 @@ func (g *APIGatewayV2Generator) loadStages(svc *apigatewayv2.ApiGatewayV2, restA
 		if err != nil {
 			return err
 		}
-		g.processStages(output.Items, restAPIID)
+		err = g.processStages(output.Items, restAPIID)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -147,7 +155,10 @@ func (g *APIGatewayV2Generator) loadModels(svc *apigatewayv2.ApiGatewayV2, restA
 	if err != nil {
 		return err
 	}
-	g.processModels(output.Items, restAPIID)
+	err = g.processModels(output.Items, restAPIID)
+	if err != nil {
+		return err
+	}
 
 	for output.NextToken != nil {
 		output, err = svc.GetModels(
@@ -157,7 +168,10 @@ func (g *APIGatewayV2Generator) loadModels(svc *apigatewayv2.ApiGatewayV2, restA
 		if err != nil {
 			return err
 		}
-		g.processModels(output.Items, restAPIID)
+		err = g.processModels(output.Items, restAPIID)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -194,7 +208,10 @@ func (g *APIGatewayV2Generator) loadRoutes(svc *apigatewayv2.ApiGatewayV2, restA
 		return err
 	}
 
-	g.processRoutes(svc, output.Items, restAPIID)
+	err = g.processRoutes(svc, output.Items, restAPIID)
+	if err != nil {
+		return err
+	}
 
 	for output.NextToken != nil {
 		output, err := svc.GetRoutes(
@@ -205,7 +222,10 @@ func (g *APIGatewayV2Generator) loadRoutes(svc *apigatewayv2.ApiGatewayV2, restA
 			return err
 		}
 
-		g.processRoutes(svc, output.Items, restAPIID)
+		err = g.processRoutes(svc, output.Items, restAPIID)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -244,7 +264,10 @@ func (g *APIGatewayV2Generator) loadResponses(svc *apigatewayv2.ApiGatewayV2, re
 	if err != nil {
 		return err
 	}
-	g.processResponses(output.Items, restAPIID, routeID)
+	err = g.processResponses(output.Items, restAPIID, routeID)
+	if err != nil {
+		return err
+	}
 
 	for output.NextToken != nil {
 		output, err = svc.GetRouteResponses(
@@ -255,7 +278,10 @@ func (g *APIGatewayV2Generator) loadResponses(svc *apigatewayv2.ApiGatewayV2, re
 		if err != nil {
 			return err
 		}
-		g.processResponses(output.Items, restAPIID, routeID)
+		err = g.processResponses(output.Items, restAPIID, routeID)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
