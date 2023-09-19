@@ -320,6 +320,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"wafv2_cloudfront":  &AwsFacade{service: NewWafv2CloudfrontGenerator()},
 		"wafv2_regional":    &AwsFacade{service: NewWafv2RegionalGenerator()},
 		"vpc":               &AwsFacade{service: &VpcGenerator{}},
+		"vpc_endpoint":      &AwsFacade{service: &VpcEndpointGenerator{}},
 		"vpc_peering":       &AwsFacade{service: &VpcPeeringConnectionGenerator{}},
 		"vpn_connection":    &AwsFacade{service: &VpnConnectionGenerator{}},
 		"vpn_gateway":       &AwsFacade{service: &VpnGatewayGenerator{}},
