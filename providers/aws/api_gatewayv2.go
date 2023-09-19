@@ -62,7 +62,7 @@ func (g *APIGatewayV2Generator) loadRestApis(svc *apigatewayv2.ApiGatewayV2) err
 			fmt.Println("Failed to list APIs:", err)
 			return err
 		}
-		if err = g.processRestApis(svc, output.Items); err! = nil {
+		if err = g.processRestApis(svc, output.Items); err != nil {
 			fmt.Println("Failed to list APIs:", err)
 			return err
 		}
