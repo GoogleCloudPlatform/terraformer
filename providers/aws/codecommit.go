@@ -73,11 +73,12 @@ func (g *CodeCommitGenerator) InitResources() error {
 		return e
 	}
 	svc := codecommit.NewFromConfig(config)
-
-	if err := g.loadRepository(svc); err != nil {
+	err := g.loadRepository(svc)
+	if err != nil {
 		return err
 	}
-	if err := g.loadApprovalRuleTemplate(svc); err != nil {
+	err = g.loadApprovalRuleTemplate(svc)
+	if err != nil {
 		return err
 	}
 
