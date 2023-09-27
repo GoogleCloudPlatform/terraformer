@@ -54,7 +54,8 @@ func (g *MQGenerator) InitResources() error {
 	}
 	svc := mq.NewFromConfig(config)
 
-	if err := g.loadBrokers(svc); err != nil {
+	err := g.loadBrokers(svc)
+	if err != nil {
 		return err
 	}
 
