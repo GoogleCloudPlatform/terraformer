@@ -17,7 +17,6 @@ package alicloud
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"runtime"
 
@@ -90,7 +89,7 @@ func LoadConfigFromProfile(profileName string) (*connectivity.Config, error) {
 	}
 
 	// Try to parse JSON
-	data, err := ioutil.ReadFile(profilePath)
+	data, err := os.ReadFile(profilePath)
 	if err != nil {
 		return nil, err
 	}

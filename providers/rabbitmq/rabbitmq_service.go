@@ -15,7 +15,7 @@
 package rabbitmq
 
 import (
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -38,7 +38,7 @@ func (s *RBTService) generateRequest(uri string) ([]byte, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
