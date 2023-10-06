@@ -290,6 +290,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"media_package":     &AwsFacade{service: &MediaPackageGenerator{}},
 		"media_store":       &AwsFacade{service: &MediaStoreGenerator{}},
 		"medialive":         &AwsFacade{service: &MediaLiveGenerator{}},
+		"mq":                &AwsFacade{service: &MQGenerator{}},
 		"msk":               &AwsFacade{service: &MskGenerator{}},
 		"nacl":              &AwsFacade{service: &NaclGenerator{}},
 		"nat":               &AwsFacade{service: &NatGatewayGenerator{}},
