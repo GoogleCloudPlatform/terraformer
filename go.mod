@@ -3,9 +3,9 @@ module github.com/GoogleCloudPlatform/terraformer
 go 1.21
 
 require (
-	cloud.google.com/go v0.110.2 // indirect
+	cloud.google.com/go v0.110.4 // indirect
 	cloud.google.com/go/logging v1.7.0
-	cloud.google.com/go/storage v1.29.0
+	cloud.google.com/go/storage v1.33.0
 	github.com/Azure/azure-sdk-for-go v63.4.0+incompatible
 	github.com/Azure/azure-storage-blob-go v0.10.0
 	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 // indirect
@@ -161,8 +161,8 @@ require (
 	golang.org/x/oauth2 v0.12.0
 	golang.org/x/text v0.13.0
 	gonum.org/v1/gonum v0.7.0
-	google.golang.org/api v0.131.0
-	google.golang.org/genproto v0.0.0-20230629202037-9506855d4529
+	google.golang.org/api v0.132.0
+	google.golang.org/genproto v0.0.0-20230706204954-ccb25ca9f130
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22 // indirect
 	k8s.io/apimachinery v0.24.2
 	k8s.io/client-go v0.24.2
@@ -342,10 +342,10 @@ require (
 require github.com/PuerkitoBio/rehttp v1.0.0 // indirect
 
 require (
-	cloud.google.com/go/cloudbuild v1.9.0
-	cloud.google.com/go/cloudtasks v1.10.0
-	cloud.google.com/go/iam v0.13.0
-	cloud.google.com/go/monitoring v1.13.0
+	cloud.google.com/go/cloudbuild v1.10.1
+	cloud.google.com/go/cloudtasks v1.11.1
+	cloud.google.com/go/iam v1.1.0
+	cloud.google.com/go/monitoring v1.15.1
 	github.com/DataDog/datadog-api-client-go/v2 v2.11.0
 	github.com/Myra-Security-GmbH/myrasec-go/v2 v2.28.0
 	github.com/manicminer/hamilton v0.44.0
@@ -356,7 +356,7 @@ require (
 require (
 	cloud.google.com/go/compute v1.20.1 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
-	cloud.google.com/go/longrunning v0.4.1 // indirect
+	cloud.google.com/go/longrunning v0.5.1 // indirect
 	github.com/DataDog/zstd v1.5.2 // indirect
 	github.com/Myra-Security-GmbH/signature v1.0.0 // indirect
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
@@ -376,8 +376,8 @@ require (
 	github.com/manicminer/hamilton-autorest v0.2.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	golang.org/x/tools/cmd/cover v0.1.0-deprecated // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20230629202037-9506855d4529 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20230706204954-ccb25ca9f130 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20230706204954-ccb25ca9f130 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20230711160842-782d3b101e98 // indirect
 	k8s.io/kube-openapi v0.0.0-20220328201542-3ee0da9b0b42 // indirect
 	sigs.k8s.io/json v0.0.0-20211208200746-9f7c6b3444d2 // indirect
 )
