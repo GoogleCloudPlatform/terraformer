@@ -37,7 +37,7 @@ func (g AppSignOnPolicyGenerator) createResources(appSignOnPolicyList []*okta.Po
 			"app_signon_policy"+resourceName,
 			resourceType,
 			"okta",
-			[]string{}))
+			[]string{"description"}))
 	}
 	return resources
 }
