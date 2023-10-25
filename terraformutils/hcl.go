@@ -126,6 +126,8 @@ func (v *astSanitizer) visitObjectItem(o *ast.ObjectItem) {
 			t.Token.Type = 10
 			// check if text json for Unquote and Indent
 			jsonTest := t.Token.Text
+			// Since it's heredoc, we probably want to unescape quotes no matter what
+			t.Token.Text = strings.ReplaceAll(jsonTest, "\\\"", "\"")
 			lines := strings.Split(jsonTest, "\n")
 			jsonTest = strings.Join(lines[1:len(lines)-1], "\n")
 			jsonTest = strings.ReplaceAll(jsonTest, "\\\"", "\"")
