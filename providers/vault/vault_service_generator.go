@@ -216,31 +216,43 @@ func (g *ServiceGenerator) createGenericSecretResources() error {
 	}
 	for _, mount := range mounts {
 		path := fmt.Sprintf("%s/", mount)
-		s, err := g.client.Logical().List(path)
-		if err != nil {
-			log.Printf("error calling path %s: %s", path, err)
-			continue
-		}
-		if s == nil {
-			log.Printf("call to %s returned nil result", path)
-			continue
-		}
-		secrets, ok := s.Data["keys"]
-		if !ok {
-			log.Printf("no keys in call to %s", path)
-			continue
-		}
-		for _, secret := range secrets.([]interface{}) {
-			g.Resources = append(g.Resources,
-				terraformutils.NewSimpleResource(
-					fmt.Sprintf("%s/%s", mount, secret),
-					fmt.Sprintf("%s_%s", mount, secret),
-					"vault_generic_secret",
-					g.ProviderName,
-					[]string{}))
-		}
+		g.createGenericSecretResourcesPerMount(path)
 	}
 	return nil
+}
+
+func (g *ServiceGenerator) createGenericSecretResourcesPerMount(path string) {
+	s, err := g.client.Logical().List(path)
+	if err != nil {
+		log.Printf("error calling path %s: %s", path, err)
+		return
+	}
+	if s == nil {
+		log.Printf("call to %s returned nil result", path)
+		return
+	}
+	secrets, ok := s.Data["keys"]
+	if !ok {
+		log.Printf("no keys in call to %s", path)
+		return
+	}
+	for _, secret := range secrets.([]interface{}) {
+		secretStr := secret.(string)
+		secretLen := len(secretStr)
+		newPath := path + secretStr
+		// Folders are suffixed with `/`: https://www.vaultproject.io/api-docs/secret/kv/kv-v1#list-secrets
+		if secretStr[secretLen-1:secretLen] == "/" {
+			g.createGenericSecretResourcesPerMount(newPath)
+			continue
+		}
+		g.Resources = append(g.Resources,
+			terraformutils.NewSimpleResource(
+				newPath,
+				strings.ReplaceAll(newPath, "/", "_"),
+				"vault_generic_secret",
+				g.ProviderName,
+				[]string{}))
+	}
 }
 
 func (g *ServiceGenerator) createMountResources() error {
@@ -280,6 +292,13 @@ POLICY`, sanitizedPolicy)
 				}
 				sort.Strings(strPolicies)
 				resource.Item["policies"] = strPolicies
+			}
+		case "vault_generic_secret":
+			if data, ok := resource.Item["data_json"]; ok {
+				dataStr := data.(string)
+				dataStr = strings.ReplaceAll(dataStr, "%{", "%%{")
+				dataStr = strings.ReplaceAll(dataStr, "${", "$${")
+				resource.Item["data_json"] = dataStr
 			}
 		}
 	}
