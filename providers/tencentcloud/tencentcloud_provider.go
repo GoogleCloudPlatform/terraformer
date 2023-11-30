@@ -115,6 +115,7 @@ func (p *TencentCloudProvider) GetSupportedService() map[string]terraformutils.S
 		"tat":            &TatGenerator{},
 		"dnspod":         &DnspodGenerator{},
 		"ses":            &SesGenerator{},
+		"teo":            &TeoGenerator{},
 	}
 }
 

@@ -387,30 +387,29 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/medialive v1.24.2
 	github.com/aws/aws-sdk-go-v2/service/mq v1.15.1
 	github.com/aws/aws-sdk-go-v2/service/ssoadmin v1.16.5
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/as v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cbs v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdb v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cfs v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.694
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/es v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/gaap v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/mongodb v1.0.392
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/as v1.0.806
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cbs v1.0.806
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdb v1.0.806
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn v1.0.806
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cfs v1.0.806
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.806
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.806
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm v1.0.806
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod v1.0.806
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/es v1.0.806
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/gaap v1.0.806
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/mongodb v1.0.806
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/pts v1.0.694
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/redis v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/scf v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ses v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tat v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tcaplusdb v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc v1.0.392
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/redis v1.0.806
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/scf v1.0.806
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ses v1.0.806
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.806
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tat v1.0.806
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tcaplusdb v1.0.806
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc v1.0.806
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo v1.0.806
 )
 
 replace gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
 
 replace gopkg.in/ns1/ns1-go.v2 => github.com/ns1/ns1-go/v2 v2.6.5
-
-replace github.com/tencentcloud/tencentcloud-sdk-go => github.com/tencentcloud/tencentcloud-sdk-go v1.0.392

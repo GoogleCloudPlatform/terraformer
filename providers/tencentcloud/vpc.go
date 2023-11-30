@@ -37,7 +37,7 @@ func (g *VpcGenerator) InitResources() error {
 	}
 
 	request := vpc.NewDescribeVpcsRequest()
-	request.Filters = make([]*vpc.Filter, 0)
+	//request.Filters = make([]*vpc.Filter, 0)
 	vpcIds := make([]string, 0)
 	for _, filter := range g.Filter {
 		if filter.FieldPath == "id" && filter.IsApplicable("tencentcloud_vpc") {
