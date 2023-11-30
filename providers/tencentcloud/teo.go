@@ -16,6 +16,7 @@ package tencentcloud
 
 import (
 	"fmt"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	teo "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/teo/v20220901"
@@ -51,7 +52,9 @@ func (g *TeoGenerator) InitResources() error {
 			[]string{},
 			map[string]interface{}{},
 		)
-		g.loadRuleEngines(client, *instance.ZoneId)
+		if err := g.loadRuleEngines(client, *instance.ZoneId); err != nil {
+			return err
+		}
 		g.Resources = append(g.Resources, resource)
 	}
 
@@ -76,7 +79,7 @@ func (g *TeoGenerator) loadRuleEngines(client *teo.Client, zoneID string) error 
 			[]string{},
 			map[string]interface{}{},
 		)
-		//resource.AdditionalFields["zone_id"] = "${local.zone_id}"
+		// resource.AdditionalFields["zone_id"] = "${local.zone_id}"
 		g.Resources = append(g.Resources, resource)
 	}
 
