@@ -16,6 +16,7 @@ package aws
 
 import (
 	"context"
+	"errors"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -41,7 +42,12 @@ func (g *IdentityStoreGenerator) GetIdentityStoreId() (*string, error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(instances.Instances) == 0 {
+		err = errors.New("No Identity Instances found")
+		return nil, err
+	}
 	identityStoreId := StringValue(instances.Instances[0].IdentityStoreId)
+	
 	return &identityStoreId, nil
 
 }
