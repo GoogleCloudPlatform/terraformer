@@ -212,6 +212,8 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_medialive_channel`
     * `aws_medialive_input`
     * `aws_medialive_input_security_group`
+*   `mq`
+    * `aws_mq_broker`
 *   `msk`
     * `aws_msk_cluster`
 *   `nacl`
@@ -302,6 +304,8 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_ec2_transit_gateway_vpc_attachment`
 *   `vpc`
     * `aws_vpc`
+*   `vpc_endpoint`
+    * `aws_vpc_endpoint`
 *   `vpc_peering`
     * `aws_vpc_peering_connection`
 *   `vpn_connection`
