@@ -30,6 +30,7 @@ import (
 	dataPlatform "github.com/ionos-cloud/sdk-go-dataplatform"
 	dbaasMongo "github.com/ionos-cloud/sdk-go-dbaas-mongo"
 	dbaasPgSql "github.com/ionos-cloud/sdk-go-dbaas-postgres"
+	dns "github.com/ionos-cloud/sdk-go-dns"
 	ionoscloud "github.com/ionos-cloud/sdk-go/v6"
 )
 
@@ -44,6 +45,7 @@ type Bundle struct {
 	CertificateManagerAPIClient *certificateManager.APIClient
 	ContainerRegistryAPIClient  *containerRegistry.APIClient
 	DataPlatformAPIClient       *dataPlatform.APIClient
+	DNSAPIClient                *dns.APIClient
 }
 
 type clientType int
@@ -55,6 +57,7 @@ const (
 	certificateManagerClient
 	containerRegistryClient
 	dataPlatformClient
+	dnsClient
 )
 
 func (s *Service) generateClient() *Bundle {
@@ -81,6 +84,7 @@ func (s *Service) generateClient() *Bundle {
 		certificateManagerClient: NewClientByType(username, password, token, cleanedURL, certificateManagerClient),
 		containerRegistryClient:  NewClientByType(username, password, token, cleanedURL, containerRegistryClient),
 		dataPlatformClient:       NewClientByType(username, password, token, cleanedURL, dataPlatformClient),
+		dnsClient:                NewClientByType(username, password, token, cleanedURL, dnsClient),
 	}
 
 	return &Bundle{
@@ -90,6 +94,7 @@ func (s *Service) generateClient() *Bundle {
 		CertificateManagerAPIClient: clients[certificateManagerClient].(*certificateManager.APIClient),
 		ContainerRegistryAPIClient:  clients[containerRegistryClient].(*containerRegistry.APIClient),
 		DataPlatformAPIClient:       clients[dataPlatformClient].(*dataPlatform.APIClient),
+		DNSAPIClient:                clients[dnsClient].(*dns.APIClient),
 	}
 }
 
@@ -178,6 +183,20 @@ func NewClientByType(username, password, token, url string, clientType clientTyp
 			newConfig.UserAgent = fmt.Sprintf(
 				"terraformer_ionos-cloud-sdk-go-dataplatform/%s_os/%s_arch/%s", dataPlatform.Version, runtime.GOOS, runtime.GOARCH)
 			return dataPlatform.NewAPIClient(newConfig)
+		}
+	case dnsClient:
+		{
+			newConfig := dns.NewConfiguration(username, password, token, url)
+
+			if os.Getenv(helpers.IonosDebug) != "" {
+				newConfig.Debug = true
+			}
+			newConfig.MaxRetries = helpers.MaxRetries
+			newConfig.WaitTime = helpers.MaxWaitTime
+			newConfig.HTTPClient = &http.Client{Transport: CreateTransport()}
+			newConfig.UserAgent = fmt.Sprintf(
+				"terraformer_ionos-cloud-sdk-go-dns/%s_os/%s_arch/%s", dns.Version, runtime.GOOS, runtime.GOARCH)
+			return dns.NewAPIClient(newConfig)
 		}
 	default:
 		log.Printf("[ERROR] unknown client type %d", clientType)
