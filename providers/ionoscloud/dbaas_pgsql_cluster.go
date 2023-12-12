@@ -9,11 +9,11 @@ import (
 	dbaas "github.com/ionos-cloud/sdk-go-dbaas-postgres"
 )
 
-type DBaaSClusterGenerator struct {
+type DBaaSPgSQLClusterGenerator struct {
 	Service
 }
 
-func (g DBaaSClusterGenerator) createResources(
+func (g DBaaSPgSQLClusterGenerator) createResources(
 	clustersList []dbaas.ClusterResponse,
 ) []terraformutils.Resource {
 	var resources []terraformutils.Resource
@@ -37,9 +37,9 @@ func (g DBaaSClusterGenerator) createResources(
 	return resources
 }
 
-func (g *DBaaSClusterGenerator) InitResources() error {
+func (g *DBaaSPgSQLClusterGenerator) InitResources() error {
 	client := g.generateClient()
-	dbaasAPIClient := client.DBaaSApiClient
+	dbaasAPIClient := client.DBaaSPgSqlApiClient
 	output, _, err := dbaasAPIClient.ClustersApi.ClustersGet(context.TODO()).Execute()
 	if err != nil {
 		return err

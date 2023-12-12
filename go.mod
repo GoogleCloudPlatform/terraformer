@@ -131,6 +131,7 @@ require (
 	github.com/hokaccha/go-prettyjson v0.0.0-20210113012101-fb4e108d2519 // indirect
 	github.com/honeycombio/terraform-provider-honeycombio v0.10.0
 	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
+	github.com/ionos-cloud/sdk-go-dbaas-mongo v1.3.1
 	github.com/ionos-cloud/sdk-go-dbaas-postgres v1.0.3
 	github.com/ionos-cloud/sdk-go/v6 v6.1.3
 	github.com/jefferai/jsonx v1.0.1 // indirect
@@ -385,11 +386,11 @@ require (
 require (
 	github.com/aws/aws-sdk-go-v2/service/identitystore v1.16.5
 	github.com/aws/aws-sdk-go-v2/service/medialive v1.24.2
+	github.com/aws/aws-sdk-go-v2/service/mq v1.15.1
+	github.com/aws/aws-sdk-go-v2/service/ssoadmin v1.16.5
 	github.com/ionos-cloud/sdk-go-cert-manager v1.0.0
 	github.com/ionos-cloud/sdk-go-container-registry v1.0.0
 	github.com/ionos-cloud/sdk-go-dataplatform v1.0.1
-	github.com/aws/aws-sdk-go-v2/service/mq v1.15.1
-	github.com/aws/aws-sdk-go-v2/service/ssoadmin v1.16.5
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/as v1.0.392
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cbs v1.0.392
 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdb v1.0.392
