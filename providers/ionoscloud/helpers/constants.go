@@ -19,6 +19,7 @@ const (
 	UserID                = "user_id"
 	GroupID               = "group_id"
 	ResourceID            = "resource_id"
+	ZoneID                = "zone_id"
 
 	UsernameArg = "username"
 	PasswordArg = "password"
