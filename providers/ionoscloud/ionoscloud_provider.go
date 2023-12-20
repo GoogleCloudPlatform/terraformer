@@ -124,6 +124,7 @@ func (p *IonosCloudProvider) GetSupportedService() map[string]terraformutils.Ser
 		"volume":                   &VolumeGenerator{},
 		"pg_cluster":               &DBaaSPgSQLClusterGenerator{},
 		"mongo_cluster":            &DBaaSMongoClusterGenerator{},
+		"mongo_user":               &DBaaSMongoUserGenerator{},
 		"backup_unit":              &BackupUnitGenerator{},
 		"ipblock":                  &IPBlockGenerator{},
 		"k8s_cluster":              &KubernetesClusterGenerator{},

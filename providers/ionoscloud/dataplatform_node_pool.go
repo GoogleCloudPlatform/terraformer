@@ -46,7 +46,7 @@ func (g *DataPlatformNodePoolGenerator) InitResources() error {
 				*dpNodePool.Properties.Name+"-"+*dpNodePool.Id,
 				resourceType,
 				helpers.Ionos,
-				map[string]string{helpers.DataPlatformClusterID: *dpCluster.Id},
+				map[string]string{helpers.ClusterID: *dpCluster.Id},
 				[]string{},
 				map[string]interface{}{}))
 		}
