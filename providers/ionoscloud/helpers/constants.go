@@ -11,8 +11,8 @@ const (
 const (
 	IonosDebug   = "IONOS_DEBUG"
 	Ionos        = "ionoscloud"
-	ClusterID    = "cluster_id"
 	DcID         = "datacenter_id"
+	ClusterID    = "cluster_id"
 	ServerID     = "server_id"
 	NicID        = "nic_id"
 	K8sClusterID = "k8s_cluster_id"

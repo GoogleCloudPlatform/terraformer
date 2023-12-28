@@ -132,7 +132,7 @@ require (
 	github.com/honeycombio/terraform-provider-honeycombio v0.10.0
 	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
 	github.com/ionos-cloud/sdk-go-dbaas-mongo v1.3.1
-	github.com/ionos-cloud/sdk-go-dbaas-postgres v1.0.3
+	github.com/ionos-cloud/sdk-go-dbaas-postgres v1.1.2
 	github.com/ionos-cloud/sdk-go/v6 v6.1.3
 	github.com/jefferai/jsonx v1.0.1 // indirect
 	github.com/jmespath/go-jmespath v0.4.0
