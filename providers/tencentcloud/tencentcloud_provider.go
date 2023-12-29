@@ -19,7 +19,6 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	"github.com/zclconf/go-cty/cty"
@@ -58,6 +57,10 @@ func (p *TencentCloudProvider) GetConfig() cty.Value {
 
 func (p *TencentCloudProvider) GetName() string {
 	return "tencentcloud"
+}
+
+func (p *TencentCloudProvider) GetSource() string {
+	return "tencentcloudstack/" + p.GetName()
 }
 
 func (p *TencentCloudProvider) Init(args []string) error {
@@ -200,7 +203,7 @@ func (p *TencentCloudProvider) GetProviderData(arg ...string) map[string]interfa
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			p.GetName(): map[string]interface{}{
-				"version": providerwrapper.GetProviderVersion(p.GetName()),
+				"region": p.region,
 			},
 		},
 	}
