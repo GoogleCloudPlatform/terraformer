@@ -22,6 +22,7 @@ const (
 	ZoneID       = "zone_id"
 
 	UsernameArg = "username"
+	NameArg     = "name"
 	PasswordArg = "password"
 	TokenArg    = "token"
 	URLArg      = "url"
