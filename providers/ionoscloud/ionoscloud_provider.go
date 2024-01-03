@@ -152,6 +152,7 @@ func (p *IonosCloudProvider) GetSupportedService() map[string]terraformutils.Ser
 		"container_registry_token":           &ContainerRegistryTokenGenerator{},
 		"dns_zone":                           &DNSZoneGenerator{},
 		"dns_record":                         &DNSRecordGenerator{},
+		"logging_pipeline":                   &LoggingPipelineGenerator{},
 	}
 }
 

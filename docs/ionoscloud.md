@@ -51,6 +51,7 @@ export IONOS_TOKEN="token"
 * [`application_loadbalancer_forwardingrule`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/application_loadbalancer_forwardingrule)
 * [`dns_zone`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/dns_zone)
 * [`dns_record`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/dns_record)
+* [`logging_pipeline`](https://registry.terraform.io/providers/ionos-cloud/ionoscloud/latest/docs/resources/logging_pipeline)
 
 We allow only resources that provide valid terraform plans to be imported.
 If you do not see your resource in the tf plan, please enable TF_LOG=debug and check logs 

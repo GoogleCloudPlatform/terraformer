@@ -1138,6 +1138,8 @@ github.com/ionos-cloud/sdk-go-dbaas-postgres v1.1.2 h1:AaKbci+kVS6/k43VwJwmXxCJ7
 github.com/ionos-cloud/sdk-go-dbaas-postgres v1.1.2/go.mod h1:nmJEwuRX65A5/PxwvdFW0XrV+N6WFYnMV1TiIafAwz4=
 github.com/ionos-cloud/sdk-go-dns v1.1.1 h1:Qdf5mXYt9ZeRl4zZQxGrvamFkKm1X9WeARyB9/WYhKg=
 github.com/ionos-cloud/sdk-go-dns v1.1.1/go.mod h1:l9gYdwtUshlBOiIi4nHn3RCX81XlV3VoNvLJrO2VfHg=
+github.com/ionos-cloud/sdk-go-logging v1.0.1 h1:MB9jPoBUL3mZ+ois7kXYy67x0FopAw2aihMGdr2wu1k=
+github.com/ionos-cloud/sdk-go-logging v1.0.1/go.mod h1:P2JQJpUgH3ZyfyJmv6jMwcB1NJIVVZSL+/bllhWpwc8=
 github.com/ionos-cloud/sdk-go/v6 v6.1.3 h1:vb6yqdpiqaytvreM0bsn2pXw+1YDvEk2RKSmBAQvgDQ=
 github.com/ionos-cloud/sdk-go/v6 v6.1.3/go.mod h1:Ox3W0iiEz0GHnfY9e5LmAxwklsxguuNFEUSu0gVRTME=
 github.com/jefferai/jsonx v1.0.1 h1:GvWkLWihoLqDG0BSP45TUQJH9qsINX50PVrFULgpc/I=
