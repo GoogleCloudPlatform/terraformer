@@ -388,6 +388,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/medialive v1.24.2
 	github.com/aws/aws-sdk-go-v2/service/mq v1.15.1
 	github.com/aws/aws-sdk-go-v2/service/ssoadmin v1.16.5
+	github.com/gofrs/uuid/v3 v3.1.2
 	github.com/ionos-cloud/sdk-go-cert-manager v1.0.0
 	github.com/ionos-cloud/sdk-go-container-registry v1.0.0
 	github.com/ionos-cloud/sdk-go-dataplatform v1.0.1

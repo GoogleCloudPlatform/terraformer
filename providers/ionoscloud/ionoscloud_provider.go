@@ -153,6 +153,7 @@ func (p *IonosCloudProvider) GetSupportedService() map[string]terraformutils.Ser
 		"dns_zone":                           &DNSZoneGenerator{},
 		"dns_record":                         &DNSRecordGenerator{},
 		"logging_pipeline":                   &LoggingPipelineGenerator{},
+		"ipfailover":                         &IPFailoverGenerator{},
 	}
 }
 

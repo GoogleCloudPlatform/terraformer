@@ -2,20 +2,22 @@ package ionoscloud
 
 import (
 	"context"
+	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	uuid "github.com/gofrs/uuid/v3"
 	"log"
 
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
-	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
-type LanGenerator struct {
+type IPFailoverGenerator struct {
 	Service
 }
 
-func (g *LanGenerator) InitResources() error {
+func (g *IPFailoverGenerator) InitResources() error {
 	client := g.generateClient()
 	cloudAPIClient := client.CloudAPIClient
 	datacenters, err := helpers.GetAllDatacenters(*cloudAPIClient)
+	resourceType := "ionoscloud_ipfailover"
 	if err != nil {
 		return err
 	}
@@ -31,7 +33,7 @@ func (g *LanGenerator) InitResources() error {
 			continue
 		}
 		for _, lan := range *lans.Items {
-			if lan.Properties == nil || lan.Properties.Name == nil {
+			if lan.Properties == nil || lan.Properties.IpFailover == nil {
 				log.Printf(
 					"[WARNING] 'nil' values in the response for LAN with ID %v, datacenter ID: %v, skipping this resource",
 					*lan.Id,
@@ -39,13 +41,15 @@ func (g *LanGenerator) InitResources() error {
 				)
 				continue
 			}
-			if lan.Properties != nil && lan.Properties.Name != nil {
+			for _, ipFailover := range *lan.Properties.IpFailover {
+				// Generate the ID of the resource using the IP
+				id := uuid.NewV5(uuid.NewV5(uuid.NamespaceURL, "https://github.com/ionos-cloud/terraform-provider-ionoscloud"), *ipFailover.Ip).String()
 				g.Resources = append(g.Resources, terraformutils.NewResource(
-					*lan.Id,
-					*lan.Properties.Name+"-"+*lan.Id,
-					"ionoscloud_lan",
+					id,
+					id,
+					resourceType,
 					helpers.Ionos,
-					map[string]string{helpers.DcID: *datacenter.Id},
+					map[string]string{helpers.DcID: *datacenter.Id, "lan_id": *lan.Id, "ip": *ipFailover.Ip, "nicuuid": *ipFailover.NicUuid},
 					[]string{},
 					map[string]interface{}{}))
 			}
