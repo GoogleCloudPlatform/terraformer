@@ -39,7 +39,7 @@ func (g DBaaSPgSQLClusterGenerator) createResources(
 
 func (g *DBaaSPgSQLClusterGenerator) InitResources() error {
 	client := g.generateClient()
-	dbaasAPIClient := client.DBaaSPgSqlApiClient
+	dbaasAPIClient := client.DBaaSPgSQLApiClient
 	output, _, err := dbaasAPIClient.ClustersApi.ClustersGet(context.TODO()).Execute()
 	if err != nil {
 		return err

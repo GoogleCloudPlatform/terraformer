@@ -2,9 +2,10 @@ package ionoscloud
 
 import (
 	"context"
+	"log"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"log"
 )
 
 type DBaaSMongoClusterGenerator struct {
@@ -13,7 +14,7 @@ type DBaaSMongoClusterGenerator struct {
 
 func (g *DBaaSMongoClusterGenerator) InitResources() error {
 	client := g.generateClient()
-	dbaasMongoClient := client.DBaaSMongoApiClient
+	dbaasMongoClient := client.DBaaSMongoAPIClient
 	resourceType := "ionoscloud_mongo_cluster"
 
 	response, _, err := dbaasMongoClient.ClustersApi.ClustersGet(context.TODO()).Execute()

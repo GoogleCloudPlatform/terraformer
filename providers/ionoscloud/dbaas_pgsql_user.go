@@ -2,9 +2,10 @@ package ionoscloud
 
 import (
 	"context"
+	"log"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"log"
 )
 
 type DBaaSPgSQLUserGenerator struct {
@@ -13,10 +14,10 @@ type DBaaSPgSQLUserGenerator struct {
 
 func (g *DBaaSPgSQLUserGenerator) InitResources() error {
 	client := g.generateClient()
-	dbaasPgSqlClient := client.DBaaSPgSqlApiClient
+	dbaasPgSQLClient := client.DBaaSPgSQLApiClient
 	resourceType := "ionoscloud_pg_user"
 
-	response, _, err := dbaasPgSqlClient.ClustersApi.ClustersGet(context.TODO()).Execute()
+	response, _, err := dbaasPgSQLClient.ClustersApi.ClustersGet(context.TODO()).Execute()
 	if err != nil {
 		return err
 	}
@@ -25,7 +26,7 @@ func (g *DBaaSPgSQLUserGenerator) InitResources() error {
 	}
 	clusters := *response.Items
 	for _, cluster := range clusters {
-		usersResponse, _, err := dbaasPgSqlClient.UsersApi.UsersList(context.TODO(), *cluster.Id).Execute()
+		usersResponse, _, err := dbaasPgSQLClient.UsersApi.UsersList(context.TODO(), *cluster.Id).Execute()
 		if err != nil {
 			return err
 		}

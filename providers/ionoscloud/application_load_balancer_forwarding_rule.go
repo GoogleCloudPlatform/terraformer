@@ -2,9 +2,10 @@ package ionoscloud
 
 import (
 	"context"
+	"log"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"log"
 )
 
 type ALBForwardingRuleGenerator struct {

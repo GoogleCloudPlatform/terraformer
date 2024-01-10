@@ -29,7 +29,7 @@ import (
 	containerRegistry "github.com/ionos-cloud/sdk-go-container-registry"
 	dataPlatform "github.com/ionos-cloud/sdk-go-dataplatform"
 	dbaasMongo "github.com/ionos-cloud/sdk-go-dbaas-mongo"
-	dbaasPgSql "github.com/ionos-cloud/sdk-go-dbaas-postgres"
+	dbaasPgSQL "github.com/ionos-cloud/sdk-go-dbaas-postgres"
 	dns "github.com/ionos-cloud/sdk-go-dns"
 	logging "github.com/ionos-cloud/sdk-go-logging"
 	ionoscloud "github.com/ionos-cloud/sdk-go/v6"
@@ -41,8 +41,8 @@ type Service struct {
 
 type Bundle struct {
 	CloudAPIClient              *ionoscloud.APIClient
-	DBaaSPgSqlApiClient         *dbaasPgSql.APIClient
-	DBaaSMongoApiClient         *dbaasMongo.APIClient
+	DBaaSPgSQLApiClient         *dbaasPgSQL.APIClient
+	DBaaSMongoAPIClient         *dbaasMongo.APIClient
 	CertificateManagerAPIClient *certificateManager.APIClient
 	ContainerRegistryAPIClient  *containerRegistry.APIClient
 	DataPlatformAPIClient       *dataPlatform.APIClient
@@ -54,7 +54,7 @@ type clientType int
 
 const (
 	ionosClient clientType = iota
-	dbaasPgSqlClient
+	dbaasPgSQLClient
 	dbaasMongoClient
 	certificateManagerClient
 	containerRegistryClient
@@ -82,7 +82,7 @@ func (s *Service) generateClient() *Bundle {
 
 	clients := map[clientType]interface{}{
 		ionosClient:              NewClientByType(username, password, token, cleanedURL, ionosClient),
-		dbaasPgSqlClient:         NewClientByType(username, password, token, cleanedURL, dbaasPgSqlClient),
+		dbaasPgSQLClient:         NewClientByType(username, password, token, cleanedURL, dbaasPgSQLClient),
 		dbaasMongoClient:         NewClientByType(username, password, token, cleanedURL, dbaasMongoClient),
 		certificateManagerClient: NewClientByType(username, password, token, cleanedURL, certificateManagerClient),
 		containerRegistryClient:  NewClientByType(username, password, token, cleanedURL, containerRegistryClient),
@@ -93,8 +93,8 @@ func (s *Service) generateClient() *Bundle {
 
 	return &Bundle{
 		CloudAPIClient:              clients[ionosClient].(*ionoscloud.APIClient),
-		DBaaSPgSqlApiClient:         clients[dbaasPgSqlClient].(*dbaasPgSql.APIClient),
-		DBaaSMongoApiClient:         clients[dbaasMongoClient].(*dbaasMongo.APIClient),
+		DBaaSPgSQLApiClient:         clients[dbaasPgSQLClient].(*dbaasPgSQL.APIClient),
+		DBaaSMongoAPIClient:         clients[dbaasMongoClient].(*dbaasMongo.APIClient),
 		CertificateManagerAPIClient: clients[certificateManagerClient].(*certificateManager.APIClient),
 		ContainerRegistryAPIClient:  clients[containerRegistryClient].(*containerRegistry.APIClient),
 		DataPlatformAPIClient:       clients[dataPlatformClient].(*dataPlatform.APIClient),
@@ -119,9 +119,9 @@ func NewClientByType(username, password, token, url string, clientType clientTyp
 				"terraformer_ionos-cloud-sdk-go/%s_os/%s_arch/%s", ionoscloud.Version, runtime.GOOS, runtime.GOARCH)
 			return ionoscloud.NewAPIClient(newConfig)
 		}
-	case dbaasPgSqlClient:
+	case dbaasPgSQLClient:
 		{
-			newConfig := dbaasPgSql.NewConfiguration(username, password, token, url)
+			newConfig := dbaasPgSQL.NewConfiguration(username, password, token, url)
 
 			if os.Getenv(helpers.IonosDebug) != "" {
 				newConfig.Debug = true
@@ -130,8 +130,8 @@ func NewClientByType(username, password, token, url string, clientType clientTyp
 			newConfig.WaitTime = helpers.MaxWaitTime
 			newConfig.HTTPClient = &http.Client{Transport: CreateTransport()}
 			newConfig.UserAgent = fmt.Sprintf(
-				"terraformer_ionos-cloud-sdk-go-dbaas-postgres/%s_os/%s_arch/%s", dbaasPgSql.Version, runtime.GOOS, runtime.GOARCH)
-			return dbaasPgSql.NewAPIClient(newConfig)
+				"terraformer_ionos-cloud-sdk-go-dbaas-postgres/%s_os/%s_arch/%s", dbaasPgSQL.Version, runtime.GOOS, runtime.GOARCH)
+			return dbaasPgSQL.NewAPIClient(newConfig)
 		}
 	case dbaasMongoClient:
 		{

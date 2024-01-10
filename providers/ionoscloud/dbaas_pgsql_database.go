@@ -2,9 +2,10 @@ package ionoscloud
 
 import (
 	"context"
+	"log"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"log"
 )
 
 type DBaaSPgSQLDatabaseGenerator struct {
@@ -13,10 +14,10 @@ type DBaaSPgSQLDatabaseGenerator struct {
 
 func (g *DBaaSPgSQLDatabaseGenerator) InitResources() error {
 	client := g.generateClient()
-	dbaasPgSqlClient := client.DBaaSPgSqlApiClient
+	dbaasPgSQLClient := client.DBaaSPgSQLApiClient
 	resourceType := "ionoscloud_pg_database"
 
-	response, _, err := dbaasPgSqlClient.ClustersApi.ClustersGet(context.TODO()).Execute()
+	response, _, err := dbaasPgSQLClient.ClustersApi.ClustersGet(context.TODO()).Execute()
 	if err != nil {
 		return err
 	}
@@ -25,7 +26,7 @@ func (g *DBaaSPgSQLDatabaseGenerator) InitResources() error {
 	}
 	clusters := *response.Items
 	for _, cluster := range clusters {
-		databasesResponse, _, err := dbaasPgSqlClient.DatabasesApi.DatabasesList(context.TODO(), *cluster.Id).Execute()
+		databasesResponse, _, err := dbaasPgSQLClient.DatabasesApi.DatabasesList(context.TODO(), *cluster.Id).Execute()
 		if err != nil {
 			return err
 		}

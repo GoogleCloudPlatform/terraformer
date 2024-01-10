@@ -2,9 +2,10 @@ package ionoscloud
 
 import (
 	"context"
+	"log"
+
 	"github.com/GoogleCloudPlatform/terraformer/providers/ionoscloud/helpers"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"log"
 )
 
 type DBaaSMongoUserGenerator struct {
@@ -13,7 +14,7 @@ type DBaaSMongoUserGenerator struct {
 
 func (g *DBaaSMongoUserGenerator) InitResources() error {
 	client := g.generateClient()
-	dbaasMongoClient := client.DBaaSMongoApiClient
+	dbaasMongoClient := client.DBaaSMongoAPIClient
 	resourceType := "ionoscloud_mongo_user"
 
 	response, _, err := dbaasMongoClient.ClustersApi.ClustersGet(context.TODO()).Execute()
@@ -39,10 +40,10 @@ func (g *DBaaSMongoUserGenerator) InitResources() error {
 				log.Printf("[WARNING] 'nil' values in the response for Mongo user, skipping this resource")
 				continue
 			}
-			userId := *cluster.Id + *user.Properties.Username
+			userID := *cluster.Id + *user.Properties.Username
 			g.Resources = append(g.Resources, terraformutils.NewResource(
-				userId,
-				userId,
+				userID,
+				userID,
 				resourceType,
 				helpers.Ionos,
 				map[string]string{helpers.ClusterID: *cluster.Id, helpers.UsernameArg: *user.Properties.Username},

@@ -48,9 +48,7 @@ func (g *ServerGenerator) InitResources() error {
 				continue
 			}
 
-			var resourceType string
-
-			resourceType = getServerResourceType(*server.Properties.Type)
+			resourceType := getServerResourceType(*server.Properties.Type)
 			if resourceType == "" {
 				log.Printf("[WARNING] unknown server type: %v for server with ID: %v, skipping this server", *server.Properties.Type, *server.Id)
 				continue

@@ -32,7 +32,7 @@ type IonosCloudProvider struct { //nolint
 	url      string
 }
 
-func (p *IonosCloudProvider) Init(args []string) error {
+func (p *IonosCloudProvider) Init(_ []string) error {
 	username := os.Getenv(ionoscloud.IonosUsernameEnvVar)
 	password := os.Getenv(ionoscloud.IonosPasswordEnvVar)
 	token := os.Getenv(ionoscloud.IonosTokenEnvVar)
@@ -60,7 +60,7 @@ func (p *IonosCloudProvider) GetName() string {
 	return helpers.ProviderName
 }
 
-func (p *IonosCloudProvider) GetProviderData(arg ...string) map[string]interface{} {
+func (p *IonosCloudProvider) GetProviderData(_ ...string) map[string]interface{} {
 	return map[string]interface{}{}
 }
 
