@@ -142,7 +142,7 @@ func (g *Route53Generator) InitResources() error {
 	}
 	svc := route53.NewFromConfig(config)
 
-  g.Resources = g.createZonesResources(svc)
+	g.Resources = g.createZonesResources(svc)
 	healthCheckResources := g.createHealthChecksResources(svc)
 	g.Resources = append(g.Resources, healthCheckResources...)
 
