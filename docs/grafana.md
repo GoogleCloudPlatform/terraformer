@@ -5,8 +5,8 @@ This provider uses the [terraform-provider-grafana](https://registry.terraform.i
 #### Example
 
 ```
-GRAFANA_AUTH=api_token GRAFANA_URL=https://stack.grafana.net ./terraformer import grafana -r=dashboards // Import with Grafana API token
-GRAFANA_AUTH=username:password GRAFANA_URL=https://stack.grafana.net ./terraformer import grafana -r=dashboards // Import with HTTP basic auth
+GRAFANA_AUTH=api_token GRAFANA_URL=https://stack.grafana.net ./terraformer import grafana -r=grafana_dashboard // Import with Grafana API token
+GRAFANA_AUTH=username:password GRAFANA_URL=https://stack.grafana.net ./terraformer import grafana -r=grafana_dashboard // Import with HTTP basic auth
 ```
 
 #### Configuration
