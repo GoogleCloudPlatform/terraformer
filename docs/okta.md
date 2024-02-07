@@ -9,6 +9,13 @@ $ export OKTA_API_TOKEN=<API_TOKEN>
 $ terraformer import okta --resources=okta_user,okta_group
 ```
 
+If you login to your Okta instance at: https://dev-12345678.okta.com/ you would configure:
+```
+$ export OKTA_ORG_NAME=dev-12345678
+$ export OKTA_BASE_URL=okta.com
+```
+
+
 List of supported Okta services:
 
 *    `user`
