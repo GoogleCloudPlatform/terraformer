@@ -46,9 +46,9 @@ func (g *IdentityStoreGenerator) GetIdentityStoreId() (*string, error) {
 		err = errors.New("No Identity Instances found")
 		return nil, err
 	}
-	identityStoreId := StringValue(instances.Instances[0].IdentityStoreId)
+	identityStoreID := StringValue(instances.Instances[0].IdentityStoreId)
 	
-	return &identityStoreId, nil
+	return &identityStoreID, nil
 
 }
 
