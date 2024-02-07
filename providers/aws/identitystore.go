@@ -176,6 +176,9 @@ func (g *IdentityStoreGenerator) InitResources() error {
 	if e != nil {
 		return e
 	}
+	if identityStoreId == nil {
+		return nil
+	}
 
 	e = g.InitUserResources(*identityStoreId)
 	if e != nil {

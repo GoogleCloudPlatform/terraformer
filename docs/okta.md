@@ -17,6 +17,7 @@ List of supported Okta services:
      * `okta_user_type`
 *    `group`
      * `okta_group`
+     * `okta_group_rule`
 *    `policy`
      * `okta_policy_password`
      * `okta_policy_rule_password`
@@ -39,6 +40,8 @@ List of supported Okta services:
      * `okta_app_secure_password_store`
      * `okta_app_swa`
      * `okta_app_three_field`
+     * `okta_app_signon_policy`
+     * `okta_app_signon_policy_rule`
 *    `event_hook`
 *    * `okta_event_hook`
 *    `factor`
