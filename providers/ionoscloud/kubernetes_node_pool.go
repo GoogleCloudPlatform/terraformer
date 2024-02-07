@@ -17,7 +17,7 @@ func (g *KubernetesNodePoolGenerator) InitResources() error {
 	cloudAPIClient := client.CloudAPIClient
 	resourceType := "ionoscloud_k8s_node_pool"
 
-	kubernetesClusters, _, err := cloudAPIClient.KubernetesApi.K8sGet(context.TODO()).Depth(1).Execute()
+	kubernetesClusters, _, err := cloudAPIClient.KubernetesApi.K8sGet(context.TODO()).Execute()
 	if err != nil {
 		return err
 	}
