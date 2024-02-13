@@ -22,6 +22,11 @@ export HONEYCOMB_API_KEY=MYAPIKEY
   * `honeycombio_slo`
   * `honeycombio_burn_alert`
   * `honeycombio_derived_column`
+* `recipient`
+  * `honeycombio_email_recipient`
+  * `honeycombio_pagerduty_recipient`
+  * `honeycombio_slack_recipient`
+  * `honeycombio_webhook_recipient`
 
 #### A note about Environment-wide assets
 
