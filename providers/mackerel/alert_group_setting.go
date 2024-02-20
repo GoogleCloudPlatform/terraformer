@@ -16,43 +16,78 @@ package mackerel
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/mackerelio/mackerel-client-go"
 )
 
-// AlertGroupSettingGenerator ...
 type AlertGroupSettingGenerator struct {
+	serviceName string
 	MackerelService
 }
 
-func (g *AlertGroupSettingGenerator) createResources(alertGroupSettings []*mackerel.AlertGroupSetting) []terraformutils.Resource {
-	resources := []terraformutils.Resource{}
-	for _, alertGroupSetting := range alertGroupSettings {
-		resources = append(resources, g.createResource(alertGroupSetting.ID))
+func (g *AlertGroupSettingGenerator) isAlertGroupSettingTarget(alertGroup *mackerel.AlertGroupSetting) bool {
+	for _, svc := range alertGroup.ServiceScopes {
+		if svc == g.serviceName {
+			return true
+		}
 	}
-	return resources
+
+	for _, role := range alertGroup.RoleScopes {
+		sp := strings.Split(role, ":")
+		if sp[0] == g.serviceName {
+			return true
+		}
+	}
+	return false
 }
 
-func (g *AlertGroupSettingGenerator) createResource(alertGroupSettingID string) terraformutils.Resource {
-	return terraformutils.NewSimpleResource(
-		alertGroupSettingID,
-		fmt.Sprintf("alert_group_setting_%s", alertGroupSettingID),
-		"mackerel_alert_group_setting",
-		"mackerel",
-		[]string{},
-	)
-}
-
-// InitResources Generate TerraformResources from Mackerel API,
-// from each alert group setting create 1 TerraformResource.
-// Need Alert Group Setting ID as ID for terraform resource
-func (g *AlertGroupSettingGenerator) InitResources() error {
-	client := g.Args["mackerelClient"].(*mackerel.Client)
-	alertGroupSettings, err := client.FindAlertGroupSettings()
+func (g *AlertGroupSettingGenerator) createAlertGroupSettingResources(client *mackerel.Client) error {
+	alertGroups, err := client.FindAlertGroupSettings()
 	if err != nil {
 		return err
 	}
-	g.Resources = append(g.Resources, g.createResources(alertGroupSettings)...)
+
+	for _, alertGroup := range alertGroups {
+		if !g.isAlertGroupSettingTarget(alertGroup) {
+			continue
+		}
+
+		g.Resources = append(g.Resources, terraformutils.NewResource(
+			alertGroup.ID,
+			fmt.Sprintf("alert_group_setting_%s", alertGroup.Name),
+			"mackerel_alert_group_setting",
+			g.ProviderName,
+			map[string]string{
+				"name": alertGroup.Name,
+			},
+			[]string{},
+			map[string]interface{}{},
+		))
+	}
+	return nil
+}
+
+// InitResources Generate TerraformResources from Mackerel API,
+// from each service create 1 TerraformResource.
+// Need Service Name as ID for terraform resource
+func (g *AlertGroupSettingGenerator) InitResources() error {
+	client, err := g.Client()
+	if err != nil {
+		return err
+	}
+
+	funcs := []func(*mackerel.Client) error{
+		g.createAlertGroupSettingResources,
+	}
+
+	for _, f := range funcs {
+		err := f(client)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

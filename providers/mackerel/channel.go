@@ -21,55 +21,90 @@ import (
 	"github.com/mackerelio/mackerel-client-go"
 )
 
-// ChannelGenerator ...
 type ChannelGenerator struct {
+	serviceName string
 	MackerelService
 }
 
-func (g *ChannelGenerator) createResources(channels []*mackerel.Channel) []terraformutils.Resource {
-	resources := []terraformutils.Resource{}
-	for _, channel := range channels {
-		if channel.Type != "email" && channel.Type != "slack" && channel.Type != "webhook" {
+func (g *ChannelGenerator) createChannelResources(client *mackerel.Client) error {
+	channels, err := client.FindChannels()
+	if err != nil {
+		return err
+	}
+
+	channelByID := map[string]*mackerel.Channel{}
+	for _, c := range channels {
+		channelByID[c.ID] = c
+	}
+
+	targetChannelIDs := map[string]bool{}
+	notificationGroups, err := client.FindNotificationGroups()
+	if err != nil {
+		return err
+	}
+
+	for _, notificationGroup := range notificationGroups {
+		if len(notificationGroup.Services) == 0 {
 			continue
 		}
 
-		if channel.Type == "email" {
-			if channel.Events != nil {
-				events := *channel.Events
-				for _, event := range events {
-					if event != "alert" && event != "alertGroup" {
-						continue
-					}
-				}
-			} else {
-				continue
+		isTarget := false
+		for _, svc := range notificationGroup.Services {
+			if svc.Name == g.serviceName {
+				isTarget = true
+				break
 			}
 		}
-
-		resources = append(resources, g.createResource(channel.ID))
+		if !isTarget {
+			continue
+		}
+		for _, chanID := range notificationGroup.ChildChannelIDs {
+			targetChannelIDs[chanID] = true
+		}
 	}
-	return resources
-}
 
-func (g *ChannelGenerator) createResource(channelID string) terraformutils.Resource {
-	return terraformutils.NewSimpleResource(
-		channelID,
-		fmt.Sprintf("channel_%s", channelID),
-		"mackerel_channel",
-		"mackerel",
-		[]string{},
-	)
+	for id := range targetChannelIDs {
+		channel, ok := channelByID[id]
+		if !ok {
+			// error?
+			continue
+		}
+		g.Resources = append(g.Resources, terraformutils.NewResource(
+			channel.ID,
+			fmt.Sprintf("channel_%s", channel.Name),
+			"mackerel_channel",
+			g.ProviderName,
+			map[string]string{
+				"name": channel.Name,
+			},
+			[]string{},
+			map[string]interface{}{},
+		))
+
+	}
+
+	return nil
 }
 
 // InitResources Generate TerraformResources from Mackerel API,
 // from each channel create 1 TerraformResource.
 // Need Channel ID as ID for terraform resource
 func (g *ChannelGenerator) InitResources() error {
-	client := g.Args["mackerelClient"].(*mackerel.Client)
-	channels, err := client.FindChannels()
+	client, err := g.Client()
 	if err != nil {
 		return err
 	}
-	g.Resources = append(g.Resources, g.createResources(channels)...)
+
+	funcs := []func(*mackerel.Client) error{
+		g.createChannelResources,
+	}
+
+	for _, f := range funcs {
+		err := f(client)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

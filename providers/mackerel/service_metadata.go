@@ -15,18 +15,19 @@
 package mackerel
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/mackerelio/mackerel-client-go"
 )
 
-type ServiceGenerator struct {
+type ServiceMetadataGenerator struct {
 	serviceName string
 	MackerelService
 }
 
-func (g *ServiceGenerator) createServiceResources(client *mackerel.Client) error {
+func (g *ServiceMetadataGenerator) createServiceMetadataGeneratorResources(client *mackerel.Client) error {
 	services, err := client.FindServices()
 	if err != nil {
 		return err
@@ -36,34 +37,51 @@ func (g *ServiceGenerator) createServiceResources(client *mackerel.Client) error
 		if service.Name != g.serviceName {
 			continue
 		}
-		g.Resources = append(g.Resources, terraformutils.NewResource(
-			service.Name,
-			fmt.Sprintf("service_%s", service.Name),
-			"mackerel_service",
-			g.ProviderName,
-			map[string]string{
-				"name": service.Name,
-				"memo": service.Memo,
-			},
-			[]string{},
-			map[string]interface{}{},
-		))
+
+		namespaces, err := client.GetServiceMetaDataNameSpaces(g.serviceName)
+		if err != nil {
+			return err
+		}
+
+		for _, namespace := range namespaces {
+			metadata, err := client.GetServiceMetaData(g.serviceName, namespace)
+			if err != nil {
+				return err
+			}
+
+			b, err := json.Marshal(metadata.ServiceMetaData)
+			if err != nil {
+				return err
+			}
+
+			g.Resources = append(g.Resources, terraformutils.NewResource(
+				g.serviceName+"."+namespace,
+				fmt.Sprintf("service_metadata_%s", service.Name),
+				"mackerel_service_metadata",
+				g.ProviderName,
+				map[string]string{
+					"metadata_json": string(b),
+				},
+				[]string{},
+				map[string]interface{}{},
+			))
+		}
 	}
 
 	return nil
 }
 
 // InitResources Generate TerraformResources from Mackerel API,
-// from each service create 1 TerraformResource.
-// Need Service Name as ID for terraform resource
-func (g *ServiceGenerator) InitResources() error {
+// from each service metadata create 1 TerraformResource.
+// Need ServiceMetadata Name as ID for terraform resource
+func (g *ServiceMetadataGenerator) InitResources() error {
 	client, err := g.Client()
 	if err != nil {
 		return err
 	}
 
 	funcs := []func(*mackerel.Client) error{
-		g.createServiceResources,
+		g.createServiceMetadataGeneratorResources,
 	}
 
 	for _, f := range funcs {
