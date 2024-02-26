@@ -53,7 +53,8 @@ func getRegion(project, regionName string) *compute.Region {
 		log.Println(err)
 		return &compute.Region{}
 	}
-	region, err := computeService.Regions.Get(project, regionName).Do()
+	regionsGetCall := computeService.Regions.Get(project, regionName).Fields("name", "zones")
+	region, err := regionsGetCall.Do()
 	if err != nil {
 		log.Println(err)
 		return &compute.Region{}
