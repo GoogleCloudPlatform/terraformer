@@ -15,6 +15,7 @@
 package cloudflare
 
 import (
+	"context"
 	"fmt"
 	"log"
 
@@ -26,8 +27,8 @@ type DNSGenerator struct {
 	CloudflareService
 }
 
-func (*DNSGenerator) createZonesResource(api *cf.API, zoneID string) ([]terraformutils.Resource, error) {
-	zoneDetails, err := api.ZoneDetails(zoneID)
+func (*DNSGenerator) createZonesResource(ctx context.Context, api *cf.API, zoneID string) ([]terraformutils.Resource, error) {
+	zoneDetails, err := api.ZoneDetails(ctx, zoneID)
 	if err != nil {
 		log.Println(err)
 		return []terraformutils.Resource{}, err
@@ -49,9 +50,9 @@ func (*DNSGenerator) createZonesResource(api *cf.API, zoneID string) ([]terrafor
 	return []terraformutils.Resource{resource}, nil
 }
 
-func (*DNSGenerator) createRecordsResources(api *cf.API, zoneID string) ([]terraformutils.Resource, error) {
+func (*DNSGenerator) createRecordsResources(ctx context.Context, api *cf.API, zoneID string) ([]terraformutils.Resource, error) {
 	resources := []terraformutils.Resource{}
-	records, err := api.DNSRecords(zoneID, cf.DNSRecord{})
+	records, err := api.DNSRecords(ctx, zoneID, cf.DNSRecord{})
 	if err != nil {
 		log.Println(err)
 		return resources, err
@@ -80,26 +81,27 @@ func (*DNSGenerator) createRecordsResources(api *cf.API, zoneID string) ([]terra
 }
 
 func (g *DNSGenerator) InitResources() error {
+	ctx := context.Background()
 	api, err := g.initializeAPI()
 	if err != nil {
 		log.Println(err)
 		return err
 	}
 
-	zones, err := api.ListZones()
+	zones, err := api.ListZones(ctx)
 	if err != nil {
 		log.Println(err)
 		return err
 	}
 
-	funcs := []func(*cf.API, string) ([]terraformutils.Resource, error){
+	funcs := []func(context.Context, *cf.API, string) ([]terraformutils.Resource, error){
 		g.createZonesResource,
 		g.createRecordsResources,
 	}
 
 	for _, zone := range zones {
 		for _, f := range funcs {
-			tmpRes, err := f(api, zone.ID)
+			tmpRes, err := f(ctx, api, zone.ID)
 			if err != nil {
 				log.Println(err)
 				return err

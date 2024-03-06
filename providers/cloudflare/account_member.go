@@ -15,6 +15,8 @@
 package cloudflare
 
 import (
+	"context"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	cf "github.com/cloudflare/cloudflare-go"
 )
@@ -23,14 +25,14 @@ type AccountMemberGenerator struct {
 	CloudflareService
 }
 
-func (g *AccountMemberGenerator) createAccountMemberResources(api *cf.API) ([]terraformutils.Resource, error) {
+func (g *AccountMemberGenerator) createAccountMemberResources(ctx context.Context, api *cf.API) ([]terraformutils.Resource, error) {
 	var resources []terraformutils.Resource
 	pageOpt := cf.PaginationOptions{
 		Page:    1,
 		PerPage: 10}
 
 	for {
-		members, info, err := api.AccountMembers(api.AccountID, pageOpt)
+		members, info, err := api.AccountMembers(ctx, api.AccountID, pageOpt)
 		if err != nil {
 			return resources, err
 		}
@@ -67,11 +69,12 @@ func (g *AccountMemberGenerator) createAccountMemberResources(api *cf.API) ([]te
 }
 
 func (g *AccountMemberGenerator) InitResources() error {
+	ctx := context.Background()
 	api, err := g.initializeAPI()
 	if err != nil {
 		return err
 	}
-	resources, err := g.createAccountMemberResources(api)
+	resources, err := g.createAccountMemberResources(ctx, api)
 	if err != nil {
 		return err
 	}

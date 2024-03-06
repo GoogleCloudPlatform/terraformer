@@ -20,6 +20,9 @@ List of supported Cloudflare services:
 
 * `access`
   * `cloudflare_access_application`
+  * `cloudflare_access_group`
+  * `cloudflare_access_identity_provider`
+  * `cloudflare_access_policy`
 * `dns`
   * `cloudflare_zone`
   * `cloudflare_record`
