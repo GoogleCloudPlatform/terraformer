@@ -31,7 +31,7 @@ func (g *VolumeGenerator) InitResources() error {
 			continue
 		}
 		for _, server := range *servers.Items {
-			volumes, _, err := cloudAPIClient.ServersApi.DatacentersServersVolumesGet(context.TODO(), *datacenter.Id, *server.Id).Depth(2).Execute()
+			volumes, _, err := cloudAPIClient.ServersApi.DatacentersServersVolumesGet(context.TODO(), *datacenter.Id, *server.Id).Depth(1).Execute()
 			if err != nil {
 				return err
 			}

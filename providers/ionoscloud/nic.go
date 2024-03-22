@@ -20,7 +20,7 @@ func (g *NicGenerator) InitResources() error {
 		return err
 	}
 	for _, datacenter := range datacenters {
-		servers, _, err := cloudAPIClient.ServersApi.DatacentersServersGet(context.TODO(), *datacenter.Id).Depth(1).Execute()
+		servers, _, err := cloudAPIClient.ServersApi.DatacentersServersGet(context.TODO(), *datacenter.Id).Execute()
 		if err != nil {
 			return err
 		}
@@ -31,7 +31,7 @@ func (g *NicGenerator) InitResources() error {
 			continue
 		}
 		for _, server := range *servers.Items {
-			nics, _, err := cloudAPIClient.NetworkInterfacesApi.DatacentersServersNicsGet(context.TODO(), *datacenter.Id, *server.Id).Depth(2).Execute()
+			nics, _, err := cloudAPIClient.NetworkInterfacesApi.DatacentersServersNicsGet(context.TODO(), *datacenter.Id, *server.Id).Depth(1).Execute()
 			if err != nil {
 				return err
 			}

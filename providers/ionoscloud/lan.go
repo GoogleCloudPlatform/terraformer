@@ -26,14 +26,14 @@ func (g *LanGenerator) InitResources() error {
 		}
 		if lans.Items == nil {
 			log.Printf(
-				"[WARNING] expected a response containing LANs but received 'nil' instead, skipping search for datacenter with ID: %v.\n",
+				"[WARNING] expected a response containing LANs but received 'nil' instead, skipping search for datacenter with ID: %v",
 				*datacenter.Id)
 			continue
 		}
 		for _, lan := range *lans.Items {
 			if lan.Properties == nil || lan.Properties.Name == nil {
 				log.Printf(
-					"[WARNING] 'nil' values in the response for LAN with ID %v, datacenter ID: %v, skipping this resource.\n",
+					"[WARNING] 'nil' values in the response for LAN with ID %v, datacenter ID: %v, skipping this resource",
 					*lan.Id,
 					*datacenter.Id,
 				)
@@ -44,7 +44,7 @@ func (g *LanGenerator) InitResources() error {
 					*lan.Id,
 					*lan.Properties.Name+"-"+*lan.Id,
 					"ionoscloud_lan",
-					"ionoscloud",
+					helpers.Ionos,
 					map[string]string{helpers.DcID: *datacenter.Id},
 					[]string{},
 					map[string]interface{}{}))

@@ -98,6 +98,8 @@ func (p *OktaProvider) GetSupportedService() map[string]terraformutils.ServiceGe
 		"okta_app_bookmark":              &AppBookmarkGenerator{},
 		"okta_app_saml":                  &AppSamlGenerator{},
 		"okta_app_oauth":                 &AppOAuthGenerator{},
+		"okta_app_signon_policy":         &AppSignOnPolicyGenerator{},
+		"okta_app_signon_policy_rule":    &AppSignOnPolicyRuleGenerator{},
 		"okta_idp_oidc":                  &IdpOIDCGenerator{},
 		"okta_idp_saml":                  &IdpSAMLGenerator{},
 		"okta_idp_social":                &IdpSocialGenerator{},

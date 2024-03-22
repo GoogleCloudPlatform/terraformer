@@ -14,7 +14,6 @@
 package terraformoutput
 
 import (
-	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -127,7 +126,7 @@ func printFile(v []terraformutils.Resource, fileName, path, output string, sort 
 			if err := os.MkdirAll(path+"/data/", os.ModePerm); err != nil {
 				return err
 			}
-			err := ioutil.WriteFile(path+"/data/"+fileName, content, os.ModePerm)
+			err := os.WriteFile(path+"/data/"+fileName, content, os.ModePerm)
 			if err != nil {
 				return err
 			}
@@ -138,7 +137,7 @@ func printFile(v []terraformutils.Resource, fileName, path, output string, sort 
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(path+"/"+fileName+"."+GetFileExtension(output), tfFile, os.ModePerm)
+	err = os.WriteFile(path+"/"+fileName+"."+GetFileExtension(output), tfFile, os.ModePerm)
 	if err != nil {
 		return err
 	}
@@ -147,7 +146,7 @@ func printFile(v []terraformutils.Resource, fileName, path, output string, sort 
 }
 
 func PrintFile(path string, data []byte) {
-	err := ioutil.WriteFile(path, data, os.ModePerm)
+	err := os.WriteFile(path, data, os.ModePerm)
 	if err != nil {
 		log.Fatal(err)
 		return

@@ -32,7 +32,7 @@ type IonosCloudProvider struct { //nolint
 	url      string
 }
 
-func (p *IonosCloudProvider) Init(args []string) error {
+func (p *IonosCloudProvider) Init(_ []string) error {
 	username := os.Getenv(ionoscloud.IonosUsernameEnvVar)
 	password := os.Getenv(ionoscloud.IonosPasswordEnvVar)
 	token := os.Getenv(ionoscloud.IonosTokenEnvVar)
@@ -60,7 +60,7 @@ func (p *IonosCloudProvider) GetName() string {
 	return helpers.ProviderName
 }
 
-func (p *IonosCloudProvider) GetProviderData(arg ...string) map[string]interface{} {
+func (p *IonosCloudProvider) GetProviderData(_ ...string) map[string]interface{} {
 	return map[string]interface{}{}
 }
 
@@ -106,30 +106,54 @@ func (IonosCloudProvider) GetResourceConnections() map[string]map[string][]strin
 			"datacenter": []string{helpers.DcID, "id"},
 			"natgateway": []string{"natgateway_id", "id"},
 		},
+		"s3_key": {
+			"user": []string{helpers.UserID, "id"},
+		},
+		"share": {
+			"group": []string{helpers.GroupID, "id"},
+		},
 	}
 }
 
 func (p *IonosCloudProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"datacenter":                         &DatacenterGenerator{},
-		"lan":                                &LanGenerator{},
-		"nic":                                &NicGenerator{},
-		"server":                             &ServerGenerator{},
-		"volume":                             &VolumeGenerator{},
-		"pg_cluster":                         &DBaaSClusterGenerator{},
-		"backup_unit":                        &BackupUnitGenerator{},
-		"ipblock":                            &IPBlockGenerator{},
-		"k8s_cluster":                        &KubernetesClusterGenerator{},
-		"k8s_node_pool":                      &KubernetesNodePoolGenerator{},
-		"target_group":                       &TargetGroupGenerator{},
-		"networkloadbalancer":                &NetworkLoadBalancerGenerator{},
-		"natgateway":                         &NATGatewayGenerator{},
-		"group":                              &GroupGenerator{},
-		"application_loadbalancer":           &ApplicationLoadBalancerGenerator{},
+		"datacenter":               &DatacenterGenerator{},
+		"lan":                      &LanGenerator{},
+		"nic":                      &NicGenerator{},
+		"server":                   &ServerGenerator{},
+		"volume":                   &VolumeGenerator{},
+		"pg_cluster":               &DBaaSPgSQLClusterGenerator{},
+		"pg_user":                  &DBaaSPgSQLUserGenerator{},
+		"pg_database":              &DBaaSPgSQLDatabaseGenerator{},
+		"mongo_cluster":            &DBaaSMongoClusterGenerator{},
+		"mongo_user":               &DBaaSMongoUserGenerator{},
+		"backup_unit":              &BackupUnitGenerator{},
+		"ipblock":                  &IPBlockGenerator{},
+		"k8s_cluster":              &KubernetesClusterGenerator{},
+		"k8s_node_pool":            &KubernetesNodePoolGenerator{},
+		"target_group":             &TargetGroupGenerator{},
+		"networkloadbalancer":      &NetworkLoadBalancerGenerator{},
+		"natgateway":               &NATGatewayGenerator{},
+		"group":                    &GroupGenerator{},
+		"application_loadbalancer": &ApplicationLoadBalancerGenerator{},
+		"application_loadbalancer_forwardingrule": &ALBForwardingRuleGenerator{},
 		"firewall":                           &FirewallGenerator{},
 		"networkloadbalancer_forwardingrule": &NetworkLoadBalancerForwardingRuleGenerator{},
 		"loadbalancer":                       &LoadBalancerGenerator{},
 		"natgateway_rule":                    &NATGatewayRuleGenerator{},
+		"certificate":                        &CertificateGenerator{},
+		"private_crossconnect":               &PrivateCrossConnectGenerator{},
+		"s3_key":                             &S3KeyGenerator{},
+		"container_registry":                 &ContainerRegistryGenerator{},
+		"dataplatform_cluster":               &DataPlatformClusterGenerator{},
+		"dataplatform_node_pool":             &DataPlatformNodePoolGenerator{},
+		"share":                              &ShareGenerator{},
+		"user":                               &UserGenerator{},
+		"container_registry_token":           &ContainerRegistryTokenGenerator{},
+		"dns_zone":                           &DNSZoneGenerator{},
+		"dns_record":                         &DNSRecordGenerator{},
+		"logging_pipeline":                   &LoggingPipelineGenerator{},
+		"ipfailover":                         &IPFailoverGenerator{},
 	}
 }
 
