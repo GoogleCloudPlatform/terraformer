@@ -81,10 +81,21 @@ func (g *PowerpackGenerator) InitResources() error {
 		return nil
 	}
 
-	powerpacks, _, err := api.ListPowerpacks(auth)
-	if err != nil {
-		return err
+	var powerpacks []datadogV2.PowerpackData
+	optionalParameters := &datadogV2.ListPowerpacksOptionalParameters{}
+	paginationChan, _ := api.ListPowerpacksWithPagination(auth,
+		*optionalParameters.WithPageLimit(1000))
+	for {
+		pageResult, more := <-paginationChan
+		if !more {
+			break
+		}
+		if pageResult.Error != nil {
+			return pageResult.Error
+		}
+		powerpacks = append(powerpacks, pageResult.Item)
 	}
-	g.Resources = g.createResources(powerpacks.GetData())
+
+	g.Resources = g.createResources(powerpacks)
 	return nil
 }
