@@ -66,7 +66,6 @@ func (g *PowerpackGenerator) InitResources() error {
 	for _, filter := range g.Filter {
 		if filter.FieldPath == "id" && filter.IsApplicable("powerpack") {
 			for _, value := range filter.AcceptableValues {
-				// fixme: how to get a powerpack id? dashboard json?
 				powerpack, _, err := api.GetPowerpack(auth, value)
 				if err != nil {
 					return err
