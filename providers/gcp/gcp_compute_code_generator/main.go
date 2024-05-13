@@ -18,7 +18,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"go/format"
-	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -152,7 +151,7 @@ var ComputeServices = map[string]terraformutils.ServiceGenerator{
 `
 
 func main() {
-	computeAPIData, err := ioutil.ReadFile(os.Getenv("GOPATH") + "/src/google.golang.org/api/compute/v1/compute-api.json") // TODO delete this hack
+	computeAPIData, err := os.ReadFile(os.Getenv("GOPATH") + "/src/google.golang.org/api/compute/v1/compute-api.json") // TODO delete this hack
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -210,7 +209,7 @@ func main() {
 				log.Print(resource, err)
 				continue
 			}
-			err = ioutil.WriteFile(currentPath+"/"+resource+"_gen.go", codeFormat(tpl.Bytes()), os.ModePerm)
+			err = os.WriteFile(currentPath+"/"+resource+"_gen.go", codeFormat(tpl.Bytes()), os.ModePerm)
 			if err != nil {
 				log.Print(resource, err)
 				continue
@@ -228,7 +227,7 @@ func main() {
 		log.Print(err)
 	}
 	rootPath, _ := os.Getwd()
-	err = ioutil.WriteFile(rootPath+pathForGenerateFiles+"compute.go", codeFormat(tpl.Bytes()), os.ModePerm)
+	err = os.WriteFile(rootPath+pathForGenerateFiles+"compute.go", codeFormat(tpl.Bytes()), os.ModePerm)
 	if err != nil {
 		log.Println(err)
 	}

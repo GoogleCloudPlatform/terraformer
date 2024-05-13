@@ -48,7 +48,9 @@ func (g NetworkInterfaceGenerator) createResources(interfaceListResult network.I
 
 func (g *NetworkInterfaceGenerator) InitResources() error {
 	ctx := context.Background()
-	interfacesClient := network.NewInterfacesClient(g.Args["config"].(authentication.Config).SubscriptionID)
+	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	interfacesClient := network.NewInterfacesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 
 	interfacesClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 	var (

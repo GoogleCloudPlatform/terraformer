@@ -89,6 +89,7 @@ func (p *AzureProvider) getAuthorizer() (autorest.Authorizer, error) {
 	if err != nil {
 		return nil, err
 	}
+	p.config.CustomResourceManagerEndpoint = env.ResourceManagerEndpoint
 	oauthConfig, err := p.config.BuildOAuthConfig(env.ActiveDirectoryEndpoint)
 	if err != nil {
 		return nil, err

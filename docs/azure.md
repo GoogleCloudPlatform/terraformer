@@ -1,6 +1,6 @@
 # Use with Azure
 
-## Autentication
+## Authentication
 
 ### Supported Methods
 

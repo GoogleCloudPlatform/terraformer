@@ -33,7 +33,7 @@ type LogAnalysisGenerator struct {
 func (g LogAnalysisGenerator) loadCloudMonitoring(logID string, logName string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
 		logID,
-		normalizeResourceName(logName, false),
+		normalizeResourceName(logName, true),
 		"ibm_resource_instance",
 		"ibm",
 		[]string{})

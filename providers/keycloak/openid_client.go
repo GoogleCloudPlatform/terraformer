@@ -85,23 +85,26 @@ func (g RealmGenerator) createOpenIDGenericProtocolMapperResource(protocolMapper
 	)
 }
 
-func (g RealmGenerator) createOpenIDProtocolMapperResources(clientID string, openidClient *keycloak.OpenidClientWithGenericClientProtocolMappers) []terraformutils.Resource {
+func (g RealmGenerator) createOpenIDProtocolMapperResources(clientID string, openidClient *keycloak.OpenidClientWithGenericProtocolMappers) []terraformutils.Resource {
 	var resources []terraformutils.Resource
 	for _, protocolMapper := range openidClient.ProtocolMappers {
 		switch protocolMapper.ProtocolMapper {
 		case "oidc-audience-mapper":
 			resources = append(resources, g.createOpenIDGenericProtocolMapperResource("audience", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
+		case "oidc-audience-resolve-mapper":
+			resources = append(resources, g.createOpenIDGenericProtocolMapperResource("audience_resolve", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
 		case "oidc-full-name-mapper":
 			resources = append(resources, g.createOpenIDGenericProtocolMapperResource("full_name", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
 		case "oidc-group-membership-mapper":
 			resources = append(resources, g.createOpenIDGenericProtocolMapperResource("group_membership", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
 		case "oidc-hardcoded-claim-mapper":
 			resources = append(resources, g.createOpenIDGenericProtocolMapperResource("hardcoded_claim", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
-		case "oidc-hardcoded-group-mapper":
-			resources = append(resources, g.createOpenIDGenericProtocolMapperResource("hardcoded_group", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
 		case "oidc-hardcoded-role-mapper":
 			// Only works with client roles
 			resources = append(resources, g.createOpenIDGenericProtocolMapperResource("hardcoded_role", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
+		case "oidc-script-based-protocol-mapper":
+			// Support for this protocol mapper was removed in Keycloak 18
+			resources = append(resources, g.createOpenIDGenericProtocolMapperResource("script", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
 		case "oidc-usermodel-attribute-mapper":
 			resources = append(resources, g.createOpenIDGenericProtocolMapperResource("user_attribute", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
 		case "oidc-usermodel-property-mapper":
@@ -127,10 +130,6 @@ func (g RealmGenerator) createOpenIDProtocolMapperResources(clientID string, ope
 		case "oidc-allowed-origins-mapper":
 			// Not supported for the moment
 			// resources = append(resources, g.createOpenIDGenericProtocolMapperResource("allowed_web_origins", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
-			continue
-		case "oidc-audience-resolve-mapper":
-			// Not supported for the moment
-			// resources = append(resources, g.createOpenIDGenericProtocolMapperResource("audience_resolve", protocolMapper.Id, protocolMapper.Name, openidClient.RealmId, openidClient.ClientId, clientID))
 			continue
 		}
 	}

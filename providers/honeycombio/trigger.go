@@ -17,10 +17,12 @@ func (g *TriggerGenerator) InitResources() error {
 		return fmt.Errorf("unable to initialize Honeycomb client: %v", err)
 	}
 
-	ctx := context.TODO()
-
 	for _, dataset := range g.datasets {
-		triggers, err := client.Triggers.List(ctx, dataset.Slug)
+		if dataset.Slug == environmentWideDatasetSlug {
+			// environment-wide Triggers are not supported
+			continue
+		}
+		triggers, err := client.Triggers.List(context.TODO(), dataset.Slug)
 		if err != nil {
 			return fmt.Errorf("unable to list Honeycomb triggers for dataset %s: %v", dataset.Slug, err)
 		}

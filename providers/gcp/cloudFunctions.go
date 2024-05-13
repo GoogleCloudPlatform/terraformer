@@ -19,7 +19,7 @@ import (
 	"log"
 	"strings"
 
-	"google.golang.org/api/cloudfunctions/v1"
+	"google.golang.org/api/cloudfunctions/v2"
 	"google.golang.org/api/compute/v1"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
@@ -27,24 +27,63 @@ import (
 
 var cloudFunctionsAllowEmptyValues = []string{""}
 
+var cloudFunctionsAdditionalFields = map[string]interface{}{}
+
 type CloudFunctionsGenerator struct {
 	GCPService
 }
 
 // Run on CloudFunctionsList and create for each TerraformResource
-func (g CloudFunctionsGenerator) createResources(ctx context.Context, functionsList *cloudfunctions.ProjectsLocationsFunctionsListCall) []terraformutils.Resource {
+func (g CloudFunctionsGenerator) createCloudFunctionsResources(ctx context.Context, functionsList *cloudfunctions.ProjectsLocationsFunctionsListCall) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	if err := functionsList.Pages(ctx, func(page *cloudfunctions.ListFunctionsResponse) error {
 		for _, functions := range page.Functions {
 			t := strings.Split(functions.Name, "/")
-			name := t[len(t)-1]
-			resources = append(resources, terraformutils.NewSimpleResource(
-				g.GetArgs()["project"].(string)+"/"+g.GetArgs()["region"].(compute.Region).Name+"/"+name,
-				g.GetArgs()["region"].(compute.Region).Name+"_"+name,
-				"google_cloudfunctions_function",
-				g.ProviderName,
-				cloudFunctionsAllowEmptyValues,
-			))
+			if functions.Environment == "GEN_1" {
+				name := t[len(t)-1]
+				resources = append(resources, terraformutils.NewResource(
+					g.GetArgs()["project"].(string)+"/"+g.GetArgs()["region"].(compute.Region).Name+"/"+name,
+					g.GetArgs()["region"].(compute.Region).Name+"_"+name,
+					"google_cloudfunctions_function",
+					g.ProviderName,
+					map[string]string{
+						"name":     name,
+						"project":  g.GetArgs()["project"].(string),
+						"location": g.GetArgs()["region"].(compute.Region).Name,
+					},
+					cloudFunctionsAllowEmptyValues,
+					cloudFunctionsAdditionalFields,
+				))
+			}
+		}
+		return nil
+	}); err != nil {
+		log.Println(err)
+	}
+	return resources
+}
+
+func (g CloudFunctionsGenerator) createCloudFunctions2ndGenResources(ctx context.Context, functionsList *cloudfunctions.ProjectsLocationsFunctionsListCall) []terraformutils.Resource {
+	resources := []terraformutils.Resource{}
+	if err := functionsList.Pages(ctx, func(page *cloudfunctions.ListFunctionsResponse) error {
+		for _, functions := range page.Functions {
+			t := strings.Split(functions.Name, "/")
+			if functions.Environment == "GEN_2" {
+				name := t[len(t)-1]
+				resources = append(resources, terraformutils.NewResource(
+					g.GetArgs()["project"].(string)+"/"+g.GetArgs()["region"].(compute.Region).Name+"/"+name,
+					g.GetArgs()["region"].(compute.Region).Name+"_"+name,
+					"google_cloudfunctions2_function",
+					g.ProviderName,
+					map[string]string{
+						"name":     name,
+						"project":  g.GetArgs()["project"].(string),
+						"location": g.GetArgs()["region"].(compute.Region).Name,
+					},
+					cloudFunctionsAllowEmptyValues,
+					cloudFunctionsAdditionalFields,
+				))
+			}
 		}
 		return nil
 	}); err != nil {
@@ -65,6 +104,8 @@ func (g *CloudFunctionsGenerator) InitResources() error {
 
 	functionsList := cloudfunctionsService.Projects.Locations.Functions.List("projects/" + g.GetArgs()["project"].(string) + "/locations/" + g.GetArgs()["region"].(compute.Region).Name)
 
-	g.Resources = g.createResources(ctx, functionsList)
+	g.Resources = append(g.Resources, g.createCloudFunctionsResources(ctx, functionsList)...)
+	g.Resources = append(g.Resources, g.createCloudFunctions2ndGenResources(ctx, functionsList)...)
+
 	return nil
 }

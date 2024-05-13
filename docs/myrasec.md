@@ -4,14 +4,14 @@ Example using a Myra Security API Key and corresponding Token:
 
 ```
 export MYRASEC_API_SECRET=[MYRASEC_API_SECRET]
-export MYRASEC_API_TOKEN=[MYRASEC_API_TOKEN]
+export MYRASEC_API_KEY=[MYRASEC_API_KEY]
 ./terraformer import myrasec --resources=domain
 ```
 
 List of supported Myra Security services:
 * `domain`
   * `myrasec_domain`
-* `dns`
+* `dns_record`
   * `myrasec_dns_record`
 * `redirect`
   * `myrasec_redirect`

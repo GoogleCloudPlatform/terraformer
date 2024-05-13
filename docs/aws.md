@@ -46,6 +46,7 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_lb_target_group_attachment`
 *   `api_gateway`
     * `aws_api_gateway_authorizer`
+    * `aws_api_gateway_api_key`
     * `aws_api_gateway_documentation_part`
     * `aws_api_gateway_gateway_response`
     * `aws_api_gateway_integration`
@@ -78,6 +79,7 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_cloudformation_stack_set_instance`
 *   `cloudfront`
     * `aws_cloudfront_distribution`
+    * `aws_cloudfront_cache_policy`
 *   `cloudhsm`
     * `aws_cloudhsm_v2_cluster`
     * `aws_cloudhsm_v2_hsm`
@@ -162,12 +164,13 @@ terraformer import aws --resources=sg --regions=us-east-1
 *   `firehose`
     * `aws_kinesis_firehose_delivery_stream`
 *   `glue`
-    * `glue_crawler`
+    * `aws_glue_crawler`
     * `aws_glue_catalog_database`
     * `aws_glue_catalog_table`
     * `aws_glue_job`
     * `aws_glue_trigger`
 *   `iam`
+    * `aws_iam_access_key`
     * `aws_iam_group`
     * `aws_iam_group_policy`
     * `aws_iam_group_policy_attachment`
@@ -198,12 +201,19 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_lambda_function`
     * `aws_lambda_function_event_invoke_config`
     * `aws_lambda_layer_version`
+    * `aws_lambda_permission`
 *   `logs`
     * `aws_cloudwatch_log_group`
 *   `media_package`
     * `aws_media_package_channel`
 *   `media_store`
     * `aws_media_store_container`
+*   `medialive`
+    * `aws_medialive_channel`
+    * `aws_medialive_input`
+    * `aws_medialive_input_security_group`
+*   `mq`
+    * `aws_mq_broker`
 *   `msk`
     * `aws_msk_cluster`
 *   `nacl`
@@ -232,15 +242,26 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_db_instance`
     * `aws_db_proxy`
     * `aws_db_cluster`
+    * `aws_db_cluster_snapshot`
     * `aws_db_parameter_group`
+    * `aws_db_snapshot`
     * `aws_db_subnet_group`
     * `aws_db_option_group`
     * `aws_db_event_subscription`
+    * `aws_rds_global_cluster`
+*   `redshift`
+    * `aws_redshift_cluster`
+    * `aws_redshift_event_subscription`
+    * `aws_redshift_parameter_group`
+    * `aws_redshift_snapshot_schedule`
+    * `aws_redshift_snapshot_schedule_association`
+    * `aws_redshift_subnet_group`
 *   `resourcegroups`
     * `aws_resourcegroups_group`
 *   `route53`
     * `aws_route53_zone`
     * `aws_route53_record`
+    * `aws_route53_health_check`
 *   `route_table`
     * `aws_route_table`
     * `aws_main_route_table_association`
@@ -284,6 +305,8 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_ec2_transit_gateway_vpc_attachment`
 *   `vpc`
     * `aws_vpc`
+*   `vpc_endpoint`
+    * `aws_vpc_endpoint`
 *   `vpc_peering`
     * `aws_vpc_peering_connection`
 *   `vpn_connection`

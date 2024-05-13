@@ -27,7 +27,7 @@ func (g RealmGenerator) createRealmResources(realms []*keycloak.Realm) []terrafo
 	var resources []terraformutils.Resource
 	for _, realm := range realms {
 		resources = append(resources, terraformutils.NewSimpleResource(
-			realm.Id,
+			realm.Realm,
 			"realm_"+normalizeResourceName(realm.Realm),
 			"keycloak_realm",
 			"keycloak",

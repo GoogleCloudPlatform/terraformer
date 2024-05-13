@@ -17,16 +17,18 @@ func (g *BurnAlertGenerator) InitResources() error {
 		return fmt.Errorf("unable to initialize Honeycomb client: %v", err)
 	}
 
-	ctx := context.TODO()
-
 	for _, dataset := range g.datasets {
-		slos, err := client.SLOs.List(ctx, dataset.Slug)
+		if dataset.Slug == environmentWideDatasetSlug {
+			// environment-wide Burn Alerts are not supported
+			continue
+		}
+		slos, err := client.SLOs.List(context.TODO(), dataset.Slug)
 		if err != nil {
-			return fmt.Errorf("unable to list Honeycomb SLOs for dataset %s: %v", dataset.Slug, err)
+			return fmt.Errorf("unable to list Honeycomb SLOs for dataset %q: %v", dataset.Slug, err)
 		}
 
 		for _, slo := range slos {
-			bas, _ := client.BurnAlerts.ListForSLO(ctx, dataset.Slug, slo.ID)
+			bas, _ := client.BurnAlerts.ListForSLO(context.TODO(), dataset.Slug, slo.ID)
 			for _, ba := range bas {
 				g.Resources = append(g.Resources, terraformutils.NewResource(
 					ba.ID,
