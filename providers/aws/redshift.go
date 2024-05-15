@@ -97,27 +97,6 @@ func (g *RedshiftGenerator) loadSubnetGroups(svc *redshift.Client) error {
 	return nil
 }
 
-func (g *RedshiftGenerator) loadSecurityGroups(svc *redshift.Client) error {
-	p := redshift.NewDescribeClusterSecurityGroupsPaginator(svc, &redshift.DescribeClusterSecurityGroupsInput{})
-	for p.HasMorePages() {
-		page, err := p.NextPage(context.TODO())
-		if err != nil {
-			return err
-		}
-		for _, sg := range page.ClusterSecurityGroups {
-			resourceName := StringValue(sg.ClusterSecurityGroupName)
-			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-				resourceName,
-				resourceName,
-				"aws_redshift_security_group",
-				"aws",
-				RedshiftAllowEmptyValues,
-			))
-		}
-	}
-	return nil
-}
-
 func (g *RedshiftGenerator) loadEventSubscription(svc *redshift.Client) error {
 	p := redshift.NewDescribeEventSubscriptionsPaginator(svc, &redshift.DescribeEventSubscriptionsInput{})
 	for p.HasMorePages() {
@@ -189,9 +168,6 @@ func (g *RedshiftGenerator) InitResources() error {
 		return err
 	}
 	if err := g.loadSubnetGroups(svc); err != nil {
-		return err
-	}
-	if err := g.loadSecurityGroups(svc); err != nil {
 		return err
 	}
 	if err := g.loadEventSubscription(svc); err != nil {

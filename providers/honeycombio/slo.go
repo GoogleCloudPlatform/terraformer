@@ -20,6 +20,10 @@ func (g *SLOGenerator) InitResources() error {
 	ctx := context.TODO()
 
 	for _, dataset := range g.datasets {
+		if dataset.Slug == environmentWideDatasetSlug {
+			// environment-wide SLOs are not supported
+			continue
+		}
 		slos, err := client.SLOs.List(ctx, dataset.Slug)
 		if err != nil {
 			return fmt.Errorf("unable to list Honeycomb SLOs for dataset %s: %v", dataset.Slug, err)

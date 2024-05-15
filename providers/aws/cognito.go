@@ -21,7 +21,7 @@ const CognitoMaxResults = 60 // Required field for Cognito API
 
 func (g *CognitoGenerator) loadIdentityPools(svc *cognitoidentity.Client) error {
 	p := cognitoidentity.NewListIdentityPoolsPaginator(svc, &cognitoidentity.ListIdentityPoolsInput{
-		MaxResults: *aws.Int32(CognitoMaxResults),
+		MaxResults: aws.Int32(CognitoMaxResults),
 	})
 	for p.HasMorePages() {
 		page, err := p.NextPage(context.TODO())
@@ -33,7 +33,7 @@ func (g *CognitoGenerator) loadIdentityPools(svc *cognitoidentity.Client) error 
 			var resourceName = *pool.IdentityPoolName
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				id,
-				resourceName,
+				resourceName+"_"+id,
 				"aws_cognito_identity_pool",
 				"aws",
 				[]string{}))
@@ -45,7 +45,7 @@ func (g *CognitoGenerator) loadIdentityPools(svc *cognitoidentity.Client) error 
 
 func (g *CognitoGenerator) loadUserPools(svc *cognitoidentityprovider.Client) ([]string, error) {
 	p := cognitoidentityprovider.NewListUserPoolsPaginator(svc, &cognitoidentityprovider.ListUserPoolsInput{
-		MaxResults: *aws.Int32(CognitoMaxResults),
+		MaxResults: aws.Int32(CognitoMaxResults),
 	})
 
 	var userPoolIds []string
@@ -59,7 +59,7 @@ func (g *CognitoGenerator) loadUserPools(svc *cognitoidentityprovider.Client) ([
 			resourceName := *pool.Name
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				id,
-				resourceName,
+				resourceName+"_"+id,
 				"aws_cognito_user_pool",
 				"aws",
 				[]string{}))
@@ -74,7 +74,7 @@ func (g *CognitoGenerator) loadUserPoolClients(svc *cognitoidentityprovider.Clie
 	for _, userPoolID := range userPoolIds {
 		p := cognitoidentityprovider.NewListUserPoolClientsPaginator(svc, &cognitoidentityprovider.ListUserPoolClientsInput{
 			UserPoolId: aws.String(userPoolID),
-			MaxResults: *aws.Int32(CognitoMaxResults),
+			MaxResults: aws.Int32(CognitoMaxResults),
 		})
 
 		for p.HasMorePages() {
@@ -87,7 +87,7 @@ func (g *CognitoGenerator) loadUserPoolClients(svc *cognitoidentityprovider.Clie
 				resourceName := *poolClient.ClientName
 				g.Resources = append(g.Resources, terraformutils.NewResource(
 					id,
-					resourceName,
+					resourceName+"_"+id,
 					"aws_cognito_user_pool_client",
 					"aws",
 					map[string]string{

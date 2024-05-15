@@ -3,7 +3,6 @@ package connectivity
 import (
 	"encoding/xml"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 )
@@ -81,9 +80,9 @@ func loadEndpoint(region string, serviceCode ServiceCode) string {
 	}
 
 	// Load current path endpoint file endpoints.xml, if failed, it will load from environment variables TF_ENDPOINT_PATH
-	data, err := ioutil.ReadFile("./endpoints.xml")
+	data, err := os.ReadFile("./endpoints.xml")
 	if err != nil || len(data) == 0 {
-		d, e := ioutil.ReadFile(os.Getenv("TF_ENDPOINT_PATH"))
+		d, e := os.ReadFile(os.Getenv("TF_ENDPOINT_PATH"))
 		if e != nil {
 			return ""
 		}

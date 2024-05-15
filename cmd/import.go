@@ -15,7 +15,6 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"sort"
@@ -280,7 +279,7 @@ func printService(provider terraformutils.ProviderGenerator, serviceName string,
 		} else {
 			log.Println(provider.GetName() + " save tfstate for " + serviceName)
 		}
-		if err := ioutil.WriteFile(path+"/terraform.tfstate", tfStateFile, os.ModePerm); err != nil {
+		if err := os.WriteFile(path+"/terraform.tfstate", tfStateFile, os.ModePerm); err != nil {
 			return err
 		}
 	}

@@ -26,8 +26,8 @@ type EventHubGenerator struct {
 }
 
 func (az *EventHubGenerator) listNamespaces() ([]eventhub.EHNamespace, error) {
-	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
-	client := eventhub.NewNamespacesClient(subscriptionID)
+	subscriptionID, resourceGroup, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := eventhub.NewNamespacesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	var (
 		iterator eventhub.EHNamespaceListResultIterator
@@ -59,8 +59,8 @@ func (az *EventHubGenerator) AppendNamespace(namespace *eventhub.EHNamespace) {
 }
 
 func (az *EventHubGenerator) appendEventHubs(namespace *eventhub.EHNamespace, namespaceRg *ResourceID) error {
-	subscriptionID, _, authorizer := az.getClientArgs()
-	client := eventhub.NewEventHubsClient(subscriptionID)
+	subscriptionID, _, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := eventhub.NewEventHubsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
 	iterator, err := client.ListByNamespaceComplete(ctx, namespaceRg.ResourceGroup, *namespace.Name, nil, nil)
@@ -84,8 +84,8 @@ func (az *EventHubGenerator) appendEventHubs(namespace *eventhub.EHNamespace, na
 }
 
 func (az *EventHubGenerator) appendConsumerGroups(namespace *eventhub.EHNamespace, namespaceRg *ResourceID, eventHubName string) error {
-	subscriptionID, _, authorizer := az.getClientArgs()
-	client := eventhub.NewConsumerGroupsClient(subscriptionID)
+	subscriptionID, _, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := eventhub.NewConsumerGroupsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
 	iterator, err := client.ListByEventHubComplete(ctx, namespaceRg.ResourceGroup, *namespace.Name, eventHubName, nil, nil)
@@ -104,8 +104,8 @@ func (az *EventHubGenerator) appendConsumerGroups(namespace *eventhub.EHNamespac
 }
 
 func (az *EventHubGenerator) appendAuthorizationRules(namespace *eventhub.EHNamespace, namespaceRg *ResourceID) error {
-	subscriptionID, _, authorizer := az.getClientArgs()
-	client := eventhub.NewNamespacesClient(subscriptionID)
+	subscriptionID, _, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := eventhub.NewNamespacesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
 	iterator, err := client.ListAuthorizationRulesComplete(ctx, namespaceRg.ResourceGroup, *namespace.Name)

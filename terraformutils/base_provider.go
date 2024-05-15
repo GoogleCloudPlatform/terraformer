@@ -32,6 +32,10 @@ type ProviderGenerator interface {
 	GetResourceConnections() map[string]map[string][]string
 }
 
+type ProviderWithSource interface {
+	GetSource() string
+}
+
 type Provider struct {
 	Service ServiceGenerator
 	Config  cty.Value

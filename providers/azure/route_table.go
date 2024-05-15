@@ -26,8 +26,8 @@ type RouteTableGenerator struct {
 }
 
 func (az *RouteTableGenerator) listResources() ([]network.RouteTable, error) {
-	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
-	client := network.NewRouteTablesClient(subscriptionID)
+	subscriptionID, resourceGroup, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := network.NewRouteTablesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	var (
 		iterator network.RouteTableListResultIterator
@@ -59,8 +59,8 @@ func (az *RouteTableGenerator) appendResource(resource *network.RouteTable) {
 }
 
 func (az *RouteTableGenerator) appendRoutes(parent *network.RouteTable, resourceGroupID *ResourceID) error {
-	subscriptionID, _, authorizer := az.getClientArgs()
-	client := network.NewRoutesClient(subscriptionID)
+	subscriptionID, _, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := network.NewRoutesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
 	iterator, err := client.ListComplete(ctx, resourceGroupID.ResourceGroup, *parent.Name)
@@ -79,8 +79,8 @@ func (az *RouteTableGenerator) appendRoutes(parent *network.RouteTable, resource
 }
 
 func (az *RouteTableGenerator) listRouteFilters() ([]network.RouteFilter, error) {
-	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
-	client := network.NewRouteFiltersClient(subscriptionID)
+	subscriptionID, resourceGroup, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := network.NewRouteFiltersClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	var (
 		iterator network.RouteFilterListResultIterator

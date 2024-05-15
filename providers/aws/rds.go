@@ -50,6 +50,27 @@ func (g *RDSGenerator) loadDBClusters(svc *rds.Client) error {
 	return nil
 }
 
+func (g *RDSGenerator) loadDBClusterSnapshots(svc *rds.Client) error {
+	p := rds.NewDescribeDBClusterSnapshotsPaginator(svc, &rds.DescribeDBClusterSnapshotsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, snapshot := range page.DBClusterSnapshots {
+			resourceName := StringValue(snapshot.DBClusterSnapshotIdentifier)
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+				resourceName,
+				resourceName,
+				"aws_db_cluster_snapshot",
+				"aws",
+				RDSAllowEmptyValues,
+			))
+		}
+	}
+	return nil
+}
+
 func (g *RDSGenerator) loadDBProxies(svc *rds.Client) error {
 	p := rds.NewDescribeDBProxiesPaginator(svc, &rds.DescribeDBProxiesInput{})
 	for p.HasMorePages() {
@@ -80,10 +101,33 @@ func (g *RDSGenerator) loadDBInstances(svc *rds.Client) error {
 		}
 		for _, db := range page.DBInstances {
 			resourceName := StringValue(db.DBInstanceIdentifier)
-			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+			r := terraformutils.NewSimpleResource(
 				resourceName,
 				resourceName,
 				"aws_db_instance",
+				"aws",
+				RDSAllowEmptyValues,
+			)
+			r.IgnoreKeys = append(r.IgnoreKeys, "^name$")
+			g.Resources = append(g.Resources, r)
+		}
+	}
+	return nil
+}
+
+func (g *RDSGenerator) loadDBInstanceSnapshots(svc *rds.Client) error {
+	p := rds.NewDescribeDBSnapshotsPaginator(svc, &rds.DescribeDBSnapshotsInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, snapshot := range page.DBSnapshots {
+			resourceName := StringValue(snapshot.DBSnapshotIdentifier)
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+				resourceName,
+				resourceName,
+				"aws_db_snapshot",
 				"aws",
 				RDSAllowEmptyValues,
 			))
@@ -182,6 +226,27 @@ func (g *RDSGenerator) loadEventSubscription(svc *rds.Client) error {
 	return nil
 }
 
+func (g *RDSGenerator) loadRDSGlobalClusters(svc *rds.Client) error {
+	p := rds.NewDescribeGlobalClustersPaginator(svc, &rds.DescribeGlobalClustersInput{})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, cluster := range page.GlobalClusters {
+			resourceName := StringValue(cluster.GlobalClusterIdentifier)
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+				resourceName,
+				resourceName,
+				"aws_rds_global_cluster",
+				"aws",
+				RDSAllowEmptyValues,
+			))
+		}
+	}
+	return nil
+}
+
 // Generate TerraformResources from AWS API,
 // from each database create 1 TerraformResource.
 // Need only database name as ID for terraform resource
@@ -196,7 +261,13 @@ func (g *RDSGenerator) InitResources() error {
 	if err := g.loadDBClusters(svc); err != nil {
 		return err
 	}
+	if err := g.loadDBClusterSnapshots(svc); err != nil {
+		return err
+	}
 	if err := g.loadDBInstances(svc); err != nil {
+		return err
+	}
+	if err := g.loadDBInstanceSnapshots(svc); err != nil {
 		return err
 	}
 	if err := g.loadDBProxies(svc); err != nil {
@@ -216,12 +287,27 @@ func (g *RDSGenerator) InitResources() error {
 		return err
 	}
 
+	if err := g.loadRDSGlobalClusters(svc); err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (g *RDSGenerator) PostConvertHook() error {
 	for i, r := range g.Resources {
 		if r.InstanceInfo.Type == "aws_db_instance" || r.InstanceInfo.Type == "aws_rds_cluster" {
+			for _, dbInstance := range g.Resources {
+				if dbInstance.InstanceInfo.Type != "aws_db_instance" {
+					continue
+				}
+				if g.Resources[i].Item["replicate_source_db"] != nil {
+					delete(g.Resources[i].Item, "username")
+					delete(g.Resources[i].Item, "engine_version")
+					delete(g.Resources[i].Item, "engine")
+					delete(g.Resources[i].Item, "db_name")
+				}
+			}
 
 			for _, parameterGroup := range g.Resources {
 				if parameterGroup.InstanceInfo.Type != "aws_db_parameter_group" {

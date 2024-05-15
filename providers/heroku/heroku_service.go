@@ -24,7 +24,6 @@ type HerokuService struct { //nolint
 }
 
 func (s *HerokuService) generateService() *heroku.Service {
-	heroku.DefaultTransport.Username = s.Args["email"].(string)
 	heroku.DefaultTransport.Password = s.Args["api_key"].(string)
 	heroku.DefaultTransport.Debug = s.Verbose
 	return heroku.NewService(heroku.DefaultClient)

@@ -78,7 +78,9 @@ func (g VirtualMachineGenerator) createResources(virtualMachineListResultIterato
 
 func (g *VirtualMachineGenerator) InitResources() error {
 	ctx := context.Background()
-	vmClient := compute.NewVirtualMachinesClient(g.Args["config"].(authentication.Config).SubscriptionID)
+	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	vmClient := compute.NewVirtualMachinesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 
 	vmClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 

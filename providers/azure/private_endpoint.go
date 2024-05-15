@@ -26,8 +26,8 @@ type PrivateEndpointGenerator struct {
 }
 
 func (az *PrivateEndpointGenerator) listServices() ([]network.PrivateLinkService, error) {
-	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
-	client := network.NewPrivateLinkServicesClient(subscriptionID)
+	subscriptionID, resourceGroup, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := network.NewPrivateLinkServicesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	var (
 		iterator network.PrivateLinkServiceListResultIterator
@@ -59,8 +59,8 @@ func (az *PrivateEndpointGenerator) AppendServices(link *network.PrivateLinkServ
 }
 
 func (az *PrivateEndpointGenerator) listEndpoints() ([]network.PrivateEndpoint, error) {
-	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
-	client := network.NewPrivateEndpointsClient(subscriptionID)
+	subscriptionID, resourceGroup, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := network.NewPrivateEndpointsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	var (
 		iterator network.PrivateEndpointListResultIterator

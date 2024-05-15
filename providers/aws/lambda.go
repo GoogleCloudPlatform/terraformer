@@ -16,15 +16,29 @@ package aws
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/lambda"
+	"github.com/aws/smithy-go"
 )
 
 var lambdaAllowEmptyValues = []string{"tags."}
 
 type LambdaGenerator struct {
 	AWSService
+}
+
+type Statement struct {
+	Sid string `json:"Sid"`
+}
+
+type Policy struct {
+	Version   string       `json:"Version"`
+	ID        string       `json:"Id"`
+	Statement []*Statement `json:"Statement"`
 }
 
 func (g *LambdaGenerator) InitResources() error {
@@ -88,6 +102,43 @@ func (g *LambdaGenerator) addFunctions(svc *lambda.Client) error {
 				lambdaAllowEmptyValues,
 				map[string]interface{}{},
 			))
+
+			gp, err := svc.GetPolicy(context.TODO(), &lambda.GetPolicyInput{
+				FunctionName: aws.String(*function.FunctionArn),
+			})
+
+			if err != nil {
+				// skip ResourceNotFoundException, because there may be only inline policy defined
+				var apiErr smithy.APIError
+				if !errors.As(err, &apiErr) || apiErr.ErrorCode() != "ResourceNotFoundException" {
+					return err
+				}
+			}
+
+			if gp != nil {
+				outputPolicy := *gp.Policy
+				var policy Policy
+				err = json.Unmarshal([]byte(outputPolicy), &policy)
+
+				if err != nil {
+					return err
+				}
+
+				for _, statement := range policy.Statement {
+					g.Resources = append(g.Resources, terraformutils.NewResource(
+						statement.Sid,
+						statement.Sid,
+						"aws_lambda_permission",
+						"aws",
+						map[string]string{
+							"statement_id":  statement.Sid,
+							"function_name": *function.FunctionArn,
+						},
+						lambdaAllowEmptyValues,
+						map[string]interface{}{},
+					))
+				}
+			}
 
 			pi := lambda.NewListFunctionEventInvokeConfigsPaginator(svc,
 				&lambda.ListFunctionEventInvokeConfigsInput{

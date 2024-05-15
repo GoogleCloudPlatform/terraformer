@@ -159,6 +159,10 @@ func (g *IamGenerator) getUsers(svc *iam.Client) error {
 			if err != nil {
 				log.Println(err)
 			}
+			err = g.getUserAccessKey(svc, user.UserName, StringValue(user.UserId))
+			if err != nil {
+				log.Println(err)
+			}
 		}
 	}
 	return nil
@@ -355,6 +359,32 @@ func (g *IamGenerator) getInstanceProfiles(svc *iam.Client) error {
 				},
 				IamAllowEmptyValues,
 				IamAdditionalFields))
+		}
+	}
+	return nil
+}
+
+func (g *IamGenerator) getUserAccessKey(svc *iam.Client, userName *string, userID string) error {
+	p := iam.NewListAccessKeysPaginator(svc, &iam.ListAccessKeysInput{UserName: userName})
+	for p.HasMorePages() {
+		page, err := p.NextPage(context.TODO())
+		if err != nil {
+			return err
+		}
+		for _, key := range page.AccessKeyMetadata {
+			accessKeyID := StringValue(key.AccessKeyId)
+			g.Resources = append(g.Resources, terraformutils.NewResource(
+				accessKeyID,
+				accessKeyID,
+				"aws_iam_access_key",
+				"aws",
+				map[string]string{
+					"user": *userName,
+				},
+				IamAllowEmptyValues,
+				map[string]interface{}{
+					"depends_on": []string{"aws_iam_user.tfer--" + userID},
+				}))
 		}
 	}
 	return nil
