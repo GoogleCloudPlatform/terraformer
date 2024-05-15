@@ -39,8 +39,7 @@ func (g *SchedulesGenerator) createResources(schedules []*Schedule) []terraformu
 			[]string{},
 			map[string]interface{}{},
 		))
-	}
-	for _, sch := range schedules {
+
 		for _, rot := range sch.Rotations {
 			resourceList = append(resourceList, terraformutils.NewResource(
 				fmt.Sprintf("%d", rot.ID),

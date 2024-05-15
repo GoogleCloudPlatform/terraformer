@@ -118,17 +118,9 @@ func (g *GlobalEventRulesGenerator) InitResources() error {
 }
 
 type AlertSource struct {
-	ID             string `json:"_id"`
-	Type           string `json:"type"`
-	Heading        string `json:"heading"`
-	SupportDocURL  string `json:"supportDoc"`
-	DisplayKeyOnly bool   `json:"displayKeyOnly"`
-	ShortName      string `json:"shortName"`
-	Version        string `json:"version"`
-
-	IsValid      bool `json:"isValid"`
-	IsPrivate    bool `json:"isPrivate"`
-	IsDeprecated bool `json:"deprecated"`
+	Type      string `json:"type"`
+	ShortName string `json:"shortName"`
+	Version   string `json:"version"`
 }
 
 func (g *GlobalEventRulesGenerator) getAlertSources() (map[string]string, error) {
