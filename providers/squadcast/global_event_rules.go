@@ -77,43 +77,70 @@ func (g *GlobalEventRulesGenerator) createResources(ger []GER) []terraformutils.
 					[]string{},
 					map[string]interface{}{},
 				))
+
 			}
+			resourceList = append(resourceList, terraformutils.NewResource(
+				fmt.Sprintf("%d", rs.ID),
+				fmt.Sprintf("ger_ruleset_rules_ordering_%d", rs.ID),
+				"squadcast_ger_ruleset_rules_ordering",
+				g.GetProviderName(),
+				map[string]string{
+					"ger_id":                 fmt.Sprintf("%d", rule.ID),
+					"alert_source":           alertSourcesMap[rs.AlertSourceShortName],
+					"alert_source_shortname": rs.AlertSourceShortName,
+					"alert_source_version":   rs.AlertSourceVersion,
+				},
+				[]string{},
+				map[string]interface{}{},
+			))
 		}
 	}
 	return resourceList
 }
 
 func (g *GlobalEventRulesGenerator) InitResources() error {
-	req := TRequest{
-		URL:             fmt.Sprintf("/v3/global-event-rules?owner_id=%s", g.Args["team_id"].(string)),
-		AccessToken:     g.Args["access_token"].(string),
-		Region:          g.Args["region"].(string),
-		IsAuthenticated: true,
-	}
-	response, err := Request[[]GER](req)
-	if err != nil {
-		return err
+	var allRules []GER
+	page := 1
+	pageSize := 100
+
+	for {
+		req := TRequest{
+			URL:             fmt.Sprintf("/v3/global-event-rules?owner_id=%s&page_number=%d&page_size=%d", g.Args["team_id"].(string), page, pageSize),
+			AccessToken:     g.Args["access_token"].(string),
+			Region:          g.Args["region"].(string),
+			IsAuthenticated: true,
+		}
+
+		response, meta, err := Request[[]GER](req)
+		if err != nil {
+			return err
+		}
+
+		allRules = append(allRules, *response...)
+		if page*pageSize >= meta.TotalCount {
+			break
+		}
+
+		page++
 	}
 
-	ger := *response
-
-	for i, rule := range ger {
+	for i, rule := range allRules {
 		for j, rs := range rule.Rulesets {
 			req := TRequest{
-				URL:             fmt.Sprintf("/v3/global-event-rules/%d/rulesets/%s/%s/rules", rule.ID, rs.AlertSourceVersion, rs.AlertSourceShortName),
+				URL:             fmt.Sprintf("/v3/global-event-rules/%d/rulesets/%s/%s/rules?page_number=1&page_size=100", rule.ID, rs.AlertSourceVersion, rs.AlertSourceShortName),
 				AccessToken:     g.Args["access_token"].(string),
 				Region:          g.Args["region"].(string),
 				IsAuthenticated: true,
 			}
-			resp, err := Request[[]GER_Ruleset_Rules](req)
+			resp, _, err := Request[[]GER_Ruleset_Rules](req)
 			if err != nil {
 				return err
 			}
-			ger[i].Rulesets[j].Rules = *resp
+			allRules[i].Rulesets[j].Rules = *resp
 		}
 	}
 
-	g.Resources = g.createResources(*response)
+	g.Resources = g.createResources(allRules)
 	return nil
 }
 
@@ -132,7 +159,7 @@ func (g *GlobalEventRulesGenerator) getAlertSources() (map[string]string, error)
 		IsAuthenticated: true,
 		IsV2:            true,
 	}
-	alertSources, err := Request[[]AlertSource](req)
+	alertSources, _, err := Request[[]AlertSource](req)
 	if err != nil {
 		return nil, err
 	}

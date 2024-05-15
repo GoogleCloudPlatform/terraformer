@@ -35,7 +35,7 @@ func (g *WebformsGenerator) InitResources() error {
 		Region:          g.Args["region"].(string),
 		IsAuthenticated: true,
 	}
-	response, err := Request[[]Webform](req)
+	response, _, err := Request[[]Webform](req)
 	if err != nil {
 		return err
 	}

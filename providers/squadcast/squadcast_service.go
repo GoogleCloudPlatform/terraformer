@@ -43,7 +43,7 @@ type TRequest struct {
 	IsV2            bool
 }
 
-func Request[TRes any](request TRequest) (*TRes, error) {
+func Request[TRes any](request TRequest) (*TRes, *Meta, error) {
 	ctx := context.Background()
 	var URL string
 	var req *http.Request
@@ -65,7 +65,7 @@ func Request[TRes any](request TRequest) (*TRes, error) {
 		req.Header.Set("X-Refresh-Token", request.RefreshToken)
 	}
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	req.Header.Set("User-Agent", UserAgent)
@@ -73,10 +73,10 @@ func Request[TRes any](request TRequest) (*TRes, error) {
 
 	var response struct {
 		Data *TRes `json:"data"`
-		*Meta
+		Meta *Meta `json:"meta"`
 	}
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	defer func(Body io.ReadCloser) {
@@ -88,20 +88,20 @@ func Request[TRes any](request TRequest) (*TRes, error) {
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if response.Meta != nil {
 		if response.Meta.Meta.Status >= 400 {
-			return nil, fmt.Errorf("error: %s", response.Meta.Meta.Message)
+			return nil, nil, fmt.Errorf("error: %s", response.Meta.Meta.Message)
 		}
 	}
 
-	return response.Data, nil
+	return response.Data, response.Meta, nil
 }
 
 var gqlClient *graphql.Client

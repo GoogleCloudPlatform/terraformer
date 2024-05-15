@@ -46,7 +46,7 @@ func (g *SLOGenerator) InitResources() error {
 		Region:          g.Args["region"].(string),
 		IsAuthenticated: true,
 	}
-	response, err := Request[getSLOsResponse](req)
+	response, _, err := Request[getSLOsResponse](req)
 	if err != nil {
 		return err
 	}

@@ -41,7 +41,7 @@ func (g *SquadGenerator) InitResources() error {
 		Region:          g.Args["region"].(string),
 		IsAuthenticated: true,
 	}
-	response, err := Request[[]Squad](req)
+	response, _, err := Request[[]Squad](req)
 	if err != nil {
 		return err
 	}

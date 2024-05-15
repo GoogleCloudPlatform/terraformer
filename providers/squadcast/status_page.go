@@ -35,17 +35,27 @@ func (g *StatusPagesGenerator) createResources(statusPages []StatusPage) []terra
 }
 
 func (g *StatusPagesGenerator) InitResources() error {
-	req := TRequest{
-		URL:             fmt.Sprintf("/v4/statuspages?teamID=%s", g.Args["team_id"].(string)),
-		AccessToken:     g.Args["access_token"].(string),
-		Region:          g.Args["region"].(string),
-		IsAuthenticated: true,
-	}
-	response, err := Request[[]StatusPage](req)
-	if err != nil {
-		return err
+	var allStatusPages []StatusPage
+	page := 1
+	pageSize := 100
+	for {
+		req := TRequest{
+			URL:             fmt.Sprintf("/v4/statuspages?teamID=%s&pageNumber=%d&pageSize=%d", g.Args["team_id"].(string), page, pageSize),
+			AccessToken:     g.Args["access_token"].(string),
+			Region:          g.Args["region"].(string),
+			IsAuthenticated: true,
+		}
+		response, meta, err := Request[[]StatusPage](req)
+		if err != nil {
+			return err
+		}
+		allStatusPages = append(allStatusPages, *response...)
+		if page*pageSize >= meta.TotalPages {
+			break
+		}
+		page++
 	}
 
-	g.Resources = g.createResources(*response)
+	g.Resources = g.createResources(allStatusPages)
 	return nil
 }

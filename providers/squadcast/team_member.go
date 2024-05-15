@@ -41,7 +41,7 @@ func (g *TeamMemberGenerator) InitResources() error {
 		IsAuthenticated: true,
 	}
 
-	response, err := Request[Team](req)
+	response, _, err := Request[Team](req)
 	if err != nil {
 		return err
 	}

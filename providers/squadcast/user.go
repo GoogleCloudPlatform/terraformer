@@ -35,7 +35,7 @@ func (g *UserGenerator) InitResources() error {
 		Region:          g.Args["region"].(string),
 		IsAuthenticated: true,
 	}
-	response, err := Request[[]User](req)
+	response, _, err := Request[[]User](req)
 	if err != nil {
 		return err
 	}

@@ -47,7 +47,7 @@ func (g *RoutingRulesGenerator) InitResources() error {
 			Region:          g.Args["region"].(string),
 			IsAuthenticated: true,
 		}
-		responseService, err := Request[[]Service](req)
+		responseService, _, err := Request[[]Service](req)
 		if err != nil {
 			return err
 		}
@@ -59,7 +59,7 @@ func (g *RoutingRulesGenerator) InitResources() error {
 				Region:          g.Args["region"].(string),
 				IsAuthenticated: true,
 			}
-			response, err := Request[RoutingRules](req)
+			response, _, err := Request[RoutingRules](req)
 			if err != nil {
 				return err
 			}
@@ -73,7 +73,7 @@ func (g *RoutingRulesGenerator) InitResources() error {
 			Region:          g.Args["region"].(string),
 			IsAuthenticated: true,
 		}
-		response, err := Request[RoutingRules](req)
+		response, _, err := Request[RoutingRules](req)
 		if err != nil {
 			return err
 		}

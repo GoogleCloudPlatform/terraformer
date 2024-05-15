@@ -37,7 +37,7 @@ func (g *TaggingRuleGenerator) InitResources() error {
 			Region:          g.Args["region"].(string),
 			IsAuthenticated: true,
 		}
-		responseService, err := Request[[]Service](req)
+		responseService, _, err := Request[[]Service](req)
 		if err != nil {
 			return err
 		}
@@ -49,7 +49,7 @@ func (g *TaggingRuleGenerator) InitResources() error {
 				Region:          g.Args["region"].(string),
 				IsAuthenticated: true,
 			}
-			response, err := Request[TaggingRules](req)
+			response, _, err := Request[TaggingRules](req)
 			if err != nil {
 				return err
 			}
@@ -63,7 +63,7 @@ func (g *TaggingRuleGenerator) InitResources() error {
 			Region:          g.Args["region"].(string),
 			IsAuthenticated: true,
 		}
-		response, err := Request[TaggingRules](req)
+		response, _, err := Request[TaggingRules](req)
 		if err != nil {
 			return err
 		}

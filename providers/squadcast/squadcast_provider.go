@@ -29,7 +29,9 @@ type AccessToken struct {
 
 // Meta holds the status of the request information
 type Meta struct {
-	Meta AppError `json:"meta,omitempty"`
+	Meta       AppError `json:"meta,omitempty"`
+	TotalCount int      `json:"total_count"`
+	TotalPages int      `json:"totalCount"`
 }
 
 type AppError struct {
@@ -38,7 +40,6 @@ type AppError struct {
 }
 
 func (p *SCProvider) Init(args []string) error {
-
 	if refreshToken := os.Getenv("SQUADCAST_REFRESH_TOKEN"); refreshToken != "" {
 		p.refreshToken = os.Getenv("SQUADCAST_REFRESH_TOKEN")
 	}
@@ -155,7 +156,7 @@ func (p *SCProvider) GetAccessToken() {
 		Region:          p.region,
 		IsAuthenticated: false,
 	}
-	response, err := Request[AccessToken](req)
+	response, _, err := Request[AccessToken](req)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -169,7 +170,7 @@ func (p *SCProvider) GetTeamID() {
 		Region:          p.region,
 		IsAuthenticated: true,
 	}
-	response, err := Request[Team](req)
+	response, _, err := Request[Team](req)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -183,7 +184,7 @@ func (p *SCProvider) GetServiceID() {
 		Region:          p.region,
 		IsAuthenticated: true,
 	}
-	response, err := Request[Service](req)
+	response, _, err := Request[Service](req)
 	if err != nil {
 		log.Fatal(err)
 	}

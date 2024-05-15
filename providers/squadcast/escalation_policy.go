@@ -41,7 +41,7 @@ func (g *EscalationPolicyGenerator) InitResources() error {
 		IsAuthenticated: true,
 	}
 
-	response, err := Request[[]EscalationPolicy](req)
+	response, _, err := Request[[]EscalationPolicy](req)
 	if err != nil {
 		return err
 	}

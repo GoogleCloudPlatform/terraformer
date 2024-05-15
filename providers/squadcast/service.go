@@ -42,7 +42,7 @@ func (g *ServiceGenerator) InitResources() error {
 		Region:          g.Args["region"].(string),
 		IsAuthenticated: true,
 	}
-	response, err := Request[[]Service](req)
+	response, _, err := Request[[]Service](req)
 	if err != nil {
 		return err
 	}

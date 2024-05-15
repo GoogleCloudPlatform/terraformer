@@ -42,7 +42,7 @@ func (g *StatusPageGroupsGenerator) InitResources() error {
 		Region:          g.Args["region"].(string),
 		IsAuthenticated: true,
 	}
-	response, err := Request[[]StatusPage](req)
+	response, _, err := Request[[]StatusPage](req)
 	if err != nil {
 		return err
 	}
@@ -53,7 +53,7 @@ func (g *StatusPageGroupsGenerator) InitResources() error {
 			Region:          g.Args["region"].(string),
 			IsAuthenticated: true,
 		}
-		response, err := Request[[]StatusPageGroup](req)
+		response, _, err := Request[[]StatusPageGroup](req)
 		if err != nil {
 			return err
 		}

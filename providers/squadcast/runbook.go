@@ -42,7 +42,7 @@ func (g *RunbookGenerator) InitResources() error {
 		Region:          g.Args["region"].(string),
 		IsAuthenticated: true,
 	}
-	response, err := Request[[]Runbook](req)
+	response, _, err := Request[[]Runbook](req)
 	if err != nil {
 		return err
 	}

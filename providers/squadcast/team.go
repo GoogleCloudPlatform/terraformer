@@ -38,7 +38,7 @@ func (g *TeamGenerator) InitResources() error {
 		Region:          g.Args["region"].(string),
 		IsAuthenticated: true,
 	}
-	response, err := Request[[]Team](req)
+	response, _, err := Request[[]Team](req)
 	if err != nil {
 		return err
 	}

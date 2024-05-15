@@ -40,7 +40,7 @@ func (g *TeamRolesGenerator) InitResources() error {
 		Region:          g.Args["region"].(string),
 		IsAuthenticated: true,
 	}
-	response, err := Request[[]TeamRole](req)
+	response, _, err := Request[[]TeamRole](req)
 	if err != nil {
 		return err
 	}
