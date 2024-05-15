@@ -6,31 +6,21 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
-type RoutingRulesGenerator struct {
+type DeduplicationRuleGenerator struct {
 	SCService
 }
 
-type RoutingRules struct {
-	ID        string         `json:"id"`
-	ServiceID string         `json:"service_id"`
-	Rules     []*RoutingRule `json:"rules"`
-}
-
-type RoutingRule struct {
-	ID string `json:"rule_id"`
-}
-
-func (g *RoutingRulesGenerator) createResources(routingRules RoutingRules) []terraformutils.Resource {
+func (g *DeduplicationRuleGenerator) createResources(deduplicationRulesV2 DeduplicationRules) []terraformutils.Resource {
 	var resourceList []terraformutils.Resource
-	for _, rule := range routingRules.Rules {
+	for _, rule := range deduplicationRulesV2.Rules {
 		resourceList = append(resourceList, terraformutils.NewResource(
 			rule.ID,
-			fmt.Sprintf("routing_rule_%s", rule.ID),
-			"squadcast_routing_rules",
+			fmt.Sprintf("deduplication_rule_v2_%s", rule.ID),
+			"squadcast_deduplication_rule_v2",
 			g.GetProviderName(),
 			map[string]string{
 				"team_id":    g.Args["team_id"].(string),
-				"service_id": routingRules.ServiceID,
+				"service_id": deduplicationRulesV2.ServiceID,
 			},
 			[]string{},
 			map[string]interface{}{},
@@ -39,7 +29,7 @@ func (g *RoutingRulesGenerator) createResources(routingRules RoutingRules) []ter
 	return resourceList
 }
 
-func (g *RoutingRulesGenerator) InitResources() error {
+func (g *DeduplicationRuleGenerator) InitResources() error {
 	if len(g.Args["service_name"].(string)) == 0 {
 		req := TRequest{
 			URL:             "/v3/services",
@@ -54,12 +44,12 @@ func (g *RoutingRulesGenerator) InitResources() error {
 
 		for _, service := range *responseService {
 			req := TRequest{
-				URL:             fmt.Sprintf("/v3/services/%s/routing-rules", service.ID),
+				URL:             fmt.Sprintf("/v3/services/%s/deduplication-rules", service.ID),
 				AccessToken:     g.Args["access_token"].(string),
 				Region:          g.Args["region"].(string),
 				IsAuthenticated: true,
 			}
-			response, err := Request[RoutingRules](req)
+			response, err := Request[DeduplicationRules](req)
 			if err != nil {
 				return err
 			}
@@ -68,12 +58,12 @@ func (g *RoutingRulesGenerator) InitResources() error {
 		}
 	} else {
 		req := TRequest{
-			URL:             fmt.Sprintf("/v3/services/%s/routing-rules", g.Args["service_id"]),
+			URL:             fmt.Sprintf("/v3/services/%s/deduplication-rules", g.Args["service_id"]),
 			AccessToken:     g.Args["access_token"].(string),
 			Region:          g.Args["region"].(string),
 			IsAuthenticated: true,
 		}
-		response, err := Request[RoutingRules](req)
+		response, err := Request[DeduplicationRules](req)
 		if err != nil {
 			return err
 		}

@@ -1,3 +1,5 @@
+// service resource is yet to be implemented
+
 package squadcast
 
 import (
@@ -6,22 +8,21 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
-type EscalationPolicyGenerator struct {
+type StatusPagesGenerator struct {
 	SCService
 }
 
-type EscalationPolicy struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+type StatusPage struct {
+	ID uint `json:"id"`
 }
 
-func (g *EscalationPolicyGenerator) createResources(policies []EscalationPolicy) []terraformutils.Resource {
+func (g *StatusPagesGenerator) createResources(statusPages []StatusPage) []terraformutils.Resource {
 	var resourceList []terraformutils.Resource
-	for _, policy := range policies {
+	for _, sp := range statusPages {
 		resourceList = append(resourceList, terraformutils.NewResource(
-			policy.ID,
-			fmt.Sprintf("policy_%s", policy.Name),
-			"squadcast_escalation_policy",
+			fmt.Sprintf("%d", sp.ID),
+			fmt.Sprintf("status_page_%d", sp.ID),
+			"squadcast_status_page",
 			g.GetProviderName(),
 			map[string]string{
 				"team_id": g.Args["team_id"].(string),
@@ -33,15 +34,14 @@ func (g *EscalationPolicyGenerator) createResources(policies []EscalationPolicy)
 	return resourceList
 }
 
-func (g *EscalationPolicyGenerator) InitResources() error {
+func (g *StatusPagesGenerator) InitResources() error {
 	req := TRequest{
-		URL:             fmt.Sprintf("/v3/escalation-policies?owner_id=%s", g.Args["team_id"].(string)),
+		URL:             fmt.Sprintf("/v4/statuspages?teamID=%s", g.Args["team_id"].(string)),
 		AccessToken:     g.Args["access_token"].(string),
 		Region:          g.Args["region"].(string),
 		IsAuthenticated: true,
 	}
-
-	response, err := Request[[]EscalationPolicy](req)
+	response, err := Request[[]StatusPage](req)
 	if err != nil {
 		return err
 	}

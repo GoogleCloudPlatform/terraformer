@@ -36,8 +36,13 @@ func (g *ServiceGenerator) createResources(services []Service) []terraformutils.
 }
 
 func (g *ServiceGenerator) InitResources() error {
-	getServicesURL := "/v3/services"
-	response, err := Request[[]Service](getServicesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+	req := TRequest{
+		URL:             "/v3/services",
+		AccessToken:     g.Args["access_token"].(string),
+		Region:          g.Args["region"].(string),
+		IsAuthenticated: true,
+	}
+	response, err := Request[[]Service](req)
 	if err != nil {
 		return err
 	}

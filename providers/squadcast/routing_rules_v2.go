@@ -6,27 +6,17 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
-type RoutingRulesGenerator struct {
+type RoutingRuleGenerator struct {
 	SCService
 }
 
-type RoutingRules struct {
-	ID        string         `json:"id"`
-	ServiceID string         `json:"service_id"`
-	Rules     []*RoutingRule `json:"rules"`
-}
-
-type RoutingRule struct {
-	ID string `json:"rule_id"`
-}
-
-func (g *RoutingRulesGenerator) createResources(routingRules RoutingRules) []terraformutils.Resource {
+func (g *RoutingRuleGenerator) createResources(routingRules RoutingRules) []terraformutils.Resource {
 	var resourceList []terraformutils.Resource
 	for _, rule := range routingRules.Rules {
 		resourceList = append(resourceList, terraformutils.NewResource(
 			rule.ID,
-			fmt.Sprintf("routing_rule_%s", rule.ID),
-			"squadcast_routing_rules",
+			fmt.Sprintf("routing_rule_v2_%s", rule.ID),
+			"squadcast_routing_rule_v2",
 			g.GetProviderName(),
 			map[string]string{
 				"team_id":    g.Args["team_id"].(string),
@@ -39,7 +29,7 @@ func (g *RoutingRulesGenerator) createResources(routingRules RoutingRules) []ter
 	return resourceList
 }
 
-func (g *RoutingRulesGenerator) InitResources() error {
+func (g *RoutingRuleGenerator) InitResources() error {
 	if len(g.Args["service_name"].(string)) == 0 {
 		req := TRequest{
 			URL:             "/v3/services",

@@ -8,6 +8,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/hasura/go-graphql-client"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -19,7 +21,7 @@ const (
 	UserAgent = "terraformer-squadcast"
 )
 
-func GetHost(region string) string {
+func getHost(region string) string {
 	switch region {
 	case "us":
 		return "squadcast.com"
@@ -32,23 +34,38 @@ func GetHost(region string) string {
 	}
 }
 
-func Request[TRes any](url string, token string, region string, isAuthenticated bool) (*TRes, error) {
+type TRequest struct {
+	URL             string
+	AccessToken     string
+	RefreshToken    string
+	Region          string
+	IsAuthenticated bool
+	IsV2            bool
+}
+
+func Request[TRes any](request TRequest) (*TRes, error) {
 	ctx := context.Background()
 	var URL string
 	var req *http.Request
 	var err error
-	host := GetHost(region)
-	if isAuthenticated {
-		URL = fmt.Sprintf("https://api.%s%s", host, url)
-		req, err = http.NewRequestWithContext(ctx, http.MethodGet, URL, nil)
-		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
+	host := getHost(request.Region)
+	if request.IsAuthenticated {
+		if !request.IsV2 {
+			URL = fmt.Sprintf("https://api.%s%s", host, request.URL)
+			req, err = http.NewRequestWithContext(ctx, http.MethodGet, URL, nil)
+			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", request.AccessToken))
+		} else {
+			URL = fmt.Sprintf("https://platform-backend.%s%s", host, request.URL)
+			req, err = http.NewRequestWithContext(ctx, http.MethodGet, URL, nil)
+			req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", request.AccessToken))
+		}
 	} else {
-		URL = fmt.Sprintf("https://auth.%s%s", host, url)
+		URL = fmt.Sprintf("https://auth.%s%s", host, request.URL)
 		req, err = http.NewRequestWithContext(ctx, http.MethodGet, URL, nil)
-		req.Header.Set("X-Refresh-Token", token)
+		req.Header.Set("X-Refresh-Token", request.RefreshToken)
 	}
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	req.Header.Set("User-Agent", UserAgent)
@@ -58,10 +75,10 @@ func Request[TRes any](url string, token string, region string, isAuthenticated 
 		Data *TRes `json:"data"`
 		*Meta
 	}
-
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
+
 	defer func(Body io.ReadCloser) {
 		err := Body.Close()
 		if err != nil {
@@ -80,9 +97,27 @@ func Request[TRes any](url string, token string, region string, isAuthenticated 
 	}
 	if response.Meta != nil {
 		if response.Meta.Meta.Status >= 400 {
-			return nil, fmt.Errorf("Error: %s", response.Meta.Meta.Message)
+			return nil, fmt.Errorf("error: %s", response.Meta.Meta.Message)
 		}
 	}
 
 	return response.Data, nil
+}
+
+var gqlClient *graphql.Client
+
+func GraphQLRequest[TReq any](method string, token string, region string, payload *TReq, variables map[string]interface{}) (*TReq, error) {
+	graphQLURL := fmt.Sprintf("https://api.%s/v3/graphql", getHost(region))
+	bearerToken := fmt.Sprintf("Bearer %s", token)
+
+	if gqlClient == nil {
+		gqlClient = graphql.NewClient(graphQLURL, nil).WithRequestModifier(func(req *http.Request) {
+			req.Header.Set("Authorization", bearerToken)
+		})
+	}
+	if err := gqlClient.WithDebug(false).Query(context.Background(), payload, variables); err != nil {
+		return nil, err
+	}
+
+	return payload, nil
 }

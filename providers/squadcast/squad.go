@@ -35,8 +35,13 @@ func (g *SquadGenerator) createResources(squads []Squad) []terraformutils.Resour
 }
 
 func (g *SquadGenerator) InitResources() error {
-	getSquadsURL := fmt.Sprintf("/v3/squads?owner_id=%s", g.Args["team_id"].(string))
-	response, err := Request[[]Squad](getSquadsURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+	req := TRequest{
+		URL:             fmt.Sprintf("/v3/squads?owner_id=%s", g.Args["team_id"].(string)),
+		AccessToken:     g.Args["access_token"].(string),
+		Region:          g.Args["region"].(string),
+		IsAuthenticated: true,
+	}
+	response, err := Request[[]Squad](req)
 	if err != nil {
 		return err
 	}

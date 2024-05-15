@@ -34,8 +34,14 @@ func (g *TeamMemberGenerator) createResources(team Team) []terraformutils.Resour
 }
 
 func (g *TeamMemberGenerator) InitResources() error {
-	getTeamURL := fmt.Sprintf("/v3/teams/by-name?name=%s", url.QueryEscape(g.Args["team_name"].(string)))
-	response, err := Request[Team](getTeamURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+	req := TRequest{
+		URL:             fmt.Sprintf("/v3/teams/by-name?name=%s", url.QueryEscape(g.Args["team_name"].(string))),
+		AccessToken:     g.Args["access_token"].(string),
+		Region:          g.Args["region"].(string),
+		IsAuthenticated: true,
+	}
+
+	response, err := Request[Team](req)
 	if err != nil {
 		return err
 	}

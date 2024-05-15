@@ -41,15 +41,25 @@ func (g *TaggingRulesGenerator) createResources(taggingRule TaggingRules) []terr
 
 func (g *TaggingRulesGenerator) InitResources() error {
 	if len(g.Args["service_name"].(string)) == 0 {
-		getServicesURL := "/v3/services"
-		responseService, err := Request[[]Service](getServicesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+		req := TRequest{
+			URL:             "/v3/services",
+			AccessToken:     g.Args["access_token"].(string),
+			Region:          g.Args["region"].(string),
+			IsAuthenticated: true,
+		}
+		responseService, err := Request[[]Service](req)
 		if err != nil {
 			return err
 		}
 
 		for _, service := range *responseService {
-			getTaggingRulesURL := fmt.Sprintf("/v3/services/%s/tagging-rules", service.ID)
-			response, err := Request[TaggingRules](getTaggingRulesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+			req := TRequest{
+				URL:             fmt.Sprintf("/v3/services/%s/tagging-rules", service.ID),
+				AccessToken:     g.Args["access_token"].(string),
+				Region:          g.Args["region"].(string),
+				IsAuthenticated: true,
+			}
+			response, err := Request[TaggingRules](req)
 			if err != nil {
 				return err
 			}
@@ -57,8 +67,13 @@ func (g *TaggingRulesGenerator) InitResources() error {
 			g.Resources = append(g.Resources, g.createResources(*response)...)
 		}
 	} else {
-		getTaggingRulesURL := fmt.Sprintf("/v3/services/%s/tagging-rules", g.Args["service_id"])
-		response, err := Request[TaggingRules](getTaggingRulesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+		req := TRequest{
+			URL:             fmt.Sprintf("/v3/services/%s/tagging-rules", g.Args["service_id"]),
+			AccessToken:     g.Args["access_token"].(string),
+			Region:          g.Args["region"].(string),
+			IsAuthenticated: true,
+		}
+		response, err := Request[TaggingRules](req)
 		if err != nil {
 			return err
 		}

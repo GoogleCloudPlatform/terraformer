@@ -257,7 +257,7 @@ require (
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/gofuzz v1.1.0 // indirect
 	github.com/google/jsonapi v1.0.0 // indirect
-	github.com/google/uuid v1.3.0 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.12.0 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
@@ -389,11 +389,13 @@ require (
 	google.golang.org/genproto/googleapis/api v0.0.0-20230629202037-9506855d4529 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230706204954-ccb25ca9f130 // indirect
 	k8s.io/kube-openapi v0.0.0-20220328201542-3ee0da9b0b42 // indirect
+	nhooyr.io/websocket v1.8.10 // indirect
 	sigs.k8s.io/json v0.0.0-20211208200746-9f7c6b3444d2 // indirect
 )
 
 require (
 	github.com/gofrs/uuid/v3 v3.1.2
+	github.com/hasura/go-graphql-client v0.12.1
 	github.com/ionos-cloud/sdk-go-cert-manager v1.0.0
 	github.com/ionos-cloud/sdk-go-container-registry v1.0.0
 	github.com/ionos-cloud/sdk-go-dataplatform v1.0.1

@@ -41,15 +41,25 @@ func (g *DeduplicationRulesGenerator) createResources(deduplicationRules Dedupli
 
 func (g *DeduplicationRulesGenerator) InitResources() error {
 	if len(g.Args["service_name"].(string)) == 0 {
-		getServicesURL := "/v3/services"
-		responseService, err := Request[[]Service](getServicesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+		req := TRequest{
+			URL:             "/v3/services",
+			AccessToken:     g.Args["access_token"].(string),
+			Region:          g.Args["region"].(string),
+			IsAuthenticated: true,
+		}
+		responseService, err := Request[[]Service](req)
 		if err != nil {
 			return err
 		}
 
 		for _, service := range *responseService {
-			getDeduplicationRulesURL := fmt.Sprintf("/v3/services/%s/deduplication-rules", service.ID)
-			response, err := Request[DeduplicationRules](getDeduplicationRulesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+			req := TRequest{
+				URL:             fmt.Sprintf("/v3/services/%s/deduplication-rules", service.ID),
+				AccessToken:     g.Args["access_token"].(string),
+				Region:          g.Args["region"].(string),
+				IsAuthenticated: true,
+			}
+			response, err := Request[DeduplicationRules](req)
 			if err != nil {
 				return err
 			}
@@ -57,8 +67,13 @@ func (g *DeduplicationRulesGenerator) InitResources() error {
 			g.Resources = append(g.Resources, g.createResources(*response)...)
 		}
 	} else {
-		getDeduplicationRulesURL := fmt.Sprintf("/v3/services/%s/deduplication-rules", g.Args["service_id"])
-		response, err := Request[DeduplicationRules](getDeduplicationRulesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+		req := TRequest{
+			URL:             fmt.Sprintf("/v3/services/%s/deduplication-rules", g.Args["service_id"]),
+			AccessToken:     g.Args["access_token"].(string),
+			Region:          g.Args["region"].(string),
+			IsAuthenticated: true,
+		}
+		response, err := Request[DeduplicationRules](req)
 		if err != nil {
 			return err
 		}

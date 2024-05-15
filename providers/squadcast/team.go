@@ -32,8 +32,13 @@ func (g *TeamGenerator) createResources(teams []Team) []terraformutils.Resource 
 }
 
 func (g *TeamGenerator) InitResources() error {
-	getTeamsURL := "/v3/teams"
-	response, err := Request[[]Team](getTeamsURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+	req := TRequest{
+		URL:             "/v3/teams",
+		AccessToken:     g.Args["access_token"].(string),
+		Region:          g.Args["region"].(string),
+		IsAuthenticated: true,
+	}
+	response, err := Request[[]Team](req)
 	if err != nil {
 		return err
 	}

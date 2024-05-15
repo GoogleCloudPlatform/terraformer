@@ -36,8 +36,13 @@ func (g *RunbookGenerator) createResources(runbooks []Runbook) []terraformutils.
 }
 
 func (g *RunbookGenerator) InitResources() error {
-	getRunbooksURL := "/v3/runbooks"
-	response, err := Request[[]Runbook](getRunbooksURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+	req := TRequest{
+		URL:             "/v3/runbooks",
+		AccessToken:     g.Args["access_token"].(string),
+		Region:          g.Args["region"].(string),
+		IsAuthenticated: true,
+	}
+	response, err := Request[[]Runbook](req)
 	if err != nil {
 		return err
 	}
