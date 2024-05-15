@@ -23,13 +23,13 @@ import (
 
 type BizflyCloudProvider struct { //nolint
 	terraformutils.Provider
-	authMethod string
-	region string
-	email string
-	password string
-	appCredID string
+	authMethod    string
+	region        string
+	email         string
+	password      string
+	appCredID     string
 	appCredSecret string
-	projectID string
+	projectID     string
 }
 
 func (p *BizflyCloudProvider) Init(args []string) error {
@@ -40,8 +40,8 @@ func (p *BizflyCloudProvider) Init(args []string) error {
 	if os.Getenv("BIZFLYCLOUD_PROJECT_ID") == "" {
 		return errors.New("set BIZFLYCLOUD_PROJECT_ID env var")
 	}
-	p.projectID =  os.Getenv("BIZFLYCLOUD_PROJECT_ID")
-	
+	p.projectID = os.Getenv("BIZFLYCLOUD_PROJECT_ID")
+
 	if os.Getenv("BIZFLYCLOUD_REGION") == "" {
 		return errors.New("set BIZFLYCLOUD_REGION env var")
 	}
@@ -60,8 +60,6 @@ func (p *BizflyCloudProvider) Init(args []string) error {
 		return errors.New("set BIZFLYCLOUD_PASSWORD env var")
 	}
 	p.password = os.Getenv("BIZFLYCLOUD_PASSWORD")
-
-
 
 	if os.Getenv("BIZFLYCLOUD_APP_CRED_ID") == "" && p.authMethod == "application_credential" {
 		return errors.New("set BIZFLYCLOUD_APP_CRED_ID env var")
@@ -90,7 +88,8 @@ func (BizflyCloudProvider) GetResourceConnections() map[string]map[string][]stri
 
 func (p *BizflyCloudProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"server":            &ServerGenerator{},
+		"server":   &ServerGenerator{},
+		"database": &CloudDatabaseGenerator{},
 	}
 }
 
@@ -104,13 +103,13 @@ func (p *BizflyCloudProvider) InitService(serviceName string, verbose bool) erro
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"auth_method": p.authMethod,
-		"email": p.email,
-		"password": p.password,
-		"app_credential_id": p.appCredID,
+		"auth_method":           p.authMethod,
+		"email":                 p.email,
+		"password":              p.password,
+		"app_credential_id":     p.appCredID,
 		"app_credential_secret": p.appCredSecret,
-		"project_id": p.projectID,
-		"region_name": p.region,
+		"project_id":            p.projectID,
+		"region_name":           p.region,
 	})
 	return nil
 }

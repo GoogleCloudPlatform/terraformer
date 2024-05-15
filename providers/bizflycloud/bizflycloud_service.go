@@ -59,7 +59,6 @@ func (s *BizflyCloudService) generateClient() *gobizfly.Client {
 		)
 	}
 
-
 	if err != nil {
 		log.Fatal(err)
 	}
