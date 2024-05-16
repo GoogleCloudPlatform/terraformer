@@ -73,6 +73,18 @@ func (g *CloudDatabaseGenerator) loadDatabaseInstances(ctx context.Context, clie
 				}
 			}
 
+			additionalFields := map[string]interface{}{
+				"flavor_name":       flavorName,
+				"availability_zone": availabilityZone,
+				"network_ids":       networkIDs,
+			}
+			if quantity > 0 {
+				additionalFields["secondaries"] = map[string]interface{}{
+					"availability_zone": _availabilityZone,
+					"quantity":          quantity,
+				}
+			}
+
 			g.Resources = append(g.Resources, terraformutils.NewResource(
 				instance.ID,
 				instance.Name,
@@ -80,15 +92,7 @@ func (g *CloudDatabaseGenerator) loadDatabaseInstances(ctx context.Context, clie
 				"bizflycloud",
 				map[string]string{},
 				[]string{},
-				map[string]interface{}{
-					"flavor_name":       flavorName,
-					"availability_zone": availabilityZone,
-					"secondaries": map[string]interface{}{
-						"availability_zone": _availabilityZone,
-						"quantity":          quantity,
-					},
-					"network_ids": networkIDs,
-				}))
+				additionalFields))
 			list = append(list, instance)
 		}
 		break
