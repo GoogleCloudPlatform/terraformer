@@ -2,6 +2,7 @@ package squadcast
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -31,8 +32,12 @@ func (g *RoutingRuleGenerator) createResources(routingRules RoutingRules) []terr
 
 func (g *RoutingRuleGenerator) InitResources() error {
 	if len(g.Args["service_name"].(string)) == 0 {
+		getServicesURL := "/v3/services"
+		if strings.TrimSpace(g.Args["team_id"].(string)) != "" {
+			getServicesURL = fmt.Sprintf("/v3/services?owner_id=%s", g.Args["team_id"].(string))
+		}
 		req := TRequest{
-			URL:             "/v3/services",
+			URL:             getServicesURL,
 			AccessToken:     g.Args["access_token"].(string),
 			Region:          g.Args["region"].(string),
 			IsAuthenticated: true,

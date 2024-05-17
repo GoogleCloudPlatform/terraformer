@@ -4,6 +4,7 @@ package squadcast
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -36,8 +37,12 @@ func (g *ServiceGenerator) createResources(services []Service) []terraformutils.
 }
 
 func (g *ServiceGenerator) InitResources() error {
+	getServicesURL := "/v3/services"
+	if strings.TrimSpace(g.Args["team_id"].(string)) != "" {
+		getServicesURL = fmt.Sprintf("/v3/services?owner_id=%s", g.Args["team_id"].(string))
+	}
 	req := TRequest{
-		URL:             "/v3/services",
+		URL:             getServicesURL,
 		AccessToken:     g.Args["access_token"].(string),
 		Region:          g.Args["region"].(string),
 		IsAuthenticated: true,
