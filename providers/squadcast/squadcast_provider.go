@@ -29,7 +29,9 @@ type AccessToken struct {
 
 // Meta holds the status of the request information
 type Meta struct {
-	Meta AppError `json:"meta,omitempty"`
+	Meta       AppError `json:"meta,omitempty"`
+	TotalCount int      `json:"total_count"`
+	TotalPages int      `json:"totalCount"`
 }
 
 type AppError struct {
@@ -38,7 +40,6 @@ type AppError struct {
 }
 
 func (p *SCProvider) Init(args []string) error {
-
 	if refreshToken := os.Getenv("SQUADCAST_REFRESH_TOKEN"); refreshToken != "" {
 		p.refreshToken = os.Getenv("SQUADCAST_REFRESH_TOKEN")
 	}
@@ -122,25 +123,40 @@ func (p *SCProvider) GetName() string {
 
 func (p *SCProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"user":                &UserGenerator{},
-		"service":             &ServiceGenerator{},
-		"squad":               &SquadGenerator{},
-		"team":                &TeamGenerator{},
-		"team_member":         &TeamMemberGenerator{},
-		"team_roles":          &TeamRolesGenerator{},
-		"escalation_policy":   &EscalationPolicyGenerator{},
-		"runbook":             &RunbookGenerator{},
-		"slo":                 &SLOGenerator{},
-		"tagging_rules":       &TaggingRulesGenerator{},
-		"routing_rules":       &RoutingRulesGenerator{},
-		"deduplication_rules": &DeduplicationRulesGenerator{},
-		"suppression_rules":   &SuppressionRulesGenerator{},
+		"user":                   &UserGenerator{},
+		"service":                &ServiceGenerator{},
+		"squad":                  &SquadGenerator{},
+		"team":                   &TeamGenerator{},
+		"team_member":            &TeamMemberGenerator{},
+		"team_roles":             &TeamRolesGenerator{},
+		"escalation_policy":      &EscalationPolicyGenerator{},
+		"runbook":                &RunbookGenerator{},
+		"slo":                    &SLOGenerator{},
+		"tagging_rules":          &TaggingRulesGenerator{},
+		"tagging_rule_v2":        &TaggingRuleGenerator{},
+		"routing_rules":          &RoutingRulesGenerator{},
+		"routing_rule_v2":        &RoutingRuleGenerator{},
+		"deduplication_rules":    &DeduplicationRulesGenerator{},
+		"deduplication_rule_v2":  &DeduplicationRuleGenerator{},
+		"suppression_rules":      &SuppressionRulesGenerator{},
+		"suppression_rule_v2":    &SuppressionRuleGenerator{},
+		"global_event_rules":     &GlobalEventRulesGenerator{},
+		"webforms":               &WebformsGenerator{},
+		"status_pages":           &StatusPagesGenerator{},
+		"status_page_components": &StatusPageComponentsGenerator{},
+		"status_page_groups":     &StatusPageGroupsGenerator{},
+		"schedules_v2":           &SchedulesGenerator{},
 	}
 }
 
 func (p *SCProvider) GetAccessToken() {
-	url := "/oauth/access-token"
-	response, err := Request[AccessToken](url, p.refreshToken, p.region, false)
+	req := TRequest{
+		URL:             "/oauth/access-token",
+		RefreshToken:    p.refreshToken,
+		Region:          p.region,
+		IsAuthenticated: false,
+	}
+	response, _, err := Request[AccessToken](req)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -148,8 +164,13 @@ func (p *SCProvider) GetAccessToken() {
 }
 
 func (p *SCProvider) GetTeamID() {
-	url := fmt.Sprintf("/v3/teams/by-name?name=%s", url.QueryEscape(p.teamName))
-	response, err := Request[Team](url, p.accessToken, p.region, true)
+	req := TRequest{
+		URL:             fmt.Sprintf("/v3/teams/by-name?name=%s", url.QueryEscape(p.teamName)),
+		AccessToken:     p.accessToken,
+		Region:          p.region,
+		IsAuthenticated: true,
+	}
+	response, _, err := Request[Team](req)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -157,8 +178,13 @@ func (p *SCProvider) GetTeamID() {
 }
 
 func (p *SCProvider) GetServiceID() {
-	url := fmt.Sprintf("/v3/services/by-name?name=%s&owner_id=%s", url.QueryEscape(p.serviceName), p.teamID)
-	response, err := Request[Service](url, p.accessToken, p.region, true)
+	req := TRequest{
+		URL:             fmt.Sprintf("/v3/services/by-name?name=%s&owner_id=%s", url.QueryEscape(p.serviceName), p.teamID),
+		AccessToken:     p.accessToken,
+		Region:          p.region,
+		IsAuthenticated: true,
+	}
+	response, _, err := Request[Service](req)
 	if err != nil {
 		log.Fatal(err)
 	}

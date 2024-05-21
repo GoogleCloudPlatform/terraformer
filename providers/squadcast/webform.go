@@ -6,24 +6,21 @@ import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
-type TeamGenerator struct {
+type WebformsGenerator struct {
 	SCService
 }
 
-type Team struct {
-	ID      string        `json:"id"`
-	Name    string        `json:"name"`
-	Members []*TeamMember `json:"members"`
-	Roles   []*TeamRole   `json:"roles"`
+type Webform struct {
+	ID uint `json:"id"`
 }
 
-func (g *TeamGenerator) createResources(teams []Team) []terraformutils.Resource {
+func (g *WebformsGenerator) createResources(webforms []Webform) []terraformutils.Resource {
 	var resourceList []terraformutils.Resource
-	for _, team := range teams {
+	for _, webform := range webforms {
 		resourceList = append(resourceList, terraformutils.NewSimpleResource(
-			team.ID,
-			fmt.Sprintf("team_%s", team.Name),
-			"squadcast_team",
+			fmt.Sprintf("%d", webform.ID),
+			fmt.Sprintf("webform_%d", webform.ID),
+			"squadcast_webform",
 			g.GetProviderName(),
 			[]string{},
 		))
@@ -31,14 +28,14 @@ func (g *TeamGenerator) createResources(teams []Team) []terraformutils.Resource 
 	return resourceList
 }
 
-func (g *TeamGenerator) InitResources() error {
+func (g *WebformsGenerator) InitResources() error {
 	req := TRequest{
-		URL:             "/v3/teams",
+		URL:             fmt.Sprintf("/v3/webforms?owner_id=%s", g.Args["team_id"].(string)),
 		AccessToken:     g.Args["access_token"].(string),
 		Region:          g.Args["region"].(string),
 		IsAuthenticated: true,
 	}
-	response, _, err := Request[[]Team](req)
+	response, _, err := Request[[]Webform](req)
 	if err != nil {
 		return err
 	}

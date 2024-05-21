@@ -41,15 +41,25 @@ func (g *SuppressionRulesGenerator) createResources(suppressionRules Suppression
 
 func (g *SuppressionRulesGenerator) InitResources() error {
 	if len(g.Args["service_name"].(string)) == 0 {
-		getServicesURL := "/v3/services"
-		responseService, err := Request[[]Service](getServicesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+		req := TRequest{
+			URL:             "/v3/services",
+			AccessToken:     g.Args["access_token"].(string),
+			Region:          g.Args["region"].(string),
+			IsAuthenticated: true,
+		}
+		responseService, _, err := Request[[]Service](req)
 		if err != nil {
 			return err
 		}
 
 		for _, service := range *responseService {
-			getSuppressionRulesURL := fmt.Sprintf("/v3/services/%s/suppression-rules", service.ID)
-			response, err := Request[SuppressionRules](getSuppressionRulesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+			req := TRequest{
+				URL:             fmt.Sprintf("/v3/services/%s/suppression-rules", service.ID),
+				AccessToken:     g.Args["access_token"].(string),
+				Region:          g.Args["region"].(string),
+				IsAuthenticated: true,
+			}
+			response, _, err := Request[SuppressionRules](req)
 			if err != nil {
 				return err
 			}
@@ -57,8 +67,13 @@ func (g *SuppressionRulesGenerator) InitResources() error {
 			g.Resources = append(g.Resources, g.createResources(*response)...)
 		}
 	} else {
-		getSuppressionRulesURL := fmt.Sprintf("/v3/services/%s/suppression-rules", g.Args["service_id"])
-		response, err := Request[SuppressionRules](getSuppressionRulesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+		req := TRequest{
+			URL:             fmt.Sprintf("/v3/services/%s/suppression-rules", g.Args["service_id"]),
+			AccessToken:     g.Args["access_token"].(string),
+			Region:          g.Args["region"].(string),
+			IsAuthenticated: true,
+		}
+		response, _, err := Request[SuppressionRules](req)
 		if err != nil {
 			return err
 		}

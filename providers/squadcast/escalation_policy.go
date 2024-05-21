@@ -34,8 +34,14 @@ func (g *EscalationPolicyGenerator) createResources(policies []EscalationPolicy)
 }
 
 func (g *EscalationPolicyGenerator) InitResources() error {
-	getEscalationPolicyURL := fmt.Sprintf("/v3/escalation-policies?owner_id=%s", g.Args["team_id"].(string))
-	response, err := Request[[]EscalationPolicy](getEscalationPolicyURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+	req := TRequest{
+		URL:             fmt.Sprintf("/v3/escalation-policies?owner_id=%s", g.Args["team_id"].(string)),
+		AccessToken:     g.Args["access_token"].(string),
+		Region:          g.Args["region"].(string),
+		IsAuthenticated: true,
+	}
+
+	response, _, err := Request[[]EscalationPolicy](req)
 	if err != nil {
 		return err
 	}

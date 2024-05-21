@@ -29,8 +29,13 @@ func (g *UserGenerator) createResources(users []User) []terraformutils.Resource 
 }
 
 func (g *UserGenerator) InitResources() error {
-	getUsersURL := "/v3/users"
-	response, err := Request[[]User](getUsersURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+	req := TRequest{
+		URL:             "/v3/users",
+		AccessToken:     g.Args["access_token"].(string),
+		Region:          g.Args["region"].(string),
+		IsAuthenticated: true,
+	}
+	response, _, err := Request[[]User](req)
 	if err != nil {
 		return err
 	}

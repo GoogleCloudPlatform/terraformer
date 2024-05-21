@@ -34,8 +34,13 @@ func (g *TeamRolesGenerator) createResources(teamRoles []TeamRole) []terraformut
 }
 
 func (g *TeamRolesGenerator) InitResources() error {
-	getTeamRolesURL := fmt.Sprintf("/v3/teams/%s/roles", g.Args["team_id"].(string))
-	response, err := Request[[]TeamRole](getTeamRolesURL, g.Args["access_token"].(string), g.Args["region"].(string), true)
+	req := TRequest{
+		URL:             fmt.Sprintf("/v3/teams/%s/roles", g.Args["team_id"].(string)),
+		AccessToken:     g.Args["access_token"].(string),
+		Region:          g.Args["region"].(string),
+		IsAuthenticated: true,
+	}
+	response, _, err := Request[[]TeamRole](req)
 	if err != nil {
 		return err
 	}
