@@ -28,7 +28,7 @@ type ServerGenerator struct {
 func (g ServerGenerator) listServers(ctx context.Context, client *gobizfly.Client) ([]*gobizfly.Server, error) {
 
 	opt := &gobizfly.ServerListOptions{}
-	servers, err := client.Server.List(ctx, opt)
+	servers, err := client.CloudServer.List(ctx, opt)
 	if err != nil {
 		return nil, err
 	}

@@ -54,7 +54,7 @@ func (g *CloudDatabaseGenerator) loadDatabaseInstances(ctx context.Context, clie
 					_flavor = strings.Replace(_flavor, "_enterprise", "", -1)
 					flavorName = _flavor
 
-					nets, err := client.VPC.List(ctx)
+					nets, err := client.CloudServer.VPCNetworks().List(ctx)
 					if err != nil {
 						return nil, err
 					}
