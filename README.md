@@ -43,7 +43,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [OctopusDeploy](/docs/octopus.md)
         * [RabbitMQ](/docs/rabbitmq.md)
     * Network
-        * [Cloudflare](/docs/cloudflare.md)
+        * [Cloudflare](/docs/cloudflare.md) (broken, see #1761)
         * [Myrasec](/docs/myrasec.md)
         * [PAN-OS](/docs/panos.md)
     * VCS
