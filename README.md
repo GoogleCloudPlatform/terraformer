@@ -334,7 +334,7 @@ https://www.terraform.io/docs/configuration/providers.html
 ## Contributing
 
 If you have improvements or fixes, we would love to have your contributions.
-Please read CONTRIBUTING.md for more information on the process we would like
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for more information on the process we would like
 contributors to follow.
 
 ## Developing
