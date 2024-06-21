@@ -45,10 +45,11 @@ func (g *LoadBalancerGenerator) listLoadBalancers(ctx context.Context, client *g
 	return loadBalancers, nil
 }
 
-func (g *LoadBalancerGenerator) listLoadBalancerListeners(ctx context.Context, client *gobizfly.Client, loadBalancers []*gobizfly.LoadBalancer) ([]*gobizfly.Listener, error) {
-	list := []*gobizfly.Listener{}
+func (g *LoadBalancerGenerator) listLoadBalancerListeners(ctx context.Context, client *gobizfly.Client, loadBalancers []*gobizfly.LoadBalancer, pools []*gobizfly.CloudLoadBalancerPool) ([]*gobizfly.CloudLoadBalancerListener, error) {
+	list := []*gobizfly.CloudLoadBalancerListener{}
 
 	opts := &gobizfly.ListOptions{}
+	l7Policies := []map[string]string{}
 	for _, loadBalancer := range loadBalancers {
 		listeners, err := client.CloudLoadBalancer.Listeners().List(ctx, loadBalancer.ID, opts)
 		if err != nil {
@@ -56,7 +57,22 @@ func (g *LoadBalancerGenerator) listLoadBalancerListeners(ctx context.Context, c
 		}
 
 		list = append(list, listeners...)
+		defaultPoolName := ""
 		for _, listener := range listeners {
+			for _, policy := range listener.L7Policies {
+				l7Policies = append(l7Policies, map[string]string{
+					"PolicyID":     policy.ID,
+					"ListenerName": listener.Name,
+				})
+			}
+
+			for _, pool := range pools {
+				if pool.ID == listener.DefaultPoolID {
+					defaultPoolName = pool.Name
+					break
+				}
+			}
+
 			g.Resources = append(g.Resources, terraformutils.NewResource(
 				listener.ID,
 				listener.Name,
@@ -64,15 +80,38 @@ func (g *LoadBalancerGenerator) listLoadBalancerListeners(ctx context.Context, c
 				"bizflycloud",
 				map[string]string{},
 				[]string{},
-				map[string]interface{}{"load_balancer_id": loadBalancer.ID}))
+				map[string]interface{}{
+					"load_balancer_id": "${bizflycloud_loadbalancer.tfer--" + loadBalancer.Name + ".id}",
+					"default_pool_id":  "${bizflycloud_loadbalancer_pool.tfer--" + defaultPoolName + ".id}",
+				}))
 		}
+	}
+
+	for _, l7Policy := range l7Policies {
+		policy, err := client.CloudLoadBalancer.L7Policies().Get(ctx, l7Policy["PolicyID"])
+		if err != nil {
+			return nil, err
+		}
+		if policy.Name == "" {
+			policy.Name = policy.ID
+		}
+
+		g.Resources = append(g.Resources, terraformutils.NewResource(
+			policy.ID,
+			policy.Name,
+			"bizflycloud_loadbalancer_l7policy",
+			"bizflycloud",
+			map[string]string{},
+			[]string{},
+			map[string]interface{}{
+				"listener_id": "${bizflycloud_loadbalancer_listener.tfer--" + l7Policy["ListenerName"] + ".id}"}))
 	}
 	return list, nil
 
 }
 
-func (g *LoadBalancerGenerator) listLoadBalancerPools(ctx context.Context, client *gobizfly.Client, loadBalancers []*gobizfly.LoadBalancer) ([]*gobizfly.Pool, error) {
-	list := []*gobizfly.Pool{}
+func (g *LoadBalancerGenerator) listLoadBalancerPools(ctx context.Context, client *gobizfly.Client, loadBalancers []*gobizfly.LoadBalancer) ([]*gobizfly.CloudLoadBalancerPool, error) {
+	list := []*gobizfly.CloudLoadBalancerPool{}
 
 	opts := &gobizfly.ListOptions{}
 	for _, loadBalancer := range loadBalancers {
@@ -83,7 +122,7 @@ func (g *LoadBalancerGenerator) listLoadBalancerPools(ctx context.Context, clien
 
 		list = append(list, pools...)
 		for _, pool := range pools {
-			additionalFields := map[string]interface{}{"load_balancer_id": loadBalancer.ID}
+			additionalFields := map[string]interface{}{"load_balancer_id": "${bizflycloud_loadbalancer.tfer--" + loadBalancer.Name + ".id}"}
 			if pool.HealthMonitorID != "" {
 				healthmonitor, err := client.CloudLoadBalancer.HealthMonitors().Get(ctx, pool.HealthMonitorID)
 				if err != nil {
@@ -98,7 +137,7 @@ func (g *LoadBalancerGenerator) listLoadBalancerPools(ctx context.Context, clien
 					"max_retries_down": healthmonitor.MaxRetriesDown,
 					"timeout":          healthmonitor.TimeOut,
 					"http_method":      healthmonitor.HTTPMethod,
-					"url_path":         healthmonitor.UrlPath,
+					"url_path":         healthmonitor.URLPath,
 					"expected_code":    healthmonitor.ExpectedCodes,
 				}
 			}
@@ -139,11 +178,11 @@ func (g *LoadBalancerGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
-	_, err = g.listLoadBalancerListeners(context.TODO(), client, loadBalancers)
+	pools, err := g.listLoadBalancerPools(context.TODO(), client, loadBalancers)
 	if err != nil {
 		return err
 	}
-	_, err = g.listLoadBalancerPools(context.TODO(), client, loadBalancers)
+	_, err = g.listLoadBalancerListeners(context.TODO(), client, loadBalancers, pools)
 	if err != nil {
 		return err
 	}

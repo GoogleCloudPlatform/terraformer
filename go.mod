@@ -393,7 +393,7 @@ require (
 )
 
 require (
-	github.com/bizflycloud/gobizfly v1.1.0
+	github.com/bizflycloud/gobizfly v1.1.3
 	github.com/gofrs/uuid/v3 v3.1.2
 	github.com/ionos-cloud/sdk-go-cert-manager v1.0.0
 	github.com/ionos-cloud/sdk-go-container-registry v1.0.0

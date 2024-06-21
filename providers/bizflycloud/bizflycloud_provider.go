@@ -88,9 +88,10 @@ func (BizflyCloudProvider) GetResourceConnections() map[string]map[string][]stri
 
 func (p *BizflyCloudProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"server":        &ServerGenerator{},
-		"database":      &CloudDatabaseGenerator{},
-		"load_balancer": &LoadBalancerGenerator{},
+		"server":            &ServerGenerator{},
+		"database":          &CloudDatabaseGenerator{},
+		"load_balancer":     &LoadBalancerGenerator{},
+		"kubernetes_engine": &KubernetesClusterGenerator{},
 	}
 }
 

@@ -37,6 +37,11 @@ func (g *CloudDatabaseGenerator) loadDatabaseInstances(ctx context.Context, clie
 			return nil, err
 		}
 
+		nets, err := client.CloudServer.VPCNetworks().List(ctx)
+		if err != nil {
+			return nil, err
+		}
+
 		for _, instance := range instances {
 			flavorName := ""
 			availabilityZone := ""
@@ -54,10 +59,6 @@ func (g *CloudDatabaseGenerator) loadDatabaseInstances(ctx context.Context, clie
 					_flavor = strings.Replace(_flavor, "_enterprise", "", -1)
 					flavorName = _flavor
 
-					nets, err := client.CloudServer.VPCNetworks().List(ctx)
-					if err != nil {
-						return nil, err
-					}
 					for _, network := range node.Addresses.Private {
 						for _, net := range nets {
 							if net.Name == network.Network {
@@ -84,6 +85,18 @@ func (g *CloudDatabaseGenerator) loadDatabaseInstances(ctx context.Context, clie
 					"quantity":          quantity,
 				}
 			}
+
+			instanceAutoScalingEnable := 0
+			if instance.AutoScaling.Enable {
+				instanceAutoScalingEnable = 1
+			}
+			additionalFields["autoscaling"] = map[string]interface{}{
+				"enable":           instanceAutoScalingEnable,
+				"volume_limited":   instance.AutoScaling.Volume.Limited,
+				"volume_threshold": instance.AutoScaling.Volume.Threshold,
+			}
+
+			additionalFields["volume_size"] = instance.Volume.Size
 
 			g.Resources = append(g.Resources, terraformutils.NewResource(
 				instance.ID,

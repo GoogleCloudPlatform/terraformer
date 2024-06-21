@@ -28,7 +28,7 @@ type BizflyCloudService struct { //nolint
 }
 
 func (s *BizflyCloudService) generateClient() *gobizfly.Client {
-	client, err := gobizfly.NewClient(gobizfly.WithProjectId(s.Args["project_id"].(string)),
+	client, err := gobizfly.NewClient(gobizfly.WithProjectID(s.Args["project_id"].(string)),
 		gobizfly.WithRegionName(s.Args["region_name"].(string))) // nolint
 
 	if err != nil {
