@@ -27,6 +27,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [IBM Cloud](/docs/ibmcloud.md)
     * Cloud
         * [DigitalOcean](/docs/digitalocean.md)
+        * [Bizfly Cloud](/docs/bizflycloud.md)
         * [Equinix Metal](/docs/equinixmetal.md)
         * [Fastly](/docs/fastly.md)
         * [Heroku](/docs/heroku.md)
@@ -280,6 +281,7 @@ Links to download Terraform provider plugins:
     * Alicloud provider >1.57.1 - [here](https://releases.hashicorp.com/terraform-provider-alicloud/)
 * Cloud
     * DigitalOcean provider >1.9.1 - [here](https://releases.hashicorp.com/terraform-provider-digitalocean/)
+    * BizflyCloud provider >=0.1.11 - [here](https://github.com/bizflycloud/terraform-provider-bizflycloud/releases)
     * Heroku provider >2.2.1 - [here](https://releases.hashicorp.com/terraform-provider-heroku/)
     * LaunchDarkly provider >=2.1.1 - [here](https://releases.hashicorp.com/terraform-provider-launchdarkly/)
     * Linode provider >1.8.0 - [here](https://releases.hashicorp.com/terraform-provider-linode/)
