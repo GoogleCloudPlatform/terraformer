@@ -38,7 +38,9 @@ func (az *ApplicationServiceGenerator) listResources() ([]msgraph.Application, e
 
 func (az *ApplicationServiceGenerator) appendResource(resource *msgraph.Application) {
 	id := resource.ID
-	az.appendSimpleResource(*id, *resource.DisplayName, "azuread_application")
+	// Prepend "/applications/" to the application ID
+	fullID := "/applications/" + *id
+	az.appendSimpleResource(fullID, *resource.DisplayName, "azuread_application")
 }
 
 func (az *ApplicationServiceGenerator) InitResources() error {
