@@ -8,7 +8,7 @@ Example:
 
 List of supported Logz.io resources:
 
-*   `alerts`
-    * `logzio_alert`
 *   `alert_notification_endpoints`
     * `logzio_endpoint`
+*   `alerts`
+    * `logzio_alert`
