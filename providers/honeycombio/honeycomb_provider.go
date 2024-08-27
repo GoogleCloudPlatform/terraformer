@@ -23,7 +23,7 @@ import (
 )
 
 const honeycombDefaultURL = "https://api.honeycomb.io"
-const honeycombTerraformerProviderVersion = "0.0.2"
+const honeycombTerraformerProviderVersion = "0.0.3"
 
 type HoneycombProvider struct { //nolint
 	terraformutils.Provider
@@ -32,7 +32,7 @@ type HoneycombProvider struct { //nolint
 	datasets []string
 }
 
-func (p HoneycombProvider) GetProviderData(arg ...string) map[string]interface{} {
+func (p HoneycombProvider) GetProviderData(_ ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
 			"honeycomb": map[string]interface{}{
@@ -131,5 +131,6 @@ func (p *HoneycombProvider) GetSupportedService() map[string]terraformutils.Serv
 		"query_annotation": &QueryAnnotationGenerator{},
 		"slo":              &SLOGenerator{},
 		"burn_alert":       &BurnAlertGenerator{},
+		"recipient":        &RecipientGenerator{},
 	}
 }
