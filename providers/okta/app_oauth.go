@@ -15,50 +15,44 @@
 package okta
 
 import (
-	"context"
+	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v5/okta"
 )
 
 type AppOAuthGenerator struct {
 	OktaService
 }
 
-func (g AppOAuthGenerator) createResources(appList []*okta.Application) []terraformutils.Resource {
+func (g *AppOAuthGenerator) createResources(appList []okta.ListApplications200ResponseInner) []terraformutils.Resource {
 	var resources []terraformutils.Resource
 	for _, app := range appList {
-		resources = append(resources, terraformutils.NewSimpleResource(
-			app.Id,
-			normalizeResourceName(app.Id+"_"+app.Name),
-			"okta_app_oauth",
-			"okta",
-			[]string{}))
+		if app.OpenIdConnectApplication != nil {
+			resources = append(resources, terraformutils.NewSimpleResource(
+				*app.OpenIdConnectApplication.Id,
+				normalizeResourceName(*app.OpenIdConnectApplication.Id+"_"+app.OpenIdConnectApplication.Label),
+				"okta_app_oauth",
+				"okta",
+				[]string{},
+			))
+		}
 	}
 	return resources
 }
 
 // Generate Terraform Resources from Okta API,
 func (g *AppOAuthGenerator) InitResources() error {
-	ctx, client, e := g.Client()
+	ctx, client, e := g.ClientV5()
 	if e != nil {
 		return e
 	}
 
-	apps, err := getOAuthApplications(ctx, client)
+	appList, _, err := client.ApplicationAPI.ListApplications(ctx).Filter("name eq \"oidc_client\"").Execute()
 	if err != nil {
-		return err
+		return fmt.Errorf("error listing applications: %w", err)
 	}
 
-	g.Resources = g.createResources(apps)
+	g.Resources = g.createResources(appList)
 	return nil
-}
-
-func getOAuthApplications(ctx context.Context, client *okta.Client) ([]*okta.Application, error) {
-	signOnMode := "OPENID_CONNECT"
-	apps, err := getApplications(ctx, client, signOnMode)
-	if err != nil {
-		return nil, err
-	}
-	return apps, nil
 }
