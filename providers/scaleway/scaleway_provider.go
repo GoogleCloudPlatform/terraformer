@@ -67,7 +67,8 @@ func (ScalewayProvider) GetResourceConnections() map[string]map[string][]string 
 
 func (p *ScalewayProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"instances": &InstanceGenerator{},
+		"instances":  &InstanceGenerator{},
+		"kubernetes": &KubernetesGenerator{},
 	}
 }
 
