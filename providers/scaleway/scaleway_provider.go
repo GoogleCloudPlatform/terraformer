@@ -69,6 +69,7 @@ func (p *ScalewayProvider) GetSupportedService() map[string]terraformutils.Servi
 	return map[string]terraformutils.ServiceGenerator{
 		"instances":  &InstanceGenerator{},
 		"kubernetes": &KubernetesGenerator{},
+		"vpc":        &VpcGenerator{},
 	}
 }
 

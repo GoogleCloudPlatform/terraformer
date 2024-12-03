@@ -10,3 +10,4 @@ terraform.tfstate.backup
 init.tf
 vendor/
 *.tf
+.env
