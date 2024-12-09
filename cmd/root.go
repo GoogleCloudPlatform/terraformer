@@ -51,6 +51,7 @@ func providerImporterSubcommands() []func(options ImportOptions) *cobra.Command 
 		newCmdLaunchDarklyImporter,
 		newCmdLinodeImporter,
 		newCmdOpenStackImporter,
+		newCmdScalewayImporter,
 		newCmdTencentCloudImporter,
 		newCmdVultrImporter,
 		newCmdYandexImporter,
@@ -110,6 +111,7 @@ func providerGenerators() map[string]func() terraformutils.ProviderGenerator {
 		newLinodeProvider,
 		newNs1Provider,
 		newOpenStackProvider,
+		newScalewayProvider,
 		newTencentCloudProvider,
 		newVultrProvider,
 		// Infrastructure Software
