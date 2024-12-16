@@ -610,7 +610,7 @@ func (g *DatabasesGenerator) createSQLServerResources(servers []sql.Server) ([]t
 		resources = append(resources, terraformutils.NewResource(
 			*server.ID,
 			*server.Name,
-			"azurerm_sql_server",
+			"azurerm_mssql_server",
 			g.ProviderName,
 			map[string]string{},
 			[]string{},
@@ -646,7 +646,7 @@ func (g *DatabasesGenerator) createSQLDatabaseResources(servers []sql.Server) ([
 			resources = append(resources, terraformutils.NewSimpleResource(
 				*database.ID,
 				*database.Name+"-"+*server.Name,
-				"azurerm_sql_database",
+				"azurerm_mssql_database",
 				g.ProviderName,
 				[]string{}))
 		}
@@ -678,7 +678,7 @@ func (g *DatabasesGenerator) createSQLFirewallRuleResources(servers []sql.Server
 			resources = append(resources, terraformutils.NewSimpleResource(
 				*rule.ID,
 				*rule.Name,
-				"azurerm_sql_firewall_rule",
+				"azurerm_mssql_firewall_rule",
 				g.ProviderName,
 				[]string{}))
 		}
