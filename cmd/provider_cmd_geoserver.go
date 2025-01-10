@@ -30,6 +30,7 @@ func newCmdGeoServerImporter(options ImportOptions) *cobra.Command {
 	password := ""
 	insecure := false
 	targetWorkspace := ""
+	targetDatastore := ""
 	cmd := &cobra.Command{
 		Use:   "geoserver",
 		Short: "Import current state to Terraform configuration from GeoServer",
@@ -37,7 +38,7 @@ func newCmdGeoServerImporter(options ImportOptions) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			provider := newGeoServerProvider()
 			log.Println(provider.GetName() + " importing configuration from " + geoserverURL)
-			err := Import(provider, options, []string{geoserverURL, geowebcacheURL, user, password, strconv.FormatBool(insecure), targetWorkspace})
+			err := Import(provider, options, []string{geoserverURL, geowebcacheURL, user, password, strconv.FormatBool(insecure), targetWorkspace, targetDatastore})
 			if err != nil {
 				return err
 			}
@@ -52,7 +53,8 @@ func newCmdGeoServerImporter(options ImportOptions) *cobra.Command {
 	cmd.PersistentFlags().StringVarP(&user, "user", "", "admin", "A login which can use the REST API")
 	cmd.PersistentFlags().StringVarP(&password, "password", "", "geoserver", "The password for the user")
 	cmd.PersistentFlags().BoolVarP(&insecure, "insecure", "", false, "Use insecure TLS")
-	cmd.PersistentFlags().StringVarP(&targetWorkspace, "target", "", "", "The target workspace for workspace dependant resources")
+	cmd.PersistentFlags().StringVarP(&targetWorkspace, "target-workspace", "", "", "The target workspace for workspace dependant resources")
+	cmd.PersistentFlags().StringVarP(&targetDatastore, "target-datastore", "", "", "The target datastore for datastore dependant resources")
 	return cmd
 }
 

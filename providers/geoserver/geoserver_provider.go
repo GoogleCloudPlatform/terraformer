@@ -31,6 +31,7 @@ type GeoServerProvider struct { //nolint
 	password        string
 	insecure        bool
 	targetWorkspace string
+	targetDatastore string
 }
 
 func (p *GeoServerProvider) Init(args []string) error {
@@ -42,6 +43,7 @@ func (p *GeoServerProvider) Init(args []string) error {
 	p.password = args[3]
 	p.insecure, _ = strconv.ParseBool(args[4])
 	p.targetWorkspace = args[5]
+	p.targetDatastore = args[6]
 	return nil
 }
 
@@ -85,6 +87,7 @@ func (p *GeoServerProvider) InitService(serviceName string, verbose bool) error 
 		"password":        p.password,
 		"insecure":        p.insecure,
 		"targetWorkspace": p.targetWorkspace,
+		"targetDatastore": p.targetDatastore,
 	})
 	return nil
 }
@@ -92,8 +95,9 @@ func (p *GeoServerProvider) InitService(serviceName string, verbose bool) error 
 func (p *GeoServerProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	log.Println("GetSupportedService")
 	return map[string]terraformutils.ServiceGenerator{
-		"workspaces": &WorkspacesGenerator{},
-		"datastores": &DatastoresGenerator{},
+		"workspaces":   &WorkspacesGenerator{},
+		"datastores":   &DatastoresGenerator{},
+		"featuretypes": &FeatureTypesGenerator{},
 	}
 }
 

@@ -23,48 +23,45 @@ import (
 	gs "github.com/camptocamp/go-geoserver/client"
 )
 
-type DatastoresGenerator struct {
+type FeatureTypesGenerator struct {
 	GeoServerService
 }
 
 // InitResources generates TerraformResources from Github API,
-func (g *DatastoresGenerator) InitResources() error {
+func (g *FeatureTypesGenerator) InitResources() error {
 	log.Println("InitResources for Datastores")
 	ctx := context.Background()
 	client := g.GeoserverClient()
 	targetWorkspace := g.GetArgs()["targetWorkspace"].(string)
+	targetDatastore := g.GetArgs()["targetDatastore"].(string)
 
-	if targetWorkspace == "" {
-		log.Println("No target workspace is defined - Cannot work with datastores")
+	if targetWorkspace == "" || targetDatastore == "" {
+		log.Println("No target workspace or datastore is defined - Cannot work with feature types")
 		return nil
 	}
 
-	g.Resources = append(g.Resources, createDatastoreResources(ctx, client, targetWorkspace)...)
+	g.Resources = append(g.Resources, createFeatureTypeResources(ctx, client, targetWorkspace, targetDatastore)...)
 
 	return nil
 }
 
-func createDatastoreResources(ctx context.Context, client *gs.Client, workspaceName string) []terraformutils.Resource {
+func createFeatureTypeResources(ctx context.Context, client *gs.Client, workspaceName string, datastoreName string) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 
-	datastores, err := client.GetDatastores(workspaceName)
+	featuretypes, err := client.GetFeatureTypes(workspaceName, datastoreName)
 	if err != nil {
 		log.Println(err)
 		return nil
 	}
 
-	for _, datastore := range datastores {
+	for _, featuretype := range featuretypes {
 		resource := terraformutils.NewSimpleResource(
-			fmt.Sprintf("%s/%s", workspaceName, datastore.Name),
-			datastore.Name,
-			"geoserver_datastore",
+			fmt.Sprintf("%s/%s/%s", workspaceName, datastoreName, featuretype.Name),
+			featuretype.Name,
+			"geoserver_featuretype",
 			"geoserver",
 			[]string{})
 		resources = append(resources, resource)
-
-		// init feature types
-		resources = append(resources, createFeatureTypeResources(ctx, client, workspaceName, datastore.Name)...)
-
 	}
 
 	return resources
