@@ -371,6 +371,7 @@ require (
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
 	github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578 // indirect
 	github.com/aws/aws-sdk-go v1.44.122 // indirect
+	github.com/camptocamp/go-geoserver v0.0.0-20241226145437-50ac0707114e // indirect
 	github.com/clbanning/mxj v1.8.4 // indirect
 	github.com/emicklei/go-restful v2.16.0+incompatible // indirect
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
