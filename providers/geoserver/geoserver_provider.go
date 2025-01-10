@@ -25,11 +25,12 @@ import (
 
 type GeoServerProvider struct { //nolint
 	terraformutils.Provider
-	geoserverURL   string
-	geowebcacheURL string
-	user           string
-	password       string
-	insecure       bool
+	geoserverURL    string
+	geowebcacheURL  string
+	user            string
+	password        string
+	insecure        bool
+	targetWorkspace string
 }
 
 func (p *GeoServerProvider) Init(args []string) error {
@@ -40,6 +41,7 @@ func (p *GeoServerProvider) Init(args []string) error {
 	p.user = args[2]
 	p.password = args[3]
 	p.insecure, _ = strconv.ParseBool(args[4])
+	p.targetWorkspace = args[5]
 	return nil
 }
 
@@ -77,11 +79,12 @@ func (p *GeoServerProvider) InitService(serviceName string, verbose bool) error 
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"geoserverURL":   p.geoserverURL,
-		"geowebcacheURL": p.geowebcacheURL,
-		"user":           p.user,
-		"password":       p.password,
-		"insecure":       p.insecure,
+		"geoserverURL":    p.geoserverURL,
+		"geowebcacheURL":  p.geowebcacheURL,
+		"user":            p.user,
+		"password":        p.password,
+		"insecure":        p.insecure,
+		"targetWorkspace": p.targetWorkspace,
 	})
 	return nil
 }
@@ -90,6 +93,7 @@ func (p *GeoServerProvider) GetSupportedService() map[string]terraformutils.Serv
 	log.Println("GetSupportedService")
 	return map[string]terraformutils.ServiceGenerator{
 		"workspaces": &WorkspacesGenerator{},
+		"datastores": &DatastoresGenerator{},
 	}
 }
 

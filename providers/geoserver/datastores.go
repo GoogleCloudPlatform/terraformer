@@ -16,47 +16,51 @@ package geoserver
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	gs "github.com/camptocamp/go-geoserver/client"
 )
 
-type WorkspacesGenerator struct {
+type DatastoresGenerator struct {
 	GeoServerService
 }
 
 // InitResources generates TerraformResources from Github API,
-func (g *WorkspacesGenerator) InitResources() error {
-	log.Println("InitResources")
+func (g *DatastoresGenerator) InitResources() error {
+	log.Println("InitResources for Datastores")
 	ctx := context.Background()
 	client := g.GeoserverClient()
+	targetWorkspace := g.GetArgs()["targetWorkspace"].(string)
 
-	g.Resources = append(g.Resources, createWorkspaceResources(ctx, client)...)
+	if targetWorkspace == "" {
+		log.Println("No target workspace is defined - Cannot work with datastores")
+		return nil
+	}
+
+	g.Resources = append(g.Resources, createDatastoreResources(ctx, client, targetWorkspace)...)
 
 	return nil
 }
 
-func createWorkspaceResources(ctx context.Context, client *gs.Client) []terraformutils.Resource {
+func createDatastoreResources(ctx context.Context, client *gs.Client, workspaceName string) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 
-	workspaces, err := client.GetWorkspaces()
+	datastores, err := client.GetDatastores(workspaceName)
 	if err != nil {
 		log.Println(err)
 		return nil
 	}
 
-	for _, workspace := range workspaces {
+	for _, datastore := range datastores {
 		resource := terraformutils.NewSimpleResource(
-			workspace.Name,
-			workspace.Name,
-			"geoserver_workspace",
+			fmt.Sprintf("%s/%s", datastore.Workspace.Name, datastore.Name),
+			datastore.Name,
+			"geoserver_datastore",
 			"geoserver",
 			[]string{})
 		resources = append(resources, resource)
-
-		// init datastores
-		resources = append(resources, createDatastoreResources(ctx, client, workspace.Name)...)
 	}
 
 	return resources
