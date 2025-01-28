@@ -20,7 +20,7 @@ import (
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/IBM/go-sdk-core/v4/core"
+	"github.com/IBM/go-sdk-core/v5/core"
 	"github.com/IBM/vpc-go-sdk/vpcv1"
 )
 
@@ -32,7 +32,7 @@ type LBGenerator struct {
 func (g LBGenerator) createLBResources(lbID, lbName string) terraformutils.Resource {
 	resource := terraformutils.NewResource(
 		lbID,
-		normalizeResourceName(lbName, true),
+		lbName,
 		"ibm_is_lb",
 		"ibm",
 		map[string]string{},
@@ -49,7 +49,7 @@ func (g LBGenerator) createLBResources(lbID, lbName string) terraformutils.Resou
 func (g LBGenerator) createLBPoolResources(lbID, lbPoolID, lbPoolName string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", lbID, lbPoolID),
-		normalizeResourceName(lbPoolName, true),
+		lbPoolName,
 		"ibm_is_lb_pool",
 		"ibm",
 		map[string]string{},
@@ -61,7 +61,7 @@ func (g LBGenerator) createLBPoolResources(lbID, lbPoolID, lbPoolName string) te
 func (g LBGenerator) createLBPoolMemberResources(lbID, lbPoolID, lbPoolMemberID, lbPoolMemberName string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s/%s", lbID, lbPoolID, lbPoolMemberID),
-		normalizeResourceName(lbPoolMemberName, true),
+		lbPoolMemberName,
 		"ibm_is_lb_pool_member",
 		"ibm",
 		map[string]string{},
@@ -73,7 +73,7 @@ func (g LBGenerator) createLBPoolMemberResources(lbID, lbPoolID, lbPoolMemberID,
 func (g LBGenerator) createLBListenerResources(lbID, lbListenerID, lbListenerName string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", lbID, lbListenerID),
-		normalizeResourceName(lbListenerName, true),
+		lbListenerName,
 		"ibm_is_lb_listener",
 		"ibm",
 		map[string]string{},
@@ -85,7 +85,7 @@ func (g LBGenerator) createLBListenerResources(lbID, lbListenerID, lbListenerNam
 func (g LBGenerator) createLBListenerPolicyResources(lbID, lbListenerID, lbListenerPolicyID, lbListenerPolicyName string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s/%s", lbID, lbListenerID, lbListenerPolicyID),
-		normalizeResourceName(lbListenerPolicyName, true),
+		lbListenerPolicyName,
 		"ibm_is_lb_listener_policy",
 		"ibm",
 		map[string]string{
@@ -99,7 +99,7 @@ func (g LBGenerator) createLBListenerPolicyResources(lbID, lbListenerID, lbListe
 func (g LBGenerator) createLBListenerPolicyRuleResources(lbID, lbListenerID, lbListenerPolicyID, lbListenerPolicyRuleID, lbListenerPolicyName string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s/%s/%s", lbID, lbListenerID, lbListenerPolicyID, lbListenerPolicyRuleID),
-		normalizeResourceName(lbListenerPolicyName, true),
+		lbListenerPolicyName,
 		"ibm_is_lb_listener_policy_rule",
 		"ibm",
 		map[string]string{},
@@ -139,7 +139,7 @@ func (g *LBGenerator) InitResources() error {
 	listLoadBalancersOptions := &vpcv1.ListLoadBalancersOptions{}
 	lbs, response, err := vpcclient.ListLoadBalancers(listLoadBalancersOptions)
 	if err != nil {
-		return fmt.Errorf("Error Fetching vpcs %s\n%s", err, response)
+		return fmt.Errorf("Error Fetching load balancers %s\n%s", err, response)
 	}
 	allrecs = append(allrecs, lbs.LoadBalancers...)
 
