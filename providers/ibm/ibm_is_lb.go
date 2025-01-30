@@ -32,7 +32,7 @@ type LBGenerator struct {
 func (g LBGenerator) createLBResources(lbID, lbName string) terraformutils.Resource {
 	resource := terraformutils.NewResource(
 		lbID,
-		lbName,
+		normalizeResourceName(lbName, true),
 		"ibm_is_lb",
 		"ibm",
 		map[string]string{},
@@ -49,7 +49,7 @@ func (g LBGenerator) createLBResources(lbID, lbName string) terraformutils.Resou
 func (g LBGenerator) createLBPoolResources(lbID, lbPoolID, lbPoolName string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", lbID, lbPoolID),
-		lbPoolName,
+		normalizeResourceName(lbPoolName, true),
 		"ibm_is_lb_pool",
 		"ibm",
 		map[string]string{},
@@ -61,7 +61,7 @@ func (g LBGenerator) createLBPoolResources(lbID, lbPoolID, lbPoolName string) te
 func (g LBGenerator) createLBPoolMemberResources(lbID, lbPoolID, lbPoolMemberID, lbPoolMemberName string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s/%s", lbID, lbPoolID, lbPoolMemberID),
-		lbPoolMemberName,
+		normalizeResourceName(lbPoolMemberName, true),
 		"ibm_is_lb_pool_member",
 		"ibm",
 		map[string]string{},
@@ -73,7 +73,7 @@ func (g LBGenerator) createLBPoolMemberResources(lbID, lbPoolID, lbPoolMemberID,
 func (g LBGenerator) createLBListenerResources(lbID, lbListenerID, lbListenerName string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", lbID, lbListenerID),
-		lbListenerName,
+		normalizeResourceName(lbListenerName, true),
 		"ibm_is_lb_listener",
 		"ibm",
 		map[string]string{},
@@ -85,7 +85,7 @@ func (g LBGenerator) createLBListenerResources(lbID, lbListenerID, lbListenerNam
 func (g LBGenerator) createLBListenerPolicyResources(lbID, lbListenerID, lbListenerPolicyID, lbListenerPolicyName string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s/%s", lbID, lbListenerID, lbListenerPolicyID),
-		lbListenerPolicyName,
+		normalizeResourceName(lbListenerPolicyName, true),
 		"ibm_is_lb_listener_policy",
 		"ibm",
 		map[string]string{
@@ -99,7 +99,7 @@ func (g LBGenerator) createLBListenerPolicyResources(lbID, lbListenerID, lbListe
 func (g LBGenerator) createLBListenerPolicyRuleResources(lbID, lbListenerID, lbListenerPolicyID, lbListenerPolicyRuleID, lbListenerPolicyName string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s/%s/%s", lbID, lbListenerID, lbListenerPolicyID, lbListenerPolicyRuleID),
-		lbListenerPolicyName,
+		normalizeResourceName(lbListenerPolicyName, true),
 		"ibm_is_lb_listener_policy_rule",
 		"ibm",
 		map[string]string{},
