@@ -15,101 +15,71 @@
 package okta
 
 import (
-	"context"
+	"fmt"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"log"
-	"strings"
+	"github.com/okta/okta-sdk-golang/v5/okta"
 )
 
 type AppSamlGenerator struct {
 	OktaService
 }
 
-func (g AppSamlGenerator) createResourcesApp(ctx context.Context, client *okta.Client, appList []*okta.Application) []terraformutils.Resource {
+func (g *AppSamlGenerator) createResources(appList []okta.ListApplications200ResponseInner) []terraformutils.Resource {
 	var resources []terraformutils.Resource
 	for _, app := range appList {
-		r := terraformutils.NewResource(
-			app.Id,
-			normalizeResourceName(app.Id+"_"+app.Name),
-			"okta_app_saml",
-			"okta",
-			map[string]string{},
-			[]string{},
-			map[string]interface{}{})
-		r.IgnoreKeys = append(r.IgnoreKeys, "^groups", "^users")
-		r.SlowQueryRequired = true
-		groups := g.initAppGroups(ctx, client, app)
-		resources = append(resources, r)
-		resources = append(resources, groups...)
-	}
-	return resources
-}
+		if app.SamlApplication != nil && app.SamlApplication.Id != nil && app.SamlApplication.Label != "" {
+			resources = append(resources, terraformutils.NewSimpleResource(
+				*app.SamlApplication.Id,
+				normalizeResourceName(*app.SamlApplication.Id+"_"+app.SamlApplication.Label),
+				"okta_app_saml",
+				"okta",
+				[]string{},
+			))
+		}
 
-func (g AppSamlGenerator) initAppGroups(ctx context.Context, client *okta.Client, app *okta.Application) []terraformutils.Resource {
-	groupsIDs, err := listApplicationGroupsIDs(ctx, client, app.Id)
-	if err != nil {
-		log.Println(err)
-	}
-	var resources []terraformutils.Resource
-	for _, groupID := range groupsIDs {
-		r := terraformutils.NewResource(
-			app.Id,
-			normalizeResourceName(app.Id+"_"+groupID),
-			"okta_app_group_assignment",
-			"okta",
-			map[string]string{
-				"group_id": groupID,
-				"app_id":   app.Id,
-			},
-			[]string{},
-			map[string]interface{}{})
-		r.SlowQueryRequired = true
-		resources = append(resources, r)
+		if app.Saml11Application != nil && app.Saml11Application.Id != nil && app.Saml11Application.Label != "" {
+			resources = append(resources, terraformutils.NewSimpleResource(
+				*app.Saml11Application.Id,
+				normalizeResourceName(*app.Saml11Application.Id+"_"+app.Saml11Application.Label),
+				"okta_app_saml",
+				"okta",
+				[]string{},
+			))
+		}
 	}
 	return resources
 }
 
 func (g *AppSamlGenerator) InitResources() error {
-	signOnMode := []string{"SAML_1_1", "SAML_2_0"}
-	allSamlApps := []*okta.Application{}
-	ctx, client, err := g.Client()
+	ctx, client, err := g.ClientV5()
 	if err != nil {
 		return err
 	}
-	for _, signOnMode := range signOnMode {
-		apps, err := getApplications(ctx, client, signOnMode)
-		if err != nil {
-			return err
-		}
-		allSamlApps = append(allSamlApps, apps...)
+
+	appList, resp, err := client.ApplicationAPI.ListApplications(ctx).Execute()
+	if err != nil {
+		return fmt.Errorf("error listing applications: %w", err)
 	}
-	g.Resources = g.createResourcesApp(ctx, client, allSamlApps)
+
+	allApplications := appList
+
+	for resp.HasNextPage() {
+		var nextAppList []okta.ListApplications200ResponseInner
+		resp, err = resp.Next(&nextAppList)
+		if err != nil {
+			return fmt.Errorf("error fetching next page: %w", err)
+		}
+		allApplications = append(allApplications, nextAppList...)
+	}
+
+	g.Resources = g.createResources(allApplications)
 	return nil
 }
 
 func (g *AppSamlGenerator) PostConvertHook() error {
 	for i := range g.Resources {
-		g.Resources[i].Item = replaceParams(g.Resources[i].Item)
+		g.Resources[i].Item = escapeDollar(g.Resources[i].Item)
 	}
 	return nil
-}
-
-func replaceParams(item map[string]interface{}) map[string]interface{} {
-	for k, f := range item {
-		switch v := f.(type) {
-		case string:
-			item[k] = strings.ReplaceAll(v, "${", "$${")
-		case map[string]interface{}:
-			item[k] = replaceParams(v)
-		case []string:
-			t := []string{}
-			for _, s := range v {
-				t = append(t, strings.ReplaceAll(s, "${", "$${"))
-			}
-			item[k] = t
-		default:
-		}
-	}
-	return item
 }
