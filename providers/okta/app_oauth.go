@@ -29,31 +29,43 @@ func (g *AppOAuthGenerator) createResources(appList []okta.ListApplications200Re
 	var resources []terraformutils.Resource
 	for _, app := range appList {
 		if app.OpenIdConnectApplication != nil {
-			resources = append(resources, terraformutils.NewSimpleResource(
-				*app.OpenIdConnectApplication.Id,
-				normalizeResourceName(*app.OpenIdConnectApplication.Id+"_"+app.OpenIdConnectApplication.Label),
-				"okta_app_oauth",
-				"okta",
-				[]string{},
-			))
+			if id, label := app.OpenIdConnectApplication.Id, app.OpenIdConnectApplication.Label; id != nil && label != "" {
+				resources = append(resources, terraformutils.NewSimpleResource(
+					*id,
+					normalizeResourceName(*id+"_"+label),
+					"okta_app_oauth",
+					"okta",
+					[]string{},
+				))
+			}
 		}
 	}
 	return resources
 }
 
-// Generate Terraform Resources from Okta API,
 func (g *AppOAuthGenerator) InitResources() error {
-	ctx, client, e := g.ClientV5()
-	if e != nil {
-		return e
-	}
-
-	appList, _, err := client.ApplicationAPI.ListApplications(ctx).Filter("name eq \"oidc_client\"").Execute()
+	ctx, client, err := g.ClientV5()
 	if err != nil {
-		return fmt.Errorf("error listing applications: %w", err)
+		return err
 	}
 
-	g.Resources = g.createResources(appList)
+	appList, resp, err := client.ApplicationAPI.ListApplications(ctx).Filter("name eq \"oidc_client\"").Execute()
+	if err != nil {
+		return fmt.Errorf("error listing OAuth applications: %w", err)
+	}
+
+	allApplications := appList
+
+	for resp.HasNextPage() {
+		var nextAppList []okta.ListApplications200ResponseInner
+		resp, err = resp.Next(&nextAppList)
+		if err != nil {
+			return fmt.Errorf("error fetching next page: %w", err)
+		}
+		allApplications = append(allApplications, nextAppList...)
+	}
+
+	g.Resources = g.createResources(allApplications)
 	return nil
 }
 
