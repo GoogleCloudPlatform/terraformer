@@ -56,3 +56,10 @@ func (g *AppOAuthGenerator) InitResources() error {
 	g.Resources = g.createResources(appList)
 	return nil
 }
+
+func (g *AppOAuthGenerator) PostConvertHook() error {
+	for i := range g.Resources {
+		g.Resources[i].Item = escapeDollar(g.Resources[i].Item)
+	}
+	return nil
+}
