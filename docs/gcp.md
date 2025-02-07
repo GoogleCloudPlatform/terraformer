@@ -173,4 +173,4 @@ List of supported GCP services:
     * `google_compute_vpn_tunnel`
 
 Your `tf` and `tfstate` files are written by default to
-`generated/gcp/zone/service`.
+`generated/google/zone/service`.
