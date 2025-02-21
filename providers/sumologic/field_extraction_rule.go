@@ -19,7 +19,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/iancoleman/strcase"
-	sumologic "github.com/sumovishal/sumologic-go-sdk/api"
+	sumologic "github.com/SumoLogic/sumologic-go-sdk"
 )
 
 type FieldExtractionRuleGenerator struct {
@@ -45,17 +45,17 @@ func (g *FieldExtractionRuleGenerator) createResources(rules []sumologic.Extract
 
 func (g *FieldExtractionRuleGenerator) InitResources() error {
 	client := g.Client()
-	req := client.ExtractionRuleManagementApi.ListExtractionRules(g.AuthCtx())
+	req := client.ExtractionRuleManagementAPI.ListExtractionRules(g.AuthCtx())
 	req = req.Limit(100)
 
-	respBody, _, err := client.ExtractionRuleManagementApi.ListExtractionRulesExecute(req)
+	respBody, _, err := client.ExtractionRuleManagementAPI.ListExtractionRulesExecute(req)
 	if err != nil {
 		return err
 	}
 	rules := respBody.Data
 	for respBody.Next != nil {
 		req = req.Token(respBody.GetNext())
-		respBody, _, err = client.ExtractionRuleManagementApi.ListExtractionRulesExecute(req)
+		respBody, _, err = client.ExtractionRuleManagementAPI.ListExtractionRulesExecute(req)
 		if err != nil {
 			return err
 		}

@@ -19,7 +19,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/iancoleman/strcase"
-	sumologic "github.com/sumovishal/sumologic-go-sdk/api"
+	sumologic "github.com/SumoLogic/sumologic-go-sdk"
 )
 
 type PartitionGenerator struct {
@@ -45,17 +45,17 @@ func (g *PartitionGenerator) createResources(partitions []sumologic.Partition) [
 
 func (g *PartitionGenerator) InitResources() error {
 	client := g.Client()
-	req := client.PartitionManagementApi.ListPartitions(g.AuthCtx())
+	req := client.PartitionManagementAPI.ListPartitions(g.AuthCtx())
 	req = req.Limit(100)
 
-	respBody, _, err := client.PartitionManagementApi.ListPartitionsExecute(req)
+	respBody, _, err := client.PartitionManagementAPI.ListPartitionsExecute(req)
 	if err != nil {
 		return err
 	}
 	partitions := respBody.Data
 	for respBody.Next != nil {
 		req = req.Token(respBody.GetNext())
-		respBody, _, err = client.PartitionManagementApi.ListPartitionsExecute(req)
+		respBody, _, err = client.PartitionManagementAPI.ListPartitionsExecute(req)
 		if err != nil {
 			return err
 		}

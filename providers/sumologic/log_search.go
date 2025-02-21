@@ -19,7 +19,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/iancoleman/strcase"
-	sumologic "github.com/sumovishal/sumologic-go-sdk/api"
+	sumologic "github.com/SumoLogic/sumologic-go-sdk"
 )
 
 type LogSearchGenerator struct {
@@ -50,17 +50,17 @@ func (g *LogSearchGenerator) InitResources() error {
 	var resources []terraformutils.Resource
 	var logSearches []sumologic.LogSearch
 
-	req := client.LogSearchesManagementApi.ListLogSearches(g.AuthCtx())
+	req := client.LogSearchesManagementAPI.ListLogSearches(g.AuthCtx())
 	req = req.Limit(100)
 
-	respBody, _, err := client.LogSearchesManagementApi.ListLogSearchesExecute(req)
+	respBody, _, err := client.LogSearchesManagementAPI.ListLogSearchesExecute(req)
 	if err != nil {
 		return err
 	}
 	logSearches = respBody.LogSearches
 	for respBody.Token != nil {
 		req = req.Token(respBody.GetToken())
-		respBody, _, err = client.LogSearchesManagementApi.ListLogSearchesExecute(req)
+		respBody, _, err = client.LogSearchesManagementAPI.ListLogSearchesExecute(req)
 		if err != nil {
 			return err
 		}

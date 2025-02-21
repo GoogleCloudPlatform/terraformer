@@ -21,7 +21,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 
-	sumologic "github.com/sumovishal/sumologic-go-sdk/api"
+	sumologic "github.com/SumoLogic/sumologic-go-sdk"
 )
 
 type SumoLogicService struct { //nolint

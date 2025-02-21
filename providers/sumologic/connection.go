@@ -19,7 +19,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/iancoleman/strcase"
-	sumologic "github.com/sumovishal/sumologic-go-sdk/api"
+	sumologic "github.com/SumoLogic/sumologic-go-sdk"
 )
 
 type ConnectionGenerator struct {
@@ -45,17 +45,17 @@ func (g *ConnectionGenerator) createResources(connections []sumologic.Connection
 
 func (g *ConnectionGenerator) InitResources() error {
 	client := g.Client()
-	req := client.ConnectionManagementApi.ListConnections(g.AuthCtx())
+	req := client.ConnectionManagementAPI.ListConnections(g.AuthCtx())
 	req = req.Limit(100)
 
-	respBody, _, err := client.ConnectionManagementApi.ListConnectionsExecute(req)
+	respBody, _, err := client.ConnectionManagementAPI.ListConnectionsExecute(req)
 	if err != nil {
 		return err
 	}
 	connections := respBody.Data
 	for respBody.Next != nil {
 		req = req.Token(respBody.GetNext())
-		respBody, _, err = client.ConnectionManagementApi.ListConnectionsExecute(req)
+		respBody, _, err = client.ConnectionManagementAPI.ListConnectionsExecute(req)
 		if err != nil {
 			return err
 		}

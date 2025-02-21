@@ -19,7 +19,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/iancoleman/strcase"
-	sumologic "github.com/sumovishal/sumologic-go-sdk/api"
+	sumologic "github.com/SumoLogic/sumologic-go-sdk"
 )
 
 type FolderGenerator struct {
@@ -49,9 +49,9 @@ func (g *FolderGenerator) InitResources() error {
 
 	var resources []terraformutils.Resource
 
-	req := client.FolderManagementApi.GetPersonalFolder(g.AuthCtx())
+	req := client.FolderManagementAPI.GetPersonalFolder(g.AuthCtx())
 
-	respBody, _, err := client.FolderManagementApi.GetPersonalFolderExecute(req)
+	respBody, _, err := client.FolderManagementAPI.GetPersonalFolderExecute(req)
 	if err != nil {
 		return err
 	}
@@ -67,8 +67,8 @@ func (g *FolderGenerator) InitResources() error {
 func (g *FolderGenerator) getFolderOk(folderId string) (sumologic.Folder, bool) {
 	client := g.Client()
 
-	req := client.FolderManagementApi.GetFolder(g.AuthCtx(), folderId)
-	folder, _, err := client.FolderManagementApi.GetFolderExecute(req)
+	req := client.FolderManagementAPI.GetFolder(g.AuthCtx(), folderId)
+	folder, _, err := client.FolderManagementAPI.GetFolderExecute(req)
 	if err != nil {
 		fmt.Println(err)
 		return sumologic.Folder{}, false
