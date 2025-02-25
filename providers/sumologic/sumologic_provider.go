@@ -112,6 +112,7 @@ func (p *SumoLogicProvider) GetSupportedService() map[string]terraformutils.Serv
 		"dashboard":             &DashboardGenerator{},
 		"field_extraction_rule": &FieldExtractionRuleGenerator{},
 		"log_search":            &LogSearchGenerator{},
+		"metrics_search_v2":     &MetricsSearchV2Generator{},
 		"monitor":               &MonitorGenerator{},
 		"partition":             &PartitionGenerator{},
 		"role":                  &RoleGenerator{},
