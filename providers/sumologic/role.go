@@ -19,7 +19,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/iancoleman/strcase"
-	sumologic "github.com/sumovishal/sumologic-go-sdk/api"
+	sumologic "github.com/SumoLogic/sumologic-go-sdk"
 )
 
 type RoleGenerator struct {
@@ -45,7 +45,7 @@ func (g *RoleGenerator) createResources(roles []sumologic.RoleModel) []terraform
 
 func (g *RoleGenerator) InitResources() error {
 	client := g.Client()
-	req := client.RoleManagementApi.ListRoles(g.AuthCtx())
+	req := client.RoleManagementAPI.ListRoles(g.AuthCtx())
 	req = req.Limit(100)
 	for _, filter := range g.Filter {
 		if filter.IsApplicable("role") && filter.FieldPath == "name" {
@@ -55,14 +55,14 @@ func (g *RoleGenerator) InitResources() error {
 		}
 	}
 
-	respBody, _, err := client.RoleManagementApi.ListRolesExecute(req)
+	respBody, _, err := client.RoleManagementAPI.ListRolesExecute(req)
 	if err != nil {
 		return err
 	}
 	roles := respBody.Data
 	for respBody.Next != nil {
 		req = req.Token(respBody.GetNext())
-		respBody, _, err = client.RoleManagementApi.ListRolesExecute(req)
+		respBody, _, err = client.RoleManagementAPI.ListRolesExecute(req)
 		if err != nil {
 			return err
 		}

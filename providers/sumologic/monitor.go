@@ -20,7 +20,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/iancoleman/strcase"
-	sumologic "github.com/sumovishal/sumologic-go-sdk/api"
+	sumologic "github.com/SumoLogic/sumologic-go-sdk"
 )
 
 type MonitorGenerator struct {
@@ -48,9 +48,9 @@ func (g *MonitorGenerator) createResources(monitors []sumologic.MonitorsLibraryB
 func (g *MonitorGenerator) InitResources() error {
 	client := g.Client()
 
-	searchReq := client.MonitorsLibraryManagementApi.MonitorsSearch(
+	searchReq := client.MonitorsLibraryManagementAPI.MonitorsSearch(
 		g.AuthCtx()).Query(fmt.Sprintf("createdAfter:%d", time.Now().Unix()))
-	rspBody, _, err := client.MonitorsLibraryManagementApi.MonitorsSearchExecute(searchReq)
+	rspBody, _, err := client.MonitorsLibraryManagementAPI.MonitorsSearchExecute(searchReq)
 	if err != nil {
 		return err
 	}

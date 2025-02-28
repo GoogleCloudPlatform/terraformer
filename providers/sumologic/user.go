@@ -19,7 +19,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/iancoleman/strcase"
-	sumologic "github.com/sumovishal/sumologic-go-sdk/api"
+	sumologic "github.com/SumoLogic/sumologic-go-sdk"
 )
 
 type UserGenerator struct {
@@ -45,7 +45,7 @@ func (g *UserGenerator) createResources(users []sumologic.UserModel) []terraform
 
 func (g *UserGenerator) InitResources() error {
 	client := g.Client()
-	req := client.UserManagementApi.ListUsers(g.AuthCtx())
+	req := client.UserManagementAPI.ListUsers(g.AuthCtx())
 	req = req.Limit(100)
 	for _, filter := range g.Filter {
 		if filter.IsApplicable("user") && filter.FieldPath == "email" {
@@ -55,14 +55,14 @@ func (g *UserGenerator) InitResources() error {
 		}
 	}
 
-	respBody, _, err := client.UserManagementApi.ListUsersExecute(req)
+	respBody, _, err := client.UserManagementAPI.ListUsersExecute(req)
 	if err != nil {
 		return err
 	}
 	users := respBody.Data
 	for respBody.Next != nil {
 		req = req.Token(respBody.GetNext())
-		respBody, _, err = client.UserManagementApi.ListUsersExecute(req)
+		respBody, _, err = client.UserManagementAPI.ListUsersExecute(req)
 		if err != nil {
 			return err
 		}

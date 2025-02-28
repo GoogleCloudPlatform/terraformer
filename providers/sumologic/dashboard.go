@@ -19,7 +19,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/iancoleman/strcase"
-	sumologic "github.com/sumovishal/sumologic-go-sdk/api"
+	sumologic "github.com/SumoLogic/sumologic-go-sdk"
 )
 
 type DashboardGenerator struct {
@@ -50,17 +50,17 @@ func (g *DashboardGenerator) InitResources() error {
 	var resources []terraformutils.Resource
 	var dashboards []sumologic.Dashboard
 
-	req := client.DashboardManagementApi.ListDashboards(g.AuthCtx())
+	req := client.DashboardManagementAPI.ListDashboards(g.AuthCtx())
 	req = req.Limit(100)
 
-	respBody, _, err := client.DashboardManagementApi.ListDashboardsExecute(req)
+	respBody, _, err := client.DashboardManagementAPI.ListDashboardsExecute(req)
 	if err != nil {
 		return err
 	}
 	dashboards = respBody.Dashboards
 	for respBody.Next != nil {
 		req = req.Token(respBody.GetNext())
-		respBody, _, err = client.DashboardManagementApi.ListDashboardsExecute(req)
+		respBody, _, err = client.DashboardManagementAPI.ListDashboardsExecute(req)
 		if err != nil {
 			return err
 		}

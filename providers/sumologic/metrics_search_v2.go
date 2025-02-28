@@ -18,23 +18,23 @@ import (
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/iancoleman/strcase"
 	sumologic "github.com/SumoLogic/sumologic-go-sdk"
+	"github.com/iancoleman/strcase"
 )
 
-type FieldExtractionRuleGenerator struct {
+type MetricsSearchV2Generator struct {
 	SumoLogicService
 }
 
-func (g *FieldExtractionRuleGenerator) createResources(rules []sumologic.ExtractionRule) []terraformutils.Resource {
-	resources := make([]terraformutils.Resource, len(rules))
+func (g *MetricsSearchV2Generator) createResources(searches []sumologic.MetricsSearchResponse) []terraformutils.Resource {
+	resources := make([]terraformutils.Resource, len(searches))
 
-	for i, rule := range rules {
-		name := strcase.ToSnake(replaceSpaceAndDash(rule.Name))
+	for i, search := range searches {
+		title := strcase.ToSnake(replaceSpaceAndDash(search.Title))
 		resource := terraformutils.NewSimpleResource(
-			rule.Id,
-			fmt.Sprintf("%s-%s", name, rule.Id),
-			"sumologic_field_extraction_rule",
+			*search.Id,
+			fmt.Sprintf("%s-%s", title, *search.Id),
+			"sumologic_metrics_search_v2",
 			g.ProviderName,
 			[]string{})
 		resources[i] = resource
@@ -43,26 +43,26 @@ func (g *FieldExtractionRuleGenerator) createResources(rules []sumologic.Extract
 	return resources
 }
 
-func (g *FieldExtractionRuleGenerator) InitResources() error {
+func (g *MetricsSearchV2Generator) InitResources() error {
 	client := g.Client()
-	req := client.ExtractionRuleManagementAPI.ListExtractionRules(g.AuthCtx())
-	req = req.Limit(100)
+	req := client.MetricsSearchesManagementV2API.ListMetricsSearches(g.AuthCtx())
+	req = req.Limit(100).Mode("allViewableByUser")
 
-	respBody, _, err := client.ExtractionRuleManagementAPI.ListExtractionRulesExecute(req)
+	respBody, _, err := client.MetricsSearchesManagementV2API.ListMetricsSearchesExecute(req)
 	if err != nil {
 		return err
 	}
-	rules := respBody.Data
+	searches := respBody.MetricsSearches
 	for respBody.Next != nil {
 		req = req.Token(respBody.GetNext())
-		respBody, _, err = client.ExtractionRuleManagementAPI.ListExtractionRulesExecute(req)
+		respBody, _, err = client.MetricsSearchesManagementV2API.ListMetricsSearchesExecute(req)
 		if err != nil {
 			return err
 		}
-		rules = append(rules, respBody.Data...)
+		searches = append(searches, respBody.MetricsSearches...)
 	}
 
-	resources := g.createResources(rules)
+	resources := g.createResources(searches)
 	g.Resources = resources
 	return nil
 }
