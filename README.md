@@ -379,6 +379,8 @@ go run providers/gcp/gcp_compute_code_generator/*.go
 
 #Testing Commit1
 
+#Testing Commit 2
+
 * Simpler to add new providers and resources - already supports AWS, GCP, GitHub, Kubernetes, and Openstack. Terraforming supports only AWS.
 * Better support for HCL + tfstate, including updates for Terraform 0.12.
 * If a provider adds new attributes to a resource, there is no need change Terraformer code - just update the Terraform provider on your laptop.
