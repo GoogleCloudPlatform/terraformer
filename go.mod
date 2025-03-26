@@ -350,12 +350,14 @@ require (
 require github.com/PuerkitoBio/rehttp v1.0.0 // indirect
 
 require (
-	cloud.google.com/go/cloudbuild v1.19.0
-	cloud.google.com/go/cloudtasks v1.13.2
-	cloud.google.com/go/iam v1.2.2
-	cloud.google.com/go/monitoring v1.21.2
-	github.com/DataDog/datadog-api-client-go/v2 v2.11.0
-	github.com/Myra-Security-GmbH/myrasec-go/v2 v2.28.0
+  cloud.google.com/go/cloudbuild v1.19.0
+  cloud.google.com/go/cloudtasks v1.13.2
+  cloud.google.com/go/iam v1.2.2
+  cloud.google.com/go/monitoring v1.21.2
+  github.com/DataDog/datadog-api-client-go/v2 v2.11.0
+  github.com/Myra-Security-GmbH/myrasec-go/v2 v2.28.0
+  github.com/bradleyfalzon/ghinstallation/v2 v2.1.0
+
 	github.com/manicminer/hamilton v0.44.0
 	github.com/opalsecurity/opal-go v1.0.19
 	gopkg.in/ns1/ns1-go.v2 v2.6.5
@@ -389,11 +391,12 @@ require (
 	github.com/go-openapi/jsonpointer v0.19.5 // indirect
 	github.com/go-openapi/jsonreference v0.19.5 // indirect
 	github.com/go-openapi/swag v0.19.14 // indirect
-	github.com/golang-jwt/jwt/v4 v4.5.2 // indirect
+  github.com/golang-jwt/jwt/v4 v4.5.2 // indirect
+  github.com/google/gnostic v0.5.7-v3refs // indirect
+  github.com/google/go-github/v45 v45.2.0 // indirect
   github.com/goccy/go-json v0.10.2 // indirect
-	github.com/google/gnostic v0.5.7-v3refs // indirect
-	github.com/google/s2a-go v0.1.8 // indirect
-	github.com/googleapis/enterprise-certificate-proxy v0.3.4 // indirect
+  github.com/google/s2a-go v0.1.8 // indirect
+  github.com/googleapis/enterprise-certificate-proxy v0.3.4 // indirect
 	github.com/hashicorp/terraform-plugin-log v0.7.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/lestrrat-go/backoff/v2 v2.0.8 // indirect
