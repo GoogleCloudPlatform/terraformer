@@ -48,6 +48,9 @@ func GetRegions(project string) []string {
 }
 
 func getRegion(project, regionName string) *compute.Region {
+	if regionName == "global" {
+		return &compute.Region{}
+	}
 	computeService, err := compute.NewService(context.Background())
 	if err != nil {
 		log.Println(err)
