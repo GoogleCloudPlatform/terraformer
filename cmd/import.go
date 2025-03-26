@@ -124,7 +124,7 @@ func initOptionsAndWrapper(provider terraformutils.ProviderGenerator, options Im
 		options.Resources = providerServices(provider)
 	}
 
-	if options.Excludes != nil {
+	if len(options.Excludes) > 0 {
 		localSlice := []string{}
 		for _, r := range options.Resources {
 			remove := false
