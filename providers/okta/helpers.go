@@ -57,3 +57,23 @@ func RandStringBytes(n int) string {
 	}
 	return string(b)
 }
+
+// escapeDollar modifies ${ into $${ recursively
+func escapeDollar(item map[string]interface{}) map[string]interface{} {
+	for k, f := range item {
+		switch v := f.(type) {
+		case string:
+			item[k] = strings.ReplaceAll(v, "${", "$${")
+		case map[string]interface{}:
+			item[k] = escapeDollar(v)
+		case []interface{}:
+			for i, s := range v {
+				if str, ok := s.(string); ok {
+					v[i] = strings.ReplaceAll(str, "${", "$${")
+				}
+			}
+			item[k] = v
+		}
+	}
+	return item
+}

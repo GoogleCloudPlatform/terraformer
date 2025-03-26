@@ -20,16 +20,16 @@ List of supported Cloudflare services:
 
 * `access`
   * `cloudflare_access_application`
+* `account_member`
+  * `cloudflare_account_member`
 * `dns`
-  * `cloudflare_zone`
   * `cloudflare_record`
+  * `cloudflare_zone`
 * `firewall`
   * `cloudflare_access_rule`
   * `cloudflare_filter`
   * `cloudflare_firewall_rule`
-  * `cloudflare_zone_lockdown`
   * `cloudflare_rate_limit`
+  * `cloudflare_zone_lockdown`
 * `page_rule`
   * `cloudflare_page_rule`
-* `account_member`
-  * `cloudflare_account_member`

@@ -37,12 +37,13 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [TencentCloud](/docs/tencentcloud.md)
         * [Vultr](/docs/vultr.md)
         * [Yandex Cloud](/docs/yandex.md)
+        * [Ionos Cloud](/docs/ionoscloud.md)
     * Infrastructure Software
         * [Kubernetes](/docs/kubernetes.md)
         * [OctopusDeploy](/docs/octopus.md)
         * [RabbitMQ](/docs/rabbitmq.md)
     * Network
-        * [Cloudflare](/docs/cloudflare.md)
+        * [Cloudflare](/docs/cloudflare.md) (broken, see #1761)
         * [Myrasec](/docs/myrasec.md)
         * [PAN-OS](/docs/panos.md)
     * VCS
@@ -56,6 +57,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [PagerDuty](/docs/pagerduty.md)
         * [Opsgenie](/docs/opsgenie.md)
         * [Honeycomb.io](/docs/honeycombio.md)
+        * [Opal](/docs/opal.md)
     * Community
         * [Keycloak](/docs/keycloak.md)
         * [Logz.io](/docs/logz.md)
@@ -215,13 +217,48 @@ It's possible to combine `--compact` `--path-pattern` parameters together.
 
 ### Installation
 
-From source:
+Both Terraformer and a Terraform provider plugin need to be installed.
+
+#### Terraformer
+
+**From a package manager**
+- [Homebrew](https://brew.sh/) users can use `brew install terraformer`.
+- [MacPorts](https://www.macports.org/) users can use `sudo port install terraformer`.
+- [Chocolatey](https://chocolatey.org/) users can use `choco install terraformer`.
+
+**From releases**
+This installs all providers, set `PROVIDER` to one of `google`, `aws` or `kubernetes` if you only need one.
+
+* Linux
+```
+export PROVIDER=all
+curl -LO "https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | grep tag_name | cut -d '"' -f 4)/terraformer-${PROVIDER}-linux-amd64"
+chmod +x terraformer-${PROVIDER}-linux-amd64
+sudo mv terraformer-${PROVIDER}-linux-amd64 /usr/local/bin/terraformer
+```
+* MacOS
+```
+export PROVIDER=all
+curl -LO "https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | grep tag_name | cut -d '"' -f 4)/terraformer-${PROVIDER}-darwin-amd64"
+chmod +x terraformer-${PROVIDER}-darwin-amd64
+sudo mv terraformer-${PROVIDER}-darwin-amd64 /usr/local/bin/terraformer
+```
+* Windows
+1. Install Terraform - https://www.terraform.io/downloads
+2. Download exe file for required provider from here - https://github.com/GoogleCloudPlatform/terraformer/releases
+3. Add the exe file path to path variable
+
+**From source**
 1.  Run `git clone <terraformer repo> && cd terraformer/`
 2.  Run `go mod download`
 3.  Run `go build -v` for all providers OR build with one provider
 `go run build/main.go {google,aws,azure,kubernetes,etc}`
-4.  Run ```terraform init``` against a ```versions.tf``` file to install the plugins required for your platform. For example, if you need plugins for the google provider, ```versions.tf``` should contain:
 
+#### Terraform Providers
+
+Create a working folder and initialize the Terraform provider plugin.  This folder will be where you run Terraformer commands.
+
+Run ```terraform init``` against a ```versions.tf``` file to install the plugins required for your platform. For example, if you need plugins for the google provider, ```versions.tf``` should contain:
 ```
 terraform {
   required_providers {
@@ -232,47 +269,10 @@ terraform {
   required_version = ">= 0.13"
 }
 ```
-Or alternatively
 
-*  Copy your Terraform provider's plugin(s) to folder
-    `~/.terraform.d/plugins/{darwin,linux}_amd64/`, as appropriate.
+Or, copy your Terraform provider's plugin(s) from the list below to folder `~/.terraform.d/plugins/`, as appropriate.
 
-From Releases:
-
-* Linux
-
-```
-export PROVIDER={all,google,aws,kubernetes}
-curl -LO https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | grep tag_name | cut -d '"' -f 4)/terraformer-${PROVIDER}-linux-amd64
-chmod +x terraformer-${PROVIDER}-linux-amd64
-sudo mv terraformer-${PROVIDER}-linux-amd64 /usr/local/bin/terraformer
-```
-* MacOS
-
-```
-export PROVIDER={all,google,aws,kubernetes}
-curl -LO https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | grep tag_name | cut -d '"' -f 4)/terraformer-${PROVIDER}-darwin-amd64
-chmod +x terraformer-${PROVIDER}-darwin-amd64
-sudo mv terraformer-${PROVIDER}-darwin-amd64 /usr/local/bin/terraformer
-```
-* Windows
-1. Install Terraform - https://www.terraform.io/downloads
-2. Download exe file for required provider from here - https://github.com/GoogleCloudPlatform/terraformer/releases
-3. Add the exe file path to path variable
-4. Create a folder and initialize the terraform provider and run terraformer commands from there
-   * For AWS -  refer https://learn.hashicorp.com/tutorials/terraform/aws-build?in=terraform/aws-get-started
-
-
-
-#### Using a package manager
-
-If you want to use a package manager:
-
-- [Homebrew](https://brew.sh/) users can use `brew install terraformer`.
-- [MacPorts](https://www.macports.org/) users can use `sudo port install terraformer`.
-- [Chocolatey](https://chocolatey.org/) users can use `choco install terraformer`.
-
-Links to download Terraform Providers:
+Links to download Terraform provider plugins:
 * Major Cloud
     * Google Cloud provider >2.11.0 - [here](https://releases.hashicorp.com/terraform-provider-google/)
     * AWS provider >2.25.0 - [here](https://releases.hashicorp.com/terraform-provider-aws/)
@@ -287,6 +287,7 @@ Links to download Terraform Providers:
     * TencentCloud provider >1.50.0 - [here](https://releases.hashicorp.com/terraform-provider-tencentcloud/)
     * Vultr provider >1.0.5 - [here](https://releases.hashicorp.com/terraform-provider-vultr/)
     * Yandex provider >0.42.0 - [here](https://releases.hashicorp.com/terraform-provider-yandex/)
+    * Ionoscloud provider >6.3.3 - [here](https://github.com/ionos-cloud/terraform-provider-ionoscloud/releases)
 * Infrastructure Software
     * Kubernetes provider >=1.9.0 - [here](https://releases.hashicorp.com/terraform-provider-kubernetes/)
     * RabbitMQ provider >=1.1.0 - [here](https://releases.hashicorp.com/terraform-provider-rabbitmq/)
@@ -305,6 +306,7 @@ Links to download Terraform Providers:
     * Pagerduty >=1.9 - [here](https://releases.hashicorp.com/terraform-provider-pagerduty/)
     * Opsgenie >= 0.6.0 [here](https://releases.hashicorp.com/terraform-provider-opsgenie/)
     * Honeycomb.io >= 0.10.0 - [here](https://github.com/honeycombio/terraform-provider-honeycombio/releases)
+    * Opal >= 0.0.2 - [here](https://github.com/opalsecurity/terraform-provider-opal/releases)
 * Community
     * Keycloak provider >=1.19.0 - [here](https://github.com/mrparkers/terraform-provider-keycloak/)
     * Logz.io provider >=1.1.1 - [here](https://github.com/jonboydell/logzio_terraform_provider/)
@@ -332,7 +334,7 @@ https://www.terraform.io/docs/configuration/providers.html
 ## Contributing
 
 If you have improvements or fixes, we would love to have your contributions.
-Please read CONTRIBUTING.md for more information on the process we would like
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for more information on the process we would like
 contributors to follow.
 
 ## Developing

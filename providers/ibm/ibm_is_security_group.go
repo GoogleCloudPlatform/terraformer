@@ -42,7 +42,7 @@ func (g SecurityGroupGenerator) createSecurityGroupResources(sgID, sgName string
 func (g SecurityGroupGenerator) createSecurityGroupRuleResources(sgID, sgRuleID string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s.%s", sgID, sgRuleID),
-		normalizeResourceName("ibm_is_security_group_rule", true),
+		normalizeResourceName(sgRuleID, false),
 		"ibm_is_security_group_rule",
 		"ibm",
 		map[string]string{},

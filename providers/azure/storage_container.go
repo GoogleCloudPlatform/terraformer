@@ -18,10 +18,10 @@ type StorageContainerGenerator struct {
 	AzureService
 }
 
-func NewStorageContainerGenerator(subscriptionID string, authorizer autorest.Authorizer, rg string) *StorageContainerGenerator {
+func NewStorageContainerGenerator(resourceManagerEndpoint string, subscriptionID string, authorizer autorest.Authorizer, rg string) *StorageContainerGenerator {
 	storageContainerGenerator := new(StorageContainerGenerator)
 	storageContainerGenerator.Args = map[string]interface{}{}
-	storageContainerGenerator.Args["config"] = authentication.Config{SubscriptionID: subscriptionID}
+	storageContainerGenerator.Args["config"] = authentication.Config{CustomResourceManagerEndpoint: resourceManagerEndpoint, SubscriptionID: subscriptionID}
 	storageContainerGenerator.Args["authorizer"] = authorizer
 	storageContainerGenerator.Args["resource_group"] = rg
 
@@ -30,7 +30,9 @@ func NewStorageContainerGenerator(subscriptionID string, authorizer autorest.Aut
 
 func (g StorageContainerGenerator) ListBlobContainers() ([]terraformutils.Resource, error) {
 	var containerResources []terraformutils.Resource
-	blobContainersClient := storage.NewBlobContainersClient(g.Args["config"].(authentication.Config).SubscriptionID)
+	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	blobContainersClient := storage.NewBlobContainersClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	blobContainersClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 	ctx := context.Background()
 
@@ -75,7 +77,9 @@ func (g StorageContainerGenerator) ListBlobContainers() ([]terraformutils.Resour
 
 func (g *StorageContainerGenerator) getStorageAccounts() ([]storage.Account, error) {
 	ctx := context.Background()
-	accountsClient := storage.NewAccountsClient(g.Args["config"].(authentication.Config).SubscriptionID)
+	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	accountsClient := storage.NewAccountsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 
 	accountsClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 	var accounts []storage.Account

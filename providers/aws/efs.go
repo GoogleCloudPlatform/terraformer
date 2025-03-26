@@ -41,9 +41,6 @@ func (g *EfsGenerator) InitResources() error {
 	if err := g.loadAccessPoint(svc); err != nil {
 		return err
 	}
-	if err := g.loadMountTarget(svc); err != nil {
-		return err
-	}
 	return nil
 }
 
@@ -85,7 +82,6 @@ func (g *EfsGenerator) loadFileSystem(svc *efs.Client) error {
 				fmt.Println(err.Error())
 				continue
 			}
-			escapedPolicy := g.escapeAwsInterpolation(StringValue(policyResponse.Policy))
 			g.Resources = append(g.Resources, terraformutils.NewResource(
 				StringValue(fileSystem.FileSystemId),
 				StringValue(fileSystem.FileSystemId),
@@ -93,32 +89,10 @@ func (g *EfsGenerator) loadFileSystem(svc *efs.Client) error {
 				"aws",
 				map[string]string{
 					"file_system_id": StringValue(fileSystem.FileSystemId),
-					"policy": fmt.Sprintf(`<<POLICY
-%s
-POLICY`, escapedPolicy),
+					"policy":         StringValue(policyResponse.Policy),
 				},
 				efsAllowEmptyValues,
 				map[string]interface{}{}))
-		}
-	}
-	return nil
-}
-
-func (g *EfsGenerator) loadMountTarget(svc *efs.Client) error {
-	p := efs.NewDescribeFileSystemsPaginator(svc, &efs.DescribeFileSystemsInput{})
-	for p.HasMorePages() {
-		page, err := p.NextPage(context.TODO())
-		if err != nil {
-			return err
-		}
-		for _, fileSystem := range page.FileSystems {
-			id := StringValue(fileSystem.FileSystemId)
-			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-				id,
-				id,
-				"aws_efs_file_system",
-				"aws",
-				efsAllowEmptyValues))
 		}
 	}
 	return nil
@@ -139,6 +113,21 @@ func (g *EfsGenerator) loadAccessPoint(svc *efs.Client) error {
 				"aws_efs_access_point",
 				"aws",
 				efsAllowEmptyValues))
+		}
+	}
+	return nil
+}
+
+// PostConvertHook for add policy json as heredoc
+func (g *EfsGenerator) PostConvertHook() error {
+	for i, resource := range g.Resources {
+		if resource.InstanceInfo.Type == "aws_efs_file_system_policy" {
+			if val, ok := g.Resources[i].Item["policy"]; ok {
+				policy := g.escapeAwsInterpolation(val.(string))
+				g.Resources[i].Item["policy"] = fmt.Sprintf(`<<POLICY
+%s
+POLICY`, policy)
+			}
 		}
 	}
 	return nil

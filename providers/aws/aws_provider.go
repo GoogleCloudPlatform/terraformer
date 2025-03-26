@@ -92,6 +92,12 @@ func (p AWSProvider) GetResourceConnections() map[string]map[string][]string {
 			"subnet": []string{"subnets", "id"},
 		},
 		"igw": {"vpc": []string{"vpc_id", "id"}},
+		"identitystore": {
+			"identitystore": []string{
+				"group_id", "id",
+				"member_id", "id",
+			},
+		},
 		"msk": {
 			"subnet": []string{"broker_node_group_info.client_subnets", "id"},
 			"sg":     []string{"broker_node_group_info.security_groups", "id"},
@@ -195,13 +201,13 @@ func (p *AWSProvider) Init(args []string) error {
 		}
 	}
 
-	if p.profile != "default" && p.profile != "" {
+	if p.profile != "" && p.profile != "default" {
+		envVar := "AWS_PROFILE"
 		if enableSharedConfig {
-			err = os.Setenv("AWS_DEFAULT_PROFILE", p.profile)
-		} else {
-			err = os.Setenv("AWS_PROFILE", p.profile)
+			envVar = "AWS_DEFAULT_PROFILE"
 		}
-		if err != nil {
+
+		if err := os.Setenv(envVar, p.profile); err != nil {
 			return err
 		}
 	}
@@ -236,6 +242,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"acm":               &AwsFacade{service: &ACMGenerator{}},
 		"alb":               &AwsFacade{service: &AlbGenerator{}},
 		"api_gateway":       &AwsFacade{service: &APIGatewayGenerator{}},
+		"api_gatewayv2":     &AwsFacade{service: &APIGatewayV2Generator{}},
 		"appsync":           &AwsFacade{service: &AppSyncGenerator{}},
 		"auto_scaling":      &AwsFacade{service: &AutoScalingGenerator{}},
 		"batch":             &AwsFacade{service: &BatchGenerator{}},
@@ -274,6 +281,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"firehose":          &AwsFacade{service: &FirehoseGenerator{}},
 		"glue":              &AwsFacade{service: &GlueGenerator{}},
 		"iam":               &AwsFacade{service: &IamGenerator{}},
+		"identitystore":     &AwsFacade{service: &IdentityStoreGenerator{}},
 		"igw":               &AwsFacade{service: &IgwGenerator{}},
 		"iot":               &AwsFacade{service: &IotGenerator{}},
 		"kinesis":           &AwsFacade{service: &KinesisGenerator{}},
@@ -282,6 +290,8 @@ func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"logs":              &AwsFacade{service: &LogsGenerator{}},
 		"media_package":     &AwsFacade{service: &MediaPackageGenerator{}},
 		"media_store":       &AwsFacade{service: &MediaStoreGenerator{}},
+		"medialive":         &AwsFacade{service: &MediaLiveGenerator{}},
+		"mq":                &AwsFacade{service: &MQGenerator{}},
 		"msk":               &AwsFacade{service: &MskGenerator{}},
 		"nacl":              &AwsFacade{service: &NaclGenerator{}},
 		"nat":               &AwsFacade{service: &NatGatewayGenerator{}},
@@ -311,6 +321,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"wafv2_cloudfront":  &AwsFacade{service: NewWafv2CloudfrontGenerator()},
 		"wafv2_regional":    &AwsFacade{service: NewWafv2RegionalGenerator()},
 		"vpc":               &AwsFacade{service: &VpcGenerator{}},
+		"vpc_endpoint":      &AwsFacade{service: &VpcEndpointGenerator{}},
 		"vpc_peering":       &AwsFacade{service: &VpcPeeringConnectionGenerator{}},
 		"vpn_connection":    &AwsFacade{service: &VpnConnectionGenerator{}},
 		"vpn_gateway":       &AwsFacade{service: &VpnGatewayGenerator{}},

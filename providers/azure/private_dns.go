@@ -33,7 +33,8 @@ func (g *PrivateDNSGenerator) listRecordSets(resourceGroupName string, privateZo
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
-	RecordSetsClient := privatedns.NewRecordSetsClient(subscriptionID)
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	RecordSetsClient := privatedns.NewRecordSetsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	RecordSetsClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	recordSetIterator, err := RecordSetsClient.ListComplete(ctx, resourceGroupName, privateZoneName, top, "")
@@ -77,7 +78,8 @@ func (g *PrivateDNSGenerator) listVirtualNetworkLinks(resourceGroupName string, 
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
-	VirtualNetworkLinksClient := privatedns.NewVirtualNetworkLinksClient(subscriptionID)
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	VirtualNetworkLinksClient := privatedns.NewVirtualNetworkLinksClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	VirtualNetworkLinksClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	virtualNetworkLinkIterator, err := VirtualNetworkLinksClient.ListComplete(ctx, resourceGroupName, privateZoneName, pageSize)
@@ -107,7 +109,8 @@ func (g *PrivateDNSGenerator) listAndAddForPrivateDNSZone() ([]terraformutils.Re
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
-	PrivateDNSZonesClient := privatedns.NewPrivateZonesClient(subscriptionID)
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	PrivateDNSZonesClient := privatedns.NewPrivateZonesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	PrivateDNSZonesClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	var pageSize int32 = 50

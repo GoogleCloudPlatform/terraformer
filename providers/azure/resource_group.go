@@ -48,7 +48,9 @@ func (g ResourceGroupGenerator) createResources(groupListResultIterator resource
 
 func (g *ResourceGroupGenerator) InitResources() error {
 	ctx := context.Background()
-	groupsClient := resources.NewGroupsClient(g.Args["config"].(authentication.Config).SubscriptionID)
+	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	groupsClient := resources.NewGroupsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 
 	groupsClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 

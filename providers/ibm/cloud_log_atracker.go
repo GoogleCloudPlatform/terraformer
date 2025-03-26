@@ -33,7 +33,7 @@ type ActivityTrackerGenerator struct {
 func (g ActivityTrackerGenerator) loadCloudAtracker(aTrackerID string, aTrackerName string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
 		aTrackerID,
-		normalizeResourceName(aTrackerName, false),
+		normalizeResourceName(aTrackerName, true),
 		"ibm_resource_instance",
 		"ibm",
 		[]string{})

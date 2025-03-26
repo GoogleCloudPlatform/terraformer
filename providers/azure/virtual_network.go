@@ -55,7 +55,9 @@ func (g VirtualNetworkGenerator) createResources(ctx context.Context, iterator n
 
 func (g *VirtualNetworkGenerator) InitResources() error {
 	ctx := context.Background()
-	virtualNetworkClient := network.NewVirtualNetworksClient(g.Args["config"].(authentication.Config).SubscriptionID)
+	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	virtualNetworkClient := network.NewVirtualNetworksClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 
 	virtualNetworkClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 

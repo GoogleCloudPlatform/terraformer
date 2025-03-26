@@ -32,22 +32,23 @@ List of supported GCP services:
 *   `bigQuery`
     * `google_bigquery_dataset`
     * `google_bigquery_table`
-*   `cloudbuild`
-    * `google_cloudbuild_trigger` 
 *   `cloudFunctions`
     * `google_cloudfunctions_function`
+    * `google_cloudfunctions2_function`
+*   `cloudbuild`
+    * `google_cloudbuild_trigger`
 *   `cloudsql`
-    * `google_sql_database_instance`
     * `google_sql_database`
+    * `google_sql_database_instance`
 *   `dataProc`
     * `google_dataproc_cluster`
 *   `disks`
     * `google_compute_disk`
-*   `externalVpnGateways`
-    * `google_compute_external_vpn_gateway`
 *   `dns`
     * `google_dns_managed_zone`
     * `google_dns_record_set`
+*   `externalVpnGateways`
+    * `google_compute_external_vpn_gateway`
 *   `firewall`
     * `google_compute_firewall`
 *   `forwardingRules`
@@ -55,10 +56,10 @@ List of supported GCP services:
 *   `gcs`
     * `google_storage_bucket`
     * `google_storage_bucket_acl`
-    * `google_storage_default_object_acl`
     * `google_storage_bucket_iam_binding`
     * `google_storage_bucket_iam_member`
     * `google_storage_bucket_iam_policy`
+    * `google_storage_default_object_acl`
     * `google_storage_notification`
 *   `gke`
     * `google_container_cluster`
@@ -90,8 +91,8 @@ List of supported GCP services:
 *   `interconnectAttachments`
     * `google_compute_interconnect_attachment`
 *   `kms`
-    * `google_kms_key_ring`
     * `google_kms_crypto_key`
+    * `google_kms_key_ring`
 *   `logging`
     * `google_logging_metric`
 *   `memoryStore`
@@ -103,12 +104,12 @@ List of supported GCP services:
     * `google_monitoring_uptime_check_config`
 *   `networks`
     * `google_compute_network`
-*   `packetMirrorings`
-    * `google_compute_packet_mirroring`
 *   `nodeGroups`
     * `google_compute_node_group`
 *   `nodeTemplates`
     * `google_compute_node_template`
+*   `packetMirrorings`
+    * `google_compute_packet_mirroring`
 *   `project`
     * `google_project`
 *   `pubsub`
@@ -122,6 +123,8 @@ List of supported GCP services:
     * `google_compute_region_disk`
 *   `regionHealthChecks`
     * `google_compute_region_health_check`
+*   `regionInstanceGroupManagers`
+    * `google_compute_region_instance_group_manager`
 *   `regionInstanceGroups`
     * `google_compute_region_instance_group`
 *   `regionSslCertificates`
@@ -136,8 +139,6 @@ List of supported GCP services:
     * `google_compute_reservation`
 *   `resourcePolicies`
     * `google_compute_resource_policy`
-*   `regionInstanceGroupManagers`
-    * `google_compute_region_instance_group_manager`
 *   `routers`
     * `google_compute_router`
 *   `routes`

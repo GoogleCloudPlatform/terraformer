@@ -117,7 +117,7 @@ func (g *ClbGenerator) loadListener(client *clb.Client, loadBalancerID, resource
 				map[string]interface{}{},
 			)
 			attachmentResource.AdditionalFields["clb_id"] = "${tencentcloud_clb_instance." + resourceName + ".id}"
-			attachmentResource.AdditionalFields["listener_id"] = "${tencentcloud_clb_listener." + resource.ResourceName + ".id}"
+			attachmentResource.AdditionalFields["listener_id"] = "${tencentcloud_clb_listener." + resource.ResourceName + ".listener_id}"
 			g.Resources = append(g.Resources, attachmentResource)
 		}
 

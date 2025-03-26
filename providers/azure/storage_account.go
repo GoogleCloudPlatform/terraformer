@@ -70,7 +70,9 @@ func (g StorageAccountGenerator) createResources(ctx context.Context, client sto
 
 func (g *StorageAccountGenerator) InitResources() error {
 	ctx := context.Background()
-	accountsClient := storage.NewAccountsClient(g.Args["config"].(authentication.Config).SubscriptionID)
+	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	accountsClient := storage.NewAccountsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	accountsClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 	if rg := g.Args["resource_group"].(string); rg != "" {
 		output, err := g.createResourcesByResourceGroup(ctx, accountsClient, rg)

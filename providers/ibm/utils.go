@@ -210,3 +210,15 @@ func GetAuthEndPoint() string {
 
 	return iamURL
 }
+
+func getAction(instanceStatus string) string {
+	return map[string]string{
+		"failed":     "start",
+		"pending":    "start",
+		"restarting": "reboot",
+		"running":    "start",
+		"starting":   "start",
+		"stopped":    "stop",
+		"stopping":   "stop",
+	}[instanceStatus]
+}

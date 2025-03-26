@@ -48,7 +48,9 @@ func (g ApplicationGatewayGenerator) createResources(ctx context.Context, iterat
 
 func (g *ApplicationGatewayGenerator) InitResources() error {
 	ctx := context.Background()
-	applicationGatewaysClient := network.NewApplicationGatewaysClient(g.Args["config"].(authentication.Config).SubscriptionID)
+	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	applicationGatewaysClient := network.NewApplicationGatewaysClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 
 	applicationGatewaysClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 

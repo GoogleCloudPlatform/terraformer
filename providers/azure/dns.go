@@ -33,7 +33,8 @@ func (g *DNSGenerator) listRecordSets(resourceGroupName string, zoneName string,
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
-	RecordSetsClient := dns.NewRecordSetsClient(subscriptionID)
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	RecordSetsClient := dns.NewRecordSetsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	RecordSetsClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	recordSetIterator, err := RecordSetsClient.ListAllByDNSZoneComplete(ctx, resourceGroupName, zoneName, top, "")
@@ -79,7 +80,8 @@ func (g *DNSGenerator) listAndAddForDNSZone() ([]terraformutils.Resource, error)
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
-	DNSZonesClient := dns.NewZonesClient(subscriptionID)
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	DNSZonesClient := dns.NewZonesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	DNSZonesClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	var pageSize int32 = 50

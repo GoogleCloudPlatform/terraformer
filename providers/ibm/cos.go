@@ -39,7 +39,7 @@ type COSGenerator struct {
 func (g COSGenerator) loadCOS(cosID string, cosName string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
 		cosID,
-		normalizeResourceName(cosName, false),
+		normalizeResourceName(cosName, true),
 		"ibm_resource_instance",
 		"ibm",
 		[]string{})
@@ -49,10 +49,12 @@ func (g COSGenerator) loadCOS(cosID string, cosName string) terraformutils.Resou
 func (g COSGenerator) loadCOSBuckets(bucketID, bucketName string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		bucketID,
-		normalizeResourceName(bucketName, false),
+		normalizeResourceName(bucketName, true),
 		"ibm_cos_bucket",
 		"ibm",
-		map[string]string{},
+		map[string]string{
+			"force_delete": "true",
+		},
 		[]string{},
 		map[string]interface{}{})
 	return resources
