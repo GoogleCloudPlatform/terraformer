@@ -15,6 +15,7 @@
 package azure
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -23,6 +24,7 @@ import (
 	"github.com/Azure/go-autorest/autorest"
 	"github.com/hashicorp/go-azure-helpers/authentication"
 	"github.com/hashicorp/go-azure-helpers/sender"
+	"github.com/manicminer/hamilton/environments"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
@@ -40,23 +42,34 @@ func (p *AzureProvider) setEnvConfig() error {
 	if subscriptionID == "" {
 		return errors.New("set ARM_SUBSCRIPTION_ID env var")
 	}
+	var auxTenants []string
+	if v := os.Getenv("ARM_AUXILIARY_TENANT_IDS"); v != "" {
+		auxTenants = strings.Split(v, ";")
+		if len(auxTenants) > 3 {
+			return fmt.Errorf("the provider only supports 3 auxiliary tenant IDs for ARM_AUXILIARY_TENANT_IDS")
+		}
+	}
 	builder := &authentication.Builder{
-		ClientID:                 os.Getenv("ARM_CLIENT_ID"),
-		SubscriptionID:           subscriptionID,
-		TenantID:                 os.Getenv("ARM_TENANT_ID"),
-		Environment:              os.Getenv("ARM_ENVIRONMENT"),
-		ClientSecret:             os.Getenv("ARM_CLIENT_SECRET"),
-		SupportsAzureCliToken:    true,
-		SupportsClientSecretAuth: true,
-		SupportsClientCertAuth:   true,
-		ClientCertPath:           os.Getenv("ARM_CLIENT_CERTIFICATE_PATH"),
-		ClientCertPassword:       os.Getenv("ARM_CLIENT_CERTIFICATE_PASSWORD"),
+		ClientID:            os.Getenv("ARM_CLIENT_ID"),
+		SubscriptionID:      subscriptionID,
+		TenantID:            os.Getenv("ARM_TENANT_ID"),
+		AuxiliaryTenantIDs:  auxTenants,
+		Environment:         os.Getenv("ARM_ENVIRONMENT"),
+		MetadataHost:        os.Getenv("ARM_METADATA_HOSTNAME"),
+		MsiEndpoint:         os.Getenv("ARM_MSI_ENDPOINT"),
+		ClientSecret:        os.Getenv("ARM_CLIENT_SECRET"),
+		ClientCertPath:      os.Getenv("ARM_CLIENT_CERTIFICATE_PATH"),
+		ClientCertPassword:  os.Getenv("ARM_CLIENT_CERTIFICATE_PASSWORD"),
+		IDTokenRequestToken: os.Getenv("ARM_OIDC_REQUEST_TOKEN"),
+		IDTokenRequestURL:   os.Getenv("ARM_OIDC_REQUEST_URL"),
 
-		/*
-		   // Managed Service Identity Auth
-		   SupportsManagedServiceIdentity bool
-		   MsiEndpoint                    string
-		*/
+		// Feature Toggles
+		SupportsAzureCliToken:          true,
+		SupportsClientSecretAuth:       true,
+		SupportsClientCertAuth:         true,
+		SupportsManagedServiceIdentity: os.Getenv("ARM_USE_MSI") != "",
+		SupportsOIDCAuth:               os.Getenv("ARM_USE_OIDC") != "",
+		UseMicrosoftGraph:              os.Getenv("ARM_USE_ADAL") == "",
 	}
 
 	if builder.Environment == "" {
@@ -76,23 +89,31 @@ func (p *AzureProvider) getAuthorizer() (autorest.Authorizer, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	p.config.CustomResourceManagerEndpoint = env.ResourceManagerEndpoint
 	oauthConfig, err := p.config.BuildOAuthConfig(env.ActiveDirectoryEndpoint)
 	if err != nil {
 		return nil, err
 	}
-
 	if oauthConfig == nil {
-		return nil, fmt.Errorf("Unable to configure OAuthConfig for tenant %s", p.config.TenantID)
+		return nil, fmt.Errorf("unable to configure OAuthConfig for tenant %s", p.config.TenantID)
 	}
+	sender := sender.BuildSender("terraformer")
+	ctx := context.Background()
+	var auth autorest.Authorizer
 
-	sender := sender.BuildSender("AzureRM")
-
-	auth, err := p.config.GetAuthorizationToken(sender, oauthConfig, env.ResourceManagerEndpoint)
+	if p.config.UseMicrosoftGraph {
+		hamiltonEnv, ero := environments.EnvironmentFromString(p.config.Environment)
+		if ero != nil {
+			return nil, ero
+		}
+		auth, err = p.config.GetMSALToken(ctx, hamiltonEnv.ResourceManager, sender, oauthConfig, env.TokenAudience)
+	} else {
+		// Deprecated
+		auth, err = p.config.GetADALToken(ctx, sender, oauthConfig, env.ResourceManagerEndpoint)
+	}
 	if err != nil {
 		return nil, err
 	}
-
 	return auth, nil
 }
 

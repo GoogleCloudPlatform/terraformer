@@ -75,13 +75,24 @@ func (g IAMGenerator) loadServiceIDs() func(serviceID, grpName string) terraform
 }
 
 func (g IAMGenerator) loadAuthPolicies(policyID string) terraformutils.Resource {
-	resources := terraformutils.NewSimpleResource(
+	resource := terraformutils.NewResource(
 		policyID,
 		normalizeResourceName("iam_authorization_policy", true),
 		"ibm_iam_authorization_policy",
 		"ibm",
-		[]string{})
-	return resources
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{})
+
+	// Conflict parameters
+	resource.IgnoreKeys = append(resource.IgnoreKeys,
+		"^subject_attributes$",
+		"^resource_attributes$",
+		"^source_resource_instance_id$",
+		"^target_resource_instance_id$",
+		"^transaction_id$",
+	)
+	return resource
 }
 
 func (g IAMGenerator) loadCustomRoles() func(roleID, roleName string) terraformutils.Resource {

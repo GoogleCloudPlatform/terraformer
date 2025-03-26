@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -17,7 +16,7 @@ const packageCmdPath = "cmd"
 func main() {
 	provider := os.Args[1]
 	log.Println("Build terraformer with " + provider + " provider...")
-	files, err := ioutil.ReadDir(packageCmdPath)
+	files, err := os.ReadDir(packageCmdPath)
 	if err != nil {
 		log.Println(err)
 	}
@@ -44,7 +43,7 @@ func main() {
 	}
 
 	// comment deleted providers in code
-	rootCode, err := ioutil.ReadFile(packageCmdPath + "/root.go")
+	rootCode, err := os.ReadFile(packageCmdPath + "/root.go")
 	if err != nil {
 		log.Println(err)
 	}
@@ -62,7 +61,7 @@ func main() {
 		newRootCodeLines[i] = line
 	}
 	newRootCode := strings.Join(newRootCodeLines, "\n")
-	err = ioutil.WriteFile(packageCmdPath+"/root.go", []byte(newRootCode), os.ModePerm)
+	err = os.WriteFile(packageCmdPath+"/root.go", []byte(newRootCode), os.ModePerm)
 	if err != nil {
 		log.Println(err)
 	}
@@ -78,7 +77,7 @@ func main() {
 	fmt.Println(outb.String())
 
 	// revert code and files
-	err = ioutil.WriteFile(packageCmdPath+"/root.go", rootCode, os.ModePerm)
+	err = os.WriteFile(packageCmdPath+"/root.go", rootCode, os.ModePerm)
 	if err != nil {
 		log.Println(err)
 	}

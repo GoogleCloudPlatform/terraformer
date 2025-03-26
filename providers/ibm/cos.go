@@ -39,24 +39,24 @@ type COSGenerator struct {
 func (g COSGenerator) loadCOS(cosID string, cosName string) terraformutils.Resource {
 	resources := terraformutils.NewSimpleResource(
 		cosID,
-		normalizeResourceName(cosName, false),
+		normalizeResourceName(cosName, true),
 		"ibm_resource_instance",
 		"ibm",
 		[]string{})
 	return resources
 }
 
-func (g COSGenerator) loadCOSBuckets(bucketID, bucketName string, dependsOn []string) terraformutils.Resource {
+func (g COSGenerator) loadCOSBuckets(bucketID, bucketName string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		bucketID,
-		normalizeResourceName(bucketName, false),
+		normalizeResourceName(bucketName, true),
 		"ibm_cos_bucket",
 		"ibm",
-		map[string]string{},
+		map[string]string{
+			"force_delete": "true",
+		},
 		[]string{},
-		map[string]interface{}{
-			"depends_on": dependsOn,
-		})
+		map[string]interface{}{})
 	return resources
 }
 
@@ -90,25 +90,23 @@ func (g *COSGenerator) InitResources() error {
 	if err != nil {
 		return err
 	}
-	authEndpoint := "https://iam.cloud.ibm.com/identity/token"
+	authEndpoint := GetAuthEndPoint()
 	for _, cs := range cosInstances {
 		g.Resources = append(g.Resources, g.loadCOS(cs.ID, cs.Name))
-		csResourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
 		s3Conf := ibmaws.NewConfig().WithCredentials(ibmiam.NewStaticCredentials(ibmaws.NewConfig(), authEndpoint, os.Getenv("IC_API_KEY"), cs.ID)).WithS3ForcePathStyle(true).WithEndpoint("s3.us-south.cloud-object-storage.appdomain.cloud")
 		s3Sess := cossession.Must(cossession.NewSession())
 		s3Client := coss3.New(s3Sess, s3Conf)
+
 		singleSiteLocationRegex := regexp.MustCompile("^[a-z]{3}[0-9][0-9]-[a-z]{4,8}$")
-		regionLocationRegex := regexp.MustCompile("^[a-z]{2}-[a-z]{2,5}-[a-z]{4,8}$")
+		regionLocationRegex := regexp.MustCompile("^[a-z]{2}-[a-z]{2,5}[0-9]?-[a-z]{4,8}$")
 		crossRegionLocationRegex := regexp.MustCompile("^[a-z]{2}-[a-z]{4,8}$")
 		d, _ := s3Client.ListBucketsExtended(&coss3.ListBucketsExtendedInput{})
 		for _, b := range d.Buckets {
-			var dependsOn []string
-			dependsOn = append(dependsOn,
-				"ibm_resource_instance."+csResourceName)
 			var apiType, location string
+
 			bLocationConstraint := *b.LocationConstraint
 			if singleSiteLocationRegex.MatchString(bLocationConstraint) {
-				apiType = "ss1"
+				apiType = "ssl"
 				location = strings.Split(bLocationConstraint, "-")[0]
 			}
 			if regionLocationRegex.MatchString(bLocationConstraint) {
@@ -120,7 +118,26 @@ func (g *COSGenerator) InitResources() error {
 				location = strings.Split(bLocationConstraint, "-")[0]
 			}
 			bucketID := fmt.Sprintf("%s:%s:%s:meta:%s:%s", strings.ReplaceAll(cs.ID, "::", ""), "bucket", *b.Name, apiType, location)
-			g.Resources = append(g.Resources, g.loadCOSBuckets(bucketID, *b.Name, dependsOn))
+			g.Resources = append(g.Resources, g.loadCOSBuckets(bucketID, *b.Name))
+
+		}
+	}
+
+	return nil
+}
+
+func (g *COSGenerator) PostConvertHook() error {
+	for i, r := range g.Resources {
+		if r.InstanceInfo.Type != "ibm_cos_bucket" {
+			continue
+		}
+		for _, rt := range g.Resources {
+			if rt.InstanceInfo.Type != "ibm_resource_instance" {
+				continue
+			}
+			if r.InstanceState.Attributes["resource_instance_id"] == rt.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["resource_instance_id"] = "${ibm_resource_instance." + rt.ResourceName + ".id}"
+			}
 		}
 	}
 

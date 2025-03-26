@@ -24,7 +24,9 @@ type StorageBlobGenerator struct {
 }
 
 func (g StorageBlobGenerator) getAccountPrimaryKey(ctx context.Context, accountName, accountGroupName string) string {
-	storageAccountsClient := storage.NewAccountsClient(g.Args["config"].(authentication.Config).SubscriptionID)
+	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	storageAccountsClient := storage.NewAccountsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	storageAccountsClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	response, err := storageAccountsClient.ListKeys(ctx, accountGroupName, accountName, "kerb")
@@ -78,7 +80,11 @@ func (g StorageBlobGenerator) listStorageBlobs() ([]terraformutils.Resource, err
 	var storageBlobsResources []terraformutils.Resource
 	ctx := context.Background()
 
-	blobContainerGenerator := NewStorageContainerGenerator(g.Args["config"].(authentication.Config).SubscriptionID, g.Args["authorizer"].(autorest.Authorizer), g.Args["resource_group"].(string))
+	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	authorizer := g.Args["authorizer"].(autorest.Authorizer)
+	resourceGroup := g.Args["resource_group"].(string)
+	blobContainerGenerator := NewStorageContainerGenerator(resourceManagerEndpoint, subscriptionID, authorizer, resourceGroup)
 	blobContainersResources, err := blobContainerGenerator.ListBlobContainers()
 	if err != nil {
 		return storageBlobsResources, err

@@ -16,28 +16,24 @@ package heroku
 
 import (
 	"errors"
-	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 type HerokuProvider struct { //nolint
 	terraformutils.Provider
-	email  string
 	apiKey string
+	team   string
 }
 
+// Init the Provider for imports. args are defined in cmd/provider_cmd_heroku.go
 func (p *HerokuProvider) Init(args []string) error {
-	if os.Getenv("HEROKU_EMAIL") == "" {
-		return errors.New("set HEROKU_EMAIL env var")
+	if len(args) > 0 {
+		p.apiKey = args[0]
 	}
-	p.email = os.Getenv("HEROKU_EMAIL")
-
-	if os.Getenv("HEROKU_API_KEY") == "" {
-		return errors.New("set HEROKU_API_KEY env var")
+	if len(args) > 1 {
+		p.team = args[1]
 	}
-	p.apiKey = os.Getenv("HEROKU_API_KEY")
-
 	return nil
 }
 
@@ -45,12 +41,14 @@ func (p *HerokuProvider) GetName() string {
 	return "heroku"
 }
 
+func (p *HerokuProvider) GetSource() string {
+	return "heroku/heroku"
+}
+
 func (p *HerokuProvider) GetProviderData(arg ...string) map[string]interface{} {
 	return map[string]interface{}{
 		"provider": map[string]interface{}{
-			"heroku": map[string]interface{}{
-				"email": p.email,
-			},
+			"heroku": map[string]interface{}{},
 		},
 	}
 }
@@ -61,22 +59,12 @@ func (HerokuProvider) GetResourceConnections() map[string]map[string][]string {
 
 func (p *HerokuProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"account_feature":        &AccountFeatureGenerator{},
-		"addon":                  &AddOnGenerator{},
-		"addon_attachment":       &AddOnAttachmentGenerator{},
-		"app":                    &AppGenerator{},
-		"app_config_association": &AppConfigAssociationGenerator{},
-		"app_feature":            &AppFeatureGenerator{},
-		"app_webhook":            &AppWebhookGenerator{},
-		"build":                  &BuildGenerator{},
-		"cert":                   &CertGenerator{},
-		"domain":                 &DomainGenerator{},
-		"drain":                  &DrainGenerator{},
-		"formation":              &FormationGenerator{},
-		"pipeline":               &PipelineGenerator{},
-		"pipeline_coupling":      &PipelineCouplingGenerator{},
-		"team_collaborator":      &TeamCollaboratorGenerator{},
-		"team_member":            &TeamMemberGenerator{},
+		"account_feature":   &AccountFeatureGenerator{},
+		"app":               &AppGenerator{},
+		"pipeline":          &PipelineGenerator{},
+		"pipeline_coupling": &PipelineCouplingGenerator{},
+		"team_collaborator": &TeamCollaboratorGenerator{},
+		"team_member":       &TeamMemberGenerator{},
 	}
 }
 
@@ -90,8 +78,8 @@ func (p *HerokuProvider) InitService(serviceName string, verbose bool) error {
 	p.Service.SetVerbose(verbose)
 	p.Service.SetProviderName(p.GetName())
 	p.Service.SetArgs(map[string]interface{}{
-		"email":   p.email,
 		"api_key": p.apiKey,
+		"team":    p.team,
 	})
 	return nil
 }

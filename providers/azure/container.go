@@ -33,7 +33,8 @@ func (g *ContainerGenerator) listAndAddForContainerGroup() ([]terraformutils.Res
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
-	ContainerGroupsClient := containerinstance.NewContainerGroupsClient(subscriptionID)
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	ContainerGroupsClient := containerinstance.NewContainerGroupsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	ContainerGroupsClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	var (
@@ -71,7 +72,8 @@ func (g *ContainerGenerator) listRegistryWebhooks(resourceGroupName string, regi
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
-	WebhooksClient := containerregistry.NewWebhooksClient(subscriptionID)
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	WebhooksClient := containerregistry.NewWebhooksClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	WebhooksClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	webhookIterator, err := WebhooksClient.ListComplete(ctx, resourceGroupName, registryName)
@@ -99,7 +101,8 @@ func (g *ContainerGenerator) listAndAddForContainerRegistry() ([]terraformutils.
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
-	ContainerRegistriesClient := containerregistry.NewRegistriesClient(subscriptionID)
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	ContainerRegistriesClient := containerregistry.NewRegistriesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	ContainerRegistriesClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	var (

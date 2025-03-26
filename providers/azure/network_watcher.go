@@ -26,8 +26,8 @@ type NetworkWatcherGenerator struct {
 }
 
 func (az *NetworkWatcherGenerator) listResources() ([]network.Watcher, error) {
-	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
-	client := network.NewWatchersClient(subscriptionID)
+	subscriptionID, resourceGroup, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := network.NewWatchersClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	var (
 		resources network.WatcherListResult
@@ -50,8 +50,8 @@ func (az *NetworkWatcherGenerator) appendResource(resource *network.Watcher) {
 }
 
 func (az *NetworkWatcherGenerator) appendFlowLogs(parent *network.Watcher, resourceGroupID *ResourceID) error {
-	subscriptionID, _, authorizer := az.getClientArgs()
-	client := network.NewFlowLogsClient(subscriptionID)
+	subscriptionID, _, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := network.NewFlowLogsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
 	iterator, err := client.ListComplete(ctx, resourceGroupID.ResourceGroup, *parent.Name)
@@ -70,8 +70,8 @@ func (az *NetworkWatcherGenerator) appendFlowLogs(parent *network.Watcher, resou
 }
 
 func (az *NetworkWatcherGenerator) appendPacketCaptures(parent *network.Watcher, resourceGroupID *ResourceID) error {
-	subscriptionID, _, authorizer := az.getClientArgs()
-	client := network.NewPacketCapturesClient(subscriptionID)
+	subscriptionID, _, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := network.NewPacketCapturesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
 	resources, err := client.List(ctx, resourceGroupID.ResourceGroup, *parent.Name)

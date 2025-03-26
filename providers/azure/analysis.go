@@ -32,7 +32,9 @@ func (g *AnalysisGenerator) listServiceServers() ([]terraformutils.Resource, err
 	log.Println("\tImporting Service Servers")
 	var resources []terraformutils.Resource
 	ctx := context.Background()
-	AnalysisClient := analysisservices.NewServersClient(g.Args["config"].(authentication.Config).SubscriptionID)
+	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	AnalysisClient := analysisservices.NewServersClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	AnalysisClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	var (

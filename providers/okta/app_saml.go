@@ -15,43 +15,71 @@
 package okta
 
 import (
+	"fmt"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v5/okta"
 )
 
 type AppSamlGenerator struct {
 	OktaService
 }
 
-func (g AppSamlGenerator) createResources(appList []*okta.Application) []terraformutils.Resource {
+func (g *AppSamlGenerator) createResources(appList []okta.ListApplications200ResponseInner) []terraformutils.Resource {
 	var resources []terraformutils.Resource
 	for _, app := range appList {
-		resources = append(resources, terraformutils.NewSimpleResource(
-			app.Id,
-			normalizeResourceName(app.Id+"_"+app.Name),
-			"okta_app_saml",
-			"okta",
-			[]string{}))
+		if app.SamlApplication != nil && app.SamlApplication.Id != nil && app.SamlApplication.Label != "" {
+			resources = append(resources, terraformutils.NewSimpleResource(
+				*app.SamlApplication.Id,
+				normalizeResourceName(*app.SamlApplication.Id+"_"+app.SamlApplication.Label),
+				"okta_app_saml",
+				"okta",
+				[]string{},
+			))
+		}
+
+		if app.Saml11Application != nil && app.Saml11Application.Id != nil && app.Saml11Application.Label != "" {
+			resources = append(resources, terraformutils.NewSimpleResource(
+				*app.Saml11Application.Id,
+				normalizeResourceName(*app.Saml11Application.Id+"_"+app.Saml11Application.Label),
+				"okta_app_saml",
+				"okta",
+				[]string{},
+			))
+		}
 	}
 	return resources
 }
 
 func (g *AppSamlGenerator) InitResources() error {
-	signOnMode := []string{"SAML_1_1", "SAML_2_0"}
-	allSamlApps := []*okta.Application{}
-	for _, signOnMode := range signOnMode {
-		ctx, client, err := g.Client()
-		if err != nil {
-			return err
-		}
-		apps, err := getApplications(ctx, client, signOnMode)
-		if err != nil {
-			return err
-		}
-
-		allSamlApps = append(allSamlApps, apps...)
+	ctx, client, err := g.ClientV5()
+	if err != nil {
+		return err
 	}
 
-	g.Resources = g.createResources(allSamlApps)
+	appList, resp, err := client.ApplicationAPI.ListApplications(ctx).Execute()
+	if err != nil {
+		return fmt.Errorf("error listing applications: %w", err)
+	}
+
+	allApplications := appList
+
+	for resp.HasNextPage() {
+		var nextAppList []okta.ListApplications200ResponseInner
+		resp, err = resp.Next(&nextAppList)
+		if err != nil {
+			return fmt.Errorf("error fetching next page: %w", err)
+		}
+		allApplications = append(allApplications, nextAppList...)
+	}
+
+	g.Resources = g.createResources(allApplications)
+	return nil
+}
+
+func (g *AppSamlGenerator) PostConvertHook() error {
+	for i := range g.Resources {
+		g.Resources[i].Item = escapeDollar(g.Resources[i].Item)
+	}
 	return nil
 }

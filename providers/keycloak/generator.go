@@ -15,6 +15,7 @@
 package keycloak
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"sort"
@@ -31,9 +32,11 @@ type RealmGenerator struct {
 func (g *RealmGenerator) InitResources() error {
 	var realms []*keycloak.Realm
 	var realmsGroups []*keycloak.Group
+	ctx := context.TODO()
 
 	// Connect to keycloak instance
-	kck, err := keycloak.NewKeycloakClient(g.GetArgs()["url"].(string), g.GetArgs()["client_id"].(string), g.GetArgs()["client_secret"].(string), g.GetArgs()["realm"].(string), "", "", true, g.GetArgs()["client_timeout"].(int), g.GetArgs()["root_ca_certificate"].(string), g.GetArgs()["tls_insecure_skip_verify"].(bool))
+	userAgent := "GoogleCloudPlatform Terraformer/0.8.22 (+https://github.com/GoogleCloudPlatform/terraformer) Terraform Plugin SDK/2.10.1"
+	kck, err := keycloak.NewKeycloakClient(ctx, g.GetArgs()["url"].(string), g.GetArgs()["base_path"].(string), g.GetArgs()["client_id"].(string), g.GetArgs()["client_secret"].(string), g.GetArgs()["realm"].(string), "", "", true, g.GetArgs()["client_timeout"].(int), g.GetArgs()["root_ca_certificate"].(string), g.GetArgs()["tls_insecure_skip_verify"].(bool), userAgent, g.GetArgs()["red_hat_sso"].(bool), make(map[string]string))
 	if err != nil {
 		return errors.New("keycloak: could not connect to Keycloak")
 	}
@@ -41,12 +44,12 @@ func (g *RealmGenerator) InitResources() error {
 	// Get realm resources
 	target := g.GetArgs()["target"].(string)
 	if target == "" {
-		realms, err = kck.GetRealms()
+		realms, err = kck.GetRealms(ctx)
 		if err != nil {
 			return errors.New("keycloak: could not get realms attributes in Keycloak")
 		}
 	} else {
-		realm, err := kck.GetRealm(target)
+		realm, err := kck.GetRealm(ctx, target)
 		if err != nil {
 			return errors.New("keycloak: could not get " + target + " realm attributes in Keycloak")
 		}
@@ -57,25 +60,25 @@ func (g *RealmGenerator) InitResources() error {
 	// For each realm, get resources
 	for _, realm := range realms {
 		// Get required actions resources
-		requiredActions, err := kck.GetRequiredActions(realm.Id)
+		requiredActions, err := kck.GetRequiredActions(ctx, realm.Realm)
 		if err != nil {
-			return fmt.Errorf("keycloak: could not get required actions of realm %s in Keycloak. err: %w", realm.Id, err)
+			return fmt.Errorf("keycloak: could not get required actions of realm %s in Keycloak. err: %w", realm.Realm, err)
 		}
 		g.Resources = append(g.Resources, g.createRequiredActionResources(requiredActions)...)
 
 		// Get top-level authentication flows resources
-		authenticationFlows, err := kck.ListAuthenticationFlows(realm.Id)
+		authenticationFlows, err := kck.ListAuthenticationFlows(ctx, realm.Realm)
 		if err != nil {
-			return fmt.Errorf("keycloak: could not get authentication flows of realm %s in Keycloak. err: %w", realm.Id, err)
+			return fmt.Errorf("keycloak: could not get authentication flows of realm %s in Keycloak. err: %w", realm.Realm, err)
 		}
 		g.Resources = append(g.Resources, g.createAuthenticationFlowResources(authenticationFlows)...)
 
 		// For each authentication flow, get subFlow, execution and execution config resources
 		for _, topLevelAuthenticationFlow := range authenticationFlows {
-			authenticationSubFlowOrExecutions, err := kck.ListAuthenticationExecutions(realm.Id, topLevelAuthenticationFlow.Alias)
+			authenticationSubFlowOrExecutions, err := kck.ListAuthenticationExecutions(ctx, realm.Realm, topLevelAuthenticationFlow.Alias)
 			if err != nil {
 				return fmt.Errorf("keycloak: could not get authentication executions of authentication flow %s of realm %s in Keycloak. err: %w",
-					topLevelAuthenticationFlow.Alias, realm.Id, err)
+					topLevelAuthenticationFlow.Alias, realm.Realm, err)
 			}
 
 			var stack []*keycloak.AuthenticationExecutionInfo
@@ -109,10 +112,10 @@ func (g *RealmGenerator) InitResources() error {
 
 				switch authenticationSubFlowOrExecution.AuthenticationFlow {
 				case true:
-					authenticationSubFlow, err := kck.GetAuthenticationSubFlow(realm.Id, parentFlowAlias, authenticationSubFlowOrExecution.FlowId)
+					authenticationSubFlow, err := kck.GetAuthenticationSubFlow(ctx, realm.Realm, parentFlowAlias, authenticationSubFlowOrExecution.FlowId)
 					if err != nil {
 						return fmt.Errorf("keycloak: could not get authentication subflow %s of realm %s in Keycloak. err: %w",
-							authenticationSubFlowOrExecution.FlowId, realm.Id, err)
+							authenticationSubFlowOrExecution.FlowId, realm.Realm, err)
 					}
 
 					// Need to store the alias and parent flow alias
@@ -123,10 +126,10 @@ func (g *RealmGenerator) InitResources() error {
 					g.Resources = append(g.Resources, resource)
 
 				case false:
-					authenticationExecution, err := kck.GetAuthenticationExecution(realm.Id, parentFlowAlias, authenticationSubFlowOrExecution.Id)
+					authenticationExecution, err := kck.GetAuthenticationExecution(ctx, realm.Realm, parentFlowAlias, authenticationSubFlowOrExecution.Id)
 					if err != nil {
 						return fmt.Errorf("keycloak: could not get authentication execution %s of realm %s in Keycloak. err: %w",
-							authenticationSubFlowOrExecution.Id, realm.Id, err)
+							authenticationSubFlowOrExecution.Id, realm.Realm, err)
 					}
 
 					// Need to store the parent flow alias
@@ -137,14 +140,14 @@ func (g *RealmGenerator) InitResources() error {
 
 					if authenticationSubFlowOrExecution.AuthenticationConfig != "" {
 						authenticationExecutionConfig := &keycloak.AuthenticationExecutionConfig{
-							RealmId:     realm.Id,
+							RealmId:     realm.Realm,
 							Id:          authenticationSubFlowOrExecution.AuthenticationConfig,
 							ExecutionId: authenticationSubFlowOrExecution.Id,
 						}
-						err := kck.GetAuthenticationExecutionConfig(authenticationExecutionConfig)
+						err := kck.GetAuthenticationExecutionConfig(ctx, authenticationExecutionConfig)
 						if err != nil {
 							return fmt.Errorf("keycloak: could not get authentication execution config %s of realm %s in Keycloak. err: %w",
-								authenticationExecutionConfig.Id, realm.Id, err)
+								authenticationExecutionConfig.Id, realm.Realm, err)
 						}
 
 						g.Resources = append(g.Resources, g.createAuthenticationExecutionConfigResource(authenticationExecutionConfig))
@@ -153,18 +156,18 @@ func (g *RealmGenerator) InitResources() error {
 
 				if len(stack) > 0 && authenticationSubFlowOrExecution.Index > 0 {
 					previous := stack[len(stack)-1]
-					var resouceType string
-					var resouceName string
+					var resourceType string
+					var resourceName string
 					if previous.AuthenticationFlow {
-						resouceType = "keycloak_authentication_subflow"
-						resouceName = "authentication_subflow_" +
-							normalizeResourceName(realm.Id) + "_" + normalizeResourceName(previous.FlowId)
+						resourceType = "keycloak_authentication_subflow"
+						resourceName = "authentication_subflow_" +
+							normalizeResourceName(realm.Realm) + "_" + normalizeResourceName(previous.FlowId)
 					} else {
-						resouceType = "keycloak_authentication_execution"
-						resouceName = "authentication_execution_" +
-							normalizeResourceName(realm.Id) + "_" + normalizeResourceName(previous.Id)
+						resourceType = "keycloak_authentication_execution"
+						resourceName = "authentication_execution_" +
+							normalizeResourceName(realm.Realm) + "_" + normalizeResourceName(previous.Id)
 					}
-					resource.AdditionalFields["depends_on"] = []string{resouceType + "." + terraformutils.TfSanitize(resouceName)}
+					resource.AdditionalFields["depends_on"] = []string{resourceType + "." + terraformutils.TfSanitize(resourceName)}
 				}
 
 				// Stack the current sub flow/execution
@@ -179,7 +182,7 @@ func (g *RealmGenerator) InitResources() error {
 
 		// Get custom federations resources
 		// TODO: support kerberos user federation
-		customUserFederations, err := kck.GetCustomUserFederations(realm.Id)
+		customUserFederations, err := kck.GetCustomUserFederations(ctx, realm.Realm, realm.Id)
 		if err != nil {
 			return errors.New("keycloak: could not get custom user federations of realm " + realm.Id + " in Keycloak")
 		}
@@ -188,44 +191,44 @@ func (g *RealmGenerator) InitResources() error {
 		// For each custom federation, get mappers resources
 		for _, customUserFederation := range *customUserFederations {
 			if customUserFederation.ProviderId == "ldap" {
-				mappers, err := kck.GetLdapUserFederationMappers(realm.Id, customUserFederation.Id)
+				mappers, err := kck.GetLdapUserFederationMappers(ctx, realm.Realm, customUserFederation.Id)
 				if err != nil {
-					return errors.New("keycloak: could not get mappers of ldap user federation " + customUserFederation.Name + " of realm " + realm.Id + " in Keycloak")
+					return errors.New("keycloak: could not get mappers of ldap user federation " + customUserFederation.Name + " of realm " + realm.Realm + " in Keycloak")
 				}
-				g.Resources = append(g.Resources, g.createLdapMapperResources(realm.Id, customUserFederation.Name, mappers)...)
+				g.Resources = append(g.Resources, g.createLdapMapperResources(realm.Realm, customUserFederation.Name, mappers)...)
 			}
 		}
 
 		// Get groups tree and default groups resources
-		realmGroups, err := kck.GetGroups(realm.Id)
+		realmGroups, err := kck.GetGroups(ctx, realm.Realm)
 		if err != nil {
-			return errors.New("keycloak: could not get groups of realm " + realm.Id + " in Keycloak")
+			return errors.New("keycloak: could not get groups of realm " + realm.Realm + " in Keycloak")
 		}
 		realmsGroups = append(realmsGroups, realmGroups...)
-		g.Resources = append(g.Resources, g.createDefaultGroupResource(realm.Id))
+		g.Resources = append(g.Resources, g.createDefaultGroupResource(realm.Realm))
 
 		// Get users resources
-		realmUsers, err := kck.GetUsers(realm.Id)
+		realmUsers, err := kck.GetUsers(ctx, realm.Realm)
 		if err != nil {
-			return errors.New("keycloak: could not get users of realm " + realm.Id + " in Keycloak")
+			return errors.New("keycloak: could not get users of realm " + realm.Realm + " in Keycloak")
 		}
 		g.Resources = append(g.Resources, g.createUserResources(realmUsers)...)
 
 		// Get realm open id client scopes resources
-		realmScopes, err := kck.ListOpenidClientScopesWithFilter(realm.Id, func(scope *keycloak.OpenidClientScope) bool { return true })
+		realmScopes, err := kck.ListOpenidClientScopesWithFilter(ctx, realm.Realm, func(scope *keycloak.OpenidClientScope) bool { return true })
 		if err != nil {
-			return errors.New("keycloak: could not get realm scopes of realm " + realm.Id + " in Keycloak")
+			return errors.New("keycloak: could not get realm scopes of realm " + realm.Realm + " in Keycloak")
 		}
-		g.Resources = append(g.Resources, g.createScopeResources(realm.Id, realmScopes)...)
+		g.Resources = append(g.Resources, g.createScopeResources(realm.Realm, realmScopes)...)
 
 		// Get open id clients
-		realmClients, err := kck.GetOpenidClients(realm.Id, true)
+		realmClients, err := kck.GetOpenidClients(ctx, realm.Realm, true)
 		if err != nil {
-			return errors.New("keycloak: could not get open id clients of realm " + realm.Id + " in Keycloak")
+			return errors.New("keycloak: could not get open id clients of realm " + realm.Realm + " in Keycloak")
 		}
 		g.Resources = append(g.Resources, g.createOpenIDClientResources(realmClients)...)
 
-		// For earch open id client, get resources
+		// For each open id client, get resources
 		mapServiceAccountIds := map[string]map[string]string{}
 		mapContainerIDs := map[string]string{}
 		mapClientIDs := map[string]string{}
@@ -234,37 +237,37 @@ func (g *RealmGenerator) InitResources() error {
 			mapContainerIDs[client.Id] = "_" + client.ClientId
 
 			// Get open id client protocol mappers resources
-			clientMappers, err := kck.GetGenericClientProtocolMappers(realm.Id, client.Id)
+			clientMappers, err := kck.GetGenericProtocolMappers(ctx, realm.Realm, client.Id)
 			if err != nil {
-				return errors.New("keycloak: could not get protocol mappers of open id client " + client.ClientId + " of realm " + realm.Id + " in Keycloak")
+				return errors.New("keycloak: could not get protocol mappers of open id client " + client.ClientId + " of realm " + realm.Realm + " in Keycloak")
 			}
 			g.Resources = append(g.Resources, g.createOpenIDProtocolMapperResources(client.ClientId, clientMappers)...)
 
 			// Get open id client default scopes resources
-			clientScopes, err := kck.GetOpenidDefaultClientScopes(realm.Id, client.Id)
+			clientScopes, err := kck.GetOpenidDefaultClientScopes(ctx, realm.Realm, client.Id)
 			if err != nil {
-				return errors.New("keycloak: could not get default client scopes of open id client " + client.ClientId + " of realm " + realm.Id + " in Keycloak")
+				return errors.New("keycloak: could not get default client scopes of open id client " + client.ClientId + " of realm " + realm.Realm + " in Keycloak")
 			}
 			if len(*clientScopes) > 0 {
-				g.Resources = append(g.Resources, g.createOpenidClientScopesResources(realm.Id, client.Id, client.ClientId, "default", clientScopes))
+				g.Resources = append(g.Resources, g.createOpenidClientScopesResources(realm.Realm, client.Id, client.ClientId, "default", clientScopes))
 			}
 
 			// Get open id client optional scopes resources
-			clientScopes, err = kck.GetOpenidOptionalClientScopes(realm.Id, client.Id)
+			clientScopes, err = kck.GetOpenidOptionalClientScopes(ctx, realm.Realm, client.Id)
 			if err != nil {
-				return errors.New("keycloak: could not get optional client scopes of open id client " + client.ClientId + " of realm " + realm.Id + " in Keycloak")
+				return errors.New("keycloak: could not get optional client scopes of open id client " + client.ClientId + " of realm " + realm.Realm + " in Keycloak")
 			}
 			if len(*clientScopes) > 0 {
-				g.Resources = append(g.Resources, g.createOpenidClientScopesResources(realm.Id, client.Id, client.ClientId, "optional", clientScopes))
+				g.Resources = append(g.Resources, g.createOpenidClientScopesResources(realm.Realm, client.Id, client.ClientId, "optional", clientScopes))
 			}
 
 			// Prepare a slice to be able to link roles associated to service account roles to be associated to the open id client, only if service accounts are enabled
 			if !client.ServiceAccountsEnabled {
 				continue
 			}
-			serviceAccountUser, err := kck.GetOpenidClientServiceAccountUserId(realm.Id, client.Id)
+			serviceAccountUser, err := kck.GetOpenidClientServiceAccountUserId(ctx, realm.Realm, client.Id)
 			if err != nil {
-				return errors.New("keycloak: could not get service account user associated to open id client " + client.ClientId + " of realm " + realm.Id + " in Keycloak")
+				return errors.New("keycloak: could not get service account user associated to open id client " + client.ClientId + " of realm " + realm.Realm + " in Keycloak")
 			}
 			mapServiceAccountIds[serviceAccountUser.Id] = map[string]string{}
 			mapServiceAccountIds[serviceAccountUser.Id]["Id"] = client.Id
@@ -272,20 +275,20 @@ func (g *RealmGenerator) InitResources() error {
 		}
 
 		// Get open id client roles
-		clientRoles, err := kck.GetClientRoles(realm.Id, realmClients)
+		clientRoles, err := kck.GetClientRoles(ctx, realm.Realm, realmClients)
 		if err != nil {
-			return errors.New("keycloak: could not get open id clients roles of realm " + realm.Id + " in Keycloak")
+			return errors.New("keycloak: could not get open id clients roles of realm " + realm.Realm + " in Keycloak")
 		}
 
 		// Get roles
-		realmRoles, err := kck.GetRealmRoles(realm.Id)
+		realmRoles, err := kck.GetRealmRoles(ctx, realm.Realm)
 		if err != nil {
-			return errors.New("keycloak: could not get realm roles of realm " + realm.Id + " in Keycloak")
+			return errors.New("keycloak: could not get realm roles of realm " + realm.Realm + " in Keycloak")
 		}
 
 		// Set ContainerId of the roles, for realm = "", for open id clients = "_" + client.ClientId
 		// and get roles resources
-		mapContainerIDs[realm.Id] = ""
+		mapContainerIDs[realm.Realm] = ""
 		roles := append(clientRoles, realmRoles...)
 		for _, role := range roles {
 			role.ContainerId = mapContainerIDs[role.ContainerId]
@@ -293,11 +296,11 @@ func (g *RealmGenerator) InitResources() error {
 		g.Resources = append(g.Resources, g.createRoleResources(roles)...)
 
 		// Get service account roles resources
-		usersInRole, err := kck.GetClientRoleUsers(realm.Id, clientRoles)
+		usersInRole, err := kck.GetClientRoleUsers(ctx, realm.Realm, clientRoles)
 		if err != nil {
-			return errors.New("keycloak: could not get users roles of realm " + realm.Id + " in Keycloak")
+			return errors.New("keycloak: could not get users roles of realm " + realm.Realm + " in Keycloak")
 		}
-		g.Resources = append(g.Resources, g.createServiceAccountClientRolesResources(realm.Id, clientRoles, *usersInRole, mapServiceAccountIds, mapClientIDs)...)
+		g.Resources = append(g.Resources, g.createServiceAccountClientRolesResources(realm.Realm, clientRoles, *usersInRole, mapServiceAccountIds, mapClientIDs)...)
 	}
 
 	// Parse the groups trees, and get all the groups
@@ -308,7 +311,7 @@ func (g *RealmGenerator) InitResources() error {
 	// For each group, get group memberships and roles resources
 	for _, group := range groups {
 		// Get group members resources
-		members, err := kck.GetGroupMembers(group.RealmId, group.Id)
+		members, err := kck.GetGroupMembers(ctx, group.RealmId, group.Id)
 		if err != nil {
 			return errors.New("keycloak: could not get group members of group " + group.Name + " in Keycloak")
 		}
@@ -322,7 +325,7 @@ func (g *RealmGenerator) InitResources() error {
 
 		// Get group roles resources
 		// For realm roles and open id clients roles
-		groupDetails, err := kck.GetGroup(group.RealmId, group.Id)
+		groupDetails, err := kck.GetGroup(ctx, group.RealmId, group.Id)
 		if err != nil {
 			return errors.New("keycloak: could not get details about group " + group.Name + " in Keycloak")
 		}
@@ -394,15 +397,6 @@ func (g *RealmGenerator) PostConvertHook() error {
 				mapServiceAccountUserIDs[r.Item["realm_id"].(string)+"_"+r.InstanceState.Attributes["service_account_user_id"]] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".service_account_user_id}"
 			}
 		}
-		if r.InstanceInfo.Type == "keycloak_role" {
-			mapRoleIDs[r.Item["realm_id"].(string)+"_"+r.InstanceState.ID] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".id}"
-			if _, exist := r.Item["client_id"]; exist {
-				mapClientRoleNames[r.Item["realm_id"].(string)+"_"+mapClientNames[r.Item["realm_id"].(string)+"_"+r.Item["client_id"].(string)]+"."+r.Item["name"].(string)] = mapClientClientNames[r.Item["realm_id"].(string)+"_"+r.Item["client_id"].(string)] + ".${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
-				mapClientRoleShortNames[r.Item["realm_id"].(string)+"_"+mapClientNames[r.Item["realm_id"].(string)+"_"+r.Item["client_id"].(string)]+"."+r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
-			} else {
-				mapClientRoleNames[r.Item["realm_id"].(string)+"_"+r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
-			}
-		}
 		if r.InstanceInfo.Type == "keycloak_openid_client_scope" {
 			mapScopeNames[r.Item["realm_id"].(string)+"_"+r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
 		}
@@ -417,7 +411,21 @@ func (g *RealmGenerator) PostConvertHook() error {
 		}
 	}
 
-	// For each resources, modify import if needed...
+	// Set slices to be able to map IDs with Terraform variables
+	// Separate loop for roles to avoid fetching with a key that is not present in the map
+	for _, r := range g.Resources {
+		if r.InstanceInfo.Type == "keycloak_role" {
+			mapRoleIDs[r.Item["realm_id"].(string)+"_"+r.InstanceState.ID] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".id}"
+			if _, exist := r.Item["client_id"]; exist {
+				mapClientRoleNames[r.Item["realm_id"].(string)+"_"+mapClientNames[r.Item["realm_id"].(string)+"_"+r.Item["client_id"].(string)]+"."+r.Item["name"].(string)] = mapClientClientNames[r.Item["realm_id"].(string)+"_"+r.Item["client_id"].(string)] + ".${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+				mapClientRoleShortNames[r.Item["realm_id"].(string)+"_"+mapClientNames[r.Item["realm_id"].(string)+"_"+r.Item["client_id"].(string)]+"."+r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+			} else {
+				mapClientRoleNames[r.Item["realm_id"].(string)+"_"+r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+			}
+		}
+	}
+
+	// For each resource, modify import if needed...
 	for i, r := range g.Resources {
 		// Escape keycloak text inputs not to get unpredictable results or errors when Terraform will try to interpret variables ($ vs $$)
 		// TODO: ensure that we escape all existing fields
@@ -516,12 +524,16 @@ func (g *RealmGenerator) PostConvertHook() error {
 
 		// Sort role_ids to get reproducible results for keycloak_group_roles resources
 		if r.InstanceInfo.Type == "keycloak_group_roles" {
-			sortedRoles := make([]string, len(r.Item["role_ids"].([]interface{})))
-			for k, v := range r.Item["role_ids"].([]interface{}) {
-				sortedRoles[k] = mapRoleIDs[r.Item["realm_id"].(string)+"_"+v.(string)]
+			if roleIDs, ok := r.Item["role_ids"].([]interface{}); ok {
+				sortedRoles := make([]string, len(roleIDs))
+				for k, v := range roleIDs {
+					sortedRoles[k] = mapRoleIDs[r.Item["realm_id"].(string)+"_"+v.(string)]
+				}
+				sort.Strings(sortedRoles)
+				g.Resources[i].Item["role_ids"] = sortedRoles
+			} else {
+				g.Resources[i].Item["role_ids"] = []string{}
 			}
-			sort.Strings(sortedRoles)
-			g.Resources[i].Item["role_ids"] = sortedRoles
 		}
 
 		// Sort members to get reproducible results for keycloak_group_memberships resources
@@ -580,14 +592,17 @@ func (g *RealmGenerator) PostConvertHook() error {
 		// Map client_id attributes to keycloak_openid_client.foo.id Terraform variables for open id mappers resources
 		if _, exist := r.Item["client_id"]; exist && (r.InstanceInfo.Type == "keycloak_openid_client_service_account_role" ||
 			r.InstanceInfo.Type == "keycloak_openid_audience_protocol_mapper" ||
+			r.InstanceInfo.Type == "keycloak_openid_audience_resolve_protocol_mapper" ||
 			r.InstanceInfo.Type == "keycloak_openid_full_name_protocol_mapper" ||
 			r.InstanceInfo.Type == "keycloak_openid_group_membership_protocol_mapper" ||
 			r.InstanceInfo.Type == "keycloak_openid_hardcoded_claim_protocol_mapper" ||
-			r.InstanceInfo.Type == "keycloak_openid_hardcoded_group_protocol_mapper" ||
 			r.InstanceInfo.Type == "keycloak_openid_hardcoded_role_protocol_mapper" ||
+			r.InstanceInfo.Type == "keycloak_openid_script_protocol_mapper" ||
 			r.InstanceInfo.Type == "keycloak_openid_user_attribute_protocol_mapper" ||
+			r.InstanceInfo.Type == "keycloak_openid_user_client_role_protocol_mapper" ||
 			r.InstanceInfo.Type == "keycloak_openid_user_property_protocol_mapper" ||
 			r.InstanceInfo.Type == "keycloak_openid_user_realm_role_protocol_mapper" ||
+			r.InstanceInfo.Type == "keycloak_openid_user_session_note_protocol_mapper" ||
 			r.InstanceInfo.Type == "keycloak_openid_client_default_scopes" ||
 			r.InstanceInfo.Type == "keycloak_openid_client_optional_scopes" ||
 			r.InstanceInfo.Type == "keycloak_role") {

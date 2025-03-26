@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//	http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,6 @@
 package terraformoutput
 
 import (
-	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -25,21 +24,28 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func OutputHclFiles(resources []terraformutils.Resource, provider terraformutils.ProviderGenerator, path string, serviceName string, isCompact bool, output string) error {
+func OutputHclFiles(resources []terraformutils.Resource, provider terraformutils.ProviderGenerator, path string, serviceName string, isCompact bool, output string, sort bool) error {
 	if err := os.MkdirAll(path, os.ModePerm); err != nil {
 		return err
 	}
+
+	providerConfig := map[string]interface{}{
+		"version": providerwrapper.GetProviderVersion(provider.GetName()),
+	}
+
+	if providerWithSource, ok := provider.(terraformutils.ProviderWithSource); ok {
+		providerConfig["source"] = providerWithSource.GetSource()
+	}
+
 	// create provider file
 	providerData := provider.GetProviderData()
 	providerData["terraform"] = map[string]interface{}{
 		"required_providers": []map[string]interface{}{{
-			provider.GetName(): map[string]interface{}{
-				"version": providerwrapper.GetProviderVersion(provider.GetName()),
-			},
+			provider.GetName(): providerConfig,
 		}},
 	}
 
-	providerDataFile, err := terraformutils.Print(providerData, map[string]struct{}{}, output)
+	providerDataFile, err := terraformutils.Print(providerData, map[string]struct{}{}, output, sort)
 	if err != nil {
 		return err
 	}
@@ -82,7 +88,7 @@ func OutputHclFiles(resources []terraformutils.Resource, provider terraformutils
 	}
 	if len(outputsByResource) > 0 {
 		outputs["output"] = outputsByResource
-		outputsFile, err := terraformutils.Print(outputs, map[string]struct{}{}, output)
+		outputsFile, err := terraformutils.Print(outputs, map[string]struct{}{}, output, sort)
 		if err != nil {
 			return err
 		}
@@ -95,14 +101,14 @@ func OutputHclFiles(resources []terraformutils.Resource, provider terraformutils
 		typeOfServices[r.InstanceInfo.Type] = append(typeOfServices[r.InstanceInfo.Type], r)
 	}
 	if isCompact {
-		err := printFile(resources, "resources", path, output)
+		err := printFile(resources, "resources", path, output, sort)
 		if err != nil {
 			return err
 		}
 	} else {
 		for k, v := range typeOfServices {
 			fileName := strings.ReplaceAll(k, strings.Split(k, "_")[0]+"_", "")
-			err := printFile(v, fileName, path, output)
+			err := printFile(v, fileName, path, output, sort)
 			if err != nil {
 				return err
 			}
@@ -111,7 +117,7 @@ func OutputHclFiles(resources []terraformutils.Resource, provider terraformutils
 	return nil
 }
 
-func printFile(v []terraformutils.Resource, fileName, path, output string) error {
+func printFile(v []terraformutils.Resource, fileName, path, output string, sort bool) error {
 	for _, res := range v {
 		if res.DataFiles == nil {
 			continue
@@ -120,18 +126,18 @@ func printFile(v []terraformutils.Resource, fileName, path, output string) error
 			if err := os.MkdirAll(path+"/data/", os.ModePerm); err != nil {
 				return err
 			}
-			err := ioutil.WriteFile(path+"/data/"+fileName, content, os.ModePerm)
+			err := os.WriteFile(path+"/data/"+fileName, content, os.ModePerm)
 			if err != nil {
 				return err
 			}
 		}
 	}
 
-	tfFile, err := terraformutils.HclPrintResource(v, map[string]interface{}{}, output)
+	tfFile, err := terraformutils.HclPrintResource(v, map[string]interface{}{}, output, sort)
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(path+"/"+fileName+"."+GetFileExtension(output), tfFile, os.ModePerm)
+	err = os.WriteFile(path+"/"+fileName+"."+GetFileExtension(output), tfFile, os.ModePerm)
 	if err != nil {
 		return err
 	}
@@ -140,7 +146,7 @@ func printFile(v []terraformutils.Resource, fileName, path, output string) error
 }
 
 func PrintFile(path string, data []byte) {
-	err := ioutil.WriteFile(path, data, os.ModePerm)
+	err := os.WriteFile(path, data, os.ModePerm)
 	if err != nil {
 		log.Fatal(err)
 		return

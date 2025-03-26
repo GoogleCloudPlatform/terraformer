@@ -50,3 +50,15 @@ func (g *CodeBuildGenerator) InitResources() error {
 	}
 	return nil
 }
+
+func (g *CodeBuildGenerator) PostConvertHook() error {
+	for _, r := range g.Resources {
+		if r.InstanceInfo.Type != "aws_codebuild_project" {
+			continue
+		}
+		if r.InstanceState.Attributes["concurrent_build_limit"] == "0" {
+			delete(r.Item, "concurrent_build_limit")
+		}
+	}
+	return nil
+}

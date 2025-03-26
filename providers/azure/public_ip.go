@@ -32,7 +32,8 @@ func (g *PublicIPGenerator) listAndAddForPublicIPAddress() ([]terraformutils.Res
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
-	PublicIPAddressesClient := network.NewPublicIPAddressesClient(subscriptionID)
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	PublicIPAddressesClient := network.NewPublicIPAddressesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	PublicIPAddressesClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	var (
@@ -69,7 +70,8 @@ func (g *PublicIPGenerator) listAndAddForPublicIPPrefix() ([]terraformutils.Reso
 	var resources []terraformutils.Resource
 	ctx := context.Background()
 	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
-	PublicIPPrefixesClient := network.NewPublicIPPrefixesClient(subscriptionID)
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	PublicIPPrefixesClient := network.NewPublicIPPrefixesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	PublicIPPrefixesClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 
 	var (

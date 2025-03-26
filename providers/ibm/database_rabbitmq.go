@@ -31,13 +31,24 @@ type DatabaseRabbitMQGenerator struct {
 
 // loadRabbitMQDB ...
 func (g DatabaseRabbitMQGenerator) loadRabbitMQDB(dbID string, dbName string) terraformutils.Resource {
-	resources := terraformutils.NewSimpleResource(
+	resource := terraformutils.NewSimpleResource(
 		dbID,
 		normalizeResourceName(dbName, false),
 		"ibm_database",
 		"ibm",
 		[]string{})
-	return resources
+
+	resource.IgnoreKeys = append(resource.IgnoreKeys,
+		"^node_count$",
+		"^members_memory_allocation_mb$",
+		"^node_memory_allocation_mb$",
+		"^members_disk_allocation_mb$",
+		"^members_cpu_allocation_count$",
+		"^node_cpu_allocation_count$",
+		"^node_disk_allocation_mb$",
+	)
+
+	return resource
 }
 
 // InitResources ...
@@ -63,7 +74,7 @@ func (g *DatabaseRabbitMQGenerator) InitResources() error {
 		return err
 	}
 
-	serviceID, err := catalogClient.ResourceCatalog().FindByName("databases-for-rabbitmq", true)
+	serviceID, err := catalogClient.ResourceCatalog().FindByName("messages-for-rabbitmq", true)
 	if err != nil {
 		return err
 	}

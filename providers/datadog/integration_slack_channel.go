@@ -19,7 +19,8 @@ import (
 	"fmt"
 	"log"
 
-	datadogV1 "github.com/DataDog/datadog-api-client-go/api/v1/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV1"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -57,14 +58,15 @@ func (g *IntegrationSlackChannelGenerator) createResource(id string) terraformut
 // InitResources Generate TerraformResources from Datadog API,
 // from each slack channel create 1 TerraformResource.
 func (g *IntegrationSlackChannelGenerator) InitResources() error {
-	datadogClientV1 := g.Args["datadogClientV1"].(*datadogV1.APIClient)
-	authV1 := g.Args["authV1"].(context.Context)
+	datadogClient := g.Args["datadogClient"].(*datadog.APIClient)
+	auth := g.Args["auth"].(context.Context)
+	api := datadogV1.NewSlackIntegrationApi(datadogClient)
 
 	resources := []terraformutils.Resource{}
 	for _, filter := range g.Filter {
 		if filter.FieldPath == "account_name" && filter.IsApplicable("integration_slack_channel") {
 			for _, value := range filter.AcceptableValues {
-				slackChannels, _, err := datadogClientV1.SlackIntegrationApi.GetSlackIntegrationChannels(authV1, value)
+				slackChannels, _, err := api.GetSlackIntegrationChannels(auth, value)
 				if err != nil {
 					return err
 				}

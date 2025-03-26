@@ -28,8 +28,8 @@ type SynapseGenerator struct {
 }
 
 func (az *SynapseGenerator) listWorkspaces() ([]synapse.Workspace, error) {
-	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
-	client := synapse.NewWorkspacesClient(subscriptionID)
+	subscriptionID, resourceGroup, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := synapse.NewWorkspacesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	var (
 		iterator synapse.WorkspaceInfoListResultIterator
@@ -61,8 +61,8 @@ func (az *SynapseGenerator) appendWorkspace(workspace *synapse.Workspace) {
 }
 
 func (az *SynapseGenerator) appendSQLPools(workspace *synapse.Workspace, workspaceRg *ResourceID) error {
-	subscriptionID, _, authorizer := az.getClientArgs()
-	client := synapse.NewSQLPoolsClient(subscriptionID)
+	subscriptionID, _, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := synapse.NewSQLPoolsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
 	iterator, err := client.ListByWorkspaceComplete(ctx, workspaceRg.ResourceGroup, *workspace.Name)
@@ -81,8 +81,8 @@ func (az *SynapseGenerator) appendSQLPools(workspace *synapse.Workspace, workspa
 }
 
 func (az *SynapseGenerator) appendSparkPools(workspace *synapse.Workspace, workspaceRg *ResourceID) error {
-	subscriptionID, _, authorizer := az.getClientArgs()
-	client := synapse.NewBigDataPoolsClient(subscriptionID)
+	subscriptionID, _, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := synapse.NewBigDataPoolsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
 	iterator, err := client.ListByWorkspaceComplete(ctx, workspaceRg.ResourceGroup, *workspace.Name)
@@ -101,8 +101,8 @@ func (az *SynapseGenerator) appendSparkPools(workspace *synapse.Workspace, works
 }
 
 func (az *SynapseGenerator) appendFirewallRule(workspace *synapse.Workspace, workspaceRg *ResourceID) error {
-	subscriptionID, _, authorizer := az.getClientArgs()
-	client := synapse.NewIPFirewallRulesClient(subscriptionID)
+	subscriptionID, _, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := synapse.NewIPFirewallRulesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
 	iterator, err := client.ListByWorkspaceComplete(ctx, workspaceRg.ResourceGroup, *workspace.Name)
@@ -129,7 +129,8 @@ func (az *SynapseGenerator) appendManagedPrivateEndpoint(workspace *synapse.Work
 	if virtualNetworkName == "" || virtualNetworkName == "default" {
 		return nil
 	}
-	subscriptionID, _, authorizer := az.getClientArgs()
+	subscriptionID, _, authorizer, _ := az.getClientArgs()
+	// ManagedPrivateEndpointsClient does not have a ...WithBaseURI function, why is this different?
 	client := managedvirtualnetwork.NewManagedPrivateEndpointsClient(subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
@@ -149,8 +150,8 @@ func (az *SynapseGenerator) appendManagedPrivateEndpoint(workspace *synapse.Work
 }
 
 func (az *SynapseGenerator) listPrivateLinkHubs() ([]synapse.PrivateLinkHub, error) {
-	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
-	client := synapse.NewPrivateLinkHubsClient(subscriptionID)
+	subscriptionID, resourceGroup, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := synapse.NewPrivateLinkHubsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	var (
 		iterator synapse.PrivateLinkHubInfoListResultIterator

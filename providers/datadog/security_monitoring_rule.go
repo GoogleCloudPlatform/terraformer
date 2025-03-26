@@ -19,7 +19,8 @@ import (
 	"fmt"
 	"strconv"
 
-	datadogV2 "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV2"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -37,9 +38,17 @@ type SecurityMonitoringRuleGenerator struct {
 func (g *SecurityMonitoringRuleGenerator) createResources(rulesResponse []datadogV2.SecurityMonitoringRuleResponse) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	for _, rule := range rulesResponse {
-		if !rule.GetIsDefault() {
-			resourceName := rule.GetId()
-			resources = append(resources, g.createResource(resourceName, rule.GetIsEnabled()))
+		if rule.SecurityMonitoringSignalRuleResponse != nil {
+			if !rule.SecurityMonitoringSignalRuleResponse.GetIsDefault() {
+				resourceName := rule.SecurityMonitoringSignalRuleResponse.GetId()
+				resources = append(resources, g.createResource(resourceName, rule.SecurityMonitoringSignalRuleResponse.GetIsEnabled()))
+			}
+		}
+		if rule.SecurityMonitoringStandardRuleResponse != nil {
+			if !rule.SecurityMonitoringStandardRuleResponse.GetIsDefault() {
+				resourceName := rule.SecurityMonitoringStandardRuleResponse.GetId()
+				resources = append(resources, g.createResource(resourceName, rule.SecurityMonitoringStandardRuleResponse.GetIsEnabled()))
+			}
 		}
 	}
 
@@ -66,15 +75,16 @@ func (g *SecurityMonitoringRuleGenerator) createResource(ruleID string, ruleEnab
 func (g *SecurityMonitoringRuleGenerator) InitResources() error {
 	var securityMonitoringRuleResponses []datadogV2.SecurityMonitoringRuleResponse
 
-	datadogClientV2 := g.Args["datadogClientV2"].(*datadogV2.APIClient)
-	authV2 := g.Args["authV2"].(context.Context)
+	datadogClient := g.Args["datadogClient"].(*datadog.APIClient)
+	auth := g.Args["auth"].(context.Context)
+	api := datadogV2.NewSecurityMonitoringApi(datadogClient)
 
 	pageSize := int64(1000)
 	pageNumber := int64(0)
 	remaining := int64(1)
 
 	for remaining > int64(0) {
-		resp, _, err := datadogClientV2.SecurityMonitoringApi.ListSecurityMonitoringRules(authV2,
+		resp, _, err := api.ListSecurityMonitoringRules(auth,
 			*datadogV2.NewListSecurityMonitoringRulesOptionalParameters().
 				WithPageNumber(pageNumber).
 				WithPageSize(pageSize))

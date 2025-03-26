@@ -26,8 +26,8 @@ type DatabricksGenerator struct {
 }
 
 func (az *DatabricksGenerator) listWorkspaces() ([]databricks.Workspace, error) {
-	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
-	client := databricks.NewWorkspacesClient(subscriptionID)
+	subscriptionID, resourceGroup, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := databricks.NewWorkspacesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	var (
 		iterator databricks.WorkspaceListResultIterator
