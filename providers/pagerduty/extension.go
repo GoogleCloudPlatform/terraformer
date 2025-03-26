@@ -17,40 +17,56 @@ package pagerduty
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	pagerduty "github.com/heimweh/go-pagerduty/pagerduty"
+
+	"fmt"
 	"strings"
 )
 
-type BusinessServiceGenerator struct {
+type ExtensionGenerator struct {
 	PagerDutyService
 }
 
-func (g *BusinessServiceGenerator) createBusinessServiceResources(client *pagerduty.Client) error {
-	resp, _, err := client.BusinessServices.List()
-	if err != nil {
-		return err
-	}
+func (g *ExtensionGenerator) createExtensionResources(client *pagerduty.Client) error {
+	var offset = 0
+	options := pagerduty.ListExtensionsOptions{}
+	for {
+		options.Offset = offset
+		resp, _, err := client.Extensions.List(&options)
+		if err != nil {
+			return err
+		}
 
-	for _, service := range resp.BusinessServices {
-		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-			service.ID,
-			strings.Replace(service.Name, " ", "_", -1),
-			"pagerduty_business_service",
-			g.ProviderName,
-			[]string{},
-		))
+		for _, extension := range resp.Extensions {
+			g.Resources = append(g.Resources, terraformutils.NewResource(
+				extension.ID,
+				fmt.Sprintf("extension_%s_%s", strings.Replace(extension.Name, " ", "_", -1), extension.ID),
+				"pagerduty_extension",
+				g.ProviderName,
+				map[string]string{
+					"extension_schema": extension.ExtensionSchema.ID,
+				},
+				[]string{},
+				map[string]interface{}{},
+			))
+		}
+
+		if !resp.More {
+			break
+		}
+		offset += resp.Limit
 	}
 
 	return nil
 }
 
-func (g *BusinessServiceGenerator) InitResources() error {
+func (g *ExtensionGenerator) InitResources() error {
 	client, err := g.Client()
 	if err != nil {
 		return err
 	}
 
 	funcs := []func(*pagerduty.Client) error{
-		g.createBusinessServiceResources,
+		g.createExtensionResources,
 	}
 
 	for _, f := range funcs {

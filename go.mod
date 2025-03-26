@@ -164,6 +164,7 @@ require (
 	github.com/yandex-cloud/go-sdk v0.0.0-20220314105123-d0c2a928feb6
 	github.com/zclconf/go-cty v1.11.0
 	github.com/zorkian/go-datadog-api v2.30.0+incompatible
+	go.mongodb.org/mongo-driver v1.7.2 // indirect
 	golang.org/x/oauth2 v0.24.0
 	golang.org/x/text v0.22.0
 	gonum.org/v1/gonum v0.7.0
@@ -203,6 +204,7 @@ require (
 	github.com/Azure/go-autorest/autorest/validation v0.3.1 // indirect
 	github.com/Azure/go-autorest/logger v0.2.1 // indirect
 	github.com/Azure/go-autorest/tracing v0.6.0 // indirect
+	github.com/MakeNowJust/heredoc v1.0.0 // indirect
 	github.com/BurntSushi/toml v1.1.0 // indirect
 	github.com/IBM/go-sdk-core/v5 v5.10.1 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
@@ -314,25 +316,28 @@ require (
 	github.com/tomnomnom/linkheader v0.0.0-20180905144013-02ca5825eb80 // indirect
 	github.com/ulikunitz/xz v0.5.10 // indirect
 	github.com/vmihailenco/msgpack/v4 v4.3.12 // indirect
-	github.com/vmihailenco/tagparser v0.1.2 // indirect
-	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
-	github.com/xdg-go/scram v1.0.2 // indirect
-	github.com/xdg-go/stringprep v1.0.2 // indirect
-	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
-	go.mongodb.org/mongo-driver v1.7.5 // indirect
-	go.opencensus.io v0.24.0 // indirect
-	golang.org/x/crypto v0.35.0 // indirect
-	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
-	golang.org/x/net v0.36.0 // indirect
-	golang.org/x/sync v0.11.0 // indirect
-	golang.org/x/sys v0.30.0 // indirect
-	golang.org/x/term v0.29.0 // indirect
-	golang.org/x/time v0.8.0 // indirect
-	golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d // indirect
-	google.golang.org/appengine v1.6.8 // indirect
-	google.golang.org/grpc v1.67.3 // indirect
-	google.golang.org/protobuf v1.35.2 // indirect
-	gopkg.in/auth0.v5 v5.21.1
+  github.com/vmihailenco/tagparser v0.1.2 // indirect
+  github.com/xdg-go/pbkdf2 v1.0.0 // indirect
+  github.com/xdg-go/scram v1.0.2 // indirect
+  github.com/xdg-go/stringprep v1.0.2 // indirect
+  github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
+  go.mongodb.org/mongo-driver v1.7.5 // indirect
+  go.opencensus.io v0.24.0 // indirect
+  golang.org/x/crypto v0.35.0 // indirect
+  golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
+  golang.org/x/mod v0.4.1 // indirect
+  golang.org/x/net v0.36.0 // indirect
+  golang.org/x/sync v0.11.0 // indirect
+  golang.org/x/sys v0.30.0 // indirect
+  golang.org/x/term v0.29.0 // indirect
+  golang.org/x/time v0.8.0 // indirect
+  golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d // indirect
+  golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+  google.golang.org/appengine v1.6.8 // indirect
+  google.golang.org/grpc v1.67.3 // indirect
+  google.golang.org/protobuf v1.35.2 // indirect
+  gopkg.in/auth0.v5 v5.21.1
+  gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/go-playground/validator.v9 v9.31.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
@@ -345,6 +350,12 @@ require (
 	k8s.io/utils v0.0.0-20220210201930-3a6ce19ff2f9 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.1 // indirect
 	sigs.k8s.io/yaml v1.2.0 // indirect
+)
+replace (
+	github.com/heimweh/go-pagerduty v0.0.0-20210918035825-a01d951d4871 => ../go-pagerduty
+	gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
+	gopkg.in/ns1/ns1-go.v2 => github.com/ns1/ns1-go/v2 v2.6.5
+	github.com/tencentcloud/tencentcloud-sdk-go => github.com/tencentcloud/tencentcloud-sdk-go v1.0.392
 )
 
 require github.com/PuerkitoBio/rehttp v1.0.0 // indirect
@@ -378,7 +389,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/clbanning/mxj v1.8.4 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.2.0 // indirect
-	github.com/emicklei/go-restful v2.16.0+incompatible // indirect
 	github.com/go-jose/go-jose/v3 v3.0.3 // indirect
 	github.com/cncf/xds/go v0.0.0-20240905190251-b4127c9b8d78 // indirect
 	github.com/emicklei/go-restful v2.16.0+incompatible // indirect
@@ -390,7 +400,7 @@ require (
 	github.com/go-openapi/jsonreference v0.19.5 // indirect
 	github.com/go-openapi/swag v0.19.14 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.2 // indirect
-  github.com/goccy/go-json v0.10.2 // indirect
+	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/google/gnostic v0.5.7-v3refs // indirect
 	github.com/google/s2a-go v0.1.8 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.4 // indirect
@@ -420,41 +430,3 @@ require (
 	k8s.io/kube-openapi v0.0.0-20220328201542-3ee0da9b0b42 // indirect
 	sigs.k8s.io/json v0.0.0-20211208200746-9f7c6b3444d2 // indirect
 )
-
-require (
-	github.com/aws/aws-sdk-go v1.44.122
-	github.com/aws/aws-sdk-go-v2/service/directconnect v1.30.1
-	github.com/gofrs/uuid/v3 v3.1.2
-	github.com/ionos-cloud/sdk-go-cert-manager v1.0.0
-	github.com/ionos-cloud/sdk-go-container-registry v1.0.0
-	github.com/ionos-cloud/sdk-go-dataplatform v1.0.1
-	github.com/ionos-cloud/sdk-go-dns v1.1.1
-	github.com/ionos-cloud/sdk-go-logging v1.0.1
-	github.com/okta/okta-sdk-golang/v5 v5.0.1
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/as v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cbs v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdb v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cdn v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cfs v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/clb v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.694
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/cvm v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/dnspod v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/es v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/gaap v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/mongodb v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/pts v1.0.694
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/redis v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/scf v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ses v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ssl v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tat v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/tcaplusdb v1.0.392
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/vpc v1.0.392
-)
-
-replace gopkg.in/jarcoal/httpmock.v1 => github.com/jarcoal/httpmock v1.0.5
-
-replace gopkg.in/ns1/ns1-go.v2 => github.com/ns1/ns1-go/v2 v2.6.5
-
-replace github.com/tencentcloud/tencentcloud-sdk-go => github.com/tencentcloud/tencentcloud-sdk-go v1.0.392

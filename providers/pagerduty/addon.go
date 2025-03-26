@@ -17,24 +17,26 @@ package pagerduty
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	pagerduty "github.com/heimweh/go-pagerduty/pagerduty"
+
+	"fmt"
 	"strings"
 )
 
-type BusinessServiceGenerator struct {
+type AddonGenerator struct {
 	PagerDutyService
 }
 
-func (g *BusinessServiceGenerator) createBusinessServiceResources(client *pagerduty.Client) error {
-	resp, _, err := client.BusinessServices.List()
+func (g *AddonGenerator) createAddonResources(client *pagerduty.Client) error {
+	resp, _, err := client.Addons.List(&pagerduty.ListAddonsOptions{})
 	if err != nil {
 		return err
 	}
 
-	for _, service := range resp.BusinessServices {
+	for _, addon := range resp.Addons {
 		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-			service.ID,
-			strings.Replace(service.Name, " ", "_", -1),
-			"pagerduty_business_service",
+			addon.ID,
+			fmt.Sprintf("addon_%s_%s", strings.Replace(addon.Name, " ", "_", -1), addon.ID),
+			"pagerduty_addon",
 			g.ProviderName,
 			[]string{},
 		))
@@ -43,14 +45,14 @@ func (g *BusinessServiceGenerator) createBusinessServiceResources(client *pagerd
 	return nil
 }
 
-func (g *BusinessServiceGenerator) InitResources() error {
+func (g *AddonGenerator) InitResources() error {
 	client, err := g.Client()
 	if err != nil {
 		return err
 	}
 
 	funcs := []func(*pagerduty.Client) error{
-		g.createBusinessServiceResources,
+		g.createAddonResources,
 	}
 
 	for _, f := range funcs {

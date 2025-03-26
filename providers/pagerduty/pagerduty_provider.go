@@ -63,13 +63,19 @@ func (PagerDutyProvider) GetResourceConnections() map[string]map[string][]string
 
 func (p *PagerDutyProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
 	return map[string]terraformutils.ServiceGenerator{
-		"business_service":  &BusinessServiceGenerator{},
-		"escalation_policy": &EscalationPolicyGenerator{},
-		"ruleset":           &RulesetGenerator{},
-		"schedule":          &ScheduleGenerator{},
-		"service":           &ServiceGenerator{},
-		"team":              &TeamGenerator{},
-		"user":              &UserGenerator{},
+		"addon":               &AddonGenerator{},
+		"business_service":    &BusinessServiceGenerator{},
+		"escalation_policy":   &EscalationPolicyGenerator{},
+		"extension":           &ExtensionGenerator{},
+		"maintenance_window":  &MaintenanceWindowGenerator{},
+		"response_play":       &ResponsePlayGenerator{},
+		"ruleset":             &RulesetGenerator{},
+		"ruleset_rule":        &RulesetRuleGenerator{},
+		"schedule":            &ScheduleGenerator{},
+		"service":             &ServiceGenerator{},
+		"service_integration": &ServiceIntegrationGenerator{},
+		"team":                &TeamGenerator{},
+		"user":                &UserGenerator{},
 	}
 }
 

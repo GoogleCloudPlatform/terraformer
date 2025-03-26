@@ -17,6 +17,7 @@ package pagerduty
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	pagerduty "github.com/heimweh/go-pagerduty/pagerduty"
+	"strings"
 )
 
 type RulesetGenerator struct {
@@ -32,7 +33,7 @@ func (g *RulesetGenerator) createRulesetResources(client *pagerduty.Client) erro
 	for _, ruleset := range resp.Rulesets {
 		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 			ruleset.ID,
-			ruleset.Name,
+			strings.Replace(ruleset.Name, " ", "_", -1),
 			"pagerduty_ruleset",
 			g.ProviderName,
 			[]string{},

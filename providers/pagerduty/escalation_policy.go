@@ -17,6 +17,7 @@ package pagerduty
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	pagerduty "github.com/heimweh/go-pagerduty/pagerduty"
+	"strings"
 )
 
 type EscalationPolicyGenerator struct {
@@ -36,7 +37,7 @@ func (g *EscalationPolicyGenerator) createEscalationPolicyResources(client *page
 		for _, policy := range resp.EscalationPolicies {
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 				policy.ID,
-				policy.Name,
+				strings.Replace(policy.Name, " ", "_", -1),
 				"pagerduty_escalation_policy",
 				g.ProviderName,
 				[]string{},
