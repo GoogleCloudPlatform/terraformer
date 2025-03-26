@@ -91,20 +91,6 @@ Tag filters are order specific. For example, if your monitor has tags (in the or
     * `datadog_dashboard_list`
 *   `downtime`
     * `datadog_downtime`
-*   `logs_archive`
-    * `datadog_logs_archive`
-*   `logs_archive_order`
-    * `datadog_logs_archive_order`
-*   `logs_custom_pipeline`
-    * `datadog_logs_custom_pipeline`
-*   `logs_integration_pipeline`
-    * `datadog_logs_integration_pipeline`
-*   `logs_pipeline_order`
-    * `datadog_logs_pipeline_order`
-*   `logs_index`
-    * `datadog_logs_index`
-*   `logs_index_order`
-    * `datadog_logs_index_order`
 *   `integration_aws`
     * `datadog_integration_aws`
 *   `integration_aws_lambda_arn`
@@ -124,6 +110,20 @@ Tag filters are order specific. For example, if your monitor has tags (in the or
 *   `integration_slack_channel`
     * `datadog_integration_slack_channel`
         * **_NOTE:_** Importing resource requires resource ID or `account_name` to be passed via [Filter][1] option
+*   `logs_archive`
+    * `datadog_logs_archive`
+*   `logs_archive_order`
+    * `datadog_logs_archive_order`
+*   `logs_custom_pipeline`
+    * `datadog_logs_custom_pipeline`
+*   `logs_index`
+    * `datadog_logs_index`
+*   `logs_index_order`
+    * `datadog_logs_index_order`
+*   `logs_integration_pipeline`
+    * `datadog_logs_integration_pipeline`
+*   `logs_pipeline_order`
+    * `datadog_logs_pipeline_order`
 *   `metric_metadata`
     * `datadog_metric_metadata`
         * **_NOTE:_** Importing resource requires resource ID's to be passed via [Filter][1] option
@@ -137,13 +137,13 @@ Tag filters are order specific. For example, if your monitor has tags (in the or
     * `datadog_security_monitoring_rule`
 *   `service_level_objective`
     * `datadog_service_level_objective`
-*   `synthetics_test`
-    * `datadog_synthetics_test`
 *   `synthetics_global_variable`
     * `datadog_synthetics_global_variable`
         * **_NOTE:_** Importing resource requires resource ID's to be passed via [Filter][1] option
 *   `synthetics_private_location`
     * `datadog_synthetics_private_location`
+*   `synthetics_test`
+    * `datadog_synthetics_test`
 *   `user`
     * `datadog_user`
 
