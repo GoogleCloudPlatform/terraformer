@@ -152,6 +152,8 @@ func (p *IBMProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"ibm_is_instance_template":          &InstanceTemplateGenerator{},
 		"ibm_function":                      &CloudFunctionGenerator{},
 		"ibm_cd_toolchain":                  &CdToolchainGenerator{},
+		"ibm_cd_toolchain_tool_pipeline":    &CdToolchainToolPipelineGenerator{},
+		"ibm_cd_tekton_pipeline":            &CdTektonPipelineGenerator{},
 		"ibm_private_dns":                   &privateDNSTemplateGenerator{},
 		"ibm_certificate_manager":           &CMGenerator{},
 		"ibm_direct_link":                   &DLGenerator{},
