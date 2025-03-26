@@ -1,6 +1,6 @@
 module github.com/GoogleCloudPlatform/terraformer
 
-go 1.22.0
+go 1.24.0
 
 require (
 	cloud.google.com/go v0.116.0 // indirect
