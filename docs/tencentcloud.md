@@ -11,8 +11,8 @@ $ terraformer import tencentcloud --resources=cvm,cbs --regions=ap-guangzhou
 List of supported TencentCloud services:
 
 *    `as`
-     * `tencentcloud_as_scaling_group`
      * `tencentcloud_as_scaling_config`
+     * `tencentcloud_as_scaling_group`
 *    `cbs`
      * `tencentcloud_cbs_storage`
 *    `cdn`
@@ -51,5 +51,5 @@ List of supported TencentCloud services:
      * `tencentcloud_tcaplus_cluster`
 *    `vpc`
      * `tencentcloud_vpc`
-*    `vpc`
+*    `vpn`
      * `tencentcloud_vpn_gateway`

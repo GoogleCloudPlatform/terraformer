@@ -11,20 +11,19 @@ $ terraformer import auth0 --resources=auth0_rule,auth0_user
 
 List of supported Auth0 services:
 
-
 * `auth0_action`
+* `auth0_branding`
 * `auth0_client`
 * `auth0_client_grant`
+* `auth0_custom_domain`
+* `auth0_email`
 * `auth0_hook`
+* `auth0_log_stream`
+* `auth0_prompt`
 * `auth0_resource_server`
 * `auth0_role`
 * `auth0_rule`
 * `auth0_rule_config`
+* `auth0_tenant`
 * `auth0_trigger_binding`
 * `auth0_user`
-* `auth0_branding`
-* `auth0_custom_domain`
-* `auth0_email`
-* `auth0_prompt`
-* `auth0_log_stream`
-* `auth0_tenant`

@@ -16,7 +16,7 @@ List of supported Fastly resources:
     * `fastly_service_dictionary_items_v1`
     * `fastly_service_dynamic_snippet_content_v1`
     * `fastly_service_v1`
-*   `user`
-    * `fastly_user_v1`
 *   `tls_subscription`
     * `fastly_tls_subscription`
+*   `user`
+    * `fastly_user_v1`

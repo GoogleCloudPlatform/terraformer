@@ -16,12 +16,12 @@ export HONEYCOMB_API_KEY=MYAPIKEY
 * `derived_column`
   * `honeycombio_derived_column`
 * `trigger`
-  * `honeycombio_trigger`
   * `honeycombio_query`
+  * `honeycombio_trigger`
 * `slo`
-  * `honeycombio_slo`
   * `honeycombio_burn_alert`
   * `honeycombio_derived_column`
+  * `honeycombio_slo`
 
 #### A note about Environment-wide assets
 

@@ -25,12 +25,12 @@ The list of usable environment variables is the same as the [pango go-client](ht
 Here is the list of resources which are currently supported:
 
 *   `firewall_device_config`
-    * `panos_general_settings`
-    * `panos_telemetry` 
     * `panos_email_server_profile`
+    * `panos_general_settings`
     * `panos_http_server_profile`
     * `panos_snmptrap_server_profile`
     * `panos_syslog_server_profile`
+    * `panos_telemetry`
 *   `firewall_networking`
     * `panos_aggregate_interface`
     * `panos_bfd_profile`
@@ -69,21 +69,21 @@ Here is the list of resources which are currently supported:
     * `panos_zone`
 *   `firewall_objects`
     * `panos_address_group`
-    * `panos_administrative_tag`
-    * `panos_application_group`
-    * `panos_application_object`
-    * `panos_edl`
-    * `panos_log_forwarding_profile`
-    * `panos_service_group`
-    * `panos_service_object`
     * `panos_address_object`
+    * `panos_administrative_tag`
     * `panos_anti_spyware_security_profile`
     * `panos_antivirus_security_profile`
+    * `panos_application_group`
+    * `panos_application_object`
     * `panos_custom_data_pattern_object`
     * `panos_data_filtering_security_profile`
     * `panos_dos_protection_profile`
     * `panos_dynamic_user_group`
+    * `panos_edl`
     * `panos_file_blocking_security_profile`
+    * `panos_log_forwarding_profile`
+    * `panos_service_group`
+    * `panos_service_object`
     * `panos_url_filtering_security_profile`
     * `panos_vulnerability_security_profile`
     * `panos_wildfire_analysis_security_profile`
@@ -138,14 +138,6 @@ Here is the list of resources which are currently supported:
     * `panos_panorama_vlan_interface`
     * `panos_panorama_zone`
 *   `panorama_objects`
-    * `panos_panorama_address_group`
-    * `panos_panorama_administrative_tag`
-    * `panos_panorama_application_group`
-    * `panos_panorama_application_object`
-    * `panos_panorama_edl`
-    * `panos_panorama_log_forwarding_profile`
-    * `panos_panorama_service_group`
-    * `panos_panorama_service_object`
     * `panos_address_object`
     * `panos_anti_spyware_security_profile`
     * `panos_antivirus_security_profile`
@@ -154,6 +146,14 @@ Here is the list of resources which are currently supported:
     * `panos_dos_protection_profile`
     * `panos_dynamic_user_group`
     * `panos_file_blocking_security_profile`
+    * `panos_panorama_address_group`
+    * `panos_panorama_administrative_tag`
+    * `panos_panorama_application_group`
+    * `panos_panorama_application_object`
+    * `panos_panorama_edl`
+    * `panos_panorama_log_forwarding_profile`
+    * `panos_panorama_service_group`
+    * `panos_panorama_service_object`
     * `panos_url_filtering_security_profile`
     * `panos_vulnerability_security_profile`
     * `panos_wildfire_analysis_security_profile`

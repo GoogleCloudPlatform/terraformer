@@ -50,11 +50,11 @@ Heroku Terraformer resources with the terraform-provider-heroku resources they i
 *   `account_feature`
     * `heroku_account_feature`
 *   `app`
+    * `heroku_addon`
+    * `heroku_addon_attachment` (includes attachments to other apps)
     * `heroku_app`
     * `heroku_app_feature`
     * `heroku_app_webhook`
-    * `heroku_addon`
-    * `heroku_addon_attachment` (includes attachments to other apps)
     * `heroku_domain`
     * `heroku_drain`
     * `heroku_formation`

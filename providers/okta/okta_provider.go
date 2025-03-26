@@ -20,6 +20,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils/providerwrapper"
+	"github.com/zclconf/go-cty/cty"
 )
 
 type OktaProvider struct { //nolint
@@ -127,4 +128,13 @@ func (p *OktaProvider) GetSupportedService() map[string]terraformutils.ServiceGe
 		"okta_user_schema":               &UserSchemaPropertyGenerator{},
 		"okta_app_user_schema":           &AppUserSchemaPropertyGenerator{},
 	}
+}
+
+// GetConfig returns the provider configuration for Okta
+func (p *OktaProvider) GetConfig() cty.Value {
+	return cty.ObjectVal(map[string]cty.Value{
+		"base_url":  cty.StringVal(p.baseURL),
+		"api_token": cty.StringVal(p.apiToken),
+		"org_name":  cty.StringVal(p.orgName),
+	})
 }

@@ -201,13 +201,13 @@ func (p *AWSProvider) Init(args []string) error {
 		}
 	}
 
-	if p.profile != "default" && p.profile != "" {
+	if p.profile != "" && p.profile != "default" {
+		envVar := "AWS_PROFILE"
 		if enableSharedConfig {
-			err = os.Setenv("AWS_DEFAULT_PROFILE", p.profile)
-		} else {
-			err = os.Setenv("AWS_PROFILE", p.profile)
+			envVar = "AWS_DEFAULT_PROFILE"
 		}
-		if err != nil {
+
+		if err := os.Setenv(envVar, p.profile); err != nil {
 			return err
 		}
 	}

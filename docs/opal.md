@@ -62,13 +62,13 @@ $ terraform plan # No changes. Your infrastructure matches the configuration.
 
 ## Supported Opal resources:
 
+*   `group`
+    * `opal_group`
+*   `message_channels`
+    * `opal_message_channels`
+*   `on_call_schedules`
+    * `opal_on_call_schedules`
 *   `owner`
     * `opal_owner`
 *   `resource`
     * `opal_resource`
-*   `group`
-    * `opal_group`
-*   `on_call_schedules`
-    * `opal_on_call_schedules`
-*   `message_channels`
-    * `opal_message_channels`

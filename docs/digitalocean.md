@@ -45,3 +45,5 @@ List of supported DigitalOcean resources:
     * `digitalocean_volume`
 *   `volume_snapshot`
     * `digitalocean_volume_snapshot`
+*   `vpc`
+    * `digitalocean_vpc`

@@ -20,11 +20,11 @@ Supports only organizational resources. List of supported resources:
 *   `organization_webhooks`
     * `github_organization_webhook`
 *   `repositories`
-    * `github_repository`
-    * `github_repository_webhook`
     * `github_branch_protection`
+    * `github_repository`
     * `github_repository_collaborator`
     * `github_repository_deploy_key`
+    * `github_repository_webhook`
 *   `teams`
     * `github_team`
     * `github_team_membership`

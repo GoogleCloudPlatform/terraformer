@@ -21,7 +21,7 @@ https://www.googleapis.com/auth/gmail.settings.basic
 
 List of supported GmailFilter resources:
 
-*   `label`
-    * `gmailfilter_label`
 *   `filter`
     * `gmailfilter_filter`
+*   `label`
+    * `gmailfilter_label`

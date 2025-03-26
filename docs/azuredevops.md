@@ -14,12 +14,12 @@ export AZDO_PERSONAL_ACCESS_TOKEN="<Personal Access Token>"
 
 ## List of supported Azure DevOps resources
 
-* `project`
-  * `azuredevops_project`
-* `group`
-  * `azuredevops_group`
 * `git_repository`
   * `azuredevops_git_repository`
+* `group`
+  * `azuredevops_group`
+* `project`
+  * `azuredevops_project`
 
 ## Notes
 
