@@ -38,7 +38,7 @@ type CloudFunctionGenerator struct {
 func (g CloudFunctionGenerator) loadPackages(namespace, pkgName string) terraformutils.Resource {
 	resource := terraformutils.NewResource(
 		fmt.Sprintf("%s:%s", namespace, pkgName),
-		pkgName,
+		normalizeResourceName(fmt.Sprintf("%s_%s", namespace, pkgName), false),
 		"ibm_function_package",
 		"ibm",
 		map[string]string{},
@@ -50,7 +50,7 @@ func (g CloudFunctionGenerator) loadPackages(namespace, pkgName string) terrafor
 func (g CloudFunctionGenerator) loadRules(namespace, ruleName string) terraformutils.Resource {
 	resource := terraformutils.NewResource(
 		fmt.Sprintf("%s:%s", namespace, ruleName),
-		normalizeResourceName(ruleName, false),
+		normalizeResourceName(ruleName, true),
 		"ibm_function_rule",
 		"ibm",
 		map[string]string{},
@@ -62,7 +62,7 @@ func (g CloudFunctionGenerator) loadRules(namespace, ruleName string) terraformu
 func (g CloudFunctionGenerator) loadTriggers(namespace, triggerName string) terraformutils.Resource {
 	resource := terraformutils.NewResource(
 		fmt.Sprintf("%s:%s", namespace, triggerName),
-		normalizeResourceName(triggerName, false),
+		normalizeResourceName(triggerName, true),
 		"ibm_function_trigger",
 		"ibm",
 		map[string]string{},
@@ -181,11 +181,11 @@ func (g *CloudFunctionGenerator) InitResources() error {
 			if len(parts) == 2 {
 				var pkgDependsOn []string
 				pkgDependsOn = append(pkgDependsOn,
-					"ibm_function_package."+terraformutils.TfSanitize(parts[1]))
+					"ibm_function_package."+terraformutils.TfSanitize(fmt.Sprintf("%s_%s", n.GetName(), parts[1])))
 				actionID = fmt.Sprintf("%s/%s", parts[1], a.Name)
 				g.Resources = append(g.Resources, terraformutils.NewResource(
 					fmt.Sprintf("%s:%s", n.GetName(), actionID),
-					normalizeResourceName(a.Name, false),
+					normalizeResourceName(a.Name, true),
 					"ibm_function_action",
 					"ibm",
 					map[string]string{},
@@ -196,7 +196,7 @@ func (g *CloudFunctionGenerator) InitResources() error {
 			} else {
 				g.Resources = append(g.Resources, terraformutils.NewResource(
 					fmt.Sprintf("%s:%s", n.GetName(), a.Name),
-					normalizeResourceName(a.Name, false),
+					normalizeResourceName(a.Name, true),
 					"ibm_function_action",
 					"ibm",
 					map[string]string{},
@@ -236,5 +236,24 @@ func (g *CloudFunctionGenerator) InitResources() error {
 		}
 	}
 
+	return nil
+}
+
+func (g *CloudFunctionGenerator) PostConvertHook() error {
+	for i, r := range g.Resources {
+		if r.InstanceInfo.Type != "ibm_function_action" {
+			continue
+		}
+		for _, ri := range g.Resources {
+			if ri.InstanceInfo.Type != "ibm_function_package" {
+				continue
+			}
+			if len(strings.Split(r.InstanceState.Attributes["id"], "/")) == 2 {
+				if strings.Split(r.InstanceState.Attributes["id"], "/")[0] == ri.InstanceState.Attributes["id"] {
+					g.Resources[i].Item["name"] = "${ibm_function_package." + ri.ResourceName + ".name}" + "/" + r.InstanceState.Attributes["action_id"]
+				}
+			}
+		}
+	}
 	return nil
 }

@@ -26,8 +26,8 @@ type SSHPublicKeyGenerator struct {
 }
 
 func (az *SSHPublicKeyGenerator) listResources() ([]compute.SSHPublicKeyResource, error) {
-	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
-	client := compute.NewSSHPublicKeysClient(subscriptionID)
+	subscriptionID, resourceGroup, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := compute.NewSSHPublicKeysClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	var (
 		iterator compute.SSHPublicKeysGroupListResultIterator

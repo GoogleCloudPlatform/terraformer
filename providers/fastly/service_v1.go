@@ -16,7 +16,14 @@ package fastly
 
 import (
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/fastly/go-fastly/v3/fastly"
+	"github.com/fastly/go-fastly/v7/fastly"
+)
+
+const (
+	// ServiceTypeVCL is the type for VCL services.
+	ServiceTypeVCL = "vcl"
+	// ServiceTypeWasm is the type for Wasm services.
+	ServiceTypeWasm = "wasm"
 )
 
 type ServiceV1Generator struct {
@@ -29,12 +36,21 @@ func (g *ServiceV1Generator) loadServices(client *fastly.Client) ([]*fastly.Serv
 		return nil, err
 	}
 	for _, service := range services {
-		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-			service.ID,
-			service.ID,
-			"fastly_service_v1",
-			"fastly",
-			[]string{}))
+		if service.Type == ServiceTypeVCL {
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+				service.ID,
+				service.ID,
+				"fastly_service_v1",
+				"fastly",
+				[]string{}))
+		} else if service.Type == ServiceTypeWasm {
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+				service.ID,
+				service.ID,
+				"fastly_service_compute",
+				"fastly",
+				[]string{}))
+		}
 	}
 	return services, nil
 }

@@ -159,3 +159,12 @@ func contains(s []string, e string) bool {
 	}
 	return false
 }
+
+func mapExists(mapString map[string]string, item map[string]interface{}, element string) bool {
+	if _, ok := item[element]; ok {
+		if _, ok2 := mapString[item[element].(string)]; ok2 {
+			return true
+		}
+	}
+	return false
+}

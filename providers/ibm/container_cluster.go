@@ -17,18 +17,29 @@ package ibm
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	bluemix "github.com/IBM-Cloud/bluemix-go"
 	"github.com/IBM-Cloud/bluemix-go/api/container/containerv1"
+	v1 "github.com/IBM-Cloud/bluemix-go/api/container/containerv1"
+	"github.com/IBM-Cloud/bluemix-go/api/container/containerv2"
 	"github.com/IBM-Cloud/bluemix-go/session"
+)
+
+const (
+	defaultWorkerPool = "default"
+	hardwareShared    = "shared"
+	hardwareDedicated = "dedicated"
+	isolationPublic   = "public"
+	isolationPrivate  = "private"
 )
 
 type ContainerClusterGenerator struct {
 	IBMService
 }
 
-func (g ContainerClusterGenerator) loadcluster(clustersID, clusterName string) terraformutils.Resource {
+func (g ContainerClusterGenerator) loadcluster(clustersID, clusterName, datacenter, hardware string) terraformutils.Resource {
 	resource := terraformutils.NewResource(
 		clustersID,
 		normalizeResourceName(clusterName, false),
@@ -38,6 +49,8 @@ func (g ContainerClusterGenerator) loadcluster(clustersID, clusterName string) t
 			"force_delete_storage":   "true",
 			"update_all_workers":     "false",
 			"wait_for_worker_update": "true",
+			"datacenter":             datacenter,
+			"hardware":               hardware,
 		},
 		[]string{},
 		map[string]interface{}{})
@@ -45,10 +58,11 @@ func (g ContainerClusterGenerator) loadcluster(clustersID, clusterName string) t
 	resource.IgnoreKeys = append(resource.IgnoreKeys,
 		"^worker_num$", "^region$",
 	)
+
 	return resource
 }
 
-func (g ContainerClusterGenerator) loadWorkerPools(clustersID, poolID, poolName string, dependsOn []string) terraformutils.Resource {
+func (g ContainerClusterGenerator) loadWorkerPools(clustersID, poolID, poolName string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s", clustersID, poolID),
 		normalizeResourceName(poolName, true),
@@ -56,27 +70,42 @@ func (g ContainerClusterGenerator) loadWorkerPools(clustersID, poolID, poolName 
 		"ibm",
 		map[string]string{},
 		[]string{},
-		map[string]interface{}{
-			"depends_on": dependsOn,
-		})
+		map[string]interface{}{})
+
 	return resources
 }
 
-func (g ContainerClusterGenerator) loadWorkerPoolZones(clustersID, poolID, zoneID string, dependsOn []string) terraformutils.Resource {
+func (g ContainerClusterGenerator) loadWorkerPoolZones(clustersID, poolID, zoneID string) terraformutils.Resource {
 	resources := terraformutils.NewResource(
 		fmt.Sprintf("%s/%s/%s", clustersID, poolID, zoneID),
 		normalizeResourceName("ibm_container_worker_pool_zone_attachment", true),
 		"ibm_container_worker_pool_zone_attachment",
 		"ibm",
+		map[string]string{
+			"wait_till_albs": "true",
+		},
+		[]string{},
+		map[string]interface{}{})
+	return resources
+}
+
+func (g ContainerClusterGenerator) loadNlbDNS(clusterID string, nlbIPs []interface{}) terraformutils.Resource {
+	resources := terraformutils.NewResource(
+		clusterID,
+		normalizeResourceName(clusterID, true),
+		"ibm_container_nlb_dns",
+		"ibm",
 		map[string]string{},
 		[]string{},
 		map[string]interface{}{
-			"depends_on": dependsOn,
+			"nlb_ips": nlbIPs,
 		})
+
 	return resources
 }
 
 func (g *ContainerClusterGenerator) InitResources() error {
+	region := g.Args["region"].(string)
 	bmxConfig := &bluemix.Config{
 		BluemixAPIKey: os.Getenv("IC_API_KEY"),
 	}
@@ -94,29 +123,112 @@ func (g *ContainerClusterGenerator) InitResources() error {
 		return err
 	}
 
-	for _, cs := range clusters {
-		g.Resources = append(g.Resources, g.loadcluster(cs.ID, cs.Name))
-		clusterResourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
-		workerPools, err := client.WorkerPools().ListWorkerPools(cs.ID, containerv1.ClusterTargetHeader{
-			ResourceGroup: cs.ResourceGroupID,
-		})
-		if err != nil {
-			return err
-		}
-		for _, pool := range workerPools {
-			var dependsOn []string
-			dependsOn = append(dependsOn,
-				"ibm_container_cluster."+clusterResourceName)
-			g.Resources = append(g.Resources, g.loadWorkerPools(cs.ID, pool.ID, pool.Name, dependsOn))
-			poolResourceName := g.Resources[len(g.Resources)-1:][0].ResourceName
+	clientNlb, err := containerv2.New(sess)
+	if err != nil {
+		return err
+	}
 
-			dependsOn = append(dependsOn,
-				"ibm_container_worker_pool."+poolResourceName)
-			zones := pool.Zones
-			for _, zone := range zones {
-				g.Resources = append(g.Resources, g.loadWorkerPoolZones(cs.ID, pool.ID, zone.ID, dependsOn))
+	for _, cs := range clusters {
+		if region == cs.Region {
+			hardware := hardwareShared
+
+			workerPools, err := client.WorkerPools().ListWorkerPools(cs.ID, containerv1.ClusterTargetHeader{
+				ResourceGroup: cs.ResourceGroupID,
+			})
+			if err != nil {
+				return err
+			}
+
+			if len(workerPools) > 0 && workerPoolContains(workerPools, defaultWorkerPool) {
+				hardware = workerPools[0].Isolation
+				switch strings.ToLower(hardware) {
+				case "":
+					hardware = hardwareShared
+				case isolationPrivate:
+					hardware = hardwareDedicated
+				case isolationPublic:
+					hardware = hardwareShared
+				}
+			}
+
+			g.Resources = append(g.Resources, g.loadcluster(cs.ID, cs.Name, cs.DataCenter, hardware))
+
+			for _, pool := range workerPools {
+				g.Resources = append(g.Resources, g.loadWorkerPools(cs.ID, pool.ID, pool.Name))
+
+				zones := pool.Zones
+				for _, zone := range zones {
+					g.Resources = append(g.Resources, g.loadWorkerPoolZones(cs.ID, pool.ID, zone.ID))
+				}
+			}
+
+			nlbData, err := clientNlb.NlbDns().GetNLBDNSList(cs.Name)
+			if err != nil {
+				return err
+			}
+
+			for _, data := range nlbData {
+				g.Resources = append(g.Resources, g.loadNlbDNS(data.Nlb.Cluster, data.Nlb.NlbIPArray))
 			}
 		}
 	}
+
+	return nil
+}
+
+func workerPoolContains(workerPools []v1.WorkerPoolResponse, pool string) bool {
+	for _, workerPool := range workerPools {
+		if workerPool.Name == pool {
+			return true
+		}
+	}
+	return false
+}
+
+func (g *ContainerClusterGenerator) PostConvertHook() error {
+	for _, r := range g.Resources {
+		if r.InstanceInfo.Type != "ibm_container_cluster" {
+			continue
+		}
+		for i, wp := range g.Resources {
+			if wp.InstanceInfo.Type != "ibm_container_worker_pool" {
+				continue
+			}
+
+			if wp.InstanceState.Attributes["cluster"] == r.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["cluster"] = "${ibm_container_cluster." + r.ResourceName + ".id}"
+			}
+		}
+
+		for i, wpZoneAttach := range g.Resources {
+			if wpZoneAttach.InstanceInfo.Type != "ibm_container_worker_pool_zone_attachment" {
+				continue
+			}
+
+			if wpZoneAttach.InstanceState.Attributes["cluster"] == r.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["cluster"] = "${ibm_container_cluster." + r.ResourceName + ".id}"
+			}
+		}
+
+		for i, wp := range g.Resources {
+			if wp.InstanceInfo.Type != "ibm_container_worker_pool" {
+				continue
+			}
+			if wp.InstanceState.Attributes["cluster"] == r.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["cluster"] = "${ibm_container_cluster." + r.ResourceName + ".id}"
+			}
+		}
+
+		for i, nlb := range g.Resources {
+			if nlb.InstanceInfo.Type != "ibm_container_nlb_dns" {
+				continue
+			}
+
+			if nlb.InstanceState.Attributes["cluster"] == r.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["cluster"] = "${ibm_container_cluster." + r.ResourceName + ".id}"
+			}
+		}
+	}
+
 	return nil
 }

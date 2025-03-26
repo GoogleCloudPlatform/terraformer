@@ -4,7 +4,7 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//      http://www.apache.org/licenses/LICENSE-2.0
+//	http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,7 +15,6 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"sort"
@@ -52,6 +51,7 @@ type ImportOptions struct {
 	Filter        []string
 	Plan          bool `json:"-"`
 	Output        string
+	NoSort        bool
 	RetryCount    int
 	RetrySleepMs  int
 }
@@ -72,6 +72,11 @@ func newImportCmd() *cobra.Command {
 	}
 
 	cmd.AddCommand(newCmdPlanImporter(options))
+	cmd.AddCommand(&cobra.Command{
+		Use:   "no-sort",
+		Short: "Don't sort resources",
+		Long:  "Don't sort resources",
+	})
 	for _, subcommand := range providerImporterSubcommands() {
 		providerCommand := subcommand(options)
 		_ = providerCommand.MarkPersistentFlagRequired("resources")
@@ -119,7 +124,7 @@ func initOptionsAndWrapper(provider terraformutils.ProviderGenerator, options Im
 		options.Resources = providerServices(provider)
 	}
 
-	if options.Excludes != nil {
+	if len(options.Excludes) > 0 {
 		localSlice := []string{}
 		for _, r := range options.Resources {
 			remove := false
@@ -247,7 +252,7 @@ func printService(provider terraformutils.ProviderGenerator, serviceName string,
 	log.Println(provider.GetName() + " save " + serviceName)
 	// Print HCL files for Resources
 	path := Path(options.PathPattern, provider.GetName(), serviceName, options.PathOutput)
-	err := terraformoutput.OutputHclFiles(resources, provider, path, serviceName, options.Compact, options.Output)
+	err := terraformoutput.OutputHclFiles(resources, provider, path, serviceName, options.Compact, options.Output, !options.NoSort)
 	if err != nil {
 		return err
 	}
@@ -265,7 +270,7 @@ func printService(provider terraformutils.ProviderGenerator, serviceName string,
 			return err
 		}
 		// create Bucket file
-		if bucketStateDataFile, err := terraformutils.Print(bucket.BucketGetTfData(path), map[string]struct{}{}, options.Output); err == nil {
+		if bucketStateDataFile, err := terraformutils.Print(bucket.BucketGetTfData(path), map[string]struct{}{}, options.Output, !options.NoSort); err == nil {
 			terraformoutput.PrintFile(path+"/bucket.tf", bucketStateDataFile)
 		}
 	} else {
@@ -274,7 +279,7 @@ func printService(provider terraformutils.ProviderGenerator, serviceName string,
 		} else {
 			log.Println(provider.GetName() + " save tfstate for " + serviceName)
 		}
-		if err := ioutil.WriteFile(path+"/terraform.tfstate", tfStateFile, os.ModePerm); err != nil {
+		if err := os.WriteFile(path+"/terraform.tfstate", tfStateFile, os.ModePerm); err != nil {
 			return err
 		}
 	}
@@ -312,7 +317,7 @@ func printService(provider terraformutils.ProviderGenerator, serviceName string,
 			}
 			// create variables file
 			if len(provider.GetResourceConnections()[serviceName]) > 0 && options.Connect && len(variables["data"]["terraform_remote_state"]) > 0 {
-				variablesFile, err := terraformutils.Print(variables, map[string]struct{}{"config": {}}, options.Output)
+				variablesFile, err := terraformutils.Print(variables, map[string]struct{}{"config": {}}, options.Output, !options.NoSort)
 				if err != nil {
 					return err
 				}
@@ -342,7 +347,7 @@ func printService(provider terraformutils.ProviderGenerator, serviceName string,
 			}
 			// create variables file
 			if options.Connect {
-				variablesFile, err := terraformutils.Print(variables, map[string]struct{}{"config": {}}, options.Output)
+				variablesFile, err := terraformutils.Print(variables, map[string]struct{}{"config": {}}, options.Output, !options.NoSort)
 				if err != nil {
 					return err
 				}
@@ -398,6 +403,7 @@ func baseProviderFlags(flag *pflag.FlagSet, options *ImportOptions, sampleRes, s
 	flag.StringVarP(&options.Bucket, "bucket", "b", "", "gs://terraform-state")
 	flag.StringSliceVarP(&options.Filter, "filter", "f", []string{}, sampleFilters)
 	flag.BoolVarP(&options.Verbose, "verbose", "v", false, "")
+	flag.BoolVarP(&options.NoSort, "no-sort", "S", false, "set to disable sorting of HCL")
 	flag.StringVarP(&options.Output, "output", "O", "hcl", "output format hcl or json")
 	flag.IntVarP(&options.RetryCount, "retry-number", "n", 5, "number of retries to perform when refresh fails")
 	flag.IntVarP(&options.RetrySleepMs, "retry-sleep-ms", "m", 300, "time in ms to sleep between retries")

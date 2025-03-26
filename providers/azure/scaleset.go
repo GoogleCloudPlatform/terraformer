@@ -76,7 +76,9 @@ func (g ScaleSetGenerator) createResources(ctx context.Context, client compute.V
 
 func (g *ScaleSetGenerator) InitResources() error {
 	ctx := context.Background()
-	ScaleSetClient := compute.NewVirtualMachineScaleSetsClient(g.Args["config"].(authentication.Config).SubscriptionID)
+	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	ScaleSetClient := compute.NewVirtualMachineScaleSetsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 
 	ScaleSetClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 

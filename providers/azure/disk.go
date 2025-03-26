@@ -48,7 +48,9 @@ func (g DiskGenerator) createResources(diskListIterator compute.DiskListIterator
 
 func (g *DiskGenerator) InitResources() error {
 	ctx := context.Background()
-	disksClient := compute.NewDisksClient(g.Args["config"].(authentication.Config).SubscriptionID)
+	resourceManagerEndpoint := g.Args["config"].(authentication.Config).CustomResourceManagerEndpoint
+	subscriptionID := g.Args["config"].(authentication.Config).SubscriptionID
+	disksClient := compute.NewDisksClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 
 	disksClient.Authorizer = g.Args["authorizer"].(autorest.Authorizer)
 

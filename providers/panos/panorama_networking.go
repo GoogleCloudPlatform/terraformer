@@ -747,46 +747,48 @@ func (g *PanoramaNetworkingGenerator) PostConvertHook() error {
 	mapIPSECCryptoProfileNames := map[string]string{}
 
 	for _, r := range g.Resources {
-		if r.InstanceInfo.Type == "panos_panorama_aggregate_interface" {
-			mapInterfaceNames[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
-			mapInterfaceModes[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".mode}"
-		}
+		if _, ok := r.Item["name"]; ok {
+			if r.InstanceInfo.Type == "panos_panorama_aggregate_interface" {
+				mapInterfaceNames[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+				mapInterfaceModes[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".mode}"
+			}
 
-		if r.InstanceInfo.Type == "panos_panorama_ethernet_interface" {
-			mapInterfaceNames[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
-			mapInterfaceModes[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".mode}"
-		}
+			if r.InstanceInfo.Type == "panos_panorama_ethernet_interface" {
+				mapInterfaceNames[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+				mapInterfaceModes[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".mode}"
+			}
 
-		if r.InstanceInfo.Type == "panos_panorama_layer2_subinterface" {
-			mapInterfaceNames[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
-		}
+			if r.InstanceInfo.Type == "panos_panorama_layer2_subinterface" {
+				mapInterfaceNames[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+			}
 
-		if r.InstanceInfo.Type == "panos_panorama_layer3_subinterface" {
-			mapInterfaceNames[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
-		}
+			if r.InstanceInfo.Type == "panos_panorama_layer3_subinterface" {
+				mapInterfaceNames[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+			}
 
-		if r.InstanceInfo.Type == "panos_panorama_loopback_interface" {
-			mapInterfaceNames[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
-		}
+			if r.InstanceInfo.Type == "panos_panorama_loopback_interface" {
+				mapInterfaceNames[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+			}
 
-		if r.InstanceInfo.Type == "panos_panorama_tunnel_interface" {
-			mapInterfaceNames[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
-		}
+			if r.InstanceInfo.Type == "panos_panorama_tunnel_interface" {
+				mapInterfaceNames[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+			}
 
-		if r.InstanceInfo.Type == "panos_panorama_vlan_interface" {
-			mapInterfaceNames[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
-		}
+			if r.InstanceInfo.Type == "panos_panorama_vlan_interface" {
+				mapInterfaceNames[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+			}
 
-		if r.InstanceInfo.Type == "panos_panorama_ike_crypto_profile" {
-			mapIKECryptoProfileNames[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
-		}
+			if r.InstanceInfo.Type == "panos_panorama_ike_crypto_profile" {
+				mapIKECryptoProfileNames[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+			}
 
-		if r.InstanceInfo.Type == "panos_panorama_ike_gateway" {
-			mapIKEGatewayNames[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
-		}
+			if r.InstanceInfo.Type == "panos_panorama_ike_gateway" {
+				mapIKEGatewayNames[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+			}
 
-		if r.InstanceInfo.Type == "panos_panorama_ipsec_crypto_profile" {
-			mapIPSECCryptoProfileNames[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+			if r.InstanceInfo.Type == "panos_panorama_ipsec_crypto_profile" {
+				mapIPSECCryptoProfileNames[r.Item["name"].(string)] = "${" + r.InstanceInfo.Type + "." + r.ResourceName + ".name}"
+			}
 		}
 	}
 
@@ -794,8 +796,10 @@ func (g *PanoramaNetworkingGenerator) PostConvertHook() error {
 		if r.InstanceInfo.Type == "panos_panorama_bgp" ||
 			r.InstanceInfo.Type == "panos_panorama_redistribution_profile_ipv4" ||
 			r.InstanceInfo.Type == "panos_panorama_static_route_ipv4" {
-			if r.Item["virtual_router"].(string) != "default" {
-				r.Item["virtual_router"] = "${panos_panorama_virtual_router." + normalizeResourceName(r.Item["virtual_router"].(string)) + ".name}"
+			if _, ok := r.Item["virtual_router"]; ok {
+				if r.Item["virtual_router"].(string) != "default" {
+					r.Item["virtual_router"] = "${panos_panorama_virtual_router." + normalizeResourceName(r.Item["virtual_router"].(string)) + ".name}"
+				}
 			}
 		}
 
@@ -807,65 +811,91 @@ func (g *PanoramaNetworkingGenerator) PostConvertHook() error {
 			r.InstanceInfo.Type == "panos_panorama_bgp_import_rule_group" ||
 			r.InstanceInfo.Type == "panos_panorama_bgp_peer_group" ||
 			r.InstanceInfo.Type == "panos_panorama_bgp_redist_rule" {
-			if r.Item["virtual_router"].(string) != "default" {
-				r.Item["virtual_router"] = "${panos_panorama_bgp." + normalizeResourceName(r.Item["virtual_router"].(string)) + ".virtual_router}"
+			if _, ok := r.Item["virtual_router"]; ok {
+				if r.Item["virtual_router"].(string) != "default" {
+					r.Item["virtual_router"] = "${panos_panorama_bgp." + normalizeResourceName(r.Item["virtual_router"].(string)) + ".virtual_router}"
+				}
 			}
 		}
 
 		if r.InstanceInfo.Type == "panos_panorama_bgp_aggregate_advertise_filter" ||
 			r.InstanceInfo.Type == "panos_panorama_bgp_aggregate_suppress_filter" {
-			if r.Item["virtual_router"].(string) != "default" {
-				r.Item["virtual_router"] = "${panos_panorama_bgp_aggregate." + normalizeResourceName(r.Item["virtual_router"].(string)) + ".virtual_router}"
+			if _, ok := r.Item["virtual_router"]; ok {
+				if r.Item["virtual_router"].(string) != "default" {
+					r.Item["virtual_router"] = "${panos_panorama_bgp_aggregate." + normalizeResourceName(r.Item["virtual_router"].(string)) + ".virtual_router}"
+				}
 			}
-			r.Item["bgp_aggregate"] = "${panos_panorama_bgp_aggregate." + normalizeResourceName(r.Item["bgp_aggregate"].(string)) + ".name}"
+			if _, ok := r.Item["bgp_aggregate"]; ok {
+				r.Item["bgp_aggregate"] = "${panos_panorama_bgp_aggregate." + normalizeResourceName(r.Item["bgp_aggregate"].(string)) + ".name}"
+			}
 		}
 
 		if r.InstanceInfo.Type == "panos_panorama_bgp_peer" {
-			if r.Item["virtual_router"].(string) != "default" {
-				r.Item["virtual_router"] = "${panos_panorama_bgp." + normalizeResourceName(r.Item["virtual_router"].(string)) + ".virtual_router}"
-				r.Item["peer_as"] = "${panos_panorama_bgp." + normalizeResourceName(r.Item["virtual_router"].(string)) + ".as_number}"
+			if _, ok := r.Item["virtual_router"]; ok {
+				if r.Item["virtual_router"].(string) != "default" {
+					r.Item["virtual_router"] = "${panos_panorama_bgp." + normalizeResourceName(r.Item["virtual_router"].(string)) + ".virtual_router}"
+					r.Item["peer_as"] = "${panos_panorama_bgp." + normalizeResourceName(r.Item["virtual_router"].(string)) + ".as_number}"
+				}
 			}
-			r.Item["bgp_peer_group"] = "${panos_panorama_bgp_peer_group." + normalizeResourceName(r.Item["panos_bgp_peer_group"].(string)) + ".name}"
+			if _, ok := r.Item["panos_bgp_peer_group"]; ok {
+				r.Item["bgp_peer_group"] = "${panos_panorama_bgp_peer_group." + normalizeResourceName(r.Item["panos_bgp_peer_group"].(string)) + ".name}"
+			}
 		}
 
 		if r.InstanceInfo.Type == "panos_panorama_bgp_conditional_adv_advertise_filter" ||
 			r.InstanceInfo.Type == "panos_panorama_bgp_conditional_adv_non_exist_filter" {
-			if r.Item["virtual_router"].(string) != "default" {
-				r.Item["virtual_router"] = "${panos_panorama_bgp." + normalizeResourceName(r.Item["virtual_router"].(string)) + ".virtual_router}"
+			if _, ok := r.Item["virtual_router"]; ok {
+				if r.Item["virtual_router"].(string) != "default" {
+					r.Item["virtual_router"] = "${panos_panorama_bgp." + normalizeResourceName(r.Item["virtual_router"].(string)) + ".virtual_router}"
+				}
 			}
-			r.Item["bgp_conditional_adv"] = "${panos_panorama_bgp_conditional_adv." + normalizeResourceName(r.Item["panos_bgp_conditional_adv"].(string)) + ".name}"
+			if _, ok := r.Item["panos_bgp_conditional_adv"]; ok {
+				r.Item["bgp_conditional_adv"] = "${panos_panorama_bgp_conditional_adv." + normalizeResourceName(r.Item["panos_bgp_conditional_adv"].(string)) + ".name}"
+			}
 		}
 
 		if r.InstanceInfo.Type == "panos_panorama_gre_tunnel" {
-			r.Item["interface"] = mapInterfaceNames[r.Item["interface"].(string)]
-			r.Item["tunnel_interface"] = mapInterfaceNames[r.Item["tunnel_interface"].(string)]
+			if mapExists(mapInterfaceNames, r.Item, "interface") {
+				r.Item["interface"] = mapInterfaceNames[r.Item["interface"].(string)]
+			}
+			if mapExists(mapInterfaceNames, r.Item, "tunnel_interface") {
+				r.Item["tunnel_interface"] = mapInterfaceNames[r.Item["tunnel_interface"].(string)]
+			}
 		}
 
 		if r.InstanceInfo.Type == "panos_panorama_ike_gateway" {
-			if _, ok := r.Item["ikev1_crypto_profile"]; ok {
+			if mapExists(mapIKECryptoProfileNames, r.Item, "ikev1_crypto_profile") {
 				r.Item["ikev1_crypto_profile"] = mapIKECryptoProfileNames[r.Item["ikev1_crypto_profile"].(string)]
 			}
 		}
 
 		if r.InstanceInfo.Type == "panos_panorama_ipsec_tunnel" {
-			r.Item["tunnel_interface"] = mapInterfaceNames[r.Item["tunnel_interface"].(string)]
-			r.Item["ak_ike_gateway"] = mapIKEGatewayNames[r.Item["ak_ike_gateway"].(string)]
-			r.Item["ak_ipsec_crypto_profile"] = mapIPSECCryptoProfileNames[r.Item["ak_ipsec_crypto_profile"].(string)]
+			if mapExists(mapInterfaceNames, r.Item, "tunnel_interface") {
+				r.Item["tunnel_interface"] = mapInterfaceNames[r.Item["tunnel_interface"].(string)]
+			}
+			if mapExists(mapIKEGatewayNames, r.Item, "ak_ike_gateway") {
+				r.Item["ak_ike_gateway"] = mapIKEGatewayNames[r.Item["ak_ike_gateway"].(string)]
+			}
+			if mapExists(mapIPSECCryptoProfileNames, r.Item, "ak_ipsec_crypto_profile") {
+				r.Item["ak_ipsec_crypto_profile"] = mapIPSECCryptoProfileNames[r.Item["ak_ipsec_crypto_profile"].(string)]
+			}
 		}
 
 		if r.InstanceInfo.Type == "panos_panorama_ipsec_tunnel_proxy_id_ipv4" {
-			r.Item["tunnel_interface"] = mapInterfaceNames[r.Item["tunnel_interface"].(string)]
+			if mapExists(mapInterfaceNames, r.Item, "tunnel_interface") {
+				r.Item["tunnel_interface"] = mapInterfaceNames[r.Item["tunnel_interface"].(string)]
+			}
 		}
 
 		if r.InstanceInfo.Type == "panos_panorama_layer2_subinterface" {
-			if _, ok := mapInterfaceModes[r.Item["parent_interface"].(string)]; ok {
+			if mapExists(mapInterfaceModes, r.Item, "parent_interface") {
 				r.Item["parent_mode"] = mapInterfaceModes[r.Item["parent_interface"].(string)]
 			}
 		}
 
 		if r.InstanceInfo.Type == "panos_panorama_layer2_subinterface" ||
 			r.InstanceInfo.Type == "panos_panorama_layer3_subinterface" {
-			if _, ok := mapInterfaceNames[r.Item["parent_interface"].(string)]; ok {
+			if mapExists(mapInterfaceNames, r.Item, "parent_interface") {
 				r.Item["parent_interface"] = mapInterfaceNames[r.Item["parent_interface"].(string)]
 			}
 		}
@@ -913,9 +943,11 @@ func (g *PanoramaNetworkingGenerator) PostConvertHook() error {
 			if _, ok := r.Item["interfaces"]; ok {
 				interfaces := make([]string, len(r.Item["interfaces"].([]interface{})))
 				for k, eth := range r.Item["interfaces"].([]interface{}) {
-					if name, ok := mapInterfaceNames[eth.(string)]; ok {
+					if name, ok2 := mapInterfaceNames[eth.(string)]; ok2 {
 						interfaces[k] = name
+						continue
 					}
+					interfaces[k] = eth.(string)
 				}
 
 				r.Item["interfaces"] = interfaces
@@ -923,7 +955,9 @@ func (g *PanoramaNetworkingGenerator) PostConvertHook() error {
 		}
 
 		if r.InstanceInfo.Type == "panos_panorama_vlan" {
-			r.Item["vlan_interface"] = mapInterfaceNames[r.Item["vlan_interface"].(string)]
+			if mapExists(mapInterfaceNames, r.Item, "vlan_interface") {
+				r.Item["vlan_interface"] = mapInterfaceNames[r.Item["vlan_interface"].(string)]
+			}
 		}
 	}
 

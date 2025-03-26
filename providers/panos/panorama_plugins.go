@@ -105,7 +105,9 @@ func (g *PanoramaPluginsGenerator) PostConvertHook() error {
 
 	for _, r := range g.Resources {
 		if r.InstanceInfo.Type == "panos_panorama_gke_cluster" {
-			r.Item["gke_cluster_group"] = mapGKEClusterGroupNames[r.Item["gke_cluster_group"].(string)]
+			if mapExists(mapGKEClusterGroupNames, r.Item, "gke_cluster_group") {
+				r.Item["gke_cluster_group"] = mapGKEClusterGroupNames[r.Item["gke_cluster_group"].(string)]
+			}
 		}
 	}
 

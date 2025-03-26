@@ -16,8 +16,10 @@ package okta
 
 import (
 	"context"
+	"log"
 
 	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v2/okta/query"
 )
 
 //NOTE: Okta SDK v2.6.1 ListApplications() method does not support applications by type at this time. So
@@ -38,32 +40,60 @@ func getApplications(ctx context.Context, client *okta.Client, signOnMode string
 }
 
 func getAllApplications(ctx context.Context, client *okta.Client) ([]*okta.Application, error) {
-	apps, resp, err := client.Application.ListApplications(ctx, nil)
+	var apps []*okta.Application
+	data, resp, err := client.Application.ListApplications(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	for resp.HasNextPage() {
-		var nextAppSet []okta.App
+		var nextAppSet []*okta.Application
 		resp, err = resp.Next(ctx, &nextAppSet)
 		if err != nil {
+			log.Println("fff")
 			return nil, err
 		}
 		apps = append(apps, nextAppSet...)
+	}
+	for _, a := range data {
+		apps = append(apps, a.(*okta.Application))
 	}
 
 	var supportedApps []*okta.Application
 	for _, app := range apps {
 		//NOTE: Okta provider does not support the following app type/name
-		if app.(*okta.Application).Name == "template_wsfed" ||
-			app.(*okta.Application).Name == "template_swa_two_page" ||
-			app.(*okta.Application).Name == "okta_enduser" ||
-			app.(*okta.Application).Name == "okta_browser_plugin" ||
-			app.(*okta.Application).Name == "saasure" {
+		if app.Name == "template_wsfed" ||
+			app.Name == "template_swa_two_page" ||
+			app.Name == "okta_enduser" ||
+			app.Name == "okta_browser_plugin" ||
+			app.Name == "saasure" {
 			continue
 		}
-		supportedApps = append(supportedApps, app.(*okta.Application))
+		supportedApps = append(supportedApps, app)
 	}
 
 	return supportedApps, nil
+}
+
+func listApplicationGroupsIDs(ctx context.Context, client *okta.Client, id string) ([]string, error) {
+	var groupIDs []string
+	groups, resp, err := client.Application.ListApplicationGroupAssignments(ctx, id, &query.Params{})
+	if err != nil {
+		return nil, err
+	}
+	for {
+		for _, groupID := range groups {
+			groupIDs = append(groupIDs, groupID.Id)
+		}
+		if resp.HasNextPage() {
+			resp, err = resp.Next(ctx, &groups)
+			if err != nil {
+				return nil, err
+			}
+			continue
+		} else {
+			break
+		}
+	}
+	return groupIDs, nil
 }

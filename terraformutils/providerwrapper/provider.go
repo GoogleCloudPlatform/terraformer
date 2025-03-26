@@ -17,7 +17,6 @@ package providerwrapper //nolint
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -275,12 +274,12 @@ func getProviderFileNameV13andV14(prefix, providerName string) (string, error) {
 	// Read terraform v14 file path
 	registryDir := prefix + string(os.PathSeparator) + "providers" + string(os.PathSeparator) +
 		"registry.terraform.io"
-	providerDirs, err := ioutil.ReadDir(registryDir)
+	providerDirs, err := os.ReadDir(registryDir)
 	if err != nil {
 		// Read terraform v13 file path
 		registryDir = prefix + string(os.PathSeparator) + "plugins" + string(os.PathSeparator) +
 			"registry.terraform.io"
-		providerDirs, err = ioutil.ReadDir(registryDir)
+		providerDirs, err = os.ReadDir(registryDir)
 		if err != nil {
 			return "", err
 		}
@@ -289,7 +288,7 @@ func getProviderFileNameV13andV14(prefix, providerName string) (string, error) {
 	for _, providerDir := range providerDirs {
 		pluginPath := registryDir + string(os.PathSeparator) + providerDir.Name() +
 			string(os.PathSeparator) + providerName
-		dirs, err := ioutil.ReadDir(pluginPath)
+		dirs, err := os.ReadDir(pluginPath)
 		if err != nil {
 			continue
 		}
@@ -300,7 +299,7 @@ func getProviderFileNameV13andV14(prefix, providerName string) (string, error) {
 			for _, dir := range dirs {
 				fullPluginPath := pluginPath + string(os.PathSeparator) + dir.Name() +
 					string(os.PathSeparator) + runtime.GOOS + "_" + runtime.GOARCH
-				files, err := ioutil.ReadDir(fullPluginPath)
+				files, err := os.ReadDir(fullPluginPath)
 				if err == nil {
 					for _, file := range files {
 						if strings.HasPrefix(file.Name(), "terraform-provider-"+providerName) {
@@ -320,10 +319,10 @@ func getProviderFileNameV12(providerName string) (string, error) {
 		defaultDataDir = DefaultDataDir
 	}
 	pluginPath := defaultDataDir + string(os.PathSeparator) + "plugins" + string(os.PathSeparator) + runtime.GOOS + "_" + runtime.GOARCH
-	files, err := ioutil.ReadDir(pluginPath)
+	files, err := os.ReadDir(pluginPath)
 	if err != nil {
 		pluginPath = os.Getenv("HOME") + string(os.PathSeparator) + "." + DefaultPluginVendorDirV12
-		files, err = ioutil.ReadDir(pluginPath)
+		files, err = os.ReadDir(pluginPath)
 		if err != nil {
 			return "", err
 		}

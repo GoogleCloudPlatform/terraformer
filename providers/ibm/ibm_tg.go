@@ -53,6 +53,20 @@ func (g TGGenerator) createTransitGatewayConnectionResources(gatewayID, connecti
 	return resource
 }
 
+func (g TGGenerator) loadTransitGatewayRouterResource(gatewayID, routerID string, dependsOn []string) terraformutils.Resource {
+	resource := terraformutils.NewResource(
+		fmt.Sprintf("%s/%s", gatewayID, routerID),
+		normalizeResourceName(routerID, false),
+		"ibm_tg_route_report",
+		"ibm",
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{
+			"depends_on": dependsOn,
+		})
+	return resource
+}
+
 // CreateVersionDate requires mandatory version attribute. Any date from 2019-12-13 up to the currentdate may be provided. Specify the current date to request the latest version.
 func CreateVersionDate() *string {
 	version := time.Now().Format("2006-01-02")
@@ -111,6 +125,17 @@ func (g *TGGenerator) InitResources() error {
 		}
 		for _, connection := range connections.Connections {
 			g.Resources = append(g.Resources, g.createTransitGatewayConnectionResources(*gateway.ID, *connection.ID, *connection.Name, dependsOn))
+		}
+		// Trying to get Transit Gateway reports
+		listTransitGatewayRouteReportOptions := &tg.ListTransitGatewayRouteReportsOptions{
+			TransitGatewayID: gateway.ID,
+		}
+		routeReports, response, err := tgclient.ListTransitGatewayRouteReports(listTransitGatewayRouteReportOptions)
+		if err != nil {
+			return fmt.Errorf("Error Listing Transit Gateway route reports %s\n%s", err, response)
+		}
+		for _, routeReport := range routeReports.RouteReports {
+			g.Resources = append(g.Resources, g.loadTransitGatewayRouterResource(*gateway.ID, *routeReport.ID, dependsOn))
 		}
 	}
 	return nil

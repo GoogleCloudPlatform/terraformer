@@ -52,9 +52,7 @@ func (g *InstanceGenerator) loadInstances(sdk *ycsdk.SDK, folderID string) ([]*c
 }
 
 func (g *InstanceGenerator) InitResources() error {
-	sdk, err := ycsdk.Build(context.Background(), ycsdk.Config{
-		Credentials: ycsdk.OAuthToken(g.Args["token"].(string)),
-	})
+	sdk, err := g.InitSDK()
 	if err != nil {
 		return err
 	}

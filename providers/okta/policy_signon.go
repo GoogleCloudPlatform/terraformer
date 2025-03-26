@@ -56,16 +56,20 @@ func (g *SignOnPolicyGenerator) InitResources() error {
 
 func getSignOnPolicies(ctx context.Context, client *okta.Client) ([]*okta.Policy, error) {
 	qp := query.NewQueryParams(query.WithType("OKTA_SIGN_ON"))
-	output, resp, err := client.Policy.ListPolicies(ctx, qp)
+	var policies []*okta.Policy
+	data, resp, err := client.Policy.ListPolicies(ctx, qp)
 	if err != nil {
 		return nil, err
 	}
 
 	for resp.HasNextPage() {
-		var nextPolicySet []*okta.Policy
-		resp, _ = resp.Next(ctx, &nextPolicySet)
-		output = append(output, nextPolicySet...)
+		var nextPolicies []*okta.Policy
+		resp, _ = resp.Next(ctx, &nextPolicies)
+		policies = append(policies, nextPolicies...)
+	}
+	for _, p := range data {
+		policies = append(policies, p.(*okta.Policy))
 	}
 
-	return output, nil
+	return policies, nil
 }

@@ -18,7 +18,8 @@ import (
 	"context"
 	"fmt"
 
-	datadogV2 "github.com/DataDog/datadog-api-client-go/api/v2/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV2"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -57,14 +58,15 @@ func (g *LogsArchiveGenerator) createResource(logsArchiveID string) terraformuti
 // from each archive create 1 TerraformResource.
 // Need LogsArchive ID as ID for terraform resource
 func (g *LogsArchiveGenerator) InitResources() error {
-	datadogClientV2 := g.Args["datadogClientV2"].(*datadogV2.APIClient)
-	authV2 := g.Args["authV2"].(context.Context)
+	datadogClient := g.Args["datadogClient"].(*datadog.APIClient)
+	auth := g.Args["auth"].(context.Context)
+	api := datadogV2.NewLogsArchivesApi(datadogClient)
 
 	resources := []terraformutils.Resource{}
 	for _, filter := range g.Filter {
 		if filter.FieldPath == "id" && filter.IsApplicable("logs_archive") {
 			for _, value := range filter.AcceptableValues {
-				resp, _, err := datadogClientV2.LogsArchivesApi.GetLogsArchive(authV2, value)
+				resp, _, err := api.GetLogsArchive(auth, value)
 				if err != nil {
 					return err
 				}
@@ -79,7 +81,7 @@ func (g *LogsArchiveGenerator) InitResources() error {
 		return nil
 	}
 
-	logsArchiveListResp, _, err := datadogClientV2.LogsArchivesApi.ListLogsArchives(authV2)
+	logsArchiveListResp, _, err := api.ListLogsArchives(auth)
 	logsArchiveList := logsArchiveListResp.GetData()
 	if err != nil {
 		return err

@@ -164,6 +164,7 @@ func GetResourceGroupID(apiKey, name, region string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	userInfo, err := fetchUserDetails(sess, gen)
 	if err != nil {
 		return "", err
@@ -188,4 +189,36 @@ func GetResourceGroupID(apiKey, name, region string) (string, error) {
 	}
 
 	return "", fmt.Errorf("Unable to get ID of resource group")
+}
+
+func GetVPCEndPoint(region string) string {
+	isURL := fmt.Sprintf("https://%s.iaas.cloud.ibm.com/v1", region)
+	isAPIEndpoint := os.Getenv("IBMCLOUD_IS_API_ENDPOINT")
+	if isAPIEndpoint != "" {
+		isURL = isAPIEndpoint
+	}
+
+	return isURL
+}
+
+func GetAuthEndPoint() string {
+	iamURL := "https://iam.cloud.ibm.com/identity/token"
+	iamAPIEndPoint := os.Getenv("IBMCLOUD_IAM_API_ENDPOINT")
+	if iamAPIEndPoint != "" {
+		iamURL = fmt.Sprintf("%s/%s", iamAPIEndPoint, "identity/token")
+	}
+
+	return iamURL
+}
+
+func getAction(instanceStatus string) string {
+	return map[string]string{
+		"failed":     "start",
+		"pending":    "start",
+		"restarting": "reboot",
+		"running":    "start",
+		"starting":   "start",
+		"stopped":    "stop",
+		"stopping":   "stop",
+	}[instanceStatus]
 }

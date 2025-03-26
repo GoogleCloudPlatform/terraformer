@@ -31,7 +31,7 @@ type InstanceGenerator struct {
 func (g InstanceGenerator) createInstanceResources(instanceID, instanceName, instanceImgID string) terraformutils.Resource {
 	resource := terraformutils.NewResource(
 		instanceID,
-		normalizeResourceName(instanceName, false),
+		normalizeResourceName(instanceName, true),
 		"ibm_is_instance",
 		"ibm",
 		map[string]string{
@@ -44,8 +44,47 @@ func (g InstanceGenerator) createInstanceResources(instanceID, instanceName, ins
 
 	// Deprecated parameters
 	resource.IgnoreKeys = append(resource.IgnoreKeys,
-		"^port$",
+		"^port_speed$",
+		"^primary_network_interface.[0-9].port_speed$",
+		"^primary_network_interface.[0-9].primary_ip.[0-9].address$",
+		"^primary_network_interface.[0-9].primary_ip.[0-9].reserved_ip$",
 	)
+	return resource
+}
+
+func (g InstanceGenerator) createVPCVolumeAttachmentResource(instanceID, volumeAttachedID, volumeAttachedName string) terraformutils.Resource {
+	resource := terraformutils.NewResource(
+		fmt.Sprintf("%s/%s", instanceID, volumeAttachedID),
+		normalizeResourceName(volumeAttachedName, true),
+		"ibm_is_instance_volume_attachment",
+		"ibm",
+		map[string]string{},
+		[]string{},
+		map[string]interface{}{})
+
+	resource.IgnoreKeys = append(resource.IgnoreKeys,
+		"^volume$",
+		"^iops$",
+	)
+
+	return resource
+}
+
+func (g InstanceGenerator) createInstanceActionResource(instanceID, instanceStatus string) terraformutils.Resource {
+	resource := terraformutils.NewResource(
+		instanceID,
+		normalizeResourceName(fmt.Sprintf("%s_%s", instanceID, instanceStatus), true),
+		"ibm_is_instance_action",
+		"ibm",
+		map[string]string{
+			"instance": instanceID,
+			"action":   getAction(instanceStatus),
+		},
+		[]string{},
+		map[string]interface{}{
+			"force_action": false,
+		})
+
 	return resource
 }
 
@@ -57,11 +96,13 @@ func (g *InstanceGenerator) InitResources() error {
 		return fmt.Errorf("No API key set")
 	}
 
-	vpcurl := fmt.Sprintf("https://%s.iaas.cloud.ibm.com/v1", region)
+	isURL := GetVPCEndPoint(region)
+	iamURL := GetAuthEndPoint()
 	vpcoptions := &vpcv1.VpcV1Options{
-		URL: envFallBack([]string{"IBMCLOUD_IS_API_ENDPOINT"}, vpcurl),
+		URL: isURL,
 		Authenticator: &core.IamAuthenticator{
 			ApiKey: apiKey,
+			URL:    iamURL,
 		},
 	}
 	vpcclient, err := vpcv1.NewVpcV1(vpcoptions)
@@ -95,6 +136,55 @@ func (g *InstanceGenerator) InitResources() error {
 
 	for _, instance := range allrecs {
 		g.Resources = append(g.Resources, g.createInstanceResources(*instance.ID, *instance.Name, *instance.Image.ID))
+
+		listVPCInsVolOptions := &vpcv1.ListInstanceVolumeAttachmentsOptions{
+			InstanceID: instance.ID,
+		}
+
+		volumeAtts, response, err := vpcclient.ListInstanceVolumeAttachments(listVPCInsVolOptions)
+		if err != nil {
+			return fmt.Errorf("fetching vpc Instance volume Attachments %s\n%s", err, response)
+		}
+		allrecs := []vpcv1.VolumeAttachment{}
+		allrecs = append(allrecs, volumeAtts.VolumeAttachments...)
+
+		for _, volumeAtt := range allrecs {
+			g.Resources = append(g.Resources, g.createVPCVolumeAttachmentResource(*instance.ID, *volumeAtt.ID, *volumeAtt.Name))
+		}
+
+		g.Resources = append(g.Resources, g.createInstanceActionResource(*instance.ID, *instance.Status))
 	}
+	return nil
+}
+
+func (g *InstanceGenerator) PostConvertHook() error {
+	for i, r := range g.Resources {
+		if r.InstanceInfo.Type != "ibm_is_instance_volume_attachment" {
+			continue
+		}
+		for _, ri := range g.Resources {
+			if ri.InstanceInfo.Type != "ibm_is_instance" {
+				continue
+			}
+			if r.InstanceState.Attributes["instance"] == ri.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["instance"] = "${ibm_is_instance." + ri.ResourceName + ".id}"
+			}
+		}
+	}
+
+	for i, r := range g.Resources {
+		if r.InstanceInfo.Type != "ibm_is_instance_action" {
+			continue
+		}
+		for _, ri := range g.Resources {
+			if ri.InstanceInfo.Type != "ibm_is_instance" {
+				continue
+			}
+			if r.InstanceState.Attributes["instance"] == ri.InstanceState.Attributes["id"] {
+				g.Resources[i].Item["instance"] = "${ibm_is_instance." + ri.ResourceName + ".id}"
+			}
+		}
+	}
+
 	return nil
 }

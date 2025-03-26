@@ -1,4 +1,4 @@
-// Copyright 2021 The Terraformer Authors.
+// Copyright 2022 The Terraformer Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +36,17 @@ func (g *CbsGenerator) InitResources() error {
 
 	request := cbs.NewDescribeDisksRequest()
 
-	var offset uint64 = 0
+	filters := make([]string, 0)
+	for _, filter := range g.Filter {
+		if filter.FieldPath == "id" && filter.IsApplicable("tencentcloud_cbs_storage") {
+			filters = append(filters, filter.AcceptableValues...)
+		}
+	}
+	for i := range filters {
+		request.DiskIds = append(request.DiskIds, &filters[i])
+	}
+
+	var offset uint64
 	var pageSize uint64 = 50
 	allInstances := make([]*cbs.Disk, 0)
 
@@ -66,6 +76,20 @@ func (g *CbsGenerator) InitResources() error {
 			map[string]interface{}{},
 		)
 		g.Resources = append(g.Resources, resource)
+
+		if *instance.Attached {
+			attachment := terraformutils.NewResource(
+				*instance.DiskId,
+				*instance.DiskId,
+				"tencentcloud_cbs_storage_attachment",
+				"tencentcloud",
+				map[string]string{},
+				[]string{},
+				map[string]interface{}{},
+			)
+			attachment.AdditionalFields["storage_id"] = "${tencentcloud_cbs_storage." + resource.ResourceName + ".id}"
+			g.Resources = append(g.Resources, attachment)
+		}
 	}
 
 	return nil

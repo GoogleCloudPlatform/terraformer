@@ -1,4 +1,4 @@
-// Copyright 2021 The Terraformer Authors.
+// Copyright 2022 The Terraformer Authors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ func (g *CdnGenerator) InitResources() error {
 
 	request := cdn.NewDescribeDomainsConfigRequest()
 
-	var offset int64 = 0
+	var offset int64
 	var pageSize int64 = 50
 	allInstances := make([]*cdn.DetailDomain, 0)
 
@@ -68,5 +68,37 @@ func (g *CdnGenerator) InitResources() error {
 		g.Resources = append(g.Resources, resource)
 	}
 
+	return nil
+}
+
+func (g *CdnGenerator) PostConvertHook() error {
+	for _, resource := range g.Resources {
+		if resource.InstanceInfo.Type == "tencentcloud_cdn_domain" {
+			httpsConfigs := resource.Item["https_config"].([]interface{})
+			if len(httpsConfigs) > 0 {
+				config := httpsConfigs[0].(map[string]interface{})
+				if config["https_switch"] == "on" &&
+					resource.InstanceState.Attributes["https_config.0.server_certificate_config.#"] == "1" {
+					serverCert := map[string]interface{}{
+						"certificate_content": "",
+						"private_key":         "",
+					}
+					serverCerts := make([]interface{}, 0, 1)
+					serverCerts = append(serverCerts, serverCert)
+					config["server_certificate_config"] = serverCerts
+				}
+				if config["verify_client"] == "on" {
+					clientCert := map[string]interface{}{
+						"certificate_content": "",
+					}
+					clientCerts := make([]interface{}, 0, 1)
+					clientCerts = append(clientCerts, clientCert)
+					config["client_certificate_config"] = clientCerts
+				}
+				httpsConfigs[0] = config
+			}
+			resource.Item["https_config"] = httpsConfigs
+		}
+	}
 	return nil
 }

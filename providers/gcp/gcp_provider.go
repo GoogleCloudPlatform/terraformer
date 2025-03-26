@@ -48,12 +48,16 @@ func GetRegions(project string) []string {
 }
 
 func getRegion(project, regionName string) *compute.Region {
+	if regionName == "global" {
+		return &compute.Region{}
+	}
 	computeService, err := compute.NewService(context.Background())
 	if err != nil {
 		log.Println(err)
 		return &compute.Region{}
 	}
-	region, err := computeService.Regions.Get(project, regionName).Do()
+	regionsGetCall := computeService.Regions.Get(project, regionName).Fields("name", "zones")
+	region, err := regionsGetCall.Do()
 	if err != nil {
 		log.Println(err)
 		return &compute.Region{}
@@ -105,6 +109,7 @@ func (p *GCPProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 	services["bigQuery"] = &GCPFacade{service: &BigQueryGenerator{}}
 	services["cloudFunctions"] = &GCPFacade{service: &CloudFunctionsGenerator{}}
 	services["cloudsql"] = &GCPFacade{service: &CloudSQLGenerator{}}
+	services["cloudtasks"] = &GCPFacade{service: &CloudTaskGenerator{}}
 	services["dataProc"] = &GCPFacade{service: &DataprocGenerator{}}
 	services["dns"] = &GCPFacade{service: &CloudDNSGenerator{}}
 	services["gcs"] = &GCPFacade{service: &GcsGenerator{}}
@@ -118,6 +123,7 @@ func (p *GCPProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 	services["instances"] = &GCPFacade{service: &InstancesGenerator{}}
 	services["pubsub"] = &GCPFacade{service: &PubsubGenerator{}}
 	services["schedulerJobs"] = &GCPFacade{service: &SchedulerJobsGenerator{}}
+	services["cloudbuild"] = &GCPFacade{service: &CloudBuildGenerator{}}
 	return services
 }
 

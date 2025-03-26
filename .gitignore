@@ -8,3 +8,4 @@ cmd/tmp
 terraform.tfstate
 terraform.tfstate.backup
 init.tf
+vendor/

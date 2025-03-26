@@ -47,11 +47,13 @@ func (g *PublicGatewayGenerator) InitResources() error {
 		log.Fatal("No API key set")
 	}
 
-	vpcurl := fmt.Sprintf("https://%s.iaas.cloud.ibm.com/v1", region)
+	isURL := GetVPCEndPoint(region)
+	iamURL := GetAuthEndPoint()
 	vpcoptions := &vpcv1.VpcV1Options{
-		URL: envFallBack([]string{"IBMCLOUD_IS_API_ENDPOINT"}, vpcurl),
+		URL: isURL,
 		Authenticator: &core.IamAuthenticator{
 			ApiKey: apiKey,
+			URL:    iamURL,
 		},
 	}
 	vpcclient, err := vpcv1.NewVpcV1(vpcoptions)
@@ -86,5 +88,6 @@ func (g *PublicGatewayGenerator) InitResources() error {
 	for _, pg := range allrecs {
 		g.Resources = append(g.Resources, g.createPublicGatewayResources(*pg.ID, *pg.Name))
 	}
+
 	return nil
 }

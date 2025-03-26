@@ -127,8 +127,8 @@ func (az *DataFactoryGenerator) appendResourceFrom(resources []terraformutils.Re
 }
 
 func (az *DataFactoryGenerator) listFactories() ([]datafactory.Factory, error) {
-	subscriptionID, resourceGroup, authorizer := az.getClientArgs()
-	client := datafactory.NewFactoriesClient(subscriptionID)
+	subscriptionID, resourceGroup, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := datafactory.NewFactoriesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	var (
 		iterator datafactory.FactoryListResponseIterator
@@ -180,8 +180,8 @@ func getIntegrationRuntimeType(properties interface{}) string {
 }
 
 func (az *DataFactoryGenerator) createIntegrationRuntimesResources(dataFactories []datafactory.Factory) ([]terraformutils.Resource, error) {
-	subscriptionID, _, authorizer := az.getClientArgs()
-	client := datafactory.NewIntegrationRuntimesClient(subscriptionID)
+	subscriptionID, _, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := datafactory.NewIntegrationRuntimesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
 	var resources []terraformutils.Resource
@@ -208,8 +208,8 @@ func (az *DataFactoryGenerator) createIntegrationRuntimesResources(dataFactories
 }
 
 func (az *DataFactoryGenerator) createLinkedServiceResources(dataFactories []datafactory.Factory) ([]terraformutils.Resource, error) {
-	subscriptionID, _, authorizer := az.getClientArgs()
-	client := datafactory.NewLinkedServicesClient(subscriptionID)
+	subscriptionID, _, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := datafactory.NewLinkedServicesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
 	var resources []terraformutils.Resource
@@ -235,8 +235,8 @@ func (az *DataFactoryGenerator) createLinkedServiceResources(dataFactories []dat
 }
 
 func (az *DataFactoryGenerator) createPipelineResources(dataFactories []datafactory.Factory) ([]terraformutils.Resource, error) {
-	subscriptionID, _, authorizer := az.getClientArgs()
-	client := datafactory.NewPipelinesClient(subscriptionID)
+	subscriptionID, _, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := datafactory.NewPipelinesClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
 	var resources []terraformutils.Resource
@@ -262,8 +262,8 @@ func (az *DataFactoryGenerator) createPipelineResources(dataFactories []datafact
 }
 
 func (az *DataFactoryGenerator) createPipelineTriggerScheduleResources(dataFactories []datafactory.Factory) ([]terraformutils.Resource, error) {
-	subscriptionID, _, authorizer := az.getClientArgs()
-	client := datafactory.NewTriggersClient(subscriptionID)
+	subscriptionID, _, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := datafactory.NewTriggersClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
 	var resources []terraformutils.Resource
@@ -289,8 +289,8 @@ func (az *DataFactoryGenerator) createPipelineTriggerScheduleResources(dataFacto
 }
 
 func (az *DataFactoryGenerator) createDataFlowResources(dataFactories []datafactory.Factory) ([]terraformutils.Resource, error) {
-	subscriptionID, _, authorizer := az.getClientArgs()
-	client := datafactory.NewDataFlowsClient(subscriptionID)
+	subscriptionID, _, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := datafactory.NewDataFlowsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
 	var resources []terraformutils.Resource
@@ -316,8 +316,8 @@ func (az *DataFactoryGenerator) createDataFlowResources(dataFactories []datafact
 }
 
 func (az *DataFactoryGenerator) createPipelineDatasetResources(dataFactories []datafactory.Factory) ([]terraformutils.Resource, error) {
-	subscriptionID, _, authorizer := az.getClientArgs()
-	client := datafactory.NewDatasetsClient(subscriptionID)
+	subscriptionID, _, authorizer, resourceManagerEndpoint := az.getClientArgs()
+	client := datafactory.NewDatasetsClientWithBaseURI(resourceManagerEndpoint, subscriptionID)
 	client.Authorizer = authorizer
 	ctx := context.Background()
 	var resources []terraformutils.Resource
