@@ -94,6 +94,10 @@ func (g *Ec2Generator) PostConvertHook() error {
 		if r.InstanceInfo.Type != "aws_instance" {
 			continue
 		}
+		if r.Item["root_block_device"] == nil {
+			continue
+		}
+
 		rootDeviceVolumeType := r.InstanceState.Attributes["root_block_device.0.volume_type"]
 		if !(rootDeviceVolumeType == "io1" || rootDeviceVolumeType == "io2" || rootDeviceVolumeType == "gp3") {
 			delete(r.Item["root_block_device"].([]interface{})[0].(map[string]interface{}), "iops")

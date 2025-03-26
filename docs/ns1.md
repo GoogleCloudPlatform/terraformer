@@ -9,9 +9,9 @@ $ terraformer import ns1 -r zone,monitoringjob,team
 
 List of supported NS1 resources:
 
-*   `zone`
-    * `ns1_zone`
 *   `monitoringjob`
     * `ns1_monitoringjob`
 *   `team`
     * `ns1_team`
+*   `zone`
+    * `ns1_zone`

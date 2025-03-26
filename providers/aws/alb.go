@@ -97,7 +97,7 @@ func (g *AlbGenerator) loadLBListenerRule(svc *elasticloadbalancingv2.Client, li
 			return err
 		}
 		for _, lsr := range lsrs.Rules {
-			if !lsr.IsDefault {
+			if !*lsr.IsDefault {
 				resourceName := *lsr.RuleArn
 				g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 					resourceName,

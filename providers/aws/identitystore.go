@@ -41,6 +41,9 @@ func (g *IdentityStoreGenerator) GetIdentityStoreId() (*string, error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(instances.Instances) == 0 {
+		return nil, nil
+	}
 	identityStoreId := StringValue(instances.Instances[0].IdentityStoreId)
 	return &identityStoreId, nil
 
@@ -169,6 +172,9 @@ func (g *IdentityStoreGenerator) InitResources() error {
 	identityStoreId, e := g.GetIdentityStoreId()
 	if e != nil {
 		return e
+	}
+	if identityStoreId == nil {
+		return nil
 	}
 
 	e = g.InitUserResources(*identityStoreId)

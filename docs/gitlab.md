@@ -9,12 +9,12 @@ Example:
 
 List of supported resources:
 
-* `projects`
-  * `gitlab_project`
-  * `gitlab_project_value`
-  * `gitlab_project_membership`
-  * `gitlab_tag_protection`
-  * `gitlab_branch_protection`
 * `groups`
   * `gitlab_group_membership`
   * `gitlab_group_variable`
+* `projects`
+  * `gitlab_branch_protection`
+  * `gitlab_project`
+  * `gitlab_project_membership`
+  * `gitlab_project_value`
+  * `gitlab_tag_protection`

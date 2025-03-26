@@ -4,6 +4,26 @@
 You can either edit your alicloud config directly, (usually it is `~/.aliyun/config.json`)
 or run `aliyun configure` and enter the credentials when prompted.
 
+Example:
+
+```json
+{
+	"current": "default",
+	"profiles": [
+		{
+			"name": "default",
+			"mode": "AK",
+			"access_key_id": "LTA***",
+			"access_key_secret": "mrZ***",
+			"region_id": "cn-hangzhou",
+			"output_format": "json",
+			"language": "en"
+		}
+	],
+	"meta_path": ""
+}
+```
+
 Terraformer will pick up the profile name specified in the `--profile` parameter.
 It defaults to the first config in the config array.
 

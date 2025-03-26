@@ -11,11 +11,12 @@ jobs:
     runs-on: "ubuntu-latest"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
-          go-version: 1.19
+          go-version-file: go.mod
+          cache: true
       - name: Test
         run: go build -v && go test ./...
       - name: Build for linux/amd64
@@ -26,8 +27,6 @@ jobs:
         run: GOOS=darwin go build -o terraformer-all-darwin-amd64
       - name: Build for mac Apple Silicon
         run: GOOS=darwin GOARCH=arm64 go build -o terraformer-all-darwin-arm64
-      - name: Build for windows
-        run: GOOS=windows go build -o terraformer-all-windows-amd64
       - name: Build for all providers
         run: go run build/multi-build/main.go
 

@@ -12,9 +12,9 @@ List of supported Equinix Metal resources:
 
 *   `device`
     * `metal_device`
-*   `volume`
-    * `metal_volume`
-*   `sshkey`
-    * `metal_ssh_key`
 *   `spotmarketrequest`
     * `metal_spot_market_request`
+*   `sshkey`
+    * `metal_ssh_key`
+*   `volume`
+    * `metal_volume`

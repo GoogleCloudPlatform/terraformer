@@ -217,6 +217,8 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_medialive_channel`
     * `aws_medialive_input`
     * `aws_medialive_input_security_group`
+*   `mq`
+    * `aws_mq_broker`
 *   `msk`
     * `aws_msk_cluster`
 *   `nacl`
@@ -252,11 +254,19 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_db_option_group`
     * `aws_db_event_subscription`
     * `aws_rds_global_cluster`
+*   `redshift`
+    * `aws_redshift_cluster`
+    * `aws_redshift_event_subscription`
+    * `aws_redshift_parameter_group`
+    * `aws_redshift_snapshot_schedule`
+    * `aws_redshift_snapshot_schedule_association`
+    * `aws_redshift_subnet_group`
 *   `resourcegroups`
     * `aws_resourcegroups_group`
 *   `route53`
     * `aws_route53_zone`
     * `aws_route53_record`
+    * `aws_route53_health_check`
 *   `route_table`
     * `aws_route_table`
     * `aws_main_route_table_association`
@@ -300,6 +310,8 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_ec2_transit_gateway_vpc_attachment`
 *   `vpc`
     * `aws_vpc`
+*   `vpc_endpoint`
+    * `aws_vpc_endpoint`
 *   `vpc_peering`
     * `aws_vpc_peering_connection`
 *   `vpn_connection`
