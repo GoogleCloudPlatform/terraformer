@@ -422,6 +422,7 @@ require (
 )
 
 require (
+	github.com/aws/aws-sdk-go v1.44.122
 	github.com/aws/aws-sdk-go-v2/service/directconnect v1.30.1
 	github.com/gofrs/uuid/v3 v3.1.2
 	github.com/ionos-cloud/sdk-go-cert-manager v1.0.0
