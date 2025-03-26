@@ -64,6 +64,7 @@ func (p *DigitalOceanProvider) GetSupportedService() map[string]terraformutils.S
 		"tag":                &TagGenerator{},
 		"volume":             &VolumeGenerator{},
 		"volume_snapshot":    &VolumeSnapshotGenerator{},
+		"vpc":                &VPCGenerator{},
 	}
 }
 
