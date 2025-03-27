@@ -116,10 +116,10 @@ func (g *CloudDNSGenerator) PostConvertHook() error {
 				continue
 			}
 			if zoneID == resourceZone.InstanceState.ID {
-				g.Resources[i].Item["managed_zone"] = "google_dns_managed_zone." + resourceZone.ResourceName + ".name"
+				g.Resources[i].Item["managed_zone"] = "${google_dns_managed_zone." + resourceZone.ResourceName + ".name}"
 				name := g.Resources[i].Item["name"].(string)
 				name = strings.ReplaceAll(name, resourceZone.Item["dns_name"].(string), "")
-				g.Resources[i].Item["name"] = name + "google_dns_managed_zone." + resourceZone.ResourceName + ".dns_name"
+				g.Resources[i].Item["name"] = name + "${google_dns_managed_zone." + resourceZone.ResourceName + ".dns_name}"
 			}
 		}
 	}
