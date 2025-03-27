@@ -61,6 +61,11 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_api_gateway_vpc_link`
 *   `appsync`
     * `aws_appsync_graphql_api`
+*   `athena`
+    * `aws_athena_data_catalog`
+    * `aws_athena_database`
+    * `aws_athena_named_query`
+    * `aws_athena_workgroup`
 *   `auto_scaling`
     * `aws_autoscaling_group`
     * `aws_launch_configuration`
