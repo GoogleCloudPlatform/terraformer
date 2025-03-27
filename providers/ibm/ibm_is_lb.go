@@ -20,7 +20,7 @@ import (
 	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/IBM/go-sdk-core/v4/core"
+	"github.com/IBM/go-sdk-core/v5/core"
 	"github.com/IBM/vpc-go-sdk/vpcv1"
 )
 
@@ -139,9 +139,25 @@ func (g *LBGenerator) InitResources() error {
 	listLoadBalancersOptions := &vpcv1.ListLoadBalancersOptions{}
 	lbs, response, err := vpcclient.ListLoadBalancers(listLoadBalancersOptions)
 	if err != nil {
-		return fmt.Errorf("Error Fetching vpcs %s\n%s", err, response)
+		return fmt.Errorf("Error Fetching load balancers %s\n%s", err, response)
 	}
-	allrecs = append(allrecs, lbs.LoadBalancers...)
+	filters := make([]string, 0)
+	for _, filter := range g.Filter {
+		if filter.FieldPath == "id" && filter.IsApplicable("ibm_is_lb") {
+			filters = append(filters, filter.AcceptableValues...)
+		}
+	}
+	if len(filters) > 0 {
+		for _, filter := range filters {
+			for _, lb := range lbs.LoadBalancers {
+				if *lb.ID == filter {
+					allrecs = append(allrecs, lb)
+				}
+			}
+		}
+	} else {
+		allrecs = append(allrecs, lbs.LoadBalancers...)
+	}
 
 	for _, lb := range allrecs {
 		g.Resources = append(g.Resources, g.createLBResources(*lb.ID, *lb.Name))

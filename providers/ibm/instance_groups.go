@@ -104,10 +104,11 @@ func (g *InstanceGroupGenerator) handleManagers(sess *vpcv1.VpcV1, instanceGroup
 			ID:              &instanceGroupManagerID,
 			InstanceGroupID: &instanceGroupID,
 		}
-		instanceGroupManager, response, err := sess.GetInstanceGroupManager(&getInstanceGroupManagerOptions)
+		instanceGroupManagerIntf, response, err := sess.GetInstanceGroupManager(&getInstanceGroupManagerOptions)
 		if err != nil {
 			g.fatalErrors <- fmt.Errorf("Error Getting InstanceGroup Manager: %s\n%s", err, response)
 		}
+		instanceGroupManager := instanceGroupManagerIntf.(*vpcv1.InstanceGroupManager)
 		g.Resources = append(g.Resources, g.loadInstanceGroupManger(instanceGroupID, instanceGroupManagerID, *instanceGroupManager.Name, dependsOn))
 
 		policies := make([]string, 0)
