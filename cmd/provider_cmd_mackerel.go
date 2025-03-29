@@ -21,14 +21,14 @@ import (
 )
 
 func newCmdMackerelImporter(options ImportOptions) *cobra.Command {
-	var apiKey string
+	var apiKey, apiBase, serviceName string
 	cmd := &cobra.Command{
 		Use:   "mackerel",
 		Short: "Import current state to Terraform configuration from Mackerel",
 		Long:  "Import current state to Terraform configuration from Mackerel",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			provider := newMackerelProvider()
-			err := Import(provider, options, []string{apiKey})
+			err := Import(provider, options, []string{apiKey, apiBase, serviceName})
 			if err != nil {
 				return err
 			}
@@ -38,6 +38,8 @@ func newCmdMackerelImporter(options ImportOptions) *cobra.Command {
 	cmd.AddCommand(listCmd(newMackerelProvider()))
 	baseProviderFlags(cmd.PersistentFlags(), &options, "service,role,aws_integration", "aws_integration=id1:id2:id4")
 	cmd.PersistentFlags().StringVarP(&apiKey, "api-key", "", "", "YOUR_MACKEREL_API_KEY or env param MACKEREL_API_KEY")
+	cmd.PersistentFlags().StringVarP(&apiBase, "api-base", "", "", "YOUR_MACKEREL_API_BASE or env param MACKEREL_API_BASE")
+	cmd.PersistentFlags().StringVarP(&serviceName, "service-name", "", "", "target mackerel service name")
 	return cmd
 }
 
