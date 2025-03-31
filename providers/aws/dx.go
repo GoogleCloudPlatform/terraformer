@@ -32,16 +32,16 @@ type DirectConnectGenerator struct {
 func (g *DirectConnectGenerator) getDirectConnectGateways(svc *directconnect.Client) error {
 	input := &directconnect.DescribeDirectConnectGatewaysInput{}
 	for {
-				  // Fetch a page of results
+		// Fetch a page of results
 		output, err := svc.DescribeDirectConnectGateways(context.TODO(), input)
-		if     err  != nil {
+		if err != nil {
 			return err
 		}
 
-				  // Process each DirectConnect Gateway
+		// Process each DirectConnect Gateway
 		for _, dx := range output.DirectConnectGateways {
 			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-				*dx.DirectConnectGatewayId,  // Dereference the pointer
+				*dx.DirectConnectGatewayId, // Dereference the pointer
 				*dx.DirectConnectGatewayId,
 				"aws_dx_gateway",
 				"aws",
@@ -49,12 +49,12 @@ func (g *DirectConnectGenerator) getDirectConnectGateways(svc *directconnect.Cli
 			))
 		}
 
-				  // Check if there are more pages
+		// Check if there are more pages
 		if output.NextToken == nil {
 			break
 		}
 
-				  // Update the input token for the next page
+		// Update the input token for the next page
 		input.NextToken = output.NextToken
 	}
 	return nil
@@ -62,72 +62,72 @@ func (g *DirectConnectGenerator) getDirectConnectGateways(svc *directconnect.Cli
 
 func (g *DirectConnectGenerator) getDirectConnectConnections(svc *directconnect.Client) error {
 	input := &directconnect.DescribeConnectionsInput{}
-		output, err := svc.DescribeConnections(context.TODO(), input)
-		if     err  != nil {
-			return err
-		}
+	output, err := svc.DescribeConnections(context.TODO(), input)
+	if err != nil {
+		return err
+	}
 
-		for _, dx := range output.Connections {
-			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-				*dx.ConnectionId,  // Dereference the pointer
-				*dx.ConnectionName,
-				"aws_dx_gateway",
-				"aws",
-				dxAllowEmptyValues,
-			))
-		}
+	for _, dx := range output.Connections {
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+			*dx.ConnectionId, // Dereference the pointer
+			*dx.ConnectionName,
+			"aws_dx_connection",
+			"aws",
+			dxAllowEmptyValues,
+		))
+	}
 	return nil
 }
 
 func (g *DirectConnectGenerator) getDirectConnectVritualInterfaces(svc *directconnect.Client) error {
 	input := &directconnect.DescribeVirtualInterfacesInput{}
-		output, err := svc.DescribeVirtualInterfaces(context.TODO(), input)
-		if     err  != nil {
-			return err
+	output, err := svc.DescribeVirtualInterfaces(context.TODO(), input)
+	if err != nil {
+		return err
+	}
+
+	for _, vif := range output.VirtualInterfaces {
+		var resourceType string
+
+		if *vif.VirtualInterfaceType == "private" {
+			resourceType = "aws_dx_private_virtual_interface"
+		} else if *vif.VirtualInterfaceType == "public" {
+			resourceType = "aws_dx_public_virtual_interface"
+		} else {
+			log.Printf("Unknown Virtual Interface Type: %s for ID: %s", *vif.VirtualInterfaceType, *vif.VirtualInterfaceId)
+			continue
 		}
 
-		for _, vif := range output.VirtualInterfaces {
-			var resourceType string
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+			*vif.VirtualInterfaceId,
+			*vif.VirtualInterfaceName,
+			resourceType,
+			"aws",
+			dxAllowEmptyValues,
+		))
+	}
 
-			if *vif.VirtualInterfaceType == "private" {
-			  resourceType                       = "aws_dx_private_virtual_interface"
-			} else if *vif.VirtualInterfaceType == "public" {
-				resourceType = "aws_dx_public_virtual_interface"
-			} else {
-				log.Printf("Unknown Virtual Interface Type: %s for ID: %s", *vif.VirtualInterfaceType, *vif.VirtualInterfaceId)
-				continue
-			}
-
-			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-				*vif.VirtualInterfaceId,
-				*vif.VirtualInterfaceName,
-				resourceType,
-				"aws",
-				dxAllowEmptyValues,
-			))
-		}
-		
 	return nil
 
 }
 
 func (g *DirectConnectGenerator) InitResources() error {
 	config, err := g.generateConfig()
-	if     err  != nil {
+	if err != nil {
 		return err
 	}
-	   svc := directconnect.NewFromConfig(config)
+	svc := directconnect.NewFromConfig(config)
 	if err := g.getDirectConnectGateways(svc); err != nil {
 		log.Println(err)
 		return err
 	}
 
-	   err  = g.getDirectConnectVritualInterfaces(svc)
+	err = g.getDirectConnectVritualInterfaces(svc)
 	if err != nil {
 		log.Println(err)
 	}
 
-	err  = g.getDirectConnectConnections(svc)
+	err = g.getDirectConnectConnections(svc)
 	if err != nil {
 		log.Println(err)
 	}
