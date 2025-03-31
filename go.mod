@@ -1,7 +1,6 @@
 module github.com/GoogleCloudPlatform/terraformer
 
 go 1.24.0
-
 require (
 	cloud.google.com/go v0.116.0 // indirect
 	cloud.google.com/go/logging v1.12.0
@@ -192,7 +191,7 @@ require (
 	github.com/launchdarkly/api-client-go v5.3.0+incompatible
 )
 
-require github.com/newrelic/newrelic-client-go v0.79.0
+require github.com/newrelic/newrelic-client-go v1.1.0
 
 require (
 	github.com/Azure/azure-pipeline-go v0.2.2 // indirect
@@ -408,6 +407,7 @@ require (
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
+	github.com/valyala/fastjson v1.6.3 // indirect
 	go.opentelemetry.io/contrib/detectors/gcp v1.29.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.54.0 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.54.0 // indirect
