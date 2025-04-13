@@ -19,6 +19,7 @@ import (
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	newrelic "github.com/newrelic/newrelic-client-go/newrelic"
+	"github.com/newrelic/newrelic-client-go/pkg/common"
 )
 
 type TagsGenerator struct {
@@ -32,18 +33,18 @@ func (g *TagsGenerator) createSyntheticsMonitorTagResources(client *newrelic.New
 	}
 
 	for _, monitor := range allMonitors {
-		allTags, err := client.Synthetics.GetTagsForEntity(monitor.ID)
+		allTags, err := client.Entities.GetTagsForEntityMutable(common.EntityGUID(monitor.ID))
 		if err != nil {
 			return err
 		}
 
-		for _, tag := range allTags {
-		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
-			fmt.Sprint(monitor.ID),
-			fmt.Sprintf("%s-%s", normalizeResourceName(monitor.Name), monitor.ID),
-			"newrelic_entity_tags",
-			g.ProviderName,
-			[]string{}))
+		for range allTags {
+			g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+				fmt.Sprint(monitor.ID),
+				fmt.Sprintf("%s-%s", normalizeResourceName(monitor.Name), monitor.ID),
+				"newrelic_entity_tags",
+				g.ProviderName,
+				[]string{}))
 		}
 	}
 
@@ -62,23 +63,17 @@ func (g *TagsGenerator) createAlertConditionTagResources(client *newrelic.NewRel
 			return err
 		}
 
-		allAlertConditionTags := client.Synthetics.GetTagsForEntity(alertCondition.ID)
-		if err != nil {
-			return err
-		}
-
 		nrqlConditions, err := client.Alerts.ListNrqlConditions(alertPolicy.ID)
 		if err != nil {
 			return err
 		}
 
-		allNRQLConditionTags, err := client.Synthetics.GetTagsForEntity(nrqlCondition.ID)
-		if err != nil {
-			return err
-		}
-
 		for _, alertCondition := range alertConditions {
-			for _, tag := range allAlertConditionTags {
+			allAlertConditionTags, err := client.Entities.GetTagsForEntityMutable(common.EntityGUID(fmt.Sprint(alertCondition.ID)))
+			if err != nil {
+				return err
+			}
+			for range allAlertConditionTags {
 				g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 					fmt.Sprintf("%d:%d", alertPolicy.ID, alertCondition.ID),
 					fmt.Sprintf("%s-%d", normalizeResourceName(alertCondition.Name), alertCondition.ID),
@@ -89,7 +84,11 @@ func (g *TagsGenerator) createAlertConditionTagResources(client *newrelic.NewRel
 		}
 
 		for _, nrqlCondition := range nrqlConditions {
-			for _, tag := range allAlertConditionTags {
+			allNRQLConditionTags, err := client.Entities.GetTagsForEntityMutable(common.EntityGUID(fmt.Sprint(nrqlCondition.ID)))
+			if err != nil {
+				return err
+			}
+			for range allNRQLConditionTags {
 				g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
 					fmt.Sprintf("%d:%d", alertPolicy.ID, nrqlCondition.ID),
 					fmt.Sprintf("%s-%d", normalizeResourceName(nrqlCondition.Name), nrqlCondition.ID),
