@@ -15,55 +15,67 @@
 package mackerel
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/mackerelio/mackerel-client-go"
 )
 
-type ServiceGenerator struct {
+type RoleMetadataGenerator struct {
 	serviceName string
 	MackerelService
 }
 
-func (g *ServiceGenerator) createServiceResources(client *mackerel.Client) error {
-	services, err := client.FindServices()
+func (g *RoleMetadataGenerator) createRoleMetadataGeneratorResources(client *mackerel.Client) error {
+	roles, err := client.FindRoles(g.serviceName)
 	if err != nil {
 		return err
 	}
 
-	for _, service := range services {
-		if service.Name != g.serviceName {
-			continue
+	for _, role := range roles {
+		namespaces, err := client.GetRoleMetaDataNameSpaces(g.serviceName, role.Name)
+		if err != nil {
+			return err
 		}
-		g.Resources = append(g.Resources, terraformutils.NewResource(
-			service.Name,
-			fmt.Sprintf("service_%s", service.Name),
-			"mackerel_service",
-			g.ProviderName,
-			map[string]string{
-				"name": service.Name,
-				"memo": service.Memo,
-			},
-			[]string{},
-			map[string]interface{}{},
-		))
-	}
 
+		for _, namespace := range namespaces {
+			metadata, err := client.GetRoleMetaData(g.serviceName, role.Name, namespace)
+			if err != nil {
+				return err
+			}
+
+			b, err := json.Marshal(metadata)
+			if err != nil {
+				return err
+			}
+			g.Resources = append(g.Resources, terraformutils.NewResource(
+				role.Name+"."+namespace,
+				fmt.Sprintf("role_metadata_%s", role.Name),
+				"mackerel_role_metadata",
+				g.ProviderName,
+				map[string]string{
+					"metadata_json": string(b),
+				},
+				[]string{},
+				map[string]interface{}{},
+			))
+		}
+	}
 	return nil
 }
 
 // InitResources Generate TerraformResources from Mackerel API,
-// from each service create 1 TerraformResource.
-// Need Service Name as ID for terraform resource
-func (g *ServiceGenerator) InitResources() error {
+// from each role metadata create 1 TerraformResource.
+// Need RoleMetadata Name as ID for terraform resource
+func (g *RoleMetadataGenerator) InitResources() error {
 	client, err := g.Client()
 	if err != nil {
 		return err
 	}
 
 	funcs := []func(*mackerel.Client) error{
-		g.createServiceResources,
+		g.createRoleMetadataGeneratorResources,
 	}
 
 	for _, f := range funcs {

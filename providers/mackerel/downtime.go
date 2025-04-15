@@ -16,43 +16,101 @@ package mackerel
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 	"github.com/mackerelio/mackerel-client-go"
 )
 
-// DowntimeGenerator ...
 type DowntimeGenerator struct {
+	serviceName string
 	MackerelService
 }
 
-func (g *DowntimeGenerator) createResources(downtimes []*mackerel.Downtime) []terraformutils.Resource {
-	resources := []terraformutils.Resource{}
-	for _, downtime := range downtimes {
-		resources = append(resources, g.createResource(downtime.ID))
+func (g *DowntimeGenerator) isDowntimeTarget(d *mackerel.Downtime) bool {
+	if len(d.ServiceScopes) > 0 {
+		for _, svc := range d.ServiceScopes {
+			if svc == g.serviceName {
+				return true
+			}
+		}
 	}
-	return resources
+
+	if len(d.ServiceExcludeScopes) > 0 {
+		for _, svc := range d.ServiceExcludeScopes {
+			if svc == g.serviceName {
+				return false
+			}
+		}
+	}
+
+	if len(d.RoleScopes) > 0 {
+		for _, role := range d.RoleScopes {
+			sp := strings.Split(role, ":")
+			if sp[0] == g.serviceName {
+				return true
+			}
+		}
+	}
+
+	if len(d.RoleExcludeScopes) > 0 {
+		for _, role := range d.RoleExcludeScopes {
+			sp := strings.Split(role, ":")
+			if sp[0] == g.serviceName {
+				return false
+			}
+		}
+	}
+
+	return false
 }
 
-func (g *DowntimeGenerator) createResource(downtimeID string) terraformutils.Resource {
-	return terraformutils.NewSimpleResource(
-		downtimeID,
-		fmt.Sprintf("downtime_%s", downtimeID),
-		"mackerel_downtime",
-		"mackerel",
-		[]string{},
-	)
+func (g *DowntimeGenerator) createDowntimeResources(client *mackerel.Client) error {
+	downtimes, err := client.FindDowntimes()
+	if err != nil {
+		return err
+	}
+
+	for _, downtime := range downtimes {
+		if !g.isDowntimeTarget(downtime) {
+			continue
+		}
+
+		g.Resources = append(g.Resources, terraformutils.NewResource(
+			downtime.ID,
+			fmt.Sprintf("downtime_%s", downtime.Name),
+			"mackerel_downtime",
+			g.ProviderName,
+			map[string]string{
+				"name": downtime.Name,
+				"memo": downtime.Memo,
+			},
+			[]string{},
+			map[string]interface{}{},
+		))
+	}
+	return nil
 }
 
 // InitResources Generate TerraformResources from Mackerel API,
 // from each downtime create 1 TerraformResource.
 // Need Downtime ID as ID for terraform resource
 func (g *DowntimeGenerator) InitResources() error {
-	client := g.Args["mackerelClient"].(*mackerel.Client)
-	downtimes, err := client.FindDowntimes()
+	client, err := g.Client()
 	if err != nil {
 		return err
 	}
-	g.Resources = append(g.Resources, g.createResources(downtimes)...)
+
+	funcs := []func(*mackerel.Client) error{
+		g.createDowntimeResources,
+	}
+
+	for _, f := range funcs {
+		err := f(client)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

@@ -21,38 +21,88 @@ import (
 	"github.com/mackerelio/mackerel-client-go"
 )
 
-// NotificationGroupGenerator ...
 type NotificationGroupGenerator struct {
+	serviceName string
 	MackerelService
 }
 
-func (g *NotificationGroupGenerator) createResources(notificationGroups []*mackerel.NotificationGroup) []terraformutils.Resource {
-	resources := []terraformutils.Resource{}
-	for _, notificationGroup := range notificationGroups {
-		resources = append(resources, g.createResource(notificationGroup.ID))
+func (g *NotificationGroupGenerator) createNotificationGroupGeneratorResources(client *mackerel.Client) error {
+	notificationGroups, err := client.FindNotificationGroups()
+	if err != nil {
+		return err
 	}
-	return resources
-}
+	notificationGroupByID := map[string]*mackerel.NotificationGroup{}
+	for _, ng := range notificationGroups {
+		notificationGroupByID[ng.ID] = ng
+	}
 
-func (g *NotificationGroupGenerator) createResource(notificationGroupID string) terraformutils.Resource {
-	return terraformutils.NewSimpleResource(
-		notificationGroupID,
-		fmt.Sprintf("notification_group_%s", notificationGroupID),
-		"mackerel_notification_group",
-		"mackerel",
-		[]string{},
-	)
+	for id, notificationGroup := range notificationGroupByID {
+		if len(notificationGroup.Services) == 0 {
+			continue
+		}
+
+		isTarget := false
+		for _, svc := range notificationGroup.Services {
+			if svc.Name == g.serviceName {
+				isTarget = true
+				break
+			}
+		}
+		if !isTarget {
+			continue
+		}
+
+		g.Resources = append(g.Resources, terraformutils.NewResource(
+			id,
+			fmt.Sprintf("notification_group_%s", notificationGroup.Name),
+			"mackerel_notification_group",
+			g.ProviderName,
+			map[string]string{
+				"name": notificationGroup.Name,
+			},
+			[]string{},
+			map[string]interface{}{},
+		))
+
+		for _, childID := range notificationGroup.ChildNotificationGroupIDs {
+			if id == childID {
+				child := notificationGroupByID[id]
+				g.Resources = append(g.Resources, terraformutils.NewResource(
+					child.ID,
+					fmt.Sprintf("notification_group_%s", child.Name),
+					"mackerel_notification_group",
+					g.ProviderName,
+					map[string]string{
+						"name": child.Name,
+					},
+					[]string{},
+					map[string]interface{}{},
+				))
+			}
+		}
+	}
+	return nil
 }
 
 // InitResources Generate TerraformResources from Mackerel API,
 // from each notification group create 1 TerraformResource.
 // Need Notification Group ID as ID for terraform resource
 func (g *NotificationGroupGenerator) InitResources() error {
-	client := g.Args["mackerelClient"].(*mackerel.Client)
-	notificationGroups, err := client.FindNotificationGroups()
+	client, err := g.Client()
 	if err != nil {
 		return err
 	}
-	g.Resources = append(g.Resources, g.createResources(notificationGroups)...)
+
+	funcs := []func(*mackerel.Client) error{
+		g.createNotificationGroupGeneratorResources,
+	}
+
+	for _, f := range funcs {
+		err := f(client)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
