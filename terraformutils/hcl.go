@@ -150,7 +150,9 @@ func (v *astSanitizer) visitObjectItem(o *ast.ObjectItem) {
 			}
 		}
 	case *ast.ListType:
-		sortHclTree(t.List)
+		if v.sort {
+			sortHclTree(t.List)
+		}
 	default:
 	}
 
