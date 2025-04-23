@@ -499,10 +499,10 @@ func (g *ToolchainGenerator) updateRepos(i int, res terraformutils.Resource, rep
 		return
 	}
 	if tcID, ok := g.Resources[i].InstanceState.Attributes["toolchain_id"]; ok {
+		repoMutex.Lock()
 		if repos[tcID] == nil {
 			repos[tcID] = make(map[string]string)
 		}
-		repoMutex.Lock()
 		repos[tcID][paramsMap["repo_url"].(string)] = res.InstanceInfo.ResourceAddress().String()
 		repoMutex.Unlock()
 	}
