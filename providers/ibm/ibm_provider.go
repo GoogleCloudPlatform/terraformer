@@ -17,12 +17,15 @@ package ibm
 import (
 	"errors"
 	"os"
+	"sync"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 const DefaultRegion = "us-south"
 const NoRegion = ""
+
+var resourceMutex sync.RWMutex // Used for g.Resources
 
 type IBMProvider struct { //nolint
 	terraformutils.Provider
