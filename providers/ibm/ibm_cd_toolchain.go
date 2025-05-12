@@ -208,6 +208,11 @@ func (g *ToolchainGenerator) HandleTool(t cdtoolchainv2.ToolModel, toolType stri
 				log.Print("......! Error getting pipeline information: ", err)
 			}
 
+			region := g.Args["region"].(string)
+
+			serviceURL := fmt.Sprintf("https://api.%s.devops.cloud.ibm.com/pipeline/v2", region)
+			cdTektonPipelineService.SetServiceURL(serviceURL)
+
 			getTektonPipelineOptions := cdTektonPipelineService.NewGetTektonPipelineOptions(plID)
 
 			tektonPipeline, _, err := cdTektonPipelineService.GetTektonPipeline(getTektonPipelineOptions)
@@ -435,12 +440,16 @@ func (g *ToolchainGenerator) InitResources() error {
 				return err
 			}
 
+			serviceURL := fmt.Sprintf("https://api.%s.devops.cloud.ibm.com/toolchain/v2", region)
+			toolchainClient.SetServiceURL(serviceURL)
+
 			listToolsOptions := toolchainClient.NewListToolsOptions(tcID)
 
 			listToolsOptions.SetLimit(150) // 150 is max num tools per toolchain
 
 			tools, _, err := toolchainClient.ListTools(listToolsOptions)
 			if err != nil {
+				fmt.Println("failed here!", tcID)
 				return err
 			}
 
