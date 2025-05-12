@@ -226,7 +226,7 @@ func (g *ToolchainGenerator) HandleTool(t cdtoolchainv2.ToolModel, toolType stri
 				defName := normalizeResourceName("definition", true)
 
 				resourceMutex.Lock()
-				g.Resources = append(g.Resources, g.loadPLDef("ibm_cd_tekton_pipeline_definition", defID, defName, plIDref, plID))
+				g.Resources = append(g.Resources, g.loadPLDef("ibm_cd_tekton_pipeline_definition", defID, defName, plIDref, tcID))
 				resourceMutex.Unlock()
 			}
 
@@ -499,21 +499,36 @@ func (g *ToolchainGenerator) updateWorkerIDs(i int, res terraformutils.Resource,
 
 // Goroutine helper to collect repos for TektonDefinitionPostProcess
 func (g *ToolchainGenerator) updateRepos(i int, res terraformutils.Resource, repos map[string](map[string]string)) {
-	params, ok := g.Resources[i].Item["parameters"].([]interface{})
-	if !ok || len(params) == 0 {
-		return
-	}
-	paramsMap, ok := params[0].(map[string]interface{})
-	if !ok {
-		return
-	}
-	if tcID, ok := g.Resources[i].InstanceState.Attributes["toolchain_id"]; ok {
-		repoMutex.Lock()
-		if repos[tcID] == nil {
-			repos[tcID] = make(map[string]string)
+	if params, ok := g.Resources[i].Item["parameters"].([]interface{}); ok && len(params) > 0 {
+		if paramsMap, ok := params[0].(map[string]interface{}); ok {
+			if tcID, ok := g.Resources[i].InstanceState.Attributes["toolchain_id"]; ok {
+				if paramsMap["repo_url"].(string) != "" {
+					repoMutex.Lock()
+					if repos[tcID] == nil {
+						repos[tcID] = make(map[string]string)
+					}
+					repos[tcID][paramsMap["repo_url"].(string)] = res.InstanceInfo.ResourceAddress().String()
+					repoMutex.Unlock()
+					return
+				}
+			}
 		}
-		repos[tcID][paramsMap["repo_url"].(string)] = res.InstanceInfo.ResourceAddress().String()
-		repoMutex.Unlock()
+	}
+
+	if initialization, ok := g.Resources[i].Item["initialization"].([]interface{}); ok && len(initialization) > 0 {
+		if initMap, ok := initialization[0].(map[string]interface{}); ok {
+			if tcID, ok := g.Resources[i].InstanceState.Attributes["toolchain_id"]; ok {
+				if initMap["repo_url"].(string) != "" {
+					repoMutex.Lock()
+					if repos[tcID] == nil {
+						repos[tcID] = make(map[string]string)
+					}
+					repos[tcID][initMap["repo_url"].(string)] = res.InstanceInfo.ResourceAddress().String()
+					repoMutex.Unlock()
+					return
+				}
+			}
+		}
 	}
 }
 
@@ -629,8 +644,12 @@ func (g *ToolchainGenerator) TektonDefinitionPostProcess(i int, res terraformuti
 	if !ok {
 		return
 	}
+	fmt.Println("REPOS IS:", repos, "\n", "repo is:", defPropsMap["url"])
 	if repo, ok := repos[tcID.(string)][defPropsMap["url"].(string)]; ok {
 		g.Resources[i].Item["depends_on"] = []string{repo}
+		fmt.Println("JACKPOT!")
+	} else {
+		fmt.Println("this is tcID:", tcID.(string), "THIS IS REPOS TCID:", repos[tcID.(string)])
 	}
 	delete(g.Resources[i].Item, "toolchain_id_actual")
 }
