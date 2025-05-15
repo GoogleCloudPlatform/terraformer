@@ -17,12 +17,15 @@ package ibm
 import (
 	"errors"
 	"os"
+	"sync"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
 const DefaultRegion = "us-south"
 const NoRegion = ""
+
+var resourceMutex sync.RWMutex // Used for g.Resources
 
 type IBMProvider struct { //nolint
 	terraformutils.Provider
@@ -160,6 +163,7 @@ func (p *IBMProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"ibm_satellite_data_plane":          &SatelliteDataPlaneGenerator{},
 		"ibm_secrets_manager":               &SecretsManagerGenerator{},
 		"ibm_continuous_delivery":           &ContinuousDeliveryGenerator{},
+		"ibm_cd_toolchain":                  &ToolchainGenerator{},
 		"ibm_cloud_sysdig_monitor":          &MonitoringGenerator{},
 		"ibm_cloud_logdna":                  &LogAnalysisGenerator{},
 		"ibm_cloud_atracker":                &ActivityTrackerGenerator{},

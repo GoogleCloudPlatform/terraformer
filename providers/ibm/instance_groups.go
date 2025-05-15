@@ -88,11 +88,13 @@ func (g *InstanceGroupGenerator) handlePolicies(sess *vpcv1.VpcV1, instanceGroup
 			g.fatalErrors <- fmt.Errorf("Error Getting InstanceGroup Manager Policy: %s\n%s", err, response)
 		}
 		instanceGroupManagerPolicy := data.(*vpcv1.InstanceGroupManagerPolicy)
+		resourceMutex.Lock()
 		g.Resources = append(g.Resources, g.loadInstanceGroupMangerPolicy(instanceGroupID,
 			instanceGroupManagerID,
 			instanceGroupManagerPolicyID,
 			*instanceGroupManagerPolicy.Name,
 			dependsOn))
+		resourceMutex.Unlock()
 	}
 }
 
@@ -109,7 +111,9 @@ func (g *InstanceGroupGenerator) handleManagers(sess *vpcv1.VpcV1, instanceGroup
 			g.fatalErrors <- fmt.Errorf("Error Getting InstanceGroup Manager: %s\n%s", err, response)
 		}
 		instanceGroupManager := instanceGroupManagerIntf.(*vpcv1.InstanceGroupManager)
+		resourceMutex.Lock()
 		g.Resources = append(g.Resources, g.loadInstanceGroupManger(instanceGroupID, instanceGroupManagerID, *instanceGroupManager.Name, dependsOn))
+		resourceMutex.Unlock()
 
 		policies := make([]string, 0)
 
@@ -152,7 +156,9 @@ func (g *InstanceGroupGenerator) handleInstanceGroups(sess *vpcv1.VpcV1, waitGro
 		dependsOn = append(dependsOn,
 			"ibm_is_instance_group."+terraformutils.TfSanitize(*instanceGroup.Name))
 		instanceGoupID := *instanceGroup.ID
+		resourceMutex.Lock()
 		g.Resources = append(g.Resources, g.loadInstanceGroup(instanceGoupID, *instanceGroup.Name))
+		resourceMutex.Unlock()
 		managers := make([]string, 0)
 		for i := 0; i < len(instanceGroup.Managers); i++ {
 			managers = append(managers, *(instanceGroup.Managers[i].ID))
