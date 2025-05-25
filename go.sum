@@ -492,8 +492,8 @@ github.com/aws/aws-sdk-go-v2/service/glue v1.72.4 h1:4zoqdS+svLp0a83g7YsYRR/9cNd
 github.com/aws/aws-sdk-go-v2/service/glue v1.72.4/go.mod h1:ALQEuXs/XUdwrkAucRl3juNFbiomoaPICShOoGzHNiE=
 github.com/aws/aws-sdk-go-v2/service/iam v1.28.5 h1:Ts2eDDuMLrrmd0ARlg5zSoBQUvhdthgiNnPdiykTJs0=
 github.com/aws/aws-sdk-go-v2/service/iam v1.28.5/go.mod h1:kKI0gdVsf+Ev9knh/3lBJbchtX5LLNH25lAzx3KDj3Q=
-github.com/aws/aws-sdk-go-v2/service/identitystore v1.21.5 h1:x93yL/0ey4Y/HEBSsqcLNQDDeIVRLOdziLMg3+YM/F8=
-github.com/aws/aws-sdk-go-v2/service/identitystore v1.21.5/go.mod h1:vs4IYQdGHOLq6DsPfSuoADmRzr/AeWIk8m50XBnwN/o=
+github.com/aws/aws-sdk-go-v2/service/identitystore v1.28.3 h1:zQMIlYXYHFzrurTKozpXFTGs0M5kwWgG8jL8EKGp8xg=
+github.com/aws/aws-sdk-go-v2/service/identitystore v1.28.3/go.mod h1:7nGvrQXBNp7k5yYpwpmxGucYTPY39d0cxjmANAeWwYE=
 github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.10.4 h1:/b31bi3YVNlkzkBrm9LfpaKoaYZUxIAj4sHfOTmLfqw=
 github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.10.4/go.mod h1:2aGXHFmbInwgP9ZfpmdIfOELL79zhdNYNmReK8qDfdQ=
 github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.2.9 h1:/90OR2XbSYfXucBMJ4U14wrjlfleq/0SB6dZDPncgmo=
