@@ -1,6 +1,7 @@
 module github.com/GoogleCloudPlatform/terraformer
 
 go 1.24.0
+
 require (
 	cloud.google.com/go v0.116.0 // indirect
 	cloud.google.com/go/logging v1.12.0
@@ -91,7 +92,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.25.5
 	github.com/aws/aws-sdk-go-v2/service/securityhub v1.43.5
 	github.com/aws/aws-sdk-go-v2/service/servicecatalog v1.25.5
-	github.com/aws/aws-sdk-go-v2/service/ses v1.19.5
+	github.com/aws/aws-sdk-go-v2/service/ses v1.30.2
 	github.com/aws/aws-sdk-go-v2/service/sfn v1.24.5
 	github.com/aws/aws-sdk-go-v2/service/sns v1.26.5
 	github.com/aws/aws-sdk-go-v2/service/sqs v1.29.5
