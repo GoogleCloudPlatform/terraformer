@@ -113,7 +113,7 @@ func (p *OktaProvider) GetSupportedService() map[string]terraformutils.ServiceGe
 		"okta_group":                     &GroupGenerator{},
 		"okta_group_rule":                &GroupRuleGenerator{},
 		"okta_event_hook":                &EventHookGenerator{},
-		"okta_inline_hook":               &EventHookGenerator{},
+		"okta_inline_hook":               &InlineHookGenerator{},
 		"okta_policy_password":           &PasswordPolicyGenerator{},
 		"okta_policy_rule_password":      &PasswordPolicyRuleGenerator{},
 		"okta_policy_signon":             &SignOnPolicyGenerator{},
