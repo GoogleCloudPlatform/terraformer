@@ -1,6 +1,7 @@
 module github.com/GoogleCloudPlatform/terraformer
 
 go 1.24.0
+
 require (
 	cloud.google.com/go v0.116.0 // indirect
 	cloud.google.com/go/logging v1.12.0
@@ -59,7 +60,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ecr v1.24.5
 	github.com/aws/aws-sdk-go-v2/service/ecrpublic v1.21.5
 	github.com/aws/aws-sdk-go-v2/service/ecs v1.56.3
-	github.com/aws/aws-sdk-go-v2/service/efs v1.26.5
+	github.com/aws/aws-sdk-go-v2/service/efs v1.36.0
 	github.com/aws/aws-sdk-go-v2/service/eks v1.35.5
 	github.com/aws/aws-sdk-go-v2/service/elasticache v1.34.5
 	github.com/aws/aws-sdk-go-v2/service/elasticbeanstalk v1.20.5
