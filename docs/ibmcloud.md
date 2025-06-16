@@ -60,6 +60,34 @@ List of supported IBM Cloud resources:
     * `ibm_container_vpc_cluster`
     * `ibm_container_vpc_worker_pool`
 *   `ibm_continuous_delivery`
+* `ibm_cd_toolchain`
+    * `ibm_cd_tekton_pipeline`
+    * `ibm_cd_tekton_pipeline_definition`
+    * `ibm_cd_tekton_pipeline_property`
+    * `ibm_cd_tekton_pipeline_trigger`
+    * `ibm_cd_tekton_pipeline_trigger_property`
+    * `ibm_cd_toolchain_tool_appconfig`
+    * `ibm_cd_toolchain_tool_artifactory`
+    * `ibm_cd_toolchain_tool_bitbucketgit`
+    * `ibm_cd_toolchain_tool_custom`
+    * `ibm_cd_toolchain_tool_devopsinsights`
+    * `ibm_cd_toolchain_tool_eventnotifications`
+    * `ibm_cd_toolchain_tool_githubconsolidated`
+    * `ibm_cd_toolchain_tool_gitlab`
+    * `ibm_cd_toolchain_tool_hashicorpvault`
+    * `ibm_cd_toolchain_tool_hostedgit`
+    * `ibm_cd_toolchain_tool_jenkins`
+    * `ibm_cd_toolchain_tool_jira`
+    * `ibm_cd_toolchain_tool_keyprotect`
+    * `ibm_cd_toolchain_tool_nexus`
+    * `ibm_cd_toolchain_tool_pagerduty`
+    * `ibm_cd_toolchain_tool_pipeline`
+    * `ibm_cd_toolchain_tool_privateworker`
+    * `ibm_cd_toolchain_tool_saucelabs`
+    * `ibm_cd_toolchain_tool_secretsmanager`
+    * `ibm_cd_toolchain_tool_securitycompliance`
+    * `ibm_cd_toolchain_tool_slack`
+    * `ibm_cd_toolchain_tool_sonarqube`
 *   `ibm_cos`
     * `ibm_cos_bucket`
     * `ibm_resource_instance`

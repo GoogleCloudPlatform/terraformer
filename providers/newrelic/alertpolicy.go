@@ -12,47 +12,47 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package okta
+package newrelic
 
 import (
+	"fmt"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/okta/okta-sdk-golang/v5/okta"
+	newrelic "github.com/newrelic/newrelic-client-go/newrelic"
 )
 
-type UserGenerator struct {
-	OktaService
+type AlertPolicyGenerator struct {
+	NewRelicService
 }
 
-func (g UserGenerator) createResources(userList []okta.User) []terraformutils.Resource {
-	var resources []terraformutils.Resource
-	for _, user := range userList {
-		resources = append(resources, terraformutils.NewSimpleResource(
-			user.GetId(),
-			"user_"+user.GetId(),
-			"okta_user",
-			"okta",
+func (g *AlertPolicyGenerator) createAlertPolicyResources(client *newrelic.NewRelic) error {
+	alertPolicies, err := client.Alerts.ListPolicies(nil)
+	if err != nil {
+		return err
+	}
+
+	for _, alertPolicy := range alertPolicies {
+		g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
+			fmt.Sprintf("%d", alertPolicy.ID),
+			fmt.Sprintf("%s-%d", normalizeResourceName(alertPolicy.Name), alertPolicy.ID),
+			"newrelic_alert_policy",
+			g.ProviderName,
 			[]string{}))
 	}
-	return resources
+
+	return nil
 }
 
-func (g *UserGenerator) InitResources() error {
-	ctx, client, err := g.ClientV5()
+func (g *AlertPolicyGenerator) InitResources() error {
+	client, err := g.Client()
 	if err != nil {
 		return err
 	}
 
-	output, resp, err := client.UserAPI.ListUsers(ctx).Execute()
+	err = g.createAlertPolicyResources(client)
 	if err != nil {
 		return err
 	}
 
-	for resp.HasNextPage() {
-		var nextUserSet []okta.User
-		resp, _ = resp.Next(&nextUserSet)
-		output = append(output, nextUserSet...)
-	}
-
-	g.Resources = g.createResources(output)
 	return nil
 }
