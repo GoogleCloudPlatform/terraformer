@@ -24,8 +24,6 @@ type ToolchainGenerator struct {
 	IBMService
 }
 
-var resourceMutex sync.RWMutex // Used for g.Resources
-
 var workerIDMutex sync.RWMutex // Used in PostConvertHook
 var repoMutex sync.RWMutex     // Used in PostConvertHook
 var toolMutex sync.RWMutex     // Used in PostConvertHook
