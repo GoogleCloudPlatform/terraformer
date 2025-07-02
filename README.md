@@ -43,7 +43,7 @@ A CLI tool that generates `tf`/`json` and `tfstate` files based on existing infr
         * [OctopusDeploy](/docs/octopus.md)
         * [RabbitMQ](/docs/rabbitmq.md)
     * Network
-        * [Cloudflare](/docs/cloudflare.md)
+        * [Cloudflare](/docs/cloudflare.md) (broken, see #1761)
         * [Myrasec](/docs/myrasec.md)
         * [PAN-OS](/docs/panos.md)
     * VCS
@@ -334,7 +334,7 @@ https://www.terraform.io/docs/configuration/providers.html
 ## Contributing
 
 If you have improvements or fixes, we would love to have your contributions.
-Please read CONTRIBUTING.md for more information on the process we would like
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for more information on the process we would like
 contributors to follow.
 
 ## Developing

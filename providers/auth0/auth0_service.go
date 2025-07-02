@@ -33,7 +33,7 @@ func (s *Auth0Service) generateClient() *management.Management {
 		management.WithDebug(false),
 	)
 	if err != nil {
-		log.Fatalf(err.Error())
+		log.Fatalf("%v", err)
 	}
 
 	return apiClient

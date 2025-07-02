@@ -201,13 +201,13 @@ func (p *AWSProvider) Init(args []string) error {
 		}
 	}
 
-	if p.profile != "default" && p.profile != "" {
+	if p.profile != "" && p.profile != "default" {
+		envVar := "AWS_PROFILE"
 		if enableSharedConfig {
-			err = os.Setenv("AWS_DEFAULT_PROFILE", p.profile)
-		} else {
-			err = os.Setenv("AWS_PROFILE", p.profile)
+			envVar = "AWS_DEFAULT_PROFILE"
 		}
-		if err != nil {
+
+		if err := os.Setenv(envVar, p.profile); err != nil {
 			return err
 		}
 	}
@@ -242,6 +242,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"acm":               &AwsFacade{service: &ACMGenerator{}},
 		"alb":               &AwsFacade{service: &AlbGenerator{}},
 		"api_gateway":       &AwsFacade{service: &APIGatewayGenerator{}},
+		"api_gatewayv2":     &AwsFacade{service: &APIGatewayV2Generator{}},
 		"appsync":           &AwsFacade{service: &AppSyncGenerator{}},
 		"auto_scaling":      &AwsFacade{service: &AutoScalingGenerator{}},
 		"batch":             &AwsFacade{service: &BatchGenerator{}},
@@ -262,6 +263,7 @@ func (p *AWSProvider) GetSupportedService() map[string]terraformutils.ServiceGen
 		"datapipeline":      &AwsFacade{service: &DataPipelineGenerator{}},
 		"devicefarm":        &AwsFacade{service: &DeviceFarmGenerator{}},
 		"docdb":             &AwsFacade{service: &DocDBGenerator{}},
+		"dx":				 &AwsFacade{service: &DirectConnectGenerator{}},
 		"dynamodb":          &AwsFacade{service: &DynamoDbGenerator{}},
 		"ebs":               &AwsFacade{service: &EbsGenerator{}},
 		"ec2_instance":      &AwsFacade{service: &Ec2Generator{}},

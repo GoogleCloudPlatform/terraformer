@@ -18,57 +18,52 @@ import (
 	"context"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/okta/okta-sdk-golang/v2/okta"
-	"github.com/okta/okta-sdk-golang/v2/okta/query"
+	"github.com/okta/okta-sdk-golang/v5/okta"
 )
 
 type AppSignOnPolicyGenerator struct {
 	OktaService
 }
 
-func (g AppSignOnPolicyGenerator) createResources(appSignOnPolicyList []*okta.Policy) []terraformutils.Resource {
+func (g AppSignOnPolicyGenerator) createResources(policies []okta.ListPolicies200ResponseInner) []terraformutils.Resource {
 	var resources []terraformutils.Resource
-	for _, appSignOnPolicy := range appSignOnPolicyList {
-		resourceName := normalizeResourceName(appSignOnPolicy.Name)
-		resourceType := "okta_app_signon_policy"
+	for _, policy := range policies {
+		if policy.AccessPolicy == nil {
+			continue
+		}
+
+		resourceName := normalizeResourceNameWithRandom(policy.AccessPolicy.GetName(), true)
+		resourceID := policy.AccessPolicy.GetId()
 
 		resources = append(resources, terraformutils.NewSimpleResource(
-			appSignOnPolicy.Id,
-			"app_signon_policy"+resourceName,
-			resourceType,
+			resourceID,
+			resourceName,
+			"okta_app_signon_policy",
 			"okta",
-			[]string{"description"}))
+			[]string{}))
 	}
 	return resources
 }
 
 func (g *AppSignOnPolicyGenerator) InitResources() error {
-	var output []*okta.Policy
-	ctx, client, e := g.Client()
-	if e != nil {
-		return e
+	ctx, client, err := g.ClientV5()
+	if err != nil {
+		return err
 	}
 
-	output, _ = getAppSignOnPolicies(ctx, client)
-	g.Resources = g.createResources(output)
+	policies, err := getAppSignOnPolicies(ctx, client)
+	if err != nil {
+		return err
+	}
+
+	g.Resources = g.createResources(policies)
 	return nil
 }
 
-func getAppSignOnPolicies(ctx context.Context, client *okta.Client) ([]*okta.Policy, error) {
-	qp := query.NewQueryParams(query.WithType("ACCESS_POLICY"))
-	var policies []*okta.Policy
-	data, resp, err := client.Policy.ListPolicies(ctx, qp)
+func getAppSignOnPolicies(ctx context.Context, client *okta.APIClient) ([]okta.ListPolicies200ResponseInner, error) {
+	policies, _, err := client.PolicyAPI.ListPolicies(ctx).Type_("ACCESS_POLICY").Execute()
 	if err != nil {
 		return nil, err
-	}
-
-	for resp.HasNextPage() {
-		var nextPolicies []*okta.Policy
-		resp, _ = resp.Next(ctx, &nextPolicies)
-		policies = append(policies, nextPolicies...)
-	}
-	for _, p := range data {
-		policies = append(policies, p.(*okta.Policy))
 	}
 	return policies, nil
 }

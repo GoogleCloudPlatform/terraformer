@@ -15,21 +15,29 @@
 package okta
 
 import (
+	"context"
+
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/okta/terraform-provider-okta/sdk"
+	"github.com/okta/okta-sdk-golang/v5/okta"
 )
 
 type AppSignOnPolicyRuleGenerator struct {
 	OktaService
 }
 
-func (g AppSignOnPolicyRuleGenerator) createResources(signOnPolicyRuleList []sdk.PolicyRule, policyID string, policyName string) []terraformutils.Resource {
+func (g AppSignOnPolicyRuleGenerator) createResources(signOnPolicyRuleList []okta.ListPolicyRules200ResponseInner, policyID string) []terraformutils.Resource {
 	var resources []terraformutils.Resource
 
 	for _, policyRule := range signOnPolicyRuleList {
+		if policyRule.AccessPolicyRule == nil {
+			continue
+		}
+
+		resourceName := normalizeResourceNameWithRandom(policyRule.AccessPolicyRule.GetName(), true)
+
 		resources = append(resources, terraformutils.NewResource(
-			policyRule.Id,
-			"app_policyrule_signon_"+normalizeResourceName(policyName+"_"+policyRule.Name),
+			policyRule.AccessPolicyRule.GetId(),
+			resourceName,
 			"okta_app_signon_policy_rule",
 			"okta",
 			map[string]string{
@@ -44,47 +52,44 @@ func (g AppSignOnPolicyRuleGenerator) createResources(signOnPolicyRuleList []sdk
 }
 
 func (g *AppSignOnPolicyRuleGenerator) InitResources() error {
-	var resources []terraformutils.Resource
-
-	ctx, client, e := g.Client()
-	if e != nil {
-		return e
-	}
-
-	appSignOnPolicies, err := getAppSignOnPolicies(ctx, client)
+	ctx, client, err := g.ClientV5()
 	if err != nil {
 		return err
 	}
 
-	for _, policy := range appSignOnPolicies {
-		output, err := getAppSignOnPolicyRules(g, policy.Id)
+	policies, err := getAppSignOnPolicies(ctx, client)
+	if err != nil {
+		return err
+	}
+
+	var allResources []terraformutils.Resource
+
+	for _, policy := range policies {
+		if policy.AccessPolicy == nil {
+			continue
+		}
+
+		policyID := policy.AccessPolicy.GetId()
+
+		policyRules, err := getAppSignOnPolicyRules(ctx, client, policyID)
 		if err != nil {
 			return err
 		}
 
-		resources = append(resources, g.createResources(output, policy.Id, policy.Name)...)
+		resources := g.createResources(policyRules, policyID)
+
+		allResources = append(allResources, resources...)
 	}
 
-	g.Resources = resources
+	g.Resources = allResources
+
 	return nil
 }
 
-func getAppSignOnPolicyRules(g *AppSignOnPolicyRuleGenerator, policyID string) ([]sdk.PolicyRule, error) {
-	ctx, client, e := g.APISupplementClient()
-	if e != nil {
-		return nil, e
-	}
-
-	output, resp, err := client.ListPolicyRules(ctx, policyID)
+func getAppSignOnPolicyRules(ctx context.Context, client *okta.APIClient, policyID string) ([]okta.ListPolicyRules200ResponseInner, error) {
+	policyRules, _, err := client.PolicyAPI.ListPolicyRules(ctx, policyID).Execute()
 	if err != nil {
-		return nil, e
+		return nil, err
 	}
-
-	for resp.HasNextPage() {
-		var nextPolicySet []sdk.PolicyRule
-		resp, _ = resp.Next(ctx, &nextPolicySet)
-		output = append(output, nextPolicySet...)
-	}
-
-	return output, nil
+	return policyRules, nil
 }

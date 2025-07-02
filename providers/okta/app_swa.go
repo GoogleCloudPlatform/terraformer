@@ -15,57 +15,62 @@
 package okta
 
 import (
-	"context"
+	"fmt"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	"github.com/okta/okta-sdk-golang/v2/okta"
+	"github.com/okta/okta-sdk-golang/v5/okta"
 )
 
 type AppSWAGenerator struct {
 	OktaService
 }
 
-func (g AppSWAGenerator) createResources(appList []*okta.Application) []terraformutils.Resource {
+func (g *AppSWAGenerator) createResources(appList []okta.ListApplications200ResponseInner) []terraformutils.Resource {
 	var resources []terraformutils.Resource
 	for _, app := range appList {
-		resources = append(resources, terraformutils.NewSimpleResource(
-			app.Id,
-			normalizeResourceName(app.Id+"_"+app.Name),
-			"okta_app_swa",
-			"okta",
-			[]string{}))
+		if app.BrowserPluginApplication != nil && app.BrowserPluginApplication.Id != nil && app.BrowserPluginApplication.Label != "" {
+			resources = append(resources, terraformutils.NewSimpleResource(
+				*app.BrowserPluginApplication.Id,
+				normalizeResourceName(*app.BrowserPluginApplication.Id+"_"+app.BrowserPluginApplication.Label),
+				"okta_app_swa",
+				"okta",
+				[]string{},
+			))
+		}
 	}
 	return resources
 }
 
 func (g *AppSWAGenerator) InitResources() error {
-	ctx, client, e := g.Client()
-	if e != nil {
-		return e
-	}
-
-	apps, err := getSWAApplications(ctx, client)
+	ctx, client, err := g.ClientV5()
 	if err != nil {
 		return err
 	}
 
-	g.Resources = g.createResources(apps)
+	appList, resp, err := client.ApplicationAPI.ListApplications(ctx).Execute()
+	if err != nil {
+		return fmt.Errorf("error listing applications: %w", err)
+	}
+
+	allApplications := appList
+
+	for resp.HasNextPage() {
+		var nextAppList []okta.ListApplications200ResponseInner
+		resp, err = resp.Next(&nextAppList)
+		if err != nil {
+			return fmt.Errorf("error fetching next page: %w", err)
+		}
+
+		allApplications = append(allApplications, nextAppList...)
+	}
+
+	g.Resources = g.createResources(allApplications)
 	return nil
 }
 
-func getSWAApplications(ctx context.Context, client *okta.Client) ([]*okta.Application, error) {
-	signOnMode := "BROWSER_PLUGIN"
-	apps, err := getApplications(ctx, client, signOnMode)
-	if err != nil {
-		return nil, err
+func (g *AppSWAGenerator) PostConvertHook() error {
+	for i := range g.Resources {
+		g.Resources[i].Item = escapeDollar(g.Resources[i].Item)
 	}
-
-	swaApps := []*okta.Application{}
-	for _, app := range apps {
-		if app.Name == "template_swa" {
-			swaApps = append(swaApps, app)
-		}
-	}
-
-	return swaApps, nil
+	return nil
 }
