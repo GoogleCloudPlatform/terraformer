@@ -81,6 +81,26 @@ Filtering based on resource ID:
 
 Tag filters are order specific. For example, if your monitor has tags (in the order) `atag: atagvalue`, `foo:bar` but you filter for `--filter="Name=tags;Value='foo:bar'" --filter="Name=tags;Value='atag: atagvalue'"`, the monitor would not be imported.
 
+### Preserving Resource Order with `--no-sort`
+
+When importing certain Datadog resources like dashboards or synthetic tests, you may need to use the `--no-sort` option to preserve the correct order of elements (e.g., dashboard widgets, synthetic test steps).
+
+Without `--no-sort`, the imported resources may have their internal ordering altered, which can cause issues when applying the Terraform configuration.
+
+**Recommended usage:**
+```bash
+# For dashboards
+./terraformer import datadog --resources=dashboard --no-sort
+
+# For synthetic tests  
+./terraformer import datadog --resources=synthetics_test --no-sort
+
+# For all resources (recommended)
+./terraformer import datadog --resources=* --no-sort
+```
+
+This ensures that the imported Terraform configuration maintains the same order as your existing Datadog resources.
+
 ## Supported Datadog resources
 
 *   `dashboard`
