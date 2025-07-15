@@ -16,7 +16,7 @@ terraform {
   required_providers {
     datadog = {
       source  = "DataDog/datadog"
-      version = "3.20.0"
+      version = "~> 3.67.0"         # Find the latest version here: https://github.com/DataDog/terraform-provider-datadog/releases/latest
     }
   }
 }
