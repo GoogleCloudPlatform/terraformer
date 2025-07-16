@@ -108,9 +108,6 @@ var terraformResources = map[string]gcpResourceRenderable{
 		terraformName:    "google_compute_region_instance_group_manager",
 		allowEmptyValues: []string{"name", "health_check"},
 	},
-	"regionInstanceGroups": basicGCPResource{
-		terraformName: "google_compute_region_instance_group",
-	},
 	"regionSslCertificates": basicGCPResource{
 		terraformName: "google_compute_region_ssl_certificate",
 	},
