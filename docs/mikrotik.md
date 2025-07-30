@@ -1,4 +1,4 @@
-### Use with [Mikrotik](https://wiki.mikrotik.com/wiki/Manual:TOC)
+### Use with [Mikrotik](https://help.mikrotik.com/docs/)
 
 This provider uses the [terraform-provider-mikrotik](https://github.com/ddelnano/terraform-provider-mikrotik). The terraformer provider was built by [Dom Del Nano](https://github.com/ddelnano).
 
