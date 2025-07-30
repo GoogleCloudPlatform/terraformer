@@ -38,6 +38,11 @@ func (SubnetGenerator) createResources(subnets *ec2.DescribeSubnetsOutput) []ter
 			SubnetAllowEmptyValues,
 		)
 		resource.IgnoreKeys = append(resource.IgnoreKeys, "availability_zone")
+
+		if subnet.EnableLniAtDeviceIndex == nil || *subnet.EnableLniAtDeviceIndex == 0 {
+			resource.IgnoreKeys = append(resource.IgnoreKeys, "enable_lni_at_device_index")
+		}
+
 		resources = append(resources, resource)
 	}
 	return resources
