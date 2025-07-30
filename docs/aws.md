@@ -183,6 +183,10 @@ terraformer import aws --resources=sg --regions=us-east-1
     * `aws_iam_user_group_membership`
     * `aws_iam_user_policy`
     * `aws_iam_user_policy_attachment`
+*   `identitystore`
+    * `aws_identitystore_group`
+    * `aws_identitystore_group_membership`
+    * `aws_identitystore_user`
 *   `igw`
     * `aws_internet_gateway`
 *   `iot`
