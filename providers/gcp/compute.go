@@ -50,7 +50,6 @@ var ComputeServices = map[string]terraformutils.ServiceGenerator{
 	"regionDisks":                 &GCPFacade{service: &RegionDisksGenerator{}},
 	"regionHealthChecks":          &GCPFacade{service: &RegionHealthChecksGenerator{}},
 	"regionInstanceGroupManagers": &GCPFacade{service: &RegionInstanceGroupManagersGenerator{}},
-	"regionInstanceGroups":        &GCPFacade{service: &RegionInstanceGroupsGenerator{}},
 	"regionSslCertificates":       &GCPFacade{service: &RegionSslCertificatesGenerator{}},
 	"regionTargetHttpProxies":     &GCPFacade{service: &RegionTargetHttpProxiesGenerator{}},
 	"regionTargetHttpsProxies":    &GCPFacade{service: &RegionTargetHttpsProxiesGenerator{}},
