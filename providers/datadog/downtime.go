@@ -17,11 +17,8 @@ package datadog
 import (
 	"context"
 	"fmt"
-	"strconv"
-
 	"github.com/DataDog/datadog-api-client-go/v2/api/datadog"
-	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV1"
-
+	"github.com/DataDog/datadog-api-client-go/v2/api/datadogV2"
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
 
@@ -35,10 +32,10 @@ type DowntimeGenerator struct {
 	DatadogService
 }
 
-func (g *DowntimeGenerator) createResources(downtimes []datadogV1.Downtime) []terraformutils.Resource {
+func (g *DowntimeGenerator) createResources(downtimes []datadogV2.DowntimeResponseData) []terraformutils.Resource {
 	resources := []terraformutils.Resource{}
 	for _, downtime := range downtimes {
-		resourceName := strconv.FormatInt(downtime.GetId(), 10)
+		resourceName := downtime.GetId()
 		resources = append(resources, g.createResource(resourceName))
 	}
 
@@ -48,8 +45,8 @@ func (g *DowntimeGenerator) createResources(downtimes []datadogV1.Downtime) []te
 func (g *DowntimeGenerator) createResource(downtimeID string) terraformutils.Resource {
 	return terraformutils.NewSimpleResource(
 		downtimeID,
-		fmt.Sprintf("downtime_%s", downtimeID),
-		"datadog_downtime",
+		fmt.Sprintf("downtime_schedule_%s", downtimeID),
+		"datadog_downtime_schedule",
 		"datadog",
 		DowntimeAllowEmptyValues,
 	)
@@ -61,23 +58,18 @@ func (g *DowntimeGenerator) createResource(downtimeID string) terraformutils.Res
 func (g *DowntimeGenerator) InitResources() error {
 	datadogClient := g.Args["datadogClient"].(*datadog.APIClient)
 	auth := g.Args["auth"].(context.Context)
-	api := datadogV1.NewDowntimesApi(datadogClient)
+	api := datadogV2.NewDowntimesApi(datadogClient)
 
 	resources := []terraformutils.Resource{}
 	for _, filter := range g.Filter {
 		if filter.FieldPath == "id" && filter.IsApplicable("downtime") {
 			for _, value := range filter.AcceptableValues {
-				i, err := strconv.ParseInt(value, 10, 64)
+				downtime, _, err := api.GetDowntime(auth, value)
 				if err != nil {
 					return err
 				}
 
-				monitor, _, err := api.GetDowntime(auth, i)
-				if err != nil {
-					return err
-				}
-
-				resources = append(resources, g.createResource(strconv.FormatInt(monitor.GetId(), 10)))
+				resources = append(resources, g.createResource(downtime.Data.GetId()))
 			}
 		}
 	}
@@ -87,10 +79,22 @@ func (g *DowntimeGenerator) InitResources() error {
 		return nil
 	}
 
-	downtimes, _, err := api.ListDowntimes(auth)
-	if err != nil {
-		return err
+	var downtimes []datadogV2.DowntimeResponseData
+	optionalParameters := *datadogV2.NewListDowntimesOptionalParameters()
+	downtimesChan, _ := api.ListDowntimesWithPagination(auth,
+		*optionalParameters.WithPageLimit(1000))
+
+	for {
+		pageResult, more := <-downtimesChan
+		if !more {
+			break
+		}
+		if pageResult.Error != nil {
+			return pageResult.Error
+		}
+		downtimes = append(downtimes, pageResult.Item)
 	}
+
 	g.Resources = g.createResources(downtimes)
 	return nil
 }
