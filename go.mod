@@ -352,7 +352,7 @@ require (
 	cloud.google.com/go/cloudtasks v1.13.2
 	cloud.google.com/go/iam v1.2.2
 	cloud.google.com/go/monitoring v1.21.2
-	github.com/DataDog/datadog-api-client-go/v2 v2.11.0
+	github.com/DataDog/datadog-api-client-go/v2 v2.25.0
 	github.com/Myra-Security-GmbH/myrasec-go/v2 v2.28.0
 	github.com/bradleyfalzon/ghinstallation/v2 v2.1.0
 	github.com/manicminer/hamilton v0.44.0
