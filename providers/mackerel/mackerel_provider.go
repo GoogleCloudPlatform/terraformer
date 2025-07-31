@@ -19,81 +19,108 @@ import (
 	"os"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
-	mackerel "github.com/mackerelio/mackerel-client-go"
+	"github.com/mackerelio/mackerel-client-go"
 	"github.com/zclconf/go-cty/cty"
 )
 
-type MackerelProvider struct { //nolint
+type MackerelProvider struct {
 	terraformutils.Provider
-	apiKey         string
-	mackerelClient *mackerel.Client
+	apiKey      string
+	apiBase     string
+	serviceName string
+	client      *mackerel.Client
 }
 
-// Init check env params and initialize API Client
-func (p *MackerelProvider) Init(args []string) error {
+func (m *MackerelProvider) Init(args []string) error {
+	if args[2] == "" {
+		return errors.New("you should specify mackerel service name")
+	}
+
+	if apiKey := os.Getenv("MACKEREL_API_KEY"); apiKey != "" {
+		m.apiKey = apiKey
+	}
+	if base := os.Getenv("MACKEREL_API_BASE"); base != "" {
+		m.apiBase = base
+	}
+
 	if args[0] != "" {
-		p.apiKey = args[0]
-	} else {
-		if apiKey := os.Getenv("MACKEREL_API_KEY"); apiKey != "" {
-			p.apiKey = apiKey
-		} else {
-			return errors.New("api-key requirement")
-		}
+		m.apiKey = args[0]
 	}
-	// Initialize the Mackerel API client
-	p.mackerelClient = mackerel.NewClient(p.apiKey)
+
+	if args[1] != "" {
+		m.apiBase = args[1]
+	}
+
+	m.serviceName = args[2]
 	return nil
 }
 
-// InitService ...
-func (p *MackerelProvider) InitService(serviceName string, verbose bool) error {
-	var isSupported bool
-	if _, isSupported = p.GetSupportedService()[serviceName]; !isSupported {
-		return errors.New(p.GetName() + ": " + serviceName + " not supported service")
-	}
-	p.Service = p.GetSupportedService()[serviceName]
-	p.Service.SetName(serviceName)
-	p.Service.SetVerbose(verbose)
-	p.Service.SetProviderName(p.GetName())
-	p.Service.SetArgs(map[string]interface{}{
-		"api-key":        p.apiKey,
-		"mackerelClient": p.mackerelClient,
-	})
-	return nil
-}
-
-// GetName return string of provider name for Mackerel
-func (p *MackerelProvider) GetName() string {
+func (m *MackerelProvider) GetName() string {
 	return "mackerel"
 }
 
-// GetConfig return map of provider config for Mackerel
-func (p *MackerelProvider) GetConfig() cty.Value {
+func (m *MackerelProvider) GetConfig() cty.Value {
 	return cty.ObjectVal(map[string]cty.Value{
-		"api_key": cty.StringVal(p.apiKey),
+		"api_key": cty.StringVal(m.apiKey),
 	})
 }
 
-// GetSupportedService return map of support service for Mackerel
-func (p *MackerelProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
-	return map[string]terraformutils.ServiceGenerator{
-		"alert_group_setting": &AlertGroupSettingGenerator{},
-		"aws_integration":     &AWSIntegrationGenerator{},
-		"channel":             &ChannelGenerator{},
-		"downtime":            &DowntimeGenerator{},
-		"monitor":             &MonitorGenerator{},
-		"notification_group":  &NotificationGroupGenerator{},
-		"role":                &RoleGenerator{},
-		"service":             &ServiceGenerator{},
+func (m *MackerelProvider) GetProviderData(arg ...string) map[string]interface{} {
+	return map[string]interface{}{
+		"provider": map[string]interface{}{
+			"mackerel": map[string]interface{}{},
+		},
 	}
 }
 
-// GetProviderData return map of provider data for Mackerel
-func (p MackerelProvider) GetProviderData(arg ...string) map[string]interface{} {
-	return map[string]interface{}{}
+func (MackerelProvider) GetResourceConnections() map[string]map[string][]string {
+	return map[string]map[string][]string{}
 }
 
-// GetResourceConnections return map of resource connections for Mackerel
-func (p *MackerelProvider) GetResourceConnections() map[string]map[string][]string {
-	return map[string]map[string][]string{}
+func (m *MackerelProvider) GetSupportedService() map[string]terraformutils.ServiceGenerator {
+	return map[string]terraformutils.ServiceGenerator{
+		"alert_group_setting": &AlertGroupSettingGenerator{
+			serviceName: m.serviceName,
+		},
+		"downtime": &DowntimeGenerator{
+			serviceName: m.serviceName,
+		},
+		"monitor": &MonitorGenerator{
+			serviceName: m.serviceName,
+		},
+		"channel": &ChannelGenerator{
+			serviceName: m.serviceName,
+		},
+		"notification_group": &NotificationGroupGenerator{
+			serviceName: m.serviceName,
+		},
+		"role": &RoleGenerator{
+			serviceName: m.serviceName,
+		},
+		"service": &ServiceGenerator{
+			serviceName: m.serviceName,
+		},
+		"role_metadata": &RoleMetadataGenerator{
+			serviceName: m.serviceName,
+		},
+		"service_metadata": &ServiceMetadataGenerator{
+			serviceName: m.serviceName,
+		},
+	}
+}
+
+func (m *MackerelProvider) InitService(serviceName string, verbose bool) error {
+	var isSupported bool
+	if _, isSupported = m.GetSupportedService()[serviceName]; !isSupported {
+		return errors.New(m.GetName() + ": " + serviceName + " not supported service")
+	}
+	m.Service = m.GetSupportedService()[serviceName]
+	m.Service.SetName(serviceName)
+	m.Service.SetVerbose(verbose)
+	m.Service.SetProviderName(m.GetName())
+	m.Service.SetArgs(map[string]interface{}{
+		"api_key":  m.apiKey,
+		"api_base": m.apiBase,
+	})
+	return nil
 }
