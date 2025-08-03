@@ -14,7 +14,9 @@
 package cmd
 
 import (
+	"errors"
 	"log"
+	"os"
 	"strings"
 
 	gcp_terraforming "github.com/GoogleCloudPlatform/terraformer/providers/gcp"
@@ -29,6 +31,11 @@ func newCmdGoogleImporter(options ImportOptions) *cobra.Command {
 		Short: "Import current state to Terraform configuration from Google Cloud",
 		Long:  "Import current state to Terraform configuration from Google Cloud",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			if credentialPath := os.Getenv("GOOGLE_APPLICATION_CREDENTIALS"); credentialPath == "" {
+				return errors.New("gcp: GOOGLE_APPLICATION_CREDENTIALS is not set")
+			} else if _, err := os.Stat(credentialPath); os.IsNotExist(err) {
+				return errors.New("gcp: GOOGLE_APPLICATION_CREDENTIALS file does not exist")
+			}
 			originalPathPattern := options.PathPattern
 			for _, project := range options.Projects {
 				for _, region := range options.Regions {
