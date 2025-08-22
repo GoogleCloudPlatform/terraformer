@@ -40,7 +40,7 @@ export DATADOG_API_KEY=Datadog API key. More information on this at https://docs
 export DATADOG_HOST=Datadog API host i.e. https://api.datadoghq.eu which can be found at https://docs.datadoghq.com/getting_started/site/#access-the-datadog-site
 export DATADOG_APP_KEY=Datadog APP key. More information on this at https://docs.datadoghq.com/account_management/api-app-keys/ 
 
-./terraformer import datadog --resources=* 
+./terraformer import datadog --resources='*'
 ```
 
 You can also specify only certain kinds of resources to import as well, i.e. `--resources=dashboard`.
