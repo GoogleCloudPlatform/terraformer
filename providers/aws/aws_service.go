@@ -16,14 +16,15 @@ package aws
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"regexp"
-
-	"github.com/aws/aws-sdk-go-v2/service/sts"
+	"sync"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials/stscreds"
+	"github.com/aws/aws-sdk-go-v2/service/sts"
 
 	"github.com/GoogleCloudPlatform/terraformer/terraformutils"
 )
@@ -34,12 +35,20 @@ type AWSService struct { //nolint
 
 var awsVariable = regexp.MustCompile(`(\${[0-9A-Za-z:]+})`)
 
-var configCache *aws.Config
+var (
+	configCache   = map[string]aws.Config{}
+	configCacheMu sync.RWMutex
+)
 
 func (s *AWSService) generateConfig() (aws.Config, error) {
-	if configCache != nil {
-		return *configCache, nil
+	cacheKey := s.configCacheKey()
+
+	configCacheMu.RLock()
+	if cachedConfig, ok := configCache[cacheKey]; ok {
+		configCacheMu.RUnlock()
+		return cachedConfig, nil
 	}
+	configCacheMu.RUnlock()
 
 	baseConfig, e := s.buildBaseConfig()
 
@@ -66,8 +75,27 @@ func (s *AWSService) generateConfig() (aws.Config, error) {
 			os.Setenv("AWS_SESSION_TOKEN", creds.SessionToken)
 		}
 	}
-	configCache = &baseConfig
+	configCacheMu.Lock()
+	configCache[cacheKey] = baseConfig
+	configCacheMu.Unlock()
 	return baseConfig, nil
+}
+
+func (s *AWSService) configCacheKey() string {
+	var region, profile string
+	var skipRegionValidation bool
+
+	if value, ok := s.GetArgs()["region"].(string); ok {
+		region = value
+	}
+	if value, ok := s.GetArgs()["profile"].(string); ok {
+		profile = value
+	}
+	if value, ok := s.GetArgs()["skip_region_validation"].(bool); ok {
+		skipRegionValidation = value
+	}
+
+	return fmt.Sprintf("region:%s|profile:%s|skip_region_validation:%t", region, profile, skipRegionValidation)
 }
 
 func (s *AWSService) buildBaseConfig() (aws.Config, error) {
