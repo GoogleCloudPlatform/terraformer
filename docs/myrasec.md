@@ -1,8 +1,8 @@
-### Use with Myra Security
+# Use with Myra Security
 
 Example using a Myra Security API Key and corresponding Token:
 
-```
+```bash
 export MYRASEC_API_SECRET=[MYRASEC_API_SECRET]
 export MYRASEC_API_KEY=[MYRASEC_API_KEY]
 ./terraformer import myrasec --resources=domain
