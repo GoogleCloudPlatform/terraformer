@@ -1,13 +1,22 @@
-### Use with OctopusDeploy
+# Use with OctopusDeploy
 
 Example:
 
-```
+```bash
 export OCTOPUS_CLI_SERVER=http://localhost:8081/
 export OCTOPUS_CLI_API_KEY=API-CK7DQ8BMJCUUBSHAJCDIATXUO
 
 terraformer import octopusdeploy --resources=tagsets
 ```
+
+```powershell
+$Env:OCTOPUS_CLI_SERVER = 'http://localhost:8081/'
+$Env:OCTOPUS_CLI_API_KEY = 'API-CK7DQ8BMJCUUBSHAJCDIATXUO'
+
+terraformer import octopusdeploy --resources=tagsets
+```
+
+## Suported Resources
 
 * `accounts`
   * `octopusdeploy_account`
