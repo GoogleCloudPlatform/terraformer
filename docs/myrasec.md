@@ -26,5 +26,13 @@ List of supported Myra Security services:
   * `myrasec_redirect`
 * `settings`
   * `myrasec_settings`
+* `tag`
+  * `myrasec_tag`
+* `tag_cache_setting`
+  * `myrasec_tag_cache_setting`
+* `tag_settings`
+  * `myrasec_tag_settings`
+* `tag_waf_rule`
+  * `myrasec_tag_waf_rule`
 * `waf_rule`
   * `myrasec_waf_rule`
