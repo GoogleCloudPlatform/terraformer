@@ -1,6 +1,7 @@
 module github.com/GoogleCloudPlatform/terraformer
 
 go 1.24.0
+
 require (
 	cloud.google.com/go v0.116.0 // indirect
 	cloud.google.com/go/logging v1.12.0
@@ -305,7 +306,7 @@ require (
 	github.com/posener/complete v1.2.1 // indirect
 	github.com/russellhaering/goxmldsig v1.2.0 // indirect
 	github.com/sergi/go-diff v1.2.0 // indirect
-	github.com/sirupsen/logrus v1.8.1 // indirect
+	github.com/sirupsen/logrus v1.8.3 // indirect
 	github.com/sourcegraph/jsonrpc2 v0.0.0-20210201082850-366fbb520750 // indirect
 	github.com/spf13/afero v1.10.0 // indirect
 	github.com/stretchr/testify v1.10.0 // indirect
