@@ -89,7 +89,7 @@ func (g *IamGenerator) getRoles(svc *iam.Client) error {
 				rolePoliciesNextPage, err := rolePoliciesPage.NextPage(context.TODO())
 				if err != nil {
 					log.Println(err)
-					continue
+					break
 				}
 				for _, policyName := range rolePoliciesNextPage.PolicyNames {
 					g.Resources = append(g.Resources, terraformutils.NewSimpleResource(
@@ -107,7 +107,7 @@ func (g *IamGenerator) getRoles(svc *iam.Client) error {
 				roleAttachedPoliciesNextPage, err := roleAttachedPoliciesPage.NextPage(context.TODO())
 				if err != nil {
 					log.Println(err)
-					continue
+					break
 				}
 				for _, attachedPolicy := range roleAttachedPoliciesNextPage.AttachedPolicies {
 					g.Resources = append(g.Resources, terraformutils.NewResource(
@@ -291,11 +291,11 @@ func (g *IamGenerator) getGroupPolicies(svc *iam.Client, group types.Group) {
 	groupPoliciesPage := iam.NewListGroupPoliciesPaginator(svc, &iam.ListGroupPoliciesInput{GroupName: group.GroupName})
 	for groupPoliciesPage.HasMorePages() {
 		groupPoliciesNextPage, err := groupPoliciesPage.NextPage(context.TODO())
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-		for _, policy := range groupPoliciesNextPage.PolicyNames {
+		                if err != nil {
+		                    log.Println(err)
+		                    break
+		                }	
+			for _, policy := range groupPoliciesNextPage.PolicyNames {
 			id := *group.GroupName + ":" + policy
 			groupPolicyName := *group.GroupName + "_" + policy
 			g.Resources = append(g.Resources, terraformutils.NewResource(
@@ -315,10 +315,10 @@ func (g *IamGenerator) getAttachedGroupPolicies(svc *iam.Client, group types.Gro
 		&iam.ListAttachedGroupPoliciesInput{GroupName: group.GroupName})
 	for groupAttachedPoliciesPage.HasMorePages() {
 		groupAttachedPoliciesNextPage, err := groupAttachedPoliciesPage.NextPage(context.TODO())
-		if err != nil {
-			log.Println(err)
-			continue
-		}
+		                if err != nil {
+		                    log.Println(err)
+		                    break
+		                }
 		for _, attachedPolicy := range groupAttachedPoliciesNextPage.AttachedPolicies {
 			if !strings.Contains(*attachedPolicy.PolicyArn, "arn:aws:iam::aws") {
 				continue // map only AWS managed policies since others should be managed by
