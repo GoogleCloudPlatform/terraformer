@@ -53,7 +53,7 @@ func (g *MonitoringGenerator) loadAlerts(ctx context.Context, project string) er
 		}
 		if err != nil {
 			log.Println("error with alert:", err)
-			continue
+			return err
 		}
 		g.Resources = append(g.Resources, terraformutils.NewResource(
 			alert.Name,
@@ -89,7 +89,7 @@ func (g *MonitoringGenerator) loadGroups(ctx context.Context, project string) er
 		}
 		if err != nil {
 			log.Println("error with group:", err)
-			continue
+			return err
 		}
 		g.Resources = append(g.Resources, terraformutils.NewResource(
 			group.Name,
@@ -125,7 +125,7 @@ func (g *MonitoringGenerator) loadNotificationChannel(ctx context.Context, proje
 		}
 		if err != nil {
 			log.Println("error with notification Channel:", err)
-			continue
+			return err
 		}
 		g.Resources = append(g.Resources, terraformutils.NewResource(
 			notificationChannel.Name,
@@ -160,7 +160,7 @@ func (g *MonitoringGenerator) loadUptimeCheck(ctx context.Context, project strin
 		}
 		if err != nil {
 			log.Println("error with uptimeCheckConfigs:", err)
-			continue
+			return err
 		}
 		g.Resources = append(g.Resources, terraformutils.NewResource(
 			uptimeCheckConfigs.Name,
